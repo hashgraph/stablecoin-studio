@@ -1,1 +1,1 @@
-# -hedera-accelerator-stablecoin
+# hedera-accelerator-stablecoin
