@@ -6,7 +6,7 @@ import {
     deleteAccountSDK,
     getAccountBalanceSDK,
     deleteContractSDK,
-    getAccountBalanceInTinyBarSDK, getClient
+    getAccountBalanceInTinyBarSDK, getClient, fileCreate
 } from './utils_sdk.mjs';
 import { connectToContractWith } from './utils_hethers.mjs';
 
@@ -24,34 +24,42 @@ const tokenDecimals = process.env.TOKEN_DECIMALS;
 const hederaERC20json = JSON.parse(fs.readFileSync('./build/contracts/HederaERC20.json', 'utf8'));
 const hederaERC20AbiInterface = new Interface(hederaERC20json.abi);
 const hederaERC20Bytecode = hederaERC20json.bytecode;
+let hederaERC20FileId;
 
 const hederaERC1967ProxyJson = JSON.parse(fs.readFileSync('./build/contracts/HederaERC1967Proxy.json', 'utf8'));
 const hederaERC1967ProxyAbiInterface = new Interface(hederaERC1967ProxyJson.abi);
 const hederaERC1967ProxyBytecode = hederaERC1967ProxyJson.bytecode;
+let hederaERC1967FileId;
 
 const htsTokenOwnerJson = JSON.parse(fs.readFileSync('./build/contracts/HTSTokenOwner.json', 'utf8'));
 const htsTokenOwnerAbiInterface = new Interface(htsTokenOwnerJson.abi);
 const htsTokenOwnerBytecode = htsTokenOwnerJson.bytecode;
+let htsTokenOwnerFileId;
 
 const supplyControllerJson = JSON.parse(fs.readFileSync('./build/contracts/SupplyController.json', 'utf8'));
 const supplyControllerAbiInterface = new Interface(supplyControllerJson.abi);
 const supplyControllerBytecode = supplyControllerJson.bytecode;
+let supplyControllerFileId;
 
 const supplyControllerjsonV1_1 = JSON.parse(fs.readFileSync('./build/contracts/SupplyControllerV1_1.json', 'utf8'));
 const supplyControllerAbiInterfaceV1_1 = new Interface(supplyControllerjsonV1_1.abi);
 const supplyControllerBytecodeV1_1 = supplyControllerjsonV1_1.bytecode;
+let supplyControllerFileIdV1_1;
 
 const supplyControllerjsonV2 = JSON.parse(fs.readFileSync('./build/contracts/SupplyControllerV2.json', 'utf8'));
 const supplyControllerAbiInterfaceV2 = new Interface(supplyControllerjsonV2.abi);
 const supplyControllerBytecodeV2 = supplyControllerjsonV2.bytecode;
+let supplyControllerFileIdV2;
 
 const hederaERC20jsonV1_1 = JSON.parse(fs.readFileSync('./build/contracts/HederaERC20V1_1.json', 'utf8'));
 const hederaERC20AbiInterfaceV1_1 = new Interface(hederaERC20jsonV1_1.abi);
 const hederaERC20BytecodeV1_1 = hederaERC20jsonV1_1.bytecode;
+let hederaERC20FileIdV1_1;
 
 const hederaERC20jsonV2 = JSON.parse(fs.readFileSync('./build/contracts/HederaERC20V2.json', 'utf8'));
 const hederaERC20AbiInterfaceV2 = new Interface(hederaERC20jsonV2.abi);
 const hederaERC20BytecodeV2 = hederaERC20jsonV2.bytecode;
+let hederaERC20V2FileId;
 
 let master;
 let admin;
@@ -181,12 +189,20 @@ async function burnTokenCreatedAccounts(accountsToDelete, accounts, deployedCont
 
 async function deployContracts(tokenName, tokenSymbol, tokenDecimals, accounts, accountClient) {
     console.log("Deploying ERC20 contract... please wait.");
-    const erc20Contract = await deployContractSDK(hederaERC20Bytecode, 35, accounts, null, clientOperatorForProperties, accountClient);
-    let constructorParameters = new ContractFunctionParameters()
-            .addAddress(ContractId.fromString(erc20Contract.toString()).toSolidityAddress())
-            .addBytes(new Uint8Array([]));
+    if (!hederaERC20FileId) {
+        hederaERC20FileId = await fileCreate(hederaERC20Bytecode, accounts.account.privateECDSAKey, clientOperatorForProperties);
+    }
+    const erc20Contract = await deployContractSDK(hederaERC20FileId, accounts, null, accountClient);
+
     console.log("Deploying hederaERC1967Proxy contract... please wait.");
-    const proxyContract = await deployContractSDK(hederaERC1967ProxyBytecode, 35, accounts, constructorParameters, clientOperatorForProperties, accountClient);
+    let constructorParameters = new ContractFunctionParameters()
+        .addAddress(ContractId.fromString(erc20Contract.toString()).toSolidityAddress())
+        .addBytes(new Uint8Array([]));
+    if (!hederaERC1967FileId) {
+        hederaERC1967FileId = await fileCreate(hederaERC1967ProxyBytecode, accounts.account.privateECDSAKey, clientOperatorForProperties);
+    }
+
+    const proxyContract = await deployContractSDK(hederaERC1967FileId, accounts, constructorParameters, accountClient);
     const proxyConnnectionWithAccount = await connectToContractWith(accounts.account, proxyContract, hederaERC20AbiInterface);
     await proxyConnnectionWithAccount.initialize(AccountId.fromString(accounts.master.accountId.toString()).toSolidityAddress(),
                                                  AccountId.fromString(accounts.admin.accountId.toString()).toSolidityAddress(),
@@ -195,12 +211,17 @@ async function deployContracts(tokenName, tokenSymbol, tokenDecimals, accounts, 
                                                  { gasLimit: 250000 });
 
     console.log("Deploying supplyController contract... please wait.");
-    const supplyControllerContract = await deployContractSDK(supplyControllerBytecode, 35, accounts, null, clientOperatorForProperties, accountClient);
+    if (!supplyControllerFileId) {
+        supplyControllerFileId = await fileCreate(supplyControllerBytecode, accounts.account.privateECDSAKey, clientOperatorForProperties);
+    }
+    const supplyControllerContract = await deployContractSDK(supplyControllerFileId, accounts, null, accountClient);
+
+    console.log("Deploying hederaERC1967Proxy contract... please wait.");
     constructorParameters = new ContractFunctionParameters()
             .addAddress(ContractId.fromString(supplyControllerContract.toString()).toSolidityAddress())
             .addBytes(new Uint8Array([]));
-    console.log("Deploying hederaERC1967Proxy contract... please wait.");
-    const proxySupplyController = await deployContractSDK(hederaERC1967ProxyBytecode, 35, accounts, constructorParameters, clientOperatorForProperties, accountClient);
+
+    const proxySupplyController = await deployContractSDK(hederaERC1967FileId, accounts, constructorParameters, accountClient);
     const proxySupplyControllerConnnectionWithAccount = await connectToContractWith(accounts.account, proxySupplyController, supplyControllerAbiInterface);
     await proxySupplyControllerConnnectionWithAccount.initialize(ContractId.fromString(proxyContract).toSolidityAddress(),
                                                                 AccountId.fromString(accounts.masterSupplyController.accountId.toString()).toSolidityAddress(),
@@ -213,7 +234,10 @@ async function deployContracts(tokenName, tokenSymbol, tokenDecimals, accounts, 
                                                ContractId.fromString(proxySupplyController).toSolidityAddress(), { gasLimit: 100000 });
 
     console.log("Deploying htsTokenOwner contract... please wait.");
-    const tokenOwnerContract = await deployContractSDK(htsTokenOwnerBytecode, 10, accounts, null, clientOperatorForProperties, accountClient);
+    if (!htsTokenOwnerFileId) {
+        htsTokenOwnerFileId = await fileCreate(htsTokenOwnerBytecode, accounts.account.privateECDSAKey, clientOperatorForProperties);
+    }
+    const tokenOwnerContract = await deployContractSDK(htsTokenOwnerFileId, accounts, null, accountClient);
 
     console.log("Creating token... please wait.");
     const hederaToken = await createTokenSDK(tokenName, tokenSymbol, tokenDecimals, tokenOwnerContract.toString(), '0x'.concat(accounts.account.privateECDSAKey.toStringRaw()), accountClient);

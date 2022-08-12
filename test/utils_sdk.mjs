@@ -223,8 +223,7 @@ async function deleteContractSDK(contractToDelete, accountToRecoverHbar) {
     const txResponse = await transaction.execute(accountOperatorForProperties);
     await txResponse.getReceipt(accountOperatorForProperties);
 }
-async function deployContractSDK(bytecode, chunks, accounts, constructorParameters, clientOperator, accountClient) {
-    const bytecodeFileId = await fileCreate(bytecode, chunks, accounts.account.privateECDSAKey, clientOperator);
+async function deployContractSDK(bytecodeFileId, accounts, constructorParameters, accountClient) {
     const transaction = new ContractCreateTransaction()
         .setGas(181_000)
         .setBytecodeFileId(bytecodeFileId)
@@ -243,7 +242,7 @@ async function deployContractSDK(bytecode, chunks, accounts, constructorParamete
     return contractId;
 }
 
-async function fileCreate(bytecode, chunks, signingPrivateKey, clientOperator) {
+async function fileCreate(bytecode, signingPrivateKey, clientOperator) {
     const fileCreateTx = new FileCreateTransaction().setKeys([signingPrivateKey]).freezeWith(clientOperator);
     const fileSign = await fileCreateTx.sign(signingPrivateKey);
     const fileSubmit = await fileSign.execute(clientOperator);
@@ -252,7 +251,7 @@ async function fileCreate(bytecode, chunks, signingPrivateKey, clientOperator) {
     const fileAppendTx = new FileAppendTransaction()
         .setFileId(bytecodeFileId)
         .setContents(bytecode)
-        .setMaxChunks(chunks)
+        .setMaxChunks(35)
         .setMaxTransactionFee(new Hbar(2))
         .freezeWith(clientOperator);
     const fileAppendSign = await fileAppendTx.sign(signingPrivateKey);
@@ -331,5 +330,6 @@ export {
     getOperatorAccountBalanceSDK,
     getContractBalanceSDK,
     addHbarTransferSDK,
-    deleteContractSDK
+    deleteContractSDK,
+    fileCreate
 }

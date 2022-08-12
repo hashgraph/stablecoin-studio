@@ -27,7 +27,7 @@ describe("Token Rescue", function () {
         initialOperatorAccountBalance = await getOperatorAccountBalanceSDK(clientOperatorForProperties);
         accounts = await createAccounts(200, 100);
         operatorAccountBalanceAfterAccountsCreation = await getOperatorAccountBalanceSDK(clientOperatorForProperties);
-        accountClient = getClient();;
+        accountClient = getClient();
         accountClient.setOperator(accounts.account.accountId, accounts.account.privateECDSAKey);
         deployedContracts = await deployContracts(tokenName, tokenSymbol, tokenDecimals, accounts, accountClient);
         operatorAccountBalanceAfterContractsDeployment = await getOperatorAccountBalanceSDK(clientOperatorForProperties);
