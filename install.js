@@ -10,8 +10,6 @@ const handleError = (error, stdout, stderr) => {
   if (error) {
     console.error(error);
   }
-  console.log(stdout);
-  console.error(stderr);
 };
 
 const npmInstall = (dir, name = "module") => {
@@ -20,7 +18,13 @@ const npmInstall = (dir, name = "module") => {
   console.log("\tDone");
 };
 
-npmInstall(cliDir, "CLI");
-npmInstall(sdkDir, "SDK");
-npmInstall(webDir, "WEB");
-npmInstall(conDir, "CONTRACTS");
+let option = process.argv.slice(2)[0];
+
+if (option) {
+  npmInstall(`${dir}/${option}`, option.toUpperCase());
+} else {
+  npmInstall(cliDir, "CLI");
+  npmInstall(sdkDir, "SDK");
+  npmInstall(webDir, "WEB");
+  npmInstall(conDir, "CONTRACTS");
+}
