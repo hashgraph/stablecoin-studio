@@ -3,7 +3,7 @@ on:
   pull_request:
     branches: [ main, release/**, feature/** ]
   push:
-    branches: [ main, release/** ]
+    branches: [ main, release/**, feature/** ]
     tags: [ v* ]
 jobs:
   test-node:
