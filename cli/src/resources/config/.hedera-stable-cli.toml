@@ -1,0 +1,72 @@
+[general]
+configPath = ""
+network = "testnet"
+
+[[networks]]
+name = "mainnet"
+mirrorNodeUrl = "https://mainnet.mirrornode.hedera.com/"
+chainId = 0
+
+  [[networks.consensusNodes]]
+  url = "35.231.208.148:50211"
+  nodeId = "0.0.3"
+
+  [[networks.consensusNodes]]
+  url = "35.199.15.177:50211"
+  nodeId = "0.0.4"
+
+  [[networks.consensusNodes]]
+  url = "35.225.201.195:50211"
+  nodeId = "0.0.5"
+
+  [[networks.consensusNodes]]
+  url = "35.247.109.135:50211"
+  nodeId = "0.0.6"
+
+[[networks]]
+name = "previewnet"
+mirrorNodeUrl = "https://previewnet.mirrornode.hedera.com/"
+chainId = 0
+
+  [[networks.consensusNodes]]
+  url = "35.231.208.148:50211"
+  nodeId = "0.0.3"
+
+  [[networks.consensusNodes]]
+  url = "35.199.15.177:50211"
+  nodeId = "0.0.4"
+
+  [[networks.consensusNodes]]
+  url = "35.225.201.195:50211"
+  nodeId = "0.0.5"
+
+  [[networks.consensusNodes]]
+  url = "35.247.109.135:50211"
+  nodeId = "0.0.6"
+
+[[networks]]
+name = "testnet"
+mirrorNodeUrl = "https://testnet.mirrornode.hedera.com"
+chainId = 0
+
+  [[networks.consensusNodes]]
+  url = "0.testnet.hedera.com:50211"
+  nodeId = "0.0.3"
+
+  [[networks.consensusNodes]]
+  url = "1.testnet.hedera.com:50211"
+  nodeId = "0.0.4"
+
+  [[networks.consensusNodes]]
+  url = "2.testnet.hedera.com:50211"
+  nodeId = "0.0.5"
+
+  [[networks.consensusNodes]]
+  url = "3.testnet.hedera.com:50211"
+  nodeId = "0.0.6"
+
+[[accounts]]
+accountId = ""
+privateKey = ""
+isECDA25519Type = false
+alias = ""

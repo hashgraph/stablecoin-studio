@@ -1,0 +1,24 @@
+name: test
+on:
+  pull_request:
+    branches: [ main, release/**, feature/** ]
+  push:
+    branches: [ main, release/** ]
+    tags: [ v* ]
+jobs:
+  test-node:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Use Node.js TLS 16.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.x
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: npm i
+      - name: Build
+        run: npm run build
+      - name: Test
+        run: npm run test

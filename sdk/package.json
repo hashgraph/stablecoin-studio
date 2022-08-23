@@ -1,0 +1,59 @@
+{
+	"name": "hedera-stable-coin-sdk",
+	"version": "0.0.1",
+	"description": "",
+	"main": "./build/src/index.js",
+	"engines": {
+		"node": ">= 16.13 <17"
+	},
+	"types": "./build/src/index.d.ts",
+	"exports": {
+		".": "./build/src/index.js"
+	},
+	"devDependencies": {
+		"@babel/cli": "^7.18.10",
+		"@babel/core": "^7.18.10",
+		"@babel/preset-env": "^7.18.10",
+		"@babel/preset-typescript": "^7.18.6",
+		"@types/jest": "~27.5",
+		"@types/node": "~16",
+		"@typescript-eslint/eslint-plugin": "~5.26",
+		"@typescript-eslint/parser": "~5.26",
+		"concurrently": "^7.3.0",
+		"eslint": "~8.16",
+		"eslint-config-prettier": "~8.5",
+		"eslint-plugin-jest": "~26.2",
+		"format-imports": "^3.0.12",
+		"jest": "~28.1",
+		"prettier": "~2.6",
+		"rimraf": "~3.0",
+		"ts-jest": "~28.0",
+		"tsutils": "~3.21",
+		"typescript": "~4.7"
+	},
+	"scripts": {
+		"start": "node build/src/index.js",
+		"clean": "rimraf coverage build tmp",
+		"prebuild": "npm run lint",
+		"build": "rimraf build && npx tsc -p tsconfig.json",
+		"build:types": "npx tsc -p tsconfig.json --emitDeclarationOnly",
+		"build:tsc": "rm -rf build && npx tsc -p tsconfig.json",
+		"build:watch": "npx tsc -w -p tsconfig.json",
+		"build:release": "npm run clean && tsc -p tsconfig.release.json",
+		"lint": "eslint . --ext .ts --ext .mts",
+		"test": "npm run test:jest",
+		"prettier": "prettier --config .prettierrc --write .",
+		"format:imports": "npx format-imports ./src",
+		"test:watch": "concurrently --kill-others \"npm run build:watch\" \"npm run test:jest:watch\"",
+		"test:jest:watch": "NODE_OPTIONS=--experimental-vm-modules npx jest --watch",
+		"test:jest": "NODE_OPTIONS=--experimental-vm-modules npx jest --coverage"
+	},
+	"license": "Apache-2.0",
+	"dependencies": {
+		"@hashgraph/hethers": "^1.1.4",
+		"tslib": "~2.4"
+	},
+	"volta": {
+		"node": "16.13.0"
+	}
+}

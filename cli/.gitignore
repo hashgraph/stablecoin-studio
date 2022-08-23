@@ -2,7 +2,6 @@
 logs
 *.log
 npm-debug.log*
-package-lock.json
 
 # Dependencies
 node_modules/
@@ -29,5 +28,4 @@ build
 # Misc
 .DS_Store
 
-# Old files
-.old
+package-lock.json
