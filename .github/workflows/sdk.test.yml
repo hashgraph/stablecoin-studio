@@ -17,10 +17,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
       - name: Go into the SDK folder
-        run: cd sdk
+        run: cd sdk && pwd
       - name: Install dependencies
         run: npm install
       - name: Build
-        run: npm run build
+        run: pwd && npm run build
       - name: Test
         run: npm run test
