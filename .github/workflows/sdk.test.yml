@@ -3,12 +3,12 @@ on:
   pull_request:
     branches: [main, release/sdk/**, feature/sdk/**]
     paths:
-      - src/**
+      - sdk/**
       - .github/workflows/sdk.*.yaml
   push:
     branches: [main, release/sdk/**, feature/sdk/**]
     paths:
-      - src/**
+      - sdk/**
       - .github/workflows/sdk.*.yaml
 defaults:
   run:
