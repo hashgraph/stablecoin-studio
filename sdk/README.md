@@ -1,5 +1,7 @@
 # node-typescript-boilerplate
 
+Example
+
 [![Sponsor][sponsor-badge]][sponsor]
 [![TypeScript version][ts-badge]][typescript-4-7]
 [![Node.js version][nodejs-badge]][nodejs]
