@@ -1,10 +1,18 @@
 name: SDK - Test
 on:
   pull_request:
-    branches: [main, release/**, feature/**]
+    branches: [main, release/sdk/**, feature/sdk/**]
+    paths:
+      - src/**
+      - .github/workflows/sdk.*.yaml
   push:
-    branches: [main, release/**, feature/**]
-    tags: [v*]
+    branches: [main, release/sdk/**, feature/sdk/**]
+    paths:
+      - src/**
+      - .github/workflows/sdk.*.yaml
+defaults:
+  run:
+    working-directory: sdk
 jobs:
   test-node:
     name: Unit Tests
@@ -15,13 +23,10 @@ jobs:
         with:
           node-version: 16.x
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Install dependencies
         run: npm install
-        working-directory: ./sdk
       - name: Build
         run: npm run build
-        working-directory: ./sdk
       - name: Test
         run: npm run test
-        working-directory: ./sdk
