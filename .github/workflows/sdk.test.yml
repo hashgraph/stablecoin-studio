@@ -1,4 +1,4 @@
-name: SDK Test
+name: SDK - Test
 on:
   pull_request:
     branches: [main, release/**, feature/**]
@@ -17,7 +17,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
       - name: Go into the SDK folder
-        uses: cd sdk
+        run: cd sdk
       - name: Install dependencies
         run: npm install
       - name: Build
