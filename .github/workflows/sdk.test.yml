@@ -1,10 +1,10 @@
 name: SDK - Test
 on:
   pull_request:
-    branches: [ main, release/**, feature/** ]
+    branches: [main, release/**, feature/**]
   push:
-    branches: [ main, release/**, feature/** ]
-    tags: [ v* ]
+    branches: [main, release/**, feature/**]
+    tags: [v*]
 jobs:
   test-node:
     name: Unit Tests
