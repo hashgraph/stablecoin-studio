@@ -1,0 +1,10 @@
+name: test
+on:
+  pull_request:
+    branches: [ main ]
+jobs:
+  test-node:
+    name: Publish
+    runs-on: ubuntu-latest
+    steps:
+# Steps go here
