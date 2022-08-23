@@ -16,11 +16,12 @@ jobs:
           node-version: 16.x
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Go into the SDK folder
-        run: cd sdk && pwd
       - name: Install dependencies
         run: npm install
+        working-directory: ./sdk
       - name: Build
-        run: pwd && npm run build
+        run: npm run build
+        working-directory: ./sdk
       - name: Test
         run: npm run test
+        working-directory: ./sdk
