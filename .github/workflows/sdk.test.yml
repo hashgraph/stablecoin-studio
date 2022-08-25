@@ -31,6 +31,6 @@ jobs:
       - name: Check Coverage
         uses: ArtiomTr/jest-coverage-report-action@v2.0.9
         with:
-            test-script: npm run test:sdk
+            working-directory: sdk
 
 
