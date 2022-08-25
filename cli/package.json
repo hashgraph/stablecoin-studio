@@ -36,7 +36,8 @@
     "prettier": "~2.6",
     "rimraf": "~3.0",
     "ts-jest": "~28.0",
-    "tsutils": "~3.21"
+    "tsutils": "~3.21",
+    "hedera-stable-coin-sdk": "file:../sdk"
   },
   "dependencies": {
     "@iarna/toml": "^2.2.5",
