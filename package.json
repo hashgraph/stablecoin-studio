@@ -4,7 +4,8 @@
   "description": "",
   "scripts": {
     "install": "node install.js",
-    "setup": "npm run install"
+    "setup": "npm run install",
+    "test:sdk": "cd sdk && npm run test"
   },
   "keywords": [],
   "author": "",
