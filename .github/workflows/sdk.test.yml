@@ -33,7 +33,7 @@ jobs:
       - name: Check Coverage
         uses: ArtiomTr/jest-coverage-report-action@v2.0.9
         with:
-            coverage-file: .sdk/coverage/coverage-final.json
-            base-coverage-file: .sdk/coverage/coverage-final.json
+            coverage-file: ./sdk/coverage/coverage-final.json
+            base-coverage-file: ./sdk/coverage/coverage-final.json
 
 
