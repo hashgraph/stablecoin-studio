@@ -1,4 +1,8 @@
-import { configurationService, language, utilsService } from '../../../index.js';
+import {
+  configurationService,
+  language,
+  utilsService,
+} from '../../../index.js';
 import Service from '../Service.js';
 import fs from 'fs-extra';
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
@@ -78,6 +82,8 @@ export default class SetConfigurationService extends Service {
 
       if (response === 'y' || response === 'yes') {
         await this.configureCustomNetwork(network);
+      } else {
+        network = await this.configureDefaultNetwork();
       }
     }
 
@@ -96,7 +102,7 @@ export default class SetConfigurationService extends Service {
     let moreAccounts = true;
 
     while (moreAccounts) {
-      utilsService.showMessage(`Account ${accounts.length + 1}`);
+      utilsService.showMessage(`Account:`);
 
       const accountId = await utilsService.defaultSingleAsk(
         language.getText('configuration.askAccountId'),
@@ -108,8 +114,12 @@ export default class SetConfigurationService extends Service {
         language.getText('configuration.askAlias'),
         'AdminAccount',
       );
-      while(accounts.some(account => account.alias === alias)){
-        utilsService.showError(`Alias ${alias} already in use. Please use another alias.`);
+      while (accounts.some((account) => account.alias === alias)) {
+        utilsService.showError(
+          language.getText('configuration.aliasAlreadyInUse', {
+            alias,
+          }),
+        );
         alias = await utilsService.defaultSingleAsk(
           language.getText('configuration.askAlias'),
           'AdminAccount',
@@ -119,16 +129,17 @@ export default class SetConfigurationService extends Service {
         accountId: accountId,
         privateKey: accountFromPrivKey.privateKey,
         isECDA25519Type: accountFromPrivKey.isECDA25519Type,
-        alias: alias
+        alias: alias,
       });
 
-      const response = await utilsService.defaultSingleAsk(
+      moreAccounts = false;
+      /* const response = await utilsService.defaultSingleAsk(
         language.getText('configuration.askMoreAccounts'),
         'y',
       );
       if (response !== 'y' && response !== 'yes') {
         moreAccounts = false;
-      }
+      } */
     }
 
     // Set accounts
@@ -150,7 +161,7 @@ export default class SetConfigurationService extends Service {
     );
 
     let isECDA25519Type = false;
-    let alias= '';
+    let alias = '';
 
     // Actions by length
     switch (privateKey.length) {
@@ -180,7 +191,7 @@ export default class SetConfigurationService extends Service {
       accountId: accountId,
       privateKey: privateKey,
       isECDA25519Type: isECDA25519Type,
-      alias: alias
+      alias: alias,
     };
   }
 
@@ -234,9 +245,9 @@ export default class SetConfigurationService extends Service {
     );
     const network: INetworkConfig = {
       name: networkName,
-      consensusNodes: consensusNodes,
       mirrorNodeUrl: mirrorUrl,
       chainId: Number(chainId),
+      consensusNodes: consensusNodes,
     };
     defaultCfgData.networks.push(network);
 

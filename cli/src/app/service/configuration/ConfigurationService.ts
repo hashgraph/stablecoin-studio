@@ -1,7 +1,7 @@
 import Service from '../Service.js';
 import shell from 'shelljs';
 import pkg from '../../../../package.json';
-import toml, { JsonMap } from '@iarna/toml';
+import yaml from 'js-yaml';
 import fs from 'fs-extra';
 import { IConfiguration } from '../../../domain/configuration/interfaces/IConfiguration.js';
 import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
@@ -13,7 +13,7 @@ import { utilsService } from '../../../index.js';
  */
 export default class ConfigurationService extends Service {
   private configuration: IConfiguration;
-  private configFileName = '.hedera-stable-cli.toml';
+  private configFileName = '.hedera-stable-cli.yaml';
   private firstTime = false;
 
   constructor() {
@@ -41,8 +41,8 @@ export default class ConfigurationService extends Service {
 
   /**
    * Set the configuration and save to config file
-   * @param _configuration 
-   * @param _path 
+   * @param _configuration
+   * @param _path
    */
   public setConfiguration(
     _configuration: IConfiguration,
@@ -51,7 +51,7 @@ export default class ConfigurationService extends Service {
     this.configuration = _configuration;
     fs.writeFileSync(
       _path ?? _configuration.general.configPath,
-      toml.stringify(_configuration as unknown as JsonMap),
+      yaml.dump(_configuration as unknown),
       'utf8',
     );
   }
@@ -68,13 +68,13 @@ export default class ConfigurationService extends Service {
    */
   public createDefaultConfiguration(): void {
     try {
-      const defaultConfig = toml.parse(
+      const defaultConfig = yaml.load(
         fs.readFileSync(`src/resources/config/${this.configFileName}`, 'utf8'),
       );
       const filePath = this.getDefaultConfigurationPath();
       defaultConfig.general['configPath'] = filePath;
       fs.ensureFileSync(filePath);
-      fs.writeFileSync(filePath, toml.stringify(defaultConfig), 'utf8');
+      fs.writeFileSync(filePath, yaml.dump(defaultConfig), 'utf8');
     } catch (ex) {
       utilsService.showError(ex);
     }
@@ -84,7 +84,7 @@ export default class ConfigurationService extends Service {
    * Set config data from config file
    */
   public setConfigFromConfigFile(): IConfiguration {
-    let defaultConfigRaw = toml.parse(
+    let defaultConfigRaw = yaml.load(
       fs.readFileSync(this.getDefaultConfigurationPath(), 'utf8'),
     );
 
@@ -93,7 +93,7 @@ export default class ConfigurationService extends Service {
       defaultConfigRaw.general['configPath'] !== '' &&
       fs.existsSync(defaultConfigRaw.general['configPath'])
     ) {
-      defaultConfigRaw = toml.parse(
+      defaultConfigRaw = yaml.load(
         fs.readFileSync(defaultConfigRaw.general['configPath'], 'utf8'),
       );
     }
@@ -116,7 +116,7 @@ export default class ConfigurationService extends Service {
 
   /**
    * Get the default path for the configuration
-   * @returns 
+   * @returns
    */
   public getDefaultConfigurationPath(): string {
     shell.config.silent = true;
