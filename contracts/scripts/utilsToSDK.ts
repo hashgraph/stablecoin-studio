@@ -6,78 +6,52 @@ import { TokenCreateTransaction,DelegateContractId, Hbar,  Client,  AccountId, P
   ContractExecuteTransaction } from "@hashgraph/sdk";
 
 
-import { HederaERC20__factory, HTSTokenOwner__factory, HederaERC1967Proxy__factory } from "../typechain-types";
+import { HederaERC20__factory, HTSTokenOwner__factory, ERC1967Proxy__factory } from "../typechain-types";
 //no mas de 18 decimales
-export async function deployContracts(name:string, 
-                                      symbol:string,
-                                      decimals:number=6,
-                                      initialSupply:number=0,
-                                      maxSupply:number,
-                                      memo:string,
-                                      freeze:boolean=false) {
+export async function deployContracts(name:string, symbol:string, decimals:number=6,
+                                      initialSupply:number=0, maxSupply:number, 
+                                      memo:string, freeze:boolean=false) {
+
   console.log(`Creating token  (${name},${symbol},${decimals},${initialSupply},${maxSupply},${memo},${freeze})`);                                        
     
-
   let account    = "0.0.28540472";
   let privateKey = "302e020100300506032b657004220420f284d8c41cbf70fe44c6512379ff651c6e0e4fe85c300adcd9507a80a0ee3b69";
-  let publicKey  ="302a300506032b657003210032c231261223d8667d841d7ca58abd9d0701eb03238a8ee4e5cdfba6925c3109";                                      
+  let publicKey  = "302a300506032b657003210032c231261223d8667d841d7ca58abd9d0701eb03238a8ee4e5cdfba6925c3109";                                      
 
-  let wall = createWallet();
-  const clientSdk = getClientSdk();
+  let wallet = createWallet(account, privateKey);
+  const clientSdk = getClientSdk(account, privateKey);
 
-  let tokenContract = await deployContractHethers( HederaERC20__factory,wall);
+  console.log(`Deploying ${HederaERC20__factory.name} contract... please wait.`);
+  let tokenContract = await deployContractHethers( HederaERC20__factory, wallet);
 
-  let proxyContract = await deployContractHethers(HederaERC1967Proxy__factory,wall,tokenContract.address, "0x");
+  console.log(`Deploying ${ERC1967Proxy__factory.name} contract... please wait.`);
+  let proxyContract = await deployContractHethers(ERC1967Proxy__factory, wallet, tokenContract.address, "0x");
 
-  let proxyHederaERC20conection = await connectToContract(wall,proxyContract.address,HederaERC20__factory.abi);
+  let proxyHederaERC20conection = await connectToContract(wallet, proxyContract.address, HederaERC20__factory.abi);
   await proxyHederaERC20conection.initialize({ gasLimit: 350000 });  
 
-  const tokenOwnerContract = await deployContractSDK(
-    HTSTokenOwner__factory,
-    10,
-    privateKey,
-    clientSdk,
-    null
-  );
+  console.log(`Deploying ${HTSTokenOwner__factory.name} contract... please wait.`);
+  const tokenOwnerContract = await deployContractSDK(HTSTokenOwner__factory, 10, privateKey, clientSdk);
 
-  const hederaToken = await createToken(
-    tokenOwnerContract,
-    name, 
-    symbol,
-    decimals,
-    initialSupply,
-    maxSupply,
-    memo,
-    freeze,
-    account,
-    privateKey,
-    publicKey,
-    clientSdk
-  );
+  console.log("Creating token... please wait.");
+  const hederaToken = await createToken(tokenOwnerContract, name, symbol, decimals, initialSupply, maxSupply, memo, freeze, account, privateKey, publicKey, clientSdk);
 
+  console.log("Setting up contract... please wait.");
   await proxyHederaERC20conection.setTokenAddress(
-    //@ts-ignore
-      ContractId.fromString(tokenOwnerContract).toSolidityAddress(),
-    //@ts-ignore  
-      TokenId.fromString(hederaToken.toString()).toSolidityAddress(),
+      ContractId.fromString(tokenOwnerContract!.toString()).toSolidityAddress(),
+      TokenId.fromString(hederaToken!.toString()).toSolidityAddress(),
       { gasLimit: 200000 }
-    );
+  );
 
-    let tokenOwnerConnection = await connectToContract(wall,tokenOwnerContract?.toSolidityAddress(),HTSTokenOwner__factory.abi);
-    await tokenOwnerConnection.setERC20Address(proxyContract.address, {
-      gasLimit: 120000,
-    });
+  let tokenOwnerConnection = await connectToContract(wallet, tokenOwnerContract?.toSolidityAddress(), HTSTokenOwner__factory.abi);
+  await tokenOwnerConnection.setERC20Address(proxyContract.address, { gasLimit: 120000 });
 
-    return proxyContract.address;
+  return proxyContract.address;
 }
 
-export async function deployContractsWithSDK(name:string, 
-  symbol:string,
-  decimals:number=6,
-  initialSupply:number=0,
-  maxSupply:number,
-  memo:string,
-  freeze:boolean=false) {
+export async function deployContractsWithSDK(name:string, symbol:string, decimals:number=6,
+                                             initialSupply:number=0, maxSupply:number, 
+                                             memo:string, freeze:boolean=false) {
 
   console.log(`Creating token  (${name},${symbol},${decimals},${initialSupply},${maxSupply},${memo},${freeze})`);                                        
 
@@ -85,27 +59,33 @@ export async function deployContractsWithSDK(name:string,
   let privateKey = "302e020100300506032b657004220420f284d8c41cbf70fe44c6512379ff651c6e0e4fe85c300adcd9507a80a0ee3b69";
   let publicKey  ="302a300506032b657003210032c231261223d8667d841d7ca58abd9d0701eb03238a8ee4e5cdfba6925c3109";                                      
 
-  const clientSdk = getClientSdk();
+  const clientSdk = getClientSdk(account, privateKey);
 
+  console.log(`Deploying ${HederaERC20__factory.name} contract... please wait.`);
   let tokenContract = await deployContractSDK(HederaERC20__factory, 10, privateKey, clientSdk);
 
+  console.log(`Deploying ${ERC1967Proxy__factory.name} contract... please wait.`);
   let parameters = new ContractFunctionParameters()
-                        .addAddress(tokenContract ? tokenContract.toSolidityAddress() : "")
+                        .addAddress(tokenContract!.toSolidityAddress())
                         .addBytes(new Uint8Array([]));
-  let proxyContract = await deployContractSDK(HederaERC1967Proxy__factory, 10, privateKey, clientSdk, parameters);
+  let proxyContract = await deployContractSDK(ERC1967Proxy__factory, 10, privateKey, clientSdk, parameters);
   parameters = new ContractFunctionParameters();    
   await contractCall(proxyContract, 'initialize', parameters, clientSdk, 60000);
   
+  console.log(`Deploying ${HTSTokenOwner__factory.name} contract... please wait.`);
   const tokenOwnerContract = await deployContractSDK(HTSTokenOwner__factory, 10, privateKey, clientSdk);
+
+  console.log("Creating token... please wait.");
   const hederaToken = await createToken(tokenOwnerContract, name,  symbol, decimals, initialSupply, maxSupply, memo, freeze, account, privateKey, publicKey, clientSdk);
 
+  console.log("Setting up contract... please wait.");
   parameters = new ContractFunctionParameters()
-                    .addAddress(tokenOwnerContract ? tokenOwnerContract.toSolidityAddress() : "")
-                    .addAddress(TokenId.fromString(hederaToken?hederaToken.toString():"").toSolidityAddress());    
+                    .addAddress(tokenOwnerContract!.toSolidityAddress())
+                    .addAddress(TokenId.fromString(hederaToken!.toString()).toSolidityAddress());    
   await contractCall(proxyContract, 'setTokenAddress', parameters, clientSdk, 60000);
 
   parameters = new ContractFunctionParameters()
-                    .addAddress(proxyContract ? proxyContract.toSolidityAddress() : "")
+                    .addAddress(proxyContract!.toSolidityAddress())
   await contractCall(tokenOwnerContract, 'setERC20Address', parameters, clientSdk, 60000);
 
   return proxyContract?.toSolidityAddress();
@@ -126,19 +106,19 @@ async function contractCall(contractId:any,
   return record.contractFunctionResult;
 }
 
-function getClientSdk() {
+function getClientSdk(account:string, privateKey:string) {
   const clientSdk = Client.forTestnet();
   clientSdk.setOperator(
-    "0.0.28540472",
-    "302e020100300506032b657004220420f284d8c41cbf70fe44c6512379ff651c6e0e4fe85c300adcd9507a80a0ee3b69"
+    account,
+    privateKey
   );
   return clientSdk;
 }
 
-function createWallet() {
+function createWallet(account:string, privateKey:string) {
   const eoaAccount: any = {
-    account: "0.0.28540472",
-    privateKey: "302e020100300506032b657004220420f284d8c41cbf70fe44c6512379ff651c6e0e4fe85c300adcd9507a80a0ee3b69",
+    account: account,
+    privateKey: privateKey,
     isED25519Type: true
   };
   let wall = new hethers.Wallet(eoaAccount, hethers.providers.getDefaultProvider('testnet'));
