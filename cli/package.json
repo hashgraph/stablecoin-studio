@@ -3,12 +3,14 @@
   "version": "0.0.1-SNAPSHOT",
   "description": "CLI for Hedera Stable Coin",
   "main": "./build/src/index.js",
-  "bin": "build/src/index.js",
+  "bin": {
+    "accelerator": "build/src/index.js"
+  },
   "exports": {
     ".": "./build/src/index.js"
   },
   "scripts": {
-    "start": "npx tsc && node ./build/src/index.js",
+    "start": "clear && npx tsc && node ./build/src/index.js",
     "start2": "npx ts-node ./src/index.ts",
     "clean": "rimraf coverage build tmp",
     "prebuild": "npm run lint",
@@ -41,15 +43,17 @@
   },
   "dependencies": {
     "@iarna/toml": "^2.2.5",
+    "cli-table3": "^0.6.2",
     "commander": "^9.4.0",
     "figlet-promised": "^1.0.0",
     "fs-extra": "^10.1.0",
     "inquirer": "^8.0.0",
     "js-yaml": "^4.1.0",
     "lodash": "^4.17.21",
+    "ora": "^6.1.2",
     "shelljs": "^0.8.5",
     "ts-node": "^10.9.1",
     "tslib": "^2.4.0",
-    "typescript": "^4.7.4"
+    "typescript": "4.7.4"
   }
 }
