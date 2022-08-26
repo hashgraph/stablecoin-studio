@@ -2,11 +2,11 @@ require("@hashgraph/hardhat-hethers");
 import {hethers} from "@hashgraph/hethers";
 
 import { TokenCreateTransaction,DelegateContractId, Hbar,  Client,  AccountId, PrivateKey,
-  PublicKey, ContractCreateTransaction, FileCreateTransaction, FileAppendTransaction, ContractId, TokenId,
+  PublicKey, ContractCreateTransaction, FileCreateTransaction, FileAppendTransaction, ContractId, TokenId,TokenSupplyType
 } from "@hashgraph/sdk";
 
-import { Interface } from "@ethersproject/abi";
-import { HederaERC20__factory, HTSTokenOwner__factory } from "../typechain-types";
+
+import { HederaERC20__factory, HTSTokenOwner__factory, HederaERC1967Proxy__factory } from "../typechain-types";
 //no mas de 18 decimales
 export async function deployContracts(name:string, 
                                       symbol:string,
@@ -18,14 +18,19 @@ export async function deployContracts(name:string,
   console.log(`Creating token  (${name},${symbol},${decimals},${initialSupply},${maxSupply},${memo},${freeze})`);                                        
     
 
-  let account = "0.0.28540472";
+  let account    = "0.0.28540472";
   let privateKey = "302e020100300506032b657004220420f284d8c41cbf70fe44c6512379ff651c6e0e4fe85c300adcd9507a80a0ee3b69";
-
+  let publicKey  ="302a300506032b657003210032c231261223d8667d841d7ca58abd9d0701eb03238a8ee4e5cdfba6925c3109";                                      
 
   let wall = createWallet();
   const clientSdk = getClientSdk();
 
-  let tokenContract = await deployContractHethers( HederaERC20__factory,wall)
+  let tokenContract = await deployContractHethers( HederaERC20__factory,wall);
+
+  let proxyContract = await deployContractHethers(HederaERC1967Proxy__factory,wall,tokenContract.address, "0x");
+
+  let proxyHederaERC20conection = await connectToContract(wall,proxyContract.address,HederaERC20__factory.abi);
+  await proxyHederaERC20conection.initialize({ gasLimit: 350000 });  
 
   const tokenOwnerContract = await deployContractSDK(
     HTSTokenOwner__factory,
@@ -33,47 +38,36 @@ export async function deployContracts(name:string,
     privateKey,
     clientSdk,
   );
-  
 
-  
-
-
-/*
-    
-  const tokenOwnerContract = await deployContractSDK(
-    htsTokenOwnerBytecode,
-    10,
-    hreConfig.accounts[0].privateKey,
-    clientOperatorForProperties
-  );
-  
   const hederaToken = await createToken(
     tokenOwnerContract,
-    hreConfig.accounts[0].account,
-    hreConfig.accounts[0].privateKey,
-    hreConfig.accounts[0].publicKey
+    name, 
+    symbol,
+    decimals,
+    initialSupply,
+    maxSupply,
+    memo,
+    freeze,
+    account,
+    privateKey,
+    publicKey,
+    clientSdk
   );
 
-  const tokenOwnerConnection = await hre.hethers.getContractAt(
-    "HTSTokenOwner",
-    tokenOwnerContract?.toSolidityAddress()
-  );
+  await proxyHederaERC20conection.setTokenAddress(
+    //@ts-ignore
+      ContractId.fromString(tokenOwnerContract).toSolidityAddress(),
+    //@ts-ignore  
+      TokenId.fromString(hederaToken.toString()).toSolidityAddress(),
+      { gasLimit: 200000 }
+    );
 
-  await tokenOwnerConnection.setERC20Address(deployedProxy.address, {
-    gasLimit: 120000,
-  });
+    let tokenOwnerConnection = await connectToContract(wall,tokenOwnerContract?.toSolidityAddress(),HTSTokenOwner__factory.abi);
+    await tokenOwnerConnection.setERC20Address(proxyContract.address, {
+      gasLimit: 120000,
+    });
 
-  
-  await contractProxy.setTokenAddress(
-  //@ts-ignore
-    ContractId.fromString(tokenOwnerContract).toSolidityAddress(),
-  //@ts-ignore  
-    TokenId.fromString(hederaToken.toString()).toSolidityAddress(),
-    { gasLimit: 200000 }
-  );
-  await contractProxy.initialize({ gasLimit: 350000 });  
-  return deployedProxy.address;
-*/
+    return proxyContract.address;
 }
 
 
@@ -98,32 +92,44 @@ function createWallet() {
 
 async function createToken(
   contractId: any,
+  name:string, 
+  symbol:string,
+  decimals:number=6,
+  initialSupply:number=0,
+  maxSupply:number,
+  memo:string,
+  freeze:boolean=false,
   accountId: string,
   privateKey: string,
-  publicKey: string
+  publicKey: string,
+  clientSdk:any
 ) {
-  const clientOperatorForProperties = Client.forTestnet();
-  clientOperatorForProperties.setOperator(accountId, privateKey);
-
+ 
   let transaction = new TokenCreateTransaction()
     .setMaxTransactionFee(new Hbar(15))
-    .setTokenName("tokenName")
-    .setTokenSymbol("tokenSymbol")
-    .setDecimals(2)
+    .setTokenName(name)
+    .setTokenSymbol(symbol)
+    .setDecimals(decimals)
+    .setInitialSupply(initialSupply)
+    .setMaxSupply(maxSupply)
+    .setSupplyType(TokenSupplyType.Finite)
+    .setTokenMemo(memo)
+    .setFreezeDefault(freeze)
     .setTreasuryAccountId(AccountId.fromString(contractId.toString()))
     .setAdminKey(PublicKey.fromString(publicKey))
     .setFreezeKey(PublicKey.fromString(publicKey))
     .setWipeKey(PublicKey.fromString(publicKey))
     .setSupplyKey(DelegateContractId.fromString(contractId))
-    .freezeWith(clientOperatorForProperties);
+    .freezeWith(clientSdk);
   const transactionSign = await transaction.sign(
     PrivateKey.fromStringED25519(privateKey)
   );
   const txResponse = await transactionSign.execute(
-    clientOperatorForProperties
+    clientSdk
   );
-  const receipt = await txResponse.getReceipt(clientOperatorForProperties);
+  const receipt = await txResponse.getReceipt(clientSdk);
   const tokenId = receipt.tokenId;
+  console.log( `Token ${name} created tokenId ${tokenId} - tokenAddress ${tokenId?.toSolidityAddress()}   `);
   return tokenId;
 }
 
@@ -186,33 +192,17 @@ async function fileCreate(
   return bytecodeFileId;
 };
 
-async function  deployContractHethers(contractFactory:any,wallet:any){
+async function  deployContractHethers(contractFactory:any,wallet:any,...args:any){
 
   const factory = new hethers.ContractFactory(contractFactory.abi, contractFactory.bytecode, wallet);
-  const contract = await factory.deploy({ gasLimit: 200000 });
+  const contract = await factory.deploy(...args,{ gasLimit: 200000 });
   await contract.deployTransaction.wait();
   console.log( ` ${contractFactory.name } - address ${contract.address}`);
   return contract;
   
 };
 
-/*
-getProvider(){
-//Network y un account
-}
+async function connectToContract(wallet:any, address:any, abi:any) {
 
-getContractConection(){
-  //recibir un wallet , un nombre de contrato y una direccion.
-  //devolvera un contrato conectado 
+  return new hethers.Contract(address, abi, wallet);
 }
-/*
-async function deployContractProxyWithHethers(account, bytecode, abiInterface, tokenContractId) {
-  const wallet = await getWallet(account.accountId, '0x'.concat(account.privateECDSAKey.toStringRaw()));
-  const factory = new hethers.ContractFactory(abiInterface, bytecode, wallet);
-  const contract = await factory.deploy(tokenContractId,
-                                        '0x',
-                                        { gasLimit: 200000 });
-  await contract.deployTransaction.wait();
-  return contract;
-}
-*/
