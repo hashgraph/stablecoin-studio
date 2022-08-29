@@ -1,8 +1,8 @@
 
-import {deployContracts} from "./utils";
+import { deployContractsWithSDK } from "./utils";
 
 async function  main () {
-  deployContracts();
+  deployContractsWithSDK("TOKEN","TK",2,0,100_000,"mytoken",false);
 }
 
 main();
