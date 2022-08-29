@@ -38,6 +38,14 @@ export default class UtilitiesService extends Service {
   }
 
   /**
+   * Function to create n break line
+   * @param n
+   */
+  public breakLine(n: number = 1): void {
+    console.log('\n'.repeat(n));
+  }
+
+  /**
    * Function to show spinner component
    * @param promise
    * @param options
