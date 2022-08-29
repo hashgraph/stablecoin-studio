@@ -1,119 +1,132 @@
-require("@hashgraph/hardhat-hethers");
-require("@hashgraph/sdk");
+import { TokenCreateTransaction,DelegateContractId, Hbar,  Client,  AccountId, PrivateKey, ContractFunctionParameters,
+  PublicKey, ContractCreateTransaction, FileCreateTransaction, FileAppendTransaction, ContractId, TokenId,TokenSupplyType,
+  ContractExecuteTransaction } from "@hashgraph/sdk";
 
-import { TokenCreateTransaction, Hbar, DelegateContractId,  Client,  AccountId, PrivateKey,
-  PublicKey, ContractCreateTransaction, FileCreateTransaction, FileAppendTransaction, ContractId, TokenId,
-} from "@hashgraph/sdk";
-import * as fs from "fs";
-import { Interface } from "@ethersproject/abi";
+import { HederaERC20__factory, HTSTokenOwner__factory, ERC1967Proxy__factory } from "../typechain-types";
 
-const hre = require("hardhat");
-let hreConfig = hre.network.config;
+import dotenv from "dotenv";
 
-const htsTokenOwnerJson = JSON.parse(
-  fs.readFileSync(
-    "./artifacts/contracts/HTSTokenOwner.sol/HTSTokenOwner.json",
-    "utf8"
-  )
-);
-const htsTokenOwnerAbiInterface = new Interface(htsTokenOwnerJson.abi);
-const htsTokenOwnerBytecode = htsTokenOwnerJson.bytecode;
+dotenv.config();
 
-export async function deployContracts() {
+export async function deployContractsWithSDK(name:string, symbol:string, decimals:number=6,
+                                             initialSupply:number=0, maxSupply:number, 
+                                             memo:string, freeze:boolean=false) {
+
+  console.log(`Creating token  (${name},${symbol},${decimals},${initialSupply},${maxSupply},${memo},${freeze})`);                                        
+
+  let account    = process.env.OPERATOR_ID;
+  let privateKey = process.env.OPERATOR_PRIVATE_KEY;
+  let publicKey  = process.env.OPERATOR_PUBLIC_KEY;                                      
+
+  const clientSdk = getClient(account!, privateKey!);
+
+  console.log(`Deploying ${HederaERC20__factory.name} contract... please wait.`);
+  let tokenContract = await deployContractSDK(HederaERC20__factory, 10, privateKey, clientSdk);
+
+  console.log(`Deploying ${ERC1967Proxy__factory.name} contract... please wait.`);
+  let parameters = new ContractFunctionParameters()
+                        .addAddress(tokenContract!.toSolidityAddress())
+                        .addBytes(new Uint8Array([]));
+  let proxyContract = await deployContractSDK(ERC1967Proxy__factory, 10, privateKey, clientSdk, parameters);
+  parameters = new ContractFunctionParameters();    
+  await contractCall(proxyContract, 'initialize', parameters, clientSdk, 60000);
   
-  const hederaERC20 = await hre.hethers.getContractFactory("HederaERC20");
-  const deployedhederaERC20 = await hederaERC20.deploy();
-  const contractErc20 = await hre.hethers.getContractAt(
-    "HederaERC20",
-    deployedhederaERC20.address
-  );
+  console.log(`Deploying ${HTSTokenOwner__factory.name} contract... please wait.`);
+  const tokenOwnerContract = await deployContractSDK(HTSTokenOwner__factory, 10, privateKey, clientSdk);
 
-  const proxy = await hre.hethers.getContractFactory("HederaERC1967Proxy");
-  const deployedProxy = await proxy.deploy(deployedhederaERC20.address, "0x");
-  const contractProxy = await hre.hethers.getContractAt(
-    "HederaERC20",
-    deployedProxy.address
-  );
+  console.log("Creating token... please wait.");
+  const hederaToken = await createToken(tokenOwnerContract, name,  symbol, decimals, initialSupply, maxSupply, memo, freeze, account!, privateKey!, publicKey!, clientSdk);
 
-  const clientOperatorForProperties = Client.forTestnet();
-  clientOperatorForProperties.setOperator(
-    hreConfig.accounts[0].account,
-    hreConfig.accounts[0].privateKey
-  );
-  const tokenOwnerContract = await deployContractSDK(
-    htsTokenOwnerBytecode,
-    10,
-    hreConfig.accounts[0].privateKey,
-    clientOperatorForProperties
-  );
-  
-  const hederaToken = await createToken(
-    tokenOwnerContract,
-    hreConfig.accounts[0].account,
-    hreConfig.accounts[0].privateKey,
-    hreConfig.accounts[0].publicKey
-  );
+  console.log("Setting up contract... please wait.");
+  parameters = new ContractFunctionParameters()
+                    .addAddress(tokenOwnerContract!.toSolidityAddress())
+                    .addAddress(TokenId.fromString(hederaToken!.toString()).toSolidityAddress());    
+  await contractCall(proxyContract, 'setTokenAddress', parameters, clientSdk, 60000);
 
-  const tokenOwnerConnection = await hre.hethers.getContractAt(
-    "HTSTokenOwner",
-    tokenOwnerContract?.toSolidityAddress()
-  );
+  parameters = new ContractFunctionParameters()
+                    .addAddress(proxyContract!.toSolidityAddress())
+  await contractCall(tokenOwnerContract, 'setERC20Address', parameters, clientSdk, 60000);
 
-  await tokenOwnerConnection.setERC20Address(deployedProxy.address, {
-    gasLimit: 120000,
-  });
+  return proxyContract?.toSolidityAddress();
+}
 
-  
-  await contractProxy.setTokenAddress(
-  //@ts-ignore
-    ContractId.fromString(tokenOwnerContract).toSolidityAddress(),
-  //@ts-ignore  
-    TokenId.fromString(hederaToken.toString()).toSolidityAddress(),
-    { gasLimit: 200000 }
+async function contractCall(contractId:any, 
+                            functionName:string, 
+                            functionParameters:ContractFunctionParameters, 
+                            clientOperator: any,
+                            gas: any) {
+  const contractTx = await new ContractExecuteTransaction()
+      .setContractId(contractId)
+      .setFunction(functionName, functionParameters)
+      .setGas(gas)
+      .execute(clientOperator);
+  let record = await contractTx.getRecord(clientOperator);
+
+  return record.contractFunctionResult;
+}
+
+function getClient(account:string, privateKey:string) {
+  const network = process.env.HEDERA_NETWORK;
+  const client = Client.forName(network!);
+  client.setOperator(
+    account,
+    privateKey
   );
-  await contractProxy.initialize({ gasLimit: 350000 });  
-  return deployedProxy.address;
+  return client;
 }
 
 async function createToken(
   contractId: any,
+  name:string, 
+  symbol:string,
+  decimals:number=6,
+  initialSupply:number=0,
+  maxSupply:number,
+  memo:string,
+  freeze:boolean=false,
   accountId: string,
   privateKey: string,
-  publicKey: string
+  publicKey: string,
+  clientSdk:any
 ) {
-  const clientOperatorForProperties = Client.forTestnet();
-  clientOperatorForProperties.setOperator(accountId, privateKey);
-
+ 
   let transaction = new TokenCreateTransaction()
     .setMaxTransactionFee(new Hbar(15))
-    .setTokenName("tokenName")
-    .setTokenSymbol("tokenSymbol")
-    .setDecimals(2)
+    .setTokenName(name)
+    .setTokenSymbol(symbol)
+    .setDecimals(decimals)
+    .setInitialSupply(initialSupply)
+    .setMaxSupply(maxSupply)
+    .setSupplyType(TokenSupplyType.Finite)
+    .setTokenMemo(memo)
+    .setFreezeDefault(freeze)
     .setTreasuryAccountId(AccountId.fromString(contractId.toString()))
     .setAdminKey(PublicKey.fromString(publicKey))
     .setFreezeKey(PublicKey.fromString(publicKey))
     .setWipeKey(PublicKey.fromString(publicKey))
     .setSupplyKey(DelegateContractId.fromString(contractId))
-    .freezeWith(clientOperatorForProperties);
+    .freezeWith(clientSdk);
   const transactionSign = await transaction.sign(
     PrivateKey.fromStringED25519(privateKey)
   );
   const txResponse = await transactionSign.execute(
-    clientOperatorForProperties
+    clientSdk
   );
-  const receipt = await txResponse.getReceipt(clientOperatorForProperties);
+  const receipt = await txResponse.getReceipt(clientSdk);
   const tokenId = receipt.tokenId;
+  console.log( `Token ${name} created tokenId ${tokenId} - tokenAddress ${tokenId?.toSolidityAddress()}   `);
   return tokenId;
 }
 
 async function deployContractSDK(
-  bytecode: any,
+  factory: any,
   chunks: any,
   privateKey: any,
-  clientOperator: any
+  clientOperator: any,
+  constructorParameters?: any
 ) {
   const bytecodeFileId = await fileCreate(
-    bytecode,
+    factory.bytecode,
     chunks,
     PrivateKey.fromStringED25519(privateKey),
     clientOperator
@@ -124,7 +137,9 @@ async function deployContractSDK(
     .setBytecodeFileId(bytecodeFileId)
     .setMaxTransactionFee(new Hbar(30))
     .setAdminKey(PrivateKey.fromStringED25519(privateKey));
-
+    if (constructorParameters) {
+      transaction.setConstructorParameters(constructorParameters);
+    }
   transaction.freezeWith(clientOperator);
   const contractCreateSign = await transaction.sign(
     PrivateKey.fromStringED25519(privateKey)
@@ -133,6 +148,7 @@ async function deployContractSDK(
   const receipt = await txResponse.getReceipt(clientOperator);
 
   const contractId = receipt.contractId;
+  console.log( ` ${factory.name } - contractId ${contractId} -contractId ${contractId?.toSolidityAddress()}   `);
   return contractId;
 }
 
@@ -160,4 +176,4 @@ async function fileCreate(
   const fileAppendSubmit = await fileAppendSign.execute(clientOperator);
   const fileAppendRx = await fileAppendSubmit.getReceipt(clientOperator);
   return bytecodeFileId;
-}
+};
