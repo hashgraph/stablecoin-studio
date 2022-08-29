@@ -1,8 +1,13 @@
-import { configurationService, language, utilsService } from '../../../index.js';
+import {
+  configurationService,
+  language,
+  utilsService,
+} from '../../../index.js';
 import SetConfigurationService from '../configuration/SetConfigurationService.js';
 import Service from '../Service.js';
 import CreateStableCoinService from '../stablecoin/CreateStableCoinService.js';
 import OperationStableCoinService from '../stablecoin/OperationStableCoinService.js';
+import ListStableCoinsService from '../stablecoin/ListStableCoinsService.js';
 
 /**
  * Wizard Service
@@ -34,6 +39,9 @@ export default class WizardService extends Service {
         await new OperationStableCoinService().start();
         break;
       case wizardMainOptions[2]:
+        await new ListStableCoinsService().listStableCoins();
+        break;
+      case wizardMainOptions[3]:
         this.setConfigurationService = new SetConfigurationService();
         await this.configurationMenu();
         break;
@@ -82,5 +90,4 @@ export default class WizardService extends Service {
 
     await this.configurationMenu();
   }
-
 }

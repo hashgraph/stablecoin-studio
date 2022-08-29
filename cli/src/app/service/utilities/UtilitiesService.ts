@@ -2,6 +2,8 @@ import * as inquirer from 'inquirer';
 import figlet from 'figlet-promised';
 import Service from '../Service.js';
 import { language } from '../../../index.js';
+import Table from 'cli-table3';
+import { StableCoinList } from '../../../domain/stablecoin/StableCoinList.js';
 
 /**
  * Utilities Service
@@ -36,6 +38,20 @@ export default class UtilitiesService extends Service {
   }
 
   /**
+   * Function to show spinner component
+   * @param promise
+   * @param options
+   */
+  public async showSpinner(
+    promise: Promise<void>,
+    options: object,
+  ): Promise<void> {
+    const { oraPromise } = await import('ora');
+
+    await oraPromise(promise, options);
+  }
+
+  /**
    * Function for simple ask questions with inquire
    * @param question
    * @param defaultValue
@@ -43,7 +59,7 @@ export default class UtilitiesService extends Service {
    */
   public async defaultSingleAsk(
     question: string,
-    defaultValue: string,
+    defaultValue: string | undefined,
   ): Promise<string> {
     const variable = await inquirer.prompt({
       name: 'response',
@@ -59,7 +75,7 @@ export default class UtilitiesService extends Service {
   /**
    * Function for multiple ask questions with inquire
    * @param question
-   * @param defaultValue
+   * @param choices
    * @returns
    */
   public async defaultMultipleAsk(
@@ -73,5 +89,44 @@ export default class UtilitiesService extends Service {
       choices: choices,
     });
     return variable.response;
+  }
+
+  /**
+   * Function for multiple ask questions with inquire
+   * @param question
+   * @param defaultValue
+   * @returns
+   */
+  public async defaultConfirmAsk(
+    question: string,
+    defaultValue: boolean,
+  ): Promise<boolean> {
+    const variable = await inquirer.prompt({
+      name: 'response',
+      type: 'confirm',
+      message: question,
+      default() {
+        return defaultValue;
+      },
+    });
+    return variable.response;
+  }
+
+  public async drawTableListStableCoin(data?: StableCoinList[]): Promise<void> {
+    const table = new Table({
+      style: { head: ['green'] },
+      head: ['Id', 'Symbol', 'Name', 'Balance'],
+      colWidths: [15, 20, 30, 20],
+    });
+
+    if (data) {
+      data.forEach((item) =>
+        table.push([item.id, item.symbol, item.name, item.balance]),
+      );
+    } else {
+      table.push(['-', '-', '-', '-']);
+    }
+
+    console.log(table.toString());
   }
 }
