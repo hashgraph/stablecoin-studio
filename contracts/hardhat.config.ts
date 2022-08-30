@@ -2,6 +2,7 @@ import "@nomicfoundation/hardhat-toolbox";
 import "@hashgraph/hardhat-hethers";
 import "@hashgraph/sdk";
 import { PrivateKey } from "@hashgraph/sdk";
+require('hardhat-abi-exporter');
 
 module.exports = {
   solidity: "0.8.10",

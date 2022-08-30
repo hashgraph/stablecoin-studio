@@ -16,7 +16,8 @@
     "@nomicfoundation/hardhat-toolbox": "^1.0.2",
     "@openzeppelin/contracts": "^4.7.2",
     "@openzeppelin/contracts-upgradeable": "^4.7.2",
+    "dotenv": "^16.0.1",
     "hardhat": "^2.10.1",
-    "dotenv": "^16.0.1"
+    "hardhat-abi-exporter": "^2.10.0"
   }
 }
