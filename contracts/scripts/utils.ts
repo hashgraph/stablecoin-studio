@@ -1,6 +1,6 @@
 import { TokenCreateTransaction,DelegateContractId, Hbar,  Client,  AccountId, PrivateKey, ContractFunctionParameters,
-  PublicKey, ContractCreateTransaction, FileCreateTransaction, FileAppendTransaction, ContractId, TokenId,TokenSupplyType,
-  ContractExecuteTransaction } from "@hashgraph/sdk";
+  PublicKey, ContractCreateTransaction, FileCreateTransaction, FileAppendTransaction, TokenId,TokenSupplyType,
+  ContractExecuteTransaction, AccountCreateTransaction } from "@hashgraph/sdk";
 
 import { HederaERC20__factory, HTSTokenOwner__factory, HederaERC1967Proxy__factory } from "../typechain-types";
 
@@ -43,7 +43,7 @@ export async function deployContractsWithSDK(name:string, symbol:string, decimal
 
   console.log("Setting up contract... please wait.");
   parametersContractCall = [tokenOwnerContract!.toSolidityAddress(),TokenId.fromString(hederaToken!.toString()).toSolidityAddress()];    
-  await contractCall(proxyContract, 'setTokenAddress', parametersContractCall, clientSdk, 60000, HederaERC20__factory.abi);
+  await contractCall(proxyContract, 'setTokenAddress', parametersContractCall, clientSdk, 80000, HederaERC20__factory.abi);
 
   parametersContractCall = [proxyContract!.toSolidityAddress()];
   await contractCall(tokenOwnerContract, 'setERC20Address', parametersContractCall, clientSdk, 60000, HTSTokenOwner__factory.abi);
@@ -202,3 +202,21 @@ async function fileCreate(
   const fileAppendRx = await fileAppendSubmit.getReceipt(clientOperator);
   return bytecodeFileId;
 };
+
+export async function createECDSAAccount(client:any, amount:number) {
+  let privateECDSAKey;
+
+  do {
+      privateECDSAKey = PrivateKey.generateECDSA();
+    } while (privateECDSAKey.toStringRaw().length < 64);
+
+  const response = await new AccountCreateTransaction()
+  .setKey(privateECDSAKey)
+  .setInitialBalance(new Hbar(amount))
+  .execute(client);
+  const receipt = await response.getReceipt(client);
+  const account = receipt.accountId;
+  let accountId = account!.toString();
+  let privateKey = '0x'.concat(privateECDSAKey.toStringRaw());
+  return { accountId, privateKey, privateECDSAKey };
+}
