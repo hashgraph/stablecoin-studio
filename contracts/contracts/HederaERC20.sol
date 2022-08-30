@@ -11,12 +11,6 @@ import "./HederaERC20Mintable.sol";
 contract HederaERC20 is IHederaERC20, Initializable, IERC20Upgradeable, HederaERC20Mintable {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
-<<<<<<< HEAD
-=======
-    HTSTokenOwner HTSTokenOwnerAddress;
-    address tokenAddress; 
-
->>>>>>> Minting functionality without transfer working
     function initialize () 
         payable 
         external 
