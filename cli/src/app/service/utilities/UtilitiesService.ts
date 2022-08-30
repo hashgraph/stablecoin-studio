@@ -3,7 +3,10 @@ import figlet from 'figlet-promised';
 import Service from '../Service.js';
 import { language } from '../../../index.js';
 import Table from 'cli-table3';
-import { StableCoinList } from '../../../domain/stablecoin/StableCoinList.js';
+import {
+  StableCoinDetail,
+  StableCoinList,
+} from '../../../domain/stablecoin/StableCoinList.js';
 
 /**
  * Utilities Service
@@ -41,7 +44,7 @@ export default class UtilitiesService extends Service {
    * Function to create n break line
    * @param n
    */
-  public breakLine(n: number = 1): void {
+  public breakLine(n = 1): void {
     console.log('\n'.repeat(n));
   }
 
@@ -52,6 +55,34 @@ export default class UtilitiesService extends Service {
    */
   public async showSpinner(
     promise: Promise<void>,
+    options: object,
+  ): Promise<void> {
+    const { oraPromise } = await import('ora');
+
+    await oraPromise(promise, options);
+  }
+
+  /**
+   * Function to show spinner component
+   * @param promise
+   * @param options
+   */
+  public async showSpinnerDetail(
+    promise: Promise<StableCoinDetail>,
+    options: object,
+  ): Promise<void> {
+    const { oraPromise } = await import('ora');
+
+    await oraPromise(promise, options);
+  }
+
+  /**
+   * Function to show spinner component
+   * @param promise
+   * @param options
+   */
+  public async showSpinnerList(
+    promise: Promise<StableCoinList[]>,
     options: object,
   ): Promise<void> {
     const { oraPromise } = await import('ora');
@@ -123,16 +154,14 @@ export default class UtilitiesService extends Service {
   public async drawTableListStableCoin(data?: StableCoinList[]): Promise<void> {
     const table = new Table({
       style: { head: ['green'] },
-      head: ['Id', 'Symbol', 'Name', 'Balance'],
-      colWidths: [15, 20, 30, 20],
+      head: ['Id', 'Symbol'],
+      colWidths: [15, 20],
     });
 
     if (data) {
-      data.forEach((item) =>
-        table.push([item.id, item.symbol, item.name, item.balance]),
-      );
+      data.forEach((item) => table.push([item.id, item.symbol]));
     } else {
-      table.push(['-', '-', '-', '-']);
+      table.push(['-', '-']);
     }
 
     console.log(table.toString());
