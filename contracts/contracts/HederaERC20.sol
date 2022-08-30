@@ -2,22 +2,27 @@
 pragma solidity ^0.8.10;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "./IHederaERC20.sol";
+<<<<<<< HEAD
 import "./HTSTokenOwner.sol";
+=======
+>>>>>>> Modularization structure
 
-
-contract HederaERC20 is IHederaERC20, Initializable, IERC20Upgradeable{
+contract HederaERC20 is IHederaERC20, Initializable, IERC20Upgradeable {
     using SafeERC20Upgradeable for IERC20Upgradeable;
-
-
-    HTSTokenOwner HTSTokenOwnerAddress;
-    address tokenAddress; 
 
     function initialize () 
         payable 
-        external initializer {
+        external 
+        initializer 
+    {
+        __AccessControl_init();
+        
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(SUPPLIER_ROLE, msg.sender);
     }
      
     function name() 
@@ -27,7 +32,7 @@ contract HederaERC20 is IHederaERC20, Initializable, IERC20Upgradeable{
     {
         return IERC20MetadataUpgradeable(tokenAddress).name();        
     }
-    
+
     function symbol() 
         external 
         view 
@@ -62,31 +67,15 @@ contract HederaERC20 is IHederaERC20, Initializable, IERC20Upgradeable{
         return IERC20Upgradeable(tokenAddress).balanceOf(account);
     }
     
-    function setTokenAddress(HTSTokenOwner _htsTokenOwnerAddress, address _tokenAddress) 
-        external         
-    {
-        require(tokenAddress == address(0), "Token address already defined");
-
-        HTSTokenOwnerAddress = _htsTokenOwnerAddress;
-        tokenAddress = _tokenAddress;
-    }
-
-    function getTokenAddress()  
-        external 
-        view 
-        returns (address) 
-    {
-        return tokenAddress;
-    }
-
     function mint(address account, uint256 amount) 
         external        
         returns (bool) 
     {         
-        (bool success) = HTSTokenOwnerAddress.mintToken(tokenAddress, amount);
-        require(success, "Minting error");
+        //(bool success) = HTSTokenOwnerAddress.mintToken(getTokenAddress(), amount);
+        //require(success, "Minting error");
+        return true;
 
-        return _transfer(address(HTSTokenOwnerAddress), account, amount);
+        //return _transfer(address(tokenOwnerAddress), account, amount);
     }
 
     function burn(uint256 amount) 
@@ -136,5 +125,4 @@ contract HederaERC20 is IHederaERC20, Initializable, IERC20Upgradeable{
         returns (bool){
          return true;
     }
-
 }
