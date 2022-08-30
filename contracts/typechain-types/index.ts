@@ -28,6 +28,8 @@ export type { HederaERC1967Proxy } from "./contracts/HederaERC1967Proxy";
 export { HederaERC1967Proxy__factory } from "./factories/contracts/HederaERC1967Proxy__factory";
 export type { HederaERC20 } from "./contracts/HederaERC20";
 export { HederaERC20__factory } from "./factories/contracts/HederaERC20__factory";
+export type { HederaTokenService } from "./contracts/hts-precompile/HederaTokenService";
+export { HederaTokenService__factory } from "./factories/contracts/hts-precompile/HederaTokenService__factory";
 export type { IHederaTokenService } from "./contracts/hts-precompile/IHederaTokenService";
 export { IHederaTokenService__factory } from "./factories/contracts/hts-precompile/IHederaTokenService__factory";
 export type { HTSTokenOwner } from "./contracts/HTSTokenOwner";

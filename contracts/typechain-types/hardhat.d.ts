@@ -57,6 +57,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.HederaERC20__factory>;
     getContractFactory(
+      name: "HederaTokenService",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.HederaTokenService__factory>;
+    getContractFactory(
       name: "IHederaTokenService",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IHederaTokenService__factory>;
@@ -124,6 +128,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.HederaERC20>;
+    getContractAt(
+      name: "HederaTokenService",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.HederaTokenService>;
     getContractAt(
       name: "IHederaTokenService",
       address: string,

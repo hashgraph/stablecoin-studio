@@ -21,7 +21,7 @@ import type {
   TypedListener,
   OnEvent,
   PromiseOrValue,
-} from "../common";
+} from "../../common";
 
 export declare namespace IHederaTokenService {
   export type ExpiryStruct = {
@@ -69,21 +69,14 @@ export declare namespace IHederaTokenService {
   ] & { keyType: BigNumber; key: IHederaTokenService.KeyValueStructOutput };
 }
 
-export interface HTSTokenOwnerInterface extends utils.Interface {
+export interface HederaTokenServiceInterface extends utils.Interface {
   functions: {
-    "burnToken(address,uint256)": FunctionFragment;
-    "erc20address()": FunctionFragment;
     "getTokenExpiryInfo(address)": FunctionFragment;
     "getTokenKey(address,uint256)": FunctionFragment;
     "grantTokenKyc(address,address)": FunctionFragment;
     "isKyc(address,address)": FunctionFragment;
-    "mintToken(address,uint256)": FunctionFragment;
     "pauseToken(address)": FunctionFragment;
     "revokeTokenKyc(address,address)": FunctionFragment;
-    "setERC20Address(address)": FunctionFragment;
-    "toString(bytes)": FunctionFragment;
-    "transfer(address,uint256)": FunctionFragment;
-    "transfer(address,address,address,uint256)": FunctionFragment;
     "unpauseToken(address)": FunctionFragment;
     "updateTokenExpiryInfo(address,(uint32,address,uint32))": FunctionFragment;
     "updateTokenKeys(address,(uint256,(bool,address,bytes,bytes,address))[])": FunctionFragment;
@@ -91,32 +84,17 @@ export interface HTSTokenOwnerInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "burnToken"
-      | "erc20address"
       | "getTokenExpiryInfo"
       | "getTokenKey"
       | "grantTokenKyc"
       | "isKyc"
-      | "mintToken"
       | "pauseToken"
       | "revokeTokenKyc"
-      | "setERC20Address"
-      | "toString"
-      | "transfer(address,uint256)"
-      | "transfer(address,address,address,uint256)"
       | "unpauseToken"
       | "updateTokenExpiryInfo"
       | "updateTokenKeys"
   ): FunctionFragment;
 
-  encodeFunctionData(
-    functionFragment: "burnToken",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "erc20address",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "getTokenExpiryInfo",
     values: [PromiseOrValue<string>]
@@ -134,37 +112,12 @@ export interface HTSTokenOwnerInterface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "mintToken",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "pauseToken",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "revokeTokenKyc",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setERC20Address",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "toString",
-    values: [PromiseOrValue<BytesLike>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transfer(address,uint256)",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transfer(address,address,address,uint256)",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>
-    ]
   ): string;
   encodeFunctionData(
     functionFragment: "unpauseToken",
@@ -179,11 +132,6 @@ export interface HTSTokenOwnerInterface extends utils.Interface {
     values: [PromiseOrValue<string>, IHederaTokenService.TokenKeyStruct[]]
   ): string;
 
-  decodeFunctionResult(functionFragment: "burnToken", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "erc20address",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "getTokenExpiryInfo",
     data: BytesLike
@@ -197,23 +145,9 @@ export interface HTSTokenOwnerInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "isKyc", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "mintToken", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pauseToken", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "revokeTokenKyc",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setERC20Address",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "toString", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "transfer(address,uint256)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "transfer(address,address,address,uint256)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -232,12 +166,12 @@ export interface HTSTokenOwnerInterface extends utils.Interface {
   events: {};
 }
 
-export interface HTSTokenOwner extends BaseContract {
+export interface HederaTokenService extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: HTSTokenOwnerInterface;
+  interface: HederaTokenServiceInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -259,14 +193,6 @@ export interface HTSTokenOwner extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    burnToken(
-      tokenAddress: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    erc20address(overrides?: CallOverrides): Promise<[string]>;
-
     getTokenExpiryInfo(
       token: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -290,12 +216,6 @@ export interface HTSTokenOwner extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    mintToken(
-      tokenAddress: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     pauseToken(
       token: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -304,30 +224,6 @@ export interface HTSTokenOwner extends BaseContract {
     revokeTokenKyc(
       token: PromiseOrValue<string>,
       account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    setERC20Address(
-      _erc20address: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    toString(
-      data: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    "transfer(address,uint256)"(
-      to: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "transfer(address,address,address,uint256)"(
-      tokenAddress: PromiseOrValue<string>,
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -348,14 +244,6 @@ export interface HTSTokenOwner extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
-
-  burnToken(
-    tokenAddress: PromiseOrValue<string>,
-    amount: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  erc20address(overrides?: CallOverrides): Promise<string>;
 
   getTokenExpiryInfo(
     token: PromiseOrValue<string>,
@@ -380,12 +268,6 @@ export interface HTSTokenOwner extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  mintToken(
-    tokenAddress: PromiseOrValue<string>,
-    amount: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   pauseToken(
     token: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -394,30 +276,6 @@ export interface HTSTokenOwner extends BaseContract {
   revokeTokenKyc(
     token: PromiseOrValue<string>,
     account: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  setERC20Address(
-    _erc20address: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  toString(
-    data: PromiseOrValue<BytesLike>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  "transfer(address,uint256)"(
-    to: PromiseOrValue<string>,
-    amount: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "transfer(address,address,address,uint256)"(
-    tokenAddress: PromiseOrValue<string>,
-    from: PromiseOrValue<string>,
-    to: PromiseOrValue<string>,
-    amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -439,14 +297,6 @@ export interface HTSTokenOwner extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    burnToken(
-      tokenAddress: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    erc20address(overrides?: CallOverrides): Promise<string>;
-
     getTokenExpiryInfo(
       token: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -482,12 +332,6 @@ export interface HTSTokenOwner extends BaseContract {
       [BigNumber, boolean] & { responseCode: BigNumber; kycGranted: boolean }
     >;
 
-    mintToken(
-      tokenAddress: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
     pauseToken(
       token: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -498,30 +342,6 @@ export interface HTSTokenOwner extends BaseContract {
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    setERC20Address(
-      _erc20address: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    toString(
-      data: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    "transfer(address,uint256)"(
-      to: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    "transfer(address,address,address,uint256)"(
-      tokenAddress: PromiseOrValue<string>,
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
 
     unpauseToken(
       token: PromiseOrValue<string>,
@@ -544,14 +364,6 @@ export interface HTSTokenOwner extends BaseContract {
   filters: {};
 
   estimateGas: {
-    burnToken(
-      tokenAddress: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    erc20address(overrides?: CallOverrides): Promise<BigNumber>;
-
     getTokenExpiryInfo(
       token: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -575,12 +387,6 @@ export interface HTSTokenOwner extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    mintToken(
-      tokenAddress: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     pauseToken(
       token: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -589,30 +395,6 @@ export interface HTSTokenOwner extends BaseContract {
     revokeTokenKyc(
       token: PromiseOrValue<string>,
       account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setERC20Address(
-      _erc20address: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    toString(
-      data: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "transfer(address,uint256)"(
-      to: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "transfer(address,address,address,uint256)"(
-      tokenAddress: PromiseOrValue<string>,
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -635,14 +417,6 @@ export interface HTSTokenOwner extends BaseContract {
   };
 
   populateTransaction: {
-    burnToken(
-      tokenAddress: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    erc20address(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     getTokenExpiryInfo(
       token: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -666,12 +440,6 @@ export interface HTSTokenOwner extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    mintToken(
-      tokenAddress: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     pauseToken(
       token: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -680,30 +448,6 @@ export interface HTSTokenOwner extends BaseContract {
     revokeTokenKyc(
       token: PromiseOrValue<string>,
       account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setERC20Address(
-      _erc20address: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    toString(
-      data: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "transfer(address,uint256)"(
-      to: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "transfer(address,address,address,uint256)"(
-      tokenAddress: PromiseOrValue<string>,
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
