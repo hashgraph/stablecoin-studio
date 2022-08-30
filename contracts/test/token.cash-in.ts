@@ -17,15 +17,12 @@ describe("General ERC20", function() {
     client = getClient(process.env.OPERATOR_ID!, process.env.OPERATOR_PRIVATE_KEY!);      
   });
   beforeEach(async function () {
-    proxyAddress = await deployContractsWithSDK("MIDAS", "MD", 3, 0, 1000, "Token para dejar de trabajar");    
+    proxyAddress = await deployContractsWithSDK("MIDAS", "MD", 3, 0, 1000, "Hedera Accelerator Stable Coin");    
   });
   it("Basic init params check", async function() {
-    const result = await contractCall(ContractId.fromString(proxyAddress), 'name', [], client, 60000, HederaERC20__factory.abi);
-    expect(result[0]).to.equals("MIDAS");
-
-    /*const account = await createECDSAAccount(client, 0);
+    const account = await createECDSAAccount(client, 0);
     const parametersContractCall = [AccountId.fromString(account.accountId).toSolidityAddress(), 1000];  
     const result = await contractCall(ContractId.fromString(proxyAddress), 'mint2', parametersContractCall, client, 400000, HederaERC20__factory.abi)  
-    expect(result[0]).to.equals(true);*/
+    expect(result[0]).to.equals(true);
   });
 });
