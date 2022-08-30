@@ -13,6 +13,12 @@ import "./extensions/Wipeable.sol";
 contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20Upgradeable, Mintable, Wipeable {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
+<<<<<<< HEAD
+=======
+    HTSTokenOwner HTSTokenOwnerAddress;
+    address tokenAddress; 
+
+>>>>>>> Minting functionality without transfer working
     function initialize () 
         payable 
         external 
