@@ -73,10 +73,9 @@ export interface HTSTokenOwnerInterface extends utils.Interface {
   functions: {
     "burnToken(address,uint256)": FunctionFragment;
     "erc20address()": FunctionFragment;
-    "getTokenAddress()": FunctionFragment;
     "getTokenExpiryInfo(address)": FunctionFragment;
     "getTokenKey(address,uint256)": FunctionFragment;
-    "getTokenOwnerAddress()": FunctionFragment;
+
     "grantTokenKyc(address,address)": FunctionFragment;
     "isKyc(address,address)": FunctionFragment;
     "mintToken(address,uint256)": FunctionFragment;
@@ -97,10 +96,8 @@ export interface HTSTokenOwnerInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "burnToken"
       | "erc20address"
-      | "getTokenAddress"
       | "getTokenExpiryInfo"
       | "getTokenKey"
-      | "getTokenOwnerAddress"
       | "grantTokenKyc"
       | "isKyc"
       | "mintToken"
@@ -126,20 +123,12 @@ export interface HTSTokenOwnerInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getTokenAddress",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "getTokenExpiryInfo",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "getTokenKey",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getTokenOwnerAddress",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "grantTokenKyc",
@@ -206,14 +195,9 @@ export interface HTSTokenOwnerInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>
     ]
   ): string;
-
   decodeFunctionResult(functionFragment: "burnToken", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "erc20address",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getTokenAddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -222,10 +206,6 @@ export interface HTSTokenOwnerInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getTokenKey",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getTokenOwnerAddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -269,7 +249,6 @@ export interface HTSTokenOwnerInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "wipeToken", data: BytesLike): Result;
-
   events: {};
 }
 
@@ -307,9 +286,6 @@ export interface HTSTokenOwner extends BaseContract {
     ): Promise<ContractTransaction>;
 
     erc20address(overrides?: CallOverrides): Promise<[string]>;
-
-    getTokenAddress(overrides?: CallOverrides): Promise<[string]>;
-
     getTokenExpiryInfo(
       token: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -320,9 +296,6 @@ export interface HTSTokenOwner extends BaseContract {
       keyType: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
-
-    getTokenOwnerAddress(overrides?: CallOverrides): Promise<[string]>;
-
     grantTokenKyc(
       token: PromiseOrValue<string>,
       account: PromiseOrValue<string>,
@@ -398,7 +371,6 @@ export interface HTSTokenOwner extends BaseContract {
       keys: IHederaTokenService.TokenKeyStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
-
     wipeToken(
       tokenAddress: PromiseOrValue<string>,
       account: PromiseOrValue<string>,
@@ -414,9 +386,6 @@ export interface HTSTokenOwner extends BaseContract {
   ): Promise<ContractTransaction>;
 
   erc20address(overrides?: CallOverrides): Promise<string>;
-
-  getTokenAddress(overrides?: CallOverrides): Promise<string>;
-
   getTokenExpiryInfo(
     token: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -427,9 +396,6 @@ export interface HTSTokenOwner extends BaseContract {
     keyType: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
-
-  getTokenOwnerAddress(overrides?: CallOverrides): Promise<string>;
-
   grantTokenKyc(
     token: PromiseOrValue<string>,
     account: PromiseOrValue<string>,
@@ -522,7 +488,7 @@ export interface HTSTokenOwner extends BaseContract {
 
     erc20address(overrides?: CallOverrides): Promise<string>;
 
-    getTokenAddress(overrides?: CallOverrides): Promise<string>;
+   getTokenAddress(overrides?: CallOverrides): Promise<string>;
 
     getTokenExpiryInfo(
       token: PromiseOrValue<string>,
@@ -631,6 +597,7 @@ export interface HTSTokenOwner extends BaseContract {
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
   };
 
   filters: {};
@@ -644,8 +611,6 @@ export interface HTSTokenOwner extends BaseContract {
 
     erc20address(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getTokenAddress(overrides?: CallOverrides): Promise<BigNumber>;
-
     getTokenExpiryInfo(
       token: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -656,9 +621,6 @@ export interface HTSTokenOwner extends BaseContract {
       keyType: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
-
-    getTokenOwnerAddress(overrides?: CallOverrides): Promise<BigNumber>;
-
     grantTokenKyc(
       token: PromiseOrValue<string>,
       account: PromiseOrValue<string>,
@@ -734,13 +696,13 @@ export interface HTSTokenOwner extends BaseContract {
       keys: IHederaTokenService.TokenKeyStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
-
     wipeToken(
       tokenAddress: PromiseOrValue<string>,
       account: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
   };
 
   populateTransaction: {
@@ -752,8 +714,6 @@ export interface HTSTokenOwner extends BaseContract {
 
     erc20address(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getTokenAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     getTokenExpiryInfo(
       token: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -763,10 +723,6 @@ export interface HTSTokenOwner extends BaseContract {
       token: PromiseOrValue<string>,
       keyType: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    getTokenOwnerAddress(
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     grantTokenKyc(
@@ -851,5 +807,6 @@ export interface HTSTokenOwner extends BaseContract {
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
   };
 }
