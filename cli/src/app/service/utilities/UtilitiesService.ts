@@ -3,10 +3,7 @@ import figlet from 'figlet-promised';
 import Service from '../Service.js';
 import { language } from '../../../index.js';
 import Table from 'cli-table3';
-import {
-  StableCoinDetail,
-  StableCoinList,
-} from '../../../domain/stablecoin/StableCoinList.js';
+import { StableCoinList } from '../../../domain/stablecoin/StableCoinList.js';
 
 /**
  * Utilities Service
@@ -53,36 +50,8 @@ export default class UtilitiesService extends Service {
    * @param promise
    * @param options
    */
-  public async showSpinner(
-    promise: Promise<void>,
-    options: object,
-  ): Promise<void> {
-    const { oraPromise } = await import('ora');
-
-    await oraPromise(promise, options);
-  }
-
-  /**
-   * Function to show spinner component
-   * @param promise
-   * @param options
-   */
-  public async showSpinnerDetail(
-    promise: Promise<StableCoinDetail>,
-    options: object,
-  ): Promise<void> {
-    const { oraPromise } = await import('ora');
-
-    await oraPromise(promise, options);
-  }
-
-  /**
-   * Function to show spinner component
-   * @param promise
-   * @param options
-   */
-  public async showSpinnerList(
-    promise: Promise<StableCoinList[]>,
+  public async showSpinner<T>(
+    promise: Promise<T>,
     options: object,
   ): Promise<void> {
     const { oraPromise } = await import('ora');

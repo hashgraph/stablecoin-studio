@@ -26,7 +26,7 @@ export default class ListStableCoinsService extends Service {
 
     let resp: StableCoinList[];
 
-    await utilsService.showSpinnerList(
+    await utilsService.showSpinner(
       sdk
         .getListStableCoin({
           privateKey:
@@ -57,7 +57,7 @@ export default class ListStableCoinsService extends Service {
 
         utilsService.breakLine();
 
-        await utilsService.showSpinnerDetail(
+        await utilsService.showSpinner(
           sdk
             .getStableCoin({
               stableCoinId: this.stableCoinId.split(' - ')[0],
