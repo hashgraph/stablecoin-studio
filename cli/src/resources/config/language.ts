@@ -55,9 +55,6 @@ export const english = {
       feeSchedule: 'What will be the Fee Schedule key?',
     },
     askOperateStableCoin: 'Do you want to operate with stable coin created?',
-    askOperateStableCoinSelect:
-      'With which Stable coin do you want to operate?',
-    askStableCoinDetail: 'Which Stable coin do you want to display details?',
     created:
       'Stable Coin ${name} (${symbol}) with ${decimals} decimals have been created!',
   },
@@ -116,7 +113,15 @@ export const english = {
       'Edit accounts',
       'Return to main menu',
     ],
-    stableCoinOptions: ['Cash in', 'Details', 'Balance', 'Return to main menu'],
+    stableCoinOptions: [
+      'Cash in',
+      'Details',
+      'Balance',
+      'Cash out',
+      'Wipe',
+      'Rescue',
+      'Return to main menu',
+    ],
   },
   state: {
     searching: 'Searching...',

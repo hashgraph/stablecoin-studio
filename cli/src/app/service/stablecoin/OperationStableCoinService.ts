@@ -15,21 +15,10 @@ export default class OperationStableCoinService extends Service {
    * Start the wizard for operation a stable coin
    */
   public async start(): Promise<void> {
-    await utilsService.showSpinner(
-      new Promise((promise) => setTimeout(promise, 3000)),
-      {
-        text: language.getText('state.searching'),
-        successText: language.getText('state.searchingSuccess') + '\n',
-      },
+    this.stableCoinId = await utilsService.defaultSingleAsk(
+      language.getText('stablecoin.askToken'),
+      '0.0.0',
     );
-
-    this.stableCoinId = await utilsService.defaultMultipleAsk(
-      language.getText('stablecoin.askOperateStableCoinSelect'),
-      ['Symbol 1', 'Symbol 2', 'Symbol 3', 'Cancel'],
-    );
-
-    if (this.stableCoinId === 'Cancel') await wizardService.mainMenu();
-
     await this.operationsStableCoin();
   }
 
@@ -49,10 +38,19 @@ export default class OperationStableCoinService extends Service {
         // Call to mint
         break;
       case wizardOperationsStableCoinOptions[1]:
-        // Call to burn
+        // Call to details
         break;
       case wizardOperationsStableCoinOptions[2]:
-        // Call to transfer
+        // Call to balance
+        break;
+      case wizardOperationsStableCoinOptions[3]:
+        // Call to burn
+        break;
+      case wizardOperationsStableCoinOptions[4]:
+        // Call to Wipe
+        break;
+      case wizardOperationsStableCoinOptions[5]:
+        // Call to Rescue
         break;
       case wizardOperationsStableCoinOptions[
         wizardOperationsStableCoinOptions.length - 1
