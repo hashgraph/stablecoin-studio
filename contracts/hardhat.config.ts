@@ -4,6 +4,8 @@ import "@hashgraph/sdk";
 import { PrivateKey } from "@hashgraph/sdk";
 require('hardhat-abi-exporter');
 
+require('hardhat-abi-exporter');
+
 module.exports = {
   solidity: "0.8.10",
   defaultNetwork: "localHederaNetwork", // The selected default network. It has to match the name of one of the configured networks.
