@@ -2,7 +2,7 @@ import { TokenCreateTransaction,DelegateContractId, Hbar,  Client,  AccountId, P
   PublicKey, ContractCreateTransaction, FileCreateTransaction, FileAppendTransaction, ContractId, TokenId,TokenSupplyType,
   ContractExecuteTransaction } from "@hashgraph/sdk";
 
-import { HederaERC20__factory, HTSTokenOwner__factory, ERC1967Proxy__factory } from "../typechain-types";
+import { HederaERC20__factory, HTSTokenOwner__factory, HederaERC1967Proxy__factory } from "../typechain-types";
 
 import dotenv from "dotenv";
 
@@ -27,11 +27,11 @@ export async function deployContractsWithSDK(name:string, symbol:string, decimal
   console.log(`Deploying ${HederaERC20__factory.name} contract... please wait.`);
   let tokenContract = await deployContractSDK(HederaERC20__factory, 10, privateKey, clientSdk);
 
-  console.log(`Deploying ${ERC1967Proxy__factory.name} contract... please wait.`);
+  console.log(`Deploying ${HederaERC1967Proxy__factory.name} contract... please wait.`);
   let parameters = new ContractFunctionParameters()
                         .addAddress(tokenContract!.toSolidityAddress())
                         .addBytes(new Uint8Array([]));
-  let proxyContract = await deployContractSDK(ERC1967Proxy__factory, 10, privateKey, clientSdk, parameters);
+  let proxyContract = await deployContractSDK(HederaERC1967Proxy__factory, 10, privateKey, clientSdk, parameters);
   let parametersContractCall: any[] = [];    
   await contractCall(proxyContract, 'initialize', parametersContractCall, clientSdk, 60000, HederaERC20__factory.abi);
   
