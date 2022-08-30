@@ -34,3 +34,6 @@ build
 
 # history
 .history
+
+# Compile contract
+artifacts/
