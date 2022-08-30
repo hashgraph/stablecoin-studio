@@ -1,6 +1,5 @@
 import { Account, ICreateStableCoinRequest, SDK } from '../src/index';
 import { IGetListStableCoinRequest, IGetStableCoinRequest } from '../src/sdk';
-import DomainError from '../build/src/domain/error/DomainError';
 
 describe('SDK Unit Test :tubo_de_ensayo:', () => {
 	let sdk: SDK;
@@ -65,13 +64,5 @@ describe('SDK Unit Test :tubo_de_ensayo:', () => {
 		const coin = sdk.getStableCoin(request);
 		expect(coin).not.toBeNull();
 		console.log(coin);
-	});
-
-	it('Domain Error', () => {
-		const error = () => {
-			throw new DomainError();
-		};
-		expect(error).toThrowError();
-		console.log(error);
 	});
 });
