@@ -19,6 +19,7 @@
 		"@types/node": "~16",
 		"@typescript-eslint/eslint-plugin": "~5.26",
 		"@typescript-eslint/parser": "~5.26",
+		"axios": "^0.27.2",
 		"concurrently": "^7.3.0",
 		"eslint": "~8.16",
 		"eslint-config-prettier": "~8.5",
@@ -51,6 +52,7 @@
 	"license": "Apache-2.0",
 	"dependencies": {
 		"@hashgraph/hethers": "^1.1.4",
+		"@hashgraph/sdk": "^2.18.0",
 		"tslib": "~2.4"
 	},
 	"volta": {

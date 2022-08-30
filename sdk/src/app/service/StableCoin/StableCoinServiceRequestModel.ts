@@ -6,3 +6,7 @@ export default class StableCoinServiceRequestModel {
 	public symbol: string;
 	public decimals: number;
 }
+
+export class StableCoinListServiceRequestModel {
+	public privateKey: string;
+}
