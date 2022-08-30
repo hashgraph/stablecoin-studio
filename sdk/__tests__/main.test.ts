@@ -45,7 +45,7 @@ describe('SDK Unit Test :tubo_de_ensayo:', () => {
 			decimals: 20,
 		};
 		const coin = sdk.createStableCoin(request);
-		expect(coin).toBeNull;
+		expect(coin).toBeNull();
 	});
 
 	it('Get list Stable coins', () => {
