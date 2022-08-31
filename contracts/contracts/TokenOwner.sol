@@ -48,5 +48,4 @@ abstract contract TokenOwner is ITokenOwner {
     {
         return address(HTSTokenOwnerAddress);
     }
-
 }
