@@ -67,7 +67,7 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
     {
         return IERC20Upgradeable(tokenAddress).balanceOf(account);
     }
-
+    
     function associateToken(address adr) 
         public 
         returns (bool) 
@@ -133,7 +133,11 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
     {
          require(false, "function not already implemented");
     }
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> Mintable contract in extensions folder and associate/dissociate
     function _checkResponse(int256 responseCode) 
         internal 
         returns (bool) 
@@ -141,5 +145,8 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
         require(responseCode == HederaResponseCodes.SUCCESS, "Error");
         return true;
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> Mintable contract in extensions folder and associate/dissociate
 }
