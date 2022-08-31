@@ -143,7 +143,7 @@ async function createToken(
     .setTreasuryAccountId(AccountId.fromString(contractId.toString()))
     .setAdminKey(PublicKey.fromString(publicKey))
     .setFreezeKey(PublicKey.fromString(publicKey))
-    .setWipeKey(PublicKey.fromString(publicKey))
+    .setWipeKey(DelegateContractId.fromString(contractId))
     .setSupplyKey(DelegateContractId.fromString(contractId))
     .setNodeAccountIds([
       AccountId.fromString('0.0.3'),
@@ -158,6 +158,7 @@ async function createToken(
       transaction.setMaxSupply(maxSupply)
     } 
     transaction.freezeWith(clientSdk);
+
   const transactionSign = await transaction.sign(
     PrivateKey.fromStringED25519(privateKey)
   );
