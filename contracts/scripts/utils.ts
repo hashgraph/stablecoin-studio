@@ -64,6 +64,9 @@ export async function contractCall(contractId:any,
       .setContractId(contractId)
       .setFunctionParameters(functionCallParameters)
       .setGas(gas)
+      .setNodeAccountIds([
+        AccountId.fromString('0.0.3')
+      ])
       .execute(clientOperator);
   let record = await contractTx.getRecord(clientOperator);  
 
@@ -128,8 +131,16 @@ async function createToken(
     .setTreasuryAccountId(AccountId.fromString(contractId.toString()))
     .setAdminKey(PublicKey.fromString(publicKey))
     .setFreezeKey(PublicKey.fromString(publicKey))
-    .setWipeKey(PublicKey.fromString(publicKey))
+    .setWipeKey(DelegateContractId.fromString(contractId))
     .setSupplyKey(DelegateContractId.fromString(contractId))
+    .setNodeAccountIds([
+      AccountId.fromString('0.0.3'),
+      AccountId.fromString('0.0.5'),
+      AccountId.fromString('0.0.6'),
+      AccountId.fromString('0.0.7'),
+      AccountId.fromString('0.0.8'),
+      AccountId.fromString('0.0.9')
+    ])
     .freezeWith(clientSdk);
   const transactionSign = await transaction.sign(
     PrivateKey.fromStringED25519(privateKey)
@@ -161,6 +172,14 @@ async function deployContractSDK(
     .setGas(181_000)
     .setBytecodeFileId(bytecodeFileId)
     .setMaxTransactionFee(new Hbar(30))
+    .setNodeAccountIds([
+      AccountId.fromString('0.0.3'),
+      AccountId.fromString('0.0.5'),
+      AccountId.fromString('0.0.6'),
+      AccountId.fromString('0.0.7'),
+      AccountId.fromString('0.0.8'),
+      AccountId.fromString('0.0.9')
+    ])
     .setAdminKey(PrivateKey.fromStringED25519(privateKey));
     if (constructorParameters) {
       transaction.setConstructorParameters(constructorParameters);
@@ -185,6 +204,14 @@ async function fileCreate(
 ) {
   const fileCreateTx = new FileCreateTransaction()
     .setKeys([signingPrivateKey])
+    .setNodeAccountIds([
+      AccountId.fromString('0.0.3'),
+      AccountId.fromString('0.0.5'),
+      AccountId.fromString('0.0.6'),
+      AccountId.fromString('0.0.7'),
+      AccountId.fromString('0.0.8'),
+      AccountId.fromString('0.0.9')
+    ])
     .freezeWith(clientOperator);
   const fileSign = await fileCreateTx.sign(signingPrivateKey);
   const fileSubmit = await fileSign.execute(clientOperator);
@@ -196,6 +223,9 @@ async function fileCreate(
     .setContents(bytecode)
     .setMaxChunks(chunks)
     .setMaxTransactionFee(new Hbar(2))
+    .setNodeAccountIds([
+      AccountId.fromString('0.0.3'),
+    ])
     .freezeWith(clientOperator);
   const fileAppendSign = await fileAppendTx.sign(signingPrivateKey);
   const fileAppendSubmit = await fileAppendSign.execute(clientOperator);
