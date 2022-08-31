@@ -23,7 +23,10 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(SUPPLIER_ROLE, msg.sender);
         _grantRole(WIPE_ROLE, msg.sender);
+<<<<<<< HEAD
 
+=======
+>>>>>>> first version wipeable
     }
      
     function name() 
@@ -133,11 +136,6 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
     {
          require(false, "function not already implemented");
     }
-<<<<<<< HEAD
-    
-=======
-
->>>>>>> Mintable contract in extensions folder and associate/dissociate
     function _checkResponse(int256 responseCode) 
         internal 
         returns (bool) 
@@ -145,8 +143,4 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
         require(responseCode == HederaResponseCodes.SUCCESS, "Error");
         return true;
     }
-<<<<<<< HEAD
-
-=======
->>>>>>> Mintable contract in extensions folder and associate/dissociate
 }
