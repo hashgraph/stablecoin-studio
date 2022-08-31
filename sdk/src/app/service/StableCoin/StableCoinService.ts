@@ -6,6 +6,20 @@ import StableCoinServiceRequestModel, {
 } from './StableCoinServiceRequestModel.js';
 import axios from 'axios';
 import UtilitiesService from '../Utilities/UtilitiesService.js';
+import {
+	getClient,
+	contractCall,
+} from 'hedera-stable-coin-contracts/scripts/utils';
+import { HederaERC20__factory } from 'hedera-stable-coin-contracts/typechain-types';
+
+// const {
+// 	HederaERC20__factory,
+// } = require('hedera-stable-coin-contracts/typechain-types');
+
+// const {
+// 	getClient,
+// 	contractCall,
+// } = require('hedera-stable-coin-contracts/scripts/utils');
 
 export interface Token {
 	symbol: string;
@@ -117,6 +131,7 @@ export default class StableCoinService extends Service {
 				});
 			})
 			.catch((err) => {
+				// TODO: exception
 				console.log('error', err);
 			});
 
@@ -158,9 +173,34 @@ export default class StableCoinService extends Service {
 				};
 			})
 			.catch((err) => {
+				// TODO: exception
 				console.log('error', err);
 			});
 
 		return resObject;
+	}
+
+	public async getBalanceOf(
+		treasuryId: string,
+		privateKey: string,
+		accountId: string,
+	): Promise<{ balance: string }> {
+		const { AccountId } = require('@hashgraph/sdk');
+
+		const clientSdk = getClient(accountId, privateKey);
+		const parameters = [
+			AccountId.fromString(accountId || '').toSolidityAddress(),
+		];
+
+		const balanceOf = await contractCall(
+			treasuryId,
+			'balanceOf',
+			parameters,
+			clientSdk,
+			36000,
+			HederaERC20__factory.abi,
+		);
+
+		return balanceOf;
 	}
 }

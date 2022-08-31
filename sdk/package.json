@@ -25,10 +25,11 @@
 		"eslint-config-prettier": "~8.5",
 		"eslint-plugin-jest": "~26.2",
 		"format-imports": "^3.0.12",
-		"jest": "~28.1",
+		"hedera-stable-coin-contracts": "file:../contracts",
+		"jest": "28.1",
 		"prettier": "~2.6",
 		"rimraf": "~3.0",
-		"ts-jest": "~28.0",
+		"ts-jest": "28.0",
 		"tsutils": "~3.21",
 		"typescript": "~4.7"
 	},

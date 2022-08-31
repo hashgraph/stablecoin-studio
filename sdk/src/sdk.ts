@@ -24,6 +24,12 @@ export interface IGetStableCoinRequest {
 	stableCoinId: string;
 }
 
+export interface IGetBalanceOf {
+	treasuryId: string;
+	privateKey: string;
+	accountId: string;
+}
+
 export interface StableCoinList {
 	symbol: string;
 	id: string;
@@ -86,6 +92,25 @@ export class SDK {
 		try {
 			const req: IGetStableCoinRequest = { ...request };
 			return this.stableCoinService.getStableCoin(req);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+
+	/**
+	 * getBalanceOf
+	 */
+	public getBalanceOf(
+		request: IGetBalanceOf,
+	): Promise<{ balance: string }> | null {
+		try {
+			const req: IGetBalanceOf = { ...request };
+			return this.stableCoinService.getBalanceOf(
+				req.treasuryId,
+				req.privateKey,
+				req.accountId,
+			);
 		} catch (error) {
 			console.error(error);
 			return null;

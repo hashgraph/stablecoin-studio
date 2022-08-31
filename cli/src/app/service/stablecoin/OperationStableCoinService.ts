@@ -8,6 +8,7 @@ import {
 import Service from '../Service.js';
 import DetailsStableCoinsService from './DetailsStableCoinService.js';
 import { SDK } from 'hedera-stable-coin-sdk';
+import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 
 /**
  * Operation Stable Coin Service
@@ -80,6 +81,12 @@ export default class OperationStableCoinService extends Service {
         break;
       case wizardOperationsStableCoinOptions[2]:
         // Call to balance
+        await new BalanceOfStableCoinsService().getBalanceOfStableCoin(
+          '0.0.28540472',
+          configurationService.getConfiguration().accounts[0].privateKey,
+          '0.0.28540472',
+          // configurationService.getConfiguration().accounts[0].accountId
+        );
         break;
       case wizardOperationsStableCoinOptions[3]:
         // Call to burn
