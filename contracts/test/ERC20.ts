@@ -46,5 +46,6 @@ describe("General ERC20", function() {
     const balanceOf = await contractCall(deployedProxyAddress, 'balanceOf', parameters, clientSdk, 36000, HederaERC20__factory.abi);
     
     expect(parseInt(balanceOf[0])).to.equals(1000000);   
+
   });
 });
