@@ -82,10 +82,9 @@ export default class OperationStableCoinService extends Service {
       case wizardOperationsStableCoinOptions[2]:
         // Call to balance
         await new BalanceOfStableCoinsService().getBalanceOfStableCoin(
-          '0.0.28540472',
+          '0.0.48130293',
           configurationService.getConfiguration().accounts[0].privateKey,
-          '0.0.28540472',
-          // configurationService.getConfiguration().accounts[0].accountId
+          configurationService.getConfiguration().accounts[0].accountId,
         );
         break;
       case wizardOperationsStableCoinOptions[3]:

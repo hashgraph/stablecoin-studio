@@ -6,20 +6,8 @@ import StableCoinServiceRequestModel, {
 } from './StableCoinServiceRequestModel.js';
 import axios from 'axios';
 import UtilitiesService from '../Utilities/UtilitiesService.js';
-import {
-	getClient,
-	contractCall,
-} from 'hedera-stable-coin-contracts/scripts/utils';
+import { getClient } from 'hedera-stable-coin-contracts/scripts/utils';
 import { HederaERC20__factory } from 'hedera-stable-coin-contracts/typechain-types';
-
-// const {
-// 	HederaERC20__factory,
-// } = require('hedera-stable-coin-contracts/typechain-types');
-
-// const {
-// 	getClient,
-// 	contractCall,
-// } = require('hedera-stable-coin-contracts/scripts/utils');
 
 export interface Token {
 	symbol: string;
@@ -184,23 +172,44 @@ export default class StableCoinService extends Service {
 		treasuryId: string,
 		privateKey: string,
 		accountId: string,
-	): Promise<{ balance: string }> {
+	): Promise<[]> {
 		const { AccountId } = require('@hashgraph/sdk');
+		const utils = new UtilitiesService();
 
 		const clientSdk = getClient(accountId, privateKey);
+
 		const parameters = [
 			AccountId.fromString(accountId || '').toSolidityAddress(),
 		];
 
-		const balanceOf = await contractCall(
+		const params = {
 			treasuryId,
-			'balanceOf',
 			parameters,
 			clientSdk,
-			36000,
-			HederaERC20__factory.abi,
-		);
+			gas: 36000,
+			abi: HederaERC20__factory.abi,
+		};
 
-		return balanceOf;
+		return await utils.callContract('balanceOf', params);
+	}
+
+	public async getNameToken(
+		treasuryId: string,
+		privateKey: string,
+		accountId: string,
+	): Promise<[]> {
+		const utils = new UtilitiesService();
+
+		const clientSdk = getClient(accountId, privateKey);
+
+		const params = {
+			treasuryId,
+			parameters: [],
+			clientSdk,
+			gas: 36000,
+			abi: HederaERC20__factory.abi,
+		};
+
+		return await utils.callContract('name', params);
 	}
 }

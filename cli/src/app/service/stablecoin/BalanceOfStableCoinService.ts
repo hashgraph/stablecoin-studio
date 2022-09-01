@@ -24,19 +24,21 @@ export default class BalanceOfStableCoinsService extends Service {
 
     utilsService.breakLine();
 
-    let respDetail: { balance: string };
+    let respDetail;
 
     await utilsService.showSpinner(
       sdk
         .getBalanceOf({ treasuryId, privateKey, accountId })
-        .then((response: { balance: string }) => (respDetail = response)),
+        .then((response) => {
+          respDetail = response;
+        }),
       {
         text: language.getText('state.searching'),
         successText: language.getText('state.searchingSuccess') + '\n',
       },
     );
 
-    console.log(respDetail);
+    console.log('Balance of Stable Coin: ', respDetail[0]);
     utilsService.breakLine();
   }
 }

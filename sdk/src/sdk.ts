@@ -101,12 +101,27 @@ export class SDK {
 	/**
 	 * getBalanceOf
 	 */
-	public getBalanceOf(
-		request: IGetBalanceOf,
-	): Promise<{ balance: string }> | null {
+	public getBalanceOf(request: IGetBalanceOf): Promise<[]> | null {
 		try {
 			const req: IGetBalanceOf = { ...request };
 			return this.stableCoinService.getBalanceOf(
+				req.treasuryId,
+				req.privateKey,
+				req.accountId,
+			);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+
+	/**
+	 * getName
+	 */
+	public getNameToken(request: IGetBalanceOf): Promise<[]> | null {
+		try {
+			const req: IGetBalanceOf = { ...request };
+			return this.stableCoinService.getNameToken(
 				req.treasuryId,
 				req.privateKey,
 				req.accountId,
