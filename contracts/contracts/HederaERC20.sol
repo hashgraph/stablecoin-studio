@@ -17,6 +17,10 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
         external 
         initializer 
     {
+        __AccessControl_init();
+
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(SUPPLIER_ROLE, msg.sender);
     }
      
     function name() 
@@ -126,14 +130,6 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
          require(false, "function not already implemented");
     }
     
-    function _checkResponse(int256 responseCode) 
-        internal 
-        returns (bool) 
-    {
-        require(responseCode == HederaResponseCodes.SUCCESS, "Error");
-        return true;
-    }
-
     function _checkResponse(int256 responseCode) 
         internal 
         returns (bool) 

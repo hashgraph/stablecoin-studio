@@ -21,6 +21,11 @@ export async function deployContractsWithSDK(name:string, symbol:string, decimal
   const privateKey = hreConfig.accounts[0].privateKey;
   const publicKey = hreConfig.accounts[0].publicKey;
 
+  //let account    = process.env.OPERATOR_ID;
+  //let privateKey = process.env.OPERATOR_PRIVATE_KEY;
+  //let publicKey  = process.env.OPERATOR_PUBLIC_KEY;                                      
+
+  //const clientSdk = getClient(account!, privateKey!);
   const clientSdk = getClient();   
   clientSdk.setOperator(account, privateKey);
 
@@ -101,6 +106,16 @@ function decodeFunctionResult(abi:any, functionName:any, resultAsBytes:any) {
   
   return jsonParsedArray;
 }
+
+/*export function getClient2(account:string, privateKey:string) {
+  const network = process.env.HEDERA_NETWORK;
+  const client = Client.forName(network!);
+  client.setOperator(
+    account,
+    privateKey
+  );
+  return client;
+}*/
 
 export function getClient() {
   switch (hre.network.name) {
