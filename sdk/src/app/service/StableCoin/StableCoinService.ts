@@ -212,4 +212,80 @@ export default class StableCoinService extends Service {
 
 		return await utils.callContract('name', params);
 	}
+
+	public async cashIn(
+		treasuryId: string,
+		privateKey: string,
+		accountId: string,
+		amount = 1000,
+	): Promise<[]> {
+		const { AccountId } = require('@hashgraph/sdk');
+		const utils = new UtilitiesService();
+
+		const clientSdk = getClient(accountId, privateKey);
+		const parameters = [
+			AccountId.fromString(accountId || '').toSolidityAddress(),
+			amount,
+		];
+
+		const params = {
+			treasuryId,
+			parameters,
+			clientSdk,
+			gas: 400000,
+			abi: HederaERC20__factory.abi,
+		};
+
+		return await utils.callContract('mint', params);
+	}
+
+	public async associateToken(
+		treasuryId: string,
+		privateKey: string,
+		accountId: string,
+	): Promise<[]> {
+		const { AccountId } = require('@hashgraph/sdk');
+		const utils = new UtilitiesService();
+
+		const clientSdk = getClient(accountId, privateKey);
+		const parameters = [
+			AccountId.fromString(accountId || '').toSolidityAddress(),
+		];
+
+		const params = {
+			treasuryId,
+			parameters,
+			clientSdk,
+			gas: 1300000,
+			abi: HederaERC20__factory.abi,
+		};
+
+		return await utils.callContract('associateToken', params);
+	}
+
+	public async wipe(
+		treasuryId: string,
+		privateKey: string,
+		accountId: string,
+		amount = 1000,
+	): Promise<[]> {
+		const { AccountId } = require('@hashgraph/sdk');
+		const utils = new UtilitiesService();
+
+		const clientSdk = getClient(accountId, privateKey);
+		const parameters = [
+			AccountId.fromString(accountId || '').toSolidityAddress(),
+			amount,
+		];
+
+		const params = {
+			treasuryId,
+			parameters,
+			clientSdk,
+			gas: 400000,
+			abi: HederaERC20__factory.abi,
+		};
+
+		return await utils.callContract('wipe', params);
+	}
 }

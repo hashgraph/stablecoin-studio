@@ -57,6 +57,8 @@ export const english = {
     askOperateStableCoin: 'Do you want to operate with stable coin created?',
     created:
       'Stable Coin ${name} (${symbol}) with ${decimals} decimals have been created!',
+    askCashInAmount: 'How many tokens do you want to cash in?',
+    askWipeAmount: 'How many tokens do you want to wipe?'
   },
   commander: {
     appDescription: 'Hedera Stable Coin is a CLI for manage stable coins',
@@ -120,6 +122,7 @@ export const english = {
       'Cash out',
       'Wipe',
       'Rescue',
+      'Associate',
       'Return to main menu',
     ],
   },

@@ -24,10 +24,11 @@ export interface IGetStableCoinRequest {
 	stableCoinId: string;
 }
 
-export interface IGetBalanceOf {
+export interface IRequestContracts {
 	treasuryId: string;
 	privateKey: string;
 	accountId: string;
+	amount?: number;
 }
 
 export interface StableCoinList {
@@ -101,9 +102,9 @@ export class SDK {
 	/**
 	 * getBalanceOf
 	 */
-	public getBalanceOf(request: IGetBalanceOf): Promise<[]> | null {
+	public getBalanceOf(request: IRequestContracts): Promise<[]> | null {
 		try {
-			const req: IGetBalanceOf = { ...request };
+			const req: IRequestContracts = { ...request };
 			return this.stableCoinService.getBalanceOf(
 				req.treasuryId,
 				req.privateKey,
@@ -118,13 +119,66 @@ export class SDK {
 	/**
 	 * getName
 	 */
-	public getNameToken(request: IGetBalanceOf): Promise<[]> | null {
+	public getNameToken(request: IRequestContracts): Promise<[]> | null {
 		try {
-			const req: IGetBalanceOf = { ...request };
+			const req: IRequestContracts = { ...request };
 			return this.stableCoinService.getNameToken(
 				req.treasuryId,
 				req.privateKey,
 				req.accountId,
+			);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+
+	/**
+	 * cashIn
+	 */
+	 public cashIn(request: IRequestContracts): Promise<[]> | null {
+		try {
+			const req: IRequestContracts = { ...request };
+			return this.stableCoinService.cashIn(
+				req.treasuryId,
+				req.privateKey,
+				req.accountId,
+				req.amount,
+			);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+
+	/**
+	 * associateToken
+	 */
+	public associateToken(request: IRequestContracts): Promise<[]> | null {
+		try {
+			const req: IRequestContracts = { ...request };
+			return this.stableCoinService.associateToken(
+				req.treasuryId,
+				req.privateKey,
+				req.accountId,
+			);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+
+	/**
+	 * wipeToken
+	 */
+	public wipe(request: IRequestContracts): Promise<[]> | null {
+		try {
+			const req: IRequestContracts = { ...request };
+			return this.stableCoinService.wipe(
+				req.treasuryId,
+				req.privateKey,
+				req.accountId,
+				req.amount,
 			);
 		} catch (error) {
 			console.error(error);
