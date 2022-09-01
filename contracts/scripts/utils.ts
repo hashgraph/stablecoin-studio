@@ -22,9 +22,7 @@ export async function deployContractsWithSDK(name:string, symbol:string, decimal
   const publicKey = hreConfig.accounts[0].publicKey;
 
   const clientSdk = getClient();   
-  const OPERATOR_ID = hreConfig.accounts[0].account;
-  const OPERATOR_KEY = hreConfig.accounts[0].privateKey; 
-  clientSdk.setOperator(OPERATOR_ID, OPERATOR_KEY);
+  clientSdk.setOperator(account, privateKey);
 
   console.log(`Deploying ${HederaERC20__factory.name} contract... please wait.`);
   let tokenContract = await deployContractSDK(HederaERC20__factory, 10, privateKey, clientSdk);
@@ -51,7 +49,7 @@ export async function deployContractsWithSDK(name:string, symbol:string, decimal
   await contractCall(tokenOwnerContract, 'setERC20Address', parametersContractCall, clientSdk, 60000, HTSTokenOwner__factory.abi);
 
   console.log("Associate administrator account to token... please wait.");
-  parametersContractCall = [AccountId.fromString(OPERATOR_ID!).toSolidityAddress()];  
+  parametersContractCall = [AccountId.fromString(account!).toSolidityAddress()];  
   await contractCall(proxyContract, 'associateToken', parametersContractCall, clientSdk, 1300000, HederaERC20__factory.abi);
 
   return proxyContract;

@@ -4,23 +4,26 @@ import { expect } from "chai";
 import { deployContractsWithSDK, getClient, contractCall } from "../scripts/utils";
 import { HederaERC20__factory } from "../typechain-types";
 
+const hre = require("hardhat");
+const hreConfig = hre.network.config;
+
 describe("General ERC20", function() {
   let deployedProxyAddress: ContractId | null;
   let account;
   let privateKey;
-  let network;
-  
+    
   beforeEach(async function () {
     deployedProxyAddress = await deployContractsWithSDK("TOKEN","TK",2,0,2000000,"",false);
     
   });
   
   it("Basic init params check", async function() {
-    account    = process.env.OPERATOR_ID;
-    privateKey = process.env.OPERATOR_PRIVATE_KEY;  
-    network    = process.env.HEDERA_NETWORK;                          
+    account = hreConfig.accounts[0].account;
+    privateKey = hreConfig.accounts[0].privateKey;
   
-    const clientSdk = getClient(account!, privateKey!, network);
+    const clientSdk = getClient();
+    clientSdk.setOperator(account, privateKey);
+
     const parameters: any[] = [];    
    
     const nameToken = await contractCall(deployedProxyAddress, 'name', parameters, clientSdk, 36000, HederaERC20__factory.abi);
@@ -33,11 +36,11 @@ describe("General ERC20", function() {
   });
 
   it("The balance of an account", async function() {
-    account    = process.env.OPERATOR_ID;
-    privateKey = process.env.OPERATOR_PRIVATE_KEY;   
-    network    = process.env.HEDERA_NETWORK;                        
+    account = hreConfig.accounts[0].account;
+    privateKey = hreConfig.accounts[0].privateKey;  
   
-    const clientSdk = getClient(account!, privateKey!, network);
+    const clientSdk = getClient();
+    clientSdk.setOperator(account, privateKey);
 
     let params: any[] = [AccountId.fromString(account!).toSolidityAddress(),1000000];      
     await contractCall(deployedProxyAddress, 'mint', params, clientSdk, 400000, HederaERC20__factory.abi);

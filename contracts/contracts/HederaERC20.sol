@@ -139,13 +139,5 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
     {
         require(responseCode == HederaResponseCodes.SUCCESS, "Error");
         return true;
-    }
-
-    function _checkResponse(int256 responseCode) 
-        internal 
-        returns (bool) 
-    {
-        require(responseCode == HederaResponseCodes.SUCCESS, "Error");
-        return true;
-    }
+    }    
 }
