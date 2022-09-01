@@ -38,5 +38,5 @@ build
 # Compile contract
 artifacts/
 
-# Cache contract
+# contracts cache
 cache/
