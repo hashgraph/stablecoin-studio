@@ -4,8 +4,6 @@ import "@hashgraph/sdk";
 import { PrivateKey } from "@hashgraph/sdk";
 require('hardhat-abi-exporter');
 
-require('hardhat-abi-exporter');
-
 module.exports = {
   solidity: "0.8.10",
   defaultNetwork: "testnet", // The selected default network. It has to match the name of one of the configured networks.
@@ -18,9 +16,15 @@ module.exports = {
           // An array of predefined Externally Owned Accounts
           {
             // OG Account
-            account: "0.0.28540472",
-            privateKey:"302e020100300506032b657004220420f284d8c41cbf70fe44c6512379ff651c6e0e4fe85c300adcd9507a80a0ee3b69",
-            publicKey:"302a300506032b657003210032c231261223d8667d841d7ca58abd9d0701eb03238a8ee4e5cdfba6925c3109",
+            account: "[include your account]",
+            privateKey:"[include your private key]",
+            publicKey:"[include your public key]",
+            isED25519Type: true
+          },
+          {           
+            account: "[include your account2]",
+            privateKey:"[include your private key2]",
+            publicKey:"[include your public key2]",
             isED25519Type: true
           },
         ],
