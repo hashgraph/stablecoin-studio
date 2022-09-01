@@ -4,13 +4,12 @@ import { TokenCreateTransaction,DelegateContractId, Hbar,  Client,  AccountId, P
 
 import { HederaERC20__factory, HTSTokenOwner__factory, HederaERC1967Proxy__factory } from "../typechain-types";
 
-import dotenv from "dotenv";
-
 import Web3 from "web3";
 
-dotenv.config();
-
 const web3 = new Web3;
+
+const hre = require("hardhat");
+const hreConfig = hre.network.config;
 
 export async function deployContractsWithSDK(name:string, symbol:string, decimals:number=6,
                                              initialSupply:number=0, maxSupply:number, 
@@ -18,11 +17,14 @@ export async function deployContractsWithSDK(name:string, symbol:string, decimal
 
   console.log(`Creating token  (${name},${symbol},${decimals},${initialSupply},${maxSupply},${memo},${freeze})`);                                        
 
-  let account    = process.env.OPERATOR_ID;
-  let privateKey = process.env.OPERATOR_PRIVATE_KEY;
-  let publicKey  = process.env.OPERATOR_PUBLIC_KEY;                                      
+  const account = hreConfig.accounts[0].account;
+  const privateKey = hreConfig.accounts[0].privateKey;
+  const publicKey = hreConfig.accounts[0].publicKey;
 
-  const clientSdk = getClient(account!, privateKey!);
+  const clientSdk = getClient();   
+  const OPERATOR_ID = hreConfig.accounts[0].account;
+  const OPERATOR_KEY = hreConfig.accounts[0].privateKey; 
+  clientSdk.setOperator(OPERATOR_ID, OPERATOR_KEY);
 
   console.log(`Deploying ${HederaERC20__factory.name} contract... please wait.`);
   let tokenContract = await deployContractSDK(HederaERC20__factory, 10, privateKey, clientSdk);
@@ -97,13 +99,19 @@ function decodeFunctionResult(abi:any, functionName:any, resultAsBytes:any) {
   return jsonParsedArray;
 }
 
-export function getClient(account:string, privateKey:string, network:string="testnet") { 
-  const client = Client.forName(network!);
-  client.setOperator(
-    account,
-    privateKey
-  );
-  return client;
+export function getClient() {
+  switch (hre.network.name) {
+    case "previewnet":
+      return Client.forPreviewnet();
+      break;
+    case "mainnet":
+      return Client.forMainnet();
+      break;
+    default:
+    case "testnet":
+      return Client.forTestnet();
+      break;  
+  }
 }
 
 async function createToken(

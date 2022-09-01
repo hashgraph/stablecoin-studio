@@ -66,13 +66,29 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
     {
         return IERC20Upgradeable(tokenAddress).balanceOf(account);
     }
+<<<<<<< HEAD
     
     function associateToken(address adr) 
+=======
+
+        function associateToken(address adr) 
+>>>>>>> utils.ts file using hardhat configuratioutils.ts file using hardhat
         public 
         returns (bool) 
     {         
         int256 responseCode = HederaTokenService.associateToken(adr, tokenAddress);
         return _checkResponse(responseCode);        
+<<<<<<< HEAD
+    }
+    
+    function dissociateToken(address adr) 
+        public 
+        returns (bool) 
+    {         
+        int256 responseCode = HederaTokenService.dissociateToken(adr, tokenAddress);
+        return _checkResponse(responseCode);        
+=======
+>>>>>>> utils.ts file using hardhat configuratioutils.ts file using hardhat
     }
     
     function dissociateToken(address adr) 
@@ -82,15 +98,7 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
         int256 responseCode = HederaTokenService.dissociateToken(adr, tokenAddress);
         return _checkResponse(responseCode);        
     }
-
-    function burn(uint256 amount) 
-        public 
-        returns (bool) 
-    {
-        _transfer(msg.sender, address(HTSTokenOwnerAddress), amount);
-        return HTSTokenOwnerAddress.burnToken(tokenAddress, amount);
-    }
-
+    
     function _transfer(address from, address to, uint256 amount) 
         internal 
         override
@@ -103,6 +111,7 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
     
         return true;
     }
+<<<<<<< HEAD
 
 
     function transfer(address to, uint256 amount) 
@@ -139,4 +148,6 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
         require(responseCode == HederaResponseCodes.SUCCESS, "Error");
         return true;
     }
+=======
+>>>>>>> utils.ts file using hardhat configuratioutils.ts file using hardhat
 }
