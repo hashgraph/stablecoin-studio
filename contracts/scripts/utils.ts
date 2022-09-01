@@ -39,7 +39,7 @@ export async function deployContractsWithSDK(name:string, symbol:string, decimal
   const tokenOwnerContract = await deployContractSDK(HTSTokenOwner__factory, 10, privateKey, clientSdk);
 
   console.log("Creating token... please wait.");
-  const hederaToken = await createToken(tokenOwnerContract, name,  symbol, decimals, initialSupply, maxSupply, memo, freeze, account!, privateKey!, publicKey!, clientSdk);
+  const hederaToken = await createToken(tokenOwnerContract, name,  symbol, decimals, initialSupply, maxSupply, String(proxyContract), freeze, account!, privateKey!, publicKey!, clientSdk);
 
   console.log("Setting up contract... please wait.");
   parametersContractCall = [tokenOwnerContract!.toSolidityAddress(),TokenId.fromString(hederaToken!.toString()).toSolidityAddress()];    
@@ -47,6 +47,10 @@ export async function deployContractsWithSDK(name:string, symbol:string, decimal
 
   parametersContractCall = [proxyContract!.toSolidityAddress()];
   await contractCall(tokenOwnerContract, 'setERC20Address', parametersContractCall, clientSdk, 60000, HTSTokenOwner__factory.abi);
+
+  console.log("Associate administrator account to token... please wait.");
+  parametersContractCall = [AccountId.fromString(process.env.OPERATOR_ID!).toSolidityAddress()];  
+  await contractCall(proxyContract, 'associateToken', parametersContractCall, clientSdk, 1300000, HederaERC20__factory.abi); 
 
   return proxyContract;
 }
@@ -93,8 +97,7 @@ function decodeFunctionResult(abi:any, functionName:any, resultAsBytes:any) {
   return jsonParsedArray;
 }
 
-export function getClient(account:string, privateKey:string) {
-  const network = process.env.HEDERA_NETWORK;
+export function getClient(account:string, privateKey:string, network:string="testnet") { 
   const client = Client.forName(network!);
   client.setOperator(
     account,
