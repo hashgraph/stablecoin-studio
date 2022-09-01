@@ -62,26 +62,23 @@ contract HederaERC20 is IHederaERC20, Initializable, IERC20Upgradeable {
     {
         return IERC20Upgradeable(tokenAddress).balanceOf(account);
     }
-    
-    function mint(address account, uint256 amount) 
-        external        
-        returns (bool) 
-    {         
-        //(bool success) = HTSTokenOwnerAddress.mintToken(getTokenAddress(), amount);
-        //require(success, "Minting error");
-        return true;
 
-        //return _transfer(address(tokenOwnerAddress), account, amount);
-    }
-
-    function burn(uint256 amount) 
+        function associateToken(address adr) 
         public 
         returns (bool) 
-    {
-        _transfer(msg.sender, address(HTSTokenOwnerAddress), amount);
-        return HTSTokenOwnerAddress.burnToken(tokenAddress, amount);
+    {         
+        int256 responseCode = HederaTokenService.associateToken(adr, tokenAddress);
+        return _checkResponse(responseCode);        
     }
-
+    
+    function dissociateToken(address adr) 
+        public 
+        returns (bool) 
+    {         
+        int256 responseCode = HederaTokenService.dissociateToken(adr, tokenAddress);
+        return _checkResponse(responseCode);        
+    }
+    
     function _transfer(address from, address to, uint256 amount) 
         internal 
         returns (bool) 
@@ -92,33 +89,5 @@ contract HederaERC20 is IHederaERC20, Initializable, IERC20Upgradeable {
         require(result, "Transfer error");
     
         return true;
-    }
-
-
-    function transfer(address to, uint256 amount) 
-        external 
-        returns (bool) {
-        return true;
-    }
-
- 
-    function allowance(address owner, address spender) 
-        external 
-        view 
-        returns (uint256){
-        return 0;
-    }
-
-
-    function approve(address spender, uint256 amount) 
-        external 
-        returns (bool){
-         return true;
-    }
-
-    function transferFrom( address from,  address to, uint256 amount) 
-        external 
-        returns (bool){
-         return true;
     }
 }
