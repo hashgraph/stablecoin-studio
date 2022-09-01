@@ -22,8 +22,6 @@ export default class BalanceOfStableCoinsService extends Service {
     // Call to list stable coins
     const sdk: SDK = new SDK();
 
-    utilsService.breakLine();
-
     let respDetail;
 
     await utilsService.showSpinner(
@@ -33,12 +31,13 @@ export default class BalanceOfStableCoinsService extends Service {
           respDetail = response;
         }),
       {
-        text: language.getText('state.searching'),
-        successText: language.getText('state.searchingSuccess') + '\n',
+        text: language.getText('state.loading'),
+        successText: language.getText('state.loadCompleted') + '\n',
       },
     );
 
-    console.log('Balance of Stable Coin: ', respDetail[0]);
+    console.log('Balance of Stable Coin: ', respDetail[0] / 1000);
+
     utilsService.breakLine();
   }
 }

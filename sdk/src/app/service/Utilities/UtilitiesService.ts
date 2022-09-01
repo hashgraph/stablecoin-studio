@@ -15,7 +15,7 @@ export interface IContractParams {
  */
 export default class UtilitiesService extends Service {
 	constructor() {
-		super('Utilities');
+		super();
 	}
 
 	public getPublicKey(privateKey: string): string {

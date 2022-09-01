@@ -78,7 +78,7 @@ export default class StableCoinService extends Service {
 	private URI_BASE = 'https://testnet.mirrornode.hedera.com/api/v1/';
 
 	constructor(repository: StableCoinRepository) {
-		super('StableCoinService');
+		super();
 		this.repository = repository;
 	}
 

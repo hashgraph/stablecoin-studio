@@ -58,7 +58,7 @@ export const english = {
     created:
       'Stable Coin ${name} (${symbol}) with ${decimals} decimals have been created!',
     askCashInAmount: 'How many tokens do you want to cash in?',
-    askWipeAmount: 'How many tokens do you want to wipe?'
+    askWipeAmount: 'How many tokens do you want to wipe?',
   },
   commander: {
     appDescription: 'Hedera Stable Coin is a CLI for manage stable coins',
@@ -128,6 +128,12 @@ export const english = {
   },
   state: {
     searching: 'Searching...',
+    loading: 'Loading...',
+    loadCompleted: 'Load completed',
     searchingSuccess: 'The search has been completed successfully',
+  },
+  operation: {
+    success: 'Operation has been completed successfully.',
+    reject: 'Operation has not been completed. Please, try again.',
   },
 };

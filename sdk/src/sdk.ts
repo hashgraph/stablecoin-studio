@@ -42,7 +42,7 @@ export class SDK {
 
 	constructor() {
 		this.init();
-		console.log('SDK Initialised');
+		// console.log('SDK Initialised');
 	}
 
 	// Initializes the SDK,
@@ -136,7 +136,7 @@ export class SDK {
 	/**
 	 * cashIn
 	 */
-	 public cashIn(request: IRequestContracts): Promise<[]> | null {
+	public cashIn(request: IRequestContracts): Promise<[]> | null {
 		try {
 			const req: IRequestContracts = { ...request };
 			return this.stableCoinService.cashIn(

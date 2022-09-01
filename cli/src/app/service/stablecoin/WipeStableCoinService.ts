@@ -23,21 +23,24 @@ export default class WipeStableCoinsService extends Service {
     // Call to list stable coins
     const sdk: SDK = new SDK();
 
-    utilsService.breakLine();
-
-    let respDetail: void;
+    let respDetail;
 
     await utilsService.showSpinner(
       sdk
         .wipe({ treasuryId, privateKey, accountId, amount })
-        .then((response: void) => (respDetail = response)),
+        .then((response) => (respDetail = response)),
       {
-        text: language.getText('state.searching'),
-        successText: language.getText('state.searchingSuccess') + '\n',
+        text: language.getText('state.loading'),
+        successText: language.getText('state.loadCompleted') + '\n',
       },
     );
 
-    console.log(respDetail);
+    console.log(
+      respDetail[0]
+        ? language.getText('operation.success')
+        : language.getText('operation.reject'),
+    );
+
     utilsService.breakLine();
   }
 }
