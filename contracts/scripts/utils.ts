@@ -54,6 +54,10 @@ export async function deployContractsWithSDK(name:string, symbol:string, decimal
   parametersContractCall = [AccountId.fromString(process.env.OPERATOR_ID!).toSolidityAddress()];  
   await contractCall(proxyContract, 'associateToken', parametersContractCall, clientSdk, 1300000, HederaERC20__factory.abi); 
 
+  console.log("Associate administrator account to token... please wait.");
+  parametersContractCall = [AccountId.fromString(OPERATOR_ID!).toSolidityAddress()];  
+  await contractCall(proxyContract, 'associateToken', parametersContractCall, clientSdk, 1300000, HederaERC20__factory.abi);
+
   return proxyContract;
 }
 

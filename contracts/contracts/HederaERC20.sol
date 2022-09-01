@@ -66,29 +66,14 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
     {
         return IERC20Upgradeable(tokenAddress).balanceOf(account);
     }
-<<<<<<< HEAD
-    
-    function associateToken(address adr) 
-=======
 
-        function associateToken(address adr) 
->>>>>>> utils.ts file using hardhat configuratioutils.ts file using hardhat
+    function associateToken(address adr) 
+
         public 
         returns (bool) 
     {         
         int256 responseCode = HederaTokenService.associateToken(adr, tokenAddress);
         return _checkResponse(responseCode);        
-<<<<<<< HEAD
-    }
-    
-    function dissociateToken(address adr) 
-        public 
-        returns (bool) 
-    {         
-        int256 responseCode = HederaTokenService.dissociateToken(adr, tokenAddress);
-        return _checkResponse(responseCode);        
-=======
->>>>>>> utils.ts file using hardhat configuratioutils.ts file using hardhat
     }
     
     function dissociateToken(address adr) 
@@ -111,36 +96,44 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
     
         return true;
     }
-<<<<<<< HEAD
 
+    function burn(uint256 amount) 
+        public 
+        returns (bool) 
+    {
+        require(false, "function not already implemented");
+    }
 
     function transfer(address to, uint256 amount) 
         external 
-        returns (bool) {
-        return true;
+        returns (bool)
+    {
+        require(false, "function not already implemented");
     }
 
- 
     function allowance(address owner, address spender) 
         external 
         view 
-        returns (uint256){
-        return 0;
+        returns (uint256)
+    {
+        require(false, "function not already implemented");
     }
 
 
     function approve(address spender, uint256 amount) 
         external 
-        returns (bool){
-         return true;
+        returns (bool)
+    {
+         require(false, "function not already implemented");
     }
 
     function transferFrom( address from,  address to, uint256 amount) 
         external 
-        returns (bool){
-         return true;
+        returns (bool)
+    {
+         require(false, "function not already implemented");
     }
-
+    
     function _checkResponse(int256 responseCode) 
         internal 
         returns (bool) 
@@ -148,6 +141,5 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
         require(responseCode == HederaResponseCodes.SUCCESS, "Error");
         return true;
     }
-=======
->>>>>>> utils.ts file using hardhat configuratioutils.ts file using hardhat
+
 }
