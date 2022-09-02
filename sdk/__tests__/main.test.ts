@@ -147,31 +147,16 @@ describe('SDK Unit Test :tubo_de_ensayo:', () => {
 		});
 	});
 
-	// it('Cash in Stable coin', async () => {
-	// 	const request: IRequestContracts = {
-	// 		treasuryId: '0.0.48135063',
-	// 		privateKey:
-	// 			'302e020100300506032b6570042204207a8a25387a3c636cb980d1ba548ee5ee3cc8cda158e42dc7af53dcd81022d8be',
-	// 		accountId: '0.0.29511696',
-	// 	};
+	it('Cash in Stable coin', async () => {
+		const request: IRequestContracts = {
+			treasuryId: '0.0.48135054',
+			privateKey:
+				'302e020100300506032b6570042204207a8a25387a3c636cb980d1ba548ee5ee3cc8cda158e42dc7af53dcd81022d8be',
+			accountId: '0.0.29511696',
+		};
 
-	// 	await sdk.cashIn(request)?.then((response) => {
-	// 		expect(response).not.toBeNull();
-	// 	});
-	// });
-
-	// it('Wipe Stable coin', async () => {
-	// 	const request: IRequestContracts = {
-	// 		treasuryId: '0.0.48131308',
-	// 		privateKey:
-	// 			'302e020100300506032b6570042204207a8a25387a3c636cb980d1ba548ee5ee3cc8cda158e42dc7af53dcd81022d8be',
-	// 		accountId: '0.0.29511696',
-	// 		amount: 1000,
-	// 	};
-
-	// 	const response = await sdk.wipe(request);
-	// 	console.log('response', response);
-
-	// 	expect(response).not.toBeNull();
-	// });
+		await sdk.cashIn(request)?.then((response) => {
+			expect(response).not.toBeNull();
+		});
+	});
 });
