@@ -26,7 +26,7 @@ describe("Operations to WIPE tokens", function() {
   beforeEach(async function () {
     proxyAddress = await deployContractsWithSDK("TOKEN-WIPE", "TM-WP", 2, 0, 3000000, "Hedera Accelerator Stable Coin (Wipe)");    
   });
-  
+
   it("Should can wipe 10.000 tokens from an account with 20.000 tokens", async function() {  
     let params: any[] = [AccountId.fromString(hreConfig.accounts[0].account).toSolidityAddress(),2000000];      
     await contractCall(ContractId.fromString(proxyAddress), 'mint', params, client, 400000, HederaERC20__factory.abi);
@@ -43,7 +43,7 @@ describe("Operations to WIPE tokens", function() {
   it("Should fail wipe if the account has not role the Wipe", async function() {
     const client2 = getClient();     
     const account2 = hreConfig.accounts[1].account;  
-    const privateKey2 = hreConfig.accounts[1].account; 
+    const privateKey2 = hreConfig.accounts[1].privateKey; 
     client2.setOperator(account2, privateKey2);
     
     let params: any[] = [AccountId.fromString(hreConfig.accounts[1].account).toSolidityAddress()];  
