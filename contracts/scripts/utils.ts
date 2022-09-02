@@ -21,11 +21,6 @@ export async function deployContractsWithSDK(name:string, symbol:string, decimal
   const privateKey = hreConfig.accounts[0].privateKey;
   const publicKey = hreConfig.accounts[0].publicKey;
 
-  //let account    = process.env.OPERATOR_ID;
-  //let privateKey = process.env.OPERATOR_PRIVATE_KEY;
-  //let publicKey  = process.env.OPERATOR_PUBLIC_KEY;                                      
-
-  //const clientSdk = getClient(account!, privateKey!);
   const clientSdk = getClient();   
   clientSdk.setOperator(account, privateKey);
 
@@ -107,16 +102,6 @@ function decodeFunctionResult(abi:any, functionName:any, resultAsBytes:any) {
   return jsonParsedArray;
 }
 
-/*export function getClient2(account:string, privateKey:string) {
-  const network = process.env.HEDERA_NETWORK;
-  const client = Client.forName(network!);
-  client.setOperator(
-    account,
-    privateKey
-  );
-  return client;
-}*/
-
 export function getClient() {
   switch (hre.network.name) {
     case "previewnet":
@@ -158,7 +143,7 @@ async function createToken(
     .setTreasuryAccountId(AccountId.fromString(contractId.toString()))
     .setAdminKey(PublicKey.fromString(publicKey))
     .setFreezeKey(PublicKey.fromString(publicKey))
-    .setWipeKey(PublicKey.fromString(publicKey))
+    .setWipeKey(DelegateContractId.fromString(contractId))
     .setSupplyKey(DelegateContractId.fromString(contractId))
     .setNodeAccountIds([
       AccountId.fromString('0.0.3'),
@@ -173,6 +158,7 @@ async function createToken(
       transaction.setMaxSupply(maxSupply)
     } 
     transaction.freezeWith(clientSdk);
+
   const transactionSign = await transaction.sign(
     PrivateKey.fromStringED25519(privateKey)
   );
@@ -289,3 +275,4 @@ export async function createECDSAAccount(client:any, amount:number) {
   let privateKey = '0x'.concat(privateECDSAKey.toStringRaw());
   return { accountId, privateKey, privateECDSAKey };
 }
+

@@ -23,11 +23,10 @@ module.exports = {
             publicKey:"[include your public key]",
             isED25519Type: true
           },
-          {
-            // OG Account
-            account: "[include your account]",
-            privateKey:"[include your private key]",
-            publicKey:"[include your public key]",
+          {           
+            account: "[include your account2]",
+            privateKey:"[include your private key2]",
+            publicKey:"[include your public key2]",
             isED25519Type: true
           },
         ],

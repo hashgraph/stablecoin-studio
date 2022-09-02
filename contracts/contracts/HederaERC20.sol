@@ -8,8 +8,9 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "./hts-precompile/HederaTokenService.sol";
 import "./IHederaERC20.sol";
 import "./extensions/Mintable.sol";
+import "./extensions/Wipeable.sol";
 
-contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20Upgradeable, Mintable {
+contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20Upgradeable, Mintable, Wipeable {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     function initialize () 
@@ -17,10 +18,10 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
         external 
         initializer 
     {
-        __AccessControl_init();
-
+        __AccessControl_init();       
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(SUPPLIER_ROLE, msg.sender);
+        _grantRole(WIPE_ROLE, msg.sender);
     }
      
     function name() 
@@ -64,6 +65,7 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
     {
         return IERC20Upgradeable(tokenAddress).balanceOf(account);
     }
+
     function associateToken(address adr) 
         public 
         returns (bool) 
@@ -71,7 +73,7 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
         int256 responseCode = HederaTokenService.associateToken(adr, tokenAddress);
         return _checkResponse(responseCode);        
     }
-    
+
     function dissociateToken(address adr) 
         public 
         returns (bool) 
