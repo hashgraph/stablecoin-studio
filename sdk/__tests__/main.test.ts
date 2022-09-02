@@ -1,5 +1,9 @@
 import { Account, ICreateStableCoinRequest, SDK } from '../src/index';
-import { IGetListStableCoinRequest, IGetStableCoinRequest } from '../src/sdk';
+import {
+	IGetListStableCoinRequest,
+	IGetStableCoinRequest,
+	IRequestContracts,
+} from '../src/sdk';
 
 describe('SDK Unit Test :tubo_de_ensayo:', () => {
 	let sdk: SDK;
@@ -43,26 +47,82 @@ describe('SDK Unit Test :tubo_de_ensayo:', () => {
 			symbol: 'PAPA',
 			decimals: 20,
 		};
-		const coin = sdk.createStableCoin(request);
-		expect(coin).toBeNull();
+		try {
+			const coin = sdk.createStableCoin(request);
+			expect(coin).toBeNull();
+		} catch (err) {
+			console.log(err);
+		}
 	});
 
-	it('Get list Stable coins', () => {
+	it('Get list Stable coins', async () => {
 		const request: IGetListStableCoinRequest = {
 			privateKey:
 				'302e020100300506032b657004220420f284d8c41cbf70fe44c6512379ff651c6e0e4fe85c300adcd9507a80a0ee3b69',
 		};
-		const coin = sdk.getListStableCoin(request);
+		const coin = await sdk.getListStableCoin(request);
 		expect(coin).not.toBeNull();
-		console.log(coin);
 	});
 
-	it('Get details Stable coins', () => {
+	it('Get details Stable coins', async () => {
 		const request: IGetStableCoinRequest = {
 			stableCoinId: '0.0.30873406',
 		};
-		const coin = sdk.getStableCoin(request);
+		const coin = await sdk.getStableCoin(request);
 		expect(coin).not.toBeNull();
-		console.log(coin);
 	});
+
+	it('Get balance of Stable coin', async () => {
+		const request: IRequestContracts = {
+			treasuryId: '0.0.48135063',
+			privateKey:
+				'302e020100300506032b6570042204207a8a25387a3c636cb980d1ba548ee5ee3cc8cda158e42dc7af53dcd81022d8be',
+			accountId: '0.0.29511696',
+		};
+
+		await sdk.getBalanceOf(request)?.then((response) => {
+			expect(response).not.toBeNull();
+		});
+	});
+
+	it('Get name of Stable coin', async () => {
+		const request: IRequestContracts = {
+			treasuryId: '0.0.48135063',
+			privateKey:
+				'302e020100300506032b6570042204207a8a25387a3c636cb980d1ba548ee5ee3cc8cda158e42dc7af53dcd81022d8be',
+			accountId: '0.0.29511696',
+		};
+
+		await sdk.getNameToken(request)?.then((response) => {
+			expect(response).not.toBeNull();
+		});
+	});
+
+	// it('Cash in Stable coin', async () => {
+	// 	const request: IRequestContracts = {
+	// 		treasuryId: '0.0.48135063',
+	// 		privateKey:
+	// 			'302e020100300506032b6570042204207a8a25387a3c636cb980d1ba548ee5ee3cc8cda158e42dc7af53dcd81022d8be',
+	// 		accountId: '0.0.29511696',
+	// 	};
+
+	// 	await sdk.cashIn(request)?.then((response) => {
+	// 		expect(response).not.toBeNull();
+	// 	});
+	// });
+
+	// it('Wipe Stable coin', async () => {
+	// 	const request: IRequestContracts = {
+	// 		treasuryId: '0.0.48131308',
+	// 		privateKey:
+	// 			'302e020100300506032b6570042204207a8a25387a3c636cb980d1ba548ee5ee3cc8cda158e42dc7af53dcd81022d8be',
+	// 		accountId: '0.0.29511696',
+	// 		amount: 1000,
+	// 	};
+
+	// 	const response = await sdk.wipe(request);
+	// 	console.log('response', response);
+
+	// 	expect(response).not.toBeNull();
+	// });
 });
