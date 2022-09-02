@@ -14,10 +14,14 @@ describe("General ERC20", function() {
     
   beforeEach(async function () {
 <<<<<<< HEAD
+<<<<<<< HEAD
     deployedProxyAddress = await deployContractsWithSDK("TOKEN","TK",2,0,100_000,"mytoken",false);
 =======
     deployedProxyAddress = await deployContractsWithSDK("TOKEN","TK",2,0,2000000,"",false);
 >>>>>>> include network in getClient, associate token to admin account y contractProxy to memo token
+=======
+    deployedProxyAddress = await deployContractsWithSDK("TOKEN","TK",2,0,2000000,"",false);
+>>>>>>> 4ac336ed52d03ed529c97f25bfea128a6d0e2b97
     
   });
   
@@ -47,15 +51,25 @@ describe("General ERC20", function() {
     clientSdk.setOperator(account, privateKey);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     const parameters = [AccountId.fromString(account || "").toSolidityAddress()];    
 =======
+=======
+>>>>>>> 4ac336ed52d03ed529c97f25bfea128a6d0e2b97
     let params: any[] = [AccountId.fromString(account!).toSolidityAddress(),1000000];      
     await contractCall(deployedProxyAddress, 'mint', params, clientSdk, 400000, HederaERC20__factory.abi);
 
     const parameters = [AccountId.fromString(account!).toSolidityAddress()];    
+<<<<<<< HEAD
 >>>>>>> include network in getClient, associate token to admin account y contractProxy to memo token
     const balanceOf = await contractCall(deployedProxyAddress, 'balanceOf', parameters, clientSdk, 36000, HederaERC20__factory.abi);
     
     expect(Number(balanceOf[0])).to.equals(0);   
+=======
+    const balanceOf = await contractCall(deployedProxyAddress, 'balanceOf', parameters, clientSdk, 36000, HederaERC20__factory.abi);
+    
+    expect(parseInt(balanceOf[0])).to.equals(1000000);   
+
+>>>>>>> 4ac336ed52d03ed529c97f25bfea128a6d0e2b97
   });
 });
