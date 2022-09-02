@@ -11,6 +11,7 @@ import "./extensions/Mintable.sol";
 import "./extensions/Wipeable.sol";
 
 contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20Upgradeable, Mintable, Wipeable {
+
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     function initialize () 
@@ -66,15 +67,14 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
     {
         return IERC20Upgradeable(tokenAddress).balanceOf(account);
     }
-    
     function associateToken(address adr) 
         public 
         returns (bool) 
     {         
         int256 responseCode = HederaTokenService.associateToken(adr, tokenAddress);
-        return _checkResponse(responseCode);        
+        return _checkResponse(responseCode);      
     }
-    
+           
     function dissociateToken(address adr) 
         public 
         returns (bool) 
@@ -82,15 +82,7 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
         int256 responseCode = HederaTokenService.dissociateToken(adr, tokenAddress);
         return _checkResponse(responseCode);        
     }
-
-    function burn(uint256 amount) 
-        public 
-        returns (bool) 
-    {
-        _transfer(msg.sender, address(HTSTokenOwnerAddress), amount);
-        return HTSTokenOwnerAddress.burnToken(tokenAddress, amount);
-    }
-
+    
     function _transfer(address from, address to, uint256 amount) 
         internal 
         override
@@ -104,39 +96,48 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
         return true;
     }
 
+    function burn(uint256 amount) 
+        public 
+        returns (bool) 
+    {
+        require(false, "function not already implemented");
+    }
 
     function transfer(address to, uint256 amount) 
         external 
-        returns (bool) {
-        return true;
+        returns (bool)
+    {
+        require(false, "function not already implemented");
     }
 
- 
     function allowance(address owner, address spender) 
         external 
         view 
-        returns (uint256){
-        return 0;
+        returns (uint256)
+    {
+        require(false, "function not already implemented");
     }
 
 
     function approve(address spender, uint256 amount) 
         external 
-        returns (bool){
-         return true;
+        returns (bool)
+    {
+         require(false, "function not already implemented");
     }
 
     function transferFrom( address from,  address to, uint256 amount) 
         external 
-        returns (bool){
-         return true;
+        returns (bool)
+    {
+         require(false, "function not already implemented");
     }
-
+    
     function _checkResponse(int256 responseCode) 
         internal 
         returns (bool) 
     {
         require(responseCode == HederaResponseCodes.SUCCESS, "Error");
         return true;
-    }
+    }    
 }

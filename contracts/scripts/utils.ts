@@ -1,28 +1,28 @@
 import { TokenCreateTransaction,DelegateContractId, Hbar,  Client,  AccountId, PrivateKey, ContractFunctionParameters,
-  PublicKey, ContractCreateTransaction, FileCreateTransaction, FileAppendTransaction, TokenId,TokenSupplyType,
+  PublicKey, ContractCreateTransaction, FileCreateTransaction, FileAppendTransaction, TokenId, TokenSupplyType,
   ContractExecuteTransaction, AccountCreateTransaction } from "@hashgraph/sdk";
 
 import { HederaERC20__factory, HTSTokenOwner__factory, HederaERC1967Proxy__factory } from "../typechain-types";
 
-import dotenv from "dotenv";
-
 import Web3 from "web3";
 
-dotenv.config();
+const hre = require("hardhat");
+const hreConfig = hre.network.config;
 
 const web3 = new Web3;
 
 export async function deployContractsWithSDK(name:string, symbol:string, decimals:number=6,
-                                             initialSupply:number=0, maxSupply:number, 
+                                             initialSupply:number=0, maxSupply:number | null, 
                                              memo:string, freeze:boolean=false) {
 
   console.log(`Creating token  (${name},${symbol},${decimals},${initialSupply},${maxSupply},${memo},${freeze})`);                                        
 
-  let account    = process.env.OPERATOR_ID;
-  let privateKey = process.env.OPERATOR_PRIVATE_KEY;
-  let publicKey  = process.env.OPERATOR_PUBLIC_KEY;                                      
+  const account = hreConfig.accounts[0].account;
+  const privateKey = hreConfig.accounts[0].privateKey;
+  const publicKey = hreConfig.accounts[0].publicKey;
 
-  const clientSdk = getClient(account!, privateKey!);
+  const clientSdk = getClient();   
+  clientSdk.setOperator(account, privateKey);
 
   console.log(`Deploying ${HederaERC20__factory.name} contract... please wait.`);
   let tokenContract = await deployContractSDK(HederaERC20__factory, 10, privateKey, clientSdk);
@@ -39,7 +39,7 @@ export async function deployContractsWithSDK(name:string, symbol:string, decimal
   const tokenOwnerContract = await deployContractSDK(HTSTokenOwner__factory, 10, privateKey, clientSdk);
 
   console.log("Creating token... please wait.");
-  const hederaToken = await createToken(tokenOwnerContract, name,  symbol, decimals, initialSupply, maxSupply, memo, freeze, account!, privateKey!, publicKey!, clientSdk);
+  const hederaToken = await createToken(tokenOwnerContract, name,  symbol, decimals, initialSupply, maxSupply, String(proxyContract), freeze, account!, privateKey!, publicKey!, clientSdk);
 
   console.log("Setting up contract... please wait.");
   parametersContractCall = [tokenOwnerContract!.toSolidityAddress(),TokenId.fromString(hederaToken!.toString()).toSolidityAddress()];    
@@ -47,6 +47,10 @@ export async function deployContractsWithSDK(name:string, symbol:string, decimal
 
   parametersContractCall = [proxyContract!.toSolidityAddress()];
   await contractCall(tokenOwnerContract, 'setERC20Address', parametersContractCall, clientSdk, 60000, HTSTokenOwner__factory.abi);
+
+  console.log("Associate administrator account to token... please wait.");
+  parametersContractCall = [AccountId.fromString(account!).toSolidityAddress()];  
+  await contractCall(proxyContract, 'associateToken', parametersContractCall, clientSdk, 1300000, HederaERC20__factory.abi);
 
   return proxyContract;
 }
@@ -65,7 +69,12 @@ export async function contractCall(contractId:any,
       .setFunctionParameters(functionCallParameters)
       .setGas(gas)
       .setNodeAccountIds([
-        AccountId.fromString('0.0.3')
+        AccountId.fromString('0.0.3'),
+        AccountId.fromString('0.0.5'),
+        AccountId.fromString('0.0.6'),
+        AccountId.fromString('0.0.7'),
+        AccountId.fromString('0.0.8'),
+        AccountId.fromString('0.0.9')
       ])
       .execute(clientOperator);
   let record = await contractTx.getRecord(clientOperator);  
@@ -93,14 +102,19 @@ function decodeFunctionResult(abi:any, functionName:any, resultAsBytes:any) {
   return jsonParsedArray;
 }
 
-export function getClient(account:string, privateKey:string) {
-  const network = process.env.HEDERA_NETWORK;
-  const client = Client.forName(network!);
-  client.setOperator(
-    account,
-    privateKey
-  );
-  return client;
+export function getClient() {
+  switch (hre.network.name) {
+    case "previewnet":
+      return Client.forPreviewnet();
+      break;
+    case "mainnet":
+      return Client.forMainnet();
+      break;
+    default:
+    case "testnet":
+      return Client.forTestnet();
+      break;  
+  }
 }
 
 async function createToken(
@@ -109,7 +123,7 @@ async function createToken(
   symbol:string,
   decimals:number=6,
   initialSupply:number=0,
-  maxSupply:number,
+  maxSupply:number | null,
   memo:string,
   freeze:boolean=false,
   accountId: string,
@@ -124,8 +138,6 @@ async function createToken(
     .setTokenSymbol(symbol)
     .setDecimals(decimals)
     .setInitialSupply(initialSupply)
-    .setMaxSupply(maxSupply)
-    .setSupplyType(TokenSupplyType.Finite)
     .setTokenMemo(memo)
     .setFreezeDefault(freeze)
     .setTreasuryAccountId(AccountId.fromString(contractId.toString()))
@@ -140,8 +152,13 @@ async function createToken(
       AccountId.fromString('0.0.7'),
       AccountId.fromString('0.0.8'),
       AccountId.fromString('0.0.9')
-    ])
-    .freezeWith(clientSdk);
+    ]);
+    if (maxSupply !== null) {
+      transaction.setSupplyType(TokenSupplyType.Finite)
+      transaction.setMaxSupply(maxSupply)
+    } 
+    transaction.freezeWith(clientSdk);
+
   const transactionSign = await transaction.sign(
     PrivateKey.fromStringED25519(privateKey)
   );
@@ -243,6 +260,14 @@ export async function createECDSAAccount(client:any, amount:number) {
   const response = await new AccountCreateTransaction()
   .setKey(privateECDSAKey)
   .setInitialBalance(new Hbar(amount))
+  .setNodeAccountIds([
+    AccountId.fromString('0.0.3'),
+    AccountId.fromString('0.0.5'),
+    AccountId.fromString('0.0.6'),
+    AccountId.fromString('0.0.7'),
+    AccountId.fromString('0.0.8'),
+    AccountId.fromString('0.0.9')
+  ])
   .execute(client);
   const receipt = await response.getReceipt(client);
   const account = receipt.accountId;
