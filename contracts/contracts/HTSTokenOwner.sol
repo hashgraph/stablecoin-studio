@@ -4,9 +4,10 @@ pragma solidity ^0.8.10;
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "./hts-precompile/HederaTokenService.sol";
-import "./IHederaERC20.sol";
+import "./IHTSTokenOwner.sol";
+import "./TokenOwner.sol";
 
-contract HTSTokenOwner is HederaTokenService {
+contract HTSTokenOwner is IHTSTokenOwner, HederaTokenService, TokenOwner {
     using SafeERC20Upgradeable for IERC20Upgradeable; 
 
     address public erc20address;
@@ -60,10 +61,20 @@ contract HTSTokenOwner is HederaTokenService {
         onlyHederaERC20() 
         returns (bool) 
     {
-        address tokenAddress = IHederaERC20(erc20address).getTokenAddress();
+        address tokenAddress = _getTokenAddress();
         int256 transferResponse = HederaTokenService.transferToken(tokenAddress, address(this), to, int64(int256(amount)));
         return _checkResponse(transferResponse);
     }
+
+    function wipeToken(address tokenAddress, address account, uint32 amount) 
+        external 
+        onlyHederaERC20() 
+        returns (bool) 
+    {
+        int256 responseCode = HederaTokenService.wipeTokenAccount(tokenAddress, account, uint32(amount));
+        return _checkResponse(responseCode);
+    }
+
 
     function _checkResponse(int256 responseCode) 
         internal 

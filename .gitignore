@@ -31,3 +31,12 @@ build
 
 # Old files
 .old
+
+# history
+.history
+
+# Compile contract
+artifacts/
+
+# contracts cache
+cache/

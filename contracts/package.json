@@ -4,7 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "compile": "npx hardhat compile",
+    "compile:force": "npx hardhat compile --force",
+    "test": "npx hardhat test",
+    "test:testnet": "npx hardhat test --network testnet",
+    "test:mintable": "npx hardhat test test/mintable.ts",
+    "test:testnet:mintable": "npx hardhat test --network testnet test/mintable.ts"
   },
   "author": "",
   "license": "ISC",
@@ -17,6 +22,6 @@
     "@openzeppelin/contracts": "^4.7.2",
     "@openzeppelin/contracts-upgradeable": "^4.7.2",
     "hardhat": "^2.10.1",
-    "dotenv": "^16.0.1"
+    "hardhat-abi-exporter": "^2.10.0"
   }
 }
