@@ -36,9 +36,8 @@ describe("Cash in tokens with maxTotalSupply", function() {
     await expect(contractCall(ContractId.fromString(proxyAddress), 'mint', params, client, 400000, HederaERC20__factory.abi)).to.be.throw;
   });
   it("User without supplier_role cannot cash in tokens", async function() {
-    const account = await createECDSAAccount(client, 10);
     const client2 = getClient();
-    client2.setOperator(account.accountId.toString(), account.privateECDSAKey.toString());      
+    client2.setOperator(hreConfig.accounts[1].account, hreConfig.accounts[1].privateKey);      
     let params = [AccountId.fromString(OPERATOR_ID!).toSolidityAddress(), 1000];        
     await expect(contractCall(ContractId.fromString(proxyAddress), 'mint', params, client2, 400000, HederaERC20__factory.abi)).to.be.throw;
   });
@@ -50,7 +49,6 @@ describe("Cash in tokens with maxTotalSupply", function() {
 
 describe("Cash in tokens without maxTotalSupply", function() {
   before(async function  () {
-    //client = getClient(process.env.OPERATOR_ID!, process.env.OPERATOR_PRIVATE_KEY!);      
     client = getClient();      
     client.setOperator(OPERATOR_ID, OPERATOR_KEY);
   });
