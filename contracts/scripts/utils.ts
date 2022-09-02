@@ -275,3 +275,4 @@ export async function createECDSAAccount(client:any, amount:number) {
   let privateKey = '0x'.concat(privateECDSAKey.toStringRaw());
   return { accountId, privateKey, privateECDSAKey };
 }
+

@@ -2,10 +2,11 @@
 pragma solidity ^0.8.10;
 
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+import "./IMintable.sol";
 import "../TokenOwner.sol";
 import "../Roles.sol";
 
-abstract contract Mintable is AccessControlUpgradeable, TokenOwner, Roles {
+abstract contract Mintable is IMintable, AccessControlUpgradeable, TokenOwner, Roles {
     
     function _transfer(address from, address to, uint256 amount) internal virtual returns (bool) ; 
 

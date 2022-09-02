@@ -18,8 +18,7 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
         external 
         initializer 
     {
-        __AccessControl_init();
-        
+        __AccessControl_init();       
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(SUPPLIER_ROLE, msg.sender);
         _grantRole(WIPE_ROLE, msg.sender);
@@ -66,7 +65,7 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
     {
         return IERC20Upgradeable(tokenAddress).balanceOf(account);
     }
-    
+
     function associateToken(address adr) 
         public 
         returns (bool) 
@@ -74,7 +73,7 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
         int256 responseCode = HederaTokenService.associateToken(adr, tokenAddress);
         return _checkResponse(responseCode);        
     }
-            
+
     function dissociateToken(address adr) 
         public 
         returns (bool) 
