@@ -7,6 +7,8 @@ import { StableCoinList } from '../../../domain/stablecoin/StableCoinList.js';
  * Create Stable Coin Service
  */
 export default class ListStableCoinsService extends Service {
+  private stableCoinId;
+
   constructor() {
     super('List Stable Coins');
   }
@@ -38,5 +40,14 @@ export default class ListStableCoinsService extends Service {
     ];
 
     utilsService.drawTableListStableCoin(dataList);
+    utilsService.breakLine();
+
+    while (this.stableCoinId !== 'Exit to main menu') {
+      this.stableCoinId = await utilsService.defaultMultipleAsk(
+        language.getText('stablecoin.askStableCoinDetail'),
+        ['Symbol 1', 'Symbol 2', 'Symbol 3', 'Exit to main menu'],
+      );
+      utilsService.breakLine();
+    }
   }
 }
