@@ -20,6 +20,7 @@
 		"@typescript-eslint/eslint-plugin": "~5.26",
 		"@typescript-eslint/parser": "~5.26",
 		"axios": "^0.27.2",
+		"babel-jest": "^29.0.1",
 		"concurrently": "^7.3.0",
 		"eslint": "~8.16",
 		"eslint-config-prettier": "~8.5",

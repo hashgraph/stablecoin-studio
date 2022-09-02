@@ -1,4 +1,10 @@
-import { Account, ICreateStableCoinRequest, SDK } from '../src/index';
+import {
+	StableCoin,
+	Account,
+	ICreateStableCoinRequest,
+	SDK,
+	Repository,
+} from '../src/index';
 import {
 	IGetListStableCoinRequest,
 	IGetStableCoinRequest,
@@ -26,6 +32,33 @@ describe('SDK Unit Test :tubo_de_ensayo:', () => {
 	// Assert sdk not null
 	it('loads the class', () => {
 		expect(sdk).not.toBeNull();
+	});
+
+	it('Account class', () => {
+		const account = new Account('0.0.1', '1234');
+		account.accountId = '0.0.2';
+		account.privateKey = '5678';
+
+		expect(account.accountId).toBe('0.0.2');
+		expect(account.privateKey).toBe('5678');
+	});
+
+	it('Stable Coin class', () => {
+		const account = new Account('0.0.1', '1234');
+		const stableCoin = new StableCoin(account, 'Token', 'TK', 10, '1234');
+
+		expect(stableCoin.admin).toBe(account);
+		expect(stableCoin.name).toBe('Token');
+		expect(stableCoin.symbol).toBe('TK');
+		expect(stableCoin.decimals).toBe(10);
+		expect(stableCoin.id).toBe('1234');
+	});
+
+	it('Repository class', () => {
+		const repository = new Repository();
+		repository.data = ['test'];
+
+		expect(repository.data[0]).toBe('test');
 	});
 
 	it('Creates a Stable Coin', () => {
@@ -83,6 +116,22 @@ describe('SDK Unit Test :tubo_de_ensayo:', () => {
 		await sdk.getBalanceOf(request)?.then((response) => {
 			expect(response).not.toBeNull();
 		});
+	});
+
+	it('Get balance of Stable coin - Revert', async () => {
+		const request: IRequestContracts = {
+			treasuryId: '0.0.48135063',
+			privateKey:
+				'302e020100300506032b6570042204207a8a25387a3c636cb980d1ba548ee5ee3cc8cda158e42dc7af53dcd81022d8be',
+			accountId: '0.0.29511690',
+		};
+		try {
+			await sdk.getBalanceOf(request)?.then((response) => {
+				expect(response).not.toBeNull();
+			});
+		} catch (err) {
+			console.log('Get balance of Stable coin - Revert');
+		}
 	});
 
 	it('Get name of Stable coin', async () => {

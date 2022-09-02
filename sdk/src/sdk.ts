@@ -7,8 +7,10 @@ import StableCoinServiceRequestModel, {
 import StableCoin from './domain/context/Hedera/StableCoin/StableCoin.js';
 import StableCoinRepository from './port/in/StableCoin/StableCoinRepository.js';
 import Account from './domain/context/Hedera/Account/Account.js';
+import Repository from './port/in/Repository.js';
 
-export { Account };
+export { Account, StableCoin, Repository };
+
 export interface ICreateStableCoinRequest {
 	account: Account;
 	name: string;
@@ -75,13 +77,8 @@ export class SDK {
 	public getListStableCoin(
 		request: IGetListStableCoinRequest,
 	): Promise<StableCoinList[]> | null {
-		try {
-			const req: StableCoinListServiceRequestModel = { ...request };
-			return this.stableCoinService.getListStableCoins(req);
-		} catch (error) {
-			console.error(error);
-			return null;
-		}
+		const req: StableCoinListServiceRequestModel = { ...request };
+		return this.stableCoinService.getListStableCoins(req);
 	}
 
 	/**
@@ -90,13 +87,8 @@ export class SDK {
 	public getStableCoin(
 		request: IGetStableCoinRequest,
 	): Promise<StableCoinDetail> | null {
-		try {
-			const req: IGetStableCoinRequest = { ...request };
-			return this.stableCoinService.getStableCoin(req);
-		} catch (error) {
-			console.error(error);
-			return null;
-		}
+		const req: IGetStableCoinRequest = { ...request };
+		return this.stableCoinService.getStableCoin(req);
 	}
 
 	/**
