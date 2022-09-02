@@ -2,7 +2,7 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/home/slb/workspaces/hedera-accelerator-stablecoin/contracts/contracts/extensions/IWipeable.sol": {
-      "lastModificationDate": 1662040636794,
+      "lastModificationDate": 1662103336020,
       "contentHash": "3caa284198f273d51e80c0a25e158447",
       "sourceName": "contracts/extensions/IWipeable.sol",
       "solcConfig": {
@@ -37,7 +37,7 @@
       ]
     },
     "/home/slb/workspaces/hedera-accelerator-stablecoin/contracts/contracts/extensions/Wipeable.sol": {
-      "lastModificationDate": 1662040636794,
+      "lastModificationDate": 1662103336020,
       "contentHash": "bd33c11e929880905f1845ff0ef50ec3",
       "sourceName": "contracts/extensions/Wipeable.sol",
       "solcConfig": {
@@ -119,7 +119,7 @@
       ]
     },
     "/home/slb/workspaces/hedera-accelerator-stablecoin/contracts/contracts/TokenOwner.sol": {
-      "lastModificationDate": 1662040404244,
+      "lastModificationDate": 1662103336020,
       "contentHash": "da55c2acd827e3832c10fcee5bc7ed40",
       "sourceName": "contracts/TokenOwner.sol",
       "solcConfig": {
@@ -156,7 +156,7 @@
       ]
     },
     "/home/slb/workspaces/hedera-accelerator-stablecoin/contracts/contracts/Roles.sol": {
-      "lastModificationDate": 1662040540064,
+      "lastModificationDate": 1662103336020,
       "contentHash": "a9cdd4b4cce724384f864e7c6b1b9ea9",
       "sourceName": "contracts/Roles.sol",
       "solcConfig": {
@@ -481,7 +481,7 @@
       ]
     },
     "/home/slb/workspaces/hedera-accelerator-stablecoin/contracts/contracts/ITokenOwner.sol": {
-      "lastModificationDate": 1662040404244,
+      "lastModificationDate": 1662103336020,
       "contentHash": "6912ad7efbf7d12eaa0afa6d8beec79c",
       "sourceName": "contracts/ITokenOwner.sol",
       "solcConfig": {
@@ -518,7 +518,7 @@
       ]
     },
     "/home/slb/workspaces/hedera-accelerator-stablecoin/contracts/contracts/HTSTokenOwner.sol": {
-      "lastModificationDate": 1662040540064,
+      "lastModificationDate": 1662103336020,
       "contentHash": "26160876c05f932a5f01083aebc791bb",
       "sourceName": "contracts/HTSTokenOwner.sol",
       "solcConfig": {
@@ -671,7 +671,7 @@
       ]
     },
     "/home/slb/workspaces/hedera-accelerator-stablecoin/contracts/contracts/IHTSTokenOwner.sol": {
-      "lastModificationDate": 1662040540064,
+      "lastModificationDate": 1662103336020,
       "contentHash": "9b1d8c6c058c94a6260287dfb5857171",
       "sourceName": "contracts/IHTSTokenOwner.sol",
       "solcConfig": {
@@ -811,7 +811,7 @@
       ]
     },
     "/home/slb/workspaces/hedera-accelerator-stablecoin/contracts/contracts/HederaERC20.sol": {
-      "lastModificationDate": 1662042412233,
+      "lastModificationDate": 1662103336020,
       "contentHash": "faeacb0a2b8065c973c71bdaf7b61c82",
       "sourceName": "contracts/HederaERC20.sol",
       "solcConfig": {
@@ -892,7 +892,7 @@
       ]
     },
     "/home/slb/workspaces/hedera-accelerator-stablecoin/contracts/contracts/extensions/Mintable.sol": {
-      "lastModificationDate": 1662040404244,
+      "lastModificationDate": 1662103336020,
       "contentHash": "22757aabd6d92dd706576bb9d414582f",
       "sourceName": "contracts/extensions/Mintable.sol",
       "solcConfig": {
