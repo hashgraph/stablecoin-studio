@@ -1,7 +1,6 @@
 import BaseEntity from '../../../BaseEntity.js';
 import Account from '../Account/Account.js';
-import InvalidDecimalRangeDomainError
-	from './error/InvalidDecimalRangeDomainError.js';
+import InvalidDecimalRangeDomainError from './error/InvalidDecimalRangeDomainError.js';
 
 export default class StableCoin extends BaseEntity {
 	/**
@@ -48,17 +47,30 @@ export default class StableCoin extends BaseEntity {
 		this._decimals = value;
 	}
 
+	/**
+	 * Id
+	 */
+	private _id: string | undefined;
+	public get id(): string | undefined {
+		return this._id;
+	}
+	public set id(value: string | undefined) {
+		this._id = value;
+	}
+
 	constructor(
 		admin: Account,
 		name: string,
 		symbol: string,
 		decimals: number,
+		id?: string | undefined,
 	) {
 		super();
 		this.admin = admin;
 		this.name = name;
 		this.symbol = symbol;
 		this.decimals = this.checkDecimals(decimals);
+		this.id = id;
 	}
 
 	private checkDecimals(value: number): number {

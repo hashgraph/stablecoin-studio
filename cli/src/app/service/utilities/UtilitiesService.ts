@@ -38,12 +38,20 @@ export default class UtilitiesService extends Service {
   }
 
   /**
+   * Function to create n break line
+   * @param n
+   */
+  public breakLine(n = 1): void {
+    console.log('\n'.repeat(n));
+  }
+
+  /**
    * Function to show spinner component
    * @param promise
    * @param options
    */
-  public async showSpinner(
-    promise: Promise<void>,
+  public async showSpinner<T>(
+    promise: Promise<T>,
     options: object,
   ): Promise<void> {
     const { oraPromise } = await import('ora');
@@ -115,16 +123,14 @@ export default class UtilitiesService extends Service {
   public async drawTableListStableCoin(data?: StableCoinList[]): Promise<void> {
     const table = new Table({
       style: { head: ['green'] },
-      head: ['Id', 'Symbol', 'Name', 'Balance'],
-      colWidths: [15, 20, 30, 20],
+      head: ['Id', 'Symbol'],
+      colWidths: [15, 20],
     });
 
     if (data) {
-      data.forEach((item) =>
-        table.push([item.id, item.symbol, item.name, item.balance]),
-      );
+      data.forEach((item) => table.push([item.id, item.symbol]));
     } else {
-      table.push(['-', '-', '-', '-']);
+      table.push(['-', '-']);
     }
 
     console.log(table.toString());
