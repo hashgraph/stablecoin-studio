@@ -25,7 +25,7 @@
 		"eslint-config-prettier": "~8.5",
 		"eslint-plugin-jest": "~26.2",
 		"format-imports": "^3.0.12",
-		"hedera-stable-coin-contracts": "file:../contracts",
+		"hedera-stable-coin-contracts": "file:../contracts/build",
 		"jest": "28.1",
 		"prettier": "~2.6",
 		"rimraf": "~3.0",
