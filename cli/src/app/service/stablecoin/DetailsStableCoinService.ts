@@ -15,7 +15,10 @@ export default class DetailsStableCoinsService extends Service {
   /**
    * List Stable Coins can be managed
    */
-  public async getDetailsStableCoins(id: string): Promise<void> {
+  public async getDetailsStableCoins(
+    id: string,
+    show = true,
+  ): Promise<void | StableCoinDetail> {
     // Call to list stable coins
     const sdk: SDK = new SDK();
 
@@ -33,8 +36,11 @@ export default class DetailsStableCoinsService extends Service {
       },
     );
 
-    console.log(respDetail);
-
-    utilsService.breakLine();
+    if (show) {
+      console.log(respDetail);
+      utilsService.breakLine();
+    } else {
+      return respDetail;
+    }
   }
 }
