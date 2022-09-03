@@ -30,7 +30,7 @@ export async function deployContractsWithSDK(name:string, symbol:string, decimal
   clientSdk.setOperator(account, privateKey);
 
   console.log(`Deploying ${HederaERC20__factory.name} contract... please wait.`);
-  let tokenContract = await deployContractSDK(HederaERC20__factory, 10, privateKey, clientSdk);
+  let tokenContract = await deployContractSDK(HederaERC20__factory, 12, privateKey, clientSdk);
 
   console.log(`Deploying ${HederaERC1967Proxy__factory.name} contract... please wait.`);
   let parameters = new ContractFunctionParameters()

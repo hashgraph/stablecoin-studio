@@ -9,6 +9,7 @@ import "../Roles.sol";
 abstract contract SupplierAdmin is ISupplierAdmin, AccessControlUpgradeable, TokenOwner, Roles {
 
     mapping(address => uint256) internal supplierAllowances;
+    mapping(address => bool) internal unlimitedSupplierAllowances;
 
     event SupplierAllowanceIncreased(address indexed sender, address indexed supplier, uint256 amount, uint256 oldAllowance, uint256 newAllowance);
     event SupplierAllowanceDecreased(address indexed sender, address indexed supplier, uint256 amount, uint256 oldAllowance, uint256 newAllowance);
@@ -22,23 +23,49 @@ abstract contract SupplierAdmin is ISupplierAdmin, AccessControlUpgradeable, Tok
         return supplierAllowances[supplier];
     }
 
-    function grantSupplierRole(address supplier)
+    function isUnlimitedSupplierAllowance(address supplier) 
+        external 
+        view 
+        returns (bool) 
+    {
+        return unlimitedSupplierAllowances[supplier];
+    }
+
+    function grantSupplierRole(address supplier, uint256 amount)
         external 
         virtual 
-        onlyRole(ADMIN_SUPPLIER_ROLE) {
+        onlyRole(ADMIN_SUPPLIER_ROLE) 
+    {
+        supplierAllowances[supplier] = amount;
+        _grantRole(SUPPLIER_ROLE, supplier);
+    }
 
-        supplierAllowances[supplier] = 0;
+    function grantUnlimitedSupplierRole(address supplier)
+        public 
+        virtual 
+        onlyRole(ADMIN_SUPPLIER_ROLE) 
+    {
+        unlimitedSupplierAllowances[supplier] = true;
         _grantRole(SUPPLIER_ROLE, supplier);
     }
 
     function revokeSupplierRole(address supplier)
         external 
         virtual 
-        onlyRole(ADMIN_SUPPLIER_ROLE) {
-
+        onlyRole(ADMIN_SUPPLIER_ROLE) 
+    {
         supplierAllowances[supplier] = 0;
         _revokeRole(SUPPLIER_ROLE, supplier);
     }
+
+    function revokeUnlimitedSupplierRole(address supplier)
+        external 
+        virtual 
+        onlyRole(ADMIN_SUPPLIER_ROLE) 
+    {
+        unlimitedSupplierAllowances[supplier] = false;
+        _revokeRole(SUPPLIER_ROLE, supplier);
+    }    
 
     function resetSupplierAllowance(address supplier) 
         external 
@@ -81,4 +108,17 @@ abstract contract SupplierAdmin is ISupplierAdmin, AccessControlUpgradeable, Tok
     
         emit SupplierAllowanceDecreased(msg.sender, supplier, amount, oldAllowance, newAllowance);
     }    
+
+    function supplierAllowanceIsSufficient(address supplier, uint256 amount) 
+        public
+        virtual
+        returns (bool)
+    {
+        if (unlimitedSupplierAllowances[supplier]) {
+            return true;
+        } else {
+            uint256 allowance = supplierAllowances[supplier];
+            return allowance >= amount;
+        }
+    }
 }
