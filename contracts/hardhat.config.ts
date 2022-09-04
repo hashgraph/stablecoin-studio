@@ -3,11 +3,24 @@ import "@hashgraph/hardhat-hethers";
 import "@hashgraph/sdk";
 import { PrivateKey } from "@hashgraph/sdk";
 require('hardhat-abi-exporter');
-
-require('hardhat-abi-exporter');
+require("hardhat-contract-sizer");
 
 module.exports = {
-  solidity: "0.8.10",
+  solidity: {
+    version: "0.8.10",
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 100,
+      },
+    },
+  },
+  contractSizer: {
+    alphaSort: true,
+    disambiguatePaths: false,
+    runOnCompile: true,
+    strict: true,
+  },  
   defaultNetwork: "testnet", // The selected default network. It has to match the name of one of the configured networks.
   hedera: {
     gasLimit: 300000, // Default gas limit. It is added to every contract transaction, but can be overwritten if required.
