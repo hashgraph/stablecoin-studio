@@ -109,16 +109,14 @@ abstract contract SupplierAdmin is ISupplierAdmin, AccessControlUpgradeable, Tok
         emit SupplierAllowanceDecreased(msg.sender, supplier, amount, oldAllowance, newAllowance);
     }    
 
-    function supplierAllowanceIsSufficient(address supplier, uint256 amount) 
+    function controlAllowanceAmount(address supplier, uint256 amount) 
         public
         virtual
-        returns (bool)
     {
-        if (unlimitedSupplierAllowances[supplier]) {
-            return true;
-        } else {
+        if (!unlimitedSupplierAllowances[supplier]) {
             uint256 allowance = supplierAllowances[supplier];
-            return allowance >= amount;
+            require(allowance >= amount, "Amount must not exceed the supplier allowance");
+            supplierAllowances[supplier] = allowance - amount;
         }
     }
 }

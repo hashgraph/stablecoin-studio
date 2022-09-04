@@ -16,7 +16,7 @@ abstract contract Mintable is IMintable, AccessControlUpgradeable, TokenOwner, R
         onlyRole(SUPPLIER_ROLE)  
         returns (bool) 
     {         
-        require(supplierAllowanceIsSufficient(msg.sender, amount), "Amount must not exceed the supplier allowance");
+        controlAllowanceAmount(msg.sender, amount);
         (bool success) = HTSTokenOwner(_getTokenOwnerAddress()).mintToken(_getTokenAddress(), amount);
         require(success, "Minting error");
         return _transfer(_getTokenOwnerAddress(), account, amount);

@@ -1,9 +1,9 @@
-import { ContractFunctionParameters, ContractId, AccountId } from "@hashgraph/sdk";
+import { ContractId, AccountId } from "@hashgraph/sdk";
 require("@hashgraph/hardhat-hethers");
 require("@hashgraph/sdk");
 
 import { expect } from "chai";
-import { deployContractsWithSDK, contractCall, getClient, createECDSAAccount } from "../scripts/utils";
+import { deployContractsWithSDK, contractCall, getClient } from "../scripts/utils";
 import { HederaERC20__factory } from "../typechain-types";
 
 const hre = require("hardhat");
@@ -57,8 +57,6 @@ describe("Grant supplier role", function() {
     await contractCall(ContractId.fromString(proxyAddress), 'grantSupplierRole', params, client, 130000, HederaERC20__factory.abi);
   });
   it("An account with supplier role and an allowance of 100 tokens can cash in 100 tokens", async function() {
-    //let params : any = [AccountId.fromString(hreConfig.accounts[1].account!).toSolidityAddress(), 100000];  
-    //await contractCall(ContractId.fromString(proxyAddress), 'increaseSupplierAllowance', params, client, 130000, HederaERC20__factory.abi);
     const client2 = getClient();
     client2.setOperator(hreConfig.accounts[1].account!, hreConfig.accounts[1].privateKey!);        
     let params : any = [AccountId.fromString(hreConfig.accounts[1].account!).toSolidityAddress()];  
@@ -71,8 +69,6 @@ describe("Grant supplier role", function() {
     expect(result[0]).to.equals(true);  
   });  
   it("An account with supplier role and an allowance of 90 tokens can not cash in 91 tokens", async function() {
-    //let params : any = [AccountId.fromString(hreConfig.accounts[1].account!).toSolidityAddress(), 90000];  
-    //await contractCall(ContractId.fromString(proxyAddress), 'increaseSupplierAllowance', params, client, 130000, HederaERC20__factory.abi);
     let params : any = [AccountId.fromString(hreConfig.accounts[1].account!).toSolidityAddress(), 10000];  
     await contractCall(ContractId.fromString(proxyAddress), 'decreaseSupplierAllowance', params, client, 130000, HederaERC20__factory.abi);    
     const client2 = getClient();
@@ -83,8 +79,6 @@ describe("Grant supplier role", function() {
     await expect(contractCall(ContractId.fromString(proxyAddress), 'mint', params, client, 400000, HederaERC20__factory.abi)).to.be.throw;  
   });    
   it("An account with supplier role and an allowance of 100 tokens can not cash more than maxSupply tokens", async function() {
-    //let params : any = [AccountId.fromString(hreConfig.accounts[1].account!).toSolidityAddress(), 101000];  
-    //await contractCall(ContractId.fromString(proxyAddress), 'increaseSupplierAllowance', params, client, 130000, HederaERC20__factory.abi);
     let params : any = [AccountId.fromString(hreConfig.accounts[1].account!).toSolidityAddress(), 1000];  
     await contractCall(ContractId.fromString(proxyAddress), 'increaseSupplierAllowance', params, client, 130000, HederaERC20__factory.abi);
     const client2 = getClient();
@@ -107,7 +101,17 @@ describe("Grant supplier role", function() {
     params = [AccountId.fromString(hreConfig.accounts[1].account!).toSolidityAddress()];  
     let result = await contractCall(ContractId.fromString(proxyAddress), 'supplierAllowance', params, client, 60000, HederaERC20__factory.abi);
     expect(Number(result[0])).to.eq(0);
-  });          
+  });   
+  it("An account with supplier role and an allowance of 100 tokens, can mint 90 tokens but, later on, cannot mint 11 tokens", async function() {
+    const client2 = getClient();
+    client2.setOperator(hreConfig.accounts[1].account!, hreConfig.accounts[1].privateKey!);        
+    let params : any = [AccountId.fromString(hreConfig.accounts[1].account!).toSolidityAddress()];  
+    await contractCall(ContractId.fromString(proxyAddress), 'associateToken', params, client2, 1800000, HederaERC20__factory.abi);    
+    params = [AccountId.fromString(hreConfig.accounts[1].account!).toSolidityAddress(), 90000];  
+    await contractCall(ContractId.fromString(proxyAddress), 'mint', params, client2, 400000, HederaERC20__factory.abi);
+    params = [AccountId.fromString(hreConfig.accounts[1].account!).toSolidityAddress(), 11000];  
+    await expect(contractCall(ContractId.fromString(proxyAddress), 'mint', params, client2, 400000, HederaERC20__factory.abi)).to.be.throw;  
+  });           
 });
 
 describe("Revoke supplier role", function() {

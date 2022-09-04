@@ -12,5 +12,5 @@ interface ISupplierAdmin {
     function resetSupplierAllowance(address supplier) external;
     function increaseSupplierAllowance(address supplier, uint256 amount) external; 
     function decreaseSupplierAllowance(address supplier, uint256 amount) external;
-    function supplierAllowanceIsSufficient(address supplier, uint256 amount) external virtual returns (bool);
+    function controlAllowanceAmount(address supplier, uint256 amount) external virtual;
 }

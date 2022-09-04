@@ -1,6 +1,6 @@
 import { TokenCreateTransaction,DelegateContractId, Hbar,  Client,  AccountId, PrivateKey, ContractFunctionParameters,
   PublicKey, ContractCreateTransaction, FileCreateTransaction, FileAppendTransaction, TokenId, TokenSupplyType,
-  ContractExecuteTransaction, AccountCreateTransaction } from "@hashgraph/sdk";
+  ContractExecuteTransaction } from "@hashgraph/sdk";
 
 import { HederaERC20__factory, HTSTokenOwner__factory, HederaERC1967Proxy__factory } from "../typechain-types";
 
@@ -21,11 +21,6 @@ export async function deployContractsWithSDK(name:string, symbol:string, decimal
   const privateKey = hreConfig.accounts[0].privateKey;
   const publicKey = hreConfig.accounts[0].publicKey;
 
-  //let account    = process.env.OPERATOR_ID;
-  //let privateKey = process.env.OPERATOR_PRIVATE_KEY;
-  //let publicKey  = process.env.OPERATOR_PUBLIC_KEY;                                      
-
-  //const clientSdk = getClient(account!, privateKey!);
   const clientSdk = getClient();   
   clientSdk.setOperator(account, privateKey);
 
@@ -106,16 +101,6 @@ function decodeFunctionResult(abi:any, functionName:any, resultAsBytes:any) {
   
   return jsonParsedArray;
 }
-
-/*export function getClient2(account:string, privateKey:string) {
-  const network = process.env.HEDERA_NETWORK;
-  const client = Client.forName(network!);
-  client.setOperator(
-    account,
-    privateKey
-  );
-  return client;
-}*/
 
 export function getClient() {
   switch (hre.network.name) {
@@ -264,30 +249,3 @@ async function fileCreate(
   const fileAppendRx = await fileAppendSubmit.getReceipt(clientOperator);
   return bytecodeFileId;
 };
-
-export async function createECDSAAccount(client:any, amount:number) {
-  let privateECDSAKey;
-
-  do {
-      privateECDSAKey = PrivateKey.generateECDSA();
-    } while (privateECDSAKey.toStringRaw().length < 64);
-
-  const response = await new AccountCreateTransaction()
-  .setKey(privateECDSAKey)
-  .setInitialBalance(new Hbar(amount))
-  .setNodeAccountIds([
-    AccountId.fromString('0.0.3'),
-    AccountId.fromString('0.0.5'),
-    AccountId.fromString('0.0.6'),
-    AccountId.fromString('0.0.7'),
-    AccountId.fromString('0.0.8'),
-    AccountId.fromString('0.0.9')
-  ])
-  .execute(client);
-  const receipt = await response.getReceipt(client);
-  const account = receipt.accountId;
-  let accountId = account!.toString();
-  let privateKey = '0x'.concat(privateECDSAKey.toStringRaw());
-  return { accountId, privateKey, privateECDSAKey };
-}
-
