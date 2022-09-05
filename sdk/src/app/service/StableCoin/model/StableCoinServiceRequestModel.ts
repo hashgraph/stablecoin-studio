@@ -1,4 +1,4 @@
-import Account from '../../../../domain/context/Hedera/Account/Account.js';
+import Account from '../../../../domain/context/hedera/account/Account.js';
 
 export default class StableCoinServiceRequestModel {
 	public account: Account;

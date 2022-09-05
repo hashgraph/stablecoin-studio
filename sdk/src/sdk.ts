@@ -8,9 +8,9 @@ import ContractsService from './app/service/contract/ContractsService.js';
 import StableCoinListServiceRequestModel from './app/service/stablecoin/model/StableCoinListServiceRequestModel.js';
 import StableCoinServiceRequestModel from './app/service/stablecoin/model/StableCoinServiceRequestModel.js';
 import StableCoinService from './app/service/stablecoin/StableCoinService.js';
-import { IStableCoinDetail } from './domain/context/hedera/stablecoin/interface/IStableCoinDetail.js';
 import StableCoin from './domain/context/hedera/stablecoin/StableCoin.js';
 import StableCoinRepository from './port/in/stablecoin/StableCoinRepository.js';
+import IStableCoinDetail from './domain/context/hedera/stablecoin/interface/IStableCoinDetail.js';
 
 export class SDK {
 	private utilsService: UtilitiesService;

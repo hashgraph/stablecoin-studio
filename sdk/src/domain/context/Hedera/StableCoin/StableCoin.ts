@@ -1,5 +1,5 @@
 import BaseEntity from '../../../BaseEntity.js';
-import Account from '../Account/Account.js';
+import Account from '../account/Account.js';
 import InvalidDecimalRangeDomainError from './error/InvalidDecimalRangeDomainError.js';
 
 export default class StableCoin extends BaseEntity {
