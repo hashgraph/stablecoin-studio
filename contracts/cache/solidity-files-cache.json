@@ -445,8 +445,8 @@
       ]
     },
     "/home/adrian/HEDERA/Test/hedera-accelerator-stablecoin/contracts/contracts/Roles.sol": {
-      "lastModificationDate": 1662382339363,
-      "contentHash": "6c4b897a418a5cff953a082f4a16aa47",
+      "lastModificationDate": 1662383402499,
+      "contentHash": "334de86ac2b88497e24bf267f16134ef",
       "sourceName": "contracts/Roles.sol",
       "solcConfig": {
         "version": "0.8.10",
@@ -888,8 +888,8 @@
       ]
     },
     "/home/adrian/HEDERA/Test/hedera-accelerator-stablecoin/contracts/contracts/HederaERC20.sol": {
-      "lastModificationDate": 1662382672824,
-      "contentHash": "3f747e709eb3bc36794b25cb5385d2fa",
+      "lastModificationDate": 1662384732930,
+      "contentHash": "660021f5ae11547071570db88ace73f8",
       "sourceName": "contracts/HederaERC20.sol",
       "solcConfig": {
         "version": "0.8.10",
@@ -974,8 +974,8 @@
       ]
     },
     "/home/adrian/HEDERA/Test/hedera-accelerator-stablecoin/contracts/contracts/extensions/Rescatable.sol": {
-      "lastModificationDate": 1662381399626,
-      "contentHash": "1bf6b67aa52908d442da3cffdfb55f2d",
+      "lastModificationDate": 1662383409315,
+      "contentHash": "81d7139c66608e7050e29843dc37c3ab",
       "sourceName": "contracts/extensions/Rescatable.sol",
       "solcConfig": {
         "version": "0.8.10",

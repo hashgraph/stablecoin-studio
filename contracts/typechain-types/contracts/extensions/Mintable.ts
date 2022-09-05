@@ -31,7 +31,7 @@ export interface MintableInterface extends utils.Interface {
   functions: {
     "ADMIN_SUPPLIER_ROLE()": FunctionFragment;
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
-    "ROLE_RESCUE()": FunctionFragment;
+    "RESCUE_ROLE()": FunctionFragment;
     "SUPPLIER_ROLE()": FunctionFragment;
     "WIPE_ROLE()": FunctionFragment;
     "controlAllowanceAmount(address,uint256)": FunctionFragment;
@@ -60,7 +60,7 @@ export interface MintableInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "ADMIN_SUPPLIER_ROLE"
       | "DEFAULT_ADMIN_ROLE"
-      | "ROLE_RESCUE"
+      | "RESCUE_ROLE"
       | "SUPPLIER_ROLE"
       | "WIPE_ROLE"
       | "controlAllowanceAmount"
@@ -94,7 +94,7 @@ export interface MintableInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "ROLE_RESCUE",
+    functionFragment: "RESCUE_ROLE",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -192,7 +192,7 @@ export interface MintableInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "ROLE_RESCUE",
+    functionFragment: "RESCUE_ROLE",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -407,7 +407,7 @@ export interface Mintable extends BaseContract {
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-    ROLE_RESCUE(overrides?: CallOverrides): Promise<[string]>;
+    RESCUE_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     SUPPLIER_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
@@ -522,7 +522,7 @@ export interface Mintable extends BaseContract {
 
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
-  ROLE_RESCUE(overrides?: CallOverrides): Promise<string>;
+  RESCUE_ROLE(overrides?: CallOverrides): Promise<string>;
 
   SUPPLIER_ROLE(overrides?: CallOverrides): Promise<string>;
 
@@ -637,7 +637,7 @@ export interface Mintable extends BaseContract {
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    ROLE_RESCUE(overrides?: CallOverrides): Promise<string>;
+    RESCUE_ROLE(overrides?: CallOverrides): Promise<string>;
 
     SUPPLIER_ROLE(overrides?: CallOverrides): Promise<string>;
 
@@ -834,7 +834,7 @@ export interface Mintable extends BaseContract {
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
-    ROLE_RESCUE(overrides?: CallOverrides): Promise<BigNumber>;
+    RESCUE_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     SUPPLIER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -954,7 +954,7 @@ export interface Mintable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    ROLE_RESCUE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    RESCUE_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     SUPPLIER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

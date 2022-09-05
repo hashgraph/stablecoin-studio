@@ -231,7 +231,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "ROLE_RESCUE",
+    name: "RESCUE_ROLE",
     outputs: [
       {
         internalType: "bytes32",

@@ -4,7 +4,7 @@ require("@hashgraph/sdk");
 
 import { expect} from "chai";
 
-import { deployContractsWithSDK, contractCall, getClient, createECDSAAccount } from "../scripts/utils";
+import { deployContractsWithSDK, contractCall, getClient } from "../scripts/utils";
 import { HederaERC20__factory } from "../typechain-types";
 
 const hre = require("hardhat"); 
