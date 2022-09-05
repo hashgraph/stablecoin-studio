@@ -56,16 +56,6 @@ contract HTSTokenOwner is IHTSTokenOwner, HederaTokenService {
         return _checkResponse(transferResponse);
     }
 
-    function transfer(address tokenAddress,address to, uint256 amount) 
-        external 
-        onlyHederaERC20() 
-        returns (bool) 
-    {
-        address tokenAddress = tokenAddress;
-        int256 transferResponse = HederaTokenService.transferToken(tokenAddress, address(this), to, int64(int256(amount)));
-        return _checkResponse(transferResponse);
-    }
-
     function wipeToken(address tokenAddress, address account, uint32 amount) 
         external 
         onlyHederaERC20() 
