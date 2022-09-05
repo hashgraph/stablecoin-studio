@@ -1,4 +1,4 @@
-import { ContractFunctionParameters, ContractId, AccountId} from "@hashgraph/sdk";
+const { ContractFunctionParameters, ContractId, AccountId} = require("@hashgraph/sdk");
 
 import { expect } from "chai";
 import { deployContractsWithSDK, getClient, contractCall } from "../scripts/utils";
@@ -8,7 +8,7 @@ const hre = require("hardhat");
 const hreConfig = hre.network.config;
 
 describe("General ERC20", function() {
-  let deployedProxyAddress: ContractId | null;
+  let deployedProxyAddress: typeof ContractId | null;
   let account;
   let privateKey;
     

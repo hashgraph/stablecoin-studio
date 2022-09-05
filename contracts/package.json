@@ -10,7 +10,13 @@
     "test:testnet": "npx hardhat test --network testnet",
     "test:mintable": "npx hardhat test test/mintable.ts",
     "test:testnet:mintable": "npx hardhat test --network testnet test/mintable.ts",
-    "size": "npx hardhat size-contracts"
+    "size": "npx hardhat size-contracts",
+    "build": "rimraf build && npx tsc -p tsconfig.json",
+		"build:types": "npx tsc -p tsconfig.json --emitDeclarationOnly",
+		"build:tsc": "rm -rf build && npx tsc -p tsconfig.json",
+		"build:watch": "npx tsc -w -p tsconfig.json",
+		"build:release": "npm run clean && tsc -p tsconfig.release.json",
+    "preinstall": "npm run build"    
   },
   "author": "",
   "license": "ISC",
