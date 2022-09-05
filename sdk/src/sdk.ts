@@ -11,11 +11,13 @@ import { IContractsRequest } from './port/out/sdk/request/IRequestContracts';
 import IStableCoinList from './port/out/sdk/response/IStableCoinList.js';
 import Account from './domain/context/hedera/account/Account.js';
 import UtilitiesService from './app/service/utility/UtilitiesService.js';
+import ContractsService from './app/service/contract/ContractsService.js';
 
 export { Account };
 
 export class SDK {
 	private utilsService: UtilitiesService;
+	private contractsService: ContractsService;
 	private stableCoinRepository: StableCoinRepository;
 	private stableCoinService: StableCoinService;
 
@@ -27,8 +29,12 @@ export class SDK {
 	// Initializes the SDK,
 	// TODO should probably be decoupled from the dependency injection
 	private init(): void {
+		this.contractsService = new ContractsService();
 		this.utilsService = new UtilitiesService();
-		this.stableCoinRepository = new StableCoinRepository(this.utilsService);
+		this.stableCoinRepository = new StableCoinRepository(
+			this.utilsService,
+			this.contractsService,
+		);
 		this.stableCoinService = new StableCoinService(
 			this.stableCoinRepository,
 		);

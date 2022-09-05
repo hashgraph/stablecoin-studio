@@ -14,9 +14,10 @@ export default class StableCoinRepository extends Repository<StableCoin> {
 	private utilsService: UtilitiesService;
 	private contractsService: ContractsService;
 
-	constructor(utilsService: UtilitiesService) {
+	constructor(utilsService: UtilitiesService, contractsService: ContractsService) {
 		super();
 		this.utilsService = utilsService;
+		this.contractsService = contractsService;
 	}
 
 	public saveCoin(coin: StableCoin): StableCoin {
