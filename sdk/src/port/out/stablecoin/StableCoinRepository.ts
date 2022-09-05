@@ -3,7 +3,7 @@ import UtilitiesService from '../../../app/service/utility/UtilitiesService.js';
 import Repository from '../Repository.js';
 import { HederaERC20__factory } from 'hedera-stable-coin-contracts/typechain-types';
 import ContractsService from '../../../app/service/contract/ContractsService.js';
-import IStableCoinList from 'port/out/sdk/response/IStableCoinList.js';
+import IStableCoinList from 'port/in/sdk/response/IStableCoinList.js';
 import ITokenList from '../../../domain/context/hedera/stablecoin/ITokenList.js';
 import IStableCoinDetail from '../../../domain/context/hedera/stablecoin/IStableCoinDetail.js';
 import StableCoin from '../../../domain/context/hedera/stablecoin/StableCoin.js';

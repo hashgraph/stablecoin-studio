@@ -1,9 +1,9 @@
 import { SDK } from '../src/index';
-import { IContractsRequest } from '../src/port/out/sdk/request/IRequestContracts';
-import { IGetStableCoinRequest } from '../src/port/out/sdk/request/IGetStableCoinRequest';
-import { IGetListStableCoinRequest } from '../src/port/out/sdk/request/IGetListStableCoinRequest';
-import { ICreateStableCoinRequest } from '../src/port/out/sdk/request/ICreateStableCoinRequest.js';
-import Repository from '../src/port/in/Repository.js';
+import { IContractsRequest } from '../src/port/in/sdk/request/IRequestContracts';
+import { IGetStableCoinRequest } from '../src/port/in/sdk/request/IGetStableCoinRequest';
+import { IGetListStableCoinRequest } from '../src/port/in/sdk/request/IGetListStableCoinRequest';
+import { ICreateStableCoinRequest } from '../src/port/in/sdk/request/ICreateStableCoinRequest.js';
+import Repository from '../src/port/out/Repository.js';
 import StableCoin from '../src/domain/context/hedera/stablecoin/StableCoin.js';
 import Account from '../src/domain/context/hedera/account/Account.js';
 

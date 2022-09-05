@@ -1,10 +1,10 @@
 import Service from '../Service.js';
 import StableCoinServiceRequestModel from './model/StableCoinServiceRequestModel.js';
 import StableCoinListServiceRequestModel from './model/StableCoinListServiceRequestModel.js';
-import IStableCoinDetail from '../../../domain/context/hedera/stablecoin/interface/IStableCoinDetail.js';
+import IStableCoinDetail from '../../../domain/context/hedera/stablecoin/IStableCoinDetail.js';
 import StableCoin from '../../../domain/context/hedera/stablecoin/StableCoin.js';
-import StableCoinRepository from '../../../port/in/stablecoin/StableCoinRepository.js';
-import IStableCoinList from '../../../port/out/sdk/response/IStableCoinList.js';
+import StableCoinRepository from '../../../port/out/stablecoin/StableCoinRepository.js';
+import IStableCoinList from '../../../port/in/sdk/response/IStableCoinList.js';
 
 export default class StableCoinService extends Service {
 	private repository: StableCoinRepository;

@@ -1,15 +1,15 @@
-import { ICreateStableCoinRequest } from './port/out/sdk/request/ICreateStableCoinRequest';
-import { IGetListStableCoinRequest } from './port/out/sdk/request/IGetListStableCoinRequest';
-import { IGetStableCoinRequest } from './port/out/sdk/request/IGetStableCoinRequest';
-import { IContractsRequest } from './port/out/sdk/request/IRequestContracts';
-import IStableCoinList from './port/out/sdk/response/IStableCoinList.js';
+import { ICreateStableCoinRequest } from './port/in/sdk/request/ICreateStableCoinRequest';
+import { IGetListStableCoinRequest } from './port/in/sdk/request/IGetListStableCoinRequest';
+import { IGetStableCoinRequest } from './port/in/sdk/request/IGetStableCoinRequest';
+import { IContractsRequest } from './port/in/sdk/request/IRequestContracts';
+import IStableCoinList from './port/in/sdk/response/IStableCoinList.js';
 import UtilitiesService from './app/service/utility/UtilitiesService.js';
 import ContractsService from './app/service/contract/ContractsService.js';
 import StableCoinListServiceRequestModel from './app/service/stablecoin/model/StableCoinListServiceRequestModel.js';
 import StableCoinServiceRequestModel from './app/service/stablecoin/model/StableCoinServiceRequestModel.js';
 import StableCoinService from './app/service/stablecoin/StableCoinService.js';
 import StableCoin from './domain/context/hedera/stablecoin/StableCoin.js';
-import StableCoinRepository from './port/in/stablecoin/StableCoinRepository.js';
+import StableCoinRepository from './port/out/stablecoin/StableCoinRepository.js';
 import IStableCoinDetail from './domain/context/hedera/stablecoin/IStableCoinDetail.js';
 import Account from './domain/context/hedera/account/Account.js';
 
