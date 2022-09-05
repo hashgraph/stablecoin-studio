@@ -8,7 +8,6 @@ import {
 import axios from 'axios';
 import UtilitiesService from '../Utilities/UtilitiesService.js';
 import { HederaERC20__factory } from 'hedera-stable-coin-contracts/typechain-types';
-import ContractsService from '../Contracts/ContractsService.js';
 
 export interface Token {
 	symbol: string;
@@ -173,11 +172,11 @@ export default class StableCoinService extends Service {
 		treasuryId: string,
 		privateKey: string,
 		accountId: string,
-	): Promise<Uint8Array> {
+	): Promise<[]> {
 		const { AccountId } = require('@hashgraph/sdk');
-		const contracts = new ContractsService();
+		const utils = new UtilitiesService();
 
-		const clientSdk = contracts.getClient('testnet');
+		const clientSdk = utils.getClient('testnet');
 		clientSdk.setOperator(accountId, privateKey);
 
 		const parameters = [
@@ -192,17 +191,17 @@ export default class StableCoinService extends Service {
 			abi: HederaERC20__factory.abi,
 		};
 
-		return await contracts.callContract('balanceOf', params);
+		return await utils.callContract('balanceOf', params);
 	}
 
 	public async getNameToken(
 		treasuryId: string,
 		privateKey: string,
 		accountId: string,
-	): Promise<Uint8Array> {
-		const contracts = new ContractsService();
+	): Promise<[]> {
+		const utils = new UtilitiesService();
 
-		const clientSdk = contracts.getClient('testnet');
+		const clientSdk = utils.getClient('testnet');
 		clientSdk.setOperator(accountId, privateKey);
 
 		const params = {
@@ -213,7 +212,7 @@ export default class StableCoinService extends Service {
 			abi: HederaERC20__factory.abi,
 		};
 
-		return await contracts.callContract('name', params);
+		return await utils.callContract('name', params);
 	}
 
 	public async cashIn(
@@ -221,11 +220,11 @@ export default class StableCoinService extends Service {
 		privateKey: string,
 		accountId: string,
 		amount = 1000,
-	): Promise<Uint8Array> {
+	): Promise<[]> {
 		const { AccountId } = require('@hashgraph/sdk');
-		const contracts = new ContractsService();
+		const utils = new UtilitiesService();
 
-		const clientSdk = contracts.getClient('testnet');
+		const clientSdk = utils.getClient('testnet');
 		clientSdk.setOperator(accountId, privateKey);
 		const parameters = [
 			AccountId.fromString(accountId || '').toSolidityAddress(),
@@ -240,18 +239,18 @@ export default class StableCoinService extends Service {
 			abi: HederaERC20__factory.abi,
 		};
 
-		return await contracts.callContract('mint', params);
+		return await utils.callContract('mint', params);
 	}
 
 	public async associateToken(
 		treasuryId: string,
 		privateKey: string,
 		accountId: string,
-	): Promise<Uint8Array> {
+	): Promise<[]> {
 		const { AccountId } = require('@hashgraph/sdk');
-		const contracts = new ContractsService();
+		const utils = new UtilitiesService();
 
-		const clientSdk = contracts.getClient('testnet');
+		const clientSdk = utils.getClient('testnet');
 		clientSdk.setOperator(accountId, privateKey);
 		const parameters = [
 			AccountId.fromString(accountId || '').toSolidityAddress(),
@@ -265,7 +264,7 @@ export default class StableCoinService extends Service {
 			abi: HederaERC20__factory.abi,
 		};
 
-		return await contracts.callContract('associateToken', params);
+		return await utils.callContract('associateToken', params);
 	}
 
 	public async wipe(
@@ -273,11 +272,11 @@ export default class StableCoinService extends Service {
 		privateKey: string,
 		accountId: string,
 		amount = 1000,
-	): Promise<Uint8Array> {
+	): Promise<[]> {
 		const { AccountId } = require('@hashgraph/sdk');
-		const contracts = new ContractsService();
+		const utils = new UtilitiesService();
 
-		const clientSdk = contracts.getClient('testnet');
+		const clientSdk = utils.getClient('testnet');
 		clientSdk.setOperator(accountId, privateKey);
 		const parameters = [
 			AccountId.fromString(accountId || '').toSolidityAddress(),
@@ -292,6 +291,6 @@ export default class StableCoinService extends Service {
 			abi: HederaERC20__factory.abi,
 		};
 
-		return await contracts.callContract('wipe', params);
+		return await utils.callContract('wipe', params);
 	}
 }
