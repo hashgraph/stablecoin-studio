@@ -3,17 +3,11 @@ import StableCoinRepository from '../../../port/in/stablecoin/StableCoinReposito
 import Service from '../Service.js';
 import StableCoinServiceRequestModel from './model/StableCoinServiceRequestModel.js';
 import StableCoinListServiceRequestModel from './model/StableCoinListServiceRequestModel.js';
-import axios from 'axios';
-import UtilitiesService from '../utility/UtilitiesService.js';
-import { HederaERC20__factory } from 'hedera-stable-coin-contracts/typechain-types';
 import IStableCoinList from '../../../domain/context/hedera/stablecoin/interface/IStableCoinList.js';
-import ITokenList from '../../../domain/context/hedera/stablecoin/interface/ITokenList.js';
 import { IStableCoinDetail } from '../../../domain/context/hedera/stablecoin/interface/IStableCoinDetail.js';
 
 export default class StableCoinService extends Service {
 	private repository: StableCoinRepository;
-
-	private URI_BASE = 'https://testnet.mirrornode.hedera.com/api/v1/';
 
 	constructor(repository: StableCoinRepository) {
 		super();
