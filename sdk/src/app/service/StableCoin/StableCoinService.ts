@@ -7,7 +7,6 @@ import {
 } from './StableCoinServiceRequestModel.js';
 import axios from 'axios';
 import UtilitiesService from '../Utilities/UtilitiesService.js';
-import { getClient } from 'hedera-stable-coin-contracts/scripts/utils';
 import { HederaERC20__factory } from 'hedera-stable-coin-contracts/typechain-types';
 
 export interface Token {
@@ -177,7 +176,8 @@ export default class StableCoinService extends Service {
 		const { AccountId } = require('@hashgraph/sdk');
 		const utils = new UtilitiesService();
 
-		const clientSdk = getClient(accountId, privateKey);
+		const clientSdk = utils.getClient('testnet');
+		clientSdk.setOperator(accountId, privateKey);
 
 		const parameters = [
 			AccountId.fromString(accountId || '').toSolidityAddress(),
@@ -201,7 +201,8 @@ export default class StableCoinService extends Service {
 	): Promise<[]> {
 		const utils = new UtilitiesService();
 
-		const clientSdk = getClient(accountId, privateKey);
+		const clientSdk = utils.getClient('testnet');
+		clientSdk.setOperator(accountId, privateKey);
 
 		const params = {
 			treasuryId,
@@ -223,7 +224,8 @@ export default class StableCoinService extends Service {
 		const { AccountId } = require('@hashgraph/sdk');
 		const utils = new UtilitiesService();
 
-		const clientSdk = getClient(accountId, privateKey);
+		const clientSdk = utils.getClient('testnet');
+		clientSdk.setOperator(accountId, privateKey);
 		const parameters = [
 			AccountId.fromString(accountId || '').toSolidityAddress(),
 			amount,
@@ -248,7 +250,8 @@ export default class StableCoinService extends Service {
 		const { AccountId } = require('@hashgraph/sdk');
 		const utils = new UtilitiesService();
 
-		const clientSdk = getClient(accountId, privateKey);
+		const clientSdk = utils.getClient('testnet');
+		clientSdk.setOperator(accountId, privateKey);
 		const parameters = [
 			AccountId.fromString(accountId || '').toSolidityAddress(),
 		];
@@ -273,7 +276,8 @@ export default class StableCoinService extends Service {
 		const { AccountId } = require('@hashgraph/sdk');
 		const utils = new UtilitiesService();
 
-		const clientSdk = getClient(accountId, privateKey);
+		const clientSdk = utils.getClient('testnet');
+		clientSdk.setOperator(accountId, privateKey);
 		const parameters = [
 			AccountId.fromString(accountId || '').toSolidityAddress(),
 			amount,
