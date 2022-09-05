@@ -4,11 +4,11 @@ import StableCoin from './domain/context/hedera/stablecoin/StableCoin.js';
 import StableCoinRepository from './port/in/stablecoin/StableCoinRepository.js';
 import StableCoinListServiceRequestModel from './app/service/stablecoin/model/StableCoinListServiceRequestModel.js';
 import { IStableCoinDetail } from './domain/context/hedera/stablecoin/interface/IStableCoinDetail.js';
-import { ICreateStableCoinRequest } from './port/out/request/ICreateStableCoinRequest';
-import { IGetListStableCoinRequest } from './port/out/request/IGetListStableCoinRequest';
-import { IGetStableCoinRequest } from './port/out/request/IGetStableCoinRequest';
-import { IRequestContracts } from './port/out/request/IRequestContracts';
-import IStableCoinList from './port/out/request/IStableCoinList.js';
+import { ICreateStableCoinRequest } from './port/out/sdk/request/ICreateStableCoinRequest';
+import { IGetListStableCoinRequest } from './port/out/sdk/request/IGetListStableCoinRequest';
+import { IGetStableCoinRequest } from './port/out/sdk/request/IGetStableCoinRequest';
+import { IContractsRequest } from './port/out/sdk/request/IRequestContracts';
+import IStableCoinList from './port/out/sdk/response/IStableCoinList.js';
 import Account from './domain/context/hedera/account/Account.js';
 import UtilitiesService from './app/service/utility/UtilitiesService.js';
 
@@ -73,10 +73,10 @@ export class SDK {
 	 * getBalanceOf
 	 */
 	public getBalanceOf(
-		request: IRequestContracts,
+		request: IContractsRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			const req: IRequestContracts = { ...request };
+			const req: IContractsRequest = { ...request };
 			return this.stableCoinService.getBalanceOf(
 				req.treasuryId,
 				req.privateKey,
@@ -92,10 +92,10 @@ export class SDK {
 	 * getName
 	 */
 	public getNameToken(
-		request: IRequestContracts,
+		request: IContractsRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			const req: IRequestContracts = { ...request };
+			const req: IContractsRequest = { ...request };
 			return this.stableCoinService.getNameToken(
 				req.treasuryId,
 				req.privateKey,
@@ -110,9 +110,9 @@ export class SDK {
 	/**
 	 * cashIn
 	 */
-	public cashIn(request: IRequestContracts): Promise<Uint8Array> | null {
+	public cashIn(request: IContractsRequest): Promise<Uint8Array> | null {
 		try {
-			const req: IRequestContracts = { ...request };
+			const req: IContractsRequest = { ...request };
 			return this.stableCoinService.cashIn(
 				req.treasuryId,
 				req.privateKey,
@@ -129,10 +129,10 @@ export class SDK {
 	 * associateToken
 	 */
 	public associateToken(
-		request: IRequestContracts,
+		request: IContractsRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			const req: IRequestContracts = { ...request };
+			const req: IContractsRequest = { ...request };
 			return this.stableCoinService.associateToken(
 				req.treasuryId,
 				req.privateKey,
@@ -147,9 +147,9 @@ export class SDK {
 	/**
 	 * wipeToken
 	 */
-	public wipe(request: IRequestContracts): Promise<Uint8Array> | null {
+	public wipe(request: IContractsRequest): Promise<Uint8Array> | null {
 		try {
-			const req: IRequestContracts = { ...request };
+			const req: IContractsRequest = { ...request };
 			return this.stableCoinService.wipe(
 				req.treasuryId,
 				req.privateKey,

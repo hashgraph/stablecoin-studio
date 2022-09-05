@@ -1,10 +1,10 @@
 import {
 	SDK,
 } from '../src/index';
-import { IRequestContracts } from "../src/port/out/request/IRequestContracts";
-import { IGetStableCoinRequest } from "../src/port/out/request/IGetStableCoinRequest";
-import { IGetListStableCoinRequest } from "../src/port/out/request/IGetListStableCoinRequest";
-import { ICreateStableCoinRequest } from '../src/port/out/request/ICreateStableCoinRequest.js';
+import { IContractsRequest } from "../src/port/out/sdk/request/IRequestContracts";
+import { IGetStableCoinRequest } from "../src/port/out/sdk/request/IGetStableCoinRequest";
+import { IGetListStableCoinRequest } from "../src/port/out/sdk/request/IGetListStableCoinRequest";
+import { ICreateStableCoinRequest } from '../src/port/out/sdk/request/ICreateStableCoinRequest.js';
 import Account from '../src/domain/context/hedera/account/Account.js';
 import StableCoin from '../src/domain/context/hedera/stablecoin/StableCoin.js';
 import Repository from '../src/port/in/Repository.js';
@@ -104,7 +104,7 @@ describe('SDK Unit Test :tubo_de_ensayo:', () => {
 	});
 
 	it('Get balance of Stable coin', async () => {
-		const request: IRequestContracts = {
+		const request: IContractsRequest = {
 			treasuryId: '0.0.48135063',
 			privateKey:
 				'302e020100300506032b6570042204207a8a25387a3c636cb980d1ba548ee5ee3cc8cda158e42dc7af53dcd81022d8be',
@@ -117,7 +117,7 @@ describe('SDK Unit Test :tubo_de_ensayo:', () => {
 	});
 
 	it('Get balance of Stable coin - Revert', async () => {
-		const request: IRequestContracts = {
+		const request: IContractsRequest = {
 			treasuryId: '0.0.48135063',
 			privateKey:
 				'302e020100300506032b6570042204207a8a25387a3c636cb980d1ba548ee5ee3cc8cda158e42dc7af53dcd81022d8be',
@@ -133,7 +133,7 @@ describe('SDK Unit Test :tubo_de_ensayo:', () => {
 	});
 
 	it('Get name of Stable coin', async () => {
-		const request: IRequestContracts = {
+		const request: IContractsRequest = {
 			treasuryId: '0.0.48135063',
 			privateKey:
 				'302e020100300506032b6570042204207a8a25387a3c636cb980d1ba548ee5ee3cc8cda158e42dc7af53dcd81022d8be',
@@ -146,7 +146,7 @@ describe('SDK Unit Test :tubo_de_ensayo:', () => {
 	});
 
 	it('Cash in Stable coin', async () => {
-		const request: IRequestContracts = {
+		const request: IContractsRequest = {
 			treasuryId: '0.0.48135054',
 			privateKey:
 				'302e020100300506032b6570042204207a8a25387a3c636cb980d1ba548ee5ee3cc8cda158e42dc7af53dcd81022d8be',
