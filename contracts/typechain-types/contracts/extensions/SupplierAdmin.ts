@@ -27,42 +27,72 @@ import type {
   PromiseOrValue,
 } from "../../common";
 
-export interface HederaERC20MintableInterface extends utils.Interface {
+export interface SupplierAdminInterface extends utils.Interface {
   functions: {
+    "ADMIN_SUPPLIER_ROLE()": FunctionFragment;
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
+    "ROLE_RESCUE()": FunctionFragment;
     "SUPPLIER_ROLE()": FunctionFragment;
     "WIPE_ROLE()": FunctionFragment;
+    "controlAllowanceAmount(address,uint256)": FunctionFragment;
+    "decreaseSupplierAllowance(address,uint256)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "getTokenAddress()": FunctionFragment;
     "getTokenOwnerAddress()": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
+    "grantSupplierRole(address,uint256)": FunctionFragment;
+    "grantUnlimitedSupplierRole(address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
-    "mint2(address,uint256)": FunctionFragment;
+    "increaseSupplierAllowance(address,uint256)": FunctionFragment;
+    "isUnlimitedSupplierAllowance(address)": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
+    "resetSupplierAllowance(address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
+    "revokeSupplierRole(address)": FunctionFragment;
+    "revokeUnlimitedSupplierRole(address)": FunctionFragment;
     "setTokenAddress(address,address)": FunctionFragment;
+    "supplierAllowance(address)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "ADMIN_SUPPLIER_ROLE"
       | "DEFAULT_ADMIN_ROLE"
+      | "ROLE_RESCUE"
       | "SUPPLIER_ROLE"
       | "WIPE_ROLE"
+      | "controlAllowanceAmount"
+      | "decreaseSupplierAllowance"
       | "getRoleAdmin"
       | "getTokenAddress"
       | "getTokenOwnerAddress"
       | "grantRole"
+      | "grantSupplierRole"
+      | "grantUnlimitedSupplierRole"
       | "hasRole"
-      | "mint2"
+      | "increaseSupplierAllowance"
+      | "isUnlimitedSupplierAllowance"
       | "renounceRole"
+      | "resetSupplierAllowance"
       | "revokeRole"
+      | "revokeSupplierRole"
+      | "revokeUnlimitedSupplierRole"
       | "setTokenAddress"
+      | "supplierAllowance"
       | "supportsInterface"
   ): FunctionFragment;
 
   encodeFunctionData(
+    functionFragment: "ADMIN_SUPPLIER_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "DEFAULT_ADMIN_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "ROLE_RESCUE",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -70,6 +100,14 @@ export interface HederaERC20MintableInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "WIPE_ROLE", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "controlAllowanceAmount",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "decreaseSupplierAllowance",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(
     functionFragment: "getRoleAdmin",
     values: [PromiseOrValue<BytesLike>]
@@ -87,24 +125,52 @@ export interface HederaERC20MintableInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "grantSupplierRole",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "grantUnlimitedSupplierRole",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "hasRole",
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "mint2",
+    functionFragment: "increaseSupplierAllowance",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isUnlimitedSupplierAllowance",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "renounceRole",
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "resetSupplierAllowance",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "revokeRole",
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "revokeSupplierRole",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "revokeUnlimitedSupplierRole",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setTokenAddress",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "supplierAllowance",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
@@ -112,7 +178,15 @@ export interface HederaERC20MintableInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(
+    functionFragment: "ADMIN_SUPPLIER_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "DEFAULT_ADMIN_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "ROLE_RESCUE",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -120,6 +194,14 @@ export interface HederaERC20MintableInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "WIPE_ROLE", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "controlAllowanceAmount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "decreaseSupplierAllowance",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getRoleAdmin",
     data: BytesLike
@@ -133,15 +215,46 @@ export interface HederaERC20MintableInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "grantSupplierRole",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "grantUnlimitedSupplierRole",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "mint2", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "increaseSupplierAllowance",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isUnlimitedSupplierAllowance",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "renounceRole",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "resetSupplierAllowance",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "revokeSupplierRole",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "revokeUnlimitedSupplierRole",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setTokenAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "supplierAllowance",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -154,12 +267,18 @@ export interface HederaERC20MintableInterface extends utils.Interface {
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
+    "SupplierAllowanceDecreased(address,address,uint256,uint256,uint256)": EventFragment;
+    "SupplierAllowanceIncreased(address,address,uint256,uint256,uint256)": EventFragment;
+    "SupplierAllowanceReset(address,address,uint256,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SupplierAllowanceDecreased"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SupplierAllowanceIncreased"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SupplierAllowanceReset"): EventFragment;
 }
 
 export interface InitializedEventObject {
@@ -206,12 +325,56 @@ export type RoleRevokedEvent = TypedEvent<
 
 export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
 
-export interface HederaERC20Mintable extends BaseContract {
+export interface SupplierAllowanceDecreasedEventObject {
+  sender: string;
+  supplier: string;
+  amount: BigNumber;
+  oldAllowance: BigNumber;
+  newAllowance: BigNumber;
+}
+export type SupplierAllowanceDecreasedEvent = TypedEvent<
+  [string, string, BigNumber, BigNumber, BigNumber],
+  SupplierAllowanceDecreasedEventObject
+>;
+
+export type SupplierAllowanceDecreasedEventFilter =
+  TypedEventFilter<SupplierAllowanceDecreasedEvent>;
+
+export interface SupplierAllowanceIncreasedEventObject {
+  sender: string;
+  supplier: string;
+  amount: BigNumber;
+  oldAllowance: BigNumber;
+  newAllowance: BigNumber;
+}
+export type SupplierAllowanceIncreasedEvent = TypedEvent<
+  [string, string, BigNumber, BigNumber, BigNumber],
+  SupplierAllowanceIncreasedEventObject
+>;
+
+export type SupplierAllowanceIncreasedEventFilter =
+  TypedEventFilter<SupplierAllowanceIncreasedEvent>;
+
+export interface SupplierAllowanceResetEventObject {
+  sender: string;
+  supplier: string;
+  oldAllowance: BigNumber;
+  newAllowance: BigNumber;
+}
+export type SupplierAllowanceResetEvent = TypedEvent<
+  [string, string, BigNumber, BigNumber],
+  SupplierAllowanceResetEventObject
+>;
+
+export type SupplierAllowanceResetEventFilter =
+  TypedEventFilter<SupplierAllowanceResetEvent>;
+
+export interface SupplierAdmin extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: HederaERC20MintableInterface;
+  interface: SupplierAdminInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -233,11 +396,27 @@ export interface HederaERC20Mintable extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    ADMIN_SUPPLIER_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    ROLE_RESCUE(overrides?: CallOverrides): Promise<[string]>;
 
     SUPPLIER_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     WIPE_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    controlAllowanceAmount(
+      supplier: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    decreaseSupplierAllowance(
+      supplier: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
@@ -254,21 +433,42 @@ export interface HederaERC20Mintable extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    grantSupplierRole(
+      supplier: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    grantUnlimitedSupplierRole(
+      supplier: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     hasRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    mint2(
-      account: PromiseOrValue<string>,
+    increaseSupplierAllowance(
+      supplier: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    isUnlimitedSupplierAllowance(
+      supplier: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     renounceRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    resetSupplierAllowance(
+      supplier: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -278,11 +478,26 @@ export interface HederaERC20Mintable extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    revokeSupplierRole(
+      supplier: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    revokeUnlimitedSupplierRole(
+      supplier: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     setTokenAddress(
       _htsTokenOwnerAddress: PromiseOrValue<string>,
       _tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    supplierAllowance(
+      supplier: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     supportsInterface(
       interfaceId: PromiseOrValue<BytesLike>,
@@ -290,11 +505,27 @@ export interface HederaERC20Mintable extends BaseContract {
     ): Promise<[boolean]>;
   };
 
+  ADMIN_SUPPLIER_ROLE(overrides?: CallOverrides): Promise<string>;
+
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  ROLE_RESCUE(overrides?: CallOverrides): Promise<string>;
 
   SUPPLIER_ROLE(overrides?: CallOverrides): Promise<string>;
 
   WIPE_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  controlAllowanceAmount(
+    supplier: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  decreaseSupplierAllowance(
+    supplier: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   getRoleAdmin(
     role: PromiseOrValue<BytesLike>,
@@ -311,21 +542,42 @@ export interface HederaERC20Mintable extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  grantSupplierRole(
+    supplier: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  grantUnlimitedSupplierRole(
+    supplier: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   hasRole(
     role: PromiseOrValue<BytesLike>,
     account: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  mint2(
-    account: PromiseOrValue<string>,
+  increaseSupplierAllowance(
+    supplier: PromiseOrValue<string>,
     amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  isUnlimitedSupplierAllowance(
+    supplier: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   renounceRole(
     role: PromiseOrValue<BytesLike>,
     account: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  resetSupplierAllowance(
+    supplier: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -335,11 +587,26 @@ export interface HederaERC20Mintable extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  revokeSupplierRole(
+    supplier: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  revokeUnlimitedSupplierRole(
+    supplier: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   setTokenAddress(
     _htsTokenOwnerAddress: PromiseOrValue<string>,
     _tokenAddress: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  supplierAllowance(
+    supplier: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   supportsInterface(
     interfaceId: PromiseOrValue<BytesLike>,
@@ -347,11 +614,27 @@ export interface HederaERC20Mintable extends BaseContract {
   ): Promise<boolean>;
 
   callStatic: {
+    ADMIN_SUPPLIER_ROLE(overrides?: CallOverrides): Promise<string>;
+
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    ROLE_RESCUE(overrides?: CallOverrides): Promise<string>;
 
     SUPPLIER_ROLE(overrides?: CallOverrides): Promise<string>;
 
     WIPE_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    controlAllowanceAmount(
+      supplier: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    decreaseSupplierAllowance(
+      supplier: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
@@ -368,15 +651,31 @@ export interface HederaERC20Mintable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    grantSupplierRole(
+      supplier: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    grantUnlimitedSupplierRole(
+      supplier: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     hasRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    mint2(
-      account: PromiseOrValue<string>,
+    increaseSupplierAllowance(
+      supplier: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    isUnlimitedSupplierAllowance(
+      supplier: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -386,9 +685,24 @@ export interface HederaERC20Mintable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    resetSupplierAllowance(
+      supplier: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     revokeRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    revokeSupplierRole(
+      supplier: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    revokeUnlimitedSupplierRole(
+      supplier: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -397,6 +711,11 @@ export interface HederaERC20Mintable extends BaseContract {
       _tokenAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    supplierAllowance(
+      supplier: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     supportsInterface(
       interfaceId: PromiseOrValue<BytesLike>,
@@ -440,14 +759,73 @@ export interface HederaERC20Mintable extends BaseContract {
       account?: PromiseOrValue<string> | null,
       sender?: PromiseOrValue<string> | null
     ): RoleRevokedEventFilter;
+
+    "SupplierAllowanceDecreased(address,address,uint256,uint256,uint256)"(
+      sender?: PromiseOrValue<string> | null,
+      supplier?: PromiseOrValue<string> | null,
+      amount?: null,
+      oldAllowance?: null,
+      newAllowance?: null
+    ): SupplierAllowanceDecreasedEventFilter;
+    SupplierAllowanceDecreased(
+      sender?: PromiseOrValue<string> | null,
+      supplier?: PromiseOrValue<string> | null,
+      amount?: null,
+      oldAllowance?: null,
+      newAllowance?: null
+    ): SupplierAllowanceDecreasedEventFilter;
+
+    "SupplierAllowanceIncreased(address,address,uint256,uint256,uint256)"(
+      sender?: PromiseOrValue<string> | null,
+      supplier?: PromiseOrValue<string> | null,
+      amount?: null,
+      oldAllowance?: null,
+      newAllowance?: null
+    ): SupplierAllowanceIncreasedEventFilter;
+    SupplierAllowanceIncreased(
+      sender?: PromiseOrValue<string> | null,
+      supplier?: PromiseOrValue<string> | null,
+      amount?: null,
+      oldAllowance?: null,
+      newAllowance?: null
+    ): SupplierAllowanceIncreasedEventFilter;
+
+    "SupplierAllowanceReset(address,address,uint256,uint256)"(
+      sender?: PromiseOrValue<string> | null,
+      supplier?: PromiseOrValue<string> | null,
+      oldAllowance?: null,
+      newAllowance?: null
+    ): SupplierAllowanceResetEventFilter;
+    SupplierAllowanceReset(
+      sender?: PromiseOrValue<string> | null,
+      supplier?: PromiseOrValue<string> | null,
+      oldAllowance?: null,
+      newAllowance?: null
+    ): SupplierAllowanceResetEventFilter;
   };
 
   estimateGas: {
+    ADMIN_SUPPLIER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    ROLE_RESCUE(overrides?: CallOverrides): Promise<BigNumber>;
 
     SUPPLIER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     WIPE_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    controlAllowanceAmount(
+      supplier: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    decreaseSupplierAllowance(
+      supplier: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
@@ -464,21 +842,42 @@ export interface HederaERC20Mintable extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    grantSupplierRole(
+      supplier: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    grantUnlimitedSupplierRole(
+      supplier: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     hasRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    mint2(
-      account: PromiseOrValue<string>,
+    increaseSupplierAllowance(
+      supplier: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    isUnlimitedSupplierAllowance(
+      supplier: PromiseOrValue<string>,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     renounceRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    resetSupplierAllowance(
+      supplier: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -488,10 +887,25 @@ export interface HederaERC20Mintable extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    revokeSupplierRole(
+      supplier: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    revokeUnlimitedSupplierRole(
+      supplier: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     setTokenAddress(
       _htsTokenOwnerAddress: PromiseOrValue<string>,
       _tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    supplierAllowance(
+      supplier: PromiseOrValue<string>,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     supportsInterface(
@@ -501,13 +915,31 @@ export interface HederaERC20Mintable extends BaseContract {
   };
 
   populateTransaction: {
+    ADMIN_SUPPLIER_ROLE(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     DEFAULT_ADMIN_ROLE(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    ROLE_RESCUE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     SUPPLIER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     WIPE_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    controlAllowanceAmount(
+      supplier: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    decreaseSupplierAllowance(
+      supplier: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
@@ -526,21 +958,42 @@ export interface HederaERC20Mintable extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    grantSupplierRole(
+      supplier: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    grantUnlimitedSupplierRole(
+      supplier: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     hasRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    mint2(
-      account: PromiseOrValue<string>,
+    increaseSupplierAllowance(
+      supplier: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    isUnlimitedSupplierAllowance(
+      supplier: PromiseOrValue<string>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     renounceRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    resetSupplierAllowance(
+      supplier: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -550,10 +1003,25 @@ export interface HederaERC20Mintable extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    revokeSupplierRole(
+      supplier: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    revokeUnlimitedSupplierRole(
+      supplier: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     setTokenAddress(
       _htsTokenOwnerAddress: PromiseOrValue<string>,
       _tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    supplierAllowance(
+      supplier: PromiseOrValue<string>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     supportsInterface(

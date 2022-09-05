@@ -26,16 +26,25 @@ import type {
 export interface IHTSTokenOwnerInterface extends utils.Interface {
   functions: {
     "mintToken(address,uint256)": FunctionFragment;
+    "tranferContract(address,address,uint256)": FunctionFragment;
     "wipeToken(address,address,uint32)": FunctionFragment;
   };
 
   getFunction(
-    nameOrSignatureOrTopic: "mintToken" | "wipeToken"
+    nameOrSignatureOrTopic: "mintToken" | "tranferContract" | "wipeToken"
   ): FunctionFragment;
 
   encodeFunctionData(
     functionFragment: "mintToken",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "tranferContract",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "wipeToken",
@@ -47,6 +56,10 @@ export interface IHTSTokenOwnerInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(functionFragment: "mintToken", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "tranferContract",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "wipeToken", data: BytesLike): Result;
 
   events: {};
@@ -85,6 +98,13 @@ export interface IHTSTokenOwner extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    tranferContract(
+      tokenAddress: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     wipeToken(
       tokenAddress: PromiseOrValue<string>,
       account: PromiseOrValue<string>,
@@ -99,6 +119,13 @@ export interface IHTSTokenOwner extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  tranferContract(
+    tokenAddress: PromiseOrValue<string>,
+    to: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   wipeToken(
     tokenAddress: PromiseOrValue<string>,
     account: PromiseOrValue<string>,
@@ -109,6 +136,13 @@ export interface IHTSTokenOwner extends BaseContract {
   callStatic: {
     mintToken(
       tokenAddress: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    tranferContract(
+      tokenAddress: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
@@ -130,6 +164,13 @@ export interface IHTSTokenOwner extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    tranferContract(
+      tokenAddress: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     wipeToken(
       tokenAddress: PromiseOrValue<string>,
       account: PromiseOrValue<string>,
@@ -141,6 +182,13 @@ export interface IHTSTokenOwner extends BaseContract {
   populateTransaction: {
     mintToken(
       tokenAddress: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    tranferContract(
+      tokenAddress: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

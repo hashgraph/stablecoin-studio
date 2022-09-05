@@ -25,6 +25,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Initializable__factory>;
     getContractFactory(
+      name: "ERC20Upgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC20Upgradeable__factory>;
+    getContractFactory(
       name: "IERC20PermitUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20PermitUpgradeable__factory>;
@@ -69,6 +73,18 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Proxy__factory>;
     getContractFactory(
+      name: "IMintable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IMintable__factory>;
+    getContractFactory(
+      name: "IRescatable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IRescatable__factory>;
+    getContractFactory(
+      name: "ISupplierAdmin",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ISupplierAdmin__factory>;
+    getContractFactory(
       name: "IWipeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IWipeable__factory>;
@@ -76,6 +92,14 @@ declare module "hardhat/types/runtime" {
       name: "Mintable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Mintable__factory>;
+    getContractFactory(
+      name: "Rescatable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Rescatable__factory>;
+    getContractFactory(
+      name: "SupplierAdmin",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.SupplierAdmin__factory>;
     getContractFactory(
       name: "Wipeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -137,6 +161,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.Initializable>;
     getContractAt(
+      name: "ERC20Upgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC20Upgradeable>;
+    getContractAt(
       name: "IERC20PermitUpgradeable",
       address: string,
       signer?: ethers.Signer
@@ -192,6 +221,21 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.Proxy>;
     getContractAt(
+      name: "IMintable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IMintable>;
+    getContractAt(
+      name: "IRescatable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IRescatable>;
+    getContractAt(
+      name: "ISupplierAdmin",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ISupplierAdmin>;
+    getContractAt(
       name: "IWipeable",
       address: string,
       signer?: ethers.Signer
@@ -201,6 +245,16 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Mintable>;
+    getContractAt(
+      name: "Rescatable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Rescatable>;
+    getContractAt(
+      name: "SupplierAdmin",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.SupplierAdmin>;
     getContractAt(
       name: "Wipeable",
       address: string,

@@ -9,6 +9,32 @@ import type { Roles, RolesInterface } from "../../contracts/Roles";
 const _abi = [
   {
     inputs: [],
+    name: "ADMIN_SUPPLIER_ROLE",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "ROLE_RESCUE",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "SUPPLIER_ROLE",
     outputs: [
       {

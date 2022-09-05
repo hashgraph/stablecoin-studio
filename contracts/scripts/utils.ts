@@ -33,7 +33,7 @@ export async function deployContractsWithSDK(name:string, symbol:string, decimal
                         .addBytes(new Uint8Array([]));
   let proxyContract = await deployContractSDK(HederaERC1967Proxy__factory, 10, privateKey, clientSdk, parameters);
   let parametersContractCall: any[] = [];    
-  await contractCall(proxyContract, 'initialize', parametersContractCall, clientSdk, 200000, HederaERC20__factory.abi);
+  await contractCall(proxyContract, 'initialize', parametersContractCall, clientSdk, 250000, HederaERC20__factory.abi);
   
   console.log(`Deploying ${HTSTokenOwner__factory.name} contract... please wait.`);
   const tokenOwnerContract = await deployContractSDK(HTSTokenOwner__factory, 10, privateKey, clientSdk);
@@ -77,6 +77,7 @@ export async function contractCall(contractId:any,
         AccountId.fromString('0.0.9')
       ])
       .execute(clientOperator);
+  
   let record = await contractTx.getRecord(clientOperator);  
 
   const results = decodeFunctionResult(abi, functionName, record.contractFunctionResult?.bytes);
