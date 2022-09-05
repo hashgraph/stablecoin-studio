@@ -4,12 +4,12 @@ on:
     branches: [main, release/sdk/**, feature/sdk/**]
     paths:
       - sdk/**
-      - .github/workflows/sdk.*.yaml
+      - .github/workflows/sdk.*.yml
   push:
     branches: [main, release/sdk/**, feature/sdk/**]
     paths:
       - sdk/**
-      - .github/workflows/sdk.*.yaml
+      - .github/workflows/sdk.*.yml
 defaults:
   run:
     working-directory: sdk
