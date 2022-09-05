@@ -1,5 +1,5 @@
-import { Token } from "../Token.js";
+import { IToken } from "../IToken.js";
 
 export default interface ITokenList {
-	tokens: Token[];
+	tokens: IToken[];
 }
