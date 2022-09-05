@@ -2,15 +2,14 @@ import { ICreateStableCoinRequest } from './port/in/sdk/request/ICreateStableCoi
 import { IGetListStableCoinRequest } from './port/in/sdk/request/IGetListStableCoinRequest';
 import { IGetStableCoinRequest } from './port/in/sdk/request/IGetStableCoinRequest';
 import IStableCoinList from './port/in/sdk/response/IStableCoinList.js';
-import UtilitiesService from './app/service/utility/UtilitiesService.js';
 import ContractsService from './app/service/contract/ContractsService.js';
 import ListStableCoinServiceRequestModel from './app/service/stablecoin/model/ListStableCoinServiceRequestModel.js';
 import CreateStableCoinServiceRequestModel from './app/service/stablecoin/model/CreateStableCoinServiceRequestModel.js';
 import StableCoinService from './app/service/stablecoin/StableCoinService.js';
-import StableCoin from './domain/context/hedera/stablecoin/StableCoin.js';
+import StableCoin from './domain/context/stablecoin/StableCoin.js';
 import StableCoinRepository from './port/out/stablecoin/StableCoinRepository.js';
-import IStableCoinDetail from './domain/context/hedera/stablecoin/IStableCoinDetail.js';
-import Account from './domain/context/hedera/account/Account.js';
+import IStableCoinDetail from './domain/context/stablecoin/IStableCoinDetail.js';
+import Account from './domain/context/account/Account.js';
 import CashInStableCoinServiceRequestModel from './app/service/stablecoin/model/CashInStableCoinServiceRequestModel.js';
 import { IGetNameStableCoinRequest } from './port/in/sdk/request/IGetNameStableCoinRequest.js';
 import { IGetBalanceStableCoinRequest } from './port/in/sdk/request/IGetBalanceStableCoinRequest.js';
@@ -22,6 +21,10 @@ import { IAssociateStableCoinRequest } from './port/in/sdk/request/IAssociateSta
 import AssociateTokenStableCoinServiceRequestModel from './app/service/stablecoin/model/AssociateTokenStableCoinServiceRequestModel.js';
 import { IWipeStableCoinRequest } from './port/in/sdk/request/IWipeStableCoinRequest.js';
 import WipeStableCoinServiceRequestModel from './app/service/stablecoin/model/WipeStableCoinServiceRequestModel.js';
+import IStableCoinRepository from './port/out/stablecoin/IStableCoinRepository.js';
+import IContractRepository from './port/out/contract/IContractRepository.js';
+import ContractRepository from './port/out/contract/ContractRepository.js';
+import Web3 from 'web3';
 
 /* Exports */
 export { Account };
@@ -33,9 +36,10 @@ export {
 	IWipeStableCoinRequest,
 };
 export class SDK {
-	private utilsService: UtilitiesService;
-	private contractsService: ContractsService;
-	private stableCoinRepository: StableCoinRepository;
+	private web3: Web3;
+	private contractService: ContractsService;
+	private contractRepository: IContractRepository;
+	private stableCoinRepository: IStableCoinRepository;
 	private stableCoinService: StableCoinService;
 
 	constructor() {
@@ -46,11 +50,11 @@ export class SDK {
 	// Initializes the SDK,
 	// TODO should probably be decoupled from the dependency injection
 	private init(): void {
-		this.contractsService = new ContractsService();
-		this.utilsService = new UtilitiesService();
+		this.web3 = new Web3();
+		this.contractRepository = new ContractRepository(this.web3);
+		this.contractService = new ContractsService(this.contractRepository);
 		this.stableCoinRepository = new StableCoinRepository(
-			this.utilsService,
-			this.contractsService,
+			this.contractRepository,
 		);
 		this.stableCoinService = new StableCoinService(
 			this.stableCoinRepository,
@@ -62,7 +66,7 @@ export class SDK {
 	 */
 	public createStableCoin(
 		request: ICreateStableCoinRequest,
-	): StableCoin | null {
+	): Promise<StableCoin> | null {
 		try {
 			const req: CreateStableCoinServiceRequestModel = { ...request };
 			return this.stableCoinService.createStableCoin(req);

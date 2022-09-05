@@ -3,9 +3,8 @@ import { IRequestContracts } from '../src/port/in/sdk/request/IRequestContracts'
 import { IGetStableCoinRequest } from '../src/port/in/sdk/request/IGetStableCoinRequest';
 import { IGetListStableCoinRequest } from '../src/port/in/sdk/request/IGetListStableCoinRequest';
 import { ICreateStableCoinRequest } from '../src/port/in/sdk/request/ICreateStableCoinRequest.js';
-import Repository from '../src/port/out/Repository.js';
-import StableCoin from '../src/domain/context/hedera/stablecoin/StableCoin.js';
-import Account from '../src/domain/context/hedera/account/Account.js';
+import StableCoin from '../src/domain/context/stablecoin/StableCoin.js';
+import Account from '../src/domain/context/account/Account.js';
 import { ICashInStableCoinRequest } from '../src/port/in/sdk/request/ICashInStableCoinRequest.js';
 
 describe('SDK Unit Test :tubo_de_ensayo:', () => {
@@ -49,13 +48,6 @@ describe('SDK Unit Test :tubo_de_ensayo:', () => {
 		expect(stableCoin.symbol).toBe('TK');
 		expect(stableCoin.decimals).toBe(10);
 		expect(stableCoin.id).toBe('1234');
-	});
-
-	it('Repository class', () => {
-		const repository = new Repository();
-		repository.data = ['test'];
-
-		expect(repository.data[0]).toBe('test');
 	});
 
 	it('Creates a Stable Coin', () => {

@@ -1,4 +1,4 @@
-import BaseEntity from '../../../BaseEntity.js';
+import BaseEntity from '../../BaseEntity.js';
 import Account from '../account/Account.js';
 import InvalidDecimalRangeDomainError from './error/InvalidDecimalRangeDomainError.js';
 

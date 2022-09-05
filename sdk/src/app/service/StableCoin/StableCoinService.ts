@@ -1,9 +1,8 @@
 import Service from '../Service.js';
 import CreateStableCoinServiceRequestModel from './model/CreateStableCoinServiceRequestModel.js';
 import ListStableCoinServiceRequestModel from './model/ListStableCoinServiceRequestModel.js';
-import IStableCoinDetail from '../../../domain/context/hedera/stablecoin/IStableCoinDetail.js';
-import StableCoin from '../../../domain/context/hedera/stablecoin/StableCoin.js';
-import StableCoinRepository from '../../../port/out/stablecoin/StableCoinRepository.js';
+import IStableCoinDetail from '../../../domain/context/stablecoin/IStableCoinDetail.js';
+import StableCoin from '../../../domain/context/stablecoin/StableCoin.js';
 import IStableCoinList from '../../../port/in/sdk/response/IStableCoinList.js';
 import GetStableCoinServiceRequestModel from './model/GetStableCoinServiceRequestModel.js';
 import GetBalanceOfStableCoinServiceRequestModel from './model/GetBalanceOfStableCoinServiceRequestModel.js';
@@ -11,11 +10,12 @@ import GetNameOfStableCoinServiceRequestModel from './model/GetNameOfStableCoinS
 import CashInStableCoinServiceRequestModel from './model/CashInStableCoinServiceRequestModel.js';
 import AssociateTokenStableCoinServiceRequestModel from './model/AssociateTokenStableCoinServiceRequestModel.js';
 import WipeStableCoinServiceRequestModel from './model/WipeStableCoinServiceRequestModel.js';
+import IStableCoinRepository from '../../../port/out/stablecoin/IStableCoinRepository.js';
 
 export default class StableCoinService extends Service {
-	private repository: StableCoinRepository;
+	private repository: IStableCoinRepository;
 
-	constructor(repository: StableCoinRepository) {
+	constructor(repository: IStableCoinRepository) {
 		super();
 		this.repository = repository;
 	}
@@ -25,7 +25,7 @@ export default class StableCoinService extends Service {
 	 */
 	public createStableCoin(
 		req: CreateStableCoinServiceRequestModel,
-	): StableCoin {
+	): Promise<StableCoin> {
 		const coin: StableCoin = new StableCoin(
 			req.account,
 			req.name,

@@ -1,30 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import IContractRepository, {
+	IContractParams,
+} from '../../../port/out/contract/IContractRepository.js';
 import Service from '../Service';
-import Web3 from 'web3';
-
-export interface IContractParams {
-	treasuryId: string;
-	parameters: any[];
-	clientSdk: any;
-	gas: number;
-	abi: any;
-}
-
-const {
-	Client,
-	ContractExecuteTransaction,
-	AccountId,
-} = require('@hashgraph/sdk');
 
 /**
- * Utilities Service
+ * Contracts Service
  */
 export default class ContractsService extends Service {
-	constructor() {
-		super();
-	}
+	private contractRepository: IContractRepository;
 
-	private web3 = new Web3();
+	constructor(contractRepository: IContractRepository) {
+		super();
+		this.contractRepository = contractRepository;
+	}
 
 	/**
 	 * getClient
@@ -32,15 +21,7 @@ export default class ContractsService extends Service {
 	 * @returns
 	 */
 	public getClient(network: 'previewnet' | 'mainnet' | 'testnet'): any {
-		switch (network) {
-			case 'previewnet':
-				return Client.forPreviewnet();
-			case 'mainnet':
-				return Client.forMainnet();
-			default:
-			case 'testnet':
-				return Client.forTestnet();
-		}
+		return this.contractRepository.getClient(network);
 	}
 
 	/**
@@ -53,36 +34,7 @@ export default class ContractsService extends Service {
 		name: string,
 		params: IContractParams,
 	): Promise<Uint8Array> {
-		const { treasuryId, parameters, clientSdk, gas, abi } = params;
-
-		const functionCallParameters = this.encodeFuncionCall(
-			name,
-			parameters,
-			abi,
-		);
-
-		const contractTx = await new ContractExecuteTransaction()
-			.setContractId(treasuryId)
-			.setFunctionParameters(functionCallParameters)
-			.setGas(gas)
-			.setNodeAccountIds([
-				AccountId.fromString('0.0.3'),
-				AccountId.fromString('0.0.5'),
-				AccountId.fromString('0.0.6'),
-				AccountId.fromString('0.0.7'),
-				AccountId.fromString('0.0.8'),
-				AccountId.fromString('0.0.9'),
-			])
-			.execute(clientSdk);
-		const record = await contractTx.getRecord(clientSdk);
-
-		const results = this.decodeFunctionResult(
-			abi,
-			name,
-			record.contractFunctionResult?.bytes,
-		);
-
-		return results;
+		return this.contractRepository.callContract(name, params);
 	}
 
 	/**
@@ -94,15 +46,11 @@ export default class ContractsService extends Service {
 		parameters: any[],
 		abi: any,
 	): Uint8Array {
-		const functionAbi = abi.find(
-			(func: { name: any; type: string }) =>
-				func.name === functionName && func.type === 'function',
+		return this.contractRepository.encodeFuncionCall(
+			functionName,
+			parameters,
+			abi,
 		);
-		const encodedParametersHex = this.web3.eth.abi
-			.encodeFunctionCall(functionAbi, parameters)
-			.slice(2);
-
-		return Buffer.from(encodedParametersHex, 'hex');
 	}
 
 	/**
@@ -114,20 +62,18 @@ export default class ContractsService extends Service {
 		functionName: any,
 		resultAsBytes: any,
 	): Uint8Array {
-		const functionAbi = abi.find(
-			(func: { name: any }) => func.name === functionName,
+		return this.contractRepository.decodeFunctionResult(
+			abi,
+			functionName,
+			resultAsBytes,
 		);
-		const functionParameters = functionAbi?.outputs;
-		const resultHex = '0x'.concat(
-			Buffer.from(resultAsBytes).toString('hex'),
-		);
-		const result = this.web3.eth.abi.decodeParameters(
-			functionParameters || [],
-			resultHex,
-		);
+	}
 
-		const jsonParsedArray = JSON.parse(JSON.stringify(result));
-
-		return jsonParsedArray;
+	/**
+	 * getPublicKey
+	 * @returns
+	 */
+	public getPublicKey(privateKey: string): string {
+		return this.contractRepository.getPublicKey(privateKey);
 	}
 }

@@ -1,4 +1,4 @@
-import BaseEntity from '../../../BaseEntity.js';
+import BaseEntity from '../../BaseEntity.js';
 
 export default class Account extends BaseEntity {
 	private _accountId: string;
