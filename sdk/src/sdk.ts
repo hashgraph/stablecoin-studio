@@ -10,7 +10,7 @@ import StableCoinServiceRequestModel from './app/service/stablecoin/model/Stable
 import StableCoinService from './app/service/stablecoin/StableCoinService.js';
 import StableCoin from './domain/context/hedera/stablecoin/StableCoin.js';
 import StableCoinRepository from './port/in/stablecoin/StableCoinRepository.js';
-import IStableCoinDetail from './domain/context/hedera/stablecoin/interface/IStableCoinDetail.js';
+import IStableCoinDetail from './domain/context/hedera/stablecoin/IStableCoinDetail.js';
 import Account from './domain/context/hedera/account/Account.js';
 
 export { Account };
