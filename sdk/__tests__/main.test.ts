@@ -3,9 +3,9 @@ import { IContractsRequest } from '../src/port/out/sdk/request/IRequestContracts
 import { IGetStableCoinRequest } from '../src/port/out/sdk/request/IGetStableCoinRequest';
 import { IGetListStableCoinRequest } from '../src/port/out/sdk/request/IGetListStableCoinRequest';
 import { ICreateStableCoinRequest } from '../src/port/out/sdk/request/ICreateStableCoinRequest.js';
-import Account from '../src/domain/context/Hedera/Account/Account.js';
-import StableCoin from '../src/domain/context/Hedera/StableCoin/StableCoin.js';
 import Repository from '../src/port/in/Repository.js';
+import StableCoin from '../src/domain/context/hedera/stablecoin/StableCoin.js';
+import Account from '../src/domain/context/hedera/account/Account.js';
 
 describe('SDK Unit Test :tubo_de_ensayo:', () => {
 	let sdk: SDK;

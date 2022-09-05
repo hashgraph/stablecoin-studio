@@ -5,15 +5,12 @@ import { IContractsRequest } from './port/out/sdk/request/IRequestContracts';
 import IStableCoinList from './port/out/sdk/response/IStableCoinList.js';
 import UtilitiesService from './app/service/utility/UtilitiesService.js';
 import ContractsService from './app/service/contract/ContractsService.js';
-import StableCoinRepository from 'port/in/StableCoin/StableCoinRepository';
-import StableCoinService from 'app/service/StableCoin/StableCoinService';
-import StableCoinServiceRequestModel from 'app/service/StableCoin/model/StableCoinServiceRequestModel';
-import StableCoinListServiceRequestModel from 'app/service/StableCoin/model/StableCoinListServiceRequestModel';
-import IStableCoinDetail from './domain/context/Hedera/StableCoin/interface/IStableCoinDetail';
-import StableCoin from './domain/context/Hedera/StableCoin/StableCoin';
-import Account from './domain/context/Hedera/Account/Account';
-
-export { Account };
+import StableCoinListServiceRequestModel from './app/service/stablecoin/model/StableCoinListServiceRequestModel.js';
+import StableCoinServiceRequestModel from './app/service/stablecoin/model/StableCoinServiceRequestModel.js';
+import StableCoinService from './app/service/stablecoin/StableCoinService.js';
+import { IStableCoinDetail } from './domain/context/hedera/stablecoin/interface/IStableCoinDetail.js';
+import StableCoin from './domain/context/hedera/stablecoin/StableCoin.js';
+import StableCoinRepository from './port/in/stablecoin/StableCoinRepository.js';
 
 export class SDK {
 	private utilsService: UtilitiesService;
