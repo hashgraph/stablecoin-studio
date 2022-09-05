@@ -1,4 +1,4 @@
 
 export interface IGetStableCoinRequest {
-	stableCoinId: string;
+	id: string;
 }

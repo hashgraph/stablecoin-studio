@@ -27,7 +27,7 @@ export default class DetailsStableCoinsService extends Service {
     await utilsService.showSpinner(
       sdk
         .getStableCoin({
-          stableCoinId: id,
+          id,
         })
         .then((response: StableCoinDetail) => (respDetail = response)),
       {

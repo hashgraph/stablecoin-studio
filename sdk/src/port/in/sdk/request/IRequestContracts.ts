@@ -1,7 +1,8 @@
-
-export interface IContractsRequest {
+export interface IRequestContracts {
 	treasuryId: string;
 	privateKey: string;
 	accountId: string;
-	amount?: number;
+}
+export interface IRequestContractsAmount extends IRequestContracts {
+	amount: number;
 }

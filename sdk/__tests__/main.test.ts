@@ -1,11 +1,12 @@
 import { SDK } from '../src/index';
-import { IContractsRequest } from '../src/port/in/sdk/request/IRequestContracts';
+import { IRequestContracts } from '../src/port/in/sdk/request/IRequestContracts';
 import { IGetStableCoinRequest } from '../src/port/in/sdk/request/IGetStableCoinRequest';
 import { IGetListStableCoinRequest } from '../src/port/in/sdk/request/IGetListStableCoinRequest';
 import { ICreateStableCoinRequest } from '../src/port/in/sdk/request/ICreateStableCoinRequest.js';
 import Repository from '../src/port/out/Repository.js';
 import StableCoin from '../src/domain/context/hedera/stablecoin/StableCoin.js';
 import Account from '../src/domain/context/hedera/account/Account.js';
+import { ICashInStableCoinRequest } from '../src/port/in/sdk/request/ICashInStableCoinRequest.js';
 
 describe('SDK Unit Test :tubo_de_ensayo:', () => {
 	let sdk: SDK;
@@ -95,14 +96,14 @@ describe('SDK Unit Test :tubo_de_ensayo:', () => {
 
 	it('Get details Stable coins', async () => {
 		const request: IGetStableCoinRequest = {
-			stableCoinId: '0.0.30873406',
+			id: '0.0.30873406',
 		};
 		const coin = await sdk.getStableCoin(request);
 		expect(coin).not.toBeNull();
 	});
 
 	it('Get balance of Stable coin', async () => {
-		const request: IContractsRequest = {
+		const request: IRequestContracts = {
 			treasuryId: '0.0.48135063',
 			privateKey:
 				'302e020100300506032b6570042204207a8a25387a3c636cb980d1ba548ee5ee3cc8cda158e42dc7af53dcd81022d8be',
@@ -115,7 +116,7 @@ describe('SDK Unit Test :tubo_de_ensayo:', () => {
 	});
 
 	it('Get balance of Stable coin - Revert', async () => {
-		const request: IContractsRequest = {
+		const request: IRequestContracts = {
 			treasuryId: '0.0.48135063',
 			privateKey:
 				'302e020100300506032b6570042204207a8a25387a3c636cb980d1ba548ee5ee3cc8cda158e42dc7af53dcd81022d8be',
@@ -131,7 +132,7 @@ describe('SDK Unit Test :tubo_de_ensayo:', () => {
 	});
 
 	it('Get name of Stable coin', async () => {
-		const request: IContractsRequest = {
+		const request: IRequestContracts = {
 			treasuryId: '0.0.48135063',
 			privateKey:
 				'302e020100300506032b6570042204207a8a25387a3c636cb980d1ba548ee5ee3cc8cda158e42dc7af53dcd81022d8be',
@@ -144,11 +145,12 @@ describe('SDK Unit Test :tubo_de_ensayo:', () => {
 	});
 
 	it('Cash in Stable coin', async () => {
-		const request: IContractsRequest = {
+		const request: ICashInStableCoinRequest = {
 			treasuryId: '0.0.48135054',
 			privateKey:
 				'302e020100300506032b6570042204207a8a25387a3c636cb980d1ba548ee5ee3cc8cda158e42dc7af53dcd81022d8be',
 			accountId: '0.0.29511696',
+			amount: 100
 		};
 
 		await sdk.cashIn(request)?.then((response) => {

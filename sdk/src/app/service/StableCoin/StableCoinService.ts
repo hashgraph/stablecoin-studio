@@ -1,10 +1,16 @@
 import Service from '../Service.js';
-import StableCoinServiceRequestModel from './model/StableCoinServiceRequestModel.js';
-import StableCoinListServiceRequestModel from './model/StableCoinListServiceRequestModel.js';
+import CreateStableCoinServiceRequestModel from './model/CreateStableCoinServiceRequestModel.js';
+import ListStableCoinServiceRequestModel from './model/ListStableCoinServiceRequestModel.js';
 import IStableCoinDetail from '../../../domain/context/hedera/stablecoin/IStableCoinDetail.js';
 import StableCoin from '../../../domain/context/hedera/stablecoin/StableCoin.js';
 import StableCoinRepository from '../../../port/out/stablecoin/StableCoinRepository.js';
 import IStableCoinList from '../../../port/in/sdk/response/IStableCoinList.js';
+import GetStableCoinServiceRequestModel from './model/GetStableCoinServiceRequestModel.js';
+import GetBalanceOfStableCoinServiceRequestModel from './model/GetBalanceOfStableCoinServiceRequestModel.js';
+import GetNameOfStableCoinServiceRequestModel from './model/GetNameOfStableCoinServiceRequestModel.js';
+import CashInStableCoinServiceRequestModel from './model/CashInStableCoinServiceRequestModel.js';
+import AssociateTokenStableCoinServiceRequestModel from './model/AssociateTokenStableCoinServiceRequestModel.js';
+import WipeStableCoinServiceRequestModel from './model/WipeStableCoinServiceRequestModel.js';
 
 export default class StableCoinService extends Service {
 	private repository: StableCoinRepository;
@@ -17,7 +23,9 @@ export default class StableCoinService extends Service {
 	/**
 	 * createStableCoin
 	 */
-	public createStableCoin(req: StableCoinServiceRequestModel): StableCoin {
+	public createStableCoin(
+		req: CreateStableCoinServiceRequestModel,
+	): StableCoin {
 		const coin: StableCoin = new StableCoin(
 			req.account,
 			req.name,
@@ -31,7 +39,7 @@ export default class StableCoinService extends Service {
 	 * getListStableCoins
 	 */
 	public async getListStableCoins(
-		req: StableCoinListServiceRequestModel,
+		req: ListStableCoinServiceRequestModel,
 	): Promise<IStableCoinList[]> {
 		return this.repository.getListStableCoins(req.privateKey);
 	}
@@ -39,60 +47,57 @@ export default class StableCoinService extends Service {
 	/**
 	 * getListStableCoins
 	 */
-	public async getStableCoin(req: {
-		stableCoinId: string;
-	}): Promise<IStableCoinDetail> {
-		return this.repository.getStableCoin(req.stableCoinId);
+	public async getStableCoin(
+		req: GetStableCoinServiceRequestModel,
+	): Promise<IStableCoinDetail> {
+		return this.repository.getStableCoin(req.id);
 	}
 
 	public async getBalanceOf(
-		treasuryId: string,
-		privateKey: string,
-		accountId: string,
+		req: GetBalanceOfStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
-		return this.repository.getBalanceOf(treasuryId, privateKey, accountId);
+		return this.repository.getBalanceOf(req.treasuryId, req.privateKey, req.accountId);
 	}
 
 	public async getNameToken(
-		treasuryId: string,
-		privateKey: string,
-		accountId: string,
+		req: GetNameOfStableCoinServiceRequestModel
 	): Promise<Uint8Array> {
-		return this.repository.getNameToken(treasuryId, privateKey, accountId);
+		return this.repository.getNameToken(
+			req.treasuryId,
+			req.privateKey,
+			req.accountId,
+		);
 	}
 
 	public async cashIn(
-		treasuryId: string,
-		privateKey: string,
-		accountId: string,
-		amount = 1000,
+		req: CashInStableCoinServiceRequestModel
 	): Promise<Uint8Array> {
 		return this.repository.cashIn(
-			treasuryId,
-			privateKey,
-			accountId,
-			amount,
+			req.treasuryId,
+			req.privateKey,
+			req.accountId,
+			req.amount,
 		);
 	}
 
 	public async associateToken(
-		treasuryId: string,
-		privateKey: string,
-		accountId: string,
+		req: AssociateTokenStableCoinServiceRequestModel
 	): Promise<Uint8Array> {
 		return this.repository.associateToken(
-			treasuryId,
-			privateKey,
-			accountId,
+			req.treasuryId,
+			req.privateKey,
+			req.accountId,
 		);
 	}
 
 	public async wipe(
-		treasuryId: string,
-		privateKey: string,
-		accountId: string,
-		amount = 1000,
+		req: WipeStableCoinServiceRequestModel
 	): Promise<Uint8Array> {
-		return this.repository.wipe(treasuryId, privateKey, accountId, amount);
+		return this.repository.wipe(
+			req.treasuryId,
+			req.privateKey,
+			req.accountId,
+			req.amount,
+		);
 	}
 }
