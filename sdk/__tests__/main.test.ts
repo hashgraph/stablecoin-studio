@@ -1,15 +1,13 @@
 import {
-	StableCoin,
-	Account,
-	ICreateStableCoinRequest,
 	SDK,
-	Repository,
 } from '../src/index';
-import {
-	IGetListStableCoinRequest,
-	IGetStableCoinRequest,
-	IRequestContracts,
-} from '../src/sdk';
+import { IRequestContracts } from "../src/port/out/request/IRequestContracts";
+import { IGetStableCoinRequest } from "../src/port/out/request/IGetStableCoinRequest";
+import { IGetListStableCoinRequest } from "../src/port/out/request/IGetListStableCoinRequest";
+import { ICreateStableCoinRequest } from '../src/port/out/request/ICreateStableCoinRequest.js';
+import Account from '../src/domain/context/hedera/account/Account.js';
+import StableCoin from '../src/domain/context/hedera/stablecoin/StableCoin.js';
+import Repository from '../src/port/in/Repository.js';
 
 describe('SDK Unit Test :tubo_de_ensayo:', () => {
 	let sdk: SDK;

@@ -49,7 +49,7 @@ export default class UtilitiesService extends Service {
 		);
 	}
 
-	public getClient(network: 'previewnet' | 'mainnet' | 'testnet') {
+	public getClient(network: 'previewnet' | 'mainnet' | 'testnet'): any {
 		switch (network) {
 			case 'previewnet':
 				return Client.forPreviewnet();

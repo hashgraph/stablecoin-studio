@@ -1,45 +1,21 @@
-import StableCoinService, {
-	StableCoinDetail,
-} from './app/service/StableCoin/StableCoinService.js';
-import {
-	StableCoinServiceRequestModel,
-	StableCoinListServiceRequestModel,
-} from './app/service/StableCoin/StableCoinServiceRequestModel.js';
-import StableCoin from './domain/context/Hedera/StableCoin/StableCoin.js';
-import StableCoinRepository from './port/in/StableCoin/StableCoinRepository.js';
-import Account from './domain/context/Hedera/Account/Account.js';
-import Repository from './port/in/Repository.js';
+import StableCoinService from './app/service/stablecoin/StableCoinService.js';
+import StableCoinServiceRequestModel from './app/service/stablecoin/model/StableCoinServiceRequestModel.js';
+import StableCoin from './domain/context/hedera/stablecoin/StableCoin.js';
+import StableCoinRepository from './port/in/stablecoin/StableCoinRepository.js';
+import StableCoinListServiceRequestModel from './app/service/stablecoin/model/StableCoinListServiceRequestModel.js';
+import { IStableCoinDetail } from './domain/context/hedera/stablecoin/interface/IStableCoinDetail.js';
+import { ICreateStableCoinRequest } from './port/out/request/ICreateStableCoinRequest';
+import { IGetListStableCoinRequest } from './port/out/request/IGetListStableCoinRequest';
+import { IGetStableCoinRequest } from './port/out/request/IGetStableCoinRequest';
+import { IRequestContracts } from './port/out/request/IRequestContracts';
+import IStableCoinList from './port/out/request/IStableCoinList.js';
+import Account from './domain/context/hedera/account/Account.js';
+import UtilitiesService from './app/service/utility/UtilitiesService.js';
 
-export { Account, StableCoin, Repository };
-
-export interface ICreateStableCoinRequest {
-	account: Account;
-	name: string;
-	symbol: string;
-	decimals: number;
-}
-
-export interface IGetListStableCoinRequest {
-	privateKey: string;
-}
-
-export interface IGetStableCoinRequest {
-	stableCoinId: string;
-}
-
-export interface IRequestContracts {
-	treasuryId: string;
-	privateKey: string;
-	accountId: string;
-	amount?: number;
-}
-
-export interface StableCoinList {
-	symbol: string;
-	id: string;
-}
+export { Account };
 
 export class SDK {
+	private utilsService: UtilitiesService;
 	private stableCoinRepository: StableCoinRepository;
 	private stableCoinService: StableCoinService;
 
@@ -51,7 +27,8 @@ export class SDK {
 	// Initializes the SDK,
 	// TODO should probably be decoupled from the dependency injection
 	private init(): void {
-		this.stableCoinRepository = new StableCoinRepository();
+		this.utilsService = new UtilitiesService();
+		this.stableCoinRepository = new StableCoinRepository(this.utilsService);
 		this.stableCoinService = new StableCoinService(
 			this.stableCoinRepository,
 		);
@@ -77,7 +54,7 @@ export class SDK {
 	 */
 	public getListStableCoin(
 		request: IGetListStableCoinRequest,
-	): Promise<StableCoinList[]> | null {
+	): Promise<IStableCoinList[]> | null {
 		const req: StableCoinListServiceRequestModel = { ...request };
 		return this.stableCoinService.getListStableCoins(req);
 	}
@@ -87,7 +64,7 @@ export class SDK {
 	 */
 	public getStableCoin(
 		request: IGetStableCoinRequest,
-	): Promise<StableCoinDetail> | null {
+	): Promise<IStableCoinDetail> | null {
 		const req: IGetStableCoinRequest = { ...request };
 		return this.stableCoinService.getStableCoin(req);
 	}
