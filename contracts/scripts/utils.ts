@@ -1,6 +1,6 @@
 import { TokenCreateTransaction,DelegateContractId, Hbar,  Client,  AccountId, PrivateKey, ContractFunctionParameters,
   PublicKey, ContractCreateTransaction, FileCreateTransaction, FileAppendTransaction, TokenId, TokenSupplyType,
-  ContractExecuteTransaction, AccountCreateTransaction } from "@hashgraph/sdk";
+  ContractExecuteTransaction } from "@hashgraph/sdk";
 
 import { HederaERC20__factory, HTSTokenOwner__factory, HederaERC1967Proxy__factory } from "../typechain-types";
 
@@ -25,7 +25,7 @@ export async function deployContractsWithSDK(name:string, symbol:string, decimal
   clientSdk.setOperator(account, privateKey);
 
   console.log(`Deploying ${HederaERC20__factory.name} contract... please wait.`);
-  let tokenContract = await deployContractSDK(HederaERC20__factory, 10, privateKey, clientSdk);
+  let tokenContract = await deployContractSDK(HederaERC20__factory, 12, privateKey, clientSdk);
 
   console.log(`Deploying ${HederaERC1967Proxy__factory.name} contract... please wait.`);
   let parameters = new ContractFunctionParameters()
@@ -249,30 +249,3 @@ async function fileCreate(
   const fileAppendRx = await fileAppendSubmit.getReceipt(clientOperator);
   return bytecodeFileId;
 };
-
-export async function createECDSAAccount(client:any, amount:number) {
-  let privateECDSAKey;
-
-  do {
-      privateECDSAKey = PrivateKey.generateECDSA();
-    } while (privateECDSAKey.toStringRaw().length < 64);
-
-  const response = await new AccountCreateTransaction()
-  .setKey(privateECDSAKey)
-  .setInitialBalance(new Hbar(amount))
-  .setNodeAccountIds([
-    AccountId.fromString('0.0.3'),
-    AccountId.fromString('0.0.5'),
-    AccountId.fromString('0.0.6'),
-    AccountId.fromString('0.0.7'),
-    AccountId.fromString('0.0.8'),
-    AccountId.fromString('0.0.9')
-  ])
-  .execute(client);
-  const receipt = await response.getReceipt(client);
-  const account = receipt.accountId;
-  let accountId = account!.toString();
-  let privateKey = '0x'.concat(privateECDSAKey.toStringRaw());
-  return { accountId, privateKey, privateECDSAKey };
-}
-
