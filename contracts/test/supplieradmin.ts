@@ -44,6 +44,10 @@ describe("Grant unlimited supplier role", function() {
     params = [AccountId.fromString(hreConfig.accounts[1].account!).toSolidityAddress(), 101000];  
     await expect(contractCall(ContractId.fromString(proxyAddress), 'mint', params, client2, 400000, HederaERC20__factory.abi)).to.be.throw;
   }); 
+  it("An account with unlimited supplier role can not be granted limited supplier role", async function() {
+    let params : any = [AccountId.fromString(hreConfig.accounts[1].account!).toSolidityAddress(), 100000];  
+    await expect(contractCall(ContractId.fromString(proxyAddress), 'grantSupplierRole', params, client, 130000, HederaERC20__factory.abi)).to.be.throw;
+  });   
 });
 
 describe("Grant supplier role", function() {
@@ -95,7 +99,7 @@ describe("Grant supplier role", function() {
     let result = await contractCall(ContractId.fromString(proxyAddress), 'supplierAllowance', params, client, 60000, HederaERC20__factory.abi);
     expect(Number(result[0])).to.eq(90000);
   });        
-  it("An account with supplier role and an allowance of 100 tokens, when decrease 10 tokens will have an allowance of 90 tokens", async function() {
+  it("An account with supplier role and an allowance of 100 tokens, when reseted, will have an allowance of 0 tokens", async function() {
     let params : any = [AccountId.fromString(hreConfig.accounts[1].account!).toSolidityAddress()];  
     await contractCall(ContractId.fromString(proxyAddress), 'resetSupplierAllowance', params, client, 120000, HederaERC20__factory.abi);
     params = [AccountId.fromString(hreConfig.accounts[1].account!).toSolidityAddress()];  
@@ -111,7 +115,14 @@ describe("Grant supplier role", function() {
     await contractCall(ContractId.fromString(proxyAddress), 'mint', params, client2, 400000, HederaERC20__factory.abi);
     params = [AccountId.fromString(hreConfig.accounts[1].account!).toSolidityAddress(), 11000];  
     await expect(contractCall(ContractId.fromString(proxyAddress), 'mint', params, client2, 400000, HederaERC20__factory.abi)).to.be.throw;  
-  });           
+  });    
+  it("An account with supplier role will reset allowance when unlimited supplier role is granted", async function() {
+    let params : any = [AccountId.fromString(hreConfig.accounts[1].account!).toSolidityAddress()];  
+    await contractCall(ContractId.fromString(proxyAddress), 'grantUnlimitedSupplierRole', params, client, 130000, HederaERC20__factory.abi);
+    params = [AccountId.fromString(hreConfig.accounts[1].account!).toSolidityAddress()];  
+    let result = await contractCall(ContractId.fromString(proxyAddress), 'supplierAllowance', params, client, 60000, HederaERC20__factory.abi);
+    expect(Number(result[0])).to.eq(0);
+  });   
 });
 
 describe("Revoke supplier role", function() {

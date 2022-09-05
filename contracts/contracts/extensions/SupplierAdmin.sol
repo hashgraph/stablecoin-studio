@@ -36,8 +36,10 @@ abstract contract SupplierAdmin is ISupplierAdmin, AccessControlUpgradeable, Tok
         virtual 
         onlyRole(ADMIN_SUPPLIER_ROLE) 
     {
+        require(!unlimitedSupplierAllowances[supplier], "Account already has unlimited supplier allowance");
         supplierAllowances[supplier] = amount;
         _grantRole(SUPPLIER_ROLE, supplier);
+        
     }
 
     function grantUnlimitedSupplierRole(address supplier)
@@ -46,6 +48,7 @@ abstract contract SupplierAdmin is ISupplierAdmin, AccessControlUpgradeable, Tok
         onlyRole(ADMIN_SUPPLIER_ROLE) 
     {
         unlimitedSupplierAllowances[supplier] = true;
+        supplierAllowances[supplier] = 0;
         _grantRole(SUPPLIER_ROLE, supplier);
     }
 
