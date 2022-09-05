@@ -15,7 +15,7 @@ abstract contract Roles {
         /**
     * @dev Role to protect rescue token and rescue hbar
     * 
-    * keccak256("ROLE_RESCUE");
+    * keccak256("RESCUE_ROLE");
     */ 
-    bytes32 public constant ROLE_RESCUE = 0x43f433f336cda92fbbe5bfbdd344a9fd79b2ef138cd6e6fc49d55e2f54e1d99a;
+    bytes32 public constant RESCUE_ROLE = 0x43f433f336cda92fbbe5bfbdd344a9fd79b2ef138cd6e6fc49d55e2f54e1d99a;
 }

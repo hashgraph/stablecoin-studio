@@ -18,7 +18,7 @@ abstract contract Rescatable is IRescatable ,AccessControlUpgradeable, TokenOwne
     */
     function rescueToken(uint256 amount)
     external
-    onlyRole(ROLE_RESCUE)  
+    onlyRole(RESCUE_ROLE)  
     {
         uint256 oldBalance = IHederaERC20(address(this)).balanceOf(address(_getTokenOwnerAddress()));
         require(oldBalance >= amount, "Amount must not exceed the token balance");
@@ -35,7 +35,7 @@ abstract contract Rescatable is IRescatable ,AccessControlUpgradeable, TokenOwne
     */
     function rescueHbar(uint256 amount) 
     external
-    onlyRole(ROLE_RESCUE) 
+    onlyRole(RESCUE_ROLE) 
     {
         uint256 oldBalance = address(this).balance;
         require(oldBalance >= amount, "Amount must not exceed the hbar balance");
