@@ -54,10 +54,7 @@ describe("Rescatable", function() {
     let params: any[] = [];  
     const response = await contractCall(ContractId.fromString(proxyAddress), 'getTokenOwnerAddress', params, client, 1300000, HederaERC20__factory.abi) 
     const tokenOwnerAddress = response[0] 
-   
-    params = [tokenOwnerAddress];  
-    const result = await contractCall(ContractId.fromString(proxyAddress), 'balanceOf', params, client, 60000, HederaERC20__factory.abi)  
-    
+       
     params = [10000000];  
     
     await expect ( contractCall(ContractId.fromString(proxyAddress), 'rescueToken', params, client, 120000, HederaERC20__factory.abi)).to.be.throw;
@@ -75,9 +72,6 @@ describe("Rescatable", function() {
     const response = await contractCall(ContractId.fromString(proxyAddress), 'getTokenOwnerAddress', params, client1, 1300000, HederaERC20__factory.abi) 
     const tokenOwnerAddress = response[0] 
    
-    params = [tokenOwnerAddress];  
-    const result = await contractCall(ContractId.fromString(proxyAddress), 'balanceOf', params, client, 60000, HederaERC20__factory.abi)  
-    
     params = [10000];  
 
     await expect(contractCall(ContractId.fromString(proxyAddress), 'rescueToken', params, client, 120000, HederaERC20__factory.abi)).to.be.throw;
