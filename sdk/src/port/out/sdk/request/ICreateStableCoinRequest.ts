@@ -1,4 +1,4 @@
-import Account from '../../../../domain/context/hedera/account/Account.js';
+import Account from '../../../../domain/context/Hedera/Account/Account.js';
 
 export interface ICreateStableCoinRequest {
 	account: Account;

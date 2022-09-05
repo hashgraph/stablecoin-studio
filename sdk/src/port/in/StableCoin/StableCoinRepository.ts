@@ -1,12 +1,12 @@
 import axios from 'axios';
 import UtilitiesService from '../../../app/service/utility/UtilitiesService.js';
-import { IStableCoinDetail } from '../../../domain/context/hedera/stablecoin/interface/IStableCoinDetail.js';
-import IStableCoinList from '../../../domain/context/hedera/stablecoin/interface/IStableCoinList.js';
-import ITokenList from '../../../domain/context/hedera/stablecoin/interface/ITokenList.js';
-import StableCoin from '../../../domain/context/hedera/stablecoin/StableCoin.js';
 import Repository from '../Repository.js';
 import { HederaERC20__factory } from 'hedera-stable-coin-contracts/typechain-types';
 import ContractsService from '../../../app/service/contract/ContractsService.js';
+import StableCoin from 'domain/context/Hedera/StableCoin/StableCoin.js';
+import IStableCoinList from 'port/out/sdk/response/IStableCoinList.js';
+import ITokenList from 'domain/context/Hedera/StableCoin/interface/ITokenList.js';
+import IStableCoinDetail from 'domain/context/Hedera/StableCoin/interface/IStableCoinDetail.js';
 
 export default class StableCoinRepository extends Repository<StableCoin> {
 	private URI_BASE = 'https://testnet.mirrornode.hedera.com/api/v1/';
@@ -14,7 +14,10 @@ export default class StableCoinRepository extends Repository<StableCoin> {
 	private utilsService: UtilitiesService;
 	private contractsService: ContractsService;
 
-	constructor(utilsService: UtilitiesService, contractsService: ContractsService) {
+	constructor(
+		utilsService: UtilitiesService,
+		contractsService: ContractsService,
+	) {
 		super();
 		this.utilsService = utilsService;
 		this.contractsService = contractsService;

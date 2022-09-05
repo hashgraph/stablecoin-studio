@@ -1,11 +1,10 @@
-import { IWipeKey } from "./IWipeKey";
-import { IFreezeKey } from "./IFreezeKey";
-import { IKYCKey } from "./IKYCKey";
-import { IAdminKey } from "./IAdminKey";
-import { ICustomFees } from "./ICustomFees";
+import { IWipeKey } from './IWipeKey';
+import { IFreezeKey } from './IFreezeKey';
+import { IKYCKey } from './IKYCKey';
+import { IAdminKey } from './IAdminKey';
+import { ICustomFees } from './ICustomFees';
 
-
-export interface IStableCoinDetail {
+export default interface IStableCoinDetail {
 	token_id?: string;
 	name?: string;
 	symbol?: string;
