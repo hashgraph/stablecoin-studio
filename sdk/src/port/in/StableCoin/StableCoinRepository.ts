@@ -6,7 +6,7 @@ import ITokenList from '../../../domain/context/hedera/stablecoin/interface/ITok
 import StableCoin from '../../../domain/context/hedera/stablecoin/StableCoin.js';
 import Repository from '../Repository.js';
 import { HederaERC20__factory } from 'hedera-stable-coin-contracts/typechain-types';
-import ContractsService from 'app/service/contracts/ContractsService.js';
+import ContractsService from '../../../app/service/contract/ContractsService.js';
 
 export default class StableCoinRepository extends Repository<StableCoin> {
 	private URI_BASE = 'https://testnet.mirrornode.hedera.com/api/v1/';
