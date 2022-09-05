@@ -1,7 +1,7 @@
 import "@nomicfoundation/hardhat-toolbox";
 import "@hashgraph/hardhat-hethers";
 import "@hashgraph/sdk";
-import { PrivateKey } from "@hashgraph/sdk";
+const { PrivateKey } = require('@hashgraph/sdk')
 require('hardhat-abi-exporter');
 
 module.exports = {

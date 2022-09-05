@@ -37,3 +37,4 @@ build
 
 # Compile contract
 artifacts/
+sdk/hedera-sc-sdk.code-workspace
