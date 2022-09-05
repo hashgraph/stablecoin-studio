@@ -1,31 +1,28 @@
 import axios from 'axios';
-import UtilitiesService from '../../../app/service/utility/UtilitiesService.js';
-import Repository from '../Repository.js';
 import { HederaERC20__factory } from 'hedera-stable-coin-contracts/typechain-types';
-import ContractsService from '../../../app/service/contract/ContractsService.js';
 import IStableCoinList from 'port/in/sdk/response/IStableCoinList.js';
-import ITokenList from '../../../domain/context/hedera/stablecoin/ITokenList.js';
-import IStableCoinDetail from '../../../domain/context/hedera/stablecoin/IStableCoinDetail.js';
-import StableCoin from '../../../domain/context/hedera/stablecoin/StableCoin.js';
+import ITokenList from '../../../domain/context/stablecoin/ITokenList.js';
+import IStableCoinDetail from '../../../domain/context/stablecoin/IStableCoinDetail.js';
+import StableCoin from '../../../domain/context/stablecoin/StableCoin.js';
+import IStableCoinRepository from './IStableCoinRepository.js';
+import IContractRepository from '../contract/IContractRepository.js';
 
-export default class StableCoinRepository extends Repository<StableCoin> {
+export default class StableCoinRepository implements IStableCoinRepository {
 	private URI_BASE = 'https://testnet.mirrornode.hedera.com/api/v1/';
 
-	private utilsService: UtilitiesService;
-	private contractsService: ContractsService;
+	private contractRepository: IContractRepository;
 
 	constructor(
-		utilsService: UtilitiesService,
-		contractsService: ContractsService,
+		contractRepository: IContractRepository,
 	) {
-		super();
-		this.utilsService = utilsService;
-		this.contractsService = contractsService;
+		this.contractRepository = contractRepository;
 	}
 
-	public saveCoin(coin: StableCoin): StableCoin {
-		this.data.push(coin);
-		return coin;
+	public async saveCoin(coin: StableCoin): Promise<StableCoin> {
+
+		
+
+		return new Promise<StableCoin>(() => null);
 	}
 
 	public async getListStableCoins(
@@ -33,7 +30,7 @@ export default class StableCoinRepository extends Repository<StableCoin> {
 	): Promise<IStableCoinList[]> {
 		try {
 			const resObject: IStableCoinList[] = [];
-			const pk = this.utilsService.getPublicKey(privateKey);
+			const pk = this.contractRepository.getPublicKey(privateKey);
 			const res = await axios.get<ITokenList>(
 				this.URI_BASE + 'tokens?limit=100&publickey=' + pk,
 			);
@@ -88,7 +85,7 @@ export default class StableCoinRepository extends Repository<StableCoin> {
 	): Promise<Uint8Array> {
 		const { AccountId } = require('@hashgraph/sdk');
 
-		const clientSdk = this.contractsService.getClient('testnet');
+		const clientSdk = this.contractRepository.getClient('testnet');
 		clientSdk.setOperator(accountId, privateKey);
 
 		const parameters = [
@@ -103,7 +100,7 @@ export default class StableCoinRepository extends Repository<StableCoin> {
 			abi: HederaERC20__factory.abi,
 		};
 
-		return await this.contractsService.callContract('balanceOf', params);
+		return await this.contractRepository.callContract('balanceOf', params);
 	}
 
 	public async getNameToken(
@@ -111,7 +108,7 @@ export default class StableCoinRepository extends Repository<StableCoin> {
 		privateKey: string,
 		accountId: string,
 	): Promise<Uint8Array> {
-		const clientSdk = this.contractsService.getClient('testnet');
+		const clientSdk = this.contractRepository.getClient('testnet');
 		clientSdk.setOperator(accountId, privateKey);
 
 		const params = {
@@ -122,7 +119,7 @@ export default class StableCoinRepository extends Repository<StableCoin> {
 			abi: HederaERC20__factory.abi,
 		};
 
-		return await this.contractsService.callContract('name', params);
+		return await this.contractRepository.callContract('name', params);
 	}
 
 	public async cashIn(
@@ -133,7 +130,7 @@ export default class StableCoinRepository extends Repository<StableCoin> {
 	): Promise<Uint8Array> {
 		const { AccountId } = require('@hashgraph/sdk');
 
-		const clientSdk = this.contractsService.getClient('testnet');
+		const clientSdk = this.contractRepository.getClient('testnet');
 		clientSdk.setOperator(accountId, privateKey);
 		const parameters = [
 			AccountId.fromString(accountId || '').toSolidityAddress(),
@@ -148,7 +145,7 @@ export default class StableCoinRepository extends Repository<StableCoin> {
 			abi: HederaERC20__factory.abi,
 		};
 
-		return await this.contractsService.callContract('mint', params);
+		return await this.contractRepository.callContract('mint', params);
 	}
 
 	public async associateToken(
@@ -158,7 +155,7 @@ export default class StableCoinRepository extends Repository<StableCoin> {
 	): Promise<Uint8Array> {
 		const { AccountId } = require('@hashgraph/sdk');
 
-		const clientSdk = this.contractsService.getClient('testnet');
+		const clientSdk = this.contractRepository.getClient('testnet');
 		clientSdk.setOperator(accountId, privateKey);
 		const parameters = [
 			AccountId.fromString(accountId || '').toSolidityAddress(),
@@ -172,7 +169,7 @@ export default class StableCoinRepository extends Repository<StableCoin> {
 			abi: HederaERC20__factory.abi,
 		};
 
-		return await this.contractsService.callContract(
+		return await this.contractRepository.callContract(
 			'associateToken',
 			params,
 		);
@@ -186,7 +183,7 @@ export default class StableCoinRepository extends Repository<StableCoin> {
 	): Promise<Uint8Array> {
 		const { AccountId } = require('@hashgraph/sdk');
 
-		const clientSdk = this.contractsService.getClient('testnet');
+		const clientSdk = this.contractRepository.getClient('testnet');
 		clientSdk.setOperator(accountId, privateKey);
 		const parameters = [
 			AccountId.fromString(accountId || '').toSolidityAddress(),
@@ -201,6 +198,6 @@ export default class StableCoinRepository extends Repository<StableCoin> {
 			abi: HederaERC20__factory.abi,
 		};
 
-		return await this.contractsService.callContract('wipe', params);
+		return await this.contractRepository.callContract('wipe', params);
 	}
 }
