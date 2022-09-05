@@ -49,7 +49,7 @@ export default class StableCoinService extends Service {
 		treasuryId: string,
 		privateKey: string,
 		accountId: string,
-	): Promise<[]> {
+	): Promise<Uint8Array> {
 		return this.repository.getBalanceOf(treasuryId, privateKey, accountId);
 	}
 
@@ -57,7 +57,7 @@ export default class StableCoinService extends Service {
 		treasuryId: string,
 		privateKey: string,
 		accountId: string,
-	): Promise<[]> {
+	): Promise<Uint8Array> {
 		return this.repository.getNameToken(treasuryId, privateKey, accountId);
 	}
 
@@ -66,7 +66,7 @@ export default class StableCoinService extends Service {
 		privateKey: string,
 		accountId: string,
 		amount = 1000,
-	): Promise<[]> {
+	): Promise<Uint8Array> {
 		return this.repository.cashIn(
 			treasuryId,
 			privateKey,
@@ -79,7 +79,7 @@ export default class StableCoinService extends Service {
 		treasuryId: string,
 		privateKey: string,
 		accountId: string,
-	): Promise<[]> {
+	): Promise<Uint8Array> {
 		return this.repository.associateToken(
 			treasuryId,
 			privateKey,
@@ -92,7 +92,7 @@ export default class StableCoinService extends Service {
 		privateKey: string,
 		accountId: string,
 		amount = 1000,
-	): Promise<[]> {
+	): Promise<Uint8Array> {
 		return this.repository.wipe(treasuryId, privateKey, accountId, amount);
 	}
 }

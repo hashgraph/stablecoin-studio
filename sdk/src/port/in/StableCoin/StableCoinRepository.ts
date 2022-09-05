@@ -6,11 +6,13 @@ import ITokenList from '../../../domain/context/hedera/stablecoin/interface/ITok
 import StableCoin from '../../../domain/context/hedera/stablecoin/StableCoin.js';
 import Repository from '../Repository.js';
 import { HederaERC20__factory } from 'hedera-stable-coin-contracts/typechain-types';
+import ContractsService from 'app/service/Contracts/ContractsService.js';
 
 export default class StableCoinRepository extends Repository<StableCoin> {
 	private URI_BASE = 'https://testnet.mirrornode.hedera.com/api/v1/';
 
 	private utilsService: UtilitiesService;
+	private contractsService: ContractsService;
 
 	constructor(utilsService: UtilitiesService) {
 		super();
@@ -79,10 +81,10 @@ export default class StableCoinRepository extends Repository<StableCoin> {
 		treasuryId: string,
 		privateKey: string,
 		accountId: string,
-	): Promise<[]> {
+	): Promise<Uint8Array> {
 		const { AccountId } = require('@hashgraph/sdk');
 
-		const clientSdk = this.utilsService.getClient('testnet');
+		const clientSdk = this.contractsService.getClient('testnet');
 		clientSdk.setOperator(accountId, privateKey);
 
 		const parameters = [
@@ -97,15 +99,15 @@ export default class StableCoinRepository extends Repository<StableCoin> {
 			abi: HederaERC20__factory.abi,
 		};
 
-		return await this.utilsService.callContract('balanceOf', params);
+		return await this.contractsService.callContract('balanceOf', params);
 	}
 
 	public async getNameToken(
 		treasuryId: string,
 		privateKey: string,
 		accountId: string,
-	): Promise<[]> {
-		const clientSdk = this.utilsService.getClient('testnet');
+	): Promise<Uint8Array> {
+		const clientSdk = this.contractsService.getClient('testnet');
 		clientSdk.setOperator(accountId, privateKey);
 
 		const params = {
@@ -116,7 +118,7 @@ export default class StableCoinRepository extends Repository<StableCoin> {
 			abi: HederaERC20__factory.abi,
 		};
 
-		return await this.utilsService.callContract('name', params);
+		return await this.contractsService.callContract('name', params);
 	}
 
 	public async cashIn(
@@ -124,10 +126,10 @@ export default class StableCoinRepository extends Repository<StableCoin> {
 		privateKey: string,
 		accountId: string,
 		amount = 1000,
-	): Promise<[]> {
+	): Promise<Uint8Array> {
 		const { AccountId } = require('@hashgraph/sdk');
 
-		const clientSdk = this.utilsService.getClient('testnet');
+		const clientSdk = this.contractsService.getClient('testnet');
 		clientSdk.setOperator(accountId, privateKey);
 		const parameters = [
 			AccountId.fromString(accountId || '').toSolidityAddress(),
@@ -142,17 +144,17 @@ export default class StableCoinRepository extends Repository<StableCoin> {
 			abi: HederaERC20__factory.abi,
 		};
 
-		return await this.utilsService.callContract('mint', params);
+		return await this.contractsService.callContract('mint', params);
 	}
 
 	public async associateToken(
 		treasuryId: string,
 		privateKey: string,
 		accountId: string,
-	): Promise<[]> {
+	): Promise<Uint8Array> {
 		const { AccountId } = require('@hashgraph/sdk');
 
-		const clientSdk = this.utilsService.getClient('testnet');
+		const clientSdk = this.contractsService.getClient('testnet');
 		clientSdk.setOperator(accountId, privateKey);
 		const parameters = [
 			AccountId.fromString(accountId || '').toSolidityAddress(),
@@ -166,7 +168,10 @@ export default class StableCoinRepository extends Repository<StableCoin> {
 			abi: HederaERC20__factory.abi,
 		};
 
-		return await this.utilsService.callContract('associateToken', params);
+		return await this.contractsService.callContract(
+			'associateToken',
+			params,
+		);
 	}
 
 	public async wipe(
@@ -174,10 +179,10 @@ export default class StableCoinRepository extends Repository<StableCoin> {
 		privateKey: string,
 		accountId: string,
 		amount = 1000,
-	): Promise<[]> {
+	): Promise<Uint8Array> {
 		const { AccountId } = require('@hashgraph/sdk');
 
-		const clientSdk = this.utilsService.getClient('testnet');
+		const clientSdk = this.contractsService.getClient('testnet');
 		clientSdk.setOperator(accountId, privateKey);
 		const parameters = [
 			AccountId.fromString(accountId || '').toSolidityAddress(),
@@ -192,6 +197,6 @@ export default class StableCoinRepository extends Repository<StableCoin> {
 			abi: HederaERC20__factory.abi,
 		};
 
-		return await this.utilsService.callContract('wipe', params);
+		return await this.contractsService.callContract('wipe', params);
 	}
 }

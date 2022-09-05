@@ -72,7 +72,9 @@ export class SDK {
 	/**
 	 * getBalanceOf
 	 */
-	public getBalanceOf(request: IRequestContracts): Promise<[]> | null {
+	public getBalanceOf(
+		request: IRequestContracts,
+	): Promise<Uint8Array> | null {
 		try {
 			const req: IRequestContracts = { ...request };
 			return this.stableCoinService.getBalanceOf(
@@ -89,7 +91,9 @@ export class SDK {
 	/**
 	 * getName
 	 */
-	public getNameToken(request: IRequestContracts): Promise<[]> | null {
+	public getNameToken(
+		request: IRequestContracts,
+	): Promise<Uint8Array> | null {
 		try {
 			const req: IRequestContracts = { ...request };
 			return this.stableCoinService.getNameToken(
@@ -106,7 +110,7 @@ export class SDK {
 	/**
 	 * cashIn
 	 */
-	public cashIn(request: IRequestContracts): Promise<[]> | null {
+	public cashIn(request: IRequestContracts): Promise<Uint8Array> | null {
 		try {
 			const req: IRequestContracts = { ...request };
 			return this.stableCoinService.cashIn(
@@ -124,7 +128,9 @@ export class SDK {
 	/**
 	 * associateToken
 	 */
-	public associateToken(request: IRequestContracts): Promise<[]> | null {
+	public associateToken(
+		request: IRequestContracts,
+	): Promise<Uint8Array> | null {
 		try {
 			const req: IRequestContracts = { ...request };
 			return this.stableCoinService.associateToken(
@@ -141,7 +147,7 @@ export class SDK {
 	/**
 	 * wipeToken
 	 */
-	public wipe(request: IRequestContracts): Promise<[]> | null {
+	public wipe(request: IRequestContracts): Promise<Uint8Array> | null {
 		try {
 			const req: IRequestContracts = { ...request };
 			return this.stableCoinService.wipe(
