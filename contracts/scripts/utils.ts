@@ -1,6 +1,6 @@
-import { TokenCreateTransaction,DelegateContractId, Hbar,  Client,  AccountId, PrivateKey, ContractFunctionParameters,
+const { TokenCreateTransaction,DelegateContractId, Hbar,  Client,  AccountId, PrivateKey, ContractFunctionParameters,
   PublicKey, ContractCreateTransaction, FileCreateTransaction, FileAppendTransaction, TokenId, TokenSupplyType,
-  ContractExecuteTransaction } from "@hashgraph/sdk";
+  ContractExecuteTransaction } = require("@hashgraph/sdk");
 
 import { HederaERC20__factory, HTSTokenOwner__factory, HederaERC1967Proxy__factory } from "../typechain-types";
 

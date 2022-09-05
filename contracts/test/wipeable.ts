@@ -1,4 +1,4 @@
-import { ContractFunctionParameters, ContractId, AccountId } from "@hashgraph/sdk";
+const { ContractFunctionParameters, ContractId, AccountId } = require("@hashgraph/sdk");
 require("@hashgraph/hardhat-hethers");
 require("@hashgraph/sdk");
 
