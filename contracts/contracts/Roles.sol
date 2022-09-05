@@ -12,4 +12,10 @@ abstract contract Roles {
     // keccak_256("ADMIN_SUPPLIER_ROLE")
     bytes32 public constant ADMIN_SUPPLIER_ROLE = 0x8dd0f644b9b923c24aa7291efd0bd4141a413ec8cdb492e43928e281ce1a38e9;
 
+        /**
+    * @dev Role to protect rescue token and rescue hbar
+    * 
+    * keccak256("RESCUE_ROLE");
+    */ 
+    bytes32 public constant RESCUE_ROLE = 0x43f433f336cda92fbbe5bfbdd344a9fd79b2ef138cd6e6fc49d55e2f54e1d99a;
 }

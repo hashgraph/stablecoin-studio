@@ -22,20 +22,42 @@ import type {
 
 export interface RolesInterface extends utils.Interface {
   functions: {
+    "ADMIN_SUPPLIER_ROLE()": FunctionFragment;
+    "RESCUE_ROLE()": FunctionFragment;
     "SUPPLIER_ROLE()": FunctionFragment;
     "WIPE_ROLE()": FunctionFragment;
   };
 
   getFunction(
-    nameOrSignatureOrTopic: "SUPPLIER_ROLE" | "WIPE_ROLE"
+    nameOrSignatureOrTopic:
+      | "ADMIN_SUPPLIER_ROLE"
+      | "RESCUE_ROLE"
+      | "SUPPLIER_ROLE"
+      | "WIPE_ROLE"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "ADMIN_SUPPLIER_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "RESCUE_ROLE",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "SUPPLIER_ROLE",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "WIPE_ROLE", values?: undefined): string;
 
+  decodeFunctionResult(
+    functionFragment: "ADMIN_SUPPLIER_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "RESCUE_ROLE",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "SUPPLIER_ROLE",
     data: BytesLike
@@ -72,16 +94,28 @@ export interface Roles extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    ADMIN_SUPPLIER_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    RESCUE_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
     SUPPLIER_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     WIPE_ROLE(overrides?: CallOverrides): Promise<[string]>;
   };
+
+  ADMIN_SUPPLIER_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  RESCUE_ROLE(overrides?: CallOverrides): Promise<string>;
 
   SUPPLIER_ROLE(overrides?: CallOverrides): Promise<string>;
 
   WIPE_ROLE(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
+    ADMIN_SUPPLIER_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    RESCUE_ROLE(overrides?: CallOverrides): Promise<string>;
+
     SUPPLIER_ROLE(overrides?: CallOverrides): Promise<string>;
 
     WIPE_ROLE(overrides?: CallOverrides): Promise<string>;
@@ -90,12 +124,22 @@ export interface Roles extends BaseContract {
   filters: {};
 
   estimateGas: {
+    ADMIN_SUPPLIER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    RESCUE_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
     SUPPLIER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     WIPE_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    ADMIN_SUPPLIER_ROLE(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    RESCUE_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     SUPPLIER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     WIPE_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;

@@ -5,11 +5,36 @@
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
 import type {
-  HederaERC20Mintable,
-  HederaERC20MintableInterface,
-} from "../../contracts/HederaERC20Mintable";
+  Rescatable,
+  RescatableInterface,
+} from "../../../contracts/extensions/Rescatable";
 
 const _abi = [
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "rescuer",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "oldAmount",
+        type: "uint256",
+      },
+    ],
+    name: "HbarRescued",
+    type: "event",
+  },
   {
     anonymous: false,
     inputs: [
@@ -99,6 +124,50 @@ const _abi = [
     type: "event",
   },
   {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "rescuer",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "tokenId",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "oldBalance",
+        type: "uint256",
+      },
+    ],
+    name: "TokenRescued",
+    type: "event",
+  },
+  {
+    inputs: [],
+    name: "ADMIN_SUPPLIER_ROLE",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "DEFAULT_ADMIN_ROLE",
     outputs: [
@@ -113,7 +182,33 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "RESCUE_ROLE",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "SUPPLIER_ROLE",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "WIPE_ROLE",
     outputs: [
       {
         internalType: "bytes32",
@@ -214,30 +309,6 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
-      },
-    ],
-    name: "mint2",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
         internalType: "bytes32",
         name: "role",
         type: "bytes32",
@@ -249,6 +320,32 @@ const _abi = [
       },
     ],
     name: "renounceRole",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+    ],
+    name: "rescueHbar",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+    ],
+    name: "rescueToken",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -310,15 +407,15 @@ const _abi = [
   },
 ];
 
-export class HederaERC20Mintable__factory {
+export class Rescatable__factory {
   static readonly abi = _abi;
-  static createInterface(): HederaERC20MintableInterface {
-    return new utils.Interface(_abi) as HederaERC20MintableInterface;
+  static createInterface(): RescatableInterface {
+    return new utils.Interface(_abi) as RescatableInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): HederaERC20Mintable {
-    return new Contract(address, _abi, signerOrProvider) as HederaERC20Mintable;
+  ): Rescatable {
+    return new Contract(address, _abi, signerOrProvider) as Rescatable;
   }
 }

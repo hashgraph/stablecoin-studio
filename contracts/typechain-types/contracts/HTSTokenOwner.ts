@@ -73,19 +73,17 @@ export interface HTSTokenOwnerInterface extends utils.Interface {
   functions: {
     "burnToken(address,uint256)": FunctionFragment;
     "erc20address()": FunctionFragment;
-    "getTokenAddress()": FunctionFragment;
     "getTokenExpiryInfo(address)": FunctionFragment;
     "getTokenKey(address,uint256)": FunctionFragment;
-    "getTokenOwnerAddress()": FunctionFragment;
     "grantTokenKyc(address,address)": FunctionFragment;
     "isKyc(address,address)": FunctionFragment;
     "mintToken(address,uint256)": FunctionFragment;
     "pauseToken(address)": FunctionFragment;
     "revokeTokenKyc(address,address)": FunctionFragment;
     "setERC20Address(address)": FunctionFragment;
-    "setTokenAddress(address,address)": FunctionFragment;
     "toString(bytes)": FunctionFragment;
-    "transfer(address,uint256)": FunctionFragment;
+    "tranferContract(address,address,uint256)": FunctionFragment;
+    "transfer(address,address,uint256)": FunctionFragment;
     "transfer(address,address,address,uint256)": FunctionFragment;
     "unpauseToken(address)": FunctionFragment;
     "updateTokenExpiryInfo(address,(uint32,address,uint32))": FunctionFragment;
@@ -97,19 +95,17 @@ export interface HTSTokenOwnerInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "burnToken"
       | "erc20address"
-      | "getTokenAddress"
       | "getTokenExpiryInfo"
       | "getTokenKey"
-      | "getTokenOwnerAddress"
       | "grantTokenKyc"
       | "isKyc"
       | "mintToken"
       | "pauseToken"
       | "revokeTokenKyc"
       | "setERC20Address"
-      | "setTokenAddress"
       | "toString"
-      | "transfer(address,uint256)"
+      | "tranferContract"
+      | "transfer(address,address,uint256)"
       | "transfer(address,address,address,uint256)"
       | "unpauseToken"
       | "updateTokenExpiryInfo"
@@ -126,20 +122,12 @@ export interface HTSTokenOwnerInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getTokenAddress",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "getTokenExpiryInfo",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "getTokenKey",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getTokenOwnerAddress",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "grantTokenKyc",
@@ -166,16 +154,24 @@ export interface HTSTokenOwnerInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "setTokenAddress",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "toString",
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "transfer(address,uint256)",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+    functionFragment: "tranferContract",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "transfer(address,address,uint256)",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "transfer(address,address,address,uint256)",
@@ -213,19 +209,11 @@ export interface HTSTokenOwnerInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getTokenAddress",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getTokenExpiryInfo",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "getTokenKey",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getTokenOwnerAddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -243,13 +231,13 @@ export interface HTSTokenOwnerInterface extends utils.Interface {
     functionFragment: "setERC20Address",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "setTokenAddress",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "toString", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "transfer(address,uint256)",
+    functionFragment: "tranferContract",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "transfer(address,address,uint256)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -308,8 +296,6 @@ export interface HTSTokenOwner extends BaseContract {
 
     erc20address(overrides?: CallOverrides): Promise<[string]>;
 
-    getTokenAddress(overrides?: CallOverrides): Promise<[string]>;
-
     getTokenExpiryInfo(
       token: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -320,8 +306,6 @@ export interface HTSTokenOwner extends BaseContract {
       keyType: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
-
-    getTokenOwnerAddress(overrides?: CallOverrides): Promise<[string]>;
 
     grantTokenKyc(
       token: PromiseOrValue<string>,
@@ -357,18 +341,20 @@ export interface HTSTokenOwner extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    setTokenAddress(
-      _htsTokenOwnerAddress: PromiseOrValue<string>,
-      _tokenAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     toString(
       data: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    "transfer(address,uint256)"(
+    tranferContract(
+      tokenAddress: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    "transfer(address,address,uint256)"(
+      tokenAddress: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -415,8 +401,6 @@ export interface HTSTokenOwner extends BaseContract {
 
   erc20address(overrides?: CallOverrides): Promise<string>;
 
-  getTokenAddress(overrides?: CallOverrides): Promise<string>;
-
   getTokenExpiryInfo(
     token: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -427,8 +411,6 @@ export interface HTSTokenOwner extends BaseContract {
     keyType: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
-
-  getTokenOwnerAddress(overrides?: CallOverrides): Promise<string>;
 
   grantTokenKyc(
     token: PromiseOrValue<string>,
@@ -464,18 +446,20 @@ export interface HTSTokenOwner extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  setTokenAddress(
-    _htsTokenOwnerAddress: PromiseOrValue<string>,
-    _tokenAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   toString(
     data: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<string>;
 
-  "transfer(address,uint256)"(
+  tranferContract(
+    tokenAddress: PromiseOrValue<string>,
+    to: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  "transfer(address,address,uint256)"(
+    tokenAddress: PromiseOrValue<string>,
     to: PromiseOrValue<string>,
     amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -522,8 +506,6 @@ export interface HTSTokenOwner extends BaseContract {
 
     erc20address(overrides?: CallOverrides): Promise<string>;
 
-    getTokenAddress(overrides?: CallOverrides): Promise<string>;
-
     getTokenExpiryInfo(
       token: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -544,8 +526,6 @@ export interface HTSTokenOwner extends BaseContract {
         key: IHederaTokenService.KeyValueStructOutput;
       }
     >;
-
-    getTokenOwnerAddress(overrides?: CallOverrides): Promise<string>;
 
     grantTokenKyc(
       token: PromiseOrValue<string>,
@@ -583,18 +563,20 @@ export interface HTSTokenOwner extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setTokenAddress(
-      _htsTokenOwnerAddress: PromiseOrValue<string>,
-      _tokenAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     toString(
       data: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<string>;
 
-    "transfer(address,uint256)"(
+    tranferContract(
+      tokenAddress: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "transfer(address,address,uint256)"(
+      tokenAddress: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -644,8 +626,6 @@ export interface HTSTokenOwner extends BaseContract {
 
     erc20address(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getTokenAddress(overrides?: CallOverrides): Promise<BigNumber>;
-
     getTokenExpiryInfo(
       token: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -656,8 +636,6 @@ export interface HTSTokenOwner extends BaseContract {
       keyType: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
-
-    getTokenOwnerAddress(overrides?: CallOverrides): Promise<BigNumber>;
 
     grantTokenKyc(
       token: PromiseOrValue<string>,
@@ -693,18 +671,20 @@ export interface HTSTokenOwner extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    setTokenAddress(
-      _htsTokenOwnerAddress: PromiseOrValue<string>,
-      _tokenAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     toString(
       data: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "transfer(address,uint256)"(
+    tranferContract(
+      tokenAddress: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "transfer(address,address,uint256)"(
+      tokenAddress: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -752,8 +732,6 @@ export interface HTSTokenOwner extends BaseContract {
 
     erc20address(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getTokenAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     getTokenExpiryInfo(
       token: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -763,10 +741,6 @@ export interface HTSTokenOwner extends BaseContract {
       token: PromiseOrValue<string>,
       keyType: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    getTokenOwnerAddress(
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     grantTokenKyc(
@@ -803,18 +777,20 @@ export interface HTSTokenOwner extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    setTokenAddress(
-      _htsTokenOwnerAddress: PromiseOrValue<string>,
-      _tokenAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     toString(
       data: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "transfer(address,uint256)"(
+    tranferContract(
+      tokenAddress: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "transfer(address,address,uint256)"(
+      tokenAddress: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }

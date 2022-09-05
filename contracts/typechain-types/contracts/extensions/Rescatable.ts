@@ -25,19 +25,23 @@ import type {
   TypedListener,
   OnEvent,
   PromiseOrValue,
-} from "../common";
+} from "../../common";
 
-export interface HederaERC20MintableInterface extends utils.Interface {
+export interface RescatableInterface extends utils.Interface {
   functions: {
+    "ADMIN_SUPPLIER_ROLE()": FunctionFragment;
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
+    "RESCUE_ROLE()": FunctionFragment;
     "SUPPLIER_ROLE()": FunctionFragment;
+    "WIPE_ROLE()": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "getTokenAddress()": FunctionFragment;
     "getTokenOwnerAddress()": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
-    "mint2(address,uint256)": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
+    "rescueHbar(uint256)": FunctionFragment;
+    "rescueToken(uint256)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "setTokenAddress(address,address)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
@@ -45,28 +49,41 @@ export interface HederaERC20MintableInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "ADMIN_SUPPLIER_ROLE"
       | "DEFAULT_ADMIN_ROLE"
+      | "RESCUE_ROLE"
       | "SUPPLIER_ROLE"
+      | "WIPE_ROLE"
       | "getRoleAdmin"
       | "getTokenAddress"
       | "getTokenOwnerAddress"
       | "grantRole"
       | "hasRole"
-      | "mint2"
       | "renounceRole"
+      | "rescueHbar"
+      | "rescueToken"
       | "revokeRole"
       | "setTokenAddress"
       | "supportsInterface"
   ): FunctionFragment;
 
   encodeFunctionData(
+    functionFragment: "ADMIN_SUPPLIER_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "DEFAULT_ADMIN_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "RESCUE_ROLE",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "SUPPLIER_ROLE",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "WIPE_ROLE", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getRoleAdmin",
     values: [PromiseOrValue<BytesLike>]
@@ -88,12 +105,16 @@ export interface HederaERC20MintableInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "mint2",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "renounceRole",
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "rescueHbar",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "rescueToken",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "revokeRole",
@@ -109,13 +130,22 @@ export interface HederaERC20MintableInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(
+    functionFragment: "ADMIN_SUPPLIER_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "DEFAULT_ADMIN_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "RESCUE_ROLE",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "SUPPLIER_ROLE",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "WIPE_ROLE", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getRoleAdmin",
     data: BytesLike
@@ -130,9 +160,13 @@ export interface HederaERC20MintableInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "mint2", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceRole",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "rescueHbar", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "rescueToken",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
@@ -146,17 +180,33 @@ export interface HederaERC20MintableInterface extends utils.Interface {
   ): Result;
 
   events: {
+    "HbarRescued(address,uint256,uint256)": EventFragment;
     "Initialized(uint8)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
+    "TokenRescued(address,address,uint256,uint256)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "HbarRescued"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TokenRescued"): EventFragment;
 }
+
+export interface HbarRescuedEventObject {
+  rescuer: string;
+  amount: BigNumber;
+  oldAmount: BigNumber;
+}
+export type HbarRescuedEvent = TypedEvent<
+  [string, BigNumber, BigNumber],
+  HbarRescuedEventObject
+>;
+
+export type HbarRescuedEventFilter = TypedEventFilter<HbarRescuedEvent>;
 
 export interface InitializedEventObject {
   version: number;
@@ -202,12 +252,25 @@ export type RoleRevokedEvent = TypedEvent<
 
 export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
 
-export interface HederaERC20Mintable extends BaseContract {
+export interface TokenRescuedEventObject {
+  rescuer: string;
+  tokenId: string;
+  amount: BigNumber;
+  oldBalance: BigNumber;
+}
+export type TokenRescuedEvent = TypedEvent<
+  [string, string, BigNumber, BigNumber],
+  TokenRescuedEventObject
+>;
+
+export type TokenRescuedEventFilter = TypedEventFilter<TokenRescuedEvent>;
+
+export interface Rescatable extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: HederaERC20MintableInterface;
+  interface: RescatableInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -229,9 +292,15 @@ export interface HederaERC20Mintable extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    ADMIN_SUPPLIER_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
+    RESCUE_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
     SUPPLIER_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    WIPE_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
@@ -254,15 +323,19 @@ export interface HederaERC20Mintable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    mint2(
+    renounceRole(
+      role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    rescueHbar(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    renounceRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+    rescueToken(
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -284,9 +357,15 @@ export interface HederaERC20Mintable extends BaseContract {
     ): Promise<[boolean]>;
   };
 
+  ADMIN_SUPPLIER_ROLE(overrides?: CallOverrides): Promise<string>;
+
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
+  RESCUE_ROLE(overrides?: CallOverrides): Promise<string>;
+
   SUPPLIER_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  WIPE_ROLE(overrides?: CallOverrides): Promise<string>;
 
   getRoleAdmin(
     role: PromiseOrValue<BytesLike>,
@@ -309,15 +388,19 @@ export interface HederaERC20Mintable extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  mint2(
+  renounceRole(
+    role: PromiseOrValue<BytesLike>,
     account: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  rescueHbar(
     amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  renounceRole(
-    role: PromiseOrValue<BytesLike>,
-    account: PromiseOrValue<string>,
+  rescueToken(
+    amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -339,9 +422,15 @@ export interface HederaERC20Mintable extends BaseContract {
   ): Promise<boolean>;
 
   callStatic: {
+    ADMIN_SUPPLIER_ROLE(overrides?: CallOverrides): Promise<string>;
+
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
+    RESCUE_ROLE(overrides?: CallOverrides): Promise<string>;
+
     SUPPLIER_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    WIPE_ROLE(overrides?: CallOverrides): Promise<string>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
@@ -364,15 +453,19 @@ export interface HederaERC20Mintable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    mint2(
-      account: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
     renounceRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    rescueHbar(
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    rescueToken(
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -395,6 +488,17 @@ export interface HederaERC20Mintable extends BaseContract {
   };
 
   filters: {
+    "HbarRescued(address,uint256,uint256)"(
+      rescuer?: null,
+      amount?: null,
+      oldAmount?: null
+    ): HbarRescuedEventFilter;
+    HbarRescued(
+      rescuer?: null,
+      amount?: null,
+      oldAmount?: null
+    ): HbarRescuedEventFilter;
+
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
 
@@ -430,12 +534,31 @@ export interface HederaERC20Mintable extends BaseContract {
       account?: PromiseOrValue<string> | null,
       sender?: PromiseOrValue<string> | null
     ): RoleRevokedEventFilter;
+
+    "TokenRescued(address,address,uint256,uint256)"(
+      rescuer?: null,
+      tokenId?: null,
+      amount?: null,
+      oldBalance?: null
+    ): TokenRescuedEventFilter;
+    TokenRescued(
+      rescuer?: null,
+      tokenId?: null,
+      amount?: null,
+      oldBalance?: null
+    ): TokenRescuedEventFilter;
   };
 
   estimateGas: {
+    ADMIN_SUPPLIER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
+    RESCUE_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
     SUPPLIER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    WIPE_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
@@ -458,15 +581,19 @@ export interface HederaERC20Mintable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    mint2(
+    renounceRole(
+      role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    rescueHbar(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    renounceRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+    rescueToken(
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -489,11 +616,19 @@ export interface HederaERC20Mintable extends BaseContract {
   };
 
   populateTransaction: {
+    ADMIN_SUPPLIER_ROLE(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     DEFAULT_ADMIN_ROLE(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    RESCUE_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     SUPPLIER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    WIPE_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
@@ -518,15 +653,19 @@ export interface HederaERC20Mintable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    mint2(
+    renounceRole(
+      role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    rescueHbar(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    renounceRole(
-      role: PromiseOrValue<BytesLike>,
-      account: PromiseOrValue<string>,
+    rescueToken(
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
