@@ -1,7 +1,8 @@
 import StableCoinService, {
 	StableCoinDetail,
 } from './app/service/StableCoin/StableCoinService.js';
-import StableCoinServiceRequestModel, {
+import {
+	StableCoinServiceRequestModel,
 	StableCoinListServiceRequestModel,
 } from './app/service/StableCoin/StableCoinServiceRequestModel.js';
 import StableCoin from './domain/context/Hedera/StableCoin/StableCoin.js';
