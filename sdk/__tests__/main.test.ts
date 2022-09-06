@@ -6,11 +6,11 @@ import { ICreateStableCoinRequest } from '../src/port/in/sdk/request/ICreateStab
 import StableCoin from '../src/domain/context/stablecoin/StableCoin.js';
 import Account from '../src/domain/context/account/Account.js';
 import { ICashInStableCoinRequest } from '../src/port/in/sdk/request/ICashInStableCoinRequest.js';
+import { IRescueStableCoinRequest } from '../src/port/in/sdk/request/IRescueStableCoinRequest.js';
 
 const ACCOUNT_ID = '0.0.29511696';
 const PK =
 	'302e020100300506032b6570042204207a8a25387a3c636cb980d1ba548ee5ee3cc8cda158e42dc7af53dcd81022d8be';
-
 
 describe('SDK Unit Test :tubo_de_ensayo:', () => {
 	let sdk: SDK;
@@ -33,7 +33,7 @@ describe('SDK Unit Test :tubo_de_ensayo:', () => {
 			network: HederaNetwork.TEST,
 			mode: NetworkMode.EOA,
 			options: {
-				account: new Account(ACCOUNT_ID, PK)
+				account: new Account(ACCOUNT_ID, PK),
 			},
 		}).init();
 	});
@@ -160,10 +160,24 @@ describe('SDK Unit Test :tubo_de_ensayo:', () => {
 			privateKey:
 				'302e020100300506032b6570042204207a8a25387a3c636cb980d1ba548ee5ee3cc8cda158e42dc7af53dcd81022d8be',
 			accountId: '0.0.29511696',
-			amount: 100
+			amount: 100,
 		};
 
 		await sdk.cashIn(request)?.then((response) => {
+			expect(response).not.toBeNull();
+		});
+	});
+
+	it('Rescue Stable coin', async () => {
+		const request: IRescueStableCoinRequest = {
+			treasuryId: '0.0.48135054',
+			privateKey:
+				'302e020100300506032b6570042204207a8a25387a3c636cb980d1ba548ee5ee3cc8cda158e42dc7af53dcd81022d8be',
+			accountId: '0.0.29511696',
+			amount: 1,
+		};
+
+		await sdk.rescue(request)?.then((response) => {
 			expect(response).not.toBeNull();
 		});
 	});

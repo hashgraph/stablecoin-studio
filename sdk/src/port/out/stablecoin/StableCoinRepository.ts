@@ -210,8 +210,6 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 		const parameters = [amount];
 
-		console.log('parametros', parameters);
-
 		const params = {
 			treasuryId,
 			parameters,
