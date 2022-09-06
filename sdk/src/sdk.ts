@@ -27,6 +27,8 @@ import Web3 from 'web3';
 import { HederaNetwork } from './core/enum.js';
 import { AppMetadata } from './port/out/hedera/hashconnect/types/types.js';
 import NetworkAdapter from './port/out/network/NetworkAdapter.js';
+import { IRescueStableCoinRequest } from './port/in/sdk/request/IRescueStableCoinRequest.js';
+import RescueStableCoinServiceRequestModel from './app/service/stablecoin/model/RescueStableCoinServiceRequestModel.js';
 
 /* Exports */
 export { AppMetadata, HederaNetwork };
@@ -41,8 +43,8 @@ export {
 export interface ConfigurationOptions {
 	appMetadata?: AppMetadata;
 	account?: {
-		accountId: string,
-		privateKey: string
+		accountId: string;
+		privateKey: string;
 	};
 }
 
@@ -209,10 +211,25 @@ export class SDK {
 		}
 	}
 
-	public checkIsAddress(str?: string): boolean{
-		if(!str){
+	/**
+	 * rescue
+	 */
+	public rescue(
+		request: IRescueStableCoinRequest,
+	): Promise<Uint8Array> | null {
+		try {
+			const req: RescueStableCoinServiceRequestModel = { ...request };
+			return this.stableCoinService.rescue(req);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+
+	public checkIsAddress(str?: string): boolean {
+		if (!str) {
 			return false;
-		}else {
+		} else {
 			return /\d\.\d\.\d/.test(str);
 		}
 	}

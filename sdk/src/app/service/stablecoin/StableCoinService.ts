@@ -11,6 +11,7 @@ import CashInStableCoinServiceRequestModel from './model/CashInStableCoinService
 import AssociateTokenStableCoinServiceRequestModel from './model/AssociateTokenStableCoinServiceRequestModel.js';
 import WipeStableCoinServiceRequestModel from './model/WipeStableCoinServiceRequestModel.js';
 import IStableCoinRepository from '../../../port/out/stablecoin/IStableCoinRepository.js';
+import RescueStableCoinServiceRequestModel from './model/RescueStableCoinServiceRequestModel.js';
 import Account from '../../../domain/context/account/Account.js';
 
 export default class StableCoinService extends Service {
@@ -104,6 +105,17 @@ export default class StableCoinService extends Service {
 		req: WipeStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.wipe(
+			req.treasuryId,
+			req.privateKey,
+			req.accountId,
+			req.amount,
+		);
+	}
+
+	public async rescue(
+		req: RescueStableCoinServiceRequestModel,
+	): Promise<Uint8Array> {
+		return this.repository.rescue(
 			req.treasuryId,
 			req.privateKey,
 			req.accountId,

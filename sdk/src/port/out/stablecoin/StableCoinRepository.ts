@@ -12,11 +12,10 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 	private contractRepository: IContractRepository;
 
-	constructor(
-		contractRepository: IContractRepository
-	) {
+	constructor(contractRepository: IContractRepository) {
 		this.contractRepository = contractRepository;
 	}
+
 
 	public async saveCoin(accountId: string, privateKey: string, coin: StableCoin): Promise<StableCoin> {
 		return this.contractRepository.createStableCoin(accountId, privateKey, coin);
@@ -32,10 +31,12 @@ export default class StableCoinRepository implements IStableCoinRepository {
 				this.URI_BASE + 'tokens?limit=100&publickey=' + pk,
 			);
 			res.data.tokens.map((item) => {
-				resObject.push({
-					id: item.token_id,
-					symbol: item.symbol,
-				});
+				if (item.memo !== '') {
+					resObject.push({
+						id: item.token_id,
+						symbol: item.symbol,
+					});
+				}
 			});
 			return resObject;
 		} catch (error) {
@@ -196,5 +197,30 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		};
 
 		return await this.contractRepository.callContract('wipe', params);
+	}
+
+	public async rescue(
+		treasuryId: string,
+		privateKey: string,
+		accountId: string,
+		amount = 1000,
+	): Promise<Uint8Array> {
+		const clientSdk = this.contractRepository.getClient('testnet');
+		clientSdk.setOperator(accountId, privateKey);
+
+		const parameters = [amount];
+
+		const params = {
+			treasuryId,
+			parameters,
+			clientSdk,
+			gas: 140000,
+			abi: HederaERC20__factory.abi,
+		};
+
+		return await this.contractRepository.callContract(
+			'rescueToken',
+			params,
+		);
 	}
 }

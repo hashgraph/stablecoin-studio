@@ -122,7 +122,6 @@ export const english = {
       'Cash out',
       'Wipe',
       'Rescue',
-      'Associate',
       'Return to main menu',
     ],
   },
@@ -135,5 +134,8 @@ export const english = {
   operation: {
     success: 'Operation has been completed successfully.',
     reject: 'Operation has not been completed. Please, try again.',
+  },
+  rescue: {
+    success: 'You have rescued ${tokens} tokens',
   },
 };
