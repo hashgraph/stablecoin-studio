@@ -1,4 +1,4 @@
-import { SDK } from '../src/index';
+import { AppMetadata, HederaNetwork, NetworkMode, SDK } from '../src/index';
 import { IRequestContracts } from '../src/port/in/sdk/request/IRequestContracts';
 import { IGetStableCoinRequest } from '../src/port/in/sdk/request/IGetStableCoinRequest';
 import { IGetListStableCoinRequest } from '../src/port/in/sdk/request/IGetListStableCoinRequest';
@@ -10,6 +10,13 @@ import { ICashInStableCoinRequest } from '../src/port/in/sdk/request/ICashInStab
 describe('SDK Unit Test :tubo_de_ensayo:', () => {
 	let sdk: SDK;
 
+	const testAppMetadata: AppMetadata = {
+		icon: '',
+		name: 'test-app',
+		description: 'description example for test app',
+		url: 'localhost',
+	};
+
 	// Act before assertions
 	beforeAll(async () => {
 		// Read more about fake timers
@@ -17,7 +24,13 @@ describe('SDK Unit Test :tubo_de_ensayo:', () => {
 		// Jest 27 now uses "modern" implementation of fake timers
 		// https://jestjs.io/blog/2021/05/25/jest-27#flipping-defaults
 		// https://github.com/facebook/jest/pull/5171
-		sdk = new SDK();
+		sdk = await new SDK({
+			network: HederaNetwork.TEST,
+			mode: NetworkMode.HASHPACK,
+			options: {
+				appMetadata: testAppMetadata,
+			},
+		}).init();
 	});
 
 	// Teardown (cleanup) after assertions

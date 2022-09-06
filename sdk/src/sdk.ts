@@ -25,9 +25,12 @@ import IStableCoinRepository from './port/out/stablecoin/IStableCoinRepository.j
 import IContractRepository from './port/out/contract/IContractRepository.js';
 import ContractRepository from './port/out/contract/ContractRepository.js';
 import Web3 from 'web3';
+import { HederaNetwork } from './core/enum.js';
+import { AppMetadata } from './port/in/hedera/hashconnect/types/types.js';
+import NetworkAdapter from './port/out/network/NetworkAdapter.js';
 
 /* Exports */
-export { Account };
+export { Account, AppMetadata, HederaNetwork };
 export {
 	IGetNameStableCoinRequest,
 	IGetBalanceStableCoinRequest,
@@ -35,21 +38,49 @@ export {
 	IAssociateStableCoinRequest,
 	IWipeStableCoinRequest,
 };
+
+export interface ConfigurationOptions {
+	appMetadata?: AppMetadata;
+	account?: Account;
+}
+
+export interface Configuration {
+	network: HederaNetwork;
+	mode: NetworkMode;
+	options?: ConfigurationOptions; // TODO
+}
+
+export enum NetworkMode {
+	'EOA' = 'EOA',
+	'HASHPACK' = 'HASHPACK',
+}
+
+
 export class SDK {
+	private config: Configuration;
+
 	private web3: Web3;
+	private networkAdapter: NetworkAdapter;
 	private contractService: ContractsService;
 	private contractRepository: IContractRepository;
 	private stableCoinRepository: IStableCoinRepository;
 	private stableCoinService: StableCoinService;
 
-	constructor() {
-		this.init();
+	constructor(config: Configuration) {
+		this.config = config;
 		// console.log('SDK Initialised');
 	}
 
 	// Initializes the SDK,
 	// TODO should probably be decoupled from the dependency injection
-	private init(): void {
+	public async init(): Promise<SDK> {
+		this.networkAdapter = await new NetworkAdapter(
+			this.config.mode,
+			this.config.network,
+			{
+				appMetadata: this.config.options?.appMetadata,
+			},
+		).init();
 		this.web3 = new Web3();
 		this.contractRepository = new ContractRepository(this.web3);
 		this.contractService = new ContractsService(this.contractRepository);
@@ -59,6 +90,7 @@ export class SDK {
 		this.stableCoinService = new StableCoinService(
 			this.stableCoinRepository,
 		);
+		return this;
 	}
 
 	/**

@@ -36,8 +36,11 @@
 	},
 	"scripts": {
 		"start": "node build/src/index.js",
-		"clean": "rimraf coverage build tmp",
-		"prebuild": "npm run lint",
+		"clean": "rimraf coverage build",
+		"postinstall": "npm run link:hashconnect:build",
+		"prebuild": "npm run link:hashconnect && npm run lint",
+		"link:hashconnect": "npm link hashconnect",
+		"link:hashconnect:build": "cd tmp/hashconnect/lib && npm i && npm link",
 		"build": "rimraf build && npx tsc -p tsconfig.json",
 		"build:types": "npx tsc -p tsconfig.json --emitDeclarationOnly",
 		"build:tsc": "rm -rf build && npx tsc -p tsconfig.json",
@@ -53,7 +56,7 @@
 	},
 	"license": "Apache-2.0",
 	"dependencies": {
-		"@hashgraph/hethers": "^1.1.4",
+		"@hashgraph/hethers": "^1.2.0",
 		"@hashgraph/sdk": "^2.18.0",
 		"tslib": "~2.4",
 		"web3": "^1.7.5"
