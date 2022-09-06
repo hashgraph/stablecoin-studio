@@ -1,4 +1,8 @@
-import { StableCoinList } from '../../../domain/stablecoin/StableCoinList.js';
+/* eslint-disable no-case-declarations */
+import {
+  StableCoinDetail,
+  StableCoinList,
+} from '../../../domain/stablecoin/StableCoinList.js';
 import {
   language,
   utilsService,
@@ -8,12 +12,17 @@ import {
 import Service from '../Service.js';
 import DetailsStableCoinsService from './DetailsStableCoinService.js';
 import { SDK } from 'hedera-stable-coin-sdk';
+import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
+import CashInStableCoinsService from './CashInStableCoinService.js';
+import WipeStableCoinsService from './WipeStableCoinService.js';
+import AssociateStableCoinsService from './AssociateStableCoinService.js';
 
 /**
  * Operation Stable Coin Service
  */
 export default class OperationStableCoinService extends Service {
   private stableCoinId;
+  private treasuryStableCoinId;
 
   constructor() {
     super('Operation Stable Coin');
@@ -23,7 +32,7 @@ export default class OperationStableCoinService extends Service {
    * Start the wizard for operation a stable coin
    */
   public async start(): Promise<void> {
-    const sdk: SDK = new SDK();
+    const sdk: SDK = utilsService.getSDK();
     let resp: StableCoinList[];
 
     //Get list of stable coins to display
@@ -53,6 +62,13 @@ export default class OperationStableCoinService extends Service {
     if (this.stableCoinId === 'Exit to main menu') {
       await wizardService.mainMenu();
     } else {
+      // Get details to obtain treasury
+      await new DetailsStableCoinsService()
+        .getDetailsStableCoins(this.stableCoinId, false)
+        .then((response: StableCoinDetail) => {
+          this.treasuryStableCoinId = response.memo;
+        });
+
       await this.operationsStableCoin();
     }
   }
@@ -71,6 +87,18 @@ export default class OperationStableCoinService extends Service {
     ) {
       case wizardOperationsStableCoinOptions[0]:
         // Call to mint
+        const amount2Mint = await utilsService.defaultSingleAsk(
+          language.getText('stablecoin.askCashInAmount'),
+          '1',
+        );
+
+        await new CashInStableCoinsService().cashInStableCoin(
+          this.treasuryStableCoinId,
+          configurationService.getConfiguration().accounts[0].privateKey,
+          configurationService.getConfiguration().accounts[0].accountId,
+          parseInt(amount2Mint) * 1000,
+        );
+
         break;
       case wizardOperationsStableCoinOptions[1]:
         // Call to details
@@ -80,15 +108,41 @@ export default class OperationStableCoinService extends Service {
         break;
       case wizardOperationsStableCoinOptions[2]:
         // Call to balance
+        await new BalanceOfStableCoinsService().getBalanceOfStableCoin(
+          this.treasuryStableCoinId,
+          configurationService.getConfiguration().accounts[0].privateKey,
+          configurationService.getConfiguration().accounts[0].accountId,
+        );
+
         break;
       case wizardOperationsStableCoinOptions[3]:
         // Call to burn
         break;
       case wizardOperationsStableCoinOptions[4]:
         // Call to Wipe
+        const amount2Wipe = await utilsService.defaultSingleAsk(
+          language.getText('stablecoin.askWipeAmount'),
+          '1',
+        );
+
+        await new WipeStableCoinsService().wipeStableCoin(
+          this.treasuryStableCoinId,
+          configurationService.getConfiguration().accounts[0].privateKey,
+          configurationService.getConfiguration().accounts[0].accountId,
+          parseInt(amount2Wipe) * 1000,
+        );
+
         break;
       case wizardOperationsStableCoinOptions[5]:
         // Call to Rescue
+        break;
+      case wizardOperationsStableCoinOptions[6]:
+        // Call to AssociateToken
+        await new AssociateStableCoinsService().associateStableCoin(
+          this.treasuryStableCoinId,
+          configurationService.getConfiguration().accounts[0].privateKey,
+          configurationService.getConfiguration().accounts[0].accountId,
+        );
         break;
       case wizardOperationsStableCoinOptions[
         wizardOperationsStableCoinOptions.length - 1

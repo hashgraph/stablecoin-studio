@@ -28,6 +28,8 @@ const main = async (): Promise<void> => {
     await setConfigurationService.initConfiguration();
     await wizardService.mainMenu();
   }
+  
+  await utilsService.initSDK();
 
   commanderService.start();
 };

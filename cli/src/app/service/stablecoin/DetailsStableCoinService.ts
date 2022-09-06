@@ -15,24 +15,32 @@ export default class DetailsStableCoinsService extends Service {
   /**
    * List Stable Coins can be managed
    */
-  public async getDetailsStableCoins(id: string): Promise<void> {
+  public async getDetailsStableCoins(
+    id: string,
+    show = true,
+  ): Promise<void | StableCoinDetail> {
     // Call to list stable coins
-    const sdk: SDK = new SDK();
-    utilsService.breakLine();
+    const sdk: SDK = utilsService.getSDK();
+
     let respDetail: StableCoinDetail;
+
     await utilsService.showSpinner(
       sdk
         .getStableCoin({
-          stableCoinId: id,
+          id,
         })
         .then((response: StableCoinDetail) => (respDetail = response)),
       {
-        text: language.getText('state.searching'),
-        successText: language.getText('state.searchingSuccess') + '\n',
+        text: language.getText('state.loading'),
+        successText: language.getText('state.loadCompleted') + '\n',
       },
     );
 
-    console.log(respDetail);
-    utilsService.breakLine();
+    if (show) {
+      console.log(respDetail);
+      utilsService.breakLine();
+    } else {
+      return respDetail;
+    }
   }
 }

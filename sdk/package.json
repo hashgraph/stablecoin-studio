@@ -20,21 +20,23 @@
 		"@typescript-eslint/eslint-plugin": "~5.26",
 		"@typescript-eslint/parser": "~5.26",
 		"axios": "^0.27.2",
+		"babel-jest": "28.0.0",
 		"concurrently": "^7.3.0",
 		"eslint": "~8.16",
 		"eslint-config-prettier": "~8.5",
 		"eslint-plugin-jest": "~26.2",
 		"format-imports": "^3.0.12",
-		"jest": "~28.1",
+		"hedera-stable-coin-contracts": "file:../contracts/build",
+		"jest": "28.1",
 		"prettier": "~2.6",
 		"rimraf": "~3.0",
-		"ts-jest": "~28.0",
+		"ts-jest": "28.0",
 		"tsutils": "~3.21",
-		"typescript": "~4.7"
+		"typescript": "4.7"
 	},
 	"scripts": {
 		"start": "node build/src/index.js",
-		"clean": "rimraf coverage build tmp",
+		"clean": "rimraf coverage build",
 		"prebuild": "npm run lint",
 		"build": "rimraf build && npx tsc -p tsconfig.json",
 		"build:types": "npx tsc -p tsconfig.json --emitDeclarationOnly",
@@ -51,9 +53,10 @@
 	},
 	"license": "Apache-2.0",
 	"dependencies": {
-		"@hashgraph/hethers": "^1.1.4",
+		"@hashgraph/hethers": "^1.2.0",
 		"@hashgraph/sdk": "^2.18.0",
-		"tslib": "~2.4"
+		"tslib": "~2.4",
+		"web3": "^1.7.5"
 	},
 	"volta": {
 		"node": "16.13.0"

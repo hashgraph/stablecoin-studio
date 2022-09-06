@@ -1,9 +1,9 @@
 import { configurationService, language } from './../../../index.js';
 import { StableCoin } from '../../../domain/stablecoin/StableCoin.js';
 import { utilsService } from '../../../index.js';
+import { SDK } from 'hedera-stable-coin-sdk';
+import { IManagedFeatures } from '../../../domain/configuration/interfaces/IManagedFeatures.js';
 import Service from '../Service.js';
-import { SDK, Account } from 'hedera-stable-coin-sdk';
-import { IManagedFeatures } from '../../../domain/configuration/interfaces/IManagedFeatures';
 
 export const createdStableCoin = {
   name: '',
@@ -43,15 +43,18 @@ export default class CreateStableCoinService extends Service {
     }
 
     // Call to create stable coin sdk function
-    const sdk: SDK = new SDK();
+    const sdk: SDK = utilsService.getSDK();
 
     configurationService.getConfiguration();
-    const stableCoinCreated = sdk.createStableCoin({
-      account: configurationService.getConfiguration()
-        .accounts[0] as unknown as Account,
+    const stableCoinCreated = await sdk.createStableCoin({
+      accountId: configurationService.getConfiguration().accounts[0].accountId,
+      privateKey: configurationService.getConfiguration().accounts[0].privateKey,
       name: stableCoin.name,
       symbol: stableCoin.symbol,
       decimals: stableCoin.decimals,
+      initialSupply: stableCoin.initialSupply,
+      maxSupply: stableCoin.maxSupply,
+      freezeDefault: stableCoin.freezeDefault,
     });
     console.log(stableCoinCreated);
 
@@ -152,12 +155,12 @@ export default class CreateStableCoinService extends Service {
       name,
       symbol,
       decimals: parseInt(decimals),
-      initialSupply: initialSupply === '' ? undefined : parseInt(initialSupply),
+      initialSupply: initialSupply === '' ? undefined : BigInt(initialSupply),
       supplyType: supplyType ? 'INFINITE' : 'FINITE',
-      totalSupply: supply ? parseInt(supply) : parseInt(totalSupply),
+      maxSupply: supply ? BigInt(supply) : BigInt(totalSupply),
       expirationTime: parseInt(expirationTime),
       memo,
-      freeze: freezeManaged ?? freeze,
+      freezeDefault: freezeManaged ?? freeze,
       KYC,
       wipe,
       feeSchedule,

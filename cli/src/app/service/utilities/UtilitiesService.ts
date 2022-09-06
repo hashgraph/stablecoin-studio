@@ -4,13 +4,36 @@ import Service from '../Service.js';
 import { language } from '../../../index.js';
 import Table from 'cli-table3';
 import { StableCoinList } from '../../../domain/stablecoin/StableCoinList.js';
+import {
+  HederaNetwork,
+  NetworkMode,
+  SDK,
+} from 'hedera-stable-coin-sdk';
 
 /**
  * Utilities Service
  */
 export default class UtilitiesService extends Service {
+  private sdk: SDK;
+
   constructor() {
     super('Utilities');
+  }
+
+  public async initSDK(): Promise<SDK> {
+    this.sdk = await new SDK({
+      network: HederaNetwork.TEST,
+      mode: NetworkMode.EOA
+    }).init();
+    return this.sdk;
+  }
+
+  public getSDK(): SDK {
+    if (!this.sdk) {
+      throw new Error('SDK not initialized');
+    } else {
+      return this.sdk;
+    }
   }
 
   /**

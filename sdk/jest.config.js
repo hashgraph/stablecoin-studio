@@ -2,7 +2,7 @@ module.exports = {
 	testEnvironment: 'node',
 	coverageThreshold: {
 		global: {
-			lines: 80
+			lines: 80,
 		},
 	},
 	preset: 'ts-jest',
@@ -26,6 +26,7 @@ module.exports = {
 	],
 	transform: {
 		'^.+\\.ts?$': 'ts-jest',
+		'^.+\\.js$': 'babel-jest',
 	},
 	transformIgnorePatterns: ['node_modules/(?!@ngrx|(?!deck.gl)|ng-dynamic)'],
 };
