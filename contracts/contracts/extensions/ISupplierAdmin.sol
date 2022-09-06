@@ -8,7 +8,6 @@ interface ISupplierAdmin {
     function grantSupplierRole(address supplier, uint256 amount) external virtual;
     function grantUnlimitedSupplierRole(address supplier) external virtual;
     function revokeSupplierRole(address supplier) external virtual; 
-    function revokeUnlimitedSupplierRole(address supplier) external virtual;
     function resetSupplierAllowance(address supplier) external;
     function increaseSupplierAllowance(address supplier, uint256 amount) external; 
     function decreaseSupplierAllowance(address supplier, uint256 amount) external;

@@ -299,29 +299,34 @@ export default class HethersProvider implements IProvider {
 		symbol: string,
 		decimals: number,
 		initialSupply: bigint,
-		maxSupply: bigint,
+		maxSupply: bigint|undefined,
 		memo: string,
 		freezeDefault: boolean,
 		privateKey: string,
 		publicKey: string,
 		clientSdk: any,
 	): Promise<TokenId> {
+		
 		const transaction = new TokenCreateTransaction()
 			.setMaxTransactionFee(new Hbar(15))
 			.setTokenName(name)
 			.setTokenSymbol(symbol)
 			.setDecimals(decimals)
 			.setInitialSupply(Long.fromString(initialSupply.toString()))
-			.setMaxSupply(Long.fromString(maxSupply.toString()))
-			.setSupplyType(TokenSupplyType.Finite)
 			.setTokenMemo(memo)
 			.setFreezeDefault(freezeDefault)
 			.setTreasuryAccountId(AccountId.fromString(contractId.toString()))
 			.setAdminKey(PublicKey.fromString(publicKey))
 			.setFreezeKey(PublicKey.fromString(publicKey))
 			.setWipeKey(PublicKey.fromString(publicKey))
-			.setSupplyKey(DelegateContractId.fromString(contractId))
-			.freezeWith(clientSdk);
+			.setSupplyKey(DelegateContractId.fromString(contractId));
+		
+		if (maxSupply){
+			transaction.setMaxSupply(Long.fromString(maxSupply.toString()));
+			transaction.setSupplyType(TokenSupplyType.Finite);
+		}
+
+		transaction.freezeWith(clientSdk);
 		const transactionSign = await transaction.sign(
 			PrivateKey.fromStringED25519(privateKey),
 		);
