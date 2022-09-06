@@ -13,14 +13,11 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 	private contractRepository: IContractRepository;
 
-	constructor(
-		contractRepository: IContractRepository
-	) {
+	constructor(contractRepository: IContractRepository) {
 		this.contractRepository = contractRepository;
 	}
 
 	public async saveCoin(coin: StableCoin): Promise<StableCoin> {
-
 		return new Promise<StableCoin>(() => null);
 	}
 
@@ -198,5 +195,238 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		};
 
 		return await this.contractRepository.callContract('wipe', params);
+	}
+
+	public async grantSupplierRole(
+		treasuryId: string,
+		address: string,
+		privateKey: string,
+		accountId: string,
+		amount?: number,
+	): Promise<Uint8Array> {
+		const { AccountId } = require('@hashgraph/sdk');
+
+		const clientSdk = this.contractRepository.getClient('testnet');
+		clientSdk.setOperator(accountId, privateKey);
+		const parametersUnlimited = [
+			AccountId.fromString(address || '').toSolidityAddress(),
+		];
+		const parametersLimited = [
+			AccountId.fromString(address || '').toSolidityAddress(),
+			amount,
+		];
+
+		const params = {
+			treasuryId,
+			parameters: amount ? parametersLimited : parametersUnlimited,
+			clientSdk,
+			gas: 130000,
+			abi: HederaERC20__factory.abi,
+		};
+
+		return await this.contractRepository.callContract(
+			amount ? 'grantSupplierRole' : 'grantUnlimitedSupplierRole',
+			params,
+		);
+	}
+
+	public async isUnlimitedSupplierAllowance(
+		treasuryId: string,
+		address: string,
+		privateKey: string,
+		accountId: string,
+	): Promise<Uint8Array> {
+		const { AccountId } = require('@hashgraph/sdk');
+
+		const clientSdk = this.contractRepository.getClient('testnet');
+		clientSdk.setOperator(accountId, privateKey);
+		const parameters = [
+			AccountId.fromString(address || '').toSolidityAddress(),
+		];
+
+		const params = {
+			treasuryId,
+			parameters,
+			clientSdk,
+			gas: 60000,
+			abi: HederaERC20__factory.abi,
+		};
+
+		return await this.contractRepository.callContract(
+			'isUnlimitedSupplierAllowance',
+			params,
+		);
+	}
+
+	public async supplierAllowance(
+		treasuryId: string,
+		address: string,
+		privateKey: string,
+		accountId: string,
+	): Promise<Uint8Array> {
+		const { AccountId } = require('@hashgraph/sdk');
+
+		const clientSdk = this.contractRepository.getClient('testnet');
+		clientSdk.setOperator(accountId, privateKey);
+		const parameters = [
+			AccountId.fromString(address || '').toSolidityAddress(),
+		];
+
+		const params = {
+			treasuryId,
+			parameters,
+			clientSdk,
+			gas: 60000,
+			abi: HederaERC20__factory.abi,
+		};
+
+		return await this.contractRepository.callContract(
+			'supplierAllowance',
+			params,
+		);
+	}
+
+	public async revokeUnlimitedSupplierRole(
+		treasuryId: string,
+		address: string,
+		privateKey: string,
+		accountId: string,
+	): Promise<Uint8Array> {
+		const { AccountId } = require('@hashgraph/sdk');
+
+		const clientSdk = this.contractRepository.getClient('testnet');
+		clientSdk.setOperator(accountId, privateKey);
+		const parameters = [
+			AccountId.fromString(address || '').toSolidityAddress(),
+		];
+
+		const params = {
+			treasuryId,
+			parameters,
+			clientSdk,
+			gas: 130000,
+			abi: HederaERC20__factory.abi,
+		};
+
+		return await this.contractRepository.callContract(
+			'revokeUnlimitedSupplierRole',
+			params,
+		);
+	}
+
+	public async revokeSupplierRole(
+		treasuryId: string,
+		address: string,
+		privateKey: string,
+		accountId: string,
+	): Promise<Uint8Array> {
+		const { AccountId } = require('@hashgraph/sdk');
+
+		const clientSdk = this.contractRepository.getClient('testnet');
+		clientSdk.setOperator(accountId, privateKey);
+		const parameters = [
+			AccountId.fromString(address || '').toSolidityAddress(),
+		];
+
+		const params = {
+			treasuryId,
+			parameters,
+			clientSdk,
+			gas: 130000,
+			abi: HederaERC20__factory.abi,
+		};
+
+		return await this.contractRepository.callContract(
+			'revokeSupplierRole',
+			params,
+		);
+	}
+
+	public async resetSupplierAllowance(
+		treasuryId: string,
+		address: string,
+		privateKey: string,
+		accountId: string,
+	): Promise<Uint8Array> {
+		const { AccountId } = require('@hashgraph/sdk');
+
+		const clientSdk = this.contractRepository.getClient('testnet');
+		clientSdk.setOperator(accountId, privateKey);
+		const parameters = [
+			AccountId.fromString(address || '').toSolidityAddress(),
+		];
+
+		const params = {
+			treasuryId,
+			parameters,
+			clientSdk,
+			gas: 120000,
+			abi: HederaERC20__factory.abi,
+		};
+
+		return await this.contractRepository.callContract(
+			'resetSupplierAllowance',
+			params,
+		);
+	}
+
+	public async increaseSupplierAllowance(
+		treasuryId: string,
+		address: string,
+		privateKey: string,
+		accountId: string,
+		amount: number,
+	): Promise<Uint8Array> {
+		const { AccountId } = require('@hashgraph/sdk');
+
+		const clientSdk = this.contractRepository.getClient('testnet');
+		clientSdk.setOperator(accountId, privateKey);
+		const parameters = [
+			AccountId.fromString(address || '').toSolidityAddress(),
+			amount,
+		];
+
+		const params = {
+			treasuryId,
+			parameters,
+			clientSdk,
+			gas: 130000,
+			abi: HederaERC20__factory.abi,
+		};
+
+		return await this.contractRepository.callContract(
+			'increaseSupplierAllowance',
+			params,
+		);
+	}
+
+	public async decreaseSupplierAllowance(
+		treasuryId: string,
+		address: string,
+		privateKey: string,
+		accountId: string,
+		amount: number,
+	): Promise<Uint8Array> {
+		const { AccountId } = require('@hashgraph/sdk');
+
+		const clientSdk = this.contractRepository.getClient('testnet');
+		clientSdk.setOperator(accountId, privateKey);
+		const parameters = [
+			AccountId.fromString(address || '').toSolidityAddress(),
+			amount,
+		];
+
+		const params = {
+			treasuryId,
+			parameters,
+			clientSdk,
+			gas: 130000,
+			abi: HederaERC20__factory.abi,
+		};
+
+		return await this.contractRepository.callContract(
+			'decreaseSupplierAllowance',
+			params,
+		);
 	}
 }

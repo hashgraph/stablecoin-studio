@@ -11,6 +11,7 @@ import CashInStableCoinServiceRequestModel from './model/CashInStableCoinService
 import AssociateTokenStableCoinServiceRequestModel from './model/AssociateTokenStableCoinServiceRequestModel.js';
 import WipeStableCoinServiceRequestModel from './model/WipeStableCoinServiceRequestModel.js';
 import IStableCoinRepository from '../../../port/out/stablecoin/IStableCoinRepository.js';
+import SupplierRoleStableCoinServiceRequestModel from './model/SupplierRoleStableCoinServiceRequestModel';
 
 export default class StableCoinService extends Service {
 	private repository: IStableCoinRepository;
@@ -56,11 +57,15 @@ export default class StableCoinService extends Service {
 	public async getBalanceOf(
 		req: GetBalanceOfStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
-		return this.repository.getBalanceOf(req.treasuryId, req.privateKey, req.accountId);
+		return this.repository.getBalanceOf(
+			req.treasuryId,
+			req.privateKey,
+			req.accountId,
+		);
 	}
 
 	public async getNameToken(
-		req: GetNameOfStableCoinServiceRequestModel
+		req: GetNameOfStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.getNameToken(
 			req.treasuryId,
@@ -70,7 +75,7 @@ export default class StableCoinService extends Service {
 	}
 
 	public async cashIn(
-		req: CashInStableCoinServiceRequestModel
+		req: CashInStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.cashIn(
 			req.treasuryId,
@@ -81,7 +86,7 @@ export default class StableCoinService extends Service {
 	}
 
 	public async associateToken(
-		req: AssociateTokenStableCoinServiceRequestModel
+		req: AssociateTokenStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.associateToken(
 			req.treasuryId,
@@ -91,10 +96,95 @@ export default class StableCoinService extends Service {
 	}
 
 	public async wipe(
-		req: WipeStableCoinServiceRequestModel
+		req: WipeStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.wipe(
 			req.treasuryId,
+			req.privateKey,
+			req.accountId,
+			req.amount,
+		);
+	}
+
+	public async grantSupplierRole(
+		req: SupplierRoleStableCoinServiceRequestModel,
+	): Promise<Uint8Array> {
+		return this.repository.grantSupplierRole(
+			req.treasuryId,
+			req.address,
+			req.privateKey,
+			req.accountId,
+			req.amount,
+		);
+	}
+
+	public async isUnlimitedSupplierAllowance(
+		req: SupplierRoleStableCoinServiceRequestModel,
+	): Promise<Uint8Array> {
+		return this.repository.isUnlimitedSupplierAllowance(
+			req.treasuryId,
+			req.address,
+			req.privateKey,
+			req.accountId,
+		);
+	}
+	public async supplierAllowance(
+		req: SupplierRoleStableCoinServiceRequestModel,
+	): Promise<Uint8Array> {
+		return this.repository.supplierAllowance(
+			req.treasuryId,
+			req.address,
+			req.privateKey,
+			req.accountId,
+		);
+	}
+	public async revokeUnlimitedSupplierRole(
+		req: SupplierRoleStableCoinServiceRequestModel,
+	): Promise<Uint8Array> {
+		return this.repository.revokeUnlimitedSupplierRole(
+			req.treasuryId,
+			req.address,
+			req.privateKey,
+			req.accountId,
+		);
+	}
+	public async revokeSupplierRole(
+		req: SupplierRoleStableCoinServiceRequestModel,
+	): Promise<Uint8Array> {
+		return this.repository.revokeSupplierRole(
+			req.treasuryId,
+			req.address,
+			req.privateKey,
+			req.accountId,
+		);
+	}
+	public async resetSupplierAllowance(
+		req: SupplierRoleStableCoinServiceRequestModel,
+	): Promise<Uint8Array> {
+		return this.repository.resetSupplierAllowance(
+			req.treasuryId,
+			req.address,
+			req.privateKey,
+			req.accountId,
+		);
+	}
+	public async increaseSupplierAllowance(
+		req: SupplierRoleStableCoinServiceRequestModel,
+	): Promise<Uint8Array> {
+		return this.repository.increaseSupplierAllowance(
+			req.treasuryId,
+			req.address,
+			req.privateKey,
+			req.accountId,
+			req.amount,
+		);
+	}
+	public async decreaseSupplierAllowance(
+		req: SupplierRoleStableCoinServiceRequestModel,
+	): Promise<Uint8Array> {
+		return this.repository.decreaseSupplierAllowance(
+			req.treasuryId,
+			req.address,
 			req.privateKey,
 			req.accountId,
 			req.amount,
