@@ -32,7 +32,7 @@ export default class OperationStableCoinService extends Service {
    * Start the wizard for operation a stable coin
    */
   public async start(): Promise<void> {
-    const sdk: SDK = new SDK();
+    const sdk: SDK = utilsService.getSDK();
     let resp: StableCoinList[];
 
     //Get list of stable coins to display

@@ -1,9 +1,9 @@
 import { configurationService, language } from './../../../index.js';
 import { StableCoin } from '../../../domain/stablecoin/StableCoin.js';
 import { utilsService } from '../../../index.js';
-import Service from '../Service.js';
 import { SDK, Account } from 'hedera-stable-coin-sdk';
-import { IManagedFeatures } from '../../../domain/configuration/interfaces/IManagedFeatures';
+import { IManagedFeatures } from '../../../domain/configuration/interfaces/IManagedFeatures.js';
+import Service from '../Service.js';
 
 export const createdStableCoin = {
   name: '',
@@ -43,7 +43,7 @@ export default class CreateStableCoinService extends Service {
     }
 
     // Call to create stable coin sdk function
-    const sdk: SDK = new SDK();
+    const sdk: SDK = utilsService.getSDK();
 
     configurationService.getConfiguration();
     const stableCoinCreated = sdk.createStableCoin({

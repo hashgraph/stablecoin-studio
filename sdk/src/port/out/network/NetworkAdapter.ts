@@ -15,7 +15,7 @@ export default class NetworkAdapter {
 	private mode: NetworkMode;
 	private network: HederaNetwork;
 	private options: NetworkClientOptions;
-	provider: IProvider;
+	private provider: IProvider;
 
 	constructor(
 		mode: NetworkMode,

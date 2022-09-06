@@ -17,7 +17,7 @@ export default class ListStableCoinsService extends Service {
    */
   public async listStableCoins(): Promise<void> {
     // Call to list stable coins
-    const sdk: SDK = new SDK();
+    const sdk: SDK = utilsService.getSDK();
 
     let resp: StableCoinList[];
 

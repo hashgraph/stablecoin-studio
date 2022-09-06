@@ -20,7 +20,7 @@ export default class AssociateStableCoinsService extends Service {
     accountId: string,
   ): Promise<void> {
     // Call to list stable coins
-    const sdk: SDK = new SDK();
+    const sdk: SDK = utilsService.getSDK();
 
     let respDetail;
 
