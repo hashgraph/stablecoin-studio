@@ -9,7 +9,6 @@ import StableCoinService from './app/service/stablecoin/StableCoinService.js';
 import StableCoin from './domain/context/stablecoin/StableCoin.js';
 import StableCoinRepository from './port/out/stablecoin/StableCoinRepository.js';
 import IStableCoinDetail from './domain/context/stablecoin/IStableCoinDetail.js';
-import Account from './domain/context/account/Account.js';
 import CashInStableCoinServiceRequestModel from './app/service/stablecoin/model/CashInStableCoinServiceRequestModel.js';
 import { IGetNameStableCoinRequest } from './port/in/sdk/request/IGetNameStableCoinRequest.js';
 import { IGetBalanceStableCoinRequest } from './port/in/sdk/request/IGetBalanceStableCoinRequest.js';
@@ -30,7 +29,7 @@ import { AppMetadata } from './port/out/hedera/hashconnect/types/types.js';
 import NetworkAdapter from './port/out/network/NetworkAdapter.js';
 
 /* Exports */
-export { Account, AppMetadata, HederaNetwork };
+export { AppMetadata, HederaNetwork };
 export {
 	IGetNameStableCoinRequest,
 	IGetBalanceStableCoinRequest,
@@ -41,7 +40,10 @@ export {
 
 export interface ConfigurationOptions {
 	appMetadata?: AppMetadata;
-	account?: Account;
+	account?: {
+		accountId: string,
+		privateKey: string
+	};
 }
 
 export interface Configuration {

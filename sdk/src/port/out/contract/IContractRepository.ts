@@ -25,5 +25,5 @@ export default interface IContractRepository {
 		resultAsBytes: any,
 	): Uint8Array;
 	getPublicKey(privateKey: string): string;
-	createStableCoin(coin: StableCoin): Promise<StableCoin>;
+	createStableCoin(accountId: string, privateKey: string, coin: StableCoin): Promise<StableCoin>;
 }

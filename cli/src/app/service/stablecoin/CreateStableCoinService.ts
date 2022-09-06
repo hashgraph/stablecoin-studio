@@ -1,7 +1,7 @@
 import { configurationService, language } from './../../../index.js';
 import { StableCoin } from '../../../domain/stablecoin/StableCoin.js';
 import { utilsService } from '../../../index.js';
-import { SDK, Account } from 'hedera-stable-coin-sdk';
+import { SDK } from 'hedera-stable-coin-sdk';
 import { IManagedFeatures } from '../../../domain/configuration/interfaces/IManagedFeatures.js';
 import Service from '../Service.js';
 
@@ -47,8 +47,8 @@ export default class CreateStableCoinService extends Service {
 
     configurationService.getConfiguration();
     const stableCoinCreated = await sdk.createStableCoin({
-      account: configurationService.getConfiguration()
-        .accounts[0] as unknown as Account,
+      accountId: configurationService.getConfiguration().accounts[0].accountId,
+      privateKey: configurationService.getConfiguration().accounts[0].privateKey,
       name: stableCoin.name,
       symbol: stableCoin.symbol,
       decimals: stableCoin.decimals,

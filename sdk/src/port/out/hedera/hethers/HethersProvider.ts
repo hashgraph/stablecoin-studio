@@ -24,7 +24,6 @@ import {
 	HTSTokenOwner__factory,
 } from 'hedera-stable-coin-contracts/typechain-types/index.js';
 import { HederaNetwork } from '../../../../core/enum.js';
-import { Account } from '../../../../sdk.js';
 import { IniConfig, IProvider } from '../Provider.js';
 import Web3 from 'web3';
 import StableCoin from '../../../../domain/context/stablecoin/StableCoin.js';
@@ -54,15 +53,16 @@ export default class HethersProvider implements IProvider {
 	}
 
 	public async deploy(
-		account: Account,
+		accountId: string,
+		privateKey: string,
 		stableCoin: StableCoin,
 	): Promise<ContractId> {
 		const client = Client.forName(this.network);
-		client.setOperator(account.accountId, account.privateKey);
+		client.setOperator(accountId, privateKey);
 		const tokenContract = await this.deployContract(
 			HederaERC20__factory,
 			10,
-			account.privateKey,
+			privateKey,
 			client,
 		);
 		console.log(
@@ -74,7 +74,7 @@ export default class HethersProvider implements IProvider {
 		const proxyContract = await this.deployContract(
 			HederaERC1967Proxy__factory,
 			10,
-			account.privateKey,
+			privateKey,
 			client,
 			parameters,
 		);
@@ -93,7 +93,7 @@ export default class HethersProvider implements IProvider {
 		const tokenOwnerContract = await this.deployContract(
 			HTSTokenOwner__factory,
 			10,
-			account.privateKey,
+			privateKey,
 			client,
 		);
 		console.log('Creating token... please wait.');
@@ -106,8 +106,8 @@ export default class HethersProvider implements IProvider {
 			stableCoin.maxSupply,
 			stableCoin.memo ?? String(proxyContract),
 			stableCoin.freezeDefault,
-			account.privateKey,
-			PrivateKey.fromString(account.privateKey).publicKey.toStringRaw(),
+			privateKey,
+			PrivateKey.fromString(privateKey).publicKey.toStringRaw(),
 			client,
 		);
 		console.log('Setting up contract... please wait.');
@@ -134,7 +134,7 @@ export default class HethersProvider implements IProvider {
 		);
 		console.log('Associate administrator account to token... please wait.');
 		parametersContractCall = [
-			AccountId.fromString(account.accountId).toSolidityAddress(),
+			AccountId.fromString(accountId).toSolidityAddress(),
 		];
 		await this.contractCall(
 			proxyContract,

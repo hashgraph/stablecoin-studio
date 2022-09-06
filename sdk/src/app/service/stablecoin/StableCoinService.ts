@@ -11,6 +11,7 @@ import CashInStableCoinServiceRequestModel from './model/CashInStableCoinService
 import AssociateTokenStableCoinServiceRequestModel from './model/AssociateTokenStableCoinServiceRequestModel.js';
 import WipeStableCoinServiceRequestModel from './model/WipeStableCoinServiceRequestModel.js';
 import IStableCoinRepository from '../../../port/out/stablecoin/IStableCoinRepository.js';
+import Account from '../../../domain/context/account/Account.js';
 
 export default class StableCoinService extends Service {
 	private repository: IStableCoinRepository;
@@ -27,7 +28,7 @@ export default class StableCoinService extends Service {
 		req: CreateStableCoinServiceRequestModel,
 	): Promise<StableCoin> {
 		const coin: StableCoin = new StableCoin(
-			req.account,
+			new Account(req.accountId, req.privateKey),
 			req.name,
 			req.symbol,
 			req.decimals,
@@ -35,9 +36,9 @@ export default class StableCoinService extends Service {
 			req.maxSupply,
 			req.memo,
 			req.freeze,
-			req.freezeDefault
+			req.freezeDefault,
 		);
-		return this.repository.saveCoin(coin);
+		return this.repository.saveCoin(req.accountId, req.privateKey, coin);
 	}
 
 	/**
@@ -61,11 +62,15 @@ export default class StableCoinService extends Service {
 	public async getBalanceOf(
 		req: GetBalanceOfStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
-		return this.repository.getBalanceOf(req.treasuryId, req.privateKey, req.accountId);
+		return this.repository.getBalanceOf(
+			req.treasuryId,
+			req.privateKey,
+			req.accountId,
+		);
 	}
 
 	public async getNameToken(
-		req: GetNameOfStableCoinServiceRequestModel
+		req: GetNameOfStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.getNameToken(
 			req.treasuryId,
@@ -75,7 +80,7 @@ export default class StableCoinService extends Service {
 	}
 
 	public async cashIn(
-		req: CashInStableCoinServiceRequestModel
+		req: CashInStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.cashIn(
 			req.treasuryId,
@@ -86,7 +91,7 @@ export default class StableCoinService extends Service {
 	}
 
 	public async associateToken(
-		req: AssociateTokenStableCoinServiceRequestModel
+		req: AssociateTokenStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.associateToken(
 			req.treasuryId,
@@ -96,7 +101,7 @@ export default class StableCoinService extends Service {
 	}
 
 	public async wipe(
-		req: WipeStableCoinServiceRequestModel
+		req: WipeStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.wipe(
 			req.treasuryId,

@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { ContractId } from '@hashgraph/sdk';
 import Web3 from 'web3';
-import Account from '../../../domain/context/account/Account.js';
 import StableCoin from '../../../domain/context/stablecoin/StableCoin.js';
 import NetworkAdapter from '../network/NetworkAdapter.js';
 import IContractRepository, { IContractParams } from './IContractRepository.js';
@@ -137,8 +135,8 @@ export default class ContractRepository implements IContractRepository {
 		return publicKey;
 	}
 
-	public async createStableCoin(coin: StableCoin): Promise<StableCoin> {
-		await this.networkAdapter.provider.deploy(coin.admin, coin);
+	public async createStableCoin(accountId: string, privateKey: string, coin: StableCoin): Promise<StableCoin> {
+		await this.networkAdapter.provider.deploy(accountId, privateKey, coin);
 		return coin;
 	}
 }
