@@ -54,7 +54,4 @@ export default class HethersProvider implements IProvider {
 		}
 	}
 
-	getBalance(): Promise<number> {
-		throw new Error('Method not implemented.');
-	}
 }

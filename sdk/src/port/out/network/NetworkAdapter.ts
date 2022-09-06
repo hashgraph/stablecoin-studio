@@ -1,7 +1,7 @@
 import { HederaNetwork } from '../../../core/enum.js';
-import HashPackProvider from '../../in/hedera/hashconnect/HashPackProvider.js';
-import HethersProvider from '../../in/hedera/hethers/HethersProvider.js';
-import { IProvider, IniConfigOptions } from '../../in/hedera/Provider.js';
+import HashPackProvider from '../hedera/hashconnect/HashPackProvider.js';
+import HethersProvider from '../hedera/hethers/HethersProvider.js';
+import { IProvider, IniConfigOptions } from '../hedera/Provider.js';
 import { Account, AppMetadata, NetworkMode } from '../../../sdk.js';
 
 type NetworkClientOptions = HederaClientOptions;

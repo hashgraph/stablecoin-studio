@@ -26,7 +26,7 @@ import IContractRepository from './port/out/contract/IContractRepository.js';
 import ContractRepository from './port/out/contract/ContractRepository.js';
 import Web3 from 'web3';
 import { HederaNetwork } from './core/enum.js';
-import { AppMetadata } from './port/in/hedera/hashconnect/types/types.js';
+import { AppMetadata } from './port/out/hedera/hashconnect/types/types.js';
 import NetworkAdapter from './port/out/network/NetworkAdapter.js';
 
 /* Exports */
