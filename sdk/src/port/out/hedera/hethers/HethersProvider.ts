@@ -66,7 +66,7 @@ export default class HethersProvider implements IProvider {
 			client,
 		);
 		console.log(
-			`Deploying ${HederaERC1967Proxy__factory.name} contract... please wait.`,
+			`\tDeploying ${HederaERC1967Proxy__factory.name} contract... please wait.`,
 		);
 		const parameters = new ContractFunctionParameters()
 			.addAddress(tokenContract?.toSolidityAddress())
@@ -84,11 +84,11 @@ export default class HethersProvider implements IProvider {
 			'initialize',
 			parametersContractCall,
 			client,
-			60000,
+			250_000,
 			HederaERC20__factory.abi,
 		);
 		console.log(
-			`Deploying ${HTSTokenOwner__factory.name} contract... please wait.`,
+			`\tDeploying ${HTSTokenOwner__factory.name} contract... please wait.`,
 		);
 		const tokenOwnerContract = await this.deployContract(
 			HTSTokenOwner__factory,
@@ -96,7 +96,7 @@ export default class HethersProvider implements IProvider {
 			privateKey,
 			client,
 		);
-		console.log('Creating token... please wait.');
+		console.log('\tCreating token... please wait.');
 		const hederaToken = await this.createToken(
 			tokenOwnerContract,
 			stableCoin.name,
@@ -110,7 +110,7 @@ export default class HethersProvider implements IProvider {
 			PrivateKey.fromString(privateKey).publicKey.toStringRaw(),
 			client,
 		);
-		console.log('Setting up contract... please wait.');
+		console.log('\tSetting up contract... please wait.');
 		parametersContractCall = [
 			tokenOwnerContract.toSolidityAddress(),
 			TokenId.fromString(hederaToken.toString()).toSolidityAddress(),
@@ -120,7 +120,7 @@ export default class HethersProvider implements IProvider {
 			'setTokenAddress',
 			parametersContractCall,
 			client,
-			60000,
+			80_000,
 			HederaERC20__factory.abi,
 		);
 		parametersContractCall = [proxyContract.toSolidityAddress()];
@@ -129,10 +129,10 @@ export default class HethersProvider implements IProvider {
 			'setERC20Address',
 			parametersContractCall,
 			client,
-			60000,
+			60_000,
 			HTSTokenOwner__factory.abi,
 		);
-		console.log('Associate administrator account to token... please wait.');
+		console.log('\tAssociate administrator account to token... please wait.');
 		parametersContractCall = [
 			AccountId.fromString(accountId).toSolidityAddress(),
 		];
@@ -141,7 +141,7 @@ export default class HethersProvider implements IProvider {
 			'associateToken',
 			parametersContractCall,
 			client,
-			1300000,
+			1_300_000,
 			HederaERC20__factory.abi,
 		);
 		return proxyContract;
@@ -178,14 +178,14 @@ export default class HethersProvider implements IProvider {
 			const receipt = await txResponse.getReceipt(client);
 			if (!receipt.contractId) {
 				throw new Error(
-					`An error ocurred during deployment of ${factory.name}`,
+					`\tAn error ocurred during deployment of ${factory.name}`,
 				);
 			} else {
 				return receipt.contractId;
 			}
 		} catch (error) {
 			throw new Error(
-				`An error ocurred during deployment of ${factory.name}`,
+				`\tAn error ocurred during deployment of ${factory.name}`,
 			);
 		}
 	}
