@@ -288,7 +288,7 @@ export class SDK {
 			const req: SupplierRoleStableCoinServiceRequestModel = {
 				...request,
 			};
-			return this.stableCoinService.isUnlimitedSupplierAllowance(req);
+			return this.stableCoinService.supplierAllowance(req);
 		} catch (error) {
 			console.error(error);
 			return null;
