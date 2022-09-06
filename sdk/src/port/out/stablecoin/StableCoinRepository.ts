@@ -6,7 +6,7 @@ import IStableCoinDetail from '../../../domain/context/stablecoin/IStableCoinDet
 import StableCoin from '../../../domain/context/stablecoin/StableCoin.js';
 import IStableCoinRepository from './IStableCoinRepository.js';
 import IContractRepository from '../contract/IContractRepository.js';
-import { HederaNetwork } from '../../../sdk.js';
+import { Account } from '../../../sdk.js';
 
 export default class StableCoinRepository implements IStableCoinRepository {
 	private URI_BASE = 'https://testnet.mirrornode.hedera.com/api/v1/';
@@ -20,8 +20,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	}
 
 	public async saveCoin(coin: StableCoin): Promise<StableCoin> {
-
-		return new Promise<StableCoin>(() => null);
+		return this.contractRepository.createStableCoin(coin);
 	}
 
 	public async getListStableCoins(

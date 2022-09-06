@@ -5,4 +5,9 @@ export default class CreateStableCoinServiceRequestModel {
 	public name: string;
 	public symbol: string;
 	public decimals: number;
+	public initialSupply?: bigint;
+	public maxSupply?: bigint;
+	public memo?: string;
+	public freeze?: string;
+	public freezeDefault?: boolean;
 }

@@ -55,7 +55,6 @@ export enum NetworkMode {
 	'HASHPACK' = 'HASHPACK',
 }
 
-
 export class SDK {
 	private config: Configuration;
 
@@ -82,7 +81,10 @@ export class SDK {
 			},
 		).init();
 		this.web3 = new Web3();
-		this.contractRepository = new ContractRepository(this.web3);
+		this.contractRepository = new ContractRepository(
+			this.networkAdapter,
+			this.web3,
+		);
 		this.contractService = new ContractsService(this.contractRepository);
 		this.stableCoinRepository = new StableCoinRepository(
 			this.contractRepository,
@@ -202,6 +204,14 @@ export class SDK {
 		} catch (error) {
 			console.error(error);
 			return null;
+		}
+	}
+
+	public checkIsAddress(str?: string): boolean{
+		if(!str){
+			return false;
+		}else {
+			return /\d\.\d\.\d/.test(str);
 		}
 	}
 }

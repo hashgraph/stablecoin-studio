@@ -1,5 +1,7 @@
 import { hethers, Signer } from '@hashgraph/hethers';
+import { ContractId } from '@hashgraph/sdk';
 import { HederaNetwork } from '../../../core/enum.js';
+import StableCoin from '../../../domain/context/stablecoin/StableCoin.js';
 import { Account } from '../../../sdk.js';
 import { AppMetadata } from './hashconnect/types/types.js';
 
@@ -20,5 +22,5 @@ export interface IniConfig {
 export interface IProvider {
 	init(config: IniConfig): Promise<IProvider>;
 	stop(): Promise<boolean>;
-	deploy(factory: any, wallet: any, ...args: any): Promise<Contract>;
+	deploy(account: Account, stableCoin: StableCoin): Promise<ContractId>;
 }

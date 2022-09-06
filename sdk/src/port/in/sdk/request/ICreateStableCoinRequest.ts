@@ -5,4 +5,9 @@ export interface ICreateStableCoinRequest {
 	name: string;
 	symbol: string;
 	decimals: number;
+	initialSupply?: bigint;
+	maxSupply?: bigint;
+	memo?: string;
+	freeze?: string;
+	freezeDefault?: boolean;
 }

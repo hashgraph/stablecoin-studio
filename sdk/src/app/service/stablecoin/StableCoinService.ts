@@ -31,6 +31,11 @@ export default class StableCoinService extends Service {
 			req.name,
 			req.symbol,
 			req.decimals,
+			req.initialSupply,
+			req.maxSupply,
+			req.memo,
+			req.freeze,
+			req.freezeDefault
 		);
 		return this.repository.saveCoin(coin);
 	}

@@ -46,12 +46,15 @@ export default class CreateStableCoinService extends Service {
     const sdk: SDK = utilsService.getSDK();
 
     configurationService.getConfiguration();
-    const stableCoinCreated = sdk.createStableCoin({
+    const stableCoinCreated = await sdk.createStableCoin({
       account: configurationService.getConfiguration()
         .accounts[0] as unknown as Account,
       name: stableCoin.name,
       symbol: stableCoin.symbol,
       decimals: stableCoin.decimals,
+      initialSupply: stableCoin.initialSupply,
+      maxSupply: stableCoin.maxSupply,
+      freezeDefault: stableCoin.freezeDefault,
     });
     console.log(stableCoinCreated);
 
@@ -152,12 +155,12 @@ export default class CreateStableCoinService extends Service {
       name,
       symbol,
       decimals: parseInt(decimals),
-      initialSupply: initialSupply === '' ? undefined : parseInt(initialSupply),
+      initialSupply: initialSupply === '' ? undefined : BigInt(initialSupply),
       supplyType: supplyType ? 'INFINITE' : 'FINITE',
-      totalSupply: supply ? parseInt(supply) : parseInt(totalSupply),
+      maxSupply: supply ? BigInt(supply) : BigInt(totalSupply),
       expirationTime: parseInt(expirationTime),
       memo,
-      freeze: freezeManaged ?? freeze,
+      freezeDefault: freezeManaged ?? freeze,
       KYC,
       wipe,
       feeSchedule,

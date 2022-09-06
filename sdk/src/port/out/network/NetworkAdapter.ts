@@ -12,28 +12,29 @@ type HederaClientOptions = {
 };
 
 export default class NetworkAdapter {
-	private mode: NetworkMode;
-	private network: HederaNetwork;
-	private options: NetworkClientOptions;
-	private provider: IProvider;
+	private _mode: NetworkMode;
+	private _network: HederaNetwork;
+	private _options: NetworkClientOptions;
+	
+	public provider: IProvider;
 
 	constructor(
 		mode: NetworkMode,
 		network: HederaNetwork,
 		options: NetworkClientOptions,
 	) {
-		this.mode = mode;
-		this.network = network;
-		this.options = options;
+		this._mode = mode;
+		this._network = network;
+		this._options = options;
 	}
 
 	/**
 	 * Init
 	 */
 	public async init(): Promise<NetworkAdapter> {
-		switch (this.mode) {
+		switch (this._mode) {
 			case NetworkMode.EOA:
-				this.provider = await this.getHethersProvider(this.network);
+				this.provider = await this.getHethersProvider(this._network);
 				return this;
 			case NetworkMode.HASHPACK:
 				// this.provider = await this.getHashpackProvider(
