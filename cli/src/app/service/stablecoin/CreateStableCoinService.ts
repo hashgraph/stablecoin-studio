@@ -100,7 +100,6 @@ export default class CreateStableCoinService extends Service {
     let initialSupply = '';
     let supplyType = false;
     let totalSupply = '';
-    let memo = '';
     let freeze = false;
 
     if (optionalProps) {
@@ -114,6 +113,7 @@ export default class CreateStableCoinService extends Service {
 
       initialSupply = await this.askForInitialSupply();
       createdStableCoin.initialSupply = initialSupply;
+
       supplyType = await this.askForSupplyType();
       createdStableCoin.supplyType = supplyType;
 
@@ -122,8 +122,6 @@ export default class CreateStableCoinService extends Service {
         createdStableCoin.totalSupply = totalSupply;
       }
 
-      memo = await this.askForMemo();
-      createdStableCoin.memo = memo;
       freeze = await this.askForFreeze();
       createdStableCoin.freeze = freeze;
     }
@@ -131,7 +129,7 @@ export default class CreateStableCoinService extends Service {
     const managedBySC = await this.askForManagedFeatures();
 
     if (!managedBySC) {
-      return { name, symbol, decimals: 18 };
+      return { name, symbol, decimals: parseInt(decimals) };
     }
 
     const {
@@ -141,6 +139,7 @@ export default class CreateStableCoinService extends Service {
       freeze: freezeManaged,
       wipe,
     } = await this.configureManagedFeatures();
+
     createdStableCoin.admin = admin;
     createdStableCoin.totalSupply = supply;
     createdStableCoin.KYC = KYC;
@@ -154,7 +153,6 @@ export default class CreateStableCoinService extends Service {
       initialSupply: initialSupply === '' ? undefined : BigInt(initialSupply),
       supplyType: supplyType ? 'INFINITE' : 'FINITE',
       maxSupply: supply ? BigInt(supply) : BigInt(totalSupply),
-      memo,
       freezeDefault: freezeManaged ?? freeze,
       KYC,
       wipe,
@@ -194,13 +192,6 @@ export default class CreateStableCoinService extends Service {
     return await utilsService.defaultSingleAsk(
       language.getText('stablecoin.askTotalSupply'),
       createdStableCoin.totalSupply || '1',
-    );
-  }
-
-  private async askForMemo(): Promise<string> {
-    return await utilsService.defaultSingleAsk(
-      language.getText('stablecoin.askMemo'),
-      createdStableCoin.memo || 'Description about stable coin',
     );
   }
 

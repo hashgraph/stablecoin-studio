@@ -132,7 +132,6 @@ export const english = {
       'Cash out',
       'Wipe',
       'Rescue',
-      'Associate',
       'Role management',
       'Return to main menu',
     ],
@@ -165,5 +164,8 @@ export const english = {
     alreadyRole: 'This account already have supplier role.',
     notUnlimitedRole: 'This account does not have unlimited supplier role.',
     notRole: 'This account does not have supplier role.',
+  },
+  rescue: {
+    success: 'You have rescued ${tokens} tokens',
   },
 };

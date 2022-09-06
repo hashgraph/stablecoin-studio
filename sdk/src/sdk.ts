@@ -29,6 +29,8 @@ import { AppMetadata } from './port/out/hedera/hashconnect/types/types.js';
 import NetworkAdapter from './port/out/network/NetworkAdapter.js';
 import { ISupplierStableCoinRequest } from './port/in/sdk/request/ISupplierStableCoinRequest.js';
 import SupplierRoleStableCoinServiceRequestModel from './app/service/stablecoin/model/SupplierRoleStableCoinServiceRequestModel';
+import { IRescueStableCoinRequest } from './port/in/sdk/request/IRescueStableCoinRequest.js';
+import RescueStableCoinServiceRequestModel from './app/service/stablecoin/model/RescueStableCoinServiceRequestModel.js';
 
 /* Exports */
 export { AppMetadata, HederaNetwork };
@@ -343,8 +345,8 @@ export class SDK {
 			return null;
 		}
 	}
-
-	/**
+  
+  /**
 	 * check limited supplier role
 	 */
 	public isLimitedSupplierAllowance(
@@ -355,6 +357,21 @@ export class SDK {
 				...request,
 			};
 			return this.stableCoinService.isLimitedSupplierAllowance(req);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+
+	/**
+	 * rescue
+	 */
+	public rescue(
+		request: IRescueStableCoinRequest,
+	): Promise<Uint8Array> | null {
+		try {
+			const req: RescueStableCoinServiceRequestModel = { ...request };
+			return this.stableCoinService.rescue(req);
 		} catch (error) {
 			console.error(error);
 			return null;

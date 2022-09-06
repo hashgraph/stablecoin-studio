@@ -15,8 +15,8 @@ import { SDK } from 'hedera-stable-coin-sdk';
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 import CashInStableCoinsService from './CashInStableCoinService.js';
 import WipeStableCoinsService from './WipeStableCoinService.js';
-import AssociateStableCoinsService from './AssociateStableCoinService.js';
 import SupplierRoleStableCoinsService from './SupplierRoleStableCoinService.js';
+import RescueStableCoinsService from './RescueStableCoinService.js';
 
 /**
  * Operation Stable Coin Service
@@ -140,14 +140,33 @@ export default class OperationStableCoinService extends Service {
         break;
       case wizardOperationsStableCoinOptions[5]:
         // Call to Rescue
-        break;
-      case wizardOperationsStableCoinOptions[6]:
-        // Call to AssociateToken
-        await new AssociateStableCoinsService().associateStableCoin(
+        const amount2Rescue = await utilsService.defaultSingleAsk(
+          language.getText('stablecoin.askWipeAmount'),
+          '1',
+        );
+
+        await new RescueStableCoinsService().rescueStableCoin(
+          this.treasuryStableCoinId,
+          configurationService.getConfiguration().accounts[0].privateKey,
+          configurationService.getConfiguration().accounts[0].accountId,
+          parseInt(amount2Rescue) * 1000,
+        );
+
+        console.log(
+          language
+            .getText('rescue.success')
+            .replace('${tokens}', amount2Rescue),
+        );
+
+        utilsService.breakLine();
+
+        // Call to balance
+        await new BalanceOfStableCoinsService().getBalanceOfStableCoin(
           this.treasuryStableCoinId,
           configurationService.getConfiguration().accounts[0].privateKey,
           configurationService.getConfiguration().accounts[0].accountId,
         );
+
         break;
       case wizardOperationsStableCoinOptions[7]:
         // Call to Supplier Role

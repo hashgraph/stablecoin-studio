@@ -12,6 +12,7 @@ import AssociateTokenStableCoinServiceRequestModel from './model/AssociateTokenS
 import WipeStableCoinServiceRequestModel from './model/WipeStableCoinServiceRequestModel.js';
 import IStableCoinRepository from '../../../port/out/stablecoin/IStableCoinRepository.js';
 import SupplierRoleStableCoinServiceRequestModel from './model/SupplierRoleStableCoinServiceRequestModel';
+import RescueStableCoinServiceRequestModel from './model/RescueStableCoinServiceRequestModel.js';
 import Account from '../../../domain/context/account/Account.js';
 
 export default class StableCoinService extends Service {
@@ -111,6 +112,17 @@ export default class StableCoinService extends Service {
 			req.amount,
 		);
 	}
+  
+  public async rescue(
+		req: RescueStableCoinServiceRequestModel,
+	): Promise<Uint8Array> {
+		return this.repository.rescue(
+			req.treasuryId,
+			req.privateKey,
+			req.accountId,
+			req.amount,
+		);
+	}
 
 	public async grantSupplierRole(
 		req: SupplierRoleStableCoinServiceRequestModel,
@@ -118,11 +130,12 @@ export default class StableCoinService extends Service {
 		return this.repository.grantSupplierRole(
 			req.treasuryId,
 			req.address,
-			req.privateKey,
+      req.privateKey,
 			req.accountId,
 			req.amount,
 		);
 	}
+
 
 	public async isUnlimitedSupplierAllowance(
 		req: SupplierRoleStableCoinServiceRequestModel,
