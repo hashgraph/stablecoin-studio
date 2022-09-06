@@ -133,7 +133,7 @@ export const english = {
       'Wipe',
       'Rescue',
       'Associate',
-      'Supplier role',
+      'Role management',
       'Return to main menu',
     ],
     supplierOptions: [

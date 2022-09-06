@@ -174,16 +174,20 @@ export default class OperationStableCoinService extends Service {
     let accountTarget = '0.0.0';
     let limit = '';
     const supplierService = new SupplierRoleStableCoinsService();
+    const supplierRoleType = language.getArray('wizard.supplierRoleType');
 
     switch (
       await utilsService.defaultMultipleAsk(
-        language.getText('stablecoin.askWipeAmount'),
+        language.getText('stablecoin.askEditSupplierRole'),
         supplierOptions,
       )
     ) {
       case supplierOptions[0]:
-        const supplierRoleType = language.getArray('wizard.supplierRoleType');
         //Call to give role
+        accountTarget = await utilsService.defaultSingleAsk(
+          language.getText('stablecoin.accountTarget'),
+          accountTarget,
+        );
         const roleType = await utilsService.defaultMultipleAsk(
           language.getText('stablecoin.askSupplierRoleType'),
           supplierRoleType,
@@ -191,11 +195,7 @@ export default class OperationStableCoinService extends Service {
         if (roleType === supplierRoleType[supplierRoleType.length - 1])
           await this.supplierFlow();
         if (roleType === supplierRoleType[0]) {
-          //Dar permisos ilimitados
-          accountTarget = await utilsService.defaultSingleAsk(
-            language.getText('stablecoin.accountTarget'),
-            accountTarget,
-          );
+          //Give unlimited
           //Call to SDK
           const alreadyUnlimitedSupplierRole =
             await supplierService.checkSupplierRoleStableCoin(
@@ -218,12 +218,7 @@ export default class OperationStableCoinService extends Service {
           }
         }
         if (roleType === supplierRoleType[1]) {
-          //Dar permisos limitados
-          accountTarget = await utilsService.defaultSingleAsk(
-            language.getText('stablecoin.accountTarget'),
-            accountTarget,
-          );
-
+          //Give limited
           limit = await utilsService.defaultSingleAsk(
             language.getText('stablecoin.supplierRoleLimit'),
             '1',
@@ -262,7 +257,7 @@ export default class OperationStableCoinService extends Service {
         if (roleRevokeType === supplierRoleType[supplierRoleType.length - 1])
           this.supplierFlow();
         if (roleRevokeType === supplierRoleType[0]) {
-          //Revocar permisos ilimitados
+          //Revoke unlimited
           accountTarget = await utilsService.defaultSingleAsk(
             language.getText('stablecoin.accountTarget'),
             accountTarget,
@@ -289,7 +284,7 @@ export default class OperationStableCoinService extends Service {
           }
         }
         if (roleRevokeType === supplierRoleType[1]) {
-          //Revocar permisos limitados
+          //Revoke limited
           accountTarget = await utilsService.defaultSingleAsk(
             language.getText('stablecoin.accountTarget'),
             accountTarget,
@@ -322,9 +317,10 @@ export default class OperationStableCoinService extends Service {
           language.getText('stablecoin.askEditSupplierRole'),
           editSupplierOptions,
         );
-        if (editOption === supplierRoleType[supplierRoleType.length - 1])
+        console.log(editOption);
+        if (editOption === editSupplierOptions[editSupplierOptions.length - 1])
           this.supplierFlow();
-        if (editOption === supplierRoleType[0]) {
+        if (editOption === editSupplierOptions[0]) {
           //Increase limit
           accountTarget = await utilsService.defaultSingleAsk(
             language.getText('stablecoin.accountTarget'),
@@ -356,7 +352,7 @@ export default class OperationStableCoinService extends Service {
             console.log(language.getText('supplier.notRole'));
           }
         }
-        if (editOption === supplierRoleType[1]) {
+        if (editOption === editSupplierOptions[1]) {
           //Decrease limit
           accountTarget = await utilsService.defaultSingleAsk(
             language.getText('stablecoin.accountTarget'),
@@ -388,7 +384,7 @@ export default class OperationStableCoinService extends Service {
             console.log(language.getText('supplier.notRole'));
           }
         }
-        if (editOption === supplierRoleType[2]) {
+        if (editOption === editSupplierOptions[2]) {
           //Reset
           accountTarget = await utilsService.defaultSingleAsk(
             language.getText('stablecoin.accountTarget'),

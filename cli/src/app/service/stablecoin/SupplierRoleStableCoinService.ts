@@ -24,27 +24,19 @@ export default class SupplierRoleStableCoinsService extends Service {
   ): Promise<void> {
     const sdk: SDK = utilsService.getSDK();
 
-    let respDetail;
-
     await utilsService.showSpinner(
-      sdk
-        .grantSupplierRole(
-          supplierType === 'unlimited'
-            ? { treasuryId, address, privateKey, accountId }
-            : { treasuryId, address, privateKey, accountId, amount },
-        )
-        .then((response) => (respDetail = response)),
+      sdk.grantSupplierRole(
+        supplierType === 'unlimited'
+          ? { treasuryId, address, privateKey, accountId }
+          : { treasuryId, address, privateKey, accountId, amount },
+      ),
       {
         text: language.getText('state.loading'),
         successText: language.getText('state.loadCompleted') + '\n',
       },
     );
 
-    console.log(
-      respDetail[0]
-        ? language.getText('operation.success')
-        : language.getText('operation.reject'),
-    );
+    console.log(language.getText('operation.success'));
 
     utilsService.breakLine();
   }
@@ -58,18 +50,14 @@ export default class SupplierRoleStableCoinsService extends Service {
   ): Promise<void> {
     const sdk: SDK = utilsService.getSDK();
 
-    let respDetail;
-
     if (supplierType === 'unlimited') {
       await utilsService.showSpinner(
-        sdk
-          .revokeUnlimitedSupplierRole({
-            treasuryId,
-            address,
-            privateKey,
-            accountId,
-          })
-          .then((response) => (respDetail = response)),
+        sdk.revokeUnlimitedSupplierRole({
+          treasuryId,
+          address,
+          privateKey,
+          accountId,
+        }),
         {
           text: language.getText('state.loading'),
           successText: language.getText('state.loadCompleted') + '\n',
@@ -77,9 +65,7 @@ export default class SupplierRoleStableCoinsService extends Service {
       );
     } else {
       await utilsService.showSpinner(
-        sdk
-          .revokeSupplierRole({ treasuryId, address, privateKey, accountId })
-          .then((response) => (respDetail = response)),
+        sdk.revokeSupplierRole({ treasuryId, address, privateKey, accountId }),
         {
           text: language.getText('state.loading'),
           successText: language.getText('state.loadCompleted') + '\n',
@@ -87,11 +73,7 @@ export default class SupplierRoleStableCoinsService extends Service {
       );
     }
 
-    console.log(
-      respDetail[0]
-        ? language.getText('operation.success')
-        : language.getText('operation.reject'),
-    );
+    console.log(language.getText('operation.success'));
     utilsService.breakLine();
   }
 
@@ -121,6 +103,7 @@ export default class SupplierRoleStableCoinsService extends Service {
           successText: language.getText('state.loadCompleted') + '\n',
         },
       );
+      return respDetail[0];
     } else {
       await utilsService.showSpinner(
         sdk
@@ -131,8 +114,8 @@ export default class SupplierRoleStableCoinsService extends Service {
           successText: language.getText('state.loadCompleted') + '\n',
         },
       );
+      return respDetail[0] !== '0';
     }
-    return respDetail[0];
   }
 
   public async editSupplierRoleStableCoin(
@@ -145,18 +128,14 @@ export default class SupplierRoleStableCoinsService extends Service {
   ): Promise<void> {
     const sdk: SDK = utilsService.getSDK();
 
-    let respDetail;
-
     if (supplierAction === 'Reset limit') {
       await utilsService.showSpinner(
-        sdk
-          .resetSupplierAllowance({
-            treasuryId,
-            address,
-            privateKey,
-            accountId,
-          })
-          .then((response) => (respDetail = response)),
+        sdk.resetSupplierAllowance({
+          treasuryId,
+          address,
+          privateKey,
+          accountId,
+        }),
         {
           text: language.getText('state.loading'),
           successText: language.getText('state.loadCompleted') + '\n',
@@ -164,15 +143,13 @@ export default class SupplierRoleStableCoinsService extends Service {
       );
     } else if (supplierAction === 'Increase limit') {
       await utilsService.showSpinner(
-        sdk
-          .increaseSupplierAllowance({
-            treasuryId,
-            address,
-            privateKey,
-            accountId,
-            amount,
-          })
-          .then((response) => (respDetail = response)),
+        sdk.increaseSupplierAllowance({
+          treasuryId,
+          address,
+          privateKey,
+          accountId,
+          amount,
+        }),
         {
           text: language.getText('state.loading'),
           successText: language.getText('state.loadCompleted') + '\n',
@@ -180,15 +157,13 @@ export default class SupplierRoleStableCoinsService extends Service {
       );
     } else if (supplierAction === 'Decrease limit') {
       await utilsService.showSpinner(
-        sdk
-          .decreaseSupplierAllowance({
-            treasuryId,
-            address,
-            privateKey,
-            accountId,
-            amount,
-          })
-          .then((response) => (respDetail = response)),
+        sdk.decreaseSupplierAllowance({
+          treasuryId,
+          address,
+          privateKey,
+          accountId,
+          amount,
+        }),
         {
           text: language.getText('state.loading'),
           successText: language.getText('state.loadCompleted') + '\n',
@@ -196,11 +171,7 @@ export default class SupplierRoleStableCoinsService extends Service {
       );
     }
 
-    console.log(
-      respDetail[0]
-        ? language.getText('operation.success')
-        : language.getText('operation.reject'),
-    );
+    console.log(language.getText('operation.success'));
 
     utilsService.breakLine();
   }
