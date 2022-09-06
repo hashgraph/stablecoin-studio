@@ -46,32 +46,16 @@ export default class SupplierRoleStableCoinsService extends Service {
     address: string,
     privateKey: string,
     accountId: string,
-    supplierType: string,
   ): Promise<void> {
     const sdk: SDK = utilsService.getSDK();
 
-    if (supplierType === 'unlimited') {
-      await utilsService.showSpinner(
-        sdk.revokeUnlimitedSupplierRole({
-          treasuryId,
-          address,
-          privateKey,
-          accountId,
-        }),
-        {
-          text: language.getText('state.loading'),
-          successText: language.getText('state.loadCompleted') + '\n',
-        },
-      );
-    } else {
-      await utilsService.showSpinner(
-        sdk.revokeSupplierRole({ treasuryId, address, privateKey, accountId }),
-        {
-          text: language.getText('state.loading'),
-          successText: language.getText('state.loadCompleted') + '\n',
-        },
-      );
-    }
+    await utilsService.showSpinner(
+      sdk.revokeSupplierRole({ treasuryId, address, privateKey, accountId }),
+      {
+        text: language.getText('state.loading'),
+        successText: language.getText('state.loadCompleted') + '\n',
+      },
+    );
 
     console.log(language.getText('operation.success'));
     utilsService.breakLine();

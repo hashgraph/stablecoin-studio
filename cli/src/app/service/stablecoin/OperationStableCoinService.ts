@@ -249,67 +249,17 @@ export default class OperationStableCoinService extends Service {
         break;
       case supplierOptions[1]:
         //Call to revoke role
-        const roleRevokeType = await utilsService.defaultMultipleAsk(
-          language.getText('stablecoin.askSupplierRoleRevokeType'),
-          supplierRoleType,
+        accountTarget = await utilsService.defaultSingleAsk(
+          language.getText('stablecoin.accountTarget'),
+          accountTarget,
         );
-
-        if (roleRevokeType === supplierRoleType[supplierRoleType.length - 1])
-          this.supplierFlow();
-        if (roleRevokeType === supplierRoleType[0]) {
-          //Revoke unlimited
-          accountTarget = await utilsService.defaultSingleAsk(
-            language.getText('stablecoin.accountTarget'),
-            accountTarget,
-          );
-          //Call to SDK
-          const alreadyUnlimitedSupplierRole =
-            await supplierService.checkSupplierRoleStableCoin(
-              this.treasuryStableCoinId,
-              accountTarget,
-              configurationService.getConfiguration().accounts[0].privateKey,
-              configurationService.getConfiguration().accounts[0].accountId,
-              'unlimited',
-            );
-          if (alreadyUnlimitedSupplierRole) {
-            await supplierService.revokeSupplierRoleStableCoin(
-              this.treasuryStableCoinId,
-              accountTarget,
-              configurationService.getConfiguration().accounts[0].privateKey,
-              configurationService.getConfiguration().accounts[0].accountId,
-              'unlimited',
-            );
-          } else {
-            console.log(language.getText('supplier.notUnlimitedRole'));
-          }
-        }
-        if (roleRevokeType === supplierRoleType[1]) {
-          //Revoke limited
-          accountTarget = await utilsService.defaultSingleAsk(
-            language.getText('stablecoin.accountTarget'),
-            accountTarget,
-          );
-          //Call to SDK
-          const alreadySupplierRole =
-            await supplierService.checkSupplierRoleStableCoin(
-              this.treasuryStableCoinId,
-              accountTarget,
-              configurationService.getConfiguration().accounts[0].privateKey,
-              configurationService.getConfiguration().accounts[0].accountId,
-              'limited',
-            );
-          if (alreadySupplierRole) {
-            await supplierService.revokeSupplierRoleStableCoin(
-              this.treasuryStableCoinId,
-              accountTarget,
-              configurationService.getConfiguration().accounts[0].privateKey,
-              configurationService.getConfiguration().accounts[0].accountId,
-              'limited',
-            );
-          } else {
-            console.log(language.getText('supplier.notRole'));
-          }
-        }
+        //Call to SDK
+        await supplierService.revokeSupplierRoleStableCoin(
+          this.treasuryStableCoinId,
+          accountTarget,
+          configurationService.getConfiguration().accounts[0].privateKey,
+          configurationService.getConfiguration().accounts[0].accountId,
+        );
         break;
       case supplierOptions[2]:
         //Call to edit role
