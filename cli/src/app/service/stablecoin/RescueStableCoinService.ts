@@ -20,26 +20,17 @@ export default class RescueStableCoinsService extends Service {
     accountId: string,
     amount?: number,
   ): Promise<void> {
-    // Call to list stable coins
     const sdk: SDK = utilsService.getSDK();
 
-    let respDetail;
-
     await utilsService.showSpinner(
-      sdk
-        .rescue({ treasuryId, privateKey, accountId, amount })
-        .then((response) => (respDetail = response)),
+      sdk.rescue({ treasuryId, privateKey, accountId, amount }),
       {
         text: language.getText('state.loading'),
         successText: language.getText('state.loadCompleted') + '\n',
       },
     );
 
-    console.log(
-      respDetail[0]
-        ? language.getText('operation.success')
-        : language.getText('operation.reject'),
-    );
+    console.log(language.getText('operation.success'));
 
     utilsService.breakLine();
   }

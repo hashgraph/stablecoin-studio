@@ -146,6 +146,22 @@ export default class OperationStableCoinService extends Service {
           configurationService.getConfiguration().accounts[0].accountId,
           parseInt(amount2Rescue) * 1000,
         );
+
+        console.log(
+          language
+            .getText('rescue.success')
+            .replace('${tokens}', amount2Rescue),
+        );
+
+        utilsService.breakLine();
+
+        // Call to balance
+        await new BalanceOfStableCoinsService().getBalanceOfStableCoin(
+          this.treasuryStableCoinId,
+          configurationService.getConfiguration().accounts[0].privateKey,
+          configurationService.getConfiguration().accounts[0].accountId,
+        );
+
         break;
       case wizardOperationsStableCoinOptions[
         wizardOperationsStableCoinOptions.length - 1

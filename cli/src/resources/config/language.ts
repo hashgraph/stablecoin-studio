@@ -135,4 +135,7 @@ export const english = {
     success: 'Operation has been completed successfully.',
     reject: 'Operation has not been completed. Please, try again.',
   },
+  rescue: {
+    success: 'You have rescued ${tokens} tokens',
+  },
 };
