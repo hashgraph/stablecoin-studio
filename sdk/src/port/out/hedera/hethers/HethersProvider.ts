@@ -267,11 +267,9 @@ export default class HethersProvider implements IProvider {
 			(func: { name: any; type: string }) =>
 				func.name === functionName && func.type === 'function',
 		);
-		console.log(functionAbi);
 		const encodedParametersHex = this.web3.eth.abi
 		.encodeFunctionCall(functionAbi, parameters)
 		.slice(2);
-		console.log(encodedParametersHex);
 		return Buffer.from(encodedParametersHex, 'hex');
 	}
 
