@@ -107,14 +107,19 @@ export default class SupplierRoleStableCoinsService extends Service {
     } else {
       await utilsService.showSpinner(
         sdk
-          .supplierAllowance({ treasuryId, address, privateKey, accountId })
+          .isLimitedSupplierAllowance({
+            treasuryId,
+            address,
+            privateKey,
+            accountId,
+          })
           .then((response) => (respDetail = response)),
         {
           text: language.getText('state.loading'),
           successText: language.getText('state.loadCompleted') + '\n',
         },
       );
-      return respDetail[0] !== '0';
+      return respDetail[0];
     }
   }
 

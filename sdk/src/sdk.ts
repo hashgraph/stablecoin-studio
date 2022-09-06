@@ -344,6 +344,23 @@ export class SDK {
 		}
 	}
 
+	/**
+	 * check limited supplier role
+	 */
+	public isLimitedSupplierAllowance(
+		request: ISupplierStableCoinRequest,
+	): Promise<Uint8Array> | null {
+		try {
+			const req: SupplierRoleStableCoinServiceRequestModel = {
+				...request,
+			};
+			return this.stableCoinService.isLimitedSupplierAllowance(req);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+
 	public checkIsAddress(str?: string): boolean {
 		if (!str) {
 			return false;

@@ -196,4 +196,15 @@ export default class StableCoinService extends Service {
 			req.amount,
 		);
 	}
+
+	public async isLimitedSupplierAllowance(
+		req: SupplierRoleStableCoinServiceRequestModel,
+	): Promise<Uint8Array> {
+		return this.repository.isLimitedSupplierAllowance(
+			req.treasuryId,
+			req.address,
+			req.privateKey,
+			req.accountId,
+		);
+	}
 }

@@ -436,4 +436,30 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			params,
 		);
 	}
+
+	public async isLimitedSupplierAllowance(
+		treasuryId: string,
+		address: string,
+		privateKey: string,
+		accountId: string,
+	): Promise<Uint8Array> {
+		const { AccountId } = require('@hashgraph/sdk');
+
+		const clientSdk = this.contractRepository.getClient('testnet');
+		clientSdk.setOperator(accountId, privateKey);
+		const parameters = [
+			'0xd1ae8bbdabd60d63e418b84f5ad6f9cba90092c9816d7724d85f0d4e4bea2c60',
+			AccountId.fromString(address || '').toSolidityAddress(),
+		];
+
+		const params = {
+			treasuryId,
+			parameters,
+			clientSdk,
+			gas: 60000,
+			abi: HederaERC20__factory.abi,
+		};
+
+		return await this.contractRepository.callContract('hasRole', params);
+	}
 }
