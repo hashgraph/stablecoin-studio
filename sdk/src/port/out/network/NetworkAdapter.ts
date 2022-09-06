@@ -36,11 +36,12 @@ export default class NetworkAdapter {
 				this.provider = await this.getHethersProvider(this.network);
 				return this;
 			case NetworkMode.HASHPACK:
-				this.provider = await this.getHashpackProvider(
-					this.network,
-					this.options,
-				);
-				return this;
+				// this.provider = await this.getHashpackProvider(
+				// 	this.network,
+				// 	this.options,
+				// );
+				// return this;
+				throw new Error('Not supported');
 			default:
 				throw new Error('Not supported');
 		}
@@ -50,12 +51,12 @@ export default class NetworkAdapter {
 		return this.provider.stop();
 	}
 
-	private getHashpackProvider(
-		network: HederaNetwork,
-		options: IniConfigOptions,
-	): Promise<HashPackProvider> {
-		return new HashPackProvider().init({ network, options });
-	}
+	// private getHashpackProvider(
+	// 	network: HederaNetwork,
+	// 	options: IniConfigOptions,
+	// ): Promise<HashPackProvider> {
+	// 	return new HashPackProvider().init({ network, options });
+	// }
 
 	private getHethersProvider(
 		network: HederaNetwork,
