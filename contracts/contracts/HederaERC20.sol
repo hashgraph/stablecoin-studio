@@ -2,22 +2,31 @@
 pragma solidity ^0.8.10;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "./hts-precompile/HederaTokenService.sol";
 import "./IHederaERC20.sol";
-import "./HTSTokenOwner.sol";
+import "./extensions/Mintable.sol";
+import "./extensions/Wipeable.sol";
+import "./extensions/Rescatable.sol";
 
 
-contract HederaERC20 is IHederaERC20, Initializable, IERC20Upgradeable{
+contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20Upgradeable, Mintable, Wipeable, Rescatable{
     using SafeERC20Upgradeable for IERC20Upgradeable;
-
-
-    HTSTokenOwner HTSTokenOwnerAddress;
-    address tokenAddress; 
 
     function initialize () 
         payable 
-        external initializer {
+        external 
+        initializer 
+    {
+        __AccessControl_init();       
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _setupRole(ADMIN_SUPPLIER_ROLE, msg.sender);
+        grantUnlimitedSupplierRole(msg.sender);
+        _grantRole(RESCUE_ROLE, msg.sender);
+        _grantRole(WIPE_ROLE, msg.sender);
+        
     }
      
     function name() 
@@ -27,7 +36,7 @@ contract HederaERC20 is IHederaERC20, Initializable, IERC20Upgradeable{
     {
         return IERC20MetadataUpgradeable(tokenAddress).name();        
     }
-    
+
     function symbol() 
         external 
         view 
@@ -61,44 +70,26 @@ contract HederaERC20 is IHederaERC20, Initializable, IERC20Upgradeable{
     {
         return IERC20Upgradeable(tokenAddress).balanceOf(account);
     }
-    
-    function setTokenAddress(HTSTokenOwner _htsTokenOwnerAddress, address _tokenAddress) 
-        external         
-    {
-        require(tokenAddress == address(0), "Token address already defined");
 
-        HTSTokenOwnerAddress = _htsTokenOwnerAddress;
-        tokenAddress = _tokenAddress;
-    }
-
-    function getTokenAddress()  
-        external 
-        view 
-        returns (address) 
-    {
-        return tokenAddress;
-    }
-
-    function mint(address account, uint256 amount) 
-        external        
-        returns (bool) 
-    {         
-        (bool success) = HTSTokenOwnerAddress.mintToken(tokenAddress, amount);
-        require(success, "Minting error");
-
-        return _transfer(address(HTSTokenOwnerAddress), account, amount);
-    }
-
-    function burn(uint256 amount) 
+    function associateToken(address adr) 
         public 
         returns (bool) 
-    {
-        _transfer(msg.sender, address(HTSTokenOwnerAddress), amount);
-        return HTSTokenOwnerAddress.burnToken(tokenAddress, amount);
+    {         
+        int256 responseCode = HederaTokenService.associateToken(adr, tokenAddress);
+        return _checkResponse(responseCode);        
     }
 
+    function dissociateToken(address adr) 
+        public 
+        returns (bool) 
+    {         
+        int256 responseCode = HederaTokenService.dissociateToken(adr, tokenAddress);
+        return _checkResponse(responseCode);        
+    }
+    
     function _transfer(address from, address to, uint256 amount) 
         internal 
+        override
         returns (bool) 
     {
         require(balanceOf(from) >= amount, "Insufficient token balance");
@@ -109,32 +100,48 @@ contract HederaERC20 is IHederaERC20, Initializable, IERC20Upgradeable{
         return true;
     }
 
+    function burn(uint256 amount) 
+        public 
+        returns (bool) 
+    {
+        require(false, "function not already implemented");
+    }
 
     function transfer(address to, uint256 amount) 
         external 
-        returns (bool) {
-        return true;
+        returns (bool)
+    {
+        require(false, "function not already implemented");
     }
 
- 
     function allowance(address owner, address spender) 
         external 
         view 
-        returns (uint256){
-        return 0;
+        returns (uint256)
+    {
+        require(false, "function not already implemented");
     }
 
 
     function approve(address spender, uint256 amount) 
         external 
-        returns (bool){
-         return true;
+        returns (bool)
+    {
+         require(false, "function not already implemented");
     }
 
     function transferFrom( address from,  address to, uint256 amount) 
         external 
-        returns (bool){
-         return true;
+        returns (bool)
+    {
+         require(false, "function not already implemented");
     }
-
+    
+    function _checkResponse(int256 responseCode) 
+        internal 
+        returns (bool) 
+    {
+        require(responseCode == HederaResponseCodes.SUCCESS, "Error");
+        return true;
+    }
 }

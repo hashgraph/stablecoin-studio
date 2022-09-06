@@ -28,13 +28,8 @@ const main = async (): Promise<void> => {
     await setConfigurationService.initConfiguration();
     await wizardService.mainMenu();
   }
-
-  const accountId: string =
-    configurationService.getConfiguration().accounts[0].accountId;
-  const privateKey: string =
-    configurationService.getConfiguration().accounts[0].privateKey;
-
-  await utilsService.initSDK(accountId, privateKey);
+  
+  await utilsService.initSDK();
 
   commanderService.start();
 };

@@ -9,7 +9,6 @@ import StableCoinService from './app/service/stablecoin/StableCoinService.js';
 import StableCoin from './domain/context/stablecoin/StableCoin.js';
 import StableCoinRepository from './port/out/stablecoin/StableCoinRepository.js';
 import IStableCoinDetail from './domain/context/stablecoin/IStableCoinDetail.js';
-import Account from './domain/context/account/Account.js';
 import CashInStableCoinServiceRequestModel from './app/service/stablecoin/model/CashInStableCoinServiceRequestModel.js';
 import { IGetNameStableCoinRequest } from './port/in/sdk/request/IGetNameStableCoinRequest.js';
 import { IGetBalanceStableCoinRequest } from './port/in/sdk/request/IGetBalanceStableCoinRequest.js';
@@ -26,13 +25,13 @@ import IContractRepository from './port/out/contract/IContractRepository.js';
 import ContractRepository from './port/out/contract/ContractRepository.js';
 import Web3 from 'web3';
 import { HederaNetwork } from './core/enum.js';
-import { AppMetadata } from './port/in/hedera/hashconnect/types/types.js';
+import { AppMetadata } from './port/out/hedera/hashconnect/types/types.js';
 import NetworkAdapter from './port/out/network/NetworkAdapter.js';
 import { ISupplierStableCoinRequest } from './port/in/sdk/request/ISupplierStableCoinRequest.js';
 import SupplierRoleStableCoinServiceRequestModel from './app/service/stablecoin/model/SupplierRoleStableCoinServiceRequestModel';
 
 /* Exports */
-export { Account, AppMetadata, HederaNetwork };
+export { AppMetadata, HederaNetwork };
 export {
 	IGetNameStableCoinRequest,
 	IGetBalanceStableCoinRequest,
@@ -43,7 +42,10 @@ export {
 
 export interface ConfigurationOptions {
 	appMetadata?: AppMetadata;
-	account?: Account;
+	account?: {
+		accountId: string;
+		privateKey: string;
+	};
 }
 
 export interface Configuration {
@@ -83,7 +85,10 @@ export class SDK {
 			},
 		).init();
 		this.web3 = new Web3();
-		this.contractRepository = new ContractRepository(this.web3);
+		this.contractRepository = new ContractRepository(
+			this.networkAdapter,
+			this.web3,
+		);
 		this.contractService = new ContractsService(this.contractRepository);
 		this.stableCoinRepository = new StableCoinRepository(
 			this.contractRepository,
@@ -336,6 +341,14 @@ export class SDK {
 		} catch (error) {
 			console.error(error);
 			return null;
+		}
+	}
+
+	public checkIsAddress(str?: string): boolean {
+		if (!str) {
+			return false;
+		} else {
+			return /\d\.\d\.\d/.test(str);
 		}
 	}
 }

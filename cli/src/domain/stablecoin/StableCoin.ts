@@ -2,12 +2,12 @@ export interface StableCoin {
   name: string;
   symbol: string;
   decimals: number;
-  initialSupply?: number;
+  initialSupply?: bigint;
   supplyType?: string;
-  totalSupply?: number;
+  maxSupply?: bigint;
   expirationTime?: number;
   memo?: string;
-  freeze?: boolean;
+  freezeDefault?: boolean;
   KYC?: string;
   wipe?: string;
   feeSchedule?: string;

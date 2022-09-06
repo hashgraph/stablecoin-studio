@@ -1,39 +1,39 @@
 import { HederaNetwork } from '../../../core/enum.js';
-import HashPackProvider from '../../in/hedera/hashconnect/HashPackProvider.js';
-import HethersProvider from '../../in/hedera/hethers/HethersProvider.js';
-import { IProvider, IniConfigOptions } from '../../in/hedera/Provider.js';
-import { Account, AppMetadata, NetworkMode } from '../../../sdk.js';
+import HashPackProvider from '../hedera/hashconnect/HashPackProvider.js';
+import HethersProvider from '../hedera/hethers/HethersProvider.js';
+import { IProvider, IniConfigOptions } from '../hedera/Provider.js';
+import { AppMetadata, NetworkMode } from '../../../sdk.js';
 
 type NetworkClientOptions = HederaClientOptions;
 
 type HederaClientOptions = {
-	account?: Account;
 	appMetadata?: AppMetadata;
 };
 
 export default class NetworkAdapter {
-	private mode: NetworkMode;
-	private network: HederaNetwork;
-	private options: NetworkClientOptions;
-	private provider: IProvider;
+	private _mode: NetworkMode;
+	private _network: HederaNetwork;
+	private _options: NetworkClientOptions;
+	
+	public provider: IProvider;
 
 	constructor(
 		mode: NetworkMode,
 		network: HederaNetwork,
 		options: NetworkClientOptions,
 	) {
-		this.mode = mode;
-		this.network = network;
-		this.options = options;
+		this._mode = mode;
+		this._network = network;
+		this._options = options;
 	}
 
 	/**
 	 * Init
 	 */
 	public async init(): Promise<NetworkAdapter> {
-		switch (this.mode) {
+		switch (this._mode) {
 			case NetworkMode.EOA:
-				this.provider = await this.getHethersProvider(this.network);
+				this.provider = await this.getHethersProvider(this._network);
 				return this;
 			case NetworkMode.HASHPACK:
 				// this.provider = await this.getHashpackProvider(

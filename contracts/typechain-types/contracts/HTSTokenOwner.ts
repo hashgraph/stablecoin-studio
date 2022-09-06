@@ -82,11 +82,13 @@ export interface HTSTokenOwnerInterface extends utils.Interface {
     "revokeTokenKyc(address,address)": FunctionFragment;
     "setERC20Address(address)": FunctionFragment;
     "toString(bytes)": FunctionFragment;
-    "transfer(address,uint256)": FunctionFragment;
+    "tranferContract(address,address,uint256)": FunctionFragment;
+    "transfer(address,address,uint256)": FunctionFragment;
     "transfer(address,address,address,uint256)": FunctionFragment;
     "unpauseToken(address)": FunctionFragment;
     "updateTokenExpiryInfo(address,(uint32,address,uint32))": FunctionFragment;
     "updateTokenKeys(address,(uint256,(bool,address,bytes,bytes,address))[])": FunctionFragment;
+    "wipeToken(address,address,uint32)": FunctionFragment;
   };
 
   getFunction(
@@ -102,11 +104,13 @@ export interface HTSTokenOwnerInterface extends utils.Interface {
       | "revokeTokenKyc"
       | "setERC20Address"
       | "toString"
-      | "transfer(address,uint256)"
+      | "tranferContract"
+      | "transfer(address,address,uint256)"
       | "transfer(address,address,address,uint256)"
       | "unpauseToken"
       | "updateTokenExpiryInfo"
       | "updateTokenKeys"
+      | "wipeToken"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -154,8 +158,20 @@ export interface HTSTokenOwnerInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "transfer(address,uint256)",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+    functionFragment: "tranferContract",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "transfer(address,address,uint256)",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "transfer(address,address,address,uint256)",
@@ -177,6 +193,14 @@ export interface HTSTokenOwnerInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "updateTokenKeys",
     values: [PromiseOrValue<string>, IHederaTokenService.TokenKeyStruct[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "wipeToken",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
 
   decodeFunctionResult(functionFragment: "burnToken", data: BytesLike): Result;
@@ -209,7 +233,11 @@ export interface HTSTokenOwnerInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "toString", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "transfer(address,uint256)",
+    functionFragment: "tranferContract",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "transfer(address,address,uint256)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -228,6 +256,7 @@ export interface HTSTokenOwnerInterface extends utils.Interface {
     functionFragment: "updateTokenKeys",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "wipeToken", data: BytesLike): Result;
 
   events: {};
 }
@@ -317,7 +346,15 @@ export interface HTSTokenOwner extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    "transfer(address,uint256)"(
+    tranferContract(
+      tokenAddress: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    "transfer(address,address,uint256)"(
+      tokenAddress: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -345,6 +382,13 @@ export interface HTSTokenOwner extends BaseContract {
     updateTokenKeys(
       token: PromiseOrValue<string>,
       keys: IHederaTokenService.TokenKeyStruct[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    wipeToken(
+      tokenAddress: PromiseOrValue<string>,
+      account: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
@@ -407,7 +451,15 @@ export interface HTSTokenOwner extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  "transfer(address,uint256)"(
+  tranferContract(
+    tokenAddress: PromiseOrValue<string>,
+    to: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  "transfer(address,address,uint256)"(
+    tokenAddress: PromiseOrValue<string>,
     to: PromiseOrValue<string>,
     amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -435,6 +487,13 @@ export interface HTSTokenOwner extends BaseContract {
   updateTokenKeys(
     token: PromiseOrValue<string>,
     keys: IHederaTokenService.TokenKeyStruct[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  wipeToken(
+    tokenAddress: PromiseOrValue<string>,
+    account: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -509,7 +568,15 @@ export interface HTSTokenOwner extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    "transfer(address,uint256)"(
+    tranferContract(
+      tokenAddress: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "transfer(address,address,uint256)"(
+      tokenAddress: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -539,6 +606,13 @@ export interface HTSTokenOwner extends BaseContract {
       keys: IHederaTokenService.TokenKeyStruct[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    wipeToken(
+      tokenAddress: PromiseOrValue<string>,
+      account: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
   };
 
   filters: {};
@@ -602,7 +676,15 @@ export interface HTSTokenOwner extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "transfer(address,uint256)"(
+    tranferContract(
+      tokenAddress: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "transfer(address,address,uint256)"(
+      tokenAddress: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -630,6 +712,13 @@ export interface HTSTokenOwner extends BaseContract {
     updateTokenKeys(
       token: PromiseOrValue<string>,
       keys: IHederaTokenService.TokenKeyStruct[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    wipeToken(
+      tokenAddress: PromiseOrValue<string>,
+      account: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
@@ -693,7 +782,15 @@ export interface HTSTokenOwner extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "transfer(address,uint256)"(
+    tranferContract(
+      tokenAddress: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "transfer(address,address,uint256)"(
+      tokenAddress: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -721,6 +818,13 @@ export interface HTSTokenOwner extends BaseContract {
     updateTokenKeys(
       token: PromiseOrValue<string>,
       keys: IHederaTokenService.TokenKeyStruct[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    wipeToken(
+      tokenAddress: PromiseOrValue<string>,
+      account: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
