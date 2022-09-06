@@ -214,7 +214,7 @@ export class SDK {
 	): Promise<Uint8Array> | null {
 		try {
 			const req: RescueStableCoinServiceRequestModel = { ...request };
-			return this.stableCoinService.wipe(req);
+			return this.stableCoinService.rescue(req);
 		} catch (error) {
 			console.error(error);
 			return null;

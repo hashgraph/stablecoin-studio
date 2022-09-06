@@ -11,6 +11,7 @@ import CashInStableCoinServiceRequestModel from './model/CashInStableCoinService
 import AssociateTokenStableCoinServiceRequestModel from './model/AssociateTokenStableCoinServiceRequestModel.js';
 import WipeStableCoinServiceRequestModel from './model/WipeStableCoinServiceRequestModel.js';
 import IStableCoinRepository from '../../../port/out/stablecoin/IStableCoinRepository.js';
+import RescueStableCoinServiceRequestModel from './model/RescueStableCoinServiceRequestModel.js';
 
 export default class StableCoinService extends Service {
 	private repository: IStableCoinRepository;
@@ -56,11 +57,15 @@ export default class StableCoinService extends Service {
 	public async getBalanceOf(
 		req: GetBalanceOfStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
-		return this.repository.getBalanceOf(req.treasuryId, req.privateKey, req.accountId);
+		return this.repository.getBalanceOf(
+			req.treasuryId,
+			req.privateKey,
+			req.accountId,
+		);
 	}
 
 	public async getNameToken(
-		req: GetNameOfStableCoinServiceRequestModel
+		req: GetNameOfStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.getNameToken(
 			req.treasuryId,
@@ -70,7 +75,7 @@ export default class StableCoinService extends Service {
 	}
 
 	public async cashIn(
-		req: CashInStableCoinServiceRequestModel
+		req: CashInStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.cashIn(
 			req.treasuryId,
@@ -81,7 +86,7 @@ export default class StableCoinService extends Service {
 	}
 
 	public async associateToken(
-		req: AssociateTokenStableCoinServiceRequestModel
+		req: AssociateTokenStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.associateToken(
 			req.treasuryId,
@@ -91,9 +96,20 @@ export default class StableCoinService extends Service {
 	}
 
 	public async wipe(
-		req: WipeStableCoinServiceRequestModel
+		req: WipeStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.wipe(
+			req.treasuryId,
+			req.privateKey,
+			req.accountId,
+			req.amount,
+		);
+	}
+
+	public async rescue(
+		req: RescueStableCoinServiceRequestModel,
+	): Promise<Uint8Array> {
+		return this.repository.rescue(
 			req.treasuryId,
 			req.privateKey,
 			req.accountId,

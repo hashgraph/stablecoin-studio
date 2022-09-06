@@ -15,7 +15,6 @@ import { SDK } from 'hedera-stable-coin-sdk';
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 import CashInStableCoinsService from './CashInStableCoinService.js';
 import WipeStableCoinsService from './WipeStableCoinService.js';
-import AssociateStableCoinsService from './AssociateStableCoinService.js';
 import RescueStableCoinsService from './RescueStableCoinService.js';
 
 /**
@@ -146,14 +145,6 @@ export default class OperationStableCoinService extends Service {
           configurationService.getConfiguration().accounts[0].privateKey,
           configurationService.getConfiguration().accounts[0].accountId,
           parseInt(amount2Rescue) * 1000,
-        );
-        break;
-      case wizardOperationsStableCoinOptions[6]:
-        // Call to AssociateToken
-        await new AssociateStableCoinsService().associateStableCoin(
-          this.treasuryStableCoinId,
-          configurationService.getConfiguration().accounts[0].privateKey,
-          configurationService.getConfiguration().accounts[0].accountId,
         );
         break;
       case wizardOperationsStableCoinOptions[

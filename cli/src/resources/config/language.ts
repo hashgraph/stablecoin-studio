@@ -122,7 +122,6 @@ export const english = {
       'Cash out',
       'Wipe',
       'Rescue',
-      'Associate',
       'Return to main menu',
     ],
   },

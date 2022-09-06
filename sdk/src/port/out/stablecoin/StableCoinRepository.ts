@@ -31,10 +31,12 @@ export default class StableCoinRepository implements IStableCoinRepository {
 				this.URI_BASE + 'tokens?limit=100&publickey=' + pk,
 			);
 			res.data.tokens.map((item) => {
-				resObject.push({
-					id: item.token_id,
-					symbol: item.symbol,
-				});
+				if (item.memo !== '') {
+					resObject.push({
+						id: item.token_id,
+						symbol: item.symbol,
+					});
+				}
 			});
 			return resObject;
 		} catch (error) {
@@ -208,11 +210,13 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 		const parameters = [amount];
 
+		console.log('parametros', parameters);
+
 		const params = {
 			treasuryId,
 			parameters,
 			clientSdk,
-			gas: 120000,
+			gas: 140000,
 			abi: HederaERC20__factory.abi,
 		};
 
