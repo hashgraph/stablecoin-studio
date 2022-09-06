@@ -148,18 +148,22 @@ export default class UtilitiesService extends Service {
   }
 
   public async drawTableListStableCoin(data?: StableCoinList[]): Promise<void> {
-    const table = new Table({
-      style: { head: ['green'] },
-      head: ['Id', 'Symbol'],
-      colWidths: [15, 20],
-    });
-
-    if (data) {
-      data.forEach((item) => table.push([item.id, item.symbol]));
+    if (data.length === 0) {
+      console.log('There are no stable coins available at this time.');
     } else {
-      table.push(['-', '-']);
-    }
+      const table = new Table({
+        style: { head: ['green'] },
+        head: ['Id', 'Symbol'],
+        colWidths: [15, 20],
+      });
 
-    console.log(table.toString());
+      if (data) {
+        data.forEach((item) => table.push([item.id, item.symbol]));
+      } else {
+        table.push(['-', '-']);
+      }
+
+      console.log(table.toString());
+    }
   }
 }

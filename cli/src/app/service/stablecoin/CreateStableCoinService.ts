@@ -96,7 +96,6 @@ export default class CreateStableCoinService extends Service {
     let initialSupply = '';
     let supplyType = false;
     let totalSupply = '';
-    let expirationTime = '';
     let memo = '';
     let freeze = false;
 
@@ -119,8 +118,6 @@ export default class CreateStableCoinService extends Service {
         createdStableCoin.totalSupply = totalSupply;
       }
 
-      expirationTime = await this.askForExpirationTime();
-      createdStableCoin.expirationTime = expirationTime;
       memo = await this.askForMemo();
       createdStableCoin.memo = memo;
       freeze = await this.askForFreeze();
@@ -139,14 +136,12 @@ export default class CreateStableCoinService extends Service {
       KYC,
       freeze: freezeManaged,
       wipe,
-      feeSchedule,
     } = await this.configureManagedFeatures();
     createdStableCoin.admin = admin;
     createdStableCoin.totalSupply = supply;
     createdStableCoin.KYC = KYC;
     createdStableCoin.freeze = freeze;
     createdStableCoin.wipe = wipe;
-    createdStableCoin.feeSchedule = feeSchedule;
 
     return {
       name,
@@ -155,12 +150,10 @@ export default class CreateStableCoinService extends Service {
       initialSupply: initialSupply === '' ? undefined : parseInt(initialSupply),
       supplyType: supplyType ? 'INFINITE' : 'FINITE',
       totalSupply: supply ? parseInt(supply) : parseInt(totalSupply),
-      expirationTime: parseInt(expirationTime),
       memo,
       freeze: freezeManaged ?? freeze,
       KYC,
       wipe,
-      feeSchedule,
       admin,
     };
   }
@@ -168,7 +161,7 @@ export default class CreateStableCoinService extends Service {
   private async askForDecimals(): Promise<string> {
     return await utilsService.defaultSingleAsk(
       language.getText('stablecoin.askDecimals'),
-      createdStableCoin.decimals || '18',
+      createdStableCoin.decimals || '6',
     );
   }
 
@@ -197,13 +190,6 @@ export default class CreateStableCoinService extends Service {
     return await utilsService.defaultSingleAsk(
       language.getText('stablecoin.askTotalSupply'),
       createdStableCoin.totalSupply || '1',
-    );
-  }
-
-  private async askForExpirationTime(): Promise<string> {
-    return await utilsService.defaultSingleAsk(
-      language.getText('stablecoin.askExpirationTime'),
-      createdStableCoin.expirationTime || '90', //TODO 90 days, have to multiply by 86400 to convert to seconds
     );
   }
 
@@ -254,11 +240,6 @@ export default class CreateStableCoinService extends Service {
       createdStableCoin.wipe || '', //TODO Check correct default value
     );
 
-    const feeSchedule = await utilsService.defaultSingleAsk(
-      language.getText('stablecoin.features.feeSchedule'),
-      createdStableCoin.feeSchedule || '', //TODO Check correct default value
-    );
-
-    return { admin, supply, KYC, freeze, wipe, feeSchedule };
+    return { admin, supply, KYC, freeze, wipe };
   }
 }

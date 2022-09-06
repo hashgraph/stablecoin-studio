@@ -59,6 +59,16 @@ export const english = {
       'Stable Coin ${name} (${symbol}) with ${decimals} decimals have been created!',
     askCashInAmount: 'How many tokens do you want to cash in?',
     askWipeAmount: 'How many tokens do you want to wipe?',
+    askTargetAccount: 'What is the target account?',
+    askAccountToBalance:
+      'Which account would you like to obtain the balance from?',
+    askSupplierRoleType: 'What kind of permission do you want to give?',
+    askSupplierRoleRevokeType: 'What type of permit do you want to revoke?',
+    askEditSupplierRole: 'What action do you want to perform?',
+    accountTarget: 'Enter the id of the target account',
+    supplierRoleLimit: 'What will be the limit?',
+    amountIncrease: 'Amount to increase',
+    amountDecrease: 'Amount to decrease',
   },
   commander: {
     appDescription: 'Hedera Stable Coin is a CLI for manage stable coins',
@@ -123,7 +133,21 @@ export const english = {
       'Wipe',
       'Rescue',
       'Associate',
+      'Supplier role',
       'Return to main menu',
+    ],
+    supplierOptions: [
+      'Give supplier role',
+      'Revoke supplier role',
+      'Edit supplier role',
+      'Back',
+    ],
+    supplierRoleType: ['Unlimited', 'Limited', 'Back'],
+    editSupplierRoleOptions: [
+      'Increase limit',
+      'Decrease limit',
+      'Reset limit',
+      'Back',
     ],
   },
   state: {
@@ -135,5 +159,11 @@ export const english = {
   operation: {
     success: 'Operation has been completed successfully.',
     reject: 'Operation has not been completed. Please, try again.',
+  },
+  supplier: {
+    alreadyUnlimitedRole: 'This account already have unlimited supplier role.',
+    alreadyRole: 'This account already have supplier role.',
+    notUnlimitedRole: 'This account does not have unlimited supplier role.',
+    notRole: 'This account does not have supplier role.',
   },
 };
