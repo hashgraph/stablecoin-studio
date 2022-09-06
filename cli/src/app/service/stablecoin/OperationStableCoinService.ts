@@ -141,7 +141,7 @@ export default class OperationStableCoinService extends Service {
       case wizardOperationsStableCoinOptions[5]:
         // Call to Rescue
         const amount2Rescue = await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.askWipeAmount'),
+          language.getText('stablecoin.askRescueAmount'),
           '1',
         );
 
@@ -168,7 +168,7 @@ export default class OperationStableCoinService extends Service {
         );
 
         break;
-      case wizardOperationsStableCoinOptions[7]:
+      case wizardOperationsStableCoinOptions[6]:
         // Call to Supplier Role
         await this.supplierFlow();
         break;
