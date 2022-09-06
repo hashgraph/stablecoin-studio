@@ -32,6 +32,8 @@ jobs:
       - name: Build Contracts
         run: npm run build
         working-directory: contracts
+      - name: LS
+        run: ls -la && cd app && ls -la && cd service && ls -la
       - name: Build SDK
         run: npm run build
       - name: Test
