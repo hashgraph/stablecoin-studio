@@ -112,8 +112,8 @@ export default class StableCoinService extends Service {
 			req.amount,
 		);
 	}
-  
-  public async rescue(
+
+	public async rescue(
 		req: RescueStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.rescue(
@@ -130,12 +130,11 @@ export default class StableCoinService extends Service {
 		return this.repository.grantSupplierRole(
 			req.treasuryId,
 			req.address,
-      req.privateKey,
+			req.privateKey,
 			req.accountId,
 			req.amount,
 		);
 	}
-
 
 	public async isUnlimitedSupplierAllowance(
 		req: SupplierRoleStableCoinServiceRequestModel,
@@ -151,16 +150,6 @@ export default class StableCoinService extends Service {
 		req: SupplierRoleStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.supplierAllowance(
-			req.treasuryId,
-			req.address,
-			req.privateKey,
-			req.accountId,
-		);
-	}
-	public async revokeUnlimitedSupplierRole(
-		req: SupplierRoleStableCoinServiceRequestModel,
-	): Promise<Uint8Array> {
-		return this.repository.revokeUnlimitedSupplierRole(
 			req.treasuryId,
 			req.address,
 			req.privateKey,

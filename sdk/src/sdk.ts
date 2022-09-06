@@ -231,23 +231,6 @@ export class SDK {
 	}
 
 	/**
-	 * revoke unlimited supplier role
-	 */
-	public revokeUnlimitedSupplierRole(
-		request: ISupplierStableCoinRequest,
-	): Promise<Uint8Array> | null {
-		try {
-			const req: SupplierRoleStableCoinServiceRequestModel = {
-				...request,
-			};
-			return this.stableCoinService.revokeUnlimitedSupplierRole(req);
-		} catch (error) {
-			console.error(error);
-			return null;
-		}
-	}
-
-	/**
 	 * revoke limited supplier role
 	 */
 	public revokeSupplierRole(
@@ -345,8 +328,8 @@ export class SDK {
 			return null;
 		}
 	}
-  
-  /**
+
+	/**
 	 * check limited supplier role
 	 */
 	public isLimitedSupplierAllowance(

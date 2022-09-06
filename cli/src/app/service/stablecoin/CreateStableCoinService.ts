@@ -85,13 +85,13 @@ export default class CreateStableCoinService extends Service {
 
     const name = await utilsService.defaultSingleAsk(
       language.getText('stablecoin.askName'),
-      createdStableCoin.name || 'PAPACOIN',
+      createdStableCoin.name || 'HEDERACOIN',
     );
     createdStableCoin.name = name;
 
     const symbol = await utilsService.defaultSingleAsk(
       language.getText('stablecoin.askSymbol'),
-      createdStableCoin.symbol || 'PPC',
+      createdStableCoin.symbol || 'HDC',
     );
     createdStableCoin.symbol = symbol;
 

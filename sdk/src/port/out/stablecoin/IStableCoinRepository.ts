@@ -56,12 +56,6 @@ export default interface IStableCoinRepository {
 		privateKey: string,
 		accountId: string,
 	): Promise<Uint8Array>;
-	revokeUnlimitedSupplierRole(
-		treasuryId: string,
-		address: string,
-		privateKey: string,
-		accountId: string,
-	): Promise<Uint8Array>;
 	revokeSupplierRole(
 		treasuryId: string,
 		address: string,
@@ -93,7 +87,7 @@ export default interface IStableCoinRepository {
 		address: string,
 		privateKey: string,
 		accountId: string,
-  ): Promise<Uint8Array>;
+	): Promise<Uint8Array>;
 	rescue(
 		treasuryId: string,
 		privateKey: string,

@@ -16,8 +16,16 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		this.contractRepository = contractRepository;
 	}
 
-	public async saveCoin(accountId: string, privateKey: string, coin: StableCoin): Promise<StableCoin> {
-		return this.contractRepository.createStableCoin(accountId, privateKey, coin);
+	public async saveCoin(
+		accountId: string,
+		privateKey: string,
+		coin: StableCoin,
+	): Promise<StableCoin> {
+		return this.contractRepository.createStableCoin(
+			accountId,
+			privateKey,
+			coin,
+		);
 	}
 
 	public async getListStableCoins(
@@ -287,34 +295,6 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		);
 	}
 
-	public async revokeUnlimitedSupplierRole(
-		treasuryId: string,
-		address: string,
-		privateKey: string,
-		accountId: string,
-	): Promise<Uint8Array> {
-		const { AccountId } = require('@hashgraph/sdk');
-
-		const clientSdk = this.contractRepository.getClient('testnet');
-		clientSdk.setOperator(accountId, privateKey);
-		const parameters = [
-			AccountId.fromString(address || '').toSolidityAddress(),
-		];
-
-		const params = {
-			treasuryId,
-			parameters,
-			clientSdk,
-			gas: 130000,
-			abi: HederaERC20__factory.abi,
-		};
-
-		return await this.contractRepository.callContract(
-			'revokeUnlimitedSupplierRole',
-			params,
-		);
-	}
-
 	public async revokeSupplierRole(
 		treasuryId: string,
 		address: string,
@@ -400,8 +380,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			params,
 		);
 	}
-  
-  public async decreaseSupplierAllowance(
+
+	public async decreaseSupplierAllowance(
 		treasuryId: string,
 		address: string,
 		privateKey: string,
