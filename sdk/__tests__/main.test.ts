@@ -7,6 +7,11 @@ import StableCoin from '../src/domain/context/stablecoin/StableCoin.js';
 import Account from '../src/domain/context/account/Account.js';
 import { ICashInStableCoinRequest } from '../src/port/in/sdk/request/ICashInStableCoinRequest.js';
 
+const ACCOUNT_ID = '0.0.29511696';
+const PK =
+	'302e020100300506032b6570042204207a8a25387a3c636cb980d1ba548ee5ee3cc8cda158e42dc7af53dcd81022d8be';
+
+
 describe('SDK Unit Test :tubo_de_ensayo:', () => {
 	let sdk: SDK;
 
@@ -26,9 +31,9 @@ describe('SDK Unit Test :tubo_de_ensayo:', () => {
 		// https://github.com/facebook/jest/pull/5171
 		sdk = await new SDK({
 			network: HederaNetwork.TEST,
-			mode: NetworkMode.HASHPACK,
+			mode: NetworkMode.EOA,
 			options: {
-				appMetadata: testAppMetadata,
+				account: new Account(ACCOUNT_ID, PK)
 			},
 		}).init();
 	});
