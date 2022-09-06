@@ -16,6 +16,7 @@ import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 import CashInStableCoinsService from './CashInStableCoinService.js';
 import WipeStableCoinsService from './WipeStableCoinService.js';
 import AssociateStableCoinsService from './AssociateStableCoinService.js';
+import RescueStableCoinsService from './RescueStableCoinService.js';
 
 /**
  * Operation Stable Coin Service
@@ -135,6 +136,17 @@ export default class OperationStableCoinService extends Service {
         break;
       case wizardOperationsStableCoinOptions[5]:
         // Call to Rescue
+        const amount2Rescue = await utilsService.defaultSingleAsk(
+          language.getText('stablecoin.askWipeAmount'),
+          '1',
+        );
+
+        await new RescueStableCoinsService().rescueStableCoin(
+          this.treasuryStableCoinId,
+          configurationService.getConfiguration().accounts[0].privateKey,
+          configurationService.getConfiguration().accounts[0].accountId,
+          parseInt(amount2Rescue) * 1000,
+        );
         break;
       case wizardOperationsStableCoinOptions[6]:
         // Call to AssociateToken

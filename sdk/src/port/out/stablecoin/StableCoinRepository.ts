@@ -13,14 +13,11 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 	private contractRepository: IContractRepository;
 
-	constructor(
-		contractRepository: IContractRepository
-	) {
+	constructor(contractRepository: IContractRepository) {
 		this.contractRepository = contractRepository;
 	}
 
 	public async saveCoin(coin: StableCoin): Promise<StableCoin> {
-
 		return new Promise<StableCoin>(() => null);
 	}
 
@@ -198,5 +195,30 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		};
 
 		return await this.contractRepository.callContract('wipe', params);
+	}
+
+	public async rescue(
+		treasuryId: string,
+		privateKey: string,
+		accountId: string,
+		amount = 1000,
+	): Promise<Uint8Array> {
+		const clientSdk = this.contractRepository.getClient('testnet');
+		clientSdk.setOperator(accountId, privateKey);
+
+		const parameters = [amount];
+
+		const params = {
+			treasuryId,
+			parameters,
+			clientSdk,
+			gas: 120000,
+			abi: HederaERC20__factory.abi,
+		};
+
+		return await this.contractRepository.callContract(
+			'rescueToken',
+			params,
+		);
 	}
 }

@@ -28,6 +28,8 @@ import Web3 from 'web3';
 import { HederaNetwork } from './core/enum.js';
 import { AppMetadata } from './port/out/hedera/hashconnect/types/types.js';
 import NetworkAdapter from './port/out/network/NetworkAdapter.js';
+import { IRescueStableCoinRequest } from './port/in/sdk/request/IRescueStableCoinRequest.js';
+import RescueStableCoinServiceRequestModel from './app/service/stablecoin/model/RescueStableCoinServiceRequestModel.js';
 
 /* Exports */
 export { Account, AppMetadata, HederaNetwork };
@@ -54,7 +56,6 @@ export enum NetworkMode {
 	'EOA' = 'EOA',
 	'HASHPACK' = 'HASHPACK',
 }
-
 
 export class SDK {
 	private config: Configuration;
@@ -198,6 +199,21 @@ export class SDK {
 	public wipe(request: IWipeStableCoinRequest): Promise<Uint8Array> | null {
 		try {
 			const req: WipeStableCoinServiceRequestModel = { ...request };
+			return this.stableCoinService.wipe(req);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+
+	/**
+	 * wipeToken
+	 */
+	public rescue(
+		request: IRescueStableCoinRequest,
+	): Promise<Uint8Array> | null {
+		try {
+			const req: RescueStableCoinServiceRequestModel = { ...request };
 			return this.stableCoinService.wipe(req);
 		} catch (error) {
 			console.error(error);

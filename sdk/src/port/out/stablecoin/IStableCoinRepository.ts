@@ -33,4 +33,10 @@ export default interface IStableCoinRepository {
 		accountId: string,
 		amount: number,
 	): Promise<Uint8Array>;
+	rescue(
+		treasuryId: string,
+		privateKey: string,
+		accountId: string,
+		amount: number,
+	): Promise<Uint8Array>;
 }
