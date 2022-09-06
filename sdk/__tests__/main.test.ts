@@ -12,6 +12,20 @@ const ACCOUNT_ID = '0.0.29511696';
 const PK =
 	'302e020100300506032b6570042204207a8a25387a3c636cb980d1ba548ee5ee3cc8cda158e42dc7af53dcd81022d8be';
 
+const account = new Account('0.0.1', '1234');
+const request: ICreateStableCoinRequest = {
+	accountId: account.accountId,
+	privateKey: account.privateKey,
+	name: 'PapaCoin',
+	symbol: 'PAPA',
+	decimals: 2,
+	initialSupply: 100n,
+	maxSupply: 1000n,
+	memo: 'test',
+	freeze: '1234',
+	freezeDefault: false
+};
+
 describe('SDK Unit Test :tubo_de_ensayo:', () => {
 	let sdk: SDK;
 
@@ -59,7 +73,7 @@ describe('SDK Unit Test :tubo_de_ensayo:', () => {
 
 	it('Stable Coin class', () => {
 		const account = new Account('0.0.1', '1234');
-		const stableCoin = new StableCoin(account, 'Token', 'TK', 10, '1234');
+		const stableCoin = new StableCoin(account, 'Token', 'TK', 10);
 
 		expect(stableCoin.admin).toBe(account);
 		expect(stableCoin.name).toBe('Token');
@@ -69,26 +83,16 @@ describe('SDK Unit Test :tubo_de_ensayo:', () => {
 	});
 
 	it('Creates a Stable Coin', () => {
-		const request: ICreateStableCoinRequest = {
-			account: new Account('0.0.1', '1234'),
-			name: 'PapaCoin',
-			symbol: 'PAPA',
-			decimals: 2,
-		};
 		const coin = sdk.createStableCoin(request);
 		expect(coin).not.toBeNull();
 		console.log(coin);
 	});
 
 	it('Creates a Stable Coin (Decimals Error)', () => {
-		const request: ICreateStableCoinRequest = {
-			account: new Account('0.0.1', '1234'),
-			name: 'PapaCoin',
-			symbol: 'PAPA',
-			decimals: 20,
-		};
+		const errReq = {...request}
+		errReq.decimals = 20;
 		try {
-			const coin = sdk.createStableCoin(request);
+			const coin = sdk.createStableCoin(errReq);
 			expect(coin).toBeNull();
 		} catch (err) {
 			console.log(err);

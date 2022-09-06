@@ -1,8 +1,13 @@
-import Account from '../../../../domain/context/account/Account.js';
 
 export interface ICreateStableCoinRequest {
-	account: Account;
+	accountId: string;
+	privateKey: string;
 	name: string;
 	symbol: string;
 	decimals: number;
+	initialSupply?: bigint;
+	maxSupply?: bigint;
+	memo?: string;
+	freeze?: string;
+	freezeDefault?: boolean;
 }

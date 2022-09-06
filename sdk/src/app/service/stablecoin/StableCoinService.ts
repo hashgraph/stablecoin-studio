@@ -12,6 +12,7 @@ import AssociateTokenStableCoinServiceRequestModel from './model/AssociateTokenS
 import WipeStableCoinServiceRequestModel from './model/WipeStableCoinServiceRequestModel.js';
 import IStableCoinRepository from '../../../port/out/stablecoin/IStableCoinRepository.js';
 import RescueStableCoinServiceRequestModel from './model/RescueStableCoinServiceRequestModel.js';
+import Account from '../../../domain/context/account/Account.js';
 
 export default class StableCoinService extends Service {
 	private repository: IStableCoinRepository;
@@ -28,12 +29,17 @@ export default class StableCoinService extends Service {
 		req: CreateStableCoinServiceRequestModel,
 	): Promise<StableCoin> {
 		const coin: StableCoin = new StableCoin(
-			req.account,
+			new Account(req.accountId, req.privateKey),
 			req.name,
 			req.symbol,
 			req.decimals,
+			req.initialSupply,
+			req.maxSupply,
+			req.memo,
+			req.freeze,
+			req.freezeDefault,
 		);
-		return this.repository.saveCoin(coin);
+		return this.repository.saveCoin(req.accountId, req.privateKey, coin);
 	}
 
 	/**

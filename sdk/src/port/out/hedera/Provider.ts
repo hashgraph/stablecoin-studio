@@ -1,6 +1,7 @@
 import { hethers, Signer } from '@hashgraph/hethers';
+import { ContractId } from '@hashgraph/sdk';
 import { HederaNetwork } from '../../../core/enum.js';
-import { Account } from '../../../sdk.js';
+import StableCoin from '../../../domain/context/stablecoin/StableCoin.js';
 import { AppMetadata } from './hashconnect/types/types.js';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -10,7 +11,6 @@ export { Signer };
 
 export interface IniConfigOptions {
 	appMetadata?: AppMetadata;
-	account?: Account;
 }
 export interface IniConfig {
 	network: HederaNetwork;
@@ -20,5 +20,5 @@ export interface IniConfig {
 export interface IProvider {
 	init(config: IniConfig): Promise<IProvider>;
 	stop(): Promise<boolean>;
-	deploy(factory: any, wallet: any, ...args: any): Promise<Contract>;
+	deploy(accountId: string, privateKey: string, stableCoin: StableCoin): Promise<ContractId>;
 }

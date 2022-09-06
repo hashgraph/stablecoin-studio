@@ -9,7 +9,6 @@ import StableCoinService from './app/service/stablecoin/StableCoinService.js';
 import StableCoin from './domain/context/stablecoin/StableCoin.js';
 import StableCoinRepository from './port/out/stablecoin/StableCoinRepository.js';
 import IStableCoinDetail from './domain/context/stablecoin/IStableCoinDetail.js';
-import Account from './domain/context/account/Account.js';
 import CashInStableCoinServiceRequestModel from './app/service/stablecoin/model/CashInStableCoinServiceRequestModel.js';
 import { IGetNameStableCoinRequest } from './port/in/sdk/request/IGetNameStableCoinRequest.js';
 import { IGetBalanceStableCoinRequest } from './port/in/sdk/request/IGetBalanceStableCoinRequest.js';
@@ -32,7 +31,7 @@ import { IRescueStableCoinRequest } from './port/in/sdk/request/IRescueStableCoi
 import RescueStableCoinServiceRequestModel from './app/service/stablecoin/model/RescueStableCoinServiceRequestModel.js';
 
 /* Exports */
-export { Account, AppMetadata, HederaNetwork };
+export { AppMetadata, HederaNetwork };
 export {
 	IGetNameStableCoinRequest,
 	IGetBalanceStableCoinRequest,
@@ -43,7 +42,10 @@ export {
 
 export interface ConfigurationOptions {
 	appMetadata?: AppMetadata;
-	account?: Account;
+	account?: {
+		accountId: string,
+		privateKey: string
+	};
 }
 
 export interface Configuration {
@@ -83,7 +85,10 @@ export class SDK {
 			},
 		).init();
 		this.web3 = new Web3();
-		this.contractRepository = new ContractRepository(this.web3);
+		this.contractRepository = new ContractRepository(
+			this.networkAdapter,
+			this.web3,
+		);
 		this.contractService = new ContractsService(this.contractRepository);
 		this.stableCoinRepository = new StableCoinRepository(
 			this.contractRepository,
@@ -193,20 +198,7 @@ export class SDK {
 		}
 	}
 
-	/**
-	 * wipeToken
-	 */
-	public wipe(request: IWipeStableCoinRequest): Promise<Uint8Array> | null {
-		try {
-			const req: WipeStableCoinServiceRequestModel = { ...request };
-			return this.stableCoinService.wipe(req);
-		} catch (error) {
-			console.error(error);
-			return null;
-		}
-	}
-
-	/**
+  /**
 	 * wipeToken
 	 */
 	public rescue(
@@ -218,6 +210,14 @@ export class SDK {
 		} catch (error) {
 			console.error(error);
 			return null;
+		}
+	}
+	
+	public checkIsAddress(str?: string): boolean{
+		if(!str){
+			return false;
+		}else {
+			return /\d\.\d\.\d/.test(str);
 		}
 	}
 }

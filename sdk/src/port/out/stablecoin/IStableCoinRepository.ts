@@ -3,7 +3,7 @@ import StableCoin from '../../../domain/context/stablecoin/StableCoin.js';
 import IStableCoinList from '../../in/sdk/response/IStableCoinList.js';
 
 export default interface IStableCoinRepository {
-	saveCoin(coin: StableCoin): Promise<StableCoin>;
+	saveCoin(accountId: string, privateKey: string, coin: StableCoin): Promise<StableCoin>;
 	getListStableCoins(privateKey: string): Promise<IStableCoinList[]>;
 	getStableCoin(id: string): Promise<IStableCoinDetail>;
 	getBalanceOf(

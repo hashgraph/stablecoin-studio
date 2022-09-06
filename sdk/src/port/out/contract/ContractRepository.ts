@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import Web3 from 'web3';
+import StableCoin from '../../../domain/context/stablecoin/StableCoin.js';
+import NetworkAdapter from '../network/NetworkAdapter.js';
 import IContractRepository, { IContractParams } from './IContractRepository.js';
 const {
 	Client,
@@ -10,11 +12,12 @@ const {
 
 export default class ContractRepository implements IContractRepository {
 	private web3;
-
+	private networkAdapter: NetworkAdapter;
 	/**
 	 *
 	 */
-	constructor(web3: Web3) {
+	constructor(networkAdapter: NetworkAdapter, web3: Web3) {
+		this.networkAdapter = networkAdapter;
 		this.web3 = web3;
 	}
 
@@ -123,12 +126,17 @@ export default class ContractRepository implements IContractRepository {
 		return jsonParsedArray;
 	}
 
-	getPublicKey(privateKey: string): string {
+	public getPublicKey(privateKey: string): string {
 		const { PrivateKey } = require('@hashgraph/sdk');
 
 		const publicKey =
 			PrivateKey.fromString(privateKey).publicKey.toStringDer();
 
 		return publicKey;
+	}
+
+	public async createStableCoin(accountId: string, privateKey: string, coin: StableCoin): Promise<StableCoin> {
+		await this.networkAdapter.provider.deploy(accountId, privateKey, coin);
+		return coin;
 	}
 }

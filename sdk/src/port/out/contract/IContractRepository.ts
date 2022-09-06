@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import Account from "../../../domain/context/account/Account.js";
+import StableCoin from "../../../domain/context/stablecoin/StableCoin.js";
+
 export interface IContractParams {
 	treasuryId: string;
 	parameters: any[];
@@ -22,4 +25,5 @@ export default interface IContractRepository {
 		resultAsBytes: any,
 	): Uint8Array;
 	getPublicKey(privateKey: string): string;
+	createStableCoin(accountId: string, privateKey: string, coin: StableCoin): Promise<StableCoin>;
 }
