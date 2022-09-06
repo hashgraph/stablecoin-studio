@@ -43,8 +43,8 @@ export {
 export interface ConfigurationOptions {
 	appMetadata?: AppMetadata;
 	account?: {
-		accountId: string,
-		privateKey: string
+		accountId: string;
+		privateKey: string;
 	};
 }
 
@@ -198,8 +198,21 @@ export class SDK {
 		}
 	}
 
-  /**
+	/**
 	 * wipeToken
+	 */
+	public wipe(request: IWipeStableCoinRequest): Promise<Uint8Array> | null {
+		try {
+			const req: WipeStableCoinServiceRequestModel = { ...request };
+			return this.stableCoinService.wipe(req);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+
+	/**
+	 * rescue
 	 */
 	public rescue(
 		request: IRescueStableCoinRequest,
@@ -212,11 +225,11 @@ export class SDK {
 			return null;
 		}
 	}
-	
-	public checkIsAddress(str?: string): boolean{
-		if(!str){
+
+	public checkIsAddress(str?: string): boolean {
+		if (!str) {
 			return false;
-		}else {
+		} else {
 			return /\d\.\d\.\d/.test(str);
 		}
 	}
