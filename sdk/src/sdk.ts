@@ -1,12 +1,10 @@
 import IStableCoinList from './port/in/sdk/response/IStableCoinList.js';
 import ContractsService from './app/service/contract/ContractsService.js';
 import StableCoinService from './app/service/stablecoin/StableCoinService.js';
-import StableCoin from './domain/context/stablecoin/StableCoin.js';
+import { StableCoin } from './domain/context/stablecoin/StableCoin.js';
 import StableCoinRepository from './port/out/stablecoin/StableCoinRepository.js';
 import IStableCoinDetail from './domain/context/stablecoin/IStableCoinDetail.js';
 import IStableCoinRepository from './port/out/stablecoin/IStableCoinRepository.js';
-import IContractRepository from './port/out/contract/IContractRepository.js';
-import ContractRepository from './port/out/contract/ContractRepository.js';
 import NetworkAdapter from './port/out/network/NetworkAdapter.js';
 
 import Web3 from 'web3';
@@ -25,7 +23,6 @@ import AssociateTokenStableCoinServiceRequestModel from './app/service/stablecoi
 import SupplierRoleStableCoinServiceRequestModel from './app/service/stablecoin/model/SupplierRoleStableCoinServiceRequestModel';
 import RescueStableCoinServiceRequestModel from './app/service/stablecoin/model/RescueStableCoinServiceRequestModel.js';
 
-
 /* Public requests */
 import { IAssociateStableCoinRequest } from './port/in/sdk/request/IAssociateStableCoinRequest.js';
 import { ICashInStableCoinRequest } from './port/in/sdk/request/ICashInStableCoinRequest.js';
@@ -37,19 +34,20 @@ import { IGetStableCoinRequest } from './port/in/sdk/request/IGetStableCoinReque
 import { IRescueStableCoinRequest } from './port/in/sdk/request/IRescueStableCoinRequest.js';
 import { ISupplierStableCoinRequest } from './port/in/sdk/request/ISupplierStableCoinRequest.js';
 import { IWipeStableCoinRequest } from './port/in/sdk/request/IWipeStableCoinRequest.js';
+import { AccountId } from './domain/context/account/AccountId.js';
 
 export {
-    IAssociateStableCoinRequest,
-    ICashInStableCoinRequest,
-    ICreateStableCoinRequest,
-    IGetBalanceStableCoinRequest,
-    IGetListStableCoinRequest,
-    IGetNameStableCoinRequest,
-    IGetStableCoinRequest,
-    IRescueStableCoinRequest,
-    ISupplierStableCoinRequest,
-    IWipeStableCoinRequest
-}
+	IAssociateStableCoinRequest,
+	ICashInStableCoinRequest,
+	ICreateStableCoinRequest,
+	IGetBalanceStableCoinRequest,
+	IGetListStableCoinRequest,
+	IGetNameStableCoinRequest,
+	IGetStableCoinRequest,
+	IRescueStableCoinRequest,
+	ISupplierStableCoinRequest,
+	IWipeStableCoinRequest,
+};
 
 /* Export basic types*/
 export { AppMetadata, HederaNetwork };
@@ -57,7 +55,7 @@ export { AppMetadata, HederaNetwork };
 export interface ConfigurationOptions {
 	appMetadata?: AppMetadata;
 	account?: {
-		accountId: string;
+		accountId: AccountId;
 		privateKey: string;
 	};
 }
@@ -79,7 +77,6 @@ export class SDK {
 	private web3: Web3;
 	private networkAdapter: NetworkAdapter;
 	private contractService: ContractsService;
-	private contractRepository: IContractRepository;
 	private stableCoinRepository: IStableCoinRepository;
 	private stableCoinService: StableCoinService;
 
@@ -99,13 +96,9 @@ export class SDK {
 			},
 		).init();
 		this.web3 = new Web3();
-		this.contractRepository = new ContractRepository(
-			this.networkAdapter,
-			this.web3,
-		);
-		this.contractService = new ContractsService(this.contractRepository);
+		this.contractService = new ContractsService(this.networkAdapter);
 		this.stableCoinRepository = new StableCoinRepository(
-			this.contractRepository,
+			this.networkAdapter,
 		);
 		this.stableCoinService = new StableCoinService(
 			this.stableCoinRepository,
@@ -374,10 +367,8 @@ export class SDK {
 	}
 
 	public checkIsAddress(str?: string): boolean {
-		if (!str) {
-			return false;
-		} else {
-			return /\d\.\d\.\d/.test(str);
-		}
+		if (!str) return false;
+		new AccountId(str);
+		return true;
 	}
 }

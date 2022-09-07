@@ -2,7 +2,7 @@ import Service from '../Service.js';
 import CreateStableCoinServiceRequestModel from './model/CreateStableCoinServiceRequestModel.js';
 import ListStableCoinServiceRequestModel from './model/ListStableCoinServiceRequestModel.js';
 import IStableCoinDetail from '../../../domain/context/stablecoin/IStableCoinDetail.js';
-import StableCoin from '../../../domain/context/stablecoin/StableCoin.js';
+import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import IStableCoinList from '../../../port/in/sdk/response/IStableCoinList.js';
 import GetStableCoinServiceRequestModel from './model/GetStableCoinServiceRequestModel.js';
 import GetBalanceOfStableCoinServiceRequestModel from './model/GetBalanceOfStableCoinServiceRequestModel.js';
@@ -14,6 +14,7 @@ import IStableCoinRepository from '../../../port/out/stablecoin/IStableCoinRepos
 import SupplierRoleStableCoinServiceRequestModel from './model/SupplierRoleStableCoinServiceRequestModel';
 import RescueStableCoinServiceRequestModel from './model/RescueStableCoinServiceRequestModel.js';
 import Account from '../../../domain/context/account/Account.js';
+import { AccountId } from '../../../domain/context/account/AccountId.js';
 
 export default class StableCoinService extends Service {
 	private repository: IStableCoinRepository;
@@ -30,7 +31,7 @@ export default class StableCoinService extends Service {
 		req: CreateStableCoinServiceRequestModel,
 	): Promise<StableCoin> {
 		const coin: StableCoin = new StableCoin(
-			new Account(req.accountId, req.privateKey),
+			new Account(new AccountId(req.accountId), req.privateKey),
 			req.name,
 			req.symbol,
 			req.decimals,
@@ -39,8 +40,15 @@ export default class StableCoinService extends Service {
 			req.memo,
 			req.freeze,
 			req.freezeDefault,
+			req.kycKey,
+			req.wipeKey,
+			req.supplyKey,
+			req.treasury,
+			req.expiry,
+			req.tokenType,
+			req.supplyType,
+			req.id,
 		);
-		console.debug(coin);
 		return this.repository.saveCoin(req.accountId, req.privateKey, coin);
 	}
 
