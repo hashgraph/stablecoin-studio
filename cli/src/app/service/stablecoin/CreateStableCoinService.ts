@@ -102,7 +102,7 @@ export default class CreateStableCoinService extends Service {
     createdStableCoin.symbol = symbol;
 
     const optionalProps = await this.askForOptionalProps();
-    let decimals = '6';
+    let decimals = '';
     let initialSupply = '';
     let supplyType = false;
     let totalSupply = undefined;
@@ -139,7 +139,7 @@ export default class CreateStableCoinService extends Service {
         symbol,
         decimals: parseInt(decimals),
         initialSupply: initialSupply === '' ? undefined : BigInt(initialSupply),
-        supplyType: !supplyType ? 'INFINITE' : 'FINITE',
+        supplyType: !supplyType && !totalSupply ? 'INFINITE' : 'FINITE',
         maxSupply: totalSupply ? BigInt(totalSupply) : totalSupply,
         freezeDefault: freeze,
       };
@@ -164,7 +164,7 @@ export default class CreateStableCoinService extends Service {
       symbol,
       decimals: parseInt(decimals),
       initialSupply: initialSupply === '' ? undefined : BigInt(initialSupply),
-      supplyType: supplyType ? 'INFINITE' : 'FINITE',
+      supplyType: !supplyType && !totalSupply ? 'INFINITE' : 'FINITE',
       maxSupply: supply ? BigInt(supply) : BigInt(totalSupply),
       freezeDefault: freezeManaged ?? freeze,
       KYC,

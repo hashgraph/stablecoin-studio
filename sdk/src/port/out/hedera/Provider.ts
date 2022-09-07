@@ -41,5 +41,5 @@ export interface IProvider {
 		accountId: string,
 		privateKey: string,
 		stableCoin: StableCoin,
-	): Promise<ContractId>;
+	): Promise<StableCoin>;
 }

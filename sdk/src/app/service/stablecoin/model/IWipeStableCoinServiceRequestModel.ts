@@ -7,6 +7,4 @@ import {
 export default interface IWipeStableCoinServiceRequestModel
 	extends ITreasureyRequestModel,
 		IAccountWithKeyRequestModel,
-		IAmountRequestModel {
-	address: string;
-}
+		IAmountRequestModel {}

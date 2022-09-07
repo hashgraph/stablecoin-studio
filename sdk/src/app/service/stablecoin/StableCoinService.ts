@@ -1,7 +1,6 @@
 import Service from '../Service.js';
 import ICreateStableCoinServiceRequestModel from './model/ICreateStableCoinServiceRequestModel.js';
 import { IListStableCoinServiceRequestModel } from './model/IListStableCoinServiceRequestModel.js';
-import IStableCoinDetail from '../../../domain/context/stablecoin/IStableCoinDetail.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import IStableCoinList from '../../../port/in/sdk/response/IStableCoinList.js';
 import IGetStableCoinServiceRequestModel from './model/IGetStableCoinServiceRequestModel.js';
@@ -15,6 +14,7 @@ import ISupplierRoleStableCoinServiceRequestModel from './model/ISupplierRoleSta
 import IRescueStableCoinServiceRequestModel from './model/IRescueStableCoinServiceRequestModel.js';
 import Account from '../../../domain/context/account/Account.js';
 import { AccountId } from '../../../domain/context/account/AccountId.js';
+import IStableCoinDetail from './model/stablecoindetail/IStableCoinDetail.js';
 
 export default class StableCoinService extends Service {
 	private repository: IStableCoinRepository;

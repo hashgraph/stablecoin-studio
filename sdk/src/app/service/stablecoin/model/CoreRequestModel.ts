@@ -14,6 +14,10 @@ export interface IAmountRequestModel {
 	amount: number;
 }
 
+export interface IAmountOptionalRequestModel {
+	amount?: number;
+}
+
 export interface ITreasureyRequestModel {
 	treasuryId: string;
 }

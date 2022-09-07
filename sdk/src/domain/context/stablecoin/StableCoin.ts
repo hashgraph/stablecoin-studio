@@ -211,7 +211,7 @@ export class StableCoin extends BaseEntity {
 		expiry?: number,
 		tokenType?: TokenType,
 		supplyType?: TokenSupplyType,
-		id?: string | undefined,
+		id?: string
 	) {
 		super();
 		this.admin = admin;

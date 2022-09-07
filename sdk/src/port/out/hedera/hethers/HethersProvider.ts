@@ -155,7 +155,7 @@ export default class HethersProvider implements IProvider {
 		accountId: string,
 		privateKey: string,
 		stableCoin: StableCoin,
-	): Promise<ContractId> {
+	): Promise<StableCoin> {
 		const client = this.getClient(accountId, privateKey);
 		const account = {
 			accountId,
@@ -171,23 +171,28 @@ export default class HethersProvider implements IProvider {
 			`Deploying ${HederaERC1967Proxy__factory.name} contract... please wait.`,
 			logOpts,
 		);
-		const proxyContract = await this.deployContract(
-			HederaERC1967Proxy__factory,
-			10,
-			privateKey,
-			client,
-			new ContractFunctionParameters()
-				.addAddress(tokenContract?.toSolidityAddress())
-				.addBytes(new Uint8Array([])),
-		);
-		const erc20: IContractParams = {
+		let proxyContract: ContractId = stableCoin.memo ?? '';
+
+		if (!proxyContract) {
+			proxyContract = await this.deployContract(
+				HederaERC1967Proxy__factory,
+				10,
+				privateKey,
+				client,
+				new ContractFunctionParameters()
+					.addAddress(tokenContract?.toSolidityAddress())
+					.addBytes(new Uint8Array([])),
+			);
+			stableCoin.memo = String(proxyContract);
+		}
+
+		await this.callContract('initialize', {
 			contractId: proxyContract,
 			parameters: [],
 			gas: 250_000,
 			abi: HederaERC20__factory.abi,
 			account,
-		};
-		await this.callContract('initialize', erc20);
+		});
 		log(
 			`Deploying ${HTSTokenOwner__factory.name} contract... please wait.`,
 			logOpts,
@@ -206,14 +211,15 @@ export default class HethersProvider implements IProvider {
 			stableCoin.decimals,
 			stableCoin.initialSupply,
 			stableCoin.maxSupply,
-			stableCoin.memo ?? String(proxyContract),
+			proxyContract,
 			stableCoin.freezeDefault,
 			privateKey,
-			PrivateKey.fromString(privateKey).publicKey.toStringRaw(),
+			this.getPublicKey(privateKey),
 			client,
 		);
+		stableCoin.id = TokenId.fromString(hederaToken.toString());
 		log('Setting up contract... please wait.', logOpts);
-		const setTokenAddress: IContractParams = {
+		await this.callContract('setTokenAddress', {
 			contractId: proxyContract,
 			parameters: [
 				tokenOwnerContract.toSolidityAddress(),
@@ -222,8 +228,7 @@ export default class HethersProvider implements IProvider {
 			gas: 80_000,
 			abi: HederaERC20__factory.abi,
 			account,
-		};
-		await this.callContract('setTokenAddress', setTokenAddress);
+		});
 		const setERC20Address: IContractParams = {
 			contractId: tokenOwnerContract,
 			parameters: [proxyContract.toSolidityAddress()],
@@ -244,7 +249,7 @@ export default class HethersProvider implements IProvider {
 			account,
 		};
 		await this.callContract('associateToken', associateToken);
-		return proxyContract;
+		return stableCoin;
 	}
 
 	private async deployContract(
