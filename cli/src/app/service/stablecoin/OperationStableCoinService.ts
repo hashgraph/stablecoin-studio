@@ -17,6 +17,7 @@ import CashInStableCoinsService from './CashInStableCoinService.js';
 import WipeStableCoinsService from './WipeStableCoinService.js';
 import SupplierRoleStableCoinsService from './SupplierRoleStableCoinService.js';
 import RescueStableCoinsService from './RescueStableCoinService.js';
+import { StableCoin } from '../../../domain/stablecoin/StableCoin.js';
 
 /**
  * Operation Stable Coin Service
@@ -25,8 +26,11 @@ export default class OperationStableCoinService extends Service {
   private stableCoinId;
   private treasuryStableCoinId;
 
-  constructor() {
+  constructor(stableCoin?: StableCoin) {
     super('Operation Stable Coin');
+    if (stableCoin) {
+      this.stableCoinId = stableCoin.name; //TODO Cambiar name por el id que llegue en la creación del token
+    }
   }
 
   /**
@@ -35,41 +39,44 @@ export default class OperationStableCoinService extends Service {
   public async start(): Promise<void> {
     const sdk: SDK = utilsService.getSDK();
     let resp: StableCoinList[];
+    if (this.stableCoinId === undefined) {
+      //Get list of stable coins to display
+      await utilsService.showSpinner(
+        sdk
+          .getListStableCoin({
+            privateKey:
+              configurationService.getConfiguration().accounts[0].privateKey,
+          })
+          .then((response: StableCoinList[]) => (resp = response)),
+        {
+          text: language.getText('state.searching'),
+          successText: language.getText('state.searchingSuccess') + '\n',
+        },
+      );
 
-    //Get list of stable coins to display
-    await utilsService.showSpinner(
-      sdk
-        .getListStableCoin({
-          privateKey:
-            configurationService.getConfiguration().accounts[0].privateKey,
-        })
-        .then((response: StableCoinList[]) => (resp = response)),
-      {
-        text: language.getText('state.searching'),
-        successText: language.getText('state.searchingSuccess') + '\n',
-      },
-    );
+      this.stableCoinId = await utilsService.defaultMultipleAsk(
+        language.getText('stablecoin.askToken'),
+        resp
+          .map((item) => {
+            return `${item.id} - ${item.symbol}`;
+          })
+          .concat('Exit to main menu'),
+      );
+      this.stableCoinId = this.stableCoinId.split(' - ')[0];
 
-    this.stableCoinId = await utilsService.defaultMultipleAsk(
-      language.getText('stablecoin.askToken'),
-      resp
-        .map((item) => {
-          return `${item.id} - ${item.symbol}`;
-        })
-        .concat('Exit to main menu'),
-    );
-    this.stableCoinId = this.stableCoinId.split(' - ')[0];
+      if (this.stableCoinId === 'Exit to main menu') {
+        await wizardService.mainMenu();
+      } else {
+        // Get details to obtain treasury
+        await new DetailsStableCoinsService()
+          .getDetailsStableCoins(this.stableCoinId, false)
+          .then((response: StableCoinDetail) => {
+            this.treasuryStableCoinId = response.memo;
+          });
 
-    if (this.stableCoinId === 'Exit to main menu') {
-      await wizardService.mainMenu();
+        await this.operationsStableCoin();
+      }
     } else {
-      // Get details to obtain treasury
-      await new DetailsStableCoinsService()
-        .getDetailsStableCoins(this.stableCoinId, false)
-        .then((response: StableCoinDetail) => {
-          this.treasuryStableCoinId = response.memo;
-        });
-
       await this.operationsStableCoin();
     }
   }
@@ -288,7 +295,7 @@ export default class OperationStableCoinService extends Service {
         );
         console.log(editOption);
         if (editOption === editSupplierOptions[editSupplierOptions.length - 1])
-          this.supplierFlow();
+          await this.supplierFlow();
         if (editOption === editSupplierOptions[0]) {
           //Increase limit
           accountTarget = await utilsService.defaultSingleAsk(

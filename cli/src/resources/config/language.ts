@@ -10,7 +10,8 @@ export const english = {
   },
   configuration: {
     askPath: 'Write your config path',
-    askCreateConfig: 'No configuration file found at the specified path, would you like to create one? (y/n)',
+    askCreateConfig:
+      'No configuration file found at the specified path, would you like to create one? (y/n)',
     askNetwork: 'Write the network you want to use',
     askNotDefaultNetwork:
       'Your option is not a default network, Do you want to create a new network? (y/n)',
@@ -31,6 +32,7 @@ export const english = {
     description: 'Creating Stable Coin',
     askName: 'What is your stable coin name?',
     askSymbol: 'What is your stable coin symbol?',
+    askAutoRenewAccountId: 'What will be the autorenew account?',
     askDecimals: 'How many decimals do you want to use?',
     askToken: 'What is the id of the stable coin you want to operate with?',
     askDoSomething: 'What do you want to do?',
@@ -53,8 +55,11 @@ export const english = {
       KYC: 'What will be the KYC key?',
       freeze: 'What will be the Freeze key?',
       wipe: 'What will be the Wipe key?',
+      pause: 'What will be the Pause key?',
       feeSchedule: 'What will be the Fee Schedule key?',
+      key: 'Enter the key',
     },
+    asdTreasuryAccountAddress: 'Add the treasury account address.',
     askOperateStableCoin: 'Do you want to operate with stable coin created?',
     created:
       'Stable Coin ${name} (${symbol}) with ${decimals} decimals have been created!',
@@ -90,6 +95,8 @@ export const english = {
         accountId: 'Id of the user',
         name: 'Name of the stable coin',
         symbol: 'Symbol of the stable coin',
+        autorenewAccountId:
+          'Account that will paid the fee in case of renew expiration time',
         decimals: 'Decimals of the stable coin',
         address: 'Address of stable coin',
         amount: 'Amount of stable coins for this action',
@@ -143,6 +150,7 @@ export const english = {
       'Edit supplier role',
       'Back',
     ],
+    featureOptions: ['The Smart Contract', 'Admin Key', 'Other key', 'None'],
     supplierRoleType: ['Unlimited', 'Limited', 'Back'],
     editSupplierRoleOptions: [
       'Increase limit',
@@ -169,5 +177,8 @@ export const english = {
   },
   rescue: {
     success: 'You have rescued ${tokens} tokens',
+  },
+  account: {
+    wrong: 'Incorrect account format. Please try again.',
   },
 };
