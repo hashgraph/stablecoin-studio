@@ -33,7 +33,6 @@ export interface ISupplierAdminInterface extends utils.Interface {
     "isUnlimitedSupplierAllowance(address)": FunctionFragment;
     "resetSupplierAllowance(address)": FunctionFragment;
     "revokeSupplierRole(address)": FunctionFragment;
-    "revokeUnlimitedSupplierRole(address)": FunctionFragment;
     "supplierAllowance(address)": FunctionFragment;
   };
 
@@ -47,7 +46,6 @@ export interface ISupplierAdminInterface extends utils.Interface {
       | "isUnlimitedSupplierAllowance"
       | "resetSupplierAllowance"
       | "revokeSupplierRole"
-      | "revokeUnlimitedSupplierRole"
       | "supplierAllowance"
   ): FunctionFragment;
 
@@ -81,10 +79,6 @@ export interface ISupplierAdminInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "revokeSupplierRole",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "revokeUnlimitedSupplierRole",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -122,10 +116,6 @@ export interface ISupplierAdminInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "revokeSupplierRole",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "revokeUnlimitedSupplierRole",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -207,11 +197,6 @@ export interface ISupplierAdmin extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    revokeUnlimitedSupplierRole(
-      supplier: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     supplierAllowance(
       supplier: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -262,11 +247,6 @@ export interface ISupplierAdmin extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  revokeUnlimitedSupplierRole(
-    supplier: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   supplierAllowance(
     supplier: PromiseOrValue<string>,
     overrides?: CallOverrides
@@ -313,11 +293,6 @@ export interface ISupplierAdmin extends BaseContract {
     ): Promise<void>;
 
     revokeSupplierRole(
-      supplier: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    revokeUnlimitedSupplierRole(
       supplier: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -375,11 +350,6 @@ export interface ISupplierAdmin extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    revokeUnlimitedSupplierRole(
-      supplier: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     supplierAllowance(
       supplier: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -427,11 +397,6 @@ export interface ISupplierAdmin extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     revokeSupplierRole(
-      supplier: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    revokeUnlimitedSupplierRole(
       supplier: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

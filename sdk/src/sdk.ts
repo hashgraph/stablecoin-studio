@@ -27,6 +27,8 @@ import Web3 from 'web3';
 import { HederaNetwork } from './core/enum.js';
 import { AppMetadata } from './port/out/hedera/hashconnect/types/types.js';
 import NetworkAdapter from './port/out/network/NetworkAdapter.js';
+import { ISupplierStableCoinRequest } from './port/in/sdk/request/ISupplierStableCoinRequest.js';
+import SupplierRoleStableCoinServiceRequestModel from './app/service/stablecoin/model/SupplierRoleStableCoinServiceRequestModel';
 import { IRescueStableCoinRequest } from './port/in/sdk/request/IRescueStableCoinRequest.js';
 import RescueStableCoinServiceRequestModel from './app/service/stablecoin/model/RescueStableCoinServiceRequestModel.js';
 
@@ -205,6 +207,139 @@ export class SDK {
 		try {
 			const req: WipeStableCoinServiceRequestModel = { ...request };
 			return this.stableCoinService.wipe(req);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+
+	/**
+	 * grant supplier role
+	 */
+	public grantSupplierRole(
+		request: ISupplierStableCoinRequest,
+	): Promise<Uint8Array> | null {
+		try {
+			const req: SupplierRoleStableCoinServiceRequestModel = {
+				...request,
+			};
+			return this.stableCoinService.grantSupplierRole(req);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+
+	/**
+	 * revoke limited supplier role
+	 */
+	public revokeSupplierRole(
+		request: ISupplierStableCoinRequest,
+	): Promise<Uint8Array> | null {
+		try {
+			const req: SupplierRoleStableCoinServiceRequestModel = {
+				...request,
+			};
+			return this.stableCoinService.revokeSupplierRole(req);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+
+	/**
+	 * check unlimited supplier role
+	 */
+	public isUnlimitedSupplierAllowance(
+		request: ISupplierStableCoinRequest,
+	): Promise<Uint8Array> | null {
+		try {
+			const req: SupplierRoleStableCoinServiceRequestModel = {
+				...request,
+			};
+			return this.stableCoinService.isUnlimitedSupplierAllowance(req);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+	/**
+	 * check limited supplier role
+	 */
+	public supplierAllowance(
+		request: ISupplierStableCoinRequest,
+	): Promise<Uint8Array> | null {
+		try {
+			const req: SupplierRoleStableCoinServiceRequestModel = {
+				...request,
+			};
+			return this.stableCoinService.supplierAllowance(req);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+
+	/**
+	 * reset supplier allowance
+	 */
+	public resetSupplierAllowance(
+		request: ISupplierStableCoinRequest,
+	): Promise<Uint8Array> | null {
+		try {
+			const req: SupplierRoleStableCoinServiceRequestModel = {
+				...request,
+			};
+			return this.stableCoinService.resetSupplierAllowance(req);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+	/**
+	 * increase supplier allowance
+	 */
+	public increaseSupplierAllowance(
+		request: ISupplierStableCoinRequest,
+	): Promise<Uint8Array> | null {
+		try {
+			const req: SupplierRoleStableCoinServiceRequestModel = {
+				...request,
+			};
+			return this.stableCoinService.increaseSupplierAllowance(req);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+	/**
+	 * decrease supplier allowance
+	 */
+	public decreaseSupplierAllowance(
+		request: ISupplierStableCoinRequest,
+	): Promise<Uint8Array> | null {
+		try {
+			const req: SupplierRoleStableCoinServiceRequestModel = {
+				...request,
+			};
+			return this.stableCoinService.decreaseSupplierAllowance(req);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+
+	/**
+	 * check limited supplier role
+	 */
+	public isLimitedSupplierAllowance(
+		request: ISupplierStableCoinRequest,
+	): Promise<Uint8Array> | null {
+		try {
+			const req: SupplierRoleStableCoinServiceRequestModel = {
+				...request,
+			};
+			return this.stableCoinService.isLimitedSupplierAllowance(req);
 		} catch (error) {
 			console.error(error);
 			return null;

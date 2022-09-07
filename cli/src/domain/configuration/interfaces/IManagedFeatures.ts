@@ -4,5 +4,4 @@ export interface IManagedFeatures {
   KYC: string;
   freeze: boolean;
   wipe: string;
-  feeSchedule: string;
 }

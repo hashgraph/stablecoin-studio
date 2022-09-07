@@ -11,6 +11,7 @@ import CashInStableCoinServiceRequestModel from './model/CashInStableCoinService
 import AssociateTokenStableCoinServiceRequestModel from './model/AssociateTokenStableCoinServiceRequestModel.js';
 import WipeStableCoinServiceRequestModel from './model/WipeStableCoinServiceRequestModel.js';
 import IStableCoinRepository from '../../../port/out/stablecoin/IStableCoinRepository.js';
+import SupplierRoleStableCoinServiceRequestModel from './model/SupplierRoleStableCoinServiceRequestModel';
 import RescueStableCoinServiceRequestModel from './model/RescueStableCoinServiceRequestModel.js';
 import Account from '../../../domain/context/account/Account.js';
 
@@ -120,6 +121,92 @@ export default class StableCoinService extends Service {
 			req.privateKey,
 			req.accountId,
 			req.amount,
+		);
+	}
+
+	public async grantSupplierRole(
+		req: SupplierRoleStableCoinServiceRequestModel,
+	): Promise<Uint8Array> {
+		return this.repository.grantSupplierRole(
+			req.treasuryId,
+			req.address,
+			req.privateKey,
+			req.accountId,
+			req.amount,
+		);
+	}
+
+	public async isUnlimitedSupplierAllowance(
+		req: SupplierRoleStableCoinServiceRequestModel,
+	): Promise<Uint8Array> {
+		return this.repository.isUnlimitedSupplierAllowance(
+			req.treasuryId,
+			req.address,
+			req.privateKey,
+			req.accountId,
+		);
+	}
+	public async supplierAllowance(
+		req: SupplierRoleStableCoinServiceRequestModel,
+	): Promise<Uint8Array> {
+		return this.repository.supplierAllowance(
+			req.treasuryId,
+			req.address,
+			req.privateKey,
+			req.accountId,
+		);
+	}
+	public async revokeSupplierRole(
+		req: SupplierRoleStableCoinServiceRequestModel,
+	): Promise<Uint8Array> {
+		return this.repository.revokeSupplierRole(
+			req.treasuryId,
+			req.address,
+			req.privateKey,
+			req.accountId,
+		);
+	}
+	public async resetSupplierAllowance(
+		req: SupplierRoleStableCoinServiceRequestModel,
+	): Promise<Uint8Array> {
+		return this.repository.resetSupplierAllowance(
+			req.treasuryId,
+			req.address,
+			req.privateKey,
+			req.accountId,
+		);
+	}
+	public async increaseSupplierAllowance(
+		req: SupplierRoleStableCoinServiceRequestModel,
+	): Promise<Uint8Array> {
+		return this.repository.increaseSupplierAllowance(
+			req.treasuryId,
+			req.address,
+			req.privateKey,
+			req.accountId,
+			req.amount,
+		);
+	}
+	public async decreaseSupplierAllowance(
+		req: SupplierRoleStableCoinServiceRequestModel,
+	): Promise<Uint8Array> {
+		return this.repository.decreaseSupplierAllowance(
+			req.treasuryId,
+			req.address,
+			req.privateKey,
+			req.accountId,
+			req.amount,
+		);
+	}
+
+	public async isLimitedSupplierAllowance(
+		req: SupplierRoleStableCoinServiceRequestModel,
+	): Promise<Uint8Array> {
+		return this.repository.isLimitedSupplierAllowance(
+			req.treasuryId,
+			req.address,
+			req.privateKey,
+			req.accountId,
 		);
 	}
 }

@@ -6,3 +6,8 @@ export interface IRequestContracts {
 export interface IRequestContractsAmount extends IRequestContracts {
 	amount: number;
 }
+
+export interface IRequestSupplier extends IRequestContracts {
+	amount?: number;
+	address: string;
+}
