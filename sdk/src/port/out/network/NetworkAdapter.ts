@@ -3,8 +3,6 @@ import HashPackProvider from '../hedera/hashconnect/HashPackProvider.js';
 import HethersProvider from '../hedera/hethers/HethersProvider.js';
 import { IProvider, IniConfigOptions } from '../hedera/Provider.js';
 import { AppMetadata, NetworkMode } from '../../../sdk.js';
-import { ContractId } from '@hashgraph/sdk';
-import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 
 type NetworkClientOptions = HederaClientOptions;
 
@@ -44,12 +42,11 @@ export default class NetworkAdapter {
 				this.provider = await this.getHethersProvider(this._network);
 				return this;
 			case NetworkMode.HASHPACK:
-				// this.provider = await this.getHashpackProvider(
-				// 	this.network,
-				// 	this.options,
-				// );
-				// return this;
-				throw new Error('Not supported');
+				this.provider = await this.getHashpackProvider(
+					this._network,
+					this._options,
+				);
+				return this;
 			default:
 				throw new Error('Not supported');
 		}
@@ -59,12 +56,12 @@ export default class NetworkAdapter {
 		return this.provider.stop();
 	}
 
-	// private getHashpackProvider(
-	// 	network: HederaNetwork,
-	// 	options: IniConfigOptions,
-	// ): Promise<HashPackProvider> {
-	// 	return new HashPackProvider().init({ network, options });
-	// }
+	private getHashpackProvider(
+		network: HederaNetwork,
+		options: IniConfigOptions,
+	): Promise<HashPackProvider> {
+		return new HashPackProvider().init({ network, options });
+	}
 
 	private getHethersProvider(
 		network: HederaNetwork,
