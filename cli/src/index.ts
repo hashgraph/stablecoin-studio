@@ -18,6 +18,10 @@ export const commanderService: CommanderService = new CommanderService();
  * Main function
  */
 const main = async (): Promise<void> => {
+  
+  // Initialize SDK
+  await utilsService.initSDK();
+  
   // Show initial banner
   await utilsService.showBanner();
 
@@ -29,7 +33,6 @@ const main = async (): Promise<void> => {
     await wizardService.mainMenu();
   }
   
-  await utilsService.initSDK();
 
   commanderService.start();
 };

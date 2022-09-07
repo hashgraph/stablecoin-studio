@@ -1,12 +1,12 @@
 import {
 	IAccountWithKeyRequestModel,
-	IAmountRequestModel,
+	IAmountOptionalRequestModel,
 	ITreasureyRequestModel,
 } from './CoreRequestModel.js';
 
 export default interface ISupplierRoleStableCoinServiceRequestModel
 	extends ITreasureyRequestModel,
 		IAccountWithKeyRequestModel,
-		IAmountRequestModel {
+		IAmountOptionalRequestModel {
 	address: string;
 }
