@@ -30,6 +30,7 @@ import { StableCoin } from '../../../../domain/context/stablecoin/StableCoin.js'
 import Long from 'long';
 import { log } from '../../../../core/log.js';
 import { IContractParams } from '../types.js';
+import HederaError from '../error/HederaError.js';
 
 type DefaultHederaProvider = hethers.providers.DefaultHederaProvider;
 
@@ -45,12 +46,14 @@ export default class HethersProvider implements IProvider {
 	public init({ network }: IniConfig): Promise<HethersProvider> {
 		this.network = network;
 		this.hethersProvider = this.getHethersProvider(network);
+		// We have to follow an async pattern to match Hashconnect
 		return new Promise((r) => {
 			r(this);
 		});
 	}
 
 	public async stop(): Promise<boolean> {
+		// No need to do anything here but return true, hasconnect does need this function
 		return new Promise((res) => {
 			res(true);
 		});
@@ -73,6 +76,10 @@ export default class HethersProvider implements IProvider {
 			(func: { name: any; type: string }) =>
 				func.name === functionName && func.type === 'function',
 		);
+		if (!functionAbi)
+			throw new HederaError(
+				'Contract function not found in ABI, are you using the right version?',
+			);
 		const encodedParametersHex = this.web3.eth.abi
 			.encodeFunctionCall(functionAbi, parameters)
 			.slice(2);
@@ -88,6 +95,10 @@ export default class HethersProvider implements IProvider {
 		const functionAbi = abi.find(
 			(func: { name: any }) => func.name === functionName,
 		);
+		if (!functionAbi?.outputs)
+			throw new HederaError(
+				'Contract function not found in ABI, are you using the right version?',
+			);
 		const functionParameters = functionAbi?.outputs;
 		const resultHex = '0x'.concat(
 			Buffer.from(resultAsBytes).toString('hex'),
@@ -103,9 +114,9 @@ export default class HethersProvider implements IProvider {
 	}
 
 	public getPublicKey(privateKey?: string | undefined): string {
+		if (!privateKey) throw new HederaError('No privateKey provided');
 		const publicKey =
 			PrivateKey.fromString(privateKey).publicKey.toStringRaw();
-
 		return publicKey;
 	}
 
@@ -174,7 +185,7 @@ export default class HethersProvider implements IProvider {
 			parameters: [],
 			gas: 250_000,
 			abi: HederaERC20__factory.abi,
-			account
+			account,
 		};
 		await this.callContract('initialize', erc20);
 		log(
@@ -222,7 +233,7 @@ export default class HethersProvider implements IProvider {
 		};
 		await this.callContract('setERC20Address', setERC20Address);
 		log(
-			'Associate administrator account to token... please wait.',
+			'Associating administrator account to token... please wait.',
 			logOpts,
 		);
 		const associateToken: IContractParams = {
