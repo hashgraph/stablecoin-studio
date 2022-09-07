@@ -14,7 +14,7 @@ interface IWipeable   {
     * Validate that there is sufficient token balance before wipe
     * 
     * @param account The address of the account where to wipe the token
-    * @param amount The amount to wipe
+    * @param amount The number of tokens to wipe
     * @return True if successful       
     */
     function wipe(address account, uint32 amount) external returns (bool) ;
