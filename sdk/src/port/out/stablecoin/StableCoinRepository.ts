@@ -131,7 +131,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		treasuryId: string,
 		privateKey: string,
 		accountId: string,
-		amount = 1000,
+		amount: number,
 	): Promise<Uint8Array> {
 		const { AccountId } = require('@hashgraph/sdk');
 

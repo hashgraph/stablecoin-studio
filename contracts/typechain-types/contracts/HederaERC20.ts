@@ -114,6 +114,7 @@ export interface HederaERC20Interface extends utils.Interface {
     "revokeRole(bytes32,address)": FunctionFragment;
     "revokeSupplierRole(address)": FunctionFragment;
     "revokeTokenKyc(address,address)": FunctionFragment;
+    "revokeUnlimitedSupplierRole(address)": FunctionFragment;
     "setTokenAddress(address,address)": FunctionFragment;
     "supplierAllowance(address)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
@@ -167,6 +168,7 @@ export interface HederaERC20Interface extends utils.Interface {
       | "revokeRole"
       | "revokeSupplierRole"
       | "revokeTokenKyc"
+      | "revokeUnlimitedSupplierRole"
       | "setTokenAddress"
       | "supplierAllowance"
       | "supportsInterface"
@@ -324,6 +326,10 @@ export interface HederaERC20Interface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "revokeUnlimitedSupplierRole",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setTokenAddress",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
@@ -474,6 +480,10 @@ export interface HederaERC20Interface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "revokeTokenKyc",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "revokeUnlimitedSupplierRole",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -894,6 +904,11 @@ export interface HederaERC20 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    revokeUnlimitedSupplierRole(
+      supplier: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     setTokenAddress(
       _htsTokenOwnerAddress: PromiseOrValue<string>,
       _tokenAddress: PromiseOrValue<string>,
@@ -1125,6 +1140,11 @@ export interface HederaERC20 extends BaseContract {
   revokeTokenKyc(
     token: PromiseOrValue<string>,
     account: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  revokeUnlimitedSupplierRole(
+    supplier: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1371,6 +1391,11 @@ export interface HederaERC20 extends BaseContract {
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    revokeUnlimitedSupplierRole(
+      supplier: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     setTokenAddress(
       _htsTokenOwnerAddress: PromiseOrValue<string>,
@@ -1745,6 +1770,11 @@ export interface HederaERC20 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    revokeUnlimitedSupplierRole(
+      supplier: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     setTokenAddress(
       _htsTokenOwnerAddress: PromiseOrValue<string>,
       _tokenAddress: PromiseOrValue<string>,
@@ -1983,6 +2013,11 @@ export interface HederaERC20 extends BaseContract {
     revokeTokenKyc(
       token: PromiseOrValue<string>,
       account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    revokeUnlimitedSupplierRole(
+      supplier: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

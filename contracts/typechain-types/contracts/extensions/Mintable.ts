@@ -50,6 +50,7 @@ export interface MintableInterface extends utils.Interface {
     "resetSupplierAllowance(address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "revokeSupplierRole(address)": FunctionFragment;
+    "revokeUnlimitedSupplierRole(address)": FunctionFragment;
     "setTokenAddress(address,address)": FunctionFragment;
     "supplierAllowance(address)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
@@ -78,6 +79,7 @@ export interface MintableInterface extends utils.Interface {
       | "resetSupplierAllowance"
       | "revokeRole"
       | "revokeSupplierRole"
+      | "revokeUnlimitedSupplierRole"
       | "setTokenAddress"
       | "supplierAllowance"
       | "supportsInterface"
@@ -165,6 +167,10 @@ export interface MintableInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "revokeUnlimitedSupplierRole",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setTokenAddress",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
@@ -244,6 +250,10 @@ export interface MintableInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "revokeSupplierRole",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "revokeUnlimitedSupplierRole",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -486,6 +496,11 @@ export interface Mintable extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    revokeUnlimitedSupplierRole(
+      supplier: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     setTokenAddress(
       _htsTokenOwnerAddress: PromiseOrValue<string>,
       _tokenAddress: PromiseOrValue<string>,
@@ -596,6 +611,11 @@ export interface Mintable extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  revokeUnlimitedSupplierRole(
+    supplier: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   setTokenAddress(
     _htsTokenOwnerAddress: PromiseOrValue<string>,
     _tokenAddress: PromiseOrValue<string>,
@@ -702,6 +722,11 @@ export interface Mintable extends BaseContract {
     ): Promise<void>;
 
     revokeSupplierRole(
+      supplier: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    revokeUnlimitedSupplierRole(
       supplier: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -898,6 +923,11 @@ export interface Mintable extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    revokeUnlimitedSupplierRole(
+      supplier: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     setTokenAddress(
       _htsTokenOwnerAddress: PromiseOrValue<string>,
       _tokenAddress: PromiseOrValue<string>,
@@ -1011,6 +1041,11 @@ export interface Mintable extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     revokeSupplierRole(
+      supplier: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    revokeUnlimitedSupplierRole(
       supplier: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

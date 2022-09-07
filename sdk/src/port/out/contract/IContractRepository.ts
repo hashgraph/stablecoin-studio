@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import Account from "../../../domain/context/account/Account.js";
 import StableCoin from "../../../domain/context/stablecoin/StableCoin.js";
 
 export interface IContractParams {

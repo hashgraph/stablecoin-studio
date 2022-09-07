@@ -40,6 +40,7 @@ export default class StableCoinService extends Service {
 			req.freeze,
 			req.freezeDefault,
 		);
+		console.debug(coin);
 		return this.repository.saveCoin(req.accountId, req.privateKey, coin);
 	}
 

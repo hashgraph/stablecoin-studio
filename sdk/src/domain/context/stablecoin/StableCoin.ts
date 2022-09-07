@@ -74,11 +74,11 @@ export default class StableCoin extends BaseEntity {
 	/**
 	 * Maximum Supply
 	 */
-	private _maxSupply: bigint;
-	public get maxSupply(): bigint {
+	private _maxSupply?: bigint | undefined;
+	public get maxSupply(): bigint | undefined {
 		return this._maxSupply;
 	}
-	public set maxSupply(value: bigint) {
+	public set maxSupply(value: bigint | undefined) {
 		this._maxSupply = value;
 	}
 
@@ -133,7 +133,7 @@ export default class StableCoin extends BaseEntity {
 		this.symbol = symbol;
 		this.decimals = this.checkDecimals(decimals);
 		this.initialSupply = initialSupply ?? 0n;
-		this.maxSupply = maxSupply ?? MAX_SUPPLY;
+		this.maxSupply = maxSupply;
 		this.memo = memo;
 		this.freeze = freeze ?? '';
 		this.freezeDefault = freezeDefault ?? false;

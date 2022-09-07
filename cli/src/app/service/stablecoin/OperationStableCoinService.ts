@@ -97,7 +97,7 @@ export default class OperationStableCoinService extends Service {
           this.treasuryStableCoinId,
           configurationService.getConfiguration().accounts[0].privateKey,
           configurationService.getConfiguration().accounts[0].accountId,
-          parseInt(amount2Mint) * 1000,
+          parseFloat(amount2Mint),
         );
 
         break;
@@ -134,7 +134,7 @@ export default class OperationStableCoinService extends Service {
           this.treasuryStableCoinId,
           configurationService.getConfiguration().accounts[0].privateKey,
           configurationService.getConfiguration().accounts[0].accountId,
-          parseInt(amount2Wipe) * 1000,
+          parseInt(amount2Wipe),
         );
 
         break;
@@ -144,12 +144,12 @@ export default class OperationStableCoinService extends Service {
           language.getText('stablecoin.askRescueAmount'),
           '1',
         );
-
+        // TODO validation
         await new RescueStableCoinsService().rescueStableCoin(
           this.treasuryStableCoinId,
           configurationService.getConfiguration().accounts[0].privateKey,
           configurationService.getConfiguration().accounts[0].accountId,
-          parseInt(amount2Rescue) * 1000,
+          parseInt(amount2Rescue),
         );
 
         console.log(
