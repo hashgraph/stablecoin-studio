@@ -55,6 +55,7 @@
 	"dependencies": {
 		"@hashgraph/hethers": "^1.2.0",
 		"@hashgraph/sdk": "^2.18.0",
+		"hashconnect": "file:../hashconnect/lib",
 		"tslib": "~2.4",
 		"web3": "^1.7.5"
 	},
