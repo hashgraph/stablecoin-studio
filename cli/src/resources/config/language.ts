@@ -181,4 +181,9 @@ export const english = {
   account: {
     wrong: 'Incorrect account format. Please try again.',
   },
+  validations: {
+    wrongFormatAddress:
+      'The format of the address is not correct. Please check the format and try again.',
+    lessZero: 'The number is 0 or less. Please use a number greater than 0.',
+  },
 };
