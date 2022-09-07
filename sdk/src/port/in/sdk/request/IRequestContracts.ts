@@ -11,3 +11,7 @@ export interface IRequestSupplier extends IRequestContracts {
 	amount?: number;
 	address: string;
 }
+
+export interface IRequestBalanceOf extends IRequestContracts {
+	targetId: string;
+}

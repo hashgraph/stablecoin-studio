@@ -75,6 +75,8 @@ export default class OperationStableCoinService extends Service {
   }
 
   private async operationsStableCoin(): Promise<void> {
+    const sdk: SDK = utilsService.getSDK();
+
     const wizardOperationsStableCoinOptions = language.getArray(
       'wizard.stableCoinOptions',
     );
@@ -109,15 +111,27 @@ export default class OperationStableCoinService extends Service {
         break;
       case wizardOperationsStableCoinOptions[2]:
         // Call to balance
-        await utilsService.defaultSingleAsk(
+        const targetId = await utilsService.defaultSingleAsk(
           language.getText('stablecoin.askAccountToBalance'),
           configurationService.getConfiguration().accounts[0].accountId,
         );
-        await new BalanceOfStableCoinsService().getBalanceOfStableCoin(
-          this.treasuryStableCoinId,
-          configurationService.getConfiguration().accounts[0].privateKey,
-          configurationService.getConfiguration().accounts[0].accountId,
-        );
+
+        try {
+          // Check Address
+          if (sdk.checkIsAddress(targetId)) {
+            await new BalanceOfStableCoinsService().getBalanceOfStableCoin(
+              this.treasuryStableCoinId,
+              configurationService.getConfiguration().accounts[0].privateKey,
+              configurationService.getConfiguration().accounts[0].accountId,
+              targetId,
+            );
+          }
+        } catch (err) {
+          console.log(language.getText('validations.wrongFormatAddress'));
+          utilsService.breakLine();
+
+          await this.operationsStableCoin();
+        }
 
         break;
       case wizardOperationsStableCoinOptions[3]:
@@ -144,13 +158,29 @@ export default class OperationStableCoinService extends Service {
           language.getText('stablecoin.askRescueAmount'),
           '1',
         );
-        // TODO validation
-        await new RescueStableCoinsService().rescueStableCoin(
-          this.treasuryStableCoinId,
-          configurationService.getConfiguration().accounts[0].privateKey,
-          configurationService.getConfiguration().accounts[0].accountId,
-          parseInt(amount2Rescue),
-        );
+
+        if (parseFloat(amount2Rescue) <= 0) {
+          console.log(language.getText('validations.lessZero'));
+          utilsService.breakLine();
+
+          await this.operationsStableCoin();
+        }
+
+        try {
+          await new RescueStableCoinsService().rescueStableCoin(
+            this.treasuryStableCoinId,
+            configurationService.getConfiguration().accounts[0].privateKey,
+            configurationService.getConfiguration().accounts[0].accountId,
+            parseInt(amount2Rescue),
+          );
+        } catch (err) {
+          console.log(language.getText('operation.reject'));
+          console.error('error', err);
+
+          utilsService.breakLine();
+
+          await this.operationsStableCoin();
+        }
 
         console.log(
           language
@@ -164,6 +194,7 @@ export default class OperationStableCoinService extends Service {
         await new BalanceOfStableCoinsService().getBalanceOfStableCoin(
           this.treasuryStableCoinId,
           configurationService.getConfiguration().accounts[0].privateKey,
+          configurationService.getConfiguration().accounts[0].accountId,
           configurationService.getConfiguration().accounts[0].accountId,
         );
 

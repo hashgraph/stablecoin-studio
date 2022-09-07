@@ -1,5 +1,8 @@
 import { AppMetadata, HederaNetwork, NetworkMode, SDK } from '../src/index';
-import { IRequestContracts } from '../src/port/in/sdk/request/IRequestContracts';
+import {
+	IRequestBalanceOf,
+	IRequestContracts,
+} from '../src/port/in/sdk/request/IRequestContracts';
 import { IGetStableCoinRequest } from '../src/port/in/sdk/request/IGetStableCoinRequest';
 import { IGetListStableCoinRequest } from '../src/port/in/sdk/request/IGetListStableCoinRequest';
 import { ICreateStableCoinRequest } from '../src/port/in/sdk/request/ICreateStableCoinRequest.js';
@@ -89,7 +92,7 @@ describe('SDK Unit Test :tubo_de_ensayo:', () => {
 	});
 
 	it('Creates a Stable Coin (Decimals Error)', () => {
-		const errReq = {...request}
+		const errReq = { ...request };
 		errReq.decimals = 20;
 		try {
 			const coin = sdk.createStableCoin(errReq);
@@ -117,11 +120,12 @@ describe('SDK Unit Test :tubo_de_ensayo:', () => {
 	});
 
 	it('Get balance of Stable coin', async () => {
-		const request: IRequestContracts = {
+		const request: IRequestBalanceOf = {
 			treasuryId: '0.0.48135063',
 			privateKey:
 				'302e020100300506032b6570042204207a8a25387a3c636cb980d1ba548ee5ee3cc8cda158e42dc7af53dcd81022d8be',
 			accountId: '0.0.29511696',
+			targetId: '0.0.29511696',
 		};
 
 		await sdk.getBalanceOf(request)?.then((response) => {
@@ -130,11 +134,12 @@ describe('SDK Unit Test :tubo_de_ensayo:', () => {
 	});
 
 	it('Get balance of Stable coin - Revert', async () => {
-		const request: IRequestContracts = {
+		const request: IRequestBalanceOf = {
 			treasuryId: '0.0.48135063',
 			privateKey:
 				'302e020100300506032b6570042204207a8a25387a3c636cb980d1ba548ee5ee3cc8cda158e42dc7af53dcd81022d8be',
 			accountId: '0.0.29511690',
+			targetId: '0.0.29511696',
 		};
 		try {
 			await sdk.getBalanceOf(request)?.then((response) => {

@@ -10,7 +10,8 @@ export const english = {
   },
   configuration: {
     askPath: 'Write your config path',
-    askCreateConfig: 'No configuration file found at the specified path, would you like to create one? (y/n)',
+    askCreateConfig:
+      'No configuration file found at the specified path, would you like to create one? (y/n)',
     askNetwork: 'Write the network you want to use',
     askNotDefaultNetwork:
       'Your option is not a default network, Do you want to create a new network? (y/n)',
@@ -169,5 +170,10 @@ export const english = {
   },
   rescue: {
     success: 'You have rescued ${tokens} tokens',
+  },
+  validations: {
+    wrongFormatAddress:
+      'The format of the address is not correct. Please check the format and try again.',
+    lessZero: 'The number is 0 or less. Please use a number greater than 0.',
   },
 };

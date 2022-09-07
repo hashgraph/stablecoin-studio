@@ -18,6 +18,7 @@ export default class BalanceOfStableCoinsService extends Service {
     treasuryId: string,
     privateKey: string,
     accountId: string,
+    targetId: string,
   ): Promise<void> {
     // Call to list stable coins
     const sdk: SDK = utilsService.getSDK();
@@ -26,7 +27,7 @@ export default class BalanceOfStableCoinsService extends Service {
 
     await utilsService.showSpinner(
       sdk
-        .getBalanceOf({ treasuryId, privateKey, accountId })
+        .getBalanceOf({ treasuryId, privateKey, accountId, targetId })
         .then((response) => {
           respDetail = response;
         }),
