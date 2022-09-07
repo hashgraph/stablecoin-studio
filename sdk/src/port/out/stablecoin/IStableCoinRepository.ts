@@ -1,5 +1,5 @@
 import IStableCoinDetail from '../../../domain/context/stablecoin/IStableCoinDetail.js';
-import StableCoin from '../../../domain/context/stablecoin/StableCoin.js';
+import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import IStableCoinList from '../../in/sdk/response/IStableCoinList.js';
 
 export default interface IStableCoinRepository {

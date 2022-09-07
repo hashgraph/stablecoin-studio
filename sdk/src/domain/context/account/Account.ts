@@ -1,11 +1,12 @@
 import BaseEntity from '../../BaseEntity.js';
+import { AccountId } from './AccountId.js';
 
 export default class Account extends BaseEntity {
-	private _accountId: string;
-	public get accountId(): string {
+	private _accountId: AccountId;
+	public get accountId(): AccountId {
 		return this._accountId;
 	}
-	public set accountId(value: string) {
+	public set accountId(value: AccountId) {
 		this._accountId = value;
 	}
 	private _privateKey: string;
@@ -16,9 +17,13 @@ export default class Account extends BaseEntity {
 		this._privateKey = value;
 	}
 
-	constructor(accountId: string, privateKey: string) {
+	constructor(accountId: AccountId, privateKey: string) {
 		super();
 		this.accountId = accountId;
 		this.privateKey = privateKey;
+	}
+
+	public getAccountId(): string {
+		return this.accountId.id;
 	}
 }

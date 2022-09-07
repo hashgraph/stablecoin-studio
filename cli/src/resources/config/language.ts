@@ -10,6 +10,7 @@ export const english = {
   },
   configuration: {
     askPath: 'Write your config path',
+    askCreateConfig: 'No configuration file found at the specified path, would you like to create one? (y/n)',
     askNetwork: 'Write the network you want to use',
     askNotDefaultNetwork:
       'Your option is not a default network, Do you want to create a new network? (y/n)',

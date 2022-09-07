@@ -1,10 +1,12 @@
 import BaseEntity from '../../BaseEntity.js';
 import Account from '../account/Account.js';
 import InvalidDecimalRangeDomainError from './error/InvalidDecimalRangeDomainError.js';
+import { TokenSupplyType } from './TokenSupply.js';
+import { TokenType } from './TokenType.js';
 
 const MAX_SUPPLY = 9_223_372_036_854_775_807n;
 
-export default class StableCoin extends BaseEntity {
+export class StableCoin extends BaseEntity {
 	/**
 	 * Admin Account for the token
 	 */
@@ -74,11 +76,11 @@ export default class StableCoin extends BaseEntity {
 	/**
 	 * Maximum Supply
 	 */
-	private _maxSupply: bigint;
-	public get maxSupply(): bigint {
+	private _maxSupply?: bigint | undefined;
+	public get maxSupply(): bigint | undefined {
 		return this._maxSupply;
 	}
-	public set maxSupply(value: bigint) {
+	public set maxSupply(value: bigint | undefined) {
 		this._maxSupply = value;
 	}
 
@@ -96,16 +98,16 @@ export default class StableCoin extends BaseEntity {
 	/**
 	 * Freeze key
 	 */
-	private _freeze: string;
-	public get freeze(): string {
-		return this._freeze;
+	private _freezeKey: string | undefined;
+	public get freeze(): string | undefined {
+		return this._freezeKey;
 	}
-	public set freeze(value: string) {
-		this._freeze = value;
+	public set freeze(value: string | undefined) {
+		this._freezeKey = value;
 	}
 
 	/**
-	 * Freeze key
+	 * Freeze account by default
 	 */
 	private _freezeDefault: boolean;
 	public get freezeDefault(): boolean {
@@ -113,6 +115,83 @@ export default class StableCoin extends BaseEntity {
 	}
 	public set freezeDefault(value: boolean) {
 		this._freezeDefault = value;
+	}
+
+	/**
+	 * KYC key
+	 */
+	private _kycKey: string | undefined;
+	public get kycKey(): string | undefined {
+		return this._kycKey;
+	}
+	public set kycKey(value: string | undefined) {
+		this._kycKey = value;
+	}
+
+	/**
+	 * Wipe key
+	 */
+	private _wipeKey: string | undefined;
+	public get wipeKey(): string | undefined {
+		return this._wipeKey;
+	}
+	public set wipeKey(value: string | undefined) {
+		this._wipeKey = value;
+	}
+
+	/**
+	 * Supply key
+	 */
+	private _supplyKey?: string;
+	public get supplyKey(): string | undefined {
+		return this._supplyKey;
+	}
+	public set supplyKey(value: string | undefined) {
+		this._supplyKey = value;
+	}
+
+	/**
+	 * Treasury account
+	 */
+	private _treasury?: string;
+	public get treasury(): string | undefined {
+		return this._treasury;
+	}
+	public set treasury(value: string | undefined) {
+		this._treasury = value;
+	}
+
+	/**
+	 * Expiration of token
+	 */
+	private _expiry?: number;
+	public get expiry(): number | undefined {
+		return this._expiry;
+	}
+	public set expiry(value: number | undefined) {
+		this._expiry = value;
+	}
+
+	/**
+	 * Token type
+	 */
+	private _tokenType: TokenType;
+	public get tokenType(): TokenType {
+		return this._tokenType;
+	}
+	public set tokenType(value: TokenType) {
+		this._tokenType = value;
+	}
+
+	/**
+	 * Token supply type
+	 */
+	private _supplyType: TokenSupplyType;
+	public get supplyType(): TokenSupplyType {
+		return this._supplyType;
+	}
+	public set supplyType(value: TokenSupplyType) {
+		this._supplyType = value;
 	}
 
 	constructor(
@@ -123,8 +202,15 @@ export default class StableCoin extends BaseEntity {
 		initialSupply?: bigint,
 		maxSupply?: bigint,
 		memo?: string,
-		freeze?: string,
+		freezeKey?: string,
 		freezeDefault?: boolean,
+		kycKey?: string,
+		wipeKey?: string,
+		supplyKey?: string,
+		treasury?: string,
+		expiry?: number,
+		tokenType?: TokenType,
+		supplyType?: TokenSupplyType,
 		id?: string | undefined,
 	) {
 		super();
@@ -133,10 +219,20 @@ export default class StableCoin extends BaseEntity {
 		this.symbol = symbol;
 		this.decimals = this.checkDecimals(decimals);
 		this.initialSupply = initialSupply ?? 0n;
-		this.maxSupply = maxSupply ?? MAX_SUPPLY;
+		this.maxSupply = maxSupply;
 		this.memo = memo;
-		this.freeze = freeze ?? '';
+		this.freeze = freezeKey ?? '';
 		this.freezeDefault = freezeDefault ?? false;
+		this.kycKey = kycKey;
+		this.wipeKey = wipeKey;
+		this.supplyKey = supplyKey;
+		this.treasury = treasury;
+		this.expiry = expiry;
+		this.tokenType = tokenType ?? TokenType.FUNGIBLE_COMMON;
+		this.supplyType =
+			supplyType && !maxSupply
+				? TokenSupplyType.INFINITE
+				: TokenSupplyType.FINITE;
 		this.id = id;
 	}
 

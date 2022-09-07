@@ -3,18 +3,19 @@ import { IRequestContracts } from '../src/port/in/sdk/request/IRequestContracts'
 import { IGetStableCoinRequest } from '../src/port/in/sdk/request/IGetStableCoinRequest';
 import { IGetListStableCoinRequest } from '../src/port/in/sdk/request/IGetListStableCoinRequest';
 import { ICreateStableCoinRequest } from '../src/port/in/sdk/request/ICreateStableCoinRequest.js';
-import StableCoin from '../src/domain/context/stablecoin/StableCoin.js';
+import { StableCoin } from '../src/domain/context/stablecoin/StableCoin.js';
 import Account from '../src/domain/context/account/Account.js';
-import { ICashInStableCoinRequest } from '../src/port/in/sdk/request/ICashInStableCoinRequest.js';
 import { IRescueStableCoinRequest } from '../src/port/in/sdk/request/IRescueStableCoinRequest.js';
+import { ICashInStableCoinRequest } from '../src/port/in/sdk/request/ICashInStableCoinRequest.js';
+import { AccountId } from '../src/domain/context/account/AccountId.js';
 
 const ACCOUNT_ID = '0.0.29511696';
 const PK =
 	'302e020100300506032b6570042204207a8a25387a3c636cb980d1ba548ee5ee3cc8cda158e42dc7af53dcd81022d8be';
 
-const account = new Account('0.0.1', '1234');
+const account = new Account(new AccountId(ACCOUNT_ID), '1234');
 const request: ICreateStableCoinRequest = {
-	accountId: account.accountId,
+	accountId: account.accountId.id,
 	privateKey: account.privateKey,
 	name: 'PapaCoin',
 	symbol: 'PAPA',
@@ -23,7 +24,7 @@ const request: ICreateStableCoinRequest = {
 	maxSupply: 1000n,
 	memo: 'test',
 	freeze: '1234',
-	freezeDefault: false
+	freezeDefault: false,
 };
 
 describe('SDK Unit Test :tubo_de_ensayo:', () => {
@@ -47,7 +48,7 @@ describe('SDK Unit Test :tubo_de_ensayo:', () => {
 			network: HederaNetwork.TEST,
 			mode: NetworkMode.EOA,
 			options: {
-				account: new Account(ACCOUNT_ID, PK),
+				account: new Account(new AccountId(ACCOUNT_ID), PK),
 			},
 		}).init();
 	});
@@ -63,8 +64,7 @@ describe('SDK Unit Test :tubo_de_ensayo:', () => {
 	});
 
 	it('Account class', () => {
-		const account = new Account('0.0.1', '1234');
-		account.accountId = '0.0.2';
+		const account = new Account(new AccountId(ACCOUNT_ID), '1234');
 		account.privateKey = '5678';
 
 		expect(account.accountId).toBe('0.0.2');
@@ -72,7 +72,7 @@ describe('SDK Unit Test :tubo_de_ensayo:', () => {
 	});
 
 	it('Stable Coin class', () => {
-		const account = new Account('0.0.1', '1234');
+		const account = new Account(new AccountId(ACCOUNT_ID), '1234');
 		const stableCoin = new StableCoin(account, 'Token', 'TK', 10);
 
 		expect(stableCoin.admin).toBe(account);

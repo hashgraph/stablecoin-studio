@@ -1,3 +1,4 @@
+import { TokenType, TokenSupplyType } from '@hashgraph/sdk';
 
 export default class CreateStableCoinServiceRequestModel {
 	public accountId: string;
@@ -10,4 +11,12 @@ export default class CreateStableCoinServiceRequestModel {
 	public memo?: string;
 	public freeze?: string;
 	public freezeDefault?: boolean;
+	public kycKey?: string;
+	public wipeKey?: string;
+	public supplyKey?: string;
+	public treasury?: string;
+	public expiry?: number;
+	public tokenType?: TokenType;
+	public supplyType?: TokenSupplyType;
+	public id?: string | undefined;
 }

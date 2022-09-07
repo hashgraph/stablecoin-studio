@@ -2,7 +2,7 @@
 	"compilerOptions": {
 		"target": "ES2020" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
 		"module": "NodeNext" /* Specify what module code is generated. */,
-		"moduleResolution": "node",
+		"moduleResolution": "Node16",
 		"declaration": true /* Generate .d.ts files from TypeScript and JavaScript files in your project. */,
 		"rootDir": ".",
 		"outDir": "./build" /* Specify an output folder for all emitted files. */,

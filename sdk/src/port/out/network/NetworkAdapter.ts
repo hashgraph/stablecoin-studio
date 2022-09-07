@@ -3,6 +3,8 @@ import HashPackProvider from '../hedera/hashconnect/HashPackProvider.js';
 import HethersProvider from '../hedera/hethers/HethersProvider.js';
 import { IProvider, IniConfigOptions } from '../hedera/Provider.js';
 import { AppMetadata, NetworkMode } from '../../../sdk.js';
+import { ContractId } from '@hashgraph/sdk';
+import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 
 type NetworkClientOptions = HederaClientOptions;
 
@@ -14,8 +16,14 @@ export default class NetworkAdapter {
 	private _mode: NetworkMode;
 	private _network: HederaNetwork;
 	private _options: NetworkClientOptions;
-	
-	public provider: IProvider;
+
+	private _provider: IProvider;
+	public get provider(): IProvider {
+		return this._provider;
+	}
+	public set provider(value: IProvider) {
+		this._provider = value;
+	}
 
 	constructor(
 		mode: NetworkMode,
@@ -63,5 +71,4 @@ export default class NetworkAdapter {
 	): Promise<HethersProvider> {
 		return new HethersProvider().init({ network });
 	}
-
 }
