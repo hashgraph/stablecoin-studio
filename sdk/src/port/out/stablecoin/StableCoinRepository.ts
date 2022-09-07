@@ -9,6 +9,7 @@ import { IContractParams } from '../hedera/types.js';
 import IStableCoinDetail from '../../../app/service/stablecoin/model/stablecoindetail/IStableCoinDetail.js';
 import ITokenList from '../../../app/service/stablecoin/model/stablecoindetail/ITokenList.js';
 import HederaError from '../hedera/error/HederaError.js';
+import { IToken } from '../../../app/service/stablecoin/model/stablecoindetail/IToken.js';
 
 export default class StableCoinRepository implements IStableCoinRepository {
 	private networkAdapter: NetworkAdapter;
@@ -33,7 +34,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		} catch (error) {
 			console.error(error);
 			throw new HederaError(
-				`There was a fatal error deploying the Stable Coin: ${coin.name}`
+				`There was a fatal error deploying the Stable Coin: ${coin.name}`,
 			);
 		}
 	}
@@ -47,16 +48,14 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			const res = await axios.get<ITokenList>(
 				this.URI_BASE + 'tokens?limit=100&publickey=' + pk,
 			);
-			res.data.tokens.map(
-				(item: { memo: string; token_id: string; symbol: string }) => {
-					if (item.memo !== '') {
-						resObject.push({
-							id: item.token_id,
-							symbol: item.symbol,
-						});
-					}
-				},
-			);
+			res.data.tokens.map((item: IToken) => {
+				if (item.memo !== '') {
+					resObject.push({
+						id: item.token_id,
+						symbol: item.symbol,
+					});
+				}
+			});
 			return resObject;
 		} catch (error) {
 			return Promise.reject<IStableCoinList[]>(error);
