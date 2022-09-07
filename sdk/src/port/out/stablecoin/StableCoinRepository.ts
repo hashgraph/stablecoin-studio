@@ -89,10 +89,10 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		treasuryId: string,
 		privateKey: string,
 		accountId: string,
+		targetId: string,
 	): Promise<Uint8Array> {
-
 		const parameters = [
-			AccountId.fromString(accountId || '').toSolidityAddress(),
+			AccountId.fromString(targetId || '').toSolidityAddress(),
 		];
 
 		const params: IContractParams = {
@@ -106,7 +106,10 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			},
 		};
 
-		return await this.networkAdapter.provider.callContract('balanceOf', params);
+		return await this.networkAdapter.provider.callContract(
+			'balanceOf',
+			params,
+		);
 	}
 
 	public async getNameToken(
@@ -114,7 +117,6 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		privateKey: string,
 		accountId: string,
 	): Promise<Uint8Array> {
-
 		const params: IContractParams = {
 			contractId: treasuryId,
 			parameters: [],
@@ -151,10 +153,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			},
 		};
 
-		return await this.networkAdapter.provider.callContract(
-			'mint',
-			params,
-		);
+		return await this.networkAdapter.provider.callContract('mint', params);
 	}
 
 	public async associateToken(
@@ -173,7 +172,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			abi: HederaERC20__factory.abi,
 			account: {
 				accountId,
-				privateKey
+				privateKey,
 			},
 		};
 
@@ -257,8 +256,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			abi: HederaERC20__factory.abi,
 			account: {
 				accountId,
-				privateKey
-			}
+				privateKey,
+			},
 		};
 
 		return await this.networkAdapter.provider.callContract(

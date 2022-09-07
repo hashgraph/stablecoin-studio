@@ -1,3 +1,3 @@
-import { IRequestContracts } from './IRequestContracts.js';
+import { IRequestBalanceOf } from './IRequestContracts.js';
 
-export type IGetBalanceStableCoinRequest = IRequestContracts
+export type IGetBalanceStableCoinRequest = IRequestBalanceOf;

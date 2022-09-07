@@ -77,6 +77,7 @@ export default class StableCoinService extends Service {
 			req.treasuryId,
 			req.privateKey,
 			req.accountId,
+			req.targetId,
 		);
 	}
 
