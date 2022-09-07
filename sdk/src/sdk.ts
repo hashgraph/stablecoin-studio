@@ -3,7 +3,6 @@ import ContractsService from './app/service/contract/ContractsService.js';
 import StableCoinService from './app/service/stablecoin/StableCoinService.js';
 import { StableCoin } from './domain/context/stablecoin/StableCoin.js';
 import StableCoinRepository from './port/out/stablecoin/StableCoinRepository.js';
-import IStableCoinDetail from './domain/context/stablecoin/IStableCoinDetail.js';
 import IStableCoinRepository from './port/out/stablecoin/IStableCoinRepository.js';
 import NetworkAdapter from './port/out/network/NetworkAdapter.js';
 
@@ -35,6 +34,7 @@ import { IRescueStableCoinRequest } from './port/in/sdk/request/IRescueStableCoi
 import { ISupplierStableCoinRequest } from './port/in/sdk/request/ISupplierStableCoinRequest.js';
 import { IWipeStableCoinRequest } from './port/in/sdk/request/IWipeStableCoinRequest.js';
 import { AccountId } from './domain/context/account/AccountId.js';
+import IStableCoinDetail from './app/service/stablecoin/model/stablecoindetail/IStableCoinDetail.js';
 
 export {
 	IAssociateStableCoinRequest,
