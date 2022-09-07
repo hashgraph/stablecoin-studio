@@ -49,6 +49,7 @@ export default class StableCoinService extends Service {
 			req.supplyType,
 			req.id,
 		);
+		console.debug(coin);
 		return this.repository.saveCoin(req.accountId, req.privateKey, coin);
 	}
 
