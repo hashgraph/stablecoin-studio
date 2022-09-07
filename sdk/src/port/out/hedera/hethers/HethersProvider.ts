@@ -211,7 +211,7 @@ export default class HethersProvider implements IProvider {
 			stableCoin.decimals,
 			stableCoin.initialSupply,
 			stableCoin.maxSupply,
-			proxyContract,
+			String(proxyContract),
 			stableCoin.freezeDefault,
 			privateKey,
 			this.getPublicKey(privateKey),
@@ -263,7 +263,7 @@ export default class HethersProvider implements IProvider {
 			const bytecodeFileId = await this.fileCreate(
 				factory.bytecode,
 				chunks,
-				PrivateKey.fromStringED25519(privateKey),
+				PrivateKey.fromString(privateKey),
 				client,
 			);
 
@@ -271,13 +271,13 @@ export default class HethersProvider implements IProvider {
 				.setGas(181_000)
 				.setBytecodeFileId(bytecodeFileId)
 				.setMaxTransactionFee(new Hbar(30))
-				.setAdminKey(PrivateKey.fromStringED25519(privateKey));
+				.setAdminKey(PrivateKey.fromString(privateKey));
 			if (params) {
 				transaction.setConstructorParameters(params);
 			}
 			transaction.freezeWith(client);
 			const contractCreateSign = await transaction.sign(
-				PrivateKey.fromStringED25519(privateKey),
+				PrivateKey.fromString(privateKey),
 			);
 			const txResponse = await contractCreateSign.execute(client);
 			const receipt = await txResponse.getReceipt(client);
@@ -334,7 +334,7 @@ export default class HethersProvider implements IProvider {
 	}
 
 	private async createToken(
-		contractId: any,
+		contractId: ContractId,
 		name: string,
 		symbol: string,
 		decimals: number,
@@ -364,10 +364,10 @@ export default class HethersProvider implements IProvider {
 			transaction.setMaxSupply(Long.fromString(maxSupply.toString()));
 			transaction.setSupplyType(TokenSupplyType.Finite);
 		}
-
+		console.log(transaction);
 		transaction.freezeWith(clientSdk);
 		const transactionSign = await transaction.sign(
-			PrivateKey.fromStringED25519(privateKey),
+			PrivateKey.fromString(privateKey),
 		);
 		const txResponse = await transactionSign.execute(clientSdk);
 		const receipt = await txResponse.getReceipt(clientSdk);
@@ -376,7 +376,7 @@ export default class HethersProvider implements IProvider {
 				`An error ocurred creating the stable coin ${name}`,
 			);
 		}
-		const tokenId = receipt.tokenId;
+		const tokenId: TokenId = receipt.tokenId;
 		log(
 			`Token ${name} created tokenId ${tokenId} - tokenAddress ${tokenId?.toSolidityAddress()}`,
 			logOpts,
