@@ -17,7 +17,7 @@
     "build:watch": "npx tsc -w -p tsconfig.json",
     "build:release": "npm run clean && tsc -p tsconfig.release.json",
     "preinstall": "npm run build",
-    "doc": "npx solidoc2"
+    "doc": "npx hardhat dodoc"
   },
   "author": "",
   "license": "ISC",
@@ -31,10 +31,7 @@
     "@openzeppelin/contracts-upgradeable": "^4.7.2",
     "hardhat": "^2.10.1",
     "hardhat-abi-exporter": "^2.10.0",
-    "hardhat-contract-sizer": "^2.6.1"
-  },
-  "dependencies": {
-    "@primitivefi/hardhat-dodoc": "^0.2.3",
-    "solidoc2": "^1.0.7"
+    "hardhat-contract-sizer": "^2.6.1",
+    "@primitivefi/hardhat-dodoc": "^0.2.3"
   }
 }
