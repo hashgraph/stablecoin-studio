@@ -29,7 +29,11 @@ import Web3 from 'web3';
 import { StableCoin } from '../../../../domain/context/stablecoin/StableCoin.js';
 import Long from 'long';
 import { log } from '../../../../core/log.js';
-import { IContractParams } from '../types.js';
+import {
+	ICallContractRequest,
+	ICallContractWithAccountRequest,
+} from '../types.js';
+import HederaError from '../error/HederaError.js';
 
 type DefaultHederaProvider = hethers.providers.DefaultHederaProvider;
 
@@ -45,12 +49,14 @@ export default class HethersProvider implements IProvider {
 	public init({ network }: IniConfig): Promise<HethersProvider> {
 		this.network = network;
 		this.hethersProvider = this.getHethersProvider(network);
+		// We have to follow an async pattern to match Hashconnect
 		return new Promise((r) => {
 			r(this);
 		});
 	}
 
 	public async stop(): Promise<boolean> {
+		// No need to do anything here but return true, hasconnect does need this function
 		return new Promise((res) => {
 			res(true);
 		});
@@ -73,6 +79,10 @@ export default class HethersProvider implements IProvider {
 			(func: { name: any; type: string }) =>
 				func.name === functionName && func.type === 'function',
 		);
+		if (!functionAbi)
+			throw new HederaError(
+				'Contract function not found in ABI, are you using the right version?',
+			);
 		const encodedParametersHex = this.web3.eth.abi
 			.encodeFunctionCall(functionAbi, parameters)
 			.slice(2);
@@ -88,6 +98,10 @@ export default class HethersProvider implements IProvider {
 		const functionAbi = abi.find(
 			(func: { name: any }) => func.name === functionName,
 		);
+		if (!functionAbi?.outputs)
+			throw new HederaError(
+				'Contract function not found in ABI, are you using the right version?',
+			);
 		const functionParameters = functionAbi?.outputs;
 		const resultHex = '0x'.concat(
 			Buffer.from(resultAsBytes).toString('hex'),
@@ -103,21 +117,28 @@ export default class HethersProvider implements IProvider {
 	}
 
 	public getPublicKey(privateKey?: string | undefined): string {
+		if (!privateKey) throw new HederaError('No privateKey provided');
 		const publicKey =
 			PrivateKey.fromString(privateKey).publicKey.toStringRaw();
-
 		return publicKey;
 	}
 
 	public async callContract(
 		name: string,
-		params: IContractParams,
+		params: ICallContractRequest | ICallContractWithAccountRequest,
 	): Promise<Uint8Array> {
 		const { contractId, parameters, gas, abi } = params;
-		const client = this.getClient(
-			params.account?.accountId,
-			params.account?.privateKey,
-		);
+		let client;
+
+		if ('account' in params) {
+			client = this.getClient(
+				params.account.accountId,
+				params.account.privateKey,
+			);
+		} else {
+			client = this.getClient();
+		}
+
 		const functionCallParameters = this.encodeFunctionCall(
 			name,
 			parameters,
@@ -144,7 +165,7 @@ export default class HethersProvider implements IProvider {
 		accountId: string,
 		privateKey: string,
 		stableCoin: StableCoin,
-	): Promise<ContractId> {
+	): Promise<StableCoin> {
 		const client = this.getClient(accountId, privateKey);
 		const account = {
 			accountId,
@@ -160,23 +181,28 @@ export default class HethersProvider implements IProvider {
 			`Deploying ${HederaERC1967Proxy__factory.name} contract... please wait.`,
 			logOpts,
 		);
-		const proxyContract = await this.deployContract(
-			HederaERC1967Proxy__factory,
-			10,
-			privateKey,
-			client,
-			new ContractFunctionParameters()
-				.addAddress(tokenContract?.toSolidityAddress())
-				.addBytes(new Uint8Array([])),
-		);
-		const erc20: IContractParams = {
+		let proxyContract: ContractId = stableCoin.memo ?? '';
+
+		if (!proxyContract) {
+			proxyContract = await this.deployContract(
+				HederaERC1967Proxy__factory,
+				10,
+				privateKey,
+				client,
+				new ContractFunctionParameters()
+					.addAddress(tokenContract?.toSolidityAddress())
+					.addBytes(new Uint8Array([])),
+			);
+			stableCoin.memo = String(proxyContract);
+		}
+
+		await this.callContract('initialize', {
 			contractId: proxyContract,
 			parameters: [],
 			gas: 250_000,
 			abi: HederaERC20__factory.abi,
-			account
-		};
-		await this.callContract('initialize', erc20);
+			account,
+		});
 		log(
 			`Deploying ${HTSTokenOwner__factory.name} contract... please wait.`,
 			logOpts,
@@ -195,14 +221,15 @@ export default class HethersProvider implements IProvider {
 			stableCoin.decimals,
 			stableCoin.initialSupply,
 			stableCoin.maxSupply,
-			stableCoin.memo ?? String(proxyContract),
+			String(proxyContract),
 			stableCoin.freezeDefault,
 			privateKey,
-			PrivateKey.fromString(privateKey).publicKey.toStringRaw(),
+			this.getPublicKey(privateKey),
 			client,
 		);
+		stableCoin.id = TokenId.fromString(hederaToken.toString());
 		log('Setting up contract... please wait.', logOpts);
-		const setTokenAddress: IContractParams = {
+		await this.callContract('setTokenAddress', {
 			contractId: proxyContract,
 			parameters: [
 				tokenOwnerContract.toSolidityAddress(),
@@ -211,29 +238,26 @@ export default class HethersProvider implements IProvider {
 			gas: 80_000,
 			abi: HederaERC20__factory.abi,
 			account,
-		};
-		await this.callContract('setTokenAddress', setTokenAddress);
-		const setERC20Address: IContractParams = {
+		});
+		await this.callContract('setERC20Address', {
 			contractId: tokenOwnerContract,
 			parameters: [proxyContract.toSolidityAddress()],
 			gas: 60_000,
 			abi: HTSTokenOwner__factory.abi,
 			account,
-		};
-		await this.callContract('setERC20Address', setERC20Address);
+		});
 		log(
-			'Associate administrator account to token... please wait.',
+			'Associating administrator account to token... please wait.',
 			logOpts,
 		);
-		const associateToken: IContractParams = {
+		await this.callContract('associateToken', {
 			contractId: proxyContract,
 			parameters: [AccountId.fromString(accountId).toSolidityAddress()],
 			gas: 1_300_000,
 			abi: HederaERC20__factory.abi,
 			account,
-		};
-		await this.callContract('associateToken', associateToken);
-		return proxyContract;
+		});
+		return stableCoin;
 	}
 
 	private async deployContract(
@@ -247,7 +271,7 @@ export default class HethersProvider implements IProvider {
 			const bytecodeFileId = await this.fileCreate(
 				factory.bytecode,
 				chunks,
-				PrivateKey.fromStringED25519(privateKey),
+				PrivateKey.fromString(privateKey),
 				client,
 			);
 
@@ -255,13 +279,13 @@ export default class HethersProvider implements IProvider {
 				.setGas(181_000)
 				.setBytecodeFileId(bytecodeFileId)
 				.setMaxTransactionFee(new Hbar(30))
-				.setAdminKey(PrivateKey.fromStringED25519(privateKey));
+				.setAdminKey(PrivateKey.fromString(privateKey));
 			if (params) {
 				transaction.setConstructorParameters(params);
 			}
 			transaction.freezeWith(client);
 			const contractCreateSign = await transaction.sign(
-				PrivateKey.fromStringED25519(privateKey),
+				PrivateKey.fromString(privateKey),
 			);
 			const txResponse = await contractCreateSign.execute(client);
 			const receipt = await txResponse.getReceipt(client);
@@ -318,7 +342,7 @@ export default class HethersProvider implements IProvider {
 	}
 
 	private async createToken(
-		contractId: any,
+		contractId: ContractId,
 		name: string,
 		symbol: string,
 		decimals: number,
@@ -348,10 +372,10 @@ export default class HethersProvider implements IProvider {
 			transaction.setMaxSupply(Long.fromString(maxSupply.toString()));
 			transaction.setSupplyType(TokenSupplyType.Finite);
 		}
-
+		console.log(transaction);
 		transaction.freezeWith(clientSdk);
 		const transactionSign = await transaction.sign(
-			PrivateKey.fromStringED25519(privateKey),
+			PrivateKey.fromString(privateKey),
 		);
 		const txResponse = await transactionSign.execute(clientSdk);
 		const receipt = await txResponse.getReceipt(clientSdk);
@@ -360,7 +384,7 @@ export default class HethersProvider implements IProvider {
 				`An error ocurred creating the stable coin ${name}`,
 			);
 		}
-		const tokenId = receipt.tokenId;
+		const tokenId: TokenId = receipt.tokenId;
 		log(
 			`Token ${name} created tokenId ${tokenId} - tokenAddress ${tokenId?.toSolidityAddress()}`,
 			logOpts,

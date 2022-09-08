@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { IContractParams } from '../../../port/out/hedera/types.js';
+import { ICallContractRequest } from '../../../port/out/hedera/types.js';
 import NetworkAdapter from '../../../port/out/network/NetworkAdapter.js';
 import Service from '../Service';
 
@@ -22,7 +22,7 @@ export default class ContractsService extends Service {
 	 */
 	public async callContract(
 		name: string,
-		params: IContractParams,
+		params: ICallContractRequest,
 	): Promise<Uint8Array> {
 		return this.networkAdapter.provider.callContract(name, params);
 	}

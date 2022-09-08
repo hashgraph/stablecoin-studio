@@ -4,7 +4,7 @@ import { ContractId } from '@hashgraph/sdk';
 import { HederaNetwork } from '../../../core/enum.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import { AppMetadata } from './hashconnect/types/types.js';
-import { IContractParams } from './types.js';
+import { ICallContractRequest } from './types.js';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface Contract extends hethers.Contract {}
@@ -24,7 +24,7 @@ export interface IProvider {
 	stop(): Promise<boolean>;
 	callContract(
 		name: string,
-		parameters: IContractParams,
+		parameters: ICallContractRequest,
 	): Promise<Uint8Array>;
 	encodeFunctionCall(
 		functionName: string,
@@ -41,5 +41,5 @@ export interface IProvider {
 		accountId: string,
 		privateKey: string,
 		stableCoin: StableCoin,
-	): Promise<ContractId>;
+	): Promise<StableCoin>;
 }

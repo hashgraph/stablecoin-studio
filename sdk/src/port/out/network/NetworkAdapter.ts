@@ -2,7 +2,7 @@ import { HederaNetwork } from '../../../core/enum.js';
 import HashPackProvider from '../hedera/hashconnect/HashPackProvider.js';
 import HethersProvider from '../hedera/hethers/HethersProvider.js';
 import { IProvider, IniConfigOptions } from '../hedera/Provider.js';
-import { AppMetadata, NetworkMode } from '../../../sdk.js';
+import { AppMetadata, NetworkMode } from '../../in/sdk/sdk.js';
 
 type NetworkClientOptions = HederaClientOptions;
 
@@ -12,7 +12,7 @@ type HederaClientOptions = {
 
 export default class NetworkAdapter {
 	private _mode: NetworkMode;
-	private _network: HederaNetwork;
+	public network: HederaNetwork;
 	private _options: NetworkClientOptions;
 
 	private _provider: IProvider;
@@ -29,7 +29,7 @@ export default class NetworkAdapter {
 		options: NetworkClientOptions,
 	) {
 		this._mode = mode;
-		this._network = network;
+		this.network = network;
 		this._options = options;
 	}
 
@@ -39,11 +39,11 @@ export default class NetworkAdapter {
 	public async init(): Promise<NetworkAdapter> {
 		switch (this._mode) {
 			case NetworkMode.EOA:
-				this.provider = await this.getHethersProvider(this._network);
+				this.provider = await this.getHethersProvider(this.network);
 				return this;
 			case NetworkMode.HASHPACK:
 				this.provider = await this.getHashpackProvider(
-					this._network,
+					this.network,
 					this._options,
 				);
 				return this;

@@ -1,4 +1,4 @@
-import IStableCoinDetail from '../../../domain/context/stablecoin/IStableCoinDetail.js';
+import IStableCoinDetail from '../../../app/service/stablecoin/model/stablecoindetail/IStableCoinDetail.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import IStableCoinList from '../../in/sdk/response/IStableCoinList.js';
 
