@@ -1,4 +1,3 @@
-
 export interface ICallContractRequest {
 	contractId: string;
 	parameters: any[];

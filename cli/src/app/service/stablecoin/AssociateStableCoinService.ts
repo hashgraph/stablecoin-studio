@@ -15,7 +15,7 @@ export default class AssociateStableCoinsService extends Service {
    * List Stable Coins can be managed
    */
   public async associateStableCoin(
-    treasuryId: string,
+    proxyContractId: string,
     privateKey: string,
     accountId: string,
   ): Promise<void> {
@@ -26,7 +26,7 @@ export default class AssociateStableCoinsService extends Service {
 
     await utilsService.showSpinner(
       sdk
-        .associateToken({ treasuryId, privateKey, accountId })
+        .associateToken({ proxyContractId, privateKey, accountId })
         .then((response) => (respDetail = response)),
       {
         text: language.getText('state.loading'),

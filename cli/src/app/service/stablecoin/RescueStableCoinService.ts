@@ -18,12 +18,13 @@ export default class RescueStableCoinsService extends Service {
     proxyContractId: string,
     privateKey: string,
     accountId: string,
+    tokenId: string,
     amount?: number,
   ): Promise<void> {
     const sdk: SDK = utilsService.getSDK();
 
     await utilsService.showSpinner(
-      sdk.rescue({ proxyContractId, privateKey, accountId, amount }),
+      sdk.rescue({ proxyContractId, privateKey, accountId, tokenId, amount }),
       {
         text: language.getText('state.loading'),
         successText: language.getText('state.loadCompleted') + '\n',

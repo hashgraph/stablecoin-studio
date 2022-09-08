@@ -71,6 +71,10 @@ export default class CommanderService extends Service {
         '-s, --symbol <symbol>',
         language.getText('commander.token.options.symbol'),
       )
+      .requiredOption(
+        '-aracc, --autorenewAccountId <symbol>',
+        language.getText('commander.token.options.autorenewAccountId'),
+      )
       .option(
         '-d, --decimals [decimals]',
         language.getText('commander.token.options.decimals'),
@@ -90,6 +94,7 @@ export default class CommanderService extends Service {
             name: options.name,
             symbol: options.symbol,
             decimals: options.decimals,
+            autoRenewAccountId: options.autoRenewAccountId,
           },
           false,
         );
@@ -131,9 +136,18 @@ export default class CommanderService extends Service {
 
     token
       .command('cashIn')
-      .option('-pk, --privateKey [privateKey]', language.getText('commander.token.options.privateKey'))
-      .requiredOption('-addr, --address <address>', language.getText('commander.token.options.address'))
-      .requiredOption('-a, --amount <amount>', language.getText('commander.token.options.amount'))
+      .option(
+        '-pk, --privateKey [privateKey]',
+        language.getText('commander.token.options.privateKey'),
+      )
+      .requiredOption(
+        '-addr, --address <address>',
+        language.getText('commander.token.options.address'),
+      )
+      .requiredOption(
+        '-a, --amount <amount>',
+        language.getText('commander.token.options.amount'),
+      )
       .requiredOption(
         '-acc, --accountId <accountId>',
         language.getText('commander.token.options.accountId'),
@@ -147,7 +161,9 @@ export default class CommanderService extends Service {
       .command('admin')
       .description(language.getText('commander.admin.mainDescription'));
 
-    const adminToken = admin.command('token').description(language.getText('commander.admin.token.description'));
+    const adminToken = admin
+      .command('token')
+      .description(language.getText('commander.admin.token.description'));
 
     admin
       .command('accounts')
@@ -165,7 +181,9 @@ export default class CommanderService extends Service {
 
     adminToken
       .command('accounts')
-      .description(language.getText('commander.admin.token.accountsDescription'))
+      .description(
+        language.getText('commander.admin.token.accountsDescription'),
+      )
       .action(() => {
         console.log(`Account List:`);
       });

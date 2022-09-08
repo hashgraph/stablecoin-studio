@@ -8,17 +8,18 @@ import Service from '../Service.js';
 export const createdStableCoin = {
   name: '',
   symbol: '',
+  autoRenewAccountId: '',
   decimals: '',
   initialSupply: undefined,
   supplyType: true,
   totalSupply: '',
-  expirationTime: '',
-  memo: '',
-  freeze: false,
-  admin: '',
-  KYC: '',
-  wipe: '',
-  feeSchedule: '',
+  supplyKey: '',
+  freezeKey: '',
+  adminKey: '',
+  KYCKey: '',
+  wipeKey: '',
+  pauseKey: '',
+  treasuryAccountAddress: '',
 };
 
 /**
@@ -37,7 +38,7 @@ export default class CreateStableCoinService extends Service {
   public async createStableCoin(
     stableCoin: StableCoin,
     isWizard = false,
-  ): Promise<void> {
+  ): Promise<StableCoin> {
     if (isWizard) {
       stableCoin = await this.wizardCreateStableCoin();
     }
@@ -80,6 +81,7 @@ export default class CreateStableCoinService extends Service {
         }),
       },
     );
+    return stableCoin;
   }
 
   /**
@@ -88,6 +90,8 @@ export default class CreateStableCoinService extends Service {
    */
   public async wizardCreateStableCoin(): Promise<StableCoin> {
     utilsService.showMessage(language.getText('general.newLine'));
+    // Call to create stable coin sdk function
+    const sdk: SDK = utilsService.getSDK();
 
     const name = await utilsService.defaultSingleAsk(
       language.getText('stablecoin.askName'),
@@ -100,13 +104,27 @@ export default class CreateStableCoinService extends Service {
       createdStableCoin.symbol || 'HDC',
     );
     createdStableCoin.symbol = symbol;
+    let autoRenewAccountId = '';
+    try {
+      autoRenewAccountId = await utilsService.defaultSingleAsk(
+        language.getText('stablecoin.askAutoRenewAccountId'),
+        createdStableCoin.autoRenewAccountId || '0.0.0',
+      );
+      sdk.checkIsAddress(autoRenewAccountId);
+    } catch (error) {
+      console.log(language.getText('account.wrong'));
+      autoRenewAccountId = await utilsService.defaultSingleAsk(
+        language.getText('stablecoin.askAutoRenewAccountId'),
+        createdStableCoin.autoRenewAccountId || '0.0.0',
+      );
+    }
+    createdStableCoin.autoRenewAccountId = autoRenewAccountId;
 
     const optionalProps = await this.askForOptionalProps();
-    let decimals = '6';
+    let decimals = '';
     let initialSupply = '';
     let supplyType = false;
     let totalSupply = undefined;
-    let freeze = false;
 
     if (optionalProps) {
       decimals = await this.askForDecimals();
@@ -127,9 +145,6 @@ export default class CreateStableCoinService extends Service {
         totalSupply = await this.askForTotalSupply();
         createdStableCoin.totalSupply = totalSupply;
       }
-
-      freeze = await this.askForFreeze();
-      createdStableCoin.freeze = freeze;
     }
 
     const managedBySC = await this.askForManagedFeatures();
@@ -137,39 +152,58 @@ export default class CreateStableCoinService extends Service {
       return {
         name,
         symbol,
+        autoRenewAccountId,
         decimals: parseInt(decimals),
         initialSupply: initialSupply === '' ? undefined : BigInt(initialSupply),
-        supplyType: !supplyType && !totalSupply ? 'INFINITE' : 'FINITE',
+        supplyType: supplyType ? 'INFINITE' : 'FINITE',
         maxSupply: totalSupply ? BigInt(totalSupply) : totalSupply,
-        freezeDefault: freeze,
       };
     }
 
-    const {
-      admin,
-      supply,
-      KYC,
-      freeze: freezeManaged,
-      wipe,
-    } = await this.configureManagedFeatures();
+    const { adminKey, supplyKey, KYCKey, freezeKey, wipeKey, pauseKey } =
+      await this.configureManagedFeatures();
 
-    createdStableCoin.admin = admin;
-    createdStableCoin.totalSupply = supply;
-    createdStableCoin.KYC = KYC;
-    createdStableCoin.freeze = freeze;
-    createdStableCoin.wipe = wipe;
+    createdStableCoin.adminKey = adminKey;
+    createdStableCoin.supplyKey = supplyKey;
+    createdStableCoin.KYCKey = KYCKey;
+    createdStableCoin.freezeKey = freezeKey;
+    createdStableCoin.wipeKey = wipeKey;
+    createdStableCoin.pauseKey = pauseKey;
+
+    let treasuryAccountAddress;
+
+    if (supplyKey !== language.getArray('wizard.featureOptions')[0]) {
+      try {
+        await utilsService.defaultSingleAsk(
+          language.getText('stablecoin.askTreasuryAccountAddress'),
+          createdStableCoin.treasuryAccountAddress || '0.0.0',
+        );
+        sdk.checkIsAddress(treasuryAccountAddress);
+      } catch (error) {
+        console.log(language.getText('account.wrong'));
+        treasuryAccountAddress = await utilsService.defaultSingleAsk(
+          language.getText('stablecoin.askTreasuryAccountAddress'),
+          createdStableCoin.treasuryAccountAddress || '0.0.0',
+        );
+      }
+      createdStableCoin.treasuryAccountAddress = treasuryAccountAddress;
+    }
 
     return {
       name,
       symbol,
+      autoRenewAccountId,
       decimals: parseInt(decimals),
       initialSupply: initialSupply === '' ? undefined : BigInt(initialSupply),
-      supplyType: !supplyType && !totalSupply ? 'INFINITE' : 'FINITE',
-      maxSupply: supply ? BigInt(supply) : BigInt(totalSupply),
-      freezeDefault: freezeManaged ?? freeze,
-      KYC,
-      wipe,
-      admin,
+      supplyType: supplyType ? 'INFINITE' : 'FINITE',
+      maxSupply: totalSupply ? BigInt(totalSupply) : totalSupply,
+      freezeKey,
+      KYCKey,
+      wipeKey,
+      adminKey,
+      supplyKey,
+      pauseKey,
+      treasuryAccountAddress,
     };
   }
 
@@ -208,13 +242,6 @@ export default class CreateStableCoinService extends Service {
     );
   }
 
-  private async askForFreeze(): Promise<boolean> {
-    return await utilsService.defaultConfirmAsk(
-      language.getText('stablecoin.askFreezeAccount'),
-      createdStableCoin.freeze || false,
-    );
-  }
-
   private async askForManagedFeatures(): Promise<boolean> {
     return await utilsService.defaultConfirmAsk(
       language.getText('stablecoin.askFeaturesManagedBy'),
@@ -223,31 +250,58 @@ export default class CreateStableCoinService extends Service {
   }
 
   private async configureManagedFeatures(): Promise<IManagedFeatures> {
-    const admin = await utilsService.defaultSingleAsk(
-      language.getText('stablecoin.features.admin'),
-      createdStableCoin.admin || '', //TODO Check correct default value
+    const adminKey = await this.checkOtherKey(
+      await utilsService.defaultMultipleAsk(
+        language.getText('stablecoin.features.admin'),
+        language.getArray('wizard.featureOptions'),
+      ),
     );
 
-    const supply = await utilsService.defaultSingleAsk(
-      language.getText('stablecoin.features.supply'),
-      createdStableCoin.totalSupply || '', //TODO Check correct default value
+    const KYCKey = await this.checkOtherKey(
+      await utilsService.defaultMultipleAsk(
+        language.getText('stablecoin.features.KYC'),
+        language.getArray('wizard.featureOptions'),
+      ),
     );
 
-    const KYC = await utilsService.defaultSingleAsk(
-      language.getText('stablecoin.features.KYC'),
-      createdStableCoin.KYC || '', //TODO Check correct default value
+    const freezeKey = await this.checkOtherKey(
+      await utilsService.defaultMultipleAsk(
+        language.getText('stablecoin.features.freeze'),
+        language.getArray('wizard.featureOptions'),
+      ),
     );
 
-    const freeze = await utilsService.defaultConfirmAsk(
-      language.getText('stablecoin.features.freeze'),
-      createdStableCoin.freeze || false, //TODO Check correct default value
+    const wipeKey = await this.checkOtherKey(
+      await utilsService.defaultMultipleAsk(
+        language.getText('stablecoin.features.wipe'),
+        language.getArray('wizard.featureOptions'),
+      ),
     );
 
-    const wipe = await utilsService.defaultSingleAsk(
-      language.getText('stablecoin.features.wipe'),
-      createdStableCoin.wipe || '', //TODO Check correct default value
+    const pauseKey = await this.checkOtherKey(
+      await utilsService.defaultMultipleAsk(
+        language.getText('stablecoin.features.pause'),
+        language.getArray('wizard.featureOptions'),
+      ),
     );
 
-    return { admin, supply, KYC, freeze, wipe };
+    const supplyKey = await this.checkOtherKey(
+      await utilsService.defaultMultipleAsk(
+        language.getText('stablecoin.features.supply'),
+        language.getArray('wizard.featureOptions'),
+      ),
+    );
+
+    return { adminKey, supplyKey, KYCKey, freezeKey, wipeKey, pauseKey };
+  }
+
+  private async checkOtherKey(answer: string): Promise<string> {
+    if (answer === 'Other key') {
+      answer = await utilsService.defaultSingleAsk(
+        language.getText('stablecoin.features.key'),
+        '0.0.0',
+      );
+    }
+    return answer;
   }
 }

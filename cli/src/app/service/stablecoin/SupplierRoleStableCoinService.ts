@@ -50,7 +50,12 @@ export default class SupplierRoleStableCoinsService extends Service {
     const sdk: SDK = utilsService.getSDK();
 
     await utilsService.showSpinner(
-      sdk.revokeSupplierRole({ proxyContractId, address, privateKey, accountId }),
+      sdk.revokeSupplierRole({
+        proxyContractId,
+        address,
+        privateKey,
+        accountId,
+      }),
       {
         text: language.getText('state.loading'),
         successText: language.getText('state.loadCompleted') + '\n',

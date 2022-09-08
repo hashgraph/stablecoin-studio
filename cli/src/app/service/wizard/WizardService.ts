@@ -33,7 +33,17 @@ export default class WizardService extends Service {
       )
     ) {
       case wizardMainOptions[0]:
-        await new CreateStableCoinService().createStableCoin(undefined, true);
+        const stableCoin = await new CreateStableCoinService().createStableCoin(
+          undefined,
+          true,
+        );
+        const operate = await utilsService.defaultConfirmAsk(
+          `Do you want to operate with ${stableCoin.name}`,
+          true,
+        );
+        if (operate) {
+          await new OperationStableCoinService(stableCoin).start();
+        }
         break;
       case wizardMainOptions[1]:
         await new OperationStableCoinService().start();
