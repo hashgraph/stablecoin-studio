@@ -369,4 +369,8 @@ export class SDK {
 		new AccountId(str);
 		return true;
 	}
+
+	public getPublicKey(str?: string): string {
+		return this.networkAdapter.provider.getPublicKey(str);
+	}
 }
