@@ -148,6 +148,19 @@ const _abi = [
         type: "address",
       },
     ],
+    name: "revokeUnlimitedSupplierRole",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "supplier",
+        type: "address",
+      },
+    ],
     name: "supplierAllowance",
     outputs: [
       {

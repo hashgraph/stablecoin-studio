@@ -1,27 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import IContractRepository, {
-	IContractParams,
-} from '../../../port/out/contract/IContractRepository.js';
+import { ICallContractRequest } from '../../../port/out/hedera/types.js';
+import NetworkAdapter from '../../../port/out/network/NetworkAdapter.js';
 import Service from '../Service';
 
 /**
  * Contracts Service
  */
 export default class ContractsService extends Service {
-	private contractRepository: IContractRepository;
+	private networkAdapter: NetworkAdapter;
 
-	constructor(contractRepository: IContractRepository) {
+	constructor(networkAdapter: NetworkAdapter) {
 		super();
-		this.contractRepository = contractRepository;
-	}
-
-	/**
-	 * getClient
-	 * @param network
-	 * @returns
-	 */
-	public getClient(network: 'previewnet' | 'mainnet' | 'testnet'): any {
-		return this.contractRepository.getClient(network);
+		this.networkAdapter = networkAdapter;
 	}
 
 	/**
@@ -32,9 +22,9 @@ export default class ContractsService extends Service {
 	 */
 	public async callContract(
 		name: string,
-		params: IContractParams,
+		params: ICallContractRequest,
 	): Promise<Uint8Array> {
-		return this.contractRepository.callContract(name, params);
+		return this.networkAdapter.provider.callContract(name, params);
 	}
 
 	/**
@@ -46,7 +36,7 @@ export default class ContractsService extends Service {
 		parameters: any[],
 		abi: any,
 	): Uint8Array {
-		return this.contractRepository.encodeFuncionCall(
+		return this.networkAdapter.provider.encodeFunctionCall(
 			functionName,
 			parameters,
 			abi,
@@ -62,7 +52,7 @@ export default class ContractsService extends Service {
 		functionName: any,
 		resultAsBytes: any,
 	): Uint8Array {
-		return this.contractRepository.decodeFunctionResult(
+		return this.networkAdapter.provider.decodeFunctionResult(
 			abi,
 			functionName,
 			resultAsBytes,
@@ -74,6 +64,6 @@ export default class ContractsService extends Service {
 	 * @returns
 	 */
 	public getPublicKey(privateKey: string): string {
-		return this.contractRepository.getPublicKey(privateKey);
+		return this.networkAdapter.provider.getPublicKey(privateKey);
 	}
 }

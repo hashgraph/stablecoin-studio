@@ -2,7 +2,7 @@ import { HederaNetwork } from '../../../core/enum.js';
 import HashPackProvider from '../hedera/hashconnect/HashPackProvider.js';
 import HethersProvider from '../hedera/hethers/HethersProvider.js';
 import { IProvider, IniConfigOptions } from '../hedera/Provider.js';
-import { AppMetadata, NetworkMode } from '../../../sdk.js';
+import { AppMetadata, NetworkMode } from '../../in/sdk/sdk.js';
 
 type NetworkClientOptions = HederaClientOptions;
 
@@ -12,10 +12,16 @@ type HederaClientOptions = {
 
 export default class NetworkAdapter {
 	private _mode: NetworkMode;
-	private _network: HederaNetwork;
+	public network: HederaNetwork;
 	private _options: NetworkClientOptions;
-	
-	public provider: IProvider;
+
+	private _provider: IProvider;
+	public get provider(): IProvider {
+		return this._provider;
+	}
+	public set provider(value: IProvider) {
+		this._provider = value;
+	}
 
 	constructor(
 		mode: NetworkMode,
@@ -23,7 +29,7 @@ export default class NetworkAdapter {
 		options: NetworkClientOptions,
 	) {
 		this._mode = mode;
-		this._network = network;
+		this.network = network;
 		this._options = options;
 	}
 
@@ -33,15 +39,14 @@ export default class NetworkAdapter {
 	public async init(): Promise<NetworkAdapter> {
 		switch (this._mode) {
 			case NetworkMode.EOA:
-				this.provider = await this.getHethersProvider(this._network);
+				this.provider = await this.getHethersProvider(this.network);
 				return this;
 			case NetworkMode.HASHPACK:
-				// this.provider = await this.getHashpackProvider(
-				// 	this.network,
-				// 	this.options,
-				// );
-				// return this;
-				throw new Error('Not supported');
+				this.provider = await this.getHashpackProvider(
+					this.network,
+					this._options,
+				);
+				return this;
 			default:
 				throw new Error('Not supported');
 		}
@@ -51,17 +56,16 @@ export default class NetworkAdapter {
 		return this.provider.stop();
 	}
 
-	// private getHashpackProvider(
-	// 	network: HederaNetwork,
-	// 	options: IniConfigOptions,
-	// ): Promise<HashPackProvider> {
-	// 	return new HashPackProvider().init({ network, options });
-	// }
+	private getHashpackProvider(
+		network: HederaNetwork,
+		options: IniConfigOptions,
+	): Promise<HashPackProvider> {
+		return new HashPackProvider().init({ network, options });
+	}
 
 	private getHethersProvider(
 		network: HederaNetwork,
 	): Promise<HethersProvider> {
 		return new HethersProvider().init({ network });
 	}
-
 }

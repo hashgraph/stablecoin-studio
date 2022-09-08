@@ -122,7 +122,6 @@ abstract contract SupplierAdmin is ISupplierAdmin, AccessControlUpgradeable, Tok
         onlyRole(ADMIN_SUPPLIER_ROLE) 
     {
         supplierAllowances[supplier] = 0;
-        unlimitedSupplierAllowances[supplier] = false;
         _revokeRole(SUPPLIER_ROLE, supplier);
     }
 

@@ -18,6 +18,12 @@ const npmInstall = (dir, name = "module") => {
   console.log("\tDone");
 };
 
+const npmLinkProject = (dir) => {
+  process.stdout.write(`Registering CLI as global command 'accelerator'...`);
+  execSync(`cd ${dir} && npm link`, handleError);
+  console.log("\tDone");
+};
+
 let option = process.argv.slice(2)[0];
 
 if (option) {
@@ -25,6 +31,8 @@ if (option) {
 } else {
   npmInstall(cliDir, "CLI");
   npmInstall(sdkDir, "SDK");
-  npmInstall(webDir, "WEB");
+  // npmInstall(webDir, "WEB");
   npmInstall(conDir, "CONTRACTS");
 }
+
+npmLinkProject(cliDir);

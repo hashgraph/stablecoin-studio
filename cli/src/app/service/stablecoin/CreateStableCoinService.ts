@@ -1,7 +1,7 @@
 import { configurationService, language } from './../../../index.js';
 import { StableCoin } from '../../../domain/stablecoin/StableCoin.js';
 import { utilsService } from '../../../index.js';
-import { SDK } from 'hedera-stable-coin-sdk';
+import { SDK, ICreateStableCoinRequest } from 'hedera-stable-coin-sdk';
 import { IManagedFeatures } from '../../../domain/configuration/interfaces/IManagedFeatures.js';
 import Service from '../Service.js';
 
@@ -46,23 +46,29 @@ export default class CreateStableCoinService extends Service {
     const sdk: SDK = utilsService.getSDK();
 
     configurationService.getConfiguration();
-    const stableCoinCreated = await sdk.createStableCoin({
-      accountId: configurationService.getConfiguration().accounts[0].accountId,
-      privateKey:
-        configurationService.getConfiguration().accounts[0].privateKey,
-      name: stableCoin.name,
-      symbol: stableCoin.symbol,
-      decimals: stableCoin.decimals,
-      initialSupply: stableCoin.initialSupply,
-      maxSupply: stableCoin.maxSupply,
-      freezeDefault: stableCoin.freezeDefault,
-    });
-    console.log(stableCoinCreated);
 
     // Loading
     utilsService.showMessage('\n');
     await utilsService.showSpinner(
-      new Promise((resolve) => setTimeout(resolve, 4000)),
+      new Promise((resolve, reject) => {
+        const req: ICreateStableCoinRequest = {
+          accountId:
+            configurationService.getConfiguration().accounts[0].accountId,
+          privateKey:
+            configurationService.getConfiguration().accounts[0].privateKey,
+          ...stableCoin,
+        };
+        console.debug('Final request:', req);
+        sdk
+          .createStableCoin(req)
+          .then((coin) => {
+            console.log(coin);
+            resolve(coin);
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      }),
       {
         text:
           language.getText('stablecoin.description') + ` ${stableCoin.name}...`,
@@ -99,7 +105,7 @@ export default class CreateStableCoinService extends Service {
     let decimals = '';
     let initialSupply = '';
     let supplyType = false;
-    let totalSupply = '';
+    let totalSupply = undefined;
     let freeze = false;
 
     if (optionalProps) {
@@ -127,9 +133,16 @@ export default class CreateStableCoinService extends Service {
     }
 
     const managedBySC = await this.askForManagedFeatures();
-
-    if (!managedBySC) {
-      return { name, symbol, decimals: parseInt(decimals) };
+    if (managedBySC) {
+      return {
+        name,
+        symbol,
+        decimals: parseInt(decimals),
+        initialSupply: initialSupply === '' ? undefined : BigInt(initialSupply),
+        supplyType: !supplyType && !totalSupply ? 'INFINITE' : 'FINITE',
+        maxSupply: totalSupply ? BigInt(totalSupply) : totalSupply,
+        freezeDefault: freeze,
+      };
     }
 
     const {
@@ -151,7 +164,7 @@ export default class CreateStableCoinService extends Service {
       symbol,
       decimals: parseInt(decimals),
       initialSupply: initialSupply === '' ? undefined : BigInt(initialSupply),
-      supplyType: supplyType ? 'INFINITE' : 'FINITE',
+      supplyType: !supplyType && !totalSupply ? 'INFINITE' : 'FINITE',
       maxSupply: supply ? BigInt(supply) : BigInt(totalSupply),
       freezeDefault: freezeManaged ?? freeze,
       KYC,
@@ -222,7 +235,7 @@ export default class CreateStableCoinService extends Service {
 
     const KYC = await utilsService.defaultSingleAsk(
       language.getText('stablecoin.features.KYC'),
-      createdStableCoin.initialSupply || '', //TODO Check correct default value
+      createdStableCoin.KYC || '', //TODO Check correct default value
     );
 
     const freeze = await utilsService.defaultConfirmAsk(

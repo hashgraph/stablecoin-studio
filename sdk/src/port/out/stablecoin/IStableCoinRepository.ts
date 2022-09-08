@@ -1,5 +1,5 @@
-import IStableCoinDetail from '../../../domain/context/stablecoin/IStableCoinDetail.js';
-import StableCoin from '../../../domain/context/stablecoin/StableCoin.js';
+import IStableCoinDetail from '../../../app/service/stablecoin/model/stablecoindetail/IStableCoinDetail.js';
+import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import IStableCoinList from '../../in/sdk/response/IStableCoinList.js';
 
 export default interface IStableCoinRepository {
@@ -14,6 +14,7 @@ export default interface IStableCoinRepository {
 		treasuryId: string,
 		privateKey: string,
 		accountId: string,
+		targetId: string,
 	): Promise<Uint8Array>;
 	getNameToken(
 		treasuryId: string,
