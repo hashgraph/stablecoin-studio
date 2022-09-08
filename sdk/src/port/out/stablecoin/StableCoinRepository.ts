@@ -5,7 +5,7 @@ import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import IStableCoinRepository from './IStableCoinRepository.js';
 import NetworkAdapter from '../network/NetworkAdapter.js';
 import { AccountId } from '@hashgraph/sdk';
-import { ICallContractRequest } from '../hedera/types.js';
+import { ICallContractWithAccountRequest } from '../hedera/types.js';
 import IStableCoinDetail from '../../../app/service/stablecoin/model/stablecoindetail/IStableCoinDetail.js';
 import ITokenList from '../../../app/service/stablecoin/model/stablecoindetail/ITokenList.js';
 import HederaError from '../hedera/error/HederaError.js';
@@ -104,7 +104,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			AccountId.fromString(targetId || '').toSolidityAddress(),
 		];
 
-		const params: ICallContractRequest = {
+		const params: ICallContractWithAccountRequest = {
 			contractId: treasuryId,
 			parameters,
 			gas: 36000,
@@ -126,7 +126,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		privateKey: string,
 		accountId: string,
 	): Promise<Uint8Array> {
-		const params: ICallContractRequest = {
+		const params: ICallContractWithAccountRequest = {
 			contractId: treasuryId,
 			parameters: [],
 			gas: 36000,
@@ -151,7 +151,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			amount,
 		];
 
-		const params: ICallContractRequest = {
+		const params: ICallContractWithAccountRequest = {
 			contractId: treasuryId,
 			parameters,
 			gas: 400000,
@@ -174,7 +174,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			AccountId.fromString(accountId || '').toSolidityAddress(),
 		];
 
-		const params: ICallContractRequest = {
+		const params: ICallContractWithAccountRequest = {
 			contractId: treasuryId,
 			parameters,
 			gas: 1300000,
@@ -202,7 +202,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			amount,
 		];
 
-		const params: ICallContractRequest = {
+		const params: ICallContractWithAccountRequest = {
 			contractId: treasuryId,
 			parameters,
 			gas: 400000,
@@ -231,7 +231,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			amount,
 		];
 
-		const params: ICallContractRequest = {
+		const params: ICallContractWithAccountRequest = {
 			contractId: treasuryId,
 			parameters: amount ? parametersLimited : parametersUnlimited,
 			gas: 130000,
@@ -258,7 +258,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			AccountId.fromString(address || '').toSolidityAddress(),
 		];
 
-		const params: ICallContractRequest = {
+		const params: ICallContractWithAccountRequest = {
 			contractId: treasuryId,
 			parameters,
 			gas: 60_000,
@@ -285,7 +285,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			AccountId.fromString(address || '').toSolidityAddress(),
 		];
 
-		const params: ICallContractRequest = {
+		const params: ICallContractWithAccountRequest = {
 			contractId: treasuryId,
 			parameters,
 			gas: 60_000,
@@ -312,7 +312,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			AccountId.fromString(address || '').toSolidityAddress(),
 		];
 
-		const params: ICallContractRequest = {
+		const params: ICallContractWithAccountRequest = {
 			contractId: treasuryId,
 			parameters,
 			gas: 130000,
@@ -339,7 +339,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			AccountId.fromString(address || '').toSolidityAddress(),
 		];
 
-		const params: ICallContractRequest = {
+		const params: ICallContractWithAccountRequest = {
 			contractId: treasuryId,
 			parameters,
 			gas: 120000,
@@ -368,7 +368,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			amount,
 		];
 
-		const params: ICallContractRequest = {
+		const params: ICallContractWithAccountRequest = {
 			contractId: treasuryId,
 			parameters,
 			gas: 130000,
@@ -397,7 +397,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			amount,
 		];
 
-		const params: ICallContractRequest = {
+		const params: ICallContractWithAccountRequest = {
 			contractId: treasuryId,
 			parameters,
 			gas: 130000,
@@ -422,7 +422,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	): Promise<Uint8Array> {
 		const parameters = [amount];
 
-		const params: ICallContractRequest = {
+		const params: ICallContractWithAccountRequest = {
 			contractId: treasuryId,
 			parameters,
 			gas: 140000,
@@ -450,7 +450,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			AccountId.fromString(address || '').toSolidityAddress(),
 		];
 
-		const params: ICallContractRequest = {
+		const params: ICallContractWithAccountRequest = {
 			contractId: treasuryId,
 			parameters,
 			gas: 60000,

@@ -1,4 +1,4 @@
 
 
 /* SDK */
-export * from './sdk';
+export * from './port/in/sdk/sdk';
