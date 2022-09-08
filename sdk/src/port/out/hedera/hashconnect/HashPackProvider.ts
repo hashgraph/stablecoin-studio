@@ -65,7 +65,8 @@ export default class HashPackProvider implements IProvider {
 	}
 
 	public async stop(): Promise<boolean> {
-		await this.hc.disconnect(this.initData.topic);
+		const topic = this.initData.topic;
+		await this.hc.disconnect(topic);
 		await this.hc.clearConnectionsAndData();
 		return new Promise((res) => {
 			res(true);
