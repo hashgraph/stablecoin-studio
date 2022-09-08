@@ -29,7 +29,10 @@ import Web3 from 'web3';
 import { StableCoin } from '../../../../domain/context/stablecoin/StableCoin.js';
 import Long from 'long';
 import { log } from '../../../../core/log.js';
-import { IContractParams } from '../types.js';
+import {
+	ICallContractRequest,
+	ICallContractWithAccountRequest,
+} from '../types.js';
 import HederaError from '../error/HederaError.js';
 
 type DefaultHederaProvider = hethers.providers.DefaultHederaProvider;
@@ -122,13 +125,20 @@ export default class HethersProvider implements IProvider {
 
 	public async callContract(
 		name: string,
-		params: IContractParams,
+		params: ICallContractRequest | ICallContractWithAccountRequest,
 	): Promise<Uint8Array> {
 		const { contractId, parameters, gas, abi } = params;
-		const client = this.getClient(
-			params.account?.accountId,
-			params.account?.privateKey,
-		);
+		let client;
+
+		if ('account' in params) {
+			client = this.getClient(
+				params.account.accountId,
+				params.account.privateKey,
+			);
+		} else {
+			client = this.getClient();
+		}
+
 		const functionCallParameters = this.encodeFunctionCall(
 			name,
 			parameters,
@@ -229,26 +239,24 @@ export default class HethersProvider implements IProvider {
 			abi: HederaERC20__factory.abi,
 			account,
 		});
-		const setERC20Address: IContractParams = {
+		await this.callContract('setERC20Address', {
 			contractId: tokenOwnerContract,
 			parameters: [proxyContract.toSolidityAddress()],
 			gas: 60_000,
 			abi: HTSTokenOwner__factory.abi,
 			account,
-		};
-		await this.callContract('setERC20Address', setERC20Address);
+		});
 		log(
 			'Associating administrator account to token... please wait.',
 			logOpts,
 		);
-		const associateToken: IContractParams = {
+		await this.callContract('associateToken', {
 			contractId: proxyContract,
 			parameters: [AccountId.fromString(accountId).toSolidityAddress()],
 			gas: 1_300_000,
 			abi: HederaERC20__factory.abi,
 			account,
-		};
-		await this.callContract('associateToken', associateToken);
+		});
 		return stableCoin;
 	}
 
