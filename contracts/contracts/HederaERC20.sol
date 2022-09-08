@@ -101,7 +101,7 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
     /**
      * @dev Associate a account to the token
      *
-     * @param account The address to associate
+     * @param adr The address to associate
      *
      * @return True number if the account has been successfully associated with the token
      */
@@ -116,7 +116,7 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
     /**
      * @dev Dissociate a account to the token
      *
-     * @param account The address to dissociate
+     * @param adr The address to dissociate
      *
      * @return True number if the account has been successfully dissociated with the token
      */
