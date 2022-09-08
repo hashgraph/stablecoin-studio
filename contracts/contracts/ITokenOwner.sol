@@ -6,22 +6,24 @@ import "./HTSTokenOwner.sol";
 interface ITokenOwner {
     
     /**
-     * @dev Assigns the address contract HTSTokenOwner and the address of the token. Validating that the token address is not already assigned
+     * @dev Assigns the HTSTokenOwner contract address and the token address, validating that the token address was not already assigned
      *
-     * @param _htsTokenOwnerAddress The address contract HTSTokenOwner
-     * @param _tokenAddress The address token created
+     * @param _htsTokenOwnerAddress The  contract address HTSTokenOwner
+     * @param _tokenAddress The token address created
      */
     function setTokenAddress(HTSTokenOwner _htsTokenOwnerAddress, address _tokenAddress) external;
+    
     /**
-     * @dev Returns the address token.
+     * @dev Returns the token address
      * 
-     * @return The address token.
-     */     
+     * @return address The token address
+     */
     function getTokenAddress() external view returns(address);
-      /**
-     * @dev Returns the address HTSTokenOwner.
+
+    /**
+     * @dev Returns the HTSTokenOwner contract address 
      * 
-     * @return The address HTSTokenOwner.
+     * @return address HTSTokenOwner contract address
      */
     function getTokenOwnerAddress() external view returns(address);
 }

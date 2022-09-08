@@ -13,19 +13,19 @@
 ### getImplementation
 
 ```solidity
-function getImplementation() external view returns (address impl)
+function getImplementation() external view returns (address)
 ```
 
 
 
-
+*Returns the implementation behind the proxy*
 
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| impl | address | undefined |
+| _0 | address | address The address of the implementation behind the proxy |
 
 
 

@@ -27,7 +27,7 @@ interface IRescatable   {
     event HbarRescued  (address rescuer, uint256 amount, uint256 oldAmount);
 
     /**
-    * @dev Rescue `value` `tokenId` from contractTokenOwner to rescuer
+    * @dev Rescue `value` tokens from contractTokenOwner to rescuer
     * 
     * @param amount The number of tokens to rescuer
     */

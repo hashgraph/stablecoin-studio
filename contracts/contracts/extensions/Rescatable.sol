@@ -12,9 +12,9 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 abstract contract Rescatable is IRescatable ,AccessControlUpgradeable, TokenOwner, Roles {
     
     /**
-    * @dev Rescue `value` `tokenId` from contractTokenOwner to rescuer.
+    * @dev Rescue `value` `tokenId` from contractTokenOwner to rescuer
     * 
-    * Must be protected with isRescuer().
+    * Must be protected with isRescuer()
     *
     * @param amount The number of tokens to rescuer
     */
@@ -32,9 +32,9 @@ abstract contract Rescatable is IRescatable ,AccessControlUpgradeable, TokenOwne
     }
     
     /**
-    * @dev Rescue `value` hbar from contractTokenOwner to rescuer.
+    * @dev Rescue `value` hbar from contractTokenOwner to rescuer
     *
-    * Must be protected with isRescuer().
+    * Must be protected with isRescuer()
     *
     * @param amount The amount of hbar to rescuer
     */

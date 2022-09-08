@@ -103,14 +103,14 @@ function controlAllowanceAmount(address supplier, uint256 amount) external nonpa
 
 
 
-*Validate that if the address account `supplier` isn&#39;t unlimited supplier&#39;s allowance,  and the amount `amount`  not exceed the supplier allowance, subtract the amount from supplier&#39;s allowance.*
+*Validate that if the address account `supplier` isn&#39;t unlimited supplier&#39;s allowance,  and the `amount` not exceed the supplier allowance, subtracting the amount from supplier&#39;s allowance*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
 | supplier | address | The address of the supplier |
-| amount | uint256 | The amount to add to the supplier&#39;s current minting allowance |
+| amount | uint256 | The amount to check whether exceeds current supplier allowance |
 
 ### decreaseSupplierAllowance
 
@@ -159,14 +159,14 @@ function getTokenAddress() external view returns (address)
 
 
 
-*Returns the address token. *
+*Returns the token address *
 
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | address | The address token. |
+| _0 | address | address The token address |
 
 ### getTokenOwnerAddress
 
@@ -176,14 +176,14 @@ function getTokenOwnerAddress() external view returns (address)
 
 
 
-*Returns the address HTSTokenOwner. *
+*Returns the HTSTokenOwner contract address  *
 
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | address | The address HTSTokenOwner. |
+| _0 | address | address HTSTokenOwner contract address |
 
 ### grantRole
 
@@ -371,14 +371,14 @@ function setTokenAddress(contract HTSTokenOwner _htsTokenOwnerAddress, address _
 
 
 
-*Assigns the address contract HTSTokenOwner and the address of the token. Validating that the token address is not already assigned*
+*Assigns the HTSTokenOwner contract address and the token address, validating that the token address was not already assigned*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| _htsTokenOwnerAddress | contract HTSTokenOwner | The address contract HTSTokenOwner |
-| _tokenAddress | address | The address token created |
+| _htsTokenOwnerAddress | contract HTSTokenOwner | The  contract address HTSTokenOwner |
+| _tokenAddress | address | The token address created |
 
 ### supplierAllowance
 

@@ -30,9 +30,9 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
     }
 
     /**
-     * @dev Returns the name of the token.
+     * @dev Returns the name of the token
      * 
-     * @return The the name of the token.
+     * @return string The the name of the token
      */
     function name() 
         external 
@@ -43,9 +43,9 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
     }
 
     /**
-     * @dev Returns the symbol of the token.
+     * @dev Returns the symbol of the token
      * 
-     * @return The the symbol of the token.
+     * @return string The the symbol of the token
      */
     function symbol() 
         external 
@@ -56,9 +56,9 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
     }
 
     /**
-     * @dev Returns the number of decimal precision for the token.
+     * @dev Returns the number of decimals of the token
      * 
-     * @return The number of decimal precision.
+     * @return uint8 The number of decimals of the token
      */
     function decimals() 
         public 
@@ -69,9 +69,9 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
     }
 
     /**
-     * @dev Returns the number total of tokens that are in existence.
+     * @dev Returns the total number of tokens that exits
      * 
-     * @return The number total of tokens that are in existence.
+     * @return uint256 The total number of tokens that exists
      */
     function totalSupply() 
         external 
@@ -83,11 +83,11 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
     }
 
     /**
-     * @dev Returns the number tokens that an account has.
+     * @dev Returns the number tokens that an account has
      *
-     * @param account The address to be consulted
+     * @param account The address of the account to be consulted
      *
-     * @return The number number tokens that an account has.
+     * @return uint256 The number number tokens that an account has
      */
     function balanceOf(address account) 
         public 
@@ -99,11 +99,11 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
     }
 
     /**
-     * @dev Associate a account to the token
+     * @dev Associates a account to the token
      *
-     * @param adr The address to associate
+     * @param adr The address of the account to associate
      *
-     * @return True number if the account has been successfully associated with the token
+     * @return bool True if the account has been successfully associated with the token
      */
     function associateToken(address adr) 
         public 
@@ -114,11 +114,11 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
     }
 
     /**
-     * @dev Dissociate a account to the token
+     * @dev Dissociates an account from the token
      *
-     * @param adr The address to dissociate
+     * @param adr The address of the account to dissociate
      *
-     * @return True number if the account has been successfully dissociated with the token
+     * @return bool True if the account has been successfully dissociated from the token
      */
     function dissociateToken(address adr) 
         public 
@@ -127,7 +127,14 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
         int256 responseCode = HederaTokenService.dissociateToken(adr, tokenAddress);
         return _checkResponse(responseCode);        
     }
-       
+
+    /**
+     * @dev Transfers an amount of tokens from and account to another account
+     *
+     * @param from The address the tokens are transferred from
+     * @param to The address the tokens are transferred to
+     * @return bool True if tokens were successfully transferred 
+     */
     function _transfer(address from, address to, uint256 amount) 
         internal 
         override
@@ -194,6 +201,9 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
     
     /**
     * @dev Transforms the response from a HederaResponseCodes to a boolean
+    *
+    * @param responseCode The Hedera response code to transform
+    * @return bool True if successful
     */
     function _checkResponse(int256 responseCode) 
         internal 

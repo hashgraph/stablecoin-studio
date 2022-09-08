@@ -10,29 +10,6 @@
 
 ## Methods
 
-### burnToken
-
-```solidity
-function burnToken(address tokenAddress, uint256 amount) external nonpayable returns (bool)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| tokenAddress | address | undefined |
-| amount | uint256 | undefined |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | bool | undefined |
-
 ### erc20address
 
 ```solidity
@@ -152,14 +129,14 @@ function mintToken(address tokenAddress, uint256 amount) external nonpayable ret
 
 
 
-
+*Creates an `amount` of tokens and transfers them to an `account`, increasing the total supply*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| tokenAddress | address | undefined |
-| amount | uint256 | undefined |
+| tokenAddress | address | The address of the token we want to mint |
+| amount | uint256 | The number of tokens to be minted |
 
 #### Returns
 
@@ -220,35 +197,13 @@ function setERC20Address(address _erc20address) external nonpayable
 
 
 
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| _erc20address | address | undefined |
-
-### toString
-
-```solidity
-function toString(bytes data) external pure returns (string)
-```
-
-
-
-
+*Sets the HederaERC20 contract address*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| data | bytes | undefined |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | string | undefined |
+| _erc20address | address | The address of the HederaERC20 contract |
 
 ### tranferContract
 
@@ -258,21 +213,21 @@ function tranferContract(address tokenAddress, address to, uint256 amount) exter
 
 
 
-
+*Transfers an amount of token from the token owner contract to an account    *
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| tokenAddress | address | undefined |
-| to | address | undefined |
-| amount | uint256 | undefined |
+| tokenAddress | address | The address of the token we want to transfer |
+| to | address | The address of the account the tokens will be transferred |
+| amount | uint256 | The number of tokens to transfer |
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | bool | undefined |
+| _0 | bool | boolean True if successful        |
 
 ### transfer
 
@@ -282,22 +237,22 @@ function transfer(address tokenAddress, address from, address to, uint256 amount
 
 
 
-
+*Transfer an amount of tokens from an account to another account    *
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| tokenAddress | address | undefined |
-| from | address | undefined |
+| tokenAddress | address | The address of the token we want to transfer |
+| from | address | The address of the account the tokens will be transferred to |
 | to | address | undefined |
-| amount | uint256 | undefined |
+| amount | uint256 | The number of tokens to transfer |
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | bool | undefined |
+| _0 | bool | boolean True if successful        |
 
 ### unpauseToken
 
@@ -375,21 +330,21 @@ function wipeToken(address tokenAddress, address account, uint32 amount) externa
 
 
 
-
+*Wipes an amount of tokens from an account    *
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| tokenAddress | address | undefined |
-| account | address | undefined |
-| amount | uint32 | undefined |
+| tokenAddress | address | The address of the token we want to wipe |
+| account | address | The address of the where tokens will be wiped |
+| amount | uint32 | The number of tokens to wipe |
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | bool | undefined |
+| _0 | bool | boolean True if successful        |
 
 
 

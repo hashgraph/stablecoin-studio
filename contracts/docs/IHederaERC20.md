@@ -18,19 +18,19 @@ function balanceOf(address account) external view returns (uint256)
 
 
 
-*Returns the number tokens that an account has.*
+*Returns the number tokens that an account has*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| account | address | The address to be consulted |
+| account | address | The address of the account to be consulted |
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | uint256 | The number number tokens that an account has. |
+| _0 | uint256 | uint256 The number number tokens that an account has |
 
 ### decimals
 
@@ -40,14 +40,14 @@ function decimals() external view returns (uint8)
 
 
 
-*Returns the number of decimal precision for the token. *
+*Returns the number of decimals of the token *
 
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | uint8 | The number of decimal precision. |
+| _0 | uint8 | uint8 The number of decimals of the token |
 
 ### name
 
@@ -57,14 +57,14 @@ function name() external view returns (string)
 
 
 
-*Returns the name of the token. *
+*Returns the name of the token *
 
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | string | The the name of the token. |
+| _0 | string | The the name of the token |
 
 ### symbol
 
@@ -74,14 +74,14 @@ function symbol() external view returns (string)
 
 
 
-*Returns the symbol of the token. *
+*Returns the symbol of the token*
 
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | string | The the symbol of the token. |
+| _0 | string | The the symbol of the token |
 
 ### totalSupply
 
@@ -91,14 +91,14 @@ function totalSupply() external view returns (uint256)
 
 
 
-*Returns the number total of tokens in existence. *
+*Returns the total number of tokens that exits *
 
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | uint256 | The number total of tokens in existence. |
+| _0 | uint256 | uint256 The total number of tokens that exists |
 
 
 

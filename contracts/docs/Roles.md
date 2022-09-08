@@ -18,7 +18,7 @@ function ADMIN_SUPPLIER_ROLE() external view returns (bytes32)
 
 
 
-*Role that allows managing supplier functionality  keccak_256(&quot;ADMIN_SUPPLIER_ROLE&quot;)*
+*Role that allows to manage supplier functionality  keccak_256(&quot;ADMIN_SUPPLIER_ROLE&quot;)*
 
 
 #### Returns
@@ -35,7 +35,7 @@ function RESCUE_ROLE() external view returns (bytes32)
 
 
 
-*Role to protect rescue token and rescue hbar  keccak256(&quot;RESCUE_ROLE&quot;);*
+*Role that allows to rescue both tokens and hbar  keccak256(&quot;RESCUE_ROLE&quot;);*
 
 
 #### Returns
@@ -52,7 +52,7 @@ function SUPPLIER_ROLE() external view returns (bytes32)
 
 
 
-*Role that allows mint token  keccak_256(&quot;SUPPLIER_ROLE&quot;)*
+*Role that allows to mint token  keccak_256(&quot;SUPPLIER_ROLE&quot;)*
 
 
 #### Returns
@@ -69,7 +69,7 @@ function WIPE_ROLE() external view returns (bytes32)
 
 
 
-*Role that allows wipe token  keccak_256(&quot;WIPE_ROLE&quot;)*
+*Role that allows to wipe token  keccak_256(&quot;WIPE_ROLE&quot;)*
 
 
 #### Returns

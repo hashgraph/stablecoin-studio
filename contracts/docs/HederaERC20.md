@@ -149,19 +149,19 @@ function associateToken(address adr) external nonpayable returns (bool)
 
 
 
-*Associate a account to the token*
+*Associates a account to the token*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| adr | address | The address to associate |
+| adr | address | The address of the account to associate |
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | bool | True number if the account has been successfully associated with the token |
+| _0 | bool | bool True if the account has been successfully associated with the token |
 
 ### balanceOf
 
@@ -171,19 +171,19 @@ function balanceOf(address account) external view returns (uint256)
 
 
 
-*Returns the number tokens that an account has.*
+*Returns the number tokens that an account has*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| account | address | The address to be consulted |
+| account | address | The address of the account to be consulted |
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | uint256 | The number number tokens that an account has. |
+| _0 | uint256 | uint256 The number number tokens that an account has |
 
 ### burn
 
@@ -215,14 +215,14 @@ function controlAllowanceAmount(address supplier, uint256 amount) external nonpa
 
 
 
-*Validate that if the address account `supplier` isn&#39;t unlimited supplier&#39;s allowance,  and the amount `amount`  not exceed the supplier allowance, subtract the amount from supplier&#39;s allowance.*
+*Validate that if the address account `supplier` isn&#39;t unlimited supplier&#39;s allowance,  and the `amount` not exceed the supplier allowance, subtracting the amount from supplier&#39;s allowance*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
 | supplier | address | The address of the supplier |
-| amount | uint256 | The amount to add to the supplier&#39;s current minting allowance |
+| amount | uint256 | The amount to check whether exceeds current supplier allowance |
 
 ### decimals
 
@@ -232,14 +232,14 @@ function decimals() external view returns (uint8)
 
 
 
-*Returns the number of decimal precision for the token. *
+*Returns the number of decimals of the token *
 
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | uint8 | The number of decimal precision. |
+| _0 | uint8 | uint8 The number of decimals of the token |
 
 ### decreaseSupplierAllowance
 
@@ -266,19 +266,19 @@ function dissociateToken(address adr) external nonpayable returns (bool)
 
 
 
-*Dissociate a account to the token*
+*Dissociates an account from the token*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| adr | address | The address to dissociate |
+| adr | address | The address of the account to dissociate |
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | bool | True number if the account has been successfully dissociated with the token |
+| _0 | bool | bool True if the account has been successfully dissociated from the token |
 
 ### getRoleAdmin
 
@@ -310,14 +310,14 @@ function getTokenAddress() external view returns (address)
 
 
 
-*Returns the address token. *
+*Returns the token address *
 
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | address | The address token. |
+| _0 | address | address The token address |
 
 ### getTokenExpiryInfo
 
@@ -374,14 +374,14 @@ function getTokenOwnerAddress() external view returns (address)
 
 
 
-*Returns the address HTSTokenOwner. *
+*Returns the HTSTokenOwner contract address  *
 
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | address | The address HTSTokenOwner. |
+| _0 | address | address HTSTokenOwner contract address |
 
 ### grantRole
 
@@ -561,7 +561,7 @@ function mint(address account, uint256 amount) external nonpayable returns (bool
 
 
 
-*Creates an `amount` of tokens and assigns them to an `account`, increasing the total supply. Only the SUPPLIER_ROLE can execute. The `amount` must be less than or equal to the supplier&#39;s allowance. Minting reduces supplier&#39;s allowance.*
+*Creates an `amount` of tokens and transfers them to an `account`, increasing the total supply*
 
 #### Parameters
 
@@ -584,14 +584,14 @@ function name() external view returns (string)
 
 
 
-*Returns the name of the token. *
+*Returns the name of the token *
 
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | string | The the name of the token. |
+| _0 | string | string The the name of the token |
 
 ### pauseToken
 
@@ -640,7 +640,7 @@ function rescueHbar(uint256 amount) external nonpayable
 
 
 
-*Rescue `value` hbar from contractTokenOwner to rescuer. Must be protected with isRescuer().*
+*Rescue `value` hbar from contractTokenOwner to rescuer Must be protected with isRescuer()*
 
 #### Parameters
 
@@ -656,7 +656,7 @@ function rescueToken(uint256 amount) external nonpayable
 
 
 
-*Rescue `value` `tokenId` from contractTokenOwner to rescuer.  Must be protected with isRescuer().*
+*Rescue `value` `tokenId` from contractTokenOwner to rescuer  Must be protected with isRescuer()*
 
 #### Parameters
 
@@ -744,14 +744,14 @@ function setTokenAddress(contract HTSTokenOwner _htsTokenOwnerAddress, address _
 
 
 
-*Assigns the address contract HTSTokenOwner and the address of the token. Validating that the token address is not already assigned*
+*Assigns the HTSTokenOwner contract address and the token address, validating that the token address was not already assigned*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| _htsTokenOwnerAddress | contract HTSTokenOwner | The address contract HTSTokenOwner |
-| _tokenAddress | address | The address token created |
+| _htsTokenOwnerAddress | contract HTSTokenOwner | The  contract address HTSTokenOwner |
+| _tokenAddress | address | The token address created |
 
 ### supplierAllowance
 
@@ -805,14 +805,14 @@ function symbol() external view returns (string)
 
 
 
-*Returns the symbol of the token. *
+*Returns the symbol of the token *
 
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | string | The the symbol of the token. |
+| _0 | string | string The the symbol of the token |
 
 ### totalSupply
 
@@ -822,14 +822,14 @@ function totalSupply() external view returns (uint256)
 
 
 
-*Returns the number total of tokens that are in existence. *
+*Returns the total number of tokens that exits *
 
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | uint256 | The number total of tokens that are in existence. |
+| _0 | uint256 | uint256 The total number of tokens that exists |
 
 ### transfer
 

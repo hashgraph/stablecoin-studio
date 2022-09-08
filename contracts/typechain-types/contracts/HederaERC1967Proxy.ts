@@ -107,9 +107,7 @@ export interface HederaERC1967Proxy extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    getImplementation(
-      overrides?: CallOverrides
-    ): Promise<[string] & { impl: string }>;
+    getImplementation(overrides?: CallOverrides): Promise<[string]>;
   };
 
   getImplementation(overrides?: CallOverrides): Promise<string>;

@@ -193,12 +193,12 @@ abstract contract SupplierAdmin is ISupplierAdmin, AccessControlUpgradeable, Tok
         emit SupplierAllowanceDecreased(msg.sender, supplier, amount, oldAllowance, newAllowance);
     }    
 
-    /**
+   /**
     * @dev Validate that if the address account `supplier` isn't unlimited supplier's allowance, 
-    * and the amount `amount`  not exceed the supplier allowance, subtract the amount from supplier's allowance.
+    * and the `amount` not exceed the supplier allowance, subtracting the amount from supplier's allowance
     *
     * @param supplier The address of the supplier
-    * @param amount The amount to add to the supplier's current minting allowance
+    * @param amount The amount to check whether exceeds current supplier allowance
     */
     function controlAllowanceAmount(address supplier, uint256 amount) 
         public

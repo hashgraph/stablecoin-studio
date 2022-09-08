@@ -18,7 +18,7 @@ function mint(address account, uint256 amount) external nonpayable returns (bool
 
 
 
-*Creates an `amount` of tokens and assigns them to an `account`, increasing the total supply*
+*Creates an `amount` of tokens and transfers them to an `account`, increasing the total supply*
 
 #### Parameters
 

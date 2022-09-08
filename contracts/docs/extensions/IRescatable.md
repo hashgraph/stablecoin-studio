@@ -34,7 +34,7 @@ function rescueToken(uint256 amount) external nonpayable
 
 
 
-*Rescue `value` `tokenId` from contractTokenOwner to rescuer *
+*Rescue `value` tokens from contractTokenOwner to rescuer *
 
 #### Parameters
 
