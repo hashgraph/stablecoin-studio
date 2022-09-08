@@ -78,7 +78,7 @@ export default class StableCoinService extends Service {
 		req: IGetBalanceOfStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.getBalanceOf(
-			req.treasuryId,
+			req.proxyContractId,
 			req.privateKey,
 			req.accountId,
 			req.targetId,
@@ -89,7 +89,7 @@ export default class StableCoinService extends Service {
 		req: IGetNameOfStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.getNameToken(
-			req.treasuryId,
+			req.proxyContractId,
 			req.privateKey,
 			req.accountId,
 		);
@@ -98,11 +98,23 @@ export default class StableCoinService extends Service {
 	public async cashIn(
 		req: ICashInStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
+		// TODO validation
+		const coin: IStableCoinDetail = await this.getStableCoin({
+			id: req.tokenId,
+		});
+		const op = 10 ^ parseInt(coin.decimals ?? '0');
+		const amount = req.amount * op;
+		const totalQuantity =
+			parseInt(coin.max_supply ?? '0') -
+			parseInt(coin.total_supply ?? '0');
+		if (amount > totalQuantity) {
+			throw new Error('Amount is bigger than allowed supply');
+		}
 		return this.repository.cashIn(
-			req.treasuryId,
+			req.proxyContractId,
 			req.privateKey,
 			req.accountId,
-			req.amount,
+			amount,
 		);
 	}
 
@@ -110,7 +122,7 @@ export default class StableCoinService extends Service {
 		req: IAssociateTokenStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.associateToken(
-			req.treasuryId,
+			req.proxyContractId,
 			req.privateKey,
 			req.accountId,
 		);
@@ -120,7 +132,7 @@ export default class StableCoinService extends Service {
 		req: IWipeStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.wipe(
-			req.treasuryId,
+			req.proxyContractId,
 			req.privateKey,
 			req.accountId,
 			req.amount,
@@ -131,7 +143,7 @@ export default class StableCoinService extends Service {
 		req: IRescueStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.rescue(
-			req.treasuryId,
+			req.proxyContractId,
 			req.privateKey,
 			req.accountId,
 			req.amount,
@@ -142,7 +154,7 @@ export default class StableCoinService extends Service {
 		req: ISupplierRoleStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.grantSupplierRole(
-			req.treasuryId,
+			req.proxyContractId,
 			req.address,
 			req.privateKey,
 			req.accountId,
@@ -154,7 +166,7 @@ export default class StableCoinService extends Service {
 		req: ISupplierRoleStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.isUnlimitedSupplierAllowance(
-			req.treasuryId,
+			req.proxyContractId,
 			req.address,
 			req.privateKey,
 			req.accountId,
@@ -164,7 +176,7 @@ export default class StableCoinService extends Service {
 		req: ISupplierRoleStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.supplierAllowance(
-			req.treasuryId,
+			req.proxyContractId,
 			req.address,
 			req.privateKey,
 			req.accountId,
@@ -174,7 +186,7 @@ export default class StableCoinService extends Service {
 		req: ISupplierRoleStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.revokeSupplierRole(
-			req.treasuryId,
+			req.proxyContractId,
 			req.address,
 			req.privateKey,
 			req.accountId,
@@ -184,7 +196,7 @@ export default class StableCoinService extends Service {
 		req: ISupplierRoleStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.resetSupplierAllowance(
-			req.treasuryId,
+			req.proxyContractId,
 			req.address,
 			req.privateKey,
 			req.accountId,
@@ -194,7 +206,7 @@ export default class StableCoinService extends Service {
 		req: ISupplierRoleStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.increaseSupplierAllowance(
-			req.treasuryId,
+			req.proxyContractId,
 			req.address,
 			req.privateKey,
 			req.accountId,
@@ -205,7 +217,7 @@ export default class StableCoinService extends Service {
 		req: ISupplierRoleStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.decreaseSupplierAllowance(
-			req.treasuryId,
+			req.proxyContractId,
 			req.address,
 			req.privateKey,
 			req.accountId,
@@ -217,7 +229,7 @@ export default class StableCoinService extends Service {
 		req: ISupplierRoleStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.isLimitedSupplierAllowance(
-			req.treasuryId,
+			req.proxyContractId,
 			req.address,
 			req.privateKey,
 			req.accountId,

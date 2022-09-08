@@ -18,6 +18,11 @@ export interface IAmountOptionalRequestModel {
 	amount?: number;
 }
 
-export interface ITreasureyRequestModel {
-	treasuryId: string;
+export interface IProxyContractIdRequestModel {
+	// TODO rename to something more appropiate
+	proxyContractId: string;
+}
+
+export interface ITokenIdRequestModel {
+	tokenId: string;
 }
