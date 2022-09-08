@@ -12,6 +12,9 @@ contract HTSTokenOwner is IHTSTokenOwner, HederaTokenService {
 
     address public erc20address;
 
+    /**
+     * @dev Checks is message sender is the HederaERC20 contract
+     */
     modifier onlyHederaERC20() {
         require (msg.sender == erc20address, "Caller is not HederaERC20 contract");
         _;
@@ -20,6 +23,11 @@ contract HTSTokenOwner is IHTSTokenOwner, HederaTokenService {
     constructor() {
     }
 
+    /**
+     * @dev Sets the HederaERC20 contract address
+     *
+     * @param _erc20address The address of the HederaERC20 contract
+     */
     function setERC20Address(address _erc20address) 
         external 
     {
@@ -27,6 +35,13 @@ contract HTSTokenOwner is IHTSTokenOwner, HederaTokenService {
         erc20address = _erc20address;
     }
 
+    /**
+     * @dev Creates an `amount` of tokens and transfers them to an `account`, increasing
+     * the total supply
+     *
+     * @param tokenAddress The address of the token we want to mint
+     * @param amount The number of tokens to be minted
+     */
     function mintToken(address tokenAddress, uint256 amount) 
         external 
         onlyHederaERC20() 
@@ -37,16 +52,15 @@ contract HTSTokenOwner is IHTSTokenOwner, HederaTokenService {
         return _checkResponse(responseCode);
     }
 
-    function burnToken(address tokenAddress, uint256 amount) 
-        external 
-        onlyHederaERC20() 
-        returns (bool) 
-    {
-        (int256 responseCode, uint64 newTotalSupply) = HederaTokenService
-            .burnToken(tokenAddress, uint64(amount), new int64[](0));
-        return _checkResponse(responseCode);
-    }
-
+    /**
+    * @dev Transfer an amount of tokens from an account to another account
+    *    
+    * @param tokenAddress The address of the token we want to transfer
+    * @param from The address of the account the tokens will be transferred from
+    * @param from The address of the account the tokens will be transferred to
+    * @param amount The number of tokens to transfer
+    * @return boolean True if successful       
+    */
     function transfer(address tokenAddress, address from, address to, uint256 amount) 
         external 
         onlyHederaERC20() 
@@ -56,6 +70,14 @@ contract HTSTokenOwner is IHTSTokenOwner, HederaTokenService {
         return _checkResponse(transferResponse);
     }
 
+    /**
+    * @dev Wipes an amount of tokens from an account
+    *    
+    * @param tokenAddress The address of the token we want to wipe
+    * @param account The address of the where tokens will be wiped
+    * @param amount The number of tokens to wipe
+    * @return boolean True if successful       
+    */
     function wipeToken(address tokenAddress, address account, uint32 amount) 
         external 
         onlyHederaERC20() 
@@ -64,6 +86,15 @@ contract HTSTokenOwner is IHTSTokenOwner, HederaTokenService {
         int256 responseCode = HederaTokenService.wipeTokenAccount(tokenAddress, account, uint32(amount));
         return _checkResponse(responseCode);
     }
+
+   /**
+    * @dev Transfers an amount of token from the token owner contract to an account
+    *    
+    * @param tokenAddress The address of the token we want to transfer
+    * @param to The address of the account the tokens will be transferred
+    * @param amount The number of tokens to transfer
+    * @return boolean True if successful       
+    */
     function tranferContract(address tokenAddress,address to, uint256 amount) 
         external
         override
@@ -74,7 +105,12 @@ contract HTSTokenOwner is IHTSTokenOwner, HederaTokenService {
         return _checkResponse(transferResponse);
     }
 
-
+    /**
+    * @dev Transforms the response from a HederaResponseCodes to a boolean
+    *
+    * @param responseCode The Hedera response code to transform
+    * @return bool True if successful
+    */
     function _checkResponse(int256 responseCode) 
         internal 
         returns (bool) 
@@ -82,22 +118,4 @@ contract HTSTokenOwner is IHTSTokenOwner, HederaTokenService {
         require(responseCode == HederaResponseCodes.SUCCESS, "Error");
         return true;
     }
-
-    function toString(bytes memory data) 
-        public 
-        pure 
-        returns(string memory) 
-    {
-        bytes memory alphabet = "0123456789abcdef";
-
-        bytes memory str = new bytes(2 + data.length * 2);
-        str[0] = "0";
-        str[1] = "x";
-        for (uint i = 0; i < data.length; i++) {
-            str[2+i*2] = alphabet[uint(uint8(data[i] >> 4))];
-            str[3+i*2] = alphabet[uint(uint8(data[i] & 0x0f))];
-        }
-        return string(str);
-    }
-
 }

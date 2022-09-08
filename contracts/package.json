@@ -12,24 +12,26 @@
     "test:testnet:mintable": "npx hardhat test --network testnet test/mintable.ts",
     "size": "npx hardhat size-contracts",
     "build": "rimraf build && npx tsc -p tsconfig.json",
-		"build:types": "npx tsc -p tsconfig.json --emitDeclarationOnly",
-		"build:tsc": "rm -rf build && npx tsc -p tsconfig.json",
-		"build:watch": "npx tsc -w -p tsconfig.json",
-		"build:release": "npm run clean && tsc -p tsconfig.release.json",
-    "preinstall": "npm run build"    
+    "build:types": "npx tsc -p tsconfig.json --emitDeclarationOnly",
+    "build:tsc": "rm -rf build && npx tsc -p tsconfig.json",
+    "build:watch": "npx tsc -w -p tsconfig.json",
+    "build:release": "npm run clean && tsc -p tsconfig.release.json",
+    "preinstall": "npm run build",
+    "doc": "npx hardhat dodoc"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@hashgraph/hardhat-hethers": "^1.0.0",
-    "@nomicfoundation/hardhat-chai-matchers": "^1.0.2",
     "@hashgraph/hethers": "^1.1.3",
     "@hashgraph/sdk": "2.17.1",
+    "@nomicfoundation/hardhat-chai-matchers": "^1.0.2",
     "@nomicfoundation/hardhat-toolbox": "^1.0.2",
     "@openzeppelin/contracts": "^4.7.2",
     "@openzeppelin/contracts-upgradeable": "^4.7.2",
     "hardhat": "^2.10.1",
     "hardhat-abi-exporter": "^2.10.0",
-    "hardhat-contract-sizer": "^2.6.1"
+    "hardhat-contract-sizer": "^2.6.1",
+    "@primitivefi/hardhat-dodoc": "^0.2.3"
   }
 }

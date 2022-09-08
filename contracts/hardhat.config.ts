@@ -4,6 +4,7 @@ import "@hashgraph/sdk";
 const { PrivateKey } = require("@hashgraph/sdk");
 require('hardhat-abi-exporter');
 require("hardhat-contract-sizer");
+require('@primitivefi/hardhat-dodoc');
 
 module.exports = {
   solidity: {
