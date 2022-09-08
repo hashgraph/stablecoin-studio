@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { hethers } from '@hashgraph/hethers';
+import PrivateKey from '../../../../domain/context/account/PrivateKey.js';
 import {
-	AccountId,
+	AccountId as HAccountId,
 	Client,
 	ContractCreateTransaction,
 	ContractExecuteTransaction,
@@ -12,7 +13,7 @@ import {
 	FileCreateTransaction,
 	FileId,
 	Hbar,
-	PrivateKey,
+	PrivateKey as HPrivateKey,
 	PublicKey,
 	TokenCreateTransaction,
 	TokenId,
@@ -116,10 +117,15 @@ export default class HethersProvider implements IProvider {
 		return jsonParsedArray;
 	}
 
-	public getPublicKey(privateKey?: string | undefined): string {
-		if (!privateKey) throw new HederaError('No private key provided');
-		const publicKey =
-			PrivateKey.fromString(privateKey).publicKey.toStringRaw();
+	public getPublicKey(privateKey?: PrivateKey | string | undefined): string {
+		let key = null;
+		if (privateKey instanceof PrivateKey) {
+			key = privateKey.key;
+		} else {
+			key = privateKey;
+		}
+		if (!key) throw new HederaError('No private key provided');
+		const publicKey = HPrivateKey.fromString(key).publicKey.toStringRaw();
 		return publicKey;
 	}
 
@@ -167,14 +173,14 @@ export default class HethersProvider implements IProvider {
 		stableCoin: StableCoin,
 	): Promise<StableCoin> {
 		const client = this.getClient(accountId, privateKey);
-		const account = {
+		const plainAccount = {
 			accountId,
 			privateKey,
 		};
 		const tokenContract = await this.deployContract(
 			HederaERC20__factory,
 			10,
-			privateKey,
+			plainAccount.privateKey,
 			client,
 		);
 		log(
@@ -187,7 +193,7 @@ export default class HethersProvider implements IProvider {
 			proxyContract = await this.deployContract(
 				HederaERC1967Proxy__factory,
 				10,
-				privateKey,
+				plainAccount.privateKey,
 				client,
 				new ContractFunctionParameters()
 					.addAddress(tokenContract?.toSolidityAddress())
@@ -201,7 +207,7 @@ export default class HethersProvider implements IProvider {
 			parameters: [],
 			gas: 250_000,
 			abi: HederaERC20__factory.abi,
-			account,
+			account: plainAccount,
 		});
 		log(
 			`Deploying ${HTSTokenOwner__factory.name} contract... please wait.`,
@@ -210,7 +216,7 @@ export default class HethersProvider implements IProvider {
 		const tokenOwnerContract = await this.deployContract(
 			HTSTokenOwner__factory,
 			10,
-			privateKey,
+			plainAccount.privateKey,
 			client,
 		);
 		log('Creating token... please wait.', logOpts);
@@ -223,7 +229,7 @@ export default class HethersProvider implements IProvider {
 			stableCoin.maxSupply,
 			String(proxyContract),
 			stableCoin.freezeDefault,
-			privateKey,
+			plainAccount.privateKey,
 			this.getPublicKey(privateKey),
 			client,
 		);
@@ -237,14 +243,14 @@ export default class HethersProvider implements IProvider {
 			],
 			gas: 80_000,
 			abi: HederaERC20__factory.abi,
-			account,
+			account: plainAccount,
 		});
 		await this.callContract('setERC20Address', {
 			contractId: tokenOwnerContract,
 			parameters: [proxyContract.toSolidityAddress()],
 			gas: 60_000,
 			abi: HTSTokenOwner__factory.abi,
-			account,
+			account: plainAccount,
 		});
 		log(
 			'Associating administrator account to token... please wait.',
@@ -252,10 +258,10 @@ export default class HethersProvider implements IProvider {
 		);
 		await this.callContract('associateToken', {
 			contractId: proxyContract,
-			parameters: [AccountId.fromString(accountId).toSolidityAddress()],
+			parameters: [HAccountId.fromString(accountId).toSolidityAddress()],
 			gas: 1_300_000,
 			abi: HederaERC20__factory.abi,
-			account,
+			account: plainAccount,
 		});
 		return stableCoin;
 	}
@@ -271,7 +277,7 @@ export default class HethersProvider implements IProvider {
 			const bytecodeFileId = await this.fileCreate(
 				factory.bytecode,
 				chunks,
-				PrivateKey.fromString(privateKey),
+				HPrivateKey.fromString(privateKey),
 				client,
 			);
 
@@ -279,13 +285,13 @@ export default class HethersProvider implements IProvider {
 				.setGas(181_000)
 				.setBytecodeFileId(bytecodeFileId)
 				.setMaxTransactionFee(new Hbar(30))
-				.setAdminKey(PrivateKey.fromString(privateKey));
+				.setAdminKey(HPrivateKey.fromString(privateKey));
 			if (params) {
 				transaction.setConstructorParameters(params);
 			}
 			transaction.freezeWith(client);
 			const contractCreateSign = await transaction.sign(
-				PrivateKey.fromString(privateKey),
+				HPrivateKey.fromString(privateKey),
 			);
 			const txResponse = await contractCreateSign.execute(client);
 			const receipt = await txResponse.getReceipt(client);
@@ -362,7 +368,7 @@ export default class HethersProvider implements IProvider {
 			.setInitialSupply(Long.fromString(initialSupply.toString()))
 			.setTokenMemo(memo)
 			.setFreezeDefault(freezeDefault)
-			.setTreasuryAccountId(AccountId.fromString(contractId.toString()))
+			.setTreasuryAccountId(HAccountId.fromString(contractId.toString()))
 			.setAdminKey(PublicKey.fromString(publicKey))
 			.setFreezeKey(PublicKey.fromString(publicKey))
 			.setWipeKey(PublicKey.fromString(publicKey))
@@ -372,10 +378,9 @@ export default class HethersProvider implements IProvider {
 			transaction.setMaxSupply(Long.fromString(maxSupply.toString()));
 			transaction.setSupplyType(TokenSupplyType.Finite);
 		}
-		console.log(transaction);
 		transaction.freezeWith(clientSdk);
 		const transactionSign = await transaction.sign(
-			PrivateKey.fromString(privateKey),
+			HPrivateKey.fromString(privateKey),
 		);
 		const txResponse = await transactionSign.execute(clientSdk);
 		const receipt = await txResponse.getReceipt(clientSdk);

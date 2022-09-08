@@ -2,6 +2,8 @@
 import { hethers, Signer } from '@hashgraph/hethers';
 import { ContractId } from '@hashgraph/sdk';
 import { HederaNetwork } from '../../../core/enum.js';
+import AccountId from '../../../domain/context/account/AccountId.js';
+import PrivateKey from '../../../domain/context/account/PrivateKey.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import { AppMetadata } from './hashconnect/types/types.js';
 import { ICallContractRequest } from './types.js';
@@ -36,7 +38,7 @@ export interface IProvider {
 		resultAsBytes: ArrayBuffer,
 		abi: Array<any>,
 	): Uint8Array;
-	getPublicKey(privateKey?: string): string;
+	getPublicKey(privateKey?: PrivateKey | string | undefined): string;
 	deployStableCoin(
 		accountId: string,
 		privateKey: string,

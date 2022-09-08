@@ -22,14 +22,14 @@ export default class DetailsStableCoinsService extends Service {
     // Call to list stable coins
     const sdk: SDK = utilsService.getSDK();
 
-    let respDetail: StableCoinDetail;
+    let respDetail;
 
     await utilsService.showSpinner(
       sdk
         .getStableCoin({
           id,
         })
-        .then((response: StableCoinDetail) => (respDetail = response)),
+        .then((response) => (respDetail = response)),
       {
         text: language.getText('state.loading'),
         successText: language.getText('state.loadCompleted') + '\n',

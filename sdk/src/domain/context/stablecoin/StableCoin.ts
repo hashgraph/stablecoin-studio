@@ -1,21 +1,23 @@
 import BaseEntity from '../../BaseEntity.js';
-import Account from '../account/Account.js';
+import AccountId from '../account/AccountId.js';
+import { PublicKey } from '../account/PublicKey.js';
 import InvalidDecimalRangeDomainError from './error/InvalidDecimalRangeDomainError.js';
 import { TokenSupplyType } from './TokenSupply.js';
 import { TokenType } from './TokenType.js';
 
 const MAX_SUPPLY = 9_223_372_036_854_775_807n;
+const TEN = 10;
 
 export class StableCoin extends BaseEntity {
 	/**
-	 * Admin Account for the token
+	 * Admin PublicKey for the token
 	 */
-	private _admin: Account;
-	public get admin(): Account {
-		return this._admin;
+	private _adminKey: PublicKey;
+	public get adminKey(): PublicKey {
+		return this._adminKey;
 	}
-	public set admin(value: Account) {
-		this._admin = value;
+	public set adminKey(value: PublicKey) {
+		this._adminKey = value;
 	}
 
 	/**
@@ -54,11 +56,11 @@ export class StableCoin extends BaseEntity {
 	/**
 	 * Id
 	 */
-	private _id: string | undefined;
-	public get id(): string | undefined {
+	private _id: string;
+	public get id(): string {
 		return this._id;
 	}
-	public set id(value: string | undefined) {
+	public set id(value: string) {
 		this._id = value;
 	}
 
@@ -76,33 +78,44 @@ export class StableCoin extends BaseEntity {
 	/**
 	 * Maximum Supply
 	 */
-	private _maxSupply?: bigint | undefined;
-	public get maxSupply(): bigint | undefined {
+	private _maxSupply: bigint;
+	public get maxSupply(): bigint {
 		return this._maxSupply;
 	}
-	public set maxSupply(value: bigint | undefined) {
+	public set maxSupply(value: bigint) {
 		this._maxSupply = value;
+	}
+
+	/**
+	 * Total Supply
+	 */
+	private _totalSupply: bigint;
+	public get totalSupply(): bigint {
+		return this._totalSupply;
+	}
+	public set totalSupply(value: bigint) {
+		this._totalSupply = value;
 	}
 
 	/**
 	 * Memo field
 	 */
-	private _memo?: string | undefined;
-	public get memo(): string | undefined {
+	private _memo: string;
+	public get memo(): string {
 		return this._memo;
 	}
-	public set memo(value: string | undefined) {
+	public set memo(value: string) {
 		this._memo = value;
 	}
 
 	/**
 	 * Freeze key
 	 */
-	private _freezeKey: string | undefined;
-	public get freezeKey(): string | undefined {
+	private _freezeKey: PublicKey;
+	public get freezeKey(): PublicKey {
 		return this._freezeKey;
 	}
-	public set freezeKey(value: string | undefined) {
+	public set freezeKey(value: PublicKey) {
 		this._freezeKey = value;
 	}
 
@@ -120,55 +133,55 @@ export class StableCoin extends BaseEntity {
 	/**
 	 * KYC key
 	 */
-	private _kycKey: string | undefined;
-	public get kycKey(): string | undefined {
+	private _kycKey: PublicKey;
+	public get kycKey(): PublicKey {
 		return this._kycKey;
 	}
-	public set kycKey(value: string | undefined) {
+	public set kycKey(value: PublicKey) {
 		this._kycKey = value;
 	}
 
 	/**
 	 * Wipe key
 	 */
-	private _wipeKey: string | undefined;
-	public get wipeKey(): string | undefined {
+	private _wipeKey: PublicKey;
+	public get wipeKey(): PublicKey {
 		return this._wipeKey;
 	}
-	public set wipeKey(value: string | undefined) {
+	public set wipeKey(value: PublicKey) {
 		this._wipeKey = value;
 	}
 
 	/**
 	 * Supply key
 	 */
-	private _supplyKey?: string;
-	public get supplyKey(): string | undefined {
+	private _supplyKey: PublicKey;
+	public get supplyKey(): PublicKey {
 		return this._supplyKey;
 	}
-	public set supplyKey(value: string | undefined) {
+	public set supplyKey(value: PublicKey) {
 		this._supplyKey = value;
 	}
 
 	/**
 	 * Treasury account
 	 */
-	private _treasury?: string;
-	public get treasury(): string | undefined {
+	private _treasury: AccountId;
+	public get treasury(): AccountId {
 		return this._treasury;
 	}
-	public set treasury(value: string | undefined) {
+	public set treasury(value: AccountId) {
 		this._treasury = value;
 	}
 
 	/**
 	 * Expiration of token
 	 */
-	private _expiry?: number;
-	public get expiry(): number | undefined {
+	private _expiry: number;
+	public get expiry(): number {
 		return this._expiry;
 	}
-	public set expiry(value: number | undefined) {
+	public set expiry(value: number) {
 		this._expiry = value;
 	}
 
@@ -194,53 +207,97 @@ export class StableCoin extends BaseEntity {
 		this._supplyType = value;
 	}
 
-	constructor(
-		admin: Account,
-		name: string,
-		symbol: string,
-		decimals: number,
-		initialSupply?: bigint,
-		maxSupply?: bigint,
-		memo?: string,
-		freezeKey?: string,
-		freezeDefault?: boolean,
-		kycKey?: string,
-		wipeKey?: string,
-		supplyKey?: string,
-		treasury?: string,
-		expiry?: number,
-		tokenType?: TokenType,
-		supplyType?: TokenSupplyType,
-		id?: string,
-	) {
+	private _autoRenewAccount: AccountId;
+	public get autoRenewAccount(): AccountId {
+		return this._autoRenewAccount;
+	}
+	public set autoRenewAccount(value: AccountId) {
+		this._autoRenewAccount = value;
+	}
+
+	constructor(params: {
+		name: string;
+		symbol: string;
+		decimals: number;
+		adminKey?: PublicKey;
+		initialSupply?: bigint;
+		totalSupply?: bigint;
+		maxSupply?: bigint;
+		memo?: string;
+		freezeKey?: PublicKey;
+		freezeDefault?: boolean;
+		kycKey?: PublicKey;
+		wipeKey?: PublicKey;
+		supplyKey?: PublicKey;
+		treasury?: AccountId;
+		tokenType?: TokenType;
+		supplyType?: TokenSupplyType;
+		id?: string;
+		autoRenewAccount?: AccountId;
+	}) {
 		super();
-		this.admin = admin;
+		const {
+			adminKey,
+			name,
+			symbol,
+			decimals,
+			initialSupply,
+			totalSupply,
+			maxSupply,
+			memo,
+			freezeKey,
+			freezeDefault,
+			kycKey,
+			wipeKey,
+			supplyKey,
+			treasury,
+			tokenType,
+			supplyType,
+			id,
+			autoRenewAccount,
+		} = params;
+		const defaultKey = new PublicKey({
+			key: 'null',
+			type: 'null',
+		});
+		this.adminKey = adminKey ?? defaultKey;
 		this.name = name;
 		this.symbol = symbol;
 		this.decimals = this.checkDecimals(decimals);
 		this.initialSupply = initialSupply ?? 0n;
-		this.maxSupply = maxSupply;
-		this.memo = memo;
-		this.freezeKey = freezeKey;
+		this.totalSupply = totalSupply ?? 0n;
+		this.maxSupply = maxSupply ?? 0n;
+		this.memo = memo ?? '';
+		this.freezeKey = freezeKey ?? defaultKey;
 		this.freezeDefault = freezeDefault ?? false;
-		this.kycKey = kycKey;
-		this.wipeKey = wipeKey;
-		this.supplyKey = supplyKey;
-		this.treasury = treasury;
-		this.expiry = expiry;
+		this.kycKey = kycKey ?? defaultKey;
+		this.wipeKey = wipeKey ?? defaultKey;
+		this.supplyKey = supplyKey ?? defaultKey;
+		this.treasury = treasury ?? new AccountId('0.0.0');
 		this.tokenType = tokenType ?? TokenType.FUNGIBLE_COMMON;
 		this.supplyType =
 			(supplyType && !maxSupply) || !supplyType
 				? TokenSupplyType.INFINITE
 				: TokenSupplyType.FINITE;
-		this.id = id;
+		this.id = id ?? '0.0.0';
+		this.autoRenewAccount = autoRenewAccount ?? new AccountId('0.0.0');
 	}
 
-	private checkDecimals(value: number): number {
+	public checkDecimals(value: number): number {
 		if (value < 0 || value > 18) {
 			throw new InvalidDecimalRangeDomainError(value);
 		} else {
 			return value;
 		}
 	}
+
+	public getDecimalOperator(): number {
+		return TEN ^ this.decimals;
+	}
+
+	public getAmount(amount: number): number {
+		return amount * this.getDecimalOperator();
+	}
+
+
 }

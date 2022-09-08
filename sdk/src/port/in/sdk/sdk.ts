@@ -33,9 +33,9 @@ import { IGetStableCoinRequest } from './request/IGetStableCoinRequest.js';
 import { IRescueStableCoinRequest } from './request/IRescueStableCoinRequest.js';
 import { ISupplierStableCoinRequest } from './request/ISupplierStableCoinRequest.js';
 import { IWipeStableCoinRequest } from './request/IWipeStableCoinRequest.js';
-import { AccountId } from '../../../domain/context/account/AccountId.js';
-import IStableCoinDetail from '../../../app/service/stablecoin/model/stablecoindetail/IStableCoinDetail.js';
-import Account from '../../../domain/context/account/Account.js';
+import AccountId from '../../../domain/context/account/AccountId.js';
+import IStableCoinDetail from '../../out/stablecoin/types/IStableCoinDetail.js';
+import EOAccount from '../../../domain/context/account/EOAccount.js';
 
 export {
 	IAssociateStableCoinRequest,
@@ -55,7 +55,7 @@ export { AppMetadata, HederaNetwork };
 
 export interface ConfigurationOptions {
 	appMetadata?: AppMetadata;
-	account?: Account;
+	account?: EOAccount;
 }
 
 export interface Configuration {
@@ -134,7 +134,7 @@ export class SDK {
 	 */
 	public getStableCoin(
 		request: IGetStableCoinRequest,
-	): Promise<IStableCoinDetail> | null {
+	): Promise<StableCoin> | null {
 		const req: IGetStableCoinServiceRequestModel = { ...request };
 		return this.stableCoinService.getStableCoin(req);
 	}

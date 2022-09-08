@@ -9,21 +9,24 @@ export type RequireAtLeastOne<T, Keys extends keyof T = keyof T> = Pick<
 	}[Keys];
 
 export abstract class ValueObject<T> {
-    constructor(protected props: T) {
-        const baseProps: any = {
-            ...props,
-        };
+	constructor(protected props: T) {
+		const baseProps: any = {
+			...props,
+		};
 
-        this.props = baseProps;
-    }
+		this.props = baseProps;
+	}
+    
+    public abstract toString(): string;
 
-    public equals(vo?: ValueObject<T>): boolean {
-        if (vo === null || vo === undefined) {
-            return false;
-        }
-        if (vo.props === undefined) {
-            return false;
-        }
-        return JSON.stringify(this.props) === JSON.stringify(vo.props);
-    }
+	public equals(vo?: ValueObject<T>): boolean {
+		if (vo === null || vo === undefined) {
+			return false;
+		}
+		if (vo.props === undefined) {
+			return false;
+		}
+		return JSON.stringify(this.props) === JSON.stringify(vo.props);
+	}
+
 }

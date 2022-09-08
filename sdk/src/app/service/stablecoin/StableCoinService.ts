@@ -12,10 +12,7 @@ import IWipeStableCoinServiceRequestModel from './model/IWipeStableCoinServiceRe
 import IStableCoinRepository from '../../../port/out/stablecoin/IStableCoinRepository.js';
 import ISupplierRoleStableCoinServiceRequestModel from './model/ISupplierRoleStableCoinServiceRequestModel';
 import IRescueStableCoinServiceRequestModel from './model/IRescueStableCoinServiceRequestModel.js';
-import Account from '../../../domain/context/account/Account.js';
-import { AccountId } from '../../../domain/context/account/AccountId.js';
-import IStableCoinDetail from './model/stablecoindetail/IStableCoinDetail.js';
-import { PrivateKey } from '../../../domain/context/account/PrivateKey.js';
+import IStableCoinDetail from '../../../port/out/stablecoin/types/IStableCoinDetail.js';
 
 export default class StableCoinService extends Service {
 	private repository: IStableCoinRepository;
@@ -31,28 +28,24 @@ export default class StableCoinService extends Service {
 	public createStableCoin(
 		req: ICreateStableCoinServiceRequestModel,
 	): Promise<StableCoin> {
-		const coin: StableCoin = new StableCoin(
-			new Account(
-				new AccountId(req.accountId),
-				new PrivateKey(req.privateKey),
-			),
-			req.name,
-			req.symbol,
-			req.decimals,
-			req.initialSupply,
-			req.maxSupply,
-			req.memo,
-			req.freeze,
-			req.freezeDefault,
-			req.kycKey,
-			req.wipeKey,
-			req.supplyKey,
-			req.treasury,
-			req.expiry,
-			req.tokenType,
-			req.supplyType,
-			req.id,
-		);
+		const coin: StableCoin = new StableCoin({
+			name: req.name,
+			symbol: req.symbol,
+			decimals: req.decimals,
+			initialSupply: req.initialSupply,
+			maxSupply: req.maxSupply,
+			memo: req.memo,
+			freezeKey: req.freezeKey,
+			freezeDefault: req.freezeDefault,
+			kycKey: req.kycKey,
+			wipeKey: req.wipeKey,
+			supplyKey: req.supplyKey,
+			treasury: req.treasury,
+			tokenType: req.tokenType,
+			supplyType: req.supplyType,
+			id: req.id,
+			autoRenewAccount: req.autoRenewAccount,
+		});
 		return this.repository.saveCoin(req.accountId, req.privateKey, coin);
 	}
 
@@ -70,7 +63,7 @@ export default class StableCoinService extends Service {
 	 */
 	public async getStableCoin(
 		req: IGetStableCoinServiceRequestModel,
-	): Promise<IStableCoinDetail> {
+	): Promise<StableCoin> {
 		return this.repository.getStableCoin(req.id);
 	}
 
@@ -99,15 +92,11 @@ export default class StableCoinService extends Service {
 		req: ICashInStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
 		// TODO validation
-		const coin: IStableCoinDetail = await this.getStableCoin({
+		const coin: StableCoin = await this.getStableCoin({
 			id: req.tokenId,
 		});
-		const op = 10 ^ parseInt(coin.decimals ?? '0');
-		const amount = req.amount * op;
-		const totalQuantity =
-			parseInt(coin.max_supply ?? '0') -
-			parseInt(coin.total_supply ?? '0');
-		if (amount > totalQuantity) {
+		const amount = coin.getAmount(req.amount);
+		if (amount > coin.maxSupply - coin.totalSupply) {
 			throw new Error('Amount is bigger than allowed supply');
 		}
 		return this.repository.cashIn(

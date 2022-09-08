@@ -1,4 +1,5 @@
+import PrivateKey from "../../../../domain/context/account/PrivateKey.js";
 
 export interface IGetListStableCoinRequest {
-	privateKey: string;
+	privateKey: PrivateKey;
 }

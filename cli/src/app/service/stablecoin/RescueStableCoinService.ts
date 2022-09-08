@@ -15,7 +15,7 @@ export default class RescueStableCoinsService extends Service {
    * List Stable Coins can be managed
    */
   public async rescueStableCoin(
-    treasuryId: string,
+    proxyContractId: string,
     privateKey: string,
     accountId: string,
     amount?: number,
@@ -23,7 +23,7 @@ export default class RescueStableCoinsService extends Service {
     const sdk: SDK = utilsService.getSDK();
 
     await utilsService.showSpinner(
-      sdk.rescue({ treasuryId, privateKey, accountId, amount }),
+      sdk.rescue({ proxyContractId, privateKey, accountId, amount }),
       {
         text: language.getText('state.loading'),
         successText: language.getText('state.loadCompleted') + '\n',

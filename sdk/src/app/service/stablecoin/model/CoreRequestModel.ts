@@ -1,9 +1,12 @@
+import AccountId from "../../../../domain/context/account/AccountId.js";
+import PrivateKey from "../../../../domain/context/account/PrivateKey.js";
+
 export interface IAccountRequestModel {
-	accountId: string;
+	accountId: AccountId;
 }
 
 export interface IPrivateKeyRequestModel {
-	privateKey: string;
+	privateKey: PrivateKey;
 }
 
 export interface IAccountWithKeyRequestModel
