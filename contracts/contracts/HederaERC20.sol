@@ -28,7 +28,12 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
         _grantRole(WIPE_ROLE, msg.sender);
         
     }
-     
+
+    /**
+     * @dev Returns the name of the token.
+     * 
+     * @return The the name of the token.
+     */
     function name() 
         external 
         view 
@@ -37,6 +42,11 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
         return IERC20MetadataUpgradeable(tokenAddress).name();        
     }
 
+    /**
+     * @dev Returns the symbol of the token.
+     * 
+     * @return The the symbol of the token.
+     */
     function symbol() 
         external 
         view 
@@ -45,6 +55,11 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
         return IERC20MetadataUpgradeable(tokenAddress).symbol();
     }
 
+    /**
+     * @dev Returns the number of decimal precision for the token.
+     * 
+     * @return The number of decimal precision.
+     */
     function decimals() 
         public 
         view 
@@ -53,6 +68,11 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
         return IERC20MetadataUpgradeable(tokenAddress).decimals();
     }
 
+    /**
+     * @dev Returns the number total of tokens that are in existence.
+     * 
+     * @return The number total of tokens that are in existence.
+     */
     function totalSupply() 
         external 
         view 
@@ -62,6 +82,13 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
         return IERC20Upgradeable(tokenAddress).totalSupply();
     }
 
+    /**
+     * @dev Returns the number tokens that an account has.
+     *
+     * @param account The address to be consulted
+     *
+     * @return The number number tokens that an account has.
+     */
     function balanceOf(address account) 
         public 
         view 
@@ -71,6 +98,13 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
         return IERC20Upgradeable(tokenAddress).balanceOf(account);
     }
 
+    /**
+     * @dev Associate a account to the token
+     *
+     * @param account The address to associate
+     *
+     * @return True number if the account has been successfully associated with the token
+     */
     function associateToken(address adr) 
         public 
         returns (bool) 
@@ -79,6 +113,13 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
         return _checkResponse(responseCode);        
     }
 
+    /**
+     * @dev Dissociate a account to the token
+     *
+     * @param account The address to dissociate
+     *
+     * @return True number if the account has been successfully dissociated with the token
+     */
     function dissociateToken(address adr) 
         public 
         returns (bool) 
@@ -86,7 +127,7 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
         int256 responseCode = HederaTokenService.dissociateToken(adr, tokenAddress);
         return _checkResponse(responseCode);        
     }
-    
+       
     function _transfer(address from, address to, uint256 amount) 
         internal 
         override
@@ -100,6 +141,9 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
         return true;
     }
 
+    /**
+    * @dev Function not already implemented
+    */
     function burn(uint256 amount) 
         public 
         returns (bool) 
@@ -107,6 +151,9 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
         require(false, "function not already implemented");
     }
 
+    /**
+    * @dev Function not already implemented
+    */
     function transfer(address to, uint256 amount) 
         external 
         returns (bool)
@@ -114,6 +161,9 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
         require(false, "function not already implemented");
     }
 
+    /**
+    * @dev Function not already implemented
+    */
     function allowance(address owner, address spender) 
         external 
         view 
@@ -122,7 +172,9 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
         require(false, "function not already implemented");
     }
 
-
+    /**
+    * @dev Function not already implemented
+    */
     function approve(address spender, uint256 amount) 
         external 
         returns (bool)
@@ -130,6 +182,9 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
          require(false, "function not already implemented");
     }
 
+    /**
+    * @dev Function not already implemented
+    */
     function transferFrom( address from,  address to, uint256 amount) 
         external 
         returns (bool)
@@ -137,6 +192,9 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
          require(false, "function not already implemented");
     }
     
+    /**
+    * @dev Transforms the response from a HederaResponseCodes to a boolean
+    */
     function _checkResponse(int256 responseCode) 
         internal 
         returns (bool) 
