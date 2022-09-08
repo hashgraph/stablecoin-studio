@@ -15,7 +15,7 @@ module.exports = {
 		'^(\\.{1,2}/.*)\\.(m)?js$': '$1',
 	},
 	// testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.[jt]sx?$',
-	testMatch: ['**/__tests__/**/*.[jt]s?(x)'],
+	testMatch: ['**/__tests__/**/*.(test|spec).[jt]s?(x)'],
 	testPathIgnorePatterns: ['/build/'],
 	coverageDirectory: 'coverage',
 	collectCoverageFrom: [

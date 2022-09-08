@@ -15,6 +15,7 @@ import IRescueStableCoinServiceRequestModel from './model/IRescueStableCoinServi
 import Account from '../../../domain/context/account/Account.js';
 import { AccountId } from '../../../domain/context/account/AccountId.js';
 import IStableCoinDetail from './model/stablecoindetail/IStableCoinDetail.js';
+import { PrivateKey } from '../../../domain/context/account/PrivateKey.js';
 
 export default class StableCoinService extends Service {
 	private repository: IStableCoinRepository;
@@ -31,7 +32,10 @@ export default class StableCoinService extends Service {
 		req: ICreateStableCoinServiceRequestModel,
 	): Promise<StableCoin> {
 		const coin: StableCoin = new StableCoin(
-			new Account(new AccountId(req.accountId), req.privateKey),
+			new Account(
+				new AccountId(req.accountId),
+				new PrivateKey(req.privateKey),
+			),
 			req.name,
 			req.symbol,
 			req.decimals,
