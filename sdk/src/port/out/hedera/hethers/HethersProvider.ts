@@ -117,7 +117,7 @@ export default class HethersProvider implements IProvider {
 	}
 
 	public getPublicKey(privateKey?: string | undefined): string {
-		if (!privateKey) throw new HederaError('No privateKey provided');
+		if (!privateKey) throw new HederaError('No private key provided');
 		const publicKey =
 			PrivateKey.fromString(privateKey).publicKey.toStringRaw();
 		return publicKey;
