@@ -5,4 +5,6 @@ import {
 
 export default interface IGetBalanceOfStableCoinServiceRequestModel
 	extends ITreasureyRequestModel,
-		IAccountWithKeyRequestModel {}
+		IAccountWithKeyRequestModel {
+			targetId: string;
+		}

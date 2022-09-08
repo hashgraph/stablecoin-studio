@@ -1,11 +1,10 @@
 import { HashConnect, HashConnectTypes } from 'hashconnect/dist/cjs/main';
 import { HashConnectSigner } from 'hashconnect/dist/cjs/provider/signer.js';
-import { Signer, IniConfig, IProvider } from '../Provider.js';
-import { Contract, hethers } from '@hashgraph/hethers';
-import { HederaNetwork } from '../../../../sdk.js';
+import { IniConfig, IProvider } from '../Provider.js';
+import { HederaNetwork } from '../../../in/sdk/sdk.js';
 import { ContractId } from '@hashgraph/sdk';
 import { StableCoin } from '../../../../domain/context/stablecoin/StableCoin.js';
-import { IContractParams } from '../types.js';
+import { ICallContractRequest } from '../types.js';
 
 export default class HashPackProvider implements IProvider {
 	private hc: HashConnect;
@@ -32,7 +31,7 @@ export default class HashPackProvider implements IProvider {
 
 	public async callContract(
 		name: string,
-		parameters: IContractParams,
+		parameters: ICallContractRequest,
 	): Promise<Uint8Array> {
 		throw new Error('Method not implemented.');
 	}
