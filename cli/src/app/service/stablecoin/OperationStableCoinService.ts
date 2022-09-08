@@ -88,6 +88,7 @@ export default class OperationStableCoinService extends Service {
     );
     const details = await new DetailsStableCoinsService().getDetailsStableCoins(
       this.stableCoinId,
+      false,
     );
 
     switch (
@@ -136,18 +137,15 @@ export default class OperationStableCoinService extends Service {
           language.getText('stablecoin.askAccountToBalance'),
           configurationService.getConfiguration().accounts[0].accountId,
         );
-
-        try {
-          // Check Address
-          if (sdk.checkIsAddress(targetId)) {
-            await new BalanceOfStableCoinsService().getBalanceOfStableCoin(
-              this.proxyContractId,
-              configurationService.getConfiguration().accounts[0].privateKey,
-              configurationService.getConfiguration().accounts[0].accountId,
-              targetId,
-            );
-          }
-        } catch (err) {
+        // Check Address
+        if (sdk.checkIsAddress(targetId)) {
+          await new BalanceOfStableCoinsService().getBalanceOfStableCoin(
+            this.proxyContractId,
+            configurationService.getConfiguration().accounts[0].privateKey,
+            configurationService.getConfiguration().accounts[0].accountId,
+            targetId,
+          );
+        } else {
           console.log(language.getText('validations.wrongFormatAddress'));
           utilsService.breakLine();
 
@@ -458,16 +456,14 @@ export default class OperationStableCoinService extends Service {
 
   private disableOptions(
     options: string[],
-    details: void | StableCoinDetail,
+    details: StableCoinDetail,
   ): string[] {
     const sdk: SDK = utilsService.getSDK();
-    let result: string[] = [];
-
-    //check cash in key
+    let result: string[] = options;
     if (
-      (details && details['supplyKey'] === null) ||
-      (details['supplyKey']['_type'] !== 'ProtobufEncoded' &&
-        details['supplyKey']['_type'] !==
+      (details && details?.supplyKey === null) ||
+      (details?.supplyKey?.type !== 'ProtobufEncoded' &&
+        details?.supplyKey?.key !==
           sdk.getPublicKey(
             configurationService.getConfiguration().accounts[0].privateKey,
           ))
@@ -475,9 +471,9 @@ export default class OperationStableCoinService extends Service {
       result = options.filter((opt) => opt !== 'Cash in');
     }
     if (
-      (details && details['wipeKey'] === null) ||
-      (details['wipeKey']['_type'] !== 'ProtobufEncoded' &&
-        details['wipeKey']['_type'] !==
+      (details && details?.wipeKey === null) ||
+      (details?.wipeKey?.type !== 'ProtobufEncoded' &&
+        details?.wipeKey?.key !==
           sdk.getPublicKey(
             configurationService.getConfiguration().accounts[0].privateKey,
           ))

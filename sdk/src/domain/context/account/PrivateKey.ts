@@ -6,7 +6,7 @@ export default class PrivateKey extends ValueObject<string> {
 	public readonly _type: string;
 
 	constructor(key: string) {
-		super(key);
+		super();
 		this._type = this.getType(key);
 		this.key = key;
 	}

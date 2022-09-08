@@ -6,7 +6,7 @@ export class PublicKey extends ValueObject<string> {
 	public readonly type: string;
 	constructor(params: { key: string; type: string }) {
 		const { key, type } = params;
-		super(key);
+		super();
 		this.validate(key);
 		this.key = key;
 		this.type = type;

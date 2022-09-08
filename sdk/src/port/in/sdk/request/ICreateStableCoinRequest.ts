@@ -1,9 +1,6 @@
-import AccountId from "../../../../domain/context/account/AccountId.js";
-import PrivateKey from "../../../../domain/context/account/PrivateKey.js";
-
 export interface ICreateStableCoinRequest {
-	accountId: AccountId;
-	privateKey: PrivateKey;
+	accountId: string;
+	privateKey: string;
 	name: string;
 	symbol: string;
 	decimals: number;

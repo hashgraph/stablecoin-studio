@@ -96,7 +96,7 @@ export default class StableCoinService extends Service {
 			id: req.tokenId,
 		});
 		const amount = coin.getAmount(req.amount);
-		if (amount > coin.maxSupply - coin.totalSupply) {
+		if (coin.maxSupply > 0n && amount > coin.maxSupply - coin.totalSupply) {
 			throw new Error('Amount is bigger than allowed supply');
 		}
 		return this.repository.cashIn(

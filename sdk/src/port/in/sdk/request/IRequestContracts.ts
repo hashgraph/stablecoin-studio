@@ -1,10 +1,8 @@
-import AccountId from "../../../../domain/context/account/AccountId.js";
-import PrivateKey from "../../../../domain/context/account/PrivateKey.js";
 
 export interface IRequestContracts {
 	proxyContractId: string;
-	privateKey: PrivateKey;
-	accountId: AccountId;
+	privateKey: string;
+	accountId: string;
 }
 export interface IRequestContractsAmount extends IRequestContracts {
 	amount: number;

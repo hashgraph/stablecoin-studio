@@ -1,3 +1,3 @@
-import { IRequestContractsAmount } from './IRequestContracts.js';
+import { IRequestContractsAmount, ITokenIdRequestModel } from './IRequestContracts.js';
 
-export type IWipeStableCoinRequest = IRequestContractsAmount;
+export type IWipeStableCoinRequest = IRequestContractsAmount & ITokenIdRequestModel;

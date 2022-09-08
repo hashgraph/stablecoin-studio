@@ -8,9 +8,9 @@ import {
 	SDK,
 } from '../src/index.js';
 
-const ACCOUNT_ID = '0.0.29511696';
+const ACCOUNT_ID = '0.0.47822430';
 const PK =
-	'302e020100300506032b6570042204207a8a25387a3c636cb980d1ba548ee5ee3cc8cda158e42dc7af53dcd81022d8be';
+	'302e020100300506032b65700422042010f13d4517ae383e2a1a0f915b2f6e70a823f3627e69ab1a8f516666fecdf386';
 
 export const ACCOUNTS: { testnet: EOAccount } = {
 	testnet: new EOAccount({

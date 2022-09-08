@@ -13,6 +13,7 @@ import { PublicKey } from '../../../domain/context/account/PublicKey.js';
 import PrivateKey from '../../../domain/context/account/PrivateKey.js';
 import { AccountId as HAccountId } from '@hashgraph/sdk';
 import AccountId from '../../../domain/context/account/AccountId.js';
+import { IPublicKey } from './types/IPublicKey.js';
 
 export default class StableCoinRepository implements IStableCoinRepository {
 	private networkAdapter: NetworkAdapter;
@@ -70,6 +71,18 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			const response = await axios.get<IStableCoinDetail>(
 				this.URI_BASE + 'tokens/' + id,
 			);
+
+			const getKeyOrDefault = (
+				val?: IPublicKey,
+			): PublicKey | undefined => {
+				return val
+					? new PublicKey({
+							key: val.key,
+							type: val._type,
+					  })
+					: undefined;
+			};
+
 			return new StableCoin({
 				id: response.data.token_id,
 				name: response.data.name ?? '',
@@ -87,26 +100,11 @@ export default class StableCoinRepository implements IStableCoinRepository {
 				freezeDefault: response.data.freeze_default,
 				// kycStatus: string;
 				// deleted: response.data.deleted,
-				adminKey: new PublicKey({
-					key: response.data.admin_key?.key ?? '',
-					type: response.data.admin_key?._type ?? '',
-				}),
-				kycKey: new PublicKey({
-					key: response.data.kyc_key?.key ?? '',
-					type: response.data.kyc_key?._type ?? '',
-				}),
-				freezeKey: new PublicKey({
-					key: response.data.freeze_key?.key ?? '',
-					type: response.data.freeze_key?._type ?? '',
-				}),
-				wipeKey: new PublicKey({
-					key: response.data.wipe_key?.key ?? '',
-					type: response.data.wipe_key?._type ?? '',
-				}),
-				supplyKey: new PublicKey({
-					key: response.data.supply_key?.key ?? '',
-					type: response.data.supply_key?._type ?? '',
-				}),
+				adminKey: getKeyOrDefault(response.data.admin_key),
+				kycKey: getKeyOrDefault(response.data.kyc_key),
+				freezeKey: getKeyOrDefault(response.data.freeze_key),
+				wipeKey: getKeyOrDefault(response.data.wipe_key),
+				supplyKey: getKeyOrDefault(response.data.supply_key),
 				// pauseKey: response.data.pause_key,
 			});
 		} catch (error) {
@@ -130,8 +128,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			gas: 36000,
 			abi: HederaERC20__factory.abi,
 			account: {
-				accountId: accountId.toString(),
-				privateKey: privateKey.toString(),
+				accountId: accountId.id,
+				privateKey: privateKey.key,
 			},
 		};
 
@@ -144,7 +142,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	public async getNameToken(
 		treasuryId: string,
 		privateKey: PrivateKey,
-		accountId: HAccountId,
+		accountId: AccountId,
 	): Promise<Uint8Array> {
 		const params: ICallContractWithAccountRequest = {
 			contractId: treasuryId,
@@ -152,8 +150,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			gas: 36000,
 			abi: HederaERC20__factory.abi,
 			account: {
-				accountId: accountId.toString(),
-				privateKey: privateKey.toString(),
+				accountId: accountId.id,
+				privateKey: privateKey.key,
 			},
 		};
 
@@ -163,7 +161,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	public async cashIn(
 		treasuryId: string,
 		privateKey: PrivateKey,
-		accountId: HAccountId,
+		accountId: AccountId,
 		amount: number,
 	): Promise<Uint8Array> {
 		const parameters = [
@@ -177,8 +175,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			gas: 400000,
 			abi: HederaERC20__factory.abi,
 			account: {
-				accountId: accountId.toString(),
-				privateKey: privateKey.toString(),
+				accountId: accountId.id,
+				privateKey: privateKey.key,
 			},
 		};
 
@@ -188,7 +186,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	public async associateToken(
 		treasuryId: string,
 		privateKey: PrivateKey,
-		accountId: HAccountId,
+		accountId: AccountId,
 	): Promise<Uint8Array> {
 		const parameters = [
 			HAccountId.fromString(accountId || '').toSolidityAddress(),
@@ -200,8 +198,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			gas: 1300000,
 			abi: HederaERC20__factory.abi,
 			account: {
-				accountId: accountId.toString(),
-				privateKey: privateKey.toString(),
+				accountId: accountId.id,
+				privateKey: privateKey.key,
 			},
 		};
 
@@ -228,8 +226,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			gas: 400000,
 			abi: HederaERC20__factory.abi,
 			account: {
-				accountId: accountId.toString(),
-				privateKey: privateKey.toString(),
+				accountId: accountId.id,
+				privateKey: privateKey.key,
 			},
 		};
 
@@ -257,8 +255,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			gas: 130000,
 			abi: HederaERC20__factory.abi,
 			account: {
-				accountId: accountId.toString(),
-				privateKey: privateKey.toString(),
+				accountId: accountId.id,
+				privateKey: privateKey.key,
 			},
 		};
 
@@ -284,8 +282,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			gas: 60_000,
 			abi: HederaERC20__factory.abi,
 			account: {
-				accountId: accountId.toString(),
-				privateKey: privateKey.toString(),
+				accountId: accountId.id,
+				privateKey: privateKey.key,
 			},
 		};
 
@@ -311,8 +309,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			gas: 60_000,
 			abi: HederaERC20__factory.abi,
 			account: {
-				accountId: accountId.toString(),
-				privateKey: privateKey.toString(),
+				accountId: accountId.id,
+				privateKey: privateKey.key,
 			},
 		};
 
@@ -338,8 +336,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			gas: 130000,
 			abi: HederaERC20__factory.abi,
 			account: {
-				accountId: accountId.toString(),
-				privateKey: privateKey.toString(),
+				accountId: accountId.id,
+				privateKey: privateKey.key,
 			},
 		};
 
@@ -365,8 +363,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			gas: 120000,
 			abi: HederaERC20__factory.abi,
 			account: {
-				accountId: accountId.toString(),
-				privateKey: privateKey.toString(),
+				accountId: accountId.id,
+				privateKey: privateKey.key,
 			},
 		};
 
@@ -394,8 +392,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			gas: 130000,
 			abi: HederaERC20__factory.abi,
 			account: {
-				accountId: accountId.toString(),
-				privateKey: privateKey.toString(),
+				accountId: accountId.id,
+				privateKey: privateKey.key,
 			},
 		};
 
@@ -423,8 +421,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			gas: 130000,
 			abi: HederaERC20__factory.abi,
 			account: {
-				accountId: accountId.toString(),
-				privateKey: privateKey.toString(),
+				accountId: accountId.id,
+				privateKey: privateKey.key,
 			},
 		};
 
@@ -448,8 +446,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			gas: 140000,
 			abi: HederaERC20__factory.abi,
 			account: {
-				accountId: accountId.toString(),
-				privateKey: privateKey.toString(),
+				accountId: accountId.id,
+				privateKey: privateKey.key,
 			},
 		};
 
@@ -476,8 +474,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			gas: 60000,
 			abi: HederaERC20__factory.abi,
 			account: {
-				accountId: accountId.toString(),
-				privateKey: privateKey.toString(),
+				accountId: accountId.id,
+				privateKey: privateKey.key,
 			},
 		};
 

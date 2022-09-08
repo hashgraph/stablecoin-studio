@@ -121,7 +121,7 @@ export default class CreateStableCoinService extends Service {
     createdStableCoin.autoRenewAccountId = autoRenewAccountId;
 
     const optionalProps = await this.askForOptionalProps();
-    let decimals = '';
+    let decimals = '6';
     let initialSupply = '';
     let supplyType = false;
     let totalSupply = undefined;

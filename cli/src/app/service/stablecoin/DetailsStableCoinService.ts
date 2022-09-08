@@ -18,11 +18,11 @@ export default class DetailsStableCoinsService extends Service {
   public async getDetailsStableCoins(
     id: string,
     show = true,
-  ): Promise<void | StableCoinDetail> {
+  ): Promise<StableCoinDetail> {
     // Call to list stable coins
     const sdk: SDK = utilsService.getSDK();
 
-    let respDetail;
+    let respDetail: StableCoinDetail;
 
     await utilsService.showSpinner(
       sdk
@@ -39,8 +39,7 @@ export default class DetailsStableCoinsService extends Service {
     if (show) {
       console.log(respDetail);
       utilsService.breakLine();
-    } else {
-      return respDetail;
     }
+    return respDetail;
   }
 }

@@ -4,7 +4,7 @@ import { AccountIdNotValid } from './error/AccountIdNotValid.js';
 export default class AccountId extends ValueObject<string> {
 	public readonly id: string;
 	constructor(id: string) {
-		super(id);
+		super();
         this.validate(id);
 		this.id = id;
 	}
