@@ -15,7 +15,7 @@ export default class BalanceOfStableCoinsService extends Service {
    * List Stable Coins can be managed
    */
   public async getBalanceOfStableCoin(
-    treasuryId: string,
+    proxyContractId: string,
     privateKey: string,
     accountId: string,
     targetId: string,
@@ -27,7 +27,7 @@ export default class BalanceOfStableCoinsService extends Service {
 
     await utilsService.showSpinner(
       sdk
-        .getBalanceOf({ treasuryId, privateKey, accountId, targetId })
+        .getBalanceOf({ proxyContractId, privateKey, accountId, targetId })
         .then((response) => {
           respDetail = response;
         }),
