@@ -35,6 +35,7 @@ import { ISupplierStableCoinRequest } from './request/ISupplierStableCoinRequest
 import { IWipeStableCoinRequest } from './request/IWipeStableCoinRequest.js';
 import { AccountId } from '../../../domain/context/account/AccountId.js';
 import IStableCoinDetail from '../../../app/service/stablecoin/model/stablecoindetail/IStableCoinDetail.js';
+import Account from '../../../domain/context/account/Account.js';
 
 export {
 	IAssociateStableCoinRequest,
@@ -54,10 +55,7 @@ export { AppMetadata, HederaNetwork };
 
 export interface ConfigurationOptions {
 	appMetadata?: AppMetadata;
-	account?: {
-		accountId: AccountId;
-		privateKey: string;
-	};
+	account?: Account;
 }
 
 export interface Configuration {
@@ -370,5 +368,9 @@ export class SDK {
 		if (!str) return false;
 		new AccountId(str);
 		return true;
+	}
+
+	public getPublicKey(str?: string): string {
+		return this.networkAdapter.provider.getPublicKey(str);
 	}
 }

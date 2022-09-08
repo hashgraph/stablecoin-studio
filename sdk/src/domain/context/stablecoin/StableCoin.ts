@@ -99,10 +99,10 @@ export class StableCoin extends BaseEntity {
 	 * Freeze key
 	 */
 	private _freezeKey: string | undefined;
-	public get freeze(): string | undefined {
+	public get freezeKey(): string | undefined {
 		return this._freezeKey;
 	}
-	public set freeze(value: string | undefined) {
+	public set freezeKey(value: string | undefined) {
 		this._freezeKey = value;
 	}
 
@@ -211,7 +211,7 @@ export class StableCoin extends BaseEntity {
 		expiry?: number,
 		tokenType?: TokenType,
 		supplyType?: TokenSupplyType,
-		id?: string
+		id?: string,
 	) {
 		super();
 		this.admin = admin;
@@ -221,7 +221,7 @@ export class StableCoin extends BaseEntity {
 		this.initialSupply = initialSupply ?? 0n;
 		this.maxSupply = maxSupply;
 		this.memo = memo;
-		this.freeze = freezeKey ?? '';
+		this.freezeKey = freezeKey;
 		this.freezeDefault = freezeDefault ?? false;
 		this.kycKey = kycKey;
 		this.wipeKey = wipeKey;
@@ -230,7 +230,7 @@ export class StableCoin extends BaseEntity {
 		this.expiry = expiry;
 		this.tokenType = tokenType ?? TokenType.FUNGIBLE_COMMON;
 		this.supplyType =
-			supplyType && !maxSupply
+			(supplyType && !maxSupply) || !supplyType
 				? TokenSupplyType.INFINITE
 				: TokenSupplyType.FINITE;
 		this.id = id;
