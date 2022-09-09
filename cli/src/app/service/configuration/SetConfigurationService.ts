@@ -32,7 +32,7 @@ export default class SetConfigurationService extends Service {
    */
   public async configurePath(): Promise<string> {
     const defaultConfigPath =
-      configurationService.getConfiguration()?.general?.configPath;
+      configurationService.getDefaultConfigurationPath();
     const defaultPath = await utilsService.defaultSingleAsk(
       language.getText('configuration.askPath'),
       defaultConfigPath ?? configurationService.getDefaultConfigurationPath(),
@@ -40,13 +40,21 @@ export default class SetConfigurationService extends Service {
 
     // If the path is incorrect
     if (!fs.existsSync(defaultPath)) {
-      utilsService.showError(language.getText('general.incorrectParam'));
-      await this.configurePath();
+      const createAuto = await utilsService.defaultConfirmAsk(
+        language.getText('configuration.askCreateConfig'),
+        true,
+      );
+      if (!createAuto) {
+        utilsService.exitApplication(
+          language.getText('configuration.askCreateConfigNeg'),
+        );
+      } else {
+        configurationService.createDefaultConfiguration()
+      }
     }
 
     // Set default path
     const defaultCfgData = configurationService.getConfiguration();
-    defaultCfgData.general.configPath = defaultPath;
     configurationService.setConfiguration(defaultCfgData, defaultPath);
     return defaultPath;
   }
@@ -57,13 +65,13 @@ export default class SetConfigurationService extends Service {
   public async configureDefaultNetwork(): Promise<string> {
     let network = await utilsService.defaultSingleAsk(
       language.getText('configuration.askNetwork'),
-      'mainnet|previewnet|testnet',
+      'mainnet|previewnet|testnet|local',
     );
 
     if (
       network === undefined ||
       network === '' ||
-      network === 'mainnet|previewnet|testnet'
+      network === 'mainnet|previewnet|testnet|local'
     ) {
       utilsService.showError(language.getText('general.incorrectParam'));
       network = await this.configureDefaultNetwork();
@@ -73,7 +81,8 @@ export default class SetConfigurationService extends Service {
     if (
       network !== 'mainnet' &&
       network !== 'previewnet' &&
-      network !== 'testnet'
+      network !== 'testnet' &&
+      network !== 'local'
     ) {
       const response = await utilsService.defaultSingleAsk(
         language.getText('configuration.askNotDefaultNetwork'),
@@ -89,7 +98,7 @@ export default class SetConfigurationService extends Service {
 
     // Set a default network
     const defaultCfgData = configurationService.getConfiguration();
-    defaultCfgData.general.network = network;
+    defaultCfgData.defaultNetwork = network;
     configurationService.setConfiguration(defaultCfgData);
     return network;
   }
@@ -128,7 +137,7 @@ export default class SetConfigurationService extends Service {
       accounts.push({
         accountId: accountId,
         privateKey: accountFromPrivKey.privateKey,
-        isECDA25519Type: accountFromPrivKey.isECDA25519Type,
+        network: configurationService.getConfiguration().defaultNetwork,
         alias: alias,
       });
 
@@ -160,17 +169,15 @@ export default class SetConfigurationService extends Service {
       '96|64|66 characters',
     );
 
-    let isECDA25519Type = false;
+    const network = configurationService.getConfiguration().defaultNetwork;
     let alias = '';
 
     // Actions by length
     switch (privateKey.length) {
-      case 96:
-        isECDA25519Type = true;
-        break;
       case 64:
         privateKey = '0x' + privateKey;
         break;
+      case 96:
       default:
         break;
     }
@@ -183,14 +190,13 @@ export default class SetConfigurationService extends Service {
       utilsService.showError(language.getText('general.incorrectParam'));
       const acc = await this.askForPrivateKeyOfAccount(accountId);
       privateKey = acc.privateKey;
-      isECDA25519Type = acc.isECDA25519Type;
       alias = acc.alias;
     }
 
     return {
       accountId: accountId,
       privateKey: privateKey,
-      isECDA25519Type: isECDA25519Type,
+      network,
       alias: alias,
     };
   }

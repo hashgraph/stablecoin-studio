@@ -1,9 +1,8 @@
-import { language } from './../../../index.js';
+import { configurationService, language } from './../../../index.js';
 import { Command } from 'commander';
 import Service from '../Service.js';
 import pkg from '../../../../package.json';
 import { utilsService, wizardService } from '../../../index.js';
-import SetConfigurationService from '../configuration/SetConfigurationService.js';
 import CreateStableCoinService from '../stablecoin/CreateStableCoinService.js';
 
 /**
@@ -34,20 +33,28 @@ export default class CommanderService extends Service {
       .description(language.getText('commander.appDescription'));
 
     program
-      .command('init')
-      .description(language.getText('commander.initDescription'))
-      .action(async (): Promise<void> => {
-        const setConfigurationService: SetConfigurationService =
-          new SetConfigurationService();
-        await setConfigurationService.initConfiguration();
-      });
-
-    program
       .command('wizard')
+      .option(
+        '-c, --config [config]',
+        language.getText('commander.options.config'),
+      )
+      .option(
+        '-n, --network [network]',
+        language.getText('commander.options.network'),
+      )
       .description(language.getText('commander.wizardDescription'))
-      .action(async (): Promise<void> => {
-        await wizardService.mainMenu();
-      });
+      .action(
+        async (options: { config: string; network: string }): Promise<void> => {
+          // Check if default configuration exists, if not, start init command
+          await configurationService.init(
+            {
+              defaultNetwork: options.network,
+            },
+            options.config,
+          );
+          await wizardService.mainMenu();
+        },
+      );
 
     const token = program
       .command('token')

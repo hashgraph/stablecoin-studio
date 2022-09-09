@@ -12,6 +12,8 @@ export const english = {
     askPath: 'Write your config path',
     askCreateConfig:
       'No configuration file found at the specified path, would you like to create one? (y/n)',
+    askCreateConfigNeg:
+      'You have chosen not to create the file automatically, create the configuration file and try again.',
     askNetwork: 'Write the network you want to use',
     askNotDefaultNetwork:
       'Your option is not a default network, Do you want to create a new network? (y/n)',
@@ -83,6 +85,10 @@ export const english = {
     initDescription: 'Init the application',
     wizardDescription: 'Start the wizard',
     tokenDescription: 'Token command',
+    options: {
+      config: 'Path to the configuration file',
+      network: 'Network to use',
+    },
     token: {
       createDescription:
         'Create a new Stable Coin and associate the new token to the admin.',
@@ -185,5 +191,5 @@ export const english = {
     wrongFormatAddress:
       'The format of the address is not correct. Please check the format and try again.',
     lessZero: 'The number is 0 or less. Please use a number greater than 0.',
-  }
+  },
 };
