@@ -1,4 +1,4 @@
-import { As, Icon as ChakraIcon } from '@chakra-ui/react';
+import { As, Icon as ChakraIcon, IconProps as ChakraIconProps } from '@chakra-ui/react';
 
 import * as ReactPhosphorIcons from 'phosphor-react';
 
@@ -1053,7 +1053,7 @@ const NameIcons = [
 	'YoutubeLogo',
 ];
 
-export interface IconProps {
+export interface IconProps extends ChakraIconProps {
 	name: typeof NameIcons[number];
 }
 
