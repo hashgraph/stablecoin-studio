@@ -1,10 +1,9 @@
-import { NamedRoutes } from "./NamedRoutes";
+import { NamedRoutes } from './NamedRoutes';
 
 /**
- * Mapping from name to the url. 
+ * Mapping from name to the url.
  * */
 export const RoutesMappingUrl: Record<NamedRoutes, string> = {
-    [NamedRoutes.Dashboard]: "/dashboard",
-    [NamedRoutes.Login]: "/login",
-
+	[NamedRoutes.Dashboard]: '/dashboard',
+	[NamedRoutes.Login]: '/login',
 };
