@@ -13,7 +13,7 @@ let proxyAddress:any;
 let client:any;
 const OPERATOR_ID = hreConfig.accounts[0].account;
 const OPERATOR_KEY = hreConfig.accounts[0].privateKey;
-
+/*
 describe("Grant unlimited supplier role", function() {
   before(async function  () {
     client = getClient();      
@@ -146,7 +146,7 @@ describe("Revoke supplier role", function() {
     await expect(contractCall(ContractId.fromString(proxyAddress), 'mint', params, client2, 400000, HederaERC20__factory.abi)).to.be.throw;
   });
 });
-
+*/
 describe("Revoke unlimited supplier role", function() {
   before(async function  () {
     client = getClient();      
@@ -159,7 +159,7 @@ describe("Revoke unlimited supplier role", function() {
   });
   it("An account with unlimited supplier role, but revoked, can not cash in 100 tokens", async function() {
     let params : any = [AccountId.fromString(hreConfig.accounts[1].account!).toSolidityAddress()];  
-    await contractCall(ContractId.fromString(proxyAddress), 'revokeUnlimitedSupplierRole', params, client, 130000, HederaERC20__factory.abi);
+    await contractCall(ContractId.fromString(proxyAddress), 'revokeSupplierRole', params, client, 130000, HederaERC20__factory.abi);
     const client2 = getClient();
     client2.setOperator(hreConfig.accounts[1].account!, hreConfig.accounts[1].privateKey!);        
     params = [AccountId.fromString(hreConfig.accounts[1].account!).toSolidityAddress()];  
