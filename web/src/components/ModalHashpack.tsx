@@ -7,7 +7,7 @@ const ModalHashpack = () => {
 
 	return (
 		<Flex
-			bgColor='white'
+			bgColor='brand.white'
 			w='500px'
 			h='272px'
 			borderRadius='8px'
@@ -21,7 +21,7 @@ const ModalHashpack = () => {
 				fontWeight='700'
 				lineHeight='16px'
 				align='center'
-				color='#323232'
+				color='brand.black'
 				mb='8px'
 			>
 				{t('hashpack-no-installed.title')}
@@ -31,7 +31,7 @@ const ModalHashpack = () => {
 				fontWeight='400'
 				lineHeight='16px'
 				align='center'
-				color='#666666'
+				color='brand.gray'
 				mb='24px'
 			>
 				{t('hashpack-no-installed.description')}
