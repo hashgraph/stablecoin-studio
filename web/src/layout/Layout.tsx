@@ -16,7 +16,7 @@ const Layout = ({ children }: Props['general']) => {
 
 			<Flex transition='transform 0.3s, width 0.3s' h='calc(100vh - 64px)'>
 				<Sidebar />
-				<Box w='100%' pt={10} pr={10} pl={10} minH='100%' overflowY='auto'>
+				<Box w='100%' pt={10} pr={10} pl={10} minH='100%' overflowY='auto' bgColor='brand.gray5'>
 					{children}
 				</Box>
 			</Flex>

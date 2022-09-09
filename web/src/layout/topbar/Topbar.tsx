@@ -8,7 +8,7 @@ const Topbar = () => {
 		<Flex
 			w='100%'
 			h='64px'
-			boxShadow='topbar'
+			boxShadow='down-black'
 			bgColor='brand.white'
 			color='brand.gray2'
 			alignItems='center'
