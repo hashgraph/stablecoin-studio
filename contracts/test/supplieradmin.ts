@@ -13,7 +13,7 @@ let proxyAddress:any;
 let client:any;
 const OPERATOR_ID = hreConfig.accounts[0].account;
 const OPERATOR_KEY = hreConfig.accounts[0].privateKey;
-/*
+
 describe("Grant unlimited supplier role", function() {
   before(async function  () {
     client = getClient();      
@@ -146,7 +146,7 @@ describe("Revoke supplier role", function() {
     await expect(contractCall(ContractId.fromString(proxyAddress), 'mint', params, client2, 400000, HederaERC20__factory.abi)).to.be.throw;
   });
 });
-*/
+
 describe("Revoke unlimited supplier role", function() {
   before(async function  () {
     client = getClient();      
