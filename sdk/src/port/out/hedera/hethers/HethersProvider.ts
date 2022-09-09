@@ -27,6 +27,7 @@ import { HederaNetwork } from '../../../../core/enum.js';
 import { IniConfig, IProvider } from '../Provider.js';
 import Web3 from 'web3';
 import { StableCoin } from '../../../../domain/context/stablecoin/StableCoin.js';
+import { getHederaNetwork } from '../../../../core/enum.js';
 import Long from 'long';
 import { log } from '../../../../core/log.js';
 import {
@@ -334,8 +335,8 @@ export default class HethersProvider implements IProvider {
 			case HederaNetwork.MAIN:
 			case HederaNetwork.PREVIEW:
 			case HederaNetwork.TEST:
-				return hethers.getDefaultProvider(network);
-			case HederaNetwork.CUSTOM:
+				return hethers.getDefaultProvider(getHederaNetwork(network)?.name);
+			case HederaNetwork.LOCAL:
 			default:
 				throw new Error('Network not supported');
 		}

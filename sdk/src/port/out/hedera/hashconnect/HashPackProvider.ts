@@ -1,6 +1,7 @@
 import { HashConnect, HashConnectTypes } from 'hashconnect/dist/cjs/main';
 import { HashConnectSigner } from 'hashconnect/dist/cjs/provider/signer.js';
 import { IniConfig, IProvider } from '../Provider.js';
+import { getHederaNetwork } from '../../../../core/enum.js';
 import { HederaNetwork } from '../../../in/sdk/sdk.js';
 import { ContractId } from '@hashgraph/sdk';
 import { StableCoin } from '../../../../domain/context/stablecoin/StableCoin.js';
@@ -21,7 +22,7 @@ export default class HashPackProvider implements IProvider {
 		if (options && options?.appMetadata) {
 			this.initData = await this.hc.init(
 				options.appMetadata,
-				network as Partial<'mainnet' | 'testnet' | 'previewnet'>,
+				getHederaNetwork(network)?.name as Partial<'mainnet' | 'testnet' | 'previewnet'>,
 			);
 		} else {
 			throw new Error('No app metadata');
@@ -75,7 +76,7 @@ export default class HashPackProvider implements IProvider {
 
 	private getSigner(): HashConnectSigner {
 		const provider = this.hc.getProvider(
-			this.network,
+			getHederaNetwork(this.network)?.name,
 			this.initData.topic,
 			'0.0.1', // TODO
 		);
