@@ -1055,19 +1055,6 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "supplier",
-        type: "address",
-      },
-    ],
-    name: "revokeUnlimitedSupplierRole",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
         internalType: "contract HTSTokenOwner",
         name: "_htsTokenOwnerAddress",
         type: "address",
