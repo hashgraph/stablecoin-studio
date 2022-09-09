@@ -15,7 +15,7 @@ const TopbarRight = () => {
 				<Text>{network}</Text>
 			</Flex>
 			<Box borderLeft='2px solid #ECEBF1' w='1px' />
-			<Flex color='brand.gray' fontSize='12px' fontWeight='400'>
+			<Flex color='brand.gray' fontSize='12px' fontWeight='400' alignItems='center'>
 				<Text>{t('topbar.account')}</Text>
 				<Text mr='5px'>: </Text>
 				<Text>{accountId}</Text>
