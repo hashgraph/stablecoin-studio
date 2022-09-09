@@ -31,7 +31,7 @@ export default class ConfigurationService extends Service {
     ) {
       const setConfigurationService: SetConfigurationService =
         new SetConfigurationService();
-      await setConfigurationService.initConfiguration();
+      await setConfigurationService.initConfiguration(path);
     }
     this.configuration = this.setConfigFromConfigFile();
     if (overrides?.defaultNetwork) {

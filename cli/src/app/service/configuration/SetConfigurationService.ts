@@ -20,9 +20,9 @@ export default class SetConfigurationService extends Service {
   /**
    * Initialise the configuration for first time or with "init" command
    */
-  public async initConfiguration(): Promise<void> {
+  public async initConfiguration(path?: string): Promise<void> {
     utilsService.showMessage(language.getText('initialConfiguration.title'));
-    await this.configurePath();
+    await this.configurePath(path);
     await this.configureDefaultNetwork();
     await this.configureAccounts();
   }
@@ -30,9 +30,9 @@ export default class SetConfigurationService extends Service {
   /**
    * Function to configure the default path, fails if the path doesn't exist
    */
-  public async configurePath(): Promise<string> {
+  public async configurePath(path?: string): Promise<string> {
     const defaultConfigPath =
-      configurationService.getDefaultConfigurationPath();
+      path ?? configurationService.getDefaultConfigurationPath();
     const defaultPath = await utilsService.defaultSingleAsk(
       language.getText('configuration.askPath'),
       defaultConfigPath ?? configurationService.getDefaultConfigurationPath(),
@@ -49,7 +49,7 @@ export default class SetConfigurationService extends Service {
           language.getText('configuration.askCreateConfigNeg'),
         );
       } else {
-        configurationService.createDefaultConfiguration()
+        configurationService.createDefaultConfiguration();
       }
     }
 
