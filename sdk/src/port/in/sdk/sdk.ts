@@ -34,9 +34,9 @@ import { IRescueStableCoinRequest } from './request/IRescueStableCoinRequest.js'
 import { ISupplierStableCoinRequest } from './request/ISupplierStableCoinRequest.js';
 import { IWipeStableCoinRequest } from './request/IWipeStableCoinRequest.js';
 import AccountId from '../../../domain/context/account/AccountId.js';
-import IStableCoinDetail from '../../out/stablecoin/types/IStableCoinDetail.js';
 import EOAccount from '../../../domain/context/account/EOAccount.js';
 import PrivateKey from '../../../domain/context/account/PrivateKey.js';
+import { PublicKey } from '../../../domain/context/account/PublicKey.js';
 
 export {
 	IAssociateStableCoinRequest,
@@ -52,7 +52,15 @@ export {
 };
 
 /* Export basic types*/
-export { AppMetadata, HederaNetwork };
+export {
+	AppMetadata,
+	HederaNetwork,
+	StableCoin,
+	AccountId,
+	EOAccount,
+	PrivateKey,
+	PublicKey,
+};
 
 export interface ConfigurationOptions {
 	appMetadata?: AppMetadata;

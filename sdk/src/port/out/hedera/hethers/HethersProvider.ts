@@ -363,7 +363,7 @@ export default class HethersProvider implements IProvider {
 			case HederaNetwork.PREVIEW:
 			case HederaNetwork.TEST:
 				return hethers.getDefaultProvider(network);
-			case HederaNetwork.CUSTOM:
+			case HederaNetwork.LOCAL:
 			default:
 				throw new Error('Network not supported');
 		}

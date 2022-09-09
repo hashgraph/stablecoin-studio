@@ -1,5 +1,4 @@
-general: { configPath: '', network: 'testnet' }
-
+defaultNetwork: 'testnet'
 networks:
   [
     {
@@ -39,5 +38,4 @@ networks:
       chainId: 0,
     },
   ]
-
-accounts: [{ accountId: '', privateKey: '', isECDA25519Type: false, alias: '' }]
+accounts: [{ accountId: '', privateKey: '', network: '', alias: '' }]
