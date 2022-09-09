@@ -59,7 +59,6 @@ export default class CreateStableCoinService extends Service {
             configurationService.getConfiguration().accounts[0].privateKey,
           ...stableCoin,
         };
-        console.debug('Final request:', req);
         sdk
           .createStableCoin(req)
           .then((coin) => {

@@ -12,7 +12,6 @@ import IWipeStableCoinServiceRequestModel from './model/IWipeStableCoinServiceRe
 import IStableCoinRepository from '../../../port/out/stablecoin/IStableCoinRepository.js';
 import ISupplierRoleStableCoinServiceRequestModel from './model/ISupplierRoleStableCoinServiceRequestModel';
 import IRescueStableCoinServiceRequestModel from './model/IRescueStableCoinServiceRequestModel.js';
-import IStableCoinDetail from '../../../port/out/stablecoin/types/IStableCoinDetail.js';
 
 export default class StableCoinService extends Service {
 	private repository: IStableCoinRepository;
@@ -25,10 +24,10 @@ export default class StableCoinService extends Service {
 	/**
 	 * createStableCoin
 	 */
-	public createStableCoin(
+	public async createStableCoin(
 		req: ICreateStableCoinServiceRequestModel,
 	): Promise<StableCoin> {
-		const coin: StableCoin = new StableCoin({
+		let coin: StableCoin = new StableCoin({
 			name: req.name,
 			symbol: req.symbol,
 			decimals: req.decimals,
@@ -46,7 +45,12 @@ export default class StableCoinService extends Service {
 			id: req.id,
 			autoRenewAccount: req.autoRenewAccount,
 		});
-		return this.repository.saveCoin(req.accountId, req.privateKey, coin);
+		coin = await this.repository.saveCoin(
+			req.accountId,
+			req.privateKey,
+			coin,
+		);
+		return this.repository.getStableCoin(coin.id);
 	}
 
 	/**

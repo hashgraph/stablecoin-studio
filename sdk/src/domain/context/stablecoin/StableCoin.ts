@@ -175,17 +175,6 @@ export class StableCoin extends BaseEntity {
 	}
 
 	/**
-	 * Expiration of token
-	 */
-	private _expiry: number;
-	public get expiry(): number {
-		return this._expiry;
-	}
-	public set expiry(value: number) {
-		this._expiry = value;
-	}
-
-	/**
 	 * Token type
 	 */
 	private _tokenType: TokenType;
@@ -206,7 +195,10 @@ export class StableCoin extends BaseEntity {
 	public set supplyType(value: TokenSupplyType) {
 		this._supplyType = value;
 	}
-
+	
+	/**
+	 * Token auto-renew account
+	 */
 	private _autoRenewAccount: AccountId;
 	public get autoRenewAccount(): AccountId {
 		return this._autoRenewAccount;

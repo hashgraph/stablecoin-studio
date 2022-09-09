@@ -14,7 +14,7 @@ import {
 	FileId,
 	Hbar,
 	PrivateKey as HPrivateKey,
-	PublicKey,
+	PublicKey as HPublicKey,
 	TokenCreateTransaction,
 	TokenId,
 	TokenSupplyType,
@@ -33,8 +33,11 @@ import { log } from '../../../../core/log.js';
 import {
 	ICallContractRequest,
 	ICallContractWithAccountRequest,
+	ICreateTokenResponse,
 } from '../types.js';
 import HederaError from '../error/HederaError.js';
+import { PublicKey } from '../../../../domain/context/account/PublicKey.js';
+import AccountId from '../../../../domain/context/account/AccountId.js';
 
 type DefaultHederaProvider = hethers.providers.DefaultHederaProvider;
 
@@ -233,13 +236,14 @@ export default class HethersProvider implements IProvider {
 			this.getPublicKey(privateKey),
 			client,
 		);
-		stableCoin.id = TokenId.fromString(hederaToken.toString());
 		log('Setting up contract... please wait.', logOpts);
 		await this.callContract('setTokenAddress', {
 			contractId: proxyContract,
 			parameters: [
 				tokenOwnerContract.toSolidityAddress(),
-				TokenId.fromString(hederaToken.toString()).toSolidityAddress(),
+				TokenId.fromString(
+					hederaToken.tokenId.toString(),
+				).toSolidityAddress(),
 			],
 			gas: 80_000,
 			abi: HederaERC20__factory.abi,
@@ -263,7 +267,25 @@ export default class HethersProvider implements IProvider {
 			abi: HederaERC20__factory.abi,
 			account: plainAccount,
 		});
-		return stableCoin;
+		console.log(hederaToken.supplyKey);
+
+		return new StableCoin({
+			name: hederaToken.name,
+			symbol: hederaToken.symbol,
+			decimals: hederaToken.decimals,
+			initialSupply: BigInt(hederaToken.initialSupply.toNumber()),
+			maxSupply: BigInt(hederaToken.maxSupply.toNumber()),
+			memo: hederaToken.memo,
+			freezeDefault: hederaToken.freezeDefault,
+			treasury: new AccountId(hederaToken.treasuryAccountId.toString()),
+			adminKey: this.fromPublicKey(hederaToken.adminKey),
+			freezeKey: this.fromPublicKey(hederaToken.freezeKey),
+			wipeKey: this.fromPublicKey(hederaToken.wipeKey),
+			supplyKey: hederaToken.supplyKey,
+			id: hederaToken.tokenId,
+			tokenType: stableCoin.tokenType,
+			supplyType: stableCoin.supplyType,
+		});
 	}
 
 	private async deployContract(
@@ -359,23 +381,41 @@ export default class HethersProvider implements IProvider {
 		privateKey: string,
 		publicKey: string,
 		clientSdk: any,
-	): Promise<TokenId> {
+	): Promise<ICreateTokenResponse> {
+		const values: ICreateTokenResponse = {
+			name,
+			symbol,
+			decimals,
+			initialSupply: Long.fromString(initialSupply.toString()),
+			maxSupply: maxSupply
+				? Long.fromString(maxSupply.toString())
+				: Long.ZERO,
+			memo,
+			freezeDefault,
+			treasuryAccountId: HAccountId.fromString(contractId.toString()),
+			adminKey: HPublicKey.fromString(publicKey),
+			freezeKey: HPublicKey.fromString(publicKey),
+			wipeKey: HPublicKey.fromString(publicKey),
+			supplyKey: DelegateContractId.fromString(contractId),
+			tokenId: '',
+		};
+
 		const transaction = new TokenCreateTransaction()
 			.setMaxTransactionFee(new Hbar(25))
-			.setTokenName(name)
-			.setTokenSymbol(symbol)
-			.setDecimals(decimals)
-			.setInitialSupply(Long.fromString(initialSupply.toString()))
-			.setTokenMemo(memo)
-			.setFreezeDefault(freezeDefault)
-			.setTreasuryAccountId(HAccountId.fromString(contractId.toString()))
-			.setAdminKey(PublicKey.fromString(publicKey))
-			.setFreezeKey(PublicKey.fromString(publicKey))
-			.setWipeKey(PublicKey.fromString(publicKey))
-			.setSupplyKey(DelegateContractId.fromString(contractId));
+			.setTokenName(values.name)
+			.setTokenSymbol(values.symbol)
+			.setDecimals(values.decimals)
+			.setInitialSupply(values.initialSupply)
+			.setTokenMemo(values.memo)
+			.setFreezeDefault(values.freezeDefault)
+			.setTreasuryAccountId(values.treasuryAccountId)
+			.setAdminKey(values.adminKey)
+			.setFreezeKey(values.freezeKey)
+			.setWipeKey(values.wipeKey)
+			.setSupplyKey(values.supplyKey);
 
 		if (maxSupply) {
-			transaction.setMaxSupply(Long.fromString(maxSupply.toString()));
+			transaction.setMaxSupply(values.maxSupply);
 			transaction.setSupplyType(TokenSupplyType.Finite);
 		}
 		transaction.freezeWith(clientSdk);
@@ -389,11 +429,17 @@ export default class HethersProvider implements IProvider {
 				`An error ocurred creating the stable coin ${name}`,
 			);
 		}
-		const tokenId: TokenId = receipt.tokenId;
+		values.tokenId = receipt.tokenId;
 		log(
-			`Token ${name} created tokenId ${tokenId} - tokenAddress ${tokenId?.toSolidityAddress()}`,
+			`Token ${name} created tokenId ${
+				values.tokenId
+			} - tokenAddress ${values.tokenId?.toSolidityAddress()}`,
 			logOpts,
 		);
-		return tokenId;
+		return values;
+	}
+
+	private fromPublicKey(key: HPublicKey): PublicKey {
+		return new PublicKey({ key: key._key, type: key._type });
 	}
 }
