@@ -1,5 +1,6 @@
 import { extendTheme } from '@chakra-ui/react';
 import { Button } from './components/Button';
+import { ConfigSelect } from './components/Select';
 
 const theme = extendTheme({
 	config: {
@@ -27,6 +28,7 @@ const theme = extendTheme({
 	},
 	components: {
 		Button,
+		Select: ConfigSelect,
 	},
 });
 
