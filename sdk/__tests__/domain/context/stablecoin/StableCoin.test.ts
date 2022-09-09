@@ -38,7 +38,6 @@ describe('🧪 [DOMAIN] StableCoin', () => {
 		expect(coin.wipeKey).toBeUndefined();
 		expect(coin.supplyKey).toBeUndefined();
 		expect(coin.treasury).toBeUndefined();
-		expect(coin.expiry).toBeUndefined();
 		expect(coin.tokenType).toBe(TokenType.FUNGIBLE_COMMON);
 		expect(coin.supplyType).toBe(TokenSupplyType.INFINITE);
 	});
