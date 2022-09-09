@@ -1053,7 +1053,7 @@ const NameIcons = [
 	'YoutubeLogo',
 ];
 
-export interface IconProps extends ChakraIconProps {
+export interface IconProps extends Omit<ChakraIconProps, 'name' | 'as'> {
 	name: typeof NameIcons[number];
 }
 
