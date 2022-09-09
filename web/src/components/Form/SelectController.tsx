@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // @ts-nocheck
 
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useRef, useState } from 'react';
 import {
 	FormControl,
 	FormErrorMessage,
@@ -21,7 +21,8 @@ import { Controller } from 'react-hook-form';
 import { Props } from 'react-select';
 import type { Control, UseControllerProps } from 'react-hook-form';
 import { Select as ChakraSelect } from 'chakra-react-select';
-import { Icon } from '../Icon';
+import Icon from '../Icon';
+import { merge as _merge } from 'lodash';
 
 export interface SelectOption {
 	value: string | number;
@@ -46,12 +47,44 @@ export interface SelectControllerProps {
 	formStyle?: Object;
 	labelStyle?: Object;
 	'data-testid': string;
+	onMenuOpen?: () => void;
+	onMenuClose?: () => void;
+	addonDown?: ReactNode;
+	overrideStyles?: any;
 }
 const IconContainer = ({ children, sx }: { children: ReactNode; sx?: SystemStyleObject }) => (
 	<Flex alignItems='center' justifyContent='center' sx={sx}>
 		{children}
 	</Flex>
 );
+
+const useStyles = ({
+	variant,
+	size,
+	isInvalid,
+	isDisabled,
+	addonLeft,
+	addonRight,
+	addonError,
+	addonDown,
+	overrideStyles,
+}) => {
+	console.log();
+
+	const themeStyles = useChakraMultiStyleConfig('Select', {
+		variant,
+		size,
+		isInvalid,
+		isDisabled,
+		addonLeft,
+		addonRight,
+		addonError,
+		addonDown,
+	}) as any;
+	const styles = _merge(themeStyles, overrideStyles);
+
+	return styles;
+};
 
 const useComponents = ({
 	variant,
@@ -63,6 +96,7 @@ const useComponents = ({
 	isInvalid,
 	isDisabled,
 	placeholder,
+	styles,
 }: {
 	variant: any;
 	addonLeft?: ReactNode;
@@ -73,18 +107,8 @@ const useComponents = ({
 	isInvalid?: boolean;
 	isDisabled?: boolean;
 	placeholder?: string | ReactNode;
+	overrideStyles?: any;
 }): any => {
-	const styles = useChakraMultiStyleConfig('Select', {
-		variant,
-		size,
-		isInvalid,
-		isDisabled,
-		addonLeft,
-		addonRight,
-		addonError,
-		addonDown,
-	}) as any;
-
 	return {
 		Placeholder: () => null,
 		IndicatorSeparator: () => null,
@@ -145,14 +169,22 @@ export const SelectController = ({
 	addonRight,
 	addonError,
 	addonDown = <Icon name='CaretDown' />,
-
 	labelStyle,
+	overrideStyles,
 	'data-testid': dataTestId,
 	...props
 }: SelectControllerProps) => {
-	const components = useComponents({
-		size,
+	const styles = useStyles({
 		variant,
+		addonRight,
+		addonError,
+		addonDown,
+		size,
+		isInvalid: false,
+		isDisabled,
+		overrideStyles,
+	});
+	const components = useComponents({
 		addonLeft,
 		addonRight,
 		addonError,
@@ -160,6 +192,7 @@ export const SelectController = ({
 		placeholder,
 		isInvalid: false,
 		isDisabled,
+		styles,
 	});
 
 	return (
@@ -186,26 +219,28 @@ export const SelectController = ({
 									{isRequired && <Text color='red'>*</Text>}
 								</HStack>
 							</FormLabel>
-							{/* <Select
-								data-testid={dataTestId || name}
-								id={id || name}
-								name={name}
-								placeholder={placeholder || ''}
-								value={value}
-								options={options}
-								isDisabled={disabled}
-								isSearchable={isSearchable}
-								onChange={onChangeCustom as Props['onChange']}
-								onBlur={onBlurCustom as Props['onBlur']}
-								styles={chakraStyles}
-								{...props}
-							/> */}
+
 							<ChakraSelect
 								isInvalid={invalid}
-								isDisabled={isDisabled}
 								options={options}
+								onChange={onChangeCustom as Props['onChange']}
+								onBlur={onBlurCustom as Props['onBlur']}
+								placeholder={placeholder}
+								value={value}
+								data-testid={dataTestId || name}
 								components={components}
-								// {...props}
+								chakraStyles={{
+									option: (provided, state) => {
+										console.log(styles.optionSelected);
+
+										return {
+											...styles.option,
+											...(state.isSelected && styles.optionSelected),
+										};
+									},
+								}}
+								variant='unstyled'
+								{...props}
 							/>
 							{showErrors && <FormErrorMessage>{error && error.message}</FormErrorMessage>}
 						</FormControl>

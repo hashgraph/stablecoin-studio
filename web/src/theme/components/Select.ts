@@ -9,6 +9,8 @@ const baseStyle = ({ isDisabled, isInvalid, addonRight, addonLeft, hasValue }: a
 			h: 'full',
 			position: 'relative',
 			cursor: isDisabled ? 'not-allowed' : 'pointer',
+			transition: 'all .1s ease-in',
+			fontSize: 'sm',
 		},
 		container: {
 			position: 'relative',
@@ -27,13 +29,23 @@ const baseStyle = ({ isDisabled, isInvalid, addonRight, addonLeft, hasValue }: a
 		},
 		valueSelected: {
 			position: 'absolute',
+			color: 'brand.gray',
 		},
-		menuList: {
-			border: '1px solid',
-			borderColor: 'gray.200',
-		},
+		menuList: {},
 		option: {
 			bg: 'transparent',
+			p: 2,
+			borderRadius: '8px',
+			mb: 2,
+			_hover: {
+				bg: 'blackAlpha.100',
+			},
+		},
+		optionSelected: {
+			bg: 'brand.lightPrimary',
+			_hover: {
+				bg: 'brand.lightPrimary',
+			},
 		},
 		addonDown: {
 			paddingEnd: addonRight || isInvalid ? '14px' : 4,
@@ -95,12 +107,13 @@ const outline = ({ isInvalid, isDisabled }: any) => {
 	return {
 		wrapper: {
 			border: '1px solid',
-			borderColor: isInvalid ? 'red.500' : 'gray.200',
+			borderColor: isInvalid ? 'red.500' : 'gray.600',
+			borderRadius: '4px',
 			_hover: {
 				borderColor: isInvalid ? 'red.500' : isDisabled ? 'gray.200' : 'gray.300',
 			},
 			_focusWithin: {
-				borderColor: isInvalid ? 'red.500' : 'blue.500',
+				borderColor: isInvalid ? 'red.500' : 'gray.600',
 			},
 		},
 	};
@@ -117,6 +130,8 @@ export const ConfigSelect = {
 		'menuList',
 		'label',
 		'valueSelected',
+		'option',
+		'optionSelected',
 	],
 	baseStyle,
 	sizes: {

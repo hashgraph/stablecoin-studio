@@ -20,6 +20,7 @@ const theme = extendTheme({
 			green: '#A7D88A',
 			red: '#F25454',
 			blue: '#7285EA',
+			lightPrimary: '#ECE8FF',
 		},
 		light: {
 			primary: '#ECEBF1',
@@ -44,6 +45,14 @@ const theme = extendTheme({
 	components: {
 		Button,
 		Select: ConfigSelect,
+		Input: {
+			baseStyle: {
+				border: 0,
+			},
+			defaultProps: {
+				variant: 'unstyled',
+			},
+		},
 	},
 });
 
