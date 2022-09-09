@@ -1,5 +1,4 @@
-/* eslint-disable import/namespace */
-import { Icon as ChakraIcon } from '@chakra-ui/react';
+import { As, Icon as ChakraIcon, IconProps as ChakraIconProps } from '@chakra-ui/react';
 
 import * as ReactPhosphorIcons from 'phosphor-react';
 
@@ -1054,22 +1053,18 @@ const NameIcons = [
 	'YoutubeLogo',
 ];
 
-export interface PhosphorIconProps {
+export interface IconProps extends Omit<ChakraIconProps, 'name' | 'as'> {
 	name: typeof NameIcons[number];
 }
 
-export const Icon = ({ name, ...props }: PhosphorIconProps) => {
+const Icon = ({ name, ...props }: IconProps) => {
 	const phosphorName = `${name}` as keyof typeof ReactPhosphorIcons;
 
 	if (!(phosphorName in ReactPhosphorIcons)) {
 		throw new Error(`Icon '${name}' not found.`);
 	}
 
-	return (
-		<ChakraIcon
-			// @ts-ignore
-			as={ReactPhosphorIcons[phosphorName]}
-			{...props}
-		/>
-	);
+	return <ChakraIcon as={ReactPhosphorIcons[phosphorName] as As} {...props} />;
 };
+
+export default Icon;
