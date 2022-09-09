@@ -1,4 +1,4 @@
-import IGetStableCoinServiceRequestModel from '../../../../src/app/service/stablecoin/model/IGetStableCoinServiceRequestModel.js';
+import { Key, PublicKey as HPublicKey } from '@hashgraph/sdk';
 import { PublicKey } from '../../../../src/domain/context/account/PublicKey.js';
 import { SDK } from '../../../../src/index.js';
 import { ACCOUNTS, getSDK } from '../../../core.js';
@@ -39,5 +39,4 @@ describe('🧪 [PORT] SDK', () => {
 		});
 		expect(list).not.toBeNull();
 	});
-
 });
