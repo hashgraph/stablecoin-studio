@@ -19,6 +19,7 @@
     "framer-motion": "^4.1.17",
     "hedera-stable-coin-sdk": "file:../sdk",
     "moment": "^2.29.4",
+    "named-urls": "^2.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.34.0",
