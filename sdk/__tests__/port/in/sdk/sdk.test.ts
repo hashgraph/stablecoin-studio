@@ -1,6 +1,7 @@
 import { Key, PublicKey as HPublicKey } from '@hashgraph/sdk';
+import { proto } from '@hashgraph/proto';
 import PublicKey from '../../../../src/domain/context/account/PublicKey.js';
-import { SDK } from '../../../../src/index.js';
+import { ContractId, SDK } from '../../../../src/index.js';
 import { ACCOUNTS, getSDK } from '../../../core.js';
 
 describe('🧪 [PORT] SDK', () => {
@@ -40,18 +41,9 @@ describe('🧪 [PORT] SDK', () => {
 		expect(list).not.toBeNull();
 	});
 
-	// it('Gets contract id from public key', async () => {
-	// 	const key = { key: '420518f3c4fe16', type: 'ProtobufEncoded' };
-	// 	const hex = hexToBytes(key.key);
-	// 	console.log(hex);
-	// 	// console.log(HPublicKey.fromBytes(hex));
-	// 	console.log(Key._fromProtobufKey(hex));
-	// });
+	it('Gets contract id from public key', async () => {
+		const key = { key: '420518f3c4fe16', type: 'ProtobufEncoded' };
+		console.log(ContractId.fromKey(key.key));
+		expect(ContractId.fromKey(key.key)).not.toBeNull();
+	});
 });
-
-function hexToBytes(hex: string): number[] {
-	const bytes = [];
-	for (let c = 0; c < hex.length; c += 2)
-		bytes.push(parseInt(hex.substr(c, 2), 16));
-	return bytes;
-}

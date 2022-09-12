@@ -76,9 +76,9 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			const getKeyOrDefault = (
 				val?: IPublicKey,
 			): ContractId | PublicKey | undefined => {
-				// if(val?._type === 'ProtobufEncoded'){
-				// 	return ContractId.fromKey(val.key);
-				// }
+				if(val?._type === 'ProtobufEncoded'){
+					return ContractId.fromKey(val.key);
+				}
 				if (val) {
 					return new PublicKey({
 						key: val.key,
