@@ -41,7 +41,7 @@ export default class SetConfigurationService extends Service {
       );
     }
     // If the path is incorrect
-    if (!fs.existsSync(defaultPath)) {
+    if (!fs.existsSync(defaultPath) || !configurationService.validateConfigurationFile()) {
       const createAuto = await utilsService.defaultConfirmAsk(
         language.getText('configuration.askCreateConfig'),
         true,
