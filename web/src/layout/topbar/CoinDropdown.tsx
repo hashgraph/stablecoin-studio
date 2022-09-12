@@ -8,8 +8,14 @@ const CoinDropdown = () => {
 	const { t } = useTranslation('global');
 	const { control } = useForm();
 	const styles = {
-		menuList: { maxH: '220px', overflowY: 'auto', bg: 'brand.white' },
-		wrapperOpened: { borderWidth: '0', boxShadow: '' },
+		menuList: {
+			maxH: '220px',
+			overflowY: 'auto',
+			bg: 'brand.white',
+			boxShadow: 'down-black',
+			p: 4,
+		},
+		wrapperOpened: { borderWidth: '0' },
 	};
 
 	return (
