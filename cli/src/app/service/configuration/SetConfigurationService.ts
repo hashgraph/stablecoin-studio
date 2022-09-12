@@ -20,10 +20,10 @@ export default class SetConfigurationService extends Service {
   /**
    * Initialise the configuration for first time or with "init" command
    */
-  public async initConfiguration(path?: string): Promise<void> {
+  public async initConfiguration(path?: string, network?: string): Promise<void> {
     utilsService.showMessage(language.getText('initialConfiguration.title'));
     await this.configurePath(path);
-    await this.configureDefaultNetwork();
+    await this.configureDefaultNetwork(network);
     await this.configureAccounts();
   }
 
@@ -64,11 +64,16 @@ export default class SetConfigurationService extends Service {
   /**
    * Function to configure the default network
    */
-  public async configureDefaultNetwork(): Promise<string> {
-    let network = await utilsService.defaultSingleAsk(
-      language.getText('configuration.askNetwork'),
-      'mainnet|previewnet|testnet|local',
-    );
+  public async configureDefaultNetwork(_network?: string): Promise<string> {
+    let network: string;
+    if (_network){
+      network = _network;
+    }else{
+      network = await utilsService.defaultSingleAsk(
+        language.getText('configuration.askNetwork'),
+        'mainnet|previewnet|testnet|local',
+      );
+    }
 
     if (
       network === undefined ||
