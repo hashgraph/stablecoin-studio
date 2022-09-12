@@ -1,5 +1,7 @@
+import CoinDropdown from '../sidebar/CoinDropdown';
+
 const TopbarLeft = () => {
-	return <div>TopbarLeft</div>;
+	return <CoinDropdown />;
 };
 
 export default TopbarLeft;

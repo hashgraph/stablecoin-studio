@@ -1,5 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-const baseStyle = ({ isDisabled, isInvalid, addonRight, addonLeft, hasValue }: any) => {
+import { SelectConfigProps } from '../../components/Form/SelectController';
+
+const baseStyle = ({ isDisabled, isInvalid, hasValue }: SelectConfigProps) => {
 	return {
 		wrapper: {
 			display: 'flex',
@@ -11,6 +12,7 @@ const baseStyle = ({ isDisabled, isInvalid, addonRight, addonLeft, hasValue }: a
 			cursor: isDisabled ? 'not-allowed' : 'pointer',
 			transition: 'all .1s ease-in',
 			fontSize: 'sm',
+			p: 0,
 		},
 		container: {
 			position: 'relative',
@@ -18,7 +20,6 @@ const baseStyle = ({ isDisabled, isInvalid, addonRight, addonLeft, hasValue }: a
 			alignItems: 'center',
 			w: 'full',
 			h: 'auto',
-			paddingStart: addonLeft ? '9.5px' : 4,
 		},
 		label: {
 			position: 'absolute',
@@ -35,6 +36,7 @@ const baseStyle = ({ isDisabled, isInvalid, addonRight, addonLeft, hasValue }: a
 		option: {
 			bg: 'transparent',
 			p: 2,
+			color: 'brand.black',
 			borderRadius: '8px',
 			mb: 2,
 			_hover: {
@@ -48,7 +50,7 @@ const baseStyle = ({ isDisabled, isInvalid, addonRight, addonLeft, hasValue }: a
 			},
 		},
 		addonDown: {
-			paddingEnd: addonRight || isInvalid ? '14px' : 4,
+			paddingEnd: 4,
 		},
 		addonError: {
 			color: 'red.500',
@@ -63,47 +65,7 @@ const baseStyle = ({ isDisabled, isInvalid, addonRight, addonLeft, hasValue }: a
 	};
 };
 
-const sizesStyle = {
-	md: () => {
-		return {
-			container: {
-				py: '10px',
-			},
-		};
-	},
-	lg: ({ hasValue }: any) => {
-		return {
-			container: {
-				paddingTop: hasValue ? '21px' : '14px',
-				paddingBottom: hasValue ? '7px' : '14px',
-			},
-			label: {
-				display: 'block',
-				top: hasValue ? '7px' : 'auto',
-			},
-			valueSelected: {
-				bottom: '7px',
-			},
-		};
-	},
-	xl: ({ hasValue }: any) => {
-		return {
-			container: {
-				paddingTop: hasValue ? '26px' : '18px',
-				paddingBottom: hasValue ? '10px' : '18px',
-			},
-			label: {
-				display: 'block',
-				top: hasValue ? '10px' : 'auto',
-			},
-			valueSelected: {
-				bottom: '10px',
-			},
-		};
-	},
-};
-
-const outline = ({ isInvalid, isDisabled }: any) => {
+const outline = ({ isInvalid, isDisabled }: SelectConfigProps) => {
 	return {
 		wrapper: {
 			border: '1px solid',
@@ -134,11 +96,6 @@ export const ConfigSelect = {
 		'optionSelected',
 	],
 	baseStyle,
-	sizes: {
-		md: sizesStyle.md,
-		lg: sizesStyle.lg,
-		xl: sizesStyle.xl,
-	},
 	variants: {
 		outline,
 	},

@@ -1,8 +1,4 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-// @ts-nocheck
-
-import React, { ReactNode, useRef, useState } from 'react';
+import React, { ReactNode } from 'react';
 import {
 	FormControl,
 	FormErrorMessage,
@@ -10,7 +6,6 @@ import {
 	HStack,
 	Stack,
 	Text,
-	useFormControlContext as useChakraFormControlContext,
 	useMultiStyleConfig as useChakraMultiStyleConfig,
 	Flex,
 	type SystemStyleObject,
@@ -18,40 +13,90 @@ import {
 } from '@chakra-ui/react';
 import type { ChangeEvent } from 'react';
 import { Controller } from 'react-hook-form';
-import { Props } from 'react-select';
+import { Props as ReactSelectProps } from 'react-select';
 import type { Control, UseControllerProps } from 'react-hook-form';
-import { Select as ChakraSelect } from 'chakra-react-select';
+
+import {
+	Select as ChakraSelect,
+	type SelectComponentsConfig,
+	type GroupBase,
+} from 'chakra-react-select';
 import Icon from '../Icon';
 import { merge as _merge } from 'lodash';
+import { Variant } from 'chakra-react-select/dist/types/types';
 
 export interface SelectOption {
 	value: string | number;
 	label: string | number;
 }
 
+export const partsListByTheme: Array<
+	| 'wrapper'
+	| 'container'
+	| 'addonLeft'
+	| 'addonRight'
+	| 'addonError'
+	| 'addonDown'
+	| 'menuList'
+	| 'label'
+	| 'valueSelected'
+	| 'option'
+	| 'optionSelected'
+> = [
+	'wrapper',
+	'container',
+	'addonLeft',
+	'addonRight',
+	'addonError',
+	'addonDown',
+	'menuList',
+	'label',
+	'valueSelected',
+	'option',
+	'optionSelected',
+];
+
+type Parts = typeof partsListByTheme;
+
+export type SelectThemeStyle = Record<Parts[number], SystemStyleObject>;
 export interface SelectControllerProps {
 	id: string;
 	name: string;
 	rules?: UseControllerProps['rules'];
 	label?: string;
 	placeholder?: string;
-	options: Props['options'];
+	options: ReactSelectProps['options'];
 	control: Control<Record<string, SelectOption['value']>>;
 	isRequired?: boolean;
 	isSearchable?: boolean;
 	isDisabled?: boolean;
 	onChangeAux?: React.ChangeEventHandler<HTMLInputElement>;
-	onBlurAux?: Props['onBlur'];
+	onBlurAux?: ReactSelectProps['onBlur'];
 	showErrors?: boolean;
-	chakraStyles?: Object;
-	formStyle?: Object;
-	labelStyle?: Object;
-	'data-testid': string;
+	labelProps?: Object;
+	'data-testid'?: string;
 	onMenuOpen?: () => void;
 	onMenuClose?: () => void;
 	addonDown?: ReactNode;
-	overrideStyles?: any;
+	addonRight?: ReactNode;
+	addonError?: ReactNode;
+	addonLeft?: ReactNode;
+	variant: Variant;
+	size?: ReactSelectProps['size'];
+	overrideStyles?: Partial<SelectThemeStyle>;
 }
+
+export type SelectConfigProps = {
+	variant: Record<string, SystemStyleObject>;
+	isInvalid?: boolean;
+	isDisabled?: boolean;
+	addonDown?: ReactNode;
+	addonError?: ReactNode;
+	addonLeft?: ReactNode;
+	addonRight?: ReactNode;
+	hasValue?: boolean;
+};
+
 const IconContainer = ({ children, sx }: { children: ReactNode; sx?: SystemStyleObject }) => (
 	<Flex alignItems='center' justifyContent='center' sx={sx}>
 		{children}
@@ -68,9 +113,17 @@ const useStyles = ({
 	addonError,
 	addonDown,
 	overrideStyles,
+}: {
+	variant: Variant;
+	size: ReactSelectProps['size'];
+	isInvalid: boolean;
+	isDisabled: boolean;
+	addonDown: ReactNode;
+	addonRight: ReactNode;
+	addonError: ReactNode;
+	addonLeft: ReactNode;
+	overrideStyles?: Partial<SelectThemeStyle>;
 }) => {
-	console.log();
-
 	const themeStyles = useChakraMultiStyleConfig('Select', {
 		variant,
 		size,
@@ -80,10 +133,12 @@ const useStyles = ({
 		addonRight,
 		addonError,
 		addonDown,
-	}) as any;
-	const styles = _merge(themeStyles, overrideStyles);
-
-	return styles;
+	});
+	const styles = React.useMemo(
+		() => _merge({}, themeStyles, overrideStyles),
+		[themeStyles, overrideStyles],
+	);
+	return styles as SelectThemeStyle;
 };
 
 const useComponents = ({
@@ -98,17 +153,17 @@ const useComponents = ({
 	placeholder,
 	styles,
 }: {
-	variant: any;
+	variant: Variant;
 	addonLeft?: ReactNode;
 	addonRight?: ReactNode;
 	addonError?: ReactNode;
 	addonDown?: ReactNode;
-	size?: any;
+	size?: ReactSelectProps['size'];
 	isInvalid?: boolean;
 	isDisabled?: boolean;
 	placeholder?: string | ReactNode;
-	overrideStyles?: any;
-}): any => {
+	styles: SelectThemeStyle;
+}): SelectComponentsConfig<unknown, boolean, GroupBase<unknown>> => {
 	return {
 		Placeholder: () => null,
 		IndicatorSeparator: () => null,
@@ -132,7 +187,7 @@ const useComponents = ({
 				isInvalid,
 				isDisabled,
 				hasValue: hasValue || inputValue,
-			}) as any;
+			}) as SelectThemeStyle;
 			return (
 				<Box sx={_styles.container}>
 					<Text as='span' sx={_styles.label}>
@@ -148,10 +203,9 @@ const useComponents = ({
 };
 
 export const SelectController = ({
-	id,
 	name,
 	rules,
-	label = '',
+	label,
 	placeholder,
 	options,
 	control,
@@ -160,18 +214,15 @@ export const SelectController = ({
 	onChangeAux,
 	onBlurAux,
 	showErrors = true,
-	chakraStyles,
-	formStyle,
-	isSearchable,
 	size,
 	variant,
 	addonLeft,
 	addonRight,
 	addonError,
 	addonDown = <Icon name='CaretDown' />,
-	labelStyle,
+	labelProps,
 	overrideStyles,
-	'data-testid': dataTestId,
+	'data-testid': dataTestId = `${name}-select`,
 	...props
 }: SelectControllerProps) => {
 	const styles = useStyles({
@@ -179,6 +230,7 @@ export const SelectController = ({
 		addonRight,
 		addonError,
 		addonDown,
+		addonLeft,
 		size,
 		isInvalid: false,
 		isDisabled,
@@ -193,6 +245,7 @@ export const SelectController = ({
 		isInvalid: false,
 		isDisabled,
 		styles,
+		variant,
 	});
 
 	return (
@@ -212,34 +265,33 @@ export const SelectController = ({
 
 				return (
 					<Stack w='full'>
-						<FormControl data-testid='form_control' isInvalid={invalid} {...formStyle}>
-							<FormLabel fontSize='14px' color='brand.formLabel' pt='20px' {...labelStyle}>
-								<HStack>
-									<Text>{label}</Text>
-									{isRequired && <Text color='red'>*</Text>}
-								</HStack>
-							</FormLabel>
+						<FormControl data-testid='form_control' isInvalid={invalid}>
+							{label && (
+								<FormLabel {...labelProps}>
+									<HStack>
+										<Text>{label}</Text>
+										{isRequired && <Text color='red'>*</Text>}
+									</HStack>
+								</FormLabel>
+							)}
 
 							<ChakraSelect
 								isInvalid={invalid}
 								options={options}
-								onChange={onChangeCustom as Props['onChange']}
-								onBlur={onBlurCustom as Props['onBlur']}
+								onChange={onChangeCustom as ReactSelectProps['onChange']}
+								onBlur={onBlurCustom as ReactSelectProps['onBlur']}
 								placeholder={placeholder}
 								value={value}
 								data-testid={dataTestId || name}
 								components={components}
 								chakraStyles={{
-									option: (provided, state) => {
-										console.log(styles.optionSelected);
-
-										return {
-											...styles.option,
-											...(state.isSelected && styles.optionSelected),
-										};
-									},
+									option: (_, state) => ({
+										// option needs to be styled like this, otherwise it doesn't let user select the options
+										...styles.option,
+										...(state.isSelected && styles.optionSelected),
+									}),
 								}}
-								variant='unstyled'
+								variant={variant}
 								{...props}
 							/>
 							{showErrors && <FormErrorMessage>{error && error.message}</FormErrorMessage>}

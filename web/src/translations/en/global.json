@@ -7,5 +7,10 @@
   "topbar":{
     "network": "Operating network",
     "account": "Operating account"
+  },
+  "sidebar": {
+    "coinDropdown": {
+      "placeholder": "Select stable coin"
+    }
   }
 }

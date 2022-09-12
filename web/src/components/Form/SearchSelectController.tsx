@@ -1,81 +1,45 @@
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { SystemStyleObject } from '@chakra-ui/react';
+import { useMemo, useState } from 'react';
+import { Control } from 'react-hook-form';
 import Icon from '../Icon';
-import { SelectController } from './SelectController';
+import {
+	SelectController,
+	SelectControllerProps,
+	SelectOption,
+	SelectThemeStyle,
+} from './SelectController';
 
-const SearchSelectController = () => {
+export interface SearchSelectControllerProps
+	extends Omit<SelectControllerProps, 'overrideStyles' | 'id' | 'variant'> {
+	control: Control<Record<string, SelectOption['value']>>;
+	styles: Partial<SelectThemeStyle> & {
+		wrapperOpened?: SystemStyleObject;
+		wrapperClosed?: SystemStyleObject;
+	};
+}
+const SearchSelectController = ({
+	control,
+	styles,
+	name,
+	'data-testid': dataTestId,
+	...props
+}: SearchSelectControllerProps) => {
 	const [isMenuOpened, setIsMenuOpened] = useState(false);
 
-	const { control } = useForm();
+	const { wrapperOpened, wrapperClosed, ...restStyles } = styles;
+	const overrideStyles = useMemo(
+		() => ({
+			...restStyles,
+			wrapper: !isMenuOpened ? wrapperClosed : wrapperOpened,
+		}),
+		[isMenuOpened],
+	);
 
 	return (
 		<SelectController
 			control={control}
-			name='Prueba'
+			name={name}
 			isSearchable
-			id='prueba'
-			options={[
-				{
-					label: 'uno',
-					value: '1',
-				},
-				{
-					label: 'dos',
-					value: 2,
-				},
-				{
-					label: 'dos',
-					value: Math.random(),
-				},
-				{
-					label: 'dos',
-					value: Math.random(),
-				},
-				{
-					label: 'dos',
-					value: Math.random(),
-				},
-				{
-					label: 'dos',
-					value: Math.random(),
-				},
-				{
-					label: 'dos',
-					value: Math.random(),
-				},
-				{
-					label: 'dos',
-					value: Math.random(),
-				},
-				{
-					label: 'dos',
-					value: Math.random(),
-				},
-				{
-					label: 'dos',
-					value: Math.random(),
-				},
-				{
-					label: 'dos',
-					value: Math.random(),
-				},
-				{
-					label: 'dos',
-					value: Math.random(),
-				},
-				{
-					label: 'dos',
-					value: Math.random(),
-				},
-				{
-					label: 'dos',
-					value: Math.random(),
-				},
-				{
-					label: 'ult',
-					value: Math.random(),
-				},
-			]}
 			addonDown={
 				isMenuOpened ? (
 					<Icon name='MagnifyingGlass' w={5} h={5} />
@@ -83,13 +47,13 @@ const SearchSelectController = () => {
 					<Icon name='CaretDown' w={4} h={4} />
 				)
 			}
-			data-testid='prueba'
+			data-testid={dataTestId}
+			id={name}
 			onMenuOpen={() => setIsMenuOpened(true)}
 			onMenuClose={() => setIsMenuOpened(false)}
-			overrideStyles={{
-				wrapper: !isMenuOpened ? { borderColor: 'transparent' } : {},
-				menuList: { maxH: '400px', overflowY: 'scroll' },
-			}}
+			overrideStyles={overrideStyles}
+			{...props}
+			variant='unstyled'
 		/>
 	);
 };
