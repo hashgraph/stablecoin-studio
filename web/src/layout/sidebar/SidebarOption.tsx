@@ -1,21 +1,23 @@
 import { Flex, Text } from '@chakra-ui/react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Icon from '../../components/Icon';
+import { RouterManager } from '../../Router/RouterManager';
+import { NamedRoutes } from '../../Router/NamedRoutes';
 
-interface Props {
+interface SidebarOptionProps {
 	icon: string;
 	title: string;
-	route: string;
+	route: NamedRoutes;
 }
 
-const SidebarOption = ({ icon, title, route }: Props) => {
+const SidebarOption = ({ icon, title, route }: SidebarOptionProps) => {
 	const navigate = useNavigate();
 	const { pathname } = useLocation();
 
 	const isActive = pathname.includes(route);
 
 	const handleNavigate = () => {
-		navigate(route);
+		RouterManager.to(navigate, route);
 	};
 
 	return (
