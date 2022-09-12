@@ -64,7 +64,17 @@ export default class HethersProvider implements IProvider {
 	}
 
 	public getClient(accountId?: string, privateKey?: string): Client {
-		const client = Client.forName(this.network);
+		//*cambiarlo para que coja los nodos de consenso*//
+		//const client = Client.forName(this.network);
+		let client:any;
+		const hederaNetWork = getHederaNetwork(this.network)
+
+		if (hederaNetWork.consensusNodes){
+			client = Client.forNetwork(hederaNetWork.consensusNodes)
+		}else if (this.network.hederaNetworkEnviroment != HederaNetworkEnviroment.LOCAL){
+			client = Client.forName(this.network.hederaNetworkEnviroment);
+		}
+		 	
 		if (accountId && privateKey) {
 			client.setOperator(accountId, privateKey);
 		}

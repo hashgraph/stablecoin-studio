@@ -13,7 +13,7 @@ export class HederaNetwork {
 
 	constructor(hederaNetworkEnviroment:HederaNetworkEnviroment,nodes:[]){
 		this.hederaNetworkEnviroment = hederaNetworkEnviroment;
-		this.nodes = nodes
+		this.nodes = nodes;
 	}
 }
 export interface HederaNetworkSpec {
