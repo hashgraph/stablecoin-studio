@@ -1,8 +1,7 @@
 import { HashConnect, HashConnectTypes } from 'hashconnect/dist/cjs/main';
 import { HashConnectSigner } from 'hashconnect/dist/cjs/provider/signer.js';
 import { IniConfig, IProvider } from '../Provider.js';
-import { getHederaNetwork } from '../../../../core/enum.js';
-import { HederaNetwork } from '../../../in/sdk/sdk.js';
+import { HederaNetwork,getHederaNetwork } from '../../../in/sdk/sdk.js';
 import { ContractId } from '@hashgraph/sdk';
 import { StableCoin } from '../../../../domain/context/stablecoin/StableCoin.js';
 import { ICallContractRequest } from '../types.js';

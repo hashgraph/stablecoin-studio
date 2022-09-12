@@ -1,3 +1,4 @@
+
 import Account from '../src/domain/context/account/Account.js';
 import { AccountId } from '../src/domain/context/account/AccountId.js';
 import { PrivateKey } from '../src/domain/context/account/PrivateKey.js';
@@ -5,6 +6,7 @@ import {
 	Configuration,
 	HederaNetwork,
 	NetworkMode,
+	HederaNetworkEnviroment,
 	SDK,
 } from '../src/index.js';
 
@@ -17,15 +19,16 @@ export const ACCOUNTS: { testnet: Account } = {
 };
 
 export const SDKConfig: { hethers: Configuration; hashpack: Configuration } = {
+	
 	hethers: {
-		network: HederaNetwork.TEST,
+		network: new HederaNetwork(HederaNetworkEnviroment.TEST, []),
 		mode: NetworkMode.EOA,
 		options: {
 			account: ACCOUNTS.testnet,
 		},
 	},
 	hashpack: {
-		network: HederaNetwork.TEST,
+		network: new HederaNetwork(HederaNetworkEnviroment.TEST, []),
 		mode: NetworkMode.HASHPACK,
 		options: {
 			appMetadata: {
