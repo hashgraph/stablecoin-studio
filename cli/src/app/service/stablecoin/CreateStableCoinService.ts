@@ -4,6 +4,7 @@ import { utilsService } from '../../../index.js';
 import { SDK, ICreateStableCoinRequest } from 'hedera-stable-coin-sdk';
 import { IManagedFeatures } from '../../../domain/configuration/interfaces/IManagedFeatures.js';
 import Service from '../Service.js';
+import SetConfigurationService from '../configuration/SetConfigurationService.js';
 
 export const createdStableCoin = {
   name: '',
@@ -46,7 +47,19 @@ export default class CreateStableCoinService extends Service {
     // Call to create stable coin sdk function
     const sdk: SDK = utilsService.getSDK();
 
-    configurationService.getConfiguration();
+    if (
+      configurationService.getConfiguration().accounts[0].privateKey == null ||
+      configurationService.getConfiguration().accounts[0].privateKey ==
+        undefined ||
+      configurationService.getConfiguration().accounts[0].privateKey == ''
+    ) {
+      const setConfigurationService: SetConfigurationService =
+        new SetConfigurationService();
+      await setConfigurationService.initConfiguration(
+        configurationService.getDefaultConfigurationPath(),
+        configurationService.getConfiguration().defaultNetwork,
+      );
+    }
 
     // Loading
     utilsService.showMessage('\n');
