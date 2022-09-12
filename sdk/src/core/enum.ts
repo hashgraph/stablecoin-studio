@@ -1,4 +1,4 @@
-import { MAINNET_ADDRESS_BOOK, PREVIEWNET_ADDRESS_BOOK, TESTNET_ADDRESS_BOOK
+import { MAINNET_ADDRESS_BOOK, PREVIEWNET_ADDRESS_BOOK, TESTNET_ADDRESS_BOOK, AccountId
 } from '@hashgraph/sdk';
 
 export enum HederaNetworkEnviroment {
@@ -9,9 +9,9 @@ export enum HederaNetworkEnviroment {
 }
 export class HederaNetwork {
 	hederaNetworkEnviroment:HederaNetworkEnviroment;
-	nodes:[];	
+	nodes:{};	
 
-	constructor(hederaNetworkEnviroment:HederaNetworkEnviroment,nodes:[]){
+	constructor(hederaNetworkEnviroment:HederaNetworkEnviroment,nodes:Map<String,AccountId>){
 		this.hederaNetworkEnviroment = hederaNetworkEnviroment;
 		this.nodes = nodes;
 	}
@@ -23,7 +23,7 @@ export interface HederaNetworkSpec {
 }
 export function getHederaNetwork(hederaNetwork: HederaNetwork): HederaNetworkSpec {
 	const enviroment:HederaNetworkEnviroment = hederaNetwork.hederaNetworkEnviroment
-	const nodes:[] = hederaNetwork.nodes
+	const nodes:{} = hederaNetwork.nodes
     switch (enviroment) {
         case HederaNetworkEnviroment.MAIN:
             return {name:'mainnet', consensusNodes: nodes?nodes:MAINNET_ADDRESS_BOOK, mirrorNodeUrl: 'https://mainnet.mirrornode.hedera.com/'};

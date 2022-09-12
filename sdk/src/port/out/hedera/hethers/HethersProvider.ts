@@ -35,6 +35,7 @@ import {
 	ICallContractWithAccountRequest,
 } from '../types.js';
 import HederaError from '../error/HederaError.js';
+import { json } from 'stream/consumers';
 
 type DefaultHederaProvider = hethers.providers.DefaultHederaProvider;
 
@@ -70,6 +71,7 @@ export default class HethersProvider implements IProvider {
 		const hederaNetWork = getHederaNetwork(this.network)
 
 		if (hederaNetWork.consensusNodes){
+			console.log("nodes :" + hederaNetWork.consensusNodes)
 			client = Client.forNetwork(hederaNetWork.consensusNodes)
 		}else if (this.network.hederaNetworkEnviroment != HederaNetworkEnviroment.LOCAL){
 			client = Client.forName(this.network.hederaNetworkEnviroment);
@@ -278,14 +280,16 @@ export default class HethersProvider implements IProvider {
 		client: Client,
 		params?: any,
 	): Promise<ContractId> {
+		console.log("1");
 		try {
+			console.log(JSON.stringify(client));
 			const bytecodeFileId = await this.fileCreate(
 				factory.bytecode,
 				chunks,
 				PrivateKey.fromString(privateKey),
 				client,
 			);
-
+			console.log("2");
 			const transaction = new ContractCreateTransaction()
 				.setGas(181_000)
 				.setBytecodeFileId(bytecodeFileId)
@@ -295,9 +299,11 @@ export default class HethersProvider implements IProvider {
 				transaction.setConstructorParameters(params);
 			}
 			transaction.freezeWith(client);
+			console.log("3");
 			const contractCreateSign = await transaction.sign(
 				PrivateKey.fromString(privateKey),
 			);
+			console.log("4");
 			const txResponse = await contractCreateSign.execute(client);
 			const receipt = await txResponse.getReceipt(client);
 			if (!receipt.contractId) {
