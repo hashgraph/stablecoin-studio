@@ -44,3 +44,9 @@ export const SDKConfig: { hethers: Configuration; hashpack: Configuration } = {
 export const getSDK = async (config?: Configuration): Promise<SDK> => {
 	return await new SDK(config ?? SDKConfig.hethers).init();
 };
+
+export const baseCoin: { name: string; symbol: string; decimals: number } = {
+	name: 'TEST COIN',
+	symbol: 'TEST COIN',
+	decimals: 3,
+};

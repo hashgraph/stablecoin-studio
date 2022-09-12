@@ -23,12 +23,6 @@ describe('🧪 [DOMAIN] EOAccount', () => {
 		expect(account.privateKey).toBe(ACCOUNTS.testnet.privateKey);
 	});
 
-	it('Expect to fail on invalid account id', () => {
-		expect(() => new AccountId('invalid account id')).toThrowError(
-			DomainError,
-		);
-	});
-
 	it('Expect to fail on invalid private key', () => {
 		expect(() => new PrivateKey('invalid key')).toThrowError(DomainError);
 	});

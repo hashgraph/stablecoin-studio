@@ -40,10 +40,4 @@ describe('🧪 [PORT] SDK', () => {
 		});
 		expect(list).not.toBeNull();
 	});
-
-	it('Gets contract id from public key', async () => {
-		const key = { key: '420518f3c4fe16', type: 'ProtobufEncoded' };
-		console.log(ContractId.fromKey(key.key));
-		expect(ContractId.fromKey(key.key)).not.toBeNull();
-	});
 });

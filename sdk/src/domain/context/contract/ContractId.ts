@@ -12,7 +12,7 @@ export default class ContractId extends ValueObject {
 		this.id = id;
 	}
 
-	public static fromKey(
+	public static fromProtoBufKey(
 		key: string,
 		options: { strict: boolean } = { strict: false },
 	): ContractId {
