@@ -31,7 +31,10 @@ export default class ConfigurationService extends Service {
     ) {
       const setConfigurationService: SetConfigurationService =
         new SetConfigurationService();
-      await setConfigurationService.initConfiguration(path);
+      await setConfigurationService.initConfiguration(
+        path,
+        overrides?.defaultNetwork,
+      );
     }
     this.configuration = this.setConfigFromConfigFile();
     if (overrides?.defaultNetwork) {
@@ -76,10 +79,9 @@ export default class ConfigurationService extends Service {
         fs.readFileSync(`src/resources/config/${this.configFileName}`, 'utf8'),
       );
       const filePath = path ?? this.getDefaultConfigurationPath();
-      console.log(filePath);
       fs.ensureFileSync(filePath);
       fs.writeFileSync(filePath, yaml.dump(defaultConfig), 'utf8');
-      configurationService.setConfiguration(defaultConfig);
+      configurationService.setConfiguration(defaultConfig, filePath);
     } catch (ex) {
       utilsService.showError(ex);
     }
@@ -116,13 +118,14 @@ export default class ConfigurationService extends Service {
   }
 
   public validateConfigurationFile(): boolean {
-    const config = yaml.load(
+    const config: IConfiguration = yaml.load(
       fs.readFileSync(this.getDefaultConfigurationPath(), 'utf8'),
     );
-    if (!config?.defaultNetwork) {
-      return false;
-    } else {
-      return true;
-    }
+    return (
+      config?.defaultNetwork &&
+      !!config?.accounts &&
+      Array.isArray(config?.accounts) &&
+      config?.accounts[0].accountId.length > 0
+    );
   }
 }
