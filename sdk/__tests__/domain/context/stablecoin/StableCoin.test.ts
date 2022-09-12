@@ -65,5 +65,8 @@ describe('🧪 [DOMAIN] StableCoin', () => {
 		expect(coin.symbol).toBe(baseCoin.symbol);
 		expect(coin.decimals).toBe(baseCoin.decimals);
 		expect(coin.isValidAmount(100.4213214241232)).toBeFalsy();
+		expect(coin.isValidAmount(100)).toBeTruthy();
+		expect(coin.isValidAmount(100.42)).toBeTruthy();
+		expect(coin.isValidAmount(100.1)).toBeTruthy();
 	});
 });

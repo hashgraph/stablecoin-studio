@@ -2,6 +2,7 @@ import BaseEntity from '../../BaseEntity.js';
 import AccountId from '../account/AccountId.js';
 import PublicKey from '../account/PublicKey.js';
 import ContractId from '../contract/ContractId.js';
+import InvalidAmountDomainError from './error/InvalidAmountDomainError.js';
 import InvalidDecimalRangeDomainError from './error/InvalidDecimalRangeDomainError.js';
 import { TokenSupplyType } from './TokenSupply.js';
 import { TokenType } from './TokenType.js';
@@ -289,10 +290,15 @@ export class StableCoin extends BaseEntity {
 	}
 
 	public getAmount(amount: number): number {
+		if (!this.isValidAmount(amount)) {
+			throw new InvalidAmountDomainError(amount, this.decimals);
+		}
 		return amount * this.getDecimalOperator();
 	}
 
 	public isValidAmount(amount: number): boolean {
-		return amount.toString().split('.')[1].length <= this.decimals;
+		const val = amount.toString().split('.');
+		const decimals = val.length > 1 ? val[1]?.length : 0;
+		return decimals <= this.decimals;
 	}
 }

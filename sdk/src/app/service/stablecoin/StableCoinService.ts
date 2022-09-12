@@ -127,7 +127,7 @@ export default class StableCoinService extends Service {
 		const coin: StableCoin = await this.getStableCoin({
 			id: req.tokenId,
 		});
-
+		// Balances
 		if (
 			coin.totalSupply < 0n ||
 			coin.totalSupply - BigInt(coin.getAmount(req.amount)) < 0n
@@ -135,11 +135,19 @@ export default class StableCoinService extends Service {
 			throw new Error('Amount is bigger than allowed supply');
 		}
 
-		if (!coin.isValidAmount(req.amount)) {
+		const balance = await this.getBalanceOf({
+			accountId: req.accountId,
+			privateKey: req.privateKey,
+			proxyContractId: req.proxyContractId,
+			targetId: req.accountId.id,
+		});
+
+		if (balance[0] < req.amount) {
 			throw new Error(
-				`Decimals in amount are not valid, expected ${coin.decimals}`,
+				`Insufficient funds on account ${req.accountId.id}`,
 			);
 		}
+
 		return this.repository.wipe(
 			req.proxyContractId,
 			req.privateKey,
