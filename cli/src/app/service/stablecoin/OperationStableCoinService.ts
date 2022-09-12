@@ -17,6 +17,7 @@ import CashInStableCoinsService from './CashInStableCoinService.js';
 import WipeStableCoinsService from './WipeStableCoinService.js';
 import SupplierRoleStableCoinsService from './SupplierRoleStableCoinService.js';
 import RescueStableCoinsService from './RescueStableCoinService.js';
+const colors = require('colors');
 
 /**
  * Operation Stable Coin Service
@@ -126,15 +127,19 @@ export default class OperationStableCoinService extends Service {
           console.log(language.getText('account.wrong'));
           await this.operationsStableCoin();
         }
-
-        await new CashInStableCoinsService().cashInStableCoin(
-          this.proxyContractId,
-          configurationService.getConfiguration().accounts[0].privateKey,
-          configurationService.getConfiguration().accounts[0].accountId,
-          this.stableCoinId,
-          account2Mint,
-          parseFloat(amount2Mint),
-        );
+        try {
+          await new CashInStableCoinsService().cashInStableCoin(
+            this.proxyContractId,
+            configurationService.getConfiguration().accounts[0].privateKey,
+            configurationService.getConfiguration().accounts[0].accountId,
+            this.stableCoinId,
+            account2Mint,
+            parseFloat(amount2Mint),
+          );
+        } catch (error) {
+          console.log(colors.red(error.message));
+          await this.operationsStableCoin();
+        }
 
         break;
       case 'Details':
@@ -188,14 +193,19 @@ export default class OperationStableCoinService extends Service {
           await this.operationsStableCoin();
         }
 
-        await new WipeStableCoinsService().wipeStableCoin(
-          this.proxyContractId,
-          configurationService.getConfiguration().accounts[0].privateKey,
-          configurationService.getConfiguration().accounts[0].accountId,
-          this.stableCoinId,
-          account2Wipe,
-          parseInt(amount2Wipe),
-        );
+        try {
+          await new WipeStableCoinsService().wipeStableCoin(
+            this.proxyContractId,
+            configurationService.getConfiguration().accounts[0].privateKey,
+            configurationService.getConfiguration().accounts[0].accountId,
+            this.stableCoinId,
+            account2Wipe,
+            parseInt(amount2Wipe),
+          );
+        } catch (error) {
+          console.log(colors.red(error.message));
+          await this.operationsStableCoin();
+        }
 
         break;
       case 'Rescue':
