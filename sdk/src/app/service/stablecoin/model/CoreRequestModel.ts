@@ -1,5 +1,5 @@
-import AccountId from "../../../../domain/context/account/AccountId.js";
-import PrivateKey from "../../../../domain/context/account/PrivateKey.js";
+import AccountId from '../../../../domain/context/account/AccountId.js';
+import PrivateKey from '../../../../domain/context/account/PrivateKey.js';
 
 export interface IAccountRequestModel {
 	accountId: AccountId;
@@ -28,4 +28,8 @@ export interface IProxyContractIdRequestModel {
 
 export interface ITokenIdRequestModel {
 	tokenId: string;
+}
+
+export interface ITargetIdRequestModel {
+	targetId: string;
 }

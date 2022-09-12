@@ -108,6 +108,7 @@ export default class StableCoinService extends Service {
 			req.proxyContractId,
 			req.privateKey,
 			req.accountId,
+			req.targetId,
 			amount,
 		);
 	}
@@ -140,7 +141,7 @@ export default class StableCoinService extends Service {
 			accountId: req.accountId,
 			privateKey: req.privateKey,
 			proxyContractId: req.proxyContractId,
-			targetId: req.accountId.id,
+			targetId: req.targetId,
 			tokenId: req.tokenId,
 		});
 
@@ -154,6 +155,7 @@ export default class StableCoinService extends Service {
 			req.proxyContractId,
 			req.privateKey,
 			req.accountId,
+			req.targetId,
 			req.amount,
 		);
 	}

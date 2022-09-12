@@ -1,4 +1,3 @@
-
 export interface IRequestContracts {
 	proxyContractId: string;
 	privateKey: string;
@@ -19,4 +18,8 @@ export interface IRequestBalanceOf extends IRequestContracts {
 
 export interface ITokenIdRequestModel {
 	tokenId: string;
+}
+
+export interface ITargetIdRequestModel {
+	targetId: string;
 }

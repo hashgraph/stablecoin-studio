@@ -27,6 +27,7 @@ export default interface IStableCoinRepository {
 		treasuryId: string,
 		privateKey: PrivateKey,
 		accountId: AccountId,
+		targetId: string,
 		amount: number,
 	): Promise<Uint8Array>;
 	associateToken(
@@ -38,6 +39,7 @@ export default interface IStableCoinRepository {
 		treasuryId: string,
 		privateKey: PrivateKey,
 		accountId: AccountId,
+		targetId: string,
 		amount: number,
 	): Promise<Uint8Array>;
 	grantSupplierRole(

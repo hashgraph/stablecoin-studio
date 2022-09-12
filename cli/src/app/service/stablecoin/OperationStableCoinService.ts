@@ -122,7 +122,7 @@ export default class OperationStableCoinService extends Service {
           language.getText('stablecoin.askCashInAmount'),
           '1',
         );
-        if (parseFloat(account2Mint) < 0) {
+        if (parseFloat(amount2Mint) < 0) {
           console.log(language.getText('account.wrong'));
           await this.operationsStableCoin();
         }
@@ -132,6 +132,7 @@ export default class OperationStableCoinService extends Service {
           configurationService.getConfiguration().accounts[0].privateKey,
           configurationService.getConfiguration().accounts[0].accountId,
           this.stableCoinId,
+          account2Mint,
           parseFloat(amount2Mint),
         );
 
@@ -182,7 +183,7 @@ export default class OperationStableCoinService extends Service {
           language.getText('stablecoin.askWipeAmount'),
           '1',
         );
-        if (parseFloat(account2Wipe) < 0) {
+        if (parseFloat(amount2Wipe) < 0) {
           console.log(language.getText('account.wrong'));
           await this.operationsStableCoin();
         }
@@ -192,6 +193,7 @@ export default class OperationStableCoinService extends Service {
           configurationService.getConfiguration().accounts[0].privateKey,
           configurationService.getConfiguration().accounts[0].accountId,
           this.stableCoinId,
+          account2Wipe,
           parseInt(amount2Wipe),
         );
 

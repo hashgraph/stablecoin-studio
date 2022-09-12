@@ -173,10 +173,11 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		treasuryId: string,
 		privateKey: PrivateKey,
 		accountId: AccountId,
+		targetId: string,
 		amount: number,
 	): Promise<Uint8Array> {
 		const parameters = [
-			HAccountId.fromString(accountId || '').toSolidityAddress(),
+			HAccountId.fromString(targetId || '').toSolidityAddress(),
 			amount,
 		];
 
@@ -224,10 +225,11 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		treasuryId: string,
 		privateKey: PrivateKey,
 		accountId: AccountId,
+		targetId: string,
 		amount = 1000,
 	): Promise<Uint8Array> {
 		const parameters = [
-			HAccountId.fromString(accountId || '').toSolidityAddress(),
+			HAccountId.fromString(targetId || '').toSolidityAddress(),
 			amount,
 		];
 
