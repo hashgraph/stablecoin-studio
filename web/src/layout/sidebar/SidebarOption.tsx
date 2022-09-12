@@ -36,7 +36,7 @@ const SidebarOption = ({ icon, title, route }: SidebarOptionProps) => {
 			}}
 			onClick={handleNavigate}
 		>
-			<Icon name={icon} fontSize='20px' />
+			<Icon name={icon} fontSize='22px' />
 			<Text fontSize='14px' fontWeight='700'>
 				{title}
 			</Text>
