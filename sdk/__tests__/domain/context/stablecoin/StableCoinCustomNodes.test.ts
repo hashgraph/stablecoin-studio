@@ -7,45 +7,62 @@ import { TokenType } from '../../../../src/domain/context/stablecoin/TokenType.j
 import { ACCOUNTS, getSDK } from '../../../core.js';
 import { assert } from 'console';
 
-describe('🧪 [DOMAIN] StableCoin', () => {
+describe('🧪 [DOMAIN] StableCoin',  () => {
 	let sdk:any;
-
-
-	beforeEach(async () => {
-		//const nodes = new Map();
-
-		//nodes.set("34.94.106.61:50212",AccountId.fromString("0.0.3"));
-
-		let conf:Configuration = {
-			network: new HederaNetwork(HederaNetworkEnviroment.TEST, {"127.0.0.1:50211": new AccountId(3)}),
+	
+    it('Create an stable coin with custom nodes',   async ()  => {
+		
+		const conf:Configuration = {
+			network: new HederaNetwork(HederaNetworkEnviroment.TEST, {"52.168.76.241:50211": new AccountId(4)},''),
 			mode: NetworkMode.EOA,
 			options: {
 				account: ACCOUNTS.testnet,
 			}
 		}
+
 		sdk = await getSDK(conf);
-	});
-	
-    it('Create an base instance', () => {
-		let create:ICreateStableCoinRequest  = {
+		const create:ICreateStableCoinRequest  = {
 				accountId: ACCOUNTS.testnet.accountId.id,
 				privateKey: ACCOUNTS.testnet.privateKey.key,
 				name: 'Custom Nodes', 
 				symbol: 'CN',
-				decimals: 2,
-				memo: 'CN'
+				decimals: 2
 			}
-			//let result:StableCoin
-		let sc:any;
-		sdk.createStableCoin(create).then((result:any) => 
-			{
-				console.log(result);
-				sc = result;
-			}).catch((err:any) => {
-				console.log(err);
-			  });;
-		console.log(sc);
-		assert(sc.name =="Custom Nodes")
-	});
+		
+		await sdk.createStableCoin(create).then((result:any) => setTimeout(() =>{ 
+			console.log(result);
+			assert(result.name === create.name)
+			assert(result.name !== 'prueba')
+			}, 10000000));
+		
+		
+	}, 10_100_000);
 	
+	it('Create an stable coin with empty nodes',   async ()  => {
+		
+		const conf:Configuration = {
+			network: new HederaNetwork(HederaNetworkEnviroment.TEST),
+			mode: NetworkMode.EOA,
+			options: {
+				account: ACCOUNTS.testnet,
+			}
+		}
+
+		sdk = await getSDK(conf);
+		const create:ICreateStableCoinRequest  = {
+				accountId: ACCOUNTS.testnet.accountId.id,
+				privateKey: ACCOUNTS.testnet.privateKey.key,
+				name: 'Custom Nodes', 
+				symbol: 'CN',
+				decimals: 2
+			}
+		
+		await sdk.createStableCoin(create).then((result:any) => setTimeout(() =>{ 
+			console.log(result);
+			assert(result.name === create.name)
+			assert(result.name !== 'prueba')
+			}, 10000000));
+		
+		
+	}, 10_100_000);
 });

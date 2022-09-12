@@ -65,8 +65,7 @@ export default class HethersProvider implements IProvider {
 	}
 
 	public getClient(accountId?: string, privateKey?: string): Client {
-		//*cambiarlo para que coja los nodos de consenso*//
-		//const client = Client.forName(this.network);
+		
 		let client:any;
 		const hederaNetWork = getHederaNetwork(this.network)
 
@@ -280,16 +279,16 @@ export default class HethersProvider implements IProvider {
 		client: Client,
 		params?: any,
 	): Promise<ContractId> {
-		console.log("1");
+		
 		try {
-			console.log(JSON.stringify(client));
+			
 			const bytecodeFileId = await this.fileCreate(
 				factory.bytecode,
 				chunks,
 				PrivateKey.fromString(privateKey),
 				client,
 			);
-			console.log("2");
+			
 			const transaction = new ContractCreateTransaction()
 				.setGas(181_000)
 				.setBytecodeFileId(bytecodeFileId)
@@ -299,11 +298,11 @@ export default class HethersProvider implements IProvider {
 				transaction.setConstructorParameters(params);
 			}
 			transaction.freezeWith(client);
-			console.log("3");
+			
 			const contractCreateSign = await transaction.sign(
 				PrivateKey.fromString(privateKey),
 			);
-			console.log("4");
+			
 			const txResponse = await contractCreateSign.execute(client);
 			const receipt = await txResponse.getReceipt(client);
 			if (!receipt.contractId) {
@@ -347,7 +346,7 @@ export default class HethersProvider implements IProvider {
 	}
 
 	private getHethersProvider(network: HederaNetwork): DefaultHederaProvider {
-		let enviroment = network.hederaNetworkEnviroment
+		const enviroment = network.hederaNetworkEnviroment
 		switch (enviroment) {
 			case HederaNetworkEnviroment.MAIN:
 			case HederaNetworkEnviroment.PREVIEW:
