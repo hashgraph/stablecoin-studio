@@ -1,4 +1,4 @@
-import { Key } from '@hashgraph/sdk';
+import { Key, PublicKey as HPublicKey } from '@hashgraph/sdk';
 import PublicKey from '../../../../src/domain/context/account/PublicKey.js';
 import { SDK } from '../../../../src/index.js';
 import { ACCOUNTS, getSDK } from '../../../core.js';
@@ -40,8 +40,18 @@ describe('🧪 [PORT] SDK', () => {
 		expect(list).not.toBeNull();
 	});
 
-	it('Gets contract id from public key', async () => {
-		console.log(Buffer.from('420518f3c4fe16').toString("hex").length)
-		// console.log(Key._fromProtobufKey({ ed25519: '420518f3c4fe16' }));
-	})
+	// it('Gets contract id from public key', async () => {
+	// 	const key = { key: '420518f3c4fe16', type: 'ProtobufEncoded' };
+	// 	const hex = hexToBytes(key.key);
+	// 	console.log(hex);
+	// 	// console.log(HPublicKey.fromBytes(hex));
+	// 	console.log(Key._fromProtobufKey(hex));
+	// });
 });
+
+function hexToBytes(hex: string): number[] {
+	const bytes = [];
+	for (let c = 0; c < hex.length; c += 2)
+		bytes.push(parseInt(hex.substr(c, 2), 16));
+	return bytes;
+}
