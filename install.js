@@ -5,7 +5,7 @@ const cliDir = `${dir}/cli`;
 const webDir = `${dir}/web`;
 const sdkDir = `${dir}/sdk`;
 const conDir = `${dir}/contracts`;
-const hashDir = `${dir}/hashconnect`;
+const hashDir = `${dir}/hashconnect/lib`;
 
 const handleError = (error, stdout, stderr) => {
   if (error) {
