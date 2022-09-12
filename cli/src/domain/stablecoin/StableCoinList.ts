@@ -1,3 +1,5 @@
+import { ContractId } from "hedera-stable-coin-sdk";
+
 export interface StableCoinList {
   id: string;
   symbol: string;
@@ -19,11 +21,11 @@ export interface StableCoinDetail {
   // kycStatus: string;
   deleted?: boolean;
   adminKey?: IPublicKey;
-  kycKey?: IPublicKey;
-  freezeKey?: IPublicKey;
-  wipeKey?: IPublicKey;
-  supplyKey?: IPublicKey;
-  pauseKey?: IPublicKey;
+  kycKey?: ContractId | IPublicKey;
+  freezeKey?: ContractId | IPublicKey;
+  wipeKey?: ContractId | IPublicKey;
+  supplyKey?: ContractId | IPublicKey;
+  pauseKey?: ContractId | IPublicKey;
 }
 
 export interface ICustomFees {

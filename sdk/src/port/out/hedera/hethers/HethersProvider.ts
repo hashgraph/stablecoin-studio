@@ -36,7 +36,7 @@ import {
 	ICreateTokenResponse,
 } from '../types.js';
 import HederaError from '../error/HederaError.js';
-import { PublicKey } from '../../../../domain/context/account/PublicKey.js';
+import PublicKey from '../../../../domain/context/account/PublicKey.js';
 import AccountId from '../../../../domain/context/account/AccountId.js';
 
 type DefaultHederaProvider = hethers.providers.DefaultHederaProvider;

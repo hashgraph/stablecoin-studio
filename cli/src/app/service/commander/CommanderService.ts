@@ -35,7 +35,7 @@ export default class CommanderService extends Service {
     program
       .command('wizard')
       .option(
-        '-c, --config [config]',
+        '-cp, --config [config]',
         language.getText('commander.options.config'),
       )
       .option(
@@ -44,7 +44,8 @@ export default class CommanderService extends Service {
       )
       .description(language.getText('commander.wizardDescription'))
       .action(
-        async (options: { config: string; network: string }): Promise<void> => {
+        async (options): Promise<void> => {
+          console.log(options);
           // Check if default configuration exists, if not, start init command
           await configurationService.init(
             {

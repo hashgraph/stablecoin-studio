@@ -1,7 +1,7 @@
 import { ValueObject } from '../../../core/types.js';
 import { AccountIdNotValid } from './error/AccountIdNotValid.js';
 
-export default class AccountId extends ValueObject<string> {
+export default class AccountId extends ValueObject {
 	public readonly id: string;
 	constructor(id: string) {
 		super();

@@ -11,7 +11,7 @@
   },
   "scripts": {
     "start": "clear && npx tsc && node ./build/src/index.js",
-    "start2": "npx ts-node ./src/index.ts",
+    "start:wizard": "clear && npx tsc && node ./build/src/index.js wizard -cp './lol.yaml'",
     "clean": "rimraf coverage build tmp",
     "prebuild": "npm run lint",
     "build": "tsc -p tsconfig.json",

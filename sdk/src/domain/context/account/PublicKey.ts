@@ -1,7 +1,7 @@
 import { ValueObject } from '../../../core/types.js';
 import { PublicKeyNotValid } from './error/PublicKeyNotValid.js';
 
-export class PublicKey extends ValueObject<string> {
+export default class PublicKey extends ValueObject {
 	public readonly key: string;
 	public readonly type: string;
 	constructor(params: { key: string; type: string }) {

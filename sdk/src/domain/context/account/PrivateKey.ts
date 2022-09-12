@@ -1,7 +1,7 @@
 import { ValueObject } from '../../../core/types.js';
 import { PrivateKeyNotValid } from './error/PrivateKeyNotValid.js';
 
-export default class PrivateKey extends ValueObject<string> {
+export default class PrivateKey extends ValueObject {
 	public readonly key: string;
 	public readonly _type: string;
 

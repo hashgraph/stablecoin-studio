@@ -9,6 +9,6 @@ export type RequireAtLeastOne<T, Keys extends keyof T = keyof T> = Pick<
 	}[Keys];
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export abstract class ValueObject<T> {
+export abstract class ValueObject {
 	public abstract toString(): string;
 }

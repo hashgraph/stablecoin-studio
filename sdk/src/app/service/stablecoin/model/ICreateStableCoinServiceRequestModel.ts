@@ -1,6 +1,6 @@
 import { TokenType, TokenSupplyType } from '@hashgraph/sdk';
 import AccountId from '../../../../domain/context/account/AccountId.js';
-import { PublicKey } from '../../../../domain/context/account/PublicKey.js';
+import PublicKey from '../../../../domain/context/account/PublicKey.js';
 import { IAccountWithKeyRequestModel } from './CoreRequestModel.js';
 
 export default interface ICreateStableCoinServiceRequestModel

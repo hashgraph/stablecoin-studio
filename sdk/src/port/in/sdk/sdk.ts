@@ -36,7 +36,10 @@ import { IWipeStableCoinRequest } from './request/IWipeStableCoinRequest.js';
 import AccountId from '../../../domain/context/account/AccountId.js';
 import EOAccount from '../../../domain/context/account/EOAccount.js';
 import PrivateKey from '../../../domain/context/account/PrivateKey.js';
-import { PublicKey } from '../../../domain/context/account/PublicKey.js';
+import PublicKey from '../../../domain/context/account/PublicKey.js';
+import ContractId from '../../../domain/context/contract/ContractId.js';
+import { TokenType } from '../../../domain/context/stablecoin/TokenType.js';
+import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.js';
 
 export {
 	IAssociateStableCoinRequest,
@@ -60,6 +63,9 @@ export {
 	EOAccount,
 	PrivateKey,
 	PublicKey,
+	ContractId,
+	TokenType,
+	TokenSupplyType
 };
 
 export interface ConfigurationOptions {

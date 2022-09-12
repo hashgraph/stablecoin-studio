@@ -70,12 +70,13 @@ export default class ConfigurationService extends Service {
   /**
    * Create default configuration file and override if exists
    */
-  public createDefaultConfiguration(): void {
+  public createDefaultConfiguration(path?: string): void {
     try {
       const defaultConfig = yaml.load(
         fs.readFileSync(`src/resources/config/${this.configFileName}`, 'utf8'),
       );
-      const filePath = this.getDefaultConfigurationPath();
+      const filePath = path ?? this.getDefaultConfigurationPath();
+      console.log(filePath);
       fs.ensureFileSync(filePath);
       fs.writeFileSync(filePath, yaml.dump(defaultConfig), 'utf8');
       configurationService.setConfiguration(defaultConfig);

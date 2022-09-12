@@ -9,11 +9,12 @@ import IStableCoinDetail from './types/IStableCoinDetail.js';
 import ITokenList from './types/ITokenList.js';
 import HederaError from '../hedera/error/HederaError.js';
 import { IToken } from './types/IToken.js';
-import { PublicKey } from '../../../domain/context/account/PublicKey.js';
+import PublicKey from '../../../domain/context/account/PublicKey.js';
 import PrivateKey from '../../../domain/context/account/PrivateKey.js';
 import { AccountId as HAccountId } from '@hashgraph/sdk';
 import AccountId from '../../../domain/context/account/AccountId.js';
 import { IPublicKey } from './types/IPublicKey.js';
+import ContractId from '../../../domain/context/contract/ContractId.js';
 
 export default class StableCoinRepository implements IStableCoinRepository {
 	private networkAdapter: NetworkAdapter;
@@ -74,13 +75,18 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 			const getKeyOrDefault = (
 				val?: IPublicKey,
-			): PublicKey | undefined => {
-				return val
-					? new PublicKey({
-							key: val.key,
-							type: val._type,
-					  })
-					: undefined;
+			): ContractId | PublicKey | undefined => {
+				// if(val?._type === 'ProtobufEncoded'){
+				// 	return ContractId.fromKey(val.key);
+				// }
+				if (val) {
+					return new PublicKey({
+						key: val.key,
+						type: val._type,
+					});
+				} else {
+					return undefined;
+				}
 			};
 
 			return new StableCoin({
@@ -100,7 +106,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 				freezeDefault: response.data.freeze_default,
 				// kycStatus: string;
 				// deleted: response.data.deleted,
-				adminKey: getKeyOrDefault(response.data.admin_key),
+				adminKey: getKeyOrDefault(response.data.admin_key) as PublicKey,
 				kycKey: getKeyOrDefault(response.data.kyc_key),
 				freezeKey: getKeyOrDefault(response.data.freeze_key),
 				wipeKey: getKeyOrDefault(response.data.wipe_key),

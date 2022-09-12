@@ -30,7 +30,7 @@ describe('🧪 [DOMAIN] StableCoin', () => {
 		expect(coin.symbol).toBe(baseCoin.symbol);
 		expect(coin.decimals).toBe(baseCoin.decimals);
 		expect(coin.initialSupply).toBe(0n);
-		expect(coin.maxSupply).toBeUndefined();
+		expect(coin.maxSupply).toBe(0n);
 		expect(coin.memo).toBeUndefined();
 		expect(coin.freezeKey).toBeUndefined();
 		expect(coin.freezeDefault).toBe(false);

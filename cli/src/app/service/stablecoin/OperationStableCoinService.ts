@@ -11,7 +11,7 @@ import {
 } from '../../../index.js';
 import Service from '../Service.js';
 import DetailsStableCoinsService from './DetailsStableCoinService.js';
-import { SDK } from 'hedera-stable-coin-sdk';
+import { PublicKey, SDK } from 'hedera-stable-coin-sdk';
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 import CashInStableCoinsService from './CashInStableCoinService.js';
 import WipeStableCoinsService from './WipeStableCoinService.js';
@@ -462,7 +462,7 @@ export default class OperationStableCoinService extends Service {
     let result: string[] = options;
     if (
       (details && details?.supplyKey === null) ||
-      (details?.supplyKey?.type !== 'ProtobufEncoded' &&
+      (details?.supplyKey instanceof PublicKey &&
         details?.supplyKey?.key !==
           sdk.getPublicKey(
             configurationService.getConfiguration().accounts[0].privateKey,
@@ -472,7 +472,7 @@ export default class OperationStableCoinService extends Service {
     }
     if (
       (details && details?.wipeKey === null) ||
-      (details?.wipeKey?.type !== 'ProtobufEncoded' &&
+      (details?.wipeKey instanceof PublicKey &&
         details?.wipeKey?.key !==
           sdk.getPublicKey(
             configurationService.getConfiguration().accounts[0].privateKey,

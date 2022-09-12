@@ -1,6 +1,7 @@
 import BaseEntity from '../../BaseEntity.js';
 import AccountId from '../account/AccountId.js';
-import { PublicKey } from '../account/PublicKey.js';
+import PublicKey from '../account/PublicKey.js';
+import ContractId from '../contract/ContractId.js';
 import InvalidDecimalRangeDomainError from './error/InvalidDecimalRangeDomainError.js';
 import { TokenSupplyType } from './TokenSupply.js';
 import { TokenType } from './TokenType.js';
@@ -111,11 +112,11 @@ export class StableCoin extends BaseEntity {
 	/**
 	 * Freeze key
 	 */
-	private _freezeKey: PublicKey;
-	public get freezeKey(): PublicKey {
+	private _freezeKey: ContractId | PublicKey;
+	public get freezeKey(): ContractId | PublicKey {
 		return this._freezeKey;
 	}
-	public set freezeKey(value: PublicKey) {
+	public set freezeKey(value: ContractId | PublicKey) {
 		this._freezeKey = value;
 	}
 
@@ -133,33 +134,33 @@ export class StableCoin extends BaseEntity {
 	/**
 	 * KYC key
 	 */
-	private _kycKey: PublicKey;
-	public get kycKey(): PublicKey {
+	private _kycKey: ContractId | PublicKey;
+	public get kycKey(): ContractId | PublicKey {
 		return this._kycKey;
 	}
-	public set kycKey(value: PublicKey) {
+	public set kycKey(value: ContractId | PublicKey) {
 		this._kycKey = value;
 	}
 
 	/**
 	 * Wipe key
 	 */
-	private _wipeKey: PublicKey;
-	public get wipeKey(): PublicKey {
+	private _wipeKey: ContractId | PublicKey;
+	public get wipeKey(): ContractId | PublicKey {
 		return this._wipeKey;
 	}
-	public set wipeKey(value: PublicKey) {
+	public set wipeKey(value: ContractId | PublicKey) {
 		this._wipeKey = value;
 	}
 
 	/**
 	 * Supply key
 	 */
-	private _supplyKey: PublicKey;
-	public get supplyKey(): PublicKey {
+	private _supplyKey: ContractId | PublicKey;
+	public get supplyKey(): ContractId | PublicKey {
 		return this._supplyKey;
 	}
-	public set supplyKey(value: PublicKey) {
+	public set supplyKey(value: ContractId | PublicKey) {
 		this._supplyKey = value;
 	}
 
@@ -195,7 +196,7 @@ export class StableCoin extends BaseEntity {
 	public set supplyType(value: TokenSupplyType) {
 		this._supplyType = value;
 	}
-	
+
 	/**
 	 * Token auto-renew account
 	 */
@@ -216,11 +217,11 @@ export class StableCoin extends BaseEntity {
 		totalSupply?: bigint;
 		maxSupply?: bigint;
 		memo?: string;
-		freezeKey?: PublicKey;
+		freezeKey?: ContractId | PublicKey;
 		freezeDefault?: boolean;
-		kycKey?: PublicKey;
-		wipeKey?: PublicKey;
-		supplyKey?: PublicKey;
+		kycKey?: ContractId | PublicKey;
+		wipeKey?: ContractId | PublicKey;
+		supplyKey?: ContractId | PublicKey;
 		treasury?: AccountId;
 		tokenType?: TokenType;
 		supplyType?: TokenSupplyType;
@@ -290,6 +291,4 @@ export class StableCoin extends BaseEntity {
 	public getAmount(amount: number): number {
 		return amount * this.getDecimalOperator();
 	}
-
-
 }

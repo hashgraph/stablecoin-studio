@@ -31,13 +31,15 @@ export default class SetConfigurationService extends Service {
    * Function to configure the default path, fails if the path doesn't exist
    */
   public async configurePath(path?: string): Promise<string> {
-    const defaultConfigPath =
-      path ?? configurationService.getDefaultConfigurationPath();
-    const defaultPath = await utilsService.defaultSingleAsk(
-      language.getText('configuration.askPath'),
-      defaultConfigPath ?? configurationService.getDefaultConfigurationPath(),
-    );
-
+    let defaultPath: string;
+    if (path) {
+      defaultPath = path;
+    } else {
+      defaultPath = await utilsService.defaultSingleAsk(
+        language.getText('configuration.askPath'),
+        configurationService.getDefaultConfigurationPath(),
+      );
+    }
     // If the path is incorrect
     if (!fs.existsSync(defaultPath)) {
       const createAuto = await utilsService.defaultConfirmAsk(
@@ -49,7 +51,7 @@ export default class SetConfigurationService extends Service {
           language.getText('configuration.askCreateConfigNeg'),
         );
       } else {
-        configurationService.createDefaultConfiguration();
+        configurationService.createDefaultConfiguration(defaultPath);
       }
     }
 
