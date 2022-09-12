@@ -6,4 +6,7 @@ import { NamedRoutes } from './NamedRoutes';
 export const RoutesMappingUrl: Record<NamedRoutes, string> = {
 	[NamedRoutes.Dashboard]: '/dashboard',
 	[NamedRoutes.Login]: '/login',
+	[NamedRoutes.Operations]: '/operations',
+	[NamedRoutes.Roles]: '/roles',
+	[NamedRoutes.Details]: '/details',
 };
