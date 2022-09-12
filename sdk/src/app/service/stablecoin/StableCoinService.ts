@@ -45,7 +45,11 @@ export default class StableCoinService extends Service {
 			id: req.id,
 			autoRenewAccount: req.autoRenewAccount,
 		});
-		coin = await this.repository.saveCoin(req.accountId, req.privateKey, coin);
+		coin = await this.repository.saveCoin(
+			req.accountId,
+			req.privateKey,
+			coin,
+		);
 		return this.repository.getStableCoin(coin.id);
 	}
 
@@ -120,6 +124,22 @@ export default class StableCoinService extends Service {
 	public async wipe(
 		req: IWipeStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
+		const coin: StableCoin = await this.getStableCoin({
+			id: req.tokenId,
+		});
+
+		if (
+			coin.totalSupply < 0n ||
+			coin.totalSupply - BigInt(coin.getAmount(req.amount)) < 0n
+		) {
+			throw new Error('Amount is bigger than allowed supply');
+		}
+
+		if (!coin.isValidAmount(req.amount)) {
+			throw new Error(
+				`Decimals in amount are not valid, expected ${coin.decimals}`,
+			);
+		}
 		return this.repository.wipe(
 			req.proxyContractId,
 			req.privateKey,

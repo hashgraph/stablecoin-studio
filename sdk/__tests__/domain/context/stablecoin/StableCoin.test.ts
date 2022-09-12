@@ -53,4 +53,17 @@ describe('🧪 [DOMAIN] StableCoin', () => {
 		expect(coin.symbol).toBe(baseCoin.symbol);
 		expect(coin.decimals).toBe(baseCoin.decimals);
 	});
+
+	it('Create an instance with valid decimals, check against invalid amount', () => {
+		const coin = new StableCoin({
+			name: baseCoin.name,
+			symbol: baseCoin.symbol,
+			decimals: baseCoin.decimals,
+		});
+		expect(coin).not.toBeNull();
+		expect(coin.name).toBe(baseCoin.name);
+		expect(coin.symbol).toBe(baseCoin.symbol);
+		expect(coin.decimals).toBe(baseCoin.decimals);
+		expect(coin.isValidAmount(100.4213214241232)).toBeFalsy();
+	});
 });

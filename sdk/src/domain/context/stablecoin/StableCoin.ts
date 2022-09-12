@@ -291,4 +291,8 @@ export class StableCoin extends BaseEntity {
 	public getAmount(amount: number): number {
 		return amount * this.getDecimalOperator();
 	}
+
+	public isValidAmount(amount: number): boolean {
+		return amount.toString().split('.')[1].length <= this.decimals;
+	}
 }
