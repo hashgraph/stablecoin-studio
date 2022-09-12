@@ -132,7 +132,7 @@ export default class StableCoinService extends Service {
 		// Balances
 		if (
 			coin.totalSupply < 0n ||
-			coin.totalSupply - BigInt(coin.fromInteger(req.amount)) < 0n
+			coin.totalSupply - BigInt(coin.toInteger(req.amount)) < 0n
 		) {
 			throw new Error('Amount is bigger than allowed supply');
 		}
@@ -146,9 +146,7 @@ export default class StableCoinService extends Service {
 		});
 
 		if (balance[0] < req.amount) {
-			throw new Error(
-				`Insufficient funds on account ${req.accountId.id}`,
-			);
+			throw new Error(`Insufficient funds on account ${req.targetId}`);
 		}
 
 		return this.repository.wipe(
@@ -156,7 +154,7 @@ export default class StableCoinService extends Service {
 			req.privateKey,
 			req.accountId,
 			req.targetId,
-			req.amount,
+			coin.toInteger(req.amount),
 		);
 	}
 
