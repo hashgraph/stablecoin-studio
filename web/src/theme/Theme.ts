@@ -16,6 +16,7 @@ const theme = extendTheme({
 			gray2: '#929292',
 			gray3: '#F2F2F2',
 			gray4: '#FFFAF4',
+			gray5: '#edf2f7',
 			white: '#FFFFFF',
 			green: '#A7D88A',
 			red: '#F25454',
@@ -25,6 +26,7 @@ const theme = extendTheme({
 		light: {
 			primary: '#ECEBF1',
 			secondary: '#A0A0A0',
+			purple: '#ECE8FF',
 		},
 		dark: {
 			primary: '#662D8F',
@@ -39,8 +41,7 @@ const theme = extendTheme({
 	},
 	shadows: {
 		outline: 'none',
-		topbar: '0px -5px 10px 3px rgba(0,0,0,0.25)',
-		sidebar: '0px -5px 10px 3px rgba(0,0,0,0.05)',
+		'down-black': '0px -6px 10px 3px rgba(0,0,0,0.25)',
 	},
 	components: {
 		Button,
