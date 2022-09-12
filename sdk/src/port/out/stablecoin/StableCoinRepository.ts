@@ -123,6 +123,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		privateKey: PrivateKey,
 		accountId: AccountId,
 		targetId: string,
+		tokenId: string,
 	): Promise<Uint8Array> {
 		const parameters = [
 			HAccountId.fromString(targetId || '').toSolidityAddress(),
@@ -139,10 +140,14 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			},
 		};
 
-		return await this.networkAdapter.provider.callContract(
+		const response = await this.networkAdapter.provider.callContract(
 			'balanceOf',
 			params,
 		);
+		const coin: StableCoin = await this.getStableCoin(tokenId);
+		response[0] = coin.getAmount(response[0]);
+
+		return response;
 	}
 
 	public async getNameToken(

@@ -1,7 +1,7 @@
 export interface StableCoin {
   name: string;
   symbol: string;
-  autoRenewAccountId: string;
+  autoRenewAccount: string;
   decimals: number;
   initialSupply?: bigint;
   supplyType?: string;
@@ -12,5 +12,7 @@ export interface StableCoin {
   freezeKey?: string;
   pauseKey?: string;
   supplyKey?: string;
-  treasuryAccountAddress?: string;
+  treasury?: string;
+  id?: string;
+  memo?: string;
 }

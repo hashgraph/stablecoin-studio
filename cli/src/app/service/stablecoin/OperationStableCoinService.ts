@@ -17,7 +17,6 @@ import CashInStableCoinsService from './CashInStableCoinService.js';
 import WipeStableCoinsService from './WipeStableCoinService.js';
 import SupplierRoleStableCoinsService from './SupplierRoleStableCoinService.js';
 import RescueStableCoinsService from './RescueStableCoinService.js';
-import { StableCoin } from '../../../domain/stablecoin/StableCoin.js';
 
 /**
  * Operation Stable Coin Service
@@ -25,11 +24,14 @@ import { StableCoin } from '../../../domain/stablecoin/StableCoin.js';
 export default class OperationStableCoinService extends Service {
   private stableCoinId;
   private proxyContractId;
+  private stableCoinWithSymbol;
 
-  constructor(stableCoin?: StableCoin) {
+  constructor(tokenId?: string, memo?: string, symbol?: string) {
     super('Operation Stable Coin');
-    if (stableCoin) {
-      this.stableCoinId = stableCoin.name; //TODO Cambiar name por el id que llegue en la creación del token
+    if (tokenId && memo && symbol) {
+      this.stableCoinId = tokenId.toString(); //TODO Cambiar name por el id que llegue en la creación del token
+      this.proxyContractId = memo;
+      this.stableCoinWithSymbol = `${tokenId.toString()} - ${symbol}`;
     }
   }
 
@@ -61,7 +63,12 @@ export default class OperationStableCoinService extends Service {
             return `${item.id} - ${item.symbol}`;
           })
           .concat('Exit to main menu'),
+        configurationService.getConfiguration()?.defaultNetwork,
+        configurationService.getConfiguration()?.accounts[0].accountId +
+          ' - ' +
+          configurationService.getConfiguration()?.accounts[0].alias,
       );
+      this.stableCoinWithSymbol = this.stableCoinId;
       this.stableCoinId = this.stableCoinId.split(' - ')[0];
 
       if (this.stableCoinId === 'Exit to main menu') {
@@ -93,9 +100,13 @@ export default class OperationStableCoinService extends Service {
 
     switch (
       await utilsService.defaultMultipleAsk(
-        language.getText('stablecoin.askDoSomething') +
-          ` (${this.stableCoinId})`,
+        language.getText('stablecoin.askDoSomething'),
         this.disableOptions(wizardOperationsStableCoinOptions, details),
+        configurationService.getConfiguration().defaultNetwork,
+        configurationService.getConfiguration()?.accounts[0].accountId +
+          ' - ' +
+          configurationService.getConfiguration()?.accounts[0].alias,
+        this.stableCoinWithSymbol,
       )
     ) {
       case 'Cash in':
@@ -144,6 +155,7 @@ export default class OperationStableCoinService extends Service {
             configurationService.getConfiguration().accounts[0].privateKey,
             configurationService.getConfiguration().accounts[0].accountId,
             targetId,
+            this.stableCoinId,
           );
         } else {
           console.log(language.getText('validations.wrongFormatAddress'));
@@ -229,6 +241,7 @@ export default class OperationStableCoinService extends Service {
           configurationService.getConfiguration().accounts[0].privateKey,
           configurationService.getConfiguration().accounts[0].accountId,
           configurationService.getConfiguration().accounts[0].accountId,
+          this.stableCoinId,
         );
 
         break;

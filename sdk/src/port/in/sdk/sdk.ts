@@ -65,7 +65,7 @@ export {
 	PublicKey,
 	ContractId,
 	TokenType,
-	TokenSupplyType
+	TokenSupplyType,
 };
 
 export interface ConfigurationOptions {
@@ -174,6 +174,7 @@ export class SDK {
 				...request,
 				accountId: new AccountId(request.accountId),
 				privateKey: new PrivateKey(request.privateKey),
+				targetId: request.targetId,
 			};
 			return this.stableCoinService.getBalanceOf(req);
 		} catch (error) {

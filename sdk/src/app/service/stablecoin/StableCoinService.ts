@@ -79,6 +79,7 @@ export default class StableCoinService extends Service {
 			req.privateKey,
 			req.accountId,
 			req.targetId,
+			req.tokenId,
 		);
 	}
 
@@ -99,7 +100,7 @@ export default class StableCoinService extends Service {
 		const coin: StableCoin = await this.getStableCoin({
 			id: req.tokenId,
 		});
-		const amount = coin.getAmount(req.amount);
+		const amount = coin.toAmount(req.amount);
 		if (coin.maxSupply > 0n && amount > coin.maxSupply - coin.totalSupply) {
 			throw new Error('Amount is bigger than allowed supply');
 		}
@@ -140,6 +141,7 @@ export default class StableCoinService extends Service {
 			privateKey: req.privateKey,
 			proxyContractId: req.proxyContractId,
 			targetId: req.accountId.id,
+			tokenId: req.tokenId,
 		});
 
 		if (balance[0] < req.amount) {

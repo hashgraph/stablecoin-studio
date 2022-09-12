@@ -9,6 +9,7 @@ import Service from '../Service.js';
 import CreateStableCoinService from '../stablecoin/CreateStableCoinService.js';
 import OperationStableCoinService from '../stablecoin/OperationStableCoinService.js';
 import ListStableCoinsService from '../stablecoin/ListStableCoinsService.js';
+import { StableCoin } from '../../../domain/stablecoin/StableCoin.js';
 
 /**
  * Wizard Service
@@ -31,19 +32,25 @@ export default class WizardService extends Service {
       await utilsService.defaultMultipleAsk(
         language.getText('wizard.mainMenuTitle'),
         wizardMainOptions,
+        configurationService.getConfiguration().defaultNetwork,
+        configurationService.getConfiguration().accounts[0].accountId +
+          ' - ' +
+          configurationService.getConfiguration().accounts[0].alias,
       )
     ) {
       case wizardMainOptions[0]:
-        const stableCoin = await new CreateStableCoinService().createStableCoin(
-          undefined,
-          true,
-        );
+        const stableCoin: StableCoin =
+          await new CreateStableCoinService().createStableCoin(undefined, true);
         const operate = await utilsService.defaultConfirmAsk(
           `Do you want to operate with ${stableCoin.name}`,
           true,
         );
         if (operate) {
-          await new OperationStableCoinService(stableCoin).start();
+          await new OperationStableCoinService(
+            stableCoin.id,
+            stableCoin.memo,
+            stableCoin.symbol,
+          ).start();
         }
         break;
       case wizardMainOptions[1]:

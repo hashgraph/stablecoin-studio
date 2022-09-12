@@ -31,6 +31,8 @@ export const english = {
     askNode: 'Introduce the node id',
   },
   stablecoin: {
+    askConfirmCreation:
+      'Are you sure to create the stable coin with these parameters?',
     description: 'Creating Stable Coin',
     askName: 'What is your stable coin name?',
     askSymbol: 'What is your stable coin symbol?',

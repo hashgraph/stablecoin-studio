@@ -286,19 +286,23 @@ export class StableCoin extends BaseEntity {
 	}
 
 	public getDecimalOperator(): number {
-		return TEN ^ this.decimals;
+		return TEN ** this.decimals;
 	}
 
 	public getAmount(amount: number): number {
-		if (!this.isValidAmount(amount)) {
-			throw new InvalidAmountDomainError(amount, this.decimals);
-		}
-		return amount * this.getDecimalOperator();
+		return amount / this.getDecimalOperator();
 	}
 
 	public isValidAmount(amount: number): boolean {
 		const val = amount.toString().split('.');
 		const decimals = val.length > 1 ? val[1]?.length : 0;
 		return decimals <= this.decimals;
+	}
+
+	public toAmount(amount: number): number {
+		if (!this.isValidAmount(amount)) {
+			throw new InvalidAmountDomainError(amount, this.decimals);
+		}
+		return amount * this.getDecimalOperator();
 	}
 }

@@ -101,7 +101,7 @@ export default class CommanderService extends Service {
             name: options.name,
             symbol: options.symbol,
             decimals: options.decimals,
-            autoRenewAccountId: options.autoRenewAccountId,
+            autoRenewAccount: options.autoRenewAccount,
           },
           false,
         );
