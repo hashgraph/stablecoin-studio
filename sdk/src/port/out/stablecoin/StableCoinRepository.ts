@@ -145,7 +145,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			params,
 		);
 		const coin: StableCoin = await this.getStableCoin(tokenId);
-		response[0] = coin.getAmount(response[0]);
+		response[0] = coin.fromInteger(response[0]);
 
 		return response;
 	}

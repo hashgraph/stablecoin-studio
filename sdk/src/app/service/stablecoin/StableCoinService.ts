@@ -100,7 +100,7 @@ export default class StableCoinService extends Service {
 		const coin: StableCoin = await this.getStableCoin({
 			id: req.tokenId,
 		});
-		const amount = coin.toAmount(req.amount);
+		const amount = coin.toInteger(req.amount);
 		if (coin.maxSupply > 0n && amount > coin.maxSupply - coin.totalSupply) {
 			throw new Error('Amount is bigger than allowed supply');
 		}
@@ -131,7 +131,7 @@ export default class StableCoinService extends Service {
 		// Balances
 		if (
 			coin.totalSupply < 0n ||
-			coin.totalSupply - BigInt(coin.getAmount(req.amount)) < 0n
+			coin.totalSupply - BigInt(coin.fromInteger(req.amount)) < 0n
 		) {
 			throw new Error('Amount is bigger than allowed supply');
 		}

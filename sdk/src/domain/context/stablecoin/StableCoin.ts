@@ -289,7 +289,7 @@ export class StableCoin extends BaseEntity {
 		return TEN ** this.decimals;
 	}
 
-	public getAmount(amount: number): number {
+	public fromInteger(amount: number): number {
 		return amount / this.getDecimalOperator();
 	}
 
@@ -299,7 +299,7 @@ export class StableCoin extends BaseEntity {
 		return decimals <= this.decimals;
 	}
 
-	public toAmount(amount: number): number {
+	public toInteger(amount: number): number {
 		if (!this.isValidAmount(amount)) {
 			throw new InvalidAmountDomainError(amount, this.decimals);
 		}
