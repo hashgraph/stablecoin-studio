@@ -2,10 +2,15 @@
   "hashpack-no-installed": {
     "title": "Your haspack extension is not installed yet",
     "description": "Click in the button bellow to download the extension.",
-    "button":"Download Hashpack"
+    "button": "Download Hashpack"
   },
-  "topbar":{
+  "topbar": {
     "network": "Operating network",
     "account": "Operating account"
+  },
+  "sidebar": {
+    "operations": "Operations",
+    "role": "Role management",
+    "details": "Stable coin details"
   }
 }
