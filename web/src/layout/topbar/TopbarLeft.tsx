@@ -1,5 +1,5 @@
 const TopbarLeft = () => {
-	return <div>TopbarLeft</div>;
+	return <div data-testid='topbar-left'>TopbarLeft</div>;
 };
 
 export default TopbarLeft;

@@ -6,8 +6,8 @@ import { NamedRoutes } from '../../Router/NamedRoutes';
 
 interface SidebarOptionProps {
 	icon: string;
-	title: string;
 	route: NamedRoutes;
+	title: string;
 }
 
 const SidebarOption = ({ icon, title, route }: SidebarOptionProps) => {
@@ -22,6 +22,7 @@ const SidebarOption = ({ icon, title, route }: SidebarOptionProps) => {
 
 	return (
 		<Flex
+			data-testid={`sidebar-option-${icon}`}
 			h='48px'
 			w='100%'
 			gap='10px'
@@ -37,7 +38,7 @@ const SidebarOption = ({ icon, title, route }: SidebarOptionProps) => {
 			onClick={handleNavigate}
 		>
 			<Icon name={icon} fontSize='22px' />
-			<Text fontSize='14px' fontWeight='700'>
+			<Text data-testid='sidebar-option-title' fontSize='14px' fontWeight='700'>
 				{title}
 			</Text>
 		</Flex>
