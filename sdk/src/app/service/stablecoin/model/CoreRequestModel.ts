@@ -1,9 +1,12 @@
+import AccountId from '../../../../domain/context/account/AccountId.js';
+import PrivateKey from '../../../../domain/context/account/PrivateKey.js';
+
 export interface IAccountRequestModel {
-	accountId: string;
+	accountId: AccountId;
 }
 
 export interface IPrivateKeyRequestModel {
-	privateKey: string;
+	privateKey: PrivateKey;
 }
 
 export interface IAccountWithKeyRequestModel
@@ -18,6 +21,15 @@ export interface IAmountOptionalRequestModel {
 	amount?: number;
 }
 
-export interface ITreasureyRequestModel {
-	treasuryId: string;
+export interface IProxyContractIdRequestModel {
+	// TODO rename to something more appropiate
+	proxyContractId: string;
+}
+
+export interface ITokenIdRequestModel {
+	tokenId: string;
+}
+
+export interface ITargetIdRequestModel {
+	targetId: string;
 }

@@ -15,7 +15,7 @@ export default class SupplierRoleStableCoinsService extends Service {
    * give supplier role
    */
   public async giveSupplierRoleStableCoin(
-    treasuryId: string,
+    proxyContractId: string,
     address: string,
     privateKey: string,
     accountId: string,
@@ -27,8 +27,8 @@ export default class SupplierRoleStableCoinsService extends Service {
     await utilsService.showSpinner(
       sdk.grantSupplierRole(
         supplierType === 'unlimited'
-          ? { treasuryId, address, privateKey, accountId }
-          : { treasuryId, address, privateKey, accountId, amount },
+          ? { proxyContractId, address, privateKey, accountId }
+          : { proxyContractId, address, privateKey, accountId, amount },
       ),
       {
         text: language.getText('state.loading'),
@@ -42,7 +42,7 @@ export default class SupplierRoleStableCoinsService extends Service {
   }
 
   public async revokeSupplierRoleStableCoin(
-    treasuryId: string,
+    proxyContractId: string,
     address: string,
     privateKey: string,
     accountId: string,
@@ -50,7 +50,12 @@ export default class SupplierRoleStableCoinsService extends Service {
     const sdk: SDK = utilsService.getSDK();
 
     await utilsService.showSpinner(
-      sdk.revokeSupplierRole({ treasuryId, address, privateKey, accountId }),
+      sdk.revokeSupplierRole({
+        proxyContractId,
+        address,
+        privateKey,
+        accountId,
+      }),
       {
         text: language.getText('state.loading'),
         successText: language.getText('state.loadCompleted') + '\n',
@@ -62,7 +67,7 @@ export default class SupplierRoleStableCoinsService extends Service {
   }
 
   public async checkSupplierRoleStableCoin(
-    treasuryId: string,
+    proxyContractId: string,
     address: string,
     privateKey: string,
     accountId: string,
@@ -76,7 +81,7 @@ export default class SupplierRoleStableCoinsService extends Service {
       await utilsService.showSpinner(
         sdk
           .isUnlimitedSupplierAllowance({
-            treasuryId,
+            proxyContractId,
             address,
             privateKey,
             accountId,
@@ -92,7 +97,7 @@ export default class SupplierRoleStableCoinsService extends Service {
       await utilsService.showSpinner(
         sdk
           .isLimitedSupplierAllowance({
-            treasuryId,
+            proxyContractId,
             address,
             privateKey,
             accountId,
@@ -108,7 +113,7 @@ export default class SupplierRoleStableCoinsService extends Service {
   }
 
   public async editSupplierRoleStableCoin(
-    treasuryId: string,
+    proxyContractId: string,
     address: string,
     privateKey: string,
     accountId: string,
@@ -120,7 +125,7 @@ export default class SupplierRoleStableCoinsService extends Service {
     if (supplierAction === 'Reset limit') {
       await utilsService.showSpinner(
         sdk.resetSupplierAllowance({
-          treasuryId,
+          proxyContractId,
           address,
           privateKey,
           accountId,
@@ -133,7 +138,7 @@ export default class SupplierRoleStableCoinsService extends Service {
     } else if (supplierAction === 'Increase limit') {
       await utilsService.showSpinner(
         sdk.increaseSupplierAllowance({
-          treasuryId,
+          proxyContractId,
           address,
           privateKey,
           accountId,
@@ -147,7 +152,7 @@ export default class SupplierRoleStableCoinsService extends Service {
     } else if (supplierAction === 'Decrease limit') {
       await utilsService.showSpinner(
         sdk.decreaseSupplierAllowance({
-          treasuryId,
+          proxyContractId,
           address,
           privateKey,
           accountId,

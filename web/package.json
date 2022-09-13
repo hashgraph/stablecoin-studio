@@ -11,11 +11,11 @@
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^13.5.0",
     "@types/jest": "^27.5.2",
-    "@types/node": "^16.11.49",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
     "@types/react-redux": "^7.1.24",
     "axios": "^0.27.2",
+    "chakra-react-select": "^4.1.4",
     "framer-motion": "^4.1.17",
     "hedera-stable-coin-sdk": "file:../sdk",
     "moment": "^2.29.4",
@@ -27,6 +27,7 @@
     "react-router-dom": "^6",
     "react-scripts": "5.0.1",
     "react-toastify": "^9.0.8",
+    "redux-mock-store": "^1.5.4",
     "typescript": "^4.7.4",
     "web-vitals": "^2.1.4",
     "webpack": "^5.74.0"
@@ -43,6 +44,14 @@
       "react-app/jest"
     ]
   },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "./lib/*"
+      ]
+    }
+  },
+  "types": "./lib/*.d.ts",
   "browserslist": {
     "production": [
       ">0.2%",
@@ -56,7 +65,9 @@
     ]
   },
   "devDependencies": {
+    "@types/node": "^18.7.16",
     "@types/react-toastify": "^4.1.0",
+    "@types/redux-mock-store": "^1.0.3",
     "@typescript-eslint/eslint-plugin": "^5.33.0",
     "@typescript-eslint/parser": "^5.33.0",
     "assert": "^2.0.0",
@@ -80,6 +91,19 @@
     "react-i18next": "^11.18.3",
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
+    "ts-jest": "^28.0.8",
     "url": "^0.11.0"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "jsdom",
+    "clearMocks": true,
+    "testTimeout": 20000,
+    "modulePaths": [
+      "<rootDir>/src"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/src/test/setupTests.ts"
+    ]
   }
 }

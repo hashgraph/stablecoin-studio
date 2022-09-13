@@ -1,17 +1,18 @@
-import {
-	SDK,
-} from '../src/index';
+import { SDK } from '../src/index';
 import { ICreateStableCoinRequest } from '../src/port/in/sdk/request/ICreateStableCoinRequest.js';
-import Account from '../src/domain/context/account/Account.js';
-import { AccountId } from '../src/domain/context/account/AccountId.js';
+import AccountId from '../src/domain/context/account/AccountId.js';
 import { getSDK } from './core.js';
-import { PrivateKey } from '../src/domain/context/account/PrivateKey.js';
+import PrivateKey from '../src/domain/context/account/PrivateKey.js';
+import EOAccount from '../src/domain/context/account/EOAccount.js';
 
 const ACCOUNT_ID = '0.0.29511696';
 const PK =
 	'302e020100300506032b6570042204207a8a25387a3c636cb980d1ba548ee5ee3cc8cda158e42dc7af53dcd81022d8be';
 
-const account = new Account(new AccountId(ACCOUNT_ID), new PrivateKey(PK));
+const account = new EOAccount({
+	accountId: new AccountId(ACCOUNT_ID),
+	privateKey: new PrivateKey(PK),
+});
 const request: ICreateStableCoinRequest = {
 	accountId: account.accountId.id,
 	privateKey: account.privateKey.key,

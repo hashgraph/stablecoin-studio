@@ -2,6 +2,7 @@ module.exports = {
 	env: {
 		browser: true,
 		es2021: true,
+		jest: true,
 	},
 	extends: [
 		'plugin:react/recommended',
@@ -22,5 +23,8 @@ module.exports = {
 		'no-unused-vars': 'off',
 		'@typescript-eslint/no-unused-vars': 'error',
 		'no-useless-constructor': 'off',
+		'@typescript-eslint/no-redeclare': 'error',
+		'react/prop-types': 'off',
+		'import/no-duplicates': 'error',
 	},
 };

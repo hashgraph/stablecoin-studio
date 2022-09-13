@@ -1,6 +1,7 @@
 import { extendTheme } from '@chakra-ui/react';
 import { Button } from './components/Button';
 import { Text } from './components/Text';
+import { ConfigSelect } from './components/Select';
 
 const theme = extendTheme({
 	config: {
@@ -21,11 +22,16 @@ const theme = extendTheme({
 			green: '#A7D88A',
 			red: '#F25454',
 			blue: '#7285EA',
+			lightPrimary: '#ECE8FF',
+			primary200: '#5C47D9',
 		},
 		light: {
 			primary: '#ECEBF1',
 			secondary: '#A0A0A0',
 			purple: '#ECE8FF',
+			purple2: '#B699F5',
+			purple3: '#9F79F2',
+			purple4: 'rgb(182, 153, 245, .4)',
 		},
 		dark: {
 			primary: '#662D8F',
@@ -51,6 +57,15 @@ const theme = extendTheme({
 	components: {
 		Button,
 		Text,
+		Select: ConfigSelect,
+		Input: {
+			baseStyle: {
+				border: 0,
+			},
+			defaultProps: {
+				variant: 'unstyled',
+			},
+		},
 	},
 });
 

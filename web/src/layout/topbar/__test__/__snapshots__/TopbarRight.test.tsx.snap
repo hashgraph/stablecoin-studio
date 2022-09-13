@@ -1,0 +1,58 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<TopbarRight /> should render correctly 1`] = `
+<DocumentFragment>
+  <div
+    class="css-rg2hwn"
+    data-testid="topbar-right"
+  >
+    <div
+      class="css-18wp8yu"
+      data-testid="topbar-right-network"
+    >
+      <p
+        class="chakra-text css-0"
+      >
+        Operating network
+      </p>
+      <p
+        class="chakra-text css-1sylyko"
+      >
+        : 
+      </p>
+      <p
+        class="chakra-text css-0"
+      >
+        TESNET
+      </p>
+    </div>
+    <div
+      class="css-dv2lk7"
+    />
+    <div
+      class="css-18wp8yu"
+      data-testid="topbar-right-account"
+    >
+      <p
+        class="chakra-text css-0"
+      >
+        Operating account
+      </p>
+      <p
+        class="chakra-text css-1sylyko"
+      >
+        : 
+      </p>
+      <p
+        class="chakra-text css-0"
+      >
+        0.0.123456
+      </p>
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;

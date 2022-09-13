@@ -15,9 +15,11 @@ export default class CashInStableCoinsService extends Service {
    * List Stable Coins can be managed
    */
   public async cashInStableCoin(
-    treasuryId: string,
+    proxyContractId: string,
     privateKey: string,
     accountId: string,
+    tokenId: string,
+    targetId: string,
     amount?: number,
   ): Promise<void> {
     // Call to list stable coins
@@ -27,7 +29,14 @@ export default class CashInStableCoinsService extends Service {
 
     await utilsService.showSpinner(
       sdk
-        .cashIn({ treasuryId, privateKey, accountId, amount })
+        .cashIn({
+          proxyContractId,
+          privateKey,
+          accountId,
+          tokenId,
+          targetId,
+          amount,
+        })
         .then((response) => (respDetail = response)),
       {
         text: language.getText('state.loading'),

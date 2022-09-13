@@ -6,9 +6,11 @@ import Table from 'cli-table3';
 import { StableCoinList } from '../../../domain/stablecoin/StableCoinList.js';
 import {
   HederaNetwork,
+  HederaNetworkEnviroment,
   NetworkMode,
   SDK,
 } from 'hedera-stable-coin-sdk';
+const colors = require('colors');
 
 /**
  * Utilities Service
@@ -22,8 +24,8 @@ export default class UtilitiesService extends Service {
 
   public async initSDK(): Promise<SDK> {
     this.sdk = await new SDK({
-      network: HederaNetwork.TEST,
-      mode: NetworkMode.EOA
+      network: new HederaNetwork(HederaNetworkEnviroment.TEST),
+      mode: NetworkMode.EOA,
     }).init();
     return this.sdk;
   }
@@ -112,7 +114,19 @@ export default class UtilitiesService extends Service {
   public async defaultMultipleAsk(
     question: string,
     choices: Array<string>,
+    network?: string,
+    account?: string,
+    token?: string,
   ): Promise<string> {
+    if (network) {
+      question = question + ' ' + colors.cyan('(' + network + ')');
+    }
+    if (account) {
+      question = question + ' ' + colors.magenta('(' + account + ')');
+    }
+    if (token) {
+      question = question + ' ' + colors.yellow('(' + token + ')');
+    }
     const variable = await inquirer.prompt({
       name: 'response',
       type: 'rawlist',
@@ -161,5 +175,14 @@ export default class UtilitiesService extends Service {
 
       console.log(table.toString());
     }
+  }
+
+  public exitApplication(cause?: string): void {
+    let code = 0; // OK
+    if (cause) {
+      this.showError(`\n 🛑 ${cause}`);
+      code = 1;
+    }
+    process.exit(code);
   }
 }
