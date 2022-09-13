@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<ModalNotification /> should render correctly: default 1`] = `
+<DocumentFragment>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;
+
+exports[`<ModalNotification /> should render description if it is on props: with-description 1`] = `
+<DocumentFragment>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;
+
+exports[`<ModalNotification /> should render error icon if variant is error: error 1`] = `
+<DocumentFragment>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;
+
+exports[`<ModalNotification /> should render success icon if variant is success: success 1`] = `
+<DocumentFragment>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;

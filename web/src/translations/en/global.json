@@ -1,4 +1,7 @@
 {
+  "common": {
+    "accept": "Accept"
+  },
   "hashpack-no-installed": {
     "title": "Your haspack extension is not installed yet",
     "description": "Click in the button bellow to download the extension.",
