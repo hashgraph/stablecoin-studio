@@ -15,5 +15,12 @@
     "operations": "Operations",
     "role": "Role management",
     "details": "Stable coin details"
+  },
+  "errorPage": {
+    "StableCoinNotSelected": {
+      "title": "Choose a Stable coin to start operating!",
+      "description": "You have not chosen a Stable coin yet.",
+      "description2": "Choose one in the search bar above to operate."
+    }
   }
 }
