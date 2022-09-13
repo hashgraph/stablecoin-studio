@@ -69,8 +69,7 @@ export default class HethersProvider implements IProvider {
 		let client:any;
 		const hederaNetWork = getHederaNetwork(this.network)
 
-		if (hederaNetWork.consensusNodes){
-			console.log("nodes :" + hederaNetWork.consensusNodes)
+		if (hederaNetWork.consensusNodes){			
 			client = Client.forNetwork(hederaNetWork.consensusNodes)
 		}else if (this.network.hederaNetworkEnviroment != HederaNetworkEnviroment.LOCAL){
 			client = Client.forName(this.network.hederaNetworkEnviroment);
@@ -389,7 +388,7 @@ export default class HethersProvider implements IProvider {
 			transaction.setMaxSupply(Long.fromString(maxSupply.toString()));
 			transaction.setSupplyType(TokenSupplyType.Finite);
 		}
-		console.log(transaction);
+		
 		transaction.freezeWith(clientSdk);
 		const transactionSign = await transaction.sign(
 			PrivateKey.fromString(privateKey),
