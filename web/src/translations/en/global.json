@@ -1,4 +1,7 @@
 {
+  "common": {
+    "accept": "Accept"
+  },
   "hashpack-no-installed": {
     "title": "Your haspack extension is not installed yet",
     "description": "Click in the button bellow to download the extension.",
@@ -6,7 +9,10 @@
   },
   "topbar": {
     "network": "Operating network",
-    "account": "Operating account"
+    "account": "Operating account",
+    "coinDropdown": {
+      "placeholder": "Choose Stable coin"
+    }
   },
   "sidebar": {
     "operations": "Operations",

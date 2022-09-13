@@ -15,19 +15,16 @@ const Sidebar = () => {
 	const options: optionsProps[] = [
 		{
 			icon: 'Coin',
-			// @ts-ignore
 			title: t('sidebar.operations'),
 			route: NamedRoutes.Operations,
 		},
 		{
 			icon: 'Users',
-			// @ts-ignore
 			title: t('sidebar.role'),
 			route: NamedRoutes.Roles,
 		},
 		{
 			icon: 'Gear',
-			// @ts-ignore
 			title: t('sidebar.details'),
 			route: NamedRoutes.Details,
 		},
