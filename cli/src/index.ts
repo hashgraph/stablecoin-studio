@@ -5,7 +5,6 @@ import WizardService from './app/service/wizard/WizardService.js';
 import ConfigurationService from './app/service/configuration/ConfigurationService.js';
 import UtilitiesService from './app/service/utilities/UtilitiesService.js';
 import CommanderService from './app/service/commander/CommanderService.js';
-import SetConfigurationService from './app/service/configuration/SetConfigurationService.js';
 
 export const language: Language = new Language();
 export const wizardService: WizardService = new WizardService();
@@ -24,15 +23,6 @@ const main = async (): Promise<void> => {
   
   // Show initial banner
   await utilsService.showBanner();
-
-  // Check if default configuration exists, if not, start init command
-  if (configurationService.getIsFirstTime()) {
-    const setConfigurationService: SetConfigurationService =
-      new SetConfigurationService();
-    await setConfigurationService.initConfiguration();
-    await wizardService.mainMenu();
-  }
-  
 
   commanderService.start();
 };

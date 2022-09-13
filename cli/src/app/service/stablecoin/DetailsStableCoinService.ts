@@ -18,7 +18,7 @@ export default class DetailsStableCoinsService extends Service {
   public async getDetailsStableCoins(
     id: string,
     show = true,
-  ): Promise<void | StableCoinDetail> {
+  ): Promise<StableCoinDetail> {
     // Call to list stable coins
     const sdk: SDK = utilsService.getSDK();
 
@@ -29,7 +29,7 @@ export default class DetailsStableCoinsService extends Service {
         .getStableCoin({
           id,
         })
-        .then((response: StableCoinDetail) => (respDetail = response)),
+        .then((response) => (respDetail = response)),
       {
         text: language.getText('state.loading'),
         successText: language.getText('state.loadCompleted') + '\n',
@@ -39,8 +39,7 @@ export default class DetailsStableCoinsService extends Service {
     if (show) {
       console.log(respDetail);
       utilsService.breakLine();
-    } else {
-      return respDetail;
     }
+    return respDetail;
   }
 }

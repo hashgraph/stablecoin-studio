@@ -1,10 +1,14 @@
 import {
 	IAccountWithKeyRequestModel as IAccountWithKeyRequestModel,
 	IAmountRequestModel as IAmountRequestModel,
-	ITreasureyRequestModel as ITreasureyRequestModel,
+	IProxyContractIdRequestModel as IProxyContractIdRequestModel,
+	ITokenIdRequestModel,
+	ITargetIdRequestModel,
 } from './CoreRequestModel.js';
 
 export default interface IWipeStableCoinServiceRequestModel
-	extends ITreasureyRequestModel,
+	extends IProxyContractIdRequestModel,
 		IAccountWithKeyRequestModel,
+		ITokenIdRequestModel,
+		ITargetIdRequestModel,
 		IAmountRequestModel {}

@@ -1,3 +1,9 @@
-import { IRequestContractsAmount } from './IRequestContracts.js';
+import {
+	IRequestContractsAmount,
+	ITokenIdRequestModel,
+	ITargetIdRequestModel,
+} from './IRequestContracts.js';
 
-export type ICashInStableCoinRequest = IRequestContractsAmount;
+export type ICashInStableCoinRequest = IRequestContractsAmount &
+	ITokenIdRequestModel &
+	ITargetIdRequestModel;

@@ -1,15 +1,18 @@
 export interface StableCoin {
   name: string;
   symbol: string;
+  autoRenewAccount: string;
   decimals: number;
   initialSupply?: bigint;
   supplyType?: string;
   maxSupply?: bigint;
-  expirationTime?: number;
+  KYCKey?: string;
+  wipeKey?: string;
+  adminKey?: string;
+  freezeKey?: string;
+  pauseKey?: string;
+  supplyKey?: string;
+  treasury?: string;
+  id?: string;
   memo?: string;
-  freezeDefault?: boolean;
-  KYC?: string;
-  wipe?: string;
-  feeSchedule?: string;
-  admin?: string;
 }

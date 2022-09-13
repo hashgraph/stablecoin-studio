@@ -1,4 +1,3 @@
-
 export interface ICreateStableCoinRequest {
 	accountId: string;
 	privateKey: string;

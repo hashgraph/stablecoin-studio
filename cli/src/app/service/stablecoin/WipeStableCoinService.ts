@@ -15,9 +15,11 @@ export default class WipeStableCoinsService extends Service {
    * List Stable Coins can be managed
    */
   public async wipeStableCoin(
-    treasuryId: string,
+    proxyContractId: string,
     privateKey: string,
     accountId: string,
+    tokenId: string,
+    targetId: string,
     amount?: number,
   ): Promise<void> {
     // Call to list stable coins
@@ -27,7 +29,14 @@ export default class WipeStableCoinsService extends Service {
 
     await utilsService.showSpinner(
       sdk
-        .wipe({ treasuryId, privateKey, accountId, amount })
+        .wipe({
+          proxyContractId,
+          privateKey,
+          accountId,
+          tokenId,
+          targetId,
+          amount,
+        })
         .then((response) => (respDetail = response)),
       {
         text: language.getText('state.loading'),
