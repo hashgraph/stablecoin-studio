@@ -25,6 +25,9 @@ const theme = extendTheme({
 			primary: '#ECEBF1',
 			secondary: '#A0A0A0',
 			purple: '#ECE8FF',
+			purple2: '#B699F5',
+			purple3: '#9F79F2',
+			purple4: 'rgb(182, 153, 245, .4)',
 		},
 		dark: {
 			primary: '#662D8F',
