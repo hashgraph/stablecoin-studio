@@ -6,7 +6,10 @@
   },
   "topbar": {
     "network": "Operating network",
-    "account": "Operating account"
+    "account": "Operating account",
+    "coinDropdown": {
+      "placeholder": "Choose Stable coin"
+    }
   },
   "sidebar": {
     "operations": "Operations",

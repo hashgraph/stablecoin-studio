@@ -1,5 +1,7 @@
+import { Box } from '@chakra-ui/react';
+
 const Dashboard = () => {
-	return <div>Dashboard</div>;
+	return <Box>Dashboard</Box>;
 };
 
 export default Dashboard;

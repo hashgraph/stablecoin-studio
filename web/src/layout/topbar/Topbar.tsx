@@ -1,6 +1,6 @@
 import { Box, Flex, Image } from '@chakra-ui/react';
 import LOGO_HEDERA from '../../assets/svg/hedera-hbar-logo.svg';
-import TopbarLeft from './TopbarLeft';
+import CoinDropdown from './CoinDropdown';
 import TopbarRight from './TopbarRight';
 
 const Topbar = () => {
@@ -21,7 +21,7 @@ const Topbar = () => {
 			</Box>
 			<Box borderRight='2px solid' borderRightColor='light.primary' w='1px' h='30px' />
 			<Flex w='100%' h='100%' justifyContent='space-between' alignItems='center' pl={6} pr={10}>
-				<TopbarLeft />
+				<CoinDropdown />
 				<TopbarRight />
 			</Flex>
 		</Flex>
