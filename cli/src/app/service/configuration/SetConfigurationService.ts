@@ -20,33 +20,43 @@ export default class SetConfigurationService extends Service {
   /**
    * Initialise the configuration for first time or with "init" command
    */
-  public async initConfiguration(): Promise<void> {
+  public async initConfiguration(path?: string, network?: string): Promise<void> {
     utilsService.showMessage(language.getText('initialConfiguration.title'));
-    await this.configurePath();
-    await this.configureDefaultNetwork();
+    await this.configurePath(path);
+    await this.configureDefaultNetwork(network);
     await this.configureAccounts();
   }
 
   /**
    * Function to configure the default path, fails if the path doesn't exist
    */
-  public async configurePath(): Promise<string> {
-    const defaultConfigPath =
-      configurationService.getConfiguration()?.general?.configPath;
-    const defaultPath = await utilsService.defaultSingleAsk(
-      language.getText('configuration.askPath'),
-      defaultConfigPath ?? configurationService.getDefaultConfigurationPath(),
-    );
-
+  public async configurePath(path?: string): Promise<string> {
+    let defaultPath: string;
+    if (path) {
+      defaultPath = path;
+    } else {
+      defaultPath = await utilsService.defaultSingleAsk(
+        language.getText('configuration.askPath'),
+        configurationService.getDefaultConfigurationPath(),
+      );
+    }
     // If the path is incorrect
-    if (!fs.existsSync(defaultPath)) {
-      utilsService.showError(language.getText('general.incorrectParam'));
-      await this.configurePath();
+    if (!fs.existsSync(defaultPath) || !configurationService.validateConfigurationFile()) {
+      const createAuto = await utilsService.defaultConfirmAsk(
+        language.getText('configuration.askCreateConfig'),
+        true,
+      );
+      if (!createAuto) {
+        utilsService.exitApplication(
+          language.getText('configuration.askCreateConfigNeg'),
+        );
+      } else {
+        configurationService.createDefaultConfiguration(defaultPath);
+      }
     }
 
     // Set default path
     const defaultCfgData = configurationService.getConfiguration();
-    defaultCfgData.general.configPath = defaultPath;
     configurationService.setConfiguration(defaultCfgData, defaultPath);
     return defaultPath;
   }
@@ -54,16 +64,21 @@ export default class SetConfigurationService extends Service {
   /**
    * Function to configure the default network
    */
-  public async configureDefaultNetwork(): Promise<string> {
-    let network = await utilsService.defaultSingleAsk(
-      language.getText('configuration.askNetwork'),
-      'mainnet|previewnet|testnet',
-    );
+  public async configureDefaultNetwork(_network?: string): Promise<string> {
+    let network: string;
+    if (_network){
+      network = _network;
+    }else{
+      network = await utilsService.defaultSingleAsk(
+        language.getText('configuration.askNetwork'),
+        'mainnet|previewnet|testnet|local',
+      );
+    }
 
     if (
       network === undefined ||
       network === '' ||
-      network === 'mainnet|previewnet|testnet'
+      network === 'mainnet|previewnet|testnet|local'
     ) {
       utilsService.showError(language.getText('general.incorrectParam'));
       network = await this.configureDefaultNetwork();
@@ -73,7 +88,8 @@ export default class SetConfigurationService extends Service {
     if (
       network !== 'mainnet' &&
       network !== 'previewnet' &&
-      network !== 'testnet'
+      network !== 'testnet' &&
+      network !== 'local'
     ) {
       const response = await utilsService.defaultSingleAsk(
         language.getText('configuration.askNotDefaultNetwork'),
@@ -89,7 +105,7 @@ export default class SetConfigurationService extends Service {
 
     // Set a default network
     const defaultCfgData = configurationService.getConfiguration();
-    defaultCfgData.general.network = network;
+    defaultCfgData.defaultNetwork = network;
     configurationService.setConfiguration(defaultCfgData);
     return network;
   }
@@ -128,7 +144,7 @@ export default class SetConfigurationService extends Service {
       accounts.push({
         accountId: accountId,
         privateKey: accountFromPrivKey.privateKey,
-        isECDA25519Type: accountFromPrivKey.isECDA25519Type,
+        network: configurationService.getConfiguration().defaultNetwork,
         alias: alias,
       });
 
@@ -160,17 +176,15 @@ export default class SetConfigurationService extends Service {
       '96|64|66 characters',
     );
 
-    let isECDA25519Type = false;
+    const network = configurationService.getConfiguration().defaultNetwork;
     let alias = '';
 
     // Actions by length
     switch (privateKey.length) {
-      case 96:
-        isECDA25519Type = true;
-        break;
       case 64:
         privateKey = '0x' + privateKey;
         break;
+      case 96:
       default:
         break;
     }
@@ -183,14 +197,13 @@ export default class SetConfigurationService extends Service {
       utilsService.showError(language.getText('general.incorrectParam'));
       const acc = await this.askForPrivateKeyOfAccount(accountId);
       privateKey = acc.privateKey;
-      isECDA25519Type = acc.isECDA25519Type;
       alias = acc.alias;
     }
 
     return {
       accountId: accountId,
       privateKey: privateKey,
-      isECDA25519Type: isECDA25519Type,
+      network,
       alias: alias,
     };
   }

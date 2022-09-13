@@ -11,7 +11,7 @@
   },
   "scripts": {
     "start": "clear && npx tsc && node ./build/src/index.js",
-    "start2": "npx ts-node ./src/index.ts",
+    "start:wizard": "clear && npx tsc && node ./build/src/index.js wizard -cp './hsca-config.yaml' -n 'testnet'",
     "clean": "rimraf coverage build tmp",
     "prebuild": "npm run lint",
     "build": "tsc -p tsconfig.json",
@@ -34,16 +34,18 @@
     "eslint": "~8.16",
     "eslint-config-prettier": "~8.5",
     "eslint-plugin-jest": "~26.2",
+    "hedera-stable-coin-sdk": "file:../sdk",
     "jest": "^28.1.3",
     "prettier": "~2.6",
     "rimraf": "~3.0",
     "ts-jest": "~28.0",
-    "tsutils": "~3.21",
-    "hedera-stable-coin-sdk": "file:../sdk"
+    "tsutils": "~3.21"
   },
   "dependencies": {
     "@iarna/toml": "^2.2.5",
+    "chalk": "^5.0.1",
     "cli-table3": "^0.6.2",
+    "colors": "^1.4.0",
     "commander": "^9.4.0",
     "figlet-promised": "^1.0.0",
     "fs-extra": "^10.1.0",

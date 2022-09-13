@@ -1,0 +1,93 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<DirectAccess /> should render correctly 1`] = `
+<DocumentFragment>
+  <div
+    class="css-1a4lzer"
+    data-testid="direct-access-container"
+  >
+    <div
+      class="css-bv4l9q"
+    >
+      <svg
+        class="chakra-icon css-1f9qa95"
+        data-testid="direct-access-Coin"
+        fill="currentColor"
+        focusable="false"
+        height="1em"
+        viewBox="0 0 256 256"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <rect
+          fill="none"
+          height="256"
+          width="256"
+        />
+        <ellipse
+          cx="128"
+          cy="104"
+          fill="none"
+          rx="104"
+          ry="48"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="16"
+        />
+        <line
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="16"
+          x1="128"
+          x2="128"
+          y1="152"
+          y2="200"
+        />
+        <path
+          d="M24,104v48c0,24,40,48,104,48s104-24,104-48V104"
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="16"
+        />
+        <line
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="16"
+          x1="192"
+          x2="192"
+          y1="142.1"
+          y2="190.1"
+        />
+        <line
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="16"
+          x1="64"
+          x2="64"
+          y1="142.1"
+          y2="190.1"
+        />
+      </svg>
+    </div>
+    <p
+      class="chakra-text css-g6mx6s"
+      data-testid="direct-access-Test"
+    >
+      Test
+    </p>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;

@@ -1,9 +1,8 @@
-import { IAccountConfig } from "./IAccountConfig.js";
-import { IGeneralConfig } from "./IGeneralConfig.js";
-import { INetworkConfig } from "./INetworkConfig.js";
+import { IAccountConfig } from './IAccountConfig.js';
+import { INetworkConfig } from './INetworkConfig.js';
 
 export interface IConfiguration {
-    general?: IGeneralConfig;
-    networks?: INetworkConfig[];
-    accounts?: IAccountConfig[];
+  defaultNetwork?: string;
+  networks?: INetworkConfig[];
+  accounts?: IAccountConfig[];
 }

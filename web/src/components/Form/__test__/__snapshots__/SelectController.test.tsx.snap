@@ -1,0 +1,61 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<SelectController /> shows error with showErrors=true: ShowingError 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-stack css-1h0sumw"
+  >
+    <div
+      class="chakra-form-control css-1kxonj9"
+      data-testid="form_control"
+      role="group"
+    >
+      <label
+        class="chakra-form__label css-2gx1h6"
+        data-invalid=""
+        for="field-:r0:"
+        id="field-:r0:-label"
+      >
+        <div
+          class="chakra-stack css-84zodg"
+        >
+          <p
+            class="chakra-text css-0"
+          >
+            Select an option
+          </p>
+        </div>
+      </label>
+      <select
+        data-testid="selection"
+      >
+        <option
+          value="value1"
+        >
+          Value 1
+        </option>
+        <option
+          value="value2"
+        >
+          Value 2
+        </option>
+        <option
+          value="value3"
+        >
+          Value 3
+        </option>
+      </select>
+      <div
+        aria-live="polite"
+        class="chakra-form__error-message css-170ki1a"
+        data-testid="form-error-msg"
+        id="field-:r0:-feedback"
+      />
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;

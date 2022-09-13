@@ -20,10 +20,10 @@ describe(`<${Topbar.name} />`, () => {
 		expect(logo).toHaveAttribute('src', HEDERA_LOGO);
 	});
 
-	test('should has a component in left position', () => {
+	test('should have CoinDropdown in left position', () => {
 		const component = render(<Topbar />);
 
-		const topbarLeft = component.getByTestId('topbar-left');
+		const topbarLeft = component.getByTestId('coin-dropdown');
 		expect(topbarLeft).toBeInTheDocument();
 	});
 

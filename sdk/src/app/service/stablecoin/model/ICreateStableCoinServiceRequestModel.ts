@@ -1,21 +1,24 @@
 import { TokenType, TokenSupplyType } from '@hashgraph/sdk';
+import AccountId from '../../../../domain/context/account/AccountId.js';
+import PublicKey from '../../../../domain/context/account/PublicKey.js';
 import { IAccountWithKeyRequestModel } from './CoreRequestModel.js';
 
-export default interface ICreateStableCoinServiceRequestModel extends IAccountWithKeyRequestModel {
+export default interface ICreateStableCoinServiceRequestModel
+	extends IAccountWithKeyRequestModel {
 	name: string;
 	symbol: string;
 	decimals: number;
 	initialSupply?: bigint;
 	maxSupply?: bigint;
 	memo?: string;
-	freeze?: string;
+	freezeKey?: PublicKey;
 	freezeDefault?: boolean;
-	kycKey?: string;
-	wipeKey?: string;
-	supplyKey?: string;
-	treasury?: string;
-	expiry?: number;
+	kycKey?: PublicKey;
+	wipeKey?: PublicKey;
+	supplyKey?: PublicKey;
+	treasury?: AccountId;
 	tokenType?: TokenType;
 	supplyType?: TokenSupplyType;
-	id?: string | undefined;
+	id?: string;
+	autoRenewAccount?: AccountId;
 }

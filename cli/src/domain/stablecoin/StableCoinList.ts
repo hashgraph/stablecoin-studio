@@ -1,3 +1,5 @@
+import { ContractId } from "hedera-stable-coin-sdk";
+
 export interface StableCoinList {
   id: string;
   symbol: string;
@@ -7,23 +9,23 @@ export interface StableCoinDetail {
   tokenId?: string;
   name?: string;
   symbol?: string;
-  decimals?: string;
-  totalSupply?: string;
-  maxSupply?: string;
+  decimals?: number;
+  totalSupply?: bigint;
+  maxSupply?: bigint;
   customFee?: ICustomFees;
   treasuryId?: string;
   expirationTime?: string;
   memo?: string;
   paused?: string;
-  freeze?: boolean;
+  freezeDefault?: boolean;
   // kycStatus: string;
   deleted?: boolean;
-  adminKey?: IAdminKey;
-  kycKey?: IKYCKey;
-  freezeKey?: IFreezeKey;
-  wipeKey?: IWipeKey;
-  supplyKey?: string;
-  pauseKey?: string;
+  adminKey?: IPublicKey;
+  kycKey?: ContractId | IPublicKey;
+  freezeKey?: ContractId | IPublicKey;
+  wipeKey?: ContractId | IPublicKey;
+  supplyKey?: ContractId | IPublicKey;
+  pauseKey?: ContractId | IPublicKey;
 }
 
 export interface ICustomFees {
@@ -32,22 +34,7 @@ export interface ICustomFees {
   fractional_fees: string[];
 }
 
-export interface IAdminKey {
-  _type: string;
-  key: string;
-}
-
-export interface IKYCKey {
-  _type: string;
-  key: string;
-}
-
-export interface IFreezeKey {
-  _type: string;
-  key: string;
-}
-
-export interface IWipeKey {
-  _type: string;
+export interface IPublicKey {
+  type: string;
   key: string;
 }

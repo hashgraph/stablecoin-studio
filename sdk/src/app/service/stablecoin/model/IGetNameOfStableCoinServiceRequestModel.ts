@@ -1,8 +1,8 @@
 import {
 	IAccountWithKeyRequestModel,
-	ITreasureyRequestModel,
+	IProxyContractIdRequestModel,
 } from './CoreRequestModel.js';
 
 export default interface IGetNameOfStableCoinServiceRequestModel
-	extends ITreasureyRequestModel,
+	extends IProxyContractIdRequestModel,
 		IAccountWithKeyRequestModel {}

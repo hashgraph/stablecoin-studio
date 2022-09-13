@@ -1,5 +1,5 @@
 export interface IRequestContracts {
-	treasuryId: string;
+	proxyContractId: string;
 	privateKey: string;
 	accountId: string;
 }
@@ -13,5 +13,13 @@ export interface IRequestSupplier extends IRequestContracts {
 }
 
 export interface IRequestBalanceOf extends IRequestContracts {
+	targetId: string;
+}
+
+export interface ITokenIdRequestModel {
+	tokenId: string;
+}
+
+export interface ITargetIdRequestModel {
 	targetId: string;
 }

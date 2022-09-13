@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { hethers } from '@hashgraph/hethers';
+import PrivateKey from '../../../../domain/context/account/PrivateKey.js';
 import {
-	AccountId,
+	AccountId as HAccountId,
 	Client,
 	ContractCreateTransaction,
 	ContractExecuteTransaction,
@@ -12,8 +13,8 @@ import {
 	FileCreateTransaction,
 	FileId,
 	Hbar,
-	PrivateKey,
-	PublicKey,
+	PrivateKey as HPrivateKey,
+	PublicKey as HPublicKey,
 	TokenCreateTransaction,
 	TokenId,
 	TokenSupplyType,
@@ -23,7 +24,10 @@ import {
 	HederaERC20__factory,
 	HTSTokenOwner__factory,
 } from 'hedera-stable-coin-contracts/typechain-types/index.js';
-import { HederaNetwork, HederaNetworkEnviroment } from '../../../../core/enum.js';
+import {
+	HederaNetwork,
+	HederaNetworkEnviroment,
+} from '../../../../core/enum.js';
 import { IniConfig, IProvider } from '../Provider.js';
 import Web3 from 'web3';
 import { StableCoin } from '../../../../domain/context/stablecoin/StableCoin.js';
@@ -33,8 +37,11 @@ import { log } from '../../../../core/log.js';
 import {
 	ICallContractRequest,
 	ICallContractWithAccountRequest,
+	ICreateTokenResponse,
 } from '../types.js';
 import HederaError from '../error/HederaError.js';
+import PublicKey from '../../../../domain/context/account/PublicKey.js';
+import AccountId from '../../../../domain/context/account/AccountId.js';
 import { json } from 'stream/consumers';
 
 type DefaultHederaProvider = hethers.providers.DefaultHederaProvider;
@@ -65,16 +72,18 @@ export default class HethersProvider implements IProvider {
 	}
 
 	public getClient(accountId?: string, privateKey?: string): Client {
-		
-		let client:any;
-		const hederaNetWork = getHederaNetwork(this.network)
+		let client: any;
+		const hederaNetWork = getHederaNetwork(this.network);
 
-		if (hederaNetWork.consensusNodes){			
-			client = Client.forNetwork(hederaNetWork.consensusNodes)
-		}else if (this.network.hederaNetworkEnviroment != HederaNetworkEnviroment.LOCAL){
+		if (hederaNetWork.consensusNodes) {
+			client = Client.forNetwork(hederaNetWork.consensusNodes);
+		} else if (
+			this.network.hederaNetworkEnviroment !=
+			HederaNetworkEnviroment.LOCAL
+		) {
 			client = Client.forName(this.network.hederaNetworkEnviroment);
 		}
-		 	
+
 		if (accountId && privateKey) {
 			client.setOperator(accountId, privateKey);
 		}
@@ -127,10 +136,15 @@ export default class HethersProvider implements IProvider {
 		return jsonParsedArray;
 	}
 
-	public getPublicKey(privateKey?: string | undefined): string {
-		if (!privateKey) throw new HederaError('No private key provided');
-		const publicKey =
-			PrivateKey.fromString(privateKey).publicKey.toStringRaw();
+	public getPublicKey(privateKey?: PrivateKey | string | undefined): string {
+		let key = null;
+		if (privateKey instanceof PrivateKey) {
+			key = privateKey.key;
+		} else {
+			key = privateKey;
+		}
+		if (!key) throw new HederaError('No private key provided');
+		const publicKey = HPrivateKey.fromString(key).publicKey.toStringRaw();
 		return publicKey;
 	}
 
@@ -178,14 +192,14 @@ export default class HethersProvider implements IProvider {
 		stableCoin: StableCoin,
 	): Promise<StableCoin> {
 		const client = this.getClient(accountId, privateKey);
-		const account = {
+		const plainAccount = {
 			accountId,
 			privateKey,
 		};
 		const tokenContract = await this.deployContract(
 			HederaERC20__factory,
 			10,
-			privateKey,
+			plainAccount.privateKey,
 			client,
 		);
 		log(
@@ -198,7 +212,7 @@ export default class HethersProvider implements IProvider {
 			proxyContract = await this.deployContract(
 				HederaERC1967Proxy__factory,
 				10,
-				privateKey,
+				plainAccount.privateKey,
 				client,
 				new ContractFunctionParameters()
 					.addAddress(tokenContract?.toSolidityAddress())
@@ -212,7 +226,7 @@ export default class HethersProvider implements IProvider {
 			parameters: [],
 			gas: 250_000,
 			abi: HederaERC20__factory.abi,
-			account,
+			account: plainAccount,
 		});
 		log(
 			`Deploying ${HTSTokenOwner__factory.name} contract... please wait.`,
@@ -221,7 +235,7 @@ export default class HethersProvider implements IProvider {
 		const tokenOwnerContract = await this.deployContract(
 			HTSTokenOwner__factory,
 			10,
-			privateKey,
+			plainAccount.privateKey,
 			client,
 		);
 		log('Creating token... please wait.', logOpts);
@@ -234,28 +248,29 @@ export default class HethersProvider implements IProvider {
 			stableCoin.maxSupply,
 			String(proxyContract),
 			stableCoin.freezeDefault,
-			privateKey,
+			plainAccount.privateKey,
 			this.getPublicKey(privateKey),
 			client,
 		);
-		stableCoin.id = TokenId.fromString(hederaToken.toString());
 		log('Setting up contract... please wait.', logOpts);
 		await this.callContract('setTokenAddress', {
 			contractId: proxyContract,
 			parameters: [
 				tokenOwnerContract.toSolidityAddress(),
-				TokenId.fromString(hederaToken.toString()).toSolidityAddress(),
+				TokenId.fromString(
+					hederaToken.tokenId.toString(),
+				).toSolidityAddress(),
 			],
 			gas: 80_000,
 			abi: HederaERC20__factory.abi,
-			account,
+			account: plainAccount,
 		});
 		await this.callContract('setERC20Address', {
 			contractId: tokenOwnerContract,
 			parameters: [proxyContract.toSolidityAddress()],
 			gas: 60_000,
 			abi: HTSTokenOwner__factory.abi,
-			account,
+			account: plainAccount,
 		});
 		log(
 			'Associating administrator account to token... please wait.',
@@ -263,12 +278,30 @@ export default class HethersProvider implements IProvider {
 		);
 		await this.callContract('associateToken', {
 			contractId: proxyContract,
-			parameters: [AccountId.fromString(accountId).toSolidityAddress()],
+			parameters: [HAccountId.fromString(accountId).toSolidityAddress()],
 			gas: 1_300_000,
 			abi: HederaERC20__factory.abi,
-			account,
+			account: plainAccount,
 		});
-		return stableCoin;
+		console.log(hederaToken.supplyKey);
+
+		return new StableCoin({
+			name: hederaToken.name,
+			symbol: hederaToken.symbol,
+			decimals: hederaToken.decimals,
+			initialSupply: BigInt(hederaToken.initialSupply.toNumber()),
+			maxSupply: BigInt(hederaToken.maxSupply.toNumber()),
+			memo: hederaToken.memo,
+			freezeDefault: hederaToken.freezeDefault,
+			treasury: new AccountId(hederaToken.treasuryAccountId.toString()),
+			adminKey: this.fromPublicKey(hederaToken.adminKey),
+			freezeKey: this.fromPublicKey(hederaToken.freezeKey),
+			wipeKey: this.fromPublicKey(hederaToken.wipeKey),
+			supplyKey: hederaToken.supplyKey,
+			id: hederaToken.tokenId,
+			tokenType: stableCoin.tokenType,
+			supplyType: stableCoin.supplyType,
+		});
 	}
 
 	private async deployContract(
@@ -278,30 +311,28 @@ export default class HethersProvider implements IProvider {
 		client: Client,
 		params?: any,
 	): Promise<ContractId> {
-		
 		try {
-			
 			const bytecodeFileId = await this.fileCreate(
 				factory.bytecode,
 				chunks,
-				PrivateKey.fromString(privateKey),
+				HPrivateKey.fromString(privateKey),
 				client,
 			);
-			
+
 			const transaction = new ContractCreateTransaction()
 				.setGas(181_000)
 				.setBytecodeFileId(bytecodeFileId)
 				.setMaxTransactionFee(new Hbar(30))
-				.setAdminKey(PrivateKey.fromString(privateKey));
+				.setAdminKey(HPrivateKey.fromString(privateKey));
 			if (params) {
 				transaction.setConstructorParameters(params);
 			}
 			transaction.freezeWith(client);
-			
+
 			const contractCreateSign = await transaction.sign(
-				PrivateKey.fromString(privateKey),
+				HPrivateKey.fromString(privateKey),
 			);
-			
+
 			const txResponse = await contractCreateSign.execute(client);
 			const receipt = await txResponse.getReceipt(client);
 			if (!receipt.contractId) {
@@ -345,12 +376,14 @@ export default class HethersProvider implements IProvider {
 	}
 
 	private getHethersProvider(network: HederaNetwork): DefaultHederaProvider {
-		const enviroment = network.hederaNetworkEnviroment
+		const enviroment = network.hederaNetworkEnviroment;
 		switch (enviroment) {
 			case HederaNetworkEnviroment.MAIN:
 			case HederaNetworkEnviroment.PREVIEW:
 			case HederaNetworkEnviroment.TEST:
-				return hethers.getDefaultProvider(getHederaNetwork(network)?.name);
+				return hethers.getDefaultProvider(
+					getHederaNetwork(network)?.name,
+				);
 			case HederaNetworkEnviroment.LOCAL:
 			default:
 				throw new Error('Network not supported');
@@ -369,29 +402,47 @@ export default class HethersProvider implements IProvider {
 		privateKey: string,
 		publicKey: string,
 		clientSdk: any,
-	): Promise<TokenId> {
+	): Promise<ICreateTokenResponse> {
+		const values: ICreateTokenResponse = {
+			name,
+			symbol,
+			decimals,
+			initialSupply: Long.fromString(initialSupply.toString()),
+			maxSupply: maxSupply
+				? Long.fromString(maxSupply.toString())
+				: Long.ZERO,
+			memo,
+			freezeDefault,
+			treasuryAccountId: HAccountId.fromString(contractId.toString()),
+			adminKey: HPublicKey.fromString(publicKey),
+			freezeKey: HPublicKey.fromString(publicKey),
+			wipeKey: HPublicKey.fromString(publicKey),
+			supplyKey: DelegateContractId.fromString(contractId),
+			tokenId: '',
+		};
+
 		const transaction = new TokenCreateTransaction()
 			.setMaxTransactionFee(new Hbar(25))
-			.setTokenName(name)
-			.setTokenSymbol(symbol)
-			.setDecimals(decimals)
-			.setInitialSupply(Long.fromString(initialSupply.toString()))
-			.setTokenMemo(memo)
-			.setFreezeDefault(freezeDefault)
-			.setTreasuryAccountId(AccountId.fromString(contractId.toString()))
-			.setAdminKey(PublicKey.fromString(publicKey))
-			.setFreezeKey(PublicKey.fromString(publicKey))
-			.setWipeKey(PublicKey.fromString(publicKey))
-			.setSupplyKey(DelegateContractId.fromString(contractId));
+			.setTokenName(values.name)
+			.setTokenSymbol(values.symbol)
+			.setDecimals(values.decimals)
+			.setInitialSupply(values.initialSupply)
+			.setTokenMemo(values.memo)
+			.setFreezeDefault(values.freezeDefault)
+			.setTreasuryAccountId(values.treasuryAccountId)
+			.setAdminKey(values.adminKey)
+			.setFreezeKey(values.freezeKey)
+			.setWipeKey(values.wipeKey)
+			.setSupplyKey(values.supplyKey);
 
 		if (maxSupply) {
-			transaction.setMaxSupply(Long.fromString(maxSupply.toString()));
+			transaction.setMaxSupply(values.maxSupply);
 			transaction.setSupplyType(TokenSupplyType.Finite);
 		}
-		
+
 		transaction.freezeWith(clientSdk);
 		const transactionSign = await transaction.sign(
-			PrivateKey.fromString(privateKey),
+			HPrivateKey.fromString(privateKey),
 		);
 		const txResponse = await transactionSign.execute(clientSdk);
 		const receipt = await txResponse.getReceipt(clientSdk);
@@ -400,11 +451,17 @@ export default class HethersProvider implements IProvider {
 				`An error ocurred creating the stable coin ${name}`,
 			);
 		}
-		const tokenId: TokenId = receipt.tokenId;
+		values.tokenId = receipt.tokenId;
 		log(
-			`Token ${name} created tokenId ${tokenId} - tokenAddress ${tokenId?.toSolidityAddress()}`,
+			`Token ${name} created tokenId ${
+				values.tokenId
+			} - tokenAddress ${values.tokenId?.toSolidityAddress()}`,
 			logOpts,
 		);
-		return tokenId;
+		return values;
+	}
+
+	private fromPublicKey(key: HPublicKey): PublicKey {
+		return new PublicKey({ key: key._key, type: key._type });
 	}
 }

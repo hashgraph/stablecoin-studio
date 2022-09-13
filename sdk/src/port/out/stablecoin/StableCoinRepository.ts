@@ -4,12 +4,18 @@ import IStableCoinList from 'port/in/sdk/response/IStableCoinList.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import IStableCoinRepository from './IStableCoinRepository.js';
 import NetworkAdapter from '../network/NetworkAdapter.js';
-import { AccountId } from '@hashgraph/sdk';
 import { ICallContractWithAccountRequest } from '../hedera/types.js';
-import IStableCoinDetail from '../../../app/service/stablecoin/model/stablecoindetail/IStableCoinDetail.js';
-import ITokenList from '../../../app/service/stablecoin/model/stablecoindetail/ITokenList.js';
+import IStableCoinDetail from './types/IStableCoinDetail.js';
+import ITokenList from './types/ITokenList.js';
 import HederaError from '../hedera/error/HederaError.js';
-import { IToken } from '../../../app/service/stablecoin/model/stablecoindetail/IToken.js';
+import { IToken } from './types/IToken.js';
+import PublicKey from '../../../domain/context/account/PublicKey.js';
+import PrivateKey from '../../../domain/context/account/PrivateKey.js';
+import { AccountId as HAccountId } from '@hashgraph/sdk';
+import AccountId from '../../../domain/context/account/AccountId.js';
+import { IPublicKey } from './types/IPublicKey.js';
+import ContractId from '../../../domain/context/contract/ContractId.js';
+import { getHederaNetwork } from '../../../core/enum.js';
 
 export default class StableCoinRepository implements IStableCoinRepository {
 	private networkAdapter: NetworkAdapter;
@@ -17,18 +23,20 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 	constructor(networkAdapter: NetworkAdapter) {
 		this.networkAdapter = networkAdapter;
-		this.URI_BASE = `https://${this.networkAdapter.network}.mirrornode.hedera.com/api/v1/`;
+		this.URI_BASE = `${
+			getHederaNetwork(networkAdapter.network).mirrorNodeUrl
+		}/api/v1/`;
 	}
 
 	public async saveCoin(
-		accountId: string,
-		privateKey: string,
+		accountId: AccountId,
+		privateKey: PrivateKey,
 		coin: StableCoin,
 	): Promise<StableCoin> {
 		try {
 			return this.networkAdapter.provider.deployStableCoin(
-				accountId,
-				privateKey,
+				accountId.id,
+				privateKey.key,
 				coin,
 			);
 		} catch (error) {
@@ -40,7 +48,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	}
 
 	public async getListStableCoins(
-		privateKey: string,
+		privateKey: PrivateKey,
 	): Promise<IStableCoinList[]> {
 		try {
 			const resObject: IStableCoinList[] = [];
@@ -62,46 +70,66 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		}
 	}
 
-	public async getStableCoin(id: string): Promise<IStableCoinDetail> {
+	public async getStableCoin(id: string): Promise<StableCoin> {
 		try {
 			const response = await axios.get<IStableCoinDetail>(
 				this.URI_BASE + 'tokens/' + id,
 			);
-			return {
-				tokenId: response.data.token_id,
-				name: response.data.name,
-				symbol: response.data.symbol,
-				decimals: response.data.decimals,
-				totalSupply: response.data.total_supply,
-				maxSupply: response.data.max_supply,
-				customFee: response.data.custom_fees,
-				treasuryId: response.data.treasury_account_id,
-				expirationTime: response.data.expiry_timestamp,
+
+			const getKeyOrDefault = (
+				val?: IPublicKey,
+			): ContractId | PublicKey | undefined => {
+				if (val?._type === 'ProtobufEncoded') {
+					return ContractId.fromProtoBufKey(val.key);
+				}
+				if (val) {
+					return new PublicKey({
+						key: val.key,
+						type: val._type,
+					});
+				} else {
+					return undefined;
+				}
+			};
+
+			return new StableCoin({
+				id: response.data.token_id,
+				name: response.data.name ?? '',
+				symbol: response.data.symbol ?? '',
+				decimals: parseInt(response.data.decimals ?? '0'),
+				totalSupply: BigInt(response.data.total_supply ?? '0'),
+				maxSupply: BigInt(response.data.max_supply ?? '0'),
+				// customFee: response.data.custom_fees,
+				treasury: new AccountId(
+					response.data.treasury_account_id ?? '0.0.0',
+				),
+				// expirationTime: response.data.expiry_timestamp,
 				memo: response.data.memo,
-				paused: response.data.pause_status,
-				freeze: response.data.freeze_default,
+				// paused: response.data.pause_status,
+				freezeDefault: response.data.freeze_default,
 				// kycStatus: string;
-				deleted: response.data.deleted,
-				adminKey: response.data.admin_key,
-				kycKey: response.data.kyc_key,
-				freezeKey: response.data.freeze_key,
-				wipeKey: response.data.wipe_key,
-				supplyKey: response.data.supply_key,
-				pauseKey: response.data.pause_key,
-			} as IStableCoinDetail;
+				// deleted: response.data.deleted,
+				adminKey: getKeyOrDefault(response.data.admin_key) as PublicKey,
+				kycKey: getKeyOrDefault(response.data.kyc_key),
+				freezeKey: getKeyOrDefault(response.data.freeze_key),
+				wipeKey: getKeyOrDefault(response.data.wipe_key),
+				supplyKey: getKeyOrDefault(response.data.supply_key),
+				// pauseKey: response.data.pause_key,
+			});
 		} catch (error) {
-			return Promise.reject<IStableCoinDetail>(error);
+			return Promise.reject<StableCoin>(error);
 		}
 	}
 
 	public async getBalanceOf(
 		treasuryId: string,
-		privateKey: string,
-		accountId: string,
+		privateKey: PrivateKey,
+		accountId: AccountId,
 		targetId: string,
+		tokenId: string,
 	): Promise<Uint8Array> {
 		const parameters = [
-			AccountId.fromString(targetId || '').toSolidityAddress(),
+			HAccountId.fromString(targetId || '').toSolidityAddress(),
 		];
 
 		const params: ICallContractWithAccountRequest = {
@@ -110,21 +138,25 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			gas: 36000,
 			abi: HederaERC20__factory.abi,
 			account: {
-				accountId,
-				privateKey,
+				accountId: accountId.id,
+				privateKey: privateKey.key,
 			},
 		};
 
-		return await this.networkAdapter.provider.callContract(
+		const response = await this.networkAdapter.provider.callContract(
 			'balanceOf',
 			params,
 		);
+		const coin: StableCoin = await this.getStableCoin(tokenId);
+		response[0] = coin.fromInteger(response[0]);
+
+		return response;
 	}
 
 	public async getNameToken(
 		treasuryId: string,
-		privateKey: string,
-		accountId: string,
+		privateKey: PrivateKey,
+		accountId: AccountId,
 	): Promise<Uint8Array> {
 		const params: ICallContractWithAccountRequest = {
 			contractId: treasuryId,
@@ -132,8 +164,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			gas: 36000,
 			abi: HederaERC20__factory.abi,
 			account: {
-				accountId,
-				privateKey,
+				accountId: accountId.id,
+				privateKey: privateKey.key,
 			},
 		};
 
@@ -142,12 +174,13 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 	public async cashIn(
 		treasuryId: string,
-		privateKey: string,
-		accountId: string,
+		privateKey: PrivateKey,
+		accountId: AccountId,
+		targetId: string,
 		amount: number,
 	): Promise<Uint8Array> {
 		const parameters = [
-			AccountId.fromString(accountId || '').toSolidityAddress(),
+			HAccountId.fromString(targetId || '').toSolidityAddress(),
 			amount,
 		];
 
@@ -157,8 +190,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			gas: 400000,
 			abi: HederaERC20__factory.abi,
 			account: {
-				accountId,
-				privateKey,
+				accountId: accountId.id,
+				privateKey: privateKey.key,
 			},
 		};
 
@@ -167,11 +200,11 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 	public async associateToken(
 		treasuryId: string,
-		privateKey: string,
-		accountId: string,
+		privateKey: PrivateKey,
+		accountId: AccountId,
 	): Promise<Uint8Array> {
 		const parameters = [
-			AccountId.fromString(accountId || '').toSolidityAddress(),
+			HAccountId.fromString(accountId || '').toSolidityAddress(),
 		];
 
 		const params: ICallContractWithAccountRequest = {
@@ -180,8 +213,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			gas: 1300000,
 			abi: HederaERC20__factory.abi,
 			account: {
-				accountId,
-				privateKey,
+				accountId: accountId.id,
+				privateKey: privateKey.key,
 			},
 		};
 
@@ -193,12 +226,13 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 	public async wipe(
 		treasuryId: string,
-		privateKey: string,
-		accountId: string,
+		privateKey: PrivateKey,
+		accountId: AccountId,
+		targetId: string,
 		amount = 1000,
 	): Promise<Uint8Array> {
 		const parameters = [
-			AccountId.fromString(accountId || '').toSolidityAddress(),
+			HAccountId.fromString(targetId || '').toSolidityAddress(),
 			amount,
 		];
 
@@ -208,8 +242,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			gas: 400000,
 			abi: HederaERC20__factory.abi,
 			account: {
-				accountId,
-				privateKey,
+				accountId: accountId.id,
+				privateKey: privateKey.key,
 			},
 		};
 
@@ -219,15 +253,15 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	public async grantSupplierRole(
 		treasuryId: string,
 		address: string,
-		privateKey: string,
-		accountId: string,
+		privateKey: PrivateKey,
+		accountId: AccountId,
 		amount?: number,
 	): Promise<Uint8Array> {
 		const parametersUnlimited = [
-			AccountId.fromString(address || '').toSolidityAddress(),
+			HAccountId.fromString(address || '').toSolidityAddress(),
 		];
 		const parametersLimited = [
-			AccountId.fromString(address || '').toSolidityAddress(),
+			HAccountId.fromString(address || '').toSolidityAddress(),
 			amount,
 		];
 
@@ -237,8 +271,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			gas: 130000,
 			abi: HederaERC20__factory.abi,
 			account: {
-				accountId,
-				privateKey,
+				accountId: accountId.id,
+				privateKey: privateKey.key,
 			},
 		};
 
@@ -251,11 +285,11 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	public async isUnlimitedSupplierAllowance(
 		treasuryId: string,
 		address: string,
-		privateKey: string,
-		accountId: string,
+		privateKey: PrivateKey,
+		accountId: AccountId,
 	): Promise<Uint8Array> {
 		const parameters = [
-			AccountId.fromString(address || '').toSolidityAddress(),
+			HAccountId.fromString(address || '').toSolidityAddress(),
 		];
 
 		const params: ICallContractWithAccountRequest = {
@@ -264,8 +298,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			gas: 60_000,
 			abi: HederaERC20__factory.abi,
 			account: {
-				accountId,
-				privateKey,
+				accountId: accountId.id,
+				privateKey: privateKey.key,
 			},
 		};
 
@@ -278,11 +312,11 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	public async supplierAllowance(
 		treasuryId: string,
 		address: string,
-		privateKey: string,
-		accountId: string,
+		privateKey: PrivateKey,
+		accountId: AccountId,
 	): Promise<Uint8Array> {
 		const parameters = [
-			AccountId.fromString(address || '').toSolidityAddress(),
+			HAccountId.fromString(address || '').toSolidityAddress(),
 		];
 
 		const params: ICallContractWithAccountRequest = {
@@ -291,8 +325,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			gas: 60_000,
 			abi: HederaERC20__factory.abi,
 			account: {
-				accountId,
-				privateKey,
+				accountId: accountId.id,
+				privateKey: privateKey.key,
 			},
 		};
 
@@ -305,11 +339,11 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	public async revokeSupplierRole(
 		treasuryId: string,
 		address: string,
-		privateKey: string,
-		accountId: string,
+		privateKey: PrivateKey,
+		accountId: AccountId,
 	): Promise<Uint8Array> {
 		const parameters = [
-			AccountId.fromString(address || '').toSolidityAddress(),
+			HAccountId.fromString(address || '').toSolidityAddress(),
 		];
 
 		const params: ICallContractWithAccountRequest = {
@@ -318,8 +352,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			gas: 130000,
 			abi: HederaERC20__factory.abi,
 			account: {
-				accountId,
-				privateKey,
+				accountId: accountId.id,
+				privateKey: privateKey.key,
 			},
 		};
 
@@ -332,11 +366,11 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	public async resetSupplierAllowance(
 		treasuryId: string,
 		address: string,
-		privateKey: string,
-		accountId: string,
+		privateKey: PrivateKey,
+		accountId: AccountId,
 	): Promise<Uint8Array> {
 		const parameters = [
-			AccountId.fromString(address || '').toSolidityAddress(),
+			HAccountId.fromString(address || '').toSolidityAddress(),
 		];
 
 		const params: ICallContractWithAccountRequest = {
@@ -345,8 +379,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			gas: 120000,
 			abi: HederaERC20__factory.abi,
 			account: {
-				accountId,
-				privateKey,
+				accountId: accountId.id,
+				privateKey: privateKey.key,
 			},
 		};
 
@@ -359,12 +393,12 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	public async increaseSupplierAllowance(
 		treasuryId: string,
 		address: string,
-		privateKey: string,
-		accountId: string,
+		privateKey: PrivateKey,
+		accountId: AccountId,
 		amount: number,
 	): Promise<Uint8Array> {
 		const parameters = [
-			AccountId.fromString(address || '').toSolidityAddress(),
+			HAccountId.fromString(address || '').toSolidityAddress(),
 			amount,
 		];
 
@@ -374,8 +408,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			gas: 130000,
 			abi: HederaERC20__factory.abi,
 			account: {
-				accountId,
-				privateKey,
+				accountId: accountId.id,
+				privateKey: privateKey.key,
 			},
 		};
 
@@ -388,12 +422,12 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	public async decreaseSupplierAllowance(
 		treasuryId: string,
 		address: string,
-		privateKey: string,
-		accountId: string,
+		privateKey: PrivateKey,
+		accountId: AccountId,
 		amount: number,
 	): Promise<Uint8Array> {
 		const parameters = [
-			AccountId.fromString(address || '').toSolidityAddress(),
+			HAccountId.fromString(address || '').toSolidityAddress(),
 			amount,
 		];
 
@@ -403,8 +437,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			gas: 130000,
 			abi: HederaERC20__factory.abi,
 			account: {
-				accountId,
-				privateKey,
+				accountId: accountId.id,
+				privateKey: privateKey.key,
 			},
 		};
 
@@ -416,8 +450,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 	public async rescue(
 		treasuryId: string,
-		privateKey: string,
-		accountId: string,
+		privateKey: PrivateKey,
+		accountId: AccountId,
 		amount = 1000,
 	): Promise<Uint8Array> {
 		const parameters = [amount];
@@ -428,8 +462,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			gas: 140000,
 			abi: HederaERC20__factory.abi,
 			account: {
-				accountId,
-				privateKey,
+				accountId: accountId.id,
+				privateKey: privateKey.key,
 			},
 		};
 
@@ -442,12 +476,12 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	public async isLimitedSupplierAllowance(
 		treasuryId: string,
 		address: string,
-		privateKey: string,
-		accountId: string,
+		privateKey: PrivateKey,
+		accountId: AccountId,
 	): Promise<Uint8Array> {
 		const parameters = [
 			'0xd1ae8bbdabd60d63e418b84f5ad6f9cba90092c9816d7724d85f0d4e4bea2c60',
-			AccountId.fromString(address || '').toSolidityAddress(),
+			HAccountId.fromString(address || '').toSolidityAddress(),
 		];
 
 		const params: ICallContractWithAccountRequest = {
@@ -456,8 +490,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			gas: 60000,
 			abi: HederaERC20__factory.abi,
 			account: {
-				accountId,
-				privateKey,
+				accountId: accountId.id,
+				privateKey: privateKey.key,
 			},
 		};
 

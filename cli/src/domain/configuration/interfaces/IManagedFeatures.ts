@@ -1,7 +1,8 @@
 export interface IManagedFeatures {
-  admin: string;
-  supply: string;
-  KYC: string;
-  freeze: boolean;
-  wipe: string;
+  adminKey: string;
+  supplyKey: string;
+  KYCKey: string;
+  freezeKey: string;
+  wipeKey: string;
+  pauseKey: string;
 }

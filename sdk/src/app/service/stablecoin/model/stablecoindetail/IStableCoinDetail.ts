@@ -1,8 +1,5 @@
-import { IWipeKey } from './IWipeKey';
-import { IFreezeKey } from './IFreezeKey';
-import { IKYCKey } from './IKYCKey';
-import { IAdminKey } from './IAdminKey';
 import { ICustomFees } from './ICustomFees';
+import { IPublicKey } from './IPublicKey.js';
 
 export default interface IStableCoinDetail {
 	token_id?: string;
@@ -19,10 +16,10 @@ export default interface IStableCoinDetail {
 	freeze_default?: boolean;
 	// kycStatus: string;
 	deleted?: boolean;
-	admin_key?: IAdminKey;
-	kyc_key?: IKYCKey;
-	freeze_key?: IFreezeKey;
-	wipe_key?: IWipeKey;
-	supply_key?: string;
+	admin_key?: IPublicKey;
+	kyc_key?: IPublicKey;
+	freeze_key?: IPublicKey;
+	wipe_key?: IPublicKey;
+	supply_key?: IPublicKey;
 	pause_key?: string;
 }
