@@ -5,6 +5,7 @@ import {
 	Configuration,
 	HederaNetwork,
 	NetworkMode,
+	HederaNetworkEnviroment,
 	SDK,
 } from '../src/index.js';
 
@@ -21,14 +22,14 @@ export const ACCOUNTS: { testnet: EOAccount } = {
 
 export const SDKConfig: { hethers: Configuration; hashpack: Configuration } = {
 	hethers: {
-		network: HederaNetwork.TEST,
+		network: new HederaNetwork(HederaNetworkEnviroment.TEST),
 		mode: NetworkMode.EOA,
 		options: {
 			account: ACCOUNTS.testnet,
 		},
 	},
 	hashpack: {
-		network: HederaNetwork.TEST,
+		network: new HederaNetwork(HederaNetworkEnviroment.TEST),
 		mode: NetworkMode.HASHPACK,
 		options: {
 			appMetadata: {

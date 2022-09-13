@@ -8,10 +8,15 @@ contract HederaERC1967Proxy is ERC1967Proxy {
     constructor(address _logic, bytes memory _data) payable public ERC1967Proxy(_logic, _data) {    
     }
 
+    /**
+     * @dev Returns the implementation behind the proxy
+     *
+     * @return address The address of the implementation behind the proxy
+     */
     function getImplementation() 
         external 
         view 
-        returns (address impl) 
+        returns (address) 
     {
         return _implementation();
     }

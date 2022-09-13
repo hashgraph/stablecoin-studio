@@ -10,7 +10,14 @@ import "../Roles.sol";
 abstract contract Mintable is IMintable, AccessControlUpgradeable, TokenOwner, Roles, SupplierAdmin {
     
     function _transfer(address from, address to, uint256 amount) internal virtual returns (bool) ; 
-
+    
+    /**
+     * @dev Creates an `amount` of tokens and transfers them to an `account`, increasing
+     * the total supply
+     *
+     * @param account The address that receives minted tokens
+     * @param amount The number of tokens to be minted
+     */
     function mint(address account, uint256 amount) 
         external       
         onlyRole(SUPPLIER_ROLE)  

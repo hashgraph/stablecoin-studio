@@ -24,10 +24,14 @@ import {
 	HederaERC20__factory,
 	HTSTokenOwner__factory,
 } from 'hedera-stable-coin-contracts/typechain-types/index.js';
-import { HederaNetwork } from '../../../../core/enum.js';
+import {
+	HederaNetwork,
+	HederaNetworkEnviroment,
+} from '../../../../core/enum.js';
 import { IniConfig, IProvider } from '../Provider.js';
 import Web3 from 'web3';
 import { StableCoin } from '../../../../domain/context/stablecoin/StableCoin.js';
+import { getHederaNetwork } from '../../../../core/enum.js';
 import Long from 'long';
 import { log } from '../../../../core/log.js';
 import {
@@ -38,6 +42,7 @@ import {
 import HederaError from '../error/HederaError.js';
 import PublicKey from '../../../../domain/context/account/PublicKey.js';
 import AccountId from '../../../../domain/context/account/AccountId.js';
+import { json } from 'stream/consumers';
 
 type DefaultHederaProvider = hethers.providers.DefaultHederaProvider;
 
@@ -67,7 +72,18 @@ export default class HethersProvider implements IProvider {
 	}
 
 	public getClient(accountId?: string, privateKey?: string): Client {
-		const client = Client.forName(this.network);
+		let client: any;
+		const hederaNetWork = getHederaNetwork(this.network);
+
+		if (hederaNetWork.consensusNodes) {
+			client = Client.forNetwork(hederaNetWork.consensusNodes);
+		} else if (
+			this.network.hederaNetworkEnviroment !=
+			HederaNetworkEnviroment.LOCAL
+		) {
+			client = Client.forName(this.network.hederaNetworkEnviroment);
+		}
+
 		if (accountId && privateKey) {
 			client.setOperator(accountId, privateKey);
 		}
@@ -312,9 +328,11 @@ export default class HethersProvider implements IProvider {
 				transaction.setConstructorParameters(params);
 			}
 			transaction.freezeWith(client);
+
 			const contractCreateSign = await transaction.sign(
 				HPrivateKey.fromString(privateKey),
 			);
+
 			const txResponse = await contractCreateSign.execute(client);
 			const receipt = await txResponse.getReceipt(client);
 			if (!receipt.contractId) {
@@ -358,12 +376,15 @@ export default class HethersProvider implements IProvider {
 	}
 
 	private getHethersProvider(network: HederaNetwork): DefaultHederaProvider {
-		switch (network) {
-			case HederaNetwork.MAIN:
-			case HederaNetwork.PREVIEW:
-			case HederaNetwork.TEST:
-				return hethers.getDefaultProvider(network);
-			case HederaNetwork.LOCAL:
+		const enviroment = network.hederaNetworkEnviroment;
+		switch (enviroment) {
+			case HederaNetworkEnviroment.MAIN:
+			case HederaNetworkEnviroment.PREVIEW:
+			case HederaNetworkEnviroment.TEST:
+				return hethers.getDefaultProvider(
+					getHederaNetwork(network)?.name,
+				);
+			case HederaNetworkEnviroment.LOCAL:
 			default:
 				throw new Error('Network not supported');
 		}
@@ -418,6 +439,7 @@ export default class HethersProvider implements IProvider {
 			transaction.setMaxSupply(values.maxSupply);
 			transaction.setSupplyType(TokenSupplyType.Finite);
 		}
+
 		transaction.freezeWith(clientSdk);
 		const transactionSign = await transaction.sign(
 			HPrivateKey.fromString(privateKey),

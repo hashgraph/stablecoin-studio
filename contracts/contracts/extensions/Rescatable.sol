@@ -15,6 +15,8 @@ abstract contract Rescatable is IRescatable ,AccessControlUpgradeable, TokenOwne
     * @dev Rescue `value` `tokenId` from contractTokenOwner to rescuer
     * 
     * Must be protected with isRescuer()
+    *
+    * @param amount The number of tokens to rescuer
     */
     function rescueToken(uint256 amount)
     external
@@ -31,7 +33,10 @@ abstract contract Rescatable is IRescatable ,AccessControlUpgradeable, TokenOwne
     
     /**
     * @dev Rescue `value` hbar from contractTokenOwner to rescuer
+    *
     * Must be protected with isRescuer()
+    *
+    * @param amount The amount of hbar to rescuer
     */
     function rescueHbar(uint256 amount) 
     external

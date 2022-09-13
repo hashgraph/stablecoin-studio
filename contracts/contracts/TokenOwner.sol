@@ -8,6 +8,12 @@ abstract contract TokenOwner is ITokenOwner {
     HTSTokenOwner HTSTokenOwnerAddress;
     address tokenAddress; 
 
+    /**
+     * @dev Assigns the HTSTokenOwner contract address and the token address, validating that the token address was not already assigned
+     *
+     * @param _htsTokenOwnerAddress The  contract address HTSTokenOwner
+     * @param _tokenAddress The token address created
+     */
     function setTokenAddress(HTSTokenOwner _htsTokenOwnerAddress, address _tokenAddress) 
         external         
     {
@@ -17,6 +23,11 @@ abstract contract TokenOwner is ITokenOwner {
         tokenAddress = _tokenAddress;
     }
 
+    /**
+     * @dev Returns the token address
+     * 
+     * @return address The token address
+     */
     function getTokenAddress()  
         public
         view 
@@ -25,6 +36,11 @@ abstract contract TokenOwner is ITokenOwner {
         return _getTokenAddress();
     }
 
+    /**
+     * @dev Returns the token address
+     * 
+     * @return address The token address
+     */
     function _getTokenAddress()  
         internal
         view 
@@ -33,6 +49,11 @@ abstract contract TokenOwner is ITokenOwner {
         return tokenAddress;
     }
 
+    /**
+     * @dev Returns the HTSTokenOwner contract address 
+     * 
+     * @return address HTSTokenOwner contract address
+     */
     function getTokenOwnerAddress()
         public
         view 
@@ -41,6 +62,11 @@ abstract contract TokenOwner is ITokenOwner {
         return _getTokenOwnerAddress();
     }
 
+    /**
+     * @dev Returns the HTSTokenOwner contract address 
+     * 
+     * @return address HTSTokenOwner contract address
+     */
     function _getTokenOwnerAddress()
         internal
         view 
