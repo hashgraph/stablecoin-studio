@@ -200,7 +200,7 @@ export default class OperationStableCoinService extends Service {
             configurationService.getConfiguration().accounts[0].accountId,
             this.stableCoinId,
             account2Wipe,
-            parseInt(amount2Wipe),
+            parseFloat(amount2Wipe),
           );
         } catch (error) {
           console.log(colors.red(error.message));
@@ -228,7 +228,7 @@ export default class OperationStableCoinService extends Service {
             configurationService.getConfiguration().accounts[0].privateKey,
             configurationService.getConfiguration().accounts[0].accountId,
             this.stableCoinId,
-            parseInt(amount2Rescue),
+            parseFloat(amount2Rescue),
           );
         } catch (err) {
           console.log(language.getText('operation.reject'));

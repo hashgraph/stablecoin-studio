@@ -15,6 +15,7 @@ import { AccountId as HAccountId } from '@hashgraph/sdk';
 import AccountId from '../../../domain/context/account/AccountId.js';
 import { IPublicKey } from './types/IPublicKey.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
+import { getHederaNetwork } from '../../../core/enum.js';
 
 export default class StableCoinRepository implements IStableCoinRepository {
 	private networkAdapter: NetworkAdapter;
@@ -22,7 +23,9 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 	constructor(networkAdapter: NetworkAdapter) {
 		this.networkAdapter = networkAdapter;
-		this.URI_BASE = `https://${this.networkAdapter.network}.mirrornode.hedera.com/api/v1/`;
+		this.URI_BASE = `${
+			getHederaNetwork(networkAdapter.network).mirrorNodeUrl
+		}/api/v1/`;
 	}
 
 	public async saveCoin(
@@ -76,7 +79,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			const getKeyOrDefault = (
 				val?: IPublicKey,
 			): ContractId | PublicKey | undefined => {
-				if(val?._type === 'ProtobufEncoded'){
+				if (val?._type === 'ProtobufEncoded') {
 					return ContractId.fromProtoBufKey(val.key);
 				}
 				if (val) {
