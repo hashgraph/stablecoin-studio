@@ -1,9 +1,9 @@
 import { render } from '../../../test/index';
 import StableCoinNotSelected from '../StableCoinNotSelected';
-import en from '../../../translations/en/global.json';
+import en from '../../../translations/en/errorPage.json';
 
 const SAFE_BOX = 'safe-box.svg';
-const translations = en.errorPage.stableCoinNotSelected;
+const translations = en.stableCoinNotSelected;
 
 describe(`<${StableCoinNotSelected.name} />`, () => {
 	test('should render correctly', () => {
