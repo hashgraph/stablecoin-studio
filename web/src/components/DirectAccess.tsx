@@ -19,6 +19,7 @@ const DirectAccess = ({ title, icon, route, ...props }: DirectAccessProps) => {
 
 	return (
 		<Flex
+			data-testid='direct-access-container'
 			w='120px'
 			h='136px'
 			borderRadius='16px'
@@ -42,9 +43,19 @@ const DirectAccess = ({ title, icon, route, ...props }: DirectAccessProps) => {
 				justifyContent='center'
 				alignItems='center'
 			>
-				<Icon name={icon} fontSize='28px' color='light.purple3' />
+				<Icon
+					data-testid={`direct-access-${icon}`}
+					name={icon}
+					fontSize='28px'
+					color='light.purple3'
+				/>
 			</Flex>
-			<Text fontSize='14px' fontWeight='700' lineHeight='16px'>
+			<Text
+				data-testid={`direct-access-${title}`}
+				fontSize='14px'
+				fontWeight='700'
+				lineHeight='16px'
+			>
 				{title}
 			</Text>
 		</Flex>
