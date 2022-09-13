@@ -144,6 +144,9 @@ declare module '@hashgraph/sdk' {
 	export { default as ReceiptStatusError } from '@hashgraph/sdk/lib/ReceiptStatusError.js';
 	export { default as LedgerId } from '@hashgraph/sdk/lib/LedgerId.js';
 	export { default as Logger } from 'js-logger';
+	export { default as MAINNET_ADDRESS_BOOK} from '@hashgraph/sdk/lib/address_book/AddressBooks.js';
+	export { default as PREVIEWNET_ADDRESS_BOOK} from '@hashgraph/sdk/lib/address_book/AddressBooks.js';
+	export { default as TESTNET_ADDRESS_BOOK} from '@hashgraph/sdk/lib/address_book/AddressBooks.js';
 	/**
 	 * @typedef {import("@hashgraph/sdk/lib/client/Client.js").NetworkName} ClientNetworkName
 	 * @typedef {import("@hashgraph/sdk/lib/Provider.js").Provider} Provider

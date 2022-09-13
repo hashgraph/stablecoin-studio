@@ -9,6 +9,10 @@ import NetworkAdapter from '../../out/network/NetworkAdapter.js';
 import Web3 from 'web3';
 
 import { HederaNetwork } from '../../../core/enum.js';
+import { HederaNetworkEnviroment } from '../../../core/enum.js';
+import { getHederaNetwork } from '../../../core/enum.js';
+
+
 import { AppMetadata } from '../../out/hedera/hashconnect/types/types.js';
 
 import IWipeStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IWipeStableCoinServiceRequestModel.js';
@@ -48,10 +52,13 @@ export {
 	IRescueStableCoinRequest,
 	ISupplierStableCoinRequest,
 	IWipeStableCoinRequest,
+
 };
 
 /* Export basic types*/
-export { AppMetadata, HederaNetwork };
+export { AppMetadata, HederaNetwork ,	HederaNetworkEnviroment,
+getHederaNetwork
+	};
 
 export interface ConfigurationOptions {
 	appMetadata?: AppMetadata;

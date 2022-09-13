@@ -6,6 +6,7 @@ import Table from 'cli-table3';
 import { StableCoinList } from '../../../domain/stablecoin/StableCoinList.js';
 import {
   HederaNetwork,
+  HederaNetworkEnviroment,
   NetworkMode,
   SDK,
 } from 'hedera-stable-coin-sdk';
@@ -22,7 +23,7 @@ export default class UtilitiesService extends Service {
 
   public async initSDK(): Promise<SDK> {
     this.sdk = await new SDK({
-      network: HederaNetwork.TEST,
+      network: new HederaNetwork(HederaNetworkEnviroment.TEST),
       mode: NetworkMode.EOA
     }).init();
     return this.sdk;
