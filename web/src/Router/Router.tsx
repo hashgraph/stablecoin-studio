@@ -4,6 +4,7 @@ import Layout from '../layout/Layout';
 import { RootState } from '../store/store';
 import Dashboard from '../views/Dashboard';
 import Login from '../views/Login';
+import CashInOperation from '../views/Operations/CashIn';
 import { RoutesMappingUrl } from './RoutesMappingUrl';
 
 const PrivateRoute = () => {
@@ -31,6 +32,7 @@ const Router = () => {
 				{/* Private routes */}
 				<Route element={<PrivateRoute />}>
 					<Route path={RoutesMappingUrl.dashboard} element={<Dashboard />} />
+					<Route path={RoutesMappingUrl.cashIn} element={<CashInOperation />} />
 					<Route path='*' element={<Navigate to={RoutesMappingUrl.dashboard} />} />
 				</Route>
 			</Routes>

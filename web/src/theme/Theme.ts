@@ -1,5 +1,6 @@
 import { extendTheme } from '@chakra-ui/react';
 import { Button } from './components/Button';
+import { Text } from './components/Text';
 
 const theme = extendTheme({
 	config: {
@@ -37,12 +38,19 @@ const theme = extendTheme({
 		lg: '960px',
 		xl: '1200px',
 	},
+	fonts: {
+		regular: 'Mulish Regular, Arial, sans-serif',
+		medium: 'Mulish Medium, Arial, sans-serif',
+		semiBold: 'Mulish Semibold, Arial, sans-serif',
+		bold: 'Mulish Bold, Arial, sans-serif',
+	},
 	shadows: {
 		outline: 'none',
 		'down-black': '0px -6px 10px 3px rgba(0,0,0,0.25)',
 	},
 	components: {
 		Button,
+		Text,
 	},
 });
 

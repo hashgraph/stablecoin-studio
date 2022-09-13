@@ -6,6 +6,7 @@ import store from '../store/store';
 import theme from '../theme/Theme';
 import Router from '../Router/Router';
 import { BrowserRouter } from 'react-router-dom';
+import { Fonts } from '../components/Fonts';
 
 function App() {
 	return (
@@ -13,6 +14,7 @@ function App() {
 			<Provider store={store}>
 				<ChakraProvider theme={theme}>
 					<BrowserRouter>
+						<Fonts assetsUrl={''} />
 						<Router />
 					</BrowserRouter>
 				</ChakraProvider>
