@@ -16,6 +16,7 @@ const CoinDropdown = () => {
 			p: 4,
 		},
 		wrapperOpened: { borderWidth: '0' },
+		label: { color: 'brand.primary200' },
 	};
 
 	return (
@@ -26,6 +27,7 @@ const CoinDropdown = () => {
 				name='coin-dropdown'
 				options={[]}
 				placeholder={t('sidebar.coinDropdown.placeholder')}
+				iconStyles={{ color: 'brand.primary200' }}
 			/>
 		</Box>
 	);

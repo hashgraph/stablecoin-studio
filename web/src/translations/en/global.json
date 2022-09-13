@@ -10,8 +10,8 @@
   },
   "sidebar": {
     "coinDropdown": {
-      "placeholder": "Select stable coin"
-    }
+      "placeholder": "Choose Stable coin"
+    },
     "operations": "Operations",
     "role": "Role management",
     "details": "Stable coin details"

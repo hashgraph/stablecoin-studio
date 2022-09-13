@@ -1,4 +1,4 @@
-import { SystemStyleObject } from '@chakra-ui/react';
+import { SystemStyleObject, IconProps as ChakraIconProps } from '@chakra-ui/react';
 import { useMemo, useState } from 'react';
 import { Control } from 'react-hook-form';
 import Icon from '../Icon';
@@ -16,10 +16,12 @@ export interface SearchSelectControllerProps
 		wrapperOpened?: SystemStyleObject;
 		wrapperClosed?: SystemStyleObject;
 	};
+	iconStyles?: Omit<ChakraIconProps, 'as'>;
 }
 const SearchSelectController = ({
 	control,
 	styles,
+	iconStyles,
 	name,
 	'data-testid': dataTestId,
 	...props
@@ -42,9 +44,9 @@ const SearchSelectController = ({
 			isSearchable
 			addonDown={
 				isMenuOpened ? (
-					<Icon name='MagnifyingGlass' w={5} h={5} />
+					<Icon name='MagnifyingGlass' w={5} h={5} {...iconStyles} />
 				) : (
-					<Icon name='CaretDown' w={4} h={4} />
+					<Icon name='CaretDown' w={4} h={4} {...iconStyles} />
 				)
 			}
 			data-testid={dataTestId}
