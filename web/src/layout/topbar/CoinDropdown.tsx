@@ -20,13 +20,16 @@ const CoinDropdown = () => {
 	};
 
 	return (
-		<Box w={{ base: 'full', md: '250px' }}>
+		<Box w={{ base: 'full', md: '250px' }} data-testid='coin-dropdown'>
 			<SearchSelectController
 				control={control}
 				styles={styles}
 				name='coin-dropdown'
-				options={[]}
-				placeholder={t('sidebar.coinDropdown.placeholder')}
+				options={[
+					{ value: 1, label: '1' },
+					{ value: 2, label: '2' },
+				]}
+				placeholder={t('topbar.coinDropdown.placeholder')}
 				iconStyles={{ color: 'brand.primary200' }}
 			/>
 		</Box>

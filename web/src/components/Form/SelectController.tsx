@@ -60,7 +60,6 @@ type Parts = typeof partsListByTheme;
 
 export type SelectThemeStyle = Record<Parts[number], SystemStyleObject>;
 export interface SelectControllerProps {
-	id: string;
 	name: string;
 	rules?: UseControllerProps['rules'];
 	label?: string;
@@ -77,11 +76,12 @@ export interface SelectControllerProps {
 	'data-testid'?: string;
 	onMenuOpen?: () => void;
 	onMenuClose?: () => void;
+	defaultValue?: SelectOption['value'];
 	addonDown?: ReactNode;
 	addonRight?: ReactNode;
 	addonError?: ReactNode;
 	addonLeft?: ReactNode;
-	variant: Variant;
+	variant?: Variant;
 	size?: ReactSelectProps['size'];
 	overrideStyles?: Partial<SelectThemeStyle>;
 }
@@ -193,7 +193,7 @@ const useComponents = ({
 
 			return (
 				<Box sx={overrideStyles.container}>
-					<Text as='span' sx={overrideStyles.label}>
+					<Text as='span' data-testid='select-placeholder' sx={overrideStyles.label}>
 						{placeholder}
 					</Text>
 					{children}
@@ -218,14 +218,14 @@ export const SelectController = ({
 	onBlurAux,
 	showErrors = true,
 	size,
-	variant,
+	variant = 'outline',
 	addonLeft,
 	addonRight,
 	addonError,
 	addonDown = <Icon name='CaretDown' />,
 	labelProps,
 	overrideStyles,
-	'data-testid': dataTestId = `${name}-select`,
+	defaultValue,
 	...props
 }: SelectControllerProps) => {
 	const styles = useStyles({
@@ -255,6 +255,7 @@ export const SelectController = ({
 		<Controller
 			control={control}
 			name={name}
+			defaultValue={defaultValue}
 			rules={rules}
 			render={({ field: { onChange, value }, fieldState: { invalid, error } }) => {
 				const onChangeCustom = (event: ChangeEvent<HTMLInputElement>) => {
@@ -280,12 +281,12 @@ export const SelectController = ({
 
 							<ChakraSelect
 								isInvalid={invalid}
+								name={name}
 								options={options}
 								onChange={onChangeCustom as ReactSelectProps['onChange']}
 								onBlur={onBlurCustom as ReactSelectProps['onBlur']}
 								placeholder={placeholder}
 								value={value}
-								data-testid={dataTestId || name}
 								components={components}
 								chakraStyles={{
 									option: (_, state) => ({
@@ -297,7 +298,11 @@ export const SelectController = ({
 								variant={variant}
 								{...props}
 							/>
-							{showErrors && <FormErrorMessage>{error && error.message}</FormErrorMessage>}
+							{showErrors && (
+								<FormErrorMessage data-testid='form-error-msg'>
+									{error && error.message}
+								</FormErrorMessage>
+							)}
 						</FormControl>
 					</Stack>
 				);

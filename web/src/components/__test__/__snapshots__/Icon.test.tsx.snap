@@ -1,0 +1,65 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Icon /> should show icon 1`] = `
+<DocumentFragment>
+  <svg
+    class="chakra-icon css-13otjrl"
+    fill="currentColor"
+    focusable="false"
+    height="1em"
+    viewBox="0 0 256 256"
+    width="1em"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <rect
+      fill="none"
+      height="256"
+      width="256"
+    />
+    <path
+      d="M128,216,88,232V200l16-16V152L24,168V136l80-40V48a24,24,0,0,1,48,0V96l80,40v32l-80-16v32L168,200v32Z"
+      fill="none"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="16"
+    />
+  </svg>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;
+
+exports[`<Icon /> shows icon with personalized color: IconWithPersonalizedColor 1`] = `
+<DocumentFragment>
+  <svg
+    class="chakra-icon css-f11o2j"
+    fill="currentColor"
+    focusable="false"
+    height="1em"
+    viewBox="0 0 256 256"
+    width="1em"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <rect
+      fill="none"
+      height="256"
+      width="256"
+    />
+    <path
+      d="M128,216,88,232V200l16-16V152L24,168V136l80-40V48a24,24,0,0,1,48,0V96l80,40v32l-80-16v32L168,200v32Z"
+      fill="none"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="16"
+    />
+  </svg>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;

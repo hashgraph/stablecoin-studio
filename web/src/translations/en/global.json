@@ -6,12 +6,12 @@
   },
   "topbar": {
     "network": "Operating network",
-    "account": "Operating account"
-  },
-  "sidebar": {
+    "account": "Operating account",
     "coinDropdown": {
       "placeholder": "Choose Stable coin"
-    },
+    }
+  },
+  "sidebar": {
     "operations": "Operations",
     "role": "Role management",
     "details": "Stable coin details"

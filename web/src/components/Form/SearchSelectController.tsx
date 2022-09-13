@@ -50,7 +50,6 @@ const SearchSelectController = ({
 				)
 			}
 			data-testid={dataTestId}
-			id={name}
 			onMenuOpen={() => setIsMenuOpened(true)}
 			onMenuClose={() => setIsMenuOpened(false)}
 			overrideStyles={overrideStyles}
