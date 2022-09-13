@@ -16,7 +16,6 @@ const CoinDropdown = () => {
 			p: 4,
 		},
 		wrapperOpened: { borderWidth: '0' },
-		label: { color: 'brand.primary200' },
 	};
 
 	return (

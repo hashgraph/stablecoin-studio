@@ -189,11 +189,9 @@ const useComponents = ({
 				hasValue: hasValue || inputValue,
 			}) as SelectThemeStyle;
 
-			const overrideStyles = React.useMemo(() => _merge({}, _styles, styles), [_styles, styles]);
-
 			return (
-				<Box sx={overrideStyles.container}>
-					<Text as='span' data-testid='select-placeholder' sx={overrideStyles.label}>
+				<Box sx={_styles.container}>
+					<Text as='span' data-testid='select-placeholder' sx={_styles.label}>
 						{placeholder}
 					</Text>
 					{children}

@@ -93,6 +93,11 @@ exports[`<CoinDropdown /> should render correctly 1`] = `
               </div>
             </div>
           </div>
+          <input
+            name="coin-dropdown"
+            type="hidden"
+            value=""
+          />
         </div>
       </div>
     </div>

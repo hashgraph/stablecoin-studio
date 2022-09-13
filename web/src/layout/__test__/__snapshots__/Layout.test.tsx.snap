@@ -58,6 +58,7 @@ exports[`<Layout /> should render correctly 1`] = `
                   >
                     <span
                       class="chakra-text css-1nd6c34"
+                      data-testid="select-placeholder"
                     >
                       Choose Stable coin
                     </span>
@@ -115,6 +116,11 @@ exports[`<Layout /> should render correctly 1`] = `
                     </div>
                   </div>
                 </div>
+                <input
+                  name="coin-dropdown"
+                  type="hidden"
+                  value=""
+                />
               </div>
             </div>
           </div>

@@ -24,7 +24,7 @@ const baseStyle = ({ isDisabled, isInvalid, hasValue }: SelectConfigProps) => {
 		label: {
 			position: 'absolute',
 			display: hasValue ? 'none' : 'block',
-			color: isInvalid ? 'red.500' : 'blackAlpha.500',
+			color: isInvalid ? 'red.500' : hasValue ? 'blackAlpha.500' : 'brand.primary200',
 			fontSize: hasValue ? 'sm' : 'md',
 			transitionDuration: '300ms',
 		},
