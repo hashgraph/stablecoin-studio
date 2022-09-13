@@ -27,9 +27,9 @@ export function getHederaNetwork(
 	hederaNetwork: HederaNetwork,
 ): HederaNetworkSpec {
 	const enviroment: HederaNetworkEnviroment =
-		hederaNetwork.hederaNetworkEnviroment;
-	const nodes: unknown = hederaNetwork.nodes;
-	const mirrorNodeUrl: unknown = hederaNetwork.mirrorNodeUrl;
+		hederaNetwork?.hederaNetworkEnviroment;
+	const nodes: unknown = hederaNetwork?.nodes;
+	const mirrorNodeUrl: unknown = hederaNetwork?.mirrorNodeUrl;
 	switch (enviroment) {
 		case HederaNetworkEnviroment.MAIN:
 			return {
