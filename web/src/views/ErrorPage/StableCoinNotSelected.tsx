@@ -30,7 +30,7 @@ const StableCoinNotSelected = () => {
 				lineHeight='16px'
 				mb='16px'
 			>
-				{t('errorPage.StableCoinNotSelected.title')}
+				{t('errorPage.stableCoinNotSelected.title')}
 			</Text>
 			<Text
 				data-testid='stable-coin-not-selected-description'
@@ -41,10 +41,10 @@ const StableCoinNotSelected = () => {
 				textAlign='center'
 				mb='2px'
 			>
-				{t('errorPage.StableCoinNotSelected.description')}
+				{t('errorPage.stableCoinNotSelected.description')}
 			</Text>
 			<Text fontSize='16px' fontWeight='500' lineHeight='16px' maxW='500px' textAlign='center'>
-				{t('errorPage.StableCoinNotSelected.description2')}
+				{t('errorPage.stableCoinNotSelected.description2')}
 			</Text>
 		</Flex>
 	);

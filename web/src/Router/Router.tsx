@@ -33,7 +33,7 @@ const Router = () => {
 				<Route element={<PrivateRoute />}>
 					<Route path={RoutesMappingUrl.dashboard} element={<Dashboard />} />
 					<Route
-						path={RoutesMappingUrl['stable-coin-not-selected']}
+						path={RoutesMappingUrl.stableCoinNotSelected}
 						element={<StableCoinNotSelected />}
 					/>
 					<Route path='*' element={<Navigate to={RoutesMappingUrl.dashboard} />} />

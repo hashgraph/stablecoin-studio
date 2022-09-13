@@ -3,7 +3,7 @@ import StableCoinNotSelected from '../StableCoinNotSelected';
 import en from '../../../translations/en/global.json';
 
 const SAFE_BOX = 'safe-box.svg';
-const translations = en.errorPage.StableCoinNotSelected;
+const translations = en.errorPage.stableCoinNotSelected;
 
 describe(`<${StableCoinNotSelected.name} />`, () => {
 	test('should render correctly', () => {
