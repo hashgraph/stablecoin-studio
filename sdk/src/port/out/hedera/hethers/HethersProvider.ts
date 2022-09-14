@@ -304,25 +304,7 @@ export default class HethersProvider implements IProvider {
 		client: Client,
 		params?: any,
 	): Promise<ContractId> {
-		try {
-			/*
-			const bytecodeFileId = await this.fileCreate(
-				factory.bytecode,
-				chunks,
-				HPrivateKey.fromString(privateKey),
-				client,
-			);
-
-			const transaction = new ContractCreateTransaction()
-				.setGas(181_000)
-				.setBytecodeFileId(bytecodeFileId)
-				.setMaxTransactionFee(new Hbar(30))
-				.setAdminKey(HPrivateKey.fromString(privateKey));
-			if (params) {
-				transaction.setConstructorParameters(params);
-			}
-			transaction.freezeWith(client);
-*/
+		try {			
 			const transaction =  new ContractCreateFlow()
 				.setBytecode(factory.bytecode)    
 				.setGas(90_000)    
@@ -349,33 +331,7 @@ export default class HethersProvider implements IProvider {
 			);
 		}
 	}
-/*
-	private async fileCreate(
-		bytecode: any,
-		chunks: any,
-		signingPrivateKey: any,
-		client: Client,
-	): Promise<FileId | string> {
-		const fileCreateTx = new FileCreateTransaction()
-			.setKeys([signingPrivateKey])
-			.freezeWith(client);
-		const fileSign = await fileCreateTx.sign(signingPrivateKey);
-		const fileSubmit = await fileSign.execute(client);
-		const fileCreateRx = await fileSubmit.getReceipt(client);
 
-		const bytecodeFileId = fileCreateRx.fileId || '';
-		const fileAppendTx = new FileAppendTransaction()
-			.setFileId(bytecodeFileId)
-			.setContents(bytecode)
-			.setMaxChunks(chunks)
-			.setMaxTransactionFee(new Hbar(2))
-			.freezeWith(client);
-		const fileAppendSign = await fileAppendTx.sign(signingPrivateKey);
-		const fileAppendSubmit = await fileAppendSign.execute(client);
-		await fileAppendSubmit.getReceipt(client);
-		return bytecodeFileId;
-	}
-*/
 	private getHethersProvider(network: HederaNetwork): DefaultHederaProvider {
 		const enviroment = network.hederaNetworkEnviroment;
 		switch (enviroment) {
