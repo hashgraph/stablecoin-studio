@@ -20,7 +20,10 @@ export default class SetConfigurationService extends Service {
   /**
    * Initialise the configuration for first time or with "init" command
    */
-  public async initConfiguration(path?: string, network?: string): Promise<void> {
+  public async initConfiguration(
+    path?: string,
+    network?: string,
+  ): Promise<void> {
     utilsService.showMessage(language.getText('initialConfiguration.title'));
     await this.configurePath(path);
     await this.configureDefaultNetwork(network);
@@ -41,7 +44,10 @@ export default class SetConfigurationService extends Service {
       );
     }
     // If the path is incorrect
-    if (!fs.existsSync(defaultPath) || !configurationService.validateConfigurationFile()) {
+    if (
+      !fs.existsSync(defaultPath) ||
+      !configurationService.validateConfigurationFile()
+    ) {
       const createAuto = await utilsService.defaultConfirmAsk(
         language.getText('configuration.askCreateConfig'),
         true,
@@ -66,9 +72,9 @@ export default class SetConfigurationService extends Service {
    */
   public async configureDefaultNetwork(_network?: string): Promise<string> {
     let network: string;
-    if (_network){
+    if (_network) {
       network = _network;
-    }else{
+    } else {
       network = await utilsService.defaultSingleAsk(
         language.getText('configuration.askNetwork'),
         'mainnet|previewnet|testnet|local',
@@ -171,9 +177,9 @@ export default class SetConfigurationService extends Service {
   public async askForPrivateKeyOfAccount(
     accountId: string,
   ): Promise<IAccountConfig> {
-    let privateKey = await utilsService.defaultSingleAsk(
-      language.getText('configuration.askPrivateKey') + ` (${accountId})`,
-      '96|64|66 characters',
+    let privateKey = await utilsService.defaultPasswordAsk(
+      language.getText('configuration.askPrivateKey') +
+        ` '96|64|66 characters' (${accountId})`,
     );
 
     const network = configurationService.getConfiguration().defaultNetwork;

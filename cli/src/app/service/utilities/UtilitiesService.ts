@@ -157,6 +157,22 @@ export default class UtilitiesService extends Service {
     return variable.response;
   }
 
+  /**
+   * Function for simple ask questions with inquire
+   * @param question
+   * @param defaultValue
+   * @returns
+   */
+  public async defaultPasswordAsk(question: string): Promise<string> {
+    const variable = await inquirer.prompt({
+      name: 'response',
+      type: 'password',
+      mask: '*',
+      message: question,
+    });
+    return variable.response;
+  }
+
   public async drawTableListStableCoin(data?: StableCoinList[]): Promise<void> {
     if (data.length === 0) {
       console.log('There are no stable coins available at this time.');
