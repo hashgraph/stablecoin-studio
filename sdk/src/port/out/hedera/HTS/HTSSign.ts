@@ -1,23 +1,16 @@
-import { ISign, ResponseType } from "../sign/ISign";
+import { ISigner, TransactionType } from "../sign/ISigner";
 import {
     Transaction,Signer,Wallet,TransactionResponse,Client
 } from '@hashgraph/sdk';
 
-export class HTSSign extends ISign{
+export class HTSSign extends ISigner{
+
+    constructor (client:Client) {
+        super(client);  
+    };
+
+    async signAndSendTransaction ( transaction:Transaction, signer?:Signer):Transaction{
+        return transaction.execute(this.client);
+    };
     
-    async signAndSendTransaction ( transaction:Transaction, signer:Signer):Transaction{
-        transaction.sign( Wallet.privateKey);    
-        return transaction.execute(Client);
-    };
-    manageResponse(transactionResponse:TransactionResponse, responseType:ResponseType ):TransactionResponse{
-        
-        let response:any;
-        if (responseType == ResponseType.RECEIPT){ 
-           response = transactionResponse.getReceipt(Client);
-        }
-        if (responseType == ResponseType.RECEIPT){
-            response = transactionResponse.getRecord(Client);
-        }   
-        return response;
-    };
 }

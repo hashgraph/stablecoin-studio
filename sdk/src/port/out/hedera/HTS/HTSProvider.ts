@@ -46,6 +46,8 @@ import AccountId from '../../../../domain/context/account/AccountId.js';
 import { json } from 'stream/consumers';
 import { TransactionProvider } from '../transaction/TransactionProvider.js';
 import { HTSSign } from './HTSSign.js';
+import { HTSResponse, TransactionResponse, TransactionType } from '../sign/ISigner.js';
+import { TransactionResposeHandler } from '../TransactionResponseHandler.js';
 
 type DefaultHederaProvider = hethers.providers.DefaultHederaProvider;
 
@@ -158,6 +160,7 @@ export default class HTSProvider implements IProvider {
 		params: ICallContractRequest | ICallContractWithAccountRequest,
 	): Promise<Uint8Array> {
 		const { contractId, parameters, gas, abi } = params;
+		//_>> cambiarlo!!
 		let client;
 
 		if ('account' in params) {
@@ -183,10 +186,11 @@ export default class HTSProvider implements IProvider {
 		const record = await contractTx.getRecord(client);
 		*/
 
-		let transaction: Transaction = this.transactionProvider.contractExecute(contractId,functionCallParameters, gas);
-		this.htsSign
-		
+		let transaction: Transaction = this.transactionProvider.contractExecute(contractId, functionCallParameters, gas);
+		let transactionResponse: TransactionResponse = this.htsSign.signAndSendTransaction(transaction);
+		let htsResponse: HTSResponse = TransactionResposeHandler.manageResponse(transactionResponse, TransactionType.RECORD, this.getClient());
 
+		
 		const results = this.decodeFunctionResult(
 			name,
 			record.contractFunctionResult?.bytes,
@@ -195,6 +199,8 @@ export default class HTSProvider implements IProvider {
 
 		return results;
 	}
+
+	
 
 	public async deployStableCoin(
 		accountId: string,
