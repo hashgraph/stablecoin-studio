@@ -31,6 +31,8 @@ interface StepperProps {
 	handleLastButtonPrimary: () => void;
 }
 
+const FOOTER_HEIGHT = '88px';
+
 const Stepper = (props: StepperProps) => {
 	const { t } = useTranslation('global');
 
@@ -105,10 +107,10 @@ const Stepper = (props: StepperProps) => {
 							key={index}
 						>
 							<VStack h='full' spacing={4} align='stretch'>
-								<Box h='calc(100% - 88px)' overflowY='auto'>
+								<Flex flex={1} overflowY='auto'>
 									{children}
-								</Box>
-								<Box h='88px'>
+								</Flex>
+								<Box h={FOOTER_HEIGHT}>
 									<Divider color='brand.gray2' />
 									<Flex p='0px 24px' justifyContent='flex-end' h='99%' alignItems='center'>
 										<Button
