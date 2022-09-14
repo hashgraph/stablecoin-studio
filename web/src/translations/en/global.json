@@ -22,7 +22,8 @@
     "details": "Stable coin details"
   },
   "validations": {
-    "required": "This field is required"
+    "required": "This field is required",
+    "invalidAccount": "Incorrect account"
   },
   "operations": {
     "title": "Operations"

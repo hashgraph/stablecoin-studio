@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import DetailsReview from '../../components/DetailsReview';
 import InputController from '../../components/Form/InputController';
 import InputNumberController from '../../components/Form/InputNumberController';
+import { validateAccount } from '../../utils/validationsHelper';
 import OperationLayout from './OperationLayout';
 
 const CashInOperation = () => {
@@ -43,6 +44,11 @@ const CashInOperation = () => {
 						<InputController
 							rules={{
 								required: t('global:validations.required'),
+								validate: {
+									validAccount: (value: string) => {
+										return validateAccount(value) || t('global:validations.invalidAccount');
+									},
+								},
 							}}
 							isRequired
 							control={control}

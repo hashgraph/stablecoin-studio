@@ -6,6 +6,7 @@ import { Input } from './components/Input';
 import { FormLabel } from './components/FormLabel';
 import { Heading } from './components/Heading';
 import { Tabs } from './components/Tabs';
+import { FormError } from './components/FormError';
 
 const theme = extendTheme({
 	config: {
@@ -68,13 +69,7 @@ const theme = extendTheme({
 		Input,
 		Heading,
 		Tabs,
-		FormError: {
-			baseStyle: {
-				text: {
-					color: 'brand.red',
-				},
-			},
-		},
+		FormError,
 	},
 	styles: {
 		global: {
