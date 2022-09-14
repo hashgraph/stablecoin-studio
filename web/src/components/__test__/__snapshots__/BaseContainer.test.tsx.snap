@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<BaseContainer /> should render correctly 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-stack css-16oka5y"
+  >
+    <h2
+      class="chakra-heading css-1f8usip"
+      data-testid="base-container-heading"
+    >
+      Test
+    </h2>
+    <div
+      class="css-60yst0"
+      data-testid="base-container-children"
+    >
+      <div
+        class="css-0"
+      >
+        Test
+      </div>
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;
