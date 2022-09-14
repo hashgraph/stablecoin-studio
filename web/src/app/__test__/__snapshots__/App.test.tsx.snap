@@ -35,7 +35,7 @@ exports[`<App /> should render correctly 1`] = `
           target="_blank"
         >
           <button
-            class="chakra-button css-1jvauvu"
+            class="chakra-button css-l6yrnw"
             data-testid="modal-hashpack-button"
             type="button"
           >
