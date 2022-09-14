@@ -3,6 +3,7 @@ export const Input = {
 		outline: {
 			field: {
 				borderColor: 'brand.black',
+				fontSize: '14px',
 				_focus: {
 					boxShadow: 'none',
 				},
@@ -14,6 +15,10 @@ export const Input = {
 				},
 				_placeholder: {
 					color: 'brand.black',
+					fontSize: '14px',
+				},
+				_invalid: {
+					borderColor: 'brand.red',
 				},
 			},
 		},

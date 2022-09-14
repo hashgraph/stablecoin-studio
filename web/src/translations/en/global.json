@@ -1,6 +1,7 @@
 {
   "common": {
-    "accept": "Accept"
+    "accept": "Accept",
+    "goBack": "Go back"
   },
   "hashpack-no-installed": {
     "title": "Your haspack extension is not installed yet",
@@ -21,5 +22,8 @@
   },
   "validations": {
     "required": "This field is required"
+  },
+  "operations": {
+    "title": "Operations"
   }
 }

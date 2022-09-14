@@ -5,28 +5,28 @@ export const Fonts = ({ assetsUrl }: { assetsUrl: string }) => (
 		styles={`
 
   @font-face {
-    font-family: 'Mulish Bold';
+    font-family: 'Mulish';
     src: url('${assetsUrl}/fonts/Mulish-Bold.ttf') format("truetype");
     font-weight: 700;
     font-style: normal;
   }
 
   @font-face {
-    font-family: 'Mulish Semibold';
+    font-family: 'Mulish';
     src: url('${assetsUrl}/fonts/Mulish-SemiBold.ttf') format("truetype");
     font-weight: 600;
     font-style: normal;
   }
 
   @font-face {
-    font-family: 'Mulish Medium';
+    font-family: 'Mulish';
     src: url('${assetsUrl}/fonts/Mulish-Medium.ttf') format("truetype");
     font-weight: 500;
     font-style: normal;
   }
 
   @font-face {
-    font-family: 'Mulish Regular';
+    font-family: 'Mulish';
     src: url('${assetsUrl}/fonts/Mulish-Regular.ttf') format("truetype");
     font-weight: 400;
     font-style: normal;

@@ -4,6 +4,7 @@ import { Text } from './components/Text';
 import { Select } from './components/Select';
 import { Input } from './components/Input';
 import { FormLabel } from './components/FormLabel';
+import { Heading } from './components/Heading';
 
 const theme = extendTheme({
 	config: {
@@ -20,9 +21,10 @@ const theme = extendTheme({
 			gray3: '#F2F2F2',
 			gray4: '#FFFAF4',
 			gray5: '#edf2f7',
+			gray6: '#F7FAFC',
 			white: '#FFFFFF',
 			green: '#A7D88A',
-			red: '#F25454',
+			red: '#E62A10',
 			blue: '#7285EA',
 			lightGray: '#E1E1E1',
 			lightPrimary: '#ECE8FF',
@@ -48,10 +50,7 @@ const theme = extendTheme({
 		xl: '1200px',
 	},
 	fonts: {
-		regular: 'Mulish Regular, Arial, sans-serif',
-		medium: 'Mulish Medium, Arial, sans-serif',
-		semiBold: 'Mulish Semibold, Arial, sans-serif',
-		bold: 'Mulish Bold, Arial, sans-serif',
+		regular: 'Mulish, Arial, sans-serif',
 	},
 	shadows: {
 		outline: 'none',
@@ -63,6 +62,21 @@ const theme = extendTheme({
 		Select,
 		FormLabel,
 		Input,
+		Heading,
+		FormError: {
+			baseStyle: {
+				text: {
+					color: 'brand.red',
+				},
+			},
+		},
+	},
+	styles: {
+		global: {
+			body: {
+				fontFamily: 'regular',
+			},
+		},
 	},
 });
 

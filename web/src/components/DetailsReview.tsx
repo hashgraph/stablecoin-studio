@@ -1,4 +1,4 @@
-import { Box, Divider, Flex, Text } from '@chakra-ui/react';
+import { Box, Divider, Flex, TextProps as ChakraTextProps, Text } from '@chakra-ui/react';
 
 interface Detail {
 	label: string;
@@ -11,6 +11,7 @@ interface DetailsReviewProps {
 	details: Detail[];
 	divider?: boolean;
 	title?: string;
+	titleProps?: ChakraTextProps;
 }
 
 const commonTextProps = {
@@ -27,7 +28,7 @@ const textInBoldProps = {
 };
 
 const DetailsReview = (props: DetailsReviewProps) => {
-	const { details, divider = true, title } = props;
+	const { details, divider = true, title, titleProps } = props;
 
 	return (
 		<Box textAlign='left'>
@@ -37,7 +38,8 @@ const DetailsReview = (props: DetailsReviewProps) => {
 					fontSize='16px'
 					fontWeight={600}
 					color='brand.gray'
-					mb='25px'
+					mb={6}
+					{...titleProps}
 				>
 					{title}
 				</Text>

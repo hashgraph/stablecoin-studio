@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // @ts-nocheck
-
+// TODO: Improve TS
 import { useState } from 'react';
 import {
 	Button,
@@ -152,7 +152,7 @@ const InputNumberController = ({
 									{...props}
 								/>
 
-								<InputRightElement w='' gap='10px' zIndex='1'>
+								<InputRightElement gap='10px' zIndex='1'>
 									{hasArrows && (
 										<Flex>
 											<Button borderRadius='0px' w='20px' onClick={incrementValue}>
