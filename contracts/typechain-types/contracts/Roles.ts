@@ -23,6 +23,7 @@ import type {
 export interface RolesInterface extends utils.Interface {
   functions: {
     "ADMIN_SUPPLIER_ROLE()": FunctionFragment;
+    "PAUSER_ROLE()": FunctionFragment;
     "RESCUE_ROLE()": FunctionFragment;
     "SUPPLIER_ROLE()": FunctionFragment;
     "WIPE_ROLE()": FunctionFragment;
@@ -31,6 +32,7 @@ export interface RolesInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "ADMIN_SUPPLIER_ROLE"
+      | "PAUSER_ROLE"
       | "RESCUE_ROLE"
       | "SUPPLIER_ROLE"
       | "WIPE_ROLE"
@@ -38,6 +40,10 @@ export interface RolesInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "ADMIN_SUPPLIER_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "PAUSER_ROLE",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -52,6 +58,10 @@ export interface RolesInterface extends utils.Interface {
 
   decodeFunctionResult(
     functionFragment: "ADMIN_SUPPLIER_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "PAUSER_ROLE",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -96,6 +106,8 @@ export interface Roles extends BaseContract {
   functions: {
     ADMIN_SUPPLIER_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
+    PAUSER_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
     RESCUE_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     SUPPLIER_ROLE(overrides?: CallOverrides): Promise<[string]>;
@@ -105,6 +117,8 @@ export interface Roles extends BaseContract {
 
   ADMIN_SUPPLIER_ROLE(overrides?: CallOverrides): Promise<string>;
 
+  PAUSER_ROLE(overrides?: CallOverrides): Promise<string>;
+
   RESCUE_ROLE(overrides?: CallOverrides): Promise<string>;
 
   SUPPLIER_ROLE(overrides?: CallOverrides): Promise<string>;
@@ -113,6 +127,8 @@ export interface Roles extends BaseContract {
 
   callStatic: {
     ADMIN_SUPPLIER_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    PAUSER_ROLE(overrides?: CallOverrides): Promise<string>;
 
     RESCUE_ROLE(overrides?: CallOverrides): Promise<string>;
 
@@ -126,6 +142,8 @@ export interface Roles extends BaseContract {
   estimateGas: {
     ADMIN_SUPPLIER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
+    PAUSER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
     RESCUE_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     SUPPLIER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
@@ -137,6 +155,8 @@ export interface Roles extends BaseContract {
     ADMIN_SUPPLIER_ROLE(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    PAUSER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     RESCUE_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

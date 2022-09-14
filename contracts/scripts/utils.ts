@@ -1,5 +1,5 @@
 const { TokenCreateTransaction,DelegateContractId, Hbar,  Client,  AccountId, PrivateKey, ContractFunctionParameters,
-  PublicKey, ContractCreateTransaction, FileCreateTransaction, FileAppendTransaction, TokenId, TokenSupplyType,
+  PublicKey, ContractCreateFlow, TokenId, TokenSupplyType,
   ContractExecuteTransaction } = require("@hashgraph/sdk");
 
 import { HederaERC20__factory, HTSTokenOwner__factory, HederaERC1967Proxy__factory } from "../typechain-types";
@@ -25,18 +25,18 @@ export async function deployContractsWithSDK(name:string, symbol:string, decimal
   clientSdk.setOperator(account, privateKey);
 
   console.log(`Deploying ${HederaERC20__factory.name} contract... please wait.`);
-  let tokenContract = await deployContractSDK(HederaERC20__factory, 12, privateKey, clientSdk);
+  let tokenContract = await deployContractSDK(HederaERC20__factory, privateKey, clientSdk);
 
   console.log(`Deploying ${HederaERC1967Proxy__factory.name} contract... please wait.`);
   let parameters = new ContractFunctionParameters()
                         .addAddress(tokenContract!.toSolidityAddress())
                         .addBytes(new Uint8Array([]));
-  let proxyContract = await deployContractSDK(HederaERC1967Proxy__factory, 10, privateKey, clientSdk, parameters);
+  let proxyContract = await deployContractSDK(HederaERC1967Proxy__factory, privateKey, clientSdk, parameters);
   let parametersContractCall: any[] = [];    
   await contractCall(proxyContract, 'initialize', parametersContractCall, clientSdk, 250000, HederaERC20__factory.abi);
   
   console.log(`Deploying ${HTSTokenOwner__factory.name} contract... please wait.`);
-  const tokenOwnerContract = await deployContractSDK(HTSTokenOwner__factory, 10, privateKey, clientSdk);
+  const tokenOwnerContract = await deployContractSDK(HTSTokenOwner__factory, privateKey, clientSdk);
 
   console.log("Creating token... please wait.");
   const hederaToken = await createToken(tokenOwnerContract, name,  symbol, decimals, initialSupply, maxSupply, String(proxyContract), freeze, account!, privateKey!, publicKey!, clientSdk);
@@ -173,39 +173,24 @@ async function createToken(
 }
 
 async function deployContractSDK(
-  factory: any,
-  chunks: any,
+  factory: any, 
   privateKey: any,
   clientOperator: any,
   constructorParameters?: any
 ) {
-  const bytecodeFileId = await fileCreate(
-    factory.bytecode,
-    chunks,
-    PrivateKey.fromStringED25519(privateKey),
-    clientOperator
-  );
-
-  const transaction = new ContractCreateTransaction()
-    .setGas(181_000)
-    .setBytecodeFileId(bytecodeFileId)
-    .setMaxTransactionFee(new Hbar(30))
-    .setNodeAccountIds([
-      AccountId.fromString('0.0.3'),
-      AccountId.fromString('0.0.5'),
-      AccountId.fromString('0.0.6'),
-      AccountId.fromString('0.0.7'),
-      AccountId.fromString('0.0.8'),
-      AccountId.fromString('0.0.9')
-    ])
+   
+  const transaction =  new ContractCreateFlow()
+    .setBytecode(factory.bytecode)    
+    .setGas(90_000)    
     .setAdminKey(PrivateKey.fromStringED25519(privateKey));
     if (constructorParameters) {
       transaction.setConstructorParameters(constructorParameters);
     }
-  transaction.freezeWith(clientOperator);
+    
   const contractCreateSign = await transaction.sign(
     PrivateKey.fromStringED25519(privateKey)
   );
+  
   const txResponse = await contractCreateSign.execute(clientOperator);
   const receipt = await txResponse.getReceipt(clientOperator);
 
@@ -214,39 +199,3 @@ async function deployContractSDK(
   return contractId;
 }
 
-async function fileCreate(
-  bytecode: any,
-  chunks: any,
-  signingPrivateKey: any,
-  clientOperator: any
-) {
-  const fileCreateTx = new FileCreateTransaction()
-    .setKeys([signingPrivateKey])
-    .setNodeAccountIds([
-      AccountId.fromString('0.0.3'),
-      AccountId.fromString('0.0.5'),
-      AccountId.fromString('0.0.6'),
-      AccountId.fromString('0.0.7'),
-      AccountId.fromString('0.0.8'),
-      AccountId.fromString('0.0.9')
-    ])
-    .freezeWith(clientOperator);
-  const fileSign = await fileCreateTx.sign(signingPrivateKey);
-  const fileSubmit = await fileSign.execute(clientOperator);
-  const fileCreateRx = await fileSubmit.getReceipt(clientOperator);
-
-  const bytecodeFileId = fileCreateRx.fileId || "";
-  const fileAppendTx = new FileAppendTransaction()
-    .setFileId(bytecodeFileId)
-    .setContents(bytecode)
-    .setMaxChunks(chunks)
-    .setMaxTransactionFee(new Hbar(2))
-    .setNodeAccountIds([
-      AccountId.fromString('0.0.3'),
-    ])
-    .freezeWith(clientOperator);
-  const fileAppendSign = await fileAppendTx.sign(signingPrivateKey);
-  const fileAppendSubmit = await fileAppendSign.execute(clientOperator);
-  const fileAppendRx = await fileAppendSubmit.getReceipt(clientOperator);
-  return bytecodeFileId;
-};

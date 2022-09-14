@@ -4,14 +4,11 @@ import PrivateKey from '../../../../domain/context/account/PrivateKey.js';
 import {
 	AccountId as HAccountId,
 	Client,
-	ContractCreateTransaction,
+	ContractCreateFlow,
 	ContractExecuteTransaction,
 	ContractFunctionParameters,
 	ContractId,
 	DelegateContractId,
-	FileAppendTransaction,
-	FileCreateTransaction,
-	FileId,
 	Hbar,
 	PrivateKey as HPrivateKey,
 	PublicKey as HPublicKey,
@@ -198,7 +195,6 @@ export default class HethersProvider implements IProvider {
 		};
 		const tokenContract = await this.deployContract(
 			HederaERC20__factory,
-			10,
 			plainAccount.privateKey,
 			client,
 		);
@@ -211,7 +207,6 @@ export default class HethersProvider implements IProvider {
 		if (!proxyContract) {
 			proxyContract = await this.deployContract(
 				HederaERC1967Proxy__factory,
-				10,
 				plainAccount.privateKey,
 				client,
 				new ContractFunctionParameters()
@@ -234,7 +229,6 @@ export default class HethersProvider implements IProvider {
 		);
 		const tokenOwnerContract = await this.deployContract(
 			HTSTokenOwner__factory,
-			10,
 			plainAccount.privateKey,
 			client,
 		);
@@ -306,29 +300,18 @@ export default class HethersProvider implements IProvider {
 
 	private async deployContract(
 		factory: any,
-		chunks: number,
 		privateKey: string,
 		client: Client,
 		params?: any,
 	): Promise<ContractId> {
-		try {
-			const bytecodeFileId = await this.fileCreate(
-				factory.bytecode,
-				chunks,
-				HPrivateKey.fromString(privateKey),
-				client,
-			);
-
-			const transaction = new ContractCreateTransaction()
-				.setGas(181_000)
-				.setBytecodeFileId(bytecodeFileId)
-				.setMaxTransactionFee(new Hbar(30))
+		try {			
+			const transaction =  new ContractCreateFlow()
+				.setBytecode(factory.bytecode)    
+				.setGas(90_000)    
 				.setAdminKey(HPrivateKey.fromString(privateKey));
 			if (params) {
 				transaction.setConstructorParameters(params);
 			}
-			transaction.freezeWith(client);
-
 			const contractCreateSign = await transaction.sign(
 				HPrivateKey.fromString(privateKey),
 			);
@@ -347,32 +330,6 @@ export default class HethersProvider implements IProvider {
 				`An error ocurred during deployment of ${factory.name}`,
 			);
 		}
-	}
-
-	private async fileCreate(
-		bytecode: any,
-		chunks: any,
-		signingPrivateKey: any,
-		client: Client,
-	): Promise<FileId | string> {
-		const fileCreateTx = new FileCreateTransaction()
-			.setKeys([signingPrivateKey])
-			.freezeWith(client);
-		const fileSign = await fileCreateTx.sign(signingPrivateKey);
-		const fileSubmit = await fileSign.execute(client);
-		const fileCreateRx = await fileSubmit.getReceipt(client);
-
-		const bytecodeFileId = fileCreateRx.fileId || '';
-		const fileAppendTx = new FileAppendTransaction()
-			.setFileId(bytecodeFileId)
-			.setContents(bytecode)
-			.setMaxChunks(chunks)
-			.setMaxTransactionFee(new Hbar(2))
-			.freezeWith(client);
-		const fileAppendSign = await fileAppendTx.sign(signingPrivateKey);
-		const fileAppendSubmit = await fileAppendSign.execute(client);
-		await fileAppendSubmit.getReceipt(client);
-		return bytecodeFileId;
 	}
 
 	private getHethersProvider(network: HederaNetwork): DefaultHederaProvider {

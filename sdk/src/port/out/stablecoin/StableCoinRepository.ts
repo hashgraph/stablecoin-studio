@@ -24,7 +24,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	constructor(networkAdapter: NetworkAdapter) {
 		this.networkAdapter = networkAdapter;
 		this.URI_BASE = `${
-			getHederaNetwork(networkAdapter.network).mirrorNodeUrl
+			getHederaNetwork(networkAdapter.network)?.mirrorNodeUrl
 		}/api/v1/`;
 	}
 
