@@ -18,6 +18,7 @@ import {
 	TokenCreateTransaction,
 	TokenId,
 	TokenSupplyType,
+	Transaction
 } from '@hashgraph/sdk';
 import {
 	HederaERC1967Proxy__factory,
@@ -43,6 +44,8 @@ import HederaError from '../error/HederaError.js';
 import PublicKey from '../../../../domain/context/account/PublicKey.js';
 import AccountId from '../../../../domain/context/account/AccountId.js';
 import { json } from 'stream/consumers';
+import { TransactionProvider } from '../transaction/TransactionProvider.js';
+import { HTSSign } from './HTSSign.js';
 
 type DefaultHederaProvider = hethers.providers.DefaultHederaProvider;
 
@@ -51,6 +54,8 @@ export default class HTSProvider implements IProvider {
 	public HTSProvider: DefaultHederaProvider;
 	private network: HederaNetwork;
 	private web3 = new Web3();
+	private transactionProvider: TransactionProvider;
+	private htsSign: HTSSign;
 
 	/**
 	 * init
@@ -170,12 +175,17 @@ export default class HTSProvider implements IProvider {
 			abi,
 		);
 
-		const contractTx = await new ContractExecuteTransaction()
+		/*const contractTx = await new ContractExecuteTransaction()
 			.setContractId(contractId)
 			.setFunctionParameters(functionCallParameters)
 			.setGas(gas)
 			.execute(client);
 		const record = await contractTx.getRecord(client);
+		*/
+
+		let transaction: Transaction = this.transactionProvider.contractExecute(contractId,functionCallParameters, gas);
+		this.htsSign
+		
 
 		const results = this.decodeFunctionResult(
 			name,
