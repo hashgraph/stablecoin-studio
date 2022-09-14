@@ -2,10 +2,12 @@
 import 'react-i18next';
 
 import GLOBAL_EN from './translations/en/global.json';
+import CASH_IN_EN from './translations/en/cashIn.json';
 
 declare module 'react-i18next' {
 	interface Resources {
 		global: typeof GLOBAL_EN;
+		cashIn: typeof CASH_IN_EN;
 	}
 }
 
@@ -16,6 +18,7 @@ declare module 'react-i18next' {
 		defaultNS: 'global';
 		resources: {
 			global: typeof GLOBAL_EN;
+			cashIn: typeof CASH_IN_EN;
 		};
 	}
 }

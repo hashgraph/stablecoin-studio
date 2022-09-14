@@ -1,0 +1,14 @@
+{
+    "amountLabel": "How much tokens?",
+    "amountPlaceholder": "Introduce amount",
+    "destinationAccountLabel": "What account will receive the tokens?",
+    "destinationAccountPlaceholder": "Introduce account",
+    "details": {
+        "name": "Name",
+        "symbol": "Symbol",
+        "decimals": "Decimals",
+        "initialSupply": "Initial supply",
+        "totalSupply": "Total supply",
+        "supplyType": "Supply type (infinite or finite)"
+    }
+}

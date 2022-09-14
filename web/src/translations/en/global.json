@@ -15,5 +15,8 @@
     "operations": "Operations",
     "role": "Role management",
     "details": "Stable coin details"
+  },
+  "validations": {
+    "required": "This field is required"
   }
 }

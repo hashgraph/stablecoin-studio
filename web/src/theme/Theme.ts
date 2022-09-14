@@ -1,7 +1,9 @@
 import { extendTheme } from '@chakra-ui/react';
 import { Button } from './components/Button';
 import { Text } from './components/Text';
-import { ConfigSelect } from './components/Select';
+import { Select } from './components/Select';
+import { Input } from './components/Input';
+import { FormLabel } from './components/FormLabel';
 
 const theme = extendTheme({
 	config: {
@@ -57,15 +59,9 @@ const theme = extendTheme({
 	components: {
 		Button,
 		Text,
-		Select: ConfigSelect,
-		Input: {
-			baseStyle: {
-				border: 0,
-			},
-			defaultProps: {
-				variant: 'unstyled',
-			},
-		},
+		Select,
+		FormLabel,
+		Input,
 	},
 });
 
