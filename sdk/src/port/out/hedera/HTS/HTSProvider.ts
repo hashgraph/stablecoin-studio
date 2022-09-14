@@ -47,17 +47,17 @@ import { json } from 'stream/consumers';
 type DefaultHederaProvider = hethers.providers.DefaultHederaProvider;
 
 const logOpts = { newLine: true, clear: true };
-export default class HethersProvider implements IProvider {
-	public hethersProvider: DefaultHederaProvider;
+export default class HTSProvider implements IProvider {
+	public HTSProvider: DefaultHederaProvider;
 	private network: HederaNetwork;
 	private web3 = new Web3();
 
 	/**
 	 * init
 	 */
-	public init({ network }: IniConfig): Promise<HethersProvider> {
+	public init({ network }: IniConfig): Promise<HTSProvider> {
 		this.network = network;
-		this.hethersProvider = this.getHethersProvider(network);
+		this.HTSProvider = this.getHTSProvider(network);
 		// We have to follow an async pattern to match Hashconnect
 		return new Promise((r) => {
 			r(this);
@@ -375,7 +375,7 @@ export default class HethersProvider implements IProvider {
 		return bytecodeFileId;
 	}
 
-	private getHethersProvider(network: HederaNetwork): DefaultHederaProvider {
+	private getHTSProvider(network: HederaNetwork): DefaultHederaProvider {
 		const enviroment = network.hederaNetworkEnviroment;
 		switch (enviroment) {
 			case HederaNetworkEnviroment.MAIN:

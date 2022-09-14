@@ -39,7 +39,7 @@ export default class NetworkAdapter {
 	public async init(): Promise<NetworkAdapter> {
 		switch (this._mode) {
 			case NetworkMode.EOA:
-				this.provider = await this.getHethersProvider(this.network);
+				this.provider = await this.getHTSProvider(this.network);
 				return this;
 			case NetworkMode.HASHPACK:
 				this.provider = await this.getHashpackProvider(
@@ -63,7 +63,7 @@ export default class NetworkAdapter {
 		return new HashPackProvider().init({ network, options });
 	}
 
-	private getHethersProvider(
+	private getHTSProvider(
 		network: HederaNetwork,
 	): Promise<HTSProvider> {
 		return new HTSProvider().init({ network });
