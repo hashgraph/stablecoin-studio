@@ -1,0 +1,15 @@
+{
+  "common": {
+    "nextStep" : "Next step",
+    "goBack" : "Go back",
+    "createStableCoin": "Create Stable coin",
+    "createNewStableCoin": "Create new Stable coin",
+    "cancel": "Cancel"
+  },
+  "tabs": {
+    "basicDetails": "Basic details",
+    "optionalDetails": "Optional details",
+    "managementPermissions": "Management Permissions",
+    "review": "Review"
+  }
+}

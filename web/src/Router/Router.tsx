@@ -6,6 +6,7 @@ import Dashboard from '../views/Dashboard';
 import StableCoinNotSelected from '../views/ErrorPage/StableCoinNotSelected';
 import Login from '../views/Login';
 import CashInOperation from '../views/Operations/CashIn';
+import StableCoinCreation from '../views/StableCoinCreation/StableCoinCreation';
 import { RoutesMappingUrl } from './RoutesMappingUrl';
 
 const PrivateRoute = () => {
@@ -38,6 +39,7 @@ const Router = () => {
 						path={RoutesMappingUrl.stableCoinNotSelected}
 						element={<StableCoinNotSelected />}
 					/>
+					<Route path={RoutesMappingUrl.stableCoinCreation} element={<StableCoinCreation />} />
 					<Route path='*' element={<Navigate to={RoutesMappingUrl.dashboard} />} />
 				</Route>
 			</Routes>

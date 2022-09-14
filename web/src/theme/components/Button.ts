@@ -29,7 +29,7 @@ export const Button = {
 			fontWeight: '700',
 			textDecoration: 'none',
 			_hover: {
-				bgColor: 'brand.primary',
+				bgColor: 'dark.primary',
 				color: 'brand.white',
 			},
 		},

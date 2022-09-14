@@ -5,6 +5,7 @@ import { Select } from './components/Select';
 import { Input } from './components/Input';
 import { FormLabel } from './components/FormLabel';
 import { Heading } from './components/Heading';
+import { Tabs } from './components/Tabs';
 
 const theme = extendTheme({
 	config: {
@@ -22,6 +23,9 @@ const theme = extendTheme({
 			gray4: '#FFFAF4',
 			gray5: '#edf2f7',
 			gray6: '#F7FAFC',
+			gray100: '#F7FAFC',
+			gray300: '#CBD5E0',
+			gray600: '#4A5568',
 			white: '#FFFFFF',
 			green: '#A7D88A',
 			red: '#E62A10',
@@ -63,6 +67,7 @@ const theme = extendTheme({
 		FormLabel,
 		Input,
 		Heading,
+		Tabs,
 		FormError: {
 			baseStyle: {
 				text: {

@@ -11,4 +11,5 @@ export const RoutesMappingUrl: Record<NamedRoutes, string> = {
 	[NamedRoutes.Details]: '/details',
 	[NamedRoutes.CashIn]: '/cash-in',
 	[NamedRoutes.StableCoinNotSelected]: '/stable-coin-not-selected',
+	[NamedRoutes.StableCoinCreation]: '/stable-coin-creation',
 };

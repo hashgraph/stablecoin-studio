@@ -6,6 +6,7 @@ import GLOBAL_EN from './translations/en/global.json';
 import GLOBAL_ES from './translations/es/global.json';
 import CASH_IN_EN from './translations/en/cashIn.json';
 import ERROR_PAGE_EN from './translations/en/errorPage.json';
+import STABLE_COIN_CREATION_EN from './translations/en/stableCoinCreation.json';
 
 const options = {
 	order: ['localStorage', 'navigator'],
@@ -23,6 +24,7 @@ i18n
 				global: GLOBAL_EN,
 				cashIn: CASH_IN_EN,
 				errorPage: ERROR_PAGE_EN,
+				stableCoinCreation: STABLE_COIN_CREATION_EN,
 			},
 			es: {
 				global: GLOBAL_ES,
