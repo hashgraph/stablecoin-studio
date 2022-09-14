@@ -1,5 +1,6 @@
 import { extendTheme } from '@chakra-ui/react';
 import { Button } from './components/Button';
+import { Tabs } from './components/Tabs';
 import { ConfigSelect } from './components/Select';
 
 const theme = extendTheme({
@@ -17,6 +18,9 @@ const theme = extendTheme({
 			gray3: '#F2F2F2',
 			gray4: '#FFFAF4',
 			gray5: '#edf2f7',
+			gray100: '#F7FAFC',
+			gray300: '#CBD5E0',
+			gray600: '#4A5568',
 			white: '#FFFFFF',
 			green: '#A7D88A',
 			red: '#F25454',
@@ -59,6 +63,7 @@ const theme = extendTheme({
 				variant: 'unstyled',
 			},
 		},
+		Tabs,
 	},
 });
 

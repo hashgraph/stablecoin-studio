@@ -3,11 +3,13 @@ import 'react-i18next';
 
 import GLOBAL_EN from './translations/en/global.json';
 import ERROR_PAGE_EN from './translations/en/errorPage.json';
+import STABLE_COIN_CREATION_EN from './translations/en/stableCoinCreation.json';
 
 declare module 'react-i18next' {
 	interface Resources {
 		global: typeof GLOBAL_EN;
 		errorPage: typeof ERROR_PAGE_EN;
+		stableCoinCreation: typeof STABLE_COIN_CREATION_EN;
 	}
 }
 
@@ -19,6 +21,7 @@ declare module 'react-i18next' {
 		resources: {
 			global: typeof GLOBAL_EN;
 			errorPage: typeof ERROR_PAGE_EN;
+			stableCoinCreation: typeof STABLE_COIN_CREATION_EN;
 		};
 	}
 }
