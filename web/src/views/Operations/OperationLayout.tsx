@@ -1,9 +1,10 @@
 import { ReactNode } from 'react';
-import { Button, Flex, Heading, SimpleGrid, Stack } from '@chakra-ui/react';
+import { Button, Flex, SimpleGrid, Stack } from '@chakra-ui/react';
 import { RouterManager } from '../../Router/RouterManager';
 import { useNavigate } from 'react-router-dom';
 import { NamedRoutes } from '../../Router/NamedRoutes';
 import { useTranslation } from 'react-i18next';
+import BaseContainer from '../../components/BaseContainer';
 
 export interface OperationLayoutProps {
 	LeftContent: ReactNode;
@@ -19,10 +20,7 @@ const OperationLayout = ({ LeftContent, RightContent, onConfirm }: OperationLayo
 	};
 
 	return (
-		<Stack>
-			<Heading fontSize='28px' fontWeight='500' color='brand.secondary'>
-				{t('operations.title')}
-			</Heading>
+		<BaseContainer title={t('operations.title')}>
 			<Flex
 				direction='column'
 				bg='brand.gray6'
@@ -47,7 +45,7 @@ const OperationLayout = ({ LeftContent, RightContent, onConfirm }: OperationLayo
 					</Stack>
 				</Flex>
 			</Flex>
-		</Stack>
+		</BaseContainer>
 	);
 };
 
