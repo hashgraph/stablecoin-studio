@@ -2,10 +2,12 @@
 import 'react-i18next';
 
 import GLOBAL_EN from './translations/en/global.json';
+import ERROR_PAGE_EN from './translations/en/errorPage.json';
 
 declare module 'react-i18next' {
 	interface Resources {
 		global: typeof GLOBAL_EN;
+		errorPage: typeof ERROR_PAGE_EN;
 	}
 }
 
@@ -16,6 +18,7 @@ declare module 'react-i18next' {
 		defaultNS: 'global';
 		resources: {
 			global: typeof GLOBAL_EN;
+			errorPage: typeof ERROR_PAGE_EN;
 		};
 	}
 }

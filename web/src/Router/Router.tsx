@@ -3,6 +3,7 @@ import { Navigate, Route, Routes, Outlet } from 'react-router-dom';
 import Layout from '../layout/Layout';
 import { RootState } from '../store/store';
 import Dashboard from '../views/Dashboard';
+import StableCoinNotSelected from '../views/ErrorPage/StableCoinNotSelected';
 import Login from '../views/Login';
 import { RoutesMappingUrl } from './RoutesMappingUrl';
 
@@ -31,6 +32,10 @@ const Router = () => {
 				{/* Private routes */}
 				<Route element={<PrivateRoute />}>
 					<Route path={RoutesMappingUrl.dashboard} element={<Dashboard />} />
+					<Route
+						path={RoutesMappingUrl.stableCoinNotSelected}
+						element={<StableCoinNotSelected />}
+					/>
 					<Route path='*' element={<Navigate to={RoutesMappingUrl.dashboard} />} />
 				</Route>
 			</Routes>
