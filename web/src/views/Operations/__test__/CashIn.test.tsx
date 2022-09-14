@@ -18,4 +18,6 @@ describe(`<${CashInOperation.name} />`, () => {
 		expect(component.getByTestId('operation-title')).toHaveTextContent(translations.operationTitle);
 		expect(component.getByTestId('details-title')).toHaveTextContent(translations.details.title);
 	});
+
+	test.todo('rest of the tests');
 });

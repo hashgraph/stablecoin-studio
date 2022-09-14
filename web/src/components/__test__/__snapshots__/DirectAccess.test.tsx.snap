@@ -79,7 +79,7 @@ exports[`<DirectAccess /> should render correctly 1`] = `
       </svg>
     </div>
     <p
-      class="chakra-text css-g6mx6s"
+      class="chakra-text css-872br"
       data-testid="direct-access-Test"
     >
       Test

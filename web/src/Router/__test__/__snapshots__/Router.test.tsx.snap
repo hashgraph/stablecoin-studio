@@ -16,13 +16,13 @@ exports[`<Router /> should render correctly 1`] = `
           src="hedera-hbar-logo.svg"
         />
         <p
-          class="chakra-text css-n0l37h"
+          class="chakra-text css-q6jngl"
           data-testid="modal-hashpack-title"
         >
           Your haspack extension is not installed yet
         </p>
         <p
-          class="chakra-text css-gllz07"
+          class="chakra-text css-zxkbt5"
           data-testid="modal-hashpack-description"
         >
           Click in the button bellow to download the extension.

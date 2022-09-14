@@ -57,7 +57,7 @@ exports[`<Layout /> should render correctly 1`] = `
                     class="css-3y2vuh"
                   >
                     <span
-                      class="chakra-text css-1nd6c34"
+                      class="chakra-text css-19fpr04"
                       data-testid="select-placeholder"
                     >
                       Choose Stable coin
@@ -134,17 +134,17 @@ exports[`<Layout /> should render correctly 1`] = `
             data-testid="topbar-right-network"
           >
             <p
-              class="chakra-text css-0"
+              class="chakra-text css-mgupmj"
             >
               Operating network
             </p>
             <p
-              class="chakra-text css-1sylyko"
+              class="chakra-text css-1n27kwj"
             >
               : 
             </p>
             <p
-              class="chakra-text css-0"
+              class="chakra-text css-mgupmj"
             >
               TESNET
             </p>
@@ -157,17 +157,17 @@ exports[`<Layout /> should render correctly 1`] = `
             data-testid="topbar-right-account"
           >
             <p
-              class="chakra-text css-0"
+              class="chakra-text css-mgupmj"
             >
               Operating account
             </p>
             <p
-              class="chakra-text css-1sylyko"
+              class="chakra-text css-1n27kwj"
             >
               : 
             </p>
             <p
-              class="chakra-text css-0"
+              class="chakra-text css-mgupmj"
             >
               0.0.123456
             </p>
@@ -257,7 +257,7 @@ exports[`<Layout /> should render correctly 1`] = `
               />
             </svg>
             <p
-              class="chakra-text css-182kmv3"
+              class="chakra-text css-h0pfk0"
               data-testid="sidebar-option-title"
             >
               Operations
@@ -316,7 +316,7 @@ exports[`<Layout /> should render correctly 1`] = `
               />
             </svg>
             <p
-              class="chakra-text css-182kmv3"
+              class="chakra-text css-h0pfk0"
               data-testid="sidebar-option-title"
             >
               Role management
@@ -360,7 +360,7 @@ exports[`<Layout /> should render correctly 1`] = `
               />
             </svg>
             <p
-              class="chakra-text css-182kmv3"
+              class="chakra-text css-h0pfk0"
               data-testid="sidebar-option-title"
             >
               Stable coin details
