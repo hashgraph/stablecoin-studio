@@ -16,17 +16,17 @@ export class HTSResponse{
 	transactionStatus:Status;
 	transactionType:TransactionType;
 	error:String|undefined;
-	reponseParam:[]|undefined;
+	reponseParam:Uint8Array|undefined;
 	topic:String|undefined;
-
+    
     constructor( 
-
         idTransaction:String,
         transactionStatus:Status,
         transactionType:TransactionType,
         error?:String,
-        reponseParam?:[],
-        topic?:String){
+        reponseParam?:Uint8Array,
+        topic?:String)
+    {
         this.idTransaction =idTransaction;    
         this.transactionStatus =transactionStatus;
         this.transactionType =transactionType;

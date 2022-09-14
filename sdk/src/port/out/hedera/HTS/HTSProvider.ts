@@ -47,7 +47,7 @@ import { json } from 'stream/consumers';
 import { TransactionProvider } from '../transaction/TransactionProvider.js';
 import { HTSSign } from './HTSSign.js';
 import { HTSResponse, TransactionResponse, TransactionType } from '../sign/ISigner.js';
-import { TransactionResposeHandler } from '../TransactionResponseHandler.js';
+import { TransactionResposeHandler } from '../transaction/TransactionResponseHandler.js';
 
 type DefaultHederaProvider = hethers.providers.DefaultHederaProvider;
 
@@ -117,32 +117,7 @@ export default class HTSProvider implements IProvider {
 		return Buffer.from(encodedParametersHex, 'hex');
 	}
 
-	public decodeFunctionResult(
-		functionName: string,
-		resultAsBytes: ArrayBuffer,
-		abi: any[],
-	): Uint8Array {
-		const functionAbi = abi.find(
-			(func: { name: any }) => func.name === functionName,
-		);
-		if (!functionAbi?.outputs)
-			throw new HederaError(
-				'Contract function not found in ABI, are you using the right version?',
-			);
-		const functionParameters = functionAbi?.outputs;
-		const resultHex = '0x'.concat(
-			Buffer.from(resultAsBytes).toString('hex'),
-		);
-		const result = this.web3.eth.abi.decodeParameters(
-			functionParameters || [],
-			resultHex,
-		);
-
-		const jsonParsedArray = JSON.parse(JSON.stringify(result));
-
-		return jsonParsedArray;
-	}
-
+	
 	public getPublicKey(privateKey?: PrivateKey | string | undefined): string {
 		let key = null;
 		if (privateKey instanceof PrivateKey) {
@@ -177,25 +152,10 @@ export default class HTSProvider implements IProvider {
 			parameters,
 			abi,
 		);
-
-		/*const contractTx = await new ContractExecuteTransaction()
-			.setContractId(contractId)
-			.setFunctionParameters(functionCallParameters)
-			.setGas(gas)
-			.execute(client);
-		const record = await contractTx.getRecord(client);
-		*/
-
-		let transaction: Transaction = this.transactionProvider.contractExecute(contractId, functionCallParameters, gas);
-		let transactionResponse: TransactionResponse = this.htsSign.signAndSendTransaction(transaction);
-		let htsResponse: HTSResponse = TransactionResposeHandler.manageResponse(transactionResponse, TransactionType.RECORD, this.getClient());
-
 		
-		const results = this.decodeFunctionResult(
-			name,
-			record.contractFunctionResult?.bytes,
-			abi,
-		);
+		let transaction: Transaction = this.transactionProvider.buildContractExecuteTransaction(contractId, functionCallParameters, gas);
+		let transactionResponse: TransactionResponse = this.htsSign.signAndSendTransaction(transaction);
+		let htsResponse: HTSResponse | undefined = TransactionResposeHandler.manageResponse(transactionResponse, TransactionType.RECORD, this.getClient());
 
 		return results;
 	}

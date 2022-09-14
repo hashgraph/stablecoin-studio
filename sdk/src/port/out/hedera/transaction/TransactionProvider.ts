@@ -4,7 +4,7 @@ import ICreateTokenResponse from '../../../out/hedera/types.ts'
 
 export class TransactionProvider{
 
-    public contractExecute (contractId:string, functionCallParameters:Uint8Array, gas:number) : Transaction{  
+    public buildContractExecuteTransaction (contractId:string, functionCallParameters:Uint8Array, gas:number) : Transaction{  
         const transaction = new ContractExecuteTransaction()
 			.setContractId(contractId)
 			.setFunctionParameters(functionCallParameters)
@@ -13,7 +13,7 @@ export class TransactionProvider{
         return transaction;    
     }
 
-    public createToken (values: ICreateTokenResponse, gas:number) : Transaction{
+    public buildTokenCreateTransaction (values: ICreateTokenResponse, gas:number) : Transaction{
         const transaction = new TokenCreateTransaction()
 			.setMaxTransactionFee(new Hbar(25))
 			.setTokenName(values.name)
@@ -35,7 +35,7 @@ export class TransactionProvider{
 		}
     }
 
-    public createContract (factory:any, admPrivateKey: string, parameters:any, gas:number): Transaction{
+    public buildContractCreateFlowTransaction (factory:any, admPrivateKey: string, parameters:any, gas:number): Transaction{
         const transaction =  new ContractCreateFlow()
             .setBytecode(factory.bytecode)    
             .setGas(gas)    
