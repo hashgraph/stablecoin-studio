@@ -8,6 +8,7 @@ import { HederaERC20__factory } from "../typechain-types";
 
 const hre = require("hardhat");
 const hreConfig = hre.network.config;
+const WIPE_ROLE : string = '0x515f99f4e5a381c770462a8d9879a01f0fd4a414a168a2404dab62a62e1af0c3';
 
 describe("Operations to WIPE tokens", function() {
   let proxyAddress:any;
@@ -25,6 +26,29 @@ describe("Operations to WIPE tokens", function() {
   });
   beforeEach(async function () {
     proxyAddress = await deployContractsWithSDK("TOKEN-WIPE", "TM-WP", 2, 0, 3000000, "Hedera Accelerator Stable Coin (Wipe)");    
+  });
+
+  it("Admin account can grant wipeable role to an account", async function() {  
+    let params: any[] = [WIPE_ROLE, AccountId.fromString(hreConfig.accounts[1].account).toSolidityAddress()];  
+    await contractCall(ContractId.fromString(proxyAddress), 'grantRole', params, client, 400000, HederaERC20__factory.abi);  
+   
+    params = [WIPE_ROLE, AccountId.fromString(hreConfig.accounts[1].account).toSolidityAddress()];      
+    const result = await contractCall(ContractId.fromString(proxyAddress), 'hasRole', params, client, 60000, HederaERC20__factory.abi);      
+ 
+    expect(result[0]).to.equals(true);
+  });
+
+  it("Admin account can revoke wipeable role to an account", async function() {
+    let params: any[] = [WIPE_ROLE, AccountId.fromString(hreConfig.accounts[1].account).toSolidityAddress()];  
+    await contractCall(ContractId.fromString(proxyAddress), 'grantRole', params, client, 400000, HederaERC20__factory.abi);  
+
+    params = [WIPE_ROLE, AccountId.fromString(hreConfig.accounts[1].account).toSolidityAddress()];  
+    await contractCall(ContractId.fromString(proxyAddress), 'revokeRole', params, client, 400000, HederaERC20__factory.abi);  
+
+    params = [WIPE_ROLE, AccountId.fromString(hreConfig.accounts[1].account).toSolidityAddress()];      
+    const result = await contractCall(ContractId.fromString(proxyAddress), 'hasRole', params, client, 60000, HederaERC20__factory.abi);      
+
+    expect(result[0]).to.equals(false);
   });
 
   it("Should can wipe 10.000 tokens from an account with 20.000 tokens", async function() {  

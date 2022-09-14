@@ -31,4 +31,11 @@ abstract contract Roles {
     * keccak256("RESCUE_ROLE");
     */ 
     bytes32 public constant RESCUE_ROLE = 0x43f433f336cda92fbbe5bfbdd344a9fd79b2ef138cd6e6fc49d55e2f54e1d99a;
+
+    /**
+    * @dev Role that allows to pause the token
+    * 
+    * keccak256("PAUSER_ROLE");
+    */ 
+    bytes32 public constant PAUSER_ROLE = 0x65d7a28e3265b37a6474929f336521b332c1681b933f6cb9f3376673440d862a;
 }

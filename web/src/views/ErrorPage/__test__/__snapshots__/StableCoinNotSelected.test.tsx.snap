@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<StableCoinNotSelected /> should render correctly 1`] = `
+<DocumentFragment>
+  <div
+    class="css-mytqyt"
+    data-testid="stable-coin-not-selected-container"
+  >
+    <img
+      alt="Safe box"
+      class="chakra-image css-1faqnpj"
+      data-testid="stable-coin-not-selected-logo"
+      src="safe-box.svg"
+    />
+    <p
+      class="chakra-text css-148we7z"
+      data-testid="stable-coin-not-selected-title"
+    >
+      Choose a Stable coin to start operating!
+    </p>
+    <p
+      class="chakra-text css-17vpb1v"
+      data-testid="stable-coin-not-selected-description"
+    >
+      You have not chosen a Stable coin yet.
+    </p>
+    <p
+      class="chakra-text css-blayim"
+    >
+      Choose one in the search bar above to operate.
+    </p>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;
