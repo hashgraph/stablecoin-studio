@@ -1,7 +1,5 @@
-import { ISigner, TransactionType } from "../sign/ISigner";
-import {
-    Transaction,Signer,Wallet,TransactionResponse,Client
-} from '@hashgraph/sdk';
+import { ISigner } from "../sign/ISigner";
+import { Transaction, PrivateKey, Client, TransactionResponse } from '@hashgraph/sdk';
 
 export class HTSSign extends ISigner{
 
@@ -9,8 +7,10 @@ export class HTSSign extends ISigner{
         super(client);  
     };
 
-    async signAndSendTransaction ( transaction:Transaction, signer?:Signer):Transaction{
+    async signAndSendTransaction(transaction:Transaction, privateKey?:PrivateKey):TransactionResponse {
+        if (privateKey) {
+            transaction = transaction.sign(privateKey);
+        }
         return transaction.execute(this.client);
     };
-    
 }

@@ -1,7 +1,4 @@
-import { ConstructorFragment } from '@hashgraph/hethers/lib/utils';
-import {
-    Transaction,Signer,Client,TransactionResponse
-} from '@hashgraph/sdk';
+import { Transaction, PrivateKey, Client, TransactionResponse } from '@hashgraph/sdk';
 /* Debe de firmar de una u otra forma en funcion de la configuracion del SDK*/
 export enum TransactionType{
     RECORD,
@@ -15,24 +12,24 @@ export class HTSResponse{
     idTransaction:String;
 	transactionStatus:Status;
 	transactionType:TransactionType;
-	error:String|undefined;
-	reponseParam:Uint8Array|undefined;
 	topic:String|undefined;
+	reponseParam:Uint8Array|undefined;
+    error:String|undefined;
     
     constructor( 
         idTransaction:String,
         transactionStatus:Status,
         transactionType:TransactionType,
-        error?:String,
+        topic?:String,
         reponseParam?:Uint8Array,
-        topic?:String)
+        error?:String)
     {
         this.idTransaction =idTransaction;    
         this.transactionStatus =transactionStatus;
         this.transactionType =transactionType;
-        this.error = error;
-        this.reponseParam =reponseParam;
         this.topic = topic;
+        this.reponseParam =reponseParam;
+        this.error = error;
     }
     
 }
@@ -43,7 +40,8 @@ export class ISigner{
     constructor (client:Client) {
         this.client = client;
     };
-    async signAndSendTransaction(transaction:Transaction,transactionType:TransactionType, signer?:Signer):Promise<TransactionResponse>{
+
+    async signAndSendTransaction(transaction:Transaction, privateKey?:PrivateKey):Promise<TransactionResponse>{
         throw new Error ("not an implementation!!");
     }
 

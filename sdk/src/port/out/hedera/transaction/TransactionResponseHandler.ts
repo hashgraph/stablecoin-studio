@@ -1,39 +1,44 @@
 import {  TransactionType,HTSResponse } from "../sign/ISigner";
-import {TransactionResponse, Client, TransactionReceipt, TransactionRecord} from "@hashgraph/sdk";
+import {TransactionResponse, Client, TransactionReceipt, TransactionRecord, Status } from "@hashgraph/sdk";
 import HederaError from '../error/HederaError.js';
 import Web3 from 'web3';
 
 export  class TransactionResposeHandler {
 
-
-    public static manageResponse(transactionResponse:TransactionResponse, responseType:TransactionType,client:Client, abi?:any ):HTSResponse | undefined{
+    public static manageResponse(transactionResponse:TransactionResponse, responseType:TransactionType,client:Client, abi?:any ):HTSResponse | undefined {
         
-        let response:HTSResponse|undefined;
-        
-        if (responseType == TransactionType.RECEIPT){ 
-            const transactionReceipt: TransactionReceipt = transactionResponse.getReceipt(Client);
-            response = new HTSResponse(transactionReceipt.idTransaction,
-                transactionReceipt.Status,
-                responseType,
-                transactionReceipt.error);
+        if (responseType == TransactionType.RECEIPT) { 
+            const transactionReceipt: TransactionReceipt = transactionResponse.getReceipt(Client);            
+            return this.createHTSResponse(transactionResponse.transactionId,
+                                          transactionReceipt.status,
+                                          responseType,
+                                          transactionReceipt.topicId);
         }
 
-        if (responseType == TransactionType.RECORD){
-            const transactionRecord: TransactionRecord= transactionResponse.getRecord(Client);
+        if (responseType == TransactionType.RECORD) {
+            const transactionRecord: TransactionRecord = transactionResponse.getRecord(Client);
             
             const results = this.decodeFunctionResult(
                 transactionRecord.name,
                 transactionRecord.contractFunctionResult?.bytes,
                 abi,
             );
-            response = new HTSResponse(transactionRecord.idTransaction,
-                transactionRecord.Status,
-                responseType,
-                transactionRecord.error,
-                results);
+            return this.createHTSResponse(transactionRecord.transactionId,
+                                          transactionRecord.receipt.status,
+                                          responseType,
+                                          transactionRecord.receipt.topicId,
+                                          results);
         }   
-        return response;
     };
+
+    public static createHTSResponse(transactionId:any, 
+                                    transactionStatus:Status,
+                                    responseType:TransactionType,
+                                    topic:String,
+                                    responseParam?:Uint8Array,
+                                    error?:string): HTSResponse {
+        return new HTSResponse(transactionId, transactionStatus, responseType, topic, responseParam, error);
+    }
 
     public static decodeFunctionResult(
 		functionName: string,
