@@ -3,13 +3,11 @@ import { ReactNode } from 'react';
 import Sidebar from './sidebar/Sidebar';
 import Topbar from './topbar/Topbar';
 
-interface Props {
-	general: {
-		children: ReactNode;
-	};
+interface LayoutProps {
+	children: ReactNode;
 }
 
-const Layout = ({ children }: Props['general']) => {
+const Layout = ({ children }: LayoutProps) => {
 	return (
 		<Box data-testid='layout' h='100vh' w='100%'>
 			<Topbar />

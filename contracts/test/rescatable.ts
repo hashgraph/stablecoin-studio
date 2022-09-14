@@ -8,8 +8,8 @@ import { deployContractsWithSDK, contractCall, getClient } from "../scripts/util
 import { HederaERC20__factory } from "../typechain-types";
 
 const hre = require("hardhat"); 
-
 const hreConfig = hre.network.config;
+const RESCUE_ROLE : string = '0x43f433f336cda92fbbe5bfbdd344a9fd79b2ef138cd6e6fc49d55e2f54e1d99a';
 
 describe("Rescatable", function() {
   let proxyAddress:any;
@@ -18,16 +18,39 @@ describe("Rescatable", function() {
   let account:string;
   let privateKey:string;
 
-  before(async function  () {
-         
+  before(async function  () {         
     account = hreConfig.accounts[0].account;
     privateKey = hreConfig.accounts[0].privateKey;
     client.setOperator(account, privateKey);
-
   });
   beforeEach(async function () {
     
   });
+  it("Admin account can grant rescue role to an account", async function() {  
+    proxyAddress = await deployContractsWithSDK("MIDAS", "MD", 3, 20000, 20000, "Hedera Accelerator Stable Coin");    
+
+    let params: any[] = [RESCUE_ROLE, AccountId.fromString(hreConfig.accounts[1].account).toSolidityAddress()];  
+    await contractCall(ContractId.fromString(proxyAddress), 'grantRole', params, client, 400000, HederaERC20__factory.abi);  
+   
+    params = [RESCUE_ROLE, AccountId.fromString(hreConfig.accounts[1].account).toSolidityAddress()];      
+    const result = await contractCall(ContractId.fromString(proxyAddress), 'hasRole', params, client, 60000, HederaERC20__factory.abi);      
+ 
+    expect(result[0]).to.equals(true);
+  });
+  it("Admin account can revoke rescue role to an account", async function() {
+    proxyAddress = await deployContractsWithSDK("MIDAS", "MD", 3, 20000, 20000, "Hedera Accelerator Stable Coin");    
+
+    let params: any[] = [RESCUE_ROLE, AccountId.fromString(hreConfig.accounts[1].account).toSolidityAddress()];  
+    await contractCall(ContractId.fromString(proxyAddress), 'grantRole', params, client, 400000, HederaERC20__factory.abi);  
+
+    params = [RESCUE_ROLE, AccountId.fromString(hreConfig.accounts[1].account).toSolidityAddress()];  
+    await contractCall(ContractId.fromString(proxyAddress), 'revokeRole', params, client, 400000, HederaERC20__factory.abi);  
+
+    params = [RESCUE_ROLE, AccountId.fromString(hreConfig.accounts[1].account).toSolidityAddress()];      
+    const result = await contractCall(ContractId.fromString(proxyAddress), 'hasRole', params, client, 60000, HederaERC20__factory.abi);      
+
+    expect(result[0]).to.equals(false);
+  });  
   it("Should rescue 10000 token", async function() {
     proxyAddress = await deployContractsWithSDK("MIDAS", "MD", 3, 20000000, 20000000, "Hedera Accelerator Stable Coin");    
     let params: any[] = [];  

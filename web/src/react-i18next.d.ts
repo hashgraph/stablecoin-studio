@@ -3,11 +3,13 @@ import 'react-i18next';
 
 import GLOBAL_EN from './translations/en/global.json';
 import CASH_IN_EN from './translations/en/cashIn.json';
+import ERROR_PAGE_EN from './translations/en/errorPage.json';
 
 declare module 'react-i18next' {
 	interface Resources {
 		global: typeof GLOBAL_EN;
 		cashIn: typeof CASH_IN_EN;
+		errorPage: typeof ERROR_PAGE_EN;
 	}
 }
 
@@ -19,6 +21,7 @@ declare module 'react-i18next' {
 		resources: {
 			global: typeof GLOBAL_EN;
 			cashIn: typeof CASH_IN_EN;
+			errorPage: typeof ERROR_PAGE_EN;
 		};
 	}
 }
