@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`<Tabs /> should render correctly 1`] = `
+exports[`<Stepper /> should render correctly 1`] = `
 <DocumentFragment>
   <div
     class="chakra-tabs css-1x6vjw3"
@@ -22,13 +22,13 @@ exports[`<Tabs /> should render correctly 1`] = `
       >
         <p
           class="chakra-text css-bak5wb"
-          data-testid="tabs-tab-number-1"
+          data-testid="stepper-step-number-1"
         >
           01
         </p>
         <p
           class="chakra-text css-57h6bf"
-          data-testid="tabs-tab-title-1"
+          data-testid="stepper-step-title-1"
         >
           Option 1
         </p>
@@ -45,13 +45,13 @@ exports[`<Tabs /> should render correctly 1`] = `
       >
         <p
           class="chakra-text css-1bxd6jy"
-          data-testid="tabs-tab-number-2"
+          data-testid="stepper-step-number-2"
         >
           02
         </p>
         <p
           class="chakra-text css-57h6bf"
-          data-testid="tabs-tab-title-2"
+          data-testid="stepper-step-title-2"
         >
           Option 2
         </p>
@@ -63,7 +63,7 @@ exports[`<Tabs /> should render correctly 1`] = `
       <div
         aria-labelledby="tabs-:r0:--tab-0"
         class="chakra-tabs__tab-panel css-4278sh"
-        data-testid="tabs-tabpanel-container-1"
+        data-testid="stepper-step-panel-container-1"
         id="tabs-:r0:--tabpanel-0"
         role="tabpanel"
         tabindex="0"
@@ -72,7 +72,7 @@ exports[`<Tabs /> should render correctly 1`] = `
           class="chakra-stack css-1eot3nj"
         >
           <div
-            class="css-1l1zmw3"
+            class="css-16vsafx"
           >
             <div
               class="css-0"
@@ -92,14 +92,14 @@ exports[`<Tabs /> should render correctly 1`] = `
             >
               <button
                 class="chakra-button css-124znom"
-                data-testid="tabs-tabpanel-button-secondary-1"
+                data-testid="stepper-step-panel-button-secondary-1"
                 type="button"
               >
                 Cancel
               </button>
               <button
                 class="chakra-button css-1jvauvu"
-                data-testid="tabs-tabpanel-button-primary-1"
+                data-testid="stepper-step-panel-button-primary-1"
                 type="button"
               >
                 Next step
@@ -111,7 +111,7 @@ exports[`<Tabs /> should render correctly 1`] = `
       <div
         aria-labelledby="tabs-:r0:--tab-1"
         class="chakra-tabs__tab-panel css-4278sh"
-        data-testid="tabs-tabpanel-container-2"
+        data-testid="stepper-step-panel-container-2"
         hidden=""
         id="tabs-:r0:--tabpanel-1"
         role="tabpanel"

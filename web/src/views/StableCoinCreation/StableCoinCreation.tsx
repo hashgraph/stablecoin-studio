@@ -2,7 +2,7 @@ import { Box, Stack } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import BaseContainer from '../../components/BaseContainer';
-import Tabs, { OptionBaseTabProps } from '../../components/Tabs';
+import Stepper, { Step } from '../../components/Stepper';
 import { NamedRoutes } from '../../Router/NamedRoutes';
 import { RouterManager } from '../../Router/RouterManager';
 
@@ -11,7 +11,7 @@ const StableCoinCreation = () => {
 	const { t } = useTranslation('stableCoinCreation');
 
 	// TODO: change childrens props when components will be ready
-	const options: OptionBaseTabProps[] = [
+	const steps: Step[] = [
 		{
 			number: '01',
 			title: t('tabs.basicDetails'),
@@ -47,8 +47,8 @@ const StableCoinCreation = () => {
 		RouterManager.to(navigate, NamedRoutes.Dashboard);
 	};
 
-	const tabsProps = {
-		options,
+	const stepperProps = {
+		steps,
 		handleLastButtonPrimary: handleFinish,
 		handleFirstButtonSecondary: handleCancel,
 		textLastButtonPrimary: t('common.createStableCoin'),
@@ -57,7 +57,7 @@ const StableCoinCreation = () => {
 	return (
 		<Stack h='full'>
 			<BaseContainer title={t('common.createNewStableCoin')}>
-				<Tabs {...tabsProps} />
+				<Stepper {...stepperProps} />
 			</BaseContainer>
 		</Stack>
 	);

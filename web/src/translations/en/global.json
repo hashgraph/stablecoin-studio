@@ -1,6 +1,7 @@
 {
   "common": {
-    "accept": "Accept"
+    "accept": "Accept",
+    "cancel": "Cancel"
   },
   "hashpack-no-installed": {
     "title": "Your haspack extension is not installed yet",
@@ -18,5 +19,10 @@
     "operations": "Operations",
     "role": "Role management",
     "details": "Stable coin details"
+  },
+  "stepper": {
+    "goBack": "Go back",
+    "finish": "Finish",
+    "nextStep": "Next step"
   }
 }
