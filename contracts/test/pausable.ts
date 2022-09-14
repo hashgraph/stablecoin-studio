@@ -11,7 +11,7 @@ const hre = require("hardhat");
 const hreConfig = hre.network.config;
 const PAUSER_ROLE : string = '0x65d7a28e3265b37a6474929f336521b332c1681b933f6cb9f3376673440d862a';
 
-describe("Rescatable", function() {
+describe("Pausable", function() {
   let proxyAddress:any;
   let client:any = getClient();;
   let contractProxy: { name: (arg0: { gasLimit: number; }) => any; symbol: (arg0: { gasLimit: number; }) => any; decimals: (arg0: { gasLimit: number; }) => any; };
