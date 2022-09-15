@@ -36,7 +36,7 @@ exports[`<CashInOperation /> should render correctly 1`] = `
             >
               Operation details
             </p>
-            <div
+            <form
               class="chakra-stack css-b5leqj"
             >
               <div
@@ -49,8 +49,8 @@ exports[`<CashInOperation /> should render correctly 1`] = `
                 >
                   <label
                     class="chakra-form__label css-1jbsrib"
-                    for="field-:r0:"
-                    id="field-:r0:-label"
+                    for="field-:r1:"
+                    id="field-:r1:-label"
                   >
                     <div
                       class="chakra-stack css-84zodg"
@@ -74,7 +74,7 @@ exports[`<CashInOperation /> should render correctly 1`] = `
                     <input
                       class="chakra-input css-6kc61d"
                       data-testid="amount"
-                      id="field-:r0:"
+                      id="field-:r1:"
                       inputmode="numeric"
                       placeholder="Introduce amount"
                       type="text"
@@ -95,8 +95,8 @@ exports[`<CashInOperation /> should render correctly 1`] = `
                 >
                   <label
                     class="chakra-form__label css-1jbsrib"
-                    for="field-:r1:"
-                    id="field-:r1:-label"
+                    for="field-:r2:"
+                    id="field-:r2:-label"
                   >
                     <div
                       class="chakra-stack css-84zodg"
@@ -121,7 +121,7 @@ exports[`<CashInOperation /> should render correctly 1`] = `
                       autocomplete="off"
                       class="chakra-input css-6kc61d"
                       data-testid="destinationAccount"
-                      id="field-:r1:"
+                      id="field-:r2:"
                       name="destinationAccount"
                       placeholder="Introduce account"
                       value=""
@@ -129,7 +129,7 @@ exports[`<CashInOperation /> should render correctly 1`] = `
                   </div>
                 </div>
               </div>
-            </div>
+            </form>
           </div>
           <div
             class="chakra-stack css-eunu1i"
@@ -312,6 +312,7 @@ exports[`<CashInOperation /> should render correctly 1`] = `
             <button
               class="chakra-button css-1jvauvu"
               data-testid="confirm-btn"
+              disabled=""
               type="button"
             >
               Accept

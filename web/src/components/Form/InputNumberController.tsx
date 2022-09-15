@@ -96,28 +96,20 @@ const InputNumberController = ({
 
 					if (maxValue && minValue) {
 						const { floatValue = 0 } = values;
-						let floatAux = floatValue;
 
-						if (floatValue === undefined) floatAux = minValue;
-
-						if (minValue <= floatAux && floatAux <= maxValue) return true;
-						return false;
+						return minValue <= floatValue && floatValue <= maxValue;
 					}
 
 					if (maxValue) {
 						const { floatValue = 0 } = values;
-						let floatAux = floatValue;
-						if (!floatValue) floatAux = 0;
-						if (floatAux <= maxValue) return true;
-						return false;
+
+						return floatValue <= maxValue;
 					}
 
 					if (minValue) {
 						const { floatValue = 0 } = values;
-						let floatAux = floatValue;
-						if (!floatValue) floatAux = minValue;
-						if (floatAux >= minValue) return true;
-						return false;
+
+						return floatValue >= minValue;
 					}
 					return true;
 				};

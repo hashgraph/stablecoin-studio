@@ -4,7 +4,7 @@ exports[`<DirectAccess /> should render correctly 1`] = `
 <DocumentFragment>
   <button
     class="css-r6fkgg"
-    data-testid="direct-access-container"
+    data-testid="direct-access-dashboard"
   >
     <div
       class="css-bv4l9q"

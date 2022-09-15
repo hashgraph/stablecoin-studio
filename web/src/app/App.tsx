@@ -16,7 +16,7 @@ function App() {
 				<ChakraProvider theme={theme}>
 					<BrowserRouter>
 						<Focus />
-						<Fonts assetsUrl={''} />
+						<Fonts />
 						<Router />
 					</BrowserRouter>
 				</ChakraProvider>

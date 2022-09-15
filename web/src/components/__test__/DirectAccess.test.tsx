@@ -37,7 +37,7 @@ describe(`<${DirectAccess.name} />`, () => {
 	test('on click should redirect', () => {
 		const component = render(<DirectAccess {...directAccessProps} />);
 
-		const container = component.getByTestId('direct-access-container');
+		const container = component.getByTestId(`direct-access-${directAccessProps.route}`);
 		const anything = expect.any(Function);
 
 		userEvent.click(container);
