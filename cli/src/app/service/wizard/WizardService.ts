@@ -27,15 +27,14 @@ export default class WizardService extends Service {
   public async mainMenu(): Promise<void> {
     const wizardMainOptions: Array<string> =
       language.getArray('wizard.mainOptions');
+    const currentAccount = utilsService.getCurrentAccount();
 
     switch (
       await utilsService.defaultMultipleAsk(
         language.getText('wizard.mainMenuTitle'),
         wizardMainOptions,
         configurationService.getConfiguration().defaultNetwork,
-        configurationService.getConfiguration().accounts[0].accountId +
-          ' - ' +
-          configurationService.getConfiguration().accounts[0].alias,
+        `${currentAccount.accountId} - ${currentAccount.alias}`,
       )
     ) {
       case wizardMainOptions[0]:
@@ -75,7 +74,7 @@ export default class WizardService extends Service {
   /**
    * Show configuration menu
    */
-  private async configurationMenu(): Promise<void> {
+  public async configurationMenu(): Promise<void> {
     const wizardChangeConfigOptions: Array<string> = language.getArray(
       'wizard.changeOptions',
     );
@@ -98,8 +97,8 @@ export default class WizardService extends Service {
         utilsService.showMessage(language.getText('wizard.networkChanged'));
         break;
       case wizardChangeConfigOptions[3]:
-        await this.setConfigurationService.configureAccounts();
-        utilsService.showMessage(language.getText('wizard.accountsChanged'));
+        await this.setConfigurationService.manageAccountMenu();
+        //utilsService.showMessage(language.getText('wizard.accountsChanged'));
         break;
       case wizardChangeConfigOptions[wizardChangeConfigOptions.length - 1]:
       default:
@@ -107,5 +106,22 @@ export default class WizardService extends Service {
     }
 
     await this.configurationMenu();
+  }
+
+  public async chooseAccount(): Promise<void> {
+    const accounts = configurationService.getConfiguration().accounts;
+    const options = accounts.map((acc) => `${acc.accountId} - ${acc.alias}`);
+    const account = await utilsService.defaultMultipleAsk(
+      language.getText('wizard.accountLogin'),
+      options,
+    );
+    utilsService.setCurrentAccount(
+      accounts.find(
+        (acc) =>
+          acc.accountId === account.split(' - ')[0] &&
+          acc.alias === account.split(' - ')[1],
+      ),
+    );
+    await this.mainMenu();
   }
 }

@@ -10,13 +10,16 @@ import {
   NetworkMode,
   SDK,
 } from 'hedera-stable-coin-sdk';
+import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 const colors = require('colors');
+const MaskData = require('maskdata');
 
 /**
  * Utilities Service
  */
 export default class UtilitiesService extends Service {
   private sdk: SDK;
+  private currentAccount: IAccountConfig;
 
   constructor() {
     super('Utilities');
@@ -35,6 +38,18 @@ export default class UtilitiesService extends Service {
       throw new Error('SDK not initialized');
     } else {
       return this.sdk;
+    }
+  }
+
+  public setCurrentAccount(account: IAccountConfig): void {
+    this.currentAccount = account;
+  }
+
+  public getCurrentAccount(): IAccountConfig {
+    if (!this.currentAccount) {
+      throw new Error('Account not initialized');
+    } else {
+      return this.currentAccount;
     }
   }
 
@@ -184,5 +199,22 @@ export default class UtilitiesService extends Service {
       code = 1;
     }
     process.exit(code);
+  }
+
+  public maskPrivateAccounts(accounts: IAccountConfig[]): IAccountConfig[] {
+    const maskJSONOptions = {
+      maskWith: '.',
+      unmaskedStartCharacters: 4,
+      unmaskedEndCharacters: 4,
+    };
+    const result = accounts.map((acc) => {
+      return {
+        privateKey: MaskData.maskPassword(acc.privateKey, maskJSONOptions),
+        accountId: acc.accountId,
+        network: acc.network,
+        alias: acc.alias,
+      };
+    });
+    return result;
   }
 }

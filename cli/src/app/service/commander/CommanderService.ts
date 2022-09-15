@@ -43,18 +43,16 @@ export default class CommanderService extends Service {
         language.getText('commander.options.network'),
       )
       .description(language.getText('commander.wizardDescription'))
-      .action(
-        async (options): Promise<void> => {
-          // Check if default configuration exists, if not, start init command
-          await configurationService.init(
-            {
-              defaultNetwork: options.network,
-            },
-            options.config,
-          );
-          await wizardService.mainMenu();
-        },
-      );
+      .action(async (options): Promise<void> => {
+        // Check if default configuration exists, if not, start init command
+        await configurationService.init(
+          {
+            defaultNetwork: options.network,
+          },
+          options.config,
+        );
+        await wizardService.chooseAccount();
+      });
 
     const token = program
       .command('token')
