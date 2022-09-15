@@ -19,10 +19,11 @@ import DatePicker from 'react-datepicker';
 import Icon from '../Icon';
 import 'react-datepicker/dist/react-datepicker.css';
 
-interface DatePickerControllerProps {
+export interface DatePickerControllerProps {
 	control: Control<Record<string, string | number>>;
 	dataTestId?: string;
 	dateFormat?: string;
+	disabled?: boolean;
 	isClearable?: boolean;
 	isRequired?: boolean;
 	label?: string;
@@ -32,6 +33,7 @@ interface DatePickerControllerProps {
 	onChangeAux?: (date: Date | [Date | null, Date | null] | null) => void;
 	placeholder?: string;
 	rules?: UseControllerProps['rules'];
+	showErrors?: boolean;
 }
 
 const CustomInput = forwardRef<any, any>((props, ref) => {
@@ -87,10 +89,11 @@ const CustomHeader = ({
 
 const StyledDatePicker = chakra(DatePicker);
 
-const DatepickerController = ({
+const DatePickerController = ({
 	control,
 	dataTestId,
 	dateFormat = 'MMM dd, yyy',
+	disabled,
 	isClearable = false,
 	isRequired = false,
 	label,
@@ -100,6 +103,7 @@ const DatepickerController = ({
 	onChangeAux,
 	placeholder,
 	rules,
+	showErrors,
 	...props
 }: DatePickerControllerProps) => {
 	return (
@@ -134,6 +138,7 @@ const DatepickerController = ({
 								customInput={<CustomInput />}
 								data-testid={dataTestId || name}
 								dateFormat={dateFormat}
+								disabled={disabled}
 								dropdownMode='select'
 								formatWeekDay={(nameOfDay) => nameOfDay.substr(0, 1)}
 								isClearable={isClearable}
@@ -147,7 +152,11 @@ const DatepickerController = ({
 								showPopperArrow={false}
 								{...props}
 							/>
-							<FormErrorMessage>{error && error.message}</FormErrorMessage>
+							{showErrors && (
+								<FormErrorMessage data-testid='datepicker-error-message'>
+									{error && error.message}
+								</FormErrorMessage>
+							)}
 						</FormControl>
 					</Stack>
 				);
@@ -156,4 +165,4 @@ const DatepickerController = ({
 	);
 };
 
-export default DatepickerController;
+export default DatePickerController;
