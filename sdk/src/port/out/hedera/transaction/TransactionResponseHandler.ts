@@ -5,32 +5,33 @@ import Web3 from 'web3';
 
 export  class TransactionResposeHandler {
 
-    public async manageResponse(transactionResponse:TransactionResponse, responseType:TransactionType, name:string, client:Client, abi?:any ):Promise<HTSResponse> {
+    public async manageResponse(transactionResponse:TransactionResponse, responseType:TransactionType, client:Client, nameFunction?:string, abi?:any ):Promise<HTSResponse> {
         
+        let results : Uint8Array = new Uint8Array();
         if (responseType == TransactionType.RECEIPT) { 
             const transactionReceipt: TransactionReceipt = await transactionResponse.getReceipt(client);            
             return this.createHTSResponse(transactionResponse.transactionId,
                                           transactionReceipt.status,
                                           responseType,
-                                          new Uint8Array(),
+                                          results,
                                           transactionReceipt.topicId
                                           );
         }
 
-        if (responseType == TransactionType.RECORD) {
-            
+        if (responseType == TransactionType.RECORD) {            
             const transactionRecord: TransactionRecord = await transactionResponse.getRecord(client);
             
-            const results = this.decodeFunctionResult(
-                name,
-                transactionRecord.contractFunctionResult?.bytes,
-                abi,
-            );
+            if (nameFunction) {
+                results = this.decodeFunctionResult(nameFunction,
+                                                    transactionRecord.contractFunctionResult?.bytes,
+                                                    abi
+                );
+            }   
             return this.createHTSResponse(transactionRecord.transactionId,
-                                          transactionRecord.receipt.status,
-                                          responseType,                                          
-                                          results,
-                                          transactionRecord.receipt.topicId);
+                                        transactionRecord.receipt.status,
+                                        responseType,                                          
+                                        results,
+                                        transactionRecord.receipt.topicId);
         }   
 
         throw new Error ("The response type is neither RECORD nor RECEIPT.")

@@ -156,7 +156,7 @@ export default class HTSProvider implements IProvider {
 		this.htsSigner.setClient(client);
 		const transaction: Transaction = TransactionProvider.buildContractExecuteTransaction(contractId, functionCallParameters, gas);
 		const transactionResponse: TransactionResponse = await this.htsSigner.signAndSendTransaction(transaction);
-		const htsResponse: HTSResponse = await this.transactionResposeHandler.manageResponse(transactionResponse, TransactionType.RECORD,name, client,abi);
+		const htsResponse: HTSResponse = await this.transactionResposeHandler.manageResponse(transactionResponse, TransactionType.RECORD, client, name, abi);
 			
 		return htsResponse.reponseParam;
 	}
