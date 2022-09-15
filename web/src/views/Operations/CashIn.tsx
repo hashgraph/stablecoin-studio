@@ -28,8 +28,6 @@ const CashInOperation = () => {
 						{t('cashIn:operationTitle')}
 					</Text>
 					<Stack spacing={6}>
-						{/* TODO: improve typesctipt  */}
-						{/* @ts-ignore */}
 						<InputNumberController
 							rules={{
 								required: t('global:validations.required'),

@@ -1,0 +1,164 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<InputNumberController /> .render should be disabled if disabled=true: Disabled 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-stack css-1h0sumw"
+  >
+    <div
+      class="chakra-form-control css-1kxonj9"
+      data-testid="formControl"
+      role="group"
+    >
+      <div
+        class="chakra-input__group css-4302v8"
+      >
+        <input
+          class="chakra-input css-6kc61d"
+          data-testid="input-test"
+          disabled=""
+          id="field-:r5:"
+          inputmode="numeric"
+          type="text"
+          value=""
+        />
+        <div
+          class="chakra-input__right-element css-y1u7d2"
+        />
+      </div>
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;
+
+exports[`<InputNumberController /> .render should render the component: WithLabel 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-stack css-1h0sumw"
+  >
+    <div
+      class="chakra-form-control css-1kxonj9"
+      data-testid="formControl"
+      role="group"
+    >
+      <label
+        class="chakra-form__label css-1jbsrib"
+        for="field-:r0:"
+        id="field-:r0:-label"
+      >
+        <div
+          class="chakra-stack css-84zodg"
+        >
+          <p
+            class="chakra-text css-mgupmj"
+          >
+            test-label
+          </p>
+        </div>
+      </label>
+      <div
+        class="chakra-input__group css-4302v8"
+      >
+        <input
+          class="chakra-input css-6kc61d"
+          data-testid="input-test"
+          id="field-:r0:"
+          inputmode="numeric"
+          type="text"
+          value=""
+        />
+        <div
+          class="chakra-input__right-element css-y1u7d2"
+        />
+      </div>
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;
+
+exports[`<InputNumberController /> .render should show placeholder: WithPlaceholder 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-stack css-1h0sumw"
+  >
+    <div
+      class="chakra-form-control css-1kxonj9"
+      data-testid="formControl"
+      role="group"
+    >
+      <div
+        class="chakra-input__group css-4302v8"
+      >
+        <input
+          class="chakra-input css-6kc61d"
+          data-testid="input-test"
+          id="field-:r4:"
+          inputmode="numeric"
+          placeholder="placeholder"
+          type="text"
+          value=""
+        />
+        <div
+          class="chakra-input__right-element css-y1u7d2"
+        />
+      </div>
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;
+
+exports[`<InputNumberController /> .render should show the error message: WithError 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-stack css-1h0sumw"
+  >
+    <div
+      class="chakra-form-control css-1kxonj9"
+      data-testid="formControl"
+      role="group"
+    >
+      <div
+        class="chakra-input__group css-4302v8"
+      >
+        <input
+          aria-describedby="field-:r2:-feedback"
+          aria-invalid="true"
+          class="chakra-input css-6kc61d"
+          data-testid="input-test"
+          id="field-:r2:"
+          inputmode="numeric"
+          type="text"
+          value=""
+        />
+        <div
+          class="chakra-input__right-element css-y1u7d2"
+        />
+      </div>
+      <div
+        aria-live="polite"
+        class="chakra-form__error-message css-2e3jkk"
+        data-testid="input-error-message"
+        id="field-:r2:-feedback"
+      >
+        Expired
+      </div>
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;

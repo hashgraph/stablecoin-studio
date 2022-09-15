@@ -2,8 +2,8 @@
 
 exports[`<DirectAccess /> should render correctly 1`] = `
 <DocumentFragment>
-  <div
-    class="css-1a4lzer"
+  <button
+    class="css-r6fkgg"
     data-testid="direct-access-container"
   >
     <div
@@ -84,7 +84,7 @@ exports[`<DirectAccess /> should render correctly 1`] = `
     >
       Test
     </p>
-  </div>
+  </button>
   <span
     hidden=""
     id="__chakra_env"

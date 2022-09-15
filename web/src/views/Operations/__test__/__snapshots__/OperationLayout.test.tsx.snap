@@ -3,54 +3,60 @@
 exports[`<OperationLayout /> should render correctly 1`] = `
 <DocumentFragment>
   <div
-    class="chakra-stack css-n21gh5"
+    class="chakra-stack css-16oka5y"
   >
     <h2
-      class="chakra-heading css-19s3yit"
+      class="chakra-heading css-llrpa2"
+      data-testid="base-container-heading"
     >
       Operations
     </h2>
     <div
-      class="css-epd29r"
+      class="css-1kemao2"
+      data-testid="base-container-children"
     >
       <div
-        class="css-1rtxhmh"
+        class="css-epd29r"
       >
         <div
-          class="chakra-stack css-n21gh5"
+          class="css-1rtxhmh"
         >
-          <span
-            data-testid="left-content"
-          />
+          <div
+            class="chakra-stack css-n21gh5"
+          >
+            <span
+              data-testid="left-content"
+            />
+          </div>
+          <div
+            class="chakra-stack css-eunu1i"
+          >
+            <span
+              data-testid="right-content"
+            />
+          </div>
         </div>
         <div
-          class="chakra-stack css-eunu1i"
+          class="css-3gu2fl"
         >
-          <span
-            data-testid="right-content"
-          />
-        </div>
-      </div>
-      <div
-        class="css-3gu2fl"
-      >
-        <div
-          class="chakra-stack css-1amf41o"
-        >
-          <button
-            class="chakra-button css-iad710"
-            data-testid="cancel-btn"
-            type="button"
+          <div
+            class="chakra-stack css-1amf41o"
           >
-            Go back
-          </button>
-          <button
-            class="chakra-button css-1jvauvu"
-            data-testid="confirm-btn"
-            type="button"
-          >
-            Accept
-          </button>
+            <button
+              class="chakra-button css-a4cdul"
+              data-testid="cancel-btn"
+              type="button"
+            >
+              Go back
+            </button>
+            <button
+              class="chakra-button css-1jvauvu"
+              data-testid="confirm-btn"
+              type="button"
+            >
+              Accept
+            </button>
+          </div>
         </div>
       </div>
     </div>
