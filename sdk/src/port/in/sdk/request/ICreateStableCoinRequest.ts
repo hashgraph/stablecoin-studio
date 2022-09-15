@@ -9,4 +9,5 @@ export interface ICreateStableCoinRequest {
 	memo?: string;
 	freeze?: string;
 	freezeDefault?: boolean;
+	autoRenewAccount?: string;
 }

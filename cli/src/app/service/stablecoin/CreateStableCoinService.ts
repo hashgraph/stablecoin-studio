@@ -138,7 +138,7 @@ export default class CreateStableCoinService extends Service {
     const optionalProps = await this.askForOptionalProps();
     let decimals = '6';
     let initialSupply = '';
-    let supplyType = false;
+    let supplyType = true;
     let totalSupply = undefined;
 
     if (optionalProps) {

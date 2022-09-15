@@ -135,6 +135,9 @@ export class SDK {
 				...request,
 				accountId: new AccountId(request.accountId),
 				privateKey: new PrivateKey(request.privateKey),
+				autoRenewAccount: request.autoRenewAccount
+					? new AccountId(request.autoRenewAccount)
+					: request.autoRenewAccount,
 			};
 			return this.stableCoinService.createStableCoin(req);
 		} catch (error) {
