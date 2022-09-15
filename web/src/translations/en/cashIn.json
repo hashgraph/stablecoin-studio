@@ -15,5 +15,11 @@
         "initialSupply": "Initial supply",
         "totalSupply": "Total supply",
         "supplyType": "Supply type (infinite or finite)"
+    },
+    "modalAction": {
+        "subtitle": "Operation details review",
+        "destinationAccount": "Account to cash in",
+        "amount": "Amount",
+        "accept": "Make cash in"
     }
 }

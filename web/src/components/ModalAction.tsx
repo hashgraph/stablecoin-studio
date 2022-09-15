@@ -1,5 +1,6 @@
 import {
 	Button,
+	HStack,
 	Modal,
 	ModalBody,
 	ModalCloseButton,
@@ -11,7 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 
-interface ModalActionProps {
+export interface ModalActionProps {
 	cancelButtonLabel: string;
 	children: ReactNode;
 	confirmButtonLabel: string;
@@ -37,9 +38,9 @@ const ModalAction = (props: ModalActionProps) => {
 	return (
 		<Modal data-testid='modal-action' isOpen={isOpen} onClose={onClose} size={'xl'} isCentered>
 			<ModalOverlay />
-			<ModalContent data-testid='modal-action-content' p='50'>
+			<ModalContent data-testid='modal-action-content' p='50' w='500px'>
 				<ModalCloseButton />
-				<ModalHeader>
+				<ModalHeader px={0}>
 					<Text
 						data-testid='modal-action-title'
 						fontSize='19px'
@@ -50,20 +51,23 @@ const ModalAction = (props: ModalActionProps) => {
 						{title}
 					</Text>
 				</ModalHeader>
-				<ModalBody textAlign='center' pt='14px'>
+				<ModalBody textAlign='center' pt='14px' px={0}>
 					{children}
 				</ModalBody>
-				<ModalFooter justifyContent={'space-between'} pb='0'>
-					<Button
-						data-testid='modal-action-cancel-button'
-						onClick={onCancel || onClose}
-						variant='secondary'
-					>
-						{cancelButtonLabel}
-					</Button>
-					<Button data-testid='modal-action-confirm-button' onClick={onConfirm} variant='primary'>
-						{confirmButtonLabel}
-					</Button>
+				<ModalFooter p='0' justifyContent='center'>
+					<HStack spacing={6} pt={8} w='full'>
+						<Button
+							data-testid='modal-action-cancel-button'
+							onClick={onCancel || onClose}
+							variant='secondary'
+							flex={1}
+						>
+							{cancelButtonLabel}
+						</Button>
+						<Button data-testid='modal-action-confirm-button' onClick={onConfirm} flex={1}>
+							{confirmButtonLabel}
+						</Button>
+					</HStack>
 				</ModalFooter>
 			</ModalContent>
 		</Modal>

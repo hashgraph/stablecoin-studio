@@ -1,6 +1,9 @@
 {
     "title": "Operations",
     "subtitle": "Create new operation",
-    "cashInOperation": "Cash in tokens"
-
+    "cashInOperation": "Cash in tokens",
+    "modalSuccessTitle": "Operation successfully completed",
+    "modalSuccessDesc": "You can follow the order in the list of operations.",
+    "modalErrorTitle": "Error in the operation",
+    "modalErrorDesc": "Operation failed, please try again later."
 }

@@ -1,6 +1,6 @@
-import { render } from '../../../test/index';
-import en from '../../../translations/en/cashIn.json';
-import CashInOperation from '../CashIn';
+import { render } from '../../../../test/index';
+import en from '../../../../translations/en/cashIn.json';
+import CashInOperation from '../';
 
 const translations = en;
 
