@@ -1,18 +1,16 @@
 import {
 	FormControl,
 	FormErrorMessage,
-	FormLabel,
-	HStack,
 	Input,
 	InputGroup,
 	Stack,
-	Text,
 	InputProps as ChakraInputProps,
 	FormControlProps,
 	FormLabelProps,
 } from '@chakra-ui/react';
 import { Control, Controller, FieldValues, UseControllerProps } from 'react-hook-form';
 import { ChangeEventHandler, ChangeEvent, FocusEvent, ReactNode } from 'react';
+import InputLabel from './InputLabel';
 
 export interface InputControllerProps extends Omit<ChakraInputProps, 'name'> {
 	rules?: UseControllerProps['rules'];
@@ -69,12 +67,9 @@ const InputController = ({
 					<Stack w='full'>
 						<FormControl isInvalid={!!error} {...formStyle}>
 							{label && (
-								<FormLabel {...labelStyle}>
-									<HStack>
-										<Text>{label}</Text>
-										{isRequired && <Text color='red'>*</Text>}
-									</HStack>
-								</FormLabel>
+								<InputLabel isRequired={isRequired} style={labelStyle}>
+									{label}
+								</InputLabel>
 							)}
 							<InputGroup>
 								{leftElement}
@@ -91,9 +86,9 @@ const InputController = ({
 								/>
 								{rightElement}
 							</InputGroup>
-							{showErrors && (
+							{showErrors && error && (
 								<FormErrorMessage data-testid='input-error-message'>
-									{error && error.message}
+									{error.message}
 								</FormErrorMessage>
 							)}
 						</FormControl>

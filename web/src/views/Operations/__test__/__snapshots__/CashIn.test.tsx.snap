@@ -3,312 +3,381 @@
 exports[`<CashInOperation /> should render correctly 1`] = `
 <DocumentFragment>
   <div
-    class="chakra-stack css-n21gh5"
+    class="chakra-stack css-16oka5y"
   >
     <h2
-      class="chakra-heading css-19s3yit"
+      class="chakra-heading css-llrpa2"
+      data-testid="base-container-heading"
     >
       Operations
     </h2>
     <div
-      class="css-epd29r"
+      class="css-1kemao2"
+      data-testid="base-container-children"
     >
       <div
-        class="css-1rtxhmh"
+        class="css-epd29r"
       >
         <div
-          class="chakra-stack css-n21gh5"
-        >
-          <h2
-            class="chakra-heading css-17ipgvs"
-            data-testid="title"
-          >
-            Cash in operation
-          </h2>
-          <p
-            class="chakra-text css-1lyqlf8"
-            data-testid="operation-title"
-          >
-            Operation details
-          </p>
-          <div
-            class="chakra-stack css-b5leqj"
-          >
-            <div
-              class="chakra-stack css-1h0sumw"
-            >
-              <div
-                class="chakra-form-control css-1kxonj9"
-                data-testid="formControl"
-                role="group"
-              >
-                <label
-                  class="chakra-form__label css-1hbfdlu"
-                  for="field-:r0:"
-                  id="field-:r0:-label"
-                >
-                  <div
-                    class="chakra-stack css-84zodg"
-                  >
-                    <p
-                      class="chakra-text css-mgupmj"
-                    >
-                      How much tokens?
-                    </p>
-                    <p
-                      class="chakra-text css-x3tq0c"
-                    >
-                      *
-                    </p>
-                  </div>
-                </label>
-                <div
-                  class="chakra-input__group css-4302v8"
-                >
-                  <input
-                    class="chakra-input css-6kc61d"
-                    data-testid="amount"
-                    id="field-:r0:"
-                    inputmode="numeric"
-                    placeholder="Introduce amount"
-                    type="text"
-                    value=""
-                  />
-                  <div
-                    class="chakra-input__right-element css-2otcp4"
-                  />
-                </div>
-              </div>
-            </div>
-            <div
-              class="chakra-stack css-1h0sumw"
-            >
-              <div
-                class="chakra-form-control css-1kxonj9"
-                role="group"
-              >
-                <label
-                  class="chakra-form__label css-1jbsrib"
-                  for="field-:r1:"
-                  id="field-:r1:-label"
-                >
-                  <div
-                    class="chakra-stack css-84zodg"
-                  >
-                    <p
-                      class="chakra-text css-mgupmj"
-                    >
-                      What account will receive the tokens?
-                    </p>
-                    <p
-                      class="chakra-text css-x3tq0c"
-                    >
-                      *
-                    </p>
-                  </div>
-                </label>
-                <div
-                  class="chakra-input__group css-4302v8"
-                >
-                  <input
-                    autocomplete="off"
-                    class="chakra-input css-6kc61d"
-                    data-testid="destinationAccount"
-                    id="field-:r1:"
-                    name="destinationAccount"
-                    placeholder="Introduce account"
-                    value=""
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          class="chakra-stack css-eunu1i"
+          class="css-1rtxhmh"
         >
           <div
-            class="chakra-stack css-wqnj46"
+            class="chakra-stack css-n21gh5"
           >
             <h2
-              class="chakra-heading css-12c29ps"
-              data-testid="details-title"
+              class="chakra-heading css-17ipgvs"
+              data-testid="title"
             >
-              Stable coin details
+              Cash in operation
             </h2>
-            <div
-              class="css-13brihr"
+            <p
+              class="chakra-text css-1lyqlf8"
+              data-testid="operation-title"
             >
-              <p
-                class="chakra-text css-53sllx"
-                data-testid="details-review-title"
-              >
-                Basic details
-              </p>
+              Operation details
+            </p>
+            <div
+              class="chakra-stack css-b5leqj"
+            >
               <div
-                class="css-0"
+                class="chakra-stack css-1h0sumw"
               >
                 <div
-                  class="css-0"
+                  class="chakra-form-control css-1kxonj9"
+                  data-testid="formControl"
+                  role="group"
                 >
-                  <div
-                    class="css-gg4vpm"
-                    data-testid="details-review-detail-0"
+                  <label
+                    class="chakra-form__label css-1jbsrib"
+                    for="field-:r0:"
+                    id="field-:r0:-label"
                   >
-                    <p
-                      class="chakra-text css-rhg419"
+                    <div
+                      class="chakra-stack css-84zodg"
                     >
-                      Name
-                    </p>
-                    <p
-                      class="chakra-text css-rhg419"
-                    />
-                  </div>
-                  <hr
-                    aria-orientation="horizontal"
-                    class="chakra-divider css-zaaihy"
-                    title="divider"
-                  />
-                </div>
-                <div
-                  class="css-0"
-                >
+                      <p
+                        class="chakra-text css-mgupmj"
+                      >
+                        How much tokens?
+                      </p>
+                      <p
+                        class="chakra-text css-ftb7fv"
+                        data-testid="required"
+                      >
+                        *
+                      </p>
+                    </div>
+                  </label>
                   <div
-                    class="css-gg4vpm"
-                    data-testid="details-review-detail-1"
+                    class="chakra-input__group css-4302v8"
                   >
-                    <p
-                      class="chakra-text css-rhg419"
-                    >
-                      Symbol
-                    </p>
-                    <p
-                      class="chakra-text css-rhg419"
+                    <input
+                      class="chakra-input css-6kc61d"
+                      data-testid="amount"
+                      id="field-:r0:"
+                      inputmode="numeric"
+                      placeholder="Introduce amount"
+                      type="text"
+                      value=""
                     />
-                  </div>
-                  <hr
-                    aria-orientation="horizontal"
-                    class="chakra-divider css-zaaihy"
-                    title="divider"
-                  />
-                </div>
-                <div
-                  class="css-0"
-                >
-                  <div
-                    class="css-gg4vpm"
-                    data-testid="details-review-detail-2"
-                  >
-                    <p
-                      class="chakra-text css-rhg419"
+                    <div
+                      class="chakra-input__right-element css-y1u7d2"
                     >
-                      Decimals
-                    </p>
-                    <p
-                      class="chakra-text css-rhg419"
-                    />
+                      <div
+                        class="css-k008qs"
+                      >
+                        <button
+                          class="chakra-button css-ulqh8l"
+                          type="button"
+                        >
+                          <svg
+                            class="chakra-icon css-1imiqbz"
+                            fill="currentColor"
+                            focusable="false"
+                            height="1em"
+                            viewBox="0 0 256 256"
+                            width="1em"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <rect
+                              fill="none"
+                              height="256"
+                              width="256"
+                            />
+                            <polyline
+                              fill="none"
+                              points="48 160 128 80 208 160"
+                              stroke="currentColor"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="16"
+                            />
+                          </svg>
+                        </button>
+                        <button
+                          class="chakra-button css-ulqh8l"
+                          type="button"
+                        >
+                          <svg
+                            class="chakra-icon css-1imiqbz"
+                            fill="currentColor"
+                            focusable="false"
+                            height="1em"
+                            viewBox="0 0 256 256"
+                            width="1em"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <rect
+                              fill="none"
+                              height="256"
+                              width="256"
+                            />
+                            <polyline
+                              fill="none"
+                              points="208 96 128 176 48 96"
+                              stroke="currentColor"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="16"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div
-              class="css-13brihr"
-            >
-              <p
-                class="chakra-text css-53sllx"
-                data-testid="details-review-title"
-              >
-                Optional details
-              </p>
               <div
-                class="css-0"
+                class="chakra-stack css-1h0sumw"
               >
                 <div
-                  class="css-0"
+                  class="chakra-form-control css-1kxonj9"
+                  role="group"
                 >
-                  <div
-                    class="css-gg4vpm"
-                    data-testid="details-review-detail-0"
+                  <label
+                    class="chakra-form__label css-1jbsrib"
+                    for="field-:r1:"
+                    id="field-:r1:-label"
                   >
-                    <p
-                      class="chakra-text css-rhg419"
+                    <div
+                      class="chakra-stack css-84zodg"
                     >
-                      Initial supply
-                    </p>
-                    <p
-                      class="chakra-text css-rhg419"
-                    />
-                  </div>
-                  <hr
-                    aria-orientation="horizontal"
-                    class="chakra-divider css-zaaihy"
-                    title="divider"
-                  />
-                </div>
-                <div
-                  class="css-0"
-                >
+                      <p
+                        class="chakra-text css-mgupmj"
+                      >
+                        What account will receive the tokens?
+                      </p>
+                      <p
+                        class="chakra-text css-ftb7fv"
+                        data-testid="required"
+                      >
+                        *
+                      </p>
+                    </div>
+                  </label>
                   <div
-                    class="css-gg4vpm"
-                    data-testid="details-review-detail-1"
+                    class="chakra-input__group css-4302v8"
                   >
-                    <p
-                      class="chakra-text css-rhg419"
-                    >
-                      Total supply
-                    </p>
-                    <p
-                      class="chakra-text css-rhg419"
-                    />
-                  </div>
-                  <hr
-                    aria-orientation="horizontal"
-                    class="chakra-divider css-zaaihy"
-                    title="divider"
-                  />
-                </div>
-                <div
-                  class="css-0"
-                >
-                  <div
-                    class="css-gg4vpm"
-                    data-testid="details-review-detail-2"
-                  >
-                    <p
-                      class="chakra-text css-rhg419"
-                    >
-                      Supply type (infinite or finite)
-                    </p>
-                    <p
-                      class="chakra-text css-rhg419"
+                    <input
+                      autocomplete="off"
+                      class="chakra-input css-6kc61d"
+                      data-testid="destinationAccount"
+                      id="field-:r1:"
+                      name="destinationAccount"
+                      placeholder="Introduce account"
+                      value=""
                     />
                   </div>
                 </div>
               </div>
             </div>
           </div>
+          <div
+            class="chakra-stack css-eunu1i"
+          >
+            <div
+              class="chakra-stack css-wqnj46"
+            >
+              <h2
+                class="chakra-heading css-12c29ps"
+                data-testid="details-title"
+              >
+                Stable coin details
+              </h2>
+              <div
+                class="css-13brihr"
+              >
+                <p
+                  class="chakra-text css-53sllx"
+                  data-testid="details-review-title"
+                >
+                  Basic details
+                </p>
+                <div
+                  class="css-0"
+                >
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-0"
+                    >
+                      <p
+                        class="chakra-text css-rhg419"
+                      >
+                        Name
+                      </p>
+                      <p
+                        class="chakra-text css-rhg419"
+                      />
+                    </div>
+                    <hr
+                      aria-orientation="horizontal"
+                      class="chakra-divider css-zaaihy"
+                      title="divider"
+                    />
+                  </div>
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-1"
+                    >
+                      <p
+                        class="chakra-text css-rhg419"
+                      >
+                        Symbol
+                      </p>
+                      <p
+                        class="chakra-text css-rhg419"
+                      />
+                    </div>
+                    <hr
+                      aria-orientation="horizontal"
+                      class="chakra-divider css-zaaihy"
+                      title="divider"
+                    />
+                  </div>
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-2"
+                    >
+                      <p
+                        class="chakra-text css-rhg419"
+                      >
+                        Decimals
+                      </p>
+                      <p
+                        class="chakra-text css-rhg419"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="css-13brihr"
+              >
+                <p
+                  class="chakra-text css-53sllx"
+                  data-testid="details-review-title"
+                >
+                  Optional details
+                </p>
+                <div
+                  class="css-0"
+                >
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-0"
+                    >
+                      <p
+                        class="chakra-text css-rhg419"
+                      >
+                        Initial supply
+                      </p>
+                      <p
+                        class="chakra-text css-rhg419"
+                      />
+                    </div>
+                    <hr
+                      aria-orientation="horizontal"
+                      class="chakra-divider css-zaaihy"
+                      title="divider"
+                    />
+                  </div>
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-1"
+                    >
+                      <p
+                        class="chakra-text css-rhg419"
+                      >
+                        Total supply
+                      </p>
+                      <p
+                        class="chakra-text css-rhg419"
+                      />
+                    </div>
+                    <hr
+                      aria-orientation="horizontal"
+                      class="chakra-divider css-zaaihy"
+                      title="divider"
+                    />
+                  </div>
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-2"
+                    >
+                      <p
+                        class="chakra-text css-rhg419"
+                      >
+                        Supply type (infinite or finite)
+                      </p>
+                      <p
+                        class="chakra-text css-rhg419"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-      <div
-        class="css-3gu2fl"
-      >
         <div
-          class="chakra-stack css-1amf41o"
+          class="css-3gu2fl"
         >
-          <button
-            class="chakra-button css-iad710"
-            data-testid="cancel-btn"
-            type="button"
+          <div
+            class="chakra-stack css-1amf41o"
           >
-            Go back
-          </button>
-          <button
-            class="chakra-button css-1jvauvu"
-            data-testid="confirm-btn"
-            type="button"
-          >
-            Accept
-          </button>
+            <button
+              class="chakra-button css-a4cdul"
+              data-testid="cancel-btn"
+              type="button"
+            >
+              Go back
+            </button>
+            <button
+              class="chakra-button css-1jvauvu"
+              data-testid="confirm-btn"
+              type="button"
+            >
+              Accept
+            </button>
+          </div>
         </div>
       </div>
     </div>

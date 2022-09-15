@@ -1,23 +1,52 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-// @ts-nocheck
-// TODO: Improve TS
-import { useState } from 'react';
+import { ComponentType, useState } from 'react';
 import {
 	Button,
 	Flex,
 	FormControl,
 	FormErrorMessage,
-	FormLabel,
-	HStack,
 	Input,
+	InputProps as ChakraInputProps,
 	InputGroup,
 	InputRightElement,
+	FormControlProps,
+	FormLabelProps,
 	Stack,
-	Text,
 } from '@chakra-ui/react';
-import { Controller } from 'react-hook-form';
-import { NumericFormat } from 'react-number-format';
+import { Control, Controller, FieldValues, UseControllerProps } from 'react-hook-form';
+import { NumericFormat, NumericFormatProps } from 'react-number-format';
 import Icon from '../Icon';
+import InputLabel from './InputLabel';
+import { InputAttributes } from 'react-number-format/types/types';
+
+/**
+ * NumberFormatValues copied from 'react-number-format' since it isn't exported from the library right now
+ */
+interface NumberFormatValues {
+	floatValue: number | undefined;
+	formattedValue: string;
+	value: string;
+}
+export interface InputNumberControllerProps
+	extends Omit<
+			ChakraInputProps,
+			'name' | 'width' | 'value' | 'defaultValue' | 'color' | 'height' | 'size' | 'type'
+		>,
+		NumericFormatProps {
+	rules?: UseControllerProps['rules'];
+	control: Control<FieldValues>;
+	label?: string;
+	disabled?: boolean;
+	onChangeAux?: (values: NumberFormatValues) => void;
+	onBlurAux?: (floatValue: NumberFormatValues['floatValue']) => void;
+	showErrors?: boolean;
+	'data-testid'?: string;
+	formStyle?: FormControlProps;
+	labelStyle?: FormLabelProps;
+	name: string;
+	hasArrows?: boolean;
+	maxValue?: number;
+	minValue?: number;
+}
 
 const InputNumberController = ({
 	control,
@@ -38,42 +67,35 @@ const InputNumberController = ({
 	decimalSeparator = '.',
 	thousandSeparator = ',',
 	hasArrows = false,
-	rigthAddon = false,
 	showErrors = true,
-	'data-testid': dataTestId,
+	'data-testid': dataTestId = name,
 	formStyle,
-	handleAllowedCustom,
-	readOnly,
-	decimalScale,
-	decimalPrecision,
+	decimalScale = 2,
 	...props
-}) => {
-	const [inputFloatValue, setInputFloatValue] = useState();
+}: InputNumberControllerProps) => {
+	const [inputFloatValue, setInputFloatValue] = useState<number>();
 
 	return (
 		<Controller
 			control={control}
 			rules={rules}
 			name={name}
-			render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => {
-				const onChangeCustom = (values) => {
+			render={({ field: { onChange, value }, fieldState: { error } }) => {
+				const onChangeCustom = (values: NumberFormatValues) => {
 					onChange(values.floatValue === undefined ? '' : values.floatValue);
-					setInputFloatValue(values.floatValue);
-					onChangeAux &&
-						onChangeAux(values, values.value, values.isMax !== undefined ? values.isMax : false);
+					setInputFloatValue(values?.floatValue!);
+					onChangeAux && onChangeAux(values);
 				};
 
-				const onBlurCustom = (event) => {
-					onBlur(event);
-
+				const onBlurCustom = () => {
 					onBlurAux && onBlurAux(inputFloatValue);
 				};
 
-				const handleAllowed = (inputObj) => {
+				const getIsAllowedValue = (values: NumberFormatValues) => {
 					if (maxValue === 0) return false;
 
 					if (maxValue && minValue) {
-						const { floatValue } = inputObj;
+						const { floatValue = 0 } = values;
 						let floatAux = floatValue;
 
 						if (floatValue === undefined) floatAux = minValue;
@@ -83,7 +105,7 @@ const InputNumberController = ({
 					}
 
 					if (maxValue) {
-						const { floatValue } = inputObj;
+						const { floatValue = 0 } = values;
 						let floatAux = floatValue;
 						if (!floatValue) floatAux = 0;
 						if (floatAux <= maxValue) return true;
@@ -91,7 +113,7 @@ const InputNumberController = ({
 					}
 
 					if (minValue) {
-						const { floatValue } = inputObj;
+						const { floatValue = 0 } = values;
 						let floatAux = floatValue;
 						if (!floatValue) floatAux = minValue;
 						if (floatAux >= minValue) return true;
@@ -103,9 +125,17 @@ const InputNumberController = ({
 				const incrementValue = () => {
 					if (maxValue) {
 						maxValue !== value &&
-							onChangeCustom({ value: !value ? 1 : value++, floatValue: !value ? '1' : value++ });
+							onChangeCustom({
+								value: !value ? '1' : (value++).toString(),
+								floatValue: !value ? 1 : value++,
+								formattedValue: value,
+							});
 					} else {
-						onChangeCustom({ value: !value ? 1 : value++, floatValue: !value ? '1' : value++ });
+						onChangeCustom({
+							value: !value ? '1' : (value++).toString(),
+							floatValue: !value ? 1 : value++,
+							formattedValue: value,
+						});
 					}
 				};
 
@@ -113,11 +143,16 @@ const InputNumberController = ({
 					if (minValue || minValue === 0) {
 						minValue !== value &&
 							onChangeCustom({
-								value: !value ? minValue : value--,
+								value: !value ? minValue.toString() : (value--).toString(),
 								floatValue: !value ? minValue : value--,
+								formattedValue: value,
 							});
 					} else {
-						onChangeCustom({ value: !value ? 0 : value--, floatValue: !value ? '0' : value-- });
+						onChangeCustom({
+							value: !value ? '0' : (value--).toString(),
+							floatValue: !value ? 0 : value--,
+							formattedValue: value,
+						});
 					}
 				};
 
@@ -125,54 +160,47 @@ const InputNumberController = ({
 					<Stack w='full'>
 						<FormControl data-testid='formControl' isInvalid={!!error} id={id} {...formStyle}>
 							{label && (
-								<FormLabel fontSize='14px' color='brand.formLabel' pt='20px' {...labelStyle}>
-									<HStack>
-										<Text>{label}</Text>
-										{isRequired && <Text color='red'>*</Text>}
-									</HStack>
-								</FormLabel>
+								<InputLabel isRequired={isRequired} style={labelStyle}>
+									{label}
+								</InputLabel>
 							)}
 							<InputGroup>
 								<NumericFormat
-									data-testid={dataTestId || name}
+									data-testid={dataTestId}
 									suffix={suffix}
 									value={value}
 									displayType='input'
 									type='text'
 									thousandSeparator={thousandSeparator}
-									decimalSeparator={decimalPrecision === 0 ? false : decimalSeparator}
+									decimalSeparator={decimalSeparator}
 									placeholder={placeholder}
-									onValueChange={(values, e) => onChangeCustom(values, e)}
-									onBlur={(e) => onBlurCustom(e)}
-									isAllowed={handleAllowedCustom || handleAllowed}
+									onValueChange={(values) => onChangeCustom(values)}
+									onBlur={onBlurCustom}
+									isAllowed={getIsAllowedValue}
 									allowNegative={allowNegative}
 									disabled={disabled}
-									customInput={Input}
-									decimalScale={decimalScale || 2}
+									customInput={Input as ComponentType<InputAttributes>}
+									decimalScale={decimalScale}
 									{...props}
 								/>
 
-								<InputRightElement gap='10px' zIndex='1'>
+								<InputRightElement w='auto'>
 									{hasArrows && (
 										<Flex>
-											<Button borderRadius='0px' w='20px' onClick={incrementValue}>
-												<Icon name='CaretUp' size={24} weight='fill' />
+											<Button variant='unstyled' w='20px' onClick={incrementValue}>
+												<Icon name='CaretUp' w={6} />
 											</Button>
-											<Button
-												borderRadius='0px'
-												borderTopRightRadius='5px'
-												borderBottomRightRadius='5px'
-												w='20px'
-												onClick={(e) => decrementValue(e)}
-											>
-												<Icon name='CaretDown' size={24} weight='fill' />
+											<Button variant='unstyled' w='20px' onClick={decrementValue}>
+												<Icon name='CaretDown' w={6} />
 											</Button>
 										</Flex>
 									)}
 								</InputRightElement>
 							</InputGroup>
-							{showErrors && (
-								<FormErrorMessage whiteSpace='nowrap'>{error && error.message}</FormErrorMessage>
+							{showErrors && error && (
+								<FormErrorMessage data-testid='input-error-message'>
+									{error.message}
+								</FormErrorMessage>
 							)}
 						</FormControl>
 					</Stack>

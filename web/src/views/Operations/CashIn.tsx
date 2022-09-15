@@ -40,6 +40,7 @@ const CashInOperation = () => {
 							name='amount'
 							label={t('cashIn:amountLabel')}
 							placeholder={t('cashIn:amountPlaceholder')}
+							hasArrows
 						/>
 						<InputController
 							rules={{

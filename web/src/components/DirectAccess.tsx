@@ -25,9 +25,12 @@ const DirectAccess = ({ title, icon, route, ...props }: DirectAccessProps) => {
 			borderRadius='16px'
 			gap='16px'
 			bgColor='brand.white'
+			borderWidth='1px'
+			borderColor='brand.gray300'
 			flexDirection='column'
 			justifyContent='center'
 			alignItems='center'
+			as='button'
 			onClick={handleNavigate}
 			_hover={{
 				cursor: 'pointer',
