@@ -1,5 +1,11 @@
 import { ReactNode } from 'react';
-import { Button, Flex, SimpleGrid, Stack } from '@chakra-ui/react';
+import {
+	Button,
+	ButtonProps as ChakraButtonProps,
+	Flex,
+	SimpleGrid,
+	Stack,
+} from '@chakra-ui/react';
 import { RouterManager } from '../../Router/RouterManager';
 import { useNavigate } from 'react-router-dom';
 import { NamedRoutes } from '../../Router/NamedRoutes';
@@ -10,8 +16,14 @@ export interface OperationLayoutProps {
 	LeftContent: ReactNode;
 	RightContent: ReactNode;
 	onConfirm: () => void;
+	confirmBtnProps?: ChakraButtonProps;
 }
-const OperationLayout = ({ LeftContent, RightContent, onConfirm }: OperationLayoutProps) => {
+const OperationLayout = ({
+	LeftContent,
+	RightContent,
+	onConfirm,
+	confirmBtnProps,
+}: OperationLayoutProps) => {
 	const navigate = useNavigate();
 	const { t } = useTranslation('global');
 
@@ -39,7 +51,7 @@ const OperationLayout = ({ LeftContent, RightContent, onConfirm }: OperationLayo
 						<Button data-testid='cancel-btn' onClick={handleGoBack} variant='secondary'>
 							{t('common.goBack')}
 						</Button>
-						<Button data-testid='confirm-btn' onClick={onConfirm}>
+						<Button data-testid='confirm-btn' onClick={onConfirm} {...confirmBtnProps}>
 							{t('common.accept')}
 						</Button>
 					</Stack>
