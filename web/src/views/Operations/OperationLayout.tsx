@@ -35,7 +35,7 @@ const OperationLayout = ({
 		<BaseContainer title={t('operations.title')}>
 			<Flex
 				direction='column'
-				bg='brand.gray6'
+				bg='brand.gray100'
 				px={{ base: 4, lg: 14 }}
 				pt={{ base: 4, lg: 14 }}
 				pb={6}

@@ -23,7 +23,6 @@ const theme = extendTheme({
 			gray3: '#F2F2F2',
 			gray4: '#FFFAF4',
 			gray5: '#edf2f7',
-			gray6: '#F7FAFC',
 			gray100: '#F7FAFC',
 			gray300: '#CBD5E0',
 			gray600: '#4A5568',
