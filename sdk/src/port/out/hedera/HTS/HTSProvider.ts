@@ -45,7 +45,7 @@ import PublicKey from '../../../../domain/context/account/PublicKey.js';
 import AccountId from '../../../../domain/context/account/AccountId.js';
 import { json } from 'stream/consumers';
 import { TransactionProvider } from '../transaction/TransactionProvider.js';
-import { HTSSign } from './HTSSign.js';
+import { HTSSigner } from './HTSSigner.js';
 import { HTSResponse, TransactionType } from '../sign/ISigner.js';
 import { TransactionResposeHandler } from '../transaction/TransactionResponseHandler.js';
 
@@ -56,8 +56,7 @@ export default class HTSProvider implements IProvider {
 	public HTSProvider: DefaultHederaProvider;
 	private network: HederaNetwork;
 	private web3 = new Web3();
-	private transactionProvider: TransactionProvider;
-	private htsSign: HTSSign;
+	private htsSigner: HTSSigner;
 
 	/**
 	 * init
@@ -65,6 +64,7 @@ export default class HTSProvider implements IProvider {
 	public init({ network }: IniConfig): Promise<HTSProvider> {
 		this.network = network;
 		this.HTSProvider = this.getHTSProvider(network);
+		this.htsSigner = new HTSSigner(this.getClient());
 		// We have to follow an async pattern to match Hashconnect
 		return new Promise((r) => {
 			r(this);
@@ -153,8 +153,8 @@ export default class HTSProvider implements IProvider {
 			abi,
 		);
 		
-		const transaction: Transaction = this.transactionProvider.buildContractExecuteTransaction(contractId, functionCallParameters, gas);
-		const transactionResponse: TransactionResponse = this.htsSign.signAndSendTransaction(transaction);
+		const transaction: Transaction = TransactionProvider.buildContractExecuteTransaction(contractId, functionCallParameters, gas);
+		const transactionResponse: TransactionResponse = this.htsSigner.signAndSendTransaction(transaction);
 		const htsResponse: HTSResponse = TransactionResposeHandler.manageResponse(transactionResponse, TransactionType.RECORD, this.getClient());
 
 		return htsResponse.reponseParam;

@@ -1,4 +1,4 @@
-import {  TransactionType,HTSResponse } from "../sign/ISigner";
+import {  TransactionType, HTSResponse } from "../sign/ISigner";
 import {TransactionResponse, Client, TransactionReceipt, TransactionRecord, Status } from "@hashgraph/sdk";
 import HederaError from '../error/HederaError.js';
 import Web3 from 'web3';
@@ -8,7 +8,7 @@ export  class TransactionResposeHandler {
     public static manageResponse(transactionResponse:TransactionResponse, responseType:TransactionType,client:Client, abi?:any ):HTSResponse {
         
         if (responseType == TransactionType.RECEIPT) { 
-            const transactionReceipt: TransactionReceipt = transactionResponse.getReceipt(Client);            
+            const transactionReceipt: TransactionReceipt = transactionResponse.getReceipt(client);            
             return this.createHTSResponse(transactionResponse.transactionId,
                                           transactionReceipt.status,
                                           responseType,
@@ -18,7 +18,7 @@ export  class TransactionResposeHandler {
         }
 
         if (responseType == TransactionType.RECORD) {
-            const transactionRecord: TransactionRecord = transactionResponse.getRecord(Client);
+            const transactionRecord: TransactionRecord = transactionResponse.getRecord(client);
             
             const results = this.decodeFunctionResult(
                 transactionRecord.name,

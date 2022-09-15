@@ -1,10 +1,10 @@
 //Creacion de todas las transacciones que necesitemos sin firmar y sin congelar//
 import { Transaction, ContractExecuteTransaction, TokenCreateTransaction, Hbar, TokenSupplyType, ContractCreateFlow, PrivateKey} from '@hashgraph/sdk';
-import ICreateTokenResponse from '../../../out/hedera/types.js'
+import { ICreateTokenResponse } from '../types.js';
 
 export class TransactionProvider{
 
-    public buildContractExecuteTransaction (contractId:string, functionCallParameters:Uint8Array, gas:number) : Transaction{  
+    public static buildContractExecuteTransaction (contractId:string, functionCallParameters:Uint8Array, gas:number) : Transaction{  
         const transaction = new ContractExecuteTransaction()
 			.setContractId(contractId)
 			.setFunctionParameters(functionCallParameters)
@@ -13,7 +13,7 @@ export class TransactionProvider{
         return transaction;    
     }
 
-    public buildTokenCreateTransaction (values: ICreateTokenResponse, gas:number) : Transaction{
+    public static buildTokenCreateTransaction (values: ICreateTokenResponse, gas:number) : Transaction{
         const transaction = new TokenCreateTransaction()
 			.setMaxTransactionFee(new Hbar(25))
 			.setTokenName(values.name)
@@ -35,7 +35,7 @@ export class TransactionProvider{
 		}
     }
 
-    public buildContractCreateFlowTransaction (factory:any, admPrivateKey: string, parameters:any, gas:number): Transaction{
+    public static buildContractCreateFlowTransaction (factory:any, admPrivateKey: string, parameters:any, gas:number): Transaction{
         const transaction =  new ContractCreateFlow()
             .setBytecode(factory.bytecode)    
             .setGas(gas)    
