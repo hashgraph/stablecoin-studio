@@ -5,14 +5,16 @@ import Web3 from 'web3';
 
 export  class TransactionResposeHandler {
 
-    public static manageResponse(transactionResponse:TransactionResponse, responseType:TransactionType,client:Client, abi?:any ):HTSResponse | undefined {
+    public static manageResponse(transactionResponse:TransactionResponse, responseType:TransactionType,client:Client, abi?:any ):HTSResponse {
         
         if (responseType == TransactionType.RECEIPT) { 
             const transactionReceipt: TransactionReceipt = transactionResponse.getReceipt(Client);            
             return this.createHTSResponse(transactionResponse.transactionId,
                                           transactionReceipt.status,
                                           responseType,
-                                          transactionReceipt.topicId);
+                                          new Uint8Array(),
+                                          transactionReceipt.topicId
+                                          );
         }
 
         if (responseType == TransactionType.RECORD) {
@@ -25,19 +27,22 @@ export  class TransactionResposeHandler {
             );
             return this.createHTSResponse(transactionRecord.transactionId,
                                           transactionRecord.receipt.status,
-                                          responseType,
-                                          transactionRecord.receipt.topicId,
-                                          results);
+                                          responseType,                                          
+                                          results,
+                                          transactionRecord.receipt.topicId);
         }   
+
+        throw new Error ("The response type is neither RECORD nor RECEIPT.")
     };
 
     public static createHTSResponse(transactionId:any, 
                                     transactionStatus:Status,
                                     responseType:TransactionType,
-                                    topic:String,
-                                    responseParam?:Uint8Array,
+                                    responseParam:Uint8Array,
+                                    topic?:string,                                    
                                     error?:string): HTSResponse {
-        return new HTSResponse(transactionId, transactionStatus, responseType, topic, responseParam, error);
+                                        
+        return new HTSResponse(transactionId, transactionStatus, responseType, responseParam, topic, error);
     }
 
     public static decodeFunctionResult(

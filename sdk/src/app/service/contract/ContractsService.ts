@@ -44,22 +44,6 @@ export default class ContractsService extends Service {
 	}
 
 	/**
-	 * decodeFunctionResult
-	 * @returns
-	 */
-	public decodeFunctionResult(
-		abi: any,
-		functionName: any,
-		resultAsBytes: any,
-	): Uint8Array {
-		return this.networkAdapter.provider.decodeFunctionResult(
-			abi,
-			functionName,
-			resultAsBytes,
-		);
-	}
-
-	/**
 	 * getPublicKey
 	 * @returns
 	 */

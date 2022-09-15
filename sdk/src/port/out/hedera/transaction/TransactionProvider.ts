@@ -1,6 +1,6 @@
 //Creacion de todas las transacciones que necesitemos sin firmar y sin congelar//
 import { Transaction, ContractExecuteTransaction, TokenCreateTransaction, Hbar, TokenSupplyType, ContractCreateFlow, PrivateKey} from '@hashgraph/sdk';
-import ICreateTokenResponse from '../../../out/hedera/types.ts'
+import ICreateTokenResponse from '../../../out/hedera/types.js'
 
 export class TransactionProvider{
 

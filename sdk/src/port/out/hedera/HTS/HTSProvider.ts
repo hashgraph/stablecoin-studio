@@ -5,7 +5,7 @@ import {
 	AccountId as HAccountId,
 	Client,
 	ContractCreateTransaction,
-	ContractExecuteTransaction,
+	TransactionResponse,
 	ContractFunctionParameters,
 	ContractId,
 	DelegateContractId,
@@ -46,7 +46,7 @@ import AccountId from '../../../../domain/context/account/AccountId.js';
 import { json } from 'stream/consumers';
 import { TransactionProvider } from '../transaction/TransactionProvider.js';
 import { HTSSign } from './HTSSign.js';
-import { HTSResponse, TransactionResponse, TransactionType } from '../sign/ISigner.js';
+import { HTSResponse, TransactionType } from '../sign/ISigner.js';
 import { TransactionResposeHandler } from '../transaction/TransactionResponseHandler.js';
 
 type DefaultHederaProvider = hethers.providers.DefaultHederaProvider;
@@ -153,11 +153,11 @@ export default class HTSProvider implements IProvider {
 			abi,
 		);
 		
-		let transaction: Transaction = this.transactionProvider.buildContractExecuteTransaction(contractId, functionCallParameters, gas);
-		let transactionResponse: TransactionResponse = this.htsSign.signAndSendTransaction(transaction);
-		let htsResponse: HTSResponse | undefined = TransactionResposeHandler.manageResponse(transactionResponse, TransactionType.RECORD, this.getClient());
+		const transaction: Transaction = this.transactionProvider.buildContractExecuteTransaction(contractId, functionCallParameters, gas);
+		const transactionResponse: TransactionResponse = this.htsSign.signAndSendTransaction(transaction);
+		const htsResponse: HTSResponse = TransactionResposeHandler.manageResponse(transactionResponse, TransactionType.RECORD, this.getClient());
 
-		return results;
+		return htsResponse.reponseParam;
 	}
 
 	

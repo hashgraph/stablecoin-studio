@@ -11,6 +11,6 @@ export class HashConnectSign extends ISigner{
 
     async signAndSendTransaction ( transaction:Transaction, signer:Signer):Transaction{
         transaction.signWithSigner(signer);    
-        return transaction.executeWithSigner(Client);
+        return transaction.executeWithSigner(signer);
     };
 }
