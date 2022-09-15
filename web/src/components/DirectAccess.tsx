@@ -19,7 +19,7 @@ const DirectAccess = ({ title, icon, route, ...props }: DirectAccessProps) => {
 
 	return (
 		<Flex
-			data-testid='direct-access-container'
+			data-testid={`direct-access-${route}`}
 			w='120px'
 			h='136px'
 			borderRadius='16px'

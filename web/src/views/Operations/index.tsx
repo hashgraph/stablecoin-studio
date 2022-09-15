@@ -9,7 +9,7 @@ const Operations = () => {
 	return (
 		<BaseContainer title='Operations'>
 			<Box p={{ base: 4, md: '128px' }}>
-				<Heading fontSize='20px' fontWeight='600' mb={14}>
+				<Heading fontSize='20px' fontWeight='600' mb={14} data-testid='subtitle'>
 					{t('subtitle')}
 				</Heading>
 				<DirectAccess title={t('cashInOperation')} icon='ArrowDown' route={NamedRoutes.CashIn} />

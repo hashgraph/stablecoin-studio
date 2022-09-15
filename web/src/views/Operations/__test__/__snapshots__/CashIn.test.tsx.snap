@@ -82,68 +82,7 @@ exports[`<CashInOperation /> should render correctly 1`] = `
                     />
                     <div
                       class="chakra-input__right-element css-y1u7d2"
-                    >
-                      <div
-                        class="css-k008qs"
-                      >
-                        <button
-                          class="chakra-button css-ulqh8l"
-                          type="button"
-                        >
-                          <svg
-                            class="chakra-icon css-1imiqbz"
-                            fill="currentColor"
-                            focusable="false"
-                            height="1em"
-                            viewBox="0 0 256 256"
-                            width="1em"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <rect
-                              fill="none"
-                              height="256"
-                              width="256"
-                            />
-                            <polyline
-                              fill="none"
-                              points="48 160 128 80 208 160"
-                              stroke="currentColor"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="16"
-                            />
-                          </svg>
-                        </button>
-                        <button
-                          class="chakra-button css-ulqh8l"
-                          type="button"
-                        >
-                          <svg
-                            class="chakra-icon css-1imiqbz"
-                            fill="currentColor"
-                            focusable="false"
-                            height="1em"
-                            viewBox="0 0 256 256"
-                            width="1em"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <rect
-                              fill="none"
-                              height="256"
-                              width="256"
-                            />
-                            <polyline
-                              fill="none"
-                              points="208 96 128 176 48 96"
-                              stroke="currentColor"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="16"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
+                    />
                   </div>
                 </div>
               </div>
