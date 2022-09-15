@@ -52,6 +52,22 @@ contract HTSTokenOwner is IHTSTokenOwner, HederaTokenService {
         return _checkResponse(responseCode);
     }
 
+   /**
+    * @dev Burns an `amount` of tokens owned by the treasury account
+    *
+    * @param tokenAddress The address of the token we want to burn
+    * @param amount The number of tokens to be burned
+    */
+    function burnToken(address tokenAddress, uint256 amount) 
+        external 
+        onlyHederaERC20() 
+        returns (bool)
+    {
+        (int256 responseCode, uint64 newTotalSupply) = HederaTokenService
+            .burnToken(tokenAddress, uint64(amount), new int64[](0));
+        return _checkResponse(responseCode);
+    }
+
     /**
     * @dev Transfer an amount of tokens from an account to another account
     *    

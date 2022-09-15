@@ -210,13 +210,13 @@ function burn(uint256 amount) external nonpayable returns (bool)
 
 
 
-*Function not already implemented*
+*Burns an `amount` of tokens owned by the treasury account*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| amount | uint256 | undefined |
+| amount | uint256 | The number of tokens to be burned |
 
 #### Returns
 
