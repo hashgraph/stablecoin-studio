@@ -9,7 +9,7 @@ export const RoutesMappingUrl: Record<NamedRoutes, string> = {
 	[NamedRoutes.Operations]: '/operations',
 	[NamedRoutes.Roles]: '/roles',
 	[NamedRoutes.Details]: '/details',
-	[NamedRoutes.CashIn]: '/cash-in',
+	[NamedRoutes.CashIn]: '/operations/cash-in',
 	[NamedRoutes.StableCoinNotSelected]: '/stable-coin-not-selected',
 	[NamedRoutes.StableCoinCreation]: '/stable-coin-creation',
 };
