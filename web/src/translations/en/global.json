@@ -1,6 +1,7 @@
 {
   "common": {
     "accept": "Accept",
+    "goBack": "Go back",
     "cancel": "Cancel"
   },
   "hashpack-no-installed": {
@@ -19,6 +20,13 @@
     "operations": "Operations",
     "role": "Role management",
     "details": "Stable coin details"
+  },
+  "validations": {
+    "required": "This field is required",
+    "invalidAccount": "Incorrect account"
+  },
+  "operations": {
+    "title": "Operations"
   },
   "stepper": {
     "goBack": "Go back",

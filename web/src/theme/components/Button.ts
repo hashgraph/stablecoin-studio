@@ -43,4 +43,7 @@ export const Button: ComponentSingleStyleConfig = {
 			},
 		},
 	},
+	defaultProps: {
+		variant: 'primary',
+	},
 };

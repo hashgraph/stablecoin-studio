@@ -1,0 +1,214 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<InputController /> .render should be disabled if disabled=true: Disabled 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-stack css-1h0sumw"
+  >
+    <div
+      class="chakra-form-control css-1kxonj9"
+      role="group"
+    >
+      <div
+        class="chakra-input__group css-4302v8"
+      >
+        <input
+          autocomplete="off"
+          class="chakra-input css-6kc61d"
+          data-testid="input-test"
+          disabled=""
+          id="field-:r5:"
+          name="input-test"
+          value=""
+        />
+      </div>
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;
+
+exports[`<InputController /> .render should render the component: WithLabel 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-stack css-1h0sumw"
+  >
+    <div
+      class="chakra-form-control css-1kxonj9"
+      role="group"
+    >
+      <label
+        class="chakra-form__label css-1jbsrib"
+        for="field-:r0:"
+        id="field-:r0:-label"
+      >
+        <div
+          class="chakra-stack css-84zodg"
+        >
+          <p
+            class="chakra-text css-mgupmj"
+          >
+            test-label
+          </p>
+        </div>
+      </label>
+      <div
+        class="chakra-input__group css-4302v8"
+      >
+        <input
+          autocomplete="off"
+          class="chakra-input css-6kc61d"
+          data-testid="input-test"
+          id="field-:r0:"
+          name="input-test"
+          value=""
+        />
+      </div>
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;
+
+exports[`<InputController /> .render should render the left element: WithLeftElement 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-stack css-1h0sumw"
+  >
+    <div
+      class="chakra-form-control css-1kxonj9"
+      role="group"
+    >
+      <div
+        class="chakra-input__group css-4302v8"
+      >
+        <span
+          data-testid="left-element"
+        />
+        <input
+          autocomplete="off"
+          class="chakra-input css-6kc61d"
+          data-testid="input-test"
+          id="field-:r7:"
+          name="input-test"
+          value=""
+        />
+      </div>
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;
+
+exports[`<InputController /> .render should render the right element: WithRightElement 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-stack css-1h0sumw"
+  >
+    <div
+      class="chakra-form-control css-1kxonj9"
+      role="group"
+    >
+      <div
+        class="chakra-input__group css-4302v8"
+      >
+        <input
+          autocomplete="off"
+          class="chakra-input css-6kc61d"
+          data-testid="input-test"
+          id="field-:r6:"
+          name="input-test"
+          value=""
+        />
+        <span
+          data-testid="right-element"
+        />
+      </div>
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;
+
+exports[`<InputController /> .render should show placeholder: WithPlaceholder 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-stack css-1h0sumw"
+  >
+    <div
+      class="chakra-form-control css-1kxonj9"
+      role="group"
+    >
+      <div
+        class="chakra-input__group css-4302v8"
+      >
+        <input
+          autocomplete="off"
+          class="chakra-input css-6kc61d"
+          data-testid="input-test"
+          id="field-:r4:"
+          name="input-test"
+          placeholder="placeholder"
+          value=""
+        />
+      </div>
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;
+
+exports[`<InputController /> .render should show the error message: WithError 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-stack css-1h0sumw"
+  >
+    <div
+      class="chakra-form-control css-1kxonj9"
+      role="group"
+    >
+      <div
+        class="chakra-input__group css-4302v8"
+      >
+        <input
+          aria-describedby="field-:r2:-feedback"
+          aria-invalid="true"
+          autocomplete="off"
+          class="chakra-input css-6kc61d"
+          data-testid="input-test"
+          id="field-:r2:"
+          name="input-test"
+          value=""
+        />
+      </div>
+      <div
+        aria-live="polite"
+        class="chakra-form__error-message css-2e3jkk"
+        data-testid="input-error-message"
+        id="field-:r2:-feedback"
+      >
+        Expired
+      </div>
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;
