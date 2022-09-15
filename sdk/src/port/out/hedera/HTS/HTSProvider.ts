@@ -57,6 +57,7 @@ export default class HTSProvider implements IProvider {
 	private network: HederaNetwork;
 	private web3 = new Web3();
 	private htsSigner: HTSSigner;
+	private transactionResposeHandler:TransactionResposeHandler = new TransactionResposeHandler()
 
 	/**
 	 * init
@@ -152,11 +153,11 @@ export default class HTSProvider implements IProvider {
 			parameters,
 			abi,
 		);
-		
+		this.htsSigner.setClient(client);
 		const transaction: Transaction = TransactionProvider.buildContractExecuteTransaction(contractId, functionCallParameters, gas);
-		const transactionResponse: TransactionResponse = this.htsSigner.signAndSendTransaction(transaction);
-		const htsResponse: HTSResponse = TransactionResposeHandler.manageResponse(transactionResponse, TransactionType.RECORD, this.getClient());
-
+		const transactionResponse: TransactionResponse = await this.htsSigner.signAndSendTransaction(transaction);
+		const htsResponse: HTSResponse = await this.transactionResposeHandler.manageResponse(transactionResponse, TransactionType.RECORD,name, client,abi);
+			
 		return htsResponse.reponseParam;
 	}
 

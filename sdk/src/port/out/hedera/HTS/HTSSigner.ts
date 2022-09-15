@@ -7,12 +7,17 @@ export class HTSSigner extends ISigner{
         super(client);  
     };
 
-    async signAndSendTransaction(transaction:Transaction, signer?:Signer):TransactionResponse {
+    async signAndSendTransaction(transaction:Transaction, signer?:Signer):Promise <TransactionResponse> {
         
         if (signer) {
             transaction = transaction.signWithSigner(signer);
         }
+        console.log(JSON.stringify(this.client))
         console.log(transaction);
-        return transaction.execute(this.client);
-    };
+        
+        return await transaction.freezeWith(this.client).execute(this.client);
+   };
+   public setClient(client:Client ){
+        this.client = client;
+   }
 }

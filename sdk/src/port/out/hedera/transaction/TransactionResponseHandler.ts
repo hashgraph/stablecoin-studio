@@ -5,10 +5,10 @@ import Web3 from 'web3';
 
 export  class TransactionResposeHandler {
 
-    public static manageResponse(transactionResponse:TransactionResponse, responseType:TransactionType,client:Client, abi?:any ):HTSResponse {
+    public async manageResponse(transactionResponse:TransactionResponse, responseType:TransactionType, name:string, client:Client, abi?:any ):Promise<HTSResponse> {
         
         if (responseType == TransactionType.RECEIPT) { 
-            const transactionReceipt: TransactionReceipt = transactionResponse.getReceipt(client);            
+            const transactionReceipt: TransactionReceipt = await transactionResponse.getReceipt(client);            
             return this.createHTSResponse(transactionResponse.transactionId,
                                           transactionReceipt.status,
                                           responseType,
@@ -18,10 +18,11 @@ export  class TransactionResposeHandler {
         }
 
         if (responseType == TransactionType.RECORD) {
-            const transactionRecord: TransactionRecord = transactionResponse.getRecord(client);
+            
+            const transactionRecord: TransactionRecord = await transactionResponse.getRecord(client);
             
             const results = this.decodeFunctionResult(
-                transactionRecord.name,
+                name,
                 transactionRecord.contractFunctionResult?.bytes,
                 abi,
             );
@@ -35,7 +36,7 @@ export  class TransactionResposeHandler {
         throw new Error ("The response type is neither RECORD nor RECEIPT.")
     };
 
-    public static createHTSResponse(transactionId:any, 
+    public  createHTSResponse(transactionId:any, 
                                     transactionStatus:Status,
                                     responseType:TransactionType,
                                     responseParam:Uint8Array,
@@ -45,7 +46,7 @@ export  class TransactionResposeHandler {
         return new HTSResponse(transactionId, transactionStatus, responseType, responseParam, topic, error);
     }
 
-    public static decodeFunctionResult(
+    public  decodeFunctionResult(
 		functionName: string,
 		resultAsBytes: ArrayBuffer,
 		abi: any[],
