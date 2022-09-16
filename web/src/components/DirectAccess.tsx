@@ -11,7 +11,7 @@ interface DirectAccessProps extends FlexProps {
 	variant?: string;
 }
 
-const DirectAccess = ({ title, icon, route, variant = 'primary', ...props }: DirectAccessProps) => {
+const DirectAccess = ({ title, icon, route, variant, ...props }: DirectAccessProps) => {
 	const navigate = useNavigate();
 
 	const style = useStyleConfig('DirectAccess', { variant });

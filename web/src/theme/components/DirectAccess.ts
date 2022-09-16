@@ -23,4 +23,7 @@ export const DirectAccess: ComponentSingleStyleConfig = {
 			opacity: '.5',
 		},
 	},
+	defaultProps: {
+		variant: 'primary',
+	},
 };
