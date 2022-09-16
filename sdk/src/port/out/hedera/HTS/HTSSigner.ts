@@ -12,12 +12,9 @@ export class HTSSigner extends ISigner{
         if (signer) {
             transaction = transaction.signWithSigner(signer);
         }
-        console.log(JSON.stringify(this.client))
-        console.log(transaction);
-        
-        return await transaction.freezeWith(this.client).execute(this.client);
+              
+        //return await transaction.freezeWith(this.client).execute(this.client);
+        return await transaction.execute(this.client);
    };
-   public setClient(client:Client ){
-        this.client = client;
-   }
+
 }

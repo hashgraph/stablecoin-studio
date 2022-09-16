@@ -11,10 +11,9 @@ export  class TransactionResposeHandler {
         if (responseType == TransactionType.RECEIPT) { 
             const transactionReceipt: TransactionReceipt = await transactionResponse.getReceipt(client);            
             return this.createHTSResponse(transactionResponse.transactionId,
-                                          transactionReceipt.status,
                                           responseType,
                                           results,
-                                          transactionReceipt.topicId
+                                          transactionReceipt
                                           );
         }
 
@@ -28,23 +27,22 @@ export  class TransactionResposeHandler {
                 );
             }   
             return this.createHTSResponse(transactionRecord.transactionId,
-                                        transactionRecord.receipt.status,
                                         responseType,                                          
                                         results,
-                                        transactionRecord.receipt.topicId);
+                                        transactionRecord.receipt
+                                        );
         }   
 
         throw new Error ("The response type is neither RECORD nor RECEIPT.")
     };
 
     public  createHTSResponse(transactionId:any, 
-                                    transactionStatus:Status,
-                                    responseType:TransactionType,
-                                    responseParam:Uint8Array,
-                                    topic?:string,                                    
-                                    error?:string): HTSResponse {
-                                        
-        return new HTSResponse(transactionId, transactionStatus, responseType, responseParam, topic, error);
+                              responseType:TransactionType,
+                              responseParam:Uint8Array,
+                              receipt: TransactionReceipt
+                              ): HTSResponse {
+                                               
+        return new HTSResponse(transactionId, responseType, responseParam, receipt);
     }
 
     public  decodeFunctionResult(

@@ -1,5 +1,6 @@
-//Creacion de todas las transacciones que necesitemos sin firmar y sin congelar//
-import { Transaction, ContractExecuteTransaction, TokenCreateTransaction, Hbar, TokenSupplyType, ContractCreateFlow, PrivateKey} from '@hashgraph/sdk';
+import {
+	Transaction, ContractExecuteTransaction, TokenCreateTransaction, Hbar, TokenSupplyType, ContractCreateFlow, PrivateKey
+} from '@hashgraph/sdk';
 import { ICreateTokenResponse } from '../types.js';
 
 export class TransactionProvider{
@@ -13,7 +14,7 @@ export class TransactionProvider{
         return transaction;    
     }
 
-    public static buildTokenCreateTransaction (values: ICreateTokenResponse, gas:number) : Transaction{
+    public static buildTokenCreateTransaction (values: ICreateTokenResponse, maxSupply: bigint | undefined) : Transaction{
         const transaction = new TokenCreateTransaction()
 			.setMaxTransactionFee(new Hbar(25))
 			.setTokenName(values.name)
@@ -26,13 +27,14 @@ export class TransactionProvider{
 			.setAdminKey(values.adminKey)
 			.setFreezeKey(values.freezeKey)
 			.setWipeKey(values.wipeKey)
-			.setSupplyKey(values.supplyKey)
-            .gas(gas);
+			.setSupplyKey(values.supplyKey);
 
-		if (values.maxSupply) {
+		if (maxSupply) {
+			console.log("max="+maxSupply);
 			transaction.setMaxSupply(values.maxSupply);
 			transaction.setSupplyType(TokenSupplyType.Finite);
 		}
+		return transaction;
     }
 
     public static buildContractCreateFlowTransaction (factory:any, admPrivateKey: string, parameters:any, gas:number): Transaction{
