@@ -13,3 +13,15 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.react-switch-bg {
+  width: 75px !important;
+  border-color: #A0AEC0;
+  border-width: 1px;
+}
+
+.react-switch-handle {
+  width: 40px !important;
+  border-radius: 100px !important;
+}
+

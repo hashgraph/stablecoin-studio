@@ -12,11 +12,11 @@ exports[`<OperationLayout /> should render correctly 1`] = `
       Operations
     </h2>
     <div
-      class="css-1kemao2"
+      class="css-vrk9k9"
       data-testid="base-container-children"
     >
       <div
-        class="css-epd29r"
+        class="css-f3f3xv"
       >
         <div
           class="css-1rtxhmh"
@@ -43,14 +43,14 @@ exports[`<OperationLayout /> should render correctly 1`] = `
             class="chakra-stack css-1amf41o"
           >
             <button
-              class="chakra-button css-a4cdul"
+              class="chakra-button css-hg6n4b"
               data-testid="cancel-btn"
               type="button"
             >
               Go back
             </button>
             <button
-              class="chakra-button css-1jvauvu"
+              class="chakra-button css-l6yrnw"
               data-testid="confirm-btn"
               type="button"
             >
