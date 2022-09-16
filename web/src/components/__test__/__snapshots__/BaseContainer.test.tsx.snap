@@ -12,7 +12,7 @@ exports[`<BaseContainer /> should render correctly 1`] = `
       Test
     </h2>
     <div
-      class="css-1kemao2"
+      class="css-vrk9k9"
       data-testid="base-container-children"
     >
       <div

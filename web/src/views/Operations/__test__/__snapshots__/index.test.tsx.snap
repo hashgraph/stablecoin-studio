@@ -12,7 +12,7 @@ exports[`<Operations /> should render correctly 1`] = `
       Operations
     </h2>
     <div
-      class="css-1kemao2"
+      class="css-vrk9k9"
       data-testid="base-container-children"
     >
       <div
