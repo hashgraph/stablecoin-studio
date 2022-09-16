@@ -1,4 +1,4 @@
-import { Flex, Text, FlexProps } from '@chakra-ui/react';
+import { Flex, Text, FlexProps, useStyleConfig } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { NamedRoutes } from '../Router/NamedRoutes';
 import { RouterManager } from '../Router/RouterManager';
@@ -8,10 +8,13 @@ interface DirectAccessProps extends FlexProps {
 	title: string;
 	icon: string;
 	route: NamedRoutes;
+	variant?: string;
 }
 
-const DirectAccess = ({ title, icon, route, ...props }: DirectAccessProps) => {
+const DirectAccess = ({ title, icon, route, variant, ...props }: DirectAccessProps) => {
 	const navigate = useNavigate();
+
+	const style = useStyleConfig('DirectAccess', { variant });
 
 	const handleNavigate = () => {
 		RouterManager.to(navigate, route);
@@ -19,23 +22,15 @@ const DirectAccess = ({ title, icon, route, ...props }: DirectAccessProps) => {
 
 	return (
 		<Flex
+			sx={style}
 			data-testid={`direct-access-${route}`}
-			w='120px'
-			h='136px'
-			borderRadius='16px'
 			gap='16px'
-			bgColor='brand.white'
-			borderWidth='1px'
-			borderColor='brand.gray300'
 			flexDirection='column'
 			justifyContent='center'
 			alignItems='center'
 			as='button'
 			onClick={handleNavigate}
-			_hover={{
-				cursor: 'pointer',
-				transform: 'scale(1.03)',
-			}}
+			disabled={variant === 'disabled'}
 			{...props}
 		>
 			<Flex
@@ -55,6 +50,7 @@ const DirectAccess = ({ title, icon, route, ...props }: DirectAccessProps) => {
 			</Flex>
 			<Text
 				data-testid={`direct-access-${title}`}
+				color='brand.gray600'
 				fontSize='14px'
 				fontWeight='700'
 				lineHeight='16px'

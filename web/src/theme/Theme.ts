@@ -7,6 +7,7 @@ import { FormLabel } from './components/FormLabel';
 import { Heading } from './components/Heading';
 import { Tabs } from './components/Tabs';
 import { FormError } from './components/FormError';
+import { DirectAccess } from './components/DirectAccess';
 
 const theme = extendTheme({
 	config: {
@@ -24,6 +25,7 @@ const theme = extendTheme({
 			gray4: '#FFFAF4',
 			gray5: '#edf2f7',
 			gray100: '#F7FAFC',
+			gray200: '#E2E8F0',
 			gray300: '#CBD5E0',
 			gray600: '#4A5568',
 			white: '#FFFFFF',
@@ -69,6 +71,7 @@ const theme = extendTheme({
 		Heading,
 		Tabs,
 		FormError,
+		DirectAccess,
 	},
 	styles: {
 		global: {
