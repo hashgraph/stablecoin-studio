@@ -102,7 +102,7 @@ export default class OperationStableCoinService extends Service {
       await utilsService.defaultMultipleAsk(
         language.getText('stablecoin.askDoSomething'),
         this.disableOptions(wizardOperationsStableCoinOptions, details),
-        configurationService.getConfiguration().defaultNetwork,
+        currentAccount.network,
         `${currentAccount.accountId} - ${currentAccount.alias}`,
         this.stableCoinWithSymbol,
       )
@@ -114,6 +114,8 @@ export default class OperationStableCoinService extends Service {
           currentAccount.accountId,
         );
         if (!sdk.checkIsAddress(account2Mint)) {
+          console.log(language.getText('validations.wrongFormatAddress'));
+
           await this.operationsStableCoin();
         }
         const amount2Mint = await utilsService.defaultSingleAsk(
@@ -162,7 +164,6 @@ export default class OperationStableCoinService extends Service {
           );
         } else {
           console.log(language.getText('validations.wrongFormatAddress'));
-          utilsService.breakLine();
 
           await this.operationsStableCoin();
         }
@@ -178,7 +179,7 @@ export default class OperationStableCoinService extends Service {
           currentAccount.accountId,
         );
         if (!sdk.checkIsAddress(account2Wipe)) {
-          console.log(language.getText('account.wrong'));
+          console.log(language.getText('validations.wrongFormatAddress'));
           await this.operationsStableCoin();
         }
         const amount2Wipe = await utilsService.defaultSingleAsk(
@@ -186,7 +187,7 @@ export default class OperationStableCoinService extends Service {
           '1',
         );
         if (parseFloat(amount2Wipe) < 0) {
-          console.log(language.getText('account.wrong'));
+          console.log(language.getText('validations.wrongFormatAddress'));
           await this.operationsStableCoin();
         }
 
@@ -272,6 +273,7 @@ export default class OperationStableCoinService extends Service {
    * Supplier Flow
    */
   private async supplierFlow(): Promise<void> {
+    const sdk: SDK = utilsService.getSDK();
     const currentAccount = utilsService.getCurrentAccount();
     const supplierOptions = language.getArray('wizard.supplierOptions');
     const editSupplierOptions = language.getArray(
@@ -294,6 +296,12 @@ export default class OperationStableCoinService extends Service {
           language.getText('stablecoin.accountTarget'),
           accountTarget,
         );
+
+        if (!sdk.checkIsAddress(accountTarget)) {
+          console.log(language.getText('validations.wrongFormatAddress'));
+          await this.supplierFlow();
+        }
+
         const roleType = await utilsService.defaultMultipleAsk(
           language.getText('stablecoin.askSupplierRoleType'),
           supplierRoleType,
@@ -359,6 +367,10 @@ export default class OperationStableCoinService extends Service {
           language.getText('stablecoin.accountTarget'),
           accountTarget,
         );
+        if (!sdk.checkIsAddress(accountTarget)) {
+          console.log(language.getText('validations.wrongFormatAddress'));
+          await this.supplierFlow();
+        }
         //Call to SDK
         await supplierService.revokeSupplierRoleStableCoin(
           this.proxyContractId,
@@ -382,6 +394,10 @@ export default class OperationStableCoinService extends Service {
             language.getText('stablecoin.accountTarget'),
             accountTarget,
           );
+          if (!sdk.checkIsAddress(accountTarget)) {
+            console.log(language.getText('validations.wrongFormatAddress'));
+            await this.supplierFlow();
+          }
           limit = await utilsService.defaultSingleAsk(
             language.getText('stablecoin.amountIncrease'),
             '1',
@@ -414,6 +430,10 @@ export default class OperationStableCoinService extends Service {
             language.getText('stablecoin.accountTarget'),
             accountTarget,
           );
+          if (!sdk.checkIsAddress(accountTarget)) {
+            console.log(language.getText('validations.wrongFormatAddress'));
+            await this.supplierFlow();
+          }
           limit = await utilsService.defaultSingleAsk(
             language.getText('stablecoin.amountDecrease'),
             '1',
@@ -446,6 +466,10 @@ export default class OperationStableCoinService extends Service {
             language.getText('stablecoin.accountTarget'),
             accountTarget,
           );
+          if (!sdk.checkIsAddress(accountTarget)) {
+            console.log(language.getText('validations.wrongFormatAddress'));
+            await this.supplierFlow();
+          }
           //Call to SDK
           const alreadySupplierRole =
             await supplierService.checkSupplierRoleStableCoin(

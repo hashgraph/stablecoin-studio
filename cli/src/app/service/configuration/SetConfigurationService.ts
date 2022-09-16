@@ -9,6 +9,7 @@ import fs from 'fs-extra';
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 import { IConsensusNodeConfig } from '../../../domain/configuration/interfaces/IConsensusNodeConfig.js';
 import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
+const colors = require('colors');
 
 /**
  * Set Configuration Service
@@ -72,13 +73,16 @@ export default class SetConfigurationService extends Service {
    * Function to configure the default network
    */
   public async configureDefaultNetwork(_network?: string): Promise<string> {
+    const networks = configurationService
+      .getConfiguration()
+      .networks.map((network) => network.name);
     let network: string;
     if (_network) {
       network = _network;
     } else {
-      network = await utilsService.defaultSingleAsk(
+      network = await utilsService.defaultMultipleAsk(
         language.getText('configuration.askNetwork'),
-        'mainnet|previewnet|testnet|local',
+        networks,
       );
     }
 
@@ -121,8 +125,8 @@ export default class SetConfigurationService extends Service {
    * Function to configure the account id
    */
   public async configureAccounts(): Promise<IAccountConfig[]> {
-    const accounts: IAccountConfig[] =
-      configurationService.getConfiguration()?.accounts || [];
+    const configuration = configurationService.getConfiguration();
+    const accounts: IAccountConfig[] = configuration?.accounts || [];
     let moreAccounts = true;
 
     while (moreAccounts) {
@@ -134,6 +138,11 @@ export default class SetConfigurationService extends Service {
       );
       const accountFromPrivKey: IAccountConfig =
         await this.askForPrivateKeyOfAccount(accountId);
+
+      const network = await utilsService.defaultMultipleAsk(
+        language.getText('configuration.askNetworkAccount'),
+        configuration.networks.map((acc) => acc.name),
+      );
       let alias = await utilsService.defaultSingleAsk(
         language.getText('configuration.askAlias'),
         'AdminAccount',
@@ -152,7 +161,7 @@ export default class SetConfigurationService extends Service {
       accounts.push({
         accountId: accountId,
         privateKey: accountFromPrivKey.privateKey,
-        network: configurationService.getConfiguration().defaultNetwork,
+        network: network,
         alias: alias,
       });
 
@@ -200,15 +209,17 @@ export default class SetConfigurationService extends Service {
               acc.accountId !== currentAcc.accountId &&
               acc.alias !== currentAcc.alias,
           )
-          .map((acc) => `${acc.accountId} - ${acc.alias}`);
+          .map(
+            (acc) =>
+              `${acc.accountId} - ${acc.alias}` +
+              colors.magenta(' (' + acc.network + ')'),
+          );
         const account = await utilsService.defaultMultipleAsk(
           language.getText('wizard.accountDelete'),
           options,
         );
         defaultCfgData.accounts = accounts.filter(
-          (acc) =>
-            acc.accountId !== account.split(' - ')[0] &&
-            acc.alias !== account.split(' - ')[1],
+          (acc) => acc.accountId !== account.split(' - ')[0],
         );
         configurationService.setConfiguration(defaultCfgData);
         break;

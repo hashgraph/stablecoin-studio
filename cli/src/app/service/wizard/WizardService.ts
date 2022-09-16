@@ -10,6 +10,7 @@ import CreateStableCoinService from '../stablecoin/CreateStableCoinService.js';
 import OperationStableCoinService from '../stablecoin/OperationStableCoinService.js';
 import ListStableCoinsService from '../stablecoin/ListStableCoinsService.js';
 import { StableCoin } from '../../../domain/stablecoin/StableCoin.js';
+const colors = require('colors');
 
 /**
  * Wizard Service
@@ -33,7 +34,7 @@ export default class WizardService extends Service {
       await utilsService.defaultMultipleAsk(
         language.getText('wizard.mainMenuTitle'),
         wizardMainOptions,
-        configurationService.getConfiguration().defaultNetwork,
+        currentAccount.network,
         `${currentAccount.accountId} - ${currentAccount.alias}`,
       )
     ) {
@@ -108,20 +109,42 @@ export default class WizardService extends Service {
     await this.configurationMenu();
   }
 
-  public async chooseAccount(): Promise<void> {
-    const accounts = configurationService.getConfiguration().accounts;
-    const options = accounts.map((acc) => `${acc.accountId} - ${acc.alias}`);
+  public async chooseAccount(network?: string): Promise<void> {
+    const configuration = configurationService.getConfiguration();
+    const { networks, accounts } = configuration;
+    let options = network
+      ? accounts
+          .filter((acc) => acc.network === network)
+          .map(
+            (acc) =>
+              `${acc.accountId} - ${acc.alias}` +
+              colors.magenta(' (' + acc.network + ')'),
+          )
+      : accounts.map(
+          (acc) =>
+            `${acc.accountId} - ${acc.alias}` +
+            colors.magenta(' (' + acc.network + ')'),
+        );
+    if (network && options.length === 0) {
+      options = accounts.map(
+        (acc) =>
+          `${acc.accountId} - ${acc.alias}` +
+          colors.magenta(' (' + acc.network + ')'),
+      );
+      console.log(colors.yellow(language.getText('wizard.accountsNotFound')));
+    }
     const account = await utilsService.defaultMultipleAsk(
       language.getText('wizard.accountLogin'),
       options,
     );
-    utilsService.setCurrentAccount(
-      accounts.find(
-        (acc) =>
-          acc.accountId === account.split(' - ')[0] &&
-          acc.alias === account.split(' - ')[1],
-      ),
+    const currentAccount = accounts.find(
+      (acc) => acc.accountId === account.split(' - ')[0],
     );
+    utilsService.setCurrentAccount(currentAccount);
+    const currentNetwork = networks.find(
+      (network) => currentAccount.network === network.name,
+    );
+    utilsService.setCurrentNetwotk(currentNetwork);
     await this.mainMenu();
   }
 }

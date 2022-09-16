@@ -18,6 +18,7 @@ export const english = {
     askNotDefaultNetwork:
       'Your option is not a default network, Do you want to create a new network? (y/n)',
     askAccountId: 'Introduce the accountId',
+    askNetworkAccount: 'Which network does this account belong to?',
     askAlias: 'Introduce an alias for this account',
     aliasAlreadyInUse:
       'Alias ${alias} already in use. Please use another alias.',
@@ -124,6 +125,8 @@ export const english = {
   wizard: {
     name: 'Wizard',
     accountLogin: 'Which account do you want to operate with?',
+    accountsNotFound:
+      'There is no account for the indicated parameters, here is a list of the configured accounts:',
     accountOptions: 'Manage account menu:',
     accountDelete: 'Which account would you like to delete?',
     noAccountToDelete: 'You cannot delete your current account.',

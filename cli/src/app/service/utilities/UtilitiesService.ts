@@ -11,6 +11,7 @@ import {
   SDK,
 } from 'hedera-stable-coin-sdk';
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
+import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
 const colors = require('colors');
 const MaskData = require('maskdata');
 
@@ -20,6 +21,7 @@ const MaskData = require('maskdata');
 export default class UtilitiesService extends Service {
   private sdk: SDK;
   private currentAccount: IAccountConfig;
+  private currentNetwork: INetworkConfig;
 
   constructor() {
     super('Utilities');
@@ -50,6 +52,18 @@ export default class UtilitiesService extends Service {
       throw new Error('Account not initialized');
     } else {
       return this.currentAccount;
+    }
+  }
+
+  public setCurrentNetwotk(network: INetworkConfig): void {
+    this.currentNetwork = network;
+  }
+
+  public getCurrentNetwork(): INetworkConfig {
+    if (!this.currentNetwork) {
+      throw new Error('Network not initialized');
+    } else {
+      return this.currentNetwork;
     }
   }
 

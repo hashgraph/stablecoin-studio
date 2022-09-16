@@ -51,7 +51,7 @@ export default class CommanderService extends Service {
           },
           options.config,
         );
-        await wizardService.chooseAccount();
+        await wizardService.chooseAccount(options.network);
       });
 
     const token = program
