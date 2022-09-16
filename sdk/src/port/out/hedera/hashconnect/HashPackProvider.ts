@@ -1,21 +1,23 @@
-import { HashConnect, HashConnectTypes } from 'hashconnect/dist/cjs/main';
+import { HashConnect, HashConnectTypes ,MessageTypes} from 'hashconnect/dist/cjs/main';
 import { HashConnectSigner } from 'hashconnect/dist/cjs/provider/signer.js';
 import { IniConfig, IProvider } from '../Provider.js';
-import { HederaNetwork,getHederaNetwork } from '../../../in/sdk/sdk.js';
+import { HederaNetwork,getHederaNetwork, AppMetadata } from '../../../in/sdk/sdk.js';
 import { ContractId } from '@hashgraph/sdk';
 import { StableCoin } from '../../../../domain/context/stablecoin/StableCoin.js';
 import { ICallContractRequest } from '../types.js';
+import { HashConnectConnectionState } from 'hashconnect/dist/cjs/types/hashconnect.js';
 
 export default class HashPackProvider implements IProvider {
 	private hc: HashConnect;
 	private initData: HashConnectTypes.InitilizationData;
 	private network: HederaNetwork;
+	private extensionMetadata:AppMetadata;	
 
 	public async init({
 		network,
 		options,
 	}: IniConfig): Promise<HashPackProvider> {
-		this.hc = new HashConnect();
+		this.hc = new HashConnect(true);
 		this.network = network;
 		this.registerEvents();
 		if (options && options?.appMetadata) {
@@ -26,6 +28,12 @@ export default class HashPackProvider implements IProvider {
 		} else {
 			throw new Error('No app metadata');
 		}
+		let topic = this.initData.topic;
+		const state = await this.hc.connect();
+        
+        this.hc.findLocalWallets();
+		this.hc.connectToLocalWallet();
+
 		return this;
 	}
 
@@ -83,8 +91,51 @@ export default class HashPackProvider implements IProvider {
 	}
 
 	registerEvents(): void {
-		return;
-	}
+
+		const foundExtensionEventHandler = (data: HashConnectTypes.WalletMetadata) => {
+			console.log("====foundExtensionEvent====");
+			console.log(JSON.stringify(data));
+		
+		  };
+		
+	   	const pairingEventHandler = (data: MessageTypes.ApprovePairing) => {
+			 console.log("====pairingEvent:::Wallet connected=====");
+			 console.log(JSON.stringify(data));
+	
+		};
+		
+	   	const acknowledgeEventHandler = (data: MessageTypes.Acknowledge) => {
+			console.log("====Acknowledge:::Wallet request received =====");
+			console.log(JSON.stringify(data));
+	
+	   };
+
+	    const transactionEventHandler = (data: MessageTypes.Transaction) => {
+			console.log("====Transaction:::Transaction executed =====");
+			console.log(JSON.stringify(data));
+	
+ 		};
+
+   		const additionalAccountRequestEventHandler = (data: MessageTypes.AdditionalAccountRequest) => {
+			console.log("====AdditionalAccountRequest:::AdditionalAccountRequest=====");
+			console.log(JSON.stringify(data));
+		}
+		
+		const connectionStatusChangeEventHandler = (data: HashConnectConnectionState) => {
+			console.log("====AdditionalAccountRequest:::AdditionalAccountRequest=====");
+			console.log(JSON.stringify(data));
+		}
+		const authRequestEventHandler = (data: MessageTypes.AuthenticationRequest) => {
+			console.log("====AdditionalAccountRequest:::AdditionalAccountRequest=====");
+			console.log(JSON.stringify(data));
+		}
+		
+		/*const signRequestEventHandler = (data: ) => {
+			console.log("====AdditionalAccountRequest:::AdditionalAccountRequest=====");
+			console.log(JSON.stringify(data));
+		}*/
+	};
+	
 
 	getBalance(): Promise<number> {
 		throw new Error('Method not implemented.');
