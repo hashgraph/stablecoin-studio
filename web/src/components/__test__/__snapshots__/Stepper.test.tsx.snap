@@ -1,0 +1,127 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Stepper /> should render correctly 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-tabs css-1x6vjw3"
+  >
+    <div
+      aria-orientation="horizontal"
+      class="chakra-tabs__tablist css-10a73ai"
+      role="tablist"
+    >
+      <button
+        aria-controls="tabs-:r0:--tabpanel-0"
+        aria-selected="true"
+        class="chakra-tabs__tab css-1abs3h5"
+        data-index="0"
+        id="tabs-:r0:--tab-0"
+        role="tab"
+        tabindex="0"
+        type="button"
+      >
+        <p
+          class="chakra-text css-1ikrtdg"
+          data-testid="stepper-step-number-1"
+        >
+          01
+        </p>
+        <p
+          class="chakra-text css-1i91963"
+          data-testid="stepper-step-title-1"
+        >
+          Option 1
+        </p>
+      </button>
+      <button
+        aria-controls="tabs-:r0:--tabpanel-1"
+        aria-selected="false"
+        class="chakra-tabs__tab css-1abs3h5"
+        data-index="1"
+        id="tabs-:r0:--tab-1"
+        role="tab"
+        tabindex="-1"
+        type="button"
+      >
+        <p
+          class="chakra-text css-1wzl1bo"
+          data-testid="stepper-step-number-2"
+        >
+          02
+        </p>
+        <p
+          class="chakra-text css-1i91963"
+          data-testid="stepper-step-title-2"
+        >
+          Option 2
+        </p>
+      </button>
+    </div>
+    <div
+      class="chakra-tabs__tab-panels css-27a8z"
+    >
+      <div
+        aria-labelledby="tabs-:r0:--tab-0"
+        class="chakra-tabs__tab-panel css-4278sh"
+        data-testid="stepper-step-panel-container-1"
+        id="tabs-:r0:--tabpanel-0"
+        role="tabpanel"
+        tabindex="0"
+      >
+        <div
+          class="chakra-stack css-1eot3nj"
+        >
+          <div
+            class="css-1x90gox"
+          >
+            <div
+              class="css-0"
+            >
+              Tab 1
+            </div>
+          </div>
+          <div
+            class="css-1q6t3f6"
+          >
+            <hr
+              aria-orientation="horizontal"
+              class="chakra-divider css-12thghs"
+            />
+            <div
+              class="css-g4d8ui"
+            >
+              <button
+                class="chakra-button css-124znom"
+                data-testid="stepper-step-panel-button-secondary-1"
+                type="button"
+              >
+                Cancel
+              </button>
+              <button
+                class="chakra-button css-1jvauvu"
+                data-testid="stepper-step-panel-button-primary-1"
+                type="button"
+              >
+                Next step
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        aria-labelledby="tabs-:r0:--tab-1"
+        class="chakra-tabs__tab-panel css-4278sh"
+        data-testid="stepper-step-panel-container-2"
+        hidden=""
+        id="tabs-:r0:--tabpanel-1"
+        role="tabpanel"
+        tabindex="0"
+      />
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;

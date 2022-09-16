@@ -34,7 +34,7 @@ exports[`<CoinDropdown /> should render correctly 1`] = `
               class="css-3y2vuh"
             >
               <span
-                class="chakra-text css-1nd6c34"
+                class="chakra-text css-19fpr04"
                 data-testid="select-placeholder"
               >
                 Choose Stable coin

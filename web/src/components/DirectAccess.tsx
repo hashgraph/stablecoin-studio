@@ -19,15 +19,18 @@ const DirectAccess = ({ title, icon, route, ...props }: DirectAccessProps) => {
 
 	return (
 		<Flex
-			data-testid='direct-access-container'
+			data-testid={`direct-access-${route}`}
 			w='120px'
 			h='136px'
 			borderRadius='16px'
 			gap='16px'
 			bgColor='brand.white'
+			borderWidth='1px'
+			borderColor='brand.gray300'
 			flexDirection='column'
 			justifyContent='center'
 			alignItems='center'
+			as='button'
 			onClick={handleNavigate}
 			_hover={{
 				cursor: 'pointer',

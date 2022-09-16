@@ -73,6 +73,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Proxy__factory>;
     getContractFactory(
+      name: "Burnable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Burnable__factory>;
+    getContractFactory(
+      name: "IBurnable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IBurnable__factory>;
+    getContractFactory(
       name: "IMintable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IMintable__factory>;
@@ -220,6 +228,16 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Proxy>;
+    getContractAt(
+      name: "Burnable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Burnable>;
+    getContractAt(
+      name: "IBurnable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IBurnable>;
     getContractAt(
       name: "IMintable",
       address: string,

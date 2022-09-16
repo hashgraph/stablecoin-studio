@@ -71,6 +71,7 @@ export declare namespace IHederaTokenService {
 
 export interface HTSTokenOwnerInterface extends utils.Interface {
   functions: {
+    "burnToken(address,uint256)": FunctionFragment;
     "erc20address()": FunctionFragment;
     "getTokenExpiryInfo(address)": FunctionFragment;
     "getTokenKey(address,uint256)": FunctionFragment;
@@ -90,6 +91,7 @@ export interface HTSTokenOwnerInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "burnToken"
       | "erc20address"
       | "getTokenExpiryInfo"
       | "getTokenKey"
@@ -107,6 +109,10 @@ export interface HTSTokenOwnerInterface extends utils.Interface {
       | "wipeToken"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "burnToken",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(
     functionFragment: "erc20address",
     values?: undefined
@@ -181,6 +187,7 @@ export interface HTSTokenOwnerInterface extends utils.Interface {
     ]
   ): string;
 
+  decodeFunctionResult(functionFragment: "burnToken", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "erc20address",
     data: BytesLike
@@ -257,6 +264,12 @@ export interface HTSTokenOwner extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    burnToken(
+      tokenAddress: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     erc20address(overrides?: CallOverrides): Promise<[string]>;
 
     getTokenExpiryInfo(
@@ -343,6 +356,12 @@ export interface HTSTokenOwner extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
+
+  burnToken(
+    tokenAddress: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   erc20address(overrides?: CallOverrides): Promise<string>;
 
@@ -431,6 +450,12 @@ export interface HTSTokenOwner extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    burnToken(
+      tokenAddress: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     erc20address(overrides?: CallOverrides): Promise<string>;
 
     getTokenExpiryInfo(
@@ -533,6 +558,12 @@ export interface HTSTokenOwner extends BaseContract {
   filters: {};
 
   estimateGas: {
+    burnToken(
+      tokenAddress: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     erc20address(overrides?: CallOverrides): Promise<BigNumber>;
 
     getTokenExpiryInfo(
@@ -621,6 +652,12 @@ export interface HTSTokenOwner extends BaseContract {
   };
 
   populateTransaction: {
+    burnToken(
+      tokenAddress: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     erc20address(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getTokenExpiryInfo(

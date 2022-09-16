@@ -3,16 +3,24 @@ pragma solidity ^0.8.10;
 
 interface IHTSTokenOwner {
     
-    /**
-     * @dev Creates an `amount` of tokens and transfers them to an `account`, increasing
-     * the total supply
-     *
-     * @param tokenAddress The address of the token we want to mint
-     * @param amount The number of tokens to be minted
-     */
+   /**
+    * @dev Creates an `amount` of tokens and transfers them to an `account`, increasing
+    * the total supply
+    *
+    * @param tokenAddress The address of the token we want to mint
+    * @param amount The number of tokens to be minted
+    */
     function mintToken(address tokenAddress, uint256 amount) external returns (bool);
-    
-    /**
+
+   /**
+    * @dev Burns an `amount` of tokens owned by the treasury account
+    *
+    * @param tokenAddress The address of the token we want to burn
+    * @param amount The number of tokens to be burned
+    */
+    function burnToken(address tokenAddress, uint256 amount) external returns (bool);
+
+   /**
     * @dev Wipes an amount of tokens from an account
     *    
     * @param tokenAddress The address of the token we want to wipe

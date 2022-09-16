@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<InputLabel /> should render correctly 1`] = `
+<DocumentFragment>
+  <label
+    class="chakra-form__label css-1jbsrib"
+  >
+    <div
+      class="chakra-stack css-84zodg"
+    >
+      <p
+        class="chakra-text css-mgupmj"
+      >
+        Label
+      </p>
+    </div>
+  </label>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;

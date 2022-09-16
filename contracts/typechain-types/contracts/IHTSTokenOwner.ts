@@ -25,15 +25,24 @@ import type {
 
 export interface IHTSTokenOwnerInterface extends utils.Interface {
   functions: {
+    "burnToken(address,uint256)": FunctionFragment;
     "mintToken(address,uint256)": FunctionFragment;
     "tranferContract(address,address,uint256)": FunctionFragment;
     "wipeToken(address,address,uint32)": FunctionFragment;
   };
 
   getFunction(
-    nameOrSignatureOrTopic: "mintToken" | "tranferContract" | "wipeToken"
+    nameOrSignatureOrTopic:
+      | "burnToken"
+      | "mintToken"
+      | "tranferContract"
+      | "wipeToken"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "burnToken",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(
     functionFragment: "mintToken",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
@@ -55,6 +64,7 @@ export interface IHTSTokenOwnerInterface extends utils.Interface {
     ]
   ): string;
 
+  decodeFunctionResult(functionFragment: "burnToken", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "mintToken", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "tranferContract",
@@ -92,6 +102,12 @@ export interface IHTSTokenOwner extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    burnToken(
+      tokenAddress: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     mintToken(
       tokenAddress: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
@@ -112,6 +128,12 @@ export interface IHTSTokenOwner extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
+
+  burnToken(
+    tokenAddress: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   mintToken(
     tokenAddress: PromiseOrValue<string>,
@@ -134,6 +156,12 @@ export interface IHTSTokenOwner extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    burnToken(
+      tokenAddress: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     mintToken(
       tokenAddress: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
@@ -158,6 +186,12 @@ export interface IHTSTokenOwner extends BaseContract {
   filters: {};
 
   estimateGas: {
+    burnToken(
+      tokenAddress: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     mintToken(
       tokenAddress: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
@@ -180,6 +214,12 @@ export interface IHTSTokenOwner extends BaseContract {
   };
 
   populateTransaction: {
+    burnToken(
+      tokenAddress: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     mintToken(
       tokenAddress: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,

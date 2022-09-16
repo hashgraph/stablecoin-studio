@@ -4,5 +4,7 @@ export enum NamedRoutes {
 	Operations = 'operations',
 	Roles = 'roles',
 	Details = 'details',
+	CashIn = 'cashIn',
 	StableCoinNotSelected = 'stableCoinNotSelected',
+	StableCoinCreation = 'stableCoinCreation',
 }

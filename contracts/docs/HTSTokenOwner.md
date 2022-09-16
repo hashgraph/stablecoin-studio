@@ -10,6 +10,29 @@
 
 ## Methods
 
+### burnToken
+
+```solidity
+function burnToken(address tokenAddress, uint256 amount) external nonpayable returns (bool)
+```
+
+
+
+*Burns an `amount` of tokens owned by the treasury account*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| tokenAddress | address | The address of the token we want to burn |
+| amount | uint256 | The number of tokens to be burned |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
+
 ### erc20address
 
 ```solidity
