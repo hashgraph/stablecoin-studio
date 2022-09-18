@@ -198,6 +198,29 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		return await this.networkAdapter.provider.callContract('mint', params);
 	}
 
+	public async cashOut(
+		treasuryId: string,
+		privateKey: PrivateKey,
+		accountId: AccountId,
+		amount: number,
+	): Promise<Uint8Array> {
+		const parameters = [
+			amount
+		];
+
+		const params: ICallContractWithAccountRequest = {
+			contractId: treasuryId,
+			parameters,
+			gas: 400000,
+			abi: HederaERC20__factory.abi,
+			account: {
+				accountId: accountId.id,
+				privateKey: privateKey.key
+			},
+		};
+		return await this.networkAdapter.provider.callContract('burn', params);
+	}
+
 	public async associateToken(
 		treasuryId: string,
 		privateKey: PrivateKey,

@@ -7,6 +7,7 @@ import IGetStableCoinServiceRequestModel from './model/IGetStableCoinServiceRequ
 import IGetBalanceOfStableCoinServiceRequestModel from './model/IGetBalanceOfStableCoinServiceRequestModel.js';
 import IGetNameOfStableCoinServiceRequestModel from './model/IGetNameOfStableCoinServiceRequestModel.js';
 import ICashInStableCoinServiceRequestModel from './model/ICashInStableCoinServiceRequestModel.js';
+import ICashOutStableCoinServiceRequestModel from './model/ICashOutStableCoinServiceRequestModel.js';
 import IAssociateTokenStableCoinServiceRequestModel from './model/IAssociateTokenStableCoinServiceRequestModel.js';
 import IWipeStableCoinServiceRequestModel from './model/IWipeStableCoinServiceRequestModel.js';
 import IStableCoinRepository from '../../../port/out/stablecoin/IStableCoinRepository.js';
@@ -110,6 +111,25 @@ export default class StableCoinService extends Service {
 			req.accountId,
 			req.targetId,
 			amount,
+		);
+	}
+
+	public async cashOut(
+		req: ICashOutStableCoinServiceRequestModel,
+	): Promise<Uint8Array> {
+		// TODO validate 
+		const coin: StableCoin = await this.getStableCoin({
+			id: req.tokenId,
+		});
+		const amount = coin.toInteger(req.amount);
+		/*if (coin.maxSupply > 0n && amount > coin.maxSupply - coin.totalSupply) {
+			throw new Error('Amount is bigger than allowed supply');
+		}*/
+		return this.repository.cashOut(
+			req.proxyContractId,
+			req.privateKey,
+			req.accountId,
+			amount
 		);
 	}
 

@@ -30,6 +30,12 @@ export default interface IStableCoinRepository {
 		targetId: string,
 		amount: number,
 	): Promise<Uint8Array>;
+	cashOut(
+		treasuryId: string,
+		privateKey: PrivateKey,
+		accountId: AccountId,
+		amount: number,
+	): Promise<Uint8Array>;
 	associateToken(
 		treasuryId: string,
 		privateKey: PrivateKey,
