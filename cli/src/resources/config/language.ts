@@ -18,6 +18,7 @@ export const english = {
     askNotDefaultNetwork:
       'Your option is not a default network, Do you want to create a new network? (y/n)',
     askAccountId: 'Introduce the accountId',
+    askNetworkAccount: 'Which network does this account belong to?',
     askAlias: 'Introduce an alias for this account',
     aliasAlreadyInUse:
       'Alias ${alias} already in use. Please use another alias.',
@@ -29,6 +30,8 @@ export const english = {
     askMirrorNode: 'Introduce the mirror url',
     askChain: 'Introduce the chain id',
     askNode: 'Introduce the node id',
+    askOperateWithNewAccount:
+      'Would you like to operate with the last account you have created?',
   },
   stablecoin: {
     askConfirmCreation:
@@ -63,7 +66,7 @@ export const english = {
       feeSchedule: 'What will be the Fee Schedule key?',
       key: 'Enter the key',
     },
-    asdTreasuryAccountAddress: 'Add the treasury account address.',
+    askTreasuryAccountAddress: 'What will be the Treasury account id?',
     askOperateStableCoin: 'Do you want to operate with stable coin created?',
     created:
       'Stable Coin ${name} (${symbol}) with ${decimals} decimals have been created!',
@@ -124,8 +127,14 @@ export const english = {
   },
   wizard: {
     name: 'Wizard',
+    accountLogin: 'Which account do you want to operate with?',
+    accountsNotFound:
+      'There is no account for the indicated parameters, here is a list of the configured accounts:',
+    accountOptions: 'Manage account menu:',
+    accountDelete: 'Which account would you like to delete?',
+    noAccountToDelete: 'You cannot delete your current account.',
     mainMenuTitle: 'What do you want to do?',
-    configurationMenuTitle: 'What do you want to edit?',
+    configurationMenuTitle: 'What do you want to do?',
     pathChanged: '\nPath changed successfully',
     networkChanged: '\nNetwork changed successfully',
     accountsChanged: '\nAccounts changed successfully',
@@ -140,8 +149,15 @@ export const english = {
       'Show configuration',
       'Edit config path',
       'Edit default network',
-      'Edit accounts',
+      'Manage accounts',
       'Return to main menu',
+    ],
+    manageAccountOptions: [
+      'Change account',
+      'List accounts',
+      'Add new account',
+      'Delete account',
+      'Go back',
     ],
     stableCoinOptions: [
       'Cash in',

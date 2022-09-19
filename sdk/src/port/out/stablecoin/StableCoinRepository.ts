@@ -97,6 +97,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 				name: response.data.name ?? '',
 				symbol: response.data.symbol ?? '',
 				decimals: parseInt(response.data.decimals ?? '0'),
+				initialSupply: BigInt(response.data.initial_supply ?? '0'),
 				totalSupply: BigInt(response.data.total_supply ?? '0'),
 				maxSupply: BigInt(response.data.max_supply ?? '0'),
 				// customFee: response.data.custom_fees,
