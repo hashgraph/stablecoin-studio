@@ -32,11 +32,12 @@ export interface IProvider {
 		functionName: string,
 		parameters: any[],
 		abi: Array<any>,
-	): Uint8Array;	
+	): Uint8Array;
 	getPublicKey(privateKey?: PrivateKey | string | undefined): string;
 	deployStableCoin(
 		accountId: string,
 		privateKey: string,
 		stableCoin: StableCoin,
 	): Promise<StableCoin>;
+	getAvailabilityExtension(): boolean;
 }

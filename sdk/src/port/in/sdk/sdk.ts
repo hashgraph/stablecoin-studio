@@ -443,4 +443,10 @@ export class SDK {
 	public getPublicKey(str?: string): string {
 		return this.networkAdapter.provider.getPublicKey(str);
 	}
+
+	public getAvailabilityExtension(): boolean {
+		console.log('=====getAvailabilityExtension=====');
+
+		return this.networkAdapter.provider.getAvailabilityExtension();
+	}
 }
