@@ -36,7 +36,6 @@ import {
 import HederaError from '../error/HederaError.js';
 import PublicKey from '../../../../domain/context/account/PublicKey.js';
 import AccountId from '../../../../domain/context/account/AccountId.js';
-import { json } from 'stream/consumers';
 import { TransactionProvider } from '../transaction/TransactionProvider.js';
 import { HTSSigner } from './HTSSigner.js';
 import { HTSResponse, TransactionType } from '../sign/ISigner.js';

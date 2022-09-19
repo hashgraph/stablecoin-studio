@@ -1,11 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { hethers, Signer } from '@hashgraph/hethers';
-import { ContractId } from '@hashgraph/sdk';
 import { HederaNetwork } from '../../../core/enum.js';
-import AccountId from '../../../domain/context/account/AccountId.js';
 import PrivateKey from '../../../domain/context/account/PrivateKey.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
-import { AppMetadata } from './hashconnect/types/types.js';
+import { AppMetadata } from './hashpack/types/types.js';
 import { ICallContractRequest } from './types.js';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
