@@ -35,6 +35,7 @@ import { HederaERC1967Proxy__factory, HederaERC20__factory, HTSTokenOwner__facto
 import { HashConnectProvider } from 'hashconnect/dist/cjs/provider/provider.js';
 import { HashConnectSigner } from "hashconnect/dist/cjs/provider/signer";
 import Long from 'long';
+import { stat } from 'fs';
 
 const logOpts = { newLine: true, clear: true };
 
@@ -49,6 +50,7 @@ export default class HashPackProvider implements IProvider {
 		new TransactionResposeHandler();
 	private web3 = new Web3();
 	private provider: HashConnectProvider;
+	private hashConnectConectionState: HashConnectConnectionState;
 
 	public async init({
 		network,
@@ -97,6 +99,7 @@ export default class HashPackProvider implements IProvider {
 
 		//This is fired when HashConnect loses connection, pairs successfully, or is starting connection
 		this.hc.connectionStatusChangeEvent.on((state) => {
+			this.hashConnectConectionState = state
 			console.log('hashconnect state change event', state);
 			// this.state = state;
 		});
