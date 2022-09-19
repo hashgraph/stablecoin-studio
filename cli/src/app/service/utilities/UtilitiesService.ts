@@ -27,11 +27,18 @@ export default class UtilitiesService extends Service {
     super('Utilities');
   }
 
-  public async initSDK(): Promise<SDK> {
+  public async initSDK(network: string): Promise<SDK> {
+    const networks = {
+      testnet: HederaNetworkEnviroment.TEST,
+      previewnet: HederaNetworkEnviroment.PREVIEW,
+      mainnet: HederaNetworkEnviroment.MAIN,
+      local: HederaNetworkEnviroment.LOCAL,
+    };
     this.sdk = await new SDK({
-      network: new HederaNetwork(HederaNetworkEnviroment.TEST),
+      network: new HederaNetwork(networks[network]),
       mode: NetworkMode.EOA,
     }).init();
+    console.log('SDK:::::::::', this.sdk); //TODO QUITAR LOG
     return this.sdk;
   }
 

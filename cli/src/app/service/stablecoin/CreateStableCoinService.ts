@@ -57,7 +57,7 @@ export default class CreateStableCoinService extends Service {
         new SetConfigurationService();
       await setConfigurationService.initConfiguration(
         configurationService.getDefaultConfigurationPath(),
-        configurationService.getConfiguration().defaultNetwork,
+        currentAccount.network,
       );
     }
     let createdToken;

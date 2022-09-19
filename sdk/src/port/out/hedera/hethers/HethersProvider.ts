@@ -304,10 +304,10 @@ export default class HethersProvider implements IProvider {
 		client: Client,
 		params?: any,
 	): Promise<ContractId> {
-		try {			
-			const transaction =  new ContractCreateFlow()
-				.setBytecode(factory.bytecode)    
-				.setGas(90_000)    
+		try {
+			const transaction = new ContractCreateFlow()
+				.setBytecode(factory.bytecode)
+				.setGas(90_000)
 				.setAdminKey(HPrivateKey.fromString(privateKey));
 			if (params) {
 				transaction.setConstructorParameters(params);
@@ -327,7 +327,7 @@ export default class HethersProvider implements IProvider {
 			}
 		} catch (error) {
 			throw new Error(
-				`An error ocurred during deployment of ${factory.name}`,
+				`An error ocurred during deployment of ${factory.name}. ${error}`,
 			);
 		}
 	}

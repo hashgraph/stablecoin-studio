@@ -2,7 +2,7 @@ import { configurationService, language } from './../../../index.js';
 import { Command } from 'commander';
 import Service from '../Service.js';
 import pkg from '../../../../package.json';
-import { utilsService, wizardService } from '../../../index.js';
+import { utilsService } from '../../../index.js';
 import CreateStableCoinService from '../stablecoin/CreateStableCoinService.js';
 
 /**
@@ -51,7 +51,7 @@ export default class CommanderService extends Service {
           },
           options.config,
         );
-        await wizardService.chooseAccount(options.network);
+        //await wizardService.chooseAccount(options.network);
       });
 
     const token = program

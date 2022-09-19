@@ -191,7 +191,9 @@ export default class SetConfigurationService extends Service {
     );
     switch (accountAction) {
       case manageOptions[0]:
-        await wizardService.chooseAccount();
+        await wizardService.chooseAccount(false);
+        await utilsService.initSDK(utilsService.getCurrentNetwork().name);
+        await wizardService.mainMenu();
         break;
       case manageOptions[1]:
         console.dir(utilsService.maskPrivateAccounts(accounts), {

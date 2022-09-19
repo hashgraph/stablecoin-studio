@@ -109,7 +109,7 @@ export default class WizardService extends Service {
     await this.configurationMenu();
   }
 
-  public async chooseAccount(network?: string): Promise<void> {
+  public async chooseAccount(mainMenu = true, network?: string): Promise<void> {
     const configuration = configurationService.getConfiguration();
     const { networks, accounts } = configuration;
     let options = network
@@ -145,6 +145,6 @@ export default class WizardService extends Service {
       (network) => currentAccount.network === network.name,
     );
     utilsService.setCurrentNetwotk(currentNetwork);
-    await this.mainMenu();
+    if (mainMenu) await this.mainMenu();
   }
 }
