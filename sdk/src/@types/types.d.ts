@@ -1,4 +1,6 @@
 declare module '@hashgraph/sdk' {
+	export { default as Signer } from '@hashgraph/sdk/lib/Signer.js';
+	export { default as Transaction } from '@hashgraph/sdk/lib/transaction/Transaction.js';
 	export { default as Cache } from '@hashgraph/sdk/lib/Cache.js';
 	export { default as PrivateKey } from '@hashgraph/sdk/lib/PrivateKey.js';
 	export { default as PublicKey } from '@hashgraph/sdk/lib/PublicKey.js';

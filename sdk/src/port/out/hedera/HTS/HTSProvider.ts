@@ -4,17 +4,14 @@ import PrivateKey from '../../../../domain/context/account/PrivateKey.js';
 import {
 	AccountId as HAccountId,
 	Client,
-	ContractCreateFlow,
-	ContractExecuteTransaction,
+	TransactionResponse,
 	ContractFunctionParameters,
 	ContractId,
 	DelegateContractId,
-	Hbar,
 	PrivateKey as HPrivateKey,
 	PublicKey as HPublicKey,
-	TokenCreateTransaction,
 	TokenId,
-	TokenSupplyType,
+	Transaction,
 } from '@hashgraph/sdk';
 import {
 	HederaERC1967Proxy__factory,
@@ -40,21 +37,29 @@ import HederaError from '../error/HederaError.js';
 import PublicKey from '../../../../domain/context/account/PublicKey.js';
 import AccountId from '../../../../domain/context/account/AccountId.js';
 import { json } from 'stream/consumers';
+import { TransactionProvider } from '../transaction/TransactionProvider.js';
+import { HTSSigner } from './HTSSigner.js';
+import { HTSResponse, TransactionType } from '../sign/ISigner.js';
+import { TransactionResposeHandler } from '../transaction/TransactionResponseHandler.js';
 
 type DefaultHederaProvider = hethers.providers.DefaultHederaProvider;
 
 const logOpts = { newLine: true, clear: true };
-export default class HethersProvider implements IProvider {
-	public hethersProvider: DefaultHederaProvider;
+export default class HTSProvider implements IProvider {
+	public HTSProvider: DefaultHederaProvider;
 	private network: HederaNetwork;
 	private web3 = new Web3();
+	private htsSigner: HTSSigner;
+	private transactionResposeHandler: TransactionResposeHandler =
+		new TransactionResposeHandler();
 
 	/**
 	 * init
 	 */
-	public init({ network }: IniConfig): Promise<HethersProvider> {
+	public init({ network }: IniConfig): Promise<HTSProvider> {
 		this.network = network;
-		this.hethersProvider = this.getHethersProvider(network);
+		this.HTSProvider = this.getHTSProvider(network);
+
 		// We have to follow an async pattern to match Hashconnect
 		return new Promise((r) => {
 			r(this);
@@ -107,32 +112,6 @@ export default class HethersProvider implements IProvider {
 		return Buffer.from(encodedParametersHex, 'hex');
 	}
 
-	public decodeFunctionResult(
-		functionName: string,
-		resultAsBytes: ArrayBuffer,
-		abi: any[],
-	): Uint8Array {
-		const functionAbi = abi.find(
-			(func: { name: any }) => func.name === functionName,
-		);
-		if (!functionAbi?.outputs)
-			throw new HederaError(
-				'Contract function not found in ABI, are you using the right version?',
-			);
-		const functionParameters = functionAbi?.outputs;
-		const resultHex = '0x'.concat(
-			Buffer.from(resultAsBytes).toString('hex'),
-		);
-		const result = this.web3.eth.abi.decodeParameters(
-			functionParameters || [],
-			resultHex,
-		);
-
-		const jsonParsedArray = JSON.parse(JSON.stringify(result));
-
-		return jsonParsedArray;
-	}
-
 	public getPublicKey(privateKey?: PrivateKey | string | undefined): string {
 		let key = null;
 		if (privateKey instanceof PrivateKey) {
@@ -150,6 +129,7 @@ export default class HethersProvider implements IProvider {
 		params: ICallContractRequest | ICallContractWithAccountRequest,
 	): Promise<Uint8Array> {
 		const { contractId, parameters, gas, abi } = params;
+
 		let client;
 
 		if ('account' in params) {
@@ -167,20 +147,25 @@ export default class HethersProvider implements IProvider {
 			abi,
 		);
 
-		const contractTx = await new ContractExecuteTransaction()
-			.setContractId(contractId)
-			.setFunctionParameters(functionCallParameters)
-			.setGas(gas)
-			.execute(client);
-		const record = await contractTx.getRecord(client);
+		this.htsSigner = new HTSSigner(client);
+		const transaction: Transaction =
+			TransactionProvider.buildContractExecuteTransaction(
+				contractId,
+				functionCallParameters,
+				gas,
+			);
+		const transactionResponse: TransactionResponse =
+			await this.htsSigner.signAndSendTransaction(transaction);
+		const htsResponse: HTSResponse =
+			await this.transactionResposeHandler.manageResponse(
+				transactionResponse,
+				TransactionType.RECORD,
+				client,
+				name,
+				abi,
+			);
 
-		const results = this.decodeFunctionResult(
-			name,
-			record.contractFunctionResult?.bytes,
-			abi,
-		);
-
-		return results;
+		return htsResponse.reponseParam;
 	}
 
 	public async deployStableCoin(
@@ -277,7 +262,6 @@ export default class HethersProvider implements IProvider {
 			abi: HederaERC20__factory.abi,
 			account: plainAccount,
 		});
-		console.log(hederaToken.supplyKey);
 
 		return new StableCoin({
 			name: hederaToken.name,
@@ -305,34 +289,38 @@ export default class HethersProvider implements IProvider {
 		params?: any,
 	): Promise<ContractId> {
 		try {
-			const transaction = new ContractCreateFlow()
-				.setBytecode(factory.bytecode)
-				.setGas(90_000)
-				.setAdminKey(HPrivateKey.fromString(privateKey));
-			if (params) {
-				transaction.setConstructorParameters(params);
-			}
-			const contractCreateSign = await transaction.sign(
-				HPrivateKey.fromString(privateKey),
-			);
+			this.htsSigner = new HTSSigner(client);
+			const transaction: Transaction =
+				TransactionProvider.buildContractCreateFlowTransaction(
+					factory,
+					privateKey,
+					params,
+					90_000,
+				);
+			const transactionResponse: TransactionResponse =
+				await this.htsSigner.signAndSendTransaction(transaction);
+			const htsResponse: HTSResponse =
+				await this.transactionResposeHandler.manageResponse(
+					transactionResponse,
+					TransactionType.RECEIPT,
+					client,
+				);
 
-			const txResponse = await contractCreateSign.execute(client);
-			const receipt = await txResponse.getReceipt(client);
-			if (!receipt.contractId) {
+			if (!htsResponse.receipt.contractId) {
 				throw new Error(
 					`An error ocurred during deployment of ${factory.name}`,
 				);
 			} else {
-				return receipt.contractId;
+				return htsResponse.receipt.contractId;
 			}
 		} catch (error) {
 			throw new Error(
-				`An error ocurred during deployment of ${factory.name}. ${error}`,
+				`An error ocurred during deployment of ${factory.name} : ${error}`,
 			);
 		}
 	}
 
-	private getHethersProvider(network: HederaNetwork): DefaultHederaProvider {
+	private getHTSProvider(network: HederaNetwork): DefaultHederaProvider {
 		const enviroment = network.hederaNetworkEnviroment;
 		switch (enviroment) {
 			case HederaNetworkEnviroment.MAIN:
@@ -358,7 +346,7 @@ export default class HethersProvider implements IProvider {
 		freezeDefault: boolean,
 		privateKey: string,
 		publicKey: string,
-		clientSdk: any,
+		client: Client,
 	): Promise<ICreateTokenResponse> {
 		const values: ICreateTokenResponse = {
 			name,
@@ -378,37 +366,24 @@ export default class HethersProvider implements IProvider {
 			tokenId: '',
 		};
 
-		const transaction = new TokenCreateTransaction()
-			.setMaxTransactionFee(new Hbar(25))
-			.setTokenName(values.name)
-			.setTokenSymbol(values.symbol)
-			.setDecimals(values.decimals)
-			.setInitialSupply(values.initialSupply)
-			.setTokenMemo(values.memo)
-			.setFreezeDefault(values.freezeDefault)
-			.setTreasuryAccountId(values.treasuryAccountId)
-			.setAdminKey(values.adminKey)
-			.setFreezeKey(values.freezeKey)
-			.setWipeKey(values.wipeKey)
-			.setSupplyKey(values.supplyKey);
+		this.htsSigner = new HTSSigner(client);
+		const transaction: Transaction =
+			TransactionProvider.buildTokenCreateTransaction(values, maxSupply);
+		const transactionResponse: TransactionResponse =
+			await this.htsSigner.signAndSendTransaction(transaction);
+		const htsResponse: HTSResponse =
+			await this.transactionResposeHandler.manageResponse(
+				transactionResponse,
+				TransactionType.RECEIPT,
+				client,
+			);
 
-		if (maxSupply) {
-			transaction.setMaxSupply(values.maxSupply);
-			transaction.setSupplyType(TokenSupplyType.Finite);
-		}
-
-		transaction.freezeWith(clientSdk);
-		const transactionSign = await transaction.sign(
-			HPrivateKey.fromString(privateKey),
-		);
-		const txResponse = await transactionSign.execute(clientSdk);
-		const receipt = await txResponse.getReceipt(clientSdk);
-		if (!receipt.tokenId) {
+		if (!htsResponse.receipt.tokenId) {
 			throw new Error(
 				`An error ocurred creating the stable coin ${name}`,
 			);
 		}
-		values.tokenId = receipt.tokenId;
+		values.tokenId = htsResponse.receipt.tokenId;
 		log(
 			`Token ${name} created tokenId ${
 				values.tokenId

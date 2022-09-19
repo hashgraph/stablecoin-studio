@@ -6,13 +6,13 @@ exports[`<BaseContainer /> should render correctly 1`] = `
     class="chakra-stack css-16oka5y"
   >
     <h2
-      class="chakra-heading css-1f8usip"
+      class="chakra-heading css-llrpa2"
       data-testid="base-container-heading"
     >
       Test
     </h2>
     <div
-      class="css-60yst0"
+      class="css-vrk9k9"
       data-testid="base-container-children"
     >
       <div

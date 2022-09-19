@@ -11,17 +11,17 @@ exports[`<TopbarRight /> should render correctly 1`] = `
       data-testid="topbar-right-network"
     >
       <p
-        class="chakra-text css-0"
+        class="chakra-text css-mgupmj"
       >
         Operating network
       </p>
       <p
-        class="chakra-text css-1sylyko"
+        class="chakra-text css-1n27kwj"
       >
         : 
       </p>
       <p
-        class="chakra-text css-0"
+        class="chakra-text css-mgupmj"
       >
         TESNET
       </p>
@@ -34,17 +34,17 @@ exports[`<TopbarRight /> should render correctly 1`] = `
       data-testid="topbar-right-account"
     >
       <p
-        class="chakra-text css-0"
+        class="chakra-text css-mgupmj"
       >
         Operating account
       </p>
       <p
-        class="chakra-text css-1sylyko"
+        class="chakra-text css-1n27kwj"
       >
         : 
       </p>
       <p
-        class="chakra-text css-0"
+        class="chakra-text css-mgupmj"
       >
         0.0.123456
       </p>

@@ -1,17 +1,31 @@
-export const Button = {
+import type { ComponentSingleStyleConfig } from "@chakra-ui/react";
+
+export const Button: ComponentSingleStyleConfig = {
 	baseStyle: {
-		_focus: { boxShadow: 'none' },
+			_focus: { boxShadow: 'none' },
+			textDecoration: 'none',
+			borderRadius: "8px",
+			p: "12px",
+			fontWeight: 700,
+			lineHeight: "16px",
+	},
+	sizes: {
+		sm: { 
+			borderRadius: "4px",
+			p: "8px",
+			fontSize: "10px",
+			fontWeight: 400,
+			lineHeight: "12.5px",
+		},
+		md: {
+			fontSize: "14px",
+		},
 	},
 	variants: {
 		primary: {
-			minW: '182px',
-			minH: '40px',
-			borderRadius: '8px',
 			bgColor: 'dark.primary',
 			color: 'brand.white',
-			fontSize: '14px',
-			fontWeight: '700',
-			textDecoration: 'none',
+			minW: '182px', // seems to be that it is not working from baseStyle
 			_hover: {
 				bgColor: 'brand.white',
 				color: 'brand.primary',
@@ -19,19 +33,17 @@ export const Button = {
 			},
 		},
 		secondary: {
-			minW: '182px',
-			minH: '40px',
-			borderRadius: '8px',
 			border: '1px solid',
 			bgColor: 'brand.white',
 			color: 'brand.primary',
-			fontSize: '14px',
-			fontWeight: '700',
-			textDecoration: 'none',
+			minW: '182px',
 			_hover: {
 				bgColor: 'dark.primary',
 				color: 'brand.white',
 			},
 		},
+	},
+	defaultProps: {
+		variant: 'primary',
 	},
 };

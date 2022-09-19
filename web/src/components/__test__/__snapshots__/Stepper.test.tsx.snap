@@ -21,13 +21,13 @@ exports[`<Stepper /> should render correctly 1`] = `
         type="button"
       >
         <p
-          class="chakra-text css-bak5wb"
+          class="chakra-text css-1ikrtdg"
           data-testid="stepper-step-number-1"
         >
           01
         </p>
         <p
-          class="chakra-text css-57h6bf"
+          class="chakra-text css-1i91963"
           data-testid="stepper-step-title-1"
         >
           Option 1
@@ -44,13 +44,13 @@ exports[`<Stepper /> should render correctly 1`] = `
         type="button"
       >
         <p
-          class="chakra-text css-1bxd6jy"
+          class="chakra-text css-1wzl1bo"
           data-testid="stepper-step-number-2"
         >
           02
         </p>
         <p
-          class="chakra-text css-57h6bf"
+          class="chakra-text css-1i91963"
           data-testid="stepper-step-title-2"
         >
           Option 2
@@ -72,7 +72,7 @@ exports[`<Stepper /> should render correctly 1`] = `
           class="chakra-stack css-1eot3nj"
         >
           <div
-            class="css-16vsafx"
+            class="css-1x90gox"
           >
             <div
               class="css-0"
@@ -91,14 +91,14 @@ exports[`<Stepper /> should render correctly 1`] = `
               class="css-g4d8ui"
             >
               <button
-                class="chakra-button css-124znom"
+                class="chakra-button css-1vbjkjj"
                 data-testid="stepper-step-panel-button-secondary-1"
                 type="button"
               >
                 Cancel
               </button>
               <button
-                class="chakra-button css-1jvauvu"
+                class="chakra-button css-l6yrnw"
                 data-testid="stepper-step-panel-button-primary-1"
                 type="button"
               >

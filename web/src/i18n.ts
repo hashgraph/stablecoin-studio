@@ -4,6 +4,8 @@ import languagedetector from 'i18next-browser-languagedetector';
 
 import GLOBAL_EN from './translations/en/global.json';
 import GLOBAL_ES from './translations/es/global.json';
+import CASH_IN_EN from './translations/en/cashIn.json';
+import OPERATIONS_EN from './translations/en/operations.json';
 import ERROR_PAGE_EN from './translations/en/errorPage.json';
 import STABLE_COIN_CREATION_EN from './translations/en/stableCoinCreation.json';
 
@@ -21,6 +23,8 @@ i18n
 		resources: {
 			en: {
 				global: GLOBAL_EN,
+				cashIn: CASH_IN_EN,
+				operations: OPERATIONS_EN,
 				errorPage: ERROR_PAGE_EN,
 				stableCoinCreation: STABLE_COIN_CREATION_EN,
 			},

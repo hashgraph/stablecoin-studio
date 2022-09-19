@@ -38,7 +38,6 @@ export default class UtilitiesService extends Service {
       network: new HederaNetwork(networks[network]),
       mode: NetworkMode.EOA,
     }).init();
-    console.log('SDK:::::::::', this.sdk); //TODO QUITAR LOG
     return this.sdk;
   }
 
