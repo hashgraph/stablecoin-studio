@@ -473,4 +473,7 @@ export default class HashPackProvider implements IProvider {
 	getAvailabilityExtension(): boolean {
 		return this.availableExtension;
 	}
+	gethashConnectConectionStatus(): HashConnectConnectionState {
+		return this.hashConnectConectionState;
+	}
 }

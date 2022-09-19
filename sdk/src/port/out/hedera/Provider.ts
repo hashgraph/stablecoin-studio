@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { hethers, Signer } from '@hashgraph/hethers';
+import { HashConnectConnectionState } from 'hashconnect/dist/cjs/types/hashconnect.js';
 import { HederaNetwork } from '../../../core/enum.js';
 import PrivateKey from '../../../domain/context/account/PrivateKey.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
@@ -38,4 +39,5 @@ export interface IProvider {
 		stableCoin: StableCoin,
 	): Promise<StableCoin>;
 	getAvailabilityExtension(): boolean;
+	gethashConnectConectionStatus():HashConnectConnectionState;
 }

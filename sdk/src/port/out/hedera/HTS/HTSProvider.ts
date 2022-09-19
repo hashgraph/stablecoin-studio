@@ -40,6 +40,7 @@ import { TransactionProvider } from '../transaction/TransactionProvider.js';
 import { HTSSigner } from './HTSSigner.js';
 import { HTSResponse, TransactionType } from '../sign/ISigner.js';
 import { TransactionResposeHandler } from '../transaction/TransactionResponseHandler.js';
+import { HashConnectConnectionState } from 'hashconnect/dist/cjs/types/hashconnect.js';
 
 type DefaultHederaProvider = hethers.providers.DefaultHederaProvider;
 
@@ -398,5 +399,8 @@ export default class HTSProvider implements IProvider {
 
 	getAvailabilityExtension(): boolean {
 		return false;
+	}
+	gethashConnectConectionStatus(): HashConnectConnectionState {
+		return HashConnectConnectionState.Disconnected;
 	}
 }

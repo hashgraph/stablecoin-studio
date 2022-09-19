@@ -449,4 +449,8 @@ export class SDK {
 
 		return this.networkAdapter.provider.getAvailabilityExtension();
 	}
+	gethashConnectConectionStatus(): HashConnectConnectionState {
+		console.log('=====getAvailabilityExtension=====');
+		return this.networkAdapter.provider.gethashConnectConectionStatus;
+	}
 }
