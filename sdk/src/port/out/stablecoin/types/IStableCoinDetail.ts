@@ -7,6 +7,7 @@ export default interface IStableCoinDetail {
 	name?: string;
 	symbol?: string;
 	decimals?: string;
+	initial_supply?: string;
 	total_supply?: string;
 	max_supply?: string;
 	custom_fees?: ICustomFees;

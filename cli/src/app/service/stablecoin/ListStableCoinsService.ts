@@ -1,4 +1,4 @@
-import { configurationService, language } from './../../../index.js';
+import { language } from './../../../index.js';
 import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
 import { StableCoinList } from '../../../domain/stablecoin/StableCoinList.js';
@@ -18,14 +18,14 @@ export default class ListStableCoinsService extends Service {
   public async listStableCoins(): Promise<void> {
     // Call to list stable coins
     const sdk: SDK = utilsService.getSDK();
+    const currentAccount = utilsService.getCurrentAccount();
 
     let resp: StableCoinList[];
 
     await utilsService.showSpinner(
       sdk
         .getListStableCoin({
-          privateKey:
-            configurationService.getConfiguration().accounts[0].privateKey,
+          privateKey: currentAccount.privateKey,
         })
         .then((response: StableCoinList[]) => (resp = response)),
       {

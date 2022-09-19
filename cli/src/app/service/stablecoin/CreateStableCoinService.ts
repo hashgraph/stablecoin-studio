@@ -46,18 +46,18 @@ export default class CreateStableCoinService extends Service {
 
     // Call to create stable coin sdk function
     const sdk: SDK = utilsService.getSDK();
+    const currentAccount = utilsService.getCurrentAccount();
 
     if (
-      configurationService.getConfiguration().accounts[0].privateKey == null ||
-      configurationService.getConfiguration().accounts[0].privateKey ==
-        undefined ||
-      configurationService.getConfiguration().accounts[0].privateKey == ''
+      currentAccount.privateKey == null ||
+      currentAccount.privateKey == undefined ||
+      currentAccount.privateKey == ''
     ) {
       const setConfigurationService: SetConfigurationService =
         new SetConfigurationService();
       await setConfigurationService.initConfiguration(
         configurationService.getDefaultConfigurationPath(),
-        configurationService.getConfiguration().defaultNetwork,
+        currentAccount.network,
       );
     }
     let createdToken;
@@ -67,10 +67,8 @@ export default class CreateStableCoinService extends Service {
     await utilsService.showSpinner(
       new Promise((resolve, reject) => {
         const req: ICreateStableCoinRequest = {
-          accountId:
-            configurationService.getConfiguration().accounts[0].accountId,
-          privateKey:
-            configurationService.getConfiguration().accounts[0].privateKey,
+          accountId: currentAccount.accountId,
+          privateKey: currentAccount.privateKey,
           ...stableCoin,
         };
         sdk

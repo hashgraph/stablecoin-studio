@@ -2,12 +2,14 @@ import {
   configurationService,
   language,
   utilsService,
+  wizardService,
 } from '../../../index.js';
 import Service from '../Service.js';
 import fs from 'fs-extra';
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 import { IConsensusNodeConfig } from '../../../domain/configuration/interfaces/IConsensusNodeConfig.js';
 import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
+const colors = require('colors');
 
 /**
  * Set Configuration Service
@@ -20,7 +22,10 @@ export default class SetConfigurationService extends Service {
   /**
    * Initialise the configuration for first time or with "init" command
    */
-  public async initConfiguration(path?: string, network?: string): Promise<void> {
+  public async initConfiguration(
+    path?: string,
+    network?: string,
+  ): Promise<void> {
     utilsService.showMessage(language.getText('initialConfiguration.title'));
     await this.configurePath(path);
     await this.configureDefaultNetwork(network);
@@ -41,7 +46,10 @@ export default class SetConfigurationService extends Service {
       );
     }
     // If the path is incorrect
-    if (!fs.existsSync(defaultPath) || !configurationService.validateConfigurationFile()) {
+    if (
+      !fs.existsSync(defaultPath) ||
+      !configurationService.validateConfigurationFile()
+    ) {
       const createAuto = await utilsService.defaultConfirmAsk(
         language.getText('configuration.askCreateConfig'),
         true,
@@ -65,13 +73,16 @@ export default class SetConfigurationService extends Service {
    * Function to configure the default network
    */
   public async configureDefaultNetwork(_network?: string): Promise<string> {
+    const networks = configurationService
+      .getConfiguration()
+      .networks.map((network) => network.name);
     let network: string;
-    if (_network){
+    if (_network) {
       network = _network;
-    }else{
-      network = await utilsService.defaultSingleAsk(
+    } else {
+      network = await utilsService.defaultMultipleAsk(
         language.getText('configuration.askNetwork'),
-        'mainnet|previewnet|testnet|local',
+        networks,
       );
     }
 
@@ -114,7 +125,8 @@ export default class SetConfigurationService extends Service {
    * Function to configure the account id
    */
   public async configureAccounts(): Promise<IAccountConfig[]> {
-    const accounts: IAccountConfig[] = [];
+    const configuration = configurationService.getConfiguration();
+    const accounts: IAccountConfig[] = configuration?.accounts || [];
     let moreAccounts = true;
 
     while (moreAccounts) {
@@ -126,6 +138,11 @@ export default class SetConfigurationService extends Service {
       );
       const accountFromPrivKey: IAccountConfig =
         await this.askForPrivateKeyOfAccount(accountId);
+
+      const network = await utilsService.defaultMultipleAsk(
+        language.getText('configuration.askNetworkAccount'),
+        configuration.networks.map((acc) => acc.name),
+      );
       let alias = await utilsService.defaultSingleAsk(
         language.getText('configuration.askAlias'),
         'AdminAccount',
@@ -144,18 +161,17 @@ export default class SetConfigurationService extends Service {
       accounts.push({
         accountId: accountId,
         privateKey: accountFromPrivKey.privateKey,
-        network: configurationService.getConfiguration().defaultNetwork,
+        network: network,
         alias: alias,
       });
 
-      moreAccounts = false;
-      /* const response = await utilsService.defaultSingleAsk(
+      const response = await utilsService.defaultConfirmAsk(
         language.getText('configuration.askMoreAccounts'),
-        'y',
+        true,
       );
-      if (response !== 'y' && response !== 'yes') {
+      if (!response) {
         moreAccounts = false;
-      } */
+      }
     }
 
     // Set accounts
@@ -163,6 +179,66 @@ export default class SetConfigurationService extends Service {
     defaultCfgData.accounts = accounts;
     configurationService.setConfiguration(defaultCfgData);
     return accounts;
+  }
+
+  public async manageAccountMenu(): Promise<void> {
+    const manageOptions = language.getArray('wizard.manageAccountOptions');
+    const defaultCfgData = configurationService.getConfiguration();
+    const accounts = defaultCfgData.accounts;
+    const accountAction = await utilsService.defaultMultipleAsk(
+      language.getText('wizard.accountOptions'),
+      manageOptions,
+    );
+    switch (accountAction) {
+      case manageOptions[0]:
+        await wizardService.chooseAccount(false);
+        await utilsService.initSDK(utilsService.getCurrentNetwork().name);
+        await wizardService.mainMenu();
+        break;
+      case manageOptions[1]:
+        console.dir(utilsService.maskPrivateAccounts(accounts), {
+          depth: null,
+        });
+        break;
+      case manageOptions[2]:
+        await this.configureAccounts();
+        const operateWithNewAccount = await utilsService.defaultConfirmAsk(
+          language.getText('configuration.askOperateWithNewAccount'),
+          true,
+        );
+        if (operateWithNewAccount) {
+          await wizardService.chooseLastAccount();
+          await utilsService.initSDK(utilsService.getCurrentNetwork().name);
+          await wizardService.mainMenu();
+        }
+        break;
+      case manageOptions[3]:
+        const currentAcc = utilsService.getCurrentAccount();
+        const options = accounts
+          .filter(
+            (acc) =>
+              acc.accountId !== currentAcc.accountId &&
+              acc.alias !== currentAcc.alias,
+          )
+          .map(
+            (acc) =>
+              `${acc.accountId} - ${acc.alias}` +
+              colors.magenta(' (' + acc.network + ')'),
+          );
+        const account = await utilsService.defaultMultipleAsk(
+          language.getText('wizard.accountDelete'),
+          options,
+        );
+        defaultCfgData.accounts = accounts.filter(
+          (acc) => acc.accountId !== account.split(' - ')[0],
+        );
+        configurationService.setConfiguration(defaultCfgData);
+        break;
+      case manageOptions[manageOptions.length - 1]:
+      default:
+        await wizardService.configurationMenu();
+    }
+    await this.manageAccountMenu();
   }
 
   /**
