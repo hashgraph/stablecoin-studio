@@ -102,7 +102,7 @@ export default class HTSProvider implements IProvider {
 		);
 		if (!functionAbi)
 			throw new HederaError(
-				'Contract function not found in ABI, are you using the right version?',
+				`Contract function ${ functionName } not found in ABI, are you using the right version?`,
 			);
 		const encodedParametersHex = this.web3.eth.abi
 			.encodeFunctionCall(functionAbi, parameters)

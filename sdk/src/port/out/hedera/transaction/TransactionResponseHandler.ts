@@ -57,7 +57,7 @@ export  class TransactionResposeHandler {
 		);
 		if (!functionAbi?.outputs)
 			throw new HederaError(
-				'Contract function not found in ABI, are you using the right version?',
+                `Contract function ${ functionName } not found in ABI, are you using the right version?`,
 			);
 		const functionParameters = functionAbi?.outputs;
 		const resultHex = '0x'.concat(

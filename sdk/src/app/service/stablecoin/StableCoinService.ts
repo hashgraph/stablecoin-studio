@@ -5,6 +5,7 @@ import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import IStableCoinList from '../../../port/in/sdk/response/IStableCoinList.js';
 import IGetStableCoinServiceRequestModel from './model/IGetStableCoinServiceRequestModel.js';
 import IGetBalanceOfStableCoinServiceRequestModel from './model/IGetBalanceOfStableCoinServiceRequestModel.js';
+import IGetBalanceOfTokenOwnerStableCoinServiceRequestModel from './model/IGetBalanceOfTokenOwnerStableCoinServiceRequestModel.js';
 import IGetNameOfStableCoinServiceRequestModel from './model/IGetNameOfStableCoinServiceRequestModel.js';
 import ICashInStableCoinServiceRequestModel from './model/ICashInStableCoinServiceRequestModel.js';
 import ICashOutStableCoinServiceRequestModel from './model/ICashOutStableCoinServiceRequestModel.js';
@@ -84,6 +85,17 @@ export default class StableCoinService extends Service {
 		);
 	}
 
+	public async getTokenOwnerBalance(
+		req: IGetBalanceOfTokenOwnerStableCoinServiceRequestModel,
+	): Promise<Uint8Array> {
+		return this.repository.getTokenOwnerBalance(
+			req.proxyContractId,
+			req.privateKey,
+			req.accountId,
+			req.tokenId
+		);
+	}	
+
 	public async getNameToken(
 		req: IGetNameOfStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
@@ -122,9 +134,16 @@ export default class StableCoinService extends Service {
 			id: req.tokenId,
 		});
 		const amount = coin.toInteger(req.amount);
-		/*if (coin.maxSupply > 0n && amount > coin.maxSupply - coin.totalSupply) {
-			throw new Error('Amount is bigger than allowed supply');
-		}*/
+		const tokenOwnerBalance = await this.getTokenOwnerBalance({
+			accountId: req.accountId,
+			privateKey: req.privateKey,
+			proxyContractId: req.proxyContractId,
+			tokenId: req.tokenId
+		});
+console.log(`Saldo del token owner ${ tokenOwnerBalance[0] }`);
+		if (amount > tokenOwnerBalance[0]) {
+			throw new Error('Amount is bigger than token owner balance');
+		}
 		return this.repository.cashOut(
 			req.proxyContractId,
 			req.privateKey,
