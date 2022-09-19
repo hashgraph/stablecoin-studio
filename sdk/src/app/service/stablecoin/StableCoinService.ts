@@ -140,7 +140,6 @@ export default class StableCoinService extends Service {
 			proxyContractId: req.proxyContractId,
 			tokenId: req.tokenId
 		});
-console.log(`Saldo del token owner ${ tokenOwnerBalance[0] }`);
 		if (amount > tokenOwnerBalance[0]) {
 			throw new Error('Amount is bigger than token owner balance');
 		}
