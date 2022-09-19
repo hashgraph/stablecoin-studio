@@ -202,6 +202,15 @@ export default class SetConfigurationService extends Service {
         break;
       case manageOptions[2]:
         await this.configureAccounts();
+        const operateWithNewAccount = await utilsService.defaultConfirmAsk(
+          language.getText('configuration.askOperateWithNewAccount'),
+          true,
+        );
+        if (operateWithNewAccount) {
+          await wizardService.chooseLastAccount();
+          await utilsService.initSDK(utilsService.getCurrentNetwork().name);
+          await wizardService.mainMenu();
+        }
         break;
       case manageOptions[3]:
         const currentAcc = utilsService.getCurrentAccount();

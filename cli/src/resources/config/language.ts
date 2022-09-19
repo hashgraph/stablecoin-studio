@@ -30,6 +30,8 @@ export const english = {
     askMirrorNode: 'Introduce the mirror url',
     askChain: 'Introduce the chain id',
     askNode: 'Introduce the node id',
+    askOperateWithNewAccount:
+      'Would you like to operate with the last account you have created?',
   },
   stablecoin: {
     askConfirmCreation:

@@ -147,4 +147,15 @@ export default class WizardService extends Service {
     utilsService.setCurrentNetwotk(currentNetwork);
     if (mainMenu) await this.mainMenu();
   }
+
+  public async chooseLastAccount(): Promise<void> {
+    const configuration = configurationService.getConfiguration();
+    const { networks, accounts } = configuration;
+    const currentAccount = accounts[accounts.length - 1];
+    utilsService.setCurrentAccount(currentAccount);
+    const currentNetwork = networks.find(
+      (network) => currentAccount.network === network.name,
+    );
+    utilsService.setCurrentNetwotk(currentNetwork);
+  }
 }
