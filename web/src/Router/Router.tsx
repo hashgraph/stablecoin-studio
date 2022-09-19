@@ -8,6 +8,7 @@ import Login from '../views/Login';
 import Operations from '../views/Operations';
 import CashInOperation from '../views/Operations/CashIn';
 import StableCoinCreation from '../views/StableCoinCreation/StableCoinCreation';
+import Roles from '../views/Roles';
 import { RoutesMappingUrl } from './RoutesMappingUrl';
 
 const PrivateRoute = () => {
@@ -34,14 +35,15 @@ const Router = () => {
 
 				{/* Private routes */}
 				<Route element={<PrivateRoute />}>
+					<Route path={RoutesMappingUrl.cashIn} element={<CashInOperation />} />
 					<Route path={RoutesMappingUrl.dashboard} element={<Dashboard />} />
 					<Route path={RoutesMappingUrl.operations} element={<Operations />} />
-					<Route path={RoutesMappingUrl.cashIn} element={<CashInOperation />} />
+					<Route path={RoutesMappingUrl.roles} element={<Roles />} />
+					<Route path={RoutesMappingUrl.stableCoinCreation} element={<StableCoinCreation />} />
 					<Route
 						path={RoutesMappingUrl.stableCoinNotSelected}
 						element={<StableCoinNotSelected />}
 					/>
-					<Route path={RoutesMappingUrl.stableCoinCreation} element={<StableCoinCreation />} />
 					<Route path='*' element={<Navigate to={RoutesMappingUrl.dashboard} />} />
 				</Route>
 			</Routes>

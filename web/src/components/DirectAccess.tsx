@@ -4,7 +4,7 @@ import { NamedRoutes } from '../Router/NamedRoutes';
 import { RouterManager } from '../Router/RouterManager';
 import Icon from './Icon';
 
-interface DirectAccessProps extends FlexProps {
+export interface DirectAccessProps extends FlexProps {
 	title: string;
 	icon: string;
 	route: NamedRoutes;

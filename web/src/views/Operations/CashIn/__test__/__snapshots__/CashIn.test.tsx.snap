@@ -12,7 +12,7 @@ exports[`<CashInOperation /> should render correctly 1`] = `
       Operations
     </h2>
     <div
-      class="css-vrk9k9"
+      class="css-1b6lda7"
       data-testid="base-container-children"
     >
       <div

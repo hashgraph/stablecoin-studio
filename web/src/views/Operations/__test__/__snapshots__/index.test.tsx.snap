@@ -12,7 +12,7 @@ exports[`<Operations /> should render correctly 1`] = `
       Operations
     </h2>
     <div
-      class="css-vrk9k9"
+      class="css-1b6lda7"
       data-testid="base-container-children"
     >
       <div
@@ -24,56 +24,64 @@ exports[`<Operations /> should render correctly 1`] = `
         >
           Create new operation
         </h2>
-        <button
-          class="css-r6fkgg"
-          data-testid="direct-access-cashIn"
+        <div
+          class="css-qbodi0"
         >
           <div
-            class="css-bv4l9q"
+            class="css-180e663"
           >
-            <svg
-              class="chakra-icon css-1f9qa95"
-              data-testid="direct-access-ArrowDown"
-              fill="currentColor"
-              focusable="false"
-              height="1em"
-              viewBox="0 0 256 256"
-              width="1em"
-              xmlns="http://www.w3.org/2000/svg"
+            <button
+              class="css-yidqqh"
+              data-testid="direct-access-cashIn"
             >
-              <rect
-                fill="none"
-                height="256"
-                width="256"
-              />
-              <line
-                fill="none"
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="16"
-                x1="128"
-                x2="128"
-                y1="40"
-                y2="216"
-              />
-              <polyline
-                fill="none"
-                points="56 144 128 216 200 144"
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="16"
-              />
-            </svg>
+              <div
+                class="css-bv4l9q"
+              >
+                <svg
+                  class="chakra-icon css-1f9qa95"
+                  data-testid="direct-access-ArrowDown"
+                  fill="currentColor"
+                  focusable="false"
+                  height="1em"
+                  viewBox="0 0 256 256"
+                  width="1em"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect
+                    fill="none"
+                    height="256"
+                    width="256"
+                  />
+                  <line
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                    x1="128"
+                    x2="128"
+                    y1="40"
+                    y2="216"
+                  />
+                  <polyline
+                    fill="none"
+                    points="56 144 128 216 200 144"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                  />
+                </svg>
+              </div>
+              <p
+                class="chakra-text css-1mbt7nu"
+                data-testid="direct-access-Cash in tokens"
+              >
+                Cash in tokens
+              </p>
+            </button>
           </div>
-          <p
-            class="chakra-text css-872br"
-            data-testid="direct-access-Cash in tokens"
-          >
-            Cash in tokens
-          </p>
-        </button>
+        </div>
       </div>
     </div>
   </div>

@@ -4,13 +4,26 @@ import BaseContainer from '../../components/BaseContainer';
 import { NamedRoutes } from '../../Router/NamedRoutes';
 import GridDirectAccess from '../../components/GridDirectAccess';
 
-const Operations = () => {
-	const { t } = useTranslation('operations');
+const Roles = () => {
+	const { t } = useTranslation('roles');
 	const directAccesses = [
 		{
-			icon: 'ArrowDown',
-			route: NamedRoutes.CashIn,
-			title: t('cashInOperation'),
+			icon: 'PlusCircle',
+			route: NamedRoutes.GiveRole,
+			title: t('give'),
+			variant: 'disabled',
+		},
+		{
+			icon: 'MinusCircle',
+			route: NamedRoutes.RevokeRole,
+			title: t('revoke'),
+			variant: 'disabled',
+		},
+		{
+			icon: 'PencilSimple',
+			route: NamedRoutes.EditRole,
+			title: t('edit'),
+			variant: 'disabled',
 		},
 	];
 
@@ -26,4 +39,4 @@ const Operations = () => {
 	);
 };
 
-export default Operations;
+export default Roles;
