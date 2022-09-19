@@ -400,7 +400,7 @@ export default class HTSProvider implements IProvider {
 	getAvailabilityExtension(): boolean {
 		return false;
 	}
-	gethashConnectConectionStatus(): HashConnectConnectionState {
+	gethashConnectConectionState(): HashConnectConnectionState {
 		return HashConnectConnectionState.Disconnected;
 	}
 }

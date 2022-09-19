@@ -39,5 +39,5 @@ export interface IProvider {
 		stableCoin: StableCoin,
 	): Promise<StableCoin>;
 	getAvailabilityExtension(): boolean;
-	gethashConnectConectionStatus():HashConnectConnectionState;
+	gethashConnectConectionState():HashConnectConnectionState;
 }

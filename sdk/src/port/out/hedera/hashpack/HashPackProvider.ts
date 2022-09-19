@@ -54,7 +54,7 @@ export default class HashPackProvider implements IProvider {
 
 	public async init({
 		network,
-		options,
+		options
 	}: IniConfig): Promise<HashPackProvider> {		
 
 		this.hc = new HashConnect(true);
@@ -473,7 +473,7 @@ export default class HashPackProvider implements IProvider {
 	getAvailabilityExtension(): boolean {
 		return this.availableExtension;
 	}
-	gethashConnectConectionStatus(): HashConnectConnectionState {
+	gethashConnectConectionState(): HashConnectConnectionState {
 		return this.hashConnectConectionState;
 	}
 }
