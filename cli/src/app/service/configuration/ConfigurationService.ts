@@ -8,6 +8,7 @@ import { INetworkConfig } from '../../../domain/configuration/interfaces/INetwor
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 import { configurationService, utilsService } from '../../../index.js';
 import SetConfigurationService from './SetConfigurationService.js';
+const MaskData = require('maskdata');
 
 /**
  * Configuration Service
@@ -67,7 +68,21 @@ export default class ConfigurationService extends Service {
    * Show full configuration in json format
    */
   public showFullConfiguration(): void {
-    console.dir(this.getConfiguration(), { depth: null });
+    const maskJSONOptions = {
+      maskWith: '.',
+      unmaskedStartCharacters: 4,
+      unmaskedEndCharacters: 4,
+    };
+    const configuration = this.getConfiguration();
+    configuration.accounts = configuration.accounts.map((acc) => {
+      return {
+        privateKey: MaskData.maskPassword(acc.privateKey, maskJSONOptions),
+        accountId: acc.accountId,
+        network: acc.network,
+        alias: acc.alias,
+      };
+    });
+    console.dir(configuration, { depth: null });
   }
 
   /**
