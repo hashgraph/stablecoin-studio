@@ -12,7 +12,7 @@ import IWipeStableCoinServiceRequestModel from './model/IWipeStableCoinServiceRe
 import IStableCoinRepository from '../../../port/out/stablecoin/IStableCoinRepository.js';
 import IRescueStableCoinServiceRequestModel from './model/IRescueStableCoinServiceRequestModel.js';
 import IRoleStableCoinServiceRequestModel from './model/IRoleStableCoinServiceRequestModel';
-import IGetWithAddressRequestModel from './model/IGetBasicRequest.js';
+import IGetBasicRequestModel from './model/IGetBasicRequest.js';
 import ISupplierRoleStableCoinServiceRequestModel from './model/ISupplierRoleStableCoinServiceRequestModel.js';
 import { StableCoinRole } from '../../../index.js';
 
@@ -185,7 +185,7 @@ export default class StableCoinService extends Service {
 	}
 
 	public async isUnlimitedSupplierAllowance(
-		req: IGetWithAddressRequestModel,
+		req: IGetBasicRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.isUnlimitedSupplierAllowance(
 			req.proxyContractId,
@@ -195,7 +195,7 @@ export default class StableCoinService extends Service {
 		);
 	}
 	public async supplierAllowance(
-		req: IGetWithAddressRequestModel,
+		req: IGetBasicRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.supplierAllowance(
 			req.proxyContractId,
@@ -205,7 +205,7 @@ export default class StableCoinService extends Service {
 		);
 	}
 	public async revokeSupplierRole(
-		req: IGetWithAddressRequestModel,
+		req: IGetBasicRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.revokeSupplierRole(
 			req.proxyContractId,
@@ -215,7 +215,7 @@ export default class StableCoinService extends Service {
 		);
 	}
 	public async resetSupplierAllowance(
-		req: IGetWithAddressRequestModel,
+		req: IGetBasicRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.resetSupplierAllowance(
 			req.proxyContractId,
@@ -248,7 +248,7 @@ export default class StableCoinService extends Service {
 	}
 
 	public async isLimitedSupplierAllowance(
-		req: IGetWithAddressRequestModel,
+		req: IGetBasicRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.isLimitedSupplierAllowance(
 			req.proxyContractId,
