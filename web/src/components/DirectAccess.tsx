@@ -24,10 +24,6 @@ const DirectAccess = ({ title, icon, route, variant, ...props }: DirectAccessPro
 		<Flex
 			sx={style}
 			data-testid={`direct-access-${route}`}
-			gap='16px'
-			flexDirection='column'
-			justifyContent='center'
-			alignItems='center'
 			as='button'
 			onClick={handleNavigate}
 			disabled={variant === 'disabled'}

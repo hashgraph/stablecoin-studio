@@ -1,5 +1,8 @@
 export enum NamedRoutes {
 	CashIn = 'cashIn',
+	CashOut = 'cashOut',
+	Rescue = 'rescue',
+	Wipe = 'wipe',
 	Dashboard = 'dashboard',
 	Details = 'details',
 	EditRole = 'editRole',
