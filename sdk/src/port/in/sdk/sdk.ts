@@ -454,4 +454,8 @@ export class SDK {
 		console.log('=====getAvailabilityExtension=====');
 		return this.networkAdapter.provider.gethashConnectConectionState();
 	}
+	disconectHaspack():void{
+		console.log('=====disconect Haspack=====');
+		return this.networkAdapter.provider.disconectHaspack();
+	}
 }

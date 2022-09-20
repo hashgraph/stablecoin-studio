@@ -51,6 +51,7 @@ export default class HashPackProvider implements IProvider {
 	private web3 = new Web3();
 	private provider: HashConnectProvider;
 	private hashConnectConectionState: HashConnectConnectionState;
+	private pairingData:HashConnectTypes.SavedPairingData|null = null ;
 
 	public async init({
 		network,
@@ -60,9 +61,7 @@ export default class HashPackProvider implements IProvider {
 		this.hc = new HashConnect(true);
 
 		this.setUpHashConnectEvents();
-
 		this.network = network;
-		// this.registerEvents();
 		if (options && options?.appMetadata) {
 			this.initData = await this.hc.init(
 				options.appMetadata,
@@ -71,11 +70,13 @@ export default class HashPackProvider implements IProvider {
 		} else {
 			throw new Error('No app metadata');
 		}
-				
-		await this.hc.connect();
-		this.hc.findLocalWallets();
-		this.hc.connectToLocalWallet();
+		return this;
+	}
 
+	public async connectWallet(): Promise<HashPackProvider> {
+		console.log('=====CONNECT WALLET HASPACKPROVIDER=====');
+	
+		this.hc.connectToLocalWallet();
 		return this;
 	}
 
@@ -92,6 +93,7 @@ export default class HashPackProvider implements IProvider {
 
 		//This is fired when a wallet approves a pairing
 		this.hc.pairingEvent.on((data) => {
+			this.pairingData = data.pairingData!;
 			console.log('Paired with wallet', data);
 
 			// this.pairingData = data.pairingData!;
@@ -475,5 +477,9 @@ export default class HashPackProvider implements IProvider {
 	}
 	gethashConnectConectionState(): HashConnectConnectionState {
 		return this.hashConnectConectionState;
+	}
+	disconectHaspack(): void {
+		this.hc.disconnect(this.pairingData!.topic);
+        this.pairingData = null;	
 	}
 }

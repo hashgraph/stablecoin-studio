@@ -403,4 +403,7 @@ export default class HTSProvider implements IProvider {
 	gethashConnectConectionState(): HashConnectConnectionState {
 		return HashConnectConnectionState.Disconnected;
 	}
+	disconectHaspack(): void {
+		
+	}
 }
