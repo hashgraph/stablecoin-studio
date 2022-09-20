@@ -365,6 +365,18 @@ export default class OperationStableCoinService extends Service {
               console.log(language.getText('validations.wrongFormatAddress'));
               await this.roleManagementFlow();
             }
+
+            if (
+              await this.checkSupplierType(
+                accountTarget,
+                roleService,
+                'unlimited',
+                currentAccount,
+              )
+            ) {
+              console.log(language.getText('supplier.unlimitedRole') + '\n');
+              break;
+            }
             limit = await utilsService.defaultSingleAsk(
               language.getText('stablecoin.amountIncrease'),
               '1',
@@ -407,6 +419,17 @@ export default class OperationStableCoinService extends Service {
               console.log(language.getText('validations.wrongFormatAddress'));
               await this.roleManagementFlow();
             }
+            if (
+              await this.checkSupplierType(
+                accountTarget,
+                roleService,
+                'unlimited',
+                currentAccount,
+              )
+            ) {
+              console.log(language.getText('supplier.unlimitedRole') + '\n');
+              break;
+            }
             limit = await utilsService.defaultSingleAsk(
               language.getText('stablecoin.amountDecrease'),
               '1',
@@ -447,6 +470,17 @@ export default class OperationStableCoinService extends Service {
             if (!sdk.checkIsAddress(accountTarget)) {
               console.log(language.getText('validations.wrongFormatAddress'));
               await this.roleManagementFlow();
+            }
+            if (
+              await this.checkSupplierType(
+                accountTarget,
+                roleService,
+                'unlimited',
+                currentAccount,
+              )
+            ) {
+              console.log(language.getText('supplier.unlimitedRole') + '\n');
+              break;
             }
             //Call to SDK
             if (

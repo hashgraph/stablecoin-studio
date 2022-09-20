@@ -189,6 +189,7 @@ export const english = {
     reject: 'Operation has not been completed. Please, try again.',
   },
   supplier: {
+    unlimitedRole: 'This account have unlimited supplier role',
     alreadyUnlimitedRole: 'This account already have unlimited supplier role.',
     alreadyRole: 'This account already have supplier role.',
     notUnlimitedRole: 'This account does not have unlimited supplier role.',
