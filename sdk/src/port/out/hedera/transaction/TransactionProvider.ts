@@ -14,7 +14,7 @@ export class TransactionProvider{
         return transaction;    
     }
 
-    public static buildTokenCreateTransaction (values: ICreateTokenResponse, maxSupply: bigint | undefined) : Transaction{
+    public static buildTokenCreateTransaction (values: ICreateTokenResponse, maxSupply: bigint | undefined) : Transaction {
         const transaction = new TokenCreateTransaction()
 			.setMaxTransactionFee(new Hbar(25))
 			.setTokenName(values.name)
@@ -23,17 +23,37 @@ export class TransactionProvider{
 			.setInitialSupply(values.initialSupply)
 			.setTokenMemo(values.memo)
 			.setFreezeDefault(values.freezeDefault)
-			.setTreasuryAccountId(values.treasuryAccountId)
-			.setAdminKey(values.adminKey)
-			.setFreezeKey(values.freezeKey)
-			.setWipeKey(values.wipeKey)
-			.setSupplyKey(values.supplyKey);
-
+			.setTreasuryAccountId(values.treasuryAccountId);
+		
+		if (values.adminKey) {
+			console.log("se setea el admin key");
+			transaction.setAdminKey(values.adminKey);
+		}
+		if (values.freezeKey) {
+			console.log("se setea el freeze key");
+			transaction.setFreezeKey(values.freezeKey);
+		}
+		if (values.wipeKey) {
+			console.log("se setea el wipe key");
+			transaction.setWipeKey(values.wipeKey);
+		}
+		/*if (values.kycKey) {
+			console.log("se setea el kyc key");
+			transaction.setKycKey(values.kycKey);
+		}*/
+		if (values.pauseKey) {
+			console.log("se setea el pause key");
+			transaction.setPauseKey(values.pauseKey);
+		}
+		if (values.supplyKey) {
+			console.log("se setea el supply key key: " + values.supplyKey);
+			transaction.setSupplyKey(values.supplyKey);
+		}
 		if (maxSupply) {
-			console.log("max="+maxSupply);
 			transaction.setMaxSupply(values.maxSupply);
 			transaction.setSupplyType(TokenSupplyType.Finite);
 		}
+console.log("transaction: " + transaction);		
 		return transaction;
     }
 

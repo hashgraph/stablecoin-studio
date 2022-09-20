@@ -218,6 +218,12 @@ export default class HTSProvider implements IProvider {
 			client,
 		);
 		log('Creating token... please wait.', logOpts);
+		console.log(`xx freezeKey: ${ stableCoin.freezeKey } `);		
+		console.log(`xx kycKey: ${ stableCoin.kycKey } `);		
+		console.log(`xx wipeKey: ${ stableCoin.wipeKey } `);		
+		console.log(`xx supplyKey: ${ stableCoin.supplyKey } `);		
+		console.log(`xx adminKey: ${ stableCoin.adminKey } `);		
+		console.log(`xx pauseKey: ${ stableCoin.pauseKey } `);		
 		const hederaToken = await this.createToken(
 			tokenOwnerContract,
 			stableCoin.name,
@@ -230,6 +236,12 @@ export default class HTSProvider implements IProvider {
 			plainAccount.privateKey,
 			this.getPublicKey(privateKey),
 			client,
+			stableCoin.adminKey,
+			stableCoin.freezeKey,
+			stableCoin.kycKey,
+			stableCoin.wipeKey,
+			stableCoin.pauseKey,
+			stableCoin.supplyKey,
 		);
 		log('Setting up contract... please wait.', logOpts);
 		await this.callContract('setTokenAddress', {
@@ -272,9 +284,12 @@ export default class HTSProvider implements IProvider {
 			memo: hederaToken.memo,
 			freezeDefault: hederaToken.freezeDefault,
 			treasury: new AccountId(hederaToken.treasuryAccountId.toString()),
-			adminKey: this.fromPublicKey(hederaToken.adminKey),
-			freezeKey: this.fromPublicKey(hederaToken.freezeKey),
-			wipeKey: this.fromPublicKey(hederaToken.wipeKey),
+			adminKey: hederaToken.adminKey,
+			//freezeKey: this.fromPublicKey(hederaToken.freezeKey),
+			freezeKey: hederaToken.freezeKey,
+			kycKey: hederaToken.kycKey,
+			wipeKey: hederaToken.wipeKey,
+			pauseKey: hederaToken.pauseKey,
 			supplyKey: hederaToken.supplyKey,
 			id: hederaToken.tokenId,
 			tokenType: stableCoin.tokenType,
@@ -347,6 +362,12 @@ export default class HTSProvider implements IProvider {
 		privateKey: string,
 		publicKey: string,
 		client: Client,
+		adminKey?: ContractId | PublicKey,
+		freezeKey?: ContractId | PublicKey,
+		kycKey?: ContractId | PublicKey,
+		wipeKey?: ContractId | PublicKey,
+		pauseKey?: ContractId | PublicKey,
+		supplyKey?: ContractId | PublicKey,
 	): Promise<ICreateTokenResponse> {
 		const values: ICreateTokenResponse = {
 			name,
@@ -361,10 +382,21 @@ export default class HTSProvider implements IProvider {
 			treasuryAccountId: HAccountId.fromString(contractId.toString()),
 			adminKey: HPublicKey.fromString(publicKey),
 			freezeKey: HPublicKey.fromString(publicKey),
+			kycKey: HPublicKey.fromString(publicKey),
 			wipeKey: HPublicKey.fromString(publicKey),
+			pauseKey: HPublicKey.fromString(publicKey),
 			supplyKey: DelegateContractId.fromString(contractId),
-			tokenId: '',
+			//pauseKey: this.getKeyFromOption(pauseKey, contractId, publicKey),
+			//supplyKey: this.getKeyFromOption(supplyKey, contractId, publicKey),
+			tokenId: ''
 		};
+
+		console.log(`yy freezeKey: ${ values.freezeKey } `);		
+		console.log(`yy kycKey: ${ values.kycKey } `);		
+		console.log(`yy wipeKey: ${ values.wipeKey } `);		
+		console.log(`yy supplyKey: ${ values.supplyKey } `);		
+		console.log(`yy adminKey: ${ values.adminKey } `);		
+		console.log(`yy pauseKey: ${ values.pauseKey } `);		
 
 		this.htsSigner = new HTSSigner(client);
 		const transaction: Transaction =
@@ -391,6 +423,24 @@ export default class HTSProvider implements IProvider {
 			logOpts,
 		);
 		return values;
+	}
+
+	private getKeyFromOption(option: string, contractId: string, publicKey: string): HPublicKey | DelegateContractId | undefined {
+		switch(option) {
+			case "Admin Key":
+				return HPublicKey.fromString(publicKey);
+
+			/*case: 
+				const accountPublicKey : string; 
+				return HPublicKey.fromString(accountPublicKey);*/
+
+			case "None":
+				return undefined;
+
+			case "The Smart Contract":
+			default:
+				return DelegateContractId.fromString(contractId);
+		}
 	}
 
 	private fromPublicKey(key: HPublicKey): PublicKey {
