@@ -34,13 +34,14 @@ const OnboardingRoute = ({ status }: { status?: HashConnectConnectionState }) =>
 const Router = () => {
 	const [status, setStatus] = useState<HashConnectConnectionState>();
 
+	useEffect(() => {
+		getStatus();
+	}, []);
+
 	const getStatus = async () => {
 		const status = await SDKService.getStatus();
 		setStatus(status);
 	};
-	useEffect(() => {
-		getStatus();
-	}, []);
 
 	return (
 		<main>
