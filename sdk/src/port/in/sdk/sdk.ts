@@ -44,6 +44,7 @@ import ContractId from '../../../domain/context/contract/ContractId.js';
 import { TokenType } from '../../../domain/context/stablecoin/TokenType.js';
 import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.js';
 import { HashConnectConnectionState } from 'hashconnect/dist/cjs/types/hashconnect.js';
+import HashPackProvider from 'port/out/hedera/hashpack/HashPackProvider.js';
 
 export {
 	IAssociateStableCoinRequest,
@@ -457,5 +458,10 @@ export class SDK {
 	disconectHaspack():void{
 		console.log('=====disconect Haspack=====');
 		return this.networkAdapter.provider.disconectHaspack();
+	}
+
+	connectWallet():Promise<HashPackProvider>{
+		console.log('=====connectWallet Haspack=====');
+		return this.networkAdapter.provider.connectWallet();
 	}
 }
