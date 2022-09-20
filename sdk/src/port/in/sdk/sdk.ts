@@ -12,8 +12,6 @@ import { HederaNetwork, StableCoinRole } from '../../../core/enum.js';
 import { HederaNetworkEnviroment } from '../../../core/enum.js';
 import { getHederaNetwork } from '../../../core/enum.js';
 
-import { AppMetadata } from '../../out/hedera/hashpack/types/types.js';
-
 import IWipeStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IWipeStableCoinServiceRequestModel.js';
 import ICreateStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/ICreateStableCoinServiceRequestModel.js';
 import { IListStableCoinServiceRequestModel } from '../../../app/service/stablecoin/model/IListStableCoinServiceRequestModel.js';
@@ -49,6 +47,7 @@ import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.
 import { IAllowanceRequest } from './request/IRequestContracts.js';
 import { HashConnectConnectionState } from 'hashconnect/dist/cjs/types/hashconnect.js';
 import HashPackProvider from 'port/out/hedera/hashpack/HashPackProvider.js';
+import { AppMetadata } from '../../out/hedera/hashpack/types/types.js';
 
 export {
 	IAssociateStableCoinRequest,
