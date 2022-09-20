@@ -1,97 +1,173 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-empty-function */
-import { hethers } from '@hashgraph/hethers';
-import PrivateKey from '../../../../domain/context/account/PrivateKey.js';
+import {
+	HashConnect,
+	HashConnectTypes,
+	MessageTypes,
+} from 'hashconnect/dist/cjs/main';
+import { IniConfig, IProvider } from '../Provider.js';
+import {
+	HederaNetwork,
+	getHederaNetwork,
+	AppMetadata,
+	PublicKey,
+	PrivateKey,
+} from '../../../in/sdk/sdk.js';
 import {
 	AccountId as HAccountId,
-	Client,
 	TransactionResponse,
 	ContractFunctionParameters,
 	ContractId,
 	DelegateContractId,
-	PrivateKey as HPrivateKey,
 	PublicKey as HPublicKey,
+	PrivateKey as HPrivateKey,
 	TokenId,
 	Transaction,
 } from '@hashgraph/sdk';
-import {
-	HederaERC1967Proxy__factory,
-	HederaERC20__factory,
-	HTSTokenOwner__factory,
-} from 'hedera-stable-coin-contracts/typechain-types/index.js';
-import {
-	HederaNetwork,
-	HederaNetworkEnviroment,
-} from '../../../../core/enum.js';
-import { IniConfig, IProvider } from '../Provider.js';
-import Web3 from 'web3';
 import { StableCoin } from '../../../../domain/context/stablecoin/StableCoin.js';
-import { getHederaNetwork } from '../../../../core/enum.js';
-import Long from 'long';
-import { log } from '../../../../core/log.js';
 import {
 	ICallContractRequest,
 	ICallContractWithAccountRequest,
 	ICreateTokenResponse,
 } from '../types.js';
-import HederaError from '../error/HederaError.js';
-import PublicKey from '../../../../domain/context/account/PublicKey.js';
-import AccountId from '../../../../domain/context/account/AccountId.js';
+import { HashConnectConnectionState } from 'hashconnect/dist/cjs/types/hashconnect.js';
+import { HashPackSigner } from './HashPackSigner.js';
 import { TransactionProvider } from '../transaction/TransactionProvider.js';
-import { HTSSigner } from './HTSSigner.js';
 import { HTSResponse, TransactionType } from '../sign/ISigner.js';
 import { TransactionResposeHandler } from '../transaction/TransactionResponseHandler.js';
-import { HashConnectConnectionState } from 'hashconnect/dist/cjs/types/hashconnect.js';
-import HashPackProvider from '../hashpack/HashPackProvider.js';
-
-type DefaultHederaProvider = hethers.providers.DefaultHederaProvider;
+import HederaError from '../error/HederaError.js';
+import Web3 from 'web3';
+import { log } from '../../../../core/log.js';
+import {
+	HederaERC1967Proxy__factory,
+	HederaERC20__factory,
+	HTSTokenOwner__factory,
+} from 'hedera-stable-coin-contracts/typechain-types/index.js';
+import { HashConnectProvider } from 'hashconnect/dist/cjs/provider/provider.js';
+import { HashConnectSigner } from 'hashconnect/dist/cjs/provider/signer';
+import Long from 'long';
+import { stat } from 'fs';
 
 const logOpts = { newLine: true, clear: true };
-export default class HTSProvider implements IProvider {
-	public HTSProvider: DefaultHederaProvider;
+
+export default class HashPackProvider implements IProvider {
+	private hc: HashConnect;
+	private initData: HashConnectTypes.InitilizationData;
 	private network: HederaNetwork;
-	private web3 = new Web3();
-	private htsSigner: HTSSigner;
+	private extensionMetadata: AppMetadata;
+	private availableExtension = false;
+	private hashPackSigner: HashPackSigner;
 	private transactionResposeHandler: TransactionResposeHandler =
 		new TransactionResposeHandler();
+	private web3 = new Web3();
+	private provider: HashConnectProvider;
+	private hashConnectConectionState: HashConnectConnectionState;
+	private pairingData: HashConnectTypes.SavedPairingData | null = null;
 
-	/**
-	 * init
-	 */
-	public init({ network }: IniConfig): Promise<HTSProvider> {
+	public async init({
+		network,
+		options,
+	}: IniConfig): Promise<HashPackProvider> {
+		this.hc = new HashConnect(options?.appMetadata?.debugMode);
+
+		this.setUpHashConnectEvents();
 		this.network = network;
-		this.HTSProvider = this.getHTSProvider(network);
+		if (options && options?.appMetadata) {
+			this.initData = await this.hc.init(
+				options.appMetadata,
+				getHederaNetwork(network)?.name as Partial<
+					'mainnet' | 'testnet' | 'previewnet'
+				>,
+			);
+		} else {
+			throw new Error('No app metadata');
+		}
+		return this;
+	}
 
-		// We have to follow an async pattern to match Hashconnect
-		return new Promise((r) => {
-			r(this);
+	public async connectWallet(): Promise<HashPackProvider> {
+		console.log('=====CONNECT WALLET HASPACKPROVIDER=====');
+
+		this.hc.connectToLocalWallet();
+		return this;
+	}
+
+	public getAvailability(): boolean {
+		return this.availableExtension;
+	}
+
+	public setUpHashConnectEvents() {
+		//This is fired when a extension is found
+		this.hc.foundExtensionEvent.on((data) => {
+			console.log('Found extension', data);
+			if (data) this.availableExtension = true;
+		});
+
+		//This is fired when a wallet approves a pairing
+		this.hc.pairingEvent.on((data) => {
+			this.pairingData = data.pairingData!;
+			console.log('Paired with wallet', data);
+
+			// this.pairingData = data.pairingData!;
+		});
+
+		//This is fired when HashConnect loses connection, pairs successfully, or is starting connection
+		this.hc.connectionStatusChangeEvent.on((state) => {
+			this.hashConnectConectionState = state;
+			console.log('hashconnect state change event', state);
+			// this.state = state;
+		});
+
+		this.hc.acknowledgeMessageEvent.on((state) => {
+			console.log('acknowledgeMessageEvent event', state);
 		});
 	}
 
-	public async stop(): Promise<boolean> {
-		// No need to do anything here but return true, hasconnect does need this function
-		return new Promise((res) => {
-			res(true);
-		});
-	}
+	public async callContract(
+		name: string,
+		params: ICallContractRequest | ICallContractWithAccountRequest,
+	): Promise<Uint8Array> {
+		const { contractId, parameters, gas, abi } = params;
 
-	public getClient(accountId?: string, privateKey?: string): Client {
-		let client: any;
-		const hederaNetWork = getHederaNetwork(this.network);
-
-		if (hederaNetWork.consensusNodes) {
-			client = Client.forNetwork(hederaNetWork.consensusNodes);
-		} else if (
-			this.network.hederaNetworkEnviroment !=
-			HederaNetworkEnviroment.LOCAL
-		) {
-			client = Client.forName(this.network.hederaNetworkEnviroment);
+		if ('account' in params) {
+			this.provider = this.hc.getProvider(
+				this.network.hederaNetworkEnviroment,
+				this.initData.topic,
+				params.account.accountId,
+			);
+		} else {
+			throw new Error(
+				'You must specify an accountId for operate with HashConnect.',
+			);
 		}
 
-		if (accountId && privateKey) {
-			client.setOperator(accountId, privateKey);
-		}
-		return client;
+		const functionCallParameters = this.encodeFunctionCall(
+			name,
+			parameters,
+			abi,
+		);
+
+		this.hashPackSigner = new HashPackSigner(undefined);
+		const transaction: Transaction =
+			TransactionProvider.buildContractExecuteTransaction(
+				contractId,
+				functionCallParameters,
+				gas,
+			);
+
+		const transactionResponse: TransactionResponse =
+			await this.hashPackSigner.signAndSendTransaction(
+				transaction,
+				this.hc.getSigner(this.provider),
+			);
+		const htsResponse: HTSResponse =
+			await this.transactionResposeHandler.manageResponse(
+				transactionResponse,
+				TransactionType.RECORD,
+				undefined,
+				name,
+				abi,
+			);
+
+		return htsResponse.reponseParam;
 	}
 
 	public encodeFunctionCall(
@@ -114,76 +190,32 @@ export default class HTSProvider implements IProvider {
 		return Buffer.from(encodedParametersHex, 'hex');
 	}
 
-	public getPublicKey(privateKey?: PrivateKey | string | undefined): string {
-		let key = null;
-		if (privateKey instanceof PrivateKey) {
-			key = privateKey.key;
-		} else {
-			key = privateKey;
-		}
-		if (!key) throw new HederaError('No private key provided');
-		const publicKey = HPrivateKey.fromString(key).publicKey.toStringRaw();
-		return publicKey;
-	}
-
-	public async callContract(
-		name: string,
-		params: ICallContractRequest | ICallContractWithAccountRequest,
-	): Promise<Uint8Array> {
-		const { contractId, parameters, gas, abi } = params;
-
-		let client;
-
-		if ('account' in params) {
-			client = this.getClient(
-				params.account.accountId,
-				params.account.privateKey,
-			);
-		} else {
-			client = this.getClient();
-		}
-
-		const functionCallParameters = this.encodeFunctionCall(
-			name,
-			parameters,
-			abi,
-		);
-
-		this.htsSigner = new HTSSigner(client);
-		const transaction: Transaction =
-			TransactionProvider.buildContractExecuteTransaction(
-				contractId,
-				functionCallParameters,
-				gas,
-			);
-		const transactionResponse: TransactionResponse =
-			await this.htsSigner.signAndSendTransaction(transaction);
-		const htsResponse: HTSResponse =
-			await this.transactionResposeHandler.manageResponse(
-				transactionResponse,
-				TransactionType.RECORD,
-				client,
-				name,
-				abi,
-			);
-
-		return htsResponse.reponseParam;
-	}
-
 	public async deployStableCoin(
 		accountId: string,
 		privateKey: string,
 		stableCoin: StableCoin,
 	): Promise<StableCoin> {
-		const client = this.getClient(accountId, privateKey);
 		const plainAccount = {
 			accountId,
 			privateKey,
 		};
+
+		if (accountId) {
+			this.provider = this.hc.getProvider(
+				this.network.hederaNetworkEnviroment,
+				this.initData.topic,
+				accountId,
+			);
+		} else {
+			throw new Error(
+				'You must specify an accountId for operate with HashConnect.',
+			);
+		}
+
 		const tokenContract = await this.deployContract(
 			HederaERC20__factory,
 			plainAccount.privateKey,
-			client,
+			this.hc.getSigner(this.provider),
 		);
 		log(
 			`Deploying ${HederaERC1967Proxy__factory.name} contract... please wait.`,
@@ -195,7 +227,7 @@ export default class HTSProvider implements IProvider {
 			proxyContract = await this.deployContract(
 				HederaERC1967Proxy__factory,
 				plainAccount.privateKey,
-				client,
+				this.hc.getSigner(this.provider),
 				new ContractFunctionParameters()
 					.addAddress(tokenContract?.toSolidityAddress())
 					.addBytes(new Uint8Array([])),
@@ -217,7 +249,7 @@ export default class HTSProvider implements IProvider {
 		const tokenOwnerContract = await this.deployContract(
 			HTSTokenOwner__factory,
 			plainAccount.privateKey,
-			client,
+			this.hc.getSigner(this.provider),
 		);
 		log('Creating token... please wait.', logOpts);
 		const hederaToken = await this.createToken(
@@ -231,7 +263,7 @@ export default class HTSProvider implements IProvider {
 			stableCoin.freezeDefault,
 			plainAccount.privateKey,
 			this.getPublicKey(privateKey),
-			client,
+			this.hc.getSigner(this.provider),
 		);
 		log('Setting up contract... please wait.', logOpts);
 		await this.callContract('setTokenAddress', {
@@ -273,7 +305,7 @@ export default class HTSProvider implements IProvider {
 			maxSupply: BigInt(hederaToken.maxSupply.toNumber()),
 			memo: hederaToken.memo,
 			freezeDefault: hederaToken.freezeDefault,
-			treasury: new AccountId(hederaToken.treasuryAccountId.toString()),
+			treasury: new HAccountId(hederaToken.treasuryAccountId.toString()),
 			adminKey: this.fromPublicKey(hederaToken.adminKey),
 			freezeKey: this.fromPublicKey(hederaToken.freezeKey),
 			wipeKey: this.fromPublicKey(hederaToken.wipeKey),
@@ -287,11 +319,11 @@ export default class HTSProvider implements IProvider {
 	private async deployContract(
 		factory: any,
 		privateKey: string,
-		client: Client,
+		signer: HashConnectSigner,
 		params?: any,
 	): Promise<ContractId> {
 		try {
-			this.htsSigner = new HTSSigner(client);
+			this.hashPackSigner = new HashPackSigner(undefined);
 			const transaction: Transaction =
 				TransactionProvider.buildContractCreateFlowTransaction(
 					factory,
@@ -300,12 +332,15 @@ export default class HTSProvider implements IProvider {
 					90_000,
 				);
 			const transactionResponse: TransactionResponse =
-				await this.htsSigner.signAndSendTransaction(transaction);
+				await this.hashPackSigner.signAndSendTransaction(
+					transaction,
+					signer,
+				);
 			const htsResponse: HTSResponse =
 				await this.transactionResposeHandler.manageResponse(
 					transactionResponse,
 					TransactionType.RECEIPT,
-					client,
+					signer,
 				);
 
 			if (!htsResponse.receipt.contractId) {
@@ -322,21 +357,6 @@ export default class HTSProvider implements IProvider {
 		}
 	}
 
-	private getHTSProvider(network: HederaNetwork): DefaultHederaProvider {
-		const enviroment = network.hederaNetworkEnviroment;
-		switch (enviroment) {
-			case HederaNetworkEnviroment.MAIN:
-			case HederaNetworkEnviroment.PREVIEW:
-			case HederaNetworkEnviroment.TEST:
-				return hethers.getDefaultProvider(
-					getHederaNetwork(network)?.name,
-				);
-			case HederaNetworkEnviroment.LOCAL:
-			default:
-				throw new Error('Network not supported');
-		}
-	}
-
 	private async createToken(
 		contractId: ContractId,
 		name: string,
@@ -348,7 +368,7 @@ export default class HTSProvider implements IProvider {
 		freezeDefault: boolean,
 		privateKey: string,
 		publicKey: string,
-		client: Client,
+		signer: HashConnectSigner,
 	): Promise<ICreateTokenResponse> {
 		const values: ICreateTokenResponse = {
 			name,
@@ -368,16 +388,19 @@ export default class HTSProvider implements IProvider {
 			tokenId: '',
 		};
 
-		this.htsSigner = new HTSSigner(client);
+		this.hashPackSigner = new HashPackSigner(undefined);
 		const transaction: Transaction =
 			TransactionProvider.buildTokenCreateTransaction(values, maxSupply);
 		const transactionResponse: TransactionResponse =
-			await this.htsSigner.signAndSendTransaction(transaction);
+			await this.hashPackSigner.signAndSendTransaction(
+				transaction,
+				signer,
+			);
 		const htsResponse: HTSResponse =
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
 				TransactionType.RECEIPT,
-				client,
+				signer,
 			);
 
 		if (!htsResponse.receipt.tokenId) {
@@ -399,16 +422,94 @@ export default class HTSProvider implements IProvider {
 		return new PublicKey({ key: key._key, type: key._type });
 	}
 
+	public getPublicKey(privateKey?: PrivateKey | string | undefined): string {
+		let key = null;
+		if (privateKey instanceof PrivateKey) {
+			key = privateKey.key;
+		} else {
+			key = privateKey;
+		}
+		if (!key) throw new HederaError('No private key provided');
+		const publicKey = HPrivateKey.fromString(key).publicKey.toStringRaw();
+		return publicKey;
+	}
+
+	public async stop(): Promise<boolean> {
+		const topic = this.initData.topic;
+		await this.hc.disconnect(topic);
+		await this.hc.clearConnectionsAndData();
+		return new Promise((res) => {
+			res(true);
+		});
+	}
+
+	registerEvents(): void {
+		const foundExtensionEventHandler = (
+			data: HashConnectTypes.WalletMetadata,
+		) => {
+			console.log('====foundExtensionEvent====');
+			console.log(JSON.stringify(data));
+		};
+
+		const pairingEventHandler = (data: MessageTypes.ApprovePairing) => {
+			console.log('====pairingEvent:::Wallet connected=====');
+			console.log(JSON.stringify(data));
+		};
+
+		const acknowledgeEventHandler = (data: MessageTypes.Acknowledge) => {
+			console.log('====Acknowledge:::Wallet request received =====');
+			console.log(JSON.stringify(data));
+		};
+
+		const transactionEventHandler = (data: MessageTypes.Transaction) => {
+			console.log('====Transaction:::Transaction executed =====');
+			console.log(JSON.stringify(data));
+		};
+
+		const additionalAccountRequestEventHandler = (
+			data: MessageTypes.AdditionalAccountRequest,
+		) => {
+			console.log(
+				'====AdditionalAccountRequest:::AdditionalAccountRequest=====',
+			);
+			console.log(JSON.stringify(data));
+		};
+
+		const connectionStatusChangeEventHandler = (
+			data: HashConnectConnectionState,
+		) => {
+			console.log(
+				'====AdditionalAccountRequest:::AdditionalAccountRequest=====',
+			);
+			console.log(JSON.stringify(data));
+		};
+		const authRequestEventHandler = (
+			data: MessageTypes.AuthenticationRequest,
+		) => {
+			console.log(
+				'====AdditionalAccountRequest:::AdditionalAccountRequest=====',
+			);
+			console.log(JSON.stringify(data));
+		};
+
+		/*const signRequestEventHandler = (data: ) => {
+			console.log("====AdditionalAccountRequest:::AdditionalAccountRequest=====");
+			console.log(JSON.stringify(data));
+		}*/
+	}
+
+	getBalance(): Promise<number> {
+		throw new Error('Method not implemented.');
+	}
+
 	getAvailabilityExtension(): boolean {
-		return false;
+		return this.availableExtension;
 	}
 	gethashConnectConectionState(): HashConnectConnectionState {
-		return HashConnectConnectionState.Disconnected;
+		return this.hashConnectConectionState;
 	}
 	disconectHaspack(): void {
-		throw new Error('not haspack');
-	}
-	connectWallet(): Promise<HashPackProvider> {
-		throw new Error('not haspack');
+		this.hc.disconnect(this.pairingData!.topic);
+		this.pairingData = null;
 	}
 }
