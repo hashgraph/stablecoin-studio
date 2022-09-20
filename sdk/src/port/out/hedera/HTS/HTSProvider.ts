@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { hethers } from '@hashgraph/hethers';
 import PrivateKey from '../../../../domain/context/account/PrivateKey.js';
 import {

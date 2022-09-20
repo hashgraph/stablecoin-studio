@@ -58,7 +58,7 @@ export default class HashPackProvider implements IProvider {
 		options
 	}: IniConfig): Promise<HashPackProvider> {		
 
-		this.hc = new HashConnect(true);
+		this.hc = new HashConnect(options?.appMetadata?.debugMode);
 
 		this.setUpHashConnectEvents();
 		this.network = network;
