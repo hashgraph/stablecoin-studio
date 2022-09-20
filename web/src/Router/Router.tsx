@@ -5,6 +5,10 @@ import { RootState } from '../store/store';
 import Dashboard from '../views/Dashboard';
 import StableCoinNotSelected from '../views/ErrorPage/StableCoinNotSelected';
 import Login from '../views/Login';
+import Operations from '../views/Operations';
+import CashInOperation from '../views/Operations/CashIn';
+import StableCoinCreation from '../views/StableCoinCreation/StableCoinCreation';
+import Roles from '../views/Roles';
 import { RoutesMappingUrl } from './RoutesMappingUrl';
 
 const PrivateRoute = () => {
@@ -31,7 +35,11 @@ const Router = () => {
 
 				{/* Private routes */}
 				<Route element={<PrivateRoute />}>
+					<Route path={RoutesMappingUrl.cashIn} element={<CashInOperation />} />
 					<Route path={RoutesMappingUrl.dashboard} element={<Dashboard />} />
+					<Route path={RoutesMappingUrl.operations} element={<Operations />} />
+					<Route path={RoutesMappingUrl.roles} element={<Roles />} />
+					<Route path={RoutesMappingUrl.stableCoinCreation} element={<StableCoinCreation />} />
 					<Route
 						path={RoutesMappingUrl.stableCoinNotSelected}
 						element={<StableCoinNotSelected />}

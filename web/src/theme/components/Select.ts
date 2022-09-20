@@ -81,7 +81,7 @@ const outline = ({ isInvalid, isDisabled }: SelectConfigProps) => {
 	};
 };
 
-export const ConfigSelect = {
+export const Select = {
 	parts: [
 		'wrapper',
 		'container',

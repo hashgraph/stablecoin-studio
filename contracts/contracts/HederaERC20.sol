@@ -8,11 +8,12 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "./hts-precompile/HederaTokenService.sol";
 import "./IHederaERC20.sol";
 import "./extensions/Mintable.sol";
+import "./extensions/Burnable.sol";
 import "./extensions/Wipeable.sol";
 import "./extensions/Rescatable.sol";
 
 
-contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20Upgradeable, Mintable, Wipeable, Rescatable{
+contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20Upgradeable, Mintable, Burnable, Wipeable, Rescatable{
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     function initialize () 
@@ -92,7 +93,7 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
     function balanceOf(address account) 
         public 
         view 
-        override(IHederaERC20, IERC20Upgradeable) 
+        override(IHederaERC20, IERC20Upgradeable, Burnable) 
         returns (uint256) 
     {
         return IERC20Upgradeable(tokenAddress).balanceOf(account);
@@ -146,16 +147,6 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
         require(result, "Transfer error");
     
         return true;
-    }
-
-    /**
-    * @dev Function not already implemented
-    */
-    function burn(uint256 amount) 
-        public 
-        returns (bool) 
-    {
-        require(false, "function not already implemented");
     }
 
     /**

@@ -2,7 +2,7 @@ import { configurationService, language } from './../../../index.js';
 import { Command } from 'commander';
 import Service from '../Service.js';
 import pkg from '../../../../package.json';
-import { utilsService, wizardService } from '../../../index.js';
+import { utilsService } from '../../../index.js';
 import CreateStableCoinService from '../stablecoin/CreateStableCoinService.js';
 
 /**
@@ -43,18 +43,16 @@ export default class CommanderService extends Service {
         language.getText('commander.options.network'),
       )
       .description(language.getText('commander.wizardDescription'))
-      .action(
-        async (options): Promise<void> => {
-          // Check if default configuration exists, if not, start init command
-          await configurationService.init(
-            {
-              defaultNetwork: options.network,
-            },
-            options.config,
-          );
-          await wizardService.mainMenu();
-        },
-      );
+      .action(async (options): Promise<void> => {
+        // Check if default configuration exists, if not, start init command
+        await configurationService.init(
+          {
+            defaultNetwork: options.network,
+          },
+          options.config,
+        );
+        //await wizardService.chooseAccount(options.network);
+      });
 
     const token = program
       .command('token')

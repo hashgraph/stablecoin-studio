@@ -13,19 +13,19 @@ exports[`<StableCoinNotSelected /> should render correctly 1`] = `
       src="safe-box.svg"
     />
     <p
-      class="chakra-text css-148we7z"
+      class="chakra-text css-1hg9qrt"
       data-testid="stable-coin-not-selected-title"
     >
       Choose a Stable coin to start operating!
     </p>
     <p
-      class="chakra-text css-17vpb1v"
+      class="chakra-text css-18wysbb"
       data-testid="stable-coin-not-selected-description"
     >
       You have not chosen a Stable coin yet.
     </p>
     <p
-      class="chakra-text css-blayim"
+      class="chakra-text css-1vi71u4"
     >
       Choose one in the search bar above to operate.
     </p>

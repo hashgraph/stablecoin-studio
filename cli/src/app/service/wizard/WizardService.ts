@@ -10,6 +10,7 @@ import CreateStableCoinService from '../stablecoin/CreateStableCoinService.js';
 import OperationStableCoinService from '../stablecoin/OperationStableCoinService.js';
 import ListStableCoinsService from '../stablecoin/ListStableCoinsService.js';
 import { StableCoin } from '../../../domain/stablecoin/StableCoin.js';
+const colors = require('colors');
 
 /**
  * Wizard Service
@@ -27,15 +28,14 @@ export default class WizardService extends Service {
   public async mainMenu(): Promise<void> {
     const wizardMainOptions: Array<string> =
       language.getArray('wizard.mainOptions');
+    const currentAccount = utilsService.getCurrentAccount();
 
     switch (
       await utilsService.defaultMultipleAsk(
         language.getText('wizard.mainMenuTitle'),
         wizardMainOptions,
-        configurationService.getConfiguration().defaultNetwork,
-        configurationService.getConfiguration().accounts[0].accountId +
-          ' - ' +
-          configurationService.getConfiguration().accounts[0].alias,
+        currentAccount.network,
+        `${currentAccount.accountId} - ${currentAccount.alias}`,
       )
     ) {
       case wizardMainOptions[0]:
@@ -75,7 +75,7 @@ export default class WizardService extends Service {
   /**
    * Show configuration menu
    */
-  private async configurationMenu(): Promise<void> {
+  public async configurationMenu(): Promise<void> {
     const wizardChangeConfigOptions: Array<string> = language.getArray(
       'wizard.changeOptions',
     );
@@ -98,8 +98,8 @@ export default class WizardService extends Service {
         utilsService.showMessage(language.getText('wizard.networkChanged'));
         break;
       case wizardChangeConfigOptions[3]:
-        await this.setConfigurationService.configureAccounts();
-        utilsService.showMessage(language.getText('wizard.accountsChanged'));
+        await this.setConfigurationService.manageAccountMenu();
+        //utilsService.showMessage(language.getText('wizard.accountsChanged'));
         break;
       case wizardChangeConfigOptions[wizardChangeConfigOptions.length - 1]:
       default:
@@ -107,5 +107,55 @@ export default class WizardService extends Service {
     }
 
     await this.configurationMenu();
+  }
+
+  public async chooseAccount(mainMenu = true, network?: string): Promise<void> {
+    const configuration = configurationService.getConfiguration();
+    const { networks, accounts } = configuration;
+    let options = network
+      ? accounts
+          .filter((acc) => acc.network === network)
+          .map(
+            (acc) =>
+              `${acc.accountId} - ${acc.alias}` +
+              colors.magenta(' (' + acc.network + ')'),
+          )
+      : accounts.map(
+          (acc) =>
+            `${acc.accountId} - ${acc.alias}` +
+            colors.magenta(' (' + acc.network + ')'),
+        );
+    if (network && options.length === 0) {
+      options = accounts.map(
+        (acc) =>
+          `${acc.accountId} - ${acc.alias}` +
+          colors.magenta(' (' + acc.network + ')'),
+      );
+      console.log(colors.yellow(language.getText('wizard.accountsNotFound')));
+    }
+    const account = await utilsService.defaultMultipleAsk(
+      language.getText('wizard.accountLogin'),
+      options,
+    );
+    const currentAccount = accounts.find(
+      (acc) => acc.accountId === account.split(' - ')[0],
+    );
+    utilsService.setCurrentAccount(currentAccount);
+    const currentNetwork = networks.find(
+      (network) => currentAccount.network === network.name,
+    );
+    utilsService.setCurrentNetwotk(currentNetwork);
+    if (mainMenu) await this.mainMenu();
+  }
+
+  public async chooseLastAccount(): Promise<void> {
+    const configuration = configurationService.getConfiguration();
+    const { networks, accounts } = configuration;
+    const currentAccount = accounts[accounts.length - 1];
+    utilsService.setCurrentAccount(currentAccount);
+    const currentNetwork = networks.find(
+      (network) => currentAccount.network === network.name,
+    );
+    utilsService.setCurrentNetwotk(currentNetwork);
   }
 }

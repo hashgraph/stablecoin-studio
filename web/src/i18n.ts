@@ -2,9 +2,13 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import languagedetector from 'i18next-browser-languagedetector';
 
+import CASH_IN_EN from './translations/en/cashIn.json';
+import ERROR_PAGE_EN from './translations/en/errorPage.json';
 import GLOBAL_EN from './translations/en/global.json';
 import GLOBAL_ES from './translations/es/global.json';
-import ERROR_PAGE_EN from './translations/en/errorPage.json';
+import OPERATIONS_EN from './translations/en/operations.json';
+import ROLES_EN from './translations/en/roles.json';
+import STABLE_COIN_CREATION_EN from './translations/en/stableCoinCreation.json';
 
 const options = {
 	order: ['localStorage', 'navigator'],
@@ -19,8 +23,12 @@ i18n
 		interpolation: { escapeValue: false },
 		resources: {
 			en: {
-				global: GLOBAL_EN,
+				cashIn: CASH_IN_EN,
 				errorPage: ERROR_PAGE_EN,
+				global: GLOBAL_EN,
+				operations: OPERATIONS_EN,
+				roles: ROLES_EN,
+				stableCoinCreation: STABLE_COIN_CREATION_EN,
 			},
 			es: {
 				global: GLOBAL_ES,

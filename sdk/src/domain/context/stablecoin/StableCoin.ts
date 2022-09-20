@@ -297,10 +297,7 @@ export class StableCoin extends BaseEntity {
 		return res;
 	}
 
-	public isValidAmount(amount: number): boolean {
-		console.log('Decimales del token', this.decimals);
-		console.log('Amount', amount);
-		console.log('Decimales del amount', this.getDecimals(amount));
+	public isValidAmount(amount: number): boolean {		
 		return this.getDecimals(amount) <= this.decimals;
 	}
 

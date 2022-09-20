@@ -9,7 +9,7 @@ import "../Roles.sol";
 
 abstract contract Mintable is IMintable, AccessControlUpgradeable, TokenOwner, Roles, SupplierAdmin {
     
-    function _transfer(address from, address to, uint256 amount) internal virtual returns (bool) ; 
+    function _transfer(address from, address to, uint256 amount) internal virtual returns (bool); 
     
     /**
      * @dev Creates an `amount` of tokens and transfers them to an `account`, increasing

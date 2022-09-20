@@ -36,6 +36,10 @@ export type { ERC1967Upgrade } from "./@openzeppelin/contracts/proxy/ERC1967/ERC
 export { ERC1967Upgrade__factory } from "./factories/@openzeppelin/contracts/proxy/ERC1967/ERC1967Upgrade__factory";
 export type { Proxy } from "./@openzeppelin/contracts/proxy/Proxy";
 export { Proxy__factory } from "./factories/@openzeppelin/contracts/proxy/Proxy__factory";
+export type { Burnable } from "./contracts/extensions/Burnable";
+export { Burnable__factory } from "./factories/contracts/extensions/Burnable__factory";
+export type { IBurnable } from "./contracts/extensions/IBurnable";
+export { IBurnable__factory } from "./factories/contracts/extensions/IBurnable__factory";
 export type { IMintable } from "./contracts/extensions/IMintable";
 export { IMintable__factory } from "./factories/contracts/extensions/IMintable__factory";
 export type { IRescatable } from "./contracts/extensions/IRescatable";

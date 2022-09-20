@@ -33,7 +33,13 @@ const ModalNotification = (props: ModalNotificationProps) => {
 	const getIcon = () => icon || (variant === SUCCESS ? SUCCESS_ICON : ERROR_ICON);
 
 	return (
-		<Modal data-testid='modal-notification' isOpen={isOpen} onClose={onClose} isCentered>
+		<Modal
+			data-testid='modal-notification'
+			isOpen={isOpen}
+			onClose={onClose}
+			isCentered
+			blockScrollOnMount={false}
+		>
 			<ModalOverlay />
 			<ModalContent data-testid='modal-notification-content' pt='50' pb='50'>
 				<ModalCloseButton />

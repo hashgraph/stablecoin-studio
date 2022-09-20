@@ -6,6 +6,9 @@ import store from '../store/store';
 import theme from '../theme/Theme';
 import Router from '../Router/Router';
 import { BrowserRouter } from 'react-router-dom';
+import { Fonts } from '../components/Fonts';
+import { Focus } from '../components/Focus';
+import { ScrollBar } from '../components/Scrollbar';
 
 function App() {
 	return (
@@ -13,6 +16,9 @@ function App() {
 			<Provider store={store}>
 				<ChakraProvider theme={theme}>
 					<BrowserRouter>
+						<Focus />
+						<Fonts />
+						<ScrollBar />
 						<Router />
 					</BrowserRouter>
 				</ChakraProvider>

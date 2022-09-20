@@ -1,0 +1,25 @@
+{
+    "title": "Cash in operation",
+    "operationTitle": "Operation details",
+    "amountLabel": "How much tokens?",
+    "amountPlaceholder": "Introduce amount",
+    "destinationAccountLabel": "What account will receive the tokens?",
+    "destinationAccountPlaceholder": "Introduce account",
+    "details": {
+        "title": "Stable coin details",
+        "basicTitle": "Basic details",
+        "optionalTitle": "Optional details",
+        "name": "Name",
+        "symbol": "Symbol",
+        "decimals": "Decimals",
+        "initialSupply": "Initial supply",
+        "totalSupply": "Total supply",
+        "supplyType": "Supply type (infinite or finite)"
+    },
+    "modalAction": {
+        "subtitle": "Operation details review",
+        "destinationAccount": "Account to cash in",
+        "amount": "Amount",
+        "accept": "Make cash in"
+    }
+}

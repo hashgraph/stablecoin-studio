@@ -27,9 +27,9 @@ export function getHederaNetwork(
 	hederaNetwork: HederaNetwork,
 ): HederaNetworkSpec {
 	const enviroment: HederaNetworkEnviroment =
-		hederaNetwork.hederaNetworkEnviroment;
-	const nodes: unknown = hederaNetwork.nodes;
-	const mirrorNodeUrl: unknown = hederaNetwork.mirrorNodeUrl;
+		hederaNetwork?.hederaNetworkEnviroment;
+	const nodes: unknown = hederaNetwork?.nodes;
+	const mirrorNodeUrl: unknown = hederaNetwork?.mirrorNodeUrl;
 	switch (enviroment) {
 		case HederaNetworkEnviroment.MAIN:
 			return {
@@ -37,7 +37,7 @@ export function getHederaNetwork(
 				consensusNodes: nodes,
 				mirrorNodeUrl: mirrorNodeUrl
 					? mirrorNodeUrl
-					: 'https://mainnet.mirrornode.hedera.com/',
+					: 'https://mainnet.mirrornode.hedera.com',
 			};
 		case HederaNetworkEnviroment.PREVIEW:
 			return {
@@ -45,7 +45,7 @@ export function getHederaNetwork(
 				consensusNodes: nodes,
 				mirrorNodeUrl: mirrorNodeUrl
 					? mirrorNodeUrl
-					: 'https://previewnet.mirrornode.hedera.com/',
+					: 'https://previewnet.mirrornode.hedera.com',
 			};
 		case HederaNetworkEnviroment.TEST:
 			return {
