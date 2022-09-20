@@ -1,6 +1,8 @@
-import { useForm, UseFormReturn } from 'react-hook-form';
+import type { UseFormReturn } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { act, fireEvent, waitFor } from '@testing-library/react';
-import InputNumberController, { InputNumberControllerProps } from '../InputNumberController';
+import type { InputNumberControllerProps } from '../InputNumberController';
+import InputNumberController from '../InputNumberController';
 import { render } from '../../../test/index';
 
 let form: UseFormReturn;

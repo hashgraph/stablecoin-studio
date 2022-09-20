@@ -1,22 +1,27 @@
-import { ComponentType, useState } from 'react';
+import type { ComponentType } from 'react';
+import { useState } from 'react';
+import type {
+	InputProps as ChakraInputProps,
+	FormControlProps,
+	FormLabelProps,
+} from '@chakra-ui/react';
 import {
 	Button,
 	Flex,
 	FormControl,
 	FormErrorMessage,
 	Input,
-	InputProps as ChakraInputProps,
 	InputGroup,
 	InputRightElement,
-	FormControlProps,
-	FormLabelProps,
 	Stack,
 } from '@chakra-ui/react';
-import { Control, Controller, FieldValues, UseControllerProps } from 'react-hook-form';
-import { NumericFormat, NumericFormatProps } from 'react-number-format';
+import type { Control, FieldValues, UseControllerProps } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
+import type { NumericFormatProps } from 'react-number-format';
+import { NumericFormat } from 'react-number-format';
 import Icon from '../Icon';
 import InputLabel from './InputLabel';
-import { InputAttributes } from 'react-number-format/types/types';
+import type { InputAttributes } from 'react-number-format/types/types';
 
 /**
  * NumberFormatValues copied from 'react-number-format' since it isn't exported from the library right now

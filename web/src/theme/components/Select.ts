@@ -1,4 +1,4 @@
-import { SelectConfigProps } from '../../components/Form/SelectController';
+import type { SelectConfigProps } from '../../components/Form/SelectController';
 
 const baseStyle = ({ isDisabled, isInvalid, hasValue }: SelectConfigProps) => {
 	return {

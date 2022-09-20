@@ -1,7 +1,6 @@
 import { useForm } from 'react-hook-form';
-import SwitchController, {
-	SwitchControllerProps as AllSwitchControllerProps,
-} from '../SwitchController';
+import type { SwitchControllerProps as AllSwitchControllerProps } from '../SwitchController';
+import SwitchController from '../SwitchController';
 import { render } from '../../../test';
 import userEvent from '@testing-library/user-event';
 

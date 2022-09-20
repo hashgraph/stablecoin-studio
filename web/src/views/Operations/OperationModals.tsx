@@ -1,7 +1,8 @@
 import { useDisclosure } from '@chakra-ui/react';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import ModalAction, { ModalActionProps } from '../../components/ModalAction';
+import type { ModalActionProps } from '../../components/ModalAction';
+import ModalAction from '../../components/ModalAction';
 import ModalNotification from '../../components/ModalNotification';
 
 export interface OperationModalActionProps

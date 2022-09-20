@@ -2,12 +2,18 @@ import type { ComponentSingleStyleConfig } from '@chakra-ui/react';
 
 export const DirectAccess: ComponentSingleStyleConfig = {
 	baseStyle: {
-		w: '120px',
-		h: '136px',
 		borderRadius: '16px',
+		px: '6px',
+		py: 6,
+		w: '120px',
 		bgColor: 'brand.white',
 		borderWidth: '1.3px',
 		borderColor: 'brand.gray200',
+		transition: 'all .2s ease-in',
+		flexDirection: 'column',
+		justifyContent: 'center',
+		gap: '16px',
+		alignItems: 'center',
 		_hover: {
 			cursor: 'default',
 		},

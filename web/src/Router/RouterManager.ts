@@ -1,8 +1,8 @@
 import type { ReverseParams } from 'named-urls';
 import { reverse } from 'named-urls';
 import { RoutesMappingUrl } from './RoutesMappingUrl';
-import { NamedRoutes } from './NamedRoutes';
-import { NavigateFunction } from 'react-router-dom';
+import type { NamedRoutes } from './NamedRoutes';
+import type { NavigateFunction } from 'react-router-dom';
 
 export class BaseRouterManager {
 	constructor(private routes: Record<NamedRoutes, string> = RoutesMappingUrl) {}

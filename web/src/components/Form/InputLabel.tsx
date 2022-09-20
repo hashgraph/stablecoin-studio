@@ -1,5 +1,6 @@
-import { FormLabel, HStack, Text, FormLabelProps as ChakraInputProps } from '@chakra-ui/react';
-import { ReactNode } from 'react';
+import type { FormLabelProps as ChakraInputProps } from '@chakra-ui/react';
+import { FormLabel, HStack, Text } from '@chakra-ui/react';
+import type { ReactNode } from 'react';
 
 export interface InputLabelProps {
 	isRequired: boolean;

@@ -1,5 +1,6 @@
 import { render } from '../../../test/index';
-import InputLabel, { InputLabelProps } from '../InputLabel';
+import type { InputLabelProps } from '../InputLabel';
+import InputLabel from '../InputLabel';
 
 const inputLabelProps: InputLabelProps = {
 	children: 'Label',

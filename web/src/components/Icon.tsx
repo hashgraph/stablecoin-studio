@@ -1,4 +1,5 @@
-import { As, Icon as ChakraIcon, IconProps as ChakraIconProps } from '@chakra-ui/react';
+import type { As, IconProps as ChakraIconProps } from '@chakra-ui/react';
+import { Icon as ChakraIcon } from '@chakra-ui/react';
 
 import * as ReactPhosphorIcons from 'phosphor-react';
 
