@@ -1,9 +1,14 @@
-import { Button, Flex, Image, Link, Text } from '@chakra-ui/react';
+import { Button, Flex, Image, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import HEDERA_LOGO from '../assets/svg/hedera-hbar-logo.svg';
+import SDKService from '../services/SDKService';
 
 const ModalHashpack = () => {
 	const { t } = useTranslation('global');
+
+	const handleConnectWallet = async () => {
+		await SDKService.connectWallet();
+	};
 
 	return (
 		<Flex
@@ -45,16 +50,16 @@ const ModalHashpack = () => {
 			>
 				{t('hashpack-no-installed.description')}
 			</Text>
-			<Link
+			{/* <Link
 				data-testid='modal-hashpack-link'
 				href='https://www.hashpack.app/download'
 				isExternal
 				_hover={{ textDecoration: 'none' }}
-			>
-				<Button data-testid='modal-hashpack-button' variant='primary'>
-					{t('hashpack-no-installed.button')}
-				</Button>
-			</Link>
+			> */}
+			<Button data-testid='modal-hashpack-button' variant='primary' onClick={handleConnectWallet}>
+				{t('hashpack-no-installed.button')}
+			</Button>
+			{/* </Link> */}
 		</Flex>
 	);
 };

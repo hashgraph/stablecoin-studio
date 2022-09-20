@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { hethers } from '@hashgraph/hethers';
 import PrivateKey from '../../../../domain/context/account/PrivateKey.js';
 import {
@@ -36,11 +37,12 @@ import {
 import HederaError from '../error/HederaError.js';
 import PublicKey from '../../../../domain/context/account/PublicKey.js';
 import AccountId from '../../../../domain/context/account/AccountId.js';
-import { json } from 'stream/consumers';
 import { TransactionProvider } from '../transaction/TransactionProvider.js';
 import { HTSSigner } from './HTSSigner.js';
 import { HTSResponse, TransactionType } from '../sign/ISigner.js';
 import { TransactionResposeHandler } from '../transaction/TransactionResponseHandler.js';
+import { HashConnectConnectionState } from 'hashconnect/dist/cjs/types/hashconnect.js';
+import HashPackProvider from '../hashpack/HashPackProvider.js';
 
 type DefaultHederaProvider = hethers.providers.DefaultHederaProvider;
 
@@ -395,5 +397,18 @@ export default class HTSProvider implements IProvider {
 
 	private fromPublicKey(key: HPublicKey): PublicKey {
 		return new PublicKey({ key: key._key, type: key._type });
+	}
+
+	getAvailabilityExtension(): boolean {
+		return false;
+	}
+	gethashConnectConectionState(): HashConnectConnectionState {
+		return HashConnectConnectionState.Disconnected;
+	}
+	disconectHaspack(): void {
+		throw new Error("not haspack");
+	}
+	connectWallet(): Promise<HashPackProvider> {
+		throw new Error("not haspack");
 	}
 }
