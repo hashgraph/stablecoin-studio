@@ -1,0 +1,10 @@
+{
+    "title": "Roles",
+    "subtitle": "Give / Revoke roles",
+    "give": "Give role",
+    "revoke": "Revoke role",
+    "edit": "Edit role",
+    "revokeModalSuccessTitle": "Role successfully revoked",
+    "revokeModalErrorTitle": "Error revoking the role",
+    "revokeModalErrorDesc": "please try again later."
+}

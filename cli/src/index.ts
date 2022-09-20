@@ -17,14 +17,16 @@ export const commanderService: CommanderService = new CommanderService();
  * Main function
  */
 const main = async (): Promise<void> => {
-  
-  // Initialize SDK
-  await utilsService.initSDK();
-  
   // Show initial banner
   await utilsService.showBanner();
-
   commanderService.start();
+  await wizardService.chooseAccount(
+    false,
+    configurationService.getConfiguration().defaultNetwork,
+  );
+  // Initialize SDK
+  await utilsService.initSDK(utilsService.getCurrentNetwork().name);
+  await wizardService.mainMenu();
 };
 
 try {

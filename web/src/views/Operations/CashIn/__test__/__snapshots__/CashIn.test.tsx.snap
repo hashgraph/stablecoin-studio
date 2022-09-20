@@ -1,0 +1,330 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<CashInOperation /> should render correctly 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-stack css-16oka5y"
+  >
+    <h2
+      class="chakra-heading css-llrpa2"
+      data-testid="base-container-heading"
+    >
+      Operations
+    </h2>
+    <div
+      class="css-1b6lda7"
+      data-testid="base-container-children"
+    >
+      <div
+        class="css-f3f3xv"
+      >
+        <div
+          class="css-1rtxhmh"
+        >
+          <div
+            class="chakra-stack css-n21gh5"
+          >
+            <h2
+              class="chakra-heading css-17ipgvs"
+              data-testid="title"
+            >
+              Cash in operation
+            </h2>
+            <p
+              class="chakra-text css-1lyqlf8"
+              data-testid="operation-title"
+            >
+              Operation details
+            </p>
+            <form
+              class="chakra-stack css-b5leqj"
+            >
+              <div
+                class="chakra-stack css-1h0sumw"
+              >
+                <div
+                  class="chakra-form-control css-1kxonj9"
+                  data-testid="formControl"
+                  role="group"
+                >
+                  <label
+                    class="chakra-form__label css-1jbsrib"
+                    for="field-:r1:"
+                    id="field-:r1:-label"
+                  >
+                    <div
+                      class="chakra-stack css-84zodg"
+                    >
+                      <p
+                        class="chakra-text css-mgupmj"
+                      >
+                        How much tokens?
+                      </p>
+                      <p
+                        class="chakra-text css-ftb7fv"
+                        data-testid="required"
+                      >
+                        *
+                      </p>
+                    </div>
+                  </label>
+                  <div
+                    class="chakra-input__group css-4302v8"
+                  >
+                    <input
+                      class="chakra-input css-6kc61d"
+                      data-testid="amount"
+                      id="field-:r1:"
+                      inputmode="numeric"
+                      placeholder="Introduce amount"
+                      type="text"
+                      value=""
+                    />
+                    <div
+                      class="chakra-input__right-element css-y1u7d2"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div
+                class="chakra-stack css-1h0sumw"
+              >
+                <div
+                  class="chakra-form-control css-1kxonj9"
+                  role="group"
+                >
+                  <label
+                    class="chakra-form__label css-1jbsrib"
+                    for="field-:r2:"
+                    id="field-:r2:-label"
+                  >
+                    <div
+                      class="chakra-stack css-84zodg"
+                    >
+                      <p
+                        class="chakra-text css-mgupmj"
+                      >
+                        What account will receive the tokens?
+                      </p>
+                      <p
+                        class="chakra-text css-ftb7fv"
+                        data-testid="required"
+                      >
+                        *
+                      </p>
+                    </div>
+                  </label>
+                  <div
+                    class="chakra-input__group css-4302v8"
+                  >
+                    <input
+                      autocomplete="off"
+                      class="chakra-input css-6kc61d"
+                      data-testid="destinationAccount"
+                      id="field-:r2:"
+                      name="destinationAccount"
+                      placeholder="Introduce account"
+                      value=""
+                    />
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div
+            class="chakra-stack css-eunu1i"
+          >
+            <div
+              class="chakra-stack css-wqnj46"
+            >
+              <h2
+                class="chakra-heading css-12c29ps"
+                data-testid="details-title"
+              >
+                Stable coin details
+              </h2>
+              <div
+                class="css-13brihr"
+              >
+                <p
+                  class="chakra-text css-53sllx"
+                  data-testid="details-review-title"
+                >
+                  Basic details
+                </p>
+                <div
+                  class="css-0"
+                >
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-0"
+                    >
+                      <p
+                        class="chakra-text css-rhg419"
+                      >
+                        Name
+                      </p>
+                      <p
+                        class="chakra-text css-rhg419"
+                      />
+                    </div>
+                    <hr
+                      aria-orientation="horizontal"
+                      class="chakra-divider css-zaaihy"
+                      title="divider"
+                    />
+                  </div>
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-1"
+                    >
+                      <p
+                        class="chakra-text css-rhg419"
+                      >
+                        Symbol
+                      </p>
+                      <p
+                        class="chakra-text css-rhg419"
+                      />
+                    </div>
+                    <hr
+                      aria-orientation="horizontal"
+                      class="chakra-divider css-zaaihy"
+                      title="divider"
+                    />
+                  </div>
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-2"
+                    >
+                      <p
+                        class="chakra-text css-rhg419"
+                      >
+                        Decimals
+                      </p>
+                      <p
+                        class="chakra-text css-rhg419"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="css-13brihr"
+              >
+                <p
+                  class="chakra-text css-53sllx"
+                  data-testid="details-review-title"
+                >
+                  Optional details
+                </p>
+                <div
+                  class="css-0"
+                >
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-0"
+                    >
+                      <p
+                        class="chakra-text css-rhg419"
+                      >
+                        Initial supply
+                      </p>
+                      <p
+                        class="chakra-text css-rhg419"
+                      />
+                    </div>
+                    <hr
+                      aria-orientation="horizontal"
+                      class="chakra-divider css-zaaihy"
+                      title="divider"
+                    />
+                  </div>
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-1"
+                    >
+                      <p
+                        class="chakra-text css-rhg419"
+                      >
+                        Total supply
+                      </p>
+                      <p
+                        class="chakra-text css-rhg419"
+                      />
+                    </div>
+                    <hr
+                      aria-orientation="horizontal"
+                      class="chakra-divider css-zaaihy"
+                      title="divider"
+                    />
+                  </div>
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-2"
+                    >
+                      <p
+                        class="chakra-text css-rhg419"
+                      >
+                        Supply type (infinite or finite)
+                      </p>
+                      <p
+                        class="chakra-text css-rhg419"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="css-3gu2fl"
+        >
+          <div
+            class="chakra-stack css-1amf41o"
+          >
+            <button
+              class="chakra-button css-hg6n4b"
+              data-testid="cancel-btn"
+              type="button"
+            >
+              Go back
+            </button>
+            <button
+              class="chakra-button css-l6yrnw"
+              data-testid="confirm-btn"
+              disabled=""
+              type="button"
+            >
+              Accept
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;

@@ -44,7 +44,7 @@ export function getHederaNetwork(
 				consensusNodes: nodes,
 				mirrorNodeUrl: mirrorNodeUrl
 					? mirrorNodeUrl
-					: 'https://mainnet.mirrornode.hedera.com/',
+					: 'https://mainnet.mirrornode.hedera.com',
 			};
 		case HederaNetworkEnviroment.PREVIEW:
 			return {
@@ -52,7 +52,7 @@ export function getHederaNetwork(
 				consensusNodes: nodes,
 				mirrorNodeUrl: mirrorNodeUrl
 					? mirrorNodeUrl
-					: 'https://previewnet.mirrornode.hedera.com/',
+					: 'https://previewnet.mirrornode.hedera.com',
 			};
 		case HederaNetworkEnviroment.TEST:
 			return {

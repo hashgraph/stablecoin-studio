@@ -1,0 +1,93 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Operations /> should render correctly 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-stack css-16oka5y"
+  >
+    <h2
+      class="chakra-heading css-llrpa2"
+      data-testid="base-container-heading"
+    >
+      Operations
+    </h2>
+    <div
+      class="css-1b6lda7"
+      data-testid="base-container-children"
+    >
+      <div
+        class="css-src872"
+      >
+        <h2
+          class="chakra-heading css-1brd3j2"
+          data-testid="subtitle"
+        >
+          Create new operation
+        </h2>
+        <div
+          class="css-qbodi0"
+        >
+          <div
+            class="css-180e663"
+          >
+            <button
+              class="css-yidqqh"
+              data-testid="direct-access-cashIn"
+            >
+              <div
+                class="css-bv4l9q"
+              >
+                <svg
+                  class="chakra-icon css-1f9qa95"
+                  data-testid="direct-access-ArrowDown"
+                  fill="currentColor"
+                  focusable="false"
+                  height="1em"
+                  viewBox="0 0 256 256"
+                  width="1em"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect
+                    fill="none"
+                    height="256"
+                    width="256"
+                  />
+                  <line
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                    x1="128"
+                    x2="128"
+                    y1="40"
+                    y2="216"
+                  />
+                  <polyline
+                    fill="none"
+                    points="56 144 128 216 200 144"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                  />
+                </svg>
+              </div>
+              <p
+                class="chakra-text css-1mbt7nu"
+                data-testid="direct-access-Cash in tokens"
+              >
+                Cash in tokens
+              </p>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;

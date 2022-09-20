@@ -11,7 +11,7 @@ Object {
         class="css-13brihr"
       >
         <p
-          class="chakra-text css-3np1xn"
+          class="chakra-text css-1r1i26i"
           data-testid="details-review-title"
         >
           Datails Review
@@ -27,12 +27,12 @@ Object {
               data-testid="details-review-detail-0"
             >
               <p
-                class="chakra-text css-1a8ms5n"
+                class="chakra-text css-rhg419"
               >
                 Account to revoke rol
               </p>
               <p
-                class="chakra-text css-1a8ms5n"
+                class="chakra-text css-rhg419"
               >
                 0.0.734953
               </p>
@@ -51,12 +51,12 @@ Object {
               data-testid="details-review-detail-1"
             >
               <p
-                class="chakra-text css-1a8ms5n"
+                class="chakra-text css-rhg419"
               >
                 Role to revoke
               </p>
               <p
-                class="chakra-text css-7osar8"
+                class="chakra-text css-s8y9fg"
               >
                 Rescuer
               </p>
@@ -115,7 +115,7 @@ Object {
       class="css-13brihr"
     >
       <p
-        class="chakra-text css-3np1xn"
+        class="chakra-text css-1r1i26i"
         data-testid="details-review-title"
       >
         Datails Review
@@ -131,12 +131,12 @@ Object {
             data-testid="details-review-detail-0"
           >
             <p
-              class="chakra-text css-1a8ms5n"
+              class="chakra-text css-rhg419"
             >
               Account to revoke rol
             </p>
             <p
-              class="chakra-text css-1a8ms5n"
+              class="chakra-text css-rhg419"
             >
               0.0.734953
             </p>
@@ -155,12 +155,12 @@ Object {
             data-testid="details-review-detail-1"
           >
             <p
-              class="chakra-text css-1a8ms5n"
+              class="chakra-text css-rhg419"
             >
               Role to revoke
             </p>
             <p
-              class="chakra-text css-7osar8"
+              class="chakra-text css-s8y9fg"
             >
               Rescuer
             </p>

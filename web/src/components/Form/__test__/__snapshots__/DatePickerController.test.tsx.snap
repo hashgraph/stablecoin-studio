@@ -1,0 +1,340 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<DatePickerController /> .render should be disabled if disabled=true: Disabled 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-stack css-1h0sumw"
+  >
+    <div
+      class="chakra-form-control css-1kxonj9"
+      data-testid="form-control"
+      role="group"
+    >
+      <div
+        class="react-datepicker-wrapper"
+      >
+        <div
+          class="react-datepicker__input-container"
+        >
+          <div
+            class="chakra-input__group css-1hua6uu"
+          >
+            <div
+              class="chakra-input__left-element css-nc17it"
+            >
+              <div
+                class="css-gmuwbf"
+              >
+                <svg
+                  class="chakra-icon css-g5uxme"
+                  fill="currentColor"
+                  focusable="false"
+                  height="1em"
+                  viewBox="0 0 256 256"
+                  width="1em"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect
+                    fill="none"
+                    height="256"
+                    width="256"
+                  />
+                  <rect
+                    fill="none"
+                    height="176"
+                    rx="8"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                    width="176"
+                    x="40"
+                    y="40"
+                  />
+                  <line
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                    x1="176"
+                    x2="176"
+                    y1="24"
+                    y2="56"
+                  />
+                  <line
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                    x1="80"
+                    x2="80"
+                    y1="24"
+                    y2="56"
+                  />
+                  <line
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                    x1="40"
+                    x2="216"
+                    y1="88"
+                    y2="88"
+                  />
+                </svg>
+              </div>
+            </div>
+            <input
+              class="chakra-input css-u6qfzp"
+              disabled=""
+              id="field-:r4:"
+              placeholder="datepicker-placeholder"
+              value=""
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;
+
+exports[`<DatePickerController /> .render should render the component: WithLabel 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-stack css-1h0sumw"
+  >
+    <div
+      class="chakra-form-control css-1kxonj9"
+      data-testid="form-control"
+      role="group"
+    >
+      <label
+        class="chakra-form__label css-1jbsrib"
+        for="field-:r0:"
+        id="field-:r0:-label"
+      >
+        <div
+          class="chakra-stack css-84zodg"
+        >
+          <p
+            class="chakra-text css-mgupmj"
+          >
+            test-label
+          </p>
+        </div>
+      </label>
+      <div
+        class="react-datepicker-wrapper"
+      >
+        <div
+          class="react-datepicker__input-container"
+        >
+          <div
+            class="chakra-input__group css-1hua6uu"
+          >
+            <div
+              class="chakra-input__left-element css-nc17it"
+            >
+              <div
+                class="css-gmuwbf"
+              >
+                <svg
+                  class="chakra-icon css-g5uxme"
+                  fill="currentColor"
+                  focusable="false"
+                  height="1em"
+                  viewBox="0 0 256 256"
+                  width="1em"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect
+                    fill="none"
+                    height="256"
+                    width="256"
+                  />
+                  <rect
+                    fill="none"
+                    height="176"
+                    rx="8"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                    width="176"
+                    x="40"
+                    y="40"
+                  />
+                  <line
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                    x1="176"
+                    x2="176"
+                    y1="24"
+                    y2="56"
+                  />
+                  <line
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                    x1="80"
+                    x2="80"
+                    y1="24"
+                    y2="56"
+                  />
+                  <line
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                    x1="40"
+                    x2="216"
+                    y1="88"
+                    y2="88"
+                  />
+                </svg>
+              </div>
+            </div>
+            <input
+              class="chakra-input css-u6qfzp"
+              id="field-:r0:"
+              value=""
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;
+
+exports[`<DatePickerController /> .render should show the error message: WithError 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-stack css-1h0sumw"
+  >
+    <div
+      class="chakra-form-control css-1kxonj9"
+      data-testid="form-control"
+      role="group"
+    >
+      <div
+        class="react-datepicker-wrapper"
+      >
+        <div
+          class="react-datepicker__input-container"
+        >
+          <div
+            class="chakra-input__group css-1hua6uu"
+          >
+            <div
+              class="chakra-input__left-element css-nc17it"
+            >
+              <div
+                class="css-gmuwbf"
+              >
+                <svg
+                  class="chakra-icon css-g5uxme"
+                  fill="currentColor"
+                  focusable="false"
+                  height="1em"
+                  viewBox="0 0 256 256"
+                  width="1em"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect
+                    fill="none"
+                    height="256"
+                    width="256"
+                  />
+                  <rect
+                    fill="none"
+                    height="176"
+                    rx="8"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                    width="176"
+                    x="40"
+                    y="40"
+                  />
+                  <line
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                    x1="176"
+                    x2="176"
+                    y1="24"
+                    y2="56"
+                  />
+                  <line
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                    x1="80"
+                    x2="80"
+                    y1="24"
+                    y2="56"
+                  />
+                  <line
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                    x1="40"
+                    x2="216"
+                    y1="88"
+                    y2="88"
+                  />
+                </svg>
+              </div>
+            </div>
+            <input
+              aria-describedby="field-:r2:-feedback"
+              aria-invalid="true"
+              class="chakra-input css-u6qfzp"
+              id="field-:r2:"
+              value=""
+            />
+          </div>
+        </div>
+      </div>
+      <div
+        aria-live="polite"
+        class="chakra-form__error-message css-2e3jkk"
+        data-testid="datepicker-error-message"
+        id="field-:r2:-feedback"
+      >
+        Expired
+      </div>
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;

@@ -74,7 +74,7 @@ exports[`<SidebarOption /> should render correctly 1`] = `
       />
     </svg>
     <p
-      class="chakra-text css-182kmv3"
+      class="chakra-text css-h0pfk0"
       data-testid="sidebar-option-title"
     >
       Operations
