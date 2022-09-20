@@ -4,6 +4,7 @@ import { HashConnectConnectionState } from 'hashconnect/dist/cjs/types/hashconne
 import { HederaNetwork } from '../../../core/enum.js';
 import PrivateKey from '../../../domain/context/account/PrivateKey.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
+import HashPackProvider from './hashpack/HashPackProvider.js';
 import { AppMetadata } from './hashpack/types/types.js';
 import { ICallContractRequest } from './types.js';
 
@@ -41,4 +42,5 @@ export interface IProvider {
 	getAvailabilityExtension(): boolean;
 	gethashConnectConectionState():HashConnectConnectionState;
 	disconectHaspack():void;
+	connectWallet(): Promise<HashPackProvider> ;
 }
