@@ -13,16 +13,14 @@ import { RoutesMappingUrl } from './RoutesMappingUrl';
 
 const PrivateRoute = () => {
 	// TODO: change logic when it is paired w/ account ?
-	const user = useSelector((state: RootState) => state.user.user);
-	return (
-		<Layout>
-			{user ? (
-				<Outlet />
-			) : (
-				<Navigate to={RoutesMappingUrl.login} replace state={{ from: location }} />
-			)}
-		</Layout>
-	);
+	const user = useSelector((state: RootState) => state.user.user.username);
+	return <Layout>{user ? <Outlet /> : <Navigate to={RoutesMappingUrl.login} replace />}</Layout>;
+};
+
+const OnboardingRoute = () => {
+	// TODO: change logic when it is paired w/ account ?
+	const user = useSelector((state: RootState) => state.user.user.username);
+	return !user ? <Outlet /> : <Navigate to={RoutesMappingUrl.dashboard} replace />;
 };
 
 const Router = () => {
@@ -30,9 +28,9 @@ const Router = () => {
 		<main>
 			<Routes>
 				{/* Public routes */}
-				<Route path='/' element={<Login />} />
-				<Route path={RoutesMappingUrl.login} element={<Login />} />
-
+				<Route element={<OnboardingRoute />}>
+					<Route path={RoutesMappingUrl.login} element={<Login />} />
+				</Route>
 				{/* Private routes */}
 				<Route element={<PrivateRoute />}>
 					<Route path={RoutesMappingUrl.cashIn} element={<CashInOperation />} />
