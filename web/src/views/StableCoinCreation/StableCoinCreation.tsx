@@ -2,7 +2,8 @@ import { Box, Stack } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import BaseContainer from '../../components/BaseContainer';
-import Stepper, { Step } from '../../components/Stepper';
+import type { Step } from '../../components/Stepper';
+import Stepper from '../../components/Stepper';
 import { NamedRoutes } from '../../Router/NamedRoutes';
 import { RouterManager } from '../../Router/RouterManager';
 

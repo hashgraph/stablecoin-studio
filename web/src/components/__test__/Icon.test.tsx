@@ -1,4 +1,5 @@
-import Icon, { IconProps } from '../Icon';
+import type { IconProps } from '../Icon';
+import Icon from '../Icon';
 import { render } from '../../test/index';
 
 describe(`<${Icon.name} />`, () => {

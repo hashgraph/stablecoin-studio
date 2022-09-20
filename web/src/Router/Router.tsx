@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
 import { Navigate, Route, Routes, Outlet } from 'react-router-dom';
 import Layout from '../layout/Layout';
-import { RootState } from '../store/store';
+import type { RootState } from '../store/store';
 import Dashboard from '../views/Dashboard';
 import StableCoinNotSelected from '../views/ErrorPage/StableCoinNotSelected';
 import Login from '../views/Login';

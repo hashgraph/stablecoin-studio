@@ -1,5 +1,5 @@
 import { Box, Flex } from '@chakra-ui/react';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import Sidebar from './sidebar/Sidebar';
 import Topbar from './topbar/Topbar';
 

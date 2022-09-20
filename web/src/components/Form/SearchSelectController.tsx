@@ -1,13 +1,9 @@
-import { SystemStyleObject, IconProps as ChakraIconProps } from '@chakra-ui/react';
+import type { SystemStyleObject, IconProps as ChakraIconProps } from '@chakra-ui/react';
 import { useMemo, useState } from 'react';
-import { Control } from 'react-hook-form';
+import type { Control } from 'react-hook-form';
 import Icon from '../Icon';
-import {
-	SelectController,
-	SelectControllerProps,
-	SelectOption,
-	SelectThemeStyle,
-} from './SelectController';
+import type { SelectControllerProps, SelectOption, SelectThemeStyle } from './SelectController';
+import { SelectController } from './SelectController';
 
 export interface SearchSelectControllerProps
 	extends Omit<SelectControllerProps, 'overrideStyles' | 'id' | 'variant'> {

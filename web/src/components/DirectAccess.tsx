@@ -1,6 +1,7 @@
-import { Flex, Text, FlexProps, useStyleConfig } from '@chakra-ui/react';
+import type { FlexProps } from '@chakra-ui/react';
+import { Flex, Text, useStyleConfig } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
-import { NamedRoutes } from '../Router/NamedRoutes';
+import type { NamedRoutes } from '../Router/NamedRoutes';
 import { RouterManager } from '../Router/RouterManager';
 import Icon from './Icon';
 

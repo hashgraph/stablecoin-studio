@@ -1,7 +1,8 @@
 import { Box } from '@chakra-ui/react';
 import userEvent from '@testing-library/user-event';
 import { render } from '../../test/index';
-import Stepper, { Step } from '../Stepper';
+import type { Step } from '../Stepper';
+import Stepper from '../Stepper';
 
 const steps: Step[] = [
 	{

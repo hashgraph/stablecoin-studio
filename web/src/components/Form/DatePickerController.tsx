@@ -13,8 +13,10 @@ import {
 	Text,
 } from '@chakra-ui/react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
-import { forwardRef, SyntheticEvent } from 'react';
-import { Control, Controller, UseControllerProps } from 'react-hook-form';
+import type { SyntheticEvent } from 'react';
+import { forwardRef } from 'react';
+import type { Control, UseControllerProps } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import DatePicker from 'react-datepicker';
 import Icon from '../Icon';
 import 'react-datepicker/dist/react-datepicker.css';

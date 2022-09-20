@@ -1,11 +1,6 @@
-import { ReactNode } from 'react';
-import {
-	Button,
-	ButtonProps as ChakraButtonProps,
-	Flex,
-	SimpleGrid,
-	Stack,
-} from '@chakra-ui/react';
+import type { ReactNode } from 'react';
+import type { ButtonProps as ChakraButtonProps } from '@chakra-ui/react';
+import { Button, Flex, SimpleGrid, Stack } from '@chakra-ui/react';
 import { RouterManager } from '../../Router/RouterManager';
 import { useNavigate } from 'react-router-dom';
 import { NamedRoutes } from '../../Router/NamedRoutes';

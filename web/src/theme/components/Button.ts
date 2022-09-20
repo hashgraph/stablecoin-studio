@@ -1,24 +1,24 @@
-import type { ComponentSingleStyleConfig } from "@chakra-ui/react";
+import type { ComponentSingleStyleConfig } from '@chakra-ui/react';
 
 export const Button: ComponentSingleStyleConfig = {
 	baseStyle: {
-			_focus: { boxShadow: 'none' },
-			textDecoration: 'none',
-			borderRadius: "8px",
-			p: "12px",
-			fontWeight: 700,
-			lineHeight: "16px",
+		_focus: { boxShadow: 'none' },
+		textDecoration: 'none',
+		borderRadius: '8px',
+		p: '12px',
+		fontWeight: 700,
+		lineHeight: '16px',
 	},
 	sizes: {
-		sm: { 
-			borderRadius: "4px",
-			p: "8px",
-			fontSize: "10px",
+		sm: {
+			borderRadius: '4px',
+			p: '8px',
+			fontSize: '10px',
 			fontWeight: 400,
-			lineHeight: "12.5px",
+			lineHeight: '12.5px',
 		},
 		md: {
-			fontSize: "14px",
+			fontSize: '14px',
 		},
 	},
 	variants: {
