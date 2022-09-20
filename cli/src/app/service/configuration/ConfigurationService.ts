@@ -74,7 +74,8 @@ export default class ConfigurationService extends Service {
       unmaskedEndCharacters: 4,
     };
     const configuration = this.getConfiguration();
-    configuration.accounts = configuration.accounts.map((acc) => {
+    const result = { ...configuration };
+    result.accounts = configuration.accounts.map((acc) => {
       return {
         privateKey: MaskData.maskPassword(acc.privateKey, maskJSONOptions),
         accountId: acc.accountId,
@@ -82,7 +83,7 @@ export default class ConfigurationService extends Service {
         alias: acc.alias,
       };
     });
-    console.dir(configuration, { depth: null });
+    console.dir(result, { depth: null });
   }
 
   /**
