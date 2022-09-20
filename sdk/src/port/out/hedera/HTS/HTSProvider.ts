@@ -42,6 +42,7 @@ import { HTSSigner } from './HTSSigner.js';
 import { HTSResponse, TransactionType } from '../sign/ISigner.js';
 import { TransactionResposeHandler } from '../transaction/TransactionResponseHandler.js';
 import { HashConnectConnectionState } from 'hashconnect/dist/cjs/types/hashconnect.js';
+import HashPackProvider from '../hashpack/HashPackProvider.js';
 
 type DefaultHederaProvider = hethers.providers.DefaultHederaProvider;
 
@@ -405,6 +406,9 @@ export default class HTSProvider implements IProvider {
 		return HashConnectConnectionState.Disconnected;
 	}
 	disconectHaspack(): void {
-		
+		throw new Error("not haspack");
+	}
+	connectWallet(): Promise<HashPackProvider> {
+		throw new Error("not haspack");
 	}
 }
