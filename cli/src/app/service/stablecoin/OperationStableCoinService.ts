@@ -11,11 +11,11 @@ import {
 } from '../../../index.js';
 import Service from '../Service.js';
 import DetailsStableCoinsService from './DetailsStableCoinService.js';
-import { PublicKey, SDK } from 'hedera-stable-coin-sdk';
+import { PublicKey, SDK, StableCoinRole } from 'hedera-stable-coin-sdk';
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 import CashInStableCoinsService from './CashInStableCoinService.js';
 import WipeStableCoinsService from './WipeStableCoinService.js';
-import SupplierRoleStableCoinsService from './SupplierRoleStableCoinService.js';
+import RoleStableCoinsService from './RoleStableCoinService.js';
 import RescueStableCoinsService from './RescueStableCoinService.js';
 const colors = require('colors');
 
@@ -259,7 +259,7 @@ export default class OperationStableCoinService extends Service {
         break;
       case 'Role management':
         // Call to Supplier Role
-        await this.supplierFlow();
+        await this.roleManagementFlow();
         break;
       case wizardOperationsStableCoinOptions[
         wizardOperationsStableCoinOptions.length - 1
@@ -272,211 +272,235 @@ export default class OperationStableCoinService extends Service {
   }
 
   /**
-   * Supplier Flow
+   * RoleManagement Flow
    */
-  private async supplierFlow(): Promise<void> {
-    const supplierOptions = language.getArray('wizard.supplierOptions');
-    const editSupplierOptions = language.getArray(
-      'wizard.editSupplierRoleOptions',
+  private async roleManagementFlow(): Promise<void> {
+    const roleManagementOptions = language.getArray(
+      'wizard.roleManagementOptions',
     );
+
     let accountTarget = '0.0.0';
     let limit = '';
-    const supplierService = new SupplierRoleStableCoinsService();
-    const supplierRoleType = language.getArray('wizard.supplierRoleType');
+    const roleService = new RoleStableCoinsService();
 
+    let role: string;
     switch (
       await utilsService.defaultMultipleAsk(
         language.getText('stablecoin.askEditSupplierRole'),
-        supplierOptions,
+        roleManagementOptions,
       )
     ) {
-      case supplierOptions[0]:
-        //Call to give role
+      case roleManagementOptions[0]:
+        // Grant role
+        //Lists all roles
+        role = await this.getRole();
         accountTarget = await utilsService.defaultSingleAsk(
           language.getText('stablecoin.accountTarget'),
           accountTarget,
         );
-        const roleType = await utilsService.defaultMultipleAsk(
-          language.getText('stablecoin.askSupplierRoleType'),
-          supplierRoleType,
-        );
-        if (roleType === supplierRoleType[supplierRoleType.length - 1])
-          await this.supplierFlow();
-        if (roleType === supplierRoleType[0]) {
-          //Give unlimited
-          //Call to SDK
-          const alreadyUnlimitedSupplierRole =
-            await supplierService.checkSupplierRoleStableCoin(
-              this.proxyContractId,
-              accountTarget,
-              configurationService.getConfiguration().accounts[0].privateKey,
-              configurationService.getConfiguration().accounts[0].accountId,
-              'unlimited',
-            );
-          if (!alreadyUnlimitedSupplierRole) {
-            await supplierService.giveSupplierRoleStableCoin(
-              this.proxyContractId,
-              accountTarget,
-              configurationService.getConfiguration().accounts[0].privateKey,
-              configurationService.getConfiguration().accounts[0].accountId,
-              'unlimited',
-            );
-          } else {
-            console.log(language.getText('supplier.alreadyUnlimitedRole'));
-          }
-        }
-        if (roleType === supplierRoleType[1]) {
-          //Give limited
-          limit = await utilsService.defaultSingleAsk(
-            language.getText('stablecoin.supplierRoleLimit'),
-            '1',
-          );
-          //Call to SDK
-          const alreadySupplierRole =
-            await supplierService.checkSupplierRoleStableCoin(
-              this.proxyContractId,
-              accountTarget,
-              configurationService.getConfiguration().accounts[0].privateKey,
-              configurationService.getConfiguration().accounts[0].accountId,
-              'limited',
-            );
-          if (!alreadySupplierRole) {
-            await supplierService.giveSupplierRoleStableCoin(
-              this.proxyContractId,
-              accountTarget,
-              configurationService.getConfiguration().accounts[0].privateKey,
-              configurationService.getConfiguration().accounts[0].accountId,
-              'limited',
-              parseInt(limit),
-            );
-          } else {
-            console.log(language.getText('supplier.alreadyRole'));
-          }
+
+        if (StableCoinRole[role] === StableCoinRole.SUPPLIER_ROLE) {
+          await this.grantSupplierRole(accountTarget, roleService);
+          break;
         }
 
+        //Call to SDK
+        await roleService.grantRoleStableCoin(
+          this.proxyContractId,
+          accountTarget,
+          configurationService.getConfiguration().accounts[0].privateKey,
+          configurationService.getConfiguration().accounts[0].accountId,
+          role,
+        );
         break;
-      case supplierOptions[1]:
+      case roleManagementOptions[1]:
+        // Revoke role
+        //Lists all roles
+        role = await this.getRole();
+
         //Call to revoke role
         accountTarget = await utilsService.defaultSingleAsk(
           language.getText('stablecoin.accountTarget'),
           accountTarget,
         );
+
         //Call to SDK
-        await supplierService.revokeSupplierRoleStableCoin(
+        await roleService.revokeRoleStableCoin(
           this.proxyContractId,
           accountTarget,
           configurationService.getConfiguration().accounts[0].privateKey,
           configurationService.getConfiguration().accounts[0].accountId,
+          role,
         );
         break;
-      case supplierOptions[2]:
+      case roleManagementOptions[2]:
         //Call to edit role
-        const editOption = await utilsService.defaultMultipleAsk(
-          language.getText('stablecoin.askEditSupplierRole'),
-          editSupplierOptions,
-        );
-        console.log(editOption);
-        if (editOption === editSupplierOptions[editSupplierOptions.length - 1])
-          await this.supplierFlow();
-        if (editOption === editSupplierOptions[0]) {
-          //Increase limit
-          accountTarget = await utilsService.defaultSingleAsk(
-            language.getText('stablecoin.accountTarget'),
-            accountTarget,
-          );
-          limit = await utilsService.defaultSingleAsk(
-            language.getText('stablecoin.amountIncrease'),
-            '1',
-          );
-          //Call to SDK
-          const alreadySupplierRole =
-            await supplierService.checkSupplierRoleStableCoin(
-              this.proxyContractId,
+        const editOptions = language.getArray('roleManagement.editAction');
+        switch (
+          await utilsService.defaultMultipleAsk(
+            language.getText('roleManagement.askRole'),
+            editOptions,
+          )
+        ) {
+          case editOptions[0]:
+            //Increase limit
+            accountTarget = await utilsService.defaultSingleAsk(
+              language.getText('stablecoin.accountTarget'),
               accountTarget,
-              configurationService.getConfiguration().accounts[0].privateKey,
-              configurationService.getConfiguration().accounts[0].accountId,
-              'limited',
             );
-          if (alreadySupplierRole) {
-            await supplierService.editSupplierRoleStableCoin(
-              this.proxyContractId,
-              accountTarget,
-              configurationService.getConfiguration().accounts[0].privateKey,
-              configurationService.getConfiguration().accounts[0].accountId,
-              editOption,
-              parseInt(limit),
+            limit = await utilsService.defaultSingleAsk(
+              language.getText('stablecoin.amountIncrease'),
+              '1',
             );
-          } else {
-            console.log(language.getText('supplier.notRole'));
-          }
-        }
-        if (editOption === editSupplierOptions[1]) {
-          //Decrease limit
-          accountTarget = await utilsService.defaultSingleAsk(
-            language.getText('stablecoin.accountTarget'),
-            accountTarget,
-          );
-          limit = await utilsService.defaultSingleAsk(
-            language.getText('stablecoin.amountDecrease'),
-            '1',
-          );
-          //Call to SDK
-          const alreadySupplierRole =
-            await supplierService.checkSupplierRoleStableCoin(
-              this.proxyContractId,
-              accountTarget,
-              configurationService.getConfiguration().accounts[0].privateKey,
-              configurationService.getConfiguration().accounts[0].accountId,
-              'limited',
-            );
-          if (alreadySupplierRole) {
-            await supplierService.editSupplierRoleStableCoin(
-              this.proxyContractId,
-              accountTarget,
-              configurationService.getConfiguration().accounts[0].privateKey,
-              configurationService.getConfiguration().accounts[0].accountId,
-              editOption,
-              parseInt(limit),
-            );
-          } else {
-            console.log(language.getText('supplier.notRole'));
-          }
-        }
-        if (editOption === editSupplierOptions[2]) {
-          //Reset
-          accountTarget = await utilsService.defaultSingleAsk(
-            language.getText('stablecoin.accountTarget'),
-            accountTarget,
-          );
-          //Call to SDK
-          const alreadySupplierRole =
-            await supplierService.checkSupplierRoleStableCoin(
-              this.proxyContractId,
-              accountTarget,
-              configurationService.getConfiguration().accounts[0].privateKey,
-              configurationService.getConfiguration().accounts[0].accountId,
-              'limited',
-            );
-          if (alreadySupplierRole) {
-            await supplierService.editSupplierRoleStableCoin(
-              this.proxyContractId,
-              accountTarget,
-              configurationService.getConfiguration().accounts[0].privateKey,
-              configurationService.getConfiguration().accounts[0].accountId,
-              editOption,
-              0,
-            );
-          } else {
-            console.log(language.getText('supplier.notRole'));
-          }
-        }
+            //Call to SDK
 
+            if (
+              await this.checkSupplierType(
+                accountTarget,
+                roleService,
+                'limited',
+              )
+            ) {
+              await roleService.increaseLimitSupplierRoleStableCoin(
+                this.proxyContractId,
+                accountTarget,
+                configurationService.getConfiguration().accounts[0].privateKey,
+                configurationService.getConfiguration().accounts[0].accountId,
+                parseInt(limit),
+              );
+
+              await roleService.getSupplierAllowance(
+                this.proxyContractId,
+                accountTarget,
+                configurationService.getConfiguration().accounts[0].privateKey,
+                configurationService.getConfiguration().accounts[0].accountId,
+              );
+            } else {
+              console.log(language.getText('supplier.notRole'));
+            }
+            break;
+          case editOptions[1]:
+            //Decrease limit
+            accountTarget = await utilsService.defaultSingleAsk(
+              language.getText('stablecoin.accountTarget'),
+              accountTarget,
+            );
+            limit = await utilsService.defaultSingleAsk(
+              language.getText('stablecoin.amountDecrease'),
+              '1',
+            );
+            //Call to SDK
+            if (
+              await this.checkSupplierType(
+                accountTarget,
+                roleService,
+                'limited',
+              )
+            ) {
+              await roleService.decreaseLimitSupplierRoleStableCoin(
+                this.proxyContractId,
+                accountTarget,
+                configurationService.getConfiguration().accounts[0].privateKey,
+                configurationService.getConfiguration().accounts[0].accountId,
+
+                parseInt(limit),
+              );
+
+              await roleService.getSupplierAllowance(
+                this.proxyContractId,
+                accountTarget,
+                configurationService.getConfiguration().accounts[0].privateKey,
+                configurationService.getConfiguration().accounts[0].accountId,
+              );
+            } else {
+              console.log(language.getText('supplier.notRole'));
+            }
+            break;
+          case editOptions[2]:
+            //Reset
+            accountTarget = await utilsService.defaultSingleAsk(
+              language.getText('stablecoin.accountTarget'),
+              accountTarget,
+            );
+            //Call to SDK
+            if (
+              await this.checkSupplierType(
+                accountTarget,
+                roleService,
+                'limited',
+              )
+            ) {
+              await roleService.resetLimitSupplierRoleStableCoin(
+                this.proxyContractId,
+                accountTarget,
+                configurationService.getConfiguration().accounts[0].privateKey,
+                configurationService.getConfiguration().accounts[0].accountId,
+              );
+
+              await roleService.getSupplierAllowance(
+                this.proxyContractId,
+                accountTarget,
+                configurationService.getConfiguration().accounts[0].privateKey,
+                configurationService.getConfiguration().accounts[0].accountId,
+              );
+            } else {
+              console.log(language.getText('supplier.notRole'));
+            }
+            break;
+          case editOptions[3]:
+            accountTarget = await utilsService.defaultSingleAsk(
+              language.getText('stablecoin.accountTarget'),
+              accountTarget,
+            );
+            if (
+              await this.checkSupplierType(
+                accountTarget,
+                roleService,
+                'unlimited',
+              )
+            ) {
+              let response = language.getText(
+                'roleManagement.accountHasRoleSupplierUnlimited',
+              );
+
+              console.log(response.replace('${address}', accountTarget) + '\n');
+              break;
+            }
+            await roleService.getSupplierAllowance(
+              this.proxyContractId,
+              accountTarget,
+              configurationService.getConfiguration().accounts[0].privateKey,
+              configurationService.getConfiguration().accounts[0].accountId,
+            );
+
+            break;
+          case editOptions[editOptions.length - 1]:
+          default:
+            await this.roleManagementFlow();
+        }
         break;
-      case supplierOptions[supplierOptions.length - 1]:
+      case roleManagementOptions[3]:
+        //Lists all roles
+        role = await this.getRole();
+        //Call to has role
+        accountTarget = await utilsService.defaultSingleAsk(
+          language.getText('stablecoin.accountTarget'),
+          accountTarget,
+        );
+        //Call to SDK
+        await roleService.hasRoleStableCoin(
+          this.proxyContractId,
+          accountTarget,
+          configurationService.getConfiguration().accounts[0].privateKey,
+          configurationService.getConfiguration().accounts[0].accountId,
+          role,
+        );
+        break;
+      case roleManagementOptions[roleManagementOptions.length - 1]:
       default:
         await this.operationsStableCoin();
     }
-    await this.supplierFlow();
+    await this.roleManagementFlow();
   }
 
   private disableOptions(
@@ -506,5 +530,78 @@ export default class OperationStableCoinService extends Service {
       result = options.filter((opt) => opt !== 'Wipe');
     }
     return result;
+  }
+
+  private async getRole(): Promise<string> {
+    return await utilsService.defaultMultipleAsk(
+      language.getText('roleManagement.askRole'),
+      Object.keys(StableCoinRole),
+    );
+  }
+
+  private async grantSupplierRole(
+    accountTarget: string,
+    roleService: RoleStableCoinsService,
+  ) {
+    let limit = '';
+    const supplierRoleType = language.getArray('wizard.supplierRoleType');
+
+    const roleType = await utilsService.defaultMultipleAsk(
+      language.getText('stablecoin.askSupplierRoleType'),
+      supplierRoleType,
+    );
+    if (roleType === supplierRoleType[supplierRoleType.length - 1])
+      await this.roleManagementFlow();
+    if (roleType === supplierRoleType[0]) {
+      //Give unlimited
+      //Call to SDK
+      if (
+        await this.checkSupplierType(accountTarget, roleService, 'unlimited')
+      ) {
+        console.log(language.getText('supplier.alreadyUnlimitedRole'));
+      }
+
+      await roleService.giveSupplierRoleStableCoin(
+        this.proxyContractId,
+        accountTarget,
+        configurationService.getConfiguration().accounts[0].privateKey,
+        configurationService.getConfiguration().accounts[0].accountId,
+        'unlimited',
+      );
+    }
+    if (roleType === supplierRoleType[1]) {
+      //Give limited
+      limit = await utilsService.defaultSingleAsk(
+        language.getText('stablecoin.supplierRoleLimit'),
+        '1',
+      );
+      //Call to SDK
+      if (await this.checkSupplierType(accountTarget, roleService, 'limited')) {
+        console.log(language.getText('supplier.alreadyRole'));
+      }
+
+      await roleService.giveSupplierRoleStableCoin(
+        this.proxyContractId,
+        accountTarget,
+        configurationService.getConfiguration().accounts[0].privateKey,
+        configurationService.getConfiguration().accounts[0].accountId,
+        'limited',
+        parseInt(limit),
+      );
+    }
+  }
+
+  private async checkSupplierType(
+    accountTarget: string,
+    roleService: RoleStableCoinsService,
+    supplierType: string,
+  ): Promise<boolean> {
+    return await roleService.checkSupplierRoleStableCoin(
+      this.proxyContractId,
+      accountTarget,
+      configurationService.getConfiguration().accounts[0].privateKey,
+      configurationService.getConfiguration().accounts[0].accountId,
+      supplierType,
+    );
   }
 }

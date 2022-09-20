@@ -10,8 +10,11 @@ import ICashInStableCoinServiceRequestModel from './model/ICashInStableCoinServi
 import IAssociateTokenStableCoinServiceRequestModel from './model/IAssociateTokenStableCoinServiceRequestModel.js';
 import IWipeStableCoinServiceRequestModel from './model/IWipeStableCoinServiceRequestModel.js';
 import IStableCoinRepository from '../../../port/out/stablecoin/IStableCoinRepository.js';
-import ISupplierRoleStableCoinServiceRequestModel from './model/ISupplierRoleStableCoinServiceRequestModel';
 import IRescueStableCoinServiceRequestModel from './model/IRescueStableCoinServiceRequestModel.js';
+import IRoleStableCoinServiceRequestModel from './model/IRoleStableCoinServiceRequestModel';
+import IGetWithAddressRequestModel from './model/IGetBasicRequest.js';
+import ISupplierRoleStableCoinServiceRequestModel from './model/ISupplierRoleStableCoinServiceRequestModel.js';
+import { StableCoinRole } from '../../../index.js';
 
 export default class StableCoinService extends Service {
 	private repository: IStableCoinRepository;
@@ -174,7 +177,7 @@ export default class StableCoinService extends Service {
 	): Promise<Uint8Array> {
 		return this.repository.grantSupplierRole(
 			req.proxyContractId,
-			req.address,
+			req.targetId,
 			req.privateKey,
 			req.accountId,
 			req.amount,
@@ -182,41 +185,41 @@ export default class StableCoinService extends Service {
 	}
 
 	public async isUnlimitedSupplierAllowance(
-		req: ISupplierRoleStableCoinServiceRequestModel,
+		req: IGetWithAddressRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.isUnlimitedSupplierAllowance(
 			req.proxyContractId,
-			req.address,
+			req.targetId,
 			req.privateKey,
 			req.accountId,
 		);
 	}
 	public async supplierAllowance(
-		req: ISupplierRoleStableCoinServiceRequestModel,
+		req: IGetWithAddressRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.supplierAllowance(
 			req.proxyContractId,
-			req.address,
+			req.targetId,
 			req.privateKey,
 			req.accountId,
 		);
 	}
 	public async revokeSupplierRole(
-		req: ISupplierRoleStableCoinServiceRequestModel,
+		req: IGetWithAddressRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.revokeSupplierRole(
 			req.proxyContractId,
-			req.address,
+			req.targetId,
 			req.privateKey,
 			req.accountId,
 		);
 	}
 	public async resetSupplierAllowance(
-		req: ISupplierRoleStableCoinServiceRequestModel,
+		req: IGetWithAddressRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.resetSupplierAllowance(
 			req.proxyContractId,
-			req.address,
+			req.targetId,
 			req.privateKey,
 			req.accountId,
 		);
@@ -226,7 +229,7 @@ export default class StableCoinService extends Service {
 	): Promise<Uint8Array> {
 		return this.repository.increaseSupplierAllowance(
 			req.proxyContractId,
-			req.address,
+			req.targetId,
 			req.privateKey,
 			req.accountId,
 			req.amount,
@@ -237,7 +240,7 @@ export default class StableCoinService extends Service {
 	): Promise<Uint8Array> {
 		return this.repository.decreaseSupplierAllowance(
 			req.proxyContractId,
-			req.address,
+			req.targetId,
 			req.privateKey,
 			req.accountId,
 			req.amount,
@@ -245,13 +248,56 @@ export default class StableCoinService extends Service {
 	}
 
 	public async isLimitedSupplierAllowance(
-		req: ISupplierRoleStableCoinServiceRequestModel,
+		req: IGetWithAddressRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.isLimitedSupplierAllowance(
 			req.proxyContractId,
-			req.address,
+			req.targetId,
 			req.privateKey,
 			req.accountId,
+		);
+	}
+
+	public async grantRole(
+		req: IRoleStableCoinServiceRequestModel,
+	): Promise<Uint8Array> {
+		if (req.role != StableCoinRole.SUPPLIER_ROLE) {
+			return this.repository.grantRole(
+				req.proxyContractId,
+				req.targetId,
+				req.privateKey,
+				req.accountId,
+				req.role,
+			);
+		}
+
+		return this.grantSupplierRole(req);
+	}
+
+	public async revokeRole(
+		req: IRoleStableCoinServiceRequestModel,
+	): Promise<Uint8Array> {
+		if (req.role != StableCoinRole.SUPPLIER_ROLE) {
+			return this.repository.revokeRole(
+				req.proxyContractId,
+				req.targetId,
+				req.privateKey,
+				req.accountId,
+				req.role,
+			);
+		}
+		return this.revokeSupplierRole(req);
+	}
+
+	public async hasRole(
+		req: IRoleStableCoinServiceRequestModel,
+	): Promise<Uint8Array> {
+		return this.repository.hasRole(
+			req.proxyContractId,
+			req.targetId,
+			req.privateKey,
+			req.accountId,
+			req.role,
 		);
 	}
 }
