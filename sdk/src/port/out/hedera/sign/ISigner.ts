@@ -30,7 +30,7 @@ export class HTSResponse{
 }
 export class ISigner{
 
-    client:Client;
+    client:Client|undefined;
 
     constructor (client:Client) {
         this.client = client;

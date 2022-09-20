@@ -190,3 +190,6 @@ declare module '@hashgraph/sdk' {
 	export { default as LocalProvider } from '@hashgraph/sdk/lib/LocalProvider.js';
 	export { default as Client } from '@hashgraph/sdk/lib/client/NodeClient.js';
 }
+declare module 'HashConnect'{
+	export { AppMetadata } from './hashconnect/types/types.js';
+}
