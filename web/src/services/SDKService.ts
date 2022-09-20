@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 import {
 	AppMetadata,
 	HederaNetwork,
@@ -5,7 +6,13 @@ import {
 	NetworkMode,
 	SDK,
 } from 'hedera-stable-coin-sdk';
-import { HashConnectConnectionState } from '../context/SDKContext';
+
+export enum HashConnectConnectionState {
+	Connected = 'Connected',
+	Disconnected = 'Disconnected',
+	Paired = 'Paired',
+	Connecting = 'Connecting',
+}
 
 const appMetadata: AppMetadata = {
 	name: 'dApp Example',
@@ -14,48 +21,42 @@ const appMetadata: AppMetadata = {
 	url: '',
 };
 
-class SDKService {
-	private sdk: SDK;
+export class SDKService {
+	private static instance: SDK | undefined;
 
-	constructor() {
-		this.sdk = new SDK({
-			network: new HederaNetwork(HederaNetworkEnviroment.TEST), // TODO: dynamic data
-			mode: NetworkMode.HASHPACK,
-			options: {
-				appMetadata,
-			},
-		});
+	constructor() {}
+
+	public static async getInstance() {
+		if (!SDKService.instance)
+			SDKService.instance = new SDK({
+				network: new HederaNetwork(HederaNetworkEnviroment.TEST), // TODO: dynamic data
+				mode: NetworkMode.HASHPACK,
+				options: {
+					appMetadata,
+				},
+			});
+		await SDKService.instance.init();
+
+		return SDKService.instance;
 	}
 
-	getSDK() {
-		return this.sdk;
+	public static async connectWallet() {
+		await SDKService.getInstance().then((instance) => instance.connectWallet());
 	}
 
-	init() {
-		this.sdk.init();
+	public static async getStatus(): Promise<HashConnectConnectionState> {
+		return await SDKService.getInstance().then((instance) =>
+			instance.gethashConnectConectionStatus(),
+		);
 	}
 
-	connectWallet() {
-		this.sdk.connectWallet();
-	}
-
-	status(): HashConnectConnectionState {
-		return this.sdk.gethashConnectConectionStatus();
-	}
-
-	extension(): boolean {
-		return this.sdk.getAvailabilityExtension();
-	}
+	// extension(): boolean {
+	// 	return this.sdk.getAvailabilityExtension();
+	// }
 
 	// cashIn(): void {
-	// 	this.sdk.cashIn({
-
-	//   });
+	// 	this.sdk.cashIn({});
 	// }
 }
 
-const sdk = new SDKService();
-sdk.init();
-console.log('INIT SERVICE');
-
-export default sdk;
+export default SDKService;

@@ -1,7 +1,5 @@
-import { useSelector } from 'react-redux';
 import { Navigate, Route, Routes, Outlet } from 'react-router-dom';
 import Layout from '../layout/Layout';
-import { RootState } from '../store/store';
 import Dashboard from '../views/Dashboard';
 import StableCoinNotSelected from '../views/ErrorPage/StableCoinNotSelected';
 import Login from '../views/Login';
@@ -10,29 +8,49 @@ import CashInOperation from '../views/Operations/CashIn';
 import StableCoinCreation from '../views/StableCoinCreation/StableCoinCreation';
 import Roles from '../views/Roles';
 import { RoutesMappingUrl } from './RoutesMappingUrl';
+import SDKService, { HashConnectConnectionState } from '../services/SDKService';
+import { useEffect, useState } from 'react';
 
-const PrivateRoute = () => {
-	// TODO: change logic when it is paired w/ account ?
-	const user = useSelector((state: RootState) => state.user.user.username);
-	return <Layout>{user ? <Outlet /> : <Navigate to={RoutesMappingUrl.login} replace />}</Layout>;
+const PrivateRoute = ({ status }: { status?: HashConnectConnectionState }) => {
+	return (
+		<Layout>
+			{status === HashConnectConnectionState.Paired ? (
+				<Outlet />
+			) : (
+				<Navigate to={RoutesMappingUrl.login} replace />
+			)}
+		</Layout>
+	);
 };
 
-const OnboardingRoute = () => {
-	// TODO: change logic when it is paired w/ account ?
-	const user = useSelector((state: RootState) => state.user.user.username);
-	return !user ? <Outlet /> : <Navigate to={RoutesMappingUrl.dashboard} replace />;
+const OnboardingRoute = ({ status }: { status?: HashConnectConnectionState }) => {
+	return status !== HashConnectConnectionState.Paired ? (
+		<Outlet />
+	) : (
+		<Navigate to={RoutesMappingUrl.dashboard} replace />
+	);
 };
 
 const Router = () => {
+	const [status, setStatus] = useState<HashConnectConnectionState>();
+
+	const getStatus = async () => {
+		const status = await SDKService.getStatus();
+		setStatus(status);
+	};
+	useEffect(() => {
+		getStatus();
+	}, []);
+
 	return (
 		<main>
 			<Routes>
 				{/* Public routes */}
-				<Route element={<OnboardingRoute />}>
+				<Route element={<OnboardingRoute status={status} />}>
 					<Route path={RoutesMappingUrl.login} element={<Login />} />
 				</Route>
 				{/* Private routes */}
-				<Route element={<PrivateRoute />}>
+				<Route element={<PrivateRoute status={status} />}>
 					<Route path={RoutesMappingUrl.cashIn} element={<CashInOperation />} />
 					<Route path={RoutesMappingUrl.dashboard} element={<Dashboard />} />
 					<Route path={RoutesMappingUrl.operations} element={<Operations />} />
