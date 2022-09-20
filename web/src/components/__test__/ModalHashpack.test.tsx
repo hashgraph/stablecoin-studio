@@ -31,7 +31,7 @@ describe(`<${ModalHashpack.name} />`, () => {
 		expect(description).toHaveTextContent(translations.description);
 	});
 
-	test('should has a link to download hashpack', () => {
+	test.skip('should has a link to download hashpack', () => {
 		const component = render(<ModalHashpack />);
 
 		const link = component.getByTestId('modal-hashpack-link');
