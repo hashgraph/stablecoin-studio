@@ -16,6 +16,14 @@ const appMetadata: AppMetadata = {
 	url: '',
 };
 
+interface CashInRequest {
+	proxyContractId: string;
+	privateKey: string;
+	accountId: string;
+	tokenId: string;
+	targetId: string;
+	amount: number;
+}
 export class SDKService {
 	private static instance: SDK | undefined;
 
@@ -54,6 +62,19 @@ export class SDKService {
 
 	public static async getStatus(): Promise<HashConnectConnectionState | undefined> {
 		return SDKService.getInstance().gethashConnectConectionStatus();
+	}
+
+	public static async cashIn({
+		proxyContractId,
+		privateKey,
+		accountId,
+		tokenId,
+		targetId,
+		amount,
+	}: CashInRequest) {
+		return await SDKService.getInstance().then((instance) =>
+			instance.cashIn({ proxyContractId, privateKey, accountId, tokenId, targetId, amount }),
+		);
 	}
 }
 
