@@ -1,15 +1,24 @@
-import {  TransactionType, HTSResponse } from "../sign/ISigner";
-import {TransactionResponse, Client, TransactionReceipt, TransactionRecord, Status } from "@hashgraph/sdk";
+import {TransactionType, HTSResponse } from "../sign/ISigner";
+import {TransactionResponse, Client, TransactionReceipt, TransactionRecord } from "@hashgraph/sdk";
 import HederaError from '../error/HederaError.js';
 import Web3 from 'web3';
+import { HashConnectSigner } from "hashconnect/dist/cjs/provider/signer";
 
 export  class TransactionResposeHandler {
 
-    public async manageResponse(transactionResponse:TransactionResponse, responseType:TransactionType, client:Client, nameFunction?:string, abi?:any ):Promise<HTSResponse> {
+    public async manageResponse(transactionResponse:TransactionResponse, responseType:TransactionType, clientOrSigner:Client|HashConnectSigner, nameFunction?:string, abi?:any ):Promise<HTSResponse> {
         
         let results : Uint8Array = new Uint8Array();
-        if (responseType == TransactionType.RECEIPT) { 
-            const transactionReceipt: TransactionReceipt = await transactionResponse.getReceipt(client);            
+
+        if (responseType == TransactionType.RECEIPT) {
+            let transactionReceipt: TransactionReceipt  
+            if (clientOrSigner instanceof Client) {
+                transactionReceipt = await transactionResponse.getReceipt(clientOrSigner);            
+                
+            } else if (clientOrSigner instanceof HashConnectSigner) {
+                transactionReceipt = await transactionResponse.getReceiptWithSigner(clientOrSigner);            
+            }
+            
             return this.createHTSResponse(transactionResponse.transactionId,
                                           responseType,
                                           results,
@@ -17,8 +26,13 @@ export  class TransactionResposeHandler {
                                           );
         }
 
-        if (responseType == TransactionType.RECORD) {            
-            const transactionRecord: TransactionRecord = await transactionResponse.getRecord(client);
+        if (responseType == TransactionType.RECORD) {    
+            let  transactionRecord: TransactionRecord ;
+            if (clientOrSigner instanceof Client) {
+                transactionRecord = await transactionResponse.getRecord(clientOrSigner);     
+            } else if (clientOrSigner instanceof HashConnectSigner) {
+                transactionRecord = await transactionResponse.getRecordWithSigner(clientOrSigner);            
+            }                      
             
             if (nameFunction) {
                 results = this.decodeFunctionResult(nameFunction,
