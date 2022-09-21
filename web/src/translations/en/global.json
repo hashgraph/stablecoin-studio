@@ -11,6 +11,11 @@
     "description": "Click in the button bellow to download the extension.",
     "button": "Download Hashpack"
   },
+  "hashpack-no-connected": {
+    "title": "Your wallet is not connected yet",
+    "description": "Click in the button bellow to connect your wallet",
+    "button": "Connect your wallet"
+  },
   "topbar": {
     "network": "Operating network",
     "account": "Operating account",
