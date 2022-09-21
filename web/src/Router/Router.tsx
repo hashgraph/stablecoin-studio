@@ -7,6 +7,7 @@ import Dashboard from '../views/Dashboard';
 import GiveRole from '../views/Roles/GiveRole';
 import Login from '../views/Login';
 import Operations from '../views/Operations';
+import RevokeRole from '../views/Roles/RevokeRole';
 import Roles from '../views/Roles';
 import StableCoinCreation from '../views/StableCoinCreation/StableCoinCreation';
 import StableCoinNotSelected from '../views/ErrorPage/StableCoinNotSelected';
@@ -57,6 +58,7 @@ const Router = () => {
 					<Route path={RoutesMappingUrl.dashboard} element={<Dashboard />} />
 					<Route path={RoutesMappingUrl.giveRole} element={<GiveRole />} />
 					<Route path={RoutesMappingUrl.operations} element={<Operations />} />
+					<Route path={RoutesMappingUrl.revokeRole} element={<RevokeRole />} />
 					<Route path={RoutesMappingUrl.roles} element={<Roles />} />
 					<Route path={RoutesMappingUrl.stableCoinCreation} element={<StableCoinCreation />} />
 					<Route

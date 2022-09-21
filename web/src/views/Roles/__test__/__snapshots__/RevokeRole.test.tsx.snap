@@ -1,0 +1,235 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<RevokeRole /> should render correctly 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-stack css-16oka5y"
+  >
+    <h2
+      class="chakra-heading css-llrpa2"
+      data-testid="base-container-heading"
+    >
+      Role management
+    </h2>
+    <div
+      class="css-1b6lda7"
+      data-testid="base-container-children"
+    >
+      <div
+        class="chakra-stack css-9fu93p"
+      >
+        <div
+          class="chakra-stack css-scr4k4"
+        >
+          <div
+            class="chakra-stack css-135a0es"
+          >
+            <h2
+              class="chakra-heading css-uig24d"
+              data-testid="title"
+            >
+              Revoke role
+            </h2>
+            <form
+              class="chakra-stack css-b5leqj"
+            >
+              <div
+                class="chakra-stack css-1h0sumw"
+              >
+                <div
+                  class="chakra-form-control css-1kxonj9"
+                  role="group"
+                >
+                  <label
+                    class="chakra-form__label css-1jbsrib"
+                    for="field-:r1:"
+                    id="field-:r1:-label"
+                  >
+                    <div
+                      class="chakra-stack css-84zodg"
+                    >
+                      <p
+                        class="chakra-text css-mgupmj"
+                      >
+                        Account
+                      </p>
+                      <p
+                        class="chakra-text css-ftb7fv"
+                        data-testid="required"
+                      >
+                        *
+                      </p>
+                    </div>
+                  </label>
+                  <div
+                    class="chakra-input__group css-4302v8"
+                  >
+                    <input
+                      autocomplete="off"
+                      class="chakra-input css-6kc61d"
+                      data-testid="account"
+                      id="field-:r1:"
+                      name="account"
+                      placeholder="Introduce account"
+                      value=""
+                    />
+                  </div>
+                </div>
+              </div>
+              <div
+                class="chakra-stack css-1h0sumw"
+              >
+                <div
+                  class="chakra-form-control css-1kxonj9"
+                  data-testid="form_control"
+                  role="group"
+                >
+                  <label
+                    class="chakra-form__label css-1jbsrib"
+                    for="field-:r2:"
+                    id="field-:r2:-label"
+                  >
+                    <div
+                      class="chakra-stack css-84zodg"
+                    >
+                      <p
+                        class="chakra-text css-mgupmj"
+                      >
+                        Select role to give
+                      </p>
+                      <p
+                        class="chakra-text css-x3tq0c"
+                      >
+                        *
+                      </p>
+                    </div>
+                  </label>
+                  <div
+                    class="css-svkhat"
+                  >
+                    <div
+                      class="css-3qrqo0"
+                    />
+                    <span
+                      class="css-1f43avz-a11yText-A11yText"
+                      id="react-select-2-live-region"
+                    />
+                    <span
+                      aria-atomic="false"
+                      aria-live="polite"
+                      aria-relevant="additions text"
+                      class="css-1f43avz-a11yText-A11yText"
+                    />
+                    <div
+                      class=" css-15j38w8"
+                    >
+                      <div
+                        class="css-3y2vuh"
+                      >
+                        <span
+                          class="chakra-text css-4pvr19"
+                          data-testid="select-placeholder"
+                        >
+                          Select role to give
+                        </span>
+                        <div
+                          class=" css-svnjlw"
+                          data-value=""
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            aria-describedby="react-select-2-placeholder"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            class=" css-146k1ar-input"
+                            id="field-:r2:"
+                            role="combobox"
+                            spellcheck="false"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                        </div>
+                      </div>
+                      <div
+                        class=" css-hfbj6y"
+                      >
+                        <div
+                          class="css-1aabyhj"
+                        >
+                          <svg
+                            class="chakra-icon css-13otjrl"
+                            fill="currentColor"
+                            focusable="false"
+                            height="1em"
+                            viewBox="0 0 256 256"
+                            width="1em"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <rect
+                              fill="none"
+                              height="256"
+                              width="256"
+                            />
+                            <polyline
+                              fill="none"
+                              points="208 96 128 176 48 96"
+                              stroke="currentColor"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="16"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                    <input
+                      name="role"
+                      type="hidden"
+                      value=""
+                    />
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div
+          class="css-ajbtx6"
+        >
+          <hr
+            aria-orientation="horizontal"
+            class="chakra-divider css-svjswr"
+          />
+          <div
+            class="chakra-stack css-zhuomp"
+          >
+            <button
+              class="chakra-button css-hg6n4b"
+              data-testid="cancel-btn"
+              type="button"
+            >
+              Go back
+            </button>
+            <button
+              class="chakra-button css-l6yrnw"
+              data-testid="confirm-btn"
+              disabled=""
+              type="button"
+            >
+              Accept
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;

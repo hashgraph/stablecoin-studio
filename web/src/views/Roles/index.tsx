@@ -16,7 +16,6 @@ const Roles = () => {
 			icon: 'MinusCircle',
 			route: NamedRoutes.RevokeRole,
 			title: t('revoke'),
-			variant: 'disabled',
 		},
 		{
 			icon: 'PencilSimple',

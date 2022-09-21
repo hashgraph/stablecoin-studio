@@ -97,9 +97,8 @@ exports[`<Roles /> should render correctly 1`] = `
             class="css-180e663"
           >
             <button
-              class="css-kly7w1"
+              class="css-1g500l7"
               data-testid="direct-access-revokeRole"
-              disabled=""
             >
               <div
                 class="css-bv4l9q"
