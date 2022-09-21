@@ -44,7 +44,7 @@ import ContractId from '../../../domain/context/contract/ContractId.js';
 import { TokenType } from '../../../domain/context/stablecoin/TokenType.js';
 import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.js';
 import { HashConnectConnectionState } from 'hashconnect/dist/cjs/types/hashconnect.js';
-import HashPackProvider from 'port/out/hedera/hashpack/HashPackProvider.js';
+import HashPackProvider from '../../out/hedera/hashpack/HashPackProvider.js';
 
 export {
 	IAssociateStableCoinRequest,
