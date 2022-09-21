@@ -182,6 +182,7 @@ export const english = {
       'Reset limit',
       'Back',
     ],
+    backOption: 'Go back',
   },
   state: {
     searching: 'Searching...',

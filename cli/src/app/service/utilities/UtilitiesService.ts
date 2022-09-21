@@ -149,6 +149,7 @@ export default class UtilitiesService extends Service {
   public async defaultMultipleAsk(
     question: string,
     choices: Array<string>,
+    goBack?: boolean,
     network?: string,
     account?: string,
     token?: string,
@@ -166,7 +167,9 @@ export default class UtilitiesService extends Service {
       name: 'response',
       type: 'rawlist',
       message: question,
-      choices: choices,
+      choices: goBack
+        ? choices.concat(language.getText('wizard.backOption'))
+        : choices,
     });
     return variable.response;
   }
