@@ -76,11 +76,9 @@ export class SDKService {
 		targetId,
 		amount,
 	}: CashInRequest) {
-		console.log(await SDKService.getInstance());
-		return await SDKService.getInstance().then((instance) => {
-			console.log(instance);
-			instance.cashIn({ proxyContractId, privateKey, accountId, tokenId, targetId, amount });
-		});
+		return await SDKService.getInstance().then((instance) =>
+			instance.cashIn({ proxyContractId, privateKey, accountId, tokenId, targetId, amount }),
+		);
 	}
 }
 

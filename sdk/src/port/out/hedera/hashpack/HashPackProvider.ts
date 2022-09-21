@@ -2,7 +2,7 @@ import {
 	HashConnect,
 	HashConnectTypes,
 	MessageTypes,
-} from 'hashconnect/dist/cjs/main';
+} from 'hashconnect/dist/esm/main';
 import { IniConfig, IProvider } from '../Provider.js';
 import {
 	HederaNetwork,
@@ -85,6 +85,7 @@ export default class HashPackProvider implements IProvider {
 		options,
 	}: IniConfig): Promise<HashPackProvider> {
 		this.hc = new HashConnect(options?.appMetadata?.debugMode);
+		console.log(this.hc);
 
 		this.setUpHashConnectEvents();
 		console.log(this.hc);
@@ -163,7 +164,6 @@ export default class HashPackProvider implements IProvider {
 		params: ICallContractRequest | ICallContractWithAccountRequest,
 	): Promise<Uint8Array> {
 		const { contractId, parameters, gas, abi } = params;
-
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(
 				this.network.hederaNetworkEnviroment,
@@ -258,7 +258,8 @@ export default class HashPackProvider implements IProvider {
 			`Deploying ${HederaERC1967Proxy__factory.name} contract... please wait.`,
 			logOpts,
 		);
-		let proxyContract: ContractId = ContractId.fromString(stableCoin.memo) ?? '';
+		let proxyContract: ContractId =
+			ContractId.fromString(stableCoin.memo) ?? '';
 
 		if (!proxyContract) {
 			proxyContract = await this.deployContract(
@@ -456,7 +457,10 @@ export default class HashPackProvider implements IProvider {
 	}
 
 	private fromPublicKey(key: HPublicKey): PublicKey {
-		return new PublicKey({ key: key._key.toStringRaw(), type: key._key._type });
+		return new PublicKey({
+			key: key._key.toStringRaw(),
+			type: key._key._type,
+		});
 	}
 
 	public getPublicKey(privateKey?: PrivateKey | string | undefined): string {
