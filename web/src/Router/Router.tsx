@@ -1,15 +1,16 @@
+import { useEffect, useState } from 'react';
 import { Navigate, Route, Routes, Outlet } from 'react-router-dom';
 import Layout from '../layout/Layout';
+import { RoutesMappingUrl } from './RoutesMappingUrl';
+import CashInOperation from '../views/Operations/CashIn';
 import Dashboard from '../views/Dashboard';
-import StableCoinNotSelected from '../views/ErrorPage/StableCoinNotSelected';
+import GiveRole from '../views/Roles/GiveRole';
 import Login from '../views/Login';
 import Operations from '../views/Operations';
-import CashInOperation from '../views/Operations/CashIn';
-import StableCoinCreation from '../views/StableCoinCreation/StableCoinCreation';
 import Roles from '../views/Roles';
-import { RoutesMappingUrl } from './RoutesMappingUrl';
+import StableCoinCreation from '../views/StableCoinCreation/StableCoinCreation';
+import StableCoinNotSelected from '../views/ErrorPage/StableCoinNotSelected';
 import SDKService, { HashConnectConnectionState } from '../services/SDKService';
-import { useEffect, useState } from 'react';
 
 const PrivateRoute = ({ status }: { status?: HashConnectConnectionState }) => {
 	return (
@@ -54,6 +55,7 @@ const Router = () => {
 				<Route element={<PrivateRoute status={status} />}>
 					<Route path={RoutesMappingUrl.cashIn} element={<CashInOperation />} />
 					<Route path={RoutesMappingUrl.dashboard} element={<Dashboard />} />
+					<Route path={RoutesMappingUrl.giveRole} element={<GiveRole />} />
 					<Route path={RoutesMappingUrl.operations} element={<Operations />} />
 					<Route path={RoutesMappingUrl.roles} element={<Roles />} />
 					<Route path={RoutesMappingUrl.stableCoinCreation} element={<StableCoinCreation />} />

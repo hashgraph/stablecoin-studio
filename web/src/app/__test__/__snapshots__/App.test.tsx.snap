@@ -27,21 +27,13 @@ exports[`<App /> should render correctly 1`] = `
         >
           Click in the button bellow to download the extension.
         </p>
-        <a
-          class="chakra-link css-13jvj27"
-          data-testid="modal-hashpack-link"
-          href="https://www.hashpack.app/download"
-          rel="noopener"
-          target="_blank"
+        <button
+          class="chakra-button css-l6yrnw"
+          data-testid="modal-hashpack-button"
+          type="button"
         >
-          <button
-            class="chakra-button css-l6yrnw"
-            data-testid="modal-hashpack-button"
-            type="button"
-          >
-            Download Hashpack
-          </button>
-        </a>
+          Download Hashpack
+        </button>
       </div>
     </div>
   </main>
