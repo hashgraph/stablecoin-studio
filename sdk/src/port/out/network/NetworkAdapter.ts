@@ -63,9 +63,7 @@ export default class NetworkAdapter {
 		return new HashPackProvider().init({ network, options });
 	}
 
-	private getHTSProvider(
-		network: HederaNetwork,
-	): Promise<HTSProvider> {
+	private getHTSProvider(network: HederaNetwork): Promise<HTSProvider> {
 		return new HTSProvider().init({ network });
 	}
 }

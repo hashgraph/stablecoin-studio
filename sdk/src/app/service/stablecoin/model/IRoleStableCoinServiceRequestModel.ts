@@ -1,3 +1,4 @@
+import { StableCoinRole } from '../../../../core/enum.js';
 import {
 	IAccountWithKeyRequestModel,
 	IAmountOptionalRequestModel,
@@ -5,8 +6,10 @@ import {
 	ITargetIdRequestModel,
 } from './CoreRequestModel.js';
 
-export default interface ISupplierRoleStableCoinServiceRequestModel
+export default interface IRoleStableCoinServiceRequestModel
 	extends IProxyContractIdRequestModel,
 		IAccountWithKeyRequestModel,
 		IAmountOptionalRequestModel,
-		ITargetIdRequestModel {}
+		ITargetIdRequestModel {
+	role: StableCoinRole;
+}
