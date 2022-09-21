@@ -29,8 +29,8 @@ export class SDKService {
 
 	constructor() {}
 
-	public static getInstance() {
-		if (!SDKService.instance) {
+	public static async getInstance() {
+		if (!SDKService.instance)
 			SDKService.instance = new SDK({
 				network: new HederaNetwork(HederaNetworkEnviroment.TEST), // TODO: dynamic data
 				mode: NetworkMode.HASHPACK,
@@ -38,13 +38,9 @@ export class SDKService {
 					appMetadata,
 				},
 			});
-		}
+		await SDKService.instance.init();
 
 		return SDKService.instance;
-	}
-
-	public static async initSdk(onInit: (data: InitializationData) => void) {
-		return await this.getInstance().init({ onInit });
 	}
 
 	public static isInit() {
@@ -53,15 +49,23 @@ export class SDKService {
 	}
 
 	public static connectWallet() {
-		SDKService.getInstance().connectWallet();
+		SDKService.getInstance().then((instance) => instance?.connectWallet());
 	}
 
 	public static async getAvailabilityExtension(): Promise<boolean> {
-		return SDKService.getInstance().getAvailabilityExtension();
+		return (await SDKService.getInstance())?.getAvailabilityExtension();
 	}
 
 	public static async getStatus(): Promise<HashConnectConnectionState | undefined> {
-		return SDKService.getInstance().gethashConnectConectionStatus();
+		return (await SDKService.getInstance())?.gethashConnectConectionStatus();
+	}
+
+	public static async getWalletData(): Promise<InitializationData> {
+		return (await SDKService.getInstance()).getInitData();
+	}
+
+	public static async disconnectWallet(): Promise<void> {
+		return (await SDKService.getInstance()).disconectHaspack();
 	}
 
 	public static async cashIn({
@@ -72,9 +76,11 @@ export class SDKService {
 		targetId,
 		amount,
 	}: CashInRequest) {
-		return await SDKService.getInstance().then((instance) =>
-			instance.cashIn({ proxyContractId, privateKey, accountId, tokenId, targetId, amount }),
-		);
+		console.log(await SDKService.getInstance());
+		return await SDKService.getInstance().then((instance) => {
+			console.log(instance);
+			instance.cashIn({ proxyContractId, privateKey, accountId, tokenId, targetId, amount });
+		});
 	}
 }
 

@@ -2,8 +2,8 @@
   "compilerOptions": {
     "noImplicitAny": true,
     "allowJs": false,
-    "target": "ES5",
-    "module": "esnext",
+    "target": "ES2017",
+    "module": "ESNext",
     "moduleResolution":"node",
     "declaration": true,
     "esModuleInterop": true,
