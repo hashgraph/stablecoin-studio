@@ -1,8 +1,9 @@
 import userEvent from '@testing-library/user-event';
-import GiveRole from '../GiveRole';
+import HandleRoles from '../HandleRoles';
+import type { Action } from '../HandleRoles';
 import en from '../../../translations/en/roles.json';
 import { render } from '../../../test';
-import { fakeOptions, fields } from '../constans';
+import { fakeOptions, fields, actions } from '../constants';
 import { waitFor } from '@testing-library/react';
 import type { RenderResult } from '@testing-library/react';
 import { RouterManager } from '../../../Router/RouterManager';
@@ -16,22 +17,24 @@ jest.mock('../../../Router/RouterManager', () => ({
 const translations = en.giveRole;
 const validAccount = '0.0.123456';
 
-describe(`<${GiveRole.name} />`, () => {
-	test('should render correctly', () => {
-		const component = render(<GiveRole />);
+describe(`<${HandleRoles.name} />`, () => {
+	test('should render correctly on all actions', () => {
+		Object.keys(actions).forEach((action) => {
+			const component = render(<HandleRoles action={action as Action} />);
 
-		expect(component.asFragment()).toMatchSnapshot();
+			expect(component.asFragment()).toMatchSnapshot(action);
+		});
 	});
 
 	test('should has disabled confirm button as default', () => {
-		const component = render(<GiveRole />);
+		const component = render(<HandleRoles action='giveRole' />);
 
 		const confirmButton = component.getByTestId('confirm-btn');
 		expect(confirmButton).toHaveAttribute('disabled');
 	});
 
 	test('should enable confirm button after fill form correctly', async () => {
-		const component = render(<GiveRole />);
+		const component = render(<HandleRoles action='giveRole' />);
 
 		const account = component.getByTestId(fields.account);
 		userEvent.type(account, validAccount);
@@ -53,7 +56,7 @@ describe(`<${GiveRole.name} />`, () => {
 	});
 
 	test('cancel button should redirect to Roles view', () => {
-		const component = render(<GiveRole />);
+		const component = render(<HandleRoles action='giveRole' />);
 
 		const anything = expect.any(Function);
 
@@ -75,7 +78,7 @@ describe(`<${GiveRole.name} />`, () => {
 		};
 
 		test('should render children', async () => {
-			const component = render(<GiveRole />);
+			const component = render(<HandleRoles action='giveRole' />);
 
 			fillInitialForm(component);
 
@@ -101,7 +104,7 @@ describe(`<${GiveRole.name} />`, () => {
 		});
 
 		test('should be selected Infinity token quantity by default', () => {
-			const component = render(<GiveRole />);
+			const component = render(<HandleRoles action='giveRole' />);
 
 			fillInitialForm(component);
 
@@ -110,7 +113,7 @@ describe(`<${GiveRole.name} />`, () => {
 		});
 
 		test('if set switch off then user should fill token quantity field', async () => {
-			const component = render(<GiveRole />);
+			const component = render(<HandleRoles action='giveRole' />);
 
 			fillInitialForm(component);
 

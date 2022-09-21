@@ -29,8 +29,10 @@
     "revokeRole": {
         "accountLabel": "Account",
         "accountPlaceholder": "Introduce account",
+        "infinity": "",
         "modalActionDetailAccount": "Account to revoke role",
         "modalActionDetailRole": "Role to revoke",
+        "modalActionDetailSupplierQuantity": "",
         "modalActionConfirmButton": "Revoke role",
         "modalActionTitle": "Revoke role",
         "modalActionSubtitle": "Action details review",
@@ -38,6 +40,28 @@
         "modalErrorTitle": "Error revoking the role",
         "modalErrorDescription": "please try again later.",
         "selectLabel": "Select role to give",
-        "selectPlaceholder": "Select role to give"
+        "selectPlaceholder": "Select role to revoke",
+        "supplierQuantityInputPlaceholder": "",
+        "supplierQuantityQuestion": "",
+        "switchLabel": ""
+    },
+    "editRole": {
+        "accountLabel": "Account",
+        "accountPlaceholder": "Introduce account",
+        "infinity": "Infinity",
+        "modalActionDetailAccount": "Account to edit role",
+        "modalActionDetailRole": "Role to edit",
+        "modalActionDetailSupplierQuantity": "Token quantity",
+        "modalActionConfirmButton": "Edit role",
+        "modalActionTitle": "Edit role",
+        "modalActionSubtitle": "Action details review",
+        "modalSuccessTitle": "Role successfully edited",
+        "modalErrorTitle": "Error editing the role",
+        "modalErrorDescription": "please try again later.",
+        "selectLabel": "Select role to edit",
+        "selectPlaceholder": "Select role to edit",
+        "supplierQuantityInputPlaceholder": "Tokens quantity",
+        "supplierQuantityQuestion": "How much tokens the account can mint?",
+        "switchLabel": "Infinity?"
     }
 }

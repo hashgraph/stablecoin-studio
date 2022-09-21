@@ -21,7 +21,6 @@ const Roles = () => {
 			icon: 'PencilSimple',
 			route: NamedRoutes.EditRole,
 			title: t('edit'),
-			variant: 'disabled',
 		},
 	];
 

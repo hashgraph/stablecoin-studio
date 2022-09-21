@@ -4,10 +4,10 @@ import Layout from '../layout/Layout';
 import { RoutesMappingUrl } from './RoutesMappingUrl';
 import CashInOperation from '../views/Operations/CashIn';
 import Dashboard from '../views/Dashboard';
-import GiveRole from '../views/Roles/GiveRole';
+import HandleRoles from '../views/Roles/HandleRoles';
+import { actions } from '../views/Roles/constants';
 import Login from '../views/Login';
 import Operations from '../views/Operations';
-import RevokeRole from '../views/Roles/RevokeRole';
 import Roles from '../views/Roles';
 import StableCoinCreation from '../views/StableCoinCreation/StableCoinCreation';
 import StableCoinNotSelected from '../views/ErrorPage/StableCoinNotSelected';
@@ -56,9 +56,13 @@ const Router = () => {
 				<Route element={<PrivateRoute status={status} />}>
 					<Route path={RoutesMappingUrl.cashIn} element={<CashInOperation />} />
 					<Route path={RoutesMappingUrl.dashboard} element={<Dashboard />} />
-					<Route path={RoutesMappingUrl.giveRole} element={<GiveRole />} />
+					<Route path={RoutesMappingUrl.editRole} element={<HandleRoles action={actions.edit} />} />
+					<Route path={RoutesMappingUrl.giveRole} element={<HandleRoles action={actions.give} />} />
 					<Route path={RoutesMappingUrl.operations} element={<Operations />} />
-					<Route path={RoutesMappingUrl.revokeRole} element={<RevokeRole />} />
+					<Route
+						path={RoutesMappingUrl.revokeRole}
+						element={<HandleRoles action={actions.revoke} />}
+					/>
 					<Route path={RoutesMappingUrl.roles} element={<Roles />} />
 					<Route path={RoutesMappingUrl.stableCoinCreation} element={<StableCoinCreation />} />
 					<Route
