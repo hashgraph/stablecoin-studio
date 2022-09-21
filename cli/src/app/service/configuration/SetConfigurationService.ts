@@ -133,15 +133,18 @@ export default class SetConfigurationService extends Service {
     while (moreAccounts) {
       utilsService.showMessage(`Account:`);
 
-      const accountId = await utilsService.defaultSingleAsk(
+      let accountId = await utilsService.defaultSingleAsk(
         language.getText('configuration.askAccountId'),
         '0.0.0',
       );
       if (doCheck) {
         const sdk: SDK = utilsService.getSDK();
-        if (!sdk.checkIsAddress(accountId)) {
+        while (!sdk.checkIsAddress(accountId)) {
           console.log(language.getText('validations.wrongFormatAddress'));
-          await this.configureAccounts(true);
+          accountId = await utilsService.defaultSingleAsk(
+            language.getText('configuration.askAccountId'),
+            '0.0.0',
+          );
         }
       }
       const accountFromPrivKey: IAccountConfig =
