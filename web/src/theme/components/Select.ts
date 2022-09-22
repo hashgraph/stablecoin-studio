@@ -81,6 +81,14 @@ const outline = ({ isInvalid, isDisabled }: SelectConfigProps) => {
 	};
 };
 
+const unstyled = ()=> {
+	return {
+		label: {
+			color: "brand.black"
+		}
+	}
+}
+
 export const Select = {
 	parts: [
 		'wrapper',
@@ -98,6 +106,7 @@ export const Select = {
 	baseStyle,
 	variants: {
 		outline,
+		unstyled,
 	},
 	defaultProps: {
 		size: 'md',

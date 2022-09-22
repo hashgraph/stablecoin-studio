@@ -11,7 +11,6 @@ const Roles = () => {
 			icon: 'PlusCircle',
 			route: NamedRoutes.GiveRole,
 			title: t('give'),
-			variant: 'disabled',
 		},
 		{
 			icon: 'MinusCircle',

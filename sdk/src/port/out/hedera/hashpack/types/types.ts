@@ -7,4 +7,4 @@ export type AppMetadata = {
 	description: string;
 	url: string;
 	debugMode?: false;
-};;
+};

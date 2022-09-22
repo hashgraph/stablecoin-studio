@@ -1,0 +1,545 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<GiveRole /> Supplier role should render children: giveSupplierRole 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-stack css-16oka5y"
+  >
+    <h2
+      class="chakra-heading css-llrpa2"
+      data-testid="base-container-heading"
+    >
+      Role management
+    </h2>
+    <div
+      class="css-1b6lda7"
+      data-testid="base-container-children"
+    >
+      <div
+        class="chakra-stack css-9fu93p"
+      >
+        <div
+          class="chakra-stack css-scr4k4"
+        >
+          <div
+            class="chakra-stack css-135a0es"
+          >
+            <h2
+              class="chakra-heading css-uig24d"
+              data-testid="title"
+            >
+              Give role
+            </h2>
+            <form
+              class="chakra-stack css-b5leqj"
+            >
+              <div
+                class="chakra-stack css-1h0sumw"
+              >
+                <div
+                  class="chakra-form-control css-1kxonj9"
+                  role="group"
+                >
+                  <label
+                    class="chakra-form__label css-1jbsrib"
+                    for="field-:r8:"
+                    id="field-:r8:-label"
+                  >
+                    <div
+                      class="chakra-stack css-84zodg"
+                    >
+                      <p
+                        class="chakra-text css-mgupmj"
+                      >
+                        Account
+                      </p>
+                      <p
+                        class="chakra-text css-ftb7fv"
+                        data-testid="required"
+                      >
+                        *
+                      </p>
+                    </div>
+                  </label>
+                  <div
+                    class="chakra-input__group css-4302v8"
+                  >
+                    <input
+                      autocomplete="off"
+                      class="chakra-input css-6kc61d"
+                      data-testid="account"
+                      id="field-:r8:"
+                      name="account"
+                      placeholder="Introduce account"
+                      value="0.0.123456"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div
+                class="chakra-stack css-1h0sumw"
+              >
+                <div
+                  class="chakra-form-control css-1kxonj9"
+                  data-testid="form_control"
+                  role="group"
+                >
+                  <label
+                    class="chakra-form__label css-1jbsrib"
+                    for="field-:r9:"
+                    id="field-:r9:-label"
+                  >
+                    <div
+                      class="chakra-stack css-84zodg"
+                    >
+                      <p
+                        class="chakra-text css-mgupmj"
+                      >
+                        Select role to give
+                      </p>
+                      <p
+                        class="chakra-text css-x3tq0c"
+                      >
+                        *
+                      </p>
+                    </div>
+                  </label>
+                  <div
+                    class="css-svkhat"
+                  >
+                    <div
+                      class="css-3qrqo0"
+                    />
+                    <span
+                      class="css-1f43avz-a11yText-A11yText"
+                      id="react-select-6-live-region"
+                    />
+                    <span
+                      aria-atomic="false"
+                      aria-live="polite"
+                      aria-relevant="additions text"
+                      class="css-1f43avz-a11yText-A11yText"
+                    />
+                    <div
+                      class=" css-15j38w8"
+                    >
+                      <div
+                        class="css-3y2vuh"
+                      >
+                        <span
+                          class="chakra-text css-fe5bdd"
+                          data-testid="select-placeholder"
+                        >
+                          Select role to give
+                        </span>
+                        <div
+                          class="css-lyj4wt"
+                        >
+                          Supplier
+                        </div>
+                        <div
+                          class=" css-svnjlw"
+                          data-value=""
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            class=" css-knqiki-input"
+                            id="field-:r9:"
+                            role="combobox"
+                            spellcheck="false"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                        </div>
+                      </div>
+                      <div
+                        class=" css-hfbj6y"
+                      >
+                        <div
+                          class="css-1aabyhj"
+                        >
+                          <svg
+                            class="chakra-icon css-13otjrl"
+                            fill="currentColor"
+                            focusable="false"
+                            height="1em"
+                            viewBox="0 0 256 256"
+                            width="1em"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <rect
+                              fill="none"
+                              height="256"
+                              width="256"
+                            />
+                            <polyline
+                              fill="none"
+                              points="208 96 128 176 48 96"
+                              stroke="currentColor"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="16"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                    <input
+                      name="role"
+                      type="hidden"
+                      value="2"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div
+                class="css-0"
+                data-testid="supplier-quantity"
+              >
+                <div
+                  class="chakra-stack css-84zodg"
+                >
+                  <p
+                    class="chakra-text css-mgupmj"
+                  >
+                    How much tokens the account can mint?
+                  </p>
+                </div>
+                <div
+                  class="chakra-stack css-1wytzre"
+                >
+                  <p
+                    class="chakra-text css-4dzt3e"
+                  >
+                    Infinity?
+                  </p>
+                  <div
+                    style="position: relative; display: inline-block; text-align: left; opacity: 1; direction: ltr; border-radius: 17.5px; transition: opacity 0.25s; user-select: none;"
+                  >
+                    <div
+                      class="react-switch-bg"
+                      style="height: 35px; width: 64px; margin: 0px; position: relative; background: rgb(255, 255, 255); border-radius: 17.5px; cursor: pointer; transition: background 0.25s;"
+                    />
+                    <div
+                      class="react-switch-handle"
+                      style="height: 29px; width: 29px; background: rgb(173, 244, 222); display: inline-block; cursor: pointer; border-radius: 50%; position: absolute; transform: translateX(32px); top: 3px; outline: 0; border: 0px; transition: background-color 0.25s, transform 0.25s, box-shadow 0.15s;"
+                    >
+                      <div
+                        style="height: 29px; width: 29px; opacity: 0; position: absolute; left: 0px; top: 0px; pointer-events: none; transition: opacity 0.25s;"
+                      >
+                        <div
+                          class="chakra-stack css-191yzw1"
+                        >
+                          <p
+                            class="chakra-text css-6ixl7s"
+                            data-testid="switch-handler-no"
+                          >
+                            NO
+                          </p>
+                        </div>
+                      </div>
+                      <div
+                        style="height: 29px; width: 29px; opacity: 1; position: absolute; left: 0px; top: 0px; pointer-events: none; transition: opacity 0.25s;"
+                      >
+                        <div
+                          class="chakra-stack css-191yzw1"
+                        >
+                          <p
+                            class="chakra-text css-6ixl7s"
+                            data-testid="switch-handler-yes"
+                          >
+                            YES
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <input
+                      aria-checked="true"
+                      checked=""
+                      data-testid="switch"
+                      id="switch-component"
+                      role="switch"
+                      style="border: 0px; height: 1px; margin: -1px; overflow: hidden; padding: 0px; position: absolute; width: 1px;"
+                      type="checkbox"
+                    />
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div
+          class="css-ajbtx6"
+        >
+          <hr
+            aria-orientation="horizontal"
+            class="chakra-divider css-svjswr"
+          />
+          <div
+            class="chakra-stack css-zhuomp"
+          >
+            <button
+              class="chakra-button css-hg6n4b"
+              data-testid="cancel-btn"
+              type="button"
+            >
+              Go back
+            </button>
+            <button
+              class="chakra-button css-l6yrnw"
+              data-testid="confirm-btn"
+              type="button"
+            >
+              Accept
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;
+
+exports[`<GiveRole /> should render correctly 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-stack css-16oka5y"
+  >
+    <h2
+      class="chakra-heading css-llrpa2"
+      data-testid="base-container-heading"
+    >
+      Role management
+    </h2>
+    <div
+      class="css-1b6lda7"
+      data-testid="base-container-children"
+    >
+      <div
+        class="chakra-stack css-9fu93p"
+      >
+        <div
+          class="chakra-stack css-scr4k4"
+        >
+          <div
+            class="chakra-stack css-135a0es"
+          >
+            <h2
+              class="chakra-heading css-uig24d"
+              data-testid="title"
+            >
+              Give role
+            </h2>
+            <form
+              class="chakra-stack css-b5leqj"
+            >
+              <div
+                class="chakra-stack css-1h0sumw"
+              >
+                <div
+                  class="chakra-form-control css-1kxonj9"
+                  role="group"
+                >
+                  <label
+                    class="chakra-form__label css-1jbsrib"
+                    for="field-:r0:"
+                    id="field-:r0:-label"
+                  >
+                    <div
+                      class="chakra-stack css-84zodg"
+                    >
+                      <p
+                        class="chakra-text css-mgupmj"
+                      >
+                        Account
+                      </p>
+                      <p
+                        class="chakra-text css-ftb7fv"
+                        data-testid="required"
+                      >
+                        *
+                      </p>
+                    </div>
+                  </label>
+                  <div
+                    class="chakra-input__group css-4302v8"
+                  >
+                    <input
+                      autocomplete="off"
+                      class="chakra-input css-6kc61d"
+                      data-testid="account"
+                      id="field-:r0:"
+                      name="account"
+                      placeholder="Introduce account"
+                      value=""
+                    />
+                  </div>
+                </div>
+              </div>
+              <div
+                class="chakra-stack css-1h0sumw"
+              >
+                <div
+                  class="chakra-form-control css-1kxonj9"
+                  data-testid="form_control"
+                  role="group"
+                >
+                  <label
+                    class="chakra-form__label css-1jbsrib"
+                    for="field-:r1:"
+                    id="field-:r1:-label"
+                  >
+                    <div
+                      class="chakra-stack css-84zodg"
+                    >
+                      <p
+                        class="chakra-text css-mgupmj"
+                      >
+                        Select role to give
+                      </p>
+                      <p
+                        class="chakra-text css-x3tq0c"
+                      >
+                        *
+                      </p>
+                    </div>
+                  </label>
+                  <div
+                    class="css-svkhat"
+                  >
+                    <div
+                      class="css-3qrqo0"
+                    />
+                    <span
+                      class="css-1f43avz-a11yText-A11yText"
+                      id="react-select-2-live-region"
+                    />
+                    <span
+                      aria-atomic="false"
+                      aria-live="polite"
+                      aria-relevant="additions text"
+                      class="css-1f43avz-a11yText-A11yText"
+                    />
+                    <div
+                      class=" css-15j38w8"
+                    >
+                      <div
+                        class="css-3y2vuh"
+                      >
+                        <span
+                          class="chakra-text css-4pvr19"
+                          data-testid="select-placeholder"
+                        >
+                          Select role to give
+                        </span>
+                        <div
+                          class=" css-svnjlw"
+                          data-value=""
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            aria-describedby="react-select-2-placeholder"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            class=" css-146k1ar-input"
+                            id="field-:r1:"
+                            role="combobox"
+                            spellcheck="false"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                        </div>
+                      </div>
+                      <div
+                        class=" css-hfbj6y"
+                      >
+                        <div
+                          class="css-1aabyhj"
+                        >
+                          <svg
+                            class="chakra-icon css-13otjrl"
+                            fill="currentColor"
+                            focusable="false"
+                            height="1em"
+                            viewBox="0 0 256 256"
+                            width="1em"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <rect
+                              fill="none"
+                              height="256"
+                              width="256"
+                            />
+                            <polyline
+                              fill="none"
+                              points="208 96 128 176 48 96"
+                              stroke="currentColor"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="16"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                    <input
+                      name="role"
+                      type="hidden"
+                      value=""
+                    />
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div
+          class="css-ajbtx6"
+        >
+          <hr
+            aria-orientation="horizontal"
+            class="chakra-divider css-svjswr"
+          />
+          <div
+            class="chakra-stack css-zhuomp"
+          >
+            <button
+              class="chakra-button css-hg6n4b"
+              data-testid="cancel-btn"
+              type="button"
+            >
+              Go back
+            </button>
+            <button
+              class="chakra-button css-l6yrnw"
+              data-testid="confirm-btn"
+              disabled=""
+              type="button"
+            >
+              Accept
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;
