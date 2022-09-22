@@ -5,7 +5,8 @@ import DetailsReview from '../../../components/DetailsReview';
 import InputController from '../../../components/Form/InputController';
 import InputNumberController from '../../../components/Form/InputNumberController';
 import { validateAccount } from '../../../utils/validationsHelper';
-import OperationModals, { OperationModalActionProps } from '../OperationModals';
+import type { OperationModalActionProps } from '../OperationModals';
+import OperationModals from '../OperationModals';
 import OperationLayout from './../OperationLayout';
 
 const WipeOperation = () => {

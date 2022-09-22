@@ -1,7 +1,5 @@
-import { HederaNetwork, HederaNetworkEnviroment, NetworkMode, SDK } from 'hedera-stable-coin-sdk';
-
 import type { AppMetadata } from 'hedera-stable-coin-sdk';
-
+import { HederaNetwork, HederaNetworkEnviroment, NetworkMode, SDK } from 'hedera-stable-coin-sdk';
 export enum HashConnectConnectionState {
 	Connected = 'Connected',
 	Disconnected = 'Disconnected',

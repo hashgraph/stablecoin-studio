@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react';
+import { useEffect, useState } from 'react';
 import type { ButtonProps as ChakraButtonProps } from '@chakra-ui/react';
 import { Button, Flex, Stack, Heading, SimpleGrid } from '@chakra-ui/react';
 import { RouterManager } from '../../Router/RouterManager';
 import { useNavigate } from 'react-router-dom';
-import { NamedRoutes } from '../../Router/NamedRoutes';
 import { useTranslation } from 'react-i18next';
 import BaseContainer from '../../components/BaseContainer';
 import DetailsReview from '../../components/DetailsReview';
@@ -16,9 +16,27 @@ export interface OperationLayoutProps {
 const OperationLayout = ({ LeftContent, onConfirm, confirmBtnProps }: OperationLayoutProps) => {
 	const navigate = useNavigate();
 	const { t } = useTranslation(['operations', 'global']);
+	// TODO: correct type from sdk
+	const [stableCoinData, setStableCoinData] = useState<any>();
+
+	useEffect(() => {
+		getStableCoinDetails();
+	}, []);
 
 	const handleGoBack = () => {
-		RouterManager.to(navigate, NamedRoutes.Operations);
+		RouterManager.goBack(navigate);
+	};
+
+	const getStableCoinDetails = () => {
+		// TODO: get from sdk
+		setStableCoinData({
+			name: 'Example',
+			symbol: 'example',
+			decimals: 6,
+			initialSupply: 20,
+			totalSupply: 200,
+			supplyType: 'infinite',
+		});
 	};
 
 	return (
@@ -44,15 +62,15 @@ const OperationLayout = ({ LeftContent, onConfirm, confirmBtnProps }: OperationL
 								details={[
 									{
 										label: t('operations:details.name'),
-										value: '',
+										value: stableCoinData?.name,
 									},
 									{
 										label: t('operations:details.symbol'),
-										value: '',
+										value: stableCoinData?.symbol,
 									},
 									{
 										label: t('operations:details.decimals'),
-										value: '',
+										value: stableCoinData?.decimals,
 									},
 								]}
 							/>
@@ -62,15 +80,15 @@ const OperationLayout = ({ LeftContent, onConfirm, confirmBtnProps }: OperationL
 								details={[
 									{
 										label: t('operations:details.initialSupply'),
-										value: '',
+										value: stableCoinData?.initialSupply,
 									},
 									{
 										label: t('operations:details.totalSupply'),
-										value: '',
+										value: stableCoinData?.totalSupply,
 									},
 									{
 										label: t('operations:details.supplyType'),
-										value: '',
+										value: stableCoinData?.supplyType,
 									},
 								]}
 							/>
