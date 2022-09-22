@@ -4,9 +4,9 @@ import { useTranslation } from 'react-i18next';
 import DetailsReview from '../../../components/DetailsReview';
 import InputController from '../../../components/Form/InputController';
 import InputNumberController from '../../../components/Form/InputNumberController';
+import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
+import ModalsHandler from '../../../components/ModalsHandler';
 import { validateAccount } from '../../../utils/validationsHelper';
-import type { OperationModalActionProps } from '../OperationModals';
-import OperationModals from '../OperationModals';
 import OperationLayout from './../OperationLayout';
 
 const WipeOperation = () => {
@@ -20,10 +20,10 @@ const WipeOperation = () => {
 		mode: 'onChange',
 	});
 
-	const { t } = useTranslation(['wipe', 'global']);
+	const { t } = useTranslation(['wipe', 'global', 'operations']);
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const handleWipe: OperationModalActionProps['onConfirm'] = ({ onSuccess, onError }) => {
+	const handleWipe: ModalsHandlerActionsProps['onConfirm'] = ({ onSuccess, onError }) => {
 		// TODO: integrate with sdk to do cashin
 		onSuccess();
 	};
@@ -72,12 +72,14 @@ const WipeOperation = () => {
 				onConfirm={onOpenModalAction}
 				confirmBtnProps={{ isDisabled: !formState.isValid }}
 			/>
-			<OperationModals
-				modalSuccessDesc={t('wipe:modalSuccessDesc', {
+			<ModalsHandler
+				errorNotificationTitle={t('operations:modalErrorTitle')}
+				errorNotificationDescription={'error'} // TODO: save error from sdk
+				successNotificationTitle={t('operations:modalSuccessTitle')}
+				successNotificationDescription={t('wipe:modalSuccessDesc', {
 					amount: getValues().amount,
 					account: getValues().destinationAccount,
 				})}
-				modalErrorDesc={'error'} // TODO: save error from sdk
 				modalActionProps={{
 					isOpen: isOpenModalAction,
 					onClose: onCloseModalAction,
