@@ -127,7 +127,10 @@ export default class SetConfigurationService extends Service {
    */
   public async configureAccounts(doCheck = false): Promise<IAccountConfig[]> {
     const configuration = configurationService.getConfiguration();
-    const accounts: IAccountConfig[] = configuration?.accounts || [];
+    let accounts: IAccountConfig[] = configuration?.accounts || [];
+    if (accounts.length === 1 && accounts[0].privateKey === '') {
+      accounts = [];
+    }
     let moreAccounts = true;
 
     while (moreAccounts) {
