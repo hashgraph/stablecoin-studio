@@ -32,39 +32,42 @@ export default class NetworkAdapter {
 		this._mode = mode;
 		this.network = network;
 		this._options = options;
-	}
-
-	/**
-	 * Init
-	 */
-	public async init(): Promise<NetworkAdapter> {
 		switch (this._mode) {
 			case NetworkMode.EOA:
-				this.provider = await this.getHTSProvider(this.network);
+				this.provider = this.getHTSProvider();
 				return this;
 			case NetworkMode.HASHPACK:
-				this.provider = await this.getHashpackProvider(
-					this.network,
-					this._options,
-				);
+				this.provider = this.getHashpackProvider();
 				return this;
 			default:
 				throw new Error('Not supported');
 		}
 	}
 
+	/**
+	 * Init
+	 */
+	public async init(): Promise<NetworkAdapter> {
+		this.provider = await this.provider.init({
+			network: this.network,
+			options: this._options,
+		});
+		return this;
+	}
+
+	public getInitData(): InitializationData {
+		return this.provider.initData;
+	}
+
 	public async stop(): Promise<boolean> {
 		return this.provider.stop();
 	}
 
-	private getHashpackProvider(
-		network: HederaNetwork,
-		options: IniConfigOptions,
-	): Promise<HashPackProvider> {
-		return new HashPackProvider().init({ network, options });
+	private getHashpackProvider(): HashPackProvider {
+		return new HashPackProvider();
 	}
 
-	private getHTSProvider(network: HederaNetwork): Promise<HTSProvider> {
-		return new HTSProvider().init({ network });
+	private getHTSProvider(): HTSProvider {
+		return new HTSProvider();
 	}
 }

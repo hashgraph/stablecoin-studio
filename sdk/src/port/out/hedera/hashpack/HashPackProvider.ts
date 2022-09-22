@@ -45,6 +45,8 @@ import {
 import { HashConnectProvider } from 'hashconnect/dist/cjs/provider/provider.js';
 import { HashConnectSigner } from 'hashconnect/dist/cjs/provider/signer';
 import Long from 'long';
+import EventEmitter from '../../../../core/eventEmitter.js';
+import ProviderEvent, { ProviderEventNames } from '../ProviderEvent.js';
 
 const logOpts = { newLine: true, clear: true };
 
@@ -61,6 +63,10 @@ export default class HashPackProvider implements IProvider {
 	private provider: HashConnectProvider;
 	private hashConnectConectionState: HashConnectConnectionState;
 	private pairingData: HashConnectTypes.SavedPairingData | null = null;
+
+	public emitter: EventEmitter<ProviderEvent> =
+		new EventEmitter<ProviderEvent>();
+	public events: ProviderEvent;
 
 	public get initData(): InitializationData {
 		return this._initData;
@@ -84,6 +90,7 @@ export default class HashPackProvider implements IProvider {
 					'mainnet' | 'testnet' | 'previewnet'
 				>,
 			);
+			this.emitter.emit(ProviderEventNames.providerInit, this.initData);
 		} else {
 			throw new Error('No app metadata');
 		}
@@ -96,22 +103,26 @@ export default class HashPackProvider implements IProvider {
 		return this;
 	}
 
-	public getAvailability(): boolean {
-		return this.availableExtension;
-	}
-
 	public setUpHashConnectEvents() {
 		//This is fired when a extension is found
 		this.hc.foundExtensionEvent.on((data) => {
 			console.log('Found extension', data);
-			if (data) this.availableExtension = true;
+			if (data) {
+				this.availableExtension = true;
+				this.emitter.emit(
+					ProviderEventNames.providerFoundExtensionEvent,
+				);
+			}
 		});
 
 		//This is fired when a wallet approves a pairing
 		this.hc.pairingEvent.on((data) => {
 			this.pairingData = data.pairingData!;
 			console.log('Paired with wallet', data);
-
+			this.emitter.emit(
+				ProviderEventNames.providerPairingEvent,
+				this.pairingData,
+			);
 			// this.pairingData = data.pairingData!;
 		});
 
@@ -119,6 +130,10 @@ export default class HashPackProvider implements IProvider {
 		this.hc.connectionStatusChangeEvent.on((state) => {
 			this.hashConnectConectionState = state;
 			console.log('hashconnect state change event', state);
+			this.emitter.emit(
+				ProviderEventNames.providerConnectionStatusChangeEvent,
+				this.hashConnectConectionState,
+			);
 			// this.state = state;
 		});
 

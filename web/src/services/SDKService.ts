@@ -1,6 +1,6 @@
 import { HederaNetwork, HederaNetworkEnviroment, NetworkMode, SDK } from 'hedera-stable-coin-sdk';
 
-import type { AppMetadata } from 'hedera-stable-coin-sdk';
+import type { AppMetadata, InitializationData } from 'hedera-stable-coin-sdk';
 
 export enum HashConnectConnectionState {
 	Connected = 'Connected',
@@ -21,7 +21,7 @@ export class SDKService {
 
 	constructor() {}
 
-	public static async getInstance() {
+	public static getInstance() {
 		if (!SDKService.instance) {
 			SDKService.instance = new SDK({
 				network: new HederaNetwork(HederaNetworkEnviroment.TEST), // TODO: dynamic data
@@ -30,10 +30,13 @@ export class SDKService {
 					appMetadata,
 				},
 			});
-			await SDKService.instance.init();
 		}
 
 		return SDKService.instance;
+	}
+
+	public static async initSdk(onInit: (data: InitializationData) => void) {
+		return await this.getInstance().init({ onInit });
 	}
 
 	public static isInit() {
@@ -42,15 +45,15 @@ export class SDKService {
 	}
 
 	public static connectWallet() {
-		SDKService.getInstance().then((instance) => instance?.connectWallet());
+		SDKService.getInstance().connectWallet();
 	}
 
 	public static async getAvailabilityExtension(): Promise<boolean> {
-		return (await SDKService.getInstance())?.getAvailabilityExtension();
+		return SDKService.getInstance().getAvailabilityExtension();
 	}
 
 	public static async getStatus(): Promise<HashConnectConnectionState | undefined> {
-		return (await SDKService.getInstance())?.gethashConnectConectionStatus();
+		return SDKService.getInstance().gethashConnectConectionStatus();
 	}
 }
 

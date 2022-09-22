@@ -43,7 +43,8 @@ import { HTSSigner } from './HTSSigner.js';
 import { HTSResponse, TransactionType } from '../sign/ISigner.js';
 import { TransactionResposeHandler } from '../transaction/TransactionResponseHandler.js';
 import { HashConnectConnectionState } from 'hashconnect/dist/cjs/types/hashconnect.js';
-import HashPackProvider from '../hashpack/HashPackProvider.js';
+import EventEmitter from '../../../../core/eventEmitter.js';
+import ProviderEvent, { ProviderEventNames } from '../ProviderEvent.js';
 
 type DefaultHederaProvider = hethers.providers.DefaultHederaProvider;
 
@@ -58,6 +59,10 @@ export default class HTSProvider implements IProvider {
 
 	public initData: InitializationData;
 
+	public emitter: EventEmitter<ProviderEvent> =
+		new EventEmitter<ProviderEvent>();
+	public events: ProviderEvent;
+
 	/**
 	 * init
 	 */
@@ -67,6 +72,13 @@ export default class HTSProvider implements IProvider {
 
 		// We have to follow an async pattern to match Hashconnect
 		return new Promise((r) => {
+			console.log(
+				'INIT event emitted',
+				this.emitter.emit(ProviderEventNames.providerInit, {
+					status: 'connected',
+				}),
+				this.emitter,
+			);
 			r(this);
 		});
 	}
@@ -409,10 +421,14 @@ export default class HTSProvider implements IProvider {
 		return HashConnectConnectionState.Disconnected;
 	}
 	disconectHaspack(): void {
-		throw new Error('not haspack');
+		this.emitter.emit(
+			ProviderEventNames.providerConnectionStatusChangeEvent,
+			HashConnectConnectionState.Disconnected,
+		);
 	}
-	connectWallet(): Promise<HashPackProvider> {
-		throw new Error('not haspack');
+	connectWallet(): Promise<HTSProvider> {
+		this.emitter.emit(ProviderEventNames.providerPairingEvent);
+		return new Promise((r) => r(this));
 	}
 	getInitData(): InitializationData {
 		throw new Error('not haspack');

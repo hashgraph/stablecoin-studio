@@ -15,38 +15,28 @@ import SDKService from '../services/SDKService';
 function App() {
 	const [SDKInit, setSDKInit] = useState<boolean>(false);
 	const [SDKInitialize, setSDKInitialize] = useState<boolean>(false);
-	const [intervalId, setIntervalId] = useState<ReturnType<typeof setTimeout>>();
 
 	useEffect(() => {
 		instanceSDK();
-
-		const interval = setInterval(() => {
-			handlerInitSDK();
-		}, 200);
-		setIntervalId(interval);
-
-		return () => {
-			clearInterval(interval);
-		};
 	}, []);
 
 	useEffect(() => {
 		if (SDKInitialize) {
-			clearInterval(intervalId);
 			setSDKInit(true);
 		}
 	}, [SDKInitialize]);
 
-	const handlerInitSDK = () => {
-		const init = SDKService?.isInit();
-
-		if (init) {
+	const instanceSDK = async () => {
+		const instance = SDKService.getInstance();
+		await instance.init({
+			onInit: () => {
+				console.log('Init');
+			},
+		});
+		instance.onWalletExtensionFound(() => {
+			console.log('Extension found');
 			setSDKInitialize(true);
-		}
-	};
-
-	const instanceSDK = () => {
-		SDKService.getInstance();
+		});
 	};
 
 	return (

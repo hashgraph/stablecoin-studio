@@ -46,9 +46,11 @@ import { TokenType } from '../../../domain/context/stablecoin/TokenType.js';
 import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.js';
 import { IAllowanceRequest } from './request/IRequestContracts.js';
 import { HashConnectConnectionState } from 'hashconnect/dist/cjs/types/hashconnect.js';
-import HashPackProvider from '../../out/hedera/hashpack/HashPackProvider.js';
 import { AppMetadata } from '../../out/hedera/hashpack/types/types.js';
 import { InitializationData } from '../../out/hedera/types.js';
+import { ProviderEventNames } from '../../out/hedera/ProviderEvent.js';
+import EventService from '../../../app/service/event/EventService.js';
+import { IProvider } from '../../out/hedera/Provider.js';
 
 export {
 	IAssociateStableCoinRequest,
@@ -98,6 +100,10 @@ export enum NetworkMode {
 	'HASHPACK' = 'HASHPACK',
 }
 
+export interface SDKInitOptions {
+	onInit: (data: InitializationData) => void;
+}
+
 export class SDK {
 	private config: Configuration;
 
@@ -106,6 +112,7 @@ export class SDK {
 	private contractService: ContractsService;
 	private stableCoinRepository: IStableCoinRepository;
 	private stableCoinService: StableCoinService;
+	private eventService: EventService;
 
 	constructor(config: Configuration) {
 		this.config = config;
@@ -114,14 +121,14 @@ export class SDK {
 
 	// Initializes the SDK,
 	// TODO should probably be decoupled from the dependency injection
-	public async init(): Promise<SDK> {
-		this.networkAdapter = await new NetworkAdapter(
+	public async init(options?: SDKInitOptions): Promise<SDK> {
+		this.networkAdapter = new NetworkAdapter(
 			this.config.mode,
 			this.config.network,
 			{
 				appMetadata: this.config.options?.appMetadata,
 			},
-		).init();
+		);
 		this.web3 = new Web3();
 		this.contractService = new ContractsService(this.networkAdapter);
 		this.stableCoinRepository = new StableCoinRepository(
@@ -130,6 +137,17 @@ export class SDK {
 		this.stableCoinService = new StableCoinService(
 			this.stableCoinRepository,
 		);
+
+		const providerEvents = Object.keys(ProviderEventNames).reduce(
+			(p, c) => ({ ...p, [c]: this.networkAdapter.provider.emitter }),
+			{},
+		);
+
+		this.eventService = new EventService({ ...providerEvents });
+		if (options && options?.onInit) {
+			this.eventService.OnWalletInit(options.onInit);
+		}
+		await this.networkAdapter.init();
 		return this;
 	}
 
@@ -490,8 +508,16 @@ export class SDK {
 		return this.networkAdapter.provider.disconectHaspack();
 	}
 
-	connectWallet(): Promise<HashPackProvider> {
+	connectWallet(): Promise<IProvider> {
 		console.log('=====connectWallet Haspack=====');
 		return this.networkAdapter.provider.connectWallet();
+	}
+
+	public onInit(listener: (data: InitializationData) => void): void {
+		this.eventService.OnWalletInit(listener);
+	}
+
+	public onWalletExtensionFound(listener: () => void): void {
+		this.eventService.OnWalletExtensionFound(listener);
 	}
 }
