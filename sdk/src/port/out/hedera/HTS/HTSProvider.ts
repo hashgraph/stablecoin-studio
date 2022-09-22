@@ -33,7 +33,7 @@ import {
 	ICallContractRequest,
 	ICallContractWithAccountRequest,
 	ICreateTokenResponse,
-	InitilizationData,
+	InitializationData,
 } from '../types.js';
 import HederaError from '../error/HederaError.js';
 import PublicKey from '../../../../domain/context/account/PublicKey.js';
@@ -44,6 +44,8 @@ import { HTSResponse, TransactionType } from '../sign/ISigner.js';
 import { TransactionResposeHandler } from '../transaction/TransactionResponseHandler.js';
 import { HashConnectConnectionState } from 'hashconnect/dist/cjs/types/hashconnect.js';
 import HashPackProvider from '../hashpack/HashPackProvider.js';
+import EventEmitter from '../../../../core/eventEmitter.js';
+import ProviderEvent, { ProviderEventNames } from '../ProviderEvent.js';
 
 type DefaultHederaProvider = hethers.providers.DefaultHederaProvider;
 
@@ -56,7 +58,12 @@ export default class HTSProvider implements IProvider {
 	private transactionResposeHandler: TransactionResposeHandler =
 		new TransactionResposeHandler();
 
-	public initData: InitilizationData;
+	public initData: InitializationData;
+
+	public emitter: EventEmitter<ProviderEvent> =
+		new EventEmitter<ProviderEvent>();
+	public events: ProviderEvent;
+
 	/**
 	 * init
 	 */
@@ -66,6 +73,24 @@ export default class HTSProvider implements IProvider {
 
 		// We have to follow an async pattern to match Hashconnect
 		return new Promise((r) => {
+			this.emitter.emit(ProviderEventNames.providerInit, {
+				topic: '0.0.0',
+				encryptionKey: '1',
+				pairingString: '1',
+				savedPairings: [
+					{
+						accountIds: ['0.0.0'],
+						lastUsed: 0,
+						metadata: {
+							description: '',
+							icon: '',
+							name: '',
+						},
+						network: '',
+						topic: '',
+					},
+				],
+			});
 			r(this);
 		});
 	}
