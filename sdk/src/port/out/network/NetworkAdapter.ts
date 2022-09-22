@@ -3,6 +3,7 @@ import HashPackProvider from '../hedera/hashpack/HashPackProvider.js';
 import HTSProvider from '../hedera/HTS/HTSProvider.js';
 import { IProvider, IniConfigOptions } from '../hedera/Provider.js';
 import { AppMetadata, NetworkMode } from '../../in/sdk/sdk.js';
+import { InitializationData } from '../hedera/types.js';
 
 type NetworkClientOptions = HederaClientOptions;
 
