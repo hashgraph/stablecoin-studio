@@ -352,14 +352,15 @@ export default class CreateStableCoinService extends Service {
   }
 
   private async checkAnswer(answer: string): Promise<string> {
-    const hexRegEx: RegExp = /^[0-9A-F]{63,}$/gi;
+    const hexRegEx = /^[0-9A-F]{63,}$/gi;
     switch(answer) {
-      case 'Other key':
-        const key = await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.features.publicKey'),
-          undefined
-        );
-        return (hexRegEx.test(key)) ? key : await this.askNewKey(hexRegEx);
+      case 'Other key': {
+          const key = await utilsService.defaultSingleAsk(
+            language.getText('stablecoin.features.publicKey'),
+            undefined
+          );
+          return (hexRegEx.test(key)) ? key : await this.askNewKey(hexRegEx);
+      }
       case 'The Smart Contract':
         return 'CONTRACT';  
       default:

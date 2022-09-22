@@ -10,7 +10,7 @@ import CreateStableCoinService from '../stablecoin/CreateStableCoinService.js';
 import OperationStableCoinService from '../stablecoin/OperationStableCoinService.js';
 import ListStableCoinsService from '../stablecoin/ListStableCoinsService.js';
 import { StableCoin } from '../../../domain/stablecoin/StableCoin.js';
-const colors = require('colors');
+import colors from 'colors';
 
 /**
  * Wizard Service
