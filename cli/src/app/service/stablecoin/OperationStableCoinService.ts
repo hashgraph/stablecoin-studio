@@ -295,56 +295,58 @@ export default class OperationStableCoinService extends Service {
         // Grant role
         //Lists all roles
         role = await this.getRole();
-        accountTarget = await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.accountTarget'),
-          accountTarget,
-        );
-
-        if (!sdk.checkIsAddress(accountTarget)) {
-          console.log(language.getText('validations.wrongFormatAddress'));
-          await this.roleManagementFlow();
-        }
-
-        if (StableCoinRole[role] === StableCoinRole.SUPPLIER_ROLE) {
-          await this.grantSupplierRole(
+        if (role !== language.getText('wizard.backOption')) {
+          accountTarget = await utilsService.defaultSingleAsk(
+            language.getText('stablecoin.accountTarget'),
             accountTarget,
-            roleService,
-            currentAccount,
           );
-          break;
-        }
+          if (!sdk.checkIsAddress(accountTarget)) {
+            console.log(language.getText('validations.wrongFormatAddress'));
+            await this.roleManagementFlow();
+          }
 
-        //Call to SDK
-        await roleService.grantRoleStableCoin(
-          this.proxyContractId,
-          accountTarget,
-          currentAccount.privateKey,
-          currentAccount.accountId,
-          role,
-        );
+          if (StableCoinRole[role] === StableCoinRole.SUPPLIER_ROLE) {
+            await this.grantSupplierRole(
+              accountTarget,
+              roleService,
+              currentAccount,
+            );
+            break;
+          }
+
+          //Call to SDK
+          await roleService.grantRoleStableCoin(
+            this.proxyContractId,
+            accountTarget,
+            currentAccount.privateKey,
+            currentAccount.accountId,
+            role,
+          );
+        }
         break;
       case roleManagementOptions[1]:
         // Revoke role
         //Lists all roles
         role = await this.getRole();
-
-        //Call to revoke role
-        accountTarget = await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.accountTarget'),
-          accountTarget,
-        );
-        if (!sdk.checkIsAddress(accountTarget)) {
-          console.log(language.getText('validations.wrongFormatAddress'));
-          await this.roleManagementFlow();
+        if (role !== language.getText('wizard.backOption')) {
+          //Call to revoke role
+          accountTarget = await utilsService.defaultSingleAsk(
+            language.getText('stablecoin.accountTarget'),
+            accountTarget,
+          );
+          if (!sdk.checkIsAddress(accountTarget)) {
+            console.log(language.getText('validations.wrongFormatAddress'));
+            await this.roleManagementFlow();
+          }
+          //Call to SDK
+          await roleService.revokeRoleStableCoin(
+            this.proxyContractId,
+            accountTarget,
+            currentAccount.privateKey,
+            currentAccount.accountId,
+            role,
+          );
         }
-        //Call to SDK
-        await roleService.revokeRoleStableCoin(
-          this.proxyContractId,
-          accountTarget,
-          currentAccount.privateKey,
-          currentAccount.accountId,
-          role,
-        );
         break;
       case roleManagementOptions[2]:
         //Call to edit role
@@ -548,19 +550,21 @@ export default class OperationStableCoinService extends Service {
       case roleManagementOptions[3]:
         //Lists all roles
         role = await this.getRole();
-        //Call to has role
-        accountTarget = await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.accountTarget'),
-          accountTarget,
-        );
-        //Call to SDK
-        await roleService.hasRoleStableCoin(
-          this.proxyContractId,
-          accountTarget,
-          currentAccount.privateKey,
-          currentAccount.accountId,
-          role,
-        );
+        if (role !== language.getText('wizard.backOption')) {
+          //Call to has role
+          accountTarget = await utilsService.defaultSingleAsk(
+            language.getText('stablecoin.accountTarget'),
+            accountTarget,
+          );
+          //Call to SDK
+          await roleService.hasRoleStableCoin(
+            this.proxyContractId,
+            accountTarget,
+            currentAccount.privateKey,
+            currentAccount.accountId,
+            role,
+          );
+        }
         break;
       case roleManagementOptions[roleManagementOptions.length - 1]:
       default:
@@ -597,6 +601,7 @@ export default class OperationStableCoinService extends Service {
     return await utilsService.defaultMultipleAsk(
       language.getText('roleManagement.askRole'),
       Object.keys(StableCoinRole),
+      true,
     );
   }
 

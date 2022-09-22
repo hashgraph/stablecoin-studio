@@ -173,7 +173,7 @@ export const english = {
       'Revoke role',
       'Edit role',
       'Has role',
-      'Back',
+      'Go back',
     ],
     featureOptions: ['The Smart Contract', 'Admin Key', 'Other key', 'None'],
     supplierRoleType: ['Unlimited', 'Limited', 'Back'],
@@ -228,7 +228,7 @@ export const english = {
       'Decrease supplier limit',
       'Reset supplier limit',
       'Check supplier limit',
-      'Back',
+      'Go back',
     ],
   },
 };
