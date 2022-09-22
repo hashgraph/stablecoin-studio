@@ -12,27 +12,22 @@ class HashConnectSigner {
     getLedgerId() {
         return this.provider.client.ledgerId;
     }
-    ;
     getAccountId() {
         return sdk_1.AccountId.fromString(this.accountToSign);
     }
-    ;
     getNetwork() {
-        let network = {};
+        const network = {};
         network[this.accountToSign.toString()] = this.provider.network;
         return network;
     }
-    ;
     getMirrorNetwork() {
         throw new Error("Get Mirror Network not implemented in HashConnect");
         return [];
     }
-    ;
     sign(messages) {
         throw new Error("Sign messages not implemented in HashConnect");
         console.log(messages);
     }
-    ;
     getAccountBalance() {
         return new sdk_1.AccountBalanceQuery()
             .setAccountId(this.accountToSign)
@@ -51,12 +46,10 @@ class HashConnectSigner {
     async signTransaction(transaction) {
         return transaction.freezeWith(this.provider.client);
     }
-    ;
     checkTransaction(transaction) {
         throw new Error("Check transaction not implemented in HashConnect");
         console.log(transaction);
     }
-    ;
     async populateTransaction(transaction) {
         // await this.checkTransaction(transaction);
         transaction.setTransactionId(sdk_1.TransactionId.generate(this.accountToSign));
@@ -64,7 +57,6 @@ class HashConnectSigner {
         // transaction.setNodeAccountIds([]);
         return transaction;
     }
-    ;
     async call(request) {
         const transaction = {
             byteArray: this.getBytesOf(request),
@@ -74,12 +66,12 @@ class HashConnectSigner {
             },
             topic: this.topicId,
         };
-        let res = await this.hashconnect.sendTransaction(this.topicId, transaction);
-        let response = res.response;
+        const res = await this.hashconnect.sendTransaction(this.topicId, transaction);
+        const response = res.response;
         return response;
     }
     getBytesOf(request) {
-        let transaction = request;
+        const transaction = request;
         let query;
         if (!transaction)
             query = request;

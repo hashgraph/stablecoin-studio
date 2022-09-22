@@ -1,23 +1,22 @@
-import { AccountId, Client, Provider, TransactionId, TransactionResponse } from '@hashgraph/sdk';
-import Executable from '@hashgraph/sdk/lib/Executable';
+import * as sdk from '@hashgraph/sdk';
 import { HashConnect } from '../main';
-export declare class HashConnectProvider implements Provider {
-    client: Client;
+export declare class HashConnectProvider implements sdk.Provider {
+    client: sdk.Client;
     private hashconnect;
     network: string;
     topicId: string;
     accountToSign: string;
     constructor(networkName: string, hashconnect: HashConnect, topicId: string, accountToSign: string);
-    getLedgerId(): import("@hashgraph/sdk/lib/LedgerId").default | null;
+    getLedgerId(): sdk.LedgerId | null;
     getNetwork(): {
-        [key: string]: string | AccountId;
+        [key: string]: string | sdk.AccountId;
     };
     getMirrorNetwork(): never[];
-    getAccountBalance(accountId: AccountId | string): Promise<import("@hashgraph/sdk").AccountBalance>;
-    getAccountInfo(accountId: AccountId | string): Promise<import("@hashgraph/sdk").AccountInfo>;
-    getAccountRecords(accountId: AccountId | string): Promise<import("@hashgraph/sdk").TransactionRecord[]>;
-    getTransactionReceipt(transactionId: TransactionId | string): Promise<import("@hashgraph/sdk").TransactionReceipt>;
-    waitForReceipt(response: TransactionResponse): Promise<import("@hashgraph/sdk").TransactionReceipt>;
-    call<RequestT, ResponseT, OutputT>(request: Executable<RequestT, ResponseT, OutputT>): Promise<OutputT>;
+    getAccountBalance(accountId: sdk.AccountId | string): Promise<sdk.AccountBalance>;
+    getAccountInfo(accountId: sdk.AccountId | string): Promise<sdk.AccountInfo>;
+    getAccountRecords(accountId: sdk.AccountId | string): Promise<sdk.TransactionRecord[]>;
+    getTransactionReceipt(transactionId: sdk.TransactionId | string): Promise<sdk.TransactionReceipt>;
+    waitForReceipt(response: sdk.TransactionResponse): Promise<sdk.TransactionReceipt>;
+    call<RequestT, ResponseT, OutputT>(request: sdk.Executable<RequestT, ResponseT, OutputT>): Promise<OutputT>;
     private getBytesOf;
 }

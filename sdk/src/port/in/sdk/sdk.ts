@@ -46,7 +46,7 @@ import { TokenType } from '../../../domain/context/stablecoin/TokenType.js';
 import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.js';
 import { IAllowanceRequest } from './request/IRequestContracts.js';
 import { HashConnectConnectionState } from 'hashconnect/dist/cjs/types/hashconnect.js';
-import HashPackProvider from 'port/out/hedera/hashpack/HashPackProvider.js';
+import HashPackProvider from '../../out/hedera/hashpack/HashPackProvider.js';
 import { AppMetadata } from '../../out/hedera/hashpack/types/types.js';
 
 export {
