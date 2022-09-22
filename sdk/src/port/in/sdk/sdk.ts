@@ -8,11 +8,9 @@ import NetworkAdapter from '../../out/network/NetworkAdapter.js';
 
 import Web3 from 'web3';
 
-import { HederaNetwork } from '../../../core/enum.js';
+import { HederaNetwork, StableCoinRole } from '../../../core/enum.js';
 import { HederaNetworkEnviroment } from '../../../core/enum.js';
 import { getHederaNetwork } from '../../../core/enum.js';
-
-import { AppMetadata } from '../../out/hedera/hashpack/types/types.js';
 
 import IWipeStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IWipeStableCoinServiceRequestModel.js';
 import ICreateStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/ICreateStableCoinServiceRequestModel.js';
@@ -24,6 +22,8 @@ import IGetStableCoinServiceRequestModel from '../../../app/service/stablecoin/m
 import IAssociateTokenStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IAssociateTokenStableCoinServiceRequestModel.js';
 import ISupplierRoleStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/ISupplierRoleStableCoinServiceRequestModel';
 import IRescueStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IRescueStableCoinServiceRequestModel.js';
+import IRoleStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IRoleStableCoinServiceRequestModel.js';
+import IGetBasicRequestModel from '../../../app/service/stablecoin/model/IGetBasicRequest.js';
 
 /* Public requests */
 import { IAssociateStableCoinRequest } from './request/IAssociateStableCoinRequest.js';
@@ -34,8 +34,9 @@ import { IGetListStableCoinRequest } from './request/IGetListStableCoinRequest.j
 import { IGetNameStableCoinRequest } from './request/IGetNameStableCoinRequest.js';
 import { IGetStableCoinRequest } from './request/IGetStableCoinRequest.js';
 import { IRescueStableCoinRequest } from './request/IRescueStableCoinRequest.js';
-import { ISupplierStableCoinRequest } from './request/ISupplierStableCoinRequest.js';
+import { IRoleStableCoinRequest } from './request/IRoleStableCoinRequest.js';
 import { IWipeStableCoinRequest } from './request/IWipeStableCoinRequest.js';
+import { IBasicRequest } from './request/IBasicRequest.js';
 import AccountId from '../../../domain/context/account/AccountId.js';
 import EOAccount from '../../../domain/context/account/EOAccount.js';
 import PrivateKey from '../../../domain/context/account/PrivateKey.js';
@@ -43,8 +44,10 @@ import PublicKey from '../../../domain/context/account/PublicKey.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
 import { TokenType } from '../../../domain/context/stablecoin/TokenType.js';
 import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.js';
+import { IAllowanceRequest } from './request/IRequestContracts.js';
 import { HashConnectConnectionState } from 'hashconnect/dist/cjs/types/hashconnect.js';
 import HashPackProvider from '../../out/hedera/hashpack/HashPackProvider.js';
+import { AppMetadata } from '../../out/hedera/hashpack/types/types.js';
 
 export {
 	IAssociateStableCoinRequest,
@@ -55,8 +58,9 @@ export {
 	IGetNameStableCoinRequest,
 	IGetStableCoinRequest,
 	IRescueStableCoinRequest,
-	ISupplierStableCoinRequest,
+	IRoleStableCoinRequest,
 	IWipeStableCoinRequest,
+	IBasicRequest,
 };
 
 /* Export basic types*/
@@ -73,6 +77,7 @@ export {
 	TokenSupplyType,
 	HederaNetworkEnviroment,
 	getHederaNetwork,
+	StableCoinRole,
 };
 
 export interface ConfigurationOptions {
@@ -268,51 +273,13 @@ export class SDK {
 	}
 
 	/**
-	 * grant supplier role
-	 */
-	public grantSupplierRole(
-		request: ISupplierStableCoinRequest,
-	): Promise<Uint8Array> | null {
-		try {
-			const req: ISupplierRoleStableCoinServiceRequestModel = {
-				...request,
-				accountId: new AccountId(request.accountId),
-				privateKey: new PrivateKey(request.privateKey),
-			};
-			return this.stableCoinService.grantSupplierRole(req);
-		} catch (error) {
-			console.error(error);
-			return null;
-		}
-	}
-
-	/**
-	 * revoke limited supplier role
-	 */
-	public revokeSupplierRole(
-		request: ISupplierStableCoinRequest,
-	): Promise<Uint8Array> | null {
-		try {
-			const req: ISupplierRoleStableCoinServiceRequestModel = {
-				...request,
-				accountId: new AccountId(request.accountId),
-				privateKey: new PrivateKey(request.privateKey),
-			};
-			return this.stableCoinService.revokeSupplierRole(req);
-		} catch (error) {
-			console.error(error);
-			return null;
-		}
-	}
-
-	/**
 	 * check unlimited supplier role
 	 */
 	public isUnlimitedSupplierAllowance(
-		request: ISupplierStableCoinRequest,
+		request: IBasicRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			const req: ISupplierRoleStableCoinServiceRequestModel = {
+			const req: IGetBasicRequestModel = {
 				...request,
 				accountId: new AccountId(request.accountId),
 				privateKey: new PrivateKey(request.privateKey),
@@ -327,10 +294,10 @@ export class SDK {
 	 * check limited supplier role
 	 */
 	public supplierAllowance(
-		request: ISupplierStableCoinRequest,
+		request: IBasicRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			const req: ISupplierRoleStableCoinServiceRequestModel = {
+			const req: IGetBasicRequestModel = {
 				...request,
 				accountId: new AccountId(request.accountId),
 				privateKey: new PrivateKey(request.privateKey),
@@ -346,10 +313,10 @@ export class SDK {
 	 * reset supplier allowance
 	 */
 	public resetSupplierAllowance(
-		request: ISupplierStableCoinRequest,
+		request: IBasicRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			const req: ISupplierRoleStableCoinServiceRequestModel = {
+			const req: IGetBasicRequestModel = {
 				...request,
 				accountId: new AccountId(request.accountId),
 				privateKey: new PrivateKey(request.privateKey),
@@ -364,7 +331,7 @@ export class SDK {
 	 * increase supplier allowance
 	 */
 	public increaseSupplierAllowance(
-		request: ISupplierStableCoinRequest,
+		request: IAllowanceRequest,
 	): Promise<Uint8Array> | null {
 		try {
 			const req: ISupplierRoleStableCoinServiceRequestModel = {
@@ -382,7 +349,7 @@ export class SDK {
 	 * decrease supplier allowance
 	 */
 	public decreaseSupplierAllowance(
-		request: ISupplierStableCoinRequest,
+		request: IAllowanceRequest,
 	): Promise<Uint8Array> | null {
 		try {
 			const req: ISupplierRoleStableCoinServiceRequestModel = {
@@ -401,10 +368,10 @@ export class SDK {
 	 * check limited supplier role
 	 */
 	public isLimitedSupplierAllowance(
-		request: ISupplierStableCoinRequest,
+		request: IBasicRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			const req: ISupplierRoleStableCoinServiceRequestModel = {
+			const req: IGetBasicRequestModel = {
 				...request,
 				accountId: new AccountId(request.accountId),
 				privateKey: new PrivateKey(request.privateKey),
@@ -449,6 +416,57 @@ export class SDK {
 		return this.networkAdapter.provider.getPublicKey(str);
 	}
 
+	public grantRole(
+		request: IRoleStableCoinRequest,
+	): Promise<Uint8Array> | null {
+		try {
+			const req: IRoleStableCoinServiceRequestModel = {
+				...request,
+				accountId: new AccountId(request.accountId),
+				privateKey: new PrivateKey(request.privateKey),
+			};
+
+			return this.stableCoinService.grantRole(req);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+
+	public revokeRole(
+		request: IRoleStableCoinRequest,
+	): Promise<Uint8Array> | null {
+		try {
+			const req: IRoleStableCoinServiceRequestModel = {
+				...request,
+				accountId: new AccountId(request.accountId),
+				privateKey: new PrivateKey(request.privateKey),
+				role: request.role,
+			};
+			return this.stableCoinService.revokeRole(req);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+
+	public hasRole(
+		request: IRoleStableCoinRequest,
+	): Promise<Uint8Array> | null {
+		try {
+			const req: IRoleStableCoinServiceRequestModel = {
+				...request,
+				accountId: new AccountId(request.accountId),
+				privateKey: new PrivateKey(request.privateKey),
+				role: request.role,
+			};
+			return this.stableCoinService.hasRole(req);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+
 	public getAvailabilityExtension(): boolean {
 		console.log('=====getAvailabilityExtension=====');
 
@@ -458,12 +476,12 @@ export class SDK {
 		console.log('=====getAvailabilityExtension=====');
 		return this.networkAdapter.provider.gethashConnectConectionState();
 	}
-	disconectHaspack():void{
+	disconectHaspack(): void {
 		console.log('=====disconect Haspack=====');
 		return this.networkAdapter.provider.disconectHaspack();
 	}
 
-	connectWallet():Promise<HashPackProvider>{
+	connectWallet(): Promise<HashPackProvider> {
 		console.log('=====connectWallet Haspack=====');
 		return this.networkAdapter.provider.connectWallet();
 	}
