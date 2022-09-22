@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations */
 import {
   configurationService,
   language,
@@ -80,6 +81,7 @@ export default class SetConfigurationService extends Service {
     if (_network) {
       network = _network;
     } else {
+
       network = await utilsService.defaultMultipleAsk(
         language.getText('configuration.askNetwork'),
         networks,
@@ -247,9 +249,9 @@ export default class SetConfigurationService extends Service {
   public async askForPrivateKeyOfAccount(
     accountId: string,
   ): Promise<IAccountConfig> {
-    let privateKey = await utilsService.defaultSingleAsk(
-      language.getText('configuration.askPrivateKey') + ` (${accountId})`,
-      '96|64|66 characters',
+    let privateKey = await utilsService.defaultPasswordAsk(
+      language.getText('configuration.askPrivateKey') +
+        ` '96|64|66 characters' (${accountId})`,
     );
 
     const network = configurationService.getConfiguration().defaultNetwork;

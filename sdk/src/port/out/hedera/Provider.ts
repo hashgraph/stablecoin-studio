@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { hethers, Signer } from '@hashgraph/hethers';
-import { ContractId } from '@hashgraph/sdk';
+import { HashConnectConnectionState } from 'hashconnect/dist/cjs/types/hashconnect.js';
 import { HederaNetwork } from '../../../core/enum.js';
-import AccountId from '../../../domain/context/account/AccountId.js';
 import PrivateKey from '../../../domain/context/account/PrivateKey.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
-import { AppMetadata } from './hashconnect/types/types.js';
+import HashPackProvider from './hashpack/HashPackProvider.js';
+import { AppMetadata } from './hashpack/types/types.js';
 import { ICallContractRequest } from './types.js';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -32,11 +32,15 @@ export interface IProvider {
 		functionName: string,
 		parameters: any[],
 		abi: Array<any>,
-	): Uint8Array;	
+	): Uint8Array;
 	getPublicKey(privateKey?: PrivateKey | string | undefined): string;
 	deployStableCoin(
 		accountId: string,
 		privateKey: string,
 		stableCoin: StableCoin,
 	): Promise<StableCoin>;
+	getAvailabilityExtension(): boolean;
+	gethashConnectConectionState(): HashConnectConnectionState;
+	disconectHaspack(): void;
+	connectWallet(): Promise<HashPackProvider>;
 }

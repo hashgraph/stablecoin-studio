@@ -2,7 +2,7 @@ import { Flex, Text } from '@chakra-ui/react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Icon from '../../components/Icon';
 import { RouterManager } from '../../Router/RouterManager';
-import { NamedRoutes } from '../../Router/NamedRoutes';
+import type { NamedRoutes } from '../../Router/NamedRoutes';
 
 interface SidebarOptionProps {
 	icon: string;

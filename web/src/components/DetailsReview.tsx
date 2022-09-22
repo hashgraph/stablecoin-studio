@@ -1,4 +1,5 @@
-import { Box, Divider, Flex, TextProps as ChakraTextProps, Text } from '@chakra-ui/react';
+import type { TextProps as ChakraTextProps } from '@chakra-ui/react';
+import { Box, Divider, Flex, Text } from '@chakra-ui/react';
 
 interface Detail {
 	label: string;

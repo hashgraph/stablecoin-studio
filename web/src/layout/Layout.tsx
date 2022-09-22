@@ -1,5 +1,5 @@
 import { Box, Flex } from '@chakra-ui/react';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import Sidebar from './sidebar/Sidebar';
 import Topbar from './topbar/Topbar';
 
@@ -14,16 +14,7 @@ const Layout = ({ children }: LayoutProps) => {
 
 			<Flex transition='transform 0.3s, width 0.3s' h='calc(100vh - 64px)'>
 				<Sidebar />
-				<Box
-					w='100%'
-					pt={9}
-					pr={10}
-					pl={10}
-					pb={9}
-					minH='100%'
-					overflowY='auto'
-					bgColor='brand.gray5'
-				>
+				<Box w='100%' py={9} px={10} minH='100%' bgColor='brand.gray5'>
 					{children}
 				</Box>
 			</Flex>

@@ -5,9 +5,12 @@
       "declaration": true,
       "lib": ["ES2022"],
       "moduleResolution": "Node16",
+      "baseUrl": "./src",
       "rootDir": ".",
       "outDir": "build",
-      "allowSyntheticDefaultImports": true,
+      "allowSyntheticDefaultImports": true /* Allow 'import x from y' when a module doesn't have a default export. */,
+      "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */,
+      "skipLibCheck": true /* Skip type checking all .d.ts files. */,
       "importHelpers": true,
       "alwaysStrict": true,
       "sourceMap": true,
@@ -22,6 +25,6 @@
       "resolveJsonModule": true
     },
     "include": ["src/**/*", "__tests__/**/*"],
-    "exclude": ["node_modules/*"]
+    "exclude": ["node_modules/**/*", "build/**/*"]
   }
   

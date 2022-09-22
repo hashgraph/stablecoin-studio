@@ -1,10 +1,11 @@
-import { Flex, Text, FlexProps, useStyleConfig } from '@chakra-ui/react';
+import type { FlexProps } from '@chakra-ui/react';
+import { Flex, Text, useStyleConfig } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
-import { NamedRoutes } from '../Router/NamedRoutes';
+import type { NamedRoutes } from '../Router/NamedRoutes';
 import { RouterManager } from '../Router/RouterManager';
 import Icon from './Icon';
 
-interface DirectAccessProps extends FlexProps {
+export interface DirectAccessProps extends FlexProps {
 	title: string;
 	icon: string;
 	route: NamedRoutes;
@@ -24,10 +25,6 @@ const DirectAccess = ({ title, icon, route, variant, ...props }: DirectAccessPro
 		<Flex
 			sx={style}
 			data-testid={`direct-access-${route}`}
-			gap='16px'
-			flexDirection='column'
-			justifyContent='center'
-			alignItems='center'
 			as='button'
 			onClick={handleNavigate}
 			disabled={variant === 'disabled'}

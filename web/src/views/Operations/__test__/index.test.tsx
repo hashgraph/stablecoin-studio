@@ -23,4 +23,28 @@ describe(`<${Operations.name} />`, () => {
 			translations.cashInOperation,
 		);
 	});
+
+	test('should render wipe button', () => {
+		const component = render(<Operations />);
+
+		expect(component.getByTestId('direct-access-wipe')).toHaveTextContent(
+			translations.wipeOperation,
+		);
+	});
+
+	test('should render rescue button', () => {
+		const component = render(<Operations />);
+
+		expect(component.getByTestId('direct-access-rescue')).toHaveTextContent(
+			translations.rescueOperation,
+		);
+	});
+
+	test('should render cashout button', () => {
+		const component = render(<Operations />);
+
+		expect(component.getByTestId('direct-access-cashOut')).toHaveTextContent(
+			translations.cashOutOperation,
+		);
+	});
 });

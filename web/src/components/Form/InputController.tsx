@@ -1,15 +1,12 @@
-import {
-	FormControl,
-	FormErrorMessage,
-	Input,
-	InputGroup,
-	Stack,
+import type {
 	InputProps as ChakraInputProps,
 	FormControlProps,
 	FormLabelProps,
 } from '@chakra-ui/react';
-import { Control, Controller, FieldValues, UseControllerProps } from 'react-hook-form';
-import { ChangeEventHandler, ChangeEvent, FocusEvent, ReactNode } from 'react';
+import { FormControl, FormErrorMessage, Input, InputGroup, Stack } from '@chakra-ui/react';
+import type { Control, FieldValues, UseControllerProps } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
+import type { ChangeEventHandler, ChangeEvent, FocusEvent, ReactNode } from 'react';
 import InputLabel from './InputLabel';
 
 export interface InputControllerProps extends Omit<ChakraInputProps, 'name'> {

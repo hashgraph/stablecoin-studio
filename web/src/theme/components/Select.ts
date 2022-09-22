@@ -1,4 +1,4 @@
-import { SelectConfigProps } from '../../components/Form/SelectController';
+import type { SelectConfigProps } from '../../components/Form/SelectController';
 
 const baseStyle = ({ isDisabled, isInvalid, hasValue }: SelectConfigProps) => {
 	return {
@@ -81,6 +81,14 @@ const outline = ({ isInvalid, isDisabled }: SelectConfigProps) => {
 	};
 };
 
+const unstyled = ()=> {
+	return {
+		label: {
+			color: "brand.black"
+		}
+	}
+}
+
 export const Select = {
 	parts: [
 		'wrapper',
@@ -98,6 +106,7 @@ export const Select = {
 	baseStyle,
 	variants: {
 		outline,
+		unstyled,
 	},
 	defaultProps: {
 		size: 'md',

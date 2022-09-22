@@ -1,5 +1,5 @@
 import { Stack, Heading, Box } from '@chakra-ui/react';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 interface BaseContainerProps {
 	title: string;
@@ -20,7 +20,7 @@ const BaseContainer = (props: BaseContainerProps) => {
 			>
 				{title}
 			</Heading>
-			<Box data-testid='base-container-children' bg='brand.gray100' h='full'>
+			<Box data-testid='base-container-children' bg='brand.gray100' h='full' overflowY='auto'>
 				{children}
 			</Box>
 		</Stack>

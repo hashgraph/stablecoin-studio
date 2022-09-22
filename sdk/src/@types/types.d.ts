@@ -146,9 +146,9 @@ declare module '@hashgraph/sdk' {
 	export { default as ReceiptStatusError } from '@hashgraph/sdk/lib/ReceiptStatusError.js';
 	export { default as LedgerId } from '@hashgraph/sdk/lib/LedgerId.js';
 	export { default as Logger } from 'js-logger';
-	export { default as MAINNET_ADDRESS_BOOK} from '@hashgraph/sdk/lib/address_book/AddressBooks.js';
-	export { default as PREVIEWNET_ADDRESS_BOOK} from '@hashgraph/sdk/lib/address_book/AddressBooks.js';
-	export { default as TESTNET_ADDRESS_BOOK} from '@hashgraph/sdk/lib/address_book/AddressBooks.js';
+	export { default as MAINNET_ADDRESS_BOOK } from '@hashgraph/sdk/lib/address_book/AddressBooks.js';
+	export { default as PREVIEWNET_ADDRESS_BOOK } from '@hashgraph/sdk/lib/address_book/AddressBooks.js';
+	export { default as TESTNET_ADDRESS_BOOK } from '@hashgraph/sdk/lib/address_book/AddressBooks.js';
 	/**
 	 * @typedef {import("@hashgraph/sdk/lib/client/Client.js").NetworkName} ClientNetworkName
 	 * @typedef {import("@hashgraph/sdk/lib/Provider.js").Provider} Provider
@@ -167,7 +167,8 @@ declare module '@hashgraph/sdk' {
 	 * @type {NetworkNameType}
 	 */
 	export const NetworkName: NetworkNameType;
-	export type ClientNetworkName = import('@hashgraph/sdk/lib/client/Client.js').NetworkName;
+	export type ClientNetworkName =
+		import('@hashgraph/sdk/lib/client/Client.js').NetworkName;
 	export type AccountBalanceJson =
 		import('@hashgraph/sdk/lib/account/AccountBalance.js').AccountBalanceJson;
 	export type TokenBalanceJson =
@@ -189,4 +190,7 @@ declare module '@hashgraph/sdk' {
 	} from '@hashgraph/cryptography';
 	export { default as LocalProvider } from '@hashgraph/sdk/lib/LocalProvider.js';
 	export { default as Client } from '@hashgraph/sdk/lib/client/NodeClient.js';
+}
+declare module 'HashConnect' {
+	export { AppMetadata } from './hashconnect/types/types.js';
 }

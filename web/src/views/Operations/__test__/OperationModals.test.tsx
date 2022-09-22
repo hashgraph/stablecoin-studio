@@ -1,5 +1,6 @@
 import { render } from '../../../test/index';
-import OperationModals, { OperationModalsProps } from '../OperationModals';
+import type { OperationModalsProps } from '../OperationModals';
+import OperationModals from '../OperationModals';
 
 describe(`<${OperationModals.name} />`, () => {
 	const props: OperationModalsProps = {

@@ -1,0 +1,19 @@
+{
+    "edit": "Edit role",
+    "give": "Give role",
+    "revoke": "Revoke role",
+    "revokeModalErrorDesc": "please try again later.",
+    "revokeModalErrorTitle": "Error revoking the role",
+    "revokeModalSuccessTitle": "Role successfully revoked",
+    "subtitle": "Give / Revoke roles",
+    "title": "Role management",
+    "giveRole": {
+        "accountLabel": "Account",
+        "accountPlaceholder": "Introduce account",
+        "selectLabel": "Select role to give",
+        "selectPlaceholder": "Select role to give",
+        "supplierQuantityQuestion": "How much tokens the account can mint?",
+        "switchLabel": "Infinity?",
+        "supplierQuantityInputPlaceholder": "Tokens quantity"
+    }
+}

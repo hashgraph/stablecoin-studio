@@ -2,7 +2,8 @@ import { render } from '../../../test/index';
 import type { UseFormReturn } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
 import { act, fireEvent, waitFor } from '@testing-library/react';
-import DatePickerController, { DatePickerControllerProps } from '../DatePickerController';
+import type { DatePickerControllerProps } from '../DatePickerController';
+import DatePickerController from '../DatePickerController';
 
 let form: UseFormReturn;
 
