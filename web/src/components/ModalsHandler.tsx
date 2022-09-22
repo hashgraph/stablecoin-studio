@@ -1,22 +1,34 @@
 import { useDisclosure } from '@chakra-ui/react';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { ModalActionProps } from '../../components/ModalAction';
-import ModalAction from '../../components/ModalAction';
-import ModalNotification from '../../components/ModalNotification';
+import ModalAction from './ModalAction';
+import type { ModalActionProps } from './ModalAction';
+import ModalNotification from './ModalNotification';
 
-export interface OperationModalActionProps
+export interface ModalsHandlerActionsProps
 	extends Pick<ModalActionProps, 'title' | 'confirmButtonLabel' | 'isOpen' | 'onClose'> {
 	onConfirm: ({ onSuccess, onError }: Record<'onSuccess' | 'onError', () => void>) => void;
 }
 
-export interface OperationModalsProps {
+export interface ModalsHandlerProps {
+	errorNotificationDescription?: string;
+	errorNotificationTitle: string;
 	ModalActionChildren: ReactNode;
-	modalActionProps: OperationModalActionProps;
+	modalActionProps: ModalsHandlerActionsProps;
+	successNotificationDescription?: string;
+	successNotificationTitle: string;
 }
 
-const OperationModals = ({ modalActionProps, ModalActionChildren }: OperationModalsProps) => {
-	const { t } = useTranslation(['global', 'operations']);
+const ModalsHandler = (props: ModalsHandlerProps) => {
+	const {
+		errorNotificationDescription,
+		errorNotificationTitle,
+		modalActionProps,
+		ModalActionChildren,
+		successNotificationDescription,
+		successNotificationTitle,
+	} = props;
+	const { t } = useTranslation(['global', 'roles']);
 	const {
 		isOpen: isOpenModalSuccess,
 		onOpen: onOpenModalSuccess,
@@ -42,15 +54,15 @@ const OperationModals = ({ modalActionProps, ModalActionChildren }: OperationMod
 			</ModalAction>
 			<ModalNotification
 				variant='success'
-				title={t('operations:modalSuccessTitle')}
-				description={t('operations:modalSuccessDesc')}
+				title={successNotificationTitle}
+				description={successNotificationDescription}
 				isOpen={isOpenModalSuccess}
 				onClose={onCloseModalSuccess}
 			/>
 			<ModalNotification
 				variant='error'
-				title={t('operations:modalErrorTitle')}
-				description={t('operations:modalErrorDesc')}
+				title={errorNotificationTitle}
+				description={errorNotificationDescription}
 				isOpen={isOpenModalError}
 				onClose={onCloseModalError}
 			/>
@@ -58,4 +70,4 @@ const OperationModals = ({ modalActionProps, ModalActionChildren }: OperationMod
 	);
 };
 
-export default OperationModals;
+export default ModalsHandler;

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`<OperationModals /> should render correctly 1`] = `
+exports[`<ModalsHandler /> should render correctly 1`] = `
 <DocumentFragment>
   <span
     hidden=""
