@@ -300,9 +300,12 @@ export default class OperationStableCoinService extends Service {
             language.getText('stablecoin.accountTarget'),
             accountTarget,
           );
-          if (!sdk.checkIsAddress(accountTarget)) {
+          while (!sdk.checkIsAddress(accountTarget)) {
             console.log(language.getText('validations.wrongFormatAddress'));
-            await this.roleManagementFlow();
+            accountTarget = await utilsService.defaultSingleAsk(
+              language.getText('stablecoin.accountTarget'),
+              '0.0.0',
+            );
           }
 
           if (StableCoinRole[role] === StableCoinRole.SUPPLIER_ROLE) {
@@ -334,9 +337,12 @@ export default class OperationStableCoinService extends Service {
             language.getText('stablecoin.accountTarget'),
             accountTarget,
           );
-          if (!sdk.checkIsAddress(accountTarget)) {
+          while (!sdk.checkIsAddress(accountTarget)) {
             console.log(language.getText('validations.wrongFormatAddress'));
-            await this.roleManagementFlow();
+            accountTarget = await utilsService.defaultSingleAsk(
+              language.getText('stablecoin.accountTarget'),
+              '0.0.0',
+            );
           }
           //Call to SDK
           await roleService.revokeRoleStableCoin(
@@ -363,9 +369,12 @@ export default class OperationStableCoinService extends Service {
               language.getText('stablecoin.accountTarget'),
               accountTarget,
             );
-            if (!sdk.checkIsAddress(accountTarget)) {
+            while (!sdk.checkIsAddress(accountTarget)) {
               console.log(language.getText('validations.wrongFormatAddress'));
-              await this.roleManagementFlow();
+              accountTarget = await utilsService.defaultSingleAsk(
+                language.getText('stablecoin.accountTarget'),
+                '0.0.0',
+              );
             }
 
             if (
@@ -417,9 +426,12 @@ export default class OperationStableCoinService extends Service {
               language.getText('stablecoin.accountTarget'),
               accountTarget,
             );
-            if (!sdk.checkIsAddress(accountTarget)) {
+            while (!sdk.checkIsAddress(accountTarget)) {
               console.log(language.getText('validations.wrongFormatAddress'));
-              await this.roleManagementFlow();
+              accountTarget = await utilsService.defaultSingleAsk(
+                language.getText('stablecoin.accountTarget'),
+                '0.0.0',
+              );
             }
             if (
               await this.checkSupplierType(
@@ -469,9 +481,12 @@ export default class OperationStableCoinService extends Service {
               language.getText('stablecoin.accountTarget'),
               accountTarget,
             );
-            if (!sdk.checkIsAddress(accountTarget)) {
+            while (!sdk.checkIsAddress(accountTarget)) {
               console.log(language.getText('validations.wrongFormatAddress'));
-              await this.roleManagementFlow();
+              accountTarget = await utilsService.defaultSingleAsk(
+                language.getText('stablecoin.accountTarget'),
+                '0.0.0',
+              );
             }
             if (
               await this.checkSupplierType(
@@ -515,9 +530,12 @@ export default class OperationStableCoinService extends Service {
               language.getText('stablecoin.accountTarget'),
               accountTarget,
             );
-            if (!sdk.checkIsAddress(accountTarget)) {
+            while (!sdk.checkIsAddress(accountTarget)) {
               console.log(language.getText('validations.wrongFormatAddress'));
-              await this.roleManagementFlow();
+              accountTarget = await utilsService.defaultSingleAsk(
+                language.getText('stablecoin.accountTarget'),
+                '0.0.0',
+              );
             }
             if (
               await this.checkSupplierType(
@@ -556,6 +574,13 @@ export default class OperationStableCoinService extends Service {
             language.getText('stablecoin.accountTarget'),
             accountTarget,
           );
+          while (!sdk.checkIsAddress(accountTarget)) {
+            console.log(language.getText('validations.wrongFormatAddress'));
+            accountTarget = await utilsService.defaultSingleAsk(
+              language.getText('stablecoin.accountTarget'),
+              '0.0.0',
+            );
+          }
           //Call to SDK
           await roleService.hasRoleStableCoin(
             this.proxyContractId,
