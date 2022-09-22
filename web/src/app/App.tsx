@@ -13,8 +13,8 @@ import { useEffect, useState } from 'react';
 import SDKService from '../services/SDKService';
 
 function App() {
-	const [SDKInit, setSDKInit] = useState<boolean | null>(false);
-	const [SDKInitialize, setSDKInitialize] = useState<boolean | null>(false);
+	const [SDKInit, setSDKInit] = useState<boolean>(false);
+	const [SDKInitialize, setSDKInitialize] = useState<boolean>(false);
 	const [intervalId, setIntervalId] = useState<ReturnType<typeof setTimeout>>();
 
 	useEffect(() => {
