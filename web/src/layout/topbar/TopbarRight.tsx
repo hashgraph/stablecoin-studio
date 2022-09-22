@@ -78,7 +78,7 @@ const TopbarRight = () => {
 				fontWeight='400'
 				alignItems='center'
 			>
-				<Button h='100%' w='40px' variant='logout' onClick={handleDisconnect}>
+				<Button h='100%' w='40px' onClick={handleDisconnect}>
 					<Icon name='Power' fontSize='20px' />
 				</Button>
 			</Flex>
