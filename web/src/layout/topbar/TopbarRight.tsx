@@ -21,7 +21,7 @@ const TopbarRight = () => {
 	});
 
 	useEffect(() => {
-		getData();
+		getWalletData();
 	}, []);
 
 	useEffect(() => {
@@ -36,7 +36,7 @@ const TopbarRight = () => {
 		}
 	}, [initData]);
 
-	const getData = async () => {
+	const getWalletData = async () => {
 		const dataResponse = await SDKService.getWalletData();
 		setInitData(dataResponse);
 	};
