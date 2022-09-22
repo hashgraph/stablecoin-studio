@@ -65,22 +65,22 @@ As in the case of compilation process, there are several ways to do it using scr
 
  - Executing all the tests using the configuration present in hardhat configuration file. This way, tests are executed in the network configured by existing `defaultNetwork` property, so accounts associated to this network in the configuration file can be used:
 ```
-npm test
+npm run test
 ```
  - Executing all the tests in the indicated network:
   ```
-npm test:testnet
+npm run test:testnet
 ```
 
 In the same way, you can execute only one test:
  - In the network present in hadhat configuration file:
   ```
-npm test:mintable
+npm run test:mintable
 ```
 
  - In the specified network:
   ```
-npm test:testnet:mintable
+npm run test:testnet:mintable
 ```
 
 ### Support
