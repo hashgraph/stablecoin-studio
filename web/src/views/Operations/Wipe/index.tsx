@@ -5,11 +5,10 @@ import DetailsReview from '../../../components/DetailsReview';
 import InputController from '../../../components/Form/InputController';
 import InputNumberController from '../../../components/Form/InputNumberController';
 import { validateAccount } from '../../../utils/validationsHelper';
+import OperationModals, { OperationModalActionProps } from '../OperationModals';
 import OperationLayout from './../OperationLayout';
-import ModalsHandler from '../../../components/ModalsHandler';
-import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
 
-const CashInOperation = () => {
+const WipeOperation = () => {
 	const {
 		isOpen: isOpenModalAction,
 		onOpen: onOpenModalAction,
@@ -20,10 +19,10 @@ const CashInOperation = () => {
 		mode: 'onChange',
 	});
 
-	const { t } = useTranslation(['cashIn', 'global', 'operations']);
+	const { t } = useTranslation(['wipe', 'global']);
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const handleCashIn: ModalsHandlerActionsProps['onConfirm'] = ({ onSuccess, onError }) => {
+	const handleWipe: OperationModalActionProps['onConfirm'] = ({ onSuccess, onError }) => {
 		// TODO: integrate with sdk to do cashin
 		onSuccess();
 	};
@@ -34,10 +33,10 @@ const CashInOperation = () => {
 				LeftContent={
 					<>
 						<Heading data-testid='title' fontSize='24px' fontWeight='700' mb={10} lineHeight='16px'>
-							{t('cashIn:title')}
+							{t('wipe:title')}
 						</Heading>
 						<Text color='brand.gray' data-testid='operation-title'>
-							{t('cashIn:operationTitle')}
+							{t('wipe:operationTitle')}
 						</Text>
 						<Stack as='form' spacing={6}>
 							<InputNumberController
@@ -48,8 +47,8 @@ const CashInOperation = () => {
 								isRequired
 								control={control}
 								name='amount'
-								label={t('cashIn:amountLabel')}
-								placeholder={t('cashIn:amountPlaceholder')}
+								label={t('wipe:amountLabel')}
+								placeholder={t('wipe:amountPlaceholder')}
 							/>
 							<InputController
 								rules={{
@@ -63,8 +62,8 @@ const CashInOperation = () => {
 								isRequired
 								control={control}
 								name='destinationAccount'
-								placeholder={t('cashIn:destinationAccountPlaceholder')}
-								label={t('cashIn:destinationAccountLabel')}
+								placeholder={t('wipe:fromAccountPlaceholder')}
+								label={t('wipe:fromAccountLabel')}
 							/>
 						</Stack>
 					</>
@@ -72,37 +71,38 @@ const CashInOperation = () => {
 				onConfirm={onOpenModalAction}
 				confirmBtnProps={{ isDisabled: !formState.isValid }}
 			/>
-			<ModalsHandler
-				errorNotificationTitle={t('operations:modalErrorTitle')}
-				errorNotificationDescription={t('cashIn:modalSuccessDesc')}
+			<OperationModals
+				modalSuccessDesc={t('wipe:modalSuccessDesc', {
+					amount: getValues().amount,
+					account: getValues().destinationAccount,
+				})}
+				modalErrorDesc={'error'} // TODO: save error from sdk
 				modalActionProps={{
 					isOpen: isOpenModalAction,
 					onClose: onCloseModalAction,
-					title: t('cashIn:modalAction.subtitle'),
-					confirmButtonLabel: t('cashIn:modalAction.accept'),
-					onConfirm: handleCashIn,
+					title: t('wipe:modalAction.subtitle'),
+					confirmButtonLabel: t('wipe:modalAction.accept'),
+					onConfirm: handleWipe,
 				}}
 				ModalActionChildren={
 					<DetailsReview
-						title={t('cashIn:modalAction.subtitle')}
+						title={t('wipe:modalAction.subtitle')}
 						details={[
 							{
-								label: t('cashIn:modalAction.destinationAccount'),
+								label: t('wipe:modalAction.fromAccount'),
 								value: getValues().destinationAccount,
 							},
 							{
-								label: t('cashIn:modalAction.amount'),
+								label: t('wipe:modalAction.amount'),
 								value: getValues().amount,
 								valueInBold: true,
 							},
 						]}
 					/>
 				}
-				successNotificationTitle={t('operations:modalSuccessTitle')}
-				successNotificationDescription={t('operations:modalSuccessDesc')}
 			/>
 		</>
 	);
 };
 
-export default CashInOperation;
+export default WipeOperation;

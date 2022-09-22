@@ -5,7 +5,6 @@ import OperationLayout, { OperationLayoutProps } from '../OperationLayout';
 describe(`<${OperationLayout.name} />`, () => {
 	const props: OperationLayoutProps = {
 		LeftContent: <span data-testid='left-content'></span>,
-		RightContent: <span data-testid='right-content'></span>,
 		onConfirm: jest.fn(),
 	};
 
