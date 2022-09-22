@@ -4,6 +4,7 @@ import {
 	PublicKey as HPublicKey,
 	TokenId,
 } from '@hashgraph/sdk';
+import { HashConnectTypes } from 'hashconnect';
 
 export interface ICallContractRequest {
 	contractId: string;
@@ -34,3 +35,5 @@ export interface ICreateTokenResponse {
 	supplyKey: DelegateContractId;
 	tokenId: TokenId;
 }
+
+export type InitializationData = HashConnectTypes.InitilizationData;

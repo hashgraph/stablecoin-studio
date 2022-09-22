@@ -45,6 +45,8 @@ import { TokenType } from '../../../domain/context/stablecoin/TokenType.js';
 import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.js';
 import { HashConnectConnectionState } from 'hashconnect/dist/cjs/types/hashconnect.js';
 import HashPackProvider from '../../out/hedera/hashpack/HashPackProvider.js';
+import EventService from '../../../app/service/event/EventService.js';
+import { InitializationData } from '../../out/hedera/types.js';
 
 export {
 	IAssociateStableCoinRequest,
@@ -73,6 +75,7 @@ export {
 	TokenSupplyType,
 	HederaNetworkEnviroment,
 	getHederaNetwork,
+	InitializationData,
 };
 
 export interface ConfigurationOptions {
@@ -99,6 +102,7 @@ export class SDK {
 	private contractService: ContractsService;
 	private stableCoinRepository: IStableCoinRepository;
 	private stableCoinService: StableCoinService;
+	private eventService: EventService;
 
 	constructor(config: Configuration) {
 		this.config = config;
@@ -123,6 +127,9 @@ export class SDK {
 		this.stableCoinService = new StableCoinService(
 			this.stableCoinRepository,
 		);
+		this.eventService = new EventService([
+			this.networkAdapter.provider.emitter,
+		]);
 		return this;
 	}
 
@@ -458,12 +465,12 @@ export class SDK {
 		console.log('=====getAvailabilityExtension=====');
 		return this.networkAdapter.provider.gethashConnectConectionState();
 	}
-	disconectHaspack():void{
+	disconectHaspack(): void {
 		console.log('=====disconect Haspack=====');
 		return this.networkAdapter.provider.disconectHaspack();
 	}
 
-	connectWallet():Promise<HashPackProvider>{
+	connectWallet(): Promise<HashPackProvider> {
 		console.log('=====connectWallet Haspack=====');
 		return this.networkAdapter.provider.connectWallet();
 	}
