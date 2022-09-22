@@ -1,6 +1,6 @@
 import { HederaNetwork, HederaNetworkEnviroment, NetworkMode, SDK } from 'hedera-stable-coin-sdk';
 
-import type { AppMetadata } from 'hedera-stable-coin-sdk';
+import type { AppMetadata, InitializationData } from 'hedera-stable-coin-sdk';
 
 export enum HashConnectConnectionState {
 	Connected = 'Connected',
@@ -51,6 +51,14 @@ export class SDKService {
 
 	public static async getStatus(): Promise<HashConnectConnectionState | undefined> {
 		return (await SDKService.getInstance())?.gethashConnectConectionStatus();
+	}
+
+	public static async getWalletData(): Promise<InitializationData> {
+		return (await SDKService.getInstance()).getInitData();
+	}
+
+	public static async disconnectWallet(): Promise<void> {
+		return (await SDKService.getInstance()).disconectHaspack();
 	}
 }
 

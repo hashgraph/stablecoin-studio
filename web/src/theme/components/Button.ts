@@ -36,10 +36,19 @@ export const Button: ComponentSingleStyleConfig = {
 			border: '1px solid',
 			bgColor: 'brand.white',
 			color: 'brand.primary',
-			minW: '182px',
+			w: '182px',
 			_hover: {
 				bgColor: 'dark.primary',
 				color: 'brand.white',
+			},
+		},
+		logout: {
+			bgColor: 'dark.primary',
+			color: 'brand.white',
+			_hover: {
+				bgColor: 'brand.white',
+				color: 'brand.primary',
+				border: '1px solid',
 			},
 		},
 	},

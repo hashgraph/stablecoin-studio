@@ -1,8 +1,10 @@
-import TopbarRight, { accountId, network as networkName } from '../TopbarRight';
+import TopbarRight from '../TopbarRight';
 import { render } from '../../../test/';
 import en from '../../../translations/en/global.json';
 
 const translations = en.topbar;
+const networkName = 'TESNET';
+const accountId = '0.0.12345';
 
 describe(`<${TopbarRight.name} />`, () => {
 	test('should render correctly', () => {
