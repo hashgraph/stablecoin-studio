@@ -5,10 +5,6 @@ import EventEmitter from '../../../core/eventEmitter.js';
 import { InitializationData } from '../../../index.js';
 import { ProviderEventNames } from '../../../port/out/hedera/ProviderEvent.js';
 import Service from '../Service.js';
-import OnWalletConnectionChangedRequestModel from './model/OnWalletConnectionChangedRequestModel.js';
-import OnWalletExtensionFoundRequestModel from './model/OnWalletExtensionFoundRequestModel.js';
-import OnWalletInitRequestModel from './model/OnWalletInitRequestModel.js';
-import OnWalletPairedRequestModel from './model/OnWalletPairedRequestModel.js';
 
 export default class EventService extends Service {
 	private events: { [key: keyof Event]: EventEmitter<Event> };
@@ -50,5 +46,11 @@ export default class EventService extends Service {
 
 	public OnWalletExtensionFound(listener: () => void): void {
 		this.on(ProviderEventNames.providerFoundExtensionEvent, listener);
+	}
+
+	public OnWalletAcknowledgeMessageEvent(
+		listener: (state: HashConnectConnectionState) => void,
+	): void {
+		this.on(ProviderEventNames.providerAcknowledgeMessageEvent,listener);
 	}
 }

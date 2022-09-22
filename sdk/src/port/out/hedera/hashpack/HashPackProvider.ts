@@ -139,6 +139,10 @@ export default class HashPackProvider implements IProvider {
 
 		this.hc.acknowledgeMessageEvent.on((state) => {
 			console.log('acknowledgeMessageEvent event', state);
+			this.emitter.emit(
+				ProviderEventNames.providerAcknowledgeMessageEvent,
+				state,
+			);
 		});
 	}
 
@@ -530,8 +534,12 @@ export default class HashPackProvider implements IProvider {
 		return this.hashConnectConectionState;
 	}
 	disconectHaspack(): void {
-		this.hc.disconnect(this.pairingData!.topic);
+		if (this.pairingData?.topic) this.hc.disconnect(this.pairingData.topic);
 		this.pairingData = null;
+		this.emitter.emit(
+			ProviderEventNames.providerConnectionStatusChangeEvent,
+			HashConnectConnectionState.Disconnected,
+		);
 	}
 	getInitData(): HashConnectTypes.InitilizationData {
 		return this.initData;

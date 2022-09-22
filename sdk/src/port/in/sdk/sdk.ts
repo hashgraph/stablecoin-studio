@@ -45,7 +45,7 @@ import ContractId from '../../../domain/context/contract/ContractId.js';
 import { TokenType } from '../../../domain/context/stablecoin/TokenType.js';
 import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.js';
 import { IAllowanceRequest } from './request/IRequestContracts.js';
-import { HashConnectConnectionState } from 'hashconnect/dist/cjs/types/hashconnect.js';
+import { HashConnectConnectionState, HashConnectTypes } from 'hashconnect/dist/cjs/types/hashconnect.js';
 import { AppMetadata } from '../../out/hedera/hashpack/types/types.js';
 import { InitializationData } from '../../out/hedera/types.js';
 import { ProviderEventNames } from '../../out/hedera/ProviderEvent.js';
@@ -489,7 +489,6 @@ export class SDK {
 
 	public getAvailabilityExtension(): boolean {
 		console.log('=====getAvailabilityExtension=====');
-
 		return this.networkAdapter.provider.getAvailabilityExtension();
 	}
 
@@ -519,5 +518,23 @@ export class SDK {
 
 	public onWalletExtensionFound(listener: () => void): void {
 		this.eventService.OnWalletExtensionFound(listener);
+	}
+
+	public onWalletConnectionChanged(
+		listener: (state: HashConnectConnectionState) => void,
+	): void {
+		this.eventService.OnWalletConnectionChanged(listener);
+	}
+
+	public OnWalletPaired(
+		listener: (data: HashConnectTypes.SavedPairingData) => void,
+	): void {
+		this.eventService.OnWalletPaired(listener);
+	}
+
+	public OnWalletAcknowledgeMessageEvent(
+		listener: (state: HashConnectConnectionState) => void,
+	): void {
+		this.eventService.OnWalletAcknowledgeMessageEvent(listener);
 	}
 }
