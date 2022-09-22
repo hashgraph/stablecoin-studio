@@ -218,12 +218,6 @@ export default class HTSProvider implements IProvider {
 			client,
 		);
 		log('Creating token... please wait.', logOpts);
-		console.log(`xx freezeKey: ${ stableCoin.freezeKey } `);		
-		console.log(`xx kycKey: ${ stableCoin.kycKey } `);		
-		console.log(`xx wipeKey: ${ stableCoin.wipeKey } `);		
-		console.log(`xx supplyKey: ${ stableCoin.supplyKey } `);		
-		console.log(`xx adminKey: ${ stableCoin.adminKey } `);		
-		console.log(`xx pauseKey: ${ stableCoin.pauseKey } `);		
 		const hederaToken = await this.createToken(
 			tokenOwnerContract,
 			stableCoin.name,
@@ -285,7 +279,6 @@ export default class HTSProvider implements IProvider {
 			freezeDefault: hederaToken.freezeDefault,
 			treasury: new AccountId(hederaToken.treasuryAccountId.toString()),
 			adminKey: hederaToken.adminKey,
-			//freezeKey: this.fromPublicKey(hederaToken.freezeKey),
 			freezeKey: hederaToken.freezeKey,
 			kycKey: hederaToken.kycKey,
 			wipeKey: hederaToken.wipeKey,
@@ -380,23 +373,14 @@ export default class HTSProvider implements IProvider {
 			memo,
 			freezeDefault,
 			treasuryAccountId: HAccountId.fromString(contractId.toString()),
-			adminKey: HPublicKey.fromString(publicKey),
-			freezeKey: HPublicKey.fromString(publicKey),
-			kycKey: HPublicKey.fromString(publicKey),
-			wipeKey: HPublicKey.fromString(publicKey),
-			pauseKey: HPublicKey.fromString(publicKey),
-			supplyKey: DelegateContractId.fromString(contractId),
-			//pauseKey: this.getKeyFromOption(pauseKey, contractId, publicKey),
-			//supplyKey: this.getKeyFromOption(supplyKey, contractId, publicKey),
+			adminKey: this.getKeyFromOption(adminKey, contractId, publicKey),
+			freezeKey: this.getKeyFromOption(freezeKey, contractId, publicKey),
+			kycKey: this.getKeyFromOption(kycKey, contractId, publicKey),
+			wipeKey: this.getKeyFromOption(wipeKey, contractId, publicKey),
+			pauseKey: this.getKeyFromOption(pauseKey, contractId, publicKey),
+			supplyKey: this.getKeyFromOption(supplyKey, contractId, publicKey),
 			tokenId: ''
 		};
-
-		console.log(`yy freezeKey: ${ values.freezeKey } `);		
-		console.log(`yy kycKey: ${ values.kycKey } `);		
-		console.log(`yy wipeKey: ${ values.wipeKey } `);		
-		console.log(`yy supplyKey: ${ values.supplyKey } `);		
-		console.log(`yy adminKey: ${ values.adminKey } `);		
-		console.log(`yy pauseKey: ${ values.pauseKey } `);		
 
 		this.htsSigner = new HTSSigner(client);
 		const transaction: Transaction =
@@ -426,18 +410,18 @@ export default class HTSProvider implements IProvider {
 	}
 
 	private getKeyFromOption(option: string, contractId: string, publicKey: string): HPublicKey | DelegateContractId | undefined {
-		switch(option) {
-			case "Admin Key":
+		const hexRegEx = /^[0-9A-F]{63,}$/gi;
+		switch(true) {
+			case option === 'ADMIN_KEY': 
 				return HPublicKey.fromString(publicKey);
 
-			/*case: 
-				const accountPublicKey : string; 
-				return HPublicKey.fromString(accountPublicKey);*/
+			case hexRegEx.test(option): 
+				return HPublicKey.fromString(option);
 
-			case "None":
+			case option === 'NONE': 
 				return undefined;
 
-			case "The Smart Contract":
+			case option === 'CONTRACT': 
 			default:
 				return DelegateContractId.fromString(contractId);
 		}
