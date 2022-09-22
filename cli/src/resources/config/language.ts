@@ -44,10 +44,10 @@ export const english = {
     askToken: 'What is the id of the stable coin you want to operate with?',
     askDoSomething: 'What do you want to do?',
     askOptionalProps:
-      'Do you want to configure the initial supply, total supply, decimals, expiration time, admins keys or token memo?',
+      'Do you want to configure the initial supply, max supply, decimals, expiration time, admins keys or token memo?',
     askInitialSupply: 'What will be the initial supply?',
     askSupplyType: 'Do you want that the token supply will be infinite?',
-    askTotalSupply: 'What will be the total supply?',
+    askTotalSupply: 'What will be the max supply?',
     askExpirationTime: 'What will be the token expiration time?',
     askMemo: 'What will be the token Memo?',
     askFreezeAccount:

@@ -33,8 +33,12 @@ export default class StableCoinService extends Service {
 			name: req.name,
 			symbol: req.symbol,
 			decimals: req.decimals,
-			initialSupply: req.initialSupply,
-			maxSupply: req.maxSupply,
+			initialSupply: req.initialSupply
+				? req.initialSupply * 10n ** BigInt(req.decimals)
+				: undefined,
+			maxSupply: req.maxSupply
+				? req.maxSupply * 10n ** BigInt(req.decimals)
+				: undefined,
 			memo: req.memo,
 			freezeKey: req.freezeKey,
 			freezeDefault: req.freezeDefault,
@@ -92,9 +96,8 @@ export default class StableCoinService extends Service {
 			req.proxyContractId,
 			req.privateKey,
 			req.accountId,
-			req.tokenId
 		);
-	}	
+	}
 
 	public async getNameToken(
 		req: IGetNameOfStableCoinServiceRequestModel,
@@ -129,7 +132,7 @@ export default class StableCoinService extends Service {
 	public async cashOut(
 		req: ICashOutStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
-		// TODO validate 
+		// TODO validate
 		const coin: StableCoin = await this.getStableCoin({
 			id: req.tokenId,
 		});
@@ -138,7 +141,6 @@ export default class StableCoinService extends Service {
 			accountId: req.accountId,
 			privateKey: req.privateKey,
 			proxyContractId: req.proxyContractId,
-			tokenId: req.tokenId
 		});
 		if (amount > tokenOwnerBalance[0]) {
 			throw new Error('Amount is bigger than token owner balance');
@@ -147,7 +149,7 @@ export default class StableCoinService extends Service {
 			req.proxyContractId,
 			req.privateKey,
 			req.accountId,
-			amount
+			amount,
 		);
 	}
 
@@ -199,11 +201,25 @@ export default class StableCoinService extends Service {
 	public async rescue(
 		req: IRescueStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
+		const coin: StableCoin = await this.getStableCoin({
+			id: req.tokenId,
+		});
+		const amount = coin.toInteger(req.amount);
+
+		const tokenOwnerBalance = await this.getTokenOwnerBalance({
+			accountId: req.accountId,
+			privateKey: req.privateKey,
+			proxyContractId: req.proxyContractId,
+		});
+
+		if (amount > tokenOwnerBalance[0]) {
+			throw new Error('Amount is bigger than token owner balance');
+		}
 		return this.repository.rescue(
 			req.proxyContractId,
 			req.privateKey,
 			req.accountId,
-			req.amount,
+			amount,
 		);
 	}
 

@@ -6,5 +6,4 @@ import {
 
 export default interface IGetBalanceOfStableCoinServiceRequestModel
 	extends IProxyContractIdRequestModel,
-		ITokenIdRequestModel,
 		IAccountWithKeyRequestModel {}

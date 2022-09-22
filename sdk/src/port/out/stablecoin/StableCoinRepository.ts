@@ -158,7 +158,6 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		treasuryId: string,
 		privateKey: PrivateKey,
 		accountId: AccountId,
-		tokenId: string
 	): Promise<Uint8Array> {
 		const params: ICallContractWithAccountRequest = {
 			contractId: treasuryId,
@@ -174,8 +173,6 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			'tokenOwnerBalance',
 			params,
 		);
-		const coin: StableCoin = await this.getStableCoin(tokenId);
-		response[0] = coin.fromInteger(response[0]);
 
 		return response;
 	}
@@ -231,9 +228,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		accountId: AccountId,
 		amount: number,
 	): Promise<Uint8Array> {
-		const parameters = [
-			amount
-		];
+		const parameters = [amount];
 
 		const params: ICallContractWithAccountRequest = {
 			contractId: treasuryId,
@@ -242,7 +237,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			abi: HederaERC20__factory.abi,
 			account: {
 				accountId: accountId.id,
-				privateKey: privateKey.key
+				privateKey: privateKey.key,
 			},
 		};
 		return await this.networkAdapter.provider.callContract('burn', params);

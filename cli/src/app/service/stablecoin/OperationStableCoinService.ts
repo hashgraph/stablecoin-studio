@@ -246,11 +246,7 @@ export default class OperationStableCoinService extends Service {
             parseFloat(amount2Rescue),
           );
         } catch (err) {
-          console.log(language.getText('operation.reject'));
-          console.error('error', err);
-
-          utilsService.breakLine();
-
+          console.log(colors.red(err.message));
           await this.operationsStableCoin();
         }
 
