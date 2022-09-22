@@ -13,23 +13,43 @@ import { useEffect, useState } from 'react';
 import SDKService from '../services/SDKService';
 
 function App() {
-	const [SDKInit, setSDKInit] = useState<boolean | undefined>();
+	const [SDKInit, setSDKInit] = useState<boolean | null>(false);
+	const [SDKInitialize, setSDKInitialize] = useState<boolean | null>(false);
+	const [intervalId, setIntervalId] = useState<ReturnType<typeof setTimeout>>();
 
 	useEffect(() => {
 		instanceSDK();
+
+		const interval = setInterval(() => {
+			handlerInitSDK();
+		}, 200);
+		setIntervalId(interval);
+
+		return () => {
+			clearInterval(interval);
+		};
 	}, []);
 
-	const instanceSDK = async () => {
-		SDKService.getInstance().then((response) => {
-			if (response) {
-				setTimeout(() => {
-					setSDKInit(true);
-				}, 100);
-			}
-		});
+	useEffect(() => {
+		if (SDKInitialize) {
+			clearInterval(intervalId);
+			setSDKInit(true);
+		}
+	}, [SDKInitialize]);
+
+	const handlerInitSDK = () => {
+		const init = SDKService?.isInit();
+
+		if (init) {
+			setSDKInitialize(true);
+		}
 	};
 
-	return SDKInit ? (
+	const instanceSDK = () => {
+		SDKService.getInstance();
+	};
+
+	return (
 		<I18nextProvider i18n={i18n}>
 			<Provider store={store}>
 				<ChakraProvider theme={theme}>
@@ -37,13 +57,11 @@ function App() {
 						<Focus />
 						<Fonts />
 						<ScrollBar />
-						<Router />
+						{SDKInit ? <Router /> : <></>}
 					</BrowserRouter>
 				</ChakraProvider>
 			</Provider>
 		</I18nextProvider>
-	) : (
-		<></>
 	);
 }
 

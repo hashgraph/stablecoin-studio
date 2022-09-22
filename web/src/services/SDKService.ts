@@ -18,14 +18,11 @@ const appMetadata: AppMetadata = {
 
 export class SDKService {
 	private static instance: SDK | undefined;
-	public static extension: boolean | undefined;
-	public static init = false;
 
 	constructor() {}
 
 	public static async getInstance() {
 		if (!SDKService.instance) {
-			this.init = true;
 			SDKService.instance = new SDK({
 				network: new HederaNetwork(HederaNetworkEnviroment.TEST), // TODO: dynamic data
 				mode: NetworkMode.HASHPACK,
@@ -39,16 +36,21 @@ export class SDKService {
 		return SDKService.instance;
 	}
 
+	public static isInit() {
+		// @ts-ignore
+		return !!this.instance?.networkAdapter?._provider;
+	}
+
 	public static connectWallet() {
 		SDKService.getInstance().then((instance) => instance?.connectWallet());
 	}
 
 	public static async getAvailabilityExtension(): Promise<boolean> {
-		return (await SDKService.getInstance()).getAvailabilityExtension();
+		return (await SDKService.getInstance())?.getAvailabilityExtension();
 	}
 
 	public static async getStatus(): Promise<HashConnectConnectionState | undefined> {
-		return (await SDKService.getInstance()).gethashConnectConectionStatus();
+		return (await SDKService.getInstance())?.gethashConnectConectionStatus();
 	}
 }
 
