@@ -180,6 +180,13 @@ export const english = {
     adminFeatureOptions: ['Admin Key', 'None'],
     featureOptions: ['The Smart Contract', 'Admin Key', 'Other key', 'None'],
     supplierRoleType: ['Unlimited', 'Limited', 'Back'],
+    editSupplierRoleOptions: [
+      'Increase limit',
+      'Decrease limit',
+      'Reset limit',
+      'Back',
+    ],
+    backOption: 'Go back',
   },
   state: {
     searching: 'Searching...',

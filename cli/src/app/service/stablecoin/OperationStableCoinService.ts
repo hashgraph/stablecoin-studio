@@ -59,18 +59,17 @@ export default class OperationStableCoinService extends Service {
 
       this.stableCoinId = await utilsService.defaultMultipleAsk(
         language.getText('stablecoin.askToken'),
-        resp
-          .map((item) => {
-            return `${item.id} - ${item.symbol}`;
-          })
-          .concat('Exit to main menu'),
+        resp.map((item) => {
+          return `${item.id} - ${item.symbol}`;
+        }),
+        true,
         configurationService.getConfiguration()?.defaultNetwork,
         `${currentAccount.accountId} - ${currentAccount.alias}`,
       );
       this.stableCoinWithSymbol = this.stableCoinId;
       this.stableCoinId = this.stableCoinId.split(' - ')[0];
 
-      if (this.stableCoinId === 'Exit to main menu') {
+      if (this.stableCoinId === language.getText('wizard.backOption')) {
         await wizardService.mainMenu();
       } else {
         // Get details to obtain treasury
@@ -102,6 +101,7 @@ export default class OperationStableCoinService extends Service {
       await utilsService.defaultMultipleAsk(
         language.getText('stablecoin.askDoSomething'),
         this.disableOptions(wizardOperationsStableCoinOptions, details),
+        false,
         currentAccount.network,
         `${currentAccount.accountId} - ${currentAccount.alias}`,
         this.stableCoinWithSymbol,

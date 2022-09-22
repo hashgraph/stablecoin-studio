@@ -472,16 +472,18 @@ export class SDK {
 
 		return this.networkAdapter.provider.getAvailabilityExtension();
 	}
+  
 	gethashConnectConectionStatus(): HashConnectConnectionState {
 		console.log('=====getAvailabilityExtension=====');
 		return this.networkAdapter.provider.gethashConnectConectionState();
 	}
+  
 	disconectHaspack(): void {
 		console.log('=====disconect Haspack=====');
 		return this.networkAdapter.provider.disconectHaspack();
 	}
 
-	connectWallet(): Promise<HashPackProvider> {
+	connectWallet():Promise<HashPackProvider>{
 		console.log('=====connectWallet Haspack=====');
 		return this.networkAdapter.provider.connectWallet();
 	}

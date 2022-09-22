@@ -34,6 +34,7 @@ export default class WizardService extends Service {
       await utilsService.defaultMultipleAsk(
         language.getText('wizard.mainMenuTitle'),
         wizardMainOptions,
+        false,
         currentAccount.network,
         `${currentAccount.accountId} - ${currentAccount.alias}`,
       )
