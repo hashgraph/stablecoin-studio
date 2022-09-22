@@ -2,11 +2,15 @@ import { Box, Button, Flex, Text } from '@chakra-ui/react';
 import type { InitializationData } from 'hedera-stable-coin-sdk';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useDispatch } from 'react-redux';
 import Icon from '../../components/Icon';
 import SDKService from '../../services/SDKService';
+import { walletActions } from '../../store/slices/walletSlice';
 
 const TopbarRight = () => {
 	const { t } = useTranslation('global');
+	const dispatch = useDispatch();
+
 	const [initData, setInitData] = useState<InitializationData>();
 	const [walletInfo, setWalletInfo] = useState<{
 		network: string;
@@ -28,6 +32,7 @@ const TopbarRight = () => {
 				accountId: walletInfo.accountIds[0],
 			};
 			setWalletInfo(wallet);
+			dispatch(walletActions.setData(walletInfo));
 		}
 	}, [initData]);
 
