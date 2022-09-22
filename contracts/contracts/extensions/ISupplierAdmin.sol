@@ -29,21 +29,21 @@ interface ISupplierAdmin {
      * @param amount The amount of tokens to set the supplier allowance
      * 
     */
-    function grantSupplierRole(address supplier, uint256 amount) external virtual;
+    function grantSupplierRole(address supplier, uint256 amount) external;
 
     /** 
     * @dev Gives `SUPPLIER ROLE' permissions to perform supplier's allowance and sets unlimited supplier's allowance permission
     *
     * @param supplier The address of the supplier
     */
-    function grantUnlimitedSupplierRole(address supplier) external virtual;
+    function grantUnlimitedSupplierRole(address supplier) external;
 
     /**
     * @dev Revoke `SUPPLIER ROLE' to perform supplier's allowance and revoke unlimited supplier's allowance permission  
     *
     * @param supplier The address of the supplier
     */
-    function revokeSupplierRole(address supplier) external virtual; 
+    function revokeSupplierRole(address supplier) external; 
 
     /**
     * @dev Reset the supplier's allowance to 0
@@ -75,5 +75,5 @@ interface ISupplierAdmin {
     * @param supplier The address of the supplier
     * @param amount The amount to check whether exceeds current supplier allowance
     */
-    function controlAllowanceAmount(address supplier, uint256 amount) external virtual;
+    function controlAllowanceAmount(address supplier, uint256 amount) external;
 }

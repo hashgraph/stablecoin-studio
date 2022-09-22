@@ -47,7 +47,7 @@ contract HTSTokenOwner is IHTSTokenOwner, HederaTokenService {
         onlyHederaERC20() 
         returns (bool) 
     {
-        (int256 responseCode, uint64 newTotalSupply, int64[] memory serialNumbers) = HederaTokenService
+        (int256 responseCode, , ) = HederaTokenService
             .mintToken(tokenAddress, uint64(amount), new bytes[](0));
         return _checkResponse(responseCode);
     }
@@ -63,7 +63,7 @@ contract HTSTokenOwner is IHTSTokenOwner, HederaTokenService {
         onlyHederaERC20() 
         returns (bool)
     {
-        (int256 responseCode, uint64 newTotalSupply) = HederaTokenService
+        (int256 responseCode, ) = HederaTokenService
             .burnToken(tokenAddress, uint64(amount), new int64[](0));
         return _checkResponse(responseCode);
     }
@@ -129,6 +129,7 @@ contract HTSTokenOwner is IHTSTokenOwner, HederaTokenService {
     */
     function _checkResponse(int256 responseCode) 
         internal 
+        pure
         returns (bool) 
     {
         require(responseCode == HederaResponseCodes.SUCCESS, "Error");

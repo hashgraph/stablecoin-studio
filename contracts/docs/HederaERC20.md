@@ -115,7 +115,7 @@ function WIPE_ROLE() external view returns (bytes32)
 ### allowance
 
 ```solidity
-function allowance(address owner, address spender) external view returns (uint256)
+function allowance(address, address) external pure returns (uint256)
 ```
 
 
@@ -126,8 +126,8 @@ function allowance(address owner, address spender) external view returns (uint25
 
 | Name | Type | Description |
 |---|---|---|
-| owner | address | undefined |
-| spender | address | undefined |
+| _0 | address | undefined |
+| _1 | address | undefined |
 
 #### Returns
 
@@ -138,7 +138,7 @@ function allowance(address owner, address spender) external view returns (uint25
 ### approve
 
 ```solidity
-function approve(address spender, uint256 amount) external nonpayable returns (bool)
+function approve(address, uint256) external pure returns (bool)
 ```
 
 
@@ -149,8 +149,8 @@ function approve(address spender, uint256 amount) external nonpayable returns (b
 
 | Name | Type | Description |
 |---|---|---|
-| spender | address | undefined |
-| amount | uint256 | undefined |
+| _0 | address | undefined |
+| _1 | uint256 | undefined |
 
 #### Returns
 
@@ -851,7 +851,7 @@ function totalSupply() external view returns (uint256)
 ### transfer
 
 ```solidity
-function transfer(address to, uint256 amount) external nonpayable returns (bool)
+function transfer(address, uint256) external pure returns (bool)
 ```
 
 
@@ -862,8 +862,8 @@ function transfer(address to, uint256 amount) external nonpayable returns (bool)
 
 | Name | Type | Description |
 |---|---|---|
-| to | address | undefined |
-| amount | uint256 | undefined |
+| _0 | address | undefined |
+| _1 | uint256 | undefined |
 
 #### Returns
 
@@ -874,7 +874,7 @@ function transfer(address to, uint256 amount) external nonpayable returns (bool)
 ### transferFrom
 
 ```solidity
-function transferFrom(address from, address to, uint256 amount) external nonpayable returns (bool)
+function transferFrom(address, address, uint256) external pure returns (bool)
 ```
 
 
@@ -885,9 +885,9 @@ function transferFrom(address from, address to, uint256 amount) external nonpaya
 
 | Name | Type | Description |
 |---|---|---|
-| from | address | undefined |
-| to | address | undefined |
-| amount | uint256 | undefined |
+| _0 | address | undefined |
+| _1 | address | undefined |
+| _2 | uint256 | undefined |
 
 #### Returns
 

@@ -152,42 +152,49 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
     /**
     * @dev Function not already implemented
     */
-    function transfer(address to, uint256 amount) 
+    function transfer(address /* to */, uint256 /* amount */) 
         external 
+        pure
         returns (bool)
     {
         require(false, "function not already implemented");
+        return true;
     }
 
     /**
     * @dev Function not already implemented
     */
-    function allowance(address owner, address spender) 
+    function allowance(address /* owner */, address /* spender */) 
         external 
-        view 
+        pure 
         returns (uint256)
     {
         require(false, "function not already implemented");
+        return 0;
     }
 
     /**
     * @dev Function not already implemented
     */
-    function approve(address spender, uint256 amount) 
+    function approve(address /* spender */, uint256 /* amount */) 
         external 
+        pure
         returns (bool)
     {
-         require(false, "function not already implemented");
+        require(false, "function not already implemented");
+        return true;
     }
 
     /**
     * @dev Function not already implemented
     */
-    function transferFrom( address from,  address to, uint256 amount) 
+    function transferFrom(address /* from */,  address /* to */, uint256 /* amount */) 
         external 
+        pure
         returns (bool)
     {
-         require(false, "function not already implemented");
+        require(false, "function not already implemented");
+        return true;
     }
     
     /**
@@ -198,6 +205,7 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
     */
     function _checkResponse(int256 responseCode) 
         internal 
+        pure
         returns (bool) 
     {
         require(responseCode == HederaResponseCodes.SUCCESS, "Error");
