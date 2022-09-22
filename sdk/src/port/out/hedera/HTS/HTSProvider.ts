@@ -406,9 +406,9 @@ export default class HTSProvider implements IProvider {
 		return HashConnectConnectionState.Disconnected;
 	}
 	disconectHaspack(): void {
-		throw new Error("not haspack");
+		throw new Error('not haspack');
 	}
 	connectWallet(): Promise<HashPackProvider> {
-		throw new Error("not haspack");
+		throw new Error('not haspack');
 	}
 }

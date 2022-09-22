@@ -1,10 +1,11 @@
 {
   "common": {
     "accept": "Accept",
-    "goBack": "Go back",
+    "account": "Account",
     "cancel": "Cancel",
-    "yes": "Yes",
-    "no": "No"
+    "goBack": "Go back",
+    "no": "No",
+    "yes": "Yes"
   },
   "hashpack-no-installed": {
     "title": "Your haspack extension is not installed yet",

@@ -31,6 +31,7 @@ describe(`<${ModalHashpack.name} />`, () => {
 		expect(description).toHaveTextContent(translations.description);
 	});
 
+
 	test('should has a link to download hashpack', () => {
 		const component = render(<ModalHashpack type='no-installed' />);
 

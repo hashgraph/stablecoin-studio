@@ -1,3 +1,5 @@
+import { StableCoinRole } from '../sdk.js';
+
 export interface IRequestContracts {
 	proxyContractId: string;
 	privateKey: string;
@@ -5,11 +7,6 @@ export interface IRequestContracts {
 }
 export interface IRequestContractsAmount extends IRequestContracts {
 	amount: number;
-}
-
-export interface IRequestSupplier extends IRequestContracts {
-	amount?: number;
-	address: string;
 }
 
 export interface IRequestBalanceOf extends IRequestContracts {
@@ -22,4 +19,15 @@ export interface ITokenIdRequestModel {
 
 export interface ITargetIdRequestModel {
 	targetId: string;
+}
+
+export interface IRequestRole extends IRequestContracts, ITargetIdRequestModel {
+	role: StableCoinRole;
+	amount?: number;
+}
+
+export interface IAllowanceRequest
+	extends IRequestContracts,
+		ITargetIdRequestModel {
+	amount: number;
 }

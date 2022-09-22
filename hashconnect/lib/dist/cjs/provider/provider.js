@@ -1,12 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HashConnectProvider = void 0;
-const sdk_1 = require("@hashgraph/sdk");
+const tslib_1 = require("tslib");
+const sdk = tslib_1.__importStar(require("@hashgraph/sdk"));
 class HashConnectProvider {
     constructor(networkName, hashconnect, topicId, accountToSign) {
         this.hashconnect = hashconnect;
         this.network = networkName;
-        this.client = sdk_1.Client.forName(networkName);
+        this.client = sdk.Client.forName(networkName);
         this.topicId = topicId;
         this.accountToSign = accountToSign;
     }
@@ -20,29 +21,28 @@ class HashConnectProvider {
         throw new Error("Get Mirror Network not implemented in HashConnect provider");
         return [];
     }
-    ;
     getAccountBalance(accountId) {
-        return new sdk_1.AccountBalanceQuery()
+        return new sdk.AccountBalanceQuery()
             .setAccountId(accountId)
             .execute(this.client);
     }
     getAccountInfo(accountId) {
-        return new sdk_1.AccountInfoQuery()
+        return new sdk.AccountInfoQuery()
             .setAccountId(accountId)
             .execute(this.client);
     }
     getAccountRecords(accountId) {
-        return new sdk_1.AccountRecordsQuery()
+        return new sdk.AccountRecordsQuery()
             .setAccountId(accountId)
             .execute(this.client);
     }
     getTransactionReceipt(transactionId) {
-        return new sdk_1.TransactionReceiptQuery()
+        return new sdk.TransactionReceiptQuery()
             .setTransactionId(transactionId)
             .execute(this.client);
     }
     waitForReceipt(response) {
-        return new sdk_1.TransactionReceiptQuery()
+        return new sdk.TransactionReceiptQuery()
             .setNodeAccountIds([response.nodeId])
             .setTransactionId(response.transactionId)
             .execute(this.client);
@@ -56,13 +56,13 @@ class HashConnectProvider {
             },
             topic: this.topicId,
         };
-        let res = await this.hashconnect.sendTransaction(this.topicId, transaction);
-        let response = res.response;
+        const res = await this.hashconnect.sendTransaction(this.topicId, transaction);
+        const response = res.response;
         return response;
         throw new Error(`We only know how to forward Transactions and Queries.`);
     }
     getBytesOf(request) {
-        let transaction = request;
+        const transaction = request;
         let query;
         if (!transaction)
             query = request;

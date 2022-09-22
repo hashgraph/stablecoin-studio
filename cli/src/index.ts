@@ -20,13 +20,6 @@ const main = async (): Promise<void> => {
   // Show initial banner
   await utilsService.showBanner();
   commanderService.start();
-  await wizardService.chooseAccount(
-    false,
-    configurationService.getConfiguration().defaultNetwork,
-  );
-  // Initialize SDK
-  await utilsService.initSDK(utilsService.getCurrentNetwork().name);
-  await wizardService.mainMenu();
 };
 
 try {

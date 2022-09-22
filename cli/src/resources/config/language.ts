@@ -168,10 +168,11 @@ export const english = {
       'Role management',
       'Return to main menu',
     ],
-    supplierOptions: [
-      'Give supplier role',
-      'Revoke supplier role',
-      'Edit supplier role',
+    roleManagementOptions: [
+      'Grant role',
+      'Revoke role',
+      'Edit role',
+      'Has role',
       'Back',
     ],
     featureOptions: ['The Smart Contract', 'Admin Key', 'Other key', 'None'],
@@ -182,6 +183,7 @@ export const english = {
       'Reset limit',
       'Back',
     ],
+    backOption: 'Go back',
   },
   state: {
     searching: 'Searching...',
@@ -194,6 +196,7 @@ export const english = {
     reject: 'Operation has not been completed. Please, try again.',
   },
   supplier: {
+    unlimitedRole: 'This account have unlimited supplier role',
     alreadyUnlimitedRole: 'This account already have unlimited supplier role.',
     alreadyRole: 'This account already have supplier role.',
     notUnlimitedRole: 'This account does not have unlimited supplier role.',
@@ -209,5 +212,23 @@ export const english = {
     wrongFormatAddress:
       'The format of the address is not correct. Please check the format and try again.',
     lessZero: 'The number is 0 or less. Please use a number greater than 0.',
+  },
+  roleManagement: {
+    askRole: 'Select a role',
+    accountHasRoleSupplierUnlimited:
+      'The account ${address} has the supplier role type unlimited',
+    accountHasRole: 'The account ${address} has the ${role} role',
+    accountNotHasRole: 'The account ${address} not has the ${role} role',
+    grantRole: 'Grant ${role} role to account: ${address}',
+    revokeRole: 'Revoke ${role} role to account: ${address}',
+    getAmountAllowance:
+      'The account ${address} has a supplier limit of ${amount}',
+    editAction: [
+      'Increase supplier limit',
+      'Decrease supplier limit',
+      'Reset supplier limit',
+      'Check supplier limit',
+      'Back',
+    ],
   },
 };
