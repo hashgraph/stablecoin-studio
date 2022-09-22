@@ -11,18 +11,24 @@ import {
 	PublicKey,
 	PrivateKey,
 } from '../../../in/sdk/sdk.js';
-import {AccountId as HAccountId,	
+import {
+	AccountId as HAccountId,
 	TransactionResponse,
 	ContractFunctionParameters,
 	ContractId,
-	DelegateContractId,	
+	DelegateContractId,
 	PublicKey as HPublicKey,
 	PrivateKey as HPrivateKey,
 	TokenId,
 	Transaction,
 } from '@hashgraph/sdk';
 import { StableCoin } from '../../../../domain/context/stablecoin/StableCoin.js';
-import { ICallContractRequest, ICallContractWithAccountRequest, ICreateTokenResponse } from '../types.js';
+import {
+	ICallContractRequest,
+	ICallContractWithAccountRequest,
+	ICreateTokenResponse,
+	InitilizationData,
+} from '../types.js';
 import { HashConnectConnectionState } from 'hashconnect/dist/cjs/types/hashconnect.js';
 import { HashPackSigner } from './HashPackSigner.js';
 import { TransactionProvider } from '../transaction/TransactionProvider.js';
@@ -31,17 +37,20 @@ import { TransactionResposeHandler } from '../transaction/TransactionResponseHan
 import HederaError from '../error/HederaError.js';
 import Web3 from 'web3';
 import { log } from '../../../../core/log.js';
-import { HederaERC1967Proxy__factory, HederaERC20__factory, HTSTokenOwner__factory } from 'hedera-stable-coin-contracts/typechain-types/index.js';
+import {
+	HederaERC1967Proxy__factory,
+	HederaERC20__factory,
+	HTSTokenOwner__factory,
+} from 'hedera-stable-coin-contracts/typechain-types/index.js';
 import { HashConnectProvider } from 'hashconnect/dist/cjs/provider/provider.js';
-import { HashConnectSigner } from "hashconnect/dist/cjs/provider/signer";
+import { HashConnectSigner } from 'hashconnect/dist/cjs/provider/signer';
 import Long from 'long';
-import { stat } from 'fs';
 
 const logOpts = { newLine: true, clear: true };
 
 export default class HashPackProvider implements IProvider {
 	private hc: HashConnect;
-	private initData: HashConnectTypes.InitilizationData;
+	private _initData: InitilizationData;
 	private network: HederaNetwork;
 	private extensionMetadata: AppMetadata;
 	private availableExtension = false;
@@ -51,13 +60,19 @@ export default class HashPackProvider implements IProvider {
 	private web3 = new Web3();
 	private provider: HashConnectProvider;
 	private hashConnectConectionState: HashConnectConnectionState;
-	private pairingData:HashConnectTypes.SavedPairingData|null = null ;
+	private pairingData: HashConnectTypes.SavedPairingData | null = null;
+
+	public get initData(): InitilizationData {
+		return this._initData;
+	}
+	public set initData(value: InitilizationData) {
+		this._initData = value;
+	}
 
 	public async init({
 		network,
-		options
-	}: IniConfig): Promise<HashPackProvider> {		
-
+		options,
+	}: IniConfig): Promise<HashPackProvider> {
 		this.hc = new HashConnect(options?.appMetadata?.debugMode);
 
 		this.setUpHashConnectEvents();
@@ -65,7 +80,9 @@ export default class HashPackProvider implements IProvider {
 		if (options && options?.appMetadata) {
 			this.initData = await this.hc.init(
 				options.appMetadata,
-				getHederaNetwork(network)?.name as Partial<'mainnet' | 'testnet' | 'previewnet'>,
+				getHederaNetwork(network)?.name as Partial<
+					'mainnet' | 'testnet' | 'previewnet'
+				>,
 			);
 		} else {
 			throw new Error('No app metadata');
@@ -75,7 +92,7 @@ export default class HashPackProvider implements IProvider {
 
 	public async connectWallet(): Promise<HashPackProvider> {
 		console.log('=====CONNECT WALLET HASPACKPROVIDER=====');
-	
+
 		this.hc.connectToLocalWallet();
 		return this;
 	}
@@ -101,7 +118,7 @@ export default class HashPackProvider implements IProvider {
 
 		//This is fired when HashConnect loses connection, pairs successfully, or is starting connection
 		this.hc.connectionStatusChangeEvent.on((state) => {
-			this.hashConnectConectionState = state
+			this.hashConnectConectionState = state;
 			console.log('hashconnect state change event', state);
 			// this.state = state;
 		});
@@ -116,11 +133,17 @@ export default class HashPackProvider implements IProvider {
 		params: ICallContractRequest | ICallContractWithAccountRequest,
 	): Promise<Uint8Array> {
 		const { contractId, parameters, gas, abi } = params;
-		
+
 		if ('account' in params) {
-			this.provider = this.hc.getProvider(this.network.hederaNetworkEnviroment, this.initData.topic, params.account.accountId);
+			this.provider = this.hc.getProvider(
+				this.network.hederaNetworkEnviroment,
+				this.initData.topic,
+				params.account.accountId,
+			);
 		} else {
-			throw new Error('You must specify an accountId for operate with HashConnect.');
+			throw new Error(
+				'You must specify an accountId for operate with HashConnect.',
+			);
 		}
 
 		const functionCallParameters = this.encodeFunctionCall(
@@ -128,16 +151,20 @@ export default class HashPackProvider implements IProvider {
 			parameters,
 			abi,
 		);
-		
+
 		this.hashPackSigner = new HashPackSigner(undefined);
-		const transaction: Transaction =TransactionProvider.buildContractExecuteTransaction(
+		const transaction: Transaction =
+			TransactionProvider.buildContractExecuteTransaction(
 				contractId,
 				functionCallParameters,
 				gas,
 			);
-			
+
 		const transactionResponse: TransactionResponse =
-			await this.hashPackSigner.signAndSendTransaction(transaction, this.hc.getSigner(this.provider));
+			await this.hashPackSigner.signAndSendTransaction(
+				transaction,
+				this.hc.getSigner(this.provider),
+			);
 		const htsResponse: HTSResponse =
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
@@ -175,16 +202,21 @@ export default class HashPackProvider implements IProvider {
 		privateKey: string,
 		stableCoin: StableCoin,
 	): Promise<StableCoin> {
-		
 		const plainAccount = {
 			accountId,
 			privateKey,
 		};
 
 		if (accountId) {
-			this.provider = this.hc.getProvider(this.network.hederaNetworkEnviroment, this.initData.topic, accountId);
+			this.provider = this.hc.getProvider(
+				this.network.hederaNetworkEnviroment,
+				this.initData.topic,
+				accountId,
+			);
 		} else {
-			throw new Error('You must specify an accountId for operate with HashConnect.');
+			throw new Error(
+				'You must specify an accountId for operate with HashConnect.',
+			);
 		}
 
 		const tokenContract = await this.deployContract(
@@ -293,7 +325,7 @@ export default class HashPackProvider implements IProvider {
 
 	private async deployContract(
 		factory: any,
-		privateKey: string,		
+		privateKey: string,
 		signer: HashConnectSigner,
 		params?: any,
 	): Promise<ContractId> {
@@ -307,7 +339,10 @@ export default class HashPackProvider implements IProvider {
 					90_000,
 				);
 			const transactionResponse: TransactionResponse =
-				await this.hashPackSigner.signAndSendTransaction(transaction, signer);
+				await this.hashPackSigner.signAndSendTransaction(
+					transaction,
+					signer,
+				);
 			const htsResponse: HTSResponse =
 				await this.transactionResposeHandler.manageResponse(
 					transactionResponse,
@@ -364,7 +399,10 @@ export default class HashPackProvider implements IProvider {
 		const transaction: Transaction =
 			TransactionProvider.buildTokenCreateTransaction(values, maxSupply);
 		const transactionResponse: TransactionResponse =
-			await this.hashPackSigner.signAndSendTransaction(transaction, signer);
+			await this.hashPackSigner.signAndSendTransaction(
+				transaction,
+				signer,
+			);
 		const htsResponse: HTSResponse =
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
@@ -402,7 +440,6 @@ export default class HashPackProvider implements IProvider {
 		const publicKey = HPrivateKey.fromString(key).publicKey.toStringRaw();
 		return publicKey;
 	}
-	
 
 	public async stop(): Promise<boolean> {
 		const topic = this.initData.topic;
@@ -480,6 +517,6 @@ export default class HashPackProvider implements IProvider {
 	}
 	disconectHaspack(): void {
 		this.hc.disconnect(this.pairingData!.topic);
-        this.pairingData = null;	
+		this.pairingData = null;
 	}
 }
