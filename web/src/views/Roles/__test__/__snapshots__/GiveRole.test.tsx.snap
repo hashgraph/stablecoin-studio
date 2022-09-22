@@ -6,7 +6,9 @@ exports[`<GiveRole /> Supplier role should render children: giveSupplierRole 1`]
     class="chakra-stack css-16oka5y"
   >
     <h2
+      aria-hidden="true"
       class="chakra-heading css-llrpa2"
+      data-aria-hidden="true"
       data-testid="base-container-heading"
     >
       Role management
@@ -25,7 +27,9 @@ exports[`<GiveRole /> Supplier role should render children: giveSupplierRole 1`]
             class="chakra-stack css-135a0es"
           >
             <h2
+              aria-hidden="true"
               class="chakra-heading css-uig24d"
+              data-aria-hidden="true"
               data-testid="title"
             >
               Give role
@@ -34,7 +38,9 @@ exports[`<GiveRole /> Supplier role should render children: giveSupplierRole 1`]
               class="chakra-stack css-b5leqj"
             >
               <div
+                aria-hidden="true"
                 class="chakra-stack css-1h0sumw"
+                data-aria-hidden="true"
               >
                 <div
                   class="chakra-form-control css-1kxonj9"
@@ -42,8 +48,8 @@ exports[`<GiveRole /> Supplier role should render children: giveSupplierRole 1`]
                 >
                   <label
                     class="chakra-form__label css-1jbsrib"
-                    for="field-:r8:"
-                    id="field-:r8:-label"
+                    for="field-:r11:"
+                    id="field-:r11:-label"
                   >
                     <div
                       class="chakra-stack css-84zodg"
@@ -68,7 +74,7 @@ exports[`<GiveRole /> Supplier role should render children: giveSupplierRole 1`]
                       autocomplete="off"
                       class="chakra-input css-6kc61d"
                       data-testid="account"
-                      id="field-:r8:"
+                      id="field-:r11:"
                       name="account"
                       placeholder="Introduce account"
                       value="0.0.123456"
@@ -85,9 +91,11 @@ exports[`<GiveRole /> Supplier role should render children: giveSupplierRole 1`]
                   role="group"
                 >
                   <label
+                    aria-hidden="true"
                     class="chakra-form__label css-1jbsrib"
-                    for="field-:r9:"
-                    id="field-:r9:-label"
+                    data-aria-hidden="true"
+                    for="field-:r12:"
+                    id="field-:r12:-label"
                   >
                     <div
                       class="chakra-stack css-84zodg"
@@ -108,10 +116,14 @@ exports[`<GiveRole /> Supplier role should render children: giveSupplierRole 1`]
                     class="css-svkhat"
                   >
                     <div
+                      aria-hidden="true"
                       class="css-3qrqo0"
+                      data-aria-hidden="true"
                     />
                     <span
+                      aria-hidden="true"
                       class="css-1f43avz-a11yText-A11yText"
+                      data-aria-hidden="true"
                       id="react-select-6-live-region"
                     />
                     <span
@@ -121,7 +133,9 @@ exports[`<GiveRole /> Supplier role should render children: giveSupplierRole 1`]
                       class="css-1f43avz-a11yText-A11yText"
                     />
                     <div
+                      aria-hidden="true"
                       class=" css-15j38w8"
+                      data-aria-hidden="true"
                     >
                       <div
                         class="css-3y2vuh"
@@ -149,7 +163,7 @@ exports[`<GiveRole /> Supplier role should render children: giveSupplierRole 1`]
                             autocomplete="off"
                             autocorrect="off"
                             class=" css-knqiki-input"
-                            id="field-:r9:"
+                            id="field-:r12:"
                             role="combobox"
                             spellcheck="false"
                             tabindex="0"
@@ -191,6 +205,8 @@ exports[`<GiveRole /> Supplier role should render children: giveSupplierRole 1`]
                       </div>
                     </div>
                     <input
+                      aria-hidden="true"
+                      data-aria-hidden="true"
                       name="role"
                       type="hidden"
                       value="2"
@@ -199,7 +215,9 @@ exports[`<GiveRole /> Supplier role should render children: giveSupplierRole 1`]
                 </div>
               </div>
               <div
+                aria-hidden="true"
                 class="css-0"
+                data-aria-hidden="true"
                 data-testid="supplier-quantity"
               >
                 <div
@@ -275,7 +293,9 @@ exports[`<GiveRole /> Supplier role should render children: giveSupplierRole 1`]
           </div>
         </div>
         <div
+          aria-hidden="true"
           class="css-ajbtx6"
+          data-aria-hidden="true"
         >
           <hr
             aria-orientation="horizontal"
@@ -304,6 +324,8 @@ exports[`<GiveRole /> Supplier role should render children: giveSupplierRole 1`]
     </div>
   </div>
   <span
+    aria-hidden="true"
+    data-aria-hidden="true"
     hidden=""
     id="__chakra_env"
   />
@@ -352,8 +374,8 @@ exports[`<GiveRole /> should render correctly 1`] = `
                 >
                   <label
                     class="chakra-form__label css-1jbsrib"
-                    for="field-:r0:"
-                    id="field-:r0:-label"
+                    for="field-:r1:"
+                    id="field-:r1:-label"
                   >
                     <div
                       class="chakra-stack css-84zodg"
@@ -378,7 +400,7 @@ exports[`<GiveRole /> should render correctly 1`] = `
                       autocomplete="off"
                       class="chakra-input css-6kc61d"
                       data-testid="account"
-                      id="field-:r0:"
+                      id="field-:r1:"
                       name="account"
                       placeholder="Introduce account"
                       value=""
@@ -396,8 +418,8 @@ exports[`<GiveRole /> should render correctly 1`] = `
                 >
                   <label
                     class="chakra-form__label css-1jbsrib"
-                    for="field-:r1:"
-                    id="field-:r1:-label"
+                    for="field-:r2:"
+                    id="field-:r2:-label"
                   >
                     <div
                       class="chakra-stack css-84zodg"
@@ -455,7 +477,7 @@ exports[`<GiveRole /> should render correctly 1`] = `
                             autocomplete="off"
                             autocorrect="off"
                             class=" css-146k1ar-input"
-                            id="field-:r1:"
+                            id="field-:r2:"
                             role="combobox"
                             spellcheck="false"
                             tabindex="0"

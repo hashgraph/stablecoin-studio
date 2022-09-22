@@ -10,10 +10,20 @@
     "giveRole": {
         "accountLabel": "Account",
         "accountPlaceholder": "Introduce account",
+        "infinity": "Infinity",
+        "modalActionDetailAccount": "Account to revoke role",
+        "modalActionDetailRole": "Role to grant",
+        "modalActionDetailSupplierQuantity": "Token quantity",
+        "modalActionConfirmButton": "Give role",
+        "modalActionTitle": "Give role",
+        "modalActionSubtitle": "Action details review",
+        "modalSuccessTitle": "Role successfully granted",
+        "modalErrorTitle": "Error giving role",
+        "modalErrorDescription": "please try again later.",
         "selectLabel": "Select role to give",
         "selectPlaceholder": "Select role to give",
+        "supplierQuantityInputPlaceholder": "Tokens quantity",
         "supplierQuantityQuestion": "How much tokens the account can mint?",
-        "switchLabel": "Infinity?",
-        "supplierQuantityInputPlaceholder": "Tokens quantity"
+        "switchLabel": "Infinity?"
     }
 }
