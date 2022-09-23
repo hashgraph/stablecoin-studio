@@ -179,7 +179,7 @@ export default class CreateStableCoinService extends Service {
         initialSupply: initialSupply === '' ? undefined : BigInt(initialSupply),
         supplyType: supplyType ? 'INFINITE' : 'FINITE',
         maxSupply: totalSupply ? BigInt(totalSupply) : totalSupply,
-        adminKey: 'ADMIN_KEY'
+        adminKey: 'ADMIN_KEY',
       };
       if (
         !(await utilsService.defaultConfirmAsk(
@@ -352,19 +352,19 @@ export default class CreateStableCoinService extends Service {
   }
 
   private async checkAnswer(answer: string): Promise<string> {
-    const hexRegEx = /^[0-9A-F]{63,}$/gi;
-    switch(answer) {
+    const hexRegEx = /^[0-9A-F]{64,}$/gi;
+    switch (answer) {
       case 'Other key': {
-          const key = await utilsService.defaultSingleAsk(
-            language.getText('stablecoin.features.publicKey'),
-            undefined
-          );
-          return (hexRegEx.test(key)) ? key : await this.askNewKey(hexRegEx);
+        const key = await utilsService.defaultSingleAsk(
+          language.getText('stablecoin.features.publicKey'),
+          undefined,
+        );
+        return hexRegEx.test(key) ? key : await this.askNewKey(hexRegEx);
       }
       case 'The Smart Contract':
-        return 'CONTRACT';  
+        return 'CONTRACT';
       default:
-        return answer.toUpperCase().replace(" ", "_");
+        return answer.toUpperCase().replace(' ', '_');
     }
   }
 
@@ -372,7 +372,7 @@ export default class CreateStableCoinService extends Service {
     const newKey = await utilsService.defaultSingleAsk(
       language.getText('stablecoin.features.keyError'),
       undefined,
-    ); 
-    return (regExp.test(newKey)) ? newKey : await this.askNewKey(regExp);
-  }  
+    );
+    return regExp.test(newKey) ? newKey : await this.askNewKey(regExp);
+  }
 }
