@@ -27,6 +27,7 @@ import {
 	ICallContractRequest,
 	ICallContractWithAccountRequest,
 	ICreateTokenResponse,
+	InitializationData,
 } from '../types.js';
 import { HashConnectConnectionState } from 'hashconnect/dist/cjs/types/hashconnect.js';
 import { HashPackSigner } from './HashPackSigner.js';
@@ -44,13 +45,12 @@ import {
 import { HashConnectProvider } from 'hashconnect/dist/cjs/provider/provider.js';
 import { HashConnectSigner } from 'hashconnect/dist/cjs/provider/signer';
 import Long from 'long';
-import { stat } from 'fs';
 
 const logOpts = { newLine: true, clear: true };
 
 export default class HashPackProvider implements IProvider {
 	private hc: HashConnect;
-	private initData: HashConnectTypes.InitilizationData;
+	private _initData: InitializationData;
 	private network: HederaNetwork;
 	private extensionMetadata: AppMetadata;
 	private availableExtension = false;
@@ -61,6 +61,13 @@ export default class HashPackProvider implements IProvider {
 	private provider: HashConnectProvider;
 	private hashConnectConectionState: HashConnectConnectionState;
 	private pairingData: HashConnectTypes.SavedPairingData | null = null;
+
+	public get initData(): InitializationData {
+		return this._initData;
+	}
+	public set initData(value: InitializationData) {
+		this._initData = value;
+	}
 
 	public async init({
 		network,
@@ -510,5 +517,8 @@ export default class HashPackProvider implements IProvider {
 	disconectHaspack(): void {
 		this.hc.disconnect(this.pairingData!.topic);
 		this.pairingData = null;
+	}
+	getInitData(): HashConnectTypes.InitilizationData {
+		return this.initData;
 	}
 }

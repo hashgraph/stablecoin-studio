@@ -33,6 +33,7 @@ import {
 	ICallContractRequest,
 	ICallContractWithAccountRequest,
 	ICreateTokenResponse,
+	InitializationData,
 } from '../types.js';
 import HederaError from '../error/HederaError.js';
 import PublicKey from '../../../../domain/context/account/PublicKey.js';
@@ -54,6 +55,8 @@ export default class HTSProvider implements IProvider {
 	private htsSigner: HTSSigner;
 	private transactionResposeHandler: TransactionResposeHandler =
 		new TransactionResposeHandler();
+
+	public initData: InitializationData;
 
 	/**
 	 * init
@@ -409,6 +412,9 @@ export default class HTSProvider implements IProvider {
 		throw new Error('not haspack');
 	}
 	connectWallet(): Promise<HashPackProvider> {
+		throw new Error('not haspack');
+	}
+	getInitData(): InitializationData {
 		throw new Error('not haspack');
 	}
 }

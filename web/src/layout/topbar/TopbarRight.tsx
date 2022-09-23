@@ -1,11 +1,30 @@
-import { Box, Flex, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Text } from '@chakra-ui/react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-
-export const network = 'TESNET';
-export const accountId = '0.0.123456';
+import { useDispatch, useSelector } from 'react-redux';
+import Icon from '../../components/Icon';
+import SDKService from '../../services/SDKService';
+import { SELECTED_WALLET_PAIRED, walletActions } from '../../store/slices/walletSlice';
+import type { SavedPairingData } from 'hedera-stable-coin-sdk';
 
 const TopbarRight = () => {
 	const { t } = useTranslation('global');
+	const dispatch = useDispatch();
+
+	const pairingData: SavedPairingData = useSelector(SELECTED_WALLET_PAIRED);
+
+	useEffect(() => {
+		if (!pairingData) getWalletData();
+	}, []);
+
+	const getWalletData = async () => {
+		const dataResponse = await SDKService.getWalletData();
+		dispatch(walletActions.setData(dataResponse));
+	};
+
+	const handleDisconnect = () => {
+		SDKService.disconnectWallet();
+	};
 
 	return (
 		<Flex data-testid='topbar-right' gap={5} h='30px'>
@@ -18,7 +37,7 @@ const TopbarRight = () => {
 			>
 				<Text>{t('topbar.network')}</Text>
 				<Text mr='5px'>: </Text>
-				<Text>{network}</Text>
+				<Text textTransform='uppercase'>{pairingData ? pairingData.network : ''}</Text>
 			</Flex>
 			<Box borderLeft='2px solid' borderLeftColor='light.primary' w='1px' />
 			<Flex
@@ -30,7 +49,19 @@ const TopbarRight = () => {
 			>
 				<Text>{t('topbar.account')}</Text>
 				<Text mr='5px'>: </Text>
-				<Text>{accountId}</Text>
+				<Text>{pairingData ? pairingData.accountIds[0] : ''}</Text>
+			</Flex>
+			<Box borderLeft='2px solid' borderLeftColor='light.primary' w='1px' />
+			<Flex
+				data-testid='topbar-right-disconnect'
+				color='brand.gray'
+				fontSize='12px'
+				fontWeight='400'
+				alignItems='center'
+			>
+				<Button h='100%' w='40px' onClick={handleDisconnect}>
+					<Icon name='Power' fontSize='20px' />
+				</Button>
 			</Flex>
 		</Flex>
 	);

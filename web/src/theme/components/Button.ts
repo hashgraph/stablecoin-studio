@@ -25,7 +25,7 @@ export const Button: ComponentSingleStyleConfig = {
 		primary: {
 			bgColor: 'dark.primary',
 			color: 'brand.white',
-			minW: '182px', // seems to be that it is not working from baseStyle
+			w: '182px', // seems to be that it is not working from baseStyle
 			_hover: {
 				bgColor: 'brand.white',
 				color: 'brand.primary',
@@ -36,7 +36,7 @@ export const Button: ComponentSingleStyleConfig = {
 			border: '1px solid',
 			bgColor: 'brand.white',
 			color: 'brand.primary',
-			minW: '182px',
+			w: '182px',
 			_hover: {
 				bgColor: 'dark.primary',
 				color: 'brand.white',
