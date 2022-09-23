@@ -6,6 +6,7 @@ import {
 	TokenSupplyType,
 	ContractCreateFlow,
 	PrivateKey,
+	Executable,
 } from '@hashgraph/sdk';
 import { ICreateTokenResponse } from '../types.js';
 
@@ -54,11 +55,11 @@ export class TransactionProvider {
 		admPrivateKey: string,
 		parameters: any,
 		gas: number,
-	): ContractCreateFlow {
+	) {
 		const transaction = new ContractCreateFlow()
 			.setBytecode(factory.bytecode)
 			.setGas(gas)
-			.setAdminKey(PrivateKey.fromStringED25519(admPrivateKey));
+			.setAdminKey(PrivateKey.fromStringED25519(admPrivateKey))
 		if (parameters) {
 			transaction.setConstructorParameters(parameters);
 		}

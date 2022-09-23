@@ -17,6 +17,7 @@ import CashInStableCoinsService from './CashInStableCoinService.js';
 import WipeStableCoinsService from './WipeStableCoinService.js';
 import RoleStableCoinsService from './RoleStableCoinService.js';
 import RescueStableCoinsService from './RescueStableCoinService.js';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const colors = require('colors');
 
 /**
@@ -525,7 +526,7 @@ export default class OperationStableCoinService extends Service {
                 currentAccount,
               )
             ) {
-              let response = language.getText(
+              const response = language.getText(
                 'roleManagement.accountHasRoleSupplierUnlimited',
               );
 
@@ -604,7 +605,7 @@ export default class OperationStableCoinService extends Service {
     accountTarget: string,
     roleService: RoleStableCoinsService,
     currentAccount,
-  ) {
+  ): Promise<void> {
     let limit = '';
     const supplierRoleType = language.getArray('wizard.supplierRoleType');
 

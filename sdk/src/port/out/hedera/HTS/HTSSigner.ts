@@ -4,7 +4,7 @@ import {
 	Signer,
 	Client,
 	TransactionResponse,
-    ContractCreateFlow,
+	ContractCreateFlow,
 } from '@hashgraph/sdk';
 
 export class HTSSigner implements ISigner {
@@ -18,8 +18,15 @@ export class HTSSigner implements ISigner {
 		transaction: Transaction | ContractCreateFlow,
 		signer?: Signer,
 	): Promise<TransactionResponse> {
-        return await transaction.execute(this.client);
+		let t = transaction;
+		if (transaction instanceof Transaction) {
+			t = transaction.freezeWith(this.client);
+		}else if(transaction instanceof ContractCreateFlow){
+			transaction._contractCreate = transaction._contractCreate.freezeWith(
+				this.client,
+				);
+			console.log(transaction._contractCreate);
+		}
+		return await t.execute(this.client);
 	}
-
-
 }

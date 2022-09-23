@@ -13,6 +13,7 @@ import {
 	PublicKey as HPublicKey,
 	TokenId,
 	Transaction,
+	Executable,
 } from '@hashgraph/sdk';
 import {
 	HederaERC1967Proxy__factory,

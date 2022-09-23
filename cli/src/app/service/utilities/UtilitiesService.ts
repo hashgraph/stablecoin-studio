@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import * as inquirer from 'inquirer';
 import figlet from 'figlet-promised';
 import Service from '../Service.js';
