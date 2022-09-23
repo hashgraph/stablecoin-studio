@@ -128,7 +128,7 @@ export default class StableCoinService extends Service {
 
 	public async wipe(
 		req: IWipeStableCoinServiceRequestModel,
-	): Promise<Uint8Array> {
+	): Promise<boolean> {
 		const coin: StableCoin = await this.getStableCoin({
 			id: req.tokenId,
 		});
@@ -151,14 +151,30 @@ export default class StableCoinService extends Service {
 		if (balance[0] < req.amount) {
 			throw new Error(`Insufficient funds on account ${req.targetId}`);
 		}
+		
+		let resultWipe = false;
+		const isWipeContract = true; //TODO cambiar por la validación de Adri
+		
+		if (isWipeContract) {
+			const result = await this.repository.wipe(
+				req.proxyContractId,
+				req.privateKey,
+				req.accountId,
+				req.targetId,
+				coin.toInteger(req.amount),
+			);
+			resultWipe = Boolean(result[0]);
+		}else{
+			resultWipe = await this.repository.wipeHTS(			
+				req.privateKey,
+				req.accountId,
+				req.tokenId,
+				req.targetId,
+				coin.toInteger(req.amount),
+			);
+		}
 
-		return this.repository.wipe(
-			req.proxyContractId,
-			req.privateKey,
-			req.accountId,
-			req.targetId,
-			coin.toInteger(req.amount),
-		);
+		return resultWipe;
 	}
 
 	public async rescue(

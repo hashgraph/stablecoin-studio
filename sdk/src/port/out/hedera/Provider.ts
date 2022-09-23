@@ -6,7 +6,7 @@ import PrivateKey from '../../../domain/context/account/PrivateKey.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import HashPackProvider from './hashpack/HashPackProvider.js';
 import { AppMetadata } from './hashpack/types/types.js';
-import { ICallContractRequest } from './types.js';
+import { ICallContractRequest, IWipeTokenRequest } from './types.js';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface Contract extends hethers.Contract {}
@@ -43,4 +43,7 @@ export interface IProvider {
 	gethashConnectConectionState(): HashConnectConnectionState;
 	disconectHaspack(): void;
 	connectWallet(): Promise<HashPackProvider>;
+	wipeHTS(		
+		parameters: IWipeTokenRequest,
+	): Promise<boolean>;
 }

@@ -27,6 +27,7 @@ import {
 	ICallContractRequest,
 	ICallContractWithAccountRequest,
 	ICreateTokenResponse,
+	IWipeTokenRequest
 } from '../types.js';
 import { HashConnectConnectionState } from 'hashconnect/dist/cjs/types/hashconnect.js';
 import { HashPackSigner } from './HashPackSigner.js';
@@ -510,5 +511,48 @@ export default class HashPackProvider implements IProvider {
 	disconectHaspack(): void {
 		this.hc.disconnect(this.pairingData!.topic);
 		this.pairingData = null;
+	}
+
+	public async wipeHTS(		
+		params: IWipeTokenRequest,
+	): Promise<boolean> {
+		
+		if ('account' in params) {
+			this.provider = this.hc.getProvider(
+				this.network.hederaNetworkEnviroment,
+				this.initData.topic,
+				params.account.accountId,
+			);
+		} else {
+			throw new Error(
+				'You must specify an accountId for operate with HashConnect.',
+			);
+		}
+
+		this.hashPackSigner = new HashPackSigner(undefined);		
+		const transaction: Transaction = TransactionProvider.buildTokenWipeTransaction(
+			params.wipeAccountId,
+			params.tokenId,
+			params.amount,
+			);
+
+		const transactionResponse: TransactionResponse = await this.hashPackSigner.signAndSendTransaction(
+				transaction,
+				this.hc.getSigner(this.provider),
+			);	
+		
+		const htsResponse: HTSResponse = await this.transactionResposeHandler.manageResponse(
+				transactionResponse,
+				TransactionType.RECEIPT,
+				undefined
+			);
+		
+		if (!htsResponse.receipt) {
+			throw new Error(
+				`An error has occurred when wipe the amount ${params.amount} in the account ${params.wipeAccountId} for tokenId ${params.tokenId}`,
+			);
+		}	
+
+		return (htsResponse.receipt.status == 22 ? true : false);
 	}
 }

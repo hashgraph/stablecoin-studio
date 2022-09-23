@@ -43,6 +43,13 @@ export default interface IStableCoinRepository {
 		targetId: string,
 		amount: number,
 	): Promise<Uint8Array>;
+	wipeHTS(
+		privateKey: PrivateKey,
+		accountId: AccountId,
+		tokenId: string,
+		wipeAccountId: string,
+		amount: number,
+	): Promise<boolean>;
 	grantSupplierRole(
 		treasuryId: string,
 		address: string,

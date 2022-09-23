@@ -258,7 +258,7 @@ export class SDK {
 	/**
 	 * wipeToken
 	 */
-	public wipe(request: IWipeStableCoinRequest): Promise<Uint8Array> | null {
+	public wipe(request: IWipeStableCoinRequest): Promise<boolean> | null {
 		try {
 			const req: IWipeStableCoinServiceRequestModel = {
 				...request,

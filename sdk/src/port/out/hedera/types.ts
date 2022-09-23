@@ -34,3 +34,13 @@ export interface ICreateTokenResponse {
 	supplyKey: DelegateContractId;
 	tokenId: TokenId;
 }
+
+export interface IWipeTokenRequest{
+	account: {
+		privateKey: string;
+		accountId: string;
+	};
+	tokenId: string,
+	wipeAccountId: string,
+	amount: number
+}

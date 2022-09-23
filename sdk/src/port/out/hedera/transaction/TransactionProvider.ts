@@ -1,5 +1,6 @@
 import {
-	Transaction, ContractExecuteTransaction, TokenCreateTransaction, Hbar, TokenSupplyType, ContractCreateFlow, PrivateKey
+	Transaction, ContractExecuteTransaction, TokenCreateTransaction, Hbar, TokenSupplyType, ContractCreateFlow, PrivateKey,
+	TokenWipeTransaction, TokenMintTransaction, TokenBurnTransaction, TokenId, AccountId
 } from '@hashgraph/sdk';
 import { ICreateTokenResponse } from '../types.js';
 
@@ -45,6 +46,31 @@ export class TransactionProvider{
         if (parameters) {
             transaction.setConstructorParameters(parameters);
         }
+        return transaction;
+    }
+
+	public static buildTokenWipeTransaction (accountId:string, tokenId: string, amount:number): Transaction{
+        const transaction =  new TokenWipeTransaction()
+		.setAccountId(AccountId.fromString(accountId))
+		.setTokenId(TokenId.fromString(tokenId))
+		.setAmount(amount)
+	
+        return transaction;
+    }
+
+	public static buildTokenMintTransaction (tokenId: string, amount:number): Transaction{
+        const transaction =  new TokenMintTransaction()
+		.setTokenId(TokenId.fromString(tokenId))
+		.setAmount(amount)
+	
+        return transaction;
+    }
+
+	public static buildTokenBurnTransaction (tokenId: string, amount:number): Transaction{
+        const transaction =  new new TokenBurnTransaction()
+		.setTokenId(TokenId.fromString(tokenId))
+		.setAmount(amount)
+	
         return transaction;
     }
 }
