@@ -28,8 +28,8 @@ export const walletSlice = createSlice({
 	},
 });
 
-export const SELECT_WALLET = (state: RootState) => state.wallet;
-export const SELECT_WALLET_DATA: any = (state: RootState) => state.wallet.data;
-export const SELECT_WALLET_PAIRED: any = (state: RootState) => state.wallet.data.savedPairings[0];
+export const SELECTED_WALLET = (state: RootState) => state.wallet;
+export const SELECTED_WALLET_DATA: any = (state: RootState) => state.wallet.data;
+export const SELECTED_WALLET_PAIRED: any = (state: RootState) => state.wallet.data.savedPairings[0];
 
 export const walletActions = walletSlice.actions;

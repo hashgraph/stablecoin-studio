@@ -4,14 +4,14 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import Icon from '../../components/Icon';
 import SDKService from '../../services/SDKService';
-import { SELECT_WALLET_PAIRED, walletActions } from '../../store/slices/walletSlice';
+import { SELECTED_WALLET_PAIRED, walletActions } from '../../store/slices/walletSlice';
 import type { SavedPairingData } from 'hedera-stable-coin-sdk';
 
 const TopbarRight = () => {
 	const { t } = useTranslation('global');
 	const dispatch = useDispatch();
 
-	const pairingData: SavedPairingData = useSelector(SELECT_WALLET_PAIRED);
+	const pairingData: SavedPairingData = useSelector(SELECTED_WALLET_PAIRED);
 
 	useEffect(() => {
 		if (!pairingData) getWalletData();
