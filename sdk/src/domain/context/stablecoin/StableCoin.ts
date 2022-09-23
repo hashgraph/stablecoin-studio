@@ -1,3 +1,4 @@
+import { DelegateContractId } from '@hashgraph/sdk';
 import BaseEntity from '../../BaseEntity.js';
 import AccountId from '../account/AccountId.js';
 import PublicKey from '../account/PublicKey.js';
@@ -157,11 +158,11 @@ export class StableCoin extends BaseEntity {
 	/**
 	 * Supply key
 	 */
-	private _supplyKey: ContractId | PublicKey;
-	public get supplyKey(): ContractId | PublicKey {
+	private _supplyKey: DelegateContractId | ContractId | PublicKey;
+	public get supplyKey(): DelegateContractId | ContractId | PublicKey {
 		return this._supplyKey;
 	}
-	public set supplyKey(value: ContractId | PublicKey) {
+	public set supplyKey(value: DelegateContractId | ContractId | PublicKey) {
 		this._supplyKey = value;
 	}
 
@@ -222,7 +223,7 @@ export class StableCoin extends BaseEntity {
 		freezeDefault?: boolean;
 		kycKey?: ContractId | PublicKey;
 		wipeKey?: ContractId | PublicKey;
-		supplyKey?: ContractId | PublicKey;
+		supplyKey?: DelegateContractId | ContractId | PublicKey;
 		treasury?: AccountId;
 		tokenType?: TokenType;
 		supplyType?: TokenSupplyType;
@@ -297,7 +298,7 @@ export class StableCoin extends BaseEntity {
 		return res;
 	}
 
-	public isValidAmount(amount: number): boolean {		
+	public isValidAmount(amount: number): boolean {
 		return this.getDecimals(amount) <= this.decimals;
 	}
 

@@ -78,7 +78,7 @@ export default class HTSProvider implements IProvider {
 			this.eventService.emit(ProviderEventNames.providerInitEvent, {
 				status: 'connected',
 			}),
-			r(this);
+				r(this);
 		});
 	}
 
@@ -203,7 +203,8 @@ export default class HTSProvider implements IProvider {
 			`Deploying ${HederaERC1967Proxy__factory.name} contract... please wait.`,
 			logOpts,
 		);
-		let proxyContract: ContractId = stableCoin.memo ?? '';
+		let proxyContract: ContractId =
+			ContractId.fromString(stableCoin.memo) ?? '';
 
 		if (!proxyContract) {
 			proxyContract = await this.deployContract(
@@ -218,7 +219,7 @@ export default class HTSProvider implements IProvider {
 		}
 
 		await this.callContract('initialize', {
-			contractId: proxyContract,
+			contractId: stableCoin.memo,
 			parameters: [],
 			gas: 250_000,
 			abi: HederaERC20__factory.abi,
@@ -241,7 +242,7 @@ export default class HTSProvider implements IProvider {
 			stableCoin.decimals,
 			stableCoin.initialSupply,
 			stableCoin.maxSupply,
-			String(proxyContract),
+			stableCoin.memo,
 			stableCoin.freezeDefault,
 			plainAccount.privateKey,
 			this.getPublicKey(privateKey),
@@ -249,7 +250,7 @@ export default class HTSProvider implements IProvider {
 		);
 		log('Setting up contract... please wait.', logOpts);
 		await this.callContract('setTokenAddress', {
-			contractId: proxyContract,
+			contractId: stableCoin.memo,
 			parameters: [
 				tokenOwnerContract.toSolidityAddress(),
 				TokenId.fromString(
@@ -261,7 +262,7 @@ export default class HTSProvider implements IProvider {
 			account: plainAccount,
 		});
 		await this.callContract('setERC20Address', {
-			contractId: tokenOwnerContract,
+			contractId: String(tokenOwnerContract),
 			parameters: [proxyContract.toSolidityAddress()],
 			gas: 60_000,
 			abi: HTSTokenOwner__factory.abi,
@@ -272,7 +273,7 @@ export default class HTSProvider implements IProvider {
 			logOpts,
 		);
 		await this.callContract('associateToken', {
-			contractId: proxyContract,
+			contractId: stableCoin.memo,
 			parameters: [HAccountId.fromString(accountId).toSolidityAddress()],
 			gas: 1_300_000,
 			abi: HederaERC20__factory.abi,
@@ -292,7 +293,7 @@ export default class HTSProvider implements IProvider {
 			freezeKey: this.fromPublicKey(hederaToken.freezeKey),
 			wipeKey: this.fromPublicKey(hederaToken.wipeKey),
 			supplyKey: hederaToken.supplyKey,
-			id: hederaToken.tokenId,
+			id: hederaToken.tokenId.toString(),
 			tokenType: stableCoin.tokenType,
 			supplyType: stableCoin.supplyType,
 		});
@@ -306,7 +307,7 @@ export default class HTSProvider implements IProvider {
 	): Promise<ContractId> {
 		try {
 			this.htsSigner = new HTSSigner(client);
-			const transaction: Transaction =
+			const transaction =
 				TransactionProvider.buildContractCreateFlowTransaction(
 					factory,
 					privateKey,
@@ -374,12 +375,12 @@ export default class HTSProvider implements IProvider {
 				: Long.ZERO,
 			memo,
 			freezeDefault,
-			treasuryAccountId: HAccountId.fromString(contractId.toString()),
+			treasuryAccountId: HAccountId.fromString(String(contractId)),
 			adminKey: HPublicKey.fromString(publicKey),
 			freezeKey: HPublicKey.fromString(publicKey),
 			wipeKey: HPublicKey.fromString(publicKey),
-			supplyKey: DelegateContractId.fromString(contractId),
-			tokenId: '',
+			supplyKey: DelegateContractId.fromString(String(contractId)),
+			tokenId: TokenId.fromString('0.0.0'),
 		};
 
 		this.htsSigner = new HTSSigner(client);
@@ -410,7 +411,10 @@ export default class HTSProvider implements IProvider {
 	}
 
 	private fromPublicKey(key: HPublicKey): PublicKey {
-		return new PublicKey({ key: key._key, type: key._type });
+		return new PublicKey({
+			key: key._key.toStringRaw(),
+			type: key._key._type,
+		});
 	}
 
 	getAvailabilityExtension(): boolean {

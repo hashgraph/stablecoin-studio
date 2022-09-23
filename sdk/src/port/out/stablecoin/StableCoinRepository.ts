@@ -205,7 +205,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		accountId: AccountId,
 	): Promise<Uint8Array> {
 		const parameters = [
-			HAccountId.fromString(accountId || '').toSolidityAddress(),
+			HAccountId.fromString(accountId.id).toSolidityAddress(),
 		];
 
 		const params: ICallContractWithAccountRequest = {
