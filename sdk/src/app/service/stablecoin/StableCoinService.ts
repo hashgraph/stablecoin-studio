@@ -37,9 +37,12 @@ export default class StableCoinService extends Service {
 			symbol: req.symbol,
 			decimals: req.decimals,
 			adminKey: req.adminKey,
-			initialSupply: req.initialSupply,
-			maxSupply: req.maxSupply,
-			memo: req.memo,
+			initialSupply: req.initialSupply
+				? req.initialSupply * 10n ** BigInt(req.decimals)
+				: undefined,
+			maxSupply: req.maxSupply
+				? req.maxSupply * 10n ** BigInt(req.decimals)
+				: undefined,			memo: req.memo,
 			freezeKey: req.freezeKey,
 			freezeDefault: req.freezeDefault,
 			kycKey: req.KYCKey,
