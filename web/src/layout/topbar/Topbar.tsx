@@ -38,7 +38,6 @@ const Topbar = () => {
 					<CoinDropdown />
 					<Button
 						variant='secondary'
-						size='md'
 						onClick={handleNavigateSC}
 						gap={2}
 						w={isLargerThan1210 ? '182px' : '30px'}
