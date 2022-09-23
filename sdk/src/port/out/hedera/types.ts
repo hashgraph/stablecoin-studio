@@ -4,6 +4,7 @@ import {
 	PublicKey as HPublicKey,
 	TokenId,
 } from '@hashgraph/sdk';
+import { HashConnectTypes } from 'hashconnect';
 
 export interface ICallContractRequest {
 	contractId: string;
@@ -28,10 +29,12 @@ export interface ICreateTokenResponse {
 	memo: string;
 	freezeDefault: boolean;
 	treasuryAccountId: HAccount;
-	adminKey: HPublicKey;
-	freezeKey: HPublicKey;
-	wipeKey: HPublicKey;
-	supplyKey: DelegateContractId;
+	adminKey: HPublicKey | DelegateContractId | undefined;
+	freezeKey: HPublicKey | DelegateContractId | undefined;
+	kycKey: HPublicKey | DelegateContractId | undefined;
+	wipeKey: HPublicKey | DelegateContractId | undefined;
+	pauseKey: HPublicKey | DelegateContractId | undefined;
+	supplyKey: HPublicKey | DelegateContractId | undefined;
 	tokenId: TokenId;
 }
 
@@ -47,3 +50,6 @@ export interface IHTSTokenRequest {
 export interface IWipeTokenRequest extends IHTSTokenRequest {
 	wipeAccountId: string;
 }
+
+export type InitializationData = HashConnectTypes.InitilizationData;
+export type SavedPairingData = HashConnectTypes.SavedPairingData;

@@ -10,7 +10,8 @@ import {
 	ICallContractRequest,
 	IHTSTokenRequest,
 	IWipeTokenRequest,
-} from './types.js';
+	InitializationData } from './types.js';
+
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface Contract extends hethers.Contract {}
@@ -47,6 +48,8 @@ export interface IProvider {
 	gethashConnectConectionState(): HashConnectConnectionState;
 	disconectHaspack(): void;
 	connectWallet(): Promise<HashPackProvider>;
+	getInitData(): InitializationData;
 	wipeHTS(parameters: IWipeTokenRequest): Promise<boolean>;
 	cashInHTS(parameters: IHTSTokenRequest): Promise<boolean>;
+	
 }

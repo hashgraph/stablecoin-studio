@@ -9,7 +9,7 @@ import InputController from '../../components/Form/InputController';
 import { SelectController } from '../../components/Form/SelectController';
 import { RouterManager } from '../../Router/RouterManager';
 import { NamedRoutes } from '../../Router/NamedRoutes';
-import { fields } from './constans';
+import { fields } from './constants';
 
 const styles = {
 	menuList: {

@@ -8,13 +8,15 @@ export default interface ICreateStableCoinServiceRequestModel
 	name: string;
 	symbol: string;
 	decimals: number;
+	adminKey?: PublicKey,
 	initialSupply?: bigint;
 	maxSupply?: bigint;
 	memo?: string;
 	freezeKey?: PublicKey;
 	freezeDefault?: boolean;
-	kycKey?: PublicKey;
+	KYCKey?: PublicKey;
 	wipeKey?: PublicKey;
+	pauseKey?: PublicKey;
 	supplyKey?: PublicKey;
 	treasury?: AccountId;
 	tokenType?: TokenType;

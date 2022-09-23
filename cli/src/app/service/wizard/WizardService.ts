@@ -10,7 +10,7 @@ import CreateStableCoinService from '../stablecoin/CreateStableCoinService.js';
 import OperationStableCoinService from '../stablecoin/OperationStableCoinService.js';
 import ListStableCoinsService from '../stablecoin/ListStableCoinsService.js';
 import { StableCoin } from '../../../domain/stablecoin/StableCoin.js';
-const colors = require('colors');
+import colors from 'colors';
 
 /**
  * Wizard Service
@@ -34,6 +34,7 @@ export default class WizardService extends Service {
       await utilsService.defaultMultipleAsk(
         language.getText('wizard.mainMenuTitle'),
         wizardMainOptions,
+        false,
         currentAccount.network,
         `${currentAccount.accountId} - ${currentAccount.alias}`,
       )

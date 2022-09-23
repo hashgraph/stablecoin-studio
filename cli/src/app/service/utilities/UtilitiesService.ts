@@ -12,8 +12,8 @@ import {
 } from 'hedera-stable-coin-sdk';
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
-const colors = require('colors');
-const MaskData = require('maskdata');
+import colors from 'colors';
+import MaskData from 'maskdata';
 
 /**
  * Utilities Service
@@ -149,6 +149,7 @@ export default class UtilitiesService extends Service {
   public async defaultMultipleAsk(
     question: string,
     choices: Array<string>,
+    goBack?: boolean,
     network?: string,
     account?: string,
     token?: string,
@@ -166,7 +167,9 @@ export default class UtilitiesService extends Service {
       name: 'response',
       type: 'rawlist',
       message: question,
-      choices: choices,
+      choices: goBack
+        ? choices.concat(language.getText('wizard.backOption'))
+        : choices,
     });
     return variable.response;
   }

@@ -48,6 +48,10 @@ import { IAllowanceRequest } from './request/IRequestContracts.js';
 import { HashConnectConnectionState } from 'hashconnect/dist/cjs/types/hashconnect.js';
 import HashPackProvider from '../../out/hedera/hashpack/HashPackProvider.js';
 import { AppMetadata } from '../../out/hedera/hashpack/types/types.js';
+import {
+	InitializationData,
+	SavedPairingData,
+} from '../../out/hedera/types.js';
 
 export {
 	IAssociateStableCoinRequest,
@@ -78,6 +82,8 @@ export {
 	HederaNetworkEnviroment,
 	getHederaNetwork,
 	StableCoinRole,
+	InitializationData,
+	SavedPairingData,
 };
 
 export interface ConfigurationOptions {
@@ -470,10 +476,17 @@ export class SDK {
 
 		return this.networkAdapter.provider.getAvailabilityExtension();
 	}
+
 	gethashConnectConectionStatus(): HashConnectConnectionState {
 		console.log('=====getAvailabilityExtension=====');
 		return this.networkAdapter.provider.gethashConnectConectionState();
 	}
+
+	getInitData(): InitializationData {
+		console.log('=====getInitData=====');
+		return this.networkAdapter.provider.getInitData();
+	}
+
 	disconectHaspack(): void {
 		console.log('=====disconect Haspack=====');
 		return this.networkAdapter.provider.disconectHaspack();

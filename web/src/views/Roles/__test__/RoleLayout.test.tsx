@@ -4,7 +4,7 @@ import RoleLayout from '../RoleLayout';
 import type { RoleLayoutProps as AllRoleLayoutProps } from '../RoleLayout';
 import en from '../../../translations/en/roles.json';
 import { render } from '../../../test';
-import { fakeOptions, fields } from '../constans';
+import { fakeOptions, fields } from '../constants';
 import { RouterManager } from '../../../Router/RouterManager';
 
 jest.mock('../../../Router/RouterManager', () => ({

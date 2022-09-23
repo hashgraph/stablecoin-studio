@@ -59,12 +59,14 @@ export const english = {
     features: {
       admin: 'What will be the Admin key?',
       supply: 'What will be the Supply key?',
+      keyError: 'The introduced key has wrong format. Please. Introduce it again.',
       KYC: 'What will be the KYC key?',
       freeze: 'What will be the Freeze key?',
       wipe: 'What will be the Wipe key?',
       pause: 'What will be the Pause key?',
       feeSchedule: 'What will be the Fee Schedule key?',
       key: 'Enter the key',
+      publicKey: 'Enter the public key'
     },
     askTreasuryAccountAddress: 'What will be the Treasury account id?',
     askOperateStableCoin: 'Do you want to operate with stable coin created?',
@@ -173,10 +175,18 @@ export const english = {
       'Revoke role',
       'Edit role',
       'Has role',
-      'Back',
+      'Go back',
     ],
+    adminFeatureOptions: ['Admin Key', 'None'],
     featureOptions: ['The Smart Contract', 'Admin Key', 'Other key', 'None'],
     supplierRoleType: ['Unlimited', 'Limited', 'Back'],
+    editSupplierRoleOptions: [
+      'Increase limit',
+      'Decrease limit',
+      'Reset limit',
+      'Back',
+    ],
+    backOption: 'Go back',
   },
   state: {
     searching: 'Searching...',
@@ -221,7 +231,7 @@ export const english = {
       'Decrease supplier limit',
       'Reset supplier limit',
       'Check supplier limit',
-      'Back',
+      'Go back',
     ],
   },
 };
