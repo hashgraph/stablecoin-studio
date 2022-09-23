@@ -10,7 +10,6 @@ import fs from 'fs-extra';
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 import { IConsensusNodeConfig } from '../../../domain/configuration/interfaces/IConsensusNodeConfig.js';
 import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
-import { SDK } from 'hedera-stable-coin-sdk';
 const colors = require('colors');
 
 /**
@@ -126,7 +125,7 @@ export default class SetConfigurationService extends Service {
   /**
    * Function to configure the account id
    */
-  public async configureAccounts(doCheck = false): Promise<IAccountConfig[]> {
+  public async configureAccounts(): Promise<IAccountConfig[]> {
     const configuration = configurationService.getConfiguration();
     let accounts: IAccountConfig[] = configuration?.accounts || [];
     if (accounts.length === 1 && accounts[0].privateKey === '') {
@@ -141,15 +140,12 @@ export default class SetConfigurationService extends Service {
         language.getText('configuration.askAccountId'),
         '0.0.0',
       );
-      if (doCheck) {
-        const sdk: SDK = utilsService.getSDK();
-        while (!sdk.checkIsAddress(accountId)) {
-          console.log(language.getText('validations.wrongFormatAddress'));
-          accountId = await utilsService.defaultSingleAsk(
-            language.getText('configuration.askAccountId'),
-            '0.0.0',
-          );
-        }
+      while (!/\d\.\d\.\d/.test(accountId)) {
+        console.log(language.getText('validations.wrongFormatAddress'));
+        accountId = await utilsService.defaultSingleAsk(
+          language.getText('configuration.askAccountId'),
+          '0.0.0',
+        );
       }
       const accountFromPrivKey: IAccountConfig =
         await this.askForPrivateKeyOfAccount(accountId);
@@ -220,7 +216,7 @@ export default class SetConfigurationService extends Service {
         });
         break;
       case manageOptions[2]:
-        await this.configureAccounts(true);
+        await this.configureAccounts();
         const operateWithNewAccount = await utilsService.defaultConfirmAsk(
           language.getText('configuration.askOperateWithNewAccount'),
           true,
