@@ -133,7 +133,6 @@ export class SDK {
 				options.onInit,
 			);
 		}
-		console.log(options);
 		this.networkAdapter = await new NetworkAdapter(
 			this.eventService,
 			this.config.mode,

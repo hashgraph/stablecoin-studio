@@ -13,7 +13,6 @@ import {
 	PublicKey as HPublicKey,
 	TokenId,
 	Transaction,
-	Executable,
 } from '@hashgraph/sdk';
 import {
 	HederaERC1967Proxy__factory,
@@ -204,20 +203,15 @@ export default class HTSProvider implements IProvider {
 			`Deploying ${HederaERC1967Proxy__factory.name} contract... please wait.`,
 			logOpts,
 		);
-		let proxyContract: ContractId =
-			ContractId.fromString(stableCoin.memo) ?? '';
-
-		if (!proxyContract) {
-			proxyContract = await this.deployContract(
-				HederaERC1967Proxy__factory,
-				plainAccount.privateKey,
-				client,
-				new ContractFunctionParameters()
-					.addAddress(tokenContract?.toSolidityAddress())
-					.addBytes(new Uint8Array([])),
-			);
-			stableCoin.memo = String(proxyContract);
-		}
+		const proxyContract: ContractId = await this.deployContract(
+			HederaERC1967Proxy__factory,
+			plainAccount.privateKey,
+			client,
+			new ContractFunctionParameters()
+				.addAddress(tokenContract?.toSolidityAddress())
+				.addBytes(new Uint8Array([])),
+		);
+		stableCoin.memo = String(proxyContract);
 
 		await this.callContract('initialize', {
 			contractId: stableCoin.memo,

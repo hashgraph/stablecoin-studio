@@ -5,7 +5,6 @@ import { IProvider } from '../hedera/Provider.js';
 import { AppMetadata, NetworkMode } from '../../in/sdk/sdk.js';
 import { InitializationData } from '../hedera/types.js';
 import EventService from '../../../app/service/event/EventService.js';
-import ProviderEvent from '../hedera/ProviderEvent.js';
 
 type NetworkClientOptions = HederaClientOptions;
 
@@ -55,7 +54,6 @@ export default class NetworkAdapter {
 			network: this.network,
 			options: this._options,
 		});
-		console.log(this);
 		return this;
 	}
 

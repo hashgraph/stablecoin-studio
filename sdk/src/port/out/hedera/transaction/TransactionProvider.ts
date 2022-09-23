@@ -55,7 +55,7 @@ export class TransactionProvider {
 		admPrivateKey: string,
 		parameters: any,
 		gas: number,
-	) {
+	): ContractCreateFlow {
 		const transaction = new ContractCreateFlow()
 			.setBytecode(factory.bytecode)
 			.setGas(gas)

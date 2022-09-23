@@ -15,7 +15,7 @@ export enum StableCoinRole {
 }
 export class HederaNetwork {
 	hederaNetworkEnviroment: HederaNetworkEnviroment;
-	nodes: { [key: string]: string | AccountId };
+	nodes: { [key: string]: string | AccountId } | undefined;
 	mirrorNodeUrl: unknown;
 	constructor(
 		hederaNetworkEnviroment: HederaNetworkEnviroment,
@@ -23,13 +23,13 @@ export class HederaNetwork {
 		mirrorNodeUrl?: string,
 	) {
 		this.hederaNetworkEnviroment = hederaNetworkEnviroment;
-		this.nodes = nodes ?? {};
+		this.nodes = nodes;
 		this.mirrorNodeUrl = mirrorNodeUrl;
 	}
 }
 export interface HederaNetworkSpec {
 	name: string;
-	consensusNodes: { [key: string]: string | AccountId };
+	consensusNodes: { [key: string]: string | AccountId } | undefined;
 	mirrorNodeUrl: unknown;
 }
 export function getHederaNetwork(
@@ -37,7 +37,7 @@ export function getHederaNetwork(
 ): HederaNetworkSpec {
 	const enviroment: HederaNetworkEnviroment =
 		hederaNetwork?.hederaNetworkEnviroment;
-	const nodes: { [key: string]: string | AccountId } = hederaNetwork?.nodes;
+	const nodes: { [key: string]: string | AccountId } | undefined = hederaNetwork?.nodes;
 	const mirrorNodeUrl: unknown = hederaNetwork?.mirrorNodeUrl;
 	switch (enviroment) {
 		case HederaNetworkEnviroment.MAIN:
