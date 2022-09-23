@@ -23,13 +23,21 @@ exports[`<ModalHashpack /> should render correctly 1`] = `
     >
       Click in the button bellow to download the extension.
     </p>
-    <button
-      class="chakra-button css-l6yrnw"
-      data-testid="modal-hashpack-button"
-      type="button"
+    <a
+      class="chakra-link css-13jvj27"
+      data-testid="modal-hashpack-link"
+      href="https://www.hashpack.app/download"
+      rel="noopener"
+      target="_blank"
     >
-      Download Hashpack
-    </button>
+      <button
+        class="chakra-button css-l6yrnw"
+        data-testid="modal-hashpack-button"
+        type="button"
+      >
+        Download Hashpack
+      </button>
+    </a>
   </div>
   <span
     hidden=""

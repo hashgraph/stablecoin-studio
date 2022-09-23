@@ -59,12 +59,14 @@ export const partsListByTheme: Array<
 type Parts = typeof partsListByTheme;
 
 export type SelectThemeStyle = Record<Parts[number], SystemStyleObject>;
+
+export type Option = { label: string; value: number | string };
 export interface SelectControllerProps {
 	name: string;
 	rules?: UseControllerProps['rules'];
 	label?: string;
 	placeholder?: string;
-	options: ReactSelectProps['options'];
+	options: Array<Option>;
 	control: Control<Record<string, SelectOption['value']>>;
 	isRequired?: boolean;
 	isSearchable?: boolean;

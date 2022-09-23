@@ -1,6 +1,7 @@
 import { HederaNetwork, HederaNetworkEnviroment, NetworkMode, SDK } from 'hedera-stable-coin-sdk';
 
 import type { AppMetadata, InitializationData } from 'hedera-stable-coin-sdk';
+import type IStableCoinList from 'hedera-stable-coin-sdk/build/src/port/in/sdk/response/IStableCoinList';
 
 export enum HashConnectConnectionState {
 	Connected = 'Connected',
@@ -8,6 +9,8 @@ export enum HashConnectConnectionState {
 	Paired = 'Paired',
 	Connecting = 'Connecting',
 }
+
+export type StableCoinListRaw = Array<Record<'id' | 'symbol', string>>;
 
 const appMetadata: AppMetadata = {
 	name: 'dApp Example',
@@ -58,6 +61,14 @@ export class SDKService {
 
 	public static async disconnectWallet(): Promise<void> {
 		return (await SDKService.getInstance()).disconectHaspack();
+	}
+
+	public static async getStableCoins({
+		privateKey,
+	}: {
+		privateKey: string;
+	}): Promise<IStableCoinList[] | null> {
+		return (await SDKService.getInstance())?.getListStableCoin({ privateKey });
 	}
 }
 

@@ -8,6 +8,7 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import i18n from '../i18n';
 import theme from '../theme/Theme';
+import SDKService from '../services/SDKService';
 
 const mockStore = configureMockStore();
 const store = mockStore({});
@@ -26,3 +27,7 @@ const customRender = (ui: React.ReactElement, options?: RenderOptions) =>
 	render(ui, { wrapper: AllProviders, ...options });
 
 export { customRender as render };
+
+export const sdkMock = (fnToBeMocked: keyof typeof SDKService) => {
+	return jest.mocked(SDKService[fnToBeMocked], true);
+};

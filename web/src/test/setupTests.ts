@@ -17,3 +17,5 @@ jest.mock('react-i18next', (): any => ({
 	initReactI18next: { type: '3rdParty', init: jest.fn() },
 	...jest.requireActual('react-i18next'),
 }));
+
+jest.mock('../services/SDKService');

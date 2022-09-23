@@ -22,7 +22,7 @@ exports[`<Topbar /> should render correctly 1`] = `
       class="css-1gacwoi"
     >
       <div
-        class="css-d9s5ly"
+        class="css-1hg55h3"
         data-testid="coin-dropdown"
       >
         <div
