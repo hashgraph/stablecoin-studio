@@ -44,8 +44,8 @@ import {
 	HederaERC20__factory,
 	HTSTokenOwner__factory,
 } from 'hedera-stable-coin-contracts/typechain-types/index.js';
-import { HashConnectProvider } from 'hashconnect/dist/cjs/provider/provider.js';
-import { HashConnectSigner } from 'hashconnect/dist/cjs/provider/signer';
+import { HashConnectProvider } from 'hashconnect/dist/esm/provider/provider.js';
+import { HashConnectSigner } from 'hashconnect/dist/esm/provider/signer';
 import Long from 'long';
 import ProviderEvent, { ProviderEventNames } from '../ProviderEvent.js';
 import EventService from '../../../../app/service/event/EventService.js';

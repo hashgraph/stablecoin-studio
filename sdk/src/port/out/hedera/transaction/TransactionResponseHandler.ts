@@ -7,7 +7,7 @@ import {
 } from '@hashgraph/sdk';
 import HederaError from '../error/HederaError.js';
 import Web3 from 'web3';
-import { HashConnectSigner } from 'hashconnect/dist/cjs/provider/signer';
+import { HashConnectSigner } from 'hashconnect/dist/esm/provider/signer';
 
 export class TransactionResposeHandler {
 	public async manageResponse(
