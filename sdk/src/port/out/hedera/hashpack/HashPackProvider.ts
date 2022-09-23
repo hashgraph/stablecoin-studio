@@ -315,6 +315,8 @@ export default class HashPackProvider implements IProvider {
 			adminKey: this.fromPublicKey(hederaToken.adminKey),
 			freezeKey: this.fromPublicKey(hederaToken.freezeKey),
 			wipeKey: this.fromPublicKey(hederaToken.wipeKey),
+			pauseKey: this.fromPublicKey(hederaToken.wipeKey),
+			kycKey: this.fromPublicKey(hederaToken.wipeKey),
 			supplyKey: hederaToken.supplyKey,
 			id: hederaToken.tokenId,
 			tokenType: stableCoin.tokenType,
@@ -390,6 +392,8 @@ export default class HashPackProvider implements IProvider {
 			adminKey: HPublicKey.fromString(publicKey),
 			freezeKey: HPublicKey.fromString(publicKey),
 			wipeKey: HPublicKey.fromString(publicKey),
+			pauseKey: HPublicKey.fromString(publicKey),
+			kycKey: HPublicKey.fromString(publicKey),
 			supplyKey: DelegateContractId.fromString(contractId),
 			tokenId: '',
 		};
