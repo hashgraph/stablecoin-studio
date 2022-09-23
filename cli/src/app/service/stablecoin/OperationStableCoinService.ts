@@ -457,20 +457,24 @@ export default class OperationStableCoinService extends Service {
                 currentAccount,
               )
             ) {
-              await roleService.decreaseLimitSupplierRoleStableCoin(
-                this.proxyContractId,
-                accountTarget,
-                currentAccount.privateKey,
-                currentAccount.accountId,
-                parseInt(limit),
-              );
+              try {
+                await roleService.decreaseLimitSupplierRoleStableCoin(
+                  this.proxyContractId,
+                  accountTarget,
+                  currentAccount.privateKey,
+                  currentAccount.accountId,
+                  parseInt(limit),
+                );
 
-              await roleService.getSupplierAllowance(
-                this.proxyContractId,
-                accountTarget,
-                currentAccount.privateKey,
-                currentAccount.accountId,
-              );
+                await roleService.getSupplierAllowance(
+                  this.proxyContractId,
+                  accountTarget,
+                  currentAccount.privateKey,
+                  currentAccount.accountId,
+                );
+              } catch (e) {
+                console.log(colors.red(e.message));
+              }
             } else {
               console.log(language.getText('supplier.notRole'));
             }
