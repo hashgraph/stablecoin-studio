@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { InitializationData } from 'hedera-stable-coin-sdk';
+import type { RootState } from '../store';
 
 interface InitialStateProps {
 	data: InitializationData;
@@ -27,6 +28,8 @@ export const walletSlice = createSlice({
 	},
 });
 
-// TODO: Add const for selector
+export const SELECT_WALLET = (state: RootState) => state.wallet;
+export const SELECT_WALLET_DATA: any = (state: RootState) => state.wallet.data;
+export const SELECT_WALLET_PAIRED: any = (state: RootState) => state.wallet.data.savedPairings[0];
 
 export const walletActions = walletSlice.actions;

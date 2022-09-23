@@ -37,3 +37,4 @@ export interface ICreateTokenResponse {
 }
 
 export type InitializationData = HashConnectTypes.InitilizationData;
+export type SavedPairingData = HashConnectTypes.SavedPairingData;

@@ -48,7 +48,10 @@ import { IAllowanceRequest } from './request/IRequestContracts.js';
 import { HashConnectConnectionState } from 'hashconnect/dist/cjs/types/hashconnect.js';
 import HashPackProvider from '../../out/hedera/hashpack/HashPackProvider.js';
 import { AppMetadata } from '../../out/hedera/hashpack/types/types.js';
-import { InitializationData } from '../../out/hedera/types.js';
+import {
+	InitializationData,
+	SavedPairingData,
+} from '../../out/hedera/types.js';
 
 export {
 	IAssociateStableCoinRequest,
@@ -80,6 +83,7 @@ export {
 	getHederaNetwork,
 	StableCoinRole,
 	InitializationData,
+	SavedPairingData,
 };
 
 export interface ConfigurationOptions {
