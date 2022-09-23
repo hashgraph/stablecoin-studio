@@ -35,12 +35,15 @@ export interface ICreateTokenResponse {
 	tokenId: TokenId;
 }
 
-export interface IWipeTokenRequest{
+export interface IHTSTokenRequest {
 	account: {
 		privateKey: string;
 		accountId: string;
 	};
-	tokenId: string,
-	wipeAccountId: string,
-	amount: number
+	tokenId: string;
+	amount: number;
+}
+
+export interface IWipeTokenRequest extends IHTSTokenRequest {
+	wipeAccountId: string;
 }

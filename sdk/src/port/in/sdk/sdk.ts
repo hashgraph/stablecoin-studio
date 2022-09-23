@@ -220,9 +220,7 @@ export class SDK {
 	/**
 	 * cashIn
 	 */
-	public cashIn(
-		request: ICashInStableCoinRequest,
-	): Promise<Uint8Array> | null {
+	public cashIn(request: ICashInStableCoinRequest): Promise<boolean> | null {
 		try {
 			const req: ICashInStableCoinServiceRequestModel = {
 				...request,

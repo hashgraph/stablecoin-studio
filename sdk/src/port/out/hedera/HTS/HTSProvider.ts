@@ -33,7 +33,8 @@ import {
 	ICallContractRequest,
 	ICallContractWithAccountRequest,
 	ICreateTokenResponse,
-	IWipeTokenRequest
+	IHTSTokenRequest,
+	IWipeTokenRequest,
 } from '../types.js';
 import HederaError from '../error/HederaError.js';
 import PublicKey from '../../../../domain/context/account/PublicKey.js';
@@ -413,10 +414,7 @@ export default class HTSProvider implements IProvider {
 		throw new Error('not haspack');
 	}
 
-	public async wipeHTS(		
-		params: IWipeTokenRequest,
-	): Promise<boolean> {
-		
+	public async wipeHTS(params: IWipeTokenRequest): Promise<boolean> {
 		let client;
 
 		if ('account' in params) {
@@ -429,27 +427,69 @@ export default class HTSProvider implements IProvider {
 		}
 
 		this.htsSigner = new HTSSigner(client);
-		const transaction: Transaction = TransactionProvider.buildTokenWipeTransaction(
-			params.wipeAccountId,
-			params.tokenId,
-			params.amount,
+		const transaction: Transaction =
+			TransactionProvider.buildTokenWipeTransaction(
+				params.wipeAccountId,
+				params.tokenId,
+				params.amount,
 			);
-		const transactionResponse: TransactionResponse = await this.htsSigner.signAndSendTransaction(transaction);
-		const htsResponse: HTSResponse = await this.transactionResposeHandler.manageResponse(
+		const transactionResponse: TransactionResponse =
+			await this.htsSigner.signAndSendTransaction(transaction);
+		const htsResponse: HTSResponse =
+			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
 				TransactionType.RECEIPT,
-				client
+				client,
 			);
-		
 
 		if (!htsResponse.receipt) {
 			throw new Error(
 				`An error has occurred when wipe the amount ${params.amount} in the account ${params.wipeAccountId} for tokenId ${params.tokenId}`,
 			);
-		}	
-		log(`Result wipe HTS ${htsResponse.receipt.status}: account ${params.wipeAccountId}, tokenId ${params.tokenId}, amount ${params.amount}`,
+		}
+		log(
+			`Result wipe HTS ${htsResponse.receipt.status}: account ${params.wipeAccountId}, tokenId ${params.tokenId}, amount ${params.amount}`,
 			logOpts,
 		);
-		return (htsResponse.receipt.status == 22 ? true : false);
+		return htsResponse.receipt.status == 22 ? true : false;
+	}
+
+	public async cashInHTS(params: IHTSTokenRequest): Promise<boolean> {
+		let client;
+
+		if ('account' in params) {
+			client = this.getClient(
+				params.account.accountId,
+				params.account.privateKey,
+			);
+		} else {
+			client = this.getClient();
+		}
+
+		this.htsSigner = new HTSSigner(client);
+		const transaction: Transaction =
+			TransactionProvider.buildTokenMintTransaction(
+				params.tokenId,
+				params.amount,
+			);
+		const transactionResponse: TransactionResponse =
+			await this.htsSigner.signAndSendTransaction(transaction);
+		const htsResponse: HTSResponse =
+			await this.transactionResposeHandler.manageResponse(
+				transactionResponse,
+				TransactionType.RECEIPT,
+				client,
+			);
+
+		if (!htsResponse.receipt) {
+			throw new Error(
+				`An error has occurred when cash in the amount ${params.amount} in the account ${params.account.accountId} for tokenId ${params.tokenId}`,
+			);
+		}
+		log(
+			`Result cash in HTS ${htsResponse.receipt.status}: account ${params.account.accountId}, tokenId ${params.tokenId}, amount ${params.amount}`,
+			logOpts,
+		);
+		return htsResponse.receipt.status == 22 ? true : false;
 	}
 }

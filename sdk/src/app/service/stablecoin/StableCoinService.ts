@@ -98,7 +98,7 @@ export default class StableCoinService extends Service {
 
 	public async cashIn(
 		req: ICashInStableCoinServiceRequestModel,
-	): Promise<Uint8Array> {
+	): Promise<boolean> {
 		// TODO validation
 		const coin: StableCoin = await this.getStableCoin({
 			id: req.tokenId,
@@ -107,13 +107,26 @@ export default class StableCoinService extends Service {
 		if (coin.maxSupply > 0n && amount > coin.maxSupply - coin.totalSupply) {
 			throw new Error('Amount is bigger than allowed supply');
 		}
-		return this.repository.cashIn(
-			req.proxyContractId,
-			req.privateKey,
-			req.accountId,
-			req.targetId,
-			amount,
-		);
+		let resultCashIn = false;
+		const isCashInContract = true; //TODO cambiar por la validación de Adri
+		if (isCashInContract) {
+			const result = await this.repository.cashIn(
+				req.proxyContractId,
+				req.privateKey,
+				req.accountId,
+				req.targetId,
+				amount,
+			);
+			resultCashIn = Boolean(result[0]);
+		} else {
+			resultCashIn = await this.repository.cashInHTS(
+				req.privateKey,
+				req.accountId,
+				req.tokenId,
+				amount,
+			);
+		}
+		return resultCashIn;
 	}
 
 	public async associateToken(
@@ -151,10 +164,10 @@ export default class StableCoinService extends Service {
 		if (balance[0] < req.amount) {
 			throw new Error(`Insufficient funds on account ${req.targetId}`);
 		}
-		
+
 		let resultWipe = false;
 		const isWipeContract = true; //TODO cambiar por la validación de Adri
-		
+
 		if (isWipeContract) {
 			const result = await this.repository.wipe(
 				req.proxyContractId,
@@ -164,8 +177,8 @@ export default class StableCoinService extends Service {
 				coin.toInteger(req.amount),
 			);
 			resultWipe = Boolean(result[0]);
-		}else{
-			resultWipe = await this.repository.wipeHTS(			
+		} else {
+			resultWipe = await this.repository.wipeHTS(
 				req.privateKey,
 				req.accountId,
 				req.tokenId,
