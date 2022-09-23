@@ -22,7 +22,7 @@ import {
 	PrivateKey as HPrivateKey,
 	TokenId,
 	Transaction,
-	Client,
+	Signer,
 } from '@hashgraph/sdk';
 import { StableCoin } from '../../../../domain/context/stablecoin/StableCoin.js';
 import {
@@ -31,7 +31,7 @@ import {
 	ICreateTokenResponse,
 	InitializationData,
 } from '../types.js';
-import { HashConnectConnectionState } from 'hashconnect/dist/cjs/types/hashconnect.js';
+import { HashConnectConnectionState } from 'hashconnect/dist/esm/types/hashconnect.js';
 import { HashPackSigner } from './HashPackSigner.js';
 import { TransactionProvider } from '../transaction/TransactionProvider.js';
 import { HTSResponse, TransactionType } from '../sign/ISigner.js';

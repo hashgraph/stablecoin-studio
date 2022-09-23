@@ -48,7 +48,7 @@ import { IAllowanceRequest } from './request/IRequestContracts.js';
 import {
 	HashConnectConnectionState,
 	HashConnectTypes,
-} from 'hashconnect/dist/cjs/types/hashconnect.js';
+} from 'hashconnect/dist/esm/types/hashconnect.js';
 import { AppMetadata } from '../../out/hedera/hashpack/types/types.js';
 import { InitializationData } from '../../out/hedera/types.js';
 import { ProviderEventNames } from '../../out/hedera/ProviderEvent.js';

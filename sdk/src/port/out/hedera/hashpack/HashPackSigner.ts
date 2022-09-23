@@ -4,15 +4,19 @@ import {
 	Signer,
 	TransactionResponse,
 	ContractCreateFlow,
+	ContractExecuteTransaction,
 } from '@hashgraph/sdk';
 
 export class HashPackSigner implements ISigner {
+
 	async signAndSendTransaction(
-		transaction: Transaction | ContractCreateFlow,
+		transaction: Transaction | ContractExecuteTransaction | ContractCreateFlow,
 		signer?: Signer,
 	): Promise<TransactionResponse> {
 		if (signer) {
-			return await transaction.executeWithSigner(signer);
+			console.log(transaction);
+			const trans = await transaction.executeWithSigner(signer);
+			return trans;
 		}
 		throw new Error('Its necessary to have a Signer');
 	}

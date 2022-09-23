@@ -43,7 +43,7 @@ import { HTSSigner } from './HTSSigner.js';
 import { HTSResponse, TransactionType } from '../sign/ISigner.js';
 import { TransactionResposeHandler } from '../transaction/TransactionResponseHandler.js';
 
-import { HashConnectConnectionState } from 'hashconnect/dist/cjs/types/hashconnect.js';
+import { HashConnectConnectionState } from 'hashconnect/dist/esm/types/hashconnect.js';
 import ProviderEvent, { ProviderEventNames } from '../ProviderEvent.js';
 import EventService from '../../../../app/service/event/EventService.js';
 
@@ -78,8 +78,8 @@ export default class HTSProvider implements IProvider {
 		return new Promise((r) => {
 			this.eventService.emit(ProviderEventNames.providerInitEvent, {
 				status: 'connected',
-			}),
-				r(this);
+			});
+			r(this);
 		});
 	}
 

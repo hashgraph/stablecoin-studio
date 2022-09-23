@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { hethers, Signer } from '@hashgraph/hethers';
-import { HashConnectConnectionState } from 'hashconnect/dist/cjs/types/hashconnect.js';
+import { HashConnectConnectionState } from 'hashconnect/dist/esm/types/hashconnect.js';
 import { HashConnectTypes } from 'hashconnect/dist/esm/types/index.js';
 import { HederaNetwork } from '../../../core/enum.js';
 import PrivateKey from '../../../domain/context/account/PrivateKey.js';

@@ -18,7 +18,7 @@ function App() {
 	const [SDKInitialize, setSDKInitialize] = useState<boolean>(true);
 
 	useEffect(() => {
-		// instanceSDK();
+		instanceSDK();
 	}, []);
 
 	useEffect(() => {
@@ -27,18 +27,18 @@ function App() {
 		}
 	}, [SDKInitialize]);
 
-	// const instanceSDK = async () => {
-	// 	const instance = SDKService.getInstance();
-	// 	// await instance.init({
-	// 	// 	onInit: () => {
-	// 	// 		console.log('Init');
-	// 	// 	},
-	// 	// });
-	// 	// instance.onWalletExtensionFound(() => {
-	// 	// 	console.log('Extension found');
-	// 	// 	setSDKInitialize(true);
-	// 	// });
-	// };
+	const instanceSDK = async () => {
+		const instance = await SDKService.getInstance();
+		await instance.init({
+			onInit: () => {
+				console.log('Init');
+			},
+		});
+		instance.onWalletExtensionFound(() => {
+			console.log('Extension found');
+			setSDKInitialize(true);
+		});
+	};
 
 	return (
 		<I18nextProvider i18n={i18n}>

@@ -15,5 +15,6 @@
     "types": ["node", "jest"],
     "resolveJsonModule": true,
   },
-  "include": ["src", "svg.d.ts"]
+  "include": ["src", "svg.d.ts"],
+  "exclude": ["node_modules"]
 }
