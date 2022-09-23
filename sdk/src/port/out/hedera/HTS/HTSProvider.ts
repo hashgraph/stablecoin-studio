@@ -43,8 +43,8 @@ import { HTSSigner } from './HTSSigner.js';
 import { HTSResponse, TransactionType } from '../sign/ISigner.js';
 import { TransactionResposeHandler } from '../transaction/TransactionResponseHandler.js';
 import { HashConnectConnectionState } from 'hashconnect/dist/cjs/types/hashconnect.js';
-import EventEmitter from '../../../../core/eventEmitter.js';
 import ProviderEvent, { ProviderEventNames } from '../ProviderEvent.js';
+import EventService from '../../../../app/service/event/EventService.js';
 
 type DefaultHederaProvider = hethers.providers.DefaultHederaProvider;
 
@@ -59,9 +59,12 @@ export default class HTSProvider implements IProvider {
 
 	public initData: InitializationData;
 
-	public emitter: EventEmitter<ProviderEvent> =
-		new EventEmitter<ProviderEvent>();
+	public eventService: EventService;
 	public events: ProviderEvent;
+
+	constructor(eventService: EventService) {
+		this.eventService = eventService;
+	}
 
 	/**
 	 * init
@@ -72,13 +75,9 @@ export default class HTSProvider implements IProvider {
 
 		// We have to follow an async pattern to match Hashconnect
 		return new Promise((r) => {
-			console.log(
-				'INIT event emitted',
-				this.emitter.emit(ProviderEventNames.providerInit, {
-					status: 'connected',
-				}),
-				this.emitter,
-			);
+			this.eventService.emit(ProviderEventNames.providerInitEvent, {
+				status: 'connected',
+			}),
 			r(this);
 		});
 	}
@@ -417,19 +416,23 @@ export default class HTSProvider implements IProvider {
 	getAvailabilityExtension(): boolean {
 		return false;
 	}
+
 	gethashConnectConectionState(): HashConnectConnectionState {
 		return HashConnectConnectionState.Disconnected;
 	}
+
 	disconectHaspack(): void {
-		this.emitter.emit(
+		this.eventService.emit(
 			ProviderEventNames.providerConnectionStatusChangeEvent,
 			HashConnectConnectionState.Disconnected,
 		);
 	}
+
 	connectWallet(): Promise<HTSProvider> {
-		this.emitter.emit(ProviderEventNames.providerPairingEvent);
+		this.eventService.emit(ProviderEventNames.providerPairingEvent);
 		return new Promise((r) => r(this));
 	}
+
 	getInitData(): InitializationData {
 		throw new Error('not haspack');
 	}

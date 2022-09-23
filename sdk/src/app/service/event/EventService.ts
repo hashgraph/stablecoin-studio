@@ -1,5 +1,3 @@
-import { HashConnectTypes } from 'hashconnect';
-import { HashConnectConnectionState } from 'hashconnect/dist/esm/types/index.js';
 import Event from '../../../core/event.js';
 import EventEmitter from '../../../core/eventEmitter.js';
 import { InitializationData } from '../../../index.js';
@@ -7,50 +5,50 @@ import { ProviderEventNames } from '../../../port/out/hedera/ProviderEvent.js';
 import Service from '../Service.js';
 
 export default class EventService extends Service {
-	private events: { [key: keyof Event]: EventEmitter<Event> };
+	private events: { [key: keyof Event]: Event };
+	private emitters: { [key: keyof Event]: EventEmitter<Event> } = {};
 
-	constructor(emitters: { [key: keyof Event]: EventEmitter<Event> }) {
+	constructor(events: { [key: keyof Event]: Event }) {
 		super();
-		this.events = emitters;
+		this.events = events;
 	}
 
-	private on<E extends keyof Event>(event: E, listener: Event[E]): void {
-		this.events[event].on(event, listener);
+	private getEventEmitter<E extends keyof Event>(
+		event: E,
+	): EventEmitter<Event> {
+		if (!Object.keys(this.events).includes(event.toString())) {
+			throw new Error(`Event (${event}) not registered yet`);
+		}
+		if (!Object.keys(this.emitters).includes(event.toString())) {
+			const type = this.events[event];
+			this.emitters[event] = new EventEmitter<typeof type>();
+		}
+		return this.emitters[event];
 	}
 
-	public EmitInit(data: InitializationData): void {
-		this.events[ProviderEventNames.providerInit].emit(
-			ProviderEventNames.providerInit,
+	public on<E extends keyof Event>(event: E, listener: Event[E]): void {
+		if (!this.events[event])
+			throw new Error(
+				`Event (${event}) emitter listener not registered yet`,
+			);
+		this.getEventEmitter(event).on(event, listener);
+	}
+
+	public emitInit(data: InitializationData): void {
+		this.getEventEmitter(ProviderEventNames.providerInitEvent).emit(
+			ProviderEventNames.providerInitEvent,
 			data,
 		);
 	}
 
-	public OnWalletInit(listener: (data: InitializationData) => void): void {
-		this.on(ProviderEventNames.providerInit, listener);
+	public emit<E extends keyof Event>(
+		event: E,
+		...args: Parameters<Event[E]>
+	): boolean {
+		return this.getEventEmitter(event).emit(event, ...args);
 	}
 
-	public OnWalletPaired(
-		listener: (data: HashConnectTypes.SavedPairingData) => void,
-	): void {
-		this.on(ProviderEventNames.providerPairingEvent, listener);
-	}
-
-	public OnWalletConnectionChanged(
-		listener: (state: HashConnectConnectionState) => void,
-	): void {
-		this.on(
-			ProviderEventNames.providerConnectionStatusChangeEvent,
-			listener,
-		);
-	}
-
-	public OnWalletExtensionFound(listener: () => void): void {
-		this.on(ProviderEventNames.providerFoundExtensionEvent, listener);
-	}
-
-	public OnWalletAcknowledgeMessageEvent(
-		listener: (state: HashConnectConnectionState) => void,
-	): void {
-		this.on(ProviderEventNames.providerAcknowledgeMessageEvent,listener);
+	public eventNames(): (keyof Event | string)[] {
+		return Object.keys(this.events);
 	}
 }

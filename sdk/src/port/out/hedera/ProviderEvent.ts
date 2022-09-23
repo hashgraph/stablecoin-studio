@@ -4,7 +4,7 @@ import Event from '../../../core/event.js';
 import { InitializationData } from './types.js';
 
 export const ProviderEventNames = {
-	providerInit: 'providerInit',
+	providerInitEvent: 'providerInitEvent',
 	providerFoundExtensionEvent: 'providerFoundExtensionEvent',
 	providerPairingEvent: 'providerPairingEvent',
 	providerConnectionStatusChangeEvent: 'providerConnectionStatusChangeEvent',
@@ -12,7 +12,7 @@ export const ProviderEventNames = {
 };
 
 interface ProviderEvent extends Event {
-	providerInit: (data: InitializationData) => void;
+	providerInitEvent: (data: InitializationData) => void;
 	providerFoundExtensionEvent: () => void;
 	providerPairingEvent: (data: HashConnectTypes.SavedPairingData) => void;
 	providerConnectionStatusChangeEvent: (

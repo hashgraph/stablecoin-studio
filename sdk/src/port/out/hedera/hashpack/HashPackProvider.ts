@@ -45,8 +45,8 @@ import {
 import { HashConnectProvider } from 'hashconnect/dist/cjs/provider/provider.js';
 import { HashConnectSigner } from 'hashconnect/dist/cjs/provider/signer';
 import Long from 'long';
-import EventEmitter from '../../../../core/eventEmitter.js';
 import ProviderEvent, { ProviderEventNames } from '../ProviderEvent.js';
+import EventService from '../../../../app/service/event/EventService.js';
 
 const logOpts = { newLine: true, clear: true };
 
@@ -64,15 +64,18 @@ export default class HashPackProvider implements IProvider {
 	private hashConnectConectionState: HashConnectConnectionState;
 	private pairingData: HashConnectTypes.SavedPairingData | null = null;
 
-	public emitter: EventEmitter<ProviderEvent> =
-		new EventEmitter<ProviderEvent>();
-	public events: ProviderEvent;
+	public eventService: EventService;
+	public static events: ProviderEvent;
 
 	public get initData(): InitializationData {
 		return this._initData;
 	}
 	public set initData(value: InitializationData) {
 		this._initData = value;
+	}
+
+	constructor(eventService: EventService) {
+		this.eventService = eventService;
 	}
 
 	public async init({
@@ -82,6 +85,7 @@ export default class HashPackProvider implements IProvider {
 		this.hc = new HashConnect(options?.appMetadata?.debugMode);
 
 		this.setUpHashConnectEvents();
+		console.log(this.hc);
 		this.network = network;
 		if (options && options?.appMetadata) {
 			this.initData = await this.hc.init(
@@ -90,7 +94,10 @@ export default class HashPackProvider implements IProvider {
 					'mainnet' | 'testnet' | 'previewnet'
 				>,
 			);
-			this.emitter.emit(ProviderEventNames.providerInit, this.initData);
+			this.eventService.emit(
+				ProviderEventNames.providerInitEvent,
+				this.initData,
+			);
 		} else {
 			throw new Error('No app metadata');
 		}
@@ -103,14 +110,17 @@ export default class HashPackProvider implements IProvider {
 		return this;
 	}
 
-	public setUpHashConnectEvents() {
+	public setUpHashConnectEvents(): void {
 		//This is fired when a extension is found
 		this.hc.foundExtensionEvent.on((data) => {
 			console.log('Found extension', data);
 			if (data) {
 				this.availableExtension = true;
-				this.emitter.emit(
-					ProviderEventNames.providerFoundExtensionEvent,
+				console.log(
+					'Emitted found',
+					this.eventService.emit(
+						ProviderEventNames.providerFoundExtensionEvent,
+					),
 				);
 			}
 		});
@@ -119,7 +129,7 @@ export default class HashPackProvider implements IProvider {
 		this.hc.pairingEvent.on((data) => {
 			this.pairingData = data.pairingData!;
 			console.log('Paired with wallet', data);
-			this.emitter.emit(
+			this.eventService.emit(
 				ProviderEventNames.providerPairingEvent,
 				this.pairingData,
 			);
@@ -130,7 +140,7 @@ export default class HashPackProvider implements IProvider {
 		this.hc.connectionStatusChangeEvent.on((state) => {
 			this.hashConnectConectionState = state;
 			console.log('hashconnect state change event', state);
-			this.emitter.emit(
+			this.eventService.emit(
 				ProviderEventNames.providerConnectionStatusChangeEvent,
 				this.hashConnectConectionState,
 			);
@@ -139,7 +149,7 @@ export default class HashPackProvider implements IProvider {
 
 		this.hc.acknowledgeMessageEvent.on((state) => {
 			console.log('acknowledgeMessageEvent event', state);
-			this.emitter.emit(
+			this.eventService.emit(
 				ProviderEventNames.providerAcknowledgeMessageEvent,
 				state,
 			);
@@ -530,17 +540,20 @@ export default class HashPackProvider implements IProvider {
 	getAvailabilityExtension(): boolean {
 		return this.availableExtension;
 	}
+
 	gethashConnectConectionState(): HashConnectConnectionState {
 		return this.hashConnectConectionState;
 	}
+
 	disconectHaspack(): void {
 		if (this.pairingData?.topic) this.hc.disconnect(this.pairingData.topic);
 		this.pairingData = null;
-		this.emitter.emit(
+		this.eventService.emit(
 			ProviderEventNames.providerConnectionStatusChangeEvent,
 			HashConnectConnectionState.Disconnected,
 		);
 	}
+	
 	getInitData(): HashConnectTypes.InitilizationData {
 		return this.initData;
 	}

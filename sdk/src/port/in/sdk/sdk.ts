@@ -45,7 +45,10 @@ import ContractId from '../../../domain/context/contract/ContractId.js';
 import { TokenType } from '../../../domain/context/stablecoin/TokenType.js';
 import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.js';
 import { IAllowanceRequest } from './request/IRequestContracts.js';
-import { HashConnectConnectionState, HashConnectTypes } from 'hashconnect/dist/cjs/types/hashconnect.js';
+import {
+	HashConnectConnectionState,
+	HashConnectTypes,
+} from 'hashconnect/dist/cjs/types/hashconnect.js';
 import { AppMetadata } from '../../out/hedera/hashpack/types/types.js';
 import { InitializationData } from '../../out/hedera/types.js';
 import { ProviderEventNames } from '../../out/hedera/ProviderEvent.js';
@@ -122,13 +125,23 @@ export class SDK {
 	// Initializes the SDK,
 	// TODO should probably be decoupled from the dependency injection
 	public async init(options?: SDKInitOptions): Promise<SDK> {
-		this.networkAdapter = new NetworkAdapter(
+		const providerEvents = this.getEventNames();
+		this.eventService = new EventService({ ...providerEvents });
+		if (options && options?.onInit) {
+			this.eventService.on(
+				ProviderEventNames.providerInitEvent,
+				options.onInit,
+			);
+		}
+		console.log(options);
+		this.networkAdapter = await new NetworkAdapter(
+			this.eventService,
 			this.config.mode,
 			this.config.network,
 			{
 				appMetadata: this.config.options?.appMetadata,
 			},
-		);
+		).init();
 		this.web3 = new Web3();
 		this.contractService = new ContractsService(this.networkAdapter);
 		this.stableCoinRepository = new StableCoinRepository(
@@ -137,18 +150,15 @@ export class SDK {
 		this.stableCoinService = new StableCoinService(
 			this.stableCoinRepository,
 		);
+		return this;
+	}
 
-		const providerEvents = Object.keys(ProviderEventNames).reduce(
-			(p, c) => ({ ...p, [c]: this.networkAdapter.provider.emitter }),
+	// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+	private getEventNames() {
+		return Object.keys(ProviderEventNames).reduce(
+			(p, c) => ({ ...p, [c]: ProviderEventNames }),
 			{},
 		);
-
-		this.eventService = new EventService({ ...providerEvents });
-		if (options && options?.onInit) {
-			this.eventService.OnWalletInit(options.onInit);
-		}
-		await this.networkAdapter.init();
-		return this;
 	}
 
 	/**
@@ -513,28 +523,37 @@ export class SDK {
 	}
 
 	public onInit(listener: (data: InitializationData) => void): void {
-		this.eventService.OnWalletInit(listener);
+		this.eventService.on(ProviderEventNames.providerInitEvent, listener);
 	}
 
 	public onWalletExtensionFound(listener: () => void): void {
-		this.eventService.OnWalletExtensionFound(listener);
+		this.eventService.on(
+			ProviderEventNames.providerFoundExtensionEvent,
+			listener,
+		);
 	}
 
 	public onWalletConnectionChanged(
 		listener: (state: HashConnectConnectionState) => void,
 	): void {
-		this.eventService.OnWalletConnectionChanged(listener);
+		this.eventService.on(
+			ProviderEventNames.providerConnectionStatusChangeEvent,
+			listener,
+		);
 	}
 
-	public OnWalletPaired(
+	public onWalletPaired(
 		listener: (data: HashConnectTypes.SavedPairingData) => void,
 	): void {
-		this.eventService.OnWalletPaired(listener);
+		this.eventService.on(ProviderEventNames.providerPairingEvent, listener);
 	}
 
-	public OnWalletAcknowledgeMessageEvent(
+	public onWalletAcknowledgeMessageEvent(
 		listener: (state: HashConnectConnectionState) => void,
 	): void {
-		this.eventService.OnWalletAcknowledgeMessageEvent(listener);
+		this.eventService.on(
+			ProviderEventNames.providerAcknowledgeMessageEvent,
+			listener,
+		);
 	}
 }
