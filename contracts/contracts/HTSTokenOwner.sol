@@ -20,9 +20,6 @@ contract HTSTokenOwner is IHTSTokenOwner, HederaTokenService {
         _;
     }
 
-    constructor() {
-    }
-
     /**
      * @dev Sets the HederaERC20 contract address
      *
@@ -117,7 +114,8 @@ contract HTSTokenOwner is IHTSTokenOwner, HederaTokenService {
         onlyHederaERC20() 
         returns (bool) 
     {
-        int256 transferResponse = HederaTokenService.transferToken(tokenAddress, address(this), to, int64(int256(amount)));
+        int256 transferResponse = HederaTokenService.transferToken(tokenAddress, address(this), 
+                                    to, int64(int256(amount)));
         return _checkResponse(transferResponse);
     }
 

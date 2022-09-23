@@ -13,12 +13,13 @@ import "./extensions/Wipeable.sol";
 import "./extensions/Rescatable.sol";
 
 
-contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20Upgradeable, Mintable, Burnable, Wipeable, Rescatable{
+contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20Upgradeable, 
+                       Mintable, Burnable, Wipeable, Rescatable{
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     function initialize () 
-        payable 
         external 
+        payable 
         initializer 
     {
         __AccessControl_init();       

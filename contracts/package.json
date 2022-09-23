@@ -17,6 +17,7 @@
     "build:watch": "npx tsc -w -p tsconfig.json",
     "build:release": "npm run clean && tsc -p tsconfig.release.json",
     "preinstall": "npm run build",
+    "lint": "npx solhint 'contracts/**/*.sol'",
     "doc": "npx hardhat dodoc"
   },
   "author": "",
@@ -43,5 +44,17 @@
     "typechain": "^8.1.0",
 	  "ts-node": "^10.9.1",
     "typescript": "latest"
+  },
+  "dependencies": {
+    "eslint": "^8.16.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-babel": "^5.3.1",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-mocha": "^10.0.4",
+    "eslint-plugin-n": "^15.2.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^6.0.0",
+    "ethlint": "^1.2.5",
+    "solhint": "^3.3.7"
   }
 }
