@@ -1,9 +1,18 @@
 import { Button, Flex, Image, Link, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import HEDERA_LOGO from '../assets/svg/hedera-hbar-logo.svg';
+import SDKService from '../services/SDKService';
 
-const ModalHashpack = () => {
+interface ModalHashpackProps {
+	type: 'no-installed' | 'no-connected';
+}
+
+const ModalHashpack = ({ type }: ModalHashpackProps) => {
 	const { t } = useTranslation('global');
+
+	const handleConnectWallet = async () => {
+		SDKService.connectWallet();
+	};
 
 	return (
 		<Flex
@@ -32,7 +41,7 @@ const ModalHashpack = () => {
 				color='brand.black'
 				mb='8px'
 			>
-				{t('hashpack-no-installed.title')}
+				{t(`hashpack-${type}.title`)}
 			</Text>
 			<Text
 				data-testid='modal-hashpack-description'
@@ -43,18 +52,24 @@ const ModalHashpack = () => {
 				color='brand.gray'
 				mb='24px'
 			>
-				{t('hashpack-no-installed.description')}
+				{t(`hashpack-${type}.description`)}
 			</Text>
-			<Link
-				data-testid='modal-hashpack-link'
-				href='https://www.hashpack.app/download'
-				isExternal
-				_hover={{ textDecoration: 'none' }}
-			>
-				<Button data-testid='modal-hashpack-button' variant='primary'>
-					{t('hashpack-no-installed.button')}
+			{type === 'no-installed' ? (
+				<Link
+					data-testid='modal-hashpack-link'
+					href='https://www.hashpack.app/download'
+					isExternal
+					_hover={{ textDecoration: 'none' }}
+				>
+					<Button data-testid='modal-hashpack-button' variant='primary'>
+						{t('hashpack-no-installed.button')}
+					</Button>
+				</Link>
+			) : (
+				<Button data-testid='modal-hashpack-button' variant='primary' onClick={handleConnectWallet}>
+					{t('hashpack-no-connected.button')}
 				</Button>
-			</Link>
+			)}
 		</Flex>
 	);
 };

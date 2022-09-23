@@ -11,19 +11,16 @@ const Roles = () => {
 			icon: 'PlusCircle',
 			route: NamedRoutes.GiveRole,
 			title: t('give'),
-			variant: 'disabled',
 		},
 		{
 			icon: 'MinusCircle',
 			route: NamedRoutes.RevokeRole,
 			title: t('revoke'),
-			variant: 'disabled',
 		},
 		{
 			icon: 'PencilSimple',
 			route: NamedRoutes.EditRole,
 			title: t('edit'),
-			variant: 'disabled',
 		},
 	];
 

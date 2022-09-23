@@ -11,7 +11,8 @@ import {
 	Button,
 	VStack,
 } from '@chakra-ui/react';
-import { MouseEvent, ReactNode, useState } from 'react';
+import type { MouseEvent, ReactNode } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export interface Step {

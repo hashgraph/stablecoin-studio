@@ -5,8 +5,9 @@ import DetailsReview from '../../../components/DetailsReview';
 import InputController from '../../../components/Form/InputController';
 import InputNumberController from '../../../components/Form/InputNumberController';
 import { validateAccount } from '../../../utils/validationsHelper';
-import OperationModals, { OperationModalActionProps } from '../OperationModals';
 import OperationLayout from './../OperationLayout';
+import ModalsHandler from '../../../components/ModalsHandler';
+import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
 
 const CashInOperation = () => {
 	const {
@@ -19,10 +20,10 @@ const CashInOperation = () => {
 		mode: 'onChange',
 	});
 
-	const { t } = useTranslation(['cashIn', 'global']);
+	const { t } = useTranslation(['cashIn', 'global', 'operations']);
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const handleCashIn: OperationModalActionProps['onConfirm'] = ({ onSuccess, onError }) => {
+	const handleCashIn: ModalsHandlerActionsProps['onConfirm'] = ({ onSuccess, onError }) => {
 		// TODO: integrate with sdk to do cashin
 		onSuccess();
 	};
@@ -115,7 +116,9 @@ const CashInOperation = () => {
 				onConfirm={onOpenModalAction}
 				confirmBtnProps={{ isDisabled: !formState.isValid }}
 			/>
-			<OperationModals
+			<ModalsHandler
+				errorNotificationTitle={t('operations:modalErrorTitle')}
+				errorNotificationDescription={t('operations:modalErrorDesc')}
 				modalActionProps={{
 					isOpen: isOpenModalAction,
 					onClose: onCloseModalAction,
@@ -139,6 +142,8 @@ const CashInOperation = () => {
 						]}
 					/>
 				}
+				successNotificationTitle={t('operations:modalSuccessTitle')}
+				successNotificationDescription={t('operations:modalSuccessDesc')}
 			/>
 		</>
 	);

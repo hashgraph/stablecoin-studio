@@ -1,13 +1,14 @@
-import { Box, Divider, Flex, TextProps as ChakraTextProps, Text } from '@chakra-ui/react';
+import type { TextProps as ChakraTextProps } from '@chakra-ui/react';
+import { Box, Divider, Flex, Text } from '@chakra-ui/react';
 
-interface Detail {
+export interface Detail {
 	label: string;
 	labelInBold?: boolean;
 	value: string;
 	valueInBold?: boolean;
 }
 
-interface DetailsReviewProps {
+export interface DetailsReviewProps {
 	details: Detail[];
 	divider?: boolean;
 	title?: string;

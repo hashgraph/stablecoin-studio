@@ -15,5 +15,5 @@ jest.mock('react-i18next', (): any => ({
 	}),
 	Trans: ({ children }: { children: any }) => children,
 	initReactI18next: { type: '3rdParty', init: jest.fn() },
-	...jest.requireActual('react-i18next')
+	...jest.requireActual('react-i18next'),
 }));

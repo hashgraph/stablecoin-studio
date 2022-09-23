@@ -12,6 +12,24 @@ const Operations = () => {
 			route: NamedRoutes.CashIn,
 			title: t('cashInOperation'),
 		},
+		{
+			icon: 'MinusCircle',
+			route: NamedRoutes.Wipe,
+			title: t('wipeOperation'),
+			variant: 'disabled',
+		},
+		{
+			icon: 'ArrowsDownUp',
+			route: NamedRoutes.Rescue,
+			title: t('rescueOperation'),
+			variant: 'disabled',
+		},
+		{
+			icon: 'ArrowUp',
+			route: NamedRoutes.CashOut,
+			title: t('cashOutOperation'),
+			variant: 'disabled',
+		},
 	];
 
 	return (

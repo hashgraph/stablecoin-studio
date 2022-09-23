@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { hethers } from '@hashgraph/hethers';
 import PrivateKey from '../../../../domain/context/account/PrivateKey.js';
 import {
@@ -32,15 +33,17 @@ import {
 	ICallContractRequest,
 	ICallContractWithAccountRequest,
 	ICreateTokenResponse,
+	InitializationData,
 } from '../types.js';
 import HederaError from '../error/HederaError.js';
 import PublicKey from '../../../../domain/context/account/PublicKey.js';
 import AccountId from '../../../../domain/context/account/AccountId.js';
-import { json } from 'stream/consumers';
 import { TransactionProvider } from '../transaction/TransactionProvider.js';
 import { HTSSigner } from './HTSSigner.js';
 import { HTSResponse, TransactionType } from '../sign/ISigner.js';
 import { TransactionResposeHandler } from '../transaction/TransactionResponseHandler.js';
+import { HashConnectConnectionState } from 'hashconnect/dist/cjs/types/hashconnect.js';
+import HashPackProvider from '../hashpack/HashPackProvider.js';
 
 type DefaultHederaProvider = hethers.providers.DefaultHederaProvider;
 
@@ -52,6 +55,8 @@ export default class HTSProvider implements IProvider {
 	private htsSigner: HTSSigner;
 	private transactionResposeHandler: TransactionResposeHandler =
 		new TransactionResposeHandler();
+
+	public initData: InitializationData;
 
 	/**
 	 * init
@@ -230,6 +235,12 @@ export default class HTSProvider implements IProvider {
 			plainAccount.privateKey,
 			this.getPublicKey(privateKey),
 			client,
+			stableCoin.adminKey,
+			stableCoin.freezeKey,
+			stableCoin.kycKey,
+			stableCoin.wipeKey,
+			stableCoin.pauseKey,
+			stableCoin.supplyKey,
 		);
 		log('Setting up contract... please wait.', logOpts);
 		await this.callContract('setTokenAddress', {
@@ -272,9 +283,11 @@ export default class HTSProvider implements IProvider {
 			memo: hederaToken.memo,
 			freezeDefault: hederaToken.freezeDefault,
 			treasury: new AccountId(hederaToken.treasuryAccountId.toString()),
-			adminKey: this.fromPublicKey(hederaToken.adminKey),
-			freezeKey: this.fromPublicKey(hederaToken.freezeKey),
-			wipeKey: this.fromPublicKey(hederaToken.wipeKey),
+			adminKey: hederaToken.adminKey,
+			freezeKey: hederaToken.freezeKey,
+			kycKey: hederaToken.kycKey,
+			wipeKey: hederaToken.wipeKey,
+			pauseKey: hederaToken.pauseKey,
 			supplyKey: hederaToken.supplyKey,
 			id: hederaToken.tokenId,
 			tokenType: stableCoin.tokenType,
@@ -347,6 +360,12 @@ export default class HTSProvider implements IProvider {
 		privateKey: string,
 		publicKey: string,
 		client: Client,
+		adminKey?: ContractId | PublicKey,
+		freezeKey?: ContractId | PublicKey,
+		kycKey?: ContractId | PublicKey,
+		wipeKey?: ContractId | PublicKey,
+		pauseKey?: ContractId | PublicKey,
+		supplyKey?: ContractId | PublicKey,
 	): Promise<ICreateTokenResponse> {
 		const values: ICreateTokenResponse = {
 			name,
@@ -359,11 +378,13 @@ export default class HTSProvider implements IProvider {
 			memo,
 			freezeDefault,
 			treasuryAccountId: HAccountId.fromString(contractId.toString()),
-			adminKey: HPublicKey.fromString(publicKey),
-			freezeKey: HPublicKey.fromString(publicKey),
-			wipeKey: HPublicKey.fromString(publicKey),
-			supplyKey: DelegateContractId.fromString(contractId),
-			tokenId: '',
+			adminKey: this.getKeyFromOption(adminKey, contractId, publicKey),
+			freezeKey: this.getKeyFromOption(freezeKey, contractId, publicKey),
+			kycKey: this.getKeyFromOption(kycKey, contractId, publicKey),
+			wipeKey: this.getKeyFromOption(wipeKey, contractId, publicKey),
+			pauseKey: this.getKeyFromOption(pauseKey, contractId, publicKey),
+			supplyKey: this.getKeyFromOption(supplyKey, contractId, publicKey),
+			tokenId: ''
 		};
 
 		this.htsSigner = new HTSSigner(client);
@@ -393,7 +414,41 @@ export default class HTSProvider implements IProvider {
 		return values;
 	}
 
+	private getKeyFromOption(option: string, contractId: string, publicKey: string): HPublicKey | DelegateContractId | undefined {
+		const hexRegEx = /^[0-9A-F]{63,}$/gi;
+		switch(true) {
+			case option === 'ADMIN_KEY': 
+				return HPublicKey.fromString(publicKey);
+
+			case hexRegEx.test(option): 
+				return HPublicKey.fromString(option);
+
+			case option === 'NONE': 
+				return undefined;
+
+			case option === 'CONTRACT': 
+			default:
+				return DelegateContractId.fromString(contractId);
+		}
+	}
+
 	private fromPublicKey(key: HPublicKey): PublicKey {
 		return new PublicKey({ key: key._key, type: key._type });
+	}
+
+	getAvailabilityExtension(): boolean {
+		return false;
+	}
+	gethashConnectConectionState(): HashConnectConnectionState {
+		return HashConnectConnectionState.Disconnected;
+	}
+	disconectHaspack(): void {
+		throw new Error('not haspack');
+	}
+	connectWallet(): Promise<HashPackProvider> {
+		throw new Error('not haspack');
+	}
+	getInitData(): InitializationData {
+		throw new Error('not haspack');
 	}
 }

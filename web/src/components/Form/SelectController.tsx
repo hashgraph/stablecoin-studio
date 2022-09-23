@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React from 'react';
 import {
 	FormControl,
 	FormErrorMessage,
@@ -11,9 +11,9 @@ import {
 	type SystemStyleObject,
 	Box,
 } from '@chakra-ui/react';
-import type { ChangeEvent } from 'react';
+import type { ChangeEvent, ReactNode } from 'react';
 import { Controller } from 'react-hook-form';
-import { Props as ReactSelectProps } from 'react-select';
+import type { Props as ReactSelectProps } from 'react-select';
 import type { Control, UseControllerProps } from 'react-hook-form';
 
 import {
@@ -23,7 +23,7 @@ import {
 } from 'chakra-react-select';
 import Icon from '../Icon';
 import { merge as _merge } from 'lodash';
-import { Variant } from 'chakra-react-select/dist/types/types';
+import type { Variant } from 'chakra-react-select/dist/types/types';
 
 export interface SelectOption {
 	value: string | number;

@@ -1,11 +1,10 @@
-import { ISigner, TransactionType } from "../sign/ISigner";
-import {
-    Transaction,Signer,Wallet,TransactionResponse,Client
+import { ISigner} from "../sign/ISigner";
+import { Transaction,Signer,TransactionResponse,Client
 } from '@hashgraph/sdk';
 
-export class HashConnectSigner extends ISigner{
+export class HashPackSigner extends ISigner{
     
-    constructor (client:Client) {
+    constructor (client:Client|undefined) {
         super(client);
     };
 

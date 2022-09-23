@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations */
 import {
   configurationService,
   language,
@@ -9,7 +10,8 @@ import fs from 'fs-extra';
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 import { IConsensusNodeConfig } from '../../../domain/configuration/interfaces/IConsensusNodeConfig.js';
 import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
-const colors = require('colors');
+import { SDK } from 'hedera-stable-coin-sdk';
+import colors from 'colors';
 
 /**
  * Set Configuration Service
@@ -124,18 +126,31 @@ export default class SetConfigurationService extends Service {
   /**
    * Function to configure the account id
    */
-  public async configureAccounts(): Promise<IAccountConfig[]> {
+  public async configureAccounts(doCheck = false): Promise<IAccountConfig[]> {
     const configuration = configurationService.getConfiguration();
-    const accounts: IAccountConfig[] = configuration?.accounts || [];
+    let accounts: IAccountConfig[] = configuration?.accounts || [];
+    if (accounts.length === 1 && accounts[0].privateKey === '') {
+      accounts = [];
+    }
     let moreAccounts = true;
 
     while (moreAccounts) {
       utilsService.showMessage(`Account:`);
 
-      const accountId = await utilsService.defaultSingleAsk(
+      let accountId = await utilsService.defaultSingleAsk(
         language.getText('configuration.askAccountId'),
         '0.0.0',
       );
+      if (doCheck) {
+        const sdk: SDK = utilsService.getSDK();
+        while (!sdk.checkIsAddress(accountId)) {
+          console.log(language.getText('validations.wrongFormatAddress'));
+          accountId = await utilsService.defaultSingleAsk(
+            language.getText('configuration.askAccountId'),
+            '0.0.0',
+          );
+        }
+      }
       const accountFromPrivKey: IAccountConfig =
         await this.askForPrivateKeyOfAccount(accountId);
 
@@ -182,12 +197,16 @@ export default class SetConfigurationService extends Service {
   }
 
   public async manageAccountMenu(): Promise<void> {
+    const currentAccount = utilsService.getCurrentAccount();
     const manageOptions = language.getArray('wizard.manageAccountOptions');
     const defaultCfgData = configurationService.getConfiguration();
     const accounts = defaultCfgData.accounts;
     const accountAction = await utilsService.defaultMultipleAsk(
       language.getText('wizard.accountOptions'),
       manageOptions,
+      false,
+      currentAccount.network,
+      `${currentAccount.accountId} - ${currentAccount.alias}`,
     );
     switch (accountAction) {
       case manageOptions[0]:
@@ -201,7 +220,7 @@ export default class SetConfigurationService extends Service {
         });
         break;
       case manageOptions[2]:
-        await this.configureAccounts();
+        await this.configureAccounts(true);
         const operateWithNewAccount = await utilsService.defaultConfirmAsk(
           language.getText('configuration.askOperateWithNewAccount'),
           true,
@@ -213,24 +232,40 @@ export default class SetConfigurationService extends Service {
         }
         break;
       case manageOptions[3]:
-        const currentAcc = utilsService.getCurrentAccount();
         const options = accounts
           .filter(
             (acc) =>
-              acc.accountId !== currentAcc.accountId &&
-              acc.alias !== currentAcc.alias,
+              acc.accountId !== currentAccount.accountId ||
+              acc.alias !== currentAccount.alias,
           )
           .map(
             (acc) =>
               `${acc.accountId} - ${acc.alias}` +
               colors.magenta(' (' + acc.network + ')'),
           );
-        const account = await utilsService.defaultMultipleAsk(
+        const optionsWithoutColors = accounts
+          .filter(
+            (acc) =>
+              acc.accountId !== currentAccount.accountId ||
+              acc.alias !== currentAccount.alias,
+          )
+          .map(
+            (acc) =>
+              `${acc.accountId} - ${acc.alias}` + ' (' + acc.network + ')',
+          );
+        let account = await utilsService.defaultMultipleAsk(
           language.getText('wizard.accountDelete'),
           options,
+          true,
         );
+        if (account === language.getText('wizard.backOption')) {
+          await this.manageAccountMenu();
+        }
+        account = optionsWithoutColors[options.indexOf(account)];
+        const accId = account.split(' - ')[0];
+        const accAlias = account.split(' - ')[1].split(' ')[0];
         defaultCfgData.accounts = accounts.filter(
-          (acc) => acc.accountId !== account.split(' - ')[0],
+          (acc) => acc.accountId !== accId || acc.alias !== accAlias,
         );
         configurationService.setConfiguration(defaultCfgData);
         break;
@@ -247,9 +282,9 @@ export default class SetConfigurationService extends Service {
   public async askForPrivateKeyOfAccount(
     accountId: string,
   ): Promise<IAccountConfig> {
-    let privateKey = await utilsService.defaultSingleAsk(
-      language.getText('configuration.askPrivateKey') + ` (${accountId})`,
-      '96|64|66 characters',
+    let privateKey = await utilsService.defaultPasswordAsk(
+      language.getText('configuration.askPrivateKey') +
+        ` '96|64|66 characters' (${accountId})`,
     );
 
     const network = configurationService.getConfiguration().defaultNetwork;

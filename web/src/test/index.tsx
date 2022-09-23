@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type * as React from 'react';
 import { render } from '@testing-library/react';
 import type { RenderOptions } from '@testing-library/react';
 import { ChakraProvider } from '@chakra-ui/react';

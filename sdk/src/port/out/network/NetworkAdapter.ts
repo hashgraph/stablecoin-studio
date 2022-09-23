@@ -1,8 +1,9 @@
 import { HederaNetwork } from '../../../core/enum.js';
-import HashPackProvider from '../hedera/hashconnect/HashPackProvider.js';
+import HashPackProvider from '../hedera/hashpack/HashPackProvider.js';
 import HTSProvider from '../hedera/HTS/HTSProvider.js';
 import { IProvider, IniConfigOptions } from '../hedera/Provider.js';
 import { AppMetadata, NetworkMode } from '../../in/sdk/sdk.js';
+import { InitializationData } from '../hedera/types.js';
 
 type NetworkClientOptions = HederaClientOptions;
 
@@ -63,9 +64,7 @@ export default class NetworkAdapter {
 		return new HashPackProvider().init({ network, options });
 	}
 
-	private getHTSProvider(
-		network: HederaNetwork,
-	): Promise<HTSProvider> {
+	private getHTSProvider(network: HederaNetwork): Promise<HTSProvider> {
 		return new HTSProvider().init({ network });
 	}
 }

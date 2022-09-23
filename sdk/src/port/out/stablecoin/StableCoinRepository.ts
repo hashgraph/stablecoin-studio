@@ -15,7 +15,7 @@ import { AccountId as HAccountId } from '@hashgraph/sdk';
 import AccountId from '../../../domain/context/account/AccountId.js';
 import { IPublicKey } from './types/IPublicKey.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
-import { getHederaNetwork } from '../../../core/enum.js';
+import { getHederaNetwork, StableCoinRole } from '../../../core/enum.js';
 
 export default class StableCoinRepository implements IStableCoinRepository {
 	private networkAdapter: NetworkAdapter;
@@ -313,7 +313,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		const params: ICallContractWithAccountRequest = {
 			contractId: treasuryId,
 			parameters: amount ? parametersLimited : parametersUnlimited,
-			gas: 130000,
+			gas: 250000,
 			abi: HederaERC20__factory.abi,
 			account: {
 				accountId: accountId.id,
@@ -533,6 +533,93 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			contractId: treasuryId,
 			parameters,
 			gas: 60000,
+			abi: HederaERC20__factory.abi,
+			account: {
+				accountId: accountId.id,
+				privateKey: privateKey.key,
+			},
+		};
+
+		return await this.networkAdapter.provider.callContract(
+			'hasRole',
+			params,
+		);
+	}
+
+	public async grantRole(
+		treasuryId: string,
+		address: string,
+		privateKey: PrivateKey,
+		accountId: AccountId,
+		role: StableCoinRole,
+	): Promise<Uint8Array> {
+		const parameters = [
+			role,
+			HAccountId.fromString(address || '').toSolidityAddress(),
+		];
+
+		const params: ICallContractWithAccountRequest = {
+			contractId: treasuryId,
+			parameters,
+			gas: 400000,
+			abi: HederaERC20__factory.abi,
+			account: {
+				accountId: accountId.id,
+				privateKey: privateKey.key,
+			},
+		};
+
+		return await this.networkAdapter.provider.callContract(
+			'grantRole',
+			params,
+		);
+	}
+
+	public async revokeRole(
+		treasuryId: string,
+		address: string,
+		privateKey: PrivateKey,
+		accountId: AccountId,
+		role: StableCoinRole,
+	): Promise<Uint8Array> {
+		const parameters = [
+			role,
+			HAccountId.fromString(address || '').toSolidityAddress(),
+		];
+
+		const params: ICallContractWithAccountRequest = {
+			contractId: treasuryId,
+			parameters,
+			gas: 400000,
+			abi: HederaERC20__factory.abi,
+			account: {
+				accountId: accountId.id,
+				privateKey: privateKey.key,
+			},
+		};
+
+		return await this.networkAdapter.provider.callContract(
+			'revokeRole',
+			params,
+		);
+	}
+
+	public async hasRole(
+		treasuryId: string,
+		address: string,
+		privateKey: PrivateKey,
+		accountId: AccountId,
+		role: StableCoinRole,
+	): Promise<Uint8Array> {
+		const parameters = [
+			role,
+			HAccountId.fromString(address || '').toSolidityAddress(),
+		];
+
+		const params: ICallContractWithAccountRequest = {
+			contractId: treasuryId,
+			parameters,
+			gas: 400000,
 			abi: HederaERC20__factory.abi,
 			account: {
 				accountId: accountId.id,

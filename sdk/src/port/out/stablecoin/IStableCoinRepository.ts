@@ -1,3 +1,4 @@
+import { StableCoinRole } from '../../../core/enum.js';
 import AccountId from '../../../domain/context/account/AccountId.js';
 import PrivateKey from '../../../domain/context/account/PrivateKey.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
@@ -109,5 +110,26 @@ export default interface IStableCoinRepository {
 		privateKey: PrivateKey,
 		accountId: AccountId,
 		amount: number,
+	): Promise<Uint8Array>;
+	grantRole(
+		treasuryId: string,
+		address: string,
+		privateKey: PrivateKey,
+		accountId: AccountId,
+		role: StableCoinRole,
+	): Promise<Uint8Array>;
+	revokeRole(
+		treasuryId: string,
+		address: string,
+		privateKey: PrivateKey,
+		accountId: AccountId,
+		role: StableCoinRole,
+	): Promise<Uint8Array>;
+	hasRole(
+		treasuryId: string,
+		address: string,
+		privateKey: PrivateKey,
+		accountId: AccountId,
+		role: StableCoinRole,
 	): Promise<Uint8Array>;
 }

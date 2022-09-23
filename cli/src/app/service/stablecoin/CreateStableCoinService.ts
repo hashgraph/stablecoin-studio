@@ -136,7 +136,7 @@ export default class CreateStableCoinService extends Service {
     const optionalProps = await this.askForOptionalProps();
     let decimals = '6';
     let initialSupply = '';
-    let supplyType = false;
+    let supplyType = true;
     let totalSupply = undefined;
 
     if (optionalProps) {
@@ -179,6 +179,7 @@ export default class CreateStableCoinService extends Service {
         initialSupply: initialSupply === '' ? undefined : BigInt(initialSupply),
         supplyType: supplyType ? 'INFINITE' : 'FINITE',
         maxSupply: totalSupply ? BigInt(totalSupply) : totalSupply,
+        adminKey: 'ADMIN_KEY',
       };
       if (
         !(await utilsService.defaultConfirmAsk(
@@ -191,12 +192,12 @@ export default class CreateStableCoinService extends Service {
       return tokenToCreate;
     }
 
-    const { adminKey, supplyKey, KYCKey, freezeKey, wipeKey, pauseKey } =
+    const { adminKey, supplyKey, freezeKey, wipeKey, pauseKey } =
       await this.configureManagedFeatures();
 
     createdStableCoin.adminKey = adminKey;
     createdStableCoin.supplyKey = supplyKey;
-    createdStableCoin.KYCKey = KYCKey;
+    //createdStableCoin.KYCKey = KYCKey;
     createdStableCoin.freezeKey = freezeKey;
     createdStableCoin.wipeKey = wipeKey;
     createdStableCoin.pauseKey = pauseKey;
@@ -228,7 +229,7 @@ export default class CreateStableCoinService extends Service {
       supplyType: supplyType ? 'INFINITE' : 'FINITE',
       maxSupply: totalSupply ? BigInt(totalSupply) : totalSupply,
       freezeKey,
-      KYCKey,
+      //KYCKey,
       wipeKey,
       adminKey,
       supplyKey,
@@ -244,7 +245,7 @@ export default class CreateStableCoinService extends Service {
       supplyType: supplyType ? 'INFINITE' : 'FINITE',
       maxSupply: totalSupply ? BigInt(totalSupply) : totalSupply,
       freezeKey,
-      KYCKey,
+      //KYCKey,
       wipeKey,
       adminKey,
       supplyKey,
@@ -305,58 +306,73 @@ export default class CreateStableCoinService extends Service {
   }
 
   private async configureManagedFeatures(): Promise<IManagedFeatures> {
-    const adminKey = await this.checkOtherKey(
+    const adminKey = await this.checkAnswer(
       await utilsService.defaultMultipleAsk(
         language.getText('stablecoin.features.admin'),
-        language.getArray('wizard.featureOptions'),
+        language.getArray('wizard.adminFeatureOptions'),
       ),
     );
 
-    const KYCKey = await this.checkOtherKey(
+    /*const KYCKey = await this.checkAnswer(
       await utilsService.defaultMultipleAsk(
         language.getText('stablecoin.features.KYC'),
         language.getArray('wizard.featureOptions'),
       ),
-    );
+    );*/
 
-    const freezeKey = await this.checkOtherKey(
+    const freezeKey = await this.checkAnswer(
       await utilsService.defaultMultipleAsk(
         language.getText('stablecoin.features.freeze'),
         language.getArray('wizard.featureOptions'),
       ),
     );
 
-    const wipeKey = await this.checkOtherKey(
+    const wipeKey = await this.checkAnswer(
       await utilsService.defaultMultipleAsk(
         language.getText('stablecoin.features.wipe'),
         language.getArray('wizard.featureOptions'),
       ),
     );
 
-    const pauseKey = await this.checkOtherKey(
+    const pauseKey = await this.checkAnswer(
       await utilsService.defaultMultipleAsk(
         language.getText('stablecoin.features.pause'),
         language.getArray('wizard.featureOptions'),
       ),
     );
 
-    const supplyKey = await this.checkOtherKey(
+    const supplyKey = await this.checkAnswer(
       await utilsService.defaultMultipleAsk(
         language.getText('stablecoin.features.supply'),
         language.getArray('wizard.featureOptions'),
       ),
     );
 
-    return { adminKey, supplyKey, KYCKey, freezeKey, wipeKey, pauseKey };
+    return { adminKey, supplyKey, freezeKey, wipeKey, pauseKey };
   }
 
-  private async checkOtherKey(answer: string): Promise<string> {
-    if (answer === 'Other key') {
-      answer = await utilsService.defaultSingleAsk(
-        language.getText('stablecoin.features.key'),
-        '0.0.0',
-      );
+  private async checkAnswer(answer: string): Promise<string> {
+    const hexRegEx = /^[0-9A-F]{64,}$/gi;
+    switch (answer) {
+      case 'Other key': {
+        const key = await utilsService.defaultSingleAsk(
+          language.getText('stablecoin.features.publicKey'),
+          undefined,
+        );
+        return hexRegEx.test(key) ? key : await this.askNewKey(hexRegEx);
+      }
+      case 'The Smart Contract':
+        return 'CONTRACT';
+      default:
+        return answer.toUpperCase().replace(' ', '_');
     }
-    return answer;
+  }
+
+  private async askNewKey(regExp: RegExp): Promise<string> {
+    const newKey = await utilsService.defaultSingleAsk(
+      language.getText('stablecoin.features.keyError'),
+      undefined,
+    );
+    return regExp.test(newKey) ? newKey : await this.askNewKey(regExp);
   }
 }
