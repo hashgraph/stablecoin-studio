@@ -1,8 +1,5 @@
 /* eslint-disable no-case-declarations */
-import {
-  StableCoinDetail,
-  StableCoinList,
-} from '../../../domain/stablecoin/StableCoinList.js';
+import { StableCoinList } from '../../../domain/stablecoin/StableCoinList.js';
 import {
   language,
   utilsService,
@@ -11,7 +8,12 @@ import {
 } from '../../../index.js';
 import Service from '../Service.js';
 import DetailsStableCoinsService from './DetailsStableCoinService.js';
-import { PublicKey, SDK, StableCoinRole } from 'hedera-stable-coin-sdk';
+import {
+  PublicKey,
+  SDK,
+  StableCoin,
+  StableCoinRole,
+} from 'hedera-stable-coin-sdk';
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 import CashInStableCoinsService from './CashInStableCoinService.js';
 import CashOutStableCoinsService from './CashOutStableCoinService.js';
@@ -76,7 +78,7 @@ export default class OperationStableCoinService extends Service {
         // Get details to obtain treasury
         await new DetailsStableCoinsService()
           .getDetailsStableCoins(this.stableCoinId, false)
-          .then((response: StableCoinDetail) => {
+          .then((response: StableCoin) => {
             this.proxyContractId = response.memo;
           });
 
@@ -611,10 +613,7 @@ export default class OperationStableCoinService extends Service {
     await this.roleManagementFlow();
   }
 
-  private disableOptions(
-    options: string[],
-    details: StableCoinDetail,
-  ): string[] {
+  private disableOptions(options: string[], details: StableCoin): string[] {
     const sdk: SDK = utilsService.getSDK();
     const currentAccount = utilsService.getCurrentAccount();
     let result: string[] = options;
