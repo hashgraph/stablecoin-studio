@@ -19,6 +19,11 @@ export default interface IStableCoinRepository {
 		targetId: string,
 		tokenId: string,
 	): Promise<Uint8Array>;
+	getTokenOwnerBalance(
+		treasuryId: string,
+		privateKey: PrivateKey,
+		accountId: AccountId,
+	): Promise<Uint8Array>;
 	getNameToken(
 		treasuryId: string,
 		privateKey: PrivateKey,
@@ -36,7 +41,13 @@ export default interface IStableCoinRepository {
 		accountId: AccountId,
 		tokenId: string,
 		amount: number,
-	): Promise<boolean>;
+	): Promise<boolean>;	
+	cashOut(
+		treasuryId: string,
+		privateKey: PrivateKey,
+		accountId: AccountId,
+		amount: number,
+	): Promise<Uint8Array>;
 	associateToken(
 		treasuryId: string,
 		privateKey: PrivateKey,
