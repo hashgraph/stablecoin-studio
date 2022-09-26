@@ -19,7 +19,7 @@
     "axios": "^0.27.2",
     "chakra-react-select": "^4.1.4",
     "framer-motion": "^4.1.17",
-    "hedera-stable-coin-sdk": "file:../sdk",
+    "hedera-stable-coin-sdk": "file:../sdk/build/src",
     "moment": "^2.29.4",
     "named-urls": "^2.0.1",
     "react": "^18.2.0",

@@ -4,7 +4,7 @@ import { AccountId
 import { StableCoin } from '../../../../src/domain/context/stablecoin/StableCoin.js';
 import { TokenSupplyType } from '../../../../src/domain/context/stablecoin/TokenSupply.js';
 import { TokenType } from '../../../../src/domain/context/stablecoin/TokenType.js';
-import { ACCOUNTS, getSDK } from '../../../core.js';
+import { ACCOUNTS, getSDKAsync } from '../../../core.js';
 import { assert } from 'console';
 
 describe('🧪 [DOMAIN] StableCoin',  () => {
@@ -20,7 +20,7 @@ describe('🧪 [DOMAIN] StableCoin',  () => {
 			}
 		}
 
-		sdk = await getSDK(conf);
+		sdk = await getSDKAsync(conf);
 		const create:ICreateStableCoinRequest  = {
 				accountId: ACCOUNTS.testnet.accountId.id,
 				privateKey: ACCOUNTS.testnet.privateKey.key,
@@ -48,7 +48,7 @@ describe('🧪 [DOMAIN] StableCoin',  () => {
 			}
 		}
 
-		sdk = await getSDK(conf);
+		sdk = await getSDKAsync(conf);
 		const create:ICreateStableCoinRequest  = {
 				accountId: ACCOUNTS.testnet.accountId.id,
 				privateKey: ACCOUNTS.testnet.privateKey.key,

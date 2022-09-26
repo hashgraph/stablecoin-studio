@@ -1,3 +1,5 @@
+import { AccountId } from '@hashgraph/sdk';
+
 export enum HederaNetworkEnviroment {
 	MAIN = 'mainnet',
 	PREVIEW = 'previewnet',
@@ -13,11 +15,11 @@ export enum StableCoinRole {
 }
 export class HederaNetwork {
 	hederaNetworkEnviroment: HederaNetworkEnviroment;
-	nodes: unknown;
+	nodes: { [key: string]: string | AccountId } | undefined;
 	mirrorNodeUrl: unknown;
 	constructor(
 		hederaNetworkEnviroment: HederaNetworkEnviroment,
-		nodes?: unknown,
+		nodes?: { [key: string]: string | AccountId },
 		mirrorNodeUrl?: string,
 	) {
 		this.hederaNetworkEnviroment = hederaNetworkEnviroment;
@@ -27,7 +29,7 @@ export class HederaNetwork {
 }
 export interface HederaNetworkSpec {
 	name: string;
-	consensusNodes: unknown;
+	consensusNodes: { [key: string]: string | AccountId } | undefined;
 	mirrorNodeUrl: unknown;
 }
 export function getHederaNetwork(
@@ -35,7 +37,7 @@ export function getHederaNetwork(
 ): HederaNetworkSpec {
 	const enviroment: HederaNetworkEnviroment =
 		hederaNetwork?.hederaNetworkEnviroment;
-	const nodes: unknown = hederaNetwork?.nodes;
+	const nodes: { [key: string]: string | AccountId } | undefined = hederaNetwork?.nodes;
 	const mirrorNodeUrl: unknown = hederaNetwork?.mirrorNodeUrl;
 	switch (enviroment) {
 		case HederaNetworkEnviroment.MAIN:

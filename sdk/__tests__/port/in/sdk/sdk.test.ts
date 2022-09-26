@@ -1,14 +1,12 @@
-import { Key, PublicKey as HPublicKey } from '@hashgraph/sdk';
-import { proto } from '@hashgraph/proto';
 import PublicKey from '../../../../src/domain/context/account/PublicKey.js';
-import { ContractId, SDK } from '../../../../src/index.js';
-import { ACCOUNTS, getSDK } from '../../../core.js';
+import { SDK } from '../../../../src/index.js';
+import { ACCOUNTS, getSDKAsync } from '../../../core.js';
 
 describe('🧪 [PORT] SDK', () => {
 	let sdk: SDK;
 
 	beforeAll(async () => {
-		sdk = await getSDK();
+		sdk = await getSDKAsync();
 	});
 
 	it('Creates a Stable Coin with EOAccount', async () => {

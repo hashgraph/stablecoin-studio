@@ -1,18 +1,23 @@
-import { ISigner} from "../sign/ISigner";
-import { Transaction,Signer,TransactionResponse,Client
+import { ISigner } from '../sign/ISigner';
+import {
+	Transaction,
+	Signer,
+	TransactionResponse,
+	ContractCreateFlow,
+	ContractExecuteTransaction,
 } from '@hashgraph/sdk';
 
-export class HashPackSigner extends ISigner{
-    
-    constructor (client:Client|undefined) {
-        super(client);
-    };
+export class HashPackSigner implements ISigner {
 
-    async signAndSendTransaction ( transaction:Transaction, signer?:Signer):Promise<TransactionResponse>{
-        if (signer){
-            transaction.signWithSigner(signer);    
-            return transaction.executeWithSigner(signer);
-        }
-        throw new Error("Is necessary to have a Signer");
-    };
+	async signAndSendTransaction(
+		transaction: Transaction | ContractExecuteTransaction | ContractCreateFlow,
+		signer?: Signer,
+	): Promise<TransactionResponse> {
+		if (signer) {
+			console.log(transaction);
+			const trans = await transaction.executeWithSigner(signer);
+			return trans;
+		}
+		throw new Error('Its necessary to have a Signer');
+	}
 }
