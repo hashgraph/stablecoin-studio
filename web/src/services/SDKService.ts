@@ -23,12 +23,18 @@ interface CashInRequest {
 	targetId: string;
 	amount: number;
 }
+interface EventsSetter {
+	onInit: () => void,
+	onWalletExtensionFound: () => void,
+	onWalletPaired: () => void
+}
+
 export class SDKService {
 	private static instance: SDK | undefined;
 
 	constructor() {}
-	public static async getInstance() {
-		if (!SDKService.instance)
+	public static async getInstance(events?: EventsSetter) {
+		if (!SDKService.instance) {
 			SDKService.instance = new SDK({
 				network: new HederaNetwork(HederaNetworkEnviroment.TEST), // TODO: dynamic data
 				mode: NetworkMode.HASHPACK,
@@ -36,7 +42,15 @@ export class SDKService {
 					appMetadata,
 				},
 			});
-		await SDKService.instance.init();
+
+			const { onInit, onWalletExtensionFound, onWalletPaired } = events || {};
+			// @ts-ignore expect 0 arguments but got 1
+			await SDKService.instance.init({ onInit });
+			// @ts-ignore method does not exists on type SDK
+			SDKService.instance.onWalletExtensionFound(onWalletExtensionFound);
+			// @ts-ignore method does not exists on type SDK
+			SDKService.instance.onWalletPaired(onWalletPaired);
+		}
 
 		return SDKService.instance;
 	}
