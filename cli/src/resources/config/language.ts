@@ -44,10 +44,10 @@ export const english = {
     askToken: 'What is the id of the stable coin you want to operate with?',
     askDoSomething: 'What do you want to do?',
     askOptionalProps:
-      'Do you want to configure the initial supply, total supply, decimals, expiration time, admins keys or token memo?',
+      'Do you want to configure the initial supply, max supply, decimals, expiration time, admins keys or token memo?',
     askInitialSupply: 'What will be the initial supply?',
     askSupplyType: 'Do you want that the token supply will be infinite?',
-    askTotalSupply: 'What will be the total supply?',
+    askTotalSupply: 'What will be the max supply?',
     askExpirationTime: 'What will be the token expiration time?',
     askMemo: 'What will be the token Memo?',
     askFreezeAccount:
@@ -59,18 +59,21 @@ export const english = {
     features: {
       admin: 'What will be the Admin key?',
       supply: 'What will be the Supply key?',
+      keyError: 'The introduced key has wrong format. Please. Introduce it again.',
       KYC: 'What will be the KYC key?',
       freeze: 'What will be the Freeze key?',
       wipe: 'What will be the Wipe key?',
       pause: 'What will be the Pause key?',
       feeSchedule: 'What will be the Fee Schedule key?',
       key: 'Enter the key',
+      publicKey: 'Enter the public key'
     },
     askTreasuryAccountAddress: 'What will be the Treasury account id?',
     askOperateStableCoin: 'Do you want to operate with stable coin created?',
     created:
       'Stable Coin ${name} (${symbol}) with ${decimals} decimals have been created!',
     askCashInAmount: 'How many tokens do you want to cash in?',
+    askCashOutAmount: 'How many tokens do you want to cash out?',
     askWipeAmount: 'How many tokens do you want to wipe?',
     askRescueAmount: 'How many tokens do you want to rescue?',
     askTargetAccount: 'What is the target account?',
@@ -173,8 +176,9 @@ export const english = {
       'Revoke role',
       'Edit role',
       'Has role',
-      'Back',
+      'Go back',
     ],
+    adminFeatureOptions: ['Admin Key', 'None'],
     featureOptions: ['The Smart Contract', 'Admin Key', 'Other key', 'None'],
     supplierRoleType: ['Unlimited', 'Limited', 'Back'],
     editSupplierRoleOptions: [
@@ -228,7 +232,7 @@ export const english = {
       'Decrease supplier limit',
       'Reset supplier limit',
       'Check supplier limit',
-      'Back',
+      'Go back',
     ],
   },
 };

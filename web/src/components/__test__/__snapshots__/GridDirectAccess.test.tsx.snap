@@ -9,7 +9,7 @@ exports[`<GridDirectAccess /> should render correctly 1`] = `
       class="css-180e663"
     >
       <button
-        class="css-yidqqh"
+        class="css-1g500l7"
         data-testid="direct-access-giveRole"
       >
         <div
@@ -75,7 +75,7 @@ exports[`<GridDirectAccess /> should render correctly 1`] = `
       class="css-180e663"
     >
       <button
-        class="css-yidqqh"
+        class="css-1g500l7"
         data-testid="direct-access-revokeRole"
       >
         <div

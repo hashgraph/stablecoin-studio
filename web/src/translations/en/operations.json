@@ -8,5 +8,16 @@
     "modalSuccessTitle": "Operation successfully completed",
     "modalSuccessDesc": "You can follow the order in the list of operations.",
     "modalErrorTitle": "Error in the operation",
-    "modalErrorDesc": "Operation failed, please try again later."
+    "modalErrorDesc": "Operation failed, please try again later.",
+    "details": {
+        "title": "Stable coin details",
+        "basicTitle": "Basic details",
+        "optionalTitle": "Optional details",
+        "name": "Name",
+        "symbol": "Symbol",
+        "decimals": "Decimals",
+        "initialSupply": "Initial supply",
+        "totalSupply": "Total supply",
+        "supplyType": "Supply type (infinite or finite)"
+    }
 }

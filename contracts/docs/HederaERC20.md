@@ -831,6 +831,23 @@ function symbol() external view returns (string)
 |---|---|---|
 | _0 | string | string The the symbol of the token |
 
+### tokenOwnerBalance
+
+```solidity
+function tokenOwnerBalance() external view returns (uint256)
+```
+
+
+
+*Returns the number tokens that the token owner contract has*
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | uint256 The number number tokens that the token owner contract has |
+
 ### totalSupply
 
 ```solidity

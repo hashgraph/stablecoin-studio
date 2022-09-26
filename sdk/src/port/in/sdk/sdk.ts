@@ -16,6 +16,7 @@ import IWipeStableCoinServiceRequestModel from '../../../app/service/stablecoin/
 import ICreateStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/ICreateStableCoinServiceRequestModel.js';
 import { IListStableCoinServiceRequestModel } from '../../../app/service/stablecoin/model/IListStableCoinServiceRequestModel.js';
 import ICashInStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/ICashInStableCoinServiceRequestModel.js';
+import ICashOutStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/ICashOutStableCoinServiceRequestModel.js';
 import IGetNameOfStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IGetNameOfStableCoinServiceRequestModel.js';
 import IGetBalanceOfStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IGetBalanceOfStableCoinServiceRequestModel.js';
 import IGetStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IGetStableCoinServiceRequestModel.js';
@@ -28,6 +29,7 @@ import IGetBasicRequestModel from '../../../app/service/stablecoin/model/IGetBas
 /* Public requests */
 import { IAssociateStableCoinRequest } from './request/IAssociateStableCoinRequest.js';
 import { ICashInStableCoinRequest } from './request/ICashInStableCoinRequest.js';
+import { ICashOutStableCoinRequest } from './request/ICashOutStableCoinRequest.js';
 import { ICreateStableCoinRequest } from './request/ICreateStableCoinRequest.js';
 import { IGetBalanceStableCoinRequest } from './request/IGetBalanceStableCoinRequest.js';
 import { IGetListStableCoinRequest } from './request/IGetListStableCoinRequest.js';
@@ -48,10 +50,15 @@ import { IAllowanceRequest } from './request/IRequestContracts.js';
 import { HashConnectConnectionState } from 'hashconnect/dist/cjs/types/hashconnect.js';
 import HashPackProvider from '../../out/hedera/hashpack/HashPackProvider.js';
 import { AppMetadata } from '../../out/hedera/hashpack/types/types.js';
+import {
+	InitializationData,
+	SavedPairingData,
+} from '../../out/hedera/types.js';
 
 export {
 	IAssociateStableCoinRequest,
 	ICashInStableCoinRequest,
+	ICashOutStableCoinRequest,
 	ICreateStableCoinRequest,
 	IGetBalanceStableCoinRequest,
 	IGetListStableCoinRequest,
@@ -78,6 +85,8 @@ export {
 	HederaNetworkEnviroment,
 	getHederaNetwork,
 	StableCoinRole,
+	InitializationData,
+	SavedPairingData,
 };
 
 export interface ConfigurationOptions {
@@ -236,6 +245,25 @@ export class SDK {
 		}
 	}
 
+	/**
+	 * cashOut
+	 */
+	public cashOut(
+		request: ICashOutStableCoinRequest,
+	): Promise<Uint8Array> | null {
+		try {
+			const req: ICashOutStableCoinServiceRequestModel = {
+				...request,
+				accountId: new AccountId(request.accountId),
+				privateKey: new PrivateKey(request.privateKey),
+			};
+			return this.stableCoinService.cashOut(req);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+	
 	/**
 	 * associateToken
 	 */
@@ -472,18 +500,23 @@ export class SDK {
 
 		return this.networkAdapter.provider.getAvailabilityExtension();
 	}
-  
+
 	gethashConnectConectionStatus(): HashConnectConnectionState {
 		console.log('=====getAvailabilityExtension=====');
 		return this.networkAdapter.provider.gethashConnectConectionState();
 	}
-  
+
+	getInitData(): InitializationData {
+		console.log('=====getInitData=====');
+		return this.networkAdapter.provider.getInitData();
+	}
+
 	disconectHaspack(): void {
 		console.log('=====disconect Haspack=====');
 		return this.networkAdapter.provider.disconectHaspack();
 	}
 
-	connectWallet():Promise<HashPackProvider>{
+	connectWallet(): Promise<HashPackProvider> {
 		console.log('=====connectWallet Haspack=====');
 		return this.networkAdapter.provider.connectWallet();
 	}

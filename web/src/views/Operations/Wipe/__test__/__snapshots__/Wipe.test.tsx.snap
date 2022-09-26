@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`<CashInOperation /> should render correctly 1`] = `
+exports[`<WipeOperation /> should render correctly 1`] = `
 <DocumentFragment>
   <div
     class="chakra-stack css-16oka5y"
@@ -28,7 +28,7 @@ exports[`<CashInOperation /> should render correctly 1`] = `
               class="chakra-heading css-17ipgvs"
               data-testid="title"
             >
-              Cash in operation
+              Wipe operation
             </h2>
             <p
               class="chakra-text css-1lyqlf8"
@@ -104,7 +104,7 @@ exports[`<CashInOperation /> should render correctly 1`] = `
                       <p
                         class="chakra-text css-mgupmj"
                       >
-                        What account will receive the tokens?
+                        From what account?
                       </p>
                       <p
                         class="chakra-text css-ftb7fv"
