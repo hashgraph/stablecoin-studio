@@ -1,0 +1,15 @@
+{
+    "title": "Wipe operation",
+    "operationTitle": "Operation details",
+    "amountLabel": "How much tokens?",
+    "amountPlaceholder": "Introduce amount",
+    "fromAccountLabel": "From what account?",
+    "fromAccountPlaceholder": "Introduce account",
+    "modalAction": {
+        "subtitle": "Operation details review",
+        "fromAccount": "Account to wipe from",
+        "amount": "Amount",
+        "accept": "Make wipe"
+    },
+    "modalSuccessDesc": "You have wiped {{amount}} tokens from '{{account}}"
+}

@@ -5,17 +5,7 @@
     "amountPlaceholder": "Introduce amount",
     "destinationAccountLabel": "What account will receive the tokens?",
     "destinationAccountPlaceholder": "Introduce account",
-    "details": {
-        "title": "Stable coin details",
-        "basicTitle": "Basic details",
-        "optionalTitle": "Optional details",
-        "name": "Name",
-        "symbol": "Symbol",
-        "decimals": "Decimals",
-        "initialSupply": "Initial supply",
-        "totalSupply": "Total supply",
-        "supplyType": "Supply type (infinite or finite)"
-    },
+    "modalSuccessDesc": "The cash in operation finished successfully.",
     "modalAction": {
         "subtitle": "Operation details review",
         "destinationAccount": "Account to cash in",

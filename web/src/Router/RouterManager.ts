@@ -20,6 +20,10 @@ export class BaseRouterManager {
 	getUrl(namedUrl: NamedRoutes, params?: ReverseParams, extra?: string) {
 		return reverse(`${this.routes[namedUrl]}${extra || ''}`, params);
 	}
+
+	goBack(navigate: NavigateFunction) {
+		return navigate(-1);
+	}
 }
 
 export const RouterManager = new BaseRouterManager(RoutesMappingUrl);

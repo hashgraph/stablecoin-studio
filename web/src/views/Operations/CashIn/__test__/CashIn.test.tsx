@@ -16,8 +16,17 @@ describe(`<${CashInOperation.name} />`, () => {
 
 		expect(component.getByTestId('title')).toHaveTextContent(translations.title);
 		expect(component.getByTestId('operation-title')).toHaveTextContent(translations.operationTitle);
-		expect(component.getByTestId('details-title')).toHaveTextContent(translations.details.title);
 	});
 
-	test.todo('rest of the tests');
+	test('should have an input to write the amount', () => {
+		const component = render(<CashInOperation />);
+
+		expect(component.getByTestId('amount')).toBeInTheDocument();
+	});
+
+	test('should have an input to write the destinationAccount', () => {
+		const component = render(<CashInOperation />);
+
+		expect(component.getByTestId('destinationAccount')).toBeInTheDocument();
+	});
 });

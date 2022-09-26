@@ -2,41 +2,6 @@
 
 exports[`<App /> should render correctly 1`] = `
 <DocumentFragment>
-  <main>
-    <div
-      class="css-1nicdo9"
-    >
-      <div
-        class="css-1e9z5ru"
-      >
-        <img
-          alt="Hedera logo"
-          class="chakra-image css-6cymbs"
-          data-testid="hedera-logo"
-          src="hedera-hbar-logo.svg"
-        />
-        <p
-          class="chakra-text css-q6jngl"
-          data-testid="modal-hashpack-title"
-        >
-          Your haspack extension is not installed yet
-        </p>
-        <p
-          class="chakra-text css-zxkbt5"
-          data-testid="modal-hashpack-description"
-        >
-          Click in the button bellow to download the extension.
-        </p>
-        <button
-          class="chakra-button css-l6yrnw"
-          data-testid="modal-hashpack-button"
-          type="button"
-        >
-          Download Hashpack
-        </button>
-      </div>
-    </div>
-  </main>
   <span
     hidden=""
     id="__chakra_env"
