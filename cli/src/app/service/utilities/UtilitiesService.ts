@@ -12,8 +12,8 @@ import {
 } from 'hedera-stable-coin-sdk';
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
-const colors = require('colors');
-const MaskData = require('maskdata');
+import colors from 'colors';
+import MaskData from 'maskdata';
 
 /**
  * Utilities Service

@@ -22,7 +22,8 @@
     "account": "Operating account",
     "coinDropdown": {
       "placeholder": "Choose Stable coin"
-    }
+    },
+    "createSC": "Create Stable coin"
   },
   "sidebar": {
     "operations": "Operations",
