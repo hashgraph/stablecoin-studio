@@ -6,7 +6,7 @@ import { AccountId, PublicKey } from '../../in/sdk/sdk.js';
 
 export interface ICallContractRequest {
 	contractId: string;
-	parameters: any[];
+	parameters: string[];
 	gas: number;
 	abi: object[];
 }
