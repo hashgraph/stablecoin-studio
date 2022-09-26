@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { hethers } from '@hashgraph/hethers';
 import PrivateKey from '../../../../domain/context/account/PrivateKey.js';
 import {
@@ -92,7 +91,7 @@ export default class HTSProvider implements IProvider {
 	}
 
 	public getClient(accountId?: string, privateKey?: string): Client {
-		let client: any;
+		let client: Client;
 		const hederaNetWork = getHederaNetwork(this.network);
 
 		if (hederaNetWork.consensusNodes) {
@@ -102,6 +101,8 @@ export default class HTSProvider implements IProvider {
 			HederaNetworkEnviroment.LOCAL
 		) {
 			client = Client.forName(this.network.hederaNetworkEnviroment);
+		} else {
+			throw new Error('Cannot get client: Invalid configuration');
 		}
 
 		if (accountId && privateKey) {
@@ -112,11 +113,12 @@ export default class HTSProvider implements IProvider {
 
 	public encodeFunctionCall(
 		functionName: string,
-		parameters: any[],
+		parameters: string[],
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		abi: any[],
 	): Uint8Array {
 		const functionAbi = abi.find(
-			(func: { name: any; type: string }) =>
+			(func: { name: string; type: string }) =>
 				func.name === functionName && func.type === 'function',
 		);
 		if (!functionAbi)

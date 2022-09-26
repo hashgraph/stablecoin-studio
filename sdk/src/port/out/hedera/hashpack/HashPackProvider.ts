@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
 	HashConnect,
 	HashConnectTypes,
-	MessageTypes,
+	// MessageTypes,
 } from 'hashconnect/dist/cjs/main';
 import { IniConfig, IProvider } from '../Provider.js';
 import {
@@ -18,12 +19,10 @@ import {
 	TransactionResponse,
 	ContractFunctionParameters,
 	ContractId as HContractId,
-	DelegateContractId,
 	PublicKey as HPublicKey,
 	PrivateKey as HPrivateKey,
 	TokenId,
 	Transaction,
-	Signer,
 } from '@hashgraph/sdk';
 import { StableCoin } from '../../../../domain/context/stablecoin/StableCoin.js';
 import {
@@ -501,60 +500,60 @@ export default class HashPackProvider implements IProvider {
 		});
 	}
 
-	registerEvents(): void {
-		const foundExtensionEventHandler = (
-			data: HashConnectTypes.WalletMetadata,
-		) => {
-			console.log('====foundExtensionEvent====');
-			console.log(JSON.stringify(data));
-		};
+	// registerEvents(): void {
+	// 	const foundExtensionEventHandler = (
+	// 		data: HashConnectTypes.WalletMetadata,
+	// 	) => {
+	// 		console.log('====foundExtensionEvent====');
+	// 		console.log(JSON.stringify(data));
+	// 	};
 
-		const pairingEventHandler = (data: MessageTypes.ApprovePairing) => {
-			console.log('====pairingEvent:::Wallet connected=====');
-			console.log(JSON.stringify(data));
-		};
+	// 	const pairingEventHandler = (data: MessageTypes.ApprovePairing) => {
+	// 		console.log('====pairingEvent:::Wallet connected=====');
+	// 		console.log(JSON.stringify(data));
+	// 	};
 
-		const acknowledgeEventHandler = (data: MessageTypes.Acknowledge) => {
-			console.log('====Acknowledge:::Wallet request received =====');
-			console.log(JSON.stringify(data));
-		};
+	// 	const acknowledgeEventHandler = (data: MessageTypes.Acknowledge) => {
+	// 		console.log('====Acknowledge:::Wallet request received =====');
+	// 		console.log(JSON.stringify(data));
+	// 	};
 
-		const transactionEventHandler = (data: MessageTypes.Transaction) => {
-			console.log('====Transaction:::Transaction executed =====');
-			console.log(JSON.stringify(data));
-		};
+	// 	const transactionEventHandler = (data: MessageTypes.Transaction) => {
+	// 		console.log('====Transaction:::Transaction executed =====');
+	// 		console.log(JSON.stringify(data));
+	// 	};
 
-		const additionalAccountRequestEventHandler = (
-			data: MessageTypes.AdditionalAccountRequest,
-		) => {
-			console.log(
-				'====AdditionalAccountRequest:::AdditionalAccountRequest=====',
-			);
-			console.log(JSON.stringify(data));
-		};
+	// 	const additionalAccountRequestEventHandler = (
+	// 		data: MessageTypes.AdditionalAccountRequest,
+	// 	) => {
+	// 		console.log(
+	// 			'====AdditionalAccountRequest:::AdditionalAccountRequest=====',
+	// 		);
+	// 		console.log(JSON.stringify(data));
+	// 	};
 
-		const connectionStatusChangeEventHandler = (
-			data: HashConnectConnectionState,
-		) => {
-			console.log(
-				'====AdditionalAccountRequest:::AdditionalAccountRequest=====',
-			);
-			console.log(JSON.stringify(data));
-		};
-		const authRequestEventHandler = (
-			data: MessageTypes.AuthenticationRequest,
-		) => {
-			console.log(
-				'====AdditionalAccountRequest:::AdditionalAccountRequest=====',
-			);
-			console.log(JSON.stringify(data));
-		};
+	// 	const connectionStatusChangeEventHandler = (
+	// 		data: HashConnectConnectionState,
+	// 	) => {
+	// 		console.log(
+	// 			'====AdditionalAccountRequest:::AdditionalAccountRequest=====',
+	// 		);
+	// 		console.log(JSON.stringify(data));
+	// 	};
+	// 	const authRequestEventHandler = (
+	// 		data: MessageTypes.AuthenticationRequest,
+	// 	) => {
+	// 		console.log(
+	// 			'====AdditionalAccountRequest:::AdditionalAccountRequest=====',
+	// 		);
+	// 		console.log(JSON.stringify(data));
+	// 	};
 
-		/*const signRequestEventHandler = (data: ) => {
-			console.log("====AdditionalAccountRequest:::AdditionalAccountRequest=====");
-			console.log(JSON.stringify(data));
-		}*/
-	}
+	// 	/*const signRequestEventHandler = (data: ) => {
+	// 		console.log("====AdditionalAccountRequest:::AdditionalAccountRequest=====");
+	// 		console.log(JSON.stringify(data));
+	// 	}*/
+	// }
 
 	getBalance(): Promise<number> {
 		throw new Error('Method not implemented.');
