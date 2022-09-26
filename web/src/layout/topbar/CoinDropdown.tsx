@@ -54,16 +54,26 @@ const CoinDropdown = () => {
 		const stableCoinDetails = await SDKService.getStableCoinDetails({
 			id: selectedCoin,
 		});
+		console.log(stableCoinDetails);
 
 		// TODO: change this when sdk returns correct info
 		dispatch(
 			walletActions.setSelectedStableCoin({
-				initialSupply: stableCoinDetails?.initialSupply.toString(),
-				totalSupply: stableCoinDetails?.totalSupply.toString(),
+				initialSupply: stableCoinDetails?.initialSupply,
+				totalSupply: stableCoinDetails?.totalSupply,
 				supplyType: stableCoinDetails?.supplyType,
 				name: stableCoinDetails?.name,
 				symbol: stableCoinDetails?.symbol,
 				decimals: stableCoinDetails?.decimals,
+				id: stableCoinDetails?.id,
+				maxSupply: stableCoinDetails?.maxSupply,
+				treasury: { id: stableCoinDetails?.treasury.id },
+				memo: stableCoinDetails?.memo,
+				adminKey: stableCoinDetails?.adminKey,
+				kycKey: stableCoinDetails?.kycKey,
+				freezeKey: stableCoinDetails?.freezeKey,
+				wipeKey: stableCoinDetails?.wipeKey,
+				supplyKey: stableCoinDetails?.supplyKey,
 			}),
 		);
 	};

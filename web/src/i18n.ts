@@ -9,6 +9,7 @@ import GLOBAL_ES from './translations/es/global.json';
 import OPERATIONS_EN from './translations/en/operations.json';
 import ROLES_EN from './translations/en/roles.json';
 import STABLE_COIN_CREATION_EN from './translations/en/stableCoinCreation.json';
+import STABLE_COIN_DETAILS_EN from './translations/en/stableCoinDetails.json';
 
 const options = {
 	order: ['localStorage', 'navigator'],
@@ -29,6 +30,7 @@ i18n
 				operations: OPERATIONS_EN,
 				roles: ROLES_EN,
 				stableCoinCreation: STABLE_COIN_CREATION_EN,
+				stableCoinDetails: STABLE_COIN_DETAILS_EN,
 			},
 			es: {
 				global: GLOBAL_ES,

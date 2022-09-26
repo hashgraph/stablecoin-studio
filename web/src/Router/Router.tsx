@@ -12,6 +12,7 @@ import Roles from '../views/Roles';
 import StableCoinCreation from '../views/StableCoinCreation/StableCoinCreation';
 import StableCoinNotSelected from '../views/ErrorPage/StableCoinNotSelected';
 import SDKService, { HashConnectConnectionState } from '../services/SDKService';
+import StableCoinDetails from '../views/StableCoinDetails';
 
 const PrivateRoute = ({ status }: { status?: HashConnectConnectionState }) => {
 	return (
@@ -69,6 +70,7 @@ const Router = () => {
 						path={RoutesMappingUrl.stableCoinNotSelected}
 						element={<StableCoinNotSelected />}
 					/>
+					<Route path={RoutesMappingUrl.stableCoinDetails} element={<StableCoinDetails />} />
 					<Route path='*' element={<Navigate to={RoutesMappingUrl.dashboard} />} />
 				</Route>
 			</Routes>
