@@ -1,5 +1,4 @@
 import { HederaNetwork, HederaNetworkEnviroment, NetworkMode, SDK } from 'hedera-stable-coin-sdk';
-
 import type { AppMetadata, InitializationData } from 'hedera-stable-coin-sdk';
 
 export enum HashConnectConnectionState {

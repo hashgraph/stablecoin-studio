@@ -153,7 +153,7 @@ export class StableCoin extends BaseEntity {
 	public set wipeKey(value: ContractId | PublicKey | undefined) {
 		this._wipeKey = value;
 	}
-
+		 
 	/**
 	 * Pause key
 	 */

@@ -580,4 +580,7 @@ export default class HashPackProvider implements IProvider {
 	getInitData(): HashConnectTypes.InitilizationData {
 		return this.initData;
 	}
+	getInitData(): HashConnectTypes.InitilizationData {
+		return this.initData;
+	}
 }

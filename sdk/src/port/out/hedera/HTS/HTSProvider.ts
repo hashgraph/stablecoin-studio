@@ -478,4 +478,7 @@ export default class HTSProvider implements IProvider {
 	getInitData(): InitializationData {
 		throw new Error('not haspack');
 	}
+	getInitData(): InitializationData {
+		throw new Error('not haspack');
+	}
 }
