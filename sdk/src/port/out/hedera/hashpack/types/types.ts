@@ -1,4 +1,4 @@
-// import { HashConnectTypes } from 'hashconnect/dist/esm/main';
+// import { HashConnectTypes } from 'hashconnect/dist/cjs/main';
 
 // export type AppMetadata = HashConnectTypes.AppMetadata;
 export type AppMetadata = {

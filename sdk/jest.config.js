@@ -28,7 +28,5 @@ module.exports = {
 		'^.+\\.ts?$': 'ts-jest',
 		'^.+\\.js$': 'babel-jest',
 	},
-	transformIgnorePatterns: [
-		'node_modules/(?!@ngrx|(?!deck.gl)|ng-dynamic|hashconnect)',
-	],
+	transformIgnorePatterns: ['node_modules/(?!@ngrx|(?!deck.gl)|ng-dynamic)'],
 };

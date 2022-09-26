@@ -1,5 +1,5 @@
 import { HashConnectTypes } from 'hashconnect';
-import { HashConnectConnectionState } from 'hashconnect/dist/esm/types/index.js';
+import { HashConnectConnectionState } from 'hashconnect/dist/cjs/types/index.js';
 import Event from '../../../core/event.js';
 import { InitializationData } from './types.js';
 

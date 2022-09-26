@@ -2,7 +2,7 @@ import {
 	HashConnect,
 	HashConnectTypes,
 	MessageTypes,
-} from 'hashconnect/dist/esm/main';
+} from 'hashconnect/dist/cjs/main';
 import { IniConfig, IProvider } from '../Provider.js';
 import {
 	HederaNetwork,
@@ -32,7 +32,7 @@ import {
 	ICreateTokenResponse,
 	InitializationData,
 } from '../types.js';
-import { HashConnectConnectionState } from 'hashconnect/dist/esm/types/hashconnect.js';
+import { HashConnectConnectionState } from 'hashconnect/dist/cjs/types/hashconnect.js';
 import { HashPackSigner } from './HashPackSigner.js';
 import { TransactionProvider } from '../transaction/TransactionProvider.js';
 import { HTSResponse, TransactionType } from '../sign/ISigner.js';
@@ -45,8 +45,8 @@ import {
 	HederaERC20__factory,
 	HTSTokenOwner__factory,
 } from 'hedera-stable-coin-contracts/typechain-types/index.js';
-import { HashConnectProvider } from 'hashconnect/dist/esm/provider/provider.js';
-import { HashConnectSigner } from 'hashconnect/dist/esm/provider/signer';
+import { HashConnectProvider } from 'hashconnect/dist/cjs/provider/provider.js';
+import { HashConnectSigner } from 'hashconnect/dist/cjs/provider/signer';
 import Long from 'long';
 import ProviderEvent, { ProviderEventNames } from '../ProviderEvent.js';
 import EventService from '../../../../app/service/event/EventService.js';
