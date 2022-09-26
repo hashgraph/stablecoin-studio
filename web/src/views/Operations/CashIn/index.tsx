@@ -74,7 +74,7 @@ const CashInOperation = () => {
 			/>
 			<ModalsHandler
 				errorNotificationTitle={t('operations:modalErrorTitle')}
-				errorNotificationDescription={t('cashIn:modalSuccessDesc')}
+				errorNotificationDescription={'error'} // TODO: show returned error from sdk
 				modalActionProps={{
 					isOpen: isOpenModalAction,
 					onClose: onCloseModalAction,
