@@ -18,12 +18,7 @@ import CashOutStableCoinsService from './CashOutStableCoinService.js';
 import WipeStableCoinsService from './WipeStableCoinService.js';
 import RoleStableCoinsService from './RoleStableCoinService.js';
 import RescueStableCoinsService from './RescueStableCoinService.js';
-<<<<<<< HEAD
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const colors = require('colors');
-=======
 import colors from 'colors';
->>>>>>> main_merge
 
 /**
  * Operation Stable Coin Service

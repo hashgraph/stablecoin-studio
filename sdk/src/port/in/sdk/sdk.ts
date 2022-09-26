@@ -468,7 +468,7 @@ export class SDK {
 	}
 
 	public getPublicKey(str?: string): string {
-		return this.networkAdapter.provider.getPublicKey(str);
+		return this.networkAdapter.provider.getPublicKeyString(str);
 	}
 
 	public grantRole(

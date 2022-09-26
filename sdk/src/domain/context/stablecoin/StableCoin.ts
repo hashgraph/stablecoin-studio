@@ -15,11 +15,11 @@ export class StableCoin extends BaseEntity {
 	/**
 	 * Admin PublicKey for the token
 	 */
-	private _adminKey: PublicKey;
-	public get adminKey(): PublicKey {
+	private _adminKey: PublicKey | DelegateContractId;
+	public get adminKey(): PublicKey | DelegateContractId {
 		return this._adminKey;
 	}
-	public set adminKey(value: PublicKey) {
+	public set adminKey(value: PublicKey | DelegateContractId) {
 		this._adminKey = value;
 	}
 
@@ -227,7 +227,7 @@ export class StableCoin extends BaseEntity {
 		name: string;
 		symbol: string;
 		decimals: number;
-		adminKey?: PublicKey;
+		adminKey?: DelegateContractId | PublicKey;
 		initialSupply?: bigint;
 		totalSupply?: bigint;
 		maxSupply?: bigint;
@@ -266,10 +266,7 @@ export class StableCoin extends BaseEntity {
 			id,
 			autoRenewAccount,
 		} = params;
-		const defaultKey = new PublicKey({
-			key: 'null',
-			type: 'null',
-		});
+		const defaultKey = PublicKey.NULL;
 		this.adminKey = adminKey ?? defaultKey;
 		this.name = name;
 		this.symbol = symbol;

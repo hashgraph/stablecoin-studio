@@ -36,7 +36,7 @@ export interface IProvider {
 		parameters: any[],
 		abi: Array<any>,
 	): Uint8Array;
-	getPublicKey(privateKey?: PrivateKey | string | undefined): string;
+	getPublicKeyString(privateKey?: PrivateKey | string | undefined): string;
 	deployStableCoin(
 		accountId: string,
 		privateKey: string,

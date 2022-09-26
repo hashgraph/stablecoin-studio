@@ -442,9 +442,9 @@ export default class HTSProvider implements IProvider {
 	private getKeyFromOption(
 		option: ContractId | PublicKey,
 		contractId: ContractId,
-	): HPublicKey | DelegateContractId | undefined {
+	): HPublicKey | ContractId | undefined {
 		if (option instanceof ContractId) {
-			return DelegateContractId.fromString(String(contractId));
+			return ContractId.fromString(String(contractId));
 		} else if (option instanceof PublicKey) {
 			return HPublicKey.fromString(option.key);
 		} else {

@@ -52,7 +52,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	): Promise<IStableCoinList[]> {
 		try {
 			const resObject: IStableCoinList[] = [];
-			const pk = this.networkAdapter.provider.getPublicKey(privateKey);
+			const pk = this.networkAdapter.provider.getPublicKeyString(privateKey);
 			const res = await axios.get<ITokenList>(
 				this.URI_BASE + 'tokens?limit=100&publickey=' + pk,
 			);

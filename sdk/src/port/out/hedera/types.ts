@@ -1,5 +1,6 @@
 import {
 	AccountId as HAccount,
+	ContractId,
 	DelegateContractId,
 	PublicKey as HPublicKey,
 	TokenId,
@@ -29,12 +30,12 @@ export interface ICreateTokenResponse {
 	memo: string;
 	freezeDefault: boolean;
 	treasuryAccountId: HAccount;
-	adminKey: HPublicKey | DelegateContractId | undefined;
-	freezeKey: HPublicKey | DelegateContractId | undefined;
-	kycKey: HPublicKey | DelegateContractId | undefined;
-	wipeKey: HPublicKey | DelegateContractId | undefined;
-	pauseKey: HPublicKey | DelegateContractId | undefined;
-	supplyKey: HPublicKey | DelegateContractId | undefined;
+	adminKey: HPublicKey | ContractId | undefined;
+	freezeKey: HPublicKey | ContractId | undefined;
+	kycKey: HPublicKey | ContractId | undefined;
+	wipeKey: HPublicKey | ContractId | undefined;
+	pauseKey: HPublicKey | ContractId | undefined;
+	supplyKey: HPublicKey | ContractId | undefined;
 	tokenId: TokenId;
 }
 
