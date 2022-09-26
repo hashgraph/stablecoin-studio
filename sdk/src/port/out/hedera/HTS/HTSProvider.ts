@@ -5,10 +5,9 @@ import PrivateKey from '../../../../domain/context/account/PrivateKey.js';
 import {
 	AccountId as HAccountId,
 	Client,
+	ContractId as HContractId,
 	TransactionResponse,
 	ContractFunctionParameters,
-	ContractId,
-	DelegateContractId,
 	PrivateKey as HPrivateKey,
 	PublicKey as HPublicKey,
 	TokenId,
@@ -46,6 +45,8 @@ import { TransactionResposeHandler } from '../transaction/TransactionResponseHan
 import { HashConnectConnectionState } from 'hashconnect/dist/esm/types/hashconnect.js';
 import ProviderEvent, { ProviderEventNames } from '../ProviderEvent.js';
 import EventService from '../../../../app/service/event/EventService.js';
+import { ContractId } from '../../../in/sdk/sdk.js';
+import { safeCast } from '../../../../core/cast.js';
 
 type DefaultHederaProvider = hethers.providers.DefaultHederaProvider;
 
@@ -212,7 +213,7 @@ export default class HTSProvider implements IProvider {
 			`Deploying ${HederaERC1967Proxy__factory.name} contract... please wait.`,
 			logOpts,
 		);
-		const proxyContract: ContractId = await this.deployContract(
+		const proxyContract: HContractId = await this.deployContract(
 			HederaERC1967Proxy__factory,
 			plainAccount.privateKey,
 			client,
@@ -249,17 +250,13 @@ export default class HTSProvider implements IProvider {
 			stableCoin.memo,
 			stableCoin.freezeDefault,
 			plainAccount.privateKey,
-			new PublicKey({
-				key: this.getPublicKeyString(privateKey),
-				type: this.getPublicKey(privateKey)._key._type,
-			}),
 			client,
-			stableCoin.adminKey,
-			stableCoin.freezeKey,
-			stableCoin.kycKey,
-			stableCoin.wipeKey,
-			stableCoin.pauseKey,
-			stableCoin.supplyKey,
+			safeCast<PublicKey>(stableCoin.adminKey),
+			safeCast<PublicKey>(stableCoin.freezeKey),
+			safeCast<PublicKey>(stableCoin.kycKey),
+			safeCast<PublicKey>(stableCoin.wipeKey),
+			safeCast<PublicKey>(stableCoin.pauseKey),
+			safeCast<PublicKey>(stableCoin.supplyKey),
 		);
 		log('Setting up contract... please wait.', logOpts);
 		await this.callContract('setTokenAddress', {
@@ -302,12 +299,34 @@ export default class HTSProvider implements IProvider {
 			memo: hederaToken.memo,
 			freezeDefault: hederaToken.freezeDefault,
 			treasury: new AccountId(hederaToken.treasuryAccountId.toString()),
-			adminKey: hederaToken.adminKey,
-			freezeKey: hederaToken.freezeKey,
-			kycKey: hederaToken.kycKey,
-			wipeKey: hederaToken.wipeKey,
-			pauseKey: hederaToken.pauseKey,
-			supplyKey: hederaToken.supplyKey,
+			adminKey:
+				hederaToken.adminKey &&
+				hederaToken.adminKey instanceof HPublicKey
+					? PublicKey.fromHederaKey(hederaToken.adminKey)
+					: hederaToken.adminKey,
+			freezeKey:
+				hederaToken.freezeKey &&
+				hederaToken.freezeKey instanceof HPublicKey
+					? PublicKey.fromHederaKey(hederaToken.freezeKey)
+					: hederaToken.freezeKey,
+			kycKey:
+				hederaToken.kycKey && hederaToken.kycKey instanceof HPublicKey
+					? PublicKey.fromHederaKey(hederaToken.kycKey)
+					: hederaToken.kycKey,
+			wipeKey:
+				hederaToken.wipeKey && hederaToken.wipeKey instanceof HPublicKey
+					? PublicKey.fromHederaKey(hederaToken.wipeKey)
+					: hederaToken.wipeKey,
+			pauseKey:
+				hederaToken.pauseKey &&
+				hederaToken.pauseKey instanceof HPublicKey
+					? PublicKey.fromHederaKey(hederaToken.pauseKey)
+					: hederaToken.pauseKey,
+			supplyKey:
+				hederaToken.supplyKey &&
+				hederaToken.supplyKey instanceof HPublicKey
+					? PublicKey.fromHederaKey(hederaToken.supplyKey)
+					: hederaToken.supplyKey,
 			id: hederaToken.tokenId.toString(),
 			tokenType: stableCoin.tokenType,
 			supplyType: stableCoin.supplyType,
@@ -319,7 +338,7 @@ export default class HTSProvider implements IProvider {
 		privateKey: string,
 		client: Client,
 		params?: any,
-	): Promise<ContractId> {
+	): Promise<HContractId> {
 		try {
 			this.htsSigner = new HTSSigner(client);
 			const transaction =
@@ -368,7 +387,7 @@ export default class HTSProvider implements IProvider {
 	}
 
 	private async createToken(
-		contractId: ContractId,
+		contractId: HContractId,
 		name: string,
 		symbol: string,
 		decimals: number,
@@ -377,14 +396,13 @@ export default class HTSProvider implements IProvider {
 		memo: string,
 		freezeDefault: boolean,
 		privateKey: string,
-		publicKey: PublicKey,
 		client: Client,
-		adminKey?: ContractId | PublicKey,
-		freezeKey?: ContractId | PublicKey,
-		kycKey?: ContractId | PublicKey,
-		wipeKey?: ContractId | PublicKey,
-		pauseKey?: ContractId | PublicKey,
-		supplyKey?: ContractId | PublicKey,
+		adminKey?: PublicKey,
+		freezeKey?: PublicKey,
+		kycKey?: PublicKey,
+		wipeKey?: PublicKey,
+		pauseKey?: PublicKey,
+		supplyKey?: PublicKey,
 	): Promise<ICreateTokenResponse> {
 		const values: ICreateTokenResponse = {
 			name,
@@ -396,25 +414,23 @@ export default class HTSProvider implements IProvider {
 				: Long.ZERO,
 			memo,
 			freezeDefault,
-			treasuryAccountId: HAccountId.fromString(String(contractId)),
+			treasuryAccountId: new AccountId(String(contractId)),
 			tokenId: TokenId.fromString('0.0.0'),
-			adminKey: this.getKeyFromOption(adminKey ?? publicKey, contractId),
-			freezeKey: this.getKeyFromOption(
-				freezeKey ?? publicKey,
-				contractId,
-			),
-			kycKey: this.getKeyFromOption(kycKey ?? publicKey, contractId),
-			wipeKey: this.getKeyFromOption(wipeKey ?? publicKey, contractId),
-			pauseKey: this.getKeyFromOption(pauseKey ?? publicKey, contractId),
-			supplyKey: this.getKeyFromOption(
-				supplyKey ?? publicKey,
-				contractId,
-			),
+			adminKey,
+			freezeKey,
+			kycKey,
+			wipeKey,
+			pauseKey,
+			supplyKey,
 		};
 
 		this.htsSigner = new HTSSigner(client);
 		const transaction: Transaction =
-			TransactionProvider.buildTokenCreateTransaction(values, maxSupply);
+			TransactionProvider.buildTokenCreateTransaction(
+				ContractId.fromHederaContractId(contractId),
+				values,
+				maxSupply,
+			);
 		const transactionResponse: TransactionResponse =
 			await this.htsSigner.signAndSendTransaction(transaction);
 		const htsResponse: HTSResponse =
@@ -437,26 +453,6 @@ export default class HTSProvider implements IProvider {
 			logOpts,
 		);
 		return values;
-	}
-
-	private getKeyFromOption(
-		option: ContractId | PublicKey,
-		contractId: ContractId,
-	): HPublicKey | ContractId | undefined {
-		if (option instanceof ContractId) {
-			return ContractId.fromString(String(contractId));
-		} else if (option instanceof PublicKey) {
-			return HPublicKey.fromString(option.key);
-		} else {
-			return undefined;
-		}
-	}
-
-	private fromPublicKey(key: HPublicKey): PublicKey {
-		return new PublicKey({
-			key: key._key.toStringRaw(),
-			type: key._key._type,
-		});
 	}
 
 	getAvailabilityExtension(): boolean {

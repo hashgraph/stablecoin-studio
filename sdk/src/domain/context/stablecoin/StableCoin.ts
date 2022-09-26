@@ -1,4 +1,3 @@
-import { DelegateContractId } from '@hashgraph/sdk';
 import BaseEntity from '../../BaseEntity.js';
 import AccountId from '../account/AccountId.js';
 import PublicKey from '../account/PublicKey.js';
@@ -15,11 +14,11 @@ export class StableCoin extends BaseEntity {
 	/**
 	 * Admin PublicKey for the token
 	 */
-	private _adminKey: PublicKey | DelegateContractId;
-	public get adminKey(): PublicKey | DelegateContractId {
+	private _adminKey: ContractId | PublicKey | undefined;
+	public get adminKey(): ContractId | PublicKey | undefined {
 		return this._adminKey;
 	}
-	public set adminKey(value: PublicKey | DelegateContractId) {
+	public set adminKey(value: ContractId | PublicKey | undefined) {
 		this._adminKey = value;
 	}
 
@@ -114,11 +113,11 @@ export class StableCoin extends BaseEntity {
 	/**
 	 * Freeze key
 	 */
-	private _freezeKey: ContractId | PublicKey;
-	public get freezeKey(): ContractId | PublicKey {
+	private _freezeKey: ContractId | PublicKey | undefined;
+	public get freezeKey(): ContractId | PublicKey | undefined {
 		return this._freezeKey;
 	}
-	public set freezeKey(value: ContractId | PublicKey) {
+	public set freezeKey(value: ContractId | PublicKey | undefined) {
 		this._freezeKey = value;
 	}
 
@@ -136,46 +135,44 @@ export class StableCoin extends BaseEntity {
 	/**
 	 * KYC key
 	 */
-	private _kycKey: ContractId | PublicKey;
-	public get kycKey(): ContractId | PublicKey {
+	private _kycKey: ContractId | PublicKey | undefined;
+	public get kycKey(): ContractId | PublicKey | undefined {
 		return this._kycKey;
 	}
-	public set kycKey(value: ContractId | PublicKey) {
+	public set kycKey(value: ContractId | PublicKey | undefined) {
 		this._kycKey = value;
 	}
 
 	/**
 	 * Wipe key
 	 */
-	private _wipeKey: ContractId | PublicKey;
-	public get wipeKey(): ContractId | PublicKey {
+	private _wipeKey: ContractId | PublicKey | undefined;
+	public get wipeKey(): ContractId | PublicKey | undefined {
 		return this._wipeKey;
 	}
-	public set wipeKey(value: ContractId | PublicKey) {
+	public set wipeKey(value: ContractId | PublicKey | undefined) {
 		this._wipeKey = value;
 	}
-
 
 	/**
 	 * Pause key
 	 */
-	private _pauseKey: ContractId | PublicKey;
-	public get pauseKey(): ContractId | PublicKey {
+	private _pauseKey: ContractId | PublicKey | undefined;
+	public get pauseKey(): ContractId | PublicKey | undefined {
 		return this._pauseKey;
 	}
-	public set pauseKey(value: ContractId | PublicKey) {
+	public set pauseKey(value: ContractId | PublicKey | undefined) {
 		this._pauseKey = value;
 	}
 
-		 
 	/**
 	 * Supply key
 	 */
-	private _supplyKey: DelegateContractId | ContractId | PublicKey;
-	public get supplyKey(): DelegateContractId | ContractId | PublicKey {
+	private _supplyKey: ContractId | PublicKey | undefined;
+	public get supplyKey(): ContractId | PublicKey | undefined {
 		return this._supplyKey;
 	}
-	public set supplyKey(value: DelegateContractId | ContractId | PublicKey) {
+	public set supplyKey(value: ContractId | PublicKey | undefined) {
 		this._supplyKey = value;
 	}
 
@@ -227,17 +224,17 @@ export class StableCoin extends BaseEntity {
 		name: string;
 		symbol: string;
 		decimals: number;
-		adminKey?: DelegateContractId | PublicKey;
+		adminKey?: PublicKey | ContractId;
 		initialSupply?: bigint;
 		totalSupply?: bigint;
 		maxSupply?: bigint;
 		memo?: string;
-		freezeKey?: ContractId | PublicKey;
+		freezeKey?: PublicKey | ContractId;
 		freezeDefault?: boolean;
-		kycKey?: ContractId | PublicKey;
-		wipeKey?: ContractId | PublicKey;
-		pauseKey?: ContractId | PublicKey;
-		supplyKey?: ContractId | PublicKey;
+		kycKey?: PublicKey | ContractId;
+		wipeKey?: PublicKey | ContractId;
+		pauseKey?: PublicKey | ContractId;
+		supplyKey?: PublicKey | ContractId;
 		treasury?: AccountId;
 		tokenType?: TokenType;
 		supplyType?: TokenSupplyType;

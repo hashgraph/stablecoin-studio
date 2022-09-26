@@ -1,11 +1,8 @@
 import {
-	AccountId as HAccount,
-	ContractId,
-	DelegateContractId,
-	PublicKey as HPublicKey,
 	TokenId,
 } from '@hashgraph/sdk';
 import { HashConnectTypes } from 'hashconnect';
+import { AccountId, ContractId, PublicKey } from '../../in/sdk/sdk.js';
 
 export interface ICallContractRequest {
 	contractId: string;
@@ -29,13 +26,13 @@ export interface ICreateTokenResponse {
 	maxSupply: Long;
 	memo: string;
 	freezeDefault: boolean;
-	treasuryAccountId: HAccount;
-	adminKey: HPublicKey | ContractId | undefined;
-	freezeKey: HPublicKey | ContractId | undefined;
-	kycKey: HPublicKey | ContractId | undefined;
-	wipeKey: HPublicKey | ContractId | undefined;
-	pauseKey: HPublicKey | ContractId | undefined;
-	supplyKey: HPublicKey | ContractId | undefined;
+	treasuryAccountId: AccountId;
+	adminKey?: PublicKey;
+	freezeKey?: PublicKey;
+	kycKey?: PublicKey;
+	wipeKey?: PublicKey;
+	pauseKey?: PublicKey;
+	supplyKey?: PublicKey;
 	tokenId: TokenId;
 }
 

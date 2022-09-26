@@ -1,7 +1,5 @@
-import { Key, PublicKey as HPublicKey } from '@hashgraph/sdk';
-import { proto } from '@hashgraph/proto';
 import PublicKey from '../../../../src/domain/context/account/PublicKey.js';
-import { ContractId, SDK } from '../../../../src/index.js';
+import { SDK } from '../../../../src/index.js';
 import { ACCOUNTS, getSDKAsync } from '../../../core.js';
 
 describe('🧪 [PORT] SDK', () => {

@@ -11,12 +11,13 @@ import {
 	PublicKey,
 	PrivateKey,
 	AccountId,
+	ContractId,
 } from '../../../in/sdk/sdk.js';
 import {
 	AccountId as HAccountId,
 	TransactionResponse,
 	ContractFunctionParameters,
-	ContractId,
+	ContractId as HContractId,
 	DelegateContractId,
 	PublicKey as HPublicKey,
 	PrivateKey as HPrivateKey,
@@ -258,8 +259,8 @@ export default class HashPackProvider implements IProvider {
 			`Deploying ${HederaERC1967Proxy__factory.name} contract... please wait.`,
 			logOpts,
 		);
-		let proxyContract: ContractId =
-			ContractId.fromString(stableCoin.memo) ?? '';
+		let proxyContract: HContractId =
+			HContractId.fromString(stableCoin.memo) ?? '';
 
 		if (!proxyContract) {
 			proxyContract = await this.deployContract(
@@ -344,11 +345,11 @@ export default class HashPackProvider implements IProvider {
 			memo: hederaToken.memo,
 			freezeDefault: hederaToken.freezeDefault,
 			treasury: new AccountId(hederaToken.treasuryAccountId.toString()),
-			adminKey: this.fromPublicKey(hederaToken.adminKey as HPublicKey),
-			freezeKey: this.fromPublicKey(hederaToken.freezeKey as HPublicKey),
-			wipeKey: this.fromPublicKey(hederaToken.wipeKey as HPublicKey),
-			pauseKey: this.fromPublicKey(hederaToken.pauseKey as HPublicKey),
-			kycKey: this.fromPublicKey(hederaToken.kycKey as HPublicKey),
+			adminKey: hederaToken.adminKey,
+			freezeKey: hederaToken.freezeKey,
+			wipeKey: hederaToken.wipeKey,
+			pauseKey: hederaToken.pauseKey,
+			kycKey: hederaToken.kycKey,
 			supplyKey: hederaToken.supplyKey,
 			id: hederaToken.tokenId.toString(),
 			tokenType: stableCoin.tokenType,
@@ -361,7 +362,7 @@ export default class HashPackProvider implements IProvider {
 		privateKey: string,
 		signer: HashConnectSigner,
 		params?: any,
-	): Promise<ContractId> {
+	): Promise<HContractId> {
 		try {
 			this.hashPackSigner = new HashPackSigner();
 			const transaction =
@@ -398,7 +399,7 @@ export default class HashPackProvider implements IProvider {
 	}
 
 	private async createToken(
-		contractId: ContractId,
+		contractId: HContractId,
 		name: string,
 		symbol: string,
 		decimals: number,
@@ -409,6 +410,12 @@ export default class HashPackProvider implements IProvider {
 		privateKey: string,
 		publicKey: string,
 		signer: HashConnectSigner,
+		adminKey?: PublicKey,
+		freezeKey?: PublicKey,
+		kycKey?: PublicKey,
+		wipeKey?: PublicKey,
+		pauseKey?: PublicKey,
+		supplyKey?: PublicKey,
 	): Promise<ICreateTokenResponse> {
 		const values: ICreateTokenResponse = {
 			name,
@@ -420,19 +427,23 @@ export default class HashPackProvider implements IProvider {
 				: Long.ZERO,
 			memo,
 			freezeDefault,
-			treasuryAccountId: HAccountId.fromString(String(contractId)),
-			adminKey: HPublicKey.fromString(publicKey),
-			freezeKey: HPublicKey.fromString(publicKey),
-			wipeKey: HPublicKey.fromString(publicKey),
-			supplyKey: DelegateContractId.fromString(String(contractId)),
+			treasuryAccountId: new AccountId(String(contractId)),
 			tokenId: TokenId.fromString('0.0.0'),
-			pauseKey: HPublicKey.fromString(publicKey),
-			kycKey: HPublicKey.fromString(publicKey),
+			adminKey,
+			freezeKey,
+			kycKey,
+			wipeKey,
+			pauseKey,
+			supplyKey,
 		};
 
 		this.hashPackSigner = new HashPackSigner();
 		const transaction: Transaction =
-			TransactionProvider.buildTokenCreateTransaction(values, maxSupply);
+			TransactionProvider.buildTokenCreateTransaction(
+				ContractId.fromHederaContractId(contractId),
+				values,
+				maxSupply,
+			);
 		const transactionResponse: TransactionResponse =
 			await this.hashPackSigner.signAndSendTransaction(
 				transaction,
