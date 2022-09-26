@@ -50,15 +50,13 @@ import { IAllowanceRequest } from './request/IRequestContracts.js';
 import {
 	HashConnectConnectionState,
 	HashConnectTypes,
-} from 'hashconnect/dist/cjs/types/hashconnect.js';
+} from 'hashconnect/dist/esm/types/hashconnect.js';
 import { AppMetadata } from '../../out/hedera/hashpack/types/types.js';
-import { InitializationData } from '../../out/hedera/types.js';
+import { AcknowledgeMessage, AdditionalAccountRequestMessage, AdditionalAccountResponseMessage, ApprovePairingMessage, AuthenticationRequestMessage, AuthenticationResponseMessage, InitializationData } from '../../out/hedera/types.js';
 import { ProviderEventNames } from '../../out/hedera/ProviderEvent.js';
 import EventService from '../../../app/service/event/EventService.js';
 import { IProvider } from '../../out/hedera/Provider.js';
-import {
-	SavedPairingData,
-} from '../../out/hedera/types.js';
+import { SavedPairingData } from '../../out/hedera/types.js';
 
 export {
 	IAssociateStableCoinRequest,
@@ -92,6 +90,12 @@ export {
 	StableCoinRole,
 	InitializationData,
 	SavedPairingData,
+	AcknowledgeMessage,
+	AdditionalAccountRequestMessage,
+	AdditionalAccountResponseMessage,
+	ApprovePairingMessage,
+	AuthenticationRequestMessage,
+	AuthenticationResponseMessage,
 };
 
 export interface ConfigurationOptions {
@@ -290,7 +294,7 @@ export class SDK {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * associateToken
 	 */
@@ -574,7 +578,7 @@ export class SDK {
 	}
 
 	public onWalletAcknowledgeMessageEvent(
-		listener: (state: HashConnectConnectionState) => void,
+		listener: (state: AcknowledgeMessage) => void,
 	): void {
 		this.eventService.on(
 			ProviderEventNames.providerAcknowledgeMessageEvent,

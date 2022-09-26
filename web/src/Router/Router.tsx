@@ -20,6 +20,7 @@ import {
 	HAS_WALLET_EXTENSION,
 	IS_INITIALIZED,
 } from '../store/slices/hashpackSlice';
+import type { AcknowledgeMessage } from 'hedera-stable-coin-sdk';
 
 const PrivateRoute = ({ status }: { status?: HashConnectConnectionState }) => {
 	return (
@@ -63,8 +64,16 @@ const Router = () => {
 
 	const onWalletPaired = () => setStatus('Paired' as HashConnectConnectionState);
 
+	const onWalletAcknowledgeMessageEvent = (msg: AcknowledgeMessage) =>
+		dispatch(hashpackActions.setAckMessage(msg));
+
 	const instanceSDK = async () =>
-		await SDKService.getInstance({ onInit, onWalletExtensionFound, onWalletPaired });
+		await SDKService.getInstance({
+			onInit,
+			onWalletExtensionFound,
+			onWalletPaired,
+			onWalletAcknowledgeMessageEvent,
+		});
 
 	const getStatus = async () => {
 		try {
