@@ -19,3 +19,12 @@ jest.mock('react-i18next', (): any => ({
 }));
 
 jest.mock('../services/SDKService');
+window.matchMedia =
+	window.matchMedia ||
+	function () {
+		return {
+			matches: false,
+			addListener: function () {},
+			removeListener: function () {},
+		};
+	};

@@ -1,6 +1,7 @@
 import userEvent from '@testing-library/user-event';
 import { render } from '../../../test/index';
-import OperationLayout, { OperationLayoutProps } from '../OperationLayout';
+import type { OperationLayoutProps } from '../OperationLayout';
+import OperationLayout from '../OperationLayout';
 
 describe(`<${OperationLayout.name} />`, () => {
 	const props: OperationLayoutProps = {

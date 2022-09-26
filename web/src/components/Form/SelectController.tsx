@@ -86,6 +86,7 @@ export interface SelectControllerProps {
 	variant?: Variant;
 	size?: ReactSelectProps['size'];
 	overrideStyles?: Partial<SelectThemeStyle>;
+	noOptionsMessage?: ReactSelectProps['noOptionsMessage'];
 }
 
 export type SelectConfigProps = {

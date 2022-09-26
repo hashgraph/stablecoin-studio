@@ -1,29 +1,71 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Box } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
 import SearchSelectController from '../../components/Form/SearchSelectController';
 import type { Option } from '../../components/Form/SelectController';
 import SDKService from '../../services/SDKService';
+import type { AppDispatch } from '../../store/store';
+import {
+	getStableCoinList,
+	SELECTED_WALLET_COIN,
+	STABLE_COIN_LIST,
+	walletActions,
+} from '../../store/slices/walletSlice';
+import { RouterManager } from '../../Router/RouterManager';
+import { useNavigate } from 'react-router-dom';
+import { NamedRoutes } from '../../Router/NamedRoutes';
 
 const CoinDropdown = () => {
-	const [stableCoins, setStableCoins] = useState<Option[]>([]);
-	// TODO onchange add to redux selected coin
-	useEffect(() => {
-		getStableCoins();
-	}, []);
+	const stableCoinList = useSelector(STABLE_COIN_LIST);
+	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
+	const dispatch = useDispatch<AppDispatch>();
+	const [options, setOptions] = useState<Option[]>([]);
+	const navigate = useNavigate();
 
-	const getStableCoins = async () => {
-		const coins = await SDKService.getStableCoins({
-			privateKey:
-				'302e020100300506032b6570042204201713ea5a2dc0287b11a6f25a1137c0cad65fb5af52706076de9a9ec5a4b7f625',
+	useEffect(() => {
+		dispatch(getStableCoinList());
+
+		if (!selectedStableCoin) {
+			RouterManager.to(navigate, NamedRoutes.StableCoinNotSelected);
+		} else {
+			RouterManager.to(navigate, NamedRoutes.Operations);
+		}
+	}, [selectedStableCoin]);
+
+	useEffect(() => {
+		formatOptionsStableCoins();
+	}, [stableCoinList]);
+
+	const formatOptionsStableCoins = async () => {
+		if (stableCoinList) {
+			const options = stableCoinList.map(({ id, symbol }) => ({
+				label: `${id} - ${symbol}`,
+				value: id,
+			}));
+			setOptions(options);
+		}
+	};
+
+	const handleSelectCoin = async (event: any) => {
+		const selectedCoin = event.value;
+
+		const stableCoinDetails = await SDKService.getStableCoinDetails({
+			id: selectedCoin,
 		});
 
-		if (coins) {
-			const options = coins.map(({ id, symbol }) => ({ label: `${id} - ${symbol}`, value: id }));
-			setStableCoins(options);
-		}
+		// TODO: change this when sdk returns correct info
+		dispatch(
+			walletActions.setSelectedStableCoin({
+				initialSupply: stableCoinDetails?.initialSupply.toString(),
+				totalSupply: stableCoinDetails?.totalSupply.toString(),
+				supplyType: stableCoinDetails?.supplyType,
+				name: stableCoinDetails?.name,
+				symbol: stableCoinDetails?.symbol,
+				decimals: stableCoinDetails?.decimals,
+			}),
+		);
 	};
 
 	const { t } = useTranslation('global');
@@ -45,12 +87,11 @@ const CoinDropdown = () => {
 				control={control}
 				styles={styles}
 				name='coin-dropdown'
-				options={stableCoins}
+				options={options}
 				placeholder={t('topbar.coinDropdown.placeholder')}
 				iconStyles={{ color: 'brand.primary200' }}
-				onChangeAux={() => {
-					console.log('changes');
-				}}
+				onChangeAux={handleSelectCoin}
+				noOptionsMessage={() => t('topbar.coinDropdown.noStableCoin')}
 			/>
 		</Box>
 	);

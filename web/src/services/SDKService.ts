@@ -1,6 +1,6 @@
 import { HederaNetwork, HederaNetworkEnviroment, NetworkMode, SDK } from 'hedera-stable-coin-sdk';
 
-import type { AppMetadata, InitializationData } from 'hedera-stable-coin-sdk';
+import type { AppMetadata, InitializationData, StableCoin } from 'hedera-stable-coin-sdk';
 import type IStableCoinList from 'hedera-stable-coin-sdk/build/src/port/in/sdk/response/IStableCoinList';
 
 export enum HashConnectConnectionState {
@@ -69,6 +69,10 @@ export class SDKService {
 		privateKey: string;
 	}): Promise<IStableCoinList[] | null> {
 		return (await SDKService.getInstance())?.getListStableCoin({ privateKey });
+	}
+
+	public static async getStableCoinDetails({ id }: { id: string }): Promise<StableCoin | null> {
+		return (await SDKService.getInstance())?.getStableCoin({ id });
 	}
 }
 

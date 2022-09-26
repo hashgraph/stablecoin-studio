@@ -14,9 +14,25 @@ exports[`<CoinDropdown /> should render correctly 1`] = `
         data-testid="form_control"
         role="group"
       >
+        <span
+          data-testid="select-placeholder"
+        >
+          Choose Stable coin 
+        </span>
         <select
           data-testid="select-coin-dropdown"
-        />
+        >
+          <option
+            value="0.0.123"
+          >
+            0.0.123 - HBAR
+          </option>
+          <option
+            value="0.0.13234"
+          >
+            0.0.13234 - EXP
+          </option>
+        </select>
       </div>
     </div>
   </div>

@@ -1,9 +1,14 @@
 import CoinDropdown from '../CoinDropdown';
 import { render } from '../../../test/';
-import SDKService from '../../../services/SDKService';
 import { waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { getStableCoinsFull } from '../../../mocks/sdk';
+import { Provider } from 'react-redux';
+import type { MockStoreEnhanced } from 'redux-mock-store';
+import configureMockStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
+import { RouterManager } from '../../../Router/RouterManager';
+import { NamedRoutes } from '../../../Router/NamedRoutes';
 
 jest.mock('react-select', () =>
 	// eslint-disable-next-line react/display-name
@@ -33,18 +38,42 @@ jest.mock('react-select', () =>
 		);
 	},
 );
+jest.mock('../../../Router/RouterManager', () => ({
+	RouterManager: {
+		to: jest.fn(),
+	},
+}));
+const middlewares = [thunk];
+const mockStore = configureMockStore(middlewares);
+const defaultStore = mockStore({
+	wallet: {
+		stableCoinList: getStableCoinsFull,
+	},
+});
 
+let localStore: MockStoreEnhanced<unknown, {}>;
 describe(`<${CoinDropdown.name} />`, () => {
+	const factoryComponent = ({
+		store = defaultStore,
+	}: {
+		store?: MockStoreEnhanced<unknown, {}>;
+	} = {}) => {
+		localStore = store;
+		return render(
+			<Provider store={localStore}>
+				<CoinDropdown />
+			</Provider>,
+		);
+	};
+
 	test('should render correctly', () => {
-		const component = render(<CoinDropdown />);
+		const component = factoryComponent();
 
 		expect(component.asFragment()).toMatchSnapshot();
 	});
 
 	test('should show all stable coins', async () => {
-		jest.mocked(SDKService.getStableCoins, true).mockResolvedValueOnce(getStableCoinsFull);
-
-		const component = render(<CoinDropdown />);
+		const component = factoryComponent();
 
 		const select = component.getByTestId('select-coin-dropdown');
 		userEvent.click(select);
@@ -54,10 +83,9 @@ describe(`<${CoinDropdown.name} />`, () => {
 			expect(component.getByText(coinLabel)).toBeInTheDocument();
 		});
 	});
-	test('should be able to choose one coin', async () => {
-		jest.mocked(SDKService.getStableCoins, true).mockResolvedValueOnce(getStableCoinsFull);
 
-		const component = render(<CoinDropdown />);
+	test('should be able to choose one coin', async () => {
+		const component = factoryComponent();
 
 		const select = component.getByTestId('select-coin-dropdown');
 		userEvent.click(select);
@@ -65,10 +93,23 @@ describe(`<${CoinDropdown.name} />`, () => {
 		await waitFor(() => {
 			const coinLabel = `${getStableCoinsFull[0].id} - ${getStableCoinsFull[0].symbol}`;
 			const option = component.getByText(coinLabel);
-			// const option = component.getByRole('button', { name: coinLabel });
 
 			userEvent.click(option);
 			expect((select as HTMLInputElement).value).toEqual(getStableCoinsFull[0].id);
+		});
+		// TODO: validate onchange fn
+	});
+
+	test('should go to StableCoinNotSelected if coin isnt selected ', async () => {
+		const store = mockStore({
+			wallet: {},
+		});
+		const anything = expect.any(Function);
+
+		factoryComponent({ store });
+
+		await waitFor(() => {
+			expect(RouterManager.to).toHaveBeenCalledWith(anything, NamedRoutes.StableCoinNotSelected);
 		});
 	});
 });
