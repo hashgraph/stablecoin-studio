@@ -176,8 +176,8 @@ export class SDK {
 		try {
 			const req: ICreateStableCoinServiceRequestModel = {
 				...request,
-				accountId: new AccountId(request.accountId),
-				privateKey: new PrivateKey(request.privateKey),
+				accountId: request.accountId,
+				privateKey: request.privateKey,
 				autoRenewAccount: request.autoRenewAccount
 					? new AccountId(request.autoRenewAccount)
 					: undefined,

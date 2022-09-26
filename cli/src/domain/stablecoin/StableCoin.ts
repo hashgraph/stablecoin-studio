@@ -1,3 +1,6 @@
+import { AccountId, PublicKey } from 'hedera-stable-coin-sdk';
+
+
 export interface StableCoin {
   name: string;
   symbol: string;
@@ -6,13 +9,13 @@ export interface StableCoin {
   initialSupply?: bigint;
   supplyType?: string;
   maxSupply?: bigint;
-  KYCKey?: string;
-  wipeKey?: string;
-  adminKey?: string;
-  freezeKey?: string;
-  pauseKey?: string;
-  supplyKey?: string;
-  treasury?: string;
+  KYCKey?: PublicKey;
+  wipeKey?: PublicKey;
+  adminKey?: PublicKey;
+  freezeKey?: PublicKey;
+  pauseKey?: PublicKey;
+  supplyKey?: PublicKey;
+  treasury?: AccountId;
   id?: string;
   memo?: string;
 }
