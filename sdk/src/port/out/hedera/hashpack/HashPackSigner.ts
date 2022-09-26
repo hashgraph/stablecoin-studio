@@ -30,9 +30,7 @@ export class HashPackSigner implements ISigner {
 			if (transaction instanceof ContractCreateFlow) {
 				return await transaction.executeWithSigner(signer);
 			} else {
-				console.log('Trans');
 				const signedT = await transaction.freezeWithSigner(signer);
-				console.log('Trans', signedT);
 				const t = await signer.signTransaction(signedT);
 				return await this.hc.sendTransaction(this.initData.topic, {
 					topic: this.initData.topic,
