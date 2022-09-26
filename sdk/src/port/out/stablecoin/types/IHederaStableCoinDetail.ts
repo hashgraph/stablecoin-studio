@@ -1,11 +1,13 @@
+import ContractId from '../../../../domain/context/contract/ContractId.js';
 import { ICustomFees } from './ICustomFees';
 import { IPublicKey } from './IPublicKey.js';
 
-export default interface IStableCoinDetail {
+export default interface IHederaStableCoinDetail {
 	token_id?: string;
 	name?: string;
 	symbol?: string;
 	decimals?: string;
+	initial_supply?: string;
 	total_supply?: string;
 	max_supply?: string;
 	custom_fees?: ICustomFees;

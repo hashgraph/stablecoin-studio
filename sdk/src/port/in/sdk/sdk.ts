@@ -1,4 +1,5 @@
 import IStableCoinList from './response/IStableCoinList.js';
+import IStableCoinDetail from './response/IStableCoinDetail.js';
 import ContractsService from '../../../app/service/contract/ContractsService.js';
 import StableCoinService from '../../../app/service/stablecoin/StableCoinService.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
@@ -56,9 +57,7 @@ import { InitializationData } from '../../out/hedera/types.js';
 import { ProviderEventNames } from '../../out/hedera/ProviderEvent.js';
 import EventService from '../../../app/service/event/EventService.js';
 import { IProvider } from '../../out/hedera/Provider.js';
-import {
-	SavedPairingData,
-} from '../../out/hedera/types.js';
+import { SavedPairingData } from '../../out/hedera/types.js';
 
 export {
 	IAssociateStableCoinRequest,
@@ -214,6 +213,15 @@ export class SDK {
 		return this.stableCoinService.getStableCoin(req);
 	}
 
+	public getStableCoinDetails(
+		request: IGetStableCoinRequest,
+	): Promise<IStableCoinDetail> | null {
+		const req: IGetStableCoinServiceRequestModel = {
+			...request,
+		};
+		return this.stableCoinService.getStableCoinDetails(req);
+	}
+
 	/**
 	 * getBalanceOf
 	 */
@@ -290,7 +298,7 @@ export class SDK {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * associateToken
 	 */

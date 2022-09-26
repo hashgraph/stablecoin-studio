@@ -5,7 +5,7 @@ import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import IStableCoinRepository from './IStableCoinRepository.js';
 import NetworkAdapter from '../network/NetworkAdapter.js';
 import { ICallContractWithAccountRequest } from '../hedera/types.js';
-import IStableCoinDetail from './types/IStableCoinDetail.js';
+import IHederaStableCoinDetail from './types/IHederaStableCoinDetail.js';
 import ITokenList from './types/ITokenList.js';
 import HederaError from '../hedera/error/HederaError.js';
 import { IToken } from './types/IToken.js';
@@ -52,7 +52,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	): Promise<IStableCoinList[]> {
 		try {
 			const resObject: IStableCoinList[] = [];
-			const pk = this.networkAdapter.provider.getPublicKeyString(privateKey);
+			const pk =
+				this.networkAdapter.provider.getPublicKeyString(privateKey);
 			const res = await axios.get<ITokenList>(
 				this.URI_BASE + 'tokens?limit=100&publickey=' + pk,
 			);
@@ -72,7 +73,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 	public async getStableCoin(id: string): Promise<StableCoin> {
 		try {
-			const response = await axios.get<IStableCoinDetail>(
+			const response = await axios.get<IHederaStableCoinDetail>(
 				this.URI_BASE + 'tokens/' + id,
 			);
 
