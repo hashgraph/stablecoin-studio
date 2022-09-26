@@ -623,6 +623,52 @@ export default class HashPackProvider implements IProvider {
 		return htsResponse.receipt.status == 22 ? true : false;
 	}	
 
+	public async cashOutHTS(params: IHTSTokenRequest): Promise<boolean> {
+		if ('account' in params) {
+			this.provider = this.hc.getProvider(
+				this.network.hederaNetworkEnviroment,
+				this.initData.topic,
+				params.account.accountId,
+			);
+		} else {
+			throw new Error(
+				'You must specify an accountId for operate with HashConnect.',
+			);
+		}
+
+		this.hashPackSigner = new HashPackSigner(undefined);
+		const transaction: Transaction =
+			TransactionProvider.buildTokenBurnTransaction(
+				params.tokenId,
+				params.amount,
+			);
+
+		const transactionResponse: TransactionResponse =
+			await this.hashPackSigner.signAndSendTransaction(
+				transaction,
+				this.hc.getSigner(this.provider),
+			);
+
+		const htsResponse: HTSResponse =
+			await this.transactionResposeHandler.manageResponse(
+				transactionResponse,
+				TransactionType.RECEIPT,
+				undefined,
+			);
+
+		if (!htsResponse.receipt) {
+			throw new Error(
+				`An error has occurred when cash out the amount ${params.amount} in the account ${params.account.accountId} for tokenId ${params.tokenId}`,
+			);
+		}
+		log(
+			`Result cash out HTS ${htsResponse.receipt.status}: account ${params.account.accountId}, tokenId ${params.tokenId}, amount ${params.amount}`,
+			logOpts,
+		);
+
+		return htsResponse.receipt.status == 22 ? true : false;
+	}	
+
 	public async transferHTS(params: ITransferTokenRequest): Promise<boolean> {
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(

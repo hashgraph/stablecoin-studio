@@ -265,6 +265,24 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 	}
 
+	public async cashOutHTS(
+		privateKey: PrivateKey,
+		accountId: AccountId,
+		tokenId: string,
+		amount: number,
+	): Promise<boolean> {
+		const params: IHTSTokenRequest = {
+			account: {
+				privateKey: privateKey.key,
+				accountId: accountId.id,
+			},
+			tokenId: tokenId,
+			amount: amount,
+		};
+
+		return await this.networkAdapter.provider.cashOutHTS(params);
+	}
+
 	public async associateToken(
 		treasuryId: string,
 		privateKey: PrivateKey,

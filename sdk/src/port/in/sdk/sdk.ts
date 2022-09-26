@@ -248,7 +248,7 @@ export class SDK {
 	 */
 	public cashOut(
 		request: ICashOutStableCoinRequest,
-	): Promise<Uint8Array> | null {
+	): Promise<boolean> | null {
 		try {
 			const req: ICashOutStableCoinServiceRequestModel = {
 				...request,

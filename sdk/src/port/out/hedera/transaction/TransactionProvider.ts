@@ -83,7 +83,7 @@ export class TransactionProvider {
     }
 
 	public static buildTokenBurnTransaction (tokenId: string, amount:number): Transaction{
-        const transaction =  new new TokenBurnTransaction()
+        const transaction =  new TokenBurnTransaction()
 		.setTokenId(TokenId.fromString(tokenId))
 		.setAmount(amount)
 	

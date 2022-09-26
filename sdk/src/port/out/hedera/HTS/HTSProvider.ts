@@ -265,7 +265,7 @@ export default class HTSProvider implements IProvider {
 			abi: HTSTokenOwner__factory.abi,
 			account: plainAccount,
 		});
-		log(
+		/*log(
 			'Associating administrator account to token... please wait.',
 			logOpts,
 		);
@@ -276,7 +276,7 @@ export default class HTSProvider implements IProvider {
 			abi: HederaERC20__factory.abi,
 			account: plainAccount,
 		});
-
+*/
 		return new StableCoin({
 			name: hederaToken.name,
 			symbol: hederaToken.symbol,
@@ -380,7 +380,7 @@ export default class HTSProvider implements IProvider {
 				: Long.ZERO,
 			memo,
 			freezeDefault,
-			treasuryAccountId: HAccountId.fromString(contractId.toString()),
+			treasuryAccountId: client._operator.accountId, //HAccountId.fromString(contractId.toString()),
 			adminKey: this.getKeyFromOption(adminKey, contractId, publicKey),
 			freezeKey: this.getKeyFromOption(freezeKey, contractId, publicKey),
 			kycKey: this.getKeyFromOption(kycKey, contractId, publicKey),
@@ -530,6 +530,45 @@ export default class HTSProvider implements IProvider {
 		}
 		log(
 			`Result cash in HTS ${htsResponse.receipt.status}: account ${params.account.accountId}, tokenId ${params.tokenId}, amount ${params.amount}`,
+			logOpts,
+		);
+		return htsResponse.receipt.status == 22 ? true : false;
+	}	
+
+	public async cashOutHTS(params: IHTSTokenRequest): Promise<boolean> {
+		let client;
+
+		if ('account' in params) {
+			client = this.getClient(
+				params.account.accountId,
+				params.account.privateKey,
+			);
+		} else {
+			client = this.getClient();
+		}
+
+		this.htsSigner = new HTSSigner(client);
+		const transaction: Transaction =
+			TransactionProvider.buildTokenBurnTransaction(
+				params.tokenId,
+				params.amount,
+			);
+		const transactionResponse: TransactionResponse =
+			await this.htsSigner.signAndSendTransaction(transaction);
+		const htsResponse: HTSResponse =
+			await this.transactionResposeHandler.manageResponse(
+				transactionResponse,
+				TransactionType.RECEIPT,
+				client,
+			);
+
+		if (!htsResponse.receipt) {
+			throw new Error(
+				`An error has occurred when cash out the amount ${params.amount} in the account ${params.account.accountId} for tokenId ${params.tokenId}`,
+			);
+		}
+		log(
+			`Result cash out HTS ${htsResponse.receipt.status}: account ${params.account.accountId}, tokenId ${params.tokenId}, amount ${params.amount}`,
 			logOpts,
 		);
 		return htsResponse.receipt.status == 22 ? true : false;

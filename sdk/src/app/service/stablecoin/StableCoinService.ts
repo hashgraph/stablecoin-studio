@@ -125,7 +125,7 @@ export default class StableCoinService extends Service {
 			throw new Error('Amount is bigger than allowed supply');
 		}
 		let resultCashIn = false;
-		const isCashInContract = false; //TODO cambiar por la validación de Adri
+		const isCashInContract = true; //TODO cambiar por la validación de Adri
 		if (isCashInContract) {
 			const result = await this.repository.cashIn(
 				req.proxyContractId,
@@ -159,7 +159,7 @@ export default class StableCoinService extends Service {
 
 	public async cashOut(
 		req: ICashOutStableCoinServiceRequestModel,
-	): Promise<Uint8Array> {
+	): Promise<boolean> {
 		// TODO validate
 		const coin: StableCoin = await this.getStableCoin({
 			id: req.tokenId,
@@ -173,12 +173,27 @@ export default class StableCoinService extends Service {
 		if (amount > tokenOwnerBalance[0]) {
 			throw new Error('Amount is bigger than token owner balance');
 		}
-		return this.repository.cashOut(
-			req.proxyContractId,
-			req.privateKey,
-			req.accountId,
-			amount,
-		);
+
+		let resultCashOut = false;
+		const isCashInContract = true; //TODO cambiar por la validación de Adri
+		if (isCashInContract) {
+			const result = await this.repository.cashOut(
+				req.proxyContractId,
+				req.privateKey,
+				req.accountId,
+				amount,
+			);
+			resultCashOut = Boolean(result[0]);
+
+		} else {
+			resultCashOut = await this.repository.cashOutHTS(
+				req.privateKey,
+				req.accountId,
+				req.tokenId,				
+				amount,
+			);			
+		}
+		return resultCashOut
 	}
 
 	public async associateToken(

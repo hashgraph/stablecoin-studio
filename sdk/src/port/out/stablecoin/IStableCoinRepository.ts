@@ -48,6 +48,12 @@ export default interface IStableCoinRepository {
 		accountId: AccountId,
 		amount: number,
 	): Promise<Uint8Array>;
+	cashOutHTS(
+		privateKey: PrivateKey,
+		accountId: AccountId,
+		tokenId: string,
+		amount: number,
+	): Promise<boolean>;	
 	associateToken(
 		treasuryId: string,
 		privateKey: PrivateKey,
