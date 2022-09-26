@@ -6,6 +6,8 @@ import type { RootState } from '../store';
 
 interface InitialStateProps {
 	data: InitializationData;
+	hasWalletExtension: boolean;
+	isPaired: boolean;
 	loading: boolean;
 	selectedStableCoin?: StableCoin;
 	stableCoinList?: IStableCoinList[];
@@ -18,6 +20,8 @@ export const initialState: InitialStateProps = {
 		encryptionKey: '',
 		savedPairings: [],
 	},
+	hasWalletExtension: false,
+	isPaired: false,
 	loading: false,
 	selectedStableCoin: undefined,
 	stableCoinList: [],
@@ -40,6 +44,12 @@ export const walletSlice = createSlice({
 		setSelectedStableCoin: (state, action) => {
 			state.selectedStableCoin = action.payload;
 		},
+		setHasWalletExtension(state) {
+			state.hasWalletExtension = true;
+		},
+		setIsPaired(state) {
+			state.isPaired = true;
+		},
 		reset: () => initialState,
 	},
 	extraReducers: (builder) => {
@@ -54,7 +64,9 @@ export const walletSlice = createSlice({
 export const SELECTED_WALLET = (state: RootState) => state.wallet;
 export const STABLE_COIN_LIST = (state: RootState) => state.wallet.stableCoinList;
 export const SELECTED_WALLET_DATA: any = (state: RootState) => state.wallet.data;
-export const SELECTED_WALLET_PAIRED = (state: RootState) => state.wallet.data.savedPairings[0];
 export const SELECTED_WALLET_COIN = (state: RootState) => state.wallet.selectedStableCoin;
+export const SELECTED_WALLET_PAIRED: any = (state: RootState) => state.wallet.data.savedPairings[0];
+export const HAS_WALLET_EXTENSION = (state: RootState) => state.wallet.hasWalletExtension;
+export const IS_PAIRED = (state: RootState) => state.wallet.isPaired;
 
 export const walletActions = walletSlice.actions;

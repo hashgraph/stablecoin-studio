@@ -17,7 +17,7 @@ import IRoleStableCoinServiceRequestModel from './model/IRoleStableCoinServiceRe
 import IGetBasicRequestModel from './model/IGetBasicRequest.js';
 import ISupplierRoleStableCoinServiceRequestModel from './model/ISupplierRoleStableCoinServiceRequestModel.js';
 import { StableCoinRole } from '../../../index.js';
-import { IStableCoinDetail } from '../../../port/in/sdk/response/IStableCoinDetail.js';
+import IStableCoinDetail from '../../../port/in/sdk/response/IStableCoinDetail.js';
 
 export default class StableCoinService extends Service {
 	private repository: IStableCoinRepository;
