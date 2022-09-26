@@ -8,6 +8,7 @@ import {
 	ICallContractWithAccountRequest,
 	IHTSTokenRequest,
 	IWipeTokenRequest,
+	ITransferTokenRequest,
 } from '../hedera/types.js';
 import IStableCoinDetail from './types/IStableCoinDetail.js';
 import ITokenList from './types/ITokenList.js';
@@ -629,5 +630,27 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			'hasRole',
 			params,
 		);
+	}
+
+	public async transferHTS(
+		privateKey: PrivateKey,
+		accountId: AccountId,
+		tokenId: string,
+		amount: number,
+		outAccountId: string,
+		inAccountId: string, 
+	): Promise<boolean> {
+		const params: ITransferTokenRequest = {
+			account: {
+				privateKey: privateKey.key,
+				accountId: accountId.id,
+			},
+			tokenId: tokenId,
+			amount: amount,
+			outAccountId: outAccountId,
+			inAccountId: inAccountId
+		};
+
+		return await this.networkAdapter.provider.transferHTS(params);
 	}
 }

@@ -10,6 +10,7 @@ import {
 	ICallContractRequest,
 	IHTSTokenRequest,
 	IWipeTokenRequest,
+	ITransferTokenRequest,
 	InitializationData } from './types.js';
 
 
@@ -51,5 +52,6 @@ export interface IProvider {
 	getInitData(): InitializationData;
 	wipeHTS(parameters: IWipeTokenRequest): Promise<boolean>;
 	cashInHTS(parameters: IHTSTokenRequest): Promise<boolean>;
+	transferHTS(parameters: ITransferTokenRequest): Promise<boolean>;
 	
 }

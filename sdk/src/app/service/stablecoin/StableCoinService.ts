@@ -110,7 +110,7 @@ export default class StableCoinService extends Service {
 			throw new Error('Amount is bigger than allowed supply');
 		}
 		let resultCashIn = false;
-		const isCashInContract = true; //TODO cambiar por la validación de Adri
+		const isCashInContract = false; //TODO cambiar por la validación de Adri
 		if (isCashInContract) {
 			const result = await this.repository.cashIn(
 				req.proxyContractId,
@@ -124,9 +124,20 @@ export default class StableCoinService extends Service {
 			resultCashIn = await this.repository.cashInHTS(
 				req.privateKey,
 				req.accountId,
-				req.tokenId,
+				req.tokenId,				
 				amount,
 			);
+			if (resultCashIn){
+				//Transfer
+				resultCashIn = await this.repository.transferHTS(
+					req.privateKey,
+					req.accountId,
+					req.tokenId,				
+					amount,
+					req.accountId.id,
+					req.targetId
+				)
+			}
 		}
 		return resultCashIn;
 	}

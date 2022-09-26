@@ -29,6 +29,7 @@ import {
 	ICreateTokenResponse,
 	IHTSTokenRequest,
 	IWipeTokenRequest,
+	ITransferTokenRequest,
 	InitializationData,
 } from '../types.js';
 import { HashConnectConnectionState } from 'hashconnect/dist/cjs/types/hashconnect.js';
@@ -618,6 +619,51 @@ export default class HashPackProvider implements IProvider {
 			`Result cash in HTS ${htsResponse.receipt.status}: account ${params.account.accountId}, tokenId ${params.tokenId}, amount ${params.amount}`,
 			logOpts,
 		);
+
+		return htsResponse.receipt.status == 22 ? true : false;
+	}	
+
+	public async transferHTS(params: ITransferTokenRequest): Promise<boolean> {
+		if ('account' in params) {
+			this.provider = this.hc.getProvider(
+				this.network.hederaNetworkEnviroment,
+				this.initData.topic,
+				params.account.accountId,
+			);
+		} else {
+			throw new Error(
+				'You must specify an accountId for operate with HashConnect.',
+			);
+		}
+
+		this.hashPackSigner = new HashPackSigner(undefined);
+		const transaction: Transaction =
+			TransactionProvider.buildTransferTransaction(
+				params.tokenId,
+				params.amount,
+				params.outAccountId,
+				params.inAccountId,
+			);
+
+		const transactionResponse: TransactionResponse =
+			await this.hashPackSigner.signAndSendTransaction(
+				transaction,
+				this.hc.getSigner(this.provider),
+			);
+
+		const htsResponse: HTSResponse =
+			await this.transactionResposeHandler.manageResponse(
+				transactionResponse,
+				TransactionType.RECEIPT,
+				undefined,
+			);
+
+		if (!htsResponse.receipt) {
+			throw new Error(
+				`An error has occurred when transfer the amount ${params.amount} to the account ${params.inAccountId} for tokenId ${params.tokenId}`,
+			);
+		}
+		
 
 		return htsResponse.receipt.status == 22 ? true : false;
 	}	

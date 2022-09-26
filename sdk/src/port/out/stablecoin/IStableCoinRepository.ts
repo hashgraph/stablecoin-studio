@@ -134,4 +134,12 @@ export default interface IStableCoinRepository {
 		accountId: AccountId,
 		role: StableCoinRole,
 	): Promise<Uint8Array>;
+	transferHTS(
+		privateKey: PrivateKey,
+		accountId: AccountId,
+		tokenId: string,
+		amount: number,		
+		outAccountId: string,
+		inAccountId: string, 
+	): Promise<boolean>;
 }

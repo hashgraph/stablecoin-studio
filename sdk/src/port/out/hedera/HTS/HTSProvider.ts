@@ -35,6 +35,7 @@ import {
 	ICreateTokenResponse,
 	IHTSTokenRequest,
 	IWipeTokenRequest,
+	ITransferTokenRequest,
 	InitializationData,
 } from '../types.js';
 import HederaError from '../error/HederaError.js';
@@ -531,6 +532,44 @@ export default class HTSProvider implements IProvider {
 			`Result cash in HTS ${htsResponse.receipt.status}: account ${params.account.accountId}, tokenId ${params.tokenId}, amount ${params.amount}`,
 			logOpts,
 		);
+		return htsResponse.receipt.status == 22 ? true : false;
+	}	
+
+	public async transferHTS(params: ITransferTokenRequest): Promise<boolean> {
+		let client;
+
+		if ('account' in params) {
+			client = this.getClient(
+				params.account.accountId,
+				params.account.privateKey,
+			);
+		} else {
+			client = this.getClient();
+		}
+
+		this.htsSigner = new HTSSigner(client);
+		const transaction: Transaction =
+			TransactionProvider.buildTransferTransaction(
+				params.tokenId,
+				params.amount,
+				params.outAccountId,
+				params.inAccountId
+			);
+		const transactionResponse: TransactionResponse =
+			await this.htsSigner.signAndSendTransaction(transaction);
+		const htsResponse: HTSResponse =
+			await this.transactionResposeHandler.manageResponse(
+				transactionResponse,
+				TransactionType.RECEIPT,
+				client,
+			);
+
+		if (!htsResponse.receipt) {
+			throw new Error(
+				`An error has occurred when transfer the amount ${params.amount} to the account ${params.inAccountId} for tokenId ${params.tokenId}`,
+			);
+		}
+		
 		return htsResponse.receipt.status == 22 ? true : false;
 	}	
 }
