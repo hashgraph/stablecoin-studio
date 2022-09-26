@@ -16,11 +16,8 @@ import Roles from '../views/Roles';
 import StableCoinCreation from '../views/StableCoinCreation/StableCoinCreation';
 import StableCoinNotSelected from '../views/ErrorPage/StableCoinNotSelected';
 import SDKService, { HashConnectConnectionState } from '../services/SDKService';
-import {
-	hashpackActions,
-	HAS_WALLET_EXTENSION,
-	IS_INITIALIZED,
-} from '../store/slices/hashpackSlice';
+import { hashpackActions, IS_INITIALIZED } from '../store/slices/hashpackSlice';
+import { walletActions, HAS_WALLET_EXTENSION } from '../store/slices/walletSlice';
 
 const PrivateRoute = ({ status }: { status?: HashConnectConnectionState }) => {
 	return (
@@ -60,9 +57,9 @@ const Router = () => {
 
 	const onInit = () => dispatch(hashpackActions.setInitialized());
 
-	const onWalletExtensionFound = () => dispatch(hashpackActions.setHasWalletExtension());
+	const onWalletExtensionFound = () => dispatch(walletActions.setHasWalletExtension());
 
-	const onWalletPaired = () => setStatus('Paired' as HashConnectConnectionState);
+	const onWalletPaired = () => setStatus(HashConnectConnectionState.Paired);
 
 	const instanceSDK = async () =>
 		await SDKService.getInstance({ onInit, onWalletExtensionFound, onWalletPaired });
@@ -72,7 +69,7 @@ const Router = () => {
 			const status = await SDKService.getStatus();
 			setStatus(status);
 		} catch {
-			setStatus('Disconnected' as HashConnectConnectionState);
+			setStatus(HashConnectConnectionState.Disconnected);
 		}
 	};
 
