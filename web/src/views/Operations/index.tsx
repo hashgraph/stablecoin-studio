@@ -16,7 +16,6 @@ const Operations = () => {
 			icon: 'MinusCircle',
 			route: NamedRoutes.Wipe,
 			title: t('wipeOperation'),
-			variant: 'disabled',
 		},
 		{
 			icon: 'ArrowsDownUp',

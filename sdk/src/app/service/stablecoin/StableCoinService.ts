@@ -5,8 +5,10 @@ import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import IStableCoinList from '../../../port/in/sdk/response/IStableCoinList.js';
 import IGetStableCoinServiceRequestModel from './model/IGetStableCoinServiceRequestModel.js';
 import IGetBalanceOfStableCoinServiceRequestModel from './model/IGetBalanceOfStableCoinServiceRequestModel.js';
+import IGetBalanceOfTokenOwnerStableCoinServiceRequestModel from './model/IGetBalanceOfTokenOwnerStableCoinServiceRequestModel.js';
 import IGetNameOfStableCoinServiceRequestModel from './model/IGetNameOfStableCoinServiceRequestModel.js';
 import ICashInStableCoinServiceRequestModel from './model/ICashInStableCoinServiceRequestModel.js';
+import ICashOutStableCoinServiceRequestModel from './model/ICashOutStableCoinServiceRequestModel.js';
 import IAssociateTokenStableCoinServiceRequestModel from './model/IAssociateTokenStableCoinServiceRequestModel.js';
 import IWipeStableCoinServiceRequestModel from './model/IWipeStableCoinServiceRequestModel.js';
 import IStableCoinRepository from '../../../port/out/stablecoin/IStableCoinRepository.js';
@@ -34,13 +36,18 @@ export default class StableCoinService extends Service {
 			name: req.name,
 			symbol: req.symbol,
 			decimals: req.decimals,
-			initialSupply: req.initialSupply,
-			maxSupply: req.maxSupply,
-			memo: req.memo,
+			adminKey: req.adminKey,
+			initialSupply: req.initialSupply
+				? req.initialSupply * 10n ** BigInt(req.decimals)
+				: undefined,
+			maxSupply: req.maxSupply
+				? req.maxSupply * 10n ** BigInt(req.decimals)
+				: undefined,			memo: req.memo,
 			freezeKey: req.freezeKey,
 			freezeDefault: req.freezeDefault,
-			kycKey: req.kycKey,
+			kycKey: req.KYCKey,
 			wipeKey: req.wipeKey,
+			pauseKey: req.pauseKey,
 			supplyKey: req.supplyKey,
 			treasury: req.treasury,
 			tokenType: req.tokenType,
@@ -86,6 +93,16 @@ export default class StableCoinService extends Service {
 		);
 	}
 
+	public async getTokenOwnerBalance(
+		req: IGetBalanceOfTokenOwnerStableCoinServiceRequestModel,
+	): Promise<Uint8Array> {
+		return this.repository.getTokenOwnerBalance(
+			req.proxyContractId,
+			req.privateKey,
+			req.accountId,
+		);
+	}
+
 	public async getNameToken(
 		req: IGetNameOfStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
@@ -112,6 +129,30 @@ export default class StableCoinService extends Service {
 			req.privateKey,
 			req.accountId,
 			req.targetId,
+			amount,
+		);
+	}
+
+	public async cashOut(
+		req: ICashOutStableCoinServiceRequestModel,
+	): Promise<Uint8Array> {
+		// TODO validate
+		const coin: StableCoin = await this.getStableCoin({
+			id: req.tokenId,
+		});
+		const amount = coin.toInteger(req.amount);
+		const tokenOwnerBalance = await this.getTokenOwnerBalance({
+			accountId: req.accountId,
+			privateKey: req.privateKey,
+			proxyContractId: req.proxyContractId,
+		});
+		if (amount > tokenOwnerBalance[0]) {
+			throw new Error('Amount is bigger than token owner balance');
+		}
+		return this.repository.cashOut(
+			req.proxyContractId,
+			req.privateKey,
+			req.accountId,
 			amount,
 		);
 	}
@@ -164,11 +205,25 @@ export default class StableCoinService extends Service {
 	public async rescue(
 		req: IRescueStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
+		const coin: StableCoin = await this.getStableCoin({
+			id: req.tokenId,
+		});
+		const amount = coin.toInteger(req.amount);
+
+		const tokenOwnerBalance = await this.getTokenOwnerBalance({
+			accountId: req.accountId,
+			privateKey: req.privateKey,
+			proxyContractId: req.proxyContractId,
+		});
+
+		if (amount > tokenOwnerBalance[0]) {
+			throw new Error('Amount is bigger than token owner balance');
+		}
 		return this.repository.rescue(
 			req.proxyContractId,
 			req.privateKey,
 			req.accountId,
-			req.amount,
+			amount,
 		);
 	}
 

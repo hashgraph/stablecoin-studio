@@ -7,6 +7,7 @@ import GLOBAL_EN from './translations/en/global.json';
 import OPERATIONS_EN from './translations/en/operations.json';
 import ROLES_EN from './translations/en/roles.json';
 import STABLE_COIN_CREATION_EN from './translations/en/stableCoinCreation.json';
+import WIPE_EN from './translations/en/wipe.json';
 
 declare module 'react-i18next' {
 	interface Resources {
@@ -16,6 +17,7 @@ declare module 'react-i18next' {
 		operations: typeof OPERATIONS_EN;
 		roles: typeof ROLES_EN;
 		stableCoinCreation: typeof STABLE_COIN_CREATION_EN;
+		wipe: typeof WIPE_EN;
 	}
 }
 
@@ -31,6 +33,7 @@ declare module 'react-i18next' {
 			operations: typeof OPERATIONS_EN;
 			roles: typeof ROLES_EN;
 			stableCoinCreation: typeof STABLE_COIN_CREATION_EN;
+			wipe: typeof WIPE_EN;
 		};
 	}
 }

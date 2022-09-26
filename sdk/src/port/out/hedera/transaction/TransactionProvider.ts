@@ -1,20 +1,29 @@
 import {
-	Transaction, ContractExecuteTransaction, TokenCreateTransaction, Hbar, TokenSupplyType, ContractCreateFlow, PrivateKey
+	Transaction,
+	ContractExecuteTransaction,
+	TokenCreateTransaction,
+	Hbar,
+	TokenSupplyType,
+	ContractCreateFlow,
+	PrivateKey,
 } from '@hashgraph/sdk';
 import { ICreateTokenResponse } from '../types.js';
 
-export class TransactionProvider{
-
-    public static buildContractExecuteTransaction (contractId:string, functionCallParameters:Uint8Array, gas:number) : Transaction{  
-        const transaction = new ContractExecuteTransaction()
+export class TransactionProvider {
+	public static buildContractExecuteTransaction(
+		contractId: string,
+		functionCallParameters: Uint8Array,
+		gas: number,
+	): Transaction {
+		const transaction = new ContractExecuteTransaction()
 			.setContractId(contractId)
 			.setFunctionParameters(functionCallParameters)
-			.setGas(gas)
-        
-        return transaction;    
-    }
+			.setGas(gas);
 
-    public static buildTokenCreateTransaction (values: ICreateTokenResponse, maxSupply: bigint | undefined) : Transaction{
+		return transaction;
+	}
+
+    public static buildTokenCreateTransaction (values: ICreateTokenResponse, maxSupply: bigint | undefined) : Transaction {
         const transaction = new TokenCreateTransaction()
 			.setMaxTransactionFee(new Hbar(25))
 			.setTokenName(values.name)
@@ -23,28 +32,46 @@ export class TransactionProvider{
 			.setInitialSupply(values.initialSupply)
 			.setTokenMemo(values.memo)
 			.setFreezeDefault(values.freezeDefault)
-			.setTreasuryAccountId(values.treasuryAccountId)
-			.setAdminKey(values.adminKey)
-			.setFreezeKey(values.freezeKey)
-			.setWipeKey(values.wipeKey)
-			.setSupplyKey(values.supplyKey);
-
+			.setTreasuryAccountId(values.treasuryAccountId);
+		
+		if (values.adminKey) {
+			transaction.setAdminKey(values.adminKey);
+		}
+		if (values.freezeKey) {
+			transaction.setFreezeKey(values.freezeKey);
+		}
+		if (values.wipeKey) {
+			transaction.setWipeKey(values.wipeKey);
+		}
+		/*if (values.kycKey) {
+			transaction.setKycKey(values.kycKey);
+		}*/
+		if (values.pauseKey) {
+			transaction.setPauseKey(values.pauseKey);
+		}
+		if (values.supplyKey) {
+			transaction.setSupplyKey(values.supplyKey);
+		}
 		if (maxSupply) {
-			console.log("max="+maxSupply);
 			transaction.setMaxSupply(values.maxSupply);
 			transaction.setSupplyType(TokenSupplyType.Finite);
 		}
 		return transaction;
-    }
+	}
 
-    public static buildContractCreateFlowTransaction (factory:any, admPrivateKey: string, parameters:any, gas:number): Transaction{
-        const transaction =  new ContractCreateFlow()
-            .setBytecode(factory.bytecode)    
-            .setGas(gas)    
-            .setAdminKey(PrivateKey.fromStringED25519(admPrivateKey));
-        if (parameters) {
-            transaction.setConstructorParameters(parameters);
-        }
-        return transaction;
-    }
+	public static buildContractCreateFlowTransaction(
+		factory: any,
+		admPrivateKey: string,
+		parameters: any,
+		gas: number,
+	): Transaction {
+		const transaction = new ContractCreateFlow()
+			.setBytecode(factory.bytecode)
+			.setGas(gas)
+			.setAdminKey(PrivateKey.fromStringED25519(admPrivateKey));
+		if (parameters) {
+			transaction.setConstructorParameters(parameters);
+		}
+		return transaction;
+	}
 }

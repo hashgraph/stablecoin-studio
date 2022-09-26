@@ -1,12 +1,9 @@
 import {
 	IAccountWithKeyRequestModel,
-	IAmountRequestModel,
 	IProxyContractIdRequestModel,
 	ITokenIdRequestModel,
 } from './CoreRequestModel.js';
 
-export default interface IRescueStableCoinServiceRequestModel
+export default interface IGetBalanceOfStableCoinServiceRequestModel
 	extends IProxyContractIdRequestModel,
-		IAccountWithKeyRequestModel,
-		IAmountRequestModel,
-		ITokenIdRequestModel {}
+		IAccountWithKeyRequestModel {}
