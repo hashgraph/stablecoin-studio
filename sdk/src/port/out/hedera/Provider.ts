@@ -7,7 +7,6 @@ import PrivateKey from '../../../domain/context/account/PrivateKey.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import { AppMetadata } from './hashpack/types/types.js';
 import { ICallContractRequest, InitializationData } from './types.js';
-import ProviderEvent from './ProviderEvent.js';
 import EventService from '../../../app/service/event/EventService.js';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface

@@ -16,6 +16,7 @@ import IWipeStableCoinServiceRequestModel from '../../../app/service/stablecoin/
 import ICreateStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/ICreateStableCoinServiceRequestModel.js';
 import { IListStableCoinServiceRequestModel } from '../../../app/service/stablecoin/model/IListStableCoinServiceRequestModel.js';
 import ICashInStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/ICashInStableCoinServiceRequestModel.js';
+import ICashOutStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/ICashOutStableCoinServiceRequestModel.js';
 import IGetNameOfStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IGetNameOfStableCoinServiceRequestModel.js';
 import IGetBalanceOfStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IGetBalanceOfStableCoinServiceRequestModel.js';
 import IGetStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IGetStableCoinServiceRequestModel.js';
@@ -28,6 +29,7 @@ import IGetBasicRequestModel from '../../../app/service/stablecoin/model/IGetBas
 /* Public requests */
 import { IAssociateStableCoinRequest } from './request/IAssociateStableCoinRequest.js';
 import { ICashInStableCoinRequest } from './request/ICashInStableCoinRequest.js';
+import { ICashOutStableCoinRequest } from './request/ICashOutStableCoinRequest.js';
 import { ICreateStableCoinRequest } from './request/ICreateStableCoinRequest.js';
 import { IGetBalanceStableCoinRequest } from './request/IGetBalanceStableCoinRequest.js';
 import { IGetListStableCoinRequest } from './request/IGetListStableCoinRequest.js';
@@ -54,10 +56,14 @@ import { InitializationData } from '../../out/hedera/types.js';
 import { ProviderEventNames } from '../../out/hedera/ProviderEvent.js';
 import EventService from '../../../app/service/event/EventService.js';
 import { IProvider } from '../../out/hedera/Provider.js';
+import {
+	SavedPairingData,
+} from '../../out/hedera/types.js';
 
 export {
 	IAssociateStableCoinRequest,
 	ICashInStableCoinRequest,
+	ICashOutStableCoinRequest,
 	ICreateStableCoinRequest,
 	IGetBalanceStableCoinRequest,
 	IGetListStableCoinRequest,
@@ -85,6 +91,7 @@ export {
 	getHederaNetwork,
 	StableCoinRole,
 	InitializationData,
+	SavedPairingData,
 };
 
 export interface ConfigurationOptions {
@@ -265,6 +272,25 @@ export class SDK {
 		}
 	}
 
+	/**
+	 * cashOut
+	 */
+	public cashOut(
+		request: ICashOutStableCoinRequest,
+	): Promise<Uint8Array> | null {
+		try {
+			const req: ICashOutStableCoinServiceRequestModel = {
+				...request,
+				accountId: new AccountId(request.accountId),
+				privateKey: new PrivateKey(request.privateKey),
+			};
+			return this.stableCoinService.cashOut(req);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+	
 	/**
 	 * associateToken
 	 */

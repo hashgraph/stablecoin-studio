@@ -155,6 +155,19 @@ export class StableCoin extends BaseEntity {
 		this._wipeKey = value;
 	}
 
+
+	/**
+	 * Pause key
+	 */
+	private _pauseKey: ContractId | PublicKey;
+	public get pauseKey(): ContractId | PublicKey {
+		return this._pauseKey;
+	}
+	public set pauseKey(value: ContractId | PublicKey) {
+		this._pauseKey = value;
+	}
+
+		 
 	/**
 	 * Supply key
 	 */
@@ -223,7 +236,8 @@ export class StableCoin extends BaseEntity {
 		freezeDefault?: boolean;
 		kycKey?: ContractId | PublicKey;
 		wipeKey?: ContractId | PublicKey;
-		supplyKey?: DelegateContractId | ContractId | PublicKey;
+		pauseKey?: ContractId | PublicKey;
+		supplyKey?: ContractId | PublicKey;
 		treasury?: AccountId;
 		tokenType?: TokenType;
 		supplyType?: TokenSupplyType;
@@ -244,6 +258,7 @@ export class StableCoin extends BaseEntity {
 			freezeDefault,
 			kycKey,
 			wipeKey,
+			pauseKey,
 			supplyKey,
 			treasury,
 			tokenType,
@@ -267,6 +282,7 @@ export class StableCoin extends BaseEntity {
 		this.freezeDefault = freezeDefault ?? false;
 		this.kycKey = kycKey ?? defaultKey;
 		this.wipeKey = wipeKey ?? defaultKey;
+		this.pauseKey = pauseKey ?? defaultKey;
 		this.supplyKey = supplyKey ?? defaultKey;
 		this.treasury = treasury ?? new AccountId('0.0.0');
 		this.tokenType = tokenType ?? TokenType.FUNGIBLE_COMMON;

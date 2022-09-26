@@ -14,11 +14,16 @@ import DetailsStableCoinsService from './DetailsStableCoinService.js';
 import { PublicKey, SDK, StableCoinRole } from 'hedera-stable-coin-sdk';
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 import CashInStableCoinsService from './CashInStableCoinService.js';
+import CashOutStableCoinsService from './CashOutStableCoinService.js';
 import WipeStableCoinsService from './WipeStableCoinService.js';
 import RoleStableCoinsService from './RoleStableCoinService.js';
 import RescueStableCoinsService from './RescueStableCoinService.js';
+<<<<<<< HEAD
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const colors = require('colors');
+=======
+import colors from 'colors';
+>>>>>>> main_merge
 
 /**
  * Operation Stable Coin Service
@@ -171,7 +176,23 @@ export default class OperationStableCoinService extends Service {
 
         break;
       case 'Cash out':
-        // Call to burn
+        const amount2Burn = await utilsService.defaultSingleAsk(
+          language.getText('stablecoin.askCashOutAmount'),
+          '1',
+        );
+        try {
+          await new CashOutStableCoinsService().cashOutStableCoin(
+            this.proxyContractId,
+            configurationService.getConfiguration().accounts[0].privateKey,
+            configurationService.getConfiguration().accounts[0].accountId,
+            this.stableCoinId,
+            parseFloat(amount2Burn),
+          );
+        } catch (error) {
+          console.log(colors.red(error.message));
+          await this.operationsStableCoin();
+        }
+
         break;
       case 'Wipe':
         // Call to Wipe
@@ -230,11 +251,7 @@ export default class OperationStableCoinService extends Service {
             parseFloat(amount2Rescue),
           );
         } catch (err) {
-          console.log(language.getText('operation.reject'));
-          console.error('error', err);
-
-          utilsService.breakLine();
-
+          console.log(colors.red(err.message));
           await this.operationsStableCoin();
         }
 
@@ -296,56 +313,64 @@ export default class OperationStableCoinService extends Service {
         // Grant role
         //Lists all roles
         role = await this.getRole();
-        accountTarget = await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.accountTarget'),
-          accountTarget,
-        );
-
-        if (!sdk.checkIsAddress(accountTarget)) {
-          console.log(language.getText('validations.wrongFormatAddress'));
-          await this.roleManagementFlow();
-        }
-
-        if (StableCoinRole[role] === StableCoinRole.SUPPLIER_ROLE) {
-          await this.grantSupplierRole(
+        if (role !== language.getText('wizard.backOption')) {
+          accountTarget = await utilsService.defaultSingleAsk(
+            language.getText('stablecoin.accountTarget'),
             accountTarget,
-            roleService,
-            currentAccount,
           );
-          break;
-        }
+          while (!sdk.checkIsAddress(accountTarget)) {
+            console.log(language.getText('validations.wrongFormatAddress'));
+            accountTarget = await utilsService.defaultSingleAsk(
+              language.getText('stablecoin.accountTarget'),
+              '0.0.0',
+            );
+          }
 
-        //Call to SDK
-        await roleService.grantRoleStableCoin(
-          this.proxyContractId,
-          accountTarget,
-          currentAccount.privateKey,
-          currentAccount.accountId,
-          role,
-        );
+          if (StableCoinRole[role] === StableCoinRole.SUPPLIER_ROLE) {
+            await this.grantSupplierRole(
+              accountTarget,
+              roleService,
+              currentAccount,
+            );
+            break;
+          }
+
+          //Call to SDK
+          await roleService.grantRoleStableCoin(
+            this.proxyContractId,
+            accountTarget,
+            currentAccount.privateKey,
+            currentAccount.accountId,
+            role,
+          );
+        }
         break;
       case roleManagementOptions[1]:
         // Revoke role
         //Lists all roles
         role = await this.getRole();
-
-        //Call to revoke role
-        accountTarget = await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.accountTarget'),
-          accountTarget,
-        );
-        if (!sdk.checkIsAddress(accountTarget)) {
-          console.log(language.getText('validations.wrongFormatAddress'));
-          await this.roleManagementFlow();
+        if (role !== language.getText('wizard.backOption')) {
+          //Call to revoke role
+          accountTarget = await utilsService.defaultSingleAsk(
+            language.getText('stablecoin.accountTarget'),
+            accountTarget,
+          );
+          while (!sdk.checkIsAddress(accountTarget)) {
+            console.log(language.getText('validations.wrongFormatAddress'));
+            accountTarget = await utilsService.defaultSingleAsk(
+              language.getText('stablecoin.accountTarget'),
+              '0.0.0',
+            );
+          }
+          //Call to SDK
+          await roleService.revokeRoleStableCoin(
+            this.proxyContractId,
+            accountTarget,
+            currentAccount.privateKey,
+            currentAccount.accountId,
+            role,
+          );
         }
-        //Call to SDK
-        await roleService.revokeRoleStableCoin(
-          this.proxyContractId,
-          accountTarget,
-          currentAccount.privateKey,
-          currentAccount.accountId,
-          role,
-        );
         break;
       case roleManagementOptions[2]:
         //Call to edit role
@@ -362,9 +387,12 @@ export default class OperationStableCoinService extends Service {
               language.getText('stablecoin.accountTarget'),
               accountTarget,
             );
-            if (!sdk.checkIsAddress(accountTarget)) {
+            while (!sdk.checkIsAddress(accountTarget)) {
               console.log(language.getText('validations.wrongFormatAddress'));
-              await this.roleManagementFlow();
+              accountTarget = await utilsService.defaultSingleAsk(
+                language.getText('stablecoin.accountTarget'),
+                '0.0.0',
+              );
             }
 
             if (
@@ -416,9 +444,12 @@ export default class OperationStableCoinService extends Service {
               language.getText('stablecoin.accountTarget'),
               accountTarget,
             );
-            if (!sdk.checkIsAddress(accountTarget)) {
+            while (!sdk.checkIsAddress(accountTarget)) {
               console.log(language.getText('validations.wrongFormatAddress'));
-              await this.roleManagementFlow();
+              accountTarget = await utilsService.defaultSingleAsk(
+                language.getText('stablecoin.accountTarget'),
+                '0.0.0',
+              );
             }
             if (
               await this.checkSupplierType(
@@ -468,9 +499,12 @@ export default class OperationStableCoinService extends Service {
               language.getText('stablecoin.accountTarget'),
               accountTarget,
             );
-            if (!sdk.checkIsAddress(accountTarget)) {
+            while (!sdk.checkIsAddress(accountTarget)) {
               console.log(language.getText('validations.wrongFormatAddress'));
-              await this.roleManagementFlow();
+              accountTarget = await utilsService.defaultSingleAsk(
+                language.getText('stablecoin.accountTarget'),
+                '0.0.0',
+              );
             }
             if (
               await this.checkSupplierType(
@@ -514,9 +548,12 @@ export default class OperationStableCoinService extends Service {
               language.getText('stablecoin.accountTarget'),
               accountTarget,
             );
-            if (!sdk.checkIsAddress(accountTarget)) {
+            while (!sdk.checkIsAddress(accountTarget)) {
               console.log(language.getText('validations.wrongFormatAddress'));
-              await this.roleManagementFlow();
+              accountTarget = await utilsService.defaultSingleAsk(
+                language.getText('stablecoin.accountTarget'),
+                '0.0.0',
+              );
             }
             if (
               await this.checkSupplierType(
@@ -549,19 +586,28 @@ export default class OperationStableCoinService extends Service {
       case roleManagementOptions[3]:
         //Lists all roles
         role = await this.getRole();
-        //Call to has role
-        accountTarget = await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.accountTarget'),
-          accountTarget,
-        );
-        //Call to SDK
-        await roleService.hasRoleStableCoin(
-          this.proxyContractId,
-          accountTarget,
-          currentAccount.privateKey,
-          currentAccount.accountId,
-          role,
-        );
+        if (role !== language.getText('wizard.backOption')) {
+          //Call to has role
+          accountTarget = await utilsService.defaultSingleAsk(
+            language.getText('stablecoin.accountTarget'),
+            accountTarget,
+          );
+          while (!sdk.checkIsAddress(accountTarget)) {
+            console.log(language.getText('validations.wrongFormatAddress'));
+            accountTarget = await utilsService.defaultSingleAsk(
+              language.getText('stablecoin.accountTarget'),
+              '0.0.0',
+            );
+          }
+          //Call to SDK
+          await roleService.hasRoleStableCoin(
+            this.proxyContractId,
+            accountTarget,
+            currentAccount.privateKey,
+            currentAccount.accountId,
+            role,
+          );
+        }
         break;
       case roleManagementOptions[roleManagementOptions.length - 1]:
       default:
@@ -598,6 +644,7 @@ export default class OperationStableCoinService extends Service {
     return await utilsService.defaultMultipleAsk(
       language.getText('roleManagement.askRole'),
       Object.keys(StableCoinRole),
+      true,
     );
   }
 

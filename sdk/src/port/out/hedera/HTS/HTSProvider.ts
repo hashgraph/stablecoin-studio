@@ -120,7 +120,7 @@ export default class HTSProvider implements IProvider {
 		);
 		if (!functionAbi)
 			throw new HederaError(
-				'Contract function not found in ABI, are you using the right version?',
+				`Contract function ${functionName} not found in ABI, are you using the right version?`,
 			);
 		const encodedParametersHex = this.web3.eth.abi
 			.encodeFunctionCall(functionAbi, parameters)
@@ -129,7 +129,9 @@ export default class HTSProvider implements IProvider {
 		return Buffer.from(encodedParametersHex, 'hex');
 	}
 
-	public getPublicKey(privateKey?: PrivateKey | string | undefined): string {
+	public getPublicKey(
+		privateKey?: PrivateKey | string | undefined,
+	): HPublicKey {
 		let key = null;
 		if (privateKey instanceof PrivateKey) {
 			key = privateKey.key;
@@ -137,8 +139,14 @@ export default class HTSProvider implements IProvider {
 			key = privateKey;
 		}
 		if (!key) throw new HederaError('No private key provided');
-		const publicKey = HPrivateKey.fromString(key).publicKey.toStringRaw();
+		const publicKey = HPrivateKey.fromString(key).publicKey;
 		return publicKey;
+	}
+
+	public getPublicKeyString(
+		privateKey?: PrivateKey | string | undefined,
+	): string {
+		return this.getPublicKey(privateKey).toStringRaw();
 	}
 
 	public async callContract(
@@ -241,8 +249,17 @@ export default class HTSProvider implements IProvider {
 			stableCoin.memo,
 			stableCoin.freezeDefault,
 			plainAccount.privateKey,
-			this.getPublicKey(privateKey),
+			new PublicKey({
+				key: this.getPublicKeyString(privateKey),
+				type: this.getPublicKey(privateKey)._key._type,
+			}),
 			client,
+			stableCoin.adminKey,
+			stableCoin.freezeKey,
+			stableCoin.kycKey,
+			stableCoin.wipeKey,
+			stableCoin.pauseKey,
+			stableCoin.supplyKey,
 		);
 		log('Setting up contract... please wait.', logOpts);
 		await this.callContract('setTokenAddress', {
@@ -285,9 +302,11 @@ export default class HTSProvider implements IProvider {
 			memo: hederaToken.memo,
 			freezeDefault: hederaToken.freezeDefault,
 			treasury: new AccountId(hederaToken.treasuryAccountId.toString()),
-			adminKey: this.fromPublicKey(hederaToken.adminKey),
-			freezeKey: this.fromPublicKey(hederaToken.freezeKey),
-			wipeKey: this.fromPublicKey(hederaToken.wipeKey),
+			adminKey: hederaToken.adminKey,
+			freezeKey: hederaToken.freezeKey,
+			kycKey: hederaToken.kycKey,
+			wipeKey: hederaToken.wipeKey,
+			pauseKey: hederaToken.pauseKey,
 			supplyKey: hederaToken.supplyKey,
 			id: hederaToken.tokenId.toString(),
 			tokenType: stableCoin.tokenType,
@@ -358,8 +377,14 @@ export default class HTSProvider implements IProvider {
 		memo: string,
 		freezeDefault: boolean,
 		privateKey: string,
-		publicKey: string,
+		publicKey: PublicKey,
 		client: Client,
+		adminKey?: ContractId | PublicKey,
+		freezeKey?: ContractId | PublicKey,
+		kycKey?: ContractId | PublicKey,
+		wipeKey?: ContractId | PublicKey,
+		pauseKey?: ContractId | PublicKey,
+		supplyKey?: ContractId | PublicKey,
 	): Promise<ICreateTokenResponse> {
 		const values: ICreateTokenResponse = {
 			name,
@@ -372,11 +397,19 @@ export default class HTSProvider implements IProvider {
 			memo,
 			freezeDefault,
 			treasuryAccountId: HAccountId.fromString(String(contractId)),
-			adminKey: HPublicKey.fromString(publicKey),
-			freezeKey: HPublicKey.fromString(publicKey),
-			wipeKey: HPublicKey.fromString(publicKey),
-			supplyKey: DelegateContractId.fromString(String(contractId)),
 			tokenId: TokenId.fromString('0.0.0'),
+			adminKey: this.getKeyFromOption(adminKey ?? publicKey, contractId),
+			freezeKey: this.getKeyFromOption(
+				freezeKey ?? publicKey,
+				contractId,
+			),
+			kycKey: this.getKeyFromOption(kycKey ?? publicKey, contractId),
+			wipeKey: this.getKeyFromOption(wipeKey ?? publicKey, contractId),
+			pauseKey: this.getKeyFromOption(pauseKey ?? publicKey, contractId),
+			supplyKey: this.getKeyFromOption(
+				supplyKey ?? publicKey,
+				contractId,
+			),
 		};
 
 		this.htsSigner = new HTSSigner(client);
@@ -404,6 +437,19 @@ export default class HTSProvider implements IProvider {
 			logOpts,
 		);
 		return values;
+	}
+
+	private getKeyFromOption(
+		option: ContractId | PublicKey,
+		contractId: ContractId,
+	): HPublicKey | DelegateContractId | undefined {
+		if (option instanceof ContractId) {
+			return DelegateContractId.fromString(String(contractId));
+		} else if (option instanceof PublicKey) {
+			return HPublicKey.fromString(option.key);
+		} else {
+			return undefined;
+		}
 	}
 
 	private fromPublicKey(key: HPublicKey): PublicKey {

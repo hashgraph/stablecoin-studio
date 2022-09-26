@@ -300,7 +300,7 @@ export default class HashPackProvider implements IProvider {
 			String(proxyContract),
 			stableCoin.freezeDefault,
 			plainAccount.privateKey,
-			this.getPublicKey(privateKey),
+			this.getPublicKeyString(privateKey),
 			this.hc.getSigner(this.provider),
 		);
 		log('Setting up contract... please wait.', logOpts);
@@ -344,9 +344,11 @@ export default class HashPackProvider implements IProvider {
 			memo: hederaToken.memo,
 			freezeDefault: hederaToken.freezeDefault,
 			treasury: new AccountId(hederaToken.treasuryAccountId.toString()),
-			adminKey: this.fromPublicKey(hederaToken.adminKey),
-			freezeKey: this.fromPublicKey(hederaToken.freezeKey),
-			wipeKey: this.fromPublicKey(hederaToken.wipeKey),
+			adminKey: this.fromPublicKey(hederaToken.adminKey as HPublicKey),
+			freezeKey: this.fromPublicKey(hederaToken.freezeKey as HPublicKey),
+			wipeKey: this.fromPublicKey(hederaToken.wipeKey as HPublicKey),
+			pauseKey: this.fromPublicKey(hederaToken.pauseKey as HPublicKey),
+			kycKey: this.fromPublicKey(hederaToken.kycKey as HPublicKey),
 			supplyKey: hederaToken.supplyKey,
 			id: hederaToken.tokenId.toString(),
 			tokenType: stableCoin.tokenType,
@@ -424,6 +426,8 @@ export default class HashPackProvider implements IProvider {
 			wipeKey: HPublicKey.fromString(publicKey),
 			supplyKey: DelegateContractId.fromString(String(contractId)),
 			tokenId: TokenId.fromString('0.0.0'),
+			pauseKey: HPublicKey.fromString(publicKey),
+			kycKey: HPublicKey.fromString(publicKey),
 		};
 
 		this.hashPackSigner = new HashPackSigner();
@@ -463,7 +467,9 @@ export default class HashPackProvider implements IProvider {
 		});
 	}
 
-	public getPublicKey(privateKey?: PrivateKey | string | undefined): string {
+	public getPublicKeyString(
+		privateKey?: PrivateKey | string | undefined,
+	): string {
 		let key = null;
 		if (privateKey instanceof PrivateKey) {
 			key = privateKey.key;

@@ -8,8 +8,7 @@ import { INetworkConfig } from '../../../domain/configuration/interfaces/INetwor
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 import { configurationService, utilsService } from '../../../index.js';
 import SetConfigurationService from './SetConfigurationService.js';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const MaskData = require('maskdata');
+import MaskData from 'maskdata';
 
 /**
  * Configuration Service

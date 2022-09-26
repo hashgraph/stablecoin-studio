@@ -154,6 +154,29 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		return response;
 	}
 
+	public async getTokenOwnerBalance(
+		treasuryId: string,
+		privateKey: PrivateKey,
+		accountId: AccountId,
+	): Promise<Uint8Array> {
+		const params: ICallContractWithAccountRequest = {
+			contractId: treasuryId,
+			parameters: [],
+			gas: 136000,
+			abi: HederaERC20__factory.abi,
+			account: {
+				accountId: accountId.id,
+				privateKey: privateKey.key,
+			},
+		};
+		const response = await this.networkAdapter.provider.callContract(
+			'tokenOwnerBalance',
+			params,
+		);
+
+		return response;
+	}
+
 	public async getNameToken(
 		treasuryId: string,
 		privateKey: PrivateKey,
@@ -197,6 +220,27 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		};
 
 		return await this.networkAdapter.provider.callContract('mint', params);
+	}
+
+	public async cashOut(
+		treasuryId: string,
+		privateKey: PrivateKey,
+		accountId: AccountId,
+		amount: number,
+	): Promise<Uint8Array> {
+		const parameters = [amount];
+
+		const params: ICallContractWithAccountRequest = {
+			contractId: treasuryId,
+			parameters,
+			gas: 400000,
+			abi: HederaERC20__factory.abi,
+			account: {
+				accountId: accountId.id,
+				privateKey: privateKey.key,
+			},
+		};
+		return await this.networkAdapter.provider.callContract('burn', params);
 	}
 
 	public async associateToken(

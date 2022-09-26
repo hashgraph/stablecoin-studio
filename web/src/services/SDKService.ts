@@ -28,7 +28,6 @@ export class SDKService {
 	private static instance: SDK | undefined;
 
 	constructor() {}
-
 	public static async getInstance() {
 		if (!SDKService.instance)
 			SDKService.instance = new SDK({

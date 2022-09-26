@@ -11,8 +11,7 @@ import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccoun
 import { IConsensusNodeConfig } from '../../../domain/configuration/interfaces/IConsensusNodeConfig.js';
 import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
 import { SDK } from 'hedera-stable-coin-sdk';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const colors = require('colors');
+import colors from 'colors';
 
 /**
  * Set Configuration Service
