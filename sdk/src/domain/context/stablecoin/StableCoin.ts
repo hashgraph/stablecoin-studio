@@ -313,7 +313,7 @@ export class StableCoin extends BaseEntity {
 		return res;
 	}
 
-	public isValidAmount(amount: number): boolean {		
+	public isValidAmount(amount: number): boolean {
 		return this.getDecimals(amount) <= this.decimals;
 	}
 
