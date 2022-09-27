@@ -1,4 +1,8 @@
-import { PublicKey as HPublicKey } from '@hashgraph/sdk';
+import {
+	DelegateContractId,
+	PublicKey as HPublicKey,
+	ContractId as HContractId,
+} from '@hashgraph/sdk';
 import { ValueObject } from '../../../core/types.js';
 import { proto } from '@hashgraph/proto';
 import InvalidKeyForContractIdDomainError from './error/InvalidKeyForContractIdDomainError.js';
@@ -28,7 +32,15 @@ export default class ContractId extends ValueObject {
 		return new ContractId('0.0.' + id.toString());
 	}
 
+	public static fromHederaContractId(con: HContractId | DelegateContractId) {
+		return new ContractId(String(con));
+	}
+
+	public toDelegateContractId(): DelegateContractId {
+		return DelegateContractId.fromString(this.id);
+	}
+
 	public toString(): string {
-		throw new Error('Method not implemented.');
+		return this.id;
 	}
 }

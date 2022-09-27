@@ -1,11 +1,12 @@
 import { HederaNetwork, HederaNetworkEnviroment , Configuration, NetworkMode,ICreateStableCoinRequest} from '../../../../src/index.js';
-import { AccountId
-} from '@hashgraph/sdk';
+import { AccountId as HederaAccountId } from '@hashgraph/sdk';
 import { StableCoin } from '../../../../src/domain/context/stablecoin/StableCoin.js';
 import { TokenSupplyType } from '../../../../src/domain/context/stablecoin/TokenSupply.js';
 import { TokenType } from '../../../../src/domain/context/stablecoin/TokenType.js';
-import { ACCOUNTS, getSDK } from '../../../core.js';
+import { ACCOUNTS, getSDKAsync } from '../../../core.js';
 import { assert } from 'console';
+import PrivateKey from '../../../../src/domain/context/account/PrivateKey.js';
+import AccountId from '../../../../src/domain/context/account/AccountId.js';
 
 describe('🧪 [DOMAIN] StableCoin',  () => {
 	let sdk:any;
@@ -13,17 +14,17 @@ describe('🧪 [DOMAIN] StableCoin',  () => {
     it('Create an stable coin with custom nodes',   async ()  => {
 		
 		const conf:Configuration = {
-			network: new HederaNetwork(HederaNetworkEnviroment.TEST, {"52.168.76.241:50211": new AccountId(4)},''),
+			network: new HederaNetwork(HederaNetworkEnviroment.TEST, {"52.168.76.241:50211": new HederaAccountId(4)},''),
 			mode: NetworkMode.EOA,
 			options: {
 				account: ACCOUNTS.testnet,
 			}
 		}
 
-		sdk = await getSDK(conf);
+		sdk = await getSDKAsync(conf);
 		const create:ICreateStableCoinRequest  = {
-				accountId: ACCOUNTS.testnet.accountId.id,
-				privateKey: ACCOUNTS.testnet.privateKey.key,
+				accountId: new AccountId(ACCOUNTS.testnet.accountId.id),
+				privateKey: new PrivateKey(ACCOUNTS.testnet.privateKey.key),
 				name: 'Custom Nodes', 
 				symbol: 'CN',
 				decimals: 2
@@ -48,10 +49,10 @@ describe('🧪 [DOMAIN] StableCoin',  () => {
 			}
 		}
 
-		sdk = await getSDK(conf);
+		sdk = await getSDKAsync(conf);
 		const create:ICreateStableCoinRequest  = {
-				accountId: ACCOUNTS.testnet.accountId.id,
-				privateKey: ACCOUNTS.testnet.privateKey.key,
+				accountId: new AccountId(ACCOUNTS.testnet.accountId.id),
+				privateKey: new PrivateKey(ACCOUNTS.testnet.privateKey.key),
 				name: 'Custom Nodes', 
 				symbol: 'CN',
 				decimals: 2

@@ -1,5 +1,6 @@
 import { ValueObject } from '../../../core/types.js';
 import { PublicKeyNotValid } from './error/PublicKeyNotValid.js';
+import { PublicKey as HPublicKey } from '@hashgraph/sdk';
 
 export default class PublicKey extends ValueObject {
 	public static readonly NULL: PublicKey = new PublicKey({
@@ -15,6 +16,17 @@ export default class PublicKey extends ValueObject {
 		this.validate(key);
 		this.key = key;
 		this.type = type;
+	}
+
+	public static fromHederaKey(key: HPublicKey): PublicKey {
+		return new PublicKey({
+			key: key.toStringRaw(),
+			type: key._key._type
+		})
+	}
+
+	public toHederaKey(): HPublicKey {
+		return HPublicKey.fromString(this.key)
 	}
 
 	public toString(): string {

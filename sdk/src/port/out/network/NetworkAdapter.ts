@@ -1,9 +1,10 @@
 import { HederaNetwork } from '../../../core/enum.js';
 import HashPackProvider from '../hedera/hashpack/HashPackProvider.js';
 import HTSProvider from '../hedera/HTS/HTSProvider.js';
-import { IProvider, IniConfigOptions } from '../hedera/Provider.js';
+import { IProvider } from '../hedera/Provider.js';
 import { AppMetadata, NetworkMode } from '../../in/sdk/sdk.js';
 import { InitializationData } from '../hedera/types.js';
+import EventService from '../../../app/service/event/EventService.js';
 
 type NetworkClientOptions = HederaClientOptions;
 
@@ -25,6 +26,7 @@ export default class NetworkAdapter {
 	}
 
 	constructor(
+		eventService: EventService,
 		mode: NetworkMode,
 		network: HederaNetwork,
 		options: NetworkClientOptions,
@@ -32,39 +34,34 @@ export default class NetworkAdapter {
 		this._mode = mode;
 		this.network = network;
 		this._options = options;
-	}
-
-	/**
-	 * Init
-	 */
-	public async init(): Promise<NetworkAdapter> {
 		switch (this._mode) {
 			case NetworkMode.EOA:
-				this.provider = await this.getHTSProvider(this.network);
+				this.provider = new HTSProvider(eventService);
 				return this;
 			case NetworkMode.HASHPACK:
-				this.provider = await this.getHashpackProvider(
-					this.network,
-					this._options,
-				);
+				this.provider = new HashPackProvider(eventService);
 				return this;
 			default:
 				throw new Error('Not supported');
 		}
 	}
 
+	/**
+	 * Init
+	 */
+	public async init(): Promise<NetworkAdapter> {
+		this.provider = await this.provider.init({
+			network: this.network,
+			options: this._options,
+		});
+		return this;
+	}
+
+	public getInitData(): InitializationData {
+		return this.provider.initData;
+	}
+
 	public async stop(): Promise<boolean> {
 		return this.provider.stop();
-	}
-
-	private getHashpackProvider(
-		network: HederaNetwork,
-		options: IniConfigOptions,
-	): Promise<HashPackProvider> {
-		return new HashPackProvider().init({ network, options });
-	}
-
-	private getHTSProvider(network: HederaNetwork): Promise<HTSProvider> {
-		return new HTSProvider().init({ network });
 	}
 }
