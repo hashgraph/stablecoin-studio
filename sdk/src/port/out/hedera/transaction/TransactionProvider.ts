@@ -3,7 +3,6 @@ import {
 	TokenWipeTransaction, TokenMintTransaction, TokenBurnTransaction, TokenId, AccountId, TransferTransaction,
 	PublicKey as HPublicKey,
 	DelegateContractId,
-	AccountId,
 } from '@hashgraph/sdk';
 import { ContractId, PublicKey } from '../../../in/sdk/sdk.js';
 import { ICreateTokenResponse } from '../types.js';
