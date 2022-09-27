@@ -1,6 +1,7 @@
 import { StableCoinRole } from '../../../core/enum.js';
 import AccountId from '../../../domain/context/account/AccountId.js';
 import PrivateKey from '../../../domain/context/account/PrivateKey.js';
+import { Capabilities } from '../../../domain/context/stablecoin/Capabilities.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import IStableCoinList from '../../in/sdk/response/IStableCoinList.js';
 
@@ -12,6 +13,7 @@ export default interface IStableCoinRepository {
 	): Promise<StableCoin>;
 	getListStableCoins(privateKey: PrivateKey): Promise<IStableCoinList[]>;
 	getStableCoin(id: string): Promise<StableCoin>;
+	getCapabilitiesStableCoin(id: string,publickey:string): Promise <Capabilities[]> ;
 	getBalanceOf(
 		treasuryId: string,
 		privateKey: PrivateKey,
@@ -36,12 +38,24 @@ export default interface IStableCoinRepository {
 		targetId: string,
 		amount: number,
 	): Promise<Uint8Array>;
+	cashInHTS(
+		privateKey: PrivateKey,
+		accountId: AccountId,
+		tokenId: string,
+		amount: number,
+	): Promise<boolean>;	
 	cashOut(
 		treasuryId: string,
 		privateKey: PrivateKey,
 		accountId: AccountId,
 		amount: number,
 	): Promise<Uint8Array>;
+	cashOutHTS(
+		privateKey: PrivateKey,
+		accountId: AccountId,
+		tokenId: string,
+		amount: number,
+	): Promise<boolean>;	
 	associateToken(
 		treasuryId: string,
 		privateKey: PrivateKey,
@@ -54,6 +68,13 @@ export default interface IStableCoinRepository {
 		targetId: string,
 		amount: number,
 	): Promise<Uint8Array>;
+	wipeHTS(
+		privateKey: PrivateKey,
+		accountId: AccountId,
+		tokenId: string,
+		wipeAccountId: string,
+		amount: number,
+	): Promise<boolean>;
 	grantSupplierRole(
 		treasuryId: string,
 		address: string,
@@ -132,4 +153,12 @@ export default interface IStableCoinRepository {
 		accountId: AccountId,
 		role: StableCoinRole,
 	): Promise<Uint8Array>;
+	transferHTS(
+		privateKey: PrivateKey,
+		accountId: AccountId,
+		tokenId: string,
+		amount: number,		
+		outAccountId: string,
+		inAccountId: string, 
+	): Promise<boolean>;
 }

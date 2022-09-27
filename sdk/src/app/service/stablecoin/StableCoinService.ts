@@ -17,6 +17,7 @@ import IRoleStableCoinServiceRequestModel from './model/IRoleStableCoinServiceRe
 import IGetBasicRequestModel from './model/IGetBasicRequest.js';
 import ISupplierRoleStableCoinServiceRequestModel from './model/ISupplierRoleStableCoinServiceRequestModel.js';
 import { StableCoinRole } from '../../../index.js';
+import { Capabilities } from '../../../domain/context/stablecoin/Capabilities.js';
 
 export default class StableCoinService extends Service {
 	private repository: IStableCoinRepository;
@@ -81,6 +82,11 @@ export default class StableCoinService extends Service {
 		return this.repository.getStableCoin(req.id);
 	}
 
+	public async getCapabilitiesStableCoin(id:string,publicKey:string)
+	: Promise<Capabilities[]> {
+		return this.repository.getCapabilitiesStableCoin(id,publicKey);
+	}
+
 	public async getBalanceOf(
 		req: IGetBalanceOfStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
@@ -115,7 +121,7 @@ export default class StableCoinService extends Service {
 
 	public async cashIn(
 		req: ICashInStableCoinServiceRequestModel,
-	): Promise<Uint8Array> {
+	): Promise<boolean> {
 		// TODO validation
 		const coin: StableCoin = await this.getStableCoin({
 			id: req.tokenId,
@@ -125,18 +131,45 @@ export default class StableCoinService extends Service {
 		if (coin.maxSupply > 0n && amount > coin.maxSupply - coin.totalSupply) {
 			throw new Error('Amount is bigger than allowed supply');
 		}
-		return this.repository.cashIn(
-			req.proxyContractId,
-			req.privateKey,
-			req.accountId,
-			req.targetId,
-			amount,
-		);
+		let resultCashIn = false;
+		
+		const capabilities: Capabilities[] = await this.getCapabilitiesStableCoin(req.tokenId, req.privateKey.publicKey.key);
+		if (capabilities.includes(Capabilities.CASH_IN)){
+			const result = await this.repository.cashIn(
+				req.proxyContractId,
+				req.privateKey,
+				req.accountId,
+				req.targetId,
+				amount,
+			);
+			resultCashIn = Boolean(result[0]);
+		} else if (capabilities.includes(Capabilities.CASH_IN_HTS)){
+			resultCashIn = await this.repository.cashInHTS(
+				req.privateKey,
+				req.accountId,
+				req.tokenId,				
+				amount,
+			);
+			if (resultCashIn && req.accountId.id != req.targetId){				
+				resultCashIn = await this.repository.transferHTS(
+					req.privateKey,
+					req.accountId,
+					req.tokenId,				
+					amount,
+					req.accountId.id,
+					req.targetId
+				)
+			}
+		} else {
+			throw new Error('Cash in not allowed'); 
+		}
+		return resultCashIn;
 	}
 
 	public async cashOut(
 		req: ICashOutStableCoinServiceRequestModel,
-	): Promise<Uint8Array> {
+	): Promise<boolean> {
+		// TODO validate
 		const coin: StableCoin = await this.getStableCoin({
 			id: req.tokenId,
 		});
@@ -154,12 +187,28 @@ export default class StableCoinService extends Service {
 			throw new Error('Amount is bigger than treasury account balance');
 		}
 
-		return this.repository.cashOut(
-			req.proxyContractId,
-			req.privateKey,
-			req.accountId,
-			amount,
-		);
+		let resultCashOut = false;
+		const capabilities: Capabilities[] = await this.getCapabilitiesStableCoin(req.tokenId, req.privateKey.publicKey.key);
+		if (capabilities.includes(Capabilities.CASH_OUT)){
+			const result = await this.repository.cashOut(
+				req.proxyContractId,
+				req.privateKey,
+				req.accountId,
+				amount,
+			);
+			resultCashOut = Boolean(result[0]);
+
+		} else if (capabilities.includes(Capabilities.CASH_OUT_HTS)){
+			resultCashOut = await this.repository.cashOutHTS(
+				req.privateKey,
+				req.accountId,
+				req.tokenId,				
+				amount,
+			);			
+		} else {
+			throw new Error('Cash out not allowed'); 
+		}
+		return resultCashOut
 	}
 
 	public async associateToken(
@@ -174,7 +223,7 @@ export default class StableCoinService extends Service {
 
 	public async wipe(
 		req: IWipeStableCoinServiceRequestModel,
-	): Promise<Uint8Array> {
+	): Promise<boolean> {
 		const coin: StableCoin = await this.getStableCoin({
 			id: req.tokenId,
 		});
@@ -197,14 +246,31 @@ export default class StableCoinService extends Service {
 		if (balance[0] < req.amount) {
 			throw new Error(`Insufficient funds on account ${req.targetId}`);
 		}
+		
+		let resultWipe = false;
+		const capabilities: Capabilities[] = await this.getCapabilitiesStableCoin(req.tokenId, req.privateKey.publicKey.key);
+		if (capabilities.includes(Capabilities.WIPE)){
+			const result = await this.repository.wipe(
+				req.proxyContractId,
+				req.privateKey,
+				req.accountId,
+				req.targetId,
+				coin.toInteger(req.amount),
+			);
+			resultWipe = Boolean(result[0]);
+		} else if (capabilities.includes(Capabilities.WIPE_HTS)){
+			resultWipe = await this.repository.wipeHTS(
+				req.privateKey,
+				req.accountId,
+				req.tokenId,
+				req.targetId,
+				coin.toInteger(req.amount),
+			);
+		} else {
+			throw new Error('Wipe not allowed'); 
+		}
 
-		return this.repository.wipe(
-			req.proxyContractId,
-			req.privateKey,
-			req.accountId,
-			req.targetId,
-			coin.toInteger(req.amount),
-		);
+		return resultWipe;
 	}
 
 	public async rescue(
