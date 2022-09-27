@@ -460,10 +460,15 @@ export default class OperationStableCoinService extends Service {
               console.log(language.getText('supplier.unlimitedRole') + '\n');
               break;
             }
-            limit = await utilsService.defaultSingleAsk(
-              language.getText('stablecoin.amountDecrease'),
-              '1',
-            );
+            do {
+              limit = await utilsService.defaultSingleAsk(
+                language.getText('stablecoin.amountDecrease'),
+                '1',
+              );
+              if (parseInt(limit) <= 0) {
+                console.log(language.getText('validations.lessZero'));
+              }
+            } while (parseInt(limit) <= 0);
             //Call to SDK
             if (
               await this.checkSupplierType(
