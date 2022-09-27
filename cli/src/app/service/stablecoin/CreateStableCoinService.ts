@@ -398,7 +398,7 @@ export default class CreateStableCoinService extends Service {
       const currentAccount = utilsService.getCurrentAccount();
       return new AccountId(currentAccount.accountId)
     } else {
-      return AccountId.NULL;
+      return AccountId.NULL;      
     }
   }  
 }
