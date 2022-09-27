@@ -22,8 +22,8 @@ interface ISupplierAdmin {
     function isUnlimitedSupplierAllowance(address supplier) external view returns (bool);
 
      /**
-     * @dev  Gives `SUPPLIER ROLE' permissions to perform supplier's allowance and sets the `amount` the supplier can mint,
-     * if you don't already have unlimited supplier's allowance permission
+     * @dev  Gives `SUPPLIER ROLE' permissions to perform supplier's allowance and sets the `amount` 
+     * the supplier can mint, if you don't already have unlimited supplier's allowance permission
      *
      * @param supplier The address of the supplier
      * @param amount The amount of tokens to set the supplier allowance
@@ -32,7 +32,8 @@ interface ISupplierAdmin {
     function grantSupplierRole(address supplier, uint256 amount) external;
 
     /** 
-    * @dev Gives `SUPPLIER ROLE' permissions to perform supplier's allowance and sets unlimited supplier's allowance permission
+    * @dev Gives `SUPPLIER ROLE' permissions to perform supplier's allowance and sets unlimited 
+    * supplier's allowance permission.
     *
     * @param supplier The address of the supplier
     */

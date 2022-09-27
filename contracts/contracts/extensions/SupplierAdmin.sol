@@ -8,8 +8,8 @@ import "../Roles.sol";
 
 abstract contract SupplierAdmin is ISupplierAdmin, AccessControlUpgradeable, TokenOwner, Roles {
 
-    mapping(address => uint256) internal supplierAllowances;
-    mapping(address => bool) internal unlimitedSupplierAllowances;
+    mapping(address => uint256) internal _supplierAllowances;
+    mapping(address => bool) internal _unlimitedSupplierAllowances;
 
      /**
      * @dev Emitted when a supply controller increases a supplier's allowance
@@ -55,7 +55,7 @@ abstract contract SupplierAdmin is ISupplierAdmin, AccessControlUpgradeable, Tok
         view 
         returns (uint256) 
     {
-        return supplierAllowances[supplier];
+        return _supplierAllowances[supplier];
     }
 
     /**
@@ -70,7 +70,7 @@ abstract contract SupplierAdmin is ISupplierAdmin, AccessControlUpgradeable, Tok
         view 
         returns (bool) 
     {
-        return unlimitedSupplierAllowances[supplier];
+        return _unlimitedSupplierAllowances[supplier];
     }
 
     /**
@@ -87,15 +87,15 @@ abstract contract SupplierAdmin is ISupplierAdmin, AccessControlUpgradeable, Tok
         virtual 
         onlyRole(ADMIN_SUPPLIER_ROLE) 
     {
-        require(!unlimitedSupplierAllowances[supplier], "Account already has unlimited supplier allowance");
-        supplierAllowances[supplier] = amount;
+        require(!_unlimitedSupplierAllowances[supplier], "Account already has unlimited supplier allowance");
+        _supplierAllowances[supplier] = amount;
         _grantRole(SUPPLIER_ROLE, supplier);
         
     }
 
     /** 
-    * @dev Gives `SUPPLIER ROLE' permissions to perform supplier's allowance, sets unlimited supplier's allowance permission,
-    * and sets the `amount` the supplier can mint to 0.
+    * @dev Gives `SUPPLIER ROLE' permissions to perform supplier's allowance, sets unlimited 
+    * supplier's allowance permission, and sets the `amount` the supplier can mint to 0.
     * Only the 'ADMIN SUPPLIER ROLE` can execute.
     *
     * @param supplier The address of the supplier
@@ -105,13 +105,14 @@ abstract contract SupplierAdmin is ISupplierAdmin, AccessControlUpgradeable, Tok
         virtual 
         onlyRole(ADMIN_SUPPLIER_ROLE) 
     {
-        unlimitedSupplierAllowances[supplier] = true;
-        supplierAllowances[supplier] = 0;
+        _unlimitedSupplierAllowances[supplier] = true;
+        _supplierAllowances[supplier] = 0;
         _grantRole(SUPPLIER_ROLE, supplier);
     }
 
     /**
-    * @dev Revoke `SUPPLIER ROLE' permissions to perform supplier's allowance and revoke unlimited supplier's allowance permission.    
+    * @dev Revoke `SUPPLIER ROLE' permissions to perform supplier's allowance and revoke unlimited 
+    * supplier's allowance permission.    
     * Only the 'ADMIN SUPPLIER ROLE` can execute.
     *
     * @param supplier The address of the supplier
@@ -121,8 +122,8 @@ abstract contract SupplierAdmin is ISupplierAdmin, AccessControlUpgradeable, Tok
         virtual 
         onlyRole(ADMIN_SUPPLIER_ROLE) 
     {
-        supplierAllowances[supplier] = 0;
-        unlimitedSupplierAllowances[supplier] = false;
+        _supplierAllowances[supplier] = 0;
+        _unlimitedSupplierAllowances[supplier] = false;
         _revokeRole(SUPPLIER_ROLE, supplier);
     }
 
@@ -138,9 +139,9 @@ abstract contract SupplierAdmin is ISupplierAdmin, AccessControlUpgradeable, Tok
         virtual 
         onlyRole(ADMIN_SUPPLIER_ROLE) 
     {    
-        uint256 oldAllowance = supplierAllowances[supplier];
+        uint256 oldAllowance = _supplierAllowances[supplier];
         uint256 newAllowance = 0;
-        supplierAllowances[supplier] = newAllowance;
+        _supplierAllowances[supplier] = newAllowance;
 
         emit SupplierAllowanceReset(msg.sender, supplier, oldAllowance, newAllowance);
     }
@@ -161,9 +162,9 @@ abstract contract SupplierAdmin is ISupplierAdmin, AccessControlUpgradeable, Tok
     {
         require(amount > 0, "Amount must be greater than zero");
         
-        uint256 oldAllowance = supplierAllowances[supplier];
+        uint256 oldAllowance = _supplierAllowances[supplier];
         uint256 newAllowance = oldAllowance + amount;  
-        supplierAllowances[supplier] = newAllowance;
+        _supplierAllowances[supplier] = newAllowance;
         
         emit SupplierAllowanceIncreased(msg.sender, supplier, amount, oldAllowance, newAllowance);
     }
@@ -184,11 +185,11 @@ abstract contract SupplierAdmin is ISupplierAdmin, AccessControlUpgradeable, Tok
     {
         require(amount > 0, "Amount must be greater than zero");
     
-        uint256 oldAllowance = supplierAllowances[supplier];
+        uint256 oldAllowance = _supplierAllowances[supplier];
         require(amount <= oldAllowance, "Amount must not exceed the supplier allowance");
         
         uint256 newAllowance = oldAllowance - amount;
-        supplierAllowances[supplier] = newAllowance;
+        _supplierAllowances[supplier] = newAllowance;
     
         emit SupplierAllowanceDecreased(msg.sender, supplier, amount, oldAllowance, newAllowance);
     }    
@@ -204,10 +205,10 @@ abstract contract SupplierAdmin is ISupplierAdmin, AccessControlUpgradeable, Tok
         public
         virtual
     {
-        if (!unlimitedSupplierAllowances[supplier]) {
-            uint256 allowance = supplierAllowances[supplier];
+        if (!_unlimitedSupplierAllowances[supplier]) {
+            uint256 allowance = _supplierAllowances[supplier];
             require(allowance >= amount, "Amount must not exceed the supplier allowance");
-            supplierAllowances[supplier] = allowance - amount;
+            _supplierAllowances[supplier] = allowance - amount;
         }
     }
 }
