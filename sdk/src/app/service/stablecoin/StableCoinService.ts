@@ -293,6 +293,19 @@ export default class StableCoinService extends Service {
 	public async decreaseSupplierAllowance(
 		req: ISupplierRoleStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
+		const limit = await this.supplierAllowance({
+			proxyContractId: req.proxyContractId,
+			targetId: req.targetId,
+			privateKey: req.privateKey,
+			accountId: req.accountId,
+		});
+
+		if (req.amount && limit[0] < req.amount) {
+			throw new Error(
+				'It is not possible to decrease the limit because the indicated amount is higher than the current limit. To be able to decrease the limit, at most the amount must be equal to the current limit.',
+			);
+		}
+
 		return this.repository.decreaseSupplierAllowance(
 			req.proxyContractId,
 			req.targetId,
