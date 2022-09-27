@@ -43,7 +43,7 @@ export default class CashOutStableCoinsService extends Service {
     );
 
     console.log(
-      respDetail[0]
+      respDetail
         ? language.getText('operation.success')
         : language.getText('operation.reject'),
     );
