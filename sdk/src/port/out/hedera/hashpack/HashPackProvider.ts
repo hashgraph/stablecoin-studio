@@ -2,8 +2,7 @@
 import {
 	HashConnect,
 	HashConnectTypes,
-	// MessageTypes,
-} from 'hashconnect/dist/cjs/main';
+} from 'hashconnect/dist/esm/main';
 import { IniConfig, IProvider } from '../Provider.js';
 import {
 	HederaNetwork,
@@ -35,7 +34,7 @@ import {
 	ITransferTokenRequest,
 	InitializationData,
 } from '../types.js';
-import { HashConnectConnectionState } from 'hashconnect/dist/cjs/types/hashconnect.js';
+import { HashConnectConnectionState } from 'hashconnect/dist/esm/types/hashconnect.js';
 import { HashPackSigner } from './HashPackSigner.js';
 import { TransactionProvider } from '../transaction/TransactionProvider.js';
 import { HTSResponse, TransactionType } from '../sign/ISigner.js';
@@ -48,8 +47,8 @@ import {
 	HederaERC20__factory,
 	HTSTokenOwner__factory,
 } from 'hedera-stable-coin-contracts/typechain-types/index.js';
-import { HashConnectProvider } from 'hashconnect/dist/cjs/provider/provider.js';
-import { HashConnectSigner } from 'hashconnect/dist/cjs/provider/signer';
+import { HashConnectProvider } from 'hashconnect/dist/esm/provider/provider.js';
+import { HashConnectSigner } from 'hashconnect/dist/esm/provider/signer';
 import Long from 'long';
 import ProviderEvent, { ProviderEventNames } from '../ProviderEvent.js';
 import EventService from '../../../../app/service/event/EventService.js';
@@ -154,11 +153,11 @@ export default class HashPackProvider implements IProvider {
 			// this.state = state;
 		});
 
-		this.hc.acknowledgeMessageEvent.on((state) => {
-			console.log('acknowledgeMessageEvent event', state);
+		this.hc.acknowledgeMessageEvent.on((msg) => {
+			console.log('acknowledgeMessageEvent event', msg);
 			this.eventService.emit(
 				ProviderEventNames.providerAcknowledgeMessageEvent,
-				state,
+				msg,
 			);
 		});
 	}
@@ -186,7 +185,7 @@ export default class HashPackProvider implements IProvider {
 			abi,
 		);
 
-		this.hashPackSigner = new HashPackSigner();
+		this.hashPackSigner = new HashPackSigner(this.hc, this.initData);
 		const transaction: Transaction =
 			TransactionProvider.buildContractExecuteTransaction(
 				contractId,
@@ -194,7 +193,7 @@ export default class HashPackProvider implements IProvider {
 				gas,
 			);
 
-		const transactionResponse: TransactionResponse =
+		const transactionResponse =
 			await this.hashPackSigner.signAndSendTransaction(
 				transaction,
 				this.hc.getSigner(this.provider),
@@ -367,7 +366,7 @@ export default class HashPackProvider implements IProvider {
 		params?: any,
 	): Promise<HContractId> {
 		try {
-			this.hashPackSigner = new HashPackSigner();
+			this.hashPackSigner = new HashPackSigner(this.hc, this.initData);
 			const transaction =
 				TransactionProvider.buildContractCreateFlowTransaction(
 					factory,
@@ -375,7 +374,7 @@ export default class HashPackProvider implements IProvider {
 					params,
 					90_000,
 				);
-			const transactionResponse: TransactionResponse =
+			const transactionResponse =
 				await this.hashPackSigner.signAndSendTransaction(
 					transaction,
 					signer,
@@ -440,14 +439,14 @@ export default class HashPackProvider implements IProvider {
 			supplyKey,
 		};
 
-		this.hashPackSigner = new HashPackSigner();
+		this.hashPackSigner = new HashPackSigner(this.hc, this.initData);
 		const transaction: Transaction =
 			TransactionProvider.buildTokenCreateTransaction(
 				ContractId.fromHederaContractId(contractId),
 				values,
 				maxSupply,
 			);
-		const transactionResponse: TransactionResponse =
+		const transactionResponse =
 			await this.hashPackSigner.signAndSendTransaction(
 				transaction,
 				signer,
