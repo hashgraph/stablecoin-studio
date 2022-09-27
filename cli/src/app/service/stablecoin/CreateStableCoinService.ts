@@ -40,6 +40,7 @@ export default class CreateStableCoinService extends Service {
     stableCoin: StableCoin,
     isWizard = false,
   ): Promise<StableCoin> {
+
     if (isWizard) {
       stableCoin = await this.wizardCreateStableCoin();
     }
@@ -47,7 +48,7 @@ export default class CreateStableCoinService extends Service {
     // Call to create stable coin sdk function
     const sdk: SDK = utilsService.getSDK();
     const currentAccount = utilsService.getCurrentAccount();
-
+            
     if (
       currentAccount.privateKey == null ||
       currentAccount.privateKey == undefined ||
@@ -171,6 +172,7 @@ export default class CreateStableCoinService extends Service {
       maxSupply: totalSupply ? BigInt(totalSupply) : totalSupply,
     });
     if (managedBySC) {
+      const privateKey: PrivateKey = new PrivateKey(utilsService.getCurrentAccount().privateKey);     
       tokenToCreate = {
         name,
         symbol,
@@ -179,7 +181,7 @@ export default class CreateStableCoinService extends Service {
         initialSupply: initialSupply === '' ? undefined : BigInt(initialSupply),
         supplyType: supplyType ? 'INFINITE' : 'FINITE',
         maxSupply: totalSupply ? BigInt(totalSupply) : totalSupply,
-        //adminKey: 'ADMIN_KEY',
+        adminKey: privateKey.publicKey
       };
       if (
         !(await utilsService.defaultConfirmAsk(
@@ -352,26 +354,32 @@ export default class CreateStableCoinService extends Service {
   }
 
   private async checkAnswer(answer: string): Promise<PublicKey> {
-    console.log(answer);
     const hexRegEx = /^[0-9A-F]{64,}$/gi;
-    await this.askNewKey(hexRegEx)
-    /*switch (answer) {
+    switch (answer) {
+      case 'Admin Key': {
+        const currentAccount = utilsService.getCurrentAccount();
+        const privateKey: PrivateKey = new PrivateKey(currentAccount.privateKey);
+        return privateKey.publicKey;
+      }
+
       case 'Other key': {
         const key = await utilsService.defaultSingleAsk(
           language.getText('stablecoin.features.publicKey'),
           undefined,
         );
-        return hexRegEx.test(key) ? key : await this.askNewKey(hexRegEx);
+        return new PublicKey({
+          key: hexRegEx.test(key) ? key : await this.askNewKey(hexRegEx),
+          type: 'ED25519'
+        });
       }
+
+      case 'None':
+          return null;
+
       case 'The Smart Contract':
-        return 'CONTRACT';
       default:
-        return answer.toUpperCase().replace(' ', '_');
-    }*/
-    return new PublicKey({
-			key: "",
-			type: ""
-		})
+          return PublicKey.NULL;
+    }
   }
 
   private async askNewKey(regExp: RegExp): Promise<string> {
