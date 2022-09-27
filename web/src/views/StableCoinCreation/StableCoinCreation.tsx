@@ -1,6 +1,10 @@
-import { Stack } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
+import { Stack, useDisclosure } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
+import { AccountId, PrivateKey } from 'hedera-stable-coin-sdk';
+import type { ICreateStableCoinRequest } from 'hedera-stable-coin-sdk';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import BaseContainer from '../../components/BaseContainer';
 import BasicDetails from './BasicDetails';
@@ -11,17 +15,15 @@ import { RouterManager } from '../../Router/RouterManager';
 import OptionalDetails from './OptionalDetails';
 import ManagementPermissions from './ManagementPermissions';
 import Review from './Review';
-import { useEffect, useState } from 'react';
 import { OTHER_KEY_VALUE } from './components/KeySelector';
-import type { ICreateStableCoinRequest } from 'hedera-stable-coin-sdk';
-import { useSelector } from 'react-redux';
 import { SELECTED_WALLET_PAIRED_ACCOUNTID } from '../../store/slices/walletSlice';
 import SDKService from '../../services/SDKService';
+import type { RootState } from '../../store/store';
+import ModalNotification from '../../components/ModalNotification';
 
 const StableCoinCreation = () => {
 	const navigate = useNavigate();
 	const { t } = useTranslation('stableCoinCreation');
-
 	const form = useForm({ mode: 'onChange' });
 	const {
 		control,
@@ -30,8 +32,11 @@ const StableCoinCreation = () => {
 		formState: { errors },
 	} = form;
 
-	const [isValidForm, setIsValidForm] = useState(false);
-	const [currentStep, setCurrentStep] = useState(0);
+	const [isValidForm, setIsValidForm] = useState<boolean>(false);
+	const [currentStep, setCurrentStep] = useState<number>(0);
+	const [success, setSuccess] = useState<boolean>();
+	const accountId = useSelector<RootState, string>(SELECTED_WALLET_PAIRED_ACCOUNTID);
+	const { isOpen, onOpen, onClose } = useDisclosure();
 
 	useEffect(() => {
 		if (getValues()) {
@@ -116,24 +121,31 @@ const StableCoinCreation = () => {
 		);
 	};
 
-	const handleFinish = () => {
+	const handleFinish = async () => {
 		// TODO: complete request object with keys
 		const { name, symbol, autorenewAccount, initialSupply, totalSupply, decimals } = getValues();
 
 		const newStableCoinParams: ICreateStableCoinRequest = {
-			accountId: useSelector(SELECTED_WALLET_PAIRED_ACCOUNTID),
-			privateKey: '',
+			accountId: new AccountId(accountId),
+			privateKey: new PrivateKey(''),
 			name,
 			symbol,
 			decimals,
 			autoRenewAccount: autorenewAccount,
-			initialSupply,
+			initialSupply: BigInt(initialSupply),
 			maxSupply: totalSupply,
 		};
 
-		SDKService.createStableCoin(newStableCoinParams);
+		try {
+			const response = await SDKService.createStableCoin(newStableCoinParams);
+			console.log('RESPONSE: ', response);
+			setSuccess(!!response);
+		} catch (error) {
+			console.log('ERROR: ', error);
+			setSuccess(false);
+		}
 
-		alert('create!');
+		onOpen();
 	};
 
 	const handleCancel = () => {
@@ -155,6 +167,14 @@ const StableCoinCreation = () => {
 			<BaseContainer title={t('common.createNewStableCoin')}>
 				<Stepper {...stepperProps} />
 			</BaseContainer>
+			<ModalNotification
+				variant={success ? 'success' : 'error'}
+				title={t('notification.title', { result: success ? 'Success' : 'Error' })}
+				description={t(`notification.description${success ? 'Success' : 'Error'}`)}
+				isOpen={isOpen}
+				onClose={onClose}
+				onClick={() => RouterManager.to(navigate, NamedRoutes.Dashboard)}
+			/>
 		</Stack>
 	);
 };
