@@ -91,14 +91,11 @@ export default class OperationStableCoinService extends Service {
       'wizard.stableCoinOptions',
     );
 
-    // TODO: uncomment when service will be ready!
     const capabilitiesStableCoin =
       await new CapabilitiesStableCoinsService().getCapabilitiesStableCoins(
         this.stableCoinId,
         sdk.getPublicKey(currentAccount.privateKey),
       );
-    console.log('capability', capabilitiesStableCoin);
-    // const capabilitiesStableCoin = ['DETAILS'];
 
     switch (
       await utilsService.defaultMultipleAsk(
@@ -620,29 +617,20 @@ export default class OperationStableCoinService extends Service {
     options: string[],
     capabilities: string[],
   ): string[] {
-    // const OPTIONS_TRANSLATE = {
-    //   CASH_IN: 'Cash in',
-    //   CASH_IN_SDK: 'Cash in',
-    //   DETAILS: 'Details',
-    //   BALANCE: 'Balance',
-    //   CASH_OUT: 'Cash out',
-    //   CASH_OUT_SDK: 'Cash out',
-    //   WIPE: 'Wipe',
-    //   RESCUE: 'Rescue',
-    //   ROLE_MANAGEMENT: 'Role management',
-    //   RETURN_TO_MAIN_MENU: 'Return to main menu',
-    // };
-
     if (capabilities.length === 0) return options;
+
+    capabilities = capabilities.concat('Return to main menu');
 
     return options.filter((option) => {
       if (
         (option === 'Cash in' &&
-          (capabilities.includes('CASH_IN') ||
-            capabilities.includes('CASH_IN_SDK'))) ||
+          (capabilities.includes('Cash in') ||
+            capabilities.includes('Cash in sdk'))) ||
         (option === 'Cash out' &&
-          (capabilities.includes('CASH_OUT') ||
-            capabilities.includes('CASH_OUT_SDK')))
+          (capabilities.includes('Cash out') ||
+            capabilities.includes('Cash out sdk'))) ||
+        (option === 'Wipe' &&
+          (capabilities.includes('Wipe') || capabilities.includes('Wipe sdk')))
       ) {
         return true;
       }

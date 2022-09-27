@@ -1,4 +1,3 @@
-import { language } from '../../../index.js';
 import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
 import { SDK } from 'hedera-stable-coin-sdk';
@@ -24,15 +23,7 @@ export default class CapabilitiesStableCoinsService extends Service {
 
     let capabilities: Capabilities[];
 
-    await utilsService.showSpinner(
-      sdk
-        .getCapabilitiesStableCoin(id, publicKey)
-        .then((response) => (capabilities = response)),
-      {
-        text: language.getText('state.loading'),
-        successText: language.getText('state.loadCompleted') + '\n',
-      },
-    );
+    capabilities = await sdk.getCapabilitiesStableCoin(id, publicKey);
 
     return capabilities;
   }
