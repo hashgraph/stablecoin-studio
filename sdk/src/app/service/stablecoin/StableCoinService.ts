@@ -149,7 +149,7 @@ export default class StableCoinService extends Service {
 			targetId: treasruyAccount,
 			tokenId: req.tokenId,
 		});
-		if (amount > tokenOwnerBalance[0]) {
+		if (amount > coin.toInteger(tokenOwnerBalance[0])) {
 			throw new Error('Amount is bigger than treasury account balance');
 		}
 		return this.repository.cashOut(
