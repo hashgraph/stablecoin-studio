@@ -15,6 +15,7 @@ import WipeStableCoinsService from './WipeStableCoinService.js';
 import RoleStableCoinsService from './RoleStableCoinService.js';
 import RescueStableCoinsService from './RescueStableCoinService.js';
 import colors from 'colors';
+import CapabilitiesStableCoinsService from './CapabilitiesStableCoinService.js';
 
 /**
  * Operation Stable Coin Service
@@ -91,11 +92,13 @@ export default class OperationStableCoinService extends Service {
     );
 
     // TODO: uncomment when service will be ready!
-    // const capabilitiesStableCoin = await new CapabilitiesStableCoinsService().getCapabilitiesStableCoins(
-    //   this.stableCoinId,
-    //   sdk.getPublicKey(currentAccount.privateKey)
-    // )
-    const capabilitiesStableCoin = ['DETAILS'];
+    const capabilitiesStableCoin =
+      await new CapabilitiesStableCoinsService().getCapabilitiesStableCoins(
+        this.stableCoinId,
+        sdk.getPublicKey(currentAccount.privateKey),
+      );
+    console.log('capability', capabilitiesStableCoin);
+    // const capabilitiesStableCoin = ['DETAILS'];
 
     switch (
       await utilsService.defaultMultipleAsk(
@@ -617,20 +620,18 @@ export default class OperationStableCoinService extends Service {
     options: string[],
     capabilities: string[],
   ): string[] {
-    const OPTIONS_TRANSLATE = {
-      CASH_IN: 'Cash in',
-      CASH_IN_SDK: 'Cash in',
-      DETAILS: 'Details',
-      BALANCE: 'Balance',
-      CASH_OUT: 'Cash out',
-      CASH_OUT_SDK: 'Cash out',
-      WIPE: 'Wipe',
-      RESCUE: 'Rescue',
-      ROLE_MANAGEMENT: 'Role management',
-      RETURN_TO_MAIN_MENU: 'Return to main menu',
-    };
-
-    capabilities = capabilities.concat('RETURN_TO_MAIN_MENU');
+    // const OPTIONS_TRANSLATE = {
+    //   CASH_IN: 'Cash in',
+    //   CASH_IN_SDK: 'Cash in',
+    //   DETAILS: 'Details',
+    //   BALANCE: 'Balance',
+    //   CASH_OUT: 'Cash out',
+    //   CASH_OUT_SDK: 'Cash out',
+    //   WIPE: 'Wipe',
+    //   RESCUE: 'Rescue',
+    //   ROLE_MANAGEMENT: 'Role management',
+    //   RETURN_TO_MAIN_MENU: 'Return to main menu',
+    // };
 
     if (capabilities.length === 0) return options;
 
@@ -646,11 +647,7 @@ export default class OperationStableCoinService extends Service {
         return true;
       }
 
-      return capabilities.includes(
-        Object.keys(OPTIONS_TRANSLATE).find(
-          (key) => OPTIONS_TRANSLATE[key] === option,
-        ),
-      );
+      return capabilities.includes(option);
     });
   }
 
