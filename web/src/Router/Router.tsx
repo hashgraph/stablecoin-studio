@@ -7,6 +7,7 @@ import { RoutesMappingUrl } from './RoutesMappingUrl';
 import CashInOperation from '../views/Operations/CashIn';
 import WipeOperation from '../views/Operations/Wipe';
 import Dashboard from '../views/Dashboard';
+import GetBalanceOperation from '../views/Operations/GetBalance';
 import HandleRoles from '../views/Roles/HandleRoles';
 import { actions } from '../views/Roles/constants';
 import Login from '../views/Login';
@@ -124,6 +125,7 @@ const Router = () => {
 					<Spinner w='150px' h='150px' justifyContent='center' alignSelf={'center'} />
 				</Flex>
 			)}
+
 		</main>
 	);
 };
