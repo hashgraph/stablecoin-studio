@@ -121,10 +121,11 @@ export default class OperationStableCoinService extends Service {
 
           await this.operationsStableCoin();
         }
-        const amount2Mint = await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.askCashInAmount'),
-          '1',
-        );
+
+        const amount2Mint = await utilsService
+          .defaultSingleAsk(language.getText('stablecoin.askCashInAmount'), '1')
+          .then((val) => val.replace(',', '.'));
+
         if (parseFloat(amount2Mint) < 0) {
           console.log(language.getText('account.wrong'));
           await this.operationsStableCoin();
@@ -173,10 +174,12 @@ export default class OperationStableCoinService extends Service {
 
         break;
       case 'Cash out':
-        const amount2Burn = await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.askCashOutAmount'),
-          '1',
-        );
+        const amount2Burn = await utilsService
+          .defaultSingleAsk(
+            language.getText('stablecoin.askCashOutAmount'),
+            '1',
+          )
+          .then((val) => val.replace(',', '.'));
         try {
           await new CashOutStableCoinsService().cashOutStableCoin(
             this.proxyContractId,
@@ -201,10 +204,9 @@ export default class OperationStableCoinService extends Service {
           console.log(language.getText('validations.wrongFormatAddress'));
           await this.operationsStableCoin();
         }
-        const amount2Wipe = await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.askWipeAmount'),
-          '1',
-        );
+        const amount2Wipe = await utilsService
+          .defaultSingleAsk(language.getText('stablecoin.askWipeAmount'), '1')
+          .then((val) => val.replace(',', '.'));
         if (parseFloat(amount2Wipe) < 0) {
           console.log(language.getText('validations.wrongFormatAddress'));
           await this.operationsStableCoin();
@@ -227,10 +229,9 @@ export default class OperationStableCoinService extends Service {
         break;
       case 'Rescue':
         // Call to Rescue
-        const amount2Rescue = await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.askRescueAmount'),
-          '1',
-        );
+        const amount2Rescue = await utilsService
+          .defaultSingleAsk(language.getText('stablecoin.askRescueAmount'), '1')
+          .then((val) => val.replace(',', '.'));
 
         if (parseFloat(amount2Rescue) <= 0) {
           console.log(language.getText('validations.lessZero'));
