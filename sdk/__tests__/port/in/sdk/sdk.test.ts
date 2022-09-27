@@ -1,6 +1,8 @@
 import PublicKey from '../../../../src/domain/context/account/PublicKey.js';
 import { SDK } from '../../../../src/index.js';
 import { ACCOUNTS, getSDKAsync } from '../../../core.js';
+import AccountId from '../../../../src/domain/context/account/AccountId.js';
+import PrivateKey from '../../../../src/domain/context/account/PrivateKey.js';
 
 describe('🧪 [PORT] SDK', () => {
 	let sdk: SDK;
@@ -11,8 +13,8 @@ describe('🧪 [PORT] SDK', () => {
 
 	it('Creates a Stable Coin with EOAccount', async () => {
 		const coin = await sdk.createStableCoin({
-			accountId: ACCOUNTS.testnet.accountId.id,
-			privateKey: ACCOUNTS.testnet.privateKey.key,
+			accountId: new AccountId(ACCOUNTS.testnet.accountId.id),
+			privateKey: new PrivateKey(ACCOUNTS.testnet.privateKey.key),
 			name: 'TEST COIN',
 			symbol: 'TC',
 			decimals: 0,

@@ -7,6 +7,7 @@ import { RoutesMappingUrl } from './RoutesMappingUrl';
 import CashInOperation from '../views/Operations/CashIn';
 import WipeOperation from '../views/Operations/Wipe';
 import Dashboard from '../views/Dashboard';
+import GetBalanceOperation from '../views/Operations/GetBalance';
 import HandleRoles from '../views/Roles/HandleRoles';
 import { actions } from '../views/Roles/constants';
 import Login from '../views/Login';
@@ -91,32 +92,35 @@ const Router = () => {
 						<Route path={RoutesMappingUrl.login} element={<Login />} />
 					</Route>
 					{/* Private routes */}
-					<Route element={<PrivateRoute status={status} />}>
-						<Route path={RoutesMappingUrl.cashIn} element={<CashInOperation />} />
-						<Route path={RoutesMappingUrl.dashboard} element={<Dashboard />} />
-						<Route
-							path={RoutesMappingUrl.editRole}
-							element={<HandleRoles action={actions.edit} />}
-						/>
-						<Route
-							path={RoutesMappingUrl.giveRole}
-							element={<HandleRoles action={actions.give} />}
-						/>
-						<Route path={RoutesMappingUrl.operations} element={<Operations />} />
-						<Route
-							path={RoutesMappingUrl.revokeRole}
-							element={<HandleRoles action={actions.revoke} />}
-						/>
-						<Route path={RoutesMappingUrl.roles} element={<Roles />} />
-						<Route path={RoutesMappingUrl.stableCoinCreation} element={<StableCoinCreation />} />
-						<Route
-							path={RoutesMappingUrl.stableCoinNotSelected}
-							element={<StableCoinNotSelected />}
-						/>
-						<Route path={RoutesMappingUrl.stableCoinDetails} element={<StableCoinDetails />} />
-						<Route path={RoutesMappingUrl.wipe} element={<WipeOperation />} />
-						<Route path='*' element={<Navigate to={RoutesMappingUrl.dashboard} />} />
-					</Route>
+					{status && (
+						<Route element={<PrivateRoute status={status} />}>
+							<Route path={RoutesMappingUrl.balance} element={<GetBalanceOperation />} />
+							<Route path={RoutesMappingUrl.cashIn} element={<CashInOperation />} />
+							<Route path={RoutesMappingUrl.wipe} element={<WipeOperation />} />
+							<Route path={RoutesMappingUrl.dashboard} element={<Dashboard />} />
+							<Route
+								path={RoutesMappingUrl.editRole}
+								element={<HandleRoles action={actions.edit} />}
+							/>
+							<Route
+								path={RoutesMappingUrl.giveRole}
+								element={<HandleRoles action={actions.give} />}
+							/>
+							<Route path={RoutesMappingUrl.operations} element={<Operations />} />
+							<Route
+								path={RoutesMappingUrl.revokeRole}
+								element={<HandleRoles action={actions.revoke} />}
+							/>
+							<Route path={RoutesMappingUrl.roles} element={<Roles />} />
+							<Route path={RoutesMappingUrl.stableCoinCreation} element={<StableCoinCreation />} />
+							<Route path={RoutesMappingUrl.stableCoinDetails} element={<StableCoinDetails />} />
+							<Route
+								path={RoutesMappingUrl.stableCoinNotSelected}
+								element={<StableCoinNotSelected />}
+							/>
+							<Route path='*' element={<Navigate to={RoutesMappingUrl.dashboard} />} />
+						</Route>
+					)}
 				</Routes>
 			) : (
 				<Flex

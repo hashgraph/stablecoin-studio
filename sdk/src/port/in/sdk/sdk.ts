@@ -53,7 +53,15 @@ import {
 	HashConnectTypes,
 } from 'hashconnect/dist/esm/types/hashconnect.js';
 import { AppMetadata } from '../../out/hedera/hashpack/types/types.js';
-import { AcknowledgeMessage, AdditionalAccountRequestMessage, AdditionalAccountResponseMessage, ApprovePairingMessage, AuthenticationRequestMessage, AuthenticationResponseMessage, InitializationData } from '../../out/hedera/types.js';
+import {
+	AcknowledgeMessage,
+	AdditionalAccountRequestMessage,
+	AdditionalAccountResponseMessage,
+	ApprovePairingMessage,
+	AuthenticationRequestMessage,
+	AuthenticationResponseMessage,
+	InitializationData,
+} from '../../out/hedera/types.js';
 import { ProviderEventNames } from '../../out/hedera/ProviderEvent.js';
 import EventService from '../../../app/service/event/EventService.js';
 import { IProvider } from '../../out/hedera/Provider.js';
@@ -181,8 +189,8 @@ export class SDK {
 		try {
 			const req: ICreateStableCoinServiceRequestModel = {
 				...request,
-				accountId: new AccountId(request.accountId),
-				privateKey: new PrivateKey(request.privateKey),
+				accountId: request.accountId,
+				privateKey: request.privateKey,
 				autoRenewAccount: request.autoRenewAccount
 					? new AccountId(request.autoRenewAccount)
 					: undefined,

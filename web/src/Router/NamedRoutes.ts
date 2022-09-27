@@ -1,4 +1,5 @@
 export enum NamedRoutes {
+	Balance = 'balance',
 	CashIn = 'cashIn',
 	CashOut = 'cashOut',
 	Dashboard = 'dashboard',

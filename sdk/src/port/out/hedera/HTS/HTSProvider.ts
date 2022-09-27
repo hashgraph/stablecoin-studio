@@ -406,6 +406,7 @@ export default class HTSProvider implements IProvider {
 		pauseKey?: PublicKey,
 		supplyKey?: PublicKey,
 	): Promise<ICreateTokenResponse> {
+
 		const values: ICreateTokenResponse = {
 			name,
 			symbol,

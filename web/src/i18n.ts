@@ -4,6 +4,7 @@ import languagedetector from 'i18next-browser-languagedetector';
 
 import CASH_IN_EN from './translations/en/cashIn.json';
 import ERROR_PAGE_EN from './translations/en/errorPage.json';
+import GET_BALANCE_EN from './translations/en/getBalance.json';
 import GLOBAL_EN from './translations/en/global.json';
 import GLOBAL_ES from './translations/es/global.json';
 import OPERATIONS_EN from './translations/en/operations.json';
@@ -27,6 +28,7 @@ i18n
 			en: {
 				cashIn: CASH_IN_EN,
 				errorPage: ERROR_PAGE_EN,
+				getBalance: GET_BALANCE_EN,
 				global: GLOBAL_EN,
 				operations: OPERATIONS_EN,
 				roles: ROLES_EN,
