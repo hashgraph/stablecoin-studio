@@ -1,4 +1,3 @@
-/* eslint-disable no-case-declarations */
 import { StableCoinList } from '../../../domain/stablecoin/StableCoinList.js';
 import {
   language,
@@ -8,12 +7,7 @@ import {
 } from '../../../index.js';
 import Service from '../Service.js';
 import DetailsStableCoinsService from './DetailsStableCoinService.js';
-import {
-  PublicKey,
-  SDK,
-  StableCoin,
-  StableCoinRole,
-} from 'hedera-stable-coin-sdk';
+import { SDK, StableCoin, StableCoinRole } from 'hedera-stable-coin-sdk';
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 import CashInStableCoinsService from './CashInStableCoinService.js';
 import CashOutStableCoinsService from './CashOutStableCoinService.js';
@@ -92,18 +86,24 @@ export default class OperationStableCoinService extends Service {
   private async operationsStableCoin(): Promise<void> {
     const sdk: SDK = utilsService.getSDK();
     const currentAccount = utilsService.getCurrentAccount();
-    const wizardOperationsStableCoinOptions = language.getArray(
+    let wizardOperationsStableCoinOptions = language.getArray(
       'wizard.stableCoinOptions',
     );
-    const details = await new DetailsStableCoinsService().getDetailsStableCoins(
-      this.stableCoinId,
-      false,
-    );
+
+    // TODO: uncomment when service will be ready!
+    // const capabilitiesStableCoin = await new CapabilitiesStableCoinsService().getCapabilitiesStableCoins(
+    //   this.stableCoinId,
+    //   sdk.getPublicKey(currentAccount.privateKey)
+    // )
+    const capabilitiesStableCoin = ['DETAILS'];
 
     switch (
       await utilsService.defaultMultipleAsk(
         language.getText('stablecoin.askDoSomething'),
-        this.disableOptions(wizardOperationsStableCoinOptions, details),
+        this.filterMenuOptions(
+          wizardOperationsStableCoinOptions,
+          capabilitiesStableCoin,
+        ),
         false,
         currentAccount.network,
         `${currentAccount.accountId} - ${currentAccount.alias}`,
@@ -613,25 +613,45 @@ export default class OperationStableCoinService extends Service {
     await this.roleManagementFlow();
   }
 
-  private disableOptions(options: string[], details: StableCoin): string[] {
-    const sdk: SDK = utilsService.getSDK();
-    const currentAccount = utilsService.getCurrentAccount();
-    let result: string[] = options;
-    if (
-      (details && details?.supplyKey === null) ||
-      (details?.supplyKey instanceof PublicKey &&
-        details?.supplyKey?.key !== sdk.getPublicKey(currentAccount.privateKey))
-    ) {
-      result = options.filter((opt) => opt !== 'Cash in');
-    }
-    if (
-      (details && details?.wipeKey === null) ||
-      (details?.wipeKey instanceof PublicKey &&
-        details?.wipeKey?.key !== sdk.getPublicKey(currentAccount.privateKey))
-    ) {
-      result = options.filter((opt) => opt !== 'Wipe');
-    }
-    return result;
+  private filterMenuOptions(
+    options: string[],
+    capabilities: string[],
+  ): string[] {
+    const OPTIONS_TRANSLATE = {
+      CASH_IN: 'Cash in',
+      CASH_IN_SDK: 'Cash in',
+      DETAILS: 'Details',
+      BALANCE: 'Balance',
+      CASH_OUT: 'Cash out',
+      CASH_OUT_SDK: 'Cash out',
+      WIPE: 'Wipe',
+      RESCUE: 'Rescue',
+      ROLE_MANAGEMENT: 'Role management',
+      RETURN_TO_MAIN_MENU: 'Return to main menu',
+    };
+
+    capabilities = capabilities.concat('RETURN_TO_MAIN_MENU');
+
+    if (capabilities.length === 0) return options;
+
+    return options.filter((option) => {
+      if (
+        (option === 'Cash in' &&
+          (capabilities.includes('CASH_IN') ||
+            capabilities.includes('CASH_IN_SDK'))) ||
+        (option === 'Cash out' &&
+          (capabilities.includes('CASH_OUT') ||
+            capabilities.includes('CASH_OUT_SDK')))
+      ) {
+        return true;
+      }
+
+      return capabilities.includes(
+        Object.keys(OPTIONS_TRANSLATE).find(
+          (key) => OPTIONS_TRANSLATE[key] === option,
+        ),
+      );
+    });
   }
 
   private async getRole(): Promise<string> {
