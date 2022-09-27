@@ -26,7 +26,7 @@
     "avoid-throw": "error",
     "avoid-tx-origin": "error",
     "check-send-result": "error",
-    "compiler-version": ["error","^0.7.5"],
+    "compiler-version": ["error","^0.8.10"],
     "func-visibility": ["warn",{"ignoreConstructors":true}],
     "multiple-sends": "error",
     "reentrancy": "error",
