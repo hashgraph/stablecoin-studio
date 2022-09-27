@@ -120,6 +120,7 @@ export default class StableCoinService extends Service {
 		const coin: StableCoin = await this.getStableCoin({
 			id: req.tokenId,
 		});
+
 		const amount = coin.toInteger(req.amount);
 		if (coin.maxSupply > 0n && amount > coin.maxSupply - coin.totalSupply) {
 			throw new Error('Amount is bigger than allowed supply');
@@ -136,19 +137,23 @@ export default class StableCoinService extends Service {
 	public async cashOut(
 		req: ICashOutStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
-		// TODO validate
 		const coin: StableCoin = await this.getStableCoin({
 			id: req.tokenId,
 		});
+		const treasruyAccount: string = coin.treasury.id;
 		const amount = coin.toInteger(req.amount);
-		const tokenOwnerBalance = await this.getTokenOwnerBalance({
+		/*
+		const tokenOwnerBalance = await this.getBalanceOf({
 			accountId: req.accountId,
 			privateKey: req.privateKey,
 			proxyContractId: req.proxyContractId,
+			targetId: treasruyAccount,
+			tokenId: req.tokenId,
 		});
 		if (amount > tokenOwnerBalance[0]) {
-			throw new Error('Amount is bigger than token owner balance');
+			throw new Error('Amount is bigger than treasury account balance');
 		}
+		*/
 		return this.repository.cashOut(
 			req.proxyContractId,
 			req.privateKey,

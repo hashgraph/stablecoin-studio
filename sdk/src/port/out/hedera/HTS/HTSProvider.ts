@@ -230,7 +230,10 @@ export default class HTSProvider implements IProvider {
 			parameters: [],
 			gas: 250_000,
 			abi: HederaERC20__factory.abi,
-			account: plainAccount,
+			account: {
+				accountId: plainAccount.accountId,
+				privateKey: plainAccount.privateKey,
+			},
 		});
 		log(
 			`Deploying ${HTSTokenOwner__factory.name} contract... please wait.`,
@@ -251,8 +254,8 @@ export default class HTSProvider implements IProvider {
 			stableCoin.maxSupply,
 			stableCoin.memo,
 			stableCoin.freezeDefault,
-			plainAccount.privateKey,
 			client,
+			stableCoin.treasury,
 			safeCast<PublicKey>(stableCoin.adminKey),
 			safeCast<PublicKey>(stableCoin.freezeKey),
 			safeCast<PublicKey>(stableCoin.kycKey),
@@ -271,26 +274,40 @@ export default class HTSProvider implements IProvider {
 			],
 			gas: 80_000,
 			abi: HederaERC20__factory.abi,
-			account: plainAccount,
+			account: {
+				accountId: plainAccount.accountId,
+				privateKey: plainAccount.privateKey,
+			},
 		});
 		await this.callContract('setERC20Address', {
 			contractId: String(tokenOwnerContract),
 			parameters: [proxyContract.toSolidityAddress()],
 			gas: 60_000,
 			abi: HTSTokenOwner__factory.abi,
-			account: plainAccount,
+			account: {
+				accountId: plainAccount.accountId,
+				privateKey: plainAccount.privateKey,
+			},
 		});
-		log(
-			'Associating administrator account to token... please wait.',
-			logOpts,
-		);
-		await this.callContract('associateToken', {
-			contractId: stableCoin.memo,
-			parameters: [HAccountId.fromString(accountId).toSolidityAddress()],
-			gas: 1_300_000,
-			abi: HederaERC20__factory.abi,
-			account: plainAccount,
-		});
+	
+		if (hederaToken.treasuryAccountId.toString() !== accountId) {
+			log(
+				'Associating administrator account to token... please wait.',
+				logOpts,
+			);
+			await this.callContract('associateToken', {
+				contractId: stableCoin.memo,
+				parameters: [
+					HAccountId.fromString(accountId).toSolidityAddress(),
+				],
+				gas: 1_300_000,
+				abi: HederaERC20__factory.abi,
+				account: {
+					accountId: plainAccount.accountId,
+					privateKey: plainAccount.privateKey,
+				},
+			});
+		}
 
 		return new StableCoin({
 			name: hederaToken.name,
@@ -397,8 +414,8 @@ export default class HTSProvider implements IProvider {
 		maxSupply: bigint | undefined,
 		memo: string,
 		freezeDefault: boolean,
-		privateKey: string,
 		client: Client,
+		treasuryAccountId?: AccountId,
 		adminKey?: PublicKey,
 		freezeKey?: PublicKey,
 		kycKey?: PublicKey,
@@ -406,7 +423,6 @@ export default class HTSProvider implements IProvider {
 		pauseKey?: PublicKey,
 		supplyKey?: PublicKey,
 	): Promise<ICreateTokenResponse> {
-
 		const values: ICreateTokenResponse = {
 			name,
 			symbol,
@@ -417,7 +433,8 @@ export default class HTSProvider implements IProvider {
 				: Long.ZERO,
 			memo,
 			freezeDefault,
-			treasuryAccountId: new AccountId(String(contractId)),
+			treasuryAccountId:
+				treasuryAccountId ?? new AccountId(String(contractId)),
 			tokenId: TokenId.fromString('0.0.0'),
 			adminKey,
 			freezeKey,
