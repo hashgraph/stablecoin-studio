@@ -116,7 +116,7 @@ export class SDKService {
 			instance.cashIn({ proxyContractId, privateKey, accountId, tokenId, targetId, amount }),
 		);
 	}
-	
+
 	public static async createStableCoin(
 		createStableCoinRequest: ICreateStableCoinRequest,
 	): Promise<StableCoin | null> {

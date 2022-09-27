@@ -185,7 +185,7 @@ export default class HashPackProvider implements IProvider {
 			abi,
 		);
 
-		this.hashPackSigner = new HashPackSigner();
+		this.hashPackSigner = new HashPackSigner(this.hc, this.initData);
 		const transaction: Transaction =
 			TransactionProvider.buildContractExecuteTransaction(
 				contractId,
@@ -366,7 +366,7 @@ export default class HashPackProvider implements IProvider {
 		params?: any,
 	): Promise<HContractId> {
 		try {
-			this.hashPackSigner = new HashPackSigner();
+			this.hashPackSigner = new HashPackSigner(this.hc, this.initData);
 			const transaction =
 				TransactionProvider.buildContractCreateFlowTransaction(
 					factory,
@@ -439,7 +439,7 @@ export default class HashPackProvider implements IProvider {
 			supplyKey,
 		};
 
-		this.hashPackSigner = new HashPackSigner();
+		this.hashPackSigner = new HashPackSigner(this.hc, this.initData);
 		const transaction: Transaction =
 			TransactionProvider.buildTokenCreateTransaction(
 				ContractId.fromHederaContractId(contractId),
