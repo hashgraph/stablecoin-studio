@@ -87,6 +87,7 @@ const Router = () => {
 					{/* Private routes */}
 					{status && (
 						<Route element={<PrivateRoute status={status} />}>
+							<Route path={RoutesMappingUrl.balance} element={<GetBalanceOperation />} />
 							<Route path={RoutesMappingUrl.cashIn} element={<CashInOperation />} />
 							<Route path={RoutesMappingUrl.wipe} element={<WipeOperation />} />
 							<Route path={RoutesMappingUrl.dashboard} element={<Dashboard />} />
@@ -125,7 +126,6 @@ const Router = () => {
 					<Spinner w='150px' h='150px' justifyContent='center' alignSelf={'center'} />
 				</Flex>
 			)}
-
 		</main>
 	);
 };
