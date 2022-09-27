@@ -629,12 +629,12 @@ export default class OperationStableCoinService extends Service {
       if (
         (option === 'Cash in' &&
           (capabilities.includes('Cash in') ||
-            capabilities.includes('Cash in sdk'))) ||
+            capabilities.includes('Cash in hts'))) ||
         (option === 'Cash out' &&
           (capabilities.includes('Cash out') ||
-            capabilities.includes('Cash out sdk'))) ||
+            capabilities.includes('Cash out hts'))) ||
         (option === 'Wipe' &&
-          (capabilities.includes('Wipe') || capabilities.includes('Wipe sdk')))
+          (capabilities.includes('Wipe') || capabilities.includes('Wipe hts')))
       ) {
         return true;
       }

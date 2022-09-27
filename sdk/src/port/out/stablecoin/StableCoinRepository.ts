@@ -125,7 +125,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	public async getCapabilitiesStableCoin(id: string, publickey:string): Promise <Capabilities[]> {
 		try {
 			const stableCoin:StableCoin =  await this.getStableCoin(id);
-			let listCapabilities: Capabilities[] = [];
+			const listCapabilities: Capabilities[] = [];
 			
 			listCapabilities.push(Capabilities.DETAILS);
 			listCapabilities.push(Capabilities.BALANCE);
@@ -133,8 +133,6 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			//TODO add Roles
 			listCapabilities.push(Capabilities.ROLE_MANAGEMENT);
 			
-			console.log(stableCoin.supplyKey?.toString());
-			console.log(stableCoin.treasury.toString());
 			if(stableCoin.supplyKey?.toString() === stableCoin.treasury.toString()){
 				//TODO add Roles
 				listCapabilities.push(Capabilities.CASH_IN);
@@ -142,14 +140,17 @@ export default class StableCoinRepository implements IStableCoinRepository {
 				listCapabilities.push(Capabilities.WIPE);
 			}
 			
-
-			if(stableCoin.supplyKey?.toString()===publickey){
-				listCapabilities.push(Capabilities.CASH_IN_SDK);
-				listCapabilities.push(Capabilities.CASH_OUT_SDK);
+			if (stableCoin.supplyKey instanceof PublicKey){
+				if(stableCoin.supplyKey?.key.toString()==publickey.toString()){
+					listCapabilities.push(Capabilities.CASH_IN_HTS);
+					listCapabilities.push(Capabilities.CASH_OUT_HTS);
+				}
 			}
 			
-			if(stableCoin.supplyKey?.toString()===publickey){
-				listCapabilities.push(Capabilities.WIPE_SDK);
+			if (stableCoin.wipeKey instanceof PublicKey){
+				if(stableCoin.wipeKey?.key.toString()==publickey.toString()){
+					listCapabilities.push(Capabilities.WIPE_HTS);
+				}
 			}
 			
 			return listCapabilities; 
