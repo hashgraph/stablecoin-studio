@@ -176,7 +176,6 @@ export default class StableCoinService extends Service {
 		const treasruyAccount: string = coin.treasury.id;
 		const amount = coin.toInteger(req.amount);
 
-		/*
 		const tokenOwnerBalance = await this.getBalanceOf({
 			accountId: req.accountId,
 			privateKey: req.privateKey,
@@ -184,10 +183,9 @@ export default class StableCoinService extends Service {
 			targetId: treasruyAccount,
 			tokenId: req.tokenId,
 		});
-		if (amount > tokenOwnerBalance[0]) {
+		if (amount > coin.toInteger(tokenOwnerBalance[0])) {
 			throw new Error('Amount is bigger than treasury account balance');
 		}
-*/
 
 		let resultCashOut = false;
 		const capabilities: Capabilities[] = await this.getCapabilitiesStableCoin(req.tokenId, req.privateKey.publicKey.key);
