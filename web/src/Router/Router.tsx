@@ -5,6 +5,7 @@ import { RoutesMappingUrl } from './RoutesMappingUrl';
 import CashInOperation from '../views/Operations/CashIn';
 import WipeOperation from '../views/Operations/Wipe';
 import Dashboard from '../views/Dashboard';
+import GetBalanceOperation from '../views/Operations/GetBalance';
 import HandleRoles from '../views/Roles/HandleRoles';
 import { actions } from '../views/Roles/constants';
 import Login from '../views/Login';
@@ -55,6 +56,7 @@ const Router = () => {
 				</Route>
 				{/* Private routes */}
 				<Route element={<PrivateRoute status={status} />}>
+					<Route path={RoutesMappingUrl.balance} element={<GetBalanceOperation />} />
 					<Route path={RoutesMappingUrl.cashIn} element={<CashInOperation />} />
 					<Route path={RoutesMappingUrl.wipe} element={<WipeOperation />} />
 					<Route path={RoutesMappingUrl.dashboard} element={<Dashboard />} />

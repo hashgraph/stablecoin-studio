@@ -91,14 +91,14 @@ exports[`<Stepper /> should render correctly 1`] = `
               class="css-g4d8ui"
             >
               <button
-                class="chakra-button css-1vbjkjj"
+                class="chakra-button css-1skd29p"
                 data-testid="stepper-step-panel-button-secondary-1"
                 type="button"
               >
                 Cancel
               </button>
               <button
-                class="chakra-button css-l6yrnw"
+                class="chakra-button css-16vubea"
                 data-testid="stepper-step-panel-button-primary-1"
                 type="button"
               >
