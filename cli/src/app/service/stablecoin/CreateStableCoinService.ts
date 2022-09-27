@@ -1,6 +1,6 @@
 import { configurationService, language } from './../../../index.js';
 import { utilsService } from '../../../index.js';
-import { SDK, ICreateStableCoinRequest } from 'hedera-stable-coin-sdk';
+import { SDK, ICreateStableCoinRequest, AccountId, PrivateKey, PublicKey } from 'hedera-stable-coin-sdk';
 import { IManagedFeatures } from '../../../domain/configuration/interfaces/IManagedFeatures.js';
 import Service from '../Service.js';
 import SetConfigurationService from '../configuration/SetConfigurationService.js';
@@ -14,13 +14,13 @@ export const createdStableCoin = {
   initialSupply: undefined,
   supplyType: true,
   totalSupply: '',
-  supplyKey: '',
-  freezeKey: '',
-  adminKey: '',
-  KYCKey: '',
-  wipeKey: '',
-  pauseKey: '',
-  treasury: '',
+  supplyKey: undefined,
+  freezeKey: undefined,
+  adminKey: undefined,
+  KYCKey: undefined,
+  wipeKey: undefined,
+  pauseKey: undefined,
+  treasury: undefined
 };
 
 /**
@@ -40,6 +40,7 @@ export default class CreateStableCoinService extends Service {
     stableCoin: StableCoin,
     isWizard = false,
   ): Promise<StableCoin> {
+
     if (isWizard) {
       stableCoin = await this.wizardCreateStableCoin();
     }
@@ -47,7 +48,7 @@ export default class CreateStableCoinService extends Service {
     // Call to create stable coin sdk function
     const sdk: SDK = utilsService.getSDK();
     const currentAccount = utilsService.getCurrentAccount();
-
+            
     if (
       currentAccount.privateKey == null ||
       currentAccount.privateKey == undefined ||
@@ -67,8 +68,8 @@ export default class CreateStableCoinService extends Service {
     await utilsService.showSpinner(
       new Promise((resolve, reject) => {
         const req: ICreateStableCoinRequest = {
-          accountId: currentAccount.accountId,
-          privateKey: currentAccount.privateKey,
+          accountId: new AccountId(currentAccount.accountId),
+          privateKey: new PrivateKey(currentAccount.privateKey),
           ...stableCoin,
         };
         sdk
@@ -171,6 +172,7 @@ export default class CreateStableCoinService extends Service {
       maxSupply: totalSupply ? BigInt(totalSupply) : totalSupply,
     });
     if (managedBySC) {
+      const privateKey: PrivateKey = new PrivateKey(utilsService.getCurrentAccount().privateKey);     
       tokenToCreate = {
         name,
         symbol,
@@ -179,7 +181,7 @@ export default class CreateStableCoinService extends Service {
         initialSupply: initialSupply === '' ? undefined : BigInt(initialSupply),
         supplyType: supplyType ? 'INFINITE' : 'FINITE',
         maxSupply: totalSupply ? BigInt(totalSupply) : totalSupply,
-        adminKey: 'ADMIN_KEY',
+        adminKey: privateKey.publicKey
       };
       if (
         !(await utilsService.defaultConfirmAsk(
@@ -204,7 +206,7 @@ export default class CreateStableCoinService extends Service {
 
     let treasury;
 
-    if (supplyKey !== language.getArray('wizard.featureOptions')[0]) {
+    /*if (supplyKey !== language.getArray('wizard.featureOptions')[0]) {
       try {
         await utilsService.defaultSingleAsk(
           language.getText('stablecoin.askTreasuryAccountAddress'),
@@ -219,7 +221,7 @@ export default class CreateStableCoinService extends Service {
         );
       }
       createdStableCoin.treasury = treasury;
-    }
+    }*/
     console.log({
       name,
       symbol,
@@ -351,20 +353,32 @@ export default class CreateStableCoinService extends Service {
     return { adminKey, supplyKey, freezeKey, wipeKey, pauseKey };
   }
 
-  private async checkAnswer(answer: string): Promise<string> {
+  private async checkAnswer(answer: string): Promise<PublicKey> {
     const hexRegEx = /^[0-9A-F]{64,}$/gi;
     switch (answer) {
+      case 'Admin Key': {
+        const currentAccount = utilsService.getCurrentAccount();
+        const privateKey: PrivateKey = new PrivateKey(currentAccount.privateKey);
+        return privateKey.publicKey;
+      }
+
       case 'Other key': {
         const key = await utilsService.defaultSingleAsk(
           language.getText('stablecoin.features.publicKey'),
           undefined,
         );
-        return hexRegEx.test(key) ? key : await this.askNewKey(hexRegEx);
+        return new PublicKey({
+          key: hexRegEx.test(key) ? key : await this.askNewKey(hexRegEx),
+          type: 'ED25519'
+        });
       }
+
+      case 'None':
+          return null;
+
       case 'The Smart Contract':
-        return 'CONTRACT';
       default:
-        return answer.toUpperCase().replace(' ', '_');
+          return PublicKey.NULL;
     }
   }
 

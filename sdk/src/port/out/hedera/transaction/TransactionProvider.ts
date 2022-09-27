@@ -37,7 +37,7 @@ export class TransactionProvider {
 		): HPublicKey | DelegateContractId | undefined => {
 			if (key && key !== PublicKey.NULL) {
 				return key.toHederaKey();
-			} else if (!key) {
+			} else if (key && key === PublicKey.NULL) {
 				return contractId.toDelegateContractId();
 			} else {
 				return undefined;

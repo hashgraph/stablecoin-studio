@@ -25,7 +25,10 @@ import {
 	ICreateTokenResponse,
 	InitializationData,
 } from '../types.js';
-import { HashConnectConnectionState, HashConnectTypes } from 'hashconnect/dist/esm/types/hashconnect.js';
+import {
+	HashConnectConnectionState,
+	HashConnectTypes,
+} from 'hashconnect/dist/esm/types/hashconnect.js';
 import { HashPackSigner } from './HashPackSigner.js';
 import { TransactionProvider } from '../transaction/TransactionProvider.js';
 import { HTSResponse, TransactionType } from '../sign/ISigner.js';

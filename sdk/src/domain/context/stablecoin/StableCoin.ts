@@ -166,17 +166,6 @@ export class StableCoin extends BaseEntity {
 	}
 
 	/**
-	 * Pause key
-	 */
-	private _pauseKey: ContractId | PublicKey;
-	public get pauseKey(): ContractId | PublicKey {
-		return this._pauseKey;
-	}
-	public set pauseKey(value: ContractId | PublicKey) {
-		this._pauseKey = value;
-	}
-
-	/**
 	 * Supply key
 	 */
 	private _supplyKey: ContractId | PublicKey | undefined;

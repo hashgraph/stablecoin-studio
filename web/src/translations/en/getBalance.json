@@ -1,0 +1,13 @@
+{
+    "title": "Get balance operation",
+    "operationTitle": "Operation details",
+    "accountLabel": "What account?",
+    "accountPlaceholder": "Introduce account",
+    "modalSuccessBalance": "The account {{ account }} balance is {{ balance }}.",
+    "modalAction": {
+        "subtitle": "Operation details review",
+        "account": "Account to get balance",
+        "balance": "balance",
+        "accept": "Get balance"
+    }
+}

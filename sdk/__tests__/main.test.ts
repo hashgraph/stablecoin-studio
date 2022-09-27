@@ -1,8 +1,8 @@
 import { SDK } from '../src/index';
 import { ICreateStableCoinRequest } from '../src/port/in/sdk/request/ICreateStableCoinRequest.js';
-import AccountId from '../src/domain/context/account/AccountId.js';
 import { getSDK, getSDKAsync } from './core.js';
 import PrivateKey from '../src/domain/context/account/PrivateKey.js';
+import AccountId from '../src/domain/context/account/AccountId.js';
 import EOAccount from '../src/domain/context/account/EOAccount.js';
 
 const ACCOUNT_ID = '0.0.29511696';
@@ -14,15 +14,14 @@ const account = new EOAccount({
 	privateKey: new PrivateKey(PK),
 });
 const request: ICreateStableCoinRequest = {
-	accountId: account.accountId.id,
-	privateKey: account.privateKey.key,
+	accountId: new AccountId(account.accountId.id),
+	privateKey: new PrivateKey(account.privateKey.key),
 	name: 'PapaCoin',
 	symbol: 'PAPA',
 	decimals: 2,
 	initialSupply: 100n,
 	maxSupply: 1000n,
 	memo: 'test',
-	freeze: '1234',
 	freezeDefault: false,
 };
 
