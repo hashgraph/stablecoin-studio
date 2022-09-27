@@ -59,6 +59,7 @@ import { IProvider } from '../../out/hedera/Provider.js';
 import {
 	SavedPairingData,
 } from '../../out/hedera/types.js';
+import { Capabilities } from '../../../domain/context/stablecoin/Capabilities.js';
 
 export {
 	IAssociateStableCoinRequest,
@@ -188,7 +189,13 @@ export class SDK {
 			return null;
 		}
 	}
-
+    public getCapabilitiesStableCoin(
+		id:string,
+		publicKey:string
+	): Promise<Capabilities[]> | null {
+		
+		return this.stableCoinService.getCapabilitiesStableCoin(id,publicKey);
+	}
 	/**
 	 * getListStableCoin
 	 */
