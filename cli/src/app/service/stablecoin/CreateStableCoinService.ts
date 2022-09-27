@@ -5,6 +5,7 @@ import { IManagedFeatures } from '../../../domain/configuration/interfaces/IMana
 import Service from '../Service.js';
 import SetConfigurationService from '../configuration/SetConfigurationService.js';
 import { StableCoin } from '../../../domain/stablecoin/StableCoin.js';
+import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 
 export const createdStableCoin = {
   name: '',
@@ -172,7 +173,8 @@ export default class CreateStableCoinService extends Service {
       maxSupply: totalSupply ? BigInt(totalSupply) : totalSupply,
     });
     if (managedBySC) {
-      const privateKey: PrivateKey = new PrivateKey(utilsService.getCurrentAccount().privateKey);     
+      const currentAccount: IAccountConfig = utilsService.getCurrentAccount();
+      const privateKey: PrivateKey = new PrivateKey(currentAccount.privateKey);     
       tokenToCreate = {
         name,
         symbol,
@@ -181,7 +183,8 @@ export default class CreateStableCoinService extends Service {
         initialSupply: initialSupply === '' ? undefined : BigInt(initialSupply),
         supplyType: supplyType ? 'INFINITE' : 'FINITE',
         maxSupply: totalSupply ? BigInt(totalSupply) : totalSupply,
-        adminKey: privateKey.publicKey
+        adminKey: privateKey.publicKey,
+        treasury: AccountId.NULL
       };
       if (
         !(await utilsService.defaultConfirmAsk(
@@ -252,7 +255,7 @@ export default class CreateStableCoinService extends Service {
       adminKey,
       supplyKey,
       pauseKey,
-      treasury,
+      treasury: this.getTreasuryAccountFromSupplyKey(supplyKey)
     };
     if (
       !(await utilsService.defaultConfirmAsk(
@@ -374,7 +377,7 @@ export default class CreateStableCoinService extends Service {
       }
 
       case 'None':
-          return null;
+          return undefined;
 
       case 'The Smart Contract':
       default:
@@ -389,4 +392,13 @@ export default class CreateStableCoinService extends Service {
     );
     return regExp.test(newKey) ? newKey : await this.askNewKey(regExp);
   }
+
+  private getTreasuryAccountFromSupplyKey(supplyKey: PublicKey): AccountId {
+    if (supplyKey && supplyKey !== PublicKey.NULL) {
+      const currentAccount = utilsService.getCurrentAccount();
+      return new AccountId(currentAccount.accountId)
+    } else {
+      return AccountId.NULL;
+    }
+  }  
 }
