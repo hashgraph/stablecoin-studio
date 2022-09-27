@@ -142,8 +142,7 @@ export default class StableCoinService extends Service {
 				req.tokenId,				
 				amount,
 			);
-			if (resultCashIn){
-				//Transfer
+			if (resultCashIn && req.accountId.id != req.targetId){				
 				resultCashIn = await this.repository.transferHTS(
 					req.privateKey,
 					req.accountId,
@@ -165,6 +164,7 @@ export default class StableCoinService extends Service {
 			id: req.tokenId,
 		});
 		const amount = coin.toInteger(req.amount);
+		
 		const tokenOwnerBalance = await this.getTokenOwnerBalance({
 			accountId: req.accountId,
 			privateKey: req.privateKey,

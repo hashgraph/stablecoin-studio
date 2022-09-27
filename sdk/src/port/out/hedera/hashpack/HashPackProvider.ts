@@ -23,6 +23,7 @@ import {
 	PrivateKey as HPrivateKey,
 	TokenId,
 	Transaction,
+	Status,
 } from '@hashgraph/sdk';
 import { StableCoin } from '../../../../domain/context/stablecoin/StableCoin.js';
 import {
@@ -596,7 +597,7 @@ export default class HashPackProvider implements IProvider {
 			);
 		}
 
-		this.hashPackSigner = new HashPackSigner(undefined);
+		this.hashPackSigner = new HashPackSigner();
 		const transaction: Transaction =
 			TransactionProvider.buildTokenWipeTransaction(
 				params.wipeAccountId,
@@ -614,7 +615,7 @@ export default class HashPackProvider implements IProvider {
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
 				TransactionType.RECEIPT,
-				undefined,
+				this.hc.getSigner(this.provider),
 			);
 
 		if (!htsResponse.receipt) {
@@ -627,7 +628,7 @@ export default class HashPackProvider implements IProvider {
 			logOpts,
 		);
 
-		return htsResponse.receipt.status == 22 ? true : false;
+		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
 	public async cashInHTS(params: IHTSTokenRequest): Promise<boolean> {
@@ -643,7 +644,7 @@ export default class HashPackProvider implements IProvider {
 			);
 		}
 
-		this.hashPackSigner = new HashPackSigner(undefined);
+		this.hashPackSigner = new HashPackSigner();
 		const transaction: Transaction =
 			TransactionProvider.buildTokenMintTransaction(
 				params.tokenId,
@@ -660,7 +661,7 @@ export default class HashPackProvider implements IProvider {
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
 				TransactionType.RECEIPT,
-				undefined,
+				this.hc.getSigner(this.provider),
 			);
 
 		if (!htsResponse.receipt) {
@@ -673,7 +674,7 @@ export default class HashPackProvider implements IProvider {
 			logOpts,
 		);
 
-		return htsResponse.receipt.status == 22 ? true : false;
+		return htsResponse.receipt.status == Status.Success ? true : false;
 	}	
 
 	public async cashOutHTS(params: IHTSTokenRequest): Promise<boolean> {
@@ -689,7 +690,7 @@ export default class HashPackProvider implements IProvider {
 			);
 		}
 
-		this.hashPackSigner = new HashPackSigner(undefined);
+		this.hashPackSigner = new HashPackSigner();
 		const transaction: Transaction =
 			TransactionProvider.buildTokenBurnTransaction(
 				params.tokenId,
@@ -706,7 +707,7 @@ export default class HashPackProvider implements IProvider {
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
 				TransactionType.RECEIPT,
-				undefined,
+				this.hc.getSigner(this.provider),
 			);
 
 		if (!htsResponse.receipt) {
@@ -719,7 +720,7 @@ export default class HashPackProvider implements IProvider {
 			logOpts,
 		);
 
-		return htsResponse.receipt.status == 22 ? true : false;
+		return htsResponse.receipt.status == Status.Success ? true : false;
 	}	
 
 	public async transferHTS(params: ITransferTokenRequest): Promise<boolean> {
@@ -735,7 +736,7 @@ export default class HashPackProvider implements IProvider {
 			);
 		}
 
-		this.hashPackSigner = new HashPackSigner(undefined);
+		this.hashPackSigner = new HashPackSigner();
 		const transaction: Transaction =
 			TransactionProvider.buildTransferTransaction(
 				params.tokenId,
@@ -754,7 +755,7 @@ export default class HashPackProvider implements IProvider {
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
 				TransactionType.RECEIPT,
-				undefined,
+				this.hc.getSigner(this.provider),
 			);
 
 		if (!htsResponse.receipt) {
@@ -764,6 +765,6 @@ export default class HashPackProvider implements IProvider {
 		}
 		
 
-		return htsResponse.receipt.status == 22 ? true : false;
+		return htsResponse.receipt.status == Status.Success ? true : false;
 	}	
 }

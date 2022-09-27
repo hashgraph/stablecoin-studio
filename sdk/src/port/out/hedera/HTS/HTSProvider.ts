@@ -11,6 +11,7 @@ import {
 	PublicKey as HPublicKey,
 	TokenId,
 	Transaction,
+	Status,
 } from '@hashgraph/sdk';
 import {
 	HederaERC1967Proxy__factory,
@@ -283,7 +284,7 @@ export default class HTSProvider implements IProvider {
 			abi: HTSTokenOwner__factory.abi,
 			account: plainAccount,
 		});
-		/*log(
+		log(
 			'Associating administrator account to token... please wait.',
 			logOpts,
 		);
@@ -294,7 +295,7 @@ export default class HTSProvider implements IProvider {
 			abi: HederaERC20__factory.abi,
 			account: plainAccount,
 		});
-*/
+
 		return new StableCoin({
 			name: hederaToken.name,
 			symbol: hederaToken.symbol,
@@ -523,7 +524,7 @@ export default class HTSProvider implements IProvider {
 			`Result wipe HTS ${htsResponse.receipt.status}: account ${params.wipeAccountId}, tokenId ${params.tokenId}, amount ${params.amount}`,
 			logOpts,
 		);
-		return htsResponse.receipt.status == 22 ? true : false;
+		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
 	public async cashInHTS(params: IHTSTokenRequest): Promise<boolean> {
@@ -562,7 +563,7 @@ export default class HTSProvider implements IProvider {
 			`Result cash in HTS ${htsResponse.receipt.status}: account ${params.account.accountId}, tokenId ${params.tokenId}, amount ${params.amount}`,
 			logOpts,
 		);
-		return htsResponse.receipt.status == 22 ? true : false;
+		return htsResponse.receipt.status == Status.Success ? true : false;
 	}	
 
 	public async cashOutHTS(params: IHTSTokenRequest): Promise<boolean> {
@@ -601,7 +602,7 @@ export default class HTSProvider implements IProvider {
 			`Result cash out HTS ${htsResponse.receipt.status}: account ${params.account.accountId}, tokenId ${params.tokenId}, amount ${params.amount}`,
 			logOpts,
 		);
-		return htsResponse.receipt.status == 22 ? true : false;
+		return htsResponse.receipt.status == Status.Success ? true : false;
 	}	
 
 	public async transferHTS(params: ITransferTokenRequest): Promise<boolean> {
@@ -639,6 +640,6 @@ export default class HTSProvider implements IProvider {
 			);
 		}
 		
-		return htsResponse.receipt.status == 22 ? true : false;
+		return htsResponse.receipt.status == Status.Success ? true : false;
 	}	
 }
