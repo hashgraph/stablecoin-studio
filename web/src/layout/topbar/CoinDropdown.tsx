@@ -60,14 +60,15 @@ const CoinDropdown = () => {
 		dispatch(
 			walletActions.setSelectedStableCoin({
 				initialSupply: 0,
+				tokenId: stableCoinDetails?.tokenId,
 				totalSupply: 0,
 				// supplyType: stableCoinDetails?.supplyType,
 				name: stableCoinDetails?.name,
 				symbol: stableCoinDetails?.symbol,
 				decimals: stableCoinDetails?.decimals,
-				id: stableCoinDetails?.id,
+				id: stableCoinDetails?.tokenId,
 				maxSupply: stableCoinDetails?.maxSupply,
-				treasury: { id: stableCoinDetails?.treasury.id },
+				treasuryId: stableCoinDetails?.treasuryId,
 				memo: stableCoinDetails?.memo,
 				adminKey: stableCoinDetails?.adminKey,
 				kycKey: stableCoinDetails?.kycKey,

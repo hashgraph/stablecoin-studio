@@ -6,6 +6,7 @@
     "destinationAccountLabel": "What account will receive the tokens?",
     "destinationAccountPlaceholder": "Introduce account",
     "modalSuccessDesc": "The cash in operation finished successfully.",
+    "decimalsValidation": "You have added more decimals than the supported by the stable coin",
     "modalAction": {
         "subtitle": "Operation details review",
         "destinationAccount": "Account to cash in",

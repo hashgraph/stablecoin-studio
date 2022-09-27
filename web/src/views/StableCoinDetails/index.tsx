@@ -8,7 +8,6 @@ import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
 const StableCoinDetails = () => {
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const { t } = useTranslation('stableCoinDetails');
-	console.log(selectedStableCoin?.name);
 
 	return (
 		<BaseContainer title='Stable coin details'>
@@ -22,10 +21,10 @@ const StableCoinDetails = () => {
 							details={[
 								{
 									label: t('tokenId'),
-									value: selectedStableCoin?.id,
+									value: selectedStableCoin?.tokenId,
 								},
 								{
-									label: t('tokenId'),
+									label: t('name'),
 									value: selectedStableCoin?.name,
 								},
 								{
@@ -46,7 +45,7 @@ const StableCoinDetails = () => {
 								},
 								{
 									label: 'treasuryId',
-									value: selectedStableCoin?.treasury.id,
+									value: selectedStableCoin?.treasuryId,
 								},
 								{
 									label: 'memo',

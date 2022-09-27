@@ -11,6 +11,7 @@ import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
 import { useSelector } from 'react-redux';
 import { GET_ACK_MESSAGES } from '../../../store/slices/hashpackSlice';
+import { SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
 
 const CashInOperation = () => {
 	const {
@@ -20,7 +21,8 @@ const CashInOperation = () => {
 	} = useDisclosure();
 
 	const walletMessages = useSelector(GET_ACK_MESSAGES);
-
+	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
+	const { decimals = 0 } = selectedStableCoin || {};
 	console.log('Messages in state:', walletMessages);
 
 	const { control, getValues, formState } = useForm({
@@ -64,7 +66,13 @@ const CashInOperation = () => {
 							<InputNumberController
 								rules={{
 									required: t('global:validations.required'),
-									// TODO: Add validation of max decimals allowed by stable coin
+									validate: {
+										maxDecimals: (value: string) => {
+											const decimalsValue = (value + '').split('.')[1];
+											const dec = decimalsValue ? decimalsValue.length : 0;
+											return dec < decimals || t('cashIn:decimalsValidation');
+										},
+									},
 								}}
 								isRequired
 								control={control}
