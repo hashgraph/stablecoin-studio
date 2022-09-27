@@ -132,8 +132,9 @@ export default class StableCoinService extends Service {
 			throw new Error('Amount is bigger than allowed supply');
 		}
 		let resultCashIn = false;
-		const isCashInContract = true; //TODO cambiar por la validación de Adri
-		if (isCashInContract) {
+		
+		const capabilities: Capabilities[] = await this.getCapabilitiesStableCoin(req.tokenId, req.privateKey.publicKey.key);
+		if (capabilities.includes(Capabilities.CASH_IN)){
 			const result = await this.repository.cashIn(
 				req.proxyContractId,
 				req.privateKey,
@@ -142,7 +143,7 @@ export default class StableCoinService extends Service {
 				amount,
 			);
 			resultCashIn = Boolean(result[0]);
-		} else {
+		} else if (capabilities.includes(Capabilities.CASH_IN_HTS)){
 			resultCashIn = await this.repository.cashInHTS(
 				req.privateKey,
 				req.accountId,
@@ -159,6 +160,8 @@ export default class StableCoinService extends Service {
 					req.targetId
 				)
 			}
+		} else {
+			throw new Error('Cash in not allowed'); 
 		}
 		return resultCashIn;
 	}
@@ -187,8 +190,8 @@ export default class StableCoinService extends Service {
 */
 
 		let resultCashOut = false;
-		const isCashInContract = true; //TODO cambiar por la validación de Adri
-		if (isCashInContract) {
+		const capabilities: Capabilities[] = await this.getCapabilitiesStableCoin(req.tokenId, req.privateKey.publicKey.key);
+		if (capabilities.includes(Capabilities.CASH_OUT)){
 			const result = await this.repository.cashOut(
 				req.proxyContractId,
 				req.privateKey,
@@ -197,13 +200,15 @@ export default class StableCoinService extends Service {
 			);
 			resultCashOut = Boolean(result[0]);
 
-		} else {
+		} else if (capabilities.includes(Capabilities.CASH_OUT_HTS)){
 			resultCashOut = await this.repository.cashOutHTS(
 				req.privateKey,
 				req.accountId,
 				req.tokenId,				
 				amount,
 			);			
+		} else {
+			throw new Error('Cash out not allowed'); 
 		}
 		return resultCashOut
 	}
@@ -243,11 +248,10 @@ export default class StableCoinService extends Service {
 		if (balance[0] < req.amount) {
 			throw new Error(`Insufficient funds on account ${req.targetId}`);
 		}
-
+		
 		let resultWipe = false;
-		const isWipeContract = true; //TODO cambiar por la validación de Adri
-
-		if (isWipeContract) {
+		const capabilities: Capabilities[] = await this.getCapabilitiesStableCoin(req.tokenId, req.privateKey.publicKey.key);
+		if (capabilities.includes(Capabilities.WIPE)){
 			const result = await this.repository.wipe(
 				req.proxyContractId,
 				req.privateKey,
@@ -256,7 +260,7 @@ export default class StableCoinService extends Service {
 				coin.toInteger(req.amount),
 			);
 			resultWipe = Boolean(result[0]);
-		} else {
+		} else if (capabilities.includes(Capabilities.WIPE_HTS)){
 			resultWipe = await this.repository.wipeHTS(
 				req.privateKey,
 				req.accountId,
@@ -264,6 +268,8 @@ export default class StableCoinService extends Service {
 				req.targetId,
 				coin.toInteger(req.amount),
 			);
+		} else {
+			throw new Error('Wipe not allowed'); 
 		}
 
 		return resultWipe;
