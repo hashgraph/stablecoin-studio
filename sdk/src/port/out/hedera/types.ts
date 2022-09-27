@@ -1,16 +1,12 @@
-import {
-	AccountId as HAccount,
-	DelegateContractId,
-	PublicKey as HPublicKey,
-	TokenId,
-} from '@hashgraph/sdk';
-import { HashConnectTypes } from 'hashconnect';
+import { TokenId } from '@hashgraph/sdk';
+import { HashConnectTypes, MessageTypes } from 'hashconnect';
+import { AccountId, PublicKey } from '../../in/sdk/sdk.js';
 
 export interface ICallContractRequest {
 	contractId: string;
-	parameters: any[];
+	parameters: string[];
 	gas: number;
-	abi: any[];
+	abi: object[];
 }
 
 export interface ICallContractWithAccountRequest extends ICallContractRequest {
@@ -28,13 +24,23 @@ export interface ICreateTokenResponse {
 	maxSupply: Long;
 	memo: string;
 	freezeDefault: boolean;
-	treasuryAccountId: HAccount;
-	adminKey: HPublicKey;
-	freezeKey: HPublicKey;
-	wipeKey: HPublicKey;
-	supplyKey: DelegateContractId;
+	treasuryAccountId: AccountId;
+	adminKey?: PublicKey;
+	freezeKey?: PublicKey;
+	kycKey?: PublicKey;
+	wipeKey?: PublicKey;
+	pauseKey?: PublicKey;
+	supplyKey?: PublicKey;
 	tokenId: TokenId;
 }
 
 export type InitializationData = HashConnectTypes.InitilizationData;
 export type SavedPairingData = HashConnectTypes.SavedPairingData;
+export type AcknowledgeMessage = MessageTypes.Acknowledge;
+export type AdditionalAccountRequestMessage =
+	MessageTypes.AdditionalAccountRequest;
+export type AdditionalAccountResponseMessage =
+	MessageTypes.AdditionalAccountResponse;
+export type ApprovePairingMessage = MessageTypes.ApprovePairing;
+export type AuthenticationRequestMessage = MessageTypes.AuthenticationRequest;
+export type AuthenticationResponseMessage = MessageTypes.AuthenticationResponse;

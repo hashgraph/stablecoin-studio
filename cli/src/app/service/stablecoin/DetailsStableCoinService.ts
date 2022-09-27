@@ -1,8 +1,7 @@
 import { language } from '../../../index.js';
 import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
-import { StableCoinDetail } from '../../../domain/stablecoin/StableCoinList.js';
-import { SDK } from 'hedera-stable-coin-sdk';
+import { SDK, StableCoin } from 'hedera-stable-coin-sdk';
 
 /**
  * Create Stable Coin Service
@@ -18,11 +17,11 @@ export default class DetailsStableCoinsService extends Service {
   public async getDetailsStableCoins(
     id: string,
     show = true,
-  ): Promise<StableCoinDetail> {
+  ): Promise<StableCoin> {
     // Call to list stable coins
     const sdk: SDK = utilsService.getSDK();
 
-    let respDetail: StableCoinDetail;
+    let respDetail: StableCoin;
 
     await utilsService.showSpinner(
       sdk

@@ -1,8 +1,5 @@
 /* eslint-disable no-case-declarations */
-import {
-  StableCoinDetail,
-  StableCoinList,
-} from '../../../domain/stablecoin/StableCoinList.js';
+import { StableCoinList } from '../../../domain/stablecoin/StableCoinList.js';
 import {
   language,
   utilsService,
@@ -11,13 +8,19 @@ import {
 } from '../../../index.js';
 import Service from '../Service.js';
 import DetailsStableCoinsService from './DetailsStableCoinService.js';
-import { PublicKey, SDK, StableCoinRole } from 'hedera-stable-coin-sdk';
+import {
+  PublicKey,
+  SDK,
+  StableCoin,
+  StableCoinRole,
+} from 'hedera-stable-coin-sdk';
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 import CashInStableCoinsService from './CashInStableCoinService.js';
+import CashOutStableCoinsService from './CashOutStableCoinService.js';
 import WipeStableCoinsService from './WipeStableCoinService.js';
 import RoleStableCoinsService from './RoleStableCoinService.js';
 import RescueStableCoinsService from './RescueStableCoinService.js';
-const colors = require('colors');
+import colors from 'colors';
 
 /**
  * Operation Stable Coin Service
@@ -75,7 +78,7 @@ export default class OperationStableCoinService extends Service {
         // Get details to obtain treasury
         await new DetailsStableCoinsService()
           .getDetailsStableCoins(this.stableCoinId, false)
-          .then((response: StableCoinDetail) => {
+          .then((response: StableCoin) => {
             this.proxyContractId = response.memo;
           });
 
@@ -170,7 +173,23 @@ export default class OperationStableCoinService extends Service {
 
         break;
       case 'Cash out':
-        // Call to burn
+        const amount2Burn = await utilsService.defaultSingleAsk(
+          language.getText('stablecoin.askCashOutAmount'),
+          '1',
+        );
+        try {
+          await new CashOutStableCoinsService().cashOutStableCoin(
+            this.proxyContractId,
+            configurationService.getConfiguration().accounts[0].privateKey,
+            configurationService.getConfiguration().accounts[0].accountId,
+            this.stableCoinId,
+            parseFloat(amount2Burn),
+          );
+        } catch (error) {
+          console.log(colors.red(error.message));
+          await this.operationsStableCoin();
+        }
+
         break;
       case 'Wipe':
         // Call to Wipe
@@ -229,11 +248,7 @@ export default class OperationStableCoinService extends Service {
             parseFloat(amount2Rescue),
           );
         } catch (err) {
-          console.log(language.getText('operation.reject'));
-          console.error('error', err);
-
-          utilsService.breakLine();
-
+          console.log(colors.red(err.message));
           await this.operationsStableCoin();
         }
 
@@ -545,7 +560,7 @@ export default class OperationStableCoinService extends Service {
                 currentAccount,
               )
             ) {
-              let response = language.getText(
+              const response = language.getText(
                 'roleManagement.accountHasRoleSupplierUnlimited',
               );
 
@@ -598,10 +613,7 @@ export default class OperationStableCoinService extends Service {
     await this.roleManagementFlow();
   }
 
-  private disableOptions(
-    options: string[],
-    details: StableCoinDetail,
-  ): string[] {
+  private disableOptions(options: string[], details: StableCoin): string[] {
     const sdk: SDK = utilsService.getSDK();
     const currentAccount = utilsService.getCurrentAccount();
     let result: string[] = options;
@@ -634,7 +646,7 @@ export default class OperationStableCoinService extends Service {
     accountTarget: string,
     roleService: RoleStableCoinsService,
     currentAccount,
-  ) {
+  ): Promise<void> {
     let limit = '';
     const supplierRoleType = language.getArray('wizard.supplierRoleType');
 

@@ -290,7 +290,7 @@ export default class RoleStableCoinsService extends Service {
       },
     );
 
-    let response = language.getText('roleManagement.getAmountAllowance');
+    const response = language.getText('roleManagement.getAmountAllowance');
     console.log(
       response.replace('${address}', targetId).replace('${amount}', amount) +
         '\n',

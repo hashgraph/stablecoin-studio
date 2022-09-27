@@ -31,9 +31,178 @@ exports[`<OperationLayout /> should render correctly 1`] = `
           <div
             class="chakra-stack css-eunu1i"
           >
-            <span
-              data-testid="right-content"
-            />
+            <div
+              class="chakra-stack css-wqnj46"
+            >
+              <h2
+                class="chakra-heading css-12c29ps"
+                data-testid="details-title"
+              >
+                Stable coin details
+              </h2>
+              <div
+                class="css-13brihr"
+              >
+                <p
+                  class="chakra-text css-53sllx"
+                  data-testid="details-review-title"
+                >
+                  Basic details
+                </p>
+                <div
+                  class="css-0"
+                >
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-0"
+                    >
+                      <p
+                        class="chakra-text css-rhg419"
+                      >
+                        Name
+                      </p>
+                      <p
+                        class="chakra-text css-rhg419"
+                      >
+                        Example
+                      </p>
+                    </div>
+                    <hr
+                      aria-orientation="horizontal"
+                      class="chakra-divider css-zaaihy"
+                      title="divider"
+                    />
+                  </div>
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-1"
+                    >
+                      <p
+                        class="chakra-text css-rhg419"
+                      >
+                        Symbol
+                      </p>
+                      <p
+                        class="chakra-text css-rhg419"
+                      >
+                        example
+                      </p>
+                    </div>
+                    <hr
+                      aria-orientation="horizontal"
+                      class="chakra-divider css-zaaihy"
+                      title="divider"
+                    />
+                  </div>
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-2"
+                    >
+                      <p
+                        class="chakra-text css-rhg419"
+                      >
+                        Decimals
+                      </p>
+                      <p
+                        class="chakra-text css-rhg419"
+                      >
+                        6
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="css-13brihr"
+              >
+                <p
+                  class="chakra-text css-53sllx"
+                  data-testid="details-review-title"
+                >
+                  Optional details
+                </p>
+                <div
+                  class="css-0"
+                >
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-0"
+                    >
+                      <p
+                        class="chakra-text css-rhg419"
+                      >
+                        Initial supply
+                      </p>
+                      <p
+                        class="chakra-text css-rhg419"
+                      >
+                        20
+                      </p>
+                    </div>
+                    <hr
+                      aria-orientation="horizontal"
+                      class="chakra-divider css-zaaihy"
+                      title="divider"
+                    />
+                  </div>
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-1"
+                    >
+                      <p
+                        class="chakra-text css-rhg419"
+                      >
+                        Total supply
+                      </p>
+                      <p
+                        class="chakra-text css-rhg419"
+                      >
+                        200
+                      </p>
+                    </div>
+                    <hr
+                      aria-orientation="horizontal"
+                      class="chakra-divider css-zaaihy"
+                      title="divider"
+                    />
+                  </div>
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-2"
+                    >
+                      <p
+                        class="chakra-text css-rhg419"
+                      >
+                        Supply type (infinite or finite)
+                      </p>
+                      <p
+                        class="chakra-text css-rhg419"
+                      >
+                        infinite
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div

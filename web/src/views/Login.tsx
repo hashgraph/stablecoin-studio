@@ -1,20 +1,10 @@
 import { Flex } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import ModalHashpack from '../components/ModalHashpack';
-import SDKService from '../services/SDKService';
+import { HAS_WALLET_EXTENSION } from '../store/slices/walletSlice';
 
 const Login = () => {
-	const [availabilityExtension, setAvailabilityExtension] = useState<boolean | undefined>();
-
-	useEffect(() => {
-		getAvailability();
-	}, []);
-
-	const getAvailability = async () => {
-		SDKService.getAvailabilityExtension().then((response) => {
-			setAvailabilityExtension(response);
-		});
-	};
+	const hasWalletExtension = useSelector(HAS_WALLET_EXTENSION);
 
 	return (
 		<Flex
@@ -24,11 +14,7 @@ const Login = () => {
 			bgColor='background'
 			h='100vh'
 		>
-			{!availabilityExtension ? (
-				<ModalHashpack type='no-installed' />
-			) : (
-				<ModalHashpack type='no-connected' />
-			)}
+			<ModalHashpack type={hasWalletExtension ? 'no-connected' : 'no-installed'} />
 		</Flex>
 	);
 };

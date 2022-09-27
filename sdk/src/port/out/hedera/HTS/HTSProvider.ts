@@ -1,14 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { hethers } from '@hashgraph/hethers';
 import PrivateKey from '../../../../domain/context/account/PrivateKey.js';
 import {
 	AccountId as HAccountId,
 	Client,
+	ContractId as HContractId,
 	TransactionResponse,
 	ContractFunctionParameters,
-	ContractId,
-	DelegateContractId,
 	PrivateKey as HPrivateKey,
 	PublicKey as HPublicKey,
 	TokenId,
@@ -42,8 +40,12 @@ import { TransactionProvider } from '../transaction/TransactionProvider.js';
 import { HTSSigner } from './HTSSigner.js';
 import { HTSResponse, TransactionType } from '../sign/ISigner.js';
 import { TransactionResposeHandler } from '../transaction/TransactionResponseHandler.js';
-import { HashConnectConnectionState } from 'hashconnect/dist/cjs/types/hashconnect.js';
-import HashPackProvider from '../hashpack/HashPackProvider.js';
+
+import { HashConnectConnectionState } from 'hashconnect/dist/esm/types/hashconnect.js';
+import ProviderEvent, { ProviderEventNames } from '../ProviderEvent.js';
+import EventService from '../../../../app/service/event/EventService.js';
+import { ContractId } from '../../../in/sdk/sdk.js';
+import { safeCast } from '../../../../core/cast.js';
 
 type DefaultHederaProvider = hethers.providers.DefaultHederaProvider;
 
@@ -58,6 +60,13 @@ export default class HTSProvider implements IProvider {
 
 	public initData: InitializationData;
 
+	public eventService: EventService;
+	public events: ProviderEvent;
+
+	constructor(eventService: EventService) {
+		this.eventService = eventService;
+	}
+
 	/**
 	 * init
 	 */
@@ -67,6 +76,9 @@ export default class HTSProvider implements IProvider {
 
 		// We have to follow an async pattern to match Hashconnect
 		return new Promise((r) => {
+			this.eventService.emit(ProviderEventNames.providerInitEvent, {
+				status: 'connected',
+			});
 			r(this);
 		});
 	}
@@ -79,7 +91,7 @@ export default class HTSProvider implements IProvider {
 	}
 
 	public getClient(accountId?: string, privateKey?: string): Client {
-		let client: any;
+		let client: Client;
 		const hederaNetWork = getHederaNetwork(this.network);
 
 		if (hederaNetWork.consensusNodes) {
@@ -89,6 +101,8 @@ export default class HTSProvider implements IProvider {
 			HederaNetworkEnviroment.LOCAL
 		) {
 			client = Client.forName(this.network.hederaNetworkEnviroment);
+		} else {
+			throw new Error('Cannot get client: Invalid configuration');
 		}
 
 		if (accountId && privateKey) {
@@ -99,16 +113,17 @@ export default class HTSProvider implements IProvider {
 
 	public encodeFunctionCall(
 		functionName: string,
-		parameters: any[],
+		parameters: string[],
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		abi: any[],
 	): Uint8Array {
 		const functionAbi = abi.find(
-			(func: { name: any; type: string }) =>
+			(func: { name: string; type: string }) =>
 				func.name === functionName && func.type === 'function',
 		);
 		if (!functionAbi)
 			throw new HederaError(
-				'Contract function not found in ABI, are you using the right version?',
+				`Contract function ${functionName} not found in ABI, are you using the right version?`,
 			);
 		const encodedParametersHex = this.web3.eth.abi
 			.encodeFunctionCall(functionAbi, parameters)
@@ -117,7 +132,9 @@ export default class HTSProvider implements IProvider {
 		return Buffer.from(encodedParametersHex, 'hex');
 	}
 
-	public getPublicKey(privateKey?: PrivateKey | string | undefined): string {
+	public getPublicKey(
+		privateKey?: PrivateKey | string | undefined,
+	): HPublicKey {
 		let key = null;
 		if (privateKey instanceof PrivateKey) {
 			key = privateKey.key;
@@ -125,8 +142,14 @@ export default class HTSProvider implements IProvider {
 			key = privateKey;
 		}
 		if (!key) throw new HederaError('No private key provided');
-		const publicKey = HPrivateKey.fromString(key).publicKey.toStringRaw();
+		const publicKey = HPrivateKey.fromString(key).publicKey;
 		return publicKey;
+	}
+
+	public getPublicKeyString(
+		privateKey?: PrivateKey | string | undefined,
+	): string {
+		return this.getPublicKey(privateKey).toStringRaw();
 	}
 
 	public async callContract(
@@ -192,22 +215,18 @@ export default class HTSProvider implements IProvider {
 			`Deploying ${HederaERC1967Proxy__factory.name} contract... please wait.`,
 			logOpts,
 		);
-		let proxyContract: ContractId = stableCoin.memo ?? '';
-
-		if (!proxyContract) {
-			proxyContract = await this.deployContract(
-				HederaERC1967Proxy__factory,
-				plainAccount.privateKey,
-				client,
-				new ContractFunctionParameters()
-					.addAddress(tokenContract?.toSolidityAddress())
-					.addBytes(new Uint8Array([])),
-			);
-			stableCoin.memo = String(proxyContract);
-		}
+		const proxyContract: HContractId = await this.deployContract(
+			HederaERC1967Proxy__factory,
+			plainAccount.privateKey,
+			client,
+			new ContractFunctionParameters()
+				.addAddress(tokenContract?.toSolidityAddress())
+				.addBytes(new Uint8Array([])),
+		);
+		stableCoin.memo = String(proxyContract);
 
 		await this.callContract('initialize', {
-			contractId: proxyContract,
+			contractId: stableCoin.memo,
 			parameters: [],
 			gas: 250_000,
 			abi: HederaERC20__factory.abi,
@@ -230,15 +249,20 @@ export default class HTSProvider implements IProvider {
 			stableCoin.decimals,
 			stableCoin.initialSupply,
 			stableCoin.maxSupply,
-			String(proxyContract),
+			stableCoin.memo,
 			stableCoin.freezeDefault,
 			plainAccount.privateKey,
-			this.getPublicKey(privateKey),
 			client,
+			safeCast<PublicKey>(stableCoin.adminKey),
+			safeCast<PublicKey>(stableCoin.freezeKey),
+			safeCast<PublicKey>(stableCoin.kycKey),
+			safeCast<PublicKey>(stableCoin.wipeKey),
+			safeCast<PublicKey>(stableCoin.pauseKey),
+			safeCast<PublicKey>(stableCoin.supplyKey),
 		);
 		log('Setting up contract... please wait.', logOpts);
 		await this.callContract('setTokenAddress', {
-			contractId: proxyContract,
+			contractId: stableCoin.memo,
 			parameters: [
 				tokenOwnerContract.toSolidityAddress(),
 				TokenId.fromString(
@@ -250,7 +274,7 @@ export default class HTSProvider implements IProvider {
 			account: plainAccount,
 		});
 		await this.callContract('setERC20Address', {
-			contractId: tokenOwnerContract,
+			contractId: String(tokenOwnerContract),
 			parameters: [proxyContract.toSolidityAddress()],
 			gas: 60_000,
 			abi: HTSTokenOwner__factory.abi,
@@ -261,7 +285,7 @@ export default class HTSProvider implements IProvider {
 			logOpts,
 		);
 		await this.callContract('associateToken', {
-			contractId: proxyContract,
+			contractId: stableCoin.memo,
 			parameters: [HAccountId.fromString(accountId).toSolidityAddress()],
 			gas: 1_300_000,
 			abi: HederaERC20__factory.abi,
@@ -277,11 +301,35 @@ export default class HTSProvider implements IProvider {
 			memo: hederaToken.memo,
 			freezeDefault: hederaToken.freezeDefault,
 			treasury: new AccountId(hederaToken.treasuryAccountId.toString()),
-			adminKey: this.fromPublicKey(hederaToken.adminKey),
-			freezeKey: this.fromPublicKey(hederaToken.freezeKey),
-			wipeKey: this.fromPublicKey(hederaToken.wipeKey),
-			supplyKey: hederaToken.supplyKey,
-			id: hederaToken.tokenId,
+			adminKey:
+				hederaToken.adminKey &&
+				hederaToken.adminKey instanceof HPublicKey
+					? PublicKey.fromHederaKey(hederaToken.adminKey)
+					: hederaToken.adminKey,
+			freezeKey:
+				hederaToken.freezeKey &&
+				hederaToken.freezeKey instanceof HPublicKey
+					? PublicKey.fromHederaKey(hederaToken.freezeKey)
+					: hederaToken.freezeKey,
+			kycKey:
+				hederaToken.kycKey && hederaToken.kycKey instanceof HPublicKey
+					? PublicKey.fromHederaKey(hederaToken.kycKey)
+					: hederaToken.kycKey,
+			wipeKey:
+				hederaToken.wipeKey && hederaToken.wipeKey instanceof HPublicKey
+					? PublicKey.fromHederaKey(hederaToken.wipeKey)
+					: hederaToken.wipeKey,
+			pauseKey:
+				hederaToken.pauseKey &&
+				hederaToken.pauseKey instanceof HPublicKey
+					? PublicKey.fromHederaKey(hederaToken.pauseKey)
+					: hederaToken.pauseKey,
+			supplyKey:
+				hederaToken.supplyKey &&
+				hederaToken.supplyKey instanceof HPublicKey
+					? PublicKey.fromHederaKey(hederaToken.supplyKey)
+					: hederaToken.supplyKey,
+			id: hederaToken.tokenId.toString(),
 			tokenType: stableCoin.tokenType,
 			supplyType: stableCoin.supplyType,
 		});
@@ -292,10 +340,10 @@ export default class HTSProvider implements IProvider {
 		privateKey: string,
 		client: Client,
 		params?: any,
-	): Promise<ContractId> {
+	): Promise<HContractId> {
 		try {
 			this.htsSigner = new HTSSigner(client);
-			const transaction: Transaction =
+			const transaction =
 				TransactionProvider.buildContractCreateFlowTransaction(
 					factory,
 					privateKey,
@@ -341,7 +389,7 @@ export default class HTSProvider implements IProvider {
 	}
 
 	private async createToken(
-		contractId: ContractId,
+		contractId: HContractId,
 		name: string,
 		symbol: string,
 		decimals: number,
@@ -350,8 +398,13 @@ export default class HTSProvider implements IProvider {
 		memo: string,
 		freezeDefault: boolean,
 		privateKey: string,
-		publicKey: string,
 		client: Client,
+		adminKey?: PublicKey,
+		freezeKey?: PublicKey,
+		kycKey?: PublicKey,
+		wipeKey?: PublicKey,
+		pauseKey?: PublicKey,
+		supplyKey?: PublicKey,
 	): Promise<ICreateTokenResponse> {
 		const values: ICreateTokenResponse = {
 			name,
@@ -363,17 +416,23 @@ export default class HTSProvider implements IProvider {
 				: Long.ZERO,
 			memo,
 			freezeDefault,
-			treasuryAccountId: HAccountId.fromString(contractId.toString()),
-			adminKey: HPublicKey.fromString(publicKey),
-			freezeKey: HPublicKey.fromString(publicKey),
-			wipeKey: HPublicKey.fromString(publicKey),
-			supplyKey: DelegateContractId.fromString(contractId),
-			tokenId: '',
+			treasuryAccountId: new AccountId(String(contractId)),
+			tokenId: TokenId.fromString('0.0.0'),
+			adminKey,
+			freezeKey,
+			kycKey,
+			wipeKey,
+			pauseKey,
+			supplyKey,
 		};
 
 		this.htsSigner = new HTSSigner(client);
 		const transaction: Transaction =
-			TransactionProvider.buildTokenCreateTransaction(values, maxSupply);
+			TransactionProvider.buildTokenCreateTransaction(
+				ContractId.fromHederaContractId(contractId),
+				values,
+				maxSupply,
+			);
 		const transactionResponse: TransactionResponse =
 			await this.htsSigner.signAndSendTransaction(transaction);
 		const htsResponse: HTSResponse =
@@ -398,22 +457,26 @@ export default class HTSProvider implements IProvider {
 		return values;
 	}
 
-	private fromPublicKey(key: HPublicKey): PublicKey {
-		return new PublicKey({ key: key._key, type: key._type });
-	}
-
 	getAvailabilityExtension(): boolean {
 		return false;
 	}
+
 	gethashConnectConectionState(): HashConnectConnectionState {
 		return HashConnectConnectionState.Disconnected;
 	}
+
 	disconectHaspack(): void {
-		throw new Error('not haspack');
+		this.eventService.emit(
+			ProviderEventNames.providerConnectionStatusChangeEvent,
+			HashConnectConnectionState.Disconnected,
+		);
 	}
-	connectWallet(): Promise<HashPackProvider> {
-		throw new Error('not haspack');
+
+	connectWallet(): Promise<HTSProvider> {
+		this.eventService.emit(ProviderEventNames.providerPairingEvent);
+		return new Promise((r) => r(this));
 	}
+
 	getInitData(): InitializationData {
 		throw new Error('not haspack');
 	}

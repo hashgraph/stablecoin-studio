@@ -14,11 +14,11 @@ export class StableCoin extends BaseEntity {
 	/**
 	 * Admin PublicKey for the token
 	 */
-	private _adminKey: PublicKey;
-	public get adminKey(): PublicKey {
+	private _adminKey: ContractId | PublicKey | undefined;
+	public get adminKey(): ContractId | PublicKey | undefined {
 		return this._adminKey;
 	}
-	public set adminKey(value: PublicKey) {
+	public set adminKey(value: ContractId | PublicKey | undefined) {
 		this._adminKey = value;
 	}
 
@@ -113,11 +113,11 @@ export class StableCoin extends BaseEntity {
 	/**
 	 * Freeze key
 	 */
-	private _freezeKey: ContractId | PublicKey;
-	public get freezeKey(): ContractId | PublicKey {
+	private _freezeKey: ContractId | PublicKey | undefined;
+	public get freezeKey(): ContractId | PublicKey | undefined {
 		return this._freezeKey;
 	}
-	public set freezeKey(value: ContractId | PublicKey) {
+	public set freezeKey(value: ContractId | PublicKey | undefined) {
 		this._freezeKey = value;
 	}
 
@@ -135,33 +135,55 @@ export class StableCoin extends BaseEntity {
 	/**
 	 * KYC key
 	 */
-	private _kycKey: ContractId | PublicKey;
-	public get kycKey(): ContractId | PublicKey {
+	private _kycKey: ContractId | PublicKey | undefined;
+	public get kycKey(): ContractId | PublicKey | undefined {
 		return this._kycKey;
 	}
-	public set kycKey(value: ContractId | PublicKey) {
+	public set kycKey(value: ContractId | PublicKey | undefined) {
 		this._kycKey = value;
 	}
 
 	/**
 	 * Wipe key
 	 */
-	private _wipeKey: ContractId | PublicKey;
-	public get wipeKey(): ContractId | PublicKey {
+	private _wipeKey: ContractId | PublicKey | undefined;
+	public get wipeKey(): ContractId | PublicKey | undefined {
 		return this._wipeKey;
 	}
-	public set wipeKey(value: ContractId | PublicKey) {
+	public set wipeKey(value: ContractId | PublicKey | undefined) {
 		this._wipeKey = value;
+	}
+
+	/**
+	 * Pause key
+	 */
+	private _pauseKey: ContractId | PublicKey | undefined;
+	public get pauseKey(): ContractId | PublicKey | undefined {
+		return this._pauseKey;
+	}
+	public set pauseKey(value: ContractId | PublicKey | undefined) {
+		this._pauseKey = value;
+	}
+
+	/**
+	 * Pause key
+	 */
+	private _pauseKey: ContractId | PublicKey;
+	public get pauseKey(): ContractId | PublicKey {
+		return this._pauseKey;
+	}
+	public set pauseKey(value: ContractId | PublicKey) {
+		this._pauseKey = value;
 	}
 
 	/**
 	 * Supply key
 	 */
-	private _supplyKey: ContractId | PublicKey;
-	public get supplyKey(): ContractId | PublicKey {
+	private _supplyKey: ContractId | PublicKey | undefined;
+	public get supplyKey(): ContractId | PublicKey | undefined {
 		return this._supplyKey;
 	}
-	public set supplyKey(value: ContractId | PublicKey) {
+	public set supplyKey(value: ContractId | PublicKey | undefined) {
 		this._supplyKey = value;
 	}
 
@@ -213,16 +235,17 @@ export class StableCoin extends BaseEntity {
 		name: string;
 		symbol: string;
 		decimals: number;
-		adminKey?: PublicKey;
+		adminKey?: PublicKey | ContractId;
 		initialSupply?: bigint;
 		totalSupply?: bigint;
 		maxSupply?: bigint;
 		memo?: string;
-		freezeKey?: ContractId | PublicKey;
+		freezeKey?: PublicKey | ContractId;
 		freezeDefault?: boolean;
-		kycKey?: ContractId | PublicKey;
-		wipeKey?: ContractId | PublicKey;
-		supplyKey?: ContractId | PublicKey;
+		kycKey?: PublicKey | ContractId;
+		wipeKey?: PublicKey | ContractId;
+		pauseKey?: PublicKey | ContractId;
+		supplyKey?: PublicKey | ContractId;
 		treasury?: AccountId;
 		tokenType?: TokenType;
 		supplyType?: TokenSupplyType;
@@ -243,6 +266,7 @@ export class StableCoin extends BaseEntity {
 			freezeDefault,
 			kycKey,
 			wipeKey,
+			pauseKey,
 			supplyKey,
 			treasury,
 			tokenType,
@@ -250,10 +274,7 @@ export class StableCoin extends BaseEntity {
 			id,
 			autoRenewAccount,
 		} = params;
-		const defaultKey = new PublicKey({
-			key: 'null',
-			type: 'null',
-		});
+		const defaultKey = PublicKey.NULL;
 		this.adminKey = adminKey ?? defaultKey;
 		this.name = name;
 		this.symbol = symbol;
@@ -266,6 +287,7 @@ export class StableCoin extends BaseEntity {
 		this.freezeDefault = freezeDefault ?? false;
 		this.kycKey = kycKey ?? defaultKey;
 		this.wipeKey = wipeKey ?? defaultKey;
+		this.pauseKey = pauseKey ?? defaultKey;
 		this.supplyKey = supplyKey ?? defaultKey;
 		this.treasury = treasury ?? new AccountId('0.0.0');
 		this.tokenType = tokenType ?? TokenType.FUNGIBLE_COMMON;
@@ -297,7 +319,7 @@ export class StableCoin extends BaseEntity {
 		return res;
 	}
 
-	public isValidAmount(amount: number): boolean {		
+	public isValidAmount(amount: number): boolean {
 		return this.getDecimals(amount) <= this.decimals;
 	}
 

@@ -1,10 +1,10 @@
 import {
 	Transaction,
 	Signer,
-	Client,
 	TransactionResponse,
 	TransactionReceipt,
 } from '@hashgraph/sdk';
+import { MessageTypes } from 'hashconnect';
 
 export enum TransactionType {
 	RECORD,
@@ -32,17 +32,9 @@ export class HTSResponse {
 		this.receipt = receipt;
 	}
 }
-export class ISigner {
-	client: Client | undefined;
-
-	constructor(client: Client) {
-		this.client = client;
-	}
-
-	async signAndSendTransaction(
+export interface ISigner {
+	signAndSendTransaction(
 		transaction: Transaction,
 		signer?: Signer,
-	): Promise<TransactionResponse> {
-		throw new Error('not an implementation!!');
-	}
+	): Promise<TransactionResponse | MessageTypes.TransactionResponse>;
 }

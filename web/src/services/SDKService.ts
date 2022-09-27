@@ -1,7 +1,7 @@
 import { HederaNetwork, HederaNetworkEnviroment, NetworkMode, SDK } from 'hedera-stable-coin-sdk';
-
-import type { AppMetadata, InitializationData, StableCoin } from 'hedera-stable-coin-sdk';
+import type { AppMetadata, InitializationData, AcknowledgeMessage } from 'hedera-stable-coin-sdk';
 import type IStableCoinList from 'hedera-stable-coin-sdk/build/src/port/in/sdk/response/IStableCoinList';
+import type IStableCoinDetail from 'hedera-stable-coin-sdk/build/src/port/in/sdk/response/IStableCoinDetail';
 
 export enum HashConnectConnectionState {
 	Connected = 'Connected',
@@ -19,11 +19,26 @@ const appMetadata: AppMetadata = {
 	url: '',
 };
 
+interface CashInRequest {
+	proxyContractId: string;
+	privateKey: string;
+	accountId: string;
+	tokenId: string;
+	targetId: string;
+	amount: number;
+}
+interface EventsSetter {
+	onInit: () => void;
+	onWalletExtensionFound: () => void;
+	onWalletPaired: () => void;
+	onWalletAcknowledgeMessageEvent: (msg: AcknowledgeMessage) => void;
+}
+
 export class SDKService {
 	private static instance: SDK | undefined;
 
 	constructor() {}
-	public static async getInstance() {
+	public static async getInstance(events?: EventsSetter) {
 		if (!SDKService.instance) {
 			SDKService.instance = new SDK({
 				network: new HederaNetwork(HederaNetworkEnviroment.TEST), // TODO: dynamic data
@@ -32,7 +47,19 @@ export class SDKService {
 					appMetadata,
 				},
 			});
-			await SDKService.instance.init();
+
+			const { onInit, onWalletExtensionFound, onWalletPaired, onWalletAcknowledgeMessageEvent } =
+				events || {
+					onInit: () => {},
+					onWalletAcknowledgeMessageEvent: () => {},
+					onWalletExtensionFound: () => {},
+					onWalletPaired: () => {},
+				};
+
+			await SDKService.instance.init({ onInit });
+			SDKService.instance.onWalletExtensionFound(onWalletExtensionFound);
+			SDKService.instance.onWalletPaired(onWalletPaired);
+			SDKService.instance.onWalletAcknowledgeMessageEvent(onWalletAcknowledgeMessageEvent);
 		}
 
 		return SDKService.instance;
@@ -71,8 +98,25 @@ export class SDKService {
 		return (await SDKService.getInstance())?.getListStableCoin({ privateKey });
 	}
 
-	public static async getStableCoinDetails({ id }: { id: string }): Promise<StableCoin | null> {
-		return (await SDKService.getInstance())?.getStableCoin({ id });
+	public static async getStableCoinDetails({
+		id,
+	}: {
+		id: string;
+	}): Promise<IStableCoinDetail | null> {
+		return (await SDKService.getInstance())?.getStableCoinDetails({ id });
+	}
+
+	public static async cashIn({
+		proxyContractId,
+		privateKey,
+		accountId,
+		tokenId,
+		targetId,
+		amount,
+	}: CashInRequest) {
+		return await SDKService.getInstance().then((instance) =>
+			instance.cashIn({ proxyContractId, privateKey, accountId, tokenId, targetId, amount }),
+		);
 	}
 }
 
