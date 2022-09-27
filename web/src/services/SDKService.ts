@@ -30,10 +30,10 @@ interface CashInRequest {
 	amount: number;
 }
 interface EventsSetter {
-	onInit: () => void,
-	onWalletExtensionFound: () => void,
-	onWalletPaired: () => void
-	onWalletAcknowledgeMessageEvent: (msg: AcknowledgeMessage) => void
+	onInit: () => void;
+	onWalletExtensionFound: () => void;
+	onWalletPaired: () => void;
+	onWalletAcknowledgeMessageEvent: (msg: AcknowledgeMessage) => void;
 }
 
 export class SDKService {
@@ -52,13 +52,14 @@ export class SDKService {
 
 			const { onInit, onWalletExtensionFound, onWalletPaired, onWalletAcknowledgeMessageEvent } =
 				events || {
+					onInit: () => {},
 					onWalletAcknowledgeMessageEvent: () => {},
+					onWalletExtensionFound: () => {},
+					onWalletPaired: () => {},
 				};
-			// @ts-ignore expect 0 arguments but got 1
+
 			await SDKService.instance.init({ onInit });
-			// @ts-ignore method does not exists on type SDK
 			SDKService.instance.onWalletExtensionFound(onWalletExtensionFound);
-			// @ts-ignore method does not exists on type SDK
 			SDKService.instance.onWalletPaired(onWalletPaired);
 			SDKService.instance.onWalletAcknowledgeMessageEvent(onWalletAcknowledgeMessageEvent);
 		}
