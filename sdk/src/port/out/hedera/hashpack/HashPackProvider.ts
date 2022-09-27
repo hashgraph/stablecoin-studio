@@ -1,8 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-	HashConnect,
-	HashConnectTypes,
-} from 'hashconnect/dist/esm/main';
 import { IniConfig, IProvider } from '../Provider.js';
 import {
 	HederaNetwork,
@@ -15,7 +11,6 @@ import {
 } from '../../../in/sdk/sdk.js';
 import {
 	AccountId as HAccountId,
-	TransactionResponse,
 	ContractFunctionParameters,
 	ContractId as HContractId,
 	PublicKey as HPublicKey,
@@ -34,7 +29,7 @@ import {
 	ITransferTokenRequest,
 	InitializationData,
 } from '../types.js';
-import { HashConnectConnectionState } from 'hashconnect/dist/esm/types/hashconnect.js';
+import { HashConnectConnectionState, HashConnectTypes } from 'hashconnect/dist/esm/types/hashconnect.js';
 import { HashPackSigner } from './HashPackSigner.js';
 import { TransactionProvider } from '../transaction/TransactionProvider.js';
 import { HTSResponse, TransactionType } from '../sign/ISigner.js';
@@ -52,6 +47,7 @@ import { HashConnectSigner } from 'hashconnect/dist/esm/provider/signer';
 import Long from 'long';
 import ProviderEvent, { ProviderEventNames } from '../ProviderEvent.js';
 import EventService from '../../../../app/service/event/EventService.js';
+import { HashConnect } from 'hashconnect';
 
 const logOpts = { newLine: true, clear: true };
 
