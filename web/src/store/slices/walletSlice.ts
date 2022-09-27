@@ -28,10 +28,14 @@ export const initialState: InitialStateProps = {
 };
 
 export const getStableCoinList = createAsyncThunk('wallet/getStableCoinList', async () => {
-	const stableCoins = await SDKService.getStableCoins({
-		privateKey: 'pvkey',
-	});
-	return stableCoins;
+	try {
+		const stableCoins = await SDKService.getStableCoins({
+			privateKey: 'pvkey',
+		});
+		return stableCoins;
+	} catch (e) {
+		console.error(e);
+	}
 });
 
 export const walletSlice = createSlice({
