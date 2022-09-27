@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import DetailsReview from '../../../components/DetailsReview';
 import InputController from '../../../components/Form/InputController';
 import InputNumberController from '../../../components/Form/InputNumberController';
+import SDKService from '../../../services/SDKService';
 import { validateAccount } from '../../../utils/validationsHelper';
 import OperationLayout from './../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
@@ -23,9 +24,23 @@ const CashInOperation = () => {
 	const { t } = useTranslation(['cashIn', 'global', 'operations']);
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const handleCashIn: ModalsHandlerActionsProps['onConfirm'] = ({ onSuccess, onError }) => {
-		// TODO: integrate with sdk to do cashin
-		onSuccess();
+	const handleCashIn: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
+		const { amount } = getValues();
+		try {
+			await SDKService.cashIn({
+				proxyContractId: '0.0.48261507',
+				privateKey:
+					'302e020100300506032b6570042204201713ea5a2dc0287b11a6f25a1137c0cad65fb5af52706076de9a9ec5a4b7f625',
+				accountId: '0.0.47809960',
+				tokenId: '0.0.48261510',
+				targetId: '0.0.47809960', // destinationACc
+				amount,
+			});
+			onSuccess();
+		} catch (error) {
+			console.error(error);
+			onError();
+		}
 	};
 
 	return (
@@ -69,56 +84,12 @@ const CashInOperation = () => {
 						</Stack>
 					</>
 				}
-				RightContent={
-					<Stack bg='brand.white' spacing={10}>
-						<Heading fontSize='16px' color='brand.secondary' data-testid='details-title'>
-							{t('cashIn:details.title')}
-						</Heading>
-
-						<DetailsReview
-							title={t('cashIn:details.basicTitle')}
-							titleProps={{ fontWeight: 700, color: 'brand.secondary' }}
-							details={[
-								{
-									label: t('cashIn:details.name'),
-									value: '',
-								},
-								{
-									label: t('cashIn:details.symbol'),
-									value: '',
-								},
-								{
-									label: t('cashIn:details.decimals'),
-									value: '',
-								},
-							]}
-						/>
-						<DetailsReview
-							title={t('cashIn:details.optionalTitle')}
-							titleProps={{ fontWeight: 700, color: 'brand.secondary' }}
-							details={[
-								{
-									label: t('cashIn:details.initialSupply'),
-									value: '',
-								},
-								{
-									label: t('cashIn:details.totalSupply'),
-									value: '',
-								},
-								{
-									label: t('cashIn:details.supplyType'),
-									value: '',
-								},
-							]}
-						/>
-					</Stack>
-				}
 				onConfirm={onOpenModalAction}
 				confirmBtnProps={{ isDisabled: !formState.isValid }}
 			/>
 			<ModalsHandler
 				errorNotificationTitle={t('operations:modalErrorTitle')}
-				errorNotificationDescription={t('operations:modalErrorDesc')}
+				errorNotificationDescription={'error'} // TODO: show returned error from sdk
 				modalActionProps={{
 					isOpen: isOpenModalAction,
 					onClose: onCloseModalAction,

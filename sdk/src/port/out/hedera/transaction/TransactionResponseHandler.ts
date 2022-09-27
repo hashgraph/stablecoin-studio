@@ -20,18 +20,8 @@ export class TransactionResposeHandler {
 		let results: Uint8Array = new Uint8Array();
 
 		if (responseType == TransactionType.RECEIPT) {
-			let transactionReceipt: TransactionReceipt;
-			if (clientOrSigner instanceof Client) {
-				transactionReceipt = await transactionResponse.getReceipt(
-					clientOrSigner,
-				);
-			} else if (clientOrSigner instanceof HashConnectSigner) {
-				transactionReceipt =
-					await transactionResponse.getReceiptWithSigner(
-						clientOrSigner,
-					);
-			}
-
+			const transactionReceipt: TransactionReceipt =
+				await this.getReceipt(clientOrSigner, transactionResponse);
 			return this.createHTSResponse(
 				transactionResponse.transactionId,
 				responseType,
@@ -41,22 +31,18 @@ export class TransactionResposeHandler {
 		}
 
 		if (responseType == TransactionType.RECORD) {
-			let transactionRecord: TransactionRecord;
-			if (clientOrSigner instanceof Client) {
-				transactionRecord = await transactionResponse.getRecord(
-					clientOrSigner,
-				);
-			} else if (clientOrSigner instanceof HashConnectSigner) {
-				transactionRecord =
-					await transactionResponse.getRecordWithSigner(
-						clientOrSigner,
-					);
-			}
+			const transactionRecord: TransactionRecord = await this.getRecord(
+				clientOrSigner,
+				transactionResponse,
+			);
 
-			if (nameFunction) {
+			if (
+				nameFunction &&
+				transactionRecord.contractFunctionResult?.bytes
+			) {
 				results = this.decodeFunctionResult(
 					nameFunction,
-					transactionRecord.contractFunctionResult?.bytes,
+					transactionRecord.contractFunctionResult.bytes,
 					abi,
 				);
 			}
@@ -69,6 +55,44 @@ export class TransactionResposeHandler {
 		}
 
 		throw new Error('The response type is neither RECORD nor RECEIPT.');
+	}
+
+	private async getRecord(
+		clientOrSigner: Client | HashConnectSigner,
+		transactionResponse: TransactionResponse,
+	) {
+		let transactionRecord: TransactionRecord;
+		if (clientOrSigner instanceof Client) {
+			transactionRecord = await transactionResponse.getRecord(
+				clientOrSigner,
+			);
+		} else if (clientOrSigner instanceof HashConnectSigner) {
+			transactionRecord = await transactionResponse.getRecordWithSigner(
+				clientOrSigner,
+			);
+		} else {
+			throw new Error('Unsupported Client');
+		}
+		return transactionRecord;
+	}
+
+	private async getReceipt(
+		clientOrSigner: Client | HashConnectSigner,
+		transactionResponse: TransactionResponse,
+	) {
+		let transactionReceipt: TransactionReceipt;
+		if (clientOrSigner instanceof Client) {
+			transactionReceipt = await transactionResponse.getReceipt(
+				clientOrSigner,
+			);
+		} else if (clientOrSigner instanceof HashConnectSigner) {
+			transactionReceipt = await transactionResponse.getReceiptWithSigner(
+				clientOrSigner,
+			);
+		} else {
+			throw new Error('Unsupported Client');
+		}
+		return transactionReceipt;
 	}
 
 	public createHTSResponse(
@@ -97,7 +121,7 @@ export class TransactionResposeHandler {
 		);
 		if (!functionAbi?.outputs)
 			throw new HederaError(
-				'Contract function not found in ABI, are you using the right version?',
+                `Contract function ${ functionName } not found in ABI, are you using the right version?`,
 			);
 		const functionParameters = functionAbi?.outputs;
 		const resultHex = '0x'.concat(

@@ -48,6 +48,6 @@ export default class ContractsService extends Service {
 	 * @returns
 	 */
 	public getPublicKey(privateKey: string): string {
-		return this.networkAdapter.provider.getPublicKey(privateKey);
+		return this.networkAdapter.provider.getPublicKeyString(privateKey);
 	}
 }

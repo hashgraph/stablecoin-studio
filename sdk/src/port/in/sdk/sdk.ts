@@ -16,6 +16,7 @@ import IWipeStableCoinServiceRequestModel from '../../../app/service/stablecoin/
 import ICreateStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/ICreateStableCoinServiceRequestModel.js';
 import { IListStableCoinServiceRequestModel } from '../../../app/service/stablecoin/model/IListStableCoinServiceRequestModel.js';
 import ICashInStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/ICashInStableCoinServiceRequestModel.js';
+import ICashOutStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/ICashOutStableCoinServiceRequestModel.js';
 import IGetNameOfStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IGetNameOfStableCoinServiceRequestModel.js';
 import IGetBalanceOfStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IGetBalanceOfStableCoinServiceRequestModel.js';
 import IGetStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IGetStableCoinServiceRequestModel.js';
@@ -28,6 +29,7 @@ import IGetBasicRequestModel from '../../../app/service/stablecoin/model/IGetBas
 /* Public requests */
 import { IAssociateStableCoinRequest } from './request/IAssociateStableCoinRequest.js';
 import { ICashInStableCoinRequest } from './request/ICashInStableCoinRequest.js';
+import { ICashOutStableCoinRequest } from './request/ICashOutStableCoinRequest.js';
 import { ICreateStableCoinRequest } from './request/ICreateStableCoinRequest.js';
 import { IGetBalanceStableCoinRequest } from './request/IGetBalanceStableCoinRequest.js';
 import { IGetListStableCoinRequest } from './request/IGetListStableCoinRequest.js';
@@ -45,17 +47,23 @@ import ContractId from '../../../domain/context/contract/ContractId.js';
 import { TokenType } from '../../../domain/context/stablecoin/TokenType.js';
 import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.js';
 import { IAllowanceRequest } from './request/IRequestContracts.js';
-import { HashConnectConnectionState } from 'hashconnect/dist/cjs/types/hashconnect.js';
-import HashPackProvider from '../../out/hedera/hashpack/HashPackProvider.js';
-import { AppMetadata } from '../../out/hedera/hashpack/types/types.js';
 import {
-	InitializationData,
+	HashConnectConnectionState,
+	HashConnectTypes,
+} from 'hashconnect/dist/cjs/types/hashconnect.js';
+import { AppMetadata } from '../../out/hedera/hashpack/types/types.js';
+import { InitializationData } from '../../out/hedera/types.js';
+import { ProviderEventNames } from '../../out/hedera/ProviderEvent.js';
+import EventService from '../../../app/service/event/EventService.js';
+import { IProvider } from '../../out/hedera/Provider.js';
+import {
 	SavedPairingData,
 } from '../../out/hedera/types.js';
 
 export {
 	IAssociateStableCoinRequest,
 	ICashInStableCoinRequest,
+	ICashOutStableCoinRequest,
 	ICreateStableCoinRequest,
 	IGetBalanceStableCoinRequest,
 	IGetListStableCoinRequest,
@@ -102,6 +110,10 @@ export enum NetworkMode {
 	'HASHPACK' = 'HASHPACK',
 }
 
+export interface SDKInitOptions {
+	onInit: (data: InitializationData) => void;
+}
+
 export class SDK {
 	private config: Configuration;
 
@@ -110,6 +122,7 @@ export class SDK {
 	private contractService: ContractsService;
 	private stableCoinRepository: IStableCoinRepository;
 	private stableCoinService: StableCoinService;
+	private eventService: EventService;
 
 	constructor(config: Configuration) {
 		this.config = config;
@@ -118,8 +131,17 @@ export class SDK {
 
 	// Initializes the SDK,
 	// TODO should probably be decoupled from the dependency injection
-	public async init(): Promise<SDK> {
+	public async init(options?: SDKInitOptions): Promise<SDK> {
+		const providerEvents = this.getEventNames();
+		this.eventService = new EventService({ ...providerEvents });
+		if (options && options?.onInit) {
+			this.eventService.on(
+				ProviderEventNames.providerInitEvent,
+				options.onInit,
+			);
+		}
 		this.networkAdapter = await new NetworkAdapter(
+			this.eventService,
 			this.config.mode,
 			this.config.network,
 			{
@@ -137,6 +159,14 @@ export class SDK {
 		return this;
 	}
 
+	// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+	private getEventNames() {
+		return Object.keys(ProviderEventNames).reduce(
+			(p, c) => ({ ...p, [c]: ProviderEventNames }),
+			{},
+		);
+	}
+
 	/**
 	 * createStableCoin
 	 */
@@ -146,8 +176,8 @@ export class SDK {
 		try {
 			const req: ICreateStableCoinServiceRequestModel = {
 				...request,
-				accountId: new AccountId(request.accountId),
-				privateKey: new PrivateKey(request.privateKey),
+				accountId: request.accountId,
+				privateKey: request.privateKey,
 				autoRenewAccount: request.autoRenewAccount
 					? new AccountId(request.autoRenewAccount)
 					: undefined,
@@ -242,6 +272,25 @@ export class SDK {
 		}
 	}
 
+	/**
+	 * cashOut
+	 */
+	public cashOut(
+		request: ICashOutStableCoinRequest,
+	): Promise<Uint8Array> | null {
+		try {
+			const req: ICashOutStableCoinServiceRequestModel = {
+				...request,
+				accountId: new AccountId(request.accountId),
+				privateKey: new PrivateKey(request.privateKey),
+			};
+			return this.stableCoinService.cashOut(req);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+	
 	/**
 	 * associateToken
 	 */
@@ -419,7 +468,7 @@ export class SDK {
 	}
 
 	public getPublicKey(str?: string): string {
-		return this.networkAdapter.provider.getPublicKey(str);
+		return this.networkAdapter.provider.getPublicKeyString(str);
 	}
 
 	public grantRole(
@@ -475,7 +524,6 @@ export class SDK {
 
 	public getAvailabilityExtension(): boolean {
 		console.log('=====getAvailabilityExtension=====');
-
 		return this.networkAdapter.provider.getAvailabilityExtension();
 	}
 
@@ -494,8 +542,43 @@ export class SDK {
 		return this.networkAdapter.provider.disconectHaspack();
 	}
 
-	connectWallet(): Promise<HashPackProvider> {
+	connectWallet(): Promise<IProvider> {
 		console.log('=====connectWallet Haspack=====');
 		return this.networkAdapter.provider.connectWallet();
+	}
+
+	public onInit(listener: (data: InitializationData) => void): void {
+		this.eventService.on(ProviderEventNames.providerInitEvent, listener);
+	}
+
+	public onWalletExtensionFound(listener: () => void): void {
+		this.eventService.on(
+			ProviderEventNames.providerFoundExtensionEvent,
+			listener,
+		);
+	}
+
+	public onWalletConnectionChanged(
+		listener: (state: HashConnectConnectionState) => void,
+	): void {
+		this.eventService.on(
+			ProviderEventNames.providerConnectionStatusChangeEvent,
+			listener,
+		);
+	}
+
+	public onWalletPaired(
+		listener: (data: HashConnectTypes.SavedPairingData) => void,
+	): void {
+		this.eventService.on(ProviderEventNames.providerPairingEvent, listener);
+	}
+
+	public onWalletAcknowledgeMessageEvent(
+		listener: (state: HashConnectConnectionState) => void,
+	): void {
+		this.eventService.on(
+			ProviderEventNames.providerAcknowledgeMessageEvent,
+			listener,
+		);
 	}
 }

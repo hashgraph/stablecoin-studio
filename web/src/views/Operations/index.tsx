@@ -13,10 +13,15 @@ const Operations = () => {
 			title: t('cashInOperation'),
 		},
 		{
-			icon: 'MinusCircle',
-			route: NamedRoutes.Wipe,
-			title: t('wipeOperation'),
+			icon: 'ArrowUp',
+			route: NamedRoutes.CashOut,
+			title: t('cashOutOperation'),
 			variant: 'disabled',
+		},
+		{
+			icon: 'Coin',
+			route: NamedRoutes.Balance,
+			title: t('getBalanceOperation'),
 		},
 		{
 			icon: 'ArrowsDownUp',
@@ -25,10 +30,9 @@ const Operations = () => {
 			variant: 'disabled',
 		},
 		{
-			icon: 'ArrowUp',
-			route: NamedRoutes.CashOut,
-			title: t('cashOutOperation'),
-			variant: 'disabled',
+			icon: 'MinusCircle',
+			route: NamedRoutes.Wipe,
+			title: t('wipeOperation'),
 		},
 	];
 

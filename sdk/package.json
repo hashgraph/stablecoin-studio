@@ -17,6 +17,7 @@
 		"@babel/preset-typescript": "^7.18.6",
 		"@types/jest": "~27.5",
 		"@types/node": "~16",
+		"@types/uuid": "^8.3.4",
 		"@typescript-eslint/eslint-plugin": "~5.26",
 		"@typescript-eslint/parser": "~5.26",
 		"axios": "^0.27.2",
@@ -32,6 +33,7 @@
 		"rimraf": "~3.0",
 		"ts-jest": "28.0",
 		"tsutils": "~3.21",
+		"typed-emitter": "^2.1.0",
 		"typescript": "4.7"
 	},
 	"scripts": {
@@ -57,6 +59,7 @@
 		"@hashgraph/sdk": "^2.18.0",
 		"hashconnect": "^0.2.3",
 		"tslib": "~2.4",
+		"uuid": "^9.0.0",
 		"web3": "^1.7.5"
 	},
 	"volta": {
