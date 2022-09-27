@@ -56,6 +56,10 @@
     "managementPermissions": "Management Permissions",
     "optionalDetails": "Optional details",
     "title": "Stable Coin review"
+  },
+  "notification": {
+    "title": "{{ result }} creating the Stable Coin",
+    "descriptionSuccess": "The Stable Coin was created",
+    "descriptionError": "Sorry, there was an error creating the Stable Coin"
   }
-
 }
