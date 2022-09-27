@@ -289,22 +289,25 @@ export default class HTSProvider implements IProvider {
 				privateKey: plainAccount.privateKey,
 			},
 		});
-		log(
-			'Associating administrator account to token... please wait.',
-			logOpts,
-		);
-		await this.callContract('associateToken', {
-			contractId: stableCoin.memo,
-			parameters: [
-				HAccountId.fromString(accountId).toSolidityAddress(),
-			],
-			gas: 1_300_000,
-			abi: HederaERC20__factory.abi,
-			account: {
-				accountId: plainAccount.accountId,
-				privateKey: plainAccount.privateKey,
-			},
-		});
+	
+		if (hederaToken.treasuryAccountId.toString() !== accountId) {
+			log(
+				'Associating administrator account to token... please wait.',
+				logOpts,
+			);
+			await this.callContract('associateToken', {
+				contractId: stableCoin.memo,
+				parameters: [
+					HAccountId.fromString(accountId).toSolidityAddress(),
+				],
+				gas: 1_300_000,
+				abi: HederaERC20__factory.abi,
+				account: {
+					accountId: plainAccount.accountId,
+					privateKey: plainAccount.privateKey,
+				},
+			});
+		}
 
 		return new StableCoin({
 			name: hederaToken.name,
