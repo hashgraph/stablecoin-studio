@@ -17,6 +17,7 @@ import IRoleStableCoinServiceRequestModel from './model/IRoleStableCoinServiceRe
 import IGetBasicRequestModel from './model/IGetBasicRequest.js';
 import ISupplierRoleStableCoinServiceRequestModel from './model/ISupplierRoleStableCoinServiceRequestModel.js';
 import { StableCoinRole } from '../../../index.js';
+import { Capabilities } from '../../../domain/context/stablecoin/Capabilities.js';
 
 export default class StableCoinService extends Service {
 	private repository: IStableCoinRepository;
@@ -79,6 +80,11 @@ export default class StableCoinService extends Service {
 		req: IGetStableCoinServiceRequestModel,
 	): Promise<StableCoin> {
 		return this.repository.getStableCoin(req.id);
+	}
+
+	public async getCapabilitiesStableCoin(id:string,publicKey:string)
+	: Promise<Capabilities[]> {
+		return this.repository.getCapabilitiesStableCoin(id,publicKey);
 	}
 
 	public async getBalanceOf(

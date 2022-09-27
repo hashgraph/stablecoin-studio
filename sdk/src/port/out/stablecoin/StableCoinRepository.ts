@@ -21,6 +21,7 @@ import AccountId from '../../../domain/context/account/AccountId.js';
 import { IPublicKey } from './types/IPublicKey.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
 import { getHederaNetwork, StableCoinRole } from '../../../core/enum.js';
+import { Capabilities } from '../../../domain/context/stablecoin/Capabilities.js';
 
 export default class StableCoinRepository implements IStableCoinRepository {
 	private networkAdapter: NetworkAdapter;
@@ -126,7 +127,42 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			return Promise.reject<StableCoin>(error);
 		}
 	}
-
+	public async getCapabilitiesStableCoin(id: string, publickey:string): Promise <Capabilities[]> {
+		try {
+			const stableCoin:StableCoin =  await this.getStableCoin(id);
+			const listCapabilities: Capabilities[] = [];
+			
+			listCapabilities.push(Capabilities.DETAILS);
+			listCapabilities.push(Capabilities.BALANCE);
+			listCapabilities.push(Capabilities.RESCUE);
+			//TODO add Roles
+			listCapabilities.push(Capabilities.ROLE_MANAGEMENT);
+			
+			if(stableCoin.supplyKey?.toString() === stableCoin.treasury.toString()){
+				//TODO add Roles
+				listCapabilities.push(Capabilities.CASH_IN);
+				listCapabilities.push(Capabilities.CASH_OUT);
+				listCapabilities.push(Capabilities.WIPE);
+			}
+			
+			if (stableCoin.supplyKey instanceof PublicKey){
+				if(stableCoin.supplyKey?.key.toString()==publickey.toString()){
+					listCapabilities.push(Capabilities.CASH_IN_HTS);
+					listCapabilities.push(Capabilities.CASH_OUT_HTS);
+				}
+			}
+			
+			if (stableCoin.wipeKey instanceof PublicKey){
+				if(stableCoin.wipeKey?.key.toString()==publickey.toString()){
+					listCapabilities.push(Capabilities.WIPE_HTS);
+				}
+			}
+			
+			return listCapabilities; 
+		} catch (error) {
+			return Promise.reject<Capabilities[]>(error);
+		}
+	}
 	public async getBalanceOf(
 		treasuryId: string,
 		privateKey: PrivateKey,

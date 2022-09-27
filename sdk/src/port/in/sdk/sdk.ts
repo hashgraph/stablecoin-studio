@@ -56,9 +56,8 @@ import { InitializationData } from '../../out/hedera/types.js';
 import { ProviderEventNames } from '../../out/hedera/ProviderEvent.js';
 import EventService from '../../../app/service/event/EventService.js';
 import { IProvider } from '../../out/hedera/Provider.js';
-import {
-	SavedPairingData,
-} from '../../out/hedera/types.js';
+import { SavedPairingData } from '../../out/hedera/types.js';
+import { Capabilities } from '../../../domain/context/stablecoin/Capabilities.js';
 
 export {
 	IAssociateStableCoinRequest,
@@ -92,6 +91,7 @@ export {
 	StableCoinRole,
 	InitializationData,
 	SavedPairingData,
+	Capabilities,
 };
 
 export interface ConfigurationOptions {
@@ -189,6 +189,12 @@ export class SDK {
 		}
 	}
 
+	public getCapabilitiesStableCoin(
+		id: string,
+		publicKey: string,
+	): Promise<Capabilities[]> | null {
+		return this.stableCoinService.getCapabilitiesStableCoin(id, publicKey);
+	}
 	/**
 	 * getListStableCoin
 	 */
@@ -288,7 +294,7 @@ export class SDK {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * associateToken
 	 */

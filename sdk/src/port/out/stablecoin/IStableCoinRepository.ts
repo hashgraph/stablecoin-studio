@@ -1,6 +1,7 @@
 import { StableCoinRole } from '../../../core/enum.js';
 import AccountId from '../../../domain/context/account/AccountId.js';
 import PrivateKey from '../../../domain/context/account/PrivateKey.js';
+import { Capabilities } from '../../../domain/context/stablecoin/Capabilities.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import IStableCoinList from '../../in/sdk/response/IStableCoinList.js';
 
@@ -12,6 +13,7 @@ export default interface IStableCoinRepository {
 	): Promise<StableCoin>;
 	getListStableCoins(privateKey: PrivateKey): Promise<IStableCoinList[]>;
 	getStableCoin(id: string): Promise<StableCoin>;
+	getCapabilitiesStableCoin(id: string,publickey:string): Promise <Capabilities[]> ;
 	getBalanceOf(
 		treasuryId: string,
 		privateKey: PrivateKey,
