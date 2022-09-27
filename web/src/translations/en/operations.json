@@ -5,6 +5,7 @@
     "wipeOperation": "Wipe tokens",
     "rescueOperation": "Rescue tokens",
     "cashOutOperation": "Cash out",
+    "getBalanceOperation": "Get balance",
     "modalSuccessTitle": "Operation successfully completed",
     "modalSuccessDesc": "You can follow the order in the list of operations.",
     "modalErrorTitle": "Error in the operation",
