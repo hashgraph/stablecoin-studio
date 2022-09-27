@@ -165,6 +165,7 @@ export class StableCoin extends BaseEntity {
 		this._pauseKey = value;
 	}
 
+		 
 	/**
 	 * Supply key
 	 */
