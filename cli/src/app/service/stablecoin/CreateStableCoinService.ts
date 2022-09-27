@@ -184,6 +184,11 @@ export default class CreateStableCoinService extends Service {
         supplyType: supplyType ? 'INFINITE' : 'FINITE',
         maxSupply: totalSupply ? BigInt(totalSupply) : totalSupply,
         adminKey: privateKey.publicKey,
+        freezeKey: PublicKey.NULL,
+        //KYCKey,
+        wipeKey: PublicKey.NULL,
+        supplyKey: PublicKey.NULL,
+        pauseKey: PublicKey.NULL,        
         treasury: AccountId.NULL
       };
       if (
