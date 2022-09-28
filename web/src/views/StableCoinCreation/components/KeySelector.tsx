@@ -2,8 +2,8 @@ import { VStack } from '@chakra-ui/react';
 import type { Control, FieldValues } from 'react-hook-form';
 import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import InputController from './Form/InputController';
-import { SelectController } from './Form/SelectController';
+import InputController from '../../../components/Form/InputController';
+import { SelectController } from '../../../components/Form/SelectController';
 
 export const OTHER_KEY_VALUE = 3;
 
