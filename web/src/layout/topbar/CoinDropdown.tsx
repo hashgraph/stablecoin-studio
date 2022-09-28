@@ -14,7 +14,7 @@ import {
 	walletActions,
 } from '../../store/slices/walletSlice';
 import { RouterManager } from '../../Router/RouterManager';
-import { useNavigate } from 'react-router-dom';
+import { matchPath, useLocation, useNavigate } from 'react-router-dom';
 import { NamedRoutes } from '../../Router/NamedRoutes';
 
 const CoinDropdown = () => {
@@ -23,13 +23,20 @@ const CoinDropdown = () => {
 	const dispatch = useDispatch<AppDispatch>();
 	const [options, setOptions] = useState<Option[]>([]);
 	const navigate = useNavigate();
+	const location = useLocation();
+	const isInStableCoinNotSelected = !!matchPath(
+		location.pathname,
+		RouterManager.getUrl(NamedRoutes.StableCoinNotSelected),
+	);
 
 	useEffect(() => {
 		dispatch(getStableCoinList());
 
 		if (!selectedStableCoin) {
 			RouterManager.to(navigate, NamedRoutes.StableCoinNotSelected);
-		} else {
+		}
+
+		if (selectedStableCoin && isInStableCoinNotSelected) {
 			RouterManager.to(navigate, NamedRoutes.Operations);
 		}
 	}, [selectedStableCoin]);
@@ -66,14 +73,14 @@ const CoinDropdown = () => {
 				symbol: stableCoinDetails?.symbol,
 				decimals: stableCoinDetails?.decimals,
 				id: stableCoinDetails?.tokenId,
-				maxSupply: stableCoinDetails?.maxSupply,
+				maxSupply: stableCoinDetails?.maxSupply?.toString(),
 				treasuryId: stableCoinDetails?.treasuryId,
 				memo: stableCoinDetails?.memo,
-				adminKey: stableCoinDetails?.adminKey,
-				kycKey: stableCoinDetails?.kycKey,
-				freezeKey: stableCoinDetails?.freezeKey,
-				wipeKey: stableCoinDetails?.wipeKey,
-				supplyKey: stableCoinDetails?.supplyKey,
+				adminKey: JSON.parse(JSON.stringify(stableCoinDetails?.adminKey)),
+				kycKey: JSON.parse(JSON.stringify(stableCoinDetails?.kycKey)),
+				freezeKey: JSON.parse(JSON.stringify(stableCoinDetails?.freezeKey)),
+				wipeKey: JSON.parse(JSON.stringify(stableCoinDetails?.wipeKey)),
+				supplyKey: JSON.parse(JSON.stringify(stableCoinDetails?.supplyKey)),
 			}),
 		);
 	};
