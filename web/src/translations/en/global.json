@@ -21,7 +21,8 @@
     "network": "Operating network",
     "account": "Operating account",
     "coinDropdown": {
-      "placeholder": "Choose Stable coin"
+      "placeholder": "Choose Stable coin",
+      "noStableCoin": "No Stable Coins"
     },
     "createSC": "Create Stable coin"
   },

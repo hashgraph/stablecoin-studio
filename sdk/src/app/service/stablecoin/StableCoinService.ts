@@ -15,6 +15,8 @@ import IRescueStableCoinServiceRequestModel from './model/IRescueStableCoinServi
 import IRoleStableCoinServiceRequestModel from './model/IRoleStableCoinServiceRequestModel';
 import IGetBasicRequestModel from './model/IGetBasicRequest.js';
 import ISupplierRoleStableCoinServiceRequestModel from './model/ISupplierRoleStableCoinServiceRequestModel.js';
+import { StableCoinRole } from '../../../index.js';
+import IStableCoinDetail from '../../../port/in/sdk/response/IStableCoinDetail.js';
 import { Capabilities } from '../../../domain/context/stablecoin/Capabilities.js';
 import IGetSupplierAllowanceModel from './model/IGetSupplierAllowanceModel.js';
 
@@ -80,6 +82,36 @@ export default class StableCoinService extends Service {
 		req: IGetStableCoinServiceRequestModel,
 	): Promise<StableCoin> {
 		return this.repository.getStableCoin(req.id);
+	}
+
+	public async getStableCoinDetails(
+		req: IGetStableCoinServiceRequestModel,
+	): Promise<IStableCoinDetail> {
+		const stableCoin: StableCoin = await this.getStableCoin(req);
+		const stableCoinDetails: IStableCoinDetail = {
+			tokenId: stableCoin.id,
+			name: stableCoin.name,
+			symbol: stableCoin.symbol,
+			decimals: stableCoin.decimals,
+			totalSupply: stableCoin.totalSupply,
+			maxSupply: stableCoin.maxSupply,
+			// customFee:stableCoin.,
+			treasuryId: stableCoin.treasury.id,
+			// expirationTime:stableCoin.,
+			memo: stableCoin.memo,
+			// paused:stableCoin.,
+			freezeDefault: stableCoin.freezeDefault,
+			// kycStatus: string;
+			// deleted:stableCoin.,
+			adminKey: stableCoin.adminKey,
+			kycKey: stableCoin.kycKey,
+			freezeKey: stableCoin.freezeKey,
+			wipeKey: stableCoin.wipeKey,
+			supplyKey: stableCoin.supplyKey,
+			pauseKey: stableCoin.pauseKey,
+		};
+		return stableCoinDetails;
+		// cast
 	}
 
 	public async getCapabilitiesStableCoin(
@@ -189,7 +221,7 @@ export default class StableCoinService extends Service {
 				req.tokenId,
 				req.privateKey.publicKey.key,
 			);
-		if (capabilities.includes(Capabilities.BURN)) {
+		if (capabilities.includes(Capabilities.CASH_OUT)) {
 			const result = await this.repository.cashOut(
 				req.proxyContractId,
 				req.privateKey,
@@ -197,7 +229,7 @@ export default class StableCoinService extends Service {
 				amount,
 			);
 			resultCashOut = Boolean(result[0]);
-		} else if (capabilities.includes(Capabilities.BURN_HTS)) {
+		} else if (capabilities.includes(Capabilities.CASH_OUT_HTS)) {
 			resultCashOut = await this.repository.cashOutHTS(
 				req.privateKey,
 				req.accountId,

@@ -13,6 +13,8 @@ module.exports = {
 	// },
 	moduleNameMapper: {
 		'^(\\.{1,2}/.*)\\.(m)?js$': '$1',
+		'hashconnect/dist/esm(.*)': 'hashconnect/dist/cjs$1',
+		'hashconnect': 'hashconnect/dist/cjs/hashconnect.js',
 	},
 	// testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.[jt]sx?$',
 	testMatch: ['**/__tests__/**/*.(test|spec).[jt]s?(x)'],
@@ -26,7 +28,9 @@ module.exports = {
 	],
 	transform: {
 		'^.+\\.ts?$': 'ts-jest',
-		'^.+\\.js$': 'babel-jest',
+		'^.+\\.[t|j]sx?$': 'babel-jest',
 	},
-	transformIgnorePatterns: ['node_modules/(?!@ngrx|(?!deck.gl)|ng-dynamic)'],
+	transformIgnorePatterns: [
+		'node_modules/(?!@ngrx|(?!deck.gl)|ng-dynamic)',
+	],
 };

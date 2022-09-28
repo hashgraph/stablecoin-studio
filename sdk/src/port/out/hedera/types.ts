@@ -1,7 +1,5 @@
-import {
-	TokenId,
-} from '@hashgraph/sdk';
-import { HashConnectTypes } from 'hashconnect';
+import { HashConnectTypes, MessageTypes } from 'hashconnect';
+import { TokenId } from '@hashgraph/sdk';
 import { AccountId, PublicKey } from '../../in/sdk/sdk.js';
 
 export interface ICallContractRequest {
@@ -56,3 +54,11 @@ export interface ITransferTokenRequest extends IHTSTokenRequest{
 
 export type InitializationData = HashConnectTypes.InitilizationData;
 export type SavedPairingData = HashConnectTypes.SavedPairingData;
+export type AcknowledgeMessage = MessageTypes.Acknowledge;
+export type AdditionalAccountRequestMessage =
+	MessageTypes.AdditionalAccountRequest;
+export type AdditionalAccountResponseMessage =
+	MessageTypes.AdditionalAccountResponse;
+export type ApprovePairingMessage = MessageTypes.ApprovePairing;
+export type AuthenticationRequestMessage = MessageTypes.AuthenticationRequest;
+export type AuthenticationResponseMessage = MessageTypes.AuthenticationResponse;

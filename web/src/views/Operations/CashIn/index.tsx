@@ -5,10 +5,13 @@ import DetailsReview from '../../../components/DetailsReview';
 import InputController from '../../../components/Form/InputController';
 import InputNumberController from '../../../components/Form/InputNumberController';
 import SDKService from '../../../services/SDKService';
-import { validateAccount } from '../../../utils/validationsHelper';
+import { validateAccount, validateDecimals } from '../../../utils/validationsHelper';
 import OperationLayout from './../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
+import { useSelector } from 'react-redux';
+import { GET_ACK_MESSAGES } from '../../../store/slices/hashpackSlice';
+import { SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
 
 const CashInOperation = () => {
 	const {
@@ -16,6 +19,11 @@ const CashInOperation = () => {
 		onOpen: onOpenModalAction,
 		onClose: onCloseModalAction,
 	} = useDisclosure();
+
+	const walletMessages = useSelector(GET_ACK_MESSAGES);
+	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
+	const { decimals = 0 } = selectedStableCoin || {};
+	console.log('Messages in state:', walletMessages);
 
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
@@ -32,7 +40,7 @@ const CashInOperation = () => {
 				privateKey: '',
 				accountId: '0.0.47809960',
 				tokenId: '0.0.48261510',
-				targetId: '0.0.47809960', // destinationACc
+				targetId: '0.0.47822430', // destinationACc
 				amount,
 			});
 			onSuccess();
@@ -57,7 +65,11 @@ const CashInOperation = () => {
 							<InputNumberController
 								rules={{
 									required: t('global:validations.required'),
-									// TODO: Add validation of max decimals allowed by stable coin
+									validate: {
+										maxDecimals: (value: number) => {
+											return validateDecimals(value, decimals) || t('cashIn:decimalsValidation');
+										},
+									},
 								}}
 								isRequired
 								control={control}

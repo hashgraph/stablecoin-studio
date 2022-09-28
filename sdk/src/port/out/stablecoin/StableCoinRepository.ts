@@ -4,6 +4,7 @@ import IStableCoinList from 'port/in/sdk/response/IStableCoinList.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import IStableCoinRepository from './IStableCoinRepository.js';
 import NetworkAdapter from '../network/NetworkAdapter.js';
+import IHederaStableCoinDetail from './types/IHederaStableCoinDetail.js';
 import {
 	ICallContractWithAccountRequest,
 	IHTSTokenRequest,
@@ -58,7 +59,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	): Promise<IStableCoinList[]> {
 		try {
 			const resObject: IStableCoinList[] = [];
-			const pk = this.networkAdapter.provider.getPublicKeyString(privateKey);
+			const pk =
+				this.networkAdapter.provider.getPublicKeyString(privateKey);
 			const res = await axios.get<ITokenList>(
 				this.URI_BASE + 'tokens?limit=100&publickey=' + pk,
 			);
@@ -78,7 +80,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 	public async getStableCoin(id: string): Promise<StableCoin> {
 		try {
-			const response = await axios.get<IStableCoinDetail>(
+			const response = await axios.get<IHederaStableCoinDetail>(
 				this.URI_BASE + 'tokens/' + id,
 			);
 
@@ -127,45 +129,48 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			return Promise.reject<StableCoin>(error);
 		}
 	}
-	public async getCapabilitiesStableCoin(id: string, publickey:string): Promise <Capabilities[]> {
+	public async getCapabilitiesStableCoin(
+		id: string,
+		publickey: string,
+	): Promise<Capabilities[]> {
 		try {
-			const stableCoin:StableCoin =  await this.getStableCoin(id);
+			const stableCoin: StableCoin = await this.getStableCoin(id);
 			const listCapabilities: Capabilities[] = [];
-			
+
 			listCapabilities.push(Capabilities.DETAILS);
 			listCapabilities.push(Capabilities.BALANCE);
 			listCapabilities.push(Capabilities.RESCUE);
 			//TODO add Roles
 			listCapabilities.push(Capabilities.ROLE_MANAGEMENT);
-			
-			if(stableCoin.supplyKey?.toString() === stableCoin.treasury.toString()){
+
+			if (
+				stableCoin.supplyKey?.toString() ===
+				stableCoin.treasury.toString()
+			) {
 				//TODO add Roles
 				listCapabilities.push(Capabilities.CASH_IN);
 				listCapabilities.push(Capabilities.BURN);
 			}
-			
-			if (stableCoin.supplyKey instanceof PublicKey){
-				if(stableCoin.supplyKey?.key.toString()==publickey.toString()){
+
+			if (stableCoin.supplyKey instanceof PublicKey) {
+				if (
+					stableCoin.supplyKey?.key.toString() == publickey.toString()
+				) {
 					listCapabilities.push(Capabilities.CASH_IN_HTS);
 					listCapabilities.push(Capabilities.BURN_HTS);
 				}
 			}
-			
-			if (stableCoin.wipeKey instanceof PublicKey){
-				if(stableCoin.wipeKey?.key.toString()==publickey.toString()){
+
+			if (stableCoin.wipeKey instanceof PublicKey) {
+				if (
+					stableCoin.wipeKey?.key.toString() == publickey.toString()
+				) {
 					listCapabilities.push(Capabilities.WIPE_HTS);
 				}
 				
 			}
-			if (stableCoin.wipeKey instanceof ContractId){
-				if(stableCoin.wipeKey?.id.toString()==stableCoin.treasury.toString()){
-					listCapabilities.push(Capabilities.WIPE);
-				}
-				
-			};
-				
-			
-			return listCapabilities; 
+
+			return listCapabilities;
 		} catch (error) {
 			return Promise.reject<Capabilities[]>(error);
 		}
@@ -282,7 +287,6 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			},
 		};
 		return await this.networkAdapter.provider.callContract('burn', params);
-
 	}
 
 	public async cashOutHTS(
@@ -716,7 +720,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		tokenId: string,
 		amount: number,
 		outAccountId: string,
-		inAccountId: string, 
+		inAccountId: string,
 	): Promise<boolean> {
 		const params: ITransferTokenRequest = {
 			account: {
@@ -726,7 +730,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			tokenId: tokenId,
 			amount: amount,
 			outAccountId: outAccountId,
-			inAccountId: inAccountId
+			inAccountId: inAccountId,
 		};
 
 		return await this.networkAdapter.provider.transferHTS(params);

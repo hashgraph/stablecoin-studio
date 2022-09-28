@@ -1,5 +1,7 @@
 import { HederaNetwork, HederaNetworkEnviroment, NetworkMode, SDK } from 'hedera-stable-coin-sdk';
-import type { AppMetadata, InitializationData } from 'hedera-stable-coin-sdk';
+import type { AppMetadata, InitializationData, AcknowledgeMessage } from 'hedera-stable-coin-sdk';
+import type IStableCoinList from 'hedera-stable-coin-sdk/build/src/port/in/sdk/response/IStableCoinList';
+import type IStableCoinDetail from 'hedera-stable-coin-sdk/build/src/port/in/sdk/response/IStableCoinDetail';
 
 export enum HashConnectConnectionState {
 	Connected = 'Connected',
@@ -7,6 +9,8 @@ export enum HashConnectConnectionState {
 	Paired = 'Paired',
 	Connecting = 'Connecting',
 }
+
+export type StableCoinListRaw = Array<Record<'id' | 'symbol', string>>;
 
 const appMetadata: AppMetadata = {
 	name: 'dApp Example',
@@ -27,6 +31,7 @@ interface EventsSetter {
 	onInit: () => void;
 	onWalletExtensionFound: () => void;
 	onWalletPaired: () => void;
+	onWalletAcknowledgeMessageEvent: (msg: AcknowledgeMessage) => void;
 }
 
 export class SDKService {
@@ -43,9 +48,10 @@ export class SDKService {
 				},
 			});
 
-			const { onInit, onWalletExtensionFound, onWalletPaired } =
+			const { onInit, onWalletExtensionFound, onWalletPaired, onWalletAcknowledgeMessageEvent } =
 				events || {
 					onInit: () => {},
+					onWalletAcknowledgeMessageEvent: () => {},
 					onWalletExtensionFound: () => {},
 					onWalletPaired: () => {},
 				};
@@ -53,6 +59,7 @@ export class SDKService {
 			await SDKService.instance.init({ onInit });
 			SDKService.instance.onWalletExtensionFound(onWalletExtensionFound);
 			SDKService.instance.onWalletPaired(onWalletPaired);
+			SDKService.instance.onWalletAcknowledgeMessageEvent(onWalletAcknowledgeMessageEvent);
 		}
 
 		return SDKService.instance;
@@ -81,6 +88,22 @@ export class SDKService {
 
 	public static async disconnectWallet(): Promise<void> {
 		return (await SDKService.getInstance()).disconectHaspack();
+	}
+
+	public static async getStableCoins({
+		privateKey,
+	}: {
+		privateKey: string;
+	}): Promise<IStableCoinList[] | null> {
+		return (await SDKService.getInstance())?.getListStableCoin({ privateKey });
+	}
+
+	public static async getStableCoinDetails({
+		id,
+	}: {
+		id: string;
+	}): Promise<IStableCoinDetail | null> {
+		return (await SDKService.getInstance())?.getStableCoinDetails({ id });
 	}
 
 	public static async cashIn({
