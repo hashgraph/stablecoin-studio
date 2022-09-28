@@ -11,5 +11,12 @@
     "optionalDetails": "Optional details",
     "managementPermissions": "Management Permissions",
     "review": "Review"
+  },
+  "basicDetails": {
+    "name": "Name",
+    "namePlaceholder": "Introduce name",
+    "symbol": "Symbol",
+    "symbolPlaceholder": "Introduce Symbol",
+    "title": "Stable Coin basic details"
   }
 }

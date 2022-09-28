@@ -23,6 +23,7 @@ export interface Step {
 }
 
 interface StepperProps {
+	isValid: boolean;
 	steps: Step[];
 	textDefaultButtonPrimary?: string;
 	textLastButtonPrimary?: string;
@@ -38,6 +39,7 @@ const Stepper = (props: StepperProps) => {
 	const { t } = useTranslation('global');
 
 	const {
+		isValid,
 		steps,
 		textDefaultButtonPrimary = t('stepper.nextStep'),
 		textLastButtonPrimary = t('stepper.finish'),
@@ -108,7 +110,7 @@ const Stepper = (props: StepperProps) => {
 							key={index}
 						>
 							<VStack h='full' spacing={4} align='stretch'>
-								<Flex flex={1} overflowY='auto'>
+								<Flex flex={1} justify='center' overflowY='auto'>
 									{children}
 								</Flex>
 								<Box h={FOOTER_HEIGHT}>
@@ -128,6 +130,7 @@ const Stepper = (props: StepperProps) => {
 										</Button>
 										<Button
 											data-testid={`stepper-step-panel-button-primary-${index + 1}`}
+											disabled={!isValid}
 											variant='primary'
 											onClick={
 												isLastStep ? handleLastButtonPrimary : (e) => handleStep(e, index, 'next')
