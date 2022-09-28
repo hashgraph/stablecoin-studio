@@ -10,7 +10,7 @@ const GlobalStyles = css`
 	&::-webkit-scrollbar-thumb {
 		background: #d1beee;
 		border-radius: 24px;
-		border: 5px solid #ffffff;
+		border: 5px solid transparent;
 		background-clip: padding-box;
 	}
 `;

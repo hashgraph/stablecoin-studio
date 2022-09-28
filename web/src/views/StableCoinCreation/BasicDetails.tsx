@@ -17,10 +17,10 @@ const BasicDetails = (props: BasicDetailsProps) => {
 				<Stack minW={400}>
 					<Heading
 						data-testid='title'
-						fontSize='24px'
-						fontWeight='700'
+						fontSize='16px'
+						fontWeight='600'
 						mb={10}
-						lineHeight='16px'
+						lineHeight='15.2px'
 						textAlign={'left'}
 					>
 						{t('stableCoinCreation:basicDetails.title')}

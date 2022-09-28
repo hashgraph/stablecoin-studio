@@ -20,7 +20,7 @@ const BaseContainer = (props: BaseContainerProps) => {
 			>
 				{title}
 			</Heading>
-			<Box data-testid='base-container-children' bg='brand.gray100' h='full' overflowY='auto'>
+			<Box data-testid='base-container-children' bg='brand.gray100' h='full' overflowY='hidden'>
 				{children}
 			</Box>
 		</Stack>
