@@ -13,12 +13,16 @@ import ManagementPermissions from './ManagementPermissions';
 import Review from './Review';
 import { useEffect, useState } from 'react';
 import { OTHER_KEY_VALUE } from './components/KeySelector';
+import type { ICreateStableCoinRequest } from 'hedera-stable-coin-sdk';
+import { useSelector } from 'react-redux';
+import { SELECTED_WALLET_PAIRED_ACCOUNTID } from '../../store/slices/walletSlice';
+import SDKService from '../../services/SDKService';
 
 const StableCoinCreation = () => {
 	const navigate = useNavigate();
 	const { t } = useTranslation('stableCoinCreation');
 
-	const form = useForm({ mode: 'onChange', defaultValues: {} });
+	const form = useForm({ mode: 'onChange' });
 	const {
 		control,
 		getValues,
@@ -69,7 +73,12 @@ const StableCoinCreation = () => {
 
 		if (currentStep === 1) {
 			// @ts-ignore
-			fieldsStep = watch(['initialSupply', 'totalSupply', 'decimals', 'expirationDate']);
+			const supplyType = watch('supplyType');
+			let keys = ['initialSupply', 'decimals', 'expirationDate'];
+
+			if (supplyType?.value === 0) keys = keys.concat('totalSupply');
+
+			fieldsStep = watch(keys);
 		}
 
 		if (currentStep === 2) {
@@ -108,7 +117,22 @@ const StableCoinCreation = () => {
 	};
 
 	const handleFinish = () => {
-		// TODO: connect with SDK services
+		// TODO: complete request object with keys
+		const { name, symbol, autorenewAccount, initialSupply, totalSupply, decimals } = getValues();
+
+		const newStableCoinParams: ICreateStableCoinRequest = {
+			accountId: useSelector(SELECTED_WALLET_PAIRED_ACCOUNTID),
+			privateKey: '',
+			name,
+			symbol,
+			decimals,
+			autoRenewAccount: autorenewAccount,
+			initialSupply,
+			maxSupply: totalSupply,
+		};
+
+		SDKService.createStableCoin(newStableCoinParams);
+
 		alert('create!');
 	};
 

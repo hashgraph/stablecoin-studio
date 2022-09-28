@@ -25,10 +25,14 @@
   "optionalDetails": {
     "decimals": "Decimals",
     "expirationDate": "Expiration date",
+    "finite": "Finite",
     "initialSupply": "Initial supply",
+    "infinite": "Infinite",
     "placeholder": "Introduce {{placeholder}}",
     "title": "Stable Coin optional details",
-    "totalSupply": "Total supply"
+    "totalSupply": "Total supply",
+    "typeSupply": "Type supply",
+    "typeSupplyPlaceholder": "Choose type supply"
   },
   "managementPermissions": {
     "description": "Allow all the following features to be managed through Smart Contract",

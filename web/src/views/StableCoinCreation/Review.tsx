@@ -18,6 +18,7 @@ const Review = (props: ReviewProps) => {
 		symbol,
 		autorenewAccount,
 		initialSupply,
+		supplyType,
 		totalSupply,
 		decimals,
 		expirationDate,
@@ -90,8 +91,12 @@ const Review = (props: ReviewProps) => {
 								value: initialSupply || '',
 							},
 							{
+								label: t('stableCoinCreation:optionalDetails.typeSupply'),
+								value: supplyType?.label || '',
+							},
+							{
 								label: t('stableCoinCreation:optionalDetails.totalSupply'),
-								value: totalSupply || '',
+								value: supplyType?.value === 0 ? totalSupply : supplyType?.label,
 							},
 							{
 								label: t('stableCoinCreation:optionalDetails.decimals'),
