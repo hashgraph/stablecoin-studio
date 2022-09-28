@@ -6,8 +6,15 @@ import { HederaNetwork } from '../../../core/enum.js';
 import PrivateKey from '../../../domain/context/account/PrivateKey.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import { AppMetadata } from './hashpack/types/types.js';
-import { ICallContractRequest, InitializationData } from './types.js';
+import {
+	ICallContractRequest,
+	IHTSTokenRequest,
+	IWipeTokenRequest,
+	ITransferTokenRequest,
+	InitializationData } from './types.js';
+
 import EventService from '../../../app/service/event/EventService.js';
+
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface Contract extends hethers.Contract {}
@@ -47,4 +54,9 @@ export interface IProvider {
 	disconectHaspack(): void;
 	connectWallet(): Promise<IProvider>;
 	getInitData(): InitializationData;
+	wipeHTS(parameters: IWipeTokenRequest): Promise<boolean>;
+	cashInHTS(parameters: IHTSTokenRequest): Promise<boolean>;
+	cashOutHTS(parameters: IHTSTokenRequest): Promise<boolean>;
+	transferHTS(parameters: ITransferTokenRequest): Promise<boolean>;
+	
 }

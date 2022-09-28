@@ -4,43 +4,28 @@ import { useTranslation } from 'react-i18next';
 import DetailsReview from '../../../components/DetailsReview';
 import InputController from '../../../components/Form/InputController';
 import InputNumberController from '../../../components/Form/InputNumberController';
-import SDKService from '../../../services/SDKService';
+// import SDKService from '../../../services/SDKService';
 import { validateAccount } from '../../../utils/validationsHelper';
 import OperationLayout from './../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
-import { useSelector } from 'react-redux';
-import { GET_ACK_MESSAGES } from '../../../store/slices/hashpackSlice';
 
-const CashInOperation = () => {
+const CashOutOperation = () => {
 	const {
 		isOpen: isOpenModalAction,
 		onOpen: onOpenModalAction,
 		onClose: onCloseModalAction,
 	} = useDisclosure();
 
-	const walletMessages = useSelector(GET_ACK_MESSAGES);
-
-	console.log('Messages in state:', walletMessages);
-
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
 	});
 
-	const { t } = useTranslation(['cashIn', 'global', 'operations']);
+	const { t } = useTranslation(['cashOut', 'global', 'operations']);
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const handleCashIn: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
-		const { amount } = getValues();
+	const handleCashOut: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
 		try {
-			await SDKService.cashIn({
-				proxyContractId: '0.0.48261507',
-				privateKey: '',
-				accountId: '0.0.47809960',
-				tokenId: '0.0.48261510',
-				targetId: '0.0.47822430', // destinationACc
-				amount,
-			});
 			onSuccess();
 		} catch (error) {
 			console.error(error);
@@ -54,10 +39,10 @@ const CashInOperation = () => {
 				LeftContent={
 					<>
 						<Heading data-testid='title' fontSize='24px' fontWeight='700' mb={10} lineHeight='16px'>
-							{t('cashIn:title')}
+							{t('cashOut:title')}
 						</Heading>
 						<Text color='brand.gray' data-testid='operation-title'>
-							{t('cashIn:operationTitle')}
+							{t('cashOut:operationTitle')}
 						</Text>
 						<Stack as='form' spacing={6}>
 							<InputNumberController
@@ -68,8 +53,8 @@ const CashInOperation = () => {
 								isRequired
 								control={control}
 								name='amount'
-								label={t('cashIn:amountLabel')}
-								placeholder={t('cashIn:amountPlaceholder')}
+								label={t('cashOut:amountLabel')}
+								placeholder={t('cashOut:amountPlaceholder')}
 							/>
 							<InputController
 								rules={{
@@ -82,9 +67,9 @@ const CashInOperation = () => {
 								}}
 								isRequired
 								control={control}
-								name='destinationAccount'
-								placeholder={t('cashIn:destinationAccountPlaceholder')}
-								label={t('cashIn:destinationAccountLabel')}
+								name='originAccount'
+								placeholder={t('cashOut:originAccountPlaceholder')}
+								label={t('cashOut:originAccountLabel')}
 							/>
 						</Stack>
 					</>
@@ -98,20 +83,20 @@ const CashInOperation = () => {
 				modalActionProps={{
 					isOpen: isOpenModalAction,
 					onClose: onCloseModalAction,
-					title: t('cashIn:modalAction.subtitle'),
-					confirmButtonLabel: t('cashIn:modalAction.accept'),
-					onConfirm: handleCashIn,
+					title: t('cashOut:modalAction.subtitle'),
+					confirmButtonLabel: t('cashOut:modalAction.accept'),
+					onConfirm: handleCashOut,
 				}}
 				ModalActionChildren={
 					<DetailsReview
-						title={t('cashIn:modalAction.subtitle')}
+						title={t('cashOut:modalAction.subtitle')}
 						details={[
 							{
-								label: t('cashIn:modalAction.destinationAccount'),
-								value: getValues().destinationAccount,
+								label: t('cashOut:modalAction.originAccount'),
+								value: getValues().originAccount,
 							},
 							{
-								label: t('cashIn:modalAction.amount'),
+								label: t('cashOut:modalAction.amount'),
 								value: getValues().amount,
 								valueInBold: true,
 							},
@@ -125,4 +110,4 @@ const CashInOperation = () => {
 	);
 };
 
-export default CashInOperation;
+export default CashOutOperation;

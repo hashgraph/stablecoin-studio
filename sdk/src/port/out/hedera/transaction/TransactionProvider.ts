@@ -1,11 +1,6 @@
 import {
-	Transaction,
-	ContractExecuteTransaction,
-	TokenCreateTransaction,
-	Hbar,
-	TokenSupplyType,
-	ContractCreateFlow,
-	PrivateKey,
+	Transaction, ContractExecuteTransaction, TokenCreateTransaction, Hbar, TokenSupplyType, ContractCreateFlow, PrivateKey,
+	TokenWipeTransaction, TokenMintTransaction, TokenBurnTransaction, TokenId, AccountId, TransferTransaction,
 	PublicKey as HPublicKey,
 	DelegateContractId,
 } from '@hashgraph/sdk';
@@ -44,6 +39,18 @@ export class TransactionProvider {
 			}
 		};
 
+		const getTreasuryAccount = (
+			accountId: AccountId,
+			contractId: ContractId,
+			supplyKey?: PublicKey,
+		): AccountId => {
+			if (supplyKey && supplyKey !== PublicKey.NULL) {
+				return accountId;
+			} else {
+				return AccountId.fromString(contractId.toString())
+			}
+		};
+
 		const transaction = new TokenCreateTransaction()
 			.setMaxTransactionFee(new Hbar(25))
 			.setTokenName(values.name)
@@ -52,7 +59,8 @@ export class TransactionProvider {
 			.setInitialSupply(values.initialSupply)
 			.setTokenMemo(values.memo)
 			.setFreezeDefault(values.freezeDefault)
-			.setTreasuryAccountId(values.treasuryAccountId.id);
+			.setTreasuryAccountId(getTreasuryAccount(AccountId.fromString(values.treasuryAccountId.id), 
+													 contractId, values.supplyKey));
 
 		const adminKey = getKey(contractId, values.adminKey);
 		const freezeKey = getKey(contractId, values.freezeKey);
@@ -91,4 +99,37 @@ export class TransactionProvider {
 		}
 		return transaction;
 	}
+
+	public static buildTokenWipeTransaction (accountId:string, tokenId: string, amount:number): Transaction{
+        const transaction =  new TokenWipeTransaction()
+		.setAccountId(AccountId.fromString(accountId))
+		.setTokenId(TokenId.fromString(tokenId))
+		.setAmount(amount)
+	
+        return transaction;
+    }
+
+	public static buildTokenMintTransaction (tokenId: string, amount:number): Transaction{
+        const transaction =  new TokenMintTransaction()
+		.setTokenId(TokenId.fromString(tokenId))
+		.setAmount(amount)
+	
+        return transaction;
+    }
+
+	public static buildTokenBurnTransaction (tokenId: string, amount:number): Transaction{
+        const transaction =  new TokenBurnTransaction()
+		.setTokenId(TokenId.fromString(tokenId))
+		.setAmount(amount)
+	
+        return transaction;
+    }
+	public static buildTransferTransaction (tokenId: string, amount: number, outAccountId: string, inAccountId: string): Transaction{
+        const transaction = new TransferTransaction()
+		.addTokenTransfer(tokenId, AccountId.fromString(outAccountId), -amount)
+		.addTokenTransfer(tokenId, AccountId.fromString(inAccountId), amount);
+	
+        return transaction;
+    }
 }
+

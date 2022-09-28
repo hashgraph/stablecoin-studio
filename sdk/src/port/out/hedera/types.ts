@@ -34,6 +34,24 @@ export interface ICreateTokenResponse {
 	tokenId: TokenId;
 }
 
+export interface IHTSTokenRequest {
+	account: {
+		privateKey: string;
+		accountId: string;
+	};
+	tokenId: string;
+	amount: number;
+}
+
+export interface IWipeTokenRequest extends IHTSTokenRequest {
+	wipeAccountId: string;
+}
+
+export interface ITransferTokenRequest extends IHTSTokenRequest{
+	outAccountId: string;
+	inAccountId: string;
+}
+
 export type InitializationData = HashConnectTypes.InitilizationData;
 export type SavedPairingData = HashConnectTypes.SavedPairingData;
 export type AcknowledgeMessage = MessageTypes.Acknowledge;

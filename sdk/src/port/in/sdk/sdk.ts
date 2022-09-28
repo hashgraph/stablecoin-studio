@@ -66,6 +66,7 @@ import { ProviderEventNames } from '../../out/hedera/ProviderEvent.js';
 import EventService from '../../../app/service/event/EventService.js';
 import { IProvider } from '../../out/hedera/Provider.js';
 import { SavedPairingData } from '../../out/hedera/types.js';
+import { Capabilities } from '../../../domain/context/stablecoin/Capabilities.js';
 
 export {
 	IAssociateStableCoinRequest,
@@ -105,6 +106,7 @@ export {
 	ApprovePairingMessage,
 	AuthenticationRequestMessage,
 	AuthenticationResponseMessage,
+	Capabilities,
 };
 
 export interface ConfigurationOptions {
@@ -202,6 +204,12 @@ export class SDK {
 		}
 	}
 
+	public getCapabilitiesStableCoin(
+		id: string,
+		publicKey: string,
+	): Promise<Capabilities[]> | null {
+		return this.stableCoinService.getCapabilitiesStableCoin(id, publicKey);
+	}
 	/**
 	 * getListStableCoin
 	 */
@@ -278,9 +286,7 @@ export class SDK {
 	/**
 	 * cashIn
 	 */
-	public cashIn(
-		request: ICashInStableCoinRequest,
-	): Promise<Uint8Array> | null {
+	public cashIn(request: ICashInStableCoinRequest): Promise<boolean> | null {
 		try {
 			const req: ICashInStableCoinServiceRequestModel = {
 				...request,
@@ -299,7 +305,7 @@ export class SDK {
 	 */
 	public cashOut(
 		request: ICashOutStableCoinRequest,
-	): Promise<Uint8Array> | null {
+	): Promise<boolean> | null {
 		try {
 			const req: ICashOutStableCoinServiceRequestModel = {
 				...request,
@@ -335,7 +341,7 @@ export class SDK {
 	/**
 	 * wipeToken
 	 */
-	public wipe(request: IWipeStableCoinRequest): Promise<Uint8Array> | null {
+	public wipe(request: IWipeStableCoinRequest): Promise<boolean> | null {
 		try {
 			const req: IWipeStableCoinServiceRequestModel = {
 				...request,

@@ -1,8 +1,8 @@
+import userEvent from '@testing-library/user-event';
+import { waitFor } from '@testing-library/react';
 import { render } from '../../../../test/index';
 import translations from '../../../../translations/en/getBalance.json';
 import GetBalanceOperation from '../';
-import userEvent from '@testing-library/user-event';
-import { waitFor } from '@testing-library/react';
 
 describe(`<${GetBalanceOperation.name} />`, () => {
 	test('should render correctly', () => {
@@ -24,7 +24,7 @@ describe(`<${GetBalanceOperation.name} />`, () => {
 		expect(component.getByTestId('account')).toBeInTheDocument();
 	});
 
-	test('should has an disabled confirm button that is enable when introduce an account', async () => {
+	test('should have a disabled confirm button that is enable when introduce an account', async () => {
 		const component = render(<GetBalanceOperation />);
 
 		const button = component.getByTestId('confirm-btn');

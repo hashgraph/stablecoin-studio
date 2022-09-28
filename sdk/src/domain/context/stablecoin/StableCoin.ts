@@ -263,8 +263,7 @@ export class StableCoin extends BaseEntity {
 			id,
 			autoRenewAccount,
 		} = params;
-		const defaultKey = PublicKey.NULL;
-		this.adminKey = adminKey ?? defaultKey;
+		this.adminKey = adminKey;
 		this.name = name;
 		this.symbol = symbol;
 		this.decimals = this.checkDecimals(decimals);
@@ -272,12 +271,12 @@ export class StableCoin extends BaseEntity {
 		this.totalSupply = totalSupply ?? 0n;
 		this.maxSupply = maxSupply ?? 0n;
 		this.memo = memo ?? '';
-		this.freezeKey = freezeKey ?? defaultKey;
+		this.freezeKey = freezeKey;
 		this.freezeDefault = freezeDefault ?? false;
-		this.kycKey = kycKey ?? defaultKey;
-		this.wipeKey = wipeKey ?? defaultKey;
-		this.pauseKey = pauseKey ?? defaultKey;
-		this.supplyKey = supplyKey ?? defaultKey;
+		this.kycKey = kycKey;
+		this.wipeKey = wipeKey;
+		this.pauseKey = pauseKey;
+		this.supplyKey = supplyKey;
 		this.treasury = treasury ?? new AccountId('0.0.0');
 		this.tokenType = tokenType ?? TokenType.FUNGIBLE_COMMON;
 		this.supplyType =

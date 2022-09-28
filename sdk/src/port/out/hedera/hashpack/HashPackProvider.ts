@@ -17,12 +17,16 @@ import {
 	PrivateKey as HPrivateKey,
 	TokenId,
 	Transaction,
+	Status,
 } from '@hashgraph/sdk';
 import { StableCoin } from '../../../../domain/context/stablecoin/StableCoin.js';
 import {
 	ICallContractRequest,
 	ICallContractWithAccountRequest,
 	ICreateTokenResponse,
+	IHTSTokenRequest,
+	IWipeTokenRequest,
+	ITransferTokenRequest,
 	InitializationData,
 } from '../types.js';
 import {
@@ -577,4 +581,188 @@ export default class HashPackProvider implements IProvider {
 	getInitData(): HashConnectTypes.InitilizationData {
 		return this.initData;
 	}
+
+	public async wipeHTS(params: IWipeTokenRequest): Promise<boolean> {
+		if ('account' in params) {
+			this.provider = this.hc.getProvider(
+				this.network.hederaNetworkEnviroment,
+				this.initData.topic,
+				params.account.accountId,
+			);
+		} else {
+			throw new Error(
+				'You must specify an accountId for operate with HashConnect.',
+			);
+		}
+
+		this.hashPackSigner = new HashPackSigner();
+		const transaction: Transaction =
+			TransactionProvider.buildTokenWipeTransaction(
+				params.wipeAccountId,
+				params.tokenId,
+				params.amount,
+			);
+
+		const transactionResponse: TransactionResponse =
+			await this.hashPackSigner.signAndSendTransaction(
+				transaction,
+				this.hc.getSigner(this.provider),
+			);
+
+		const htsResponse: HTSResponse =
+			await this.transactionResposeHandler.manageResponse(
+				transactionResponse,
+				TransactionType.RECEIPT,
+				this.hc.getSigner(this.provider),
+			);
+
+		if (!htsResponse.receipt) {
+			throw new Error(
+				`An error has occurred when wipe the amount ${params.amount} in the account ${params.wipeAccountId} for tokenId ${params.tokenId}`,
+			);
+		}
+		log(
+			`Result wipe HTS ${htsResponse.receipt.status}: account ${params.wipeAccountId}, tokenId ${params.tokenId}, amount ${params.amount}`,
+			logOpts,
+		);
+
+		return htsResponse.receipt.status == Status.Success ? true : false;
+	}
+
+	public async cashInHTS(params: IHTSTokenRequest): Promise<boolean> {
+		if ('account' in params) {
+			this.provider = this.hc.getProvider(
+				this.network.hederaNetworkEnviroment,
+				this.initData.topic,
+				params.account.accountId,
+			);
+		} else {
+			throw new Error(
+				'You must specify an accountId for operate with HashConnect.',
+			);
+		}
+
+		this.hashPackSigner = new HashPackSigner();
+		const transaction: Transaction =
+			TransactionProvider.buildTokenMintTransaction(
+				params.tokenId,
+				params.amount,
+			);
+
+		const transactionResponse: TransactionResponse =
+			await this.hashPackSigner.signAndSendTransaction(
+				transaction,
+				this.hc.getSigner(this.provider),
+			);
+
+		const htsResponse: HTSResponse =
+			await this.transactionResposeHandler.manageResponse(
+				transactionResponse,
+				TransactionType.RECEIPT,
+				this.hc.getSigner(this.provider),
+			);
+
+		if (!htsResponse.receipt) {
+			throw new Error(
+				`An error has occurred when cash in the amount ${params.amount} in the account ${params.account.accountId} for tokenId ${params.tokenId}`,
+			);
+		}
+		log(
+			`Result cash in HTS ${htsResponse.receipt.status}: account ${params.account.accountId}, tokenId ${params.tokenId}, amount ${params.amount}`,
+			logOpts,
+		);
+
+		return htsResponse.receipt.status == Status.Success ? true : false;
+	}	
+
+	public async cashOutHTS(params: IHTSTokenRequest): Promise<boolean> {
+		if ('account' in params) {
+			this.provider = this.hc.getProvider(
+				this.network.hederaNetworkEnviroment,
+				this.initData.topic,
+				params.account.accountId,
+			);
+		} else {
+			throw new Error(
+				'You must specify an accountId for operate with HashConnect.',
+			);
+		}
+
+		this.hashPackSigner = new HashPackSigner();
+		const transaction: Transaction =
+			TransactionProvider.buildTokenBurnTransaction(
+				params.tokenId,
+				params.amount,
+			);
+
+		const transactionResponse: TransactionResponse =
+			await this.hashPackSigner.signAndSendTransaction(
+				transaction,
+				this.hc.getSigner(this.provider),
+			);
+
+		const htsResponse: HTSResponse =
+			await this.transactionResposeHandler.manageResponse(
+				transactionResponse,
+				TransactionType.RECEIPT,
+				this.hc.getSigner(this.provider),
+			);
+
+		if (!htsResponse.receipt) {
+			throw new Error(
+				`An error has occurred when cash out the amount ${params.amount} in the account ${params.account.accountId} for tokenId ${params.tokenId}`,
+			);
+		}
+		log(
+			`Result cash out HTS ${htsResponse.receipt.status}: account ${params.account.accountId}, tokenId ${params.tokenId}, amount ${params.amount}`,
+			logOpts,
+		);
+
+		return htsResponse.receipt.status == Status.Success ? true : false;
+	}	
+
+	public async transferHTS(params: ITransferTokenRequest): Promise<boolean> {
+		if ('account' in params) {
+			this.provider = this.hc.getProvider(
+				this.network.hederaNetworkEnviroment,
+				this.initData.topic,
+				params.account.accountId,
+			);
+		} else {
+			throw new Error(
+				'You must specify an accountId for operate with HashConnect.',
+			);
+		}
+
+		this.hashPackSigner = new HashPackSigner();
+		const transaction: Transaction =
+			TransactionProvider.buildTransferTransaction(
+				params.tokenId,
+				params.amount,
+				params.outAccountId,
+				params.inAccountId,
+			);
+
+		const transactionResponse: TransactionResponse =
+			await this.hashPackSigner.signAndSendTransaction(
+				transaction,
+				this.hc.getSigner(this.provider),
+			);
+
+		const htsResponse: HTSResponse =
+			await this.transactionResposeHandler.manageResponse(
+				transactionResponse,
+				TransactionType.RECEIPT,
+				this.hc.getSigner(this.provider),
+			);
+
+		if (!htsResponse.receipt) {
+			throw new Error(
+				`An error has occurred when transfer the amount ${params.amount} to the account ${params.inAccountId} for tokenId ${params.tokenId}`,
+			);
+		}
+		
+
+		return htsResponse.receipt.status == Status.Success ? true : false;
+	}	
 }
