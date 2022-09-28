@@ -16,6 +16,7 @@ const Review = (props: ReviewProps) => {
 	const {
 		name,
 		symbol,
+		autorenewAccount,
 		initialSupply,
 		totalSupply,
 		decimals,
@@ -73,6 +74,10 @@ const Review = (props: ReviewProps) => {
 							{
 								label: t('stableCoinCreation:basicDetails.symbol'),
 								value: symbol || '',
+							},
+							{
+								label: t('stableCoinCreation:basicDetails.autorenewAccount'),
+								value: autorenewAccount || '',
 							},
 						]}
 					/>
