@@ -10,7 +10,6 @@ import OperationLayout from './../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
 import { useSelector } from 'react-redux';
-import { GET_ACK_MESSAGES } from '../../../store/slices/hashpackSlice';
 import { SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
 
 const CashInOperation = () => {
@@ -19,16 +18,11 @@ const CashInOperation = () => {
 		onOpen: onOpenModalAction,
 		onClose: onCloseModalAction,
 	} = useDisclosure();
-
-	const walletMessages = useSelector(GET_ACK_MESSAGES);
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const { decimals = 0 } = selectedStableCoin || {};
-	console.log('Messages in state:', walletMessages);
-
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
 	});
-
 	const { t } = useTranslation(['cashIn', 'global', 'operations']);
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars

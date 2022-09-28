@@ -19,7 +19,6 @@ import StableCoinCreation from '../views/StableCoinCreation/StableCoinCreation';
 import StableCoinNotSelected from '../views/ErrorPage/StableCoinNotSelected';
 import SDKService, { HashConnectConnectionState } from '../services/SDKService';
 import StableCoinDetails from '../views/StableCoinDetails';
-import type { AcknowledgeMessage } from 'hedera-stable-coin-sdk';
 import { hashpackActions, IS_INITIALIZED } from '../store/slices/hashpackSlice';
 import { walletActions, HAS_WALLET_EXTENSION } from '../store/slices/walletSlice';
 
@@ -65,15 +64,11 @@ const Router = () => {
 
 	const onWalletPaired = () => setStatus(HashConnectConnectionState.Paired);
 
-	const onWalletAcknowledgeMessageEvent = (msg: AcknowledgeMessage) =>
-		dispatch(hashpackActions.setAckMessage(msg));
-
 	const instanceSDK = async () =>
 		await SDKService.getInstance({
 			onInit,
 			onWalletExtensionFound,
 			onWalletPaired,
-			onWalletAcknowledgeMessageEvent,
 		});
 
 	const getStatus = async () => {
