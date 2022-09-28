@@ -425,7 +425,7 @@ function grantSupplierRole(address supplier, uint256 amount) external nonpayable
 
 
 
-*Gives `SUPPLIER ROLE&#39; permissions to perform supplier&#39;s allowance and sets the `amount` the supplier can mint, if you don&#39;t already have unlimited supplier&#39;s allowance permission. Only the &#39;ADMIN SUPPLIER ROLE` can execute.*
+*Gives `SUPPLIER ROLE&#39; permissions to perform supplier&#39;s allowance and sets the `amount`  the supplier can mint, if you don&#39;t already have unlimited supplier&#39;s allowance permission. Only the &#39;ADMIN SUPPLIER ROLE` can execute.*
 
 #### Parameters
 
@@ -465,7 +465,7 @@ function grantUnlimitedSupplierRole(address supplier) external nonpayable
 
 
 
-*Gives `SUPPLIER ROLE&#39; permissions to perform supplier&#39;s allowance, sets unlimited supplier&#39;s allowance permission, and sets the `amount` the supplier can mint to 0. Only the &#39;ADMIN SUPPLIER ROLE` can execute.*
+*Gives `SUPPLIER ROLE&#39; permissions to perform supplier&#39;s allowance, sets unlimited  supplier&#39;s allowance permission, and sets the `amount` the supplier can mint to 0. Only the &#39;ADMIN SUPPLIER ROLE` can execute.*
 
 #### Parameters
 
@@ -722,7 +722,7 @@ function revokeSupplierRole(address supplier) external nonpayable
 
 
 
-*Revoke `SUPPLIER ROLE&#39; permissions to perform supplier&#39;s allowance and revoke unlimited supplier&#39;s allowance permission.     Only the &#39;ADMIN SUPPLIER ROLE` can execute.*
+*Revoke `SUPPLIER ROLE&#39; permissions to perform supplier&#39;s allowance and revoke unlimited  supplier&#39;s allowance permission.     Only the &#39;ADMIN SUPPLIER ROLE` can execute.*
 
 #### Parameters
 
@@ -756,19 +756,19 @@ Operation to revoke kyc to token account
 ### setTokenAddress
 
 ```solidity
-function setTokenAddress(contract HTSTokenOwner _htsTokenOwnerAddress, address _tokenAddress) external nonpayable
+function setTokenAddress(contract HTSTokenOwner htsTokenOwnerAddress, address tokenAddress) external nonpayable
 ```
 
 
 
-*Assigns the HTSTokenOwner contract address and the token address, validating that the token address was not already assigned*
+*Assigns the HTSTokenOwner contract address and the token address, validating that the  token address was not already assigned*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| _htsTokenOwnerAddress | contract HTSTokenOwner | The  contract address HTSTokenOwner |
-| _tokenAddress | address | The token address created |
+| htsTokenOwnerAddress | contract HTSTokenOwner | The  contract address HTSTokenOwner |
+| tokenAddress | address | The token address created |
 
 ### supplierAllowance
 

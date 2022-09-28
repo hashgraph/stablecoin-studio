@@ -4,7 +4,7 @@
   "rules": {
     "max-line-length": ["error",120],
     "max-states-count": ["off",15],
-    "no-empty-blocks": "error",
+    "no-empty-blocks": "warn",
     "no-unused-vars": "error",
     "payable-fallback": "error",
     "reason-string": ["error",{"maxLength": 80}],

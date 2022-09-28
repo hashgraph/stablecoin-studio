@@ -52,7 +52,7 @@ function grantSupplierRole(address supplier, uint256 amount) external nonpayable
 
 
 
-*Gives `SUPPLIER ROLE&#39; permissions to perform supplier&#39;s allowance and sets the `amount` the supplier can mint, if you don&#39;t already have unlimited supplier&#39;s allowance permission*
+*Gives `SUPPLIER ROLE&#39; permissions to perform supplier&#39;s allowance and sets the `amount`  the supplier can mint, if you don&#39;t already have unlimited supplier&#39;s allowance permission*
 
 #### Parameters
 
@@ -69,7 +69,7 @@ function grantUnlimitedSupplierRole(address supplier) external nonpayable
 
 
 
-*Gives `SUPPLIER ROLE&#39; permissions to perform supplier&#39;s allowance and sets unlimited supplier&#39;s allowance permission*
+*Gives `SUPPLIER ROLE&#39; permissions to perform supplier&#39;s allowance and sets unlimited  supplier&#39;s allowance permission.*
 
 #### Parameters
 

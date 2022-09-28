@@ -20,7 +20,8 @@ abstract contract SupplierAdmin is ISupplierAdmin, AccessControlUpgradeable, Tok
      * @param oldAllowance The supplier allowance before the increase
      * @param newAllowance The supplier allowance after the increase
      */
-    event SupplierAllowanceIncreased(address indexed sender, address indexed supplier, uint256 amount, uint256 oldAllowance, uint256 newAllowance);
+    event SupplierAllowanceIncreased(address indexed sender, address indexed supplier, 
+                                     uint256 amount, uint256 oldAllowance, uint256 newAllowance);
     
     /**
      * @dev Emitted when a supply controller decreases a supplier's allowance
@@ -31,7 +32,8 @@ abstract contract SupplierAdmin is ISupplierAdmin, AccessControlUpgradeable, Tok
      * @param oldAllowance The supplier allowance before the decrease
      * @param newAllowance The supplier allowance after the decrease
      */
-    event SupplierAllowanceDecreased(address indexed sender, address indexed supplier, uint256 amount, uint256 oldAllowance, uint256 newAllowance);
+    event SupplierAllowanceDecreased(address indexed sender, address indexed supplier, 
+                                     uint256 amount, uint256 oldAllowance, uint256 newAllowance);
 
     /**
      * @dev Emitted when a supply controller resets a supplier's allowance
@@ -41,7 +43,8 @@ abstract contract SupplierAdmin is ISupplierAdmin, AccessControlUpgradeable, Tok
      * @param oldAllowance The supplier allowance before the reset
      * @param newAllowance The supplier allowance after the reset (expected to be 0)
      */
-    event SupplierAllowanceReset(address indexed sender, address indexed supplier, uint256 oldAllowance, uint256 newAllowance);
+    event SupplierAllowanceReset(address indexed sender, address indexed supplier, 
+                                 uint256 oldAllowance, uint256 newAllowance);
 
     /**
      * @dev Retrun number of tokens allowed to be minted of the address account `supplier`.
@@ -74,8 +77,8 @@ abstract contract SupplierAdmin is ISupplierAdmin, AccessControlUpgradeable, Tok
     }
 
     /**
-     * @dev  Gives `SUPPLIER ROLE' permissions to perform supplier's allowance and sets the `amount` the supplier can mint,
-     * if you don't already have unlimited supplier's allowance permission.
+     * @dev  Gives `SUPPLIER ROLE' permissions to perform supplier's allowance and sets the `amount` 
+     * the supplier can mint, if you don't already have unlimited supplier's allowance permission.
      * Only the 'ADMIN SUPPLIER ROLE` can execute.
      *
      * @param supplier The address of the supplier

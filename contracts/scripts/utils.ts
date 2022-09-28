@@ -67,15 +67,7 @@ export async function contractCall(contractId:any,
   const contractTx = await new ContractExecuteTransaction()
       .setContractId(contractId)
       .setFunctionParameters(functionCallParameters)
-      .setGas(gas)
-      .setNodeAccountIds([
-        AccountId.fromString('0.0.3'),
-        AccountId.fromString('0.0.5'),
-        AccountId.fromString('0.0.6'),
-        AccountId.fromString('0.0.7'),
-        AccountId.fromString('0.0.8'),
-        AccountId.fromString('0.0.9')
-      ])
+      .setGas(gas)      
       .execute(clientOperator);
   
   let record = await contractTx.getRecord(clientOperator);  
@@ -134,7 +126,7 @@ async function createToken(
 ) {
  
   let transaction = new TokenCreateTransaction()
-    .setMaxTransactionFee(new Hbar(15))
+    .setMaxTransactionFee(new Hbar(25))
     .setTokenName(name)
     .setTokenSymbol(symbol)
     .setDecimals(decimals)
@@ -145,15 +137,8 @@ async function createToken(
     .setAdminKey(PublicKey.fromString(publicKey))
     .setFreezeKey(PublicKey.fromString(publicKey))
     .setWipeKey(DelegateContractId.fromString(contractId))
-    .setSupplyKey(DelegateContractId.fromString(contractId))
-    .setNodeAccountIds([
-      AccountId.fromString('0.0.3'),
-      AccountId.fromString('0.0.5'),
-      AccountId.fromString('0.0.6'),
-      AccountId.fromString('0.0.7'),
-      AccountId.fromString('0.0.8'),
-      AccountId.fromString('0.0.9')
-    ]);
+    .setSupplyKey(DelegateContractId.fromString(contractId));
+    
     if (maxSupply !== null) {
       transaction.setSupplyType(TokenSupplyType.Finite)
       transaction.setMaxSupply(maxSupply)

@@ -9,10 +9,10 @@ interface ITokenOwner {
      * @dev Assigns the HTSTokenOwner contract address and the token address, validating that the 
      *      token address was not already assigned
      *
-     * @param _htsTokenOwnerAddress The  contract address HTSTokenOwner
-     * @param _tokenAddress The token address created
+     * @param htsTokenOwnerAddress The  contract address HTSTokenOwner
+     * @param tokenAddress The token address created
      */
-    function setTokenAddress(HTSTokenOwner _htsTokenOwnerAddress, address _tokenAddress) external;
+    function setTokenAddress(HTSTokenOwner htsTokenOwnerAddress, address tokenAddress) external;
     
     /**
      * @dev Returns the token address
