@@ -75,7 +75,7 @@ const InputNumberController = ({
 	showErrors = true,
 	'data-testid': dataTestId = name,
 	formStyle,
-	decimalScale = 2,
+	decimalScale,
 	...props
 }: InputNumberControllerProps) => {
 	const [inputFloatValue, setInputFloatValue] = useState<number>();
@@ -87,7 +87,7 @@ const InputNumberController = ({
 			name={name}
 			render={({ field: { onChange, value }, fieldState: { error } }) => {
 				const onChangeCustom = (values: NumberFormatValues) => {
-					onChange(values.floatValue === undefined ? '' : values.floatValue);
+					onChange(values.floatValue || '');
 					setInputFloatValue(values?.floatValue!);
 					onChangeAux && onChangeAux(values);
 				};

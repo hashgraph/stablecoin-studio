@@ -9,6 +9,7 @@ import type GLOBAL_EN from './translations/en/global.json';
 import type OPERATIONS_EN from './translations/en/operations.json';
 import type ROLES_EN from './translations/en/roles.json';
 import type STABLE_COIN_CREATION_EN from './translations/en/stableCoinCreation.json';
+import type STABLE_COIN_DETAILS_EN from './translations/en/stableCoinDetails.json';
 import type WIPE_EN from './translations/en/wipe.json';
 
 declare module 'react-i18next' {
@@ -21,6 +22,7 @@ declare module 'react-i18next' {
 		operations: typeof OPERATIONS_EN;
 		roles: typeof ROLES_EN;
 		stableCoinCreation: typeof STABLE_COIN_CREATION_EN;
+		stableCoinDetails: typeof STABLE_COIN_DETAILS_EN;
 		wipe: typeof WIPE_EN;
 	}
 }
@@ -39,6 +41,7 @@ declare module 'react-i18next' {
 			operations: typeof OPERATIONS_EN;
 			roles: typeof ROLES_EN;
 			stableCoinCreation: typeof STABLE_COIN_CREATION_EN;
+			stableCoinDetails: typeof STABLE_COIN_DETAILS_EN;
 			wipe: typeof WIPE_EN;
 		};
 	}
