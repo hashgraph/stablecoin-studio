@@ -16,7 +16,6 @@ const Operations = () => {
 			icon: 'ArrowUp',
 			route: NamedRoutes.CashOut,
 			title: t('cashOutOperation'),
-			variant: 'disabled',
 		},
 		{
 			icon: 'Coin',

@@ -2,6 +2,7 @@
 import 'react-i18next';
 
 import type CASH_IN_EN from './translations/en/cashIn.json';
+import type CASH_OUT_EN from './translations/en/cashOut.json';
 import type ERROR_PAGE_EN from './translations/en/errorPage.json';
 import type GET_BALANCE_EN from './translations/en/getBalance.json';
 import type GLOBAL_EN from './translations/en/global.json';
@@ -13,6 +14,7 @@ import type WIPE_EN from './translations/en/wipe.json';
 declare module 'react-i18next' {
 	interface Resources {
 		cashIn: typeof CASH_IN_EN;
+		cashOut: typeof CASH_OUT_EN;
 		errorPage: typeof ERROR_PAGE_EN;
 		getBalance: typeof GET_BALANCE_EN;
 		global: typeof GLOBAL_EN;
@@ -30,6 +32,7 @@ declare module 'react-i18next' {
 		defaultNS: 'global';
 		resources: {
 			cashIn: typeof CASH_IN_EN;
+			cashOut: typeof CASH_OUT_EN;
 			errorPage: typeof ERROR_PAGE_EN;
 			getBalance: typeof GET_BALANCE_EN;
 			global: typeof GLOBAL_EN;
