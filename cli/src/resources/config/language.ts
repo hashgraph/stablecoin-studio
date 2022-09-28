@@ -44,7 +44,7 @@ export const english = {
     askToken: 'What is the id of the stable coin you want to operate with?',
     askDoSomething: 'What do you want to do?',
     askOptionalProps:
-      'Do you want to configure the initial supply, max supply, decimals, expiration time, admins keys or token memo?',
+      'Do you want to configure the initial supply, max supply, decimals or expiration time?',
     askInitialSupply: 'What will be the initial supply?',
     askSupplyType: 'Do you want that the token supply will be infinite?',
     askTotalSupply: 'What will be the max supply?',
@@ -53,20 +53,21 @@ export const english = {
     askFreezeAccount:
       'Do you want that the Hedera account relative to this token will be freeze by default?',
     askFeaturesManagedBy:
-      'Do you want that the following features will be managed trough the SmartContract: Admin, Supply, Freeze, KYC, Wipe, FeeSchedule?',
+      'Do you want that the following features will be managed trough the SmartContract: Admin, Supply, Freeze, KYC, Wipe?',
     askConfigureFeatures:
       'Do you want to configure some the previuous features? The not configured features will not be availables to edit in the future.',
     features: {
       admin: 'What will be the Admin key?',
       supply: 'What will be the Supply key?',
-      keyError: 'The introduced key has wrong format. Please. Introduce it again.',
+      keyError:
+        'The introduced key has wrong format. Please. Introduce it again.',
       KYC: 'What will be the KYC key?',
       freeze: 'What will be the Freeze key?',
       wipe: 'What will be the Wipe key?',
       pause: 'What will be the Pause key?',
       feeSchedule: 'What will be the Fee Schedule key?',
       key: 'Enter the key',
-      publicKey: 'Enter the public key'
+      publicKey: 'Enter the public key',
     },
     askTreasuryAccountAddress: 'What will be the Treasury account id?',
     askOperateStableCoin: 'Do you want to operate with stable coin created?',

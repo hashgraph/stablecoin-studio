@@ -336,6 +336,7 @@ export default class OperationStableCoinService extends Service {
           //Call to SDK
           await roleService.grantRoleStableCoin(
             this.proxyContractId,
+            this.stableCoinId,
             accountTarget,
             currentAccount.privateKey,
             currentAccount.accountId,
@@ -363,6 +364,7 @@ export default class OperationStableCoinService extends Service {
           //Call to SDK
           await roleService.revokeRoleStableCoin(
             this.proxyContractId,
+            this.stableCoinId,
             accountTarget,
             currentAccount.privateKey,
             currentAccount.accountId,
@@ -404,10 +406,17 @@ export default class OperationStableCoinService extends Service {
               console.log(language.getText('supplier.unlimitedRole') + '\n');
               break;
             }
-            limit = await utilsService.defaultSingleAsk(
-              language.getText('stablecoin.amountIncrease'),
-              '1',
-            );
+            do {
+              limit = await utilsService
+                .defaultSingleAsk(
+                  language.getText('stablecoin.amountDecrease'),
+                  '1',
+                )
+                .then((val) => val.replace(',', '.'));
+              if (parseFloat(limit) <= 0) {
+                console.log(language.getText('validations.lessZero'));
+              }
+            } while (parseFloat(limit) <= 0);
             //Call to SDK
 
             if (
@@ -420,14 +429,16 @@ export default class OperationStableCoinService extends Service {
             ) {
               await roleService.increaseLimitSupplierRoleStableCoin(
                 this.proxyContractId,
+                this.stableCoinId,
                 accountTarget,
                 currentAccount.privateKey,
                 currentAccount.accountId,
-                parseInt(limit),
+                parseFloat(limit),
               );
 
               await roleService.getSupplierAllowance(
                 this.proxyContractId,
+                this.stableCoinId,
                 accountTarget,
                 currentAccount.privateKey,
                 currentAccount.accountId,
@@ -461,14 +472,16 @@ export default class OperationStableCoinService extends Service {
               break;
             }
             do {
-              limit = await utilsService.defaultSingleAsk(
-                language.getText('stablecoin.amountDecrease'),
-                '1',
-              );
-              if (parseInt(limit) <= 0) {
+              limit = await utilsService
+                .defaultSingleAsk(
+                  language.getText('stablecoin.amountDecrease'),
+                  '1',
+                )
+                .then((val) => val.replace(',', '.'));
+              if (parseFloat(limit) <= 0) {
                 console.log(language.getText('validations.lessZero'));
               }
-            } while (parseInt(limit) <= 0);
+            } while (parseFloat(limit) <= 0);
             //Call to SDK
             if (
               await this.checkSupplierType(
@@ -481,14 +494,16 @@ export default class OperationStableCoinService extends Service {
               try {
                 await roleService.decreaseLimitSupplierRoleStableCoin(
                   this.proxyContractId,
+                  this.stableCoinId,
                   accountTarget,
                   currentAccount.privateKey,
                   currentAccount.accountId,
-                  parseInt(limit),
+                  parseFloat(limit),
                 );
 
                 await roleService.getSupplierAllowance(
                   this.proxyContractId,
+                  this.stableCoinId,
                   accountTarget,
                   currentAccount.privateKey,
                   currentAccount.accountId,
@@ -542,6 +557,7 @@ export default class OperationStableCoinService extends Service {
 
               await roleService.getSupplierAllowance(
                 this.proxyContractId,
+                this.stableCoinId,
                 accountTarget,
                 currentAccount.privateKey,
                 currentAccount.accountId,
@@ -579,6 +595,7 @@ export default class OperationStableCoinService extends Service {
             }
             await roleService.getSupplierAllowance(
               this.proxyContractId,
+              this.stableCoinId,
               accountTarget,
               currentAccount.privateKey,
               currentAccount.accountId,
@@ -609,6 +626,7 @@ export default class OperationStableCoinService extends Service {
           //Call to SDK
           await roleService.hasRoleStableCoin(
             this.proxyContractId,
+            this.stableCoinId,
             accountTarget,
             currentAccount.privateKey,
             currentAccount.accountId,
@@ -687,6 +705,7 @@ export default class OperationStableCoinService extends Service {
 
       await roleService.giveSupplierRoleStableCoin(
         this.proxyContractId,
+        this.stableCoinId,
         accountTarget,
         currentAccount.privateKey,
         currentAccount.accountId,
@@ -713,6 +732,7 @@ export default class OperationStableCoinService extends Service {
 
       await roleService.giveSupplierRoleStableCoin(
         this.proxyContractId,
+        this.stableCoinId,
         accountTarget,
         currentAccount.privateKey,
         currentAccount.accountId,
