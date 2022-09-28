@@ -5,11 +5,11 @@ import DetailsReview from '../../../components/DetailsReview';
 import InputController from '../../../components/Form/InputController';
 import InputNumberController from '../../../components/Form/InputNumberController';
 import { validateAccount } from '../../../utils/validationsHelper';
-import OperationLayout from './../OperationLayout';
+import OperationLayout from '../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
 
-const CashOutOperation = () => {
+const RescueTokenOperation = () => {
 	const {
 		isOpen: isOpenModalAction,
 		onOpen: onOpenModalAction,
@@ -20,7 +20,7 @@ const CashOutOperation = () => {
 		mode: 'onChange',
 	});
 
-	const { t } = useTranslation(['cashOut', 'global', 'operations']);
+	const { t } = useTranslation(['rescueTokens', 'global', 'operations']);
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const handleCashOut: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
@@ -38,10 +38,10 @@ const CashOutOperation = () => {
 				LeftContent={
 					<>
 						<Heading data-testid='title' fontSize='24px' fontWeight='700' mb={10} lineHeight='16px'>
-							{t('cashOut:title')}
+							{t('rescueTokens:title')}
 						</Heading>
 						<Text color='brand.gray' data-testid='operation-title'>
-							{t('cashOut:operationTitle')}
+							{t('rescueTokens:operationTitle')}
 						</Text>
 						<Stack as='form' spacing={6}>
 							<InputNumberController
@@ -52,8 +52,8 @@ const CashOutOperation = () => {
 								isRequired
 								control={control}
 								name='amount'
-								label={t('cashOut:amountLabel')}
-								placeholder={t('cashOut:amountPlaceholder')}
+								label={t('rescueTokens:amountLabel')}
+								placeholder={t('rescueTokens:amountPlaceholder')}
 							/>
 							<InputController
 								rules={{
@@ -67,8 +67,8 @@ const CashOutOperation = () => {
 								isRequired
 								control={control}
 								name='originAccount'
-								placeholder={t('cashOut:originAccountPlaceholder')}
-								label={t('cashOut:originAccountLabel')}
+								placeholder={t('rescueTokens:originAccountPlaceholder')}
+								label={t('rescueTokens:originAccountLabel')}
 							/>
 						</Stack>
 					</>
@@ -82,20 +82,20 @@ const CashOutOperation = () => {
 				modalActionProps={{
 					isOpen: isOpenModalAction,
 					onClose: onCloseModalAction,
-					title: t('cashOut:modalAction.subtitle'),
-					confirmButtonLabel: t('cashOut:modalAction.accept'),
+					title: t('rescueTokens:modalAction.subtitle'),
+					confirmButtonLabel: t('rescueTokens:modalAction.accept'),
 					onConfirm: handleCashOut,
 				}}
 				ModalActionChildren={
 					<DetailsReview
-						title={t('cashOut:modalAction.subtitle')}
+						title={t('rescueTokens:modalAction.subtitle')}
 						details={[
 							{
-								label: t('cashOut:modalAction.originAccount'),
+								label: t('rescueTokens:modalAction.originAccount'),
 								value: getValues().originAccount,
 							},
 							{
-								label: t('cashOut:modalAction.amount'),
+								label: t('rescueTokens:modalAction.amount'),
 								value: getValues().amount,
 								valueInBold: true,
 							},
@@ -109,4 +109,4 @@ const CashOutOperation = () => {
 	);
 };
 
-export default CashOutOperation;
+export default RescueTokenOperation;

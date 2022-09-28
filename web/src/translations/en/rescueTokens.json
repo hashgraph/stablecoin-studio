@@ -1,0 +1,15 @@
+{
+    "title": "Rescue Tokens operation",
+    "operationTitle": "Operation details",
+    "amountLabel": "How much tokens?",
+    "amountPlaceholder": "Introduce amount",
+    "originAccountLabel": "From which account tokens will be rescued?",
+    "originAccountPlaceholder": "Introduce account",
+    "modalSuccessDesc": "The rescue tokens operation finished successfully.",
+    "modalAction": {
+        "subtitle": "Operation details review",
+        "originAccount": "Account to rescue tokens",
+        "amount": "Amount",
+        "accept": "Make rescue"
+    }
+}
