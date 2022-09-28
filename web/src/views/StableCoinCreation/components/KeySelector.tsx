@@ -10,10 +10,10 @@ export const OTHER_KEY_VALUE = 3;
 interface KeySelectorProps {
 	control: Control<FieldValues>;
 	name: string;
-	nameTranslate: string;
+	label: string;
 }
 
-const KeySelector = ({ control, name, nameTranslate }: KeySelectorProps) => {
+const KeySelector = ({ control, name, label }: KeySelectorProps) => {
 	const { t } = useTranslation(['global', 'stableCoinCreation']);
 
 	const optionsKeys = [
@@ -65,10 +65,10 @@ const KeySelector = ({ control, name, nameTranslate }: KeySelectorProps) => {
 				options={[
 					{
 						value: 1,
-						label: nameTranslate,
+						label,
 					},
 				].concat(optionsKeys)}
-				label={nameTranslate}
+				label={label}
 				overrideStyles={selectorStyle}
 				addonLeft={true}
 				variant='unstyled'
@@ -82,7 +82,7 @@ const KeySelector = ({ control, name, nameTranslate }: KeySelectorProps) => {
 					control={control}
 					name={name + 'Other'}
 					placeholder={t('stableCoinCreation:managementPermissions.introduce', {
-						name: nameTranslate,
+						name: label,
 					})}
 				/>
 			)}

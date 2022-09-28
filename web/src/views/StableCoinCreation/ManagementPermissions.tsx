@@ -84,7 +84,7 @@ const ManagementPermissions = (props: ManagementPermissionsProps) => {
 										key={item.name}
 										control={control}
 										name={item.name}
-										nameTranslate={item.nameTranslate}
+										label={item.nameTranslate}
 									/>
 								);
 							})}
