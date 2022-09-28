@@ -68,6 +68,7 @@ export default class OperationStableCoinService extends Service {
       this.stableCoinId = this.stableCoinId.split(' - ')[0];
 
       if (this.stableCoinId === language.getText('wizard.backOption')) {
+        await utilsService.cleanAndShowBanner();
         await wizardService.mainMenu();
       } else {
         // Get details to obtain treasury
@@ -77,9 +78,11 @@ export default class OperationStableCoinService extends Service {
             this.proxyContractId = response.memo;
           });
 
+        await utilsService.cleanAndShowBanner();
         await this.operationsStableCoin();
       }
     } else {
+      await utilsService.cleanAndShowBanner();
       await this.operationsStableCoin();
     }
   }
@@ -111,6 +114,8 @@ export default class OperationStableCoinService extends Service {
       )
     ) {
       case 'Cash in':
+        await utilsService.cleanAndShowBanner();
+
         // Call to mint
         const account2Mint = await utilsService.defaultSingleAsk(
           language.getText('stablecoin.askTargetAccount'),
@@ -145,12 +150,16 @@ export default class OperationStableCoinService extends Service {
 
         break;
       case 'Details':
+        await utilsService.cleanAndShowBanner();
+
         // Call to details
         await new DetailsStableCoinsService().getDetailsStableCoins(
           this.stableCoinId,
         );
         break;
       case 'Balance':
+        await utilsService.cleanAndShowBanner();
+
         // Call to balance
         const targetId = await utilsService.defaultSingleAsk(
           language.getText('stablecoin.askAccountToBalance'),
@@ -173,6 +182,8 @@ export default class OperationStableCoinService extends Service {
 
         break;
       case 'Cash out':
+        await utilsService.cleanAndShowBanner();
+
         const amount2Burn = await utilsService.defaultSingleAsk(
           language.getText('stablecoin.askCashOutAmount'),
           '1',
@@ -192,6 +203,8 @@ export default class OperationStableCoinService extends Service {
 
         break;
       case 'Wipe':
+        await utilsService.cleanAndShowBanner();
+
         // Call to Wipe
         const account2Wipe = await utilsService.defaultSingleAsk(
           language.getText('stablecoin.askTargetAccount'),
@@ -226,6 +239,8 @@ export default class OperationStableCoinService extends Service {
 
         break;
       case 'Rescue':
+        await utilsService.cleanAndShowBanner();
+
         // Call to Rescue
         const amount2Rescue = await utilsService.defaultSingleAsk(
           language.getText('stablecoin.askRescueAmount'),
@@ -271,6 +286,8 @@ export default class OperationStableCoinService extends Service {
 
         break;
       case 'Role management':
+        await utilsService.cleanAndShowBanner();
+
         // Call to Supplier Role
         await this.roleManagementFlow();
         break;
@@ -278,6 +295,7 @@ export default class OperationStableCoinService extends Service {
         wizardOperationsStableCoinOptions.length - 1
       ]:
       default:
+        await utilsService.cleanAndShowBanner();
         await wizardService.mainMenu();
     }
 
@@ -307,6 +325,8 @@ export default class OperationStableCoinService extends Service {
       )
     ) {
       case roleManagementOptions[0]:
+        await utilsService.cleanAndShowBanner();
+
         // Grant role
         //Lists all roles
         role = await this.getRole();
@@ -343,6 +363,8 @@ export default class OperationStableCoinService extends Service {
         }
         break;
       case roleManagementOptions[1]:
+        await utilsService.cleanAndShowBanner();
+
         // Revoke role
         //Lists all roles
         role = await this.getRole();
@@ -370,6 +392,8 @@ export default class OperationStableCoinService extends Service {
         }
         break;
       case roleManagementOptions[2]:
+        await utilsService.cleanAndShowBanner();
+
         //Call to edit role
         const editOptions = language.getArray('roleManagement.editAction');
         switch (
@@ -379,6 +403,8 @@ export default class OperationStableCoinService extends Service {
           )
         ) {
           case editOptions[0]:
+            await utilsService.cleanAndShowBanner();
+
             //Increase limit
             accountTarget = await utilsService.defaultSingleAsk(
               language.getText('stablecoin.accountTarget'),
@@ -436,6 +462,8 @@ export default class OperationStableCoinService extends Service {
             }
             break;
           case editOptions[1]:
+            await utilsService.cleanAndShowBanner();
+
             //Decrease limit
             accountTarget = await utilsService.defaultSingleAsk(
               language.getText('stablecoin.accountTarget'),
@@ -495,6 +523,8 @@ export default class OperationStableCoinService extends Service {
             }
             break;
           case editOptions[2]:
+            await utilsService.cleanAndShowBanner();
+
             //Reset
             accountTarget = await utilsService.defaultSingleAsk(
               language.getText('stablecoin.accountTarget'),
@@ -545,6 +575,8 @@ export default class OperationStableCoinService extends Service {
             }
             break;
           case editOptions[3]:
+            await utilsService.cleanAndShowBanner();
+
             accountTarget = await utilsService.defaultSingleAsk(
               language.getText('stablecoin.accountTarget'),
               accountTarget,
@@ -581,10 +613,14 @@ export default class OperationStableCoinService extends Service {
             break;
           case editOptions[editOptions.length - 1]:
           default:
+            await utilsService.cleanAndShowBanner();
+
             await this.roleManagementFlow();
         }
         break;
       case roleManagementOptions[3]:
+        await utilsService.cleanAndShowBanner();
+
         //Lists all roles
         role = await this.getRole();
         if (role !== language.getText('wizard.backOption')) {
@@ -612,6 +648,8 @@ export default class OperationStableCoinService extends Service {
         break;
       case roleManagementOptions[roleManagementOptions.length - 1]:
       default:
+        await utilsService.cleanAndShowBanner();
+
         await this.operationsStableCoin();
     }
     await this.roleManagementFlow();
