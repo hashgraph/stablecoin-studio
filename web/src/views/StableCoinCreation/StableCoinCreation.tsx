@@ -1,7 +1,6 @@
 import { Stack } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import type { FieldValues } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
 import BaseContainer from '../../components/BaseContainer';
 import BasicDetails from './BasicDetails';
@@ -14,20 +13,6 @@ import ManagementPermissions from './ManagementPermissions';
 import Review from './Review';
 import { useEffect, useState } from 'react';
 import { OTHER_KEY_VALUE } from './components/KeySelector';
-
-export const isInvalidForm = (formValues: FieldValues, inputs: string[]) => {
-	if (Object.keys(formValues).length === 0) return true;
-
-	let isInvalid = false;
-
-	Object.keys(formValues).forEach((key) => {
-		if (inputs.includes(key) && (formValues[key] === undefined || formValues[key] === '')) {
-			isInvalid = true;
-		}
-	});
-
-	return isInvalid;
-};
 
 const StableCoinCreation = () => {
 	const navigate = useNavigate();
