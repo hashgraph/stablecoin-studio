@@ -45,15 +45,15 @@ TASK OPTIONS:
     --network     Type of network that you want to use it. (mainnet | testnet | previewnet)
 ```
 
-## 🧪 Testing
+## Testing
 
 ### Jest
 
-[Jest](https://jestjs.io/es-ES/) is a JavaScript Testing Framework.
+The project uses [Jest](https://jestjs.io/es-ES/) for testing.
 
 ### Coverage
 
-This project has a minimum of `70% line coverage`.
+The project has a minimum of `70% line coverage`.
 
 ### Run
 
