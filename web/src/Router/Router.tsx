@@ -5,9 +5,11 @@ import { Flex, Spinner } from '@chakra-ui/react';
 import Layout from '../layout/Layout';
 import { RoutesMappingUrl } from './RoutesMappingUrl';
 import CashInOperation from '../views/Operations/CashIn';
+import CashOutOperation from '../views/Operations/CashOut';
+import GetBalanceOperation from '../views/Operations/GetBalance';
+import RescueTokenOperation from '../views/Operations/RescueTokens';
 import WipeOperation from '../views/Operations/Wipe';
 import Dashboard from '../views/Dashboard';
-import GetBalanceOperation from '../views/Operations/GetBalance';
 import HandleRoles from '../views/Roles/HandleRoles';
 import { actions } from '../views/Roles/constants';
 import Login from '../views/Login';
@@ -16,11 +18,8 @@ import Roles from '../views/Roles';
 import StableCoinCreation from '../views/StableCoinCreation/StableCoinCreation';
 import StableCoinNotSelected from '../views/ErrorPage/StableCoinNotSelected';
 import SDKService, { HashConnectConnectionState } from '../services/SDKService';
-import {
-	hashpackActions,
-	HAS_WALLET_EXTENSION,
-	IS_INITIALIZED,
-} from '../store/slices/hashpackSlice';
+import { hashpackActions, IS_INITIALIZED } from '../store/slices/hashpackSlice';
+import { walletActions, HAS_WALLET_EXTENSION } from '../store/slices/walletSlice';
 
 const PrivateRoute = ({ status }: { status?: HashConnectConnectionState }) => {
 	return (
@@ -60,9 +59,9 @@ const Router = () => {
 
 	const onInit = () => dispatch(hashpackActions.setInitialized());
 
-	const onWalletExtensionFound = () => dispatch(hashpackActions.setHasWalletExtension());
+	const onWalletExtensionFound = () => dispatch(walletActions.setHasWalletExtension());
 
-	const onWalletPaired = () => setStatus('Paired' as HashConnectConnectionState);
+	const onWalletPaired = () => setStatus(HashConnectConnectionState.Paired);
 
 	const instanceSDK = async () =>
 		await SDKService.getInstance({ onInit, onWalletExtensionFound, onWalletPaired });
@@ -72,7 +71,7 @@ const Router = () => {
 			const status = await SDKService.getStatus();
 			setStatus(status);
 		} catch {
-			setStatus('Disconnected' as HashConnectConnectionState);
+			setStatus(HashConnectConnectionState.Disconnected);
 		}
 	};
 
@@ -89,6 +88,8 @@ const Router = () => {
 						<Route element={<PrivateRoute status={status} />}>
 							<Route path={RoutesMappingUrl.balance} element={<GetBalanceOperation />} />
 							<Route path={RoutesMappingUrl.cashIn} element={<CashInOperation />} />
+							<Route path={RoutesMappingUrl.cashOut} element={<CashOutOperation />} />
+							<Route path={RoutesMappingUrl.rescueTokens} element={<RescueTokenOperation />} />
 							<Route path={RoutesMappingUrl.wipe} element={<WipeOperation />} />
 							<Route path={RoutesMappingUrl.dashboard} element={<Dashboard />} />
 							<Route

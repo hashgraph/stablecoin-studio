@@ -125,7 +125,7 @@ export default class StableCoinService extends Service {
 
 	public async cashIn(
 		req: ICashInStableCoinServiceRequestModel,
-	): Promise<Uint8Array> {
+	): Promise<boolean> {
 		// TODO validation
 		const coin: StableCoin = await this.getStableCoin({
 			id: req.tokenId,
@@ -135,24 +135,51 @@ export default class StableCoinService extends Service {
 		if (coin.maxSupply > 0n && amount > coin.maxSupply - coin.totalSupply) {
 			throw new Error('Amount is bigger than allowed supply');
 		}
-		return this.repository.cashIn(
-			req.proxyContractId,
-			req.privateKey,
-			req.accountId,
-			req.targetId,
-			amount,
-		);
+		let resultCashIn = false;
+		
+		const capabilities: Capabilities[] = await this.getCapabilitiesStableCoin(req.tokenId, req.privateKey.publicKey.key);
+		if (capabilities.includes(Capabilities.CASH_IN)){
+			const result = await this.repository.cashIn(
+				req.proxyContractId,
+				req.privateKey,
+				req.accountId,
+				req.targetId,
+				amount,
+			);
+			resultCashIn = Boolean(result[0]);
+		} else if (capabilities.includes(Capabilities.CASH_IN_HTS)){
+			resultCashIn = await this.repository.cashInHTS(
+				req.privateKey,
+				req.accountId,
+				req.tokenId,				
+				amount,
+			);
+			if (resultCashIn && req.accountId.id != req.targetId){				
+				resultCashIn = await this.repository.transferHTS(
+					req.privateKey,
+					req.accountId,
+					req.tokenId,				
+					amount,
+					req.accountId.id,
+					req.targetId
+				)
+			}
+		} else {
+			throw new Error('Cash in not allowed'); 
+		}
+		return resultCashIn;
 	}
 
 	public async cashOut(
 		req: ICashOutStableCoinServiceRequestModel,
-	): Promise<Uint8Array> {
+	): Promise<boolean> {
+		// TODO validate
 		const coin: StableCoin = await this.getStableCoin({
 			id: req.tokenId,
 		});
 		const treasruyAccount: string = coin.treasury.id;
 		const amount = coin.toInteger(req.amount);
-		/*
+
 		const tokenOwnerBalance = await this.getBalanceOf({
 			accountId: req.accountId,
 			privateKey: req.privateKey,
@@ -160,16 +187,32 @@ export default class StableCoinService extends Service {
 			targetId: treasruyAccount,
 			tokenId: req.tokenId,
 		});
-		if (amount > tokenOwnerBalance[0]) {
+		if (amount > coin.toInteger(tokenOwnerBalance[0])) {
 			throw new Error('Amount is bigger than treasury account balance');
 		}
-		*/
-		return this.repository.cashOut(
-			req.proxyContractId,
-			req.privateKey,
-			req.accountId,
-			amount,
-		);
+
+		let resultCashOut = false;
+		const capabilities: Capabilities[] = await this.getCapabilitiesStableCoin(req.tokenId, req.privateKey.publicKey.key);
+		if (capabilities.includes(Capabilities.CASH_OUT)){
+			const result = await this.repository.cashOut(
+				req.proxyContractId,
+				req.privateKey,
+				req.accountId,
+				amount,
+			);
+			resultCashOut = Boolean(result[0]);
+
+		} else if (capabilities.includes(Capabilities.CASH_OUT_HTS)){
+			resultCashOut = await this.repository.cashOutHTS(
+				req.privateKey,
+				req.accountId,
+				req.tokenId,				
+				amount,
+			);			
+		} else {
+			throw new Error('Cash out not allowed'); 
+		}
+		return resultCashOut
 	}
 
 	public async associateToken(
@@ -184,7 +227,7 @@ export default class StableCoinService extends Service {
 
 	public async wipe(
 		req: IWipeStableCoinServiceRequestModel,
-	): Promise<Uint8Array> {
+	): Promise<boolean> {
 		const coin: StableCoin = await this.getStableCoin({
 			id: req.tokenId,
 		});
@@ -207,14 +250,31 @@ export default class StableCoinService extends Service {
 		if (balance[0] < req.amount) {
 			throw new Error(`Insufficient funds on account ${req.targetId}`);
 		}
+		
+		let resultWipe = false;
+		const capabilities: Capabilities[] = await this.getCapabilitiesStableCoin(req.tokenId, req.privateKey.publicKey.key);
+		if (capabilities.includes(Capabilities.WIPE)){
+			const result = await this.repository.wipe(
+				req.proxyContractId,
+				req.privateKey,
+				req.accountId,
+				req.targetId,
+				coin.toInteger(req.amount),
+			);
+			resultWipe = Boolean(result[0]);
+		} else if (capabilities.includes(Capabilities.WIPE_HTS)){
+			resultWipe = await this.repository.wipeHTS(
+				req.privateKey,
+				req.accountId,
+				req.tokenId,
+				req.targetId,
+				coin.toInteger(req.amount),
+			);
+		} else {
+			throw new Error('Wipe not allowed'); 
+		}
 
-		return this.repository.wipe(
-			req.proxyContractId,
-			req.privateKey,
-			req.accountId,
-			req.targetId,
-			coin.toInteger(req.amount),
-		);
+		return resultWipe;
 	}
 
 	public async rescue(

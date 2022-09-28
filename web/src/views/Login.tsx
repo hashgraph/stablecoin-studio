@@ -1,7 +1,7 @@
 import { Flex } from '@chakra-ui/react';
 import { useSelector } from 'react-redux';
 import ModalHashpack from '../components/ModalHashpack';
-import { HAS_WALLET_EXTENSION } from '../store/slices/hashpackSlice';
+import { HAS_WALLET_EXTENSION } from '../store/slices/walletSlice';
 
 const Login = () => {
 	const hasWalletExtension = useSelector(HAS_WALLET_EXTENSION);

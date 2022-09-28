@@ -4,7 +4,12 @@ import IStableCoinList from 'port/in/sdk/response/IStableCoinList.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import IStableCoinRepository from './IStableCoinRepository.js';
 import NetworkAdapter from '../network/NetworkAdapter.js';
-import { ICallContractWithAccountRequest } from '../hedera/types.js';
+import {
+	ICallContractWithAccountRequest,
+	IHTSTokenRequest,
+	IWipeTokenRequest,
+	ITransferTokenRequest,
+} from '../hedera/types.js';
 import IStableCoinDetail from './types/IStableCoinDetail.js';
 import ITokenList from './types/ITokenList.js';
 import HederaError from '../hedera/error/HederaError.js';
@@ -257,7 +262,23 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 		return await this.networkAdapter.provider.callContract('mint', params);
 	}
+	public async cashInHTS(
+		privateKey: PrivateKey,
+		accountId: AccountId,
+		tokenId: string,
+		amount: number,
+	): Promise<boolean> {
+		const params: IHTSTokenRequest = {
+			account: {
+				privateKey: privateKey.key,
+				accountId: accountId.id,
+			},
+			tokenId: tokenId,
+			amount: amount,
+		};
 
+		return await this.networkAdapter.provider.cashInHTS(params);
+	}
 	public async cashOut(
 		treasuryId: string,
 		privateKey: PrivateKey,
@@ -277,6 +298,25 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			},
 		};
 		return await this.networkAdapter.provider.callContract('burn', params);
+
+	}
+
+	public async cashOutHTS(
+		privateKey: PrivateKey,
+		accountId: AccountId,
+		tokenId: string,
+		amount: number,
+	): Promise<boolean> {
+		const params: IHTSTokenRequest = {
+			account: {
+				privateKey: privateKey.key,
+				accountId: accountId.id,
+			},
+			tokenId: tokenId,
+			amount: amount,
+		};
+
+		return await this.networkAdapter.provider.cashOutHTS(params);
 	}
 
 	public async associateToken(
@@ -329,6 +369,26 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		};
 
 		return await this.networkAdapter.provider.callContract('wipe', params);
+	}
+
+	public async wipeHTS(
+		privateKey: PrivateKey,
+		accountId: AccountId,
+		tokenId: string,
+		wipeAccountId: string,
+		amount: number,
+	): Promise<boolean> {
+		const params: IWipeTokenRequest = {
+			account: {
+				privateKey: privateKey.key,
+				accountId: accountId.id,
+			},
+			tokenId: tokenId,
+			wipeAccountId: wipeAccountId,
+			amount: amount,
+		};
+
+		return await this.networkAdapter.provider.wipeHTS(params);
 	}
 
 	public async grantSupplierRole(
@@ -664,5 +724,27 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			'hasRole',
 			params,
 		);
+	}
+
+	public async transferHTS(
+		privateKey: PrivateKey,
+		accountId: AccountId,
+		tokenId: string,
+		amount: number,
+		outAccountId: string,
+		inAccountId: string, 
+	): Promise<boolean> {
+		const params: ITransferTokenRequest = {
+			account: {
+				privateKey: privateKey.key,
+				accountId: accountId.id,
+			},
+			tokenId: tokenId,
+			amount: amount,
+			outAccountId: outAccountId,
+			inAccountId: inAccountId
+		};
+
+		return await this.networkAdapter.provider.transferHTS(params);
 	}
 }

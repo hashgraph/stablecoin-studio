@@ -1,14 +1,8 @@
 import {
-	Transaction,
-	ContractExecuteTransaction,
-	TokenCreateTransaction,
-	Hbar,
-	TokenSupplyType,
-	ContractCreateFlow,
-	PrivateKey,
+	Transaction, ContractExecuteTransaction, TokenCreateTransaction, Hbar, TokenSupplyType, ContractCreateFlow, PrivateKey,
+	TokenWipeTransaction, TokenMintTransaction, TokenBurnTransaction, TokenId, AccountId, TransferTransaction,
 	PublicKey as HPublicKey,
 	DelegateContractId,
-	AccountId,
 } from '@hashgraph/sdk';
 import { ContractId, PublicKey } from '../../../in/sdk/sdk.js';
 import { ICreateTokenResponse } from '../types.js';
@@ -105,4 +99,37 @@ export class TransactionProvider {
 		}
 		return transaction;
 	}
+
+	public static buildTokenWipeTransaction (accountId:string, tokenId: string, amount:number): Transaction{
+        const transaction =  new TokenWipeTransaction()
+		.setAccountId(AccountId.fromString(accountId))
+		.setTokenId(TokenId.fromString(tokenId))
+		.setAmount(amount)
+	
+        return transaction;
+    }
+
+	public static buildTokenMintTransaction (tokenId: string, amount:number): Transaction{
+        const transaction =  new TokenMintTransaction()
+		.setTokenId(TokenId.fromString(tokenId))
+		.setAmount(amount)
+	
+        return transaction;
+    }
+
+	public static buildTokenBurnTransaction (tokenId: string, amount:number): Transaction{
+        const transaction =  new TokenBurnTransaction()
+		.setTokenId(TokenId.fromString(tokenId))
+		.setAmount(amount)
+	
+        return transaction;
+    }
+	public static buildTransferTransaction (tokenId: string, amount: number, outAccountId: string, inAccountId: string): Transaction{
+        const transaction = new TransferTransaction()
+		.addTokenTransfer(tokenId, AccountId.fromString(outAccountId), -amount)
+		.addTokenTransfer(tokenId, AccountId.fromString(inAccountId), amount);
+	
+        return transaction;
+    }
 }
+

@@ -266,9 +266,7 @@ export class SDK {
 	/**
 	 * cashIn
 	 */
-	public cashIn(
-		request: ICashInStableCoinRequest,
-	): Promise<Uint8Array> | null {
+	public cashIn(request: ICashInStableCoinRequest): Promise<boolean> | null {
 		try {
 			const req: ICashInStableCoinServiceRequestModel = {
 				...request,
@@ -287,7 +285,7 @@ export class SDK {
 	 */
 	public cashOut(
 		request: ICashOutStableCoinRequest,
-	): Promise<Uint8Array> | null {
+	): Promise<boolean> | null {
 		try {
 			const req: ICashOutStableCoinServiceRequestModel = {
 				...request,
@@ -323,7 +321,7 @@ export class SDK {
 	/**
 	 * wipeToken
 	 */
-	public wipe(request: IWipeStableCoinRequest): Promise<Uint8Array> | null {
+	public wipe(request: IWipeStableCoinRequest): Promise<boolean> | null {
 		try {
 			const req: IWipeStableCoinServiceRequestModel = {
 				...request,
