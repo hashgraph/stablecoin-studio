@@ -19,7 +19,12 @@ const StableCoinCreation = () => {
 	const { t } = useTranslation('stableCoinCreation');
 
 	const form = useForm({ mode: 'onChange', defaultValues: {} });
-	const { control, getValues, watch } = form;
+	const {
+		control,
+		getValues,
+		watch,
+		formState: { errors },
+	} = form;
 
 	const [isValidForm, setIsValidForm] = useState(false);
 	const [currentStep, setCurrentStep] = useState(0);
@@ -59,7 +64,7 @@ const StableCoinCreation = () => {
 
 		if (currentStep === 0) {
 			// @ts-ignore
-			fieldsStep = watch(['name', 'symbol']);
+			fieldsStep = watch(['name', 'symbol', 'autorenewAccount']);
 		}
 
 		if (currentStep === 1) {
@@ -97,7 +102,9 @@ const StableCoinCreation = () => {
 			}
 		}
 
-		return setIsValidForm(fieldsStep?.filter((item) => !item).length === 0);
+		return setIsValidForm(
+			fieldsStep?.filter((item) => !item).length === 0 && Object.keys(errors).length === 0,
+		);
 	};
 
 	const handleFinish = () => {

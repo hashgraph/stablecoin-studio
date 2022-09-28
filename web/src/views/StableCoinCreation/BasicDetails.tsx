@@ -2,6 +2,7 @@ import { Heading, Stack, VStack } from '@chakra-ui/react';
 import type { Control, FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import InputController from '../../components/Form/InputController';
+import { validateAccount } from '../../utils/validationsHelper';
 
 interface BasicDetailsProps {
 	control: Control<FieldValues>;
@@ -44,6 +45,21 @@ const BasicDetails = (props: BasicDetailsProps) => {
 						name={'symbol'}
 						label={t('stableCoinCreation:basicDetails.symbol')}
 						placeholder={t('stableCoinCreation:basicDetails.symbolPlaceholder')}
+					/>
+					<InputController
+						rules={{
+							required: t(`global:validations.required`),
+							validate: {
+								validAccount: (value: string) => {
+									return validateAccount(value) || t('global:validations.invalidAccount');
+								},
+							},
+						}}
+						isRequired
+						control={control}
+						name={'autorenewAccount'}
+						label={t('stableCoinCreation:basicDetails.autorenewAccount')}
+						placeholder={t('stableCoinCreation:basicDetails.autorenewAccountPlaceholder')}
 					/>
 				</Stack>
 			</Stack>
