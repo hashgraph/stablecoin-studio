@@ -5,7 +5,7 @@ import DetailsReview from '../../../components/DetailsReview';
 import InputController from '../../../components/Form/InputController';
 import InputNumberController from '../../../components/Form/InputNumberController';
 import SDKService from '../../../services/SDKService';
-import { validateAccount } from '../../../utils/validationsHelper';
+import { validateAccount, validateDecimals } from '../../../utils/validationsHelper';
 import OperationLayout from './../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
@@ -67,10 +67,8 @@ const CashInOperation = () => {
 								rules={{
 									required: t('global:validations.required'),
 									validate: {
-										maxDecimals: (value: string) => {
-											const decimalsValue = (value + '').split('.')[1];
-											const dec = decimalsValue ? decimalsValue.length : 0;
-											return dec < decimals || t('cashIn:decimalsValidation');
+										maxDecimals: (value: number) => {
+											return validateDecimals(value, decimals) || t('cashIn:decimalsValidation');
 										},
 									},
 								}}

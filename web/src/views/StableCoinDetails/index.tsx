@@ -10,12 +10,12 @@ const StableCoinDetails = () => {
 	const { t } = useTranslation('stableCoinDetails');
 
 	return (
-		<BaseContainer title='Stable coin details'>
+		<BaseContainer title={t('title')}>
 			<Flex justify='center' p={{ base: 4, md: '128px' }} pt={{ base: 4, lg: 14 }}>
 				{selectedStableCoin && (
 					<Box flex={1} maxW='563px'>
 						<DetailsReview
-							title={t('title')}
+							title={t('subtitle')}
 							titleProps={{ fontWeight: 'bold' }}
 							contentProps={{ justifyContent: 'start', gap: 4 }}
 							details={[
