@@ -1,5 +1,5 @@
 import { HederaNetwork, HederaNetworkEnviroment, NetworkMode, SDK } from 'hedera-stable-coin-sdk';
-import type { AppMetadata, InitializationData, AcknowledgeMessage } from 'hedera-stable-coin-sdk';
+import type { AppMetadata, InitializationData } from 'hedera-stable-coin-sdk';
 import type IStableCoinList from 'hedera-stable-coin-sdk/build/src/port/in/sdk/response/IStableCoinList';
 import type IStableCoinDetail from 'hedera-stable-coin-sdk/build/src/port/in/sdk/response/IStableCoinDetail';
 
@@ -31,7 +31,6 @@ interface EventsSetter {
 	onInit: () => void;
 	onWalletExtensionFound: () => void;
 	onWalletPaired: () => void;
-	onWalletAcknowledgeMessageEvent: (msg: AcknowledgeMessage) => void;
 }
 
 export class SDKService {
@@ -48,7 +47,7 @@ export class SDKService {
 				},
 			});
 
-			const { onInit, onWalletExtensionFound, onWalletPaired, onWalletAcknowledgeMessageEvent } =
+			const { onInit, onWalletExtensionFound, onWalletPaired } =
 				events || {
 					onInit: () => {},
 					onWalletAcknowledgeMessageEvent: () => {},
@@ -59,7 +58,6 @@ export class SDKService {
 			await SDKService.instance.init({ onInit });
 			SDKService.instance.onWalletExtensionFound(onWalletExtensionFound);
 			SDKService.instance.onWalletPaired(onWalletPaired);
-			SDKService.instance.onWalletAcknowledgeMessageEvent(onWalletAcknowledgeMessageEvent);
 		}
 
 		return SDKService.instance;
