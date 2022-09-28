@@ -87,7 +87,7 @@ export default class OperationStableCoinService extends Service {
   private async operationsStableCoin(): Promise<void> {
     const sdk: SDK = utilsService.getSDK();
     const currentAccount = utilsService.getCurrentAccount();
-    let wizardOperationsStableCoinOptions = language.getArray(
+    const wizardOperationsStableCoinOptions = language.getArray(
       'wizard.stableCoinOptions',
     );
 
