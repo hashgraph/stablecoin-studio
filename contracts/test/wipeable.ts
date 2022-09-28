@@ -1,5 +1,5 @@
-const { ContractFunctionParameters, ContractId, AccountId } = require("@hashgraph/sdk");
-require("@hashgraph/hardhat-hethers");
+const { ContractId, AccountId } = require("@hashgraph/sdk");
+import "@hashgraph/hardhat-hethers";
 require("@hashgraph/sdk");
 
 import { expect } from "chai";
@@ -8,7 +8,7 @@ import { HederaERC20__factory } from "../typechain-types";
 
 const hre = require("hardhat");
 const hreConfig = hre.network.config;
-const WIPE_ROLE : string = '0x515f99f4e5a381c770462a8d9879a01f0fd4a414a168a2404dab62a62e1af0c3';
+const WIPE_ROLE  = '0x515f99f4e5a381c770462a8d9879a01f0fd4a414a168a2404dab62a62e1af0c3';
 
 describe("Operations to WIPE tokens", function() {
   let proxyAddress:any;
