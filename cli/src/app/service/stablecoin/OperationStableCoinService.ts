@@ -409,7 +409,7 @@ export default class OperationStableCoinService extends Service {
             do {
               limit = await utilsService
                 .defaultSingleAsk(
-                  language.getText('stablecoin.amountDecrease'),
+                  language.getText('stablecoin.amountIncrease'),
                   '1',
                 )
                 .then((val) => val.replace(',', '.'));
