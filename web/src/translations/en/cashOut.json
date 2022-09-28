@@ -1,0 +1,15 @@
+{
+    "title": "Cash out operation",
+    "operationTitle": "Operation details",
+    "amountLabel": "How much tokens?",
+    "amountPlaceholder": "Introduce amount",
+    "originAccountLabel": "From which account tokens will be withdrawn?",
+    "originAccountPlaceholder": "Introduce account",
+    "modalSuccessDesc": "The cash out operation finished successfully.",
+    "modalAction": {
+        "subtitle": "Operation details review",
+        "originAccount": "Account to cash out",
+        "amount": "Amount",
+        "accept": "Make cash out"
+    }
+}
