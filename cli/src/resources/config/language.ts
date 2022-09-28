@@ -74,7 +74,7 @@ export const english = {
     created:
       'Stable Coin ${name} (${symbol}) with ${decimals} decimals have been created!',
     askCashInAmount: 'How many tokens do you want to cash in?',
-    askCashOutAmount: 'How many tokens do you want to cash out?',
+    askBurnAmount: 'How many tokens do you want to burn?',
     askWipeAmount: 'How many tokens do you want to wipe?',
     askRescueAmount: 'How many tokens do you want to rescue?',
     askTargetAccount: 'What is the target account?',
@@ -166,7 +166,7 @@ export const english = {
       'Cash in',
       'Details',
       'Balance',
-      'Cash out',
+      'Burn',
       'Wipe',
       'Rescue',
       'Role management',

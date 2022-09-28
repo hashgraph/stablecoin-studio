@@ -10,12 +10,12 @@ import DetailsStableCoinsService from './DetailsStableCoinService.js';
 import { SDK, StableCoin, StableCoinRole } from 'hedera-stable-coin-sdk';
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 import CashInStableCoinsService from './CashInStableCoinService.js';
-import CashOutStableCoinsService from './CashOutStableCoinService.js';
 import WipeStableCoinsService from './WipeStableCoinService.js';
 import RoleStableCoinsService from './RoleStableCoinService.js';
 import RescueStableCoinsService from './RescueStableCoinService.js';
 import colors from 'colors';
 import CapabilitiesStableCoinsService from './CapabilitiesStableCoinService.js';
+import BurnStableCoinsService from './BurnStableCoinService.js';
 
 /**
  * Operation Stable Coin Service
@@ -181,15 +181,15 @@ export default class OperationStableCoinService extends Service {
         }
 
         break;
-      case 'Cash out':
+      case 'Burn':
         await utilsService.cleanAndShowBanner();
 
         const amount2Burn = await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.askCashOutAmount'),
+          language.getText('stablecoin.askBurnAmount'),
           '1',
         );
         try {
-          await new CashOutStableCoinsService().cashOutStableCoin(
+          await new BurnStableCoinsService().burnStableCoin(
             this.proxyContractId,
             configurationService.getConfiguration().accounts[0].privateKey,
             configurationService.getConfiguration().accounts[0].accountId,
@@ -668,7 +668,7 @@ export default class OperationStableCoinService extends Service {
         (option === 'Cash in' &&
           (capabilities.includes('Cash in') ||
             capabilities.includes('Cash in hts'))) ||
-        (option === 'Cash out' &&
+        (option === 'Burn' &&
           (capabilities.includes('Cash out') ||
             capabilities.includes('Cash out hts'))) ||
         (option === 'Wipe' &&
