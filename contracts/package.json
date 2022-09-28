@@ -17,7 +17,8 @@
     "build:watch": "npx tsc -w -p tsconfig.json",
     "build:release": "npm run clean && tsc -p tsconfig.release.json",
     "preinstall": "npm run build",
-    "doc": "npx hardhat dodoc"
+    "doc": "npx hardhat dodoc",
+    "security": "docker run -t --rm -v /var/run/docker.sock:/var/run/docker.sock -v \"$(pwd)\":\"/home/ethsec/contracts\" -w \"/home/ethsec/contracts\" -u 0:0 trailofbits/eth-security-toolbox -c \"solc-select use 0.8.13  && slither ./contracts --solc-remaps @=node_modules/@\""
   },
   "author": "",
   "license": "ISC",
