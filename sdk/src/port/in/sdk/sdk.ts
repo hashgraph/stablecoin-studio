@@ -1,4 +1,5 @@
 import IStableCoinList from './response/IStableCoinList.js';
+import IStableCoinDetail from './response/IStableCoinDetail.js';
 import ContractsService from '../../../app/service/contract/ContractsService.js';
 import StableCoinService from '../../../app/service/stablecoin/StableCoinService.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
@@ -50,9 +51,17 @@ import { IAllowanceRequest } from './request/IRequestContracts.js';
 import {
 	HashConnectConnectionState,
 	HashConnectTypes,
-} from 'hashconnect/dist/cjs/types/hashconnect.js';
+} from 'hashconnect/dist/esm/types/hashconnect.js';
 import { AppMetadata } from '../../out/hedera/hashpack/types/types.js';
-import { InitializationData } from '../../out/hedera/types.js';
+import {
+	AcknowledgeMessage,
+	AdditionalAccountRequestMessage,
+	AdditionalAccountResponseMessage,
+	ApprovePairingMessage,
+	AuthenticationRequestMessage,
+	AuthenticationResponseMessage,
+	InitializationData,
+} from '../../out/hedera/types.js';
 import { ProviderEventNames } from '../../out/hedera/ProviderEvent.js';
 import EventService from '../../../app/service/event/EventService.js';
 import { IProvider } from '../../out/hedera/Provider.js';
@@ -91,6 +100,12 @@ export {
 	StableCoinRole,
 	InitializationData,
 	SavedPairingData,
+	AcknowledgeMessage,
+	AdditionalAccountRequestMessage,
+	AdditionalAccountResponseMessage,
+	ApprovePairingMessage,
+	AuthenticationRequestMessage,
+	AuthenticationResponseMessage,
 	Capabilities,
 };
 
@@ -218,6 +233,15 @@ export class SDK {
 			...request,
 		};
 		return this.stableCoinService.getStableCoin(req);
+	}
+
+	public getStableCoinDetails(
+		request: IGetStableCoinRequest,
+	): Promise<IStableCoinDetail> | null {
+		const req: IGetStableCoinServiceRequestModel = {
+			...request,
+		};
+		return this.stableCoinService.getStableCoinDetails(req);
 	}
 
 	/**
@@ -578,7 +602,7 @@ export class SDK {
 	}
 
 	public onWalletAcknowledgeMessageEvent(
-		listener: (state: HashConnectConnectionState) => void,
+		listener: (state: AcknowledgeMessage) => void,
 	): void {
 		this.eventService.on(
 			ProviderEventNames.providerAcknowledgeMessageEvent,

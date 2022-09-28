@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { walletSlice } from './slices/walletSlice';
 import { hashpackSlice } from './slices/hashpackSlice';
-	
+
 const store = configureStore({
 	reducer: {
 		hashpack: hashpackSlice.reducer,
