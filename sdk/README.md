@@ -112,15 +112,13 @@ try {
 
 
 ````
-
-# Usage
-
-## Preface
+## Before using
 The SDK supports both client-side and server-side implementations, keeping in mind that only one `NetworkMode` is currently available for each environment.
 
 On client-side applications, such as React, use `NetworkMode.HASHPACK`.
 On server-side applications, such as Node applications, use `NetworkMode.EOA` and supply the credentials.
 
+# Usage
 To use the SDK, simply instantiate with the `new` keyword:
 
 ````Javascript
