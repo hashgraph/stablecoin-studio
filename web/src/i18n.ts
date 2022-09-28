@@ -9,6 +9,7 @@ import GET_BALANCE_EN from './translations/en/getBalance.json';
 import GLOBAL_EN from './translations/en/global.json';
 import GLOBAL_ES from './translations/es/global.json';
 import OPERATIONS_EN from './translations/en/operations.json';
+import RESCUE_TOKENS_EN from './translations/en/rescueTokens.json';
 import ROLES_EN from './translations/en/roles.json';
 import STABLE_COIN_CREATION_EN from './translations/en/stableCoinCreation.json';
 import WIPE_EN from './translations/en/wipe.json';
@@ -32,6 +33,7 @@ i18n
 				getBalance: GET_BALANCE_EN,
 				global: GLOBAL_EN,
 				operations: OPERATIONS_EN,
+				rescueTokens: RESCUE_TOKENS_EN,
 				roles: ROLES_EN,
 				stableCoinCreation: STABLE_COIN_CREATION_EN,
 				wipe: WIPE_EN,
