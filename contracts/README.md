@@ -25,6 +25,8 @@ These are the contents you can find in this project:
  - `package.json`: Node project configuration file.
  - `prettier.config.js`: Several languages code formatter configuration file.
  - `README.md`
+ - `slither.config.json`: Slither configuration file.
+ - `slither.report.json`: Slither report file.
  - `tsconfig.json`: TypeScript configuration file.
 
 ## Building
@@ -40,7 +42,7 @@ You must have installed
 
 From root of the project workspace:
 
-1. Run `cd contracts`. This will put you in the contracts folder.
+1. Execute `cd contracts`. This will put you in the contracts folder.
 2. Run `npm install`. This will create and populate `node_modules`.
 
 To compile the contracts, you can choose one of the following two alternatives:
@@ -153,5 +155,15 @@ npm run size
 
 Lints Solidity code.
 ```shell
-npm run lint
+npm run lint:sol
+```
+
+Lints TypeScript code.
+```shell
+npm run lint:ts
+```
+
+Launches slither security report.
+```shell
+npm run security
 ```
