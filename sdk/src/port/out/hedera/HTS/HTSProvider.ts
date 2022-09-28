@@ -211,6 +211,10 @@ export default class HTSProvider implements IProvider {
 			accountId,
 			privateKey,
 		};
+		log(
+			`Deploying ${HederaERC20__factory.name} contract... please wait.`,
+			logOpts,
+		);
 		const tokenContract = await this.deployContract(
 			HederaERC20__factory,
 			plainAccount.privateKey,
@@ -668,10 +672,14 @@ export default class HTSProvider implements IProvider {
 	}	
 
 	public logHashScan(transactionResponse: TransactionResponse, operation?:string):void{
-		let log =` https://hashscan.io/#/${this.network.hederaNetworkEnviroment}/transaction/${transactionResponse.transactionId.toString().replace('@', '-')}`;
-		const num:number =log.lastIndexOf('.');
+		let hs =` https://hashscan.io/#/${this.network.hederaNetworkEnviroment}/transaction/${transactionResponse.transactionId.toString().replace('@', '-')}`;
+		const num:number =hs.lastIndexOf('.');
 		
-		log = log.substring(0, num  ) +'-' + log.substring(num+1, log.length) ;
-		console.log(`\n ${log} \n`);
+		hs = hs.substring(0, num  ) +'-' + hs.substring(num+1, hs.length) ;
+		log(
+			`${hs} \n`,
+			logOpts,
+		);
+		
 	}
 }
