@@ -8,7 +8,7 @@ export enum NamedRoutes {
 	GiveRole = 'giveRole',
 	Login = 'login',
 	Operations = 'operations',
-	Rescue = 'rescue',
+	RescueTokens = 'rescueTokens',
 	RevokeRole = 'revokeRole',
 	Roles = 'roles',
 	StableCoinCreation = 'stableCoinCreation',

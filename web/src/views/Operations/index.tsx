@@ -24,9 +24,8 @@ const Operations = () => {
 		},
 		{
 			icon: 'ArrowsDownUp',
-			route: NamedRoutes.Rescue,
+			route: NamedRoutes.RescueTokens,
 			title: t('rescueOperation'),
-			variant: 'disabled',
 		},
 		{
 			icon: 'MinusCircle',
