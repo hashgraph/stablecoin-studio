@@ -31,5 +31,7 @@ export const walletSlice = createSlice({
 export const SELECTED_WALLET = (state: RootState) => state.wallet;
 export const SELECTED_WALLET_DATA: any = (state: RootState) => state.wallet.data;
 export const SELECTED_WALLET_PAIRED: any = (state: RootState) => state.wallet.data.savedPairings[0];
+export const SELECTED_WALLET_PAIRED_ACCOUNTID: any = (state: RootState) =>
+	state.wallet.data.savedPairings[0].accountIds[0];
 
 export const walletActions = walletSlice.actions;
