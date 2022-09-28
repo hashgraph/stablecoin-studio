@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import type { InitializationData, StableCoin } from 'hedera-stable-coin-sdk';
+import type { InitializationData } from 'hedera-stable-coin-sdk';
+import type IStableCoinDetail from 'hedera-stable-coin-sdk/build/src/port/in/sdk/response/IStableCoinDetail';
 import type IStableCoinList from 'hedera-stable-coin-sdk/build/src/port/in/sdk/response/IStableCoinList';
 import SDKService from '../../services/SDKService';
 import type { RootState } from '../store';
@@ -9,7 +10,7 @@ interface InitialStateProps {
 	hasWalletExtension: boolean;
 	isPaired: boolean;
 	loading: boolean;
-	selectedStableCoin?: StableCoin;
+	selectedStableCoin?: IStableCoinDetail;
 	stableCoinList?: IStableCoinList[];
 }
 

@@ -1,0 +1,10 @@
+{
+    "title": "Stable coin details",
+    "subtitle": "Stable coin basic information",
+    "tokenId": "Token ID",
+    "name": "Name",
+    "symbol": "Symbol",
+    "initialSupply": "Initial supply",
+    "decimals": "Decimals"
+
+}

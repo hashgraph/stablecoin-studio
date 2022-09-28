@@ -3,7 +3,6 @@ export enum NamedRoutes {
 	CashIn = 'cashIn',
 	CashOut = 'cashOut',
 	Dashboard = 'dashboard',
-	Details = 'details',
 	EditRole = 'editRole',
 	GiveRole = 'giveRole',
 	Login = 'login',
@@ -12,6 +11,7 @@ export enum NamedRoutes {
 	RevokeRole = 'revokeRole',
 	Roles = 'roles',
 	StableCoinCreation = 'stableCoinCreation',
+	StableCoinDetails = 'stableCoinDetails',
 	StableCoinNotSelected = 'stableCoinNotSelected',
 	Wipe = 'wipe',
 }
