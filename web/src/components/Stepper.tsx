@@ -21,7 +21,7 @@ export interface Step {
 }
 
 interface StepperProps {
-	isValid: boolean | void;
+	isValid: boolean;
 	steps: Step[];
 	textDefaultButtonPrimary?: string;
 	textLastButtonPrimary?: string;

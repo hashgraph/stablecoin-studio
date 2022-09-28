@@ -42,6 +42,7 @@
     "theSmartContract": "The Smart Contract",
     "title": "Stable Coin management permissions",
     "totalSupply": "Total supply",
+    "treasuryAccountAddress": "Treasury account address",
     "wipe": "Wipe"
   },
   "review": {

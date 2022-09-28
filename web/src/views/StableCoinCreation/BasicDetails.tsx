@@ -12,43 +12,41 @@ const BasicDetails = (props: BasicDetailsProps) => {
 	const { t } = useTranslation(['global', 'stableCoinCreation']);
 
 	return (
-		<VStack h='full' justify={'space-between'}>
-			<VStack pt='80px'>
-				<Stack minW={400}>
-					<Heading
-						data-testid='title'
-						fontSize='16px'
-						fontWeight='600'
-						mb={10}
-						lineHeight='15.2px'
-						textAlign={'left'}
-					>
-						{t('stableCoinCreation:basicDetails.title')}
-					</Heading>
-					<Stack as='form' spacing={6}>
-						<InputController
-							rules={{
-								required: t(`global:validations.required`),
-							}}
-							isRequired
-							control={control}
-							name={'name'}
-							label={t('stableCoinCreation:basicDetails.name')}
-							placeholder={t('stableCoinCreation:basicDetails.namePlaceholder')}
-						/>
-						<InputController
-							rules={{
-								required: t(`global:validations.required`),
-							}}
-							isRequired
-							control={control}
-							name={'symbol'}
-							label={t('stableCoinCreation:basicDetails.symbol')}
-							placeholder={t('stableCoinCreation:basicDetails.symbolPlaceholder')}
-						/>
-					</Stack>
+		<VStack h='full' justify={'space-between'} pt='80px'>
+			<Stack minW={400}>
+				<Heading
+					data-testid='title'
+					fontSize='16px'
+					fontWeight='600'
+					mb={10}
+					lineHeight='15.2px'
+					textAlign={'left'}
+				>
+					{t('stableCoinCreation:basicDetails.title')}
+				</Heading>
+				<Stack as='form' spacing={6}>
+					<InputController
+						rules={{
+							required: t(`global:validations.required`),
+						}}
+						isRequired
+						control={control}
+						name={'name'}
+						label={t('stableCoinCreation:basicDetails.name')}
+						placeholder={t('stableCoinCreation:basicDetails.namePlaceholder')}
+					/>
+					<InputController
+						rules={{
+							required: t(`global:validations.required`),
+						}}
+						isRequired
+						control={control}
+						name={'symbol'}
+						label={t('stableCoinCreation:basicDetails.symbol')}
+						placeholder={t('stableCoinCreation:basicDetails.symbolPlaceholder')}
+					/>
 				</Stack>
-			</VStack>
+			</Stack>
 		</VStack>
 	);
 };

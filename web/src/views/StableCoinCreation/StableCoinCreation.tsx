@@ -13,7 +13,7 @@ import OptionalDetails from './OptionalDetails';
 import ManagementPermissions from './ManagementPermissions';
 import Review from './Review';
 import { useEffect, useState } from 'react';
-import { OTHER_KEY_VALUE } from '../../components/KeySelector';
+import { OTHER_KEY_VALUE } from './components/KeySelector';
 
 export const isInvalidForm = (formValues: FieldValues, inputs: string[]) => {
 	if (Object.keys(formValues).length === 0) return true;
@@ -69,6 +69,7 @@ const StableCoinCreation = () => {
 	];
 
 	const isValidStep = () => {
+		// @ts-ignore
 		let fieldsStep = [];
 
 		if (currentStep === 0) {
@@ -101,6 +102,11 @@ const StableCoinCreation = () => {
 					if (item?.value === OTHER_KEY_VALUE) {
 						// @ts-ignore
 						fieldsStep[index] = watch(keys[index].concat('Other'));
+					}
+
+					if (item?.value === OTHER_KEY_VALUE && index === 1) {
+						// @ts-ignore
+						fieldsStep = fieldsStep.concat(watch('treasuryAccountAddress'));
 					}
 				});
 			}
