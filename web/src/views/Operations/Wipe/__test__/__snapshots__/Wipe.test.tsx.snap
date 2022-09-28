@@ -315,14 +315,14 @@ exports[`<WipeOperation /> should render correctly 1`] = `
             class="chakra-stack css-1amf41o"
           >
             <button
-              class="chakra-button css-hg6n4b"
+              class="chakra-button css-6blmsx"
               data-testid="cancel-btn"
               type="button"
             >
               Go back
             </button>
             <button
-              class="chakra-button css-l6yrnw"
+              class="chakra-button css-16vubea"
               data-testid="confirm-btn"
               disabled=""
               type="button"

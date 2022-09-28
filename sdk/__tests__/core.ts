@@ -7,6 +7,7 @@ import {
 	NetworkMode,
 	HederaNetworkEnviroment,
 	SDK,
+	SDKInitOptions,
 } from '../src/index.js';
 
 const ACCOUNT_ID = '0.0.47822430';
@@ -42,8 +43,15 @@ export const SDKConfig: { hethers: Configuration; hashpack: Configuration } = {
 	},
 };
 
-export const getSDK = async (config?: Configuration): Promise<SDK> => {
-	return await new SDK(config ?? SDKConfig.hethers).init();
+export const getSDKAsync = async (
+	config?: Configuration,
+	initOptions?: SDKInitOptions,
+): Promise<SDK> => {
+	return await new SDK(config ?? SDKConfig.hethers).init(initOptions);
+};
+
+export const getSDK = (config?: Configuration): SDK => {
+	return new SDK(config ?? SDKConfig.hethers);
 };
 
 export const baseCoin: { name: string; symbol: string; decimals: number } = {
