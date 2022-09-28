@@ -38,6 +38,26 @@ export interface DatePickerControllerProps {
 	showErrors?: boolean;
 }
 
+const InputStyle = {
+	fontSize: '14px',
+	_focus: {
+		boxShadow: 'none',
+	},
+	_focusVisible: {
+		borderColor: 'inherit',
+	},
+	_hover: {
+		borderColor: 'brand.black',
+	},
+	_placeholder: {
+		color: 'brand.black',
+		fontSize: '14px',
+	},
+	_invalid: {
+		borderColor: 'brand.red',
+	},
+};
+
 const CustomInput = forwardRef<any, any>((props, ref) => {
 	return (
 		<InputGroup p={2} border='1px solid' borderColor='brand.black' borderRadius='8px'>
@@ -46,7 +66,7 @@ const CustomInput = forwardRef<any, any>((props, ref) => {
 					<Icon name='CalendarBlank' fontSize={24} color='brand.primary' />
 				</Flex>
 			</InputLeftElement>
-			<Input pl='40px' {...props} ref={ref} />
+			<Input pl='34px' {...props} ref={ref} variant='unstyled' {...InputStyle} />
 		</InputGroup>
 	);
 });
