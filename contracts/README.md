@@ -1,5 +1,3 @@
-<div align="center">
-
 # Hedera Stable Coin Smart Contracts
 
 ## Overview
