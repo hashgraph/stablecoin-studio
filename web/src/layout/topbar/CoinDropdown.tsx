@@ -54,7 +54,6 @@ const CoinDropdown = () => {
 		const stableCoinDetails = await SDKService.getStableCoinDetails({
 			id: selectedCoin,
 		});
-		console.log(stableCoinDetails);
 
 		// TODO: change this when sdk returns correct info
 		dispatch(

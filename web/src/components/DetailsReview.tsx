@@ -4,7 +4,7 @@ import { Box, Divider, Flex, Text } from '@chakra-ui/react';
 export interface Detail {
 	label: string;
 	labelInBold?: boolean;
-	value: string | number | any;
+	value: any; // TODO: string | number
 	valueInBold?: boolean;
 }
 
