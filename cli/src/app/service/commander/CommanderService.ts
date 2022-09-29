@@ -57,6 +57,7 @@ export default class CommanderService extends Service {
         );
         // Initialize SDK
         await utilsService.initSDK(utilsService.getCurrentNetwork().name);
+        await utilsService.cleanAndShowBanner();
         await wizardService.mainMenu();
       });
 

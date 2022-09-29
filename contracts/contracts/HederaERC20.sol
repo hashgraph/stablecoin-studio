@@ -101,19 +101,6 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
     }
 
     /**
-     * @dev Returns the number tokens that the token owner contract has
-     *
-     * @return uint256 The number number tokens that the token owner contract has
-     */
-    function tokenOwnerBalance() 
-        public 
-        view 
-        returns (uint256) 
-    {
-        return balanceOf(_getTokenOwnerAddress());
-    }
-
-    /**
      * @dev Associates a account to the token
      *
      * @param adr The address of the account to associate

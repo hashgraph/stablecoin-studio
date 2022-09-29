@@ -58,6 +58,10 @@ import EventService from '../../../app/service/event/EventService.js';
 import { IProvider } from '../../out/hedera/Provider.js';
 import { SavedPairingData } from '../../out/hedera/types.js';
 import { Capabilities } from '../../../domain/context/stablecoin/Capabilities.js';
+import { IGetSupplierAllowance } from './request/IGetSupplierAllowance.js';
+import IGetSupplierAllowanceModel from '../../../app/service/stablecoin/model/IGetSupplierAllowanceModel.js';
+import { XOR } from 'ts-xor';
+import { ISupplierRoleStableCoinRequest } from './request/ISupplierRoleStableCoinRequest.js';
 
 export {
 	IAssociateStableCoinRequest,
@@ -353,10 +357,10 @@ export class SDK {
 	 * check limited supplier role
 	 */
 	public supplierAllowance(
-		request: IBasicRequest,
+		request: IGetSupplierAllowance,
 	): Promise<Uint8Array> | null {
 		try {
-			const req: IGetBasicRequestModel = {
+			const req: IGetSupplierAllowanceModel = {
 				...request,
 				accountId: new AccountId(request.accountId),
 				privateKey: new PrivateKey(request.privateKey),
@@ -476,15 +480,17 @@ export class SDK {
 	}
 
 	public grantRole(
-		request: IRoleStableCoinRequest,
+		request: XOR<IRoleStableCoinRequest, ISupplierRoleStableCoinRequest>,
 	): Promise<Uint8Array> | null {
 		try {
-			const req: IRoleStableCoinServiceRequestModel = {
+			const req = {
 				...request,
 				accountId: new AccountId(request.accountId),
 				privateKey: new PrivateKey(request.privateKey),
 			};
-
+			if (req.role === StableCoinRole.SUPPLIER_ROLE) {
+				return this.stableCoinService.grantSupplierRole(req);
+			}
 			return this.stableCoinService.grantRole(req);
 		} catch (error) {
 			console.error(error);
@@ -500,8 +506,10 @@ export class SDK {
 				...request,
 				accountId: new AccountId(request.accountId),
 				privateKey: new PrivateKey(request.privateKey),
-				role: request.role,
 			};
+			if (request.role === StableCoinRole.SUPPLIER_ROLE) {
+				this.stableCoinService.revokeSupplierRole(req);
+			}
 			return this.stableCoinService.revokeRole(req);
 		} catch (error) {
 			console.error(error);

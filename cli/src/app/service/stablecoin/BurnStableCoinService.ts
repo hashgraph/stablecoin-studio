@@ -4,24 +4,23 @@ import Service from '../Service.js';
 import { SDK } from 'hedera-stable-coin-sdk';
 
 /**
- * Cash Out Stable Coin Service
+ * Burn Stable Coin Service
  */
-export default class CashOutStableCoinsService extends Service {
+export default class BurnStableCoinsService extends Service {
   constructor() {
-    super('Cash Out Stable Coin');
+    super('Burn Stable Coin');
   }
 
   /**
-   * List Stable Coins can be managed
+   * Burn Stable Coin
    */
-  public async cashOutStableCoin(
+  public async burnStableCoin(
     proxyContractId: string,
     privateKey: string,
     accountId: string,
     tokenId: string,
     amount?: number,
   ): Promise<void> {
-    // Call to list stable coins
     const sdk: SDK = utilsService.getSDK();
 
     let respDetail;
@@ -38,7 +37,7 @@ export default class CashOutStableCoinsService extends Service {
         .then((response) => (respDetail = response)),
       {
         text: language.getText('state.loading'),
-        successText: language.getText('state.loadCompleted') + '\n',
+        successText: language.getText('state.burnCompleted') + '\n',
       },
     );
 

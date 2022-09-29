@@ -7,4 +7,6 @@ import {
 export default interface IGetBasicRequestModel
 	extends IProxyContractIdRequestModel,
 		IAccountWithKeyRequestModel,
-		ITargetIdRequestModel {}
+		ITargetIdRequestModel {
+	tokenId?: string;
+}

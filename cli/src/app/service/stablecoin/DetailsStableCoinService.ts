@@ -31,7 +31,7 @@ export default class DetailsStableCoinsService extends Service {
         .then((response) => (respDetail = response)),
       {
         text: language.getText('state.loading'),
-        successText: language.getText('state.loadCompleted') + '\n',
+        successText: language.getText('state.detailsCompleted') + '\n',
       },
     );
 

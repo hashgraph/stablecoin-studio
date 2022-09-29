@@ -58,6 +58,7 @@
 		"@hashgraph/hethers": "^1.2.0",
 		"@hashgraph/sdk": "^2.18.0",
 		"hashconnect": "^0.2.3",
+		"ts-xor": "^1.0.8",
 		"tslib": "~2.4",
 		"uuid": "^9.0.0",
 		"web3": "^1.7.5"
