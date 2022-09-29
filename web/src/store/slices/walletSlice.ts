@@ -31,7 +31,7 @@ export const initialState: InitialStateProps = {
 export const getStableCoinList = createAsyncThunk('wallet/getStableCoinList', async () => {
 	try {
 		const stableCoins = await SDKService.getStableCoins({
-			privateKey: '302e020100300506032b657004220420b5745b7d095b8272720b7723ecf585b82569e8d8177910ec2b39c399d764ea04',
+			privateKey: 'pvkey',
 		});
 		return stableCoins;
 	} catch (e) {

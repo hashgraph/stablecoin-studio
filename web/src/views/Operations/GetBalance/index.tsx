@@ -38,7 +38,7 @@ const GetBalanceOperation = () => {
 						<Text color='brand.gray' data-testid='operation-title'>
 							{t('getBalance:operationTitle')}
 						</Text>
-						<Stack as='form' spacing={6}>
+						<Stack as='form' spacing={6} maxW='520px'>
 							<InputController
 								rules={{
 									required: t('global:validations.required'),
