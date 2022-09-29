@@ -24,6 +24,7 @@ const StepsProps = {
 	textLastButtonPrimary: 'Last button',
 	handleLastButtonPrimary: () => jest.fn,
 	handleFirstButtonSecondary: () => jest.fn,
+	isValid: true,
 };
 
 describe(`<${Stepper.name} />`, () => {

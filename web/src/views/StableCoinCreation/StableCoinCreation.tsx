@@ -1,7 +1,9 @@
 import { Box, Stack } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
 import BaseContainer from '../../components/BaseContainer';
+import BasicDetails from './BasicDetails';
 import type { Step } from '../../components/Stepper';
 import Stepper from '../../components/Stepper';
 import { NamedRoutes } from '../../Router/NamedRoutes';
@@ -10,6 +12,10 @@ import { RouterManager } from '../../Router/RouterManager';
 const StableCoinCreation = () => {
 	const navigate = useNavigate();
 	const { t } = useTranslation('stableCoinCreation');
+	const {
+		control,
+		formState: { isValid },
+	} = useForm({ mode: 'onChange' });
 
 	// TODO: change childrens props when components will be ready
 	const steps: Step[] = [
@@ -17,7 +23,7 @@ const StableCoinCreation = () => {
 			number: '01',
 			title: t('tabs.basicDetails'),
 			complete: false,
-			children: <Box>Tab 1</Box>,
+			children: <BasicDetails control={control} />,
 		},
 		{
 			number: '02',
@@ -53,6 +59,7 @@ const StableCoinCreation = () => {
 		handleLastButtonPrimary: handleFinish,
 		handleFirstButtonSecondary: handleCancel,
 		textLastButtonPrimary: t('common.createStableCoin'),
+		isValid,
 	};
 
 	return (
