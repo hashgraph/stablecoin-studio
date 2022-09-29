@@ -96,7 +96,7 @@ const Review = (props: ReviewProps) => {
 							},
 							{
 								label: t('stableCoinCreation:optionalDetails.totalSupply'),
-								value: supplyType?.value === 0 ? totalSupply : supplyType?.label,
+								value: supplyType?.value === 1 ? totalSupply : supplyType?.label,
 							},
 							{
 								label: t('stableCoinCreation:optionalDetails.decimals'),

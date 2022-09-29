@@ -17,11 +17,11 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 	const supplyTypes = [
 		{
 			value: 0,
-			label: t('stableCoinCreation:optionalDetails.finite'),
+			label: t('stableCoinCreation:optionalDetails.infinite'),
 		},
 		{
 			value: 1,
-			label: t('stableCoinCreation:optionalDetails.infinite'),
+			label: t('stableCoinCreation:optionalDetails.finite'),
 		},
 	];
 
@@ -50,7 +50,7 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 		useWatch({
 			control,
 			name: 'supplyType',
-		})?.value === 0;
+		})?.value === 1;
 
 	return (
 		<VStack h='full' justify={'space-between'} pt='80px'>
@@ -83,6 +83,7 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 						name={'supplyType'}
 						options={supplyTypes}
 						label={t('stableCoinCreation:optionalDetails.typeSupply')}
+						placeholder={t('stableCoinCreation:optionalDetails.typeSupplyPlaceholder')}
 						overrideStyles={selectorStyle}
 						addonLeft={true}
 						variant='unstyled'

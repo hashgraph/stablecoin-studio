@@ -149,7 +149,7 @@ const StableCoinCreation = () => {
 	};
 
 	const handleCancel = () => {
-		RouterManager.to(navigate, NamedRoutes.Dashboard);
+		RouterManager.to(navigate, NamedRoutes.Operations);
 	};
 
 	const stepperProps = {
