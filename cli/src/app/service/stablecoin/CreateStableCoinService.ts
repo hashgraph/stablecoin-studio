@@ -1,6 +1,12 @@
 import { configurationService, language } from './../../../index.js';
 import { utilsService } from '../../../index.js';
-import { SDK, ICreateStableCoinRequest, AccountId, PrivateKey, PublicKey } from 'hedera-stable-coin-sdk';
+import {
+  SDK,
+  ICreateStableCoinRequest,
+  AccountId,
+  PrivateKey,
+  PublicKey,
+} from 'hedera-stable-coin-sdk';
 import { IManagedFeatures } from '../../../domain/configuration/interfaces/IManagedFeatures.js';
 import Service from '../Service.js';
 import SetConfigurationService from '../configuration/SetConfigurationService.js';
@@ -21,7 +27,7 @@ export const createdStableCoin = {
   KYCKey: undefined,
   wipeKey: undefined,
   pauseKey: undefined,
-  treasury: undefined
+  treasury: undefined,
 };
 
 /**
@@ -41,7 +47,6 @@ export default class CreateStableCoinService extends Service {
     stableCoin: StableCoin,
     isWizard = false,
   ): Promise<StableCoin> {
-
     if (isWizard) {
       stableCoin = await this.wizardCreateStableCoin();
     }
@@ -49,7 +54,7 @@ export default class CreateStableCoinService extends Service {
     // Call to create stable coin sdk function
     const sdk: SDK = utilsService.getSDK();
     const currentAccount = utilsService.getCurrentAccount();
-            
+
     if (
       currentAccount.privateKey == null ||
       currentAccount.privateKey == undefined ||
@@ -174,7 +179,7 @@ export default class CreateStableCoinService extends Service {
     });
     if (managedBySC) {
       const currentAccount: IAccountConfig = utilsService.getCurrentAccount();
-      const privateKey: PrivateKey = new PrivateKey(currentAccount.privateKey);     
+      const privateKey: PrivateKey = new PrivateKey(currentAccount.privateKey);
       tokenToCreate = {
         name,
         symbol,
@@ -188,8 +193,8 @@ export default class CreateStableCoinService extends Service {
         //KYCKey,
         wipeKey: PublicKey.NULL,
         supplyKey: PublicKey.NULL,
-        pauseKey: PublicKey.NULL,        
-        treasury: AccountId.NULL
+        pauseKey: PublicKey.NULL,
+        treasury: AccountId.NULL,
       };
       if (
         !(await utilsService.defaultConfirmAsk(
@@ -197,6 +202,8 @@ export default class CreateStableCoinService extends Service {
           true,
         ))
       ) {
+        await utilsService.cleanAndShowBanner();
+
         tokenToCreate = await this.wizardCreateStableCoin();
       }
       return tokenToCreate;
@@ -212,24 +219,8 @@ export default class CreateStableCoinService extends Service {
     createdStableCoin.wipeKey = wipeKey;
     createdStableCoin.pauseKey = pauseKey;
 
-    let treasury;
+    const treasury = this.getTreasuryAccountFromSupplyKey(supplyKey);
 
-    /*if (supplyKey !== language.getArray('wizard.featureOptions')[0]) {
-      try {
-        await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.askTreasuryAccountAddress'),
-          createdStableCoin.treasury || '0.0.0',
-        );
-        sdk.checkIsAddress(treasury);
-      } catch (error) {
-        console.log(language.getText('account.wrong'));
-        treasury = await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.askTreasuryAccountAddress'),
-          createdStableCoin.treasury || '0.0.0',
-        );
-      }
-      createdStableCoin.treasury = treasury;
-    }*/
     console.log({
       name,
       symbol,
@@ -238,13 +229,13 @@ export default class CreateStableCoinService extends Service {
       initialSupply: initialSupply === '' ? undefined : BigInt(initialSupply),
       supplyType: supplyType ? 'INFINITE' : 'FINITE',
       maxSupply: totalSupply ? BigInt(totalSupply) : totalSupply,
-      freezeKey,
+      freezeKey: freezeKey.key !== 'null' ? freezeKey : 'The Smart Contract',
       //KYCKey,
-      wipeKey,
-      adminKey,
-      supplyKey,
-      pauseKey,
-      treasury,
+      wipeKey: wipeKey.key !== 'null' ? wipeKey : 'The Smart Contract',
+      adminKey: adminKey ?? 'None',
+      supplyKey: supplyKey.key !== 'null' ? supplyKey : 'The Smart Contract',
+      pauseKey: pauseKey.key !== 'null' ? pauseKey : 'The Smart Contract',
+      treasury: treasury.id !== '0.0.0' ? treasury : 'The Smart Contract',
     });
     tokenToCreate = {
       name,
@@ -260,7 +251,7 @@ export default class CreateStableCoinService extends Service {
       adminKey,
       supplyKey,
       pauseKey,
-      treasury: this.getTreasuryAccountFromSupplyKey(supplyKey)
+      treasury,
     };
     if (
       !(await utilsService.defaultConfirmAsk(
@@ -268,6 +259,8 @@ export default class CreateStableCoinService extends Service {
         true,
       ))
     ) {
+      await utilsService.cleanAndShowBanner();
+
       tokenToCreate = await this.wizardCreateStableCoin();
     }
     return tokenToCreate;
@@ -364,9 +357,12 @@ export default class CreateStableCoinService extends Service {
   private async checkAnswer(answer: string): Promise<PublicKey> {
     const hexRegEx = /^[0-9A-F]{64,}$/gi;
     switch (answer) {
+      case 'Current user private key':
       case 'Admin Key': {
         const currentAccount = utilsService.getCurrentAccount();
-        const privateKey: PrivateKey = new PrivateKey(currentAccount.privateKey);
+        const privateKey: PrivateKey = new PrivateKey(
+          currentAccount.privateKey,
+        );
         return privateKey.publicKey;
       }
 
@@ -377,16 +373,16 @@ export default class CreateStableCoinService extends Service {
         );
         return new PublicKey({
           key: hexRegEx.test(key) ? key : await this.askNewKey(hexRegEx),
-          type: 'ED25519'
+          type: 'ED25519',
         });
       }
 
       case 'None':
-          return undefined;
+        return undefined;
 
       case 'The Smart Contract':
       default:
-          return PublicKey.NULL;
+        return PublicKey.NULL;
     }
   }
 
@@ -401,9 +397,9 @@ export default class CreateStableCoinService extends Service {
   private getTreasuryAccountFromSupplyKey(supplyKey: PublicKey): AccountId {
     if (supplyKey && supplyKey !== PublicKey.NULL) {
       const currentAccount = utilsService.getCurrentAccount();
-      return new AccountId(currentAccount.accountId)
+      return new AccountId(currentAccount.accountId);
     } else {
-      return AccountId.NULL;      
+      return AccountId.NULL;
     }
-  }  
+  }
 }

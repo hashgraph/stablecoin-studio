@@ -141,13 +141,13 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			if(stableCoin.supplyKey?.toString() === stableCoin.treasury.toString()){
 				//TODO add Roles
 				listCapabilities.push(Capabilities.CASH_IN);
-				listCapabilities.push(Capabilities.CASH_OUT);
+				listCapabilities.push(Capabilities.BURN);
 			}
 			
 			if (stableCoin.supplyKey instanceof PublicKey){
 				if(stableCoin.supplyKey?.key.toString()==publickey.toString()){
 					listCapabilities.push(Capabilities.CASH_IN_HTS);
-					listCapabilities.push(Capabilities.CASH_OUT_HTS);
+					listCapabilities.push(Capabilities.BURN_HTS);
 				}
 			}
 			
