@@ -37,7 +37,7 @@ export default class BurnStableCoinsService extends Service {
         .then((response) => (respDetail = response)),
       {
         text: language.getText('state.loading'),
-        successText: language.getText('state.loadCompleted') + '\n',
+        successText: language.getText('state.burnCompleted') + '\n',
       },
     );
 
