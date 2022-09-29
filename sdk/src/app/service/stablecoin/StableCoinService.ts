@@ -189,7 +189,7 @@ export default class StableCoinService extends Service {
 
 		let resultCashOut = false;
 		const capabilities: Capabilities[] = await this.getCapabilitiesStableCoin(req.tokenId, req.privateKey.publicKey.key);
-		if (capabilities.includes(Capabilities.CASH_OUT)){
+		if (capabilities.includes(Capabilities.BURN)){
 			const result = await this.repository.cashOut(
 				req.proxyContractId,
 				req.privateKey,
@@ -198,7 +198,7 @@ export default class StableCoinService extends Service {
 			);
 			resultCashOut = Boolean(result[0]);
 
-		} else if (capabilities.includes(Capabilities.CASH_OUT_HTS)){
+		} else if (capabilities.includes(Capabilities.BURN_HTS)){
 			resultCashOut = await this.repository.cashOutHTS(
 				req.privateKey,
 				req.accountId,
