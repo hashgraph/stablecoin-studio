@@ -18,6 +18,7 @@ import {
 	TokenId,
 	Transaction,
 	Status,
+	TransactionResponse,
 } from '@hashgraph/sdk';
 import { StableCoin } from '../../../../domain/context/stablecoin/StableCoin.js';
 import {
@@ -184,7 +185,7 @@ export default class HashPackProvider implements IProvider {
 			abi,
 		);
 
-		this.hashPackSigner = new HashPackSigner(this.hc, this.initData);
+		this.hashPackSigner = new HashPackSigner();
 		const transaction: Transaction =
 			TransactionProvider.buildContractExecuteTransaction(
 				contractId,
@@ -365,7 +366,7 @@ export default class HashPackProvider implements IProvider {
 		params?: any,
 	): Promise<HContractId> {
 		try {
-			this.hashPackSigner = new HashPackSigner(this.hc, this.initData);
+			this.hashPackSigner = new HashPackSigner();
 			const transaction =
 				TransactionProvider.buildContractCreateFlowTransaction(
 					factory,
@@ -438,7 +439,7 @@ export default class HashPackProvider implements IProvider {
 			supplyKey,
 		};
 
-		this.hashPackSigner = new HashPackSigner(this.hc, this.initData);
+		this.hashPackSigner = new HashPackSigner();
 		const transaction: Transaction =
 			TransactionProvider.buildTokenCreateTransaction(
 				ContractId.fromHederaContractId(contractId),
@@ -673,7 +674,7 @@ export default class HashPackProvider implements IProvider {
 		);
 
 		return htsResponse.receipt.status == Status.Success ? true : false;
-	}	
+	}
 
 	public async cashOutHTS(params: IHTSTokenRequest): Promise<boolean> {
 		if ('account' in params) {
@@ -719,7 +720,7 @@ export default class HashPackProvider implements IProvider {
 		);
 
 		return htsResponse.receipt.status == Status.Success ? true : false;
-	}	
+	}
 
 	public async transferHTS(params: ITransferTokenRequest): Promise<boolean> {
 		if ('account' in params) {
@@ -761,8 +762,7 @@ export default class HashPackProvider implements IProvider {
 				`An error has occurred when transfer the amount ${params.amount} to the account ${params.inAccountId} for tokenId ${params.tokenId}`,
 			);
 		}
-		
 
 		return htsResponse.receipt.status == Status.Success ? true : false;
-	}	
+	}
 }
