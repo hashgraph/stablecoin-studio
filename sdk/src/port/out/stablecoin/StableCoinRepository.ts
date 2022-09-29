@@ -11,7 +11,6 @@ import {
 	IWipeTokenRequest,
 	ITransferTokenRequest,
 } from '../hedera/types.js';
-import IStableCoinDetail from './types/IStableCoinDetail.js';
 import ITokenList from './types/ITokenList.js';
 import HederaError from '../hedera/error/HederaError.js';
 import { IToken } from './types/IToken.js';

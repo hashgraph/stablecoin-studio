@@ -76,11 +76,15 @@ const CoinDropdown = () => {
 				maxSupply: stableCoinDetails?.maxSupply?.toString(),
 				treasuryId: stableCoinDetails?.treasuryId,
 				memo: stableCoinDetails?.memo,
-				adminKey: JSON.parse(JSON.stringify(stableCoinDetails?.adminKey)),
-				kycKey: JSON.parse(JSON.stringify(stableCoinDetails?.kycKey)),
-				freezeKey: JSON.parse(JSON.stringify(stableCoinDetails?.freezeKey)),
-				wipeKey: JSON.parse(JSON.stringify(stableCoinDetails?.wipeKey)),
-				supplyKey: JSON.parse(JSON.stringify(stableCoinDetails?.supplyKey)),
+				adminKey:
+					stableCoinDetails?.adminKey && JSON.parse(JSON.stringify(stableCoinDetails?.adminKey)),
+				kycKey: stableCoinDetails?.kycKey && JSON.parse(JSON.stringify(stableCoinDetails.kycKey)),
+				freezeKey:
+					stableCoinDetails?.freezeKey && JSON.parse(JSON.stringify(stableCoinDetails.freezeKey)),
+				wipeKey:
+					stableCoinDetails?.wipeKey && JSON.parse(JSON.stringify(stableCoinDetails.wipeKey)),
+				supplyKey:
+					stableCoinDetails?.supplyKey && JSON.parse(JSON.stringify(stableCoinDetails.supplyKey)),
 			}),
 		);
 	};
