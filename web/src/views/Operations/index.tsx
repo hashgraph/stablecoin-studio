@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Box, Heading } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import BaseContainer from '../../components/BaseContainer';
@@ -8,48 +7,69 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
 import type { DirectAccessProps } from '../../components/DirectAccess';
+import { RouterManager } from '../../Router/RouterManager';
+import { useNavigate } from 'react-router-dom';
 
 const Operations = () => {
 	const { t } = useTranslation('operations');
-	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN) || {};
-	const { adminKey, freezeKey, kycKey, supplyKey, wipeKey } = selectedStableCoin;
-	const [areKeysSetted, setAreKeysSetted] = useState({
-		adminKey: false,
-		freezeKey: false,
-		kycKey: false,
-		supplyKey: false,
-		wipeKey: false,
+	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
+	const { supplyKey, wipeKey } = selectedStableCoin || {};
+	const [disabledFeatures, setDisabledFeatures] = useState({
+		cashIn: false,
+		cashOut: false,
+		balance: false,
+		rescue: false,
+		wipe: false,
 	});
+	const navigate = useNavigate();
 
 	useEffect(() => {
-		getAvailableFeatures();
+		if (selectedStableCoin) {
+			getAvailableFeatures();
+		} else {
+			RouterManager.to(navigate, NamedRoutes.StableCoinNotSelected);
+		}
 	}, [selectedStableCoin]);
 
 	const isKeySet = (
 		key: { key: string; type: string; id: never } | { id: string; key: never; type: never },
 	) => {
-		if (!key.key || !key.type || !key.id) {
+		if (!key) {
+			return false;
+		}
+		return true;
+	};
+
+	const isContractKey = (
+		key: { key: string; type: string; id: never } | { id: string; key: never; type: never },
+	) => {
+		if (!key) {
 			return false;
 		}
 		if (key.id) {
 			return true;
 		}
-		if (key.key !== 'null' && key.key !== 'null') {
-			return true;
-		}
 		return false;
 	};
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const isUserKey = async () => {
+		// pending to get public key of user connected
+		return true;
+	};
+
 	const getAvailableFeatures = () => {
-		console.table({ adminKey, freezeKey, kycKey, supplyKey, wipeKey });
-		const keys = {
-			adminKey: isKeySet(adminKey as any),
-			freezeKey: isKeySet(freezeKey as any),
-			kycKey: isKeySet(kycKey as any),
-			supplyKey: isKeySet(supplyKey as any),
-			wipeKey: isKeySet(wipeKey as any),
+		// TODO: add userkey validation
+
+		// TODO: remove as any when sdk returns correct type
+		const areDisabled = {
+			cashIn: !isKeySet(supplyKey as any) || !isContractKey(supplyKey as any),
+			cashOut: !isKeySet(supplyKey as any) || !isContractKey(supplyKey as any),
+			balance: true,
+			rescue: true,
+			wipe: !isKeySet(wipeKey as any) || !isKeySet(supplyKey as any),
 		};
-		setAreKeysSetted(keys);
+		setDisabledFeatures(areDisabled);
 	};
 
 	const directAccesses: DirectAccessProps[] = [
@@ -57,33 +77,33 @@ const Operations = () => {
 			icon: 'ArrowDown',
 			route: NamedRoutes.CashIn,
 			title: t('cashInOperation'),
-			isDisabled: !areKeysSetted.supplyKey,
+			isDisabled: disabledFeatures?.cashIn,
 		},
 		{
 			icon: 'ArrowUp',
 			route: NamedRoutes.CashOut,
 			title: t('cashOutOperation'),
-			isDisabled: !areKeysSetted.supplyKey,
+			isDisabled: disabledFeatures?.cashOut,
 		},
 		{
 			icon: 'Coin',
 			route: NamedRoutes.Balance,
 			title: t('getBalanceOperation'),
+			isDisabled: disabledFeatures?.balance,
 		},
 		{
 			icon: 'ArrowsDownUp',
 			route: NamedRoutes.RescueTokens,
 			title: t('rescueOperation'),
+			isDisabled: disabledFeatures?.rescue,
 		},
 		{
 			icon: 'MinusCircle',
 			route: NamedRoutes.Wipe,
 			title: t('wipeOperation'),
-			isDisabled: !areKeysSetted.supplyKey || !areKeysSetted.wipeKey,
+			isDisabled: disabledFeatures?.wipe,
 		},
 	];
-
-	console.log(directAccesses);
 
 	return (
 		<BaseContainer title={t('title')}>
