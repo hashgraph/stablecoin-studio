@@ -12,14 +12,14 @@ exports[`<OperationLayout /> should render correctly 1`] = `
       Operations
     </h2>
     <div
-      class="css-1b6lda7"
+      class="css-1hkemoa"
       data-testid="base-container-children"
     >
       <div
-        class="css-f3f3xv"
+        class="css-1us6gcn"
       >
         <div
-          class="css-1rtxhmh"
+          class="css-1r9sqqd"
         >
           <div
             class="chakra-stack css-n21gh5"

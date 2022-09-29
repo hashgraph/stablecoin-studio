@@ -73,5 +73,7 @@ export const SELECTED_WALLET_COIN = (state: RootState) => state.wallet.selectedS
 export const SELECTED_WALLET_PAIRED: any = (state: RootState) => state.wallet.data.savedPairings[0];
 export const HAS_WALLET_EXTENSION = (state: RootState) => state.wallet.hasWalletExtension;
 export const IS_PAIRED = (state: RootState) => state.wallet.isPaired;
+export const SELECTED_WALLET_PAIRED_ACCOUNTID: any = (state: RootState) =>
+	state.wallet.data.savedPairings[0].accountIds[0];
 
 export const walletActions = walletSlice.actions;

@@ -3,7 +3,7 @@
 exports[`<InputLabel /> should render correctly 1`] = `
 <DocumentFragment>
   <label
-    class="chakra-form__label css-1jbsrib"
+    class="chakra-form__label css-1y854pg"
   >
     <div
       class="chakra-stack css-84zodg"
