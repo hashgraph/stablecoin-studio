@@ -4,9 +4,9 @@ import {
 	ITargetIdRequestModel,
 } from './CoreRequestModel.js';
 
-export default interface IGetBasicRequestModel
+export default interface IGetSupplierAllowanceModel
 	extends IProxyContractIdRequestModel,
 		IAccountWithKeyRequestModel,
 		ITargetIdRequestModel {
-	tokenId?: string;
+	tokenId: string;
 }
