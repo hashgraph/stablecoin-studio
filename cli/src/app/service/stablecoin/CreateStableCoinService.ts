@@ -220,7 +220,6 @@ export default class CreateStableCoinService extends Service {
     createdStableCoin.pauseKey = pauseKey;
 
     const treasury = this.getTreasuryAccountFromSupplyKey(supplyKey);
-
     console.log({
       name,
       symbol,
@@ -229,12 +228,12 @@ export default class CreateStableCoinService extends Service {
       initialSupply: initialSupply === '' ? undefined : BigInt(initialSupply),
       supplyType: supplyType ? 'INFINITE' : 'FINITE',
       maxSupply: totalSupply ? BigInt(totalSupply) : totalSupply,
-      freezeKey: freezeKey.key !== 'null' ? freezeKey : 'The Smart Contract',
+      freezeKey: freezeKey === undefined ? 'None' : freezeKey.key !== 'null' ? freezeKey : 'The Smart Contract',
       //KYCKey,
-      wipeKey: wipeKey.key !== 'null' ? wipeKey : 'The Smart Contract',
+      wipeKey: wipeKey === undefined ? 'None' : wipeKey.key !== 'null' ? wipeKey : 'The Smart Contract',
       adminKey: adminKey ?? 'None',
-      supplyKey: supplyKey.key !== 'null' ? supplyKey : 'The Smart Contract',
-      pauseKey: pauseKey.key !== 'null' ? pauseKey : 'The Smart Contract',
+      supplyKey: supplyKey === undefined ? 'None' : supplyKey.key !== 'null' ? supplyKey : 'The Smart Contract',
+      pauseKey: pauseKey === undefined ? 'None' : pauseKey.key !== 'null' ? pauseKey : 'The Smart Contract',
       treasury: treasury.id !== '0.0.0' ? treasury : 'The Smart Contract',
     });
     tokenToCreate = {
