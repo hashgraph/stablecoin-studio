@@ -8,7 +8,7 @@
 
 
 # Overview
-[WIP]
+Implementation of a group of tools composed by a CLI, SDK, UI and SmartContracts that facilitates the implementation and deployment of Stable Coins and their management.
 
 # Project structure
 
