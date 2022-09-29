@@ -9,7 +9,7 @@ interface LayoutProps {
 
 const Layout = ({ children }: LayoutProps) => {
 	return (
-		<Box data-testid='layout' h='100vh' w='100%'>
+		<Box data-testid='layout' h='100vh' w='100%' overflowX='hidden'>
 			<Topbar />
 
 			<Flex transition='transform 0.3s, width 0.3s' h='calc(100vh - 64px)'>
