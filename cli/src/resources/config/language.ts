@@ -66,6 +66,7 @@ export const english = {
       wipe: 'What will be the Wipe key?',
       pause: 'What will be the Pause key?',
       feeSchedule: 'What will be the Fee Schedule key?',
+      treasury: 'What will be the Treasury account?',
       key: 'Enter the key',
       publicKey: 'Enter the public key',
     },

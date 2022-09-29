@@ -3,7 +3,7 @@ export enum Capabilities {
 	CASH_IN_HTS = 'Cash in hts',
 	DETAILS = 'Details',
 	BALANCE = 'Balance',
-	BURN = 'Burn out',
+	BURN = 'Burn',
 	BURN_HTS = 'Burn hts',
 	WIPE = 'Wipe',
 	WIPE_HTS = 'Wipe hts',

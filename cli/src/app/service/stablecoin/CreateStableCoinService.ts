@@ -209,7 +209,7 @@ export default class CreateStableCoinService extends Service {
       return tokenToCreate;
     }
 
-    const { adminKey, supplyKey, freezeKey, wipeKey, pauseKey } =
+    const { adminKey, supplyKey, freezeKey, wipeKey, pauseKey, treasuryId } =
       await this.configureManagedFeatures();
 
     createdStableCoin.adminKey = adminKey;
@@ -219,7 +219,10 @@ export default class CreateStableCoinService extends Service {
     createdStableCoin.wipeKey = wipeKey;
     createdStableCoin.pauseKey = pauseKey;
 
-    const treasury = this.getTreasuryAccountFromSupplyKey(supplyKey);
+    const treasury =
+      treasuryId === ''
+        ? this.getTreasuryAccountFromSupplyKey(supplyKey)
+        : new AccountId(treasuryId);
 
     console.log({
       name,
@@ -235,7 +238,7 @@ export default class CreateStableCoinService extends Service {
       adminKey: adminKey ?? 'None',
       supplyKey: supplyKey.key !== 'null' ? supplyKey : 'The Smart Contract',
       pauseKey: pauseKey.key !== 'null' ? pauseKey : 'The Smart Contract',
-      treasury: treasury.id !== '0.0.0' ? treasury.id : 'The Smart Contract',
+      treasury: treasury.id !== '0.0.0' ? treasury : 'The Smart Contract',
     });
     tokenToCreate = {
       name,
@@ -351,7 +354,23 @@ export default class CreateStableCoinService extends Service {
       ),
     );
 
-    return { adminKey, supplyKey, freezeKey, wipeKey, pauseKey };
+    // Check if supplyKey is not the Smart Contract
+    let treasuryId = '';
+    if (supplyKey.key !== '') {
+      treasuryId = await utilsService.defaultSingleAsk(
+        language.getText('stablecoin.features.treasury'),
+        '0.0.0',
+      );
+      while (!/\d\.\d\.\d/.test(treasuryId)) {
+        console.log(language.getText('validations.wrongFormatAddress'));
+        treasuryId = await utilsService.defaultSingleAsk(
+          language.getText('stablecoin.features.treasury'),
+          '0.0.0',
+        );
+      }
+    }
+
+    return { adminKey, supplyKey, freezeKey, wipeKey, pauseKey, treasuryId };
   }
 
   private async checkAnswer(answer: string): Promise<PublicKey> {

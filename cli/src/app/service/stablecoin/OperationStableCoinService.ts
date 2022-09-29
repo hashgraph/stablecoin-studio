@@ -669,8 +669,8 @@ export default class OperationStableCoinService extends Service {
           (capabilities.includes('Cash in') ||
             capabilities.includes('Cash in hts'))) ||
         (option === 'Burn' &&
-          (capabilities.includes('Cash out') ||
-            capabilities.includes('Cash out hts'))) ||
+          (capabilities.includes('Burn') ||
+            capabilities.includes('Burn hts'))) ||
         (option === 'Wipe' &&
           (capabilities.includes('Wipe') || capabilities.includes('Wipe hts')))
       ) {
