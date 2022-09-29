@@ -17,8 +17,7 @@ describe("Cash out tokens", function() {
   before(async function  () {
     client = getClient();      
     client.setOperator(OPERATOR_ID, OPERATOR_KEY);
-  });
-  beforeEach(async function () {
+  
     proxyAddress = await deployContractsWithSDK("MIDAS", "MD", 3, 100000, 100000, "Hedera Accelerator Stable Coin");    
   });
   it("Can cash out 100 tokens from the treasury account having 100 tokens", async function() {

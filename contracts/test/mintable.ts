@@ -18,8 +18,7 @@ describe("Cash in tokens with maxTotalSupply", function() {
   before(async function  () {
     client = getClient();      
     client.setOperator(OPERATOR_ID, OPERATOR_KEY);
-  });
-  beforeEach(async function () {
+  
     proxyAddress = await deployContractsWithSDK("MIDAS", "MD", 3, 0, 100000, "Hedera Accelerator Stable Coin");    
   });
   it("Can cash in 100 tokens to an account from a token with a 100 as maxTotalSupply", async function() {

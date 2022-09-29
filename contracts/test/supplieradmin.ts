@@ -129,8 +129,7 @@ describe("Revoke supplier role", function() {
   before(async function  () {
     client = getClient();      
     client.setOperator(OPERATOR_ID, OPERATOR_KEY);
-  });
-  beforeEach(async function () {
+  
     proxyAddress = await deployContractsWithSDK("MIDAS", "MD", 3, 0, null, "Hedera Accelerator Stable Coin");    
     const params : any = [AccountId.fromString(hreConfig.accounts[1].account!).toSolidityAddress(), 100000];  
     await contractCall(ContractId.fromString(proxyAddress), 'grantSupplierRole', params, client, 130000, HederaERC20__factory.abi);
@@ -151,8 +150,7 @@ describe("Revoke unlimited supplier role", function() {
   before(async function  () {
     client = getClient();      
     client.setOperator(OPERATOR_ID, OPERATOR_KEY);
-  });
-  beforeEach(async function () {
+ 
     proxyAddress = await deployContractsWithSDK("MIDAS", "MD", 3, 0, null, "Hedera Accelerator Stable Coin");    
     const params : any = [AccountId.fromString(hreConfig.accounts[1].account!).toSolidityAddress()];  
     await contractCall(ContractId.fromString(proxyAddress), 'grantUnlimitedSupplierRole', params, client, 130000, HederaERC20__factory.abi);

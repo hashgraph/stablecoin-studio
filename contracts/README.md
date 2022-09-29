@@ -82,7 +82,7 @@ The part of the `hardhat.config.ts` file where the accounts to be configured are
 
 Above accounts configuration behaves to testnet, so another accounts configuration fragment for previewnet must be configured to execute test in this network.
 
-To execute all tests, what will be explained in [Run](Run) section, you must take into account that both accounts, in whatever network, must have a minimum balance of HBAR. Currently, the firs account must have around 975 HBAR while the second one does not need more than 2 HBAR. These amounts could change in the future due to the price of the HBAR.
+To execute all tests, what will be explained in [Run](Run) section, you must take into account that both accounts, in whatever network, must have a minimum balance of HBAR. Currently, the firs account must have around 750 HBAR while the second one does not need more than 50 HBAR. These amounts could change in the future due to the price of the HBAR.
 
 #### Run
 
