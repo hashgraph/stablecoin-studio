@@ -220,7 +220,6 @@ export default class CreateStableCoinService extends Service {
     createdStableCoin.pauseKey = pauseKey;
 
     const treasury = this.getTreasuryAccountFromSupplyKey(supplyKey);
-
     console.log({
       name,
       symbol,
@@ -229,12 +228,12 @@ export default class CreateStableCoinService extends Service {
       initialSupply: initialSupply === '' ? undefined : BigInt(initialSupply),
       supplyType: supplyType ? 'INFINITE' : 'FINITE',
       maxSupply: totalSupply ? BigInt(totalSupply) : totalSupply,
-      freezeKey: freezeKey.key !== 'null' ? freezeKey : 'The Smart Contract',
+      freezeKey: freezeKey === undefined ? 'None' : freezeKey.key !== 'null' ? freezeKey : 'The Smart Contract',
       //KYCKey,
-      wipeKey: wipeKey.key !== 'null' ? wipeKey : 'The Smart Contract',
+      wipeKey: wipeKey === undefined ? 'None' : wipeKey.key !== 'null' ? wipeKey : 'The Smart Contract',
       adminKey: adminKey ?? 'None',
-      supplyKey: supplyKey.key !== 'null' ? supplyKey : 'The Smart Contract',
-      pauseKey: pauseKey.key !== 'null' ? pauseKey : 'The Smart Contract',
+      supplyKey: supplyKey === undefined ? 'None' : supplyKey.key !== 'null' ? supplyKey : 'The Smart Contract',
+      pauseKey: pauseKey === undefined ? 'None' : pauseKey.key !== 'null' ? pauseKey : 'The Smart Contract',
       treasury: treasury.id !== '0.0.0' ? treasury : 'The Smart Contract',
     });
     tokenToCreate = {
@@ -355,7 +354,6 @@ export default class CreateStableCoinService extends Service {
   }
 
   private async checkAnswer(answer: string): Promise<PublicKey> {
-    const hexRegEx = /^[0-9A-F]{64,}$/gi;
     switch (answer) {
       case 'Current user private key':
       case 'Admin Key': {
@@ -367,13 +365,10 @@ export default class CreateStableCoinService extends Service {
       }
 
       case 'Other key': {
-        const key = await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.features.publicKey'),
-          undefined,
-        );
+        const key = await utilsService.defaultPublicKeyAsk();
         return new PublicKey({
-          key: hexRegEx.test(key) ? key : await this.askNewKey(hexRegEx),
-          type: 'ED25519',
+          key: key,
+          type: 'ED25519'
         });
       }
 
@@ -384,14 +379,6 @@ export default class CreateStableCoinService extends Service {
       default:
         return PublicKey.NULL;
     }
-  }
-
-  private async askNewKey(regExp: RegExp): Promise<string> {
-    const newKey = await utilsService.defaultSingleAsk(
-      language.getText('stablecoin.features.keyError'),
-      undefined,
-    );
-    return regExp.test(newKey) ? newKey : await this.askNewKey(regExp);
   }
 
   private getTreasuryAccountFromSupplyKey(supplyKey: PublicKey): AccountId {
