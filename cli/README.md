@@ -51,10 +51,6 @@ TASK OPTIONS:
 
 The project uses [Jest](https://jestjs.io/es-ES/) for testing.
 
-### Coverage
-
-The project has a minimum of `70% line coverage`.
-
 ### Run
 
 Tests may be run using the following command
