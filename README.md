@@ -8,7 +8,7 @@
 
 
 # Overview
-Hedera supports the creation of tokens and stable coins. This SDK aims to help in deploying, managing and operating with stable coins in the Hedera network.
+[WIP]
 
 # Project structure
 
