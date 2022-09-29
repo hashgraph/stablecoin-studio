@@ -14,7 +14,7 @@ export const english = {
       'No configuration file found at the specified path, would you like to create one? (y/n)',
     askCreateConfigNeg:
       'You have chosen not to create the file automatically, create the configuration file and try again.',
-    askNetwork: 'Write the network you want to use',
+    askNetwork: 'Select the default network you want to use',
     askNotDefaultNetwork:
       'Your option is not a default network, Do you want to create a new network? (y/n)',
     askAccountId: 'Introduce the accountId',
@@ -74,7 +74,7 @@ export const english = {
     created:
       'Stable Coin ${name} (${symbol}) with ${decimals} decimals have been created!',
     askCashInAmount: 'How many tokens do you want to cash in?',
-    askCashOutAmount: 'How many tokens do you want to cash out?',
+    askBurnAmount: 'How many tokens do you want to burn?',
     askWipeAmount: 'How many tokens do you want to wipe?',
     askRescueAmount: 'How many tokens do you want to rescue?',
     askTargetAccount: 'What is the target account?',
@@ -166,7 +166,7 @@ export const english = {
       'Cash in',
       'Details',
       'Balance',
-      'Cash out',
+      'Burn',
       'Wipe',
       'Rescue',
       'Role management',
