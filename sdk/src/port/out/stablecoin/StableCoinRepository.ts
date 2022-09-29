@@ -195,29 +195,6 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		return response;
 	}
 
-	public async getTokenOwnerBalance(
-		treasuryId: string,
-		privateKey: PrivateKey,
-		accountId: AccountId,
-	): Promise<Uint8Array> {
-		const params: ICallContractWithAccountRequest = {
-			contractId: treasuryId,
-			parameters: [],
-			gas: 136000,
-			abi: HederaERC20__factory.abi,
-			account: {
-				accountId: accountId.id,
-				privateKey: privateKey.key,
-			},
-		};
-		const response = await this.networkAdapter.provider.callContract(
-			'tokenOwnerBalance',
-			params,
-		);
-
-		return response;
-	}
-
 	public async getNameToken(
 		treasuryId: string,
 		privateKey: PrivateKey,
