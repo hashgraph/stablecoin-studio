@@ -1,6 +1,6 @@
 const { ContractId, AccountId } = require("@hashgraph/sdk");
-require("@hashgraph/hardhat-hethers");
-require("@hashgraph/sdk");
+import "@hashgraph/hardhat-hethers";
+
 
 import { expect } from "chai";
 import { deployContractsWithSDK, contractCall, getClient } from "../scripts/utils";
@@ -21,7 +21,7 @@ describe("Grant unlimited supplier role", function() {
   });
   beforeEach(async function () {
     proxyAddress = await deployContractsWithSDK("MIDAS", "MD", 3, 0, 100000, "Hedera Accelerator Stable Coin");    
-    let params : any = [AccountId.fromString(hreConfig.accounts[1].account!).toSolidityAddress()];  
+    const params : any = [AccountId.fromString(hreConfig.accounts[1].account!).toSolidityAddress()];  
     await contractCall(ContractId.fromString(proxyAddress), 'grantUnlimitedSupplierRole', params, client, 130000, HederaERC20__factory.abi);
   });
   it("An account with unlimited supplier role can cash in 100 tokens", async function() {
@@ -45,7 +45,7 @@ describe("Grant unlimited supplier role", function() {
     await expect(contractCall(ContractId.fromString(proxyAddress), 'mint', params, client2, 400000, HederaERC20__factory.abi)).to.be.throw;
   }); 
   it("An account with unlimited supplier role can not be granted limited supplier role", async function() {
-    let params : any = [AccountId.fromString(hreConfig.accounts[1].account!).toSolidityAddress(), 100000];  
+    const params : any = [AccountId.fromString(hreConfig.accounts[1].account!).toSolidityAddress(), 100000];  
     await expect(contractCall(ContractId.fromString(proxyAddress), 'grantSupplierRole', params, client, 130000, HederaERC20__factory.abi)).to.be.throw;
   });   
 });
@@ -57,7 +57,7 @@ describe("Grant supplier role", function() {
   });
   beforeEach(async function () {
     proxyAddress = await deployContractsWithSDK("MIDAS", "MD", 3, 0, null, "Hedera Accelerator Stable Coin");    
-    let params : any = [AccountId.fromString(hreConfig.accounts[1].account!).toSolidityAddress(), 100000];  
+    const params : any = [AccountId.fromString(hreConfig.accounts[1].account!).toSolidityAddress(), 100000];  
     await contractCall(ContractId.fromString(proxyAddress), 'grantSupplierRole', params, client, 130000, HederaERC20__factory.abi);
   });
   it("An account with supplier role and an allowance of 100 tokens can cash in 100 tokens", async function() {
@@ -96,14 +96,14 @@ describe("Grant supplier role", function() {
     let params : any = [AccountId.fromString(hreConfig.accounts[1].account!).toSolidityAddress(), 10000];  
     await contractCall(ContractId.fromString(proxyAddress), 'decreaseSupplierAllowance', params, client, 130000, HederaERC20__factory.abi);
     params = [AccountId.fromString(hreConfig.accounts[1].account!).toSolidityAddress()];  
-    let result = await contractCall(ContractId.fromString(proxyAddress), 'supplierAllowance', params, client, 60000, HederaERC20__factory.abi);
+    const result = await contractCall(ContractId.fromString(proxyAddress), 'supplierAllowance', params, client, 60000, HederaERC20__factory.abi);
     expect(Number(result[0])).to.eq(90000);
   });        
   it("An account with supplier role and an allowance of 100 tokens, when reseted, will have an allowance of 0 tokens", async function() {
     let params : any = [AccountId.fromString(hreConfig.accounts[1].account!).toSolidityAddress()];  
     await contractCall(ContractId.fromString(proxyAddress), 'resetSupplierAllowance', params, client, 120000, HederaERC20__factory.abi);
     params = [AccountId.fromString(hreConfig.accounts[1].account!).toSolidityAddress()];  
-    let result = await contractCall(ContractId.fromString(proxyAddress), 'supplierAllowance', params, client, 60000, HederaERC20__factory.abi);
+    const result = await contractCall(ContractId.fromString(proxyAddress), 'supplierAllowance', params, client, 60000, HederaERC20__factory.abi);
     expect(Number(result[0])).to.eq(0);
   });   
   it("An account with supplier role and an allowance of 100 tokens, can mint 90 tokens but, later on, cannot mint 11 tokens", async function() {
@@ -120,7 +120,7 @@ describe("Grant supplier role", function() {
     let params : any = [AccountId.fromString(hreConfig.accounts[1].account!).toSolidityAddress()];  
     await contractCall(ContractId.fromString(proxyAddress), 'grantUnlimitedSupplierRole', params, client, 130000, HederaERC20__factory.abi);
     params = [AccountId.fromString(hreConfig.accounts[1].account!).toSolidityAddress()];  
-    let result = await contractCall(ContractId.fromString(proxyAddress), 'supplierAllowance', params, client, 60000, HederaERC20__factory.abi);
+    const result = await contractCall(ContractId.fromString(proxyAddress), 'supplierAllowance', params, client, 60000, HederaERC20__factory.abi);
     expect(Number(result[0])).to.eq(0);
   });   
 });
@@ -132,7 +132,7 @@ describe("Revoke supplier role", function() {
   });
   beforeEach(async function () {
     proxyAddress = await deployContractsWithSDK("MIDAS", "MD", 3, 0, null, "Hedera Accelerator Stable Coin");    
-    let params : any = [AccountId.fromString(hreConfig.accounts[1].account!).toSolidityAddress(), 100000];  
+    const params : any = [AccountId.fromString(hreConfig.accounts[1].account!).toSolidityAddress(), 100000];  
     await contractCall(ContractId.fromString(proxyAddress), 'grantSupplierRole', params, client, 130000, HederaERC20__factory.abi);
   });
   it("An account with supplier role and an allowance of 100 tokens, but revoked, can not cash in 100 tokens", async function() {
@@ -154,7 +154,7 @@ describe("Revoke unlimited supplier role", function() {
   });
   beforeEach(async function () {
     proxyAddress = await deployContractsWithSDK("MIDAS", "MD", 3, 0, null, "Hedera Accelerator Stable Coin");    
-    let params : any = [AccountId.fromString(hreConfig.accounts[1].account!).toSolidityAddress()];  
+    const params : any = [AccountId.fromString(hreConfig.accounts[1].account!).toSolidityAddress()];  
     await contractCall(ContractId.fromString(proxyAddress), 'grantUnlimitedSupplierRole', params, client, 130000, HederaERC20__factory.abi);
   });
   it("An account with unlimited supplier role, but revoked, can not cash in 100 tokens", async function() {

@@ -1,10 +1,11 @@
 import "@nomicfoundation/hardhat-toolbox";
 import "@hashgraph/hardhat-hethers";
 import "@hashgraph/sdk";
-const { PrivateKey } = require("@hashgraph/sdk");
-require('hardhat-abi-exporter');
-require("hardhat-contract-sizer");
-require('@primitivefi/hardhat-dodoc');
+import "hardhat-abi-exporter";
+import "hardhat-contract-sizer";
+import "@primitivefi/hardhat-dodoc";
+
+
 
 module.exports = {
   solidity: {
@@ -37,7 +38,7 @@ module.exports = {
             publicKey:"[include your public key]",
             isED25519Type: true
           },
-          {           
+          {
             account: "[include your account2]",
             privateKey:"[include your private key2]",
             publicKey:"[include your public key2]",

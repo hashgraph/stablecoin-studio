@@ -1,6 +1,6 @@
 const { TokenCreateTransaction,DelegateContractId, Hbar,  Client,  AccountId, PrivateKey, ContractFunctionParameters,
   PublicKey, ContractCreateFlow, TokenId, TokenSupplyType,
-  ContractExecuteTransaction } = require("@hashgraph/sdk");
+  ContractExecuteTransaction }  = require( "@hashgraph/sdk");
 
 import { HederaERC20__factory, HTSTokenOwner__factory, HederaERC1967Proxy__factory } from "../typechain-types";
 
@@ -11,9 +11,9 @@ const hreConfig = hre.network.config;
 
 const web3 = new Web3;
 
-export async function deployContractsWithSDK(name:string, symbol:string, decimals:number=6,
-                                             initialSupply:number=0, maxSupply:number | null, 
-                                             memo:string, freeze:boolean=false) {
+export async function deployContractsWithSDK(name:string, symbol:string, decimals=6,
+                                             initialSupply=0, maxSupply:number | null, 
+                                             memo:string, freeze=false) {
 
   console.log(`Creating token  (${name},${symbol},${decimals},${initialSupply},${maxSupply},${memo},${freeze})`);                                        
 
@@ -25,13 +25,13 @@ export async function deployContractsWithSDK(name:string, symbol:string, decimal
   clientSdk.setOperator(account, privateKey);
 
   console.log(`Deploying ${HederaERC20__factory.name} contract... please wait.`);
-  let tokenContract = await deployContractSDK(HederaERC20__factory, privateKey, clientSdk);
+  const tokenContract = await deployContractSDK(HederaERC20__factory, privateKey, clientSdk);
 
   console.log(`Deploying ${HederaERC1967Proxy__factory.name} contract... please wait.`);
-  let parameters = new ContractFunctionParameters()
+  const parameters = new ContractFunctionParameters()
                         .addAddress(tokenContract!.toSolidityAddress())
                         .addBytes(new Uint8Array([]));
-  let proxyContract = await deployContractSDK(HederaERC1967Proxy__factory, privateKey, clientSdk, parameters);
+  const proxyContract = await deployContractSDK(HederaERC1967Proxy__factory, privateKey, clientSdk, parameters);
   let parametersContractCall: any[] = [];    
   await contractCall(proxyContract, 'initialize', parametersContractCall, clientSdk, 250000, HederaERC20__factory.abi);
   
@@ -67,18 +67,10 @@ export async function contractCall(contractId:any,
   const contractTx = await new ContractExecuteTransaction()
       .setContractId(contractId)
       .setFunctionParameters(functionCallParameters)
-      .setGas(gas)
-      .setNodeAccountIds([
-        AccountId.fromString('0.0.3'),
-        AccountId.fromString('0.0.5'),
-        AccountId.fromString('0.0.6'),
-        AccountId.fromString('0.0.7'),
-        AccountId.fromString('0.0.8'),
-        AccountId.fromString('0.0.9')
-      ])
+      .setGas(gas)      
       .execute(clientOperator);
   
-  let record = await contractTx.getRecord(clientOperator);  
+  const record = await contractTx.getRecord(clientOperator);  
 
   const results = decodeFunctionResult(abi, functionName, record.contractFunctionResult?.bytes);
     
@@ -122,19 +114,19 @@ async function createToken(
   contractId: any,
   name:string, 
   symbol:string,
-  decimals:number=6,
-  initialSupply:number=0,
+  decimals=6,
+  initialSupply=0,
   maxSupply:number | null,
   memo:string,
-  freeze:boolean=false,
+  freeze=false,
   accountId: string,
   privateKey: string,
   publicKey: string,
   clientSdk:any
 ) {
  
-  let transaction = new TokenCreateTransaction()
-    .setMaxTransactionFee(new Hbar(15))
+  const transaction = new TokenCreateTransaction()
+    .setMaxTransactionFee(new Hbar(25))
     .setTokenName(name)
     .setTokenSymbol(symbol)
     .setDecimals(decimals)
@@ -145,15 +137,8 @@ async function createToken(
     .setAdminKey(PublicKey.fromString(publicKey))
     .setFreezeKey(PublicKey.fromString(publicKey))
     .setWipeKey(DelegateContractId.fromString(contractId))
-    .setSupplyKey(DelegateContractId.fromString(contractId))
-    .setNodeAccountIds([
-      AccountId.fromString('0.0.3'),
-      AccountId.fromString('0.0.5'),
-      AccountId.fromString('0.0.6'),
-      AccountId.fromString('0.0.7'),
-      AccountId.fromString('0.0.8'),
-      AccountId.fromString('0.0.9')
-    ]);
+    .setSupplyKey(DelegateContractId.fromString(contractId));
+    
     if (maxSupply !== null) {
       transaction.setSupplyType(TokenSupplyType.Finite)
       transaction.setMaxSupply(maxSupply)

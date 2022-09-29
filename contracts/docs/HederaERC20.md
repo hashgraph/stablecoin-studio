@@ -115,7 +115,7 @@ function WIPE_ROLE() external view returns (bytes32)
 ### allowance
 
 ```solidity
-function allowance(address owner, address spender) external view returns (uint256)
+function allowance(address, address) external pure returns (uint256)
 ```
 
 
@@ -126,8 +126,8 @@ function allowance(address owner, address spender) external view returns (uint25
 
 | Name | Type | Description |
 |---|---|---|
-| owner | address | undefined |
-| spender | address | undefined |
+| _0 | address | undefined |
+| _1 | address | undefined |
 
 #### Returns
 
@@ -138,7 +138,7 @@ function allowance(address owner, address spender) external view returns (uint25
 ### approve
 
 ```solidity
-function approve(address spender, uint256 amount) external nonpayable returns (bool)
+function approve(address, uint256) external pure returns (bool)
 ```
 
 
@@ -149,8 +149,8 @@ function approve(address spender, uint256 amount) external nonpayable returns (b
 
 | Name | Type | Description |
 |---|---|---|
-| spender | address | undefined |
-| amount | uint256 | undefined |
+| _0 | address | undefined |
+| _1 | uint256 | undefined |
 
 #### Returns
 
@@ -425,7 +425,7 @@ function grantSupplierRole(address supplier, uint256 amount) external nonpayable
 
 
 
-*Gives `SUPPLIER ROLE&#39; permissions to perform supplier&#39;s allowance and sets the `amount` the supplier can mint, if you don&#39;t already have unlimited supplier&#39;s allowance permission. Only the &#39;ADMIN SUPPLIER ROLE` can execute.*
+*Gives `SUPPLIER ROLE&#39; permissions to perform supplier&#39;s allowance and sets the `amount`  the supplier can mint, if you don&#39;t already have unlimited supplier&#39;s allowance permission. Only the &#39;ADMIN SUPPLIER ROLE` can execute.*
 
 #### Parameters
 
@@ -465,7 +465,7 @@ function grantUnlimitedSupplierRole(address supplier) external nonpayable
 
 
 
-*Gives `SUPPLIER ROLE&#39; permissions to perform supplier&#39;s allowance, sets unlimited supplier&#39;s allowance permission, and sets the `amount` the supplier can mint to 0. Only the &#39;ADMIN SUPPLIER ROLE` can execute.*
+*Gives `SUPPLIER ROLE&#39; permissions to perform supplier&#39;s allowance, sets unlimited  supplier&#39;s allowance permission, and sets the `amount` the supplier can mint to 0. Only the &#39;ADMIN SUPPLIER ROLE` can execute.*
 
 #### Parameters
 
@@ -722,7 +722,7 @@ function revokeSupplierRole(address supplier) external nonpayable
 
 
 
-*Revoke `SUPPLIER ROLE&#39; permissions to perform supplier&#39;s allowance and revoke unlimited supplier&#39;s allowance permission.     Only the &#39;ADMIN SUPPLIER ROLE` can execute.*
+*Revoke `SUPPLIER ROLE&#39; permissions to perform supplier&#39;s allowance and revoke unlimited  supplier&#39;s allowance permission.     Only the &#39;ADMIN SUPPLIER ROLE` can execute.*
 
 #### Parameters
 
@@ -756,19 +756,19 @@ Operation to revoke kyc to token account
 ### setTokenAddress
 
 ```solidity
-function setTokenAddress(contract HTSTokenOwner _htsTokenOwnerAddress, address _tokenAddress) external nonpayable
+function setTokenAddress(contract HTSTokenOwner htsTokenOwnerAddress, address tokenAddress) external nonpayable
 ```
 
 
 
-*Assigns the HTSTokenOwner contract address and the token address, validating that the token address was not already assigned*
+*Assigns the HTSTokenOwner contract address and the token address, validating that the  token address was not already assigned*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| _htsTokenOwnerAddress | contract HTSTokenOwner | The  contract address HTSTokenOwner |
-| _tokenAddress | address | The token address created |
+| htsTokenOwnerAddress | contract HTSTokenOwner | The  contract address HTSTokenOwner |
+| tokenAddress | address | The token address created |
 
 ### supplierAllowance
 
@@ -851,7 +851,7 @@ function totalSupply() external view returns (uint256)
 ### transfer
 
 ```solidity
-function transfer(address to, uint256 amount) external nonpayable returns (bool)
+function transfer(address, uint256) external pure returns (bool)
 ```
 
 
@@ -862,8 +862,8 @@ function transfer(address to, uint256 amount) external nonpayable returns (bool)
 
 | Name | Type | Description |
 |---|---|---|
-| to | address | undefined |
-| amount | uint256 | undefined |
+| _0 | address | undefined |
+| _1 | uint256 | undefined |
 
 #### Returns
 
@@ -874,7 +874,7 @@ function transfer(address to, uint256 amount) external nonpayable returns (bool)
 ### transferFrom
 
 ```solidity
-function transferFrom(address from, address to, uint256 amount) external nonpayable returns (bool)
+function transferFrom(address, address, uint256) external pure returns (bool)
 ```
 
 
@@ -885,9 +885,9 @@ function transferFrom(address from, address to, uint256 amount) external nonpaya
 
 | Name | Type | Description |
 |---|---|---|
-| from | address | undefined |
-| to | address | undefined |
-| amount | uint256 | undefined |
+| _0 | address | undefined |
+| _1 | address | undefined |
+| _2 | uint256 | undefined |
 
 #### Returns
 
