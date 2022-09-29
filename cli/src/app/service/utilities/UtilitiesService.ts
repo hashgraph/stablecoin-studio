@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 import * as inquirer from 'inquirer';
 import figlet from 'figlet-promised';
 import Service from '../Service.js';
@@ -15,6 +14,7 @@ import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccoun
 import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
 import colors from 'colors';
 import MaskData from 'maskdata';
+import { clear } from 'console';
 
 /**
  * Utilities Service
@@ -276,5 +276,10 @@ export default class UtilitiesService extends Service {
       };
     });
     return result;
+  }
+
+  public async cleanAndShowBanner(): Promise<void> {
+    clear();
+    await this.showBanner();
   }
 }
