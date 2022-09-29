@@ -16,7 +16,6 @@ const Operations = () => {
 			icon: 'ArrowUp',
 			route: NamedRoutes.CashOut,
 			title: t('cashOutOperation'),
-			variant: 'disabled',
 		},
 		{
 			icon: 'Coin',
@@ -25,9 +24,8 @@ const Operations = () => {
 		},
 		{
 			icon: 'ArrowsDownUp',
-			route: NamedRoutes.Rescue,
+			route: NamedRoutes.RescueTokens,
 			title: t('rescueOperation'),
-			variant: 'disabled',
 		},
 		{
 			icon: 'MinusCircle',

@@ -29,8 +29,7 @@ const CashInOperation = () => {
 		try {
 			await SDKService.cashIn({
 				proxyContractId: '0.0.48261507',
-				privateKey:
-					'302e020100300506032b6570042204201713ea5a2dc0287b11a6f25a1137c0cad65fb5af52706076de9a9ec5a4b7f625',
+				privateKey: '',
 				accountId: '0.0.47809960',
 				tokenId: '0.0.48261510',
 				targetId: '0.0.47809960', // destinationACc
