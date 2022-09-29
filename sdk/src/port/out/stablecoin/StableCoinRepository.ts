@@ -142,7 +142,6 @@ export default class StableCoinRepository implements IStableCoinRepository {
 				//TODO add Roles
 				listCapabilities.push(Capabilities.CASH_IN);
 				listCapabilities.push(Capabilities.CASH_OUT);
-				listCapabilities.push(Capabilities.WIPE);
 			}
 			
 			if (stableCoin.supplyKey instanceof PublicKey){
@@ -156,7 +155,15 @@ export default class StableCoinRepository implements IStableCoinRepository {
 				if(stableCoin.wipeKey?.key.toString()==publickey.toString()){
 					listCapabilities.push(Capabilities.WIPE_HTS);
 				}
+				
 			}
+			if (stableCoin.wipeKey instanceof ContractId){
+				if(stableCoin.wipeKey?.id.toString()==stableCoin.treasury.toString()){
+					listCapabilities.push(Capabilities.WIPE);
+				}
+				
+			};
+				
 			
 			return listCapabilities; 
 		} catch (error) {
