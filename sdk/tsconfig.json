@@ -14,6 +14,6 @@
 		"baseUrl": "./src",
 		"strictPropertyInitialization": false
 	},
-	"exclude": ["build/**/*", "node_modules"],
+	"exclude": ["build/**/*", "node_modules", "example/**/*"],
 	"include": ["src/**/*", "__tests__/**/*"]
 }
