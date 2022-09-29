@@ -356,7 +356,7 @@ export default class CreateStableCoinService extends Service {
 
     // Check if supplyKey is not the Smart Contract
     let treasuryId = '';
-    if (supplyKey.key !== '') {
+    if (supplyKey.key !== 'null') {
       treasuryId = await utilsService.defaultSingleAsk(
         language.getText('stablecoin.features.treasury'),
         '0.0.0',
