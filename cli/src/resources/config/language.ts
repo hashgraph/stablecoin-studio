@@ -181,8 +181,8 @@ export const english = {
       'Has role',
       'Go back',
     ],
-    adminFeatureOptions: ['Current user private key', 'None'],
-    featureOptions: ['The Smart Contract', 'Admin Key', 'Other key', 'None'],
+    adminFeatureOptions: ['Current user key', 'None'],
+    featureOptions: ['The smart contract', 'Current user key', 'Other key', 'None'],
     supplierRoleType: ['Unlimited', 'Limited', 'Back'],
     editSupplierRoleOptions: [
       'Increase limit',
