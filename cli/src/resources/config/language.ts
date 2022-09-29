@@ -195,6 +195,13 @@ export const english = {
     loading: 'Loading...',
     loadCompleted: 'Load completed',
     searchingSuccess: 'The search has been completed successfully',
+    cashInCompleted: 'Cash in completed',
+    burnCompleted: 'Burn completed',
+    rescueCompleted: 'Rescue completed',
+    wipeCompleted: 'Wipe completed',
+    detailsCompleted: 'Details loaded',
+    balanceCompleted: 'Balance loaded',
+    associteCompleted:'Stable coin associated'
   },
   operation: {
     success: 'Operation has been completed successfully.',

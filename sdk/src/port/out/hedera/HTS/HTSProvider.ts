@@ -545,10 +545,7 @@ export default class HTSProvider implements IProvider {
 				`An error has occurred when wipe the amount ${params.amount} in the account ${params.wipeAccountId} for tokenId ${params.tokenId}`,
 			);
 		}
-		log(
-			`Result wipe HTS ${htsResponse.receipt.status}: account ${params.wipeAccountId}, tokenId ${params.tokenId}, amount ${params.amount}`,
-			logOpts,
-		);
+		
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
@@ -585,10 +582,7 @@ export default class HTSProvider implements IProvider {
 				`An error has occurred when cash in the amount ${params.amount} in the account ${params.account.accountId} for tokenId ${params.tokenId}`,
 			);
 		}
-		log(
-			`Result cash in HTS ${htsResponse.receipt.status}: account ${params.account.accountId}, tokenId ${params.tokenId}, amount ${params.amount}`,
-			logOpts,
-		);
+		
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}	
 
@@ -625,10 +619,7 @@ export default class HTSProvider implements IProvider {
 				`An error has occurred when cash out the amount ${params.amount} in the account ${params.account.accountId} for tokenId ${params.tokenId}`,
 			);
 		}
-		log(
-			`Result cash out HTS ${htsResponse.receipt.status}: account ${params.account.accountId}, tokenId ${params.tokenId}, amount ${params.amount}`,
-			logOpts,
-		);
+		
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}	
 
