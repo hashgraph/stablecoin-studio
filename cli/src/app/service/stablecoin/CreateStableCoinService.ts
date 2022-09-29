@@ -362,7 +362,7 @@ export default class CreateStableCoinService extends Service {
   }
 
   private async checkAnswer(answer: string): Promise<PublicKey> {
-    const hexRegEx = /^[0-9A-F]{64,}$/gi;
+    //const hexRegEx = /^[0-9A-F]{64,}$/gi;
     switch (answer) {
       case 'Admin Key': {
         const currentAccount = utilsService.getCurrentAccount();
@@ -371,12 +371,10 @@ export default class CreateStableCoinService extends Service {
       }
 
       case 'Other key': {
-        const key = await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.features.publicKey'),
-          undefined,
-        );
+        const key = await utilsService.defaultPublicKeyAsk();
         return new PublicKey({
-          key: hexRegEx.test(key) ? key : await this.askNewKey(hexRegEx),
+          //key: hexRegEx.test(key) ? key : await this.askNewKey(hexRegEx),
+          key: key,
           type: 'ED25519'
         });
       }
@@ -390,13 +388,13 @@ export default class CreateStableCoinService extends Service {
     }
   }
 
-  private async askNewKey(regExp: RegExp): Promise<string> {
+  /*private async askNewKey(regExp: RegExp): Promise<string> {
     const newKey = await utilsService.defaultSingleAsk(
       language.getText('stablecoin.features.keyError'),
       undefined,
     );
     return regExp.test(newKey) ? newKey : await this.askNewKey(regExp);
-  }
+  }*/
 
   private getTreasuryAccountFromSupplyKey(supplyKey: PublicKey): AccountId {
     if (supplyKey && supplyKey !== PublicKey.NULL) {

@@ -24,6 +24,7 @@ export const english = {
       'Alias ${alias} already in use. Please use another alias.',
     askMoreAccounts: 'Do you want to introduce more accounts? (y/n)',
     askPrivateKey: 'Introduce the private key',
+    askPublicKey: 'Introduce the public key',
     askConsensusUrl: 'Introduce the url',
     askMoreConsensusNodes:
       'Do you want to introduce more consensus nodes? (y/n)',
