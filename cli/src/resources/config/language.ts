@@ -179,7 +179,7 @@ export const english = {
       'Has role',
       'Go back',
     ],
-    adminFeatureOptions: ['Admin Key', 'None'],
+    adminFeatureOptions: ['Current user private key', 'None'],
     featureOptions: ['The Smart Contract', 'Admin Key', 'Other key', 'None'],
     supplierRoleType: ['Unlimited', 'Limited', 'Back'],
     editSupplierRoleOptions: [
