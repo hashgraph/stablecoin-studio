@@ -18,12 +18,9 @@ export default class CapabilitiesStableCoinsService extends Service {
     id: string,
     publicKey: string,
   ): Promise<Capabilities[]> {
-    // Call to list stable coins
     const sdk: SDK = utilsService.getSDK();
 
-    let capabilities: Capabilities[];
-
-    capabilities = await sdk.getCapabilitiesStableCoin(id, publicKey);
+    const capabilities = await sdk.getCapabilitiesStableCoin(id, publicKey);
 
     return capabilities;
   }

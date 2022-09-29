@@ -99,16 +99,6 @@ export default class StableCoinService extends Service {
 		);
 	}
 
-	public async getTokenOwnerBalance(
-		req: IGetBalanceOfTokenOwnerStableCoinServiceRequestModel,
-	): Promise<Uint8Array> {
-		return this.repository.getTokenOwnerBalance(
-			req.proxyContractId,
-			req.privateKey,
-			req.accountId,
-		);
-	}
-
 	public async getNameToken(
 		req: IGetNameOfStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
@@ -176,14 +166,14 @@ export default class StableCoinService extends Service {
 		const treasruyAccount: string = coin.treasury.id;
 		const amount = coin.toInteger(req.amount);
 
-		const tokenOwnerBalance = await this.getBalanceOf({
+		const treasuryAccountBalance = await this.getBalanceOf({
 			accountId: req.accountId,
 			privateKey: req.privateKey,
 			proxyContractId: req.proxyContractId,
 			targetId: treasruyAccount,
 			tokenId: req.tokenId,
 		});
-		if (amount > coin.toInteger(tokenOwnerBalance[0])) {
+		if (amount > coin.toInteger(treasuryAccountBalance[0])) {
 			throw new Error('Amount is bigger than treasury account balance');
 		}
 
@@ -279,15 +269,18 @@ export default class StableCoinService extends Service {
 		const coin: StableCoin = await this.getStableCoin({
 			id: req.tokenId,
 		});
+
+		const treasruyAccount: string = coin.treasury.id;
 		const amount = coin.toInteger(req.amount);
 
-		const tokenOwnerBalance = await this.getTokenOwnerBalance({
+		const treasuryAccountBalance = await this.getBalanceOf({
 			accountId: req.accountId,
 			privateKey: req.privateKey,
 			proxyContractId: req.proxyContractId,
+			targetId: treasruyAccount,
+			tokenId: req.tokenId,
 		});
-
-		if (amount > tokenOwnerBalance[0]) {
+		if (amount > coin.toInteger(treasuryAccountBalance[0])) {
 			throw new Error('Amount is bigger than token owner balance');
 		}
 		return this.repository.rescue(

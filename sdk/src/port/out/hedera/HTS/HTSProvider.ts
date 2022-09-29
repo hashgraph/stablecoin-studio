@@ -188,6 +188,7 @@ export default class HTSProvider implements IProvider {
 			);
 		const transactionResponse: TransactionResponse =
 			await this.htsSigner.signAndSendTransaction(transaction);
+			this.logHashScan(transactionResponse,'call contract');
 		const htsResponse: HTSResponse =
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
@@ -210,6 +211,10 @@ export default class HTSProvider implements IProvider {
 			accountId,
 			privateKey,
 		};
+		log(
+			`Deploying ${HederaERC20__factory.name} contract... please wait.`,
+			logOpts,
+		);
 		const tokenContract = await this.deployContract(
 			HederaERC20__factory,
 			plainAccount.privateKey,
@@ -373,6 +378,7 @@ export default class HTSProvider implements IProvider {
 				);
 			const transactionResponse: TransactionResponse =
 				await this.htsSigner.signAndSendTransaction(transaction);
+				this.logHashScan(transactionResponse,'deploy contract');
 			const htsResponse: HTSResponse =
 				await this.transactionResposeHandler.manageResponse(
 					transactionResponse,
@@ -457,6 +463,7 @@ export default class HTSProvider implements IProvider {
 			);
 		const transactionResponse: TransactionResponse =
 			await this.htsSigner.signAndSendTransaction(transaction);
+			this.logHashScan(transactionResponse,'create token hts');
 		const htsResponse: HTSResponse =
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
@@ -525,6 +532,7 @@ export default class HTSProvider implements IProvider {
 			);
 		const transactionResponse: TransactionResponse =
 			await this.htsSigner.signAndSendTransaction(transaction);
+			this.logHashScan(transactionResponse),'wipe in hts';
 		const htsResponse: HTSResponse =
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
@@ -564,6 +572,7 @@ export default class HTSProvider implements IProvider {
 			);
 		const transactionResponse: TransactionResponse =
 			await this.htsSigner.signAndSendTransaction(transaction);
+			this.logHashScan(transactionResponse,'cash in hts');
 		const htsResponse: HTSResponse =
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
@@ -603,6 +612,7 @@ export default class HTSProvider implements IProvider {
 			);
 		const transactionResponse: TransactionResponse =
 			await this.htsSigner.signAndSendTransaction(transaction);
+			this.logHashScan(transactionResponse, 'cash out hts');
 		const htsResponse: HTSResponse =
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
@@ -644,6 +654,7 @@ export default class HTSProvider implements IProvider {
 			);
 		const transactionResponse: TransactionResponse =
 			await this.htsSigner.signAndSendTransaction(transaction);
+			this.logHashScan(transactionResponse,'tranfer hts');
 		const htsResponse: HTSResponse =
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
@@ -659,4 +670,16 @@ export default class HTSProvider implements IProvider {
 		
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}	
+
+	public logHashScan(transactionResponse: TransactionResponse, operation?:string):void{
+		let hs =` https://hashscan.io/#/${this.network.hederaNetworkEnviroment}/transaction/${transactionResponse.transactionId.toString().replace('@', '-')}`;
+		const num:number =hs.lastIndexOf('.');
+		
+		hs = hs.substring(0, num  ) +'-' + hs.substring(num+1, hs.length) ;
+		log(
+			`${hs} \n`,
+			logOpts,
+		);
+		
+	}
 }
