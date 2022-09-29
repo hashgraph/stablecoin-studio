@@ -12,7 +12,7 @@ describe("General ERC20", function() {
   let account;
   let privateKey;
     
-  beforeEach(async function () {
+  before(async function () {
     deployedProxyAddress = await deployContractsWithSDK("TOKEN","TK",2,0,2000000,"",false);
     
   });

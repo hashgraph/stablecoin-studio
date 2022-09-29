@@ -23,9 +23,8 @@ describe("Operations to WIPE tokens", function() {
     client = getClient();   
     client.setOperator(account, privateKey);
          
-  });
-  beforeEach(async function () {
-    proxyAddress = await deployContractsWithSDK("TOKEN-WIPE", "TM-WP", 2, 0, 3000000, "Hedera Accelerator Stable Coin (Wipe)");    
+ 
+    proxyAddress = await deployContractsWithSDK("TOKEN-WIPE", "TM-WP", 2, 0, 6000000, "Hedera Accelerator Stable Coin (Wipe)");    
   });
 
   it("Admin account can grant wipeable role to an account", async function() {  
