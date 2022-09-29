@@ -364,7 +364,7 @@ export default class CreateStableCoinService extends Service {
   private async checkAnswer(answer: string): Promise<PublicKey> {
     const hexRegEx = /^[0-9A-F]{64,}$/gi;
     switch (answer) {
-      case 'Admin Key': {
+      case 'Current User': {
         const currentAccount = utilsService.getCurrentAccount();
         const privateKey: PrivateKey = new PrivateKey(currentAccount.privateKey);
         return privateKey.publicKey;
