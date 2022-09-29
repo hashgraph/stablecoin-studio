@@ -70,8 +70,17 @@ You must have installed
 - [npm](https://www.npmjs.com/)
 
 ### Steps
+#### **For projects (WIP - when published)**
 1. Run `npm install hedera-stable-coin-sdk`. To install the dependency.
 2. Import and use the SDK.
+
+#### **For development**
+1. Clone the repo and open a terminal in the root folder
+2. Run `node install.js`. To install all the dependencies and links.
+3. `cd` into `./sdk`
+4. Make your changes.
+5. Run `npm run build` to build the SDK.
+6. Import and use the SDK. Or use one of the example projects under `/examples`
 
 ### Example (JS)
 
@@ -234,11 +243,11 @@ The SDK has an `async` function to initialize the SDK, to which you optionally c
 ````Typescript
 	// data
 	interface InitilizationData {
-        topic: string;
-        pairingString: string;
-        encryptionKey: string;
-        savedPairings: SavedPairingData[];
-    }
+		topic: string;
+		pairingString: string;
+		encryptionKey: string;
+		savedPairings: SavedPairingData[];
+         }
 
 
 	new SDK().init({
