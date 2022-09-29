@@ -7,5 +7,4 @@ export interface IManagedFeatures {
   freezeKey: PublicKey;
   wipeKey: PublicKey;
   pauseKey: PublicKey;
-  treasuryId: string;
 }
