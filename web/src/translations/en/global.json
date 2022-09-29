@@ -5,7 +5,8 @@
     "cancel": "Cancel",
     "goBack": "Go back",
     "no": "No",
-    "yes": "Yes"
+    "yes": "Yes",
+    "unknown": "-"
   },
   "hashpack-no-installed": {
     "title": "Your haspack extension is not installed yet",

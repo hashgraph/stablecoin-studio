@@ -65,9 +65,9 @@ const CoinDropdown = () => {
 		// TODO: change this when sdk returns correct info
 		dispatch(
 			walletActions.setSelectedStableCoin({
-				initialSupply: 0,
+				initialSupply: BigInt(0).toString(),
 				tokenId: stableCoinDetails?.tokenId,
-				totalSupply: 0,
+				totalSupply: stableCoinDetails?.totalSupply?.toString(),
 				// supplyType: stableCoinDetails?.supplyType,
 				name: stableCoinDetails?.name,
 				symbol: stableCoinDetails?.symbol,
@@ -77,7 +77,7 @@ const CoinDropdown = () => {
 				treasuryId: stableCoinDetails?.treasuryId,
 				memo: stableCoinDetails?.memo,
 				adminKey:
-					stableCoinDetails?.adminKey && JSON.parse(JSON.stringify(stableCoinDetails?.adminKey)),
+					stableCoinDetails?.adminKey && JSON.parse(JSON.stringify(stableCoinDetails.adminKey)),
 				kycKey: stableCoinDetails?.kycKey && JSON.parse(JSON.stringify(stableCoinDetails.kycKey)),
 				freezeKey:
 					stableCoinDetails?.freezeKey && JSON.parse(JSON.stringify(stableCoinDetails.freezeKey)),
