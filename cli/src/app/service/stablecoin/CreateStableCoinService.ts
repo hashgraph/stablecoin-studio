@@ -209,7 +209,7 @@ export default class CreateStableCoinService extends Service {
       return tokenToCreate;
     }
 
-    const { adminKey, supplyKey, freezeKey, wipeKey, pauseKey, treasuryId } =
+    const { adminKey, supplyKey, freezeKey, wipeKey, pauseKey } =
       await this.configureManagedFeatures();
 
     createdStableCoin.adminKey = adminKey;
@@ -219,10 +219,7 @@ export default class CreateStableCoinService extends Service {
     createdStableCoin.wipeKey = wipeKey;
     createdStableCoin.pauseKey = pauseKey;
 
-    const treasury =
-      treasuryId === ''
-        ? this.getTreasuryAccountFromSupplyKey(supplyKey)
-        : new AccountId(treasuryId);
+    const treasury = this.getTreasuryAccountFromSupplyKey(supplyKey);
 
     console.log({
       name,
@@ -354,23 +351,7 @@ export default class CreateStableCoinService extends Service {
       ),
     );
 
-    // Check if supplyKey is not the Smart Contract
-    let treasuryId = '';
-    if (supplyKey.key !== 'null') {
-      treasuryId = await utilsService.defaultSingleAsk(
-        language.getText('stablecoin.features.treasury'),
-        '0.0.0',
-      );
-      while (!/\d\.\d\.\d/.test(treasuryId)) {
-        console.log(language.getText('validations.wrongFormatAddress'));
-        treasuryId = await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.features.treasury'),
-          '0.0.0',
-        );
-      }
-    }
-
-    return { adminKey, supplyKey, freezeKey, wipeKey, pauseKey, treasuryId };
+    return { adminKey, supplyKey, freezeKey, wipeKey, pauseKey };
   }
 
   private async checkAnswer(answer: string): Promise<PublicKey> {
