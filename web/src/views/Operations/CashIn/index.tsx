@@ -31,8 +31,8 @@ const CashInOperation = () => {
 		try {
 			await SDKService.cashIn({
 				proxyContractId: '0.0.48261507',
-				privateKey: '',
-				accountId: '0.0.47809960',
+				privateKey: 'pvkey',
+				accountId: '0.0.47822430',
 				tokenId: '0.0.48261510',
 				targetId: '0.0.47822430', // destinationACc
 				amount,
@@ -55,7 +55,7 @@ const CashInOperation = () => {
 						<Text color='brand.gray' data-testid='operation-title'>
 							{t('cashIn:operationTitle')}
 						</Text>
-						<Stack as='form' spacing={6}>
+						<Stack as='form' spacing={6} maxW='520px'>
 							<InputNumberController
 								rules={{
 									required: t('global:validations.required'),
