@@ -355,8 +355,7 @@ export default class CreateStableCoinService extends Service {
 
   private async checkAnswer(answer: string): Promise<PublicKey> {
     switch (answer) {
-      case 'Current user private key':
-      case 'Admin Key': {
+      case 'Current user key': {
         const currentAccount = utilsService.getCurrentAccount();
         const privateKey: PrivateKey = new PrivateKey(
           currentAccount.privateKey,
