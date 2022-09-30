@@ -5,6 +5,19 @@
     "name": "Name",
     "symbol": "Symbol",
     "initialSupply": "Initial supply",
-    "decimals": "Decimals"
+    "decimals": "Decimals",
+    "totalSupply": "Total supply",
+    "maxSupply": "Max supply",
+    "treasuryId": "Treasury ID",
+    "memo": "Memo",
+    "adminKey": "Admin key",
+    "kycKey": "Kyc key",
+    "freezeKey": "Freeze key",
+    "wipeKey": "Wipe key",
+    "supplyKey": "Supply key",
+    "none": "None",
+    "smartContract": "Smart contract",
+    "currentUser": "Current user",
+    "otherKey": "Other key: {{key}}"
 
 }

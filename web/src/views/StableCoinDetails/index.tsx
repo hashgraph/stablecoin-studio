@@ -9,6 +9,23 @@ const StableCoinDetails = () => {
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const { t } = useTranslation('stableCoinDetails');
 
+	const getKeyText = (
+		key: { key: string; type: string; id: never } | { id: string; key: never; type: never },
+	) => {
+		if (!key) {
+			return t('none');
+		}
+		if (key.id) {
+			return t('smartContract');
+		}
+		if (key.key === 'same as user') {
+			// TODO: check current public key
+			return t('currentUser');
+		} else {
+			return t('otherKey', { key: key.key });
+		}
+	};
+
 	return (
 		<BaseContainer title={t('title')}>
 			<Flex justify='center' p={{ base: 4, md: '128px' }} pt={{ base: 4, lg: 14 }}>
@@ -36,45 +53,41 @@ const StableCoinDetails = () => {
 									value: selectedStableCoin?.decimals,
 								},
 								{
-									label: 'totalSupply',
+									label: t('totalSupply'),
 									value: 0,
 								},
 								{
-									label: 'maxSupply',
+									label: t('maxSupply'),
 									value: 0,
 								},
 								{
-									label: 'treasuryId',
+									label: t('treasuryId'),
 									value: selectedStableCoin?.treasuryId,
 								},
 								{
-									label: 'memo',
+									label: t('memo'),
 									value: selectedStableCoin?.memo,
 								},
 								{
-									label: 'freeze',
-									value: 0,
+									label: t('adminKey'),
+									value: getKeyText(selectedStableCoin?.adminKey as any), // TODO: remove any when received correct sdk type
 								},
-								// {
-								// 	label: 'adminKey',
-								// 	value: selectedStableCoin?.adminKey,
-								// },
-								// {
-								// 	label: 'kyc key',
-								// 	value: selectedStableCoin?.kycKey,
-								// },
-								// {
-								// 	label: 'freeze key',
-								// 	value: selectedStableCoin?.freezeKey,
-								// },
-								// {
-								// 	label: 'wipe key',
-								// 	value: selectedStableCoin?.wipeKey,
-								// },
-								// {
-								// 	label: 'supply key',
-								// 	value: selectedStableCoin?.supplyKey,
-								// },
+								{
+									label: t('kycKey'),
+									value: getKeyText(selectedStableCoin?.kycKey as any),
+								},
+								{
+									label: t('freezeKey'),
+									value: getKeyText(selectedStableCoin?.freezeKey as any),
+								},
+								{
+									label: t('wipeKey'),
+									value: getKeyText(selectedStableCoin?.wipeKey as any),
+								},
+								{
+									label: t('supplyKey'),
+									value: getKeyText(selectedStableCoin?.supplyKey as any),
+								},
 							]}
 						/>
 					</Box>

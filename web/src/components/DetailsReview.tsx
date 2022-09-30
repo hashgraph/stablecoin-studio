@@ -16,14 +16,15 @@ export interface DetailsReviewProps {
 	contentProps?: ChakraFlexProps;
 }
 
-const commonTextProps = {
+const commonTextProps: ChakraTextProps = {
 	fontSize: '14px',
 	fontWeight: 500,
 	lineHeight: '17px',
 	color: 'brand.gray',
+	wordBreak: 'break-all',
 };
 
-const textInBoldProps = {
+const textInBoldProps: ChakraTextProps = {
 	...commonTextProps,
 	fontWeight: 700,
 	color: 'brand.black',
@@ -57,7 +58,7 @@ const DetailsReview = (props: DetailsReviewProps) => {
 							<Text {...(detail.labelInBold ? textInBoldProps : commonTextProps)}>
 								{detail.label}
 							</Text>
-							<Text {...(detail.valueInBold ? textInBoldProps : commonTextProps)}>
+							<Text flex={1} {...(detail.valueInBold ? textInBoldProps : commonTextProps)}>
 								{detail.value}
 							</Text>
 						</Flex>

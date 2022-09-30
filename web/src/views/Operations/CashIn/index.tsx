@@ -65,6 +65,7 @@ const CashInOperation = () => {
 										},
 									},
 								}}
+								decimalScale={decimals}
 								isRequired
 								control={control}
 								name='amount'
