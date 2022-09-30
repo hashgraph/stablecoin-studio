@@ -108,7 +108,10 @@ export default class CreateStableCoinService extends Service {
    * @returns
    */
   public async wizardCreateStableCoin(): Promise<StableCoin> {
-    utilsService.showMessage(language.getText('general.newLine'));
+    const currentAccount = utilsService.getCurrentAccount();
+
+    utilsService.displayCurrentUserInfo(currentAccount);
+
     // Call to create stable coin sdk function
     const sdk: SDK = utilsService.getSDK();
     let tokenToCreate: StableCoin;
@@ -228,12 +231,32 @@ export default class CreateStableCoinService extends Service {
       initialSupply: initialSupply === '' ? undefined : BigInt(initialSupply),
       supplyType: supplyType ? 'INFINITE' : 'FINITE',
       maxSupply: totalSupply ? BigInt(totalSupply) : totalSupply,
-      freezeKey: freezeKey === undefined ? 'None' : freezeKey.key !== 'null' ? freezeKey : 'The Smart Contract',
+      freezeKey:
+        freezeKey === undefined
+          ? 'None'
+          : freezeKey.key !== 'null'
+          ? freezeKey
+          : 'The Smart Contract',
       //KYCKey,
-      wipeKey: wipeKey === undefined ? 'None' : wipeKey.key !== 'null' ? wipeKey : 'The Smart Contract',
+      wipeKey:
+        wipeKey === undefined
+          ? 'None'
+          : wipeKey.key !== 'null'
+          ? wipeKey
+          : 'The Smart Contract',
       adminKey: adminKey ?? 'None',
-      supplyKey: supplyKey === undefined ? 'None' : supplyKey.key !== 'null' ? supplyKey : 'The Smart Contract',
-      pauseKey: pauseKey === undefined ? 'None' : pauseKey.key !== 'null' ? pauseKey : 'The Smart Contract',
+      supplyKey:
+        supplyKey === undefined
+          ? 'None'
+          : supplyKey.key !== 'null'
+          ? supplyKey
+          : 'The Smart Contract',
+      pauseKey:
+        pauseKey === undefined
+          ? 'None'
+          : pauseKey.key !== 'null'
+          ? pauseKey
+          : 'The Smart Contract',
       treasury: treasury.id !== '0.0.0' ? treasury : 'The Smart Contract',
     });
     tokenToCreate = {
@@ -367,7 +390,7 @@ export default class CreateStableCoinService extends Service {
         const key = await utilsService.defaultPublicKeyAsk();
         return new PublicKey({
           key: key,
-          type: 'ED25519'
+          type: 'ED25519',
         });
       }
 
