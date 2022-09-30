@@ -77,10 +77,12 @@ You must have installed
 #### **For development**
 1. Clone the repo and open a terminal in the root folder
 2. Run `node install.js`. To install all the dependencies and links.
-3. `cd` into `./sdk`
-4. Make your changes.
-5. Run `npm run build` to build the SDK.
-6. Import and use the SDK. Or use one of the example projects under `/examples`
+3. `cd` into `./contracts`
+4. Run `npm run build` to build the contracts.
+5. `cd` into `./sdk`
+6. Make your changes.
+7. Run `npm run build` to build the SDK.
+8. Import and use the SDK. Or use one of the example projects under `/examples`
 
 ### Example (JS)
 
