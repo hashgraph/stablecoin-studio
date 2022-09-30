@@ -19,7 +19,7 @@
         "decimals": "Decimals",
         "initialSupply": "Initial supply",
         "totalSupply": "Total supply",
-        "supplyType": "Supply type (infinite or finite)",
+        "supplyType": "Supply type",
         "infinite": "Infinite",
         "finite": "Finite"
     }
