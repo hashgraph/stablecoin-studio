@@ -215,14 +215,15 @@ export default class UtilitiesService extends Service {
   /**
    * Function to configure the public key, fail if length doesn't 96 or 64 or 66
    */
-  public async defaultPublicKeyAsk(
-  ): Promise<string> {
+  public async defaultPublicKeyAsk(): Promise<string> {
     let publicKey: string = await this.defaultSingleAsk(
-      language.getText('configuration.askPublicKey') +
-        ` '96|64|66 characters'`, undefined
+      language.getText('configuration.askPublicKey') + ` '96|64|66 characters'`,
+      undefined,
     );
 
-    if (publicKey.length == 64) { publicKey = `0x${publicKey}` }
+    if (publicKey.length == 64) {
+      publicKey = `0x${publicKey}`;
+    }
 
     if (![64, 66, 96].includes(publicKey.length)) {
       this.showError(language.getText('general.incorrectParam'));
@@ -281,5 +282,27 @@ export default class UtilitiesService extends Service {
   public async cleanAndShowBanner(): Promise<void> {
     clear();
     await this.showBanner();
+  }
+
+  public displayCurrentUserInfo(
+    userInfo: IAccountConfig,
+    token?: string,
+  ): void {
+    const { network, accountId, alias } = userInfo;
+
+    let result = '';
+    if (network) {
+      result = result + ' ' + colors.cyan(`( ${network} )`);
+    }
+
+    if (accountId) {
+      result = result + ' ' + colors.magenta(`(${accountId} - ${alias})`);
+    }
+
+    if (token) {
+      result = result + ' ' + colors.yellow(`( ${token} )`);
+    }
+
+    this.showMessage(result);
   }
 }
