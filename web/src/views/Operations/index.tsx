@@ -65,8 +65,8 @@ const Operations = () => {
 		const areDisabled = {
 			cashIn: !isKeySet(supplyKey as any) || !isContractKey(supplyKey as any),
 			cashOut: !isKeySet(supplyKey as any) || !isContractKey(supplyKey as any),
-			balance: true,
-			rescue: true,
+			balance: false,
+			rescue: false,
 			wipe: !isKeySet(wipeKey as any) || !isKeySet(supplyKey as any),
 		};
 		setDisabledFeatures(areDisabled);
