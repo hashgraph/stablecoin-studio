@@ -37,12 +37,16 @@ This will install the dependencies in all projects and setup the links between t
 You can now start developing on any of the modules.
 
 # Building
-When making modifications to any of the modules, you can:
+When making modifications to any of the modules, you have to re-compile the dependencies, in this order, depending on which ones the modifications where made:
 ````bash
-  $ npm run build:cli
-  $ npm run build:sdk
-  $ npm run build:web
+  // 1st
   $ npm run build:contracts
+  // 2nd
+  $ npm run build:sdk
+  // 3rd
+  $ npm run build:cli
+  // or
+  $ npm run build:web
 ````
 
 Or within any of the modules:
