@@ -22,6 +22,19 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "BURN_ROLE",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "PAUSER_ROLE",
     outputs: [
       {

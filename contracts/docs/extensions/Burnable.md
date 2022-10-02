@@ -27,6 +27,23 @@ function ADMIN_SUPPLIER_ROLE() external view returns (bytes32)
 |---|---|---|
 | _0 | bytes32 | undefined |
 
+### BURN_ROLE
+
+```solidity
+function BURN_ROLE() external view returns (bytes32)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bytes32 | undefined |
+
 ### DEFAULT_ADMIN_ROLE
 
 ```solidity

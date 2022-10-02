@@ -27,6 +27,23 @@ function ADMIN_SUPPLIER_ROLE() external view returns (bytes32)
 |---|---|---|
 | _0 | bytes32 | undefined |
 
+### BURN_ROLE
+
+```solidity
+function BURN_ROLE() external view returns (bytes32)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bytes32 | undefined |
+
 ### DEFAULT_ADMIN_ROLE
 
 ```solidity
@@ -233,13 +250,13 @@ function rescueHbar(uint256 amount) external nonpayable
 
 
 
-*Rescue `value` hbar from contractTokenOwner to rescuer Must be protected with isRescuer()*
+*Rescue `value` hbar from contractTokenOwner to rescuer Must be protected with RESCUE_ROLE*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| amount | uint256 | The amount of hbar to rescuer |
+| amount | uint256 | The amount of hbar to rescue |
 
 ### rescueToken
 

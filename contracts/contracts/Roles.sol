@@ -10,7 +10,14 @@ abstract contract Roles {
     * keccak_256("SUPPLIER_ROLE")
     */ 
     bytes32 public constant SUPPLIER_ROLE = 0xd1ae8bbdabd60d63e418b84f5ad6f9cba90092c9816d7724d85f0d4e4bea2c60;
-    
+
+    /**
+    * @dev Role that allows to burn token
+    * 
+    * keccak_256("BURN_ROLE")
+    */ 
+    bytes32 public constant BURN_ROLE = 0xe97b137254058bd94f28d2f3eb79e2d34074ffb488d042e3bc958e0a57d2fa22;
+
     /**
     * @dev Role that allows to wipe token
     * 

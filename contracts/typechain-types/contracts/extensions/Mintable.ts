@@ -30,6 +30,7 @@ import type {
 export interface MintableInterface extends utils.Interface {
   functions: {
     "ADMIN_SUPPLIER_ROLE()": FunctionFragment;
+    "BURN_ROLE()": FunctionFragment;
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
     "PAUSER_ROLE()": FunctionFragment;
     "RESCUE_ROLE()": FunctionFragment;
@@ -59,6 +60,7 @@ export interface MintableInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "ADMIN_SUPPLIER_ROLE"
+      | "BURN_ROLE"
       | "DEFAULT_ADMIN_ROLE"
       | "PAUSER_ROLE"
       | "RESCUE_ROLE"
@@ -89,6 +91,7 @@ export interface MintableInterface extends utils.Interface {
     functionFragment: "ADMIN_SUPPLIER_ROLE",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "BURN_ROLE", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "DEFAULT_ADMIN_ROLE",
     values?: undefined
@@ -187,6 +190,7 @@ export interface MintableInterface extends utils.Interface {
     functionFragment: "ADMIN_SUPPLIER_ROLE",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "BURN_ROLE", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "DEFAULT_ADMIN_ROLE",
     data: BytesLike
@@ -405,6 +409,8 @@ export interface Mintable extends BaseContract {
   functions: {
     ADMIN_SUPPLIER_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
+    BURN_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     PAUSER_ROLE(overrides?: CallOverrides): Promise<[string]>;
@@ -499,8 +505,8 @@ export interface Mintable extends BaseContract {
     ): Promise<ContractTransaction>;
 
     setTokenAddress(
-      _htsTokenOwnerAddress: PromiseOrValue<string>,
-      _tokenAddress: PromiseOrValue<string>,
+      htsTokenOwnerAddress: PromiseOrValue<string>,
+      tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -516,6 +522,8 @@ export interface Mintable extends BaseContract {
   };
 
   ADMIN_SUPPLIER_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  BURN_ROLE(overrides?: CallOverrides): Promise<string>;
 
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
@@ -611,8 +619,8 @@ export interface Mintable extends BaseContract {
   ): Promise<ContractTransaction>;
 
   setTokenAddress(
-    _htsTokenOwnerAddress: PromiseOrValue<string>,
-    _tokenAddress: PromiseOrValue<string>,
+    htsTokenOwnerAddress: PromiseOrValue<string>,
+    tokenAddress: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -628,6 +636,8 @@ export interface Mintable extends BaseContract {
 
   callStatic: {
     ADMIN_SUPPLIER_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    BURN_ROLE(overrides?: CallOverrides): Promise<string>;
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
@@ -723,8 +733,8 @@ export interface Mintable extends BaseContract {
     ): Promise<void>;
 
     setTokenAddress(
-      _htsTokenOwnerAddress: PromiseOrValue<string>,
-      _tokenAddress: PromiseOrValue<string>,
+      htsTokenOwnerAddress: PromiseOrValue<string>,
+      tokenAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -823,6 +833,8 @@ export interface Mintable extends BaseContract {
   estimateGas: {
     ADMIN_SUPPLIER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
+    BURN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     PAUSER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
@@ -917,8 +929,8 @@ export interface Mintable extends BaseContract {
     ): Promise<BigNumber>;
 
     setTokenAddress(
-      _htsTokenOwnerAddress: PromiseOrValue<string>,
-      _tokenAddress: PromiseOrValue<string>,
+      htsTokenOwnerAddress: PromiseOrValue<string>,
+      tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -937,6 +949,8 @@ export interface Mintable extends BaseContract {
     ADMIN_SUPPLIER_ROLE(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    BURN_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     DEFAULT_ADMIN_ROLE(
       overrides?: CallOverrides
@@ -1036,8 +1050,8 @@ export interface Mintable extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     setTokenAddress(
-      _htsTokenOwnerAddress: PromiseOrValue<string>,
-      _tokenAddress: PromiseOrValue<string>,
+      htsTokenOwnerAddress: PromiseOrValue<string>,
+      tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

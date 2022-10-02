@@ -169,6 +169,19 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "BURN_ROLE",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "DEFAULT_ADMIN_ROLE",
     outputs: [
       {
@@ -385,12 +398,12 @@ const _abi = [
     inputs: [
       {
         internalType: "contract HTSTokenOwner",
-        name: "_htsTokenOwnerAddress",
+        name: "htsTokenOwnerAddress",
         type: "address",
       },
       {
         internalType: "address",
-        name: "_tokenAddress",
+        name: "tokenAddress",
         type: "address",
       },
     ],
