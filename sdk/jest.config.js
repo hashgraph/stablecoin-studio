@@ -6,11 +6,11 @@ module.exports = {
 		},
 	},
 	preset: 'ts-jest',
-	globals: {
-		'ts-jest': {
-			useESM: true,
-		},
-	},
+	// globals: {
+	// 	'ts-jest': {
+	// 		useESM: true,
+	// 	},
+	// },
 	moduleNameMapper: {
 		'^(\\.{1,2}/.*)\\.(m)?js$': '$1',
 	},
