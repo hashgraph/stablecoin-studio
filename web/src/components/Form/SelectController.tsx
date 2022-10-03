@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
 	FormControl,
 	FormErrorMessage,
@@ -259,6 +259,14 @@ export const SelectController = ({
 			defaultValue={defaultValue}
 			rules={rules}
 			render={({ field: { onChange, value }, fieldState: { invalid, error } }) => {
+				useEffect(() => {
+					if (defaultValue) {
+						const index = parseInt(defaultValue as string);
+						const defaultOption = options[index];
+
+						onChange(defaultOption);
+					}
+				}, []);
 				const onChangeCustom = (event: ChangeEvent<HTMLInputElement>) => {
 					onChange(event);
 					onChangeAux && onChangeAux(event);
