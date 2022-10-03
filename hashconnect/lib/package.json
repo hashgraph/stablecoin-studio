@@ -37,6 +37,10 @@
   },
   "typesVersions": {
     "*": {
+      ".": [
+        "./dist/esm/main.d.ts",
+        "./dist/cjs/main.d.ts"
+      ],
       "types": [
         "./dist/esm/types/index.d.ts",
         "./dist/cjs/types/index.d.ts"

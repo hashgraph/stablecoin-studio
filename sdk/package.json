@@ -10,6 +10,7 @@
 	"files": [
 		"./build"
 	],
+	"readme": "README.md",
 	"types": "./build/esm/src/index.d.ts",
 	"exports": {
 		".": {
