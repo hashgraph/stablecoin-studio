@@ -1,7 +1,12 @@
 import { HederaNetwork, HederaNetworkEnviroment, NetworkMode, SDK } from 'hedera-stable-coin-sdk';
-import type { AppMetadata, InitializationData, ICreateStableCoinRequest, StableCoin } from 'hedera-stable-coin-sdk';
-import type IStableCoinList from 'hedera-stable-coin-sdk/build/src/port/in/sdk/response/IStableCoinList';
-import type IStableCoinDetail from 'hedera-stable-coin-sdk/build/src/port/in/sdk/response/IStableCoinDetail';
+import type {
+	AppMetadata,
+	InitializationData,
+	ICreateStableCoinRequest,
+	StableCoin,
+	IStableCoinDetail,
+	IStableCoinList,
+} from 'hedera-stable-coin-sdk';
 
 export enum HashConnectConnectionState {
 	Connected = 'Connected',
@@ -47,13 +52,12 @@ export class SDKService {
 				},
 			});
 
-			const { onInit, onWalletExtensionFound, onWalletPaired } =
-				events || {
-					onInit: () => {},
-					onWalletAcknowledgeMessageEvent: () => {},
-					onWalletExtensionFound: () => {},
-					onWalletPaired: () => {},
-				};
+			const { onInit, onWalletExtensionFound, onWalletPaired } = events || {
+				onInit: () => {},
+				onWalletAcknowledgeMessageEvent: () => {},
+				onWalletExtensionFound: () => {},
+				onWalletPaired: () => {},
+			};
 
 			await SDKService.instance.init({ onInit });
 			SDKService.instance.onWalletExtensionFound(onWalletExtensionFound);

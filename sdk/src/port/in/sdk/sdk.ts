@@ -48,10 +48,6 @@ import ContractId from '../../../domain/context/contract/ContractId.js';
 import { TokenType } from '../../../domain/context/stablecoin/TokenType.js';
 import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.js';
 import { IAllowanceRequest } from './request/IRequestContracts.js';
-import {
-	HashConnectConnectionState,
-	HashConnectTypes,
-} from 'hashconnect/dist/esm/types/hashconnect.js';
 import { AppMetadata } from '../../out/hedera/hashpack/types/types.js';
 import {
 	AcknowledgeMessage,
@@ -67,6 +63,7 @@ import EventService from '../../../app/service/event/EventService.js';
 import { IProvider } from '../../out/hedera/Provider.js';
 import { SavedPairingData } from '../../out/hedera/types.js';
 import { Capabilities } from '../../../domain/context/stablecoin/Capabilities.js';
+import { HashConnectConnectionState, HashConnectTypes } from 'hashconnect/types';
 
 export {
 	IAssociateStableCoinRequest,
@@ -81,6 +78,8 @@ export {
 	IRoleStableCoinRequest,
 	IWipeStableCoinRequest,
 	IBasicRequest,
+	IStableCoinDetail,
+	IStableCoinList
 };
 
 /* Export basic types*/

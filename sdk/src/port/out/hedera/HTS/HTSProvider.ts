@@ -45,7 +45,7 @@ import { HTSSigner } from './HTSSigner.js';
 import { HTSResponse, TransactionType } from '../sign/ISigner.js';
 import { TransactionResposeHandler } from '../transaction/TransactionResponseHandler.js';
 
-import { HashConnectConnectionState } from 'hashconnect/dist/esm/types/hashconnect.js';
+import { HashConnectConnectionState } from 'hashconnect/types';
 import ProviderEvent, { ProviderEventNames } from '../ProviderEvent.js';
 import EventService from '../../../../app/service/event/EventService.js';
 import { ContractId } from '../../../in/sdk/sdk.js';
@@ -367,9 +367,9 @@ export default class HTSProvider implements IProvider {
 			const transaction =
 				TransactionProvider.buildContractCreateFlowTransaction(
 					factory,
-					privateKey,
 					params,
 					90_000,
+					privateKey,
 				);
 			const transactionResponse: TransactionResponse =
 				await this.htsSigner.signAndSendTransaction(transaction);
