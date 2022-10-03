@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "install": "node install.js",
+    "install": "node install.js && npm run build:cli:full",
     "build:sdk": "cd sdk && npm run build",
     "build:cli": "cd cli && npm run build",
+    "build:cli:full": "npm run build:contracts && npm run build:sdk && npm run build:cli",
     "build:contracts": "cd contracts && npm run build",
     "build:web": "cd web && npm run build",
     "setup": "npm run install"
