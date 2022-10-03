@@ -60,7 +60,7 @@ export class TransactionResposeHandler {
 	private async getRecord(
 		clientOrSigner: Client | HashConnectSigner,
 		transactionResponse: TransactionResponse,
-	) {
+	): Promise<TransactionRecord> {
 		let transactionRecord: TransactionRecord;
 		if (clientOrSigner instanceof Client) {
 			transactionRecord = await transactionResponse.getRecord(
@@ -79,7 +79,7 @@ export class TransactionResposeHandler {
 	private async getReceipt(
 		clientOrSigner: Client | HashConnectSigner,
 		transactionResponse: TransactionResponse,
-	) {
+	): Promise<TransactionReceipt> {
 		let transactionReceipt: TransactionReceipt;
 		if (clientOrSigner instanceof Client) {
 			transactionReceipt = await transactionResponse.getReceipt(
@@ -121,7 +121,7 @@ export class TransactionResposeHandler {
 		);
 		if (!functionAbi?.outputs)
 			throw new HederaError(
-                `Contract function ${ functionName } not found in ABI, are you using the right version?`,
+				`Contract function ${functionName} not found in ABI, are you using the right version?`,
 			);
 		const functionParameters = functionAbi?.outputs;
 		const resultHex = '0x'.concat(

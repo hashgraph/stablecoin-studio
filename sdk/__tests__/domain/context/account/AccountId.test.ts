@@ -10,9 +10,7 @@ describe('🧪 [DOMAIN] AccountId', () => {
 	});
 
 	it('Expect to fail on invalid account id', () => {
-		expect(() => new AccountId('invalid account id')).toThrowError(
-			DomainError,
-		);
+		expect(() => new AccountId('invalid account id')).toThrow(DomainError);
 	});
 
 	it('Empty classs', () => {

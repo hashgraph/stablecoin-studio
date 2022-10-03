@@ -10,7 +10,7 @@ describe('🧪 [DOMAIN] PrivateKey', () => {
 	});
 
 	it('Expect to fail on invalid private key', () => {
-		expect(() => new PrivateKey('invalid private key')).toThrowError(
+		expect(() => new PrivateKey('invalid private key')).toThrow(
 			DomainError,
 		);
 	});

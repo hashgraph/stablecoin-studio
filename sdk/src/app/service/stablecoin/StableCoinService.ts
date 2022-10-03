@@ -5,7 +5,6 @@ import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import IStableCoinList from '../../../port/in/sdk/response/IStableCoinList.js';
 import IGetStableCoinServiceRequestModel from './model/IGetStableCoinServiceRequestModel.js';
 import IGetBalanceOfStableCoinServiceRequestModel from './model/IGetBalanceOfStableCoinServiceRequestModel.js';
-import IGetBalanceOfTokenOwnerStableCoinServiceRequestModel from './model/IGetBalanceOfTokenOwnerStableCoinServiceRequestModel.js';
 import IGetNameOfStableCoinServiceRequestModel from './model/IGetNameOfStableCoinServiceRequestModel.js';
 import ICashInStableCoinServiceRequestModel from './model/ICashInStableCoinServiceRequestModel.js';
 import ICashOutStableCoinServiceRequestModel from './model/ICashOutStableCoinServiceRequestModel.js';
@@ -16,7 +15,6 @@ import IRescueStableCoinServiceRequestModel from './model/IRescueStableCoinServi
 import IRoleStableCoinServiceRequestModel from './model/IRoleStableCoinServiceRequestModel';
 import IGetBasicRequestModel from './model/IGetBasicRequest.js';
 import ISupplierRoleStableCoinServiceRequestModel from './model/ISupplierRoleStableCoinServiceRequestModel.js';
-import { StableCoinRole } from '../../../index.js';
 import { Capabilities } from '../../../domain/context/stablecoin/Capabilities.js';
 import IGetSupplierAllowanceModel from './model/IGetSupplierAllowanceModel.js';
 
@@ -126,9 +124,13 @@ export default class StableCoinService extends Service {
 			throw new Error('Amount is bigger than allowed supply');
 		}
 		let resultCashIn = false;
-		
-		const capabilities: Capabilities[] = await this.getCapabilitiesStableCoin(req.tokenId, req.privateKey.publicKey.key);
-		if (capabilities.includes(Capabilities.CASH_IN)){
+
+		const capabilities: Capabilities[] =
+			await this.getCapabilitiesStableCoin(
+				req.tokenId,
+				req.privateKey.publicKey.key,
+			);
+		if (capabilities.includes(Capabilities.CASH_IN)) {
 			const result = await this.repository.cashIn(
 				req.proxyContractId,
 				req.privateKey,
@@ -137,25 +139,25 @@ export default class StableCoinService extends Service {
 				amount,
 			);
 			resultCashIn = Boolean(result[0]);
-		} else if (capabilities.includes(Capabilities.CASH_IN_HTS)){
+		} else if (capabilities.includes(Capabilities.CASH_IN_HTS)) {
 			resultCashIn = await this.repository.cashInHTS(
 				req.privateKey,
 				req.accountId,
-				req.tokenId,				
+				req.tokenId,
 				amount,
 			);
-			if (resultCashIn && req.accountId.id != req.targetId){				
+			if (resultCashIn && req.accountId.id != req.targetId) {
 				resultCashIn = await this.repository.transferHTS(
 					req.privateKey,
 					req.accountId,
-					req.tokenId,				
+					req.tokenId,
 					amount,
 					req.accountId.id,
-					req.targetId
-				)
+					req.targetId,
+				);
 			}
 		} else {
-			throw new Error('Cash in not allowed'); 
+			throw new Error('Cash in not allowed');
 		}
 		return resultCashIn;
 	}
@@ -182,8 +184,12 @@ export default class StableCoinService extends Service {
 		}
 
 		let resultCashOut = false;
-		const capabilities: Capabilities[] = await this.getCapabilitiesStableCoin(req.tokenId, req.privateKey.publicKey.key);
-		if (capabilities.includes(Capabilities.BURN)){
+		const capabilities: Capabilities[] =
+			await this.getCapabilitiesStableCoin(
+				req.tokenId,
+				req.privateKey.publicKey.key,
+			);
+		if (capabilities.includes(Capabilities.BURN)) {
 			const result = await this.repository.cashOut(
 				req.proxyContractId,
 				req.privateKey,
@@ -191,18 +197,17 @@ export default class StableCoinService extends Service {
 				amount,
 			);
 			resultCashOut = Boolean(result[0]);
-
-		} else if (capabilities.includes(Capabilities.BURN_HTS)){
+		} else if (capabilities.includes(Capabilities.BURN_HTS)) {
 			resultCashOut = await this.repository.cashOutHTS(
 				req.privateKey,
 				req.accountId,
-				req.tokenId,				
+				req.tokenId,
 				amount,
-			);			
+			);
 		} else {
-			throw new Error('Cash out not allowed'); 
+			throw new Error('Cash out not allowed');
 		}
-		return resultCashOut
+		return resultCashOut;
 	}
 
 	public async associateToken(
@@ -240,10 +245,14 @@ export default class StableCoinService extends Service {
 		if (balance[0] < req.amount) {
 			throw new Error(`Insufficient funds on account ${req.targetId}`);
 		}
-		
+
 		let resultWipe = false;
-		const capabilities: Capabilities[] = await this.getCapabilitiesStableCoin(req.tokenId, req.privateKey.publicKey.key);
-		if (capabilities.includes(Capabilities.WIPE)){
+		const capabilities: Capabilities[] =
+			await this.getCapabilitiesStableCoin(
+				req.tokenId,
+				req.privateKey.publicKey.key,
+			);
+		if (capabilities.includes(Capabilities.WIPE)) {
 			const result = await this.repository.wipe(
 				req.proxyContractId,
 				req.privateKey,
@@ -252,7 +261,7 @@ export default class StableCoinService extends Service {
 				coin.toInteger(req.amount),
 			);
 			resultWipe = Boolean(result[0]);
-		} else if (capabilities.includes(Capabilities.WIPE_HTS)){
+		} else if (capabilities.includes(Capabilities.WIPE_HTS)) {
 			resultWipe = await this.repository.wipeHTS(
 				req.privateKey,
 				req.accountId,
@@ -261,7 +270,7 @@ export default class StableCoinService extends Service {
 				coin.toInteger(req.amount),
 			);
 		} else {
-			throw new Error('Wipe not allowed'); 
+			throw new Error('Wipe not allowed');
 		}
 
 		return resultWipe;

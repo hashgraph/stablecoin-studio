@@ -1,4 +1,3 @@
-import AccountId from '../../../../src/domain/context/account/AccountId.js';
 import EOAccount from '../../../../src/domain/context/account/EOAccount.js';
 import PrivateKey from '../../../../src/domain/context/account/PrivateKey.js';
 import DomainError from '../../../../src/domain/error/DomainError.js';
@@ -24,6 +23,6 @@ describe('🧪 [DOMAIN] EOAccount', () => {
 	});
 
 	it('Expect to fail on invalid private key', () => {
-		expect(() => new PrivateKey('invalid key')).toThrowError(DomainError);
+		expect(() => new PrivateKey('invalid key')).toThrow(DomainError);
 	});
 });

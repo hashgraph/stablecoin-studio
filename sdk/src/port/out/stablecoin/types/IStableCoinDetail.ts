@@ -1,4 +1,3 @@
-import ContractId from '../../../../domain/context/contract/ContractId.js';
 import { ICustomFees } from './ICustomFees';
 import { IPublicKey } from './IPublicKey.js';
 

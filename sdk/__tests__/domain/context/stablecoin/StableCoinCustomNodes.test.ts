@@ -4,18 +4,15 @@ import {
 	Configuration,
 	NetworkMode,
 	ICreateStableCoinRequest,
+	SDK,
 } from '../../../../src/index.js';
 import { AccountId as HederaAccountId } from '@hashgraph/sdk';
-import { StableCoin } from '../../../../src/domain/context/stablecoin/StableCoin.js';
-import { TokenSupplyType } from '../../../../src/domain/context/stablecoin/TokenSupply.js';
-import { TokenType } from '../../../../src/domain/context/stablecoin/TokenType.js';
 import { ACCOUNTS, getSDKAsync } from '../../../core.js';
-import { assert } from 'console';
 import PrivateKey from '../../../../src/domain/context/account/PrivateKey.js';
 import AccountId from '../../../../src/domain/context/account/AccountId.js';
 
 describe('🧪 [DOMAIN] StableCoin', () => {
-	let sdk: any;
+	let sdk: SDK;
 
 	it('Create an stable coin with custom nodes', async () => {
 		const conf: Configuration = {
@@ -39,13 +36,12 @@ describe('🧪 [DOMAIN] StableCoin', () => {
 			decimals: 2,
 		};
 
-		await sdk.createStableCoin(create).then((result: any) =>
-			setTimeout(() => {
-				assert(result.name === create.name);
-				assert(result.name !== 'prueba');
-			}, 120000),
-		);
-	}, 130_000);
+		const stableCoin = await sdk.createStableCoin(create);
+
+		expect(stableCoin).not.toBeNull();
+		expect(stableCoin?.name).toStrictEqual(create.name);
+		expect(stableCoin?.name).not.toEqual('prueba');
+	}, 10_100_000);
 
 	it('Create an stable coin with empty nodes', async () => {
 		const conf: Configuration = {
@@ -65,11 +61,10 @@ describe('🧪 [DOMAIN] StableCoin', () => {
 			decimals: 2,
 		};
 
-		await sdk.createStableCoin(create).then((result: any) =>
-			setTimeout(() => {
-				assert(result.name === create.name);
-				assert(result.name !== 'prueba');
-			}, 120000),
-		);
-	}, 130_000);
+		const stableCoin = await sdk.createStableCoin(create);
+
+		expect(stableCoin).not.toBeNull();
+		expect(stableCoin?.name).toStrictEqual(create.name);
+		expect(stableCoin?.name).not.toEqual('prueba');
+	}, 10_100_000);
 });
