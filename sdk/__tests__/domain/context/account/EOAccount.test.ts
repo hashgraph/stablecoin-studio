@@ -24,6 +24,6 @@ describe('🧪 [DOMAIN] EOAccount', () => {
 	});
 
 	it('Expect to fail on invalid private key', () => {
-		expect(() => new PrivateKey('invalid key')).toThrowError(DomainError);
+		expect(() => new PrivateKey('invalid key')).toThrow(DomainError);
 	});
 });

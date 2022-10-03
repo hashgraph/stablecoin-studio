@@ -37,7 +37,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
 					decimals: baseCoin.decimals,
 				}),
 			),
-		).rejects.toThrowError(HederaError);
+		).rejects.toThrow(HederaError);
 	});
 
 	it('Saves a new coin', async () => {
