@@ -51,7 +51,7 @@
 		"format:imports": "npx format-imports ./src",
 		"test:watch": "concurrently --kill-others \"npm run build:watch\" \"npm run test:jest:watch\"",
 		"test:jest:watch": "NODE_OPTIONS=--experimental-vm-modules npx jest --watch",
-		"test:jest": "NODE_OPTIONS=--experimental-vm-modules npx jest --coverage"
+		"test:jest": "NODE_OPTIONS=--experimental-vm-modules npx jest --coverage --forceExit"
 	},
 	"license": "Apache-2.0",
 	"dependencies": {
