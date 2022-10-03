@@ -43,11 +43,11 @@ describe(`<${Operations.name} />`, () => {
 		);
 	});
 
-	test('should render cashout button', () => {
+	test('should render burn button', () => {
 		const component = render(<Operations />);
 
-		expect(component.getByTestId('direct-access-cashOut')).toHaveTextContent(
-			translations.cashOutOperation,
+		expect(component.getByTestId('direct-access-burn')).toHaveTextContent(
+			translations.burnOperation,
 		);
 	});
 

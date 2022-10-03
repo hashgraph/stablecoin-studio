@@ -26,7 +26,10 @@ const RescueTokenOperation = () => {
 	const { t } = useTranslation(['rescueTokens', 'global', 'operations']);
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const handleCashOut: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
+	const handleRescueToken: ModalsHandlerActionsProps['onConfirm'] = async ({
+		onSuccess,
+		onError,
+	}) => {
 		try {
 			onSuccess();
 		} catch (error) {
@@ -93,7 +96,7 @@ const RescueTokenOperation = () => {
 					onClose: onCloseModalAction,
 					title: t('rescueTokens:modalAction.subtitle'),
 					confirmButtonLabel: t('rescueTokens:modalAction.accept'),
-					onConfirm: handleCashOut,
+					onConfirm: handleRescueToken,
 				}}
 				ModalActionChildren={
 					<DetailsReview

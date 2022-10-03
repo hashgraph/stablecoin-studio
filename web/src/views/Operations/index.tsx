@@ -14,7 +14,7 @@ const Operations = () => {
 	const { supplyKey, wipeKey } = selectedStableCoin || {};
 	const [disabledFeatures, setDisabledFeatures] = useState({
 		cashIn: false,
-		cashOut: false,
+		burn: false,
 		balance: false,
 		rescue: false,
 		wipe: false,
@@ -58,7 +58,7 @@ const Operations = () => {
 		// TODO: remove as any when sdk returns correct type
 		const areDisabled = {
 			cashIn: !isKeySet(supplyKey as any) || !isContractKey(supplyKey as any),
-			cashOut: !isKeySet(supplyKey as any) || !isContractKey(supplyKey as any),
+			burn: !isKeySet(supplyKey as any) || !isContractKey(supplyKey as any),
 			balance: false,
 			rescue: false,
 			wipe: !isKeySet(wipeKey as any) || !isKeySet(supplyKey as any),
@@ -75,9 +75,9 @@ const Operations = () => {
 		},
 		{
 			icon: 'ArrowUp',
-			route: NamedRoutes.CashOut,
-			title: t('cashOutOperation'),
-			isDisabled: disabledFeatures?.cashOut,
+			route: NamedRoutes.Burn,
+			title: t('burnOperation'),
+			isDisabled: disabledFeatures?.burn,
 		},
 		{
 			icon: 'Coin',
