@@ -7,8 +7,6 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
 import type { DirectAccessProps } from '../../components/DirectAccess';
-import { RouterManager } from '../../Router/RouterManager';
-import { useNavigate } from 'react-router-dom';
 
 const Operations = () => {
 	const { t } = useTranslation('operations');
@@ -21,13 +19,9 @@ const Operations = () => {
 		rescue: false,
 		wipe: false,
 	});
-	const navigate = useNavigate();
-
 	useEffect(() => {
 		if (selectedStableCoin) {
 			getAvailableFeatures();
-		} else {
-			RouterManager.to(navigate, NamedRoutes.StableCoinNotSelected);
 		}
 	}, [selectedStableCoin]);
 
