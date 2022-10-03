@@ -21,13 +21,21 @@ export interface ITargetIdRequestModel {
 	targetId: string;
 }
 
-export interface IRequestRole extends IRequestContracts, ITargetIdRequestModel {
+export interface IRequestRole
+	extends IRequestContracts,
+		ITargetIdRequestModel,
+		ITokenIdRequestModel {
 	role: StableCoinRole;
-	amount?: number;
+}
+
+export interface ISupplierRequestRoleModel extends IRequestRole {
+	amount: number;
+	role: StableCoinRole;
 }
 
 export interface IAllowanceRequest
 	extends IRequestContracts,
-		ITargetIdRequestModel {
+		ITargetIdRequestModel,
+		ITokenIdRequestModel {
 	amount: number;
 }

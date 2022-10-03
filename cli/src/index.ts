@@ -23,7 +23,9 @@ const main = async (): Promise<void> => {
 };
 
 try {
-  main();
+  if (process.env.JEST === undefined) {
+    main();
+  }
 } catch (error) {
   console.error(error);
 }

@@ -10,6 +10,7 @@ describe('🧪 [DOMAIN] ContractId', () => {
 
 	it('Create from ProtoBufKey', () => {
 		const key = { key: '420518f3c4fe16', type: 'ProtobufEncoded' };
-		expect(ContractId.fromProtoBufKey(key.key)).not.toBeNull();
+		const out = ContractId.fromProtoBufKey(key.key);
+		expect(out.id).toBe('0.0.48210547');
 	});
 });

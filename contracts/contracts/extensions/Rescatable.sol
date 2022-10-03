@@ -34,9 +34,9 @@ abstract contract Rescatable is IRescatable ,AccessControlUpgradeable, TokenOwne
     /**
     * @dev Rescue `value` hbar from contractTokenOwner to rescuer
     *
-    * Must be protected with isRescuer()
+    * Must be protected with RESCUE_ROLE
     *
-    * @param amount The amount of hbar to rescuer
+    * @param amount The amount of hbar to rescue
     */
     function rescueHbar(uint256 amount) 
     external
@@ -47,7 +47,7 @@ abstract contract Rescatable is IRescatable ,AccessControlUpgradeable, TokenOwne
 
         uint256 hbarAmount = amount * 100000000;
         (bool succeed, ) = msg.sender.call{value: hbarAmount}("");
-        require(succeed, "BaseToken: Failed to rescue Hbar");
+        require(succeed, "Failed to rescue Hbar");
                 
         emit HbarRescued  (msg.sender, amount, oldBalance);
     }

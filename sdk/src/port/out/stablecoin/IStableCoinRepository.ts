@@ -21,11 +21,6 @@ export default interface IStableCoinRepository {
 		targetId: string,
 		tokenId: string,
 	): Promise<Uint8Array>;
-	getTokenOwnerBalance(
-		treasuryId: string,
-		privateKey: PrivateKey,
-		accountId: AccountId,
-	): Promise<Uint8Array>;
 	getNameToken(
 		treasuryId: string,
 		privateKey: PrivateKey,

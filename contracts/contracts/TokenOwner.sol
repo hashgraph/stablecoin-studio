@@ -5,22 +5,23 @@ import "./ITokenOwner.sol";
 
 abstract contract TokenOwner is ITokenOwner {
     
-    HTSTokenOwner HTSTokenOwnerAddress;
-    address tokenAddress; 
+    HTSTokenOwner internal _htsTokenOwnerAddress;
+    address internal _tokenAddress; 
 
     /**
-     * @dev Assigns the HTSTokenOwner contract address and the token address, validating that the token address was not already assigned
+     * @dev Assigns the HTSTokenOwner contract address and the token address, validating that the 
+     * token address was not already assigned
      *
-     * @param _htsTokenOwnerAddress The  contract address HTSTokenOwner
-     * @param _tokenAddress The token address created
+     * @param htsTokenOwnerAddress The  contract address HTSTokenOwner
+     * @param tokenAddress The token address created
      */
-    function setTokenAddress(HTSTokenOwner _htsTokenOwnerAddress, address _tokenAddress) 
+    function setTokenAddress(HTSTokenOwner htsTokenOwnerAddress, address tokenAddress) 
         external         
     {
-        require(tokenAddress == address(0), "Token address already defined");
+        require(_tokenAddress == address(0), "Token address already defined");
 
-        HTSTokenOwnerAddress = _htsTokenOwnerAddress;
-        tokenAddress = _tokenAddress;
+        _htsTokenOwnerAddress = htsTokenOwnerAddress;
+        _tokenAddress = tokenAddress;
     }
 
     /**
@@ -46,7 +47,7 @@ abstract contract TokenOwner is ITokenOwner {
         view 
         returns (address) 
     {
-        return tokenAddress;
+        return _tokenAddress;
     }
 
     /**
@@ -72,6 +73,6 @@ abstract contract TokenOwner is ITokenOwner {
         view 
         returns (address) 
     {
-        return address(HTSTokenOwnerAddress);
+        return address(_htsTokenOwnerAddress);
     }
 }

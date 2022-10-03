@@ -11,6 +11,7 @@ import OperationStableCoinService from '../stablecoin/OperationStableCoinService
 import ListStableCoinsService from '../stablecoin/ListStableCoinsService.js';
 import { StableCoin } from '../../../domain/stablecoin/StableCoin.js';
 import colors from 'colors';
+import { clear } from 'console';
 
 /**
  * Wizard Service
@@ -40,6 +41,7 @@ export default class WizardService extends Service {
       )
     ) {
       case wizardMainOptions[0]:
+        await utilsService.cleanAndShowBanner();
         const stableCoin: StableCoin =
           await new CreateStableCoinService().createStableCoin(undefined, true);
         const operate = await utilsService.defaultConfirmAsk(
@@ -55,20 +57,23 @@ export default class WizardService extends Service {
         }
         break;
       case wizardMainOptions[1]:
+        await utilsService.cleanAndShowBanner();
         await new OperationStableCoinService().start();
         break;
       case wizardMainOptions[2]:
+        await utilsService.cleanAndShowBanner();
         await new ListStableCoinsService().listStableCoins();
         break;
       case wizardMainOptions[3]:
+        await utilsService.cleanAndShowBanner();
         this.setConfigurationService = new SetConfigurationService();
         await this.configurationMenu();
         break;
       case wizardMainOptions[wizardMainOptions.length - 1]:
       default:
+        clear();
         process.exit();
     }
-
     utilsService.showMessage(language.getText('general.newLine'));
     await this.mainMenu();
   }
@@ -88,22 +93,31 @@ export default class WizardService extends Service {
       )
     ) {
       case wizardChangeConfigOptions[0]:
+        await utilsService.cleanAndShowBanner();
+
         await configurationService.showFullConfiguration();
         break;
       case wizardChangeConfigOptions[1]:
+        await utilsService.cleanAndShowBanner();
+
         await this.setConfigurationService.configurePath();
         utilsService.showMessage(language.getText('wizard.pathChanged'));
         break;
       case wizardChangeConfigOptions[2]:
+        await utilsService.cleanAndShowBanner();
+
         await this.setConfigurationService.configureDefaultNetwork();
         utilsService.showMessage(language.getText('wizard.networkChanged'));
         break;
       case wizardChangeConfigOptions[3]:
+        await utilsService.cleanAndShowBanner();
+
         await this.setConfigurationService.manageAccountMenu();
         //utilsService.showMessage(language.getText('wizard.accountsChanged'));
         break;
       case wizardChangeConfigOptions[wizardChangeConfigOptions.length - 1]:
       default:
+        await utilsService.cleanAndShowBanner();
         await this.mainMenu();
     }
 

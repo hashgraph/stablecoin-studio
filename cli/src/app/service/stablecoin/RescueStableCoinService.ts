@@ -27,7 +27,7 @@ export default class RescueStableCoinsService extends Service {
       sdk.rescue({ proxyContractId, privateKey, accountId, tokenId, amount }),
       {
         text: language.getText('state.loading'),
-        successText: language.getText('state.loadCompleted') + '\n',
+        successText: language.getText('state.rescueCompleted') + '\n',
       },
     );
 

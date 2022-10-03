@@ -4,6 +4,10 @@
   "description": "",
   "scripts": {
     "install": "node install.js",
+    "build:sdk": "cd sdk && npm run build",
+    "build:cli": "cd cli && npm run build",
+    "build:contracts": "cd contracts && npm run build",
+    "build:web": "cd web && npm run build",
     "setup": "npm run install"
   },
   "keywords": [],

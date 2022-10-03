@@ -1,0 +1,227 @@
+{
+  "success": true,
+  "error": null,
+  "results": {
+    "detectors": [
+      {
+        "elements": [
+          {
+            "type": "function",
+            "name": "rescueHbar",
+            "source_mapping": {
+              "start": 1321,
+              "length": 478,
+              "filename_used": "/home/ethsec/contracts/contracts/extensions/Rescatable.sol",
+              "filename_relative": "contracts/extensions/Rescatable.sol",
+              "filename_absolute": "/home/ethsec/contracts/contracts/extensions/Rescatable.sol",
+              "filename_short": "contracts/extensions/Rescatable.sol",
+              "is_dependency": false,
+              "lines": [
+                41,
+                42,
+                43,
+                44,
+                45,
+                46,
+                47,
+                48,
+                49,
+                50,
+                51,
+                52,
+                53
+              ],
+              "starting_column": 5,
+              "ending_column": 6
+            },
+            "type_specific_fields": {
+              "parent": {
+                "type": "contract",
+                "name": "Rescatable",
+                "source_mapping": {
+                  "start": 361,
+                  "length": 1440,
+                  "filename_used": "/home/ethsec/contracts/contracts/extensions/Rescatable.sol",
+                  "filename_relative": "contracts/extensions/Rescatable.sol",
+                  "filename_absolute": "/home/ethsec/contracts/contracts/extensions/Rescatable.sol",
+                  "filename_short": "contracts/extensions/Rescatable.sol",
+                  "is_dependency": false,
+                  "lines": [
+                    12,
+                    13,
+                    14,
+                    15,
+                    16,
+                    17,
+                    18,
+                    19,
+                    20,
+                    21,
+                    22,
+                    23,
+                    24,
+                    25,
+                    26,
+                    27,
+                    28,
+                    29,
+                    30,
+                    31,
+                    32,
+                    33,
+                    34,
+                    35,
+                    36,
+                    37,
+                    38,
+                    39,
+                    40,
+                    41,
+                    42,
+                    43,
+                    44,
+                    45,
+                    46,
+                    47,
+                    48,
+                    49,
+                    50,
+                    51,
+                    52,
+                    53,
+                    54,
+                    55
+                  ],
+                  "starting_column": 1,
+                  "ending_column": 0
+                }
+              },
+              "signature": "rescueHbar(uint256)"
+            }
+          },
+          {
+            "type": "node",
+            "name": "(succeed) = msg.sender.call{value: hbarAmount}()",
+            "source_mapping": {
+              "start": 1596,
+              "length": 57,
+              "filename_used": "/home/ethsec/contracts/contracts/extensions/Rescatable.sol",
+              "filename_relative": "contracts/extensions/Rescatable.sol",
+              "filename_absolute": "/home/ethsec/contracts/contracts/extensions/Rescatable.sol",
+              "filename_short": "contracts/extensions/Rescatable.sol",
+              "is_dependency": false,
+              "lines": [
+                49
+              ],
+              "starting_column": 9,
+              "ending_column": 66
+            },
+            "type_specific_fields": {
+              "parent": {
+                "type": "function",
+                "name": "rescueHbar",
+                "source_mapping": {
+                  "start": 1321,
+                  "length": 478,
+                  "filename_used": "/home/ethsec/contracts/contracts/extensions/Rescatable.sol",
+                  "filename_relative": "contracts/extensions/Rescatable.sol",
+                  "filename_absolute": "/home/ethsec/contracts/contracts/extensions/Rescatable.sol",
+                  "filename_short": "contracts/extensions/Rescatable.sol",
+                  "is_dependency": false,
+                  "lines": [
+                    41,
+                    42,
+                    43,
+                    44,
+                    45,
+                    46,
+                    47,
+                    48,
+                    49,
+                    50,
+                    51,
+                    52,
+                    53
+                  ],
+                  "starting_column": 5,
+                  "ending_column": 6
+                },
+                "type_specific_fields": {
+                  "parent": {
+                    "type": "contract",
+                    "name": "Rescatable",
+                    "source_mapping": {
+                      "start": 361,
+                      "length": 1440,
+                      "filename_used": "/home/ethsec/contracts/contracts/extensions/Rescatable.sol",
+                      "filename_relative": "contracts/extensions/Rescatable.sol",
+                      "filename_absolute": "/home/ethsec/contracts/contracts/extensions/Rescatable.sol",
+                      "filename_short": "contracts/extensions/Rescatable.sol",
+                      "is_dependency": false,
+                      "lines": [
+                        12,
+                        13,
+                        14,
+                        15,
+                        16,
+                        17,
+                        18,
+                        19,
+                        20,
+                        21,
+                        22,
+                        23,
+                        24,
+                        25,
+                        26,
+                        27,
+                        28,
+                        29,
+                        30,
+                        31,
+                        32,
+                        33,
+                        34,
+                        35,
+                        36,
+                        37,
+                        38,
+                        39,
+                        40,
+                        41,
+                        42,
+                        43,
+                        44,
+                        45,
+                        46,
+                        47,
+                        48,
+                        49,
+                        50,
+                        51,
+                        52,
+                        53,
+                        54,
+                        55
+                      ],
+                      "starting_column": 1,
+                      "ending_column": 0
+                    }
+                  },
+                  "signature": "rescueHbar(uint256)"
+                }
+              }
+            }
+          }
+        ],
+        "description": "Rescatable.rescueHbar(uint256) (contracts/extensions/Rescatable.sol#41-53) sends eth to arbitrary user\n\tDangerous calls:\n\t- (succeed) = msg.sender.call{value: hbarAmount}() (contracts/extensions/Rescatable.sol#49)\n",
+        "markdown": "[Rescatable.rescueHbar(uint256)](contracts/extensions/Rescatable.sol#L41-L53) sends eth to arbitrary user\n\tDangerous calls:\n\t- [(succeed) = msg.sender.call{value: hbarAmount}()](contracts/extensions/Rescatable.sol#L49)\n",
+        "first_markdown_element": "contracts/extensions/Rescatable.sol#L41-L53",
+        "id": "9fbff163bc2d40bbf290d07e5fd651da70b4ac2221ba7eb2fbbe940aa7ffdf33",
+        "check": "arbitrary-send",
+        "impact": "High",
+        "confidence": "Medium"
+      }
+    ]
+  }
+}

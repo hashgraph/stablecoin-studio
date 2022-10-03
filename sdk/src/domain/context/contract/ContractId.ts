@@ -20,7 +20,12 @@ export default class ContractId extends ValueObject {
 		key: string,
 		options: { strict: boolean } = { strict: false },
 	): ContractId {
-		const out: proto.Key = proto.Key.decode(Buffer.from(key, 'hex'));
+		const normalizedInput = key.replace(/\s/g, '');
+		const normalizedHexInput = normalizedInput
+			.replace(/0x/g, '')
+			.toLowerCase();
+		const keyProto = Buffer.from(normalizedHexInput, 'hex');
+		const out = proto.Key.decode(keyProto);
 		let id =
 			out?.contractID?.contractNum ||
 			out?.delegatableContractId?.contractNum;

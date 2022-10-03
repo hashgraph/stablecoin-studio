@@ -40,7 +40,7 @@ export default class WipeStableCoinsService extends Service {
         .then((response) => (respDetail = response)),
       {
         text: language.getText('state.loading'),
-        successText: language.getText('state.loadCompleted') + '\n',
+        successText: language.getText('state.wipeCompleted') + '\n',
       },
     );
 

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 import * as inquirer from 'inquirer';
 import figlet from 'figlet-promised';
 import Service from '../Service.js';
@@ -15,6 +14,7 @@ import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccoun
 import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
 import colors from 'colors';
 import MaskData from 'maskdata';
+import { clear } from 'console';
 
 /**
  * Utilities Service
@@ -212,6 +212,27 @@ export default class UtilitiesService extends Service {
     return variable.response;
   }
 
+  /**
+   * Function to configure the public key, fail if length doesn't 96 or 64 or 66
+   */
+  public async defaultPublicKeyAsk(): Promise<string> {
+    let publicKey: string = await this.defaultSingleAsk(
+      language.getText('configuration.askPublicKey') + ` '96|64|66 characters'`,
+      undefined,
+    );
+
+    if (publicKey.length == 64) {
+      publicKey = `0x${publicKey}`;
+    }
+
+    if (![64, 66, 96].includes(publicKey.length)) {
+      this.showError(language.getText('general.incorrectParam'));
+      publicKey = await this.defaultPublicKeyAsk();
+    }
+
+    return publicKey;
+  }
+
   public async drawTableListStableCoin(data?: StableCoinList[]): Promise<void> {
     if (data.length === 0) {
       console.log('There are no stable coins available at this time.');
@@ -256,5 +277,32 @@ export default class UtilitiesService extends Service {
       };
     });
     return result;
+  }
+
+  public async cleanAndShowBanner(): Promise<void> {
+    clear();
+    await this.showBanner();
+  }
+
+  public displayCurrentUserInfo(
+    userInfo: IAccountConfig,
+    token?: string,
+  ): void {
+    const { network, accountId, alias } = userInfo;
+
+    let result = '';
+    if (network) {
+      result = result + ' ' + colors.cyan(`( ${network} )`);
+    }
+
+    if (accountId) {
+      result = result + ' ' + colors.magenta(`(${accountId} - ${alias})`);
+    }
+
+    if (token) {
+      result = result + ' ' + colors.yellow(`( ${token} )`);
+    }
+
+    this.showMessage(result);
   }
 }

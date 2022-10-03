@@ -4,12 +4,13 @@ import {
 	IAmountOptionalRequestModel,
 	IProxyContractIdRequestModel,
 	ITargetIdRequestModel,
+	ITokenIdRequestModel,
 } from './CoreRequestModel.js';
 
 export default interface IRoleStableCoinServiceRequestModel
 	extends IProxyContractIdRequestModel,
 		IAccountWithKeyRequestModel,
-		IAmountOptionalRequestModel,
-		ITargetIdRequestModel {
+		ITargetIdRequestModel,
+		ITokenIdRequestModel {
 	role: StableCoinRole;
 }

@@ -1,4 +1,3 @@
-/* eslint-disable no-case-declarations */
 import {
   configurationService,
   language,
@@ -206,16 +205,23 @@ export default class SetConfigurationService extends Service {
     );
     switch (accountAction) {
       case manageOptions[0]:
+        await utilsService.cleanAndShowBanner();
+
         await wizardService.chooseAccount(false);
         await utilsService.initSDK(utilsService.getCurrentNetwork().name);
+        await utilsService.cleanAndShowBanner();
         await wizardService.mainMenu();
         break;
       case manageOptions[1]:
+        await utilsService.cleanAndShowBanner();
+
         console.dir(utilsService.maskPrivateAccounts(accounts), {
           depth: null,
         });
         break;
       case manageOptions[2]:
+        await utilsService.cleanAndShowBanner();
+
         await this.configureAccounts();
         const operateWithNewAccount = await utilsService.defaultConfirmAsk(
           language.getText('configuration.askOperateWithNewAccount'),
@@ -224,10 +230,13 @@ export default class SetConfigurationService extends Service {
         if (operateWithNewAccount) {
           await wizardService.chooseLastAccount();
           await utilsService.initSDK(utilsService.getCurrentNetwork().name);
+          await utilsService.cleanAndShowBanner();
           await wizardService.mainMenu();
         }
         break;
       case manageOptions[3]:
+        await utilsService.cleanAndShowBanner();
+
         const options = accounts
           .filter(
             (acc) =>
@@ -267,6 +276,8 @@ export default class SetConfigurationService extends Service {
         break;
       case manageOptions[manageOptions.length - 1]:
       default:
+        await utilsService.cleanAndShowBanner();
+
         await wizardService.configurationMenu();
     }
     await this.manageAccountMenu();

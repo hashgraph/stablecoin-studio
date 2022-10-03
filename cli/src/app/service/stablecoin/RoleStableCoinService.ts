@@ -2,6 +2,7 @@ import { language } from '../../../index.js';
 import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
 import { SDK, StableCoinRole } from 'hedera-stable-coin-sdk';
+import colors from 'colors';
 
 /**
  * Create Role Stable Coin Service
@@ -16,6 +17,7 @@ export default class RoleStableCoinsService extends Service {
    */
   public async giveSupplierRoleStableCoin(
     proxyContractId: string,
+    tokenId: string,
     targetId: string,
     privateKey: string,
     accountId: string,
@@ -33,6 +35,7 @@ export default class RoleStableCoinsService extends Service {
               privateKey,
               accountId,
               role,
+              tokenId,
             }
           : {
               proxyContractId,
@@ -41,6 +44,7 @@ export default class RoleStableCoinsService extends Service {
               accountId,
               amount,
               role,
+              tokenId,
             },
       ),
       {
@@ -99,6 +103,7 @@ export default class RoleStableCoinsService extends Service {
 
   public async increaseLimitSupplierRoleStableCoin(
     proxyContractId: string,
+    tokenId: string,
     targetId: string,
     privateKey: string,
     accountId: string,
@@ -108,6 +113,7 @@ export default class RoleStableCoinsService extends Service {
     await utilsService.showSpinner(
       sdk.increaseSupplierAllowance({
         proxyContractId,
+        tokenId,
         targetId,
         privateKey,
         accountId,
@@ -125,6 +131,7 @@ export default class RoleStableCoinsService extends Service {
 
   public async decreaseLimitSupplierRoleStableCoin(
     proxyContractId: string,
+    tokenId: string,
     targetId: string,
     privateKey: string,
     accountId: string,
@@ -134,6 +141,7 @@ export default class RoleStableCoinsService extends Service {
     await utilsService.showSpinner(
       sdk.decreaseSupplierAllowance({
         proxyContractId,
+        tokenId,
         targetId,
         privateKey,
         accountId,
@@ -176,6 +184,7 @@ export default class RoleStableCoinsService extends Service {
 
   public async grantRoleStableCoin(
     proxyContractId: string,
+    tokenId: string,
     targetId: string,
     privateKey: string,
     accountId: string,
@@ -186,6 +195,7 @@ export default class RoleStableCoinsService extends Service {
     await utilsService.showSpinner(
       sdk.grantRole({
         proxyContractId,
+        tokenId,
         targetId,
         privateKey,
         accountId,
@@ -203,6 +213,7 @@ export default class RoleStableCoinsService extends Service {
 
   public async revokeRoleStableCoin(
     proxyContractId: string,
+    tokenId: string,
     targetId: string,
     privateKey: string,
     accountId: string,
@@ -213,6 +224,7 @@ export default class RoleStableCoinsService extends Service {
     await utilsService.showSpinner(
       sdk.revokeRole({
         proxyContractId,
+        tokenId,
         targetId,
         privateKey,
         accountId,
@@ -230,6 +242,7 @@ export default class RoleStableCoinsService extends Service {
 
   public async hasRoleStableCoin(
     proxyContractId: string,
+    tokenId: string,
     targetId: string,
     privateKey: string,
     accountId: string,
@@ -242,6 +255,7 @@ export default class RoleStableCoinsService extends Service {
       sdk
         .hasRole({
           proxyContractId,
+          tokenId,
           targetId,
           privateKey,
           accountId,
@@ -259,7 +273,9 @@ export default class RoleStableCoinsService extends Service {
     }
 
     console.log(
-      response.replace('${address}', targetId).replace('${role}', role) + '\n',
+      response
+        .replace('${address}', targetId)
+        .replace('${role}', colors.yellow(role)) + '\n',
     );
 
     utilsService.breakLine();
@@ -267,6 +283,7 @@ export default class RoleStableCoinsService extends Service {
 
   public async getSupplierAllowance(
     proxyContractId: string,
+    tokenId: string,
     targetId: string,
     privateKey: string,
     accountId: string,
@@ -280,6 +297,7 @@ export default class RoleStableCoinsService extends Service {
           targetId,
           privateKey,
           accountId,
+          tokenId,
         })
         .then((response) => {
           amount = response[0];
@@ -292,8 +310,9 @@ export default class RoleStableCoinsService extends Service {
 
     const response = language.getText('roleManagement.getAmountAllowance');
     console.log(
-      response.replace('${address}', targetId).replace('${amount}', amount) +
-        '\n',
+      response
+        .replace('${address}', targetId)
+        .replace('${amount}', colors.yellow(amount)) + '\n',
     );
   }
 }

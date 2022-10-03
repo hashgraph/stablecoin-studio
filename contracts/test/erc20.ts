@@ -1,4 +1,4 @@
-const { ContractFunctionParameters, ContractId, AccountId} = require("@hashgraph/sdk");
+const { ContractId, AccountId}  = require( "@hashgraph/sdk");
 
 import { expect } from "chai";
 import { deployContractsWithSDK, getClient, contractCall } from "../scripts/utils";
@@ -12,7 +12,7 @@ describe("General ERC20", function() {
   let account;
   let privateKey;
     
-  beforeEach(async function () {
+  before(async function () {
     deployedProxyAddress = await deployContractsWithSDK("TOKEN","TK",2,0,2000000,"",false);
     
   });
@@ -42,7 +42,7 @@ describe("General ERC20", function() {
     const clientSdk = getClient();
     clientSdk.setOperator(account, privateKey);
 
-    let params: any[] = [AccountId.fromString(account!).toSolidityAddress(),1000000];      
+    const params: any[] = [AccountId.fromString(account!).toSolidityAddress(),1000000];      
     await contractCall(deployedProxyAddress, 'mint', params, clientSdk, 400000, HederaERC20__factory.abi);
 
     const parameters = [AccountId.fromString(account!).toSolidityAddress()];    

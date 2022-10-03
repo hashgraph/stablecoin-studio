@@ -289,19 +289,19 @@ function revokeRole(bytes32 role, address account) external nonpayable
 ### setTokenAddress
 
 ```solidity
-function setTokenAddress(contract HTSTokenOwner _htsTokenOwnerAddress, address _tokenAddress) external nonpayable
+function setTokenAddress(contract HTSTokenOwner htsTokenOwnerAddress, address tokenAddress) external nonpayable
 ```
 
 
 
-*Assigns the HTSTokenOwner contract address and the token address, validating that the token address was not already assigned*
+*Assigns the HTSTokenOwner contract address and the token address, validating that the  token address was not already assigned*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| _htsTokenOwnerAddress | contract HTSTokenOwner | The  contract address HTSTokenOwner |
-| _tokenAddress | address | The token address created |
+| htsTokenOwnerAddress | contract HTSTokenOwner | The  contract address HTSTokenOwner |
+| tokenAddress | address | The token address created |
 
 ### supportsInterface
 
