@@ -1,10 +1,9 @@
 import AccountId from '../../../../domain/context/account/AccountId.js';
-import PrivateKey from '../../../../domain/context/account/PrivateKey.js';
 import PublicKey from '../../../../domain/context/account/PublicKey.js';
+import { Account } from '../sdk.js';
 
 export interface ICreateStableCoinRequest {
-	accountId: AccountId;
-	privateKey: PrivateKey;
+	account: Account;
 	name: string;
 	symbol: string;
 	decimals: number;

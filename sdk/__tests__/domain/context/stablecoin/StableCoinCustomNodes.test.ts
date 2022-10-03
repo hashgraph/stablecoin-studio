@@ -1,12 +1,7 @@
 import { HederaNetwork, HederaNetworkEnviroment , Configuration, NetworkMode,ICreateStableCoinRequest} from '../../../../src/index.js';
 import { AccountId as HederaAccountId } from '@hashgraph/sdk';
-import { StableCoin } from '../../../../src/domain/context/stablecoin/StableCoin.js';
-import { TokenSupplyType } from '../../../../src/domain/context/stablecoin/TokenSupply.js';
-import { TokenType } from '../../../../src/domain/context/stablecoin/TokenType.js';
 import { ACCOUNTS, getSDKAsync } from '../../../core.js';
 import { assert } from 'console';
-import PrivateKey from '../../../../src/domain/context/account/PrivateKey.js';
-import AccountId from '../../../../src/domain/context/account/AccountId.js';
 
 describe('🧪 [DOMAIN] StableCoin',  () => {
 	let sdk:any;
@@ -23,8 +18,7 @@ describe('🧪 [DOMAIN] StableCoin',  () => {
 
 		sdk = await getSDKAsync(conf);
 		const create:ICreateStableCoinRequest  = {
-				accountId: new AccountId(ACCOUNTS.testnet.accountId.id),
-				privateKey: new PrivateKey(ACCOUNTS.testnet.privateKey.key),
+				account: ACCOUNTS.testnet,
 				name: 'Custom Nodes', 
 				symbol: 'CN',
 				decimals: 2
@@ -50,13 +44,12 @@ describe('🧪 [DOMAIN] StableCoin',  () => {
 		}
 
 		sdk = await getSDKAsync(conf);
-		const create:ICreateStableCoinRequest  = {
-				accountId: new AccountId(ACCOUNTS.testnet.accountId.id),
-				privateKey: new PrivateKey(ACCOUNTS.testnet.privateKey.key),
-				name: 'Custom Nodes', 
-				symbol: 'CN',
-				decimals: 2
-			}
+		const create: ICreateStableCoinRequest = {
+			account: ACCOUNTS.testnet,
+			name: 'Custom Nodes',
+			symbol: 'CN',
+			decimals: 2,
+		};
 		
 		await sdk.createStableCoin(create).then((result:any) => setTimeout(() =>{ 
 			console.log(result);

@@ -1,7 +1,7 @@
 import { language } from '../../../index.js';
 import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
-import { SDK } from 'hedera-stable-coin-sdk';
+import { EOAccount, SDK } from 'hedera-stable-coin-sdk';
 
 /**
  * Create Stable Coin Service
@@ -16,8 +16,7 @@ export default class CashInStableCoinsService extends Service {
    */
   public async cashInStableCoin(
     proxyContractId: string,
-    privateKey: string,
-    accountId: string,
+    account: EOAccount,
     tokenId: string,
     targetId: string,
     amount?: number,
@@ -31,8 +30,7 @@ export default class CashInStableCoinsService extends Service {
       sdk
         .cashIn({
           proxyContractId,
-          privateKey,
-          accountId,
+          account,
           tokenId,
           targetId,
           amount,

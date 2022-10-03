@@ -9,13 +9,12 @@ const ACCOUNT_ID = '0.0.29511696';
 const PK =
 	'302e020100300506032b6570042204207a8a25387a3c636cb980d1ba548ee5ee3cc8cda158e42dc7af53dcd81022d8be';
 
-const account = new EOAccount({
-	accountId: new AccountId(ACCOUNT_ID),
-	privateKey: new PrivateKey(PK),
-});
+const account = new EOAccount(
+	new AccountId(ACCOUNT_ID),
+	new PrivateKey(PK),
+);
 const request: ICreateStableCoinRequest = {
-	accountId: new AccountId(account.accountId.id),
-	privateKey: new PrivateKey(account.privateKey.key),
+	account,
 	name: 'PapaCoin',
 	symbol: 'PAPA',
 	decimals: 2,

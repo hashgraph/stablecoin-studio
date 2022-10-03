@@ -1,7 +1,7 @@
 import { language } from '../../../index.js';
 import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
-import { SDK } from 'hedera-stable-coin-sdk';
+import { EOAccount, SDK } from 'hedera-stable-coin-sdk';
 
 /**
  * Burn Stable Coin Service
@@ -16,8 +16,7 @@ export default class BurnStableCoinsService extends Service {
    */
   public async burnStableCoin(
     proxyContractId: string,
-    privateKey: string,
-    accountId: string,
+    account: EOAccount,
     tokenId: string,
     amount?: number,
   ): Promise<void> {
@@ -29,8 +28,7 @@ export default class BurnStableCoinsService extends Service {
       sdk
         .cashOut({
           proxyContractId,
-          privateKey,
-          accountId,
+          account,
           tokenId,
           amount,
         })

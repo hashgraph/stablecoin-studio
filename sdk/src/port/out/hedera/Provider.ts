@@ -14,6 +14,7 @@ import {
 	InitializationData } from './types.js';
 
 import EventService from '../../../app/service/event/EventService.js';
+import { Account } from '../../in/sdk/sdk.js';
 
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -45,8 +46,7 @@ export interface IProvider {
 	): Uint8Array;
 	getPublicKeyString(privateKey?: PrivateKey | string | undefined): string;
 	deployStableCoin(
-		accountId: string,
-		privateKey: string,
+		account: Account,
 		stableCoin: StableCoin,
 	): Promise<StableCoin>;
 	getAvailabilityExtension(): boolean;

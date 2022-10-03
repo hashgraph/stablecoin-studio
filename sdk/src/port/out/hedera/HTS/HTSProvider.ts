@@ -48,7 +48,7 @@ import { TransactionResposeHandler } from '../transaction/TransactionResponseHan
 import { HashConnectConnectionState } from 'hashconnect/types';
 import ProviderEvent, { ProviderEventNames } from '../ProviderEvent.js';
 import EventService from '../../../../app/service/event/EventService.js';
-import { ContractId } from '../../../in/sdk/sdk.js';
+import { ContractId, EOAccount } from '../../../in/sdk/sdk.js';
 import { safeCast } from '../../../../core/cast.js';
 
 type DefaultHederaProvider = hethers.providers.DefaultHederaProvider;
@@ -167,7 +167,7 @@ export default class HTSProvider implements IProvider {
 		if ('account' in params) {
 			client = this.getClient(
 				params.account.accountId,
-				params.account.privateKey,
+				params.account.privateKey
 			);
 		} else {
 			client = this.getClient();
@@ -202,14 +202,13 @@ export default class HTSProvider implements IProvider {
 	}
 
 	public async deployStableCoin(
-		accountId: string,
-		privateKey: string,
+		account: EOAccount,
 		stableCoin: StableCoin,
 	): Promise<StableCoin> {
-		const client = this.getClient(accountId, privateKey);
+		const client = this.getClient(account.accountId.id, account.privateKey.key);
 		const plainAccount = {
-			accountId,
-			privateKey,
+			accountId: account.accountId.id,
+			privateKey: account.privateKey.key,
 		};
 		log(
 			`Deploying ${HederaERC20__factory.name} contract... please wait.`,
@@ -239,10 +238,7 @@ export default class HTSProvider implements IProvider {
 			parameters: [],
 			gas: 250_000,
 			abi: HederaERC20__factory.abi,
-			account: {
-				accountId: plainAccount.accountId,
-				privateKey: plainAccount.privateKey,
-			},
+			account: plainAccount,
 		});
 		log(
 			`Deploying ${HTSTokenOwner__factory.name} contract... please wait.`,
@@ -283,23 +279,17 @@ export default class HTSProvider implements IProvider {
 			],
 			gas: 80_000,
 			abi: HederaERC20__factory.abi,
-			account: {
-				accountId: plainAccount.accountId,
-				privateKey: plainAccount.privateKey,
-			},
+			account: plainAccount
 		});
 		await this.callContract('setERC20Address', {
 			contractId: String(tokenOwnerContract),
 			parameters: [proxyContract.toSolidityAddress()],
 			gas: 60_000,
 			abi: HTSTokenOwner__factory.abi,
-			account: {
-				accountId: plainAccount.accountId,
-				privateKey: plainAccount.privateKey,
-			},
+			account: plainAccount
 		});
 	
-		if (hederaToken.treasuryAccountId.toString() !== accountId) {
+		if (hederaToken.treasuryAccountId.toString() !== plainAccount.accountId) {
 			log(
 				'Associating administrator account to token... please wait.',
 				logOpts,
@@ -307,14 +297,13 @@ export default class HTSProvider implements IProvider {
 			await this.callContract('associateToken', {
 				contractId: stableCoin.memo,
 				parameters: [
-					HAccountId.fromString(accountId).toSolidityAddress(),
+					HAccountId.fromString(
+						plainAccount.accountId,
+					).toSolidityAddress(),
 				],
 				gas: 1_300_000,
 				abi: HederaERC20__factory.abi,
-				account: {
-					accountId: plainAccount.accountId,
-					privateKey: plainAccount.privateKey,
-				},
+				account: plainAccount,
 			});
 		}
 

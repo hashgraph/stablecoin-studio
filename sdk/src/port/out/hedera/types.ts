@@ -11,8 +11,8 @@ export interface ICallContractRequest {
 
 export interface ICallContractWithAccountRequest extends ICallContractRequest {
 	account: {
-		privateKey: string;
 		accountId: string;
+		privateKey?: string;
 	};
 }
 
@@ -36,7 +36,7 @@ export interface ICreateTokenResponse {
 
 export interface IHTSTokenRequest {
 	account: {
-		privateKey: string;
+		privateKey?: string;
 		accountId: string;
 	};
 	tokenId: string;

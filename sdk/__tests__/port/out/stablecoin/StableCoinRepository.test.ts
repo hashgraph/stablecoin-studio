@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { StableCoin } from '../../../../src/index.js';
+import { Account, StableCoin } from '../../../../src/index.js';
 import HederaError from '../../../../src/port/out/hedera/error/HederaError.js';
 import { IProvider } from '../../../../src/port/out/hedera/Provider.js';
 import NetworkAdapter from '../../../../src/port/out/network/NetworkAdapter.js';
@@ -29,8 +29,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
 		);
 		await expect(
 			repo.saveCoin(
-				ACCOUNTS.testnet.accountId,
-				ACCOUNTS.testnet.privateKey,
+				ACCOUNTS.testnet,
 				new StableCoin({
 					name: baseCoin.name,
 					symbol: baseCoin.symbol,
@@ -42,8 +41,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
 
 	it('Saves a new coin', async () => {
 		const coin: StableCoin = await repository.saveCoin(
-			ACCOUNTS.testnet.accountId,
-			ACCOUNTS.testnet.privateKey,
+			ACCOUNTS.testnet,
 			new StableCoin({
 				name: baseCoin.name,
 				symbol: baseCoin.symbol,
@@ -57,8 +55,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
 function mockRepo(networkAdapter: NetworkAdapter, provider?: IProvider) {
 	if (!provider) {
 		networkAdapter.provider.deployStableCoin = (
-			accountId: string,
-			privateKey: string,
+			account: Account,
 			coin: StableCoin,
 		) => {
 			throw new Error();
@@ -66,8 +63,7 @@ function mockRepo(networkAdapter: NetworkAdapter, provider?: IProvider) {
 	} else {
 		networkAdapter.provider = provider;
 		networkAdapter.provider.deployStableCoin = (
-			accountId: string,
-			privateKey: string,
+			account: Account,
 			coin: StableCoin,
 		) => {
 			return Promise.resolve(coin);

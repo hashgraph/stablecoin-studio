@@ -8,6 +8,7 @@ import {
 	PrivateKey,
 	AccountId,
 	ContractId,
+	Account,
 } from '../../../in/sdk/sdk.js';
 import {
 	AccountId as HAccountId,
@@ -49,6 +50,7 @@ import { HashConnect } from 'hashconnect';
 import { Signer } from '@hashgraph/sdk/lib/Signer.js';
 import { HashConnectTypes } from 'hashconnect';
 import { HashConnectConnectionState } from 'hashconnect/types';
+import HashPackAccount from '../../../../domain/context/account/HashPackAccount.js';
 
 const logOpts = { newLine: true, clear: true };
 
@@ -244,15 +246,14 @@ export default class HashPackProvider implements IProvider {
 	}
 
 	public async deployStableCoin(
-		accountId: string,
-		privateKey: string,
+		account: HashPackAccount,
 		stableCoin: StableCoin,
 	): Promise<StableCoin> {
-		if (accountId) {
+		if (account) {
 			this.provider = this.hc.getProvider(
 				this.network.hederaNetworkEnviroment,
 				this.initData.topic,
-				accountId,
+				account.accountId.id,
 			);
 		} else {
 			throw new Error(
@@ -291,7 +292,7 @@ export default class HashPackProvider implements IProvider {
 			parameters: [],
 			gas: 250_000,
 			abi: HederaERC20__factory.abi,
-			account: { accountId, privateKey },
+			account: { accountId: account.accountId.id },
 		});
 		log(
 			`Deploying ${HTSTokenOwner__factory.name} contract... please wait.`,
@@ -324,14 +325,14 @@ export default class HashPackProvider implements IProvider {
 			],
 			gas: 80_000,
 			abi: HederaERC20__factory.abi,
-			account: { accountId, privateKey },
+			account: { accountId: account.accountId.id },
 		});
 		await this.callContract('setERC20Address', {
 			contractId,
 			parameters: [proxyContract.toSolidityAddress()],
 			gas: 60_000,
 			abi: HTSTokenOwner__factory.abi,
-			account: { accountId, privateKey },
+			account: { accountId: account.accountId.id },
 		});
 		log(
 			'Associating administrator account to token... please wait.',
@@ -340,11 +341,11 @@ export default class HashPackProvider implements IProvider {
 		await this.callContract('associateToken', {
 			contractId,
 			parameters: [
-				HAccountId.fromString(accountId).toSolidityAddress(),
+				HAccountId.fromString(account.accountId.id).toSolidityAddress(),
 			],
 			gas: 1_300_000,
 			abi: HederaERC20__factory.abi,
-			account: { accountId, privateKey },
+			account: { accountId: account.accountId.id },
 		});
 
 		return new StableCoin({

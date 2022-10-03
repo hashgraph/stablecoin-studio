@@ -1,4 +1,5 @@
 import { StableCoinRole } from '../../../core/enum.js';
+import Account from '../../../domain/context/account/Account.js';
 import AccountId from '../../../domain/context/account/AccountId.js';
 import PrivateKey from '../../../domain/context/account/PrivateKey.js';
 import { Capabilities } from '../../../domain/context/stablecoin/Capabilities.js';
@@ -7,150 +8,127 @@ import IStableCoinList from '../../in/sdk/response/IStableCoinList.js';
 
 export default interface IStableCoinRepository {
 	saveCoin(
-		accountId: AccountId,
-		privateKey: PrivateKey,
+		account: Account,
 		coin: StableCoin,
 	): Promise<StableCoin>;
-	getListStableCoins(privateKey: PrivateKey): Promise<IStableCoinList[]>;
+	getListStableCoins(account: Account): Promise<IStableCoinList[]>;
 	getStableCoin(id: string): Promise<StableCoin>;
-	getCapabilitiesStableCoin(id: string,publickey:string): Promise <Capabilities[]> ;
+	getCapabilitiesStableCoin(id: string, publickey:string): Promise <Capabilities[]> ;
 	getBalanceOf(
+		account: Account,
 		treasuryId: string,
-		privateKey: PrivateKey,
-		accountId: AccountId,
 		targetId: string,
 		tokenId: string,
 	): Promise<Uint8Array>;
 	getNameToken(
+		account: Account,
 		treasuryId: string,
-		privateKey: PrivateKey,
-		accountId: AccountId,
 	): Promise<Uint8Array>;
 	cashIn(
+		account: Account,
 		treasuryId: string,
-		privateKey: PrivateKey,
-		accountId: AccountId,
 		targetId: string,
 		amount: number,
 	): Promise<Uint8Array>;
 	cashInHTS(
-		privateKey: PrivateKey,
-		accountId: AccountId,
+		account: Account,
 		tokenId: string,
 		amount: number,
 	): Promise<boolean>;	
 	cashOut(
+		account: Account,
 		treasuryId: string,
-		privateKey: PrivateKey,
-		accountId: AccountId,
 		amount: number,
 	): Promise<Uint8Array>;
 	cashOutHTS(
-		privateKey: PrivateKey,
-		accountId: AccountId,
+		account: Account,
 		tokenId: string,
 		amount: number,
 	): Promise<boolean>;	
 	associateToken(
+		account: Account,
 		treasuryId: string,
-		privateKey: PrivateKey,
-		accountId: AccountId,
 	): Promise<Uint8Array>;
 	wipe(
+		account: Account,
 		treasuryId: string,
-		privateKey: PrivateKey,
-		accountId: AccountId,
 		targetId: string,
 		amount: number,
 	): Promise<Uint8Array>;
 	wipeHTS(
-		privateKey: PrivateKey,
-		accountId: AccountId,
+		account: Account,
 		tokenId: string,
 		wipeAccountId: string,
 		amount: number,
 	): Promise<boolean>;
 	grantSupplierRole(
+		account: Account,
 		treasuryId: string,
 		address: string,
-		privateKey: PrivateKey,
-		accountId: AccountId,
 		amount?: number,
 	): Promise<Uint8Array>;
 	isUnlimitedSupplierAllowance(
+		account: Account,
 		treasuryId: string,
 		address: string,
-		privateKey: PrivateKey,
-		accountId: AccountId,
 	): Promise<Uint8Array>;
 	supplierAllowance(
+		account: Account,
 		treasuryId: string,
 		address: string,
-		privateKey: PrivateKey,
-		accountId: AccountId,
 	): Promise<Uint8Array>;
 	revokeSupplierRole(
+		account: Account,
 		treasuryId: string,
 		address: string,
-		privateKey: PrivateKey,
-		accountId: AccountId,
 	): Promise<Uint8Array>;
 	resetSupplierAllowance(
+		account: Account,
 		treasuryId: string,
 		address: string,
-		privateKey: PrivateKey,
-		accountId: AccountId,
 	): Promise<Uint8Array>;
 	increaseSupplierAllowance(
+		account: Account,
 		treasuryId: string,
 		address: string,
-		privateKey: PrivateKey,
-		accountId: AccountId,
 		amount?: number,
 	): Promise<Uint8Array>;
 	decreaseSupplierAllowance(
+		account: Account,
 		treasuryId: string,
 		address: string,
-		privateKey: PrivateKey,
-		accountId: AccountId,
 		amount?: number,
 	): Promise<Uint8Array>;
 	isLimitedSupplierAllowance(
+		account: Account,
 		treasuryId: string,
 		address: string,
-		privateKey: PrivateKey,
-		accountId: AccountId,
 	): Promise<Uint8Array>;
 	rescue(
+		account: Account,
 		treasuryId: string,
-		privateKey: PrivateKey,
-		accountId: AccountId,
 		amount: number,
 	): Promise<Uint8Array>;
 	grantRole(
+		account: Account,
 		treasuryId: string,
 		address: string,
-		privateKey: PrivateKey,
-		accountId: AccountId,
 		role: StableCoinRole,
 	): Promise<Uint8Array>;
 	revokeRole(
+		account: Account,
 		treasuryId: string,
 		address: string,
-		privateKey: PrivateKey,
-		accountId: AccountId,
 		role: StableCoinRole,
 	): Promise<Uint8Array>;
 	hasRole(
+		account: Account,
 		treasuryId: string,
 		address: string,
-		privateKey: PrivateKey,
-		accountId: AccountId,
 		role: StableCoinRole,
 	): Promise<Uint8Array>;
 	transferHTS(
-		privateKey: PrivateKey,
-		accountId: AccountId,
+		account: Account,
 		tokenId: string,
 		amount: number,		
 		outAccountId: string,
