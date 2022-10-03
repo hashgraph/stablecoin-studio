@@ -26,8 +26,12 @@ You must have installed and built
 
 From the root of the CLI project workspace:
 
-1. Run `npm install`. This will create and populate `node_modules`.
-2. Run `npm start`. This will display the CLI options.
+1. Run `npm install`. This will create and populate `node_modules` and build the project and dependencies.
+2. Run `npm start`. This will display the CLI options. 
+
+or
+
+2. Run `npm start:wizard`. To start the CLI in wizard mode.
 
 ## Commands
 
