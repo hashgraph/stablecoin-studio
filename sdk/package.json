@@ -11,30 +11,30 @@
 		".": "./build/src/index.js"
 	},
 	"devDependencies": {
-		"@babel/cli": "^7.18.10",
-		"@babel/core": "^7.18.10",
-		"@babel/preset-env": "^7.18.10",
+		"@babel/cli": "^7.19.3",
+		"@babel/core": "^7.19.3",
+		"@babel/preset-env": "^7.19.3",
 		"@babel/preset-typescript": "^7.18.6",
-		"@types/jest": "~27.5",
-		"@types/node": "~16",
+		"@types/jest": "~29.1",
+		"@types/node": "~18",
 		"@types/uuid": "^8.3.4",
-		"@typescript-eslint/eslint-plugin": "~5.26",
-		"@typescript-eslint/parser": "~5.26",
+		"@typescript-eslint/eslint-plugin": "~5.38",
+		"@typescript-eslint/parser": "~5.38",
 		"axios": "^0.27.2",
-		"babel-jest": "28.0.0",
-		"concurrently": "^7.3.0",
-		"eslint": "~8.16",
+		"babel-jest": "29.1.2",
+		"concurrently": "^7.4.0",
+		"eslint": "~8.24",
 		"eslint-config-prettier": "~8.5",
-		"eslint-plugin-jest": "~26.2",
-		"format-imports": "^3.0.12",
+		"eslint-plugin-jest": "~27.0",
+		"format-imports": "^3.1.0",
 		"hedera-stable-coin-contracts": "file:../contracts/build",
-		"jest": "28.1",
-		"prettier": "~2.6",
+		"jest": "29.1",
+		"prettier": "~2.7",
 		"rimraf": "~3.0",
-		"ts-jest": "28.0",
+		"ts-jest": "29.0",
 		"tsutils": "~3.21",
 		"typed-emitter": "^2.1.0",
-		"typescript": "4.7"
+		"typescript": "4.8"
 	},
 	"scripts": {
 		"start": "node build/src/index.js",
@@ -55,13 +55,13 @@
 	},
 	"license": "Apache-2.0",
 	"dependencies": {
-		"@hashgraph/hethers": "^1.2.0",
-		"@hashgraph/sdk": "^2.18.0",
+		"@hashgraph/hethers": "^1.2.2",
+		"@hashgraph/sdk": "^2.18.2",
 		"hashconnect": "^0.2.3",
 		"ts-xor": "^1.0.8",
 		"tslib": "~2.4",
 		"uuid": "^9.0.0",
-		"web3": "^1.7.5"
+		"web3": "^1.8.0"
 	},
 	"volta": {
 		"node": "16.13.0"
