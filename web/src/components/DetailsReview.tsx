@@ -55,10 +55,13 @@ const DetailsReview = (props: DetailsReviewProps) => {
 							justifyContent='space-between'
 							{...contentProps}
 						>
-							<Text {...(detail.labelInBold ? textInBoldProps : commonTextProps)}>
+							<Text
+								whiteSpace={'nowrap'}
+								{...(detail.labelInBold ? textInBoldProps : commonTextProps)}
+							>
 								{detail.label}
 							</Text>
-							<Text flex={1} {...(detail.valueInBold ? textInBoldProps : commonTextProps)}>
+							<Text {...(detail.valueInBold ? textInBoldProps : commonTextProps)}>
 								{detail.value}
 							</Text>
 						</Flex>
