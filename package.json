@@ -9,9 +9,24 @@
     "build:cli:full": "npm run build:contracts && npm run build:sdk && npm run build:cli",
     "build:contracts": "cd contracts && npm run build",
     "build:web": "cd web && npm run build",
-    "setup": "npm run install"
+    "setup": "npm run install",
+    "clean": "concurrently \"npm run --silent clean:all:build\" \"npm run --silent clean:all:modules\"  > '/dev/null' 2>&1",
+    "clean:sdk:modules": "rimraf ./sdk/node_modules",
+    "clean:cli:modules": "rimraf ./cli/node_modules",
+    "clean:web:modules": "rimraf ./web/node_modules",
+    "clean:contracts:modules": "rimraf ./contracts/node_modules",
+    "clean:all:modules": "concurrently \"npm run clean:sdk:modules\" \"npm run clean:cli:modules\" \"npm run clean:web:modules\" \"npm run clean:contracts:modules\"",
+    "clean:sdk:build": "rimraf ./sdk/build",
+    "clean:cli:build": "rimraf ./cli/build",
+    "clean:web:build": "rimraf ./web/build",
+    "clean:contracts:build": "rimraf ./contracts/build",
+    "clean:all:build": "concurrently \"npm run clean:sdk:build\" \"npm run clean:cli:build\" \"npm run clean:web:build\" \"npm run clean:contracts:build\""
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^7.4.0",
+    "rimraf": "^3.0.2"
+  }
 }
