@@ -2,8 +2,8 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import languagedetector from 'i18next-browser-languagedetector';
 
+import BURN_EN from './translations/en/burn.json';
 import CASH_IN_EN from './translations/en/cashIn.json';
-import CASH_OUT_EN from './translations/en/cashOut.json';
 import ERROR_PAGE_EN from './translations/en/errorPage.json';
 import GET_BALANCE_EN from './translations/en/getBalance.json';
 import GLOBAL_EN from './translations/en/global.json';
@@ -28,8 +28,8 @@ i18n
 		interpolation: { escapeValue: false },
 		resources: {
 			en: {
+				burn: BURN_EN,
 				cashIn: CASH_IN_EN,
-				cashOut: CASH_OUT_EN,
 				errorPage: ERROR_PAGE_EN,
 				getBalance: GET_BALANCE_EN,
 				global: GLOBAL_EN,
