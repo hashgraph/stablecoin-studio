@@ -128,6 +128,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			return Promise.reject<StableCoin>(error);
 		}
 	}
+
 	public async getCapabilitiesStableCoin(
 		id: string,
 		publickey: string,
@@ -181,6 +182,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			return Promise.reject<Capabilities[]>(error);
 		}
 	}
+	
 	public async getBalanceOf(
 		treasuryId: string,
 		privateKey: PrivateKey,

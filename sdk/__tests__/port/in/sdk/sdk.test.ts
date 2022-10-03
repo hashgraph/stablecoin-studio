@@ -20,11 +20,11 @@ describe('🧪 [PORT] SDK', () => {
 			decimals: 0,
 		});
 		expect(coin).not.toBeNull();
-		expect(coin?.id).toBeTruthy();
+		expect(coin?.tokenId).toBeTruthy();
 	}, 120_000);
 
 	it('Gets the token info', async () => {
-		const coin = await sdk.getStableCoin({
+		const coin = await sdk.getStableCoinDetails({
 			id: '0.0.48195895',
 		});
 		expect(coin).not.toBeNull();

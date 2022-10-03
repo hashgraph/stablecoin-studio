@@ -7,7 +7,7 @@ import {
 } from '../../../index.js';
 import Service from '../Service.js';
 import DetailsStableCoinsService from './DetailsStableCoinService.js';
-import { SDK, StableCoin, StableCoinRole } from 'hedera-stable-coin-sdk';
+import { IStableCoinDetail, SDK, StableCoinRole } from 'hedera-stable-coin-sdk';
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 import CashInStableCoinsService from './CashInStableCoinService.js';
 import WipeStableCoinsService from './WipeStableCoinService.js';
@@ -74,7 +74,7 @@ export default class OperationStableCoinService extends Service {
         // Get details to obtain treasury
         await new DetailsStableCoinsService()
           .getDetailsStableCoins(this.stableCoinId, false)
-          .then((response: StableCoin) => {
+          .then((response: IStableCoinDetail) => {
             this.proxyContractId = response.memo;
           });
 

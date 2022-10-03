@@ -3,7 +3,6 @@ import type {
 	AppMetadata,
 	InitializationData,
 	ICreateStableCoinRequest,
-	StableCoin,
 	IStableCoinDetail,
 	IStableCoinList,
 } from 'hedera-stable-coin-sdk';
@@ -123,7 +122,7 @@ export class SDKService {
 
 	public static async createStableCoin(
 		createStableCoinRequest: ICreateStableCoinRequest,
-	): Promise<StableCoin | null> {
+	): Promise<IStableCoinDetail | null> {
 		return (await SDKService.getInstance()).createStableCoin(createStableCoinRequest);
 	}
 }

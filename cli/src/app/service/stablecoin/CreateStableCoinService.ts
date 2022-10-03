@@ -6,6 +6,7 @@ import {
   AccountId,
   PrivateKey,
   PublicKey,
+  IStableCoinDetail,
 } from 'hedera-stable-coin-sdk';
 import { IManagedFeatures } from '../../../domain/configuration/interfaces/IManagedFeatures.js';
 import Service from '../Service.js';
@@ -46,7 +47,7 @@ export default class CreateStableCoinService extends Service {
   public async createStableCoin(
     stableCoin: StableCoin,
     isWizard = false,
-  ): Promise<StableCoin> {
+  ): Promise<IStableCoinDetail> {
     if (isWizard) {
       stableCoin = await this.wizardCreateStableCoin();
     }

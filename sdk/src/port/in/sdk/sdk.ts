@@ -190,7 +190,7 @@ export class SDK {
 	 */
 	public createStableCoin(
 		request: ICreateStableCoinRequest,
-	): Promise<StableCoin> | null {
+	): Promise<IStableCoinDetail> | null {
 		try {
 			const req: ICreateStableCoinServiceRequestModel = {
 				...request,
@@ -213,6 +213,7 @@ export class SDK {
 	): Promise<Capabilities[]> | null {
 		return this.stableCoinService.getCapabilitiesStableCoin(id, publicKey);
 	}
+	
 	/**
 	 * getListStableCoin
 	 */
@@ -224,18 +225,6 @@ export class SDK {
 			privateKey: new PrivateKey(request.privateKey),
 		};
 		return this.stableCoinService.getListStableCoins(req);
-	}
-
-	/**
-	 * getStableCoin
-	 */
-	public getStableCoin(
-		request: IGetStableCoinRequest,
-	): Promise<StableCoin> | null {
-		const req: IGetStableCoinServiceRequestModel = {
-			...request,
-		};
-		return this.stableCoinService.getStableCoin(req);
 	}
 
 	public getStableCoinDetails(
