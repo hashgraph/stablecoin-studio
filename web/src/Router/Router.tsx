@@ -20,7 +20,11 @@ import StableCoinNotSelected from '../views/ErrorPage/StableCoinNotSelected';
 import SDKService, { HashConnectConnectionState } from '../services/SDKService';
 import StableCoinDetails from '../views/StableCoinDetails';
 import { hashpackActions, IS_INITIALIZED } from '../store/slices/hashpackSlice';
-import { walletActions, HAS_WALLET_EXTENSION } from '../store/slices/walletSlice';
+import {
+	HAS_WALLET_EXTENSION,
+	SELECTED_WALLET_COIN,
+	walletActions,
+} from '../store/slices/walletSlice';
 
 const PrivateRoute = ({ status }: { status?: HashConnectConnectionState }) => {
 	return (
@@ -47,6 +51,7 @@ const Router = () => {
 	const dispatch = useDispatch();
 	const haspackInitialized = useSelector(IS_INITIALIZED);
 	const hasWalletExtension = useSelector(HAS_WALLET_EXTENSION);
+	const selectedWalletCoin = !!useSelector(SELECTED_WALLET_COIN);
 
 	useEffect(() => {
 		instanceSDK();
@@ -89,37 +94,39 @@ const Router = () => {
 						<Route path={RoutesMappingUrl.login} element={<Login />} />
 					</Route>
 					{/* Private routes */}
-					{status && (
-						<Route element={<PrivateRoute status={status} />}>
-							<Route path={RoutesMappingUrl.balance} element={<GetBalanceOperation />} />
-							<Route path={RoutesMappingUrl.cashIn} element={<CashInOperation />} />
-							<Route path={RoutesMappingUrl.cashOut} element={<CashOutOperation />} />
-							<Route path={RoutesMappingUrl.rescueTokens} element={<RescueTokenOperation />} />
-							<Route path={RoutesMappingUrl.wipe} element={<WipeOperation />} />
-							<Route path={RoutesMappingUrl.dashboard} element={<Dashboard />} />
-							<Route
-								path={RoutesMappingUrl.editRole}
-								element={<HandleRoles action={actions.edit} />}
-							/>
-							<Route
-								path={RoutesMappingUrl.giveRole}
-								element={<HandleRoles action={actions.give} />}
-							/>
-							<Route path={RoutesMappingUrl.operations} element={<Operations />} />
-							<Route
-								path={RoutesMappingUrl.revokeRole}
-								element={<HandleRoles action={actions.revoke} />}
-							/>
-							<Route path={RoutesMappingUrl.roles} element={<Roles />} />
-							<Route path={RoutesMappingUrl.stableCoinCreation} element={<StableCoinCreation />} />
-							<Route path={RoutesMappingUrl.stableCoinDetails} element={<StableCoinDetails />} />
-							<Route
-								path={RoutesMappingUrl.stableCoinNotSelected}
-								element={<StableCoinNotSelected />}
-							/>
-							<Route path='*' element={<Navigate to={RoutesMappingUrl.dashboard} />} />
-						</Route>
-					)}
+					<Route element={<PrivateRoute status={status} />}>
+						{selectedWalletCoin && (
+							<>
+								<Route path={RoutesMappingUrl.balance} element={<GetBalanceOperation />} />
+								<Route path={RoutesMappingUrl.cashIn} element={<CashInOperation />} />
+								<Route path={RoutesMappingUrl.cashOut} element={<CashOutOperation />} />
+								<Route path={RoutesMappingUrl.rescueTokens} element={<RescueTokenOperation />} />
+								<Route path={RoutesMappingUrl.wipe} element={<WipeOperation />} />
+								<Route path={RoutesMappingUrl.dashboard} element={<Dashboard />} />
+								<Route
+									path={RoutesMappingUrl.editRole}
+									element={<HandleRoles action={actions.edit} />}
+								/>
+								<Route
+									path={RoutesMappingUrl.giveRole}
+									element={<HandleRoles action={actions.give} />}
+								/>
+								<Route path={RoutesMappingUrl.operations} element={<Operations />} />
+								<Route
+									path={RoutesMappingUrl.revokeRole}
+									element={<HandleRoles action={actions.revoke} />}
+								/>
+								<Route path={RoutesMappingUrl.roles} element={<Roles />} />
+								<Route path={RoutesMappingUrl.stableCoinDetails} element={<StableCoinDetails />} />
+							</>
+						)}
+						<Route path={RoutesMappingUrl.stableCoinCreation} element={<StableCoinCreation />} />
+						<Route
+							path={RoutesMappingUrl.stableCoinNotSelected}
+							element={<StableCoinNotSelected />}
+						/>
+						<Route path='*' element={<Navigate to={RoutesMappingUrl.stableCoinNotSelected} />} />
+					</Route>
 				</Routes>
 			) : (
 				<Flex
