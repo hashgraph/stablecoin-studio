@@ -87,6 +87,7 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 						overrideStyles={selectorStyle}
 						addonLeft={true}
 						variant='unstyled'
+						defaultValue={'0'}
 					/>
 					{isSupplyTypeFinite && (
 						<InputNumberController
