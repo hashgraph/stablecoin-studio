@@ -5,7 +5,7 @@ import { Flex, Spinner } from '@chakra-ui/react';
 import Layout from '../layout/Layout';
 import { RoutesMappingUrl } from './RoutesMappingUrl';
 import CashInOperation from '../views/Operations/CashIn';
-import CashOutOperation from '../views/Operations/CashOut';
+import BurnOperation from '../views/Operations/Burn';
 import GetBalanceOperation from '../views/Operations/GetBalance';
 import RescueTokenOperation from '../views/Operations/RescueTokens';
 import WipeOperation from '../views/Operations/Wipe';
@@ -99,7 +99,7 @@ const Router = () => {
 							<>
 								<Route path={RoutesMappingUrl.balance} element={<GetBalanceOperation />} />
 								<Route path={RoutesMappingUrl.cashIn} element={<CashInOperation />} />
-								<Route path={RoutesMappingUrl.cashOut} element={<CashOutOperation />} />
+								<Route path={RoutesMappingUrl.burn} element={<BurnOperation />} />
 								<Route path={RoutesMappingUrl.rescueTokens} element={<RescueTokenOperation />} />
 								<Route path={RoutesMappingUrl.wipe} element={<WipeOperation />} />
 								<Route path={RoutesMappingUrl.dashboard} element={<Dashboard />} />
