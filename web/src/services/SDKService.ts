@@ -122,6 +122,12 @@ export class SDKService {
 	): Promise<StableCoin | null> {
 		return (await SDKService.getInstance()).createStableCoin(createStableCoinRequest);
 	}
+	
+	public static async getBalance(data: any ) {
+		return await SDKService.getInstance().then((instance) => 
+			instance.getBalanceOf(data)
+		)
+	}
 }
 
 export default SDKService;

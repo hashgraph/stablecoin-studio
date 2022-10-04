@@ -1,12 +1,16 @@
+import { useState } from 'react';
 import { Heading, Text, Stack, useDisclosure } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import DetailsReview from '../../../components/DetailsReview';
 import InputController from '../../../components/Form/InputController';
 import { validateAccount } from '../../../utils/validationsHelper';
 import OperationLayout from './../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
+import SDKService from '../../../services/SDKService';
+import { SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
 
 const GetBalanceOperation = () => {
 	const {
@@ -14,17 +18,35 @@ const GetBalanceOperation = () => {
 		onOpen: onOpenModalAction,
 		onClose: onCloseModalAction,
 	} = useDisclosure();
+	const [balance, setBalance] = useState<Uint8Array | null>();
 	const { t } = useTranslation(['getBalance', 'global', 'operations']);
-
+	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
 	});
 	const account = getValues().account;
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const handleCashIn: ModalsHandlerActionsProps['onConfirm'] = ({ onSuccess, onError }) => {
-		// TODO: integrate with sdk to do cashin
-		onSuccess();
+	const handleGetBalance: ModalsHandlerActionsProps['onConfirm'] = async ({
+		onSuccess,
+		onError,
+	}) => {
+		const { account: accountId } = getValues();
+
+		try {
+			const balance = await SDKService.getBalance({
+				proxyContractId: '0.0.48261507',
+				privateKey: '',
+				tokenId: selectedStableCoin!.tokenId!,
+				targetId: '0.0.48450590', // destinationACc
+				accountId,
+			});
+
+			setBalance(balance);
+			onSuccess();
+		} catch (error) {
+			onError();
+		}
 	};
 
 	return (
@@ -68,7 +90,7 @@ const GetBalanceOperation = () => {
 					onClose: onCloseModalAction,
 					title: t('getBalance:modalAction.subtitle'),
 					confirmButtonLabel: t('getBalance:modalAction.accept'),
-					onConfirm: handleCashIn,
+					onConfirm: handleGetBalance,
 				}}
 				ModalActionChildren={
 					<DetailsReview
@@ -84,7 +106,7 @@ const GetBalanceOperation = () => {
 				successNotificationTitle={t('operations:modalSuccessTitle')}
 				successNotificationDescription={t('getBalance:modalSuccessBalance', {
 					account,
-					balance: '123', // TODO: add correct value
+					balance,
 				})}
 			/>
 		</>
