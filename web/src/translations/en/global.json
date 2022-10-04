@@ -34,7 +34,9 @@
   },
   "validations": {
     "required": "This field is required",
-    "invalidAccount": "Incorrect account"
+    "invalidAccount": "Incorrect account",
+    "decimalsValidation": "You have added more decimals than the supported by the stable coin",
+    "overTotalSupply": "Quantity over current total supply"
   },
   "operations": {
     "title": "Operations"

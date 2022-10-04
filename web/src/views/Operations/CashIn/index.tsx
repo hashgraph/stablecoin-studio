@@ -19,7 +19,7 @@ const CashInOperation = () => {
 		onClose: onCloseModalAction,
 	} = useDisclosure();
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
-	const { decimals = 0 } = selectedStableCoin || {};
+	const { decimals = 0, totalSupply } = selectedStableCoin || {};
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
 	});
@@ -61,7 +61,16 @@ const CashInOperation = () => {
 									required: t('global:validations.required'),
 									validate: {
 										maxDecimals: (value: number) => {
-											return validateDecimals(value, decimals) || t('cashIn:decimalsValidation');
+											return (
+												validateDecimals(value, decimals) ||
+												t('global:validations.decimalsValidation')
+											);
+										},
+										quantityOverTotalSupply: (value: number) => {
+											return (
+												(totalSupply && totalSupply >= value) ||
+												t('global:validations.overTotalSupply')
+											);
 										},
 									},
 								}}
