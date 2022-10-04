@@ -10,16 +10,19 @@ import type { AppDispatch } from '../../store/store';
 import {
 	getStableCoinList,
 	SELECTED_WALLET_COIN,
+	SELECTED_WALLET_PAIRED_ACCOUNTID,
 	STABLE_COIN_LIST,
 	walletActions,
 } from '../../store/slices/walletSlice';
 import { RouterManager } from '../../Router/RouterManager';
 import { matchPath, useLocation, useNavigate } from 'react-router-dom';
 import { NamedRoutes } from '../../Router/NamedRoutes';
+import { HashPackAccount } from 'hedera-stable-coin-sdk';
 
 const CoinDropdown = () => {
 	const stableCoinList = useSelector(STABLE_COIN_LIST);
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
+	const accountId = useSelector(SELECTED_WALLET_PAIRED_ACCOUNTID);
 	const dispatch = useDispatch<AppDispatch>();
 	const [options, setOptions] = useState<Option[]>([]);
 	const navigate = useNavigate();
@@ -30,16 +33,17 @@ const CoinDropdown = () => {
 	);
 
 	useEffect(() => {
-		dispatch(getStableCoinList());
-
-		if (!selectedStableCoin) {
-			RouterManager.to(navigate, NamedRoutes.StableCoinNotSelected);
-		}
-
 		if (selectedStableCoin && isInStableCoinNotSelected) {
 			RouterManager.to(navigate, NamedRoutes.Operations);
 		}
 	}, [selectedStableCoin]);
+
+	useEffect(() => {
+		if (accountId) {
+			const id = new HashPackAccount(accountId);
+			dispatch(getStableCoinList(id));
+		}
+	}, [accountId]);
 
 	useEffect(() => {
 		formatOptionsStableCoins();

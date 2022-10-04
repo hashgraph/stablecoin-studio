@@ -53,11 +53,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	): Promise<IStableCoinList[]> {
 		try {
 			const resObject: IStableCoinList[] = [];
-			const pk = this.networkAdapter.provider.getPublicKeyString(
-				account?.privateKey,
-			);
 			const res = await axios.get<ITokenList>(
-				this.URI_BASE + 'tokens?limit=100&publickey=' + pk,
+				this.URI_BASE + 'tokens?limit=100&account.id=' + account.accountId.id,
 			);
 			res.data.tokens.map((item: IToken) => {
 				if (item.memo !== '') {

@@ -18,13 +18,9 @@ export default class Account extends BaseEntity {
 		this.privateKey = privateKey;
 		this.validateAccount();
 	}
-
-	public static validateAccount(acct: Account): boolean {
-		return acct.networkMode === NetworkMode.EOA && !!acct.privateKey;
-	}
 	
     private validateAccount(): void {
-		if(!Account.validateAccount(this)){
+		if(this.networkMode === NetworkMode.EOA && !!this.privateKey){
             throw new AccountNotValid('Invalid Network Mode: EOA without private key');
         }
 	}
