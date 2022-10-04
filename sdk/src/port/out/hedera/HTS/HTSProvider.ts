@@ -48,7 +48,7 @@ import { TransactionResposeHandler } from '../transaction/TransactionResponseHan
 import { HashConnectConnectionState } from 'hashconnect/types';
 import ProviderEvent, { ProviderEventNames } from '../ProviderEvent.js';
 import EventService from '../../../../app/service/event/EventService.js';
-import { ContractId, EOAccount } from '../../../in/sdk/sdk.js';
+import { Account, ContractId, EOAccount } from '../../../in/sdk/sdk.js';
 import { safeCast } from '../../../../core/cast.js';
 
 type DefaultHederaProvider = hethers.providers.DefaultHederaProvider;
@@ -94,7 +94,7 @@ export default class HTSProvider implements IProvider {
 		});
 	}
 
-	public getClient(accountId?: string, privateKey?: string): Client {
+	public getClient(account: Account): Client {
 		let client: Client;
 		const hederaNetWork = getHederaNetwork(this.network);
 
@@ -109,8 +109,10 @@ export default class HTSProvider implements IProvider {
 			throw new Error('Cannot get client: Invalid configuration');
 		}
 
-		if (accountId && privateKey) {
-			client.setOperator(accountId, privateKey);
+		if (account && account instanceof EOAccount) {
+			client.setOperator(account.accountId.id, account.privateKey.key);
+		}else{
+			throw new Error('Cannot get client: No private key');
 		}
 		return client;
 	}
@@ -165,12 +167,9 @@ export default class HTSProvider implements IProvider {
 		let client;
 
 		if ('account' in params) {
-			client = this.getClient(
-				params.account.accountId,
-				params.account.privateKey
-			);
+			client = this.getClient(params.account);
 		} else {
-			client = this.getClient();
+			throw new Error('Account must be supplied');
 		}
 
 		const functionCallParameters = this.encodeFunctionCall(
@@ -188,7 +187,7 @@ export default class HTSProvider implements IProvider {
 			);
 		const transactionResponse: TransactionResponse =
 			await this.htsSigner.signAndSendTransaction(transaction);
-			this.logHashScan(transactionResponse,'call contract');
+		this.logHashScan(transactionResponse, 'call contract');
 		const htsResponse: HTSResponse =
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
@@ -202,21 +201,17 @@ export default class HTSProvider implements IProvider {
 	}
 
 	public async deployStableCoin(
-		account: EOAccount,
 		stableCoin: StableCoin,
+		account: EOAccount,
 	): Promise<StableCoin> {
-		const client = this.getClient(account.accountId.id, account.privateKey.key);
-		const plainAccount = {
-			accountId: account.accountId.id,
-			privateKey: account.privateKey.key,
-		};
+		const client = this.getClient(account);
 		log(
 			`Deploying ${HederaERC20__factory.name} contract... please wait.`,
 			logOpts,
 		);
 		const tokenContract = await this.deployContract(
 			HederaERC20__factory,
-			plainAccount.privateKey,
+			account.privateKey,
 			client,
 		);
 		log(
@@ -225,7 +220,7 @@ export default class HTSProvider implements IProvider {
 		);
 		const proxyContract: HContractId = await this.deployContract(
 			HederaERC1967Proxy__factory,
-			plainAccount.privateKey,
+			account.privateKey,
 			client,
 			new ContractFunctionParameters()
 				.addAddress(tokenContract?.toSolidityAddress())
@@ -238,7 +233,7 @@ export default class HTSProvider implements IProvider {
 			parameters: [],
 			gas: 250_000,
 			abi: HederaERC20__factory.abi,
-			account: plainAccount,
+			account,
 		});
 		log(
 			`Deploying ${HTSTokenOwner__factory.name} contract... please wait.`,
@@ -246,7 +241,7 @@ export default class HTSProvider implements IProvider {
 		);
 		const tokenOwnerContract = await this.deployContract(
 			HTSTokenOwner__factory,
-			plainAccount.privateKey,
+			account.privateKey,
 			client,
 		);
 		log('Creating token... please wait.', logOpts);
@@ -279,17 +274,19 @@ export default class HTSProvider implements IProvider {
 			],
 			gas: 80_000,
 			abi: HederaERC20__factory.abi,
-			account: plainAccount
+			account: account,
 		});
 		await this.callContract('setERC20Address', {
 			contractId: String(tokenOwnerContract),
 			parameters: [proxyContract.toSolidityAddress()],
 			gas: 60_000,
 			abi: HTSTokenOwner__factory.abi,
-			account: plainAccount
+			account: account,
 		});
-	
-		if (hederaToken.treasuryAccountId.toString() !== plainAccount.accountId) {
+
+		if (
+			hederaToken.treasuryAccountId.toString() !== account.accountId.id
+		) {
 			log(
 				'Associating administrator account to token... please wait.',
 				logOpts,
@@ -298,12 +295,12 @@ export default class HTSProvider implements IProvider {
 				contractId: stableCoin.memo,
 				parameters: [
 					HAccountId.fromString(
-						plainAccount.accountId,
+						account.accountId.id,
 					).toSolidityAddress(),
 				],
 				gas: 1_300_000,
 				abi: HederaERC20__factory.abi,
-				account: plainAccount,
+				account: account,
 			});
 		}
 
@@ -352,7 +349,7 @@ export default class HTSProvider implements IProvider {
 
 	private async deployContract(
 		factory: any,
-		privateKey: string,
+		privateKey: PrivateKey,
 		client: Client,
 		params?: any,
 	): Promise<HContractId> {
@@ -363,11 +360,11 @@ export default class HTSProvider implements IProvider {
 					factory,
 					params,
 					90_000,
-					privateKey,
+					privateKey.key,
 				);
 			const transactionResponse: TransactionResponse =
 				await this.htsSigner.signAndSendTransaction(transaction);
-				this.logHashScan(transactionResponse,'deploy contract');
+			this.logHashScan(transactionResponse, 'deploy contract');
 			const htsResponse: HTSResponse =
 				await this.transactionResposeHandler.manageResponse(
 					transactionResponse,
@@ -452,7 +449,7 @@ export default class HTSProvider implements IProvider {
 			);
 		const transactionResponse: TransactionResponse =
 			await this.htsSigner.signAndSendTransaction(transaction);
-			this.logHashScan(transactionResponse,'create token hts');
+		this.logHashScan(transactionResponse, 'create token hts');
 		const htsResponse: HTSResponse =
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
@@ -497,19 +494,15 @@ export default class HTSProvider implements IProvider {
 
 	getInitData(): InitializationData {
 		throw new Error('not haspack');
-
 	}
 
 	public async wipeHTS(params: IWipeTokenRequest): Promise<boolean> {
 		let client;
 
 		if ('account' in params) {
-			client = this.getClient(
-				params.account.accountId,
-				params.account.privateKey,
-			);
+			client = this.getClient(params.account);
 		} else {
-			client = this.getClient();
+			throw new Error('Account must be supplied');
 		}
 
 		this.htsSigner = new HTSSigner(client);
@@ -521,7 +514,7 @@ export default class HTSProvider implements IProvider {
 			);
 		const transactionResponse: TransactionResponse =
 			await this.htsSigner.signAndSendTransaction(transaction);
-			this.logHashScan(transactionResponse),'wipe in hts';
+		this.logHashScan(transactionResponse), 'wipe in hts';
 		const htsResponse: HTSResponse =
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
@@ -534,7 +527,7 @@ export default class HTSProvider implements IProvider {
 				`An error has occurred when wipe the amount ${params.amount} in the account ${params.wipeAccountId} for tokenId ${params.tokenId}`,
 			);
 		}
-		
+
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
@@ -542,12 +535,9 @@ export default class HTSProvider implements IProvider {
 		let client;
 
 		if ('account' in params) {
-			client = this.getClient(
-				params.account.accountId,
-				params.account.privateKey,
-			);
+			client = this.getClient(params.account);
 		} else {
-			client = this.getClient();
+			throw new Error('Account must be supplied');
 		}
 
 		this.htsSigner = new HTSSigner(client);
@@ -558,7 +548,7 @@ export default class HTSProvider implements IProvider {
 			);
 		const transactionResponse: TransactionResponse =
 			await this.htsSigner.signAndSendTransaction(transaction);
-			this.logHashScan(transactionResponse,'cash in hts');
+		this.logHashScan(transactionResponse, 'cash in hts');
 		const htsResponse: HTSResponse =
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
@@ -568,23 +558,20 @@ export default class HTSProvider implements IProvider {
 
 		if (!htsResponse.receipt) {
 			throw new Error(
-				`An error has occurred when cash in the amount ${params.amount} in the account ${params.account.accountId} for tokenId ${params.tokenId}`,
+				`An error has occurred when cash in the amount ${params.amount} in the account ${params?.account?.accountId.id} for tokenId ${params.tokenId}`,
 			);
 		}
-		
+
 		return htsResponse.receipt.status == Status.Success ? true : false;
-	}	
+	}
 
 	public async cashOutHTS(params: IHTSTokenRequest): Promise<boolean> {
 		let client;
 
 		if ('account' in params) {
-			client = this.getClient(
-				params.account.accountId,
-				params.account.privateKey,
-			);
+			client = this.getClient(params.account);
 		} else {
-			client = this.getClient();
+			throw new Error('Account must be supplied');
 		}
 
 		this.htsSigner = new HTSSigner(client);
@@ -595,7 +582,7 @@ export default class HTSProvider implements IProvider {
 			);
 		const transactionResponse: TransactionResponse =
 			await this.htsSigner.signAndSendTransaction(transaction);
-			this.logHashScan(transactionResponse, 'cash out hts');
+		this.logHashScan(transactionResponse, 'cash out hts');
 		const htsResponse: HTSResponse =
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
@@ -605,23 +592,20 @@ export default class HTSProvider implements IProvider {
 
 		if (!htsResponse.receipt) {
 			throw new Error(
-				`An error has occurred when cash out the amount ${params.amount} in the account ${params.account.accountId} for tokenId ${params.tokenId}`,
+				`An error has occurred when cash out the amount ${params.amount} in the account ${params?.account?.accountId.id} for tokenId ${params.tokenId}`,
 			);
 		}
-		
+
 		return htsResponse.receipt.status == Status.Success ? true : false;
-	}	
+	}
 
 	public async transferHTS(params: ITransferTokenRequest): Promise<boolean> {
 		let client;
 
 		if ('account' in params) {
-			client = this.getClient(
-				params.account.accountId,
-				params.account.privateKey,
-			);
+			client = this.getClient(params.account);
 		} else {
-			client = this.getClient();
+			throw new Error('Account must be supplied');
 		}
 
 		this.htsSigner = new HTSSigner(client);
@@ -630,11 +614,11 @@ export default class HTSProvider implements IProvider {
 				params.tokenId,
 				params.amount,
 				params.outAccountId,
-				params.inAccountId
+				params.inAccountId,
 			);
 		const transactionResponse: TransactionResponse =
 			await this.htsSigner.signAndSendTransaction(transaction);
-			this.logHashScan(transactionResponse,'tranfer hts');
+		this.logHashScan(transactionResponse, 'tranfer hts');
 		const htsResponse: HTSResponse =
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
@@ -647,19 +631,22 @@ export default class HTSProvider implements IProvider {
 				`An error has occurred when transfer the amount ${params.amount} to the account ${params.inAccountId} for tokenId ${params.tokenId}`,
 			);
 		}
-		
-		return htsResponse.receipt.status == Status.Success ? true : false;
-	}	
 
-	public logHashScan(transactionResponse: TransactionResponse, operation?:string):void{
-		let hs =` https://hashscan.io/#/${this.network.hederaNetworkEnviroment}/transaction/${transactionResponse.transactionId.toString().replace('@', '-')}`;
-		const num:number =hs.lastIndexOf('.');
-		
-		hs = hs.substring(0, num  ) +'-' + hs.substring(num+1, hs.length) ;
-		log(
-			`${hs} \n`,
-			logOpts,
-		);
-		
+		return htsResponse.receipt.status == Status.Success ? true : false;
+	}
+
+	public logHashScan(
+		transactionResponse: TransactionResponse,
+		operation?: string,
+	): void {
+		let hs = ` https://hashscan.io/#/${
+			this.network.hederaNetworkEnviroment
+		}/transaction/${transactionResponse.transactionId
+			.toString()
+			.replace('@', '-')}`;
+		const num: number = hs.lastIndexOf('.');
+
+		hs = hs.substring(0, num) + '-' + hs.substring(num + 1, hs.length);
+		log(`${hs} \n`, logOpts);
 	}
 }

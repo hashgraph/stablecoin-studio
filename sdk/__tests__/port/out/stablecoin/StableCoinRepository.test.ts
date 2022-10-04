@@ -29,45 +29,41 @@ describe('🧪 [PORT] StableCoinRepository', () => {
 		);
 		await expect(
 			repo.saveCoin(
-				ACCOUNTS.testnet,
 				new StableCoin({
 					name: baseCoin.name,
 					symbol: baseCoin.symbol,
 					decimals: baseCoin.decimals,
 				}),
+				ACCOUNTS.testnet,
 			),
 		).rejects.toThrowError(HederaError);
 	});
 
 	it('Saves a new coin', async () => {
 		const coin: StableCoin = await repository.saveCoin(
-			ACCOUNTS.testnet,
 			new StableCoin({
 				name: baseCoin.name,
 				symbol: baseCoin.symbol,
 				decimals: baseCoin.decimals,
 			}),
+			ACCOUNTS.testnet,
 		);
 		expect(coin).not.toBeNull();
 	});
 });
 
 function mockRepo(networkAdapter: NetworkAdapter, provider?: IProvider) {
-	if (!provider) {
-		networkAdapter.provider.deployStableCoin = (
-			account: Account,
+	const deployFn = (
 			coin: StableCoin,
+			account: Account,
 		) => {
 			throw new Error();
 		};
+	if (!provider) {
+		networkAdapter.provider.deployStableCoin = deployFn;
 	} else {
 		networkAdapter.provider = provider;
-		networkAdapter.provider.deployStableCoin = (
-			account: Account,
-			coin: StableCoin,
-		) => {
-			return Promise.resolve(coin);
-		};
+		networkAdapter.provider.deployStableCoin = deployFn;
 	}
 	return new StableCoinRepository(networkAdapter);
 }

@@ -87,10 +87,8 @@ export default class HashPackProvider implements IProvider {
 		options,
 	}: IniConfig): Promise<HashPackProvider> {
 		this.hc = new HashConnect(options?.appMetadata?.debugMode);
-		console.log(this.hc);
 
 		this.setUpHashConnectEvents();
-		console.log(this.hc);
 		this.network = network;
 		if (options && options?.appMetadata) {
 			this.initData = await this.hc.init(
@@ -138,10 +136,6 @@ export default class HashPackProvider implements IProvider {
 				ProviderEventNames.providerPairingEvent,
 				this.pairingData,
 			);
-			const signer = await this.getSigner(
-				data?.pairingData?.accountIds[0] ?? '',
-			);
-			console.log(await signer.getAccountInfo());
 		});
 
 		//This is fired when HashConnect loses connection, pairs successfully, or is starting connection
@@ -164,8 +158,8 @@ export default class HashPackProvider implements IProvider {
 		});
 	}
 
-	private async getSigner(accountId: string): Promise<HashConnectSigner> {
-		return this.hc.getSigner(this.getHCProvider(accountId));
+	private getSigner(): HashConnectSigner {
+		return this.hc.getSigner(this.provider);
 	}
 
 	public async callContract(
@@ -174,7 +168,12 @@ export default class HashPackProvider implements IProvider {
 	): Promise<Uint8Array> {
 		const { contractId, parameters, gas, abi } = params;
 		if ('account' in params) {
-			this.getHCProvider(params.account.accountId);
+			this.hashPackSigner = new HashPackSigner(
+				this.hc,
+				params.account,
+				this.network,
+				this.initData.topic,
+			);
 		} else {
 			throw new Error(
 				'You must specify an accountId for operate with HashConnect.',
@@ -186,8 +185,6 @@ export default class HashPackProvider implements IProvider {
 			parameters,
 			abi,
 		);
-
-		this.hashPackSigner = new HashPackSigner(this.hc, this.initData);
 		const transaction: Transaction =
 			TransactionProvider.buildContractExecuteTransaction(
 				contractId,
@@ -196,33 +193,17 @@ export default class HashPackProvider implements IProvider {
 			);
 
 		const transactionResponse =
-			await this.hashPackSigner.signAndSendTransaction(
-				transaction,
-				this.getHCSigner(),
-			);
+			await this.hashPackSigner.signAndSendTransaction(transaction);
 		const htsResponse: HTSResponse =
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
 				TransactionType.RECORD,
-				this.hc.getSigner(this.provider),
+				this.getSigner(),
 				name,
 				abi,
 			);
 
 		return htsResponse.reponseParam;
-	}
-
-	private getHCSigner(): Signer {
-		return this.hc.getSigner(this.provider) as unknown as Signer;
-	}
-
-	private getHCProvider(accountId: string): HashConnectProvider {
-		this.provider = this.hc.getProvider(
-			this.network.hederaNetworkEnviroment,
-			this.initData.topic,
-			accountId,
-		);
-		return this.provider;
 	}
 
 	public encodeFunctionCall(
@@ -246,8 +227,8 @@ export default class HashPackProvider implements IProvider {
 	}
 
 	public async deployStableCoin(
-		account: HashPackAccount,
 		stableCoin: StableCoin,
+		account: HashPackAccount,
 	): Promise<StableCoin> {
 		if (account) {
 			this.provider = this.hc.getProvider(
@@ -261,11 +242,9 @@ export default class HashPackProvider implements IProvider {
 			);
 		}
 
-		const signer = this.hc.getSigner(this.provider);
-
 		const tokenContract = await this.deployContract(
 			HederaERC20__factory,
-			signer,
+			account,
 		);
 		log(
 			`Deploying ${HederaERC1967Proxy__factory.name} contract... please wait.`,
@@ -277,7 +256,7 @@ export default class HashPackProvider implements IProvider {
 		if (!proxyContract) {
 			proxyContract = await this.deployContract(
 				HederaERC1967Proxy__factory,
-				signer,
+				account,
 				new ContractFunctionParameters()
 					.addAddress(tokenContract?.toSolidityAddress())
 					.addBytes(new Uint8Array([])),
@@ -292,7 +271,7 @@ export default class HashPackProvider implements IProvider {
 			parameters: [],
 			gas: 250_000,
 			abi: HederaERC20__factory.abi,
-			account: { accountId: account.accountId.id },
+			account: account,
 		});
 		log(
 			`Deploying ${HTSTokenOwner__factory.name} contract... please wait.`,
@@ -300,7 +279,7 @@ export default class HashPackProvider implements IProvider {
 		);
 		const tokenOwnerContract = await this.deployContract(
 			HTSTokenOwner__factory,
-			signer,
+			account,
 		);
 		log('Creating token... please wait.', logOpts);
 		const hederaToken = await this.createToken(
@@ -312,7 +291,7 @@ export default class HashPackProvider implements IProvider {
 			stableCoin.maxSupply,
 			String(proxyContract),
 			stableCoin.freezeDefault,
-			signer,
+			account,
 		);
 		log('Setting up contract... please wait.', logOpts);
 		await this.callContract('setTokenAddress', {
@@ -325,14 +304,14 @@ export default class HashPackProvider implements IProvider {
 			],
 			gas: 80_000,
 			abi: HederaERC20__factory.abi,
-			account: { accountId: account.accountId.id },
+			account,
 		});
 		await this.callContract('setERC20Address', {
 			contractId,
 			parameters: [proxyContract.toSolidityAddress()],
 			gas: 60_000,
 			abi: HTSTokenOwner__factory.abi,
-			account: { accountId: account.accountId.id },
+			account,
 		});
 		log(
 			'Associating administrator account to token... please wait.',
@@ -345,7 +324,7 @@ export default class HashPackProvider implements IProvider {
 			],
 			gas: 1_300_000,
 			abi: HederaERC20__factory.abi,
-			account: { accountId: account.accountId.id },
+			account,
 		});
 
 		return new StableCoin({
@@ -371,12 +350,16 @@ export default class HashPackProvider implements IProvider {
 
 	private async deployContract(
 		factory: any,
-		signer: HashConnectSigner,
+		account: HashPackAccount,
 		params?: any,
 	): Promise<HContractId> {
 		try {
-			this.hashPackSigner = new HashPackSigner(this.hc, this.initData);
-			this.hashPackSigner.getPublicKey(signer);
+			this.hashPackSigner = new HashPackSigner(
+				this.hc,
+				account,
+				this.network,
+				this.initData.topic,
+			);
 			const transaction =
 				TransactionProvider.buildContractCreateFlowTransaction(
 					factory,
@@ -385,15 +368,12 @@ export default class HashPackProvider implements IProvider {
 					'1234',
 				);
 			const transactionResponse =
-				await this.hashPackSigner.signAndSendTransaction(
-					transaction,
-					signer as unknown as Signer,
-				);
+				await this.hashPackSigner.signAndSendTransaction(transaction);
 			const htsResponse: HTSResponse =
 				await this.transactionResposeHandler.manageResponse(
 					transactionResponse,
 					TransactionType.RECEIPT,
-					signer,
+					this.hashPackSigner.hashConnectSigner,
 				);
 
 			if (!htsResponse.receipt.contractId) {
@@ -419,7 +399,7 @@ export default class HashPackProvider implements IProvider {
 		maxSupply: bigint | undefined,
 		memo: string,
 		freezeDefault: boolean,
-		signer: HashConnectSigner,
+		account: HashPackAccount,
 		adminKey?: PublicKey,
 		freezeKey?: PublicKey,
 		kycKey?: PublicKey,
@@ -447,7 +427,12 @@ export default class HashPackProvider implements IProvider {
 			supplyKey,
 		};
 
-		this.hashPackSigner = new HashPackSigner(this.hc, this.initData);
+		this.hashPackSigner = new HashPackSigner(
+			this.hc,
+			account,
+			this.network,
+			this.initData.topic,
+		);
 		const transaction: Transaction =
 			TransactionProvider.buildTokenCreateTransaction(
 				ContractId.fromHederaContractId(contractId),
@@ -455,15 +440,12 @@ export default class HashPackProvider implements IProvider {
 				maxSupply,
 			);
 		const transactionResponse =
-			await this.hashPackSigner.signAndSendTransaction(
-				transaction,
-				signer as unknown as Signer,
-			);
+			await this.hashPackSigner.signAndSendTransaction(transaction);
 		const htsResponse: HTSResponse =
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
 				TransactionType.RECEIPT,
-				signer,
+				this.hashPackSigner.hashConnectSigner,
 			);
 
 		if (!htsResponse.receipt.tokenId) {
@@ -589,7 +571,13 @@ export default class HashPackProvider implements IProvider {
 			this.provider = this.hc.getProvider(
 				this.network.hederaNetworkEnviroment,
 				this.initData.topic,
-				params.account.accountId,
+				params.account.accountId.id,
+			);
+			this.hashPackSigner = new HashPackSigner(
+				this.hc,
+				params.account,
+				this.network,
+				this.initData.topic,
 			);
 		} else {
 			throw new Error(
@@ -597,7 +585,6 @@ export default class HashPackProvider implements IProvider {
 			);
 		}
 
-		this.hashPackSigner = new HashPackSigner(this.hc, this.initData);
 		const transaction: Transaction =
 			TransactionProvider.buildTokenWipeTransaction(
 				params.wipeAccountId,
@@ -606,16 +593,13 @@ export default class HashPackProvider implements IProvider {
 			);
 
 		const transactionResponse =
-			await this.hashPackSigner.signAndSendTransaction(
-				transaction,
-				this.getHCSigner(),
-			);
+			await this.hashPackSigner.signAndSendTransaction(transaction);
 
 		const htsResponse: HTSResponse =
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
 				TransactionType.RECEIPT,
-				this.hc.getSigner(this.provider),
+				this.getSigner(),
 			);
 
 		if (!htsResponse.receipt) {
@@ -636,7 +620,13 @@ export default class HashPackProvider implements IProvider {
 			this.provider = this.hc.getProvider(
 				this.network.hederaNetworkEnviroment,
 				this.initData.topic,
-				params.account.accountId,
+				params.account.accountId.id,
+			);
+			this.hashPackSigner = new HashPackSigner(
+				this.hc,
+				params.account,
+				this.network,
+				this.initData.topic,
 			);
 		} else {
 			throw new Error(
@@ -644,7 +634,6 @@ export default class HashPackProvider implements IProvider {
 			);
 		}
 
-		this.hashPackSigner = new HashPackSigner(this.hc, this.initData);
 		const transaction: Transaction =
 			TransactionProvider.buildTokenMintTransaction(
 				params.tokenId,
@@ -652,25 +641,22 @@ export default class HashPackProvider implements IProvider {
 			);
 
 		const transactionResponse =
-			await this.hashPackSigner.signAndSendTransaction(
-				transaction,
-				this.getHCSigner(),
-			);
+			await this.hashPackSigner.signAndSendTransaction(transaction);
 
 		const htsResponse: HTSResponse =
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
 				TransactionType.RECEIPT,
-				this.hc.getSigner(this.provider),
+				this.getSigner(),
 			);
 
 		if (!htsResponse.receipt) {
 			throw new Error(
-				`An error has occurred when cash in the amount ${params.amount} in the account ${params.account.accountId} for tokenId ${params.tokenId}`,
+				`An error has occurred when cash in the amount ${params.amount} in the account ${params.account.accountId.id} for tokenId ${params.tokenId}`,
 			);
 		}
 		log(
-			`Result cash in HTS ${htsResponse.receipt.status}: account ${params.account.accountId}, tokenId ${params.tokenId}, amount ${params.amount}`,
+			`Result cash in HTS ${htsResponse.receipt.status}: account ${params.account.accountId.id}, tokenId ${params.tokenId}, amount ${params.amount}`,
 			logOpts,
 		);
 
@@ -682,7 +668,13 @@ export default class HashPackProvider implements IProvider {
 			this.provider = this.hc.getProvider(
 				this.network.hederaNetworkEnviroment,
 				this.initData.topic,
-				params.account.accountId,
+				params.account.accountId.id,
+			);
+			this.hashPackSigner = new HashPackSigner(
+				this.hc,
+				params.account,
+				this.network,
+				this.initData.topic,
 			);
 		} else {
 			throw new Error(
@@ -690,7 +682,6 @@ export default class HashPackProvider implements IProvider {
 			);
 		}
 
-		this.hashPackSigner = new HashPackSigner(this.hc, this.initData);
 		const transaction: Transaction =
 			TransactionProvider.buildTokenBurnTransaction(
 				params.tokenId,
@@ -698,16 +689,13 @@ export default class HashPackProvider implements IProvider {
 			);
 
 		const transactionResponse =
-			await this.hashPackSigner.signAndSendTransaction(
-				transaction,
-				this.getHCSigner(),
-			);
+			await this.hashPackSigner.signAndSendTransaction(transaction);
 
 		const htsResponse: HTSResponse =
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
 				TransactionType.RECEIPT,
-				this.hc.getSigner(this.provider),
+				this.getSigner(),
 			);
 
 		if (!htsResponse.receipt) {
@@ -728,7 +716,13 @@ export default class HashPackProvider implements IProvider {
 			this.provider = this.hc.getProvider(
 				this.network.hederaNetworkEnviroment,
 				this.initData.topic,
-				params.account.accountId,
+				params.account.accountId.id,
+			);
+			this.hashPackSigner = new HashPackSigner(
+				this.hc,
+				params.account,
+				this.network,
+				this.initData.topic,
 			);
 		} else {
 			throw new Error(
@@ -736,7 +730,6 @@ export default class HashPackProvider implements IProvider {
 			);
 		}
 
-		this.hashPackSigner = new HashPackSigner(this.hc, this.initData);
 		const transaction: Transaction =
 			TransactionProvider.buildTransferTransaction(
 				params.tokenId,
@@ -746,16 +739,13 @@ export default class HashPackProvider implements IProvider {
 			);
 
 		const transactionResponse =
-			await this.hashPackSigner.signAndSendTransaction(
-				transaction,
-				this.getHCSigner(),
-			);
+			await this.hashPackSigner.signAndSendTransaction(transaction);
 
 		const htsResponse: HTSResponse =
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
 				TransactionType.RECEIPT,
-				this.hc.getSigner(this.provider),
+				this.getSigner(),
 			);
 
 		if (!htsResponse.receipt) {

@@ -69,6 +69,7 @@ import IGetSupplierAllowanceModel from '../../../app/service/stablecoin/model/IG
 import { XOR } from 'ts-xor';
 import { ISupplierRoleStableCoinRequest } from './request/ISupplierRoleStableCoinRequest.js';
 import Account from '../../../domain/context/account/Account.js';
+import HashPackAccount from '../../../domain/context/account/HashPackAccount.js';
 
 export {
 	IAssociateStableCoinRequest,
@@ -93,8 +94,9 @@ export {
 	HederaNetwork,
 	StableCoin,
 	Account,
-	AccountId,
 	EOAccount,
+	HashPackAccount,
+	AccountId,
 	PrivateKey,
 	PublicKey,
 	ContractId,

@@ -1,7 +1,6 @@
 import { ISigner } from '../sign/ISigner';
 import {
 	Transaction,
-	Signer,
 	Client,
 	TransactionResponse,
 	ContractCreateFlow,
@@ -16,7 +15,6 @@ export class HTSSigner implements ISigner {
 
 	async signAndSendTransaction(
 		transaction: Transaction | ContractCreateFlow,
-		signer?: Signer,
 	): Promise<TransactionResponse> {
 		return await transaction.execute(this.client);
 	}

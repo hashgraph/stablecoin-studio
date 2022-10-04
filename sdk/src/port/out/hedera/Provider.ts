@@ -46,8 +46,8 @@ export interface IProvider {
 	): Uint8Array;
 	getPublicKeyString(privateKey?: PrivateKey | string | undefined): string;
 	deployStableCoin(
-		account: Account,
 		stableCoin: StableCoin,
+		account: Account,
 	): Promise<StableCoin>;
 	getAvailabilityExtension(): boolean;
 	gethashConnectConectionState(): HashConnectConnectionState;
@@ -58,5 +58,4 @@ export interface IProvider {
 	cashInHTS(parameters: IHTSTokenRequest): Promise<boolean>;
 	cashOutHTS(parameters: IHTSTokenRequest): Promise<boolean>;
 	transferHTS(parameters: ITransferTokenRequest): Promise<boolean>;
-	
 }

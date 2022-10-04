@@ -35,6 +35,5 @@ export class HTSResponse {
 export interface ISigner {
 	signAndSendTransaction(
 		transaction: Transaction,
-		signer?: Signer,
 	): Promise<TransactionResponse | MessageTypes.TransactionResponse>;
 }

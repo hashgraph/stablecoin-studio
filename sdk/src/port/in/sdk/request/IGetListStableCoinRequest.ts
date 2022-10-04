@@ -1,5 +1,5 @@
-import { Account } from "../sdk.js";
+import { Account } from '../sdk.js';
 
 export interface IGetListStableCoinRequest {
-	account: Account
+	account: Account;
 }

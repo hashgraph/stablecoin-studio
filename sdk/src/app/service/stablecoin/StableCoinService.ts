@@ -57,10 +57,7 @@ export default class StableCoinService extends Service {
 			id: req.id,
 			autoRenewAccount: req.autoRenewAccount,
 		});
-		coin = await this.repository.saveCoin(
-			req.account,
-			coin
-		);
+		coin = await this.repository.saveCoin(coin, req.account);
 		return this.repository.getStableCoin(coin.id);
 	}
 
@@ -123,17 +120,17 @@ export default class StableCoinService extends Service {
 		req: IGetBalanceOfStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.getBalanceOf(
-			req.account,
 			req.proxyContractId,
 			req.targetId,
 			req.tokenId,
+			req.account,
 		);
 	}
 
 	public async getNameToken(
 		req: IGetNameOfStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
-		return this.repository.getNameToken(req.account, req.proxyContractId);
+		return this.repository.getNameToken(req.proxyContractId, req.account);
 	}
 
 	public async cashIn(
@@ -157,25 +154,29 @@ export default class StableCoinService extends Service {
 			);
 		if (capabilities.includes(Capabilities.CASH_IN)) {
 			const result = await this.repository.cashIn(
-				req.account,
 				req.proxyContractId,
 				req.targetId,
 				amount,
+				req.account,
 			);
 			resultCashIn = Boolean(result[0]);
 		} else if (capabilities.includes(Capabilities.CASH_IN_HTS)) {
 			resultCashIn = await this.repository.cashInHTS(
-				req.account,
 				req.tokenId,
 				amount,
+				req.account,
 			);
-			if (resultCashIn && req.account.accountId.id != req.targetId) {
+			if (
+				resultCashIn &&
+				req?.account?.accountId.id &&
+				req?.account?.accountId.id != req.targetId
+			) {
 				resultCashIn = await this.repository.transferHTS(
-					req.account,
 					req.tokenId,
 					amount,
 					req.account.accountId.id,
 					req.targetId,
+					req.account,
 				);
 			}
 		} else {
@@ -205,20 +206,23 @@ export default class StableCoinService extends Service {
 		}
 
 		let resultCashOut = false;
-		const capabilities: Capabilities[] = await this.getCapabilitiesStableCoin(req.tokenId, req.account?.privateKey?.publicKey.key ?? '');
-		if (capabilities.includes(Capabilities.BURN)){
+		const capabilities: Capabilities[] =
+			await this.getCapabilitiesStableCoin(
+				req.tokenId,
+				req.account?.privateKey?.publicKey.key ?? '',
+			);
+		if (capabilities.includes(Capabilities.BURN)) {
 			const result = await this.repository.cashOut(
-				req.account,
 				req.proxyContractId,
 				amount,
+				req.account,
 			);
 			resultCashOut = Boolean(result[0]);
-
-		} else if (capabilities.includes(Capabilities.BURN_HTS)){
+		} else if (capabilities.includes(Capabilities.BURN_HTS)) {
 			resultCashOut = await this.repository.cashOutHTS(
-				req.account,
 				req.tokenId,
 				amount,
+				req.account,
 			);
 		} else {
 			throw new Error('Cash out not allowed');
@@ -229,10 +233,7 @@ export default class StableCoinService extends Service {
 	public async associateToken(
 		req: IAssociateTokenStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
-		return this.repository.associateToken(
-			req.account,
-			req.proxyContractId,
-		);
+		return this.repository.associateToken(req.proxyContractId, req.account);
 	}
 
 	public async wipe(
@@ -268,18 +269,18 @@ export default class StableCoinService extends Service {
 			);
 		if (capabilities.includes(Capabilities.WIPE)) {
 			const result = await this.repository.wipe(
-				req.account,
 				req.proxyContractId,
 				req.targetId,
 				coin.toInteger(req.amount),
+				req.account,
 			);
 			resultWipe = Boolean(result[0]);
 		} else if (capabilities.includes(Capabilities.WIPE_HTS)) {
 			resultWipe = await this.repository.wipeHTS(
-				req.account,
 				req.tokenId,
 				req.targetId,
 				coin.toInteger(req.amount),
+				req.account,
 			);
 		} else {
 			throw new Error('Wipe not allowed');
@@ -307,7 +308,7 @@ export default class StableCoinService extends Service {
 		if (amount > coin.toInteger(treasuryAccountBalance[0])) {
 			throw new Error('Amount is bigger than token owner balance');
 		}
-		return this.repository.rescue(req.account, req.proxyContractId, amount);
+		return this.repository.rescue(req.proxyContractId, amount, req.account);
 	}
 
 	public async grantSupplierRole(
@@ -317,9 +318,9 @@ export default class StableCoinService extends Service {
 			id: req.tokenId,
 		});
 		return this.repository.grantSupplierRole(
-			req.account,
 			req.proxyContractId,
 			req.targetId,
+			req.account,
 			req.amount ? coin.toInteger(req.amount) : undefined,
 		);
 	}
@@ -328,18 +329,19 @@ export default class StableCoinService extends Service {
 		req: IGetBasicRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.isUnlimitedSupplierAllowance(
-			req.account,
 			req.proxyContractId,
 			req.targetId,
-		);
+			req.account,
+			);
 	}
+	
 	public async supplierAllowance(
 		req: IGetSupplierAllowanceModel,
 	): Promise<Uint8Array> {
 		const response = await this.repository.supplierAllowance(
-			req.account,
 			req.proxyContractId,
 			req.targetId,
+			req.account,
 		);
 		const coin: StableCoin = await this.getStableCoin({
 			id: req.tokenId,
@@ -348,24 +350,27 @@ export default class StableCoinService extends Service {
 		response[0] = amount;
 		return response;
 	}
+	
 	public async revokeSupplierRole(
 		req: IGetBasicRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.revokeSupplierRole(
-			req.account,
 			req.proxyContractId,
 			req.targetId,
+			req.account,
 		);
 	}
+	
 	public async resetSupplierAllowance(
 		req: IGetBasicRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.resetSupplierAllowance(
-			req.account,
 			req.proxyContractId,
 			req.targetId,
+			req.account,
 		);
 	}
+	
 	public async increaseSupplierAllowance(
 		req: ISupplierRoleStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
@@ -374,12 +379,13 @@ export default class StableCoinService extends Service {
 		});
 
 		return this.repository.increaseSupplierAllowance(
-			req.account,
 			req.proxyContractId,
 			req.targetId,
+			req.account,
 			req.amount ? coin.toInteger(req.amount) : 0,
 		);
 	}
+
 	public async decreaseSupplierAllowance(
 		req: ISupplierRoleStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
@@ -401,9 +407,9 @@ export default class StableCoinService extends Service {
 		});
 
 		return this.repository.decreaseSupplierAllowance(
-			req.account,
 			req.proxyContractId,
 			req.targetId,
+			req.account,
 			req.amount ? coin.toInteger(req.amount) : 0,
 		);
 	}
@@ -412,9 +418,9 @@ export default class StableCoinService extends Service {
 		req: IGetBasicRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.isLimitedSupplierAllowance(
-			req.account,
 			req.proxyContractId,
 			req.targetId,
+			req.account,
 		);
 	}
 
@@ -422,10 +428,10 @@ export default class StableCoinService extends Service {
 		req: IRoleStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.grantRole(
-			req.account,
 			req.proxyContractId,
 			req.targetId,
 			req.role,
+			req.account,
 		);
 	}
 
@@ -433,10 +439,10 @@ export default class StableCoinService extends Service {
 		req: IRoleStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.revokeRole(
-			req.account,
 			req.proxyContractId,
 			req.targetId,
 			req.role,
+			req.account,
 		);
 	}
 
@@ -444,10 +450,10 @@ export default class StableCoinService extends Service {
 		req: IRoleStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.hasRole(
-			req.account,
 			req.proxyContractId,
 			req.targetId,
 			req.role,
+			req.account,
 		);
 	}
 }

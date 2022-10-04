@@ -1,4 +1,4 @@
-import Account from '../../../../domain/context/account/Account.js';
+import { Account } from '../../../../port/in/sdk/sdk.js';
 
 export interface IAccountWithKeyRequestModel {
 	account: Account;

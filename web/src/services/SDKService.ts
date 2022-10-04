@@ -5,6 +5,7 @@ import type {
 	ICreateStableCoinRequest,
 	IStableCoinDetail,
 	IStableCoinList,
+	HashPackAccount,
 } from 'hedera-stable-coin-sdk';
 
 export enum HashConnectConnectionState {
@@ -25,8 +26,7 @@ const appMetadata: AppMetadata = {
 
 interface CashInRequest {
 	proxyContractId: string;
-	privateKey: string;
-	accountId: string;
+	account: HashPackAccount;
 	tokenId: string;
 	targetId: string;
 	amount: number;
@@ -92,11 +92,11 @@ export class SDKService {
 	}
 
 	public static async getStableCoins({
-		privateKey,
+		account,
 	}: {
-		privateKey: string;
+		account: HashPackAccount;
 	}): Promise<IStableCoinList[] | null> {
-		return (await SDKService.getInstance())?.getListStableCoin({ privateKey });
+		return (await SDKService.getInstance())?.getListStableCoin({ account });
 	}
 
 	public static async getStableCoinDetails({
@@ -109,14 +109,13 @@ export class SDKService {
 
 	public static async cashIn({
 		proxyContractId,
-		privateKey,
-		accountId,
 		tokenId,
 		targetId,
 		amount,
+		account,
 	}: CashInRequest) {
 		return await SDKService.getInstance().then((instance) =>
-			instance.cashIn({ proxyContractId, privateKey, accountId, tokenId, targetId, amount }),
+			instance.cashIn({ proxyContractId, account, tokenId, targetId, amount }),
 		);
 	}
 
