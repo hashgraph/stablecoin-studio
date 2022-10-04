@@ -13,18 +13,17 @@ describe('🧪 [PORT] SDK', () => {
 
 	it('Creates a Stable Coin with EOAccount', async () => {
 		const coin = await sdk.createStableCoin({
-			accountId: new AccountId(ACCOUNTS.testnet.accountId.id),
-			privateKey: new PrivateKey(ACCOUNTS.testnet.privateKey.key),
+			account: ACCOUNTS.testnet,
 			name: 'TEST COIN',
 			symbol: 'TC',
 			decimals: 0,
 		});
 		expect(coin).not.toBeNull();
-		expect(coin?.id).toBeTruthy();
+		expect(coin?.tokenId).toBeTruthy();
 	}, 120_000);
 
 	it('Gets the token info', async () => {
-		const coin = await sdk.getStableCoin({
+		const coin = await sdk.getStableCoinDetails({
 			id: '0.0.48195895',
 		});
 		expect(coin).not.toBeNull();
@@ -36,7 +35,7 @@ describe('🧪 [PORT] SDK', () => {
 
 	it('Gets the token list', async () => {
 		const list = await sdk.getListStableCoin({
-			privateKey: ACCOUNTS.testnet.privateKey.key,
+			account: ACCOUNTS.testnet,
 		});
 		expect(list).not.toBeNull();
 	});

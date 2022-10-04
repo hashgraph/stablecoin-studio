@@ -1,6 +1,5 @@
 import ContractId from '../../../../domain/context/contract/ContractId.js';
 import { ICustomFees } from '../../../../app/service/stablecoin/model/stablecoindetail/ICustomFees.js';
-import { IPublicKey } from '../../../../app/service/stablecoin/model/stablecoindetail/IPublicKey.js';
 import PublicKey from '../../../../domain/context/account/PublicKey.js';
 
 export default interface IStableCoinDetail {

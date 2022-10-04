@@ -15,10 +15,10 @@ const PK =
 	'302e020100300506032b65700422042010f13d4517ae383e2a1a0f915b2f6e70a823f3627e69ab1a8f516666fecdf386';
 
 export const ACCOUNTS: { testnet: EOAccount } = {
-	testnet: new EOAccount({
-		accountId: new AccountId(ACCOUNT_ID),
-		privateKey: new PrivateKey(PK),
-	}),
+	testnet: new EOAccount(
+		new AccountId(ACCOUNT_ID),
+		new PrivateKey(PK),
+	),
 };
 
 export const SDKConfig: { hethers: Configuration; hashpack: Configuration } = {

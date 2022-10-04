@@ -48,10 +48,6 @@ import ContractId from '../../../domain/context/contract/ContractId.js';
 import { TokenType } from '../../../domain/context/stablecoin/TokenType.js';
 import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.js';
 import { IAllowanceRequest } from './request/IRequestContracts.js';
-import {
-	HashConnectConnectionState,
-	HashConnectTypes,
-} from 'hashconnect/dist/esm/types/hashconnect.js';
 import { AppMetadata } from '../../out/hedera/hashpack/types/types.js';
 import {
 	AcknowledgeMessage,
@@ -85,6 +81,8 @@ export {
 	IRoleStableCoinRequest,
 	IWipeStableCoinRequest,
 	IBasicRequest,
+	IStableCoinDetail,
+	IStableCoinList
 };
 
 /* Export basic types*/
@@ -92,8 +90,10 @@ export {
 	AppMetadata,
 	HederaNetwork,
 	StableCoin,
-	AccountId,
+	Account,
 	EOAccount,
+	HashPackAccount,
+	AccountId,
 	PrivateKey,
 	PublicKey,
 	ContractId,
@@ -191,12 +191,10 @@ export class SDK {
 	 */
 	public createStableCoin(
 		request: ICreateStableCoinRequest,
-	): Promise<StableCoin> | null {
+	): Promise<IStableCoinDetail> | null {
 		try {
 			const req: ICreateStableCoinServiceRequestModel = {
 				...request,
-				accountId: request.accountId,
-				privateKey: request.privateKey,
 				autoRenewAccount: request.autoRenewAccount
 					? new AccountId(request.autoRenewAccount)
 					: undefined,
@@ -214,6 +212,7 @@ export class SDK {
 	): Promise<Capabilities[]> | null {
 		return this.stableCoinService.getCapabilitiesStableCoin(id, publicKey);
 	}
+	
 	/**
 	 * getListStableCoin
 	 */
@@ -222,21 +221,8 @@ export class SDK {
 	): Promise<IStableCoinList[]> | null {
 		const req: IListStableCoinServiceRequestModel = {
 			...request,
-			privateKey: new PrivateKey(request.privateKey),
 		};
 		return this.stableCoinService.getListStableCoins(req);
-	}
-
-	/**
-	 * getStableCoin
-	 */
-	public getStableCoin(
-		request: IGetStableCoinRequest,
-	): Promise<StableCoin> | null {
-		const req: IGetStableCoinServiceRequestModel = {
-			...request,
-		};
-		return this.stableCoinService.getStableCoin(req);
 	}
 
 	public getStableCoinDetails(
@@ -257,8 +243,6 @@ export class SDK {
 		try {
 			const req: IGetBalanceOfStableCoinServiceRequestModel = {
 				...request,
-				accountId: new AccountId(request.accountId),
-				privateKey: new PrivateKey(request.privateKey),
 				targetId: request.targetId,
 			};
 			return this.stableCoinService.getBalanceOf(req);
@@ -277,8 +261,6 @@ export class SDK {
 		try {
 			const req: IGetNameOfStableCoinServiceRequestModel = {
 				...request,
-				accountId: new AccountId(request.accountId),
-				privateKey: new PrivateKey(request.privateKey),
 			};
 			return this.stableCoinService.getNameToken(req);
 		} catch (error) {
@@ -294,8 +276,6 @@ export class SDK {
 		try {
 			const req: ICashInStableCoinServiceRequestModel = {
 				...request,
-				accountId: new AccountId(request.accountId),
-				privateKey: new PrivateKey(request.privateKey),
 			};
 			return this.stableCoinService.cashIn(req);
 		} catch (error) {
@@ -313,8 +293,6 @@ export class SDK {
 		try {
 			const req: ICashOutStableCoinServiceRequestModel = {
 				...request,
-				accountId: new AccountId(request.accountId),
-				privateKey: new PrivateKey(request.privateKey),
 			};
 			return this.stableCoinService.cashOut(req);
 		} catch (error) {
@@ -332,8 +310,6 @@ export class SDK {
 		try {
 			const req: IAssociateTokenStableCoinServiceRequestModel = {
 				...request,
-				accountId: new AccountId(request.accountId),
-				privateKey: new PrivateKey(request.privateKey),
 			};
 			return this.stableCoinService.associateToken(req);
 		} catch (error) {
@@ -349,8 +325,6 @@ export class SDK {
 		try {
 			const req: IWipeStableCoinServiceRequestModel = {
 				...request,
-				accountId: new AccountId(request.accountId),
-				privateKey: new PrivateKey(request.privateKey),
 			};
 			return this.stableCoinService.wipe(req);
 		} catch (error) {
@@ -368,8 +342,6 @@ export class SDK {
 		try {
 			const req: IGetBasicRequestModel = {
 				...request,
-				accountId: new AccountId(request.accountId),
-				privateKey: new PrivateKey(request.privateKey),
 			};
 			return this.stableCoinService.isUnlimitedSupplierAllowance(req);
 		} catch (error) {
@@ -386,8 +358,6 @@ export class SDK {
 		try {
 			const req: IGetSupplierAllowanceModel = {
 				...request,
-				accountId: new AccountId(request.accountId),
-				privateKey: new PrivateKey(request.privateKey),
 			};
 			return this.stableCoinService.supplierAllowance(req);
 		} catch (error) {
@@ -405,8 +375,6 @@ export class SDK {
 		try {
 			const req: IGetBasicRequestModel = {
 				...request,
-				accountId: new AccountId(request.accountId),
-				privateKey: new PrivateKey(request.privateKey),
 			};
 			return this.stableCoinService.resetSupplierAllowance(req);
 		} catch (error) {
@@ -423,8 +391,6 @@ export class SDK {
 		try {
 			const req: ISupplierRoleStableCoinServiceRequestModel = {
 				...request,
-				accountId: new AccountId(request.accountId),
-				privateKey: new PrivateKey(request.privateKey),
 			};
 			return this.stableCoinService.increaseSupplierAllowance(req);
 		} catch (error) {
@@ -441,8 +407,6 @@ export class SDK {
 		try {
 			const req: ISupplierRoleStableCoinServiceRequestModel = {
 				...request,
-				accountId: new AccountId(request.accountId),
-				privateKey: new PrivateKey(request.privateKey),
 			};
 			return this.stableCoinService.decreaseSupplierAllowance(req);
 		} catch (error) {
@@ -460,8 +424,6 @@ export class SDK {
 		try {
 			const req: IGetBasicRequestModel = {
 				...request,
-				accountId: new AccountId(request.accountId),
-				privateKey: new PrivateKey(request.privateKey),
 			};
 			return this.stableCoinService.isLimitedSupplierAllowance(req);
 		} catch (error) {
@@ -479,8 +441,6 @@ export class SDK {
 		try {
 			const req: IRescueStableCoinServiceRequestModel = {
 				...request,
-				accountId: new AccountId(request.accountId),
-				privateKey: new PrivateKey(request.privateKey),
 			};
 			return this.stableCoinService.rescue(req);
 		} catch (error) {
@@ -547,8 +507,6 @@ export class SDK {
 		try {
 			const req: IRoleStableCoinServiceRequestModel = {
 				...request,
-				accountId: new AccountId(request.accountId),
-				privateKey: new PrivateKey(request.privateKey),
 				role: request.role,
 			};
 			return this.stableCoinService.hasRole(req);

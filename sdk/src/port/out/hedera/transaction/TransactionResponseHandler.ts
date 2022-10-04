@@ -1,4 +1,4 @@
-import { TransactionType, HTSResponse } from '../sign/ISigner';
+import { TransactionType, HTSResponse } from '../sign/ISigner.js';
 import {
 	TransactionResponse,
 	Client,
@@ -7,8 +7,9 @@ import {
 } from '@hashgraph/sdk';
 import HederaError from '../error/HederaError.js';
 import Web3 from 'web3';
-import { HashConnectSigner } from 'hashconnect/dist/esm/provider/signer';
+import { HashConnectSigner } from 'hashconnect/provider/signer';
 import { MessageTypes } from 'hashconnect';
+import { Signer } from '@hashgraph/sdk/lib/Signer.js';
 
 export class TransactionResposeHandler {
 	public async manageResponse(
@@ -84,9 +85,10 @@ export class TransactionResposeHandler {
 			}
 		} else if (clientOrSigner instanceof HashConnectSigner) {
 			if (transactionResponse instanceof TransactionResponse) {
-				transactionRecord = await transactionResponse.getRecordWithSigner(
-					clientOrSigner,
-				);
+				transactionRecord =
+					await transactionResponse.getRecordWithSigner(
+						clientOrSigner as unknown as Signer,
+					);
 			} else {
 				transactionRecord =
 					this.getHashconnectTransactionRecord(transactionResponse);
@@ -117,7 +119,7 @@ export class TransactionResposeHandler {
 			if (transactionResponse instanceof TransactionResponse) {
 				transactionReceipt =
 					await transactionResponse.getReceiptWithSigner(
-						clientOrSigner,
+						clientOrSigner as unknown as Signer,
 					);
 			} else {
 				transactionReceipt =

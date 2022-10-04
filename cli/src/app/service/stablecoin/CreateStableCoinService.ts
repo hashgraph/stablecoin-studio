@@ -74,8 +74,10 @@ export default class CreateStableCoinService extends Service {
     await utilsService.showSpinner(
       new Promise((resolve, reject) => {
         const req: ICreateStableCoinRequest = {
-          accountId: new AccountId(currentAccount.accountId),
-          privateKey: new PrivateKey(currentAccount.privateKey),
+          account: new EOAccount(
+            new AccountId(currentAccount.accountId),
+            new PrivateKey(currentAccount.privateKey),
+          ),
           ...stableCoin,
         };
         sdk

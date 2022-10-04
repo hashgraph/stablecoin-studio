@@ -11,6 +11,7 @@ import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
 import { useSelector } from 'react-redux';
 import { SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
+import { HashPackAccount } from 'hedera-stable-coin-sdk';
 
 const CashInOperation = () => {
 	const {
@@ -31,8 +32,7 @@ const CashInOperation = () => {
 		try {
 			await SDKService.cashIn({
 				proxyContractId: '0.0.48261507',
-				privateKey: 'pvkey',
-				accountId: '0.0.47822430',
+				account: new HashPackAccount('0.0.47822430'),
 				tokenId: '0.0.48261510',
 				targetId: '0.0.47822430', // destinationACc
 				amount,

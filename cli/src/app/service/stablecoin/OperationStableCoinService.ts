@@ -7,7 +7,14 @@ import {
 } from '../../../index.js';
 import Service from '../Service.js';
 import DetailsStableCoinsService from './DetailsStableCoinService.js';
-import { SDK, StableCoin, StableCoinRole } from 'hedera-stable-coin-sdk';
+import {
+  AccountId,
+  EOAccount,
+  IStableCoinDetail,
+  PrivateKey,
+  SDK,
+  StableCoinRole,
+} from 'hedera-stable-coin-sdk';
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 import CashInStableCoinsService from './CashInStableCoinService.js';
 import WipeStableCoinsService from './WipeStableCoinService.js';
@@ -39,14 +46,18 @@ export default class OperationStableCoinService extends Service {
    */
   public async start(): Promise<void> {
     const sdk: SDK = utilsService.getSDK();
-    const currentAccount = utilsService.getCurrentAccount();
+    const configAccount = utilsService.getCurrentAccount();
+    const currentAccount = new EOAccount(
+      new AccountId(configAccount.accountId),
+      new PrivateKey(configAccount.privateKey),
+    );;
     let resp: StableCoinList[];
     if (this.stableCoinId === undefined) {
       //Get list of stable coins to display
       await utilsService.showSpinner(
         sdk
           .getListStableCoin({
-            privateKey: currentAccount.privateKey,
+            account: currentAccount,
           })
           .then((response: StableCoinList[]) => (resp = response)),
         {
@@ -62,7 +73,7 @@ export default class OperationStableCoinService extends Service {
         }),
         true,
         configurationService.getConfiguration()?.defaultNetwork,
-        `${currentAccount.accountId} - ${currentAccount.alias}`,
+        `${currentAccount.accountId.id} - ${configAccount.alias}`,
       );
       this.stableCoinWithSymbol = this.stableCoinId;
       this.stableCoinId = this.stableCoinId.split(' - ')[0];
@@ -74,7 +85,7 @@ export default class OperationStableCoinService extends Service {
         // Get details to obtain treasury
         await new DetailsStableCoinsService()
           .getDetailsStableCoins(this.stableCoinId, false)
-          .then((response: StableCoin) => {
+          .then((response: IStableCoinDetail) => {
             this.proxyContractId = response.memo;
           });
 
@@ -97,7 +108,7 @@ export default class OperationStableCoinService extends Service {
     const capabilitiesStableCoin =
       await new CapabilitiesStableCoinsService().getCapabilitiesStableCoins(
         this.stableCoinId,
-        sdk.getPublicKey(currentAccount.privateKey),
+        sdk.getPublicKey(currentAccount.privateKey.key),
       );
 
     switch (
@@ -108,8 +119,8 @@ export default class OperationStableCoinService extends Service {
           capabilitiesStableCoin,
         ),
         false,
-        currentAccount.network,
-        `${currentAccount.accountId} - ${currentAccount.alias}`,
+        configAccount.network,
+        `${currentAccount.accountId} - ${configAccount.alias}`,
         this.stableCoinWithSymbol,
       )
     ) {
@@ -123,7 +134,7 @@ export default class OperationStableCoinService extends Service {
         // Call to mint
         const account2Mint = await utilsService.defaultSingleAsk(
           language.getText('stablecoin.askTargetAccount'),
-          currentAccount.accountId,
+          currentAccount.accountId.id,
         );
         if (!sdk.checkIsAddress(account2Mint)) {
           console.log(language.getText('validations.wrongFormatAddress'));
@@ -142,8 +153,7 @@ export default class OperationStableCoinService extends Service {
         try {
           await new CashInStableCoinsService().cashInStableCoin(
             this.proxyContractId,
-            currentAccount.privateKey,
-            currentAccount.accountId,
+            currentAccount,
             this.stableCoinId,
             account2Mint,
             parseFloat(amount2Mint),
@@ -168,14 +178,13 @@ export default class OperationStableCoinService extends Service {
         // Call to balance
         const targetId = await utilsService.defaultSingleAsk(
           language.getText('stablecoin.askAccountToBalance'),
-          currentAccount.accountId,
+          configAccount.accountId,
         );
         // Check Address
         if (sdk.checkIsAddress(targetId)) {
           await new BalanceOfStableCoinsService().getBalanceOfStableCoin(
             this.proxyContractId,
-            currentAccount.privateKey,
-            currentAccount.accountId,
+            currentAccount,
             targetId,
             this.stableCoinId,
           );
@@ -200,8 +209,7 @@ export default class OperationStableCoinService extends Service {
         try {
           await new BurnStableCoinsService().burnStableCoin(
             this.proxyContractId,
-            configurationService.getConfiguration().accounts[0].privateKey,
-            configurationService.getConfiguration().accounts[0].accountId,
+            currentAccount,
             this.stableCoinId,
             parseFloat(amount2Burn),
           );
@@ -222,7 +230,7 @@ export default class OperationStableCoinService extends Service {
         // Call to Wipe
         const account2Wipe = await utilsService.defaultSingleAsk(
           language.getText('stablecoin.askTargetAccount'),
-          currentAccount.accountId,
+          configAccount.accountId,
         );
         if (!sdk.checkIsAddress(account2Wipe)) {
           console.log(language.getText('validations.wrongFormatAddress'));
@@ -239,8 +247,7 @@ export default class OperationStableCoinService extends Service {
         try {
           await new WipeStableCoinsService().wipeStableCoin(
             this.proxyContractId,
-            currentAccount.privateKey,
-            currentAccount.accountId,
+            currentAccount,
             this.stableCoinId,
             account2Wipe,
             parseFloat(amount2Wipe),
@@ -274,8 +281,7 @@ export default class OperationStableCoinService extends Service {
         try {
           await new RescueStableCoinsService().rescueStableCoin(
             this.proxyContractId,
-            currentAccount.privateKey,
-            currentAccount.accountId,
+            currentAccount,
             this.stableCoinId,
             parseFloat(amount2Rescue),
           );
@@ -295,9 +301,8 @@ export default class OperationStableCoinService extends Service {
         // Call to balance
         await new BalanceOfStableCoinsService().getBalanceOfStableCoin(
           this.proxyContractId,
-          currentAccount.privateKey,
-          currentAccount.accountId,
-          currentAccount.accountId,
+          currentAccount,
+          currentAccount.accountId.id,
           this.stableCoinId,
         );
 
@@ -325,7 +330,11 @@ export default class OperationStableCoinService extends Service {
 
   private async roleManagementFlow(): Promise<void> {
     const sdk: SDK = utilsService.getSDK();
-    const currentAccount = utilsService.getCurrentAccount();
+    const configAccount = utilsService.getCurrentAccount();
+    const currentAccount = new EOAccount(
+      new AccountId(configAccount.accountId),
+      new PrivateKey(configAccount.privateKey),
+    );
     const roleManagementOptions = language.getArray(
       'wizard.roleManagementOptions',
     );
@@ -383,8 +392,8 @@ export default class OperationStableCoinService extends Service {
             this.proxyContractId,
             this.stableCoinId,
             accountTarget,
-            currentAccount.privateKey,
-            currentAccount.accountId,
+            currentAccount.privateKey.key,
+            currentAccount.accountId.id,
             role,
           );
         }
@@ -418,8 +427,8 @@ export default class OperationStableCoinService extends Service {
             this.proxyContractId,
             this.stableCoinId,
             accountTarget,
-            currentAccount.privateKey,
-            currentAccount.accountId,
+            currentAccount.privateKey.key,
+            currentAccount.accountId.id,
             role,
           );
         }
@@ -505,8 +514,8 @@ export default class OperationStableCoinService extends Service {
                 this.proxyContractId,
                 this.stableCoinId,
                 accountTarget,
-                currentAccount.privateKey,
-                currentAccount.accountId,
+                currentAccount.privateKey.key,
+                currentAccount.accountId.id,
               );
             } else {
               console.log(language.getText('supplier.notRole'));
@@ -577,8 +586,8 @@ export default class OperationStableCoinService extends Service {
                   this.proxyContractId,
                   this.stableCoinId,
                   accountTarget,
-                  currentAccount.privateKey,
-                  currentAccount.accountId,
+                  currentAccount.privateKey.key,
+                  currentAccount.accountId.id,
                 );
               } catch (e) {
                 console.log(colors.red(e.message));
@@ -630,16 +639,16 @@ export default class OperationStableCoinService extends Service {
               await roleService.resetLimitSupplierRoleStableCoin(
                 this.proxyContractId,
                 accountTarget,
-                currentAccount.privateKey,
-                currentAccount.accountId,
+                currentAccount.privateKey.key,
+                currentAccount.accountId.id,
               );
 
               await roleService.getSupplierAllowance(
                 this.proxyContractId,
                 this.stableCoinId,
                 accountTarget,
-                currentAccount.privateKey,
-                currentAccount.accountId,
+                currentAccount.privateKey.key,
+                currentAccount.accountId.id,
               );
             } else {
               console.log(language.getText('supplier.notRole'));
@@ -683,8 +692,8 @@ export default class OperationStableCoinService extends Service {
               this.proxyContractId,
               this.stableCoinId,
               accountTarget,
-              currentAccount.privateKey,
-              currentAccount.accountId,
+              currentAccount.privateKey.key,
+              currentAccount.accountId.id,
             );
 
             break;
@@ -723,8 +732,8 @@ export default class OperationStableCoinService extends Service {
             this.proxyContractId,
             this.stableCoinId,
             accountTarget,
-            currentAccount.privateKey,
-            currentAccount.accountId,
+            currentAccount.privateKey.key,
+            currentAccount.accountId.id,
             role,
           );
         }
@@ -805,7 +814,7 @@ export default class OperationStableCoinService extends Service {
         this.stableCoinId,
         accountTarget,
         currentAccount.privateKey,
-        currentAccount.accountId,
+        currentAccount.account.accountId,
         'unlimited',
       );
     }
@@ -832,7 +841,7 @@ export default class OperationStableCoinService extends Service {
         this.stableCoinId,
         accountTarget,
         currentAccount.privateKey,
-        currentAccount.accountId,
+        currentAccount.account.accountId,
         'limited',
         parseInt(limit),
       );
@@ -849,7 +858,7 @@ export default class OperationStableCoinService extends Service {
       this.proxyContractId,
       accountTarget,
       currentAccount.privateKey,
-      currentAccount.accountId,
+      currentAccount.account.accountId,
       supplierType,
     );
   }

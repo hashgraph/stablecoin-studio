@@ -1,6 +1,6 @@
 import { HashConnectTypes, MessageTypes } from 'hashconnect';
 import { TokenId } from '@hashgraph/sdk';
-import { AccountId, PublicKey } from '../../in/sdk/sdk.js';
+import { Account, AccountId, EOAccount, PublicKey } from '../../in/sdk/sdk.js';
 
 export interface ICallContractRequest {
 	contractId: string;
@@ -10,10 +10,7 @@ export interface ICallContractRequest {
 }
 
 export interface ICallContractWithAccountRequest extends ICallContractRequest {
-	account: {
-		privateKey: string;
-		accountId: string;
-	};
+	account: Account
 }
 
 export interface ICreateTokenResponse {
@@ -35,10 +32,7 @@ export interface ICreateTokenResponse {
 }
 
 export interface IHTSTokenRequest {
-	account: {
-		privateKey: string;
-		accountId: string;
-	};
+	account: Account;
 	tokenId: string;
 	amount: number;
 }

@@ -1,7 +1,10 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import type { InitializationData } from 'hedera-stable-coin-sdk';
-import type IStableCoinDetail from 'hedera-stable-coin-sdk/build/src/port/in/sdk/response/IStableCoinDetail';
-import type IStableCoinList from 'hedera-stable-coin-sdk/build/src/port/in/sdk/response/IStableCoinList';
+import type {
+	HashPackAccount,
+	InitializationData,
+	IStableCoinDetail,
+	IStableCoinList,
+} from 'hedera-stable-coin-sdk';
 import SDKService from '../../services/SDKService';
 import type { RootState } from '../store';
 
@@ -28,16 +31,17 @@ export const initialState: InitialStateProps = {
 	stableCoinList: [],
 };
 
-export const getStableCoinList = createAsyncThunk('wallet/getStableCoinList', async () => {
-	try {
-		const stableCoins = await SDKService.getStableCoins({
-			privateKey: 'pvkey',
-		});
-		return stableCoins;
-	} catch (e) {
-		console.error(e);
-	}
-});
+export const getStableCoinList = createAsyncThunk(
+	'wallet/getStableCoinList',
+	async (account: HashPackAccount) => {
+		try {
+			const stableCoins = await SDKService.getStableCoins({ account });
+			return stableCoins;
+		} catch (e) {
+			console.error(e);
+		}
+	},
+);
 
 export const walletSlice = createSlice({
 	name: 'wallet',

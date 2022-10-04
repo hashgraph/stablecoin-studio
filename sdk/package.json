@@ -2,13 +2,21 @@
 	"name": "hedera-stable-coin-sdk",
 	"version": "0.0.1",
 	"description": "",
-	"main": "./build/src/index.js",
+	"main": "./build/cjs/src/index.js",
+	"module": "./build/esm/src/index.js",
 	"engines": {
 		"node": ">= 16.13 <17"
 	},
-	"types": "./build/src/index.d.ts",
+	"files": [
+		"./build"
+	],
+	"readme": "README.md",
+	"types": "./build/esm/src/index.d.ts",
 	"exports": {
-		".": "./build/src/index.js"
+		".": {
+			"import": "./build/esm/src/index.js",
+			"require": "./build/cjs/src/index.js"
+		}
 	},
 	"devDependencies": {
 		"@babel/cli": "^7.19.3",
@@ -40,10 +48,11 @@
 		"start": "node build/src/index.js",
 		"clean": "rimraf coverage build",
 		"prebuild": "npm run lint",
-		"build": "rimraf build && npx tsc -p tsconfig.json",
+		"postbuild": "node ./scripts/postbuild.js",
+		"build": "rimraf build && npx tsc -p tsconfig.json && npx tsc -p tsconfig-cjs.json",
 		"build:types": "npx tsc -p tsconfig.json --emitDeclarationOnly",
 		"build:tsc": "rm -rf build && npx tsc -p tsconfig.json",
-		"build:watch": "npx tsc -w -p tsconfig.json",
+		"build:watch": "concurrently --kill-others \"npx tsc -w -p tsconfig.json\" \"npx tsc -w -p tsconfig-cjs.json\"",
 		"build:release": "npm run clean && tsc -p tsconfig.release.json",
 		"lint": "eslint . --ext .ts --ext .mts",
 		"test": "npm run test:jest",
