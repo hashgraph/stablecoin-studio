@@ -1,6 +1,6 @@
 import DomainError from '../../../../src/domain/error/DomainError.js';
 import { PrivateKey } from '../../../../src/index.js';
-import { ACCOUNTS } from '../../../core.js';
+import { ACCOUNTS } from '../../../core/core.js';
 
 describe('🧪 [DOMAIN] PrivateKey', () => {
 	it('Instantiate the class', () => {

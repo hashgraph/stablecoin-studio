@@ -2,7 +2,6 @@ import { language } from './../../../index.js';
 import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
 import {
-  AccountId,
   EOAccount,
   IStableCoinList,
   PrivateKey,
@@ -31,7 +30,7 @@ export default class ListStableCoinsService extends Service {
       sdk
         .getListStableCoin({
           account: new EOAccount(
-            new AccountId(currentAccount.accountId),
+            currentAccount.accountId,
             new PrivateKey(currentAccount.privateKey),
           ),
         })

@@ -4,7 +4,7 @@ import HederaError from '../../../../src/port/out/hedera/error/HederaError.js';
 import { IProvider } from '../../../../src/port/out/hedera/Provider.js';
 import NetworkAdapter from '../../../../src/port/out/network/NetworkAdapter.js';
 import StableCoinRepository from '../../../../src/port/out/stablecoin/StableCoinRepository.js';
-import { ACCOUNTS, baseCoin } from '../../../core.js';
+import { ACCOUNTS, baseCoin } from '../../../core/core.js';
 
 const networkAdapter = () =>
 	jest.mock(

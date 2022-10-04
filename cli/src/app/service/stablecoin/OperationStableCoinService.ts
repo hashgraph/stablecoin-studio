@@ -8,7 +8,6 @@ import {
 import Service from '../Service.js';
 import DetailsStableCoinsService from './DetailsStableCoinService.js';
 import {
-  AccountId,
   EOAccount,
   IStableCoinDetail,
   PrivateKey,
@@ -48,7 +47,7 @@ export default class OperationStableCoinService extends Service {
     const sdk: SDK = utilsService.getSDK();
     const configAccount = utilsService.getCurrentAccount();
     const currentAccount = new EOAccount(
-      new AccountId(configAccount.accountId),
+      configAccount.accountId,
       new PrivateKey(configAccount.privateKey),
     );;
     let resp: StableCoinList[];
@@ -100,7 +99,11 @@ export default class OperationStableCoinService extends Service {
 
   private async operationsStableCoin(): Promise<void> {
     const sdk: SDK = utilsService.getSDK();
-    const currentAccount = utilsService.getCurrentAccount();
+    const configAccount = utilsService.getCurrentAccount();
+    const currentAccount = new EOAccount(
+      configAccount.accountId,
+      new PrivateKey(configAccount.privateKey),
+    );
     const wizardOperationsStableCoinOptions = language.getArray(
       'wizard.stableCoinOptions',
     );
@@ -332,7 +335,7 @@ export default class OperationStableCoinService extends Service {
     const sdk: SDK = utilsService.getSDK();
     const configAccount = utilsService.getCurrentAccount();
     const currentAccount = new EOAccount(
-      new AccountId(configAccount.accountId),
+      configAccount.accountId,
       new PrivateKey(configAccount.privateKey),
     );
     const roleManagementOptions = language.getArray(

@@ -1,12 +1,12 @@
 import EOAccount from '../../../../src/domain/context/account/EOAccount.js';
 import PrivateKey from '../../../../src/domain/context/account/PrivateKey.js';
 import DomainError from '../../../../src/domain/error/DomainError.js';
-import { ACCOUNTS } from '../../../core.js';
+import { ACCOUNTS } from '../../../core/core.js';
 
 describe('🧪 [DOMAIN] EOAccount', () => {
 	it('Instantiate the class', () => {
 		const account = new EOAccount(
-			ACCOUNTS.testnet.accountId,
+			ACCOUNTS.testnet.accountId.id,
 			ACCOUNTS.testnet.privateKey,
 		);
 		expect(account).not.toBeNull();
@@ -14,7 +14,7 @@ describe('🧪 [DOMAIN] EOAccount', () => {
 
 	it('Create an instance with all properties', () => {
 		const account = new EOAccount(
-			ACCOUNTS.testnet.accountId,
+			ACCOUNTS.testnet.accountId.id,
 			ACCOUNTS.testnet.privateKey,
 		);
 		expect(account).not.toBeNull();

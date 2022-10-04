@@ -1,7 +1,12 @@
 import { language } from '../../../index.js';
 import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
-import { SDK, StableCoinRole } from 'hedera-stable-coin-sdk';
+import {
+  EOAccount,
+  PrivateKey,
+  SDK,
+  StableCoinRole,
+} from 'hedera-stable-coin-sdk';
 import colors from 'colors';
 
 /**
@@ -33,7 +38,7 @@ export default class RoleStableCoinsService extends Service {
               proxyContractId,
               targetId,
               account: new EOAccount(
-                new AccountId(accountId),
+                accountId,
                 new PrivateKey(privateKey),
               ),
               role,
@@ -43,7 +48,7 @@ export default class RoleStableCoinsService extends Service {
               proxyContractId,
               targetId,
               account: new EOAccount(
-                new AccountId(accountId),
+                accountId,
                 new PrivateKey(privateKey),
               ),
               amount,
@@ -80,7 +85,7 @@ export default class RoleStableCoinsService extends Service {
             proxyContractId,
             targetId,
             account: new EOAccount(
-              new AccountId(accountId),
+              accountId,
               new PrivateKey(privateKey),
             ),
           })
@@ -98,7 +103,7 @@ export default class RoleStableCoinsService extends Service {
             proxyContractId,
             targetId,
             account: new EOAccount(
-              new AccountId(accountId),
+              accountId,
               new PrivateKey(privateKey),
             ),
           })
@@ -124,7 +129,7 @@ export default class RoleStableCoinsService extends Service {
         tokenId,
         targetId,
         account: new EOAccount(
-          new AccountId(accountId),
+          accountId,
           new PrivateKey(privateKey),
         ),
         amount,
@@ -154,7 +159,7 @@ export default class RoleStableCoinsService extends Service {
         tokenId,
         targetId,
         account: new EOAccount(
-          new AccountId(accountId),
+          accountId,
           new PrivateKey(privateKey),
         ),
         amount,
@@ -182,7 +187,7 @@ export default class RoleStableCoinsService extends Service {
         proxyContractId,
         targetId,
         account: new EOAccount(
-          new AccountId(accountId),
+          accountId,
           new PrivateKey(privateKey),
         ),
       }),
@@ -212,7 +217,7 @@ export default class RoleStableCoinsService extends Service {
         tokenId,
         targetId,
         account: new EOAccount(
-          new AccountId(accountId),
+          accountId,
           new PrivateKey(privateKey),
         ),
         role: StableCoinRole[role],
@@ -243,7 +248,7 @@ export default class RoleStableCoinsService extends Service {
         tokenId,
         targetId,
         account: new EOAccount(
-          new AccountId(accountId),
+          accountId,
           new PrivateKey(privateKey),
         ),
         role: StableCoinRole[role],
@@ -276,7 +281,7 @@ export default class RoleStableCoinsService extends Service {
           tokenId,
           targetId,
           account: new EOAccount(
-            new AccountId(accountId),
+            accountId,
             new PrivateKey(privateKey),
           ),
           role: StableCoinRole[role],
@@ -314,7 +319,7 @@ export default class RoleStableCoinsService extends Service {
       sdk
         .supplierAllowance({
           account: new EOAccount(
-            new AccountId(accountId),
+            accountId,
             new PrivateKey(privateKey),
           ),
           proxyContractId,

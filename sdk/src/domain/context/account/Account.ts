@@ -8,12 +8,12 @@ export default class Account extends BaseEntity {
 	public privateKey?: PrivateKey;
 
 	constructor(
-		accountId: AccountId,
+		accountId: string,
 		networkMode: NetworkMode,
 		privateKey?: PrivateKey,
 	) {
 		super();
-		this.accountId = accountId;
+		this.accountId = new AccountId(accountId);
 		this.networkMode = networkMode;
 		this.privateKey = privateKey;
 		this.validateAccount();

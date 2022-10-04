@@ -1,8 +1,6 @@
 import PublicKey from '../../../../src/domain/context/account/PublicKey.js';
 import { SDK } from '../../../../src/index.js';
-import { ACCOUNTS, getSDKAsync } from '../../../core.js';
-import AccountId from '../../../../src/domain/context/account/AccountId.js';
-import PrivateKey from '../../../../src/domain/context/account/PrivateKey.js';
+import { ACCOUNTS, getSDKAsync } from '../../../core/core.js';
 
 describe('🧪 [PORT] SDK', () => {
 	let sdk: SDK;

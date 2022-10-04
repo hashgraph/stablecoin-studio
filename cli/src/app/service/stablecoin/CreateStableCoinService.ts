@@ -75,7 +75,7 @@ export default class CreateStableCoinService extends Service {
       new Promise((resolve, reject) => {
         const req: ICreateStableCoinRequest = {
           account: new EOAccount(
-            new AccountId(currentAccount.accountId),
+            currentAccount.accountId,
             new PrivateKey(currentAccount.privateKey),
           ),
           ...stableCoin,
