@@ -455,7 +455,7 @@ export default class OperationStableCoinService extends Service {
             await utilsService.cleanAndShowBanner();
 
             utilsService.displayCurrentUserInfo(
-              currentAccount,
+              configAccount,
               this.stableCoinWithSymbol,
             );
 
@@ -528,7 +528,7 @@ export default class OperationStableCoinService extends Service {
             await utilsService.cleanAndShowBanner();
 
             utilsService.displayCurrentUserInfo(
-              currentAccount,
+              configAccount,
               this.stableCoinWithSymbol,
             );
 
@@ -603,7 +603,7 @@ export default class OperationStableCoinService extends Service {
             await utilsService.cleanAndShowBanner();
 
             utilsService.displayCurrentUserInfo(
-              currentAccount,
+              configAccount,
               this.stableCoinWithSymbol,
             );
 
@@ -661,7 +661,7 @@ export default class OperationStableCoinService extends Service {
             await utilsService.cleanAndShowBanner();
 
             utilsService.displayCurrentUserInfo(
-              currentAccount,
+              configAccount,
               this.stableCoinWithSymbol,
             );
 
