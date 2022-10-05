@@ -41,7 +41,7 @@ describe('🧪 [DOMAIN] StableCoin', () => {
 		expect(stableCoin).not.toBeNull();
 		expect(stableCoin?.name).toStrictEqual(create.name);
 		expect(stableCoin?.name).not.toEqual('prueba');
-	}, 10_100_000);
+	}, 180_000);
 
 	it('Create an stable coin with empty nodes', async () => {
 		const conf: Configuration = {
@@ -66,5 +66,5 @@ describe('🧪 [DOMAIN] StableCoin', () => {
 		expect(stableCoin).not.toBeNull();
 		expect(stableCoin?.name).toStrictEqual(create.name);
 		expect(stableCoin?.name).not.toEqual('prueba');
-	}, 10_100_000);
+	}, 180_000);
 });
