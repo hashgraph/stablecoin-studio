@@ -80,7 +80,7 @@ describe("Operations to WIPE tokens", function() {
       
   });
 
-  it("Should fail wipe 10.000 from an account with 100 tokens", async function() {
+  it("Should fail wipe 1.000 from an account with 100 tokens", async function() {
 
     let params: any[] = [AccountId.fromString(hreConfig.accounts[0].account).toSolidityAddress(),100000];      
     await contractCall(ContractId.fromString(proxyAddress), 'mint', params, client, 400000, HederaERC20__factory.abi);

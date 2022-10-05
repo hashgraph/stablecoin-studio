@@ -88,11 +88,11 @@ abstract contract SupplierAdmin is ISupplierAdmin, AccessControlUpgradeable, Tok
     function grantSupplierRole(address supplier, uint256 amount)
         external 
         virtual 
-        onlyRole(ADMIN_SUPPLIER_ROLE) 
+        onlyRole(DEFAULT_ADMIN_ROLE) 
     {
         require(!_unlimitedSupplierAllowances[supplier], "Account already has unlimited supplier allowance");
         _supplierAllowances[supplier] = amount;
-        _grantRole(SUPPLIER_ROLE, supplier);
+        _grantRole(CASHIN_ROLE, supplier);
         
     }
 
@@ -106,11 +106,11 @@ abstract contract SupplierAdmin is ISupplierAdmin, AccessControlUpgradeable, Tok
     function grantUnlimitedSupplierRole(address supplier)
         public 
         virtual 
-        onlyRole(ADMIN_SUPPLIER_ROLE) 
+        onlyRole(DEFAULT_ADMIN_ROLE) 
     {
         _unlimitedSupplierAllowances[supplier] = true;
         _supplierAllowances[supplier] = 0;
-        _grantRole(SUPPLIER_ROLE, supplier);
+        _grantRole(CASHIN_ROLE, supplier);
     }
 
     /**
@@ -123,11 +123,11 @@ abstract contract SupplierAdmin is ISupplierAdmin, AccessControlUpgradeable, Tok
     function revokeSupplierRole(address supplier)
         external 
         virtual 
-        onlyRole(ADMIN_SUPPLIER_ROLE) 
+        onlyRole(DEFAULT_ADMIN_ROLE) 
     {
         _supplierAllowances[supplier] = 0;
         _unlimitedSupplierAllowances[supplier] = false;
-        _revokeRole(SUPPLIER_ROLE, supplier);
+        _revokeRole(CASHIN_ROLE, supplier);
     }
 
     /**
@@ -140,7 +140,7 @@ abstract contract SupplierAdmin is ISupplierAdmin, AccessControlUpgradeable, Tok
     function resetSupplierAllowance(address supplier) 
         external 
         virtual 
-        onlyRole(ADMIN_SUPPLIER_ROLE) 
+        onlyRole(DEFAULT_ADMIN_ROLE) 
     {    
         uint256 oldAllowance = _supplierAllowances[supplier];
         uint256 newAllowance = 0;
@@ -161,7 +161,7 @@ abstract contract SupplierAdmin is ISupplierAdmin, AccessControlUpgradeable, Tok
     function increaseSupplierAllowance(address supplier, uint256 amount) 
         external 
         virtual 
-        onlyRole(ADMIN_SUPPLIER_ROLE) 
+        onlyRole(DEFAULT_ADMIN_ROLE) 
     {
         require(amount > 0, "Amount must be greater than zero");
         
@@ -184,7 +184,7 @@ abstract contract SupplierAdmin is ISupplierAdmin, AccessControlUpgradeable, Tok
     function decreaseSupplierAllowance(address supplier, uint256 amount) 
         external 
         virtual 
-        onlyRole(ADMIN_SUPPLIER_ROLE) 
+        onlyRole(DEFAULT_ADMIN_ROLE) 
     {
         require(amount > 0, "Amount must be greater than zero");
     

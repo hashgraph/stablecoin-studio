@@ -20,7 +20,7 @@ abstract contract Mintable is IMintable, AccessControlUpgradeable, TokenOwner, R
      */
     function mint(address account, uint256 amount) 
         external       
-        onlyRole(SUPPLIER_ROLE)  
+        onlyRole(CASHIN_ROLE)  
         returns (bool) 
     {         
         controlAllowanceAmount(msg.sender, amount);

@@ -17,7 +17,7 @@ abstract contract Burnable is IBurnable, AccessControlUpgradeable, TokenOwner, R
      */
     function burn(uint256 amount) 
         external       
-        onlyRole(SUPPLIER_ROLE)  
+        onlyRole(BURN_ROLE)  
         returns (bool) 
     {         
         require(balanceOf(_getTokenOwnerAddress()) >= amount, "Amount is greater than treasury account balance");
