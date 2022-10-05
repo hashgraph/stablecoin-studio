@@ -9,4 +9,5 @@ export enum Capabilities {
 	WIPE_HTS = 'Wipe hts',
 	RESCUE = 'Rescue',
 	ROLE_MANAGEMENT = 'Role management',
+	PAUSE = 'Pause',
 }

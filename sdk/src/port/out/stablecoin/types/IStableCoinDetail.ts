@@ -22,5 +22,5 @@ export default interface IStableCoinDetail {
 	freeze_key?: IPublicKey;
 	wipe_key?: IPublicKey;
 	supply_key?: IPublicKey;
-	pause_key?: string;
+	pause_key?: IPublicKey;
 }

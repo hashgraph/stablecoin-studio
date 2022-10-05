@@ -58,7 +58,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	): Promise<IStableCoinList[]> {
 		try {
 			const resObject: IStableCoinList[] = [];
-			const pk = this.networkAdapter.provider.getPublicKeyString(privateKey);
+			const pk =
+				this.networkAdapter.provider.getPublicKeyString(privateKey);
 			const res = await axios.get<ITokenList>(
 				this.URI_BASE + 'tokens?limit=100&publickey=' + pk,
 			);
@@ -121,51 +122,82 @@ export default class StableCoinRepository implements IStableCoinRepository {
 				freezeKey: getKeyOrDefault(response.data.freeze_key),
 				wipeKey: getKeyOrDefault(response.data.wipe_key),
 				supplyKey: getKeyOrDefault(response.data.supply_key),
+				pauseKey: getKeyOrDefault(response.data.pause_key),
 				// pauseKey: response.data.pause_key,
 			});
 		} catch (error) {
 			return Promise.reject<StableCoin>(error);
 		}
 	}
-	public async getCapabilitiesStableCoin(id: string, publickey:string): Promise <Capabilities[]> {
+	public async getCapabilitiesStableCoin(
+		id: string,
+		publickey: string,
+	): Promise<Capabilities[]> {
 		try {
-			const stableCoin:StableCoin =  await this.getStableCoin(id);
+			const stableCoin: StableCoin = await this.getStableCoin(id);
 			const listCapabilities: Capabilities[] = [];
-			
+
 			listCapabilities.push(Capabilities.DETAILS);
 			listCapabilities.push(Capabilities.BALANCE);
 			listCapabilities.push(Capabilities.RESCUE);
-			//TODO add Roles
-			listCapabilities.push(Capabilities.ROLE_MANAGEMENT);
-			
-			if(stableCoin.supplyKey?.toString() === stableCoin.treasury.toString()){
+
+			if (
+				stableCoin.supplyKey?.toString() ===
+				stableCoin.treasury.toString()
+			) {
 				//TODO add Roles
 				listCapabilities.push(Capabilities.CASH_IN);
 				listCapabilities.push(Capabilities.BURN);
 			}
-			
-			if (stableCoin.supplyKey instanceof PublicKey){
-				if(stableCoin.supplyKey?.key.toString()==publickey.toString()){
+
+			if (stableCoin.supplyKey instanceof PublicKey) {
+				if (
+					stableCoin.supplyKey?.key.toString() == publickey.toString()
+				) {
 					listCapabilities.push(Capabilities.CASH_IN_HTS);
 					listCapabilities.push(Capabilities.BURN_HTS);
 				}
 			}
-			
-			if (stableCoin.wipeKey instanceof PublicKey){
-				if(stableCoin.wipeKey?.key.toString()==publickey.toString()){
+
+			if (stableCoin.wipeKey instanceof PublicKey) {
+				if (
+					stableCoin.wipeKey?.key.toString() == publickey.toString()
+				) {
 					listCapabilities.push(Capabilities.WIPE_HTS);
 				}
-				
 			}
-			if (stableCoin.wipeKey instanceof ContractId){
-				if(stableCoin.wipeKey?.id.toString()==stableCoin.treasury.toString()){
+			if (stableCoin.wipeKey instanceof ContractId) {
+				if (
+					stableCoin.wipeKey?.id.toString() ==
+					stableCoin.treasury.toString()
+				) {
 					listCapabilities.push(Capabilities.WIPE);
 				}
-				
-			};
-				
-			
-			return listCapabilities; 
+			}
+			if (stableCoin.pauseKey instanceof ContractId) {
+				if (
+					stableCoin.pauseKey?.id.toString() ==
+					stableCoin.treasury.toString()
+				) {
+					listCapabilities.push(Capabilities.PAUSE);
+				}
+			}
+
+			const roleManagement = listCapabilities.some((capability) =>
+				[
+					Capabilities.PAUSE,
+					Capabilities.WIPE,
+					Capabilities.WIPE_HTS,
+					Capabilities.CASH_IN,
+					Capabilities.CASH_IN_HTS,
+					Capabilities.BURN,
+					Capabilities.BURN_HTS,
+				].includes(capability),
+			);
+			if (roleManagement) {
+				listCapabilities.push(Capabilities.ROLE_MANAGEMENT);
+			}
+			return listCapabilities;
 		} catch (error) {
 			return Promise.reject<Capabilities[]>(error);
 		}
@@ -282,7 +314,6 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			},
 		};
 		return await this.networkAdapter.provider.callContract('burn', params);
-
 	}
 
 	public async cashOutHTS(
@@ -716,7 +747,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		tokenId: string,
 		amount: number,
 		outAccountId: string,
-		inAccountId: string, 
+		inAccountId: string,
 	): Promise<boolean> {
 		const params: ITransferTokenRequest = {
 			account: {
@@ -726,7 +757,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			tokenId: tokenId,
 			amount: amount,
 			outAccountId: outAccountId,
-			inAccountId: inAccountId
+			inAccountId: inAccountId,
 		};
 
 		return await this.networkAdapter.provider.transferHTS(params);
