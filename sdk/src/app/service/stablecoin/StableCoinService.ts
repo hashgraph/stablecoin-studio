@@ -70,6 +70,36 @@ export default class StableCoinService extends Service {
 		return this.repository.getListStableCoins(req.account);
 	}
 
+	public async getStableCoinDetails(
+		req: IGetStableCoinServiceRequestModel,
+	): Promise<IStableCoinDetail> {
+		const stableCoin: StableCoin = await this.getStableCoin(req);
+		const stableCoinDetails: IStableCoinDetail = {
+			tokenId: stableCoin.id,
+			name: stableCoin.name,
+			symbol: stableCoin.symbol,
+			decimals: stableCoin.decimals,
+			totalSupply: stableCoin.totalSupply,
+			maxSupply: stableCoin.maxSupply,
+			// customFee:stableCoin.,
+			treasuryId: stableCoin.treasury.id,
+			// expirationTime:stableCoin.,
+			memo: stableCoin.memo,
+			// paused:stableCoin.,
+			freezeDefault: stableCoin.freezeDefault,
+			// kycStatus: string;
+			// deleted:stableCoin.,
+			adminKey: stableCoin.adminKey,
+			kycKey: stableCoin.kycKey,
+			freezeKey: stableCoin.freezeKey,
+			wipeKey: stableCoin.wipeKey,
+			supplyKey: stableCoin.supplyKey,
+			pauseKey: stableCoin.pauseKey,
+		};
+		return stableCoinDetails;
+		// cast
+	}
+
 	/**
 	 * getListStableCoins
 	 */
@@ -304,9 +334,9 @@ export default class StableCoinService extends Service {
 			req.proxyContractId,
 			req.targetId,
 			req.account,
-			);
+		);
 	}
-	
+
 	public async supplierAllowance(
 		req: IGetSupplierAllowanceModel,
 	): Promise<Uint8Array> {
@@ -322,7 +352,7 @@ export default class StableCoinService extends Service {
 		response[0] = amount;
 		return response;
 	}
-	
+
 	public async revokeSupplierRole(
 		req: IGetBasicRequestModel,
 	): Promise<Uint8Array> {
@@ -332,7 +362,7 @@ export default class StableCoinService extends Service {
 			req.account,
 		);
 	}
-	
+
 	public async resetSupplierAllowance(
 		req: IGetBasicRequestModel,
 	): Promise<Uint8Array> {
@@ -342,7 +372,7 @@ export default class StableCoinService extends Service {
 			req.account,
 		);
 	}
-	
+
 	public async increaseSupplierAllowance(
 		req: ISupplierRoleStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
