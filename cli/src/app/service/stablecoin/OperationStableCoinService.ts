@@ -787,7 +787,7 @@ export default class OperationStableCoinService extends Service {
   private async grantSupplierRole(
     accountTarget: string,
     roleService: RoleStableCoinsService,
-    currentAccount,
+    currentAccount: EOAccount,
   ): Promise<void> {
     let limit = '';
     const supplierRoleType = language.getArray('wizard.supplierRoleType');
@@ -816,8 +816,8 @@ export default class OperationStableCoinService extends Service {
         this.proxyContractId,
         this.stableCoinId,
         accountTarget,
-        currentAccount.privateKey,
-        currentAccount.account.accountId,
+        currentAccount.privateKey.key,
+        currentAccount.accountId.id,
         'unlimited',
       );
     }
@@ -843,8 +843,8 @@ export default class OperationStableCoinService extends Service {
         this.proxyContractId,
         this.stableCoinId,
         accountTarget,
-        currentAccount.privateKey,
-        currentAccount.account.accountId,
+        currentAccount.privateKey.key,
+        currentAccount.accountId.id,
         'limited',
         parseInt(limit),
       );
@@ -855,13 +855,13 @@ export default class OperationStableCoinService extends Service {
     accountTarget: string,
     roleService: RoleStableCoinsService,
     supplierType: string,
-    currentAccount,
+    currentAccount: EOAccount,
   ): Promise<boolean> {
     return await roleService.checkSupplierRoleStableCoin(
       this.proxyContractId,
       accountTarget,
-      currentAccount.privateKey,
-      currentAccount.account.accountId,
+      currentAccount.privateKey.key,
+      currentAccount.accountId.id,
       supplierType,
     );
   }
