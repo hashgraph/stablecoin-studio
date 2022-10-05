@@ -83,9 +83,9 @@ export const english = {
     askTargetAccount: 'What is the target account?',
     askAccountToBalance:
       'Which account would you like to obtain the balance from?',
-    askSupplierRoleType: 'What kind of permission do you want to give?',
-    askSupplierRoleRevokeType: 'What type of permit do you want to revoke?',
-    askEditSupplierRole: 'What action do you want to perform?',
+    askCashInRoleType: 'What kind of permission do you want to give?',
+    askCashInRoleRevokeType: 'What type of permit do you want to revoke?',
+    askEditCashInRole: 'What action do you want to perform?',
     accountTarget: 'Enter the id of the target account',
     supplierRoleLimit: 'What will be the limit?',
     amountIncrease: 'Amount to increase',
@@ -216,12 +216,12 @@ export const english = {
     success: 'Operation has been completed successfully.',
     reject: 'Operation has not been completed. Please, try again.',
   },
-  supplier: {
-    unlimitedRole: 'This account have unlimited supplier role',
-    alreadyUnlimitedRole: 'This account already have unlimited supplier role.',
-    alreadyRole: 'This account already have supplier role.',
-    notUnlimitedRole: 'This account does not have unlimited supplier role.',
-    notRole: 'This account does not have supplier role.',
+  cashin: {
+    unlimitedRole: 'This account have unlimited cash in role',
+    alreadyUnlimitedRole: 'This account already have unlimited cash in role.',
+    alreadyRole: 'This account already have cash in role.',
+    notUnlimitedRole: 'This account does not have unlimited cash in role.',
+    notRole: 'This account does not have cash in role.',
   },
   rescue: {
     success: 'You have rescued ${tokens} tokens',
@@ -236,19 +236,19 @@ export const english = {
   },
   roleManagement: {
     askRole: 'Select a role',
-    accountHasRoleSupplierUnlimited:
-      'The account ${address} has the supplier role type unlimited',
+    accountHasRoleCashInUnlimited:
+      'The account ${address} has the cash in role type unlimited',
     accountHasRole: 'The account ${address} has the ${role} role',
-    accountNotHasRole: 'The account ${address} not has the ${role} role',
+    accountNotHasRole: 'The account ${address} has not the ${role} role',
     grantRole: 'Grant ${role} role to account: ${address}',
     revokeRole: 'Revoke ${role} role to account: ${address}',
     getAmountAllowance:
-      'The account ${address} has a supplier limit of ${amount}',
+      'The account ${address} has a cash in limit of ${amount}',
     editAction: [
-      'Increase supplier limit',
-      'Decrease supplier limit',
-      'Reset supplier limit',
-      'Check supplier limit',
+      'Increase cash in limit',
+      'Decrease cash in limit',
+      'Reset cash in limit',
+      'Check cash in limit',
       'Go back',
     ],
   },

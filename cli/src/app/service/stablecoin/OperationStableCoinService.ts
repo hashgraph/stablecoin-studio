@@ -363,7 +363,7 @@ export default class OperationStableCoinService extends Service {
     let role: string;
     switch (
       await utilsService.defaultMultipleAsk(
-        language.getText('stablecoin.askEditSupplierRole'),
+        language.getText('stablecoin.askEditCashInRole'),
         roleManagementOptions,
         false,
         currentAccount.network,
@@ -395,7 +395,7 @@ export default class OperationStableCoinService extends Service {
             );
           }
 
-          if (StableCoinRole[role] === StableCoinRole.SUPPLIER_ROLE) {
+          if (StableCoinRole[role] === StableCoinRole.CASHIN_ROLE) {
             await this.grantSupplierRole(
               accountTarget,
               roleService,
@@ -500,7 +500,7 @@ export default class OperationStableCoinService extends Service {
                 currentAccount,
               )
             ) {
-              console.log(language.getText('supplier.unlimitedRole') + '\n');
+              console.log(language.getText('cashin.unlimitedRole') + '\n');
               break;
             }
             do {
@@ -547,7 +547,7 @@ export default class OperationStableCoinService extends Service {
                 currentAccount.accountId,
               );
             } else {
-              console.log(language.getText('supplier.notRole'));
+              console.log(language.getText('cashin.notRole'));
             }
             break;
           case editOptions[1]:
@@ -578,7 +578,7 @@ export default class OperationStableCoinService extends Service {
                 currentAccount,
               )
             ) {
-              console.log(language.getText('supplier.unlimitedRole') + '\n');
+              console.log(language.getText('cashin.unlimitedRole') + '\n');
               break;
             }
             do {
@@ -628,7 +628,7 @@ export default class OperationStableCoinService extends Service {
                 console.log(colors.red(e.message));
               }
             } else {
-              console.log(language.getText('supplier.notRole'));
+              console.log(language.getText('cashin.notRole'));
             }
             break;
           case editOptions[2]:
@@ -659,7 +659,7 @@ export default class OperationStableCoinService extends Service {
                 currentAccount,
               )
             ) {
-              console.log(language.getText('supplier.unlimitedRole') + '\n');
+              console.log(language.getText('cashin.unlimitedRole') + '\n');
               break;
             }
             //Call to SDK
@@ -692,7 +692,7 @@ export default class OperationStableCoinService extends Service {
                 currentAccount.accountId,
               );
             } else {
-              console.log(language.getText('supplier.notRole'));
+              console.log(language.getText('cashin.notRole'));
             }
             break;
           case editOptions[3]:
@@ -723,7 +723,7 @@ export default class OperationStableCoinService extends Service {
               )
             ) {
               const response = language.getText(
-                'roleManagement.accountHasRoleSupplierUnlimited',
+                'roleManagement.accountHasRoleCashInUnlimited',
               );
 
               console.log(response.replace('${address}', accountTarget) + '\n');
@@ -837,7 +837,7 @@ export default class OperationStableCoinService extends Service {
     const supplierRoleType = language.getArray('wizard.supplierRoleType');
 
     const roleType = await utilsService.defaultMultipleAsk(
-      language.getText('stablecoin.askSupplierRoleType'),
+      language.getText('stablecoin.askCashInRoleType'),
       supplierRoleType,
     );
     if (roleType === supplierRoleType[supplierRoleType.length - 1])
@@ -853,7 +853,7 @@ export default class OperationStableCoinService extends Service {
           currentAccount,
         )
       ) {
-        console.log(language.getText('supplier.alreadyUnlimitedRole'));
+        console.log(language.getText('cashin.alreadyUnlimitedRole'));
       }
 
       await roleService.giveSupplierRoleStableCoin(
@@ -883,7 +883,7 @@ export default class OperationStableCoinService extends Service {
           currentAccount,
         )
       ) {
-        console.log(language.getText('supplier.alreadyRole'));
+        console.log(language.getText('cashin.alreadyRole'));
       }
 
       await roleService.giveSupplierRoleStableCoin(
@@ -907,7 +907,7 @@ export default class OperationStableCoinService extends Service {
     supplierType: string,
     currentAccount,
   ): Promise<boolean> {
-    return await roleService.checkSupplierRoleStableCoin(
+    return await roleService.checkCashInRoleStableCoin(
       this.proxyContractId,
       accountTarget,
       new PrivateKey(

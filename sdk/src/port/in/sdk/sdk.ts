@@ -478,7 +478,7 @@ export class SDK {
 				...request,
 				accountId: new AccountId(request.accountId),
 			};
-			if (req.role === StableCoinRole.SUPPLIER_ROLE) {
+			if (req.role === StableCoinRole.CASHIN_ROLE) {
 				return this.stableCoinService.grantSupplierRole(req);
 			}
 			return this.stableCoinService.grantRole(req);
@@ -496,7 +496,7 @@ export class SDK {
 				...request,
 				accountId: new AccountId(request.accountId),
 			};
-			if (request.role === StableCoinRole.SUPPLIER_ROLE) {
+			if (request.role === StableCoinRole.CASHIN_ROLE) {
 				this.stableCoinService.revokeSupplierRole(req);
 			}
 			return this.stableCoinService.revokeRole(req);

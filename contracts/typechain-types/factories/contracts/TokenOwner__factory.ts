@@ -40,12 +40,12 @@ const _abi = [
     inputs: [
       {
         internalType: "contract HTSTokenOwner",
-        name: "_htsTokenOwnerAddress",
+        name: "htsTokenOwnerAddress",
         type: "address",
       },
       {
         internalType: "address",
-        name: "_tokenAddress",
+        name: "tokenAddress",
         type: "address",
       },
     ],

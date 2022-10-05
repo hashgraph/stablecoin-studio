@@ -25,7 +25,7 @@ export default class RoleStableCoinsService extends Service {
     amount?: number,
   ): Promise<void> {
     const sdk: SDK = utilsService.getSDK();
-    const role: StableCoinRole = StableCoinRole['SUPPLIER_ROLE'];
+    const role: StableCoinRole = StableCoinRole['CASHIN_ROLE'];
     await utilsService.showSpinner(
       sdk.grantRole(
         supplierType === 'unlimited'
@@ -58,7 +58,7 @@ export default class RoleStableCoinsService extends Service {
     utilsService.breakLine();
   }
 
-  public async checkSupplierRoleStableCoin(
+  public async checkCashInRoleStableCoin(
     proxyContractId: string,
     targetId: string,
     privateKey: PrivateKey,
