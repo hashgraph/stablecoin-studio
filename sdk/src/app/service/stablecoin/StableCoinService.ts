@@ -79,36 +79,6 @@ export default class StableCoinService extends Service {
 		return this.repository.getStableCoin(req.id);
 	}
 
-	public async getStableCoinDetails(
-		req: IGetStableCoinServiceRequestModel,
-	): Promise<IStableCoinDetail> {
-		const stableCoin: StableCoin = await this.getStableCoin(req);
-		const stableCoinDetails: IStableCoinDetail = {
-			tokenId: stableCoin.id,
-			name: stableCoin.name,
-			symbol: stableCoin.symbol,
-			decimals: stableCoin.decimals,
-			totalSupply: stableCoin.totalSupply,
-			maxSupply: stableCoin.maxSupply,
-			// customFee:stableCoin.,
-			treasuryId: stableCoin.treasury.id,
-			// expirationTime:stableCoin.,
-			memo: stableCoin.memo,
-			// paused:stableCoin.,
-			freezeDefault: stableCoin.freezeDefault,
-			// kycStatus: string;
-			// deleted:stableCoin.,
-			adminKey: stableCoin.adminKey,
-			kycKey: stableCoin.kycKey,
-			freezeKey: stableCoin.freezeKey,
-			wipeKey: stableCoin.wipeKey,
-			supplyKey: stableCoin.supplyKey,
-			pauseKey: stableCoin.pauseKey,
-		};
-		return stableCoinDetails;
-		// cast
-	}
-
 	public async getCapabilitiesStableCoin(
 		id: string,
 		publicKey: string,

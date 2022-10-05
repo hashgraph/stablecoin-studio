@@ -72,7 +72,7 @@ export class TransactionResposeHandler {
 		transactionResponse:
 			| TransactionResponse
 			| MessageTypes.TransactionResponse,
-	) {
+	): Promise<TransactionRecord> {
 		let transactionRecord: TransactionRecord;
 		if (clientOrSigner instanceof Client) {
 			if (transactionResponse instanceof TransactionResponse) {
@@ -104,7 +104,7 @@ export class TransactionResposeHandler {
 		transactionResponse:
 			| TransactionResponse
 			| MessageTypes.TransactionResponse,
-	) {
+	): Promise<TransactionReceipt> {
 		let transactionReceipt: TransactionReceipt;
 		if (clientOrSigner instanceof Client) {
 			if (transactionResponse instanceof TransactionResponse) {
