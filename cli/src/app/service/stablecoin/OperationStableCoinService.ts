@@ -7,7 +7,12 @@ import {
 } from '../../../index.js';
 import Service from '../Service.js';
 import DetailsStableCoinsService from './DetailsStableCoinService.js';
-import { SDK, StableCoin, StableCoinRole } from 'hedera-stable-coin-sdk';
+import {
+  SDK,
+  StableCoin,
+  StableCoinRole,
+  PrivateKey,
+} from 'hedera-stable-coin-sdk';
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 import CashInStableCoinsService from './CashInStableCoinService.js';
 import WipeStableCoinsService from './WipeStableCoinService.js';
@@ -46,7 +51,10 @@ export default class OperationStableCoinService extends Service {
       await utilsService.showSpinner(
         sdk
           .getListStableCoin({
-            privateKey: currentAccount.privateKey,
+            privateKey: new PrivateKey(
+              currentAccount.privateKey.key,
+              currentAccount.privateKey.type,
+            ),
           })
           .then((response: StableCoinList[]) => (resp = response)),
         {
@@ -97,7 +105,7 @@ export default class OperationStableCoinService extends Service {
     const capabilitiesStableCoin =
       await new CapabilitiesStableCoinsService().getCapabilitiesStableCoins(
         this.stableCoinId,
-        sdk.getPublicKey(currentAccount.privateKey),
+        sdk.getPublicKey(currentAccount.privateKey.key),
       );
 
     switch (
@@ -142,7 +150,10 @@ export default class OperationStableCoinService extends Service {
         try {
           await new CashInStableCoinsService().cashInStableCoin(
             this.proxyContractId,
-            currentAccount.privateKey,
+            new PrivateKey(
+              currentAccount.privateKey.key,
+              currentAccount.privateKey.type,
+            ),
             currentAccount.accountId,
             this.stableCoinId,
             account2Mint,
@@ -174,7 +185,10 @@ export default class OperationStableCoinService extends Service {
         if (sdk.checkIsAddress(targetId)) {
           await new BalanceOfStableCoinsService().getBalanceOfStableCoin(
             this.proxyContractId,
-            currentAccount.privateKey,
+            new PrivateKey(
+              currentAccount.privateKey.key,
+              currentAccount.privateKey.type,
+            ),
             currentAccount.accountId,
             targetId,
             this.stableCoinId,
@@ -200,8 +214,11 @@ export default class OperationStableCoinService extends Service {
         try {
           await new BurnStableCoinsService().burnStableCoin(
             this.proxyContractId,
-            configurationService.getConfiguration().accounts[0].privateKey,
-            configurationService.getConfiguration().accounts[0].accountId,
+            new PrivateKey(
+              currentAccount.privateKey.key,
+              currentAccount.privateKey.type,
+            ),
+            currentAccount.accountId,
             this.stableCoinId,
             parseFloat(amount2Burn),
           );
@@ -239,7 +256,10 @@ export default class OperationStableCoinService extends Service {
         try {
           await new WipeStableCoinsService().wipeStableCoin(
             this.proxyContractId,
-            currentAccount.privateKey,
+            new PrivateKey(
+              currentAccount.privateKey.key,
+              currentAccount.privateKey.type,
+            ),
             currentAccount.accountId,
             this.stableCoinId,
             account2Wipe,
@@ -274,7 +294,10 @@ export default class OperationStableCoinService extends Service {
         try {
           await new RescueStableCoinsService().rescueStableCoin(
             this.proxyContractId,
-            currentAccount.privateKey,
+            new PrivateKey(
+              currentAccount.privateKey.key,
+              currentAccount.privateKey.type,
+            ),
             currentAccount.accountId,
             this.stableCoinId,
             parseFloat(amount2Rescue),
@@ -295,7 +318,10 @@ export default class OperationStableCoinService extends Service {
         // Call to balance
         await new BalanceOfStableCoinsService().getBalanceOfStableCoin(
           this.proxyContractId,
-          currentAccount.privateKey,
+          new PrivateKey(
+            currentAccount.privateKey.key,
+            currentAccount.privateKey.type,
+          ),
           currentAccount.accountId,
           currentAccount.accountId,
           this.stableCoinId,
@@ -383,7 +409,10 @@ export default class OperationStableCoinService extends Service {
             this.proxyContractId,
             this.stableCoinId,
             accountTarget,
-            currentAccount.privateKey,
+            new PrivateKey(
+              currentAccount.privateKey.key,
+              currentAccount.privateKey.type,
+            ),
             currentAccount.accountId,
             role,
           );
@@ -418,7 +447,10 @@ export default class OperationStableCoinService extends Service {
             this.proxyContractId,
             this.stableCoinId,
             accountTarget,
-            currentAccount.privateKey,
+            new PrivateKey(
+              currentAccount.privateKey.key,
+              currentAccount.privateKey.type,
+            ),
             currentAccount.accountId,
             role,
           );
@@ -496,7 +528,10 @@ export default class OperationStableCoinService extends Service {
                 this.proxyContractId,
                 this.stableCoinId,
                 accountTarget,
-                currentAccount.privateKey,
+                new PrivateKey(
+                  currentAccount.privateKey.key,
+                  currentAccount.privateKey.type,
+                ),
                 currentAccount.accountId,
                 parseFloat(limit),
               );
@@ -505,7 +540,10 @@ export default class OperationStableCoinService extends Service {
                 this.proxyContractId,
                 this.stableCoinId,
                 accountTarget,
-                currentAccount.privateKey,
+                new PrivateKey(
+                  currentAccount.privateKey.key,
+                  currentAccount.privateKey.type,
+                ),
                 currentAccount.accountId,
               );
             } else {
@@ -568,7 +606,10 @@ export default class OperationStableCoinService extends Service {
                   this.proxyContractId,
                   this.stableCoinId,
                   accountTarget,
-                  currentAccount.privateKey,
+                  new PrivateKey(
+                    currentAccount.privateKey.key,
+                    currentAccount.privateKey.type,
+                  ),
                   currentAccount.accountId,
                   parseFloat(limit),
                 );
@@ -577,7 +618,10 @@ export default class OperationStableCoinService extends Service {
                   this.proxyContractId,
                   this.stableCoinId,
                   accountTarget,
-                  currentAccount.privateKey,
+                  new PrivateKey(
+                    currentAccount.privateKey.key,
+                    currentAccount.privateKey.type,
+                  ),
                   currentAccount.accountId,
                 );
               } catch (e) {
@@ -630,7 +674,10 @@ export default class OperationStableCoinService extends Service {
               await roleService.resetLimitSupplierRoleStableCoin(
                 this.proxyContractId,
                 accountTarget,
-                currentAccount.privateKey,
+                new PrivateKey(
+                  currentAccount.privateKey.key,
+                  currentAccount.privateKey.type,
+                ),
                 currentAccount.accountId,
               );
 
@@ -638,7 +685,10 @@ export default class OperationStableCoinService extends Service {
                 this.proxyContractId,
                 this.stableCoinId,
                 accountTarget,
-                currentAccount.privateKey,
+                new PrivateKey(
+                  currentAccount.privateKey.key,
+                  currentAccount.privateKey.type,
+                ),
                 currentAccount.accountId,
               );
             } else {
@@ -683,7 +733,10 @@ export default class OperationStableCoinService extends Service {
               this.proxyContractId,
               this.stableCoinId,
               accountTarget,
-              currentAccount.privateKey,
+              new PrivateKey(
+                currentAccount.privateKey.key,
+                currentAccount.privateKey.type,
+              ),
               currentAccount.accountId,
             );
 
@@ -723,7 +776,10 @@ export default class OperationStableCoinService extends Service {
             this.proxyContractId,
             this.stableCoinId,
             accountTarget,
-            currentAccount.privateKey,
+            new PrivateKey(
+              currentAccount.privateKey.key,
+              currentAccount.privateKey.type,
+            ),
             currentAccount.accountId,
             role,
           );
@@ -804,7 +860,10 @@ export default class OperationStableCoinService extends Service {
         this.proxyContractId,
         this.stableCoinId,
         accountTarget,
-        currentAccount.privateKey,
+        new PrivateKey(
+          currentAccount.privateKey.key,
+          currentAccount.privateKey.type,
+        ),
         currentAccount.accountId,
         'unlimited',
       );
@@ -831,7 +890,10 @@ export default class OperationStableCoinService extends Service {
         this.proxyContractId,
         this.stableCoinId,
         accountTarget,
-        currentAccount.privateKey,
+        new PrivateKey(
+          currentAccount.privateKey.key,
+          currentAccount.privateKey.type,
+        ),
         currentAccount.accountId,
         'limited',
         parseInt(limit),
@@ -848,7 +910,10 @@ export default class OperationStableCoinService extends Service {
     return await roleService.checkSupplierRoleStableCoin(
       this.proxyContractId,
       accountTarget,
-      currentAccount.privateKey,
+      new PrivateKey(
+        currentAccount.privateKey.key,
+        currentAccount.privateKey.type,
+      ),
       currentAccount.accountId,
       supplierType,
     );

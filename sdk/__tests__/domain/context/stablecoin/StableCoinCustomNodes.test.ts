@@ -30,7 +30,10 @@ describe('🧪 [DOMAIN] StableCoin', () => {
 		sdk = await getSDKAsync(conf);
 		const create: ICreateStableCoinRequest = {
 			accountId: new AccountId(ACCOUNTS.testnet.accountId.id),
-			privateKey: new PrivateKey(ACCOUNTS.testnet.privateKey.key),
+			privateKey: new PrivateKey(
+				ACCOUNTS.testnet.privateKey.key,
+				ACCOUNTS.testnet.privateKey.type,
+			),
 			name: 'Custom Nodes',
 			symbol: 'CN',
 			decimals: 2,
@@ -55,7 +58,10 @@ describe('🧪 [DOMAIN] StableCoin', () => {
 		sdk = await getSDKAsync(conf);
 		const create: ICreateStableCoinRequest = {
 			accountId: new AccountId(ACCOUNTS.testnet.accountId.id),
-			privateKey: new PrivateKey(ACCOUNTS.testnet.privateKey.key),
+			privateKey: new PrivateKey(
+				ACCOUNTS.testnet.privateKey.key,
+				ACCOUNTS.testnet.privateKey.type,
+			),
 			name: 'Custom Nodes',
 			symbol: 'CN',
 			decimals: 2,

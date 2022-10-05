@@ -58,7 +58,7 @@ export default class CreateStableCoinService extends Service {
     if (
       currentAccount.privateKey == null ||
       currentAccount.privateKey == undefined ||
-      currentAccount.privateKey == ''
+      currentAccount.privateKey.key == ''
     ) {
       const setConfigurationService: SetConfigurationService =
         new SetConfigurationService();
@@ -75,7 +75,10 @@ export default class CreateStableCoinService extends Service {
       new Promise((resolve, reject) => {
         const req: ICreateStableCoinRequest = {
           accountId: new AccountId(currentAccount.accountId),
-          privateKey: new PrivateKey(currentAccount.privateKey),
+          privateKey: new PrivateKey(
+            currentAccount.privateKey.key,
+            currentAccount.privateKey.type,
+          ),
           ...stableCoin,
         };
         sdk
@@ -182,7 +185,10 @@ export default class CreateStableCoinService extends Service {
     });
     if (managedBySC) {
       const currentAccount: IAccountConfig = utilsService.getCurrentAccount();
-      const privateKey: PrivateKey = new PrivateKey(currentAccount.privateKey);
+      const privateKey: PrivateKey = new PrivateKey(
+        currentAccount.privateKey.key,
+        currentAccount.privateKey.type,
+      );
       tokenToCreate = {
         name,
         symbol,
@@ -381,7 +387,8 @@ export default class CreateStableCoinService extends Service {
       case 'Current user key': {
         const currentAccount = utilsService.getCurrentAccount();
         const privateKey: PrivateKey = new PrivateKey(
-          currentAccount.privateKey,
+          currentAccount.privateKey.key,
+          currentAccount.privateKey.type,
         );
         return privateKey.publicKey;
       }

@@ -1,7 +1,7 @@
 import { language } from '../../../index.js';
 import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
-import { SDK, StableCoinRole } from 'hedera-stable-coin-sdk';
+import { SDK, StableCoinRole, PrivateKey } from 'hedera-stable-coin-sdk';
 import colors from 'colors';
 
 /**
@@ -19,7 +19,7 @@ export default class RoleStableCoinsService extends Service {
     proxyContractId: string,
     tokenId: string,
     targetId: string,
-    privateKey: string,
+    privateKey: PrivateKey,
     accountId: string,
     supplierType: string,
     amount?: number,
@@ -61,7 +61,7 @@ export default class RoleStableCoinsService extends Service {
   public async checkSupplierRoleStableCoin(
     proxyContractId: string,
     targetId: string,
-    privateKey: string,
+    privateKey: PrivateKey,
     accountId: string,
     supplierType: string,
   ): Promise<boolean> {
@@ -105,7 +105,7 @@ export default class RoleStableCoinsService extends Service {
     proxyContractId: string,
     tokenId: string,
     targetId: string,
-    privateKey: string,
+    privateKey: PrivateKey,
     accountId: string,
     amount?: number,
   ): Promise<void> {
@@ -133,7 +133,7 @@ export default class RoleStableCoinsService extends Service {
     proxyContractId: string,
     tokenId: string,
     targetId: string,
-    privateKey: string,
+    privateKey: PrivateKey,
     accountId: string,
     amount?: number,
   ): Promise<void> {
@@ -160,7 +160,7 @@ export default class RoleStableCoinsService extends Service {
   public async resetLimitSupplierRoleStableCoin(
     proxyContractId: string,
     targetId: string,
-    privateKey: string,
+    privateKey: PrivateKey,
     accountId: string,
   ): Promise<void> {
     const sdk: SDK = utilsService.getSDK();
@@ -186,7 +186,7 @@ export default class RoleStableCoinsService extends Service {
     proxyContractId: string,
     tokenId: string,
     targetId: string,
-    privateKey: string,
+    privateKey: PrivateKey,
     accountId: string,
     role: string,
   ): Promise<void> {
@@ -215,7 +215,7 @@ export default class RoleStableCoinsService extends Service {
     proxyContractId: string,
     tokenId: string,
     targetId: string,
-    privateKey: string,
+    privateKey: PrivateKey,
     accountId: string,
     role: string,
   ): Promise<void> {
@@ -244,7 +244,7 @@ export default class RoleStableCoinsService extends Service {
     proxyContractId: string,
     tokenId: string,
     targetId: string,
-    privateKey: string,
+    privateKey: PrivateKey,
     accountId: string,
     role: string,
   ): Promise<void> {
@@ -285,7 +285,7 @@ export default class RoleStableCoinsService extends Service {
     proxyContractId: string,
     tokenId: string,
     targetId: string,
-    privateKey: string,
+    privateKey: PrivateKey,
     accountId: string,
   ): Promise<void> {
     const sdk: SDK = utilsService.getSDK();

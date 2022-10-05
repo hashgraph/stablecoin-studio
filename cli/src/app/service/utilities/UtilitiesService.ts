@@ -270,7 +270,10 @@ export default class UtilitiesService extends Service {
     };
     const result = accounts.map((acc) => {
       return {
-        privateKey: MaskData.maskPassword(acc.privateKey, maskJSONOptions),
+        privateKey: {
+          key: MaskData.maskPassword(acc.privateKey.key, maskJSONOptions),
+          type: acc.privateKey.type,
+        },
         accountId: acc.accountId,
         network: acc.network,
         alias: acc.alias,

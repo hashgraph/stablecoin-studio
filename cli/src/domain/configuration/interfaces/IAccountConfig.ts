@@ -1,6 +1,8 @@
+import { IPrivateKey } from './IPrivateKey.js';
+
 export interface IAccountConfig {
-    accountId:       string;
-    privateKey:      string;
-    network:         string;
-    alias:           string;
+  accountId: string;
+  privateKey: IPrivateKey;
+  network: string;
+  alias: string;
 }

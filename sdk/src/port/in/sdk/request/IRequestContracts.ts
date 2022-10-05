@@ -1,8 +1,9 @@
 import { StableCoinRole } from '../sdk.js';
+import PrivateKey from '../../../../domain/context/account/PrivateKey.js';
 
 export interface IRequestContracts {
 	proxyContractId: string;
-	privateKey: string;
+	privateKey: PrivateKey;
 	accountId: string;
 }
 export interface IRequestContractsAmount extends IRequestContracts {

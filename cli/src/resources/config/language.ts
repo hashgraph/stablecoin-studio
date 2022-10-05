@@ -19,6 +19,7 @@ export const english = {
       'Your option is not a default network, Do you want to create a new network? (y/n)',
     askAccountId: 'Introduce the accountId',
     askNetworkAccount: 'Which network does this account belong to?',
+    askPrivateKeyType: 'Which type of private key will the account use?',
     askAlias: 'Introduce an alias for this account',
     aliasAlreadyInUse:
       'Alias ${alias} already in use. Please use another alias.',
@@ -182,7 +183,12 @@ export const english = {
       'Go back',
     ],
     adminFeatureOptions: ['Current user key', 'None'],
-    featureOptions: ['The smart contract', 'Current user key', 'Other key', 'None'],
+    featureOptions: [
+      'The smart contract',
+      'Current user key',
+      'Other key',
+      'None',
+    ],
     supplierRoleType: ['Unlimited', 'Limited', 'Back'],
     editSupplierRoleOptions: [
       'Increase limit',
@@ -191,6 +197,7 @@ export const english = {
       'Back',
     ],
     backOption: 'Go back',
+    privateKeyType: ['ED25519', 'ECSA'],
   },
   state: {
     searching: 'Searching...',
@@ -203,7 +210,7 @@ export const english = {
     wipeCompleted: 'Wipe completed',
     detailsCompleted: 'Details loaded',
     balanceCompleted: 'Balance loaded',
-    associteCompleted:'Stable coin associated'
+    associteCompleted: 'Stable coin associated',
   },
   operation: {
     success: 'Operation has been completed successfully.',

@@ -17,4 +17,5 @@ networks:
       mirrorNodeUrl: 'https://testnet.mirrornode.hedera.com',
     },
   ]
-accounts: [{ accountId: '', privateKey: '', network: '', alias: '' }]
+accounts:
+  [{ accountId: '', privateKey: { key: '', type: '' }, network: '', alias: '' }]
