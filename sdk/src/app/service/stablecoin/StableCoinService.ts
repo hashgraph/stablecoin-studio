@@ -32,7 +32,7 @@ export default class StableCoinService extends Service {
 	 */
 	public async createStableCoin(
 		req: ICreateStableCoinServiceRequestModel,
-	): Promise<StableCoin> {
+	): Promise<IStableCoinDetail> {
 		let coin: StableCoin = new StableCoin({
 			name: req.name,
 			symbol: req.symbol,
@@ -58,7 +58,7 @@ export default class StableCoinService extends Service {
 			autoRenewAccount: req.autoRenewAccount,
 		});
 		coin = await this.repository.saveCoin(coin, req.account);
-		return this.repository.getStableCoin(coin.id);
+		return this.getStableCoinDetails({ id: coin.id });
 	}
 
 	/**

@@ -34,9 +34,9 @@ export default class OperationStableCoinService extends Service {
   constructor(tokenId?: string, memo?: string, symbol?: string) {
     super('Operation Stable Coin');
     if (tokenId && memo && symbol) {
-      this.stableCoinId = tokenId.toString(); //TODO Cambiar name por el id que llegue en la creación del token
+      this.stableCoinId = tokenId; //TODO Cambiar name por el id que llegue en la creación del token
       this.proxyContractId = memo;
-      this.stableCoinWithSymbol = `${tokenId.toString()} - ${symbol}`;
+      this.stableCoinWithSymbol = `${tokenId} - ${symbol}`;
     }
   }
 
@@ -49,7 +49,7 @@ export default class OperationStableCoinService extends Service {
     const currentAccount = new EOAccount(
       configAccount.accountId,
       new PrivateKey(configAccount.privateKey),
-    );;
+    );
     let resp: StableCoinList[];
     if (this.stableCoinId === undefined) {
       //Get list of stable coins to display
