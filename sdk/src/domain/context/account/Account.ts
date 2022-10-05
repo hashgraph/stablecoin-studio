@@ -1,4 +1,8 @@
-import { AccountId, NetworkMode, PrivateKey } from '../../../port/in/sdk/sdk.js';
+import {
+	AccountId,
+	NetworkMode,
+	PrivateKey,
+} from '../../../port/in/sdk/sdk.js';
 import BaseEntity from '../../BaseEntity.js';
 import { AccountNotValid } from './error/AccountNotValid.js';
 
@@ -18,10 +22,12 @@ export default class Account extends BaseEntity {
 		this.privateKey = privateKey;
 		this.validateAccount();
 	}
-	
-    private validateAccount(): void {
-		if(this.networkMode === NetworkMode.EOA && !!this.privateKey){
-            throw new AccountNotValid('Invalid Network Mode: EOA without private key');
-        }
+
+	private validateAccount(): void {
+		if (this.networkMode === NetworkMode.EOA && !this.privateKey) {
+			throw new AccountNotValid(
+				'Invalid Network Mode: EOA without private key',
+			);
+		}
 	}
 }
