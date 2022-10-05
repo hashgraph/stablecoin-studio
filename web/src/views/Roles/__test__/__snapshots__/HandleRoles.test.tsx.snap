@@ -14,7 +14,7 @@ exports[`<HandleRoles /> Supplier role should render children: giveSupplierRole 
       Role management
     </h2>
     <div
-      class="css-1b6lda7"
+      class="css-1hkemoa"
       data-testid="base-container-children"
     >
       <div
@@ -47,7 +47,7 @@ exports[`<HandleRoles /> Supplier role should render children: giveSupplierRole 
                   role="group"
                 >
                   <label
-                    class="chakra-form__label css-1jbsrib"
+                    class="chakra-form__label css-1y854pg"
                     for="field-:r1h:"
                     id="field-:r1h:-label"
                   >
@@ -72,7 +72,7 @@ exports[`<HandleRoles /> Supplier role should render children: giveSupplierRole 
                   >
                     <input
                       autocomplete="off"
-                      class="chakra-input css-6kc61d"
+                      class="chakra-input css-pjkc18"
                       data-testid="account"
                       id="field-:r1h:"
                       name="account"
@@ -92,7 +92,7 @@ exports[`<HandleRoles /> Supplier role should render children: giveSupplierRole 
                 >
                   <label
                     aria-hidden="true"
-                    class="chakra-form__label css-1jbsrib"
+                    class="chakra-form__label css-1y854pg"
                     data-aria-hidden="true"
                     for="field-:r1i:"
                     id="field-:r1i:-label"
@@ -134,7 +134,7 @@ exports[`<HandleRoles /> Supplier role should render children: giveSupplierRole 
                     />
                     <div
                       aria-hidden="true"
-                      class=" css-15j38w8"
+                      class=" css-1ugyojt"
                       data-aria-hidden="true"
                     >
                       <div
@@ -344,7 +344,7 @@ exports[`<HandleRoles /> should render correctly on all actions: edit 1`] = `
       Role management
     </h2>
     <div
-      class="css-1b6lda7"
+      class="css-1hkemoa"
       data-testid="base-container-children"
     >
       <div
@@ -373,7 +373,7 @@ exports[`<HandleRoles /> should render correctly on all actions: edit 1`] = `
                   role="group"
                 >
                   <label
-                    class="chakra-form__label css-1jbsrib"
+                    class="chakra-form__label css-1y854pg"
                     for="field-:r1:"
                     id="field-:r1:-label"
                   >
@@ -398,7 +398,7 @@ exports[`<HandleRoles /> should render correctly on all actions: edit 1`] = `
                   >
                     <input
                       autocomplete="off"
-                      class="chakra-input css-6kc61d"
+                      class="chakra-input css-pjkc18"
                       data-testid="account"
                       id="field-:r1:"
                       name="account"
@@ -417,7 +417,7 @@ exports[`<HandleRoles /> should render correctly on all actions: edit 1`] = `
                   role="group"
                 >
                   <label
-                    class="chakra-form__label css-1jbsrib"
+                    class="chakra-form__label css-1y854pg"
                     for="field-:r2:"
                     id="field-:r2:-label"
                   >
@@ -453,7 +453,7 @@ exports[`<HandleRoles /> should render correctly on all actions: edit 1`] = `
                       class="css-1f43avz-a11yText-A11yText"
                     />
                     <div
-                      class=" css-15j38w8"
+                      class=" css-1ugyojt"
                     >
                       <div
                         class="css-3y2vuh"
@@ -578,7 +578,7 @@ exports[`<HandleRoles /> should render correctly on all actions: give 1`] = `
       Role management
     </h2>
     <div
-      class="css-1b6lda7"
+      class="css-1hkemoa"
       data-testid="base-container-children"
     >
       <div
@@ -607,7 +607,7 @@ exports[`<HandleRoles /> should render correctly on all actions: give 1`] = `
                   role="group"
                 >
                   <label
-                    class="chakra-form__label css-1jbsrib"
+                    class="chakra-form__label css-1y854pg"
                     for="field-:r9:"
                     id="field-:r9:-label"
                   >
@@ -632,7 +632,7 @@ exports[`<HandleRoles /> should render correctly on all actions: give 1`] = `
                   >
                     <input
                       autocomplete="off"
-                      class="chakra-input css-6kc61d"
+                      class="chakra-input css-pjkc18"
                       data-testid="account"
                       id="field-:r9:"
                       name="account"
@@ -651,7 +651,7 @@ exports[`<HandleRoles /> should render correctly on all actions: give 1`] = `
                   role="group"
                 >
                   <label
-                    class="chakra-form__label css-1jbsrib"
+                    class="chakra-form__label css-1y854pg"
                     for="field-:ra:"
                     id="field-:ra:-label"
                   >
@@ -687,7 +687,7 @@ exports[`<HandleRoles /> should render correctly on all actions: give 1`] = `
                       class="css-1f43avz-a11yText-A11yText"
                     />
                     <div
-                      class=" css-15j38w8"
+                      class=" css-1ugyojt"
                     >
                       <div
                         class="css-3y2vuh"
@@ -812,7 +812,7 @@ exports[`<HandleRoles /> should render correctly on all actions: revoke 1`] = `
       Role management
     </h2>
     <div
-      class="css-1b6lda7"
+      class="css-1hkemoa"
       data-testid="base-container-children"
     >
       <div
@@ -841,7 +841,7 @@ exports[`<HandleRoles /> should render correctly on all actions: revoke 1`] = `
                   role="group"
                 >
                   <label
-                    class="chakra-form__label css-1jbsrib"
+                    class="chakra-form__label css-1y854pg"
                     for="field-:rh:"
                     id="field-:rh:-label"
                   >
@@ -866,7 +866,7 @@ exports[`<HandleRoles /> should render correctly on all actions: revoke 1`] = `
                   >
                     <input
                       autocomplete="off"
-                      class="chakra-input css-6kc61d"
+                      class="chakra-input css-pjkc18"
                       data-testid="account"
                       id="field-:rh:"
                       name="account"
@@ -885,7 +885,7 @@ exports[`<HandleRoles /> should render correctly on all actions: revoke 1`] = `
                   role="group"
                 >
                   <label
-                    class="chakra-form__label css-1jbsrib"
+                    class="chakra-form__label css-1y854pg"
                     for="field-:ri:"
                     id="field-:ri:-label"
                   >
@@ -921,7 +921,7 @@ exports[`<HandleRoles /> should render correctly on all actions: revoke 1`] = `
                       class="css-1f43avz-a11yText-A11yText"
                     />
                     <div
-                      class=" css-15j38w8"
+                      class=" css-1ugyojt"
                     >
                       <div
                         class="css-3y2vuh"

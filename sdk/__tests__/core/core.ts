@@ -1,6 +1,6 @@
-import AccountId from '../src/domain/context/account/AccountId.js';
-import EOAccount from '../src/domain/context/account/EOAccount.js';
-import PrivateKey from '../src/domain/context/account/PrivateKey.js';
+import AccountId from '../../src/domain/context/account/AccountId.js';
+import EOAccount from '../../src/domain/context/account/EOAccount.js';
+import PrivateKey from '../../src/domain/context/account/PrivateKey.js';
 import {
 	Configuration,
 	HederaNetwork,
@@ -8,17 +8,14 @@ import {
 	HederaNetworkEnviroment,
 	SDK,
 	SDKInitOptions,
-} from '../src/index.js';
+} from '../../src/index.js';
 
 const ACCOUNT_ID = '0.0.47822430';
 const PK =
 	'302e020100300506032b65700422042010f13d4517ae383e2a1a0f915b2f6e70a823f3627e69ab1a8f516666fecdf386';
 
 export const ACCOUNTS: { testnet: EOAccount } = {
-	testnet: new EOAccount({
-		accountId: new AccountId(ACCOUNT_ID),
-		privateKey: new PrivateKey(PK),
-	}),
+  testnet: new EOAccount(ACCOUNT_ID, new PrivateKey(PK)),
 };
 
 export const SDKConfig: { hethers: Configuration; hashpack: Configuration } = {

@@ -6,6 +6,7 @@
     "originAccountLabel": "From which account tokens will be rescued?",
     "originAccountPlaceholder": "Introduce account",
     "modalSuccessDesc": "The rescue tokens operation finished successfully.",
+    "decimalsValidation": "You have added more decimals than the supported by the stable coin",
     "modalAction": {
         "subtitle": "Operation details review",
         "originAccount": "Account to rescue tokens",

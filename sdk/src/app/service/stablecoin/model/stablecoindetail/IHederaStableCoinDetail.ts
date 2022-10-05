@@ -1,12 +1,11 @@
 import { ICustomFees } from './ICustomFees';
 import { IPublicKey } from './IPublicKey.js';
 
-export default interface IStableCoinDetail {
+export default interface IHederaStableCoinDetail {
 	token_id?: string;
 	name?: string;
 	symbol?: string;
 	decimals?: string;
-	initial_supply?: string;
 	total_supply?: string;
 	max_supply?: string;
 	custom_fees?: ICustomFees;
@@ -22,5 +21,5 @@ export default interface IStableCoinDetail {
 	freeze_key?: IPublicKey;
 	wipe_key?: IPublicKey;
 	supply_key?: IPublicKey;
-	pause_key?: IPublicKey;
+	pause_key?: string;
 }

@@ -4,7 +4,11 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import Icon from '../../components/Icon';
 import SDKService from '../../services/SDKService';
-import { SELECTED_WALLET_PAIRED, walletActions } from '../../store/slices/walletSlice';
+import {
+	HAS_WALLET_EXTENSION,
+	SELECTED_WALLET_PAIRED,
+	walletActions,
+} from '../../store/slices/walletSlice';
 import type { SavedPairingData } from 'hedera-stable-coin-sdk';
 
 const TopbarRight = () => {
@@ -12,10 +16,13 @@ const TopbarRight = () => {
 	const dispatch = useDispatch();
 
 	const pairingData: SavedPairingData = useSelector(SELECTED_WALLET_PAIRED);
+	const extensionFound: boolean = useSelector(HAS_WALLET_EXTENSION);
 
 	useEffect(() => {
-		if (!pairingData) getWalletData();
-	}, []);
+		if (!pairingData && extensionFound) {
+			getWalletData();
+		}
+	}, [extensionFound]);
 
 	const getWalletData = async () => {
 		const dataResponse = await SDKService.getWalletData();

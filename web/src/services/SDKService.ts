@@ -1,5 +1,12 @@
 import { HederaNetwork, HederaNetworkEnviroment, NetworkMode, SDK } from 'hedera-stable-coin-sdk';
-import type { AppMetadata, InitializationData } from 'hedera-stable-coin-sdk';
+import type {
+	AppMetadata,
+	InitializationData,
+	ICreateStableCoinRequest,
+	IStableCoinDetail,
+	IStableCoinList,
+	HashPackAccount,
+} from 'hedera-stable-coin-sdk';
 
 export enum HashConnectConnectionState {
 	Connected = 'Connected',
@@ -7,6 +14,8 @@ export enum HashConnectConnectionState {
 	Paired = 'Paired',
 	Connecting = 'Connecting',
 }
+
+export type StableCoinListRaw = Array<Record<'id' | 'symbol', string>>;
 
 const appMetadata: AppMetadata = {
 	name: 'dApp Example',
@@ -17,8 +26,7 @@ const appMetadata: AppMetadata = {
 
 interface CashInRequest {
 	proxyContractId: string;
-	privateKey: string;
-	accountId: string;
+	account: HashPackAccount;
 	tokenId: string;
 	targetId: string;
 	amount: number;
@@ -43,12 +51,12 @@ export class SDKService {
 				},
 			});
 
-			const { onInit, onWalletExtensionFound, onWalletPaired } =
-				events || {
-					onInit: () => {},
-					onWalletExtensionFound: () => {},
-					onWalletPaired: () => {},
-				};
+			const { onInit, onWalletExtensionFound, onWalletPaired } = events || {
+				onInit: () => {},
+				onWalletAcknowledgeMessageEvent: () => {},
+				onWalletExtensionFound: () => {},
+				onWalletPaired: () => {},
+			};
 
 			await SDKService.instance.init({ onInit });
 			SDKService.instance.onWalletExtensionFound(onWalletExtensionFound);
@@ -83,17 +91,44 @@ export class SDKService {
 		return (await SDKService.getInstance()).disconectHaspack();
 	}
 
+	public static async getStableCoins({
+		account,
+	}: {
+		account: HashPackAccount;
+	}): Promise<IStableCoinList[] | null> {
+		return (await SDKService.getInstance())?.getListStableCoin({ account });
+	}
+
+	public static async getStableCoinDetails({
+		id,
+	}: {
+		id: string;
+	}): Promise<IStableCoinDetail | null> {
+		return (await SDKService.getInstance())?.getStableCoinDetails({ id });
+	}
+
 	public static async cashIn({
 		proxyContractId,
-		privateKey,
-		accountId,
 		tokenId,
 		targetId,
 		amount,
+		account,
 	}: CashInRequest) {
 		return await SDKService.getInstance().then((instance) =>
-			instance.cashIn({ proxyContractId, privateKey, accountId, tokenId, targetId, amount }),
+			instance.cashIn({ proxyContractId, account, tokenId, targetId, amount }),
 		);
+	}
+
+	public static async createStableCoin(
+		createStableCoinRequest: ICreateStableCoinRequest,
+	): Promise<IStableCoinDetail | null> {
+		return (await SDKService.getInstance()).createStableCoin(createStableCoinRequest);
+	}
+	
+	public static async getBalance(data: any ) {
+		return await SDKService.getInstance().then((instance) => 
+			instance.getBalanceOf(data)
+		)
 	}
 }
 

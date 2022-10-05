@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { hethers, Signer } from '@hashgraph/hethers';
-import { HashConnectConnectionState } from 'hashconnect/dist/cjs/types/hashconnect.js';
-import { HashConnectTypes } from 'hashconnect/dist/cjs/types/index.js';
+import { HashConnectConnectionState } from 'hashconnect/types';
+import { HashConnectTypes } from 'hashconnect/types';
 import { HederaNetwork } from '../../../core/enum.js';
 import PrivateKey from '../../../domain/context/account/PrivateKey.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
@@ -14,6 +14,7 @@ import {
 	InitializationData } from './types.js';
 
 import EventService from '../../../app/service/event/EventService.js';
+import { Account } from '../../in/sdk/sdk.js';
 
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -45,9 +46,8 @@ export interface IProvider {
 	): Uint8Array;
 	getPublicKeyString(privateKey?: PrivateKey | string | undefined): string;
 	deployStableCoin(
-		accountId: string,
-		privateKey: string,
 		stableCoin: StableCoin,
+		account: Account,
 	): Promise<StableCoin>;
 	getAvailabilityExtension(): boolean;
 	gethashConnectConectionState(): HashConnectConnectionState;
@@ -58,5 +58,4 @@ export interface IProvider {
 	cashInHTS(parameters: IHTSTokenRequest): Promise<boolean>;
 	cashOutHTS(parameters: IHTSTokenRequest): Promise<boolean>;
 	transferHTS(parameters: ITransferTokenRequest): Promise<boolean>;
-	
 }

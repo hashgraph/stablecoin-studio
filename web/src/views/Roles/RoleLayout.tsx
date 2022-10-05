@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { validateAccount } from '../../utils/validationsHelper';
 import BaseContainer from '../../components/BaseContainer';
 import InputController from '../../components/Form/InputController';
+import type { Option } from '../../components/Form/SelectController';
 import { SelectController } from '../../components/Form/SelectController';
 import { RouterManager } from '../../Router/RouterManager';
 import { NamedRoutes } from '../../Router/NamedRoutes';
@@ -27,11 +28,6 @@ const styles = {
 	},
 };
 
-interface SelectorOptionProps {
-	label: string;
-	value: string | number;
-}
-
 export interface RoleLayoutProps {
 	accountLabel: string;
 	accountPlaceholder: string;
@@ -39,7 +35,7 @@ export interface RoleLayoutProps {
 	children?: ReactNode;
 	control: Control<FieldValues>;
 	onConfirm: () => void;
-	options: SelectorOptionProps[];
+	options: Option[];
 	selectorLabel: string;
 	selectorPlaceholder: string;
 	title: string;

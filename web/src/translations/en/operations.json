@@ -4,7 +4,7 @@
     "cashInOperation": "Cash in tokens",
     "wipeOperation": "Wipe tokens",
     "rescueOperation": "Rescue tokens",
-    "cashOutOperation": "Cash out",
+    "burnOperation": "Burn tokens",
     "getBalanceOperation": "Get balance",
     "modalSuccessTitle": "Operation successfully completed",
     "modalSuccessDesc": "You can follow the order in the list of operations.",
@@ -19,6 +19,8 @@
         "decimals": "Decimals",
         "initialSupply": "Initial supply",
         "totalSupply": "Total supply",
-        "supplyType": "Supply type (infinite or finite)"
+        "supplyType": "Supply type",
+        "infinite": "Infinite",
+        "finite": "Finite"
     }
 }
