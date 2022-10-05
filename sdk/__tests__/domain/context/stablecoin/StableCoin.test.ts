@@ -3,7 +3,7 @@ import { TokenSupplyType } from '../../../../src/domain/context/stablecoin/Token
 import { TokenType } from '../../../../src/domain/context/stablecoin/TokenType.js';
 import DomainError from '../../../../src/domain/error/DomainError.js';
 import { AccountId, PublicKey } from '../../../../src/index.js';
-import { baseCoin } from '../../../core.js';
+import { baseCoin } from '../../../core/core.js';
 
 describe('🧪 [DOMAIN] StableCoin', () => {
 	

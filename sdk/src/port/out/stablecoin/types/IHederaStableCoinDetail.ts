@@ -1,7 +1,7 @@
 import { ICustomFees } from './ICustomFees';
 import { IPublicKey } from './IPublicKey.js';
 
-export default interface IStableCoinDetail {
+export default interface IHederaStableCoinDetail {
 	token_id?: string;
 	name?: string;
 	symbol?: string;

@@ -1,8 +1,6 @@
-import {
-	TokenId,
-} from '@hashgraph/sdk';
-import { HashConnectTypes } from 'hashconnect';
-import { AccountId, PublicKey } from '../../in/sdk/sdk.js';
+import { HashConnectTypes, MessageTypes } from 'hashconnect';
+import { TokenId } from '@hashgraph/sdk';
+import { Account, AccountId, EOAccount, PublicKey } from '../../in/sdk/sdk.js';
 
 export interface ICallContractRequest {
 	contractId: string;
@@ -12,10 +10,7 @@ export interface ICallContractRequest {
 }
 
 export interface ICallContractWithAccountRequest extends ICallContractRequest {
-	account: {
-		privateKey: string;
-		accountId: string;
-	};
+	account: Account
 }
 
 export interface ICreateTokenResponse {
@@ -37,10 +32,7 @@ export interface ICreateTokenResponse {
 }
 
 export interface IHTSTokenRequest {
-	account: {
-		privateKey: string;
-		accountId: string;
-	};
+	account: Account;
 	tokenId: string;
 	amount: number;
 }
@@ -56,3 +48,11 @@ export interface ITransferTokenRequest extends IHTSTokenRequest{
 
 export type InitializationData = HashConnectTypes.InitilizationData;
 export type SavedPairingData = HashConnectTypes.SavedPairingData;
+export type AcknowledgeMessage = MessageTypes.Acknowledge;
+export type AdditionalAccountRequestMessage =
+	MessageTypes.AdditionalAccountRequest;
+export type AdditionalAccountResponseMessage =
+	MessageTypes.AdditionalAccountResponse;
+export type ApprovePairingMessage = MessageTypes.ApprovePairing;
+export type AuthenticationRequestMessage = MessageTypes.AuthenticationRequest;
+export type AuthenticationResponseMessage = MessageTypes.AuthenticationResponse;

@@ -1,11 +1,11 @@
 module.exports = {
   testEnvironment: 'node',
   coverageThreshold: {
-    global: {
-      lines: 70,
-    },
+    // global: {
+    //   lines: 70,
+    // },
   },
-  preset: 'ts-jest/presets/js-with-ts',
+  preset: 'ts-jest',
   globals: {
     'ts-jest': {
       useESM: true,

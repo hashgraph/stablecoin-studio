@@ -1,6 +1,6 @@
 import AccountId from '../../../../src/domain/context/account/AccountId.js';
 import DomainError from '../../../../src/domain/error/DomainError.js';
-import { ACCOUNTS } from '../../../core.js';
+import { ACCOUNTS } from '../../../core/core.js';
 
 describe('🧪 [DOMAIN] AccountId', () => {
 	it('Instantiate the class', () => {

@@ -1,4 +1,5 @@
 import IStableCoinList from './response/IStableCoinList.js';
+import IStableCoinDetail from './response/IStableCoinDetail.js';
 import ContractsService from '../../../app/service/contract/ContractsService.js';
 import StableCoinService from '../../../app/service/stablecoin/StableCoinService.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
@@ -51,21 +52,31 @@ import ContractId from '../../../domain/context/contract/ContractId.js';
 import { TokenType } from '../../../domain/context/stablecoin/TokenType.js';
 import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.js';
 import { IAllowanceRequest } from './request/IRequestContracts.js';
-import {
-	HashConnectConnectionState,
-	HashConnectTypes,
-} from 'hashconnect/dist/cjs/types/hashconnect.js';
 import { AppMetadata } from '../../out/hedera/hashpack/types/types.js';
-import { InitializationData } from '../../out/hedera/types.js';
+import {
+	AcknowledgeMessage,
+	AdditionalAccountRequestMessage,
+	AdditionalAccountResponseMessage,
+	ApprovePairingMessage,
+	AuthenticationRequestMessage,
+	AuthenticationResponseMessage,
+	InitializationData,
+} from '../../out/hedera/types.js';
 import { ProviderEventNames } from '../../out/hedera/ProviderEvent.js';
 import EventService from '../../../app/service/event/EventService.js';
 import { IProvider } from '../../out/hedera/Provider.js';
 import { SavedPairingData } from '../../out/hedera/types.js';
 import { Capabilities } from '../../../domain/context/stablecoin/Capabilities.js';
+import {
+	HashConnectConnectionState,
+	HashConnectTypes,
+} from 'hashconnect/types';
 import { IGetSupplierAllowance } from './request/IGetSupplierAllowance.js';
 import IGetSupplierAllowanceModel from '../../../app/service/stablecoin/model/IGetSupplierAllowanceModel.js';
 import { XOR } from 'ts-xor';
 import { ISupplierRoleStableCoinRequest } from './request/ISupplierRoleStableCoinRequest.js';
+import Account from '../../../domain/context/account/Account.js';
+import HashPackAccount from '../../../domain/context/account/HashPackAccount.js';
 
 export {
 	IAssociateStableCoinRequest,
@@ -80,6 +91,8 @@ export {
 	IRoleStableCoinRequest,
 	IWipeStableCoinRequest,
 	IBasicRequest,
+	IStableCoinDetail,
+	IStableCoinList,
 };
 
 /* Export basic types*/
@@ -87,8 +100,10 @@ export {
 	AppMetadata,
 	HederaNetwork,
 	StableCoin,
-	AccountId,
+	Account,
 	EOAccount,
+	HashPackAccount,
+	AccountId,
 	PrivateKey,
 	PublicKey,
 	ContractId,
@@ -100,6 +115,12 @@ export {
 	PrivateKeyType,
 	InitializationData,
 	SavedPairingData,
+	AcknowledgeMessage,
+	AdditionalAccountRequestMessage,
+	AdditionalAccountResponseMessage,
+	ApprovePairingMessage,
+	AuthenticationRequestMessage,
+	AuthenticationResponseMessage,
 	Capabilities,
 };
 
@@ -181,12 +202,10 @@ export class SDK {
 	 */
 	public createStableCoin(
 		request: ICreateStableCoinRequest,
-	): Promise<StableCoin> | null {
+	): Promise<IStableCoinDetail> | null {
 		try {
 			const req: ICreateStableCoinServiceRequestModel = {
 				...request,
-				accountId: request.accountId,
-				privateKey: request.privateKey,
 				autoRenewAccount: request.autoRenewAccount
 					? new AccountId(request.autoRenewAccount)
 					: undefined,
@@ -204,6 +223,7 @@ export class SDK {
 	): Promise<Capabilities[]> | null {
 		return this.stableCoinService.getCapabilitiesStableCoin(id, publicKey);
 	}
+
 	/**
 	 * getListStableCoin
 	 */
@@ -216,16 +236,13 @@ export class SDK {
 		return this.stableCoinService.getListStableCoins(req);
 	}
 
-	/**
-	 * getStableCoin
-	 */
-	public getStableCoin(
+	public getStableCoinDetails(
 		request: IGetStableCoinRequest,
-	): Promise<StableCoin> | null {
+	): Promise<IStableCoinDetail> | null {
 		const req: IGetStableCoinServiceRequestModel = {
 			...request,
 		};
-		return this.stableCoinService.getStableCoin(req);
+		return this.stableCoinService.getStableCoinDetails(req);
 	}
 
 	/**
@@ -237,7 +254,6 @@ export class SDK {
 		try {
 			const req: IGetBalanceOfStableCoinServiceRequestModel = {
 				...request,
-				accountId: new AccountId(request.accountId),
 				targetId: request.targetId,
 			};
 			return this.stableCoinService.getBalanceOf(req);
@@ -256,7 +272,6 @@ export class SDK {
 		try {
 			const req: IGetNameOfStableCoinServiceRequestModel = {
 				...request,
-				accountId: new AccountId(request.accountId),
 			};
 			return this.stableCoinService.getNameToken(req);
 		} catch (error) {
@@ -272,7 +287,6 @@ export class SDK {
 		try {
 			const req: ICashInStableCoinServiceRequestModel = {
 				...request,
-				accountId: new AccountId(request.accountId),
 			};
 			return this.stableCoinService.cashIn(req);
 		} catch (error) {
@@ -290,7 +304,6 @@ export class SDK {
 		try {
 			const req: ICashOutStableCoinServiceRequestModel = {
 				...request,
-				accountId: new AccountId(request.accountId),
 			};
 			return this.stableCoinService.cashOut(req);
 		} catch (error) {
@@ -308,7 +321,6 @@ export class SDK {
 		try {
 			const req: IAssociateTokenStableCoinServiceRequestModel = {
 				...request,
-				accountId: new AccountId(request.accountId),
 			};
 			return this.stableCoinService.associateToken(req);
 		} catch (error) {
@@ -324,7 +336,6 @@ export class SDK {
 		try {
 			const req: IWipeStableCoinServiceRequestModel = {
 				...request,
-				accountId: new AccountId(request.accountId),
 			};
 			return this.stableCoinService.wipe(req);
 		} catch (error) {
@@ -342,7 +353,6 @@ export class SDK {
 		try {
 			const req: IGetBasicRequestModel = {
 				...request,
-				accountId: new AccountId(request.accountId),
 			};
 			return this.stableCoinService.isUnlimitedSupplierAllowance(req);
 		} catch (error) {
@@ -359,7 +369,6 @@ export class SDK {
 		try {
 			const req: IGetSupplierAllowanceModel = {
 				...request,
-				accountId: new AccountId(request.accountId),
 			};
 			return this.stableCoinService.supplierAllowance(req);
 		} catch (error) {
@@ -377,7 +386,6 @@ export class SDK {
 		try {
 			const req: IGetBasicRequestModel = {
 				...request,
-				accountId: new AccountId(request.accountId),
 			};
 			return this.stableCoinService.resetSupplierAllowance(req);
 		} catch (error) {
@@ -394,7 +402,6 @@ export class SDK {
 		try {
 			const req: ISupplierRoleStableCoinServiceRequestModel = {
 				...request,
-				accountId: new AccountId(request.accountId),
 			};
 			return this.stableCoinService.increaseSupplierAllowance(req);
 		} catch (error) {
@@ -411,7 +418,6 @@ export class SDK {
 		try {
 			const req: ISupplierRoleStableCoinServiceRequestModel = {
 				...request,
-				accountId: new AccountId(request.accountId),
 			};
 			return this.stableCoinService.decreaseSupplierAllowance(req);
 		} catch (error) {
@@ -429,7 +435,6 @@ export class SDK {
 		try {
 			const req: IGetBasicRequestModel = {
 				...request,
-				accountId: new AccountId(request.accountId),
 			};
 			return this.stableCoinService.isLimitedSupplierAllowance(req);
 		} catch (error) {
@@ -447,7 +452,6 @@ export class SDK {
 		try {
 			const req: IRescueStableCoinServiceRequestModel = {
 				...request,
-				accountId: new AccountId(request.accountId),
 			};
 			return this.stableCoinService.rescue(req);
 		} catch (error) {
@@ -476,7 +480,6 @@ export class SDK {
 		try {
 			const req = {
 				...request,
-				accountId: new AccountId(request.accountId),
 			};
 			if (req.role === StableCoinRole.CASHIN_ROLE) {
 				return this.stableCoinService.grantSupplierRole(req);
@@ -494,7 +497,6 @@ export class SDK {
 		try {
 			const req: IRoleStableCoinServiceRequestModel = {
 				...request,
-				accountId: new AccountId(request.accountId),
 			};
 			if (request.role === StableCoinRole.CASHIN_ROLE) {
 				this.stableCoinService.revokeSupplierRole(req);
@@ -512,8 +514,6 @@ export class SDK {
 		try {
 			const req: IRoleStableCoinServiceRequestModel = {
 				...request,
-				accountId: new AccountId(request.accountId),
-
 				role: request.role,
 			};
 			return this.stableCoinService.hasRole(req);
@@ -575,7 +575,7 @@ export class SDK {
 	}
 
 	public onWalletAcknowledgeMessageEvent(
-		listener: (state: HashConnectConnectionState) => void,
+		listener: (state: AcknowledgeMessage) => void,
 	): void {
 		this.eventService.on(
 			ProviderEventNames.providerAcknowledgeMessageEvent,

@@ -1,8 +1,12 @@
 import { language } from './../../../index.js';
 import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
-import { StableCoinList } from '../../../domain/stablecoin/StableCoinList.js';
-import { SDK, PrivateKey } from 'hedera-stable-coin-sdk';
+import {
+  EOAccount,
+  IStableCoinList,
+  PrivateKey,
+  SDK,
+} from 'hedera-stable-coin-sdk';
 
 /**
  * Create Stable Coin Service
@@ -20,17 +24,20 @@ export default class ListStableCoinsService extends Service {
     const sdk: SDK = utilsService.getSDK();
     const currentAccount = utilsService.getCurrentAccount();
 
-    let resp: StableCoinList[];
+    let resp: IStableCoinList[];
 
     await utilsService.showSpinner(
       sdk
         .getListStableCoin({
-          privateKey: new PrivateKey(
-            currentAccount.privateKey.key,
-            currentAccount.privateKey.type,
+          account: new EOAccount(
+            currentAccount.accountId,
+            new PrivateKey(
+              currentAccount.privateKey.key,
+              currentAccount.privateKey.type,
+            ),
           ),
         })
-        .then((response: StableCoinList[]) => (resp = response)),
+        .then((response: IStableCoinList[]) => (resp = response)),
       {
         text: language.getText('state.searching'),
         successText: language.getText('state.searchingSuccess') + '\n',

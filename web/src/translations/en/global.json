@@ -5,7 +5,8 @@
     "cancel": "Cancel",
     "goBack": "Go back",
     "no": "No",
-    "yes": "Yes"
+    "yes": "Yes",
+    "unknown": "-"
   },
   "hashpack-no-installed": {
     "title": "Your haspack extension is not installed yet",
@@ -21,7 +22,8 @@
     "network": "Operating network",
     "account": "Operating account",
     "coinDropdown": {
-      "placeholder": "Choose Stable coin"
+      "placeholder": "Choose Stable coin",
+      "noStableCoin": "No Stable Coins"
     },
     "createSC": "Create Stable coin"
   },
@@ -32,7 +34,9 @@
   },
   "validations": {
     "required": "This field is required",
-    "invalidAccount": "Incorrect account"
+    "invalidAccount": "Incorrect account",
+    "decimalsValidation": "You have added more decimals than the supported by the stable coin",
+    "overTotalSupply": "Quantity over current total supply"
   },
   "operations": {
     "title": "Operations"

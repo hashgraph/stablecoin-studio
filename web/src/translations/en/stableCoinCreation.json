@@ -10,6 +10,56 @@
     "basicDetails": "Basic details",
     "optionalDetails": "Optional details",
     "managementPermissions": "Management Permissions",
+    "supplierKey": "Supplier key",
     "review": "Review"
+  },
+  "basicDetails": {
+    "autorenewAccount": "Autorenew account",
+    "autorenewAccountPlaceholder": "Introduce autorenew account (e.g. 0.0.123456)",
+    "name": "Name",
+    "namePlaceholder": "Introduce name",
+    "symbol": "Symbol",
+    "symbolPlaceholder": "Introduce Symbol",
+    "title": "Stable Coin basic details"
+  },
+  "optionalDetails": {
+    "decimals": "Decimals",
+    "expirationDate": "Expiration date",
+    "finite": "Finite",
+    "initialSupply": "Initial supply",
+    "infinite": "Infinite",
+    "placeholder": "Introduce {{placeholder}}",
+    "title": "Stable Coin optional details",
+    "totalSupply": "Total supply",
+    "typeSupply": "Type supply",
+    "typeSupplyPlaceholder": "Choose type supply"
+  },
+  "managementPermissions": {
+    "description": "Allow all the following features to be managed through Smart Contract",
+    "feeSchedule": "Fee Schedule",
+    "freeze": "Freeze",
+    "introduce": "Introduce {{name}}",
+    "none": "None",
+    "otherKey": "Other key",
+    "placeholder": "Introduce {{placeholder}}",
+    "rescue": "Rescue",
+    "stableCoinAdmin": "Stable Coin admin",
+    "supply": "Supply",
+    "theSmartContract": "The Smart Contract",
+    "title": "Stable Coin management permissions",
+    "totalSupply": "Total supply",
+    "treasuryAccountAddress": "Treasury account address",
+    "wipe": "Wipe"
+  },
+  "review": {
+    "basicDetails": "Basic details",
+    "managementPermissions": "Management Permissions",
+    "optionalDetails": "Optional details",
+    "title": "Stable Coin review"
+  },
+  "notification": {
+    "title": "{{ result }} creating the Stable Coin",
+    "descriptionSuccess": "The Stable Coin was created",
+    "descriptionError": "Sorry, there was an error creating the Stable Coin"
   }
 }

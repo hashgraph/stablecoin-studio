@@ -1,17 +1,8 @@
-import AccountId from '../../../../domain/context/account/AccountId.js';
-import PrivateKey from '../../../../domain/context/account/PrivateKey.js';
+import { Account } from '../../../../port/in/sdk/sdk.js';
 
-export interface IAccountRequestModel {
-	accountId: AccountId;
+export interface IAccountWithKeyRequestModel {
+	account: Account;
 }
-
-export interface IPrivateKeyRequestModel {
-	privateKey: PrivateKey;
-}
-
-export interface IAccountWithKeyRequestModel
-	extends IAccountRequestModel,
-		IPrivateKeyRequestModel {}
 
 export interface IAmountRequestModel {
 	amount: number;

@@ -1,7 +1,7 @@
 import { language } from '../../../index.js';
 import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
-import { SDK, PrivateKey } from 'hedera-stable-coin-sdk';
+import { EOAccount, SDK } from 'hedera-stable-coin-sdk';
 
 /**
  * Create Stable Coin Service
@@ -16,8 +16,7 @@ export default class WipeStableCoinsService extends Service {
    */
   public async wipeStableCoin(
     proxyContractId: string,
-    privateKey: PrivateKey,
-    accountId: string,
+    account: EOAccount,
     tokenId: string,
     targetId: string,
     amount?: number,
@@ -30,9 +29,8 @@ export default class WipeStableCoinsService extends Service {
     await utilsService.showSpinner(
       sdk
         .wipe({
+          account,
           proxyContractId,
-          privateKey,
-          accountId,
           tokenId,
           targetId,
           amount,

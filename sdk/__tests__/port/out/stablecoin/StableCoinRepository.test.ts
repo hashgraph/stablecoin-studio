@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { StableCoin } from '../../../../src/index.js';
+import { Account, StableCoin } from '../../../../src/index.js';
 import HederaError from '../../../../src/port/out/hedera/error/HederaError.js';
 import { IProvider } from '../../../../src/port/out/hedera/Provider.js';
 import NetworkAdapter from '../../../../src/port/out/network/NetworkAdapter.js';
 import StableCoinRepository from '../../../../src/port/out/stablecoin/StableCoinRepository.js';
-import { ACCOUNTS, baseCoin } from '../../../core.js';
+import { ACCOUNTS, baseCoin } from '../../../core/core.js';
 
 const networkAdapter = () =>
 	jest.mock(
@@ -29,49 +29,41 @@ describe('🧪 [PORT] StableCoinRepository', () => {
 		);
 		await expect(
 			repo.saveCoin(
-				ACCOUNTS.testnet.accountId,
-				ACCOUNTS.testnet.privateKey,
 				new StableCoin({
 					name: baseCoin.name,
 					symbol: baseCoin.symbol,
 					decimals: baseCoin.decimals,
 				}),
+				ACCOUNTS.testnet,
 			),
 		).rejects.toThrow(HederaError);
 	});
 
 	it('Saves a new coin', async () => {
 		const coin: StableCoin = await repository.saveCoin(
-			ACCOUNTS.testnet.accountId,
-			ACCOUNTS.testnet.privateKey,
 			new StableCoin({
 				name: baseCoin.name,
 				symbol: baseCoin.symbol,
 				decimals: baseCoin.decimals,
 			}),
+			ACCOUNTS.testnet,
 		);
 		expect(coin).not.toBeNull();
 	});
 });
 
 function mockRepo(networkAdapter: NetworkAdapter, provider?: IProvider) {
-	if (!provider) {
-		networkAdapter.provider.deployStableCoin = (
-			accountId: string,
-			privateKey: string,
+	const deployFn = (
 			coin: StableCoin,
+			account: Account,
 		) => {
 			throw new Error();
 		};
+	if (!provider) {
+		networkAdapter.provider.deployStableCoin = deployFn;
 	} else {
 		networkAdapter.provider = provider;
-		networkAdapter.provider.deployStableCoin = (
-			accountId: string,
-			privateKey: string,
-			coin: StableCoin,
-		) => {
-			return Promise.resolve(coin);
-		};
+		networkAdapter.provider.deployStableCoin = deployFn;
 	}
 	return new StableCoinRepository(networkAdapter);
 }
