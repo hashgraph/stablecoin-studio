@@ -28,7 +28,7 @@ export default class PrivateKey extends ValueObject {
 
 	public validateType(type?: string): string {
 		if (!type) throw new PrivateKeyTypeNotValid(type ?? 'undefined');
-		if (type !== PrivateKeyType.ED25519 && type !== PrivateKeyType.ECSA) {
+		if (type !== PrivateKeyType.ED25519 && type !== PrivateKeyType.ECDSA) {
 			throw new PrivateKeyNotValid(type);
 		}
 		return type;
