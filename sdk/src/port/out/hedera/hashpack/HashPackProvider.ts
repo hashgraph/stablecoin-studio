@@ -18,6 +18,7 @@ import {
 	TokenId,
 	Transaction,
 	Status,
+	Signer,
 } from '@hashgraph/sdk';
 import { StableCoin } from '../../../../domain/context/stablecoin/StableCoin.js';
 import {
@@ -42,12 +43,10 @@ import {
 	HTSTokenOwner__factory,
 } from 'hedera-stable-coin-contracts/typechain-types/index.js';
 import { HashConnectProvider } from 'hashconnect/provider/provider';
-import { HashConnectSigner } from 'hashconnect/provider/signer';
 import Long from 'long';
 import ProviderEvent, { ProviderEventNames } from '../ProviderEvent.js';
 import EventService from '../../../../app/service/event/EventService.js';
 import { HashConnect } from 'hashconnect';
-import { Signer } from '@hashgraph/sdk/lib/Signer.js';
 import { HashConnectTypes } from 'hashconnect';
 import { HashConnectConnectionState } from 'hashconnect/types';
 import HashPackAccount from '../../../../domain/context/account/HashPackAccount.js';
@@ -150,7 +149,7 @@ export default class HashPackProvider implements IProvider {
 		});
 
 		this.hc.acknowledgeMessageEvent.on((msg) => {
-			console.log('acknowledgeMessageEvent event', msg);
+			// console.log('acknowledgeMessageEvent event', msg);
 			this.eventService.emit(
 				ProviderEventNames.providerAcknowledgeMessageEvent,
 				msg,
@@ -158,8 +157,8 @@ export default class HashPackProvider implements IProvider {
 		});
 	}
 
-	private getSigner(): HashConnectSigner {
-		return this.hc.getSigner(this.provider);
+	private getSigner(): Signer {
+		return this.hashPackSigner.signer;
 	}
 
 	public async callContract(
@@ -373,10 +372,10 @@ export default class HashPackProvider implements IProvider {
 				await this.transactionResposeHandler.manageResponse(
 					transactionResponse,
 					TransactionType.RECEIPT,
-					this.hashPackSigner.hashConnectSigner,
+					this.getSigner(),
 				);
 
-			if (!htsResponse.receipt.contractId) {
+			if (!htsResponse?.receipt?.contractId) {
 				throw new Error(
 					`An error ocurred during deployment of ${factory.name}`,
 				);
@@ -445,10 +444,10 @@ export default class HashPackProvider implements IProvider {
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
 				TransactionType.RECEIPT,
-				this.hashPackSigner.hashConnectSigner,
+				this.getSigner(),
 			);
 
-		if (!htsResponse.receipt.tokenId) {
+		if (!htsResponse?.receipt?.tokenId) {
 			throw new Error(
 				`An error ocurred creating the stable coin ${name}`,
 			);
