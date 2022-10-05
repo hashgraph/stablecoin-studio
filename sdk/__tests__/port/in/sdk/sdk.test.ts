@@ -14,10 +14,7 @@ describe('🧪 [PORT] SDK', () => {
 	it('Creates a Stable Coin with EOAccount', async () => {
 		const coin = await sdk.createStableCoin({
 			accountId: new AccountId(ACCOUNTS.testnet.accountId.id),
-			privateKey: new PrivateKey(
-				ACCOUNTS.testnet.privateKey.key,
-				ACCOUNTS.testnet.privateKey.type,
-			),
+			privateKey: ACCOUNTS.testnet.privateKey,
 			name: 'TEST COIN',
 			symbol: 'TC',
 			decimals: 0,

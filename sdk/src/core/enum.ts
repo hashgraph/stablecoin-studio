@@ -15,7 +15,7 @@ export enum StableCoinRole {
 }
 
 export enum PrivateKeyType {
-	ECSA = 'ECSA',
+	ECDSA = 'ECDSA',
 	ED25519 = 'ED25519',
 }
 export class HederaNetwork {

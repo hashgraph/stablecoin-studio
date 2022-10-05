@@ -197,7 +197,7 @@ export const english = {
       'Back',
     ],
     backOption: 'Go back',
-    privateKeyType: ['ED25519', 'ECSA'],
+    privateKeyType: ['ED25519', 'ECDSA'],
   },
   state: {
     searching: 'Searching...',
