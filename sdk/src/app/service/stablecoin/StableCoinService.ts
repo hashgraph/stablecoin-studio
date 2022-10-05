@@ -123,6 +123,7 @@ export default class StableCoinService extends Service {
 			req.proxyContractId,
 			req.targetId,
 			req.tokenId,
+			req.account,
 		);
 	}
 
@@ -195,8 +196,7 @@ export default class StableCoinService extends Service {
 		const amount = coin.toInteger(req.amount);
 
 		const treasuryAccountBalance = await this.getBalanceOf({
-			accountId: req.accountId,
-			privateKey: req.privateKey,
+			account: req.account,
 			proxyContractId: req.proxyContractId,
 			targetId: treasruyAccount,
 			tokenId: req.tokenId,
@@ -300,8 +300,7 @@ export default class StableCoinService extends Service {
 		const amount = coin.toInteger(req.amount);
 
 		const treasuryAccountBalance = await this.getBalanceOf({
-			accountId: req.accountId,
-			privateKey: req.privateKey,
+			account: req.account,
 			proxyContractId: req.proxyContractId,
 			targetId: treasruyAccount,
 			tokenId: req.tokenId,
@@ -321,8 +320,7 @@ export default class StableCoinService extends Service {
 		return this.repository.grantSupplierRole(
 			req.proxyContractId,
 			req.targetId,
-			req.privateKey,
-			req.accountId,
+			req.account,
 			req.amount ? coin.toInteger(req.amount) : undefined,
 		);
 	}
@@ -383,8 +381,7 @@ export default class StableCoinService extends Service {
 		return this.repository.increaseSupplierAllowance(
 			req.proxyContractId,
 			req.targetId,
-			req.privateKey,
-			req.accountId,
+			req.account,
 			req.amount ? coin.toInteger(req.amount) : 0,
 		);
 	}
@@ -395,8 +392,7 @@ export default class StableCoinService extends Service {
 		const limit = await this.supplierAllowance({
 			proxyContractId: req.proxyContractId,
 			targetId: req.targetId,
-			privateKey: req.privateKey,
-			accountId: req.accountId,
+			account: req.account,
 			tokenId: req.tokenId,
 		});
 
@@ -413,8 +409,7 @@ export default class StableCoinService extends Service {
 		return this.repository.decreaseSupplierAllowance(
 			req.proxyContractId,
 			req.targetId,
-			req.privateKey,
-			req.accountId,
+			req.account,
 			req.amount ? coin.toInteger(req.amount) : 0,
 		);
 	}
@@ -435,9 +430,8 @@ export default class StableCoinService extends Service {
 		return this.repository.grantRole(
 			req.proxyContractId,
 			req.targetId,
-			req.privateKey,
-			req.accountId,
 			req.role,
+			req.account,
 		);
 	}
 
@@ -447,9 +441,8 @@ export default class StableCoinService extends Service {
 		return this.repository.revokeRole(
 			req.proxyContractId,
 			req.targetId,
-			req.privateKey,
-			req.accountId,
 			req.role,
+			req.account,
 		);
 	}
 

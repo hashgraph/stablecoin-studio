@@ -63,10 +63,16 @@ import EventService from '../../../app/service/event/EventService.js';
 import { IProvider } from '../../out/hedera/Provider.js';
 import { SavedPairingData } from '../../out/hedera/types.js';
 import { Capabilities } from '../../../domain/context/stablecoin/Capabilities.js';
+import {
+	HashConnectConnectionState,
+	HashConnectTypes,
+} from 'hashconnect/types';
 import { IGetSupplierAllowance } from './request/IGetSupplierAllowance.js';
 import IGetSupplierAllowanceModel from '../../../app/service/stablecoin/model/IGetSupplierAllowanceModel.js';
 import { XOR } from 'ts-xor';
 import { ISupplierRoleStableCoinRequest } from './request/ISupplierRoleStableCoinRequest.js';
+import Account from '../../../domain/context/account/Account.js';
+import HashPackAccount from '../../../domain/context/account/HashPackAccount.js';
 
 export {
 	IAssociateStableCoinRequest,
@@ -82,7 +88,7 @@ export {
 	IWipeStableCoinRequest,
 	IBasicRequest,
 	IStableCoinDetail,
-	IStableCoinList
+	IStableCoinList,
 };
 
 /* Export basic types*/
@@ -212,7 +218,7 @@ export class SDK {
 	): Promise<Capabilities[]> | null {
 		return this.stableCoinService.getCapabilitiesStableCoin(id, publicKey);
 	}
-	
+
 	/**
 	 * getListStableCoin
 	 */
@@ -469,8 +475,6 @@ export class SDK {
 		try {
 			const req = {
 				...request,
-				accountId: new AccountId(request.accountId),
-				privateKey: new PrivateKey(request.privateKey),
 			};
 			if (req.role === StableCoinRole.SUPPLIER_ROLE) {
 				return this.stableCoinService.grantSupplierRole(req);
@@ -488,8 +492,6 @@ export class SDK {
 		try {
 			const req: IRoleStableCoinServiceRequestModel = {
 				...request,
-				accountId: new AccountId(request.accountId),
-				privateKey: new PrivateKey(request.privateKey),
 			};
 			if (request.role === StableCoinRole.SUPPLIER_ROLE) {
 				this.stableCoinService.revokeSupplierRole(req);

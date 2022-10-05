@@ -11,6 +11,7 @@ import OperationStableCoinService from '../stablecoin/OperationStableCoinService
 import ListStableCoinsService from '../stablecoin/ListStableCoinsService.js';
 import colors from 'colors';
 import { clear } from 'console';
+import { IStableCoinDetail } from 'hedera-stable-coin-sdk';
 
 /**
  * Wizard Service
@@ -41,7 +42,7 @@ export default class WizardService extends Service {
     ) {
       case wizardMainOptions[0]:
         await utilsService.cleanAndShowBanner();
-        const stableCoin: StableCoin =
+        const stableCoin: IStableCoinDetail =
           await new CreateStableCoinService().createStableCoin(undefined, true);
         const operate = await utilsService.defaultConfirmAsk(
           `Do you want to operate with ${stableCoin.name}`,

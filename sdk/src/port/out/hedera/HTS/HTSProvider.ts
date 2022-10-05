@@ -111,7 +111,7 @@ export default class HTSProvider implements IProvider {
 
 		if (account && account instanceof EOAccount) {
 			client.setOperator(account.accountId.id, account.privateKey.key);
-		}else{
+		} else {
 			throw new Error('Cannot get client: No private key');
 		}
 		return client;
@@ -187,7 +187,7 @@ export default class HTSProvider implements IProvider {
 			);
 		const transactionResponse: TransactionResponse =
 			await this.htsSigner.signAndSendTransaction(transaction);
-			this.logHashScan(transactionResponse,'call contract');
+		this.logHashScan(transactionResponse, 'call contract');
 		const htsResponse: HTSResponse =
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
@@ -204,11 +204,7 @@ export default class HTSProvider implements IProvider {
 		stableCoin: StableCoin,
 		account: EOAccount,
 	): Promise<StableCoin> {
-		const client = this.getClient(accountId, privateKey);
-		const plainAccount = {
-			accountId,
-			privateKey,
-		};
+		const client = this.getClient(account);
 		log(
 			`Deploying ${HederaERC20__factory.name} contract... please wait.`,
 			logOpts,
@@ -288,9 +284,7 @@ export default class HTSProvider implements IProvider {
 			account: account,
 		});
 
-		if (
-			hederaToken.treasuryAccountId.toString() !== account.accountId.id
-		) {
+		if (hederaToken.treasuryAccountId.toString() !== account.accountId.id) {
 			log(
 				'Associating administrator account to token... please wait.',
 				logOpts,
@@ -368,7 +362,7 @@ export default class HTSProvider implements IProvider {
 				);
 			const transactionResponse: TransactionResponse =
 				await this.htsSigner.signAndSendTransaction(transaction);
-				this.logHashScan(transactionResponse,'deploy contract');
+			this.logHashScan(transactionResponse, 'deploy contract');
 			const htsResponse: HTSResponse =
 				await this.transactionResposeHandler.manageResponse(
 					transactionResponse,
@@ -453,7 +447,7 @@ export default class HTSProvider implements IProvider {
 			);
 		const transactionResponse: TransactionResponse =
 			await this.htsSigner.signAndSendTransaction(transaction);
-			this.logHashScan(transactionResponse,'create token hts');
+		this.logHashScan(transactionResponse, 'create token hts');
 		const htsResponse: HTSResponse =
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
@@ -518,7 +512,7 @@ export default class HTSProvider implements IProvider {
 			);
 		const transactionResponse: TransactionResponse =
 			await this.htsSigner.signAndSendTransaction(transaction);
-			this.logHashScan(transactionResponse),'wipe in hts';
+		this.logHashScan(transactionResponse), 'wipe in hts';
 		const htsResponse: HTSResponse =
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
@@ -551,7 +545,7 @@ export default class HTSProvider implements IProvider {
 			);
 		const transactionResponse: TransactionResponse =
 			await this.htsSigner.signAndSendTransaction(transaction);
-			this.logHashScan(transactionResponse,'cash in hts');
+		this.logHashScan(transactionResponse, 'cash in hts');
 		const htsResponse: HTSResponse =
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
@@ -584,7 +578,7 @@ export default class HTSProvider implements IProvider {
 			);
 		const transactionResponse: TransactionResponse =
 			await this.htsSigner.signAndSendTransaction(transaction);
-			this.logHashScan(transactionResponse, 'cash out hts');
+		this.logHashScan(transactionResponse, 'cash out hts');
 		const htsResponse: HTSResponse =
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
@@ -619,7 +613,7 @@ export default class HTSProvider implements IProvider {
 			);
 		const transactionResponse: TransactionResponse =
 			await this.htsSigner.signAndSendTransaction(transaction);
-			this.logHashScan(transactionResponse,'tranfer hts');
+		this.logHashScan(transactionResponse, 'tranfer hts');
 		const htsResponse: HTSResponse =
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
@@ -634,17 +628,20 @@ export default class HTSProvider implements IProvider {
 		}
 
 		return htsResponse.receipt.status == Status.Success ? true : false;
-	}	
+	}
 
-	public logHashScan(transactionResponse: TransactionResponse, operation?:string):void{
-		let hs =` https://hashscan.io/#/${this.network.hederaNetworkEnviroment}/transaction/${transactionResponse.transactionId.toString().replace('@', '-')}`;
-		const num:number =hs.lastIndexOf('.');
-		
-		hs = hs.substring(0, num  ) +'-' + hs.substring(num+1, hs.length) ;
-		log(
-			`${hs} \n`,
-			logOpts,
-		);
-		
+	public logHashScan(
+		transactionResponse: TransactionResponse,
+		operation?: string,
+	): void {
+		let hs = ` https://hashscan.io/#/${
+			this.network.hederaNetworkEnviroment
+		}/transaction/${transactionResponse.transactionId
+			.toString()
+			.replace('@', '-')}`;
+		const num: number = hs.lastIndexOf('.');
+
+		hs = hs.substring(0, num) + '-' + hs.substring(num + 1, hs.length);
+		log(`${hs} \n`, logOpts);
 	}
 }

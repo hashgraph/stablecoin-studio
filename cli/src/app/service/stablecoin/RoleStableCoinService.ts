@@ -324,8 +324,6 @@ export default class RoleStableCoinsService extends Service {
           ),
           proxyContractId,
           targetId,
-          privateKey,
-          accountId,
           tokenId,
         })
         .then((response) => {

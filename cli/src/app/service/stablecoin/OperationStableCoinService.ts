@@ -131,7 +131,7 @@ export default class OperationStableCoinService extends Service {
         await utilsService.cleanAndShowBanner();
 
         utilsService.displayCurrentUserInfo(
-          currentAccount,
+          configAccount,
           this.stableCoinWithSymbol,
         );
         // Call to mint
@@ -202,7 +202,7 @@ export default class OperationStableCoinService extends Service {
         await utilsService.cleanAndShowBanner();
 
         utilsService.displayCurrentUserInfo(
-          currentAccount,
+          configAccount,
           this.stableCoinWithSymbol,
         );
 
@@ -226,7 +226,7 @@ export default class OperationStableCoinService extends Service {
         await utilsService.cleanAndShowBanner();
 
         utilsService.displayCurrentUserInfo(
-          currentAccount,
+          configAccount,
           this.stableCoinWithSymbol,
         );
 
@@ -265,7 +265,7 @@ export default class OperationStableCoinService extends Service {
         await utilsService.cleanAndShowBanner();
 
         utilsService.displayCurrentUserInfo(
-          currentAccount,
+          configAccount,
           this.stableCoinWithSymbol,
         );
 
@@ -352,8 +352,8 @@ export default class OperationStableCoinService extends Service {
         language.getText('stablecoin.askEditSupplierRole'),
         roleManagementOptions,
         false,
-        currentAccount.network,
-        `${currentAccount.accountId} - ${currentAccount.alias}`,
+        configAccount.network,
+        `${configAccount.accountId} - ${configAccount.alias}`,
         this.stableCoinWithSymbol,
       )
     ) {
@@ -361,7 +361,7 @@ export default class OperationStableCoinService extends Service {
         await utilsService.cleanAndShowBanner();
 
         utilsService.displayCurrentUserInfo(
-          currentAccount,
+          configAccount,
           this.stableCoinWithSymbol,
         );
 
@@ -405,7 +405,7 @@ export default class OperationStableCoinService extends Service {
         await utilsService.cleanAndShowBanner();
 
         utilsService.displayCurrentUserInfo(
-          currentAccount,
+          configAccount,
           this.stableCoinWithSymbol,
         );
 
@@ -446,8 +446,8 @@ export default class OperationStableCoinService extends Service {
             language.getText('roleManagement.askRole'),
             editOptions,
             false,
-            currentAccount.network,
-            `${currentAccount.accountId} - ${currentAccount.alias}`,
+            configAccount.network,
+            `${currentAccount.accountId.id} - ${configAccount.alias}`,
             this.stableCoinWithSymbol,
           )
         ) {
@@ -508,8 +508,8 @@ export default class OperationStableCoinService extends Service {
                 this.proxyContractId,
                 this.stableCoinId,
                 accountTarget,
-                currentAccount.privateKey,
-                currentAccount.accountId,
+                currentAccount.privateKey.key,
+                currentAccount.accountId.id,
                 parseFloat(limit),
               );
 
@@ -580,8 +580,8 @@ export default class OperationStableCoinService extends Service {
                   this.proxyContractId,
                   this.stableCoinId,
                   accountTarget,
-                  currentAccount.privateKey,
-                  currentAccount.accountId,
+                  currentAccount.privateKey.key,
+                  currentAccount.accountId.id,
                   parseFloat(limit),
                 );
 
@@ -711,7 +711,7 @@ export default class OperationStableCoinService extends Service {
         await utilsService.cleanAndShowBanner();
 
         utilsService.displayCurrentUserInfo(
-          currentAccount,
+          configAccount,
           this.stableCoinWithSymbol,
         );
 
