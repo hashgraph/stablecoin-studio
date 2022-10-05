@@ -97,8 +97,8 @@ export interface TokenOwner extends BaseContract {
     getTokenOwnerAddress(overrides?: CallOverrides): Promise<[string]>;
 
     setTokenAddress(
-      _htsTokenOwnerAddress: PromiseOrValue<string>,
-      _tokenAddress: PromiseOrValue<string>,
+      htsTokenOwnerAddress: PromiseOrValue<string>,
+      tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
@@ -108,8 +108,8 @@ export interface TokenOwner extends BaseContract {
   getTokenOwnerAddress(overrides?: CallOverrides): Promise<string>;
 
   setTokenAddress(
-    _htsTokenOwnerAddress: PromiseOrValue<string>,
-    _tokenAddress: PromiseOrValue<string>,
+    htsTokenOwnerAddress: PromiseOrValue<string>,
+    tokenAddress: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -119,8 +119,8 @@ export interface TokenOwner extends BaseContract {
     getTokenOwnerAddress(overrides?: CallOverrides): Promise<string>;
 
     setTokenAddress(
-      _htsTokenOwnerAddress: PromiseOrValue<string>,
-      _tokenAddress: PromiseOrValue<string>,
+      htsTokenOwnerAddress: PromiseOrValue<string>,
+      tokenAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -133,8 +133,8 @@ export interface TokenOwner extends BaseContract {
     getTokenOwnerAddress(overrides?: CallOverrides): Promise<BigNumber>;
 
     setTokenAddress(
-      _htsTokenOwnerAddress: PromiseOrValue<string>,
-      _tokenAddress: PromiseOrValue<string>,
+      htsTokenOwnerAddress: PromiseOrValue<string>,
+      tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
@@ -147,8 +147,8 @@ export interface TokenOwner extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     setTokenAddress(
-      _htsTokenOwnerAddress: PromiseOrValue<string>,
-      _tokenAddress: PromiseOrValue<string>,
+      htsTokenOwnerAddress: PromiseOrValue<string>,
+      tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };

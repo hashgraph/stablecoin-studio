@@ -476,7 +476,7 @@ export class SDK {
 			const req = {
 				...request,
 			};
-			if (req.role === StableCoinRole.SUPPLIER_ROLE) {
+			if (req.role === StableCoinRole.CASHIN_ROLE) {
 				return this.stableCoinService.grantSupplierRole(req);
 			}
 			return this.stableCoinService.grantRole(req);
@@ -493,7 +493,7 @@ export class SDK {
 			const req: IRoleStableCoinServiceRequestModel = {
 				...request,
 			};
-			if (request.role === StableCoinRole.SUPPLIER_ROLE) {
+			if (request.role === StableCoinRole.CASHIN_ROLE) {
 				this.stableCoinService.revokeSupplierRole(req);
 			}
 			return this.stableCoinService.revokeRole(req);
