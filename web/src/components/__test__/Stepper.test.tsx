@@ -8,13 +8,11 @@ const steps: Step[] = [
 	{
 		number: '01',
 		title: 'Option 1',
-		complete: false,
 		children: <Box>Tab 1</Box>,
 	},
 	{
 		number: '02',
 		title: 'Option 2',
-		complete: false,
 		children: <Box>Tab 2</Box>,
 	},
 ];
@@ -24,6 +22,9 @@ const StepsProps = {
 	textLastButtonPrimary: 'Last button',
 	handleLastButtonPrimary: () => jest.fn,
 	handleFirstButtonSecondary: () => jest.fn,
+	isValid: true,
+	currentStep: 0,
+	setCurrentStep: () => jest.fn,
 };
 
 describe(`<${Stepper.name} />`, () => {

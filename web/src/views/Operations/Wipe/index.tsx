@@ -1,12 +1,14 @@
 import { Heading, Text, Stack, useDisclosure } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import DetailsReview from '../../../components/DetailsReview';
 import InputController from '../../../components/Form/InputController';
 import InputNumberController from '../../../components/Form/InputNumberController';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
 import ModalsHandler from '../../../components/ModalsHandler';
-import { validateAccount } from '../../../utils/validationsHelper';
+import { SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
+import { validateAccount, validateDecimals } from '../../../utils/validationsHelper';
 import OperationLayout from './../OperationLayout';
 
 const WipeOperation = () => {
@@ -15,7 +17,8 @@ const WipeOperation = () => {
 		onOpen: onOpenModalAction,
 		onClose: onCloseModalAction,
 	} = useDisclosure();
-
+	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
+	const { decimals = 0 } = selectedStableCoin || {};
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
 	});
@@ -39,11 +42,15 @@ const WipeOperation = () => {
 						<Text color='brand.gray' data-testid='operation-title'>
 							{t('wipe:operationTitle')}
 						</Text>
-						<Stack as='form' spacing={6}>
+						<Stack as='form' spacing={6} maxW='520px'>
 							<InputNumberController
 								rules={{
 									required: t('global:validations.required'),
-									// TODO: Add validation of max decimals allowed by stable coin
+									validate: {
+										maxDecimals: (value: number) => {
+											return validateDecimals(value, decimals) || t('wipe:decimalsValidation');
+										},
+									},
 								}}
 								isRequired
 								control={control}

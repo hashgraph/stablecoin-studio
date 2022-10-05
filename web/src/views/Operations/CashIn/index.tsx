@@ -5,10 +5,13 @@ import DetailsReview from '../../../components/DetailsReview';
 import InputController from '../../../components/Form/InputController';
 import InputNumberController from '../../../components/Form/InputNumberController';
 import SDKService from '../../../services/SDKService';
-import { validateAccount } from '../../../utils/validationsHelper';
+import { validateAccount, validateDecimals } from '../../../utils/validationsHelper';
 import OperationLayout from './../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
+import { useSelector } from 'react-redux';
+import { SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
+import { HashPackAccount } from 'hedera-stable-coin-sdk';
 
 const CashInOperation = () => {
 	const {
@@ -16,11 +19,11 @@ const CashInOperation = () => {
 		onOpen: onOpenModalAction,
 		onClose: onCloseModalAction,
 	} = useDisclosure();
-
+	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
+	const { decimals = 0, totalSupply } = selectedStableCoin || {};
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
 	});
-
 	const { t } = useTranslation(['cashIn', 'global', 'operations']);
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -29,10 +32,9 @@ const CashInOperation = () => {
 		try {
 			await SDKService.cashIn({
 				proxyContractId: '0.0.48261507',
-				privateKey: '',
-				accountId: '0.0.47809960',
+				account: new HashPackAccount('0.0.47822430'),
 				tokenId: '0.0.48261510',
-				targetId: '0.0.47809960', // destinationACc
+				targetId: '0.0.47822430', // destinationACc
 				amount,
 			});
 			onSuccess();
@@ -53,12 +55,26 @@ const CashInOperation = () => {
 						<Text color='brand.gray' data-testid='operation-title'>
 							{t('cashIn:operationTitle')}
 						</Text>
-						<Stack as='form' spacing={6}>
+						<Stack as='form' spacing={6} maxW='520px'>
 							<InputNumberController
 								rules={{
 									required: t('global:validations.required'),
-									// TODO: Add validation of max decimals allowed by stable coin
+									validate: {
+										maxDecimals: (value: number) => {
+											return (
+												validateDecimals(value, decimals) ||
+												t('global:validations.decimalsValidation')
+											);
+										},
+										quantityOverTotalSupply: (value: number) => {
+											return (
+												(totalSupply && totalSupply >= value) ||
+												t('global:validations.overTotalSupply')
+											);
+										},
+									},
 								}}
+								decimalScale={decimals}
 								isRequired
 								control={control}
 								name='amount'

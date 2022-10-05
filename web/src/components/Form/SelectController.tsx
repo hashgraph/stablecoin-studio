@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
 	FormControl,
 	FormErrorMessage,
@@ -59,12 +59,14 @@ export const partsListByTheme: Array<
 type Parts = typeof partsListByTheme;
 
 export type SelectThemeStyle = Record<Parts[number], SystemStyleObject>;
+
+export type Option = { label: string; value: number | string };
 export interface SelectControllerProps {
 	name: string;
 	rules?: UseControllerProps['rules'];
 	label?: string;
 	placeholder?: string;
-	options: ReactSelectProps['options'];
+	options: Array<Option>;
 	control: Control<Record<string, SelectOption['value']>>;
 	isRequired?: boolean;
 	isSearchable?: boolean;
@@ -84,6 +86,7 @@ export interface SelectControllerProps {
 	variant?: Variant;
 	size?: ReactSelectProps['size'];
 	overrideStyles?: Partial<SelectThemeStyle>;
+	noOptionsMessage?: ReactSelectProps['noOptionsMessage'];
 }
 
 export type SelectConfigProps = {
@@ -256,6 +259,14 @@ export const SelectController = ({
 			defaultValue={defaultValue}
 			rules={rules}
 			render={({ field: { onChange, value }, fieldState: { invalid, error } }) => {
+				useEffect(() => {
+					if (defaultValue) {
+						const index = parseInt(defaultValue as string);
+						const defaultOption = options[index];
+
+						onChange(defaultOption);
+					}
+				}, []);
 				const onChangeCustom = (event: ChangeEvent<HTMLInputElement>) => {
 					onChange(event);
 					onChangeAux && onChangeAux(event);

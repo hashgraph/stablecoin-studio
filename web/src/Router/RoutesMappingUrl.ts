@@ -5,10 +5,9 @@ import { NamedRoutes } from './NamedRoutes';
  * */
 export const RoutesMappingUrl: Record<NamedRoutes, string> = {
 	[NamedRoutes.Balance]: '/operations/balance',
+	[NamedRoutes.Burn]: '/operations/burn',
 	[NamedRoutes.CashIn]: '/operations/cash-in',
-	[NamedRoutes.CashOut]: '/operations/cash-out',
 	[NamedRoutes.Dashboard]: '/dashboard',
-	[NamedRoutes.Details]: '/details',
 	[NamedRoutes.EditRole]: '/roles/edit-role',
 	[NamedRoutes.GiveRole]: '/roles/give-role',
 	[NamedRoutes.Login]: '/login',
@@ -16,7 +15,8 @@ export const RoutesMappingUrl: Record<NamedRoutes, string> = {
 	[NamedRoutes.RescueTokens]: '/operations/rescue-tokens',
 	[NamedRoutes.RevokeRole]: '/roles/revoke-role',
 	[NamedRoutes.Roles]: '/roles',
-	[NamedRoutes.StableCoinCreation]: '/stable-coin-creation',
-	[NamedRoutes.StableCoinNotSelected]: '/stable-coin-not-selected',
+	[NamedRoutes.StableCoinCreation]: '/stable-coin/creation',
+	[NamedRoutes.StableCoinDetails]: '/stable-coin/details',
+	[NamedRoutes.StableCoinNotSelected]: '/stable-coin/not-selected',
 	[NamedRoutes.Wipe]: '/operations/wipe',
 };

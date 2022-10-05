@@ -22,104 +22,150 @@ exports[`<Topbar /> should render correctly 1`] = `
       class="css-1gacwoi"
     >
       <div
-        class="css-d9s5ly"
-        data-testid="coin-dropdown"
+        class="css-166re2f"
       >
         <div
-          class="chakra-stack css-1h0sumw"
+          class="css-1hg55h3"
+          data-testid="coin-dropdown"
         >
           <div
-            class="chakra-form-control css-1kxonj9"
-            data-testid="form_control"
-            role="group"
+            class="chakra-stack css-1h0sumw"
           >
             <div
-              class="css-frrdvf"
+              class="chakra-form-control css-1kxonj9"
+              data-testid="form_control"
+              role="group"
             >
-              <span
-                class="css-1f43avz-a11yText-A11yText"
-                id="react-select-2-live-region"
-              />
-              <span
-                aria-atomic="false"
-                aria-live="polite"
-                aria-relevant="additions text"
-                class="css-1f43avz-a11yText-A11yText"
-              />
               <div
-                class=" css-15j38w8"
+                class="css-frrdvf"
               >
+                <span
+                  class="css-1f43avz-a11yText-A11yText"
+                  id="react-select-2-live-region"
+                />
+                <span
+                  aria-atomic="false"
+                  aria-live="polite"
+                  aria-relevant="additions text"
+                  class="css-1f43avz-a11yText-A11yText"
+                />
                 <div
-                  class="css-3y2vuh"
-                >
-                  <span
-                    class="chakra-text css-4pvr19"
-                    data-testid="select-placeholder"
-                  >
-                    Choose Stable coin
-                  </span>
-                  <div
-                    class=" css-svnjlw"
-                    data-value=""
-                  >
-                    <input
-                      aria-autocomplete="list"
-                      aria-describedby="react-select-2-placeholder"
-                      aria-expanded="false"
-                      aria-haspopup="true"
-                      autocapitalize="none"
-                      autocomplete="off"
-                      autocorrect="off"
-                      class=" css-146k1ar-input"
-                      id="field-:r0:"
-                      role="combobox"
-                      spellcheck="false"
-                      tabindex="0"
-                      type="text"
-                      value=""
-                    />
-                  </div>
-                </div>
-                <div
-                  class=" css-hfbj6y"
+                  class=" css-15j38w8"
                 >
                   <div
-                    class="css-1aabyhj"
+                    class="css-3y2vuh"
                   >
-                    <svg
-                      class="chakra-icon css-zsadqz"
-                      fill="currentColor"
-                      focusable="false"
-                      height="1em"
-                      viewBox="0 0 256 256"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
+                    <span
+                      class="chakra-text css-4pvr19"
+                      data-testid="select-placeholder"
                     >
-                      <rect
-                        fill="none"
-                        height="256"
-                        width="256"
+                      Choose Stable coin
+                    </span>
+                    <div
+                      class=" css-svnjlw"
+                      data-value=""
+                    >
+                      <input
+                        aria-autocomplete="list"
+                        aria-describedby="react-select-2-placeholder"
+                        aria-expanded="false"
+                        aria-haspopup="true"
+                        autocapitalize="none"
+                        autocomplete="off"
+                        autocorrect="off"
+                        class=" css-146k1ar-input"
+                        id="field-:r0:"
+                        role="combobox"
+                        spellcheck="false"
+                        tabindex="0"
+                        type="text"
+                        value=""
                       />
-                      <polyline
-                        fill="none"
-                        points="208 96 128 176 48 96"
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="16"
-                      />
-                    </svg>
+                    </div>
+                  </div>
+                  <div
+                    class=" css-hfbj6y"
+                  >
+                    <div
+                      class="css-1aabyhj"
+                    >
+                      <svg
+                        class="chakra-icon css-zsadqz"
+                        fill="currentColor"
+                        focusable="false"
+                        height="1em"
+                        viewBox="0 0 256 256"
+                        width="1em"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <rect
+                          fill="none"
+                          height="256"
+                          width="256"
+                        />
+                        <polyline
+                          fill="none"
+                          points="208 96 128 176 48 96"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="16"
+                        />
+                      </svg>
+                    </div>
                   </div>
                 </div>
+                <input
+                  name="coin-dropdown"
+                  type="hidden"
+                  value=""
+                />
               </div>
-              <input
-                name="coin-dropdown"
-                type="hidden"
-                value=""
-              />
             </div>
           </div>
         </div>
+        <button
+          class="chakra-button css-1ohdqi1"
+          type="button"
+        >
+          <svg
+            class="chakra-icon css-ky7im0"
+            fill="currentColor"
+            focusable="false"
+            height="1em"
+            viewBox="0 0 256 256"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect
+              fill="none"
+              height="256"
+              width="256"
+            />
+            <line
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="16"
+              x1="40"
+              x2="216"
+              y1="128"
+              y2="128"
+            />
+            <line
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="16"
+              x1="128"
+              x2="128"
+              y1="40"
+              y2="216"
+            />
+          </svg>
+        </button>
       </div>
       <div
         class="css-rg2hwn"
@@ -140,10 +186,8 @@ exports[`<Topbar /> should render correctly 1`] = `
             : 
           </p>
           <p
-            class="chakra-text css-mgupmj"
-          >
-            TESNET
-          </p>
+            class="chakra-text css-15ww2gg"
+          />
         </div>
         <div
           class="css-dv2lk7"
@@ -164,9 +208,54 @@ exports[`<Topbar /> should render correctly 1`] = `
           </p>
           <p
             class="chakra-text css-mgupmj"
+          />
+        </div>
+        <div
+          class="css-dv2lk7"
+        />
+        <div
+          class="css-18wp8yu"
+          data-testid="topbar-right-disconnect"
+        >
+          <button
+            class="chakra-button css-35en9d"
+            type="button"
           >
-            0.0.123456
-          </p>
+            <svg
+              class="chakra-icon css-1cv0b1u"
+              fill="currentColor"
+              focusable="false"
+              height="1em"
+              viewBox="0 0 256 256"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                fill="none"
+                height="256"
+                width="256"
+              />
+              <line
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="16"
+                x1="128"
+                x2="128"
+                y1="48"
+                y2="124"
+              />
+              <path
+                d="M176,54.2a88,88,0,1,1-96,0"
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="16"
+              />
+            </svg>
+          </button>
         </div>
       </div>
     </div>

@@ -10,12 +10,20 @@ export interface DirectAccessProps extends FlexProps {
 	icon: string;
 	route: NamedRoutes;
 	variant?: string;
+	isDisabled?: boolean;
 }
 
-const DirectAccess = ({ title, icon, route, variant, ...props }: DirectAccessProps) => {
+const DirectAccess = ({
+	title,
+	icon,
+	route,
+	isDisabled = false,
+	variant = 'primary',
+	...props
+}: DirectAccessProps) => {
 	const navigate = useNavigate();
 
-	const style = useStyleConfig('DirectAccess', { variant });
+	const style = useStyleConfig('DirectAccess', { variant: isDisabled ? 'disabled' : variant });
 
 	const handleNavigate = () => {
 		RouterManager.to(navigate, route);
@@ -27,7 +35,7 @@ const DirectAccess = ({ title, icon, route, variant, ...props }: DirectAccessPro
 			data-testid={`direct-access-${route}`}
 			as='button'
 			onClick={handleNavigate}
-			disabled={variant === 'disabled'}
+			disabled={isDisabled}
 			{...props}
 		>
 			<Flex

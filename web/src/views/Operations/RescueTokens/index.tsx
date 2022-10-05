@@ -4,10 +4,12 @@ import { useTranslation } from 'react-i18next';
 import DetailsReview from '../../../components/DetailsReview';
 import InputController from '../../../components/Form/InputController';
 import InputNumberController from '../../../components/Form/InputNumberController';
-import { validateAccount } from '../../../utils/validationsHelper';
+import { validateAccount, validateDecimals } from '../../../utils/validationsHelper';
 import OperationLayout from '../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
+import { useSelector } from 'react-redux';
+import { SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
 
 const RescueTokenOperation = () => {
 	const {
@@ -15,7 +17,8 @@ const RescueTokenOperation = () => {
 		onOpen: onOpenModalAction,
 		onClose: onCloseModalAction,
 	} = useDisclosure();
-
+	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
+	const { decimals = 0 } = selectedStableCoin || {};
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
 	});
@@ -23,7 +26,10 @@ const RescueTokenOperation = () => {
 	const { t } = useTranslation(['rescueTokens', 'global', 'operations']);
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const handleCashOut: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
+	const handleRescueToken: ModalsHandlerActionsProps['onConfirm'] = async ({
+		onSuccess,
+		onError,
+	}) => {
 		try {
 			onSuccess();
 		} catch (error) {
@@ -47,7 +53,13 @@ const RescueTokenOperation = () => {
 							<InputNumberController
 								rules={{
 									required: t('global:validations.required'),
-									// TODO: Add validation of max decimals allowed by stable coin
+									validate: {
+										maxDecimals: (value: number) => {
+											return (
+												validateDecimals(value, decimals) || t('rescueTokens:decimalsValidation')
+											);
+										},
+									},
 								}}
 								isRequired
 								control={control}
@@ -84,7 +96,7 @@ const RescueTokenOperation = () => {
 					onClose: onCloseModalAction,
 					title: t('rescueTokens:modalAction.subtitle'),
 					confirmButtonLabel: t('rescueTokens:modalAction.accept'),
-					onConfirm: handleCashOut,
+					onConfirm: handleRescueToken,
 				}}
 				ModalActionChildren={
 					<DetailsReview

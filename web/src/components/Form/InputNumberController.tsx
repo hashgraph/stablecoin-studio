@@ -1,5 +1,5 @@
+import { useState, useEffect } from 'react';
 import type { ComponentType } from 'react';
-import { useState } from 'react';
 import type {
 	InputProps as ChakraInputProps,
 	FormControlProps,
@@ -51,6 +51,7 @@ export interface InputNumberControllerProps
 	hasArrows?: boolean;
 	maxValue?: number;
 	minValue?: number;
+	initialValue?: number;
 }
 
 const InputNumberController = ({
@@ -76,6 +77,7 @@ const InputNumberController = ({
 	'data-testid': dataTestId = name,
 	formStyle,
 	decimalScale = 2,
+	initialValue,
 	...props
 }: InputNumberControllerProps) => {
 	const [inputFloatValue, setInputFloatValue] = useState<number>();
@@ -86,8 +88,12 @@ const InputNumberController = ({
 			rules={rules}
 			name={name}
 			render={({ field: { onChange, value }, fieldState: { error } }) => {
+				useEffect(() => {
+					if (initialValue) onChange(initialValue);
+				}, []);
+
 				const onChangeCustom = (values: NumberFormatValues) => {
-					onChange(values.floatValue === undefined ? '' : values.floatValue);
+					onChange(values.floatValue || '');
 					setInputFloatValue(values?.floatValue!);
 					onChangeAux && onChangeAux(values);
 				};
