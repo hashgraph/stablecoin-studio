@@ -11,50 +11,53 @@
 # Table of contents
 
 - [Hedera Stable Coin SDK](#hedera-stable-coin-sdk)
+- [Table of contents](#table-of-contents)
 - [Overview](#overview)
 - [Installing](#installing)
-    + [Pre-requirements](#pre-requirements)
-    + [Steps](#steps)
-    + [Example (JS)](#example-js)
-    + [Example (TS)](#example-ts)
-  * [Before using](#before-using)
+		- [Pre-requirements](#pre-requirements)
+		- [Steps](#steps)
+			- [**For projects (WIP - when published)**](#for-projects-wip---when-published)
+			- [**For development**](#for-development)
+		- [Example (JS)](#example-js)
+		- [Example (TS)](#example-ts)
+	- [Before using](#before-using)
 - [Usage](#usage)
-    + [**Important**](#important)
-  * [Create Stable Coin](#create-stable-coin)
-  * [Get stable coin list](#get-stable-coin-list)
-  * [Get Stable Coin](#get-stable-coin)
-  * [Get Balance Of](#get-balance-of)
-  * [Get Token Name](#get-token-name)
-  * [Cash in](#cash-in)
-  * [Cash out](#cash-out)
-  * [Associate token](#associate-token)
-  * [Wipe tokens](#wipe-tokens)
-  * [Rescue tokens](#rescue-tokens)
-  * [Grant supplier role](#grant-supplier-role)
-  * [Revoke supplier role](#revoke-supplier-role)
-  * [Supplier allowance](#supplier-allowance)
-  * [Reset supplier allowance](#reset-supplier-allowance)
-  * [Increase supplier allowance](#increase-supplier-allowance)
-  * [Decrease supplier allowance](#decrease-supplier-allowance)
-  * [Is supplier allowance limited](#is-supplier-allowance-limited)
-  * [Is supplier allowance unlimited](#is-supplier-allowance-unlimited)
-  * [Grant Role](#grant-role)
-  * [Revoke Role](#revoke-role)
-  * [Has role](#has-role)
-  * [Check string is valid address](#check-string-is-valid-address)
-  * [Public key from private key](#public-key-from-private-key)
-  * [Hashpack](#hashpack)
-    + [Events](#events)
+		- [**Important**](#important)
+	- [Create Stable Coin](#create-stable-coin)
+	- [Get stable coin list](#get-stable-coin-list)
+	- [Get Stable Coin](#get-stable-coin)
+	- [Get Balance Of](#get-balance-of)
+	- [Get Token Name](#get-token-name)
+	- [Cash in](#cash-in)
+	- [Cash out](#cash-out)
+	- [Associate token](#associate-token)
+	- [Wipe tokens](#wipe-tokens)
+	- [Rescue tokens](#rescue-tokens)
+	- [Grant supplier role](#grant-supplier-role)
+	- [Revoke supplier role](#revoke-supplier-role)
+	- [Supplier allowance](#supplier-allowance)
+	- [Reset supplier allowance](#reset-supplier-allowance)
+	- [Increase supplier allowance](#increase-supplier-allowance)
+	- [Decrease supplier allowance](#decrease-supplier-allowance)
+	- [Is supplier allowance limited](#is-supplier-allowance-limited)
+	- [Is supplier allowance unlimited](#is-supplier-allowance-unlimited)
+	- [Grant Role](#grant-role)
+	- [Revoke Role](#revoke-role)
+	- [Has role](#has-role)
+	- [Check string is valid address](#check-string-is-valid-address)
+	- [Public key from private key](#public-key-from-private-key)
+	- [Hashpack](#hashpack)
+		- [Events](#events)
 - [Testing](#testing)
-    + [Jest](#jest)
+		- [Jest](#jest)
 - [Typescript](#typescript)
-  * [Tsconfig](#tsconfig)
-    + [Client side](#client-side)
-    + [Server side](#server-side)
+	- [Tsconfig](#tsconfig)
+		- [Client side](#client-side)
+		- [Server side](#server-side)
 - [Support](#support)
 - [Contributing](#contributing)
 - [Code of Conduct](#code-of-conduct)
-- [License](#license)
+	- [License](#license)
 
 
 # Overview
@@ -757,9 +760,9 @@ Grants an account a role in a stable coin.
 **Spec:**
 ````Typescript
 	enum StableCoinRole {
-		SUPPLIER_ROLE,
+		CASHIN_ROLE,
+		BURN_ROLE,
 		WIPE_ROLE,
-		ADMIN_SUPPLIER_ROLE,
 		RESCUE_ROLE,
 		PAUSER_ROLE,
 	}
@@ -794,9 +797,9 @@ Revokes an account's role in a stable coin.
 **Spec:**
 ````Typescript
 	enum StableCoinRole {
-		SUPPLIER_ROLE,
+		CASHIN_ROLE,
+		BURN_ROLE,
 		WIPE_ROLE,
-		ADMIN_SUPPLIER_ROLE,
 		RESCUE_ROLE,
 		PAUSER_ROLE,
 	}
@@ -830,9 +833,9 @@ Checks if an account has a certain role on the stable coin.
 **Spec:**
 ````Typescript
 	enum StableCoinRole {
-		SUPPLIER_ROLE,
+		CASHIN_ROLE,
+		BURN_ROLE,
 		WIPE_ROLE,
-		ADMIN_SUPPLIER_ROLE,
 		RESCUE_ROLE,
 		PAUSER_ROLE,
 	}
