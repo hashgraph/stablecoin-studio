@@ -1,16 +1,11 @@
 module.exports = {
 	testEnvironment: 'node',
 	coverageThreshold: {
-		global: {
-			lines: 80,
-		},
+		// global: {
+		// 	lines: 80,
+		// },
 	},
 	preset: 'ts-jest',
-	// globals: {
-	// 	'ts-jest': {
-	// 		useESM: true,
-	// 	},
-	// },
 	moduleNameMapper: {
 		'^(\\.{1,2}/.*)\\.(m)?js$': '$1',
 		'hashconnect/dist/esm(.*)': 'hashconnect/dist/cjs$1',
