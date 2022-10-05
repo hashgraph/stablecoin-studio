@@ -602,7 +602,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		accountId: AccountId,
 	): Promise<Uint8Array> {
 		const parameters = [
-			'0xd1ae8bbdabd60d63e418b84f5ad6f9cba90092c9816d7724d85f0d4e4bea2c60',
+			StableCoinRole.CASHIN_ROLE,
 			HAccountId.fromString(address || '').toSolidityAddress(),
 		];
 

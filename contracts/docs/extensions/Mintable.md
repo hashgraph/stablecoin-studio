@@ -10,10 +10,10 @@
 
 ## Methods
 
-### ADMIN_SUPPLIER_ROLE
+### BURN_ROLE
 
 ```solidity
-function ADMIN_SUPPLIER_ROLE() external view returns (bytes32)
+function BURN_ROLE() external view returns (bytes32)
 ```
 
 
@@ -27,10 +27,10 @@ function ADMIN_SUPPLIER_ROLE() external view returns (bytes32)
 |---|---|---|
 | _0 | bytes32 | undefined |
 
-### BURN_ROLE
+### CASHIN_ROLE
 
 ```solidity
-function BURN_ROLE() external view returns (bytes32)
+function CASHIN_ROLE() external view returns (bytes32)
 ```
 
 
@@ -82,23 +82,6 @@ function PAUSER_ROLE() external view returns (bytes32)
 
 ```solidity
 function RESCUE_ROLE() external view returns (bytes32)
-```
-
-
-
-
-
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | bytes32 | undefined |
-
-### SUPPLIER_ROLE
-
-```solidity
-function SUPPLIER_ROLE() external view returns (bytes32)
 ```
 
 

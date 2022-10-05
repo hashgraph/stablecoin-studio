@@ -29,12 +29,11 @@ import type {
 
 export interface MintableInterface extends utils.Interface {
   functions: {
-    "ADMIN_SUPPLIER_ROLE()": FunctionFragment;
     "BURN_ROLE()": FunctionFragment;
+    "CASHIN_ROLE()": FunctionFragment;
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
     "PAUSER_ROLE()": FunctionFragment;
     "RESCUE_ROLE()": FunctionFragment;
-    "SUPPLIER_ROLE()": FunctionFragment;
     "WIPE_ROLE()": FunctionFragment;
     "controlAllowanceAmount(address,uint256)": FunctionFragment;
     "decreaseSupplierAllowance(address,uint256)": FunctionFragment;
@@ -59,12 +58,11 @@ export interface MintableInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "ADMIN_SUPPLIER_ROLE"
       | "BURN_ROLE"
+      | "CASHIN_ROLE"
       | "DEFAULT_ADMIN_ROLE"
       | "PAUSER_ROLE"
       | "RESCUE_ROLE"
-      | "SUPPLIER_ROLE"
       | "WIPE_ROLE"
       | "controlAllowanceAmount"
       | "decreaseSupplierAllowance"
@@ -87,11 +85,11 @@ export interface MintableInterface extends utils.Interface {
       | "supportsInterface"
   ): FunctionFragment;
 
+  encodeFunctionData(functionFragment: "BURN_ROLE", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "ADMIN_SUPPLIER_ROLE",
+    functionFragment: "CASHIN_ROLE",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "BURN_ROLE", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "DEFAULT_ADMIN_ROLE",
     values?: undefined
@@ -102,10 +100,6 @@ export interface MintableInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "RESCUE_ROLE",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "SUPPLIER_ROLE",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "WIPE_ROLE", values?: undefined): string;
@@ -186,11 +180,11 @@ export interface MintableInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>]
   ): string;
 
+  decodeFunctionResult(functionFragment: "BURN_ROLE", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "ADMIN_SUPPLIER_ROLE",
+    functionFragment: "CASHIN_ROLE",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "BURN_ROLE", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "DEFAULT_ADMIN_ROLE",
     data: BytesLike
@@ -201,10 +195,6 @@ export interface MintableInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "RESCUE_ROLE",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "SUPPLIER_ROLE",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "WIPE_ROLE", data: BytesLike): Result;
@@ -407,17 +397,15 @@ export interface Mintable extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    ADMIN_SUPPLIER_ROLE(overrides?: CallOverrides): Promise<[string]>;
-
     BURN_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    CASHIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     PAUSER_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     RESCUE_ROLE(overrides?: CallOverrides): Promise<[string]>;
-
-    SUPPLIER_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     WIPE_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
@@ -521,17 +509,15 @@ export interface Mintable extends BaseContract {
     ): Promise<[boolean]>;
   };
 
-  ADMIN_SUPPLIER_ROLE(overrides?: CallOverrides): Promise<string>;
-
   BURN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  CASHIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
   PAUSER_ROLE(overrides?: CallOverrides): Promise<string>;
 
   RESCUE_ROLE(overrides?: CallOverrides): Promise<string>;
-
-  SUPPLIER_ROLE(overrides?: CallOverrides): Promise<string>;
 
   WIPE_ROLE(overrides?: CallOverrides): Promise<string>;
 
@@ -635,17 +621,15 @@ export interface Mintable extends BaseContract {
   ): Promise<boolean>;
 
   callStatic: {
-    ADMIN_SUPPLIER_ROLE(overrides?: CallOverrides): Promise<string>;
-
     BURN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    CASHIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
     PAUSER_ROLE(overrides?: CallOverrides): Promise<string>;
 
     RESCUE_ROLE(overrides?: CallOverrides): Promise<string>;
-
-    SUPPLIER_ROLE(overrides?: CallOverrides): Promise<string>;
 
     WIPE_ROLE(overrides?: CallOverrides): Promise<string>;
 
@@ -831,17 +815,15 @@ export interface Mintable extends BaseContract {
   };
 
   estimateGas: {
-    ADMIN_SUPPLIER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
-
     BURN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    CASHIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     PAUSER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     RESCUE_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
-
-    SUPPLIER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     WIPE_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -946,11 +928,9 @@ export interface Mintable extends BaseContract {
   };
 
   populateTransaction: {
-    ADMIN_SUPPLIER_ROLE(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     BURN_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    CASHIN_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     DEFAULT_ADMIN_ROLE(
       overrides?: CallOverrides
@@ -959,8 +939,6 @@ export interface Mintable extends BaseContract {
     PAUSER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     RESCUE_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    SUPPLIER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     WIPE_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

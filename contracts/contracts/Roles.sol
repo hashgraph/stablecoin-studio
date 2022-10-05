@@ -7,9 +7,9 @@ abstract contract Roles {
     /**
     * @dev Role that allows to mint token
     * 
-    * keccak_256("SUPPLIER_ROLE")
+    * keccak_256("CASHIN_ROLE")
     */ 
-    bytes32 public constant SUPPLIER_ROLE = 0xd1ae8bbdabd60d63e418b84f5ad6f9cba90092c9816d7724d85f0d4e4bea2c60;
+    bytes32 public constant CASHIN_ROLE = 0x53300d27a2268d3ff3ecb0ec8e628321ecfba1a08aed8b817e8acf589a52d25c;
 
     /**
     * @dev Role that allows to burn token
@@ -25,13 +25,6 @@ abstract contract Roles {
     */ 
     bytes32 public constant WIPE_ROLE = 0x515f99f4e5a381c770462a8d9879a01f0fd4a414a168a2404dab62a62e1af0c3;
     
-    /**
-    * @dev Role that allows to manage supplier functionality
-    * 
-    * keccak_256("ADMIN_SUPPLIER_ROLE")
-    */    
-    bytes32 public constant ADMIN_SUPPLIER_ROLE = 0x8dd0f644b9b923c24aa7291efd0bd4141a413ec8cdb492e43928e281ce1a38e9;
-
     /**
     * @dev Role that allows to rescue both tokens and hbar
     * 

@@ -156,7 +156,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "ADMIN_SUPPLIER_ROLE",
+    name: "BURN_ROLE",
     outputs: [
       {
         internalType: "bytes32",
@@ -169,7 +169,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "BURN_ROLE",
+    name: "CASHIN_ROLE",
     outputs: [
       {
         internalType: "bytes32",
@@ -209,19 +209,6 @@ const _abi = [
   {
     inputs: [],
     name: "RESCUE_ROLE",
-    outputs: [
-      {
-        internalType: "bytes32",
-        name: "",
-        type: "bytes32",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "SUPPLIER_ROLE",
     outputs: [
       {
         internalType: "bytes32",
