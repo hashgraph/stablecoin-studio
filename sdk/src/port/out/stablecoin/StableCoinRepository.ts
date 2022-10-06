@@ -60,7 +60,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			const resObject: IStableCoinList[] = [];
 			const pk = this.networkAdapter.provider.getPublicKeyString(privateKey);
 			const res = await axios.get<ITokenList>(
-				this.URI_BASE + 'tokens?limit=100&publickey=' + pk,
+				this.URI_BASE + 'tokens?limit=200&publickey=' + pk,
 			);
 			res.data.tokens.map((item: IToken) => {
 				if (item.memo !== '') {
@@ -112,16 +112,17 @@ export default class StableCoinRepository implements IStableCoinRepository {
 				),
 				// expirationTime: response.data.expiry_timestamp,
 				memo: response.data.memo,
-				// paused: response.data.pause_status,
+				paused: response.data.pause_status,
 				freezeDefault: response.data.freeze_default,
 				// kycStatus: string;
-				// deleted: response.data.deleted,
+				deleted: response.data.deleted ?? '',
 				adminKey: getKeyOrDefault(response.data.admin_key) as PublicKey,
 				kycKey: getKeyOrDefault(response.data.kyc_key),
 				freezeKey: getKeyOrDefault(response.data.freeze_key),
 				wipeKey: getKeyOrDefault(response.data.wipe_key),
 				supplyKey: getKeyOrDefault(response.data.supply_key),
-				// pauseKey: response.data.pause_key,
+				pauseKey: getKeyOrDefault(response.data.pause_key),
+				autoRenewAccount: response.data.auto_renew_account
 			});
 		} catch (error) {
 			return Promise.reject<StableCoin>(error);

@@ -221,6 +221,49 @@ export class StableCoin extends BaseEntity {
 		this._autoRenewAccount = value;
 	}
 
+	/**
+	 * Expiration Time
+	 */
+	 private _expirationTime: string;
+	 public get expirationTime(): string {
+		 return this._expirationTime;
+	 }
+	 public set expirationTime(value: string) {
+		 this._expirationTime = value;
+	 }
+	
+	 /**
+	 * freeze Status
+	 */
+	  private _freezed: string;
+	  public get freezed(): string {
+		  return this._freezed;
+	  }
+	  public set freezed(value: string) {
+		  this._freezed = value;
+	  }
+
+	  /**
+	 * pause Status
+	 */
+	   private _paused: string;
+	   public get paused(): string {
+		   return this._paused;
+	   }
+	   public set paused(value: string) {
+		   this._paused = value;
+	   }
+
+	/**
+	 * deleted Status
+	 */
+	 private _deleted: string;
+	 public get deleted(): string {
+		 return this._deleted;
+	 }
+	 public set deleted(value: string) {
+		 this._deleted = value;
+	 }
 	constructor(params: {
 		name: string;
 		symbol: string;
@@ -235,12 +278,17 @@ export class StableCoin extends BaseEntity {
 		kycKey?: PublicKey | ContractId;
 		wipeKey?: PublicKey | ContractId;
 		pauseKey?: PublicKey | ContractId;
+		paused ?:string;
 		supplyKey?: PublicKey | ContractId;
 		treasury?: AccountId;
 		tokenType?: TokenType;
 		supplyType?: TokenSupplyType;
 		id?: string;
 		autoRenewAccount?: AccountId;
+		expirationTime?:string;
+		freezed?:string;
+		deleted?:string;
+		
 	}) {
 		super();
 		const {
@@ -263,6 +311,10 @@ export class StableCoin extends BaseEntity {
 			supplyType,
 			id,
 			autoRenewAccount,
+			expirationTime,
+			freezed,
+			deleted,
+			paused
 		} = params;
 		this.adminKey = adminKey;
 		this.name = name;
@@ -286,6 +338,11 @@ export class StableCoin extends BaseEntity {
 				: TokenSupplyType.FINITE;
 		this.id = id ?? '0.0.0';
 		this.autoRenewAccount = autoRenewAccount ?? new AccountId('0.0.0');
+		this.expirationTime = expirationTime ?? '';
+		this.paused = paused ?? '';
+		this.freezed = freezed ?? '';
+		this.deleted = deleted ?? '';
+
 	}
 
 	public checkDecimals(value: number): number {
