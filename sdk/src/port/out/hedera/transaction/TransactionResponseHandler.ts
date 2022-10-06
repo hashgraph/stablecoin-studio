@@ -21,7 +21,6 @@ export class TransactionResposeHandler {
 		abi?: any,
 	): Promise<HTSResponse> {
 		let results: Uint8Array = new Uint8Array();
-
 		if (responseType == TransactionType.RECEIPT) {
 			const transactionReceipt: TransactionReceipt | undefined =
 				await this.getReceipt(clientOrSigner, transactionResponse);
@@ -99,8 +98,8 @@ export class TransactionResposeHandler {
 		transactionResponse:
 			| TransactionResponse
 			| MessageTypes.TransactionResponse,
-	): Promise<TransactionReceipt | undefined> {
-		let transactionReceipt: TransactionReceipt | undefined;
+	): Promise<TransactionReceipt> {
+		let transactionReceipt: TransactionReceipt;
 		if (clientOrSigner instanceof Client) {
 			if (transactionResponse instanceof TransactionResponse) {
 				transactionReceipt = await transactionResponse.getReceipt(
@@ -111,7 +110,6 @@ export class TransactionResposeHandler {
 					this.getHashconnectTransactionReceipt(transactionResponse);
 			}
 		} else {
-			console.log(transactionResponse);
 			if (transactionResponse instanceof TransactionResponse) {
 				transactionReceipt =
 					await transactionResponse.getReceiptWithSigner(
@@ -127,13 +125,11 @@ export class TransactionResposeHandler {
 
 	private getHashconnectTransactionReceipt(
 		transactionResponse: MessageTypes.TransactionResponse,
-	): TransactionReceipt | undefined {
+	): TransactionReceipt {
 		const receipt = transactionResponse.receipt;
 		console.log(receipt);
 		if (receipt && receipt instanceof Uint8Array) {
 			return TransactionReceipt.fromBytes(receipt);
-		} else if (!receipt) {
-			return undefined;
 		} else {
 			throw new Error(
 				`Unexpected receipt type from Hashpack: ${receipt}`,
@@ -144,14 +140,14 @@ export class TransactionResposeHandler {
 	private getHashconnectTransactionRecord(
 		transactionResponse: MessageTypes.TransactionResponse,
 	): TransactionRecord | undefined {
-		console.log(transactionResponse);
 		const record = transactionResponse.record;
 		if (record && record instanceof Uint8Array) {
 			return TransactionRecord.fromBytes(record);
 		} else if (!record) {
-			return undefined;
-		} else {
 			throw new Error(`Unexpected receipt type from Hashpack: ${record}`);
+		} else {
+			console.log(record); // TODO not working with records (object is received)
+			return undefined;
 		}
 	}
 
