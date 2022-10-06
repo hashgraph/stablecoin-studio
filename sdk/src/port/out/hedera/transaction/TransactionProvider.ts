@@ -5,7 +5,7 @@ import {
 	Hbar,
 	TokenSupplyType,
 	ContractCreateFlow,
-	PrivateKey,
+	PrivateKey as HPrivateKey,
 	TokenWipeTransaction,
 	TokenMintTransaction,
 	TokenBurnTransaction,
@@ -17,6 +17,7 @@ import {
 } from '@hashgraph/sdk';
 import { ContractId, PublicKey } from '../../../in/sdk/sdk.js';
 import { ICreateTokenResponse } from '../types.js';
+import PrivateKey from '../../../../domain/context/account/PrivateKey';
 
 export class TransactionProvider {
 	public static buildContractExecuteTransaction(
@@ -104,15 +105,13 @@ export class TransactionProvider {
 		factory: any,
 		parameters: any,
 		gas: number,
-		admPrivateKey?: string,
+		admPrivateKey?: PrivateKey,
 	): ContractCreateFlow {
 		const transaction = new ContractCreateFlow()
 			.setBytecode(factory.bytecode)
 			.setGas(gas);
 		admPrivateKey &&
-			transaction.setAdminKey(
-				PrivateKey.fromStringED25519(admPrivateKey),
-			);
+			transaction.setAdminKey(admPrivateKey.toHashgraphKey());
 		if (parameters) {
 			transaction.setConstructorParameters(parameters);
 		}

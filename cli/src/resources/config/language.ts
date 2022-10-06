@@ -1,3 +1,6 @@
+import colors from 'colors';
+import * as inquirer from 'inquirer';
+
 export const english = {
   general: {
     title: 'Hedera Stable Coin',
@@ -149,6 +152,7 @@ export const english = {
       'Operate with an existing Stable Coin',
       'List Stable Coins',
       'Configuration',
+      new inquirer.Separator(),
       'Exit',
     ],
     changeOptions: [
@@ -156,6 +160,7 @@ export const english = {
       'Edit config path',
       'Edit default network',
       'Manage accounts',
+      new inquirer.Separator(),
       'Return to main menu',
     ],
     manageAccountOptions: [
@@ -163,6 +168,7 @@ export const english = {
       'List accounts',
       'Add new account',
       'Delete account',
+      new inquirer.Separator(),
       'Go back',
     ],
     stableCoinOptions: [
@@ -173,6 +179,7 @@ export const english = {
       'Wipe',
       'Rescue',
       'Role management',
+      new inquirer.Separator(),
       'Return to main menu',
     ],
     roleManagementOptions: [
@@ -180,6 +187,7 @@ export const english = {
       'Revoke role',
       'Edit role',
       'Has role',
+      new inquirer.Separator(),
       'Go back',
     ],
     adminFeatureOptions: ['Current user key', 'None'],
@@ -189,14 +197,20 @@ export const english = {
       'Other key',
       'None',
     ],
-    supplierRoleType: ['Unlimited', 'Limited', 'Back'],
+    supplierRoleType: [
+      'Unlimited',
+      'Limited',
+      new inquirer.Separator(),
+      'Back',
+    ],
     editSupplierRoleOptions: [
       'Increase limit',
       'Decrease limit',
       'Reset limit',
+      new inquirer.Separator(),
       'Back',
     ],
-    backOption: 'Go back',
+    backOption: [new inquirer.Separator(), 'Go back'],
     privateKeyType: ['ED25519', 'ECDSA'],
   },
   state: {
@@ -213,8 +227,8 @@ export const english = {
     associteCompleted: 'Stable coin associated',
   },
   operation: {
-    success: 'Operation has been completed successfully.',
-    reject: 'Operation has not been completed. Please, try again.',
+    success: colors.green('Operation has been completed successfully.'),
+    reject: colors.red('Operation has not been completed. Please, try again.'),
   },
   cashin: {
     unlimitedRole: 'This account have unlimited cash in role',
@@ -227,7 +241,7 @@ export const english = {
     success: 'You have rescued ${tokens} tokens',
   },
   account: {
-    wrong: 'Incorrect account format. Please try again.',
+    wrong: colors.red('Incorrect account format. Please try again.'),
   },
   validations: {
     wrongFormatAddress:
@@ -249,6 +263,7 @@ export const english = {
       'Decrease cash in limit',
       'Reset cash in limit',
       'Check cash in limit',
+      new inquirer.Separator(),
       'Go back',
     ],
   },

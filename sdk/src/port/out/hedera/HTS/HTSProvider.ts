@@ -142,13 +142,14 @@ export default class HTSProvider implements IProvider {
 		privateKey?: PrivateKey | string | undefined,
 	): HPublicKey {
 		let key = null;
+		let publicKey = null;
 		if (privateKey instanceof PrivateKey) {
-			key = privateKey.key;
+			publicKey = privateKey.toHashgraphKey().publicKey;
 		} else {
 			key = privateKey;
+			if (!key) throw new HederaError('No private key provided');
+			publicKey = HPrivateKey.fromString(key).publicKey;
 		}
-		if (!key) throw new HederaError('No private key provided');
-		const publicKey = HPrivateKey.fromString(key).publicKey;
 		return publicKey;
 	}
 
@@ -358,7 +359,7 @@ export default class HTSProvider implements IProvider {
 					factory,
 					params,
 					90_000,
-					privateKey.key,
+					privateKey,
 				);
 			const transactionResponse: TransactionResponse =
 				await this.htsSigner.signAndSendTransaction(transaction);

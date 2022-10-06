@@ -1,7 +1,7 @@
 import { ValueObject } from '../../../core/types.js';
 import { PrivateKeyNotValid } from './error/PrivateKeyNotValid.js';
 import PublicKey from './PublicKey.js';
-import { PrivateKey as HPrivateKey } from '@hashgraph/sdk';
+import { Key, PrivateKey as HPrivateKey } from '@hashgraph/sdk';
 import { PrivateKeyTypeNotValid } from './error/PrivateKeyTypeNotValid.js';
 import { PrivateKeyType } from '../../../core/enum.js';
 
@@ -15,7 +15,7 @@ export default class PrivateKey extends ValueObject {
 		this.type = this.validateType(type);
 		this.key = key;
 		this.publicKey = PublicKey.fromHederaKey(
-			HPrivateKey.fromString(key).publicKey,
+			this.toHashgraphKey().publicKey,
 		);
 	}
 
@@ -32,5 +32,11 @@ export default class PrivateKey extends ValueObject {
 			throw new PrivateKeyNotValid(type);
 		}
 		return type;
+	}
+
+	public toHashgraphKey(): HPrivateKey {
+		return this.type === PrivateKeyType.ED25519
+			? HPrivateKey.fromStringED25519(this.key)
+			: HPrivateKey.fromStringECDSA(this.key);
 	}
 }

@@ -365,7 +365,6 @@ export default class HashPackProvider implements IProvider {
 					factory,
 					params,
 					90_000,
-					'1234',
 				);
 			const transactionResponse =
 				await this.hashPackSigner.signAndSendTransaction(transaction);
@@ -467,13 +466,14 @@ export default class HashPackProvider implements IProvider {
 		privateKey?: PrivateKey | string | undefined,
 	): string {
 		let key = null;
+		let publicKey = null;
 		if (privateKey instanceof PrivateKey) {
-			key = privateKey.key;
+			publicKey = privateKey.toHashgraphKey().publicKey.toStringRaw();
 		} else {
 			key = privateKey;
+			if (!key) throw new HederaError('No private key provided');
+			publicKey = HPrivateKey.fromString(key).publicKey.toStringRaw();
 		}
-		if (!key) throw new HederaError('No private key provided');
-		const publicKey = HPrivateKey.fromString(key).publicKey.toStringRaw();
 		return publicKey;
 	}
 
