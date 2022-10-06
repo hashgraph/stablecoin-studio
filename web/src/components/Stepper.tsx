@@ -12,22 +12,23 @@ import {
 	VStack,
 } from '@chakra-ui/react';
 import type { MouseEvent, ReactNode } from 'react';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export interface Step {
 	number: string;
 	title: string;
-	complete: boolean;
 	children: ReactNode;
 }
 
 interface StepperProps {
+	isValid: boolean;
 	steps: Step[];
 	textDefaultButtonPrimary?: string;
 	textLastButtonPrimary?: string;
 	textDefaultButtonSecondary?: string;
 	textFirstButtonSecondary?: string;
+	currentStep: number;
+	setCurrentStep: (arg0: number) => void;
 	handleFirstButtonSecondary: () => void;
 	handleLastButtonPrimary: () => void;
 }
@@ -38,16 +39,17 @@ const Stepper = (props: StepperProps) => {
 	const { t } = useTranslation('global');
 
 	const {
+		isValid,
 		steps,
 		textDefaultButtonPrimary = t('stepper.nextStep'),
 		textLastButtonPrimary = t('stepper.finish'),
 		textDefaultButtonSecondary = t('stepper.goBack'),
 		textFirstButtonSecondary = t('common.cancel'),
+		currentStep,
+		setCurrentStep,
 		handleFirstButtonSecondary,
 		handleLastButtonPrimary,
 	} = props;
-
-	const [currentStep, setCurrentStep] = useState(0);
 
 	const handleStep = (e: MouseEvent<HTMLButtonElement>, index: number, type: 'next' | 'prev') => {
 		e.preventDefault();
@@ -56,23 +58,27 @@ const Stepper = (props: StepperProps) => {
 	};
 
 	return (
-		<ChakraTabs
-			isFitted
-			isLazy
-			variant='simple'
-			index={currentStep}
-			onChange={(index) => setCurrentStep(index)}
-			position='relative'
-			h='full'
-		>
+		<ChakraTabs isFitted isLazy variant='simple' index={currentStep} position='relative' h='full'>
 			<TabList justifyContent='space-between'>
 				{steps.map((step, index) => {
 					const { title, number } = step;
 
 					const isCurrentStep = currentStep === index;
 
+					const handleChangeTab = () => {
+						setCurrentStep(index);
+					};
+
 					return (
-						<Tab key={index} p='15px'>
+						<Tab
+							key={index}
+							p='15px'
+							isDisabled={index > currentStep}
+							onClick={handleChangeTab}
+							_hover={{
+								cursor: index < currentStep ? 'pointer' : 'default',
+							}}
+						>
 							<Text
 								data-testid={`stepper-step-number-${index + 1}`}
 								fontSize='14px'
@@ -108,7 +114,7 @@ const Stepper = (props: StepperProps) => {
 							key={index}
 						>
 							<VStack h='full' spacing={4} align='stretch'>
-								<Flex flex={1} overflowY='auto'>
+								<Flex flex={1} justify='center' overflowY='auto'>
 									{children}
 								</Flex>
 								<Box h={FOOTER_HEIGHT}>
@@ -128,6 +134,7 @@ const Stepper = (props: StepperProps) => {
 										</Button>
 										<Button
 											data-testid={`stepper-step-panel-button-primary-${index + 1}`}
+											disabled={!isValid}
 											variant='primary'
 											onClick={
 												isLastStep ? handleLastButtonPrimary : (e) => handleStep(e, index, 'next')

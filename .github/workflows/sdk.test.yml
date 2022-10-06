@@ -1,15 +1,15 @@
 name: SDK - Test
-on:
-  pull_request:
-    branches: [main, release/sdk/**, feature/sdk/**]
-    paths:
-      - sdk/**
-      - .github/workflows/sdk.*.yml
-  push:
-    branches: [main, release/sdk/**, feature/sdk/**]
-    paths:
-      - sdk/**
-      - .github/workflows/sdk.*.yml
+# on:
+#   pull_request:
+#     branches: [main, feature/sdk/**]
+#     paths:
+#       - sdk/**
+#       - .github/workflows/sdk.*.yml
+#   push:
+#     branches: [main]
+#     paths:
+#       - sdk/**
+#       - .github/workflows/sdk.*.yml
 defaults:
   run:
     working-directory: sdk
@@ -27,16 +27,20 @@ jobs:
       - name: Install dependencies Contracts
         run: npm install
         working-directory: contracts
+      - name: Install dependencies Hashconnect
+        run: npm install
+        working-directory: hashconnect/lib
       - name: Install dependencies SDK
         run: npm install
       - name: Build Contracts
         run: npm run build
         working-directory: contracts
+      - name: Build Hashconnect
+        run: npm run build
+        working-directory: hashconnect/lib
       - name: Build SDK
         run: npm run build
       - name: Test
         uses: ArtiomTr/jest-coverage-report-action@v2.0.9
         with:
-            working-directory: sdk
-
-
+          working-directory: sdk

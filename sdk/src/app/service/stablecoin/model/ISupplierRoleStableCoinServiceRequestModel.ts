@@ -1,3 +1,4 @@
+import { StableCoinRole } from '../../../../core/enum.js';
 import {
 	IAccountWithKeyRequestModel,
 	IAmountOptionalRequestModel,

@@ -4,6 +4,7 @@ import {
 	TransactionResponse,
 	TransactionReceipt,
 } from '@hashgraph/sdk';
+import { MessageTypes } from 'hashconnect';
 
 export enum TransactionType {
 	RECORD,
@@ -34,6 +35,5 @@ export class HTSResponse {
 export interface ISigner {
 	signAndSendTransaction(
 		transaction: Transaction,
-		signer?: Signer,
-	): Promise<TransactionResponse>;
+	): Promise<TransactionResponse | MessageTypes.TransactionResponse>;
 }

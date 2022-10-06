@@ -6,6 +6,8 @@ import {
   AccountId,
   PrivateKey,
   PublicKey,
+  IStableCoinDetail,
+  EOAccount,
 } from 'hedera-stable-coin-sdk';
 import { IManagedFeatures } from '../../../domain/configuration/interfaces/IManagedFeatures.js';
 import Service from '../Service.js';
@@ -47,7 +49,7 @@ export default class CreateStableCoinService extends Service {
   public async createStableCoin(
     stableCoin: StableCoin,
     isWizard = false,
-  ): Promise<StableCoin> {
+  ): Promise<IStableCoinDetail> {
     if (isWizard) {
       stableCoin = await this.wizardCreateStableCoin();
     }
@@ -75,8 +77,10 @@ export default class CreateStableCoinService extends Service {
     await utilsService.showSpinner(
       new Promise((resolve, reject) => {
         const req: ICreateStableCoinRequest = {
-          accountId: new AccountId(currentAccount.accountId),
-          privateKey: new PrivateKey(currentAccount.privateKey),
+          account: new EOAccount(
+            currentAccount.accountId,
+            new PrivateKey(currentAccount.privateKey),
+          ),
           ...stableCoin,
         };
         sdk

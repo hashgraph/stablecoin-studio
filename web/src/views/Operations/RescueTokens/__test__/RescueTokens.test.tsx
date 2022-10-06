@@ -1,7 +1,7 @@
 import userEvent from '@testing-library/user-event';
 import { waitFor } from '@testing-library/react';
 import { render } from '../../../../test/index';
-import en from '../../../../translations/en/cashOut.json';
+import en from '../../../../translations/en/rescueTokens.json';
 import RescueTokensOperation from '..';
 
 const translations = en;

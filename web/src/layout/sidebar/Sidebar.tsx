@@ -26,7 +26,7 @@ const Sidebar = () => {
 		{
 			icon: 'Gear',
 			title: t('sidebar.details'),
-			route: NamedRoutes.Details,
+			route: NamedRoutes.StableCoinDetails,
 		},
 	];
 

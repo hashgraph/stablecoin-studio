@@ -11,7 +11,7 @@ exports[`<SelectController /> shows error with showErrors=true: ShowingError 1`]
       role="group"
     >
       <label
-        class="chakra-form__label css-1jbsrib"
+        class="chakra-form__label css-1y854pg"
         data-invalid=""
         for="field-:r0:"
         id="field-:r0:-label"

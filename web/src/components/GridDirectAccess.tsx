@@ -26,7 +26,7 @@ const GridDirectAccess = (props: GridDirectAccessProps) => {
 						icon={directAccess.icon}
 						route={directAccess.route}
 						title={directAccess.title}
-						variant={directAccess.variant}
+						isDisabled={directAccess.isDisabled}
 					/>
 				</GridItem>
 			))}

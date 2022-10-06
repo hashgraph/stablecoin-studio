@@ -1,0 +1,50 @@
+name: WEB - Test
+# on:
+#   pull_request:
+#     branches: [main, feature/web/**]
+#     paths:
+#       - web/**
+#       - .github/workflows/web.*.yml
+#   push:
+#     branches: [main]
+#     paths:
+#       - web/**
+#       - .github/workflows/web.*.yml
+defaults:
+  run:
+    working-directory: web
+jobs:
+  test-node:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Use Node.js TLS 16.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.x
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Install dependencies Contracts
+        run: npm install
+        working-directory: contracts
+      - name: Install dependencies Hashconnect
+        run: npm install
+        working-directory: hashconnect/lib
+      - name: Install dependencies SDK
+        run: npm install
+        working-directory: sdk
+      - name: Install dependencies WEB
+        run: npm install
+      - name: Build Contracts
+        run: npm run build
+        working-directory: contracts
+      - name: Build Hashconnect
+        run: npm run build
+        working-directory: hashconnect/lib
+      - name: Build SDK
+        run: npm run build
+        working-directory: sdk
+      - name: Test
+        uses: ArtiomTr/jest-coverage-report-action@v2.0.9
+        with:
+          working-directory: web

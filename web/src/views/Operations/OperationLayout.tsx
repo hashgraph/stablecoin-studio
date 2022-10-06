@@ -1,42 +1,28 @@
 import type { ReactNode } from 'react';
-import { useEffect, useState } from 'react';
 import type { ButtonProps as ChakraButtonProps } from '@chakra-ui/react';
 import { Button, Flex, Stack, Heading, SimpleGrid } from '@chakra-ui/react';
-import { RouterManager } from '../../Router/RouterManager';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { RouterManager } from '../../Router/RouterManager';
 import BaseContainer from '../../components/BaseContainer';
 import DetailsReview from '../../components/DetailsReview';
+import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
 
 export interface OperationLayoutProps {
 	LeftContent: ReactNode;
 	onConfirm: () => void;
 	confirmBtnProps?: ChakraButtonProps;
 }
+
 const OperationLayout = ({ LeftContent, onConfirm, confirmBtnProps }: OperationLayoutProps) => {
 	const navigate = useNavigate();
 	const { t } = useTranslation(['operations', 'global']);
-	// TODO: correct type from sdk
-	const [stableCoinData, setStableCoinData] = useState<any>();
-
-	useEffect(() => {
-		getStableCoinDetails();
-	}, []);
+	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
+	const unknown = t('global:common.unknown');
 
 	const handleGoBack = () => {
 		RouterManager.goBack(navigate);
-	};
-
-	const getStableCoinDetails = () => {
-		// TODO: get from sdk
-		setStableCoinData({
-			name: 'Example',
-			symbol: 'example',
-			decimals: 6,
-			initialSupply: 20,
-			totalSupply: 200,
-			supplyType: 'infinite',
-		});
 	};
 
 	return (
@@ -62,15 +48,15 @@ const OperationLayout = ({ LeftContent, onConfirm, confirmBtnProps }: OperationL
 								details={[
 									{
 										label: t('operations:details.name'),
-										value: stableCoinData?.name,
+										value: selectedStableCoin?.name || unknown,
 									},
 									{
 										label: t('operations:details.symbol'),
-										value: stableCoinData?.symbol,
+										value: selectedStableCoin?.symbol || unknown,
 									},
 									{
 										label: t('operations:details.decimals'),
-										value: stableCoinData?.decimals,
+										value: selectedStableCoin?.decimals || unknown,
 									},
 								]}
 							/>
@@ -80,15 +66,24 @@ const OperationLayout = ({ LeftContent, onConfirm, confirmBtnProps }: OperationL
 								details={[
 									{
 										label: t('operations:details.initialSupply'),
-										value: stableCoinData?.initialSupply,
+										value:
+											// @ts-ignore Property 'initialSupply' does not exist on type 'IStableCoinDetail'.
+											selectedStableCoin.initialSupply === ('0' as unknown as BigInt)
+												? unknown
+												: // @ts-ignore Property 'initialSupply' does not exist on type 'IStableCoinDetail'.
+												  selectedStableCoin.initialSupply,
 									},
 									{
 										label: t('operations:details.totalSupply'),
-										value: stableCoinData?.totalSupply,
+										value: selectedStableCoin?.totalSupply || unknown,
 									},
 									{
 										label: t('operations:details.supplyType'),
-										value: stableCoinData?.supplyType,
+										// @ts-ignore Property 'supplyType' does not exist on type 'IStableCoinDetail'.
+										value:
+											selectedStableCoin?.maxSupply === ('0' as unknown as BigInt)
+												? t('operations:details.infinite')
+												: t('operations:details.finite'),
 									},
 								]}
 							/>

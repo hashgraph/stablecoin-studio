@@ -18,7 +18,7 @@
     "build:watch": "tsc -w -p tsconfig.json",
     "build:release": "npm run clean && tsc -p tsconfig.release.json",
     "lint": "eslint . --ext .ts --ext .mts",
-    "test": "JEST=true npx jest --coverage",
+    "test": "JEST=true npx jest --coverage --forceExit",
     "test:vm": "NODE_OPTIONS=--experimental-vm-modules npm run test",
     "prettier": "prettier --config .prettierrc --write .",
     "test:watch": "jest --watch"
