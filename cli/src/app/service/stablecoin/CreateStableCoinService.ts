@@ -28,6 +28,7 @@ export const createdStableCoin = {
   wipeKey: undefined,
   pauseKey: undefined,
   treasury: undefined,
+  autoRenewAccountId: undefined
 };
 
 /**
