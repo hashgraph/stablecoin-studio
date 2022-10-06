@@ -110,7 +110,10 @@ export default class HTSProvider implements IProvider {
 		}
 
 		if (account && account instanceof EOAccount) {
-			client.setOperator(account.accountId.id, account.privateKey.key);
+			client.setOperator(
+				account.accountId.id,
+				account.privateKey.toHashgraphKey(),
+			);
 		} else {
 			throw new Error('Cannot get client: No private key');
 		}
