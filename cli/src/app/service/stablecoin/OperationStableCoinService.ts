@@ -14,6 +14,7 @@ import {
   PrivateKey,
   SDK,
   StableCoinRole,
+  StableCoinMemo,
 } from 'hedera-stable-coin-sdk';
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 import CashInStableCoinsService from './CashInStableCoinService.js';
@@ -23,7 +24,6 @@ import RescueStableCoinsService from './RescueStableCoinService.js';
 import colors from 'colors';
 import CapabilitiesStableCoinsService from './CapabilitiesStableCoinService.js';
 import BurnStableCoinsService from './BurnStableCoinService.js';
-import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 
 /**
  * Operation Stable Coin Service
@@ -34,11 +34,11 @@ export default class OperationStableCoinService extends Service {
   private stableCoinWithSymbol;
   private roleStableCoinService = new RoleStableCoinsService();
 
-  constructor(tokenId?: string, memo?: string, symbol?: string) {
+  constructor(tokenId?: string, memo?: StableCoinMemo, symbol?: string) {
     super('Operation Stable Coin');
     if (tokenId && memo && symbol) {
       this.stableCoinId = tokenId; //TODO Cambiar name por el id que llegue en la creación del token
-      this.proxyContractId = memo;
+      this.proxyContractId = memo.proxyContract;
       this.stableCoinWithSymbol = `${tokenId} - ${symbol}`;
     }
   }
@@ -88,7 +88,7 @@ export default class OperationStableCoinService extends Service {
         await new DetailsStableCoinsService()
           .getDetailsStableCoins(this.stableCoinId, false)
           .then((response: IStableCoinDetail) => {
-            this.proxyContractId = response.memo;
+            this.proxyContractId = response.memo.proxyContract;
           });
 
         await utilsService.cleanAndShowBanner();
@@ -111,11 +111,10 @@ export default class OperationStableCoinService extends Service {
       'wizard.stableCoinOptions',
     );
 
-    const capabilitiesStableCoin =
-      await new CapabilitiesStableCoinsService().getCapabilitiesStableCoins(
-        this.stableCoinId,
-        sdk.getPublicKey(currentAccount.privateKey.key),
-      );
+    const capabilitiesStableCoin = await this.getCapabilities(
+      sdk,
+      currentAccount,
+    );
 
     switch (
       await utilsService.defaultMultipleAsk(
@@ -332,11 +331,11 @@ export default class OperationStableCoinService extends Service {
 
   private async getCapabilities(
     sdk: SDK,
-    currentAccount: IAccountConfig,
+    currentAccount: EOAccount,
   ): Promise<Capabilities[]> {
     return await new CapabilitiesStableCoinsService().getCapabilitiesStableCoins(
       this.stableCoinId,
-      sdk.getPublicKey(currentAccount.privateKey),
+      sdk.getPublicKey(currentAccount.privateKey.key),
     );
   }
 
@@ -351,14 +350,24 @@ export default class OperationStableCoinService extends Service {
       configAccount.accountId,
       new PrivateKey(configAccount.privateKey),
     );
-    const roleManagementOptions = language.getArray(
-      'wizard.roleManagementOptions',
-    );
 
     const capabilitiesStableCoin = await this.getCapabilities(
       sdk,
       currentAccount,
     );
+    const roleManagementOptions = language
+      .getArray('wizard.roleManagementOptions')
+      .filter((option) => {
+        if (option == 'Edit role') {
+          return capabilitiesStableCoin.some((capability) =>
+            [Capabilities.CASH_IN, Capabilities.CASH_IN_HTS].includes(
+              capability,
+            ),
+          );
+        }
+
+        return true;
+      });
 
     let accountTarget = '0.0.0';
     let limit = '';
@@ -374,7 +383,7 @@ export default class OperationStableCoinService extends Service {
         this.stableCoinWithSymbol,
       )
     ) {
-      case roleManagementOptions[0]:
+      case 'Grant role':
         await utilsService.cleanAndShowBanner();
 
         utilsService.displayCurrentUserInfo(
@@ -414,7 +423,7 @@ export default class OperationStableCoinService extends Service {
           );
         }
         break;
-      case roleManagementOptions[1]:
+      case 'Revoke role':
         await utilsService.cleanAndShowBanner();
 
         utilsService.displayCurrentUserInfo(
@@ -449,7 +458,7 @@ export default class OperationStableCoinService extends Service {
           );
         }
         break;
-      case roleManagementOptions[2]:
+      case 'Edit role':
         await utilsService.cleanAndShowBanner();
 
         //Call to edit role
@@ -713,7 +722,7 @@ export default class OperationStableCoinService extends Service {
             await this.roleManagementFlow();
         }
         break;
-      case roleManagementOptions[3]:
+      case 'Has role':
         await utilsService.cleanAndShowBanner();
 
         utilsService.displayCurrentUserInfo(
@@ -786,8 +795,6 @@ export default class OperationStableCoinService extends Service {
   }
 
   private async getRole(capabilities: Capabilities[]): Promise<string> {
-    console.log(capabilities);
-
     const rolesAvailability = [
       {
         role: {
@@ -796,8 +803,17 @@ export default class OperationStableCoinService extends Service {
               capability,
             ),
           ),
-          name: 'Supplier Role',
-          value: StableCoinRole.SUPPLIER_ROLE,
+          name: 'Cash in Role',
+          value: StableCoinRole.CASHIN_ROLE,
+        },
+      },
+      {
+        role: {
+          availability: capabilities.some((capability) =>
+            [Capabilities.BURN, Capabilities.BURN_HTS].includes(capability),
+          ),
+          name: 'Burn Role',
+          value: StableCoinRole.BURN_ROLE,
         },
       },
       {

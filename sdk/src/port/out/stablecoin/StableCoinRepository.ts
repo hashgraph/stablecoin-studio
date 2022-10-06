@@ -134,7 +134,10 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 			listCapabilities.push(Capabilities.DETAILS);
 			listCapabilities.push(Capabilities.BALANCE);
-			listCapabilities.push(Capabilities.RESCUE);
+
+			if (stableCoin.memo.htsAccount == stableCoin.treasury.toString()) {
+				listCapabilities.push(Capabilities.RESCUE);
+			}
 
 			if (
 				stableCoin.supplyKey?.toString() ===
@@ -187,6 +190,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 					Capabilities.CASH_IN_HTS,
 					Capabilities.BURN,
 					Capabilities.BURN_HTS,
+					Capabilities.RESCUE,
 				].includes(capability),
 			);
 			if (roleManagement) {

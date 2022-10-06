@@ -47,6 +47,7 @@ import PublicKey from '../../../domain/context/account/PublicKey.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
 import { TokenType } from '../../../domain/context/stablecoin/TokenType.js';
 import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.js';
+import { StableCoinMemo } from '../../../domain/context/stablecoin/StableCoinMemo.js';
 import { IAllowanceRequest } from './request/IRequestContracts.js';
 import { AppMetadata } from '../../out/hedera/hashpack/types/types.js';
 import {
@@ -117,6 +118,7 @@ export {
 	AuthenticationRequestMessage,
 	AuthenticationResponseMessage,
 	Capabilities,
+	StableCoinMemo,
 };
 
 export interface ConfigurationOptions {

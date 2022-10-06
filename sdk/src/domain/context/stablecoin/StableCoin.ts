@@ -4,6 +4,7 @@ import PublicKey from '../account/PublicKey.js';
 import ContractId from '../contract/ContractId.js';
 import InvalidAmountDomainError from './error/InvalidAmountDomainError.js';
 import InvalidDecimalRangeDomainError from './error/InvalidDecimalRangeDomainError.js';
+import { StableCoinMemo } from './StableCoinMemo.js';
 import { TokenSupplyType } from './TokenSupply.js';
 import { TokenType } from './TokenType.js';
 
@@ -102,11 +103,11 @@ export class StableCoin extends BaseEntity {
 	/**
 	 * Memo field
 	 */
-	private _memo: string;
-	public get memo(): string {
+	private _memo: StableCoinMemo;
+	public get memo(): StableCoinMemo {
 		return this._memo;
 	}
-	public set memo(value: string) {
+	public set memo(value: StableCoinMemo) {
 		this._memo = value;
 	}
 
@@ -270,7 +271,9 @@ export class StableCoin extends BaseEntity {
 		this.initialSupply = initialSupply ?? 0n;
 		this.totalSupply = totalSupply ?? 0n;
 		this.maxSupply = maxSupply ?? 0n;
-		this.memo = memo ?? '';
+		this.memo = memo
+			? StableCoinMemo.fromJson(memo)
+			: StableCoinMemo.empty();
 		this.freezeKey = freezeKey;
 		this.freezeDefault = freezeDefault ?? false;
 		this.kycKey = kycKey;

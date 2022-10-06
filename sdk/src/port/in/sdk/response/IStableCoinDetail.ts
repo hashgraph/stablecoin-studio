@@ -1,6 +1,7 @@
 import ContractId from '../../../../domain/context/contract/ContractId.js';
 import { ICustomFees } from '../../../../app/service/stablecoin/model/stablecoindetail/ICustomFees.js';
 import PublicKey from '../../../../domain/context/account/PublicKey.js';
+import { StableCoinMemo } from '../../../../domain/context/stablecoin/StableCoinMemo.js';
 
 export default interface IStableCoinDetail {
 	tokenId?: string;
@@ -12,7 +13,7 @@ export default interface IStableCoinDetail {
 	customFee?: ICustomFees;
 	treasuryId?: string;
 	expirationTime?: string;
-	memo?: string;
+	memo?: StableCoinMemo;
 	paused?: string;
 	freezeDefault?: boolean;
 	// kycStatus: string;
