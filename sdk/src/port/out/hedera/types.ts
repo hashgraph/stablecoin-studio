@@ -1,6 +1,6 @@
 import { HashConnectTypes, MessageTypes } from 'hashconnect';
 import { TokenId } from '@hashgraph/sdk';
-import { Account, AccountId, EOAccount, PublicKey } from '../../in/sdk/sdk.js';
+import { Account, AccountId, PublicKey } from '../../in/sdk/sdk.js';
 
 export interface ICallContractRequest {
 	contractId: string;
@@ -10,7 +10,7 @@ export interface ICallContractRequest {
 }
 
 export interface ICallContractWithAccountRequest extends ICallContractRequest {
-	account: Account
+	account: Account;
 }
 
 export interface ICreateTokenResponse {
@@ -41,7 +41,7 @@ export interface IWipeTokenRequest extends IHTSTokenRequest {
 	wipeAccountId: string;
 }
 
-export interface ITransferTokenRequest extends IHTSTokenRequest{
+export interface ITransferTokenRequest extends IHTSTokenRequest {
 	outAccountId: string;
 	inAccountId: string;
 }

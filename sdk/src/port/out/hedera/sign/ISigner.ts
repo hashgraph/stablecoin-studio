@@ -1,6 +1,5 @@
 import {
 	Transaction,
-	Signer,
 	TransactionResponse,
 	TransactionReceipt,
 } from '@hashgraph/sdk';
