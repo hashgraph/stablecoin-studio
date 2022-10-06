@@ -223,24 +223,13 @@ export class StableCoin extends BaseEntity {
 	/**
 	 * Expiration Time
 	 */
-	 private _expirationTime: string;
-	 public get expirationTime(): string {
-		 return this._expirationTime;
+	 private _autoRenewAccountPeriod: number;
+	 public get autoRenewAccountPeriod(): number {
+		 return this._autoRenewAccountPeriod;
 	 }
-	 public set expirationTime(value: string) {
-		 this._expirationTime = value;
+	 public set autoRenewAccountPeriod(value: number) {
+		 this._autoRenewAccountPeriod = value;
 	 }
-	
-	 /**
-	 * freeze Status
-	 */
-	  private _freezed: string;
-	  public get freezed(): string {
-		  return this._freezed;
-	  }
-	  public set freezed(value: string) {
-		  this._freezed = value;
-	  }
 
 	  /**
 	 * pause Status
@@ -284,8 +273,7 @@ export class StableCoin extends BaseEntity {
 		supplyType?: TokenSupplyType;
 		id?: string;
 		autoRenewAccount?: AccountId;
-		expirationTime?:string;
-		freezed?:string;
+		autoRenewAccountPeriod?:number;
 		deleted?:string;
 		
 	}) {
@@ -310,8 +298,7 @@ export class StableCoin extends BaseEntity {
 			supplyType,
 			id,
 			autoRenewAccount,
-			expirationTime,
-			freezed,
+			autoRenewAccountPeriod,
 			deleted,
 			paused
 		} = params;
@@ -337,9 +324,8 @@ export class StableCoin extends BaseEntity {
 				: TokenSupplyType.FINITE;
 		this.id = id ?? '0.0.0';
 		this.autoRenewAccount = autoRenewAccount ?? new AccountId('0.0.0');
-		this.expirationTime = expirationTime ?? '';
+		this.autoRenewAccountPeriod = autoRenewAccountPeriod ?? ;
 		this.paused = paused ?? '';
-		this.freezed = freezed ?? '';
 		this.deleted = deleted ?? '';
 
 	}

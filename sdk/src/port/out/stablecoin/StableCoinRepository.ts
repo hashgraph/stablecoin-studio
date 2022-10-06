@@ -110,13 +110,15 @@ export default class StableCoinRepository implements IStableCoinRepository {
 				freezeDefault: response.data.freeze_default,
 				// kycStatus: string;
 				deleted: response.data.deleted ?? '',
+				autoRenewAccount: response.data.auto_renew_account,
+				autoRenewAccountPeriod: response.data.auto_renew_period /(3600 *24),
 				adminKey: getKeyOrDefault(response.data.admin_key) as PublicKey,
 				kycKey: getKeyOrDefault(response.data.kyc_key),
 				freezeKey: getKeyOrDefault(response.data.freeze_key),
 				wipeKey: getKeyOrDefault(response.data.wipe_key),
 				supplyKey: getKeyOrDefault(response.data.supply_key),
 				pauseKey: getKeyOrDefault(response.data.pause_key),
-				autoRenewAccount: response.data.auto_renew_account
+			
 			});
 		} catch (error) {
 			return Promise.reject<StableCoin>(error);
