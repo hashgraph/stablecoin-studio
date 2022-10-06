@@ -156,20 +156,35 @@ export default class UtilitiesService extends Service {
     token?: string,
   ): Promise<string> {
     if (network) {
-      question = question + ' ' + colors.cyan('(' + network + ')');
+      question =
+        question +
+        ' ' +
+        colors.underline(colors.bold('Network:')) +
+        ' ' +
+        colors.cyan('(' + network + ')');
     }
     if (account) {
-      question = question + ' ' + colors.magenta('(' + account + ')');
+      question =
+        question +
+        ' ' +
+        colors.underline(colors.bold('Account:')) +
+        ' ' +
+        colors.magenta('(' + account + ')');
     }
     if (token) {
-      question = question + ' ' + colors.yellow('(' + token + ')');
+      question =
+        question +
+        ' ' +
+        colors.underline(colors.bold('Stablecoin:')) +
+        ' ' +
+        colors.yellow('(' + token + ')');
     }
     const variable = await inquirer.prompt({
       name: 'response',
       type: 'rawlist',
       message: question,
       choices: goBack
-        ? choices.concat(language.getText('wizard.backOption'))
+        ? choices.concat(language.getArray('wizard.backOption'))
         : choices,
     });
     return variable.response;
