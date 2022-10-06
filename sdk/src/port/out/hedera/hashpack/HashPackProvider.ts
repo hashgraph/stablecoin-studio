@@ -149,7 +149,6 @@ export default class HashPackProvider implements IProvider {
 		});
 
 		this.hc.acknowledgeMessageEvent.on((msg) => {
-			// console.log('acknowledgeMessageEvent event', msg);
 			this.eventService.emit(
 				ProviderEventNames.providerAcknowledgeMessageEvent,
 				msg,
