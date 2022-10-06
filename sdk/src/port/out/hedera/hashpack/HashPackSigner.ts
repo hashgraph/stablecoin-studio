@@ -57,6 +57,7 @@ export class HashPackSigner implements ISigner {
 					metadata: {
 						accountToSign: this.signer.getAccountId().toString(),
 						returnTransaction: false,
+						getRecord: true
 					},
 				});
 			}

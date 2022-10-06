@@ -104,7 +104,7 @@ export class WebSocketRelay implements IRelay {
         if (this.hc.debug) console.log("hashconnect - reconnecting...")
 
         this.connectToSocket(async () => {
-            for(let topic of this.subscribedTopics) {
+            for(const topic of this.subscribedTopics) {
                 await this.subscribe(topic);
             }
             this.hc.status = HashConnectConnectionState.Connected;
@@ -120,13 +120,12 @@ export class WebSocketRelay implements IRelay {
         this.socket.send(JSON.stringify({ action: 'sub', topic: topic }));
 
         this.socket.onmessage = (e: WebSocket.MessageEvent) => {
-            console.log("process", e)
+            if (this.hc.debug) console.log("process", e);
             this.processMessage(e);
         };
     }
 
     addDecryptionKey(privKey: string, topic: string) {
-        console.log("hashconnect - Adding decryption key \n PrivKey: " + privKey);
         if (this.hc.debug) console.log("hashconnect - Adding decryption key \n PrivKey: " + privKey);
         this.hc.encryptionKeys[topic] = privKey;
     }
