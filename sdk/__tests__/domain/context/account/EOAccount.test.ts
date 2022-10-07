@@ -18,8 +18,8 @@ describe('🧪 [DOMAIN] EOAccount', () => {
 			ACCOUNTS.testnet.privateKey,
 		);
 		expect(account).not.toBeNull();
-		expect(account.accountId).toBe(ACCOUNTS.testnet.accountId);
-		expect(account.privateKey).toBe(ACCOUNTS.testnet.privateKey);
+		expect(account.accountId).toStrictEqual(ACCOUNTS.testnet.accountId);
+		expect(account.privateKey).toStrictEqual(ACCOUNTS.testnet.privateKey);
 	});
 
 	it('Expect to fail on invalid private key', () => {
