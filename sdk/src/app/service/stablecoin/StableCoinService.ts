@@ -83,18 +83,20 @@ export default class StableCoinService extends Service {
 			maxSupply: stableCoin.maxSupply,
 			// customFee:stableCoin.,
 			treasuryId: stableCoin.treasury.id,
-			// expirationTime:stableCoin.,
-			memo: stableCoin.memo,
-			// paused:stableCoin.,
 			freezeDefault: stableCoin.freezeDefault,
+			paused:stableCoin.paused,
+			memo: stableCoin.memo,
 			// kycStatus: string;
-			// deleted:stableCoin.,
+			deleted:stableCoin.deleted,
+			autoRenewAccount: stableCoin.autoRenewAccount,
+			autoRenewAccountPeriod: stableCoin.autoRenewAccountPeriod,
 			adminKey: stableCoin.adminKey,
 			kycKey: stableCoin.kycKey,
 			freezeKey: stableCoin.freezeKey,
 			wipeKey: stableCoin.wipeKey,
 			supplyKey: stableCoin.supplyKey,
-			pauseKey: stableCoin.pauseKey,
+			pauseKey: stableCoin.pauseKey
+			
 		};
 		return stableCoinDetails;
 		// cast

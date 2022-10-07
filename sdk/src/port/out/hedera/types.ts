@@ -10,7 +10,7 @@ export interface ICallContractRequest {
 }
 
 export interface ICallContractWithAccountRequest extends ICallContractRequest {
-	account: Account
+	account: Account;
 }
 
 export interface ICreateTokenResponse {
@@ -29,6 +29,7 @@ export interface ICreateTokenResponse {
 	pauseKey?: PublicKey;
 	supplyKey?: PublicKey;
 	tokenId: TokenId;
+	autoRenewAccountId?: AccountId;
 }
 
 export interface IHTSTokenRequest {
@@ -41,7 +42,7 @@ export interface IWipeTokenRequest extends IHTSTokenRequest {
 	wipeAccountId: string;
 }
 
-export interface ITransferTokenRequest extends IHTSTokenRequest{
+export interface ITransferTokenRequest extends IHTSTokenRequest {
 	outAccountId: string;
 	inAccountId: string;
 }
