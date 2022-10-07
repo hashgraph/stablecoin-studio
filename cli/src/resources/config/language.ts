@@ -45,7 +45,7 @@ export const english = {
     askToken: 'What is the id of the stable coin you want to operate with?',
     askDoSomething: 'What do you want to do?',
     askOptionalProps:
-      'Do you want to configure the initial supply, max supply, decimalsqui?',
+      'Do you want to configure the initial supply, max supply, decimals?',
     askInitialSupply: 'What will be the initial supply?',
     askSupplyType: 'Do you want that the token supply will be infinite?',
     askTotalSupply: 'What will be the max supply?',
@@ -182,7 +182,12 @@ export const english = {
       'Go back',
     ],
     adminFeatureOptions: ['Current user key', 'None'],
-    featureOptions: ['The smart contract', 'Current user key', 'Other key', 'None'],
+    featureOptions: [
+      'The smart contract',
+      'Current user key',
+      'Other key',
+      'None',
+    ],
     supplierRoleType: ['Unlimited', 'Limited', 'Back'],
     editSupplierRoleOptions: [
       'Increase limit',
@@ -203,7 +208,7 @@ export const english = {
     wipeCompleted: 'Wipe completed',
     detailsCompleted: 'Details loaded',
     balanceCompleted: 'Balance loaded',
-    associteCompleted:'Stable coin associated'
+    associteCompleted: 'Stable coin associated',
   },
   operation: {
     success: 'Operation has been completed successfully.',

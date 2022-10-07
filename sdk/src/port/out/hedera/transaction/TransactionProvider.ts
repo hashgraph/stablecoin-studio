@@ -70,13 +70,18 @@ export class TransactionProvider {
 			.setInitialSupply(values.initialSupply)
 			.setTokenMemo(values.memo)
 			.setFreezeDefault(values.freezeDefault)
-			.setTreasuryAccountId(getTreasuryAccount(AccountId.fromString(values.treasuryAccountId.id), 
-													 contractId, values.supplyKey));
-			if (values.autoRenewAccountId){
-				transaction.setAutoRenewAccountId (AccountId.fromString(values.autoRenewAccountId.toString()));
-			}
-			
-													 
+			.setTreasuryAccountId(
+				getTreasuryAccount(
+					AccountId.fromString(values.treasuryAccountId.id),
+					contractId,
+					values.supplyKey,
+				),
+			);
+		if (values.autoRenewAccountId) {
+			transaction.setAutoRenewAccountId(
+				AccountId.fromString(values.autoRenewAccountId.toString()),
+			);
+		}
 
 		const adminKey = getKey(contractId, values.adminKey);
 		const freezeKey = getKey(contractId, values.freezeKey);
