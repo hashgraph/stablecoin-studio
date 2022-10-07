@@ -3,13 +3,11 @@ import type {
 	SelectControllerProps as BaseSelectControllerProps,
 	SelectOption,
 } from '../SelectController';
-// TODO: Reconnect with common render
-// import { render } from '../../../test/index';
+import { render } from '../../../test/index';
 import type { UseFormReturn } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
-import { act, waitFor, render } from '@testing-library/react';
+import { act, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { ChakraProvider } from '@chakra-ui/react';
 import translations from '../../../translations/en/global.json';
 
 describe(`<${SelectController.name} />`, () => {
@@ -40,9 +38,7 @@ describe(`<${SelectController.name} />`, () => {
 	};
 
 	const factoryComponent = (props: SelectControllerProps = defaultProps) => {
-		return render(<RenderWithForm {...props} />, {
-			wrapper: ({ children }) => <ChakraProvider>{children}</ChakraProvider>,
-		});
+		return render(<RenderWithForm {...props} />);
 	};
 
 	test('reports correctly the values', () => {

@@ -11,7 +11,7 @@ exports[`<SelectController /> doesn't show error with showError=false: NotShowin
       role="group"
     >
       <label
-        class="chakra-form__label css-2gx1h6"
+        class="chakra-form__label css-1jbsrib"
         data-invalid=""
         for="field-:r6:"
         id="field-:r6:-label"
@@ -20,7 +20,7 @@ exports[`<SelectController /> doesn't show error with showError=false: NotShowin
           class="chakra-stack css-84zodg"
         >
           <p
-            class="chakra-text css-0"
+            class="chakra-text css-mgupmj"
             data-testid="selector-label"
           >
             Select an option
@@ -28,7 +28,7 @@ exports[`<SelectController /> doesn't show error with showError=false: NotShowin
         </div>
       </label>
       <div
-        class="css-0"
+        class="css-hfeh7c"
       >
         <span
           class="css-1f43avz-a11yText-A11yText"
@@ -41,14 +41,14 @@ exports[`<SelectController /> doesn't show error with showError=false: NotShowin
           class="css-1f43avz-a11yText-A11yText"
         />
         <div
-          class=" css-1hs1ygi"
+          class=" css-1gc7io2"
           data-invalid="true"
         >
           <div
-            class="css-0"
+            class="css-3y2vuh"
           >
             <span
-              class="chakra-text css-0"
+              class="chakra-text css-19fpr04"
               data-testid="select-placeholder"
             />
             <div
@@ -78,7 +78,7 @@ exports[`<SelectController /> doesn't show error with showError=false: NotShowin
             class=" css-hfbj6y"
           >
             <div
-              class="css-gmuwbf"
+              class="css-1aabyhj"
             >
               <svg
                 class="chakra-icon css-13otjrl"
@@ -132,7 +132,7 @@ exports[`<SelectController /> shows error with showErrors=true: ShowingError 1`]
       role="group"
     >
       <label
-        class="chakra-form__label css-2gx1h6"
+        class="chakra-form__label css-1jbsrib"
         data-invalid=""
         for="field-:r5:"
         id="field-:r5:-label"
@@ -141,7 +141,7 @@ exports[`<SelectController /> shows error with showErrors=true: ShowingError 1`]
           class="chakra-stack css-84zodg"
         >
           <p
-            class="chakra-text css-0"
+            class="chakra-text css-mgupmj"
             data-testid="selector-label"
           >
             Select an option
@@ -149,7 +149,7 @@ exports[`<SelectController /> shows error with showErrors=true: ShowingError 1`]
         </div>
       </label>
       <div
-        class="css-0"
+        class="css-hfeh7c"
       >
         <span
           class="css-1f43avz-a11yText-A11yText"
@@ -162,14 +162,14 @@ exports[`<SelectController /> shows error with showErrors=true: ShowingError 1`]
           class="css-1f43avz-a11yText-A11yText"
         />
         <div
-          class=" css-1hs1ygi"
+          class=" css-1gc7io2"
           data-invalid="true"
         >
           <div
-            class="css-0"
+            class="css-3y2vuh"
           >
             <span
-              class="chakra-text css-0"
+              class="chakra-text css-19fpr04"
               data-testid="select-placeholder"
             />
             <div
@@ -199,7 +199,7 @@ exports[`<SelectController /> shows error with showErrors=true: ShowingError 1`]
             class=" css-hfbj6y"
           >
             <div
-              class="css-gmuwbf"
+              class="css-1aabyhj"
             >
               <svg
                 class="chakra-icon css-13otjrl"
@@ -235,7 +235,7 @@ exports[`<SelectController /> shows error with showErrors=true: ShowingError 1`]
       </div>
       <div
         aria-live="polite"
-        class="chakra-form__error-message css-170ki1a"
+        class="chakra-form__error-message css-2e3jkk"
         data-testid="form-error-msg"
         id="field-:r5:-feedback"
       />
@@ -259,7 +259,7 @@ exports[`<SelectController /> shows placeholder with default value: DefaultPlace
       role="group"
     >
       <label
-        class="chakra-form__label css-2gx1h6"
+        class="chakra-form__label css-1jbsrib"
         for="field-:r3:"
         id="field-:r3:-label"
       >
@@ -267,7 +267,7 @@ exports[`<SelectController /> shows placeholder with default value: DefaultPlace
           class="chakra-stack css-84zodg"
         >
           <p
-            class="chakra-text css-0"
+            class="chakra-text css-mgupmj"
             data-testid="selector-label"
           >
             Select an option
@@ -275,7 +275,7 @@ exports[`<SelectController /> shows placeholder with default value: DefaultPlace
         </div>
       </label>
       <div
-        class="css-0"
+        class="css-hfeh7c"
       >
         <span
           class="css-1f43avz-a11yText-A11yText"
@@ -288,13 +288,13 @@ exports[`<SelectController /> shows placeholder with default value: DefaultPlace
           class="css-1f43avz-a11yText-A11yText"
         />
         <div
-          class=" css-1hs1ygi"
+          class=" css-1gc7io2"
         >
           <div
-            class="css-0"
+            class="css-3y2vuh"
           >
             <span
-              class="chakra-text css-0"
+              class="chakra-text css-19fpr04"
               data-testid="select-placeholder"
             />
             <div
@@ -323,7 +323,7 @@ exports[`<SelectController /> shows placeholder with default value: DefaultPlace
             class=" css-hfbj6y"
           >
             <div
-              class="css-gmuwbf"
+              class="css-1aabyhj"
             >
               <svg
                 class="chakra-icon css-13otjrl"
@@ -377,7 +377,7 @@ exports[`<SelectController /> shows placeholder with the provided value: CustomP
       role="group"
     >
       <label
-        class="chakra-form__label css-2gx1h6"
+        class="chakra-form__label css-1jbsrib"
         for="field-:r4:"
         id="field-:r4:-label"
       >
@@ -385,7 +385,7 @@ exports[`<SelectController /> shows placeholder with the provided value: CustomP
           class="chakra-stack css-84zodg"
         >
           <p
-            class="chakra-text css-0"
+            class="chakra-text css-mgupmj"
             data-testid="selector-label"
           >
             Select an option
@@ -393,7 +393,7 @@ exports[`<SelectController /> shows placeholder with the provided value: CustomP
         </div>
       </label>
       <div
-        class="css-0"
+        class="css-hfeh7c"
       >
         <span
           class="css-1f43avz-a11yText-A11yText"
@@ -406,13 +406,13 @@ exports[`<SelectController /> shows placeholder with the provided value: CustomP
           class="css-1f43avz-a11yText-A11yText"
         />
         <div
-          class=" css-1hs1ygi"
+          class=" css-1gc7io2"
         >
           <div
-            class="css-0"
+            class="css-3y2vuh"
           >
             <span
-              class="chakra-text css-0"
+              class="chakra-text css-19fpr04"
               data-testid="select-placeholder"
             >
               Value of placeholder
@@ -443,7 +443,7 @@ exports[`<SelectController /> shows placeholder with the provided value: CustomP
             class=" css-hfbj6y"
           >
             <div
-              class="css-gmuwbf"
+              class="css-1aabyhj"
             >
               <svg
                 class="chakra-icon css-13otjrl"
