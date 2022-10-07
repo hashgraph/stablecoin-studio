@@ -28,11 +28,4 @@ describe('🧪 SDK Unit Test', () => {
 		console.log(data);
 		expect(data).not.toBeFalsy();
 	});
-  
-  it('Connects to wallet', async () => {
-    let event;
-    const sdk = getSDK();
-
-    expect(event).not.toBeFalsy();
-  });
 });

@@ -7,63 +7,58 @@ import StableCoinRepository from '../../../../src/port/out/stablecoin/StableCoin
 import { ACCOUNTS, baseCoin } from '../../../core/core.js';
 
 const networkAdapter = () =>
-	jest.mock(
-		'../../../../src/port/out/network/NetworkAdapter',
-	) as unknown as NetworkAdapter;
+  jest.mock(
+    '../../../../src/port/out/network/NetworkAdapter',
+  ) as unknown as NetworkAdapter;
 const provider = () =>
-	jest.mock(
-		'../../../../src/port/out/hedera/Provider',
-	) as unknown as IProvider;
+  jest.mock('../../../../src/port/out/hedera/Provider') as unknown as IProvider;
 
 describe('🧪 [PORT] StableCoinRepository', () => {
-	let repository: StableCoinRepository;
+  let repository: StableCoinRepository;
 
-	beforeAll(async () => {
-		// Mock
-		repository = mockRepo(networkAdapter(), provider());
-	});
-	it('Fails to save a new coin with no provider', async () => {
-		const repo: StableCoinRepository = mockRepo(
-			networkAdapter(),
-			undefined,
-		);
-		await expect(
-			repo.saveCoin(
-				new StableCoin({
-					name: baseCoin.name,
-					symbol: baseCoin.symbol,
-					decimals: baseCoin.decimals,
-				}),
-				ACCOUNTS.testnet,
-			),
-		).rejects.toThrow(HederaError);
-	});
-
-	it('Saves a new coin', async () => {
-		const coin: StableCoin = await repository.saveCoin(
-			new StableCoin({
-				name: baseCoin.name,
-				symbol: baseCoin.symbol,
-				decimals: baseCoin.decimals,
-			}),
-			ACCOUNTS.testnet,
-		);
-		expect(coin).not.toBeNull();
-	});
+  beforeAll(async () => {
+    // Mock
+    repository = mockRepo(networkAdapter(), provider());
+  });
+  it('Saves a new coin', async () => {
+    console.log(repository.saveCoin);
+    const coin: StableCoin = await repository.saveCoin(
+      new StableCoin({
+        name: baseCoin.name,
+        symbol: baseCoin.symbol,
+        decimals: baseCoin.decimals,
+      }),
+      ACCOUNTS.testnet,
+    );
+    expect(coin).not.toBeNull();
+  });
+  it('Fails to save a new coin with no provider', async () => {
+    const repo: StableCoinRepository = mockRepo(networkAdapter(), undefined);
+    await expect(
+      repo.saveCoin(
+        new StableCoin({
+          name: baseCoin.name,
+          symbol: baseCoin.symbol,
+          decimals: baseCoin.decimals,
+        }),
+        ACCOUNTS.testnet,
+      ),
+    ).rejects.toThrow(HederaError);
+  });
 });
 
 function mockRepo(networkAdapter: NetworkAdapter, provider?: IProvider) {
-	const deployFn = (
-			coin: StableCoin,
-			account: Account,
-		) => {
-			throw new Error();
-		};
-	if (!provider) {
-		networkAdapter.provider.deployStableCoin = deployFn;
-	} else {
-		networkAdapter.provider = provider;
-		networkAdapter.provider.deployStableCoin = deployFn;
-	}
-	return new StableCoinRepository(networkAdapter);
+  const deployFnErr = (coin: StableCoin, account: Account) => {
+    throw new Error();
+  };
+  const deployFn = (coin: StableCoin, account: Account) => {
+    return Promise.resolve(coin);
+  };
+  if (!provider) {
+    networkAdapter.provider.deployStableCoin = deployFnErr;
+  } else {
+    networkAdapter.provider = provider;
+    networkAdapter.provider.deployStableCoin = deployFn;
+  }
+  return new StableCoinRepository(networkAdapter);
 }
