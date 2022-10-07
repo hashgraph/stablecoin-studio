@@ -370,7 +370,7 @@ export default class HTSProvider implements IProvider {
 					client,
 				);
 
-			if (!htsResponse.receipt.contractId) {
+			if (!htsResponse?.receipt?.contractId) {
 				throw new Error(
 					`An error ocurred during deployment of ${factory.name}`,
 				);
@@ -455,7 +455,7 @@ export default class HTSProvider implements IProvider {
 				client,
 			);
 
-		if (!htsResponse.receipt.tokenId) {
+		if (!htsResponse?.receipt?.tokenId) {
 			throw new Error(
 				`An error ocurred creating the stable coin ${name}`,
 			);
