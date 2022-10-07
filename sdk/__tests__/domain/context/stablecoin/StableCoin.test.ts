@@ -30,11 +30,11 @@ describe('🧪 [DOMAIN] StableCoin', () => {
 		expect(coin.initialSupply).toBe(0n);
 		expect(coin.maxSupply).toBe(0n);
 		expect(coin.memo).toBe('');
-		expect(coin.freezeKey).toStrictEqual(PublicKey.NULL);
+		expect(coin.freezeKey).toStrictEqual(undefined);
 		expect(coin.freezeDefault).toBe(false);
-		expect(coin.kycKey).toStrictEqual(PublicKey.NULL);
-		expect(coin.wipeKey).toStrictEqual(PublicKey.NULL);
-		expect(coin.supplyKey).toStrictEqual(PublicKey.NULL);
+		expect(coin.kycKey).toStrictEqual(undefined);
+		expect(coin.wipeKey).toStrictEqual(undefined);
+		expect(coin.supplyKey).toStrictEqual(undefined);
 		expect(coin.treasury).toStrictEqual(AccountId.NULL);
 		expect(coin.tokenType).toBe(TokenType.FUNGIBLE_COMMON);
 		expect(coin.supplyType).toBe(TokenSupplyType.INFINITE);
