@@ -4,44 +4,16 @@ exports[`<Router /> should render correctly 1`] = `
 <DocumentFragment>
   <main>
     <div
-      class="css-1nicdo9"
+      class="css-5kdyq4"
     >
       <div
-        class="css-1e9z5ru"
+        class="chakra-spinner css-1pkq0p5"
       >
-        <img
-          alt="Hedera logo"
-          class="chakra-image css-6cymbs"
-          data-testid="hedera-logo"
-          src="hedera-hbar-logo.svg"
-        />
-        <p
-          class="chakra-text css-q6jngl"
-          data-testid="modal-hashpack-title"
+        <span
+          class="css-8b45rq"
         >
-          Your haspack extension is not installed yet
-        </p>
-        <p
-          class="chakra-text css-zxkbt5"
-          data-testid="modal-hashpack-description"
-        >
-          Click in the button bellow to download the extension.
-        </p>
-        <a
-          class="chakra-link css-13jvj27"
-          data-testid="modal-hashpack-link"
-          href="https://www.hashpack.app/download"
-          rel="noopener"
-          target="_blank"
-        >
-          <button
-            class="chakra-button css-l6yrnw"
-            data-testid="modal-hashpack-button"
-            type="button"
-          >
-            Download Hashpack
-          </button>
-        </a>
+          Loading...
+        </span>
       </div>
     </div>
   </main>

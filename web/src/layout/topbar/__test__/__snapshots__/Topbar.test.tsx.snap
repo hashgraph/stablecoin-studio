@@ -187,7 +187,9 @@ exports[`<Topbar /> should render correctly 1`] = `
           </p>
           <p
             class="chakra-text css-15ww2gg"
-          />
+          >
+            testnet
+          </p>
         </div>
         <div
           class="css-dv2lk7"
@@ -208,7 +210,9 @@ exports[`<Topbar /> should render correctly 1`] = `
           </p>
           <p
             class="chakra-text css-mgupmj"
-          />
+          >
+            0.0.48450590
+          </p>
         </div>
         <div
           class="css-dv2lk7"

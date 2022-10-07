@@ -16,10 +16,10 @@ exports[`<OperationLayout /> should render correctly 1`] = `
       data-testid="base-container-children"
     >
       <div
-        class="css-1us6gcn"
+        class="css-f3f3xv"
       >
         <div
-          class="css-1r9sqqd"
+          class="css-1rtxhmh"
         >
           <div
             class="chakra-stack css-n21gh5"
@@ -60,14 +60,14 @@ exports[`<OperationLayout /> should render correctly 1`] = `
                       data-testid="details-review-detail-0"
                     >
                       <p
-                        class="chakra-text css-rhg419"
+                        class="chakra-text css-bpirlf"
                       >
                         Name
                       </p>
                       <p
-                        class="chakra-text css-rhg419"
+                        class="chakra-text css-6b9s8v"
                       >
-                        Example
+                        ManuCoin2
                       </p>
                     </div>
                     <hr
@@ -84,14 +84,14 @@ exports[`<OperationLayout /> should render correctly 1`] = `
                       data-testid="details-review-detail-1"
                     >
                       <p
-                        class="chakra-text css-rhg419"
+                        class="chakra-text css-bpirlf"
                       >
                         Symbol
                       </p>
                       <p
-                        class="chakra-text css-rhg419"
+                        class="chakra-text css-6b9s8v"
                       >
-                        example
+                        MCC2
                       </p>
                     </div>
                     <hr
@@ -108,14 +108,14 @@ exports[`<OperationLayout /> should render correctly 1`] = `
                       data-testid="details-review-detail-2"
                     >
                       <p
-                        class="chakra-text css-rhg419"
+                        class="chakra-text css-bpirlf"
                       >
                         Decimals
                       </p>
                       <p
-                        class="chakra-text css-rhg419"
+                        class="chakra-text css-6b9s8v"
                       >
-                        6
+                        3
                       </p>
                     </div>
                   </div>
@@ -141,14 +141,14 @@ exports[`<OperationLayout /> should render correctly 1`] = `
                       data-testid="details-review-detail-0"
                     >
                       <p
-                        class="chakra-text css-rhg419"
+                        class="chakra-text css-bpirlf"
                       >
                         Initial supply
                       </p>
                       <p
-                        class="chakra-text css-rhg419"
+                        class="chakra-text css-6b9s8v"
                       >
-                        20
+                        -
                       </p>
                     </div>
                     <hr
@@ -165,14 +165,14 @@ exports[`<OperationLayout /> should render correctly 1`] = `
                       data-testid="details-review-detail-1"
                     >
                       <p
-                        class="chakra-text css-rhg419"
+                        class="chakra-text css-bpirlf"
                       >
                         Total supply
                       </p>
                       <p
-                        class="chakra-text css-rhg419"
+                        class="chakra-text css-6b9s8v"
                       >
-                        200
+                        100000
                       </p>
                     </div>
                     <hr
@@ -189,14 +189,14 @@ exports[`<OperationLayout /> should render correctly 1`] = `
                       data-testid="details-review-detail-2"
                     >
                       <p
-                        class="chakra-text css-rhg419"
+                        class="chakra-text css-bpirlf"
                       >
-                        Supply type (infinite or finite)
+                        Supply type
                       </p>
                       <p
-                        class="chakra-text css-rhg419"
+                        class="chakra-text css-6b9s8v"
                       >
-                        infinite
+                        Infinite
                       </p>
                     </div>
                   </div>
