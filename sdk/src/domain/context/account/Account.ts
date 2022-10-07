@@ -6,7 +6,7 @@ import {
 import BaseEntity from '../../BaseEntity.js';
 import { AccountNotValid } from './error/AccountNotValid.js';
 
-export default class Account extends BaseEntity {
+export default abstract class Account extends BaseEntity {
 	public accountId: AccountId;
 	public networkMode: NetworkMode;
 	public privateKey?: PrivateKey;
