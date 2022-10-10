@@ -42,7 +42,7 @@ const OnboardingRoute = ({ status }: { status?: HashConnectConnectionState }) =>
 	return status !== HashConnectConnectionState.Paired ? (
 		<Outlet />
 	) : (
-		<Navigate to={RoutesMappingUrl.dashboard} replace />
+		<Navigate to={RoutesMappingUrl.stableCoinNotSelected} replace />
 	);
 };
 
@@ -75,11 +75,18 @@ const Router = () => {
 		setStatus(HashConnectConnectionState.Paired);
 	};
 
+	const onWalletConnectionChanged = (newStatus: any) => {
+		if (newStatus === HashConnectConnectionState.Disconnected) {
+			setStatus(HashConnectConnectionState.Disconnected);
+		}
+	};
+
 	const instanceSDK = async () =>
 		await SDKService.getInstance({
 			onInit,
 			onWalletExtensionFound,
 			onWalletPaired,
+			onWalletConnectionChanged,
 		});
 
 	const getStatus = async () => {

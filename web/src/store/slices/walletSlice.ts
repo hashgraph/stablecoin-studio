@@ -56,11 +56,17 @@ export const walletSlice = createSlice({
 		setSelectedStableCoin: (state, action) => {
 			state.selectedStableCoin = action.payload;
 		},
+		setStableCoinList: (state, action) => {
+			state.stableCoinList = action.payload;
+		},
 		setHasWalletExtension(state) {
 			state.hasWalletExtension = true;
 		},
 		setIsPaired(state) {
 			state.isPaired = true;
+		},
+		clearData: (state) => {
+			state.data = initialState.data;
 		},
 		reset: () => initialState,
 	},

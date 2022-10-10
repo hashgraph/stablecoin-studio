@@ -46,6 +46,7 @@ interface EventsSetter {
 	onInit: () => void;
 	onWalletExtensionFound: () => void;
 	onWalletPaired: (data: any) => void;
+	onWalletConnectionChanged: (data: any) => void;
 }
 
 export class SDKService {
@@ -62,16 +63,19 @@ export class SDKService {
 				},
 			});
 
-			const { onInit, onWalletExtensionFound, onWalletPaired } = events || {
-				onInit: () => {},
-				onWalletAcknowledgeMessageEvent: () => {},
-				onWalletExtensionFound: () => {},
-				onWalletPaired: () => {},
-			};
+			const { onInit, onWalletExtensionFound, onWalletPaired, onWalletConnectionChanged } =
+				events || {
+					onInit: () => {},
+					onWalletAcknowledgeMessageEvent: () => {},
+					onWalletExtensionFound: () => {},
+					onWalletPaired: () => {},
+					onWalletConnectionChanged: () => {},
+				};
 
 			await SDKService.instance.init({ onInit });
 			SDKService.instance.onWalletExtensionFound(onWalletExtensionFound);
 			SDKService.instance.onWalletPaired(onWalletPaired);
+			SDKService.instance.onWalletConnectionChanged(onWalletConnectionChanged);
 		}
 
 		return SDKService.instance;
