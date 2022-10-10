@@ -67,7 +67,13 @@ const Router = () => {
 
 	const onWalletExtensionFound = () => dispatch(walletActions.setHasWalletExtension());
 
-	const onWalletPaired = () => setStatus(HashConnectConnectionState.Paired);
+	const onWalletPaired = (savedPairings: any) => {
+		if (savedPairings) {
+			dispatch(walletActions.setSavedPairings([savedPairings]));
+		}
+
+		setStatus(HashConnectConnectionState.Paired);
+	};
 
 	const instanceSDK = async () =>
 		await SDKService.getInstance({

@@ -8,6 +8,7 @@ import type {
 	IRescueStableCoinRequest,
 	HashPackAccount,
 	IGetBalanceStableCoinRequest,
+	IWipeStableCoinRequest,
 } from 'hedera-stable-coin-sdk';
 
 export enum HashConnectConnectionState {
@@ -44,7 +45,7 @@ interface CashOutRequest {
 interface EventsSetter {
 	onInit: () => void;
 	onWalletExtensionFound: () => void;
-	onWalletPaired: () => void;
+	onWalletPaired: (data: any) => void;
 }
 
 export class SDKService {
@@ -147,6 +148,10 @@ export class SDKService {
 
 	public static async rescue(data: IRescueStableCoinRequest) {
 		return SDKService.getInstance().then((instance) => instance.rescue(data));
+	}
+
+	public static async wipe(data: IWipeStableCoinRequest) {
+		return SDKService.getInstance().then((instance) => instance.wipe(data));
 	}
 }
 
