@@ -30,7 +30,6 @@ const CashInOperation = () => {
 	});
 	const { t } = useTranslation(['cashIn', 'global', 'operations']);
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const handleCashIn: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
 		const { amount, destinationAccount } = getValues();
 		try {
@@ -42,7 +41,7 @@ const CashInOperation = () => {
 				proxyContractId: selectedStableCoin.memo,
 				account: new HashPackAccount(accountId),
 				tokenId: selectedStableCoin.tokenId,
-				targetId: destinationAccount, // destinationACc
+				targetId: destinationAccount,
 				amount,
 			});
 			onSuccess();

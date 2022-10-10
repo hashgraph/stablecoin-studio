@@ -5,7 +5,9 @@ import type {
 	ICreateStableCoinRequest,
 	IStableCoinDetail,
 	IStableCoinList,
+	IRescueStableCoinRequest,
 	HashPackAccount,
+	IGetBalanceStableCoinRequest,
 } from 'hedera-stable-coin-sdk';
 
 export enum HashConnectConnectionState {
@@ -31,6 +33,14 @@ interface CashInRequest {
 	targetId: string;
 	amount: number;
 }
+
+interface CashOutRequest {
+	proxyContractId: string;
+	account: HashPackAccount;
+	tokenId: string;
+	amount: number;
+}
+
 interface EventsSetter {
 	onInit: () => void;
 	onWalletExtensionFound: () => void;
@@ -119,16 +129,24 @@ export class SDKService {
 		);
 	}
 
+	public static async burn({ proxyContractId, tokenId, amount, account }: CashOutRequest) {
+		return await SDKService.getInstance().then((instance) =>
+			instance.cashOut({ proxyContractId, account, tokenId, amount }),
+		);
+	}
+
 	public static async createStableCoin(
 		createStableCoinRequest: ICreateStableCoinRequest,
 	): Promise<IStableCoinDetail | null> {
 		return (await SDKService.getInstance()).createStableCoin(createStableCoinRequest);
 	}
-	
-	public static async getBalance(data: any ) {
-		return await SDKService.getInstance().then((instance) => 
-			instance.getBalanceOf(data)
-		)
+
+	public static async getBalance(data: IGetBalanceStableCoinRequest) {
+		return SDKService.getInstance().then((instance) => instance.getBalanceOf(data));
+	}
+
+	public static async rescue(data: IRescueStableCoinRequest) {
+		return SDKService.getInstance().then((instance) => instance.rescue(data));
 	}
 }
 

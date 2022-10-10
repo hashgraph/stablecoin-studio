@@ -10,7 +10,10 @@ import OperationLayout from './../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
 import SDKService from '../../../services/SDKService';
-import { SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
+import {
+	SELECTED_WALLET_COIN,
+	SELECTED_WALLET_PAIRED_ACCOUNT,
+} from '../../../store/slices/walletSlice';
 
 const GetBalanceOperation = () => {
 	const {
@@ -18,31 +21,38 @@ const GetBalanceOperation = () => {
 		onOpen: onOpenModalAction,
 		onClose: onCloseModalAction,
 	} = useDisclosure();
-	const [balance, setBalance] = useState<Uint8Array | null>();
+
+	const [balance, setBalance] = useState<number | null>();
+
 	const { t } = useTranslation(['getBalance', 'global', 'operations']);
+
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
+	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
+
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
 	});
-	const account = getValues().account;
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const handleGetBalance: ModalsHandlerActionsProps['onConfirm'] = async ({
 		onSuccess,
 		onError,
 	}) => {
-		const { account: accountId } = getValues();
+		const { targetAccount } = getValues();
 
 		try {
+			if (!selectedStableCoin?.memo || !selectedStableCoin?.tokenId) {
+				onError();
+				return;
+			}
+
 			const balance = await SDKService.getBalance({
-				proxyContractId: '0.0.48261507',
-				privateKey: '',
-				tokenId: selectedStableCoin!.tokenId!,
-				targetId: '0.0.48450590', // destinationACc
-				accountId,
+				proxyContractId: selectedStableCoin.memo,
+				account,
+				targetId: targetAccount,
+				tokenId: selectedStableCoin.tokenId,
 			});
 
-			setBalance(balance);
+			setBalance(balance?.[0]);
 			onSuccess();
 		} catch (error) {
 			onError();
@@ -72,7 +82,7 @@ const GetBalanceOperation = () => {
 								}}
 								isRequired
 								control={control}
-								name='account'
+								name='targetAccount'
 								placeholder={t('getBalance:accountPlaceholder')}
 								label={t('getBalance:accountLabel')}
 							/>
@@ -98,14 +108,14 @@ const GetBalanceOperation = () => {
 						details={[
 							{
 								label: t('getBalance:modalAction.account'),
-								value: account,
+								value: getValues().targetAccount,
 							},
 						]}
 					/>
 				}
 				successNotificationTitle={t('operations:modalSuccessTitle')}
 				successNotificationDescription={t('getBalance:modalSuccessBalance', {
-					account,
+					account: getValues().targetAccount,
 					balance,
 				})}
 			/>
