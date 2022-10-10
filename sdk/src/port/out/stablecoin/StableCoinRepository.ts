@@ -210,7 +210,6 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		tokenId: string,
 		account: Account,
 	): Promise<Uint8Array> {
-		console.log("yyy: " + await this.networkAdapter.provider.accountToEvmAddress(new Account(targetId)));			
 		const parameters = [
 			await this.networkAdapter.provider.accountToEvmAddress(new Account(targetId))
 		];

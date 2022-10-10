@@ -9,6 +9,7 @@ import {
 	AccountId,
 	ContractId,
 	StableCoinMemo,
+	Account
 } from '../../../in/sdk/sdk.js';
 import {
 	AccountId as HAccountId,

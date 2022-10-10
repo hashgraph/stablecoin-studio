@@ -4,7 +4,7 @@ import {
 } from '../../../port/in/sdk/sdk.js';
 import BaseEntity from '../../BaseEntity.js';
 
-export default abstract class Account extends BaseEntity {
+export default class Account extends BaseEntity {
 	public accountId: AccountId;
 	public privateKey?: PrivateKey;
 
