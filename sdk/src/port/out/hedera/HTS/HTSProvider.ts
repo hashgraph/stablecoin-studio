@@ -50,6 +50,7 @@ import ProviderEvent, { ProviderEventNames } from '../ProviderEvent.js';
 import EventService from '../../../../app/service/event/EventService.js';
 import { Account, ContractId, EOAccount } from '../../../in/sdk/sdk.js';
 import { safeCast } from '../../../../core/cast.js';
+import { StableCoinMemo } from '../../../../domain/context/stablecoin/StableCoinMemo.js';
 
 type DefaultHederaProvider = hethers.providers.DefaultHederaProvider;
 
@@ -226,10 +227,9 @@ export default class HTSProvider implements IProvider {
 				.addAddress(tokenContract?.toSolidityAddress())
 				.addBytes(new Uint8Array([])),
 		);
-		stableCoin.memo = String(proxyContract);
 
 		await this.callContract('initialize', {
-			contractId: stableCoin.memo,
+			contractId: String(proxyContract),
 			parameters: [],
 			gas: 250_000,
 			abi: HederaERC20__factory.abi,
@@ -244,6 +244,12 @@ export default class HTSProvider implements IProvider {
 			account.privateKey,
 			client,
 		);
+
+		stableCoin.memo = new StableCoinMemo(
+			String(proxyContract),
+			String(tokenOwnerContract),
+		);
+
 		log('Creating token... please wait.', logOpts);
 		const hederaToken = await this.createToken(
 			tokenOwnerContract,
@@ -252,7 +258,7 @@ export default class HTSProvider implements IProvider {
 			stableCoin.decimals,
 			stableCoin.initialSupply,
 			stableCoin.maxSupply,
-			stableCoin.memo,
+			stableCoin.memo.toJson(),
 			stableCoin.freezeDefault,
 			client,
 			stableCoin.treasury,
@@ -266,7 +272,7 @@ export default class HTSProvider implements IProvider {
 		);
 		log('Setting up contract... please wait.', logOpts);
 		await this.callContract('setTokenAddress', {
-			contractId: stableCoin.memo,
+			contractId: stableCoin.memo.proxyContract,
 			parameters: [
 				tokenOwnerContract.toSolidityAddress(),
 				TokenId.fromString(
@@ -291,7 +297,7 @@ export default class HTSProvider implements IProvider {
 				logOpts,
 			);
 			await this.callContract('associateToken', {
-				contractId: stableCoin.memo,
+				contractId: stableCoin.memo.proxyContract,
 				parameters: [
 					HAccountId.fromString(
 						account.accountId.id,

@@ -59,7 +59,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 					account.accountId.id,
 			);
 			res.data.tokens.map((item: IToken) => {
-				if (item.memo !== '') {
+				if (item.memo '') {
 					resObject.push({
 						id: item.token_id,
 						symbol: item.symbol,
@@ -126,7 +126,6 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			return Promise.reject<StableCoin>(error);
 		}
 	}
-
 	public async getCapabilitiesStableCoin(
 		id: string,
 		publickey: string,
@@ -137,9 +136,10 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 			listCapabilities.push(Capabilities.DETAILS);
 			listCapabilities.push(Capabilities.BALANCE);
-			listCapabilities.push(Capabilities.RESCUE);
-			//TODO add Roles
-			listCapabilities.push(Capabilities.ROLE_MANAGEMENT);
+
+			if (stableCoin.memo.htsAccount == stableCoin.treasury.toString()) {
+				listCapabilities.push(Capabilities.RESCUE);
+			}
 
 			if (
 				stableCoin.supplyKey?.toString() ===
@@ -174,7 +174,30 @@ export default class StableCoinRepository implements IStableCoinRepository {
 					listCapabilities.push(Capabilities.WIPE);
 				}
 			}
+			if (stableCoin.pauseKey instanceof ContractId) {
+				if (
+					stableCoin.pauseKey?.id.toString() ==
+					stableCoin.treasury.toString()
+				) {
+					listCapabilities.push(Capabilities.PAUSE);
+				}
+			}
 
+			const roleManagement = listCapabilities.some((capability) =>
+				[
+					Capabilities.PAUSE,
+					Capabilities.WIPE,
+					Capabilities.WIPE_HTS,
+					Capabilities.CASH_IN,
+					Capabilities.CASH_IN_HTS,
+					Capabilities.BURN,
+					Capabilities.BURN_HTS,
+					Capabilities.RESCUE,
+				].includes(capability),
+			);
+			if (roleManagement) {
+				listCapabilities.push(Capabilities.ROLE_MANAGEMENT);
+			}
 			return listCapabilities;
 		} catch (error) {
 			return Promise.reject<Capabilities[]>(error);

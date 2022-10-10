@@ -1,7 +1,10 @@
 import ContractId from '../../../../domain/context/contract/ContractId.js';
 import { ICustomFees } from '../../../../app/service/stablecoin/model/stablecoindetail/ICustomFees.js';
 import PublicKey from '../../../../domain/context/account/PublicKey.js';
+
+import { StableCoinMemo } from '../../../../domain/context/stablecoin/StableCoinMemo.js';
 import { AccountId } from '../sdk.js';
+
 
 export default interface IStableCoinDetail {
 	tokenId?: string;

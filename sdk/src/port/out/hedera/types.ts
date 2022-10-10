@@ -1,6 +1,6 @@
 import { HashConnectTypes, MessageTypes } from 'hashconnect';
 import { TokenId } from '@hashgraph/sdk';
-import { Account, AccountId, EOAccount, PublicKey } from '../../in/sdk/sdk.js';
+import { Account, AccountId, PublicKey } from '../../in/sdk/sdk.js';
 
 export interface ICallContractRequest {
 	contractId: string;
