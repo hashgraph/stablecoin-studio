@@ -224,6 +224,11 @@ export default class HashPackProvider implements IProvider {
 		return Buffer.from(encodedParametersHex, 'hex');
 	}
 
+	public async accountToEvmAddress(account: Account): Promise<string> {
+		return '';
+	}	
+
+
 	public async deployStableCoin(
 		stableCoin: StableCoin,
 		account: HashPackAccount,

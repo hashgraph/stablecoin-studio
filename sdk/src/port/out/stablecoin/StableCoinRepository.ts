@@ -59,7 +59,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 					account.accountId.id,
 			);
 			res.data.tokens.map((item: IToken) => {
-				if (item.memo '') {
+				if (item.memo !== '') {
 					resObject.push({
 						id: item.token_id,
 						symbol: item.symbol,
@@ -210,8 +210,9 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		tokenId: string,
 		account: Account,
 	): Promise<Uint8Array> {
+		console.log("yyy: " + await this.networkAdapter.provider.accountToEvmAddress(new Account(targetId)));			
 		const parameters = [
-			HAccountId.fromString(targetId).toSolidityAddress(),
+			await this.networkAdapter.provider.accountToEvmAddress(new Account(targetId))
 		];
 
 		const params: ICallContractWithAccountRequest = {
@@ -254,7 +255,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		account: Account,
 	): Promise<Uint8Array> {
 		const parameters = [
-			HAccountId.fromString(targetId).toSolidityAddress(),
+			await this.networkAdapter.provider.accountToEvmAddress(new Account(targetId)),
 			amount.toString(),
 		];
 
@@ -322,7 +323,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		const params: ICallContractWithAccountRequest = {
 			contractId: treasuryId,
 			parameters: [
-				HAccountId.fromString(account.accountId.id).toSolidityAddress(),
+				await this.networkAdapter.provider.accountToEvmAddress(new Account(account.accountId.id))
 			],
 			gas: 1300000,
 			abi: HederaERC20__factory.abi,
@@ -342,7 +343,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		account: Account,
 	): Promise<Uint8Array> {
 		const parameters = [
-			HAccountId.fromString(targetId).toSolidityAddress(),
+			await this.networkAdapter.provider.accountToEvmAddress(new Account(targetId)),
 			amount.toString(),
 		];
 
@@ -379,7 +380,9 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		account: Account,
 		amount?: number,
 	): Promise<Uint8Array> {
-		const parameters = [HAccountId.fromString(address).toSolidityAddress()];
+		const parameters = [
+			await this.networkAdapter.provider.accountToEvmAddress(new Account(address))
+		];
 		amount && parameters.push(amount.toString());
 
 		const params: ICallContractWithAccountRequest = {
@@ -401,7 +404,9 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		address: string,
 		account: Account,
 	): Promise<Uint8Array> {
-		const parameters = [HAccountId.fromString(address).toSolidityAddress()];
+		const parameters = [
+			await this.networkAdapter.provider.accountToEvmAddress(new Account(address))
+		];
 
 		const params: ICallContractWithAccountRequest = {
 			contractId: treasuryId,
@@ -422,7 +427,9 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		address: string,
 		account: Account,
 	): Promise<Uint8Array> {
-		const parameters = [HAccountId.fromString(address).toSolidityAddress()];
+		const parameters = [
+			await this.networkAdapter.provider.accountToEvmAddress(new Account(address))
+		];
 
 		const params: ICallContractWithAccountRequest = {
 			contractId: treasuryId,
@@ -443,7 +450,9 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		address: string,
 		account: Account,
 	): Promise<Uint8Array> {
-		const parameters = [HAccountId.fromString(address).toSolidityAddress()];
+		const parameters = [
+			await this.networkAdapter.provider.accountToEvmAddress(new Account(address))
+		];
 
 		const params: ICallContractWithAccountRequest = {
 			contractId: treasuryId,
@@ -464,7 +473,9 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		address: string,
 		account: Account,
 	): Promise<Uint8Array> {
-		const parameters = [HAccountId.fromString(address).toSolidityAddress()];
+		const parameters = [
+			await this.networkAdapter.provider.accountToEvmAddress(new Account(address))
+		];
 
 		const params: ICallContractWithAccountRequest = {
 			contractId: treasuryId,
@@ -487,7 +498,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		amount: number,
 	): Promise<Uint8Array> {
 		const parameters = [
-			HAccountId.fromString(address).toSolidityAddress(),
+			await this.networkAdapter.provider.accountToEvmAddress(new Account(address)),
 			amount.toString(),
 		];
 
@@ -512,7 +523,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		amount: number,
 	): Promise<Uint8Array> {
 		const parameters = [
-			HAccountId.fromString(address).toSolidityAddress(),
+			await this.networkAdapter.provider.accountToEvmAddress(new Account(address)),
 			amount.toString(),
 		];
 
@@ -558,7 +569,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	): Promise<Uint8Array> {
 		const parameters = [
 			StableCoinRole.CASHIN_ROLE,
-			HAccountId.fromString(address).toSolidityAddress(),
+			await this.networkAdapter.provider.accountToEvmAddress(new Account(address))
 		];
 
 		const params: ICallContractWithAccountRequest = {
@@ -583,7 +594,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	): Promise<Uint8Array> {
 		const parameters = [
 			role,
-			HAccountId.fromString(address).toSolidityAddress(),
+			await this.networkAdapter.provider.accountToEvmAddress(new Account(address))
 		];
 
 		const params: ICallContractWithAccountRequest = {
@@ -608,7 +619,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	): Promise<Uint8Array> {
 		const parameters = [
 			role,
-			HAccountId.fromString(address).toSolidityAddress(),
+			await this.networkAdapter.provider.accountToEvmAddress(new Account(address))
 		];
 
 		const params: ICallContractWithAccountRequest = {
@@ -633,7 +644,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	): Promise<Uint8Array> {
 		const parameters = [
 			role,
-			HAccountId.fromString(address).toSolidityAddress(),
+			await this.networkAdapter.provider.accountToEvmAddress(new Account(address))
 		];
 
 		const params: ICallContractWithAccountRequest = {

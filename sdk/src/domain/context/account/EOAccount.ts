@@ -1,12 +1,21 @@
-import { NetworkMode } from '../../../port/in/sdk/sdk.js';
 import Account from './Account.js';
 import PrivateKey from './PrivateKey.js';
+import { AccountNotValid } from './error/AccountNotValid.js';
 
 export default class EOAccount extends Account {
 
 	public privateKey: PrivateKey;
 
 	constructor(accountId: string, privateKey: PrivateKey) {
-		super(accountId, NetworkMode.EOA, privateKey);
+		super(accountId, privateKey);
+		this.validateAccount();
+	}
+
+	private validateAccount(): void {
+		if (!this.privateKey) {
+			throw new AccountNotValid(
+				'Invalid Network Mode: EOA without private key',
+			);
+		}
 	}
 }

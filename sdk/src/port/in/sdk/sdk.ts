@@ -149,9 +149,7 @@ export interface SDKInitOptions {
 export class SDK {
 	private config: Configuration;
 
-	private web3: Web3;
 	private networkAdapter: NetworkAdapter;
-	private contractService: ContractsService;
 	private stableCoinRepository: IStableCoinRepository;
 	private stableCoinService: StableCoinService;
 	private eventService: EventService;
@@ -180,8 +178,6 @@ export class SDK {
 				appMetadata: this.config.options?.appMetadata,
 			},
 		).init();
-		this.web3 = new Web3();
-		this.contractService = new ContractsService(this.networkAdapter);
 		this.stableCoinRepository = new StableCoinRepository(
 			this.networkAdapter,
 		);

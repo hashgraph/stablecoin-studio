@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import axios from 'axios';
 import { hethers } from '@hashgraph/hethers';
 import PrivateKey from '../../../../domain/context/account/PrivateKey.js';
 import {
@@ -12,6 +13,7 @@ import {
 	TokenId,
 	Transaction,
 	Status,
+	TokenAssociateTransaction
 } from '@hashgraph/sdk';
 import {
 	HederaERC1967Proxy__factory,
@@ -25,7 +27,7 @@ import {
 import { IniConfig, IProvider } from '../Provider.js';
 import Web3 from 'web3';
 import { StableCoin } from '../../../../domain/context/stablecoin/StableCoin.js';
-import { getHederaNetwork } from '../../../../core/enum.js';
+import { getHederaNetwork, PrivateKeyType } from '../../../../core/enum.js';
 import Long from 'long';
 import { log } from '../../../../core/log.js';
 import {
@@ -51,6 +53,7 @@ import EventService from '../../../../app/service/event/EventService.js';
 import { Account, ContractId, EOAccount } from '../../../in/sdk/sdk.js';
 import { safeCast } from '../../../../core/cast.js';
 import { StableCoinMemo } from '../../../../domain/context/stablecoin/StableCoinMemo.js';
+import { IAccount } from '../account/types/IAccount';
 
 type DefaultHederaProvider = hethers.providers.DefaultHederaProvider;
 
@@ -205,6 +208,45 @@ export default class HTSProvider implements IProvider {
 		return htsResponse.reponseParam;
 	}
 
+	public async accountToEvmAddress(account: Account, publicKey?: string): Promise<string> {
+		if (account.privateKey) {
+			switch(account.privateKey?.type) {
+				case PrivateKeyType.ECDSA:
+					return HPublicKey.fromString(account.privateKey.publicKey.key).toEthereumAddress();
+
+				default:
+					return HAccountId.fromString(account.accountId.id).toSolidityAddress();
+			}
+		} else {
+			return await this.getAccountEvmAddress(account.accountId.id);
+		}
+	}	
+
+	private async getAccountEvmAddress(
+		accountId: string,
+	): Promise<string> {
+		try {
+			const URI_BASE = `${getHederaNetwork(this.network)?.mirrorNodeUrl}/api/v1/`;
+			const res = await axios.get<IAccount>(
+				URI_BASE + 'accounts/' + accountId
+			);
+
+			if (res.data.evm_address) {
+				return res.data.evm_address;
+			} else {
+				switch(res.data.key._type) {
+					case PrivateKeyType.ECDSA:
+						return HPublicKey.fromString(res.data.key.key).toEthereumAddress();
+	
+					default:
+						return HAccountId.fromString(accountId).toSolidityAddress();
+				}
+			}
+		} catch (error) {
+			return Promise.reject<string>(error);
+		}
+	}	
+
 	public async deployStableCoin(
 		stableCoin: StableCoin,
 		account: EOAccount,
@@ -300,12 +342,15 @@ export default class HTSProvider implements IProvider {
 				'Associating administrator account to token... please wait.',
 				logOpts,
 			);
+
 			await this.callContract('associateToken', {
 				contractId: stableCoin.memo.proxyContract,
 				parameters: [
-					HAccountId.fromString(
+					await this.accountToEvmAddress(account)
+					/*HAccountId.fromString(
 						account.accountId.id,
 					).toSolidityAddress(),
+					HPublicKey.fromString(account.privateKey.publicKey.key).toEthereumAddress()*/
 				],
 				gas: 1_300_000,
 				abi: HederaERC20__factory.abi,

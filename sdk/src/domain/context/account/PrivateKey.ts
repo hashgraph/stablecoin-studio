@@ -1,7 +1,7 @@
 import { ValueObject } from '../../../core/types.js';
 import { PrivateKeyNotValid } from './error/PrivateKeyNotValid.js';
 import PublicKey from './PublicKey.js';
-import { Key, PrivateKey as HPrivateKey } from '@hashgraph/sdk';
+import { PrivateKey as HPrivateKey } from '@hashgraph/sdk';
 import { PrivateKeyTypeNotValid } from './error/PrivateKeyTypeNotValid.js';
 import { PrivateKeyType } from '../../../core/enum.js';
 
