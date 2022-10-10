@@ -8,7 +8,7 @@ import {
 	PrivateKey,
 	AccountId,
 	ContractId,
-	Account,
+	StableCoinMemo,
 } from '../../../in/sdk/sdk.js';
 import {
 	AccountId as HAccountId,
@@ -18,6 +18,7 @@ import {
 	TokenId,
 	Transaction,
 	Status,
+	Signer,
 } from '@hashgraph/sdk';
 import { StableCoin } from '../../../../domain/context/stablecoin/StableCoin.js';
 import {
@@ -42,12 +43,10 @@ import {
 	HTSTokenOwner__factory,
 } from 'hedera-stable-coin-contracts/typechain-types/index.js';
 import { HashConnectProvider } from 'hashconnect/provider/provider';
-import { HashConnectSigner } from 'hashconnect/provider/signer';
 import Long from 'long';
 import ProviderEvent, { ProviderEventNames } from '../ProviderEvent.js';
 import EventService from '../../../../app/service/event/EventService.js';
 import { HashConnect } from 'hashconnect';
-import { Signer } from '@hashgraph/sdk/lib/Signer.js';
 import { HashConnectTypes } from 'hashconnect';
 import { HashConnectConnectionState } from 'hashconnect/types';
 import HashPackAccount from '../../../../domain/context/account/HashPackAccount.js';
@@ -150,7 +149,6 @@ export default class HashPackProvider implements IProvider {
 		});
 
 		this.hc.acknowledgeMessageEvent.on((msg) => {
-			console.log('acknowledgeMessageEvent event', msg);
 			this.eventService.emit(
 				ProviderEventNames.providerAcknowledgeMessageEvent,
 				msg,
@@ -158,8 +156,8 @@ export default class HashPackProvider implements IProvider {
 		});
 	}
 
-	private getSigner(): HashConnectSigner {
-		return this.hc.getSigner(this.provider);
+	private getSigner(): Signer {
+		return this.hashPackSigner.signer;
 	}
 
 	public async callContract(
@@ -250,8 +248,9 @@ export default class HashPackProvider implements IProvider {
 			`Deploying ${HederaERC1967Proxy__factory.name} contract... please wait.`,
 			logOpts,
 		);
-		let proxyContract: HContractId =
-			HContractId.fromString(stableCoin.memo) ?? '';
+		let proxyContract: HContractId = HContractId.fromString(
+			stableCoin.memo.proxyContract,
+		);
 
 		if (!proxyContract) {
 			proxyContract = await this.deployContract(
@@ -261,10 +260,10 @@ export default class HashPackProvider implements IProvider {
 					.addAddress(tokenContract?.toSolidityAddress())
 					.addBytes(new Uint8Array([])),
 			);
-			stableCoin.memo = String(proxyContract);
+			stableCoin.memo.proxyContract = String(proxyContract);
 		}
 
-		const contractId = stableCoin.memo;
+		const contractId = stableCoin.memo.proxyContract;
 
 		await this.callContract('initialize', {
 			contractId,
@@ -281,6 +280,11 @@ export default class HashPackProvider implements IProvider {
 			HTSTokenOwner__factory,
 			account,
 		);
+
+		stableCoin.memo = new StableCoinMemo(
+			String(proxyContract),
+			String(tokenOwnerContract),
+		);
 		log('Creating token... please wait.', logOpts);
 		const hederaToken = await this.createToken(
 			tokenOwnerContract,
@@ -289,7 +293,7 @@ export default class HashPackProvider implements IProvider {
 			stableCoin.decimals,
 			stableCoin.initialSupply,
 			stableCoin.maxSupply,
-			String(proxyContract),
+			stableCoin.memo.toJson(),
 			stableCoin.freezeDefault,
 			account,
 		);
@@ -372,10 +376,10 @@ export default class HashPackProvider implements IProvider {
 				await this.transactionResposeHandler.manageResponse(
 					transactionResponse,
 					TransactionType.RECEIPT,
-					this.hashPackSigner.hashConnectSigner,
+					this.getSigner(),
 				);
 
-			if (!htsResponse.receipt.contractId) {
+			if (!htsResponse?.receipt?.contractId) {
 				throw new Error(
 					`An error ocurred during deployment of ${factory.name}`,
 				);
@@ -444,10 +448,10 @@ export default class HashPackProvider implements IProvider {
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
 				TransactionType.RECEIPT,
-				this.hashPackSigner.hashConnectSigner,
+				this.getSigner(),
 			);
 
-		if (!htsResponse.receipt.tokenId) {
+		if (!htsResponse?.receipt?.tokenId) {
 			throw new Error(
 				`An error ocurred creating the stable coin ${name}`,
 			);

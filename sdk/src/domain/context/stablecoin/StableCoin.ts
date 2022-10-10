@@ -4,6 +4,7 @@ import PublicKey from '../account/PublicKey.js';
 import ContractId from '../contract/ContractId.js';
 import InvalidAmountDomainError from './error/InvalidAmountDomainError.js';
 import InvalidDecimalRangeDomainError from './error/InvalidDecimalRangeDomainError.js';
+import { StableCoinMemo } from './StableCoinMemo.js';
 import { TokenSupplyType } from './TokenSupply.js';
 import { TokenType } from './TokenType.js';
 
@@ -102,11 +103,11 @@ export class StableCoin extends BaseEntity {
 	/**
 	 * Memo field
 	 */
-	private _memo: string;
-	public get memo(): string {
+	private _memo: StableCoinMemo;
+	public get memo(): StableCoinMemo {
 		return this._memo;
 	}
-	public set memo(value: string) {
+	public set memo(value: StableCoinMemo) {
 		this._memo = value;
 	}
 
@@ -220,6 +221,38 @@ export class StableCoin extends BaseEntity {
 		this._autoRenewAccount = value;
 	}
 
+	/**
+	 * Expiration Time
+	 */
+	private _autoRenewAccountPeriod: number;
+	public get autoRenewAccountPeriod(): number {
+		return this._autoRenewAccountPeriod;
+	}
+	public set autoRenewAccountPeriod(value: number) {
+		this._autoRenewAccountPeriod = value;
+	}
+
+	/**
+	 * pause Status
+	 */
+	private _paused: string;
+	public get paused(): string {
+		return this._paused;
+	}
+	public set paused(value: string) {
+		this._paused = value;
+	}
+
+	/**
+	 * deleted Status
+	 */
+	private _deleted: string;
+	public get deleted(): string {
+		return this._deleted;
+	}
+	public set deleted(value: string) {
+		this._deleted = value;
+	}
 	constructor(params: {
 		name: string;
 		symbol: string;
@@ -234,12 +267,15 @@ export class StableCoin extends BaseEntity {
 		kycKey?: PublicKey | ContractId;
 		wipeKey?: PublicKey | ContractId;
 		pauseKey?: PublicKey | ContractId;
+		paused?: string;
 		supplyKey?: PublicKey | ContractId;
 		treasury?: AccountId;
 		tokenType?: TokenType;
 		supplyType?: TokenSupplyType;
 		id?: string;
 		autoRenewAccount?: AccountId;
+		autoRenewAccountPeriod?: number;
+		deleted?: string;
 	}) {
 		super();
 		const {
@@ -262,6 +298,9 @@ export class StableCoin extends BaseEntity {
 			supplyType,
 			id,
 			autoRenewAccount,
+			autoRenewAccountPeriod,
+			deleted,
+			paused,
 		} = params;
 		this.adminKey = adminKey;
 		this.name = name;
@@ -270,7 +309,9 @@ export class StableCoin extends BaseEntity {
 		this.initialSupply = initialSupply ?? 0n;
 		this.totalSupply = totalSupply ?? 0n;
 		this.maxSupply = maxSupply ?? 0n;
-		this.memo = memo ?? '';
+		this.memo = memo
+			? StableCoinMemo.fromJson(memo)
+			: StableCoinMemo.empty();
 		this.freezeKey = freezeKey;
 		this.freezeDefault = freezeDefault ?? false;
 		this.kycKey = kycKey;
@@ -285,6 +326,9 @@ export class StableCoin extends BaseEntity {
 				: TokenSupplyType.FINITE;
 		this.id = id ?? '0.0.0';
 		this.autoRenewAccount = autoRenewAccount ?? new AccountId('0.0.0');
+		this.autoRenewAccountPeriod = autoRenewAccountPeriod ?? 0;
+		this.paused = paused ?? '';
+		this.deleted = deleted ?? '';
 	}
 
 	public checkDecimals(value: number): number {
