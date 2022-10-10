@@ -155,7 +155,7 @@ export class TransactionResposeHandler {
 	): Uint32Array | undefined {
 		const record = transactionResponse.record;
 		if (!record) {
-			throw new Error(`Unexpected receipt type from Hashpack: ${record}`);
+			throw new Error(`Unexpected record type from Hashpack: ${record}`);
 		} else {
 			try {
 				return new Uint32Array(Object.values(record));
