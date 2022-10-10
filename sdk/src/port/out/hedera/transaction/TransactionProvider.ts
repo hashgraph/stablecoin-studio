@@ -116,7 +116,7 @@ export class TransactionProvider {
 			.setGas(gas);
 		admPrivateKey &&
 			transaction.setAdminKey(
-				PrivateKey.fromStringED25519(admPrivateKey),
+				HPublicKey.fromString(admPrivateKey),
 			);
 		if (parameters) {
 			transaction.setConstructorParameters(parameters);

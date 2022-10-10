@@ -12,9 +12,8 @@ import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandle
 import { useSelector } from 'react-redux';
 import {
 	SELECTED_WALLET_COIN,
-	SELECTED_WALLET_PAIRED_ACCOUNTID,
+	SELECTED_WALLET_PAIRED_ACCOUNT,
 } from '../../../store/slices/walletSlice';
-import { HashPackAccount } from 'hedera-stable-coin-sdk';
 
 const CashInOperation = () => {
 	const {
@@ -23,7 +22,7 @@ const CashInOperation = () => {
 		onClose: onCloseModalAction,
 	} = useDisclosure();
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
-	const accountId = useSelector(SELECTED_WALLET_PAIRED_ACCOUNTID);
+	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
 	const { decimals = 0, totalSupply } = selectedStableCoin || {};
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
@@ -39,7 +38,7 @@ const CashInOperation = () => {
 			}
 			await SDKService.cashIn({
 				proxyContractId: selectedStableCoin.memo,
-				account: new HashPackAccount(accountId),
+				account,
 				tokenId: selectedStableCoin.tokenId,
 				targetId: destinationAccount,
 				amount,
