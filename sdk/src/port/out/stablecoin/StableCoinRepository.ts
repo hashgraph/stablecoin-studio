@@ -15,7 +15,6 @@ import ITokenList from './types/ITokenList.js';
 import HederaError from '../hedera/error/HederaError.js';
 import { IToken } from './types/IToken.js';
 import PublicKey from '../../../domain/context/account/PublicKey.js';
-import { AccountId as HAccountId } from '@hashgraph/sdk';
 import AccountId from '../../../domain/context/account/AccountId.js';
 import { IPublicKey } from './types/IPublicKey.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';

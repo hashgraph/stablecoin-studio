@@ -12,8 +12,7 @@ import {
 	PublicKey as HPublicKey,
 	TokenId,
 	Transaction,
-	Status,
-	TokenAssociateTransaction
+	Status
 } from '@hashgraph/sdk';
 import {
 	HederaERC1967Proxy__factory,
@@ -208,15 +207,12 @@ export default class HTSProvider implements IProvider {
 		return htsResponse.reponseParam;
 	}
 
-	public async accountToEvmAddress(account: Account, publicKey?: string): Promise<string> {
+	public async accountToEvmAddress(account: Account): Promise<string> {
 		if (account.privateKey) {
-			switch(account.privateKey?.type) {
-				case PrivateKeyType.ECDSA:
-					return HPublicKey.fromString(account.privateKey.publicKey.key).toEthereumAddress();
-
-				default:
-					return HAccountId.fromString(account.accountId.id).toSolidityAddress();
-			}
+			return this.getAccountEvmAddressFromPrivateKeyType(
+				account.privateKey?.type, 
+				account.privateKey.publicKey.key, 
+				account.accountId.id);
 		} else {
 			return await this.getAccountEvmAddress(account.accountId.id);
 		}
@@ -234,18 +230,29 @@ export default class HTSProvider implements IProvider {
 			if (res.data.evm_address) {
 				return res.data.evm_address;
 			} else {
-				switch(res.data.key._type) {
-					case PrivateKeyType.ECDSA:
-						return HPublicKey.fromString(res.data.key.key).toEthereumAddress();
-	
-					default:
-						return HAccountId.fromString(accountId).toSolidityAddress();
-				}
+				return this.getAccountEvmAddressFromPrivateKeyType(
+					res.data.key._type, 
+					res.data.key.key, 
+					accountId);
 			}
 		} catch (error) {
 			return Promise.reject<string>(error);
 		}
 	}	
+
+	private getAccountEvmAddressFromPrivateKeyType(
+		privateKeyType: string, 
+		publicKey: string,
+		accountId: string): string {
+			
+		switch(privateKeyType) {
+			case PrivateKeyType.ECDSA:
+				return HPublicKey.fromString(publicKey).toEthereumAddress();
+
+			default:
+				return HAccountId.fromString(accountId).toSolidityAddress();
+		}
+	}
 
 	public async deployStableCoin(
 		stableCoin: StableCoin,

@@ -5,7 +5,6 @@ import {
 	Hbar,
 	TokenSupplyType,
 	ContractCreateFlow,
-	PrivateKey as HPrivateKey,
 	TokenWipeTransaction,
 	TokenMintTransaction,
 	TokenBurnTransaction,

@@ -1,4 +1,3 @@
-import AccountId from '../../src/domain/context/account/AccountId.js';
 import EOAccount from '../../src/domain/context/account/EOAccount.js';
 import PrivateKey from '../../src/domain/context/account/PrivateKey.js';
 import {

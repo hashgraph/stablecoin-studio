@@ -1,13 +1,10 @@
 import IStableCoinList from './response/IStableCoinList.js';
 import IStableCoinDetail from './response/IStableCoinDetail.js';
-import ContractsService from '../../../app/service/contract/ContractsService.js';
 import StableCoinService from '../../../app/service/stablecoin/StableCoinService.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import StableCoinRepository from '../../out/stablecoin/StableCoinRepository.js';
 import IStableCoinRepository from '../../out/stablecoin/IStableCoinRepository.js';
 import NetworkAdapter from '../../out/network/NetworkAdapter.js';
-
-import Web3 from 'web3';
 
 import {
 	HederaNetwork,
