@@ -15,7 +15,7 @@ export default interface IStableCoinDetail {
 	maxSupply?: bigint;
 	customFee?: ICustomFees;
 	treasuryId?: string;
-	memo?: string;
+	memo?: StableCoinMemo;
 	expirationTime?: string;
 	freezeDefault?: boolean;
 	// kycStatus: string;
