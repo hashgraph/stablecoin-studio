@@ -32,6 +32,7 @@ export async function deployContractsWithSDK(
     decimals = 6,
     initialSupply = 0,
     maxSupply: number | null,
+    memo: string,
     freeze = false
 ) {
     console.log(
@@ -86,7 +87,7 @@ export async function deployContractsWithSDK(
     )
 
     console.log('Creating token... please wait.')
-    const memo = JSON.stringify({
+    memo = JSON.stringify({
         proxyContract: String(proxyContract),
         htsAccount: String(tokenOwnerContract),
     })
