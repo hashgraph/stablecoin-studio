@@ -354,10 +354,6 @@ export default class HTSProvider implements IProvider {
 				contractId: stableCoin.memo.proxyContract,
 				parameters: [
 					await this.accountToEvmAddress(account)
-					/*HAccountId.fromString(
-						account.accountId.id,
-					).toSolidityAddress(),
-					HPublicKey.fromString(account.privateKey.publicKey.key).toEthereumAddress()*/
 				],
 				gas: 1_300_000,
 				abi: HederaERC20__factory.abi,

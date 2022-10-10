@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import axios from 'axios';
 import { IniConfig, IProvider } from '../Provider.js';
 import {
 	HederaNetwork,
@@ -9,6 +10,7 @@ import {
 	AccountId,
 	ContractId,
 	StableCoinMemo,
+	PrivateKeyType,
 	Account
 } from '../../../in/sdk/sdk.js';
 import {
@@ -16,6 +18,7 @@ import {
 	ContractFunctionParameters,
 	ContractId as HContractId,
 	PrivateKey as HPrivateKey,
+	PublicKey as HPublicKey,
 	TokenId,
 	Transaction,
 	Status,
@@ -51,6 +54,7 @@ import { HashConnect } from 'hashconnect';
 import { HashConnectTypes } from 'hashconnect';
 import { HashConnectConnectionState } from 'hashconnect/types';
 import HashPackAccount from '../../../../domain/context/account/HashPackAccount.js';
+import { IAccount } from '../account/types/IAccount';
 
 const logOpts = { newLine: true, clear: true };
 
@@ -226,9 +230,51 @@ export default class HashPackProvider implements IProvider {
 	}
 
 	public async accountToEvmAddress(account: Account): Promise<string> {
-		return '';
+		if (account.privateKey) {
+			return this.getAccountEvmAddressFromPrivateKeyType(
+				account.privateKey?.type, 
+				account.privateKey.publicKey.key, 
+				account.accountId.id);
+		} else {
+			return await this.getAccountEvmAddress(account.accountId.id);
+		}
 	}	
 
+	private async getAccountEvmAddress(
+		accountId: string,
+	): Promise<string> {
+		try {
+			const URI_BASE = `${getHederaNetwork(this.network)?.mirrorNodeUrl}/api/v1/`;
+			const res = await axios.get<IAccount>(
+				URI_BASE + 'accounts/' + accountId
+			);
+
+			if (res.data.evm_address) {
+				return res.data.evm_address;
+			} else {
+				return this.getAccountEvmAddressFromPrivateKeyType(
+					res.data.key._type, 
+					res.data.key.key, 
+					accountId);
+			}
+		} catch (error) {
+			return Promise.reject<string>(error);
+		}
+	}	
+
+	private getAccountEvmAddressFromPrivateKeyType(
+		privateKeyType: string, 
+		publicKey: string,
+		accountId: string): string {
+			
+		switch(privateKeyType) {
+			case PrivateKeyType.ECDSA:
+				return HPublicKey.fromString(publicKey).toEthereumAddress();
+
+			default:
+				return HAccountId.fromString(accountId).toSolidityAddress();
+		}
+	}
 
 	public async deployStableCoin(
 		stableCoin: StableCoin,
