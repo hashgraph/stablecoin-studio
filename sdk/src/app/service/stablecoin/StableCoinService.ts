@@ -85,8 +85,8 @@ export default class StableCoinService extends Service {
 			// customFee:stableCoin.,
 			treasuryId: stableCoin.treasury.id,
 			freezeDefault: stableCoin.freezeDefault,
-			paused:stableCoin.paused,
-			memo:     ,
+			paused: stableCoin.paused,
+			memo: stableCoin.memo,
 			// kycStatus: string;
 			deleted:stableCoin.deleted,
 			autoRenewAccount: stableCoin.autoRenewAccount,
