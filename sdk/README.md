@@ -181,6 +181,92 @@ The SDK supports both client-side and server-side implementations, keeping in mi
 On client-side applications, such as React, use `NetworkMode.HASHPACK`.
 On server-side applications, such as Node applications, use `NetworkMode.EOA` and supply the credentials.
 
+# Basic Types
+
+## AccountId
+An account id on Hedera.
+
+### Fields
+ - `**id**`: [string] The account id
+
+### Example
+````Typescript
+	const haccount = new HashPackAccount('0.0.1')
+
+## Account
+Represents a base account, cannot be used directly. Instead, use EOAccount or HashPackAccount
+
+### Fields
+ - `**accountId**`: [AccountId] The account id
+ - `**privateKey?**`: [PrivateKey](Optional) PrivateKey instance
+
+## EOAccount
+Represent an **e**xtenrally **o**wned **a**ccount, a private key must be provided
+
+### Fields
+ - `**accountId**`: [AccountId] The account id
+ - `**privateKey**`: [string] PrivateKey instance
+
+### Example
+````Typescript
+	const eoa = new EOAccount('0.0.1', new PrivateKey('1234'))
+````
+
+## HashPackAccount
+Represents a HashPackAccount.
+
+### Fields
+ - `**accountId**`: [AccountId] The account id
+
+### Example
+````Typescript
+	const haccount = new HashPackAccount('0.0.1')
+````
+
+## PrivateKey
+A private key, which has the key string and the type of key (ECDSA or ED25519 [default]).
+
+### Fields
+ - `**key**`: [string] The private key
+ - `**type**`: [PrivateKeyType] The private key type (ECDSA or ED25519 [default])
+	- default: ED25519
+
+### Example
+````Typescript
+	const pk = new PrivateKey('1234')
+	const pkECDSA = new PrivateKey('1234' , PrivateKeyType.ECDSA)
+````
+
+## PrivateKeyType [WIP]
+A private key type (ECDSA or ED25519 [default]).
+
+### Example
+````Typescript
+````
+
+## PublicKey
+A public key on Hedera.
+
+### Fields
+ - `**key**`: The public key
+
+### Example
+````Typescript
+	const pk = new PublicKey('1234')
+````
+
+## ContractId
+
+Represents a contract id on Hedera.
+
+### Fields
+ - `**id**`: The contract id
+
+### Example
+````Typescript
+	const contractId = new ContractId('0.0.1')
+````
+
 # Usage
 To use the SDK, simply instantiate with the `new` keyword:
 
@@ -269,8 +355,7 @@ Creates a new stable coin.
 **Spec:**
 ````Typescript
 	interface ICreateStableCoinRequest {
-		accountId: AccountId;
-		privateKey: PrivateKey;
+		account: Account;
 		name: string;
 		symbol: string;
 		decimals: number;
@@ -294,8 +379,7 @@ Creates a new stable coin.
 **Example:**
 ````Typescript
 	const stableCoin: StableCoin = await sdk.createStableCoin({
-		accountId: new AccountId("0.0.1"),
-		privateKey: new PrivateKey("1234"),
+		account: new HashPackAccount("0.0.1"),
 		name: "Hedera Stable Coin",
 		symbol: "HSC",
 		decimals: 6
@@ -309,7 +393,7 @@ Gets a list of the stable coins (id and symbol) managed by an account.
 **Spec:**
 ````Typescript
 	interface IGetListStableCoinRequest {
-		privateKey: PrivateKey;
+		account: Account;
 	}
 
 	interface IStableCoinList {
@@ -323,7 +407,7 @@ Gets a list of the stable coins (id and symbol) managed by an account.
 **Example:**
 ````Typescript
 	const stableCoins: IStableCoinList[] = await sdk.getListStableCoin({
-		privateKey: new PrivateKey("1234"),
+		account: new EOAccount("0.0.1", new PrivateKey("1234")),
 	})
 ````
 
@@ -355,8 +439,7 @@ Gets the balance of tokens of an account.
 ````Typescript
 	interface IGetBalanceStableCoinRequest {
 		proxyContractId: ContractId;
-		privateKey: PrivateKey;
-		accountId: AccountId;
+		account: Account;
 		targetId: AccountId;
 		tokenId: AccountId;
 	}
@@ -367,9 +450,8 @@ Gets the balance of tokens of an account.
 **Example:**
 ````Typescript
 	const balance: Uint8Array | null = await sdk.getBalanceOf({
-		accountId: new ContractId("0.0.1"),
-		privateKey: new PrivateKey("1234"),
-		accountId: new AccountId("0.0.1"),
+		proxyContractId: new ContractId("0.0.1"),
+		account: new EOAccount("0.0.1", new PrivateKey("1234")),
 		targetId: new AccountId("0.0.2"),
 		tokenId: new AccountId("0.0.3")
 	})
@@ -383,8 +465,7 @@ Gets the token name of a stable coin.
 ````Typescript
 	interface IGetNameStableCoinRequest {
 		proxyContractId: ContractId;
-		privateKey: PrivateKey;
-		accountId: AccountId;
+		account: Account;
 	}
 
 	sdk.getNameToken = (request: IGetNameStableCoinRequest): Promise<Uint8Array> | null
@@ -394,8 +475,7 @@ Gets the token name of a stable coin.
 ````Typescript
 	const res: Uint8Array = await sdk.getNameToken({
 		proxyContractId: new ContractId("0.0.1"),
-		privateKey: new PrivateKey("1234"),
-		accountId: new AccountId("0.0.1"),
+		account: new EOAccount("0.0.1", new PrivateKey("1234")),
 	})
 ````
 
@@ -407,8 +487,7 @@ Cash in tokens into a stable coin.
 ````Typescript
 	interface ICashInStableCoinServiceRequestModel {
 		proxyContractId: ContractId;
-		privateKey: PrivateKey;
-		accountId: AccountId;
+		account: Account;
 		targetId: AccountId;
 		tokenId: AccountId;
 	}
@@ -420,8 +499,7 @@ Cash in tokens into a stable coin.
 ````Typescript
 	const res: Uint8Array = await sdk.cashIn({
 		proxyContractId: new ContractId("0.0.1"),
-		privateKey: new PrivateKey("1234"),
-		accountId: new AccountId("0.0.1"),
+		account: new EOAccount("0.0.1", new PrivateKey("1234")),
 		targetId: new AccountId("0.0.2"),
 		tokenId: new AccountId("0.0.3")
 	})
@@ -435,8 +513,7 @@ Cash out tokens of a stable coin.
 ````Typescript
 	interface ICashOutStableCoinServiceRequestModel {
 		proxyContractId: ContractId;
-		privateKey: PrivateKey;
-		accountId: AccountId;
+		account: Account;
 		targetId: AccountId;
 		tokenId: AccountId;
 	}
@@ -448,8 +525,7 @@ Cash out tokens of a stable coin.
 ````Typescript
 	const res: Uint8Array = await sdk.cashOut({
 		proxyContractId: new ContractId("0.0.1"),
-		privateKey: new PrivateKey("1234"),
-		accountId: new AccountId("0.0.1"),
+		account: new EOAccount("0.0.1", new PrivateKey("1234")),
 		targetId: new AccountId("0.0.2"),
 		tokenId: new AccountId("0.0.3")
 	})
@@ -463,8 +539,7 @@ Associate a stable coin to an account.
 ````Typescript
 	interface IAssociateTokenStableCoinServiceRequestModel {
 		proxyContractId: ContractId;
-		privateKey: PrivateKey;
-		accountId: AccountId;
+		account: Account;
 	}
 
 	sdk.associateToken = (request: IAssociateTokenStableCoinServiceRequestModel): Promise<Uint8Array>
@@ -474,8 +549,7 @@ Associate a stable coin to an account.
 ````Typescript
 	const res: Uint8Array = await sdk.cashOut({
 		proxyContractId: new ContractId("0.0.1"),
-		privateKey: new PrivateKey("1234"),
-		accountId: new AccountId("0.0.1"),
+		account: new EOAccount("0.0.1", new PrivateKey("1234")),
 	})
 ````
 
@@ -487,8 +561,7 @@ Wipes tokens of a stable coin
 ````Typescript
 	interface IWipeStableCoinServiceRequestModel {
 		proxyContractId: ContractId;
-		privateKey: PrivateKey;
-		accountId: AccountId;
+		account: Account;
 		targetId: AccountId;
 		tokenId: AccountId;
 		amount: number;
@@ -501,8 +574,7 @@ Wipes tokens of a stable coin
 ````Typescript
 	const res: Uint8Array = await sdk.wipe({
 		proxyContractId: new ContractId("0.0.1"),
-		privateKey: new PrivateKey("1234"),
-		accountId: new AccountId("0.0.2"),
+		account: new EOAccount("0.0.1", new PrivateKey("1234")),
 		targetId: new AccountId("0.0.3"),
 		tokenId: new AccountId("0.0.4"),
 		amount: 10.42,
@@ -517,8 +589,7 @@ Rescue tokens from a stable coin.
 ````Typescript
 	interface IRescueStableCoinRequest {
 		proxyContractId: ContractId;
-		privateKey: PrivateKey;
-		accountId: AccountId;
+		account: Account;
 		targetId: AccountId;
 		tokenId: AccountId;
 		amount: number;
@@ -531,8 +602,7 @@ Rescue tokens from a stable coin.
 ````Typescript
 	const res: Uint8Array = await sdk.rescue({
 		proxyContractId: new ContractId("0.0.1"),
-		privateKey: new PrivateKey("1234"),
-		accountId: new AccountId("0.0.2"),
+		account: new EOAccount("0.0.1", new PrivateKey("1234")),
 		targetId: new AccountId("0.0.3"),
 		tokenId: new AccountId("0.0.4"),
 		amount: 10.42,
@@ -547,8 +617,7 @@ Grants the supplier role to an account.
 ````Typescript
 	interface ISupplierRoleStableCoinServiceRequestModel {
 		proxyContractId: ContractId;
-		privateKey: PrivateKey;
-		accountId: AccountId;
+		account: Account;
 		targetId: AccountId;
 		amount: number;
 	}
@@ -560,8 +629,7 @@ Grants the supplier role to an account.
 ````Typescript
 	const res: Uint8Array = await sdk.grantSupplierRole({
 		proxyContractId: new ContractId("0.0.1"),
-		privateKey: new PrivateKey("1234"),
-		accountId: new AccountId("0.0.2"),
+		account: new EOAccount("0.0.1", new PrivateKey("1234")),
 		targetId: new AccountId("0.0.3"),
 		amount: 10.42,
 	})
@@ -575,8 +643,7 @@ Revokes the supplier role to an account.
 ````Typescript
 	interface IBasicRequest {
 		proxyContractId: ContractId;
-		privateKey: PrivateKey;
-		accountId: AccountId;
+		account: Account;
 		targetId: AccountId;
 	}
 
@@ -587,8 +654,7 @@ Revokes the supplier role to an account.
 ````Typescript
 	const res: Uint8Array = await sdk.revokeSupplierRole({
 		proxyContractId: new ContractId("0.0.1"),
-		privateKey: new PrivateKey("1234"),
-		accountId: new AccountId("0.0.2"),
+		account: new EOAccount("0.0.1", new PrivateKey("1234")),
 		targetId: new AccountId("0.0.3"),
 	})
 ````
@@ -601,8 +667,7 @@ Sets the supplier allowance for an account.
 ````Typescript
 	interface IBasicRequest {
 		proxyContractId: ContractId;
-		privateKey: PrivateKey;
-		accountId: AccountId;
+		account: Account;
 		targetId: AccountId;
 	}
 
@@ -613,8 +678,7 @@ Sets the supplier allowance for an account.
 ````Typescript
 	const res: Uint8Array = await sdk.supplierAllowance({
 		proxyContractId: new ContractId("0.0.1"),
-		privateKey: new PrivateKey("1234"),
-		accountId: new AccountId("0.0.2"),
+		account: new EOAccount("0.0.1", new PrivateKey("1234")),
 		targetId: new AccountId("0.0.3"),
 	})
 ````
@@ -628,8 +692,7 @@ Resets the allowance of a supplier.
 ````Typescript
 	interface IBasicRequest {
 		proxyContractId: ContractId;
-		privateKey: PrivateKey;
-		accountId: AccountId;
+		account: Account;
 		targetId: AccountId;
 	}
 
@@ -640,8 +703,7 @@ Resets the allowance of a supplier.
 ````Typescript
 	const res: Uint8Array = await sdk.resetSupplierAllowance({
 		proxyContractId: new ContractId("0.0.1"),
-		privateKey: new PrivateKey("1234"),
-		accountId: new AccountId("0.0.2"),
+		account: new EOAccount("0.0.1", new PrivateKey("1234")),
 		targetId: new AccountId("0.0.3"),
 	})
 ````
@@ -654,8 +716,7 @@ Increases the allowance of a supplier.
 ````Typescript
 	interface IAllowanceRequest {
 		proxyContractId: ContractId;
-		privateKey: PrivateKey;
-		accountId: AccountId;
+		account: Account;
 		targetId: AccountId;
 		amount: number;
 	}
@@ -667,8 +728,7 @@ Increases the allowance of a supplier.
 ````Typescript
 	const res: Uint8Array = await sdk.increaseSupplierAllowance({
 		proxyContractId: new ContractId("0.0.1"),
-		privateKey: new PrivateKey("1234"),
-		accountId: new AccountId("0.0.2"),
+		account: new EOAccount("0.0.1", new PrivateKey("1234")),
 		targetId: new AccountId("0.0.3"),
 		amount: 10.42,
 	})
@@ -682,8 +742,7 @@ Decreases the allowance of a supplier.
 ````Typescript
 	interface IAllowanceRequest {
 		proxyContractId: ContractId;
-		privateKey: PrivateKey;
-		accountId: AccountId;
+		account: Account;
 		targetId: AccountId;
 		amount: number;
 	}
@@ -695,8 +754,7 @@ Decreases the allowance of a supplier.
 ````Typescript
 	const res: Uint8Array = await sdk.decreaseSupplierAllowance({
 		proxyContractId: new ContractId("0.0.1"),
-		privateKey: new PrivateKey("1234"),
-		accountId: new AccountId("0.0.2"),
+		account: new EOAccount("0.0.1", new PrivateKey("1234")),
 		targetId: new AccountId("0.0.3"),
 		amount: 10.42,
 	})
@@ -710,8 +768,7 @@ Checks if the supplier account passed has it's allowance limited.
 ````Typescript
 	interface IBasicRequest {
 		proxyContractId: ContractId;
-		privateKey: PrivateKey;
-		accountId: AccountId;
+		account: Account;
 		targetId: AccountId;
 	}
 
@@ -722,8 +779,7 @@ Checks if the supplier account passed has it's allowance limited.
 ````Typescript
 	const res: Uint8Array = await sdk.isLimitedSupplierAllowance({
 		proxyContractId: new ContractId("0.0.1"),
-		privateKey: new PrivateKey("1234"),
-		accountId: new AccountId("0.0.2"),
+		account: new EOAccount("0.0.1", new PrivateKey("1234")),
 		targetId: new AccountId("0.0.3"),
 	})
 ````
@@ -735,8 +791,7 @@ Decreases the allowance of a supplier.
 ````Typescript
 	interface IBasicRequest {
 		proxyContractId: ContractId;
-		privateKey: PrivateKey;
-		accountId: AccountId;
+		account: Account;
 		targetId: AccountId;
 	}
 
@@ -747,8 +802,7 @@ Decreases the allowance of a supplier.
 ````Typescript
 	const res: Uint8Array = await sdk.isUnlimitedSupplierAllowance({
 		proxyContractId: new ContractId("0.0.1"),
-		privateKey: new PrivateKey("1234"),
-		accountId: new AccountId("0.0.2"),
+		account: new EOAccount("0.0.1", new PrivateKey("1234")),
 		targetId: new AccountId("0.0.3"),
 	})
 ````
@@ -769,8 +823,7 @@ Grants an account a role in a stable coin.
 
 	interface IRoleStableCoinRequest {
 		proxyContractId: ContractId;
-		privateKey: PrivateKey;
-		accountId: AccountId;
+		account: Account;
 		targetId: AccountId;
 		role: StableCoinRole;
 		amount?: number;
@@ -783,8 +836,7 @@ Grants an account a role in a stable coin.
 ````Typescript
 	const res: Uint8Array = await sdk.grantRole({
 		proxyContractId: new ContractId("0.0.1"),
-		privateKey: new PrivateKey("1234"),
-		accountId: new AccountId("0.0.2"),
+		account: new EOAccount("0.0.1", new PrivateKey("1234")),
 		targetId: new AccountId("0.0.3"),
 		role: StableCoinRole.WIPE_ROLE
 	})
@@ -806,8 +858,7 @@ Revokes an account's role in a stable coin.
 
 	interface IRoleStableCoinRequest {
 		proxyContractId: ContractId;
-		privateKey: PrivateKey;
-		accountId: AccountId;
+		account: Account;
 		targetId: AccountId;
 		role: StableCoinRole;
 		amount?: number;
@@ -820,8 +871,7 @@ Revokes an account's role in a stable coin.
 ````Typescript
 	const res: Uint8Array = await sdk.revokeRole({
 		proxyContractId: new ContractId("0.0.1"),
-		privateKey: new PrivateKey("1234"),
-		accountId: new AccountId("0.0.2"),
+		account: new EOAccount("0.0.1", new PrivateKey("1234")),
 		targetId: new AccountId("0.0.3"),
 		role: StableCoinRole.WIPE_ROLE
 	})
@@ -842,8 +892,7 @@ Checks if an account has a certain role on the stable coin.
 
 	interface IRoleStableCoinRequest {
 		proxyContractId: ContractId;
-		privateKey: PrivateKey;
-		accountId: AccountId;
+		account: Account;
 		targetId: AccountId;
 		role: StableCoinRole;
 		amount?: number;
@@ -856,8 +905,7 @@ Checks if an account has a certain role on the stable coin.
 ````Typescript
 	const res: Uint8Array = await sdk.hasRole({
 		proxyContractId: new ContractId("0.0.1"),
-		privateKey: new PrivateKey("1234"),
-		accountId: new AccountId("0.0.2"),
+		account: new EOAccount("0.0.1", new PrivateKey("1234")),
 		targetId: new AccountId("0.0.3"),
 		role: StableCoinRole.WIPE_ROLE
 	})

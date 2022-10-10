@@ -17,13 +17,13 @@ export class HTSResponse {
 	idTransaction: string;
 	transactionType: TransactionType;
 	reponseParam: Uint8Array;
-	receipt: TransactionReceipt;
+	receipt?: TransactionReceipt;
 
 	constructor(
 		idTransaction: string,
 		transactionType: TransactionType,
 		reponseParam: Uint8Array,
-		receipt: TransactionReceipt,
+		receipt?: TransactionReceipt,
 	) {
 		this.idTransaction = idTransaction;
 		this.transactionType = transactionType;

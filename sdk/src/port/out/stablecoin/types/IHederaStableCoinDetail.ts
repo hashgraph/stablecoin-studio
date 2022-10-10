@@ -1,3 +1,4 @@
+import { AccountId } from '../../../in/sdk/sdk.js';
 import { ICustomFees } from './ICustomFees';
 import { IPublicKey } from './IPublicKey.js';
 
@@ -12,11 +13,14 @@ export default interface IHederaStableCoinDetail {
 	custom_fees?: ICustomFees;
 	treasury_account_id?: string;
 	expiry_timestamp?: string;
+	auto_renew_account?: AccountId;
 	memo?: string;
 	pause_status?: string;
 	freeze_default?: boolean;
 	// kycStatus: string;
-	deleted?: boolean;
+	autoRenewAccount: AccountId;
+	auto_renew_period: number;
+	deleted?: string;
 	admin_key?: IPublicKey;
 	kyc_key?: IPublicKey;
 	freeze_key?: IPublicKey;
