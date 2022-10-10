@@ -18,6 +18,7 @@ import ISupplierRoleStableCoinServiceRequestModel from './model/ISupplierRoleSta
 import IStableCoinDetail from '../../../port/in/sdk/response/IStableCoinDetail.js';
 import { Capabilities } from '../../../domain/context/stablecoin/Capabilities.js';
 import IGetSupplierAllowanceModel from './model/IGetSupplierAllowanceModel.js';
+import { StableCoinMemo } from '../../../domain/context/stablecoin/StableCoinMemo.js';
 
 export default class StableCoinService extends Service {
 	private repository: IStableCoinRepository;
@@ -84,7 +85,7 @@ export default class StableCoinService extends Service {
 			// customFee:stableCoin.,
 			treasuryId: stableCoin.treasury.id,
 			freezeDefault: stableCoin.freezeDefault,
-			paused:stableCoin.paused,
+			paused: stableCoin.paused,
 			memo: stableCoin.memo,
 			// kycStatus: string;
 			deleted:stableCoin.deleted,
