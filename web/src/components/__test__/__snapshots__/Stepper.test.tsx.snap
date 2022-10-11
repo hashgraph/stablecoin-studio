@@ -12,8 +12,9 @@ exports[`<Stepper /> should render correctly 1`] = `
     >
       <button
         aria-controls="tabs-:r0:--tabpanel-0"
+        aria-disabled="false"
         aria-selected="true"
-        class="chakra-tabs__tab css-1abs3h5"
+        class="chakra-tabs__tab css-yyze93"
         data-index="0"
         id="tabs-:r0:--tab-0"
         role="tab"
@@ -36,8 +37,9 @@ exports[`<Stepper /> should render correctly 1`] = `
       <button
         aria-controls="tabs-:r0:--tabpanel-1"
         aria-selected="false"
-        class="chakra-tabs__tab css-1abs3h5"
+        class="chakra-tabs__tab css-yyze93"
         data-index="1"
+        disabled=""
         id="tabs-:r0:--tab-1"
         role="tab"
         tabindex="-1"
@@ -72,7 +74,7 @@ exports[`<Stepper /> should render correctly 1`] = `
           class="chakra-stack css-1eot3nj"
         >
           <div
-            class="css-1x90gox"
+            class="css-1c3xk1u"
           >
             <div
               class="css-0"

@@ -17,20 +17,35 @@ exports[`<CoinDropdown /> should render correctly 1`] = `
         <span
           data-testid="select-placeholder"
         >
-          <span
-            class="css-1f43avz-a11yText-A11yText"
-            id="react-select-2-live-region"
-          />
-          <span
-            aria-atomic="false"
-            aria-live="polite"
-            aria-relevant="additions text"
-            class="css-1f43avz-a11yText-A11yText"
-          />
-          <div
-            class=" css-1ugyojt"
+          Choose Stable coin 
+        </span>
+        <select
+          data-testid="select-coin-dropdown"
+        >
+          <option
+            value="0.0.123"
+          >
+            0.0.123 - HBAR
+          </option>
+          <option
+            value="0.0.13234"
           >
             0.0.13234 - EXP
+          </option>
+          <option
+            value="0.0.48451290"
+          >
+            0.0.48451290 - MCC
+          </option>
+          <option
+            value="0.0.48471242"
+          >
+            0.0.48471242 - MCC2
+          </option>
+          <option
+            value="0.0.48478857"
+          >
+            0.0.48478857 - MCC3
           </option>
         </select>
       </div>
