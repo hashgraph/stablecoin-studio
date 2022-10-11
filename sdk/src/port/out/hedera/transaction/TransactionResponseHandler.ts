@@ -21,7 +21,7 @@ export class TransactionResposeHandler {
 		abi?: any,
 	): Promise<HTSResponse> {
 		let results: Uint8Array = new Uint8Array();
-		if (responseType == TransactionType.RECEIPT) {
+		if (responseType === TransactionType.RECEIPT) {
 			const transactionReceipt: TransactionReceipt | undefined =
 				await this.getReceipt(clientOrSigner, transactionResponse);
 			let transId;
@@ -38,7 +38,7 @@ export class TransactionResposeHandler {
 			);
 		}
 
-		if (responseType == TransactionType.RECORD) {
+		if (responseType === TransactionType.RECORD) {
 			const transactionRecord:
 				| TransactionRecord
 				| Uint32Array
@@ -49,28 +49,27 @@ export class TransactionResposeHandler {
 			let record: Uint8Array | Uint32Array | undefined;
 			if (nameFunction) {
 				if (transactionRecord instanceof TransactionRecord) {
-					record = transactionRecord
-						?.contractFunctionResult?.bytes;
+					record = transactionRecord?.contractFunctionResult?.bytes;
 				} else if (transactionRecord instanceof Uint32Array) {
 					record = transactionRecord;
 				}
 				if (!record) throw new Error('Invalid response type');
 				results = this.decodeFunctionResult(nameFunction, record, abi);
 			}
-			if (record instanceof TransactionRecord) {
+			if (record instanceof Uint32Array) {
+				return this.createHTSResponse(
+					undefined,
+					responseType,
+					results,
+					undefined,
+				);
+			} else {
 				const tr = transactionRecord as TransactionRecord;
 				return this.createHTSResponse(
 					tr?.transactionId,
 					responseType,
 					results,
 					tr?.receipt,
-				);
-			} else if (record instanceof Uint32Array) {
-				return this.createHTSResponse(
-					undefined,
-					responseType,
-					results,
-					undefined,
 				);
 			}
 		}
