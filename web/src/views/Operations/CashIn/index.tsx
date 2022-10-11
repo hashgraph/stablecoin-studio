@@ -10,7 +10,10 @@ import OperationLayout from './../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
 import { useSelector } from 'react-redux';
-import { SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
+import {
+	SELECTED_WALLET_COIN,
+	SELECTED_WALLET_PAIRED_ACCOUNTID,
+} from '../../../store/slices/walletSlice';
 import { HashPackAccount } from 'hedera-stable-coin-sdk';
 
 const CashInOperation = () => {
@@ -20,6 +23,7 @@ const CashInOperation = () => {
 		onClose: onCloseModalAction,
 	} = useDisclosure();
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
+	const accountId = useSelector(SELECTED_WALLET_PAIRED_ACCOUNTID);
 	const { decimals = 0, totalSupply } = selectedStableCoin || {};
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
@@ -28,13 +32,17 @@ const CashInOperation = () => {
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const handleCashIn: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
-		const { amount } = getValues();
+		const { amount, destinationAccount } = getValues();
 		try {
+			if (!selectedStableCoin?.memo || !selectedStableCoin?.tokenId) {
+				onError();
+				return;
+			}
 			await SDKService.cashIn({
-				proxyContractId: '0.0.48261507',
-				account: new HashPackAccount('0.0.47822430'),
-				tokenId: '0.0.48261510',
-				targetId: '0.0.47822430', // destinationACc
+				proxyContractId: selectedStableCoin.memo,
+				account: new HashPackAccount(accountId),
+				tokenId: selectedStableCoin.tokenId,
+				targetId: destinationAccount, // destinationACc
 				amount,
 			});
 			onSuccess();
