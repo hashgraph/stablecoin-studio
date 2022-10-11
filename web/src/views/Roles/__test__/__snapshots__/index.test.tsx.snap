@@ -19,13 +19,13 @@ exports[`<Roles /> should render correctly 1`] = `
         class="css-src872"
       >
         <h2
-          class="chakra-heading css-1bjzvf5"
+          class="chakra-heading css-1brd3j2"
           data-testid="subtitle"
         >
           Give / Revoke roles
         </h2>
         <div
-          class="css-nxcc5s"
+          class="css-qbodi0"
         >
           <div
             class="css-180e663"

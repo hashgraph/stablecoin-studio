@@ -1,4 +1,5 @@
 import { Box, Flex } from '@chakra-ui/react';
+import type { StableCoinMemo } from 'hedera-stable-coin-sdk';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import BaseContainer from '../../components/BaseContainer';
@@ -26,6 +27,18 @@ const StableCoinDetails = () => {
 		}
 	};
 
+	const getMemoInformation = (memo: StableCoinMemo | undefined) => {
+		return (
+			t('proxyContract') +
+			': ' +
+			memo?.proxyContract +
+			', ' +
+			t('htsAccount') +
+			': ' +
+			memo?.htsAccount
+		);
+	};
+
 	return (
 		<BaseContainer title={t('title')}>
 			<Flex justify='center' p={{ base: 4, md: '128px' }} pt={{ base: 4, lg: 14 }}>
@@ -34,7 +47,7 @@ const StableCoinDetails = () => {
 						<DetailsReview
 							title={t('subtitle')}
 							titleProps={{ fontWeight: 'bold' }}
-							contentProps={{ justifyContent: 'start', gap: 4 }}
+							contentProps={{ justifyContent: 'space-between', gap: 4 }}
 							details={[
 								{
 									label: t('tokenId'),
@@ -66,7 +79,7 @@ const StableCoinDetails = () => {
 								},
 								{
 									label: t('memo'),
-									value: selectedStableCoin?.memo,
+									value: getMemoInformation(selectedStableCoin?.memo),
 								},
 								{
 									label: t('adminKey'),

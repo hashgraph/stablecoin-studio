@@ -109,13 +109,15 @@ export class TransactionProvider {
 		factory: any,
 		parameters: any,
 		gas: number,
-		admPrivateKey?: PrivateKey,
+		admKey?: string,
 	): ContractCreateFlow {
 		const transaction = new ContractCreateFlow()
 			.setBytecode(factory.bytecode)
 			.setGas(gas);
-		admPrivateKey &&
-			transaction.setAdminKey(admPrivateKey.toHashgraphKey());
+		admKey &&
+			transaction.setAdminKey(
+				HPublicKey.fromString(admKey),
+			);
 		if (parameters) {
 			transaction.setConstructorParameters(parameters);
 		}

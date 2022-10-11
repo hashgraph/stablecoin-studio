@@ -19,20 +19,21 @@ exports[`<Operations /> should render correctly 1`] = `
         class="css-src872"
       >
         <h2
-          class="chakra-heading css-1bjzvf5"
+          class="chakra-heading css-1brd3j2"
           data-testid="subtitle"
         >
           Create new operation
         </h2>
         <div
-          class="css-nxcc5s"
+          class="css-qbodi0"
         >
           <div
             class="css-180e663"
           >
             <button
-              class="css-1g500l7"
+              class="css-kly7w1"
               data-testid="direct-access-cashIn"
+              disabled=""
             >
               <div
                 class="css-bv4l9q"
@@ -85,8 +86,9 @@ exports[`<Operations /> should render correctly 1`] = `
             class="css-180e663"
           >
             <button
-              class="css-1g500l7"
-              data-testid="direct-access-cashOut"
+              class="css-kly7w1"
+              data-testid="direct-access-burn"
+              disabled=""
             >
               <div
                 class="css-bv4l9q"
@@ -129,9 +131,9 @@ exports[`<Operations /> should render correctly 1`] = `
               </div>
               <p
                 class="chakra-text css-1mbt7nu"
-                data-testid="direct-access-Cash out"
+                data-testid="direct-access-Burn tokens"
               >
-                Cash out
+                Burn tokens
               </p>
             </button>
           </div>

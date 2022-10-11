@@ -2,7 +2,6 @@ import { Heading, Stack, VStack } from '@chakra-ui/react';
 import type { Control, FieldValues } from 'react-hook-form';
 import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import DatePickerController from '../../components/Form/DatePickerController';
 import InputNumberController from '../../components/Form/InputNumberController';
 import { SelectController } from '../../components/Form/SelectController';
 
@@ -116,19 +115,6 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 						})}
 						maxValue={18}
 						initialValue={6}
-					/>
-					<DatePickerController
-						rules={{
-							required: t(`global:validations.required`),
-						}}
-						isRequired
-						control={control}
-						name={'expirationDate'}
-						label={t('stableCoinCreation:optionalDetails.expirationDate')}
-						placeholder={t('stableCoinCreation:optionalDetails.placeholder', {
-							placeholder: t('stableCoinCreation:optionalDetails.expirationDate'),
-						})}
-						minimumDate={new Date()}
 					/>
 				</Stack>
 			</Stack>

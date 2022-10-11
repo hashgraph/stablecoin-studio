@@ -197,7 +197,7 @@ const useComponents = ({
 					<Text as='span' data-testid='select-placeholder' sx={_styles.label}>
 						{placeholder}
 					</Text>
-					{children}
+					{!isDisabled && children}
 				</Box>
 			);
 		},
@@ -282,7 +282,7 @@ export const SelectController = ({
 							{label && (
 								<FormLabel {...labelProps}>
 									<HStack>
-										<Text>{label}</Text>
+										<Text data-testid='selector-label'>{label}</Text>
 										{isRequired && <Text color='red'>*</Text>}
 									</HStack>
 								</FormLabel>

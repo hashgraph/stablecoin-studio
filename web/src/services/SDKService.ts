@@ -5,7 +5,10 @@ import type {
 	ICreateStableCoinRequest,
 	IStableCoinDetail,
 	IStableCoinList,
+	IRescueStableCoinRequest,
 	HashPackAccount,
+	IGetBalanceStableCoinRequest,
+	IWipeStableCoinRequest,
 } from 'hedera-stable-coin-sdk';
 
 export enum HashConnectConnectionState {
@@ -31,10 +34,19 @@ interface CashInRequest {
 	targetId: string;
 	amount: number;
 }
+
+interface CashOutRequest {
+	proxyContractId: string;
+	account: HashPackAccount;
+	tokenId: string;
+	amount: number;
+}
+
 interface EventsSetter {
 	onInit: () => void;
 	onWalletExtensionFound: () => void;
-	onWalletPaired: () => void;
+	onWalletPaired: (data: any) => void;
+	onWalletConnectionChanged: (data: any) => void;
 }
 
 export class SDKService {
@@ -51,16 +63,19 @@ export class SDKService {
 				},
 			});
 
-			const { onInit, onWalletExtensionFound, onWalletPaired } = events || {
-				onInit: () => {},
-				onWalletAcknowledgeMessageEvent: () => {},
-				onWalletExtensionFound: () => {},
-				onWalletPaired: () => {},
-			};
+			const { onInit, onWalletExtensionFound, onWalletPaired, onWalletConnectionChanged } =
+				events || {
+					onInit: () => {},
+					onWalletAcknowledgeMessageEvent: () => {},
+					onWalletExtensionFound: () => {},
+					onWalletPaired: () => {},
+					onWalletConnectionChanged: () => {},
+				};
 
 			await SDKService.instance.init({ onInit });
 			SDKService.instance.onWalletExtensionFound(onWalletExtensionFound);
 			SDKService.instance.onWalletPaired(onWalletPaired);
+			SDKService.instance.onWalletConnectionChanged(onWalletConnectionChanged);
 		}
 
 		return SDKService.instance;
@@ -119,16 +134,28 @@ export class SDKService {
 		);
 	}
 
+	public static async burn({ proxyContractId, tokenId, amount, account }: CashOutRequest) {
+		return await SDKService.getInstance().then((instance) =>
+			instance.cashOut({ proxyContractId, account, tokenId, amount }),
+		);
+	}
+
 	public static async createStableCoin(
 		createStableCoinRequest: ICreateStableCoinRequest,
 	): Promise<IStableCoinDetail | null> {
 		return (await SDKService.getInstance()).createStableCoin(createStableCoinRequest);
 	}
-	
-	public static async getBalance(data: any ) {
-		return await SDKService.getInstance().then((instance) => 
-			instance.getBalanceOf(data)
-		)
+
+	public static async getBalance(data: IGetBalanceStableCoinRequest) {
+		return SDKService.getInstance().then((instance) => instance.getBalanceOf(data));
+	}
+
+	public static async rescue(data: IRescueStableCoinRequest) {
+		return SDKService.getInstance().then((instance) => instance.rescue(data));
+	}
+
+	public static async wipe(data: IWipeStableCoinRequest) {
+		return SDKService.getInstance().then((instance) => instance.wipe(data));
 	}
 }
 

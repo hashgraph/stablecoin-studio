@@ -2,12 +2,17 @@ import { Heading, Text, Stack, useDisclosure } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import DetailsReview from '../../../components/DetailsReview';
-import InputController from '../../../components/Form/InputController';
 import InputNumberController from '../../../components/Form/InputNumberController';
-import { validateAccount } from '../../../utils/validationsHelper';
 import OperationLayout from '../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
+import { useSelector } from 'react-redux';
+import {
+	SELECTED_WALLET_COIN,
+	SELECTED_WALLET_PAIRED_ACCOUNT,
+} from '../../../store/slices/walletSlice';
+import SDKService from '../../../services/SDKService';
+import { validateDecimals } from '../../../utils/validationsHelper';
 
 const BurnOperation = () => {
 	const {
@@ -16,15 +21,30 @@ const BurnOperation = () => {
 		onClose: onCloseModalAction,
 	} = useDisclosure();
 
+	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
+	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
+
+	const { decimals = 0, totalSupply } = selectedStableCoin || {};
+
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
 	});
 
 	const { t } = useTranslation(['burn', 'global', 'operations']);
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const handleBurn: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
+		const { amount } = getValues();
 		try {
+			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId) {
+				onError();
+				return;
+			}
+			await SDKService.burn({
+				proxyContractId: selectedStableCoin.memo.proxyContract,
+				account,
+				tokenId: selectedStableCoin.tokenId,
+				amount,
+			});
 			onSuccess();
 		} catch (error) {
 			console.error(error);
@@ -47,28 +67,27 @@ const BurnOperation = () => {
 							<InputNumberController
 								rules={{
 									required: t('global:validations.required'),
-									// TODO: Add validation of max decimals allowed by stable coin
+									validate: {
+										maxDecimals: (value: number) => {
+											return (
+												validateDecimals(value, decimals) ||
+												t('global:validations.decimalsValidation')
+											);
+										},
+										quantityOverTotalSupply: (value: number) => {
+											return (
+												(totalSupply && totalSupply >= value) ||
+												t('global:validations.overTotalSupply')
+											);
+										},
+									},
 								}}
+								decimalScale={decimals}
 								isRequired
 								control={control}
 								name='amount'
 								label={t('burn:amountLabel')}
 								placeholder={t('burn:amountPlaceholder')}
-							/>
-							<InputController
-								rules={{
-									required: t('global:validations.required'),
-									validate: {
-										validAccount: (value: string) => {
-											return validateAccount(value) || t('global:validations.invalidAccount');
-										},
-									},
-								}}
-								isRequired
-								control={control}
-								name='originAccount'
-								placeholder={t('burn:originAccountPlaceholder')}
-								label={t('burn:originAccountLabel')}
 							/>
 						</Stack>
 					</>
@@ -90,10 +109,6 @@ const BurnOperation = () => {
 					<DetailsReview
 						title={t('burn:modalAction.subtitle')}
 						details={[
-							{
-								label: t('burn:modalAction.originAccount'),
-								value: getValues().originAccount,
-							},
 							{
 								label: t('burn:modalAction.amount'),
 								value: getValues().amount,

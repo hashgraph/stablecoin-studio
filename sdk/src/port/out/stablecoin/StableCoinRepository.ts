@@ -184,11 +184,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 				[
 					Capabilities.PAUSE,
 					Capabilities.WIPE,
-					Capabilities.WIPE_HTS,
 					Capabilities.CASH_IN,
-					Capabilities.CASH_IN_HTS,
 					Capabilities.BURN,
-					Capabilities.BURN_HTS,
 					Capabilities.RESCUE,
 				].includes(capability),
 			);

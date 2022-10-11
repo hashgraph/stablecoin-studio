@@ -11,7 +11,17 @@ import { Provider } from 'react-redux';
 import type { MockStoreEnhanced } from 'redux-mock-store';
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import { initialState } from '../store/slices/walletSlice';
+import { initialState as hashpackInitialState } from '../store/slices/hashpackSlice';
+import { initialState as walletInitialState } from '../store/slices/walletSlice';
+import { mockedSelectedStableCoin, mockedStableCoinsList, mockedWalletData } from '../mocks/sdk';
+
+const walletInitial = {
+	...walletInitialState,
+	data: mockedWalletData,
+	selectedStableCoin: mockedSelectedStableCoin,
+	stableCoinList: mockedStableCoinsList,
+};
+
 const AllProviders = ({ children }: { children?: React.ReactNode }) => (
 	<I18nextProvider i18n={i18n}>
 		<ChakraProvider theme={theme}>
@@ -22,7 +32,8 @@ const AllProviders = ({ children }: { children?: React.ReactNode }) => (
 const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);
 const defaultStore = mockStore({
-	wallet: initialState,
+	hashpack: hashpackInitialState,
+	wallet: walletInitial,
 });
 
 const customRender = (

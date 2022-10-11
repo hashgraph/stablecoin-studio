@@ -807,29 +807,21 @@ export default class OperationStableCoinService extends Service {
     const rolesAvailability = [
       {
         role: {
-          availability: capabilities.some((capability) =>
-            [Capabilities.CASH_IN, Capabilities.CASH_IN_HTS].includes(
-              capability,
-            ),
-          ),
+          availability: capabilities.includes(Capabilities.CASH_IN),
           name: 'Cash in Role',
           value: StableCoinRole.CASHIN_ROLE,
         },
       },
       {
         role: {
-          availability: capabilities.some((capability) =>
-            [Capabilities.BURN, Capabilities.BURN_HTS].includes(capability),
-          ),
+          availability: capabilities.includes(Capabilities.BURN),
           name: 'Burn Role',
           value: StableCoinRole.BURN_ROLE,
         },
       },
       {
         role: {
-          availability: capabilities.some((capability) =>
-            [Capabilities.WIPE, Capabilities.WIPE_HTS].includes(capability),
-          ),
+          availability: capabilities.includes(Capabilities.WIPE),
           name: 'Wipe Role',
           value: StableCoinRole.WIPE_ROLE,
         },

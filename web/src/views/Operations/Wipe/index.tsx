@@ -7,7 +7,11 @@ import InputController from '../../../components/Form/InputController';
 import InputNumberController from '../../../components/Form/InputNumberController';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
 import ModalsHandler from '../../../components/ModalsHandler';
-import { SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
+import SDKService from '../../../services/SDKService';
+import {
+	SELECTED_WALLET_COIN,
+	SELECTED_WALLET_PAIRED_ACCOUNT,
+} from '../../../store/slices/walletSlice';
 import { validateAccount, validateDecimals } from '../../../utils/validationsHelper';
 import OperationLayout from './../OperationLayout';
 
@@ -17,18 +21,37 @@ const WipeOperation = () => {
 		onOpen: onOpenModalAction,
 		onClose: onCloseModalAction,
 	} = useDisclosure();
+
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
+	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
+
 	const { decimals = 0 } = selectedStableCoin || {};
+
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
 	});
 
 	const { t } = useTranslation(['wipe', 'global', 'operations']);
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const handleWipe: ModalsHandlerActionsProps['onConfirm'] = ({ onSuccess, onError }) => {
-		// TODO: integrate with sdk to do cashin
-		onSuccess();
+	const handleWipe: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
+		const { amount, destinationAccount } = getValues();
+		try {
+			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId) {
+				onError();
+				return;
+			}
+			await SDKService.wipe({
+				proxyContractId: selectedStableCoin.memo.proxyContract,
+				account,
+				tokenId: selectedStableCoin.tokenId,
+				targetId: destinationAccount,
+				amount,
+			});
+			onSuccess();
+		} catch (error) {
+			console.error(error);
+			onError();
+		}
 	};
 
 	return (

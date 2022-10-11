@@ -321,7 +321,7 @@ export default class HTSProvider implements IProvider {
 			safeCast<PublicKey>(stableCoin.wipeKey),
 			safeCast<PublicKey>(stableCoin.pauseKey),
 			safeCast<PublicKey>(stableCoin.supplyKey),
-			stableCoin.autoRenewAccount
+			stableCoin.autoRenewAccount,
 		);
 		log('Setting up contract... please wait.', logOpts);
 		await this.callContract('setTokenAddress', {
@@ -417,7 +417,7 @@ export default class HTSProvider implements IProvider {
 					factory,
 					params,
 					90_000,
-					privateKey,
+					privateKey.publicKey.key,
 				);
 			const transactionResponse: TransactionResponse =
 				await this.htsSigner.signAndSendTransaction(transaction);
@@ -475,7 +475,7 @@ export default class HTSProvider implements IProvider {
 		wipeKey?: PublicKey,
 		pauseKey?: PublicKey,
 		supplyKey?: PublicKey,
-		autoRenewAccount?:AccountId
+		autoRenewAccount?: AccountId,
 	): Promise<ICreateTokenResponse> {
 		const values: ICreateTokenResponse = {
 			name,
@@ -496,7 +496,9 @@ export default class HTSProvider implements IProvider {
 			wipeKey,
 			pauseKey,
 			supplyKey,
-			autoRenewAccountId: autoRenewAccount? new AccountId(autoRenewAccount.toString()):new AccountId('0.0.0')
+			autoRenewAccountId: autoRenewAccount
+				? new AccountId(autoRenewAccount.toString())
+				: new AccountId('0.0.0'),
 		};
 
 		this.htsSigner = new HTSSigner(client);
