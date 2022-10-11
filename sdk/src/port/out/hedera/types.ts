@@ -29,6 +29,7 @@ export interface ICreateTokenResponse {
 	pauseKey?: PublicKey;
 	supplyKey?: PublicKey;
 	tokenId: TokenId;
+	autoRenewAccountId?: AccountId;
 }
 
 export interface IHTSTokenRequest {

@@ -7,7 +7,7 @@ interface InitialState {
 	loading: boolean;
 }
 
-const initialState: InitialState = {
+export const initialState: InitialState = {
 	isConnected: false,
 	isInitialized: false,
 	loading: false,

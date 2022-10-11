@@ -1,4 +1,5 @@
 import { Box } from '@chakra-ui/react';
+import { waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from '../../test/index';
 import type { Step } from '../Stepper';
@@ -24,7 +25,7 @@ const StepsProps = {
 	handleFirstButtonSecondary: () => jest.fn,
 	isValid: true,
 	currentStep: 0,
-	setCurrentStep: () => jest.fn,
+	setCurrentStep: jest.fn(),
 };
 
 describe(`<${Stepper.name} />`, () => {
@@ -49,16 +50,13 @@ describe(`<${Stepper.name} />`, () => {
 		expect(numberTab2).toHaveTextContent(steps[1].number);
 	});
 
-	test('should change tab when next step button clicked', async () => {
+	test('should change tab when next step button clicked', () => {
 		const component = render(<Stepper {...StepsProps} />);
 
 		const buttonPrimaryTab1 = component.getByTestId('stepper-step-panel-button-primary-1');
-
 		userEvent.click(buttonPrimaryTab1);
 
-		const buttonSecondaryTab2 = component.getByTestId('stepper-step-panel-button-secondary-2');
-
-		expect(buttonSecondaryTab2).toBeInTheDocument();
+		expect(StepsProps.setCurrentStep).toHaveBeenCalledWith(1);
 	});
 
 	test('Cancel button should call function passed by handleFirstButtonSecondary prop', async () => {
@@ -69,7 +67,6 @@ describe(`<${Stepper.name} />`, () => {
 		);
 
 		const buttonSecondaryTab1 = component.getByTestId('stepper-step-panel-button-secondary-1');
-
 		userEvent.click(buttonSecondaryTab1);
 
 		expect(handleFirstButtonSecondary).toHaveBeenCalled();
@@ -79,15 +76,14 @@ describe(`<${Stepper.name} />`, () => {
 		const handleLastButtonPrimary = jest.fn();
 
 		const component = render(
-			<Stepper {...StepsProps} handleLastButtonPrimary={handleLastButtonPrimary} />,
+			<Stepper
+				{...StepsProps}
+				handleLastButtonPrimary={handleLastButtonPrimary}
+				currentStep={steps.length - 1}
+			/>,
 		);
 
-		const buttonPrimaryTab1 = component.getByTestId('stepper-step-panel-button-primary-1');
-
-		userEvent.click(buttonPrimaryTab1);
-
 		const buttonPrimaryTab2 = component.getByTestId('stepper-step-panel-button-primary-2');
-
 		userEvent.click(buttonPrimaryTab2);
 
 		expect(handleLastButtonPrimary).toHaveBeenCalled();

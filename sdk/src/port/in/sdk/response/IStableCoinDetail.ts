@@ -1,7 +1,10 @@
 import ContractId from '../../../../domain/context/contract/ContractId.js';
 import { ICustomFees } from '../../../../app/service/stablecoin/model/stablecoindetail/ICustomFees.js';
 import PublicKey from '../../../../domain/context/account/PublicKey.js';
+
 import { StableCoinMemo } from '../../../../domain/context/stablecoin/StableCoinMemo.js';
+import { AccountId } from '../sdk.js';
+
 
 export default interface IStableCoinDetail {
 	tokenId?: string;
@@ -12,12 +15,14 @@ export default interface IStableCoinDetail {
 	maxSupply?: bigint;
 	customFee?: ICustomFees;
 	treasuryId?: string;
-	expirationTime?: string;
 	memo?: StableCoinMemo;
-	paused?: string;
+	expirationTime?: string;
 	freezeDefault?: boolean;
 	// kycStatus: string;
-	deleted?: boolean;
+	autoRenewAccount?: AccountId;
+	autoRenewAccountPeriod?:number
+	paused?: string;
+	deleted?: string;
 	adminKey?: ContractId | PublicKey | undefined;
 	kycKey?: ContractId | PublicKey | undefined;
 	freezeKey?: ContractId | PublicKey | undefined;
