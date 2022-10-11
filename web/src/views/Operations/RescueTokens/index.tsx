@@ -38,12 +38,12 @@ const RescueTokenOperation = () => {
 	}) => {
 		const { amount } = getValues();
 		try {
-			if (!selectedStableCoin?.memo || !selectedStableCoin?.tokenId) {
+			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId) {
 				onError();
 				return;
 			}
 			await SDKService.rescue({
-				proxyContractId: selectedStableCoin.memo,
+				proxyContractId: selectedStableCoin.memo.proxyContract,
 				account,
 				tokenId: selectedStableCoin.tokenId,
 				amount,

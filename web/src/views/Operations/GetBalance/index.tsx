@@ -40,13 +40,13 @@ const GetBalanceOperation = () => {
 		const { targetAccount } = getValues();
 
 		try {
-			if (!selectedStableCoin?.memo || !selectedStableCoin?.tokenId) {
+			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId) {
 				onError();
 				return;
 			}
 
 			const balance = await SDKService.getBalance({
-				proxyContractId: selectedStableCoin.memo,
+				proxyContractId: selectedStableCoin.memo.proxyContract,
 				account,
 				targetId: targetAccount,
 				tokenId: selectedStableCoin.tokenId,
