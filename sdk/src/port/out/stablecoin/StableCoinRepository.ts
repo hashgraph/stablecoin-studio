@@ -58,12 +58,10 @@ export default class StableCoinRepository implements IStableCoinRepository {
 					account.accountId.id,
 			);
 			res.data.tokens.map((item: IToken) => {
-				if (item.memo) {
-					resObject.push({
-						id: item.token_id,
-						symbol: item.symbol,
-					});
-				}
+				resObject.push({
+					id: item.token_id,
+					symbol: item.symbol,
+				});
 			});
 			return resObject;
 		} catch (error) {
