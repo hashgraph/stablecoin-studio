@@ -13,6 +13,7 @@ import {
 	SELECTED_WALLET_PAIRED_ACCOUNT,
 } from '../../../store/slices/walletSlice';
 import SDKService from '../../../services/SDKService';
+import { useState } from 'react';
 
 const RescueTokenOperation = () => {
 	const {
@@ -23,6 +24,8 @@ const RescueTokenOperation = () => {
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
+
+	const [errorOperation, setErrorOperation] = useState();
 
 	const { decimals = 0 } = selectedStableCoin || {};
 
@@ -49,8 +52,8 @@ const RescueTokenOperation = () => {
 				amount,
 			});
 			onSuccess();
-		} catch (error) {
-			console.error(error);
+		} catch (error: any) {
+			setErrorOperation(error.toString());
 			onError();
 		}
 	};
@@ -92,7 +95,7 @@ const RescueTokenOperation = () => {
 			/>
 			<ModalsHandler
 				errorNotificationTitle={t('operations:modalErrorTitle')}
-				errorNotificationDescription={'error'} // TODO: show returned error from sdk
+				errorNotificationDescription={errorOperation}
 				modalActionProps={{
 					isOpen: isOpenModalAction,
 					onClose: onCloseModalAction,
@@ -117,7 +120,9 @@ const RescueTokenOperation = () => {
 					/>
 				}
 				successNotificationTitle={t('operations:modalSuccessTitle')}
-				successNotificationDescription={t('operations:modalSuccessDesc')}
+				successNotificationDescription={t('rescueTokens:modalSuccessDesc', {
+					amount: getValues().amount,
+				})}
 			/>
 		</>
 	);

@@ -23,6 +23,7 @@ const GetBalanceOperation = () => {
 	} = useDisclosure();
 
 	const [balance, setBalance] = useState<number | null>();
+	const [errorOperation, setErrorOperation] = useState();
 
 	const { t } = useTranslation(['getBalance', 'global', 'operations']);
 
@@ -54,7 +55,8 @@ const GetBalanceOperation = () => {
 
 			setBalance(balance?.[0]);
 			onSuccess();
-		} catch (error) {
+		} catch (error: any) {
+			setErrorOperation(error.toString());
 			onError();
 		}
 	};
@@ -94,7 +96,7 @@ const GetBalanceOperation = () => {
 			/>
 			<ModalsHandler
 				errorNotificationTitle={t('operations:modalErrorTitle')}
-				errorNotificationDescription={'error'} // TODO: show returned error from sdk
+				errorNotificationDescription={errorOperation}
 				modalActionProps={{
 					isOpen: isOpenModalAction,
 					onClose: onCloseModalAction,

@@ -1,4 +1,5 @@
 import { Heading, Text, Stack, useDisclosure } from '@chakra-ui/react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -25,6 +26,8 @@ const WipeOperation = () => {
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
 
+	const [errorOperation, setErrorOperation] = useState();
+
 	const { decimals = 0 } = selectedStableCoin || {};
 
 	const { control, getValues, formState } = useForm({
@@ -48,8 +51,8 @@ const WipeOperation = () => {
 				amount,
 			});
 			onSuccess();
-		} catch (error) {
-			console.error(error);
+		} catch (error: any) {
+			setErrorOperation(error.toString());
 			onError();
 		}
 	};
@@ -104,7 +107,7 @@ const WipeOperation = () => {
 			/>
 			<ModalsHandler
 				errorNotificationTitle={t('operations:modalErrorTitle')}
-				errorNotificationDescription={'error'} // TODO: save error from sdk
+				errorNotificationDescription={errorOperation}
 				successNotificationTitle={t('operations:modalSuccessTitle')}
 				successNotificationDescription={t('wipe:modalSuccessDesc', {
 					amount: getValues().amount,

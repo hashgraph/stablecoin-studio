@@ -12,5 +12,5 @@
         "amount": "Amount",
         "accept": "Make wipe"
     },
-    "modalSuccessDesc": "You have wiped {{amount}} tokens from '{{account}}"
+    "modalSuccessDesc": "You have wiped {{amount}} tokens from {{account}}"
 }
