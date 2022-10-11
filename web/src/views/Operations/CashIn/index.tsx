@@ -32,12 +32,12 @@ const CashInOperation = () => {
 	const handleCashIn: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
 		const { amount, destinationAccount } = getValues();
 		try {
-			if (!selectedStableCoin?.memo || !selectedStableCoin?.tokenId) {
+			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId) {
 				onError();
 				return;
 			}
 			await SDKService.cashIn({
-				proxyContractId: selectedStableCoin.memo,
+				proxyContractId: selectedStableCoin.memo.proxyContract,
 				account,
 				tokenId: selectedStableCoin.tokenId,
 				targetId: destinationAccount,

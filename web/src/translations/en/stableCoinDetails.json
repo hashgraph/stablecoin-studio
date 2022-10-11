@@ -18,6 +18,8 @@
     "none": "None",
     "smartContract": "Smart contract",
     "currentUser": "Current user",
-    "otherKey": "Other key: {{key}}"
+    "otherKey": "Other key: {{key}}",
+    "htsAccount": "HTS account",
+    "proxyContract": "Proxy contract"
 
 }
