@@ -1,10 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Stack, useDisclosure } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-// import { AccountId, PrivateKey } from 'hedera-stable-coin-sdk';
-// import type { ICreateStableCoinRequest } from 'hedera-stable-coin-sdk';
 import { useNavigate } from 'react-router-dom';
-// import { useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import BaseContainer from '../../components/BaseContainer';
 import BasicDetails from './BasicDetails';
@@ -16,10 +13,11 @@ import OptionalDetails from './OptionalDetails';
 import ManagementPermissions from './ManagementPermissions';
 import Review from './Review';
 import { OTHER_KEY_VALUE } from './components/KeySelector';
-// import { SELECTED_WALLET_PAIRED_ACCOUNTID } from '../../store/slices/walletSlice';
-// import SDKService from '../../services/SDKService';
-// import type { RootState } from '../../store/store';
+import { SELECTED_WALLET_PAIRED_ACCOUNT } from '../../store/slices/walletSlice';
+import SDKService from '../../services/SDKService';
 import ModalNotification from '../../components/ModalNotification';
+import type { ICreateStableCoinRequest } from 'hedera-stable-coin-sdk';
+import { useSelector } from 'react-redux';
 
 const StableCoinCreation = () => {
 	const navigate = useNavigate();
@@ -32,10 +30,11 @@ const StableCoinCreation = () => {
 		formState: { errors },
 	} = form;
 
+	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
+
 	const [isValidForm, setIsValidForm] = useState<boolean>(false);
 	const [currentStep, setCurrentStep] = useState<number>(0);
 	const [success, setSuccess] = useState<boolean>();
-	// const accountId = useSelector<RootState, string>(SELECTED_WALLET_PAIRED_ACCOUNTID);
 	const { isOpen, onOpen, onClose } = useDisclosure();
 
 	useEffect(() => {
@@ -79,7 +78,7 @@ const StableCoinCreation = () => {
 		if (currentStep === 1) {
 			// @ts-ignore
 			const supplyType = watch('supplyType');
-			let keys = ['initialSupply', 'decimals', 'expirationDate'];
+			let keys = ['initialSupply', 'decimals'];
 
 			if (supplyType?.value === 1) keys = keys.concat('totalSupply');
 
@@ -123,22 +122,21 @@ const StableCoinCreation = () => {
 
 	const handleFinish = async () => {
 		// TODO: complete request object with keys
-		// const { name, symbol, autorenewAccount, initialSupply, totalSupply, decimals } = getValues();
+		const { name, symbol, autorenewAccount, initialSupply, totalSupply, decimals } = getValues();
 
-		// const newStableCoinParams: ICreateStableCoinRequest = {
-		// 	accountId: new AccountId(accountId),
-		// 	privateKey: new PrivateKey(''),
-		// 	name,
-		// 	symbol,
-		// 	decimals,
-		// 	autoRenewAccount: autorenewAccount,
-		// 	initialSupply: BigInt(initialSupply),
-		// 	maxSupply: totalSupply,
-		// };
+		const newStableCoinParams: ICreateStableCoinRequest = {
+			account,
+			name,
+			symbol,
+			decimals,
+			autoRenewAccount: autorenewAccount,
+			initialSupply: BigInt(initialSupply),
+			maxSupply: totalSupply,
+		};
 
 		try {
-			// const response = await SDKService.createStableCoin(newStableCoinParams);
-			// console.log('RESPONSE: ', response);
+			const response = await SDKService.createStableCoin(newStableCoinParams);
+			console.log('RESPONSE: ', response);
 			setSuccess(true);
 		} catch (error) {
 			console.log('ERROR: ', error);

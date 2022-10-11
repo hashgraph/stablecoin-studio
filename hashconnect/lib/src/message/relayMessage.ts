@@ -82,7 +82,7 @@ export declare namespace MessageTypes {
         success: boolean;
         response?: object | string; 
         receipt?: Uint8Array | string;
-        record?: Uint8Array | string;
+        record?: Uint8Array | string | Record<string, number>;
         signedTransaction?: Uint8Array | string;
         error?: string;
     }

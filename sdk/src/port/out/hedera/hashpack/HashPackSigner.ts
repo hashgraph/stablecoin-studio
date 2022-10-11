@@ -5,6 +5,7 @@ import {
 	TransactionResponse,
 	ContractCreateFlow,
 	ContractExecuteTransaction,
+	AccountInfo,
 } from '@hashgraph/sdk';
 import { HashConnect, MessageTypes } from 'hashconnect';
 import { HashConnectProvider } from 'hashconnect/provider/provider';
@@ -34,7 +35,8 @@ export class HashPackSigner implements ISigner {
 			topic,
 			account.accountId.id,
 		);
-		this.signer = this.hc.getSigner(this.provider) as unknown as Signer;
+		this.hashConnectSigner = this.hc.getSigner(this.provider);
+		this.signer = this.hashConnectSigner as unknown as Signer;
 	}
 
 	async signAndSendTransaction(
@@ -45,6 +47,7 @@ export class HashPackSigner implements ISigner {
 	): Promise<TransactionResponse | MessageTypes.TransactionResponse> {
 		if (this.signer) {
 			if (transaction instanceof ContractCreateFlow) {
+				console.log(transaction);
 				return await transaction.executeWithSigner(this.signer);
 			} else {
 				const signedT = await transaction.freezeWithSigner(
@@ -63,5 +66,9 @@ export class HashPackSigner implements ISigner {
 			}
 		}
 		throw new Error('Its necessary to have a Signer');
+	}
+
+	async getAccountInfo(): Promise<AccountInfo> {
+		return await this.hashConnectSigner.getAccountInfo() as unknown as AccountInfo;
 	}
 }

@@ -21,7 +21,7 @@ export class TransactionResposeHandler {
 		abi?: any,
 	): Promise<HTSResponse> {
 		let results: Uint8Array = new Uint8Array();
-		if (responseType == TransactionType.RECEIPT) {
+		if (responseType === TransactionType.RECEIPT) {
 			const transactionReceipt: TransactionReceipt | undefined =
 				await this.getReceipt(clientOrSigner, transactionResponse);
 			let transId;
@@ -38,26 +38,40 @@ export class TransactionResposeHandler {
 			);
 		}
 
-		if (responseType == TransactionType.RECORD) {
-			const transactionRecord: TransactionRecord | undefined =
-				await this.getRecord(clientOrSigner, transactionResponse);
-
-			if (
-				nameFunction &&
-				transactionRecord?.contractFunctionResult?.bytes
-			) {
-				results = this.decodeFunctionResult(
-					nameFunction,
-					transactionRecord.contractFunctionResult.bytes,
-					abi,
+		if (responseType === TransactionType.RECORD) {
+			const transactionRecord:
+				| TransactionRecord
+				| Uint32Array
+				| undefined = await this.getRecord(
+				clientOrSigner,
+				transactionResponse,
+			);
+			let record: Uint8Array | Uint32Array | undefined;
+			if (nameFunction) {
+				if (transactionRecord instanceof TransactionRecord) {
+					record = transactionRecord?.contractFunctionResult?.bytes;
+				} else if (transactionRecord instanceof Uint32Array) {
+					record = transactionRecord;
+				}
+				if (!record) throw new Error('Invalid response type');
+				results = this.decodeFunctionResult(nameFunction, record, abi);
+			}
+			if (record instanceof Uint32Array) {
+				return this.createHTSResponse(
+					undefined,
+					responseType,
+					results,
+					undefined,
+				);
+			} else {
+				const tr = transactionRecord as TransactionRecord;
+				return this.createHTSResponse(
+					tr?.transactionId,
+					responseType,
+					results,
+					tr?.receipt,
 				);
 			}
-			return this.createHTSResponse(
-				transactionRecord?.transactionId,
-				responseType,
-				results,
-				transactionRecord?.receipt,
-			);
 		}
 
 		throw new Error('The response type is neither RECORD nor RECEIPT.');
@@ -68,8 +82,8 @@ export class TransactionResposeHandler {
 		transactionResponse:
 			| TransactionResponse
 			| MessageTypes.TransactionResponse,
-	): Promise<TransactionRecord | undefined> {
-		let transactionRecord: TransactionRecord | undefined;
+	): Promise<TransactionRecord | Uint32Array | undefined> {
+		let transactionRecord: TransactionRecord | Uint32Array | undefined;
 		if (clientOrSigner instanceof Client) {
 			if (transactionResponse instanceof TransactionResponse) {
 				transactionRecord = await transactionResponse.getRecord(
@@ -106,8 +120,7 @@ export class TransactionResposeHandler {
 					clientOrSigner,
 				);
 			} else {
-				transactionReceipt =
-					this.getHashconnectTransactionReceipt(transactionResponse);
+				throw new Error('Incorrect response type');
 			}
 		} else {
 			if (transactionResponse instanceof TransactionResponse) {
@@ -127,7 +140,6 @@ export class TransactionResposeHandler {
 		transactionResponse: MessageTypes.TransactionResponse,
 	): TransactionReceipt {
 		const receipt = transactionResponse.receipt;
-		console.log(receipt);
 		if (receipt && receipt instanceof Uint8Array) {
 			return TransactionReceipt.fromBytes(receipt);
 		} else {
@@ -139,15 +151,17 @@ export class TransactionResposeHandler {
 
 	private getHashconnectTransactionRecord(
 		transactionResponse: MessageTypes.TransactionResponse,
-	): TransactionRecord | undefined {
+	): Uint32Array | undefined {
 		const record = transactionResponse.record;
-		if (record && record instanceof Uint8Array) {
-			return TransactionRecord.fromBytes(record);
-		} else if (!record) {
-			throw new Error(`Unexpected receipt type from Hashpack: ${record}`);
+		if (!record) {
+			throw new Error(`Unexpected record type from Hashpack: ${record}`);
 		} else {
-			console.log(record); // TODO not working with records (object is received)
-			return undefined;
+			try {
+				return new Uint32Array(Object.values(record));
+			} catch (err) {
+				console.log('Could not determine response type for: ', record);
+				return undefined;
+			}
 		}
 	}
 
@@ -189,7 +203,6 @@ export class TransactionResposeHandler {
 		);
 
 		const jsonParsedArray = JSON.parse(JSON.stringify(result));
-
 		return jsonParsedArray;
 	}
 }
