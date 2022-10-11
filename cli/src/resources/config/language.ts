@@ -211,6 +211,7 @@ export const english = {
       'Back',
     ],
     backOption: [new inquirer.Separator(), 'Go back'],
+    returnOption: [new inquirer.Separator(), 'Return to main menu'],
     goBack: 'Go back',
     privateKeyType: ['ED25519', 'ECDSA'],
   },

@@ -382,7 +382,6 @@ export default class OperationStableCoinService extends Service {
     let limit = '';
 
     let role: string;
-    let goBack = language.getArray('wizard.backOption');
     switch (
       await utilsService.defaultMultipleAsk(
         language.getText('stablecoin.askEditCashInRole'),
@@ -779,11 +778,9 @@ export default class OperationStableCoinService extends Service {
     options: string[],
     capabilities: string[],
   ): string[] {
+    let result = [];
     if (capabilities.length === 0) return options;
-
-    capabilities = capabilities.concat('Return to main menu');
-
-    return options.filter((option) => {
+    result = options.filter((option) => {
       if (
         (option === 'Cash in' &&
           (capabilities.includes('Cash in') ||
@@ -802,6 +799,8 @@ export default class OperationStableCoinService extends Service {
 
       return capabilities.includes(option);
     });
+
+    return result.concat(language.getArray('wizard.returnOption'));
   }
 
   private async getRole(capabilities: Capabilities[]): Promise<string> {
@@ -860,7 +859,7 @@ export default class OperationStableCoinService extends Service {
       rolesNames,
       true,
     );
-    if (roleSelected !== language.getText('wizard.backOption')) {
+    if (roleSelected !== language.getText('wizard.goBack')) {
       const roleValue = rolesAvailable.filter(
         ({ role }) => role.name == roleSelected,
       )[0].role.value;
