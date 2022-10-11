@@ -31,7 +31,10 @@ export default class ListStableCoinsService extends Service {
         .getListStableCoin({
           account: new EOAccount(
             currentAccount.accountId,
-            new PrivateKey(currentAccount.privateKey),
+            new PrivateKey(
+              currentAccount.privateKey.key,
+              currentAccount.privateKey.type,
+            ),
           ),
         })
         .then((response: IStableCoinList[]) => (resp = response)),

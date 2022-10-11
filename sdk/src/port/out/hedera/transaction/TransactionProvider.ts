@@ -5,7 +5,6 @@ import {
 	Hbar,
 	TokenSupplyType,
 	ContractCreateFlow,
-	PrivateKey,
 	TokenWipeTransaction,
 	TokenMintTransaction,
 	TokenBurnTransaction,
@@ -17,6 +16,7 @@ import {
 } from '@hashgraph/sdk';
 import { ContractId, PublicKey } from '../../../in/sdk/sdk.js';
 import { ICreateTokenResponse } from '../types.js';
+import PrivateKey from '../../../../domain/context/account/PrivateKey';
 
 export class TransactionProvider {
 	public static buildContractExecuteTransaction(

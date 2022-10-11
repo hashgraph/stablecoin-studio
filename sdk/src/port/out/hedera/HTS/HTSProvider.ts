@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import axios from 'axios';
 import { hethers } from '@hashgraph/hethers';
 import PrivateKey from '../../../../domain/context/account/PrivateKey.js';
 import {
@@ -11,7 +12,7 @@ import {
 	PublicKey as HPublicKey,
 	TokenId,
 	Transaction,
-	Status,
+	Status
 } from '@hashgraph/sdk';
 import {
 	HederaERC1967Proxy__factory,
@@ -25,7 +26,7 @@ import {
 import { IniConfig, IProvider } from '../Provider.js';
 import Web3 from 'web3';
 import { StableCoin } from '../../../../domain/context/stablecoin/StableCoin.js';
-import { getHederaNetwork } from '../../../../core/enum.js';
+import { getHederaNetwork, PrivateKeyType } from '../../../../core/enum.js';
 import Long from 'long';
 import { log } from '../../../../core/log.js';
 import {
@@ -51,6 +52,7 @@ import EventService from '../../../../app/service/event/EventService.js';
 import { Account, ContractId, EOAccount } from '../../../in/sdk/sdk.js';
 import { safeCast } from '../../../../core/cast.js';
 import { StableCoinMemo } from '../../../../domain/context/stablecoin/StableCoinMemo.js';
+import { IAccount } from '../account/types/IAccount';
 
 type DefaultHederaProvider = hethers.providers.DefaultHederaProvider;
 
@@ -111,7 +113,10 @@ export default class HTSProvider implements IProvider {
 		}
 
 		if (account && account instanceof EOAccount) {
-			client.setOperator(account.accountId.id, account.privateKey.key);
+			client.setOperator(
+				account.accountId.id,
+				account.privateKey.toHashgraphKey(),
+			);
 		} else {
 			throw new Error('Cannot get client: No private key');
 		}
@@ -143,13 +148,14 @@ export default class HTSProvider implements IProvider {
 		privateKey?: PrivateKey | string | undefined,
 	): HPublicKey {
 		let key = null;
+		let publicKey = null;
 		if (privateKey instanceof PrivateKey) {
-			key = privateKey.key;
+			publicKey = privateKey.toHashgraphKey().publicKey;
 		} else {
 			key = privateKey;
+			if (!key) throw new HederaError('No private key provided');
+			publicKey = HPrivateKey.fromString(key).publicKey;
 		}
-		if (!key) throw new HederaError('No private key provided');
-		const publicKey = HPrivateKey.fromString(key).publicKey;
 		return publicKey;
 	}
 
@@ -199,6 +205,53 @@ export default class HTSProvider implements IProvider {
 			);
 
 		return htsResponse.reponseParam;
+	}
+
+	public async accountToEvmAddress(account: Account): Promise<string> {
+		if (account.privateKey) {
+			return this.getAccountEvmAddressFromPrivateKeyType(
+				account.privateKey?.type, 
+				account.privateKey.publicKey.key, 
+				account.accountId.id);
+		} else {
+			return await this.getAccountEvmAddress(account.accountId.id);
+		}
+	}	
+
+	private async getAccountEvmAddress(
+		accountId: string,
+	): Promise<string> {
+		try {
+			const URI_BASE = `${getHederaNetwork(this.network)?.mirrorNodeUrl}/api/v1/`;
+			const res = await axios.get<IAccount>(
+				URI_BASE + 'accounts/' + accountId
+			);
+
+			if (res.data.evm_address) {
+				return res.data.evm_address;
+			} else {
+				return this.getAccountEvmAddressFromPrivateKeyType(
+					res.data.key._type, 
+					res.data.key.key, 
+					accountId);
+			}
+		} catch (error) {
+			return Promise.reject<string>(error);
+		}
+	}	
+
+	private getAccountEvmAddressFromPrivateKeyType(
+		privateKeyType: string, 
+		publicKey: string,
+		accountId: string): string {
+			
+		switch(privateKeyType) {
+			case PrivateKeyType.ECDSA:
+				return HPublicKey.fromString(publicKey).toEthereumAddress();
+
+			default:
+				return HAccountId.fromString(accountId).toSolidityAddress();
+		}
 	}
 
 	public async deployStableCoin(
@@ -296,12 +349,11 @@ export default class HTSProvider implements IProvider {
 				'Associating administrator account to token... please wait.',
 				logOpts,
 			);
+
 			await this.callContract('associateToken', {
 				contractId: stableCoin.memo.proxyContract,
 				parameters: [
-					HAccountId.fromString(
-						account.accountId.id,
-					).toSolidityAddress(),
+					await this.accountToEvmAddress(account)
 				],
 				gas: 1_300_000,
 				abi: HederaERC20__factory.abi,

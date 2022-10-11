@@ -127,7 +127,7 @@ export default class SetConfigurationService extends Service {
   public async configureAccounts(): Promise<IAccountConfig[]> {
     const configuration = configurationService.getConfiguration();
     let accounts: IAccountConfig[] = configuration?.accounts || [];
-    if (accounts.length === 1 && accounts[0].privateKey === '') {
+    if (accounts.length === 1 && accounts[0].privateKey.key === '') {
       accounts = [];
     }
     let moreAccounts = true;
@@ -146,6 +146,7 @@ export default class SetConfigurationService extends Service {
           '0.0.0',
         );
       }
+
       const accountFromPrivKey: IAccountConfig =
         await this.askForPrivateKeyOfAccount(accountId);
 
@@ -153,6 +154,7 @@ export default class SetConfigurationService extends Service {
         language.getText('configuration.askNetworkAccount'),
         configuration.networks.map((acc) => acc.name),
       );
+
       let alias = await utilsService.defaultSingleAsk(
         language.getText('configuration.askAlias'),
         'AdminAccount',
@@ -263,7 +265,7 @@ export default class SetConfigurationService extends Service {
           options,
           true,
         );
-        if (account === language.getText('wizard.backOption')) {
+        if (account === language.getText('wizard.goBack')) {
           await this.manageAccountMenu();
         }
         account = optionsWithoutColors[options.indexOf(account)];
@@ -294,6 +296,11 @@ export default class SetConfigurationService extends Service {
         ` '96|64|66 characters' (${accountId})`,
     );
 
+    const pkType = await utilsService.defaultMultipleAsk(
+      language.getText('configuration.askPrivateKeyType'),
+      language.getArray('wizard.privateKeyType'),
+    );
+
     const network = configurationService.getConfiguration().defaultNetwork;
     let alias = '';
 
@@ -314,13 +321,13 @@ export default class SetConfigurationService extends Service {
     ) {
       utilsService.showError(language.getText('general.incorrectParam'));
       const acc = await this.askForPrivateKeyOfAccount(accountId);
-      privateKey = acc.privateKey;
+      privateKey = acc.privateKey.key;
       alias = acc.alias;
     }
 
     return {
       accountId: accountId,
-      privateKey: privateKey,
+      privateKey: { key: privateKey, type: pkType },
       network,
       alias: alias,
     };

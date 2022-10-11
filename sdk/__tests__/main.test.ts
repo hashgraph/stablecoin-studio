@@ -18,17 +18,17 @@ describe('🧪 SDK Unit Test', () => {
     expect(sdk).not.toBeNull();
   });
 
-	it('Emits initialization event', async () => {
-		let data;
-		await getSDKAsync(undefined, {
-			onInit: (_data) => {
-				data = _data;
-			},
-		});
-		console.log(data);
-		expect(data).not.toBeFalsy();
-	});
-  
+  it('Emits initialization event', async () => {
+    let data;
+    await getSDKAsync(undefined, {
+      onInit: (_data) => {
+        data = _data;
+      },
+    });
+    console.log(data);
+    expect(data).not.toBeFalsy();
+  });
+
   it('Connects to wallet', async () => {
     let event;
     const sdk = getSDK();

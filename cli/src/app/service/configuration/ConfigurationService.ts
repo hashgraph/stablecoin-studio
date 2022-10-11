@@ -77,7 +77,10 @@ export default class ConfigurationService extends Service {
     const result = { ...configuration };
     result.accounts = configuration.accounts.map((acc) => {
       return {
-        privateKey: MaskData.maskPassword(acc.privateKey, maskJSONOptions),
+        privateKey: {
+          key: MaskData.maskPassword(acc.privateKey.key, maskJSONOptions),
+          type: acc.privateKey.type,
+        },
         accountId: acc.accountId,
         network: acc.network,
         alias: acc.alias,
