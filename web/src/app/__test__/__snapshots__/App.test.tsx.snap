@@ -2,6 +2,21 @@
 
 exports[`<App /> should render correctly 1`] = `
 <DocumentFragment>
+  <main>
+    <div
+      class="css-5kdyq4"
+    >
+      <div
+        class="chakra-spinner css-1pkq0p5"
+      >
+        <span
+          class="css-8b45rq"
+        >
+          Loading...
+        </span>
+      </div>
+    </div>
+  </main>
   <span
     hidden=""
     id="__chakra_env"

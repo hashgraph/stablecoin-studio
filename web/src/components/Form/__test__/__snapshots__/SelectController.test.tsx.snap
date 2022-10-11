@@ -1,5 +1,126 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`<SelectController /> doesn't show error with showError=false: NotShowingError 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-stack css-1h0sumw"
+  >
+    <div
+      class="chakra-form-control css-1kxonj9"
+      data-testid="form_control"
+      role="group"
+    >
+      <label
+        class="chakra-form__label css-1jbsrib"
+        data-invalid=""
+        for="field-:r6:"
+        id="field-:r6:-label"
+      >
+        <div
+          class="chakra-stack css-84zodg"
+        >
+          <p
+            class="chakra-text css-mgupmj"
+            data-testid="selector-label"
+          >
+            Select an option
+          </p>
+        </div>
+      </label>
+      <div
+        class="css-hfeh7c"
+      >
+        <span
+          class="css-1f43avz-a11yText-A11yText"
+          id="react-select-8-live-region"
+        />
+        <span
+          aria-atomic="false"
+          aria-live="polite"
+          aria-relevant="additions text"
+          class="css-1f43avz-a11yText-A11yText"
+        />
+        <div
+          class=" css-1gc7io2"
+          data-invalid="true"
+        >
+          <div
+            class="css-3y2vuh"
+          >
+            <span
+              class="chakra-text css-19fpr04"
+              data-testid="select-placeholder"
+            />
+            <div
+              class=" css-svnjlw"
+              data-value=""
+            >
+              <input
+                aria-autocomplete="list"
+                aria-describedby="react-select-8-placeholder"
+                aria-expanded="false"
+                aria-haspopup="true"
+                aria-invalid="true"
+                autocapitalize="none"
+                autocomplete="off"
+                autocorrect="off"
+                class=" css-146k1ar-input"
+                id="field-:r6:"
+                role="combobox"
+                spellcheck="false"
+                tabindex="0"
+                type="text"
+                value=""
+              />
+            </div>
+          </div>
+          <div
+            class=" css-hfbj6y"
+          >
+            <div
+              class="css-1aabyhj"
+            >
+              <svg
+                class="chakra-icon css-13otjrl"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                viewBox="0 0 256 256"
+                width="1em"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  fill="none"
+                  height="256"
+                  width="256"
+                />
+                <polyline
+                  fill="none"
+                  points="208 96 128 176 48 96"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="16"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+        <input
+          name="selection"
+          type="hidden"
+          value=""
+        />
+      </div>
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;
+
 exports[`<SelectController /> shows error with showErrors=true: ShowingError 1`] = `
 <DocumentFragment>
   <div
@@ -11,46 +132,351 @@ exports[`<SelectController /> shows error with showErrors=true: ShowingError 1`]
       role="group"
     >
       <label
-        class="chakra-form__label css-1y854pg"
+        class="chakra-form__label css-1jbsrib"
         data-invalid=""
-        for="field-:r0:"
-        id="field-:r0:-label"
+        for="field-:r5:"
+        id="field-:r5:-label"
       >
         <div
           class="chakra-stack css-84zodg"
         >
           <p
             class="chakra-text css-mgupmj"
+            data-testid="selector-label"
           >
             Select an option
           </p>
         </div>
       </label>
-      <select
-        data-testid="selection"
+      <div
+        class="css-hfeh7c"
       >
-        <option
-          value="value1"
+        <span
+          class="css-1f43avz-a11yText-A11yText"
+          id="react-select-7-live-region"
+        />
+        <span
+          aria-atomic="false"
+          aria-live="polite"
+          aria-relevant="additions text"
+          class="css-1f43avz-a11yText-A11yText"
+        />
+        <div
+          class=" css-1gc7io2"
+          data-invalid="true"
         >
-          Value 1
-        </option>
-        <option
-          value="value2"
-        >
-          Value 2
-        </option>
-        <option
-          value="value3"
-        >
-          Value 3
-        </option>
-      </select>
+          <div
+            class="css-3y2vuh"
+          >
+            <span
+              class="chakra-text css-19fpr04"
+              data-testid="select-placeholder"
+            />
+            <div
+              class=" css-svnjlw"
+              data-value=""
+            >
+              <input
+                aria-autocomplete="list"
+                aria-describedby="react-select-7-placeholder"
+                aria-expanded="false"
+                aria-haspopup="true"
+                aria-invalid="true"
+                autocapitalize="none"
+                autocomplete="off"
+                autocorrect="off"
+                class=" css-146k1ar-input"
+                id="field-:r5:"
+                role="combobox"
+                spellcheck="false"
+                tabindex="0"
+                type="text"
+                value=""
+              />
+            </div>
+          </div>
+          <div
+            class=" css-hfbj6y"
+          >
+            <div
+              class="css-1aabyhj"
+            >
+              <svg
+                class="chakra-icon css-13otjrl"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                viewBox="0 0 256 256"
+                width="1em"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  fill="none"
+                  height="256"
+                  width="256"
+                />
+                <polyline
+                  fill="none"
+                  points="208 96 128 176 48 96"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="16"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+        <input
+          name="selection"
+          type="hidden"
+          value=""
+        />
+      </div>
       <div
         aria-live="polite"
         class="chakra-form__error-message css-2e3jkk"
         data-testid="form-error-msg"
-        id="field-:r0:-feedback"
+        id="field-:r5:-feedback"
       />
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;
+
+exports[`<SelectController /> shows placeholder with default value: DefaultPlaceholder 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-stack css-1h0sumw"
+  >
+    <div
+      class="chakra-form-control css-1kxonj9"
+      data-testid="form_control"
+      role="group"
+    >
+      <label
+        class="chakra-form__label css-1jbsrib"
+        for="field-:r3:"
+        id="field-:r3:-label"
+      >
+        <div
+          class="chakra-stack css-84zodg"
+        >
+          <p
+            class="chakra-text css-mgupmj"
+            data-testid="selector-label"
+          >
+            Select an option
+          </p>
+        </div>
+      </label>
+      <div
+        class="css-hfeh7c"
+      >
+        <span
+          class="css-1f43avz-a11yText-A11yText"
+          id="react-select-5-live-region"
+        />
+        <span
+          aria-atomic="false"
+          aria-live="polite"
+          aria-relevant="additions text"
+          class="css-1f43avz-a11yText-A11yText"
+        />
+        <div
+          class=" css-1gc7io2"
+        >
+          <div
+            class="css-3y2vuh"
+          >
+            <span
+              class="chakra-text css-19fpr04"
+              data-testid="select-placeholder"
+            />
+            <div
+              class=" css-svnjlw"
+              data-value=""
+            >
+              <input
+                aria-autocomplete="list"
+                aria-describedby="react-select-5-placeholder"
+                aria-expanded="false"
+                aria-haspopup="true"
+                autocapitalize="none"
+                autocomplete="off"
+                autocorrect="off"
+                class=" css-146k1ar-input"
+                id="field-:r3:"
+                role="combobox"
+                spellcheck="false"
+                tabindex="0"
+                type="text"
+                value=""
+              />
+            </div>
+          </div>
+          <div
+            class=" css-hfbj6y"
+          >
+            <div
+              class="css-1aabyhj"
+            >
+              <svg
+                class="chakra-icon css-13otjrl"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                viewBox="0 0 256 256"
+                width="1em"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  fill="none"
+                  height="256"
+                  width="256"
+                />
+                <polyline
+                  fill="none"
+                  points="208 96 128 176 48 96"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="16"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+        <input
+          name="selection"
+          type="hidden"
+          value=""
+        />
+      </div>
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;
+
+exports[`<SelectController /> shows placeholder with the provided value: CustomPlaceholder 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-stack css-1h0sumw"
+  >
+    <div
+      class="chakra-form-control css-1kxonj9"
+      data-testid="form_control"
+      role="group"
+    >
+      <label
+        class="chakra-form__label css-1jbsrib"
+        for="field-:r4:"
+        id="field-:r4:-label"
+      >
+        <div
+          class="chakra-stack css-84zodg"
+        >
+          <p
+            class="chakra-text css-mgupmj"
+            data-testid="selector-label"
+          >
+            Select an option
+          </p>
+        </div>
+      </label>
+      <div
+        class="css-hfeh7c"
+      >
+        <span
+          class="css-1f43avz-a11yText-A11yText"
+          id="react-select-6-live-region"
+        />
+        <span
+          aria-atomic="false"
+          aria-live="polite"
+          aria-relevant="additions text"
+          class="css-1f43avz-a11yText-A11yText"
+        />
+        <div
+          class=" css-1gc7io2"
+        >
+          <div
+            class="css-3y2vuh"
+          >
+            <span
+              class="chakra-text css-19fpr04"
+              data-testid="select-placeholder"
+            >
+              Value of placeholder
+            </span>
+            <div
+              class=" css-svnjlw"
+              data-value=""
+            >
+              <input
+                aria-autocomplete="list"
+                aria-describedby="react-select-6-placeholder"
+                aria-expanded="false"
+                aria-haspopup="true"
+                autocapitalize="none"
+                autocomplete="off"
+                autocorrect="off"
+                class=" css-146k1ar-input"
+                id="field-:r4:"
+                role="combobox"
+                spellcheck="false"
+                tabindex="0"
+                type="text"
+                value=""
+              />
+            </div>
+          </div>
+          <div
+            class=" css-hfbj6y"
+          >
+            <div
+              class="css-1aabyhj"
+            >
+              <svg
+                class="chakra-icon css-13otjrl"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                viewBox="0 0 256 256"
+                width="1em"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  fill="none"
+                  height="256"
+                  width="256"
+                />
+                <polyline
+                  fill="none"
+                  points="208 96 128 176 48 96"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="16"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+        <input
+          name="selection"
+          type="hidden"
+          value=""
+        />
+      </div>
     </div>
   </div>
   <span

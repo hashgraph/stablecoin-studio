@@ -8,7 +8,7 @@ import {
 	PrivateKey,
 	AccountId,
 	ContractId,
-	Account,
+	StableCoinMemo,
 } from '../../../in/sdk/sdk.js';
 import {
 	AccountId as HAccountId,
@@ -248,8 +248,9 @@ export default class HashPackProvider implements IProvider {
 			`Deploying ${HederaERC1967Proxy__factory.name} contract... please wait.`,
 			logOpts,
 		);
-		let proxyContract: HContractId =
-			HContractId.fromString(stableCoin.memo) ?? '';
+		let proxyContract: HContractId = HContractId.fromString(
+			stableCoin.memo.proxyContract,
+		);
 
 		if (!proxyContract) {
 			proxyContract = await this.deployContract(
@@ -259,10 +260,10 @@ export default class HashPackProvider implements IProvider {
 					.addAddress(tokenContract?.toSolidityAddress())
 					.addBytes(new Uint8Array([])),
 			);
-			stableCoin.memo = String(proxyContract);
+			stableCoin.memo.proxyContract = String(proxyContract);
 		}
 
-		const contractId = stableCoin.memo;
+		const contractId = stableCoin.memo.proxyContract;
 
 		await this.callContract('initialize', {
 			contractId,
@@ -279,6 +280,11 @@ export default class HashPackProvider implements IProvider {
 			HTSTokenOwner__factory,
 			account,
 		);
+
+		stableCoin.memo = new StableCoinMemo(
+			String(proxyContract),
+			String(tokenOwnerContract),
+		);
 		log('Creating token... please wait.', logOpts);
 		const hederaToken = await this.createToken(
 			tokenOwnerContract,
@@ -287,7 +293,7 @@ export default class HashPackProvider implements IProvider {
 			stableCoin.decimals,
 			stableCoin.initialSupply,
 			stableCoin.maxSupply,
-			String(proxyContract),
+			stableCoin.memo.toJson(),
 			stableCoin.freezeDefault,
 			account,
 		);

@@ -39,7 +39,7 @@
         "modalSuccessTitle": "Role successfully revoked",
         "modalErrorTitle": "Error revoking the role",
         "modalErrorDescription": "please try again later.",
-        "selectLabel": "Select role to give",
+        "selectLabel": "Select role to revoke",
         "selectPlaceholder": "Select role to revoke",
         "supplierQuantityInputPlaceholder": "",
         "supplierQuantityQuestion": "",

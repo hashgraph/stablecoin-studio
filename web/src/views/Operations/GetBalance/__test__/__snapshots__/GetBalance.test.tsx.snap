@@ -12,7 +12,7 @@ exports[`<GetBalanceOperation /> should render correctly 1`] = `
       Operations
     </h2>
     <div
-      class="css-1b6lda7"
+      class="css-1hkemoa"
       data-testid="base-container-children"
     >
       <div
@@ -37,7 +37,7 @@ exports[`<GetBalanceOperation /> should render correctly 1`] = `
               Operation details
             </p>
             <form
-              class="chakra-stack css-b5leqj"
+              class="chakra-stack css-hdflcv"
             >
               <div
                 class="chakra-stack css-1h0sumw"
@@ -116,14 +116,14 @@ exports[`<GetBalanceOperation /> should render correctly 1`] = `
                       data-testid="details-review-detail-0"
                     >
                       <p
-                        class="chakra-text css-rhg419"
+                        class="chakra-text css-bpirlf"
                       >
                         Name
                       </p>
                       <p
-                        class="chakra-text css-rhg419"
+                        class="chakra-text css-6b9s8v"
                       >
-                        Example
+                        ManuCoin2
                       </p>
                     </div>
                     <hr
@@ -140,14 +140,14 @@ exports[`<GetBalanceOperation /> should render correctly 1`] = `
                       data-testid="details-review-detail-1"
                     >
                       <p
-                        class="chakra-text css-rhg419"
+                        class="chakra-text css-bpirlf"
                       >
                         Symbol
                       </p>
                       <p
-                        class="chakra-text css-rhg419"
+                        class="chakra-text css-6b9s8v"
                       >
-                        example
+                        MCC2
                       </p>
                     </div>
                     <hr
@@ -164,14 +164,14 @@ exports[`<GetBalanceOperation /> should render correctly 1`] = `
                       data-testid="details-review-detail-2"
                     >
                       <p
-                        class="chakra-text css-rhg419"
+                        class="chakra-text css-bpirlf"
                       >
                         Decimals
                       </p>
                       <p
-                        class="chakra-text css-rhg419"
+                        class="chakra-text css-6b9s8v"
                       >
-                        6
+                        3
                       </p>
                     </div>
                   </div>
@@ -197,14 +197,14 @@ exports[`<GetBalanceOperation /> should render correctly 1`] = `
                       data-testid="details-review-detail-0"
                     >
                       <p
-                        class="chakra-text css-rhg419"
+                        class="chakra-text css-bpirlf"
                       >
                         Initial supply
                       </p>
                       <p
-                        class="chakra-text css-rhg419"
+                        class="chakra-text css-6b9s8v"
                       >
-                        20
+                        -
                       </p>
                     </div>
                     <hr
@@ -221,14 +221,14 @@ exports[`<GetBalanceOperation /> should render correctly 1`] = `
                       data-testid="details-review-detail-1"
                     >
                       <p
-                        class="chakra-text css-rhg419"
+                        class="chakra-text css-bpirlf"
                       >
                         Total supply
                       </p>
                       <p
-                        class="chakra-text css-rhg419"
+                        class="chakra-text css-6b9s8v"
                       >
-                        200
+                        100000
                       </p>
                     </div>
                     <hr
@@ -245,14 +245,14 @@ exports[`<GetBalanceOperation /> should render correctly 1`] = `
                       data-testid="details-review-detail-2"
                     >
                       <p
-                        class="chakra-text css-rhg419"
+                        class="chakra-text css-bpirlf"
                       >
-                        Supply type (infinite or finite)
+                        Supply type
                       </p>
                       <p
-                        class="chakra-text css-rhg419"
+                        class="chakra-text css-6b9s8v"
                       >
-                        infinite
+                        Infinite
                       </p>
                     </div>
                   </div>

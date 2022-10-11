@@ -38,7 +38,7 @@ describe(`<${Operations.name} />`, () => {
 	test('should render rescue button', () => {
 		const component = render(<Operations />);
 
-		expect(component.getByTestId('direct-access-rescue')).toHaveTextContent(
+		expect(component.getByTestId('direct-access-Rescue tokens')).toHaveTextContent(
 			translations.rescueOperation,
 		);
 	});
