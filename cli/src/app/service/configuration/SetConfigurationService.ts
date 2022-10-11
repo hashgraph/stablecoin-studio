@@ -265,7 +265,7 @@ export default class SetConfigurationService extends Service {
           options,
           true,
         );
-        if (account === language.getText('wizard.backOption')) {
+        if (account === language.getText('wizard.goBack')) {
           await this.manageAccountMenu();
         }
         account = optionsWithoutColors[options.indexOf(account)];

@@ -83,7 +83,7 @@ export default class OperationStableCoinService extends Service {
       this.stableCoinWithSymbol = this.stableCoinId;
       this.stableCoinId = this.stableCoinId.split(' - ')[0];
 
-      if (this.stableCoinId === language.getText('wizard.backOption')) {
+      if (this.stableCoinId === language.getText('wizard.goBack')) {
         await utilsService.cleanAndShowBanner();
         await wizardService.mainMenu();
       } else {
@@ -382,6 +382,7 @@ export default class OperationStableCoinService extends Service {
     let limit = '';
 
     let role: string;
+    let goBack = language.getArray('wizard.backOption');
     switch (
       await utilsService.defaultMultipleAsk(
         language.getText('stablecoin.askEditCashInRole'),
@@ -403,7 +404,7 @@ export default class OperationStableCoinService extends Service {
         // Grant role
         //Lists all roles
         role = await this.getRole(capabilitiesStableCoin);
-        if (role !== language.getText('wizard.backOption')) {
+        if (role !== language.getText('wizard.goBack')) {
           accountTarget = await utilsService.defaultSingleAsk(
             language.getText('stablecoin.accountTarget'),
             accountTarget,
@@ -443,7 +444,7 @@ export default class OperationStableCoinService extends Service {
         // Revoke role
         //Lists all roles
         role = await this.getRole(capabilitiesStableCoin);
-        if (role !== language.getText('wizard.backOption')) {
+        if (role !== language.getText('wizard.goBack')) {
           //Call to revoke role
           accountTarget = await utilsService.defaultSingleAsk(
             language.getText('stablecoin.accountTarget'),
@@ -741,7 +742,7 @@ export default class OperationStableCoinService extends Service {
 
         //Lists all roles
         role = await this.getRole(capabilitiesStableCoin);
-        if (role !== language.getText('wizard.backOption')) {
+        if (role !== language.getText('wizard.goBack')) {
           //Call to has role
           accountTarget = await utilsService.defaultSingleAsk(
             language.getText('stablecoin.accountTarget'),
