@@ -359,7 +359,7 @@ export default class HTSProvider implements IProvider {
 					factory,
 					params,
 					90_000,
-					privateKey.key,
+					privateKey.publicKey.key,
 				);
 			const transactionResponse: TransactionResponse =
 				await this.htsSigner.signAndSendTransaction(transaction);
