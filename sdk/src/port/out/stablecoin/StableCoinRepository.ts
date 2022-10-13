@@ -18,12 +18,15 @@ import PublicKey from '../../../domain/context/account/PublicKey.js';
 import AccountId from '../../../domain/context/account/AccountId.js';
 import { IPublicKey } from './types/IPublicKey.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
-import { getHederaNetwork, StableCoinRole } from '../../../core/enum.js';
+import { getHederaNetwork, StableCoinRole, PrivateKeyType } from '../../../core/enum.js';
 import { Capabilities } from '../../../domain/context/stablecoin/Capabilities.js';
 import { Account } from '../../in/sdk/sdk.js';
+import IAccount from '../hedera/account/types/IAccount.js';
+
 import IAccountInfo from '../../in/sdk/response/IAccountInfo.js';
-import IHederaAccountInfo from './types/IHederaAccountInfo.js';
-import { AccountInfo } from '@hashgraph/sdk';
+import { AccountId as HAccountId,
+		 PublicKey as HPublicKey,
+} from '@hashgraph/sdk';
 
 export default class StableCoinRepository implements IStableCoinRepository {
 	private networkAdapter: NetworkAdapter;
@@ -41,6 +44,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		account: Account,
 	): Promise<StableCoin> {
 		try {
+			account.evmAddress = await this.accountToEvmAddress(account);
 			return this.networkAdapter.provider.deployStableCoin(coin, account);
 		} catch (error) {
 			console.error(error);
@@ -208,7 +212,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		account: Account,
 	): Promise<Uint8Array> {
 		const parameters = [
-			await this.networkAdapter.provider.accountToEvmAddress(new Account(targetId))
+			await this.accountToEvmAddress(new Account(targetId))
 		];
 
 		const params: ICallContractWithAccountRequest = {
@@ -251,7 +255,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		account: Account,
 	): Promise<Uint8Array> {
 		const parameters = [
-			await this.networkAdapter.provider.accountToEvmAddress(new Account(targetId)),
+			await this.accountToEvmAddress(new Account(targetId)),
 			amount.toString(),
 		];
 
@@ -319,7 +323,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		const params: ICallContractWithAccountRequest = {
 			contractId: treasuryId,
 			parameters: [
-				await this.networkAdapter.provider.accountToEvmAddress(new Account(account.accountId.id))
+				await this.accountToEvmAddress(new Account(account.accountId.id))
 			],
 			gas: 1300000,
 			abi: HederaERC20__factory.abi,
@@ -339,7 +343,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		account: Account,
 	): Promise<Uint8Array> {
 		const parameters = [
-			await this.networkAdapter.provider.accountToEvmAddress(new Account(targetId)),
+			await this.accountToEvmAddress(new Account(targetId)),
 			amount.toString(),
 		];
 
@@ -377,7 +381,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		amount?: number,
 	): Promise<Uint8Array> {
 		const parameters = [
-			await this.networkAdapter.provider.accountToEvmAddress(new Account(address))
+			await this.accountToEvmAddress(new Account(address))
 		];
 		amount && parameters.push(amount.toString());
 
@@ -401,7 +405,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		account: Account,
 	): Promise<Uint8Array> {
 		const parameters = [
-			await this.networkAdapter.provider.accountToEvmAddress(new Account(address))
+			await this.accountToEvmAddress(new Account(address))
 		];
 
 		const params: ICallContractWithAccountRequest = {
@@ -424,7 +428,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		account: Account,
 	): Promise<Uint8Array> {
 		const parameters = [
-			await this.networkAdapter.provider.accountToEvmAddress(new Account(address))
+			await this.accountToEvmAddress(new Account(address))
 		];
 
 		const params: ICallContractWithAccountRequest = {
@@ -447,7 +451,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		account: Account,
 	): Promise<Uint8Array> {
 		const parameters = [
-			await this.networkAdapter.provider.accountToEvmAddress(new Account(address))
+			await this.accountToEvmAddress(new Account(address))
 		];
 
 		const params: ICallContractWithAccountRequest = {
@@ -470,7 +474,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		account: Account,
 	): Promise<Uint8Array> {
 		const parameters = [
-			await this.networkAdapter.provider.accountToEvmAddress(new Account(address))
+			await this.accountToEvmAddress(new Account(address))
 		];
 
 		const params: ICallContractWithAccountRequest = {
@@ -494,7 +498,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		amount: number,
 	): Promise<Uint8Array> {
 		const parameters = [
-			await this.networkAdapter.provider.accountToEvmAddress(new Account(address)),
+			await this.accountToEvmAddress(new Account(address)),
 			amount.toString(),
 		];
 
@@ -519,7 +523,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		amount: number,
 	): Promise<Uint8Array> {
 		const parameters = [
-			await this.networkAdapter.provider.accountToEvmAddress(new Account(address)),
+			await this.accountToEvmAddress(new Account(address)),
 			amount.toString(),
 		];
 
@@ -565,7 +569,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	): Promise<Uint8Array> {
 		const parameters = [
 			StableCoinRole.CASHIN_ROLE,
-			await this.networkAdapter.provider.accountToEvmAddress(new Account(address))
+			await this.accountToEvmAddress(new Account(address))
 		];
 
 		const params: ICallContractWithAccountRequest = {
@@ -590,7 +594,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	): Promise<Uint8Array> {
 		const parameters = [
 			role,
-			await this.networkAdapter.provider.accountToEvmAddress(new Account(address))
+			await this.accountToEvmAddress(new Account(address))
 		];
 
 		const params: ICallContractWithAccountRequest = {
@@ -615,7 +619,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	): Promise<Uint8Array> {
 		const parameters = [
 			role,
-			await this.networkAdapter.provider.accountToEvmAddress(new Account(address))
+			await this.accountToEvmAddress(new Account(address))
 		];
 
 		const params: ICallContractWithAccountRequest = {
@@ -640,7 +644,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	): Promise<Uint8Array> {
 		const parameters = [
 			role,
-			await this.networkAdapter.provider.accountToEvmAddress(new Account(address))
+			await this.accountToEvmAddress(new Account(address))
 		];
 
 		const params: ICallContractWithAccountRequest = {
@@ -674,23 +678,68 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 		return await this.networkAdapter.provider.transferHTS(params);
 	}
-	private async getAccountInfo(
+
+	private async accountToEvmAddress(account: Account): Promise<string> {
+		if (account.privateKey) {
+			return this.getAccountEvmAddressFromPrivateKeyType(
+				account.privateKey?.type, 
+				account.privateKey.publicKey.key, 
+				account.accountId.id);
+		} else {
+			return await this.getAccountEvmAddress(account.accountId.id);
+		}
+	}	
+
+	private async getAccountEvmAddress(
+		accountId: string,
+	): Promise<string> {
+		try {
+			const accountInfo: IAccountInfo = await this.getAccountInfo(accountId);
+			if (accountInfo.accountEvmAddress) {
+				return accountInfo.accountEvmAddress;
+			} else {
+				return this.getAccountEvmAddressFromPrivateKeyType(
+					accountInfo.publicKey!.type, 
+					accountInfo.publicKey!.key, 
+					accountId);
+			}
+		} catch (error) {
+			return Promise.reject<string>(error);
+		}
+	}	
+
+	private getAccountEvmAddressFromPrivateKeyType(
+		privateKeyType: string, 
+		publicKey: string,
+		accountId: string): string {
+			
+		switch(privateKeyType) {
+			case PrivateKeyType.ECDSA:
+				return HPublicKey.fromString(publicKey).toEthereumAddress();
+
+			default:
+				return HAccountId.fromString(accountId).toSolidityAddress();
+		}
+	}
+
+	public async getAccountInfo(
 		accountId: string,
 	): Promise<IAccountInfo> {
 		try {
-
-			const res = await axios.get<IHederaAccountInfo>(
+			const res = await axios.get<IAccount>(
 				this.URI_BASE + 'accounts/' + accountId
 			);
-			 
-			const account:IAccountInfo ={
-					account: res.data.account,
-					publicKey: new PublicKey (res.data.publicKey?.key,res.data.publicKey?.type)
 
+			const account:IAccountInfo = {
+				account: accountId,
+				accountEvmAddress: res.data.evm_address,
+				publicKey: new PublicKey({key: res.data.key.key, type: res.data.key._type})
 			};
-			return account
+
+			return account;
+
 		} catch (error) {
 			return Promise.reject<IAccountInfo>(error);
 		}
-	}	
+	}
 }

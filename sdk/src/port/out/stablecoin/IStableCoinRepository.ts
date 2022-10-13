@@ -3,6 +3,7 @@ import Account from '../../../domain/context/account/Account.js';
 import { Capabilities } from '../../../domain/context/stablecoin/Capabilities.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import IStableCoinList from '../../in/sdk/response/IStableCoinList.js';
+import IAccountInfo from '../../in/sdk/response/IAccountInfo.js';
 
 export default interface IStableCoinRepository {
 	saveCoin(coin: StableCoin, account: Account): Promise<StableCoin>;
@@ -126,4 +127,8 @@ export default interface IStableCoinRepository {
 		inAccountId: string,
 		account: Account,
 	): Promise<boolean>;
+	getAccountInfo(
+		accountId: string,
+	): Promise<IAccountInfo>;
+
 }
