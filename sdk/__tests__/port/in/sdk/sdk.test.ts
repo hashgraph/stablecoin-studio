@@ -18,7 +18,7 @@ describe('🧪 [PORT] SDK', () => {
       account: ACCOUNTS.testnet,
       name: 'TEST COIN',
       symbol: 'TC',
-      initialSupply: undefined,
+      initialSupply: 10n,
       decimals: 0,
       adminKey: ACCOUNTS.testnet.privateKey.publicKey,
       wipeKey: PublicKey.NULL,
@@ -140,7 +140,6 @@ describe('🧪 [PORT] SDK', () => {
       proxyContractId: proxyContractId ?? '',
       tokenId: tokenId ?? '',
     });
-    console.log('ACcount id:', ACCOUNTS.testnet.accountId.id);
     expect(hasRole && hasRole[0]).toBeTruthy();
     const role = await sdk.revokeRole({
       account: ACCOUNTS.testnet,
@@ -341,5 +340,29 @@ describe('🧪 [PORT] SDK', () => {
     });
     expect(check).not.toBeNull();
     expect(check && check[0]).toBeTruthy();
+  }, 15000);
+
+  it('Check account is address', async () => {
+    const address = sdk.checkIsAddress(ACCOUNTS.testnet.accountId.id);
+    expect(address).not.toBeNull();
+    expect(address).toBeTruthy();
+  }, 15000);
+
+  it('Check account is address (wrong address)', async () => {
+    const address = sdk.checkIsAddress('0.0,0');
+    expect(address).not.toBeNull();
+    expect(address).not.toBeTruthy();
+  }, 15000);
+
+  it('Rescue token', async () => {
+    const amount = 1;
+    const rescue = await sdk.rescue({
+      account: ACCOUNTS.testnet,
+      proxyContractId: proxyContractId ?? '',
+      tokenId: tokenId ?? '',
+      amount,
+    });
+    expect(rescue).not.toBeNull();
+    expect(rescue).toBeTruthy();
   }, 15000);
 });
