@@ -14,6 +14,7 @@ import {
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNT,
 } from '../../../store/slices/walletSlice';
+import { useState } from 'react';
 
 const CashInOperation = () => {
 	const {
@@ -21,12 +22,18 @@ const CashInOperation = () => {
 		onOpen: onOpenModalAction,
 		onClose: onCloseModalAction,
 	} = useDisclosure();
+
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
+
 	const { decimals = 0, totalSupply } = selectedStableCoin || {};
+
+	const [errorOperation, setErrorOperation] = useState();
+
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
 	});
+
 	const { t } = useTranslation(['cashIn', 'global', 'operations']);
 
 	const handleCashIn: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
@@ -44,8 +51,8 @@ const CashInOperation = () => {
 				amount,
 			});
 			onSuccess();
-		} catch (error) {
-			console.error(error);
+		} catch (error: any) {
+			setErrorOperation(error.toString());
 			onError();
 		}
 	};
@@ -110,7 +117,7 @@ const CashInOperation = () => {
 			/>
 			<ModalsHandler
 				errorNotificationTitle={t('operations:modalErrorTitle')}
-				errorNotificationDescription={'error'} // TODO: show returned error from sdk
+				errorNotificationDescription={errorOperation}
 				modalActionProps={{
 					isOpen: isOpenModalAction,
 					onClose: onCloseModalAction,
