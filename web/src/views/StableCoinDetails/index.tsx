@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import BaseContainer from '../../components/BaseContainer';
 import DetailsReview from '../../components/DetailsReview';
 import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
+import { formatAmount } from '../../utils/inputHelper';
 
 const StableCoinDetails = () => {
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
@@ -67,7 +68,12 @@ const StableCoinDetails = () => {
 								},
 								{
 									label: t('totalSupply'),
-									value: 0,
+									value: selectedStableCoin?.totalSupply
+										? formatAmount({
+												amount: Number(selectedStableCoin?.totalSupply),
+												decimals: selectedStableCoin?.decimals,
+										  })
+										: 0,
 								},
 								{
 									label: t('maxSupply'),

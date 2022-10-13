@@ -14,6 +14,7 @@ import {
 } from '../../../store/slices/walletSlice';
 import SDKService from '../../../services/SDKService';
 import { useState } from 'react';
+import { formatAmount } from '../../../utils/inputHelper';
 
 const RescueTokenOperation = () => {
 	const {
@@ -121,7 +122,10 @@ const RescueTokenOperation = () => {
 				}
 				successNotificationTitle={t('operations:modalSuccessTitle')}
 				successNotificationDescription={t('rescueTokens:modalSuccessDesc', {
-					amount: getValues().amount,
+					amount: formatAmount({
+						amount: getValues().amount ?? undefined,
+						decimals: selectedStableCoin?.decimals,
+					}),
 				})}
 			/>
 		</>

@@ -14,6 +14,7 @@ import {
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNT,
 } from '../../../store/slices/walletSlice';
+import { formatAmount } from '../../../utils/inputHelper';
 
 const GetBalanceOperation = () => {
 	const {
@@ -118,7 +119,10 @@ const GetBalanceOperation = () => {
 				successNotificationTitle={t('operations:modalSuccessTitle')}
 				successNotificationDescription={t('getBalance:modalSuccessBalance', {
 					account: getValues().targetAccount,
-					balance,
+					balance: formatAmount({
+						amount: balance ?? undefined,
+						decimals: selectedStableCoin?.decimals,
+					}),
 				})}
 			/>
 		</>

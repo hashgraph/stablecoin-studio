@@ -13,6 +13,7 @@ import {
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNT,
 } from '../../../store/slices/walletSlice';
+import { formatAmount } from '../../../utils/inputHelper';
 import { validateAccount, validateDecimals } from '../../../utils/validationsHelper';
 import OperationLayout from './../OperationLayout';
 
@@ -110,7 +111,10 @@ const WipeOperation = () => {
 				errorNotificationDescription={errorOperation}
 				successNotificationTitle={t('operations:modalSuccessTitle')}
 				successNotificationDescription={t('wipe:modalSuccessDesc', {
-					amount: getValues().amount,
+					amount: formatAmount({
+						amount: getValues().amount ?? undefined,
+						decimals: selectedStableCoin?.decimals,
+					}),
 					account: getValues().destinationAccount,
 				})}
 				modalActionProps={{

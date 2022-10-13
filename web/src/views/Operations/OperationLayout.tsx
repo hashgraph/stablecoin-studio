@@ -8,6 +8,7 @@ import { RouterManager } from '../../Router/RouterManager';
 import BaseContainer from '../../components/BaseContainer';
 import DetailsReview from '../../components/DetailsReview';
 import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
+import { formatAmount } from '../../utils/inputHelper';
 
 export interface OperationLayoutProps {
 	LeftContent: ReactNode;
@@ -75,7 +76,12 @@ const OperationLayout = ({ LeftContent, onConfirm, confirmBtnProps }: OperationL
 									},
 									{
 										label: t('operations:details.totalSupply'),
-										value: selectedStableCoin?.totalSupply || unknown,
+										value: selectedStableCoin?.totalSupply
+											? formatAmount({
+													amount: Number(selectedStableCoin?.totalSupply),
+													decimals: selectedStableCoin?.decimals,
+											  })
+											: unknown,
 									},
 									{
 										label: t('operations:details.supplyType'),
