@@ -111,6 +111,20 @@ describe('🧪 [PORT] SDK', () => {
     expect(balance && balance[0]).toBe(9);
   }, 15000);
 
+  /* it('Wipe token (wrong)', async () => {
+    const amount = 100;
+    expect(
+      async () =>
+        await sdk.wipe({
+          account: ACCOUNTS.testnet,
+          targetId: ACCOUNTS.testnet.accountId.id,
+          proxyContractId: proxyContractId ?? '',
+          tokenId: tokenId ?? '',
+          amount,
+        }),
+    ).toThrow(Error);
+  }, 15000);
+ */
   it('Check unlimited supplier role', async () => {
     const role = await sdk.isUnlimitedSupplierAllowance({
       account: ACCOUNTS.testnet,
@@ -260,7 +274,15 @@ describe('🧪 [PORT] SDK', () => {
     expect(check).not.toBeNull();
     expect(check && check[0]).toBe(amount);
   }, 15000);
-
+  it('Check limited supplier allowance', async () => {
+    const check = await sdk.isLimitedSupplierAllowance({
+      account: ACCOUNTS.testnet,
+      targetId: ACCOUNTS.testnet.accountId.id,
+      proxyContractId: proxyContractId ?? '',
+    });
+    expect(check).not.toBeNull();
+    expect(check && check[0]).toBeTruthy();
+  }, 15000);
   it('Increase Limit supplier role', async () => {
     const amount = 10;
     await sdk.increaseSupplierAllowance({
@@ -365,4 +387,35 @@ describe('🧪 [PORT] SDK', () => {
     expect(rescue).not.toBeNull();
     expect(rescue).toBeTruthy();
   }, 15000);
+
+  /* it('Rescue token (wrong)', async () => {
+    const amount = 100;
+    expect(
+      async () =>
+        await sdk.rescue({
+          account: ACCOUNTS.testnet,
+          proxyContractId: proxyContractId ?? '',
+          tokenId: tokenId ?? '',
+          amount,
+        }),
+    ).toThrowError('Amount is bigger than token owner balance');
+  }, 15000); */
+
+  it('Get capabilities', async () => {
+    const capabilities = await sdk.getCapabilitiesStableCoin(
+      tokenId ?? '',
+      ACCOUNTS.testnet.privateKey.publicKey.key,
+    );
+    expect(capabilities).not.toBeNull;
+  }, 15000);
+
+  /* it('Associate token', async () => {
+    expect(
+      async () =>
+        await sdk.associateToken({
+          account: ACCOUNTS.testnet,
+          proxyContractId: proxyContractId ?? '',
+        }),
+    ).toThrow();
+  }, 15000); */
 });
