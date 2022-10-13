@@ -674,4 +674,23 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 		return await this.networkAdapter.provider.transferHTS(params);
 	}
+	private async getAccountInfo(
+		accountId: string,
+	): Promise<IAccountInfo> {
+		try {
+
+			const res = await axios.get<IHederaAccountInfo>(
+				this.URI_BASE + 'accounts/' + accountId
+			);
+			 
+			const account:IAccountInfo ={
+					account: res.data.account,
+					publicKey: new PublicKey (res.data.publicKey?.key,res.data.publicKey?.type)
+
+			};
+			return account
+		} catch (error) {
+			return Promise.reject<IAccountInfo>(error);
+		}
+	}	
 }
