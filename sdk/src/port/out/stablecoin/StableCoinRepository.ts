@@ -697,11 +697,13 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			const accountInfo: IAccountInfo = await this.getAccountInfo(accountId);
 			if (accountInfo.accountEvmAddress) {
 				return accountInfo.accountEvmAddress;
-			} else {
+			} else  if (accountInfo.publicKey) {
 				return this.getAccountEvmAddressFromPrivateKeyType(
-					accountInfo.publicKey!.type, 
-					accountInfo.publicKey!.key, 
+					accountInfo.publicKey.type, 
+					accountInfo.publicKey.key, 
 					accountId);
+			} else {
+				return Promise.reject<string>("");
 			}
 		} catch (error) {
 			return Promise.reject<string>(error);

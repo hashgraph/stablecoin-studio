@@ -303,7 +303,8 @@ export default class HTSProvider implements IProvider {
 			account: account,
 		});
 
-		if (hederaToken.treasuryAccountId.toString() !== account.accountId.id) {
+		if (hederaToken.treasuryAccountId.toString() !== account.accountId.id && 
+		    account.evmAddress) {
 			log(
 				'Associating administrator account to token... please wait.',
 				logOpts,
@@ -312,7 +313,7 @@ export default class HTSProvider implements IProvider {
 			await this.callContract('associateToken', {
 				contractId: stableCoin.memo.proxyContract,
 				parameters: [
-					account.evmAddress!
+					account.evmAddress
 				],
 				gas: 1_300_000,
 				abi: HederaERC20__factory.abi,
