@@ -1,4 +1,5 @@
 import axios from 'axios';
+import {AxiosInstance} from 'axios';
 import { HederaERC20__factory } from 'hedera-stable-coin-contracts/typechain-types';
 import IStableCoinList from 'port/in/sdk/response/IStableCoinList.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
@@ -25,12 +26,20 @@ import { Account } from '../../in/sdk/sdk.js';
 export default class StableCoinRepository implements IStableCoinRepository {
 	private networkAdapter: NetworkAdapter;
 	private URI_BASE;
+	private instance:AxiosInstance;
 
 	constructor(networkAdapter: NetworkAdapter) {
 		this.networkAdapter = networkAdapter;
 		this.URI_BASE = `${
 			getHederaNetwork(networkAdapter.network)?.mirrorNodeUrl
 		}/api/v1/`;
+		this.instance = axios.create({
+
+			validateStatus: function (status:number) {
+		 
+				 return (status >= 200 && status < 300) ||  status == 404;
+			 }
+		 });
 	}
 
 	public async saveCoin(
@@ -52,7 +61,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	): Promise<IStableCoinList[]> {
 		try {
 			const resObject: IStableCoinList[] = [];
-			const res = await axios.get<ITokenList>(
+			const res = await this.instance.get<ITokenList>(
 				this.URI_BASE +
 					'tokens?limit=100&account.id=' +
 					account.accountId.id,
@@ -71,7 +80,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 	public async getStableCoin(id: string): Promise<StableCoin> {
 		try {
-			const response = await axios.get<IHederaStableCoinDetail>(
+			
+			const response = await this.instance.get<IHederaStableCoinDetail>(
 				this.URI_BASE + 'tokens/' + id,
 			);
 
