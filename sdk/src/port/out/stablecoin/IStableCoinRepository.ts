@@ -13,14 +13,17 @@ export default interface IStableCoinRepository {
 		publickey: string,
 	): Promise<Capabilities[]>;
 	getBalanceOf(
-		treasuryId: string,
+		proxyContractId: string,
 		targetId: string,
 		tokenId: string,
 		account: Account,
 	): Promise<Uint8Array>;
-	getNameToken(treasuryId: string, account: Account): Promise<Uint8Array>;
+	getNameToken(
+		proxyContractId: string,
+		account: Account,
+	): Promise<Uint8Array>;
 	cashIn(
-		treasuryId: string,
+		proxyContractId: string,
 		targetId: string,
 		amount: number,
 		account: Account,
@@ -31,7 +34,7 @@ export default interface IStableCoinRepository {
 		account: Account,
 	): Promise<boolean>;
 	cashOut(
-		treasuryId: string,
+		proxyContractId: string,
 		amount: number,
 		account: Account,
 	): Promise<Uint8Array>;
@@ -40,9 +43,12 @@ export default interface IStableCoinRepository {
 		amount: number,
 		account: Account,
 	): Promise<boolean>;
-	associateToken(treasuryId: string, account: Account): Promise<Uint8Array>;
+	associateToken(
+		proxyContractId: string,
+		account: Account,
+	): Promise<Uint8Array>;
 	wipe(
-		treasuryId: string,
+		proxyContractId: string,
 		targetId: string,
 		amount: number,
 		account: Account,
@@ -54,67 +60,67 @@ export default interface IStableCoinRepository {
 		account: Account,
 	): Promise<boolean>;
 	grantSupplierRole(
-		treasuryId: string,
+		proxyContractId: string,
 		address: string,
 		account: Account,
 		amount?: number,
 	): Promise<Uint8Array>;
 	isUnlimitedSupplierAllowance(
-		treasuryId: string,
+		proxyContractId: string,
 		address: string,
 		account: Account,
 	): Promise<Uint8Array>;
 	supplierAllowance(
-		treasuryId: string,
+		proxyContractId: string,
 		address: string,
 		account: Account,
 	): Promise<Uint8Array>;
 	revokeSupplierRole(
-		treasuryId: string,
+		proxyContractId: string,
 		address: string,
 		account: Account,
 	): Promise<Uint8Array>;
 	resetSupplierAllowance(
-		treasuryId: string,
+		proxyContractId: string,
 		address: string,
 		account: Account,
 	): Promise<Uint8Array>;
 	increaseSupplierAllowance(
-		treasuryId: string,
+		proxyContractId: string,
 		address: string,
 		account: Account,
 		amount?: number,
 	): Promise<Uint8Array>;
 	decreaseSupplierAllowance(
-		treasuryId: string,
+		proxyContractId: string,
 		address: string,
 		account: Account,
 		amount?: number,
 	): Promise<Uint8Array>;
 	isLimitedSupplierAllowance(
-		treasuryId: string,
+		proxyContractId: string,
 		address: string,
 		account: Account,
 	): Promise<Uint8Array>;
 	rescue(
-		treasuryId: string,
+		proxyContractId: string,
 		amount: number,
 		account: Account,
 	): Promise<Uint8Array>;
 	grantRole(
-		treasuryId: string,
+		proxyContractId: string,
 		address: string,
 		role: StableCoinRole,
 		account: Account,
 	): Promise<Uint8Array>;
 	revokeRole(
-		treasuryId: string,
+		proxyContractId: string,
 		address: string,
 		role: StableCoinRole,
 		account: Account,
 	): Promise<Uint8Array>;
 	hasRole(
-		treasuryId: string,
+		proxyContractId: string,
 		address: string,
 		role: StableCoinRole,
 		account: Account,

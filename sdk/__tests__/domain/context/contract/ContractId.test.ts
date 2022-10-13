@@ -33,8 +33,7 @@ describe('🧪 [DOMAIN] ContractId', () => {
   it('Test toDelegateContractId', () => {
     const contract = new ContractId('0.0.423123');
 
-    const delegatecontractId: DelegateContractId =
-      contract.toDelegateContractId();
+    const delegatecontractId = contract.toDelegateContractId();
     expect(delegatecontractId).toBeInstanceOf(DelegateContractId);
     expect(String(delegatecontractId)).toBe('0.0.423123');
   });
