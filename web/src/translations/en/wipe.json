@@ -10,7 +10,7 @@
         "subtitle": "Operation details review",
         "fromAccount": "Account to wipe from",
         "amount": "Amount",
-        "accept": "Make wipe"
+        "accept": "Wipe tokens"
     },
     "modalSuccessDesc": "You have wiped {{amount}} tokens from {{account}}"
 }
