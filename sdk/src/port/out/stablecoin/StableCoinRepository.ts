@@ -21,6 +21,9 @@ import ContractId from '../../../domain/context/contract/ContractId.js';
 import { getHederaNetwork, StableCoinRole } from '../../../core/enum.js';
 import { Capabilities } from '../../../domain/context/stablecoin/Capabilities.js';
 import { Account } from '../../in/sdk/sdk.js';
+import IAccountInfo from '../../in/sdk/response/IAccountInfo.js';
+import IHederaAccountInfo from './types/IHederaAccountInfo.js';
+import { AccountInfo } from '@hashgraph/sdk';
 
 export default class StableCoinRepository implements IStableCoinRepository {
 	private networkAdapter: NetworkAdapter;
