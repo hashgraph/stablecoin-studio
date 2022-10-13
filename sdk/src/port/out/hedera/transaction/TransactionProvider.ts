@@ -1,3 +1,4 @@
+import { ContractFactory } from '@hashgraph/hethers';
 import {
 	Transaction,
 	ContractExecuteTransaction,
@@ -13,10 +14,10 @@ import {
 	TransferTransaction,
 	PublicKey as HPublicKey,
 	DelegateContractId,
+	ContractFunctionParameters
 } from '@hashgraph/sdk';
 import { ContractId, PublicKey } from '../../../in/sdk/sdk.js';
 import { ICreateTokenResponse } from '../types.js';
-import PrivateKey from '../../../../domain/context/account/PrivateKey';
 
 export class TransactionProvider {
 	public static buildContractExecuteTransaction(
@@ -106,8 +107,8 @@ export class TransactionProvider {
 	}
 
 	public static buildContractCreateFlowTransaction(
-		factory: any,
-		parameters: any,
+		factory: ContractFactory,
+		parameters: Uint8Array | ContractFunctionParameters,
 		gas: number,
 		admKey?: string,
 	): ContractCreateFlow {

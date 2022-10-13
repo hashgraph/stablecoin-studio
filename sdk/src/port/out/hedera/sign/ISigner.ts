@@ -2,6 +2,7 @@ import {
 	Transaction,
 	TransactionResponse,
 	TransactionReceipt,
+	TransactionId
 } from '@hashgraph/sdk';
 import { MessageTypes } from 'hashconnect';
 
@@ -14,13 +15,13 @@ export enum Status {
 	ERROR,
 }
 export class HTSResponse {
-	idTransaction: string;
+	idTransaction: string| TransactionId | undefined;
 	transactionType: TransactionType;
 	reponseParam: Uint8Array;
 	receipt?: TransactionReceipt;
 
 	constructor(
-		idTransaction: string,
+		idTransaction: string | TransactionId | undefined,
 		transactionType: TransactionType,
 		reponseParam: Uint8Array,
 		receipt?: TransactionReceipt,

@@ -134,12 +134,18 @@ export default class HashPackProvider implements IProvider {
 
 		//This is fired when a wallet approves a pairing
 		this.hc.pairingEvent.on(async (data) => {
-			this.pairingData = data.pairingData!;
-			console.log('Paired with wallet', data);
-			this.eventService.emit(
-				ProviderEventNames.providerPairingEvent,
-				this.pairingData,
-			);
+			if (data.pairingData) {
+				this.pairingData = data.pairingData;
+				console.log('Paired with wallet', data);
+				this.eventService.emit(
+					ProviderEventNames.providerPairingEvent,
+					this.pairingData,
+				);
+			} else {
+				throw new Error(
+					'Pairing is not possible since pairing data is undefined.',
+				);
+			}		
 		});
 
 		//This is fired when HashConnect loses connection, pairs successfully, or is starting connection

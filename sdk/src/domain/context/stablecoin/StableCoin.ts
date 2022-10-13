@@ -8,7 +8,7 @@ import { StableCoinMemo } from './StableCoinMemo.js';
 import { TokenSupplyType } from './TokenSupply.js';
 import { TokenType } from './TokenType.js';
 
-const MAX_SUPPLY = 9_223_372_036_854_775_807n;
+const MAX_SUPPLY = 9_223_372_036_854_775_807n; // eslint-disable-line
 const TEN = 10;
 
 export class StableCoin extends BaseEntity {
