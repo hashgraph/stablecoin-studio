@@ -697,7 +697,7 @@ export default class HTSProvider implements IProvider {
 		transactionResponse: TransactionResponse,
 		operation?: string,
 	): void {
-		let hs = ` https://hashscan.io/#/${
+		let hs = `${operation} - https://hashscan.io/#/${
 			this.network.hederaNetworkEnviroment
 		}/transaction/${transactionResponse.transactionId
 			.toString()
