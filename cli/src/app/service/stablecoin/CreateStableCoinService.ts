@@ -136,7 +136,7 @@ export default class CreateStableCoinService extends Service {
     try {
       autoRenewAccount = await utilsService.defaultSingleAsk(
         language.getText('stablecoin.askAutoRenewAccountId'),
-        createdStableCoin.autoRenewAccount || '0.0.0',
+        createdStableCoin.autoRenewAccount || currentAccount.accountId,
       );
       sdk.checkIsAddress(autoRenewAccount);
     } catch (error) {
