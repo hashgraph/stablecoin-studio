@@ -1,3 +1,4 @@
+/* eslint-disable jest/no-commented-out-tests*/
 // import { HederaNetwork, HederaNetworkEnviroment , Configuration, NetworkMode,ICreateStableCoinRequest} from '../../../../src/index.js';
 // import { AccountId, PrivateKey
 // } from '@hashgraph/sdk';

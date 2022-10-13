@@ -146,6 +146,7 @@ export default class HTSProvider implements IProvider {
 
 	public getPublicKey(
 		privateKey?: PrivateKey | string | undefined,
+		privateKeyType?: string
 	): HPublicKey {
 		let key = null;
 		let publicKey = null;
@@ -154,15 +155,23 @@ export default class HTSProvider implements IProvider {
 		} else {
 			key = privateKey;
 			if (!key) throw new HederaError('No private key provided');
-			publicKey = HPrivateKey.fromString(key).publicKey;
+			switch(privateKeyType) {
+				case PrivateKeyType.ECDSA:
+					publicKey = HPrivateKey.fromStringECDSA(key).publicKey;
+					break;
+	
+				default:
+					publicKey = HPrivateKey.fromStringED25519(key).publicKey;
+			}			
 		}
 		return publicKey;
 	}
 
 	public getPublicKeyString(
 		privateKey?: PrivateKey | string | undefined,
+		privateKeyType?: string
 	): string {
-		return this.getPublicKey(privateKey).toStringRaw();
+		return this.getPublicKey(privateKey, privateKeyType).toStringRaw();
 	}
 
 	public async callContract(
@@ -697,7 +706,7 @@ export default class HTSProvider implements IProvider {
 		transactionResponse: TransactionResponse,
 		operation?: string,
 	): void {
-		let hs = ` https://hashscan.io/#/${
+		let hs = `${operation} - https://hashscan.io/#/${
 			this.network.hederaNetworkEnviroment
 		}/transaction/${transactionResponse.transactionId
 			.toString()

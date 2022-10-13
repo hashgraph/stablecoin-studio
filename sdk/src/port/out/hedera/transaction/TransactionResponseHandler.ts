@@ -4,6 +4,7 @@ import {
 	Client,
 	TransactionReceipt,
 	TransactionRecord,
+	TransactionId
 } from '@hashgraph/sdk';
 import HederaError from '../error/HederaError.js';
 import Web3 from 'web3';
@@ -18,7 +19,7 @@ export class TransactionResposeHandler {
 		responseType: TransactionType,
 		clientOrSigner: Client | Signer,
 		nameFunction?: string,
-		abi?: any,
+		abi?: object[],
 	): Promise<HTSResponse> {
 		let results: Uint8Array = new Uint8Array();
 		if (responseType === TransactionType.RECEIPT) {
@@ -166,7 +167,7 @@ export class TransactionResposeHandler {
 	}
 
 	public createHTSResponse(
-		transactionId: any,
+		transactionId: string | TransactionId | undefined,
 		responseType: TransactionType,
 		responseParam: Uint8Array,
 		receipt?: TransactionReceipt,
@@ -182,13 +183,20 @@ export class TransactionResposeHandler {
 	public decodeFunctionResult(
 		functionName: string,
 		resultAsBytes: ArrayBuffer,
-		abi: any[],
+		abi: any, // eslint-disable-line
 	): Uint8Array {
 		const web3 = new Web3();
 
-		const functionAbi = abi.find(
-			(func: { name: any }) => func.name === functionName,
-		);
+		let functionAbi;
+		if (abi) {
+			functionAbi = abi.find(
+				(func: { name: string }) => func.name === functionName,
+			);
+		} else {
+			throw new HederaError(
+				`ABI is undefined, so it could not be possible to find contract function`,
+			);
+		}
 		if (!functionAbi?.outputs)
 			throw new HederaError(
 				`Contract function ${functionName} not found in ABI, are you using the right version?`,

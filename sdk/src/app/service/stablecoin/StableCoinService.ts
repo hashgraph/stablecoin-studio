@@ -245,6 +245,11 @@ export default class StableCoinService extends Service {
 		const coin: StableCoin = await this.getStableCoin({
 			id: req.tokenId,
 		});
+
+		if (coin.treasury.id == req.targetId) {
+			throw new Error('You cannot wipe tokens from the treasury account');
+		}
+
 		// Balances
 		if (
 			coin.totalSupply < 0n ||

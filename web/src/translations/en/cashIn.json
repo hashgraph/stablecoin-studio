@@ -10,6 +10,6 @@
         "subtitle": "Operation details review",
         "destinationAccount": "Account to cash in",
         "amount": "Amount",
-        "accept": "Make cash in"
+        "accept": "Cash in tokens"
     }
 }

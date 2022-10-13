@@ -174,20 +174,10 @@ export default class StableCoinRepository implements IStableCoinRepository {
 				}
 			}
 			if (stableCoin.wipeKey instanceof ContractId) {
-				if (
-					stableCoin.wipeKey?.id.toString() ==
-					stableCoin.treasury.toString()
-				) {
-					listCapabilities.push(Capabilities.WIPE);
-				}
+				listCapabilities.push(Capabilities.WIPE);
 			}
 			if (stableCoin.pauseKey instanceof ContractId) {
-				if (
-					stableCoin.pauseKey?.id.toString() ==
-					stableCoin.treasury.toString()
-				) {
-					listCapabilities.push(Capabilities.PAUSE);
-				}
+				listCapabilities.push(Capabilities.PAUSE);
 			}
 
 			const roleManagement = listCapabilities.some((capability) =>

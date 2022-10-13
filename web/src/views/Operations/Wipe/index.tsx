@@ -1,4 +1,5 @@
 import { Heading, Text, Stack, useDisclosure } from '@chakra-ui/react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -12,6 +13,7 @@ import {
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNT,
 } from '../../../store/slices/walletSlice';
+import { formatAmount } from '../../../utils/inputHelper';
 import { validateAccount, validateDecimals } from '../../../utils/validationsHelper';
 import OperationLayout from './../OperationLayout';
 
@@ -24,6 +26,8 @@ const WipeOperation = () => {
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
+
+	const [errorOperation, setErrorOperation] = useState();
 
 	const { decimals = 0 } = selectedStableCoin || {};
 
@@ -48,8 +52,8 @@ const WipeOperation = () => {
 				amount,
 			});
 			onSuccess();
-		} catch (error) {
-			console.error(error);
+		} catch (error: any) {
+			setErrorOperation(error.toString());
 			onError();
 		}
 	};
@@ -104,10 +108,13 @@ const WipeOperation = () => {
 			/>
 			<ModalsHandler
 				errorNotificationTitle={t('operations:modalErrorTitle')}
-				errorNotificationDescription={'error'} // TODO: save error from sdk
+				errorNotificationDescription={errorOperation}
 				successNotificationTitle={t('operations:modalSuccessTitle')}
 				successNotificationDescription={t('wipe:modalSuccessDesc', {
-					amount: getValues().amount,
+					amount: formatAmount({
+						amount: getValues().amount ?? undefined,
+						decimals: selectedStableCoin?.decimals,
+					}),
 					account: getValues().destinationAccount,
 				})}
 				modalActionProps={{

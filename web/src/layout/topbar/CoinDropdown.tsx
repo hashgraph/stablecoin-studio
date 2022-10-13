@@ -59,6 +59,18 @@ const CoinDropdown = () => {
 		}
 	};
 
+	const formatSupplyParam = ({
+		supply,
+		decimals,
+	}: {
+		supply: string | undefined;
+		decimals: number;
+	}) => {
+		if (supply !== '0') return supply?.slice(0, -decimals);
+
+		return supply;
+	};
+
 	const handleSelectCoin = async (event: any) => {
 		const selectedCoin = event.value;
 
@@ -66,18 +78,26 @@ const CoinDropdown = () => {
 			id: selectedCoin,
 		});
 
-		// TODO: change this when sdk returns correct info
 		dispatch(
 			walletActions.setSelectedStableCoin({
-				initialSupply: BigInt(0).toString(),
 				tokenId: stableCoinDetails?.tokenId,
-				totalSupply: stableCoinDetails?.totalSupply?.toString(),
-				// supplyType: stableCoinDetails?.supplyType,
+				initialSupply: formatSupplyParam({
+					// TODO: Change when sdk returns initial supply info
+					supply: stableCoinDetails?.totalSupply?.toString(),
+					decimals: stableCoinDetails?.decimals ?? 0,
+				}),
+				totalSupply: formatSupplyParam({
+					supply: stableCoinDetails?.totalSupply?.toString(),
+					decimals: stableCoinDetails?.decimals ?? 0,
+				}),
+				maxSupply: formatSupplyParam({
+					supply: stableCoinDetails?.maxSupply?.toString(),
+					decimals: stableCoinDetails?.decimals ?? 0,
+				}),
 				name: stableCoinDetails?.name,
 				symbol: stableCoinDetails?.symbol,
 				decimals: stableCoinDetails?.decimals,
 				id: stableCoinDetails?.tokenId,
-				maxSupply: stableCoinDetails?.maxSupply?.toString(),
 				treasuryId: stableCoinDetails?.treasuryId,
 				memo: stableCoinDetails?.memo,
 				adminKey:
