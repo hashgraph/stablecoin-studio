@@ -1,5 +1,5 @@
 import { SDK } from '../src/index';
-import { getSDK, getSDKAsync } from './core/core.js';
+import { getSDKAsync } from './core/core.js';
 
 describe('🧪 SDK Unit Test', () => {
   let sdk: SDK;
@@ -31,8 +31,6 @@ describe('🧪 SDK Unit Test', () => {
 
   it('Connects to wallet', async () => {
     let event;
-    const sdk = getSDK();
-
     expect(event).not.toBeFalsy();
   });
 });

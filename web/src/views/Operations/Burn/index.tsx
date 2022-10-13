@@ -13,6 +13,7 @@ import {
 } from '../../../store/slices/walletSlice';
 import SDKService from '../../../services/SDKService';
 import { validateDecimals } from '../../../utils/validationsHelper';
+import { useState } from 'react';
 
 const BurnOperation = () => {
 	const {
@@ -23,6 +24,8 @@ const BurnOperation = () => {
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
+
+	const [errorOperation, setErrorOperation] = useState();
 
 	const { decimals = 0, totalSupply } = selectedStableCoin || {};
 
@@ -46,8 +49,8 @@ const BurnOperation = () => {
 				amount,
 			});
 			onSuccess();
-		} catch (error) {
-			console.error(error);
+		} catch (error: any) {
+			setErrorOperation(error.toString());
 			onError();
 		}
 	};
@@ -97,7 +100,7 @@ const BurnOperation = () => {
 			/>
 			<ModalsHandler
 				errorNotificationTitle={t('operations:modalErrorTitle')}
-				errorNotificationDescription={'error'} // TODO: show returned error from sdk
+				errorNotificationDescription={errorOperation}
 				modalActionProps={{
 					isOpen: isOpenModalAction,
 					onClose: onCloseModalAction,

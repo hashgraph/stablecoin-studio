@@ -341,7 +341,7 @@ export default class OperationStableCoinService extends Service {
   ): Promise<Capabilities[]> {
     return await new CapabilitiesStableCoinsService().getCapabilitiesStableCoins(
       this.stableCoinId,
-      sdk.getPublicKey(currentAccount.privateKey.key),
+      sdk.getPublicKey(currentAccount.privateKey.key, currentAccount.privateKey.type)
     );
   }
 

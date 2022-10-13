@@ -143,6 +143,7 @@ export default class HTSProvider implements IProvider {
 
 	public getPublicKey(
 		privateKey?: PrivateKey | string | undefined,
+		privateKeyType?: string
 	): HPublicKey {
 		let key = null;
 		let publicKey = null;
@@ -151,15 +152,23 @@ export default class HTSProvider implements IProvider {
 		} else {
 			key = privateKey;
 			if (!key) throw new HederaError('No private key provided');
-			publicKey = HPrivateKey.fromString(key).publicKey;
+			switch(privateKeyType) {
+				case PrivateKeyType.ECDSA:
+					publicKey = HPrivateKey.fromStringECDSA(key).publicKey;
+					break;
+	
+				default:
+					publicKey = HPrivateKey.fromStringED25519(key).publicKey;
+			}			
 		}
 		return publicKey;
 	}
 
 	public getPublicKeyString(
 		privateKey?: PrivateKey | string | undefined,
+		privateKeyType?: string
 	): string {
-		return this.getPublicKey(privateKey).toStringRaw();
+		return this.getPublicKey(privateKey, privateKeyType).toStringRaw();
 	}
 
 	public async callContract(
@@ -191,7 +200,7 @@ export default class HTSProvider implements IProvider {
 			);
 		const transactionResponse: TransactionResponse =
 			await this.htsSigner.signAndSendTransaction(transaction);
-		this.logHashScan(transactionResponse, 'call contract');
+		this.logHashScan(transactionResponse, 'Call contract');
 		const htsResponse: HTSResponse =
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
@@ -371,7 +380,7 @@ export default class HTSProvider implements IProvider {
 				);
 			const transactionResponse: TransactionResponse =
 				await this.htsSigner.signAndSendTransaction(transaction);
-			this.logHashScan(transactionResponse, 'deploy contract');
+			this.logHashScan(transactionResponse, 'Deploy contract');
 			const htsResponse: HTSResponse =
 				await this.transactionResposeHandler.manageResponse(
 					transactionResponse,
@@ -460,7 +469,7 @@ export default class HTSProvider implements IProvider {
 			);
 		const transactionResponse: TransactionResponse =
 			await this.htsSigner.signAndSendTransaction(transaction);
-		this.logHashScan(transactionResponse, 'create token hts');
+		this.logHashScan(transactionResponse, 'Create token hts');
 		const htsResponse: HTSResponse =
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
@@ -525,7 +534,7 @@ export default class HTSProvider implements IProvider {
 			);
 		const transactionResponse: TransactionResponse =
 			await this.htsSigner.signAndSendTransaction(transaction);
-		this.logHashScan(transactionResponse), 'wipe in hts';
+		this.logHashScan(transactionResponse), 'Wipe in hts';
 		const htsResponse: HTSResponse =
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
@@ -558,7 +567,7 @@ export default class HTSProvider implements IProvider {
 			);
 		const transactionResponse: TransactionResponse =
 			await this.htsSigner.signAndSendTransaction(transaction);
-		this.logHashScan(transactionResponse, 'cash in hts');
+		this.logHashScan(transactionResponse, 'Cash in hts');
 		const htsResponse: HTSResponse =
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
@@ -591,7 +600,7 @@ export default class HTSProvider implements IProvider {
 			);
 		const transactionResponse: TransactionResponse =
 			await this.htsSigner.signAndSendTransaction(transaction);
-		this.logHashScan(transactionResponse, 'cash out hts');
+		this.logHashScan(transactionResponse, 'Cash out hts');
 		const htsResponse: HTSResponse =
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
@@ -626,7 +635,7 @@ export default class HTSProvider implements IProvider {
 			);
 		const transactionResponse: TransactionResponse =
 			await this.htsSigner.signAndSendTransaction(transaction);
-		this.logHashScan(transactionResponse, 'tranfer hts');
+		this.logHashScan(transactionResponse, 'Tranfer hts');
 		const htsResponse: HTSResponse =
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
@@ -647,7 +656,7 @@ export default class HTSProvider implements IProvider {
 		transactionResponse: TransactionResponse,
 		operation?: string,
 	): void {
-		let hs = ` https://hashscan.io/#/${
+		let hs = `${operation} - https://hashscan.io/#/${
 			this.network.hederaNetworkEnviroment
 		}/transaction/${transactionResponse.transactionId
 			.toString()

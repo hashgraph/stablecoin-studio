@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { Account, StableCoin } from '../../../../src/index.js';
+import { StableCoin } from '../../../../src/index.js';
 import HederaError from '../../../../src/port/out/hedera/error/HederaError.js';
 import { IProvider } from '../../../../src/port/out/hedera/Provider.js';
 import NetworkAdapter from '../../../../src/port/out/network/NetworkAdapter.js';
@@ -54,8 +54,6 @@ describe('🧪 [PORT] StableCoinRepository', () => {
 
 function mockRepo(networkAdapter: NetworkAdapter, provider?: IProvider) {
 	const deployFn = (
-			coin: StableCoin,
-			account: Account,
 		) => {
 			throw new Error();
 		};
