@@ -67,6 +67,16 @@ const StableCoinDetails = () => {
 									value: selectedStableCoin?.decimals,
 								},
 								{
+									label: t('initialSupply'),
+									value: selectedStableCoin?.totalSupply
+										? formatAmount({
+												// TODO: Change when sdk returns initial supply info
+												amount: Number(selectedStableCoin?.totalSupply),
+												decimals: selectedStableCoin?.decimals,
+										  })
+										: 0,
+								},
+								{
 									label: t('totalSupply'),
 									value: selectedStableCoin?.totalSupply
 										? formatAmount({
@@ -77,7 +87,12 @@ const StableCoinDetails = () => {
 								},
 								{
 									label: t('maxSupply'),
-									value: 0,
+									value: selectedStableCoin?.maxSupply
+										? formatAmount({
+												amount: Number(selectedStableCoin?.maxSupply),
+												decimals: selectedStableCoin?.decimals,
+										  })
+										: 0,
 								},
 								{
 									label: t('treasuryId'),
