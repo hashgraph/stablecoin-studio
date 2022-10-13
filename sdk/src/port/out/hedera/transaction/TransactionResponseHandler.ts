@@ -183,7 +183,7 @@ export class TransactionResposeHandler {
 	public decodeFunctionResult(
 		functionName: string,
 		resultAsBytes: ArrayBuffer,
-		abi: any,
+		abi: any, // eslint-disable-line
 	): Uint8Array {
 		const web3 = new Web3();
 
