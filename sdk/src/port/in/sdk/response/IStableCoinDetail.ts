@@ -13,6 +13,7 @@ export default interface IStableCoinDetail {
 	decimals?: number;
 	totalSupply?: bigint;
 	maxSupply?: bigint;
+	initialSupply?:bigint;
 	customFee?: ICustomFees;
 	treasuryId?: string;
 	memo?: StableCoinMemo;

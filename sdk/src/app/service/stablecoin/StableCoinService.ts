@@ -81,6 +81,7 @@ export default class StableCoinService extends Service {
 			decimals: stableCoin.decimals,
 			totalSupply: stableCoin.totalSupply,
 			maxSupply: stableCoin.maxSupply,
+			initialSupply: stableCoin.initialSupply,
 			// customFee:stableCoin.,
 			treasuryId: stableCoin.treasury.id,
 			freezeDefault: stableCoin.freezeDefault,
