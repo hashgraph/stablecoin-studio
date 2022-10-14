@@ -77,7 +77,7 @@ const TopbarRight = () => {
 			<Flex
 				onClick={handleDisconnect}
 				h='32px'
-				w='32px'
+				minW='32px'
 				borderRadius='50%'
 				bgColor='light.purple4'
 				justifyContent='center'
