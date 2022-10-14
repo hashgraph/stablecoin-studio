@@ -670,7 +670,7 @@ export default class HashPackProvider implements IProvider {
 			);
 		}
 		log(
-			`Result wipe HTS ${htsResponse.receipt.status}: account ${params.wipeAccountId}, tokenId ${params.tokenId}, amount ${params.amount}`,
+			`Result wipe ${htsResponse.receipt.status}: account ${params.wipeAccountId}, tokenId ${params.tokenId}, amount ${params.amount}`,
 			logOpts,
 		);
 
@@ -718,7 +718,7 @@ export default class HashPackProvider implements IProvider {
 			);
 		}
 		log(
-			`Result cash in HTS ${htsResponse.receipt.status}: account ${params.account.accountId.id}, tokenId ${params.tokenId}, amount ${params.amount}`,
+			`Result Cash In ${htsResponse.receipt.status}: account ${params.account.accountId.id}, tokenId ${params.tokenId}, amount ${params.amount}`,
 			logOpts,
 		);
 
@@ -766,7 +766,7 @@ export default class HashPackProvider implements IProvider {
 			);
 		}
 		log(
-			`Result cash out HTS ${htsResponse.receipt.status}: account ${params.account.accountId}, tokenId ${params.tokenId}, amount ${params.amount}`,
+			`Result cash out ${htsResponse.receipt.status}: account ${params.account.accountId}, tokenId ${params.tokenId}, amount ${params.amount}`,
 			logOpts,
 		);
 

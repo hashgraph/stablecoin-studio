@@ -146,7 +146,7 @@ export default class CreateStableCoinService extends Service {
       console.log(language.getText('account.wrong'));
       autoRenewAccount = await utilsService.defaultSingleAsk(
         language.getText('stablecoin.askAutoRenewAccountId'),
-        createdStableCoin.autoRenewAccount || '0.0.0',
+        createdStableCoin.autoRenewAccount || currentAccount.accountId,
       );
     }
     createdStableCoin.autoRenewAccount = autoRenewAccount;

@@ -82,8 +82,7 @@ const CoinDropdown = () => {
 			walletActions.setSelectedStableCoin({
 				tokenId: stableCoinDetails?.tokenId,
 				initialSupply: formatSupplyParam({
-					// TODO: Change when sdk returns initial supply info
-					supply: stableCoinDetails?.totalSupply?.toString(),
+					supply: stableCoinDetails?.initialSupply?.toString(),
 					decimals: stableCoinDetails?.decimals ?? 0,
 				}),
 				totalSupply: formatSupplyParam({

@@ -98,6 +98,7 @@ export default class ConfigurationService extends Service {
         fs.readFileSync(`src/resources/config/${this.configFileName}`, 'utf8'),
       );
       const filePath = path ?? this.getDefaultConfigurationPath();
+      this.path = filePath;
       fs.ensureFileSync(filePath);
       fs.writeFileSync(filePath, yaml.dump(defaultConfig), 'utf8');
       configurationService.setConfiguration(defaultConfig, filePath);
