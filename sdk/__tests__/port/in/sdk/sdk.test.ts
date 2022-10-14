@@ -22,7 +22,7 @@ describe('🧪 [PORT] SDK', () => {
 
   it('Gets the token info', async () => {
     const coin = await sdk.getStableCoinDetails({
-      id: '0.0.48195895',
+      id: '0.0.48618923',
     });
     expect(coin).not.toBeNull();
     expect(coin?.decimals).toBeGreaterThanOrEqual(0);
@@ -37,4 +37,12 @@ describe('🧪 [PORT] SDK', () => {
     });
     expect(list).not.toBeNull();
   });
+  it('Gets accountInfo', async () => {
+    const list = await sdk.getAccountInfo({
+      account: ACCOUNTS.testnet,
+    });
+    console.log(list)
+    expect(list).not.toBeNull();
+  });
+  
 });
