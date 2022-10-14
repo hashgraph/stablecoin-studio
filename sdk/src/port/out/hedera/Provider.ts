@@ -44,7 +44,7 @@ export interface IProvider {
 		parameters: any[],
 		abi: Array<any>,
 	): Uint8Array;
-	getPublicKeyString(privateKey?: PrivateKey | string | undefined): string;
+	getPublicKeyString(privateKey?: PrivateKey | string | undefined, privateKeyType?: string): string;
 	deployStableCoin(
 		stableCoin: StableCoin,
 		account: Account,
@@ -58,4 +58,5 @@ export interface IProvider {
 	cashInHTS(parameters: IHTSTokenRequest): Promise<boolean>;
 	cashOutHTS(parameters: IHTSTokenRequest): Promise<boolean>;
 	transferHTS(parameters: ITransferTokenRequest): Promise<boolean>;
+	accountToEvmAddress(account: Account): Promise<string>;
 }

@@ -1,9 +1,11 @@
 import { Box, Flex } from '@chakra-ui/react';
+import type { StableCoinMemo } from 'hedera-stable-coin-sdk';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import BaseContainer from '../../components/BaseContainer';
 import DetailsReview from '../../components/DetailsReview';
 import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
+import { formatAmount } from '../../utils/inputHelper';
 
 const StableCoinDetails = () => {
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
@@ -26,6 +28,18 @@ const StableCoinDetails = () => {
 		}
 	};
 
+	const getMemoInformation = (memo: StableCoinMemo | undefined) => {
+		return (
+			t('proxyContract') +
+			': ' +
+			memo?.proxyContract +
+			', ' +
+			t('htsAccount') +
+			': ' +
+			memo?.htsAccount
+		);
+	};
+
 	return (
 		<BaseContainer title={t('title')}>
 			<Flex justify='center' p={{ base: 4, md: '128px' }} pt={{ base: 4, lg: 14 }}>
@@ -34,7 +48,7 @@ const StableCoinDetails = () => {
 						<DetailsReview
 							title={t('subtitle')}
 							titleProps={{ fontWeight: 'bold' }}
-							contentProps={{ justifyContent: 'start', gap: 4 }}
+							contentProps={{ justifyContent: 'space-between', gap: 4 }}
 							details={[
 								{
 									label: t('tokenId'),
@@ -53,12 +67,32 @@ const StableCoinDetails = () => {
 									value: selectedStableCoin?.decimals,
 								},
 								{
+									label: t('initialSupply'),
+									value: selectedStableCoin?.totalSupply
+										? formatAmount({
+												// TODO: Change when sdk returns initial supply info
+												amount: Number(selectedStableCoin?.totalSupply),
+												decimals: selectedStableCoin?.decimals,
+										  })
+										: 0,
+								},
+								{
 									label: t('totalSupply'),
-									value: 0,
+									value: selectedStableCoin?.totalSupply
+										? formatAmount({
+												amount: Number(selectedStableCoin?.totalSupply),
+												decimals: selectedStableCoin?.decimals,
+										  })
+										: 0,
 								},
 								{
 									label: t('maxSupply'),
-									value: 0,
+									value: selectedStableCoin?.maxSupply
+										? formatAmount({
+												amount: Number(selectedStableCoin?.maxSupply),
+												decimals: selectedStableCoin?.decimals,
+										  })
+										: 0,
 								},
 								{
 									label: t('treasuryId'),
@@ -66,7 +100,7 @@ const StableCoinDetails = () => {
 								},
 								{
 									label: t('memo'),
-									value: selectedStableCoin?.memo,
+									value: getMemoInformation(selectedStableCoin?.memo),
 								},
 								{
 									label: t('adminKey'),

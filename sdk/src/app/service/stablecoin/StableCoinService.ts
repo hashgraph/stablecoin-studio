@@ -18,7 +18,6 @@ import ISupplierRoleStableCoinServiceRequestModel from './model/ISupplierRoleSta
 import IStableCoinDetail from '../../../port/in/sdk/response/IStableCoinDetail.js';
 import { Capabilities } from '../../../domain/context/stablecoin/Capabilities.js';
 import IGetSupplierAllowanceModel from './model/IGetSupplierAllowanceModel.js';
-import { StableCoinMemo } from '../../../domain/context/stablecoin/StableCoinMemo.js';
 
 export default class StableCoinService extends Service {
 	private repository: IStableCoinRepository;
@@ -82,6 +81,7 @@ export default class StableCoinService extends Service {
 			decimals: stableCoin.decimals,
 			totalSupply: stableCoin.totalSupply,
 			maxSupply: stableCoin.maxSupply,
+			initialSupply: stableCoin.initialSupply,
 			// customFee:stableCoin.,
 			treasuryId: stableCoin.treasury.id,
 			freezeDefault: stableCoin.freezeDefault,
@@ -244,6 +244,11 @@ export default class StableCoinService extends Service {
 		const coin: StableCoin = await this.getStableCoin({
 			id: req.tokenId,
 		});
+
+		if (coin.treasury.id == req.targetId) {
+			throw new Error('You cannot wipe tokens from the treasury account');
+		}
+
 		// Balances
 
 		const balance = await this.getBalanceOf({

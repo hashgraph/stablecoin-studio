@@ -1,36 +1,51 @@
-import { Box, Button, Flex, Text } from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import Icon from '../../components/Icon';
 import SDKService from '../../services/SDKService';
 import {
-	HAS_WALLET_EXTENSION,
+	SELECTED_WALLET_DATA,
 	SELECTED_WALLET_PAIRED,
 	walletActions,
 } from '../../store/slices/walletSlice';
-import type { SavedPairingData } from 'hedera-stable-coin-sdk';
+import type { InitializationData, SavedPairingData } from 'hedera-stable-coin-sdk';
 
 const TopbarRight = () => {
 	const { t } = useTranslation('global');
 	const dispatch = useDispatch();
 
 	const pairingData: SavedPairingData = useSelector(SELECTED_WALLET_PAIRED);
-	const extensionFound: boolean = useSelector(HAS_WALLET_EXTENSION);
+	const walletData: InitializationData = useSelector(SELECTED_WALLET_DATA);
 
 	useEffect(() => {
-		if (!pairingData && extensionFound) {
-			getWalletData();
-		}
-	}, [extensionFound]);
+		getWalletData();
+	}, []);
 
 	const getWalletData = async () => {
 		const dataResponse = await SDKService.getWalletData();
-		dispatch(walletActions.setData(dataResponse));
+
+		const savedPairings =
+			dataResponse.savedPairings.length !== 0
+				? dataResponse.savedPairings
+				: walletData.savedPairings;
+
+		dispatch(
+			walletActions.setData({
+				...dataResponse,
+				savedPairings,
+			}),
+		);
 	};
 
 	const handleDisconnect = () => {
+		localStorage.removeItem('hashconnectData');
+
 		SDKService.disconnectWallet();
+
+		dispatch(walletActions.clearData());
+		dispatch(walletActions.setSelectedStableCoin(undefined));
+		dispatch(walletActions.setStableCoinList([]));
 	};
 
 	return (
@@ -60,15 +75,19 @@ const TopbarRight = () => {
 			</Flex>
 			<Box borderLeft='2px solid' borderLeftColor='light.primary' w='1px' />
 			<Flex
-				data-testid='topbar-right-disconnect'
-				color='brand.gray'
-				fontSize='12px'
-				fontWeight='400'
+				onClick={handleDisconnect}
+				h='32px'
+				w='32px'
+				borderRadius='50%'
+				bgColor='light.purple4'
+				justifyContent='center'
 				alignItems='center'
+				_hover={{
+					cursor: 'pointer',
+					bgColor: 'light.purple2',
+				}}
 			>
-				<Button h='100%' w='40px' onClick={handleDisconnect}>
-					<Icon name='Power' fontSize='20px' />
-				</Button>
+				<Icon name='Power' fontSize='24px' color='dark.primary' />
 			</Flex>
 		</Flex>
 	);

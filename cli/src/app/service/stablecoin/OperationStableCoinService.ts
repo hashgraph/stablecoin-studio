@@ -51,7 +51,10 @@ export default class OperationStableCoinService extends Service {
     const configAccount = utilsService.getCurrentAccount();
     const currentAccount = new EOAccount(
       configAccount.accountId,
-      new PrivateKey(configAccount.privateKey),
+      new PrivateKey(
+        configAccount.privateKey.key,
+        configAccount.privateKey.type,
+      ),
     );
     let resp: StableCoinList[];
     if (this.stableCoinId === undefined) {
@@ -80,7 +83,7 @@ export default class OperationStableCoinService extends Service {
       this.stableCoinWithSymbol = this.stableCoinId;
       this.stableCoinId = this.stableCoinId.split(' - ')[0];
 
-      if (this.stableCoinId === language.getText('wizard.backOption')) {
+      if (this.stableCoinId === language.getText('wizard.goBack')) {
         await utilsService.cleanAndShowBanner();
         await wizardService.mainMenu();
       } else {
@@ -105,7 +108,10 @@ export default class OperationStableCoinService extends Service {
     const configAccount = utilsService.getCurrentAccount();
     const currentAccount = new EOAccount(
       configAccount.accountId,
-      new PrivateKey(configAccount.privateKey),
+      new PrivateKey(
+        configAccount.privateKey.key,
+        configAccount.privateKey.type,
+      ),
     );
     const wizardOperationsStableCoinOptions = language.getArray(
       'wizard.stableCoinOptions',
@@ -335,7 +341,7 @@ export default class OperationStableCoinService extends Service {
   ): Promise<Capabilities[]> {
     return await new CapabilitiesStableCoinsService().getCapabilitiesStableCoins(
       this.stableCoinId,
-      sdk.getPublicKey(currentAccount.privateKey.key),
+      sdk.getPublicKey(currentAccount.privateKey.key, currentAccount.privateKey.type)
     );
   }
 
@@ -348,7 +354,10 @@ export default class OperationStableCoinService extends Service {
     const configAccount = utilsService.getCurrentAccount();
     const currentAccount = new EOAccount(
       configAccount.accountId,
-      new PrivateKey(configAccount.privateKey),
+      new PrivateKey(
+        configAccount.privateKey.key,
+        configAccount.privateKey.type,
+      ),
     );
 
     const capabilitiesStableCoin = await this.getCapabilities(
@@ -394,7 +403,7 @@ export default class OperationStableCoinService extends Service {
         // Grant role
         //Lists all roles
         role = await this.getRole(capabilitiesStableCoin);
-        if (role !== language.getText('wizard.backOption')) {
+        if (role !== language.getText('wizard.goBack')) {
           accountTarget = await utilsService.defaultSingleAsk(
             language.getText('stablecoin.accountTarget'),
             accountTarget,
@@ -417,7 +426,7 @@ export default class OperationStableCoinService extends Service {
             this.proxyContractId,
             this.stableCoinId,
             accountTarget,
-            currentAccount.privateKey.key,
+            currentAccount.privateKey,
             currentAccount.accountId.id,
             role,
           );
@@ -434,7 +443,7 @@ export default class OperationStableCoinService extends Service {
         // Revoke role
         //Lists all roles
         role = await this.getRole(capabilitiesStableCoin);
-        if (role !== language.getText('wizard.backOption')) {
+        if (role !== language.getText('wizard.goBack')) {
           //Call to revoke role
           accountTarget = await utilsService.defaultSingleAsk(
             language.getText('stablecoin.accountTarget'),
@@ -452,7 +461,7 @@ export default class OperationStableCoinService extends Service {
             this.proxyContractId,
             this.stableCoinId,
             accountTarget,
-            currentAccount.privateKey.key,
+            currentAccount.privateKey,
             currentAccount.accountId.id,
             role,
           );
@@ -528,7 +537,7 @@ export default class OperationStableCoinService extends Service {
                 this.proxyContractId,
                 this.stableCoinId,
                 accountTarget,
-                currentAccount.privateKey.key,
+                currentAccount.privateKey,
                 currentAccount.accountId.id,
                 parseFloat(limit),
               );
@@ -537,7 +546,7 @@ export default class OperationStableCoinService extends Service {
                 this.proxyContractId,
                 this.stableCoinId,
                 accountTarget,
-                currentAccount.privateKey.key,
+                currentAccount.privateKey,
                 currentAccount.accountId.id,
               );
             } else {
@@ -598,7 +607,7 @@ export default class OperationStableCoinService extends Service {
                   this.proxyContractId,
                   this.stableCoinId,
                   accountTarget,
-                  currentAccount.privateKey.key,
+                  currentAccount.privateKey,
                   currentAccount.accountId.id,
                   parseFloat(limit),
                 );
@@ -607,7 +616,7 @@ export default class OperationStableCoinService extends Service {
                   this.proxyContractId,
                   this.stableCoinId,
                   accountTarget,
-                  currentAccount.privateKey.key,
+                  currentAccount.privateKey,
                   currentAccount.accountId.id,
                 );
               } catch (e) {
@@ -658,7 +667,7 @@ export default class OperationStableCoinService extends Service {
               await this.roleStableCoinService.resetLimitSupplierRoleStableCoin(
                 this.proxyContractId,
                 accountTarget,
-                currentAccount.privateKey.key,
+                currentAccount.privateKey,
                 currentAccount.accountId.id,
               );
 
@@ -666,7 +675,7 @@ export default class OperationStableCoinService extends Service {
                 this.proxyContractId,
                 this.stableCoinId,
                 accountTarget,
-                currentAccount.privateKey.key,
+                currentAccount.privateKey,
                 currentAccount.accountId.id,
               );
             } else {
@@ -710,7 +719,7 @@ export default class OperationStableCoinService extends Service {
               this.proxyContractId,
               this.stableCoinId,
               accountTarget,
-              currentAccount.privateKey.key,
+              currentAccount.privateKey,
               currentAccount.accountId.id,
             );
 
@@ -732,7 +741,7 @@ export default class OperationStableCoinService extends Service {
 
         //Lists all roles
         role = await this.getRole(capabilitiesStableCoin);
-        if (role !== language.getText('wizard.backOption')) {
+        if (role !== language.getText('wizard.goBack')) {
           //Call to has role
           accountTarget = await utilsService.defaultSingleAsk(
             language.getText('stablecoin.accountTarget'),
@@ -750,7 +759,7 @@ export default class OperationStableCoinService extends Service {
             this.proxyContractId,
             this.stableCoinId,
             accountTarget,
-            currentAccount.privateKey.key,
+            currentAccount.privateKey,
             currentAccount.accountId.id,
             role,
           );
@@ -769,11 +778,9 @@ export default class OperationStableCoinService extends Service {
     options: string[],
     capabilities: string[],
   ): string[] {
+    let result = [];
     if (capabilities.length === 0) return options;
-
-    capabilities = capabilities.concat('Return to main menu');
-
-    return options.filter((option) => {
+    result = options.filter((option) => {
       if (
         (option === 'Cash in' &&
           (capabilities.includes('Cash in') ||
@@ -792,35 +799,29 @@ export default class OperationStableCoinService extends Service {
 
       return capabilities.includes(option);
     });
+
+    return result.concat(language.getArray('wizard.returnOption'));
   }
 
   private async getRole(capabilities: Capabilities[]): Promise<string> {
     const rolesAvailability = [
       {
         role: {
-          availability: capabilities.some((capability) =>
-            [Capabilities.CASH_IN, Capabilities.CASH_IN_HTS].includes(
-              capability,
-            ),
-          ),
+          availability: capabilities.includes(Capabilities.CASH_IN),
           name: 'Cash in Role',
           value: StableCoinRole.CASHIN_ROLE,
         },
       },
       {
         role: {
-          availability: capabilities.some((capability) =>
-            [Capabilities.BURN, Capabilities.BURN_HTS].includes(capability),
-          ),
+          availability: capabilities.includes(Capabilities.BURN),
           name: 'Burn Role',
           value: StableCoinRole.BURN_ROLE,
         },
       },
       {
         role: {
-          availability: capabilities.some((capability) =>
-            [Capabilities.WIPE, Capabilities.WIPE_HTS].includes(capability),
-          ),
+          availability: capabilities.includes(Capabilities.WIPE),
           name: 'Wipe Role',
           value: StableCoinRole.WIPE_ROLE,
         },
@@ -850,7 +851,7 @@ export default class OperationStableCoinService extends Service {
       rolesNames,
       true,
     );
-    if (roleSelected !== language.getText('wizard.backOption')) {
+    if (roleSelected !== language.getText('wizard.goBack')) {
       const roleValue = rolesAvailable.filter(
         ({ role }) => role.name == roleSelected,
       )[0].role.value;
@@ -888,7 +889,7 @@ export default class OperationStableCoinService extends Service {
         this.proxyContractId,
         this.stableCoinId,
         accountTarget,
-        currentAccount.privateKey.key,
+        currentAccount.privateKey,
         currentAccount.accountId.id,
         'unlimited',
       );
@@ -910,7 +911,7 @@ export default class OperationStableCoinService extends Service {
         this.proxyContractId,
         this.stableCoinId,
         accountTarget,
-        currentAccount.privateKey.key,
+        currentAccount.privateKey,
         currentAccount.accountId.id,
         'limited',
         parseInt(limit),
@@ -926,7 +927,7 @@ export default class OperationStableCoinService extends Service {
     return await this.roleStableCoinService.checkCashInRoleStableCoin(
       this.proxyContractId,
       accountTarget,
-      currentAccount.privateKey.key,
+      currentAccount.privateKey,
       currentAccount.accountId.id,
       supplierType,
     );

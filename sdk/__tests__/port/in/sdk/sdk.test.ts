@@ -48,7 +48,7 @@ describe('🧪 [PORT] SDK', () => {
     });
     expect(list).not.toBeNull();
   });
-
+  
   it('Gets the token balance', async () => {
     const balance = await sdk.getBalanceOf({
       account: ACCOUNTS.testnet,

@@ -1,3 +1,4 @@
+import { ContractFactory } from '@hashgraph/hethers';
 import {
 	Transaction,
 	ContractExecuteTransaction,
@@ -5,7 +6,6 @@ import {
 	Hbar,
 	TokenSupplyType,
 	ContractCreateFlow,
-	PrivateKey,
 	TokenWipeTransaction,
 	TokenMintTransaction,
 	TokenBurnTransaction,
@@ -14,6 +14,7 @@ import {
 	TransferTransaction,
 	PublicKey as HPublicKey,
 	DelegateContractId,
+	ContractFunctionParameters
 } from '@hashgraph/sdk';
 import { ContractId, PublicKey } from '../../../in/sdk/sdk.js';
 import { ICreateTokenResponse } from '../types.js';
@@ -106,17 +107,17 @@ export class TransactionProvider {
 	}
 
 	public static buildContractCreateFlowTransaction(
-		factory: any,
-		parameters: any,
+		factory: ContractFactory,
+		parameters: Uint8Array | ContractFunctionParameters,
 		gas: number,
-		admPrivateKey?: string,
+		admKey?: string,
 	): ContractCreateFlow {
 		const transaction = new ContractCreateFlow()
 			.setBytecode(factory.bytecode)
 			.setGas(gas);
-		admPrivateKey &&
+		admKey &&
 			transaction.setAdminKey(
-				PrivateKey.fromStringED25519(admPrivateKey),
+				HPublicKey.fromString(admKey),
 			);
 		if (parameters) {
 			transaction.setConstructorParameters(parameters);

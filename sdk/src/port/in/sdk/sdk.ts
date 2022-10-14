@@ -1,15 +1,16 @@
 import IStableCoinList from './response/IStableCoinList.js';
 import IStableCoinDetail from './response/IStableCoinDetail.js';
-import ContractsService from '../../../app/service/contract/ContractsService.js';
 import StableCoinService from '../../../app/service/stablecoin/StableCoinService.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import StableCoinRepository from '../../out/stablecoin/StableCoinRepository.js';
 import IStableCoinRepository from '../../out/stablecoin/IStableCoinRepository.js';
 import NetworkAdapter from '../../out/network/NetworkAdapter.js';
 
-import Web3 from 'web3';
-
-import { HederaNetwork, StableCoinRole } from '../../../core/enum.js';
+import {
+	HederaNetwork,
+	StableCoinRole,
+	PrivateKeyType,
+} from '../../../core/enum.js';
 import { HederaNetworkEnviroment } from '../../../core/enum.js';
 import { getHederaNetwork } from '../../../core/enum.js';
 
@@ -109,6 +110,7 @@ export {
 	HederaNetworkEnviroment,
 	getHederaNetwork,
 	StableCoinRole,
+	PrivateKeyType,
 	InitializationData,
 	SavedPairingData,
 	AcknowledgeMessage,
@@ -144,9 +146,7 @@ export interface SDKInitOptions {
 export class SDK {
 	private config: Configuration;
 
-	private web3: Web3;
 	private networkAdapter: NetworkAdapter;
-	private contractService: ContractsService;
 	private stableCoinRepository: IStableCoinRepository;
 	private stableCoinService: StableCoinService;
 	private eventService: EventService;
@@ -175,8 +175,6 @@ export class SDK {
 				appMetadata: this.config.options?.appMetadata,
 			},
 		).init();
-		this.web3 = new Web3();
-		this.contractService = new ContractsService(this.networkAdapter);
 		this.stableCoinRepository = new StableCoinRepository(
 			this.networkAdapter,
 		);
@@ -467,8 +465,8 @@ export class SDK {
 		return true;
 	}
 
-	public getPublicKey(str?: string): string {
-		return this.networkAdapter.provider.getPublicKeyString(str);
+	public getPublicKey(privateKey?: string, privateKeyType?: string): string {
+		return this.networkAdapter.provider.getPublicKeyString(privateKey, privateKeyType);
 	}
 
 	public grantRole(

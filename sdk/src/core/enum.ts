@@ -13,6 +13,11 @@ export enum StableCoinRole {
 	RESCUE_ROLE = '0x43f433f336cda92fbbe5bfbdd344a9fd79b2ef138cd6e6fc49d55e2f54e1d99a',
 	PAUSER_ROLE = '0x65d7a28e3265b37a6474929f336521b332c1681b933f6cb9f3376673440d862a',
 }
+
+export enum PrivateKeyType {
+	ECDSA = 'ECDSA',
+	ED25519 = 'ED25519',
+}
 export class HederaNetwork {
 	hederaNetworkEnviroment: HederaNetworkEnviroment;
 	nodes: { [key: string]: string | AccountId } | undefined;
@@ -37,7 +42,8 @@ export function getHederaNetwork(
 ): HederaNetworkSpec {
 	const enviroment: HederaNetworkEnviroment =
 		hederaNetwork?.hederaNetworkEnviroment;
-	const nodes: { [key: string]: string | AccountId } | undefined = hederaNetwork?.nodes;
+	const nodes: { [key: string]: string | AccountId } | undefined =
+		hederaNetwork?.nodes;
 	const mirrorNodeUrl: unknown = hederaNetwork?.mirrorNodeUrl;
 	switch (enviroment) {
 		case HederaNetworkEnviroment.MAIN:

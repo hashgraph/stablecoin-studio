@@ -12,9 +12,9 @@ import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandle
 import { useSelector } from 'react-redux';
 import {
 	SELECTED_WALLET_COIN,
-	SELECTED_WALLET_PAIRED_ACCOUNTID,
+	SELECTED_WALLET_PAIRED_ACCOUNT,
 } from '../../../store/slices/walletSlice';
-import { HashPackAccount } from 'hedera-stable-coin-sdk';
+import { useState } from 'react';
 
 const CashInOperation = () => {
 	const {
@@ -22,32 +22,37 @@ const CashInOperation = () => {
 		onOpen: onOpenModalAction,
 		onClose: onCloseModalAction,
 	} = useDisclosure();
+
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
-	const accountId = useSelector(SELECTED_WALLET_PAIRED_ACCOUNTID);
+	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
+
 	const { decimals = 0, totalSupply } = selectedStableCoin || {};
+
+	const [errorOperation, setErrorOperation] = useState();
+
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
 	});
+
 	const { t } = useTranslation(['cashIn', 'global', 'operations']);
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const handleCashIn: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
 		const { amount, destinationAccount } = getValues();
 		try {
-			if (!selectedStableCoin?.memo || !selectedStableCoin?.tokenId) {
+			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId) {
 				onError();
 				return;
 			}
 			await SDKService.cashIn({
-				proxyContractId: selectedStableCoin.memo,
-				account: new HashPackAccount(accountId),
+				proxyContractId: selectedStableCoin.memo.proxyContract,
+				account,
 				tokenId: selectedStableCoin.tokenId,
-				targetId: destinationAccount, // destinationACc
+				targetId: destinationAccount,
 				amount,
 			});
 			onSuccess();
-		} catch (error) {
-			console.error(error);
+		} catch (error: any) {
+			setErrorOperation(error.toString());
 			onError();
 		}
 	};
@@ -112,7 +117,7 @@ const CashInOperation = () => {
 			/>
 			<ModalsHandler
 				errorNotificationTitle={t('operations:modalErrorTitle')}
-				errorNotificationDescription={'error'} // TODO: show returned error from sdk
+				errorNotificationDescription={errorOperation}
 				modalActionProps={{
 					isOpen: isOpenModalAction,
 					onClose: onCloseModalAction,

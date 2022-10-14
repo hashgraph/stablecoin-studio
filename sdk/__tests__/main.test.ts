@@ -17,7 +17,7 @@ describe('🧪 SDK Unit Test', () => {
   it('Loads the class', () => {
     expect(sdk).not.toBeNull();
   });
-
+  
 	it('Emits initialization event', async () => {
 		let data;
 		await getSDKAsync(undefined, {

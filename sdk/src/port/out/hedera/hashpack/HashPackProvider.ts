@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import axios from 'axios';
 import { IniConfig, IProvider } from '../Provider.js';
 import {
 	HederaNetwork,
@@ -9,12 +10,15 @@ import {
 	AccountId,
 	ContractId,
 	StableCoinMemo,
+	PrivateKeyType,
+	Account
 } from '../../../in/sdk/sdk.js';
 import {
 	AccountId as HAccountId,
 	ContractFunctionParameters,
 	ContractId as HContractId,
 	PrivateKey as HPrivateKey,
+	PublicKey as HPublicKey,
 	TokenId,
 	Transaction,
 	Status,
@@ -50,6 +54,7 @@ import { HashConnect } from 'hashconnect';
 import { HashConnectTypes } from 'hashconnect';
 import { HashConnectConnectionState } from 'hashconnect/types';
 import HashPackAccount from '../../../../domain/context/account/HashPackAccount.js';
+import { IAccount } from '../account/types/IAccount';
 
 const logOpts = { newLine: true, clear: true };
 
@@ -129,12 +134,18 @@ export default class HashPackProvider implements IProvider {
 
 		//This is fired when a wallet approves a pairing
 		this.hc.pairingEvent.on(async (data) => {
-			this.pairingData = data.pairingData!;
-			console.log('Paired with wallet', data);
-			this.eventService.emit(
-				ProviderEventNames.providerPairingEvent,
-				this.pairingData,
-			);
+			if (data.pairingData) {
+				this.pairingData = data.pairingData;
+				console.log('Paired with wallet', data);
+				this.eventService.emit(
+					ProviderEventNames.providerPairingEvent,
+					this.pairingData,
+				);
+			} else {
+				throw new Error(
+					'Pairing is not possible since pairing data is undefined.',
+				);
+			}		
 		});
 
 		//This is fired when HashConnect loses connection, pairs successfully, or is starting connection
@@ -177,7 +188,6 @@ export default class HashPackProvider implements IProvider {
 				'You must specify an accountId for operate with HashConnect.',
 			);
 		}
-
 		const functionCallParameters = this.encodeFunctionCall(
 			name,
 			parameters,
@@ -189,7 +199,7 @@ export default class HashPackProvider implements IProvider {
 				functionCallParameters,
 				gas,
 			);
-
+	
 		const transactionResponse =
 			await this.hashPackSigner.signAndSendTransaction(transaction);
 		const htsResponse: HTSResponse =
@@ -200,7 +210,7 @@ export default class HashPackProvider implements IProvider {
 				name,
 				abi,
 			);
-
+	
 		return htsResponse.reponseParam;
 	}
 
@@ -222,6 +232,53 @@ export default class HashPackProvider implements IProvider {
 			.slice(2);
 
 		return Buffer.from(encodedParametersHex, 'hex');
+	}
+
+	public async accountToEvmAddress(account: Account): Promise<string> {
+		if (account.privateKey) {
+			return this.getAccountEvmAddressFromPrivateKeyType(
+				account.privateKey?.type, 
+				account.privateKey.publicKey.key, 
+				account.accountId.id);
+		} else {
+			return await this.getAccountEvmAddress(account.accountId.id);
+		}
+	}	
+
+	private async getAccountEvmAddress(
+		accountId: string,
+	): Promise<string> {
+		try {
+			const URI_BASE = `${getHederaNetwork(this.network)?.mirrorNodeUrl}/api/v1/`;
+			const res = await axios.get<IAccount>(
+				URI_BASE + 'accounts/' + accountId
+			);
+
+			if (res.data.evm_address) {
+				return res.data.evm_address;
+			} else {
+				return this.getAccountEvmAddressFromPrivateKeyType(
+					res.data.key._type, 
+					res.data.key.key, 
+					accountId);
+			}
+		} catch (error) {
+			return Promise.reject<string>(error);
+		}
+	}	
+
+	private getAccountEvmAddressFromPrivateKeyType(
+		privateKeyType: string, 
+		publicKey: string,
+		accountId: string): string {
+			
+		switch(privateKeyType) {
+			case PrivateKeyType.ECDSA:
+				return HPublicKey.fromString(publicKey).toEthereumAddress();
+
+			default:
+				return HAccountId.fromString(accountId).toSolidityAddress();
+		}
 	}
 
 	public async deployStableCoin(
@@ -369,7 +426,7 @@ export default class HashPackProvider implements IProvider {
 					factory,
 					params,
 					90_000,
-					'1234',
+					'd41996edecdc0975bb72d94bce4a1207d40f8a3b0a90c49d3ef3a697bb09c170',
 				);
 			const transactionResponse =
 				await this.hashPackSigner.signAndSendTransaction(transaction);
@@ -471,13 +528,14 @@ export default class HashPackProvider implements IProvider {
 		privateKey?: PrivateKey | string | undefined,
 	): string {
 		let key = null;
+		let publicKey = null;
 		if (privateKey instanceof PrivateKey) {
-			key = privateKey.key;
+			publicKey = privateKey.toHashgraphKey().publicKey.toStringRaw();
 		} else {
 			key = privateKey;
+			if (!key) throw new HederaError('No private key provided');
+			publicKey = HPrivateKey.fromString(key).publicKey.toStringRaw();
 		}
-		if (!key) throw new HederaError('No private key provided');
-		const publicKey = HPrivateKey.fromString(key).publicKey.toStringRaw();
 		return publicKey;
 	}
 

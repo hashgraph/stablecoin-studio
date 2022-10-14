@@ -8,6 +8,7 @@ import { RouterManager } from '../../Router/RouterManager';
 import BaseContainer from '../../components/BaseContainer';
 import DetailsReview from '../../components/DetailsReview';
 import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
+import { formatAmount } from '../../utils/inputHelper';
 
 export interface OperationLayoutProps {
 	LeftContent: ReactNode;
@@ -67,15 +68,22 @@ const OperationLayout = ({ LeftContent, onConfirm, confirmBtnProps }: OperationL
 									{
 										label: t('operations:details.initialSupply'),
 										value:
-											// @ts-ignore Property 'initialSupply' does not exist on type 'IStableCoinDetail'.
-											selectedStableCoin.initialSupply === ('0' as unknown as BigInt)
+											selectedStableCoin?.totalSupply === ('0' as unknown as BigInt)
 												? unknown
-												: // @ts-ignore Property 'initialSupply' does not exist on type 'IStableCoinDetail'.
-												  selectedStableCoin.initialSupply,
+												: formatAmount({
+														// TODO: Change when sdk returns initial supply info
+														amount: Number(selectedStableCoin?.totalSupply),
+														decimals: selectedStableCoin?.decimals,
+												  }),
 									},
 									{
 										label: t('operations:details.totalSupply'),
-										value: selectedStableCoin?.totalSupply || unknown,
+										value: selectedStableCoin?.totalSupply
+											? formatAmount({
+													amount: Number(selectedStableCoin?.totalSupply),
+													decimals: selectedStableCoin?.decimals,
+											  })
+											: unknown,
 									},
 									{
 										label: t('operations:details.supplyType'),
