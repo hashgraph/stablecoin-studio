@@ -68,11 +68,10 @@ const OperationLayout = ({ LeftContent, onConfirm, confirmBtnProps }: OperationL
 									{
 										label: t('operations:details.initialSupply'),
 										value:
-											selectedStableCoin?.totalSupply === ('0' as unknown as BigInt)
+											selectedStableCoin?.initialSupply === ('0' as unknown as BigInt)
 												? unknown
 												: formatAmount({
-														// TODO: Change when sdk returns initial supply info
-														amount: Number(selectedStableCoin?.totalSupply),
+														amount: Number(selectedStableCoin?.initialSupply),
 														decimals: selectedStableCoin?.decimals,
 												  }),
 									},
