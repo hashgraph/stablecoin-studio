@@ -68,10 +68,9 @@ const StableCoinDetails = () => {
 								},
 								{
 									label: t('initialSupply'),
-									value: selectedStableCoin?.totalSupply
+									value: selectedStableCoin?.initialSupply
 										? formatAmount({
-												// TODO: Change when sdk returns initial supply info
-												amount: Number(selectedStableCoin?.totalSupply),
+												amount: Number(selectedStableCoin?.initialSupply),
 												decimals: selectedStableCoin?.decimals,
 										  })
 										: 0,
