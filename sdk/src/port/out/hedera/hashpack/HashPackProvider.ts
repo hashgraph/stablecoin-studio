@@ -718,7 +718,7 @@ export default class HashPackProvider implements IProvider {
 			);
 		}
 		log(
-			`Result cash in HTS ${htsResponse.receipt.status}: account ${params.account.accountId.id}, tokenId ${params.tokenId}, amount ${params.amount}`,
+			`Result Cash In ${htsResponse.receipt.status}: account ${params.account.accountId.id}, tokenId ${params.tokenId}, amount ${params.amount}`,
 			logOpts,
 		);
 
