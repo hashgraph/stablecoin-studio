@@ -8,24 +8,18 @@ describe('🧪 SDK Unit Test', () => {
     sdk = await getSDKAsync();
   });
 
-  // Teardown (cleanup) after assertions
-  afterAll(() => {
-    console.log('afterAll: hook');
-  });
-
   // Assert sdk not null
   it('Loads the class', () => {
     expect(sdk).not.toBeNull();
   });
-  
-	it('Emits initialization event', async () => {
-		let data;
-		await getSDKAsync(undefined, {
-			onInit: (_data) => {
-				data = _data;
-			},
-		});
-		console.log(data);
-		expect(data).not.toBeFalsy();
-	});
+
+  it('Emits initialization event', async () => {
+    let data;
+    await getSDKAsync(undefined, {
+      onInit: (_data) => {
+        data = _data;
+      },
+    });
+    expect(data).not.toBeFalsy();
+  });
 });

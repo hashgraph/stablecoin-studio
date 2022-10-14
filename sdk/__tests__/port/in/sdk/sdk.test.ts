@@ -2,7 +2,6 @@ import PublicKey from '../../../../src/domain/context/account/PublicKey.js';
 import { SDK } from '../../../../src/index.js';
 import { ACCOUNTS, getSDKAsync } from '../../../core/core.js';
 import { StableCoinRole } from '../../../../src/core/enum.js';
-import PrivateKey from '../../../../src/domain/context/account/PrivateKey';
 
 describe('🧪 [PORT] SDK', () => {
   let sdk: SDK;
@@ -24,7 +23,6 @@ describe('🧪 [PORT] SDK', () => {
       wipeKey: PublicKey.NULL,
       supplyKey: PublicKey.NULL,
     });
-    console.log('COIN: ', coin);
     proxyContractId = coin?.memo?.proxyContract;
     tokenId = coin?.tokenId;
     expect(coin).not.toBeNull();
@@ -48,7 +46,7 @@ describe('🧪 [PORT] SDK', () => {
     });
     expect(list).not.toBeNull();
   });
-  
+
   it('Gets the token balance', async () => {
     const balance = await sdk.getBalanceOf({
       account: ACCOUNTS.testnet,
@@ -181,7 +179,6 @@ describe('🧪 [PORT] SDK', () => {
       proxyContractId: proxyContractId ?? '',
       tokenId: tokenId ?? '',
     });
-    console.log('ACcount id:', ACCOUNTS.testnet.accountId.id);
     expect(hasRole && hasRole[0]).toBeTruthy();
     const role = await sdk.revokeRole({
       account: ACCOUNTS.testnet,
@@ -202,7 +199,6 @@ describe('🧪 [PORT] SDK', () => {
   }, 15000);
 
   it('Grant wipe role', async () => {
-    const amount = 10;
     let hasRole = await sdk.hasRole({
       account: ACCOUNTS.testnet,
       role: StableCoinRole.WIPE_ROLE,
@@ -406,7 +402,7 @@ describe('🧪 [PORT] SDK', () => {
       tokenId ?? '',
       ACCOUNTS.testnet.privateKey.publicKey.key,
     );
-    expect(capabilities).not.toBeNull;
+    expect(capabilities).not.toBeNull();
   }, 15000);
 
   /* it('Associate token', async () => {

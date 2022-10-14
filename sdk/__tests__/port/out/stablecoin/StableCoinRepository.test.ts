@@ -392,6 +392,9 @@ function mockRepo(networkAdapter: NetworkAdapter, provider?: IProvider) {
     networkAdapter.provider.cashInHTS = resolveHTS;
     networkAdapter.provider.cashOutHTS = resolveHTS;
     networkAdapter.provider.wipeHTS = resolveHTS;
+    networkAdapter.provider.accountToEvmAddress = () => {
+      return Promise.resolve('0x0000000000000000000000000000000000000001');
+    };
   }
   networkAdapter.network = new HederaNetwork(HederaNetworkEnviroment.TEST);
   return new StableCoinRepository(networkAdapter);

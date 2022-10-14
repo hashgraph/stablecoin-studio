@@ -15,14 +15,12 @@ describe('🧪 [DOMAIN] StableCoin', () => {
   it('Create an stable coin with all funtionality', async () => {
     const { coin, sdk } = await createStableCoin();
     expect(coin.tokenId).not.toBeFalsy();
-    console.log('id ->' + coin?.tokenId);
     const cap: Capabilities[] | null = await sdk.getCapabilitiesStableCoin(
       coin.tokenId ?? '',
       PrivateKey.fromString(
         ACCOUNTS.testnet.privateKey.key,
       ).publicKey.toString(),
     );
-    console.log(cap);
     expect(cap).not.toBeNull();
   }, 180_000);
 });

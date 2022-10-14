@@ -4,6 +4,7 @@ import PublicKey from './PublicKey.js';
 import { PrivateKey as HPrivateKey } from '@hashgraph/sdk';
 import { PrivateKeyTypeNotValid } from './error/PrivateKeyTypeNotValid.js';
 import { PrivateKeyType } from '../../../core/enum.js';
+import DomainError from '../../error/DomainError.js';
 
 export default class PrivateKey extends ValueObject {
 	public readonly key: string;
@@ -35,8 +36,12 @@ export default class PrivateKey extends ValueObject {
 	}
 
 	public toHashgraphKey(): HPrivateKey {
-		return this.type === PrivateKeyType.ED25519
-			? HPrivateKey.fromStringED25519(this.key)
-			: HPrivateKey.fromStringECDSA(this.key);
+		try {
+			return this.type === PrivateKeyType.ED25519
+				? HPrivateKey.fromStringED25519(this.key)
+				: HPrivateKey.fromStringECDSA(this.key);
+		} catch (error) {
+			throw new DomainError(String(error));
+		}
 	}
 }
