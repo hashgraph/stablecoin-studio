@@ -88,7 +88,7 @@ export default class StableCoinService extends Service {
 			paused: stableCoin.paused,
 			memo: stableCoin.memo,
 			// kycStatus: string;
-			deleted:stableCoin.deleted,
+			deleted: stableCoin.deleted,
 			autoRenewAccount: stableCoin.autoRenewAccount,
 			autoRenewAccountPeriod: stableCoin.autoRenewAccountPeriod,
 			adminKey: stableCoin.adminKey,
@@ -96,8 +96,7 @@ export default class StableCoinService extends Service {
 			freezeKey: stableCoin.freezeKey,
 			wipeKey: stableCoin.wipeKey,
 			supplyKey: stableCoin.supplyKey,
-			pauseKey: stableCoin.pauseKey
-			
+			pauseKey: stableCoin.pauseKey,
 		};
 		return stableCoinDetails;
 		// cast
@@ -251,12 +250,6 @@ export default class StableCoinService extends Service {
 		}
 
 		// Balances
-		if (
-			coin.totalSupply < 0n ||
-			coin.totalSupply - BigInt(coin.toInteger(req.amount)) < 0n
-		) {
-			throw new Error('Amount is bigger than allowed supply');
-		}
 
 		const balance = await this.getBalanceOf({
 			account: req.account,

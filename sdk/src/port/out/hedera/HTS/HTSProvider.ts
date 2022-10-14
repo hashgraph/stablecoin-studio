@@ -45,11 +45,11 @@ import { TransactionProvider } from '../transaction/TransactionProvider.js';
 import { HTSSigner } from './HTSSigner.js';
 import { HTSResponse, TransactionType } from '../sign/ISigner.js';
 import { TransactionResposeHandler } from '../transaction/TransactionResponseHandler.js';
-
+import EOAccount from '../../../../domain/context/account/EOAccount.js';
 import { HashConnectConnectionState } from 'hashconnect/types';
 import ProviderEvent, { ProviderEventNames } from '../ProviderEvent.js';
 import EventService from '../../../../app/service/event/EventService.js';
-import { Account, ContractId, EOAccount } from '../../../in/sdk/sdk.js';
+import { Account, ContractId } from '../../../in/sdk/sdk.js';
 import { safeCast } from '../../../../core/cast.js';
 import { StableCoinMemo } from '../../../../domain/context/stablecoin/StableCoinMemo.js';
 import { IAccount } from '../account/types/IAccount';
