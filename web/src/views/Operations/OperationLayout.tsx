@@ -67,13 +67,12 @@ const OperationLayout = ({ LeftContent, onConfirm, confirmBtnProps }: OperationL
 								details={[
 									{
 										label: t('operations:details.initialSupply'),
-										value:
-											selectedStableCoin?.initialSupply === ('0' as unknown as BigInt)
-												? unknown
-												: formatAmount({
-														amount: Number(selectedStableCoin?.initialSupply),
-														decimals: selectedStableCoin?.decimals,
-												  }),
+										value: selectedStableCoin?.initialSupply
+											? formatAmount({
+													amount: Number(selectedStableCoin?.initialSupply),
+													decimals: selectedStableCoin?.decimals,
+											  })
+											: unknown,
 									},
 									{
 										label: t('operations:details.totalSupply'),
