@@ -8,11 +8,6 @@ describe('🧪 SDK Unit Test', () => {
     sdk = await getSDKAsync();
   });
 
-  // Teardown (cleanup) after assertions
-  afterAll(() => {
-    console.log('afterAll: hook');
-  });
-
   // Assert sdk not null
   it('Loads the class', () => {
     expect(sdk).not.toBeNull();
@@ -25,12 +20,6 @@ describe('🧪 SDK Unit Test', () => {
         data = _data;
       },
     });
-    console.log(data);
     expect(data).not.toBeFalsy();
-  });
-
-  it('Connects to wallet', async () => {
-    let event;
-    expect(event).not.toBeFalsy();
   });
 });

@@ -1,3 +1,3 @@
-export default class IGetStableCoinServiceRequestModel {
-	public id: string;
+export default interface IGetStableCoinServiceRequestModel {
+	id: string;
 }
