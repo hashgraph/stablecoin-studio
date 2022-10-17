@@ -24,7 +24,7 @@ const appMetadata: AppMetadata = {
 	name: 'dApp Example',
 	description: 'An example hedera dApp',
 	icon: 'https://absolute.url/to/icon.png',
-	url: '',
+	url: ''
 };
 
 interface CashInRequest {

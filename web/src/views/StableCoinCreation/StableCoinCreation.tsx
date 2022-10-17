@@ -16,7 +16,8 @@ import { OTHER_KEY_VALUE } from './components/KeySelector';
 import { SELECTED_WALLET_PAIRED_ACCOUNT } from '../../store/slices/walletSlice';
 import SDKService from '../../services/SDKService';
 import ModalNotification from '../../components/ModalNotification';
-import type { ICreateStableCoinRequest } from 'hedera-stable-coin-sdk';
+import type { ICreateStableCoinRequest} from 'hedera-stable-coin-sdk';
+import { PublicKey } from 'hedera-stable-coin-sdk';
 import { useSelector } from 'react-redux';
 
 const StableCoinCreation = () => {
@@ -132,6 +133,8 @@ const StableCoinCreation = () => {
 			autoRenewAccount: autorenewAccount,
 			initialSupply: BigInt(initialSupply),
 			maxSupply: totalSupply,
+			adminKey: PublicKey.NULL,
+			supplyKey: PublicKey.NULL,
 		};
 
 		try {

@@ -11,7 +11,7 @@ import {
 	ContractId,
 	StableCoinMemo,
 	PrivateKeyType,
-	Account
+	Account,
 } from '../../../in/sdk/sdk.js';
 import {
 	AccountId as HAccountId,
@@ -23,6 +23,7 @@ import {
 	Transaction,
 	Status,
 	Signer,
+	TransactionResponse,
 } from '@hashgraph/sdk';
 import { StableCoin } from '../../../../domain/context/stablecoin/StableCoin.js';
 import {
@@ -52,9 +53,10 @@ import ProviderEvent, { ProviderEventNames } from '../ProviderEvent.js';
 import EventService from '../../../../app/service/event/EventService.js';
 import { HashConnect } from 'hashconnect';
 import { HashConnectTypes } from 'hashconnect';
-import { HashConnectConnectionState } from 'hashconnect/types';
+import { HashConnectConnectionState, NetworkType } from 'hashconnect/types';
 import HashPackAccount from '../../../../domain/context/account/HashPackAccount.js';
 import { IAccount } from '../account/types/IAccount';
+import { safeCast } from '../../../../core/cast.js';
 
 const logOpts = { newLine: true, clear: true };
 
@@ -145,7 +147,7 @@ export default class HashPackProvider implements IProvider {
 				throw new Error(
 					'Pairing is not possible since pairing data is undefined.',
 				);
-			}		
+			}
 		});
 
 		//This is fired when HashConnect loses connection, pairs successfully, or is starting connection
@@ -199,7 +201,7 @@ export default class HashPackProvider implements IProvider {
 				functionCallParameters,
 				gas,
 			);
-	
+
 		const transactionResponse =
 			await this.hashPackSigner.signAndSendTransaction(transaction);
 		const htsResponse: HTSResponse =
@@ -210,7 +212,7 @@ export default class HashPackProvider implements IProvider {
 				name,
 				abi,
 			);
-	
+
 		return htsResponse.reponseParam;
 	}
 
@@ -237,42 +239,44 @@ export default class HashPackProvider implements IProvider {
 	public async accountToEvmAddress(account: Account): Promise<string> {
 		if (account.privateKey) {
 			return this.getAccountEvmAddressFromPrivateKeyType(
-				account.privateKey?.type, 
-				account.privateKey.publicKey.key, 
-				account.accountId.id);
+				account.privateKey?.type,
+				account.privateKey.publicKey.key,
+				account.accountId.id,
+			);
 		} else {
 			return await this.getAccountEvmAddress(account.accountId.id);
 		}
-	}	
+	}
 
-	private async getAccountEvmAddress(
-		accountId: string,
-	): Promise<string> {
+	private async getAccountEvmAddress(accountId: string): Promise<string> {
 		try {
-			const URI_BASE = `${getHederaNetwork(this.network)?.mirrorNodeUrl}/api/v1/`;
+			const URI_BASE = `${
+				getHederaNetwork(this.network)?.mirrorNodeUrl
+			}/api/v1/`;
 			const res = await axios.get<IAccount>(
-				URI_BASE + 'accounts/' + accountId
+				URI_BASE + 'accounts/' + accountId,
 			);
 
 			if (res.data.evm_address) {
 				return res.data.evm_address;
 			} else {
 				return this.getAccountEvmAddressFromPrivateKeyType(
-					res.data.key._type, 
-					res.data.key.key, 
-					accountId);
+					res.data.key._type,
+					res.data.key.key,
+					accountId,
+				);
 			}
 		} catch (error) {
 			return Promise.reject<string>(error);
 		}
-	}	
+	}
 
 	private getAccountEvmAddressFromPrivateKeyType(
-		privateKeyType: string, 
+		privateKeyType: string,
 		publicKey: string,
-		accountId: string): string {
-			
-		switch(privateKeyType) {
+		accountId: string,
+	): string {
+		switch (privateKeyType) {
 			case PrivateKeyType.ECDSA:
 				return HPublicKey.fromString(publicKey).toEthereumAddress();
 
@@ -287,7 +291,7 @@ export default class HashPackProvider implements IProvider {
 	): Promise<StableCoin> {
 		if (account) {
 			this.provider = this.hc.getProvider(
-				this.network.hederaNetworkEnviroment,
+				this.network.hederaNetworkEnviroment as NetworkType,
 				this.initData.topic,
 				account.accountId.id,
 			);
@@ -305,25 +309,17 @@ export default class HashPackProvider implements IProvider {
 			`Deploying ${HederaERC1967Proxy__factory.name} contract... please wait.`,
 			logOpts,
 		);
-		let proxyContract: HContractId = HContractId.fromString(
-			stableCoin.memo.proxyContract,
+		console.log(stableCoin);
+		const proxyContract: HContractId = await this.deployContract(
+			HederaERC1967Proxy__factory,
+			account,
+			new ContractFunctionParameters()
+				.addAddress(tokenContract?.toSolidityAddress())
+				.addBytes(new Uint8Array([])),
 		);
 
-		if (!proxyContract) {
-			proxyContract = await this.deployContract(
-				HederaERC1967Proxy__factory,
-				account,
-				new ContractFunctionParameters()
-					.addAddress(tokenContract?.toSolidityAddress())
-					.addBytes(new Uint8Array([])),
-			);
-			stableCoin.memo.proxyContract = String(proxyContract);
-		}
-
-		const contractId = stableCoin.memo.proxyContract;
-
 		await this.callContract('initialize', {
-			contractId,
+			contractId: String(proxyContract),
 			parameters: [],
 			gas: 250_000,
 			abi: HederaERC20__factory.abi,
@@ -353,10 +349,18 @@ export default class HashPackProvider implements IProvider {
 			stableCoin.memo.toJson(),
 			stableCoin.freezeDefault,
 			account,
+			stableCoin.treasury,
+			safeCast<PublicKey>(stableCoin.adminKey),
+			safeCast<PublicKey>(stableCoin.freezeKey),
+			safeCast<PublicKey>(stableCoin.kycKey),
+			safeCast<PublicKey>(stableCoin.wipeKey),
+			safeCast<PublicKey>(stableCoin.pauseKey),
+			safeCast<PublicKey>(stableCoin.supplyKey),
+			stableCoin.autoRenewAccount,
 		);
 		log('Setting up contract... please wait.', logOpts);
 		await this.callContract('setTokenAddress', {
-			contractId,
+			contractId: stableCoin.memo.proxyContract,
 			parameters: [
 				tokenOwnerContract.toSolidityAddress(),
 				TokenId.fromString(
@@ -368,7 +372,7 @@ export default class HashPackProvider implements IProvider {
 			account,
 		});
 		await this.callContract('setERC20Address', {
-			contractId,
+			contractId: String(tokenOwnerContract),
 			parameters: [proxyContract.toSolidityAddress()],
 			gas: 60_000,
 			abi: HTSTokenOwner__factory.abi,
@@ -379,7 +383,7 @@ export default class HashPackProvider implements IProvider {
 			logOpts,
 		);
 		await this.callContract('associateToken', {
-			contractId,
+			contractId: stableCoin.memo.proxyContract,
 			parameters: [
 				HAccountId.fromString(account.accountId.id).toSolidityAddress(),
 			],
@@ -397,12 +401,34 @@ export default class HashPackProvider implements IProvider {
 			memo: hederaToken.memo,
 			freezeDefault: hederaToken.freezeDefault,
 			treasury: new AccountId(hederaToken.treasuryAccountId.toString()),
-			adminKey: hederaToken.adminKey,
-			freezeKey: hederaToken.freezeKey,
-			wipeKey: hederaToken.wipeKey,
-			pauseKey: hederaToken.pauseKey,
-			kycKey: hederaToken.kycKey,
-			supplyKey: hederaToken.supplyKey,
+			adminKey:
+				hederaToken.adminKey &&
+				hederaToken.adminKey instanceof HPublicKey
+					? PublicKey.fromHederaKey(hederaToken.adminKey)
+					: hederaToken.adminKey,
+			freezeKey:
+				hederaToken.freezeKey &&
+				hederaToken.freezeKey instanceof HPublicKey
+					? PublicKey.fromHederaKey(hederaToken.freezeKey)
+					: hederaToken.freezeKey,
+			kycKey:
+				hederaToken.kycKey && hederaToken.kycKey instanceof HPublicKey
+					? PublicKey.fromHederaKey(hederaToken.kycKey)
+					: hederaToken.kycKey,
+			wipeKey:
+				hederaToken.wipeKey && hederaToken.wipeKey instanceof HPublicKey
+					? PublicKey.fromHederaKey(hederaToken.wipeKey)
+					: hederaToken.wipeKey,
+			pauseKey:
+				hederaToken.pauseKey &&
+				hederaToken.pauseKey instanceof HPublicKey
+					? PublicKey.fromHederaKey(hederaToken.pauseKey)
+					: hederaToken.pauseKey,
+			supplyKey:
+				hederaToken.supplyKey &&
+				hederaToken.supplyKey instanceof HPublicKey
+					? PublicKey.fromHederaKey(hederaToken.supplyKey)
+					: hederaToken.supplyKey,
 			id: hederaToken.tokenId.toString(),
 			tokenType: stableCoin.tokenType,
 			supplyType: stableCoin.supplyType,
@@ -421,15 +447,17 @@ export default class HashPackProvider implements IProvider {
 				this.network,
 				this.initData.topic,
 			);
+			const key = await this.hashPackSigner.getAccountKey();
 			const transaction =
 				TransactionProvider.buildContractCreateFlowTransaction(
 					factory,
 					params,
 					90_000,
-					'd41996edecdc0975bb72d94bce4a1207d40f8a3b0a90c49d3ef3a697bb09c170',
+					key,
 				);
 			const transactionResponse =
 				await this.hashPackSigner.signAndSendTransaction(transaction);
+			console.log(transactionResponse);
 			const htsResponse: HTSResponse =
 				await this.transactionResposeHandler.manageResponse(
 					transactionResponse,
@@ -461,12 +489,14 @@ export default class HashPackProvider implements IProvider {
 		memo: string,
 		freezeDefault: boolean,
 		account: HashPackAccount,
+		treasuryAccountId?: AccountId,
 		adminKey?: PublicKey,
 		freezeKey?: PublicKey,
 		kycKey?: PublicKey,
 		wipeKey?: PublicKey,
 		pauseKey?: PublicKey,
 		supplyKey?: PublicKey,
+		autoRenewAccount?: AccountId,
 	): Promise<ICreateTokenResponse> {
 		const values: ICreateTokenResponse = {
 			name,
@@ -478,7 +508,8 @@ export default class HashPackProvider implements IProvider {
 				: Long.ZERO,
 			memo,
 			freezeDefault,
-			treasuryAccountId: new AccountId(String(contractId)),
+			treasuryAccountId:
+				treasuryAccountId ?? new AccountId(String(contractId)),
 			tokenId: TokenId.fromString('0.0.0'),
 			adminKey,
 			freezeKey,
@@ -486,6 +517,9 @@ export default class HashPackProvider implements IProvider {
 			wipeKey,
 			pauseKey,
 			supplyKey,
+			autoRenewAccountId: autoRenewAccount
+				? new AccountId(autoRenewAccount.toString())
+				: account.accountId,
 		};
 
 		this.hashPackSigner = new HashPackSigner(
@@ -499,6 +533,7 @@ export default class HashPackProvider implements IProvider {
 				ContractId.fromHederaContractId(contractId),
 				values,
 				maxSupply,
+				this.hashPackSigner.signer
 			);
 		const transactionResponse =
 			await this.hashPackSigner.signAndSendTransaction(transaction);
@@ -631,7 +666,7 @@ export default class HashPackProvider implements IProvider {
 	public async wipeHTS(params: IWipeTokenRequest): Promise<boolean> {
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(
-				this.network.hederaNetworkEnviroment,
+				this.network.hederaNetworkEnviroment as NetworkType,
 				this.initData.topic,
 				params.account.accountId.id,
 			);
@@ -680,7 +715,7 @@ export default class HashPackProvider implements IProvider {
 	public async cashInHTS(params: IHTSTokenRequest): Promise<boolean> {
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(
-				this.network.hederaNetworkEnviroment,
+				this.network.hederaNetworkEnviroment as NetworkType,
 				this.initData.topic,
 				params.account.accountId.id,
 			);
@@ -728,7 +763,7 @@ export default class HashPackProvider implements IProvider {
 	public async cashOutHTS(params: IHTSTokenRequest): Promise<boolean> {
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(
-				this.network.hederaNetworkEnviroment,
+				this.network.hederaNetworkEnviroment as NetworkType,
 				this.initData.topic,
 				params.account.accountId.id,
 			);
@@ -776,7 +811,7 @@ export default class HashPackProvider implements IProvider {
 	public async transferHTS(params: ITransferTokenRequest): Promise<boolean> {
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(
-				this.network.hederaNetworkEnviroment,
+				this.network.hederaNetworkEnviroment as NetworkType,
 				this.initData.topic,
 				params.account.accountId.id,
 			);

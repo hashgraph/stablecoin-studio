@@ -426,7 +426,7 @@ export default class HTSProvider implements IProvider {
 					factory,
 					params,
 					90_000,
-					privateKey.publicKey.key,
+					privateKey.publicKey.toHederaKey(),
 				);
 			const transactionResponse: TransactionResponse =
 				await this.htsSigner.signAndSendTransaction(transaction);

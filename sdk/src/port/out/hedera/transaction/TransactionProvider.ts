@@ -5,7 +5,6 @@ import {
 	TokenCreateTransaction,
 	Hbar,
 	TokenSupplyType,
-	ContractCreateFlow,
 	TokenWipeTransaction,
 	TokenMintTransaction,
 	TokenBurnTransaction,
@@ -16,8 +15,10 @@ import {
 	DelegateContractId,
 	ContractFunctionParameters
 } from '@hashgraph/sdk';
+import { Signer } from '@hashgraph/sdk/lib/Signer.js';
 import { ContractId, PublicKey } from '../../../in/sdk/sdk.js';
 import { ICreateTokenResponse } from '../types.js';
+import ContractCreateFlow from './ContractCreateFlow.js';
 
 export class TransactionProvider {
 	public static buildContractExecuteTransaction(
@@ -37,6 +38,7 @@ export class TransactionProvider {
 		contractId: ContractId,
 		values: ICreateTokenResponse,
 		maxSupply: bigint | undefined,
+		signer?: Signer,
 	): Transaction {
 		const getKey = (
 			contractId: ContractId,
@@ -103,6 +105,8 @@ export class TransactionProvider {
 			transaction.setMaxSupply(values.maxSupply);
 			transaction.setSupplyType(TokenSupplyType.Finite);
 		}
+		if (signer) transaction.freezeWithSigner(signer);
+
 		return transaction;
 	}
 
@@ -110,15 +114,12 @@ export class TransactionProvider {
 		factory: ContractFactory,
 		parameters: Uint8Array | ContractFunctionParameters,
 		gas: number,
-		admKey?: string,
+		admKey?: HPublicKey,
 	): ContractCreateFlow {
 		const transaction = new ContractCreateFlow()
 			.setBytecode(factory.bytecode)
 			.setGas(gas);
-		admKey &&
-			transaction.setAdminKey(
-				HPublicKey.fromString(admKey),
-			);
+		admKey && transaction.setAdminKey(admKey);
 		if (parameters) {
 			transaction.setConstructorParameters(parameters);
 		}

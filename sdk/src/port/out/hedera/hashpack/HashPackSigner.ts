@@ -5,13 +5,15 @@ import {
 	TransactionResponse,
 	ContractCreateFlow,
 	ContractExecuteTransaction,
-	AccountInfo,
+	PublicKey as HPublicKey,
 } from '@hashgraph/sdk';
 import { HashConnect, MessageTypes } from 'hashconnect';
 import { HashConnectProvider } from 'hashconnect/provider/provider';
 import HashPackAccount from '../../../../domain/context/account/HashPackAccount.js';
 import { getHederaNetwork, HederaNetwork } from '../../../../core/enum.js';
 import { HashConnectSigner } from 'hashconnect/provider/signer';
+import { NetworkType } from 'hashconnect/types';
+import HederaError from '../error/HederaError.js';
 
 export class HashPackSigner implements ISigner {
 	private hc: HashConnect;
@@ -31,7 +33,7 @@ export class HashPackSigner implements ISigner {
 		this.account = account;
 		this.topic = topic;
 		this.provider = this.hc.getProvider(
-			getHederaNetwork(network).name,
+			getHederaNetwork(network).name as NetworkType,
 			topic,
 			account.accountId.id,
 		);
@@ -47,12 +49,18 @@ export class HashPackSigner implements ISigner {
 	): Promise<TransactionResponse | MessageTypes.TransactionResponse> {
 		if (this.signer) {
 			if (transaction instanceof ContractCreateFlow) {
-				console.log(transaction);
-				return await transaction.executeWithSigner(this.signer);
+				await this.getAccountKey();
+				try {
+					return await transaction.executeWithSigner(this.signer);
+				} catch (err) {
+					console.error(err);
+					throw err;
+				}
 			} else {
-				const signedT = await transaction.freezeWithSigner(
-					this.signer,
-				);
+				let signedT = transaction;
+				if (!transaction.isFrozen()) {
+					signedT = await transaction.freezeWithSigner(this.signer);
+				}
 				const t = await this.signer.signTransaction(signedT);
 				return await this.hc.sendTransaction(this.topic, {
 					topic: this.topic,
@@ -60,7 +68,7 @@ export class HashPackSigner implements ISigner {
 					metadata: {
 						accountToSign: this.signer.getAccountId().toString(),
 						returnTransaction: false,
-						getRecord: true
+						getRecord: true,
 					},
 				});
 			}
@@ -68,7 +76,15 @@ export class HashPackSigner implements ISigner {
 		throw new Error('Its necessary to have a Signer');
 	}
 
-	async getAccountInfo(): Promise<AccountInfo> {
-		return await this.hashConnectSigner.getAccountInfo() as unknown as AccountInfo;
+	async getAccountKey(): Promise<HPublicKey> {
+		this.hashConnectSigner = await this.hc.getSignerWithAccountKey(
+			this.provider,
+		);
+		this.signer = this.hashConnectSigner as unknown as Signer;
+		if (this.hashConnectSigner.getAccountKey) {
+			return this.hashConnectSigner.getAccountKey();
+		} else {
+			throw new HederaError('Could not fetch account public key');
+		}
 	}
 }

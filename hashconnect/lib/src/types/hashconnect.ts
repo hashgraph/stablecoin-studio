@@ -5,120 +5,174 @@ import { MessageHandler } from "../message/message-handler";
 import { HashConnectProvider } from "../provider/provider";
 import { HashConnectSigner } from "../provider/signer";
 
+export type NetworkType = "testnet" | "mainnet" | "previewnet";
+
 export interface IHashConnect {
+  /** Relay */
+  relay: IRelay;
 
-    /** Relay */
-    relay: IRelay;
+  /** Event emitters */
+  foundExtensionEvent: Event<HashConnectTypes.WalletMetadata>;
+  foundIframeEvent: Event<HashConnectTypes.WalletMetadata>;
+  pairingEvent: Event<MessageTypes.ApprovePairing>;
+  transactionEvent: Event<MessageTypes.Transaction>;
+  acknowledgeMessageEvent: Event<MessageTypes.Acknowledge>;
+  additionalAccountRequestEvent: Event<MessageTypes.AdditionalAccountRequest>;
+  connectionStatusChangeEvent: Event<HashConnectConnectionState>;
+  authRequestEvent: Event<MessageTypes.AuthenticationRequest>;
+  signRequestEvent: Event<MessageTypes.SigningRequest>;
 
-    /** Event emitters */
-    foundExtensionEvent: Event<HashConnectTypes.WalletMetadata>;
-    foundIframeEvent: Event<HashConnectTypes.WalletMetadata>;
-    pairingEvent: Event<MessageTypes.ApprovePairing>;
-    transactionEvent: Event<MessageTypes.Transaction>;
-    acknowledgeMessageEvent: Event<MessageTypes.Acknowledge>;
-    additionalAccountRequestEvent: Event<MessageTypes.AdditionalAccountRequest>;
-    connectionStatusChangeEvent: Event<HashConnectConnectionState>;
-    authRequestEvent: Event<MessageTypes.AuthenticationRequest>;
-    signRequestEvent: Event<MessageTypes.SigningRequest>;
-
-    //promises
+  //promises
     transactionResolver: (value: MessageTypes.TransactionResponse | PromiseLike<MessageTypes.TransactionResponse>) => void;
     additionalAccountResolver: (value: MessageTypes.AdditionalAccountResponse | PromiseLike<MessageTypes.AdditionalAccountResponse>) => void;
     authResolver: (value: MessageTypes.AuthenticationResponse | PromiseLike<MessageTypes.AuthenticationResponse>) => void;
     signResolver: (value: MessageTypes.SigningResponse | PromiseLike<MessageTypes.SigningResponse>) => void;
 
-    /** Messages util for protobufs */
-    messages: MessageUtil;
+  /** Messages util for protobufs */
+  messages: MessageUtil;
 
-    /** Message event parser */
-    messageParser: MessageHandler;
-    encryptionKeys: Record<string, string>;
+  /** Message event parser */
+  messageParser: MessageHandler;
+  encryptionKeys: Record<string, string>;
 
-    hcData: {
-        topic: string;
-        pairingString: string;
-        encryptionKey: string;
-        pairingData: HashConnectTypes.SavedPairingData[];
-    }
+  hcData: {
+    topic: string;
+    pairingString: string;
+    encryptionKey: string;
+    pairingData: HashConnectTypes.SavedPairingData[];
+  };
 
-    debug: boolean;
+  debug: boolean;
 
-    /**
-     * Initialize the client
-     */
-    init(metadata: HashConnectTypes.AppMetadata | HashConnectTypes.WalletMetadata, network: "testnet" | "mainnet" | "previewnet", singleAccount: boolean): Promise<HashConnectTypes.InitilizationData>
+  /**
+   * Initialize the client
+   */
+  init(
+    metadata: HashConnectTypes.AppMetadata | HashConnectTypes.WalletMetadata,
+    network: NetworkType,
+    singleAccount: boolean
+  ): Promise<HashConnectTypes.InitilizationData>;
 
-    /**
-     * Connect to a topic and produce a topic ID for a peer
-     * 
-     * @param topic optional topic
-     * @param metadata optional app metadata
-     * 
-     * @returns ConnectionState containing with topic and metadata
-     */
-    connect(topic?: string, metadataToConnect?: HashConnectTypes.AppMetadata | HashConnectTypes.WalletMetadata, encryptionKey?: string): Promise<string>;
-    disconnect(topic: string): any;
+  /**
+   * Connect to a topic and produce a topic ID for a peer
+   *
+   * @param topic optional topic
+   * @param metadata optional app metadata
+   *
+   * @returns ConnectionState containing with topic and metadata
+   */
+  connect(
+    topic?: string,
+    metadataToConnect?:
+      | HashConnectTypes.AppMetadata
+      | HashConnectTypes.WalletMetadata,
+    encryptionKey?: string
+  ): Promise<string>;
+  disconnect(topic: string): any;
 
-    /**
-     * Pair with a peer
-     * 
-     * @param pairingStr string containing topic and meta data
-     */
-    pair(pairingData: HashConnectTypes.PairingStringData, accounts: string[], network: string): Promise<HashConnectTypes.SavedPairingData>;
+  /**
+   * Pair with a peer
+   *
+   * @param pairingStr string containing topic and meta data
+   */
+  pair(
+    pairingData: HashConnectTypes.PairingStringData,
+    accounts: string[],
+    network: string
+  ): Promise<HashConnectTypes.SavedPairingData>;
 
-    /**
-     * Send a transaction
-     * 
-     * @param topic topic to publish to
-     * @param transaction transaction to send
-     */
-    sendTransaction(topic: string, transaction: MessageTypes.Transaction): Promise<MessageTypes.TransactionResponse>;
+  /**
+   * Send a transaction
+   *
+   * @param topic topic to publish to
+   * @param transaction transaction to send
+   */
+  sendTransaction(
+    topic: string,
+    transaction: MessageTypes.Transaction
+  ): Promise<MessageTypes.TransactionResponse>;
 
-    requestAdditionalAccounts(topic: string, message: MessageTypes.AdditionalAccountRequest): Promise<MessageTypes.AdditionalAccountResponse>;
+  requestAdditionalAccounts(
+    topic: string,
+    message: MessageTypes.AdditionalAccountRequest
+  ): Promise<MessageTypes.AdditionalAccountResponse>;
 
-    sendAdditionalAccounts(topic: string, message: MessageTypes.AdditionalAccountResponse): Promise<string>;
+  sendAdditionalAccounts(
+    topic: string,
+    message: MessageTypes.AdditionalAccountResponse
+  ): Promise<string>;
 
-    sendTransactionResponse(topic: string, message: MessageTypes.TransactionResponse): Promise<string>;
+  sendTransactionResponse(
+    topic: string,
+    message: MessageTypes.TransactionResponse
+  ): Promise<string>;
 
-    reject(topic: string, reason: string, msg_id: string): Promise<void>;
+  reject(topic: string, reason: string, msg_id: string): Promise<void>;
 
-    decodeLocalTransaction(message: string): Promise<RelayMessage>;
+  decodeLocalTransaction(message: string): Promise<RelayMessage>;
 
-    connectToIframeParent(): void;
+  connectToIframeParent(): void;
 
-    connectToLocalWallet(): void;
+  connectToLocalWallet(): void;
 
-    clearConnectionsAndData(): void;
+  clearConnectionsAndData(): void;
 
-    //authentication
+  //authentication
 
-    authenticate(topic: string, account_id: string, server_signing_account: string, signature: Uint8Array, payload: { url: string, data: any }): Promise<MessageTypes.AuthenticationResponse>;
+  authenticate(
+    topic: string,
+    account_id: string,
+    server_signing_account: string,
+    signature: Uint8Array,
+    payload: { url: string; data: any }
+  ): Promise<MessageTypes.AuthenticationResponse>;
 
-    sendAuthenticationResponse(topic: string, message: MessageTypes.AuthenticationResponse): Promise<string>
+  sendAuthenticationResponse(
+    topic: string,
+    message: MessageTypes.AuthenticationResponse
+  ): Promise<string>;
 
-    //generic signature
-    sign(topic: string, account_id: string, payload: any): Promise<MessageTypes.SigningResponse>;
+  //generic signature
+  sign(
+    topic: string,
+    account_id: string,
+    payload: any
+  ): Promise<MessageTypes.SigningResponse>;
 
-    sendSigningResponse(topic: string, message: MessageTypes.SigningResponse): Promise<string>
+  sendSigningResponse(
+    topic: string,
+    message: MessageTypes.SigningResponse
+  ): Promise<string>;
 
-    /**
-     * Send an acknowledgement of receipt
-     * 
-     * @param topic topic to publish to
-     */
-    acknowledge(topic: string, pubKey: string, mgs_id: string): Promise<void>
+  /**
+   * Send an acknowledgement of receipt
+   *
+   * @param topic topic to publish to
+   */
+  acknowledge(topic: string, pubKey: string, mgs_id: string): Promise<void>;
 
-    /**
-     * Generate a pairing string
-     * 
-     * @param topic the topic object from .connect()
-     * @param network either 'testnet' or 'mainnet'
-     */
-    generatePairingString(topic: string, network: string, multiAccount: boolean): string;
+  /**
+   * Generate a pairing string
+   *
+   * @param topic the topic object from .connect()
+   * @param network either 'testnet' or 'mainnet'
+   */
+  generatePairingString(
+    topic: string,
+    network: string,
+    multiAccount: boolean
+  ): string;
 
-    getProvider(network: string, topicId: string, accountToSign: string): HashConnectProvider;
-    getSigner(provider: HashConnectProvider): HashConnectSigner;
-    getPairingByTopic(topic: string): HashConnectTypes.SavedPairingData | null;
+  getProvider(
+    network: string,
+    topicId: string,
+    accountToSign: string
+  ): HashConnectProvider;
+  getSigner(provider: HashConnectProvider): HashConnectSigner;
+  getSignerWithAccountKey(
+    provider: HashConnectProvider
+  ): Promise<HashConnectSigner>;
+  getPairingByTopic(topic: string): HashConnectTypes.SavedPairingData | null;
 }
 
 export declare namespace HashConnectTypes {
