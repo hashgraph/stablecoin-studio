@@ -166,21 +166,20 @@ export default class CreateStableCoinService extends Service {
       }
       createdStableCoin.decimals = decimals;
 
+      initialSupply = await this.askForInitialSupply();
+      createdStableCoin.initialSupply = initialSupply;
+
       supplyType = await this.askForSupplyType();
       createdStableCoin.supplyType = supplyType;
 
       if (!supplyType) {
         totalSupply = await this.askForTotalSupply();
-        createdStableCoin.totalSupply = totalSupply;
-      }
-      initialSupply = await this.askForInitialSupply();
-      if (totalSupply) {
         while (parseFloat(initialSupply) > parseFloat(totalSupply)) {
           console.error(language.getText('stablecoin.initialSupplyError'));
-          initialSupply = await this.askForInitialSupply();
+          totalSupply = await this.askForTotalSupply();
         }
+        createdStableCoin.totalSupply = totalSupply;
       }
-      createdStableCoin.initialSupply = initialSupply;
     }
 
     const managedBySC = await this.askForManagedFeatures();
@@ -335,7 +334,7 @@ export default class CreateStableCoinService extends Service {
   private async askForTotalSupply(): Promise<string> {
     return await utilsService.defaultSingleAsk(
       language.getText('stablecoin.askTotalSupply'),
-      createdStableCoin.totalSupply || '1',
+      createdStableCoin.totalSupply || createdStableCoin.initialSupply || '1',
     );
   }
 
