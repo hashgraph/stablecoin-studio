@@ -9,3 +9,17 @@ export const formatAmount = ({ amount, decimals }: { amount?: number; decimals?:
 		maximumFractionDigits: decimals ?? 0,
 	});
 };
+
+export const formatAmountWithDecimals = ({
+	amount,
+	decimals,
+	language = 'en-EN',
+}: {
+	amount: number;
+	decimals: number;
+	language?: string;
+}) => {
+	return Number((amount / 10 ** decimals).toFixed(decimals)).toLocaleString(language, {
+		maximumFractionDigits: decimals,
+	});
+};

@@ -5,11 +5,11 @@ import { useSelector } from 'react-redux';
 import BaseContainer from '../../components/BaseContainer';
 import DetailsReview from '../../components/DetailsReview';
 import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
-import { formatAmount } from '../../utils/inputHelper';
+import { formatAmountWithDecimals } from '../../utils/inputHelper';
 
 const StableCoinDetails = () => {
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
-	const { t } = useTranslation('stableCoinDetails');
+	const { t, i18n } = useTranslation('stableCoinDetails');
 
 	const getKeyText = (
 		key: { key: string; type: string; id: never } | { id: string; key: never; type: never },
@@ -69,27 +69,30 @@ const StableCoinDetails = () => {
 								{
 									label: t('initialSupply'),
 									value: selectedStableCoin?.initialSupply
-										? formatAmount({
-												amount: Number(selectedStableCoin?.initialSupply),
-												decimals: selectedStableCoin?.decimals,
+										? formatAmountWithDecimals({
+												amount: Number(selectedStableCoin.initialSupply),
+												decimals: selectedStableCoin.decimals || 0,
+												language: i18n.language,
 										  })
 										: 0,
 								},
 								{
 									label: t('totalSupply'),
 									value: selectedStableCoin?.totalSupply
-										? formatAmount({
-												amount: Number(selectedStableCoin?.totalSupply),
-												decimals: selectedStableCoin?.decimals,
+										? formatAmountWithDecimals({
+												amount: Number(selectedStableCoin.totalSupply),
+												decimals: selectedStableCoin.decimals || 0,
+												language: i18n.language,
 										  })
 										: 0,
 								},
 								{
 									label: t('maxSupply'),
 									value: selectedStableCoin?.maxSupply
-										? formatAmount({
-												amount: Number(selectedStableCoin?.maxSupply),
-												decimals: selectedStableCoin?.decimals,
+										? formatAmountWithDecimals({
+												amount: Number(selectedStableCoin.maxSupply),
+												decimals: selectedStableCoin.decimals || 0,
+												language: i18n.language,
 										  })
 										: 0,
 								},
