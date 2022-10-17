@@ -87,6 +87,7 @@ const RescueTokenOperation = () => {
 								name='amount'
 								label={t('rescueTokens:amountLabel')}
 								placeholder={t('rescueTokens:amountPlaceholder')}
+								decimalScale={decimals}
 							/>
 						</Stack>
 					</>
