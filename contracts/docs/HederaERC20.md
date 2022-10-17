@@ -112,6 +112,28 @@ function WIPE_ROLE() external view returns (bytes32)
 |---|---|---|
 | _0 | bytes32 | undefined |
 
+### accountRoles
+
+```solidity
+function accountRoles(address account) external view returns (bytes32[])
+```
+
+
+
+*Returns an array of roles the account currently has*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| account | address | The account address |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bytes32[] | bytes32[] The array containing the roles |
+
 ### allowance
 
 ```solidity

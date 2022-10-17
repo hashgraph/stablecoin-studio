@@ -82,6 +82,7 @@ export interface HederaERC20Interface extends utils.Interface {
     "PAUSER_ROLE()": FunctionFragment;
     "RESCUE_ROLE()": FunctionFragment;
     "WIPE_ROLE()": FunctionFragment;
+    "accountRoles(address)": FunctionFragment;
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "associateToken(address)": FunctionFragment;
@@ -136,6 +137,7 @@ export interface HederaERC20Interface extends utils.Interface {
       | "PAUSER_ROLE"
       | "RESCUE_ROLE"
       | "WIPE_ROLE"
+      | "accountRoles"
       | "allowance"
       | "approve"
       | "associateToken"
@@ -200,6 +202,10 @@ export interface HederaERC20Interface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "WIPE_ROLE", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "accountRoles",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "allowance",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
@@ -390,6 +396,10 @@ export interface HederaERC20Interface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "WIPE_ROLE", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "accountRoles",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(
@@ -733,6 +743,11 @@ export interface HederaERC20 extends BaseContract {
 
     WIPE_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
+    accountRoles(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[string[]]>;
+
     allowance(
       arg0: PromiseOrValue<string>,
       arg1: PromiseOrValue<string>,
@@ -969,6 +984,11 @@ export interface HederaERC20 extends BaseContract {
 
   WIPE_ROLE(overrides?: CallOverrides): Promise<string>;
 
+  accountRoles(
+    account: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<string[]>;
+
   allowance(
     arg0: PromiseOrValue<string>,
     arg1: PromiseOrValue<string>,
@@ -1204,6 +1224,11 @@ export interface HederaERC20 extends BaseContract {
     RESCUE_ROLE(overrides?: CallOverrides): Promise<string>;
 
     WIPE_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    accountRoles(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<string[]>;
 
     allowance(
       arg0: PromiseOrValue<string>,
@@ -1590,6 +1615,11 @@ export interface HederaERC20 extends BaseContract {
 
     WIPE_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
+    accountRoles(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     allowance(
       arg0: PromiseOrValue<string>,
       arg1: PromiseOrValue<string>,
@@ -1828,6 +1858,11 @@ export interface HederaERC20 extends BaseContract {
     RESCUE_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     WIPE_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    accountRoles(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     allowance(
       arg0: PromiseOrValue<string>,
