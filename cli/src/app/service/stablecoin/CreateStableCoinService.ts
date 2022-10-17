@@ -166,9 +166,6 @@ export default class CreateStableCoinService extends Service {
       }
       createdStableCoin.decimals = decimals;
 
-      initialSupply = await this.askForInitialSupply();
-      createdStableCoin.initialSupply = initialSupply;
-
       supplyType = await this.askForSupplyType();
       createdStableCoin.supplyType = supplyType;
 
@@ -176,6 +173,14 @@ export default class CreateStableCoinService extends Service {
         totalSupply = await this.askForTotalSupply();
         createdStableCoin.totalSupply = totalSupply;
       }
+      initialSupply = await this.askForInitialSupply();
+      if (totalSupply) {
+        while (initialSupply > totalSupply) {
+          console.error(language.getText('stablecoin.initialSupplyError'));
+          initialSupply = await this.askForInitialSupply();
+        }
+      }
+      createdStableCoin.initialSupply = initialSupply;
     }
 
     const managedBySC = await this.askForManagedFeatures();
