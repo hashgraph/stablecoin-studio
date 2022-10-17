@@ -93,6 +93,7 @@ export {
 	IBasicRequest,
 	IStableCoinDetail,
 	IStableCoinList,
+	IAccountInfo
 };
 
 /* Export basic types*/
