@@ -39,9 +39,7 @@ const TopbarRight = () => {
 	};
 
 	const handleDisconnect = () => {
-		localStorage.removeItem('hashconnectData');
-
-		SDKService.disconnectWallet();
+		SDKService.getInstance().then((instance) => instance?.disconectHaspack());
 
 		dispatch(walletActions.clearData());
 		dispatch(walletActions.setSelectedStableCoin(undefined));
