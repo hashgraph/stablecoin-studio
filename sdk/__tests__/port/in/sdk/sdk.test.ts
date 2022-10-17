@@ -383,7 +383,7 @@ describe('🧪 [PORT] SDK', () => {
         tokenId: tokenId ?? '',
         amount,
       }),
-    ).rejects.toThrowError('Amount is bigger than token owner balance');
+    ).rejects.toThrow(Error);
   }, 15000);
 
   it('Get capabilities', async () => {
