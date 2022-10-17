@@ -93,6 +93,9 @@ export const english = {
     supplierRoleLimit: 'What will be the limit?',
     amountIncrease: 'Amount to increase',
     amountDecrease: 'Amount to decrease',
+    initialSupplyError: colors.red(
+      'Initial supply cannot be more than the max supply.',
+    ),
   },
   commander: {
     appDescription: 'Hedera Stable Coin is a CLI for manage stable coins',

@@ -33,6 +33,16 @@ export default class StableCoinService extends Service {
 	public async createStableCoin(
 		req: ICreateStableCoinServiceRequestModel,
 	): Promise<IStableCoinDetail> {
+		if (
+			req.maxSupply &&
+			req.initialSupply &&
+			req.initialSupply * 10n ** BigInt(req.decimals) >
+				req.maxSupply * 10n ** BigInt(req.decimals)
+		) {
+			throw new Error(
+				'Initial supply cannot be more than the max supply',
+			);
+		}
 		let coin: StableCoin = new StableCoin({
 			name: req.name,
 			symbol: req.symbol,
