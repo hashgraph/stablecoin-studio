@@ -254,13 +254,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		account: Account,
 	): Promise<Uint8Array> {
 		const parameters = [
-<<<<<<< HEAD
 			await this.accountToEvmAddress(new Account(targetId)),
-=======
-			await this.networkAdapter.provider.accountToEvmAddress(
-				new Account(targetId),
-			),
->>>>>>> origin/main
 			amount.toString(),
 		];
 
@@ -351,13 +345,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		account: Account,
 	): Promise<Uint8Array> {
 		const parameters = [
-<<<<<<< HEAD
 			await this.accountToEvmAddress(new Account(targetId)),
-=======
-			await this.networkAdapter.provider.accountToEvmAddress(
-				new Account(targetId),
-			),
->>>>>>> origin/main
 			amount.toString(),
 		];
 
@@ -395,13 +383,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		amount?: number,
 	): Promise<Uint8Array> {
 		const parameters = [
-<<<<<<< HEAD
 			await this.accountToEvmAddress(new Account(address))
-=======
-			await this.networkAdapter.provider.accountToEvmAddress(
-				new Account(address),
-			),
->>>>>>> origin/main
 		];
 		amount && parameters.push(amount.toString());
 
@@ -425,13 +407,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		account: Account,
 	): Promise<Uint8Array> {
 		const parameters = [
-<<<<<<< HEAD
 			await this.accountToEvmAddress(new Account(address))
-=======
-			await this.networkAdapter.provider.accountToEvmAddress(
-				new Account(address),
-			),
->>>>>>> origin/main
 		];
 
 		const params: ICallContractWithAccountRequest = {
@@ -454,13 +430,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		account: Account,
 	): Promise<Uint8Array> {
 		const parameters = [
-<<<<<<< HEAD
 			await this.accountToEvmAddress(new Account(address))
-=======
-			await this.networkAdapter.provider.accountToEvmAddress(
-				new Account(address),
-			),
->>>>>>> origin/main
 		];
 
 		const params: ICallContractWithAccountRequest = {
@@ -483,13 +453,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		account: Account,
 	): Promise<Uint8Array> {
 		const parameters = [
-<<<<<<< HEAD
 			await this.accountToEvmAddress(new Account(address))
-=======
-			await this.networkAdapter.provider.accountToEvmAddress(
-				new Account(address),
-			),
->>>>>>> origin/main
 		];
 
 		const params: ICallContractWithAccountRequest = {
@@ -512,13 +476,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		account: Account,
 	): Promise<Uint8Array> {
 		const parameters = [
-<<<<<<< HEAD
 			await this.accountToEvmAddress(new Account(address))
-=======
-			await this.networkAdapter.provider.accountToEvmAddress(
-				new Account(address),
-			),
->>>>>>> origin/main
 		];
 
 		const params: ICallContractWithAccountRequest = {
@@ -542,13 +500,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		amount: number,
 	): Promise<Uint8Array> {
 		const parameters = [
-<<<<<<< HEAD
 			await this.accountToEvmAddress(new Account(address)),
-=======
-			await this.networkAdapter.provider.accountToEvmAddress(
-				new Account(address),
-			),
->>>>>>> origin/main
 			amount.toString(),
 		];
 
@@ -573,13 +525,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		amount: number,
 	): Promise<Uint8Array> {
 		const parameters = [
-<<<<<<< HEAD
 			await this.accountToEvmAddress(new Account(address)),
-=======
-			await this.networkAdapter.provider.accountToEvmAddress(
-				new Account(address),
-			),
->>>>>>> origin/main
 			amount.toString(),
 		];
 
@@ -625,13 +571,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	): Promise<Uint8Array> {
 		const parameters = [
 			StableCoinRole.CASHIN_ROLE,
-<<<<<<< HEAD
 			await this.accountToEvmAddress(new Account(address))
-=======
-			await this.networkAdapter.provider.accountToEvmAddress(
-				new Account(address),
-			),
->>>>>>> origin/main
 		];
 
 		const params: ICallContractWithAccountRequest = {
@@ -656,13 +596,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	): Promise<Uint8Array> {
 		const parameters = [
 			role,
-<<<<<<< HEAD
 			await this.accountToEvmAddress(new Account(address))
-=======
-			await this.networkAdapter.provider.accountToEvmAddress(
-				new Account(address),
-			),
->>>>>>> origin/main
 		];
 
 		const params: ICallContractWithAccountRequest = {
@@ -687,13 +621,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	): Promise<Uint8Array> {
 		const parameters = [
 			role,
-<<<<<<< HEAD
 			await this.accountToEvmAddress(new Account(address))
-=======
-			await this.networkAdapter.provider.accountToEvmAddress(
-				new Account(address),
-			),
->>>>>>> origin/main
 		];
 
 		const params: ICallContractWithAccountRequest = {
@@ -718,13 +646,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	): Promise<Uint8Array> {
 		const parameters = [
 			role,
-<<<<<<< HEAD
 			await this.accountToEvmAddress(new Account(address))
-=======
-			await this.networkAdapter.provider.accountToEvmAddress(
-				new Account(address),
-			),
->>>>>>> origin/main
 		];
 
 		const params: ICallContractWithAccountRequest = {
