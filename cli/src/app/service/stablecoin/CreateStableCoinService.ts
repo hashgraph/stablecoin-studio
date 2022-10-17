@@ -175,7 +175,7 @@ export default class CreateStableCoinService extends Service {
       }
       initialSupply = await this.askForInitialSupply();
       if (totalSupply) {
-        while (initialSupply > totalSupply) {
+        while (parseFloat(initialSupply) > parseFloat(totalSupply)) {
           console.error(language.getText('stablecoin.initialSupplyError'));
           initialSupply = await this.askForInitialSupply();
         }
