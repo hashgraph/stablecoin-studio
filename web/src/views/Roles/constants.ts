@@ -7,9 +7,11 @@ export const actions: Record<string, Action> = {
 };
 
 export const fakeOptions = [
-	{ value: 1, label: 'Admin' },
-	{ value: 2, label: 'Supplier' },
-	{ value: 3, label: 'Other' },
+	{ value: 1, label: 'Cash in' },
+	{ value: 2, label: 'Burn' },
+	{ value: 3, label: 'Wipe' },
+	{ value: 3, label: 'Rescue' },
+	{ value: 3, label: 'Pause' }
 ];
 
 export const fields = {
