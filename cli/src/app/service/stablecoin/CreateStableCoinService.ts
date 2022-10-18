@@ -174,6 +174,10 @@ export default class CreateStableCoinService extends Service {
 
       if (!supplyType) {
         totalSupply = await this.askForTotalSupply();
+        while (parseFloat(initialSupply) > parseFloat(totalSupply)) {
+          console.error(language.getText('stablecoin.initialSupplyError'));
+          totalSupply = await this.askForTotalSupply();
+        }
         createdStableCoin.totalSupply = totalSupply;
       }
     }
@@ -330,7 +334,7 @@ export default class CreateStableCoinService extends Service {
   private async askForTotalSupply(): Promise<string> {
     return await utilsService.defaultSingleAsk(
       language.getText('stablecoin.askTotalSupply'),
-      createdStableCoin.totalSupply || '1',
+      createdStableCoin.totalSupply || createdStableCoin.initialSupply || '1',
     );
   }
 

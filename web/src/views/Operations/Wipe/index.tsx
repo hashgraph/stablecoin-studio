@@ -84,6 +84,7 @@ const WipeOperation = () => {
 								name='amount'
 								label={t('wipe:amountLabel')}
 								placeholder={t('wipe:amountPlaceholder')}
+								decimalScale={decimals}
 							/>
 							<InputController
 								rules={{
