@@ -27,6 +27,7 @@ import ISupplierRoleStableCoinServiceRequestModel from '../../../app/service/sta
 import IRescueStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IRescueStableCoinServiceRequestModel.js';
 import IRoleStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IRoleStableCoinServiceRequestModel.js';
 import IGetBasicRequestModel from '../../../app/service/stablecoin/model/IGetBasicRequest.js';
+import { IAccountWithKeyRequestModel } from '../../../app/service/stablecoin/model/CoreRequestModel.js';
 
 /* Public requests */
 import { IAssociateStableCoinRequest } from './request/IAssociateStableCoinRequest.js';
@@ -75,6 +76,7 @@ import { XOR } from 'ts-xor';
 import { ISupplierRoleStableCoinRequest } from './request/ISupplierRoleStableCoinRequest.js';
 import Account from '../../../domain/context/account/Account.js';
 import HashPackAccount from '../../../domain/context/account/HashPackAccount.js';
+import IAccountInfo from './response/IAccountInfo.js';
 
 export {
 	IAssociateStableCoinRequest,
@@ -91,7 +93,8 @@ export {
 	IAllowanceRequest,
 	IBasicRequest,
 	IStableCoinDetail,
-	IStableCoinList
+	IStableCoinList,
+	IAccountInfo
 };
 
 /* Export basic types*/
@@ -513,6 +516,17 @@ export class SDK {
 				role: request.role,
 			};
 			return this.stableCoinService.hasRole(req);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+
+	public getAccountInfo(
+		request: IAccountWithKeyRequestModel,
+	): Promise<IAccountInfo> | null {
+		try {
+			return this.stableCoinService.getAccountInfo(request);
 		} catch (error) {
 			console.error(error);
 			return null;

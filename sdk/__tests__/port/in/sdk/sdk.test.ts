@@ -46,25 +46,12 @@ describe('🧪 [PORT] SDK', () => {
     });
     expect(list).not.toBeNull();
   });
-
-  it('Gets the token balance', async () => {
-    const balance = await sdk.getBalanceOf({
+  it('Gets accountInfo', async () => {
+    const list = await sdk.getAccountInfo({
       account: ACCOUNTS.testnet,
-      targetId: ACCOUNTS.testnet.accountId.id,
-      proxyContractId: proxyContractId ?? '',
-      tokenId: tokenId ?? '',
     });
-    expect(balance).not.toBeNull();
-    expect(balance && balance[0]).toBe(0);
-  });
-
-  it('Gets the token name', async () => {
-    const name = await sdk.getNameToken({
-      account: ACCOUNTS.testnet,
-      proxyContractId: proxyContractId ?? '',
-    });
-    expect(name).not.toBeNull();
-    expect(name && name[0]).toBe('TEST COIN');
+    console.log(list)
+    expect(list).not.toBeNull();
   });
 
   it('Cash in token', async () => {
