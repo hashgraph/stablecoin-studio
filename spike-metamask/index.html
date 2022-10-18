@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"
+        type="application/javascript"></script>
+  <script>
+
+    async function  myFunction() {
+        // A Web3Provider wraps a standard Web3 provider, which is
+        // what MetaMask injects as window.ethereum into each page
+        const provider = new ethers.providers.Web3Provider(window.ethereum)
+
+        // MetaMask requires requesting permission to connect users accounts
+        await provider.send("eth_requestAccounts", []);
+
+        // The MetaMask plugin also allows signing transactions to
+        // send ether and pay to change state within the blockchain.
+        // For this, you need the account signer...
+        const signer = provider.getSigner()
+        const currentAccount = await signer.getAddress()
+        // console.log( await provider.getBalance(currentAccount).then(r => r.toString()));
+
+                
+
+        const scAddress = "0000000000000000000000000000000002e65091"; //PROXYADDRESS
+
+        // The ERC-20 Contract ABI, which is a common contract interface
+        // for tokens (this is the Human-Readable ABI format)
+        const scABI = [
+            // Some details about the token
+            "function name() view returns (string)",
+            "function symbol() view returns (string)",
+            "function associateToken(address adr) returns (bool)",
+            "function mint(address account, uint256 amount) external returns (bool)",
+
+        ];
+        // The contract object
+        const contract = new ethers.Contract(scAddress, scABI, provider);
+        const contractWithSigner = contract.connect(signer);
+        const result = await contractWithSigner.mint(currentAccount,10);
+
+        console.log(result);
+    }
+
+
+</script>
+</head>
+<body>
+    <button onclick="myFunction()">Metamask</button>
+</body>
+</html>
