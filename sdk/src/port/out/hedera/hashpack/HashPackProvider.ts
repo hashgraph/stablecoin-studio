@@ -531,8 +531,7 @@ export default class HashPackProvider implements IProvider {
 			TransactionProvider.buildTokenCreateTransaction(
 				ContractId.fromHederaContractId(contractId),
 				values,
-				maxSupply,
-				this.hashPackSigner.signer
+				maxSupply
 			);
 		const transactionResponse =
 			await this.hashPackSigner.signAndSendTransaction(transaction);

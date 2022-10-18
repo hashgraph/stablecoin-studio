@@ -14,7 +14,6 @@ import {
 import { Signer, Transaction } from "@hashgraph/sdk/lib/Signer";
 import { HashConnect } from "../main";
 import { HashConnectProvider } from "./provider";
-import TransactionResponse from "./transactions/transaction_response";
 
 export class HashConnectSigner implements Signer {
   private hashconnect: HashConnect;

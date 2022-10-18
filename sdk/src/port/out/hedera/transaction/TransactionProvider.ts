@@ -13,7 +13,7 @@ import {
 	TransferTransaction,
 	PublicKey as HPublicKey,
 	DelegateContractId,
-	ContractFunctionParameters
+	ContractFunctionParameters,
 } from '@hashgraph/sdk';
 import { Signer } from '@hashgraph/sdk/lib/Signer.js';
 import { ContractId, PublicKey } from '../../../in/sdk/sdk.js';
@@ -38,7 +38,6 @@ export class TransactionProvider {
 		contractId: ContractId,
 		values: ICreateTokenResponse,
 		maxSupply: bigint | undefined,
-		signer?: Signer,
 	): Transaction {
 		const getKey = (
 			contractId: ContractId,
@@ -105,7 +104,6 @@ export class TransactionProvider {
 			transaction.setMaxSupply(values.maxSupply);
 			transaction.setSupplyType(TokenSupplyType.Finite);
 		}
-		if (signer) transaction.freezeWithSigner(signer);
 
 		return transaction;
 	}
