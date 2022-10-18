@@ -10,7 +10,7 @@ import {
 	ContractId,
 	StableCoinMemo,
 	PrivateKeyType,
-	Account
+	Account,
 } from '../../../in/sdk/sdk.js';
 import {
 	AccountId as HAccountId,
@@ -52,6 +52,9 @@ import { HashConnect } from 'hashconnect';
 import { HashConnectTypes } from 'hashconnect';
 import { HashConnectConnectionState } from 'hashconnect/types';
 import HashPackAccount from '../../../../domain/context/account/HashPackAccount.js';
+import { PublicKey as HPublicKey } from '@hashgraph/sdk';
+import axios from 'axios';
+import IAccount from '../account/types/IAccount.js';
 
 const logOpts = { newLine: true, clear: true };
 
