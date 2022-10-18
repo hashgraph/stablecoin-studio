@@ -36,7 +36,9 @@
     "lint:ts": "npx eslint . --ext .ts",
     "doc": "npx hardhat dodoc",
     "security": "docker run -t --rm -v /var/run/docker.sock:/var/run/docker.sock -v \"$(pwd)\":\"/home/ethsec/contracts\" -w \"/home/ethsec/contracts\" -u 0:0 trailofbits/eth-security-toolbox -c \"solc-select use 0.8.13  && slither ./contracts --solc-remaps @=node_modules/@\"",
-    "postinstall": "npm run compile:force ; npm run build"
+    "postinstall": "npm run compile:force ; npm run build",
+    "start:hedera":"npx hedera start",
+    "stop:hedera":"npx hedera stop"
   },
   "author": "",
   "license": "ISC",
