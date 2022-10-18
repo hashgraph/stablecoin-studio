@@ -88,9 +88,10 @@ export {
 	IRescueStableCoinRequest,
 	IRoleStableCoinRequest,
 	IWipeStableCoinRequest,
+	IAllowanceRequest,
 	IBasicRequest,
 	IStableCoinDetail,
-	IStableCoinList,
+	IStableCoinList
 };
 
 /* Export basic types*/

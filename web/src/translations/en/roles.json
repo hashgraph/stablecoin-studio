@@ -1,5 +1,5 @@
 {
-    "edit": "Update supplier limit from an account",
+    "edit": "Manage supplier limit",
     "give": "Give role",
     "revoke": "Revoke role",
     "revokeModalErrorDesc": "please try again later.",
@@ -8,6 +8,7 @@
     "subtitle": "Give / Revoke roles",
     "title": "Role management",
     "giveRole": {
+        "title": "Give Role",
         "accountLabel": "Account",
         "accountPlaceholder": "Introduce account",
         "infinity": "Infinity",
@@ -24,9 +25,12 @@
         "selectPlaceholder": "Select role to give",
         "supplierQuantityInputPlaceholder": "Tokens quantity",
         "supplierQuantityQuestion": "How much tokens the account can mint?",
-        "switchLabel": "Infinity?"
+        "switchLabel": "Infinity?",
+        "amountLabel": "How much tokens?",
+        "amountPlaceholder": "Introduce amount"    
     },
     "revokeRole": {
+        "title": "Revoke Role",
         "accountLabel": "Account",
         "accountPlaceholder": "Introduce account",
         "infinity": "",
@@ -43,25 +47,30 @@
         "selectPlaceholder": "Select role to revoke",
         "supplierQuantityInputPlaceholder": "",
         "supplierQuantityQuestion": "",
-        "switchLabel": ""
+        "switchLabel": "",
+        "amountLabel": "How much tokens?",
+        "amountPlaceholder": "Introduce amount"    
     },
     "editRole": {
+        "title": "Manage Supplier Limit",
         "accountLabel": "Account",
         "accountPlaceholder": "Introduce account",
         "infinity": "Infinity",
         "modalActionDetailAccount": "Account to edit role",
         "modalActionDetailRole": "Role to edit",
         "modalActionDetailSupplierQuantity": "Token quantity",
-        "modalActionConfirmButton": "Edit role",
-        "modalActionTitle": "Edit role",
+        "modalActionConfirmButton": "Confirm",
+        "modalActionTitle": "Manage supplier limit",
         "modalActionSubtitle": "Action details review",
         "modalSuccessTitle": "Role successfully edited",
         "modalErrorTitle": "Error editing the role",
         "modalErrorDescription": "please try again later.",
-        "selectLabel": "Select role to edit",
-        "selectPlaceholder": "Select role to edit",
+        "selectLabel": "Cash in limit option",
+        "selectPlaceholder": "Select cash in limit option",
         "supplierQuantityInputPlaceholder": "Tokens quantity",
         "supplierQuantityQuestion": "How much tokens the account can mint?",
-        "switchLabel": "Infinity?"
+        "switchLabel": "Infinity?",
+        "amountLabel": "How much tokens?",
+        "amountPlaceholder": "Introduce amount"    
     }
 }

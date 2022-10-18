@@ -24,6 +24,7 @@ const defaultProps: RoleLayoutProps = {
 	selectorLabel: translations.selectLabel,
 	selectorPlaceholder: translations.selectPlaceholder,
 	title: en.give,
+	roleRequest: true
 };
 
 const RenderWithForm = (props: RoleLayoutProps) => {

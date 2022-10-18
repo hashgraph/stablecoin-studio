@@ -39,6 +39,7 @@ export interface RoleLayoutProps {
 	selectorLabel: string;
 	selectorPlaceholder: string;
 	title: string;
+	roleRequest: boolean;
 }
 
 const RoleLayout = (props: RoleLayoutProps) => {
@@ -53,6 +54,7 @@ const RoleLayout = (props: RoleLayoutProps) => {
 		selectorLabel,
 		selectorPlaceholder,
 		title,
+		roleRequest = true,
 	} = props;
 	const { t } = useTranslation(['global', 'roles']);
 	const navigate = useNavigate();
@@ -88,20 +90,23 @@ const RoleLayout = (props: RoleLayoutProps) => {
 								label={accountLabel}
 								placeholder={accountPlaceholder}
 							/>
-							<SelectController
-								rules={{
-									required: t('global:validations.required'),
-								}}
-								isRequired
-								control={control}
-								name={fields.role}
-								label={selectorLabel}
-								placeholder={selectorPlaceholder}
-								options={options}
-								addonLeft={true}
-								overrideStyles={styles}
-								variant='unstyled'
-							/>
+							{roleRequest && (
+								<SelectController
+									rules={{
+										required: t('global:validations.required'),
+									}}
+									isRequired
+									control={control}
+									name={fields.role}
+									label={selectorLabel}
+									placeholder={selectorPlaceholder}
+									options={options}
+									addonLeft={true}
+									overrideStyles={styles}
+									variant='unstyled'
+								/>
+							)}
+							
 							{children}
 						</Stack>
 					</Stack>
