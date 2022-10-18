@@ -15,6 +15,7 @@ import { SelectController } from '../../components/Form/SelectController';
 import { validateDecimals } from '../../utils/validationsHelper';
 import { useSelector } from 'react-redux';
 import SDKService from '../../services/SDKService';
+import { formatAmount, formatAmountWithDecimals } from '../../utils/inputHelper';
 
 import {
 	SELECTED_WALLET_COIN,
@@ -57,6 +58,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
 
 	const [errorOperation, setErrorOperation] = useState();
+	const [limit, setLimit] = useState<number | null>();
 
 	register(fields.supplierQuantitySwitch, { value: true });
 	const { isOpen, onOpen, onClose } = useDisclosure();
@@ -65,7 +67,8 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 	const amount: any = watch(fields.amount);
 	const infinity: boolean = watch(fields.supplierQuantitySwitch);
 	const supplierLimitOption = watch(fields.cashinLimitOption)?.value;
-	const increaseOrDecreseOptionSelected = [1, 2].includes(supplierLimitOption);
+	const increaseOrDecreseOptionSelected: boolean = ['INCREASE', 'DECREASE'].includes(supplierLimitOption);
+	const checkOptionSelected: boolean = ['CHECK'].includes(supplierLimitOption);
 	const role = watch(fields.role);
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -76,7 +79,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 				return;
 			}
 			switch(supplierLimitOption) {
-				case 1:
+				case 'INCREASE':
 					await SDKService.increaseSupplierAllowance({
 						proxyContractId: selectedStableCoin.memo.proxyContract,
 						account,
@@ -86,7 +89,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 					});
 					break;
 
-				case 2:
+				case 'DECREASE':
 					await SDKService.decreaseSupplierAllowance({
 						proxyContractId: selectedStableCoin.memo.proxyContract,
 						account,
@@ -96,7 +99,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 					});
 					break;
 
-				case 3:
+				case 'RESET':
 					await SDKService.resetSupplierAllowance({
 						proxyContractId: selectedStableCoin.memo.proxyContract,
 						account,
@@ -104,13 +107,14 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 					});
 					break;
 
-				case 4:
-					await SDKService.checkSupplierAllowance({
+				case 'CHECK':
+					const limit = await SDKService.checkSupplierAllowance({
 						proxyContractId: selectedStableCoin.memo.proxyContract,
 						account,
 						tokenId: selectedStableCoin.tokenId,
 						targetId: destinationAccount!
 					});
+					setLimit(limit?.[0]);
 			}
 			onSuccess();
 		} catch (error: any) {
@@ -220,7 +224,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 			details.push(roleAction);
 
 		} else if (supplierLimitOption) {
-			const value = cashinLimitOptions[supplierLimitOption-1].label;
+			const value = cashinLimitOptions.find(t=>t.value === supplierLimitOption)!.label;
 			const supplierLimitAction: Detail = {
 				label:t(`roles:${action}.selectLabel`),
 				value,
@@ -285,6 +289,13 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 					<DetailsReview title={t(`roles:${action}.modalActionSubtitle`)} details={details} />
 				}
 				successNotificationTitle={t(`roles:${action}.modalSuccessTitle`)}
+				successNotificationDescription={checkOptionSelected ? t(`roles:${action}.checkCashinLimitSuccessDesc`, {
+					account: destinationAccount,
+					limit: formatAmountWithDecimals({
+						amount: limit!,
+						decimals: selectedStableCoin!.decimals!
+					})
+				}) : ''}				
 			/>
 		</>
 	);

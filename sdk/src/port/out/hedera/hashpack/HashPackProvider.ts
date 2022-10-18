@@ -183,23 +183,19 @@ export default class HashPackProvider implements IProvider {
 				'You must specify an accountId for operate with HashConnect.',
 			);
 		}
-console.log("0");		
 		const functionCallParameters = this.encodeFunctionCall(
 			name,
 			parameters,
 			abi,
 		);
-console.log("1");				
 		const transaction: Transaction =
 			TransactionProvider.buildContractExecuteTransaction(
 				contractId,
 				functionCallParameters,
 				gas,
 			);
-console.log("2");		
 		const transactionResponse =
 			await this.hashPackSigner.signAndSendTransaction(transaction);
-console.log("3");					
 		const htsResponse: HTSResponse =
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
@@ -208,7 +204,6 @@ console.log("3");
 				name,
 				abi,
 			);
-console.log("4");			
 		return htsResponse.reponseParam;
 	}
 

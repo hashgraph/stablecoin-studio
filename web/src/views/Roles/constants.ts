@@ -15,10 +15,10 @@ export const fakeOptions = [
 ];
 
 export const cashinLimitOptions = [
-	{ value: 1, label: 'Increase cash in limit' },
-	{ value: 2, label: 'Decrease cash in limit' },
-	{ value: 3, label: 'Reset cash in limit' },
-	{ value: 4, label: 'Check cash in limit' }
+	{ value: 'INCREASE', label: 'Increase cash in limit' },
+	{ value: 'DECREASE', label: 'Decrease cash in limit' },
+	{ value: 'RESET', label: 'Reset cash in limit' },
+	{ value: 'CHECK', label: 'Check cash in limit' }
 ];
 
 export const fields = {

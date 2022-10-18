@@ -27,7 +27,8 @@
         "supplierQuantityQuestion": "How much tokens the account can mint?",
         "switchLabel": "Infinity?",
         "amountLabel": "How much tokens?",
-        "amountPlaceholder": "Introduce amount"    
+        "amountPlaceholder": "Introduce amount",
+        "checkCashinLimitSuccessDesc": ""
     },
     "revokeRole": {
         "title": "Revoke Role",
@@ -49,7 +50,8 @@
         "supplierQuantityQuestion": "",
         "switchLabel": "",
         "amountLabel": "How much tokens?",
-        "amountPlaceholder": "Introduce amount"    
+        "amountPlaceholder": "Introduce amount",
+        "checkCashinLimitSuccessDesc": ""
     },
     "editRole": {
         "title": "Manage Supplier Limit",
@@ -71,6 +73,7 @@
         "supplierQuantityQuestion": "How much tokens the account can mint?",
         "switchLabel": "Infinity?",
         "amountLabel": "How much tokens?",
-        "amountPlaceholder": "Introduce amount"    
+        "amountPlaceholder": "Introduce amount",
+        "checkCashinLimitSuccessDesc": "The account {{ account }} has a cash in limit of {{ limit }}."
     }
 }
