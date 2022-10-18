@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import axios from 'axios';
 import { hethers } from '@hashgraph/hethers';
 import PrivateKey from '../../../../domain/context/account/PrivateKey.js';
 import {
-	AccountId as HAccountId,
 	Client,
 	ContractId as HContractId,
 	TransactionResponse,
@@ -52,7 +50,6 @@ import EventService from '../../../../app/service/event/EventService.js';
 import { Account, ContractId } from '../../../in/sdk/sdk.js';
 import { safeCast } from '../../../../core/cast.js';
 import { StableCoinMemo } from '../../../../domain/context/stablecoin/StableCoinMemo.js';
-import { IAccount } from '../account/types/IAccount';
 
 type DefaultHederaProvider = hethers.providers.DefaultHederaProvider;
 
@@ -216,53 +213,6 @@ export default class HTSProvider implements IProvider {
 		return htsResponse.reponseParam;
 	}
 
-	public async accountToEvmAddress(account: Account): Promise<string> {
-		if (account.privateKey) {
-			return this.getAccountEvmAddressFromPrivateKeyType(
-				account.privateKey?.type, 
-				account.privateKey.publicKey.key, 
-				account.accountId.id);
-		} else {
-			return await this.getAccountEvmAddress(account.accountId.id);
-		}
-	}	
-
-	private async getAccountEvmAddress(
-		accountId: string,
-	): Promise<string> {
-		try {
-			const URI_BASE = `${getHederaNetwork(this.network)?.mirrorNodeUrl}/api/v1/`;
-			const res = await axios.get<IAccount>(
-				URI_BASE + 'accounts/' + accountId
-			);
-
-			if (res.data.evm_address) {
-				return res.data.evm_address;
-			} else {
-				return this.getAccountEvmAddressFromPrivateKeyType(
-					res.data.key._type, 
-					res.data.key.key, 
-					accountId);
-			}
-		} catch (error) {
-			return Promise.reject<string>(error);
-		}
-	}	
-
-	private getAccountEvmAddressFromPrivateKeyType(
-		privateKeyType: string, 
-		publicKey: string,
-		accountId: string): string {
-			
-		switch(privateKeyType) {
-			case PrivateKeyType.ECDSA:
-				return HPublicKey.fromString(publicKey).toEthereumAddress();
-
-			default:
-				return HAccountId.fromString(accountId).toSolidityAddress();
-		}
-	}
-
 	public async deployStableCoin(
 		stableCoin: StableCoin,
 		account: EOAccount,
@@ -353,7 +303,8 @@ export default class HTSProvider implements IProvider {
 			account: account,
 		});
 
-		if (hederaToken.treasuryAccountId.toString() !== account.accountId.id) {
+		if (hederaToken.treasuryAccountId.toString() !== account.accountId.id && 
+		    account.evmAddress) {
 			log(
 				'Associating administrator account to token... please wait.',
 				logOpts,
@@ -362,7 +313,7 @@ export default class HTSProvider implements IProvider {
 			await this.callContract('associateToken', {
 				contractId: stableCoin.memo.proxyContract,
 				parameters: [
-					await this.accountToEvmAddress(account)
+					account.evmAddress
 				],
 				gas: 1_300_000,
 				abi: HederaERC20__factory.abi,

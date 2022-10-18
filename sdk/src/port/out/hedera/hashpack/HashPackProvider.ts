@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import axios from 'axios';
 import { IniConfig, IProvider } from '../Provider.js';
 import {
 	HederaNetwork,
@@ -11,14 +10,13 @@ import {
 	ContractId,
 	StableCoinMemo,
 	PrivateKeyType,
-	Account,
+	Account
 } from '../../../in/sdk/sdk.js';
 import {
 	AccountId as HAccountId,
 	ContractFunctionParameters,
 	ContractId as HContractId,
 	PrivateKey as HPrivateKey,
-	PublicKey as HPublicKey,
 	TokenId,
 	Transaction,
 	Status,
@@ -54,7 +52,6 @@ import { HashConnect } from 'hashconnect';
 import { HashConnectTypes } from 'hashconnect';
 import { HashConnectConnectionState } from 'hashconnect/types';
 import HashPackAccount from '../../../../domain/context/account/HashPackAccount.js';
-import { IAccount } from '../account/types/IAccount';
 
 const logOpts = { newLine: true, clear: true };
 
