@@ -9,6 +9,8 @@ import type {
 	HashPackAccount,
 	IGetBalanceStableCoinRequest,
 	IWipeStableCoinRequest,
+	IRoleStableCoinRequest,
+	ISupplierRoleStableCoinRequest,
 } from 'hedera-stable-coin-sdk';
 
 export enum HashConnectConnectionState {
@@ -156,6 +158,19 @@ export class SDKService {
 
 	public static async wipe(data: IWipeStableCoinRequest) {
 		return SDKService.getInstance().then((instance) => instance.wipe(data));
+	}
+
+	public static async grantRole(data: IRoleStableCoinRequest | ISupplierRoleStableCoinRequest) {
+		return SDKService.getInstance().then((instance) => instance.grantRole(data));
+	}
+
+	public static async revokeRole(data: IRoleStableCoinRequest) {
+		console.log('SDK REVOKE', data);
+		return SDKService.getInstance().then((instance) => instance.revokeRole(data));
+	}
+
+	public static async hasRole(data: IRoleStableCoinRequest) {
+		return SDKService.getInstance().then((instance) => instance.hasRole(data));
 	}
 }
 

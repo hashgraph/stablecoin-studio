@@ -87,6 +87,7 @@ export {
 	IGetStableCoinRequest,
 	IRescueStableCoinRequest,
 	IRoleStableCoinRequest,
+	ISupplierRoleStableCoinRequest,
 	IWipeStableCoinRequest,
 	IBasicRequest,
 	IStableCoinDetail,
@@ -466,7 +467,10 @@ export class SDK {
 	}
 
 	public getPublicKey(privateKey?: string, privateKeyType?: string): string {
-		return this.networkAdapter.provider.getPublicKeyString(privateKey, privateKeyType);
+		return this.networkAdapter.provider.getPublicKeyString(
+			privateKey,
+			privateKeyType,
+		);
 	}
 
 	public grantRole(
