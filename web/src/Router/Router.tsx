@@ -26,6 +26,7 @@ import {
 	SELECTED_WALLET_PAIRED,
 	walletActions,
 } from '../store/slices/walletSlice';
+import type { SavedPairingData } from 'hedera-stable-coin-sdk';
 
 const PrivateRoute = ({ status }: { status?: HashConnectConnectionState }) => {
 	return (
@@ -80,8 +81,7 @@ const Router = () => {
 		if (selectedWalletPairedAccount) {
 			result = {
 				...result,
-				// @ts-ignore
-				savedPairings: [selectedWalletPairedAccount],
+				savedPairings: [selectedWalletPairedAccount as any as SavedPairingData],
 			};
 		}
 		dispatch(walletActions.setData(result));
