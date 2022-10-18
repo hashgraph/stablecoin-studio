@@ -1,6 +1,6 @@
 import {IKey} from './IKey.js';
 
-export interface IAccount {
+export default interface IAccount {
 	evm_address: string;
 	key: IKey;
 }

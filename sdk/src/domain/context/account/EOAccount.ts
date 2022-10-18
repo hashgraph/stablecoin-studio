@@ -6,8 +6,8 @@ export default class EOAccount extends Account {
 
 	public privateKey: PrivateKey;
 
-	constructor(accountId: string, privateKey: PrivateKey) {
-		super(accountId, privateKey);
+	constructor(accountId: string, privateKey: PrivateKey, evmAddress?: string) {
+		super(accountId, privateKey, evmAddress);
 		this.validateAccount();
 	}
 
