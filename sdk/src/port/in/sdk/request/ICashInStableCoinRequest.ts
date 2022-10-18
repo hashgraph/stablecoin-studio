@@ -1,3 +1,4 @@
+import { PublicKey } from '../sdk.js';
 import {
 	IRequestContractsAmount,
 	ITokenIdRequestModel,
@@ -6,4 +7,4 @@ import {
 
 export type ICashInStableCoinRequest = IRequestContractsAmount &
 	ITokenIdRequestModel &
-	ITargetIdRequestModel;
+	ITargetIdRequestModel & { publicKey?: PublicKey };

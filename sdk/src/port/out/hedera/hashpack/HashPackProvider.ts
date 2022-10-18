@@ -19,6 +19,7 @@ import {
 	Transaction,
 	Status,
 	Signer,
+	TransactionResponse,
 } from '@hashgraph/sdk';
 import { StableCoin } from '../../../../domain/context/stablecoin/StableCoin.js';
 import {
@@ -48,7 +49,7 @@ import ProviderEvent, { ProviderEventNames } from '../ProviderEvent.js';
 import EventService from '../../../../app/service/event/EventService.js';
 import { HashConnect } from 'hashconnect';
 import { HashConnectTypes } from 'hashconnect';
-import { HashConnectConnectionState } from 'hashconnect/types';
+import { HashConnectConnectionState, NetworkType } from 'hashconnect/types';
 import HashPackAccount from '../../../../domain/context/account/HashPackAccount.js';
 
 const logOpts = { newLine: true, clear: true };
@@ -235,7 +236,7 @@ export default class HashPackProvider implements IProvider {
 	): Promise<StableCoin> {
 		if (account) {
 			this.provider = this.hc.getProvider(
-				this.network.hederaNetworkEnviroment,
+				this.network.hederaNetworkEnviroment as NetworkType,
 				this.initData.topic,
 				account.accountId.id,
 			);
@@ -579,7 +580,7 @@ export default class HashPackProvider implements IProvider {
 	public async wipeHTS(params: IWipeTokenRequest): Promise<boolean> {
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(
-				this.network.hederaNetworkEnviroment,
+				this.network.hederaNetworkEnviroment as NetworkType,
 				this.initData.topic,
 				params.account.accountId.id,
 			);
@@ -628,7 +629,7 @@ export default class HashPackProvider implements IProvider {
 	public async cashInHTS(params: IHTSTokenRequest): Promise<boolean> {
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(
-				this.network.hederaNetworkEnviroment,
+				this.network.hederaNetworkEnviroment as NetworkType,
 				this.initData.topic,
 				params.account.accountId.id,
 			);
@@ -652,10 +653,9 @@ export default class HashPackProvider implements IProvider {
 
 		const transactionResponse =
 			await this.hashPackSigner.signAndSendTransaction(transaction);
-
 		const htsResponse: HTSResponse =
 			await this.transactionResposeHandler.manageResponse(
-				transactionResponse,
+				transactionResponse as TransactionResponse,
 				TransactionType.RECEIPT,
 				this.getSigner(),
 			);
@@ -676,7 +676,7 @@ export default class HashPackProvider implements IProvider {
 	public async cashOutHTS(params: IHTSTokenRequest): Promise<boolean> {
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(
-				this.network.hederaNetworkEnviroment,
+				this.network.hederaNetworkEnviroment as NetworkType,
 				this.initData.topic,
 				params.account.accountId.id,
 			);
@@ -724,7 +724,7 @@ export default class HashPackProvider implements IProvider {
 	public async transferHTS(params: ITransferTokenRequest): Promise<boolean> {
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(
-				this.network.hederaNetworkEnviroment,
+				this.network.hederaNetworkEnviroment as NetworkType,
 				this.initData.topic,
 				params.account.accountId.id,
 			);

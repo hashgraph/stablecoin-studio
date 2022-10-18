@@ -16,6 +16,7 @@ import {
 	SELECTED_WALLET_PAIRED_ACCOUNT,
 } from '../../../store/slices/walletSlice';
 import { useState } from 'react';
+import { PublicKey } from 'hedera-stable-coin-sdk';
 
 const CashInOperation = () => {
 	const {
@@ -51,7 +52,10 @@ const CashInOperation = () => {
 				tokenId: selectedStableCoin.tokenId,
 				targetId: destinationAccount,
 				amount,
-				publicKey: infoAccount.publicKey?.key,
+				publicKey: new PublicKey({
+					key: infoAccount.publicKey?.key ?? '',
+					type: infoAccount.publicKey?.type ?? '',
+				}),
 			});
 			onSuccess();
 		} catch (error: any) {

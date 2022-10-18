@@ -4,7 +4,7 @@ import {
 	Client,
 	TransactionReceipt,
 	TransactionRecord,
-	TransactionId
+	TransactionId,
 } from '@hashgraph/sdk';
 import HederaError from '../error/HederaError.js';
 import Web3 from 'web3';
@@ -125,24 +125,29 @@ export class TransactionResposeHandler {
 			}
 		} else {
 			if (transactionResponse instanceof TransactionResponse) {
-				transactionReceipt =
-					await transactionResponse.getReceiptWithSigner(
-						clientOrSigner,
-					);
+				transactionReceipt = await (
+					transactionResponse as TransactionResponse
+				).getReceiptWithSigner(clientOrSigner);
 			} else {
 				transactionReceipt =
-					this.getHashconnectTransactionReceipt(transactionResponse);
+					await this.getHashconnectTransactionReceipt(transactionResponse);
 			}
 		}
 		return transactionReceipt;
 	}
 
-	private getHashconnectTransactionReceipt(
+	private async getHashconnectTransactionReceipt(
 		transactionResponse: MessageTypes.TransactionResponse,
-	): TransactionReceipt {
+	): Promise<TransactionReceipt> {
 		const receipt = transactionResponse.receipt;
 		if (receipt && receipt instanceof Uint8Array) {
 			return TransactionReceipt.fromBytes(receipt);
+		} else if (
+			(transactionResponse as unknown as { nodeId: string }).nodeId
+		) {
+			return await (
+				transactionResponse as unknown as TransactionResponse
+			).getReceiptWithSigner(null as unknown as Signer);
 		} else {
 			throw new Error(
 				`Unexpected receipt type from Hashpack: ${receipt}`,
