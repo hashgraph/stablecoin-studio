@@ -58,14 +58,13 @@ export class HashPackSigner implements ISigner {
 					console.error(err);
 					throw err;
 				}
+			} else if (transaction instanceof TokenCreateTransaction) {
+				return await (
+					await transaction.freezeWithSigner(this.hashConnectSigner)
+				).executeWithSigner(this.hashConnectSigner);
 			} else {
 				let signedT = transaction;
-				if (signedT instanceof TokenCreateTransaction) {
-					console.log(this.provider.client);
-					signedT = signedT.setTransactionId(TransactionId.generate(this.account.accountId.id))
-					signedT = signedT.freezeWith(this.provider.client)
-					return await signedT.execute(this.provider.client);
-				} else if (!transaction.isFrozen()) {
+				if (!transaction.isFrozen()) {
 					signedT = await transaction.freezeWithSigner(this.signer);
 				}
 				const t = await this.signer.signTransaction(signedT);
