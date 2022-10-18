@@ -53,9 +53,9 @@ import { HashConnect } from 'hashconnect';
 import { HashConnectTypes } from 'hashconnect';
 import { HashConnectConnectionState, NetworkType } from 'hashconnect/types';
 import HashPackAccount from '../../../../domain/context/account/HashPackAccount.js';
-import { IAccount } from '../account/types/IAccount';
 import { safeCast } from '../../../../core/cast.js';
 import axios from 'axios';
+import IAccount from '../account/types/IAccount.js';
 
 const logOpts = { newLine: true, clear: true };
 
