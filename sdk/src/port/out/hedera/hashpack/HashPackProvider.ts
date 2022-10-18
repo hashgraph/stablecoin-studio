@@ -8,7 +8,9 @@ import {
 	PrivateKey,
 	AccountId,
 	ContractId,
-	StableCoinMemo
+	StableCoinMemo,
+	PrivateKeyType,
+	Account,
 } from '../../../in/sdk/sdk.js';
 import {
 	AccountId as HAccountId,
@@ -50,6 +52,9 @@ import { HashConnect } from 'hashconnect';
 import { HashConnectTypes } from 'hashconnect';
 import { HashConnectConnectionState } from 'hashconnect/types';
 import HashPackAccount from '../../../../domain/context/account/HashPackAccount.js';
+import { PublicKey as HPublicKey } from '@hashgraph/sdk';
+import axios from 'axios';
+import IAccount from '../account/types/IAccount.js';
 
 const logOpts = { newLine: true, clear: true };
 
@@ -140,7 +145,7 @@ export default class HashPackProvider implements IProvider {
 				throw new Error(
 					'Pairing is not possible since pairing data is undefined.',
 				);
-			}		
+			}
 		});
 
 		//This is fired when HashConnect loses connection, pairs successfully, or is starting connection
@@ -194,7 +199,7 @@ export default class HashPackProvider implements IProvider {
 				functionCallParameters,
 				gas,
 			);
-	
+
 		const transactionResponse =
 			await this.hashPackSigner.signAndSendTransaction(transaction);
 		const htsResponse: HTSResponse =
@@ -205,7 +210,7 @@ export default class HashPackProvider implements IProvider {
 				name,
 				abi,
 			);
-	
+
 		return htsResponse.reponseParam;
 	}
 
@@ -227,6 +232,55 @@ export default class HashPackProvider implements IProvider {
 			.slice(2);
 
 		return Buffer.from(encodedParametersHex, 'hex');
+	}
+
+	public async accountToEvmAddress(account: Account): Promise<string> {
+		if (account.privateKey) {
+			return this.getAccountEvmAddressFromPrivateKeyType(
+				account.privateKey?.type,
+				account.privateKey.publicKey.key,
+				account.accountId.id,
+			);
+		} else {
+			return await this.getAccountEvmAddress(account.accountId.id);
+		}
+	}
+
+	private async getAccountEvmAddress(accountId: string): Promise<string> {
+		try {
+			const URI_BASE = `${
+				getHederaNetwork(this.network)?.mirrorNodeUrl
+			}/api/v1/`;
+			const res = await axios.get<IAccount>(
+				URI_BASE + 'accounts/' + accountId,
+			);
+
+			if (res.data.evm_address) {
+				return res.data.evm_address;
+			} else {
+				return this.getAccountEvmAddressFromPrivateKeyType(
+					res.data.key._type,
+					res.data.key.key,
+					accountId,
+				);
+			}
+		} catch (error) {
+			return Promise.reject<string>(error);
+		}
+	}
+
+	private getAccountEvmAddressFromPrivateKeyType(
+		privateKeyType: string,
+		publicKey: string,
+		accountId: string,
+	): string {
+		switch (privateKeyType) {
+			case PrivateKeyType.ECDSA:
+				return HPublicKey.fromString(publicKey).toEthereumAddress();
+
+			default:
+				return HAccountId.fromString(accountId).toSolidityAddress();
+		}
 	}
 
 	public async deployStableCoin(
@@ -564,7 +618,8 @@ export default class HashPackProvider implements IProvider {
 	}
 
 	disconectHaspack(): void {
-		if (this.pairingData?.topic) this.hc.disconnect(this.pairingData.topic);
+		if (this.initData?.topic) this.hc.disconnect(this.initData.topic);
+
 		this.pairingData = null;
 		this.eventService.emit(
 			ProviderEventNames.providerConnectionStatusChangeEvent,
