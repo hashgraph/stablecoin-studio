@@ -95,7 +95,22 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 						amount
 					});
 					break;
-	
+
+				case 3:
+					await SDKService.resetSupplierAllowance({
+						proxyContractId: selectedStableCoin.memo.proxyContract,
+						account,
+						targetId: destinationAccount!
+					});
+					break;
+
+				case 4:
+					await SDKService.checkSupplierAllowance({
+						proxyContractId: selectedStableCoin.memo.proxyContract,
+						account,
+						tokenId: selectedStableCoin.tokenId,
+						targetId: destinationAccount!
+					});
 			}
 			onSuccess();
 		} catch (error: any) {
@@ -212,8 +227,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 				valueInBold: true,
 			};
 			details.push(supplierLimitAction);			
-
-			if (amount) {
+			if (amount !== undefined) {
 				const value = amount;
 				const amountAction: Detail = {
 					label:t(`roles:${action}.amountLabel`),

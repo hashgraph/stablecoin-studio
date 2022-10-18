@@ -87,6 +87,7 @@ export {
 	IGetListStableCoinRequest,
 	IGetNameStableCoinRequest,
 	IGetStableCoinRequest,
+	IGetSupplierAllowance,
 	IRescueStableCoinRequest,
 	IRoleStableCoinRequest,
 	IWipeStableCoinRequest,

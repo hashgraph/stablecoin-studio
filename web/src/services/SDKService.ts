@@ -9,7 +9,9 @@ import type {
 	HashPackAccount,
 	IGetBalanceStableCoinRequest,
 	IWipeStableCoinRequest,
-	IAllowanceRequest
+	IAllowanceRequest,
+	IGetSupplierAllowance,
+	IBasicRequest
 } from 'hedera-stable-coin-sdk';
 
 export enum HashConnectConnectionState {
@@ -167,6 +169,13 @@ export class SDKService {
 		return SDKService.getInstance().then((instance) => instance.decreaseSupplierAllowance(data));
 	}
 
+	public static async resetSupplierAllowance(data: IBasicRequest) {
+		return SDKService.getInstance().then((instance) => instance.resetSupplierAllowance(data));
+	}
+
+	public static async checkSupplierAllowance(data: IGetSupplierAllowance) {
+		return SDKService.getInstance().then((instance) => instance.supplierAllowance(data));
+	}
 }
 
 export default SDKService;

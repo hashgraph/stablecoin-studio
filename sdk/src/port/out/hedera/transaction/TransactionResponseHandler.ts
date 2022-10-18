@@ -22,7 +22,9 @@ export class TransactionResposeHandler {
 		abi?: object[],
 	): Promise<HTSResponse> {
 		let results: Uint8Array = new Uint8Array();
+console.log("3.0");		
 		if (responseType === TransactionType.RECEIPT) {
+console.log("3.1");					
 			const transactionReceipt: TransactionReceipt | undefined =
 				await this.getReceipt(clientOrSigner, transactionResponse);
 			let transId;
@@ -40,6 +42,7 @@ export class TransactionResposeHandler {
 		}
 
 		if (responseType === TransactionType.RECORD) {
+console.log("3.2");			
 			const transactionRecord:
 				| TransactionRecord
 				| Uint32Array
@@ -49,6 +52,7 @@ export class TransactionResposeHandler {
 			);
 			let record: Uint8Array | Uint32Array | undefined;
 			if (nameFunction) {
+console.log("3.3");				
 				if (transactionRecord instanceof TransactionRecord) {
 					record = transactionRecord?.contractFunctionResult?.bytes;
 				} else if (transactionRecord instanceof Uint32Array) {
@@ -58,6 +62,7 @@ export class TransactionResposeHandler {
 				results = this.decodeFunctionResult(nameFunction, record, abi);
 			}
 			if (record instanceof Uint32Array) {
+console.log("3.4");							
 				return this.createHTSResponse(
 					undefined,
 					responseType,
@@ -65,6 +70,7 @@ export class TransactionResposeHandler {
 					undefined,
 				);
 			} else {
+console.log("3.5");							
 				const tr = transactionRecord as TransactionRecord;
 				return this.createHTSResponse(
 					tr?.transactionId,
@@ -86,25 +92,31 @@ export class TransactionResposeHandler {
 	): Promise<TransactionRecord | Uint32Array | undefined> {
 		let transactionRecord: TransactionRecord | Uint32Array | undefined;
 		if (clientOrSigner instanceof Client) {
+console.log("3.2.1");			
 			if (transactionResponse instanceof TransactionResponse) {
 				transactionRecord = await transactionResponse.getRecord(
 					clientOrSigner,
 				);
 			} else {
+console.log("3.2.2");							
 				transactionRecord =
 					this.getHashconnectTransactionRecord(transactionResponse);
 			}
 		} else {
+console.log("3.2.3");						
 			if (transactionResponse instanceof TransactionResponse) {
+console.log("3.2.4");							
 				transactionRecord =
 					await transactionResponse.getRecordWithSigner(
 						clientOrSigner,
 					);
 			} else {
+console.log("3.2.5");							
 				transactionRecord =
 					this.getHashconnectTransactionRecord(transactionResponse);
 			}
 		}
+console.log("3.2.6");					
 		return transactionRecord;
 	}
 
@@ -155,8 +167,10 @@ export class TransactionResposeHandler {
 	): Uint32Array | undefined {
 		const record = transactionResponse.record;
 		if (!record) {
+console.log("3.2.5.1");			
 			throw new Error(`Unexpected record type from Hashpack: ${record}`);
 		} else {
+console.log("3.2.5.2");						
 			try {
 				return new Uint32Array(Object.values(record));
 			} catch (err) {
