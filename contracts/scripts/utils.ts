@@ -40,8 +40,15 @@ export async function deployContractsWithSDK(
     )
 
     const account = hreConfig.accounts[0].account
-    const privateKey = hreConfig.accounts[0].privateKey
-    const publicKey = hreConfig.accounts[0].publicKey
+    const privateKey = PrivateKey.fromStringECDSA(
+        hreConfig.accounts[0].privateKey
+    )
+    console.log(privateKey)
+
+    const publicKey = privateKey.publicKey
+    console.log('Mi PRIVATEKEY : ' + privateKey)
+    console.log('Mi PublicKEY: ' + publicKey)
+    console.log('Mi ACCOUNT : ' + account)
 
     let clientSdk = getClient()
     clientSdk.setOperator(
@@ -260,8 +267,8 @@ async function createToken(
         .setTokenMemo(memo)
         .setFreezeDefault(freeze)
         .setTreasuryAccountId(AccountId.fromString(contractId.toString()))
-        .setAdminKey(PublicKey.fromString(publicKey))
-        .setFreezeKey(PublicKey.fromString(publicKey))
+        .setAdminKey(publicKey)
+        .setFreezeKey(publicKey)
         .setWipeKey(DelegateContractId.fromString(contractId))
         .setSupplyKey(DelegateContractId.fromString(contractId))
 
@@ -271,9 +278,7 @@ async function createToken(
     }
     transaction.freezeWith(clientSdk)
 
-    const transactionSign = await transaction.sign(
-        PrivateKey.fromStringED25519(privateKey)
-    )
+    const transactionSign = await transaction.sign(privateKey)
     const txResponse = await transactionSign.execute(clientSdk)
     const receipt = await txResponse.getReceipt(clientSdk)
     const tokenId = receipt.tokenId
@@ -289,21 +294,23 @@ async function deployContractSDK(
     clientOperator: any,
     constructorParameters?: any
 ) {
+    console.log('DEsplegar contrato')
+    // console.log(clientOperator)
+
     const transaction = new ContractCreateFlow()
         .setBytecode(factory.bytecode)
         .setGas(90_000)
-        .setAdminKey(PrivateKey.fromStringED25519(privateKey))
+        .setAdminKey(privateKey)
     if (constructorParameters) {
         transaction.setConstructorParameters(constructorParameters)
     }
 
-    const contractCreateSign = await transaction.sign(
-        PrivateKey.fromStringED25519(privateKey)
-    )
+    const contractCreateSign = await transaction.sign(privateKey)
 
     const txResponse = await contractCreateSign.execute(clientOperator)
+    console.log('HEYY')
     const receipt = await txResponse.getReceipt(clientOperator)
-
+    console.log('HEYY22')
     const contractId = receipt.contractId
     console.log(
         ` ${
