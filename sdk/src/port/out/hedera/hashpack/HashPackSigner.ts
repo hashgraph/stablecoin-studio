@@ -7,7 +7,6 @@ import {
 	ContractExecuteTransaction,
 	PublicKey as HPublicKey,
 	TokenCreateTransaction,
-	TransactionId,
 } from '@hashgraph/sdk';
 import { HashConnect, MessageTypes } from 'hashconnect';
 import { HashConnectProvider } from 'hashconnect/provider/provider';
@@ -47,7 +46,8 @@ export class HashPackSigner implements ISigner {
 		transaction:
 			| Transaction
 			| ContractExecuteTransaction
-			| ContractCreateFlow,
+			| ContractCreateFlow
+			| TokenCreateTransaction
 	): Promise<TransactionResponse | MessageTypes.TransactionResponse> {
 		if (this.signer) {
 			const pk = await this.getAccountKey(); // Ensure we have the public key
@@ -59,9 +59,9 @@ export class HashPackSigner implements ISigner {
 					throw err;
 				}
 			} else if (transaction instanceof TokenCreateTransaction) {
-				return await (
-					await transaction.freezeWithSigner(this.hashConnectSigner)
-				).executeWithSigner(this.hashConnectSigner);
+				let t = await transaction.freezeWithSigner(this.signer)
+				t = await transaction.signWithSigner(this.signer);
+				return await t.executeWithSigner(this.signer);
 			} else {
 				let signedT = transaction;
 				if (!transaction.isFrozen()) {

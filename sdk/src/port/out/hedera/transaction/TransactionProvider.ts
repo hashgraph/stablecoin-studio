@@ -15,7 +15,6 @@ import {
 	DelegateContractId,
 	ContractFunctionParameters,
 } from '@hashgraph/sdk';
-import { Signer } from '@hashgraph/sdk/lib/Signer.js';
 import { ContractId, PublicKey } from '../../../in/sdk/sdk.js';
 import { ICreateTokenResponse } from '../types.js';
 import ContractCreateFlow from './ContractCreateFlow.js';
@@ -104,7 +103,8 @@ export class TransactionProvider {
 			transaction.setMaxSupply(values.maxSupply);
 			transaction.setSupplyType(TokenSupplyType.Finite);
 		}
-
+		console.log("Token create transaction: ", values);
+		console.log("Token create transaction: ",transaction);
 		return transaction;
 	}
 
