@@ -12,20 +12,20 @@ exports[`<Roles /> should render correctly 1`] = `
       Role management
     </h2>
     <div
-      class="css-1hkemoa"
+      class="css-1b6lda7"
       data-testid="base-container-children"
     >
       <div
         class="css-src872"
       >
         <h2
-          class="chakra-heading css-1brd3j2"
+          class="chakra-heading css-1bjzvf5"
           data-testid="subtitle"
         >
           Give / Revoke roles
         </h2>
         <div
-          class="css-qbodi0"
+          class="css-nxcc5s"
         >
           <div
             class="css-180e663"

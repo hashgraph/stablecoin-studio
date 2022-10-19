@@ -1,0 +1,462 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<StableCoinDetails /> should render correctly 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-stack css-16oka5y"
+  >
+    <h2
+      class="chakra-heading css-llrpa2"
+      data-testid="base-container-heading"
+    >
+      Stable coin details
+    </h2>
+    <div
+      class="css-1b6lda7"
+      data-testid="base-container-children"
+    >
+      <div
+        class="css-t23vsm"
+      >
+        <div
+          class="css-ezt3jl"
+        >
+          <div
+            class="css-13brihr"
+          >
+            <p
+              class="chakra-text css-hduy72"
+              data-testid="details-review-title"
+            >
+              Stable coin basic information
+            </p>
+            <div
+              class="css-0"
+            >
+              <div
+                class="css-0"
+              >
+                <div
+                  class="css-3fqpsw"
+                  data-testid="details-review-detail-0"
+                >
+                  <p
+                    class="chakra-text css-bpirlf"
+                  >
+                    Token ID
+                  </p>
+                  <p
+                    class="chakra-text css-6b9s8v"
+                  >
+                    0.0.48471242
+                  </p>
+                </div>
+                <hr
+                  aria-orientation="horizontal"
+                  class="chakra-divider css-zaaihy"
+                  title="divider"
+                />
+              </div>
+              <div
+                class="css-0"
+              >
+                <div
+                  class="css-3fqpsw"
+                  data-testid="details-review-detail-1"
+                >
+                  <p
+                    class="chakra-text css-bpirlf"
+                  >
+                    Name
+                  </p>
+                  <p
+                    class="chakra-text css-6b9s8v"
+                  >
+                    ManuCoin2
+                  </p>
+                </div>
+                <hr
+                  aria-orientation="horizontal"
+                  class="chakra-divider css-zaaihy"
+                  title="divider"
+                />
+              </div>
+              <div
+                class="css-0"
+              >
+                <div
+                  class="css-3fqpsw"
+                  data-testid="details-review-detail-2"
+                >
+                  <p
+                    class="chakra-text css-bpirlf"
+                  >
+                    Symbol
+                  </p>
+                  <p
+                    class="chakra-text css-6b9s8v"
+                  >
+                    MCC2
+                  </p>
+                </div>
+                <hr
+                  aria-orientation="horizontal"
+                  class="chakra-divider css-zaaihy"
+                  title="divider"
+                />
+              </div>
+              <div
+                class="css-0"
+              >
+                <div
+                  class="css-3fqpsw"
+                  data-testid="details-review-detail-3"
+                >
+                  <p
+                    class="chakra-text css-bpirlf"
+                  >
+                    Decimals
+                  </p>
+                  <p
+                    class="chakra-text css-6b9s8v"
+                  >
+                    3
+                  </p>
+                </div>
+                <hr
+                  aria-orientation="horizontal"
+                  class="chakra-divider css-zaaihy"
+                  title="divider"
+                />
+              </div>
+              <div
+                class="css-0"
+              >
+                <div
+                  class="css-3fqpsw"
+                  data-testid="details-review-detail-4"
+                >
+                  <p
+                    class="chakra-text css-bpirlf"
+                  >
+                    Initial supply
+                  </p>
+                  <p
+                    class="chakra-text css-6b9s8v"
+                  >
+                    0
+                  </p>
+                </div>
+                <hr
+                  aria-orientation="horizontal"
+                  class="chakra-divider css-zaaihy"
+                  title="divider"
+                />
+              </div>
+              <div
+                class="css-0"
+              >
+                <div
+                  class="css-3fqpsw"
+                  data-testid="details-review-detail-5"
+                >
+                  <p
+                    class="chakra-text css-bpirlf"
+                  >
+                    Total supply
+                  </p>
+                  <p
+                    class="chakra-text css-6b9s8v"
+                  >
+                    100
+                  </p>
+                </div>
+                <hr
+                  aria-orientation="horizontal"
+                  class="chakra-divider css-zaaihy"
+                  title="divider"
+                />
+              </div>
+              <div
+                class="css-0"
+              >
+                <div
+                  class="css-3fqpsw"
+                  data-testid="details-review-detail-6"
+                >
+                  <p
+                    class="chakra-text css-bpirlf"
+                  >
+                    Max supply
+                  </p>
+                  <p
+                    class="chakra-text css-6b9s8v"
+                  >
+                    0
+                  </p>
+                </div>
+                <hr
+                  aria-orientation="horizontal"
+                  class="chakra-divider css-zaaihy"
+                  title="divider"
+                />
+              </div>
+              <div
+                class="css-0"
+              >
+                <div
+                  class="css-3fqpsw"
+                  data-testid="details-review-detail-7"
+                >
+                  <p
+                    class="chakra-text css-bpirlf"
+                  >
+                    Treasury ID
+                  </p>
+                  <p
+                    class="chakra-text css-6b9s8v"
+                  >
+                    0.0.48450590
+                  </p>
+                </div>
+                <hr
+                  aria-orientation="horizontal"
+                  class="chakra-divider css-zaaihy"
+                  title="divider"
+                />
+              </div>
+              <div
+                class="css-0"
+              >
+                <div
+                  class="css-3fqpsw"
+                  data-testid="details-review-detail-8"
+                >
+                  <p
+                    class="chakra-text css-bpirlf"
+                  >
+                    Memo
+                  </p>
+                  <p
+                    class="chakra-text css-6b9s8v"
+                  >
+                    Proxy contract: undefined, HTS account: undefined
+                  </p>
+                </div>
+                <hr
+                  aria-orientation="horizontal"
+                  class="chakra-divider css-zaaihy"
+                  title="divider"
+                />
+              </div>
+              <div
+                class="css-0"
+              >
+                <div
+                  class="css-3fqpsw"
+                  data-testid="details-review-detail-9"
+                >
+                  <p
+                    class="chakra-text css-bpirlf"
+                  >
+                    Admin key
+                  </p>
+                  <div
+                    class="css-1p3aqhz"
+                  >
+                    <p
+                      class="chakra-text css-mgupmj"
+                    >
+                      Other key: cd7c24...31a622
+                    </p>
+                    <div
+                      class="css-1m8iww1"
+                    >
+                      <svg
+                        class="chakra-icon css-13otjrl"
+                        fill="currentColor"
+                        focusable="false"
+                        height="1em"
+                        viewBox="0 0 256 256"
+                        width="1em"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <rect
+                          fill="none"
+                          height="256"
+                          width="256"
+                        />
+                        <polyline
+                          fill="none"
+                          points="168 168 216 168 216 40 88 40 88 88"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="16"
+                        />
+                        <rect
+                          fill="none"
+                          height="128"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="16"
+                          width="128"
+                          x="40"
+                          y="88"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <hr
+                  aria-orientation="horizontal"
+                  class="chakra-divider css-zaaihy"
+                  title="divider"
+                />
+              </div>
+              <div
+                class="css-0"
+              >
+                <div
+                  class="css-3fqpsw"
+                  data-testid="details-review-detail-10"
+                >
+                  <p
+                    class="chakra-text css-bpirlf"
+                  >
+                    Kyc key
+                  </p>
+                  <p
+                    class="chakra-text css-6b9s8v"
+                  >
+                    None
+                  </p>
+                </div>
+                <hr
+                  aria-orientation="horizontal"
+                  class="chakra-divider css-zaaihy"
+                  title="divider"
+                />
+              </div>
+              <div
+                class="css-0"
+              >
+                <div
+                  class="css-3fqpsw"
+                  data-testid="details-review-detail-11"
+                >
+                  <p
+                    class="chakra-text css-bpirlf"
+                  >
+                    Freeze key
+                  </p>
+                  <p
+                    class="chakra-text css-6b9s8v"
+                  >
+                    Smart contract
+                  </p>
+                </div>
+                <hr
+                  aria-orientation="horizontal"
+                  class="chakra-divider css-zaaihy"
+                  title="divider"
+                />
+              </div>
+              <div
+                class="css-0"
+              >
+                <div
+                  class="css-3fqpsw"
+                  data-testid="details-review-detail-12"
+                >
+                  <p
+                    class="chakra-text css-bpirlf"
+                  >
+                    Wipe key
+                  </p>
+                  <p
+                    class="chakra-text css-6b9s8v"
+                  >
+                    Smart contract
+                  </p>
+                </div>
+                <hr
+                  aria-orientation="horizontal"
+                  class="chakra-divider css-zaaihy"
+                  title="divider"
+                />
+              </div>
+              <div
+                class="css-0"
+              >
+                <div
+                  class="css-3fqpsw"
+                  data-testid="details-review-detail-13"
+                >
+                  <p
+                    class="chakra-text css-bpirlf"
+                  >
+                    Supply key
+                  </p>
+                  <div
+                    class="css-1p3aqhz"
+                  >
+                    <p
+                      class="chakra-text css-mgupmj"
+                    >
+                      Other key: cd7c24...31a622
+                    </p>
+                    <div
+                      class="css-1m8iww1"
+                    >
+                      <svg
+                        class="chakra-icon css-13otjrl"
+                        fill="currentColor"
+                        focusable="false"
+                        height="1em"
+                        viewBox="0 0 256 256"
+                        width="1em"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <rect
+                          fill="none"
+                          height="256"
+                          width="256"
+                        />
+                        <polyline
+                          fill="none"
+                          points="168 168 216 168 216 40 88 40 88 88"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="16"
+                        />
+                        <rect
+                          fill="none"
+                          height="128"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="16"
+                          width="128"
+                          x="40"
+                          y="88"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;

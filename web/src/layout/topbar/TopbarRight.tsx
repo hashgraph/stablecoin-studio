@@ -42,11 +42,11 @@ const TopbarRight = () => {
 			>
 				<VStack spacing={0}>
 					<TooltipCopy valueToCopy={pairingData ? pairingData.accountIds[0] : ''}>
-						<Text fontSize='12px' fontWeight={600}>
+						<Text data-testid='topbar-right-account' fontSize='12px' fontWeight={600}>
 							{pairingData ? pairingData.accountIds[0] : ''}
 						</Text>
 					</TooltipCopy>
-					<Text fontSize='10px' textTransform='uppercase'>
+					<Text data-testid='topbar-right-network' fontSize='10px' textTransform='uppercase'>
 						{pairingData ? pairingData.network : ''}
 					</Text>
 				</VStack>

@@ -1,5 +1,5 @@
 import { Box, Flex, Text, Tooltip } from '@chakra-ui/react';
-import type { StableCoinMemo } from 'hedera-stable-coin-sdk';
+import type { ContractId, PublicKey, StableCoinMemo } from 'hedera-stable-coin-sdk';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import BaseContainer from '../../components/BaseContainer';
@@ -26,13 +26,9 @@ const StableCoinDetails = () => {
 		);
 	};
 
-	const renderKeys = ({
-		key,
-	}: {
-		key: { id: string; key: never } | { key: string; id: never } | undefined;
-	}) => {
+	const renderKeys = ({ key }: { key: ContractId | PublicKey | undefined }) => {
 		if (!key) return t('none');
-		if (key.id) return t('smartContract');
+		if ('id' in key) return t('smartContract');
 		if (key.key === 'same as user')
 			// TODO: check current public key
 			return t('currentUser');

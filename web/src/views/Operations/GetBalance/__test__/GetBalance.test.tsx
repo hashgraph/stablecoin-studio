@@ -21,7 +21,7 @@ describe(`<${GetBalanceOperation.name} />`, () => {
 	test('should have an input to write the account', () => {
 		const component = render(<GetBalanceOperation />);
 
-		expect(component.getByTestId('account')).toBeInTheDocument();
+		expect(component.getByTestId('targetAccount')).toBeInTheDocument();
 	});
 
 	test('should have a disabled confirm button that is enable when introduce an account', async () => {
@@ -30,7 +30,7 @@ describe(`<${GetBalanceOperation.name} />`, () => {
 		const button = component.getByTestId('confirm-btn');
 		expect(button).toBeDisabled();
 
-		const account = component.getByTestId('account');
+		const account = component.getByTestId('targetAccount');
 		userEvent.type(account, '0.0.12345');
 
 		await waitFor(() => {
