@@ -23,8 +23,10 @@ import { hashpackActions, IS_INITIALIZED } from '../store/slices/hashpackSlice';
 import {
 	HAS_WALLET_EXTENSION,
 	SELECTED_WALLET_COIN,
+	SELECTED_WALLET_PAIRED,
 	walletActions,
 } from '../store/slices/walletSlice';
+import type { SavedPairingData } from 'hedera-stable-coin-sdk';
 
 const PrivateRoute = ({ status }: { status?: HashConnectConnectionState }) => {
 	return (
@@ -48,10 +50,13 @@ const OnboardingRoute = ({ status }: { status?: HashConnectConnectionState }) =>
 
 const Router = () => {
 	const [status, setStatus] = useState<HashConnectConnectionState>();
+
 	const dispatch = useDispatch();
+
 	const haspackInitialized = useSelector(IS_INITIALIZED);
 	const hasWalletExtension = useSelector(HAS_WALLET_EXTENSION);
 	const selectedWalletCoin = !!useSelector(SELECTED_WALLET_COIN);
+	const selectedWalletPairedAccount = useSelector(SELECTED_WALLET_PAIRED);
 
 	useEffect(() => {
 		instanceSDK();
@@ -62,6 +67,25 @@ const Router = () => {
 			getStatus();
 		}
 	}, [haspackInitialized, hasWalletExtension]);
+
+	useEffect(() => {
+		if (status && status === HashConnectConnectionState.Paired) {
+			getWalletData();
+		}
+	}, [status]);
+
+	const getWalletData = async () => {
+		const walletData = await SDKService.getWalletData();
+		let result = { ...walletData };
+
+		if (selectedWalletPairedAccount) {
+			result = {
+				...result,
+				savedPairings: [selectedWalletPairedAccount as any as SavedPairingData],
+			};
+		}
+		dispatch(walletActions.setData(result));
+	};
 
 	const onInit = () => dispatch(hashpackActions.setInitialized());
 

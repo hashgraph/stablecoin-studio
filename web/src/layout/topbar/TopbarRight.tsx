@@ -1,47 +1,19 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
-import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import Icon from '../../components/Icon';
 import SDKService from '../../services/SDKService';
-import {
-	SELECTED_WALLET_DATA,
-	SELECTED_WALLET_PAIRED,
-	walletActions,
-} from '../../store/slices/walletSlice';
-import type { InitializationData, SavedPairingData } from 'hedera-stable-coin-sdk';
+import { SELECTED_WALLET_PAIRED, walletActions } from '../../store/slices/walletSlice';
+import type { SavedPairingData } from 'hedera-stable-coin-sdk';
 
 const TopbarRight = () => {
 	const { t } = useTranslation('global');
 	const dispatch = useDispatch();
 
 	const pairingData: SavedPairingData = useSelector(SELECTED_WALLET_PAIRED);
-	const walletData: InitializationData = useSelector(SELECTED_WALLET_DATA);
-
-	useEffect(() => {
-		getWalletData();
-	}, []);
-
-	const getWalletData = async () => {
-		const dataResponse = await SDKService.getWalletData();
-
-		const savedPairings =
-			dataResponse.savedPairings.length !== 0
-				? dataResponse.savedPairings
-				: walletData.savedPairings;
-
-		dispatch(
-			walletActions.setData({
-				...dataResponse,
-				savedPairings,
-			}),
-		);
-	};
 
 	const handleDisconnect = () => {
-		localStorage.removeItem('hashconnectData');
-
-		SDKService.disconnectWallet();
+		SDKService.getInstance().then((instance) => instance?.disconectHaspack());
 
 		dispatch(walletActions.clearData());
 		dispatch(walletActions.setSelectedStableCoin(undefined));

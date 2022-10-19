@@ -9,3 +9,14 @@ export const validateDecimals = (value: number, decimals: number) => {
 	const dec = decimalsValue ? decimalsValue.length : 0;
 	return dec <= decimals;
 };
+
+export const validateQuantityOverMaxSupply = (
+	value: number,
+	maxSupply?: bigint,
+	totalSupply?: bigint,
+) => {
+	if (maxSupply === (0 as unknown as bigint)) return true; // case when maxSupply is infinite
+	if (totalSupply && maxSupply && totalSupply + (value as unknown as bigint) <= maxSupply)
+		return true;
+	return false;
+};
