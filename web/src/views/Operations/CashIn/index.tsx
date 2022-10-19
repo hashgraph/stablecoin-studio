@@ -5,7 +5,7 @@ import DetailsReview from '../../../components/DetailsReview';
 import InputController from '../../../components/Form/InputController';
 import InputNumberController from '../../../components/Form/InputNumberController';
 import SDKService from '../../../services/SDKService';
-import { validateAccount, validateDecimals } from '../../../utils/validationsHelper';
+import { validateAccount, validateDecimals, validateQuantityOverMaxSupply } from '../../../utils/validationsHelper';
 import OperationLayout from './../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
@@ -29,7 +29,7 @@ const CashInOperation = () => {
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
 	const infoAccount = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 
-	const { decimals = 0, totalSupply } = selectedStableCoin || {};
+	const { decimals = 0, totalSupply, maxSupply } = selectedStableCoin || {};
 
 	const [errorOperation, setErrorOperation] = useState();
 
@@ -86,10 +86,10 @@ const CashInOperation = () => {
 												t('global:validations.decimalsValidation')
 											);
 										},
-										quantityOverTotalSupply: (value: number) => {
+										quantityOverMaxSupply: (value: number) => {
 											return (
-												(totalSupply && totalSupply >= value) ||
-												t('global:validations.overTotalSupply')
+												validateQuantityOverMaxSupply(value, maxSupply, totalSupply) ||
+												t('global:validations.overMaxSupplyCashIn')
 											);
 										},
 									},

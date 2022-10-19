@@ -12,6 +12,7 @@ import type {
 	IAccountInfo,
 	Capabilities,
 	ICashInStableCoinRequest,
+	ICashOutStableCoinRequest,
 } from 'hedera-stable-coin-sdk';
 
 export enum HashConnectConnectionState {
@@ -29,13 +30,6 @@ const appMetadata: AppMetadata = {
 	icon: 'https://absolute.url/to/icon.png',
 	url: '',
 };
-
-interface CashOutRequest {
-	proxyContractId: string;
-	account: HashPackAccount;
-	tokenId: string;
-	amount: number;
-}
 
 interface EventsSetter {
 	onInit: () => void;
@@ -138,9 +132,15 @@ export class SDKService {
 		);
 	}
 
-	public static async burn({ proxyContractId, tokenId, amount, account }: CashOutRequest) {
+	public static async burn({
+		proxyContractId,
+		tokenId,
+		amount,
+		account,
+		publicKey,
+	}: ICashOutStableCoinRequest) {
 		return await SDKService.getInstance().then((instance) =>
-			instance.cashOut({ proxyContractId, account, tokenId, amount }),
+			instance.cashOut({ proxyContractId, account, tokenId, amount, publicKey }),
 		);
 	}
 
@@ -158,8 +158,17 @@ export class SDKService {
 		return SDKService.getInstance().then((instance) => instance.rescue(data));
 	}
 
-	public static async wipe(data: IWipeStableCoinRequest) {
-		return SDKService.getInstance().then((instance) => instance.wipe(data));
+	public static async wipe({
+		proxyContractId,
+		account,
+		tokenId,
+		targetId,
+		amount,
+		publicKey,
+	}: IWipeStableCoinRequest) {
+		return SDKService.getInstance().then((instance) =>
+			instance.wipe({ proxyContractId, account, tokenId, targetId, amount, publicKey }),
+		);
 	}
 
 	public static async getCapabilities({
