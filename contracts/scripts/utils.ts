@@ -43,8 +43,11 @@ export async function deployContractsWithSDK(
     const privateKey = hreConfig.accounts[0].privateKey
     const publicKey = hreConfig.accounts[0].publicKey
 
-    const clientSdk = getClient()
-    clientSdk.setOperator(account, privateKey)
+    let clientSdk = getClient()
+    clientSdk.setOperator(
+        AccountId.fromString(account),
+        PrivateKey.fromStringED25519(privateKey)
+    )
 
     console.log(
         `Deploying ${HederaERC20__factory.name} contract... please wait.`
@@ -77,6 +80,11 @@ export async function deployContractsWithSDK(
         HederaERC20__factory.abi
     )
 
+    clientSdk = getClient()
+    clientSdk.setOperator(
+        AccountId.fromString(account),
+        PrivateKey.fromStringED25519(privateKey)
+    )
     console.log(
         `Deploying ${HTSTokenOwner__factory.name} contract... please wait.`
     )
@@ -130,6 +138,11 @@ export async function deployContractsWithSDK(
         HTSTokenOwner__factory.abi
     )
 
+    clientSdk = getClient()
+    clientSdk.setOperator(
+        AccountId.fromString(account),
+        PrivateKey.fromStringED25519(privateKey)
+    )
     console.log('Associate administrator account to token... please wait.')
     parametersContractCall = [
         AccountId.fromString(account!).toSolidityAddress(),
@@ -215,6 +228,11 @@ export function getClient() {
         default:
         case 'testnet':
             return Client.forTestnet()
+            break
+        case 'local':
+            // eslint-disable-next-line no-case-declarations
+            const node = { '127.0.0.1:50211': new AccountId(3) }
+            return Client.forNetwork(node).setMirrorNetwork('127.0.0.1:5600')
             break
     }
 }

@@ -23,7 +23,7 @@
 
                 
 
-        const scAddress = "0000000000000000000000000000000002e65091"; //PROXYADDRESS
+        const scAddress = "000000000000000000000000000000000000043b"; //PROXYADDRESS
 
         // The ERC-20 Contract ABI, which is a common contract interface
         // for tokens (this is the Human-Readable ABI format)
@@ -31,16 +31,20 @@
             // Some details about the token
             "function name() view returns (string)",
             "function symbol() view returns (string)",
-            "function associateToken(address adr) returns (bool)",
+            "function associateToken(address adr) public returns (bool)",
             "function mint(address account, uint256 amount) external returns (bool)",
 
         ];
         // The contract object
         const contract = new ethers.Contract(scAddress, scABI, provider);
         const contractWithSigner = contract.connect(signer);
-        const result = await contractWithSigner.mint(currentAccount,10);
+        // const result = await contractWithSigner.associateToken(currentAccount);
+            const result = await contract.name();
+            const result2 = await contract.symbol();
 
-        console.log(result);
+        // const result = await contractWithSigner.mint(currentAccount,10);
+
+        console.log(result,result2);
     }
 
 

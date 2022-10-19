@@ -4,5 +4,5 @@ console.log(
   "tokenId: " + AccountId.fromString("0.0.48648355").toSolidityAddress()
 );
 console.log(
-  "proxy: " + AccountId.fromString("0.0.48648337").toSolidityAddress()
+  "proxy: " + AccountId.fromString("0.0.48660469").toSolidityAddress()
 );
