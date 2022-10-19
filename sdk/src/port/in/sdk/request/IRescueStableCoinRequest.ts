@@ -1,3 +1,3 @@
-import { IRequestContractsAmount, ITokenIdRequestModel } from './IRequestContracts.js';
+import { ICoreOperation } from './IRequestContracts';
 
-export type IRescueStableCoinRequest = IRequestContractsAmount & ITokenIdRequestModel;
+export type IRescueStableCoinRequest = ICoreOperation;

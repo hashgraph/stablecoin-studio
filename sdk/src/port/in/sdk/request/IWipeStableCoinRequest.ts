@@ -1,10 +1,3 @@
-import { PublicKey } from '../sdk.js';
-import {
-	IRequestContractsAmount,
-	ITokenIdRequestModel,
-	ITargetIdRequestModel,
-} from './IRequestContracts.js';
+import { ITargetIdRequestModel, ICoreOperation } from './IRequestContracts.js';
 
-export type IWipeStableCoinRequest = IRequestContractsAmount &
-	ITokenIdRequestModel &
-	ITargetIdRequestModel & { publicKey?: PublicKey };
+export type IWipeStableCoinRequest = ICoreOperation & ITargetIdRequestModel;
