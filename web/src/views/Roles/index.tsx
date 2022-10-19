@@ -3,15 +3,15 @@ import { useTranslation } from 'react-i18next';
 import BaseContainer from '../../components/BaseContainer';
 import { NamedRoutes } from '../../Router/NamedRoutes';
 import GridDirectAccess from '../../components/GridDirectAccess';
-// import { useSelector } from 'react-redux';
+ import { useSelector } from 'react-redux';
 
 import {
-	// SELECTED_WALLET_CAPABILITIES
+	SELECTED_WALLET_CAPABILITIES
 } from '../../store/slices/walletSlice';
-// import { Capabilities } from 'hedera-stable-coin-sdk';
+import { Capabilities } from 'hedera-stable-coin-sdk';
 
 const Roles = () => {
-	// const capabilities = useSelector(SELECTED_WALLET_CAPABILITIES);
+	const capabilities = useSelector(SELECTED_WALLET_CAPABILITIES);
 
 	const { t } = useTranslation('roles');
 	const directAccesses = [
@@ -29,7 +29,7 @@ const Roles = () => {
 			icon: 'PencilSimple',
 			route: NamedRoutes.EditRole,
 			title: t('edit'),
-			// isDisabled: !capabilities.contains(Capabilities.CASH_IN)
+			isDisabled: !capabilities!.includes(Capabilities.CASH_IN)
 		},
 	];
 
