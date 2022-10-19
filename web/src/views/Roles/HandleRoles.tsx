@@ -15,7 +15,7 @@ import { SelectController } from '../../components/Form/SelectController';
 import { validateDecimals } from '../../utils/validationsHelper';
 import { useSelector } from 'react-redux';
 import SDKService from '../../services/SDKService';
-import { formatAmount, formatAmountWithDecimals } from '../../utils/inputHelper';
+import { formatAmountWithDecimals } from '../../utils/inputHelper';
 
 import {
 	SELECTED_WALLET_COIN,
@@ -59,6 +59,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 
 	const [errorOperation, setErrorOperation] = useState();
 	const [limit, setLimit] = useState<number | null>();
+	const [modalErrorDescription, setModalErrorDescription ] = useState<string>('modalErrorDescription');
 
 	register(fields.supplierQuantitySwitch, { value: true });
 	const { isOpen, onOpen, onClose } = useDisclosure();
@@ -74,17 +75,31 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const handleSubmit: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
 		try {
-			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId) {
+			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId || !destinationAccount) {
 				onError();
 				return;
 			}
+
+			const alreadyHasRole = await SDKService.hasRole({
+				proxyContractId: selectedStableCoin.memo.proxyContract,
+				account,
+				tokenId: selectedStableCoin.tokenId,
+				targetId: destinationAccount,
+				role: fakeOptions[0].value
+			}) ;
+			if (!alreadyHasRole || !alreadyHasRole[0]){
+				setModalErrorDescription('hasNotRoleError');
+				onError();
+				return;
+			}
+
 			switch(supplierLimitOption) {
 				case 'INCREASE':
 					await SDKService.increaseSupplierAllowance({
 						proxyContractId: selectedStableCoin.memo.proxyContract,
 						account,
 						tokenId: selectedStableCoin.tokenId,
-						targetId: destinationAccount!,
+						targetId: destinationAccount,
 						amount
 					});
 					break;
@@ -94,7 +109,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 						proxyContractId: selectedStableCoin.memo.proxyContract,
 						account,
 						tokenId: selectedStableCoin.tokenId,
-						targetId: destinationAccount!,
+						targetId: destinationAccount,
 						amount
 					});
 					break;
@@ -103,7 +118,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 					await SDKService.resetSupplierAllowance({
 						proxyContractId: selectedStableCoin.memo.proxyContract,
 						account,
-						targetId: destinationAccount!
+						targetId: destinationAccount
 					});
 					break;
 
@@ -112,7 +127,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 						proxyContractId: selectedStableCoin.memo.proxyContract,
 						account,
 						tokenId: selectedStableCoin.tokenId,
-						targetId: destinationAccount!
+						targetId: destinationAccount
 					});
 					setLimit(limit?.[0]);
 			}
@@ -277,7 +292,8 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 			</RoleLayout>
 			<ModalsHandler
 				errorNotificationTitle={t(`roles:${action}.modalErrorTitle`)}
-				errorNotificationDescription={t(`roles:${action}.modalErrorDescription`)}
+				// @ts-ignore-next-line
+				errorNotificationDescription={t(`roles:${action}.${modalErrorDescription}`)}
 				modalActionProps={{
 					isOpen,
 					onClose,

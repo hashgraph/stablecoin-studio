@@ -28,7 +28,8 @@
         "switchLabel": "Infinity?",
         "amountLabel": "How much tokens?",
         "amountPlaceholder": "Introduce amount",
-        "checkCashinLimitSuccessDesc": ""
+        "checkCashinLimitSuccessDesc": "",
+        "hasNotRoleError": "This account has not the requested role"
     },
     "revokeRole": {
         "title": "Revoke Role",
@@ -51,7 +52,8 @@
         "switchLabel": "",
         "amountLabel": "How much tokens?",
         "amountPlaceholder": "Introduce amount",
-        "checkCashinLimitSuccessDesc": ""
+        "checkCashinLimitSuccessDesc": "",
+        "hasNotRoleError": "This account has not the requested role"
     },
     "editRole": {
         "title": "Manage Supplier Limit",
@@ -74,6 +76,7 @@
         "switchLabel": "Infinity?",
         "amountLabel": "How much tokens?",
         "amountPlaceholder": "Introduce amount",
-        "checkCashinLimitSuccessDesc": "The account {{ account }} has a cash in limit of {{ limit }}."
+        "checkCashinLimitSuccessDesc": "The account {{ account }} has a cash in limit of {{ limit }}.",
+        "hasNotRoleError": "This account has not the requested role"
     }
 }

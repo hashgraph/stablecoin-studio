@@ -1,3 +1,4 @@
+import { StableCoinRole } from 'hedera-stable-coin-sdk';
 import type { Action } from './HandleRoles';
 
 export const actions: Record<string, Action> = {
@@ -7,11 +8,11 @@ export const actions: Record<string, Action> = {
 };
 
 export const fakeOptions = [
-	{ value: 1, label: 'Cash in' },
-	{ value: 2, label: 'Burn' },
-	{ value: 3, label: 'Wipe' },
-	{ value: 4, label: 'Rescue' },
-	{ value: 5, label: 'Pause' }
+	{ value: StableCoinRole.CASHIN_ROLE, label: 'Cash in' },
+	{ value: StableCoinRole.BURN_ROLE, label: 'Burn' },
+	{ value: StableCoinRole.WIPE_ROLE, label: 'Wipe' },
+	{ value: StableCoinRole.RESCUE_ROLE, label: 'Rescue' },
+	{ value: StableCoinRole.PAUSER_ROLE, label: 'Pause' },
 ];
 
 export const cashinLimitOptions = [

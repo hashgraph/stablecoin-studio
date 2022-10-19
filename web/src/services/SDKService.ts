@@ -9,6 +9,7 @@ import type {
 	HashPackAccount,
 	IGetBalanceStableCoinRequest,
 	IWipeStableCoinRequest,
+	IRoleStableCoinRequest,
 	IAllowanceRequest,
 	IGetSupplierAllowance,
 	IBasicRequest
@@ -175,6 +176,10 @@ export class SDKService {
 
 	public static async checkSupplierAllowance(data: IGetSupplierAllowance) {
 		return SDKService.getInstance().then((instance) => instance.supplierAllowance(data));
+	}
+
+	public static async hasRole(data: IRoleStableCoinRequest) {
+		return SDKService.getInstance().then((instance) => instance.hasRole(data));
 	}
 }
 
