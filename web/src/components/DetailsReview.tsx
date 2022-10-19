@@ -61,9 +61,14 @@ const DetailsReview = (props: DetailsReviewProps) => {
 							>
 								{detail.label}
 							</Text>
-							<Text {...(detail.valueInBold ? textInBoldProps : commonTextProps)}>
-								{detail.value}
-							</Text>
+
+							{typeof detail.value === 'string' || typeof detail.value === 'number' ? (
+								<Text {...(detail.valueInBold ? textInBoldProps : commonTextProps)}>
+									{detail.value}
+								</Text>
+							) : (
+								detail.value
+							)}
 						</Flex>
 						{divider && details.length !== index + 1 && (
 							<Divider title='divider' mt='13px' mb='13px' />

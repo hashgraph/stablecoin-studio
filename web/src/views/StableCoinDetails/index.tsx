@@ -1,32 +1,18 @@
-import { Box, Flex } from '@chakra-ui/react';
+import { Box, Flex, Text, Tooltip } from '@chakra-ui/react';
 import type { StableCoinMemo } from 'hedera-stable-coin-sdk';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import BaseContainer from '../../components/BaseContainer';
 import DetailsReview from '../../components/DetailsReview';
+import Icon from '../../components/Icon';
+import TooltipCopy from '../../components/TooltipCopy';
 import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
-import { formatAmountWithDecimals } from '../../utils/inputHelper';
+import { formatAmountWithDecimals, formatShortKey } from '../../utils/inputHelper';
 
 const StableCoinDetails = () => {
-	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const { t, i18n } = useTranslation('stableCoinDetails');
 
-	const getKeyText = (
-		key: { key: string; type: string; id: never } | { id: string; key: never; type: never },
-	) => {
-		if (!key) {
-			return t('none');
-		}
-		if (key.id) {
-			return t('smartContract');
-		}
-		if (key.key === 'same as user') {
-			// TODO: check current public key
-			return t('currentUser');
-		} else {
-			return t('otherKey', { key: key.key });
-		}
-	};
+	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 
 	const getMemoInformation = (memo: StableCoinMemo | undefined) => {
 		return (
@@ -40,9 +26,44 @@ const StableCoinDetails = () => {
 		);
 	};
 
+	const renderKeys = ({
+		key,
+	}: {
+		key: { id: string; key: never } | { key: string; id: never } | undefined;
+	}) => {
+		if (!key) return t('none');
+		if (key.id) return t('smartContract');
+		if (key.key === 'same as user')
+			// TODO: check current public key
+			return t('currentUser');
+
+		return (
+			<Flex
+				gap={2}
+				fontSize='14px'
+				fontWeight={500}
+				lineHeight='17px'
+				color='brand.gray'
+				wordBreak='break-all'
+			>
+				<Tooltip label={key.key} bgColor='black' borderRadius='5px'>
+					<Text>{t('otherKey', { key: formatShortKey({ key: key.key }) })}</Text>
+				</Tooltip>
+				<TooltipCopy valueToCopy={key.key}>
+					<Icon name='Copy' />
+				</TooltipCopy>
+			</Flex>
+		);
+	};
+
 	return (
 		<BaseContainer title={t('title')}>
-			<Flex justify='center' p={{ base: 4, md: '128px' }} pt={{ base: 4, lg: 14 }}>
+			<Flex
+				justify='center'
+				p={{ base: 4, md: '128px' }}
+				pt={{ base: 4, lg: 14 }}
+				overflowY='scroll'
+			>
 				{selectedStableCoin && (
 					<Box flex={1} maxW='563px'>
 						<DetailsReview
@@ -106,23 +127,33 @@ const StableCoinDetails = () => {
 								},
 								{
 									label: t('adminKey'),
-									value: getKeyText(selectedStableCoin?.adminKey as any), // TODO: remove any when received correct sdk type
+									value: renderKeys({
+										key: selectedStableCoin?.adminKey as any,
+									}),
 								},
 								{
 									label: t('kycKey'),
-									value: getKeyText(selectedStableCoin?.kycKey as any),
+									value: renderKeys({
+										key: selectedStableCoin?.kycKey as any,
+									}),
 								},
 								{
 									label: t('freezeKey'),
-									value: getKeyText(selectedStableCoin?.freezeKey as any),
+									value: renderKeys({
+										key: selectedStableCoin?.freezeKey as any,
+									}),
 								},
 								{
 									label: t('wipeKey'),
-									value: getKeyText(selectedStableCoin?.wipeKey as any),
+									value: renderKeys({
+										key: selectedStableCoin?.wipeKey as any,
+									}),
 								},
 								{
 									label: t('supplyKey'),
-									value: getKeyText(selectedStableCoin?.supplyKey as any),
+									value: renderKeys({
+										key: selectedStableCoin?.supplyKey as any,
+									}),
 								},
 							]}
 						/>
