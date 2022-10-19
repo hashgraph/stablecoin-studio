@@ -18,12 +18,13 @@
         // send ether and pay to change state within the blockchain.
         // For this, you need the account signer...
         const signer = provider.getSigner()
-        const currentAccount = await signer.getAddress()
+        const currentAccount = await signer.getAddress();
+        console.log(currentAccount);
         // console.log( await provider.getBalance(currentAccount).then(r => r.toString()));
 
                 
 
-        const scAddress = "000000000000000000000000000000000000043b"; //PROXYADDRESS
+        const scAddress = "000000000000000000000000000000000000040b"; //PROXYADDRESS
 
         // The ERC-20 Contract ABI, which is a common contract interface
         // for tokens (this is the Human-Readable ABI format)
@@ -41,10 +42,10 @@
         // const result = await contractWithSigner.associateToken(currentAccount);
             const result = await contract.name();
             const result2 = await contract.symbol();
+            // const result3 = await contractWithSigner.associateToken(currentAccount);
+        const result3 = await contractWithSigner.mint(currentAccount,10);
 
-        // const result = await contractWithSigner.mint(currentAccount,10);
-
-        console.log(result,result2);
+        console.log(result,result2,result3);
     }
 
 

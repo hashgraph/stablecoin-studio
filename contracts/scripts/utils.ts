@@ -43,7 +43,7 @@ export async function deployContractsWithSDK(
     const privateKey = PrivateKey.fromStringECDSA(
         hreConfig.accounts[0].privateKey
     )
-    console.log(privateKey)
+    // console.log(privateKey)
 
     const publicKey = privateKey.publicKey
     console.log('Mi PRIVATEKEY : ' + privateKey)
@@ -51,10 +51,7 @@ export async function deployContractsWithSDK(
     console.log('Mi ACCOUNT : ' + account)
 
     let clientSdk = getClient()
-    clientSdk.setOperator(
-        AccountId.fromString(account),
-        PrivateKey.fromStringED25519(privateKey)
-    )
+    clientSdk.setOperator(AccountId.fromString(account), privateKey)
 
     console.log(
         `Deploying ${HederaERC20__factory.name} contract... please wait.`
@@ -88,10 +85,7 @@ export async function deployContractsWithSDK(
     )
 
     clientSdk = getClient()
-    clientSdk.setOperator(
-        AccountId.fromString(account),
-        PrivateKey.fromStringED25519(privateKey)
-    )
+    clientSdk.setOperator(AccountId.fromString(account), privateKey)
     console.log(
         `Deploying ${HTSTokenOwner__factory.name} contract... please wait.`
     )
@@ -146,13 +140,12 @@ export async function deployContractsWithSDK(
     )
 
     clientSdk = getClient()
-    clientSdk.setOperator(
-        AccountId.fromString(account),
-        PrivateKey.fromStringED25519(privateKey)
-    )
+    clientSdk.setOperator(AccountId.fromString(account), privateKey)
     console.log('Associate administrator account to token... please wait.')
+
     parametersContractCall = [
-        AccountId.fromString(account!).toSolidityAddress(),
+        // AccountId.fromString(account!).toSolidityAddress(),
+        '0x' + publicKey.toEthereumAddress(),
     ]
     await contractCall(
         proxyContract,
@@ -294,7 +287,6 @@ async function deployContractSDK(
     clientOperator: any,
     constructorParameters?: any
 ) {
-    console.log('DEsplegar contrato')
     // console.log(clientOperator)
 
     const transaction = new ContractCreateFlow()
@@ -308,9 +300,7 @@ async function deployContractSDK(
     const contractCreateSign = await transaction.sign(privateKey)
 
     const txResponse = await contractCreateSign.execute(clientOperator)
-    console.log('HEYY')
     const receipt = await txResponse.getReceipt(clientOperator)
-    console.log('HEYY22')
     const contractId = receipt.contractId
     console.log(
         ` ${
