@@ -7,7 +7,7 @@ import { HashConnectSigner } from "./provider/signer";
 import { MirrorNodeClient } from "./mirror-node/mirror-node-client.js";
 import { PublicKey } from "@hashgraph/sdk";
 
-global.Buffer = global.Buffer || require('buffer').Buffer;
+global.Buffer = global.Buffer || require("buffer").Buffer;
 
 /**
  * Main interface with hashpack
