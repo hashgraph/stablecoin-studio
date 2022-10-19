@@ -5,12 +5,14 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "server":"npx lite-server"
+    "server": "npx lite-server"
   },
   "keywords": [],
   "author": "",
+  "type":"module",
   "license": "ISC",
   "dependencies": {
+    "@hashgraph/sdk": "^2.18.4",
     "lite-server": "^2.6.1"
   }
 }
