@@ -6,12 +6,14 @@ import {
 	ContractCreateFlow,
 	ContractExecuteTransaction,
 	AccountInfo,
+	TokenMintTransaction,
 } from '@hashgraph/sdk';
 import { HashConnect, MessageTypes } from 'hashconnect';
 import { HashConnectProvider } from 'hashconnect/provider/provider';
 import HashPackAccount from '../../../../domain/context/account/HashPackAccount.js';
 import { getHederaNetwork, HederaNetwork } from '../../../../core/enum.js';
 import { HashConnectSigner } from 'hashconnect/provider/signer';
+import { NetworkType } from 'hashconnect/types';
 
 export class HashPackSigner implements ISigner {
 	private hc: HashConnect;
@@ -31,7 +33,7 @@ export class HashPackSigner implements ISigner {
 		this.account = account;
 		this.topic = topic;
 		this.provider = this.hc.getProvider(
-			getHederaNetwork(network).name,
+			getHederaNetwork(network).name as NetworkType,
 			topic,
 			account.accountId.id,
 		);
@@ -45,14 +47,21 @@ export class HashPackSigner implements ISigner {
 			| ContractExecuteTransaction
 			| ContractCreateFlow,
 	): Promise<TransactionResponse | MessageTypes.TransactionResponse> {
+		let trans = transaction
 		if (this.signer) {
-			if (transaction instanceof ContractCreateFlow) {
+			if (
+				trans instanceof ContractCreateFlow ||
+				trans instanceof TokenMintTransaction
+			) {
 				console.log(transaction);
-				return await transaction.executeWithSigner(this.signer);
+				if (!(transaction as Transaction).isFrozen()) {
+					trans = await(transaction as Transaction).freezeWithSigner(
+						this.signer,
+					);
+				}
+				return await trans.executeWithSigner(this.signer);
 			} else {
-				const signedT = await transaction.freezeWithSigner(
-					this.signer,
-				);
+				const signedT = await trans.freezeWithSigner(this.signer);
 				const t = await this.signer.signTransaction(signedT);
 				return await this.hc.sendTransaction(this.topic, {
 					topic: this.topic,
@@ -60,7 +69,7 @@ export class HashPackSigner implements ISigner {
 					metadata: {
 						accountToSign: this.signer.getAccountId().toString(),
 						returnTransaction: false,
-						getRecord: true
+						getRecord: true,
 					},
 				});
 			}

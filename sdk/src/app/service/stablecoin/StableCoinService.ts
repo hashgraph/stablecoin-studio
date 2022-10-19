@@ -164,7 +164,9 @@ export default class StableCoinService extends Service {
 		const capabilities: Capabilities[] =
 			await this.getCapabilitiesStableCoin(
 				req.tokenId,
-				req.account?.privateKey?.publicKey?.key ?? '',
+				req.publicKey
+					? req.publicKey.key
+					: req.account?.privateKey?.publicKey?.key ?? '',
 			);
 		if (capabilities.includes(Capabilities.CASH_IN)) {
 			const result = await this.repository.cashIn(

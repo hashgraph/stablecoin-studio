@@ -9,6 +9,10 @@ import type {
 	HashPackAccount,
 	IGetBalanceStableCoinRequest,
 	IWipeStableCoinRequest,
+	IAccountInfo,
+	Capabilities,
+	ICashInStableCoinRequest,
+	ICashOutStableCoinRequest,
 } from 'hedera-stable-coin-sdk';
 
 export enum HashConnectConnectionState {
@@ -26,21 +30,6 @@ const appMetadata: AppMetadata = {
 	icon: 'https://absolute.url/to/icon.png',
 	url: '',
 };
-
-interface CashInRequest {
-	proxyContractId: string;
-	account: HashPackAccount;
-	tokenId: string;
-	targetId: string;
-	amount: number;
-}
-
-interface CashOutRequest {
-	proxyContractId: string;
-	account: HashPackAccount;
-	tokenId: string;
-	amount: number;
-}
 
 interface EventsSetter {
 	onInit: () => void;
@@ -122,21 +111,36 @@ export class SDKService {
 		return (await SDKService.getInstance())?.getStableCoinDetails({ id });
 	}
 
+	public static async getAccountInfo({
+		account,
+	}: {
+		account: HashPackAccount;
+	}): Promise<IAccountInfo | null> {
+		return (await SDKService.getInstance())?.getAccountInfo({ account });
+	}
+
 	public static async cashIn({
 		proxyContractId,
 		tokenId,
 		targetId,
 		amount,
 		account,
-	}: CashInRequest) {
+		publicKey,
+	}: ICashInStableCoinRequest) {
 		return await SDKService.getInstance().then((instance) =>
-			instance.cashIn({ proxyContractId, account, tokenId, targetId, amount }),
+			instance.cashIn({ proxyContractId, account, tokenId, targetId, amount, publicKey }),
 		);
 	}
 
-	public static async burn({ proxyContractId, tokenId, amount, account }: CashOutRequest) {
+	public static async burn({
+		proxyContractId,
+		tokenId,
+		amount,
+		account,
+		publicKey,
+	}: ICashOutStableCoinRequest) {
 		return await SDKService.getInstance().then((instance) =>
-			instance.cashOut({ proxyContractId, account, tokenId, amount }),
+			instance.cashOut({ proxyContractId, account, tokenId, amount, publicKey }),
 		);
 	}
 
@@ -154,8 +158,27 @@ export class SDKService {
 		return SDKService.getInstance().then((instance) => instance.rescue(data));
 	}
 
-	public static async wipe(data: IWipeStableCoinRequest) {
-		return SDKService.getInstance().then((instance) => instance.wipe(data));
+	public static async wipe({
+		proxyContractId,
+		account,
+		tokenId,
+		targetId,
+		amount,
+		publicKey,
+	}: IWipeStableCoinRequest) {
+		return SDKService.getInstance().then((instance) =>
+			instance.wipe({ proxyContractId, account, tokenId, targetId, amount, publicKey }),
+		);
+	}
+
+	public static async getCapabilities({
+		id,
+		publicKey,
+	}: {
+		id: string;
+		publicKey: string;
+	}): Promise<Capabilities[] | null> {
+		return (await SDKService.getInstance())?.getCapabilitiesStableCoin(id, publicKey);
 	}
 }
 

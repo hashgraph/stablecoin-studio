@@ -1,4 +1,4 @@
-import { Account, StableCoinRole } from '../sdk.js';
+import { Account, StableCoinRole, PublicKey } from '../sdk.js';
 
 export interface IRequestContracts {
 	proxyContractId: string;
@@ -37,4 +37,10 @@ export interface IAllowanceRequest
 		ITargetIdRequestModel,
 		ITokenIdRequestModel {
 	amount: number;
+}
+
+export interface ICoreOperation
+	extends IRequestContractsAmount,
+		ITokenIdRequestModel {
+	publicKey?: PublicKey;
 }
