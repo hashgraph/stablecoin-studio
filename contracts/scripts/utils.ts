@@ -259,11 +259,13 @@ async function createToken(
         .setInitialSupply(initialSupply)
         .setTokenMemo(memo)
         .setFreezeDefault(freeze)
-        .setTreasuryAccountId(AccountId.fromString(accountId))
+        .setTreasuryAccountId(AccountId.fromString(contractId))
+        // .setTreasuryAccountId(AccountId.fromString(contractId.toString()))
         .setAdminKey(publicKey)
         .setFreezeKey(publicKey)
         .setWipeKey(DelegateContractId.fromString(contractId))
-        .setSupplyKey(DelegateContractId.fromString(contractId))
+        .setSupplyKey(publicKey)
+    // .setSupplyKey(DelegateContractId.fromString(contractId))
 
     if (maxSupply !== null) {
         transaction.setSupplyType(TokenSupplyType.Finite)
