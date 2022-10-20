@@ -5,16 +5,18 @@ import DetailsReview from '../../../components/DetailsReview';
 import InputController from '../../../components/Form/InputController';
 import InputNumberController from '../../../components/Form/InputNumberController';
 import SDKService from '../../../services/SDKService';
-import { validateAccount, validateDecimals } from '../../../utils/validationsHelper';
+import { validateAccount, validateDecimals, validateQuantityOverMaxSupply } from '../../../utils/validationsHelper';
 import OperationLayout from './../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
 import { useSelector } from 'react-redux';
 import {
+	SELECTED_WALLET_ACCOUNT_INFO,
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNT,
 } from '../../../store/slices/walletSlice';
 import { useState } from 'react';
+import { PublicKey } from 'hedera-stable-coin-sdk';
 
 const CashInOperation = () => {
 	const {
@@ -25,8 +27,9 @@ const CashInOperation = () => {
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
+	const infoAccount = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 
-	const { decimals = 0, totalSupply } = selectedStableCoin || {};
+	const { decimals = 0, totalSupply, maxSupply } = selectedStableCoin || {};
 
 	const [errorOperation, setErrorOperation] = useState();
 
@@ -49,6 +52,10 @@ const CashInOperation = () => {
 				tokenId: selectedStableCoin.tokenId,
 				targetId: destinationAccount,
 				amount,
+				publicKey: new PublicKey({
+					key: infoAccount.publicKey?.key ?? '',
+					type: infoAccount.publicKey?.type ?? '',
+				}),
 			});
 			onSuccess();
 		} catch (error: any) {
@@ -79,10 +86,10 @@ const CashInOperation = () => {
 												t('global:validations.decimalsValidation')
 											);
 										},
-										quantityOverTotalSupply: (value: number) => {
+										quantityOverMaxSupply: (value: number) => {
 											return (
-												(totalSupply && totalSupply >= value) ||
-												t('global:validations.overTotalSupply')
+												validateQuantityOverMaxSupply(value, maxSupply, totalSupply) ||
+												t('global:validations.overMaxSupplyCashIn')
 											);
 										},
 									},

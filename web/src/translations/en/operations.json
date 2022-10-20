@@ -19,6 +19,7 @@
         "decimals": "Decimals",
         "initialSupply": "Initial supply",
         "totalSupply": "Total supply",
+        "maxSupply": "Max supply",
         "supplyType": "Supply type",
         "infinite": "Infinite",
         "finite": "Finite"

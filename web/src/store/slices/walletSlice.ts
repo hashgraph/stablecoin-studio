@@ -4,6 +4,8 @@ import type {
 	InitializationData,
 	IStableCoinDetail,
 	IStableCoinList,
+	Capabilities,
+	IAccountInfo,
 } from 'hedera-stable-coin-sdk';
 import SDKService from '../../services/SDKService';
 import type { RootState } from '../store';
@@ -13,8 +15,10 @@ interface InitialStateProps {
 	hasWalletExtension: boolean;
 	isPaired: boolean;
 	loading: boolean;
+	accountInfo: IAccountInfo;
 	selectedStableCoin?: IStableCoinDetail;
 	stableCoinList?: IStableCoinList[];
+	capabilities?: Capabilities[] | undefined;
 }
 
 export const initialState: InitialStateProps = {
@@ -27,8 +31,10 @@ export const initialState: InitialStateProps = {
 	hasWalletExtension: false,
 	isPaired: false,
 	loading: false,
+	accountInfo: {},
 	selectedStableCoin: undefined,
 	stableCoinList: [],
+	capabilities: [],
 };
 
 export const getStableCoinList = createAsyncThunk(
@@ -65,6 +71,12 @@ export const walletSlice = createSlice({
 		setIsPaired(state) {
 			state.isPaired = true;
 		},
+		setCapabilities: (state, action) => {
+			state.capabilities = action.payload;
+		},
+		setAccountInfo: (state, action) => {
+			state.accountInfo = action.payload;
+		},
 		clearData: (state) => {
 			state.data = initialState.data;
 		},
@@ -84,6 +96,8 @@ export const STABLE_COIN_LIST = (state: RootState) => state.wallet.stableCoinLis
 export const SELECTED_WALLET_DATA: any = (state: RootState) => state.wallet.data;
 export const SELECTED_WALLET_COIN = (state: RootState) => state.wallet.selectedStableCoin;
 export const SELECTED_WALLET_PAIRED: any = (state: RootState) => state.wallet.data.savedPairings[0];
+export const SELECTED_WALLET_CAPABILITIES = (state: RootState) => state.wallet.capabilities;
+export const SELECTED_WALLET_ACCOUNT_INFO = (state: RootState) => state.wallet.accountInfo;
 export const HAS_WALLET_EXTENSION = (state: RootState) => state.wallet.hasWalletExtension;
 export const IS_PAIRED = (state: RootState) => state.wallet.isPaired;
 export const SELECTED_WALLET_PAIRED_ACCOUNTID = (state: RootState) =>
