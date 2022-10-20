@@ -1,3 +1,4 @@
+import PublicKey from '../../../../domain/context/account/PublicKey.js';
 import {
 	IAccountWithKeyRequestModel,
 	IAmountRequestModel,
@@ -9,4 +10,6 @@ export default interface ICashOutStableCoinServiceRequestModel
 	extends IProxyContractIdRequestModel,
 		IAmountRequestModel,
 		IAccountWithKeyRequestModel,
-		ITokenIdRequestModel {}
+		ITokenIdRequestModel {
+	publicKey?: PublicKey;
+}
