@@ -13,11 +13,10 @@ import OptionalDetails from './OptionalDetails';
 import ManagementPermissions from './ManagementPermissions';
 import Review from './Review';
 import { OTHER_KEY_VALUE } from './components/KeySelector';
-import { SELECTED_WALLET_PAIRED_ACCOUNT } from '../../store/slices/walletSlice';
+import { SELECTED_WALLET_ACCOUNT_INFO, SELECTED_WALLET_PAIRED_ACCOUNT } from '../../store/slices/walletSlice';
 import SDKService from '../../services/SDKService';
 import ModalNotification from '../../components/ModalNotification';
 import type { ICreateStableCoinRequest} from 'hedera-stable-coin-sdk';
-import { PublicKey} from 'hedera-stable-coin-sdk';
 import { useSelector } from 'react-redux';
 
 const StableCoinCreation = () => {
@@ -32,6 +31,7 @@ const StableCoinCreation = () => {
 	} = form;
 
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
+	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 
 	const [isValidForm, setIsValidForm] = useState<boolean>(false);
 	const [currentStep, setCurrentStep] = useState<number>(0);
@@ -140,6 +140,7 @@ const StableCoinCreation = () => {
 			autoRenewAccount: autorenewAccount,
 			initialSupply: BigInt(initialSupply),
 			maxSupply: totalSupply,
+			adminKey: accountInfo.publicKey
 		};
 
 		try {
