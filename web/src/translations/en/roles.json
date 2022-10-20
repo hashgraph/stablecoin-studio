@@ -1,5 +1,5 @@
 {
-    "edit": "Manage supplier limit",
+    "edit": "Manage cash in limit",
     "give": "Give role",
     "revoke": "Revoke role",
     "revokeModalErrorDesc": "please try again later.",
@@ -57,15 +57,15 @@
         "checkCashinLimitSuccessDesc": ""
     },
     "editRole": {
-        "title": "Manage Supplier Limit",
+        "title": "Manage Cash in Limit",
         "accountLabel": "Account",
         "accountPlaceholder": "Introduce account",
         "infinity": "Infinity",
-        "modalActionDetailAccount": "Account to edit role",
+        "modalActionDetailAccount": "Account to manage cash in limit",
         "modalActionDetailRole": "Role to edit",
         "modalActionDetailSupplierQuantity": "Token quantity",
         "modalActionConfirmButton": "Confirm",
-        "modalActionTitle": "Manage supplier limit",
+        "modalActionTitle": "Manage cash in limit",
         "modalActionSubtitle": "Action details review",
         "modalSuccessTitle": "Operation successfully performed",
         "modalErrorTitle": "Error performing the operation",
