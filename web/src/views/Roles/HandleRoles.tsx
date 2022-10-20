@@ -1,4 +1,3 @@
-/* eslint-disable */ 
 import { useTranslation } from 'react-i18next';
 import { Box, HStack, Text, Stack, useDisclosure } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
@@ -15,7 +14,7 @@ import { SelectController } from '../../components/Form/SelectController';
 import { validateDecimals } from '../../utils/validationsHelper';
 import { useSelector } from 'react-redux';
 import SDKService from '../../services/SDKService';
-import { formatAmountWithDecimals } from '../../utils/inputHelper';
+import {formatAmount } from '../../utils/inputHelper';
 
 import {
 	SELECTED_WALLET_COIN,
@@ -57,6 +56,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [errorOperation, setErrorOperation] = useState();
 	const [limit, setLimit] = useState<number | null>();
 	const [modalErrorDescription, setModalErrorDescription ] = useState<string>('modalErrorDescription');
@@ -122,7 +122,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 					});
 					break;
 
-				case 'CHECK':
+				case 'CHECK': {
 					const limit = await SDKService.checkSupplierAllowance({
 						proxyContractId: selectedStableCoin.memo.proxyContract,
 						account,
@@ -130,6 +130,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 						targetId: destinationAccount
 					});
 					setLimit(limit?.[0]);
+				}
 			}
 			onSuccess();
 		} catch (error: any) {
@@ -246,7 +247,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 				valueInBold: true,
 			};
 			details.push(supplierLimitAction);			
-			if (amount !== undefined) {
+			if (increaseOrDecreseOptionSelected) {
 				const value = amount;
 				const amountAction: Detail = {
 					label:t(`roles:${action}.amountLabel`),
@@ -307,11 +308,11 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 				successNotificationTitle={t(`roles:${action}.modalSuccessTitle`)}
 				successNotificationDescription={checkOptionSelected ? t(`roles:${action}.checkCashinLimitSuccessDesc`, {
 					account: destinationAccount,
-					limit: formatAmountWithDecimals({
+					limit:formatAmount({
 						amount: limit!,
 						decimals: selectedStableCoin!.decimals!
 					})
-				}) : ''}				
+				}):''}
 			/>
 		</>
 	);
