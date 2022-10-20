@@ -13,10 +13,14 @@ import OptionalDetails from './OptionalDetails';
 import ManagementPermissions from './ManagementPermissions';
 import Review from './Review';
 import { OTHER_KEY_VALUE } from './components/KeySelector';
-import { SELECTED_WALLET_ACCOUNT_INFO, SELECTED_WALLET_PAIRED_ACCOUNT } from '../../store/slices/walletSlice';
+import {
+	SELECTED_WALLET_ACCOUNT_INFO,
+	SELECTED_WALLET_PAIRED_ACCOUNT,
+} from '../../store/slices/walletSlice';
 import SDKService from '../../services/SDKService';
 import ModalNotification from '../../components/ModalNotification';
-import type { ICreateStableCoinRequest} from 'hedera-stable-coin-sdk';
+import { AccountId, PublicKey } from 'hedera-stable-coin-sdk';
+import type { ICreateStableCoinRequest } from 'hedera-stable-coin-sdk';
 import { useSelector } from 'react-redux';
 
 const StableCoinCreation = () => {
@@ -81,7 +85,7 @@ const StableCoinCreation = () => {
 			const supplyType = watch('supplyType');
 			let keys = ['initialSupply', 'decimals'];
 
-			if (supplyType?.value === 1) keys = keys.concat('totalSupply');
+			if (supplyType?.value === 1) keys = keys.concat('maxSupply');
 
 			fieldsStep = watch(keys);
 		}
@@ -91,14 +95,7 @@ const StableCoinCreation = () => {
 			const managePermissions = watch('managementPermissions');
 
 			if (!managePermissions) {
-				const keys = [
-					'adminKey',
-					'supplyKey',
-					'rescueKey',
-					'wipeKey',
-					'freezeKey',
-					'feeScheduleKey',
-				];
+				const keys = ['adminKey', 'supplyKey', 'wipeKey', 'freezeKey', 'pauseKey'];
 
 				// @ts-ignore
 				fieldsStep = watch(keys);
@@ -121,34 +118,82 @@ const StableCoinCreation = () => {
 		);
 	};
 
+	const formatKey = (keySelection: string, keyName: string): PublicKey | undefined => {
+		const values = getValues();
+
+		if (keySelection === 'Current user key') {
+			return accountInfo.publicKey;
+		}
+
+		if (keySelection === 'Other key') {
+			const param = Object.keys(values).find((key) => key.includes(keyName + 'Other'));
+
+			return new PublicKey({
+				key: param ? values[param] : '',
+				type: 'ED25519',
+			});
+		}
+
+		if (keySelection === 'None') return undefined;
+
+		return PublicKey.NULL;
+	};
+
 	const handleFinish = async () => {
-		// TODO: complete request object with keys
 		const {
 			name,
 			symbol,
-			autorenewAccount,
-			initialSupply,
-			totalSupply,
 			decimals,
+			initialSupply,
+			autorenewAccount,
+			maxSupply,
+			managementPermissions,
+			freezeKey,
+			wipeKey,
+			pauseKey,
+			supplyKey,
+			treasuryAccountAddress,
 		} = getValues();
 
-		const newStableCoinParams: ICreateStableCoinRequest = {
+		let newStableCoinParams: ICreateStableCoinRequest = {
 			account,
 			name,
 			symbol,
 			decimals,
+			initialSupply: initialSupply ? BigInt(initialSupply) : undefined,
+			maxSupply: maxSupply ? BigInt(maxSupply) : undefined,
 			autoRenewAccount: autorenewAccount,
-			initialSupply: BigInt(initialSupply),
-			maxSupply: totalSupply,
-			adminKey: accountInfo.publicKey
 		};
 
+		if (managementPermissions) {
+			newStableCoinParams = {
+				...newStableCoinParams,
+				adminKey: accountInfo.publicKey,
+				freezeKey: PublicKey.NULL,
+				KYCKey: PublicKey.NULL,
+				wipeKey: PublicKey.NULL,
+				pauseKey: PublicKey.NULL,
+				supplyKey: PublicKey.NULL,
+				treasury: AccountId.NULL,
+			};
+		} else {
+			newStableCoinParams = {
+				...newStableCoinParams,
+				adminKey: accountInfo.publicKey,
+				freezeKey: formatKey(freezeKey.label, 'freezeKey'),
+				wipeKey: formatKey(wipeKey.label, 'wipeKey'),
+				pauseKey: formatKey(pauseKey.label, 'pauseKey'),
+				supplyKey: formatKey(supplyKey.label, 'supplyKey'),
+				treasury:
+					supplyKey.label === 'Other key' ? new AccountId(treasuryAccountAddress) : AccountId.NULL,
+			};
+		}
+
 		try {
-			const response = await SDKService.createStableCoin(newStableCoinParams);
-			console.log('RESPONSE: ', response);
+			await SDKService.createStableCoin(newStableCoinParams);
+
 			setSuccess(true);
 		} catch (error) {
-			console.log('ERROR: ', error);
 			setSuccess(false);
 		}
 

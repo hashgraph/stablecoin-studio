@@ -35,10 +35,6 @@ const ManagementPermissions = (props: ManagementPermissionsProps) => {
 			nameTranslate: t('stableCoinCreation:managementPermissions.supply'),
 		},
 		{
-			name: 'rescueKey',
-			nameTranslate: t('stableCoinCreation:managementPermissions.rescue'),
-		},
-		{
 			name: 'wipeKey',
 			nameTranslate: t('stableCoinCreation:managementPermissions.wipe'),
 		},
@@ -47,8 +43,8 @@ const ManagementPermissions = (props: ManagementPermissionsProps) => {
 			nameTranslate: t('stableCoinCreation:managementPermissions.freeze'),
 		},
 		{
-			name: 'feeScheduleKey',
-			nameTranslate: t('stableCoinCreation:managementPermissions.feeSchedule'),
+			name: 'pauseKey',
+			nameTranslate: t('stableCoinCreation:managementPermissions.pause'),
 		},
 	];
 
@@ -97,7 +93,7 @@ const ManagementPermissions = (props: ManagementPermissionsProps) => {
 						</Stack>
 					)}
 				</Stack>
-				{isOtherKeySupplySelected && (
+				{isManagementPermissions === false && isOtherKeySupplySelected && (
 					<Stack as='form' spacing={6} pb='60px'>
 						<Heading
 							data-testid='title'

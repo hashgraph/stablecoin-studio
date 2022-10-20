@@ -108,10 +108,10 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 							}}
 							isRequired
 							control={control}
-							name={'totalSupply'}
-							label={t('stableCoinCreation:optionalDetails.totalSupply')}
+							name={'maxSupply'}
+							label={t('stableCoinCreation:optionalDetails.maxSupply')}
 							placeholder={t('stableCoinCreation:optionalDetails.placeholder', {
-								placeholder: t('stableCoinCreation:optionalDetails.totalSupply'),
+								placeholder: t('stableCoinCreation:optionalDetails.maxSupply'),
 							})}
 						/>
 					)}
