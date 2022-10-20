@@ -9,6 +9,15 @@ import type {
 	HashPackAccount,
 	IGetBalanceStableCoinRequest,
 	IWipeStableCoinRequest,
+	IRoleStableCoinRequest,
+	ISupplierRoleStableCoinRequest,
+	IAllowanceRequest,
+	IGetSupplierAllowance,
+	IBasicRequest,
+	IAccountInfo,
+	Capabilities,
+	ICashInStableCoinRequest,
+	ICashOutStableCoinRequest,
 } from 'hedera-stable-coin-sdk';
 
 export enum HashConnectConnectionState {
@@ -26,21 +35,6 @@ const appMetadata: AppMetadata = {
 	icon: 'https://dashboard-assets.dappradar.com/document/15402/hashpack-dapp-defi-hedera-logo-166x166_696a701b42fd20aaa41f2591ef2339c7.png',
 	url: '',
 };
-
-interface CashInRequest {
-	proxyContractId: string;
-	account: HashPackAccount;
-	tokenId: string;
-	targetId: string;
-	amount: number;
-}
-
-interface CashOutRequest {
-	proxyContractId: string;
-	account: HashPackAccount;
-	tokenId: string;
-	amount: number;
-}
 
 interface EventsSetter {
 	onInit: () => void;
@@ -122,21 +116,36 @@ export class SDKService {
 		return (await SDKService.getInstance())?.getStableCoinDetails({ id });
 	}
 
+	public static async getAccountInfo({
+		account,
+	}: {
+		account: HashPackAccount;
+	}): Promise<IAccountInfo | null> {
+		return (await SDKService.getInstance())?.getAccountInfo({ account });
+	}
+
 	public static async cashIn({
 		proxyContractId,
 		tokenId,
 		targetId,
 		amount,
 		account,
-	}: CashInRequest) {
+		publicKey,
+	}: ICashInStableCoinRequest) {
 		return await SDKService.getInstance().then((instance) =>
-			instance.cashIn({ proxyContractId, account, tokenId, targetId, amount }),
+			instance.cashIn({ proxyContractId, account, tokenId, targetId, amount, publicKey }),
 		);
 	}
 
-	public static async burn({ proxyContractId, tokenId, amount, account }: CashOutRequest) {
+	public static async burn({
+		proxyContractId,
+		tokenId,
+		amount,
+		account,
+		publicKey,
+	}: ICashOutStableCoinRequest) {
 		return await SDKService.getInstance().then((instance) =>
-			instance.cashOut({ proxyContractId, account, tokenId, amount }),
+			instance.cashOut({ proxyContractId, account, tokenId, amount, publicKey }),
 		);
 	}
 
@@ -154,8 +163,59 @@ export class SDKService {
 		return SDKService.getInstance().then((instance) => instance.rescue(data));
 	}
 
-	public static async wipe(data: IWipeStableCoinRequest) {
-		return SDKService.getInstance().then((instance) => instance.wipe(data));
+	public static async wipe({
+		proxyContractId,
+		account,
+		tokenId,
+		targetId,
+		amount,
+		publicKey,
+	}: IWipeStableCoinRequest) {
+		return SDKService.getInstance().then((instance) =>
+			instance.wipe({ proxyContractId, account, tokenId, targetId, amount, publicKey }),
+		);
+	}
+
+	public static async getCapabilities({
+		id,
+		publicKey,
+	}: {
+		id: string;
+		publicKey: string;
+	}): Promise<Capabilities[] | null> {
+		return (await SDKService.getInstance())?.getCapabilitiesStableCoin(id, publicKey);
+	}
+
+	public static async increaseSupplierAllowance(data: IAllowanceRequest) {
+		return SDKService.getInstance().then((instance) => instance.increaseSupplierAllowance(data));
+	}
+
+	public static async decreaseSupplierAllowance(data: IAllowanceRequest) {
+		return SDKService.getInstance().then((instance) => instance.decreaseSupplierAllowance(data));
+	}
+
+	public static async resetSupplierAllowance(data: IBasicRequest) {
+		return SDKService.getInstance().then((instance) => instance.resetSupplierAllowance(data));
+	}
+
+	public static async checkSupplierAllowance(data: IGetSupplierAllowance) {
+		return SDKService.getInstance().then((instance) => instance.supplierAllowance(data));
+	}
+
+	public static async grantRole(data: IRoleStableCoinRequest | ISupplierRoleStableCoinRequest) {
+		return SDKService.getInstance().then((instance) => instance.grantRole(data));
+	}
+
+	public static async revokeRole(data: IRoleStableCoinRequest) {
+		return SDKService.getInstance().then((instance) => instance.revokeRole(data));
+	}
+
+	public static async hasRole(data: IRoleStableCoinRequest) {
+		return SDKService.getInstance().then((instance) => instance.hasRole(data));
+	}
+
+	public static async isUnlimitedSupplierAllowance(data: IBasicRequest) {
+		return SDKService.getInstance().then((instance) => instance.isUnlimitedSupplierAllowance(data));
 	}
 }
 

@@ -1,19 +1,11 @@
 import { Event } from "ts-typed-events";
 import { IRelay, WebSocketRelay } from "./types/relay";
-import {
-  MessageUtil,
-  MessageHandler,
-  MessageTypes,
-  RelayMessage,
-  RelayMessageType,
-} from "./message";
-import {
-  HashConnectTypes,
-  IHashConnect,
-  HashConnectConnectionState,
-} from "./types/hashconnect";
+import { MessageUtil, MessageHandler, MessageTypes, RelayMessage, RelayMessageType } from "./message"
+import { HashConnectTypes, IHashConnect, HashConnectConnectionState, NetworkType } from "./types/hashconnect";
 import { HashConnectProvider } from "./provider/provider";
 import { HashConnectSigner } from "./provider/signer";
+import { MirrorNodeClient } from "./mirror-node/mirror-node-client.js";
+import { PublicKey } from "@hashgraph/sdk";
 
 global.Buffer = global.Buffer || require("buffer").Buffer;
 
@@ -64,7 +56,7 @@ export class HashConnect implements IHashConnect {
 
   encryptionKeys: Record<string, string> = {}; //enc keys with topic id as the key
 
-  debug: boolean = false;
+  debug = false;
   status: HashConnectConnectionState = HashConnectConnectionState.Disconnected; //do we even need this?
 
   hcData: {
@@ -131,8 +123,6 @@ export class HashConnect implements IHashConnect {
       if (this.debug) console.log("hashconnect - Initialized");
 
       if (!this.loadLocalData()) {
-        console.log("====loadLocalData====", this.loadLocalData());
-
         if (this.debug)
           console.log("hashconnect - No local data found, initializing");
 
@@ -185,12 +175,8 @@ export class HashConnect implements IHashConnect {
         this.connectionStatusChangeEvent.emit(
           HashConnectConnectionState.Connected
         );
-        console.log(
-          "hashconnect - Found saved local data",
-          this.hcData.pairingData
-        );
+
         for (const pairing of this.hcData.pairingData) {
-          console.log("===CONNECT POR CADA DATA PAIRING ENCONTRADA", pairing);
           await this.connect(
             pairing.topic,
             pairing.metadata,
@@ -221,7 +207,6 @@ export class HashConnect implements IHashConnect {
       | HashConnectTypes.WalletMetadata,
     encryptionKey?: string
   ): Promise<string> {
-    console.log("===TOPIC-CONNECT===", topic);
     if (!topic) {
       topic = this.messages.createRandomTopicId();
       this.encryptionKeys[topic] = this.hcData.encryptionKey;
@@ -239,8 +224,6 @@ export class HashConnect implements IHashConnect {
   }
 
   async disconnect(topic: string) {
-    console.log("===TOPIC-DISCONNECT===", topic);
-    console.log("===HCDATA===", this.hcData);
     if (topic != this.hcData.topic)
       //only unsub from topic if not dapp
       await this.relay.unsubscribe(topic);
@@ -248,11 +231,7 @@ export class HashConnect implements IHashConnect {
     const index = this.hcData.pairingData.findIndex(
       (pairing) => pairing.topic == topic
     );
-    // this.hcData.pairingData.splice(index, 1);
-    console.log("===HCDATA-INDEX===", index);
-    if (index !== -1) {
-      this.hcData.pairingData = [];
-    }
+    this.hcData.pairingData.splice(index, 1);
 
     if (this.hcData.pairingData.length == 0) {
       this.status = HashConnectConnectionState.Connected;
@@ -300,7 +279,7 @@ export class HashConnect implements IHashConnect {
     if (typeof window === "undefined" || typeof localStorage === "undefined")
       return;
 
-    let data = JSON.stringify(this.hcData);
+    const data = JSON.stringify(this.hcData);
 
     if (this.debug) console.log("hashconnect - saving local data", this.hcData);
 
@@ -311,10 +290,10 @@ export class HashConnect implements IHashConnect {
     if (typeof window === "undefined" || typeof localStorage === "undefined")
       return false;
 
-    let foundData = localStorage.getItem("hashconnectData");
+    const foundData = localStorage.getItem("hashconnectData");
 
     if (foundData) {
-      let data = JSON.parse(foundData);
+      const data = JSON.parse(foundData);
 
       if (!data.pairingData || !data.encryptionKey) {
         if (this.debug)
@@ -335,7 +314,7 @@ export class HashConnect implements IHashConnect {
         "hashconnect - clearing local data - you will need to run init() again"
       );
 
-    for (let pairing of this.hcData.pairingData) {
+    for (const pairing of this.hcData.pairingData) {
       await this.relay.unsubscribe(pairing.topic);
     }
 
@@ -449,16 +428,16 @@ export class HashConnect implements IHashConnect {
   ): Promise<HashConnectTypes.SavedPairingData> {
     if (this.debug)
       console.log("hashconnect - Pairing to " + pairingData.metadata.name);
-    let state = await this.connect(pairingData.topic);
+    const state = await this.connect(pairingData.topic);
 
-    let msg: MessageTypes.ApprovePairing = {
+    const msg: MessageTypes.ApprovePairing = {
       metadata: this.metadata as HashConnectTypes.WalletMetadata,
       topic: pairingData.topic,
       accountIds: accounts,
       network: network,
     };
 
-    let newPairingData: HashConnectTypes.SavedPairingData = {
+    const newPairingData: HashConnectTypes.SavedPairingData = {
       accountIds: msg.accountIds,
       metadata: pairingData.metadata,
       network: msg.network,
@@ -516,7 +495,7 @@ export class HashConnect implements IHashConnect {
   }
 
   async reject(topic: string, reason: string, msg_id: string) {
-    let reject: MessageTypes.Rejected = {
+    const reject: MessageTypes.Rejected = {
       reason: reason,
       topic: topic,
       msg_id: msg_id,
@@ -563,7 +542,7 @@ export class HashConnect implements IHashConnect {
     serverSignature: Uint8Array,
     payload: { url: string; data: any }
   ): Promise<MessageTypes.AuthenticationResponse> {
-    let message: MessageTypes.AuthenticationRequest = {
+    const message: MessageTypes.AuthenticationRequest = {
       topic: topic,
       accountToSign: account_id,
       serverSigningAccount: server_signing_account,
@@ -623,7 +602,7 @@ export class HashConnect implements IHashConnect {
     account_id: string,
     payload: any
   ): Promise<MessageTypes.SigningResponse> {
-    let message: MessageTypes.SigningRequest = {
+    const message: MessageTypes.SigningRequest = {
       topic: topic,
       accountToSign: account_id,
       payload: payload,
@@ -675,7 +654,7 @@ export class HashConnect implements IHashConnect {
   ): string {
     if (this.debug) console.log("hashconnect - Generating pairing string");
 
-    let data: HashConnectTypes.PairingStringData = {
+    const data: HashConnectTypes.PairingStringData = {
       metadata: this.metadata,
       topic: topic,
       network: network,
@@ -687,7 +666,7 @@ export class HashConnect implements IHashConnect {
     data.network = this.sanitizeString(data.network);
     data.metadata.url = this.sanitizeString(data.metadata.url!);
 
-    let pairingString: string = Buffer.from(JSON.stringify(data)).toString(
+    const pairingString: string = Buffer.from(JSON.stringify(data)).toString(
       "base64"
     );
 
@@ -697,15 +676,15 @@ export class HashConnect implements IHashConnect {
   }
 
   decodePairingString(pairingString: string) {
-    let json_string: string = Buffer.from(pairingString, "base64").toString();
-    let data: HashConnectTypes.PairingStringData = JSON.parse(json_string);
+    const json_string: string = Buffer.from(pairingString, "base64").toString();
+    const data: HashConnectTypes.PairingStringData = JSON.parse(json_string);
 
     return data;
   }
 
   private async generateEncryptionKeys(): Promise<string> {
     //https://github.com/diafygi/webcrypto-examples/#rsa-oaep---encrypt
-    let key = this.messages.createRandomTopicId();
+    const key = this.messages.createRandomTopicId();
 
     if (this.debug)
       console.log("hashconnect - Generated new encryption key - " + key);
@@ -846,7 +825,7 @@ export class HashConnect implements IHashConnect {
    */
 
   getProvider(
-    network: string,
+    network: NetworkType,
     topicId: string,
     accountToSign: string
   ): HashConnectProvider {
@@ -862,8 +841,23 @@ export class HashConnect implements IHashConnect {
     );
   }
 
+  async getSignerWithAccountKey(
+    provider: HashConnectProvider
+  ): Promise<HashConnectSigner> {
+    const client = new MirrorNodeClient(provider.network);
+    const accountInfo = await client.getAccountInfo(provider.accountToSign);
+    const publicKey = PublicKey.fromString(accountInfo.key.key);
+    return new HashConnectSigner(
+      this,
+      provider,
+      provider.accountToSign,
+      provider.topicId,
+      publicKey
+    );
+  }
+
   getPairingByTopic(topic: string) {
-    let pairingData: HashConnectTypes.SavedPairingData | undefined =
+    const pairingData: HashConnectTypes.SavedPairingData | undefined =
       this.hcData.pairingData.find((pairing) => {
         return pairing.topic == topic;
       });

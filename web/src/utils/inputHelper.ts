@@ -1,11 +1,15 @@
-import { useTranslation } from 'react-i18next';
-
-export const formatAmount = ({ amount, decimals }: { amount?: number; decimals?: number }) => {
-	const { i18n } = useTranslation();
-
+export const formatAmount = ({
+	amount,
+	decimals,
+	language = 'en-EN',
+}: {
+	amount?: number;
+	decimals?: number;
+	language?: string;
+}) => {
 	if (typeof amount !== 'number' || Number.isNaN(amount)) return '';
 
-	return amount?.toLocaleString(i18n.language, {
+	return amount?.toLocaleString(language, {
 		maximumFractionDigits: decimals ?? 0,
 	});
 };
