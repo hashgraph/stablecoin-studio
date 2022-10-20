@@ -143,6 +143,7 @@ export const english = {
     accountsNotFound:
       'There is no account for the indicated parameters, here is a list of the configured accounts:',
     accountOptions: 'Manage account menu:',
+    externalTokenMenu: 'Manage external tokens:',
     accountDelete: 'Which account would you like to delete?',
     noAccountToDelete: 'You cannot delete your current account.',
     mainMenuTitle: 'What do you want to do?',
@@ -152,6 +153,7 @@ export const english = {
     accountsChanged: '\nAccounts changed successfully',
     mainOptions: [
       'Create a new Stable Coin',
+      'Manage external tokens',
       'Operate with an existing Stable Coin',
       'List Stable Coins',
       'Configuration',
@@ -171,6 +173,13 @@ export const english = {
       'List accounts',
       'Add new account',
       'Delete account',
+      new inquirer.Separator(),
+      'Go back',
+    ],
+    manageExternalTokens: [
+      'Add token',
+      'Refresh token',
+      'Remove token',
       new inquirer.Separator(),
       'Go back',
     ],
@@ -217,6 +226,14 @@ export const english = {
     returnOption: [new inquirer.Separator(), 'Return to main menu'],
     goBack: 'Go back',
     privateKeyType: ['ED25519', 'ECDSA'],
+  },
+  manageExternalToken: {
+    tokenId: 'What is the token id?',
+    tokenIdError: colors.red('Wrong id format. Please try again'),
+    tokenToDelete: 'Which token do you want to delete?',
+    separator: new inquirer.Separator(
+      colors.yellow('------ External Tokens ------'),
+    ),
   },
   state: {
     searching: 'Searching...',

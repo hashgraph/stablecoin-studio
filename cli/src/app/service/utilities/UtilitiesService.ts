@@ -323,4 +323,8 @@ export default class UtilitiesService extends Service {
 
     this.showMessage(result);
   }
+
+  public validateTokenId(str: string): boolean {
+    return /\d\.\d\.\d/.test(str);
+  }
 }

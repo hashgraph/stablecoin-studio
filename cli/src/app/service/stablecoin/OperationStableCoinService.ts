@@ -24,6 +24,7 @@ import RescueStableCoinsService from './RescueStableCoinService.js';
 import colors from 'colors';
 import CapabilitiesStableCoinsService from './CapabilitiesStableCoinService.js';
 import BurnStableCoinsService from './BurnStableCoinService.js';
+import ManageExternalTokenService from './ManageExternalTokenService';
 
 /**
  * Operation Stable Coin Service
@@ -73,9 +74,11 @@ export default class OperationStableCoinService extends Service {
 
       this.stableCoinId = await utilsService.defaultMultipleAsk(
         language.getText('stablecoin.askToken'),
-        resp.map((item) => {
-          return `${item.id} - ${item.symbol}`;
-        }),
+        new ManageExternalTokenService().mixExternalTokens(
+          resp.map((item) => {
+            return `${item.id} - ${item.symbol}`;
+          }),
+        ),
         true,
         configurationService.getConfiguration()?.defaultNetwork,
         `${currentAccount.accountId.id} - ${configAccount.alias}`,
@@ -341,7 +344,10 @@ export default class OperationStableCoinService extends Service {
   ): Promise<Capabilities[]> {
     return await new CapabilitiesStableCoinsService().getCapabilitiesStableCoins(
       this.stableCoinId,
-      sdk.getPublicKey(currentAccount.privateKey.key, currentAccount.privateKey.type)
+      sdk.getPublicKey(
+        currentAccount.privateKey.key,
+        currentAccount.privateKey.type,
+      ),
     );
   }
 
