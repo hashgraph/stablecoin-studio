@@ -1,5 +1,4 @@
 import { Box } from '@chakra-ui/react';
-import { waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from '../../test/index';
 import type { Step } from '../Stepper';
