@@ -66,7 +66,7 @@
 	"dependencies": {
 		"hashconnect": "file:../hashconnect/lib",
 		"@hashgraph/hethers": "^1.2.2",
-		"@hashgraph/sdk": "^2.18.2",
+		"@hashgraph/sdk": "^2.18.4",
 		"ts-xor": "^1.0.8",
 		"tslib": "~2.4",
 		"uuid": "^9.0.0",
