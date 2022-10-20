@@ -14,6 +14,7 @@ import ManagementPermissions from './ManagementPermissions';
 import Review from './Review';
 import { OTHER_KEY_VALUE } from './components/KeySelector';
 import {
+	getStableCoinList,
 	SELECTED_WALLET_ACCOUNT_INFO,
 	SELECTED_WALLET_PAIRED_ACCOUNT,
 } from '../../store/slices/walletSlice';
@@ -21,10 +22,12 @@ import SDKService from '../../services/SDKService';
 import ModalNotification from '../../components/ModalNotification';
 import { AccountId, PublicKey } from 'hedera-stable-coin-sdk';
 import type { ICreateStableCoinRequest } from 'hedera-stable-coin-sdk';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch } from '../../store/store';
 
 const StableCoinCreation = () => {
 	const navigate = useNavigate();
+	const dispatch = useDispatch<AppDispatch>();
 	const { t } = useTranslation('stableCoinCreation');
 	const form = useForm({ mode: 'onChange' });
 	const {
@@ -191,7 +194,6 @@ const StableCoinCreation = () => {
 
 		try {
 			await SDKService.createStableCoin(newStableCoinParams);
-
 			setSuccess(true);
 		} catch (error) {
 			setSuccess(false);
@@ -225,7 +227,10 @@ const StableCoinCreation = () => {
 				description={t(`notification.description${success ? 'Success' : 'Error'}`)}
 				isOpen={isOpen}
 				onClose={onClose}
-				onClick={() => RouterManager.to(navigate, NamedRoutes.Dashboard)}
+				onClick={() => {
+					dispatch(getStableCoinList(account));
+					RouterManager.to(navigate, NamedRoutes.StableCoinNotSelected);
+				}}
 			/>
 		</Stack>
 	);
