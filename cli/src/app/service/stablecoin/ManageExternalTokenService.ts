@@ -73,7 +73,32 @@ export default class ManageExternalTokenService extends Service {
       case manageOptions[1]:
         await utilsService.cleanAndShowBanner();
         //show list to refresh
-
+        let tokenToRefresh = await utilsService.defaultMultipleAsk(
+          language.getText('manageExternalToken.tokenToRefresh'),
+          currentAccount.externalTokens.map((token) => token.id),
+        );
+        const capabilitiesToRefresh =
+          await new CapabilitiesStableCoinsService().getCapabilitiesStableCoins(
+            tokenToRefresh,
+            sdk.getPublicKey(
+              currentAccount.privateKey.key,
+              currentAccount.privateKey.type,
+            ),
+          );
+        const externalTokensRefreshed = currentAccount.externalTokens.map(
+          (token) => {
+            if (token.id === tokenToRefresh) {
+              return {
+                id: token.id,
+                symbol: token.symbol,
+                capabilities: capabilitiesToRefresh,
+              };
+            }
+            return token;
+          },
+        );
+        this.updateAccount(externalTokensRefreshed);
+        currentAccount.externalTokens = externalTokensRefreshed;
         break;
       case manageOptions[2]:
         await utilsService.cleanAndShowBanner();

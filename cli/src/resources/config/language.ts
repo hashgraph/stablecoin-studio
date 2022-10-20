@@ -231,6 +231,7 @@ export const english = {
     tokenId: 'What is the token id?',
     tokenIdError: colors.red('Wrong id format. Please try again'),
     tokenToDelete: 'Which token do you want to delete?',
+    tokenToRefresh: 'Which token do you want to refresh?',
     separator: new inquirer.Separator(
       colors.yellow('------ External Tokens ------'),
     ),
