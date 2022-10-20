@@ -12,10 +12,11 @@ import type { Detail } from '../../components/DetailsReview';
 import type { ModalsHandlerActionsProps } from '../../components/ModalsHandler';
 import SDKService from '../../services/SDKService';
 import { useSelector } from 'react-redux';
-import { SELECTED_WALLET_COIN, SELECTED_WALLET_PAIRED_ACCOUNT } from '../../store/slices/walletSlice';
+import { SELECTED_WALLET_COIN, SELECTED_WALLET_PAIRED_ACCOUNT, SELECTED_WALLET_CAPABILITIES } from '../../store/slices/walletSlice';
 import { SelectController } from '../../components/Form/SelectController';
 import { validateDecimals } from '../../utils/validationsHelper';
 import {formatAmount } from '../../utils/inputHelper';
+import { Capabilities } from 'hedera-stable-coin-sdk';
 
 const supplier = 'Cash in';
 
@@ -52,6 +53,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const selectedAccount = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
+	const capabilities = useSelector(SELECTED_WALLET_CAPABILITIES)
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [errorOperation, setErrorOperation] = useState();
@@ -63,24 +65,41 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 
 	const account: string | undefined = watch(fields.account);
 	const amount: string | undefined = watch(fields.amount);
-	const destinationAccount: string | undefined = watch(fields.account);
 	const infinity: boolean = watch(fields.supplierQuantitySwitch);
 	const supplierLimitOption = watch(fields.cashinLimitOption)?.value;
 	const increaseOrDecreseOptionSelected: boolean = ['INCREASE', 'DECREASE'].includes(supplierLimitOption);
 	const checkOptionSelected: boolean = ['CHECK'].includes(supplierLimitOption);
 	const role = watch(fields.role);
+	const filteredCapabilities = roleOptions.filter(option => {
+		if(!capabilities!.includes(Capabilities.CASH_IN) && option.label=== 'Cash in'){
+			return false
+		}
+		if(!capabilities!.includes(Capabilities.BURN) && option.label=== 'Burn'){
+			return false
+		}
+		if(!capabilities!.includes(Capabilities.WIPE) && option.label=== 'Wipe'){
+			return false
+		}
+		if(!capabilities!.includes(Capabilities.PAUSE) && option.label=== 'Pause'){
+			return false
+		}
+		if(!capabilities!.includes(Capabilities.RESCUE) && option.label=== 'Rescue'){
+			return false
+		}
+		return true
+	})
+
+	console.log(filteredCapabilities)
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const handleSubmit: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
-		console.log(
-			`${action.split('Role')[0].toUpperCase()} role ${role.label} to account ${account}`,
-		);
 		try {
 		if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId || !account) {
 			onError();
 			return;
 		}
 		let alreadyHasRole ;
+		let isUnlimitedSupplierAllowance;
 		
 		switch(action.toString()){
 			case 'giveRole':
@@ -139,9 +158,9 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 			case 'editRole':
 				alreadyHasRole = await SDKService.hasRole({
 					proxyContractId: selectedStableCoin.memo.proxyContract,
-					account,
+					account: selectedAccount,
 					tokenId: selectedStableCoin.tokenId,
-					targetId: destinationAccount,
+					targetId: account,
 					role: roleOptions[0].value
 				}) ;
 				if (!alreadyHasRole || !alreadyHasRole[0]){
@@ -149,42 +168,53 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 					onError();
 					return;
 				}
-			
+
+				isUnlimitedSupplierAllowance = await SDKService.isUnlimitedSupplierAllowance({
+					proxyContractId: selectedStableCoin.memo.proxyContract,
+					account: selectedAccount,
+					targetId: account
+				}) ;
+
+				if (isUnlimitedSupplierAllowance![0]) {
+					setModalErrorDescription('hasInfiniteAllowance');
+					onError();
+					return;
+				}
 				switch(supplierLimitOption) {
 					case 'INCREASE':
 						await SDKService.increaseSupplierAllowance({
 							proxyContractId: selectedStableCoin.memo.proxyContract,
-							account,
+							account:selectedAccount,
 							tokenId: selectedStableCoin.tokenId,
-							targetId: destinationAccount,
-							amount
+							targetId: account,
+							amount: parseFloat(amount!)
 						});
 						break;
 			
 					case 'DECREASE':
 						await SDKService.decreaseSupplierAllowance({
 							proxyContractId: selectedStableCoin.memo.proxyContract,
-							account,
+							account: selectedAccount,
 							tokenId: selectedStableCoin.tokenId,
-							targetId: destinationAccount,
-							amount
+							targetId: account,
+							amount: parseFloat(amount!)
 						});
 						break;
 			
 					case 'RESET':
 						await SDKService.resetSupplierAllowance({
 							proxyContractId: selectedStableCoin.memo.proxyContract,
-							account,
-							targetId: destinationAccount
+							account: selectedAccount,
+							targetId: account
 						});
 						break;
 			
 					case 'CHECK': {
 						const limit = await SDKService.checkSupplierAllowance({
 							proxyContractId: selectedStableCoin.memo.proxyContract,
-							account,
+							account: selectedAccount,
 							tokenId: selectedStableCoin.tokenId,
-							targetId: destinationAccount
+							targetId: account
 						});
 						setLimit(limit?.[0]);
 					}
@@ -286,7 +316,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 		const details: Detail[] = [
 			{
 				label: t(`roles:${action}.modalActionDetailAccount`),
-				value: destinationAccount as string,
+				value: account as string,
 			}
 		];
 
@@ -340,7 +370,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 				buttonConfirmEnable={isValid}
 				control={control}
 				onConfirm={onOpen}
-				options={roleOptions}
+				options={filteredCapabilities}
 				selectorLabel={t(`roles:${action}.selectLabel`)}
 				selectorPlaceholder={t(`roles:${action}.selectPlaceholder`)}
 				// @ts-ignore-next-line
@@ -367,7 +397,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 				}
 				successNotificationTitle={t(`roles:${action}.modalSuccessTitle`)}
 				successNotificationDescription={checkOptionSelected ? t(`roles:${action}.checkCashinLimitSuccessDesc`, {
-					account: destinationAccount,
+					account,
 					limit:formatAmount({
 						amount: limit!,
 						decimals: selectedStableCoin!.decimals!

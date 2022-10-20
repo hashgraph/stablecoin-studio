@@ -213,6 +213,10 @@ export class SDKService {
 	public static async hasRole(data: IRoleStableCoinRequest) {
 		return SDKService.getInstance().then((instance) => instance.hasRole(data));
 	}
+
+	public static async isUnlimitedSupplierAllowance(data: IBasicRequest) {
+		return SDKService.getInstance().then((instance) => instance.isUnlimitedSupplierAllowance(data));
+	}
 }
 
 export default SDKService;
