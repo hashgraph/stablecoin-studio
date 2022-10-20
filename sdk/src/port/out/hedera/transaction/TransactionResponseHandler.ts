@@ -141,9 +141,7 @@ export class TransactionResposeHandler {
 	}
 
 	private async getHashconnectTransactionReceipt(
-		transactionResponse:
-			| MessageTypes.TransactionResponse
-			| TransactionResponse,
+		transactionResponse: MessageTypes.TransactionResponse,
 	): Promise<TransactionReceipt> {
 		let receipt;
 		if ((transactionResponse as MessageTypes.TransactionResponse).receipt) {
@@ -151,12 +149,12 @@ export class TransactionResposeHandler {
 				(transactionResponse as MessageTypes.TransactionResponse)
 					.receipt as Uint8Array,
 			);
-		} else if (
-			(transactionResponse as TransactionResponse).getReceiptWithSigner
-		) {
-			receipt = (
-				transactionResponse as TransactionResponse
-			).getReceiptWithSigner(null as unknown as Signer);
+		// } else if (
+		// 	(transactionResponse as TransactionResponse).getReceiptWithSigner
+		// ) {
+		// 	receipt = (
+		// 		transactionResponse as TransactionResponse
+		// 	).getReceiptWithSigner(null as unknown as Signer);
 		} else {
 			throw new Error(
 				`Unexpected receipt type from Hashpack: ${receipt}`,
