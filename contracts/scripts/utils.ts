@@ -259,7 +259,7 @@ async function createToken(
         .setInitialSupply(initialSupply)
         .setTokenMemo(memo)
         .setFreezeDefault(freeze)
-        .setTreasuryAccountId(AccountId.fromString(contractId.toString()))
+        .setTreasuryAccountId(AccountId.fromString(accountId))
         .setAdminKey(publicKey)
         .setFreezeKey(publicKey)
         .setWipeKey(DelegateContractId.fromString(contractId))
