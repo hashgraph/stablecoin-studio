@@ -16,7 +16,7 @@ import { SELECTED_WALLET_COIN, SELECTED_WALLET_PAIRED_ACCOUNT, SELECTED_WALLET_C
 import { SelectController } from '../../components/Form/SelectController';
 import { validateDecimals } from '../../utils/validationsHelper';
 import {formatAmount } from '../../utils/inputHelper';
-import { Capabilities } from 'hedera-stable-coin-sdk';
+import { Capabilities, StableCoinRole } from 'hedera-stable-coin-sdk';
 
 const supplier = 'Cash in';
 
@@ -55,8 +55,6 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 	const selectedAccount = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
 	const capabilities = useSelector(SELECTED_WALLET_CAPABILITIES)
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [errorOperation, setErrorOperation] = useState();
 	const [limit, setLimit] = useState<number | null>();
 	const [modalErrorDescription, setModalErrorDescription ] = useState<string>('modalErrorDescription');
 
@@ -89,8 +87,6 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 		return true
 	})
 
-	console.log(filteredCapabilities)
-
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const handleSubmit: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
 		try {
@@ -103,7 +99,6 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 		
 		switch(action.toString()){
 			case 'giveRole':
-				console.log('Switch: Give Role')
 				alreadyHasRole = await SDKService.hasRole({
 					proxyContractId: selectedStableCoin.memo.proxyContract,
 					account: selectedAccount,
@@ -134,7 +129,6 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 				}) ;
 			break;
 			case 'revokeRole':
-				console.log('Switch: Revoke Role')
 				alreadyHasRole = await SDKService.hasRole({
 					proxyContractId: selectedStableCoin.memo.proxyContract,
 					account: selectedAccount,
@@ -161,7 +155,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 					account: selectedAccount,
 					tokenId: selectedStableCoin.tokenId,
 					targetId: account,
-					role: roleOptions[0].value
+					role: StableCoinRole.CASHIN_ROLE
 				}) ;
 				if (!alreadyHasRole || !alreadyHasRole[0]){
 					setModalErrorDescription('hasNotRoleError');
