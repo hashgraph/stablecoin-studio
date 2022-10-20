@@ -1,4 +1,4 @@
-import { Box, Flex, Text, Tooltip } from '@chakra-ui/react';
+import { Box, Flex, HStack, Text, Tooltip, VStack } from '@chakra-ui/react';
 import type { ContractId, PublicKey, StableCoinMemo } from 'hedera-stable-coin-sdk';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -16,13 +16,31 @@ const StableCoinDetails = () => {
 
 	const getMemoInformation = (memo: StableCoinMemo | undefined) => {
 		return (
-			t('proxyContract') +
-			': ' +
-			memo?.proxyContract +
-			', ' +
-			t('htsAccount') +
-			': ' +
-			memo?.htsAccount
+			<VStack
+				fontSize='14px'
+				fontWeight={500}
+				lineHeight='17px'
+				color='brand.gray'
+				wordBreak='break-all'
+				alignItems='flex-end'
+			>
+				<HStack>
+					<Text>
+						{t('proxyContract')} : {memo?.proxyContract}
+					</Text>
+					<TooltipCopy valueToCopy={memo?.proxyContract ?? ''}>
+						<Icon name='Copy' />
+					</TooltipCopy>
+				</HStack>
+				<HStack>
+					<Text>
+						{t('htsAccount')} : {memo?.htsAccount}
+					</Text>
+					<TooltipCopy valueToCopy={memo?.htsAccount ?? ''}>
+						<Icon name='Copy' />
+					</TooltipCopy>
+				</HStack>
+			</VStack>
 		);
 	};
 
@@ -70,6 +88,7 @@ const StableCoinDetails = () => {
 								{
 									label: t('tokenId'),
 									value: selectedStableCoin?.tokenId,
+									copyButton: true,
 								},
 								{
 									label: t('name'),
@@ -116,6 +135,7 @@ const StableCoinDetails = () => {
 								{
 									label: t('treasuryId'),
 									value: selectedStableCoin?.treasuryId,
+									copyButton: true,
 								},
 								{
 									label: t('memo'),
