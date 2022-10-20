@@ -53,7 +53,6 @@ const GetBalanceOperation = () => {
 				targetId: targetAccount,
 				tokenId: selectedStableCoin.tokenId,
 			});
-
 			setBalance(balance?.[0]);
 			onSuccess();
 		} catch (error: any) {
