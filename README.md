@@ -25,6 +25,12 @@ There are 4 modules:
 - **`/sdk`:** The SDK that implements the features to manage and operate stable coins.
 - **`/web`:** A DAPP developed with React to manage and operate on stable coins.
 
+Learn more about them in their README:
+- [cli](https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/cli#readme) 
+- [contracts](https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/contracts#readme) 
+- [sdk](https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/sdk#readme) 
+- [web](https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/web#readme) 
+
 # Installing
 
 In a terminal:
