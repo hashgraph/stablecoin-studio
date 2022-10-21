@@ -30,10 +30,10 @@ export enum HashConnectConnectionState {
 export type StableCoinListRaw = Array<Record<'id' | 'symbol', string>>;
 
 const appMetadata: AppMetadata = {
-	name: 'dApp Example',
-	description: 'An example hedera dApp',
-	icon: 'https://absolute.url/to/icon.png',
-	url: ''
+	name: 'Hedera Stable Coin',
+	description: 'An hedera dApp',
+	icon: 'https://dashboard-assets.dappradar.com/document/15402/hashpack-dapp-defi-hedera-logo-166x166_696a701b42fd20aaa41f2591ef2339c7.png',
+	url: '',
 };
 
 interface EventsSetter {

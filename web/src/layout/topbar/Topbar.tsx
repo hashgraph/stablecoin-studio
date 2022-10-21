@@ -11,7 +11,7 @@ import TopbarRight from './TopbarRight';
 const Topbar = () => {
 	const { t } = useTranslation('global');
 	const navigate = useNavigate();
-	const [isLargerThan1210] = useMediaQuery('(min-width: 1230px)');
+	const [isLargerThan1210] = useMediaQuery('(min-width: 1000px)');
 
 	const handleNavigateSC = () => {
 		RouterManager.to(navigate, NamedRoutes.StableCoinCreation);

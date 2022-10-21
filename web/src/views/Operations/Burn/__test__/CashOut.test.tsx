@@ -26,12 +26,6 @@ describe(`<${BurnOperation.name} />`, () => {
 		expect(component.getByTestId('amount')).toBeInTheDocument();
 	});
 
-	test('should have an input to write the destinationAccount', () => {
-		const component = render(<BurnOperation />);
-
-		expect(component.getByTestId('originAccount')).toBeInTheDocument();
-	});
-
 	test('should have a disabled confirm button that is enable when introduce valid data', async () => {
 		const component = render(<BurnOperation />);
 
@@ -40,9 +34,6 @@ describe(`<${BurnOperation.name} />`, () => {
 
 		const amount = component.getByTestId('amount');
 		userEvent.type(amount, '10000');
-
-		const account = component.getByTestId('originAccount');
-		userEvent.type(account, '0.0.12345');
 
 		await waitFor(() => {
 			expect(button).toBeEnabled();

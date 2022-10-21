@@ -14,7 +14,7 @@ exports[`<Stepper /> should render correctly 1`] = `
         aria-controls="tabs-:r0:--tabpanel-0"
         aria-disabled="false"
         aria-selected="true"
-        class="chakra-tabs__tab css-yyze93"
+        class="chakra-tabs__tab css-h9y905"
         data-index="0"
         id="tabs-:r0:--tab-0"
         role="tab"
@@ -37,7 +37,7 @@ exports[`<Stepper /> should render correctly 1`] = `
       <button
         aria-controls="tabs-:r0:--tabpanel-1"
         aria-selected="false"
-        class="chakra-tabs__tab css-yyze93"
+        class="chakra-tabs__tab css-h9y905"
         data-index="1"
         disabled=""
         id="tabs-:r0:--tab-1"
@@ -93,14 +93,14 @@ exports[`<Stepper /> should render correctly 1`] = `
               class="css-g4d8ui"
             >
               <button
-                class="chakra-button css-1skd29p"
+                class="chakra-button css-1bav4bk"
                 data-testid="stepper-step-panel-button-secondary-1"
                 type="button"
               >
                 Cancel
               </button>
               <button
-                class="chakra-button css-16vubea"
+                class="chakra-button css-1178n6s"
                 data-testid="stepper-step-panel-button-primary-1"
                 type="button"
               >

@@ -1,11 +1,14 @@
 import type { FlexProps as ChakraFlexProps, TextProps as ChakraTextProps } from '@chakra-ui/react';
-import { Box, Divider, Flex, Text } from '@chakra-ui/react';
+import { Box, Divider, Flex, Text, HStack } from '@chakra-ui/react';
+import Icon from './Icon';
+import TooltipCopy from './TooltipCopy';
 
 export interface Detail {
 	label: string;
 	labelInBold?: boolean;
 	value: any; // TODO: string | number
 	valueInBold?: boolean;
+	copyButton?: boolean;
 }
 
 export interface DetailsReviewProps {
@@ -61,9 +64,19 @@ const DetailsReview = (props: DetailsReviewProps) => {
 							>
 								{detail.label}
 							</Text>
-							<Text {...(detail.valueInBold ? textInBoldProps : commonTextProps)}>
-								{detail.value}
-							</Text>
+
+							{typeof detail.value === 'string' || typeof detail.value === 'number' ? (
+								<HStack {...(detail.valueInBold ? textInBoldProps : commonTextProps)}>
+									<Text>{detail.value}</Text>
+									{detail.copyButton && (
+										<TooltipCopy valueToCopy={detail.value.toString() ?? ''}>
+											<Icon name='Copy' />
+										</TooltipCopy>
+									)}
+								</HStack>
+							) : (
+								detail.value
+							)}
 						</Flex>
 						{divider && details.length !== index + 1 && (
 							<Divider title='divider' mt='13px' mb='13px' />

@@ -3,98 +3,77 @@
 exports[`<TopbarRight /> should render correctly 1`] = `
 <DocumentFragment>
   <div
-    class="css-rg2hwn"
+    class="css-166re2f"
     data-testid="topbar-right"
   >
     <div
-      class="css-18wp8yu"
-      data-testid="topbar-right-network"
+      class="chakra-stack css-d17m5h"
     >
-      <p
-        class="chakra-text css-mgupmj"
+      <div
+        class="chakra-stack css-jp20jv"
       >
-        Operating network
-      </p>
-      <p
-        class="chakra-text css-1n27kwj"
-      >
-        : 
-      </p>
-      <p
-        class="chakra-text css-15ww2gg"
-      >
-        TESNET
-      </p>
-    </div>
-    <div
-      class="css-dv2lk7"
-    />
-    <div
-      class="css-18wp8yu"
-      data-testid="topbar-right-account"
-    >
-      <p
-        class="chakra-text css-mgupmj"
-      >
-        Operating account
-      </p>
-      <p
-        class="chakra-text css-1n27kwj"
-      >
-        : 
-      </p>
-      <p
-        class="chakra-text css-mgupmj"
-      >
-        0.0.123
-      </p>
-    </div>
-    <div
-      class="css-dv2lk7"
-    />
-    <div
-      class="css-18wp8yu"
-      data-testid="topbar-right-disconnect"
-    >
-      <button
-        class="chakra-button css-35en9d"
-        type="button"
-      >
-        <svg
-          class="chakra-icon css-1cv0b1u"
-          fill="currentColor"
-          focusable="false"
-          height="1em"
-          viewBox="0 0 256 256"
-          width="1em"
-          xmlns="http://www.w3.org/2000/svg"
+        <div
+          class="css-1m8iww1"
         >
-          <rect
-            fill="none"
-            height="256"
-            width="256"
-          />
-          <line
-            fill="none"
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="16"
-            x1="128"
-            x2="128"
-            y1="48"
-            y2="124"
-          />
-          <path
-            d="M176,54.2a88,88,0,1,1-96,0"
-            fill="none"
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="16"
-          />
-        </svg>
-      </button>
+          <p
+            class="chakra-text css-o1au3i"
+            data-testid="topbar-right-account"
+          >
+            0.0.123
+          </p>
+        </div>
+        <p
+          class="chakra-text css-gegx7f"
+          data-testid="topbar-right-network"
+        >
+          TESNET
+        </p>
+      </div>
+      <img
+        class="chakra-image css-1lzenv"
+        src="MetaMask_Fox.svg"
+      />
+    </div>
+    <div
+      class="css-dv2lk7"
+    />
+    <div
+      class="css-1a9f5vk"
+    >
+      <svg
+        class="chakra-icon css-dee54c"
+        fill="currentColor"
+        focusable="false"
+        height="1em"
+        viewBox="0 0 256 256"
+        width="1em"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <rect
+          fill="none"
+          height="256"
+          width="256"
+        />
+        <line
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="16"
+          x1="128"
+          x2="128"
+          y1="48"
+          y2="124"
+        />
+        <path
+          d="M176,54.2a88,88,0,1,1-96,0"
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="16"
+        />
+      </svg>
     </div>
   </div>
   <span

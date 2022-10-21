@@ -12,14 +12,14 @@ exports[`<OperationLayout /> should render correctly 1`] = `
       Operations
     </h2>
     <div
-      class="css-1hkemoa"
+      class="css-1b6lda7"
       data-testid="base-container-children"
     >
       <div
-        class="css-f3f3xv"
+        class="css-1us6gcn"
       >
         <div
-          class="css-1rtxhmh"
+          class="css-1r9sqqd"
         >
           <div
             class="chakra-stack css-n21gh5"
@@ -35,7 +35,7 @@ exports[`<OperationLayout /> should render correctly 1`] = `
               class="chakra-stack css-wqnj46"
             >
               <h2
-                class="chakra-heading css-12c29ps"
+                class="chakra-heading css-m8uvwu"
                 data-testid="details-title"
               >
                 Stable coin details
@@ -148,7 +148,7 @@ exports[`<OperationLayout /> should render correctly 1`] = `
                       <p
                         class="chakra-text css-6b9s8v"
                       >
-                        -
+                        0
                       </p>
                     </div>
                     <hr
@@ -172,7 +172,7 @@ exports[`<OperationLayout /> should render correctly 1`] = `
                       <p
                         class="chakra-text css-6b9s8v"
                       >
-                        100000
+                        100
                       </p>
                     </div>
                     <hr
@@ -212,14 +212,14 @@ exports[`<OperationLayout /> should render correctly 1`] = `
             class="chakra-stack css-1amf41o"
           >
             <button
-              class="chakra-button css-6blmsx"
+              class="chakra-button css-1nrhi9n"
               data-testid="cancel-btn"
               type="button"
             >
               Go back
             </button>
             <button
-              class="chakra-button css-16vubea"
+              class="chakra-button css-1178n6s"
               data-testid="confirm-btn"
               type="button"
             >
