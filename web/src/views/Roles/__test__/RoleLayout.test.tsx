@@ -4,7 +4,7 @@ import RoleLayout from '../RoleLayout';
 import type { RoleLayoutProps as AllRoleLayoutProps } from '../RoleLayout';
 import en from '../../../translations/en/roles.json';
 import { render } from '../../../test';
-import { fakeOptions, fields } from '../constants';
+import { roleOptions, fields } from '../constants';
 import { RouterManager } from '../../../Router/RouterManager';
 
 jest.mock('../../../Router/RouterManager', () => ({
@@ -20,10 +20,11 @@ const defaultProps: RoleLayoutProps = {
 	accountLabel: translations.accountLabel,
 	accountPlaceholder: translations.accountPlaceholder,
 	onConfirm: jest.fn(),
-	options: fakeOptions,
+	options: roleOptions,
 	selectorLabel: translations.selectLabel,
 	selectorPlaceholder: translations.selectPlaceholder,
 	title: en.give,
+	roleRequest: true
 };
 
 const RenderWithForm = (props: RoleLayoutProps) => {
