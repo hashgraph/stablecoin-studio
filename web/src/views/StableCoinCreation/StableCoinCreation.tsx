@@ -107,11 +107,6 @@ const StableCoinCreation = () => {
 						// @ts-ignore
 						fieldsStep[index] = watch(keys[index].concat('Other'));
 					}
-
-					if (item?.value === OTHER_KEY_VALUE && index === 1) {
-						// @ts-ignore
-						fieldsStep = fieldsStep.concat(watch('treasuryAccountAddress'));
-					}
 				});
 			}
 		}
