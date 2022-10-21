@@ -1,5 +1,5 @@
 name: SDK - Test
-# on:
+on: workflow_dispatch
 #   pull_request:
 #     branches: [main, feature/sdk/**]
 #     paths:

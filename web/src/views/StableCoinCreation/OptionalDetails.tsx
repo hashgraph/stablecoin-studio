@@ -51,6 +51,11 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 			name: 'supplyType',
 		})?.value === 1;
 
+	const initialSupply = useWatch({
+		control,
+		name: 'initialSupply',
+	});
+
 	return (
 		<VStack h='full' justify={'space-between'} pt='80px'>
 			<Stack minW={400}>
@@ -92,6 +97,14 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 						<InputNumberController
 							rules={{
 								required: t(`global:validations.required`),
+								validate: {
+									quantityOverTotalSupply: (value: number) => {
+										return (
+											(initialSupply && initialSupply <= value) ||
+											t('global:validations.overMaxSupply')
+										);
+									},
+								},
 							}}
 							isRequired
 							control={control}

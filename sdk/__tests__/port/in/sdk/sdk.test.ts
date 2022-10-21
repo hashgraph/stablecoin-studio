@@ -46,25 +46,12 @@ describe('🧪 [PORT] SDK', () => {
     });
     expect(list).not.toBeNull();
   });
-
-  it('Gets the token balance', async () => {
-    const balance = await sdk.getBalanceOf({
+  it('Gets accountInfo', async () => {
+    const list = await sdk.getAccountInfo({
       account: ACCOUNTS.testnet,
-      targetId: ACCOUNTS.testnet.accountId.id,
-      proxyContractId: proxyContractId ?? '',
-      tokenId: tokenId ?? '',
     });
-    expect(balance).not.toBeNull();
-    expect(balance && balance[0]).toBe(0);
-  });
-
-  it('Gets the token name', async () => {
-    const name = await sdk.getNameToken({
-      account: ACCOUNTS.testnet,
-      proxyContractId: proxyContractId ?? '',
-    });
-    expect(name).not.toBeNull();
-    expect(name && name[0]).toBe('TEST COIN');
+    console.log(list)
+    expect(list).not.toBeNull();
   });
 
   it('Cash in token', async () => {
@@ -109,20 +96,19 @@ describe('🧪 [PORT] SDK', () => {
     expect(balance && balance[0]).toBe(9);
   }, 15000);
 
-  /* it('Wipe token (wrong)', async () => {
+  it('Wipe token (wrong)', async () => {
     const amount = 100;
-    expect(
-      async () =>
-        await sdk.wipe({
-          account: ACCOUNTS.testnet,
-          targetId: ACCOUNTS.testnet.accountId.id,
-          proxyContractId: proxyContractId ?? '',
-          tokenId: tokenId ?? '',
-          amount,
-        }),
-    ).toThrow(Error);
+    await expect(
+      sdk.wipe({
+        account: ACCOUNTS.testnet,
+        targetId: ACCOUNTS.testnet.accountId.id,
+        proxyContractId: proxyContractId ?? '',
+        tokenId: tokenId ?? '',
+        amount,
+      }),
+    ).rejects.toThrow(Error);
   }, 15000);
- */
+
   it('Check unlimited supplier role', async () => {
     const role = await sdk.isUnlimitedSupplierAllowance({
       account: ACCOUNTS.testnet,
@@ -223,15 +209,6 @@ describe('🧪 [PORT] SDK', () => {
       tokenId: tokenId ?? '',
     });
     expect(hasRole && hasRole[0]).toBeTruthy();
-
-    /* const check = await sdk.supplierAllowance({
-      account: ACCOUNTS.testnet,
-      targetId: ACCOUNTS.testnet.accountId.id,
-      proxyContractId: proxyContractId ?? '',
-      tokenId: tokenId ?? '',
-    });
-    expect(check).not.toBeNull();
-    expect(check && check[0]).toBe(amount); */
   }, 15000);
   it('Grant limited cash in role', async () => {
     const amount = 10;
@@ -384,18 +361,17 @@ describe('🧪 [PORT] SDK', () => {
     expect(rescue).toBeTruthy();
   }, 15000);
 
-  /* it('Rescue token (wrong)', async () => {
+  it('Rescue token (wrong)', async () => {
     const amount = 100;
-    expect(
-      async () =>
-        await sdk.rescue({
-          account: ACCOUNTS.testnet,
-          proxyContractId: proxyContractId ?? '',
-          tokenId: tokenId ?? '',
-          amount,
-        }),
-    ).toThrowError('Amount is bigger than token owner balance');
-  }, 15000); */
+    await expect(
+      sdk.rescue({
+        account: ACCOUNTS.testnet,
+        proxyContractId: proxyContractId ?? '',
+        tokenId: tokenId ?? '',
+        amount,
+      }),
+    ).rejects.toThrow(Error);
+  }, 15000);
 
   it('Get capabilities', async () => {
     const capabilities = await sdk.getCapabilitiesStableCoin(
@@ -405,13 +381,27 @@ describe('🧪 [PORT] SDK', () => {
     expect(capabilities).not.toBeNull();
   }, 15000);
 
-  /* it('Associate token', async () => {
-    expect(
-      async () =>
-        await sdk.associateToken({
-          account: ACCOUNTS.testnet,
-          proxyContractId: proxyContractId ?? '',
-        }),
-    ).toThrow();
-  }, 15000); */
+  it('Associate token', async () => {
+    await expect(
+      sdk.associateToken({
+        account: ACCOUNTS.testnet,
+        proxyContractId: proxyContractId ?? '',
+      }),
+    ).rejects.toThrow();
+  }, 15000);
+  it('Throw Error initialSupply > maxSupply (wrong)', async () => {
+    await expect(
+      sdk.createStableCoin({
+        account: ACCOUNTS.testnet,
+        name: 'TEST COIN',
+        symbol: 'TC',
+        initialSupply: 10n,
+        maxSupply: 9n,
+        decimals: 0,
+        adminKey: ACCOUNTS.testnet.privateKey.publicKey,
+        wipeKey: PublicKey.NULL,
+        supplyKey: PublicKey.NULL,
+      }),
+    ).rejects.toThrow(Error);
+  }, 120_000);
 });

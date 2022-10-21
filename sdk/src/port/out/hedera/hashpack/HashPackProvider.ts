@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import axios from 'axios';
 import { IniConfig, IProvider } from '../Provider.js';
 import {
 	HederaNetwork,
@@ -11,18 +10,18 @@ import {
 	ContractId,
 	StableCoinMemo,
 	PrivateKeyType,
-	Account
+	Account,
 } from '../../../in/sdk/sdk.js';
 import {
 	AccountId as HAccountId,
 	ContractFunctionParameters,
 	ContractId as HContractId,
 	PrivateKey as HPrivateKey,
-	PublicKey as HPublicKey,
 	TokenId,
 	Transaction,
 	Status,
 	Signer,
+	TransactionResponse,
 } from '@hashgraph/sdk';
 import { StableCoin } from '../../../../domain/context/stablecoin/StableCoin.js';
 import {
@@ -52,9 +51,11 @@ import ProviderEvent, { ProviderEventNames } from '../ProviderEvent.js';
 import EventService from '../../../../app/service/event/EventService.js';
 import { HashConnect } from 'hashconnect';
 import { HashConnectTypes } from 'hashconnect';
-import { HashConnectConnectionState } from 'hashconnect/types';
+import { HashConnectConnectionState, NetworkType } from 'hashconnect/types';
 import HashPackAccount from '../../../../domain/context/account/HashPackAccount.js';
-import { IAccount } from '../account/types/IAccount';
+import { PublicKey as HPublicKey } from '@hashgraph/sdk';
+import axios from 'axios';
+import IAccount from '../account/types/IAccount.js';
 
 const logOpts = { newLine: true, clear: true };
 
@@ -145,7 +146,7 @@ export default class HashPackProvider implements IProvider {
 				throw new Error(
 					'Pairing is not possible since pairing data is undefined.',
 				);
-			}		
+			}
 		});
 
 		//This is fired when HashConnect loses connection, pairs successfully, or is starting connection
@@ -199,7 +200,7 @@ export default class HashPackProvider implements IProvider {
 				functionCallParameters,
 				gas,
 			);
-	
+			
 		const transactionResponse =
 			await this.hashPackSigner.signAndSendTransaction(transaction);
 		const htsResponse: HTSResponse =
@@ -210,7 +211,6 @@ export default class HashPackProvider implements IProvider {
 				name,
 				abi,
 			);
-	
 		return htsResponse.reponseParam;
 	}
 
@@ -237,42 +237,44 @@ export default class HashPackProvider implements IProvider {
 	public async accountToEvmAddress(account: Account): Promise<string> {
 		if (account.privateKey) {
 			return this.getAccountEvmAddressFromPrivateKeyType(
-				account.privateKey?.type, 
-				account.privateKey.publicKey.key, 
-				account.accountId.id);
+				account.privateKey?.type,
+				account.privateKey.publicKey.key,
+				account.accountId.id,
+			);
 		} else {
 			return await this.getAccountEvmAddress(account.accountId.id);
 		}
-	}	
+	}
 
-	private async getAccountEvmAddress(
-		accountId: string,
-	): Promise<string> {
+	private async getAccountEvmAddress(accountId: string): Promise<string> {
 		try {
-			const URI_BASE = `${getHederaNetwork(this.network)?.mirrorNodeUrl}/api/v1/`;
+			const URI_BASE = `${
+				getHederaNetwork(this.network)?.mirrorNodeUrl
+			}/api/v1/`;
 			const res = await axios.get<IAccount>(
-				URI_BASE + 'accounts/' + accountId
+				URI_BASE + 'accounts/' + accountId,
 			);
 
 			if (res.data.evm_address) {
 				return res.data.evm_address;
 			} else {
 				return this.getAccountEvmAddressFromPrivateKeyType(
-					res.data.key._type, 
-					res.data.key.key, 
-					accountId);
+					res.data.key._type,
+					res.data.key.key,
+					accountId,
+				);
 			}
 		} catch (error) {
 			return Promise.reject<string>(error);
 		}
-	}	
+	}
 
 	private getAccountEvmAddressFromPrivateKeyType(
-		privateKeyType: string, 
+		privateKeyType: string,
 		publicKey: string,
-		accountId: string): string {
-			
-		switch(privateKeyType) {
+		accountId: string,
+	): string {
+		switch (privateKeyType) {
 			case PrivateKeyType.ECDSA:
 				return HPublicKey.fromString(publicKey).toEthereumAddress();
 
@@ -287,7 +289,7 @@ export default class HashPackProvider implements IProvider {
 	): Promise<StableCoin> {
 		if (account) {
 			this.provider = this.hc.getProvider(
-				this.network.hederaNetworkEnviroment,
+				this.network.hederaNetworkEnviroment as NetworkType,
 				this.initData.topic,
 				account.accountId.id,
 			);
@@ -616,7 +618,8 @@ export default class HashPackProvider implements IProvider {
 	}
 
 	disconectHaspack(): void {
-		if (this.pairingData?.topic) this.hc.disconnect(this.pairingData.topic);
+		if (this.initData?.topic) this.hc.disconnect(this.initData.topic);
+
 		this.pairingData = null;
 		this.eventService.emit(
 			ProviderEventNames.providerConnectionStatusChangeEvent,
@@ -631,7 +634,7 @@ export default class HashPackProvider implements IProvider {
 	public async wipeHTS(params: IWipeTokenRequest): Promise<boolean> {
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(
-				this.network.hederaNetworkEnviroment,
+				this.network.hederaNetworkEnviroment as NetworkType,
 				this.initData.topic,
 				params.account.accountId.id,
 			);
@@ -680,7 +683,7 @@ export default class HashPackProvider implements IProvider {
 	public async cashInHTS(params: IHTSTokenRequest): Promise<boolean> {
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(
-				this.network.hederaNetworkEnviroment,
+				this.network.hederaNetworkEnviroment as NetworkType,
 				this.initData.topic,
 				params.account.accountId.id,
 			);
@@ -704,10 +707,9 @@ export default class HashPackProvider implements IProvider {
 
 		const transactionResponse =
 			await this.hashPackSigner.signAndSendTransaction(transaction);
-
 		const htsResponse: HTSResponse =
 			await this.transactionResposeHandler.manageResponse(
-				transactionResponse,
+				transactionResponse as TransactionResponse,
 				TransactionType.RECEIPT,
 				this.getSigner(),
 			);
@@ -728,7 +730,7 @@ export default class HashPackProvider implements IProvider {
 	public async cashOutHTS(params: IHTSTokenRequest): Promise<boolean> {
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(
-				this.network.hederaNetworkEnviroment,
+				this.network.hederaNetworkEnviroment as NetworkType,
 				this.initData.topic,
 				params.account.accountId.id,
 			);
@@ -776,7 +778,7 @@ export default class HashPackProvider implements IProvider {
 	public async transferHTS(params: ITransferTokenRequest): Promise<boolean> {
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(
-				this.network.hederaNetworkEnviroment,
+				this.network.hederaNetworkEnviroment as NetworkType,
 				this.initData.topic,
 				params.account.accountId.id,
 			);

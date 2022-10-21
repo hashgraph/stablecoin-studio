@@ -16,7 +16,9 @@ import IRoleStableCoinServiceRequestModel from './model/IRoleStableCoinServiceRe
 import IGetBasicRequestModel from './model/IGetBasicRequest.js';
 import ISupplierRoleStableCoinServiceRequestModel from './model/ISupplierRoleStableCoinServiceRequestModel.js';
 import IStableCoinDetail from '../../../port/in/sdk/response/IStableCoinDetail.js';
+import IAccountInfo from '../../../port/in/sdk/response/IAccountInfo.js';
 import { Capabilities } from '../../../domain/context/stablecoin/Capabilities.js';
+import { IAccountWithKeyRequestModel } from './model/CoreRequestModel.js';
 import IGetSupplierAllowanceModel from './model/IGetSupplierAllowanceModel.js';
 
 export default class StableCoinService extends Service {
@@ -33,6 +35,16 @@ export default class StableCoinService extends Service {
 	public async createStableCoin(
 		req: ICreateStableCoinServiceRequestModel,
 	): Promise<IStableCoinDetail> {
+		if (
+			req.maxSupply &&
+			req.initialSupply &&
+			req.initialSupply * 10n ** BigInt(req.decimals) >
+				req.maxSupply * 10n ** BigInt(req.decimals)
+		) {
+			throw new Error(
+				'Initial supply cannot be more than the max supply',
+			);
+		}
 		let coin: StableCoin = new StableCoin({
 			name: req.name,
 			symbol: req.symbol,
@@ -152,7 +164,9 @@ export default class StableCoinService extends Service {
 		const capabilities: Capabilities[] =
 			await this.getCapabilitiesStableCoin(
 				req.tokenId,
-				req.account?.privateKey?.publicKey?.key ?? '',
+				req.publicKey
+					? req.publicKey.key
+					: req.account?.privateKey?.publicKey?.key ?? '',
 			);
 		if (capabilities.includes(Capabilities.CASH_IN)) {
 			const result = await this.repository.cashIn(
@@ -457,4 +471,12 @@ export default class StableCoinService extends Service {
 			req.account,
 		);
 	}
+
+	public async getAccountInfo(
+		req: IAccountWithKeyRequestModel,
+	): Promise<IAccountInfo> {
+		return this.repository.getAccountInfo(
+			req.account.accountId.id
+		);
+	}	
 }

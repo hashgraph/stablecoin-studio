@@ -3,7 +3,7 @@ import HandleRoles from '../HandleRoles';
 import type { Action } from '../HandleRoles';
 import en from '../../../translations/en/roles.json';
 import { render } from '../../../test';
-import { fakeOptions, fields, actions } from '../constants';
+import { roleOptions, fields, actions } from '../constants';
 import { waitFor } from '@testing-library/react';
 import type { RenderResult } from '@testing-library/react';
 import { RouterManager } from '../../../Router/RouterManager';
@@ -42,7 +42,7 @@ describe(`<${HandleRoles.name} />`, () => {
 		const roles = component.getByTestId('select-placeholder');
 		userEvent.click(roles);
 
-		const option = component.getByText(fakeOptions[0].label);
+		const option = component.getByText(roleOptions[0].label);
 		userEvent.click(option);
 
 		expect(roles).not.toBeInTheDocument();

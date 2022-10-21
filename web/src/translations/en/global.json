@@ -36,7 +36,9 @@
     "required": "This field is required",
     "invalidAccount": "Incorrect account",
     "decimalsValidation": "You have added more decimals than the supported by the stable coin",
-    "overTotalSupply": "Quantity over current total supply"
+    "overTotalSupply": "Quantity over current total supply",
+    "overMaxSupply": "Initial supply cannot be more than the total supply",
+    "overMaxSupplyCashIn": "The total of the amounts exceeds maxSupply"
   },
   "operations": {
     "title": "Operations"

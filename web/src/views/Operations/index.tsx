@@ -5,13 +5,16 @@ import { NamedRoutes } from '../../Router/NamedRoutes';
 import GridDirectAccess from '../../components/GridDirectAccess';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
+import { SELECTED_WALLET_CAPABILITIES, SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
 import type { DirectAccessProps } from '../../components/DirectAccess';
+import { Capabilities } from 'hedera-stable-coin-sdk';
 
 const Operations = () => {
 	const { t } = useTranslation('operations');
+
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
-	const { supplyKey, wipeKey } = selectedStableCoin || {};
+	const capabilities: Capabilities[] | undefined = useSelector(SELECTED_WALLET_CAPABILITIES);
+
 	const [disabledFeatures, setDisabledFeatures] = useState({
 		cashIn: false,
 		burn: false,
@@ -25,44 +28,21 @@ const Operations = () => {
 		}
 	}, [selectedStableCoin]);
 
-	const isKeySet = (
-		key: { key: string; type: string; id: never } | { id: string; key: never; type: never },
-	) => {
-		if (!key) {
-			return false;
-		}
-		return true;
-	};
-
-	const isContractKey = (
-		key: { key: string; type: string; id: never } | { id: string; key: never; type: never },
-	) => {
-		if (!key) {
-			return false;
-		}
-		if (key.id) {
-			return true;
-		}
-		return false;
-	};
-
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const isUserKey = async () => {
-		// pending to get public key of user connected
-		return true;
-	};
-
 	const getAvailableFeatures = () => {
-		// TODO: add userkey validation
-
-		// TODO: remove as any when sdk returns correct type
 		const areDisabled = {
-			cashIn: !isKeySet(supplyKey as any) || !isContractKey(supplyKey as any),
-			burn: !isKeySet(supplyKey as any) || !isContractKey(supplyKey as any),
-			balance: false,
-			rescue: false,
-			wipe: !isKeySet(wipeKey as any) || !isKeySet(supplyKey as any),
+			cashIn:
+				!capabilities?.includes(Capabilities.CASH_IN) &&
+				!capabilities?.includes(Capabilities.CASH_IN_HTS),
+			burn:
+				!capabilities?.includes(Capabilities.BURN) &&
+				!capabilities?.includes(Capabilities.BURN_HTS),
+			balance: !capabilities?.includes(Capabilities.BALANCE),
+			rescue: !capabilities?.includes(Capabilities.RESCUE),
+			wipe:
+				!capabilities?.includes(Capabilities.WIPE) &&
+				!capabilities?.includes(Capabilities.WIPE_HTS),
 		};
+
 		setDisabledFeatures(areDisabled);
 	};
 

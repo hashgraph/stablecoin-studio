@@ -9,6 +9,8 @@ import SDKService from '../../services/SDKService';
 import type { AppDispatch } from '../../store/store';
 import {
 	getStableCoinList,
+	SELECTED_WALLET_ACCOUNT_INFO,
+	SELECTED_WALLET_CAPABILITIES,
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNTID,
 	STABLE_COIN_LIST,
@@ -20,34 +22,60 @@ import { NamedRoutes } from '../../Router/NamedRoutes';
 import { HashPackAccount } from 'hedera-stable-coin-sdk';
 
 const CoinDropdown = () => {
+	const dispatch = useDispatch<AppDispatch>();
+	const navigate = useNavigate();
+	const location = useLocation();
+
 	const stableCoinList = useSelector(STABLE_COIN_LIST);
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const accountId = useSelector(SELECTED_WALLET_PAIRED_ACCOUNTID);
-	const dispatch = useDispatch<AppDispatch>();
+	const capabilities = useSelector(SELECTED_WALLET_CAPABILITIES);
+	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
+
 	const [options, setOptions] = useState<Option[]>([]);
-	const navigate = useNavigate();
-	const location = useLocation();
+
 	const isInStableCoinNotSelected = !!matchPath(
 		location.pathname,
 		RouterManager.getUrl(NamedRoutes.StableCoinNotSelected),
 	);
 
 	useEffect(() => {
-		if (selectedStableCoin && isInStableCoinNotSelected) {
-			RouterManager.to(navigate, NamedRoutes.Operations);
+		if (selectedStableCoin) {
+			getCapabilities();
 		}
 	}, [selectedStableCoin]);
+
+	useEffect(() => {
+		if (capabilities?.length !== 0 && isInStableCoinNotSelected) {
+			RouterManager.to(navigate, NamedRoutes.Operations);
+		}
+	}, [capabilities]);
 
 	useEffect(() => {
 		if (accountId) {
 			const id = new HashPackAccount(accountId);
 			dispatch(getStableCoinList(id));
+
+			SDKService.getAccountInfo({ account: id }).then((response) =>
+				dispatch(walletActions.setAccountInfo(response)),
+			);
 		}
 	}, [accountId]);
 
 	useEffect(() => {
 		formatOptionsStableCoins();
 	}, [stableCoinList]);
+
+	const getCapabilities = async () => {
+		if (!selectedStableCoin?.tokenId || !accountInfo.publicKey?.key) return;
+
+		const capabilities = await SDKService.getCapabilities({
+			id: selectedStableCoin.tokenId,
+			publicKey: accountInfo.publicKey.key,
+		});
+
+		dispatch(walletActions.setCapabilities(capabilities));
+	};
 
 	const formatOptionsStableCoins = async () => {
 		if (stableCoinList) {
@@ -57,18 +85,6 @@ const CoinDropdown = () => {
 			}));
 			setOptions(options);
 		}
-	};
-
-	const formatSupplyParam = ({
-		supply,
-		decimals,
-	}: {
-		supply: string | undefined;
-		decimals: number;
-	}) => {
-		if (supply !== '0') return supply?.slice(0, -decimals);
-
-		return supply;
 	};
 
 	const handleSelectCoin = async (event: any) => {
@@ -81,18 +97,9 @@ const CoinDropdown = () => {
 		dispatch(
 			walletActions.setSelectedStableCoin({
 				tokenId: stableCoinDetails?.tokenId,
-				initialSupply: formatSupplyParam({
-					supply: stableCoinDetails?.initialSupply?.toString(),
-					decimals: stableCoinDetails?.decimals ?? 0,
-				}),
-				totalSupply: formatSupplyParam({
-					supply: stableCoinDetails?.totalSupply?.toString(),
-					decimals: stableCoinDetails?.decimals ?? 0,
-				}),
-				maxSupply: formatSupplyParam({
-					supply: stableCoinDetails?.maxSupply?.toString(),
-					decimals: stableCoinDetails?.decimals ?? 0,
-				}),
+				initialSupply: Number(stableCoinDetails?.initialSupply),
+				totalSupply: Number(stableCoinDetails?.totalSupply),
+				maxSupply: Number(stableCoinDetails?.maxSupply),
 				name: stableCoinDetails?.name,
 				symbol: stableCoinDetails?.symbol,
 				decimals: stableCoinDetails?.decimals,
