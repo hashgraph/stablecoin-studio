@@ -116,34 +116,27 @@ export class HashConnectSigner implements Signer {
       },
       topic: this.topicId,
     };
-    console.log("New Transaction: ", transaction);
     const res = await this.hashconnect.sendTransaction(
       this.topicId,
       transaction
     );
-    console.log("receipt:", res);
 
-    let response;
+    let out;
     try {
-      console.log(res);
-      if (res.response && typeof res.response === "object") {
-        response = res.response;
-        response.getReceiptWithSigner = (signer: Signer) => {
+      out = res;
+      if (out.response && typeof res.response === "object" && res.receipt) {
+        out.getReceiptWithSigner = (signer: Signer) => {
           signer;
           return new Promise<TransactionReceipt>((resolve) =>
             resolve(TransactionReceipt.fromBytes(res.receipt as Uint8Array))
           );
         };
-        // response = TransactionResponse.fromJSON(
-        //   res.response,
-        //   res.receipt as Uint8Array
-        // );
       }
     } catch (err) {
-      console.log("ERROR;", err);
+      console.error(err);
     }
 
-    return response as unknown as OutputT;
+    return out as unknown as OutputT;
   }
 
   private getBytesOf<RequestT, ResponseT, OutputT>(
