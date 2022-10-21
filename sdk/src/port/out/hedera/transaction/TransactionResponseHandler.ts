@@ -124,13 +124,17 @@ export class TransactionResposeHandler {
 				throw new Error('Incorrect response type');
 			}
 		} else {
+			console.log(transactionResponse instanceof TransactionResponse);
+			console.log(transactionResponse);
 			if (transactionResponse instanceof TransactionResponse) {
 				transactionReceipt = await (
 					transactionResponse as TransactionResponse
 				).getReceiptWithSigner(clientOrSigner);
 			} else {
 				transactionReceipt =
-					await this.getHashconnectTransactionReceipt(transactionResponse);
+					await this.getHashconnectTransactionReceipt(
+						transactionResponse,
+					);
 			}
 		}
 		return transactionReceipt;
@@ -139,15 +143,25 @@ export class TransactionResposeHandler {
 	private async getHashconnectTransactionReceipt(
 		transactionResponse: MessageTypes.TransactionResponse,
 	): Promise<TransactionReceipt> {
-		const receipt = transactionResponse.receipt;
-		if (receipt && receipt instanceof Uint8Array) {
-			return TransactionReceipt.fromBytes(receipt);
-		} else if (
-			(transactionResponse as unknown as { nodeId: string }).nodeId
-		) {
-			return await (
-				transactionResponse as unknown as TransactionResponse
-			).getReceiptWithSigner(null as unknown as Signer);
+		let receipt;
+		if ((transactionResponse as MessageTypes.TransactionResponse).receipt) {
+			receipt = TransactionReceipt.fromBytes(
+				(transactionResponse as MessageTypes.TransactionResponse)
+					.receipt as Uint8Array,
+			);
+		// } else if (
+		// 	(transactionResponse as TransactionResponse).getReceiptWithSigner
+		// ) {
+		// 	receipt = (
+		// 		transactionResponse as TransactionResponse
+		// 	).getReceiptWithSigner(null as unknown as Signer);
+		} else {
+			throw new Error(
+				`Unexpected receipt type from Hashpack: ${receipt}`,
+			);
+		}
+		if (receipt) {
+			return receipt;
 		} else {
 			throw new Error(
 				`Unexpected receipt type from Hashpack: ${receipt}`,

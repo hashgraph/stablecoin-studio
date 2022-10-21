@@ -6,6 +6,7 @@ import {
   Client,
   Provider,
   Query,
+  Signer,
   Transaction,
   TransactionId,
   TransactionReceipt,
@@ -93,32 +94,27 @@ export class HashConnectProvider implements Provider {
       },
       topic: this.topicId,
     };
-
     const res = await this.hashconnect.sendTransaction(
       this.topicId,
       transaction
     );
 
-      let response;
-      console.log(
-        "receipt:",
-        TransactionReceipt.fromBytes(res.receipt as Uint8Array)
-      );
-      if (
-        res.response &&
-        typeof res.response === "object" &&
-        res.receipt &&
-        Array.isArray(res.receipt)
-      ) {
-        console.log(TransactionReceipt.fromBytes(res.receipt as Uint8Array));
-        res.response.getReceiptWithSigner = () =>
-          Promise.resolve(
-            TransactionReceipt.fromBytes(res.receipt as Uint8Array)
+    let out;
+    try {
+      out = res;
+      if (out.response && typeof res.response === "object" && res.receipt) {
+        out.getReceiptWithSigner = (signer: Signer) => {
+          signer;
+          return new Promise<TransactionReceipt>((resolve) =>
+            resolve(TransactionReceipt.fromBytes(res.receipt as Uint8Array))
           );
+        };
       }
+    } catch (err) {
+      console.error(err);
+    }
 
-      return response as unknown as OutputT;
-    throw new Error(`We only know how to forward Transactions and Queries.`);
+    return out as unknown as OutputT;
   }
 
   private getBytesOf<RequestT, ResponseT, OutputT>(

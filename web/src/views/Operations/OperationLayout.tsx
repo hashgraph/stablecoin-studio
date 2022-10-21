@@ -26,72 +26,72 @@ const OperationLayout = ({ LeftContent, onConfirm, confirmBtnProps }: OperationL
 		RouterManager.goBack(navigate);
 	};
 
-	const optionalDetailsFinite = [
-		{
-			label: t('operations:details.initialSupply'),
-			value: selectedStableCoin?.initialSupply
-				? formatAmountWithDecimals({
-						amount: Number(selectedStableCoin?.initialSupply),
-						decimals: selectedStableCoin?.decimals || 0,
-				  })
-				: unknown,
-		},
-		{
-			label: t('operations:details.totalSupply'),
-			value: selectedStableCoin?.totalSupply
-				? formatAmountWithDecimals({
-						amount: Number(selectedStableCoin?.totalSupply),
-						decimals: selectedStableCoin?.decimals || 0,
-				  })
-				: unknown,
-		},
-		{
-			label: t('operations:details.maxSupply'),
-			value: selectedStableCoin?.maxSupply
-				? formatAmountWithDecimals({
-						amount: Number(selectedStableCoin?.maxSupply),
-						decimals: selectedStableCoin?.decimals || 0,
-				  })
-				: unknown,
-		},
-		{
-			label: t('operations:details.supplyType'),
-			// @ts-ignore Property 'supplyType' does not exist on type 'IStableCoinDetail'.
-			value:
-				selectedStableCoin?.maxSupply === (0 as unknown as BigInt)
-					? t('operations:details.infinite')
-					: t('operations:details.finite'),
-		},
-	]
+	// const optionalDetailsFinite = [
+	// 	{
+	// 		label: t('operations:details.initialSupply'),
+	// 		value: selectedStableCoin?.initialSupply
+	// 			? formatAmountWithDecimals({
+	// 					amount: Number(selectedStableCoin?.initialSupply),
+	// 					decimals: selectedStableCoin?.decimals || 0,
+	// 			  })
+	// 			: unknown,
+	// 	},
+	// 	{
+	// 		label: t('operations:details.totalSupply'),
+	// 		value: selectedStableCoin?.totalSupply
+	// 			? formatAmountWithDecimals({
+	// 					amount: Number(selectedStableCoin?.totalSupply),
+	// 					decimals: selectedStableCoin?.decimals || 0,
+	// 			  })
+	// 			: unknown,
+	// 	},
+	// 	{
+	// 		label: t('operations:details.maxSupply'),
+	// 		value: selectedStableCoin?.maxSupply
+	// 			? formatAmountWithDecimals({
+	// 					amount: Number(selectedStableCoin?.maxSupply),
+	// 					decimals: selectedStableCoin?.decimals || 0,
+	// 			  })
+	// 			: unknown,
+	// 	},
+	// 	{
+	// 		label: t('operations:details.supplyType'),
+	// 		// @ts-ignore Property 'supplyType' does not exist on type 'IStableCoinDetail'.
+	// 		value:
+	// 			selectedStableCoin?.maxSupply === (0 as unknown as BigInt)
+	// 				? t('operations:details.infinite')
+	// 				: t('operations:details.finite'),
+	// 	},
+	// ]
 
-	const optionalDetailsInfinite = [
-		{
-			label: t('operations:details.initialSupply'),
-			value: selectedStableCoin?.initialSupply
-				? formatAmountWithDecimals({
-						amount: Number(selectedStableCoin?.initialSupply),
-						decimals: selectedStableCoin?.decimals || 0,
-				  })
-				: unknown,
-		},
-		{
-			label: t('operations:details.totalSupply'),
-			value: selectedStableCoin?.totalSupply
-				? formatAmountWithDecimals({
-						amount: Number(selectedStableCoin?.totalSupply),
-						decimals: selectedStableCoin?.decimals || 0,
-				  })
-				: unknown,
-		},
-		{
-			label: t('operations:details.supplyType'),
-			// @ts-ignore Property 'supplyType' does not exist on type 'IStableCoinDetail'.
-			value:
-				selectedStableCoin?.maxSupply === (0 as unknown as BigInt)
-					? t('operations:details.infinite')
-					: t('operations:details.finite'),
-		},
-	]
+	// const optionalDetailsInfinite = [
+	// 	{
+	// 		label: t('operations:details.initialSupply'),
+	// 		value: selectedStableCoin?.initialSupply
+	// 			? formatAmountWithDecimals({
+	// 					amount: Number(selectedStableCoin?.initialSupply),
+	// 					decimals: selectedStableCoin?.decimals || 0,
+	// 			  })
+	// 			: unknown,
+	// 	},
+	// 	{
+	// 		label: t('operations:details.totalSupply'),
+	// 		value: selectedStableCoin?.totalSupply
+	// 			? formatAmountWithDecimals({
+	// 					amount: Number(selectedStableCoin?.totalSupply),
+	// 					decimals: selectedStableCoin?.decimals || 0,
+	// 			  })
+	// 			: unknown,
+	// 	},
+	// 	{
+	// 		label: t('operations:details.supplyType'),
+	// 		// @ts-ignore Property 'supplyType' does not exist on type 'IStableCoinDetail'.
+	// 		value:
+	// 			selectedStableCoin?.maxSupply === (0 as unknown as BigInt)
+	// 				? t('operations:details.infinite')
+	// 				: t('operations:details.finite'),
+	// 	},
+	// ]
 
 	return (
 		<BaseContainer title={t('global:operations.title')}>
@@ -131,9 +131,34 @@ const OperationLayout = ({ LeftContent, onConfirm, confirmBtnProps }: OperationL
 							<DetailsReview
 								title={t('operations:details.optionalTitle')}
 								titleProps={{ fontWeight: 700, color: 'brand.secondary' }}
-								details={
-									selectedStableCoin?.maxSupply === (0 as unknown as BigInt) ? optionalDetailsInfinite : optionalDetailsFinite
-								}
+								details={[
+									{
+										label: t('operations:details.initialSupply'),
+										value: selectedStableCoin?.initialSupply
+											? formatAmountWithDecimals({
+													amount: Number(selectedStableCoin?.initialSupply),
+													decimals: selectedStableCoin?.decimals || 0,
+											  })
+											: unknown,
+									},
+									{
+										label: t('operations:details.totalSupply'),
+										value: selectedStableCoin?.totalSupply
+											? formatAmountWithDecimals({
+													amount: Number(selectedStableCoin?.totalSupply),
+													decimals: selectedStableCoin?.decimals || 0,
+											  })
+											: unknown,
+									},
+									{
+										label: t('operations:details.supplyType'),
+										// @ts-ignore Property 'supplyType' does not exist on type 'IStableCoinDetail'.
+										value:
+											selectedStableCoin?.maxSupply === ('0' as unknown as BigInt)
+												? t('operations:details.infinite')
+												: t('operations:details.finite'),
+									},
+								]}
 							/>
 						</Stack>
 					</Stack>
