@@ -1,5 +1,5 @@
 {
-	"name": "hedera-stable-coin-sdk",
+  "name": "hedera-stable-coin-sdk",
 	"version": "0.0.1",
 	"description": "",
 	"main": "./build/cjs/src/index.js",
