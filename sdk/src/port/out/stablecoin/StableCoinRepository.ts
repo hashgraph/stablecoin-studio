@@ -139,11 +139,15 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	}
 
 	public async getCapabilitiesStableCoin(
-		id: string,
-		publickey: string,
+		proxyContractId: string,
+		targetId: string,
+		tokenId: string,
+		account: Account
 	): Promise<Capabilities[]> {
 		try {
-			const stableCoin: StableCoin = await this.getStableCoin(id);
+			const stableCoin: StableCoin = await this.getStableCoin(tokenId);
+			//const roles: any = this.getRoles(proxyContractId, targetId, account);
+
 			const listCapabilities: Capabilities[] = [];
 
 			listCapabilities.push(Capabilities.DETAILS);
@@ -164,7 +168,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 			if (stableCoin.supplyKey instanceof PublicKey) {
 				if (
-					stableCoin.supplyKey?.key.toString() == publickey.toString()
+					stableCoin.supplyKey?.key.toString() == account!.privateKey!.publicKey.toString()
 				) {
 					listCapabilities.push(Capabilities.CASH_IN_HTS);
 					listCapabilities.push(Capabilities.BURN_HTS);
@@ -173,7 +177,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 			if (stableCoin.wipeKey instanceof PublicKey) {
 				if (
-					stableCoin.wipeKey?.key.toString() == publickey.toString()
+					stableCoin.wipeKey?.key.toString() == account!.privateKey!.publicKey.toString()
 				) {
 					listCapabilities.push(Capabilities.WIPE_HTS);
 				}
@@ -659,6 +663,29 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 		return await this.networkAdapter.provider.callContract(
 			'hasRole',
+			params,
+		);
+	}
+
+	public async getRoles(
+		proxyContractId: string,
+		address: string,
+		account: Account,
+	): Promise<Uint8Array> {
+		const parameters = [
+			await this.accountToEvmAddress(new Account(address))
+		];
+
+		const params: ICallContractWithAccountRequest = {
+			contractId: proxyContractId,
+			parameters,
+			gas: 60000,
+			abi: HederaERC20__factory.abi,
+			account,
+		};
+
+		return await this.networkAdapter.provider.callContract(
+			'getRoles',
 			params,
 		);
 	}

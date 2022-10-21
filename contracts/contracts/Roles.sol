@@ -52,7 +52,7 @@ abstract contract Roles is AccessControlUpgradeable {
      * @param account The account address
      * @return bytes32[] The array containing the roles
      */
-    function accountRoles(address account)
+    function getRoles(address account)
         external
         view
         returns (bytes32[] memory)

@@ -118,8 +118,7 @@ export default class OperationStableCoinService extends Service {
     );
 
     const capabilitiesStableCoin = await this.getCapabilities(
-      sdk,
-      currentAccount,
+      currentAccount
     );
 
     switch (
@@ -336,12 +335,13 @@ export default class OperationStableCoinService extends Service {
   }
 
   private async getCapabilities(
-    sdk: SDK,
-    currentAccount: EOAccount,
+    currentAccount: EOAccount
   ): Promise<Capabilities[]> {
     return await new CapabilitiesStableCoinsService().getCapabilitiesStableCoins(
+      this.proxyContractId,
+      currentAccount,
       this.stableCoinId,
-      sdk.getPublicKey(currentAccount.privateKey.key, currentAccount.privateKey.type)
+      currentAccount.accountId.toString()
     );
   }
 
@@ -361,8 +361,7 @@ export default class OperationStableCoinService extends Service {
     );
 
     const capabilitiesStableCoin = await this.getCapabilities(
-      sdk,
-      currentAccount,
+      currentAccount
     );
     const roleManagementOptions = language
       .getArray('wizard.roleManagementOptions')

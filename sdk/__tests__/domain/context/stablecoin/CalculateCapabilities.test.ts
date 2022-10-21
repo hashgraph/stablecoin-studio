@@ -4,22 +4,30 @@ import {
   Configuration,
   NetworkMode,
   ICreateStableCoinRequest,
+  IGetCapabilitiesRequest,
   SDK,
   IStableCoinDetail,
 } from '../../../../src/index.js';
 import { AccountId, PrivateKey } from '@hashgraph/sdk';
 import { Capabilities } from '../../../../src/domain/context/stablecoin/Capabilities.js';
+import StableCoinRepository from '../../../../src/port/out/stablecoin/StableCoinRepository.js';
 import { ACCOUNTS, getSDKAsync } from '../../../core/core.js';
 
 describe('🧪 [DOMAIN] StableCoin', () => {
+  let repository: StableCoinRepository;
+
   it('Create an stable coin with all funtionality', async () => {
     const { coin, sdk } = await createStableCoin();
     expect(coin.tokenId).not.toBeFalsy();
+    const stableCoinDetails = await repository.getStableCoin(coin.tokenId!);
+    const capabilitiesReq: IGetCapabilitiesRequest = {
+      proxyContractId: stableCoinDetails.memo.proxyContract.toString(),
+			targetId: ACCOUNTS.testnet.accountId.toString(),
+			tokenId: stableCoinDetails.id,
+			account: ACCOUNTS.testnet,
+    };
     const cap: Capabilities[] | null = await sdk.getCapabilitiesStableCoin(
-      coin.tokenId ?? '',
-      PrivateKey.fromString(
-        ACCOUNTS.testnet.privateKey.key,
-      ).publicKey.toString(),
+      capabilitiesReq
     );
     expect(cap).not.toBeNull();
   }, 180_000);

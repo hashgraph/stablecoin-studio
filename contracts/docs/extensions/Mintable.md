@@ -112,28 +112,6 @@ function WIPE_ROLE() external view returns (bytes32)
 |---|---|---|
 | _0 | bytes32 | undefined |
 
-### accountRoles
-
-```solidity
-function accountRoles(address account) external view returns (bytes32[])
-```
-
-
-
-*Returns an array of roles the account currently has*
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| account | address | The account address |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | bytes32[] | bytes32[] The array containing the roles |
-
 ### controlAllowanceAmount
 
 ```solidity
@@ -189,6 +167,28 @@ function getRoleAdmin(bytes32 role) external view returns (bytes32)
 | Name | Type | Description |
 |---|---|---|
 | _0 | bytes32 | undefined |
+
+### getRoles
+
+```solidity
+function getRoles(address account) external view returns (bytes32[])
+```
+
+
+
+*Returns an array of roles the account currently has*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| account | address | The account address |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bytes32[] | bytes32[] The array containing the roles |
 
 ### getTokenAddress
 
