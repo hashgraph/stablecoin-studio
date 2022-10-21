@@ -14,7 +14,7 @@ import "./extensions/Rescatable.sol";
 import "./Roles.sol";
 
 contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20Upgradeable, 
-                       Mintable, Burnable, Wipeable, Rescatable{
+                       Mintable, Burnable, Wipeable, Rescatable {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     function initialize () 
@@ -148,26 +148,6 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
         require(result, "Transfer error");
     
         return true;
-    }
-
-    /**
-     * @dev Returns an array of roles the account currently has
-     *
-     * @param account The account address
-     * @return bytes32[] The array containing the roles
-     */
-    function accountRoles(address account)
-        external
-        view
-        returns (bytes32[] memory)
-    {
-        bytes32[] memory roles = new bytes32[](5);
-        roles[0] = hasRole(CASHIN_ROLE, account) ? CASHIN_ROLE : bytes32(0);
-        roles[1] = hasRole(BURN_ROLE, account) ? BURN_ROLE : bytes32(0);
-        roles[2] = hasRole(WIPE_ROLE, account) ? WIPE_ROLE : bytes32(0);
-        roles[3] = hasRole(RESCUE_ROLE, account) ? RESCUE_ROLE : bytes32(0);
-        roles[4] = hasRole(PAUSER_ROLE, account) ? PAUSER_ROLE : bytes32(0);
-        return roles;
     }
 
     /**

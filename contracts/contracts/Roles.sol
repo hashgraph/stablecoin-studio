@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.10;
 
-abstract contract Roles {
-    
-    
+import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+
+abstract contract Roles is AccessControlUpgradeable {
+        
     /**
     * @dev Role that allows to mint token
     * 
@@ -38,4 +39,29 @@ abstract contract Roles {
     * keccak256("PAUSER_ROLE");
     */ 
     bytes32 public constant PAUSER_ROLE = 0x65d7a28e3265b37a6474929f336521b332c1681b933f6cb9f3376673440d862a;
+
+    /**
+    * @dev Array containing all roles
+    *
+    */
+    bytes32[] private ROLES = [CASHIN_ROLE, BURN_ROLE, WIPE_ROLE, RESCUE_ROLE, PAUSER_ROLE];
+
+    /**
+     * @dev Returns an array of roles the account currently has
+     *
+     * @param account The account address
+     * @return bytes32[] The array containing the roles
+     */
+    function accountRoles(address account)
+        external
+        view
+        returns (bytes32[] memory)
+    {
+        bytes32[] memory roles = new bytes32[](ROLES.length);
+
+        for (uint i = 0; i < ROLES.length; i++) {
+            roles[i] = hasRole(ROLES[i], account) ? ROLES[i] : bytes32(0);
+        }
+        return roles;
+    }
 }

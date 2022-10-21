@@ -35,6 +35,7 @@ export interface BurnableInterface extends utils.Interface {
     "PAUSER_ROLE()": FunctionFragment;
     "RESCUE_ROLE()": FunctionFragment;
     "WIPE_ROLE()": FunctionFragment;
+    "accountRoles(address)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "burn(uint256)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
@@ -56,6 +57,7 @@ export interface BurnableInterface extends utils.Interface {
       | "PAUSER_ROLE"
       | "RESCUE_ROLE"
       | "WIPE_ROLE"
+      | "accountRoles"
       | "balanceOf"
       | "burn"
       | "getRoleAdmin"
@@ -87,6 +89,10 @@ export interface BurnableInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "WIPE_ROLE", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "accountRoles",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "balanceOf",
     values: [PromiseOrValue<string>]
@@ -150,6 +156,10 @@ export interface BurnableInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "WIPE_ROLE", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "accountRoles",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
   decodeFunctionResult(
@@ -276,6 +286,11 @@ export interface Burnable extends BaseContract {
 
     WIPE_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
+    accountRoles(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[string[]]>;
+
     balanceOf(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -343,6 +358,11 @@ export interface Burnable extends BaseContract {
 
   WIPE_ROLE(overrides?: CallOverrides): Promise<string>;
 
+  accountRoles(
+    account: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<string[]>;
+
   balanceOf(
     account: PromiseOrValue<string>,
     overrides?: CallOverrides
@@ -409,6 +429,11 @@ export interface Burnable extends BaseContract {
     RESCUE_ROLE(overrides?: CallOverrides): Promise<string>;
 
     WIPE_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    accountRoles(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<string[]>;
 
     balanceOf(
       account: PromiseOrValue<string>,
@@ -516,6 +541,11 @@ export interface Burnable extends BaseContract {
 
     WIPE_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
+    accountRoles(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     balanceOf(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -585,6 +615,11 @@ export interface Burnable extends BaseContract {
     RESCUE_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     WIPE_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    accountRoles(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     balanceOf(
       account: PromiseOrValue<string>,

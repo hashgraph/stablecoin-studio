@@ -35,6 +35,7 @@ export interface SupplierAdminInterface extends utils.Interface {
     "PAUSER_ROLE()": FunctionFragment;
     "RESCUE_ROLE()": FunctionFragment;
     "WIPE_ROLE()": FunctionFragment;
+    "accountRoles(address)": FunctionFragment;
     "controlAllowanceAmount(address,uint256)": FunctionFragment;
     "decreaseSupplierAllowance(address,uint256)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
@@ -63,6 +64,7 @@ export interface SupplierAdminInterface extends utils.Interface {
       | "PAUSER_ROLE"
       | "RESCUE_ROLE"
       | "WIPE_ROLE"
+      | "accountRoles"
       | "controlAllowanceAmount"
       | "decreaseSupplierAllowance"
       | "getRoleAdmin"
@@ -101,6 +103,10 @@ export interface SupplierAdminInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "WIPE_ROLE", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "accountRoles",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "controlAllowanceAmount",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
@@ -192,6 +198,10 @@ export interface SupplierAdminInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "WIPE_ROLE", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "accountRoles",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "controlAllowanceAmount",
     data: BytesLike
@@ -402,6 +412,11 @@ export interface SupplierAdmin extends BaseContract {
 
     WIPE_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
+    accountRoles(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[string[]]>;
+
     controlAllowanceAmount(
       supplier: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
@@ -508,6 +523,11 @@ export interface SupplierAdmin extends BaseContract {
 
   WIPE_ROLE(overrides?: CallOverrides): Promise<string>;
 
+  accountRoles(
+    account: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<string[]>;
+
   controlAllowanceAmount(
     supplier: PromiseOrValue<string>,
     amount: PromiseOrValue<BigNumberish>,
@@ -613,6 +633,11 @@ export interface SupplierAdmin extends BaseContract {
     RESCUE_ROLE(overrides?: CallOverrides): Promise<string>;
 
     WIPE_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    accountRoles(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<string[]>;
 
     controlAllowanceAmount(
       supplier: PromiseOrValue<string>,
@@ -802,6 +827,11 @@ export interface SupplierAdmin extends BaseContract {
 
     WIPE_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
+    accountRoles(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     controlAllowanceAmount(
       supplier: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
@@ -910,6 +940,11 @@ export interface SupplierAdmin extends BaseContract {
     RESCUE_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     WIPE_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    accountRoles(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     controlAllowanceAmount(
       supplier: PromiseOrValue<string>,
