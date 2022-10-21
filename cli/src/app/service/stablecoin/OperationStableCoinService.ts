@@ -83,7 +83,12 @@ export default class OperationStableCoinService extends Service {
         configurationService.getConfiguration()?.defaultNetwork,
         `${currentAccount.accountId.id} - ${configAccount.alias}`,
       );
-      this.stableCoinWithSymbol = this.stableCoinId;
+      this.stableCoinWithSymbol =
+        this.stableCoinId.split(' - ').length === 3
+          ? `${this.stableCoinId.split(' - ')[0]} - ${
+              this.stableCoinId.split(' - ')[1]
+            }`
+          : this.stableCoinId;
       this.stableCoinId = this.stableCoinId.split(' - ')[0];
 
       if (this.stableCoinId === language.getText('wizard.goBack')) {

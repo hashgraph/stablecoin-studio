@@ -151,7 +151,7 @@ export default class ManageExternalTokenService extends Service {
       language.getText('manageExternalToken.separator'),
       currentAccount.externalTokens.map(
         (token) =>
-          `${token.id} - ${token.symbol} ` +
+          `${token.id} - ${token.symbol} - ` +
           colors.yellow(colors.underline('Roles:')) +
           colors.yellow(` ${token.capabilities.join(' | ')}`),
       ),
