@@ -231,6 +231,8 @@ const StableCoinCreation = () => {
 					dispatch(getStableCoinList(account));
 					RouterManager.to(navigate, NamedRoutes.StableCoinNotSelected);
 				}}
+				closeOnOverlayClick={false}
+				closeButton={false}
 			/>
 		</Stack>
 	);

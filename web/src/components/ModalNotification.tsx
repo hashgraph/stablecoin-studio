@@ -10,13 +10,14 @@ import {
 	ModalOverlay,
 	Text,
 } from '@chakra-ui/react';
+import type { ModalProps } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import SUCCESS_ICON from '../assets/svg/success.svg';
 import ERROR_ICON from '../assets/svg/error.svg';
 
 const SUCCESS = 'success';
 
-interface ModalNotificationProps {
+interface ModalNotificationProps extends Omit<ModalProps, 'children'> {
 	description?: string;
 	icon?: string;
 	isOpen: boolean;
@@ -24,10 +25,21 @@ interface ModalNotificationProps {
 	title: string;
 	variant?: 'error' | 'success';
 	onClick?: () => void;
+	closeButton?: boolean;
 }
 
 const ModalNotification = (props: ModalNotificationProps) => {
-	const { description, icon, isOpen, onClick, onClose, title, variant } = props;
+	const {
+		description,
+		icon,
+		isOpen,
+		onClick,
+		onClose,
+		title,
+		variant,
+		closeButton = true,
+		...othersProps
+	} = props;
 	const { t } = useTranslation('global');
 
 	const getIcon = () => icon || (variant === SUCCESS ? SUCCESS_ICON : ERROR_ICON);
@@ -39,10 +51,11 @@ const ModalNotification = (props: ModalNotificationProps) => {
 			onClose={onClose}
 			isCentered
 			blockScrollOnMount={false}
+			{...othersProps}
 		>
 			<ModalOverlay />
 			<ModalContent data-testid='modal-notification-content' pt='50' pb='50'>
-				<ModalCloseButton />
+				{closeButton && <ModalCloseButton />}
 				{(icon || variant) && (
 					<ModalHeader alignSelf='center' p='0'>
 						<Image
