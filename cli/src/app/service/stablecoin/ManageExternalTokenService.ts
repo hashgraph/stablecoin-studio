@@ -88,7 +88,7 @@ export default class ManageExternalTokenService extends Service {
         );
 
         await new DetailsStableCoinsService()
-          .getDetailsStableCoins(tokenId, false)
+          .getDetailsStableCoins(tokenToRefresh, false)
           .then((response: IStableCoinDetail) => {
             symbol = response.symbol;
             proxyContractId = response.memo.proxyContract;
@@ -103,7 +103,7 @@ export default class ManageExternalTokenService extends Service {
                 currentAccount.privateKey.type,
               ),
             ),
-            tokenId,
+            tokenToRefresh,
             currentAccount.accountId.toString(),
           );
         const externalTokensRefreshed = currentAccount.externalTokens.map(

@@ -84,6 +84,7 @@ export default class ConfigurationService extends Service {
         accountId: acc.accountId,
         network: acc.network,
         alias: acc.alias,
+        externalTokens: acc.externalTokens,
       };
     });
     console.dir(result, { depth: null });
