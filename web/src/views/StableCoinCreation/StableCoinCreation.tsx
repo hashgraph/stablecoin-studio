@@ -107,11 +107,6 @@ const StableCoinCreation = () => {
 						// @ts-ignore
 						fieldsStep[index] = watch(keys[index].concat('Other'));
 					}
-
-					if (item?.value === OTHER_KEY_VALUE && index === 1) {
-						// @ts-ignore
-						fieldsStep = fieldsStep.concat(watch('treasuryAccountAddress'));
-					}
 				});
 			}
 		}
@@ -155,7 +150,6 @@ const StableCoinCreation = () => {
 			wipeKey,
 			pauseKey,
 			supplyKey,
-			treasuryAccountAddress,
 		} = getValues();
 
 		let newStableCoinParams: ICreateStableCoinRequest = {
@@ -188,7 +182,9 @@ const StableCoinCreation = () => {
 				pauseKey: formatKey(pauseKey.label, 'pauseKey'),
 				supplyKey: formatKey(supplyKey.label, 'supplyKey'),
 				treasury:
-					supplyKey.label === 'Other key' ? new AccountId(treasuryAccountAddress) : AccountId.NULL,
+					formatKey(supplyKey.label, 'supplyKey') !== PublicKey.NULL && accountInfo.account
+						? new AccountId(accountInfo.account)
+						: AccountId.NULL,
 			};
 		}
 

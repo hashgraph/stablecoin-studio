@@ -201,7 +201,7 @@ export default class HashPackProvider implements IProvider {
 				functionCallParameters,
 				gas,
 			);
-			
+
 		const transactionResponse =
 			await this.hashPackSigner.signAndSendTransaction(transaction);
 		const htsResponse: HTSResponse =
@@ -377,19 +377,27 @@ export default class HashPackProvider implements IProvider {
 			abi: HTSTokenOwner__factory.abi,
 			account,
 		});
-		log(
-			'Associating administrator account to token... please wait.',
-			logOpts,
-		);
-		await this.callContract('associateToken', {
-			contractId: stableCoin.memo.proxyContract,
-			parameters: [
-				HAccountId.fromString(account.accountId.id).toSolidityAddress(),
-			],
-			gas: 1_300_000,
-			abi: HederaERC20__factory.abi,
-			account,
-		});
+
+		if (
+			hederaToken.treasuryAccountId.toString() !== account.accountId.id &&
+			account.evmAddress
+		) {
+			log(
+				'Associating administrator account to token... please wait.',
+				logOpts,
+			);
+			await this.callContract('associateToken', {
+				contractId: stableCoin.memo.proxyContract,
+				parameters: [
+					HAccountId.fromString(
+						account.accountId.id,
+					).toSolidityAddress(),
+				],
+				gas: 1_300_000,
+				abi: HederaERC20__factory.abi,
+				account,
+			});
+		}
 
 		return new StableCoin({
 			name: hederaToken.name,
@@ -531,7 +539,7 @@ export default class HashPackProvider implements IProvider {
 			TransactionProvider.buildTokenCreateTransaction(
 				ContractId.fromHederaContractId(contractId),
 				values,
-				maxSupply
+				maxSupply,
 			);
 		const transactionResponse =
 			await this.hashPackSigner.signAndSendTransaction(transaction);

@@ -28,7 +28,6 @@ const Review = (props: ReviewProps) => {
 		wipeKey,
 		freezeKey,
 		pauseKey,
-		treasuryAccountAddress,
 	} = getValues();
 
 	const formatDate = (date = '') => {
@@ -112,7 +111,7 @@ const Review = (props: ReviewProps) => {
 						titleProps={{ fontWeight: 700, color: 'brand.secondary' }}
 						details={[
 							{
-								label: t('stableCoinCreation:managementPermissions.stableCoinAdmin'),
+								label: t('stableCoinCreation:managementPermissions.admin'),
 								value: managementPermissions
 									? t('stableCoinCreation:managementPermissions.theSmartContract')
 									: getKey(adminKey, 'adminKeyOther'),
@@ -150,8 +149,8 @@ const Review = (props: ReviewProps) => {
 							{
 								label: t('stableCoinCreation:managementPermissions.treasuryAccountAddress'),
 								value:
-									!managementPermissions && supplyKey.value === OTHER_KEY_VALUE
-										? treasuryAccountAddress
+									!managementPermissions && supplyKey.value === 1
+										? t('stableCoinCreation:managementPermissions.currentUserKey')
 										: t('stableCoinCreation:managementPermissions.theSmartContract'),
 							},
 						]}

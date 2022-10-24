@@ -2,9 +2,8 @@ import { Heading, HStack, Stack, Text, VStack } from '@chakra-ui/react';
 import type { Control, FieldValues } from 'react-hook-form';
 import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import InputController from '../../components/Form/InputController';
 import SwitchController from '../../components/Form/SwitchController';
-import KeySelector, { OTHER_KEY_VALUE } from './components/KeySelector';
+import KeySelector from './components/KeySelector';
 
 interface ManagementPermissionsProps {
 	control: Control<FieldValues>;
@@ -19,16 +18,10 @@ const ManagementPermissions = (props: ManagementPermissionsProps) => {
 		name: 'managementPermissions',
 	});
 
-	const isOtherKeySupplySelected =
-		useWatch({
-			control,
-			name: 'supplyKey',
-		})?.value === OTHER_KEY_VALUE;
-
 	const keys = [
 		{
 			name: 'adminKey',
-			nameTranslate: t('stableCoinCreation:managementPermissions.stableCoinAdmin'),
+			nameTranslate: t('stableCoinCreation:managementPermissions.admin'),
 		},
 		{
 			name: 'supplyKey',
@@ -93,32 +86,6 @@ const ManagementPermissions = (props: ManagementPermissionsProps) => {
 						</Stack>
 					)}
 				</Stack>
-				{isManagementPermissions === false && isOtherKeySupplySelected && (
-					<Stack as='form' spacing={6} pb='60px'>
-						<Heading
-							data-testid='title'
-							fontSize='16px'
-							fontWeight='600'
-							mb={1}
-							lineHeight='15.2px'
-							textAlign={'left'}
-						>
-							{t('stableCoinCreation:managementPermissions.treasuryAccountAddress')}
-						</Heading>
-						<InputController
-							rules={{
-								required: t(`global:validations.required`),
-							}}
-							isRequired
-							control={control}
-							name={'treasuryAccountAddress'}
-							placeholder={t('stableCoinCreation:managementPermissions.introduce', {
-								name: t('stableCoinCreation:managementPermissions.treasuryAccountAddress'),
-							})}
-							label={t('stableCoinCreation:managementPermissions.treasuryAccountAddress')}
-						/>
-					</Stack>
-				)}
 			</Stack>
 		</VStack>
 	);
