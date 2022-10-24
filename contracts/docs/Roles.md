@@ -95,6 +95,28 @@ function RESCUE_ROLE() external view returns (bytes32)
 |---|---|---|
 | _0 | bytes32 | undefined |
 
+### ROLES
+
+```solidity
+function ROLES(uint256) external view returns (bytes32)
+```
+
+
+
+*Array containing all roles*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bytes32 | undefined |
+
 ### WIPE_ROLE
 
 ```solidity

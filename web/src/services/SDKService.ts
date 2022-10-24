@@ -13,6 +13,7 @@ import type {
 	ISupplierRoleStableCoinRequest,
 	IAllowanceRequest,
 	IGetSupplierAllowance,
+	IGetCapabilitiesRequest,
 	IBasicRequest,
 	IAccountInfo,
 	Capabilities,
@@ -176,14 +177,10 @@ export class SDKService {
 		);
 	}
 
-	public static async getCapabilities({
-		id,
-		publicKey,
-	}: {
-		id: string;
-		publicKey: string;
-	}): Promise<Capabilities[] | null> {
-		return (await SDKService.getInstance())?.getCapabilitiesStableCoin(id, publicKey);
+	public static async getCapabilities(
+		getCapabilitiesRequest: IGetCapabilitiesRequest
+	): Promise<Capabilities[] | null> {		
+		return (await SDKService.getInstance())?.getCapabilitiesStableCoin(getCapabilitiesRequest);
 	}
 
 	public static async increaseSupplierAllowance(data: IAllowanceRequest) {

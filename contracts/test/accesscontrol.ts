@@ -12,6 +12,7 @@ const BURN_ROLE  = '0xe97b137254058bd94f28d2f3eb79e2d34074ffb488d042e3bc958e0a57
 const WIPE_ROLE = '0x515f99f4e5a381c770462a8d9879a01f0fd4a414a168a2404dab62a62e1af0c3';
 const RESCUE_ROLE = '0x43f433f336cda92fbbe5bfbdd344a9fd79b2ef138cd6e6fc49d55e2f54e1d99a';
 const PAUSER_ROLE = '0x65d7a28e3265b37a6474929f336521b332c1681b933f6cb9f3376673440d862a';
+const DEFAULT_ADMIN_ROLE = '0x00';
 
 
 let proxyAddress:any;
@@ -28,7 +29,7 @@ describe("Account roles", function() {
   });
   it("An account has a list of roles", async function() {
     const params : any = [AccountId.fromString(hreConfig.accounts[0].account!).toSolidityAddress()];  
-    const roles : boolean[] = await contractCall(ContractId.fromString(proxyAddress), 'accountRoles', params, client, 50000, HederaERC20__factory.abi);      
+    const roles : any = await contractCall(ContractId.fromString(proxyAddress), 'getRoles', params, client, 50000, HederaERC20__factory.abi);      
     expect(roles[0]).to.contains(CASHIN_ROLE);
     expect(roles[0]).to.contains(BURN_ROLE);
     expect(roles[0]).to.contains(WIPE_ROLE);

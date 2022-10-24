@@ -368,7 +368,7 @@ export default class OperationStableCoinService extends Service {
       .filter((option) => {
         if (option == 'Edit role') {
           return capabilitiesStableCoin.some((capability) =>
-            [Capabilities.CASH_IN, Capabilities.CASH_IN_HTS].includes(
+            [Capabilities.CASH_IN_ROLE].includes(
               capability,
             ),
           );
@@ -806,35 +806,35 @@ export default class OperationStableCoinService extends Service {
     const rolesAvailability = [
       {
         role: {
-          availability: capabilities.includes(Capabilities.CASH_IN),
+          availability: capabilities.includes(Capabilities.CASH_IN_ROLE),
           name: 'Cash in Role',
           value: StableCoinRole.CASHIN_ROLE,
         },
       },
       {
         role: {
-          availability: capabilities.includes(Capabilities.BURN),
+          availability: capabilities.includes(Capabilities.BURN_ROLE),
           name: 'Burn Role',
           value: StableCoinRole.BURN_ROLE,
         },
       },
       {
         role: {
-          availability: capabilities.includes(Capabilities.WIPE),
+          availability: capabilities.includes(Capabilities.WIPE_ROLE),
           name: 'Wipe Role',
           value: StableCoinRole.WIPE_ROLE,
         },
       },
       {
         role: {
-          availability: capabilities.includes(Capabilities.RESCUE),
+          availability: capabilities.includes(Capabilities.RESCUE_ROLE),
           name: 'Rescue Role',
           value: StableCoinRole.RESCUE_ROLE,
         },
       },
       {
         role: {
-          availability: capabilities.includes(Capabilities.PAUSE),
+          availability: capabilities.includes(Capabilities.PAUSE_ROLE),
           name: 'Pause Role',
           value: StableCoinRole.PAUSER_ROLE,
         },
