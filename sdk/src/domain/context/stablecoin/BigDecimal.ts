@@ -1,36 +1,146 @@
 import { FixedFormat, parseFixed } from '@ethersproject/bignumber';
-import { FixedNumber, BigNumber } from '@hashgraph/hethers';
+import { BigNumber, FixedNumber } from '@hashgraph/hethers';
 
-export default class BigDecimal extends FixedNumber {
+export type BigDecimalFormat = string | number | FixedFormat | undefined;
+
+export default class BigDecimal implements FixedNumber {
+	readonly _hex: string;
+	readonly _value: string;
+	readonly _isFixedNumber: boolean;
+
+	public get format(): FixedFormat {
+		return this.#fn.format;
+	}
+
+	public set format(value: FixedFormat) {
+		this.#fn = this.#fn.toFormat(value);
+	}
+
+	public get hex(): string {
+		return this.#fn.toHexString();
+	}
+
+	public get value(): string {
+		return this.#fn._value;
+	}
+
+	public get isFixedNumber(): boolean {
+		return this.#fn._isFixedNumber;
+	}
+
+	#fn: FixedNumber;
+
+	public static ZERO: BigDecimal = this.fromString('0');
+
+	constructor(
+		value: string | BigNumber,
+		format?: BigDecimalFormat,
+		decimals?: number,
+	) {
+		if (typeof value === 'string') {
+			this.#fn = FixedNumber.fromString(value, format);
+		} else {
+			this.#fn = FixedNumber.fromValue(value, decimals, format);
+		}
+		this._hex = this.#fn._hex;
+		this._value = this.#fn._value;
+		this._isFixedNumber = this.#fn._isFixedNumber;
+	}
+
+	_checkFormat(other: FixedNumber): void {
+		return this.#fn._checkFormat(other);
+	}
+
+	addUnsafe(other: FixedNumber): BigDecimal {
+		return this.fromFixedNumber(this.#fn.addUnsafe(other));
+	}
+
+	subUnsafe(other: BigDecimal): BigDecimal {
+		return this.fromFixedNumber(this.#fn.subUnsafe(other.#fn));
+	}
+
+	mulUnsafe(other: BigDecimal): BigDecimal {
+		return this.fromFixedNumber(this.#fn.mulUnsafe(other.#fn));
+	}
+
+	divUnsafe(other: BigDecimal): BigDecimal {
+		return this.fromFixedNumber(this.#fn.divUnsafe(other.#fn));
+	}
+
+	floor(): BigDecimal {
+		return this.fromFixedNumber(this.#fn.floor());
+	}
+
+	ceiling(): BigDecimal {
+		return this.fromFixedNumber(this.#fn.ceiling());
+	}
+
+	round(decimals?: number | undefined): BigDecimal {
+		return this.fromFixedNumber(this.#fn.round(decimals));
+	}
+
+	isZero(): boolean {
+		return this.#fn.isZero();
+	}
+
+	isNegative(): boolean {
+		return this.#fn.isNegative();
+	}
+
+	toHexString(width?: number | undefined): string {
+		return this.#fn.toHexString(width);
+	}
+
+	toUnsafeFloat(): number {
+		return this.#fn.toUnsafeFloat();
+	}
+
+	toFormat(format: string | FixedFormat): BigDecimal {
+		return this.fromFixedNumber(this.#fn.toFormat(format));
+	}
+
+	private fromFixedNumber(number: FixedNumber): BigDecimal {
+		return new BigDecimal(
+			number._value,
+			number.format,
+			number.format.decimals,
+		);
+	}
+
 	public isGreaterThan(other: BigDecimal): boolean {
-		const a = parseFixed(this._value, this.format.decimals);
-		const b = parseFixed(other._value, other.format.decimals);
+		const a = parseFixed(this.#fn._value, this.#fn.format.decimals);
+		const b = parseFixed(other.#fn._value, other.#fn.format.decimals);
 		return a > b;
 	}
 
 	public isLowerThan(other: BigDecimal): boolean {
-		const a = parseFixed(this._value, this.format.decimals);
-		const b = parseFixed(other._value, other.format.decimals);
+		const a = parseFixed(this.#fn._value, this.#fn.format.decimals);
+		const b = parseFixed(other.#fn._value, other.#fn.format.decimals);
 		return a < b;
 	}
 
 	public toBigInt(): bigint {
-		console.log(parseFixed(this._value, this.format.decimals));
+		console.log(parseFixed(this.#fn._value, this.#fn.format.decimals));
 
 		return BigInt('2');
 	}
 
 	public toString(): string {
-		return parseFixed(this._value, this.format.decimals).toString();
+		return parseFixed(this.#fn._value, this.#fn.format.decimals).toString();
 	}
-
-	static ZERO: BigDecimal = super.fromString('0');
 
 	static fromString(
 		value: string,
 		format?: string | number | FixedFormat | undefined,
 	): BigDecimal {
-		const a = super.from(value, format);
-		return new BigDecimal({}, a._hex, a._value, a.format);
+		return new BigDecimal(value, format);
+	}
+
+	static fromValue(
+		value: BigNumber,
+		decimals?: number,
+		format?: FixedFormat | string | number,
+	): BigDecimal {
+		return new BigDecimal(value, format, decimals);
 	}
 }
