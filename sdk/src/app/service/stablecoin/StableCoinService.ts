@@ -176,12 +176,6 @@ export default class StableCoinService extends Service {
 				req.account,
 			);
 			resultCashIn = Boolean(result[0]);
-		} else if (capabilities.includes(Capabilities.CASH_IN_HTS)) {
-			resultCashIn = await this.repository.cashInHTS(
-				req.tokenId,
-				amount,
-				req.account,
-			);
 			if (
 				resultCashIn &&
 				req?.account?.accountId.id &&
@@ -195,6 +189,12 @@ export default class StableCoinService extends Service {
 					req.account,
 				);
 			}
+		} else if (capabilities.includes(Capabilities.CASH_IN_HTS)) {
+			resultCashIn = await this.repository.cashInHTS(
+				req.tokenId,
+				amount,
+				req.account,
+			);
 		} else {
 			throw new Error('Cash in not allowed');
 		}
