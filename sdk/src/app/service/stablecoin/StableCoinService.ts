@@ -225,7 +225,9 @@ export default class StableCoinService extends Service {
 		const capabilities: Capabilities[] =
 			await this.getCapabilitiesStableCoin(
 				req.tokenId,
-				req.account?.privateKey?.publicKey.key ?? '',
+				req.publicKey
+					? req.publicKey.key
+					: req.account?.privateKey?.publicKey?.key ?? '',
 			);
 		if (capabilities.includes(Capabilities.BURN)) {
 			const result = await this.repository.cashOut(
@@ -280,7 +282,9 @@ export default class StableCoinService extends Service {
 		const capabilities: Capabilities[] =
 			await this.getCapabilitiesStableCoin(
 				req.tokenId,
-				req.account?.privateKey?.publicKey?.key ?? '',
+				req.publicKey
+					? req.publicKey.key
+					: req.account?.privateKey?.publicKey?.key ?? '',
 			);
 		if (capabilities.includes(Capabilities.WIPE)) {
 			const result = await this.repository.wipe(
