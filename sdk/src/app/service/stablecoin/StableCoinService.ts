@@ -20,6 +20,8 @@ import IAccountInfo from '../../../port/in/sdk/response/IAccountInfo.js';
 import { Capabilities } from '../../../domain/context/stablecoin/Capabilities.js';
 import { IAccountWithKeyRequestModel } from './model/CoreRequestModel.js';
 import IGetSupplierAllowanceModel from './model/IGetSupplierAllowanceModel.js';
+import BigDecimal from '../../../domain/context/stablecoin/BigDecimal.js';
+import { BigNumber } from '@hashgraph/hethers';
 
 export default class StableCoinService extends Service {
 	private repository: IStableCoinRepository;
@@ -35,11 +37,18 @@ export default class StableCoinService extends Service {
 	public async createStableCoin(
 		req: ICreateStableCoinServiceRequestModel,
 	): Promise<IStableCoinDetail> {
+		const initialSupply = BigDecimal.fromString(
+			req.initialSupply ?? '0',
+			req.decimals,
+		);
+		const maxSupply = BigDecimal.fromString(
+			req.maxSupply ?? '0',
+			req.decimals,
+		);
 		if (
 			req.maxSupply &&
 			req.initialSupply &&
-			req.initialSupply * 10n ** BigInt(req.decimals) >
-				req.maxSupply * 10n ** BigInt(req.decimals)
+			initialSupply.isGreaterThan(maxSupply)
 		) {
 			throw new Error(
 				'Initial supply cannot be more than the max supply',
@@ -50,12 +59,8 @@ export default class StableCoinService extends Service {
 			symbol: req.symbol,
 			decimals: req.decimals,
 			adminKey: req.adminKey,
-			initialSupply: req.initialSupply
-				? req.initialSupply * 10n ** BigInt(req.decimals)
-				: undefined,
-			maxSupply: req.maxSupply
-				? req.maxSupply * 10n ** BigInt(req.decimals)
-				: undefined,
+			initialSupply: req.initialSupply ? initialSupply : undefined,
+			maxSupply: req.maxSupply ? maxSupply : undefined,
 			memo: req.memo,
 			freezeKey: req.freezeKey,
 			freezeDefault: req.freezeDefault,
@@ -479,8 +484,6 @@ export default class StableCoinService extends Service {
 	public async getAccountInfo(
 		req: IAccountWithKeyRequestModel,
 	): Promise<IAccountInfo> {
-		return this.repository.getAccountInfo(
-			req.account.accountId.id
-		);
-	}	
+		return this.repository.getAccountInfo(req.account.accountId.id);
+	}
 }
