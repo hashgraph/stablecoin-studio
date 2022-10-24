@@ -4,9 +4,13 @@
   <meta charset="utf-8">
   <script src="https://cdn.ethers.io/lib/ethers-5.4.umd.min.js"
         type="application/javascript"></script>
-        <script src="./precompileABI.js"
+        <script src="./abi/precompileABI.js"
         type="application/javascript"></script>
-        <script src="./scABI.js"
+        <script src="./abi/HederaERC20ABI.js"
+        type="application/javascript"></script>
+        <script src="./abi/ProxyContract.js"
+        type="application/javascript"></script>
+        <script src="./abi/tokenOwner.js"
         type="application/javascript"></script>
   <script>
 
@@ -18,6 +22,17 @@
         // MetaMask requires requesting permission to connect users accounts
         await provider.send("eth_requestAccounts", []);
 
+        const deployContract = async (scObject,signer,parameters = [])=>{
+            const overrides = {
+                gasLimit: 900000
+            };
+            const factory = new ethers.ContractFactory(scObject.abi, scObject.bytecode, signer);
+            const contract = await factory.deploy(...parameters, overrides);
+            const receipt = await contract.deployTransaction.wait();
+            console.log(receipt);
+            return receipt.contractAddress;
+        }
+        
         // The MetaMask plugin also allows signing transactions to
         // send ether and pay to change state within the blockchain.
         // For this, you need the account signer...
@@ -26,7 +41,7 @@
         console.log(currentAccount);
         // console.log( await provider.getBalance(currentAccount).then(r => r.toString()));             
 
-        const scAddressHTSTOKEN1    = "0000000000000000000000000000000000000415"; // tokenId 
+        const scAddressHTSTOKEN1    = "000000000000000000000000000000000000043f"; // tokenId 
         const scAddressTOKEN2       = "000000000000000000000000000000000000040b"; //PROXYADDRESS - tokenId 0.0.1038 
         const scPrecompileAddress   = '0000000000000000000000000000000000000167';
 
@@ -41,9 +56,7 @@
         //     "function mintToken(address token, uint64 amount, [] metadata) returns (int responseCode, uint64 newTotalSupply, int64[] memory serialNumbers)"
 
         // ];
-       
-        // The contract object
-       
+         
         
         // const scContract = new ethers.Contract(scAddressTOKEN2, scABI, provider);
         // const scWithSigner = scContract.connect(signer);
@@ -51,11 +64,112 @@
         // const result = await scContract.name();
         // const result2 = await scContract.symbol();
         // console.log(result,result2,resultMint);
-        const precompileContract = new ethers.Contract(scPrecompileAddress, precompileABI, provider);
-        const precompileContractWithSigner = precompileContract.connect(signer);
-        const result3 = await precompileContractWithSigner.mintToken(scAddressHTSTOKEN1,10,[]);
+        // const precompileContract = new ethers.Contract(scPrecompileAddress, precompileABI, provider);
+        // const precompileContractWithSigner = precompileContract.connect(signer);
+        // const result3 = await precompileContractWithSigner.mintToken(scAddressHTSTOKEN1,1000000,[]);
 
         // console.log(result3);
+
+        // // Deploy ERC20 contract
+        // const tokenContractAddress = await deployContract(hederaERC20,signer)
+        // console.log(tokenContractAddress);
+
+        // // Deploy Proxy Contract
+        // const proxyTokenContractAddress = await deployContract(proxyContract,signer,[
+        //     tokenContractAddress, []
+        // ]);
+        // console.log(proxyTokenContractAddress);
+       
+
+        // Initialize ERC20 using Proxy
+        // const proxy = new ethers.Contract(proxyTokenContractAddress, hederaERC20.abi, provider);
+        // const proxyWithSigner = proxy.connect(signer);  
+        // await proxyWithSigner.initialize([]);
+        // const name = await proxy.name();
+        // const symbol = await proxy.symbol();
+        // console.log(symbol, name);
+        
+        // Deploy Proxy Contract
+        // const tokenOwnerContractAddress = await deployContract(tokenOwner,signer);
+        // console.log(tokenOwnerContractAddress);
+
+        const memo = JSON.stringify({
+            proxyContract:'0x0000000000000000000000000000000002E6cbe3', //proxyTokenContractAddress,
+            htsAccount: '0x0000000000000000000000000000000002E6cBe1',//tokenOwnerContractAddress,
+        });
+        
+        const token = {
+            name:'TESTTOKEN',
+            symbol:'TESTTKN',
+            treasury:'0x0000000000000000000000000000000002E6cBec',// tokenOwnerContractAddress
+            memo:'memoo',
+            tokenSupplyType:true,
+            maxSupply:100,
+            freezeDefault:true,
+            tokenKeys: [
+                // {
+                //     keyType:7,
+                //     key:{
+                //         inheritAccountKey:false,
+                //         delegatableContractId:'0x0000000000000000000000000000000002E6cBe3',
+                //     }
+                // },
+                // {
+                //     keyType:7,
+                //     key:{
+                //         inheritAccountKey:false,
+                //         delegatableContractId:'0x0000000000000000000000000000000002E6cBe4',
+                //     }
+                // },
+                // {
+                //     keyType:7,
+                //     key:{
+                //         inheritAccountKey:false,
+                //         delegatableContractId:'0x0000000000000000000000000000000002E6cBe5',
+                //     }
+                // },
+                // {
+                //     keyType:7,
+                //     key:{
+                //         inheritAccountKey:false,
+                //         delegatableContractId:'0x0000000000000000000000000000000002E6cBe6',
+                //     }
+                // },
+                // {
+                //     keyType:7,
+                //     key:{
+                //         inheritAccountKey:false,
+                //         delegatableContractId:'0x0000000000000000000000000000000002E6cBe7',
+                //     }
+                // },
+                // {
+                //     keyType:7,
+                //     key:{
+                //         inheritAccountKey:false,
+                //         delegatableContractId:'0x0000000000000000000000000000000002E6cBe8',
+                //     }
+                // },
+            ],
+            expiry:{
+                second:0,
+                autoRenewAccount: currentAccount,
+                autoRenewPeriod: 7776000
+            }
+        };
+        // const token = ['TESTTOKEN','TESTTKN','0x0000000000000000000000000000000002E6cBec','hola',true,'100',true,[],['0']];
+
+
+        const precompileContract = new ethers.Contract(scPrecompileAddress, precompileABI, provider);
+        const precompileContractWithSigner = precompileContract.connect(signer);
+        const tokenHTS = await precompileContractWithSigner.createFungibleToken(token,10,0,{gasLimit: 9000000}).then(r=>r.wait());
+        console.log(tokenHTS)
+        // let test = new ethers.utils.Interface(precompileABI.abi);
+        // console.log(test.decodeFunctionData("createFungibleToken", data))
+      const [createEvent] = tokenHTS.events;
+      const { tokenId } = createEvent.args;
+        console.log(tokenHTS);
+
+
     }
 
 
