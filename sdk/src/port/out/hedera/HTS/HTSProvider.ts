@@ -62,6 +62,8 @@ export default class HTSProvider implements IProvider {
 	private transactionResposeHandler: TransactionResposeHandler =
 		new TransactionResposeHandler();
 
+	private client : Client;
+
 	public initData: InitializationData;
 
 	public eventService: EventService;
