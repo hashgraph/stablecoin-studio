@@ -3,6 +3,7 @@ import { Stack, useDisclosure } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import type { FieldValues } from 'react-hook-form';
 import BaseContainer from '../../components/BaseContainer';
 import BasicDetails from './BasicDetails';
 import type { Step } from '../../components/Stepper';
@@ -29,7 +30,9 @@ const StableCoinCreation = () => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch<AppDispatch>();
 	const { t } = useTranslation('stableCoinCreation');
-	const form = useForm({ mode: 'onChange' });
+	const form = useForm<FieldValues>({
+		mode: 'onChange',
+	});
 	const {
 		control,
 		getValues,
@@ -60,7 +63,7 @@ const StableCoinCreation = () => {
 		{
 			number: '02',
 			title: t('tabs.optionalDetails'),
-			children: <OptionalDetails control={control} />,
+			children: <OptionalDetails control={control} form={form} />,
 		},
 		{
 			number: '03',

@@ -1,5 +1,5 @@
 import { Heading, Stack, VStack } from '@chakra-ui/react';
-import type { Control, FieldValues } from 'react-hook-form';
+import type { Control, FieldValues, UseFormReturn } from 'react-hook-form';
 import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import InputNumberController from '../../components/Form/InputNumberController';
@@ -7,10 +7,11 @@ import { SelectController } from '../../components/Form/SelectController';
 
 interface OptionalDetailsProps {
 	control: Control<FieldValues>;
+	form: UseFormReturn;
 }
 
 const OptionalDetails = (props: OptionalDetailsProps) => {
-	const { control } = props;
+	const { control, form } = props;
 	const { t } = useTranslation(['global', 'stableCoinCreation']);
 
 	const supplyTypes = [
@@ -45,16 +46,18 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 		},
 	};
 
-	const isSupplyTypeFinite =
-		useWatch({
-			control,
-			name: 'supplyType',
-		})?.value === 1;
+	const isSupplyTypeFinite = form.getValues().supplyType?.value === 1;
 
 	const initialSupply = useWatch({
 		control,
 		name: 'initialSupply',
 	});
+
+	const handleResetMaxSupply = () => {
+		const { maxSupply, initialSupply } = form.getValues();
+
+		if (maxSupply && initialSupply >= maxSupply) form.setValue('maxSupply', initialSupply);
+	};
 
 	return (
 		<VStack h='full' justify={'space-between'} pt='80px'>
@@ -81,6 +84,7 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 						placeholder={t('stableCoinCreation:optionalDetails.placeholder', {
 							placeholder: t('stableCoinCreation:optionalDetails.initialSupply'),
 						})}
+						onChangeAux={handleResetMaxSupply}
 					/>
 					<SelectController
 						control={control}
