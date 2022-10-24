@@ -26,6 +26,7 @@ import IAssociateTokenStableCoinServiceRequestModel from '../../../app/service/s
 import ISupplierRoleStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/ISupplierRoleStableCoinServiceRequestModel';
 import IRescueStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IRescueStableCoinServiceRequestModel.js';
 import IRoleStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IRoleStableCoinServiceRequestModel.js';
+import IGetCapabilitiesServiceRequestModel from '../../../app/service/stablecoin/model/IGetCapabilitiesServiceRequestModel.js';
 import IGetBasicRequestModel from '../../../app/service/stablecoin/model/IGetBasicRequest.js';
 import { IAccountWithKeyRequestModel } from '../../../app/service/stablecoin/model/CoreRequestModel.js';
 
@@ -41,6 +42,7 @@ import { IGetStableCoinRequest } from './request/IGetStableCoinRequest.js';
 import { IRescueStableCoinRequest } from './request/IRescueStableCoinRequest.js';
 import { IRoleStableCoinRequest } from './request/IRoleStableCoinRequest.js';
 import { IWipeStableCoinRequest } from './request/IWipeStableCoinRequest.js';
+import { IGetCapabilitiesRequest } from './request/IGetCapabilitiesRequest.js';
 import { IBasicRequest } from './request/IBasicRequest.js';
 import AccountId from '../../../domain/context/account/AccountId.js';
 import EOAccount from '../../../domain/context/account/EOAccount.js';
@@ -87,9 +89,13 @@ export {
 	IGetListStableCoinRequest,
 	IGetNameStableCoinRequest,
 	IGetStableCoinRequest,
+	IGetSupplierAllowance,
 	IRescueStableCoinRequest,
 	IRoleStableCoinRequest,
+	ISupplierRoleStableCoinRequest,
 	IWipeStableCoinRequest,
+	IGetCapabilitiesRequest,
+	IAllowanceRequest,
 	IBasicRequest,
 	IStableCoinDetail,
 	IStableCoinList,
@@ -214,12 +220,20 @@ export class SDK {
 			return null;
 		}
 	}
-
+	
 	public getCapabilitiesStableCoin(
-		id: string,
-		publicKey: string,
+		request: IGetCapabilitiesRequest
 	): Promise<Capabilities[]> | null {
-		return this.stableCoinService.getCapabilitiesStableCoin(id, publicKey);
+		try {
+			const req: IGetCapabilitiesServiceRequestModel = {
+				...request,
+				targetId: request.targetId,
+			};
+			return this.stableCoinService.getCapabilitiesStableCoin(req);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}		
 	}
 
 	/**
@@ -469,7 +483,10 @@ export class SDK {
 	}
 
 	public getPublicKey(privateKey?: string, privateKeyType?: string): string {
-		return this.networkAdapter.provider.getPublicKeyString(privateKey, privateKeyType);
+		return this.networkAdapter.provider.getPublicKeyString(
+			privateKey,
+			privateKeyType,
+		);
 	}
 
 	public grantRole(

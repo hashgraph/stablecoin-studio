@@ -1,13 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.10;
 
-import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import "./../TokenOwner.sol";
 import "./../Roles.sol";
 import "./../IHederaERC20.sol";
 import "./IWipeable.sol";
 
-abstract contract Wipeable is IWipeable, AccessControlUpgradeable, TokenOwner, Roles {
+abstract contract Wipeable is IWipeable, TokenOwner, Roles {
 
     /**
     * @dev Operation to wipe a token amount (`amount`) from account (`account`).    

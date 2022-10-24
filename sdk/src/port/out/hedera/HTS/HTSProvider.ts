@@ -376,7 +376,7 @@ export default class HTSProvider implements IProvider {
 				TransactionProvider.buildContractCreateFlowTransaction(
 					factory,
 					params,
-					90_000,
+					220_000,
 					privateKey.publicKey.key,
 				);
 			const transactionResponse: TransactionResponse =

@@ -20,6 +20,7 @@ import { RouterManager } from '../../Router/RouterManager';
 import { matchPath, useLocation, useNavigate } from 'react-router-dom';
 import { NamedRoutes } from '../../Router/NamedRoutes';
 import { HashPackAccount } from 'hedera-stable-coin-sdk';
+import type { Capabilities } from 'hedera-stable-coin-sdk';
 
 const CoinDropdown = () => {
 	const dispatch = useDispatch<AppDispatch>();
@@ -69,12 +70,17 @@ const CoinDropdown = () => {
 	const getCapabilities = async () => {
 		if (!selectedStableCoin?.tokenId || !accountInfo.publicKey?.key) return;
 
-		const capabilities = await SDKService.getCapabilities({
-			id: selectedStableCoin.tokenId,
-			publicKey: accountInfo.publicKey.key,
-		});
-
+		let capabilities: Capabilities[] | null = [];
+		if (selectedStableCoin && selectedStableCoin.memo) {
+			capabilities = await SDKService.getCapabilities({
+				proxyContractId: selectedStableCoin.memo.proxyContract,
+				account: new HashPackAccount(accountId),
+				tokenId: selectedStableCoin.tokenId,
+				targetId: accountId 
+			});
+		}
 		dispatch(walletActions.setCapabilities(capabilities));
+
 	};
 
 	const formatOptionsStableCoins = async () => {

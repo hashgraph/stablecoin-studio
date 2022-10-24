@@ -9,6 +9,12 @@ import type {
 	HashPackAccount,
 	IGetBalanceStableCoinRequest,
 	IWipeStableCoinRequest,
+	IRoleStableCoinRequest,
+	ISupplierRoleStableCoinRequest,
+	IAllowanceRequest,
+	IGetSupplierAllowance,
+	IGetCapabilitiesRequest,
+	IBasicRequest,
 	IAccountInfo,
 	Capabilities,
 	ICashInStableCoinRequest,
@@ -171,14 +177,42 @@ export class SDKService {
 		);
 	}
 
-	public static async getCapabilities({
-		id,
-		publicKey,
-	}: {
-		id: string;
-		publicKey: string;
-	}): Promise<Capabilities[] | null> {
-		return (await SDKService.getInstance())?.getCapabilitiesStableCoin(id, publicKey);
+	public static async getCapabilities(
+		getCapabilitiesRequest: IGetCapabilitiesRequest
+	): Promise<Capabilities[] | null> {		
+		return (await SDKService.getInstance())?.getCapabilitiesStableCoin(getCapabilitiesRequest);
+	}
+
+	public static async increaseSupplierAllowance(data: IAllowanceRequest) {
+		return SDKService.getInstance().then((instance) => instance.increaseSupplierAllowance(data));
+	}
+
+	public static async decreaseSupplierAllowance(data: IAllowanceRequest) {
+		return SDKService.getInstance().then((instance) => instance.decreaseSupplierAllowance(data));
+	}
+
+	public static async resetSupplierAllowance(data: IBasicRequest) {
+		return SDKService.getInstance().then((instance) => instance.resetSupplierAllowance(data));
+	}
+
+	public static async checkSupplierAllowance(data: IGetSupplierAllowance) {
+		return SDKService.getInstance().then((instance) => instance.supplierAllowance(data));
+	}
+
+	public static async grantRole(data: IRoleStableCoinRequest | ISupplierRoleStableCoinRequest) {
+		return SDKService.getInstance().then((instance) => instance.grantRole(data));
+	}
+
+	public static async revokeRole(data: IRoleStableCoinRequest) {
+		return SDKService.getInstance().then((instance) => instance.revokeRole(data));
+	}
+
+	public static async hasRole(data: IRoleStableCoinRequest) {
+		return SDKService.getInstance().then((instance) => instance.hasRole(data));
+	}
+
+	public static async isUnlimitedSupplierAllowance(data: IBasicRequest) {
+		return SDKService.getInstance().then((instance) => instance.isUnlimitedSupplierAllowance(data));
 	}
 }
 

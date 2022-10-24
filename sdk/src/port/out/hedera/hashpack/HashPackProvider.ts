@@ -200,7 +200,7 @@ export default class HashPackProvider implements IProvider {
 				functionCallParameters,
 				gas,
 			);
-
+			
 		const transactionResponse =
 			await this.hashPackSigner.signAndSendTransaction(transaction);
 		const htsResponse: HTSResponse =
@@ -211,7 +211,6 @@ export default class HashPackProvider implements IProvider {
 				name,
 				abi,
 			);
-
 		return htsResponse.reponseParam;
 	}
 

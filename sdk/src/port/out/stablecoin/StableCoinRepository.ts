@@ -54,7 +54,6 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			account.evmAddress = await this.accountToEvmAddress(account);
 			return this.networkAdapter.provider.deployStableCoin(coin, account);
 		} catch (error) {
-			// console.error(error);
 			throw new HederaError(
 				`There was a fatal error deploying the Stable Coin: ${coin.name}`,
 			);
@@ -139,18 +138,29 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	}
 
 	public async getCapabilitiesStableCoin(
-		id: string,
-		publickey: string,
+		proxyContractId: string,
+		targetId: string,
+		tokenId: string,
+		account: Account
 	): Promise<Capabilities[]> {
 		try {
-			const stableCoin: StableCoin = await this.getStableCoin(id);
+			console.log("xxx SE VAN A CALCULAR LAS CAPABILITIES DE LA CUENTA EN EL TOKEN xxx");
+
+
+			const stableCoin: StableCoin = await this.getStableCoin(tokenId);
+			const roles: any = await this.getRoles(proxyContractId, targetId, account);
 			const listCapabilities: Capabilities[] = [];
 
 			listCapabilities.push(Capabilities.DETAILS);
 			listCapabilities.push(Capabilities.BALANCE);
 
 			if (stableCoin.memo.htsAccount == stableCoin.treasury.toString()) {
-				listCapabilities.push(Capabilities.RESCUE);
+				if (roles[0].includes(StableCoinRole.DEFAULT_ADMIN_ROLE)) {
+					listCapabilities.push(Capabilities.RESCUE_ROLE);
+				}
+				if (roles[0].includes(StableCoinRole.RESCUE_ROLE)) {
+					listCapabilities.push(Capabilities.RESCUE);
+				}
 			}
 
 			if (
@@ -158,13 +168,21 @@ export default class StableCoinRepository implements IStableCoinRepository {
 				stableCoin.treasury.toString()
 			) {
 				//TODO add Roles
-				listCapabilities.push(Capabilities.CASH_IN);
-				listCapabilities.push(Capabilities.BURN);
+				if (roles[0].includes(StableCoinRole.CASHIN_ROLE)) {
+					listCapabilities.push(Capabilities.CASH_IN);
+				}
+				if (roles[0].includes(StableCoinRole.BURN_ROLE)) {
+					listCapabilities.push(Capabilities.BURN);
+				}
+				if (roles[0].includes(StableCoinRole.DEFAULT_ADMIN_ROLE)) {
+					listCapabilities.push(Capabilities.CASH_IN_ROLE);
+					listCapabilities.push(Capabilities.BURN_ROLE);
+				}
 			}
 
 			if (stableCoin.supplyKey instanceof PublicKey) {
 				if (
-					stableCoin.supplyKey?.key.toString() == publickey.toString()
+					stableCoin.supplyKey?.key.toString() == account!.privateKey!.publicKey.toString()
 				) {
 					listCapabilities.push(Capabilities.CASH_IN_HTS);
 					listCapabilities.push(Capabilities.BURN_HTS);
@@ -173,31 +191,42 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 			if (stableCoin.wipeKey instanceof PublicKey) {
 				if (
-					stableCoin.wipeKey?.key.toString() == publickey.toString()
+					stableCoin.wipeKey?.key.toString() == account!.privateKey!.publicKey.toString()
 				) {
 					listCapabilities.push(Capabilities.WIPE_HTS);
 				}
 			}
 			if (stableCoin.wipeKey instanceof ContractId) {
-				listCapabilities.push(Capabilities.WIPE);
+				if (roles[0].includes(StableCoinRole.DEFAULT_ADMIN_ROLE)) {
+					listCapabilities.push(Capabilities.WIPE_ROLE);
+				}
+				if (roles[0].includes(StableCoinRole.WIPE_ROLE)) {
+					listCapabilities.push(Capabilities.WIPE);
+				}
 			}
 			if (stableCoin.pauseKey instanceof ContractId) {
-				listCapabilities.push(Capabilities.PAUSE);
+				if (roles[0].includes(StableCoinRole.DEFAULT_ADMIN_ROLE)) {
+					listCapabilities.push(Capabilities.PAUSE_ROLE);
+				}
+				if (roles[0].includes(StableCoinRole.PAUSER_ROLE)) {
+					listCapabilities.push(Capabilities.PAUSE);
+				}
 			}
 
 			const roleManagement = listCapabilities.some((capability) =>
 				[
-					Capabilities.PAUSE,
-					Capabilities.WIPE,
-					Capabilities.CASH_IN,
-					Capabilities.BURN,
-					Capabilities.RESCUE,
+					Capabilities.PAUSE_ROLE,
+					Capabilities.WIPE_ROLE,
+					Capabilities.CASH_IN_ROLE,
+					Capabilities.BURN_ROLE,
+					Capabilities.RESCUE_ROLE,
 				].includes(capability),
 			);
 			if (roleManagement) {
 				listCapabilities.push(Capabilities.ROLE_MANAGEMENT);
 			}
 			return listCapabilities;
+
 		} catch (error) {
 			return Promise.reject<Capabilities[]>(error);
 		}
@@ -659,6 +688,29 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 		return await this.networkAdapter.provider.callContract(
 			'hasRole',
+			params,
+		);
+	}
+
+	public async getRoles(
+		proxyContractId: string,
+		address: string,
+		account: Account,
+	): Promise<Uint8Array> {
+		const parameters = [
+			await this.accountToEvmAddress(new Account(address))
+		];
+
+		const params: ICallContractWithAccountRequest = {
+			contractId: proxyContractId,
+			parameters,
+			gas: 60000,
+			abi: HederaERC20__factory.abi,
+			account,
+		};
+
+		return await this.networkAdapter.provider.callContract(
+			'getRoles',
 			params,
 		);
 	}

@@ -81,6 +81,7 @@ export interface HederaERC20Interface extends utils.Interface {
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
     "PAUSER_ROLE()": FunctionFragment;
     "RESCUE_ROLE()": FunctionFragment;
+    "ROLES(uint256)": FunctionFragment;
     "WIPE_ROLE()": FunctionFragment;
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
@@ -92,6 +93,7 @@ export interface HederaERC20Interface extends utils.Interface {
     "decreaseSupplierAllowance(address,uint256)": FunctionFragment;
     "dissociateToken(address)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
+    "getRoles(address)": FunctionFragment;
     "getTokenAddress()": FunctionFragment;
     "getTokenExpiryInfo(address)": FunctionFragment;
     "getTokenKey(address,uint256)": FunctionFragment;
@@ -135,6 +137,7 @@ export interface HederaERC20Interface extends utils.Interface {
       | "DEFAULT_ADMIN_ROLE"
       | "PAUSER_ROLE"
       | "RESCUE_ROLE"
+      | "ROLES"
       | "WIPE_ROLE"
       | "allowance"
       | "approve"
@@ -146,6 +149,7 @@ export interface HederaERC20Interface extends utils.Interface {
       | "decreaseSupplierAllowance"
       | "dissociateToken"
       | "getRoleAdmin"
+      | "getRoles"
       | "getTokenAddress"
       | "getTokenExpiryInfo"
       | "getTokenKey"
@@ -199,6 +203,10 @@ export interface HederaERC20Interface extends utils.Interface {
     functionFragment: "RESCUE_ROLE",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "ROLES",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(functionFragment: "WIPE_ROLE", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "allowance",
@@ -236,6 +244,10 @@ export interface HederaERC20Interface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getRoleAdmin",
     values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRoles",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "getTokenAddress",
@@ -389,6 +401,7 @@ export interface HederaERC20Interface extends utils.Interface {
     functionFragment: "RESCUE_ROLE",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "ROLES", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "WIPE_ROLE", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
@@ -415,6 +428,7 @@ export interface HederaERC20Interface extends utils.Interface {
     functionFragment: "getRoleAdmin",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getRoles", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getTokenAddress",
     data: BytesLike
@@ -731,6 +745,11 @@ export interface HederaERC20 extends BaseContract {
 
     RESCUE_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
+    ROLES(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     WIPE_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     allowance(
@@ -783,6 +802,11 @@ export interface HederaERC20 extends BaseContract {
       role: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[string]>;
+
+    getRoles(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[string[]]>;
 
     getTokenAddress(overrides?: CallOverrides): Promise<[string]>;
 
@@ -967,6 +991,11 @@ export interface HederaERC20 extends BaseContract {
 
   RESCUE_ROLE(overrides?: CallOverrides): Promise<string>;
 
+  ROLES(
+    arg0: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   WIPE_ROLE(overrides?: CallOverrides): Promise<string>;
 
   allowance(
@@ -1019,6 +1048,11 @@ export interface HederaERC20 extends BaseContract {
     role: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<string>;
+
+  getRoles(
+    account: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<string[]>;
 
   getTokenAddress(overrides?: CallOverrides): Promise<string>;
 
@@ -1203,6 +1237,11 @@ export interface HederaERC20 extends BaseContract {
 
     RESCUE_ROLE(overrides?: CallOverrides): Promise<string>;
 
+    ROLES(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     WIPE_ROLE(overrides?: CallOverrides): Promise<string>;
 
     allowance(
@@ -1255,6 +1294,11 @@ export interface HederaERC20 extends BaseContract {
       role: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    getRoles(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<string[]>;
 
     getTokenAddress(overrides?: CallOverrides): Promise<string>;
 
@@ -1588,6 +1632,11 @@ export interface HederaERC20 extends BaseContract {
 
     RESCUE_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
+    ROLES(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     WIPE_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     allowance(
@@ -1638,6 +1687,11 @@ export interface HederaERC20 extends BaseContract {
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getRoles(
+      account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1827,6 +1881,11 @@ export interface HederaERC20 extends BaseContract {
 
     RESCUE_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    ROLES(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     WIPE_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     allowance(
@@ -1877,6 +1936,11 @@ export interface HederaERC20 extends BaseContract {
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getRoles(
+      account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
