@@ -310,3 +310,13 @@ export async function checkRole(ROLE: string, ContractId: any, proxyAddress: str
     let result = await contractCall(ContractId.fromString(proxyAddress), 'hasRole', params, clientCheckingRole, 60000, HederaERC20__factory.abi);
     return result[0]; 
 }
+
+export async function getTotalSupply(ContractId: any, proxyAddress: string, client: any): Promise<number>{
+    let result = await contractCall(ContractId.fromString(proxyAddress), 'totalSupply', [], client, 60000, HederaERC20__factory.abi);  
+    return Number(result[0]); 
+}
+
+export async function Burn(ContractId: any, proxyAddress: string, amountOfTokenToBurn: number, client: any){
+    let params = [amountOfTokenToBurn];        
+    await contractCall(ContractId.fromString(proxyAddress), 'burn', params, client, 500000, HederaERC20__factory.abi);
+  }

@@ -2,8 +2,7 @@ const { ContractId, AccountId }  = require( "@hashgraph/sdk");
 import "@hashgraph/hardhat-hethers";
 
 import { expect } from "chai";
-import { deployContractsWithSDK, contractCall, getClient, grantRole, revokeRole, checkRole } from "../scripts/utils";
-import { HederaERC20__factory } from "../typechain-types";
+import { deployContractsWithSDK, getClient, grantRole, revokeRole, checkRole, getTotalSupply, Burn } from "../scripts/utils";
 
 const hre = require("hardhat");
 const hreConfig = hre.network.config;
@@ -11,7 +10,7 @@ const BURN_ROLE  = '0xe97b137254058bd94f28d2f3eb79e2d34074ffb488d042e3bc958e0a57
 
 
 let proxyAddress:any;
-let client:any;
+let client:any ;
 let client2:any;
 let client2account: string
 const OPERATOR_ID = hreConfig.accounts[0].account;
@@ -26,12 +25,14 @@ const TokenMemo = "Hedera Accelerator Stable Coin"
 describe("Only Admin can grant and revoke burnable role", function() {
 
   before(async function  () {
+    // Generate Client (token admin) and Client 2
     client = getClient();      
     client.setOperator(OPERATOR_ID, OPERATOR_KEY);
     client2 = getClient();
     client2account = hreConfig.accounts[1].account;
-    client2.setOperator(hreConfig.accounts[1].account, hreConfig.accounts[1].privateKey);  
+    client2.setOperator(client2account, hreConfig.accounts[1].privateKey);  
 
+    // Deploy Token using Client
     proxyAddress = await deployContractsWithSDK(TokenName, TokenSymbol, TokenDecimals, INIT_SUPPLY, MAX_SUPPLY, TokenMemo);    
   });
 
@@ -66,12 +67,17 @@ describe("Only Admin can grant and revoke burnable role", function() {
 
 });
 
-describe("Burn tokens", function() {
+describe("Burnable role functionality", function() {
 
   before(async function  () {
+    // Generate Client (token admin) and Client 2
     client = getClient();      
     client.setOperator(OPERATOR_ID, OPERATOR_KEY);
+    client2 = getClient();
+    client2account = hreConfig.accounts[1].account;
+    client2.setOperator(client2account, hreConfig.accounts[1].privateKey); 
 
+    // Deploy Token using Client
     proxyAddress = await deployContractsWithSDK(TokenName, TokenSymbol, TokenDecimals, INIT_SUPPLY, MAX_SUPPLY, TokenMemo);    
   });
 
@@ -79,46 +85,43 @@ describe("Burn tokens", function() {
     const tokensToBurn = 10 * 10**TokenDecimals;   
     
     // Retrieve original total supply
-    const initialTotalSupply = await contractCall(ContractId.fromString(proxyAddress), 'totalSupply', [], client, 60000, HederaERC20__factory.abi);      
+    const initialTotalSupply = await getTotalSupply(ContractId, proxyAddress, client);
 
     // burn some tokens
-    const params : any = [tokensToBurn];  
-    await contractCall(ContractId.fromString(proxyAddress), 'burn', params, client, 400000, HederaERC20__factory.abi);  
+    await Burn(ContractId, proxyAddress, tokensToBurn, client);
 
     // check new total supply equals the original one minus burned tokens : success
-    const currentTotalSupply = await contractCall(ContractId.fromString(proxyAddress), 'totalSupply', [], client, 60000, HederaERC20__factory.abi);  
-    expect(Number(currentTotalSupply[0])).to.equals(Number(initialTotalSupply[0]) - tokensToBurn); 
+    const currentTotalSupply = await getTotalSupply(ContractId, proxyAddress, client);
+    const expectedTotalSupply = initialTotalSupply - tokensToBurn;
+    expect(currentTotalSupply).to.equals(expectedTotalSupply); 
   });
 
   it("Cannot burn more tokens than the treasury account has", async function() {
     // Retrieve original total supply
-    const currentTotalSupply = await contractCall(ContractId.fromString(proxyAddress), 'totalSupply', [], client, 60000, HederaERC20__factory.abi); 
+    const currentTotalSupply = await getTotalSupply(ContractId, proxyAddress, client);
     
     // burn more tokens than original total supply : fail
-    const params : any = [currentTotalSupply[0] + 1];  
-    await expect(contractCall(ContractId.fromString(proxyAddress), 'burn', params, client, 400000, HederaERC20__factory.abi)).to.be.throw;  
+    await expect(Burn(ContractId, proxyAddress, currentTotalSupply + 1, client)).to.be.throw;
   });
 
   it("User without burn role cannot burn tokens", async function() {
     // Account without burn role, burns tokens : fail
-    const params : any = [1];        
-    await expect(contractCall(ContractId.fromString(proxyAddress), 'burn', params, client2, 400000, HederaERC20__factory.abi)).to.be.throw;
+    await expect(Burn(ContractId, proxyAddress, 1, client2)).to.be.throw;
   });
 
   it("User with granted burn role can burn tokens", async function() {
     const tokensToBurn = 1;    
 
     // Retrieve original total supply
-    const initialTotalSupply = await contractCall(ContractId.fromString(proxyAddress), 'totalSupply', [], client, 60000, HederaERC20__factory.abi);  
+    const initialTotalSupply = await getTotalSupply(ContractId, proxyAddress, client);
 
     // Grant burn role to account
     await grantRole(BURN_ROLE, ContractId, proxyAddress, client, client2account);
       
     // Burn tokens with newly granted account and check the new total supply : success
-    let params = [tokensToBurn];        
-    await contractCall(ContractId.fromString(proxyAddress), 'burn', params, client2, 500000, HederaERC20__factory.abi);
-    const totalSupply = await contractCall(ContractId.fromString(proxyAddress), 'totalSupply', [], client, 60000, HederaERC20__factory.abi); 
-    expect(Number(totalSupply[0])).to.equals(Number(initialTotalSupply[0]) - tokensToBurn); 
+    await Burn(ContractId, proxyAddress, tokensToBurn, client2);
+    const totalSupply = await getTotalSupply(ContractId, proxyAddress, client);
+    expect(totalSupply).to.equals(initialTotalSupply - tokensToBurn); 
   });  
   
 });
