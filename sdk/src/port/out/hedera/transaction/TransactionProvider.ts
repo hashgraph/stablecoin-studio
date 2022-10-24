@@ -158,6 +158,7 @@ export class TransactionProvider {
 
 		return transaction;
 	}
+	
 	public static buildTransferTransaction(
 		tokenId: string,
 		amount: number,
