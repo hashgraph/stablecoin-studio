@@ -2,7 +2,11 @@ import Service from '../Service.js';
 import { IExternalToken } from '../../../domain/configuration/interfaces/IExternalToken';
 import { wizardService } from '../../../index';
 import DetailsStableCoinsService from './DetailsStableCoinService.js';
-import { IStableCoinDetail, SDK } from 'hedera-stable-coin-sdk';
+import {
+  IStableCoinDetail,
+  EOAccount,
+  PrivateKey,
+} from 'hedera-stable-coin-sdk';
 import CapabilitiesStableCoinsService from './CapabilitiesStableCoinService.js';
 import {
   language,
@@ -21,8 +25,8 @@ export default class ManageExternalTokenService extends Service {
       'wizard.manageExternalTokens',
     );
     const currentAccount = utilsService.getCurrentAccount();
-    const sdk: SDK = utilsService.getSDK();
-
+    let symbol = '';
+    let proxyContractId = '';
     switch (
       await utilsService.defaultMultipleAsk(
         language.getText('wizard.externalTokenMenu'),
@@ -47,20 +51,25 @@ export default class ManageExternalTokenService extends Service {
         }
 
         //call to capabilities
-        let externalTokens = currentAccount.externalTokens;
-        let symbol = '';
+        const externalTokens = currentAccount.externalTokens;
         await new DetailsStableCoinsService()
           .getDetailsStableCoins(tokenId, false)
           .then((response: IStableCoinDetail) => {
             symbol = response.symbol;
+            proxyContractId = response.memo.proxyContract;
           });
         const capabilities =
           await new CapabilitiesStableCoinsService().getCapabilitiesStableCoins(
-            tokenId,
-            sdk.getPublicKey(
-              currentAccount.privateKey.key,
-              currentAccount.privateKey.type,
+            proxyContractId,
+            new EOAccount(
+              currentAccount.accountId,
+              new PrivateKey(
+                currentAccount.privateKey.key,
+                currentAccount.privateKey.type,
+              ),
             ),
+            tokenId,
+            currentAccount.accountId.toString(),
           );
         externalTokens.push({
           id: tokenId,
@@ -73,17 +82,29 @@ export default class ManageExternalTokenService extends Service {
       case manageOptions[1]:
         await utilsService.cleanAndShowBanner();
         //show list to refresh
-        let tokenToRefresh = await utilsService.defaultMultipleAsk(
+        const tokenToRefresh = await utilsService.defaultMultipleAsk(
           language.getText('manageExternalToken.tokenToRefresh'),
           currentAccount.externalTokens.map((token) => token.id),
         );
+
+        await new DetailsStableCoinsService()
+          .getDetailsStableCoins(tokenId, false)
+          .then((response: IStableCoinDetail) => {
+            symbol = response.symbol;
+            proxyContractId = response.memo.proxyContract;
+          });
         const capabilitiesToRefresh =
           await new CapabilitiesStableCoinsService().getCapabilitiesStableCoins(
-            tokenToRefresh,
-            sdk.getPublicKey(
-              currentAccount.privateKey.key,
-              currentAccount.privateKey.type,
+            proxyContractId,
+            new EOAccount(
+              currentAccount.accountId,
+              new PrivateKey(
+                currentAccount.privateKey.key,
+                currentAccount.privateKey.type,
+              ),
             ),
+            tokenId,
+            currentAccount.accountId.toString(),
           );
         const externalTokensRefreshed = currentAccount.externalTokens.map(
           (token) => {
@@ -103,7 +124,7 @@ export default class ManageExternalTokenService extends Service {
       case manageOptions[2]:
         await utilsService.cleanAndShowBanner();
         //show list to delete
-        let tokenToDelete = await utilsService.defaultMultipleAsk(
+        const tokenToDelete = await utilsService.defaultMultipleAsk(
           language.getText('manageExternalToken.tokenToDelete'),
           currentAccount.externalTokens.map((token) => token.id),
         );
@@ -115,7 +136,7 @@ export default class ManageExternalTokenService extends Service {
         break;
       case manageOptions[manageOptions.length - 1]:
       default:
-        wizardService.mainMenu();
+        await wizardService.mainMenu();
     }
     utilsService.showMessage(language.getText('general.newLine'));
     await this.start();
@@ -124,8 +145,8 @@ export default class ManageExternalTokenService extends Service {
   public updateAccount(externalTokens: IExternalToken[]): void {
     const defaultCfgData = configurationService.getConfiguration();
     const currentAccount = utilsService.getCurrentAccount();
-    let accounts = defaultCfgData.accounts;
-    let accsToUpdate = accounts.map((acc) => {
+    const accounts = defaultCfgData.accounts;
+    const accsToUpdate = accounts.map((acc) => {
       if (
         acc.alias === currentAccount.alias &&
         acc.accountId === currentAccount.accountId
