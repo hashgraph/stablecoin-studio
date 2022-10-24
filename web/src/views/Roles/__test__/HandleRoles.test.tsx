@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import userEvent from '@testing-library/user-event';
 import HandleRoles from '../HandleRoles';
 import type { Action } from '../HandleRoles';
@@ -7,12 +8,15 @@ import { roleOptions, fields, actions } from '../constants';
 import { waitFor } from '@testing-library/react';
 import type { RenderResult } from '@testing-library/react';
 import { RouterManager } from '../../../Router/RouterManager';
+import configureMockStore from 'redux-mock-store';
 
 jest.mock('../../../Router/RouterManager', () => ({
 	RouterManager: {
 		to: jest.fn(),
 	},
 }));
+
+const mockStore = configureMockStore();
 
 const translations = en.giveRole;
 const validAccount = '0.0.123456';
@@ -34,7 +38,20 @@ describe(`<${HandleRoles.name} />`, () => {
 	});
 
 	test('should enable confirm button after fill form correctly', async () => {
-		const component = render(<HandleRoles action='giveRole' />);
+		const store = mockStore({
+			wallet: {
+				capabilities: ['Cash in'],
+				data: {
+					savedPairings: [
+						{
+							accountIds: ['0.0.123456'],
+						},
+					],
+				},
+			},
+		});
+
+		const component = render(<HandleRoles action='giveRole' />, store);
 
 		const account = component.getByTestId(fields.account);
 		userEvent.type(account, validAccount);
@@ -63,82 +80,5 @@ describe(`<${HandleRoles.name} />`, () => {
 		const cancelButton = component.getByTestId('cancel-btn');
 		userEvent.click(cancelButton);
 		expect(RouterManager.to).toHaveBeenCalledWith(anything, 'roles');
-	});
-
-	describe('Supplier role', () => {
-		const fillInitialForm = (component: RenderResult) => {
-			const account = component.getByTestId(fields.account);
-			userEvent.type(account, validAccount);
-
-			const roles = component.getByTestId('select-placeholder');
-			userEvent.click(roles);
-
-			const option = component.getByText('Supplier');
-			userEvent.click(option);
-		};
-
-		test('should render children', async () => {
-			const component = render(<HandleRoles action='giveRole' />);
-
-			fillInitialForm(component);
-
-			const supplerQuantity = component.getByTestId('supplier-quantity');
-			expect(supplerQuantity).toBeInTheDocument();
-			expect(supplerQuantity).toHaveTextContent(translations.supplierQuantityQuestion);
-			expect(supplerQuantity).toHaveTextContent(translations.switchLabel);
-
-			const switchComponent = component.getByTestId('switch');
-			expect(switchComponent).toBeInTheDocument();
-
-			const inputQuantity = component.queryByTestId('input-supplier-quantity');
-			expect(inputQuantity).not.toBeInTheDocument();
-
-			const confirmButton = component.getByTestId('confirm-btn');
-
-			await waitFor(() => {
-				expect(confirmButton).not.toHaveAttribute('disabled');
-				userEvent.click(confirmButton);
-			});
-
-			expect(component.asFragment()).toMatchSnapshot('giveSupplierRole');
-		});
-
-		test('should be selected Infinity token quantity by default', () => {
-			const component = render(<HandleRoles action='giveRole' />);
-
-			fillInitialForm(component);
-
-			const switchComponent = component.getByTestId('switch');
-			expect(switchComponent).toHaveAttribute('aria-checked', 'true');
-		});
-
-		test('if set switch off then user should fill token quantity field', async () => {
-			const component = render(<HandleRoles action='giveRole' />);
-
-			fillInitialForm(component);
-
-			const confirmButton = component.getByTestId('confirm-btn');
-
-			await waitFor(() => {
-				expect(confirmButton).not.toHaveAttribute('disabled');
-			});
-
-			const switchComponent = component.getByTestId('switch');
-			userEvent.click(switchComponent);
-
-			await waitFor(() => {
-				expect(switchComponent).toHaveAttribute('aria-checked', 'false');
-
-				expect(confirmButton).toHaveAttribute('disabled');
-			});
-
-			const inputQuantity = component.getByTestId('input-supplier-quantity');
-			expect(inputQuantity).toBeInTheDocument();
-			userEvent.type(inputQuantity, '12345');
-
-			await waitFor(() => {
-				expect(confirmButton).not.toHaveAttribute('disabled');
-			});
-		});
 	});
 });

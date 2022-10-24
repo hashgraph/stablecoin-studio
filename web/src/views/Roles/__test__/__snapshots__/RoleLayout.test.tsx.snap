@@ -16,10 +16,10 @@ exports[`<RoleLayout /> should render correctly 1`] = `
       data-testid="base-container-children"
     >
       <div
-        class="chakra-stack css-9fu93p"
+        class="css-1us6gcn"
       >
         <div
-          class="chakra-stack css-scr4k4"
+          class="css-1r9sqqd"
         >
           <div
             class="chakra-stack css-135a0es"
@@ -197,16 +197,240 @@ exports[`<RoleLayout /> should render correctly 1`] = `
               </div>
             </form>
           </div>
+          <div
+            class="chakra-stack css-eunu1i"
+          >
+            <div
+              class="chakra-stack css-wqnj46"
+            >
+              <h2
+                class="chakra-heading css-m8uvwu"
+                data-testid="details-title"
+              >
+                Stable coin details
+              </h2>
+              <div
+                class="css-13brihr"
+              >
+                <p
+                  class="chakra-text css-53sllx"
+                  data-testid="details-review-title"
+                >
+                  Basic details
+                </p>
+                <div
+                  class="css-0"
+                >
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-0"
+                    >
+                      <p
+                        class="chakra-text css-bpirlf"
+                      >
+                        Name
+                      </p>
+                      <div
+                        class="chakra-stack css-1c8ysgd"
+                      >
+                        <p
+                          class="chakra-text css-mgupmj"
+                        >
+                          ManuCoin2
+                        </p>
+                      </div>
+                    </div>
+                    <hr
+                      aria-orientation="horizontal"
+                      class="chakra-divider css-zaaihy"
+                      title="divider"
+                    />
+                  </div>
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-1"
+                    >
+                      <p
+                        class="chakra-text css-bpirlf"
+                      >
+                        Symbol
+                      </p>
+                      <div
+                        class="chakra-stack css-1c8ysgd"
+                      >
+                        <p
+                          class="chakra-text css-mgupmj"
+                        >
+                          MCC2
+                        </p>
+                      </div>
+                    </div>
+                    <hr
+                      aria-orientation="horizontal"
+                      class="chakra-divider css-zaaihy"
+                      title="divider"
+                    />
+                  </div>
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-2"
+                    >
+                      <p
+                        class="chakra-text css-bpirlf"
+                      >
+                        Decimals
+                      </p>
+                      <div
+                        class="chakra-stack css-1c8ysgd"
+                      >
+                        <p
+                          class="chakra-text css-mgupmj"
+                        >
+                          3
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="css-13brihr"
+              >
+                <p
+                  class="chakra-text css-53sllx"
+                  data-testid="details-review-title"
+                >
+                  Optional details
+                </p>
+                <div
+                  class="css-0"
+                >
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-0"
+                    >
+                      <p
+                        class="chakra-text css-bpirlf"
+                      >
+                        Initial supply
+                      </p>
+                      <div
+                        class="chakra-stack css-1c8ysgd"
+                      >
+                        <p
+                          class="chakra-text css-mgupmj"
+                        >
+                          0
+                        </p>
+                      </div>
+                    </div>
+                    <hr
+                      aria-orientation="horizontal"
+                      class="chakra-divider css-zaaihy"
+                      title="divider"
+                    />
+                  </div>
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-1"
+                    >
+                      <p
+                        class="chakra-text css-bpirlf"
+                      >
+                        Total supply
+                      </p>
+                      <div
+                        class="chakra-stack css-1c8ysgd"
+                      >
+                        <p
+                          class="chakra-text css-mgupmj"
+                        >
+                          100
+                        </p>
+                      </div>
+                    </div>
+                    <hr
+                      aria-orientation="horizontal"
+                      class="chakra-divider css-zaaihy"
+                      title="divider"
+                    />
+                  </div>
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-2"
+                    >
+                      <p
+                        class="chakra-text css-bpirlf"
+                      >
+                        Max supply
+                      </p>
+                      <div
+                        class="chakra-stack css-1c8ysgd"
+                      >
+                        <p
+                          class="chakra-text css-mgupmj"
+                        >
+                          0
+                        </p>
+                      </div>
+                    </div>
+                    <hr
+                      aria-orientation="horizontal"
+                      class="chakra-divider css-zaaihy"
+                      title="divider"
+                    />
+                  </div>
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-3"
+                    >
+                      <p
+                        class="chakra-text css-bpirlf"
+                      >
+                        Supply type
+                      </p>
+                      <div
+                        class="chakra-stack css-1c8ysgd"
+                      >
+                        <p
+                          class="chakra-text css-mgupmj"
+                        >
+                          Finite
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         <div
-          class="css-ajbtx6"
+          class="css-3gu2fl"
         >
-          <hr
-            aria-orientation="horizontal"
-            class="chakra-divider css-svjswr"
-          />
           <div
-            class="chakra-stack css-zhuomp"
+            class="chakra-stack css-1amf41o"
           >
             <button
               class="chakra-button css-1nrhi9n"

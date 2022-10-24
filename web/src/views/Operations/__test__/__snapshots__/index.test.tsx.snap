@@ -141,8 +141,9 @@ exports[`<Operations /> should render correctly 1`] = `
             class="css-180e663"
           >
             <button
-              class="css-1g500l7"
+              class="css-kly7w1"
               data-testid="direct-access-balance"
+              disabled=""
             >
               <div
                 class="css-bv4l9q"
@@ -228,8 +229,9 @@ exports[`<Operations /> should render correctly 1`] = `
             class="css-180e663"
           >
             <button
-              class="css-1g500l7"
+              class="css-kly7w1"
               data-testid="direct-access-rescueTokens"
+              disabled=""
             >
               <div
                 class="css-bv4l9q"
@@ -301,8 +303,9 @@ exports[`<Operations /> should render correctly 1`] = `
             class="css-180e663"
           >
             <button
-              class="css-1g500l7"
+              class="css-kly7w1"
               data-testid="direct-access-wipe"
+              disabled=""
             >
               <div
                 class="css-bv4l9q"
