@@ -115,7 +115,8 @@ const StableCoinCreation = () => {
 		}
 
 		return setIsValidForm(
-			fieldsStep?.filter((item) => !item).length === 0 && Object.keys(errors).length === 0,
+			fieldsStep?.filter((item) => !item && item !== 0).length === 0 &&
+				Object.keys(errors).length === 0,
 		);
 	};
 

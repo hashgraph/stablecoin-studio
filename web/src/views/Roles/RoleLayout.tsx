@@ -97,11 +97,11 @@ const RoleLayout = (props: RoleLayoutProps) => {
 			label: t('operations:details.supplyType'),
 			// @ts-ignore Property 'supplyType' does not exist on type 'IStableCoinDetail'.
 			value:
-				selectedStableCoin?.maxSupply === (0 as unknown as BigInt)
+				selectedStableCoin?.maxSupply?.toString() === '0'
 					? t('operations:details.infinite')
 					: t('operations:details.finite'),
 		},
-	]
+	];
 
 	const optionalDetailsInfinite = [
 		{
@@ -130,7 +130,7 @@ const RoleLayout = (props: RoleLayoutProps) => {
 					? t('operations:details.infinite')
 					: t('operations:details.finite'),
 		},
-	]
+	];
 
 	return (
 		<BaseContainer title={t('roles:title')}>
@@ -140,9 +140,8 @@ const RoleLayout = (props: RoleLayoutProps) => {
 				px={{ base: 4, lg: 14 }}
 				pt={{ base: 4, lg: 14 }}
 				pb={6}
-			>						
+			>
 				<SimpleGrid columns={{ lg: 2 }} gap={{ base: 4, lg: 20 }}>
-
 					<Stack minW={400}>
 						<Heading
 							data-testid='title'
@@ -186,7 +185,7 @@ const RoleLayout = (props: RoleLayoutProps) => {
 									variant='unstyled'
 								/>
 							)}
-							
+
 							{children}
 						</Stack>
 					</Stack>
@@ -219,16 +218,21 @@ const RoleLayout = (props: RoleLayoutProps) => {
 								title={t('operations:details.optionalTitle')}
 								titleProps={{ fontWeight: 700, color: 'brand.secondary' }}
 								details={
-									selectedStableCoin?.maxSupply === (0 as unknown as BigInt) ? optionalDetailsInfinite : optionalDetailsFinite
+									selectedStableCoin?.maxSupply === (0 as unknown as BigInt)
+										? optionalDetailsInfinite
+										: optionalDetailsFinite
 								}
-							/>					
+							/>
 						</Stack>
 					</Stack>
-
-				</SimpleGrid>		
+				</SimpleGrid>
 				<Flex justify='flex-end' pt={6}>
 					<Stack direction='row' spacing={6}>
-						<Button	data-testid='cancel-btn' onClick={() => RouterManager.to(navigate, NamedRoutes.Roles)} variant='secondary'>
+						<Button
+							data-testid='cancel-btn'
+							onClick={() => RouterManager.to(navigate, NamedRoutes.Roles)}
+							variant='secondary'
+						>
 							{t('global:common.goBack')}
 						</Button>
 						<Button data-testid='confirm-btn' disabled={!buttonConfirmEnable} onClick={onConfirm}>

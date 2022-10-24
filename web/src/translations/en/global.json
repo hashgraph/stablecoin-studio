@@ -27,7 +27,8 @@
       "placeholder": "Choose Stable coin",
       "noStableCoin": "No Stable Coins"
     },
-    "createSC": "Create Stable coin"
+    "createSC": "Create coin",
+    "addSC": "Add coin"
   },
   "sidebar": {
     "operations": "Operations",
