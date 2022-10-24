@@ -1,12 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import userEvent from '@testing-library/user-event';
 import HandleRoles from '../HandleRoles';
 import type { Action } from '../HandleRoles';
-import en from '../../../translations/en/roles.json';
 import { render } from '../../../test';
 import { roleOptions, fields, actions } from '../constants';
 import { waitFor } from '@testing-library/react';
-import type { RenderResult } from '@testing-library/react';
 import { RouterManager } from '../../../Router/RouterManager';
 import configureMockStore from 'redux-mock-store';
 
@@ -18,7 +15,6 @@ jest.mock('../../../Router/RouterManager', () => ({
 
 const mockStore = configureMockStore();
 
-const translations = en.giveRole;
 const validAccount = '0.0.123456';
 
 describe(`<${HandleRoles.name} />`, () => {
