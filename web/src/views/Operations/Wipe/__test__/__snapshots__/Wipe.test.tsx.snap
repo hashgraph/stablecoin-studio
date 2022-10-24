@@ -167,11 +167,15 @@ exports[`<WipeOperation /> should render correctly 1`] = `
                       >
                         Name
                       </p>
-                      <p
-                        class="chakra-text css-6b9s8v"
+                      <div
+                        class="chakra-stack css-1c8ysgd"
                       >
-                        ManuCoin2
-                      </p>
+                        <p
+                          class="chakra-text css-mgupmj"
+                        >
+                          ManuCoin2
+                        </p>
+                      </div>
                     </div>
                     <hr
                       aria-orientation="horizontal"
@@ -191,11 +195,15 @@ exports[`<WipeOperation /> should render correctly 1`] = `
                       >
                         Symbol
                       </p>
-                      <p
-                        class="chakra-text css-6b9s8v"
+                      <div
+                        class="chakra-stack css-1c8ysgd"
                       >
-                        MCC2
-                      </p>
+                        <p
+                          class="chakra-text css-mgupmj"
+                        >
+                          MCC2
+                        </p>
+                      </div>
                     </div>
                     <hr
                       aria-orientation="horizontal"
@@ -215,11 +223,15 @@ exports[`<WipeOperation /> should render correctly 1`] = `
                       >
                         Decimals
                       </p>
-                      <p
-                        class="chakra-text css-6b9s8v"
+                      <div
+                        class="chakra-stack css-1c8ysgd"
                       >
-                        3
-                      </p>
+                        <p
+                          class="chakra-text css-mgupmj"
+                        >
+                          3
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -248,11 +260,15 @@ exports[`<WipeOperation /> should render correctly 1`] = `
                       >
                         Initial supply
                       </p>
-                      <p
-                        class="chakra-text css-6b9s8v"
+                      <div
+                        class="chakra-stack css-1c8ysgd"
                       >
-                        0
-                      </p>
+                        <p
+                          class="chakra-text css-mgupmj"
+                        >
+                          0
+                        </p>
+                      </div>
                     </div>
                     <hr
                       aria-orientation="horizontal"
@@ -272,11 +288,15 @@ exports[`<WipeOperation /> should render correctly 1`] = `
                       >
                         Total supply
                       </p>
-                      <p
-                        class="chakra-text css-6b9s8v"
+                      <div
+                        class="chakra-stack css-1c8ysgd"
                       >
-                        100
-                      </p>
+                        <p
+                          class="chakra-text css-mgupmj"
+                        >
+                          100
+                        </p>
+                      </div>
                     </div>
                     <hr
                       aria-orientation="horizontal"
@@ -296,11 +316,15 @@ exports[`<WipeOperation /> should render correctly 1`] = `
                       >
                         Supply type
                       </p>
-                      <p
-                        class="chakra-text css-6b9s8v"
+                      <div
+                        class="chakra-stack css-1c8ysgd"
                       >
-                        Infinite
-                      </p>
+                        <p
+                          class="chakra-text css-mgupmj"
+                        >
+                          Infinite
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>

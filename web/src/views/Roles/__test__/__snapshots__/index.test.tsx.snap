@@ -31,8 +31,9 @@ exports[`<Roles /> should render correctly 1`] = `
             class="css-180e663"
           >
             <button
-              class="css-1g500l7"
+              class="css-kly7w1"
               data-testid="direct-access-giveRole"
+              disabled=""
             >
               <div
                 class="css-bv4l9q"
@@ -97,8 +98,9 @@ exports[`<Roles /> should render correctly 1`] = `
             class="css-180e663"
           >
             <button
-              class="css-1g500l7"
+              class="css-kly7w1"
               data-testid="direct-access-revokeRole"
+              disabled=""
             >
               <div
                 class="css-bv4l9q"
@@ -152,8 +154,9 @@ exports[`<Roles /> should render correctly 1`] = `
             class="css-180e663"
           >
             <button
-              class="css-1g500l7"
+              class="css-kly7w1"
               data-testid="direct-access-editRole"
+              disabled=""
             >
               <div
                 class="css-bv4l9q"
@@ -196,9 +199,9 @@ exports[`<Roles /> should render correctly 1`] = `
               </div>
               <p
                 class="chakra-text css-1mbt7nu"
-                data-testid="direct-access-Edit role"
+                data-testid="direct-access-Manage cash in limit"
               >
-                Edit role
+                Manage cash in limit
               </p>
             </button>
           </div>
