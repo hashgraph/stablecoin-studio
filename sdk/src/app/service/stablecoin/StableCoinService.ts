@@ -131,7 +131,7 @@ export default class StableCoinService extends Service {
 			req.proxyContractId,
 			req.targetId,
 			req.tokenId,
-			req.account
+			req.account,
 		);
 	}
 
@@ -171,7 +171,7 @@ export default class StableCoinService extends Service {
 				proxyContractId: req.proxyContractId,
 				targetId: req.targetId,
 				tokenId: req.tokenId,
-				account: req.account
+				account: req.account,
 			});
 		if (capabilities.includes(Capabilities.CASH_IN)) {
 			const result = await this.repository.cashIn(
@@ -187,15 +187,11 @@ export default class StableCoinService extends Service {
 				amount,
 				req.account,
 			);
-			if (
-				resultCashIn &&
-				req?.account?.accountId.id &&
-				req?.account?.accountId.id != req.targetId
-			) {
+			if (resultCashIn && coin.treasury.id != req.targetId) {
 				resultCashIn = await this.repository.transferHTS(
 					req.tokenId,
 					amount,
-					req.account.accountId.id,
+					coin.treasury.id,
 					req.targetId,
 					req.account,
 				);
@@ -232,7 +228,7 @@ export default class StableCoinService extends Service {
 				proxyContractId: req.proxyContractId,
 				targetId: req.account.accountId.toString(),
 				tokenId: req.tokenId,
-				account: req.account
+				account: req.account,
 			});
 		if (capabilities.includes(Capabilities.BURN)) {
 			const result = await this.repository.cashOut(
@@ -289,7 +285,7 @@ export default class StableCoinService extends Service {
 				proxyContractId: req.proxyContractId,
 				targetId: req.targetId,
 				tokenId: req.tokenId,
-				account: req.account
+				account: req.account,
 			});
 		if (capabilities.includes(Capabilities.WIPE)) {
 			const result = await this.repository.wipe(
@@ -484,8 +480,6 @@ export default class StableCoinService extends Service {
 	public async getAccountInfo(
 		req: IAccountWithKeyRequestModel,
 	): Promise<IAccountInfo> {
-		return this.repository.getAccountInfo(
-			req.account.accountId.id
-		);
-	}	
+		return this.repository.getAccountInfo(req.account.accountId.id);
+	}
 }
