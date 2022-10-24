@@ -294,3 +294,19 @@ async function deployContractSDK(
     )
     return contractId
 }
+
+export async function grantRole(ROLE: string, ContractId: any, proxyAddress: string, clientGrantingRole: any, clientToGrantRole: string){
+    let params: any[] = [ROLE, AccountId.fromString(clientToGrantRole).toSolidityAddress()];  
+    await contractCall(ContractId.fromString(proxyAddress), 'grantRole', params, clientGrantingRole, 400000, HederaERC20__factory.abi);
+}
+
+export async function revokeRole(ROLE: string, ContractId: any, proxyAddress: string, clientRevokingRole: any, clientToRevokeRole: string){
+    let params: any[] = [ROLE, AccountId.fromString(clientToRevokeRole).toSolidityAddress()];  
+    await contractCall(ContractId.fromString(proxyAddress), 'revokeRole', params, clientRevokingRole, 400000, HederaERC20__factory.abi);  
+}
+
+export async function checkRole(ROLE: string, ContractId: any, proxyAddress: string, clientCheckingRole: any, clientToCheckRole: string): Promise<boolean>{
+    let params: any[] = [ROLE, AccountId.fromString(clientToCheckRole).toSolidityAddress()];  
+    let result = await contractCall(ContractId.fromString(proxyAddress), 'hasRole', params, clientCheckingRole, 60000, HederaERC20__factory.abi);
+    return result[0]; 
+}
