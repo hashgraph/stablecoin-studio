@@ -47,11 +47,11 @@ export default class BigDecimal implements FixedNumber {
 		this._isFixedNumber = this.#fn._isFixedNumber;
 	}
 
-	_checkFormat(other: FixedNumber): void {
+	_checkFormat(other: BigDecimal): void {
 		return this.#fn._checkFormat(other);
 	}
 
-	addUnsafe(other: FixedNumber): BigDecimal {
+	addUnsafe(other: BigDecimal): BigDecimal {
 		return this.fromFixedNumber(this.#fn.addUnsafe(other));
 	}
 
