@@ -28,6 +28,8 @@ import {
 } from '../store/slices/walletSlice';
 import type { SavedPairingData } from 'hedera-stable-coin-sdk';
 
+const events = ['load', 'mousemove', 'mousedown', 'click', 'scroll', 'keypress'];
+
 const PrivateRoute = ({ status }: { status?: HashConnectConnectionState }) => {
 	return (
 		<Layout>
@@ -50,6 +52,7 @@ const OnboardingRoute = ({ status }: { status?: HashConnectConnectionState }) =>
 
 const Router = () => {
 	const [status, setStatus] = useState<HashConnectConnectionState>();
+	let timer: ReturnType<typeof setTimeout>;
 
 	const dispatch = useDispatch();
 
@@ -71,7 +74,17 @@ const Router = () => {
 	useEffect(() => {
 		if (status && status === HashConnectConnectionState.Paired) {
 			getWalletData();
+
+			Object.values(events).forEach((item) => {
+				window.addEventListener(item, eventListeners);
+			});
 		}
+
+		return () => {
+			Object.values(events).forEach((item) => {
+				window.removeEventListener(item, eventListeners);
+			});
+		};
 	}, [status]);
 
 	const getWalletData = async () => {
@@ -120,6 +133,27 @@ const Router = () => {
 		} catch {
 			setStatus(HashConnectConnectionState.Disconnected);
 		}
+	};
+
+	const eventListeners = () => {
+		resetTimer();
+		handleLogoutTimer();
+	};
+
+	const handleLogoutTimer = () => {
+		timer = setTimeout(() => {
+			resetTimer();
+
+			Object.values(events).forEach((item) => {
+				window.removeEventListener(item, eventListeners);
+			});
+
+			SDKService.getInstance().then((instance) => instance?.disconectHaspack());
+		}, 900000); // 15 minutes
+	};
+
+	const resetTimer = () => {
+		if (timer) clearTimeout(timer);
 	};
 
 	return (
