@@ -188,15 +188,31 @@ export default class StableCoinService extends Service {
 				amount,
 				req.account,
 			);
-			if (resultCashIn && coin.treasury.id != req.targetId) {
-				resultCashIn = await this.repository.transferHTS(
-					req.tokenId,
-					amount,
-					coin.treasury.id,
-					req.targetId,
-					req.account,
-				);
+
+			if (
+				resultCashIn &&	coin.treasury.id != req.targetId
+			) {
+				if (coin.treasury.id === req?.account?.accountId.id) {
+					resultCashIn = await this.repository.transferHTS(
+						req.tokenId,
+						amount,
+						req.account.accountId.id,
+						req.targetId,
+						req.account,
+						false	
+					);
+				} else {
+					resultCashIn = await this.repository.transferHTS(
+						req.tokenId,
+						amount,
+						req.account.accountId.id,
+						req.targetId,
+						req.account,
+						true
+					);	
+				}
 			}
+			
 		} else {
 			throw new Error('Cash in not allowed');
 		}

@@ -134,6 +134,7 @@ export default interface IStableCoinRepository {
 		outAccountId: string,
 		inAccountId: string,
 		account: Account,
+		isApproval: boolean
 	): Promise<boolean>;
 	getAccountInfo(accountId: string): Promise<IAccountInfo>;
 	getRoles(

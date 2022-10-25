@@ -14,7 +14,8 @@ import {
 	TransferTransaction,
 	PublicKey as HPublicKey,
 	DelegateContractId,
-	ContractFunctionParameters
+	ContractFunctionParameters,
+	AccountAllowanceApproveTransaction
 } from '@hashgraph/sdk';
 import { ContractId, PublicKey } from '../../../in/sdk/sdk.js';
 import { ICreateTokenResponse } from '../types.js';
@@ -138,6 +139,14 @@ export class TransactionProvider {
 		return transaction;
 	}
 
+	public static approveTokenAllowance(
+	): Transaction {
+		const transaction = new AccountAllowanceApproveTransaction()
+		.approveTokenAllowance('0.0.48692645', '0.0.47624288', '0.0.47809960', 100000000000000);
+			
+		return transaction
+	}
+
 	public static buildTokenMintTransaction(
 		tokenId: string,
 		amount: number,
@@ -172,6 +181,27 @@ export class TransactionProvider {
 				-amount,
 			)
 			.addTokenTransfer(
+				tokenId,
+				AccountId.fromString(inAccountId),
+				amount,
+			);
+
+		return transaction;
+	}
+
+	public static buildApprovedTransferTransaction(
+		tokenId: string,
+		amount: number,
+		outAccountId: string,
+		inAccountId: string,
+	): Transaction {
+		const transaction = new TransferTransaction()
+			.addApprovedTokenTransfer(
+				tokenId,
+				AccountId.fromString(outAccountId),
+				-amount,
+			)
+			.addApprovedTokenTransfer(
 				tokenId,
 				AccountId.fromString(inAccountId),
 				amount,

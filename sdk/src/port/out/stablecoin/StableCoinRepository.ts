@@ -150,14 +150,6 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		account: Account,
 	): Promise<Capabilities[]> {
 		try {
-			console.log(
-				'xxx SE VAN A CALCULAR LAS CAPABILITIES DE LA CUENTA EN EL TOKEN xxx',
-			);
-			console.log(
-				'CLAVE PUBLICA:',
-				account!.privateKey!.publicKey.toString(),
-			);
-
 			const stableCoin: StableCoin = await this.getStableCoin(tokenId);
 			const roles: any = await this.getRoles(
 				proxyContractId,
@@ -751,6 +743,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		outAccountId: string,
 		inAccountId: string,
 		account: Account,
+		isApproval = false
 	): Promise<boolean> {
 		const params: ITransferTokenRequest = {
 			account,
@@ -758,6 +751,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			amount: amount,
 			outAccountId: outAccountId,
 			inAccountId: inAccountId,
+			isApproval
 		};
 
 		return await this.networkAdapter.provider.transferHTS(params);
