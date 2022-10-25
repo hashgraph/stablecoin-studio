@@ -1,7 +1,7 @@
-import DomainError from '../../../error/DomainError.js';
+import BaseError, { ErrorCode } from "../../../../core/error/BaseError.js";
 
-export class AccountNotValid extends DomainError {
+export class AccountNotValid extends BaseError {
 	constructor(cause: string) {
-		super(`Account is not valid: ${cause}`);
+		super(ErrorCode.AmountInvalid, `Account is not valid: ${cause}`);
 	}
 }

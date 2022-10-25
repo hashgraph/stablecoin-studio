@@ -1,7 +1,7 @@
-import DomainError from '../../../error/DomainError.js';
+import BaseError, { ErrorCode } from "../../../../core/error/BaseError.js";
 
-export default class InvalidDecimalRangeDomainError extends DomainError {
+export default class InvalidAmountextends extends BaseError {
     constructor(val: number, expected: number) {
-        super(`Invalid Amount ${val}, expected ${expected} decimals`);
+        super(ErrorCode.AmountInvalid, `Invalid Amount ${val}, expected ${expected} decimals`);
     }
 }

@@ -3,10 +3,15 @@ import AccountId from '../account/AccountId.js';
 import PublicKey from '../account/PublicKey.js';
 import ContractId from '../contract/ContractId.js';
 import InvalidAmountDomainError from './error/InvalidAmountDomainError.js';
-import InvalidDecimalRangeDomainError from './error/InvalidDecimalRangeDomainError.js';
+import NameLength from './error/NameLength.js';
+import NameEmpty from './error/NameEmpty.js';
+import SymbolLength from './error/SymbolLength.js';
+import SymbolEmpty from './error/SymbolEmpty.js';
 import { StableCoinMemo } from './StableCoinMemo.js';
 import { TokenSupplyType } from './TokenSupply.js';
 import { TokenType } from './TokenType.js';
+import InvalidDecimalRange from './error/InvalidDecimalRange.js';
+import BaseError from '../../../core/error/BaseError.js';
 
 const MAX_SUPPLY = 9_223_372_036_854_775_807n; // eslint-disable-line
 const TEN = 10;
@@ -302,10 +307,11 @@ export class StableCoin extends BaseEntity {
 			deleted,
 			paused,
 		} = params;
+
 		this.adminKey = adminKey;
 		this.name = name;
 		this.symbol = symbol;
-		this.decimals = this.checkDecimals(decimals);
+		this.decimals = decimals;
 		this.initialSupply = initialSupply ?? 0n;
 		this.totalSupply = totalSupply ?? 0n;
 		this.maxSupply = maxSupply ?? 0n;
@@ -331,12 +337,37 @@ export class StableCoin extends BaseEntity {
 		this.deleted = deleted ?? '';
 	}
 
-	public checkDecimals(value: number): number {
-		if (value < 0 || value > 18) {
-			throw new InvalidDecimalRangeDomainError(value);
-		} else {
-			return value;
-		}
+	public static checkName(value: string): BaseError[] {
+		const maxNameLength = 100;
+		const errorList: BaseError[] = [];
+
+		if (!value) errorList.push(new NameEmpty());
+		if (value.length > maxNameLength)
+			errorList.push(new NameLength(value, maxNameLength));
+
+		return errorList;
+	}
+
+	public static checkSymbol(value: string): BaseError[] {
+		const maxSymbolLength = 100;
+		const errorList: BaseError[] = [];
+
+		if (!value) errorList.push(new SymbolEmpty());
+		if (value.length > maxSymbolLength)
+			errorList.push(new SymbolLength(value, maxSymbolLength));
+
+		return errorList;
+	}
+
+	public static checkDecimals(value: number): BaseError[] {
+		const errorList: BaseError[] = [];
+		const min = 0;
+		const max = 18;
+
+		if (value > max || value < min)
+			errorList.push(new InvalidDecimalRange(value, min, max));
+
+		return errorList;
 	}
 
 	public getDecimalOperator(): number {

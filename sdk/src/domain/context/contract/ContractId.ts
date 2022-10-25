@@ -5,8 +5,8 @@ import {
 } from '@hashgraph/sdk';
 import { ValueObject } from '../../../core/types.js';
 import { proto } from '@hashgraph/proto';
-import InvalidKeyForContractIdDomainError from './error/InvalidKeyForContractIdDomainError.js';
 import Long from 'long';
+import InvalidKeyForContract from './error/InvalidKeyForContract.js';
 
 export default class ContractId extends ValueObject {
 	public readonly id: string;
@@ -30,7 +30,7 @@ export default class ContractId extends ValueObject {
 			out?.contractID?.contractNum ||
 			out?.delegatableContractId?.contractNum;
 		if (options.strict && !id) {
-			throw new InvalidKeyForContractIdDomainError(out);
+			throw new InvalidKeyForContract(out);
 		} else if (!id) {
 			id = Long.ZERO;
 		}
