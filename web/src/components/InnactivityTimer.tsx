@@ -1,6 +1,6 @@
 import { Alert, AlertDescription, AlertIcon, AlertTitle, CloseButton } from '@chakra-ui/react';
 import type { ReactNode } from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import SDKService, { HashConnectConnectionState } from '../services/SDKService';
@@ -12,10 +12,14 @@ interface a {
 
 const InnactivityTimer = ({ children }: a) => {
 	const { t } = useTranslation('global');
+
 	const events = ['load', 'mousemove', 'mousedown', 'click', 'scroll', 'keypress'];
+
 	const status = useSelector(HASHPACK_STATUS);
 
 	let timer: ReturnType<typeof setTimeout>;
+
+	const abortRef = useRef(false);
 
 	const [showAlert, setShowAlert] = useState(false);
 
@@ -28,10 +32,15 @@ const InnactivityTimer = ({ children }: a) => {
 	}, [showAlert]);
 
 	useEffect(() => {
+		abortRef.current = false;
 		if (status === HashConnectConnectionState.Paired) {
 			Object.values(events).forEach((item) => {
 				window.addEventListener(item, eventListeners);
 			});
+		}
+
+		if (status === HashConnectConnectionState.Disconnected) {
+			abortRef.current = true;
 		}
 
 		return () => {
@@ -54,10 +63,16 @@ const InnactivityTimer = ({ children }: a) => {
 				window.removeEventListener(item, eventListeners);
 			});
 
+			handleLogout();
+		}, 900000); // 15 minutes - 900000 ms
+	};
+
+	const handleLogout = () => {
+		if (!abortRef.current) {
 			SDKService.getInstance().then((instance) => instance?.disconectHaspack());
 
 			setShowAlert(true);
-		}, 900000); // 15 minutes - 900000 ms
+		}
 	};
 
 	const resetTimer = () => {
