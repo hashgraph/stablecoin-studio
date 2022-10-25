@@ -1,7 +1,7 @@
 import {
-	IRequestBalanceOf,
+	IAccountRequestModel,
 	ITokenIdRequestModel,
 } from './IRequestContracts.js';
 
-export type IGetCapabilitiesRequest = IRequestBalanceOf &
+export type IGetCapabilitiesRequest = IAccountRequestModel &
 	ITokenIdRequestModel;

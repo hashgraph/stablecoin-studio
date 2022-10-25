@@ -15,14 +15,12 @@ export default class CapabilitiesStableCoinsService extends Service {
    * List Stable Coins can be managed
    */
   public async getCapabilitiesStableCoins(
-    proxyContractId: string,
     account: EOAccount,
     tokenId: string,
-    targetId: string,
   ): Promise<Capabilities[]> {
     const sdk: SDK = utilsService.getSDK();
 
-    const capabilities = await sdk.getCapabilitiesStableCoin({proxyContractId, account, tokenId, targetId});
+    const capabilities = await sdk.getCapabilitiesStableCoin({account, tokenId});
 
     return capabilities;
   }

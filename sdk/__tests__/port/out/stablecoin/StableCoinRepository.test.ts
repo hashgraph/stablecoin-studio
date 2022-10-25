@@ -73,10 +73,8 @@ describe('🧪 [PORT] StableCoinRepository', () => {
     const coinId = '0.0.48586658';
     const stableCoinDetails = await repository.getStableCoin(coinId);
     const response = await repository.getCapabilitiesStableCoin(
-      stableCoinDetails.memo.proxyContract.toString(),
-      ACCOUNTS.testnet.accountId.toString(),
       stableCoinDetails.id,
-      ACCOUNTS.testnet,
+      ACCOUNTS.testnet
     );
     expect(Array.isArray(response)).toBeTruthy();
     expect(response).not.toBeNull();

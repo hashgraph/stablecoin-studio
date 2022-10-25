@@ -375,10 +375,8 @@ describe('🧪 [PORT] SDK', () => {
 
   it('Get capabilities', async () => {
     const capabilities = await sdk.getCapabilitiesStableCoin({
-      proxyContractId: proxyContractId ?? '',
-			targetId: ACCOUNTS.testnet.accountId.toString(),
 			tokenId: tokenId ?? '',
-			account: ACCOUNTS.testnet,
+			account: ACCOUNTS.testnet
     });
     expect(capabilities).not.toBeNull();
   }, 15000);

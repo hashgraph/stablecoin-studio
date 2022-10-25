@@ -1,18 +1,13 @@
 export enum Capabilities {
 	CASH_IN = 'Cash in',
 	CASH_IN_HTS = 'Cash in hts',
-	CASH_IN_ROLE = 'Cash in role',
 	DETAILS = 'Details',
 	BALANCE = 'Balance',
 	BURN = 'Burn',
 	BURN_HTS = 'Burn hts',
-	BURN_ROLE = 'Burn role',
 	WIPE = 'Wipe',
 	WIPE_HTS = 'Wipe hts',
-	WIPE_ROLE = 'Wipe role',
 	RESCUE = 'Rescue',
-	RESCUE_ROLE = 'Rescue role',
-	PAUSE_ROLE = 'Pause role',
 	ROLE_MANAGEMENT = 'Role management',
 	PAUSE = 'Pause',
 }

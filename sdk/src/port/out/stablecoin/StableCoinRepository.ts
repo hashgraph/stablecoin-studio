@@ -144,30 +144,18 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	}
 
 	public async getCapabilitiesStableCoin(
-		proxyContractId: string,
-		targetId: string,
 		tokenId: string,
 		account: Account,
 	): Promise<Capabilities[]> {
 		try {
 			const stableCoin: StableCoin = await this.getStableCoin(tokenId);
-			const roles: any = await this.getRoles(
-				proxyContractId,
-				targetId,
-				account,
-			);
 			const listCapabilities: Capabilities[] = [];
 
 			listCapabilities.push(Capabilities.DETAILS);
 			listCapabilities.push(Capabilities.BALANCE);
 
 			if (stableCoin.memo.htsAccount == stableCoin.treasury.toString()) {
-				if (roles[0].includes(StableCoinRole.DEFAULT_ADMIN_ROLE)) {
-					listCapabilities.push(Capabilities.RESCUE_ROLE);
-				}
-				if (roles[0].includes(StableCoinRole.RESCUE_ROLE)) {
-					listCapabilities.push(Capabilities.RESCUE);
-				}
+				listCapabilities.push(Capabilities.RESCUE);
 			}
 
 			if (
@@ -175,16 +163,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 				stableCoin.treasury.toString()
 			) {
 				//TODO add Roles
-				if (roles[0].includes(StableCoinRole.CASHIN_ROLE)) {
-					listCapabilities.push(Capabilities.CASH_IN);
-				}
-				if (roles[0].includes(StableCoinRole.BURN_ROLE)) {
-					listCapabilities.push(Capabilities.BURN);
-				}
-				if (roles[0].includes(StableCoinRole.DEFAULT_ADMIN_ROLE)) {
-					listCapabilities.push(Capabilities.CASH_IN_ROLE);
-					listCapabilities.push(Capabilities.BURN_ROLE);
-				}
+				listCapabilities.push(Capabilities.CASH_IN);
+				listCapabilities.push(Capabilities.BURN);
 			}
 
 			if (stableCoin.supplyKey instanceof PublicKey) {
@@ -206,29 +186,19 @@ export default class StableCoinRepository implements IStableCoinRepository {
 				}
 			}
 			if (stableCoin.wipeKey instanceof ContractId) {
-				if (roles[0].includes(StableCoinRole.DEFAULT_ADMIN_ROLE)) {
-					listCapabilities.push(Capabilities.WIPE_ROLE);
-				}
-				if (roles[0].includes(StableCoinRole.WIPE_ROLE)) {
-					listCapabilities.push(Capabilities.WIPE);
-				}
+				listCapabilities.push(Capabilities.WIPE);
 			}
 			if (stableCoin.pauseKey instanceof ContractId) {
-				if (roles[0].includes(StableCoinRole.DEFAULT_ADMIN_ROLE)) {
-					listCapabilities.push(Capabilities.PAUSE_ROLE);
-				}
-				if (roles[0].includes(StableCoinRole.PAUSER_ROLE)) {
-					listCapabilities.push(Capabilities.PAUSE);
-				}
+				listCapabilities.push(Capabilities.PAUSE);
 			}
 
 			const roleManagement = listCapabilities.some((capability) =>
 				[
-					Capabilities.PAUSE_ROLE,
-					Capabilities.WIPE_ROLE,
-					Capabilities.CASH_IN_ROLE,
-					Capabilities.BURN_ROLE,
-					Capabilities.RESCUE_ROLE,
+					Capabilities.PAUSE,
+					Capabilities.WIPE,
+					Capabilities.CASH_IN,
+					Capabilities.BURN,
+					Capabilities.RESCUE,
 				].includes(capability),
 			);
 			if (roleManagement) {

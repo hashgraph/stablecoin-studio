@@ -14,19 +14,19 @@ import { Capabilities } from 'hedera-stable-coin-sdk';
 const Roles = () => {
 	const capabilities = useSelector(SELECTED_WALLET_CAPABILITIES);
 	const filteredCapabilities = roleOptions.filter(option => {
-		if(!capabilities!.includes(Capabilities.CASH_IN_ROLE) && option.label === 'Cash in'){
+		if(!capabilities!.includes(Capabilities.CASH_IN) && option.label === 'Cash in'){
 			return false
 		}
-		if(!capabilities!.includes(Capabilities.BURN_ROLE) && option.label === 'Burn'){
+		if(!capabilities!.includes(Capabilities.BURN) && option.label === 'Burn'){
 			return false
 		}
-		if(!capabilities!.includes(Capabilities.WIPE_ROLE) && option.label === 'Wipe'){
+		if(!capabilities!.includes(Capabilities.WIPE) && option.label === 'Wipe'){
 			return false
 		}
-		if(!capabilities!.includes(Capabilities.PAUSE_ROLE) && option.label === 'Pause'){
+		if(!capabilities!.includes(Capabilities.PAUSE) && option.label === 'Pause'){
 			return false
 		}
-		if(!capabilities!.includes(Capabilities.RESCUE_ROLE) && option.label === 'Rescue'){
+		if(!capabilities!.includes(Capabilities.RESCUE) && option.label === 'Rescue'){
 			return false
 		}
 		return true
@@ -50,7 +50,7 @@ const Roles = () => {
 			icon: 'PencilSimple',
 			route: NamedRoutes.EditRole,
 			title: t('edit'),
-			isDisabled: !capabilities!.includes(Capabilities.CASH_IN_ROLE)
+			isDisabled: !capabilities!.includes(Capabilities.CASH_IN)
 		},
 	];
 

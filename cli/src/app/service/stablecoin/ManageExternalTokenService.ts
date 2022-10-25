@@ -26,7 +26,6 @@ export default class ManageExternalTokenService extends Service {
     );
     const currentAccount = utilsService.getCurrentAccount();
     let symbol = '';
-    let proxyContractId = '';
     switch (
       await utilsService.defaultMultipleAsk(
         language.getText('wizard.externalTokenMenu'),
@@ -56,11 +55,9 @@ export default class ManageExternalTokenService extends Service {
           .getDetailsStableCoins(tokenId, false)
           .then((response: IStableCoinDetail) => {
             symbol = response.symbol;
-            proxyContractId = response.memo.proxyContract;
           });
         const capabilities =
           await new CapabilitiesStableCoinsService().getCapabilitiesStableCoins(
-            proxyContractId,
             new EOAccount(
               currentAccount.accountId,
               new PrivateKey(
@@ -69,7 +66,6 @@ export default class ManageExternalTokenService extends Service {
               ),
             ),
             tokenId,
-            currentAccount.accountId.toString(),
           );
         externalTokens.push({
           id: tokenId,
@@ -91,11 +87,9 @@ export default class ManageExternalTokenService extends Service {
           .getDetailsStableCoins(tokenToRefresh, false)
           .then((response: IStableCoinDetail) => {
             symbol = response.symbol;
-            proxyContractId = response.memo.proxyContract;
           });
         const capabilitiesToRefresh =
           await new CapabilitiesStableCoinsService().getCapabilitiesStableCoins(
-            proxyContractId,
             new EOAccount(
               currentAccount.accountId,
               new PrivateKey(
@@ -103,8 +97,7 @@ export default class ManageExternalTokenService extends Service {
                 currentAccount.privateKey.type,
               ),
             ),
-            tokenToRefresh,
-            currentAccount.accountId.toString(),
+            tokenToRefresh
           );
         const externalTokensRefreshed = currentAccount.externalTokens.map(
           (token) => {

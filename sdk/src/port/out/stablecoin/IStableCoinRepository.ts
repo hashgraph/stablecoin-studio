@@ -10,8 +10,6 @@ export default interface IStableCoinRepository {
 	getListStableCoins(account: Account): Promise<IStableCoinList[]>;
 	getStableCoin(id: string): Promise<StableCoin>;
 	getCapabilitiesStableCoin(
-		proxyContractId: string,
-		targetId: string,
 		tokenId: string,
 		account: Account,
 	): Promise<Capabilities[]>;

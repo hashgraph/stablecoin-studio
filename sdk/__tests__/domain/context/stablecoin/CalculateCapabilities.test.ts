@@ -21,10 +21,8 @@ describe('🧪 [DOMAIN] StableCoin', () => {
     expect(coin.tokenId).not.toBeFalsy();
     const stableCoinDetails = await repository.getStableCoin(coin.tokenId!);
     const capabilitiesReq: IGetCapabilitiesRequest = {
-      proxyContractId: stableCoinDetails.memo.proxyContract.toString(),
-			targetId: ACCOUNTS.testnet.accountId.toString(),
 			tokenId: stableCoinDetails.id,
-			account: ACCOUNTS.testnet,
+			account: ACCOUNTS.testnet
     };
     const cap: Capabilities[] | null = await sdk.getCapabilitiesStableCoin(
       capabilitiesReq

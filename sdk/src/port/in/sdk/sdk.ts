@@ -228,8 +228,7 @@ export class SDK {
 	): Promise<Capabilities[]> | null {
 		try {
 			const req: IGetCapabilitiesServiceRequestModel = {
-				...request,
-				targetId: request.targetId,
+				...request
 			};
 			return this.stableCoinService.getCapabilitiesStableCoin(req);
 		} catch (error) {

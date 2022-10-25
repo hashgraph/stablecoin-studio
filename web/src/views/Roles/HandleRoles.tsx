@@ -69,19 +69,19 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 	const checkOptionSelected: boolean = ['CHECK'].includes(supplierLimitOption);
 	const role = watch(fields.role);
 	const filteredCapabilities = roleOptions.filter(option => {
-		if(!capabilities!.includes(Capabilities.CASH_IN_ROLE) && option.label=== 'Cash in'){
+		if(!capabilities!.includes(Capabilities.CASH_IN) && option.label=== 'Cash in'){
 			return false
 		}
-		if(!capabilities!.includes(Capabilities.BURN_ROLE) && option.label=== 'Burn'){
+		if(!capabilities!.includes(Capabilities.BURN) && option.label=== 'Burn'){
 			return false
 		}
-		if(!capabilities!.includes(Capabilities.WIPE_ROLE) && option.label=== 'Wipe'){
+		if(!capabilities!.includes(Capabilities.WIPE) && option.label=== 'Wipe'){
 			return false
 		}
-		if(!capabilities!.includes(Capabilities.PAUSE_ROLE) && option.label=== 'Pause'){
+		if(!capabilities!.includes(Capabilities.PAUSE) && option.label=== 'Pause'){
 			return false
 		}
-		if(!capabilities!.includes(Capabilities.RESCUE_ROLE) && option.label=== 'Rescue'){
+		if(!capabilities!.includes(Capabilities.RESCUE) && option.label=== 'Rescue'){
 			return false
 		}
 		return true
