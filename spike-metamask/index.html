@@ -105,7 +105,7 @@
             memo:'memoo',
             tokenSupplyType:true,
             maxSupply:100,
-            freezeDefault:true,
+            freezeDefault:false,
             tokenKeys: [
                 // {
                 //     keyType:7,
@@ -161,12 +161,12 @@
 
         const precompileContract = new ethers.Contract(scPrecompileAddress, precompileABI, provider);
         const precompileContractWithSigner = precompileContract.connect(signer);
-        const tokenHTS = await precompileContractWithSigner.createFungibleToken(token,10,0,{gasLimit: 9000000}).then(r=>r.wait());
+        const tokenHTS = await precompileContractWithSigner.createFungibleToken(token,10,0,{gasLimit: 9000000,value:ethers.utils.parseEther("30.0")}).then(r=>r.wait());
         console.log(tokenHTS)
         // let test = new ethers.utils.Interface(precompileABI.abi);
         // console.log(test.decodeFunctionData("createFungibleToken", data))
-      const [createEvent] = tokenHTS.events;
-      const { tokenId } = createEvent.args;
+        // const [createEvent] = tokenHTS.events;
+        // const { tokenId } = createEvent.args;
         console.log(tokenHTS);
 
 
