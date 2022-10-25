@@ -109,6 +109,7 @@ const CoinDropdown = () => {
 				decimals: stableCoinDetails?.decimals,
 				id: stableCoinDetails?.tokenId,
 				treasuryId: stableCoinDetails?.treasuryId,
+				autoRenewAccount: stableCoinDetails?.autoRenewAccount,
 				memo: stableCoinDetails?.memo,
 				adminKey:
 					stableCoinDetails?.adminKey && JSON.parse(JSON.stringify(stableCoinDetails.adminKey)),
