@@ -1,6 +1,6 @@
-import { BigNumber, FixedNumber } from '@hashgraph/hethers';
+import { BigNumber } from '@hashgraph/hethers';
 import BigDecimal from '../../../../src/domain/context/stablecoin/BigDecimal.js';
-import { parseFixed } from '@ethersproject/bignumber';
+import { parseFixed, FixedFormat } from '@ethersproject/bignumber';
 
 const getNumber = (
   decimals: number,
@@ -128,16 +128,14 @@ describe('🧪 [DOMAIN] BigDecimal', () => {
   });
 
   it('BigDecimal to bigint', () => {
-    const bigDecimal: BigDecimal = BigDecimal.fromString('1000');
-    console.log(bigDecimal);
+    const format = FixedFormat.from(2);
+    const bigDecimal: BigDecimal = BigDecimal.fromString('1000', 2);
 
-    console.log((bigDecimal as BigDecimal).toBigInt());
+    console.log(bigDecimal.toString());
 
-    console.log(bigDecimal.format.decimals);
+    // console.log(bigDecimal.format.decimals);
 
-    console.log(
-      parseFixed(bigDecimal._value, bigDecimal.format.decimals).toBigInt(),
-    );
-    expect(BigInt(bigDecimal.toBigInt())).toBe(10000n);
+    console.log(bigDecimal.toBigNumber());
+    expect(bigDecimal.toBigNumber()).toBe(10000);
   });
 });

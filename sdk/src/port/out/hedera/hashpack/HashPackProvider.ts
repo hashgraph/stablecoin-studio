@@ -57,6 +57,7 @@ import { PublicKey as HPublicKey } from '@hashgraph/sdk';
 import { safeCast } from '../../../../core/cast.js';
 import axios from 'axios';
 import IAccount from '../account/types/IAccount.js';
+import BigDecimal from '../../../../domain/context/stablecoin/BigDecimal.js';
 
 const logOpts = { newLine: true, clear: true };
 
@@ -403,8 +404,14 @@ export default class HashPackProvider implements IProvider {
 			name: hederaToken.name,
 			symbol: hederaToken.symbol,
 			decimals: hederaToken.decimals,
-			initialSupply: BigInt(hederaToken.initialSupply.toNumber()),
-			maxSupply: BigInt(hederaToken.maxSupply.toNumber()),
+			initialSupply: BigDecimal.fromString(
+				hederaToken.initialSupply.toString(),
+				hederaToken.decimals,
+			),
+			maxSupply: BigDecimal.fromString(
+				hederaToken.maxSupply.toString(),
+				hederaToken.decimals,
+			),
 			memo: hederaToken.memo,
 			freezeDefault: hederaToken.freezeDefault,
 			treasury: new AccountId(hederaToken.treasuryAccountId.toString()),
@@ -491,8 +498,8 @@ export default class HashPackProvider implements IProvider {
 		name: string,
 		symbol: string,
 		decimals: number,
-		initialSupply: bigint,
-		maxSupply: bigint | undefined,
+		initialSupply: BigDecimal,
+		maxSupply: BigDecimal | undefined,
 		memo: string,
 		freezeDefault: boolean,
 		account: HashPackAccount,
@@ -509,10 +516,8 @@ export default class HashPackProvider implements IProvider {
 			name,
 			symbol,
 			decimals,
-			initialSupply: Long.fromString(initialSupply.toString()),
-			maxSupply: maxSupply
-				? Long.fromString(maxSupply.toString())
-				: Long.ZERO,
+			initialSupply: initialSupply.toLong(),
+			maxSupply: maxSupply ? maxSupply.toLong() : Long.ZERO,
 			memo,
 			freezeDefault,
 			treasuryAccountId:

@@ -17,7 +17,7 @@ describe('🧪 [PORT] SDK', () => {
       account: ACCOUNTS.testnet,
       name: 'TEST COIN',
       symbol: 'TC',
-      initialSupply: 10n,
+      initialSupply: '10',
       decimals: 0,
       adminKey: ACCOUNTS.testnet.privateKey.publicKey,
       wipeKey: PublicKey.NULL,
@@ -50,12 +50,12 @@ describe('🧪 [PORT] SDK', () => {
     const list = await sdk.getAccountInfo({
       account: ACCOUNTS.testnet,
     });
-    console.log(list)
+    console.log(list);
     expect(list).not.toBeNull();
   });
 
   it('Cash in token', async () => {
-    const amount = 10;
+    const amount = '10';
     const cashin = await sdk.cashIn({
       account: ACCOUNTS.testnet,
       targetId: ACCOUNTS.testnet.accountId.id,
@@ -76,7 +76,7 @@ describe('🧪 [PORT] SDK', () => {
   }, 15000);
 
   it('Wipe token', async () => {
-    const amount = 1;
+    const amount = '1';
     const wipe = await sdk.wipe({
       account: ACCOUNTS.testnet,
       targetId: ACCOUNTS.testnet.accountId.id,
@@ -97,7 +97,7 @@ describe('🧪 [PORT] SDK', () => {
   }, 15000);
 
   it('Wipe token (wrong)', async () => {
-    const amount = 100;
+    const amount = '100';
     await expect(
       sdk.wipe({
         account: ACCOUNTS.testnet,
@@ -211,7 +211,7 @@ describe('🧪 [PORT] SDK', () => {
     expect(hasRole && hasRole[0]).toBeTruthy();
   }, 15000);
   it('Grant limited cash in role', async () => {
-    const amount = 10;
+    const amount = '10';
     let hasRole = await sdk.hasRole({
       account: ACCOUNTS.testnet,
       role: StableCoinRole.CASHIN_ROLE,
@@ -257,7 +257,7 @@ describe('🧪 [PORT] SDK', () => {
     expect(check && check[0]).toBeTruthy();
   }, 15000);
   it('Increase Limit supplier role', async () => {
-    const amount = 10;
+    const amount = '10';
     await sdk.increaseSupplierAllowance({
       account: ACCOUNTS.testnet,
       targetId: ACCOUNTS.testnet.accountId.id,
@@ -277,7 +277,7 @@ describe('🧪 [PORT] SDK', () => {
   }, 15000);
 
   it('Decrease Limit supplier role', async () => {
-    const amount = 10;
+    const amount = '10';
     await sdk.decreaseSupplierAllowance({
       account: ACCOUNTS.testnet,
       targetId: ACCOUNTS.testnet.accountId.id,
@@ -296,7 +296,7 @@ describe('🧪 [PORT] SDK', () => {
   }, 15000);
 
   it('reset Limit supplier role', async () => {
-    const amount = 10;
+    const amount = '10';
     await sdk.increaseSupplierAllowance({
       account: ACCOUNTS.testnet,
       targetId: ACCOUNTS.testnet.accountId.id,
@@ -350,7 +350,7 @@ describe('🧪 [PORT] SDK', () => {
   }, 15000);
 
   it('Rescue token', async () => {
-    const amount = 1;
+    const amount = '1';
     const rescue = await sdk.rescue({
       account: ACCOUNTS.testnet,
       proxyContractId: proxyContractId ?? '',
@@ -362,7 +362,7 @@ describe('🧪 [PORT] SDK', () => {
   }, 15000);
 
   it('Rescue token (wrong)', async () => {
-    const amount = 100;
+    const amount = '100';
     await expect(
       sdk.rescue({
         account: ACCOUNTS.testnet,
@@ -395,8 +395,8 @@ describe('🧪 [PORT] SDK', () => {
         account: ACCOUNTS.testnet,
         name: 'TEST COIN',
         symbol: 'TC',
-        initialSupply: 10n,
-        maxSupply: 9n,
+        initialSupply: '10',
+        maxSupply: '9',
         decimals: 0,
         adminKey: ACCOUNTS.testnet.privateKey.publicKey,
         wipeKey: PublicKey.NULL,

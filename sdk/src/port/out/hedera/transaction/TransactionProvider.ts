@@ -15,6 +15,7 @@ import {
 	DelegateContractId,
 	ContractFunctionParameters,
 } from '@hashgraph/sdk';
+import BigDecimal from '../../../../domain/context/stablecoin/BigDecimal.js';
 import { ContractId, PublicKey } from '../../../in/sdk/sdk.js';
 import { ICreateTokenResponse } from '../types.js';
 import ContractCreateFlow from './ContractCreateFlow.js';
@@ -36,7 +37,7 @@ export class TransactionProvider {
 	public static buildTokenCreateTransaction(
 		contractId: ContractId,
 		values: ICreateTokenResponse,
-		maxSupply: bigint | undefined,
+		maxSupply: BigDecimal | undefined,
 	): Transaction {
 		const getKey = (
 			contractId: ContractId,
@@ -103,8 +104,8 @@ export class TransactionProvider {
 			transaction.setMaxSupply(values.maxSupply);
 			transaction.setSupplyType(TokenSupplyType.Finite);
 		}
-		console.log("Token create transaction: ", values);
-		console.log("Token create transaction: ",transaction);
+		console.log('Token create transaction: ', values);
+		console.log('Token create transaction: ', transaction);
 		return transaction;
 	}
 
@@ -158,7 +159,7 @@ export class TransactionProvider {
 
 		return transaction;
 	}
-	
+
 	public static buildTransferTransaction(
 		tokenId: string,
 		amount: number,

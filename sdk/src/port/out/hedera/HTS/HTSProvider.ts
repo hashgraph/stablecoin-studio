@@ -10,7 +10,7 @@ import {
 	PublicKey as HPublicKey,
 	TokenId,
 	Transaction,
-	Status
+	Status,
 } from '@hashgraph/sdk';
 import {
 	HederaERC1967Proxy__factory,
@@ -50,6 +50,7 @@ import EventService from '../../../../app/service/event/EventService.js';
 import { Account, ContractId } from '../../../in/sdk/sdk.js';
 import { safeCast } from '../../../../core/cast.js';
 import { StableCoinMemo } from '../../../../domain/context/stablecoin/StableCoinMemo.js';
+import BigDecimal from '../../../../domain/context/stablecoin/BigDecimal.js';
 
 type DefaultHederaProvider = hethers.providers.DefaultHederaProvider;
 
@@ -62,7 +63,7 @@ export default class HTSProvider implements IProvider {
 	private transactionResposeHandler: TransactionResposeHandler =
 		new TransactionResposeHandler();
 
-	private client : Client;
+	private client: Client;
 
 	public initData: InitializationData;
 
@@ -145,7 +146,7 @@ export default class HTSProvider implements IProvider {
 
 	public getPublicKey(
 		privateKey?: PrivateKey | string | undefined,
-		privateKeyType?: string
+		privateKeyType?: string,
 	): HPublicKey {
 		let key = null;
 		let publicKey = null;
@@ -154,21 +155,21 @@ export default class HTSProvider implements IProvider {
 		} else {
 			key = privateKey;
 			if (!key) throw new HederaError('No private key provided');
-			switch(privateKeyType) {
+			switch (privateKeyType) {
 				case PrivateKeyType.ECDSA:
 					publicKey = HPrivateKey.fromStringECDSA(key).publicKey;
 					break;
-	
+
 				default:
 					publicKey = HPrivateKey.fromStringED25519(key).publicKey;
-			}			
+			}
 		}
 		return publicKey;
 	}
 
 	public getPublicKeyString(
 		privateKey?: PrivateKey | string | undefined,
-		privateKeyType?: string
+		privateKeyType?: string,
 	): string {
 		return this.getPublicKey(privateKey, privateKeyType).toStringRaw();
 	}
@@ -305,8 +306,10 @@ export default class HTSProvider implements IProvider {
 			account: account,
 		});
 
-		if (hederaToken.treasuryAccountId.toString() !== account.accountId.id && 
-		    account.evmAddress) {
+		if (
+			hederaToken.treasuryAccountId.toString() !== account.accountId.id &&
+			account.evmAddress
+		) {
 			log(
 				'Associating administrator account to token... please wait.',
 				logOpts,
@@ -314,9 +317,7 @@ export default class HTSProvider implements IProvider {
 
 			await this.callContract('associateToken', {
 				contractId: stableCoin.memo.proxyContract,
-				parameters: [
-					account.evmAddress
-				],
+				parameters: [account.evmAddress],
 				gas: 1_300_000,
 				abi: HederaERC20__factory.abi,
 				account: account,
@@ -327,8 +328,14 @@ export default class HTSProvider implements IProvider {
 			name: hederaToken.name,
 			symbol: hederaToken.symbol,
 			decimals: hederaToken.decimals,
-			initialSupply: BigInt(hederaToken.initialSupply.toNumber()),
-			maxSupply: BigInt(hederaToken.maxSupply.toNumber()),
+			initialSupply: BigDecimal.fromString(
+				hederaToken.initialSupply.toString(),
+				hederaToken.decimals,
+			),
+			maxSupply: BigDecimal.fromString(
+				hederaToken.maxSupply.toString(),
+				hederaToken.decimals,
+			),
 			memo: hederaToken.memo,
 			freezeDefault: hederaToken.freezeDefault,
 			treasury: new AccountId(hederaToken.treasuryAccountId.toString()),
@@ -425,8 +432,8 @@ export default class HTSProvider implements IProvider {
 		name: string,
 		symbol: string,
 		decimals: number,
-		initialSupply: bigint,
-		maxSupply: bigint | undefined,
+		initialSupply: BigDecimal,
+		maxSupply: BigDecimal | undefined,
 		memo: string,
 		freezeDefault: boolean,
 		client: Client,
@@ -443,10 +450,8 @@ export default class HTSProvider implements IProvider {
 			name,
 			symbol,
 			decimals,
-			initialSupply: Long.fromString(initialSupply.toString()),
-			maxSupply: maxSupply
-				? Long.fromString(maxSupply.toString())
-				: Long.ZERO,
+			initialSupply: initialSupply.toLong(),
+			maxSupply: maxSupply ? maxSupply.toLong() : Long.ZERO,
 			memo,
 			freezeDefault,
 			treasuryAccountId:

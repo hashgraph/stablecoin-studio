@@ -1,5 +1,6 @@
 import { FixedFormat, parseFixed } from '@ethersproject/bignumber';
 import { BigNumber, FixedNumber } from '@hashgraph/hethers';
+import Long from 'long';
 
 export type BigDecimalFormat = string | number | FixedFormat | undefined;
 
@@ -119,14 +120,16 @@ export default class BigDecimal implements FixedNumber {
 		return a < b;
 	}
 
-	public toBigInt(): bigint {
-		console.log(parseFixed(this.#fn._value, this.#fn.format.decimals));
-
-		return BigInt('2');
+	public toBigNumber(): BigNumber {
+		return parseFixed(this.#fn._value, this.#fn.format.decimals);
 	}
 
 	public toString(): string {
 		return parseFixed(this.#fn._value, this.#fn.format.decimals).toString();
+	}
+
+	public toLong(): Long {
+		return Long.fromString(this.toString());
 	}
 
 	static fromString(
