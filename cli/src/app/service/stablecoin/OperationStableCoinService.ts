@@ -329,6 +329,13 @@ export default class OperationStableCoinService extends Service {
         // Call to Supplier Role
         await this.roleManagementFlow();
         break;
+      case 'Show roles':
+        await utilsService.cleanAndShowBanner();
+
+        // Call to Supplier Role
+        const capabilities = await this.getCapabilities(currentAccount);
+        console.log(colors.yellow(capabilities.join(' | ')));
+        break;
       case wizardOperationsStableCoinOptions[
         wizardOperationsStableCoinOptions.length - 1
       ]:
@@ -793,7 +800,8 @@ export default class OperationStableCoinService extends Service {
           (capabilities.includes('Wipe') ||
             capabilities.includes('Wipe hts'))) ||
         (option === 'Role management' &&
-          capabilities.includes('Role management'))
+          capabilities.includes('Role management')) ||
+        option === 'Show roles'
       ) {
         return true;
       }
