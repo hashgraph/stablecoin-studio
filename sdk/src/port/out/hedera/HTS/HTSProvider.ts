@@ -560,15 +560,15 @@ export default class HTSProvider implements IProvider {
 			throw new Error('Account must be supplied');
 		}
 
-		// const transactionApprove: Transaction = TransactionProvider.approveTokenAllowance();
-		// const transactionApproveResponse: TransactionResponse = await this.htsSigner.signAndSendTransaction(transactionApprove);
-		// const htsApproveResponse: HTSResponse = await this.transactionResposeHandler.manageResponse(transactionApproveResponse, TransactionType.RECEIPT, client);
-		// if (!htsApproveResponse.receipt) {
-		// 	throw new Error(
-		// 		`An error has occurred when approving`,
-		// 	);
-		// }
-		//console.log("xxx SE HA HECHO UN APPROVE DE LA CUENTA 0.0.47624288 A LA CUENTA 0.0.48692645 DE 100 TOKENS");
+		/*const transactionApprove: Transaction = TransactionProvider.approveTokenAllowance();
+		const transactionApproveResponse: TransactionResponse = await this.htsSigner.signAndSendTransaction(transactionApprove);
+		const htsApproveResponse: HTSResponse = await this.transactionResposeHandler.manageResponse(transactionApproveResponse, TransactionType.RECEIPT, client);
+		if (!htsApproveResponse.receipt) {
+		 	throw new Error(
+		 		`An error has occurred when approving`,
+		 	);
+		}
+		console.log("xxx SE HA HECHO UN APPROVE DE LA CUENTA 0.0.47624288 A LA CUENTA 0.0.48692645 DE 100 TOKENS");*/
 
 		this.htsSigner = new HTSSigner(client);
 		const transaction: Transaction =
@@ -627,7 +627,7 @@ export default class HTSProvider implements IProvider {
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
-	public async transferHTS(params: ITransferTokenRequest, isApproval = false): Promise<boolean> {
+	public async transferHTS(params: ITransferTokenRequest): Promise<boolean> {
 		let client;
 
 		if ('account' in params) {
@@ -637,7 +637,7 @@ export default class HTSProvider implements IProvider {
 		}
 
 		this.htsSigner = new HTSSigner(client);
-		const transaction: Transaction = isApproval ?
+		const transaction: Transaction = params.isApproval ?
 			TransactionProvider.buildApprovedTransferTransaction(
 				params.tokenId,
 				params.amount,

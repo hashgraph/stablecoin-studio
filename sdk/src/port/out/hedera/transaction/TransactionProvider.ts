@@ -142,9 +142,8 @@ export class TransactionProvider {
 	public static approveTokenAllowance(
 	): Transaction {
 		const transaction = new AccountAllowanceApproveTransaction()
-		.approveTokenAllowance('0.0.48692645', '0.0.47624288', '0.0.47809960', 100000000000000);
-			
-		return transaction
+		.approveTokenAllowance('0.0.48705516', '0.0.47624288', '0.0.47793222', 100000000000000);
+		return transaction                                     
 	}
 
 	public static buildTokenMintTransaction(
