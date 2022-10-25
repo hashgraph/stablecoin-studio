@@ -113,19 +113,15 @@ describe("Burnable role functionality", function() {
     const tokensToBurn = INIT_SUPPLY / 10;   
     
     // Get the initial total supply and treasury account's balanceOf
-    const initialBalanceOf = await getBalanceOf(ContractId, proxyAddress, client, OPERATOR_ID);  
     const initialTotalSupply = await getTotalSupply(ContractId, proxyAddress, client);
 
     // burn some tokens
     await Burn(ContractId, proxyAddress, tokensToBurn, client);
 
     // check new total supply and balance of treasury account : success
-    const finalBalanceOf = await getBalanceOf(ContractId, proxyAddress, client, OPERATOR_ID);  
     const finalTotalSupply = await getTotalSupply(ContractId, proxyAddress, client);
-    const expectedFinalBalanceOf = initialBalanceOf - tokensToBurn;
     const expectedTotalSupply = initialTotalSupply - tokensToBurn;
 
-    expect(finalBalanceOf).to.equals(expectedFinalBalanceOf); 
     expect(finalTotalSupply).to.equals(expectedTotalSupply); 
   });
 
@@ -146,7 +142,6 @@ describe("Burnable role functionality", function() {
     const tokensToBurn = 1;    
 
     // Retrieve original total supply
-    const initialBalanceOf = await getBalanceOf(ContractId, proxyAddress, client, OPERATOR_ID);  
     const initialTotalSupply = await getTotalSupply(ContractId, proxyAddress, client);
 
     // Grant burn role to account
@@ -156,12 +151,9 @@ describe("Burnable role functionality", function() {
     await Burn(ContractId, proxyAddress, tokensToBurn, client2);
 
     // Check final total supply and treasury account's balanceOf : success
-    const finalBalanceOf = await getBalanceOf(ContractId, proxyAddress, client, OPERATOR_ID);  
     const finalTotalSupply = await getTotalSupply(ContractId, proxyAddress, client);
-    const expectedFinalBalanceOf = initialBalanceOf - tokensToBurn;
     const expectedTotalSupply = initialTotalSupply - tokensToBurn;
 
-    expect(finalBalanceOf).to.equals(expectedFinalBalanceOf); 
     expect(finalTotalSupply).to.equals(expectedTotalSupply); 
   });  
   

@@ -133,6 +133,11 @@ describe("Operations to WIPE tokens", function() {
   });
 
   it("Wiping more than account's balance", async function() {
+    const TokensToMint = 20 * 10**TokenDecimals;
+
+    // Mint 20 tokens
+    await Mint(ContractId, proxyAddress, TokensToMint, client, OPERATOR_ID)
+
     // Get the current balance for account
     const result = await getBalanceOf(ContractId, proxyAddress, client, OPERATOR_ID);  
 
@@ -153,7 +158,11 @@ describe("Operations to WIPE tokens", function() {
   });
 
   it("User with granted wipe role can wipe tokens", async function() {
+    const TokensToMint = 20 * 10**TokenDecimals;
     const TokensToWipe = 1;    
+
+    // Mint 20 tokens   
+    await Mint(ContractId, proxyAddress, TokensToMint, client, OPERATOR_ID)
 
     // Retrieve original total supply
     const initialBalanceOf = await getBalanceOf(ContractId, proxyAddress, client, OPERATOR_ID);  
@@ -161,7 +170,7 @@ describe("Operations to WIPE tokens", function() {
 
     // Grant wipe role to account
     await grantRole(WIPE_ROLE, ContractId, proxyAddress, client, client2account);
-      
+
     // Wipe tokens with newly granted account
     await Wipe(ContractId, proxyAddress, TokensToWipe, client2, OPERATOR_ID);
 
