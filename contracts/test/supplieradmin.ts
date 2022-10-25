@@ -5,7 +5,7 @@ chai.use(chaiAsPromised);
 var expect = chai.expect;
 
 import "@hashgraph/hardhat-hethers";
-
+import {BigNumber} from "ethers";
 
 import { deployContractsWithSDK, initializeClients } from "../scripts/utils";
 import {decreaseSupplierAllowance,
@@ -35,9 +35,10 @@ let client2publickey: string;
 
 const TokenName = "MIDAS";
 const TokenSymbol = "MD";
-const TokenDecimals = 3;
-const INIT_SUPPLY = 0;
-const MAX_SUPPLY = 1000 * 10**TokenDecimals;
+const TokenDecimals = 10;
+const TokenFactor = BigNumber.from(10).pow(TokenDecimals);
+const INIT_SUPPLY = BigNumber.from(0).mul(TokenFactor);
+const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor);
 const TokenMemo = "Hedera Accelerator Stable Coin"
 
 describe("Only Admin can grant, revoke, increase, decrease and reset cashin role (limited and unlimited)", function() {
@@ -58,8 +59,8 @@ describe("Only Admin can grant, revoke, increase, decrease and reset cashin role
         TokenName, 
         TokenSymbol, 
         TokenDecimals, 
-        INIT_SUPPLY, 
-        MAX_SUPPLY, 
+        INIT_SUPPLY.toString(), 
+        MAX_SUPPLY.toString(), 
         TokenMemo, 
         OPERATOR_ID, 
         OPERATOR_KEY, 
@@ -67,21 +68,21 @@ describe("Only Admin can grant, revoke, increase, decrease and reset cashin role
   });
 
   it("Admin account can grant and revoke supplier(s) role to an account", async function() {
-    const cashInLimit = 1;   
+    const cashInLimit = BigNumber.from(1);   
 
     // Admin grants limited supplier role : success
     let result = await supplierAllowance(ContractId, proxyAddress, client2, client2account);
-    expect(result).to.eq(0);
+    expect(result.toString()).to.eq("0");
 
     await grantSupplierRole(ContractId, proxyAddress, cashInLimit, client, client2account);
 
     result = await supplierAllowance(ContractId, proxyAddress, client2, client2account);
-    expect(result).to.eq(cashInLimit);
+    expect(result.toString()).to.eq(cashInLimit.toString());
     
     // Admin revokes limited supplier role : success
     await revokeSupplierRole(ContractId, proxyAddress, client, client2account);
     result = await supplierAllowance(ContractId, proxyAddress, client2, client2account);
-    expect(result).to.eq(0);
+    expect(result.toString()).to.eq("0");
 
     // Admin grants unlimited supplier role : success
     let isUnlimited = await isUnlimitedSupplierAllowance(ContractId, proxyAddress, client2, client2account);
@@ -100,34 +101,33 @@ describe("Only Admin can grant, revoke, increase, decrease and reset cashin role
   });
 
   it("Admin account can increase, decrease and reset supplier(s) amount", async function() {   
-    const cashInLimit = 1;   
-    const amount = 1;  
+    const cashInLimit = BigNumber.from(1);   
+    const amount = BigNumber.from(1);   
 
     // Admin increases supplier allowance : success
     await grantSupplierRole(ContractId, proxyAddress, cashInLimit, client, client2account);
     await increaseSupplierAllowance(ContractId, proxyAddress, amount, client, client2account);
     let result = await supplierAllowance(ContractId, proxyAddress, client2, client2account);
-    let expectedAmount = cashInLimit + amount;
-    expect(result).to.eq(expectedAmount);
+    let expectedAmount = cashInLimit.add(amount);
+    expect(result.toString()).to.eq(expectedAmount.toString());
 
     // Admin decreases supplier allowance : success
     await decreaseSupplierAllowance(ContractId, proxyAddress, amount, client, client2account);
     result = await supplierAllowance(ContractId, proxyAddress, client2, client2account);
     expectedAmount = cashInLimit;
-    expect(result).to.eq(expectedAmount);
+    expect(result.toString()).to.eq(expectedAmount.toString());
 
     // Admin resets supplier allowance : success
     await resetSupplierAllowance(ContractId, proxyAddress, client, client2account);
     result = await supplierAllowance(ContractId, proxyAddress, client2, client2account);
-    expectedAmount = 0;
-    expect(result).to.eq(expectedAmount);
+    expect(result.toString()).to.eq("0");
 
     // Remove the supplier role for further testing.....
     await revokeSupplierRole(ContractId, proxyAddress, client, client2account);
   });
 
   it("Non Admin account can not grant nor revoke supplier(s) role to an account", async function() {      
-    const cashInLimit = 1;   
+    const cashInLimit = BigNumber.from(1);
 
     // Non admin grants limited supplier role : fail
     await expect(grantSupplierRole(ContractId, proxyAddress, cashInLimit, client2, client2account)).to.eventually.be.rejectedWith(Error);
@@ -149,8 +149,8 @@ describe("Only Admin can grant, revoke, increase, decrease and reset cashin role
   });
 
   it("Non Admin account can not increase, decrease and reset supplier(s) amount", async function() {   
-    const cashInLimit = 10;   
-    const amount = 1;  
+    const cashInLimit = BigNumber.from(10);
+    const amount = BigNumber.from(1);  
 
     // Non Admin increases supplier allowance : fail
     await grantSupplierRole(ContractId, proxyAddress, cashInLimit, client, client2account);
@@ -188,8 +188,8 @@ describe("Grant unlimited supplier role and test its cashin right, maxsupply lim
         TokenName, 
         TokenSymbol, 
         TokenDecimals, 
-        INIT_SUPPLY, 
-        MAX_SUPPLY, 
+        INIT_SUPPLY.toString(), 
+        MAX_SUPPLY.toString(), 
         TokenMemo, 
         OPERATOR_ID, 
         OPERATOR_KEY, 
@@ -203,7 +203,7 @@ describe("Grant unlimited supplier role and test its cashin right, maxsupply lim
   });
 
   it("An account with unlimited supplier role can cash in 100 tokens", async function() {
-    const AmountToMint = 100 * 10**TokenDecimals;
+    const AmountToMint = BigNumber.from(100).mul(TokenFactor);
 
     // Get the initial total supply and account's balanceOf
     const initialTotalSupply = await getTotalSupply(ContractId, proxyAddress, client);
@@ -215,11 +215,11 @@ describe("Grant unlimited supplier role and test its cashin right, maxsupply lim
     // Check balance of account and total supply : success
     const finalTotalSupply = await getTotalSupply(ContractId, proxyAddress, client);
     const finalBalanceOf = await getBalanceOf(ContractId, proxyAddress, client, client2account);  
-    const expectedTotalSupply = initialTotalSupply + AmountToMint;
-    const expectedBalanceOf = initialBalanceOf + AmountToMint;
+    const expectedTotalSupply = initialTotalSupply.add(AmountToMint);
+    const expectedBalanceOf = initialBalanceOf.add(AmountToMint);
     
-    expect(finalTotalSupply).to.equals(expectedTotalSupply);
-    expect(finalBalanceOf).to.equals(expectedBalanceOf);
+    expect(finalTotalSupply.toString()).to.equals(expectedTotalSupply.toString());
+    expect(finalBalanceOf.toString()).to.equals(expectedBalanceOf.toString());
   });
 
   it("An account with unlimited supplier role can not cash in more than maxSupply tokens", async function() {
@@ -227,12 +227,12 @@ describe("Grant unlimited supplier role and test its cashin right, maxsupply lim
     const TotalSupply = await getTotalSupply(ContractId, proxyAddress, client);
 
     // Cashin more tokens than max supply : fail 
-    await expect(Mint(ContractId, proxyAddress, MAX_SUPPLY - TotalSupply + 1, client2, client2account)).to.eventually.be.rejectedWith(Error);
+    await expect(Mint(ContractId, proxyAddress, MAX_SUPPLY.sub(TotalSupply).add(1), client2, client2account)).to.eventually.be.rejectedWith(Error);
   }); 
 
   it("An account with unlimited supplier role can not be granted limited supplier role", async function() {
     // Grant limited supplier role to account with unlimited supplier role : fail
-    await expect(grantSupplierRole(ContractId, proxyAddress, 1, client, client2account)).to.eventually.be.rejectedWith(Error);
+    await expect(grantSupplierRole(ContractId, proxyAddress, BigNumber.from(1), client, client2account)).to.eventually.be.rejectedWith(Error);
   });   
 
   it("An account with unlimited supplier role, but revoked, can not cash in anything at all", async function() {
@@ -240,14 +240,14 @@ describe("Grant unlimited supplier role and test its cashin right, maxsupply lim
     await revokeSupplierRole(ContractId, proxyAddress, client, client2account);
 
     // Cashin 1 token : fail
-    await expect(Mint(ContractId, proxyAddress, 1, client2, client2account)).to.eventually.be.rejectedWith(Error);
+    await expect(Mint(ContractId, proxyAddress, BigNumber.from(1), client2, client2account)).to.eventually.be.rejectedWith(Error);
   });
 
 });
 
 describe("Grant limited supplier role and test its cashin right and cashin/maxsupply limits", function() {
 
-  const cashInLimit = 100 * 10**TokenDecimals;
+  const cashInLimit = BigNumber.from(100).mul(TokenFactor);
 
   before(async function  () {
     // Generate Client (token admin) and Client 2
@@ -265,8 +265,8 @@ describe("Grant limited supplier role and test its cashin right and cashin/maxsu
         TokenName, 
         TokenSymbol, 
         TokenDecimals, 
-        INIT_SUPPLY, 
-        MAX_SUPPLY, 
+        INIT_SUPPLY.toString(), 
+        MAX_SUPPLY.toString(), 
         TokenMemo, 
         OPERATOR_ID, 
         OPERATOR_KEY, 
@@ -294,21 +294,21 @@ describe("Grant limited supplier role and test its cashin right and cashin/maxsu
     // Check balance of account and total supply : success
     const finalTotalSupply = await getTotalSupply(ContractId, proxyAddress, client);
     const finalBalanceOf = await getBalanceOf(ContractId, proxyAddress, client, client2account);  
-    const expectedTotalSupply = initialTotalSupply + AmountToMint;
-    const expectedBalanceOf = initialBalanceOf + AmountToMint;
+    const expectedTotalSupply = initialTotalSupply.add(AmountToMint);
+    const expectedBalanceOf = initialBalanceOf.add(AmountToMint);
     
-    expect(finalTotalSupply).to.equals(expectedTotalSupply);
-    expect(finalBalanceOf).to.equals(expectedBalanceOf);
+    expect(finalTotalSupply.toString()).to.equals(expectedTotalSupply.toString());
+    expect(finalBalanceOf.toString()).to.equals(expectedBalanceOf.toString());
   });  
 
   it("An account with supplier role and an allowance of 90 tokens can not cash in 91 tokens", async function() {
-    const cashInDecreaseAmount = 10000;
+    const cashInDecreaseAmount = BigNumber.from(10).mul(TokenFactor);
     
     // decrease allowance
     await decreaseSupplierAllowance(ContractId, proxyAddress, cashInDecreaseAmount, client, client2account);
     
     // Cashin more token than allowed : fail
-    await expect(Mint(ContractId, proxyAddress, cashInLimit - cashInDecreaseAmount + 1, client2, client2account)).to.eventually.be.rejectedWith(Error);  
+    await expect(Mint(ContractId, proxyAddress, cashInLimit.sub(cashInDecreaseAmount).add(1), client2, client2account)).to.eventually.be.rejectedWith(Error);  
   });    
 
   it("An account with supplier role and an allowance of (100 + maxsupply) tokens can not cash more than maxSupply tokens", async function() {
@@ -316,17 +316,17 @@ describe("Grant limited supplier role and test its cashin right and cashin/maxsu
     await increaseSupplierAllowance(ContractId, proxyAddress, MAX_SUPPLY, client, client2account);
 
     // Cashin maxsupply + 1 token : fail
-    await expect(Mint(ContractId, proxyAddress, MAX_SUPPLY + 1, client2, client2account)).to.eventually.be.rejectedWith(Error);  
+    await expect(Mint(ContractId, proxyAddress, MAX_SUPPLY.add(1), client2, client2account)).to.eventually.be.rejectedWith(Error);  
   });     
 
   it("An account with supplier role and an allowance of 100 tokens, can mint 90 tokens but, later on, cannot mint 11 tokens", async function() {
-    const amountToMintlater = 10 * 10**TokenDecimals;  
+    const amountToMintlater = BigNumber.from(10).mul(TokenFactor);  
 
     // Cashin all allowed token minus "amountToMintLater"
-    await Mint(ContractId, proxyAddress, cashInLimit - amountToMintlater, client2, client2account);
+    await Mint(ContractId, proxyAddress, cashInLimit.sub(amountToMintlater), client2, client2account);
 
     // Cashin the remaining allowed tokens (amountToMintLater) + 1 token :fail
-    await expect(Mint(ContractId, proxyAddress, amountToMintlater + 1, client2, client2account)).to.eventually.be.rejectedWith(Error);  
+    await expect(Mint(ContractId, proxyAddress, amountToMintlater.add(1), client2, client2account)).to.eventually.be.rejectedWith(Error);  
   });    
 
   it("An account with supplier role will reset allowance when unlimited supplier role is granted", async function() {
@@ -335,7 +335,7 @@ describe("Grant limited supplier role and test its cashin right and cashin/maxsu
 
     // Check that supplier Allowance was not set
     const result = await supplierAllowance(ContractId, proxyAddress, client2, client2account);
-    expect(result).to.eq(0);
+    expect(result.toString()).to.eq("0");
 
     // Reset status for further testing...
     await revokeSupplierRole(ContractId, proxyAddress, client, client2account);
@@ -346,7 +346,7 @@ describe("Grant limited supplier role and test its cashin right and cashin/maxsu
     await revokeSupplierRole(ContractId, proxyAddress, client, client2account);
 
     // Cashin 1 token : fail
-    await expect(Mint(ContractId, proxyAddress, 1, client2, client2account)).to.eventually.be.rejectedWith(Error);
+    await expect(Mint(ContractId, proxyAddress, BigNumber.from(1), client2, client2account)).to.eventually.be.rejectedWith(Error);
   });
 
 });

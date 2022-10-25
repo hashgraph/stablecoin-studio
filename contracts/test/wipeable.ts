@@ -1,6 +1,8 @@
 const { ContractId, AccountId } = require("@hashgraph/sdk");
 import "@hashgraph/hardhat-hethers";
 require("@hashgraph/sdk");
+import {BigNumber} from "ethers";
+
 
 var chai = require("chai");
 var chaiAsPromised = require("chai-as-promised");
@@ -25,8 +27,9 @@ const WIPE_ROLE  = '0x515f99f4e5a381c770462a8d9879a01f0fd4a414a168a2404dab62a62e
 const TokenName = "MIDAS";
 const TokenSymbol = "MD";
 const TokenDecimals = 3;
-const INIT_SUPPLY = 0;
-const MAX_SUPPLY = 6000 * 10**TokenDecimals;
+const TokenFactor = BigNumber.from(10).pow(TokenDecimals);
+const INIT_SUPPLY = BigNumber.from(0).mul(TokenFactor);
+const MAX_SUPPLY = BigNumber.from(6000).mul(TokenFactor);
 const TokenMemo = "Hedera Accelerator Stable Coin"
 
 describe("Wipe Tests", function() {
@@ -47,8 +50,8 @@ describe("Wipe Tests", function() {
         TokenName, 
         TokenSymbol, 
         TokenDecimals, 
-        INIT_SUPPLY, 
-        MAX_SUPPLY, 
+        INIT_SUPPLY.toString(), 
+        MAX_SUPPLY.toString(), 
         TokenMemo, 
         OPERATOR_ID, 
         OPERATOR_KEY, 
@@ -88,8 +91,8 @@ describe("Wipe Tests", function() {
   });
 
   it("wipe 10 tokens from an account with 20 tokens", async function() {  
-    const TokensToMint = 20 * 10**TokenDecimals;
-    const TokensToWipe = 10 * 10**TokenDecimals;
+    const TokensToMint = BigNumber.from(20).mul(TokenFactor);
+    const TokensToWipe = BigNumber.from(10).mul(TokenFactor);
 
     // Mint 20 tokens
     await Mint(ContractId, proxyAddress, TokensToMint, client, OPERATOR_ID)
@@ -104,15 +107,15 @@ describe("Wipe Tests", function() {
     // Check balance of account and total supply : success
     const finalTotalSupply = await getTotalSupply(ContractId, proxyAddress, client);
     const finalBalanceOf = await getBalanceOf(ContractId, proxyAddress, client, OPERATOR_ID);  
-    const expectedTotalSupply = initialTotalSupply - TokensToWipe;
-    const expectedBalanceOf = initialBalanceOf - TokensToWipe;
+    const expectedTotalSupply = initialTotalSupply.sub(TokensToWipe);
+    const expectedBalanceOf = initialBalanceOf.sub(TokensToWipe);
     
-    expect(finalTotalSupply).to.equals(expectedTotalSupply);
-    expect(finalBalanceOf).to.equals(expectedBalanceOf);
+    expect(finalTotalSupply.toString()).to.equals(expectedTotalSupply.toString());
+    expect(finalBalanceOf.toString()).to.equals(expectedBalanceOf.toString());
   });
 
   it("Wiping more than account's balance", async function() {
-    const TokensToMint = 20 * 10**TokenDecimals;
+    const TokensToMint = BigNumber.from(20).mul(TokenFactor);
 
     // Mint 20 tokens
     await Mint(ContractId, proxyAddress, TokensToMint, client, OPERATOR_ID)
@@ -121,24 +124,24 @@ describe("Wipe Tests", function() {
     const result = await getBalanceOf(ContractId, proxyAddress, client, OPERATOR_ID);  
 
     // Wipe more than account's balance : fail
-    await expect(Wipe(ContractId, proxyAddress, result + 1, client, OPERATOR_ID)).to.eventually.be.rejectedWith(Error);
+    await expect(Wipe(ContractId, proxyAddress, result.add(1), client, OPERATOR_ID)).to.eventually.be.rejectedWith(Error);
    
   });  
 
   it("Wiping from account without the wipe role", async function() {
-    const TokensToMint = 20 * 10**TokenDecimals;
+    const TokensToMint = BigNumber.from(20).mul(TokenFactor);
 
     // Mint 20 tokens   
     await Mint(ContractId, proxyAddress, TokensToMint, client, OPERATOR_ID)
 
     // Wipe with account that does not have the wipe role: fail
-    await expect(Wipe(ContractId, proxyAddress, 1, client2, OPERATOR_ID)).to.eventually.be.rejectedWith(Error);
+    await expect(Wipe(ContractId, proxyAddress, BigNumber.from(1), client2, OPERATOR_ID)).to.eventually.be.rejectedWith(Error);
 
   });
 
   it("User with granted wipe role can wipe tokens", async function() {
-    const TokensToMint = 20 * 10**TokenDecimals;
-    const TokensToWipe = 1;    
+    const TokensToMint = BigNumber.from(20).mul(TokenFactor);
+    const TokensToWipe = BigNumber.from(1);
 
     // Mint 20 tokens   
     await Mint(ContractId, proxyAddress, TokensToMint, client, OPERATOR_ID)
@@ -156,11 +159,11 @@ describe("Wipe Tests", function() {
     // Check final total supply and treasury account's balanceOf : success
     const finalBalanceOf = await getBalanceOf(ContractId, proxyAddress, client, OPERATOR_ID);  
     const finalTotalSupply = await getTotalSupply(ContractId, proxyAddress, client);
-    const expectedFinalBalanceOf = initialBalanceOf - TokensToWipe;
-    const expectedTotalSupply = initialTotalSupply - TokensToWipe;
+    const expectedFinalBalanceOf = initialBalanceOf.sub(TokensToWipe);
+    const expectedTotalSupply = initialTotalSupply.sub(TokensToWipe);
 
-    expect(finalBalanceOf).to.equals(expectedFinalBalanceOf); 
-    expect(finalTotalSupply).to.equals(expectedTotalSupply); 
+    expect(finalBalanceOf.toString()).to.equals(expectedFinalBalanceOf.toString()); 
+    expect(finalTotalSupply.toString()).to.equals(expectedTotalSupply.toString()); 
   }); 
 
 });

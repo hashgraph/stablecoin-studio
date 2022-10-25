@@ -1,6 +1,8 @@
 const { ContractId, AccountId }  = require("@hashgraph/sdk");
 import "@hashgraph/hardhat-hethers";
 import "@hashgraph/sdk";
+import {BigNumber} from "ethers";
+
 
 var chai = require("chai");
 var chaiAsPromised = require("chai-as-promised");
@@ -26,8 +28,9 @@ const RESCUE_ROLE  = '0x43f433f336cda92fbbe5bfbdd344a9fd79b2ef138cd6e6fc49d55e2f
 const TokenName = "MIDAS";
 const TokenSymbol = "MD";
 const TokenDecimals = 3;
-const INIT_SUPPLY = 0;
-const MAX_SUPPLY = 1;
+const TokenFactor = BigNumber.from(10).pow(TokenDecimals);
+const INIT_SUPPLY = BigNumber.from(0).mul(TokenFactor);
+const MAX_SUPPLY = BigNumber.from(1).mul(TokenFactor);
 const TokenMemo = "Hedera Accelerator Stable Coin"
 
 describe("Rescue Tests", function() {
@@ -48,8 +51,8 @@ describe("Rescue Tests", function() {
         TokenName, 
         TokenSymbol, 
         TokenDecimals, 
-        INIT_SUPPLY, 
-        MAX_SUPPLY, 
+        INIT_SUPPLY.toString(), 
+        MAX_SUPPLY.toString(), 
         TokenMemo, 
         OPERATOR_ID, 
         OPERATOR_KEY, 

@@ -1,5 +1,7 @@
 const { ContractId }  = require( "@hashgraph/sdk");
 import "@hashgraph/hardhat-hethers";
+import {BigNumber} from "ethers";
+
 
 var chai = require("chai");
 var chaiAsPromised = require("chai-as-promised");
@@ -26,8 +28,9 @@ let client2publickey: string;
 const TokenName = "MIDAS";
 const TokenSymbol = "MD";
 const TokenDecimals = 3;
-const INIT_SUPPLY = 100 * 10**TokenDecimals;
-const MAX_SUPPLY = 1000 * 10**TokenDecimals;
+const TokenFactor = BigNumber.from(10).pow(TokenDecimals);
+const INIT_SUPPLY = BigNumber.from(100).mul(TokenFactor);
+const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor);
 const TokenMemo = "Hedera Accelerator Stable Coin"
 
 describe("Burn Tests", function() {
@@ -48,8 +51,8 @@ describe("Burn Tests", function() {
       TokenName, 
       TokenSymbol, 
       TokenDecimals, 
-      INIT_SUPPLY, 
-      MAX_SUPPLY, 
+      INIT_SUPPLY.toString(), 
+      MAX_SUPPLY.toString(), 
       TokenMemo, 
       OPERATOR_ID, 
       OPERATOR_KEY, 
@@ -88,7 +91,7 @@ describe("Burn Tests", function() {
   });
 
   it("Can burn 10 tokens from the treasury account having 100 tokens", async function() {
-    const tokensToBurn = INIT_SUPPLY / 10;   
+    const tokensToBurn = INIT_SUPPLY.div(10);   
     
     // Get the initial total supply and treasury account's balanceOf
     const initialTotalSupply = await getTotalSupply(ContractId, proxyAddress, client);
@@ -98,9 +101,9 @@ describe("Burn Tests", function() {
 
     // check new total supply and balance of treasury account : success
     const finalTotalSupply = await getTotalSupply(ContractId, proxyAddress, client);
-    const expectedTotalSupply = initialTotalSupply - tokensToBurn;
+    const expectedTotalSupply = initialTotalSupply.sub(tokensToBurn);
 
-    expect(finalTotalSupply).to.equals(expectedTotalSupply); 
+    expect(finalTotalSupply.toString()).to.equals(expectedTotalSupply.toString()); 
   });
 
   it("Cannot burn more tokens than the treasury account has", async function() {
@@ -108,16 +111,16 @@ describe("Burn Tests", function() {
     const currentTotalSupply = await getTotalSupply(ContractId, proxyAddress, client);
     
     // burn more tokens than original total supply : fail
-    await expect(Burn(ContractId, proxyAddress, currentTotalSupply + 1, client)).to.eventually.be.rejectedWith(Error);
+    await expect(Burn(ContractId, proxyAddress, currentTotalSupply.add(1), client)).to.eventually.be.rejectedWith(Error);
   });
 
   it("User without burn role cannot burn tokens", async function() {
     // Account without burn role, burns tokens : fail
-    await expect(Burn(ContractId, proxyAddress, 1, client2)).to.eventually.be.rejectedWith(Error);
+    await expect(Burn(ContractId, proxyAddress, BigNumber.from(1), client2)).to.eventually.be.rejectedWith(Error);
   });
 
   it("User with granted burn role can burn tokens", async function() {
-    const tokensToBurn = 1;    
+    const tokensToBurn = BigNumber.from(1);    
 
     // Retrieve original total supply
     const initialTotalSupply = await getTotalSupply(ContractId, proxyAddress, client);
@@ -130,9 +133,9 @@ describe("Burn Tests", function() {
 
     // Check final total supply and treasury account's balanceOf : success
     const finalTotalSupply = await getTotalSupply(ContractId, proxyAddress, client);
-    const expectedTotalSupply = initialTotalSupply - tokensToBurn;
+    const expectedTotalSupply = initialTotalSupply.sub(tokensToBurn);
 
-    expect(finalTotalSupply).to.equals(expectedTotalSupply); 
+    expect(finalTotalSupply.toString()).to.equals(expectedTotalSupply.toString()); 
   }); 
 
 });
