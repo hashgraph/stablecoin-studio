@@ -333,8 +333,12 @@ export default class OperationStableCoinService extends Service {
         await utilsService.cleanAndShowBanner();
 
         // Call to Supplier Role
-        const capabilities = await this.getCapabilities(currentAccount);
-        console.log(colors.yellow(capabilities.join(' | ')));
+        await new RoleStableCoinsService().getRoles(
+          this.proxyContractId,
+          currentAccount.accountId.id,
+          currentAccount.privateKey,
+          currentAccount.accountId.id,
+        );
         break;
       case wizardOperationsStableCoinOptions[
         wizardOperationsStableCoinOptions.length - 1

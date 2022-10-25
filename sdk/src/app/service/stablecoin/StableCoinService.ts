@@ -21,6 +21,7 @@ import IAccountInfo from '../../../port/in/sdk/response/IAccountInfo.js';
 import { Capabilities } from '../../../domain/context/stablecoin/Capabilities.js';
 import { IAccountWithKeyRequestModel } from './model/CoreRequestModel.js';
 import IGetSupplierAllowanceModel from './model/IGetSupplierAllowanceModel.js';
+import IGetRolesServiceRequestModel from './model/IGetRolesServiceRequest';
 
 export default class StableCoinService extends Service {
 	private repository: IStableCoinRepository;
@@ -481,5 +482,14 @@ export default class StableCoinService extends Service {
 		req: IAccountWithKeyRequestModel,
 	): Promise<IAccountInfo> {
 		return this.repository.getAccountInfo(req.account.accountId.id);
+	}
+	public async getRoles(
+		req: IGetRolesServiceRequestModel,
+	): Promise<string[]> {
+		return this.repository.getRoles(
+			req.proxyContractId,
+			req.targetId,
+			req.account,
+		);
 	}
 }

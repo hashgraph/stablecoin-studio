@@ -53,6 +53,7 @@ import { TokenType } from '../../../domain/context/stablecoin/TokenType.js';
 import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.js';
 import { StableCoinMemo } from '../../../domain/context/stablecoin/StableCoinMemo.js';
 import { IAllowanceRequest } from './request/IRequestContracts.js';
+import { IRequestRoles } from './request/IRequestContracts';
 import { AppMetadata } from '../../out/hedera/hashpack/types/types.js';
 import {
 	AcknowledgeMessage,
@@ -79,6 +80,7 @@ import { ISupplierRoleStableCoinRequest } from './request/ISupplierRoleStableCoi
 import Account from '../../../domain/context/account/Account.js';
 import HashPackAccount from '../../../domain/context/account/HashPackAccount.js';
 import IAccountInfo from './response/IAccountInfo.js';
+import IGetRolesServiceRequestModel from '../../../app/service/stablecoin/model/IGetRolesServiceRequest';
 
 export {
 	IAssociateStableCoinRequest,
@@ -99,7 +101,7 @@ export {
 	IBasicRequest,
 	IStableCoinDetail,
 	IStableCoinList,
-	IAccountInfo
+	IAccountInfo,
 };
 
 /* Export basic types*/
@@ -220,9 +222,9 @@ export class SDK {
 			return null;
 		}
 	}
-	
+
 	public getCapabilitiesStableCoin(
-		request: IGetCapabilitiesRequest
+		request: IGetCapabilitiesRequest,
 	): Promise<Capabilities[]> | null {
 		try {
 			const req: IGetCapabilitiesServiceRequestModel = {
@@ -233,7 +235,7 @@ export class SDK {
 		} catch (error) {
 			console.error(error);
 			return null;
-		}		
+		}
 	}
 
 	/**
@@ -543,6 +545,18 @@ export class SDK {
 	): Promise<IAccountInfo> | null {
 		try {
 			return this.stableCoinService.getAccountInfo(request);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+
+	public getRoles(request: IRequestRoles): Promise<string[]> | null {
+		try {
+			const req: IGetRolesServiceRequestModel = {
+				...request,
+			};
+			return this.stableCoinService.getRoles(req);
 		} catch (error) {
 			console.error(error);
 			return null;

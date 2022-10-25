@@ -27,6 +27,10 @@ export interface IRequestRole
 	role: StableCoinRole;
 }
 
+export interface IRequestRoles
+	extends IRequestContracts,
+		ITargetIdRequestModel {}
+
 export interface ISupplierRequestRoleModel extends IRequestRole {
 	amount: number;
 	role: StableCoinRole;

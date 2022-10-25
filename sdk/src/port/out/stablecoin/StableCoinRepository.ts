@@ -25,6 +25,7 @@ import {
 	PrivateKeyType,
 } from '../../../core/enum.js';
 import { Capabilities } from '../../../domain/context/stablecoin/Capabilities.js';
+import { Roles } from '../../../domain/context/stablecoin/Roles.js';
 import { Account } from '../../in/sdk/sdk.js';
 import IAccount from '../hedera/account/types/IAccount.js';
 
@@ -712,7 +713,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		proxyContractId: string,
 		address: string,
 		account: Account,
-	): Promise<Uint8Array> {
+	): Promise<string[]> {
 		const parameters = [
 			await this.accountToEvmAddress(new Account(address)),
 		];
@@ -725,10 +726,23 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			account,
 		};
 
-		return await this.networkAdapter.provider.callContract(
+		const roles: any = await this.networkAdapter.provider.callContract(
 			'getRoles',
 			params,
 		);
+
+		const listRoles: string[] = roles[0]
+			.filter(
+				(role: StableCoinRole) => role !== StableCoinRole.WITHOUT_ROLE,
+			)
+			.map((role: StableCoinRole) => {
+				const indexOfS = Object.values(StableCoinRole).indexOf(role);
+				const roleName = Object.keys(StableCoinRole)[indexOfS];
+				const indexOfRole = Object.keys(Roles).indexOf(roleName);
+				return Object.values(Roles)[indexOfRole];
+			});
+
+		return listRoles;
 	}
 
 	public async transferHTS(

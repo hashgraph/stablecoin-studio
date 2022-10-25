@@ -290,5 +290,6 @@ export const english = {
       new inquirer.Separator(),
       'Go back',
     ],
+    noRoles: 'You do not have any role.',
   },
 };

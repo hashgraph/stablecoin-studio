@@ -309,4 +309,35 @@ export default class RoleStableCoinsService extends Service {
         .replace('${amount}', colors.yellow(amount)) + '\n',
     );
   }
+
+  public async getRoles(
+    proxyContractId: string,
+    targetId: string,
+    privateKey: PrivateKey,
+    accountId: string,
+  ): Promise<void> {
+    const sdk: SDK = utilsService.getSDK();
+    let roles;
+    await utilsService.showSpinner(
+      sdk
+        .getRoles({
+          account: new EOAccount(accountId, privateKey),
+          proxyContractId,
+          targetId,
+        })
+        .then((response) => {
+          roles = response;
+        }),
+      {
+        text: language.getText('state.loading'),
+        successText: language.getText('state.loadCompleted') + '\n',
+      },
+    );
+
+    console.log(language.getText('operation.success'));
+    roles.length > 0
+      ? console.log(colors.yellow(roles.join(' | ')))
+      : console.log(colors.red(language.getText('roleManagement.noRoles')));
+    utilsService.breakLine();
+  }
 }
