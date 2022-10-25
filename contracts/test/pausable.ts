@@ -2,7 +2,11 @@ const { ContractId, AccountId }  = require("@hashgraph/sdk");
 import "@hashgraph/hardhat-hethers";
 import "@hashgraph/sdk";
 
-import { expect} from "chai";
+var chai = require("chai");
+var chaiAsPromised = require("chai-as-promised");
+chai.use(chaiAsPromised);
+var expect = chai.expect;
+
 
 import { deployContractsWithSDK, contractCall, getClient } from "../scripts/utils";
 import {grantRole, revokeRole, checkRole} from "../scripts/contractsMethods";
@@ -63,14 +67,14 @@ describe("Only Admin can grant and revoke pauser role", function() {
   
   it("Non Admin account can not grant pauser role to an account", async function() {   
     // Non Admin grants pauser role : fail       
-    await expect(grantRole(PAUSER_ROLE, ContractId, proxyAddress, client2, hreConfig.accounts[1].account)).to.be.throw;
+    await expect(grantRole(PAUSER_ROLE, ContractId, proxyAddress, client2, hreConfig.accounts[1].account)).to.eventually.be.rejectedWith(Error);
 
   });
 
   it("Non Admin account can not revoke pauser role to an account", async function() {
     // Non Admin revokes pauser role : fail       
     await grantRole(PAUSER_ROLE, ContractId, proxyAddress, client, hreConfig.accounts[1].account);
-    await expect(revokeRole(PAUSER_ROLE, ContractId, proxyAddress, client2, hreConfig.accounts[1].account)).to.be.throw;
+    await expect(revokeRole(PAUSER_ROLE, ContractId, proxyAddress, client2, hreConfig.accounts[1].account)).to.eventually.be.rejectedWith(Error);
   });
   
 });

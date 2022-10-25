@@ -2,11 +2,15 @@ const { ContractId, AccountId }  = require("@hashgraph/sdk");
 import "@hashgraph/hardhat-hethers";
 import "@hashgraph/sdk";
 
-import { expect } from "chai";
+var chai = require("chai");
+var chaiAsPromised = require("chai-as-promised");
+chai.use(chaiAsPromised);
+var expect = chai.expect;
+
 import { deployContractsWithSDK, contractCall, getClient } from "../scripts/utils";
 import {grantRole, revokeRole, checkRole} from "../scripts/contractsMethods";
 
-import { HederaERC20__factory } from "../typechain-types";
+import { HederaERC20__factory } from "../typechain-types/index";
 
 const hre = require("hardhat");
 const hreConfig = hre.network.config;
@@ -26,7 +30,7 @@ const MAX_SUPPLY = 100 * 10**TokenDecimals;
 const TokenMemo = "Hedera Accelerator Stable Coin"
 
 
-describe("Only Admin can grant and revoke cashin role", function() {
+describe.skip("Only Admin can grant and revoke cashin role", function() {
 
   before(async function  () {
     client = getClient();      
@@ -54,19 +58,19 @@ describe("Only Admin can grant and revoke cashin role", function() {
   });
 
   it("Non Admin account can not grant cashin role to an account", async function() {      
-    await expect(grantRole(CASHIN_ROLE, ContractId, proxyAddress, client2, hreConfig.accounts[1].account)).to.be.throw;
+    await expect(grantRole(CASHIN_ROLE, ContractId, proxyAddress, client2, hreConfig.accounts[1].account)).to.eventually.be.rejectedWith(Error);
 
   });
 
   it("Non Admin account can not revoke cashin role to an account", async function() {
     await grantRole(CASHIN_ROLE, ContractId, proxyAddress, client, hreConfig.accounts[1].account);
-    await expect(revokeRole(CASHIN_ROLE, ContractId, proxyAddress, client2, hreConfig.accounts[1].account)).to.be.throw;
+    await expect(revokeRole(CASHIN_ROLE, ContractId, proxyAddress, client2, hreConfig.accounts[1].account)).to.eventually.be.rejectedWith(Error);
   });
 
 
 });
 
-describe("Cash in tokens with maxTotalSupply", function() {
+describe.skip("Cash in tokens with maxTotalSupply", function() {
 
   before(async function  () {
     client = getClient();      
@@ -88,24 +92,24 @@ describe("Cash in tokens with maxTotalSupply", function() {
 
   it("Cannot cash in more than the maxTotalSupply", async function() {
     const params = [AccountId.fromString(OPERATOR_ID!).toSolidityAddress(), 1];        
-    await expect(contractCall(ContractId.fromString(proxyAddress), 'mint', params, client, 400000, HederaERC20__factory.abi)).to.be.throw;
+    await expect(contractCall(ContractId.fromString(proxyAddress), 'mint', params, client, 400000, HederaERC20__factory.abi)).to.eventually.be.rejectedWith(Error);
   });
 
   it("User without cashin_role cannot cash in tokens at all", async function() {
     const client2 = getClient();
     client2.setOperator(hreConfig.accounts[1].account, hreConfig.accounts[1].privateKey);      
     const params = [AccountId.fromString(OPERATOR_ID!).toSolidityAddress(), 1];        
-    await expect(contractCall(ContractId.fromString(proxyAddress), 'mint', params, client2, 400000, HederaERC20__factory.abi)).to.be.throw;
+    await expect(contractCall(ContractId.fromString(proxyAddress), 'mint', params, client2, 400000, HederaERC20__factory.abi)).to.eventually.be.rejectedWith(Error);
   });
 
   it("Cannot cash in tokens to an account not associated to the token", async function() {
     const params = [AccountId.fromString(hreConfig.accounts[1].account).toSolidityAddress(), 1];  
-    await expect(contractCall(ContractId.fromString(proxyAddress), 'mint', params, client, 400000, HederaERC20__factory.abi)).to.be.throw;  
+    await expect(contractCall(ContractId.fromString(proxyAddress), 'mint', params, client, 400000, HederaERC20__factory.abi)).to.eventually.be.rejectedWith(Error);  
   });
 
 });
 
-describe("Cash in tokens without maxTotalSupply", function() {
+describe.skip("Cash in tokens without maxTotalSupply", function() {
 
   before(async function  () {
     client = getClient();      

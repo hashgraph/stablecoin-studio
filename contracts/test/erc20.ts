@@ -1,6 +1,10 @@
 const { ContractId, AccountId}  = require( "@hashgraph/sdk");
 
-import { expect } from "chai";
+var chai = require("chai");
+var chaiAsPromised = require("chai-as-promised");
+chai.use(chaiAsPromised);
+var expect = chai.expect;
+
 import { deployContractsWithSDK, getClient, contractCall } from "../scripts/utils";
 import { HederaERC20__factory } from "../typechain-types";
 

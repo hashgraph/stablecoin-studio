@@ -188,30 +188,25 @@ abstract contract SupplierAdmin is ISupplierAdmin, AccessControlUpgradeable, Tok
     {
         require(amount > 0, "Amount must be greater than zero");
     
-        uint256 oldAllowance = _supplierAllowances[supplier];
-        require(amount <= oldAllowance, "Amount must not exceed the supplier allowance");
-        
-        uint256 newAllowance = oldAllowance - amount;
-        _supplierAllowances[supplier] = newAllowance;
-    
-        emit SupplierAllowanceDecreased(msg.sender, supplier, amount, oldAllowance, newAllowance);
+        _decreaseSupplierAllowance(supplier, amount);
     }    
 
-   /**
+    /**
     * @dev Validate that if the address account `supplier` isn't unlimited supplier's allowance, 
     * and the `amount` not exceed the supplier allowance, subtracting the amount from supplier's allowance
     *
     * @param supplier The address of the supplier
     * @param amount The amount to check whether exceeds current supplier allowance
     */
-    function controlAllowanceAmount(address supplier, uint256 amount) 
-        public
+    function _decreaseSupplierAllowance(address supplier, uint256 amount) 
+        internal
         virtual
     {
-        if (!_unlimitedSupplierAllowances[supplier]) {
-            uint256 allowance = _supplierAllowances[supplier];
-            require(allowance >= amount, "Amount must not exceed the supplier allowance");
-            _supplierAllowances[supplier] = allowance - amount;
-        }
+        uint256 oldAllowance = _supplierAllowances[supplier];
+        require(oldAllowance >= amount, "Amount must not exceed the supplier allowance");
+        uint256 newAllowance = oldAllowance - amount;
+        _supplierAllowances[supplier] = newAllowance;
+
+        emit SupplierAllowanceDecreased(msg.sender, supplier, amount, oldAllowance, newAllowance);
     }
 }

@@ -49,7 +49,7 @@ export function initializeClients(){
     client2publickey]
 }
 
-export async function deployContractsWithSDK_2(
+export async function deployContractsWithSDK(
     name: string,
     symbol: string,
     decimals = 6,
@@ -168,6 +168,7 @@ export async function deployContractsWithSDK_2(
     return proxyContract
 }
 
+/*
 export async function deployContractsWithSDK(
     name: string,
     symbol: string,
@@ -286,7 +287,7 @@ export async function deployContractsWithSDK(
     )
 
     return proxyContract
-}
+}*/
 
 export async function contractCall(
     contractId: any,

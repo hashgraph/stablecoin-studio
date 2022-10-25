@@ -2,8 +2,12 @@ const { ContractId, AccountId } = require("@hashgraph/sdk");
 import "@hashgraph/hardhat-hethers";
 require("@hashgraph/sdk");
 
-import { expect } from "chai";
-import { deployContractsWithSDK_2, getClient, initializeClients} from "../scripts/utils";
+var chai = require("chai");
+var chaiAsPromised = require("chai-as-promised");
+chai.use(chaiAsPromised);
+var expect = chai.expect;
+
+import { deployContractsWithSDK, initializeClients} from "../scripts/utils";
 import {grantRole, revokeRole, checkRole, Mint, Wipe, getBalanceOf, getTotalSupply} from "../scripts/contractsMethods";
 
 let proxyAddress:any;
@@ -25,7 +29,7 @@ const INIT_SUPPLY = 0;
 const MAX_SUPPLY = 6000 * 10**TokenDecimals;
 const TokenMemo = "Hedera Accelerator Stable Coin"
 
-describe("Only Admin can grant and revoke wipe role", function() {
+describe("Wipe Tests", function() {
 
   before(async function  () {         
     // Generate Client (token admin) and Client 2
@@ -39,7 +43,7 @@ describe("Only Admin can grant and revoke wipe role", function() {
       client2publickey] = initializeClients();
   
       // Deploy Token using Client
-      proxyAddress = await deployContractsWithSDK_2(
+      proxyAddress = await deployContractsWithSDK(
         TokenName, 
         TokenSymbol, 
         TokenDecimals, 
@@ -51,61 +55,36 @@ describe("Only Admin can grant and revoke wipe role", function() {
         OPERATOR_PUBLIC);       
   });
 
-  it("Admin account can grant wipe role to an account", async function() {     
+  it("Admin account can grant and revoke wipe role to an account", async function() {     
     // Admin grants wipe role : success 
+    let result = await checkRole(WIPE_ROLE, ContractId, proxyAddress, client, client2account);
+    expect(result).to.equals(false);
+
     await grantRole(WIPE_ROLE, ContractId, proxyAddress, client, client2account);
-    const result = await checkRole(WIPE_ROLE, ContractId, proxyAddress, client, client2account);
+
+    result = await checkRole(WIPE_ROLE, ContractId, proxyAddress, client, client2account);
     expect(result).to.equals(true);
 
-  });
-
-  it("Admin account can revoke wipe role to an account", async function() {
     // Admin revokes wipe role : success
-    await grantRole(WIPE_ROLE, ContractId, proxyAddress, client, client2account);
     await revokeRole(WIPE_ROLE, ContractId, proxyAddress, client, client2account);
-    const result = await checkRole(WIPE_ROLE, ContractId, proxyAddress, client, client2account);
+    result = await checkRole(WIPE_ROLE, ContractId, proxyAddress, client, client2account);
     expect(result).to.equals(false);
-  });  
 
-  it("Non Admin account can not grant pauser role to an account", async function() {   
+  }); 
+
+  it("Non Admin account can not grant wipe role to an account", async function() {   
     // Non Admin grants wipe role : fail       
-    await expect(grantRole(WIPE_ROLE, ContractId, proxyAddress, client2, client2account)).to.be.throw;
+    await expect(grantRole(WIPE_ROLE, ContractId, proxyAddress, client2, client2account)).to.eventually.be.rejectedWith(Error);
 
   });
 
-  it("Non Admin account can not revoke pauser role to an account", async function() {
+  it("Non Admin account can not revoke wipe role to an account", async function() {
     // Non Admin revokes wipe role : fail       
     await grantRole(WIPE_ROLE, ContractId, proxyAddress, client, client2account);
-    await expect(revokeRole(WIPE_ROLE, ContractId, proxyAddress, client2, client2account)).to.be.throw;
-  });
+    await expect(revokeRole(WIPE_ROLE, ContractId, proxyAddress, client2, client2account)).to.eventually.be.rejectedWith(Error);
 
-});
-
-
-describe("Operations to WIPE tokens", function() {
-
-  before(async function  () {
-    // Generate Client (token admin) and Client 2
-    [client,
-    OPERATOR_ID, 
-    OPERATOR_KEY,
-    OPERATOR_PUBLIC,
-    client2,
-    client2account,
-    client2privatekey,
-    client2publickey] = initializeClients();
-
-    // Deploy Token using Client
-    proxyAddress = await deployContractsWithSDK_2(
-      TokenName, 
-      TokenSymbol, 
-      TokenDecimals, 
-      INIT_SUPPLY, 
-      MAX_SUPPLY, 
-      TokenMemo, 
-      OPERATOR_ID, 
-      OPERATOR_KEY, 
-      OPERATOR_PUBLIC);     
+    //Reset status
+    revokeRole(WIPE_ROLE, ContractId, proxyAddress, client, client2account)
   });
 
   it("wipe 10 tokens from an account with 20 tokens", async function() {  
@@ -142,7 +121,7 @@ describe("Operations to WIPE tokens", function() {
     const result = await getBalanceOf(ContractId, proxyAddress, client, OPERATOR_ID);  
 
     // Wipe more than account's balance : fail
-    await expect(Wipe(ContractId, proxyAddress, result + 1, client, OPERATOR_ID)).to.be.throw;
+    await expect(Wipe(ContractId, proxyAddress, result + 1, client, OPERATOR_ID)).to.eventually.be.rejectedWith(Error);
    
   });  
 
@@ -153,7 +132,7 @@ describe("Operations to WIPE tokens", function() {
     await Mint(ContractId, proxyAddress, TokensToMint, client, OPERATOR_ID)
 
     // Wipe with account that does not have the wipe role: fail
-    await expect(Wipe(ContractId, proxyAddress, 1, client2, OPERATOR_ID)).to.be.throw;
+    await expect(Wipe(ContractId, proxyAddress, 1, client2, OPERATOR_ID)).to.eventually.be.rejectedWith(Error);
 
   });
 
@@ -182,8 +161,7 @@ describe("Operations to WIPE tokens", function() {
 
     expect(finalBalanceOf).to.equals(expectedFinalBalanceOf); 
     expect(finalTotalSupply).to.equals(expectedTotalSupply); 
-  });   
+  }); 
 
-  
-  
 });
+

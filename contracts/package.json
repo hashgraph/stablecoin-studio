@@ -66,6 +66,7 @@
     "typescript": "latest"
   },
   "dependencies": {
+    "chai-as-promised": "^7.1.1",
     "solhint": "^3.3.7",
     "web3": "^1.8.0"
   }

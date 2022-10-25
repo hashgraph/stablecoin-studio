@@ -2,7 +2,10 @@ const  { ContractId, AccountId }  = require("@hashgraph/sdk");
 require("@hashgraph/hardhat-hethers");
 require("@hashgraph/sdk");
 
-import { expect} from "chai";
+var chai = require("chai");
+var chaiAsPromised = require("chai-as-promised");
+chai.use(chaiAsPromised);
+var expect = chai.expect;
 
 import { deployContractsWithSDK, contractCall, getClient } from "../scripts/utils";
 import {grantRole, revokeRole, checkRole} from "../scripts/contractsMethods";
@@ -62,14 +65,14 @@ describe("Only Admin can grant and revoke rescatable role", function() {
 
   it("Non Admin account can not grant rescatable role to an account", async function() {   
     // Non Admin grants rescue role : fail       
-    await expect(grantRole(RESCUE_ROLE, ContractId, proxyAddress, client2, hreConfig.accounts[1].account)).to.be.throw;
+    await expect(grantRole(RESCUE_ROLE, ContractId, proxyAddress, client2, hreConfig.accounts[1].account)).to.eventually.be.rejectedWith(Error);
 
   });
 
   it("Non Admin account can not revoke rescatable role to an account", async function() {
     // Non Admin revokes rescue role : fail       
     await grantRole(RESCUE_ROLE, ContractId, proxyAddress, client, hreConfig.accounts[1].account);
-    await expect(revokeRole(RESCUE_ROLE, ContractId, proxyAddress, client2, hreConfig.accounts[1].account)).to.be.throw;
+    await expect(revokeRole(RESCUE_ROLE, ContractId, proxyAddress, client2, hreConfig.accounts[1].account)).to.eventually.be.rejectedWith(Error);
   });
 
 });
@@ -114,7 +117,7 @@ describe("Rescatable", function() {
     await contractCall(ContractId.fromString(proxyAddress), 'getTokenOwnerAddress', params, client, 1300000, HederaERC20__factory.abi) 
            
     params = [11000000];      
-    await expect ( contractCall(ContractId.fromString(proxyAddress), 'rescueToken', params, client, 120000, HederaERC20__factory.abi)).to.be.throw;
+    await expect ( contractCall(ContractId.fromString(proxyAddress), 'rescueToken', params, client, 120000, HederaERC20__factory.abi)).to.eventually.be.rejectedWith(Error);
 
   });
 
@@ -128,7 +131,7 @@ describe("Rescatable", function() {
     await contractCall(ContractId.fromString(proxyAddress), 'getTokenOwnerAddress', params, client1, 1300000, HederaERC20__factory.abi) 
        
     params = [10000];  
-    await expect(contractCall(ContractId.fromString(proxyAddress), 'rescueToken', params, client, 120000, HederaERC20__factory.abi)).to.be.throw;
+    await expect(contractCall(ContractId.fromString(proxyAddress), 'rescueToken', params, client, 120000, HederaERC20__factory.abi)).to.eventually.be.rejectedWith(Error);
 
   });
   

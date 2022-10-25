@@ -1,9 +1,13 @@
-const { ContractId, AccountId }  = require( "@hashgraph/sdk");
+const { ContractId }  = require( "@hashgraph/sdk");
 import "@hashgraph/hardhat-hethers";
 
-import { expect } from "chai";
-import { deployContractsWithSDK_2, initializeClients } from "../scripts/utils";
-import {grantRole, revokeRole, checkRole, Burn, getBalanceOf, getTotalSupply} from "../scripts/contractsMethods";
+var chai = require("chai");
+var chaiAsPromised = require("chai-as-promised");
+chai.use(chaiAsPromised);
+var expect = chai.expect;
+
+import { deployContractsWithSDK, initializeClients } from "../scripts/utils";
+import {grantRole, revokeRole, checkRole, Burn, getTotalSupply} from "../scripts/contractsMethods";
 
 const BURN_ROLE  = '0xe97b137254058bd94f28d2f3eb79e2d34074ffb488d042e3bc958e0a57d2fa22';
 
@@ -26,7 +30,7 @@ const INIT_SUPPLY = 100 * 10**TokenDecimals;
 const MAX_SUPPLY = 1000 * 10**TokenDecimals;
 const TokenMemo = "Hedera Accelerator Stable Coin"
 
-describe("Only Admin can grant and revoke burnable role", function() {
+describe("Burn Tests", function() {
 
   before(async function  () {
     // Generate Client (token admin) and Client 2
@@ -40,7 +44,7 @@ describe("Only Admin can grant and revoke burnable role", function() {
     client2publickey] = initializeClients();
 
     // Deploy Token using Client
-    proxyAddress = await deployContractsWithSDK_2(
+    proxyAddress = await deployContractsWithSDK(
       TokenName, 
       TokenSymbol, 
       TokenDecimals, 
@@ -54,59 +58,33 @@ describe("Only Admin can grant and revoke burnable role", function() {
 
   it("Admin account can grant burnable role to an account", async function() {    
     // Admin grants burn role : success    
+    let result = await checkRole(BURN_ROLE, ContractId, proxyAddress, client, client2account);
+    expect(result).to.equals(false);
+
     await grantRole(BURN_ROLE, ContractId, proxyAddress, client, client2account);
-    const result = await checkRole(BURN_ROLE, ContractId, proxyAddress, client, client2account);
+
+    result = await checkRole(BURN_ROLE, ContractId, proxyAddress, client, client2account);
     expect(result).to.equals(true);
 
-  });
-
-  it("Admin account can revoke burnable role to an account", async function() {
     // Admin revokes burn role : success    
-    await grantRole(BURN_ROLE, ContractId, proxyAddress, client, client2account);
     await revokeRole(BURN_ROLE, ContractId, proxyAddress, client, client2account);
-    const result = await checkRole(BURN_ROLE, ContractId, proxyAddress, client, client2account);
+    result = await checkRole(BURN_ROLE, ContractId, proxyAddress, client, client2account);
     expect(result).to.equals(false);
+
   });
 
   it("Non Admin account can not grant burnable role to an account", async function() {   
     // Non Admin grants burn role : fail       
-    await expect(grantRole(BURN_ROLE, ContractId, proxyAddress, client2, client2account)).to.be.throw;
-
+    await expect(grantRole(BURN_ROLE, ContractId, proxyAddress, client2, client2account)).to.eventually.be.rejectedWith(Error);
   });
 
   it("Non Admin account can not revoke burnable role to an account", async function() {
     // Non Admin revokes burn role : fail       
     await grantRole(BURN_ROLE, ContractId, proxyAddress, client, client2account);
-    await expect(revokeRole(BURN_ROLE, ContractId, proxyAddress, client2, client2account)).to.be.throw;
-  });
+    await expect(revokeRole(BURN_ROLE, ContractId, proxyAddress, client2, client2account)).to.eventually.be.rejectedWith(Error);
 
-
-});
-
-describe("Burnable role functionality", function() {
-
-  before(async function  () {
-    // Generate Client (token admin) and Client 2
-    [client,
-    OPERATOR_ID, 
-    OPERATOR_KEY,
-    OPERATOR_PUBLIC,
-    client2,
-    client2account,
-    client2privatekey,
-    client2publickey] = initializeClients();
-
-    // Deploy Token using Client
-    proxyAddress = await deployContractsWithSDK_2(
-      TokenName, 
-      TokenSymbol, 
-      TokenDecimals, 
-      INIT_SUPPLY, 
-      MAX_SUPPLY, 
-      TokenMemo, 
-      OPERATOR_ID, 
-      OPERATOR_KEY, 
-      OPERATOR_PUBLIC);    
+    //Reset status
+    revokeRole(BURN_ROLE, ContractId, proxyAddress, client, client2account)
   });
 
   it("Can burn 10 tokens from the treasury account having 100 tokens", async function() {
@@ -130,12 +108,12 @@ describe("Burnable role functionality", function() {
     const currentTotalSupply = await getTotalSupply(ContractId, proxyAddress, client);
     
     // burn more tokens than original total supply : fail
-    await expect(Burn(ContractId, proxyAddress, currentTotalSupply + 1, client)).to.be.throw;
+    await expect(Burn(ContractId, proxyAddress, currentTotalSupply + 1, client)).to.eventually.be.rejectedWith(Error);
   });
 
   it("User without burn role cannot burn tokens", async function() {
     // Account without burn role, burns tokens : fail
-    await expect(Burn(ContractId, proxyAddress, 1, client2)).to.be.throw;
+    await expect(Burn(ContractId, proxyAddress, 1, client2)).to.eventually.be.rejectedWith(Error);
   });
 
   it("User with granted burn role can burn tokens", async function() {
@@ -155,6 +133,6 @@ describe("Burnable role functionality", function() {
     const expectedTotalSupply = initialTotalSupply - tokensToBurn;
 
     expect(finalTotalSupply).to.equals(expectedTotalSupply); 
-  });  
-  
+  }); 
+
 });

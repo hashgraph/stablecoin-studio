@@ -87,7 +87,6 @@ export interface HederaERC20Interface extends utils.Interface {
     "associateToken(address)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "burn(uint256)": FunctionFragment;
-    "controlAllowanceAmount(address,uint256)": FunctionFragment;
     "decimals()": FunctionFragment;
     "decreaseSupplierAllowance(address,uint256)": FunctionFragment;
     "dissociateToken(address)": FunctionFragment;
@@ -141,7 +140,6 @@ export interface HederaERC20Interface extends utils.Interface {
       | "associateToken"
       | "balanceOf"
       | "burn"
-      | "controlAllowanceAmount"
       | "decimals"
       | "decreaseSupplierAllowance"
       | "dissociateToken"
@@ -219,10 +217,6 @@ export interface HederaERC20Interface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "burn",
     values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "controlAllowanceAmount",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
   encodeFunctionData(
@@ -398,10 +392,6 @@ export interface HederaERC20Interface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "controlAllowanceAmount",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "decreaseSupplierAllowance",
@@ -760,12 +750,6 @@ export interface HederaERC20 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    controlAllowanceAmount(
-      supplier: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     decimals(overrides?: CallOverrides): Promise<[number]>;
 
     decreaseSupplierAllowance(
@@ -992,12 +976,6 @@ export interface HederaERC20 extends BaseContract {
   ): Promise<BigNumber>;
 
   burn(
-    amount: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  controlAllowanceAmount(
-    supplier: PromiseOrValue<string>,
     amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -1231,12 +1209,6 @@ export interface HederaERC20 extends BaseContract {
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
-
-    controlAllowanceAmount(
-      supplier: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     decimals(overrides?: CallOverrides): Promise<number>;
 
@@ -1617,12 +1589,6 @@ export interface HederaERC20 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    controlAllowanceAmount(
-      supplier: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     decimals(overrides?: CallOverrides): Promise<BigNumber>;
 
     decreaseSupplierAllowance(
@@ -1852,12 +1818,6 @@ export interface HederaERC20 extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     burn(
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    controlAllowanceAmount(
-      supplier: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

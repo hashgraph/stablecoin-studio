@@ -68,13 +68,4 @@ interface ISupplierAdmin {
     * @param amount The amount to subtract from the supplier's current supplier allowance
     */
     function decreaseSupplierAllowance(address supplier, uint256 amount) external;
-
-    /**
-    * @dev Validate that if the address account `supplier` isn't unlimited supplier's allowance, 
-    * and the `amount` not exceed the supplier allowance, subtracting the amount from supplier's allowance
-    *
-    * @param supplier The address of the supplier
-    * @param amount The amount to check whether exceeds current supplier allowance
-    */
-    function controlAllowanceAmount(address supplier, uint256 amount) external;
 }
