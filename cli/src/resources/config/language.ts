@@ -191,7 +191,7 @@ export const english = {
       'Wipe',
       'Rescue',
       'Role management',
-      'Show roles',
+      'Refresh roles',
       new inquirer.Separator(),
       'Return to main menu',
     ],

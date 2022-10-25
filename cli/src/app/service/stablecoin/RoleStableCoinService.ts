@@ -315,7 +315,7 @@ export default class RoleStableCoinsService extends Service {
     targetId: string,
     privateKey: PrivateKey,
     accountId: string,
-  ): Promise<void> {
+  ): Promise<string[]> {
     const sdk: SDK = utilsService.getSDK();
     let roles;
     await utilsService.showSpinner(
@@ -339,5 +339,7 @@ export default class RoleStableCoinsService extends Service {
       ? console.log(colors.yellow(roles.join(' | ')))
       : console.log(colors.red(language.getText('roleManagement.noRoles')));
     utilsService.breakLine();
+
+    return roles;
   }
 }

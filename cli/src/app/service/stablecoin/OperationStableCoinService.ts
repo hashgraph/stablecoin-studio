@@ -329,16 +329,33 @@ export default class OperationStableCoinService extends Service {
         // Call to Supplier Role
         await this.roleManagementFlow();
         break;
-      case 'Show roles':
+      case 'Refresh roles':
         await utilsService.cleanAndShowBanner();
 
         // Call to Supplier Role
-        await new RoleStableCoinsService().getRoles(
+        const rolesToRefresh = await new RoleStableCoinsService().getRoles(
           this.proxyContractId,
           currentAccount.accountId.id,
-          currentAccount.privateKey,
+          new PrivateKey(
+            configAccount.privateKey.key,
+            configAccount.privateKey.type,
+          ),
           currentAccount.accountId.id,
         );
+        const externalTokensRefreshed = configAccount.externalTokens.map(
+          (token) => {
+            if (token.id === this.stableCoinId) {
+              return {
+                id: token.id,
+                symbol: token.symbol,
+                roles: rolesToRefresh,
+              };
+            }
+            return token;
+          },
+        );
+        new ManageExternalTokenService().updateAccount(externalTokensRefreshed);
+        configAccount.externalTokens = externalTokensRefreshed;
         break;
       case wizardOperationsStableCoinOptions[
         wizardOperationsStableCoinOptions.length - 1
@@ -356,7 +373,7 @@ export default class OperationStableCoinService extends Service {
   ): Promise<Capabilities[]> {
     return await new CapabilitiesStableCoinsService().getCapabilitiesStableCoins(
       currentAccount,
-      this.stableCoinId
+      this.stableCoinId,
     );
   }
 
@@ -381,7 +398,9 @@ export default class OperationStableCoinService extends Service {
       .filter((option) => {
         if (option == 'Edit role') {
           return capabilitiesStableCoin.some((capability) =>
-            [Capabilities.CASH_IN, Capabilities.CASH_IN_HTS].includes(capability),
+            [Capabilities.CASH_IN, Capabilities.CASH_IN_HTS].includes(
+              capability,
+            ),
           );
         }
 
@@ -803,7 +822,7 @@ export default class OperationStableCoinService extends Service {
             capabilities.includes('Wipe hts'))) ||
         (option === 'Role management' &&
           capabilities.includes('Role management')) ||
-        option === 'Show roles'
+        option === 'Refresh roles'
       ) {
         return true;
       }

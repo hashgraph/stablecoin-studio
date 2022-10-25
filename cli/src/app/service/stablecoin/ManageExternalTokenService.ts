@@ -2,18 +2,14 @@ import Service from '../Service.js';
 import { IExternalToken } from '../../../domain/configuration/interfaces/IExternalToken';
 import { wizardService } from '../../../index';
 import DetailsStableCoinsService from './DetailsStableCoinService.js';
-import {
-  IStableCoinDetail,
-  EOAccount,
-  PrivateKey,
-} from 'hedera-stable-coin-sdk';
-import CapabilitiesStableCoinsService from './CapabilitiesStableCoinService.js';
+import { IStableCoinDetail, PrivateKey } from 'hedera-stable-coin-sdk';
 import {
   language,
   utilsService,
   configurationService,
 } from '../../../index.js';
 import colors from 'colors';
+import RoleStableCoinsService from './RoleStableCoinService';
 
 export default class ManageExternalTokenService extends Service {
   constructor() {
@@ -26,6 +22,7 @@ export default class ManageExternalTokenService extends Service {
     );
     const currentAccount = utilsService.getCurrentAccount();
     let symbol = '';
+    let proxyContractId = '';
     switch (
       await utilsService.defaultMultipleAsk(
         language.getText('wizard.externalTokenMenu'),
@@ -49,27 +46,26 @@ export default class ManageExternalTokenService extends Service {
           );
         }
 
-        //call to capabilities
+        //call to roles
         const externalTokens = currentAccount.externalTokens;
         await new DetailsStableCoinsService()
           .getDetailsStableCoins(tokenId, false)
           .then((response: IStableCoinDetail) => {
             symbol = response.symbol;
+            proxyContractId = response.memo.proxyContract;
           });
-        const capabilities =
-          await new CapabilitiesStableCoinsService().getCapabilitiesStableCoins(
-            new EOAccount(
-              currentAccount.accountId,
-              new PrivateKey(
-                currentAccount.privateKey.key,
-                currentAccount.privateKey.type,
-              ),
-            ),
-            tokenId,
-          );
+        const roles = await new RoleStableCoinsService().getRoles(
+          proxyContractId,
+          currentAccount.accountId,
+          new PrivateKey(
+            currentAccount.privateKey.key,
+            currentAccount.privateKey.type,
+          ),
+          currentAccount.accountId,
+        );
         externalTokens.push({
           id: tokenId,
-          capabilities: capabilities,
+          roles,
           symbol,
         });
         this.updateAccount(externalTokens);
@@ -80,32 +76,33 @@ export default class ManageExternalTokenService extends Service {
         //show list to refresh
         const tokenToRefresh = await utilsService.defaultMultipleAsk(
           language.getText('manageExternalToken.tokenToRefresh'),
-          currentAccount.externalTokens.map((token) => token.id),
+          currentAccount.externalTokens.map(
+            (token) => `${token.id} - ${token.symbol}`,
+          ),
         );
 
         await new DetailsStableCoinsService()
-          .getDetailsStableCoins(tokenToRefresh, false)
+          .getDetailsStableCoins(tokenToRefresh.split(' - ')[0], false)
           .then((response: IStableCoinDetail) => {
             symbol = response.symbol;
+            proxyContractId = response.memo.proxyContract;
           });
-        const capabilitiesToRefresh =
-          await new CapabilitiesStableCoinsService().getCapabilitiesStableCoins(
-            new EOAccount(
-              currentAccount.accountId,
-              new PrivateKey(
-                currentAccount.privateKey.key,
-                currentAccount.privateKey.type,
-              ),
-            ),
-            tokenToRefresh
-          );
+        const rolesToRefresh = await new RoleStableCoinsService().getRoles(
+          proxyContractId,
+          currentAccount.accountId,
+          new PrivateKey(
+            currentAccount.privateKey.key,
+            currentAccount.privateKey.type,
+          ),
+          currentAccount.accountId,
+        );
         const externalTokensRefreshed = currentAccount.externalTokens.map(
           (token) => {
-            if (token.id === tokenToRefresh) {
+            if (token.id === tokenToRefresh.split(' - ')[0]) {
               return {
                 id: token.id,
                 symbol: token.symbol,
-                capabilities: capabilitiesToRefresh,
+                roles: rolesToRefresh,
               };
             }
             return token;
@@ -119,10 +116,12 @@ export default class ManageExternalTokenService extends Service {
         //show list to delete
         const tokenToDelete = await utilsService.defaultMultipleAsk(
           language.getText('manageExternalToken.tokenToDelete'),
-          currentAccount.externalTokens.map((token) => token.id),
+          currentAccount.externalTokens.map(
+            (token) => `${token.id} - ${token.symbol}`,
+          ),
         );
         const newExternalTokens = currentAccount.externalTokens.filter(
-          (token) => token.id !== tokenToDelete,
+          (token) => token.id !== tokenToDelete.split(' - ')[0],
         );
         this.updateAccount(newExternalTokens);
         currentAccount.externalTokens = newExternalTokens;
@@ -167,7 +166,7 @@ export default class ManageExternalTokenService extends Service {
         (token) =>
           `${token.id} - ${token.symbol} - ` +
           colors.yellow(colors.underline('Roles:')) +
-          colors.yellow(` ${token.capabilities.join(' | ')}`),
+          colors.yellow(` ${token.roles.join(' | ')}`),
       ),
     );
     return result;
