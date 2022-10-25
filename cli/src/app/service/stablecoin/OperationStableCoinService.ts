@@ -33,6 +33,7 @@ export default class OperationStableCoinService extends Service {
   private stableCoinId;
   private proxyContractId;
   private stableCoinWithSymbol;
+  private optionTokenListSelected;
   private roleStableCoinService = new RoleStableCoinsService();
 
   constructor(tokenId?: string, memo?: StableCoinMemo, symbol?: string) {
@@ -83,6 +84,7 @@ export default class OperationStableCoinService extends Service {
         configurationService.getConfiguration()?.defaultNetwork,
         `${currentAccount.accountId.id} - ${configAccount.alias}`,
       );
+      this.optionTokenListSelected = this.stableCoinId;
       this.stableCoinWithSymbol =
         this.stableCoinId.split(' - ').length === 3
           ? `${this.stableCoinId.split(' - ')[0]} - ${
@@ -133,6 +135,11 @@ export default class OperationStableCoinService extends Service {
         this.filterMenuOptions(
           wizardOperationsStableCoinOptions,
           capabilitiesStableCoin,
+          this.optionTokenListSelected.split(' - ').length === 3
+            ? configAccount.externalTokens.find(
+                (token) => token.id === this.stableCoinId,
+              ).roles
+            : undefined,
         ),
         false,
         configAccount.network,
@@ -806,10 +813,13 @@ export default class OperationStableCoinService extends Service {
   private filterMenuOptions(
     options: string[],
     capabilities: string[],
+    roles?: string[],
   ): string[] {
     let result = [];
+    let capabilitiesFilter = [];
     if (capabilities.length === 0) return options;
-    result = options.filter((option) => {
+
+    capabilitiesFilter = options.filter((option) => {
       if (
         (option === 'Cash in' &&
           (capabilities.includes('Cash in') ||
@@ -829,6 +839,23 @@ export default class OperationStableCoinService extends Service {
 
       return capabilities.includes(option);
     });
+
+    result = roles
+      ? capabilitiesFilter.filter((option) => {
+          if (
+            (option === 'Cash in' && roles.includes('CASH IN')) ||
+            (option === 'Burn' && roles.includes('BURN')) ||
+            (option === 'Wipe' && roles.includes('WIPE')) ||
+            (option === 'Rescue' && roles.includes('RESCUE')) ||
+            option === 'Refresh roles' ||
+            option === 'Details' ||
+            option === 'Balance'
+          ) {
+            return true;
+          }
+          return false;
+        })
+      : capabilitiesFilter;
 
     return result.concat(language.getArray('wizard.returnOption'));
   }
