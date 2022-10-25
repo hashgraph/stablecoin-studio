@@ -18,9 +18,9 @@ import {decreaseSupplierAllowance,
   supplierAllowance,
   associateToken,
   getTotalSupply,
-  getBalanceOf
+  getBalanceOf,
+  Mint
 } from "../scripts/contractsMethods";
-import { Mint } from "scripts/contractsMethods";
 
 let proxyAddress:any;
 let client:any ;
