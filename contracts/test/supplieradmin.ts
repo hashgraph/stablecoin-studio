@@ -203,7 +203,7 @@ describe("Grant unlimited supplier role and test its cashin right, maxsupply lim
   });
 
   it("An account with unlimited supplier role can cash in 100 tokens", async function() {
-    const AmountToMint = 100 * 100**TokenDecimals;
+    const AmountToMint = 100 * 10**TokenDecimals;
 
     // Get the initial total supply and account's balanceOf
     const initialTotalSupply = await getTotalSupply(ContractId, proxyAddress, client);
@@ -336,6 +336,9 @@ describe("Grant limited supplier role and test its cashin right and cashin/maxsu
     // Check that supplier Allowance was not set
     const result = await supplierAllowance(ContractId, proxyAddress, client2, client2account);
     expect(result).to.eq(0);
+
+    // Reset status for further testing...
+    await revokeSupplierRole(ContractId, proxyAddress, client, client2account);
   });   
 
   it("An account with supplier role, but revoked, can not cash in anything at all", async function() {

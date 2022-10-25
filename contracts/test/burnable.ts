@@ -56,7 +56,7 @@ describe("Burn Tests", function() {
       OPERATOR_PUBLIC);    
   });
 
-  it("Admin account can grant burnable role to an account", async function() {    
+  it("Admin account can grant and revoke burnable role to an account", async function() {    
     // Admin grants burn role : success    
     let result = await checkRole(BURN_ROLE, ContractId, proxyAddress, client, client2account);
     expect(result).to.equals(false);

@@ -1,85 +1,98 @@
-const  { ContractId, AccountId }  = require("@hashgraph/sdk");
-require("@hashgraph/hardhat-hethers");
-require("@hashgraph/sdk");
+const { ContractId, AccountId }  = require("@hashgraph/sdk");
+import "@hashgraph/hardhat-hethers";
+import "@hashgraph/sdk";
 
 var chai = require("chai");
 var chaiAsPromised = require("chai-as-promised");
 chai.use(chaiAsPromised);
 var expect = chai.expect;
 
-import { deployContractsWithSDK, contractCall, getClient } from "../scripts/utils";
-import {grantRole, revokeRole, checkRole} from "../scripts/contractsMethods";
 
-import { HederaERC20__factory } from "../typechain-types";
+import { deployContractsWithSDK, initializeClients } from "../scripts/utils";
+import {grantRole, revokeRole, checkRole, Burn, getTotalSupply} from "../scripts/contractsMethods";
 
-const hre = require("hardhat");
-const hreConfig = hre.network.config;
-let client: any;
+let proxyAddress:any;
+let client:any ;
+let OPERATOR_ID: string;
+let OPERATOR_KEY: string;
+let OPERATOR_PUBLIC: string;
+
 let client2:any;
-let client2account: string
-const OPERATOR_ID = hreConfig.accounts[0].account;
-const OPERATOR_KEY = hreConfig.accounts[0].privateKey;
+let client2account: string;
+let client2privatekey: string;
+let client2publickey: string;
+
 const RESCUE_ROLE  = '0x43f433f336cda92fbbe5bfbdd344a9fd79b2ef138cd6e6fc49d55e2f54e1d99a';
 const TokenName = "MIDAS";
 const TokenSymbol = "MD";
 const TokenDecimals = 3;
-const INIT_SUPPLY = 20000 * 10**TokenDecimals;
-const MAX_SUPPLY = 20000 * 10**TokenDecimals;
+const INIT_SUPPLY = 0;
+const MAX_SUPPLY = 1;
 const TokenMemo = "Hedera Accelerator Stable Coin"
 
-describe("Only Admin can grant and revoke rescatable role", function() {
-  let proxyAddress:any;
-
-  let account:string;
-  let privateKey:string;
+describe("Rescue Tests", function() {
 
   before(async function  () {         
-    account = hreConfig.accounts[0].account;
-    privateKey = hreConfig.accounts[0].privateKey;
-    client = getClient();
-    client.setOperator(OPERATOR_ID, OPERATOR_KEY);
-    
-    client2 = getClient();
-    client2account = hreConfig.accounts[1].account;
-    client2.setOperator(hreConfig.accounts[1].account, hreConfig.accounts[1].privateKey);
+    // Generate Client (token admin) and Client 2
+    [client,
+      OPERATOR_ID, 
+      OPERATOR_KEY,
+      OPERATOR_PUBLIC,
+      client2,
+      client2account,
+      client2privatekey,
+      client2publickey] = initializeClients();
+  
+      // Deploy Token using Client
+      proxyAddress = await deployContractsWithSDK(
+        TokenName, 
+        TokenSymbol, 
+        TokenDecimals, 
+        INIT_SUPPLY, 
+        MAX_SUPPLY, 
+        TokenMemo, 
+        OPERATOR_ID, 
+        OPERATOR_KEY, 
+        OPERATOR_PUBLIC);    
+    });    
 
-    proxyAddress = await deployContractsWithSDK(TokenName, TokenSymbol, TokenDecimals, INIT_SUPPLY, MAX_SUPPLY, TokenMemo);    
 
-  });
-
-  it("Admin account can grant and revoke rescatable role to an account", async function() {     
-    // Admin grants rescue role : success 
-    await grantRole(RESCUE_ROLE, ContractId, proxyAddress, client, hreConfig.accounts[1].account);
-    const result = await checkRole(RESCUE_ROLE, ContractId, proxyAddress, client, hreConfig.accounts[1].account);
-    expect(result).to.equals(true);
-
-  });
-
-  it("Admin account can revoke rescatable role to an account", async function() {
-    // Admin revokes rescue role : success
-    await grantRole(RESCUE_ROLE, ContractId, proxyAddress, client, hreConfig.accounts[1].account);
-    await revokeRole(RESCUE_ROLE, ContractId, proxyAddress, client, hreConfig.accounts[1].account);
-    const result = await checkRole(RESCUE_ROLE, ContractId, proxyAddress, client, hreConfig.accounts[1].account);
-    expect(result).to.equals(false);
-  });  
-
-  it("Non Admin account can not grant rescatable role to an account", async function() {   
-    // Non Admin grants rescue role : fail       
-    await expect(grantRole(RESCUE_ROLE, ContractId, proxyAddress, client2, hreConfig.accounts[1].account)).to.eventually.be.rejectedWith(Error);
-
-  });
-
-  it("Non Admin account can not revoke rescatable role to an account", async function() {
-    // Non Admin revokes rescue role : fail       
-    await grantRole(RESCUE_ROLE, ContractId, proxyAddress, client, hreConfig.accounts[1].account);
-    await expect(revokeRole(RESCUE_ROLE, ContractId, proxyAddress, client2, hreConfig.accounts[1].account)).to.eventually.be.rejectedWith(Error);
-  });
-
+    it("Admin account can grant and revoke rescue role to an account", async function() {    
+      // Admin grants rescue role : success    
+      let result = await checkRole(RESCUE_ROLE, ContractId, proxyAddress, client, client2account);
+      expect(result).to.equals(false);
+  
+      await grantRole(RESCUE_ROLE, ContractId, proxyAddress, client, client2account);
+  
+      result = await checkRole(RESCUE_ROLE, ContractId, proxyAddress, client, client2account);
+      expect(result).to.equals(true);
+  
+      // Admin revokes rescue role : success    
+      await revokeRole(RESCUE_ROLE, ContractId, proxyAddress, client, client2account);
+      result = await checkRole(RESCUE_ROLE, ContractId, proxyAddress, client, client2account);
+      expect(result).to.equals(false);
+  
+    });
+  
+    it("Non Admin account can not grant rescue role to an account", async function() {   
+      // Non Admin grants rescue role : fail       
+      await expect(grantRole(RESCUE_ROLE, ContractId, proxyAddress, client2, client2account)).to.eventually.be.rejectedWith(Error);
+    });
+  
+    it("Non Admin account can not revoke rescue role to an account", async function() {
+      // Non Admin revokes rescue role : fail       
+      await grantRole(RESCUE_ROLE, ContractId, proxyAddress, client, client2account);
+      await expect(revokeRole(RESCUE_ROLE, ContractId, proxyAddress, client2, client2account)).to.eventually.be.rejectedWith(Error);
+  
+      //Reset status
+      revokeRole(RESCUE_ROLE, ContractId, proxyAddress, client, client2account)
+    });
+  
 });
 
-describe("Rescatable", function() {
+describe.skip("Rescatable", function() {
   let proxyAddress:any;
-  const client:any = getClient();
+
   let account:string;
   let privateKey:string;
 
