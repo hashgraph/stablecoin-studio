@@ -4,7 +4,9 @@ import "@hashgraph/sdk";
 
 import { expect} from "chai";
 
-import { deployContractsWithSDK, contractCall, getClient, grantRole, revokeRole, checkRole } from "../scripts/utils";
+import { deployContractsWithSDK, contractCall, getClient } from "../scripts/utils";
+import {grantRole, revokeRole, checkRole} from "../scripts/contractsMethods";
+
 import { HederaERC20__factory } from "../typechain-types";
 
 const hre = require("hardhat");
