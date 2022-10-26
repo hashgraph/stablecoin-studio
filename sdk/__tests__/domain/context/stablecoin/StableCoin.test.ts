@@ -1,7 +1,6 @@
 import { StableCoin } from '../../../../src/domain/context/stablecoin/StableCoin.js';
 import { TokenSupplyType } from '../../../../src/domain/context/stablecoin/TokenSupply.js';
 import { TokenType } from '../../../../src/domain/context/stablecoin/TokenType.js';
-import DomainError from '../../../../src/domain/error/DomainError.js';
 import { AccountId } from '../../../../src/index.js';
 import { baseCoin } from '../../../core/core.js';
 import { StableCoinMemo } from '../../../../src/domain/context/stablecoin/StableCoinMemo';

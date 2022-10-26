@@ -133,7 +133,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 							response.data.max_supply,
 							decimals,
 					  )
-					: BigDecimal.ZERO,
+					: undefined,
 				// customFee: response.data.custom_fees,
 				treasury: new AccountId(
 					response.data.treasury_account_id ?? '0.0.0',
