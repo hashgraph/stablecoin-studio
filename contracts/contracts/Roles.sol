@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.10;
 
-abstract contract Roles {
-    
-    
+import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+
+abstract contract Roles is AccessControlUpgradeable {
+        
     /**
     * @dev Role that allows to mint token
     * 
@@ -38,4 +39,38 @@ abstract contract Roles {
     * keccak256("PAUSER_ROLE");
     */ 
     bytes32 public constant PAUSER_ROLE = 0x65d7a28e3265b37a6474929f336521b332c1681b933f6cb9f3376673440d862a;
+
+    /**
+    * @dev Chain to include in array positions for roles don't available for an account
+    * 
+    * keccak256("WITHOU_ROLE");
+    */ 
+    bytes32 private constant WITHOUT_ROLE = 0xe11b25922c3ff9f0f0a34f0b8929ac96a1f215b99dcb08c2891c220cf3a7e8cc;
+
+    /**
+    * @dev Array containing all roles
+    *
+    */
+    bytes32[6] public ROLES = [CASHIN_ROLE, BURN_ROLE, WIPE_ROLE, RESCUE_ROLE, PAUSER_ROLE, DEFAULT_ADMIN_ROLE];
+
+    /**
+     * @dev Returns an array of roles the account currently has
+     *
+     * @param account The account address
+     * @return bytes32[] The array containing the roles
+     */
+    function getRoles(address account)
+        external
+        view
+        returns (bytes32[] memory)
+    {
+        bytes32[] memory roles = new bytes32[](6);
+        roles[0] = hasRole(CASHIN_ROLE, account) ? CASHIN_ROLE : WITHOUT_ROLE;
+        roles[1] = hasRole(BURN_ROLE, account) ? BURN_ROLE : WITHOUT_ROLE;
+        roles[2] = hasRole(WIPE_ROLE, account) ? WIPE_ROLE : WITHOUT_ROLE;
+        roles[3] = hasRole(RESCUE_ROLE, account) ? RESCUE_ROLE : WITHOUT_ROLE;
+        roles[4] = hasRole(PAUSER_ROLE, account) ? PAUSER_ROLE : WITHOUT_ROLE;
+        roles[5] = hasRole(DEFAULT_ADMIN_ROLE, account) ? DEFAULT_ADMIN_ROLE : WITHOUT_ROLE;
+        return roles;
+    }
 }

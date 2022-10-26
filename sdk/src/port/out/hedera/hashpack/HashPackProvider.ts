@@ -459,7 +459,7 @@ export default class HashPackProvider implements IProvider {
 				TransactionProvider.buildContractCreateFlowTransaction(
 					factory,
 					params,
-					90_000,
+					220_000,
 					key,
 				);
 			const transactionResponse =
@@ -814,7 +814,7 @@ export default class HashPackProvider implements IProvider {
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
-	public async transferHTS(params: ITransferTokenRequest): Promise<boolean> {
+	public async transferHTS(params: ITransferTokenRequest, isApproval = false): Promise<boolean> {
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(
 				this.network.hederaNetworkEnviroment as NetworkType,
@@ -833,7 +833,14 @@ export default class HashPackProvider implements IProvider {
 			);
 		}
 
-		const transaction: Transaction =
+		const transaction: Transaction = isApproval ?
+			TransactionProvider.buildApprovedTransferTransaction(
+				params.tokenId,
+				params.amount,
+				params.outAccountId,
+				params.inAccountId,
+			)		
+			:
 			TransactionProvider.buildTransferTransaction(
 				params.tokenId,
 				params.amount,

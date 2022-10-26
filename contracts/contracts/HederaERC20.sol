@@ -11,10 +11,10 @@ import "./extensions/Mintable.sol";
 import "./extensions/Burnable.sol";
 import "./extensions/Wipeable.sol";
 import "./extensions/Rescatable.sol";
-
+import "./Roles.sol";
 
 contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20Upgradeable, 
-                       Mintable, Burnable, Wipeable, Rescatable{
+                       Mintable, Burnable, Wipeable, Rescatable {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     function initialize () 

@@ -1,12 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.10;
 
-import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import "./ISupplierAdmin.sol";
 import "../TokenOwner.sol";
 import "../Roles.sol";
 
-abstract contract SupplierAdmin is ISupplierAdmin, AccessControlUpgradeable, TokenOwner, Roles {
+abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
 
     mapping(address => uint256) internal _supplierAllowances;
     mapping(address => bool) internal _unlimitedSupplierAllowances;

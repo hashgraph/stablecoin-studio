@@ -1,8 +1,12 @@
+import IAccount from '../../../out/hedera/account/types/IAccount.js';
 import { Account, StableCoinRole, PublicKey } from '../sdk.js';
 
-export interface IRequestContracts {
-	proxyContractId: string;
+export interface IAccountRequestModel {
 	account: Account;
+}
+
+export interface IRequestContracts extends IAccountRequestModel {
+	proxyContractId: string;
 }
 export interface IRequestContractsAmount extends IRequestContracts {
 	amount: number;
@@ -26,6 +30,10 @@ export interface IRequestRole
 		ITokenIdRequestModel {
 	role: StableCoinRole;
 }
+
+export interface IRequestRoles
+	extends IRequestContracts,
+		ITargetIdRequestModel {}
 
 export interface ISupplierRequestRoleModel extends IRequestRole {
 	amount: number;
