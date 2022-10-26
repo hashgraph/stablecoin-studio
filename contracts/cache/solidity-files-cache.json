@@ -1151,8 +1151,8 @@
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-3/hedera-accelerator-stablecoin/contracts/contracts/extensions/SupplierAdmin.sol": {
-      "lastModificationDate": 1666699523583,
-      "contentHash": "f9708f51d6205655e1593444e1b8deb6",
+      "lastModificationDate": 1666786246420,
+      "contentHash": "0a9c988c432c6fdb4fa6388c79696997",
       "sourceName": "contracts/extensions/SupplierAdmin.sol",
       "solcConfig": {
         "version": "0.8.10",
