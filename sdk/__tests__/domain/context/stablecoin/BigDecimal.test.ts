@@ -1,5 +1,4 @@
 import { BigNumber } from '@hashgraph/hethers';
-import Long from 'long';
 import BigDecimal from '../../../../src/domain/context/stablecoin/BigDecimal.js';
 
 const getNumber = (

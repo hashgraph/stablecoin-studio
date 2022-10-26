@@ -96,7 +96,7 @@ export default class BigDecimal implements FixedNumber {
 		return this.#fn.toUnsafeFloat();
 	}
 
-	toFormat(format: string | FixedFormat) {
+	toFormat(format: string | FixedFormat): FixedNumber {
 		return this.#fn.toFormat(format);
 	}
 
