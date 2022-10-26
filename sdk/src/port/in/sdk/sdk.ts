@@ -77,6 +77,7 @@ import { ISupplierRoleStableCoinRequest } from './request/ISupplierRoleStableCoi
 import Account from '../../../domain/context/account/Account.js';
 import HashPackAccount from '../../../domain/context/account/HashPackAccount.js';
 import IAccountInfo from './response/IAccountInfo.js';
+import BigDecimal from '../../../domain/context/stablecoin/BigDecimal.js';
 
 export {
 	IAssociateStableCoinRequest,
@@ -127,6 +128,7 @@ export {
 	AuthenticationResponseMessage,
 	Capabilities,
 	StableCoinMemo,
+	BigDecimal
 };
 
 export interface ConfigurationOptions {

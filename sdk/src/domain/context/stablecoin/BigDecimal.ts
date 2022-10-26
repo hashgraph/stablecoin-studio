@@ -120,6 +120,24 @@ export default class BigDecimal implements FixedNumber {
 		return a < b;
 	}
 
+	public isGreaterOrEqualThan(other: BigDecimal): boolean {
+		const a = parseFixed(this.#fn._value, this.#fn.format.decimals);
+		const b = parseFixed(other.#fn._value, other.#fn.format.decimals);
+		return a >= b;
+	}
+
+	public isLowerOrEqualThan(other: BigDecimal): boolean {
+		const a = parseFixed(this.#fn._value, this.#fn.format.decimals);
+		const b = parseFixed(other.#fn._value, other.#fn.format.decimals);
+		return a <= b;
+	}
+	
+	public isEqualThan(other: BigDecimal): boolean {
+		const a = parseFixed(this.#fn._value, this.#fn.format.decimals);
+		const b = parseFixed(other.#fn._value, other.#fn.format.decimals);
+		return a == b;
+	}
+
 	public toBigNumber(): BigNumber {
 		return parseFixed(this.#fn._value, this.#fn.format.decimals);
 	}
