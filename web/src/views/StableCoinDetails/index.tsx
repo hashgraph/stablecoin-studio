@@ -138,6 +138,11 @@ const StableCoinDetails = () => {
 									copyButton: true,
 								},
 								{
+									label: t('autoRenewAccount'),
+									value: selectedStableCoin?.autoRenewAccount,
+									copyButton: true,
+								},
+								{
 									label: t('memo'),
 									value: getMemoInformation(selectedStableCoin?.memo),
 								},

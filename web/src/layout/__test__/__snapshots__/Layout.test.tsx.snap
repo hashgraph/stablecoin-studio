@@ -26,7 +26,7 @@ exports[`<Layout /> should render correctly 1`] = `
         class="css-1gacwoi"
       >
         <div
-          class="css-166re2f"
+          class="css-16czca"
         >
           <div
             class="css-1hg55h3"
@@ -128,48 +128,110 @@ exports[`<Layout /> should render correctly 1`] = `
               </div>
             </div>
           </div>
-          <button
-            class="chakra-button css-17tfhss"
-            type="button"
+          <div
+            class="chakra-stack css-84zodg"
           >
-            <svg
-              class="chakra-icon css-ky7im0"
-              fill="currentColor"
-              focusable="false"
-              height="1em"
-              viewBox="0 0 256 256"
-              width="1em"
-              xmlns="http://www.w3.org/2000/svg"
+            <div
+              class="css-0"
             >
-              <rect
-                fill="none"
-                height="256"
-                width="256"
-              />
-              <line
-                fill="none"
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="16"
-                x1="40"
-                x2="216"
-                y1="128"
-                y2="128"
-              />
-              <line
-                fill="none"
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="16"
-                x1="128"
-                x2="128"
-                y1="40"
-                y2="216"
-              />
-            </svg>
-          </button>
+              <button
+                class="chakra-button css-16hro5k"
+                type="button"
+              >
+                <svg
+                  class="chakra-icon css-1ita9rw"
+                  fill="currentColor"
+                  focusable="false"
+                  height="1em"
+                  viewBox="0 0 256 256"
+                  width="1em"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect
+                    fill="none"
+                    height="256"
+                    width="256"
+                  />
+                  <line
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                    x1="40"
+                    x2="216"
+                    y1="128"
+                    y2="128"
+                  />
+                  <line
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                    x1="128"
+                    x2="128"
+                    y1="40"
+                    y2="216"
+                  />
+                </svg>
+              </button>
+            </div>
+            <div
+              class="css-0"
+            >
+              <button
+                class="chakra-button css-16hro5k"
+                type="button"
+              >
+                <svg
+                  class="chakra-icon css-1ita9rw"
+                  fill="currentColor"
+                  focusable="false"
+                  height="1em"
+                  viewBox="0 0 256 256"
+                  width="1em"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect
+                    fill="none"
+                    height="256"
+                    width="256"
+                  />
+                  <line
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                    x1="128"
+                    x2="128"
+                    y1="32"
+                    y2="184"
+                  />
+                  <polyline
+                    fill="none"
+                    points="56 112 128 184 200 112"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                  />
+                  <line
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                    x1="40"
+                    x2="216"
+                    y1="216"
+                    y2="216"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
         </div>
         <div
           class="css-166re2f"

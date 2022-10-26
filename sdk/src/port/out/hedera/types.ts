@@ -45,6 +45,7 @@ export interface IWipeTokenRequest extends IHTSTokenRequest {
 export interface ITransferTokenRequest extends IHTSTokenRequest {
 	outAccountId: string;
 	inAccountId: string;
+	isApproval: boolean;
 }
 
 export type InitializationData = HashConnectTypes.InitilizationData;

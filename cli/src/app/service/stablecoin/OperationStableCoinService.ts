@@ -24,6 +24,7 @@ import RescueStableCoinsService from './RescueStableCoinService.js';
 import colors from 'colors';
 import CapabilitiesStableCoinsService from './CapabilitiesStableCoinService.js';
 import BurnStableCoinsService from './BurnStableCoinService.js';
+import ManageExternalTokenService from './ManageExternalTokenService';
 
 /**
  * Operation Stable Coin Service
@@ -32,6 +33,7 @@ export default class OperationStableCoinService extends Service {
   private stableCoinId;
   private proxyContractId;
   private stableCoinWithSymbol;
+  private optionTokenListSelected;
   private roleStableCoinService = new RoleStableCoinsService();
 
   constructor(tokenId?: string, memo?: StableCoinMemo, symbol?: string) {
@@ -73,14 +75,22 @@ export default class OperationStableCoinService extends Service {
 
       this.stableCoinId = await utilsService.defaultMultipleAsk(
         language.getText('stablecoin.askToken'),
-        resp.map((item) => {
-          return `${item.id} - ${item.symbol}`;
-        }),
+        new ManageExternalTokenService().mixExternalTokens(
+          resp.map((item) => {
+            return `${item.id} - ${item.symbol}`;
+          }),
+        ),
         true,
         configurationService.getConfiguration()?.defaultNetwork,
         `${currentAccount.accountId.id} - ${configAccount.alias}`,
       );
-      this.stableCoinWithSymbol = this.stableCoinId;
+      this.optionTokenListSelected = this.stableCoinId;
+      this.stableCoinWithSymbol =
+        this.stableCoinId.split(' - ').length === 3
+          ? `${this.stableCoinId.split(' - ')[0]} - ${
+              this.stableCoinId.split(' - ')[1]
+            }`
+          : this.stableCoinId;
       this.stableCoinId = this.stableCoinId.split(' - ')[0];
 
       if (this.stableCoinId === language.getText('wizard.goBack')) {
@@ -117,10 +127,7 @@ export default class OperationStableCoinService extends Service {
       'wizard.stableCoinOptions',
     );
 
-    const capabilitiesStableCoin = await this.getCapabilities(
-      sdk,
-      currentAccount,
-    );
+    const capabilitiesStableCoin = await this.getCapabilities(currentAccount);
 
     switch (
       await utilsService.defaultMultipleAsk(
@@ -128,6 +135,11 @@ export default class OperationStableCoinService extends Service {
         this.filterMenuOptions(
           wizardOperationsStableCoinOptions,
           capabilitiesStableCoin,
+          this.optionTokenListSelected.split(' - ').length === 3
+            ? configAccount.externalTokens.find(
+                (token) => token.id === this.stableCoinId,
+              ).roles
+            : undefined,
         ),
         false,
         configAccount.network,
@@ -324,6 +336,34 @@ export default class OperationStableCoinService extends Service {
         // Call to Supplier Role
         await this.roleManagementFlow();
         break;
+      case 'Refresh roles':
+        await utilsService.cleanAndShowBanner();
+
+        // Call to Supplier Role
+        const rolesToRefresh = await new RoleStableCoinsService().getRoles(
+          this.proxyContractId,
+          currentAccount.accountId.id,
+          new PrivateKey(
+            configAccount.privateKey.key,
+            configAccount.privateKey.type,
+          ),
+          currentAccount.accountId.id,
+        );
+        const externalTokensRefreshed = configAccount.externalTokens.map(
+          (token) => {
+            if (token.id === this.stableCoinId) {
+              return {
+                id: token.id,
+                symbol: token.symbol,
+                roles: rolesToRefresh,
+              };
+            }
+            return token;
+          },
+        );
+        new ManageExternalTokenService().updateAccount(externalTokensRefreshed);
+        configAccount.externalTokens = externalTokensRefreshed;
+        break;
       case wizardOperationsStableCoinOptions[
         wizardOperationsStableCoinOptions.length - 1
       ]:
@@ -336,12 +376,11 @@ export default class OperationStableCoinService extends Service {
   }
 
   private async getCapabilities(
-    sdk: SDK,
     currentAccount: EOAccount,
   ): Promise<Capabilities[]> {
     return await new CapabilitiesStableCoinsService().getCapabilitiesStableCoins(
+      currentAccount,
       this.stableCoinId,
-      sdk.getPublicKey(currentAccount.privateKey.key, currentAccount.privateKey.type)
     );
   }
 
@@ -360,10 +399,7 @@ export default class OperationStableCoinService extends Service {
       ),
     );
 
-    const capabilitiesStableCoin = await this.getCapabilities(
-      sdk,
-      currentAccount,
-    );
+    const capabilitiesStableCoin = await this.getCapabilities(currentAccount);
     const roleManagementOptions = language
       .getArray('wizard.roleManagementOptions')
       .filter((option) => {
@@ -777,10 +813,13 @@ export default class OperationStableCoinService extends Service {
   private filterMenuOptions(
     options: string[],
     capabilities: string[],
+    roles?: string[],
   ): string[] {
     let result = [];
+    let capabilitiesFilter = [];
     if (capabilities.length === 0) return options;
-    result = options.filter((option) => {
+
+    capabilitiesFilter = options.filter((option) => {
       if (
         (option === 'Cash in' &&
           (capabilities.includes('Cash in') ||
@@ -792,13 +831,31 @@ export default class OperationStableCoinService extends Service {
           (capabilities.includes('Wipe') ||
             capabilities.includes('Wipe hts'))) ||
         (option === 'Role management' &&
-          capabilities.includes('Role management'))
+          capabilities.includes('Role management')) ||
+        option === 'Refresh roles'
       ) {
         return true;
       }
 
       return capabilities.includes(option);
     });
+
+    result = roles
+      ? capabilitiesFilter.filter((option) => {
+          if (
+            (option === 'Cash in' && roles.includes('CASH IN')) ||
+            (option === 'Burn' && roles.includes('BURN')) ||
+            (option === 'Wipe' && roles.includes('WIPE')) ||
+            (option === 'Rescue' && roles.includes('RESCUE')) ||
+            option === 'Refresh roles' ||
+            option === 'Details' ||
+            option === 'Balance'
+          ) {
+            return true;
+          }
+          return false;
+        })
+      : capabilitiesFilter;
 
     return result.concat(language.getArray('wizard.returnOption'));
   }
