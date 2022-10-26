@@ -73,6 +73,12 @@ export default class ManageExternalTokenService extends Service {
         break;
       case manageOptions[1]:
         await utilsService.cleanAndShowBanner();
+        if (currentAccount.externalTokens.length === 0) {
+          console.log(
+            language.getText('manageExternalToken.noExternalTokensRefresh'),
+          );
+          await this.start();
+        }
         //show list to refresh
         const tokenToRefresh = await utilsService.defaultMultipleAsk(
           language.getText('manageExternalToken.tokenToRefresh'),
@@ -113,6 +119,12 @@ export default class ManageExternalTokenService extends Service {
         break;
       case manageOptions[2]:
         await utilsService.cleanAndShowBanner();
+        if (currentAccount.externalTokens.length === 0) {
+          console.log(
+            language.getText('manageExternalToken.noExternalTokensDelete'),
+          );
+          await this.start();
+        }
         //show list to delete
         const tokenToDelete = await utilsService.defaultMultipleAsk(
           language.getText('manageExternalToken.tokenToDelete'),
@@ -128,6 +140,7 @@ export default class ManageExternalTokenService extends Service {
         break;
       case manageOptions[manageOptions.length - 1]:
       default:
+        await utilsService.cleanAndShowBanner();
         await wizardService.mainMenu();
     }
     utilsService.showMessage(language.getText('general.newLine'));
@@ -160,7 +173,18 @@ export default class ManageExternalTokenService extends Service {
 
   public mixExternalTokens(tokens: string[]): string[] {
     const currentAccount = utilsService.getCurrentAccount();
-    const result = tokens.concat(
+    const filterTokens = tokens.filter((token) => {
+      if (
+        currentAccount.externalTokens.find(
+          (tok) => tok.id === token.split(' - ')[0],
+        )
+      ) {
+        console.log('EL TOKEN FILTRADO ES:', token);
+        return false;
+      }
+      return true;
+    });
+    const result = filterTokens.concat(
       language.getText('manageExternalToken.separator'),
       currentAccount.externalTokens.map(
         (token) =>

@@ -236,6 +236,12 @@ export const english = {
     separator: new inquirer.Separator(
       colors.yellow('------ External Tokens ------'),
     ),
+    noExternalTokensRefresh: colors.red(
+      'You dont have any external token to refresh. Please add one first',
+    ),
+    noExternalTokensDelete: colors.red(
+      'You dont have any external token to delete. Please add one first',
+    ),
   },
   state: {
     searching: 'Searching...',
