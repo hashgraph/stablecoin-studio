@@ -1,19 +1,22 @@
 import { ValueObject } from '../../../core/types.js';
 import { PublicKeyNotValid } from './error/PublicKeyNotValid.js';
 import { PublicKey as HPublicKey } from '@hashgraph/sdk';
+import CheckStrings from '../../../core/checks/strings/CheckStrings.js';
+import { RequestKey } from '../../../port/in/sdk/request/BaseRequest.js';
+import BaseError from '../../../core/error/BaseError.js';
 
 export default class PublicKey extends ValueObject {
 	public static readonly NULL: PublicKey = new PublicKey({
 		key: 'null',
 		type: 'null',
 	});
-	
+
 	public readonly key: string;
 	public readonly type: string;
 	constructor(params: { key: string; type: string }) {
 		const { key, type } = params;
 		super();
-		this.validate(key);
+		PublicKey.validate(key);
 		this.key = key;
 		this.type = type;
 	}
@@ -21,12 +24,12 @@ export default class PublicKey extends ValueObject {
 	public static fromHederaKey(key: HPublicKey): PublicKey {
 		return new PublicKey({
 			key: key.toStringRaw(),
-			type: key._key._type
-		})
+			type: key._key._type,
+		});
 	}
 
 	public toHederaKey(): HPublicKey {
-		return HPublicKey.fromString(this.key)
+		return HPublicKey.fromString(this.key);
 	}
 
 	public toString(): string {
@@ -36,7 +39,24 @@ export default class PublicKey extends ValueObject {
 		});
 	}
 
-	public validate(str?: string): void {
-		if (!str) throw new PublicKeyNotValid(str ?? 'undefined');
+	public static validate(val?: string | object): BaseError[] {
+		const err: BaseError[] = [];
+		if (typeof val === 'string') {
+			if (!CheckStrings.isNotEmpty(val))
+				err.push(new PublicKeyNotValid(val ?? 'undefined'));
+		} else if (typeof val === 'object') {
+			const keys = Object.keys(val);
+			if (!(keys.includes('key') && keys.includes('type'))) {
+				err.push(new PublicKeyNotValid(JSON.stringify(val)));
+			} else {
+				const pk = val as RequestKey;
+				if (!CheckStrings.isNotEmpty(pk.key)) {
+					err.push(new PublicKeyNotValid(JSON.stringify(val)));
+				} else if (!CheckStrings.isLengthBetween(pk.key, 64, 66)) {
+					err.push(new PublicKeyNotValid(pk.key, pk.type));
+				}
+			}
+		}
+		return err;
 	}
 }

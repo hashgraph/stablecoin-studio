@@ -1,21 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import BaseError from '../../../../../core/error/BaseError.js';
 import { BaseRequest } from '../BaseRequest.js';
-import {
-	ValidationSchema,
-	ValidatedRequestKey,
-} from './schema/ValidationSchema.js';
+import { ValidationSchema, ValidatedRequestKey } from './ValidationSchema.js';
 import ValidationResponse from './ValidationResponse.js';
 
-export default class ValidatedRequest<T extends BaseRequest>
-	implements BaseRequest
-{
+export default class ValidatedRequest<T extends BaseRequest> {
 	private schema: ValidationSchema<T>;
 
 	constructor(schema: ValidationSchema<T>) {
 		this.schema = schema;
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	private getProperty(propertyName: keyof this): any {
 		return this[propertyName];
 	}
@@ -27,8 +22,8 @@ export default class ValidatedRequest<T extends BaseRequest>
 		try {
 			if (this?.schema[propertyName]) {
 				const err = this.schema[propertyName]?.(val);
-				if(err?.length && err.length > 0){
-					return new ValidationResponse(err)
+				if (err?.length && err.length > 0) {
+					return new ValidationResponse(err);
 				}
 			}
 		} catch (err) {
@@ -39,9 +34,11 @@ export default class ValidatedRequest<T extends BaseRequest>
 	validate(key?: ValidatedRequestKey<T>): ValidationResponse[] {
 		const vals: ValidationResponse[] = [];
 		if (!key) {
-			const entries = Object.keys(this.schema);
+			const entries = Object.keys(
+				this.schema,
+			) as ValidatedRequestKey<T>[];
 			entries.forEach((key) => {
-				this.pushValidations(key as ValidatedRequestKey<T>, vals);
+				this.pushValidations(key, vals);
 			});
 		} else {
 			this.pushValidations(key, vals);

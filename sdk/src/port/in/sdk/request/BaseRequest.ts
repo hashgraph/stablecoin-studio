@@ -1,20 +1,21 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface BaseRequest {
 	[n: string]: any;
 }
 
-export interface IAccount {
+export interface RequestAccount {
 	accountId: string;
-	privateKey?: IKey;
+	privateKey?: RequestKey;
 	evmAddress?: string;
 }
 
-export interface IKey {
+export interface RequestKey {
 	key: string;
 	type: 'ECDSA' | 'ED25519';
 }
 
 export interface AccountBaseRequest {
-	account: IAccount;
+	account: RequestAccount;
 }
 
 export interface ContractBaseRequest extends BaseRequest, AccountBaseRequest {

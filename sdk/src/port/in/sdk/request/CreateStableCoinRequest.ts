@@ -1,13 +1,18 @@
-import { IKey } from '../../../out/hedera/account/types/IKey.js';
-import { Account, PrivateKey, StableCoin } from '../sdk.js';
-import { AccountBaseRequest, IAccount } from './BaseRequest.js';
+import CheckNums from '../../../../core/checks/numbers/CheckNums.js';
+import { Account, PrivateKey, StableCoin, PublicKey } from '../sdk.js';
+import {
+	AccountBaseRequest,
+	RequestAccount,
+	RequestKey,
+} from './BaseRequest.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
+import Validation from './validation/Validation.js';
 
 export default class CreateStableCoinRequest
 	extends ValidatedRequest<CreateStableCoinRequest>
 	implements AccountBaseRequest
 {
-	account: IAccount;
+	account: RequestAccount;
 	name: string;
 	symbol: string;
 	decimals: number;
@@ -16,12 +21,12 @@ export default class CreateStableCoinRequest
 	memo?: string;
 	freezeDefault?: boolean;
 	autoRenewAccount?: string;
-	adminKey?: IKey;
-	freezeKey?: IKey;
-	KYCKey?: IKey;
-	wipeKey?: IKey;
-	pauseKey?: IKey;
-	supplyKey?: IKey;
+	adminKey?: RequestKey;
+	freezeKey?: RequestKey;
+	KYCKey?: RequestKey;
+	wipeKey?: RequestKey;
+	pauseKey?: RequestKey;
+	supplyKey?: RequestKey;
 	treasury?: string;
 
 	constructor({
@@ -42,7 +47,7 @@ export default class CreateStableCoinRequest
 		supplyKey,
 		treasury,
 	}: {
-		account: IAccount;
+		account: RequestAccount;
 		name: string;
 		symbol: string;
 		decimals: number;
@@ -51,17 +56,18 @@ export default class CreateStableCoinRequest
 		memo?: string;
 		freezeDefault?: boolean;
 		autoRenewAccount?: string;
-		adminKey?: IKey;
-		freezeKey?: IKey;
-		KYCKey?: IKey;
-		wipeKey?: IKey;
-		pauseKey?: IKey;
-		supplyKey?: IKey;
+		adminKey?: RequestKey;
+		freezeKey?: RequestKey;
+		KYCKey?: RequestKey;
+		wipeKey?: RequestKey;
+		pauseKey?: RequestKey;
+		supplyKey?: RequestKey;
 		treasury?: string;
 	}) {
 		super({
 			account: (val) => {
-				const { accountId, privateKey, evmAddress } = val as IAccount;
+				const { accountId, privateKey, evmAddress } =
+					val as RequestAccount;
 				if (privateKey) {
 					new Account(
 						accountId,
@@ -75,6 +81,23 @@ export default class CreateStableCoinRequest
 			name: (val) => {
 				return StableCoin.checkName(val as string);
 			},
+			symbol: (val) => {
+				return StableCoin.checkSymbol(val as string);
+			},
+			decimals: (val) => {
+				return StableCoin.checkDecimals(val as number);
+			},
+			treasury: Validation.checkContractId(),
+			initialSupply: (val) => {
+				CheckNums.isWithinRange(val as bigint, 0n, StableCoin.MAX_SUPPLY)
+			},
+			maxSupply: Validation.checkContractId(),
+			adminKey: Validation.checkKey(),
+			freezeKey: Validation.checkKey(),
+			KYCKey: Validation.checkKey(),
+			wipeKey: Validation.checkKey(),
+			pauseKey: Validation.checkKey(),
+			supplyKey: Validation.checkKey(),
 		});
 		this.account = account;
 		this.name = name;

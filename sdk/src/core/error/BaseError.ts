@@ -12,6 +12,7 @@ export enum ErrorCode {
 	SymbolLength = '10011',
 	SymbolEmpty = '10012',
 	MemoLength = '10013',
+	InvalidContractId = '10014',
 	AccountNotAssociatedToToken = '20001',
 	MaxSupplyReached = '20002',
 	RoleNotAssigned = '20003',

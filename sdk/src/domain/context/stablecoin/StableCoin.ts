@@ -2,7 +2,7 @@ import BaseEntity from '../../BaseEntity.js';
 import AccountId from '../account/AccountId.js';
 import PublicKey from '../account/PublicKey.js';
 import ContractId from '../contract/ContractId.js';
-import InvalidAmountDomainError from './error/InvalidAmountDomainError.js';
+import InvalidAmount from './error/InvalidAmount.js';
 import NameLength from './error/NameLength.js';
 import NameEmpty from './error/NameEmpty.js';
 import SymbolLength from './error/SymbolLength.js';
@@ -12,11 +12,19 @@ import { TokenSupplyType } from './TokenSupply.js';
 import { TokenType } from './TokenType.js';
 import InvalidDecimalRange from './error/InvalidDecimalRange.js';
 import BaseError from '../../../core/error/BaseError.js';
+import CheckNums from '../../../core/checks/numbers/CheckNums.js';
+import CheckStrings from '../../../core/checks/strings/CheckStrings.js';
 
 const MAX_SUPPLY = 9_223_372_036_854_775_807n; // eslint-disable-line
 const TEN = 10;
+const ONE_HUNDRED = 100;
+const EIGHTEEN = 18;
+const ZERO = 0;
 
 export class StableCoin extends BaseEntity {
+
+	public static MAX_SUPPLY: bigint = MAX_SUPPLY;
+
 	/**
 	 * Admin PublicKey for the token
 	 */
@@ -338,22 +346,22 @@ export class StableCoin extends BaseEntity {
 	}
 
 	public static checkName(value: string): BaseError[] {
-		const maxNameLength = 100;
+		const maxNameLength = ONE_HUNDRED;
 		const errorList: BaseError[] = [];
 
 		if (!value) errorList.push(new NameEmpty());
-		if (value.length > maxNameLength)
+		if (CheckStrings.isLengthUnder(value, maxNameLength))
 			errorList.push(new NameLength(value, maxNameLength));
 
 		return errorList;
 	}
 
 	public static checkSymbol(value: string): BaseError[] {
-		const maxSymbolLength = 100;
+		const maxSymbolLength = ONE_HUNDRED;
 		const errorList: BaseError[] = [];
 
-		if (!value) errorList.push(new SymbolEmpty());
-		if (value.length > maxSymbolLength)
+		if (!CheckStrings.isNotEmpty(value)) errorList.push(new SymbolEmpty());
+		if (!CheckStrings.isLengthUnder(value, maxSymbolLength))
 			errorList.push(new SymbolLength(value, maxSymbolLength));
 
 		return errorList;
@@ -361,10 +369,10 @@ export class StableCoin extends BaseEntity {
 
 	public static checkDecimals(value: number): BaseError[] {
 		const errorList: BaseError[] = [];
-		const min = 0;
-		const max = 18;
+		const min = ZERO;
+		const max = EIGHTEEN;
 
-		if (value > max || value < min)
+		if (!CheckNums.isWithinRange(value, min, max))
 			errorList.push(new InvalidDecimalRange(value, min, max));
 
 		return errorList;
@@ -377,7 +385,7 @@ export class StableCoin extends BaseEntity {
 	public fromInteger(amount: number): number {
 		const res = amount / this.getDecimalOperator();
 		if (!this.isValidAmount(res)) {
-			throw new InvalidAmountDomainError(res, this.decimals);
+			throw new InvalidAmount(res, this.decimals);
 		}
 		return res;
 	}
@@ -394,7 +402,7 @@ export class StableCoin extends BaseEntity {
 
 	public toInteger(amount: number): number {
 		if (!this.isValidAmount(amount)) {
-			throw new InvalidAmountDomainError(amount, this.decimals);
+			throw new InvalidAmount(amount, this.decimals);
 		}
 		return amount * this.getDecimalOperator();
 	}
