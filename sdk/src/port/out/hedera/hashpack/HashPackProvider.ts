@@ -459,7 +459,7 @@ export default class HashPackProvider implements IProvider {
 				TransactionProvider.buildContractCreateFlowTransaction(
 					factory,
 					params,
-					90_000,
+					220_000,
 					key,
 				);
 			const transactionResponse =
