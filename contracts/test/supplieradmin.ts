@@ -19,8 +19,10 @@ import {decreaseSupplierAllowance,
   associateToken,
   getTotalSupply,
   getBalanceOf,
-  Mint
+  Mint,
+  checkRole
 } from "../scripts/contractsMethods";
+import {CASHIN_ROLE} from "../scripts/constants";
 
 let proxyAddress:any;
 let client:any ;
@@ -71,16 +73,23 @@ describe("Only Admin can grant, revoke, increase, decrease and reset cashin role
     const cashInLimit = BigNumber.from(1);   
 
     // Admin grants limited supplier role : success
+    let hasRole = await checkRole(CASHIN_ROLE, ContractId, proxyAddress, client, client2account);
+    expect(hasRole).to.equals(false);
     let result = await supplierAllowance(ContractId, proxyAddress, client2, client2account);
     expect(result.toString()).to.eq("0");
 
     await grantSupplierRole(ContractId, proxyAddress, cashInLimit, client, client2account);
 
+    hasRole = await checkRole(CASHIN_ROLE, ContractId, proxyAddress, client, client2account);
+    expect(hasRole).to.equals(true);
     result = await supplierAllowance(ContractId, proxyAddress, client2, client2account);
     expect(result.toString()).to.eq(cashInLimit.toString());
     
     // Admin revokes limited supplier role : success
     await revokeSupplierRole(ContractId, proxyAddress, client, client2account);
+
+    hasRole = await checkRole(CASHIN_ROLE, ContractId, proxyAddress, client, client2account);
+    expect(hasRole).to.equals(false);
     result = await supplierAllowance(ContractId, proxyAddress, client2, client2account);
     expect(result.toString()).to.eq("0");
 
@@ -92,11 +101,15 @@ describe("Only Admin can grant, revoke, increase, decrease and reset cashin role
 
     isUnlimited = await isUnlimitedSupplierAllowance(ContractId, proxyAddress, client2, client2account);
     expect(isUnlimited).to.eq(true);
+    hasRole = await checkRole(CASHIN_ROLE, ContractId, proxyAddress, client, client2account);
+    expect(hasRole).to.equals(true);
 
     // Admin revokes unlimited supplier role : success
     await revokeSupplierRole(ContractId, proxyAddress, client, client2account);
     isUnlimited = await isUnlimitedSupplierAllowance(ContractId, proxyAddress, client2, client2account);
     expect(isUnlimited).to.eq(false);
+    hasRole = await checkRole(CASHIN_ROLE, ContractId, proxyAddress, client, client2account);
+    expect(hasRole).to.equals(false);
     
   });
 

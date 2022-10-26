@@ -14,7 +14,6 @@ import { HederaERC20__factory } from "../typechain-types/index";
 
 const hre = require("hardhat");
 const hreConfig = hre.network.config;
-const CASHIN_ROLE  = '0x53300d27a2268d3ff3ecb0ec8e628321ecfba1a08aed8b817e8acf589a52d25c';
 
 
 let proxyAddress:any;

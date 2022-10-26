@@ -11,7 +11,8 @@ var expect = chai.expect;
 
 
 import { deployContractsWithSDK, initializeClients } from "../scripts/utils";
-import {grantRole, revokeRole, checkRole, Burn, getTotalSupply} from "../scripts/contractsMethods";
+import {grantRole, revokeRole, checkRole, rescueHbar, rescueToken, getBalanceOf, getTokenOwnerAddress, associateToken} from "../scripts/contractsMethods";
+import {RESCUE_ROLE} from "../scripts/constants";
 
 let proxyAddress:any;
 let client:any ;
@@ -24,13 +25,14 @@ let client2account: string;
 let client2privatekey: string;
 let client2publickey: string;
 
-const RESCUE_ROLE  = '0x43f433f336cda92fbbe5bfbdd344a9fd79b2ef138cd6e6fc49d55e2f54e1d99a';
+let tokenOwnerAddress: string;
+
 const TokenName = "MIDAS";
 const TokenSymbol = "MD";
 const TokenDecimals = 3;
 const TokenFactor = BigNumber.from(10).pow(TokenDecimals);
-const INIT_SUPPLY = BigNumber.from(0).mul(TokenFactor);
-const MAX_SUPPLY = BigNumber.from(1).mul(TokenFactor);
+const INIT_SUPPLY = BigNumber.from(100).mul(TokenFactor);
+const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor);
 const TokenMemo = "Hedera Accelerator Stable Coin"
 
 describe("Rescue Tests", function() {
@@ -56,9 +58,10 @@ describe("Rescue Tests", function() {
         TokenMemo, 
         OPERATOR_ID, 
         OPERATOR_KEY, 
-        OPERATOR_PUBLIC);    
+        OPERATOR_PUBLIC);   
+        
+      tokenOwnerAddress = await getTokenOwnerAddress(ContractId, proxyAddress, client);
     });    
-
 
     it("Admin account can grant and revoke rescue role to an account", async function() {    
       // Admin grants rescue role : success    
@@ -88,67 +91,69 @@ describe("Rescue Tests", function() {
       await expect(revokeRole(RESCUE_ROLE, ContractId, proxyAddress, client2, client2account)).to.eventually.be.rejectedWith(Error);
   
       //Reset status
-      revokeRole(RESCUE_ROLE, ContractId, proxyAddress, client, client2account)
+      await revokeRole(RESCUE_ROLE, ContractId, proxyAddress, client, client2account)
+    });
+
+    it("Should rescue 10 token", async function() {
+      const AmountToRescue = BigNumber.from(10).mul(TokenFactor);
+
+      // Get the initial balance of the token owner and client
+      const initialTokenOwnerBalance = await getBalanceOf(ContractId, proxyAddress, client, tokenOwnerAddress, false);
+      const initialClientBalance = await getBalanceOf(ContractId, proxyAddress, client, OPERATOR_ID);
+    
+      // rescue some tokens
+      await rescueToken(ContractId, proxyAddress, AmountToRescue, client);
+
+      // check new balances : success
+      const finalTokenOwnerBalance = await getBalanceOf(ContractId, proxyAddress, client, tokenOwnerAddress, false);
+      const finalClientBalance = await getBalanceOf(ContractId, proxyAddress, client, OPERATOR_ID);
+      const expectedTokenOwnerBalance = initialTokenOwnerBalance.sub(AmountToRescue);
+      const expectedClientBalance = initialClientBalance.add(AmountToRescue);
+
+      expect(finalTokenOwnerBalance.toString()).to.equals(expectedTokenOwnerBalance.toString());
+      expect(finalClientBalance.toString()).to.equals(expectedClientBalance.toString());
+     
     });
   
-});
+    it("we cannot rescue more tokens than the token owner balance", async function() {
+      // Get the initial balance of the token owner
+      const TokenOwnerBalance = await getBalanceOf(ContractId, proxyAddress, client, tokenOwnerAddress, false);
 
-describe.skip("Rescatable", function() {
-  let proxyAddress:any;
+      // Rescue TokenOwnerBalance + 1 : fail
+      await expect(rescueToken(ContractId, proxyAddress, TokenOwnerBalance.add(1), client)).to.eventually.be.rejectedWith(Error);
+    });
 
-  let account:string;
-  let privateKey:string;
+    it("User without rescue role cannot rescue tokens", async function() {
+      // Account without rescue role, rescues tokens : fail
+      await expect(rescueToken(ContractId, proxyAddress, BigNumber.from(1), client2)).to.eventually.be.rejectedWith(Error);
+    });
+  
+    it("User with granted rescue role can rescue tokens", async function() {
+      const AmountToRescue = BigNumber.from(1);    
+  
+      // Retrieve original balances
+      const initialTokenOwnerBalance = await getBalanceOf(ContractId, proxyAddress, client, tokenOwnerAddress, false);
+      const initialClientBalance = await getBalanceOf(ContractId, proxyAddress, client, client2account);
 
-  before(async function  () {         
-    account = hreConfig.accounts[0].account;
-    privateKey = hreConfig.accounts[0].privateKey;
-    client.setOperator(account, privateKey);
-   
-    proxyAddress = await deployContractsWithSDK(TokenName, TokenSymbol, TokenDecimals, INIT_SUPPLY, MAX_SUPPLY, TokenMemo); 
-  });
+      // Grant rescue role to account
+      await grantRole(RESCUE_ROLE, ContractId, proxyAddress, client, client2account);
 
-  it("Should rescue 10.000 token", async function() {
-       
-    let params: any[] = [];  
-    const response = await contractCall(ContractId.fromString(proxyAddress), 'getTokenOwnerAddress', params, client, 1300000, HederaERC20__factory.abi) 
-    const tokenOwnerAddress = response[0] 
-   
-    params = [tokenOwnerAddress];  
-    await contractCall(ContractId.fromString(proxyAddress), 'balanceOf', params, client, 60000, HederaERC20__factory.abi)  
-    
-    params = [10000000];  
-    await contractCall(ContractId.fromString(proxyAddress), 'rescueToken', params, client, 140000, HederaERC20__factory.abi)  
-    
-    params = [tokenOwnerAddress];  
-    const balance = await contractCall(ContractId.fromString(proxyAddress), 'balanceOf', params, client, 60000, HederaERC20__factory.abi)  
-    expect(parseInt(balance[0])).to.equals(10000000)
+      // Associate account to token
+      await associateToken(ContractId, proxyAddress, client2, client2account);
+        
+      // Rescue tokens with newly granted account
+      await rescueToken(ContractId, proxyAddress, AmountToRescue, client2);
+  
+      // Check final balances : success
+      const finalTokenOwnerBalance = await getBalanceOf(ContractId, proxyAddress, client, tokenOwnerAddress, false);
+      const finalClientBalance = await getBalanceOf(ContractId, proxyAddress, client, client2account);
+  
+      const expectedTokenOwnerBalance = initialTokenOwnerBalance.sub(AmountToRescue);
+      const expectedClientBalance = initialClientBalance.add(AmountToRescue);
 
-    params = [AccountId.fromString(account).toSolidityAddress()];  
-    const balanceAdm = await contractCall(ContractId.fromString(proxyAddress), 'balanceOf', params, client, 60000, HederaERC20__factory.abi)  
-    expect(parseInt(balanceAdm[0])).to.equals(10000000)
-  });
-
-  it("I cannot rescue 11.000 from an account with 10.000 tokens", async function() {
-    let params: any[] = [];  
-    await contractCall(ContractId.fromString(proxyAddress), 'getTokenOwnerAddress', params, client, 1300000, HederaERC20__factory.abi) 
-           
-    params = [11000000];      
-    await expect ( contractCall(ContractId.fromString(proxyAddress), 'rescueToken', params, client, 120000, HederaERC20__factory.abi)).to.eventually.be.rejectedWith(Error);
-
-  });
-
-  it("If the rescue key is not set, the option is disabled", async function() {
-    const client1:any = getClient();
-    const account1 = hreConfig.accounts[1].account;
-    const privateKey1 = hreConfig.accounts[1].privateKey;
-    client1.setOperator(account1, privateKey1);
-    
-    let params: any[] = [];  
-    await contractCall(ContractId.fromString(proxyAddress), 'getTokenOwnerAddress', params, client1, 1300000, HederaERC20__factory.abi) 
-       
-    params = [10000];  
-    await expect(contractCall(ContractId.fromString(proxyAddress), 'rescueToken', params, client, 120000, HederaERC20__factory.abi)).to.eventually.be.rejectedWith(Error);
-
-  });
+      expect(finalTokenOwnerBalance.toString()).to.equals(expectedTokenOwnerBalance.toString());
+      expect(finalClientBalance.toString()).to.equals(expectedClientBalance.toString());    
+    }); 
   
 });
+

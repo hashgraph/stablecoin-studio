@@ -10,8 +10,7 @@ var expect = chai.expect;
 
 import { deployContractsWithSDK, initializeClients } from "../scripts/utils";
 import {grantRole, revokeRole, checkRole, Burn, getTotalSupply} from "../scripts/contractsMethods";
-
-const BURN_ROLE  = '0xe97b137254058bd94f28d2f3eb79e2d34074ffb488d042e3bc958e0a57d2fa22';
+import {BURN_ROLE} from "../scripts/constants";
 
 
 let proxyAddress:any;
@@ -87,7 +86,7 @@ describe("Burn Tests", function() {
     await expect(revokeRole(BURN_ROLE, ContractId, proxyAddress, client2, client2account)).to.eventually.be.rejectedWith(Error);
 
     //Reset status
-    revokeRole(BURN_ROLE, ContractId, proxyAddress, client, client2account)
+    await revokeRole(BURN_ROLE, ContractId, proxyAddress, client, client2account)
   });
 
   it("Can burn 10 tokens from the treasury account having 100 tokens", async function() {

@@ -11,6 +11,7 @@ var expect = chai.expect;
 
 import { deployContractsWithSDK, initializeClients } from "../scripts/utils";
 import {grantRole, revokeRole, checkRole, Burn, getTotalSupply} from "../scripts/contractsMethods";
+import {PAUSER_ROLE} from "../scripts/constants";
 
 let proxyAddress:any;
 let client:any ;
@@ -23,7 +24,6 @@ let client2account: string;
 let client2privatekey: string;
 let client2publickey: string;
 
-const PAUSER_ROLE  = '0x65d7a28e3265b37a6474929f336521b332c1681b933f6cb9f3376673440d862a';
 const TokenName = "MIDAS";
 const TokenSymbol = "MD";
 const TokenDecimals = 3;
@@ -87,7 +87,7 @@ describe("Pause Tests", function() {
       await expect(revokeRole(PAUSER_ROLE, ContractId, proxyAddress, client2, client2account)).to.eventually.be.rejectedWith(Error);
   
       //Reset status
-      revokeRole(PAUSER_ROLE, ContractId, proxyAddress, client, client2account)
+      await revokeRole(PAUSER_ROLE, ContractId, proxyAddress, client, client2account)
     });
   
 });

@@ -11,6 +11,8 @@ var expect = chai.expect;
 
 import { deployContractsWithSDK, initializeClients} from "../scripts/utils";
 import {grantRole, revokeRole, checkRole, Mint, Wipe, getBalanceOf, getTotalSupply} from "../scripts/contractsMethods";
+import {WIPE_ROLE} from "../scripts/constants";
+
 
 let proxyAddress:any;
 let client:any ;
@@ -23,7 +25,6 @@ let client2account: string;
 let client2privatekey: string;
 let client2publickey: string;
 
-const WIPE_ROLE  = '0x515f99f4e5a381c770462a8d9879a01f0fd4a414a168a2404dab62a62e1af0c3';
 const TokenName = "MIDAS";
 const TokenSymbol = "MD";
 const TokenDecimals = 3;
@@ -87,7 +88,7 @@ describe("Wipe Tests", function() {
     await expect(revokeRole(WIPE_ROLE, ContractId, proxyAddress, client2, client2account)).to.eventually.be.rejectedWith(Error);
 
     //Reset status
-    revokeRole(WIPE_ROLE, ContractId, proxyAddress, client, client2account)
+    await revokeRole(WIPE_ROLE, ContractId, proxyAddress, client, client2account)
   });
 
   it("wipe 10 tokens from an account with 20 tokens", async function() {  
