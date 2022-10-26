@@ -1,17 +1,16 @@
-import { Box, Button, Flex, Image, Text, useMediaQuery } from '@chakra-ui/react';
+import { Box, Flex, HStack, Image } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import LOGO_HEDERA from '../../assets/svg/hedera-hbar-logo.svg';
-import Icon from '../../components/Icon';
 import { NamedRoutes } from '../../Router/NamedRoutes';
 import { RouterManager } from '../../Router/RouterManager';
 import CoinDropdown from './CoinDropdown';
+import CollapsibleButton from './components/CollapsibleButton';
 import TopbarRight from './TopbarRight';
 
 const Topbar = () => {
 	const { t } = useTranslation('global');
 	const navigate = useNavigate();
-	const [isLargerThan1210] = useMediaQuery('(min-width: 1230px)');
 
 	const handleNavigateSC = () => {
 		RouterManager.to(navigate, NamedRoutes.StableCoinCreation);
@@ -34,21 +33,20 @@ const Topbar = () => {
 			</Box>
 			<Box borderRight='2px solid' borderRightColor='light.primary' w='1px' h='30px' />
 			<Flex w='100%' h='100%' justifyContent='space-between' alignItems='center' pl={6} pr={10}>
-				<Flex gap={5}>
+				<Flex gap={5} alignItems='center'>
 					<CoinDropdown />
-					<Button
-						variant='secondary'
-						onClick={handleNavigateSC}
-						gap={2}
-						w={isLargerThan1210 ? '182px' : '30px'}
-					>
-						<Icon name='Plus' fontSize='16px' />
-						{isLargerThan1210 && (
-							<Text fontSize='14px' fontWeight='400'>
-								{t('topbar.createSC')}
-							</Text>
-						)}
-					</Button>
+					<HStack>
+						<CollapsibleButton
+							nameIcon='Plus'
+							text={t('topbar.createSC')}
+							onClick={handleNavigateSC}
+						/>
+						<CollapsibleButton
+							nameIcon='ArrowLineDown'
+							text={t('topbar.addSC')}
+							onClick={() => alert('working on it!')}
+						/>
+					</HStack>
 				</Flex>
 				<TopbarRight />
 			</Flex>

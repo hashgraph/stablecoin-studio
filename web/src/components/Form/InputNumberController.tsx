@@ -93,7 +93,7 @@ const InputNumberController = ({
 				}, []);
 
 				const onChangeCustom = (values: NumberFormatValues) => {
-					onChange(values.floatValue || '');
+					onChange(values.floatValue || values.floatValue === 0 ? values.floatValue : '');
 					setInputFloatValue(values?.floatValue!);
 					onChangeAux && onChangeAux(values);
 				};

@@ -19,17 +19,15 @@ const Review = (props: ReviewProps) => {
 		autorenewAccount,
 		initialSupply,
 		supplyType,
-		totalSupply,
+		maxSupply,
 		decimals,
 		expirationDate,
 		managementPermissions,
 		adminKey,
 		supplyKey,
-		rescueKey,
 		wipeKey,
 		freezeKey,
-		feeScheduleKey,
-		treasuryAccountAddress,
+		pauseKey,
 	} = getValues();
 
 	const formatDate = (date = '') => {
@@ -88,15 +86,15 @@ const Review = (props: ReviewProps) => {
 						details={[
 							{
 								label: t('stableCoinCreation:optionalDetails.initialSupply'),
-								value: initialSupply || '',
+								value: initialSupply.toString() || '',
 							},
 							{
 								label: t('stableCoinCreation:optionalDetails.typeSupply'),
 								value: supplyType?.label || '',
 							},
 							{
-								label: t('stableCoinCreation:optionalDetails.totalSupply'),
-								value: supplyType?.value === 1 ? totalSupply : supplyType?.label,
+								label: t('stableCoinCreation:optionalDetails.maxSupply'),
+								value: supplyType?.value === 1 ? maxSupply.toString() : supplyType?.label,
 							},
 							{
 								label: t('stableCoinCreation:optionalDetails.decimals'),
@@ -113,7 +111,7 @@ const Review = (props: ReviewProps) => {
 						titleProps={{ fontWeight: 700, color: 'brand.secondary' }}
 						details={[
 							{
-								label: t('stableCoinCreation:managementPermissions.stableCoinAdmin'),
+								label: t('stableCoinCreation:managementPermissions.admin'),
 								value: managementPermissions
 									? t('stableCoinCreation:managementPermissions.theSmartContract')
 									: getKey(adminKey, 'adminKeyOther'),
@@ -123,12 +121,6 @@ const Review = (props: ReviewProps) => {
 								value: managementPermissions
 									? t('stableCoinCreation:managementPermissions.theSmartContract')
 									: getKey(supplyKey, 'supplyKeyOther'),
-							},
-							{
-								label: t('stableCoinCreation:managementPermissions.rescue'),
-								value: managementPermissions
-									? t('stableCoinCreation:managementPermissions.theSmartContract')
-									: getKey(rescueKey, 'rescueKeyOther'),
 							},
 							{
 								label: t('stableCoinCreation:managementPermissions.wipe'),
@@ -143,10 +135,10 @@ const Review = (props: ReviewProps) => {
 									: getKey(freezeKey, 'freezeKeyOther'),
 							},
 							{
-								label: t('stableCoinCreation:managementPermissions.feeSchedule'),
+								label: t('stableCoinCreation:managementPermissions.pause'),
 								value: managementPermissions
 									? t('stableCoinCreation:managementPermissions.theSmartContract')
-									: getKey(feeScheduleKey, 'feeScheduleKeyOther'),
+									: getKey(pauseKey, 'pauseKeyOther'),
 							},
 						]}
 					/>
@@ -157,8 +149,8 @@ const Review = (props: ReviewProps) => {
 							{
 								label: t('stableCoinCreation:managementPermissions.treasuryAccountAddress'),
 								value:
-									!managementPermissions && supplyKey.value === OTHER_KEY_VALUE
-										? treasuryAccountAddress
+									!managementPermissions && supplyKey.value === 1
+										? t('stableCoinCreation:managementPermissions.currentUserKey')
 										: t('stableCoinCreation:managementPermissions.theSmartContract'),
 							},
 						]}

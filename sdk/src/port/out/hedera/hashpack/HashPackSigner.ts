@@ -5,8 +5,11 @@ import {
 	TransactionResponse,
 	ContractCreateFlow,
 	ContractExecuteTransaction,
-	AccountInfo,
+	PublicKey as HPublicKey,
+	TokenCreateTransaction,
 	TokenMintTransaction,
+	TokenBurnTransaction,
+	TokenWipeTransaction,
 } from '@hashgraph/sdk';
 import { HashConnect, MessageTypes } from 'hashconnect';
 import { HashConnectProvider } from 'hashconnect/provider/provider';
@@ -14,6 +17,7 @@ import HashPackAccount from '../../../../domain/context/account/HashPackAccount.
 import { getHederaNetwork, HederaNetwork } from '../../../../core/enum.js';
 import { HashConnectSigner } from 'hashconnect/provider/signer';
 import { NetworkType } from 'hashconnect/types';
+import HederaError from '../error/HederaError.js';
 
 export class HashPackSigner implements ISigner {
 	private hc: HashConnect;
@@ -45,23 +49,36 @@ export class HashPackSigner implements ISigner {
 		transaction:
 			| Transaction
 			| ContractExecuteTransaction
-			| ContractCreateFlow,
+			| ContractCreateFlow
+			| TokenCreateTransaction
+			| TokenWipeTransaction
+			| TokenMintTransaction
+			| TokenBurnTransaction
 	): Promise<TransactionResponse | MessageTypes.TransactionResponse> {
-		let trans = transaction
+		const trans = transaction;
 		if (this.signer) {
-			if (
-				trans instanceof ContractCreateFlow ||
-				trans instanceof TokenMintTransaction
-			) {
-				console.log(transaction);
-				if (!(transaction as Transaction).isFrozen()) {
-					trans = await(transaction as Transaction).freezeWithSigner(
-						this.signer,
-					);
+			const pk = await this.getAccountKey(); // Ensure we have the public key
+			if (transaction instanceof ContractCreateFlow) {
+				try {
+					return await transaction.executeWithSigner(this.signer);
+				} catch (err) {
+					console.error(err);
+					throw err;
 				}
-				return await trans.executeWithSigner(this.signer);
-			} else {
-				const signedT = await trans.freezeWithSigner(this.signer);
+			} else if (
+				transaction instanceof TokenCreateTransaction ||
+				transaction instanceof TokenWipeTransaction ||
+				transaction instanceof TokenBurnTransaction || 
+				transaction instanceof TokenMintTransaction
+			) {
+				let t = await transaction.freezeWithSigner(this.signer);
+				t = await transaction.signWithSigner(this.signer);
+				return await t.executeWithSigner(this.signer);
+			} else if (transaction instanceof Transaction) {
+				let signedT = transaction;
+				if (!transaction.isFrozen()) {
+					signedT = await transaction.freezeWithSigner(this.signer);
+				}
 				const t = await this.signer.signTransaction(signedT);
 				return await this.hc.sendTransaction(this.topic, {
 					topic: this.topic,
@@ -77,7 +94,18 @@ export class HashPackSigner implements ISigner {
 		throw new Error('Its necessary to have a Signer');
 	}
 
-	async getAccountInfo(): Promise<AccountInfo> {
-		return await this.hashConnectSigner.getAccountInfo() as unknown as AccountInfo;
+	async getAccountKey(): Promise<HPublicKey> {
+		if (this.hashConnectSigner.getAccountKey) {
+			return this.hashConnectSigner.getAccountKey();
+		}
+		this.hashConnectSigner = await this.hc.getSignerWithAccountKey(
+			this.provider,
+		);
+		this.signer = this.hashConnectSigner as unknown as Signer;
+		if (this.hashConnectSigner.getAccountKey) {
+			return this.hashConnectSigner.getAccountKey();
+		} else {
+			throw new HederaError('Could not fetch account public key');
+		}
 	}
 }

@@ -1,9 +1,7 @@
 import TopbarRight from '../TopbarRight';
 import { render } from '../../../test/';
-import en from '../../../translations/en/global.json';
 import configureMockStore from 'redux-mock-store';
 
-const translations = en.topbar;
 const networkName = 'TESNET';
 const accountId = '0.0.123';
 const mockStore = configureMockStore();
@@ -31,7 +29,6 @@ describe(`<${TopbarRight.name} />`, () => {
 
 		const network = component.getByTestId('topbar-right-network');
 		expect(network).toBeInTheDocument();
-		expect(network).toHaveTextContent(translations.network);
 		expect(network).toHaveTextContent(networkName);
 	});
 
@@ -40,7 +37,6 @@ describe(`<${TopbarRight.name} />`, () => {
 
 		const account = component.getByTestId('topbar-right-account');
 		expect(account).toBeInTheDocument();
-		expect(account).toHaveTextContent(translations.account);
 		expect(account).toHaveTextContent(accountId);
 	});
 });

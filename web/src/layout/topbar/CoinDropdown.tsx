@@ -56,15 +56,19 @@ const CoinDropdown = () => {
 			const id = new HashPackAccount(accountId);
 			dispatch(getStableCoinList(id));
 
-			SDKService.getAccountInfo({ account: id }).then((response) =>
-				dispatch(walletActions.setAccountInfo(response)),
-			);
+			getAccountInfo(id);
 		}
 	}, [accountId]);
 
 	useEffect(() => {
 		formatOptionsStableCoins();
 	}, [stableCoinList]);
+
+	const getAccountInfo = async (hashpackAccount: HashPackAccount) => {
+		const accountInfo = await SDKService.getAccountInfo({ account: hashpackAccount });
+
+		dispatch(walletActions.setAccountInfo(accountInfo));
+	};
 
 	const getCapabilities = async () => {
 		if (!selectedStableCoin?.tokenId || !accountInfo.publicKey?.key) return;

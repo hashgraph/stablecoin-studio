@@ -18,6 +18,10 @@ const KeySelector = ({ control, name, label }: KeySelectorProps) => {
 
 	const optionsKeys = [
 		{
+			value: 1,
+			label: t('stableCoinCreation:managementPermissions.currentUserKey'),
+		},
+		{
 			value: 2,
 			label: t('stableCoinCreation:managementPermissions.theSmartContract'),
 		},
@@ -57,17 +61,20 @@ const KeySelector = ({ control, name, label }: KeySelectorProps) => {
 		name,
 	});
 
+	const availableOptions = () => {
+		if (name === 'adminKey')
+			return optionsKeys.filter((option) => option.value !== 2 && option.value !== 3);
+
+		return optionsKeys;
+	};
+
 	return (
 		<VStack>
 			<SelectController
 				control={control}
 				name={name}
-				options={[
-					{
-						value: 1,
-						label,
-					},
-				].concat(optionsKeys)}
+				options={availableOptions()}
+				defaultValue={name === 'adminKey' ? '0' : '1'}
 				label={label}
 				overrideStyles={selectorStyle}
 				addonLeft={true}

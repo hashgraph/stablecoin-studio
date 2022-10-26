@@ -8,6 +8,7 @@ const Login = () => {
 
 	return (
 		<Flex
+			data-testid='login_container'
 			alignItems='center'
 			justifyContent='center'
 			flexDirection='column'

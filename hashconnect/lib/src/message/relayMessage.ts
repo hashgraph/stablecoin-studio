@@ -89,13 +89,13 @@ export declare namespace MessageTypes {
           nodeId: string;
           transactionHash: string;
           transactionId: string;
-          getReceiptWithSigner: (signer: Signer) => Promise<TransactionReceipt>;
         }
       | string;
     receipt?: Uint8Array | string;
     record?: Uint8Array | string | Record<string, number>;
     signedTransaction?: Uint8Array | string;
     error?: string;
+    getReceiptWithSigner: (signer: Signer) => Promise<TransactionReceipt>;
   }
 
   export interface AuthenticationRequest extends BaseMessage {

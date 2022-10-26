@@ -62,6 +62,8 @@ export default class HTSProvider implements IProvider {
 	private transactionResposeHandler: TransactionResposeHandler =
 		new TransactionResposeHandler();
 
+	private client : Client;
+
 	public initData: InitializationData;
 
 	public eventService: EventService;
@@ -377,7 +379,7 @@ export default class HTSProvider implements IProvider {
 					factory,
 					params,
 					220_000,
-					privateKey.publicKey.key,
+					privateKey.publicKey.toHederaKey(),
 				);
 			const transactionResponse: TransactionResponse =
 				await this.htsSigner.signAndSendTransaction(transaction);
@@ -674,6 +676,7 @@ export default class HTSProvider implements IProvider {
 		transactionResponse: TransactionResponse,
 		operation?: string,
 	): void {
+		operation;
 		let hs = `You can check the transaction here: https://hashscan.io/#/${
 			this.network.hederaNetworkEnviroment
 		}/transaction/${transactionResponse.transactionId

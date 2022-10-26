@@ -27,3 +27,9 @@ export const formatAmountWithDecimals = ({
 		maximumFractionDigits: decimals,
 	});
 };
+
+export const formatShortKey = ({ key }: { key: string }) => {
+	if (key) {
+		return key.slice(0, 6) + '...' + key.slice(key.length - 6, key.length);
+	}
+};

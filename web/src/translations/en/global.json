@@ -6,7 +6,9 @@
     "goBack": "Go back",
     "no": "No",
     "yes": "Yes",
-    "unknown": "-"
+    "unknown": "-",
+    "copy": "Copy",
+    "copied": "Copied!"
   },
   "hashpack-no-installed": {
     "title": "Your haspack extension is not installed yet",
@@ -19,13 +21,14 @@
     "button": "Connect your wallet"
   },
   "topbar": {
-    "network": "Operating network",
-    "account": "Operating account",
+    "network": "Op. network",
+    "account": "Op. account",
     "coinDropdown": {
       "placeholder": "Choose Stable coin",
       "noStableCoin": "No Stable Coins"
     },
-    "createSC": "Create Stable coin"
+    "createSC": "Create coin",
+    "addSC": "Add coin"
   },
   "sidebar": {
     "operations": "Operations",

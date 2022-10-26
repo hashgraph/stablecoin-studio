@@ -1,6 +1,8 @@
 import ModalHashpack from '../ModalHashpack';
 import { render } from '../../test/index';
 import en from '../../translations/en/global.json';
+import userEvent from '@testing-library/user-event';
+import SDKService from '../../services/SDKService';
 
 const HEDERA_LOGO = 'hedera-hbar-logo.svg';
 const downloadHashpack = 'https://www.hashpack.app/download';
@@ -31,7 +33,6 @@ describe(`<${ModalHashpack.name} />`, () => {
 		expect(description).toHaveTextContent(translations.description);
 	});
 
-
 	test('should has a link to download hashpack', () => {
 		const component = render(<ModalHashpack type='no-installed' />);
 
@@ -45,7 +46,16 @@ describe(`<${ModalHashpack.name} />`, () => {
 		const button = component.getByTestId('modal-hashpack-button');
 		expect(button).toBeInTheDocument();
 		expect(button).toHaveTextContent(translations.button);
+	});
 
-		// TODO add test for check background color before and after hover
+	test('Connect button should call SDK services', async () => {
+		const component = render(<ModalHashpack type='no-connected' />);
+
+		const connectButton = component.getByTestId('modal-hashpack-button');
+		expect(connectButton).toBeInTheDocument();
+
+		userEvent.click(connectButton);
+
+		expect(SDKService.connectWallet).toHaveBeenCalled();
 	});
 });

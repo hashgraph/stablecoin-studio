@@ -373,9 +373,11 @@ describe('🧪 [PORT] StableCoinRepository', () => {
 });
 
 function mockRepo(networkAdapter: NetworkAdapter, provider?: IProvider) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const deployFnErr = (coin: StableCoin, account: Account) => {
     throw new Error();
   };
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const deployFn = (coin: StableCoin, account: Account) => {
     return Promise.resolve(coin);
   };

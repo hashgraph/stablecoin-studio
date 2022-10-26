@@ -206,7 +206,6 @@ export default class StableCoinService extends Service {
 					);	
 				}
 			}
-
 		} else {
 			throw new Error('Cash in not allowed');
 		}

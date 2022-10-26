@@ -96,7 +96,7 @@ export default class ConfigurationService extends Service {
   public createDefaultConfiguration(path?: string): void {
     try {
       const defaultConfig = yaml.load(
-        fs.readFileSync(`src/resources/config/${this.configFileName}`, 'utf8'),
+        fs.readFileSync(`${this.getGlobalPath()}/src/resources/config/${this.configFileName}`),
       );
       const filePath = path ?? this.getDefaultConfigurationPath();
       this.path = filePath;
@@ -130,12 +130,13 @@ export default class ConfigurationService extends Service {
    */
   public getDefaultConfigurationPath(): string {
     if (this.path) return this.path;
+    return `${this.getGlobalPath()}/config/${this.configFileName}`;
+  }
+
+  private getGlobalPath(): string {
     shell.config.silent = true;
     const { stdout } = shell.exec('npm root -g');
-    return `${stdout}/${pkg.name}/config/${this.configFileName}`.replace(
-      /(\r\n|\n|\r)/gm,
-      '',
-    );
+    return `${stdout}/${pkg.name}`.replace(/(\r\n|\n|\r)/gm, '');
   }
 
   public validateConfigurationFile(): boolean {

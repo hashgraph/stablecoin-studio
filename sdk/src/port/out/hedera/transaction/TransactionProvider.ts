@@ -5,7 +5,6 @@ import {
 	TokenCreateTransaction,
 	Hbar,
 	TokenSupplyType,
-	ContractCreateFlow,
 	TokenWipeTransaction,
 	TokenMintTransaction,
 	TokenBurnTransaction,
@@ -19,6 +18,7 @@ import {
 } from '@hashgraph/sdk';
 import { ContractId, PublicKey } from '../../../in/sdk/sdk.js';
 import { ICreateTokenResponse } from '../types.js';
+import ContractCreateFlow from './ContractCreateFlow.js';
 
 export class TransactionProvider {
 	public static buildContractExecuteTransaction(
@@ -104,6 +104,8 @@ export class TransactionProvider {
 			transaction.setMaxSupply(values.maxSupply);
 			transaction.setSupplyType(TokenSupplyType.Finite);
 		}
+		console.log("Token create transaction: ", values);
+		console.log("Token create transaction: ",transaction);
 		return transaction;
 	}
 
@@ -111,15 +113,12 @@ export class TransactionProvider {
 		factory: ContractFactory,
 		parameters: Uint8Array | ContractFunctionParameters,
 		gas: number,
-		admKey?: string,
+		admKey?: HPublicKey,
 	): ContractCreateFlow {
 		const transaction = new ContractCreateFlow()
 			.setBytecode(factory.bytecode)
 			.setGas(gas);
-		admKey &&
-			transaction.setAdminKey(
-				HPublicKey.fromString(admKey),
-			);
+		admKey && transaction.setAdminKey(admKey);
 		if (parameters) {
 			transaction.setConstructorParameters(parameters);
 		}
@@ -167,6 +166,7 @@ export class TransactionProvider {
 
 		return transaction;
 	}
+	
 	public static buildTransferTransaction(
 		tokenId: string,
 		amount: number,

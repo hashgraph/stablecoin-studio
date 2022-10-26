@@ -31,11 +31,15 @@ Object {
               >
                 Account to revoke rol
               </p>
-              <p
-                class="chakra-text css-6b9s8v"
+              <div
+                class="chakra-stack css-1c8ysgd"
               >
-                0.0.734953
-              </p>
+                <p
+                  class="chakra-text css-mgupmj"
+                >
+                  0.0.734953
+                </p>
+              </div>
             </div>
             <hr
               aria-orientation="horizontal"
@@ -55,11 +59,15 @@ Object {
               >
                 Role to revoke
               </p>
-              <p
-                class="chakra-text css-1cc9uqq"
+              <div
+                class="chakra-stack css-9qi64u"
               >
-                Rescuer
-              </p>
+                <p
+                  class="chakra-text css-mgupmj"
+                >
+                  Rescuer
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -135,11 +143,15 @@ Object {
             >
               Account to revoke rol
             </p>
-            <p
-              class="chakra-text css-6b9s8v"
+            <div
+              class="chakra-stack css-1c8ysgd"
             >
-              0.0.734953
-            </p>
+              <p
+                class="chakra-text css-mgupmj"
+              >
+                0.0.734953
+              </p>
+            </div>
           </div>
           <hr
             aria-orientation="horizontal"
@@ -159,11 +171,15 @@ Object {
             >
               Role to revoke
             </p>
-            <p
-              class="chakra-text css-1cc9uqq"
+            <div
+              class="chakra-stack css-9qi64u"
             >
-              Rescuer
-            </p>
+              <p
+                class="chakra-text css-mgupmj"
+              >
+                Rescuer
+              </p>
+            </div>
           </div>
         </div>
       </div>
