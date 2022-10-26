@@ -185,9 +185,7 @@ abstract contract SupplierAdmin is ISupplierAdmin, AccessControlUpgradeable, Tok
         external 
         virtual 
         onlyRole(DEFAULT_ADMIN_ROLE) 
-    {
-        require(amount > 0, "Amount must be greater than zero");
-    
+    {    
         _decreaseSupplierAllowance(supplier, amount);
     }    
 
@@ -202,6 +200,8 @@ abstract contract SupplierAdmin is ISupplierAdmin, AccessControlUpgradeable, Tok
         internal
         virtual
     {
+        require(amount > 0, "Amount must be greater than zero");
+
         uint256 oldAllowance = _supplierAllowances[supplier];
         require(oldAllowance >= amount, "Amount must not exceed the supplier allowance");
         uint256 newAllowance = oldAllowance - amount;
