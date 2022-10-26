@@ -1,4 +1,4 @@
-const { ContractId, AccountId }  = require("@hashgraph/sdk");
+/*const { ContractId, AccountId }  = require("@hashgraph/sdk");
 import "@hashgraph/hardhat-hethers";
 import "@hashgraph/sdk";
 
@@ -124,4 +124,4 @@ describe.skip("Cash in tokens without maxTotalSupply", function() {
     expect(Number(result[0])).to.equals(MintedAmount);
   });
   
-});
+});*/

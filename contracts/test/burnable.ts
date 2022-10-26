@@ -9,7 +9,7 @@ chai.use(chaiAsPromised);
 var expect = chai.expect;
 
 import { deployContractsWithSDK, initializeClients } from "../scripts/utils";
-import {grantRole, revokeRole, checkRole, Burn, getTotalSupply} from "../scripts/contractsMethods";
+import {grantRole, revokeRole, hasRole, Burn, getTotalSupply} from "../scripts/contractsMethods";
 import {BURN_ROLE} from "../scripts/constants";
 
 
@@ -60,17 +60,17 @@ describe("Burn Tests", function() {
 
   it("Admin account can grant and revoke burnable role to an account", async function() {    
     // Admin grants burn role : success    
-    let result = await checkRole(BURN_ROLE, ContractId, proxyAddress, client, client2account);
+    let result = await hasRole(BURN_ROLE, ContractId, proxyAddress, client, client2account);
     expect(result).to.equals(false);
 
     await grantRole(BURN_ROLE, ContractId, proxyAddress, client, client2account);
 
-    result = await checkRole(BURN_ROLE, ContractId, proxyAddress, client, client2account);
+    result = await hasRole(BURN_ROLE, ContractId, proxyAddress, client, client2account);
     expect(result).to.equals(true);
 
     // Admin revokes burn role : success    
     await revokeRole(BURN_ROLE, ContractId, proxyAddress, client, client2account);
-    result = await checkRole(BURN_ROLE, ContractId, proxyAddress, client, client2account);
+    result = await hasRole(BURN_ROLE, ContractId, proxyAddress, client, client2account);
     expect(result).to.equals(false);
 
   });

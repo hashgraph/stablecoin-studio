@@ -1,4 +1,4 @@
-const { ContractId, AccountId}  = require( "@hashgraph/sdk");
+/*const { ContractId, AccountId}  = require( "@hashgraph/sdk");
 
 var chai = require("chai");
 var chaiAsPromised = require("chai-as-promised");
@@ -55,4 +55,4 @@ describe("General ERC20", function() {
     expect(parseInt(balanceOf[0])).to.equals(1000000);   
 
   });
-});
+});*/

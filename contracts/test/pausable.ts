@@ -10,7 +10,7 @@ var expect = chai.expect;
 
 
 import { deployContractsWithSDK, initializeClients } from "../scripts/utils";
-import {grantRole, revokeRole, checkRole, Burn, getTotalSupply} from "../scripts/contractsMethods";
+import {grantRole, revokeRole, hasRole, Burn, getTotalSupply} from "../scripts/contractsMethods";
 import {PAUSER_ROLE} from "../scripts/constants";
 
 let proxyAddress:any;
@@ -61,17 +61,17 @@ describe("Pause Tests", function() {
 
     it("Admin account can grant and revoke pauser role to an account", async function() {    
       // Admin grants pauser role : success    
-      let result = await checkRole(PAUSER_ROLE, ContractId, proxyAddress, client, client2account);
+      let result = await hasRole(PAUSER_ROLE, ContractId, proxyAddress, client, client2account);
       expect(result).to.equals(false);
   
       await grantRole(PAUSER_ROLE, ContractId, proxyAddress, client, client2account);
   
-      result = await checkRole(PAUSER_ROLE, ContractId, proxyAddress, client, client2account);
+      result = await hasRole(PAUSER_ROLE, ContractId, proxyAddress, client, client2account);
       expect(result).to.equals(true);
   
       // Admin revokes pauser role : success    
       await revokeRole(PAUSER_ROLE, ContractId, proxyAddress, client, client2account);
-      result = await checkRole(PAUSER_ROLE, ContractId, proxyAddress, client, client2account);
+      result = await hasRole(PAUSER_ROLE, ContractId, proxyAddress, client, client2account);
       expect(result).to.equals(false);
   
     });

@@ -36,7 +36,7 @@ abstract contract Rescatable is IRescatable ,AccessControlUpgradeable, TokenOwne
     *
     * Must be protected with RESCUE_ROLE
     *
-    * @param amount The amount of hbar to rescue
+    * @param amount The amount of tinyhbar to rescue
     */
     function rescueHbar(uint256 amount) 
     external
@@ -45,8 +45,7 @@ abstract contract Rescatable is IRescatable ,AccessControlUpgradeable, TokenOwne
         uint256 oldBalance = address(this).balance;
         require(oldBalance >= amount, "Amount must not exceed the hbar balance");
 
-        uint256 hbarAmount = amount * 100000000;
-        (bool succeed, ) = msg.sender.call{value: hbarAmount}("");
+        (bool succeed, ) = msg.sender.call{value: amount}("");
         require(succeed, "Failed to rescue Hbar");
                 
         emit HbarRescued  (msg.sender, amount, oldBalance);

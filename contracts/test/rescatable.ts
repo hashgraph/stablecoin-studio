@@ -11,7 +11,16 @@ var expect = chai.expect;
 
 
 import { deployContractsWithSDK, initializeClients } from "../scripts/utils";
-import {grantRole, revokeRole, checkRole, rescueHbar, rescueToken, getBalanceOf, getTokenOwnerAddress, associateToken} from "../scripts/contractsMethods";
+import {grantRole, 
+  revokeRole, 
+  hasRole, 
+  rescueHbar, 
+  rescueToken, 
+  getBalanceOf, 
+  getTokenOwnerAddress, 
+  associateToken, 
+  getHBARBalanceOf,
+  transferHBAR} from "../scripts/contractsMethods";
 import {RESCUE_ROLE} from "../scripts/constants";
 
 let proxyAddress:any;
@@ -61,21 +70,26 @@ describe("Rescue Tests", function() {
         OPERATOR_PUBLIC);   
         
       tokenOwnerAddress = await getTokenOwnerAddress(ContractId, proxyAddress, client);
+
+      const TokenOwnerBalanceHBAR = await getHBARBalanceOf(tokenOwnerAddress, client, false, true);
+      const minAmounOfTinyHBAR = 10;
+      if(TokenOwnerBalanceHBAR.lt(BigNumber.from(minAmounOfTinyHBAR))) await transferHBAR(OPERATOR_ID, tokenOwnerAddress, BigNumber.from(minAmounOfTinyHBAR), client, true);
+
     });    
 
     it("Admin account can grant and revoke rescue role to an account", async function() {    
       // Admin grants rescue role : success    
-      let result = await checkRole(RESCUE_ROLE, ContractId, proxyAddress, client, client2account);
+      let result = await hasRole(RESCUE_ROLE, ContractId, proxyAddress, client, client2account);
       expect(result).to.equals(false);
   
       await grantRole(RESCUE_ROLE, ContractId, proxyAddress, client, client2account);
   
-      result = await checkRole(RESCUE_ROLE, ContractId, proxyAddress, client, client2account);
+      result = await hasRole(RESCUE_ROLE, ContractId, proxyAddress, client, client2account);
       expect(result).to.equals(true);
   
       // Admin revokes rescue role : success    
       await revokeRole(RESCUE_ROLE, ContractId, proxyAddress, client, client2account);
-      result = await checkRole(RESCUE_ROLE, ContractId, proxyAddress, client, client2account);
+      result = await hasRole(RESCUE_ROLE, ContractId, proxyAddress, client, client2account);
       expect(result).to.equals(false);
   
     });
@@ -96,23 +110,29 @@ describe("Rescue Tests", function() {
 
     it("Should rescue 10 token", async function() {
       const AmountToRescue = BigNumber.from(10).mul(TokenFactor);
+      const AmountToRescueHBAR = BigNumber.from(0);
 
       // Get the initial balance of the token owner and client
       const initialTokenOwnerBalance = await getBalanceOf(ContractId, proxyAddress, client, tokenOwnerAddress, false);
+      const initialTokenOwnerBalanceHBAR = await getHBARBalanceOf(tokenOwnerAddress, client, false, true);
       const initialClientBalance = await getBalanceOf(ContractId, proxyAddress, client, OPERATOR_ID);
-    
+ 
       // rescue some tokens
       await rescueToken(ContractId, proxyAddress, AmountToRescue, client);
+      await rescueHbar(ContractId, proxyAddress, AmountToRescueHBAR, client);
 
       // check new balances : success
       const finalTokenOwnerBalance = await getBalanceOf(ContractId, proxyAddress, client, tokenOwnerAddress, false);
+      const finalTokenOwnerBalanceHBAR = await getHBARBalanceOf(tokenOwnerAddress, client, false, true);
       const finalClientBalance = await getBalanceOf(ContractId, proxyAddress, client, OPERATOR_ID);
+
       const expectedTokenOwnerBalance = initialTokenOwnerBalance.sub(AmountToRescue);
+      const expectedTokenOwnerBalanceHBAR = initialTokenOwnerBalanceHBAR.sub(AmountToRescueHBAR);
       const expectedClientBalance = initialClientBalance.add(AmountToRescue);
 
       expect(finalTokenOwnerBalance.toString()).to.equals(expectedTokenOwnerBalance.toString());
+      expect(finalTokenOwnerBalanceHBAR.toString()).to.equals(expectedTokenOwnerBalanceHBAR.toString());
       expect(finalClientBalance.toString()).to.equals(expectedClientBalance.toString());
-     
     });
   
     it("we cannot rescue more tokens than the token owner balance", async function() {
@@ -130,9 +150,11 @@ describe("Rescue Tests", function() {
   
     it("User with granted rescue role can rescue tokens", async function() {
       const AmountToRescue = BigNumber.from(1);    
-  
+      const AmountToRescueHBAR = BigNumber.from(0);
+
       // Retrieve original balances
       const initialTokenOwnerBalance = await getBalanceOf(ContractId, proxyAddress, client, tokenOwnerAddress, false);
+      const initialTokenOwnerBalanceHBAR = await getHBARBalanceOf(tokenOwnerAddress, client, false, true);
       const initialClientBalance = await getBalanceOf(ContractId, proxyAddress, client, client2account);
 
       // Grant rescue role to account
@@ -143,16 +165,20 @@ describe("Rescue Tests", function() {
         
       // Rescue tokens with newly granted account
       await rescueToken(ContractId, proxyAddress, AmountToRescue, client2);
-  
+      await rescueHbar(ContractId, proxyAddress, AmountToRescueHBAR, client);
+
       // Check final balances : success
       const finalTokenOwnerBalance = await getBalanceOf(ContractId, proxyAddress, client, tokenOwnerAddress, false);
+      const finalTokenOwnerBalanceHBAR = await getHBARBalanceOf(tokenOwnerAddress, client, false, true);
       const finalClientBalance = await getBalanceOf(ContractId, proxyAddress, client, client2account);
-  
+
       const expectedTokenOwnerBalance = initialTokenOwnerBalance.sub(AmountToRescue);
+      const expectedTokenOwnerBalanceHBAR = initialTokenOwnerBalanceHBAR.sub(AmountToRescueHBAR);
       const expectedClientBalance = initialClientBalance.add(AmountToRescue);
 
       expect(finalTokenOwnerBalance.toString()).to.equals(expectedTokenOwnerBalance.toString());
-      expect(finalClientBalance.toString()).to.equals(expectedClientBalance.toString());    
+      expect(finalTokenOwnerBalanceHBAR.toString()).to.equals(expectedTokenOwnerBalanceHBAR.toString());
+      expect(finalClientBalance.toString()).to.equals(expectedClientBalance.toString());
     }); 
   
 });

@@ -1069,8 +1069,8 @@
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-3/hedera-accelerator-stablecoin/contracts/contracts/extensions/Rescatable.sol": {
-      "lastModificationDate": 1666604150570,
-      "contentHash": "102db2878c24da90761f6a1976d3c861",
+      "lastModificationDate": 1666779114545,
+      "contentHash": "f7fef06cc4dc474992e508161d153374",
       "sourceName": "contracts/extensions/Rescatable.sol",
       "solcConfig": {
         "version": "0.8.10",

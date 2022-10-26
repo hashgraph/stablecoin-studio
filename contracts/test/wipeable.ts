@@ -10,7 +10,7 @@ chai.use(chaiAsPromised);
 var expect = chai.expect;
 
 import { deployContractsWithSDK, initializeClients} from "../scripts/utils";
-import {grantRole, revokeRole, checkRole, Mint, Wipe, getBalanceOf, getTotalSupply} from "../scripts/contractsMethods";
+import {grantRole, revokeRole, hasRole, Mint, Wipe, getBalanceOf, getTotalSupply} from "../scripts/contractsMethods";
 import {WIPE_ROLE} from "../scripts/constants";
 
 
@@ -61,17 +61,17 @@ describe("Wipe Tests", function() {
 
   it("Admin account can grant and revoke wipe role to an account", async function() {     
     // Admin grants wipe role : success 
-    let result = await checkRole(WIPE_ROLE, ContractId, proxyAddress, client, client2account);
+    let result = await hasRole(WIPE_ROLE, ContractId, proxyAddress, client, client2account);
     expect(result).to.equals(false);
 
     await grantRole(WIPE_ROLE, ContractId, proxyAddress, client, client2account);
 
-    result = await checkRole(WIPE_ROLE, ContractId, proxyAddress, client, client2account);
+    result = await hasRole(WIPE_ROLE, ContractId, proxyAddress, client, client2account);
     expect(result).to.equals(true);
 
     // Admin revokes wipe role : success
     await revokeRole(WIPE_ROLE, ContractId, proxyAddress, client, client2account);
-    result = await checkRole(WIPE_ROLE, ContractId, proxyAddress, client, client2account);
+    result = await hasRole(WIPE_ROLE, ContractId, proxyAddress, client, client2account);
     expect(result).to.equals(false);
 
   }); 
