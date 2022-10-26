@@ -9,6 +9,7 @@
     "totalSupply": "Total supply",
     "maxSupply": "Max supply",
     "treasuryId": "Treasury ID",
+    "autoRenewAccount": "Autorenew account",
     "memo": "Memo",
     "adminKey": "Admin key",
     "kycKey": "Kyc key",

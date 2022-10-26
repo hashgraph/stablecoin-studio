@@ -69,7 +69,11 @@ const Router = () => {
 	}, [haspackInitialized, hasWalletExtension]);
 
 	useEffect(() => {
-		if (status && status === HashConnectConnectionState.Paired) {
+		if (!status) return;
+
+		dispatch(hashpackActions.setStatus(status));
+
+		if (status === HashConnectConnectionState.Paired) {
 			getWalletData();
 		}
 	}, [status]);

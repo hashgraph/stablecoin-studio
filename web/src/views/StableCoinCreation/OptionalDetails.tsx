@@ -87,6 +87,7 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 							placeholder: t('stableCoinCreation:optionalDetails.initialSupply'),
 						})}
 						onChangeAux={handleResetMaxSupply}
+						autoComplete='off'
 					/>
 					<SelectController
 						control={control}
