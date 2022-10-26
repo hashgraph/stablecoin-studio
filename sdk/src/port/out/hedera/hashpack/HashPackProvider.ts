@@ -46,7 +46,6 @@ import {
 	HTSTokenOwner__factory,
 } from 'hedera-stable-coin-contracts/typechain-types/index.js';
 import { HashConnectProvider } from 'hashconnect/provider/provider';
-import Long from 'long';
 import ProviderEvent, { ProviderEventNames } from '../ProviderEvent.js';
 import EventService from '../../../../app/service/event/EventService.js';
 import { HashConnect } from 'hashconnect';
@@ -58,6 +57,7 @@ import { safeCast } from '../../../../core/cast.js';
 import axios from 'axios';
 import IAccount from '../account/types/IAccount.js';
 import BigDecimal from '../../../../domain/context/stablecoin/BigDecimal.js';
+import Long from 'long';
 
 const logOpts = { newLine: true, clear: true };
 
@@ -344,8 +344,8 @@ export default class HashPackProvider implements IProvider {
 			stableCoin.name,
 			stableCoin.symbol,
 			stableCoin.decimals,
-			stableCoin.initialSupply,
-			stableCoin.maxSupply,
+			stableCoin.initialSupply.toLong(),
+			stableCoin.maxSupply?.toLong(),
 			stableCoin.memo.toJson(),
 			stableCoin.freezeDefault,
 			account,
@@ -498,8 +498,8 @@ export default class HashPackProvider implements IProvider {
 		name: string,
 		symbol: string,
 		decimals: number,
-		initialSupply: BigDecimal,
-		maxSupply: BigDecimal | undefined,
+		initialSupply: Long,
+		maxSupply: Long | undefined,
 		memo: string,
 		freezeDefault: boolean,
 		account: HashPackAccount,
@@ -516,8 +516,8 @@ export default class HashPackProvider implements IProvider {
 			name,
 			symbol,
 			decimals,
-			initialSupply: initialSupply.toLong(),
-			maxSupply: maxSupply ? maxSupply.toLong() : Long.ZERO,
+			initialSupply: initialSupply,
+			maxSupply: maxSupply ? maxSupply : Long.ZERO,
 			memo,
 			freezeDefault,
 			treasuryAccountId:

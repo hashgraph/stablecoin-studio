@@ -17,8 +17,8 @@ describe('🧪 [PORT] SDK', () => {
       account: ACCOUNTS.testnet,
       name: 'TEST COIN',
       symbol: 'TC',
-      initialSupply: '10',
-      decimals: 0,
+      initialSupply: '1.11111111111111111',
+      decimals: 17,
       adminKey: ACCOUNTS.testnet.privateKey.publicKey,
       wipeKey: PublicKey.NULL,
       supplyKey: PublicKey.NULL,
@@ -72,7 +72,7 @@ describe('🧪 [PORT] SDK', () => {
     expect(cashin).not.toBeNull();
     expect(cashin).toBeTruthy();
     expect(balance).not.toBeNull();
-    expect(balance && balance[0]).toBe(amount);
+    expect(balance && balance[0]).toBe(parseInt(amount));
   }, 15000);
 
   it('Wipe token', async () => {
@@ -127,7 +127,7 @@ describe('🧪 [PORT] SDK', () => {
       tokenId: tokenId ?? '',
     });
     expect(role).not.toBeNull();
-    expect(role && role[0]).toBe(0);
+    expect(role && role).toBe('0');
   }, 15000);
 
   it('Revoke wipe role', async () => {
@@ -245,8 +245,8 @@ describe('🧪 [PORT] SDK', () => {
       tokenId: tokenId ?? '',
     });
     expect(check).not.toBeNull();
-    expect(check && check[0]).toBe(amount);
-  }, 15000);
+    expect(check && check).toBe('10');
+  }, 25000);
   it('Check limited supplier allowance', async () => {
     const check = await sdk.isLimitedSupplierAllowance({
       account: ACCOUNTS.testnet,
@@ -273,7 +273,7 @@ describe('🧪 [PORT] SDK', () => {
       tokenId: tokenId ?? '',
     });
     expect(check).not.toBeNull();
-    expect(check && check[0]).toBe(20);
+    expect(check && check).toBe('20');
   }, 15000);
 
   it('Decrease Limit supplier role', async () => {
@@ -292,7 +292,7 @@ describe('🧪 [PORT] SDK', () => {
       tokenId: tokenId ?? '',
     });
     expect(check).not.toBeNull();
-    expect(check && check[0]).toBe(10);
+    expect(check && check).toBe('10');
   }, 15000);
 
   it('reset Limit supplier role', async () => {
@@ -317,7 +317,7 @@ describe('🧪 [PORT] SDK', () => {
       tokenId: tokenId ?? '',
     });
     expect(check).not.toBeNull();
-    expect(check && check[0]).toBe(0);
+    expect(check && check).toBe('0');
   }, 15000);
 
   it('Grant unlimited supplier role', async () => {

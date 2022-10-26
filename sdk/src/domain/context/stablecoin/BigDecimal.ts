@@ -96,8 +96,8 @@ export default class BigDecimal implements FixedNumber {
 		return this.#fn.toUnsafeFloat();
 	}
 
-	toFormat(format: string | FixedFormat): BigDecimal {
-		return this.fromFixedNumber(this.#fn.toFormat(format));
+	toFormat(format: string | FixedFormat) {
+		return this.#fn.toFormat(format);
 	}
 
 	private fromFixedNumber(number: FixedNumber): BigDecimal {
@@ -125,11 +125,28 @@ export default class BigDecimal implements FixedNumber {
 	}
 
 	public toString(): string {
-		return parseFixed(this.#fn._value, this.#fn.format.decimals).toString();
+		let number = this.#fn.toString();
+
+		if (number.endsWith('.0')) {
+			number = number.substring(0, number.length - 2);
+		}
+		return number;
+
+		// this.#fn.toString() => 10.0
+	}
+
+	private splitNumber(): string[] {
+		const splitNumber = this.#fn.toString().split('.');
+		splitNumber[1] = splitNumber[1].padEnd(this.format.decimals, '0');
+		return splitNumber;
+	}
+	public toNumber(): number {
+		return Number(this.toString());
 	}
 
 	public toLong(): Long {
-		return Long.fromString(this.toString());
+		const number = this.splitNumber();
+		return Long.fromString(number[0] + number[1]);
 	}
 
 	static fromString(
@@ -137,6 +154,11 @@ export default class BigDecimal implements FixedNumber {
 		format?: string | number | FixedFormat | undefined,
 	): BigDecimal {
 		return new BigDecimal(value, format);
+	}
+	static fromStringHedera(value: string, decimals: number): BigDecimal {
+		const position = value.length - decimals;
+		value = value.substring(0, position) + '.' + value.substring(position);
+		return new BigDecimal(value, decimals);
 	}
 
 	static fromValue(

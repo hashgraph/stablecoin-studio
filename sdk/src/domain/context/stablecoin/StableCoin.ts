@@ -82,11 +82,11 @@ export class StableCoin extends BaseEntity {
 	/**
 	 * Maximum Supply
 	 */
-	private _maxSupply: BigDecimal;
-	public get maxSupply(): BigDecimal {
+	private _maxSupply: BigDecimal | undefined;
+	public get maxSupply(): BigDecimal | undefined {
 		return this._maxSupply;
 	}
-	public set maxSupply(value: BigDecimal) {
+	public set maxSupply(value: BigDecimal | undefined) {
 		this._maxSupply = value;
 	}
 
@@ -309,7 +309,7 @@ export class StableCoin extends BaseEntity {
 		this.decimals = this.checkDecimals(decimals);
 		this.initialSupply = initialSupply ?? BigDecimal.ZERO;
 		this.totalSupply = totalSupply ?? BigDecimal.ZERO;
-		this.maxSupply = maxSupply ?? BigDecimal.ZERO;
+		this.maxSupply = maxSupply ?? undefined;
 		this.memo = memo
 			? StableCoinMemo.fromJson(memo)
 			: StableCoinMemo.empty();
@@ -360,12 +360,5 @@ export class StableCoin extends BaseEntity {
 		const val = amount.toString().split('.');
 		const decimals = val.length > 1 ? val[1]?.length : 0;
 		return decimals;
-	}
-
-	public toInteger(amount: number): number {
-		if (!this.isValidAmount(amount)) {
-			throw new InvalidAmountDomainError(amount, this.decimals);
-		}
-		return amount * this.getDecimalOperator();
 	}
 }

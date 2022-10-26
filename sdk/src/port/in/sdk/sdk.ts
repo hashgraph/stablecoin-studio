@@ -366,7 +366,7 @@ export class SDK {
 	 */
 	public supplierAllowance(
 		request: IGetSupplierAllowance,
-	): Promise<Uint8Array> | null {
+	): Promise<string> | null {
 		try {
 			const req: IGetSupplierAllowanceModel = {
 				...request,

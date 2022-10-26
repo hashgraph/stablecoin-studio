@@ -1,6 +1,6 @@
 import { BigNumber } from '@hashgraph/hethers';
+import Long from 'long';
 import BigDecimal from '../../../../src/domain/context/stablecoin/BigDecimal.js';
-import { parseFixed, FixedFormat } from '@ethersproject/bignumber';
 
 const getNumber = (
   decimals: number,
@@ -45,12 +45,12 @@ describe('🧪 [DOMAIN] BigDecimal', () => {
     const val = getNumber(0);
     const num = BigDecimal.fromValue(BigNumber.from(val));
     expect(num).not.toBeNull();
-    expect(num.toString()).toBe('100.0');
+    expect(num.toString()).toBe('100');
   });
 
   it('Create from formatted float string: 100.14', () => {
-    const val = getNumber(2, { integer: '100', decimal: '14' });
-    const num = BigDecimal.fromString(val, 'fixed');
+    const val = getNumber(2, { integer: '100', decimal: '14' }); // 100.14
+    const num = BigDecimal.fromString(val, 2);
     expect(num).not.toBeNull();
     expect(num.toString()).toBe(val);
   });
@@ -120,22 +120,26 @@ describe('🧪 [DOMAIN] BigDecimal', () => {
     expect(num.toString()).toBe(getNumber(18, { ...format, separated: true }));
     expect(subtractUnsafe('1')).toBe(getNumber(18, { integer: '99' }));
     expect(subtractUnsafe('10')).toBe(getNumber(18, { integer: '90' }));
-    expect(subtractUnsafe(getNumber(18, { integer: '10' }))).toBe('90.0');
+    expect(subtractUnsafe(getNumber(18, { integer: '10' }))).toBe('90');
 
     function subtractUnsafe(val: string): string {
       return num.subUnsafe(BigDecimal.fromString(val)).toString();
     }
   });
 
-  it('BigDecimal to bigint', () => {
-    const format = FixedFormat.from(2);
-    const bigDecimal: BigDecimal = BigDecimal.fromString('1000', 2);
+  it('For testing', async () => {
+    // 10     6 dec
+    // "10"
 
-    console.log(bigDecimal.toString());
+    //Mirror
+    // 10000000 --> 6 dec -> 10.0
+    // const val = getNumber(17, { integer: '100', decimal: '1' }); // 100.00000000000000001
 
-    // console.log(bigDecimal.format.decimals);
+    const num = BigDecimal.fromString('100', 4);
+    console.log(num.toLong());
+    // 100 => 100.0
 
-    console.log(bigDecimal.toBigNumber());
-    expect(bigDecimal.toBigNumber()).toBe(10000);
+    // console.log(num.toLong());
+    expect(true).toBeTruthy();
   });
 });

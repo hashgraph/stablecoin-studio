@@ -27,7 +27,7 @@ export default class RoleStableCoinsService extends Service {
     privateKey: PrivateKey,
     accountId: string,
     supplierType: string,
-    amount?: number,
+    amount?: string,
   ): Promise<void> {
     const sdk: SDK = utilsService.getSDK();
     const role: StableCoinRole = StableCoinRole['CASHIN_ROLE'];
@@ -108,7 +108,7 @@ export default class RoleStableCoinsService extends Service {
     targetId: string,
     privateKey: PrivateKey,
     accountId: string,
-    amount?: number,
+    amount?: string,
   ): Promise<void> {
     const sdk: SDK = utilsService.getSDK();
     await utilsService.showSpinner(
@@ -135,7 +135,7 @@ export default class RoleStableCoinsService extends Service {
     targetId: string,
     privateKey: PrivateKey,
     accountId: string,
-    amount?: number,
+    amount?: string,
   ): Promise<void> {
     const sdk: SDK = utilsService.getSDK();
     await utilsService.showSpinner(

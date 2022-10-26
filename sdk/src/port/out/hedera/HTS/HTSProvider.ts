@@ -25,7 +25,6 @@ import { IniConfig, IProvider } from '../Provider.js';
 import Web3 from 'web3';
 import { StableCoin } from '../../../../domain/context/stablecoin/StableCoin.js';
 import { getHederaNetwork, PrivateKeyType } from '../../../../core/enum.js';
-import Long from 'long';
 import { log } from '../../../../core/log.js';
 import {
 	ICallContractRequest,
@@ -51,6 +50,7 @@ import { Account, ContractId } from '../../../in/sdk/sdk.js';
 import { safeCast } from '../../../../core/cast.js';
 import { StableCoinMemo } from '../../../../domain/context/stablecoin/StableCoinMemo.js';
 import BigDecimal from '../../../../domain/context/stablecoin/BigDecimal.js';
+import Long from 'long';
 
 type DefaultHederaProvider = hethers.providers.DefaultHederaProvider;
 
@@ -271,8 +271,8 @@ export default class HTSProvider implements IProvider {
 			stableCoin.name,
 			stableCoin.symbol,
 			stableCoin.decimals,
-			stableCoin.initialSupply,
-			stableCoin.maxSupply,
+			stableCoin.initialSupply.toLong(),
+			stableCoin.maxSupply?.toLong(),
 			stableCoin.memo.toJson(),
 			stableCoin.freezeDefault,
 			client,
@@ -432,8 +432,8 @@ export default class HTSProvider implements IProvider {
 		name: string,
 		symbol: string,
 		decimals: number,
-		initialSupply: BigDecimal,
-		maxSupply: BigDecimal | undefined,
+		initialSupply: Long,
+		maxSupply: Long | undefined,
 		memo: string,
 		freezeDefault: boolean,
 		client: Client,
@@ -450,8 +450,8 @@ export default class HTSProvider implements IProvider {
 			name,
 			symbol,
 			decimals,
-			initialSupply: initialSupply.toLong(),
-			maxSupply: maxSupply ? maxSupply.toLong() : Long.ZERO,
+			initialSupply: initialSupply,
+			maxSupply: maxSupply ? maxSupply : Long.ZERO,
 			memo,
 			freezeDefault,
 			treasuryAccountId:
