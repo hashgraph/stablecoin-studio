@@ -136,7 +136,7 @@ export default class StableCoinService extends Service {
 
 	public async getBalanceOf(
 		req: IGetBalanceOfStableCoinServiceRequestModel,
-	): Promise<Uint8Array> {
+	): Promise<string> {
 		return this.repository.getBalanceOf(
 			req.proxyContractId,
 			req.targetId,
@@ -224,7 +224,7 @@ export default class StableCoinService extends Service {
 			proxyContractId: req.proxyContractId,
 			targetId: treasruyAccount,
 			tokenId: req.tokenId,
-		}).then((r) => r[0]);
+		});
 		const treasuryAccountBalanceBigDecimal = BigDecimal.fromString(
 			treasuryAccountBalance.toString(),
 			coin.decimals,
@@ -284,7 +284,7 @@ export default class StableCoinService extends Service {
 			proxyContractId: req.proxyContractId,
 			targetId: req.targetId,
 			tokenId: req.tokenId,
-		}).then((r) => r[0]);
+		});
 
 		const amount = BigDecimal.fromString(req.amount, coin.decimals);
 
@@ -341,7 +341,7 @@ export default class StableCoinService extends Service {
 			proxyContractId: req.proxyContractId,
 			targetId: treasruyAccount,
 			tokenId: req.tokenId,
-		}).then((r) => r[0]);
+		});
 
 		const treasuryBigDecimal = BigDecimal.fromString(
 			treasuryAccountBalance.toString(),

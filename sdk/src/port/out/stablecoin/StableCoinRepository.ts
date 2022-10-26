@@ -229,7 +229,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		targetId: string,
 		tokenId: string,
 		account: Account,
-	): Promise<Uint8Array> {
+	): Promise<string> {
 		const parameters = [
 			await this.accountToEvmAddress(new Account(targetId)),
 		];
@@ -247,10 +247,13 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			params,
 		);
 
-		const coin: StableCoin = await this.getStableCoin(tokenId);
-		response[0] = coin.fromInteger(response[0]);
+		const coin: StableCoin = await this.getStableCoin(tokenId); //1.000000000000000000000000006
+		const balanceHedera = BigDecimal.fromStringHedera(
+			response[0].toString(),
+			coin.decimals,
+		);
 
-		return response;
+		return balanceHedera.toString();
 	}
 
 	public async getNameToken(

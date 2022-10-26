@@ -19,7 +19,7 @@ export default interface IStableCoinRepository {
 		targetId: string,
 		tokenId: string,
 		account: Account,
-	): Promise<Uint8Array>;
+	): Promise<string>;
 	getNameToken(
 		proxyContractId: string,
 		account: Account,

@@ -251,7 +251,7 @@ export class SDK {
 	 */
 	public getBalanceOf(
 		request: IGetBalanceStableCoinRequest,
-	): Promise<Uint8Array> | null {
+	): Promise<string> | null {
 		try {
 			const req: IGetBalanceOfStableCoinServiceRequestModel = {
 				...request,
