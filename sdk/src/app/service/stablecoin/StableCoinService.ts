@@ -96,9 +96,9 @@ export default class StableCoinService extends Service {
 			symbol: stableCoin.symbol,
 			decimals: stableCoin.decimals,
 			totalSupply: stableCoin.totalSupply.toString(),
-			maxSupply: stableCoin.maxSupply
-				? stableCoin.maxSupply?.toString()
-				: 'INFINITE',
+			maxSupply: stableCoin.maxSupply?.isZero
+				? 'INFINITE'
+				: stableCoin.maxSupply?.toString(),
 			initialSupply: stableCoin.initialSupply.toString(),
 			// customFee:stableCoin.,
 			treasuryId: stableCoin.treasury.id,
