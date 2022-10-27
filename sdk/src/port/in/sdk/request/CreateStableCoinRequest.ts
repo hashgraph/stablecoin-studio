@@ -1,5 +1,6 @@
 import CheckNums from '../../../../core/checks/numbers/CheckNums.js';
-import { Account, PrivateKey, StableCoin, PublicKey } from '../sdk.js';
+import { OptionalKey } from '../../../../core/decorators/OptionalDecorator.js';
+import { Account, PrivateKey, StableCoin, } from '../sdk.js';
 import {
 	AccountBaseRequest,
 	RequestAccount,
@@ -16,17 +17,41 @@ export default class CreateStableCoinRequest
 	name: string;
 	symbol: string;
 	decimals: number;
+	
+	@OptionalKey()
 	initialSupply?: bigint;
+	
+	@OptionalKey()
 	maxSupply?: bigint;
+	
+	@OptionalKey()
 	memo?: string;
+	
+	@OptionalKey()
 	freezeDefault?: boolean;
+	
+	@OptionalKey()
 	autoRenewAccount?: string;
+	
+	@OptionalKey()
 	adminKey?: RequestKey;
+	
+	@OptionalKey()
 	freezeKey?: RequestKey;
+	
+	@OptionalKey()
 	KYCKey?: RequestKey;
+	
+	@OptionalKey()
 	wipeKey?: RequestKey;
+	
+	@OptionalKey()
 	pauseKey?: RequestKey;
+	
+	@OptionalKey()
 	supplyKey?: RequestKey;
+	
+	@OptionalKey()
 	treasury?: string;
 
 	constructor({
@@ -88,10 +113,18 @@ export default class CreateStableCoinRequest
 				return StableCoin.checkDecimals(val as number);
 			},
 			treasury: Validation.checkContractId(),
-			initialSupply: (val) => {
-				CheckNums.isWithinRange(val as bigint, 0n, StableCoin.MAX_SUPPLY)
+			initialSupply: Validation.checkNumber({
+				min: 0n,
+				max: StableCoin.MAX_SUPPLY,
+			}),
+			maxSupply: (val) => {
+				CheckNums.isWithinRange(
+					val as bigint,
+					this.initialSupply ?? 0n,
+					StableCoin.MAX_SUPPLY,
+				);
 			},
-			maxSupply: Validation.checkContractId(),
+			memo: Validation.checkString({ emptyCheck: false, max: 100}),
 			adminKey: Validation.checkKey(),
 			freezeKey: Validation.checkKey(),
 			KYCKey: Validation.checkKey(),

@@ -26,7 +26,6 @@ describe('🧪 SDK Create Stable Coin Request', () => {
       decimals: 5,
     });
     expect(request).not.toBeNull();
-    console.log(request);
     const validations = request.validate();
     expect(validations.length).toBeDefined();
     expect(validations.length).toBe(0);
@@ -44,6 +43,7 @@ describe('🧪 SDK Create Stable Coin Request', () => {
     expect(request).not.toBeNull();
     console.log(request);
     const validations = request.validate();
+    console.log(validations);
     expect(validations.length).toBeDefined();
     expect(validations.length).toBe(1);
     expect(validations[0].errors[0]).toBeInstanceOf(BaseError);

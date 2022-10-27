@@ -349,8 +349,8 @@ export class StableCoin extends BaseEntity {
 		const maxNameLength = ONE_HUNDRED;
 		const errorList: BaseError[] = [];
 
-		if (!value) errorList.push(new NameEmpty());
-		if (CheckStrings.isLengthUnder(value, maxNameLength))
+		if (!CheckStrings.isNotEmpty(value)) errorList.push(new NameEmpty());
+		if (!CheckStrings.isLengthUnder(value, maxNameLength))
 			errorList.push(new NameLength(value, maxNameLength));
 
 		return errorList;

@@ -13,12 +13,17 @@ export enum ErrorCode {
 	SymbolEmpty = '10012',
 	MemoLength = '10013',
 	InvalidContractId = '10014',
+	InvalidType = '10015',
+	InvalidLength = '10016',
+	EmptyValue = '10017',
+	InvalidRange = '10018',
 	AccountNotAssociatedToToken = '20001',
 	MaxSupplyReached = '20002',
 	RoleNotAssigned = '20003',
 	ReceiptNotReceived = '30001',
 	ContractNotFound = '30002',
 	Unexpected = '30003',
+	RuntimeError = '30004',
 }
 
 export enum ErrorCategory {
