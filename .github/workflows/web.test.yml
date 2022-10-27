@@ -1,6 +1,7 @@
 name: WEB - Test
 on: workflow_dispatch
 #   pull_request:
+#     types: [review_requested]
 #     branches: [main, feature/web/**]
 #     paths:
 #       - web/**
