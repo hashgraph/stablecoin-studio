@@ -295,14 +295,11 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 									);
 								},
 								quantityOverTotalSupply: (value: number) => {
-									return (
-										(maxSupply &&
-											maxSupply !== 'INFINITE' &&
-											BigDecimal.fromString(maxSupply, decimals).isGreaterOrEqualThan(
+									return maxSupply && maxSupply !== 'INFINITE'
+										? BigDecimal.fromString(maxSupply, decimals).isGreaterOrEqualThan(
 												BigDecimal.fromString(value.toString(), decimals),
-											)) ||
-										t('global:validations.overTotalSupply')
-									);
+										  ) || t('global:validations.overTotalSupply')
+										: '';
 								},
 							},
 						}}
