@@ -1,110 +1,171 @@
 const { ContractId, AccountId } = require("@hashgraph/sdk");
 import "@hashgraph/hardhat-hethers";
 require("@hashgraph/sdk");
+import {BigNumber} from "ethers";
 
-import { expect } from "chai";
-import { deployContractsWithSDK, contractCall, getClient } from "../scripts/utils";
-import { HederaERC20__factory } from "../typechain-types";
 
-const hre = require("hardhat");
-const hreConfig = hre.network.config;
-const WIPE_ROLE  = '0x515f99f4e5a381c770462a8d9879a01f0fd4a414a168a2404dab62a62e1af0c3';
+var chai = require("chai");
+var chaiAsPromised = require("chai-as-promised");
+chai.use(chaiAsPromised);
+var expect = chai.expect;
 
-describe("Operations to WIPE tokens", function() {
-  let proxyAddress:any;
-  let client:any;
-  let account;
-  let privateKey;
+import { deployContractsWithSDK, initializeClients} from "../scripts/deploy";
+import {grantRole, revokeRole, hasRole, Mint, Wipe, getBalanceOf, getTotalSupply} from "../scripts/contractsMethods";
+import {WIPE_ROLE} from "../scripts/constants";
+
+
+let proxyAddress:any;
+let client:any ;
+let OPERATOR_ID: string;
+let OPERATOR_KEY: string;
+let OPERATOR_PUBLIC: string;
+
+let client2:any;
+let client2account: string;
+let client2privatekey: string;
+let client2publickey: string;
+
+const TokenName = "MIDAS";
+const TokenSymbol = "MD";
+const TokenDecimals = 3;
+const TokenFactor = BigNumber.from(10).pow(TokenDecimals);
+const INIT_SUPPLY = BigNumber.from(0).mul(TokenFactor);
+const MAX_SUPPLY = BigNumber.from(6000).mul(TokenFactor);
+const TokenMemo = "Hedera Accelerator Stable Coin"
+
+describe("Wipe Tests", function() {
+
+  before(async function  () {         
+    // Generate Client (token admin) and Client 2
+    [client,
+      OPERATOR_ID, 
+      OPERATOR_KEY,
+      OPERATOR_PUBLIC,
+      client2,
+      client2account,
+      client2privatekey,
+      client2publickey] = initializeClients();
   
-  before(async function  () {
-    account = hreConfig.accounts[0].account;
-    privateKey = hreConfig.accounts[0].privateKey;
-
-    client = getClient();   
-    client.setOperator(account, privateKey);
-         
- 
-    proxyAddress = await deployContractsWithSDK("TOKEN-WIPE", "TM-WP", 2, 0, 6000000, "Hedera Accelerator Stable Coin (Wipe)");    
+      // Deploy Token using Client
+      proxyAddress = await deployContractsWithSDK(
+        TokenName, 
+        TokenSymbol, 
+        TokenDecimals, 
+        INIT_SUPPLY.toString(), 
+        MAX_SUPPLY.toString(), 
+        TokenMemo, 
+        OPERATOR_ID, 
+        OPERATOR_KEY, 
+        OPERATOR_PUBLIC);       
   });
 
-  it("Admin account can grant wipeable role to an account", async function() {  
-    let params: any[] = [WIPE_ROLE, AccountId.fromString(hreConfig.accounts[1].account).toSolidityAddress()];  
-    await contractCall(ContractId.fromString(proxyAddress), 'grantRole', params, client, 400000, HederaERC20__factory.abi);  
-   
-    params = [WIPE_ROLE, AccountId.fromString(hreConfig.accounts[1].account).toSolidityAddress()];      
-    const result = await contractCall(ContractId.fromString(proxyAddress), 'hasRole', params, client, 60000, HederaERC20__factory.abi);      
- 
-    expect(result[0]).to.equals(true);
+  it("Admin account can grant and revoke wipe role to an account", async function() {     
+    // Admin grants wipe role : success 
+    let result = await hasRole(WIPE_ROLE, ContractId, proxyAddress, client, client2account);
+    expect(result).to.equals(false);
+
+    await grantRole(WIPE_ROLE, ContractId, proxyAddress, client, client2account);
+
+    result = await hasRole(WIPE_ROLE, ContractId, proxyAddress, client, client2account);
+    expect(result).to.equals(true);
+
+    // Admin revokes wipe role : success
+    await revokeRole(WIPE_ROLE, ContractId, proxyAddress, client, client2account);
+    result = await hasRole(WIPE_ROLE, ContractId, proxyAddress, client, client2account);
+    expect(result).to.equals(false);
+
+  }); 
+
+  it("Non Admin account can not grant wipe role to an account", async function() {   
+    // Non Admin grants wipe role : fail       
+    await expect(grantRole(WIPE_ROLE, ContractId, proxyAddress, client2, client2account)).to.eventually.be.rejectedWith(Error);
+
   });
 
-  it("Admin account can revoke wipeable role to an account", async function() {
-    let params: any[] = [WIPE_ROLE, AccountId.fromString(hreConfig.accounts[1].account).toSolidityAddress()];  
-    await contractCall(ContractId.fromString(proxyAddress), 'grantRole', params, client, 400000, HederaERC20__factory.abi);  
+  it("Non Admin account can not revoke wipe role to an account", async function() {
+    // Non Admin revokes wipe role : fail       
+    await grantRole(WIPE_ROLE, ContractId, proxyAddress, client, client2account);
+    await expect(revokeRole(WIPE_ROLE, ContractId, proxyAddress, client2, client2account)).to.eventually.be.rejectedWith(Error);
 
-    params = [WIPE_ROLE, AccountId.fromString(hreConfig.accounts[1].account).toSolidityAddress()];  
-    await contractCall(ContractId.fromString(proxyAddress), 'revokeRole', params, client, 400000, HederaERC20__factory.abi);  
-
-    params = [WIPE_ROLE, AccountId.fromString(hreConfig.accounts[1].account).toSolidityAddress()];      
-    const result = await contractCall(ContractId.fromString(proxyAddress), 'hasRole', params, client, 60000, HederaERC20__factory.abi);      
-
-    expect(result[0]).to.equals(false);
+    //Reset status
+    await revokeRole(WIPE_ROLE, ContractId, proxyAddress, client, client2account)
   });
 
-  it("Should can wipe 10.000 tokens from an account with 20.000 tokens", async function() {  
-    let params: any[] = [AccountId.fromString(hreConfig.accounts[0].account).toSolidityAddress(),2000000];      
-    await contractCall(ContractId.fromString(proxyAddress), 'mint', params, client, 400000, HederaERC20__factory.abi);
+  it("wipe 10 tokens from an account with 20 tokens", async function() {  
+    const TokensToMint = BigNumber.from(20).mul(TokenFactor);
+    const TokensToWipe = BigNumber.from(10).mul(TokenFactor);
 
-    params = [AccountId.fromString(hreConfig.accounts[0].account).toSolidityAddress(), 1000000];      
-    await contractCall(ContractId.fromString(proxyAddress), 'wipe', params, client, 400000, HederaERC20__factory.abi);
-   
-    params = [AccountId.fromString(hreConfig.accounts[0].account).toSolidityAddress()];  
-    const result = await contractCall(ContractId.fromString(proxyAddress), 'balanceOf', params, client, 60000, HederaERC20__factory.abi);  
+    // Mint 20 tokens
+    await Mint(ContractId, proxyAddress, TokensToMint, client, OPERATOR_ID)
+
+    // Get the initial total supply and account's balanceOf
+    const initialTotalSupply = await getTotalSupply(ContractId, proxyAddress, client);
+    const initialBalanceOf = await getBalanceOf(ContractId, proxyAddress, client, OPERATOR_ID);  
+
+    // Wipe 10 tokens
+    await Wipe(ContractId, proxyAddress, TokensToWipe, client, OPERATOR_ID)
+
+    // Check balance of account and total supply : success
+    const finalTotalSupply = await getTotalSupply(ContractId, proxyAddress, client);
+    const finalBalanceOf = await getBalanceOf(ContractId, proxyAddress, client, OPERATOR_ID);  
+    const expectedTotalSupply = initialTotalSupply.sub(TokensToWipe);
+    const expectedBalanceOf = initialBalanceOf.sub(TokensToWipe);
     
-    expect(parseInt(result[0])).to.equals(1000000);
+    expect(finalTotalSupply.toString()).to.equals(expectedTotalSupply.toString());
+    expect(finalBalanceOf.toString()).to.equals(expectedBalanceOf.toString());
   });
 
-  it("Should fail wipe if the account has not role the Wipe", async function() {
-    const client2 = getClient();     
-    const account2 = hreConfig.accounts[1].account;  
-    const privateKey2 = hreConfig.accounts[1].privateKey; 
-    client2.setOperator(account2, privateKey2);
-    
-    let params: any[] = [AccountId.fromString(hreConfig.accounts[1].account).toSolidityAddress()];  
-    await contractCall(ContractId.fromString(proxyAddress), 'associateToken', params, client2, 1300000, HederaERC20__factory.abi);  
-   
-    params = [AccountId.fromString(hreConfig.accounts[1].account).toSolidityAddress(),2000000];      
-    await contractCall(ContractId.fromString(proxyAddress), 'mint', params, client, 400000, HederaERC20__factory.abi);
-    
-    params = [AccountId.fromString(hreConfig.accounts[1].account).toSolidityAddress(), 1000000];      
-    await expect(contractCall(ContractId.fromString(proxyAddress), 'wipe', params, client2, 400000, HederaERC20__factory.abi)).to.be.throw;
-      
-  });
+  it("Wiping more than account's balance", async function() {
+    const TokensToMint = BigNumber.from(20).mul(TokenFactor);
 
-  it("Should fail wipe 1.000 from an account with 100 tokens", async function() {
+    // Mint 20 tokens
+    await Mint(ContractId, proxyAddress, TokensToMint, client, OPERATOR_ID)
 
-    let params: any[] = [AccountId.fromString(hreConfig.accounts[0].account).toSolidityAddress(),100000];      
-    await contractCall(ContractId.fromString(proxyAddress), 'mint', params, client, 400000, HederaERC20__factory.abi);
+    // Get the current balance for account
+    const result = await getBalanceOf(ContractId, proxyAddress, client, OPERATOR_ID);  
 
-    params = [AccountId.fromString(hreConfig.accounts[0].account).toSolidityAddress(), 1000000];      
-    await expect(contractCall(ContractId.fromString(proxyAddress), 'wipe', params, client, 400000, HederaERC20__factory.abi)).to.be.throw;   
+    // Wipe more than account's balance : fail
+    await expect(Wipe(ContractId, proxyAddress, result.add(1), client, OPERATOR_ID)).to.eventually.be.rejectedWith(Error);
    
   });  
 
-  it("After a wipe operation, the total supply has decreassed", async function() {
+  it("Wiping from account without the wipe role", async function() {
+    const TokensToMint = BigNumber.from(20).mul(TokenFactor);
 
-    let params: any[] = [AccountId.fromString(hreConfig.accounts[0].account).toSolidityAddress(),3000000];      
-    await contractCall(ContractId.fromString(proxyAddress), 'mint', params, client, 400000, HederaERC20__factory.abi);
-    
-    params = [];  
-    const resultBefore = await contractCall(ContractId.fromString(proxyAddress), 'totalSupply', params, client, 60000, HederaERC20__factory.abi);
+    // Mint 20 tokens   
+    await Mint(ContractId, proxyAddress, TokensToMint, client, OPERATOR_ID)
 
-    params = [AccountId.fromString(hreConfig.accounts[0].account).toSolidityAddress(), 1000000];      
-    await contractCall(ContractId.fromString(proxyAddress), 'wipe', params, client, 400000, HederaERC20__factory.abi);
-   
-    params = [];  
-    const resultAfter = await contractCall(ContractId.fromString(proxyAddress), 'totalSupply', params, client, 60000, HederaERC20__factory.abi);  
-    
-    expect(parseInt(resultAfter[0])).to.equals(Number(resultBefore[0])- 1000000);
+    // Wipe with account that does not have the wipe role: fail
+    await expect(Wipe(ContractId, proxyAddress, BigNumber.from(1), client2, OPERATOR_ID)).to.eventually.be.rejectedWith(Error);
+
   });
-  
+
+  it("User with granted wipe role can wipe tokens", async function() {
+    const TokensToMint = BigNumber.from(20).mul(TokenFactor);
+    const TokensToWipe = BigNumber.from(1);
+
+    // Mint 20 tokens   
+    await Mint(ContractId, proxyAddress, TokensToMint, client, OPERATOR_ID)
+
+    // Retrieve original total supply
+    const initialBalanceOf = await getBalanceOf(ContractId, proxyAddress, client, OPERATOR_ID);  
+    const initialTotalSupply = await getTotalSupply(ContractId, proxyAddress, client);
+
+    // Grant wipe role to account
+    await grantRole(WIPE_ROLE, ContractId, proxyAddress, client, client2account);
+
+    // Wipe tokens with newly granted account
+    await Wipe(ContractId, proxyAddress, TokensToWipe, client2, OPERATOR_ID);
+
+    // Check final total supply and treasury account's balanceOf : success
+    const finalBalanceOf = await getBalanceOf(ContractId, proxyAddress, client, OPERATOR_ID);  
+    const finalTotalSupply = await getTotalSupply(ContractId, proxyAddress, client);
+    const expectedFinalBalanceOf = initialBalanceOf.sub(TokensToWipe);
+    const expectedTotalSupply = initialTotalSupply.sub(TokensToWipe);
+
+    expect(finalBalanceOf.toString()).to.equals(expectedFinalBalanceOf.toString()); 
+    expect(finalTotalSupply.toString()).to.equals(expectedTotalSupply.toString()); 
+  }); 
+
 });
+

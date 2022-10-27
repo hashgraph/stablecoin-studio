@@ -36,7 +36,6 @@ export interface MintableInterface extends utils.Interface {
     "RESCUE_ROLE()": FunctionFragment;
     "ROLES(uint256)": FunctionFragment;
     "WIPE_ROLE()": FunctionFragment;
-    "controlAllowanceAmount(address,uint256)": FunctionFragment;
     "decreaseSupplierAllowance(address,uint256)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "getRoles(address)": FunctionFragment;
@@ -67,7 +66,6 @@ export interface MintableInterface extends utils.Interface {
       | "RESCUE_ROLE"
       | "ROLES"
       | "WIPE_ROLE"
-      | "controlAllowanceAmount"
       | "decreaseSupplierAllowance"
       | "getRoleAdmin"
       | "getRoles"
@@ -111,10 +109,6 @@ export interface MintableInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "WIPE_ROLE", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "controlAllowanceAmount",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-  ): string;
   encodeFunctionData(
     functionFragment: "decreaseSupplierAllowance",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
@@ -211,10 +205,6 @@ export interface MintableInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "ROLES", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "WIPE_ROLE", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "controlAllowanceAmount",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "decreaseSupplierAllowance",
     data: BytesLike
@@ -428,12 +418,6 @@ export interface Mintable extends BaseContract {
 
     WIPE_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-    controlAllowanceAmount(
-      supplier: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     decreaseSupplierAllowance(
       supplier: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
@@ -550,12 +534,6 @@ export interface Mintable extends BaseContract {
 
   WIPE_ROLE(overrides?: CallOverrides): Promise<string>;
 
-  controlAllowanceAmount(
-    supplier: PromiseOrValue<string>,
-    amount: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   decreaseSupplierAllowance(
     supplier: PromiseOrValue<string>,
     amount: PromiseOrValue<BigNumberish>,
@@ -671,12 +649,6 @@ export interface Mintable extends BaseContract {
     ): Promise<string>;
 
     WIPE_ROLE(overrides?: CallOverrides): Promise<string>;
-
-    controlAllowanceAmount(
-      supplier: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     decreaseSupplierAllowance(
       supplier: PromiseOrValue<string>,
@@ -876,12 +848,6 @@ export interface Mintable extends BaseContract {
 
     WIPE_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
-    controlAllowanceAmount(
-      supplier: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     decreaseSupplierAllowance(
       supplier: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
@@ -1000,12 +966,6 @@ export interface Mintable extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     WIPE_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    controlAllowanceAmount(
-      supplier: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
 
     decreaseSupplierAllowance(
       supplier: PromiseOrValue<string>,
