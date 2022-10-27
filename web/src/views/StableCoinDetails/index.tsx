@@ -106,7 +106,7 @@ const StableCoinDetails = () => {
 									label: t('initialSupply'),
 									value: selectedStableCoin?.initialSupply
 										? formatAmountWithDecimals({
-												amount: Number(selectedStableCoin.initialSupply),
+												amount: selectedStableCoin.initialSupply,
 												decimals: selectedStableCoin.decimals || 0,
 												language: i18n.language,
 										  })
@@ -116,7 +116,7 @@ const StableCoinDetails = () => {
 									label: t('totalSupply'),
 									value: selectedStableCoin?.totalSupply
 										? formatAmountWithDecimals({
-												amount: Number(selectedStableCoin.totalSupply),
+												amount: selectedStableCoin.totalSupply,
 												decimals: selectedStableCoin.decimals || 0,
 												language: i18n.language,
 										  })
@@ -124,13 +124,14 @@ const StableCoinDetails = () => {
 								},
 								{
 									label: t('maxSupply'),
-									value: selectedStableCoin?.maxSupply
-										? formatAmountWithDecimals({
-												amount: Number(selectedStableCoin.maxSupply),
-												decimals: selectedStableCoin.decimals || 0,
-												language: i18n.language,
-										  })
-										: 0,
+									value:
+										selectedStableCoin?.maxSupply && selectedStableCoin?.maxSupply !== 'INFINITE'
+											? formatAmountWithDecimals({
+													amount: selectedStableCoin.maxSupply,
+													decimals: selectedStableCoin.decimals || 0,
+													language: i18n.language,
+											  })
+											: selectedStableCoin?.maxSupply,
 								},
 								{
 									label: t('treasuryId'),

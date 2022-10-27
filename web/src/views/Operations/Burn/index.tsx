@@ -29,7 +29,7 @@ const BurnOperation = () => {
 
 	const [errorOperation, setErrorOperation] = useState();
 
-	const { decimals = 0, totalSupply } = selectedStableCoin || {};
+	const { decimals = 0 } = selectedStableCoin || {};
 
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
@@ -48,8 +48,8 @@ const BurnOperation = () => {
 				proxyContractId: selectedStableCoin.memo.proxyContract,
 				account,
 				tokenId: selectedStableCoin.tokenId,
-				amount,
-				publicKey: infoAccount.publicKey
+				amount: amount.toString(),
+				publicKey: infoAccount.publicKey,
 			});
 			onSuccess();
 		} catch (error: any) {
@@ -80,12 +80,12 @@ const BurnOperation = () => {
 												t('global:validations.decimalsValidation')
 											);
 										},
-										quantityOverTotalSupply: (value: number) => {
-											return (
-												(totalSupply && totalSupply >= value) ||
-												t('global:validations.overTotalSupply')
-											);
-										},
+										// quantityOverTotalSupply: (value: number) => {
+										// 	return (
+										// 		(totalSupply && totalSupply >= value) ||
+										// 		t('global:validations.overTotalSupply')
+										// 	);
+										// },
 									},
 								}}
 								decimalScale={decimals}

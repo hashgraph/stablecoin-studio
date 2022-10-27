@@ -50,7 +50,7 @@ const RescueTokenOperation = () => {
 				proxyContractId: selectedStableCoin.memo.proxyContract,
 				account,
 				tokenId: selectedStableCoin.tokenId,
-				amount,
+				amount: amount.toString(),
 			});
 			onSuccess();
 		} catch (error: any) {

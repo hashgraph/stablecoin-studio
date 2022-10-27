@@ -14,7 +14,7 @@ import {
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNT,
 } from '../../../store/slices/walletSlice';
-import { formatAmount } from '../../../utils/inputHelper';
+import { formatAmountWithDecimals } from '../../../utils/inputHelper';
 
 const GetBalanceOperation = () => {
 	const {
@@ -23,7 +23,7 @@ const GetBalanceOperation = () => {
 		onClose: onCloseModalAction,
 	} = useDisclosure();
 
-	const [balance, setBalance] = useState<number | null>();
+	const [balance, setBalance] = useState<string | null>();
 	const [errorOperation, setErrorOperation] = useState();
 
 	const { t } = useTranslation(['getBalance', 'global', 'operations']);
@@ -53,7 +53,7 @@ const GetBalanceOperation = () => {
 				targetId: targetAccount,
 				tokenId: selectedStableCoin.tokenId,
 			});
-			setBalance(balance?.[0]);
+			setBalance(balance);
 			onSuccess();
 		} catch (error: any) {
 			setErrorOperation(error.toString());
@@ -118,9 +118,9 @@ const GetBalanceOperation = () => {
 				successNotificationTitle={t('operations:modalSuccessTitle')}
 				successNotificationDescription={t('getBalance:modalSuccessBalance', {
 					account: getValues().targetAccount,
-					balance: formatAmount({
-						amount: balance ?? undefined,
-						decimals: selectedStableCoin?.decimals,
+					balance: formatAmountWithDecimals({
+						amount: balance ?? '',
+						decimals: selectedStableCoin?.decimals ?? 0,
 					}),
 				})}
 			/>

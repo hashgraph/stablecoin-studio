@@ -160,8 +160,8 @@ const StableCoinCreation = () => {
 			name,
 			symbol,
 			decimals,
-			initialSupply: initialSupply ? BigInt(initialSupply) : undefined,
-			maxSupply: maxSupply ? BigInt(maxSupply) : undefined,
+			initialSupply: initialSupply.toString() ?? undefined,
+			maxSupply: maxSupply.toString() ?? undefined,
 			autoRenewAccount: autorenewAccount,
 		};
 
@@ -190,7 +190,7 @@ const StableCoinCreation = () => {
 						: AccountId.NULL,
 			};
 		}
-
+		console.log(newStableCoinParams);
 		try {
 			await SDKService.createStableCoin(newStableCoinParams);
 			setSuccess(true);

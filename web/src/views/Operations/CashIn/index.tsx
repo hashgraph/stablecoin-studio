@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Heading, Text, Stack, useDisclosure } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -5,7 +6,11 @@ import DetailsReview from '../../../components/DetailsReview';
 import InputController from '../../../components/Form/InputController';
 import InputNumberController from '../../../components/Form/InputNumberController';
 import SDKService from '../../../services/SDKService';
-import { validateAccount, validateDecimals, validateQuantityOverMaxSupply } from '../../../utils/validationsHelper';
+import {
+	validateAccount,
+	validateDecimals,
+	validateQuantityOverMaxSupply,
+} from '../../../utils/validationsHelper';
 import OperationLayout from './../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
@@ -51,7 +56,7 @@ const CashInOperation = () => {
 				account,
 				tokenId: selectedStableCoin.tokenId,
 				targetId: destinationAccount,
-				amount,
+				amount: amount.toString(),
 				publicKey: new PublicKey({
 					key: infoAccount.publicKey?.key ?? '',
 					type: infoAccount.publicKey?.type ?? '',
@@ -86,12 +91,12 @@ const CashInOperation = () => {
 												t('global:validations.decimalsValidation')
 											);
 										},
-										quantityOverMaxSupply: (value: number) => {
-											return (
-												validateQuantityOverMaxSupply(value, maxSupply, totalSupply) ||
-												t('global:validations.overMaxSupplyCashIn')
-											);
-										},
+										// quantityOverMaxSupply: (value: number) => {
+										// 	return (
+										// 		validateQuantityOverMaxSupply(value, maxSupply, totalSupply) ||
+										// 		t('global:validations.overMaxSupplyCashIn')
+										// 	);
+										// },
 									},
 								}}
 								decimalScale={decimals}
