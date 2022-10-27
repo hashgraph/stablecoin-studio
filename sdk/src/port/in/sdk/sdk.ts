@@ -224,17 +224,10 @@ export class SDK {
 	}
 
 	public getCapabilitiesStableCoin(
-		request: IGetCapabilitiesRequest,
+		id: string,
+		publicKey: string
 	): Promise<Capabilities[]> | null {
-		try {
-			const req: IGetCapabilitiesServiceRequestModel = {
-				...request
-			};
-			return this.stableCoinService.getCapabilitiesStableCoin(req);
-		} catch (error) {
-			console.error(error);
-			return null;
-		}
+		return this.stableCoinService.getCapabilitiesStableCoin(id, publicKey);
 	}
 
 	/**

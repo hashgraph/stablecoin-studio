@@ -11,7 +11,7 @@ export default interface IStableCoinRepository {
 	getStableCoin(id: string): Promise<StableCoin>;
 	getCapabilitiesStableCoin(
 		tokenId: string,
-		account: Account,
+		publickey: string,
 	): Promise<Capabilities[]>;
 	getBalanceOf(
 		proxyContractId: string,

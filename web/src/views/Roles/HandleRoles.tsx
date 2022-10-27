@@ -16,7 +16,7 @@ import { SELECTED_WALLET_COIN, SELECTED_WALLET_PAIRED_ACCOUNT, SELECTED_WALLET_C
 import { SelectController } from '../../components/Form/SelectController';
 import { validateDecimals } from '../../utils/validationsHelper';
 import {formatAmount } from '../../utils/inputHelper';
-import { Capabilities, StableCoinRole } from 'hedera-stable-coin-sdk';
+import { Capabilities } from 'hedera-stable-coin-sdk';
 
 const supplier = 'Cash in';
 
@@ -150,25 +150,11 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 				}) ;
 			break;
 			case 'editRole':
-				alreadyHasRole = await SDKService.hasRole({
-					proxyContractId: selectedStableCoin.memo.proxyContract,
-					account: selectedAccount,
-					tokenId: selectedStableCoin.tokenId,
-					targetId: account,
-					role: StableCoinRole.CASHIN_ROLE
-				}) ;
-				if (!alreadyHasRole || !alreadyHasRole[0]){
-					setModalErrorDescription('hasNotRoleError');
-					onError();
-					return;
-				}
-
 				isUnlimitedSupplierAllowance = await SDKService.isUnlimitedSupplierAllowance({
 					proxyContractId: selectedStableCoin.memo.proxyContract,
 					account: selectedAccount,
 					targetId: account
 				}) ;
-
 				if (isUnlimitedSupplierAllowance![0]) {
 					setModalErrorDescription('hasInfiniteAllowance');
 					onError();

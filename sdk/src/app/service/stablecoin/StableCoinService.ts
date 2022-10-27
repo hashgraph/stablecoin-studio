@@ -126,12 +126,10 @@ export default class StableCoinService extends Service {
 	}
 
 	public async getCapabilitiesStableCoin(
-		req: IGetCapabilitiesServiceRequestModel,
+		id: string,
+		publickey: string
 	): Promise<Capabilities[]> {
-		return this.repository.getCapabilitiesStableCoin(
-			req.tokenId,
-			req.account
-		);
+		return this.repository.getCapabilitiesStableCoin(id, publickey);
 	}
 
 	public async getBalanceOf(
@@ -166,10 +164,12 @@ export default class StableCoinService extends Service {
 		let resultCashIn = false;
 
 		const capabilities: Capabilities[] =
-			await this.getCapabilitiesStableCoin({
-				tokenId: req.tokenId,
-				account: req.account
-			});
+			await this.getCapabilitiesStableCoin(
+				req.tokenId,
+				req.publicKey
+						? req.publicKey?.key
+						: req.account?.privateKey?.publicKey?.key ?? ''
+			);
 		if (capabilities.includes(Capabilities.CASH_IN)) {
 			const result = await this.repository.cashIn(
 				req.proxyContractId,
@@ -234,10 +234,12 @@ export default class StableCoinService extends Service {
 
 		let resultCashOut = false;
 		const capabilities: Capabilities[] =
-			await this.getCapabilitiesStableCoin({
-				tokenId: req.tokenId,
-				account: req.account
-			});
+			await this.getCapabilitiesStableCoin(
+				req.tokenId,
+				req.publicKey
+						? req.publicKey?.key
+						: req.account?.privateKey?.publicKey?.key ?? ''
+			);
 		if (capabilities.includes(Capabilities.BURN)) {
 			const result = await this.repository.cashOut(
 				req.proxyContractId,
@@ -289,10 +291,10 @@ export default class StableCoinService extends Service {
 
 		let resultWipe = false;
 		const capabilities: Capabilities[] =
-			await this.getCapabilitiesStableCoin({
-				tokenId: req.tokenId,
-				account: req.account
-			});
+			await this.getCapabilitiesStableCoin(
+				req.tokenId,
+				req.account?.privateKey?.publicKey?.key ?? ''
+			);
 		if (capabilities.includes(Capabilities.WIPE)) {
 			const result = await this.repository.wipe(
 				req.proxyContractId,
