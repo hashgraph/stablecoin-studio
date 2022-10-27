@@ -71,10 +71,9 @@ describe('🧪 [PORT] StableCoinRepository', () => {
 
   it('Test getCapabilitiesStableCoin', async () => {
     const coinId = '0.0.48586658';
-    const stableCoinDetails = await repository.getStableCoin(coinId);
     const response = await repository.getCapabilitiesStableCoin(
-      stableCoinDetails.id,
-      ACCOUNTS.testnet
+      coinId,
+      ACCOUNTS.testnet.privateKey.key
     );
     expect(Array.isArray(response)).toBeTruthy();
     expect(response).not.toBeNull();

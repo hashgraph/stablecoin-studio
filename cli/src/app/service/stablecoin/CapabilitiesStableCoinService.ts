@@ -1,7 +1,7 @@
 import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
 import { SDK } from 'hedera-stable-coin-sdk';
-import type { EOAccount, Capabilities } from 'hedera-stable-coin-sdk';
+import type { Capabilities } from 'hedera-stable-coin-sdk';
 
 /**
  * Capabilities Stable Coin Service
@@ -15,12 +15,12 @@ export default class CapabilitiesStableCoinsService extends Service {
    * List Stable Coins can be managed
    */
   public async getCapabilitiesStableCoins(
-    account: EOAccount,
-    tokenId: string,
+    id: string,
+    publicKey: string,
   ): Promise<Capabilities[]> {
     const sdk: SDK = utilsService.getSDK();
 
-    const capabilities = await sdk.getCapabilitiesStableCoin({account, tokenId});
+    const capabilities = await sdk.getCapabilitiesStableCoin(id, publicKey);
 
     return capabilities;
   }
