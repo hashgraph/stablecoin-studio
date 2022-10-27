@@ -99,6 +99,31 @@ const _abi = [
     type: "event",
   },
   {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "burner",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "token",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+    ],
+    name: "TokensBurned",
+    type: "event",
+  },
+  {
     inputs: [],
     name: "BURN_ROLE",
     outputs: [
@@ -198,38 +223,13 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-    ],
-    name: "balanceOf",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
         internalType: "uint256",
         name: "amount",
         type: "uint256",
       },
     ],
     name: "burn",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -274,19 +274,6 @@ const _abi = [
   {
     inputs: [],
     name: "getTokenAddress",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "getTokenOwnerAddress",
     outputs: [
       {
         internalType: "address",
@@ -371,24 +358,6 @@ const _abi = [
       },
     ],
     name: "revokeRole",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "contract HTSTokenOwner",
-        name: "htsTokenOwnerAddress",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "tokenAddress",
-        type: "address",
-      },
-    ],
-    name: "setTokenAddress",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

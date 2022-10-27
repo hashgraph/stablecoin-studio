@@ -40,7 +40,6 @@ export interface SupplierAdminInterface extends utils.Interface {
     "getRoleAdmin(bytes32)": FunctionFragment;
     "getRoles(address)": FunctionFragment;
     "getTokenAddress()": FunctionFragment;
-    "getTokenOwnerAddress()": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "grantSupplierRole(address,uint256)": FunctionFragment;
     "grantUnlimitedSupplierRole(address)": FunctionFragment;
@@ -51,7 +50,6 @@ export interface SupplierAdminInterface extends utils.Interface {
     "resetSupplierAllowance(address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "revokeSupplierRole(address)": FunctionFragment;
-    "setTokenAddress(address,address)": FunctionFragment;
     "supplierAllowance(address)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
   };
@@ -69,7 +67,6 @@ export interface SupplierAdminInterface extends utils.Interface {
       | "getRoleAdmin"
       | "getRoles"
       | "getTokenAddress"
-      | "getTokenOwnerAddress"
       | "grantRole"
       | "grantSupplierRole"
       | "grantUnlimitedSupplierRole"
@@ -80,7 +77,6 @@ export interface SupplierAdminInterface extends utils.Interface {
       | "resetSupplierAllowance"
       | "revokeRole"
       | "revokeSupplierRole"
-      | "setTokenAddress"
       | "supplierAllowance"
       | "supportsInterface"
   ): FunctionFragment;
@@ -124,10 +120,6 @@ export interface SupplierAdminInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getTokenOwnerAddress",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "grantRole",
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
   ): string;
@@ -166,10 +158,6 @@ export interface SupplierAdminInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "revokeSupplierRole",
     values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setTokenAddress",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "supplierAllowance",
@@ -212,10 +200,6 @@ export interface SupplierAdminInterface extends utils.Interface {
     functionFragment: "getTokenAddress",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "getTokenOwnerAddress",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "grantSupplierRole",
@@ -245,10 +229,6 @@ export interface SupplierAdminInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "revokeSupplierRole",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setTokenAddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -429,8 +409,6 @@ export interface SupplierAdmin extends BaseContract {
 
     getTokenAddress(overrides?: CallOverrides): Promise<[string]>;
 
-    getTokenOwnerAddress(overrides?: CallOverrides): Promise<[string]>;
-
     grantRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
@@ -487,12 +465,6 @@ export interface SupplierAdmin extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    setTokenAddress(
-      htsTokenOwnerAddress: PromiseOrValue<string>,
-      tokenAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     supplierAllowance(
       supplier: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -538,8 +510,6 @@ export interface SupplierAdmin extends BaseContract {
   ): Promise<string[]>;
 
   getTokenAddress(overrides?: CallOverrides): Promise<string>;
-
-  getTokenOwnerAddress(overrides?: CallOverrides): Promise<string>;
 
   grantRole(
     role: PromiseOrValue<BytesLike>,
@@ -597,12 +567,6 @@ export interface SupplierAdmin extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  setTokenAddress(
-    htsTokenOwnerAddress: PromiseOrValue<string>,
-    tokenAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   supplierAllowance(
     supplier: PromiseOrValue<string>,
     overrides?: CallOverrides
@@ -648,8 +612,6 @@ export interface SupplierAdmin extends BaseContract {
     ): Promise<string[]>;
 
     getTokenAddress(overrides?: CallOverrides): Promise<string>;
-
-    getTokenOwnerAddress(overrides?: CallOverrides): Promise<string>;
 
     grantRole(
       role: PromiseOrValue<BytesLike>,
@@ -704,12 +666,6 @@ export interface SupplierAdmin extends BaseContract {
 
     revokeSupplierRole(
       supplier: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setTokenAddress(
-      htsTokenOwnerAddress: PromiseOrValue<string>,
-      tokenAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -841,8 +797,6 @@ export interface SupplierAdmin extends BaseContract {
 
     getTokenAddress(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getTokenOwnerAddress(overrides?: CallOverrides): Promise<BigNumber>;
-
     grantRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
@@ -896,12 +850,6 @@ export interface SupplierAdmin extends BaseContract {
 
     revokeSupplierRole(
       supplier: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setTokenAddress(
-      htsTokenOwnerAddress: PromiseOrValue<string>,
-      tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -954,10 +902,6 @@ export interface SupplierAdmin extends BaseContract {
 
     getTokenAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getTokenOwnerAddress(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     grantRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
@@ -1011,12 +955,6 @@ export interface SupplierAdmin extends BaseContract {
 
     revokeSupplierRole(
       supplier: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setTokenAddress(
-      htsTokenOwnerAddress: PromiseOrValue<string>,
-      tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

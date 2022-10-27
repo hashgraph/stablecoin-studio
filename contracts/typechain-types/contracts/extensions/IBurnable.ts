@@ -13,7 +13,11 @@ import type {
   Signer,
   utils,
 } from "ethers";
-import type { FunctionFragment, Result } from "@ethersproject/abi";
+import type {
+  FunctionFragment,
+  Result,
+  EventFragment,
+} from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
 import type {
   TypedEventFilter,
@@ -37,8 +41,24 @@ export interface IBurnableInterface extends utils.Interface {
 
   decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
 
-  events: {};
+  events: {
+    "TokensBurned(address,address,uint256)": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "TokensBurned"): EventFragment;
 }
+
+export interface TokensBurnedEventObject {
+  burner: string;
+  token: string;
+  amount: BigNumber;
+}
+export type TokensBurnedEvent = TypedEvent<
+  [string, string, BigNumber],
+  TokensBurnedEventObject
+>;
+
+export type TokensBurnedEventFilter = TypedEventFilter<TokensBurnedEvent>;
 
 export interface IBurnable extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -82,10 +102,21 @@ export interface IBurnable extends BaseContract {
     burn(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
   };
 
-  filters: {};
+  filters: {
+    "TokensBurned(address,address,uint256)"(
+      burner?: null,
+      token?: null,
+      amount?: null
+    ): TokensBurnedEventFilter;
+    TokensBurned(
+      burner?: null,
+      token?: null,
+      amount?: null
+    ): TokensBurnedEventFilter;
+  };
 
   estimateGas: {
     burn(

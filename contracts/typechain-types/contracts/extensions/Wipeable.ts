@@ -39,12 +39,10 @@ export interface WipeableInterface extends utils.Interface {
     "getRoleAdmin(bytes32)": FunctionFragment;
     "getRoles(address)": FunctionFragment;
     "getTokenAddress()": FunctionFragment;
-    "getTokenOwnerAddress()": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
-    "setTokenAddress(address,address)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "wipe(address,uint32)": FunctionFragment;
   };
@@ -61,12 +59,10 @@ export interface WipeableInterface extends utils.Interface {
       | "getRoleAdmin"
       | "getRoles"
       | "getTokenAddress"
-      | "getTokenOwnerAddress"
       | "grantRole"
       | "hasRole"
       | "renounceRole"
       | "revokeRole"
-      | "setTokenAddress"
       | "supportsInterface"
       | "wipe"
   ): FunctionFragment;
@@ -106,10 +102,6 @@ export interface WipeableInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getTokenOwnerAddress",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "grantRole",
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
   ): string;
@@ -124,10 +116,6 @@ export interface WipeableInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "revokeRole",
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setTokenAddress",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
@@ -166,10 +154,6 @@ export interface WipeableInterface extends utils.Interface {
     functionFragment: "getTokenAddress",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "getTokenOwnerAddress",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
   decodeFunctionResult(
@@ -177,10 +161,6 @@ export interface WipeableInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "setTokenAddress",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
     data: BytesLike
@@ -192,7 +172,7 @@ export interface WipeableInterface extends utils.Interface {
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
-    "TokensWiped(address,address,uint32)": EventFragment;
+    "TokensWiped(address,address,address,uint32)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
@@ -247,12 +227,13 @@ export type RoleRevokedEvent = TypedEvent<
 export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
 
 export interface TokensWipedEventObject {
+  wiper: string;
   token: string;
   account: string;
   amount: number;
 }
 export type TokensWipedEvent = TypedEvent<
-  [string, string, number],
+  [string, string, string, number],
   TokensWipedEventObject
 >;
 
@@ -314,8 +295,6 @@ export interface Wipeable extends BaseContract {
 
     getTokenAddress(overrides?: CallOverrides): Promise<[string]>;
 
-    getTokenOwnerAddress(overrides?: CallOverrides): Promise<[string]>;
-
     grantRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
@@ -337,12 +316,6 @@ export interface Wipeable extends BaseContract {
     revokeRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    setTokenAddress(
-      htsTokenOwnerAddress: PromiseOrValue<string>,
-      tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -387,8 +360,6 @@ export interface Wipeable extends BaseContract {
 
   getTokenAddress(overrides?: CallOverrides): Promise<string>;
 
-  getTokenOwnerAddress(overrides?: CallOverrides): Promise<string>;
-
   grantRole(
     role: PromiseOrValue<BytesLike>,
     account: PromiseOrValue<string>,
@@ -410,12 +381,6 @@ export interface Wipeable extends BaseContract {
   revokeRole(
     role: PromiseOrValue<BytesLike>,
     account: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  setTokenAddress(
-    htsTokenOwnerAddress: PromiseOrValue<string>,
-    tokenAddress: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -460,8 +425,6 @@ export interface Wipeable extends BaseContract {
 
     getTokenAddress(overrides?: CallOverrides): Promise<string>;
 
-    getTokenOwnerAddress(overrides?: CallOverrides): Promise<string>;
-
     grantRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
@@ -486,12 +449,6 @@ export interface Wipeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setTokenAddress(
-      htsTokenOwnerAddress: PromiseOrValue<string>,
-      tokenAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     supportsInterface(
       interfaceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -501,7 +458,7 @@ export interface Wipeable extends BaseContract {
       account: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
   };
 
   filters: {
@@ -541,12 +498,14 @@ export interface Wipeable extends BaseContract {
       sender?: PromiseOrValue<string> | null
     ): RoleRevokedEventFilter;
 
-    "TokensWiped(address,address,uint32)"(
+    "TokensWiped(address,address,address,uint32)"(
+      wiper?: null,
       token?: null,
       account?: null,
       amount?: null
     ): TokensWipedEventFilter;
     TokensWiped(
+      wiper?: null,
       token?: null,
       account?: null,
       amount?: null
@@ -583,8 +542,6 @@ export interface Wipeable extends BaseContract {
 
     getTokenAddress(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getTokenOwnerAddress(overrides?: CallOverrides): Promise<BigNumber>;
-
     grantRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
@@ -606,12 +563,6 @@ export interface Wipeable extends BaseContract {
     revokeRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setTokenAddress(
-      htsTokenOwnerAddress: PromiseOrValue<string>,
-      tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -659,10 +610,6 @@ export interface Wipeable extends BaseContract {
 
     getTokenAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getTokenOwnerAddress(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     grantRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
@@ -684,12 +631,6 @@ export interface Wipeable extends BaseContract {
     revokeRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setTokenAddress(
-      htsTokenOwnerAddress: PromiseOrValue<string>,
-      tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

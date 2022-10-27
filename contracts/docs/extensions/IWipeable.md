@@ -13,7 +13,7 @@
 ### wipe
 
 ```solidity
-function wipe(address account, uint32 amount) external nonpayable returns (bool)
+function wipe(address account, uint32 amount) external nonpayable
 ```
 
 
@@ -27,12 +27,6 @@ function wipe(address account, uint32 amount) external nonpayable returns (bool)
 | account | address | The address of the account where to wipe the token |
 | amount | uint32 | The number of tokens to wipe |
 
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | bool | boolean True if successful        |
-
 
 
 ## Events
@@ -40,7 +34,7 @@ function wipe(address account, uint32 amount) external nonpayable returns (bool)
 ### TokensWiped
 
 ```solidity
-event TokensWiped(address token, address account, uint32 amount)
+event TokensWiped(address wiper, address token, address account, uint32 amount)
 ```
 
 
@@ -51,6 +45,7 @@ event TokensWiped(address token, address account, uint32 amount)
 
 | Name | Type | Description |
 |---|---|---|
+| wiper  | address | undefined |
 | token  | address | Token address |
 | account  | address | The address of the account where to wipe the token |
 | amount  | uint32 | The number of tokens to wipe |

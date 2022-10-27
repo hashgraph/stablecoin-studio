@@ -193,24 +193,7 @@ function getTokenAddress() external view returns (address)
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | address | address The token address |
-
-### getTokenOwnerAddress
-
-```solidity
-function getTokenOwnerAddress() external view returns (address)
-```
-
-
-
-*Returns the HTSTokenOwner contract address  *
-
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | address | address HTSTokenOwner contract address |
+| _0 | address | address of The token address |
 
 ### grantRole
 
@@ -286,23 +269,6 @@ function revokeRole(bytes32 role, address account) external nonpayable
 | role | bytes32 | undefined |
 | account | address | undefined |
 
-### setTokenAddress
-
-```solidity
-function setTokenAddress(contract HTSTokenOwner htsTokenOwnerAddress, address tokenAddress) external nonpayable
-```
-
-
-
-*Assigns the HTSTokenOwner contract address and the token address, validating that the  token address was not already assigned*
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| htsTokenOwnerAddress | contract HTSTokenOwner | The  contract address HTSTokenOwner |
-| tokenAddress | address | The token address created |
-
 ### supportsInterface
 
 ```solidity
@@ -328,7 +294,7 @@ function supportsInterface(bytes4 interfaceId) external view returns (bool)
 ### wipe
 
 ```solidity
-function wipe(address account, uint32 amount) external nonpayable returns (bool)
+function wipe(address account, uint32 amount) external nonpayable
 ```
 
 
@@ -341,12 +307,6 @@ function wipe(address account, uint32 amount) external nonpayable returns (bool)
 |---|---|---|
 | account | address | The address of the account where to wipe the token |
 | amount | uint32 | The number of tokens to wipe |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | bool | True if successful     |
 
 
 
@@ -425,7 +385,7 @@ event RoleRevoked(bytes32 indexed role, address indexed account, address indexed
 ### TokensWiped
 
 ```solidity
-event TokensWiped(address token, address account, uint32 amount)
+event TokensWiped(address wiper, address token, address account, uint32 amount)
 ```
 
 
@@ -436,6 +396,7 @@ event TokensWiped(address token, address account, uint32 amount)
 
 | Name | Type | Description |
 |---|---|---|
+| wiper  | address | undefined |
 | token  | address | undefined |
 | account  | address | undefined |
 | amount  | uint32 | undefined |

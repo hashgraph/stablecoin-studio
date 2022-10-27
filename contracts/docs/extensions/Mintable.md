@@ -210,24 +210,7 @@ function getTokenAddress() external view returns (address)
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | address | address The token address |
-
-### getTokenOwnerAddress
-
-```solidity
-function getTokenOwnerAddress() external view returns (address)
-```
-
-
-
-*Returns the HTSTokenOwner contract address  *
-
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | address | address HTSTokenOwner contract address |
+| _0 | address | address of The token address |
 
 ### grantRole
 
@@ -344,7 +327,7 @@ function isUnlimitedSupplierAllowance(address supplier) external view returns (b
 ### mint
 
 ```solidity
-function mint(address account, uint256 amount) external nonpayable returns (bool)
+function mint(address account, uint256 amount) external nonpayable
 ```
 
 
@@ -357,12 +340,6 @@ function mint(address account, uint256 amount) external nonpayable returns (bool
 |---|---|---|
 | account | address | The address that receives minted tokens |
 | amount | uint256 | The number of tokens to be minted |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | bool | undefined |
 
 ### renounceRole
 
@@ -429,23 +406,6 @@ function revokeSupplierRole(address supplier) external nonpayable
 | Name | Type | Description |
 |---|---|---|
 | supplier | address | The address of the supplier |
-
-### setTokenAddress
-
-```solidity
-function setTokenAddress(contract HTSTokenOwner htsTokenOwnerAddress, address tokenAddress) external nonpayable
-```
-
-
-
-*Assigns the HTSTokenOwner contract address and the token address, validating that the  token address was not already assigned*
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| htsTokenOwnerAddress | contract HTSTokenOwner | The  contract address HTSTokenOwner |
-| tokenAddress | address | The token address created |
 
 ### supplierAllowance
 
@@ -623,6 +583,25 @@ event SupplierAllowanceReset(address indexed sender, address indexed supplier, u
 | supplier `indexed` | address | undefined |
 | oldAllowance  | uint256 | undefined |
 | newAllowance  | uint256 | undefined |
+
+### TokensMinted
+
+```solidity
+event TokensMinted(address minter, address token, uint256 amount, address account)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| minter  | address | undefined |
+| token  | address | undefined |
+| amount  | uint256 | undefined |
+| account  | address | undefined |
 
 
 

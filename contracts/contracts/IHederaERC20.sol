@@ -7,6 +7,33 @@ import "./HTSTokenOwner.sol";
 interface IHederaERC20 {
 
     /**
+    * @dev Emitted when the token has been associated to the account
+    *
+    * @param token Token address
+    * @param account Account address
+    */  
+    event TokenAssociated (address token, address account);
+
+    /**
+    * @dev Emitted when the token has been dissociated from the account
+    *
+    * @param token Token address
+    * @param account Account address
+    */  
+    event TokenDissociated (address token, address account);
+
+    /**
+    * @dev Emitted when tokens have been transfered from sender to receiver
+    *
+    * @param token Token address
+    * @param sender Sender address
+    * @param receiver Receiver address
+    * @param amount Transfered amount
+
+    */  
+    event TokenTransfer (address token, address sender, address receiver, uint256 amount);
+
+    /**
      * @dev Returns the name of the token
      * 
      * @return The the name of the token

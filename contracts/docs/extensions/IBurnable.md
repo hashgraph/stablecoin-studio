@@ -13,7 +13,7 @@
 ### burn
 
 ```solidity
-function burn(uint256 amount) external nonpayable returns (bool)
+function burn(uint256 amount) external nonpayable
 ```
 
 
@@ -26,12 +26,27 @@ function burn(uint256 amount) external nonpayable returns (bool)
 |---|---|---|
 | amount | uint256 | The number of tokens to be burned |
 
-#### Returns
+
+
+## Events
+
+### TokensBurned
+
+```solidity
+event TokensBurned(address burner, address token, uint256 amount)
+```
+
+
+
+*Emitted when the `amount` tokens are burned from TokenOwner*
+
+#### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | bool | undefined |
-
+| burner  | address | The caller of the function that emitted the event |
+| token  | address | Token address |
+| amount  | uint256 | The number of tokens to burn |
 
 
 

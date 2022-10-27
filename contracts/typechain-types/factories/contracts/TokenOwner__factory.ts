@@ -23,37 +23,6 @@ const _abi = [
     stateMutability: "view",
     type: "function",
   },
-  {
-    inputs: [],
-    name: "getTokenOwnerAddress",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "contract HTSTokenOwner",
-        name: "htsTokenOwnerAddress",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "tokenAddress",
-        type: "address",
-      },
-    ],
-    name: "setTokenAddress",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
 ];
 
 export class TokenOwner__factory {

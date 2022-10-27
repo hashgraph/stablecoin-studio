@@ -10,7 +10,11 @@ import type {
   Signer,
   utils,
 } from "ethers";
-import type { FunctionFragment, Result } from "@ethersproject/abi";
+import type {
+  FunctionFragment,
+  Result,
+  EventFragment,
+} from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
 import type {
   TypedEventFilter,
@@ -59,8 +63,52 @@ export interface IHederaERC20Interface extends utils.Interface {
     data: BytesLike
   ): Result;
 
-  events: {};
+  events: {
+    "TokenAssociated(address,address)": EventFragment;
+    "TokenDissociated(address,address)": EventFragment;
+    "TokenTransfer(address,address,address,uint256)": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "TokenAssociated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TokenDissociated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TokenTransfer"): EventFragment;
 }
+
+export interface TokenAssociatedEventObject {
+  token: string;
+  account: string;
+}
+export type TokenAssociatedEvent = TypedEvent<
+  [string, string],
+  TokenAssociatedEventObject
+>;
+
+export type TokenAssociatedEventFilter = TypedEventFilter<TokenAssociatedEvent>;
+
+export interface TokenDissociatedEventObject {
+  token: string;
+  account: string;
+}
+export type TokenDissociatedEvent = TypedEvent<
+  [string, string],
+  TokenDissociatedEventObject
+>;
+
+export type TokenDissociatedEventFilter =
+  TypedEventFilter<TokenDissociatedEvent>;
+
+export interface TokenTransferEventObject {
+  token: string;
+  sender: string;
+  receiver: string;
+  amount: BigNumber;
+}
+export type TokenTransferEvent = TypedEvent<
+  [string, string, string, BigNumber],
+  TokenTransferEventObject
+>;
+
+export type TokenTransferEventFilter = TypedEventFilter<TokenTransferEvent>;
 
 export interface IHederaERC20 extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -131,7 +179,32 @@ export interface IHederaERC20 extends BaseContract {
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
-  filters: {};
+  filters: {
+    "TokenAssociated(address,address)"(
+      token?: null,
+      account?: null
+    ): TokenAssociatedEventFilter;
+    TokenAssociated(token?: null, account?: null): TokenAssociatedEventFilter;
+
+    "TokenDissociated(address,address)"(
+      token?: null,
+      account?: null
+    ): TokenDissociatedEventFilter;
+    TokenDissociated(token?: null, account?: null): TokenDissociatedEventFilter;
+
+    "TokenTransfer(address,address,address,uint256)"(
+      token?: null,
+      sender?: null,
+      receiver?: null,
+      amount?: null
+    ): TokenTransferEventFilter;
+    TokenTransfer(
+      token?: null,
+      sender?: null,
+      receiver?: null,
+      amount?: null
+    ): TokenTransferEventFilter;
+  };
 
   estimateGas: {
     balanceOf(

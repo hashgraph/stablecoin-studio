@@ -6,8 +6,6 @@ import type {
   BigNumber,
   BytesLike,
   CallOverrides,
-  ContractTransaction,
-  Overrides,
   PopulatedTransaction,
   Signer,
   utils,
@@ -25,40 +23,17 @@ import type {
 export interface TokenOwnerInterface extends utils.Interface {
   functions: {
     "getTokenAddress()": FunctionFragment;
-    "getTokenOwnerAddress()": FunctionFragment;
-    "setTokenAddress(address,address)": FunctionFragment;
   };
 
-  getFunction(
-    nameOrSignatureOrTopic:
-      | "getTokenAddress"
-      | "getTokenOwnerAddress"
-      | "setTokenAddress"
-  ): FunctionFragment;
+  getFunction(nameOrSignatureOrTopic: "getTokenAddress"): FunctionFragment;
 
   encodeFunctionData(
     functionFragment: "getTokenAddress",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "getTokenOwnerAddress",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setTokenAddress",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
-  ): string;
 
   decodeFunctionResult(
     functionFragment: "getTokenAddress",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getTokenOwnerAddress",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setTokenAddress",
     data: BytesLike
   ): Result;
 
@@ -93,63 +68,21 @@ export interface TokenOwner extends BaseContract {
 
   functions: {
     getTokenAddress(overrides?: CallOverrides): Promise<[string]>;
-
-    getTokenOwnerAddress(overrides?: CallOverrides): Promise<[string]>;
-
-    setTokenAddress(
-      htsTokenOwnerAddress: PromiseOrValue<string>,
-      tokenAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
   };
 
   getTokenAddress(overrides?: CallOverrides): Promise<string>;
 
-  getTokenOwnerAddress(overrides?: CallOverrides): Promise<string>;
-
-  setTokenAddress(
-    htsTokenOwnerAddress: PromiseOrValue<string>,
-    tokenAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   callStatic: {
     getTokenAddress(overrides?: CallOverrides): Promise<string>;
-
-    getTokenOwnerAddress(overrides?: CallOverrides): Promise<string>;
-
-    setTokenAddress(
-      htsTokenOwnerAddress: PromiseOrValue<string>,
-      tokenAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
   };
 
   filters: {};
 
   estimateGas: {
     getTokenAddress(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getTokenOwnerAddress(overrides?: CallOverrides): Promise<BigNumber>;
-
-    setTokenAddress(
-      htsTokenOwnerAddress: PromiseOrValue<string>,
-      tokenAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     getTokenAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getTokenOwnerAddress(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    setTokenAddress(
-      htsTokenOwnerAddress: PromiseOrValue<string>,
-      tokenAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
   };
 }

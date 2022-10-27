@@ -13,7 +13,11 @@ import type {
   Signer,
   utils,
 } from "ethers";
-import type { FunctionFragment, Result } from "@ethersproject/abi";
+import type {
+  FunctionFragment,
+  Result,
+  EventFragment,
+} from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
 import type {
   TypedEventFilter,
@@ -37,8 +41,25 @@ export interface IMintableInterface extends utils.Interface {
 
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
 
-  events: {};
+  events: {
+    "TokensMinted(address,address,uint256,address)": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "TokensMinted"): EventFragment;
 }
+
+export interface TokensMintedEventObject {
+  minter: string;
+  token: string;
+  amount: BigNumber;
+  account: string;
+}
+export type TokensMintedEvent = TypedEvent<
+  [string, string, BigNumber, string],
+  TokensMintedEventObject
+>;
+
+export type TokensMintedEventFilter = TypedEventFilter<TokensMintedEvent>;
 
 export interface IMintable extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -85,10 +106,23 @@ export interface IMintable extends BaseContract {
       account: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
   };
 
-  filters: {};
+  filters: {
+    "TokensMinted(address,address,uint256,address)"(
+      minter?: null,
+      token?: null,
+      amount?: null,
+      account?: null
+    ): TokensMintedEventFilter;
+    TokensMinted(
+      minter?: null,
+      token?: null,
+      amount?: null,
+      account?: null
+    ): TokensMintedEventFilter;
+  };
 
   estimateGas: {
     mint(

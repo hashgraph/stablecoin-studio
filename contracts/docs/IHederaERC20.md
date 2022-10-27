@@ -102,4 +102,60 @@ function totalSupply() external view returns (uint256)
 
 
 
+## Events
+
+### TokenAssociated
+
+```solidity
+event TokenAssociated(address token, address account)
+```
+
+
+
+*Emitted when the token has been associated to the account*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token  | address | Token address |
+| account  | address | Account address |
+
+### TokenDissociated
+
+```solidity
+event TokenDissociated(address token, address account)
+```
+
+
+
+*Emitted when the token has been dissociated from the account*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token  | address | Token address |
+| account  | address | Account address |
+
+### TokenTransfer
+
+```solidity
+event TokenTransfer(address token, address sender, address receiver, uint256 amount)
+```
+
+
+
+*Emitted when tokens have been transfered from sender to receiver*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token  | address | Token address |
+| sender  | address | Sender address |
+| receiver  | address | Receiver address |
+| amount  | uint256 | Transfered amount |
+
+
 

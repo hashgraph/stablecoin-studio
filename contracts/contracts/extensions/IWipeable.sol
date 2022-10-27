@@ -10,7 +10,7 @@ interface IWipeable   {
     * @param account The address of the account where to wipe the token
     * @param amount The number of tokens to wipe
     */  
-    event TokensWiped (address token, address account, uint32 amount);
+    event TokensWiped(address wiper, address token, address account, uint32 amount);
 
     /**
     * @dev Operation to wipe a token `amount` from `account`
@@ -18,8 +18,7 @@ interface IWipeable   {
     * 
     * @param account The address of the account where to wipe the token
     * @param amount The number of tokens to wipe
-    * @return boolean True if successful       
     */
-    function wipe(address account, uint32 amount) external returns (bool) ;
+    function wipe(address account, uint32 amount) external;
     
 }

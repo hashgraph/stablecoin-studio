@@ -5,11 +5,10 @@ import "./IMintable.sol";
 import "./SupplierAdmin.sol";
 import "../TokenOwner.sol";
 import "../Roles.sol";
+import "../hts-precompile/IHederaTokenService.sol";
 
 abstract contract Mintable is IMintable, TokenOwner, Roles, SupplierAdmin {
-    
-    function _transfer(address from, address to, uint256 amount) internal virtual returns (bool); 
-    
+        
     /**
      * @dev Creates an `amount` of tokens and transfers them to an `account`, increasing
      * the total supply
@@ -20,11 +19,13 @@ abstract contract Mintable is IMintable, TokenOwner, Roles, SupplierAdmin {
     function mint(address account, uint256 amount) 
         external       
         onlyRole(CASHIN_ROLE)  
-        returns (bool) 
     {         
         if(!_unlimitedSupplierAllowances[msg.sender]) _decreaseSupplierAllowance(msg.sender, amount);
-        (bool success) = HTSTokenOwner(_getTokenOwnerAddress()).mintToken(_getTokenAddress(), amount);
-        require(success, "Minting error");
-        return _transfer(_getTokenOwnerAddress(), account, amount);
+        (int256 responseCode, , ) = IHederaTokenService(precompileAddress).mintToken(_getTokenAddress(), uint64(amount), new bytes[](0));
+        _checkResponse(responseCode); 
+
+        _transfer(address(this), account, amount);
+
+        emit TokensMinted(msg.sender, _getTokenAddress(), amount, account);
     }
 }

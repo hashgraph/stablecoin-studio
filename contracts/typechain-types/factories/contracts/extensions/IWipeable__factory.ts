@@ -16,6 +16,12 @@ const _abi = [
       {
         indexed: false,
         internalType: "address",
+        name: "wiper",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "address",
         name: "token",
         type: "address",
       },
@@ -49,13 +55,7 @@ const _abi = [
       },
     ],
     name: "wipe",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },

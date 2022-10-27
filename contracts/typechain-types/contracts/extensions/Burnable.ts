@@ -36,17 +36,14 @@ export interface BurnableInterface extends utils.Interface {
     "RESCUE_ROLE()": FunctionFragment;
     "ROLES(uint256)": FunctionFragment;
     "WIPE_ROLE()": FunctionFragment;
-    "balanceOf(address)": FunctionFragment;
     "burn(uint256)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "getRoles(address)": FunctionFragment;
     "getTokenAddress()": FunctionFragment;
-    "getTokenOwnerAddress()": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
-    "setTokenAddress(address,address)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
   };
 
@@ -59,17 +56,14 @@ export interface BurnableInterface extends utils.Interface {
       | "RESCUE_ROLE"
       | "ROLES"
       | "WIPE_ROLE"
-      | "balanceOf"
       | "burn"
       | "getRoleAdmin"
       | "getRoles"
       | "getTokenAddress"
-      | "getTokenOwnerAddress"
       | "grantRole"
       | "hasRole"
       | "renounceRole"
       | "revokeRole"
-      | "setTokenAddress"
       | "supportsInterface"
   ): FunctionFragment;
 
@@ -96,10 +90,6 @@ export interface BurnableInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "WIPE_ROLE", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "balanceOf",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "burn",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
@@ -113,10 +103,6 @@ export interface BurnableInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getTokenAddress",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getTokenOwnerAddress",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -134,10 +120,6 @@ export interface BurnableInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "revokeRole",
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setTokenAddress",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
@@ -163,7 +145,6 @@ export interface BurnableInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "ROLES", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "WIPE_ROLE", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getRoleAdmin",
@@ -174,10 +155,6 @@ export interface BurnableInterface extends utils.Interface {
     functionFragment: "getTokenAddress",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "getTokenOwnerAddress",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
   decodeFunctionResult(
@@ -185,10 +162,6 @@ export interface BurnableInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "setTokenAddress",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
     data: BytesLike
@@ -199,12 +172,14 @@ export interface BurnableInterface extends utils.Interface {
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
+    "TokensBurned(address,address,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TokensBurned"): EventFragment;
 }
 
 export interface InitializedEventObject {
@@ -251,6 +226,18 @@ export type RoleRevokedEvent = TypedEvent<
 
 export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
 
+export interface TokensBurnedEventObject {
+  burner: string;
+  token: string;
+  amount: BigNumber;
+}
+export type TokensBurnedEvent = TypedEvent<
+  [string, string, BigNumber],
+  TokensBurnedEventObject
+>;
+
+export type TokensBurnedEventFilter = TypedEventFilter<TokensBurnedEvent>;
+
 export interface Burnable extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
@@ -295,11 +282,6 @@ export interface Burnable extends BaseContract {
 
     WIPE_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-    balanceOf(
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     burn(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -316,8 +298,6 @@ export interface Burnable extends BaseContract {
     ): Promise<[string[]]>;
 
     getTokenAddress(overrides?: CallOverrides): Promise<[string]>;
-
-    getTokenOwnerAddress(overrides?: CallOverrides): Promise<[string]>;
 
     grantRole(
       role: PromiseOrValue<BytesLike>,
@@ -340,12 +320,6 @@ export interface Burnable extends BaseContract {
     revokeRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    setTokenAddress(
-      htsTokenOwnerAddress: PromiseOrValue<string>,
-      tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -372,11 +346,6 @@ export interface Burnable extends BaseContract {
 
   WIPE_ROLE(overrides?: CallOverrides): Promise<string>;
 
-  balanceOf(
-    account: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   burn(
     amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -393,8 +362,6 @@ export interface Burnable extends BaseContract {
   ): Promise<string[]>;
 
   getTokenAddress(overrides?: CallOverrides): Promise<string>;
-
-  getTokenOwnerAddress(overrides?: CallOverrides): Promise<string>;
 
   grantRole(
     role: PromiseOrValue<BytesLike>,
@@ -417,12 +384,6 @@ export interface Burnable extends BaseContract {
   revokeRole(
     role: PromiseOrValue<BytesLike>,
     account: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  setTokenAddress(
-    htsTokenOwnerAddress: PromiseOrValue<string>,
-    tokenAddress: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -449,15 +410,10 @@ export interface Burnable extends BaseContract {
 
     WIPE_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    balanceOf(
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     burn(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
@@ -470,8 +426,6 @@ export interface Burnable extends BaseContract {
     ): Promise<string[]>;
 
     getTokenAddress(overrides?: CallOverrides): Promise<string>;
-
-    getTokenOwnerAddress(overrides?: CallOverrides): Promise<string>;
 
     grantRole(
       role: PromiseOrValue<BytesLike>,
@@ -494,12 +448,6 @@ export interface Burnable extends BaseContract {
     revokeRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setTokenAddress(
-      htsTokenOwnerAddress: PromiseOrValue<string>,
-      tokenAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -545,6 +493,17 @@ export interface Burnable extends BaseContract {
       account?: PromiseOrValue<string> | null,
       sender?: PromiseOrValue<string> | null
     ): RoleRevokedEventFilter;
+
+    "TokensBurned(address,address,uint256)"(
+      burner?: null,
+      token?: null,
+      amount?: null
+    ): TokensBurnedEventFilter;
+    TokensBurned(
+      burner?: null,
+      token?: null,
+      amount?: null
+    ): TokensBurnedEventFilter;
   };
 
   estimateGas: {
@@ -565,11 +524,6 @@ export interface Burnable extends BaseContract {
 
     WIPE_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
-    balanceOf(
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     burn(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -586,8 +540,6 @@ export interface Burnable extends BaseContract {
     ): Promise<BigNumber>;
 
     getTokenAddress(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getTokenOwnerAddress(overrides?: CallOverrides): Promise<BigNumber>;
 
     grantRole(
       role: PromiseOrValue<BytesLike>,
@@ -610,12 +562,6 @@ export interface Burnable extends BaseContract {
     revokeRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setTokenAddress(
-      htsTokenOwnerAddress: PromiseOrValue<string>,
-      tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -645,11 +591,6 @@ export interface Burnable extends BaseContract {
 
     WIPE_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    balanceOf(
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     burn(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -666,10 +607,6 @@ export interface Burnable extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getTokenAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getTokenOwnerAddress(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     grantRole(
       role: PromiseOrValue<BytesLike>,
@@ -692,12 +629,6 @@ export interface Burnable extends BaseContract {
     revokeRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setTokenAddress(
-      htsTokenOwnerAddress: PromiseOrValue<string>,
-      tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

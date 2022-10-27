@@ -42,19 +42,20 @@ export interface IWipeableInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "wipe", data: BytesLike): Result;
 
   events: {
-    "TokensWiped(address,address,uint32)": EventFragment;
+    "TokensWiped(address,address,address,uint32)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "TokensWiped"): EventFragment;
 }
 
 export interface TokensWipedEventObject {
+  wiper: string;
   token: string;
   account: string;
   amount: number;
 }
 export type TokensWipedEvent = TypedEvent<
-  [string, string, number],
+  [string, string, string, number],
   TokensWipedEventObject
 >;
 
@@ -105,16 +106,18 @@ export interface IWipeable extends BaseContract {
       account: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
   };
 
   filters: {
-    "TokensWiped(address,address,uint32)"(
+    "TokensWiped(address,address,address,uint32)"(
+      wiper?: null,
       token?: null,
       account?: null,
       amount?: null
     ): TokensWipedEventFilter;
     TokensWiped(
+      wiper?: null,
       token?: null,
       account?: null,
       amount?: null

@@ -193,24 +193,7 @@ function getTokenAddress() external view returns (address)
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | address | address The token address |
-
-### getTokenOwnerAddress
-
-```solidity
-function getTokenOwnerAddress() external view returns (address)
-```
-
-
-
-*Returns the HTSTokenOwner contract address  *
-
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | address | address HTSTokenOwner contract address |
+| _0 | address | address of The token address |
 
 ### grantRole
 
@@ -269,22 +252,6 @@ function renounceRole(bytes32 role, address account) external nonpayable
 | role | bytes32 | undefined |
 | account | address | undefined |
 
-### rescueHbar
-
-```solidity
-function rescueHbar(uint256 amount) external nonpayable
-```
-
-
-
-*Rescue `value` hbar from contractTokenOwner to rescuer Must be protected with RESCUE_ROLE*
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| amount | uint256 | The amount of tinyhbar to rescue |
-
 ### rescueToken
 
 ```solidity
@@ -318,23 +285,6 @@ function revokeRole(bytes32 role, address account) external nonpayable
 | role | bytes32 | undefined |
 | account | address | undefined |
 
-### setTokenAddress
-
-```solidity
-function setTokenAddress(contract HTSTokenOwner htsTokenOwnerAddress, address tokenAddress) external nonpayable
-```
-
-
-
-*Assigns the HTSTokenOwner contract address and the token address, validating that the  token address was not already assigned*
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| htsTokenOwnerAddress | contract HTSTokenOwner | The  contract address HTSTokenOwner |
-| tokenAddress | address | The token address created |
-
 ### supportsInterface
 
 ```solidity
@@ -360,24 +310,6 @@ function supportsInterface(bytes4 interfaceId) external view returns (bool)
 
 
 ## Events
-
-### HbarRescued
-
-```solidity
-event HbarRescued(address rescuer, uint256 amount, uint256 oldAmount)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| rescuer  | address | undefined |
-| amount  | uint256 | undefined |
-| oldAmount  | uint256 | undefined |
 
 ### Initialized
 
@@ -452,7 +384,7 @@ event RoleRevoked(bytes32 indexed role, address indexed account, address indexed
 ### TokenRescued
 
 ```solidity
-event TokenRescued(address rescuer, address tokenId, uint256 amount, uint256 oldBalance)
+event TokenRescued(address rescuer, address tokenId, uint256 amount)
 ```
 
 
@@ -466,7 +398,6 @@ event TokenRescued(address rescuer, address tokenId, uint256 amount, uint256 old
 | rescuer  | address | undefined |
 | tokenId  | address | undefined |
 | amount  | uint256 | undefined |
-| oldBalance  | uint256 | undefined |
 
 
 

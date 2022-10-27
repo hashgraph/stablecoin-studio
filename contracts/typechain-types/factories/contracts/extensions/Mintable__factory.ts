@@ -204,6 +204,37 @@ const _abi = [
     type: "event",
   },
   {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "minter",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "token",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+    ],
+    name: "TokensMinted",
+    type: "event",
+  },
+  {
     inputs: [],
     name: "BURN_ROLE",
     outputs: [
@@ -370,19 +401,6 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "getTokenOwnerAddress",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [
       {
         internalType: "bytes32",
@@ -506,13 +524,7 @@ const _abi = [
       },
     ],
     name: "mint",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -574,24 +586,6 @@ const _abi = [
       },
     ],
     name: "revokeSupplierRole",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "contract HTSTokenOwner",
-        name: "htsTokenOwnerAddress",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "tokenAddress",
-        type: "address",
-      },
-    ],
-    name: "setTokenAddress",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

@@ -40,7 +40,6 @@ export interface MintableInterface extends utils.Interface {
     "getRoleAdmin(bytes32)": FunctionFragment;
     "getRoles(address)": FunctionFragment;
     "getTokenAddress()": FunctionFragment;
-    "getTokenOwnerAddress()": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "grantSupplierRole(address,uint256)": FunctionFragment;
     "grantUnlimitedSupplierRole(address)": FunctionFragment;
@@ -52,7 +51,6 @@ export interface MintableInterface extends utils.Interface {
     "resetSupplierAllowance(address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "revokeSupplierRole(address)": FunctionFragment;
-    "setTokenAddress(address,address)": FunctionFragment;
     "supplierAllowance(address)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
   };
@@ -70,7 +68,6 @@ export interface MintableInterface extends utils.Interface {
       | "getRoleAdmin"
       | "getRoles"
       | "getTokenAddress"
-      | "getTokenOwnerAddress"
       | "grantRole"
       | "grantSupplierRole"
       | "grantUnlimitedSupplierRole"
@@ -82,7 +79,6 @@ export interface MintableInterface extends utils.Interface {
       | "resetSupplierAllowance"
       | "revokeRole"
       | "revokeSupplierRole"
-      | "setTokenAddress"
       | "supplierAllowance"
       | "supportsInterface"
   ): FunctionFragment;
@@ -123,10 +119,6 @@ export interface MintableInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getTokenAddress",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getTokenOwnerAddress",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -174,10 +166,6 @@ export interface MintableInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "setTokenAddress",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "supplierAllowance",
     values: [PromiseOrValue<string>]
   ): string;
@@ -218,10 +206,6 @@ export interface MintableInterface extends utils.Interface {
     functionFragment: "getTokenAddress",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "getTokenOwnerAddress",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "grantSupplierRole",
@@ -255,10 +239,6 @@ export interface MintableInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setTokenAddress",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "supplierAllowance",
     data: BytesLike
   ): Result;
@@ -275,6 +255,7 @@ export interface MintableInterface extends utils.Interface {
     "SupplierAllowanceDecreased(address,address,uint256,uint256,uint256)": EventFragment;
     "SupplierAllowanceIncreased(address,address,uint256,uint256,uint256)": EventFragment;
     "SupplierAllowanceReset(address,address,uint256,uint256)": EventFragment;
+    "TokensMinted(address,address,uint256,address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
@@ -284,6 +265,7 @@ export interface MintableInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "SupplierAllowanceDecreased"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SupplierAllowanceIncreased"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SupplierAllowanceReset"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TokensMinted"): EventFragment;
 }
 
 export interface InitializedEventObject {
@@ -374,6 +356,19 @@ export type SupplierAllowanceResetEvent = TypedEvent<
 export type SupplierAllowanceResetEventFilter =
   TypedEventFilter<SupplierAllowanceResetEvent>;
 
+export interface TokensMintedEventObject {
+  minter: string;
+  token: string;
+  amount: BigNumber;
+  account: string;
+}
+export type TokensMintedEvent = TypedEvent<
+  [string, string, BigNumber, string],
+  TokensMintedEventObject
+>;
+
+export type TokensMintedEventFilter = TypedEventFilter<TokensMintedEvent>;
+
 export interface Mintable extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
@@ -435,8 +430,6 @@ export interface Mintable extends BaseContract {
     ): Promise<[string[]]>;
 
     getTokenAddress(overrides?: CallOverrides): Promise<[string]>;
-
-    getTokenOwnerAddress(overrides?: CallOverrides): Promise<[string]>;
 
     grantRole(
       role: PromiseOrValue<BytesLike>,
@@ -500,12 +493,6 @@ export interface Mintable extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    setTokenAddress(
-      htsTokenOwnerAddress: PromiseOrValue<string>,
-      tokenAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     supplierAllowance(
       supplier: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -551,8 +538,6 @@ export interface Mintable extends BaseContract {
   ): Promise<string[]>;
 
   getTokenAddress(overrides?: CallOverrides): Promise<string>;
-
-  getTokenOwnerAddress(overrides?: CallOverrides): Promise<string>;
 
   grantRole(
     role: PromiseOrValue<BytesLike>,
@@ -616,12 +601,6 @@ export interface Mintable extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  setTokenAddress(
-    htsTokenOwnerAddress: PromiseOrValue<string>,
-    tokenAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   supplierAllowance(
     supplier: PromiseOrValue<string>,
     overrides?: CallOverrides
@@ -668,8 +647,6 @@ export interface Mintable extends BaseContract {
 
     getTokenAddress(overrides?: CallOverrides): Promise<string>;
 
-    getTokenOwnerAddress(overrides?: CallOverrides): Promise<string>;
-
     grantRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
@@ -708,7 +685,7 @@ export interface Mintable extends BaseContract {
       account: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
     renounceRole(
       role: PromiseOrValue<BytesLike>,
@@ -729,12 +706,6 @@ export interface Mintable extends BaseContract {
 
     revokeSupplierRole(
       supplier: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setTokenAddress(
-      htsTokenOwnerAddress: PromiseOrValue<string>,
-      tokenAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -828,6 +799,19 @@ export interface Mintable extends BaseContract {
       oldAllowance?: null,
       newAllowance?: null
     ): SupplierAllowanceResetEventFilter;
+
+    "TokensMinted(address,address,uint256,address)"(
+      minter?: null,
+      token?: null,
+      amount?: null,
+      account?: null
+    ): TokensMintedEventFilter;
+    TokensMinted(
+      minter?: null,
+      token?: null,
+      amount?: null,
+      account?: null
+    ): TokensMintedEventFilter;
   };
 
   estimateGas: {
@@ -865,8 +849,6 @@ export interface Mintable extends BaseContract {
     ): Promise<BigNumber>;
 
     getTokenAddress(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getTokenOwnerAddress(overrides?: CallOverrides): Promise<BigNumber>;
 
     grantRole(
       role: PromiseOrValue<BytesLike>,
@@ -927,12 +909,6 @@ export interface Mintable extends BaseContract {
 
     revokeSupplierRole(
       supplier: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setTokenAddress(
-      htsTokenOwnerAddress: PromiseOrValue<string>,
-      tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -985,10 +961,6 @@ export interface Mintable extends BaseContract {
 
     getTokenAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getTokenOwnerAddress(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     grantRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
@@ -1048,12 +1020,6 @@ export interface Mintable extends BaseContract {
 
     revokeSupplierRole(
       supplier: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setTokenAddress(
-      htsTokenOwnerAddress: PromiseOrValue<string>,
-      tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

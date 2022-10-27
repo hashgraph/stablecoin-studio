@@ -183,7 +183,7 @@ function approve(address, uint256) external pure returns (bool)
 ### associateToken
 
 ```solidity
-function associateToken(address adr) external nonpayable returns (bool)
+function associateToken(address adr) external nonpayable
 ```
 
 
@@ -195,12 +195,6 @@ function associateToken(address adr) external nonpayable returns (bool)
 | Name | Type | Description |
 |---|---|---|
 | adr | address | The address of the account to associate |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | bool | bool True if the account has been successfully associated with the token |
 
 ### balanceOf
 
@@ -227,7 +221,7 @@ function balanceOf(address account) external view returns (uint256)
 ### burn
 
 ```solidity
-function burn(uint256 amount) external nonpayable returns (bool)
+function burn(uint256 amount) external nonpayable
 ```
 
 
@@ -239,12 +233,6 @@ function burn(uint256 amount) external nonpayable returns (bool)
 | Name | Type | Description |
 |---|---|---|
 | amount | uint256 | The number of tokens to be burned |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | bool | undefined |
 
 ### decimals
 
@@ -283,7 +271,7 @@ function decreaseSupplierAllowance(address supplier, uint256 amount) external no
 ### dissociateToken
 
 ```solidity
-function dissociateToken(address adr) external nonpayable returns (bool)
+function dissociateToken(address adr) external nonpayable
 ```
 
 
@@ -295,12 +283,6 @@ function dissociateToken(address adr) external nonpayable returns (bool)
 | Name | Type | Description |
 |---|---|---|
 | adr | address | The address of the account to dissociate |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | bool | bool True if the account has been successfully dissociated from the token |
 
 ### getRoleAdmin
 
@@ -361,71 +343,7 @@ function getTokenAddress() external view returns (address)
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | address | address The token address |
-
-### getTokenExpiryInfo
-
-```solidity
-function getTokenExpiryInfo(address token) external nonpayable returns (int256 responseCode, struct IHederaTokenService.Expiry expiryInfo)
-```
-
-Operation to get token expiry info
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| token | address | The token address |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| responseCode | int256 | The response code for the status of the request. SUCCESS is 22. |
-| expiryInfo | IHederaTokenService.Expiry | The expiry info of the token |
-
-### getTokenKey
-
-```solidity
-function getTokenKey(address token, uint256 keyType) external nonpayable returns (int64 responseCode, struct IHederaTokenService.KeyValue key)
-```
-
-Query token KeyValue
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| token | address | The token address to check |
-| keyType | uint256 | The keyType of the desired KeyValue |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| responseCode | int64 | The response code for the status of the request. SUCCESS is 22. |
-| key | IHederaTokenService.KeyValue | KeyValue info for key of type `keyType` |
-
-### getTokenOwnerAddress
-
-```solidity
-function getTokenOwnerAddress() external view returns (address)
-```
-
-
-
-*Returns the HTSTokenOwner contract address  *
-
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | address | address HTSTokenOwner contract address |
+| _0 | address | address of The token address |
 
 ### grantRole
 
@@ -460,29 +378,6 @@ function grantSupplierRole(address supplier, uint256 amount) external nonpayable
 |---|---|---|
 | supplier | address | The address of the supplier |
 | amount | uint256 | The amount to add to the supplier&#39;s current minting allowance  |
-
-### grantTokenKyc
-
-```solidity
-function grantTokenKyc(address token, address account) external nonpayable returns (int64 responseCode)
-```
-
-Operation to grant kyc to token account
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| token | address | The token address |
-| account | address | The account address to grant kyc |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| responseCode | int64 | The response code for the status of the request. SUCCESS is 22. |
 
 ### grantUnlimitedSupplierRole
 
@@ -543,21 +438,10 @@ function increaseSupplierAllowance(address supplier, uint256 amount) external no
 ### initialize
 
 ```solidity
-function initialize() external payable
+function initialize(address tokenAddress) external payable
 ```
 
 
-
-
-
-
-### isKyc
-
-```solidity
-function isKyc(address token, address account) external nonpayable returns (int64 responseCode, bool kycGranted)
-```
-
-Query if token account has kyc granted
 
 
 
@@ -565,15 +449,7 @@ Query if token account has kyc granted
 
 | Name | Type | Description |
 |---|---|---|
-| token | address | The token address to check |
-| account | address | The account address associated with the token |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| responseCode | int64 | The response code for the status of the request. SUCCESS is 22. |
-| kycGranted | bool | True if `account` has kyc granted for `token` |
+| tokenAddress | address | undefined |
 
 ### isUnlimitedSupplierAllowance
 
@@ -600,7 +476,7 @@ function isUnlimitedSupplierAllowance(address supplier) external view returns (b
 ### mint
 
 ```solidity
-function mint(address account, uint256 amount) external nonpayable returns (bool)
+function mint(address account, uint256 amount) external nonpayable
 ```
 
 
@@ -613,12 +489,6 @@ function mint(address account, uint256 amount) external nonpayable returns (bool
 |---|---|---|
 | account | address | The address that receives minted tokens |
 | amount | uint256 | The number of tokens to be minted |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | bool | undefined |
 
 ### name
 
@@ -637,28 +507,6 @@ function name() external view returns (string)
 |---|---|---|
 | _0 | string | string The the name of the token |
 
-### pauseToken
-
-```solidity
-function pauseToken(address token) external nonpayable returns (int256 responseCode)
-```
-
-Operation to pause token
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| token | address | The token address to be paused |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| responseCode | int256 | The response code for the status of the request. SUCCESS is 22. |
-
 ### renounceRole
 
 ```solidity
@@ -675,22 +523,6 @@ function renounceRole(bytes32 role, address account) external nonpayable
 |---|---|---|
 | role | bytes32 | undefined |
 | account | address | undefined |
-
-### rescueHbar
-
-```solidity
-function rescueHbar(uint256 amount) external nonpayable
-```
-
-
-
-*Rescue `value` hbar from contractTokenOwner to rescuer Must be protected with RESCUE_ROLE*
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| amount | uint256 | The amount of tinyhbar to rescue |
 
 ### rescueToken
 
@@ -756,46 +588,6 @@ function revokeSupplierRole(address supplier) external nonpayable
 | Name | Type | Description |
 |---|---|---|
 | supplier | address | The address of the supplier |
-
-### revokeTokenKyc
-
-```solidity
-function revokeTokenKyc(address token, address account) external nonpayable returns (int64 responseCode)
-```
-
-Operation to revoke kyc to token account
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| token | address | The token address |
-| account | address | The account address to revoke kyc |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| responseCode | int64 | The response code for the status of the request. SUCCESS is 22. |
-
-### setTokenAddress
-
-```solidity
-function setTokenAddress(contract HTSTokenOwner htsTokenOwnerAddress, address tokenAddress) external nonpayable
-```
-
-
-
-*Assigns the HTSTokenOwner contract address and the token address, validating that the  token address was not already assigned*
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| htsTokenOwnerAddress | contract HTSTokenOwner | The  contract address HTSTokenOwner |
-| tokenAddress | address | The token address created |
 
 ### supplierAllowance
 
@@ -922,78 +714,10 @@ function transferFrom(address, address, uint256) external pure returns (bool)
 |---|---|---|
 | _0 | bool | undefined |
 
-### unpauseToken
-
-```solidity
-function unpauseToken(address token) external nonpayable returns (int256 responseCode)
-```
-
-Operation to unpause token
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| token | address | The token address to be unpaused |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| responseCode | int256 | The response code for the status of the request. SUCCESS is 22. |
-
-### updateTokenExpiryInfo
-
-```solidity
-function updateTokenExpiryInfo(address token, IHederaTokenService.Expiry expiryInfo) external nonpayable returns (int256 responseCode)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| token | address | undefined |
-| expiryInfo | IHederaTokenService.Expiry | undefined |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| responseCode | int256 | undefined |
-
-### updateTokenKeys
-
-```solidity
-function updateTokenKeys(address token, IHederaTokenService.TokenKey[] keys) external nonpayable returns (int64 responseCode)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| token | address | undefined |
-| keys | IHederaTokenService.TokenKey[] | undefined |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| responseCode | int64 | undefined |
-
 ### wipe
 
 ```solidity
-function wipe(address account, uint32 amount) external nonpayable returns (bool)
+function wipe(address account, uint32 amount) external nonpayable
 ```
 
 
@@ -1006,12 +730,6 @@ function wipe(address account, uint32 amount) external nonpayable returns (bool)
 |---|---|---|
 | account | address | The address of the account where to wipe the token |
 | amount | uint32 | The number of tokens to wipe |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | bool | True if successful     |
 
 
 
@@ -1034,24 +752,6 @@ event Approval(address indexed owner, address indexed spender, uint256 value)
 | owner `indexed` | address | undefined |
 | spender `indexed` | address | undefined |
 | value  | uint256 | undefined |
-
-### HbarRescued
-
-```solidity
-event HbarRescued(address rescuer, uint256 amount, uint256 oldAmount)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| rescuer  | address | undefined |
-| amount  | uint256 | undefined |
-| oldAmount  | uint256 | undefined |
 
 ### Initialized
 
@@ -1182,10 +882,44 @@ event SupplierAllowanceReset(address indexed sender, address indexed supplier, u
 | oldAllowance  | uint256 | undefined |
 | newAllowance  | uint256 | undefined |
 
+### TokenAssociated
+
+```solidity
+event TokenAssociated(address token, address account)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token  | address | undefined |
+| account  | address | undefined |
+
+### TokenDissociated
+
+```solidity
+event TokenDissociated(address token, address account)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token  | address | undefined |
+| account  | address | undefined |
+
 ### TokenRescued
 
 ```solidity
-event TokenRescued(address rescuer, address tokenId, uint256 amount, uint256 oldBalance)
+event TokenRescued(address rescuer, address tokenId, uint256 amount)
 ```
 
 
@@ -1199,12 +933,11 @@ event TokenRescued(address rescuer, address tokenId, uint256 amount, uint256 old
 | rescuer  | address | undefined |
 | tokenId  | address | undefined |
 | amount  | uint256 | undefined |
-| oldBalance  | uint256 | undefined |
 
-### TokensWiped
+### TokenTransfer
 
 ```solidity
-event TokensWiped(address token, address account, uint32 amount)
+event TokenTransfer(address token, address sender, address receiver, uint256 amount)
 ```
 
 
@@ -1215,6 +948,63 @@ event TokensWiped(address token, address account, uint32 amount)
 
 | Name | Type | Description |
 |---|---|---|
+| token  | address | undefined |
+| sender  | address | undefined |
+| receiver  | address | undefined |
+| amount  | uint256 | undefined |
+
+### TokensBurned
+
+```solidity
+event TokensBurned(address burner, address token, uint256 amount)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| burner  | address | undefined |
+| token  | address | undefined |
+| amount  | uint256 | undefined |
+
+### TokensMinted
+
+```solidity
+event TokensMinted(address minter, address token, uint256 amount, address account)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| minter  | address | undefined |
+| token  | address | undefined |
+| amount  | uint256 | undefined |
+| account  | address | undefined |
+
+### TokensWiped
+
+```solidity
+event TokensWiped(address wiper, address token, address account, uint32 amount)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| wiper  | address | undefined |
 | token  | address | undefined |
 | account  | address | undefined |
 | amount  | uint32 | undefined |

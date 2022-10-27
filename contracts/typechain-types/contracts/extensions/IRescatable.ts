@@ -29,58 +29,35 @@ import type {
 
 export interface IRescatableInterface extends utils.Interface {
   functions: {
-    "rescueHbar(uint256)": FunctionFragment;
     "rescueToken(uint256)": FunctionFragment;
   };
 
-  getFunction(
-    nameOrSignatureOrTopic: "rescueHbar" | "rescueToken"
-  ): FunctionFragment;
+  getFunction(nameOrSignatureOrTopic: "rescueToken"): FunctionFragment;
 
-  encodeFunctionData(
-    functionFragment: "rescueHbar",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
   encodeFunctionData(
     functionFragment: "rescueToken",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
 
-  decodeFunctionResult(functionFragment: "rescueHbar", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "rescueToken",
     data: BytesLike
   ): Result;
 
   events: {
-    "HbarRescued(address,uint256,uint256)": EventFragment;
-    "TokenRescued(address,address,uint256,uint256)": EventFragment;
+    "TokenRescued(address,address,uint256)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "HbarRescued"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TokenRescued"): EventFragment;
 }
-
-export interface HbarRescuedEventObject {
-  rescuer: string;
-  amount: BigNumber;
-  oldAmount: BigNumber;
-}
-export type HbarRescuedEvent = TypedEvent<
-  [string, BigNumber, BigNumber],
-  HbarRescuedEventObject
->;
-
-export type HbarRescuedEventFilter = TypedEventFilter<HbarRescuedEvent>;
 
 export interface TokenRescuedEventObject {
   rescuer: string;
   tokenId: string;
   amount: BigNumber;
-  oldBalance: BigNumber;
 }
 export type TokenRescuedEvent = TypedEvent<
-  [string, string, BigNumber, BigNumber],
+  [string, string, BigNumber],
   TokenRescuedEventObject
 >;
 
@@ -113,21 +90,11 @@ export interface IRescatable extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    rescueHbar(
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     rescueToken(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
-
-  rescueHbar(
-    amount: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
 
   rescueToken(
     amount: PromiseOrValue<BigNumberish>,
@@ -135,11 +102,6 @@ export interface IRescatable extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    rescueHbar(
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     rescueToken(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -147,37 +109,19 @@ export interface IRescatable extends BaseContract {
   };
 
   filters: {
-    "HbarRescued(address,uint256,uint256)"(
-      rescuer?: null,
-      amount?: null,
-      oldAmount?: null
-    ): HbarRescuedEventFilter;
-    HbarRescued(
-      rescuer?: null,
-      amount?: null,
-      oldAmount?: null
-    ): HbarRescuedEventFilter;
-
-    "TokenRescued(address,address,uint256,uint256)"(
+    "TokenRescued(address,address,uint256)"(
       rescuer?: null,
       tokenId?: null,
-      amount?: null,
-      oldBalance?: null
+      amount?: null
     ): TokenRescuedEventFilter;
     TokenRescued(
       rescuer?: null,
       tokenId?: null,
-      amount?: null,
-      oldBalance?: null
+      amount?: null
     ): TokenRescuedEventFilter;
   };
 
   estimateGas: {
-    rescueHbar(
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     rescueToken(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -185,11 +129,6 @@ export interface IRescatable extends BaseContract {
   };
 
   populateTransaction: {
-    rescueHbar(
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     rescueToken(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }

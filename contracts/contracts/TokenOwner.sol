@@ -2,35 +2,29 @@
 pragma solidity ^0.8.10;
 
 import "./ITokenOwner.sol";
+import "./hts-precompile/HederaResponseCodes.sol";
+import "./hts-precompile/IHederaTokenService.sol";
 
-abstract contract TokenOwner is ITokenOwner {
+abstract contract TokenOwner is ITokenOwner, HederaResponseCodes {
     
-    HTSTokenOwner internal _htsTokenOwnerAddress;
+    // Hedera HTS precompiled contract
+    address constant precompileAddress = address(0x167);
+    // HTS Token this contract owns
     address internal _tokenAddress; 
 
-    /**
-     * @dev Assigns the HTSTokenOwner contract address and the token address, validating that the 
-     * token address was not already assigned
-     *
-     * @param htsTokenOwnerAddress The  contract address HTSTokenOwner
-     * @param tokenAddress The token address created
-     */
-    function setTokenAddress(HTSTokenOwner htsTokenOwnerAddress, address tokenAddress) 
-        external         
+    // Initiliazes the token address
+    function _setTokenAddress (address tokenAddress) internal
     {
-        require(_tokenAddress == address(0), "Token address already defined");
-
-        _htsTokenOwnerAddress = htsTokenOwnerAddress;
         _tokenAddress = tokenAddress;
     }
 
     /**
      * @dev Returns the token address
      * 
-     * @return address The token address
+     * @return address of The token address
      */
     function getTokenAddress()  
-        public
+        external
         view 
         returns (address) 
     {
@@ -40,7 +34,7 @@ abstract contract TokenOwner is ITokenOwner {
     /**
      * @dev Returns the token address
      * 
-     * @return address The token address
+     * @return address of The token address
      */
     function _getTokenAddress()  
         internal
@@ -51,28 +45,34 @@ abstract contract TokenOwner is ITokenOwner {
     }
 
     /**
-     * @dev Returns the HTSTokenOwner contract address 
-     * 
-     * @return address HTSTokenOwner contract address
-     */
-    function getTokenOwnerAddress()
-        public
-        view 
-        returns (address) 
+    * @dev Transforms the response from a HederaResponseCodes to a boolean
+    *
+    * @param responseCode The Hedera response code to transform
+    */
+    function _checkResponse(int256 responseCode) 
+        internal 
+        pure
     {
-        return _getTokenOwnerAddress();
+        require(responseCode == HederaResponseCodes.SUCCESS, "Error");
     }
 
     /**
-     * @dev Returns the HTSTokenOwner contract address 
-     * 
-     * @return address HTSTokenOwner contract address
+     * @dev Returns the number tokens that an account has
+     *
+     * @param account The address of the account to be consulted
+     *
+     * @return uint256 The number number tokens that an account has
      */
-    function _getTokenOwnerAddress()
-        internal
-        view 
-        returns (address) 
-    {
-        return address(_htsTokenOwnerAddress);
-    }
+
+    function _balanceOf(address account) internal virtual view returns (uint256);
+
+    /**
+     * @dev Transfers an amount of tokens from and account to another account
+     *
+     * @param from The address the tokens are transferred from
+     * @param to The address the tokens are transferred to
+     */
+    function _transfer(address from, address to, uint256 amount) internal virtual; 
+
+
 }

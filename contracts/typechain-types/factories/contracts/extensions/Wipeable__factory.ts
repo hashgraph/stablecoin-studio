@@ -104,6 +104,12 @@ const _abi = [
       {
         indexed: false,
         internalType: "address",
+        name: "wiper",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "address",
         name: "token",
         type: "address",
       },
@@ -272,19 +278,6 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "getTokenOwnerAddress",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [
       {
         internalType: "bytes32",
@@ -365,24 +358,6 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "contract HTSTokenOwner",
-        name: "htsTokenOwnerAddress",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "tokenAddress",
-        type: "address",
-      },
-    ],
-    name: "setTokenAddress",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
         internalType: "bytes4",
         name: "interfaceId",
         type: "bytes4",
@@ -413,13 +388,7 @@ const _abi = [
       },
     ],
     name: "wipe",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },

@@ -82,32 +82,13 @@ export async function deployContractsWithSDK(
         clientSdk,
         parameters
     )
-    let parametersContractCall: any[] = []
-    await contractCall(
-        proxyContract,
-        'initialize',
-        parametersContractCall,
-        clientSdk,
-        250000,
-        HederaERC20__factory.abi
-    )
-
-    console.log(
-        `Deploying ${HTSTokenOwner__factory.name} contract... please wait.`
-    )
-    const tokenOwnerContract = await deployContractSDK(
-        HTSTokenOwner__factory,
-        privateKey,
-        clientSdk
-    )
 
     console.log('Creating token... please wait.')
     memo = JSON.stringify({
-        proxyContract: String(proxyContract),
-        htsAccount: String(tokenOwnerContract),
+        proxyContract: String(proxyContract)
     })
     const hederaToken = await createToken(
-        tokenOwnerContract,
+        proxyContract,
         name,
         symbol,
         decimals,
@@ -121,29 +102,17 @@ export async function deployContractsWithSDK(
         clientSdk
     )
 
-    console.log('Setting up contract... please wait.')
-    parametersContractCall = [
-        tokenOwnerContract!.toSolidityAddress(),
-        TokenId.fromString(hederaToken!.toString()).toSolidityAddress(),
-    ]
+    console.log(`Initializing Proxy for Token ${hederaToken.toSolidityAddress()}... please wait.`)
+    let parametersContractCall = [hederaToken.toSolidityAddress()]
     await contractCall(
         proxyContract,
-        'setTokenAddress',
+        'initialize',
         parametersContractCall,
         clientSdk,
-        80000,
+        250000,
         HederaERC20__factory.abi
     )
-
-    parametersContractCall = [proxyContract!.toSolidityAddress()]
-    await contractCall(
-        tokenOwnerContract,
-        'setERC20Address',
-        parametersContractCall,
-        clientSdk,
-        60000,
-        HTSTokenOwner__factory.abi
-    )
+   
 
     console.log('Associate administrator account to token... please wait.')
     parametersContractCall = [
