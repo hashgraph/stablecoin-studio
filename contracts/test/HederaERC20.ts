@@ -19,7 +19,8 @@ import {name,
   Mint, 
   Wipe,
   getTotalSupply, 
-  getBalanceOf} from "../scripts/contractsMethods";
+  getBalanceOf,
+  getTokenAddress} from "../scripts/contractsMethods";
 
 let proxyAddress:any;
 let client:any ;
@@ -148,8 +149,11 @@ describe("HederaERC20 Tests", function() {
   });
 
   it("Check initialize can only be run once", async function(){
+    // Retrieve current Token address
+    const TokenAddress = await getTokenAddress(ContractId, proxyAddress, client);
+
     // Initiliaze : fail
-    await expect(initialize(ContractId, proxyAddress, client)).to.eventually.be.rejectedWith(Error);
+    await expect(initialize(ContractId, proxyAddress, client, TokenAddress)).to.eventually.be.rejectedWith(Error);
   });
 
 });

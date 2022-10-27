@@ -82,8 +82,8 @@ export async function decimals(ContractId: any, proxyAddress: string, client: an
     return Number(result[0]);
 }
 
-export async function initialize(ContractId: any, proxyAddress: string, client: any){
-    let params: any[] = [];  
+export async function initialize(ContractId: any, proxyAddress: string, client: any, newTokenAddress: string){
+    let params = [newTokenAddress];  
     await contractCall(ContractId.fromString(proxyAddress!), 'initialize', params, client, Gas2, HederaERC20__factory.abi);  
 }
 
@@ -95,39 +95,31 @@ export async function initialize(ContractId: any, proxyAddress: string, client: 
 */
 
 // TokenOwner ///////////////////////////////////////////////////
-export async function getTokenOwnerAddress(ContractId: any, proxyAddress: string, client: any): Promise<string>{
+export async function getTokenAddress(ContractId: any, proxyAddress: string, client: any): Promise<string>{
     let params: any[] = [];  
-    const response = await contractCall(ContractId.fromString(proxyAddress!), 'getTokenOwnerAddress', params, client, Gas5, HederaERC20__factory.abi) 
+    const response = await contractCall(ContractId.fromString(proxyAddress!), 'getTokenAddress', params, client, Gas5, HederaERC20__factory.abi) 
     return response[0];
 }
 
 // Burnable ///////////////////////////////////////////////////
 export async function Burn(ContractId: any, proxyAddress: string, amountOfTokenToBurn: any, clientBurningToken: any){
     let params = [amountOfTokenToBurn.toString()];        
-    let result = await contractCall(ContractId.fromString(proxyAddress!), 'burn', params, clientBurningToken, Gas4, HederaERC20__factory.abi);
-    if(!result[0]) throw new Error("Burn unsucessful!!!");
+    await contractCall(ContractId.fromString(proxyAddress!), 'burn', params, clientBurningToken, Gas4, HederaERC20__factory.abi);
 }
 
 // Minteable ///////////////////////////////////////////////////
 export async function Mint(ContractId: any, proxyAddress: string, amountOfTokenToMint: any, clientMintingToken: any, clientToAssignTokensTo: string){
     let params: any[] = [AccountId.fromString(clientToAssignTokensTo!).toSolidityAddress(), amountOfTokenToMint.toString()];      
-    let result = await contractCall(ContractId.fromString(proxyAddress!), 'mint', params, clientMintingToken, Gas1, HederaERC20__factory.abi);
-    if(!result[0]) throw new Error("Mint unsucessful!!!");
+    await contractCall(ContractId.fromString(proxyAddress!), 'mint', params, clientMintingToken, Gas1, HederaERC20__factory.abi);
 }
 
 // Wipeable ///////////////////////////////////////////////////
 export async function Wipe(ContractId: any, proxyAddress: string, amountOfTokenToWipe: any, clientWipingToken: any, accountToWipeFrom: string){
     let params = [AccountId.fromString(accountToWipeFrom!).toSolidityAddress(), amountOfTokenToWipe.toString()];      
-    let result = await contractCall(ContractId.fromString(proxyAddress!), 'wipe', params, clientWipingToken, Gas1, HederaERC20__factory.abi);
-    if(!result[0]) throw new Error("Wipe unsucessful!!!");
+    await contractCall(ContractId.fromString(proxyAddress!), 'wipe', params, clientWipingToken, Gas1, HederaERC20__factory.abi);
 }
 
 // Rescueable ///////////////////////////////////////////////////
-export async function rescueHbar(ContractId: any, proxyAddress: string, amountOfHBarToRescue: any, clientRescueingHBar: any){
-    let params = [amountOfHBarToRescue.toString()];      
-    await contractCall(ContractId.fromString(proxyAddress!), 'rescueHbar', params, clientRescueingHBar, Gas6, HederaERC20__factory.abi)  
-}
-
 export async function rescueToken(ContractId: any, proxyAddress: string, amountOfTokenToRescue: any, clientRescueingToken: any){
     let params = [amountOfTokenToRescue.toString()];      
     await contractCall(ContractId.fromString(proxyAddress!), 'rescueToken', params, clientRescueingToken, Gas6, HederaERC20__factory.abi)  

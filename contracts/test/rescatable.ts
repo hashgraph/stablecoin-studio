@@ -14,13 +14,10 @@ import { deployContractsWithSDK, initializeClients } from "../scripts/deploy";
 import {grantRole, 
   revokeRole, 
   hasRole, 
-  rescueHbar, 
   rescueToken, 
   getBalanceOf, 
-  getTokenOwnerAddress, 
-  associateToken, 
-  getHBARBalanceOf,
-  transferHBAR} from "../scripts/contractsMethods";
+  associateToken
+} from "../scripts/contractsMethods";
 import {RESCUE_ROLE} from "../scripts/constants";
 
 let proxyAddress:any;
@@ -33,8 +30,6 @@ let client2:any;
 let client2account: string;
 let client2privatekey: string;
 let client2publickey: string;
-
-let tokenOwnerAddress: string;
 
 const TokenName = "MIDAS";
 const TokenSymbol = "MD";
@@ -69,12 +64,6 @@ describe("Rescue Tests", function() {
         OPERATOR_KEY, 
         OPERATOR_PUBLIC);   
         
-      tokenOwnerAddress = await getTokenOwnerAddress(ContractId, proxyAddress, client);
-
-      const TokenOwnerBalanceHBAR = await getHBARBalanceOf(tokenOwnerAddress, client, false, true);
-      const minAmounOfTinyHBAR = 10;
-      if(TokenOwnerBalanceHBAR.lt(BigNumber.from(minAmounOfTinyHBAR))) await transferHBAR(OPERATOR_ID, tokenOwnerAddress, BigNumber.from(minAmounOfTinyHBAR), client, true);
-
     });    
 
     it("Admin account can grant and revoke rescue role to an account", async function() {    
@@ -110,34 +99,28 @@ describe("Rescue Tests", function() {
 
     it("Should rescue 10 token", async function() {
       const AmountToRescue = BigNumber.from(10).mul(TokenFactor);
-      const AmountToRescueHBAR = BigNumber.from(0);
 
       // Get the initial balance of the token owner and client
-      const initialTokenOwnerBalance = await getBalanceOf(ContractId, proxyAddress, client, tokenOwnerAddress, false);
-      const initialTokenOwnerBalanceHBAR = await getHBARBalanceOf(tokenOwnerAddress, client, false, true);
+      const initialTokenOwnerBalance = await getBalanceOf(ContractId, proxyAddress, client, proxyAddress.toSolidityAddress(), false);
       const initialClientBalance = await getBalanceOf(ContractId, proxyAddress, client, OPERATOR_ID);
  
       // rescue some tokens
       await rescueToken(ContractId, proxyAddress, AmountToRescue, client);
-      await rescueHbar(ContractId, proxyAddress, AmountToRescueHBAR, client);
 
       // check new balances : success
-      const finalTokenOwnerBalance = await getBalanceOf(ContractId, proxyAddress, client, tokenOwnerAddress, false);
-      const finalTokenOwnerBalanceHBAR = await getHBARBalanceOf(tokenOwnerAddress, client, false, true);
+      const finalTokenOwnerBalance = await getBalanceOf(ContractId, proxyAddress, client, proxyAddress.toSolidityAddress(), false);
       const finalClientBalance = await getBalanceOf(ContractId, proxyAddress, client, OPERATOR_ID);
 
       const expectedTokenOwnerBalance = initialTokenOwnerBalance.sub(AmountToRescue);
-      const expectedTokenOwnerBalanceHBAR = initialTokenOwnerBalanceHBAR.sub(AmountToRescueHBAR);
       const expectedClientBalance = initialClientBalance.add(AmountToRescue);
 
       expect(finalTokenOwnerBalance.toString()).to.equals(expectedTokenOwnerBalance.toString());
-      expect(finalTokenOwnerBalanceHBAR.toString()).to.equals(expectedTokenOwnerBalanceHBAR.toString());
       expect(finalClientBalance.toString()).to.equals(expectedClientBalance.toString());
     });
   
     it("we cannot rescue more tokens than the token owner balance", async function() {
       // Get the initial balance of the token owner
-      const TokenOwnerBalance = await getBalanceOf(ContractId, proxyAddress, client, tokenOwnerAddress, false);
+      const TokenOwnerBalance = await getBalanceOf(ContractId, proxyAddress, client, proxyAddress.toSolidityAddress(), false);
 
       // Rescue TokenOwnerBalance + 1 : fail
       await expect(rescueToken(ContractId, proxyAddress, TokenOwnerBalance.add(1), client)).to.eventually.be.rejectedWith(Error);
@@ -150,11 +133,9 @@ describe("Rescue Tests", function() {
   
     it("User with granted rescue role can rescue tokens", async function() {
       const AmountToRescue = BigNumber.from(1);    
-      const AmountToRescueHBAR = BigNumber.from(0);
 
       // Retrieve original balances
-      const initialTokenOwnerBalance = await getBalanceOf(ContractId, proxyAddress, client, tokenOwnerAddress, false);
-      const initialTokenOwnerBalanceHBAR = await getHBARBalanceOf(tokenOwnerAddress, client, false, true);
+      const initialTokenOwnerBalance = await getBalanceOf(ContractId, proxyAddress, client, proxyAddress.toSolidityAddress(), false);
       const initialClientBalance = await getBalanceOf(ContractId, proxyAddress, client, client2account);
 
       // Grant rescue role to account
@@ -165,19 +146,15 @@ describe("Rescue Tests", function() {
         
       // Rescue tokens with newly granted account
       await rescueToken(ContractId, proxyAddress, AmountToRescue, client2);
-      await rescueHbar(ContractId, proxyAddress, AmountToRescueHBAR, client);
 
       // Check final balances : success
-      const finalTokenOwnerBalance = await getBalanceOf(ContractId, proxyAddress, client, tokenOwnerAddress, false);
-      const finalTokenOwnerBalanceHBAR = await getHBARBalanceOf(tokenOwnerAddress, client, false, true);
+      const finalTokenOwnerBalance = await getBalanceOf(ContractId, proxyAddress, client, proxyAddress.toSolidityAddress(), false);
       const finalClientBalance = await getBalanceOf(ContractId, proxyAddress, client, client2account);
 
       const expectedTokenOwnerBalance = initialTokenOwnerBalance.sub(AmountToRescue);
-      const expectedTokenOwnerBalanceHBAR = initialTokenOwnerBalanceHBAR.sub(AmountToRescueHBAR);
       const expectedClientBalance = initialClientBalance.add(AmountToRescue);
 
       expect(finalTokenOwnerBalance.toString()).to.equals(expectedTokenOwnerBalance.toString());
-      expect(finalTokenOwnerBalanceHBAR.toString()).to.equals(expectedTokenOwnerBalanceHBAR.toString());
       expect(finalClientBalance.toString()).to.equals(expectedClientBalance.toString());
     }); 
   
