@@ -44,6 +44,7 @@ export default class StableCoinService extends Service {
 			req.maxSupply ?? '0',
 			req.decimals,
 		);
+
 		if (
 			req.maxSupply &&
 			req.initialSupply &&
@@ -96,7 +97,7 @@ export default class StableCoinService extends Service {
 			symbol: stableCoin.symbol,
 			decimals: stableCoin.decimals,
 			totalSupply: stableCoin.totalSupply.toString(),
-			maxSupply: stableCoin.maxSupply?.isZero
+			maxSupply: stableCoin.maxSupply?.isZero()
 				? 'INFINITE'
 				: stableCoin.maxSupply?.toString(),
 			initialSupply: stableCoin.initialSupply.toString(),

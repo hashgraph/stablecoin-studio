@@ -108,34 +108,33 @@ export default class BigDecimal implements FixedNumber {
 		);
 	}
 
-	public isGreaterThan(other: BigDecimal): boolean {
-		const a = parseFixed(this.#fn._value, this.#fn.format.decimals);
-		const b = parseFixed(other.#fn._value, other.#fn.format.decimals);
-		return a > b;
-	}
-
-	public isLowerThan(other: BigDecimal): boolean {
-		const a = parseFixed(this.#fn._value, this.#fn.format.decimals);
-		const b = parseFixed(other.#fn._value, other.#fn.format.decimals);
-		return a < b;
-	}
-
 	public isGreaterOrEqualThan(other: BigDecimal): boolean {
 		const a = parseFixed(this.#fn._value, this.#fn.format.decimals);
 		const b = parseFixed(other.#fn._value, other.#fn.format.decimals);
-		return a >= b;
+		return a.gte(b);
+	}
+
+	public isGreaterThan(other: BigDecimal): boolean {
+		const a = parseFixed(this.#fn._value, this.#fn.format.decimals);
+		const b = parseFixed(other.#fn._value, other.#fn.format.decimals);
+		return a.gt(b);
+	}
+	public isLowerThan(other: BigDecimal): boolean {
+		const a = parseFixed(this.#fn._value, this.#fn.format.decimals);
+		const b = parseFixed(other.#fn._value, other.#fn.format.decimals);
+		return b.gt(a);
 	}
 
 	public isLowerOrEqualThan(other: BigDecimal): boolean {
 		const a = parseFixed(this.#fn._value, this.#fn.format.decimals);
 		const b = parseFixed(other.#fn._value, other.#fn.format.decimals);
-		return a <= b;
+		return b.gte(a);
 	}
-	
+
 	public isEqualThan(other: BigDecimal): boolean {
 		const a = parseFixed(this.#fn._value, this.#fn.format.decimals);
 		const b = parseFixed(other.#fn._value, other.#fn.format.decimals);
-		return a == b;
+		return a.eq(b);
 	}
 
 	public toBigNumber(): BigNumber {
