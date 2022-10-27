@@ -22,7 +22,7 @@ abstract contract Mintable is IMintable, TokenOwner, Roles, SupplierAdmin {
         onlyRole(CASHIN_ROLE)  
         returns (bool) 
     {         
-        controlAllowanceAmount(msg.sender, amount);
+        if(!_unlimitedSupplierAllowances[msg.sender]) _decreaseSupplierAllowance(msg.sender, amount);
         (bool success) = HTSTokenOwner(_getTokenOwnerAddress()).mintToken(_getTokenAddress(), amount);
         require(success, "Minting error");
         return _transfer(_getTokenOwnerAddress(), account, amount);

@@ -10,23 +10,6 @@
 
 ## Methods
 
-### controlAllowanceAmount
-
-```solidity
-function controlAllowanceAmount(address supplier, uint256 amount) external nonpayable
-```
-
-
-
-*Validate that if the address account `supplier` isn&#39;t unlimited supplier&#39;s allowance,  and the `amount` not exceed the supplier allowance, subtracting the amount from supplier&#39;s allowance*
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| supplier | address | The address of the supplier |
-| amount | uint256 | The amount to check whether exceeds current supplier allowance |
-
 ### decreaseSupplierAllowance
 
 ```solidity

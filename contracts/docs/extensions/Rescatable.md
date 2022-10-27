@@ -283,7 +283,7 @@ function rescueHbar(uint256 amount) external nonpayable
 
 | Name | Type | Description |
 |---|---|---|
-| amount | uint256 | The amount of hbar to rescue |
+| amount | uint256 | The amount of tinyhbar to rescue |
 
 ### rescueToken
 
