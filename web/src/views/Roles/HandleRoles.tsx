@@ -20,7 +20,7 @@ import {
 import { SelectController } from '../../components/Form/SelectController';
 import { validateDecimals } from '../../utils/validationsHelper';
 import { formatAmountWithDecimals } from '../../utils/inputHelper';
-import { Capabilities, StableCoinRole } from 'hedera-stable-coin-sdk';
+import { BigDecimal, Capabilities, StableCoinRole } from 'hedera-stable-coin-sdk';
 
 const supplier = 'Cash in';
 
@@ -219,7 +219,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 								tokenId: selectedStableCoin.tokenId,
 								targetId: account,
 							});
-							setLimit(limit?.[0]);
+							setLimit(limit);
 						}
 					}
 					break;
@@ -296,7 +296,10 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 								},
 								quantityOverTotalSupply: (value: number) => {
 									return (
-										(totalSupply && totalSupply >= value.toString()) ||
+										(totalSupply &&
+											BigDecimal.fromString(totalSupply, decimals).isGreaterOrEqualThan(
+												BigDecimal.fromString(value.toString(), decimals),
+											)) ||
 										t('global:validations.overTotalSupply')
 									);
 								},
@@ -402,7 +405,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 						? t(`roles:${action}.checkCashinLimitSuccessDesc`, {
 								account,
 								limit: formatAmountWithDecimals({
-									amount: limit!,
+									amount: limit ? limit.toString() : '',
 									decimals: selectedStableCoin!.decimals!,
 								}),
 						  })

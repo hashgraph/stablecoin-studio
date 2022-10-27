@@ -15,6 +15,7 @@ import {
 import SDKService from '../../../services/SDKService';
 import { validateDecimals } from '../../../utils/validationsHelper';
 import { useState } from 'react';
+import { BigDecimal } from 'hedera-stable-coin-sdk';
 
 const BurnOperation = () => {
 	const {
@@ -29,7 +30,7 @@ const BurnOperation = () => {
 
 	const [errorOperation, setErrorOperation] = useState();
 
-	const { decimals = 0 } = selectedStableCoin || {};
+	const { decimals = 0, totalSupply } = selectedStableCoin || {};
 
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
@@ -80,12 +81,15 @@ const BurnOperation = () => {
 												t('global:validations.decimalsValidation')
 											);
 										},
-										// quantityOverTotalSupply: (value: number) => {
-										// 	return (
-										// 		(totalSupply && totalSupply >= value) ||
-										// 		t('global:validations.overTotalSupply')
-										// 	);
-										// },
+										quantityOverTotalSupply: (value: number) => {
+											return (
+												(totalSupply &&
+													BigDecimal.fromString(totalSupply, decimals).isGreaterOrEqualThan(
+														BigDecimal.fromString(value.toString(), decimals),
+													)) ||
+												t('global:validations.overTotalSupply')
+											);
+										},
 									},
 								}}
 								decimalScale={decimals}
