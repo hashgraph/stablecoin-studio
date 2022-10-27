@@ -180,9 +180,9 @@ export class SDKService {
 		id,
 		publicKey,
 	}: {
-		id: string;
+		id: string,
 		publicKey: string;
-	}): Promise<Capabilities[] | null> {
+	}): Promise<Capabilities[] | null> {		
 		return (await SDKService.getInstance())?.getCapabilitiesStableCoin(id, publicKey);
 	}
 

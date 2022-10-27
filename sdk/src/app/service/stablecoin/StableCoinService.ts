@@ -14,6 +14,7 @@ import IStableCoinRepository from '../../../port/out/stablecoin/IStableCoinRepos
 import IRescueStableCoinServiceRequestModel from './model/IRescueStableCoinServiceRequestModel.js';
 import IRoleStableCoinServiceRequestModel from './model/IRoleStableCoinServiceRequestModel';
 import IGetBasicRequestModel from './model/IGetBasicRequest.js';
+import IGetCapabilitiesServiceRequestModel from './model/IGetCapabilitiesServiceRequestModel.js';
 import ISupplierRoleStableCoinServiceRequestModel from './model/ISupplierRoleStableCoinServiceRequestModel.js';
 import IStableCoinDetail from '../../../port/in/sdk/response/IStableCoinDetail.js';
 import IAccountInfo from '../../../port/in/sdk/response/IAccountInfo.js';
@@ -21,6 +22,7 @@ import { Capabilities } from '../../../domain/context/stablecoin/Capabilities.js
 import { IAccountWithKeyRequestModel } from './model/CoreRequestModel.js';
 import IGetSupplierAllowanceModel from './model/IGetSupplierAllowanceModel.js';
 import BigDecimal from '../../../domain/context/stablecoin/BigDecimal.js';
+import IGetRolesServiceRequestModel from './model/IGetRolesServiceRequest';
 
 export default class StableCoinService extends Service {
 	private repository: IStableCoinRepository;
@@ -132,9 +134,9 @@ export default class StableCoinService extends Service {
 
 	public async getCapabilitiesStableCoin(
 		id: string,
-		publicKey: string,
+		publickey: string
 	): Promise<Capabilities[]> {
-		return this.repository.getCapabilitiesStableCoin(id, publicKey);
+		return this.repository.getCapabilitiesStableCoin(id, publickey);
 	}
 
 	public async getBalanceOf(
@@ -176,8 +178,8 @@ export default class StableCoinService extends Service {
 			await this.getCapabilitiesStableCoin(
 				req.tokenId,
 				req.publicKey
-					? req.publicKey.key
-					: req.account?.privateKey?.publicKey?.key ?? '',
+						? req.publicKey?.key
+						: req.account?.privateKey?.publicKey?.key ?? ''
 			);
 		if (capabilities.includes(Capabilities.CASH_IN)) {
 			const result = await this.repository.cashIn(
@@ -193,18 +195,27 @@ export default class StableCoinService extends Service {
 				amount,
 				req.account,
 			);
-			if (
-				resultCashIn &&
-				req?.account?.accountId.id &&
-				req?.account?.accountId.id != req.targetId
-			) {
-				resultCashIn = await this.repository.transferHTS(
-					req.tokenId,
-					amount,
-					req.account.accountId.id,
-					req.targetId,
-					req.account,
-				);
+
+			if (resultCashIn &&	coin.treasury.id != req.targetId) {
+				if (coin.treasury.id === req?.account?.accountId.id) {
+					resultCashIn = await this.repository.transferHTS(
+						req.tokenId,
+						amount,
+						coin.treasury.id,
+						req.targetId,
+						req.account,
+						false	
+					);
+				} else {
+					resultCashIn = await this.repository.transferHTS(
+						req.tokenId,
+						amount,
+						coin.treasury.id,
+						req.targetId,
+						req.account,
+						true
+					);	
+				}
 			}
 		} else {
 			throw new Error('Cash in not allowed');
@@ -241,8 +252,8 @@ export default class StableCoinService extends Service {
 			await this.getCapabilitiesStableCoin(
 				req.tokenId,
 				req.publicKey
-					? req.publicKey.key
-					: req.account?.privateKey?.publicKey?.key ?? '',
+						? req.publicKey?.key
+						: req.account?.privateKey?.publicKey?.key ?? ''
 			);
 		if (capabilities.includes(Capabilities.BURN)) {
 			const result = await this.repository.cashOut(
@@ -303,9 +314,7 @@ export default class StableCoinService extends Service {
 		const capabilities: Capabilities[] =
 			await this.getCapabilitiesStableCoin(
 				req.tokenId,
-				req.publicKey
-					? req.publicKey.key
-					: req.account?.privateKey?.publicKey?.key ?? '',
+				req.account?.privateKey?.publicKey?.key ?? ''
 			);
 		if (capabilities.includes(Capabilities.WIPE)) {
 			const result = await this.repository.wipe(
@@ -516,5 +525,15 @@ export default class StableCoinService extends Service {
 		req: IAccountWithKeyRequestModel,
 	): Promise<IAccountInfo> {
 		return this.repository.getAccountInfo(req.account.accountId.id);
+	}
+  
+	public async getRoles(
+		req: IGetRolesServiceRequestModel,
+	): Promise<string[]> {
+		return this.repository.getRoles(
+			req.proxyContractId,
+			req.targetId,
+			req.account,
+		);
 	}
 }

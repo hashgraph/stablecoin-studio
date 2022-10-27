@@ -25,6 +25,7 @@ import {
 	PrivateKeyType,
 } from '../../../core/enum.js';
 import { Capabilities } from '../../../domain/context/stablecoin/Capabilities.js';
+import { Roles } from '../../../domain/context/stablecoin/Roles.js';
 import { Account } from '../../in/sdk/sdk.js';
 import IAccount from '../hedera/account/types/IAccount.js';
 
@@ -60,7 +61,6 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			account.evmAddress = await this.accountToEvmAddress(account);
 			return this.networkAdapter.provider.deployStableCoin(coin, account);
 		} catch (error) {
-			// console.error(error);
 			throw new HederaError(
 				`There was a fatal error deploying the Stable Coin: ${coin.name}`,
 			);
@@ -160,11 +160,11 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	}
 
 	public async getCapabilitiesStableCoin(
-		id: string,
+		tokenId: string,
 		publickey: string,
 	): Promise<Capabilities[]> {
 		try {
-			const stableCoin: StableCoin = await this.getStableCoin(id);
+			const stableCoin: StableCoin = await this.getStableCoin(tokenId);
 			const listCapabilities: Capabilities[] = [];
 
 			listCapabilities.push(Capabilities.DETAILS);
@@ -185,7 +185,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 			if (stableCoin.supplyKey instanceof PublicKey) {
 				if (
-					stableCoin.supplyKey?.key.toString() == publickey.toString()
+					stableCoin.supplyKey?.key.toString() ==
+					publickey.toString()
 				) {
 					listCapabilities.push(Capabilities.CASH_IN_HTS);
 					listCapabilities.push(Capabilities.BURN_HTS);
@@ -194,7 +195,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 			if (stableCoin.wipeKey instanceof PublicKey) {
 				if (
-					stableCoin.wipeKey?.key.toString() == publickey.toString()
+					stableCoin.wipeKey?.key.toString() ==
+					publickey.toString()
 				) {
 					listCapabilities.push(Capabilities.WIPE_HTS);
 				}
@@ -688,12 +690,49 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		);
 	}
 
+	public async getRoles(
+		proxyContractId: string,
+		address: string,
+		account: Account,
+	): Promise<string[]> {
+		const parameters = [
+			await this.accountToEvmAddress(new Account(address)),
+		];
+
+		const params: ICallContractWithAccountRequest = {
+			contractId: proxyContractId,
+			parameters,
+			gas: 60000,
+			abi: HederaERC20__factory.abi,
+			account,
+		};
+
+		const roles: any = await this.networkAdapter.provider.callContract(
+			'getRoles',
+			params,
+		);
+
+		const listRoles: string[] = roles[0]
+			.filter(
+				(role: StableCoinRole) => role !== StableCoinRole.WITHOUT_ROLE,
+			)
+			.map((role: StableCoinRole) => {
+				const indexOfS = Object.values(StableCoinRole).indexOf(role);
+				const roleName = Object.keys(StableCoinRole)[indexOfS];
+				const indexOfRole = Object.keys(Roles).indexOf(roleName);
+				return Object.values(Roles)[indexOfRole];
+			});
+
+		return listRoles;
+	}
+
 	public async transferHTS(
 		tokenId: string,
 		amount: BigDecimal,
 		outAccountId: string,
 		inAccountId: string,
 		account: Account,
+		isApproval = false
 	): Promise<boolean> {
 		const params: ITransferTokenRequest = {
 			account,
@@ -701,6 +740,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			amount: amount.toNumber(),
 			outAccountId: outAccountId,
 			inAccountId: inAccountId,
+			isApproval
 		};
 
 		return await this.networkAdapter.provider.transferHTS(params);

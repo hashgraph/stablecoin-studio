@@ -25,7 +25,6 @@ import type {
 
 export interface ISupplierAdminInterface extends utils.Interface {
   functions: {
-    "controlAllowanceAmount(address,uint256)": FunctionFragment;
     "decreaseSupplierAllowance(address,uint256)": FunctionFragment;
     "grantSupplierRole(address,uint256)": FunctionFragment;
     "grantUnlimitedSupplierRole(address)": FunctionFragment;
@@ -38,7 +37,6 @@ export interface ISupplierAdminInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "controlAllowanceAmount"
       | "decreaseSupplierAllowance"
       | "grantSupplierRole"
       | "grantUnlimitedSupplierRole"
@@ -49,10 +47,6 @@ export interface ISupplierAdminInterface extends utils.Interface {
       | "supplierAllowance"
   ): FunctionFragment;
 
-  encodeFunctionData(
-    functionFragment: "controlAllowanceAmount",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-  ): string;
   encodeFunctionData(
     functionFragment: "decreaseSupplierAllowance",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
@@ -86,10 +80,6 @@ export interface ISupplierAdminInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
 
-  decodeFunctionResult(
-    functionFragment: "controlAllowanceAmount",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "decreaseSupplierAllowance",
     data: BytesLike
@@ -153,12 +143,6 @@ export interface ISupplierAdmin extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    controlAllowanceAmount(
-      supplier: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     decreaseSupplierAllowance(
       supplier: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
@@ -202,12 +186,6 @@ export interface ISupplierAdmin extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
   };
-
-  controlAllowanceAmount(
-    supplier: PromiseOrValue<string>,
-    amount: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
 
   decreaseSupplierAllowance(
     supplier: PromiseOrValue<string>,
@@ -253,12 +231,6 @@ export interface ISupplierAdmin extends BaseContract {
   ): Promise<BigNumber>;
 
   callStatic: {
-    controlAllowanceAmount(
-      supplier: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     decreaseSupplierAllowance(
       supplier: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
@@ -306,12 +278,6 @@ export interface ISupplierAdmin extends BaseContract {
   filters: {};
 
   estimateGas: {
-    controlAllowanceAmount(
-      supplier: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     decreaseSupplierAllowance(
       supplier: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
@@ -357,12 +323,6 @@ export interface ISupplierAdmin extends BaseContract {
   };
 
   populateTransaction: {
-    controlAllowanceAmount(
-      supplier: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     decreaseSupplierAllowance(
       supplier: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,

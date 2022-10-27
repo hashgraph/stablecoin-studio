@@ -10,6 +10,7 @@ import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandle
 import ModalsHandler from '../../../components/ModalsHandler';
 import SDKService from '../../../services/SDKService';
 import {
+	SELECTED_WALLET_ACCOUNT_INFO,
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNT,
 } from '../../../store/slices/walletSlice';
@@ -26,6 +27,7 @@ const WipeOperation = () => {
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
+	const infoAccount = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 
 	const [errorOperation, setErrorOperation] = useState();
 
@@ -50,6 +52,7 @@ const WipeOperation = () => {
 				tokenId: selectedStableCoin.tokenId,
 				targetId: destinationAccount,
 				amount: amount.toString(),
+				publicKey: infoAccount.publicKey,
 			});
 			onSuccess();
 		} catch (error: any) {

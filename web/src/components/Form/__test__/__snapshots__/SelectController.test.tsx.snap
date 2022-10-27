@@ -41,7 +41,7 @@ exports[`<SelectController /> doesn't show error with showError=false: NotShowin
           class="css-1f43avz-a11yText-A11yText"
         />
         <div
-          class=" css-f1mqk6"
+          class=" css-ot5r48"
           data-invalid="true"
         >
           <div
@@ -162,7 +162,7 @@ exports[`<SelectController /> shows error with showErrors=true: ShowingError 1`]
           class="css-1f43avz-a11yText-A11yText"
         />
         <div
-          class=" css-f1mqk6"
+          class=" css-ot5r48"
           data-invalid="true"
         >
           <div
@@ -288,7 +288,7 @@ exports[`<SelectController /> shows placeholder with default value: DefaultPlace
           class="css-1f43avz-a11yText-A11yText"
         />
         <div
-          class=" css-f1mqk6"
+          class=" css-ot5r48"
         >
           <div
             class="css-3y2vuh"
@@ -406,7 +406,7 @@ exports[`<SelectController /> shows placeholder with the provided value: CustomP
           class="css-1f43avz-a11yText-A11yText"
         />
         <div
-          class=" css-f1mqk6"
+          class=" css-ot5r48"
         >
           <div
             class="css-3y2vuh"

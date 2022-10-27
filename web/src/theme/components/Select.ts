@@ -30,7 +30,7 @@ const baseStyle = ({ isDisabled, isInvalid, hasValue }: SelectConfigProps) => {
 		},
 		valueSelected: {
 			position: 'absolute',
-			color: 'brand.gray',
+			color: 'brand.black',
 		},
 		menuList: {},
 		option: {
@@ -81,13 +81,13 @@ const outline = ({ isInvalid, isDisabled }: SelectConfigProps) => {
 	};
 };
 
-const unstyled = ()=> {
+const unstyled = () => {
 	return {
 		label: {
-			color: "brand.black"
-		}
-	}
-}
+			color: 'brand.black',
+		},
+	};
+};
 
 export const Select = {
 	parts: [
