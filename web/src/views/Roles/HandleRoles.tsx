@@ -280,7 +280,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 	};
 
 	const renderAmount = () => {
-		const { decimals = 0, totalSupply } = selectedStableCoin || {};
+		const { decimals = 0, maxSupply } = selectedStableCoin || {};
 
 		return (
 			<Stack spacing={6}>
@@ -296,8 +296,8 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 								},
 								quantityOverTotalSupply: (value: number) => {
 									return (
-										(totalSupply &&
-											BigDecimal.fromString(totalSupply, decimals).isGreaterOrEqualThan(
+										(maxSupply !== 'INFINITE' &&
+											BigDecimal.fromString(maxSupply, decimals).isGreaterOrEqualThan(
 												BigDecimal.fromString(value.toString(), decimals),
 											)) ||
 										t('global:validations.overTotalSupply')
