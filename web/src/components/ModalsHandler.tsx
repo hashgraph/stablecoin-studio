@@ -17,6 +17,8 @@ export interface ModalsHandlerProps {
 	modalActionProps: ModalsHandlerActionsProps;
 	successNotificationDescription?: string;
 	successNotificationTitle: string;
+	handleOnCloseModalSuccess?: () => void;
+	handleOnCloseModalError?: () => void;
 }
 
 const ModalsHandler = (props: ModalsHandlerProps) => {
@@ -27,6 +29,8 @@ const ModalsHandler = (props: ModalsHandlerProps) => {
 		ModalActionChildren,
 		successNotificationDescription,
 		successNotificationTitle,
+		handleOnCloseModalSuccess,
+		handleOnCloseModalError
 	} = props;
 	const { t } = useTranslation(['global', 'roles']);
 	const {
@@ -57,14 +61,14 @@ const ModalsHandler = (props: ModalsHandlerProps) => {
 				title={successNotificationTitle}
 				description={successNotificationDescription}
 				isOpen={isOpenModalSuccess}
-				onClose={onCloseModalSuccess}
+				onClose={handleOnCloseModalSuccess ?? onCloseModalSuccess}
 			/>
 			<ModalNotification
 				variant='error'
 				title={errorNotificationTitle}
 				description={errorNotificationDescription}
 				isOpen={isOpenModalError}
-				onClose={onCloseModalError}
+				onClose={handleOnCloseModalError ?? onCloseModalError}
 			/>
 		</>
 	);
