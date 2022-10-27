@@ -17,8 +17,8 @@ describe('🧪 [PORT] SDK', () => {
       account: ACCOUNTS.testnet,
       name: 'TEST COIN',
       symbol: 'TC',
-      initialSupply: '1.11111111111111111',
-      decimals: 17,
+      initialSupply: '10',
+      decimals: 2,
       adminKey: ACCOUNTS.testnet.privateKey.publicKey,
       wipeKey: PublicKey.NULL,
       supplyKey: PublicKey.NULL,
@@ -72,11 +72,11 @@ describe('🧪 [PORT] SDK', () => {
     expect(cashin).not.toBeNull();
     expect(cashin).toBeTruthy();
     expect(balance).not.toBeNull();
-    expect(balance && balance[0]).toBe(parseInt(amount));
+    expect(balance && balance).toBe(amount);
   }, 15000);
 
   it('Wipe token', async () => {
-    const amount = '1';
+    const amount = '2';
     const wipe = await sdk.wipe({
       account: ACCOUNTS.testnet,
       targetId: ACCOUNTS.testnet.accountId.id,
@@ -93,8 +93,8 @@ describe('🧪 [PORT] SDK', () => {
     expect(wipe).not.toBeNull();
     expect(wipe).toBeTruthy();
     expect(balance).not.toBeNull();
-    expect(balance && balance[0]).toBe(9);
-  }, 15000);
+    expect(balance && balance).toBe('9');
+  }, 55000);
 
   it('Wipe token (wrong)', async () => {
     const amount = '100';
