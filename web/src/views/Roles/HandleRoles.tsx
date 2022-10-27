@@ -296,7 +296,8 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 								},
 								quantityOverTotalSupply: (value: number) => {
 									return (
-										(maxSupply !== 'INFINITE' &&
+										(maxSupply &&
+											maxSupply !== 'INFINITE' &&
 											BigDecimal.fromString(maxSupply, decimals).isGreaterOrEqualThan(
 												BigDecimal.fromString(value.toString(), decimals),
 											)) ||
