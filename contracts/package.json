@@ -9,6 +9,7 @@
     "test": "npx hardhat test",
     "test:testnet": "npx hardhat test --network testnet",
     "test:previewnet": "npx hardhat test --network previewnet",
+    "test:accesscontrol": "npx hardhat test test/accesscontrol.ts",
     "test:burnable": "npx hardhat test test/burnable.ts",
     "test:erc20": "npx hardhat test test/erc20.ts",
     "test:mintable": "npx hardhat test test/mintable.ts",

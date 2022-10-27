@@ -26,6 +26,7 @@ import IAssociateTokenStableCoinServiceRequestModel from '../../../app/service/s
 import ISupplierRoleStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/ISupplierRoleStableCoinServiceRequestModel';
 import IRescueStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IRescueStableCoinServiceRequestModel.js';
 import IRoleStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IRoleStableCoinServiceRequestModel.js';
+import IGetCapabilitiesServiceRequestModel from '../../../app/service/stablecoin/model/IGetCapabilitiesServiceRequestModel.js';
 import IGetBasicRequestModel from '../../../app/service/stablecoin/model/IGetBasicRequest.js';
 import { IAccountWithKeyRequestModel } from '../../../app/service/stablecoin/model/CoreRequestModel.js';
 
@@ -41,6 +42,7 @@ import { IGetStableCoinRequest } from './request/IGetStableCoinRequest.js';
 import { IRescueStableCoinRequest } from './request/IRescueStableCoinRequest.js';
 import { IRoleStableCoinRequest } from './request/IRoleStableCoinRequest.js';
 import { IWipeStableCoinRequest } from './request/IWipeStableCoinRequest.js';
+import { IGetCapabilitiesRequest } from './request/IGetCapabilitiesRequest.js';
 import { IBasicRequest } from './request/IBasicRequest.js';
 import AccountId from '../../../domain/context/account/AccountId.js';
 import EOAccount from '../../../domain/context/account/EOAccount.js';
@@ -51,6 +53,7 @@ import { TokenType } from '../../../domain/context/stablecoin/TokenType.js';
 import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.js';
 import { StableCoinMemo } from '../../../domain/context/stablecoin/StableCoinMemo.js';
 import { IAllowanceRequest } from './request/IRequestContracts.js';
+import { IRequestRoles } from './request/IRequestContracts';
 import { AppMetadata } from '../../out/hedera/hashpack/types/types.js';
 import {
 	AcknowledgeMessage,
@@ -77,6 +80,7 @@ import { ISupplierRoleStableCoinRequest } from './request/ISupplierRoleStableCoi
 import Account from '../../../domain/context/account/Account.js';
 import HashPackAccount from '../../../domain/context/account/HashPackAccount.js';
 import IAccountInfo from './response/IAccountInfo.js';
+import IGetRolesServiceRequestModel from '../../../app/service/stablecoin/model/IGetRolesServiceRequest';
 
 export {
 	IAssociateStableCoinRequest,
@@ -92,11 +96,12 @@ export {
 	IRoleStableCoinRequest,
 	ISupplierRoleStableCoinRequest,
 	IWipeStableCoinRequest,
+	IGetCapabilitiesRequest,
 	IAllowanceRequest,
 	IBasicRequest,
 	IStableCoinDetail,
 	IStableCoinList,
-	IAccountInfo
+	IAccountInfo,
 };
 
 /* Export basic types*/
@@ -219,10 +224,17 @@ export class SDK {
 	}
 
 	public getCapabilitiesStableCoin(
-		id: string,
-		publicKey: string,
+		request: IGetCapabilitiesRequest,
 	): Promise<Capabilities[]> | null {
-		return this.stableCoinService.getCapabilitiesStableCoin(id, publicKey);
+		try {
+			const req: IGetCapabilitiesServiceRequestModel = {
+				...request
+			};
+			return this.stableCoinService.getCapabilitiesStableCoin(req);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
 	}
 
 	/**
@@ -532,6 +544,18 @@ export class SDK {
 	): Promise<IAccountInfo> | null {
 		try {
 			return this.stableCoinService.getAccountInfo(request);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+
+	public getRoles(request: IRequestRoles): Promise<string[]> | null {
+		try {
+			const req: IGetRolesServiceRequestModel = {
+				...request,
+			};
+			return this.stableCoinService.getRoles(req);
 		} catch (error) {
 			console.error(error);
 			return null;

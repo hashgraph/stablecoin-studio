@@ -86,7 +86,7 @@ const Review = (props: ReviewProps) => {
 						details={[
 							{
 								label: t('stableCoinCreation:optionalDetails.initialSupply'),
-								value: initialSupply || '',
+								value: initialSupply.toString() || '',
 							},
 							{
 								label: t('stableCoinCreation:optionalDetails.typeSupply'),
@@ -94,7 +94,7 @@ const Review = (props: ReviewProps) => {
 							},
 							{
 								label: t('stableCoinCreation:optionalDetails.maxSupply'),
-								value: supplyType?.value === 1 ? maxSupply : supplyType?.label,
+								value: supplyType?.value === 1 ? maxSupply.toString() : supplyType?.label,
 							},
 							{
 								label: t('stableCoinCreation:optionalDetails.decimals'),

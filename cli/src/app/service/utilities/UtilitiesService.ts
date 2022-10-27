@@ -80,6 +80,7 @@ export default class UtilitiesService extends Service {
   public async showBanner(): Promise<void> {
     const data = await figlet(language.getText('general.title'));
     this.showMessage(data);
+    this.breakLine(1);
   }
 
   /**
@@ -179,6 +180,7 @@ export default class UtilitiesService extends Service {
         ' ' +
         colors.yellow('(' + token + ')');
     }
+    question = question + '\n';
     const variable = await inquirer.prompt({
       name: 'response',
       type: 'rawlist',
@@ -322,5 +324,9 @@ export default class UtilitiesService extends Service {
     }
 
     this.showMessage(result);
+  }
+
+  public validateTokenId(str: string): boolean {
+    return /\d\.\d\.\d/.test(str);
   }
 }

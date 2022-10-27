@@ -72,7 +72,7 @@ exports[`<RescueTokenOperation /> should render correctly 1`] = `
                     class="chakra-input__group css-4302v8"
                   >
                     <input
-                      class="chakra-input css-g75xpy"
+                      class="chakra-input css-l1kxkf"
                       data-testid="amount"
                       id="field-:r1:"
                       inputmode="numeric"

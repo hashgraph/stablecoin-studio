@@ -5,11 +5,10 @@ import "../IHTSTokenOwner.sol";
 import "../IHederaERC20.sol";
 import "../TokenOwner.sol";
 import "./IRescatable.sol";
-import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import "../Roles.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 
-abstract contract Rescatable is IRescatable ,AccessControlUpgradeable, TokenOwner, Roles {
+abstract contract Rescatable is IRescatable, TokenOwner, Roles {
     
     /**
     * @dev Rescue `value` `tokenId` from contractTokenOwner to rescuer
