@@ -76,7 +76,6 @@ const BurnOperation = () => {
 		const stableCoinDetails = await SDKService.getStableCoinDetails({
 			id: selectedStableCoin?.tokenId || '',
 		});
-		console.log('cojo los detalles',stableCoinDetails)
 		dispatch(
 			walletActions.setSelectedStableCoin({
 				tokenId: stableCoinDetails?.tokenId,
