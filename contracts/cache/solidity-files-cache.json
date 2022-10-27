@@ -10,7 +10,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -53,7 +53,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -93,7 +93,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -130,7 +130,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -169,7 +169,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -206,7 +206,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -247,7 +247,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -284,7 +284,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -321,7 +321,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -360,7 +360,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -397,7 +397,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -426,15 +426,15 @@
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-3/hedera-accelerator-stablecoin/contracts/contracts/extensions/Wipeable.sol": {
-      "lastModificationDate": 1666604150570,
-      "contentHash": "ce7dd11a6060389886b816af463b13cc",
+      "lastModificationDate": 1666854754834,
+      "contentHash": "b674ffefda7f27cdc49831c428b43cc8",
       "sourceName": "contracts/extensions/Wipeable.sol",
       "solcConfig": {
         "version": "0.8.10",
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -455,7 +455,6 @@
         }
       },
       "imports": [
-        "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol",
         "./../TokenOwner.sol",
         "./../Roles.sol",
         "./../IHederaERC20.sol",
@@ -469,15 +468,15 @@
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-3/hedera-accelerator-stablecoin/contracts/contracts/Roles.sol": {
-      "lastModificationDate": 1666604150570,
-      "contentHash": "0683e3dc33663ebe43096285b3aa4772",
+      "lastModificationDate": 1666854754834,
+      "contentHash": "31c5a73e32c89482f2957d698c08c326",
       "sourceName": "contracts/Roles.sol",
       "solcConfig": {
         "version": "0.8.10",
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -497,7 +496,9 @@
           }
         }
       },
-      "imports": [],
+      "imports": [
+        "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol"
+      ],
       "versionPragmas": [
         "^0.8.10"
       ],
@@ -514,7 +515,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -554,7 +555,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -591,7 +592,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -634,7 +635,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -671,7 +672,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -710,7 +711,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -747,7 +748,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -787,7 +788,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -826,7 +827,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -863,7 +864,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -905,7 +906,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -936,15 +937,15 @@
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-3/hedera-accelerator-stablecoin/contracts/contracts/HederaERC20.sol": {
-      "lastModificationDate": 1666795559979,
-      "contentHash": "3e9028fade8962ad55d236e996be370f",
+      "lastModificationDate": 1666854754834,
+      "contentHash": "51e13c40079eeeb0e7d27d1daadf5dca",
       "sourceName": "contracts/HederaERC20.sol",
       "solcConfig": {
         "version": "0.8.10",
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -974,7 +975,8 @@
         "./extensions/Mintable.sol",
         "./extensions/Burnable.sol",
         "./extensions/Wipeable.sol",
-        "./extensions/Rescatable.sol"
+        "./extensions/Rescatable.sol",
+        "./Roles.sol"
       ],
       "versionPragmas": [
         "^0.8.10"
@@ -984,15 +986,15 @@
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-3/hedera-accelerator-stablecoin/contracts/contracts/extensions/Mintable.sol": {
-      "lastModificationDate": 1666699627953,
-      "contentHash": "aa5fab2c2eca395511fee36b81ee22b2",
+      "lastModificationDate": 1666854754834,
+      "contentHash": "1aef08b5718b6d79ea070429acbb2a34",
       "sourceName": "contracts/extensions/Mintable.sol",
       "solcConfig": {
         "version": "0.8.10",
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -1013,7 +1015,6 @@
         }
       },
       "imports": [
-        "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol",
         "./IMintable.sol",
         "./SupplierAdmin.sol",
         "../TokenOwner.sol",
@@ -1027,15 +1028,15 @@
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-3/hedera-accelerator-stablecoin/contracts/contracts/extensions/Burnable.sol": {
-      "lastModificationDate": 1666604150570,
-      "contentHash": "68ec838637d4532c57de8ce85d413f54",
+      "lastModificationDate": 1666854754834,
+      "contentHash": "8aeb3904b840427c8c0c277df4d57204",
       "sourceName": "contracts/extensions/Burnable.sol",
       "solcConfig": {
         "version": "0.8.10",
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -1056,7 +1057,6 @@
         }
       },
       "imports": [
-        "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol",
         "./IBurnable.sol",
         "../TokenOwner.sol",
         "../Roles.sol"
@@ -1069,15 +1069,15 @@
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-3/hedera-accelerator-stablecoin/contracts/contracts/extensions/Rescatable.sol": {
-      "lastModificationDate": 1666779114545,
-      "contentHash": "f7fef06cc4dc474992e508161d153374",
+      "lastModificationDate": 1666854754834,
+      "contentHash": "6077b5ecee01b0cd4b0fd538b389e192",
       "sourceName": "contracts/extensions/Rescatable.sol",
       "solcConfig": {
         "version": "0.8.10",
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -1102,7 +1102,6 @@
         "../IHederaERC20.sol",
         "../TokenOwner.sol",
         "./IRescatable.sol",
-        "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol",
         "../Roles.sol",
         "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol"
       ],
@@ -1122,7 +1121,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -1151,15 +1150,15 @@
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-3/hedera-accelerator-stablecoin/contracts/contracts/extensions/SupplierAdmin.sol": {
-      "lastModificationDate": 1666786246420,
-      "contentHash": "0a9c988c432c6fdb4fa6388c79696997",
+      "lastModificationDate": 1666854754834,
+      "contentHash": "f08a324827403e80139dbb4358fe9a00",
       "sourceName": "contracts/extensions/SupplierAdmin.sol",
       "solcConfig": {
         "version": "0.8.10",
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -1180,7 +1179,6 @@
         }
       },
       "imports": [
-        "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol",
         "./ISupplierAdmin.sol",
         "../TokenOwner.sol",
         "../Roles.sol"
@@ -1201,7 +1199,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -1238,7 +1236,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -1275,7 +1273,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -1312,7 +1310,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -1351,7 +1349,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -1391,7 +1389,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -1428,7 +1426,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -1470,7 +1468,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -1507,7 +1505,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -1544,7 +1542,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {
@@ -1581,7 +1579,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 10
+            "runs": 1
           },
           "outputSelection": {
             "*": {

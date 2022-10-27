@@ -8,7 +8,7 @@ var chaiAsPromised = require("chai-as-promised");
 chai.use(chaiAsPromised);
 var expect = chai.expect;
 
-import { deployContractsWithSDK, initializeClients } from "../scripts/utils";
+import { deployContractsWithSDK, initializeClients } from "../scripts/deploy";
 import {grantRole, revokeRole, hasRole, Burn, getTotalSupply} from "../scripts/contractsMethods";
 import {BURN_ROLE} from "../scripts/constants";
 

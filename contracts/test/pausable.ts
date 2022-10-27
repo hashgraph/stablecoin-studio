@@ -9,7 +9,7 @@ chai.use(chaiAsPromised);
 var expect = chai.expect;
 
 
-import { deployContractsWithSDK, initializeClients } from "../scripts/utils";
+import { deployContractsWithSDK, initializeClients } from "../scripts/deploy";
 import {grantRole, revokeRole, hasRole, Burn, getTotalSupply} from "../scripts/contractsMethods";
 import {PAUSER_ROLE} from "../scripts/constants";
 

@@ -7,7 +7,7 @@ var expect = chai.expect;
 import "@hashgraph/hardhat-hethers";
 import {BigNumber} from "ethers";
 
-import { deployContractsWithSDK, initializeClients } from "../scripts/utils";
+import { deployContractsWithSDK, initializeClients } from "../scripts/deploy";
 import {decreaseSupplierAllowance,
   grantSupplierRole,
   grantUnlimitedSupplierRole,
