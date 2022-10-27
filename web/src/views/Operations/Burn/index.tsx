@@ -6,15 +6,19 @@ import InputNumberController from '../../../components/Form/InputNumberControlle
 import OperationLayout from '../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import {
 	SELECTED_WALLET_ACCOUNT_INFO,
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNT,
+	walletActions,
 } from '../../../store/slices/walletSlice';
 import SDKService from '../../../services/SDKService';
 import { validateDecimals } from '../../../utils/validationsHelper';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import type { AppDispatch } from '../../../store/store.js';
+import { useNavigate } from 'react-router-dom';
+import { RouterManager } from '../../../Router/RouterManager';
 
 const BurnOperation = () => {
 	const {
@@ -28,6 +32,8 @@ const BurnOperation = () => {
 	const infoAccount = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 
 	const [errorOperation, setErrorOperation] = useState();
+	const navigate = useNavigate()
+	const dispatch = useDispatch<AppDispatch>();
 
 	const { decimals = 0, totalSupply } = selectedStableCoin || {};
 
@@ -36,6 +42,14 @@ const BurnOperation = () => {
 	});
 
 	const { t } = useTranslation(['burn', 'global', 'operations']);
+
+	useEffect(() => {
+		handleRefreshCoinInfo();
+	}, [])
+	
+	const handleCloseModal = () => {
+		RouterManager.goBack(navigate);
+	}
 
 	const handleBurn: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
 		const { amount } = getValues();
@@ -56,6 +70,36 @@ const BurnOperation = () => {
 			setErrorOperation(error.toString());
 			onError();
 		}
+	};
+
+	const handleRefreshCoinInfo = async () => {
+		const stableCoinDetails = await SDKService.getStableCoinDetails({
+			id: selectedStableCoin?.tokenId || '',
+		});
+		dispatch(
+			walletActions.setSelectedStableCoin({
+				tokenId: stableCoinDetails?.tokenId,
+				initialSupply: Number(stableCoinDetails?.initialSupply),
+				totalSupply: Number(stableCoinDetails?.totalSupply),
+				maxSupply: Number(stableCoinDetails?.maxSupply),
+				name: stableCoinDetails?.name,
+				symbol: stableCoinDetails?.symbol,
+				decimals: stableCoinDetails?.decimals,
+				id: stableCoinDetails?.tokenId,
+				treasuryId: stableCoinDetails?.treasuryId,
+				autoRenewAccount: stableCoinDetails?.autoRenewAccount,
+				memo: stableCoinDetails?.memo,
+				adminKey:
+					stableCoinDetails?.adminKey && JSON.parse(JSON.stringify(stableCoinDetails.adminKey)),
+				kycKey: stableCoinDetails?.kycKey && JSON.parse(JSON.stringify(stableCoinDetails.kycKey)),
+				freezeKey:
+					stableCoinDetails?.freezeKey && JSON.parse(JSON.stringify(stableCoinDetails.freezeKey)),
+				wipeKey:
+					stableCoinDetails?.wipeKey && JSON.parse(JSON.stringify(stableCoinDetails.wipeKey)),
+				supplyKey:
+					stableCoinDetails?.supplyKey && JSON.parse(JSON.stringify(stableCoinDetails.supplyKey)),
+			}),
+		);
 	};
 
 	return (
@@ -125,6 +169,8 @@ const BurnOperation = () => {
 				}
 				successNotificationTitle={t('operations:modalSuccessTitle')}
 				successNotificationDescription={t('operations:modalSuccessDesc')}
+				handleOnCloseModalError={handleCloseModal}
+				handleOnCloseModalSuccess={handleCloseModal}
 			/>
 		</>
 	);
