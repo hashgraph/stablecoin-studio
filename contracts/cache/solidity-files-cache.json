@@ -10,7 +10,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -53,7 +53,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -93,7 +93,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -130,7 +130,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -169,7 +169,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -206,7 +206,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -247,7 +247,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -284,7 +284,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -321,7 +321,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -360,7 +360,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -397,7 +397,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -434,7 +434,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -477,7 +477,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -514,7 +514,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -554,7 +554,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -591,7 +591,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -634,7 +634,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -671,7 +671,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -710,7 +710,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -747,7 +747,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -787,7 +787,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -826,7 +826,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -863,7 +863,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -905,7 +905,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -936,7 +936,7 @@
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-3/hedera-accelerator-stablecoin/contracts/contracts/HederaERC20.sol": {
-      "lastModificationDate": 1666604150570,
+      "lastModificationDate": 1666795559979,
       "contentHash": "3e9028fade8962ad55d236e996be370f",
       "sourceName": "contracts/HederaERC20.sol",
       "solcConfig": {
@@ -944,7 +944,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -992,7 +992,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -1035,7 +1035,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -1077,7 +1077,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -1122,7 +1122,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -1159,7 +1159,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -1201,7 +1201,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -1238,7 +1238,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -1275,7 +1275,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -1312,7 +1312,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -1351,7 +1351,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -1391,7 +1391,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -1428,7 +1428,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -1470,7 +1470,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -1507,7 +1507,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -1544,7 +1544,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
@@ -1581,7 +1581,7 @@
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 100
+            "runs": 10
           },
           "outputSelection": {
             "*": {
