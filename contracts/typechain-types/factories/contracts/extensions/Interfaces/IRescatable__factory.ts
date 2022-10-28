@@ -5,9 +5,9 @@
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
 import type {
-  IWipeable,
-  IWipeableInterface,
-} from "../../../contracts/extensions/IWipeable";
+  IRescatable,
+  IRescatableInterface,
+} from "../../../../contracts/extensions/Interfaces/IRescatable";
 
 const _abi = [
   {
@@ -16,60 +16,49 @@ const _abi = [
       {
         indexed: false,
         internalType: "address",
-        name: "wiper",
+        name: "rescuer",
         type: "address",
       },
       {
         indexed: false,
         internalType: "address",
-        name: "token",
+        name: "tokenId",
         type: "address",
       },
       {
         indexed: false,
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint32",
+        internalType: "uint256",
         name: "amount",
-        type: "uint32",
+        type: "uint256",
       },
     ],
-    name: "TokensWiped",
+    name: "TokenRescued",
     type: "event",
   },
   {
     inputs: [
       {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-      {
-        internalType: "uint32",
+        internalType: "uint256",
         name: "amount",
-        type: "uint32",
+        type: "uint256",
       },
     ],
-    name: "wipe",
+    name: "rescue",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
 ];
 
-export class IWipeable__factory {
+export class IRescatable__factory {
   static readonly abi = _abi;
-  static createInterface(): IWipeableInterface {
-    return new utils.Interface(_abi) as IWipeableInterface;
+  static createInterface(): IRescatableInterface {
+    return new utils.Interface(_abi) as IRescatableInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): IWipeable {
-    return new Contract(address, _abi, signerOrProvider) as IWipeable;
+  ): IRescatable {
+    return new Contract(address, _abi, signerOrProvider) as IRescatable;
   }
 }

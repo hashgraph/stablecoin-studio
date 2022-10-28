@@ -1,7 +1,7 @@
 'npx hardhat compile --force' running
-Generating typings for: 41 artifacts in dir: typechain-types for target: ethers-v5
-Successfully generated 114 typings!
-Compiled 41 Solidity files successfully
+Generating typings for: 37 artifacts in dir: typechain-types for target: ethers-v5
+Successfully generated 108 typings!
+Compiled 37 Solidity files successfully
  ·------------------------|--------------|----------------·
  |  Contract Name         ·  Size (KiB)  ·  Change (KiB)  │
  ·························|··············|·················
@@ -9,15 +9,11 @@ Compiled 41 Solidity files successfully
  ·························|··············|·················
  |  AddressUpgradeable    ·       0.084  ·                │
  ·························|··············|·················
- |  ERC1967Proxy          ·       0.680  ·                │
+ |  ERC1967Proxy          ·       0.755  ·                │
  ·························|··············|·················
- |  ERC20Upgradeable      ·       2.132  ·                │
+ |  HederaERC1967Proxy    ·       0.795  ·                │
  ·························|··············|·················
- |  HederaERC1967Proxy    ·       0.771  ·                │
- ·························|··············|·················
- |  HederaERC20           ·      12.365  ·                │
- ·························|··············|·················
- |  HTSTokenOwner         ·       6.378  ·                │
+ |  HederaERC20           ·      10.849  ·                │
  ·························|··············|·················
  |  SafeERC20Upgradeable  ·       0.084  ·                │
  ·························|··············|·················
@@ -25,7 +21,7 @@ Compiled 41 Solidity files successfully
  ·························|··············|·················
  |  StringsUpgradeable    ·       0.084  ·                │
  ·------------------------|--------------|----------------·
-✅ Generated documentation for 41 contracts
+✅ Generated documentation for 37 contracts
 
 
 + Contract AccessControlUpgradeable (Upgradeable)
@@ -67,36 +63,6 @@ Compiled 41 Solidity files successfully
   - From Initializable
     - _disableInitializers() (internal)
 
-+ Contract ERC20Upgradeable (Upgradeable) (Most derived contract)
-  - From ContextUpgradeable
-    - __Context_init() (internal)
-    - __Context_init_unchained() (internal)
-    - _msgData() (internal)
-    - _msgSender() (internal)
-  - From Initializable
-    - _disableInitializers() (internal)
-  - From ERC20Upgradeable
-    - __ERC20_init(string,string) (internal)
-    - __ERC20_init_unchained(string,string) (internal)
-    - _afterTokenTransfer(address,address,uint256) (internal)
-    - _approve(address,address,uint256) (internal)
-    - _beforeTokenTransfer(address,address,uint256) (internal)
-    - _burn(address,uint256) (internal)
-    - _mint(address,uint256) (internal)
-    - _spendAllowance(address,address,uint256) (internal)
-    - _transfer(address,address,uint256) (internal)
-    - allowance(address,address) (public)
-    - approve(address,uint256) (public)
-    - balanceOf(address) (public)
-    - decimals() (public)
-    - decreaseAllowance(address,uint256) (public)
-    - increaseAllowance(address,uint256) (public)
-    - name() (public)
-    - symbol() (public)
-    - totalSupply() (public)
-    - transfer(address,uint256) (public)
-    - transferFrom(address,address,uint256) (public)
-
 + Contract IERC20Upgradeable (Upgradeable)
   - From IERC20Upgradeable
     - allowance(address,address) (external)
@@ -106,7 +72,7 @@ Compiled 41 Solidity files successfully
     - transfer(address,uint256) (external)
     - transferFrom(address,address,uint256) (external)
 
-+ Contract IERC20MetadataUpgradeable (Upgradeable)
++ Contract IERC20MetadataUpgradeable (Upgradeable) (Most derived contract)
   - From IERC20Upgradeable
     - allowance(address,address) (external)
     - approve(address,uint256) (external)
@@ -250,62 +216,6 @@ Compiled 41 Solidity files successfully
     - getBytes32Slot(bytes32) (internal)
     - getUint256Slot(bytes32) (internal)
 
-+ Contract HTSTokenOwner (Most derived contract)
-  - From HederaTokenService
-    - allowance(address,address,address) (internal)
-    - approve(address,address,uint256) (internal)
-    - approveNFT(address,address,uint256) (internal)
-    - associateToken(address,address) (internal)
-    - associateTokens(address,address[]) (internal)
-    - burnToken(address,uint64,int64[]) (internal)
-    - createFungibleToken(IHederaTokenService.HederaToken,uint256,uint256) (internal)
-    - createFungibleTokenWithCustomFees(IHederaTokenService.HederaToken,uint256,uint256,IHederaTokenService.FixedFee[],IHederaTokenService.FractionalFee[]) (internal)
-    - createNonFungibleToken(IHederaTokenService.HederaToken) (internal)
-    - createNonFungibleTokenWithCustomFees(IHederaTokenService.HederaToken,IHederaTokenService.FixedFee[],IHederaTokenService.RoyaltyFee[]) (internal)
-    - cryptoTransfer(IHederaTokenService.TokenTransferList[]) (internal)
-    - deleteToken(address) (internal)
-    - dissociateToken(address,address) (internal)
-    - dissociateTokens(address,address[]) (internal)
-    - freezeToken(address,address) (internal)
-    - getApproved(address,uint256) (internal)
-    - getFungibleTokenInfo(address) (internal)
-    - getNonFungibleTokenInfo(address,int64) (internal)
-    - getTokenCustomFees(address) (internal)
-    - getTokenDefaultFreezeStatus(address) (internal)
-    - getTokenDefaultKycStatus(address) (internal)
-    - getTokenExpiryInfo(address) (external)
-    - getTokenInfo(address) (internal)
-    - getTokenKey(address,uint256) (external)
-    - getTokenType(address) (internal)
-    - grantTokenKyc(address,address) (external)
-    - isApprovedForAll(address,address,address) (internal)
-    - isFrozen(address,address) (internal)
-    - isKyc(address,address) (external)
-    - isToken(address) (internal)
-    - mintToken(address,uint64,bytes[]) (internal)
-    - pauseToken(address) (external)
-    - revokeTokenKyc(address,address) (external)
-    - setApprovalForAll(address,address,bool) (internal)
-    - transferNFT(address,address,address,int64) (internal)
-    - transferNFTs(address,address[],address[],int64[]) (internal)
-    - transferToken(address,address,address,int64) (internal)
-    - transferTokens(address,address[],int64[]) (internal)
-    - unfreezeToken(address,address) (internal)
-    - unpauseToken(address) (external)
-    - updateTokenExpiryInfo(address,IHederaTokenService.Expiry) (external)
-    - updateTokenInfo(address,IHederaTokenService.HederaToken) (internal)
-    - updateTokenKeys(address,IHederaTokenService.TokenKey[]) (external)
-    - wipeTokenAccount(address,address,uint32) (internal)
-    - wipeTokenAccountNFT(address,address,int64[]) (internal)
-  - From HTSTokenOwner
-    - _checkResponse(int256) (internal)
-    - burnToken(address,uint256) (external)
-    - mintToken(address,uint256) (external)
-    - setERC20Address(address) (external)
-    - tranferContract(address,address,uint256) (external)
-    - transfer(address,address,address,uint256) (external)
-    - wipeToken(address,address,uint32) (external)
-
 + Contract HederaERC1967Proxy (Upgradeable Proxy) (Most derived contract)
   - From ERC1967Proxy
     - _implementation() (internal)
@@ -333,14 +243,9 @@ Compiled 41 Solidity files successfully
 
 + Contract HederaERC20 (Upgradeable) (Most derived contract)
   - From Rescatable
-    - rescueHbar(uint256) (external)
     - rescueToken(uint256) (external)
-  - From TokenOwner
-    - _getTokenAddress() (internal)
-    - _getTokenOwnerAddress() (internal)
-    - getTokenAddress() (public)
-    - getTokenOwnerAddress() (public)
-    - setTokenAddress(HTSTokenOwner,address) (external)
+  - From Roles
+    - getRoles(address) (external)
   - From AccessControlUpgradeable
     - __AccessControl_init() (internal)
     - __AccessControl_init_unchained() (internal)
@@ -366,6 +271,11 @@ Compiled 41 Solidity files successfully
     - __Context_init_unchained() (internal)
     - _msgData() (internal)
     - _msgSender() (internal)
+  - From TokenOwner
+    - _checkResponse(int256) (internal)
+    - _getTokenAddress() (internal)
+    - _setTokenAddress(address) (internal)
+    - getTokenAddress() (external)
   - From Wipeable
     - wipe(address,uint32) (external)
   - From Burnable
@@ -373,7 +283,7 @@ Compiled 41 Solidity files successfully
   - From Mintable
     - mint(address,uint256) (external)
   - From SupplierAdmin
-    - controlAllowanceAmount(address,uint256) (public)
+    - _decreaseSupplierAllowance(address,uint256) (internal)
     - decreaseSupplierAllowance(address,uint256) (external)
     - grantSupplierRole(address,uint256) (external)
     - grantUnlimitedSupplierRole(address) (public)
@@ -382,54 +292,8 @@ Compiled 41 Solidity files successfully
     - resetSupplierAllowance(address) (external)
     - revokeSupplierRole(address) (external)
     - supplierAllowance(address) (external)
-  - From HederaTokenService
-    - allowance(address,address,address) (internal)
-    - approve(address,address,uint256) (internal)
-    - approveNFT(address,address,uint256) (internal)
-    - associateToken(address,address) (internal)
-    - associateTokens(address,address[]) (internal)
-    - burnToken(address,uint64,int64[]) (internal)
-    - createFungibleToken(IHederaTokenService.HederaToken,uint256,uint256) (internal)
-    - createFungibleTokenWithCustomFees(IHederaTokenService.HederaToken,uint256,uint256,IHederaTokenService.FixedFee[],IHederaTokenService.FractionalFee[]) (internal)
-    - createNonFungibleToken(IHederaTokenService.HederaToken) (internal)
-    - createNonFungibleTokenWithCustomFees(IHederaTokenService.HederaToken,IHederaTokenService.FixedFee[],IHederaTokenService.RoyaltyFee[]) (internal)
-    - cryptoTransfer(IHederaTokenService.TokenTransferList[]) (internal)
-    - deleteToken(address) (internal)
-    - dissociateToken(address,address) (internal)
-    - dissociateTokens(address,address[]) (internal)
-    - freezeToken(address,address) (internal)
-    - getApproved(address,uint256) (internal)
-    - getFungibleTokenInfo(address) (internal)
-    - getNonFungibleTokenInfo(address,int64) (internal)
-    - getTokenCustomFees(address) (internal)
-    - getTokenDefaultFreezeStatus(address) (internal)
-    - getTokenDefaultKycStatus(address) (internal)
-    - getTokenExpiryInfo(address) (external)
-    - getTokenInfo(address) (internal)
-    - getTokenKey(address,uint256) (external)
-    - getTokenType(address) (internal)
-    - grantTokenKyc(address,address) (external)
-    - isApprovedForAll(address,address,address) (internal)
-    - isFrozen(address,address) (internal)
-    - isKyc(address,address) (external)
-    - isToken(address) (internal)
-    - mintToken(address,uint64,bytes[]) (internal)
-    - pauseToken(address) (external)
-    - revokeTokenKyc(address,address) (external)
-    - setApprovalForAll(address,address,bool) (internal)
-    - transferNFT(address,address,address,int64) (internal)
-    - transferNFTs(address,address[],address[],int64[]) (internal)
-    - transferToken(address,address,address,int64) (internal)
-    - transferTokens(address,address[],int64[]) (internal)
-    - unfreezeToken(address,address) (internal)
-    - unpauseToken(address) (external)
-    - updateTokenExpiryInfo(address,IHederaTokenService.Expiry) (external)
-    - updateTokenInfo(address,IHederaTokenService.HederaToken) (internal)
-    - updateTokenKeys(address,IHederaTokenService.TokenKey[]) (external)
-    - wipeTokenAccount(address,address,uint32) (internal)
-    - wipeTokenAccountNFT(address,address,int64[]) (internal)
   - From HederaERC20
-    - _checkResponse(int256) (internal)
+    - _balanceOf(address) (internal)
     - _transfer(address,address,uint256) (internal)
     - allowance(address,address) (external)
     - approve(address,uint256) (external)
@@ -437,19 +301,12 @@ Compiled 41 Solidity files successfully
     - balanceOf(address) (public)
     - decimals() (public)
     - dissociateToken(address) (public)
-    - initialize() (external)
+    - initialize(address) (external)
     - name() (external)
     - symbol() (external)
     - totalSupply() (external)
     - transfer(address,uint256) (external)
     - transferFrom(address,address,uint256) (external)
-
-+ Contract IHTSTokenOwner
-  - From IHTSTokenOwner
-    - burnToken(address,uint256) (external)
-    - mintToken(address,uint256) (external)
-    - tranferContract(address,address,uint256) (external)
-    - wipeToken(address,address,uint32) (external)
 
 + Contract IHederaERC20
   - From IHederaERC20
@@ -459,29 +316,7 @@ Compiled 41 Solidity files successfully
     - symbol() (external)
     - totalSupply() (external)
 
-+ Contract ITokenOwner
-  - From ITokenOwner
-    - getTokenAddress() (external)
-    - getTokenOwnerAddress() (external)
-    - setTokenAddress(HTSTokenOwner,address) (external)
-
-+ Contract Roles
-
-+ Contract TokenOwner
-  - From TokenOwner
-    - _getTokenAddress() (internal)
-    - _getTokenOwnerAddress() (internal)
-    - getTokenAddress() (public)
-    - getTokenOwnerAddress() (public)
-    - setTokenAddress(HTSTokenOwner,address) (external)
-
-+ Contract Burnable (Upgradeable)
-  - From TokenOwner
-    - _getTokenAddress() (internal)
-    - _getTokenOwnerAddress() (internal)
-    - getTokenAddress() (public)
-    - getTokenOwnerAddress() (public)
-    - setTokenAddress(HTSTokenOwner,address) (external)
++ Contract Roles (Upgradeable)
   - From AccessControlUpgradeable
     - __AccessControl_init() (internal)
     - __AccessControl_init_unchained() (internal)
@@ -507,8 +342,45 @@ Compiled 41 Solidity files successfully
     - __Context_init_unchained() (internal)
     - _msgData() (internal)
     - _msgSender() (internal)
+  - From Roles
+    - getRoles(address) (external)
+
++ Contract Burnable (Upgradeable)
+  - From Roles
+    - getRoles(address) (external)
+  - From AccessControlUpgradeable
+    - __AccessControl_init() (internal)
+    - __AccessControl_init_unchained() (internal)
+    - _checkRole(bytes32) (internal)
+    - _checkRole(bytes32,address) (internal)
+    - _grantRole(bytes32,address) (internal)
+    - _revokeRole(bytes32,address) (internal)
+    - _setRoleAdmin(bytes32,bytes32) (internal)
+    - _setupRole(bytes32,address) (internal)
+    - getRoleAdmin(bytes32) (public)
+    - grantRole(bytes32,address) (public)
+    - hasRole(bytes32,address) (public)
+    - renounceRole(bytes32,address) (public)
+    - revokeRole(bytes32,address) (public)
+    - supportsInterface(bytes4) (public)
+  - From ERC165Upgradeable
+    - __ERC165_init() (internal)
+    - __ERC165_init_unchained() (internal)
+  - From Initializable
+    - _disableInitializers() (internal)
+  - From ContextUpgradeable
+    - __Context_init() (internal)
+    - __Context_init_unchained() (internal)
+    - _msgData() (internal)
+    - _msgSender() (internal)
+  - From TokenOwner
+    - _balanceOf(address) (internal)
+    - _checkResponse(int256) (internal)
+    - _getTokenAddress() (internal)
+    - _setTokenAddress(address) (internal)
+    - _transfer(address,address,uint256) (internal)
+    - getTokenAddress() (external)
   - From Burnable
-    - balanceOf(address) (public)
     - burn(uint256) (external)
 
 + Contract IBurnable
@@ -521,12 +393,10 @@ Compiled 41 Solidity files successfully
 
 + Contract IRescatable
   - From IRescatable
-    - rescueHbar(uint256) (external)
     - rescueToken(uint256) (external)
 
 + Contract ISupplierAdmin
   - From ISupplierAdmin
-    - controlAllowanceAmount(address,uint256) (external)
     - decreaseSupplierAllowance(address,uint256) (external)
     - grantSupplierRole(address,uint256) (external)
     - grantUnlimitedSupplierRole(address) (external)
@@ -536,13 +406,17 @@ Compiled 41 Solidity files successfully
     - revokeSupplierRole(address) (external)
     - supplierAllowance(address) (external)
 
++ Contract ITokenOwner
+  - From ITokenOwner
+    - getTokenAddress() (external)
+
 + Contract IWipeable
   - From IWipeable
     - wipe(address,uint32) (external)
 
 + Contract Mintable (Upgradeable)
   - From SupplierAdmin
-    - controlAllowanceAmount(address,uint256) (public)
+    - _decreaseSupplierAllowance(address,uint256) (internal)
     - decreaseSupplierAllowance(address,uint256) (external)
     - grantSupplierRole(address,uint256) (external)
     - grantUnlimitedSupplierRole(address) (public)
@@ -551,12 +425,8 @@ Compiled 41 Solidity files successfully
     - resetSupplierAllowance(address) (external)
     - revokeSupplierRole(address) (external)
     - supplierAllowance(address) (external)
-  - From TokenOwner
-    - _getTokenAddress() (internal)
-    - _getTokenOwnerAddress() (internal)
-    - getTokenAddress() (public)
-    - getTokenOwnerAddress() (public)
-    - setTokenAddress(HTSTokenOwner,address) (external)
+  - From Roles
+    - getRoles(address) (external)
   - From AccessControlUpgradeable
     - __AccessControl_init() (internal)
     - __AccessControl_init_unchained() (internal)
@@ -582,17 +452,19 @@ Compiled 41 Solidity files successfully
     - __Context_init_unchained() (internal)
     - _msgData() (internal)
     - _msgSender() (internal)
-  - From Mintable
+  - From TokenOwner
+    - _balanceOf(address) (internal)
+    - _checkResponse(int256) (internal)
+    - _getTokenAddress() (internal)
+    - _setTokenAddress(address) (internal)
     - _transfer(address,address,uint256) (internal)
+    - getTokenAddress() (external)
+  - From Mintable
     - mint(address,uint256) (external)
 
 + Contract Rescatable (Upgradeable)
-  - From TokenOwner
-    - _getTokenAddress() (internal)
-    - _getTokenOwnerAddress() (internal)
-    - getTokenAddress() (public)
-    - getTokenOwnerAddress() (public)
-    - setTokenAddress(HTSTokenOwner,address) (external)
+  - From Roles
+    - getRoles(address) (external)
   - From AccessControlUpgradeable
     - __AccessControl_init() (internal)
     - __AccessControl_init_unchained() (internal)
@@ -618,17 +490,19 @@ Compiled 41 Solidity files successfully
     - __Context_init_unchained() (internal)
     - _msgData() (internal)
     - _msgSender() (internal)
+  - From TokenOwner
+    - _balanceOf(address) (internal)
+    - _checkResponse(int256) (internal)
+    - _getTokenAddress() (internal)
+    - _setTokenAddress(address) (internal)
+    - _transfer(address,address,uint256) (internal)
+    - getTokenAddress() (external)
   - From Rescatable
-    - rescueHbar(uint256) (external)
     - rescueToken(uint256) (external)
 
 + Contract SupplierAdmin (Upgradeable)
-  - From TokenOwner
-    - _getTokenAddress() (internal)
-    - _getTokenOwnerAddress() (internal)
-    - getTokenAddress() (public)
-    - getTokenOwnerAddress() (public)
-    - setTokenAddress(HTSTokenOwner,address) (external)
+  - From Roles
+    - getRoles(address) (external)
   - From AccessControlUpgradeable
     - __AccessControl_init() (internal)
     - __AccessControl_init_unchained() (internal)
@@ -654,8 +528,15 @@ Compiled 41 Solidity files successfully
     - __Context_init_unchained() (internal)
     - _msgData() (internal)
     - _msgSender() (internal)
+  - From TokenOwner
+    - _balanceOf(address) (internal)
+    - _checkResponse(int256) (internal)
+    - _getTokenAddress() (internal)
+    - _setTokenAddress(address) (internal)
+    - _transfer(address,address,uint256) (internal)
+    - getTokenAddress() (external)
   - From SupplierAdmin
-    - controlAllowanceAmount(address,uint256) (public)
+    - _decreaseSupplierAllowance(address,uint256) (internal)
     - decreaseSupplierAllowance(address,uint256) (external)
     - grantSupplierRole(address,uint256) (external)
     - grantUnlimitedSupplierRole(address) (public)
@@ -665,13 +546,18 @@ Compiled 41 Solidity files successfully
     - revokeSupplierRole(address) (external)
     - supplierAllowance(address) (external)
 
-+ Contract Wipeable (Upgradeable)
++ Contract TokenOwner
   - From TokenOwner
+    - _balanceOf(address) (internal)
+    - _checkResponse(int256) (internal)
     - _getTokenAddress() (internal)
-    - _getTokenOwnerAddress() (internal)
-    - getTokenAddress() (public)
-    - getTokenOwnerAddress() (public)
-    - setTokenAddress(HTSTokenOwner,address) (external)
+    - _setTokenAddress(address) (internal)
+    - _transfer(address,address,uint256) (internal)
+    - getTokenAddress() (external)
+
++ Contract Wipeable (Upgradeable)
+  - From Roles
+    - getRoles(address) (external)
   - From AccessControlUpgradeable
     - __AccessControl_init() (internal)
     - __AccessControl_init_unchained() (internal)
@@ -697,58 +583,17 @@ Compiled 41 Solidity files successfully
     - __Context_init_unchained() (internal)
     - _msgData() (internal)
     - _msgSender() (internal)
+  - From TokenOwner
+    - _balanceOf(address) (internal)
+    - _checkResponse(int256) (internal)
+    - _getTokenAddress() (internal)
+    - _setTokenAddress(address) (internal)
+    - _transfer(address,address,uint256) (internal)
+    - getTokenAddress() (external)
   - From Wipeable
     - wipe(address,uint32) (external)
 
 + Contract HederaResponseCodes
-
-+ Contract HederaTokenService
-  - From HederaTokenService
-    - allowance(address,address,address) (internal)
-    - approve(address,address,uint256) (internal)
-    - approveNFT(address,address,uint256) (internal)
-    - associateToken(address,address) (internal)
-    - associateTokens(address,address[]) (internal)
-    - burnToken(address,uint64,int64[]) (internal)
-    - createFungibleToken(IHederaTokenService.HederaToken,uint256,uint256) (internal)
-    - createFungibleTokenWithCustomFees(IHederaTokenService.HederaToken,uint256,uint256,IHederaTokenService.FixedFee[],IHederaTokenService.FractionalFee[]) (internal)
-    - createNonFungibleToken(IHederaTokenService.HederaToken) (internal)
-    - createNonFungibleTokenWithCustomFees(IHederaTokenService.HederaToken,IHederaTokenService.FixedFee[],IHederaTokenService.RoyaltyFee[]) (internal)
-    - cryptoTransfer(IHederaTokenService.TokenTransferList[]) (internal)
-    - deleteToken(address) (internal)
-    - dissociateToken(address,address) (internal)
-    - dissociateTokens(address,address[]) (internal)
-    - freezeToken(address,address) (internal)
-    - getApproved(address,uint256) (internal)
-    - getFungibleTokenInfo(address) (internal)
-    - getNonFungibleTokenInfo(address,int64) (internal)
-    - getTokenCustomFees(address) (internal)
-    - getTokenDefaultFreezeStatus(address) (internal)
-    - getTokenDefaultKycStatus(address) (internal)
-    - getTokenExpiryInfo(address) (external)
-    - getTokenInfo(address) (internal)
-    - getTokenKey(address,uint256) (external)
-    - getTokenType(address) (internal)
-    - grantTokenKyc(address,address) (external)
-    - isApprovedForAll(address,address,address) (internal)
-    - isFrozen(address,address) (internal)
-    - isKyc(address,address) (external)
-    - isToken(address) (internal)
-    - mintToken(address,uint64,bytes[]) (internal)
-    - pauseToken(address) (external)
-    - revokeTokenKyc(address,address) (external)
-    - setApprovalForAll(address,address,bool) (internal)
-    - transferNFT(address,address,address,int64) (internal)
-    - transferNFTs(address,address[],address[],int64[]) (internal)
-    - transferToken(address,address,address,int64) (internal)
-    - transferTokens(address,address[],int64[]) (internal)
-    - unfreezeToken(address,address) (internal)
-    - unpauseToken(address) (external)
-    - updateTokenExpiryInfo(address,IHederaTokenService.Expiry) (external)
-    - updateTokenInfo(address,IHederaTokenService.HederaToken) (internal)
-    - updateTokenKeys(address,IHederaTokenService.TokenKey[]) (external)
-    - wipeTokenAccount(address,address,uint32) (internal)
-    - wipeTokenAccountNFT(address,address,int64[]) (internal)
 
 + Contract IHederaTokenService (Most derived contract)
   - From IHederaTokenService
@@ -798,5 +643,4 @@ Compiled 41 Solidity files successfully
     - wipeTokenAccount(address,address,uint32) (external)
     - wipeTokenAccountNFT(address,address,int64[]) (external)
 
-. analyzed (41 contracts)
-INFO:Slither:slither.report.json exists already, the overwrite is prevented
+. analyzed (37 contracts)

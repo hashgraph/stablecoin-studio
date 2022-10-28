@@ -339,7 +339,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "rescueToken",
+    name: "rescue",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

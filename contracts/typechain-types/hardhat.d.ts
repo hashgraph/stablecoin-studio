@@ -25,10 +25,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Initializable__factory>;
     getContractFactory(
-      name: "ERC20Upgradeable",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ERC20Upgradeable__factory>;
-    getContractFactory(
       name: "IERC20PermitUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20PermitUpgradeable__factory>;
@@ -93,6 +89,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ISupplierAdmin__factory>;
     getContractFactory(
+      name: "ITokenOwner",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ITokenOwner__factory>;
+    getContractFactory(
       name: "IWipeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IWipeable__factory>;
@@ -109,6 +109,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.SupplierAdmin__factory>;
     getContractFactory(
+      name: "TokenOwner",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TokenOwner__factory>;
+    getContractFactory(
       name: "Wipeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Wipeable__factory>;
@@ -121,37 +125,17 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.HederaERC20__factory>;
     getContractFactory(
-      name: "HederaTokenService",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.HederaTokenService__factory>;
-    getContractFactory(
       name: "IHederaTokenService",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IHederaTokenService__factory>;
-    getContractFactory(
-      name: "HTSTokenOwner",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.HTSTokenOwner__factory>;
     getContractFactory(
       name: "IHederaERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IHederaERC20__factory>;
     getContractFactory(
-      name: "IHTSTokenOwner",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IHTSTokenOwner__factory>;
-    getContractFactory(
-      name: "ITokenOwner",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ITokenOwner__factory>;
-    getContractFactory(
       name: "Roles",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Roles__factory>;
-    getContractFactory(
-      name: "TokenOwner",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.TokenOwner__factory>;
 
     getContractAt(
       name: "AccessControlUpgradeable",
@@ -168,11 +152,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Initializable>;
-    getContractAt(
-      name: "ERC20Upgradeable",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ERC20Upgradeable>;
     getContractAt(
       name: "IERC20PermitUpgradeable",
       address: string,
@@ -254,6 +233,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ISupplierAdmin>;
     getContractAt(
+      name: "ITokenOwner",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ITokenOwner>;
+    getContractAt(
       name: "IWipeable",
       address: string,
       signer?: ethers.Signer
@@ -274,6 +258,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.SupplierAdmin>;
     getContractAt(
+      name: "TokenOwner",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TokenOwner>;
+    getContractAt(
       name: "Wipeable",
       address: string,
       signer?: ethers.Signer
@@ -289,45 +278,20 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.HederaERC20>;
     getContractAt(
-      name: "HederaTokenService",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.HederaTokenService>;
-    getContractAt(
       name: "IHederaTokenService",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IHederaTokenService>;
-    getContractAt(
-      name: "HTSTokenOwner",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.HTSTokenOwner>;
     getContractAt(
       name: "IHederaERC20",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IHederaERC20>;
     getContractAt(
-      name: "IHTSTokenOwner",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IHTSTokenOwner>;
-    getContractAt(
-      name: "ITokenOwner",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ITokenOwner>;
-    getContractAt(
       name: "Roles",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Roles>;
-    getContractAt(
-      name: "TokenOwner",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.TokenOwner>;
 
     // default types
     getContractFactory(

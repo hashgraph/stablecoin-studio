@@ -120,9 +120,9 @@ export async function Wipe(ContractId: any, proxyAddress: string, amountOfTokenT
 }
 
 // Rescueable ///////////////////////////////////////////////////
-export async function rescueToken(ContractId: any, proxyAddress: string, amountOfTokenToRescue: any, clientRescueingToken: any){
+export async function Rescue(ContractId: any, proxyAddress: string, amountOfTokenToRescue: any, clientRescueingToken: any){
     let params = [amountOfTokenToRescue.toString()];      
-    await contractCall(ContractId.fromString(proxyAddress!), 'rescueToken', params, clientRescueingToken, Gas6, HederaERC20__factory.abi)  
+    await contractCall(ContractId.fromString(proxyAddress!), 'rescue', params, clientRescueingToken, Gas6, HederaERC20__factory.abi)  
 }
 
 // SupplierAdmin ///////////////////////////////////////////////////

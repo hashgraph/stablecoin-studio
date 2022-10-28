@@ -524,10 +524,10 @@ function renounceRole(bytes32 role, address account) external nonpayable
 | role | bytes32 | undefined |
 | account | address | undefined |
 
-### rescueToken
+### rescue
 
 ```solidity
-function rescueToken(uint256 amount) external nonpayable
+function rescue(uint256 amount) external nonpayable
 ```
 
 

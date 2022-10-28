@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.10;
 
-import "./ITokenOwner.sol";
-import "./hts-precompile/HederaResponseCodes.sol";
-import "./hts-precompile/IHederaTokenService.sol";
+import "./Interfaces/ITokenOwner.sol";
+import "../hts-precompile/HederaResponseCodes.sol";
+import "../hts-precompile/IHederaTokenService.sol";
 
 abstract contract TokenOwner is ITokenOwner, HederaResponseCodes {
     

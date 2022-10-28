@@ -25,50 +25,47 @@ import type {
   TypedListener,
   OnEvent,
   PromiseOrValue,
-} from "../../common";
+} from "../../../common";
 
-export interface IRescatableInterface extends utils.Interface {
+export interface IBurnableInterface extends utils.Interface {
   functions: {
-    "rescueToken(uint256)": FunctionFragment;
+    "burn(uint256)": FunctionFragment;
   };
 
-  getFunction(nameOrSignatureOrTopic: "rescueToken"): FunctionFragment;
+  getFunction(nameOrSignatureOrTopic: "burn"): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "rescueToken",
+    functionFragment: "burn",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
 
-  decodeFunctionResult(
-    functionFragment: "rescueToken",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
 
   events: {
-    "TokenRescued(address,address,uint256)": EventFragment;
+    "TokensBurned(address,address,uint256)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "TokenRescued"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TokensBurned"): EventFragment;
 }
 
-export interface TokenRescuedEventObject {
-  rescuer: string;
-  tokenId: string;
+export interface TokensBurnedEventObject {
+  burner: string;
+  token: string;
   amount: BigNumber;
 }
-export type TokenRescuedEvent = TypedEvent<
+export type TokensBurnedEvent = TypedEvent<
   [string, string, BigNumber],
-  TokenRescuedEventObject
+  TokensBurnedEventObject
 >;
 
-export type TokenRescuedEventFilter = TypedEventFilter<TokenRescuedEvent>;
+export type TokensBurnedEventFilter = TypedEventFilter<TokensBurnedEvent>;
 
-export interface IRescatable extends BaseContract {
+export interface IBurnable extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: IRescatableInterface;
+  interface: IBurnableInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -90,46 +87,46 @@ export interface IRescatable extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    rescueToken(
+    burn(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
-  rescueToken(
+  burn(
     amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    rescueToken(
+    burn(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
 
   filters: {
-    "TokenRescued(address,address,uint256)"(
-      rescuer?: null,
-      tokenId?: null,
+    "TokensBurned(address,address,uint256)"(
+      burner?: null,
+      token?: null,
       amount?: null
-    ): TokenRescuedEventFilter;
-    TokenRescued(
-      rescuer?: null,
-      tokenId?: null,
+    ): TokensBurnedEventFilter;
+    TokensBurned(
+      burner?: null,
+      token?: null,
       amount?: null
-    ): TokenRescuedEventFilter;
+    ): TokensBurnedEventFilter;
   };
 
   estimateGas: {
-    rescueToken(
+    burn(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    rescueToken(
+    burn(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

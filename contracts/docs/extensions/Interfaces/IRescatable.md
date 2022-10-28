@@ -10,10 +10,10 @@
 
 ## Methods
 
-### rescueToken
+### rescue
 
 ```solidity
-function rescueToken(uint256 amount) external nonpayable
+function rescue(uint256 amount) external nonpayable
 ```
 
 

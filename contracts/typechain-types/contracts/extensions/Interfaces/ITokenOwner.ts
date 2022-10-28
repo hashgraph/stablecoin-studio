@@ -18,7 +18,7 @@ import type {
   TypedListener,
   OnEvent,
   PromiseOrValue,
-} from "../common";
+} from "../../../common";
 
 export interface ITokenOwnerInterface extends utils.Interface {
   functions: {

@@ -58,7 +58,7 @@ export interface HederaERC20Interface extends utils.Interface {
     "mint(address,uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
-    "rescueToken(uint256)": FunctionFragment;
+    "rescue(uint256)": FunctionFragment;
     "resetSupplierAllowance(address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "revokeSupplierRole(address)": FunctionFragment;
@@ -101,7 +101,7 @@ export interface HederaERC20Interface extends utils.Interface {
       | "mint"
       | "name"
       | "renounceRole"
-      | "rescueToken"
+      | "rescue"
       | "resetSupplierAllowance"
       | "revokeRole"
       | "revokeSupplierRole"
@@ -215,7 +215,7 @@ export interface HederaERC20Interface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "rescueToken",
+    functionFragment: "rescue",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -330,10 +330,7 @@ export interface HederaERC20Interface extends utils.Interface {
     functionFragment: "renounceRole",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "rescueToken",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "rescue", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "resetSupplierAllowance",
     data: BytesLike
@@ -747,7 +744,7 @@ export interface HederaERC20 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    rescueToken(
+    rescue(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -924,7 +921,7 @@ export interface HederaERC20 extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  rescueToken(
+  rescue(
     amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -1101,7 +1098,7 @@ export interface HederaERC20 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    rescueToken(
+    rescue(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1455,7 +1452,7 @@ export interface HederaERC20 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    rescueToken(
+    rescue(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -1635,7 +1632,7 @@ export interface HederaERC20 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    rescueToken(
+    rescue(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

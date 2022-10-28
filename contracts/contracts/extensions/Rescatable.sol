@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.10;
 
-import "../TokenOwner.sol";
+import "./TokenOwner.sol";
 import "../Roles.sol";
-import "./IRescatable.sol";
+import "./Interfaces/IRescatable.sol";
 import "../hts-precompile/IHederaTokenService.sol";
 
 abstract contract Rescatable is IRescatable, TokenOwner, Roles {
@@ -15,7 +15,7 @@ abstract contract Rescatable is IRescatable, TokenOwner, Roles {
     *
     * @param amount The number of tokens to rescuer
     */
-    function rescueToken(uint256 amount)
+    function rescue(uint256 amount)
     external
     onlyRole(RESCUE_ROLE) 
     {

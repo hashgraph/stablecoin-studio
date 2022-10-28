@@ -7,7 +7,7 @@ import type { Provider } from "@ethersproject/providers";
 import type {
   ITokenOwner,
   ITokenOwnerInterface,
-} from "../../contracts/ITokenOwner";
+} from "../../../../contracts/extensions/Interfaces/ITokenOwner";
 
 const _abi = [
   {

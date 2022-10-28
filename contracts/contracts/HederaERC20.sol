@@ -12,7 +12,7 @@ import "./extensions/Wipeable.sol";
 import "./extensions/Rescatable.sol";
 import "./Roles.sol";
 import "./hts-precompile/IHederaTokenService.sol";
-import "./TokenOwner.sol";
+import "./extensions/TokenOwner.sol";
 
 
 contract HederaERC20 is IHederaERC20, Initializable, IERC20Upgradeable,

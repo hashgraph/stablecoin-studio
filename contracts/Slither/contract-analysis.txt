@@ -1,0 +1,395 @@
+'npx hardhat compile --force' running
+Generating typings for: 37 artifacts in dir: typechain-types for target: ethers-v5
+Successfully generated 108 typings!
+Compiled 37 Solidity files successfully
+ ·------------------------|--------------|----------------·
+ |  Contract Name         ·  Size (KiB)  ·  Change (KiB)  │
+ ·························|··············|·················
+ |  Address               ·       0.084  ·                │
+ ·························|··············|·················
+ |  AddressUpgradeable    ·       0.084  ·                │
+ ·························|··············|·················
+ |  ERC1967Proxy          ·       0.755  ·                │
+ ·························|··············|·················
+ |  HederaERC1967Proxy    ·       0.795  ·                │
+ ·························|··············|·················
+ |  HederaERC20           ·      10.849  ·                │
+ ·························|··············|·················
+ |  SafeERC20Upgradeable  ·       0.084  ·                │
+ ·························|··············|·················
+ |  StorageSlot           ·       0.084  ·                │
+ ·························|··············|·················
+ |  StringsUpgradeable    ·       0.084  ·                │
+ ·------------------------|--------------|----------------·
+✅ Generated documentation for 37 contracts
+
+
+Contract locking ether found:
+	Contract HederaERC20 (contracts/HederaERC20.sol#18-219) has payable functions:
+	 - HederaERC20.initialize(address) (contracts/HederaERC20.sol#22-34)
+	But does not have a function to withdraw the ether
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#contracts-that-lock-ether
+
+ERC1967Upgrade._upgradeToAndCallUUPS(address,bytes,bool).slot (node_modules/@openzeppelin/contracts/proxy/ERC1967/ERC1967Upgrade.sol#92) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables
+
+ERC1967Upgrade._upgradeToAndCall(address,bytes,bool) (node_modules/@openzeppelin/contracts/proxy/ERC1967/ERC1967Upgrade.sol#65-74) ignores return value by Address.functionDelegateCall(newImplementation,data) (node_modules/@openzeppelin/contracts/proxy/ERC1967/ERC1967Upgrade.sol#72)
+ERC1967Upgrade._upgradeToAndCallUUPS(address,bytes,bool) (node_modules/@openzeppelin/contracts/proxy/ERC1967/ERC1967Upgrade.sol#81-99) ignores return value by IERC1822Proxiable(newImplementation).proxiableUUID() (node_modules/@openzeppelin/contracts/proxy/ERC1967/ERC1967Upgrade.sol#92-96)
+ERC1967Upgrade._upgradeBeaconToAndCall(address,bytes,bool) (node_modules/@openzeppelin/contracts/proxy/ERC1967/ERC1967Upgrade.sol#174-184) ignores return value by Address.functionDelegateCall(IBeacon(newBeacon).implementation(),data) (node_modules/@openzeppelin/contracts/proxy/ERC1967/ERC1967Upgrade.sol#182)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return
+
+IHederaTokenService.allowance(address,address,address).allowance (contracts/hts-precompile/IHederaTokenService.sol#518) shadows:
+	- IHederaTokenService.allowance(address,address,address) (contracts/hts-precompile/IHederaTokenService.sol#514-518) (function)
+IHederaTokenService.isToken(address).isToken (contracts/hts-precompile/IHederaTokenService.sol#752) shadows:
+	- IHederaTokenService.isToken(address) (contracts/hts-precompile/IHederaTokenService.sol#750-752) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing
+
+Variable 'ERC1967Upgrade._upgradeToAndCallUUPS(address,bytes,bool).slot (node_modules/@openzeppelin/contracts/proxy/ERC1967/ERC1967Upgrade.sol#92)' in ERC1967Upgrade._upgradeToAndCallUUPS(address,bytes,bool) (node_modules/@openzeppelin/contracts/proxy/ERC1967/ERC1967Upgrade.sol#81-99) potentially used before declaration: require(bool,string)(slot == _IMPLEMENTATION_SLOT,ERC1967Upgrade: unsupported proxiableUUID) (node_modules/@openzeppelin/contracts/proxy/ERC1967/ERC1967Upgrade.sol#93)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#pre-declaration-usage-of-local-variables
+
+Reentrancy in HederaERC20._transfer(address,address,uint256) (contracts/HederaERC20.sol#158-168):
+	External calls:
+	- responseCode = IHederaTokenService(precompileAddress).transferToken(_getTokenAddress(),from,to,int64(int256(amount))) (contracts/HederaERC20.sol#164)
+	Event emitted after the call(s):
+	- TokenTransfer(_getTokenAddress(),from,to,amount) (contracts/HederaERC20.sol#167)
+Reentrancy in HederaERC20.associateToken(address) (contracts/HederaERC20.sol#128-135):
+	External calls:
+	- responseCode = IHederaTokenService(precompileAddress).associateToken(adr,_getTokenAddress()) (contracts/HederaERC20.sol#131)
+	Event emitted after the call(s):
+	- TokenAssociated(_getTokenAddress(),adr) (contracts/HederaERC20.sol#134)
+Reentrancy in Burnable.burn(uint256) (contracts/extensions/Burnable.sol#17-27):
+	External calls:
+	- (responseCode) = IHederaTokenService(precompileAddress).burnToken(_getTokenAddress(),uint64(amount),new int64[](0)) (contracts/extensions/Burnable.sol#23)
+	Event emitted after the call(s):
+	- TokensBurned(msg.sender,_getTokenAddress(),amount) (contracts/extensions/Burnable.sol#26)
+Reentrancy in HederaERC20.dissociateToken(address) (contracts/HederaERC20.sol#143-150):
+	External calls:
+	- responseCode = IHederaTokenService(precompileAddress).dissociateToken(adr,_getTokenAddress()) (contracts/HederaERC20.sol#146)
+	Event emitted after the call(s):
+	- TokenDissociated(_getTokenAddress(),adr) (contracts/HederaERC20.sol#149)
+Reentrancy in Mintable.mint(address,uint256) (contracts/extensions/Mintable.sol#19-30):
+	External calls:
+	- (responseCode) = IHederaTokenService(precompileAddress).mintToken(_getTokenAddress(),uint64(amount),new bytes[](0)) (contracts/extensions/Mintable.sol#24)
+	Event emitted after the call(s):
+	- TokensMinted(msg.sender,_getTokenAddress(),amount,account) (contracts/extensions/Mintable.sol#29)
+Reentrancy in Rescatable.rescueToken(uint256) (contracts/extensions/Rescatable.sol#18-28):
+	External calls:
+	- responseCode = IHederaTokenService(precompileAddress).transferToken(_getTokenAddress(),address(this),msg.sender,int64(int256(amount))) (contracts/extensions/Rescatable.sol#24)
+	Event emitted after the call(s):
+	- TokenRescued(msg.sender,_getTokenAddress(),amount) (contracts/extensions/Rescatable.sol#27)
+Reentrancy in Wipeable.wipe(address,uint32) (contracts/extensions/Wipeable.sol#23-33):
+	External calls:
+	- responseCode = IHederaTokenService(precompileAddress).wipeTokenAccount(_getTokenAddress(),account,amount) (contracts/extensions/Wipeable.sol#29)
+	Event emitted after the call(s):
+	- TokensWiped(msg.sender,_getTokenAddress(),account,amount) (contracts/extensions/Wipeable.sol#32)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3
+
+AddressUpgradeable.verifyCallResult(bool,bytes,string) (node_modules/@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol#174-194) uses assembly
+	- INLINE ASM (node_modules/@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol#186-189)
+Proxy._delegate(address) (node_modules/@openzeppelin/contracts/proxy/Proxy.sol#22-45) uses assembly
+	- INLINE ASM (node_modules/@openzeppelin/contracts/proxy/Proxy.sol#23-44)
+Address.verifyCallResult(bool,bytes,string) (node_modules/@openzeppelin/contracts/utils/Address.sol#201-221) uses assembly
+	- INLINE ASM (node_modules/@openzeppelin/contracts/utils/Address.sol#213-216)
+StorageSlot.getAddressSlot(bytes32) (node_modules/@openzeppelin/contracts/utils/StorageSlot.sol#52-57) uses assembly
+	- INLINE ASM (node_modules/@openzeppelin/contracts/utils/StorageSlot.sol#54-56)
+StorageSlot.getBooleanSlot(bytes32) (node_modules/@openzeppelin/contracts/utils/StorageSlot.sol#62-67) uses assembly
+	- INLINE ASM (node_modules/@openzeppelin/contracts/utils/StorageSlot.sol#64-66)
+StorageSlot.getBytes32Slot(bytes32) (node_modules/@openzeppelin/contracts/utils/StorageSlot.sol#72-77) uses assembly
+	- INLINE ASM (node_modules/@openzeppelin/contracts/utils/StorageSlot.sol#74-76)
+StorageSlot.getUint256Slot(bytes32) (node_modules/@openzeppelin/contracts/utils/StorageSlot.sol#82-87) uses assembly
+	- INLINE ASM (node_modules/@openzeppelin/contracts/utils/StorageSlot.sol#84-86)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage
+
+Different versions of Solidity are used:
+	- Version used: ['>=0.4.9<0.9.0', '^0.8.0', '^0.8.1', '^0.8.10', '^0.8.2']
+	- ^0.8.0 (node_modules/@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol#4)
+	- ^0.8.0 (node_modules/@openzeppelin/contracts-upgradeable/access/IAccessControlUpgradeable.sol#4)
+	- ^0.8.2 (node_modules/@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol#4)
+	- ^0.8.0 (node_modules/@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol#4)
+	- ^0.8.0 (node_modules/@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol#4)
+	- ^0.8.0 (node_modules/@openzeppelin/contracts-upgradeable/token/ERC20/extensions/draft-IERC20PermitUpgradeable.sol#4)
+	- ^0.8.0 (node_modules/@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol#4)
+	- ^0.8.1 (node_modules/@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol#4)
+	- ^0.8.0 (node_modules/@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol#4)
+	- ^0.8.0 (node_modules/@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol#4)
+	- ^0.8.0 (node_modules/@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol#4)
+	- ^0.8.0 (node_modules/@openzeppelin/contracts-upgradeable/utils/introspection/IERC165Upgradeable.sol#4)
+	- ^0.8.0 (node_modules/@openzeppelin/contracts/interfaces/draft-IERC1822.sol#4)
+	- ^0.8.0 (node_modules/@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol#4)
+	- ^0.8.2 (node_modules/@openzeppelin/contracts/proxy/ERC1967/ERC1967Upgrade.sol#4)
+	- ^0.8.0 (node_modules/@openzeppelin/contracts/proxy/Proxy.sol#4)
+	- ^0.8.0 (node_modules/@openzeppelin/contracts/proxy/beacon/IBeacon.sol#4)
+	- ^0.8.1 (node_modules/@openzeppelin/contracts/utils/Address.sol#4)
+	- ^0.8.0 (node_modules/@openzeppelin/contracts/utils/StorageSlot.sol#4)
+	- ^0.8.10 (contracts/HederaERC1967Proxy.sol#3)
+	- ^0.8.10 (contracts/HederaERC20.sol#2)
+	- ^0.8.10 (contracts/IHederaERC20.sol#2)
+	- ^0.8.10 (contracts/Roles.sol#2)
+	- ^0.8.10 (contracts/extensions/Burnable.sol#2)
+	- ^0.8.10 (contracts/extensions/Interfaces/IBurnable.sol#2)
+	- ^0.8.10 (contracts/extensions/Interfaces/IMintable.sol#2)
+	- ^0.8.10 (contracts/extensions/Interfaces/IRescatable.sol#2)
+	- ^0.8.10 (contracts/extensions/Interfaces/ISupplierAdmin.sol#2)
+	- ^0.8.10 (contracts/extensions/Interfaces/ITokenOwner.sol#2)
+	- ^0.8.10 (contracts/extensions/Interfaces/IWipeable.sol#2)
+	- ^0.8.10 (contracts/extensions/Mintable.sol#2)
+	- ^0.8.10 (contracts/extensions/Rescatable.sol#2)
+	- ^0.8.10 (contracts/extensions/SupplierAdmin.sol#2)
+	- ^0.8.10 (contracts/extensions/TokenOwner.sol#2)
+	- ^0.8.10 (contracts/extensions/Wipeable.sol#2)
+	- >=0.4.9<0.9.0 (contracts/hts-precompile/HederaResponseCodes.sol#2)
+	- >=0.4.9<0.9.0 (contracts/hts-precompile/IHederaTokenService.sol#2)
+	- ABIEncoderV2 (contracts/hts-precompile/IHederaTokenService.sol#3)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#different-pragma-directives-are-used
+
+Pragma version^0.8.0 (node_modules/@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol#4) allows old versions
+Pragma version^0.8.0 (node_modules/@openzeppelin/contracts-upgradeable/access/IAccessControlUpgradeable.sol#4) allows old versions
+Pragma version^0.8.2 (node_modules/@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol#4) allows old versions
+Pragma version^0.8.0 (node_modules/@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol#4) allows old versions
+Pragma version^0.8.0 (node_modules/@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol#4) allows old versions
+Pragma version^0.8.0 (node_modules/@openzeppelin/contracts-upgradeable/token/ERC20/extensions/draft-IERC20PermitUpgradeable.sol#4) allows old versions
+Pragma version^0.8.0 (node_modules/@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol#4) allows old versions
+Pragma version^0.8.1 (node_modules/@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol#4) allows old versions
+Pragma version^0.8.0 (node_modules/@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol#4) allows old versions
+Pragma version^0.8.0 (node_modules/@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol#4) allows old versions
+Pragma version^0.8.0 (node_modules/@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol#4) allows old versions
+Pragma version^0.8.0 (node_modules/@openzeppelin/contracts-upgradeable/utils/introspection/IERC165Upgradeable.sol#4) allows old versions
+Pragma version^0.8.0 (node_modules/@openzeppelin/contracts/interfaces/draft-IERC1822.sol#4) allows old versions
+Pragma version^0.8.0 (node_modules/@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol#4) allows old versions
+Pragma version^0.8.2 (node_modules/@openzeppelin/contracts/proxy/ERC1967/ERC1967Upgrade.sol#4) allows old versions
+Pragma version^0.8.0 (node_modules/@openzeppelin/contracts/proxy/Proxy.sol#4) allows old versions
+Pragma version^0.8.0 (node_modules/@openzeppelin/contracts/proxy/beacon/IBeacon.sol#4) allows old versions
+Pragma version^0.8.1 (node_modules/@openzeppelin/contracts/utils/Address.sol#4) allows old versions
+Pragma version^0.8.0 (node_modules/@openzeppelin/contracts/utils/StorageSlot.sol#4) allows old versions
+Pragma version^0.8.10 (contracts/HederaERC1967Proxy.sol#3) allows old versions
+Pragma version^0.8.10 (contracts/HederaERC20.sol#2) allows old versions
+Pragma version^0.8.10 (contracts/IHederaERC20.sol#2) allows old versions
+Pragma version^0.8.10 (contracts/Roles.sol#2) allows old versions
+Pragma version^0.8.10 (contracts/extensions/Burnable.sol#2) allows old versions
+Pragma version^0.8.10 (contracts/extensions/Interfaces/IBurnable.sol#2) allows old versions
+Pragma version^0.8.10 (contracts/extensions/Interfaces/IMintable.sol#2) allows old versions
+Pragma version^0.8.10 (contracts/extensions/Interfaces/IRescatable.sol#2) allows old versions
+Pragma version^0.8.10 (contracts/extensions/Interfaces/ISupplierAdmin.sol#2) allows old versions
+Pragma version^0.8.10 (contracts/extensions/Interfaces/ITokenOwner.sol#2) allows old versions
+Pragma version^0.8.10 (contracts/extensions/Interfaces/IWipeable.sol#2) allows old versions
+Pragma version^0.8.10 (contracts/extensions/Mintable.sol#2) allows old versions
+Pragma version^0.8.10 (contracts/extensions/Rescatable.sol#2) allows old versions
+Pragma version^0.8.10 (contracts/extensions/SupplierAdmin.sol#2) allows old versions
+Pragma version^0.8.10 (contracts/extensions/TokenOwner.sol#2) allows old versions
+Pragma version^0.8.10 (contracts/extensions/Wipeable.sol#2) allows old versions
+Pragma version>=0.4.9<0.9.0 (contracts/hts-precompile/HederaResponseCodes.sol#2) is too complex
+Pragma version>=0.4.9<0.9.0 (contracts/hts-precompile/IHederaTokenService.sol#2) is too complex
+solc-0.8.10 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity
+
+Low level call in AddressUpgradeable.sendValue(address,uint256) (node_modules/@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol#60-65):
+	- (success) = recipient.call{value: amount}() (node_modules/@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol#63)
+Low level call in AddressUpgradeable.functionCallWithValue(address,bytes,uint256,string) (node_modules/@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol#128-139):
+	- (success,returndata) = target.call{value: value}(data) (node_modules/@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol#137)
+Low level call in AddressUpgradeable.functionStaticCall(address,bytes,string) (node_modules/@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol#157-166):
+	- (success,returndata) = target.staticcall(data) (node_modules/@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol#164)
+Low level call in Address.sendValue(address,uint256) (node_modules/@openzeppelin/contracts/utils/Address.sol#60-65):
+	- (success) = recipient.call{value: amount}() (node_modules/@openzeppelin/contracts/utils/Address.sol#63)
+Low level call in Address.functionCallWithValue(address,bytes,uint256,string) (node_modules/@openzeppelin/contracts/utils/Address.sol#128-139):
+	- (success,returndata) = target.call{value: value}(data) (node_modules/@openzeppelin/contracts/utils/Address.sol#137)
+Low level call in Address.functionStaticCall(address,bytes,string) (node_modules/@openzeppelin/contracts/utils/Address.sol#157-166):
+	- (success,returndata) = target.staticcall(data) (node_modules/@openzeppelin/contracts/utils/Address.sol#164)
+Low level call in Address.functionDelegateCall(address,bytes,string) (node_modules/@openzeppelin/contracts/utils/Address.sol#184-193):
+	- (success,returndata) = target.delegatecall(data) (node_modules/@openzeppelin/contracts/utils/Address.sol#191)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls
+
+HederaERC20 (contracts/HederaERC20.sol#18-219) should inherit from IERC20MetadataUpgradeable (node_modules/@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol#13-28)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#missing-inheritance
+
+Function AccessControlUpgradeable.__AccessControl_init() (node_modules/@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol#51-52) is not in mixedCase
+Function AccessControlUpgradeable.__AccessControl_init_unchained() (node_modules/@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol#54-55) is not in mixedCase
+Variable AccessControlUpgradeable.__gap (node_modules/@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol#259) is not in mixedCase
+Function IERC20PermitUpgradeable.DOMAIN_SEPARATOR() (node_modules/@openzeppelin/contracts-upgradeable/token/ERC20/extensions/draft-IERC20PermitUpgradeable.sol#59) is not in mixedCase
+Function ContextUpgradeable.__Context_init() (node_modules/@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol#18-19) is not in mixedCase
+Function ContextUpgradeable.__Context_init_unchained() (node_modules/@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol#21-22) is not in mixedCase
+Variable ContextUpgradeable.__gap (node_modules/@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol#36) is not in mixedCase
+Function ERC165Upgradeable.__ERC165_init() (node_modules/@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol#24-25) is not in mixedCase
+Function ERC165Upgradeable.__ERC165_init_unchained() (node_modules/@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol#27-28) is not in mixedCase
+Variable ERC165Upgradeable.__gap (node_modules/@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol#41) is not in mixedCase
+Variable Roles.ROLES (contracts/Roles.sol#54) is not in mixedCase
+Variable SupplierAdmin._supplierAllowances (contracts/extensions/SupplierAdmin.sol#10) is not in mixedCase
+Variable SupplierAdmin._unlimitedSupplierAllowances (contracts/extensions/SupplierAdmin.sol#11) is not in mixedCase
+Constant TokenOwner.precompileAddress (contracts/extensions/TokenOwner.sol#11) is not in UPPER_CASE_WITH_UNDERSCORES
+Variable TokenOwner._tokenAddress (contracts/extensions/TokenOwner.sol#13) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions
+
+HederaResponseCodes.OK (contracts/hts-precompile/HederaResponseCodes.sol#7) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_TRANSACTION (contracts/hts-precompile/HederaResponseCodes.sol#8) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.PAYER_ACCOUNT_NOT_FOUND (contracts/hts-precompile/HederaResponseCodes.sol#9) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_NODE_ACCOUNT (contracts/hts-precompile/HederaResponseCodes.sol#10) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.TRANSACTION_EXPIRED (contracts/hts-precompile/HederaResponseCodes.sol#11) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_TRANSACTION_START (contracts/hts-precompile/HederaResponseCodes.sol#12) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_TRANSACTION_DURATION (contracts/hts-precompile/HederaResponseCodes.sol#13) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_SIGNATURE (contracts/hts-precompile/HederaResponseCodes.sol#14) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.MEMO_TOO_LONG (contracts/hts-precompile/HederaResponseCodes.sol#15) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INSUFFICIENT_TX_FEE (contracts/hts-precompile/HederaResponseCodes.sol#16) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INSUFFICIENT_PAYER_BALANCE (contracts/hts-precompile/HederaResponseCodes.sol#17) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.DUPLICATE_TRANSACTION (contracts/hts-precompile/HederaResponseCodes.sol#18) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.BUSY (contracts/hts-precompile/HederaResponseCodes.sol#19) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.NOT_SUPPORTED (contracts/hts-precompile/HederaResponseCodes.sol#20) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_FILE_ID (contracts/hts-precompile/HederaResponseCodes.sol#22) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_ACCOUNT_ID (contracts/hts-precompile/HederaResponseCodes.sol#23) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_CONTRACT_ID (contracts/hts-precompile/HederaResponseCodes.sol#24) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_TRANSACTION_ID (contracts/hts-precompile/HederaResponseCodes.sol#25) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.RECEIPT_NOT_FOUND (contracts/hts-precompile/HederaResponseCodes.sol#26) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.RECORD_NOT_FOUND (contracts/hts-precompile/HederaResponseCodes.sol#27) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_SOLIDITY_ID (contracts/hts-precompile/HederaResponseCodes.sol#28) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.UNKNOWN (contracts/hts-precompile/HederaResponseCodes.sol#30) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.SUCCESS (contracts/hts-precompile/HederaResponseCodes.sol#31) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.FAIL_INVALID (contracts/hts-precompile/HederaResponseCodes.sol#32) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.FAIL_FEE (contracts/hts-precompile/HederaResponseCodes.sol#33) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.FAIL_BALANCE (contracts/hts-precompile/HederaResponseCodes.sol#34) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.KEY_REQUIRED (contracts/hts-precompile/HederaResponseCodes.sol#36) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.BAD_ENCODING (contracts/hts-precompile/HederaResponseCodes.sol#37) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INSUFFICIENT_ACCOUNT_BALANCE (contracts/hts-precompile/HederaResponseCodes.sol#38) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_SOLIDITY_ADDRESS (contracts/hts-precompile/HederaResponseCodes.sol#39) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INSUFFICIENT_GAS (contracts/hts-precompile/HederaResponseCodes.sol#41) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.CONTRACT_SIZE_LIMIT_EXCEEDED (contracts/hts-precompile/HederaResponseCodes.sol#42) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.LOCAL_CALL_MODIFICATION_EXCEPTION (contracts/hts-precompile/HederaResponseCodes.sol#43) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.CONTRACT_REVERT_EXECUTED (contracts/hts-precompile/HederaResponseCodes.sol#44) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.CONTRACT_EXECUTION_EXCEPTION (contracts/hts-precompile/HederaResponseCodes.sol#45) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_RECEIVING_NODE_ACCOUNT (contracts/hts-precompile/HederaResponseCodes.sol#46) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.MISSING_QUERY_HEADER (contracts/hts-precompile/HederaResponseCodes.sol#47) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.ACCOUNT_UPDATE_FAILED (contracts/hts-precompile/HederaResponseCodes.sol#49) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_KEY_ENCODING (contracts/hts-precompile/HederaResponseCodes.sol#50) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.NULL_SOLIDITY_ADDRESS (contracts/hts-precompile/HederaResponseCodes.sol#51) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.CONTRACT_UPDATE_FAILED (contracts/hts-precompile/HederaResponseCodes.sol#53) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_QUERY_HEADER (contracts/hts-precompile/HederaResponseCodes.sol#54) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_FEE_SUBMITTED (contracts/hts-precompile/HederaResponseCodes.sol#56) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_PAYER_SIGNATURE (contracts/hts-precompile/HederaResponseCodes.sol#57) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.KEY_NOT_PROVIDED (contracts/hts-precompile/HederaResponseCodes.sol#59) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_EXPIRATION_TIME (contracts/hts-precompile/HederaResponseCodes.sol#60) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.NO_WACL_KEY (contracts/hts-precompile/HederaResponseCodes.sol#61) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.FILE_CONTENT_EMPTY (contracts/hts-precompile/HederaResponseCodes.sol#62) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_ACCOUNT_AMOUNTS (contracts/hts-precompile/HederaResponseCodes.sol#63) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.EMPTY_TRANSACTION_BODY (contracts/hts-precompile/HederaResponseCodes.sol#64) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_TRANSACTION_BODY (contracts/hts-precompile/HederaResponseCodes.sol#65) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_SIGNATURE_TYPE_MISMATCHING_KEY (contracts/hts-precompile/HederaResponseCodes.sol#67) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_SIGNATURE_COUNT_MISMATCHING_KEY (contracts/hts-precompile/HederaResponseCodes.sol#68) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.EMPTY_LIVE_HASH_BODY (contracts/hts-precompile/HederaResponseCodes.sol#70) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.EMPTY_LIVE_HASH (contracts/hts-precompile/HederaResponseCodes.sol#71) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.EMPTY_LIVE_HASH_KEYS (contracts/hts-precompile/HederaResponseCodes.sol#72) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_LIVE_HASH_SIZE (contracts/hts-precompile/HederaResponseCodes.sol#73) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.EMPTY_QUERY_BODY (contracts/hts-precompile/HederaResponseCodes.sol#75) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.EMPTY_LIVE_HASH_QUERY (contracts/hts-precompile/HederaResponseCodes.sol#76) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.LIVE_HASH_NOT_FOUND (contracts/hts-precompile/HederaResponseCodes.sol#77) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.ACCOUNT_ID_DOES_NOT_EXIST (contracts/hts-precompile/HederaResponseCodes.sol#78) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.LIVE_HASH_ALREADY_EXISTS (contracts/hts-precompile/HederaResponseCodes.sol#79) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_FILE_WACL (contracts/hts-precompile/HederaResponseCodes.sol#81) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.SERIALIZATION_FAILED (contracts/hts-precompile/HederaResponseCodes.sol#82) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.TRANSACTION_OVERSIZE (contracts/hts-precompile/HederaResponseCodes.sol#83) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.TRANSACTION_TOO_MANY_LAYERS (contracts/hts-precompile/HederaResponseCodes.sol#84) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.CONTRACT_DELETED (contracts/hts-precompile/HederaResponseCodes.sol#85) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.PLATFORM_NOT_ACTIVE (contracts/hts-precompile/HederaResponseCodes.sol#87) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.KEY_PREFIX_MISMATCH (contracts/hts-precompile/HederaResponseCodes.sol#88) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.PLATFORM_TRANSACTION_NOT_CREATED (contracts/hts-precompile/HederaResponseCodes.sol#89) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_RENEWAL_PERIOD (contracts/hts-precompile/HederaResponseCodes.sol#90) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_PAYER_ACCOUNT_ID (contracts/hts-precompile/HederaResponseCodes.sol#91) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.ACCOUNT_DELETED (contracts/hts-precompile/HederaResponseCodes.sol#92) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.FILE_DELETED (contracts/hts-precompile/HederaResponseCodes.sol#93) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.ACCOUNT_REPEATED_IN_ACCOUNT_AMOUNTS (contracts/hts-precompile/HederaResponseCodes.sol#94) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.SETTING_NEGATIVE_ACCOUNT_BALANCE (contracts/hts-precompile/HederaResponseCodes.sol#95) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.OBTAINER_REQUIRED (contracts/hts-precompile/HederaResponseCodes.sol#96) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.OBTAINER_SAME_CONTRACT_ID (contracts/hts-precompile/HederaResponseCodes.sol#97) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.OBTAINER_DOES_NOT_EXIST (contracts/hts-precompile/HederaResponseCodes.sol#98) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.MODIFYING_IMMUTABLE_CONTRACT (contracts/hts-precompile/HederaResponseCodes.sol#99) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.FILE_SYSTEM_EXCEPTION (contracts/hts-precompile/HederaResponseCodes.sol#100) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.AUTORENEW_DURATION_NOT_IN_RANGE (contracts/hts-precompile/HederaResponseCodes.sol#101) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.ERROR_DECODING_BYTESTRING (contracts/hts-precompile/HederaResponseCodes.sol#102) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.CONTRACT_FILE_EMPTY (contracts/hts-precompile/HederaResponseCodes.sol#103) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.CONTRACT_BYTECODE_EMPTY (contracts/hts-precompile/HederaResponseCodes.sol#104) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_INITIAL_BALANCE (contracts/hts-precompile/HederaResponseCodes.sol#105) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_RECEIVE_RECORD_THRESHOLD (contracts/hts-precompile/HederaResponseCodes.sol#106) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_SEND_RECORD_THRESHOLD (contracts/hts-precompile/HederaResponseCodes.sol#107) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.ACCOUNT_IS_NOT_GENESIS_ACCOUNT (contracts/hts-precompile/HederaResponseCodes.sol#108) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.PAYER_ACCOUNT_UNAUTHORIZED (contracts/hts-precompile/HederaResponseCodes.sol#109) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_FREEZE_TRANSACTION_BODY (contracts/hts-precompile/HederaResponseCodes.sol#110) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.FREEZE_TRANSACTION_BODY_NOT_FOUND (contracts/hts-precompile/HederaResponseCodes.sol#111) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.TRANSFER_LIST_SIZE_LIMIT_EXCEEDED (contracts/hts-precompile/HederaResponseCodes.sol#112) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.RESULT_SIZE_LIMIT_EXCEEDED (contracts/hts-precompile/HederaResponseCodes.sol#113) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.NOT_SPECIAL_ACCOUNT (contracts/hts-precompile/HederaResponseCodes.sol#114) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.CONTRACT_NEGATIVE_GAS (contracts/hts-precompile/HederaResponseCodes.sol#115) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.CONTRACT_NEGATIVE_VALUE (contracts/hts-precompile/HederaResponseCodes.sol#116) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_FEE_FILE (contracts/hts-precompile/HederaResponseCodes.sol#117) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_EXCHANGE_RATE_FILE (contracts/hts-precompile/HederaResponseCodes.sol#118) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INSUFFICIENT_LOCAL_CALL_GAS (contracts/hts-precompile/HederaResponseCodes.sol#119) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.ENTITY_NOT_ALLOWED_TO_DELETE (contracts/hts-precompile/HederaResponseCodes.sol#120) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.AUTHORIZATION_FAILED (contracts/hts-precompile/HederaResponseCodes.sol#121) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.FILE_UPLOADED_PROTO_INVALID (contracts/hts-precompile/HederaResponseCodes.sol#122) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.FILE_UPLOADED_PROTO_NOT_SAVED_TO_DISK (contracts/hts-precompile/HederaResponseCodes.sol#123) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.FEE_SCHEDULE_FILE_PART_UPLOADED (contracts/hts-precompile/HederaResponseCodes.sol#124) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.EXCHANGE_RATE_CHANGE_LIMIT_EXCEEDED (contracts/hts-precompile/HederaResponseCodes.sol#125) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.MAX_CONTRACT_STORAGE_EXCEEDED (contracts/hts-precompile/HederaResponseCodes.sol#126) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.TRANSFER_ACCOUNT_SAME_AS_DELETE_ACCOUNT (contracts/hts-precompile/HederaResponseCodes.sol#127) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.TOTAL_LEDGER_BALANCE_INVALID (contracts/hts-precompile/HederaResponseCodes.sol#128) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.EXPIRATION_REDUCTION_NOT_ALLOWED (contracts/hts-precompile/HederaResponseCodes.sol#129) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.MAX_GAS_LIMIT_EXCEEDED (contracts/hts-precompile/HederaResponseCodes.sol#130) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.MAX_FILE_SIZE_EXCEEDED (contracts/hts-precompile/HederaResponseCodes.sol#131) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_TOPIC_ID (contracts/hts-precompile/HederaResponseCodes.sol#133) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_ADMIN_KEY (contracts/hts-precompile/HederaResponseCodes.sol#134) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_SUBMIT_KEY (contracts/hts-precompile/HederaResponseCodes.sol#135) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.UNAUTHORIZED (contracts/hts-precompile/HederaResponseCodes.sol#136) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_TOPIC_MESSAGE (contracts/hts-precompile/HederaResponseCodes.sol#137) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_AUTORENEW_ACCOUNT (contracts/hts-precompile/HederaResponseCodes.sol#138) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.AUTORENEW_ACCOUNT_NOT_ALLOWED (contracts/hts-precompile/HederaResponseCodes.sol#139) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.TOPIC_EXPIRED (contracts/hts-precompile/HederaResponseCodes.sol#143) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_CHUNK_NUMBER (contracts/hts-precompile/HederaResponseCodes.sol#144) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_CHUNK_TRANSACTION_ID (contracts/hts-precompile/HederaResponseCodes.sol#145) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.ACCOUNT_FROZEN_FOR_TOKEN (contracts/hts-precompile/HederaResponseCodes.sol#146) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.TOKENS_PER_ACCOUNT_LIMIT_EXCEEDED (contracts/hts-precompile/HederaResponseCodes.sol#147) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_TOKEN_ID (contracts/hts-precompile/HederaResponseCodes.sol#148) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_TOKEN_DECIMALS (contracts/hts-precompile/HederaResponseCodes.sol#149) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_TOKEN_INITIAL_SUPPLY (contracts/hts-precompile/HederaResponseCodes.sol#150) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_TREASURY_ACCOUNT_FOR_TOKEN (contracts/hts-precompile/HederaResponseCodes.sol#151) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_TOKEN_SYMBOL (contracts/hts-precompile/HederaResponseCodes.sol#152) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.TOKEN_HAS_NO_FREEZE_KEY (contracts/hts-precompile/HederaResponseCodes.sol#153) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.TRANSFERS_NOT_ZERO_SUM_FOR_TOKEN (contracts/hts-precompile/HederaResponseCodes.sol#154) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.MISSING_TOKEN_SYMBOL (contracts/hts-precompile/HederaResponseCodes.sol#155) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.TOKEN_SYMBOL_TOO_LONG (contracts/hts-precompile/HederaResponseCodes.sol#156) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.ACCOUNT_KYC_NOT_GRANTED_FOR_TOKEN (contracts/hts-precompile/HederaResponseCodes.sol#157) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.TOKEN_HAS_NO_KYC_KEY (contracts/hts-precompile/HederaResponseCodes.sol#158) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INSUFFICIENT_TOKEN_BALANCE (contracts/hts-precompile/HederaResponseCodes.sol#159) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.TOKEN_WAS_DELETED (contracts/hts-precompile/HederaResponseCodes.sol#160) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.TOKEN_HAS_NO_SUPPLY_KEY (contracts/hts-precompile/HederaResponseCodes.sol#161) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.TOKEN_HAS_NO_WIPE_KEY (contracts/hts-precompile/HederaResponseCodes.sol#162) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_TOKEN_MINT_AMOUNT (contracts/hts-precompile/HederaResponseCodes.sol#163) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_TOKEN_BURN_AMOUNT (contracts/hts-precompile/HederaResponseCodes.sol#164) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.TOKEN_NOT_ASSOCIATED_TO_ACCOUNT (contracts/hts-precompile/HederaResponseCodes.sol#165) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.CANNOT_WIPE_TOKEN_TREASURY_ACCOUNT (contracts/hts-precompile/HederaResponseCodes.sol#166) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_KYC_KEY (contracts/hts-precompile/HederaResponseCodes.sol#167) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_WIPE_KEY (contracts/hts-precompile/HederaResponseCodes.sol#168) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_FREEZE_KEY (contracts/hts-precompile/HederaResponseCodes.sol#169) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_SUPPLY_KEY (contracts/hts-precompile/HederaResponseCodes.sol#170) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.MISSING_TOKEN_NAME (contracts/hts-precompile/HederaResponseCodes.sol#171) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.TOKEN_NAME_TOO_LONG (contracts/hts-precompile/HederaResponseCodes.sol#172) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_WIPING_AMOUNT (contracts/hts-precompile/HederaResponseCodes.sol#173) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.TOKEN_IS_IMMUTABLE (contracts/hts-precompile/HederaResponseCodes.sol#174) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.TOKEN_ALREADY_ASSOCIATED_TO_ACCOUNT (contracts/hts-precompile/HederaResponseCodes.sol#175) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.TRANSACTION_REQUIRES_ZERO_TOKEN_BALANCES (contracts/hts-precompile/HederaResponseCodes.sol#176) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.ACCOUNT_IS_TREASURY (contracts/hts-precompile/HederaResponseCodes.sol#177) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.TOKEN_ID_REPEATED_IN_TOKEN_LIST (contracts/hts-precompile/HederaResponseCodes.sol#178) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.TOKEN_TRANSFER_LIST_SIZE_LIMIT_EXCEEDED (contracts/hts-precompile/HederaResponseCodes.sol#179) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.EMPTY_TOKEN_TRANSFER_BODY (contracts/hts-precompile/HederaResponseCodes.sol#180) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.EMPTY_TOKEN_TRANSFER_ACCOUNT_AMOUNTS (contracts/hts-precompile/HederaResponseCodes.sol#181) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_SCHEDULE_ID (contracts/hts-precompile/HederaResponseCodes.sol#183) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.SCHEDULE_IS_IMMUTABLE (contracts/hts-precompile/HederaResponseCodes.sol#184) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_SCHEDULE_PAYER_ID (contracts/hts-precompile/HederaResponseCodes.sol#185) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_SCHEDULE_ACCOUNT_ID (contracts/hts-precompile/HederaResponseCodes.sol#186) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.NO_NEW_VALID_SIGNATURES (contracts/hts-precompile/HederaResponseCodes.sol#187) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.UNRESOLVABLE_REQUIRED_SIGNERS (contracts/hts-precompile/HederaResponseCodes.sol#188) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.SCHEDULED_TRANSACTION_NOT_IN_WHITELIST (contracts/hts-precompile/HederaResponseCodes.sol#189) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.SOME_SIGNATURES_WERE_INVALID (contracts/hts-precompile/HederaResponseCodes.sol#190) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.TRANSACTION_ID_FIELD_NOT_ALLOWED (contracts/hts-precompile/HederaResponseCodes.sol#191) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.IDENTICAL_SCHEDULE_ALREADY_CREATED (contracts/hts-precompile/HederaResponseCodes.sol#192) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.INVALID_ZERO_BYTE_IN_STRING (contracts/hts-precompile/HederaResponseCodes.sol#193) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.SCHEDULE_ALREADY_DELETED (contracts/hts-precompile/HederaResponseCodes.sol#194) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.SCHEDULE_ALREADY_EXECUTED (contracts/hts-precompile/HederaResponseCodes.sol#195) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+HederaResponseCodes.MESSAGE_SIZE_TOO_LARGE (contracts/hts-precompile/HederaResponseCodes.sol#196) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+AccessControlUpgradeable.__gap (node_modules/@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol#259) is never used in HederaERC20 (contracts/HederaERC20.sol#18-219)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-state-variable
+. analyzed (37 contracts with 81 detectors), 257 result(s) found

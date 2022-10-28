@@ -7,7 +7,7 @@ import type { Provider } from "@ethersproject/providers";
 import type {
   ISupplierAdmin,
   ISupplierAdminInterface,
-} from "../../../contracts/extensions/ISupplierAdmin";
+} from "../../../../contracts/extensions/Interfaces/ISupplierAdmin";
 
 const _abi = [
   {

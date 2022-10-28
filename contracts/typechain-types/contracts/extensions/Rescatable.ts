@@ -42,7 +42,7 @@ export interface RescatableInterface extends utils.Interface {
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
-    "rescueToken(uint256)": FunctionFragment;
+    "rescue(uint256)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
   };
@@ -62,7 +62,7 @@ export interface RescatableInterface extends utils.Interface {
       | "grantRole"
       | "hasRole"
       | "renounceRole"
-      | "rescueToken"
+      | "rescue"
       | "revokeRole"
       | "supportsInterface"
   ): FunctionFragment;
@@ -114,7 +114,7 @@ export interface RescatableInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "rescueToken",
+    functionFragment: "rescue",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -160,10 +160,7 @@ export interface RescatableInterface extends utils.Interface {
     functionFragment: "renounceRole",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "rescueToken",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "rescue", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
@@ -315,7 +312,7 @@ export interface Rescatable extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    rescueToken(
+    rescue(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -379,7 +376,7 @@ export interface Rescatable extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  rescueToken(
+  rescue(
     amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -443,7 +440,7 @@ export interface Rescatable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    rescueToken(
+    rescue(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -557,7 +554,7 @@ export interface Rescatable extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    rescueToken(
+    rescue(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -624,7 +621,7 @@ export interface Rescatable extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    rescueToken(
+    rescue(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

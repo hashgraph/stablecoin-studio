@@ -3,11 +3,7 @@
 /* eslint-disable */
 export * as extensions from "./extensions";
 export * as htsPrecompile from "./hts-precompile";
-export { HTSTokenOwner__factory } from "./HTSTokenOwner__factory";
 export { HederaERC1967Proxy__factory } from "./HederaERC1967Proxy__factory";
 export { HederaERC20__factory } from "./HederaERC20__factory";
-export { IHTSTokenOwner__factory } from "./IHTSTokenOwner__factory";
 export { IHederaERC20__factory } from "./IHederaERC20__factory";
-export { ITokenOwner__factory } from "./ITokenOwner__factory";
 export { Roles__factory } from "./Roles__factory";
-export { TokenOwner__factory } from "./TokenOwner__factory";

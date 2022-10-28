@@ -7,7 +7,7 @@ import type { Provider } from "@ethersproject/providers";
 import type {
   IBurnable,
   IBurnableInterface,
-} from "../../../contracts/extensions/IBurnable";
+} from "../../../../contracts/extensions/Interfaces/IBurnable";
 
 const _abi = [
   {

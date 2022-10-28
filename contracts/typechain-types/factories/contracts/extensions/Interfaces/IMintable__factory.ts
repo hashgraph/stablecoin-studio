@@ -7,7 +7,7 @@ import type { Provider } from "@ethersproject/providers";
 import type {
   IMintable,
   IMintableInterface,
-} from "../../../contracts/extensions/IMintable";
+} from "../../../../contracts/extensions/Interfaces/IMintable";
 
 const _abi = [
   {

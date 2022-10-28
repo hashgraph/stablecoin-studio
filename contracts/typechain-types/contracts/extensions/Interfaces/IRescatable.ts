@@ -25,47 +25,47 @@ import type {
   TypedListener,
   OnEvent,
   PromiseOrValue,
-} from "../../common";
+} from "../../../common";
 
-export interface IBurnableInterface extends utils.Interface {
+export interface IRescatableInterface extends utils.Interface {
   functions: {
-    "burn(uint256)": FunctionFragment;
+    "rescue(uint256)": FunctionFragment;
   };
 
-  getFunction(nameOrSignatureOrTopic: "burn"): FunctionFragment;
+  getFunction(nameOrSignatureOrTopic: "rescue"): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "burn",
+    functionFragment: "rescue",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
 
-  decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "rescue", data: BytesLike): Result;
 
   events: {
-    "TokensBurned(address,address,uint256)": EventFragment;
+    "TokenRescued(address,address,uint256)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "TokensBurned"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TokenRescued"): EventFragment;
 }
 
-export interface TokensBurnedEventObject {
-  burner: string;
-  token: string;
+export interface TokenRescuedEventObject {
+  rescuer: string;
+  tokenId: string;
   amount: BigNumber;
 }
-export type TokensBurnedEvent = TypedEvent<
+export type TokenRescuedEvent = TypedEvent<
   [string, string, BigNumber],
-  TokensBurnedEventObject
+  TokenRescuedEventObject
 >;
 
-export type TokensBurnedEventFilter = TypedEventFilter<TokensBurnedEvent>;
+export type TokenRescuedEventFilter = TypedEventFilter<TokenRescuedEvent>;
 
-export interface IBurnable extends BaseContract {
+export interface IRescatable extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: IBurnableInterface;
+  interface: IRescatableInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -87,46 +87,46 @@ export interface IBurnable extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    burn(
+    rescue(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
-  burn(
+  rescue(
     amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    burn(
+    rescue(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
 
   filters: {
-    "TokensBurned(address,address,uint256)"(
-      burner?: null,
-      token?: null,
+    "TokenRescued(address,address,uint256)"(
+      rescuer?: null,
+      tokenId?: null,
       amount?: null
-    ): TokensBurnedEventFilter;
-    TokensBurned(
-      burner?: null,
-      token?: null,
+    ): TokenRescuedEventFilter;
+    TokenRescued(
+      rescuer?: null,
+      tokenId?: null,
       amount?: null
-    ): TokensBurnedEventFilter;
+    ): TokenRescuedEventFilter;
   };
 
   estimateGas: {
-    burn(
+    rescue(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    burn(
+    rescue(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
