@@ -1,8 +1,8 @@
 import { Heading, Text, Stack, useDisclosure } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import DetailsReview from '../../../components/DetailsReview';
 import InputController from '../../../components/Form/InputController';
 import InputNumberController from '../../../components/Form/InputNumberController';
@@ -13,10 +13,14 @@ import {
 	SELECTED_WALLET_ACCOUNT_INFO,
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNT,
+	walletActions,
 } from '../../../store/slices/walletSlice';
+import type { AppDispatch } from '../../../store/store.js';
 import { formatAmount } from '../../../utils/inputHelper';
 import { validateAccount, validateDecimals } from '../../../utils/validationsHelper';
 import OperationLayout from './../OperationLayout';
+import { useNavigate } from 'react-router-dom';
+import { RouterManager } from '../../../Router/RouterManager';
 
 const WipeOperation = () => {
 	const {
@@ -30,6 +34,8 @@ const WipeOperation = () => {
 	const infoAccount = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 
 	const [errorOperation, setErrorOperation] = useState();
+	const dispatch = useDispatch<AppDispatch>();
+	const navigate = useNavigate()
 
 	const { decimals = 0 } = selectedStableCoin || {};
 
@@ -39,6 +45,43 @@ const WipeOperation = () => {
 
 	const { t } = useTranslation(['wipe', 'global', 'operations']);
 
+	useEffect(() => {
+		handleRefreshCoinInfo();
+	}, [])
+	
+	const handleCloseModal = () => {
+		RouterManager.goBack(navigate);
+	}
+
+	const handleRefreshCoinInfo = async () => {
+		const stableCoinDetails = await SDKService.getStableCoinDetails({
+			id: selectedStableCoin?.tokenId || '',
+		});
+		dispatch(
+			walletActions.setSelectedStableCoin({
+				tokenId: stableCoinDetails?.tokenId,
+				initialSupply: Number(stableCoinDetails?.initialSupply),
+				totalSupply: Number(stableCoinDetails?.totalSupply),
+				maxSupply: Number(stableCoinDetails?.maxSupply),
+				name: stableCoinDetails?.name,
+				symbol: stableCoinDetails?.symbol,
+				decimals: stableCoinDetails?.decimals,
+				id: stableCoinDetails?.tokenId,
+				treasuryId: stableCoinDetails?.treasuryId,
+				autoRenewAccount: stableCoinDetails?.autoRenewAccount,
+				memo: stableCoinDetails?.memo,
+				adminKey:
+					stableCoinDetails?.adminKey && JSON.parse(JSON.stringify(stableCoinDetails.adminKey)),
+				kycKey: stableCoinDetails?.kycKey && JSON.parse(JSON.stringify(stableCoinDetails.kycKey)),
+				freezeKey:
+					stableCoinDetails?.freezeKey && JSON.parse(JSON.stringify(stableCoinDetails.freezeKey)),
+				wipeKey:
+					stableCoinDetails?.wipeKey && JSON.parse(JSON.stringify(stableCoinDetails.wipeKey)),
+				supplyKey:
+					stableCoinDetails?.supplyKey && JSON.parse(JSON.stringify(stableCoinDetails.supplyKey)),
+			}),
+		);
+	};
 	const handleWipe: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
 		const { amount, destinationAccount } = getValues();
 		try {
@@ -144,6 +187,8 @@ const WipeOperation = () => {
 						]}
 					/>
 				}
+				handleOnCloseModalError={handleCloseModal}
+				handleOnCloseModalSuccess={handleCloseModal}
 			/>
 		</>
 	);
