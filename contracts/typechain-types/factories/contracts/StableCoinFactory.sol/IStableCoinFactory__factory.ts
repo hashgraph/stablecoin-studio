@@ -40,28 +40,6 @@ const _abi = [
             type: "uint32",
           },
           {
-            components: [
-              {
-                internalType: "uint32",
-                name: "second",
-                type: "uint32",
-              },
-              {
-                internalType: "address",
-                name: "autoRenewAccount",
-                type: "address",
-              },
-              {
-                internalType: "uint32",
-                name: "autoRenewPeriod",
-                type: "uint32",
-              },
-            ],
-            internalType: "struct IHederaTokenService.Expiry",
-            name: "tokenExpiry",
-            type: "tuple",
-          },
-          {
             internalType: "uint256",
             name: "tokenInitialSupply",
             type: "uint256",

@@ -1,4 +1,5 @@
 const {
+    ContractId,
     AccountId,
     ContractFunctionParameters,
     TokenId,
@@ -88,17 +89,13 @@ export async function deployContractsWithSDK(
     const clientSdk = getClient()
     clientSdk.setOperator(account, privateKey)
 
-    let f_address = factoryAddress;
+    let f_address = ""
 
-    if(!f_address) f_address = await deployFactory(account, privateKey);
+    if(!factoryAddress) f_address = await deployFactory(account, privateKey);
+    else f_address = ContractId.fromString(factoryAddress);
+
 
     console.log(`Invoking Factory at ${f_address}... please wait.`)
-
-    let expiry = {
-        "second": 0,
-        "autoRenewAccount": clientSdk.toSolidityAddress(),
-        "autoRenewPeriod": 0
-    }    
 
     let tokenObject = {
         "tokenName": name,
@@ -106,10 +103,9 @@ export async function deployContractsWithSDK(
         "freeze": freeze,
         "supplyType": (maxSupply !== null)? TokenSupplyType.Finite: TokenSupplyType.Infinite,
         "tokenMaxSupply": maxSupply,
-        "tokenExpiry": expiry,
         "tokenInitialSupply": initialSupply,
         "tokenDecimals": decimals,
-        "senderPublicKey": publicKey
+        "senderPublicKey": PublicKey.fromString(publicKey).toBytes()
     };
 
     console.log(`Token Object: ${JSON.stringify(tokenObject)}`)
@@ -123,9 +119,9 @@ export async function deployContractsWithSDK(
         'deployStableCoin',
         parametersContractCall,
         clientSdk,
-        500000,
+        15000000,
         StableCoinFactory__factory.abi,
-        "100000"
+        25
     )
 
     console.log(`Proxy created: ${proxyContract.toString()}`)

@@ -24,7 +24,7 @@ export async function contractCall(
     clientOperator: any,
     gas: any,
     abi: any,
-    value: string | null = null
+    value: any = null
 ) {
     const functionCallParameters = encodeFunctionCall(
         functionName,
@@ -36,8 +36,8 @@ export async function contractCall(
         .setContractId(contractId)
         .setFunctionParameters(functionCallParameters)
         .setGas(gas)
-        .execute(clientOperator)
         .setPayableAmount(value)
+        .execute(clientOperator)
 
     const record = await contractTx.getRecord(clientOperator)
 

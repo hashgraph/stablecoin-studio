@@ -23,20 +23,6 @@ import type {
   PromiseOrValue,
 } from "../../common";
 
-export declare namespace IHederaTokenService {
-  export type ExpiryStruct = {
-    second: PromiseOrValue<BigNumberish>;
-    autoRenewAccount: PromiseOrValue<string>;
-    autoRenewPeriod: PromiseOrValue<BigNumberish>;
-  };
-
-  export type ExpiryStructOutput = [number, string, number] & {
-    second: number;
-    autoRenewAccount: string;
-    autoRenewPeriod: number;
-  };
-}
-
 export declare namespace IStableCoinFactory {
   export type TokenStructStruct = {
     tokenName: PromiseOrValue<string>;
@@ -44,7 +30,6 @@ export declare namespace IStableCoinFactory {
     freeze: PromiseOrValue<boolean>;
     supplyType: PromiseOrValue<boolean>;
     tokenMaxSupply: PromiseOrValue<BigNumberish>;
-    tokenExpiry: IHederaTokenService.ExpiryStruct;
     tokenInitialSupply: PromiseOrValue<BigNumberish>;
     tokenDecimals: PromiseOrValue<BigNumberish>;
     senderPublicKey: PromiseOrValue<BytesLike>;
@@ -56,7 +41,6 @@ export declare namespace IStableCoinFactory {
     boolean,
     boolean,
     number,
-    IHederaTokenService.ExpiryStructOutput,
     BigNumber,
     BigNumber,
     string
@@ -66,7 +50,6 @@ export declare namespace IStableCoinFactory {
     freeze: boolean;
     supplyType: boolean;
     tokenMaxSupply: number;
-    tokenExpiry: IHederaTokenService.ExpiryStructOutput;
     tokenInitialSupply: BigNumber;
     tokenDecimals: BigNumber;
     senderPublicKey: string;
@@ -75,7 +58,7 @@ export declare namespace IStableCoinFactory {
 
 export interface IStableCoinFactoryInterface extends utils.Interface {
   functions: {
-    "deployStableCoin((string,string,bool,bool,uint32,(uint32,address,uint32),uint256,uint256,bytes))": FunctionFragment;
+    "deployStableCoin((string,string,bool,bool,uint32,uint256,uint256,bytes))": FunctionFragment;
   };
 
   getFunction(nameOrSignatureOrTopic: "deployStableCoin"): FunctionFragment;
