@@ -272,7 +272,6 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 
 	const renderAmount = () => {
 		const { decimals = 0, maxSupply } = selectedStableCoin || {};
-
 		return (
 			<Stack spacing={6}>
 				{increaseOrDecreseOptionSelected && (
@@ -285,12 +284,12 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 										validateDecimals(value, decimals) || t('global:validations.decimalsValidation')
 									);
 								},
-								quantityOverTotalSupply: (value: number) => {
+								quantityOverMaxSupply: (value: number) => {
 									return maxSupply && maxSupply !== 'INFINITE'
 										? BigDecimal.fromString(maxSupply, decimals).isGreaterOrEqualThan(
 												BigDecimal.fromString(value.toString(), decimals),
-										  ) || t('global:validations.overTotalSupply')
-										: '';
+										  ) || t('global:validations.overMaxSupplyCashIn')
+										: true;
 								},
 							},
 						}}

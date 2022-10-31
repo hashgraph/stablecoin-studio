@@ -135,6 +135,7 @@ export default class OperationStableCoinService extends Service {
         this.filterMenuOptions(
           wizardOperationsStableCoinOptions,
           capabilitiesStableCoin,
+          this.optionTokenListSelected &&
           this.optionTokenListSelected.split(' - ').length === 3
             ? configAccount.externalTokens.find(
                 (token) => token.id === this.stableCoinId,

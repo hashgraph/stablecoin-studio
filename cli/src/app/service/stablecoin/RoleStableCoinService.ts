@@ -294,14 +294,13 @@ export default class RoleStableCoinsService extends Service {
           tokenId,
         })
         .then((response) => {
-          amount = response[0];
+          amount = response;
         }),
       {
         text: language.getText('state.loading'),
         successText: language.getText('state.loadCompleted') + '\n',
       },
     );
-
     const response = language.getText('roleManagement.getAmountAllowance');
     console.log(
       response
