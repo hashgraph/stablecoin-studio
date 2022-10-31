@@ -8,7 +8,7 @@ const {
     DelegateContractId
 } = require('@hashgraph/sdk')
 
-const factoryAddress = "";
+const factoryAddress = "0.0.48776934";
 
 import {
     HederaERC20__factory,
@@ -121,7 +121,7 @@ export async function deployContractsWithSDK(
         clientSdk,
         15000000,
         StableCoinFactory__factory.abi,
-        25
+        250
     )
 
     console.log(`Proxy created: ${proxyContract.toString()}`)
