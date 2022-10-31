@@ -136,6 +136,14 @@ declare module "hardhat/types/runtime" {
       name: "Roles",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Roles__factory>;
+    getContractFactory(
+      name: "IStableCoinFactory",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IStableCoinFactory__factory>;
+    getContractFactory(
+      name: "StableCoinFactory",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.StableCoinFactory__factory>;
 
     getContractAt(
       name: "AccessControlUpgradeable",
@@ -292,6 +300,16 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Roles>;
+    getContractAt(
+      name: "IStableCoinFactory",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IStableCoinFactory>;
+    getContractAt(
+      name: "StableCoinFactory",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.StableCoinFactory>;
 
     // default types
     getContractFactory(

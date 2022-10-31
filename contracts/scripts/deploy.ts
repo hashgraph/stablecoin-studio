@@ -1,13 +1,18 @@
 const {
     AccountId,
     ContractFunctionParameters,
-    TokenId
+    TokenId,
+    TokenSupplyType,
+    PublicKey,
+    DelegateContractId
 } = require('@hashgraph/sdk')
+
+const factoryAddress = "";
 
 import {
     HederaERC20__factory,
-    HTSTokenOwner__factory,
     HederaERC1967Proxy__factory,
+    StableCoinFactory__factory
 } from '../typechain-types'
 
 import {getClient, 
@@ -15,6 +20,8 @@ import {getClient,
     contractCall,
     createToken}
  from './utils'
+
+ import {BigNumber} from "ethers";
 
 const hre = require('hardhat')
 const hreConfig = hre.network.config
@@ -42,7 +49,91 @@ export function initializeClients(){
     client2publickey]
 }
 
+export async function deployFactory(
+    account: string,
+    privateKey: string
+){
+    const clientSdk = getClient()
+    clientSdk.setOperator(account, privateKey)
+
+    console.log(`Deploying Contract Factory. please wait...`);
+
+    const factory = await deployContractSDK(
+        StableCoinFactory__factory,
+        privateKey,
+        clientSdk
+    )
+
+    console.log(`Contract Factory deployed ${factory.toSolidityAddress().toString()}`);
+
+    return factory;
+}
+
 export async function deployContractsWithSDK(
+    name: string,
+    symbol: string,
+    decimals = 6,
+    initialSupply: string,
+    maxSupply: string | null,
+    memo: string,
+    account: string,
+    privateKey: string,
+    publicKey: string,
+    freeze = false
+) {
+    console.log(
+        `Creating token  (${name},${symbol},${decimals},${initialSupply},${maxSupply},${memo},${freeze})`
+    )
+
+    const clientSdk = getClient()
+    clientSdk.setOperator(account, privateKey)
+
+    let f_address = factoryAddress;
+
+    if(!f_address) f_address = await deployFactory(account, privateKey);
+
+    console.log(`Invoking Factory at ${f_address}... please wait.`)
+
+    let expiry = {
+        "second": 0,
+        "autoRenewAccount": clientSdk.toSolidityAddress(),
+        "autoRenewPeriod": 0
+    }    
+
+    let tokenObject = {
+        "tokenName": name,
+        "tokenSymbol": symbol,
+        "freeze": freeze,
+        "supplyType": (maxSupply !== null)? TokenSupplyType.Finite: TokenSupplyType.Infinite,
+        "tokenMaxSupply": maxSupply,
+        "tokenExpiry": expiry,
+        "tokenInitialSupply": initialSupply,
+        "tokenDecimals": decimals,
+        "senderPublicKey": publicKey
+    };
+
+    console.log(`Token Object: ${JSON.stringify(tokenObject)}`)
+
+    let parametersContractCall = [tokenObject]
+
+    console.log(`deploying stableCoin... please wait.`)
+
+    let proxyContract = await contractCall(
+        f_address,
+        'deployStableCoin',
+        parametersContractCall,
+        clientSdk,
+        500000,
+        StableCoinFactory__factory.abi,
+        "100000"
+    )
+
+    console.log(`Proxy created: ${proxyContract.toString()}`)
+
+    return proxyContract
+}
+
+export async function deployContractsWithSDK_old(
     name: string,
     symbol: string,
     decimals = 6,

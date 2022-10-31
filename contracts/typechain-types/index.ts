@@ -68,3 +68,7 @@ export type { IHederaERC20 } from "./contracts/IHederaERC20";
 export { IHederaERC20__factory } from "./factories/contracts/IHederaERC20__factory";
 export type { Roles } from "./contracts/Roles";
 export { Roles__factory } from "./factories/contracts/Roles__factory";
+export type { IStableCoinFactory } from "./contracts/StableCoinFactory.sol/IStableCoinFactory";
+export { IStableCoinFactory__factory } from "./factories/contracts/StableCoinFactory.sol/IStableCoinFactory__factory";
+export type { StableCoinFactory } from "./contracts/StableCoinFactory.sol/StableCoinFactory";
+export { StableCoinFactory__factory } from "./factories/contracts/StableCoinFactory.sol/StableCoinFactory__factory";

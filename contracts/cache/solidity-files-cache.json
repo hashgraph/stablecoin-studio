@@ -1442,6 +1442,49 @@
       "artifacts": [
         "IERC20PermitUpgradeable"
       ]
+    },
+    "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/contracts/StableCoinFactory.sol": {
+      "lastModificationDate": 1667230008146,
+      "contentHash": "f609130f75f3063e524726715fcd0258",
+      "sourceName": "contracts/StableCoinFactory.sol",
+      "solcConfig": {
+        "version": "0.8.10",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./hts-precompile/IHederaTokenService.sol",
+        "./hts-precompile/HederaResponseCodes.sol",
+        "./HederaERC20.sol",
+        "./HederaERC1967Proxy.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.10"
+      ],
+      "artifacts": [
+        "IStableCoinFactory",
+        "StableCoinFactory"
+      ]
     }
   }
 }
