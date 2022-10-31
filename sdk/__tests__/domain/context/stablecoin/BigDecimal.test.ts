@@ -126,6 +126,63 @@ describe('🧪 [DOMAIN] BigDecimal', () => {
     }
   });
 
+  it('Test isGreaterOrEqualThan', async () => {
+    const a = BigDecimal.fromString('100', 0);
+    const b = BigDecimal.fromString('100', 0);
+    const c = BigDecimal.fromString('10', 0);
+    const d = BigDecimal.fromString('150', 0);
+    expect(a.isGreaterOrEqualThan(b)).toBeTruthy();
+    expect(a.isGreaterOrEqualThan(c)).toBeTruthy();
+    expect(a.isGreaterOrEqualThan(d)).toBeFalsy();
+  });
+
+  it('Test isLowerOrEqualThan', async () => {
+    const a = BigDecimal.fromString('100', 0);
+    const b = BigDecimal.fromString('100', 0);
+    const c = BigDecimal.fromString('10', 0);
+    const d = BigDecimal.fromString('150', 0);
+    expect(a.isLowerOrEqualThan(b)).toBeTruthy();
+    expect(a.isLowerOrEqualThan(c)).toBeFalsy();
+    expect(a.isLowerOrEqualThan(d)).toBeTruthy();
+  });
+
+  it('Test isLowerThan', async () => {
+    const a = BigDecimal.fromString('100', 0);
+    const b = BigDecimal.fromString('100', 0);
+    const c = BigDecimal.fromString('10', 0);
+    const d = BigDecimal.fromString('150', 0);
+    expect(a.isLowerThan(b)).toBeFalsy();
+    expect(a.isLowerThan(c)).toBeFalsy();
+    expect(a.isLowerThan(d)).toBeTruthy();
+  });
+
+  it('Test isGreaterThan', async () => {
+    const a = BigDecimal.fromString('100', 0);
+    const b = BigDecimal.fromString('100', 0);
+    const c = BigDecimal.fromString('10', 0);
+    const d = BigDecimal.fromString('150', 0);
+    expect(a.isGreaterThan(b)).toBeFalsy();
+    expect(a.isGreaterThan(c)).toBeTruthy();
+    expect(a.isGreaterThan(d)).toBeFalsy();
+  });
+
+  it('Test isEqualThan', async () => {
+    const a = BigDecimal.fromString('100', 0);
+    const b = BigDecimal.fromString('100', 0);
+    const c = BigDecimal.fromString('10', 0);
+    const d = BigDecimal.fromString('150', 0);
+    expect(a.isEqualThan(b)).toBeTruthy();
+    expect(a.isEqualThan(c)).toBeFalsy();
+    expect(a.isEqualThan(d)).toBeFalsy();
+  });
+
+  it('Test fromStringHedera', () => {
+    const a = BigDecimal.fromStringHedera('1000000', 6);
+    const b = BigDecimal.fromStringHedera('1500000', 6);
+    expect(a.toString()).toBe('1');
+    expect(b.toString()).toBe('1.5');
+  });
+
   it('For testing', async () => {
     // 10     6 dec
     // "10"

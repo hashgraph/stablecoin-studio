@@ -76,7 +76,7 @@ describe('🧪 [PORT] SDK', () => {
   }, 15000);
 
   it('Wipe token', async () => {
-    const amount = '2';
+    const amount = '1';
     const wipe = await sdk.wipe({
       account: ACCOUNTS.testnet,
       targetId: ACCOUNTS.testnet.accountId.id,

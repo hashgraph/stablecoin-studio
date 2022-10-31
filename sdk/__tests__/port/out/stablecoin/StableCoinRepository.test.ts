@@ -89,8 +89,6 @@ describe('🧪 [PORT] StableCoinRepository', () => {
       stableCoinDetails.id,
       ACCOUNTS.testnet,
     );
-
-    expect(balance).toBeInstanceOf(Uint8Array);
     expect(balance).not.toBeNull();
   });
 
@@ -390,7 +388,7 @@ function mockRepo(networkAdapter: NetworkAdapter, provider?: IProvider) {
     networkAdapter.provider = provider;
     networkAdapter.provider.deployStableCoin = deployFn;
     networkAdapter.provider.callContract = () => {
-      return Promise.resolve(new Uint8Array());
+      return Promise.resolve(new Uint8Array([255]));
     };
     networkAdapter.provider.cashInHTS = resolveHTS;
     networkAdapter.provider.cashOutHTS = resolveHTS;

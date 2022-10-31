@@ -247,7 +247,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			params,
 		);
 
-		const coin: StableCoin = await this.getStableCoin(tokenId); //1.000000000000000000000000006
+		const coin: StableCoin = await this.getStableCoin(tokenId);
 		const balanceHedera = BigDecimal.fromStringHedera(
 			response[0].toString(),
 			coin.decimals,
