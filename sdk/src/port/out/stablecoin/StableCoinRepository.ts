@@ -185,8 +185,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 			if (stableCoin.supplyKey instanceof PublicKey) {
 				if (
-					stableCoin.supplyKey?.key.toString() ==
-					publickey.toString()
+					stableCoin.supplyKey?.key.toString() == publickey.toString()
 				) {
 					listCapabilities.push(Capabilities.CASH_IN_HTS);
 					listCapabilities.push(Capabilities.BURN_HTS);
@@ -195,8 +194,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 			if (stableCoin.wipeKey instanceof PublicKey) {
 				if (
-					stableCoin.wipeKey?.key.toString() ==
-					publickey.toString()
+					stableCoin.wipeKey?.key.toString() == publickey.toString()
 				) {
 					listCapabilities.push(Capabilities.WIPE_HTS);
 				}
@@ -303,7 +301,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		const params: IHTSTokenRequest = {
 			account,
 			tokenId: tokenId,
-			amount: amount.toNumber(),
+			amount: amount.toLong(),
 		};
 
 		return await this.networkAdapter.provider.cashInHTS(params);
@@ -314,7 +312,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		amount: BigDecimal,
 		account: Account,
 	): Promise<Uint8Array> {
-		const parameters = [amount.toString()];
+		const parameters = [amount.toLong().toString()];
 
 		const params: ICallContractWithAccountRequest = {
 			contractId: proxyContractId,
@@ -334,7 +332,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		const params: IHTSTokenRequest = {
 			account,
 			tokenId: tokenId,
-			amount: amount.toNumber(),
+			amount: amount.toLong(),
 		};
 
 		return await this.networkAdapter.provider.cashOutHTS(params);
@@ -397,7 +395,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			account,
 			tokenId: tokenId,
 			wipeAccountId: wipeAccountId,
-			amount: amount.toNumber(),
+			amount: amount.toLong(),
 		};
 
 		return await this.networkAdapter.provider.wipeHTS(params);
@@ -732,15 +730,15 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		outAccountId: string,
 		inAccountId: string,
 		account: Account,
-		isApproval = false
+		isApproval = false,
 	): Promise<boolean> {
 		const params: ITransferTokenRequest = {
 			account,
 			tokenId: tokenId,
-			amount: amount.toNumber(),
+			amount: amount.toLong(),
 			outAccountId: outAccountId,
 			inAccountId: inAccountId,
-			isApproval
+			isApproval,
 		};
 
 		return await this.networkAdapter.provider.transferHTS(params);

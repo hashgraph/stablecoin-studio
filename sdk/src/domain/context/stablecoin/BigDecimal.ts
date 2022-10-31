@@ -157,9 +157,6 @@ export default class BigDecimal implements FixedNumber {
 		splitNumber[1] = splitNumber[1].padEnd(this.format.decimals, '0');
 		return splitNumber;
 	}
-	public toNumber(): number {
-		return Number(this.toString());
-	}
 
 	public toLong(): Long {
 		const number = this.splitNumber();

@@ -14,7 +14,6 @@ import IStableCoinRepository from '../../../port/out/stablecoin/IStableCoinRepos
 import IRescueStableCoinServiceRequestModel from './model/IRescueStableCoinServiceRequestModel.js';
 import IRoleStableCoinServiceRequestModel from './model/IRoleStableCoinServiceRequestModel';
 import IGetBasicRequestModel from './model/IGetBasicRequest.js';
-import IGetCapabilitiesServiceRequestModel from './model/IGetCapabilitiesServiceRequestModel.js';
 import ISupplierRoleStableCoinServiceRequestModel from './model/ISupplierRoleStableCoinServiceRequestModel.js';
 import IStableCoinDetail from '../../../port/in/sdk/response/IStableCoinDetail.js';
 import IAccountInfo from '../../../port/in/sdk/response/IAccountInfo.js';
@@ -134,7 +133,7 @@ export default class StableCoinService extends Service {
 
 	public async getCapabilitiesStableCoin(
 		id: string,
-		publickey: string
+		publickey: string,
 	): Promise<Capabilities[]> {
 		return this.repository.getCapabilitiesStableCoin(id, publickey);
 	}
@@ -178,8 +177,8 @@ export default class StableCoinService extends Service {
 			await this.getCapabilitiesStableCoin(
 				req.tokenId,
 				req.publicKey
-						? req.publicKey?.key
-						: req.account?.privateKey?.publicKey?.key ?? ''
+					? req.publicKey?.key
+					: req.account?.privateKey?.publicKey?.key ?? '',
 			);
 		if (capabilities.includes(Capabilities.CASH_IN)) {
 			const result = await this.repository.cashIn(
@@ -196,7 +195,7 @@ export default class StableCoinService extends Service {
 				req.account,
 			);
 
-			if (resultCashIn &&	coin.treasury.id != req.targetId) {
+			if (resultCashIn && coin.treasury.id != req.targetId) {
 				if (coin.treasury.id === req?.account?.accountId.id) {
 					resultCashIn = await this.repository.transferHTS(
 						req.tokenId,
@@ -204,7 +203,7 @@ export default class StableCoinService extends Service {
 						coin.treasury.id,
 						req.targetId,
 						req.account,
-						false	
+						false,
 					);
 				} else {
 					resultCashIn = await this.repository.transferHTS(
@@ -213,8 +212,8 @@ export default class StableCoinService extends Service {
 						coin.treasury.id,
 						req.targetId,
 						req.account,
-						true
-					);	
+						true,
+					);
 				}
 			}
 		} else {
@@ -252,8 +251,8 @@ export default class StableCoinService extends Service {
 			await this.getCapabilitiesStableCoin(
 				req.tokenId,
 				req.publicKey
-						? req.publicKey?.key
-						: req.account?.privateKey?.publicKey?.key ?? ''
+					? req.publicKey?.key
+					: req.account?.privateKey?.publicKey?.key ?? '',
 			);
 		if (capabilities.includes(Capabilities.BURN)) {
 			const result = await this.repository.cashOut(
@@ -314,7 +313,7 @@ export default class StableCoinService extends Service {
 		const capabilities: Capabilities[] =
 			await this.getCapabilitiesStableCoin(
 				req.tokenId,
-				req.account?.privateKey?.publicKey?.key ?? ''
+				req.account?.privateKey?.publicKey?.key ?? '',
 			);
 		if (capabilities.includes(Capabilities.WIPE)) {
 			const result = await this.repository.wipe(
@@ -526,7 +525,7 @@ export default class StableCoinService extends Service {
 	): Promise<IAccountInfo> {
 		return this.repository.getAccountInfo(req.account.accountId.id);
 	}
-  
+
 	public async getRoles(
 		req: IGetRolesServiceRequestModel,
 	): Promise<string[]> {

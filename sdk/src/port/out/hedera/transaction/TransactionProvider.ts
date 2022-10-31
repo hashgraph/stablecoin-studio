@@ -14,7 +14,7 @@ import {
 	PublicKey as HPublicKey,
 	DelegateContractId,
 	ContractFunctionParameters,
-	AccountAllowanceApproveTransaction
+	AccountAllowanceApproveTransaction,
 } from '@hashgraph/sdk';
 import { ContractId, PublicKey } from '../../../in/sdk/sdk.js';
 import { ICreateTokenResponse } from '../types.js';
@@ -128,7 +128,7 @@ export class TransactionProvider {
 	public static buildTokenWipeTransaction(
 		accountId: string,
 		tokenId: string,
-		amount: number,
+		amount: Long,
 	): Transaction {
 		const transaction = new TokenWipeTransaction()
 			.setAccountId(AccountId.fromString(accountId))
@@ -138,16 +138,20 @@ export class TransactionProvider {
 		return transaction;
 	}
 
-	public static approveTokenAllowance(
-	): Transaction {
-		const transaction = new AccountAllowanceApproveTransaction()
-		.approveTokenAllowance('0.0.48705516', '0.0.47624288', '0.0.47793222', 100000000000000);
-		return transaction                                     
+	public static approveTokenAllowance(): Transaction {
+		const transaction =
+			new AccountAllowanceApproveTransaction().approveTokenAllowance(
+				'0.0.48705516',
+				'0.0.47624288',
+				'0.0.47793222',
+				100000000000000,
+			);
+		return transaction;
 	}
 
 	public static buildTokenMintTransaction(
 		tokenId: string,
-		amount: number,
+		amount: Long,
 	): Transaction {
 		const transaction = new TokenMintTransaction()
 			.setTokenId(TokenId.fromString(tokenId))
@@ -158,7 +162,7 @@ export class TransactionProvider {
 
 	public static buildTokenBurnTransaction(
 		tokenId: string,
-		amount: number,
+		amount: Long,
 	): Transaction {
 		const transaction = new TokenBurnTransaction()
 			.setTokenId(TokenId.fromString(tokenId))
@@ -169,7 +173,7 @@ export class TransactionProvider {
 
 	public static buildTransferTransaction(
 		tokenId: string,
-		amount: number,
+		amount: Long,
 		outAccountId: string,
 		inAccountId: string,
 	): Transaction {
@@ -190,7 +194,7 @@ export class TransactionProvider {
 
 	public static buildApprovedTransferTransaction(
 		tokenId: string,
-		amount: number,
+		amount: Long,
 		outAccountId: string,
 		inAccountId: string,
 	): Transaction {
