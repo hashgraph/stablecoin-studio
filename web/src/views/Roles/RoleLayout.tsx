@@ -30,6 +30,12 @@ const styles = {
 		borderRadius: '8px',
 		height: 'initial',
 	},
+	valueSelected: {
+		fontSize: '14px',
+	},
+	label: {
+		fontSize: '14px',
+	},
 };
 
 export interface RoleLayoutProps {

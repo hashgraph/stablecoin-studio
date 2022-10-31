@@ -18,4 +18,12 @@ networks:
     },
   ]
 accounts:
-  [{ accountId: '', privateKey: { key: '', type: '' }, network: '', alias: '' }]
+  [
+    {
+      accountId: '',
+      privateKey: { key: '', type: '' },
+      network: '',
+      alias: '',
+      externalTokens: [],
+    },
+  ]

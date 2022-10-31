@@ -30,18 +30,24 @@ const StableCoinCreation = () => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch<AppDispatch>();
 	const { t } = useTranslation('stableCoinCreation');
+
+	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
+	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
+
 	const form = useForm<FieldValues>({
 		mode: 'onChange',
+		defaultValues: {
+			autorenewAccount: accountInfo.account,
+			initialSupply: 0,
+		},
 	});
+
 	const {
 		control,
 		getValues,
 		watch,
 		formState: { errors },
 	} = form;
-
-	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
-	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 
 	const [isValidForm, setIsValidForm] = useState<boolean>(false);
 	const [currentStep, setCurrentStep] = useState<number>(0);
@@ -115,7 +121,8 @@ const StableCoinCreation = () => {
 		}
 
 		return setIsValidForm(
-			fieldsStep?.filter((item) => !item).length === 0 && Object.keys(errors).length === 0,
+			fieldsStep?.filter((item) => !item && item !== 0).length === 0 &&
+				Object.keys(errors).length === 0,
 		);
 	};
 

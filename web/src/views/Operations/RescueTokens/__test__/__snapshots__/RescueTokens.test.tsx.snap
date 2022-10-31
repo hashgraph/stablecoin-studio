@@ -72,7 +72,7 @@ exports[`<RescueTokenOperation /> should render correctly 1`] = `
                     class="chakra-input__group css-4302v8"
                   >
                     <input
-                      class="chakra-input css-g75xpy"
+                      class="chakra-input css-l1kxkf"
                       data-testid="amount"
                       id="field-:r1:"
                       inputmode="numeric"
@@ -251,7 +251,7 @@ exports[`<RescueTokenOperation /> should render correctly 1`] = `
                         <p
                           class="chakra-text css-mgupmj"
                         >
-                          100
+                          100,000
                         </p>
                       </div>
                     </div>
@@ -279,7 +279,7 @@ exports[`<RescueTokenOperation /> should render correctly 1`] = `
                         <p
                           class="chakra-text css-mgupmj"
                         >
-                          Infinite
+                          Finite
                         </p>
                       </div>
                     </div>

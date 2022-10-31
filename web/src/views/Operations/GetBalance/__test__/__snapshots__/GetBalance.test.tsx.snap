@@ -72,7 +72,7 @@ exports[`<GetBalanceOperation /> should render correctly 1`] = `
                   >
                     <input
                       autocomplete="off"
-                      class="chakra-input css-g75xpy"
+                      class="chakra-input css-l1kxkf"
                       data-testid="targetAccount"
                       id="field-:r1:"
                       name="targetAccount"
@@ -247,7 +247,7 @@ exports[`<GetBalanceOperation /> should render correctly 1`] = `
                         <p
                           class="chakra-text css-mgupmj"
                         >
-                          100
+                          100,000
                         </p>
                       </div>
                     </div>
@@ -275,7 +275,7 @@ exports[`<GetBalanceOperation /> should render correctly 1`] = `
                         <p
                           class="chakra-text css-mgupmj"
                         >
-                          Infinite
+                          Finite
                         </p>
                       </div>
                     </div>

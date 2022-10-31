@@ -1,18 +1,56 @@
 import { Box, Flex, HStack, Text, Tooltip, VStack } from '@chakra-ui/react';
 import type { ContractId, PublicKey, StableCoinMemo } from 'hedera-stable-coin-sdk';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import BaseContainer from '../../components/BaseContainer';
 import DetailsReview from '../../components/DetailsReview';
 import Icon from '../../components/Icon';
 import TooltipCopy from '../../components/TooltipCopy';
-import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
+import { SELECTED_WALLET_COIN, walletActions } from '../../store/slices/walletSlice';
 import { formatAmountWithDecimals, formatShortKey } from '../../utils/inputHelper';
+import SDKService from '../../services/SDKService';
+import type { AppDispatch } from '../../store/store';
 
 const StableCoinDetails = () => {
 	const { t, i18n } = useTranslation('stableCoinDetails');
+	const dispatch = useDispatch<AppDispatch>();
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
+
+	useEffect(() => {
+		handleRefreshCoinInfo();
+	}, [])
+
+	const handleRefreshCoinInfo = async () => {
+		const stableCoinDetails = await SDKService.getStableCoinDetails({
+			id: selectedStableCoin?.tokenId || '',
+		});
+		dispatch(
+			walletActions.setSelectedStableCoin({
+				tokenId: stableCoinDetails?.tokenId,
+				initialSupply: Number(stableCoinDetails?.initialSupply),
+				totalSupply: Number(stableCoinDetails?.totalSupply),
+				maxSupply: Number(stableCoinDetails?.maxSupply),
+				name: stableCoinDetails?.name,
+				symbol: stableCoinDetails?.symbol,
+				decimals: stableCoinDetails?.decimals,
+				id: stableCoinDetails?.tokenId,
+				treasuryId: stableCoinDetails?.treasuryId,
+				autoRenewAccount: stableCoinDetails?.autoRenewAccount,
+				memo: stableCoinDetails?.memo,
+				adminKey:
+					stableCoinDetails?.adminKey && JSON.parse(JSON.stringify(stableCoinDetails.adminKey)),
+				kycKey: stableCoinDetails?.kycKey && JSON.parse(JSON.stringify(stableCoinDetails.kycKey)),
+				freezeKey:
+					stableCoinDetails?.freezeKey && JSON.parse(JSON.stringify(stableCoinDetails.freezeKey)),
+				wipeKey:
+					stableCoinDetails?.wipeKey && JSON.parse(JSON.stringify(stableCoinDetails.wipeKey)),
+				supplyKey:
+					stableCoinDetails?.supplyKey && JSON.parse(JSON.stringify(stableCoinDetails.supplyKey)),
+			}),
+		);
+	};
 
 	const getMemoInformation = (memo: StableCoinMemo | undefined) => {
 		return (
@@ -136,6 +174,11 @@ const StableCoinDetails = () => {
 								{
 									label: t('treasuryId'),
 									value: selectedStableCoin?.treasuryId,
+									copyButton: true,
+								},
+								{
+									label: t('autoRenewAccount'),
+									value: selectedStableCoin?.autoRenewAccount,
 									copyButton: true,
 								},
 								{

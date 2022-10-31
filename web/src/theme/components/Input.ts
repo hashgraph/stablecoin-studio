@@ -6,6 +6,7 @@ export const Input = {
 				fontSize: '14px',
 				_focus: {
 					boxShadow: 'none',
+					borderColor: 'light.secondary',
 				},
 				_focusVisible: {
 					borderColor: 'inherit',
@@ -14,7 +15,7 @@ export const Input = {
 					borderColor: 'brand.black',
 				},
 				_placeholder: {
-					color: 'brand.black',
+					color: 'brand.gray',
 					fontSize: '14px',
 				},
 				_invalid: {

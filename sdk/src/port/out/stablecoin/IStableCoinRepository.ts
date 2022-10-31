@@ -11,7 +11,7 @@ export default interface IStableCoinRepository {
 	getListStableCoins(account: Account): Promise<IStableCoinList[]>;
 	getStableCoin(id: string): Promise<StableCoin>;
 	getCapabilitiesStableCoin(
-		id: string,
+		tokenId: string,
 		publickey: string,
 	): Promise<Capabilities[]>;
 	getBalanceOf(
@@ -133,6 +133,12 @@ export default interface IStableCoinRepository {
 		outAccountId: string,
 		inAccountId: string,
 		account: Account,
+		isApproval: boolean
 	): Promise<boolean>;
 	getAccountInfo(accountId: string): Promise<IAccountInfo>;
+	getRoles(
+		proxyContractId: string,
+		address: string,
+		account: Account,
+	): Promise<string[]>;
 }

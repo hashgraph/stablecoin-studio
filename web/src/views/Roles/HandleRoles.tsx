@@ -20,7 +20,7 @@ import {
 import { SelectController } from '../../components/Form/SelectController';
 import { validateDecimals } from '../../utils/validationsHelper';
 import { formatAmountWithDecimals } from '../../utils/inputHelper';
-import { BigDecimal, Capabilities, StableCoinRole } from 'hedera-stable-coin-sdk';
+import { BigDecimal, Capabilities } from 'hedera-stable-coin-sdk';
 
 const supplier = 'Cash in';
 
@@ -94,13 +94,13 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 		return true;
 	});
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const handleSubmit: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
 		try {
 			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId || !account) {
 				onError();
 				return;
 			}
+
 			let alreadyHasRole;
 			let isUnlimitedSupplierAllowance;
 
@@ -113,11 +113,13 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 						targetId: account,
 						role: role.value,
 					});
+
 					if (alreadyHasRole && alreadyHasRole[0]) {
 						setModalErrorDescription('hasAlreadyRoleError');
 						onError();
 						return;
 					}
+
 					amount
 						? await SDKService.grantRole({
 								proxyContractId: selectedStableCoin.memo.proxyContract,
@@ -135,6 +137,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 								role: role.value,
 						  });
 					break;
+
 				case 'revokeRole':
 					alreadyHasRole = await SDKService.hasRole({
 						proxyContractId: selectedStableCoin.memo.proxyContract,
@@ -143,11 +146,13 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 						targetId: account,
 						role: role.value,
 					});
+
 					if (alreadyHasRole && !alreadyHasRole[0]) {
 						setModalErrorDescription('hasNotRoleError');
 						onError();
 						return;
 					}
+
 					await SDKService.revokeRole({
 						proxyContractId: selectedStableCoin.memo.proxyContract,
 						account: selectedAccount,
@@ -156,20 +161,8 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 						role: role.value,
 					});
 					break;
-				case 'editRole':
-					alreadyHasRole = await SDKService.hasRole({
-						proxyContractId: selectedStableCoin.memo.proxyContract,
-						account: selectedAccount,
-						tokenId: selectedStableCoin.tokenId,
-						targetId: account,
-						role: StableCoinRole.CASHIN_ROLE,
-					});
-					if (!alreadyHasRole || !alreadyHasRole[0]) {
-						setModalErrorDescription('hasNotRoleError');
-						onError();
-						return;
-					}
 
+				case 'editRole':
 					isUnlimitedSupplierAllowance = await SDKService.isUnlimitedSupplierAllowance({
 						proxyContractId: selectedStableCoin.memo.proxyContract,
 						account: selectedAccount,
@@ -181,27 +174,26 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 						onError();
 						return;
 					}
+
 					switch (supplierLimitOption) {
 						case 'INCREASE':
-							amount &&
-								(await SDKService.increaseSupplierAllowance({
-									proxyContractId: selectedStableCoin.memo.proxyContract,
-									account: selectedAccount,
-									tokenId: selectedStableCoin.tokenId,
-									targetId: account,
-									amount: amount.toString(),
-								}));
+							await SDKService.increaseSupplierAllowance({
+								proxyContractId: selectedStableCoin.memo.proxyContract,
+								account: selectedAccount,
+								tokenId: selectedStableCoin.tokenId,
+								targetId: account,
+								amount: amount ? amount.toString() : '',
+							});
 							break;
 
 						case 'DECREASE':
-							amount &&
-								(await SDKService.decreaseSupplierAllowance({
-									proxyContractId: selectedStableCoin.memo.proxyContract,
-									account: selectedAccount,
-									tokenId: selectedStableCoin.tokenId,
-									targetId: account,
-									amount: amount.toString(),
-								}));
+							await SDKService.decreaseSupplierAllowance({
+								proxyContractId: selectedStableCoin.memo.proxyContract,
+								account: selectedAccount,
+								tokenId: selectedStableCoin.tokenId,
+								targetId: account,
+								amount: amount ? amount.toString() : '',
+							});
 							break;
 
 						case 'RESET':
@@ -224,7 +216,6 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 					}
 					break;
 			}
-
 			onSuccess();
 		} catch (error: any) {
 			console.log(error.toString());

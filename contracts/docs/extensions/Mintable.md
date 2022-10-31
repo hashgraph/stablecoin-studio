@@ -95,6 +95,28 @@ function RESCUE_ROLE() external view returns (bytes32)
 |---|---|---|
 | _0 | bytes32 | undefined |
 
+### ROLES
+
+```solidity
+function ROLES(uint256) external view returns (bytes32)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bytes32 | undefined |
+
 ### WIPE_ROLE
 
 ```solidity
@@ -111,23 +133,6 @@ function WIPE_ROLE() external view returns (bytes32)
 | Name | Type | Description |
 |---|---|---|
 | _0 | bytes32 | undefined |
-
-### controlAllowanceAmount
-
-```solidity
-function controlAllowanceAmount(address supplier, uint256 amount) external nonpayable
-```
-
-
-
-*Validate that if the address account `supplier` isn&#39;t unlimited supplier&#39;s allowance,  and the `amount` not exceed the supplier allowance, subtracting the amount from supplier&#39;s allowance*
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| supplier | address | The address of the supplier |
-| amount | uint256 | The amount to check whether exceeds current supplier allowance |
 
 ### decreaseSupplierAllowance
 
@@ -167,6 +172,28 @@ function getRoleAdmin(bytes32 role) external view returns (bytes32)
 | Name | Type | Description |
 |---|---|---|
 | _0 | bytes32 | undefined |
+
+### getRoles
+
+```solidity
+function getRoles(address account) external view returns (bytes32[])
+```
+
+
+
+*Returns an array of roles the account currently has*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| account | address | The account address |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bytes32[] | bytes32[] The array containing the roles |
 
 ### getTokenAddress
 

@@ -1,12 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.10;
 
-import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import "./IBurnable.sol";
 import "../TokenOwner.sol";
 import "../Roles.sol";
 
-abstract contract Burnable is IBurnable, AccessControlUpgradeable, TokenOwner, Roles {
+abstract contract Burnable is IBurnable, TokenOwner, Roles {
     
     function balanceOf(address account) public virtual view returns (uint256);
 

@@ -75,7 +75,9 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 				<Stack as='form' spacing={6}>
 					<InputNumberController
 						rules={{
-							required: t(`global:validations.required`),
+							validate: (value) => {
+								return typeof value !== 'string' || t(`global:validations.required`);
+							},
 						}}
 						isRequired
 						control={control}
@@ -85,6 +87,7 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 							placeholder: t('stableCoinCreation:optionalDetails.initialSupply'),
 						})}
 						onChangeAux={handleResetMaxSupply}
+						autoComplete='off'
 					/>
 					<SelectController
 						control={control}
@@ -104,7 +107,7 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 								validate: {
 									quantityOverTotalSupply: (value: number) => {
 										return (
-											(initialSupply && initialSupply <= value) ||
+											(initialSupply.toString() && initialSupply <= value) ||
 											t('global:validations.overMaxSupply')
 										);
 									},

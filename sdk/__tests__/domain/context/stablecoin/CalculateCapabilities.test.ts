@@ -18,8 +18,8 @@ describe('🧪 [DOMAIN] StableCoin', () => {
     const cap: Capabilities[] | null = await sdk.getCapabilitiesStableCoin(
       coin.tokenId ?? '',
       PrivateKey.fromString(
-        ACCOUNTS.testnet.privateKey.key,
-      ).publicKey.toString(),
+        ACCOUNTS.testnet.privateKey.key
+      ).publicKey.toString()
     );
     expect(cap).not.toBeNull();
   }, 180_000);

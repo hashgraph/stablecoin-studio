@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { I18nextProvider } from 'react-i18next';
 import { ChakraProvider } from '@chakra-ui/react';
 import { Provider } from 'react-redux';
@@ -10,6 +9,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { Fonts } from '../components/Fonts';
 import { Focus } from '../components/Focus';
 import { ScrollBar } from '../components/Scrollbar';
+import InnactivityTimer from '../components/InnactivityTimer';
 
 function App() {
 	return (
@@ -17,10 +17,12 @@ function App() {
 			<Provider store={store}>
 				<ChakraProvider theme={theme}>
 					<BrowserRouter>
-						<Focus />
-						<Fonts />
-						<ScrollBar />
-						<Router />
+						<InnactivityTimer>
+							<Focus />
+							<Fonts />
+							<ScrollBar />
+							<Router />
+						</InnactivityTimer>
 					</BrowserRouter>
 				</ChakraProvider>
 			</Provider>

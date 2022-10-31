@@ -72,7 +72,7 @@ exports[`<CashInOperation /> should render correctly 1`] = `
                     class="chakra-input__group css-4302v8"
                   >
                     <input
-                      class="chakra-input css-g75xpy"
+                      class="chakra-input css-l1kxkf"
                       data-testid="amount"
                       id="field-:r1:"
                       inputmode="numeric"
@@ -119,7 +119,7 @@ exports[`<CashInOperation /> should render correctly 1`] = `
                   >
                     <input
                       autocomplete="off"
-                      class="chakra-input css-g75xpy"
+                      class="chakra-input css-l1kxkf"
                       data-testid="destinationAccount"
                       id="field-:r2:"
                       name="destinationAccount"
@@ -294,7 +294,7 @@ exports[`<CashInOperation /> should render correctly 1`] = `
                         <p
                           class="chakra-text css-mgupmj"
                         >
-                          100
+                          100,000
                         </p>
                       </div>
                     </div>
@@ -322,7 +322,7 @@ exports[`<CashInOperation /> should render correctly 1`] = `
                         <p
                           class="chakra-text css-mgupmj"
                         >
-                          Infinite
+                          Finite
                         </p>
                       </div>
                     </div>

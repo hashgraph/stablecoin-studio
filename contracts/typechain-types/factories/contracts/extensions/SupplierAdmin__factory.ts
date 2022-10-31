@@ -269,8 +269,14 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "WIPE_ROLE",
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "ROLES",
     outputs: [
       {
         internalType: "bytes32",
@@ -282,21 +288,16 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
+    inputs: [],
+    name: "WIPE_ROLE",
+    outputs: [
       {
-        internalType: "address",
-        name: "supplier",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
       },
     ],
-    name: "controlAllowanceAmount",
-    outputs: [],
-    stateMutability: "nonpayable",
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -331,6 +332,25 @@ const _abi = [
         internalType: "bytes32",
         name: "",
         type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+    ],
+    name: "getRoles",
+    outputs: [
+      {
+        internalType: "bytes32[]",
+        name: "",
+        type: "bytes32[]",
       },
     ],
     stateMutability: "view",

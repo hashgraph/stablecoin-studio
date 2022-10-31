@@ -10,6 +10,10 @@
     "copy": "Copy",
     "copied": "Copied!"
   },
+  "innactivity": {
+    "title":"Your session has expired!",
+    "description":"Please, connect your wallet again."
+  },
   "hashpack-no-installed": {
     "title": "Your haspack extension is not installed yet",
     "description": "Click in the button bellow to download the extension.",
@@ -27,7 +31,8 @@
       "placeholder": "Choose Stable coin",
       "noStableCoin": "No Stable Coins"
     },
-    "createSC": "Create Stable coin"
+    "createSC": "Create coin",
+    "addSC": "Add coin"
   },
   "sidebar": {
     "operations": "Operations",

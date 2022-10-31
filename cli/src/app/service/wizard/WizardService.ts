@@ -8,6 +8,7 @@ import SetConfigurationService from '../configuration/SetConfigurationService.js
 import Service from '../Service.js';
 import CreateStableCoinService from '../stablecoin/CreateStableCoinService.js';
 import OperationStableCoinService from '../stablecoin/OperationStableCoinService.js';
+import ManageExternalTokenService from '../stablecoin/ManageExternalTokenService.js';
 import ListStableCoinsService from '../stablecoin/ListStableCoinsService.js';
 import colors from 'colors';
 import { clear } from 'console';
@@ -58,13 +59,17 @@ export default class WizardService extends Service {
         break;
       case wizardMainOptions[1]:
         await utilsService.cleanAndShowBanner();
-        await new OperationStableCoinService().start();
+        await new ManageExternalTokenService().start();
         break;
       case wizardMainOptions[2]:
         await utilsService.cleanAndShowBanner();
-        await new ListStableCoinsService().listStableCoins();
+        await new OperationStableCoinService().start();
         break;
       case wizardMainOptions[3]:
+        await utilsService.cleanAndShowBanner();
+        await new ListStableCoinsService().listStableCoins();
+        break;
+      case wizardMainOptions[4]:
         await utilsService.cleanAndShowBanner();
         this.setConfigurationService = new SetConfigurationService();
         await this.configurationMenu();

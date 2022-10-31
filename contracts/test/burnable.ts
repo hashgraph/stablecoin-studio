@@ -1,55 +1,140 @@
-const { ContractId, AccountId }  = require( "@hashgraph/sdk");
+const { ContractId }  = require( "@hashgraph/sdk");
 import "@hashgraph/hardhat-hethers";
+import {BigNumber} from "ethers";
 
-import { expect } from "chai";
-import { deployContractsWithSDK, contractCall, getClient } from "../scripts/utils";
-import { HederaERC20__factory } from "../typechain-types";
 
-const hre = require("hardhat");
-const hreConfig = hre.network.config;
-const BURN_ROLE  = '0xe97b137254058bd94f28d2f3eb79e2d34074ffb488d042e3bc958e0a57d2fa22';
+var chai = require("chai");
+var chaiAsPromised = require("chai-as-promised");
+chai.use(chaiAsPromised);
+var expect = chai.expect;
+
+import { deployContractsWithSDK, initializeClients } from "../scripts/deploy";
+import {grantRole, revokeRole, hasRole, Burn, getTotalSupply} from "../scripts/contractsMethods";
+import {BURN_ROLE} from "../scripts/constants";
 
 
 let proxyAddress:any;
-let client:any;
-const OPERATOR_ID = hreConfig.accounts[0].account;
-const OPERATOR_KEY = hreConfig.accounts[0].privateKey;
+let client:any ;
+let OPERATOR_ID: string;
+let OPERATOR_KEY: string;
+let OPERATOR_PUBLIC: string;
 
-describe("Burn tokens", function() {
+let client2:any;
+let client2account: string;
+let client2privatekey: string;
+let client2publickey: string;
+
+const TokenName = "MIDAS";
+const TokenSymbol = "MD";
+const TokenDecimals = 3;
+const TokenFactor = BigNumber.from(10).pow(TokenDecimals);
+const INIT_SUPPLY = BigNumber.from(100).mul(TokenFactor);
+const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor);
+const TokenMemo = "Hedera Accelerator Stable Coin"
+
+describe("Burn Tests", function() {
+
   before(async function  () {
-    client = getClient();      
-    client.setOperator(OPERATOR_ID, OPERATOR_KEY);
-  
-    proxyAddress = await deployContractsWithSDK("MIDAS", "MD", 3, 100000, 100000, "Hedera Accelerator Stable Coin");    
+    // Generate Client (token admin) and Client 2
+    [client,
+    OPERATOR_ID, 
+    OPERATOR_KEY,
+    OPERATOR_PUBLIC,
+    client2,
+    client2account,
+    client2privatekey,
+    client2publickey] = initializeClients();
+
+    // Deploy Token using Client
+    proxyAddress = await deployContractsWithSDK(
+      TokenName, 
+      TokenSymbol, 
+      TokenDecimals, 
+      INIT_SUPPLY.toString(), 
+      MAX_SUPPLY.toString(), 
+      TokenMemo, 
+      OPERATOR_ID, 
+      OPERATOR_KEY, 
+      OPERATOR_PUBLIC);    
   });
+
+  it("Admin account can grant and revoke burnable role to an account", async function() {    
+    // Admin grants burn role : success    
+    let result = await hasRole(BURN_ROLE, ContractId, proxyAddress, client, client2account);
+    expect(result).to.equals(false);
+
+    await grantRole(BURN_ROLE, ContractId, proxyAddress, client, client2account);
+
+    result = await hasRole(BURN_ROLE, ContractId, proxyAddress, client, client2account);
+    expect(result).to.equals(true);
+
+    // Admin revokes burn role : success    
+    await revokeRole(BURN_ROLE, ContractId, proxyAddress, client, client2account);
+    result = await hasRole(BURN_ROLE, ContractId, proxyAddress, client, client2account);
+    expect(result).to.equals(false);
+
+  });
+
+  it("Non Admin account can not grant burnable role to an account", async function() {   
+    // Non Admin grants burn role : fail       
+    await expect(grantRole(BURN_ROLE, ContractId, proxyAddress, client2, client2account)).to.eventually.be.rejectedWith(Error);
+  });
+
+  it("Non Admin account can not revoke burnable role to an account", async function() {
+    // Non Admin revokes burn role : fail       
+    await grantRole(BURN_ROLE, ContractId, proxyAddress, client, client2account);
+    await expect(revokeRole(BURN_ROLE, ContractId, proxyAddress, client2, client2account)).to.eventually.be.rejectedWith(Error);
+
+    //Reset status
+    await revokeRole(BURN_ROLE, ContractId, proxyAddress, client, client2account)
+  });
+
   it("Can burn 10 tokens from the treasury account having 100 tokens", async function() {
-    const tokensToBurn = 1000;    
-    const initialTotalSupply = await contractCall(ContractId.fromString(proxyAddress), 'totalSupply', [], client, 60000, HederaERC20__factory.abi);      
-    const params : any = [tokensToBurn];  
-    await contractCall(ContractId.fromString(proxyAddress), 'burn', params, client, 400000, HederaERC20__factory.abi);  
-    const totalSupply = await contractCall(ContractId.fromString(proxyAddress), 'totalSupply', [], client, 60000, HederaERC20__factory.abi);  
-    expect(Number(totalSupply[0])).to.equals(Number(initialTotalSupply[0]) - tokensToBurn); 
+    const tokensToBurn = INIT_SUPPLY.div(10);   
+    
+    // Get the initial total supply and treasury account's balanceOf
+    const initialTotalSupply = await getTotalSupply(ContractId, proxyAddress, client);
+
+    // burn some tokens
+    await Burn(ContractId, proxyAddress, tokensToBurn, client);
+
+    // check new total supply and balance of treasury account : success
+    const finalTotalSupply = await getTotalSupply(ContractId, proxyAddress, client);
+    const expectedTotalSupply = initialTotalSupply.sub(tokensToBurn);
+
+    expect(finalTotalSupply.toString()).to.equals(expectedTotalSupply.toString()); 
   });
+
   it("Cannot burn more tokens than the treasury account has", async function() {
-    const params : any = [101000];  
-    await expect(contractCall(ContractId.fromString(proxyAddress), 'burn', params, client, 400000, HederaERC20__factory.abi)).to.be.throw;  
+    // Retrieve original total supply
+    const currentTotalSupply = await getTotalSupply(ContractId, proxyAddress, client);
+    
+    // burn more tokens than original total supply : fail
+    await expect(Burn(ContractId, proxyAddress, currentTotalSupply.add(1), client)).to.eventually.be.rejectedWith(Error);
   });
+
   it("User without burn role cannot burn tokens", async function() {
-    const client2 = getClient();
-    client2.setOperator(hreConfig.accounts[1].account, hreConfig.accounts[1].privateKey);      
-    const params : any = [1000];        
-    await expect(contractCall(ContractId.fromString(proxyAddress), 'burn', params, client2, 400000, HederaERC20__factory.abi)).to.be.throw;
+    // Account without burn role, burns tokens : fail
+    await expect(Burn(ContractId, proxyAddress, BigNumber.from(1), client2)).to.eventually.be.rejectedWith(Error);
   });
+
   it("User with granted burn role can burn tokens", async function() {
-    const tokensToBurn = 1000;    
-    const initialTotalSupply = await contractCall(ContractId.fromString(proxyAddress), 'totalSupply', [], client, 60000, HederaERC20__factory.abi);  
-    let params : any = [BURN_ROLE, AccountId.fromString(hreConfig.accounts[1].account!).toSolidityAddress()];  
-    await contractCall(ContractId.fromString(proxyAddress), 'grantRole', params, client, 130000, HederaERC20__factory.abi);
-    const client2 = getClient();
-    client2.setOperator(hreConfig.accounts[1].account, hreConfig.accounts[1].privateKey);      
-    params = [tokensToBurn];        
-    await contractCall(ContractId.fromString(proxyAddress), 'burn', params, client2, 500000, HederaERC20__factory.abi);
-    const totalSupply = await contractCall(ContractId.fromString(proxyAddress), 'totalSupply', [], client, 60000, HederaERC20__factory.abi); 
-    expect(Number(totalSupply[0])).to.equals(Number(initialTotalSupply[0]) - tokensToBurn); 
-  });  
+    const tokensToBurn = BigNumber.from(1);    
+
+    // Retrieve original total supply
+    const initialTotalSupply = await getTotalSupply(ContractId, proxyAddress, client);
+
+    // Grant burn role to account
+    await grantRole(BURN_ROLE, ContractId, proxyAddress, client, client2account);
+      
+    // Burn tokens with newly granted account
+    await Burn(ContractId, proxyAddress, tokensToBurn, client2);
+
+    // Check final total supply and treasury account's balanceOf : success
+    const finalTotalSupply = await getTotalSupply(ContractId, proxyAddress, client);
+    const expectedTotalSupply = initialTotalSupply.sub(tokensToBurn);
+
+    expect(finalTotalSupply.toString()).to.equals(expectedTotalSupply.toString()); 
+  }); 
+
 });
