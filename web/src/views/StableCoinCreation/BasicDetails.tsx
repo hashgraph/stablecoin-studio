@@ -2,7 +2,6 @@ import { Heading, Stack, VStack } from '@chakra-ui/react';
 import type { Control, FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import InputController from '../../components/Form/InputController';
-import { validateAccount } from '../../utils/validationsHelper';
 import { useSelector } from 'react-redux';
 import type { SavedPairingData } from 'hedera-stable-coin-sdk';
 import { SELECTED_WALLET_PAIRED } from '../../store/slices/walletSlice';
@@ -50,20 +49,12 @@ const BasicDetails = (props: BasicDetailsProps) => {
 						placeholder={t('stableCoinCreation:basicDetails.symbolPlaceholder')}
 					/>
 					<InputController
-						rules={{
-							required: t(`global:validations.required`),
-							validate: {
-								validAccount: (value: string) => {
-									return validateAccount(value) || t('global:validations.invalidAccount');
-								},
-							},
-						}}
 						isRequired
 						control={control}
 						name={'autorenewAccount'}
 						label={t('stableCoinCreation:basicDetails.autorenewAccount')}
 						placeholder={t('stableCoinCreation:basicDetails.autorenewAccountPlaceholder')}
-						defaultValue={pairingData ? pairingData.accountIds[0] : ''}
+						value={pairingData ? pairingData.accountIds[0] : ''}
 						isReadOnly
 					/>
 				</Stack>
