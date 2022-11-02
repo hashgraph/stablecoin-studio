@@ -5,15 +5,14 @@ import PublicKey from '../../../../domain/context/account/PublicKey.js';
 import { StableCoinMemo } from '../../../../domain/context/stablecoin/StableCoinMemo.js';
 import { AccountId } from '../sdk.js';
 
-
 export default interface IStableCoinDetail {
 	tokenId?: string;
 	name?: string;
 	symbol?: string;
 	decimals?: number;
-	totalSupply?: bigint;
-	maxSupply?: bigint;
-	initialSupply?:bigint;
+	totalSupply?: string;
+	maxSupply?: string;
+	initialSupply?: string;
 	customFee?: ICustomFees;
 	treasuryId?: string;
 	memo?: StableCoinMemo;
@@ -21,7 +20,7 @@ export default interface IStableCoinDetail {
 	freezeDefault?: boolean;
 	// kycStatus: string;
 	autoRenewAccount?: AccountId;
-	autoRenewAccountPeriod?:number
+	autoRenewAccountPeriod?: number;
 	paused?: string;
 	deleted?: string;
 	adminKey?: ContractId | PublicKey | undefined;

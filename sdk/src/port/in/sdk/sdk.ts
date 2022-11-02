@@ -80,6 +80,7 @@ import { ISupplierRoleStableCoinRequest } from './request/ISupplierRoleStableCoi
 import Account from '../../../domain/context/account/Account.js';
 import HashPackAccount from '../../../domain/context/account/HashPackAccount.js';
 import IAccountInfo from './response/IAccountInfo.js';
+import BigDecimal from '../../../domain/context/stablecoin/BigDecimal.js';
 import IGetRolesServiceRequestModel from '../../../app/service/stablecoin/model/IGetRolesServiceRequest';
 
 export {
@@ -132,6 +133,7 @@ export {
 	AuthenticationResponseMessage,
 	Capabilities,
 	StableCoinMemo,
+	BigDecimal
 };
 
 export interface ConfigurationOptions {
@@ -256,7 +258,7 @@ export class SDK {
 	 */
 	public getBalanceOf(
 		request: IGetBalanceStableCoinRequest,
-	): Promise<Uint8Array> | null {
+	): Promise<string> | null {
 		try {
 			const req: IGetBalanceOfStableCoinServiceRequestModel = {
 				...request,
@@ -371,7 +373,7 @@ export class SDK {
 	 */
 	public supplierAllowance(
 		request: IGetSupplierAllowance,
-	): Promise<Uint8Array> | null {
+	): Promise<string> | null {
 		try {
 			const req: IGetSupplierAllowanceModel = {
 				...request,
@@ -508,9 +510,10 @@ export class SDK {
 				...request,
 			};
 			if (request.role === StableCoinRole.CASHIN_ROLE) {
-				this.stableCoinService.revokeSupplierRole(req);
+				return this.stableCoinService.revokeSupplierRole(req);
+			} else {
+				return this.stableCoinService.revokeRole(req);
 			}
-			return this.stableCoinService.revokeRole(req);
 		} catch (error) {
 			console.error(error);
 			return null;

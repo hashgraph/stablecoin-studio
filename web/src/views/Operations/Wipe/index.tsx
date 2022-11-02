@@ -94,7 +94,7 @@ const WipeOperation = () => {
 				account,
 				tokenId: selectedStableCoin.tokenId,
 				targetId: destinationAccount,
-				amount,
+				amount: amount.toString(),
 				publicKey: infoAccount.publicKey,
 			});
 			onSuccess();

@@ -34,6 +34,7 @@ import {
 	AccountId as HAccountId,
 	PublicKey as HPublicKey,
 } from '@hashgraph/sdk';
+import BigDecimal from '../../../domain/context/stablecoin/BigDecimal.js';
 
 export default class StableCoinRepository implements IStableCoinRepository {
 	private networkAdapter: NetworkAdapter;
@@ -109,15 +110,30 @@ export default class StableCoinRepository implements IStableCoinRepository {
 					return undefined;
 				}
 			};
-
+			const decimals = parseInt(response.data.decimals ?? '0');
 			return new StableCoin({
 				id: response.data.token_id,
 				name: response.data.name ?? '',
 				symbol: response.data.symbol ?? '',
-				decimals: parseInt(response.data.decimals ?? '0'),
-				initialSupply: BigInt(response.data.initial_supply ?? '0'),
-				totalSupply: BigInt(response.data.total_supply ?? '0'),
-				maxSupply: BigInt(response.data.max_supply ?? '0'),
+				decimals: decimals,
+				initialSupply: response.data.initial_supply
+					? BigDecimal.fromStringHedera(
+							response.data.initial_supply,
+							decimals,
+					  )
+					: BigDecimal.ZERO,
+				totalSupply: response.data.total_supply
+					? BigDecimal.fromStringHedera(
+							response.data.total_supply,
+							decimals,
+					  )
+					: BigDecimal.ZERO,
+				maxSupply: response.data.max_supply
+					? BigDecimal.fromStringHedera(
+							response.data.max_supply,
+							decimals,
+					  )
+					: undefined,
 				// customFee: response.data.custom_fees,
 				treasury: new AccountId(
 					response.data.treasury_account_id ?? '0.0.0',
@@ -169,8 +185,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 			if (stableCoin.supplyKey instanceof PublicKey) {
 				if (
-					stableCoin.supplyKey?.key.toString() ==
-					publickey.toString()
+					stableCoin.supplyKey?.key.toString() == publickey.toString()
 				) {
 					listCapabilities.push(Capabilities.CASH_IN_HTS);
 					listCapabilities.push(Capabilities.BURN_HTS);
@@ -179,8 +194,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 			if (stableCoin.wipeKey instanceof PublicKey) {
 				if (
-					stableCoin.wipeKey?.key.toString() ==
-					publickey.toString()
+					stableCoin.wipeKey?.key.toString() == publickey.toString()
 				) {
 					listCapabilities.push(Capabilities.WIPE_HTS);
 				}
@@ -215,7 +229,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		targetId: string,
 		tokenId: string,
 		account: Account,
-	): Promise<Uint8Array> {
+	): Promise<string> {
 		const parameters = [
 			await this.accountToEvmAddress(new Account(targetId)),
 		];
@@ -234,9 +248,12 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		);
 
 		const coin: StableCoin = await this.getStableCoin(tokenId);
-		response[0] = coin.fromInteger(response[0]);
+		const balanceHedera = BigDecimal.fromStringHedera(
+			response[0].toString(),
+			coin.decimals,
+		);
 
-		return response;
+		return balanceHedera.toString();
 	}
 
 	public async getNameToken(
@@ -257,12 +274,12 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	public async cashIn(
 		proxyContractId: string,
 		targetId: string,
-		amount: number,
+		amount: BigDecimal,
 		account: Account,
 	): Promise<Uint8Array> {
 		const parameters = [
 			await this.accountToEvmAddress(new Account(targetId)),
-			amount.toString(),
+			amount.toLong().toString(),
 		];
 
 		const params: ICallContractWithAccountRequest = {
@@ -278,13 +295,13 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 	public async cashInHTS(
 		tokenId: string,
-		amount: number,
+		amount: BigDecimal,
 		account: Account,
 	): Promise<boolean> {
 		const params: IHTSTokenRequest = {
 			account,
 			tokenId: tokenId,
-			amount: amount,
+			amount: amount.toLong(),
 		};
 
 		return await this.networkAdapter.provider.cashInHTS(params);
@@ -292,10 +309,10 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 	public async cashOut(
 		proxyContractId: string,
-		amount: number,
+		amount: BigDecimal,
 		account: Account,
 	): Promise<Uint8Array> {
-		const parameters = [amount.toString()];
+		const parameters = [amount.toLong().toString()];
 
 		const params: ICallContractWithAccountRequest = {
 			contractId: proxyContractId,
@@ -309,13 +326,13 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 	public async cashOutHTS(
 		tokenId: string,
-		amount: number,
+		amount: BigDecimal,
 		account: Account,
 	): Promise<boolean> {
 		const params: IHTSTokenRequest = {
 			account,
 			tokenId: tokenId,
-			amount: amount,
+			amount: amount.toLong(),
 		};
 
 		return await this.networkAdapter.provider.cashOutHTS(params);
@@ -349,12 +366,12 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	public async wipe(
 		proxyContractId: string,
 		targetId: string,
-		amount: number,
+		amount: BigDecimal,
 		account: Account,
 	): Promise<Uint8Array> {
 		const parameters = [
 			await this.accountToEvmAddress(new Account(targetId)),
-			amount.toString(),
+			amount.toLong().toString(),
 		];
 
 		const params: ICallContractWithAccountRequest = {
@@ -371,14 +388,14 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	public async wipeHTS(
 		tokenId: string,
 		wipeAccountId: string,
-		amount: number,
+		amount: BigDecimal,
 		account: Account,
 	): Promise<boolean> {
 		const params: IWipeTokenRequest = {
 			account,
 			tokenId: tokenId,
 			wipeAccountId: wipeAccountId,
-			amount: amount,
+			amount: amount.toLong(),
 		};
 
 		return await this.networkAdapter.provider.wipeHTS(params);
@@ -388,12 +405,12 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		proxyContractId: string,
 		address: string,
 		account: Account,
-		amount?: number,
+		amount?: BigDecimal,
 	): Promise<Uint8Array> {
 		const parameters = [
 			await this.accountToEvmAddress(new Account(address)),
 		];
-		amount && parameters.push(amount.toString());
+		amount && parameters.push(amount.toLong().toString());
 
 		const params: ICallContractWithAccountRequest = {
 			contractId: proxyContractId,
@@ -505,11 +522,11 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		proxyContractId: string,
 		address: string,
 		account: Account,
-		amount: number,
+		amount: BigDecimal,
 	): Promise<Uint8Array> {
 		const parameters = [
 			await this.accountToEvmAddress(new Account(address)),
-			amount.toString(),
+			amount.toLong().toString(),
 		];
 
 		const params: ICallContractWithAccountRequest = {
@@ -530,11 +547,11 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		proxyContractId: string,
 		address: string,
 		account: Account,
-		amount: number,
+		amount: BigDecimal,
 	): Promise<Uint8Array> {
 		const parameters = [
 			await this.accountToEvmAddress(new Account(address)),
-			amount.toString(),
+			amount.toLong().toString(),
 		];
 
 		const params: ICallContractWithAccountRequest = {
@@ -553,10 +570,10 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 	public async rescue(
 		proxyContractId: string,
-		amount = 1000,
+		amount: BigDecimal,
 		account: Account,
 	): Promise<Uint8Array> {
-		const parameters = [amount.toString()];
+		const parameters = [amount.toLong().toString()];
 
 		const params: ICallContractWithAccountRequest = {
 			contractId: proxyContractId,
@@ -709,19 +726,19 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 	public async transferHTS(
 		tokenId: string,
-		amount: number,
+		amount: BigDecimal,
 		outAccountId: string,
 		inAccountId: string,
 		account: Account,
-		isApproval = false
+		isApproval = false,
 	): Promise<boolean> {
 		const params: ITransferTokenRequest = {
 			account,
 			tokenId: tokenId,
-			amount: amount,
+			amount: amount.toLong(),
 			outAccountId: outAccountId,
 			inAccountId: inAccountId,
-			isApproval
+			isApproval,
 		};
 
 		return await this.networkAdapter.provider.transferHTS(params);

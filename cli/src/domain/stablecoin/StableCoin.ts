@@ -1,14 +1,13 @@
 import { AccountId, PublicKey } from 'hedera-stable-coin-sdk';
 
-
 export interface StableCoin {
   name: string;
   symbol: string;
   autoRenewAccount: string;
   decimals: number;
-  initialSupply?: bigint;
+  initialSupply?: string;
   supplyType?: string;
-  maxSupply?: bigint;
+  maxSupply?: string;
   KYCKey?: PublicKey;
   wipeKey?: PublicKey;
   adminKey?: PublicKey;

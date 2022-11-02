@@ -294,7 +294,7 @@ exports[`<CashInOperation /> should render correctly 1`] = `
                         <p
                           class="chakra-text css-mgupmj"
                         >
-                          100
+                          100,000
                         </p>
                       </div>
                     </div>
@@ -322,7 +322,7 @@ exports[`<CashInOperation /> should render correctly 1`] = `
                         <p
                           class="chakra-text css-mgupmj"
                         >
-                          Infinite
+                          Finite
                         </p>
                       </div>
                     </div>

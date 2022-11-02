@@ -229,7 +229,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                     <p
                       class="chakra-text css-mgupmj"
                     >
-                      100
+                      100,000
                     </p>
                   </div>
                 </div>
@@ -339,6 +339,25 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                 <div
                   class="css-3fqpsw"
                   data-testid="details-review-detail-8"
+                >
+                  <p
+                    class="chakra-text css-bpirlf"
+                  >
+                    Autorenew account
+                  </p>
+                </div>
+                <hr
+                  aria-orientation="horizontal"
+                  class="chakra-divider css-zaaihy"
+                  title="divider"
+                />
+              </div>
+              <div
+                class="css-0"
+              >
+                <div
+                  class="css-3fqpsw"
+                  data-testid="details-review-detail-9"
                 >
                   <p
                     class="chakra-text css-bpirlf"
@@ -455,7 +474,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
               >
                 <div
                   class="css-3fqpsw"
-                  data-testid="details-review-detail-9"
+                  data-testid="details-review-detail-10"
                 >
                   <p
                     class="chakra-text css-bpirlf"
@@ -521,7 +540,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
               >
                 <div
                   class="css-3fqpsw"
-                  data-testid="details-review-detail-10"
+                  data-testid="details-review-detail-11"
                 >
                   <p
                     class="chakra-text css-bpirlf"
@@ -549,7 +568,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
               >
                 <div
                   class="css-3fqpsw"
-                  data-testid="details-review-detail-11"
+                  data-testid="details-review-detail-12"
                 >
                   <p
                     class="chakra-text css-bpirlf"
@@ -577,7 +596,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
               >
                 <div
                   class="css-3fqpsw"
-                  data-testid="details-review-detail-12"
+                  data-testid="details-review-detail-13"
                 >
                   <p
                     class="chakra-text css-bpirlf"
@@ -605,7 +624,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
               >
                 <div
                   class="css-3fqpsw"
-                  data-testid="details-review-detail-13"
+                  data-testid="details-review-detail-14"
                 >
                   <p
                     class="chakra-text css-bpirlf"
