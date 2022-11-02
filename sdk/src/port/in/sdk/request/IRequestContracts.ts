@@ -1,4 +1,3 @@
-import IAccount from '../../../out/hedera/account/types/IAccount.js';
 import { Account, StableCoinRole, PublicKey } from '../sdk.js';
 
 export interface IAccountRequestModel {

@@ -2,18 +2,25 @@
 import CheckNums from '../../../../../core/checks/numbers/CheckNums.js';
 import CheckStrings from '../../../../../core/checks/strings/CheckStrings.js';
 import BaseError from '../../../../../core/error/BaseError.js';
-import { ContractId, PublicKey } from '../../sdk.js';
-import { RequestKey } from '../BaseRequest.js';
+import { Account, ContractId, PrivateKey, PublicKey } from '../../sdk.js';
+import { RequestAccount, RequestPrivateKey, RequestPublicKey } from '../BaseRequest.js';
 import { EmptyValue } from '../error/EmptyValue.js';
 import { InvalidLength } from '../error/InvalidLength.js';
 import { InvalidRange } from '../error/InvalidRange.js';
 import { InvalidType } from '../error/InvalidType.js';
 
 export default class Validation {
-	public static checkKey = () => {
+	public static checkPublicKey = () => {
 		return (val: any): BaseError[] => {
-			const key = val as RequestKey;
+			const key = val as RequestPublicKey;
 			return PublicKey.validate(key);
+		};
+	};
+	
+	public static checkPrivateKey = () => {
+		return (val: any): BaseError[] => {
+			const key = val as RequestPrivateKey;
+			return PrivateKey.validate(key);
 		};
 	};
 
@@ -72,6 +79,21 @@ export default class Validation {
 				}
 			}
 			return err;
+		};
+	};
+
+	public static checkAccountId = () => {
+		return (val: any): void => {
+			const { accountId, privateKey, evmAddress } = val as RequestAccount;
+			if (privateKey) {
+				new Account(
+					accountId,
+					new PrivateKey(privateKey.key, privateKey.type),
+					evmAddress,
+				);
+			} else {
+				new Account(accountId, undefined, evmAddress);
+			}
 		};
 	};
 }

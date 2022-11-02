@@ -1,10 +1,9 @@
-import CheckNums from '../../../../core/checks/numbers/CheckNums.js';
-import { OptionalKey } from '../../../../core/decorators/OptionalDecorator.js';
-import { Account, PrivateKey, StableCoin, } from '../sdk.js';
+import { OptionalField } from '../../../../core/decorators/OptionalDecorator.js';
+import { StableCoin, TokenSupplyType } from '../sdk.js';
 import {
 	AccountBaseRequest,
 	RequestAccount,
-	RequestKey,
+	RequestPublicKey,
 } from './BaseRequest.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
@@ -17,42 +16,42 @@ export default class CreateStableCoinRequest
 	name: string;
 	symbol: string;
 	decimals: number;
-	
-	@OptionalKey()
+
+	@OptionalField()
 	initialSupply?: bigint;
-	
-	@OptionalKey()
+
+	@OptionalField()
 	maxSupply?: bigint;
-	
-	@OptionalKey()
-	memo?: string;
-	
-	@OptionalKey()
+
+	@OptionalField()
 	freezeDefault?: boolean;
-	
-	@OptionalKey()
+
+	@OptionalField()
 	autoRenewAccount?: string;
-	
-	@OptionalKey()
-	adminKey?: RequestKey;
-	
-	@OptionalKey()
-	freezeKey?: RequestKey;
-	
-	@OptionalKey()
-	KYCKey?: RequestKey;
-	
-	@OptionalKey()
-	wipeKey?: RequestKey;
-	
-	@OptionalKey()
-	pauseKey?: RequestKey;
-	
-	@OptionalKey()
-	supplyKey?: RequestKey;
-	
-	@OptionalKey()
+
+	@OptionalField()
+	adminKey?: RequestPublicKey;
+
+	@OptionalField()
+	freezeKey?: RequestPublicKey;
+
+	@OptionalField()
+	KYCKey?: RequestPublicKey;
+
+	@OptionalField()
+	wipeKey?: RequestPublicKey;
+
+	@OptionalField()
+	pauseKey?: RequestPublicKey;
+
+	@OptionalField()
+	supplyKey?: RequestPublicKey;
+
+	@OptionalField()
 	treasury?: string;
+
+	@OptionalField()
+	supplyType?: TokenSupplyType;
 
 	constructor({
 		account,
@@ -61,7 +60,6 @@ export default class CreateStableCoinRequest
 		decimals,
 		initialSupply,
 		maxSupply,
-		memo,
 		freezeDefault,
 		autoRenewAccount,
 		adminKey,
@@ -71,6 +69,7 @@ export default class CreateStableCoinRequest
 		pauseKey,
 		supplyKey,
 		treasury,
+		supplyType,
 	}: {
 		account: RequestAccount;
 		name: string;
@@ -78,31 +77,19 @@ export default class CreateStableCoinRequest
 		decimals: number;
 		initialSupply?: bigint;
 		maxSupply?: bigint;
-		memo?: string;
 		freezeDefault?: boolean;
 		autoRenewAccount?: string;
-		adminKey?: RequestKey;
-		freezeKey?: RequestKey;
-		KYCKey?: RequestKey;
-		wipeKey?: RequestKey;
-		pauseKey?: RequestKey;
-		supplyKey?: RequestKey;
+		adminKey?: RequestPublicKey;
+		freezeKey?: RequestPublicKey;
+		KYCKey?: RequestPublicKey;
+		wipeKey?: RequestPublicKey;
+		pauseKey?: RequestPublicKey;
+		supplyKey?: RequestPublicKey;
 		treasury?: string;
+		supplyType?: TokenSupplyType;
 	}) {
 		super({
-			account: (val) => {
-				const { accountId, privateKey, evmAddress } =
-					val as RequestAccount;
-				if (privateKey) {
-					new Account(
-						accountId,
-						new PrivateKey(privateKey.key, privateKey.type),
-						evmAddress,
-					);
-				} else {
-					new Account(accountId, undefined, evmAddress);
-				}
-			},
+			account: Validation.checkAccountId(),
 			name: (val) => {
 				return StableCoin.checkName(val as string);
 			},
@@ -112,25 +99,34 @@ export default class CreateStableCoinRequest
 			decimals: (val) => {
 				return StableCoin.checkDecimals(val as number);
 			},
-			treasury: Validation.checkContractId(),
-			initialSupply: Validation.checkNumber({
-				min: 0n,
-				max: StableCoin.MAX_SUPPLY,
-			}),
-			maxSupply: (val) => {
-				CheckNums.isWithinRange(
+			initialSupply: (val) => {
+				if (this.initialSupply === undefined) {
+					return;
+				}
+				return StableCoin.checkInitialSupply(
 					val as bigint,
-					this.initialSupply ?? 0n,
-					StableCoin.MAX_SUPPLY,
+					this.maxSupply,
+					this.supplyType,
 				);
 			},
-			memo: Validation.checkString({ emptyCheck: false, max: 100}),
-			adminKey: Validation.checkKey(),
-			freezeKey: Validation.checkKey(),
-			KYCKey: Validation.checkKey(),
-			wipeKey: Validation.checkKey(),
-			pauseKey: Validation.checkKey(),
-			supplyKey: Validation.checkKey(),
+			maxSupply: (val) => {
+				if (this.maxSupply === undefined) {
+					return;
+				}
+				return StableCoin.checkMaxSupply(
+					val as bigint,
+					this.initialSupply,
+					this.supplyType,
+				);
+			},
+			autoRenewAccount: Validation.checkAccountId(),
+			adminKey: Validation.checkPublicKey(),
+			freezeKey: Validation.checkPublicKey(),
+			KYCKey: Validation.checkPublicKey(),
+			wipeKey: Validation.checkPublicKey(),
+			pauseKey: Validation.checkPublicKey(),
+			supplyKey: Validation.checkPublicKey(),
+			treasury: Validation.checkContractId(),
 		});
 		this.account = account;
 		this.name = name;
@@ -138,7 +134,6 @@ export default class CreateStableCoinRequest
 		this.decimals = decimals;
 		this.initialSupply = initialSupply;
 		this.maxSupply = maxSupply;
-		this.memo = memo;
 		this.freezeDefault = freezeDefault;
 		this.autoRenewAccount = autoRenewAccount;
 		this.adminKey = adminKey;
@@ -148,5 +143,6 @@ export default class CreateStableCoinRequest
 		this.pauseKey = pauseKey;
 		this.supplyKey = supplyKey;
 		this.treasury = treasury;
+		this.supplyType = supplyType;
 	}
 }

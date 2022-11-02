@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import IStableCoinList from './response/IStableCoinList.js';
 import IStableCoinDetail from './response/IStableCoinDetail.js';
 import StableCoinService from '../../../app/service/stablecoin/StableCoinService.js';
@@ -81,6 +82,9 @@ import Account from '../../../domain/context/account/Account.js';
 import HashPackAccount from '../../../domain/context/account/HashPackAccount.js';
 import IAccountInfo from './response/IAccountInfo.js';
 import IGetRolesServiceRequestModel from '../../../app/service/stablecoin/model/IGetRolesServiceRequest';
+import { CreateStableCoinRequest } from './request';
+import RequestMapper from './request/mapping/RequestMapper.js';
+import { RequestAccount } from './request/BaseRequest.js';
 
 export {
 	IAssociateStableCoinRequest,
@@ -103,6 +107,8 @@ export {
 	IStableCoinList,
 	IAccountInfo,
 };
+
+export * from './request';
 
 /* Export basic types*/
 export {
@@ -136,7 +142,7 @@ export {
 
 export interface ConfigurationOptions {
 	appMetadata?: AppMetadata;
-	account?: EOAccount;
+	account?: RequestAccount;
 }
 
 export interface Configuration {
@@ -207,15 +213,49 @@ export class SDK {
 	 * createStableCoin
 	 */
 	public createStableCoin(
-		request: ICreateStableCoinRequest,
+		request: CreateStableCoinRequest,
 	): Promise<IStableCoinDetail> | null {
 		try {
-			const req: ICreateStableCoinServiceRequestModel = {
-				...request,
-				autoRenewAccount: request.autoRenewAccount
-					? new AccountId(request.autoRenewAccount)
-					: undefined,
-			};
+			// const {
+			// 	account,
+			// 	name,
+			// 	symbol,
+			// 	decimals,
+			// 	adminKey,
+			// 	supplyKey,
+			// 	freezeKey,
+			// 	wipeKey,
+			// 	KYCKey,
+			// 	pauseKey,
+			// 	autoRenewAccount,
+			// 	initialSupply,
+			// 	maxSupply,
+			// 	supplyType,
+			// 	treasury,
+			// 	freezeDefault,
+			// } = request;
+			// const req: ICreateStableCoinServiceRequestModel = {
+			// 	account: RequestMapper.getAccount(account),
+			// 	name,
+			// 	symbol,
+			// 	decimals,
+			// 	initialSupply,
+			// 	maxSupply,
+			// 	supplyType,
+			// 	treasury: RequestMapper.getAccountId(treasury),
+			// 	freezeDefault,
+			// 	adminKey: RequestMapper.getPublicKey(adminKey),
+			// 	supplyKey: RequestMapper.getPublicKey(supplyKey),
+			// 	freezeKey: RequestMapper.getPublicKey(freezeKey),
+			// 	KYCKey: RequestMapper.getPublicKey(KYCKey),
+			// 	wipeKey: RequestMapper.getPublicKey(wipeKey),
+			// 	pauseKey: RequestMapper.getPublicKey(pauseKey),
+			// 	autoRenewAccount: RequestMapper.getAccountId(autoRenewAccount),
+			// };
+			const req: ICreateStableCoinServiceRequestModel = RequestMapper.map(request,{
+				treasury: AccountId,
+				autoRenewAccount: AccountId,
+			})
 			return this.stableCoinService.createStableCoin(req);
 		} catch (error) {
 			console.error(error);
@@ -228,7 +268,7 @@ export class SDK {
 	): Promise<Capabilities[]> | null {
 		try {
 			const req: IGetCapabilitiesServiceRequestModel = {
-				...request
+				...request,
 			};
 			return this.stableCoinService.getCapabilitiesStableCoin(req);
 		} catch (error) {

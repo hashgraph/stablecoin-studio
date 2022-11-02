@@ -3,20 +3,13 @@ export enum ErrorCode {
 	PrivateKeyInvalid = '10002',
 	PrivateKeyTypeInvalid = '10003',
 	PublicKeyInvalid = '10004',
-	InitSupplyLargerThanMaxSupply = '10005',
 	ContractKeyInvalid = '10006',
-	DecimalRangeInvalid = '10007',
-	AmountInvalid = '10008',
-	NameLength = '10009',
-	NameEmpty = '10010',
-	SymbolLength = '10011',
-	SymbolEmpty = '10012',
-	MemoLength = '10013',
+	InvalidAmount = '10008',
 	InvalidContractId = '10014',
 	InvalidType = '10015',
 	InvalidLength = '10016',
-	EmptyValue = '10017',
 	InvalidRange = '10018',
+	EmptyValue = '10017',
 	AccountNotAssociatedToToken = '20001',
 	MaxSupplyReached = '20002',
 	RoleNotAssigned = '20003',
@@ -57,4 +50,3 @@ export default class BaseError extends Error {
 		Object.setPrototypeOf(this, BaseError.prototype);
 	}
 }
-

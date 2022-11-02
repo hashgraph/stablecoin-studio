@@ -111,7 +111,7 @@ export default class HTSProvider implements IProvider {
 			throw new Error('Cannot get client: Invalid configuration');
 		}
 
-		if (account && account instanceof EOAccount) {
+		if (account && account.privateKey) {
 			client.setOperator(
 				account.accountId.id,
 				account.privateKey.toHashgraphKey(),

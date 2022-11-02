@@ -1,5 +1,5 @@
 {
-	"compilerOptions": {
+  "compilerOptions": {
     "target": "ES2020" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
     "module": "ESNext" /* Specify what module code is generated. */,
     "moduleResolution": "node",
@@ -14,8 +14,9 @@
     "baseUrl": "./src",
     "strictPropertyInitialization": false,
     "experimentalDecorators": true,
-	"emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "resolveJsonModule": true
   },
-	"exclude": ["build/**/*", "node_modules", "example/**/*"],
-	"include": ["src/**/*", "__tests__/**/*"]
+  "exclude": ["build/**/*", "node_modules", "example/**/*"],
+  "include": ["src/**/*", "__tests__/**/*"]
 }

@@ -14,6 +14,9 @@ import InvalidDecimalRange from './error/InvalidDecimalRange.js';
 import BaseError from '../../../core/error/BaseError.js';
 import CheckNums from '../../../core/checks/numbers/CheckNums.js';
 import CheckStrings from '../../../core/checks/strings/CheckStrings.js';
+import { InitSupplyInvalid } from './error/InitSupplyInvalid.js';
+import { InitSupplyLargerThanMaxSupply } from './error/InitSupplyLargerThanMaxSupply.js';
+import InvalidMaxSupplySupplyType from './error/InvalidMaxSupplySupplyType.js';
 
 const MAX_SUPPLY = 9_223_372_036_854_775_807n; // eslint-disable-line
 const TEN = 10;
@@ -22,7 +25,6 @@ const EIGHTEEN = 18;
 const ZERO = 0;
 
 export class StableCoin extends BaseEntity {
-
 	public static MAX_SUPPLY: bigint = MAX_SUPPLY;
 
 	/**
@@ -266,6 +268,7 @@ export class StableCoin extends BaseEntity {
 	public set deleted(value: string) {
 		this._deleted = value;
 	}
+
 	constructor(params: {
 		name: string;
 		symbol: string;
@@ -376,6 +379,79 @@ export class StableCoin extends BaseEntity {
 			errorList.push(new InvalidDecimalRange(value, min, max));
 
 		return errorList;
+	}
+
+	public static checkInitialSupply(
+		initialSupply: bigint,
+		maxSupply?: bigint,
+		supplyType?: TokenSupplyType,
+	): BaseError[] {
+		let list: BaseError[] = [];
+		const min = BigInt(ZERO);
+		// TODO: review decimals max supply
+		
+		if (maxSupply === undefined) {
+			if (!CheckNums.isWithinRange(initialSupply, min, MAX_SUPPLY)) {
+				list.push(new InitSupplyInvalid(initialSupply.toString()));
+			}
+		} else {
+			list = [
+				...list,
+				...StableCoin.checkSupply(maxSupply, initialSupply, supplyType),
+			];
+		}
+
+		return list;
+	}
+
+	public static checkMaxSupply(
+		maxSupply: bigint,
+		initialSupply?: bigint,
+		supplyType?: TokenSupplyType,
+	): BaseError[] {
+		let list: BaseError[] = [];
+		const min = initialSupply ?? BigInt(ZERO);
+		// TODO: review decimals max supply
+
+		if (!supplyType) {
+			if (!CheckNums.isWithinRange(maxSupply, min, MAX_SUPPLY)) {
+				list.push(
+					new InitSupplyLargerThanMaxSupply(
+						min.toString(),
+						maxSupply.toString(),
+					),
+				);
+			}
+		} else {
+			list = [
+				...list,
+				...StableCoin.checkSupply(maxSupply, min, supplyType),
+			];
+		}
+
+		return list;
+	}
+
+	private static checkSupply(
+		maxSupply: bigint,
+		initialSupply: bigint,
+		supplyType?: TokenSupplyType,
+	): BaseError[] {
+		const list: BaseError[] = [];
+		if (supplyType && supplyType !== TokenSupplyType.FINITE) {
+			if (CheckNums.isMoreThan(maxSupply, 0n)) {
+				list.push(new InvalidMaxSupplySupplyType(maxSupply.toString()));
+			}
+		}
+		if (CheckNums.isLessThan(maxSupply, initialSupply)) {
+			list.push(
+				new InitSupplyLargerThanMaxSupply(
+					initialSupply.toString(),
+					maxSupply.toString(),
+				),
+			);
+		}
+		return list;
 	}
 
 	public getDecimalOperator(): number {

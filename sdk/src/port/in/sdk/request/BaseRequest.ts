@@ -5,14 +5,20 @@ export interface BaseRequest {
 
 export interface RequestAccount {
 	accountId: string;
-	privateKey?: RequestKey;
+	privateKey?: RequestPrivateKey;
 	evmAddress?: string;
 }
 
-export interface RequestKey {
+interface RequestKey {
 	key: string;
-	type: 'ECDSA' | 'ED25519';
+	type: string;
 }
+
+// Extend as empty interface for future changes
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface RequestPrivateKey extends RequestKey {}
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface RequestPublicKey extends RequestKey {}
 
 export interface AccountBaseRequest {
 	account: RequestAccount;

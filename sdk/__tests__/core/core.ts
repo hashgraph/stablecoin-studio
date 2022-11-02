@@ -8,6 +8,7 @@ import {
   SDK,
   SDKInitOptions,
 } from '../../src/index.js';
+import { RequestAccount } from '../../src/port/in/sdk/request/BaseRequest.js';
 
 const ACCOUNT_ID = '0.0.47822430';
 const PK =
@@ -18,12 +19,22 @@ export const ACCOUNTS: { testnet: EOAccount } = {
   testnet: new EOAccount(ACCOUNT_ID, new PrivateKey(PK, TYPE)),
 };
 
+export const REQUEST_ACCOUNTS: { testnet: RequestAccount } = {
+  testnet: {
+    accountId: ACCOUNT_ID,
+    privateKey: {
+      key: PK,
+      type: TYPE,
+    },
+  },
+};
+
 export const SDKConfig: { hethers: Configuration; hashpack: Configuration } = {
   hethers: {
     network: new HederaNetwork(HederaNetworkEnviroment.TEST),
     mode: NetworkMode.EOA,
     options: {
-      account: ACCOUNTS.testnet,
+      account: REQUEST_ACCOUNTS.testnet,
     },
   },
   hashpack: {

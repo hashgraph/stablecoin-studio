@@ -192,7 +192,7 @@ const StableCoinCreation = () => {
 				pauseKey: formatKey(pauseKey.label, 'pauseKey'),
 				supplyKey: formatKey(supplyKey.label, 'supplyKey'),
 				treasury:
-					formatKey(supplyKey.label, 'supplyKey') !== PublicKey.NULL && accountInfo.account
+					!PublicKey.isNull(formatKey(supplyKey.label, 'supplyKey')) && accountInfo.account
 						? new AccountId(accountInfo.account)
 						: AccountId.NULL,
 			};

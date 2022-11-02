@@ -43,9 +43,9 @@ export class TransactionProvider {
 			contractId: ContractId,
 			key?: PublicKey,
 		): HPublicKey | DelegateContractId | undefined => {
-			if (key && key !== PublicKey.NULL) {
+			if (key && !PublicKey.isNull(key)) {
 				return key.toHederaKey();
-			} else if (key && key === PublicKey.NULL) {
+			} else if (key && PublicKey.isNull(key)) {
 				return contractId.toDelegateContractId();
 			} else {
 				return undefined;
@@ -57,7 +57,7 @@ export class TransactionProvider {
 			contractId: ContractId,
 			supplyKey?: PublicKey,
 		): AccountId => {
-			if (supplyKey && supplyKey !== PublicKey.NULL) {
+			if (supplyKey && !PublicKey.isNull(supplyKey)) {
 				return accountId;
 			} else {
 				return AccountId.fromString(contractId.toString());
@@ -104,8 +104,6 @@ export class TransactionProvider {
 			transaction.setMaxSupply(values.maxSupply);
 			transaction.setSupplyType(TokenSupplyType.Finite);
 		}
-		console.log("Token create transaction: ", values);
-		console.log("Token create transaction: ",transaction);
 		return transaction;
 	}
 

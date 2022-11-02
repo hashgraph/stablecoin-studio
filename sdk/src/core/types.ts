@@ -16,3 +16,7 @@ export abstract class ValueObject {
 export interface IndexableObject {
 	[n: string | number | symbol]: any;
 }
+
+export type Constructible<Params extends readonly any[] = any[], T = any> = new (
+	...params: Params
+) => T;

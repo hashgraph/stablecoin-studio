@@ -4,8 +4,9 @@ import BaseError from '../../../../../core/error/BaseError.js';
 import { BaseRequest } from '../BaseRequest.js';
 import { ValidationSchema, ValidatedRequestKey } from './ValidationSchema.js';
 import ValidationResponse from './ValidationResponse.js';
-import { getOptionalKeys } from '../../../../../core/decorators/OptionalDecorator.js';
+import { getOptionalFields } from '../../../../../core/decorators/OptionalDecorator.js';
 import { RuntimeError } from '../../../../../core/error/RuntimeError.js';
+import { EmptyValue } from '../error/EmptyValue.js';
 export default class ValidatedRequest<T extends BaseRequest> {
 	private schema: ValidationSchema<T>;
 
@@ -13,16 +14,29 @@ export default class ValidatedRequest<T extends BaseRequest> {
 		this.schema = schema;
 	}
 
-	protected getOptionalKeys(): ValidatedRequestKey<T>[] {
+	public validate(key?: ValidatedRequestKey<T>): ValidationResponse[] {
+		const vals: ValidationResponse[] = [];
+		if (!key) {
+			const filteredEntries = this.filterSchemaFromProps();
+			filteredEntries.forEach((key) => {
+				this.pushValidations(key, vals);
+			});
+		} else {
+			this.pushValidations(key, vals);
+		}
+		return vals;
+	}
+
+	protected getOptionalFields(): ValidatedRequestKey<T>[] {
 		let keys: ValidatedRequestKey<T>[] = [];
 		keys = Object.keys(
-			getOptionalKeys(this) ?? {},
+			getOptionalFields(this) ?? {},
 		) as ValidatedRequestKey<T>[];
 		return keys;
 	}
 
 	protected isOptional(key: ValidatedRequestKey<T>): boolean {
-		return this.getOptionalKeys().includes(key);
+		return this.getOptionalFields().includes(key);
 	}
 
 	private getProperty(propertyName: keyof this): any {
@@ -41,29 +55,29 @@ export default class ValidatedRequest<T extends BaseRequest> {
 			try {
 				const err = this.schema[propertyName]?.(val);
 				if (err?.length && err.length > 0) {
-					return new ValidationResponse(err);
+					return new ValidationResponse(propertyName.toString(), err);
 				}
 			} catch (err) {
-				return new ValidationResponse([err as BaseError]);
+				return new ValidationResponse(propertyName.toString(), [
+					err as BaseError,
+				]);
 			}
-		} else if (val === undefined && !this.isOptional(propertyName)) {
+		} else if (
+			this?.schema[propertyName] &&
+			!this.isOptional(propertyName) &&
+			val === undefined
+		) {
+			return new ValidationResponse(propertyName.toString(), [
+				new EmptyValue(propertyName),
+			]);
+		} else if (
+			!this?.schema[propertyName] &&
+			!this.isOptional(propertyName)
+		) {
 			throw new RuntimeError(
 				`Invalid validation schema for property '${propertyName.toString()}'. Did you forget to add the validation?`,
 			);
 		}
-	}
-
-	validate(key?: ValidatedRequestKey<T>): ValidationResponse[] {
-		const vals: ValidationResponse[] = [];
-		if (!key) {
-			const filteredEntries = this.filterSchemaFromProps();
-			filteredEntries.forEach((key) => {
-				this.pushValidations(key, vals);
-			});
-		} else {
-			this.pushValidations(key, vals);
-		}
-		return vals;
 	}
 
 	private filterSchemaFromProps(): ValidatedRequestKey<T>[] {
