@@ -53,7 +53,7 @@ export interface HederaERC20Interface extends utils.Interface {
     "grantUnlimitedSupplierRole(address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
     "increaseSupplierAllowance(address,uint256)": FunctionFragment;
-    "initialize(address)": FunctionFragment;
+    "initialize(address,address)": FunctionFragment;
     "isUnlimitedSupplierAllowance(address)": FunctionFragment;
     "mint(address,uint256)": FunctionFragment;
     "name()": FunctionFragment;
@@ -199,7 +199,7 @@ export interface HederaERC20Interface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "initialize",
-    values: [PromiseOrValue<string>]
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "isUnlimitedSupplierAllowance",
@@ -722,6 +722,7 @@ export interface HederaERC20 extends BaseContract {
 
     initialize(
       tokenAddress: PromiseOrValue<string>,
+      originalSender: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -899,6 +900,7 @@ export interface HederaERC20 extends BaseContract {
 
   initialize(
     tokenAddress: PromiseOrValue<string>,
+    originalSender: PromiseOrValue<string>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1076,6 +1078,7 @@ export interface HederaERC20 extends BaseContract {
 
     initialize(
       tokenAddress: PromiseOrValue<string>,
+      originalSender: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1430,6 +1433,7 @@ export interface HederaERC20 extends BaseContract {
 
     initialize(
       tokenAddress: PromiseOrValue<string>,
+      originalSender: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1610,6 +1614,7 @@ export interface HederaERC20 extends BaseContract {
 
     initialize(
       tokenAddress: PromiseOrValue<string>,
+      originalSender: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

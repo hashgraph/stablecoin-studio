@@ -438,7 +438,7 @@ function increaseSupplierAllowance(address supplier, uint256 amount) external no
 ### initialize
 
 ```solidity
-function initialize(address tokenAddress) external payable
+function initialize(address tokenAddress, address originalSender) external payable
 ```
 
 
@@ -450,6 +450,7 @@ function initialize(address tokenAddress) external payable
 | Name | Type | Description |
 |---|---|---|
 | tokenAddress | address | undefined |
+| originalSender | address | undefined |
 
 ### isUnlimitedSupplierAllowance
 

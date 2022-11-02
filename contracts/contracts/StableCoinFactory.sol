@@ -5,6 +5,7 @@ import "./hts-precompile/IHederaTokenService.sol";
 import "./hts-precompile/HederaResponseCodes.sol";
 import "./HederaERC20.sol";
 import "./HederaERC1967Proxy.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
 interface IStableCoinFactory {
 
@@ -59,13 +60,12 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes{
         require(responseCode == HederaResponseCodes.SUCCESS, "Token Creation failed");
 
         // Initialize Proxy
-        HederaERC20(address(StableCoinProxy)).initialize(tokenAddress);
+        HederaERC20(address(StableCoinProxy)).initialize(tokenAddress, msg.sender);
 
         // Associate token
         HederaERC20(address(StableCoinProxy)).associateToken(msg.sender);
 
         return address(StableCoinProxy);
-        
     }
 
     function createToken (string memory tokenName,
@@ -77,47 +77,46 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes{
         bytes memory senderPublicKey) 
     internal view returns (IHederaTokenService.HederaToken memory){
 
-        bytes memory tokenMemo = abi.encodePacked(memo_1, StableCoinProxyAddress, memo_2);
-
-        IHederaTokenService.Expiry memory tokenExpiry = IHederaTokenService.Expiry({
-            second: 10000,
-            autoRenewAccount: msg.sender,
-            autoRenewPeriod: 10000
-        });
+        string memory tokenMemo = string(abi.encodePacked(memo_1, Strings.toHexString(StableCoinProxyAddress), memo_2));
+        
+        IHederaTokenService.Expiry memory tokenExpiry;
+        tokenExpiry.autoRenewAccount = msg.sender;
+        tokenExpiry.autoRenewPeriod = 7776000;
 
         IHederaTokenService.KeyValue memory SenderKey = createKeyValue(
             false,
             address(0),
-            bytes(""),
             senderPublicKey,
+            bytes(""),
             address(0)
         );
 
         IHederaTokenService.KeyValue memory ProxyKey = createKeyValue(
             false,
-            StableCoinProxyAddress,
+            address(0),
             bytes(""),
             bytes(""),
             StableCoinProxyAddress
         );
         
         IHederaTokenService.TokenKey[] memory keys = new IHederaTokenService.TokenKey[](4);
-        keys[0] = IHederaTokenService.TokenKey({keyType: 0, key: SenderKey}); // admin
-        keys[1] = IHederaTokenService.TokenKey({keyType: 2, key: SenderKey}); // freeze
-        keys[2] = IHederaTokenService.TokenKey({keyType: 3, key: ProxyKey}); // wipe
-        keys[3] = IHederaTokenService.TokenKey({keyType: 4, key: ProxyKey}); // supply
+        keys[0] = IHederaTokenService.TokenKey({keyType: 1, key: SenderKey}); // admin
+        keys[1] = IHederaTokenService.TokenKey({keyType: 4, key: SenderKey}); // freeze
+        keys[2] = IHederaTokenService.TokenKey({keyType: 8, key: ProxyKey}); // wipe
+        keys[3] = IHederaTokenService.TokenKey({keyType: 16, key: ProxyKey}); // supply
 
-        return IHederaTokenService.HederaToken({
-            name: tokenName,
-            symbol: tokenSymbol,
-            treasury: StableCoinProxyAddress,
-            memo: string(tokenMemo),
-            tokenSupplyType: supplyType,
-            maxSupply: tokenMaxSupply,
-            freezeDefault: freeze,
-            tokenKeys: keys,
-            expiry: tokenExpiry
-        });
+        IHederaTokenService.HederaToken memory token;
+        token.name = tokenName;
+        token.symbol = tokenSymbol;
+        token.treasury = StableCoinProxyAddress;
+        token.memo = tokenMemo;
+        token.tokenSupplyType = supplyType;
+        token.maxSupply = tokenMaxSupply;
+        token.freezeDefault = freeze;
+        token.tokenKeys = keys;
+        token.expiry = tokenExpiry;
+
+        return token;
     }
 
     function createKeyValue(bool _inheritAccountKey,

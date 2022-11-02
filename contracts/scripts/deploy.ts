@@ -1,28 +1,20 @@
 const {
     ContractId,
     AccountId,
-    ContractFunctionParameters,
-    TokenId,
     TokenSupplyType,
     PublicKey,
-    DelegateContractId
 } = require('@hashgraph/sdk')
 
-const factoryAddress = "0.0.48776934";
+const factoryAddress = "0.0.48787128"; //"0000000000000000000000000000000002e86eb8"; 0.0.48787128
 
 import {
-    HederaERC20__factory,
-    HederaERC1967Proxy__factory,
-    StableCoinFactory__factory
+    StableCoinFactory__factory,
 } from '../typechain-types'
 
 import {getClient, 
     deployContractSDK,
-    contractCall,
-    createToken}
+    contractCall}
  from './utils'
-
- import {BigNumber} from "ethers";
 
 const hre = require('hardhat')
 const hreConfig = hre.network.config
@@ -50,19 +42,17 @@ export function initializeClients(){
     client2publickey]
 }
 
+
 export async function deployFactory(
-    account: string,
+    clientOperator: any,
     privateKey: string
 ){
-    const clientSdk = getClient()
-    clientSdk.setOperator(account, privateKey)
-
     console.log(`Deploying Contract Factory. please wait...`);
 
     const factory = await deployContractSDK(
         StableCoinFactory__factory,
         privateKey,
-        clientSdk
+        clientOperator
     )
 
     console.log(`Contract Factory deployed ${factory.toSolidityAddress().toString()}`);
@@ -86,14 +76,17 @@ export async function deployContractsWithSDK(
         `Creating token  (${name},${symbol},${decimals},${initialSupply},${maxSupply},${memo},${freeze})`
     )
 
+    console.log(
+        `With user account  (${account}, ${AccountId.fromString(account).toSolidityAddress()})`
+    )
+
     const clientSdk = getClient()
     clientSdk.setOperator(account, privateKey)
 
     let f_address = ""
 
-    if(!factoryAddress) f_address = await deployFactory(account, privateKey);
+    if(!factoryAddress) f_address = await deployFactory(clientSdk, privateKey);
     else f_address = ContractId.fromString(factoryAddress);
-
 
     console.log(`Invoking Factory at ${f_address}... please wait.`)
 
@@ -121,14 +114,15 @@ export async function deployContractsWithSDK(
         clientSdk,
         15000000,
         StableCoinFactory__factory.abi,
-        250
+        25
     )
 
-    console.log(`Proxy created: ${proxyContract.toString()}`)
+    console.log(`Proxy created: ${proxyContract[0]} , ${ContractId.fromSolidityAddress(proxyContract[0]).toString()}`)
 
-    return proxyContract
+    return ContractId.fromSolidityAddress(proxyContract[0])
 }
 
+/*
 export async function deployContractsWithSDK_old(
     name: string,
     symbol: string,
@@ -215,4 +209,4 @@ export async function deployContractsWithSDK_old(
     )
 
     return proxyContract
-}
+}*/

@@ -37,7 +37,7 @@ let client2publickey: string;
 
 const TokenName = "MIDAS";
 const TokenSymbol = "MD";
-const TokenDecimals = 10;
+const TokenDecimals = 6;
 const TokenFactor = BigNumber.from(10).pow(TokenDecimals);
 const INIT_SUPPLY = BigNumber.from(0).mul(TokenFactor);
 const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor);

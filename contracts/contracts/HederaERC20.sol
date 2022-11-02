@@ -19,18 +19,19 @@ contract HederaERC20 is IHederaERC20, Initializable, IERC20Upgradeable,
                        Mintable, Burnable, Wipeable, Rescatable {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
-    function initialize (address tokenAddress) 
+    function initialize (address tokenAddress, address originalSender) 
         external 
         payable 
         initializer 
     {
         _setTokenAddress(tokenAddress);
         __AccessControl_init();       
-        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        grantUnlimitedSupplierRole(msg.sender);
-        _grantRole(BURN_ROLE, msg.sender);
-        _grantRole(RESCUE_ROLE, msg.sender);
-        _grantRole(WIPE_ROLE, msg.sender);
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender); // Assign Admin role to calling contract/user in order to be able to set all the other roles
+        grantUnlimitedSupplierRole(originalSender);
+        _grantRole(BURN_ROLE, originalSender);
+        _grantRole(RESCUE_ROLE, originalSender);
+        _grantRole(WIPE_ROLE, originalSender);
+        _setupRole(DEFAULT_ADMIN_ROLE, originalSender); // Assign Admin role to the provided address
     }
 
     /**
