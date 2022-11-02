@@ -83,21 +83,11 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes{
         tokenExpiry.autoRenewAccount = msg.sender;
         tokenExpiry.autoRenewPeriod = 7776000;
 
-        IHederaTokenService.KeyValue memory SenderKey = createKeyValue(
-            false,
-            address(0),
-            senderPublicKey,
-            bytes(""),
-            address(0)
-        );
+        IHederaTokenService.KeyValue memory SenderKey;
+        SenderKey.ed25519 = senderPublicKey;
 
-        IHederaTokenService.KeyValue memory ProxyKey = createKeyValue(
-            false,
-            address(0),
-            bytes(""),
-            bytes(""),
-            StableCoinProxyAddress
-        );
+        IHederaTokenService.KeyValue memory ProxyKey;
+        SenderKey.delegatableContractId = StableCoinProxyAddress;
         
         IHederaTokenService.TokenKey[] memory keys = new IHederaTokenService.TokenKey[](4);
         keys[0] = IHederaTokenService.TokenKey({keyType: 1, key: SenderKey}); // admin
@@ -117,22 +107,5 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes{
         token.expiry = tokenExpiry;
 
         return token;
-    }
-
-    function createKeyValue(bool _inheritAccountKey,
-        address _contractId,
-        bytes memory _ed25519,
-        bytes memory _ECDSA_secp256k1,
-        address _delegatableContractId
-    ) internal pure returns (IHederaTokenService.KeyValue memory){
-
-        return IHederaTokenService.KeyValue({
-            inheritAccountKey: _inheritAccountKey,
-            contractId: _contractId,
-            ed25519: _ed25519,
-            ECDSA_secp256k1: _ECDSA_secp256k1,
-            delegatableContractId: _delegatableContractId
-        });
-
     }
 }
