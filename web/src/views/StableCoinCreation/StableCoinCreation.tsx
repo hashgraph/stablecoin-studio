@@ -167,8 +167,8 @@ const StableCoinCreation = () => {
 			name,
 			symbol,
 			decimals,
-			initialSupply: initialSupply.toString() ?? undefined,
-			maxSupply: maxSupply.toString() ?? undefined,
+			initialSupply: initialSupply ? initialSupply.toString() : undefined,
+			maxSupply: maxSupply ? maxSupply.toString() : undefined,
 			autoRenewAccount: autorenewAccount,
 		};
 

@@ -510,9 +510,10 @@ export class SDK {
 				...request,
 			};
 			if (request.role === StableCoinRole.CASHIN_ROLE) {
-				this.stableCoinService.revokeSupplierRole(req);
+				return this.stableCoinService.revokeSupplierRole(req);
+			} else {
+				return this.stableCoinService.revokeRole(req);
 			}
-			return this.stableCoinService.revokeRole(req);
 		} catch (error) {
 			console.error(error);
 			return null;

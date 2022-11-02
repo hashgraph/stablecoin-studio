@@ -169,7 +169,7 @@ const StableCoinDetails = () => {
 													decimals: selectedStableCoin.decimals || 0,
 													language: i18n.language,
 											  })
-											: selectedStableCoin?.maxSupply,
+											: 'INFINITE',
 								},
 								{
 									label: t('treasuryId'),

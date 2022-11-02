@@ -249,7 +249,7 @@ export default class CreateStableCoinService extends Service {
       symbol,
       autoRenewAccount,
       decimals: parseInt(decimals),
-      initialSupply: initialSupply === '' ? undefined : BigInt(initialSupply),
+      initialSupply: initialSupply === '' ? undefined : initialSupply,
       supplyType: supplyType ? 'INFINITE' : 'FINITE',
       maxSupply: totalSupply ? BigInt(totalSupply) : totalSupply,
       freezeKey:
