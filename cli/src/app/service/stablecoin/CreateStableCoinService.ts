@@ -141,6 +141,13 @@ export default class CreateStableCoinService extends Service {
         language.getText('stablecoin.askAutoRenewAccountId'),
         createdStableCoin.autoRenewAccount || currentAccount.accountId,
       );
+      while (autoRenewAccount !== currentAccount.accountId) {
+        console.log(language.getText('stablecoin.autoRenewAccountError'));
+        autoRenewAccount = await utilsService.defaultSingleAsk(
+          language.getText('stablecoin.askAutoRenewAccountId'),
+          createdStableCoin.autoRenewAccount || currentAccount.accountId,
+        );
+      }
       sdk.checkIsAddress(autoRenewAccount);
     } catch (error) {
       console.log(language.getText('account.wrong'));
