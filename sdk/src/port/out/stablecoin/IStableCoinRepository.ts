@@ -4,6 +4,7 @@ import { Capabilities } from '../../../domain/context/stablecoin/Capabilities.js
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import IStableCoinList from '../../in/sdk/response/IStableCoinList.js';
 import IAccountInfo from '../../in/sdk/response/IAccountInfo.js';
+import BigDecimal from '../../../domain/context/stablecoin/BigDecimal.js';
 
 export default interface IStableCoinRepository {
 	saveCoin(coin: StableCoin, account: Account): Promise<StableCoin>;
@@ -11,14 +12,14 @@ export default interface IStableCoinRepository {
 	getStableCoin(id: string): Promise<StableCoin>;
 	getCapabilitiesStableCoin(
 		tokenId: string,
-		account: Account,
+		publickey: string,
 	): Promise<Capabilities[]>;
 	getBalanceOf(
 		proxyContractId: string,
 		targetId: string,
 		tokenId: string,
 		account: Account,
-	): Promise<Uint8Array>;
+	): Promise<string>;
 	getNameToken(
 		proxyContractId: string,
 		account: Account,
@@ -26,22 +27,22 @@ export default interface IStableCoinRepository {
 	cashIn(
 		proxyContractId: string,
 		targetId: string,
-		amount: number,
+		amount: BigDecimal,
 		account: Account,
 	): Promise<Uint8Array>;
 	cashInHTS(
 		tokenId: string,
-		amount: number,
+		amount: BigDecimal,
 		account: Account,
 	): Promise<boolean>;
 	cashOut(
 		proxyContractId: string,
-		amount: number,
+		amount: BigDecimal,
 		account: Account,
 	): Promise<Uint8Array>;
 	cashOutHTS(
 		tokenId: string,
-		amount: number,
+		amount: BigDecimal,
 		account: Account,
 	): Promise<boolean>;
 	associateToken(
@@ -51,20 +52,20 @@ export default interface IStableCoinRepository {
 	wipe(
 		proxyContractId: string,
 		targetId: string,
-		amount: number,
+		amount: BigDecimal,
 		account: Account,
 	): Promise<Uint8Array>;
 	wipeHTS(
 		tokenId: string,
 		wipeAccountId: string,
-		amount: number,
+		amount: BigDecimal,
 		account: Account,
 	): Promise<boolean>;
 	grantSupplierRole(
 		proxyContractId: string,
 		address: string,
 		account: Account,
-		amount?: number,
+		amount?: BigDecimal,
 	): Promise<Uint8Array>;
 	isUnlimitedSupplierAllowance(
 		proxyContractId: string,
@@ -90,13 +91,13 @@ export default interface IStableCoinRepository {
 		proxyContractId: string,
 		address: string,
 		account: Account,
-		amount?: number,
+		amount?: BigDecimal,
 	): Promise<Uint8Array>;
 	decreaseSupplierAllowance(
 		proxyContractId: string,
 		address: string,
 		account: Account,
-		amount?: number,
+		amount?: BigDecimal,
 	): Promise<Uint8Array>;
 	isLimitedSupplierAllowance(
 		proxyContractId: string,
@@ -105,7 +106,7 @@ export default interface IStableCoinRepository {
 	): Promise<Uint8Array>;
 	rescue(
 		proxyContractId: string,
-		amount: number,
+		amount: BigDecimal,
 		account: Account,
 	): Promise<Uint8Array>;
 	grantRole(
@@ -128,7 +129,7 @@ export default interface IStableCoinRepository {
 	): Promise<Uint8Array>;
 	transferHTS(
 		tokenId: string,
-		amount: number,
+		amount: BigDecimal,
 		outAccountId: string,
 		inAccountId: string,
 		account: Account,

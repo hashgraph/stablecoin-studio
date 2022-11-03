@@ -3,30 +3,27 @@ import {
   HederaNetworkEnviroment,
   Configuration,
   NetworkMode,
-  ICreateStableCoinRequest,
-  IGetCapabilitiesRequest,
   SDK,
   IStableCoinDetail,
   CreateStableCoinRequest,
+  IGetCapabilitiesRequest,
 } from '../../../../src/index.js';
-import { AccountId, PrivateKey } from '@hashgraph/sdk';
+import { AccountId } from '@hashgraph/sdk';
 import { Capabilities } from '../../../../src/domain/context/stablecoin/Capabilities.js';
-import StableCoinRepository from '../../../../src/port/out/stablecoin/StableCoinRepository.js';
 import { ACCOUNTS, getSDKAsync, REQUEST_ACCOUNTS } from '../../../core/core.js';
 
 describe('🧪 [DOMAIN] StableCoin', () => {
-  let repository: StableCoinRepository;
-
   it('Create an stable coin with all funtionality', async () => {
     const { coin, sdk } = await createStableCoin();
     expect(coin.tokenId).not.toBeFalsy();
-    const stableCoinDetails = await repository.getStableCoin(coin.tokenId!);
-    const capabilitiesReq: IGetCapabilitiesRequest = {
-      tokenId: stableCoinDetails.id,
-      account: ACCOUNTS.testnet,
-    };
+    const stableCoinDetails = await sdk.getStableCoinDetails({
+      id: coin.tokenId!,
+    });
+    expect(stableCoinDetails).not.toBeFalsy();
+    expect(stableCoinDetails?.tokenId).not.toBeFalsy();
     const cap: Capabilities[] | null = await sdk.getCapabilitiesStableCoin(
-      capabilitiesReq,
+      stableCoinDetails!.tokenId!,
+      ACCOUNTS.testnet.privateKey.publicKey.key,
     );
     expect(cap).not.toBeNull();
   }, 180_000);

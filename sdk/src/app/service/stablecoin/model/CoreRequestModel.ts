@@ -5,11 +5,11 @@ export interface IAccountWithKeyRequestModel {
 }
 
 export interface IAmountRequestModel {
-	amount: number;
+	amount: string;
 }
 
 export interface IAmountOptionalRequestModel {
-	amount?: number;
+	amount?: string;
 }
 
 export interface IProxyContractIdRequestModel {

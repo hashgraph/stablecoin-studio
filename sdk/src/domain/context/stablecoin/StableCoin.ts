@@ -7,6 +7,7 @@ import NameLength from './error/NameLength.js';
 import NameEmpty from './error/NameEmpty.js';
 import SymbolLength from './error/SymbolLength.js';
 import SymbolEmpty from './error/SymbolEmpty.js';
+import BigDecimal from './BigDecimal.js';
 import { StableCoinMemo } from './StableCoinMemo.js';
 import { TokenSupplyType } from './TokenSupply.js';
 import { TokenType } from './TokenType.js';
@@ -17,7 +18,6 @@ import CheckStrings from '../../../core/checks/strings/CheckStrings.js';
 import { InitSupplyInvalid } from './error/InitSupplyInvalid.js';
 import { InitSupplyLargerThanMaxSupply } from './error/InitSupplyLargerThanMaxSupply.js';
 import InvalidMaxSupplySupplyType from './error/InvalidMaxSupplySupplyType.js';
-import { InvalidType } from '../../../port/in/sdk/request/error/InvalidType.js';
 
 const MAX_SUPPLY = 9_223_372_036_854_775_807n; // eslint-disable-line
 const TEN = 10;
@@ -86,33 +86,33 @@ export class StableCoin extends BaseEntity {
 	/**
 	 * Initial Supply
 	 */
-	private _initialSupply: bigint;
-	public get initialSupply(): bigint {
+	private _initialSupply: BigDecimal;
+	public get initialSupply(): BigDecimal {
 		return this._initialSupply;
 	}
-	public set initialSupply(value: bigint) {
+	public set initialSupply(value: BigDecimal) {
 		this._initialSupply = value;
 	}
 
 	/**
 	 * Maximum Supply
 	 */
-	private _maxSupply: bigint;
-	public get maxSupply(): bigint {
+	private _maxSupply: BigDecimal | undefined;
+	public get maxSupply(): BigDecimal | undefined {
 		return this._maxSupply;
 	}
-	public set maxSupply(value: bigint) {
+	public set maxSupply(value: BigDecimal | undefined) {
 		this._maxSupply = value;
 	}
 
 	/**
 	 * Total Supply
 	 */
-	private _totalSupply: bigint;
-	public get totalSupply(): bigint {
+	private _totalSupply: BigDecimal;
+	public get totalSupply(): BigDecimal {
 		return this._totalSupply;
 	}
-	public set totalSupply(value: bigint) {
+	public set totalSupply(value: BigDecimal) {
 		this._totalSupply = value;
 	}
 
@@ -275,9 +275,9 @@ export class StableCoin extends BaseEntity {
 		symbol: string;
 		decimals: number;
 		adminKey?: PublicKey | ContractId;
-		initialSupply?: bigint;
-		totalSupply?: bigint;
-		maxSupply?: bigint;
+		initialSupply?: BigDecimal;
+		totalSupply?: BigDecimal;
+		maxSupply?: BigDecimal;
 		memo?: string;
 		freezeKey?: PublicKey | ContractId;
 		freezeDefault?: boolean;
@@ -324,9 +324,9 @@ export class StableCoin extends BaseEntity {
 		this.name = name;
 		this.symbol = symbol;
 		this.decimals = decimals;
-		this.initialSupply = initialSupply ?? 0n;
-		this.totalSupply = totalSupply ?? 0n;
-		this.maxSupply = maxSupply ?? 0n;
+		this.initialSupply = initialSupply ?? BigDecimal.ZERO;
+		this.totalSupply = totalSupply ?? BigDecimal.ZERO;
+		this.maxSupply = maxSupply ?? undefined;
 		this.memo = memo
 			? StableCoinMemo.fromJson(memo)
 			: StableCoinMemo.empty();
@@ -474,12 +474,5 @@ export class StableCoin extends BaseEntity {
 		const val = amount.toString().split('.');
 		const decimals = val.length > 1 ? val[1]?.length : 0;
 		return decimals;
-	}
-
-	public toInteger(amount: number): number {
-		if (!this.isValidAmount(amount)) {
-			throw new InvalidAmount(amount, this.decimals);
-		}
-		return amount * this.getDecimalOperator();
 	}
 }

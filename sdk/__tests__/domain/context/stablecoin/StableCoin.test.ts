@@ -1,10 +1,10 @@
 import { StableCoin } from '../../../../src/domain/context/stablecoin/StableCoin.js';
 import { TokenSupplyType } from '../../../../src/domain/context/stablecoin/TokenSupply.js';
 import { TokenType } from '../../../../src/domain/context/stablecoin/TokenType.js';
-import DomainError from '../../../../src/core/error/BaseError.js';
 import { AccountId } from '../../../../src/index.js';
 import { baseCoin } from '../../../core/core.js';
 import { StableCoinMemo } from '../../../../src/domain/context/stablecoin/StableCoinMemo';
+import BigDecimal from '../../../../src/domain/context/stablecoin/BigDecimal.js';
 
 describe('🧪 [DOMAIN] StableCoin', () => {
   it('Instantiate the class', () => {
@@ -26,8 +26,8 @@ describe('🧪 [DOMAIN] StableCoin', () => {
     expect(coin.name).toBe(baseCoin.name);
     expect(coin.symbol).toBe(baseCoin.symbol);
     expect(coin.decimals).toBe(baseCoin.decimals);
-    expect(coin.initialSupply).toBe(0n);
-    expect(coin.maxSupply).toBe(0n);
+    expect(coin.initialSupply).toBe(BigDecimal.ZERO);
+    expect(coin.maxSupply).toBe(undefined);
     expect(coin.memo).toStrictEqual(StableCoinMemo.empty());
     expect(coin.freezeKey).toStrictEqual(undefined);
     expect(coin.freezeDefault).toBe(false);
@@ -65,22 +65,6 @@ describe('🧪 [DOMAIN] StableCoin', () => {
     expect(coin.isValidAmount(100)).toBeTruthy();
     expect(coin.isValidAmount(100.42)).toBeTruthy();
     expect(coin.isValidAmount(100.1)).toBeTruthy();
-  });
-
-  it('Create an instance with valid decimals, convert to integer', () => {
-    const coin = new StableCoin({
-      name: baseCoin.name,
-      symbol: baseCoin.symbol,
-      decimals: baseCoin.decimals,
-    });
-    expect(coin).not.toBeNull();
-    expect(coin.name).toBe(baseCoin.name);
-    expect(coin.symbol).toBe(baseCoin.symbol);
-    expect(coin.decimals).toBe(baseCoin.decimals);
-    expect(() => coin.toInteger(100.4213214241232)).toThrow(DomainError);
-    expect(coin.toInteger(100)).toBe(100000);
-    expect(coin.toInteger(100.42)).toBe(100420);
-    expect(coin.toInteger(100.1)).toBe(100100);
   });
 
   it('Create an instance with valid decimals, convert from integer', () => {

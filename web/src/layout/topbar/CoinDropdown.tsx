@@ -74,11 +74,10 @@ const CoinDropdown = () => {
 		if (!selectedStableCoin?.tokenId || !accountInfo.publicKey?.key) return;
 
 		const capabilities = await SDKService.getCapabilities({
-			account: new HashPackAccount(accountId),
-			tokenId: selectedStableCoin.tokenId
+			id: selectedStableCoin.tokenId,
+			publicKey: accountInfo.publicKey.key
 		});
 		dispatch(walletActions.setCapabilities(capabilities));
-
 	};
 
 	const formatOptionsStableCoins = async () => {
@@ -101,9 +100,9 @@ const CoinDropdown = () => {
 		dispatch(
 			walletActions.setSelectedStableCoin({
 				tokenId: stableCoinDetails?.tokenId,
-				initialSupply: Number(stableCoinDetails?.initialSupply),
-				totalSupply: Number(stableCoinDetails?.totalSupply),
-				maxSupply: Number(stableCoinDetails?.maxSupply),
+				initialSupply: stableCoinDetails?.initialSupply,
+				totalSupply: stableCoinDetails?.totalSupply,
+				maxSupply: stableCoinDetails?.maxSupply,
 				name: stableCoinDetails?.name,
 				symbol: stableCoinDetails?.symbol,
 				decimals: stableCoinDetails?.decimals,

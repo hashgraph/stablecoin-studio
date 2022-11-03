@@ -23,24 +23,6 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "controlAllowanceAmount",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "supplier",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
-      },
-    ],
     name: "decreaseSupplierAllowance",
     outputs: [],
     stateMutability: "nonpayable",

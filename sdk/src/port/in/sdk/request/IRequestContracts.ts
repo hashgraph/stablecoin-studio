@@ -8,7 +8,7 @@ export interface IRequestContracts extends IAccountRequestModel {
 	proxyContractId: string;
 }
 export interface IRequestContractsAmount extends IRequestContracts {
-	amount: number;
+	amount: string;
 }
 
 export interface IRequestBalanceOf extends IRequestContracts {
@@ -35,7 +35,7 @@ export interface IRequestRoles
 		ITargetIdRequestModel {}
 
 export interface ISupplierRequestRoleModel extends IRequestRole {
-	amount: number;
+	amount: string;
 	role: StableCoinRole;
 }
 
@@ -43,7 +43,7 @@ export interface IAllowanceRequest
 	extends IRequestContracts,
 		ITargetIdRequestModel,
 		ITokenIdRequestModel {
-	amount: number;
+	amount: string;
 }
 
 export interface ICoreOperation

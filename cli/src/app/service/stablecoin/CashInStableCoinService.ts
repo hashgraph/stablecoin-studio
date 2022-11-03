@@ -19,7 +19,7 @@ export default class CashInStableCoinsService extends Service {
     account: EOAccount,
     tokenId: string,
     targetId: string,
-    amount?: number,
+    amount?: string,
   ): Promise<void> {
     // Call to list stable coins
     const sdk: SDK = utilsService.getSDK();
