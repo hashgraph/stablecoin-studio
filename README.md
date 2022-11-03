@@ -26,10 +26,10 @@ Each stable coin maps to an *underlying* Hedera Token and adds the following fun
 - **Cash-in role**:
   When hedera tokens are minted, they are automatically assigned to the treasury account. If we want to assign them to another account, a second transaction    (signed by the treasury account) is required to transfer the tokens.
 
- Stable Coins implement a "cash-in" operation that allows cash-in role owners to mint and assign tokens to any account in a single transaction.
- The cash-in role comes in two flavours: 
- - *unlimited*: Accounts with the unlimited cash-in role can mint as many tokens as they wish (as long as the total supply does not exceed the max supply)
- - *limited*: Accounts with the limited cash-in role can only mint a limited number of tokens. The maximum cash-in amount is defined for each account individually and can be increased/deacreased at any time by the admin account. 
+  Stable Coins implement a "cash-in" operation that allows cash-in role owners to mint and assign tokens to any account in a single transaction.
+  The cash-in role comes in two flavours: 
+  - *unlimited*: Accounts with the unlimited cash-in role can mint as many tokens as they wish (as long as the total supply does not exceed the max supply)
+  - *limited*: Accounts with the limited cash-in role can only mint a limited number of tokens. The maximum cash-in amount is defined for each account individually and can be increased/deacreased at any time by the admin account. 
 
 - **Rescue role**:
   The treasury account for a Stable Coin's underlying token is the main Stable Coin Smart contract itself. Any token assigned to the treasury account can be managed by accounts having the *rescue* role. 
