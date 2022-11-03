@@ -44,6 +44,7 @@ export interface RoleLayoutProps {
 	selectorPlaceholder: string;
 	title: string;
 	roleRequest: boolean;
+	isRefreshRoles?: boolean;
 }
 
 const RoleLayout = (props: RoleLayoutProps) => {
@@ -59,6 +60,7 @@ const RoleLayout = (props: RoleLayoutProps) => {
 		selectorPlaceholder,
 		title,
 		roleRequest = true,
+		isRefreshRoles = false,
 	} = props;
 	const { t } = useTranslation(['global', 'roles', 'operations']);
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
@@ -154,22 +156,24 @@ const RoleLayout = (props: RoleLayoutProps) => {
 							{title}
 						</Heading>
 						<Stack as='form' spacing={6}>
-							<InputController
-								rules={{
-									required: t('global:validations.required'),
-									validate: {
-										validAccount: (value: string) => {
-											return validateAccount(value) || t('global:validations.invalidAccount');
+							{!isRefreshRoles && (
+								<InputController
+									rules={{
+										required: t('global:validations.required'),
+										validate: {
+											validAccount: (value: string) => {
+												return validateAccount(value) || t('global:validations.invalidAccount');
+											},
 										},
-									},
-								}}
-								isRequired
-								control={control}
-								name={fields.account}
-								label={accountLabel}
-								placeholder={accountPlaceholder}
-							/>
-							{roleRequest && (
+									}}
+									isRequired
+									control={control}
+									name={fields.account}
+									label={accountLabel}
+									placeholder={accountPlaceholder}
+								/>
+							)}
+							{roleRequest && !isRefreshRoles && (
 								<SelectController
 									rules={{
 										required: t('global:validations.required'),

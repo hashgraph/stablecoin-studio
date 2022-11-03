@@ -60,7 +60,7 @@ type Parts = typeof partsListByTheme;
 
 export type SelectThemeStyle = Record<Parts[number], SystemStyleObject>;
 
-export type Option = { label: string; value: number | string };
+export type Option = { label: string | ReactNode; value: number | string };
 export interface SelectControllerProps {
 	name: string;
 	rules?: UseControllerProps['rules'];
@@ -87,6 +87,7 @@ export interface SelectControllerProps {
 	size?: ReactSelectProps['size'];
 	overrideStyles?: Partial<SelectThemeStyle>;
 	noOptionsMessage?: ReactSelectProps['noOptionsMessage'];
+	isMulti?: ReactSelectProps['isMulti']
 }
 
 export type SelectConfigProps = {

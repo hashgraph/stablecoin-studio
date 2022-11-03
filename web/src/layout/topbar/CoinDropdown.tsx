@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/react';
+import { Box, HStack, Tag, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -20,6 +20,8 @@ import { RouterManager } from '../../Router/RouterManager';
 import { matchPath, useLocation, useNavigate } from 'react-router-dom';
 import { NamedRoutes } from '../../Router/NamedRoutes';
 import { HashPackAccount } from 'hedera-stable-coin-sdk';
+import type { IAccountToken } from '../../interfaces/IAccountToken.js';
+import type { IExternalToken } from '../../interfaces/IExternalToken.js';
 
 const CoinDropdown = () => {
 	const dispatch = useDispatch<AppDispatch>();
@@ -75,7 +77,7 @@ const CoinDropdown = () => {
 
 		const capabilities = await SDKService.getCapabilities({
 			id: selectedStableCoin.tokenId,
-			publicKey: accountInfo.publicKey.key
+			publicKey: accountInfo.publicKey.key,
 		});
 		dispatch(walletActions.setCapabilities(capabilities));
 	};
@@ -87,6 +89,46 @@ const CoinDropdown = () => {
 				value: id,
 			}));
 			setOptions(options);
+			const tokensAccount = localStorage.tokensAccount;
+			if (tokensAccount) {
+				const tokensAccountStoraged = JSON.parse(tokensAccount);
+				const accountExternalToken = tokensAccountStoraged.find(
+					(account: IAccountToken) => account.id === accountId,
+				);
+				setOptions(
+					options
+						.filter((coin) => {
+							if (
+								accountExternalToken?.externalTokens.find(
+									(externalCoin: IExternalToken) => externalCoin.id === coin.value,
+								)
+							) {
+								return false;
+							}
+							return true;
+						})
+						.concat(
+							accountExternalToken?.externalTokens.map((item: IExternalToken) => {
+								return {
+									label: (
+										<HStack justifyContent={'space-between'} alignItems={'center'}>
+											<Text whiteSpace={'normal'}>{`${item.id} - ${item.symbol}`}</Text>
+											<Tag
+												variant='solid'
+												size='md'
+												backgroundColor={'light.purple4'}
+												color={'dark.primary'}
+											>
+												External
+											</Tag>
+										</HStack>
+									),
+									value: item.id,
+								};
+							}),
+						),
+				);
+			}
 		}
 	};
 
@@ -134,10 +176,13 @@ const CoinDropdown = () => {
 			p: 4,
 		},
 		wrapperOpened: { borderWidth: '0' },
+		container: {
+			w: 'fit-content',
+		},
 	};
 
 	return (
-		<Box w={{ base: 'full', md: '280px' }} data-testid='coin-dropdown'>
+		<Box minW={{ base: 'full', md: '380px' }} data-testid='coin-dropdown'>
 			<SearchSelectController
 				control={control}
 				styles={styles}
