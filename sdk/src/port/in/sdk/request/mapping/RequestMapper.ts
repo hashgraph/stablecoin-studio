@@ -53,14 +53,26 @@ export default class RequestMapper {
 		} else return undefined;
 	}
 
+	/**
+	 *
+	 * @param req ValidatedRequest<T> --> The request to map from
+	 * @param extra { [key in keyof ValidatedRequest<T>]: any } --> Extra parameter type mappings
+	 * @example
+	 * const req: ICreateStableCoinServiceRequestModel = RequestMapper.map(request,{
+				treasury: AccountId,
+				autoRenewAccount: AccountId,
+			})
+	 * @returns The constructed mapped request
+	 */
 	public static map<
 		T extends ValidatedRequest<T>,
 		K extends { [key in keyof T]: any },
 	>(req: T, extra?: Partial<{ [p in keyof K]: Constructible }>): K {
 		const entries = Object.entries(req);
-		const extraKeys = Object.keys(extra ?? {});
+		const extraKeys = this.renamePrivateProps(Object.keys(extra ?? {}));
 		const target: { [n: string]: any } = {};
 		entries.forEach(([key, val]) => {
+			key = this.renamePrivateProps(key);
 			if (
 				extra &&
 				extraKeys.includes(key) &&
@@ -78,5 +90,19 @@ export default class RequestMapper {
 			}
 		});
 		return target as K;
+	}
+
+	public static renamePrivateProps(keys: string[]): string[];
+	public static renamePrivateProps(keys: string): string;
+	public static renamePrivateProps(keys: string | string[]): any {
+		if (typeof keys === 'string') {
+			return keys.startsWith('_') || keys.startsWith('#')
+				? keys.substring(1)
+				: keys;
+		} else {
+			return keys.map((key) =>
+				key.startsWith('_') ? key.substring(1) : key,
+			);
+		}
 	}
 }
