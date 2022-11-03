@@ -8,8 +8,15 @@
 
 ### Table of Contents
 **[Overview](#Overview)**<br>
- **[Stable Coin definition](#Stable-Coin-definition)**<br>
+   ***[Stable Coin definition](#Stable-Coin-definition)***<br>
 **[Project structure](#Project-structure)**<br>
+**[Technologies](#Technologies)**<br>
+**[Installation](#Installation)**<br>
+**[Build](#Build)**<br>
+**[Support](#Support)**<br>
+**[Contributing](#Contributing)**<br>
+**[Code of Conduct](#Code-of-Conduct)**<br>
+
 
 
 # Overview
@@ -76,10 +83,12 @@ Learn more about them in their README:
 
 # Technologies
 
-Typescript 4.7 or higher is highly reccomended to work with the repositories.
+- **Smart contracts**: Solidity version 0.8.10.
+- **SDK, CLI and UI**: Typescript 4.7 or higher is highly reccomended to work with the repositories.
+- **UI**:React.js 2.2.6 or higher.
 
 
-# Installing
+# Installation
 
 In a terminal:
 
@@ -90,7 +99,7 @@ This will install the dependencies in all projects and setup the links between t
 
 You can now start developing on any of the modules.
 
-# Building
+# Build
 When making modifications to any of the modules, you have to re-compile the dependencies, in this order, depending on which ones the modifications where made:
 ````bash
   // 1st
