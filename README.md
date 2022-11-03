@@ -63,7 +63,7 @@ Every time a stable coin is created, a new Hedera Token is created (the underlyi
 - The Stable Coin logic smart contract: with all the functonality described above.
 - the Stable Coin proxy smart contract: pointing to the stbale coin logic smart contract. Proxies are used to make stable coins upgradable.
 
-Users interact with the Stable Coin proxy smart contract because its address will never changed. Stable Coin logic smart contract addresses change if a new version is deployed. 
+Users interact with the Stable Coin proxy smart contract because its address will never change. Stable Coin logic smart contract addresses change if a new version is deployed. 
 
 ## Managing Stable Coins
 Every time a stable coin is deployed, the deploying account will be defined as the Stable Coin administrator (and the underlying token adminsitrator too). That account will have the possibility to assign and remove any role to any account, increase and decrease cash-in limits etc...
