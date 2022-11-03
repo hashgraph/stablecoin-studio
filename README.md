@@ -8,7 +8,7 @@
 
 ### Table of Contents
 **[Overview](#Overview)**<br>
-   ***[Stable Coin definition](#Stable-Coin-definition)***<br>
+  + *[Stable Coin definition](#Stable-Coin-definition)*<br>
 **[Project structure](#Project-structure)**<br>
 **[Technologies](#Technologies)**<br>
 **[Installation](#Installation)**<br>
