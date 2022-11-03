@@ -17,6 +17,7 @@ import CheckStrings from '../../../core/checks/strings/CheckStrings.js';
 import { InitSupplyInvalid } from './error/InitSupplyInvalid.js';
 import { InitSupplyLargerThanMaxSupply } from './error/InitSupplyLargerThanMaxSupply.js';
 import InvalidMaxSupplySupplyType from './error/InvalidMaxSupplySupplyType.js';
+import { InvalidType } from '../../../port/in/sdk/request/error/InvalidType.js';
 
 const MAX_SUPPLY = 9_223_372_036_854_775_807n; // eslint-disable-line
 const TEN = 10;
@@ -389,7 +390,6 @@ export class StableCoin extends BaseEntity {
 		let list: BaseError[] = [];
 		const min = BigInt(ZERO);
 		// TODO: review decimals max supply
-		
 		if (maxSupply === undefined) {
 			if (!CheckNums.isWithinRange(initialSupply, min, MAX_SUPPLY)) {
 				list.push(new InitSupplyInvalid(initialSupply.toString()));

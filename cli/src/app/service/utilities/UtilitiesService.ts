@@ -9,6 +9,7 @@ import {
   HederaNetworkEnviroment,
   NetworkMode,
   SDK,
+  ValidationResponse,
 } from 'hedera-stable-coin-sdk';
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
@@ -328,5 +329,33 @@ export default class UtilitiesService extends Service {
 
   public validateTokenId(str: string): boolean {
     return /\d\.\d\.\d/.test(str);
+  }
+
+  public async handleValidation(
+    val: () => ValidationResponse[],
+    cll?: (res: ValidationResponse[]) => Promise<void>,
+    consoleOut = true,
+  ): Promise<void> {
+    const outputError = (res: ValidationResponse[]): void => {
+      for (let i = 0; i < res.length; i++) {
+        const validation = res[i];
+        this.showError(`Validation failed for ${validation.name}:`);
+        for (let j = 0; j < validation.errors.length; j++) {
+          const error = validation.errors[j];
+          this.showError(`\t- [${error.errorCode}] ${error.message}`);
+        }
+      }
+    };
+
+    let res = val();
+    if (cll) {
+      while (res.length > 0) {
+        consoleOut && outputError(res);
+        await cll(res);
+        res = val();
+      }
+    } else {
+      if (res.length > 0) consoleOut && outputError(res);
+    }
   }
 }

@@ -76,12 +76,8 @@ export default class CreateStableCoinService extends Service {
     utilsService.showMessage('\n');
     await utilsService.showSpinner(
       new Promise((resolve, reject) => {
-        const req: CreateStableCoinRequest = new CreateStableCoinRequest({
-          ...stableCoin,
-        });
-        console.log(req);
         sdk
-          .createStableCoin(req)
+          .createStableCoin(stableCoin)
           .then((coin) => {
             console.log(coin);
             createdToken = coin;
@@ -126,7 +122,7 @@ export default class CreateStableCoinService extends Service {
       },
       name: '',
       symbol: '',
-      decimals: 0,
+      decimals: 6,
     });
 
     const name = await utilsService.defaultSingleAsk(
@@ -167,13 +163,14 @@ export default class CreateStableCoinService extends Service {
     };
 
     if (optionalProps) {
-      decimals = await this.askForDecimals(decimals);
-
-      while (isNaN(Number(decimals))) {
-        utilsService.showError(language.getText('general.incorrectParam'));
-        decimals = await this.askForDecimals(decimals);
-      }
-      tokenToCreate.decimals = parseInt(decimals);
+      tokenToCreate.decimals = await this.askForDecimals(decimals);
+      await utilsService.handleValidation(
+        () => tokenToCreate.validate('decimals'),
+        async () => {
+          decimals = await this.askForDecimals(tokenToCreate.decimals.toString());
+          tokenToCreate.decimals = decimals;
+        },
+      );
 
       supplyType = await this.askForSupplyType();
       tokenToCreate.supplyType = supplyType
@@ -231,31 +228,18 @@ export default class CreateStableCoinService extends Service {
     });
     if (managedBySC) {
       const currentAccount: IAccountConfig = utilsService.getCurrentAccount();
-      tokenToCreate = new CreateStableCoinRequest({
-        account: {
-          accountId: currentAccount.accountId,
-          privateKey,
-        },
-        name,
-        symbol,
-        autoRenewAccount,
-        decimals: parseInt(decimals),
-        initialSupply: initialSupply === '' ? undefined : BigInt(initialSupply),
-        supplyType: supplyType
-          ? TokenSupplyType.INFINITE
-          : TokenSupplyType.FINITE,
-        maxSupply: totalSupply ? BigInt(totalSupply) : totalSupply,
-        adminKey: PublicKey.fromPrivateKey(
-          currentAccount.privateKey.key,
-          currentAccount.privateKey.type,
-        ),
-        freezeKey: PublicKey.NULL,
-        //KYCKey,
-        wipeKey: PublicKey.NULL,
-        supplyKey: PublicKey.NULL,
-        pauseKey: PublicKey.NULL,
-        treasury: AccountId.NULL.id,
-      });
+      console.log('Token to create 1:', tokenToCreate);
+      tokenToCreate.adminKey = PublicKey.fromPrivateKey(
+        currentAccount.privateKey.key,
+        currentAccount.privateKey.type,
+      );
+      tokenToCreate.freezeKey = PublicKey.NULL;
+      //KYCKey,
+      tokenToCreate.wipeKey = PublicKey.NULL;
+      tokenToCreate.supplyKey = PublicKey.NULL;
+      tokenToCreate.pauseKey = PublicKey.NULL;
+      tokenToCreate.treasury = AccountId.NULL.id;
+      console.log('Token to create:', tokenToCreate);
       if (
         !(await utilsService.defaultConfirmAsk(
           language.getText('stablecoin.askConfirmCreation'),

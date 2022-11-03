@@ -37,6 +37,7 @@ export function getErrorCategory(errorCode: ErrorCode): ErrorCategory {
 }
 
 export default class BaseError extends Error {
+	message: string;
 	errorCode: ErrorCode;
 	errorCategory: ErrorCategory;
 
@@ -45,6 +46,7 @@ export default class BaseError extends Error {
 	 */
 	constructor(code: ErrorCode, msg: string) {
 		super(msg);
+		this.message = msg;
 		this.errorCode = code;
 		this.errorCategory = getErrorCategory(code);
 		Object.setPrototypeOf(this, BaseError.prototype);

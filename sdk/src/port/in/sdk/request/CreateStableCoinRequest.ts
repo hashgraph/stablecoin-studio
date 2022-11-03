@@ -1,10 +1,12 @@
+import CheckNums from '../../../../core/checks/numbers/CheckNums.js';
 import { OptionalField } from '../../../../core/decorators/OptionalDecorator.js';
-import { StableCoin, TokenSupplyType } from '../sdk.js';
+import { StableCoin, TokenSupplyType, ValidationResponse } from '../sdk.js';
 import {
 	AccountBaseRequest,
 	RequestAccount,
 	RequestPublicKey,
 } from './BaseRequest.js';
+import { InvalidType } from './error/InvalidType.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
 
@@ -15,7 +17,13 @@ export default class CreateStableCoinRequest
 	account: RequestAccount;
 	name: string;
 	symbol: string;
-	decimals: number;
+	private _decimals: number;
+	public get decimals(): number {
+		return this._decimals;
+	}
+	public set decimals(value: number | string) {
+		this._decimals = typeof value === 'number' ? value : parseInt(value);
+	}
 
 	@OptionalField()
 	initialSupply?: bigint;
@@ -74,7 +82,7 @@ export default class CreateStableCoinRequest
 		account: RequestAccount;
 		name: string;
 		symbol: string;
-		decimals: number;
+		decimals: number | string;
 		initialSupply?: bigint;
 		maxSupply?: bigint;
 		freezeDefault?: boolean;
@@ -97,6 +105,8 @@ export default class CreateStableCoinRequest
 				return StableCoin.checkSymbol(val as string);
 			},
 			decimals: (val) => {
+				if (isNaN(this.decimals))
+					return [new InvalidType(this.decimals, 'number')];
 				return StableCoin.checkDecimals(val as number);
 			},
 			initialSupply: (val) => {
@@ -131,7 +141,8 @@ export default class CreateStableCoinRequest
 		this.account = account;
 		this.name = name;
 		this.symbol = symbol;
-		this.decimals = decimals;
+		this.decimals =
+			typeof decimals === 'number' ? decimals : parseInt(decimals);
 		this.initialSupply = initialSupply;
 		this.maxSupply = maxSupply;
 		this.freezeDefault = freezeDefault;
