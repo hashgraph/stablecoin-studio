@@ -6,6 +6,9 @@
 
 </div>
 
+### Table of Contents
+**[Overview](#Overview)**<br>
+**[Stable Coin definition](#Stable-Coin-definition)**<br>
 
 # Overview
 This solution consists of a set of tools, including Smart Contracts, SDK, CLI and UI to facilitate the deployment and management of Stable Coins in Hedera Hashgraph.
