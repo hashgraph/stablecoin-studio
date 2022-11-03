@@ -141,6 +141,13 @@ export default class CreateStableCoinService extends Service {
         language.getText('stablecoin.askAutoRenewAccountId'),
         createdStableCoin.autoRenewAccount || currentAccount.accountId,
       );
+      while (autoRenewAccount !== currentAccount.accountId) {
+        console.log(language.getText('stablecoin.autoRenewAccountError'));
+        autoRenewAccount = await utilsService.defaultSingleAsk(
+          language.getText('stablecoin.askAutoRenewAccountId'),
+          createdStableCoin.autoRenewAccount || currentAccount.accountId,
+        );
+      }
       sdk.checkIsAddress(autoRenewAccount);
     } catch (error) {
       console.log(language.getText('account.wrong'));
@@ -194,9 +201,9 @@ export default class CreateStableCoinService extends Service {
       symbol,
       autoRenewAccount,
       decimals: parseInt(decimals),
-      initialSupply: initialSupply === '' ? undefined : BigInt(initialSupply),
+      initialSupply: initialSupply === '' ? undefined : initialSupply,
       supplyType: supplyType ? 'INFINITE' : 'FINITE',
-      maxSupply: totalSupply ? BigInt(totalSupply) : totalSupply,
+      maxSupply: totalSupply ?? '',
     });
     if (managedBySC) {
       const currentAccount: IAccountConfig = utilsService.getCurrentAccount();
@@ -209,9 +216,9 @@ export default class CreateStableCoinService extends Service {
         symbol,
         autoRenewAccount,
         decimals: parseInt(decimals),
-        initialSupply: initialSupply === '' ? undefined : BigInt(initialSupply),
+        initialSupply: initialSupply === '' ? undefined : initialSupply,
         supplyType: supplyType ? 'INFINITE' : 'FINITE',
-        maxSupply: totalSupply ? BigInt(totalSupply) : totalSupply,
+        maxSupply: totalSupply ?? undefined,
         adminKey: privateKey.publicKey,
         freezeKey: PublicKey.NULL,
         //KYCKey,
@@ -249,7 +256,7 @@ export default class CreateStableCoinService extends Service {
       symbol,
       autoRenewAccount,
       decimals: parseInt(decimals),
-      initialSupply: initialSupply === '' ? undefined : BigInt(initialSupply),
+      initialSupply: initialSupply === '' ? undefined : initialSupply,
       supplyType: supplyType ? 'INFINITE' : 'FINITE',
       maxSupply: totalSupply ? BigInt(totalSupply) : totalSupply,
       freezeKey:
@@ -285,9 +292,9 @@ export default class CreateStableCoinService extends Service {
       symbol,
       autoRenewAccount,
       decimals: parseInt(decimals),
-      initialSupply: initialSupply === '' ? undefined : BigInt(initialSupply),
+      initialSupply: initialSupply === '' ? undefined : initialSupply,
       supplyType: supplyType ? 'INFINITE' : 'FINITE',
-      maxSupply: totalSupply ? BigInt(totalSupply) : totalSupply,
+      maxSupply: totalSupply ?? undefined,
       freezeKey,
       //KYCKey,
       wipeKey,

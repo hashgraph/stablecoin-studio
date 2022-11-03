@@ -20,11 +20,11 @@ import {
 } from '../../store/slices/walletSlice';
 import { SelectController } from '../../components/Form/SelectController';
 import { validateDecimals } from '../../utils/validationsHelper';
-import { formatAmount } from '../../utils/inputHelper';
-import { Capabilities } from 'hedera-stable-coin-sdk';
 import type { IAccountToken } from '../../interfaces/IAccountToken';
 import type { IExternalToken } from '../../interfaces/IExternalToken';
 import type { IRole } from '../../interfaces/IRole';
+import { formatAmountWithDecimals } from '../../utils/inputHelper';
+import { BigDecimal, Capabilities } from 'hedera-stable-coin-sdk';
 
 const supplier = 'Cash in';
 
@@ -64,7 +64,8 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 	const accountId = useSelector(SELECTED_WALLET_PAIRED_ACCOUNTID);
 	const capabilities = useSelector(SELECTED_WALLET_CAPABILITIES);
 
-	const [limit, setLimit] = useState<number | null>();
+	const [limit, setLimit] = useState<string | null>();
+  
 	const [modalErrorDescription, setModalErrorDescription] =
 		useState<string>('modalErrorDescription');
 
@@ -77,6 +78,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 	const supplierLimitOption = watch(fields.cashinLimitOption)?.value;
 	const askRolesToSDK = watch(fields.autoCheckRoles);
 	const roles = watch(fields.roles);
+
 	const increaseOrDecreseOptionSelected: boolean = ['INCREASE', 'DECREASE'].includes(
 		supplierLimitOption,
 	);
@@ -101,7 +103,6 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 		return true;
 	});
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const handleSubmit: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
 		try {
 			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId) {
@@ -129,6 +130,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 						targetId: account,
 						role: role.value,
 					});
+
 					if (alreadyHasRole && alreadyHasRole[0]) {
 						setModalErrorDescription('hasAlreadyRoleError');
 						onError();
@@ -140,7 +142,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 								account: selectedAccount,
 								tokenId: selectedStableCoin.tokenId,
 								targetId: account,
-								amount: parseFloat(amount),
+								amount: amount.toString(),
 								role: role.value,
 						  })
 						: await SDKService.grantRole({
@@ -198,7 +200,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 								account: selectedAccount,
 								tokenId: selectedStableCoin.tokenId,
 								targetId: account,
-								amount: parseFloat(amount!),
+								amount: amount ? amount.toString() : '',
 							});
 							break;
 
@@ -208,7 +210,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 								account: selectedAccount,
 								tokenId: selectedStableCoin.tokenId,
 								targetId: account,
-								amount: parseFloat(amount!),
+								amount: amount ? amount.toString() : '',
 							});
 							break;
 
@@ -251,7 +253,6 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 					localStorage.setItem('tokensAccount', JSON.stringify(tokensAccount));
 					break;
 			}
-
 			onSuccess();
 		} catch (error: any) {
 			console.log(error.toString());
@@ -307,8 +308,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 	};
 
 	const renderAmount = () => {
-		const { decimals = 0, totalSupply } = selectedStableCoin || {};
-
+		const { decimals = 0, maxSupply } = selectedStableCoin || {};
 		return (
 			<Stack spacing={6}>
 				{increaseOrDecreseOptionSelected && (
@@ -321,10 +321,12 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 										validateDecimals(value, decimals) || t('global:validations.decimalsValidation')
 									);
 								},
-								quantityOverTotalSupply: (value: number) => {
-									return (
-										(totalSupply && totalSupply >= value) || t('global:validations.overTotalSupply')
-									);
+								quantityOverMaxSupply: (value: number) => {
+									return maxSupply && maxSupply !== 'INFINITE'
+										? BigDecimal.fromString(maxSupply, decimals).isGreaterOrEqualThan(
+												BigDecimal.fromString(value.toString(), decimals),
+										  ) || t('global:validations.overMaxSupplyCashIn')
+										: true;
 								},
 							},
 						}}
@@ -456,8 +458,8 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 					checkOptionSelected
 						? t(`roles:${action}.checkCashinLimitSuccessDesc`, {
 								account,
-								limit: formatAmount({
-									amount: limit!,
+								limit: formatAmountWithDecimals({
+									amount: limit ? limit.toString() : '',
 									decimals: selectedStableCoin!.decimals!,
 								}),
 						  })

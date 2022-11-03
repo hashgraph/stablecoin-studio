@@ -35,7 +35,7 @@ export interface ICreateTokenResponse {
 export interface IHTSTokenRequest {
 	account: Account;
 	tokenId: string;
-	amount: number;
+	amount: Long;
 }
 
 export interface IWipeTokenRequest extends IHTSTokenRequest {

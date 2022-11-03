@@ -30,6 +30,12 @@ const styles = {
 		borderRadius: '8px',
 		height: 'initial',
 	},
+	valueSelected: {
+		fontSize: '14px',
+	},
+	label: {
+		fontSize: '14px',
+	},
 };
 
 export interface RoleLayoutProps {
@@ -72,7 +78,7 @@ const RoleLayout = (props: RoleLayoutProps) => {
 			label: t('operations:details.initialSupply'),
 			value: selectedStableCoin?.initialSupply
 				? formatAmountWithDecimals({
-						amount: Number(selectedStableCoin?.initialSupply),
+						amount: selectedStableCoin?.initialSupply,
 						decimals: selectedStableCoin?.decimals || 0,
 				  })
 				: unknown,
@@ -81,7 +87,7 @@ const RoleLayout = (props: RoleLayoutProps) => {
 			label: t('operations:details.totalSupply'),
 			value: selectedStableCoin?.totalSupply
 				? formatAmountWithDecimals({
-						amount: Number(selectedStableCoin?.totalSupply),
+						amount: selectedStableCoin?.totalSupply,
 						decimals: selectedStableCoin?.decimals || 0,
 				  })
 				: unknown,
@@ -90,7 +96,7 @@ const RoleLayout = (props: RoleLayoutProps) => {
 			label: t('operations:details.maxSupply'),
 			value: selectedStableCoin?.maxSupply
 				? formatAmountWithDecimals({
-						amount: Number(selectedStableCoin?.maxSupply),
+						amount: selectedStableCoin?.maxSupply,
 						decimals: selectedStableCoin?.decimals || 0,
 				  })
 				: unknown,
@@ -99,7 +105,7 @@ const RoleLayout = (props: RoleLayoutProps) => {
 			label: t('operations:details.supplyType'),
 			// @ts-ignore Property 'supplyType' does not exist on type 'IStableCoinDetail'.
 			value:
-				selectedStableCoin?.maxSupply?.toString() === '0'
+				selectedStableCoin?.maxSupply === 'INFINITE'
 					? t('operations:details.infinite')
 					: t('operations:details.finite'),
 		},
@@ -110,7 +116,7 @@ const RoleLayout = (props: RoleLayoutProps) => {
 			label: t('operations:details.initialSupply'),
 			value: selectedStableCoin?.initialSupply
 				? formatAmountWithDecimals({
-						amount: Number(selectedStableCoin?.initialSupply),
+						amount: selectedStableCoin?.initialSupply,
 						decimals: selectedStableCoin?.decimals || 0,
 				  })
 				: unknown,
@@ -119,7 +125,7 @@ const RoleLayout = (props: RoleLayoutProps) => {
 			label: t('operations:details.totalSupply'),
 			value: selectedStableCoin?.totalSupply
 				? formatAmountWithDecimals({
-						amount: Number(selectedStableCoin?.totalSupply),
+						amount: selectedStableCoin?.totalSupply,
 						decimals: selectedStableCoin?.decimals || 0,
 				  })
 				: unknown,
@@ -128,7 +134,7 @@ const RoleLayout = (props: RoleLayoutProps) => {
 			label: t('operations:details.supplyType'),
 			// @ts-ignore Property 'supplyType' does not exist on type 'IStableCoinDetail'.
 			value:
-				selectedStableCoin?.maxSupply === (0 as unknown as BigInt)
+				selectedStableCoin?.maxSupply === 'INFINITE'
 					? t('operations:details.infinite')
 					: t('operations:details.finite'),
 		},
@@ -222,7 +228,7 @@ const RoleLayout = (props: RoleLayoutProps) => {
 								title={t('operations:details.optionalTitle')}
 								titleProps={{ fontWeight: 700, color: 'brand.secondary' }}
 								details={
-									selectedStableCoin?.maxSupply === (0 as unknown as BigInt)
+									selectedStableCoin?.maxSupply === 'INFINITE'
 										? optionalDetailsInfinite
 										: optionalDetailsFinite
 								}

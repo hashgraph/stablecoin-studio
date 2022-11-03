@@ -42,7 +42,7 @@ export default class BalanceOfStableCoinsService extends Service {
       },
     );
 
-    console.log('Balance of Stable Coin: ', respDetail[0]);
+    console.log('Balance of Stable Coin: ', respDetail);
 
     utilsService.breakLine();
   }

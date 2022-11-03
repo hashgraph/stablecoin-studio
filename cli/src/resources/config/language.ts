@@ -96,6 +96,9 @@ export const english = {
     initialSupplyError: colors.red(
       'Initial supply cannot be more than the max supply.',
     ),
+    autoRenewAccountError: colors.red(
+      'The autorenew account should be your current account.',
+    ),
   },
   commander: {
     appDescription: 'Hedera Stable Coin is a CLI for manage stable coins',
