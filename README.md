@@ -7,15 +7,17 @@
 </div>
 
 ### Table of Contents
-**[Overview](#Overview)**<br>
-  + *[Stable Coin definition](#Stable-Coin-definition)*<br>
-**[Project structure](#Project-structure)**<br>
-**[Technologies](#Technologies)**<br>
-**[Installation](#Installation)**<br>
-**[Build](#Build)**<br>
-**[Support](#Support)**<br>
-**[Contributing](#Contributing)**<br>
-**[Code of Conduct](#Code-of-Conduct)**<br>
+- **[Overview](#Overview)**<br>
+  - [Stable Coin definition](#Stable-Coin-definition)<br>
+  - [Creating Stable Coins](#Creating-Stable-Coins)<br>
+  - [Managing Stable Coins](#Managing-Stable-Coins)<br>
+- **[Project structure](#Project-structure)**<br>
+- **[Technologies](#Technologies)**<br>
+- **[Installation](#Installation)**<br>
+- **[Build](#Build)**<br>
+- **[Support](#Support)**<br>
+- **[Contributing](#Contributing)**<br>
+- **[Code of Conduct](#Code-of-Conduct)**<br>
 
 
 
