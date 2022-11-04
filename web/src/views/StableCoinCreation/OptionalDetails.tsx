@@ -52,6 +52,10 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 		control,
 		name: 'initialSupply',
 	});
+	const decimals = useWatch({
+		control,
+		name: 'decimals',
+	});
 
 	const handleResetMaxSupply = () => {
 		const { maxSupply, initialSupply } = form.getValues();
@@ -88,6 +92,7 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 						})}
 						onChangeAux={handleResetMaxSupply}
 						autoComplete='off'
+						decimalScale={decimals || 6}
 					/>
 					<SelectController
 						control={control}
