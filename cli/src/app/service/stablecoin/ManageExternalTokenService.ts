@@ -17,6 +17,7 @@ export default class ManageExternalTokenService extends Service {
   }
 
   public async start(): Promise<void> {
+    await utilsService.cleanAndShowBanner();
     const manageOptions: Array<string> = language.getArray(
       'wizard.manageExternalTokens',
     );
@@ -85,7 +86,11 @@ export default class ManageExternalTokenService extends Service {
           currentAccount.externalTokens.map(
             (token) => `${token.id} - ${token.symbol}`,
           ),
+          true,
         );
+        if (tokenToRefresh === 'Go back') {
+          await this.start();
+        }
 
         await new DetailsStableCoinsService()
           .getDetailsStableCoins(tokenToRefresh.split(' - ')[0], false)
@@ -131,7 +136,11 @@ export default class ManageExternalTokenService extends Service {
           currentAccount.externalTokens.map(
             (token) => `${token.id} - ${token.symbol}`,
           ),
+          true,
         );
+        if (tokenToDelete === 'Go back') {
+          await this.start();
+        }
         const newExternalTokens = currentAccount.externalTokens.filter(
           (token) => token.id !== tokenToDelete.split(' - ')[0],
         );
