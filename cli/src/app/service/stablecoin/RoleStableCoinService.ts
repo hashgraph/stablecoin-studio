@@ -7,6 +7,7 @@ import {
   PrivateKey,
   SDK,
   StableCoinRole,
+  GrantRoleRequest
 } from 'hedera-stable-coin-sdk';
 import colors from 'colors';
 
@@ -191,24 +192,12 @@ export default class RoleStableCoinsService extends Service {
     utilsService.breakLine();
   }
 
-  public async grantRoleStableCoin(
-    proxyContractId: string,
-    tokenId: string,
-    targetId: string,
-    privateKey: PrivateKey,
-    accountId: string,
-    role: string,
+  public async grantRoleStableCoin(req: GrantRoleRequest
   ): Promise<void> {
     const sdk: SDK = utilsService.getSDK();
 
     await utilsService.showSpinner(
-      sdk.grantRole({
-        proxyContractId,
-        tokenId,
-        targetId,
-        account: new EOAccount(accountId, privateKey),
-        role: StableCoinRole[role],
-      }),
+      sdk.grantRole(req),
       {
         text: language.getText('state.loading'),
         successText: language.getText('state.loadCompleted') + '\n',

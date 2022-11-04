@@ -16,7 +16,11 @@ import {
   StableCoinRole,
   StableCoinMemo,
   CashInStableCoinRequest,
+<<<<<<< HEAD
   GetListStableCoin,
+=======
+  GrantRoleRequest
+>>>>>>> Manage roles initial validations
 } from 'hedera-stable-coin-sdk';
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 import CashInStableCoinsService from './CashInStableCoinService.js';
@@ -474,34 +478,62 @@ export default class OperationStableCoinService extends Service {
 
         // Grant role
         //Lists all roles
-        role = await this.getRole(capabilitiesStableCoin);
-        if (role !== language.getText('wizard.goBack')) {
-          accountTarget = await utilsService.defaultSingleAsk(
+        let grantRoleRequest = new GrantRoleRequest({
+          account: {
+            accountId: currentAccount.accountId.id,
+            privateKey: {
+              key: currentAccount.privateKey.key,
+              type: currentAccount.privateKey.type,
+            },
+          }, 
+          proxyContractId: this.proxyContractId,
+          tokenId: this.stableCoinId
+        });
+
+        await utilsService.handleValidation(
+          () => grantRoleRequest.validate('account')
+        );
+
+        await utilsService.handleValidation(
+          () => grantRoleRequest.validate('proxyContractId')
+        );
+
+        await utilsService.handleValidation(
+          () => grantRoleRequest.validate('tokenId')
+        );
+
+        grantRoleRequest.role = await this.getRole(capabilitiesStableCoin);
+        await utilsService.handleValidation(
+          () => grantRoleRequest.validate('role'),
+          async () => {
+            grantRoleRequest.role = await this.getRole(capabilitiesStableCoin);
+          },
+        );
+
+        let targetId = accountTarget;
+        if (grantRoleRequest.role !== language.getText('wizard.goBack')) {
+          grantRoleRequest.targetId = await utilsService.defaultSingleAsk(
             language.getText('stablecoin.accountTarget'),
             accountTarget,
           );
-          while (!sdk.checkIsAddress(accountTarget)) {
-            console.log(language.getText('validations.wrongFormatAddress'));
-            accountTarget = await utilsService.defaultSingleAsk(
-              language.getText('stablecoin.accountTarget'),
-              '0.0.0',
-            );
-          }
+          await utilsService.handleValidation(
+            () => grantRoleRequest.validate('targetId'),
+            async () => {
+              targetId = await utilsService.defaultSingleAsk(
+                language.getText('stablecoin.accountTarget'),
+                accountTarget,
+              );
+              grantRoleRequest.targetId = targetId;
+            },
+          );
 
-          if (StableCoinRole[role] === StableCoinRole.CASHIN_ROLE) {
+          if (StableCoinRole[grantRoleRequest.role] === StableCoinRole.CASHIN_ROLE) {
             await this.grantSupplierRole(accountTarget, currentAccount);
             break;
           }
 
           //Call to SDK
-          await this.roleStableCoinService.grantRoleStableCoin(
-            this.proxyContractId,
-            this.stableCoinId,
-            accountTarget,
-            currentAccount.privateKey,
-            currentAccount.accountId.id,
-            role,
-          );
+          await this.roleStableCoinService.grantRoleStableCoin(grantRoleRequest);
         }
         break;
       case 'Revoke role':

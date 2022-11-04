@@ -3,6 +3,7 @@ import CashInStableCoinRequest from './CashInStableCoinRequest.js';
 import CashOutStableCoinRequest from './CashOutStableCoinRequest.js';
 import CreateStableCoinRequest from './CreateStableCoinRequest.js';
 import GetListStableCoin from './GetListStableCoin.js';
+import GrantRoleRequest from './GrantRoleRequest.js';
 import ValidationResponse from './validation/ValidationResponse.js';
 import WipeStableCoinRequest from './WipeStableCoinRequest.js';
 
@@ -15,5 +16,6 @@ export {
 	CashOutStableCoinRequest,
 	WipeStableCoinRequest,
 	GetListStableCoin,
-	AllowanceRequest
+	AllowanceRequest,
+	GrantRoleRequest
 };

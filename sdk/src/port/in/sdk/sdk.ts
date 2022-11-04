@@ -87,10 +87,15 @@ import {
 	CashInStableCoinRequest,
 	CashOutStableCoinRequest,
 	WipeStableCoinRequest,
+<<<<<<< HEAD
 	GetListStableCoin,
+=======
+	GrantRoleRequest 
+>>>>>>> Manage roles initial validations
 } from './request';
 import RequestMapper from './request/mapping/RequestMapper.js';
 import { RequestAccount } from './request/BaseRequest.js';
+import { Roles } from '../../../domain/context/stablecoin/Roles.js';
 
 export {
 	IAssociateStableCoinRequest,
@@ -501,16 +506,25 @@ export class SDK {
 	}
 
 	public grantRole(
-		request: XOR<IRoleStableCoinRequest, ISupplierRoleStableCoinRequest>,
+		//request: XOR<IRoleStableCoinRequest, ISupplierRoleStableCoinRequest>,
+		request: GrantRoleRequest
 	): Promise<Uint8Array> | null {
 		try {
-			const req = {
+			/*const req = {
 				...request,
-			};
-			if (req.role === StableCoinRole.CASHIN_ROLE) {
-				return this.stableCoinService.grantSupplierRole(req);
+			};*/
+			if (request.role === Roles.CASHIN_ROLE) {
+				const grantRoleReq: ISupplierRoleStableCoinServiceRequestModel = RequestMapper.map(request,{
+					//treasury: AccountId,
+					//autoRenewAccount: AccountId,
+				})
+				return this.stableCoinService.grantSupplierRole(grantRoleReq);
 			}
-			return this.stableCoinService.grantRole(req);
+			const grantSupplierRoleReq: IRoleStableCoinServiceRequestModel = RequestMapper.map(request,{
+				//treasury: AccountId,
+				//autoRenewAccount: AccountId,
+			})
+			return this.stableCoinService.grantRole(grantSupplierRoleReq);
 		} catch (error) {
 			console.error(error);
 			return null;

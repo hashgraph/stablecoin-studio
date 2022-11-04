@@ -3,6 +3,7 @@ import {
   AllowanceRequest,
   BigDecimal,
   CreateStableCoinRequest,
+  GrantRoleRequest,
   SDK,
 } from '../../../../src/index.js';
 import {
@@ -268,13 +269,13 @@ describe('🧪 [PORT] SDK', () => {
       tokenId: tokenId ?? '',
     });
     expect(hasRole && hasRole[0]).not.toBeTruthy();
-    const role = await sdk.grantRole({
-      account: ACCOUNTS.testnet,
-      targetId: ACCOUNTS.testnet.accountId.id,
+    const role = await sdk.grantRole(new GrantRoleRequest({
+      account: REQUEST_ACCOUNTS.testnet,
+      targetId: REQUEST_ACCOUNTS.testnet.accountId,
       proxyContractId: proxyContractId ?? '',
       tokenId: tokenId ?? '',
-      role: StableCoinRole.WIPE_ROLE,
-    });
+      role: StableCoinRole.WIPE_ROLE
+    }));
     expect(role).not.toBeNull();
     hasRole = await sdk.hasRole({
       account: ACCOUNTS.testnet,
@@ -295,14 +296,14 @@ describe('🧪 [PORT] SDK', () => {
       tokenId: tokenId ?? '',
     });
     expect(hasRole && hasRole[0]).not.toBeTruthy();
-    const role = await sdk.grantRole({
-      account: ACCOUNTS.testnet,
-      targetId: ACCOUNTS.testnet.accountId.id,
+    const role = await sdk.grantRole(new GrantRoleRequest({
+      account: REQUEST_ACCOUNTS.testnet,
+      targetId: REQUEST_ACCOUNTS.testnet.accountId,
       proxyContractId: proxyContractId ?? '',
       tokenId: tokenId ?? '',
       role: StableCoinRole.CASHIN_ROLE,
       amount,
-    });
+    }));
     expect(role).not.toBeNull();
     hasRole = await sdk.hasRole({
       account: ACCOUNTS.testnet,
@@ -402,13 +403,13 @@ describe('🧪 [PORT] SDK', () => {
   }, 15000);
 
   it('Grant unlimited supplier role', async () => {
-    await sdk.grantRole({
-      account: ACCOUNTS.testnet,
-      targetId: ACCOUNTS.testnet.accountId.id,
+    await sdk.grantRole(new GrantRoleRequest({
+      account: REQUEST_ACCOUNTS.testnet,
+      targetId: REQUEST_ACCOUNTS.testnet.accountId,
       proxyContractId: proxyContractId ?? '',
       tokenId: tokenId ?? '',
       role: StableCoinRole.CASHIN_ROLE,
-    });
+    }));
     const check = await sdk.isUnlimitedSupplierAllowance({
       account: ACCOUNTS.testnet,
       targetId: ACCOUNTS.testnet.accountId.id,

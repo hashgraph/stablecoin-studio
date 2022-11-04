@@ -9,6 +9,7 @@ import {
 	PrivateKey,
 	PublicKey,
 } from '../../sdk.js';
+import { Roles } from '../../../../../domain/context/stablecoin/Roles.js';
 import {
 	RequestAccount,
 	RequestPrivateKey,
@@ -20,6 +21,7 @@ import { InvalidRange } from '../error/InvalidRange.js';
 import { InvalidFormatHedera as InvalidIdFormatHedera } from '../error/InvalidFormatHedera.js';
 import { InvalidType } from '../error/InvalidType.js';
 import InvalidDecimalRange from '../../../../../domain/context/stablecoin/error/InvalidDecimalRange.js';
+import { InvalidRole } from '../../../../../domain/context/stablecoin/error/InvalidRole.js';
 
 export default class Validation {
 	public static checkPublicKey = () => {
@@ -89,6 +91,17 @@ export default class Validation {
 						err.push(new InvalidRange(v, min, max));
 					}
 				}
+			}
+			return err;
+		};
+	};
+
+	public static checkRole = () => {
+		return (val: any): BaseError[] => {
+			const err: BaseError[] = [];
+			const roles: string[] = Object.getOwnPropertyNames(Roles);
+			if (!roles.includes(val)) {
+				err.push(new InvalidRole(val));
 			}
 			return err;
 		};

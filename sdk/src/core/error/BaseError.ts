@@ -10,6 +10,7 @@ export enum ErrorCode {
 	InvalidType = '10015',
 	InvalidLength = '10016',
 	InvalidRange = '10018',
+	InvalidRole = '10019',
 	EmptyValue = '10017',
 	AccountNotAssociatedToToken = '20001',
 	MaxSupplyReached = '20002',
