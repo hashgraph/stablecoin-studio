@@ -1,16 +1,8 @@
 name: SDK - Test
-on: workflow_dispatch
-#   pull_request:
-#     types: [review_requested]
-#     branches: [main, feature/sdk/**]
-#     paths:
-#       - sdk/**
-#       - .github/workflows/sdk.*.yml
-#   push:
-#     branches: [main]
-#     paths:
-#       - sdk/**
-#       - .github/workflows/sdk.*.yml
+on: 
+  workflow_dispatch:
+  push:
+    branches: [main]
 defaults:
   run:
     working-directory: sdk
