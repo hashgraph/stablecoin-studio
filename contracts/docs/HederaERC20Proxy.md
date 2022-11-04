@@ -1,4 +1,4 @@
-# HederaERC1967Proxy
+# HederaERC20Proxy
 
 
 

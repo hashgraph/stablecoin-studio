@@ -117,13 +117,13 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Wipeable__factory>;
     getContractFactory(
-      name: "HederaERC1967Proxy",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.HederaERC1967Proxy__factory>;
-    getContractFactory(
       name: "HederaERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.HederaERC20__factory>;
+    getContractFactory(
+      name: "HederaERC20Proxy",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.HederaERC20Proxy__factory>;
     getContractFactory(
       name: "IHederaTokenService",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -276,15 +276,15 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.Wipeable>;
     getContractAt(
-      name: "HederaERC1967Proxy",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.HederaERC1967Proxy>;
-    getContractAt(
       name: "HederaERC20",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.HederaERC20>;
+    getContractAt(
+      name: "HederaERC20Proxy",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.HederaERC20Proxy>;
     getContractAt(
       name: "IHederaTokenService",
       address: string,

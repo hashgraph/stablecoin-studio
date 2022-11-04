@@ -4,7 +4,7 @@ pragma solidity ^0.8.10;
 import "./hts-precompile/IHederaTokenService.sol";
 import "./hts-precompile/HederaResponseCodes.sol";
 import "./HederaERC20.sol";
-import "./HederaERC1967Proxy.sol";
+import "./HederaERC20Proxy.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
 interface IStableCoinFactory {
@@ -38,7 +38,7 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes{
         HederaERC20 StableCoinContract = new HederaERC20();
 
         // Deploy Proxy
-        HederaERC1967Proxy StableCoinProxy = new HederaERC1967Proxy(address(StableCoinContract), "");
+        HederaERC20Proxy StableCoinProxy = new HederaERC20Proxy(address(StableCoinContract), "");
 
         // Create Token
         IHederaTokenService.HederaToken memory token = createToken(

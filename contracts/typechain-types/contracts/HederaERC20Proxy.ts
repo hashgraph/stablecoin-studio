@@ -24,7 +24,7 @@ import type {
   PromiseOrValue,
 } from "../common";
 
-export interface HederaERC1967ProxyInterface extends utils.Interface {
+export interface HederaERC20ProxyInterface extends utils.Interface {
   functions: {
     "getImplementation()": FunctionFragment;
   };
@@ -80,12 +80,12 @@ export type UpgradedEvent = TypedEvent<[string], UpgradedEventObject>;
 
 export type UpgradedEventFilter = TypedEventFilter<UpgradedEvent>;
 
-export interface HederaERC1967Proxy extends BaseContract {
+export interface HederaERC20Proxy extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: HederaERC1967ProxyInterface;
+  interface: HederaERC20ProxyInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
