@@ -36,13 +36,18 @@ The remaining smart contracts have been implemented by IOBuilders for this proje
    - `TokenOwner.sol`: abstract contract that stores the addresses of the *HTS precompiled smart contract* and the *underlying token* related to the stable coin. All the smart contracts mentioned above, inherit from this abstract contract.
  - `Roles.sol`: Contains the definition of the roles that can be assigned for every stable coin.
  - `HederaERC20.sol`: Main Stable coin contract. Contains all the stable coin related logic. Inherits all the contracts defined in the "extension" folder as well as the Role.sol contract.
- - `HederaERC1967Proxy.sol`: Extends OpenZeppelin implementation of an upgradeable proxy. This proxy will always delegate to a *HederaERC20* smart contract.
+ - `HederaERC20Proxy.sol`: Extends OpenZeppelin implementation of an upgradeable proxy. This proxy will always delegate to a *HederaERC20* smart contract.
  - `StableCoinFactory.sol`: Implements the flow to create a new stable coin. Every time a new stable coin is created, several smart contracts must be deployed and initialized and an underlying token must be created through the `HTS precompiled smart contract`. This multi-transaction process is encapsulated in this contract so that users can create new stable coins in a single transaction.
 
- > Every stable coin is made of a **HederaERC1967Proxy** contract , a **HederaERC20** contract and an **underlying token** managed through the *HTS precompiled smart contract*.
+ > Every stable coin is made of a **HederaERC20Proxy** contract , a **HederaERC20** contract and an **underlying token** managed through the *HTS precompiled smart contract*.
 
 # Architecture
-![architecture](https://github.com/hashgraph/hedera-accelerator-stablecoin/blob/tree/feature/documentation/img/architecture.jpg?raw=true)
+## Overall Smart Contracts Architecture
+![](./img/StableCoinArchitecture_1.jpg)
+
+## Detailed Smart Contracts Architecture
+
+![](./img/StableCoinArchitecture_2.jpg)
 
 
 # Content
