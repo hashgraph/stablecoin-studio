@@ -37,7 +37,7 @@ export default class ManageExternalTokenService extends Service {
         await utilsService.cleanAndShowBanner();
         let tokenId = await utilsService.defaultSingleAsk(
           language.getText('manageExternalToken.tokenId'),
-          '',
+          '0.0.1234567',
         );
         while (!utilsService.validateTokenId(tokenId)) {
           console.log(language.getText('manageExternalToken.tokenIdError'));
