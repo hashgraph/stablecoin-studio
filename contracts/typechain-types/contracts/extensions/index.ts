@@ -4,7 +4,7 @@
 import type * as interfaces from "./Interfaces";
 export type { interfaces };
 export type { Burnable } from "./Burnable";
-export type { Mintable } from "./Mintable";
+export type { CashIn } from "./CashIn";
 export type { Rescatable } from "./Rescatable";
 export type { SupplierAdmin } from "./SupplierAdmin";
 export type { TokenOwner } from "./TokenOwner";

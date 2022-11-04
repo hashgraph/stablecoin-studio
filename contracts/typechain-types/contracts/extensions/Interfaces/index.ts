@@ -2,7 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { IBurnable } from "./IBurnable";
-export type { IMintable } from "./IMintable";
+export type { ICashIn } from "./ICashIn";
 export type { IRescatable } from "./IRescatable";
 export type { ISupplierAdmin } from "./ISupplierAdmin";
 export type { ITokenOwner } from "./ITokenOwner";

@@ -2,7 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export { IBurnable__factory } from "./IBurnable__factory";
-export { IMintable__factory } from "./IMintable__factory";
+export { ICashIn__factory } from "./ICashIn__factory";
 export { IRescatable__factory } from "./IRescatable__factory";
 export { ISupplierAdmin__factory } from "./ISupplierAdmin__factory";
 export { ITokenOwner__factory } from "./ITokenOwner__factory";

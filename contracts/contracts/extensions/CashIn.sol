@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.10;
 
-import "./Interfaces/IMintable.sol";
+import "./Interfaces/ICashIn.sol";
 import "./SupplierAdmin.sol";
 import "../hts-precompile/IHederaTokenService.sol";
 
-abstract contract Mintable is IMintable, SupplierAdmin {
+abstract contract CashIn is ICashIn, SupplierAdmin {
         
     /**
      * @dev Creates an `amount` of tokens and transfers them to an `account`, increasing

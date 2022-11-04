@@ -27,7 +27,7 @@ import type {
   PromiseOrValue,
 } from "../../../common";
 
-export interface IMintableInterface extends utils.Interface {
+export interface ICashInInterface extends utils.Interface {
   functions: {
     "mint(address,uint256)": FunctionFragment;
   };
@@ -61,12 +61,12 @@ export type TokensMintedEvent = TypedEvent<
 
 export type TokensMintedEventFilter = TypedEventFilter<TokensMintedEvent>;
 
-export interface IMintable extends BaseContract {
+export interface ICashIn extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: IMintableInterface;
+  interface: ICashInInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,

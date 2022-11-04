@@ -5,9 +5,9 @@
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
 import type {
-  Mintable,
-  MintableInterface,
-} from "../../../contracts/extensions/Mintable";
+  CashIn,
+  CashInInterface,
+} from "../../../contracts/extensions/CashIn";
 
 const _abi = [
   {
@@ -630,15 +630,12 @@ const _abi = [
   },
 ];
 
-export class Mintable__factory {
+export class CashIn__factory {
   static readonly abi = _abi;
-  static createInterface(): MintableInterface {
-    return new utils.Interface(_abi) as MintableInterface;
+  static createInterface(): CashInInterface {
+    return new utils.Interface(_abi) as CashInInterface;
   }
-  static connect(
-    address: string,
-    signerOrProvider: Signer | Provider
-  ): Mintable {
-    return new Contract(address, _abi, signerOrProvider) as Mintable;
+  static connect(address: string, signerOrProvider: Signer | Provider): CashIn {
+    return new Contract(address, _abi, signerOrProvider) as CashIn;
   }
 }

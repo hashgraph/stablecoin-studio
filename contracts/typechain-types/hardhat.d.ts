@@ -73,13 +73,17 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Burnable__factory>;
     getContractFactory(
+      name: "CashIn",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.CashIn__factory>;
+    getContractFactory(
       name: "IBurnable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IBurnable__factory>;
     getContractFactory(
-      name: "IMintable",
+      name: "ICashIn",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IMintable__factory>;
+    ): Promise<Contracts.ICashIn__factory>;
     getContractFactory(
       name: "IRescatable",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -96,10 +100,6 @@ declare module "hardhat/types/runtime" {
       name: "IWipeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IWipeable__factory>;
-    getContractFactory(
-      name: "Mintable",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Mintable__factory>;
     getContractFactory(
       name: "Rescatable",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -221,15 +221,20 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.Burnable>;
     getContractAt(
+      name: "CashIn",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.CashIn>;
+    getContractAt(
       name: "IBurnable",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IBurnable>;
     getContractAt(
-      name: "IMintable",
+      name: "ICashIn",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.IMintable>;
+    ): Promise<Contracts.ICashIn>;
     getContractAt(
       name: "IRescatable",
       address: string,
@@ -250,11 +255,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IWipeable>;
-    getContractAt(
-      name: "Mintable",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Mintable>;
     getContractAt(
       name: "Rescatable",
       address: string,

@@ -5,9 +5,9 @@
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
 import type {
-  IMintable,
-  IMintableInterface,
-} from "../../../../contracts/extensions/Interfaces/IMintable";
+  ICashIn,
+  ICashInInterface,
+} from "../../../../contracts/extensions/Interfaces/ICashIn";
 
 const _abi = [
   {
@@ -61,15 +61,15 @@ const _abi = [
   },
 ];
 
-export class IMintable__factory {
+export class ICashIn__factory {
   static readonly abi = _abi;
-  static createInterface(): IMintableInterface {
-    return new utils.Interface(_abi) as IMintableInterface;
+  static createInterface(): ICashInInterface {
+    return new utils.Interface(_abi) as ICashInInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): IMintable {
-    return new Contract(address, _abi, signerOrProvider) as IMintable;
+  ): ICashIn {
+    return new Contract(address, _abi, signerOrProvider) as ICashIn;
   }
 }

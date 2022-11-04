@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.10;
 
-interface IMintable {
+interface ICashIn {
     /**
     * @dev Emitted when the `amount` tokens have been minted to account
     *

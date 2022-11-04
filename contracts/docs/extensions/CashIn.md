@@ -1,4 +1,4 @@
-# Mintable
+# CashIn
 
 
 

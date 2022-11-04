@@ -6,7 +6,7 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeab
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "./IHederaERC20.sol";
-import "./extensions/Mintable.sol";
+import "./extensions/CashIn.sol";
 import "./extensions/Burnable.sol";
 import "./extensions/Wipeable.sol";
 import "./extensions/Rescatable.sol";
@@ -16,7 +16,7 @@ import "./extensions/TokenOwner.sol";
 
 
 contract HederaERC20 is IHederaERC20, Initializable, IERC20Upgradeable,
-                       Mintable, Burnable, Wipeable, Rescatable {
+                       CashIn, Burnable, Wipeable, Rescatable {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     function initialize (address tokenAddress, address originalSender) 

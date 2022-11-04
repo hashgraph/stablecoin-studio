@@ -27,7 +27,7 @@ import type {
   PromiseOrValue,
 } from "../../common";
 
-export interface MintableInterface extends utils.Interface {
+export interface CashInInterface extends utils.Interface {
   functions: {
     "BURN_ROLE()": FunctionFragment;
     "CASHIN_ROLE()": FunctionFragment;
@@ -369,12 +369,12 @@ export type TokensMintedEvent = TypedEvent<
 
 export type TokensMintedEventFilter = TypedEventFilter<TokensMintedEvent>;
 
-export interface Mintable extends BaseContract {
+export interface CashIn extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: MintableInterface;
+  interface: CashInInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,

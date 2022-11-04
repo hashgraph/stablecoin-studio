@@ -3,7 +3,7 @@
 /* eslint-disable */
 export * as interfaces from "./Interfaces";
 export { Burnable__factory } from "./Burnable__factory";
-export { Mintable__factory } from "./Mintable__factory";
+export { CashIn__factory } from "./CashIn__factory";
 export { Rescatable__factory } from "./Rescatable__factory";
 export { SupplierAdmin__factory } from "./SupplierAdmin__factory";
 export { TokenOwner__factory } from "./TokenOwner__factory";
