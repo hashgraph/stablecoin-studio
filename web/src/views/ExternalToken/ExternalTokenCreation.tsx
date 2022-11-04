@@ -82,9 +82,6 @@ const ExternalTokenCreation = () => {
 
 	const handleFinish = async () => {
 		const { stableCoinId, autoCheckRoles, roles } = getValues();
-		console.log('STABLECOIN ID:', stableCoinId);
-		console.log('autoCheckRoles:', autoCheckRoles);
-		console.log('roles:', roles);
 		let checkRoles: string[] | null = [];
 		try {
 			const details = await SDKService.getStableCoinDetails({ id: stableCoinId });
@@ -113,7 +110,11 @@ const ExternalTokenCreation = () => {
 					? accountToken.externalTokens.push({
 							id: stableCoinId,
 							symbol: details!.symbol,
-							roles: autoCheckRoles ? checkRoles : roles.map((role: IRole) => role.label),
+							roles: autoCheckRoles
+								? checkRoles
+								: roles
+								? roles.map((role: IRole) => role.label)
+								: [],
 					  })
 					: tokensAccountParsed.push({
 							id: accountInfo.account,
@@ -121,7 +122,11 @@ const ExternalTokenCreation = () => {
 								{
 									id: stableCoinId,
 									symbol: details!.symbol,
-									roles: autoCheckRoles ? checkRoles : roles.map((role: IRole) => role.label),
+									roles: autoCheckRoles
+										? checkRoles
+										: roles
+										? roles.map((role: IRole) => role.label)
+										: [],
 								},
 							],
 					  });
@@ -136,7 +141,11 @@ const ExternalTokenCreation = () => {
 								{
 									id: stableCoinId,
 									symbol: details!.symbol,
-									roles: autoCheckRoles ? checkRoles : roles.map((role: IRole) => role.label),
+									roles: autoCheckRoles
+										? checkRoles
+										: roles
+										? roles.map((role: IRole) => role.label)
+										: [],
 								},
 							],
 						},

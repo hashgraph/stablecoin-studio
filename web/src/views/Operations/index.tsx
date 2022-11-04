@@ -51,17 +51,15 @@ const Operations = () => {
 				}
 			}
 		}
-		console.log('ES EXTERNO?', isExternalToken);
-		console.log('LOS ROLES SON:', roles);
 		const areDisabled = {
 			cashIn: !isExternalToken
 				? !capabilities?.includes(Capabilities.CASH_IN) &&
 				  !capabilities?.includes(Capabilities.CASH_IN_HTS)
-				: !roles.includes(Roles.CASHIN_ROLE),
+				: !roles.includes(Roles.CASHIN_ROLE) && !capabilities?.includes(Capabilities.CASH_IN_HTS),
 			burn: !isExternalToken
 				? !capabilities?.includes(Capabilities.BURN) &&
 				  !capabilities?.includes(Capabilities.BURN_HTS)
-				: !roles.includes(Roles.BURN_ROLE),
+				: !roles.includes(Roles.BURN_ROLE) && !capabilities?.includes(Capabilities.BURN_HTS),
 			balance: !capabilities?.includes(Capabilities.BALANCE),
 			rescue: !isExternalToken
 				? !capabilities?.includes(Capabilities.RESCUE)
@@ -69,7 +67,7 @@ const Operations = () => {
 			wipe: !isExternalToken
 				? !capabilities?.includes(Capabilities.WIPE) &&
 				  !capabilities?.includes(Capabilities.WIPE_HTS)
-				: !roles.includes(Roles.WIPE_ROLE),
+				: !roles.includes(Roles.WIPE_ROLE) && !capabilities?.includes(Capabilities.WIPE_HTS),
 		};
 
 		setDisabledFeatures(areDisabled);
