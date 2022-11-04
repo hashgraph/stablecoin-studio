@@ -3,10 +3,15 @@ import CheckNums from '../../../../../core/checks/numbers/CheckNums.js';
 import CheckStrings from '../../../../../core/checks/strings/CheckStrings.js';
 import BaseError from '../../../../../core/error/BaseError.js';
 import { Account, ContractId, PrivateKey, PublicKey } from '../../sdk.js';
-import { RequestAccount, RequestPrivateKey, RequestPublicKey } from '../BaseRequest.js';
+import {
+	RequestAccount,
+	RequestPrivateKey,
+	RequestPublicKey,
+} from '../BaseRequest.js';
 import { EmptyValue } from '../error/EmptyValue.js';
 import { InvalidLength } from '../error/InvalidLength.js';
 import { InvalidRange } from '../error/InvalidRange.js';
+import { InvalidFormatHedera } from '../error/InvalidFormatHedera.js';
 import { InvalidType } from '../error/InvalidType.js';
 
 export default class Validation {
@@ -16,7 +21,7 @@ export default class Validation {
 			return PublicKey.validate(key);
 		};
 	};
-	
+
 	public static checkPrivateKey = () => {
 		return (val: any): BaseError[] => {
 			const key = val as RequestPrivateKey;
@@ -94,6 +99,19 @@ export default class Validation {
 			} else {
 				new Account(accountId, undefined, evmAddress);
 			}
+		};
+	};
+
+	public static checkHederaFormat = () => {
+		return (val: any): BaseError[] => {
+			const regEx = /0\.0\.[1-9]*/;
+			const err: BaseError[] = [];
+			if (regEx.exec(val)) {
+				return err;
+			} else {
+				err.push(new InvalidFormatHedera(val));
+			}
+			return err;
 		};
 	};
 }
