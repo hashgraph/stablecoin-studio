@@ -12,11 +12,15 @@ import type { Detail } from '../../components/DetailsReview';
 import type { ModalsHandlerActionsProps } from '../../components/ModalsHandler';
 import SDKService from '../../services/SDKService';
 import { useSelector } from 'react-redux';
-import { SELECTED_WALLET_COIN, SELECTED_WALLET_PAIRED_ACCOUNT, SELECTED_WALLET_CAPABILITIES } from '../../store/slices/walletSlice';
+import {
+	SELECTED_WALLET_COIN,
+	SELECTED_WALLET_PAIRED_ACCOUNT,
+	SELECTED_WALLET_CAPABILITIES,
+} from '../../store/slices/walletSlice';
 import { SelectController } from '../../components/Form/SelectController';
 import { validateDecimals } from '../../utils/validationsHelper';
-import {formatAmount } from '../../utils/inputHelper';
-import { Capabilities } from 'hedera-stable-coin-sdk';
+import { formatAmountWithDecimals } from '../../utils/inputHelper';
+import { BigDecimal, Capabilities } from 'hedera-stable-coin-sdk';
 
 const supplier = 'Cash in';
 
@@ -53,10 +57,11 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const selectedAccount = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
-	const capabilities = useSelector(SELECTED_WALLET_CAPABILITIES)
+	const capabilities = useSelector(SELECTED_WALLET_CAPABILITIES);
 
-	const [limit, setLimit] = useState<number | null>();
-	const [modalErrorDescription, setModalErrorDescription ] = useState<string>('modalErrorDescription');
+	const [limit, setLimit] = useState<string | null>();
+	const [modalErrorDescription, setModalErrorDescription] =
+		useState<string>('modalErrorDescription');
 
 	register(fields.supplierQuantitySwitch, { value: true });
 	const { isOpen, onOpen, onClose } = useDisclosure();
@@ -65,148 +70,157 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 	const amount: string | undefined = watch(fields.amount);
 	const infinity: boolean = watch(fields.supplierQuantitySwitch);
 	const supplierLimitOption = watch(fields.cashinLimitOption)?.value;
-	const increaseOrDecreseOptionSelected: boolean = ['INCREASE', 'DECREASE'].includes(supplierLimitOption);
+	const increaseOrDecreseOptionSelected: boolean = ['INCREASE', 'DECREASE'].includes(
+		supplierLimitOption,
+	);
 	const checkOptionSelected: boolean = ['CHECK'].includes(supplierLimitOption);
 	const role = watch(fields.role);
-	const filteredCapabilities = roleOptions.filter(option => {
-		if(!capabilities!.includes(Capabilities.CASH_IN) && option.label=== 'Cash in'){
-			return false
+	const filteredCapabilities = roleOptions.filter((option) => {
+		if (!capabilities!.includes(Capabilities.CASH_IN) && option.label === 'Cash in') {
+			return false;
 		}
-		if(!capabilities!.includes(Capabilities.BURN) && option.label=== 'Burn'){
-			return false
+		if (!capabilities!.includes(Capabilities.BURN) && option.label === 'Burn') {
+			return false;
 		}
-		if(!capabilities!.includes(Capabilities.WIPE) && option.label=== 'Wipe'){
-			return false
+		if (!capabilities!.includes(Capabilities.WIPE) && option.label === 'Wipe') {
+			return false;
 		}
-		if(!capabilities!.includes(Capabilities.PAUSE) && option.label=== 'Pause'){
-			return false
+		if (!capabilities!.includes(Capabilities.PAUSE) && option.label === 'Pause') {
+			return false;
 		}
-		if(!capabilities!.includes(Capabilities.RESCUE) && option.label=== 'Rescue'){
-			return false
+		if (!capabilities!.includes(Capabilities.RESCUE) && option.label === 'Rescue') {
+			return false;
 		}
-		return true
-	})
+		return true;
+	});
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const handleSubmit: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
 		try {
-		if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId || !account) {
-			onError();
-			return;
-		}
-		let alreadyHasRole ;
-		let isUnlimitedSupplierAllowance;
-		
-		switch(action.toString()){
-			case 'giveRole':
-				alreadyHasRole = await SDKService.hasRole({
-					proxyContractId: selectedStableCoin.memo.proxyContract,
-					account: selectedAccount,
-					tokenId: selectedStableCoin.tokenId,
-					targetId: account,
-					role: role.value
-				}) ;
-				if (alreadyHasRole && alreadyHasRole[0]){
-					setModalErrorDescription('hasAlreadyRoleError');
-					onError();
-					return;
-				}
-				amount ? 
-				await SDKService.grantRole({
-					proxyContractId: selectedStableCoin.memo.proxyContract,
-					account: selectedAccount,
-					tokenId: selectedStableCoin.tokenId,
-					targetId: account,
-					amount: parseFloat(amount),
-					role: role.value
-				}) : 
-				await SDKService.grantRole({
-					proxyContractId: selectedStableCoin.memo.proxyContract,
-					account: selectedAccount,
-					tokenId: selectedStableCoin.tokenId,
-					targetId: account,
-					role: role.value
-				}) ;
-			break;
-			case 'revokeRole':
-				alreadyHasRole = await SDKService.hasRole({
-					proxyContractId: selectedStableCoin.memo.proxyContract,
-					account: selectedAccount,
-					tokenId: selectedStableCoin.tokenId,
-					targetId: account,
-					role: role.value
-				}) ;
-				if (alreadyHasRole && !alreadyHasRole[0]){
-					setModalErrorDescription('hasNotRoleError');
-					onError();
-					return;
-				}
-				await SDKService.revokeRole({
-					proxyContractId: selectedStableCoin.memo.proxyContract,
-					account: selectedAccount,
-					tokenId: selectedStableCoin.tokenId,
-					targetId: account,
-					role: role.value
-				}) ;
-			break;
-			case 'editRole':
-				isUnlimitedSupplierAllowance = await SDKService.isUnlimitedSupplierAllowance({
-					proxyContractId: selectedStableCoin.memo.proxyContract,
-					account: selectedAccount,
-					targetId: account
-				}) ;
-				if (isUnlimitedSupplierAllowance![0]) {
-					setModalErrorDescription('hasInfiniteAllowance');
-					onError();
-					return;
-				}
-				switch(supplierLimitOption) {
-					case 'INCREASE':
-						await SDKService.increaseSupplierAllowance({
-							proxyContractId: selectedStableCoin.memo.proxyContract,
-							account:selectedAccount,
-							tokenId: selectedStableCoin.tokenId,
-							targetId: account,
-							amount: parseFloat(amount!)
-						});
-						break;
-			
-					case 'DECREASE':
-						await SDKService.decreaseSupplierAllowance({
-							proxyContractId: selectedStableCoin.memo.proxyContract,
-							account: selectedAccount,
-							tokenId: selectedStableCoin.tokenId,
-							targetId: account,
-							amount: parseFloat(amount!)
-						});
-						break;
-			
-					case 'RESET':
-						await SDKService.resetSupplierAllowance({
-							proxyContractId: selectedStableCoin.memo.proxyContract,
-							account: selectedAccount,
-							targetId: account
-						});
-						break;
-			
-					case 'CHECK': {
-						const limit = await SDKService.checkSupplierAllowance({
-							proxyContractId: selectedStableCoin.memo.proxyContract,
-							account: selectedAccount,
-							tokenId: selectedStableCoin.tokenId,
-							targetId: account
-						});
-						setLimit(limit?.[0]);
-					}
-				}
-			break;
-		}
+			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId || !account) {
+				onError();
+				return;
+			}
 
-		onSuccess();
-	} catch (error: any) {
-		console.log(error.toString());
-		onError();
-	}
+			let alreadyHasRole;
+			let isUnlimitedSupplierAllowance;
+
+			switch (action.toString()) {
+				case 'giveRole':
+					alreadyHasRole = await SDKService.hasRole({
+						proxyContractId: selectedStableCoin.memo.proxyContract,
+						account: selectedAccount,
+						tokenId: selectedStableCoin.tokenId,
+						targetId: account,
+						role: role.value,
+					});
+
+					if (alreadyHasRole && alreadyHasRole[0]) {
+						setModalErrorDescription('hasAlreadyRoleError');
+						onError();
+						return;
+					}
+
+					amount
+						? await SDKService.grantRole({
+								proxyContractId: selectedStableCoin.memo.proxyContract,
+								account: selectedAccount,
+								tokenId: selectedStableCoin.tokenId,
+								targetId: account,
+								amount: amount.toString(),
+								role: role.value,
+						  })
+						: await SDKService.grantRole({
+								proxyContractId: selectedStableCoin.memo.proxyContract,
+								account: selectedAccount,
+								tokenId: selectedStableCoin.tokenId,
+								targetId: account,
+								role: role.value,
+						  });
+					break;
+
+				case 'revokeRole':
+					alreadyHasRole = await SDKService.hasRole({
+						proxyContractId: selectedStableCoin.memo.proxyContract,
+						account: selectedAccount,
+						tokenId: selectedStableCoin.tokenId,
+						targetId: account,
+						role: role.value,
+					});
+
+					if (alreadyHasRole && !alreadyHasRole[0]) {
+						setModalErrorDescription('hasNotRoleError');
+						onError();
+						return;
+					}
+
+					await SDKService.revokeRole({
+						proxyContractId: selectedStableCoin.memo.proxyContract,
+						account: selectedAccount,
+						tokenId: selectedStableCoin.tokenId,
+						targetId: account,
+						role: role.value,
+					});
+					break;
+
+				case 'editRole':
+					isUnlimitedSupplierAllowance = await SDKService.isUnlimitedSupplierAllowance({
+						proxyContractId: selectedStableCoin.memo.proxyContract,
+						account: selectedAccount,
+						targetId: account,
+					});
+
+					if (isUnlimitedSupplierAllowance![0]) {
+						setModalErrorDescription('hasInfiniteAllowance');
+						onError();
+						return;
+					}
+
+					switch (supplierLimitOption) {
+						case 'INCREASE':
+							await SDKService.increaseSupplierAllowance({
+								proxyContractId: selectedStableCoin.memo.proxyContract,
+								account: selectedAccount,
+								tokenId: selectedStableCoin.tokenId,
+								targetId: account,
+								amount: amount ? amount.toString() : '',
+							});
+							break;
+
+						case 'DECREASE':
+							await SDKService.decreaseSupplierAllowance({
+								proxyContractId: selectedStableCoin.memo.proxyContract,
+								account: selectedAccount,
+								tokenId: selectedStableCoin.tokenId,
+								targetId: account,
+								amount: amount ? amount.toString() : '',
+							});
+							break;
+
+						case 'RESET':
+							await SDKService.resetSupplierAllowance({
+								proxyContractId: selectedStableCoin.memo.proxyContract,
+								account: selectedAccount,
+								targetId: account,
+							});
+							break;
+
+						case 'CHECK': {
+							const limit = await SDKService.checkSupplierAllowance({
+								proxyContractId: selectedStableCoin.memo.proxyContract,
+								account: selectedAccount,
+								tokenId: selectedStableCoin.tokenId,
+								targetId: account,
+							});
+							setLimit(limit);
+						}
+					}
+					break;
+			}
+			onSuccess();
+		} catch (error: any) {
+			console.log(error.toString());
+			onError();
+		}
 	};
 
 	const renderSupplierQuantity = () => {
@@ -257,8 +271,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 	};
 
 	const renderAmount = () => {
-		const { decimals = 0, totalSupply } = selectedStableCoin || {};
-
+		const { decimals = 0, maxSupply } = selectedStableCoin || {};
 		return (
 			<Stack spacing={6}>
 				{increaseOrDecreseOptionSelected && (
@@ -268,15 +281,15 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 							validate: {
 								maxDecimals: (value: number) => {
 									return (
-										validateDecimals(value, decimals) ||
-										t('global:validations.decimalsValidation')
+										validateDecimals(value, decimals) || t('global:validations.decimalsValidation')
 									);
 								},
-								quantityOverTotalSupply: (value: number) => {
-									return (
-										(totalSupply && totalSupply >= value) ||
-										t('global:validations.overTotalSupply')
-									);
+								quantityOverMaxSupply: (value: number) => {
+									return maxSupply && maxSupply !== 'INFINITE'
+										? BigDecimal.fromString(maxSupply, decimals).isGreaterOrEqualThan(
+												BigDecimal.fromString(value.toString(), decimals),
+										  ) || t('global:validations.overMaxSupplyCashIn')
+										: true;
 								},
 							},
 						}}
@@ -297,33 +310,32 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 			{
 				label: t(`roles:${action}.modalActionDetailAccount`),
 				value: account as string,
-			}
+			},
 		];
 
 		if (action !== actions.edit) {
 			const value = role?.label;
 			const roleAction: Detail = {
-				label:t(`roles:${action}.modalActionDetailRole`),
+				label: t(`roles:${action}.modalActionDetailRole`),
 				value,
 				valueInBold: true,
 			};
 			details.push(roleAction);
-
 		} else if (supplierLimitOption) {
-			const value = cashinLimitOptions.find(t=>t.value === supplierLimitOption)!.label;
+			const value = cashinLimitOptions.find((t) => t.value === supplierLimitOption)!.label;
 			const supplierLimitAction: Detail = {
-				label:t(`roles:${action}.selectLabel`),
+				label: t(`roles:${action}.selectLabel`),
 				value,
 				valueInBold: true,
 			};
-			details.push(supplierLimitAction);			
+			details.push(supplierLimitAction);
 			if (increaseOrDecreseOptionSelected) {
 				const value = amount;
 				const amountAction: Detail = {
-					label:t(`roles:${action}.amountLabel`),
-					value
+					label: t(`roles:${action}.amountLabel`),
+					value,
 				};
-				details.push(amountAction);	
+				details.push(amountAction);
 			}
 		}
 
@@ -376,13 +388,17 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 					<DetailsReview title={t(`roles:${action}.modalActionSubtitle`)} details={details} />
 				}
 				successNotificationTitle={t(`roles:${action}.modalSuccessTitle`)}
-				successNotificationDescription={checkOptionSelected ? t(`roles:${action}.checkCashinLimitSuccessDesc`, {
-					account,
-					limit:formatAmount({
-						amount: limit!,
-						decimals: selectedStableCoin!.decimals!
-					})
-				}):''}
+				successNotificationDescription={
+					checkOptionSelected
+						? t(`roles:${action}.checkCashinLimitSuccessDesc`, {
+								account,
+								limit: formatAmountWithDecimals({
+									amount: limit ? limit.toString() : '',
+									decimals: selectedStableCoin!.decimals!,
+								}),
+						  })
+						: ''
+				}
 			/>
 		</>
 	);

@@ -108,7 +108,7 @@ const OperationLayout = ({ LeftContent, onConfirm, confirmBtnProps }: OperationL
 										label: t('operations:details.initialSupply'),
 										value: selectedStableCoin?.initialSupply
 											? formatAmountWithDecimals({
-													amount: Number(selectedStableCoin?.initialSupply),
+													amount: selectedStableCoin?.initialSupply,
 													decimals: selectedStableCoin?.decimals || 0,
 											  })
 											: unknown,
@@ -117,16 +117,15 @@ const OperationLayout = ({ LeftContent, onConfirm, confirmBtnProps }: OperationL
 										label: t('operations:details.totalSupply'),
 										value: selectedStableCoin?.totalSupply
 											? formatAmountWithDecimals({
-													amount: Number(selectedStableCoin?.totalSupply),
+													amount: selectedStableCoin?.totalSupply,
 													decimals: selectedStableCoin?.decimals || 0,
 											  })
 											: unknown,
 									},
 									{
 										label: t('operations:details.supplyType'),
-										// @ts-ignore Property 'supplyType' does not exist on type 'IStableCoinDetail'.
 										value:
-											selectedStableCoin?.maxSupply?.toString() === '0'
+											selectedStableCoin?.maxSupply === 'INFINITE'
 												? t('operations:details.infinite')
 												: t('operations:details.finite'),
 									},

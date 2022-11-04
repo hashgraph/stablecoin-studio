@@ -19,6 +19,7 @@ import { formatAmount } from '../../../utils/inputHelper';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
 import type { AppDispatch } from '../../../store/store.js';
+import { formatAmountWithDecimals } from '../../../utils/inputHelper';
 
 const GetBalanceOperation = () => {
 	const {
@@ -27,7 +28,7 @@ const GetBalanceOperation = () => {
 		onClose: onCloseModalAction,
 	} = useDisclosure();
 
-	const [balance, setBalance] = useState<number | null>();
+	const [balance, setBalance] = useState<string | null>();
 	const [errorOperation, setErrorOperation] = useState();
 	const dispatch = useDispatch<AppDispatch>();
 	const navigate = useNavigate()
@@ -97,7 +98,7 @@ const GetBalanceOperation = () => {
 				targetId: targetAccount,
 				tokenId: selectedStableCoin.tokenId,
 			});
-			setBalance(balance?.[0]);
+			setBalance(balance);
 			onSuccess();
 		} catch (error: any) {
 			setErrorOperation(error.toString());
@@ -162,9 +163,9 @@ const GetBalanceOperation = () => {
 				successNotificationTitle={t('operations:modalSuccessTitle')}
 				successNotificationDescription={t('getBalance:modalSuccessBalance', {
 					account: getValues().targetAccount,
-					balance: formatAmount({
-						amount: balance ?? undefined,
-						decimals: selectedStableCoin?.decimals,
+					balance: formatAmountWithDecimals({
+						amount: balance ?? '',
+						decimals: selectedStableCoin?.decimals ?? 0,
 					}),
 				})}
 				handleOnCloseModalError={handleCloseModal}
