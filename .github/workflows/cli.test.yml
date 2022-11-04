@@ -1,16 +1,8 @@
 name: CLI - Test
-on: workflow_dispatch
-#   pull_request:
-#     types: [review_requested]
-#     branches: [main, feature/cli/**]
-#     paths:
-#       - cli/**
-#       - .github/workflows/cli.*.yml
-#   push:
-#     branches: [main]
-#     paths:
-#       - cli/**
-#       - .github/workflows/cli.*.yml
+on: 
+  workflow_dispatch:
+  push:
+    branches: [main]
 defaults:
   run:
     working-directory: cli
