@@ -42,6 +42,7 @@ The remaining smart contracts have been implemented by IOBuilders for this proje
  > Every stable coin is made of a **HederaERC1967Proxy** contract , a **HederaERC20** contract and an **underlying token** managed through the *HTS precompiled smart contract*.
 
 # Architecture
+![architecture](https://github.com/hashgraph/hedera-accelerator-stablecoin/blob/tree/feature/documentation/img/architecture.jpg?raw=true)
 
 
 # Content
