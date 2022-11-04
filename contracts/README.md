@@ -1,23 +1,55 @@
+<div align="center">
+
 # Hedera Stable Coin Smart Contracts
 
-## Overview
+</div>
 
-This project aims to host smart contracts that will manage Hedera stable coin. This contracts are based on an hybrid model which uses HTS and solidity smart contracts, bringing the best of the 2 worlds.
-The architecture of the contracts consists of the following:
+### Table of Contents
+- **[Overview](#Overview)**<br>
+- **[Architecture](#Architecture)**<br>
+- **[Content](#Content)**<br>
+- **[Technologies](#Technologies)**<br>
+- **[Build](#Build)**<br>
+- **[Test](#Test)**<br>
+- **[Documentation](#Documentation)**<br>
+- **[Other Scripts](#Other-Scripts)**<br>
 
- - `HederaERC20`: Stable coin contract.
- - `HederaERC1967Proxy`: Extends OpenZeppelin implementation of an upgradeable proxy.
- - `TokenOwner`: Token owner contract
- - `Functionality extension contracts`: Several contracts implementing functionalities that can be included in stable coin contract.
+# Overview
 
-All these contracts are accompanied by other small contracts, together with their interfaces, in which part of the functionality has been extracted in order to make it available for some of the previous contracts.
+This module contains the solidity smart contracts used in the Hedera stable coin project.
 
-### Content
+The Hedera Token Service (HTS) functionality required in this project is exposed through an `HTS precompiled smart contract` implemented, deployed and managed by Hedera.
 
-These are the contents you can find in this project:
+The smart contracts located in the `hts-precompile` folder are used to interact with the *HTS precompiled smart contract* mentioned above, and have also been implemented and provided by Hedera. For more information about these contracts check the [Hedera Service Solidity Library](https://docs.hedera.com/guides/docs/sdks/smart-contracts/hedera-service-solidity-libraries) and the [Hedera hts precompiled contracts github repository](https://github.com/hashgraph/hedera-smart-contracts/tree/main/contracts/hts-precompile):
+ - `HederaRespondeCodes.sol`: Contains the list of response codes the *HTS precompiled smart contract* methods return.
+ - `IHederaTokenService.sol`: Interface implemented by the *HTS precompiled smart contract*. In order to execute an HTS operation, our smart contracts will  need to instantiate this interface with the *HTS precompiled smart contract* address.
 
- - `contracts`: The folder containing solidity files for the contracts. Inside this folder you can also find hts-precompile and extensions folders. The first one contains both `HederaResponseCodes` contract and `HederaTokenService` contract, next to the interface of the latter. These all contracts have not been developed by ioBuilders, but by the Hedera engineering team, and this is the reason why these contracts are located in a self folder. The second one consists of those contracts that offer contract specific functionality that can be added to stable coin contracts. Finally, contracts existing in root folder constitute stable coin base functionality.
- - `scripts`: This folder contains typescript files with the funcionality needed to execute smart contracts tests, so the deployment of the contracts and the interaction with them is made possible through these files.
+The remaining smart contracts have been implemented by IOBuilders for this project:
+
+
+ - Contracts within the `extensions` folder: *one contract for each stable coin operation*.
+   - `Burnable.sol`: abstract contract implementing the *burn* operation (burn tokens from the treasury account, decreases the total supply).
+   - `CashIn.sol`: abstract contract implementing the *cash-in* operation (mint new tokens and assign them to an account, increases the total supply).
+   - `Wipeable.sol`: abstract contract implementing the *wipe* operation (burn token from any account, decreases the total supply).
+   - `Rescatbale.sol`: abstract contract implementing the *rescue* operation (transfer tokens from the treasury to another account).
+   - `Supplieradmin.sol`: abstract contract implementing all the cashin role assignment and management (assigning/removing the role as well as setting, increasing and decreasing the cash-in limit).
+   - `TokenOwner.sol`: abstract contract that stores the addresses of the *HTS precompiled smart contract* and the *underlying token* related to the stable coin. All the smart contracts mentioned above, inherit from this abstract contract.
+ - `Roles.sol`: Contains the definition of the roles that can be assigned for every stable coin.
+ - `HederaERC20.sol`: Main Stable coin contract. Contains all the stable coin related logic. Inherits all the contracts defined in the "extension" folder as well as the Role.sol contract.
+ - `HederaERC1967Proxy.sol`: Extends OpenZeppelin implementation of an upgradeable proxy. This proxy will always delegate to a *HederaERC20* smart contract.
+ - `StableCoinFactory.sol`: Implements the flow to create a new stable coin. Every time a new stable coin is created, several smart contracts must be deployed and initialized and an underlying token must be created through the `HTS precompiled smart contract`. This multi-transaction process is encapsulated in this contract so that users can create new stable coins in a single transaction.
+
+ > Every stable coin is made of a **HederaERC1967Proxy** contract , a **HederaERC20** contract and an **underlying token** managed through the *HTS precompiled smart contract*.
+
+# Architecture
+
+
+# Content
+
+These are the folders you can find in this project:
+
+ - `contracts`: The folder with the solidity files. Inside this folder you can also find the *hts-precompile* and the *extensions* folders presented in the **[Overview](#Overview)** section.
+ - `scripts`: This folder contains typescript files with the funcionality needed to execute smart contracts tests, deployment of the contracts and the interaction with them is made possible through these files.
  - `test`: Contains previously mentioned typescript tests files.
  - `typechain-types`: The most important thing in this folder are contract factories used not only for testing, but also for any other project importing this. The content of this folder is autogenerated by `hardhat-abi-exporter` plugin whenever the user compiles the contracts.
  - `.solhint.json`: Solhint tool configuration file for linting solidity code.
@@ -29,30 +61,43 @@ These are the contents you can find in this project:
  - `slither.report.json`: Slither report file.
  - `tsconfig.json`: TypeScript configuration file.
 
-## Building
+# Technologies
 
-### Pre-requirements
-
-You must have installed
+The IDE we use in this project is **Hardhat**, in order to use it you must have:
 
 - [node (version 16)](https://nodejs.org/en/about/)
 - [npm](https://www.npmjs.com/)
 
-### Steps
+The smart contract programming language is **Solidity** version 0.8.10 or higher.
 
-From root of the project workspace:
 
-1. Execute `cd contracts`. This will put you in the contracts folder.
+# Build
+
+First download the project dependencies :
+
+1. Run `cd contracts`. This will change your current working directory to the `contracts` folder.
 2. Run `npm install`. This will create and populate `node_modules`.
 
-To compile the contracts, you can choose one of the following two alternatives:
+Then compile and build the contracts, you can choose one of the following options:
 
-- Run `npm run compile`. This will compile all contracts which have been changed since last compilation process.
-- Run `npm run compile:fore`. This will compile all contracts although they have not been modified since last compilation process.
+1. Run `npm run compile` to compile the contracts that were modified after the last compilation (This will NOT build the package, you need to run step 3)
+2. Run `npm run compile:force` to compile all the contracts (even those that were not modified after the last compilation) and build the package.
+3. run `npm run build` to build the package without compiling the contracts.
 
-## Testing
+The last two commands will generate a `build` folder that contains a `typechain-types` folder. This folder contains the contracts wrappers that allows us to access contracts abi importing the wrappers as shown below:
 
-#### Configuration
+```code
+import { HederaERC20__factory } from 'hedera-stable-coin-contracts/typechain-types';
+```
+
+
+
+
+
+
+# Test
+
+## Configuration
 
 As the life cycle of contracts is controlled by hardhat, so both the compilation and testing processes are performed using hardhat, you must configure the accounts that will be used by the tests in the `hardhat.config.ts` file.
 
@@ -84,7 +129,7 @@ Above accounts configuration behaves to testnet, so another accounts configurati
 
 To execute all tests, what will be explained in [Run](Run) section, you must take into account that both accounts, in whatever network, must have a minimum balance of HBAR. Currently, the firs account must have around 750 HBAR while the second one does not need more than 50 HBAR. These amounts could change in the future due to the price of the HBAR.
 
-#### Run
+## Run
 
 There are several ways to execute tests using the scripts present in the `package.json` file:
 
@@ -122,20 +167,10 @@ The following tests files exist, so they can all be executed at the same time as
 
 All tests can be executed both in testnet and in previewnet with the appropiate command, as explained before, as long as you haved configured needed accounts in selected network through `hardhat.config.ts` file.
 
-## Build
 
-In order to other projects can use the contracts existing in this project we must build it using the following command:
-```shell
-npm run build
-```
 
-This will generate a `build` folder that contains the `typechain-types` folder. This last folder contains contracts wrappers that allows us to access contracts abi importing the wrappers as shown below:
 
-```code
-import { HederaERC20__factory } from 'hedera-stable-coin-contracts/typechain-types';
-```
-
-## Documentation
+# Documentation
 
 Documentation files of all contracts, in markdown format, can be generated using the following command:
 ```shell
@@ -144,7 +179,7 @@ npm run doc
 
 Generated files will be located in project `docs` folder.
 
-## Other Scripts
+# Other Scripts
 
 in addition to the compilation, build, test and documentation scripts we have already talked about, there are other scripts configured in `package.json` file:
 

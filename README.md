@@ -12,6 +12,7 @@
   - [Creating Stable Coins](#Creating-Stable-Coins)<br>
   - [Managing Stable Coins](#Managing-Stable-Coins)<br>
   - [Operating Stable Coins](#Operating-Stable-Coins)<br>
+  - [Stable Coins categories](#Stable-Coins-categories)<br>
 - **[Architecture](#Architecture)**<br>
 - **[Technologies](#Technologies)**<br>
 - **[Installation](#Installation)**<br>
@@ -71,6 +72,17 @@ Every time a stable coin is deployed, the deploying account will be defined as t
 
 ## Operating Stable Coins
 Any account having any role assigned for a stable coin can operate it accordingly, for instance, if an account has the burn role assigned, it will be allowed to burn tokens. Accounts do not need to associate to the underlying token in order to operate it, they only need to be granted roles, on the other hand if they want to own tokens, they will have to associate the token as for any other Hedera token.
+
+## Stable Coins categories
+
+From an accounts's perspective, there are two kinds of stable coins:
+ - *Internal Stable Coins*
+
+ Every stable coin created using the account, independently of the roles the account might have.
+
+ - *External Stable Coins*
+
+Every stable coin for which the account has at least one role but was created using a different account.
 
 # Architecture
 The project is divided in 4 node modules:
