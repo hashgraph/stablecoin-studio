@@ -154,7 +154,11 @@ export default class BigDecimal implements FixedNumber {
 
 	private splitNumber(): string[] {
 		const splitNumber = this.#fn.toString().split('.');
-		splitNumber[1] = splitNumber[1].padEnd(this.format.decimals, '0');
+		if (splitNumber.length > 1) {
+			splitNumber[1] = splitNumber[1].padEnd(this.format.decimals, '0');
+		} else {
+			splitNumber[1] = '';
+		}
 		return splitNumber;
 	}
 
@@ -169,6 +173,7 @@ export default class BigDecimal implements FixedNumber {
 	): BigDecimal {
 		return new BigDecimal(value, format);
 	}
+
 	static fromStringHedera(value: string, decimals: number): BigDecimal {
 		const position = value.length - decimals;
 		value = value.substring(0, position) + '.' + value.substring(position);
