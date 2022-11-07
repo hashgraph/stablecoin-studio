@@ -16,6 +16,12 @@
   - [Files](#Files)<br>
   - [Configuration](#Configuration)<br>
   - [Run](#Run)<br>
+**[Deploy](#Deploy)**<br>
+  - [Deploy Factory](#Deploy-Factory)<br>
+  - [Create Stable Coins](#Create-Stable-Coins)<br>
+**[Upgrade](#Test)**<br>
+  - [Upgrade Factory](#Upgrade-Factory)<br>
+  - [Ugrade Stable Coins](#Ugrade-Stable-Coins)<br>
 - **[Documentation](#Documentation)**<br>
 - **[Other Scripts](#Other-Scripts)**<br>
 
@@ -172,6 +178,55 @@ npm test:mintable
 ```shell
 npm test:previewnet:mintable
 ```
+
+# Deploy
+The stable coin solution is made of two major components. 
+- The Factory: Smart contracts encapsulating the complexity of the creation of new stable coins.
+- The Stable Coin: Smart contracts that are deployed by the factory, exposing the functionalities and services of the stable coin solution and interacting with an underlying token.
+
+In order to create stable coins, the Factory must be deployed first. Once deployed, creating stable coins will be as simple as invoking the "createStableCoin" method of the Factory.
+
+## Deploy Factory
+The Factory deployment process can be executed by running the _deployFactory.ts_ script *(it can be easily done from the CLI and/or UI of the project, for more information on that check their respective README.md)*. These are the two tasks the script will carry out:
+
+1. Deploying the Factory:
+   - Deploying the Factory **Logic** smart contract (*StableCoinFactory.sol*).
+   - Deploying the Factory **Proxy** smart contract (*StableCoinFactoryProxy.sol*).
+   - Deploying the Factory **Proxy Admin** smart contract (*StableCoinFactoryProxyAdmin.sol*).
+   - Updating the Factory Proxy's admin (from the deploying account) to the Factory Proxy Admin.
+
+2. Updating the scripts for creating stable coins and upgrading the factory's logic:
+   - _createStableCoin.ts_ : Must contain the address of the Factory Proxy.
+   - _upgradeFactoryLogic.ts_ : Must contain the address of the Factory Proxy Admin.
+
+## Create Stable Coins
+Once the Factory has been deployed and the scripts updated, creating stable coins is very simple, just invoking one single method of the Factory's Logic : "createStableCoin(...)". *(it can be easily done from the CLI and/or UI of the project, for more information on that check their respective README.md)*
+
+These are the steps the creation method will perform when creating a new stable coin:
+- Deploy Stable Coin Logic smart contract (*HederaERC20.sol*).
+- Deploy Stable Coin Proxy smart contract (*HederaERC20Proxy.sol*).
+- Deploy Stable Coin Proxy Admin smart contract (*HederaERC20ProxyAdmin.sol*).
+- Updating the Stable Coin Proxy's admin (from the deploying account) to the Stable Coin Proxy Admin.
+- Creating the underlying token.
+- Initilaizing the Proxy.
+- Associating the Token to the deploying account.
+
+# Upgrade
+In order to make all our smart contract's implementation upgradable, we are using the *Transparent Proxy* pattern combined with the *Proxy admin* pattern, both frmo OpenZeppelin, you can find more information about these two patterns [here](https://docs.openzeppelin.com/contracts/4.x/api/proxy#transparent_proxy).
+
+The Factory's and the Stable Coins's logic can be upgraded at any time using the account that was used to either deploy it the first time (for the Factory)
+ or create it (for the Stable Coins).
+
+
+## Upgrade Factory
+- Deploy the new Factory Logic contract
+- Invoke the _upgradeAndCall_ method of the Factory Proxy Admin passing the previously deployed Factory Logic contract's address and any data required to initialize it. If you do not need to pass any initialization data, you can simply invoke the _upgrade_ method passing the previously deployed Factory Logic contract's address. **=> USE THE FACTORY PROXY ADMIN'S ADMIN ACCOUNT TO PERFORM THIS TASK. BY DEFAULT THAT ACCOUNT WILL BE THE ONE ORIGINALLY USED TO DEPLOY THE FACTORY.**
+
+## Ugrade Stable Coins
+> These steps must be performed individually for every single stable coin you wish to update, it is not possible to update all stable coins at once since the are completely independent frmo each other
+
+- Deploy the new Stable Coin Logic contract
+- Invoke the _upgradeAndCall_ method of the Stable Coin Proxy Admin passing the previously deployed Stable Coin Logic contract's address and any data required to initialize it. If you do not need to pass any initialization data, you can simply invoke the _upgrade_ method passing the previously deployed Stable coin Logic contract's address. **=> USE THE STABLE COIN PROXY ADMIN'S ADMIN ACCOUNT TO PERFORM THIS TASK. BY DEFAULT THAT ACCOUNT WILL BE THE ONE ORIGINALLY USED TO CREATE THE STBALE COIN.**
 
 
 # Documentation
