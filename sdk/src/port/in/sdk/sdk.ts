@@ -86,6 +86,7 @@ import IGetRolesServiceRequestModel from '../../../app/service/stablecoin/model/
 import { CreateStableCoinRequest, CashInStableCoinRequest } from './request';
 import RequestMapper from './request/mapping/RequestMapper.js';
 import { RequestAccount } from './request/BaseRequest.js';
+import WipeStableCoinRequest from './request/WipeStableCoinRequest.js';
 
 export {
 	IAssociateStableCoinRequest,
@@ -385,11 +386,13 @@ export class SDK {
 	/**
 	 * wipeToken
 	 */
-	public wipe(request: IWipeStableCoinRequest): Promise<boolean> | null {
+	public wipe(request: WipeStableCoinRequest): Promise<boolean> | null {
 		try {
-			const req: IWipeStableCoinServiceRequestModel = {
-				...request,
-			};
+			//const req: IWipeStableCoinServiceRequestModel = {
+			//	...request,
+			//};
+			const req: IWipeStableCoinServiceRequestModel =
+				RequestMapper.map(request);
 			return this.stableCoinService.wipe(req);
 		} catch (error) {
 			console.error(error);
