@@ -127,7 +127,10 @@ export default class OperationStableCoinService extends Service {
       'wizard.stableCoinOptions',
     );
 
-    const capabilitiesStableCoin = await this.getCapabilities(sdk, currentAccount);
+    const capabilitiesStableCoin = await this.getCapabilities(
+      sdk,
+      currentAccount,
+    );
 
     switch (
       await utilsService.defaultMultipleAsk(
@@ -136,7 +139,7 @@ export default class OperationStableCoinService extends Service {
           wizardOperationsStableCoinOptions,
           capabilitiesStableCoin,
           this.optionTokenListSelected &&
-          this.optionTokenListSelected.split(' - ').length === 3
+            this.optionTokenListSelected.split(' - ').length === 3
             ? configAccount.externalTokens.find(
                 (token) => token.id === this.stableCoinId,
               ).roles
@@ -177,7 +180,6 @@ export default class OperationStableCoinService extends Service {
         try {
           await new CashInStableCoinsService().cashInStableCoin(
             this.proxyContractId,
-            currentAccount,
             this.stableCoinId,
             account2Mint,
             amount2Mint,
@@ -404,7 +406,10 @@ export default class OperationStableCoinService extends Service {
       ),
     );
 
-    const capabilitiesStableCoin = await this.getCapabilities(sdk, currentAccount);
+    const capabilitiesStableCoin = await this.getCapabilities(
+      sdk,
+      currentAccount,
+    );
     const roleManagementOptions = language
       .getArray('wizard.roleManagementOptions')
       .filter((option) => {
