@@ -43,6 +43,24 @@ describe('🧪 SDK Create Stable Coin Request', () => {
     expect(validations.length).toBe(0);
   });
 
+  it('Create and validate simple request with 18 decimals', () => {
+    const request: CreateStableCoinRequest = new CreateStableCoinRequest({
+      account: {
+        accountId: '0.0.1',
+      },
+      name: 'name',
+      symbol: 'symbol',
+      decimals: 18,
+      initialSupply: '10.123456789012345677',
+      maxSupply: '10.123456789012345678',
+    });
+    expect(request).not.toBeNull();
+    const validations = request.validate();
+    logValidation(validations);
+    expect(validations.length).toBeDefined();
+    expect(validations.length).toBe(0);
+  });
+
   it('Create and validate simple invalid request', () => {
     const request: CreateStableCoinRequest = new CreateStableCoinRequest({
       account: {
