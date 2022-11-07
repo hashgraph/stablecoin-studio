@@ -83,10 +83,13 @@ import HashPackAccount from '../../../domain/context/account/HashPackAccount.js'
 import IAccountInfo from './response/IAccountInfo.js';
 import BigDecimal from '../../../domain/context/stablecoin/BigDecimal.js';
 import IGetRolesServiceRequestModel from '../../../app/service/stablecoin/model/IGetRolesServiceRequest';
-import { CreateStableCoinRequest, CashInStableCoinRequest } from './request';
+import {
+	CreateStableCoinRequest,
+	CashInStableCoinRequest,
+	WipeStableCoinRequest,
+} from './request';
 import RequestMapper from './request/mapping/RequestMapper.js';
 import { RequestAccount } from './request/BaseRequest.js';
-import WipeStableCoinRequest from './request/WipeStableCoinRequest.js';
 
 export {
 	IAssociateStableCoinRequest,
