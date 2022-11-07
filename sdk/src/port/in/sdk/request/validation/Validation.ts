@@ -2,7 +2,13 @@
 import CheckNums from '../../../../../core/checks/numbers/CheckNums.js';
 import CheckStrings from '../../../../../core/checks/strings/CheckStrings.js';
 import BaseError from '../../../../../core/error/BaseError.js';
-import { Account, ContractId, PrivateKey, PublicKey } from '../../sdk.js';
+import {
+	Account,
+	BigDecimal,
+	ContractId,
+	PrivateKey,
+	PublicKey,
+} from '../../sdk.js';
 import {
 	RequestAccount,
 	RequestPrivateKey,
@@ -63,12 +69,12 @@ export default class Validation {
 			const err: BaseError[] = [];
 			const iMax = max || max === 0;
 			const iMin = min || min === 0;
-			const isBigInt: boolean = CheckNums.isBigInt(val);
-			if (typeof val !== 'number' && !isBigInt) {
-				err.push(new InvalidType(val, 'string | number | bigint'));
+			const isBigDecimal: boolean = CheckNums.isBigDecimal(val);
+			if (typeof val !== 'number' && !isBigDecimal) {
+				err.push(new InvalidType(val, 'string | number | BigDecimal'));
 			} else {
 				let v = val;
-				if (typeof v !== 'number') v = BigInt(v);
+				if (typeof v !== 'number') v = BigDecimal.fromString(v);
 				if (iMin && !iMax) {
 					if (CheckNums.isLessThan(v, min)) {
 						err.push(new InvalidRange(v, min));
@@ -110,6 +116,23 @@ export default class Validation {
 				return err;
 			} else {
 				err.push(new InvalidIdFormatHedera(val));
+			}
+			return err;
+		};
+	};
+
+	public static checkAmount = () => {
+		return (val: any): BaseError[] => {
+			const err: BaseError[] = [];
+			const isBigDecimal: boolean = CheckNums.isBigDecimal(val);
+			if (!isBigDecimal) {
+				err.push(new InvalidType(val, 'BigDecimal'));
+			}
+			const valueDecimals = BigDecimal.getDecimalsFromString(val);
+			const zero = BigDecimal.fromString('0', valueDecimals);
+			const value = BigDecimal.fromString(val);
+			if (value.isLowerOrEqualThan(zero)) {
+				err.push(new InvalidRange(val, '0', undefined));
 			}
 			return err;
 		};
