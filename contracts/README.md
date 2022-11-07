@@ -220,7 +220,7 @@ The Factory's and the Stable Coins's logic can be upgraded at any time using the
 
 ## Upgrade Factory
 - Deploy the new Factory Logic contract
-- Invoke the _upgradeAndCall_ method of the Factory Proxy Admin passing the previously deployed Factory Logic contract's address and any data required to initialize it. If you do not need to pass any initialization data, you can simply invoke the _upgrade_ method passing the previously deployed Factory Logic contract's address. **=> USE THE FACTORY PROXY ADMIN'S ADMIN ACCOUNT TO PERFORM THIS TASK. BY DEFAULT THAT ACCOUNT WILL BE THE ONE ORIGINALLY USED TO DEPLOY THE FACTORY.**
+- Invoke the _upgradeAndCall_ method of the Factory Proxy Admin passing the previously deployed Factory Logic contract's address and any data required to initialize it. If you do not need to pass any initialization data, you can simply invoke the _upgrade_ method passing the previously deployed Factory Logic contract's address. **=> USE THE FACTORY PROXY ADMIN'S OWNER ACCOUNT TO PERFORM THIS TASK. BY DEFAULT THAT ACCOUNT WILL BE THE ONE ORIGINALLY USED TO DEPLOY THE FACTORY.**
 
 ## Ugrade Stable Coins
 > These steps must be performed individually for every single stable coin you wish to update, it is not possible to update all stable coins at once since the are completely independent frmo each other
