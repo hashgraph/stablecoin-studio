@@ -61,11 +61,14 @@ Each stable coin maps to an *underlying* Hedera Token and adds the following fun
 > The account deploying the Stable Coin will also be the administrator of the underlying token, which means that at any point, that account could completely bypass the Stable Coin and interact with the underlying token directly in order to change the keys associated to the roles. This could completely decoupled the Stable Coin from the underlying token making the above mentioned functionalities useless.
 
 ## Creating Stable Coins
-Every time a stable coin is created, a new Hedera Token is created (the underlying token) and two smart contracts are deployed:
+Every time a stable coin is created, a new Hedera Token is created (the underlying token) and the following smart contracts are deployed:
 - The Stable Coin logic smart contract: with all the functonality described above.
-- the Stable Coin proxy smart contract: pointing to the stbale coin logic smart contract. Proxies are used to make stable coins upgradable.
+- the Stable Coin proxy smart contract: pointing to the stable coin logic smart contract. Proxies are used to make stable coins upgradable.
+- the Stable Coin proxy admin smart contract: this contract will act as an intermediary to upgrade the Stable Coin proxy implementation. For more information on this check the contract module's README.
 
 Users interact with the Stable Coin proxy smart contract because its address will never change. Stable Coin logic smart contract addresses change if a new version is deployed. 
+
+> It is important to note that when creating a new stable coin, the user will have the possibility to specify the underlying token's keys (those that will have the wipe, supply, ... roles attached). By default those keys will be assigned to the *Stable Coin proxy smart contract* because by doing that the user will be able to enjoy the whole functionality implemented in this project through the Stable Coin logic smart contract methods. **NEVERTHELESS**, the user is free to assign any key to any account (not only during the creation process but also later, since the user's account remains the underlying key admin). If the user assigns a key to a different account, the Stable Coin Proxy will not be able to fully manage the underlying token, limiting the functionality it exposes to the user... It is also worth noting that just like the user will have to possibility to assign any key to any account other than the Stable Coin smart contract proxy, he/she will be able to assign it back too.
 
 ## Managing Stable Coins
 Every time a stable coin is deployed, the deploying account will be defined as the Stable Coin administrator (and the underlying token adminsitrator too). That account will have the possibility to assign and remove any role to any account, increase and decrease cash-in limits etc...
