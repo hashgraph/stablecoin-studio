@@ -17,7 +17,7 @@ export default class GrantRoleRequest
 	role: string;
 
 	@OptionalField()
-	amount?: bigint;
+	amount?: string;
 
 	constructor({
 		account,
@@ -32,20 +32,14 @@ export default class GrantRoleRequest
 		proxyContractId?: string;
 		tokenId?: string;
 		role?: string;
-		amount?: bigint;
+		amount?: string;
 	}) {
 		super({
 			account: Validation.checkAccountId(),
 			targetId: Validation.checkHederaFormat(),
 			proxyContractId: Validation.checkContractId(),
 			tokenId: Validation.checkHederaFormat(),
-			role: Validation.checkRole(),
-			amount: (val) => {
-				if (this.amount === undefined) {
-					return;
-				}
-				Validation.checkNumber()
-			},			
+			role: Validation.checkRole()	
 		});
 		this.account = account;
 		this.proxyContractId = proxyContractId!;

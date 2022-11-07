@@ -514,17 +514,17 @@ export class SDK {
 				...request,
 			};*/
 			if (request.role === Roles.CASHIN_ROLE) {
-				const grantRoleReq: ISupplierRoleStableCoinServiceRequestModel = RequestMapper.map(request,{
+				const grantSupplierRoleReq: ISupplierRoleStableCoinServiceRequestModel = RequestMapper.map(request,{
 					//treasury: AccountId,
 					//autoRenewAccount: AccountId,
-				})
-				return this.stableCoinService.grantSupplierRole(grantRoleReq);
+				});
+				return this.stableCoinService.grantSupplierRole(grantSupplierRoleReq);
 			}
-			const grantSupplierRoleReq: IRoleStableCoinServiceRequestModel = RequestMapper.map(request,{
+			const grantRoleReq: IRoleStableCoinServiceRequestModel = RequestMapper.map(request,{
 				//treasury: AccountId,
 				//autoRenewAccount: AccountId,
-			})
-			return this.stableCoinService.grantRole(grantSupplierRoleReq);
+			});
+			return this.stableCoinService.grantRole(grantRoleReq);
 		} catch (error) {
 			console.error(error);
 			return null;
