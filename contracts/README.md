@@ -16,10 +16,10 @@
   - [Files](#Files)<br>
   - [Configuration](#Configuration)<br>
   - [Run](#Run)<br>
-**[Deploy](#Deploy)**<br>
+- **[Deploy](#Deploy)**<br>
   - [Deploy Factory](#Deploy-Factory)<br>
   - [Create Stable Coins](#Create-Stable-Coins)<br>
-**[Upgrade](#Test)**<br>
+- **[Upgrade](#Test)**<br>
   - [Upgrade Factory](#Upgrade-Factory)<br>
   - [Ugrade Stable Coins](#Ugrade-Stable-Coins)<br>
 - **[Documentation](#Documentation)**<br>
