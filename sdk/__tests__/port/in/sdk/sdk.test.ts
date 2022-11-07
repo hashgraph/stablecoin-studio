@@ -112,7 +112,7 @@ describe('🧪 [PORT] SDK', () => {
     const wipe = await sdk.wipe(
       new WipeStableCoinRequest({
         account: REQUEST_ACCOUNTS.testnet,
-        targetId: REQUEST_ACCOUNTS.testnet.accountId.id,
+        targetId: REQUEST_ACCOUNTS.testnet.accountId,
         proxyContractId: proxyContractId ?? '',
         tokenId: tokenId ?? '',
         amount
@@ -120,7 +120,7 @@ describe('🧪 [PORT] SDK', () => {
     );
     const balance = await sdk.getBalanceOf({
       account: ACCOUNTS.testnet,
-      targetId: REQUEST_ACCOUNTS.testnet.accountId.id,
+      targetId: REQUEST_ACCOUNTS.testnet.accountId,
       proxyContractId: proxyContractId ?? '',
       tokenId: tokenId ?? '',
     });
@@ -136,7 +136,7 @@ describe('🧪 [PORT] SDK', () => {
       sdk.wipe(
         new WipeStableCoinRequest({
           account: REQUEST_ACCOUNTS.testnet,
-          targetId: REQUEST_ACCOUNTS.testnet.accountId.id,
+          targetId: REQUEST_ACCOUNTS.testnet.accountId,
           proxyContractId: proxyContractId ?? '',
           tokenId: tokenId ?? '',
           amount
