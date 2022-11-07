@@ -186,18 +186,14 @@ export default class CreateStableCoinRequest
 					this.supplyType,
 				);
 			},
-			autoRenewAccount: (val) => {
-				new AccountId(val as string);
-			},
+			autoRenewAccount: Validation.checkHederaIdFormat(),
 			adminKey: Validation.checkPublicKey(),
 			freezeKey: Validation.checkPublicKey(),
 			KYCKey: Validation.checkPublicKey(),
 			wipeKey: Validation.checkPublicKey(),
 			pauseKey: Validation.checkPublicKey(),
 			supplyKey: Validation.checkPublicKey(),
-			treasury: (val) => {
-				new AccountId(val as string);
-			},
+			treasury: Validation.checkHederaIdFormat(),
 		});
 		this.account = account;
 		this.name = name;

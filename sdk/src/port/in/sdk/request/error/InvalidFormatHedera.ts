@@ -1,10 +1,10 @@
 import BaseError, { ErrorCode } from '../../../../../core/error/BaseError.js';
 
 export class InvalidFormatHedera extends BaseError {
-	constructor(val: unknown, type?: string) {
+	constructor(val: unknown) {
 		super(
-			ErrorCode.InvalidFormatHedera,
-			`${val} not have the correct format`,
+			ErrorCode.InvalidIdFormatHedera,
+			`${val} does not have the correct format`,
 		);
 	}
 }

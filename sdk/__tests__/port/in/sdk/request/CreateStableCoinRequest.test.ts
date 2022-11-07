@@ -81,7 +81,6 @@ describe('🧪 SDK Create Stable Coin Request', () => {
     request.initialSupply = '1000';
     const validationsOk = request.validate();
     expect(validationsOk.length).toBe(0);
-    expect(request.initialSupply).toBeInstanceOf(BigDecimal);
   });
 
   it('Create and validate request, fail with [initialSupply, adminKey, treasury, autoRenewAccount]', () => {
