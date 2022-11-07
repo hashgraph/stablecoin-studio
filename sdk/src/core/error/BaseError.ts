@@ -5,7 +5,7 @@ export enum ErrorCode {
 	PublicKeyInvalid = '10004',
 	ContractKeyInvalid = '10006',
 	InvalidAmount = '10008',
-	InvalidFormatHedera = '10009',
+	InvalidIdFormatHedera = '10009',
 	InvalidContractId = '10014',
 	InvalidType = '10015',
 	InvalidLength = '10016',

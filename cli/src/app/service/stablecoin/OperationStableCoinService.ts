@@ -299,7 +299,6 @@ export default class OperationStableCoinService extends Service {
         try {
           await new WipeStableCoinsService().wipeStableCoin(
             this.proxyContractId,
-            currentAccount,
             this.stableCoinId,
             account2Wipe,
             amount2Wipe,

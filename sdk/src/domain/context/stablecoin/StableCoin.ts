@@ -19,12 +19,11 @@ import { InitSupplyInvalid } from './error/InitSupplyInvalid.js';
 import { InitSupplyLargerThanMaxSupply } from './error/InitSupplyLargerThanMaxSupply.js';
 import InvalidMaxSupplySupplyType from './error/InvalidMaxSupplySupplyType.js';
 import { BigNumber } from '@hashgraph/hethers';
-import { fromSolidityAddress } from '@hashgraph/sdk/lib/EntityIdHelper.js';
 
 const MAX_SUPPLY = 9_223_372_036_854_775_807n;
 const TEN = 10;
 const ONE_HUNDRED = 100;
-const EIGHTEEN = 18;
+const NINETEEN = 19;
 const ZERO = 0;
 
 export class StableCoin extends BaseEntity {
@@ -376,7 +375,7 @@ export class StableCoin extends BaseEntity {
 	public static checkDecimals(value: number): BaseError[] {
 		const errorList: BaseError[] = [];
 		const min = ZERO;
-		const max = EIGHTEEN;
+		const max = NINETEEN;
 
 		if (!CheckNums.isWithinRange(value, min, max))
 			errorList.push(new InvalidDecimalRange(value, min, max));

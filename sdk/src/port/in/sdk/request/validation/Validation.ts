@@ -11,7 +11,7 @@ import {
 import { EmptyValue } from '../error/EmptyValue.js';
 import { InvalidLength } from '../error/InvalidLength.js';
 import { InvalidRange } from '../error/InvalidRange.js';
-import { InvalidFormatHedera } from '../error/InvalidFormatHedera.js';
+import { InvalidFormatHedera as InvalidIdFormatHedera } from '../error/InvalidFormatHedera.js';
 import { InvalidType } from '../error/InvalidType.js';
 
 export default class Validation {
@@ -102,14 +102,14 @@ export default class Validation {
 		};
 	};
 
-	public static checkHederaFormat = () => {
+	public static checkHederaIdFormat = () => {
 		return (val: any): BaseError[] => {
 			const regEx = /0\.0\.[1-9]*/;
 			const err: BaseError[] = [];
 			if (regEx.exec(val)) {
 				return err;
 			} else {
-				err.push(new InvalidFormatHedera(val));
+				err.push(new InvalidIdFormatHedera(val));
 			}
 			return err;
 		};

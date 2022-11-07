@@ -38,11 +38,11 @@ export default class CashInStableCoinRequest
 		publicKey?: RequestPublicKey;
 	}) {
 		super({
-			account: Validation.checkAccountId(),
+			account: Validation.checkAccount(),
 			amount: Validation.checkNumber(),
 			proxyContractId: Validation.checkContractId(),
-			targetId: Validation.checkHederaFormat(),
-			tokenId: Validation.checkHederaFormat(),
+			targetId: Validation.checkHederaIdFormat(),
+			tokenId: Validation.checkHederaIdFormat(),
 			publicKey: Validation.checkPublicKey(),
 		});
 
