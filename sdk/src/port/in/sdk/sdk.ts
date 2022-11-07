@@ -86,6 +86,7 @@ import IGetRolesServiceRequestModel from '../../../app/service/stablecoin/model/
 import { CreateStableCoinRequest } from './request';
 import RequestMapper from './request/mapping/RequestMapper.js';
 import { RequestAccount } from './request/BaseRequest.js';
+import CashInStableCoinRequest from './request/CashInStableCoinRequest.js';
 
 export {
 	IAssociateStableCoinRequest,
@@ -139,7 +140,7 @@ export {
 	AuthenticationResponseMessage,
 	Capabilities,
 	StableCoinMemo,
-	BigDecimal
+	BigDecimal,
 };
 
 export interface ConfigurationOptions {
@@ -254,10 +255,13 @@ export class SDK {
 			// 	pauseKey: RequestMapper.getPublicKey(pauseKey),
 			// 	autoRenewAccount: RequestMapper.getAccountId(autoRenewAccount),
 			// };
-			const req: ICreateStableCoinServiceRequestModel = RequestMapper.map(request,{
-				treasury: AccountId,
-				autoRenewAccount: AccountId,
-			})
+			const req: ICreateStableCoinServiceRequestModel = RequestMapper.map(
+				request,
+				{
+					treasury: AccountId,
+					autoRenewAccount: AccountId,
+				},
+			);
 			return this.stableCoinService.createStableCoin(req);
 		} catch (error) {
 			console.error(error);
@@ -267,7 +271,7 @@ export class SDK {
 
 	public getCapabilitiesStableCoin(
 		id: string,
-		publicKey: string
+		publicKey: string,
 	): Promise<Capabilities[]> | null {
 		return this.stableCoinService.getCapabilitiesStableCoin(id, publicKey);
 	}
@@ -331,11 +335,13 @@ export class SDK {
 	/**
 	 * cashIn
 	 */
-	public cashIn(request: ICashInStableCoinRequest): Promise<boolean> | null {
+	public cashIn(request: CashInStableCoinRequest): Promise<boolean> | null {
 		try {
-			const req: ICashInStableCoinServiceRequestModel = {
-				...request,
-			};
+			// const req: ICashInStableCoinServiceRequestModel = {
+			// 	...request,
+			// };
+			const req: ICashInStableCoinServiceRequestModel =
+				RequestMapper.map(request);
 			return this.stableCoinService.cashIn(req);
 		} catch (error) {
 			console.error(error);

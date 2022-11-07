@@ -2,6 +2,7 @@ import PublicKey from '../../../../src/domain/context/account/PublicKey.js';
 import { CreateStableCoinRequest, SDK } from '../../../../src/index.js';
 import { ACCOUNTS, getSDKAsync, REQUEST_ACCOUNTS } from '../../../core/core.js';
 import { StableCoinRole } from '../../../../src/core/enum.js';
+import CashInStableCoinRequest from '../../../../src/port/in/sdk/request/CashInStableCoinRequest.js';
 
 describe('🧪 [PORT] SDK', () => {
   let sdk: SDK;
@@ -24,6 +25,11 @@ describe('🧪 [PORT] SDK', () => {
           key: ACCOUNTS.testnet.privateKey.publicKey.key,
           type: ACCOUNTS.testnet.privateKey.publicKey.type,
         },
+        freezeKey: PublicKey.NULL,
+        // KYCKey:PublicKey.NULL,
+        wipeKey: PublicKey.NULL,
+        pauseKey: PublicKey.NULL,
+        supplyKey: PublicKey.NULL,
       }),
     );
     proxyContractId = coin?.memo?.proxyContract;
@@ -78,16 +84,18 @@ describe('🧪 [PORT] SDK', () => {
 
   it('Cash in token', async () => {
     const amount = '10';
-    const cashin = await sdk.cashIn({
-      account: ACCOUNTS.testnet,
-      targetId: ACCOUNTS.testnet.accountId.id,
-      proxyContractId: proxyContractId ?? '',
-      tokenId: tokenId ?? '',
-      amount,
-    });
+    const cashin = await sdk.cashIn(
+      new CashInStableCoinRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        targetId: REQUEST_ACCOUNTS.testnet.accountId,
+        proxyContractId: proxyContractId ?? '',
+        tokenId: tokenId ?? '',
+        amount,
+      }),
+    );
     const balance = await sdk.getBalanceOf({
       account: ACCOUNTS.testnet,
-      targetId: ACCOUNTS.testnet.accountId.id,
+      targetId: REQUEST_ACCOUNTS.testnet.accountId,
       proxyContractId: proxyContractId ?? '',
       tokenId: tokenId ?? '',
     });
@@ -95,7 +103,7 @@ describe('🧪 [PORT] SDK', () => {
     expect(cashin).toBeTruthy();
     expect(balance).not.toBeNull();
     expect(balance && balance).toBe(amount);
-  }, 15000);
+  }, 1500000);
 
   it('Wipe token', async () => {
     const amount = '1';
@@ -397,8 +405,8 @@ describe('🧪 [PORT] SDK', () => {
 
   it('Get capabilities', async () => {
     const capabilities = await sdk.getCapabilitiesStableCoin(
-			tokenId ?? '',
-			ACCOUNTS.testnet.privateKey.publicKey.key
+      tokenId ?? '',
+      ACCOUNTS.testnet.privateKey.publicKey.key,
     );
     expect(capabilities).not.toBeNull();
   }, 15000);
