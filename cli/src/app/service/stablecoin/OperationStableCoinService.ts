@@ -15,6 +15,7 @@ import {
   SDK,
   StableCoinRole,
   StableCoinMemo,
+  CashInStableCoinRequest,
 } from 'hedera-stable-coin-sdk';
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 import CashInStableCoinsService from './CashInStableCoinService.js';
@@ -158,32 +159,57 @@ export default class OperationStableCoinService extends Service {
           configAccount,
           this.stableCoinWithSymbol,
         );
+
+        const cashInRequest = new CashInStableCoinRequest({
+          proxyContractId: this.proxyContractId,
+          account: {
+            accountId: configAccount.accountId,
+            privateKey: {
+              key: currentAccount.privateKey.key,
+              type: currentAccount.privateKey.type,
+            },
+          },
+          tokenId: this.stableCoinId,
+          targetId: '',
+          amount: '',
+        });
+
         // Call to mint
-        const account2Mint = await utilsService.defaultSingleAsk(
+        cashInRequest.targetId = await utilsService.defaultSingleAsk(
           language.getText('stablecoin.askTargetAccount'),
           currentAccount.accountId.id,
         );
-        if (!sdk.checkIsAddress(account2Mint)) {
-          console.log(language.getText('validations.wrongFormatAddress'));
+        await utilsService.handleValidation(
+          () => cashInRequest.validate('targetId'),
+          async () => {
+            const account2Mint = await utilsService.defaultSingleAsk(
+              language.getText('stablecoin.askTargetAccount'),
+              currentAccount.accountId.id,
+            );
+            cashInRequest.targetId = account2Mint;
+          },
+        );
 
-          await this.operationsStableCoin();
-        }
-
-        const amount2Mint = await utilsService
-          .defaultSingleAsk(language.getText('stablecoin.askCashInAmount'), '1')
+        cashInRequest.amount = await utilsService
+          .defaultSingleAsk(
+            language.getText('stablecoin.askTargetAccount'),
+            '1',
+          )
           .then((val) => val.replace(',', '.'));
-
-        if (parseFloat(amount2Mint) < 0) {
-          console.log(language.getText('account.wrong'));
-          await this.operationsStableCoin();
-        }
+        await utilsService.handleValidation(
+          () => cashInRequest.validate('targetId'),
+          async () => {
+            const amount2Mint = await utilsService
+              .defaultSingleAsk(
+                language.getText('stablecoin.askTargetAccount'),
+                '1',
+              )
+              .then((val) => val.replace(',', '.'));
+            cashInRequest.amount = amount2Mint;
+          },
+        );
         try {
-          await new CashInStableCoinsService().cashInStableCoin(
-            this.proxyContractId,
-            this.stableCoinId,
-            account2Mint,
-            amount2Mint,
-          );
+          await new CashInStableCoinsService().cashInStableCoin(cashInRequest);
         } catch (error) {
           console.log(colors.red(error.message));
           await this.operationsStableCoin();
