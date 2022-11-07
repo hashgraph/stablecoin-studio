@@ -131,7 +131,7 @@ export default class OperationStableCoinService extends Service {
       sdk,
       currentAccount,
     );
-    console.log(capabilitiesStableCoin);
+
     switch (
       await utilsService.defaultMultipleAsk(
         language.getText('stablecoin.askDoSomething'),
