@@ -215,7 +215,7 @@ These are the steps the creation method will perform when creating a new stable 
 - Associating the Token to the deploying account.
 
 # Upgrade
-In order to make all our smart contract's implementation upgradable, we are using the *Transparent Proxy* pattern combined with the *Proxy admin* pattern, both frmo OpenZeppelin, you can find more information about these two patterns [here](https://docs.openzeppelin.com/contracts/4.x/api/proxy#transparent_proxy).
+In order to make all our smart contract's implementation upgradable, we are using the *Transparent Proxy* pattern combined with the *Proxy admin* pattern, both from OpenZeppelin, you can find more information about these two patterns [here](https://docs.openzeppelin.com/contracts/4.x/api/proxy#transparent_proxy).
 
 The Factory's and the Stable Coins's logic can be upgraded at any time using the account that was used to either deploy it the first time (for the Factory)
  or create it (for the Stable Coins).
@@ -226,7 +226,7 @@ The Factory's and the Stable Coins's logic can be upgraded at any time using the
 - Invoke the `upgradeAndCall` method of the Factory Proxy Admin passing the previously deployed Factory Logic contract's address and any data required to initialize it. If you do not need to pass any initialization data, you can simply invoke the `upgrade` method passing the previously deployed Factory Logic contract's address. **=> USE THE FACTORY PROXY ADMIN'S OWNER ACCOUNT TO PERFORM THIS TASK. BY DEFAULT THAT ACCOUNT WILL BE THE ONE ORIGINALLY USED TO DEPLOY THE FACTORY.**
 
 ## Ugrade Stable Coins
-> These steps must be performed individually for every single stable coin you wish to update, it is not possible to update all stable coins at once since the are completely independent frmo each other
+> These steps must be performed individually for every single stable coin you wish to update, it is not possible to update all stable coins at once since the are completely independent from each other
 
 - Deploy the new Stable Coin Logic contract
 - Invoke the `upgradeAndCall` method of the Stable Coin Proxy Admin passing the previously deployed Stable Coin Logic contract's address and any data required to initialize it. If you do not need to pass any initialization data, you can simply invoke the `upgrade` method passing the previously deployed Stable coin Logic contract's address. **=> USE THE STABLE COIN PROXY ADMIN'S ADMIN ACCOUNT TO PERFORM THIS TASK. BY DEFAULT THAT ACCOUNT WILL BE THE ONE ORIGINALLY USED TO CREATE THE STBALE COIN.**

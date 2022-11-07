@@ -63,7 +63,7 @@ Each stable coin maps to an *underlying* Hedera Token and adds the following fun
 ## Creating Stable Coins
 Every time a stable coin is created, a new Hedera Token is created (the underlying token) and two smart contracts are deployed:
 - The Stable Coin logic smart contract: with all the functonality described above.
-- the Stable Coin proxy smart contract: pointing to the stbale coin logic smart contract. Proxies are used to make stable coins upgradable.
+- the Stable Coin proxy smart contract: pointing to the stable coin logic smart contract. Proxies are used to make stable coins upgradable.
 
 Users interact with the Stable Coin proxy smart contract because its address will never change. Stable Coin logic smart contract addresses change if a new version is deployed. 
 
