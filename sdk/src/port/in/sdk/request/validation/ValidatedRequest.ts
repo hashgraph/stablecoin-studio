@@ -7,6 +7,7 @@ import ValidationResponse from './ValidationResponse.js';
 import { getOptionalFields } from '../../../../../core/decorators/OptionalDecorator.js';
 import { RuntimeError } from '../../../../../core/error/RuntimeError.js';
 import { EmptyValue } from '../error/EmptyValue.js';
+import RequestMapper from '../mapping/RequestMapper.js';
 export default class ValidatedRequest<T extends BaseRequest> {
 	private schema: ValidationSchema<T>;
 
@@ -40,6 +41,17 @@ export default class ValidatedRequest<T extends BaseRequest> {
 	}
 
 	private getProperty(propertyName: keyof this): any {
+		if(this[propertyName] === undefined){
+			const privateKeys = {
+				dash: `_${String(propertyName)}` as keyof this,
+				hash: `#${String(propertyName)}` as keyof this,
+			}
+			if (this[privateKeys.dash]) {
+				return this[privateKeys.dash];
+			} else {
+				return this[privateKeys.hash];
+			}
+		}
 		return this[propertyName];
 	}
 
@@ -47,11 +59,7 @@ export default class ValidatedRequest<T extends BaseRequest> {
 		propertyName: ValidatedRequestKey<T>,
 		val: any,
 	): ValidationResponse | undefined {
-		if (
-			this?.schema[propertyName] &&
-			!this.isOptional(propertyName) &&
-			val !== undefined
-		) {
+		if (this?.schema[propertyName] && val !== undefined) {
 			try {
 				const err = this.schema[propertyName]?.(val);
 				if (err?.length && err.length > 0) {
@@ -84,7 +92,9 @@ export default class ValidatedRequest<T extends BaseRequest> {
 		const schemaEntries = Object.keys(
 			this.schema,
 		) as ValidatedRequestKey<T>[];
-		const entries = Object.keys(this) as ValidatedRequestKey<T>[];
+		const entries = RequestMapper.renamePrivateProps(
+			Object.keys(this),
+		) as ValidatedRequestKey<T>[];
 		const filteredEntries = schemaEntries.filter((value) =>
 			entries.includes(value),
 		);
@@ -95,10 +105,16 @@ export default class ValidatedRequest<T extends BaseRequest> {
 		key: ValidatedRequestKey<T>,
 		vals: ValidationResponse[],
 	): void {
-		const err = this.runValidation(
-			key,
-			this.getProperty(key as keyof this),
-		);
-		err && vals.push(err);
+		try {
+			const err = this.runValidation(
+				key,
+				this.getProperty(key as keyof this),
+			);
+			err && vals.push(err);
+		} catch (err) {
+			vals.push(
+				new ValidationResponse(key.toString(), [err as BaseError]),
+			);
+		}
 	}
 }

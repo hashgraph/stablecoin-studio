@@ -117,19 +117,19 @@ export default class StableCoinRepository implements IStableCoinRepository {
 				symbol: response.data.symbol ?? '',
 				decimals: decimals,
 				initialSupply: response.data.initial_supply
-					? BigDecimal.fromStringHedera(
+					? BigDecimal.fromStringFixed(
 							response.data.initial_supply,
 							decimals,
 					  )
 					: BigDecimal.ZERO,
 				totalSupply: response.data.total_supply
-					? BigDecimal.fromStringHedera(
+					? BigDecimal.fromStringFixed(
 							response.data.total_supply,
 							decimals,
 					  )
 					: BigDecimal.ZERO,
 				maxSupply: response.data.max_supply
-					? BigDecimal.fromStringHedera(
+					? BigDecimal.fromStringFixed(
 							response.data.max_supply,
 							decimals,
 					  )
@@ -248,7 +248,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		);
 
 		const coin: StableCoin = await this.getStableCoin(tokenId);
-		const balanceHedera = BigDecimal.fromStringHedera(
+		const balanceHedera = BigDecimal.fromStringFixed(
 			response[0].toString(),
 			coin.decimals,
 		);

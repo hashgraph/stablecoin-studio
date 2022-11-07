@@ -7,6 +7,7 @@ import {
   HederaNetworkEnviroment,
   SDK,
   SDKInitOptions,
+  ValidationResponse,
 } from '../../src/index.js';
 import { RequestAccount } from '../../src/port/in/sdk/request/BaseRequest.js';
 
@@ -66,4 +67,10 @@ export const baseCoin: { name: string; symbol: string; decimals: number } = {
   name: 'TEST COIN',
   symbol: 'TEST COIN',
   decimals: 3,
+};
+
+export const logValidation = (val: ValidationResponse[]): void => {
+  val.map((v) =>
+    v.errors.map((e) => console.log(`${v.name} - [${e.errorCode}] ${e.message}`)),
+  );
 };

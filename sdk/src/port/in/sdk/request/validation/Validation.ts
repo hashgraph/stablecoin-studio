@@ -87,7 +87,7 @@ export default class Validation {
 		};
 	};
 
-	public static checkAccountId = () => {
+	public static checkAccount = () => {
 		return (val: any): void => {
 			const { accountId, privateKey, evmAddress } = val as RequestAccount;
 			if (privateKey) {

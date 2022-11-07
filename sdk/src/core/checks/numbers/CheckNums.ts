@@ -1,6 +1,8 @@
+import BigDecimal from '../../../domain/context/stablecoin/BigDecimal.js';
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export default class CheckNums {
-	public static isWithinRange<T extends number | bigint>(
+	public static isWithinRange<T extends number | bigint | BigDecimal>(
 		value: T,
 		min: T,
 		max: T,
@@ -10,18 +12,22 @@ export default class CheckNums {
 		return true;
 	}
 
-	public static isLessThan<T extends number | bigint>(
+	public static isLessThan<T extends number | bigint | BigDecimal>(
 		value: T,
 		max: T,
 	): boolean {
+		if (value instanceof BigDecimal && max instanceof BigDecimal)
+			return value.isLowerThan(max);
 		if (value > max) return false;
 		return true;
 	}
 
-	public static isMoreThan<T extends number | bigint>(
+	public static isMoreThan<T extends number | bigint | BigDecimal>(
 		value: T,
 		max: T,
 	): boolean {
+		if (value instanceof BigDecimal && max instanceof BigDecimal)
+			return value.isGreaterThan(max);
 		if (value < max) return false;
 		return true;
 	}
@@ -33,6 +39,19 @@ export default class CheckNums {
 		} catch (err) {
 			return false;
 		}
+	}
+
+	public static isBigDecimal(value: any): boolean {
+		try {
+			BigDecimal.fromString(value);
+			return true;
+		} catch (err) {
+			return false;
+		}
+	}
+
+	public static hasMoreDecimals(from: BigDecimal, to: number): boolean {
+		return from.format.decimals > to;
 	}
 
 	public static isNumber(value: any): value is number | bigint {

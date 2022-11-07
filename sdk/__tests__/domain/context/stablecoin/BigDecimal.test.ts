@@ -177,10 +177,17 @@ describe('🧪 [DOMAIN] BigDecimal', () => {
   });
 
   it('Test fromStringHedera', () => {
-    const a = BigDecimal.fromStringHedera('1000000', 6);
-    const b = BigDecimal.fromStringHedera('1500000', 6);
+    const a = BigDecimal.fromStringFixed('1000000', 6);
+    const b = BigDecimal.fromStringFixed('1500000', 6);
     expect(a.toString()).toBe('1');
     expect(b.toString()).toBe('1.5');
+  });
+
+  it('Test setDecimals', () => {
+    let num = BigDecimal.fromStringFixed('10012345678', 8);
+    num = num.subUnsafe(BigDecimal.fromString('0.001', 3).setDecimals(8));
+    const num2be = num.setDecimals(12);
+    expect(num.toString()).toEqual(num2be.toString());
   });
 
   it('For testing', async () => {
@@ -191,11 +198,17 @@ describe('🧪 [DOMAIN] BigDecimal', () => {
     // 10000000 --> 6 dec -> 10.0
     // const val = getNumber(17, { integer: '100', decimal: '1' }); // 100.00000000000000001
 
-    const num = BigDecimal.fromString('100', 4);
-    console.log(num.toLong());
+    
     // 100 => 100.0
-
-    // console.log(num.toLong());
-    expect(true).toBeTruthy();
+    const num = BigDecimal.isBigDecimal('100.asd')
+    const num2 = BigDecimal.isBigDecimal('100.100.100')
+    const num3 = BigDecimal.isBigDecimal('100100.100')
+    const num4 = BigDecimal.isBigDecimal('asda100,100.100')
+    const num5 = BigDecimal.isBigDecimal('')
+    expect(num).toBeFalsy();
+    expect(num2).toBeFalsy();
+    expect(num3).toBeTruthy();
+    expect(num4).toBeFalsy();
+    expect(num5).toBeFalsy();
   });
 });

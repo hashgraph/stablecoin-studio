@@ -15,24 +15,6 @@ import Service from '../Service.js';
 import SetConfigurationService from '../configuration/SetConfigurationService.js';
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 
-// export const createdStableCoin = {
-//   name: '',
-//   symbol: '',
-//   autoRenewAccount: '',
-//   decimals: '',
-//   initialSupply: undefined,
-//   supplyType: true,
-//   totalSupply: '',
-//   supplyKey: undefined,
-//   freezeKey: undefined,
-//   adminKey: undefined,
-//   KYCKey: undefined,
-//   wipeKey: undefined,
-//   pauseKey: undefined,
-//   treasury: undefined,
-//   autoRenewAccountId: undefined,
-// };
-
 /**
  * Create Stable Coin Service
  */
@@ -174,7 +156,9 @@ export default class CreateStableCoinService extends Service {
       await utilsService.handleValidation(
         () => tokenToCreate.validate('decimals'),
         async () => {
-          decimals = await this.askForDecimals(tokenToCreate.decimals.toString());
+          decimals = await this.askForDecimals(
+            tokenToCreate.decimals.toString(),
+          );
           tokenToCreate.decimals = decimals;
         },
       );
@@ -186,41 +170,56 @@ export default class CreateStableCoinService extends Service {
 
       if (!supplyType) {
         totalSupply = await this.askForTotalSupply();
-        while (isNaN(Number(totalSupply))) {
-          utilsService.showError(language.getText('general.incorrectParam'));
-          totalSupply = await this.askForTotalSupply();
-        }
-        while (parseFloat(initialSupply) > parseFloat(totalSupply)) {
-          utilsService.showError(
-            language.getText('stablecoin.initialSupplyError'),
-          );
-          totalSupply = await this.askForTotalSupply(
-            tokenToCreate.maxSupply
-              ? tokenToCreate.maxSupply.toString()
-              : tokenToCreate.initialSupply?.toString(),
-          );
-        }
+        await utilsService.handleValidation(
+          () => tokenToCreate.validate('maxSupply'),
+          async () => {
+            totalSupply = await this.askForTotalSupply();
+            tokenToCreate.maxSupply = totalSupply;
+          },
+        );
+        // while (isNaN(Number(totalSupply))) {
+        //   utilsService.showError(language.getText('general.incorrectParam'));
+        //   totalSupply = await this.askForTotalSupply();
+        // }
+        // while (parseFloat(initialSupply) > parseFloat(totalSupply)) {
+        //   utilsService.showError(
+        //     language.getText('stablecoin.initialSupplyError'),
+        //   );
+        //   totalSupply = await this.askForTotalSupply(
+        //     tokenToCreate.maxSupply
+        //       ? tokenToCreate.maxSupply.toString()
+        //       : tokenToCreate.initialSupply?.toString(),
+        //   );
+        // }
         tokenToCreate.maxSupply = totalSupply;
       }
 
+      // if (totalSupply) {
+      //   while (parseFloat(initialSupply) > parseFloat(totalSupply)) {
+      //     utilsService.showError(
+      //       language.getText('stablecoin.initialSupplyError'),
+      //     );
+      //     initialSupply = await this.askForInitialSupply();
+      //   }
+      // }
+
+      // while (isNaN(Number(initialSupply))) {
+      //   utilsService.showError(language.getText('general.incorrectParam'));
+      //   initialSupply = await this.askForInitialSupply();
+      // }
       initialSupply = await this.askForInitialSupply(
         tokenToCreate.initialSupply?.toString(),
       );
-      if (totalSupply) {
-        while (parseFloat(initialSupply) > parseFloat(totalSupply)) {
-          utilsService.showError(
-            language.getText('stablecoin.initialSupplyError'),
+      tokenToCreate.initialSupply = initialSupply;
+      await utilsService.handleValidation(
+        () => tokenToCreate.validate('initialSupply'),
+        async () => {
+          initialSupply = await this.askForInitialSupply(
+            tokenToCreate.initialSupply?.toString(),
           );
-          initialSupply = await this.askForInitialSupply();
-        }
-      }
-
-      while (isNaN(Number(initialSupply))) {
-        utilsService.showError(language.getText('general.incorrectParam'));
-        initialSupply = await this.askForInitialSupply();
-      }
-
-      tokenToCreate.initialSupply = BigInt(initialSupply);
+          tokenToCreate.initialSupply = initialSupply;
+        },
+      );
     }
 
     const managedBySC = await this.askForManagedFeatures();
@@ -229,9 +228,10 @@ export default class CreateStableCoinService extends Service {
       symbol,
       autoRenewAccount,
       decimals: parseInt(decimals),
-      initialSupply: initialSupply === '' ? undefined : initialSupply,
+      initialSupply:
+        initialSupply === '' || !initialSupply ? undefined : initialSupply,
       supplyType: supplyType ? 'INFINITE' : 'FINITE',
-      maxSupply: totalSupply ?? '',
+      maxSupply: totalSupply === '' || !totalSupply ? undefined : totalSupply,
     });
     if (managedBySC) {
       const currentAccount: IAccountConfig = utilsService.getCurrentAccount();
@@ -316,11 +316,11 @@ export default class CreateStableCoinService extends Service {
       symbol,
       autoRenewAccount,
       decimals: parseInt(decimals),
-      initialSupply: initialSupply === '' ? undefined : BigInt(initialSupply),
+      initialSupply: initialSupply === '' ? undefined : initialSupply,
       supplyType: supplyType
         ? TokenSupplyType.INFINITE
         : TokenSupplyType.FINITE,
-      maxSupply: totalSupply ? BigInt(totalSupply) : totalSupply,
+      maxSupply: totalSupply === '' ? undefined : totalSupply,
       freezeKey,
       //KYCKey,
       wipeKey,

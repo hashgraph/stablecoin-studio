@@ -18,8 +18,10 @@ import CheckStrings from '../../../core/checks/strings/CheckStrings.js';
 import { InitSupplyInvalid } from './error/InitSupplyInvalid.js';
 import { InitSupplyLargerThanMaxSupply } from './error/InitSupplyLargerThanMaxSupply.js';
 import InvalidMaxSupplySupplyType from './error/InvalidMaxSupplySupplyType.js';
+import { BigNumber } from '@hashgraph/hethers';
+import { fromSolidityAddress } from '@hashgraph/sdk/lib/EntityIdHelper.js';
 
-const MAX_SUPPLY = 9_223_372_036_854_775_807n; // eslint-disable-line
+const MAX_SUPPLY = 9_223_372_036_854_775_807n;
 const TEN = 10;
 const ONE_HUNDRED = 100;
 const EIGHTEEN = 18;
@@ -383,15 +385,21 @@ export class StableCoin extends BaseEntity {
 	}
 
 	public static checkInitialSupply(
-		initialSupply: bigint,
-		maxSupply?: bigint,
+		initialSupply: BigDecimal,
+		maxSupply?: BigDecimal,
 		supplyType?: TokenSupplyType,
 	): BaseError[] {
 		let list: BaseError[] = [];
-		const min = BigInt(ZERO);
+		const min = BigDecimal.ZERO;
 		// TODO: review decimals max supply
 		if (maxSupply === undefined) {
-			if (!CheckNums.isWithinRange(initialSupply, min, MAX_SUPPLY)) {
+			if (
+				!CheckNums.isWithinRange(
+					initialSupply,
+					min,
+					BigDecimal.fromValue(BigNumber.from(MAX_SUPPLY), 0),
+				)
+			) {
 				list.push(new InitSupplyInvalid(initialSupply.toString()));
 			}
 		} else {
@@ -405,16 +413,24 @@ export class StableCoin extends BaseEntity {
 	}
 
 	public static checkMaxSupply(
-		maxSupply: bigint,
-		initialSupply?: bigint,
+		maxSupply: BigDecimal,
+		initialSupply?: BigDecimal,
 		supplyType?: TokenSupplyType,
 	): BaseError[] {
 		let list: BaseError[] = [];
-		const min = initialSupply ?? BigInt(ZERO);
+		if(typeof maxSupply === 'string') maxSupply = BigDecimal.fromString(maxSupply)
+		if(typeof initialSupply === 'string') initialSupply = BigDecimal.fromString(initialSupply);
+		const min = initialSupply ?? BigDecimal.ZERO;
 		// TODO: review decimals max supply
 
 		if (!supplyType) {
-			if (!CheckNums.isWithinRange(maxSupply, min, MAX_SUPPLY)) {
+			if (
+				!CheckNums.isWithinRange(
+					maxSupply,
+					min,
+					BigDecimal.fromValue(BigNumber.from(MAX_SUPPLY), 0),
+				)
+			) {
 				list.push(
 					new InitSupplyLargerThanMaxSupply(
 						min.toString(),
@@ -433,13 +449,13 @@ export class StableCoin extends BaseEntity {
 	}
 
 	private static checkSupply(
-		maxSupply: bigint,
-		initialSupply: bigint,
+		maxSupply: BigDecimal,
+		initialSupply: BigDecimal,
 		supplyType?: TokenSupplyType,
 	): BaseError[] {
 		const list: BaseError[] = [];
 		if (supplyType && supplyType !== TokenSupplyType.FINITE) {
-			if (CheckNums.isMoreThan(maxSupply, 0n)) {
+			if (CheckNums.isMoreThan(maxSupply, BigDecimal.ZERO)) {
 				list.push(new InvalidMaxSupplySupplyType(maxSupply.toString()));
 			}
 		}

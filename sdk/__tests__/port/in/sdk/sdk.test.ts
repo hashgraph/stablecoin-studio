@@ -1,9 +1,13 @@
 import PublicKey from '../../../../src/domain/context/account/PublicKey.js';
-import { CreateStableCoinRequest, SDK } from '../../../../src/index.js';
+import {
+  CreateStableCoinRequest,
+  SDK,
+} from '../../../../src/index.js';
 import { ACCOUNTS, getSDKAsync, REQUEST_ACCOUNTS } from '../../../core/core.js';
 import { StableCoinRole } from '../../../../src/core/enum.js';
 import CashInStableCoinRequest from '../../../../src/port/in/sdk/request/CashInStableCoinRequest.js';
 import WipeStableCoinRequest from '../../../../src/port/in/sdk/request/WipeStableCoinRequest.js';
+import BaseError from '../../../../src/core/error/BaseError.js';
 
 
 describe('🧪 [PORT] SDK', () => {
@@ -21,7 +25,7 @@ describe('🧪 [PORT] SDK', () => {
         account: REQUEST_ACCOUNTS.testnet,
         name: 'TEST COIN',
         symbol: 'TC',
-        initialSupply: 10n,
+        initialSupply: '10',
         decimals: 0,
         adminKey: {
           key: ACCOUNTS.testnet.privateKey.publicKey.key,
@@ -47,8 +51,8 @@ describe('🧪 [PORT] SDK', () => {
           account: REQUEST_ACCOUNTS.testnet,
           name: 'TEST COIN',
           symbol: 'TC',
-          initialSupply: 10n,
-          maxSupply: 9n,
+          initialSupply: '10',
+          maxSupply: '9',
           decimals: 0,
           adminKey: {
             key: ACCOUNTS.testnet.privateKey.publicKey.key,
@@ -56,7 +60,7 @@ describe('🧪 [PORT] SDK', () => {
           },
         }),
       ),
-    ).rejects.toThrow(Error);
+    ).rejects.toThrow(BaseError);
   }, 120_000);
 
   it('Gets the token info', async () => {

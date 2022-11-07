@@ -1,11 +1,15 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import CheckNums from '../../../../core/checks/numbers/CheckNums.js';
+import CheckStrings from '../../../../core/checks/strings/CheckStrings.js';
 import { OptionalField } from '../../../../core/decorators/OptionalDecorator.js';
-import { StableCoin, TokenSupplyType, ValidationResponse } from '../sdk.js';
+import InvalidDecimalRange from '../../../../domain/context/stablecoin/error/InvalidDecimalRange.js';
+import { AccountId, BigDecimal, StableCoin, TokenSupplyType } from '../sdk.js';
 import {
 	AccountBaseRequest,
 	RequestAccount,
 	RequestPublicKey,
 } from './BaseRequest.js';
+import { InvalidRange } from './error/InvalidRange.js';
 import { InvalidType } from './error/InvalidType.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
@@ -26,10 +30,10 @@ export default class CreateStableCoinRequest
 	}
 
 	@OptionalField()
-	initialSupply?: bigint;
+	initialSupply?: string | undefined;
 
 	@OptionalField()
-	maxSupply?: bigint;
+	maxSupply?: string | undefined;
 
 	@OptionalField()
 	freezeDefault?: boolean;
@@ -56,7 +60,7 @@ export default class CreateStableCoinRequest
 	supplyKey?: RequestPublicKey;
 
 	@OptionalField()
-	treasury?: string;
+	treasury?: string | undefined;
 
 	@OptionalField()
 	supplyType?: TokenSupplyType;
@@ -83,8 +87,8 @@ export default class CreateStableCoinRequest
 		name: string;
 		symbol: string;
 		decimals: number | string;
-		initialSupply?: bigint;
-		maxSupply?: bigint;
+		initialSupply?: string;
+		maxSupply?: string;
 		freezeDefault?: boolean;
 		autoRenewAccount?: string;
 		adminKey?: RequestPublicKey;
@@ -97,7 +101,7 @@ export default class CreateStableCoinRequest
 		supplyType?: TokenSupplyType;
 	}) {
 		super({
-			account: Validation.checkAccountId(),
+			account: Validation.checkAccount(),
 			name: (val) => {
 				return StableCoin.checkName(val as string);
 			},
@@ -113,9 +117,36 @@ export default class CreateStableCoinRequest
 				if (this.initialSupply === undefined) {
 					return;
 				}
+				if (!BigDecimal.isBigDecimal(this.initialSupply)) {
+					return [new InvalidType(this.initialSupply, 'BigDecimal')];
+				}
+
+				const bInitialSupply = BigDecimal.fromString(
+					this.initialSupply,
+				);
+				const bMaxSupply =
+					this.maxSupply && BigDecimal.isBigDecimal(this.maxSupply)
+						? BigDecimal.fromString(this.maxSupply)
+						: undefined;
+
+				if (CheckNums.hasMoreDecimals(bInitialSupply, this.decimals)) {
+					return [
+						new InvalidDecimalRange(
+							this.initialSupply,
+							this.decimals,
+						),
+					];
+				}
+				if (bMaxSupply && bInitialSupply.isGreaterThan(bMaxSupply)) {
+					return [
+						new InvalidRange(
+							'Initial supply cannot be more than the max supply',
+						),
+					];
+				}
 				return StableCoin.checkInitialSupply(
-					val as bigint,
-					this.maxSupply,
+					bInitialSupply,
+					bMaxSupply,
 					this.supplyType,
 				);
 			},
@@ -123,20 +154,50 @@ export default class CreateStableCoinRequest
 				if (this.maxSupply === undefined) {
 					return;
 				}
+				if (!BigDecimal.isBigDecimal(this.maxSupply)) {
+					return [new InvalidType(this.maxSupply, 'BigDecimal')];
+				}
+
+				const bMaxSupply = BigDecimal.fromString(this.maxSupply);
+				const bInitialSupply =
+					this.initialSupply &&
+					BigDecimal.isBigDecimal(this.initialSupply)
+						? BigDecimal.fromString(this.initialSupply)
+						: undefined;
+
+				if (CheckNums.hasMoreDecimals(bMaxSupply, this.decimals)) {
+					return [
+						new InvalidDecimalRange(this.maxSupply, this.decimals),
+					];
+				}
+				if (
+					bInitialSupply &&
+					bInitialSupply.isGreaterThan(bMaxSupply)
+				) {
+					return [
+						new InvalidRange(
+							'Initial supply cannot be more than the max supply',
+						),
+					];
+				}
 				return StableCoin.checkMaxSupply(
-					val as bigint,
-					this.initialSupply,
+					bMaxSupply,
+					bInitialSupply,
 					this.supplyType,
 				);
 			},
-			autoRenewAccount: Validation.checkAccountId(),
+			autoRenewAccount: (val) => {
+				new AccountId(val as string);
+			},
 			adminKey: Validation.checkPublicKey(),
 			freezeKey: Validation.checkPublicKey(),
 			KYCKey: Validation.checkPublicKey(),
 			wipeKey: Validation.checkPublicKey(),
 			pauseKey: Validation.checkPublicKey(),
 			supplyKey: Validation.checkPublicKey(),
-			treasury: Validation.checkContractId(),
+			treasury: (val) => {
+				new AccountId(val as string);
+			},
 		});
 		this.account = account;
 		this.name = name;

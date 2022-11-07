@@ -22,6 +22,7 @@ import { IAccountWithKeyRequestModel } from './model/CoreRequestModel.js';
 import IGetSupplierAllowanceModel from './model/IGetSupplierAllowanceModel.js';
 import BigDecimal from '../../../domain/context/stablecoin/BigDecimal.js';
 import IGetRolesServiceRequestModel from './model/IGetRolesServiceRequest';
+import { InvalidRange } from '../../../port/in/sdk/request/error/InvalidRange.js';
 
 export default class StableCoinService extends Service {
 	private repository: IStableCoinRepository;
@@ -51,7 +52,7 @@ export default class StableCoinService extends Service {
 			req.initialSupply &&
 			initialSupply.isGreaterThan(maxSupply)
 		) {
-			throw new Error(
+			throw new InvalidRange(
 				'Initial supply cannot be more than the max supply',
 			);
 		}
@@ -402,7 +403,7 @@ export default class StableCoinService extends Service {
 			id: req.tokenId,
 		});
 
-		return BigDecimal.fromStringHedera(
+		return BigDecimal.fromStringFixed(
 			response[0].toString(),
 			coin.decimals,
 		).toString();

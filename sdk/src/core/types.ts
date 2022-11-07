@@ -20,3 +20,5 @@ export interface IndexableObject {
 export type Constructible<Params extends readonly any[] = any[], T = any> = new (
 	...params: Params
 ) => T;
+
+export type MapFunction<T, K> = (value: T) => K

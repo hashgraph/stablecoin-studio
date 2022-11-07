@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Constructible } from '../../../../../core/types.js';
+import { isConstructible } from '../../../../../core/cast.js';
+import { Constructible, MapFunction } from '../../../../../core/types.js';
 import { Account, AccountId, PrivateKey, PublicKey } from '../../sdk.js';
 import {
 	RequestAccount,
@@ -67,7 +68,10 @@ export default class RequestMapper {
 	public static map<
 		T extends ValidatedRequest<T>,
 		K extends { [key in keyof T]: any },
-	>(req: T, extra?: Partial<{ [p in keyof K]: Constructible }>): K {
+	>(
+		req: T,
+		extra?: Partial<{ [p in keyof K]: Constructible | MapFunction<any, any> }>,
+	): K {
 		const entries = Object.entries(req);
 		const extraKeys = this.renamePrivateProps(Object.keys(extra ?? {}));
 		const target: { [n: string]: any } = {};
@@ -80,7 +84,12 @@ export default class RequestMapper {
 				val !== null
 			) {
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				target[key] = new extra[key as keyof K]!(val);
+				const cll = extra[key as keyof K];
+				if (isConstructible(cll)) {
+					target[key] = new cll(val);
+				}else if(cll){
+					target[key] = cll(val);
+				}
 			} else if (this.isPublicKey(val)) {
 				target[key] = this.getPublicKey(val);
 			} else if (this.isAccount(val)) {
@@ -101,7 +110,23 @@ export default class RequestMapper {
 				: keys;
 		} else {
 			return keys.map((key) =>
-				key.startsWith('_') ? key.substring(1) : key,
+				key.startsWith('_') || key.startsWith('#')
+					? key.substring(1)
+					: key,
+			);
+		}
+	}
+
+	public static findPrivateProps(keys: string[]): string[];
+	public static findPrivateProps(keys: string): string;
+	public static findPrivateProps(keys: string | string[]): any {
+		if (typeof keys === 'string') {
+			return keys.startsWith('_') || keys.startsWith('#')
+				? keys
+				: undefined;
+		} else {
+			return keys.filter(
+				(key) => key.startsWith('_') || key.startsWith('#'),
 			);
 		}
 	}
