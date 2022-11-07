@@ -3,6 +3,8 @@ import { CreateStableCoinRequest, SDK } from '../../../../src/index.js';
 import { ACCOUNTS, getSDKAsync, REQUEST_ACCOUNTS } from '../../../core/core.js';
 import { StableCoinRole } from '../../../../src/core/enum.js';
 import CashInStableCoinRequest from '../../../../src/port/in/sdk/request/CashInStableCoinRequest.js';
+import WipeStableCoinRequest from '../../../../src/port/in/sdk/request/WipeStableCoinRequest.js';
+
 
 describe('🧪 [PORT] SDK', () => {
   let sdk: SDK;
@@ -107,16 +109,18 @@ describe('🧪 [PORT] SDK', () => {
 
   it('Wipe token', async () => {
     const amount = '1';
-    const wipe = await sdk.wipe({
-      account: ACCOUNTS.testnet,
-      targetId: ACCOUNTS.testnet.accountId.id,
-      proxyContractId: proxyContractId ?? '',
-      tokenId: tokenId ?? '',
-      amount,
-    });
+    const wipe = await sdk.wipe(
+      new WipeStableCoinRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        targetId: REQUEST_ACCOUNTS.testnet.accountId.id,
+        proxyContractId: proxyContractId ?? '',
+        tokenId: tokenId ?? '',
+        amount
+      })
+    );
     const balance = await sdk.getBalanceOf({
       account: ACCOUNTS.testnet,
-      targetId: ACCOUNTS.testnet.accountId.id,
+      targetId: REQUEST_ACCOUNTS.testnet.accountId.id,
       proxyContractId: proxyContractId ?? '',
       tokenId: tokenId ?? '',
     });
@@ -129,13 +133,15 @@ describe('🧪 [PORT] SDK', () => {
   it('Wipe token (wrong)', async () => {
     const amount = '100';
     await expect(
-      sdk.wipe({
-        account: ACCOUNTS.testnet,
-        targetId: ACCOUNTS.testnet.accountId.id,
-        proxyContractId: proxyContractId ?? '',
-        tokenId: tokenId ?? '',
-        amount,
-      }),
+      sdk.wipe(
+        new WipeStableCoinRequest({
+          account: REQUEST_ACCOUNTS.testnet,
+          targetId: REQUEST_ACCOUNTS.testnet.accountId.id,
+          proxyContractId: proxyContractId ?? '',
+          tokenId: tokenId ?? '',
+          amount
+        })
+      ),
     ).rejects.toThrow(Error);
   }, 15000);
 
