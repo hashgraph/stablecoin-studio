@@ -39,7 +39,7 @@ export default class CashInStableCoinRequest
 	}) {
 		super({
 			account: Validation.checkAccount(),
-			amount: Validation.checkNumber(),
+			amount: Validation.checkAmount(),
 			proxyContractId: Validation.checkContractId(),
 			targetId: Validation.checkHederaIdFormat(),
 			tokenId: Validation.checkHederaIdFormat(),

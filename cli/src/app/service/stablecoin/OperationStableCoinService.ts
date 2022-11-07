@@ -182,30 +182,26 @@ export default class OperationStableCoinService extends Service {
         await utilsService.handleValidation(
           () => cashInRequest.validate('targetId'),
           async () => {
-            const account2Mint = await utilsService.defaultSingleAsk(
+            cashInRequest.targetId = await utilsService.defaultSingleAsk(
               language.getText('stablecoin.askTargetAccount'),
               currentAccount.accountId.id,
             );
-            cashInRequest.targetId = account2Mint;
           },
         );
 
         cashInRequest.amount = await utilsService
-          .defaultSingleAsk(
-            language.getText('stablecoin.askTargetAccount'),
-            '1',
-          )
+          .defaultSingleAsk(language.getText('stablecoin.askCashInAmount'), '1')
           .then((val) => val.replace(',', '.'));
+
         await utilsService.handleValidation(
-          () => cashInRequest.validate('targetId'),
+          () => cashInRequest.validate('amount'),
           async () => {
-            const amount2Mint = await utilsService
+            cashInRequest.amount = await utilsService
               .defaultSingleAsk(
                 language.getText('stablecoin.askTargetAccount'),
                 '1',
               )
               .then((val) => val.replace(',', '.'));
-            cashInRequest.amount = amount2Mint;
           },
         );
         try {
