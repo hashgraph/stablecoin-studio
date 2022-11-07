@@ -127,7 +127,10 @@ export default class OperationStableCoinService extends Service {
       'wizard.stableCoinOptions',
     );
 
-    const capabilitiesStableCoin = await this.getCapabilities(sdk, currentAccount);
+    const capabilitiesStableCoin = await this.getCapabilities(
+      sdk,
+      currentAccount,
+    );
 
     switch (
       await utilsService.defaultMultipleAsk(
@@ -136,7 +139,7 @@ export default class OperationStableCoinService extends Service {
           wizardOperationsStableCoinOptions,
           capabilitiesStableCoin,
           this.optionTokenListSelected &&
-          this.optionTokenListSelected.split(' - ').length === 3
+            this.optionTokenListSelected.split(' - ').length === 3
             ? configAccount.externalTokens.find(
                 (token) => token.id === this.stableCoinId,
               ).roles
@@ -404,7 +407,10 @@ export default class OperationStableCoinService extends Service {
       ),
     );
 
-    const capabilitiesStableCoin = await this.getCapabilities(sdk, currentAccount);
+    const capabilitiesStableCoin = await this.getCapabilities(
+      sdk,
+      currentAccount,
+    );
     const roleManagementOptions = language
       .getArray('wizard.roleManagementOptions')
       .filter((option) => {
@@ -849,8 +855,11 @@ export default class OperationStableCoinService extends Service {
       ? capabilitiesFilter.filter((option) => {
           if (
             (option === 'Cash in' && roles.includes('CASH IN')) ||
+            (option === 'Cash in' && capabilities.includes('Cash in hts')) ||
             (option === 'Burn' && roles.includes('BURN')) ||
+            (option === 'Burn' && capabilities.includes('Burn hts')) ||
             (option === 'Wipe' && roles.includes('WIPE')) ||
+            (option === 'Wipe' && capabilities.includes('Wipe hts')) ||
             (option === 'Rescue' && roles.includes('RESCUE')) ||
             option === 'Refresh roles' ||
             option === 'Details' ||
