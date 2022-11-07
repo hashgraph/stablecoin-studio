@@ -39,7 +39,9 @@ export default class WipeStableCoinsService extends Service {
     });
 
     await utilsService.showSpinner(
-      sdk.cashIn(request).then((response) => (respDetail = response)),
+      sdk
+        .wipe(request)
+        .then((response) => (respDetail = response)),
       {
         text: language.getText('state.loading'),
         successText: language.getText('state.wipeCompleted') + '\n',
