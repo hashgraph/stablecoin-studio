@@ -221,10 +221,19 @@ export class SDK {
 		request: CreateStableCoinRequest,
 	): Promise<IStableCoinDetail> {
 		try {
-			const req: ICreateStableCoinServiceRequestModel = RequestMapper.map(request,{
-				treasury: AccountId,
-				autoRenewAccount: AccountId,
-			})
+			const req: ICreateStableCoinServiceRequestModel = RequestMapper.map(
+				request,
+				{
+					treasury: AccountId,
+					autoRenewAccount: AccountId,
+					initialSupply: (val, req) => {
+						console.log(val, req);
+						return BigDecimal.fromString(val, req.decimals);
+					},
+					maxSupply: (val, req) =>
+						BigDecimal.fromString(val, req.decimals),
+				},
+			);
 			return this.stableCoinService.createStableCoin(req);
 		} catch (error) {
 			console.error(error);

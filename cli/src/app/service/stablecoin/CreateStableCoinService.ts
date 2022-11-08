@@ -7,7 +7,6 @@ import {
   PublicKey,
   IStableCoinDetail,
   CreateStableCoinRequest,
-  RequestPrivateKey,
   TokenSupplyType,
 } from 'hedera-stable-coin-sdk';
 import { IManagedFeatures } from '../../../domain/configuration/interfaces/IManagedFeatures.js';
@@ -146,10 +145,6 @@ export default class CreateStableCoinService extends Service {
     let initialSupply = '';
     let supplyType = true;
     let totalSupply = undefined;
-    const privateKey: RequestPrivateKey = {
-      key: currentAccount.privateKey.key,
-      type: currentAccount.privateKey.type,
-    };
 
     if (optionalProps) {
       tokenToCreate.decimals = await this.askForDecimals(decimals);
@@ -177,36 +172,9 @@ export default class CreateStableCoinService extends Service {
             tokenToCreate.maxSupply = totalSupply;
           },
         );
-        // while (isNaN(Number(totalSupply))) {
-        //   utilsService.showError(language.getText('general.incorrectParam'));
-        //   totalSupply = await this.askForTotalSupply();
-        // }
-        // while (parseFloat(initialSupply) > parseFloat(totalSupply)) {
-        //   utilsService.showError(
-        //     language.getText('stablecoin.initialSupplyError'),
-        //   );
-        //   totalSupply = await this.askForTotalSupply(
-        //     tokenToCreate.maxSupply
-        //       ? tokenToCreate.maxSupply.toString()
-        //       : tokenToCreate.initialSupply?.toString(),
-        //   );
-        // }
         tokenToCreate.maxSupply = totalSupply;
       }
 
-      // if (totalSupply) {
-      //   while (parseFloat(initialSupply) > parseFloat(totalSupply)) {
-      //     utilsService.showError(
-      //       language.getText('stablecoin.initialSupplyError'),
-      //     );
-      //     initialSupply = await this.askForInitialSupply();
-      //   }
-      // }
-
-      // while (isNaN(Number(initialSupply))) {
-      //   utilsService.showError(language.getText('general.incorrectParam'));
-      //   initialSupply = await this.askForInitialSupply();
-      // }
       initialSupply = await this.askForInitialSupply(
         tokenToCreate.initialSupply?.toString(),
       );
@@ -271,6 +239,8 @@ export default class CreateStableCoinService extends Service {
     tokenToCreate.pauseKey = pauseKey;
 
     const treasury = this.getTreasuryAccountFromSupplyKey(supplyKey);
+    tokenToCreate.treasury = treasury;
+
     console.log({
       name,
       symbol,
@@ -307,28 +277,7 @@ export default class CreateStableCoinService extends Service {
           : 'The Smart Contract',
       treasury: treasury !== '0.0.0' ? treasury : 'The Smart Contract',
     });
-    tokenToCreate = new CreateStableCoinRequest({
-      account: {
-        accountId: currentAccount.accountId,
-        privateKey,
-      },
-      name,
-      symbol,
-      autoRenewAccount,
-      decimals: parseInt(decimals),
-      initialSupply: initialSupply === '' ? undefined : initialSupply,
-      supplyType: supplyType
-        ? TokenSupplyType.INFINITE
-        : TokenSupplyType.FINITE,
-      maxSupply: totalSupply === '' ? undefined : totalSupply,
-      freezeKey,
-      //KYCKey,
-      wipeKey,
-      adminKey,
-      supplyKey,
-      pauseKey,
-      treasury: treasury,
-    });
+
     if (
       !(await utilsService.defaultConfirmAsk(
         language.getText('stablecoin.askConfirmCreation'),

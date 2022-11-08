@@ -6,8 +6,9 @@ export type ValidatedRequestKey<T extends BaseRequest> = keyof Omit<
 	'validations' | 'validate'
 >;
 
-export type ValidationFn = (val: unknown) => BaseError[] | void;
+export type ValidationFn<K> = (val: K) => BaseError[] | void;
+export type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
 
 export type ValidationSchema<T extends BaseRequest> = Partial<{
-	[K in ValidatedRequestKey<T>]: ValidationFn;
+	[K in ValidatedRequestKey<T>]: ValidationFn<PropType<T, K>>;
 }>;

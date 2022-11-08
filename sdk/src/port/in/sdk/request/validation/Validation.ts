@@ -80,7 +80,7 @@ export default class Validation {
 						err.push(new InvalidRange(v, min));
 					}
 				} else if (!iMin && iMax) {
-					if (CheckNums.isMoreThan(v, max)) {
+					if (CheckNums.isGreaterThan(v, max)) {
 						err.push(new InvalidRange(v, undefined, max));
 					}
 				} else if (iMin && iMax) {

@@ -38,19 +38,10 @@ export default class StableCoinService extends Service {
 	public async createStableCoin(
 		req: ICreateStableCoinServiceRequestModel,
 	): Promise<IStableCoinDetail> {
-		const initialSupply = BigDecimal.fromString(
-			req.initialSupply ?? '0',
-			req.decimals,
-		);
-		const maxSupply = BigDecimal.fromString(
-			req.maxSupply ?? '0',
-			req.decimals,
-		);
-
 		if (
 			req.maxSupply &&
 			req.initialSupply &&
-			initialSupply.isGreaterThan(maxSupply)
+			req.initialSupply.isGreaterThan(req.maxSupply)
 		) {
 			throw new InvalidRange(
 				'Initial supply cannot be more than the max supply',
@@ -61,8 +52,8 @@ export default class StableCoinService extends Service {
 			symbol: req.symbol,
 			decimals: req.decimals,
 			adminKey: req.adminKey,
-			initialSupply: req.initialSupply ? initialSupply : undefined,
-			maxSupply: req.maxSupply ? maxSupply : undefined,
+			initialSupply: req.initialSupply ? req.initialSupply : undefined,
+			maxSupply: req.maxSupply ? req.maxSupply : undefined,
 			memo: req.memo,
 			freezeKey: req.freezeKey,
 			freezeDefault: req.freezeDefault,
@@ -168,8 +159,9 @@ export default class StableCoinService extends Service {
 		if (
 			coin.maxSupply &&
 			coin.maxSupply.isGreaterThan(BigDecimal.ZERO) &&
-			amount.isLowerThan(coin.maxSupply.subUnsafe(coin.totalSupply))
+			amount.isGreaterThan(coin.maxSupply.subUnsafe(coin.totalSupply))
 		) {
+			console.log(coin.maxSupply, coin.totalSupply, amount);
 			throw new Error('Amount is bigger than allowed supply');
 		}
 		let resultCashIn = false;

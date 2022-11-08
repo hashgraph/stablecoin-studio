@@ -1,3 +1,4 @@
+import { BigNumber } from '@hashgraph/hethers';
 import ICreateStableCoinServiceRequestModel from '../../../../../src/app/service/stablecoin/model/ICreateStableCoinServiceRequestModel.js';
 import BaseError, {
   ErrorCode,
@@ -5,7 +6,7 @@ import BaseError, {
 import { Account, AccountId, BigDecimal } from '../../../../../src/index.js';
 import CreateStableCoinRequest from '../../../../../src/port/in/sdk/request/CreateStableCoinRequest.js';
 import RequestMapper from '../../../../../src/port/in/sdk/request/mapping/RequestMapper.js';
-import { logValidation } from '../../../../core/core.js';
+import { logValidation, MAX_SUPPLY } from '../../../../core/core.js';
 
 describe('🧪 SDK Create Stable Coin Request', () => {
   it('Create simple request', () => {
@@ -52,13 +53,34 @@ describe('🧪 SDK Create Stable Coin Request', () => {
       symbol: 'symbol',
       decimals: 18,
       initialSupply: '10.123456789012345677',
-      maxSupply: '10.123456789012345678',
+      maxSupply: '10.123456789012345677',
     });
     expect(request).not.toBeNull();
     const validations = request.validate();
     logValidation(validations);
     expect(validations.length).toBeDefined();
     expect(validations.length).toBe(0);
+  });
+
+  it('Create and validate simple request with 18 decimals with invalid max supply', () => {
+    const request: CreateStableCoinRequest = new CreateStableCoinRequest({
+      account: {
+        accountId: '0.0.1',
+      },
+      name: 'name',
+      symbol: 'symbol',
+      decimals: 18,
+      initialSupply: '1.123456789012345677',
+      maxSupply: BigDecimal.fromValue(
+        BigNumber.from(MAX_SUPPLY + 1n),
+        18,
+      ).toString(),
+    });
+    expect(request).not.toBeNull();
+    const validations = request.validate();
+    logValidation(validations);
+    expect(validations.length).toBeDefined();
+    expect(validations.length).toBe(1);
   });
 
   it('Create and validate simple invalid request', () => {

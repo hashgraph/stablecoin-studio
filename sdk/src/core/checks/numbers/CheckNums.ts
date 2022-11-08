@@ -7,7 +7,7 @@ export default class CheckNums {
 		min: T,
 		max: T,
 	): boolean {
-		if (this.isLessThan(value, min) || this.isMoreThan(value, max))
+		if (this.isLessThan(value, min) || this.isGreaterThan(value, max))
 			return false;
 		return true;
 	}
@@ -22,7 +22,7 @@ export default class CheckNums {
 		return true;
 	}
 
-	public static isMoreThan<T extends number | bigint | BigDecimal>(
+	public static isGreaterThan<T extends number | bigint | BigDecimal>(
 		value: T,
 		max: T,
 	): boolean {
@@ -50,8 +50,13 @@ export default class CheckNums {
 		}
 	}
 
-	public static hasMoreDecimals(from: BigDecimal, to: number): boolean {
-		return from.format.decimals > to;
+	public static hasMoreDecimals(
+		from: BigDecimal | string,
+		to: number,
+	): boolean {
+		let val = from;
+		if (typeof val === 'string') val = BigDecimal.fromString(val);
+		return val.format.decimals > to;
 	}
 
 	public static isNumber(value: any): value is number | bigint {
