@@ -2,6 +2,7 @@ import { language } from '../../../index.js';
 import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
 import {
+  AllowanceRequest,
   EOAccount,
   PrivateKey,
   SDK,
@@ -112,13 +113,18 @@ export default class RoleStableCoinsService extends Service {
   ): Promise<void> {
     const sdk: SDK = utilsService.getSDK();
     await utilsService.showSpinner(
-      sdk.increaseSupplierAllowance({
-        proxyContractId,
-        tokenId,
-        targetId,
-        account: new EOAccount(accountId, privateKey),
-        amount,
-      }),
+      sdk.increaseSupplierAllowance(
+        new AllowanceRequest({
+          proxyContractId,
+          tokenId,
+          targetId,
+          account: {
+            accountId,
+            privateKey,
+          },
+          amount,
+        }),
+      ),
       {
         text: language.getText('state.loading'),
         successText: language.getText('state.loadCompleted') + '\n',
@@ -139,13 +145,18 @@ export default class RoleStableCoinsService extends Service {
   ): Promise<void> {
     const sdk: SDK = utilsService.getSDK();
     await utilsService.showSpinner(
-      sdk.decreaseSupplierAllowance({
-        proxyContractId,
-        tokenId,
-        targetId,
-        account: new EOAccount(accountId, privateKey),
-        amount,
-      }),
+      sdk.decreaseSupplierAllowance(
+        new AllowanceRequest({
+          proxyContractId,
+          tokenId,
+          targetId,
+          account: {
+            accountId,
+            privateKey,
+          },
+          amount,
+        }),
+      ),
       {
         text: language.getText('state.loading'),
         successText: language.getText('state.loadCompleted') + '\n',
