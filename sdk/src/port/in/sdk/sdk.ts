@@ -52,8 +52,8 @@ import ContractId from '../../../domain/context/contract/ContractId.js';
 import { TokenType } from '../../../domain/context/stablecoin/TokenType.js';
 import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.js';
 import { StableCoinMemo } from '../../../domain/context/stablecoin/StableCoinMemo.js';
-import { IAllowanceRequest } from './request/IRequestContracts.js';
-import { IRequestRoles } from './request/IRequestContracts';
+import { AllowanceRequest } from './request/model/ContractRequests.js';
+import { RequestRoles } from './request/model/ContractRequests';
 import { AppMetadata } from '../../out/hedera/hashpack/types/types.js';
 import {
 	AcknowledgeMessage,
@@ -106,7 +106,7 @@ export {
 	ISupplierRoleStableCoinRequest,
 	IWipeStableCoinRequest,
 	IGetCapabilitiesRequest,
-	IAllowanceRequest,
+	AllowanceRequest as IAllowanceRequest,
 	IBasicRequest,
 	IStableCoinDetail,
 	IStableCoinList,
@@ -423,7 +423,7 @@ export class SDK {
 	 * increase supplier allowance
 	 */
 	public increaseSupplierAllowance(
-		request: IAllowanceRequest,
+		request: AllowanceRequest,
 	): Promise<Uint8Array> | null {
 		try {
 			const req: ISupplierRoleStableCoinServiceRequestModel = {
@@ -439,7 +439,7 @@ export class SDK {
 	 * decrease supplier allowance
 	 */
 	public decreaseSupplierAllowance(
-		request: IAllowanceRequest,
+		request: AllowanceRequest,
 	): Promise<Uint8Array> | null {
 		try {
 			const req: ISupplierRoleStableCoinServiceRequestModel = {
@@ -564,7 +564,7 @@ export class SDK {
 		}
 	}
 
-	public getRoles(request: IRequestRoles): Promise<string[]> | null {
+	public getRoles(request: RequestRoles): Promise<string[]> | null {
 		try {
 			const req: IGetRolesServiceRequestModel = {
 				...request,

@@ -1,7 +1,7 @@
 import {
-	IRequestBalanceOf,
-	ITokenIdRequestModel,
-} from './IRequestContracts.js';
+	RequestBalanceOf,
+	TokenIdRequestModel,
+} from './model/ContractRequests.js';
 
-export type IGetBalanceStableCoinRequest = IRequestBalanceOf &
-	ITokenIdRequestModel;
+export type IGetBalanceStableCoinRequest = RequestBalanceOf &
+	TokenIdRequestModel;
