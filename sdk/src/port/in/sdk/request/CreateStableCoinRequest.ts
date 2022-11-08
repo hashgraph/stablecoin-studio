@@ -103,85 +103,72 @@ export default class CreateStableCoinRequest
 		super({
 			account: Validation.checkAccount(),
 			name: (val) => {
-				return StableCoin.checkName(val as string);
+				return StableCoin.checkName(val);
 			},
 			symbol: (val) => {
-				return StableCoin.checkSymbol(val as string);
+				return StableCoin.checkSymbol(val);
 			},
 			decimals: (val) => {
 				if (isNaN(this.decimals))
 					return [new InvalidType(this.decimals, 'number')];
-				return StableCoin.checkDecimals(val as number);
+				return StableCoin.checkDecimals(val);
 			},
 			initialSupply: (val) => {
-				if (this.initialSupply === undefined) {
+				if (val === undefined) {
 					return;
 				}
-				if (!BigDecimal.isBigDecimal(this.initialSupply)) {
-					return [new InvalidType(this.initialSupply, 'BigDecimal')];
+				if (!BigDecimal.isBigDecimal(val)) {
+					return [new InvalidType(val, 'BigDecimal')];
+				}
+				if (CheckNums.hasMoreDecimals(val, this.decimals)) {
+					return [new InvalidDecimalRange(val, this.decimals)];
 				}
 
 				const bInitialSupply = BigDecimal.fromString(
-					this.initialSupply,
+					val,
+					this.decimals,
 				);
 				const bMaxSupply =
-					this.maxSupply && BigDecimal.isBigDecimal(this.maxSupply)
-						? BigDecimal.fromString(this.maxSupply)
+					this.maxSupply &&
+					BigDecimal.isBigDecimal(this.maxSupply) &&
+					!CheckNums.hasMoreDecimals(this.maxSupply, this.decimals)
+						? BigDecimal.fromString(this.maxSupply, this.decimals)
 						: undefined;
 
-				if (CheckNums.hasMoreDecimals(bInitialSupply, this.decimals)) {
-					return [
-						new InvalidDecimalRange(
-							this.initialSupply,
-							this.decimals,
-						),
-					];
-				}
-				if (bMaxSupply && bInitialSupply.isGreaterThan(bMaxSupply)) {
-					return [
-						new InvalidRange(
-							'Initial supply cannot be more than the max supply',
-						),
-					];
-				}
 				return StableCoin.checkInitialSupply(
 					bInitialSupply,
+					this.decimals,
 					bMaxSupply,
-					this.supplyType,
 				);
 			},
 			maxSupply: (val) => {
-				if (this.maxSupply === undefined) {
+				if (val === undefined) {
 					return;
 				}
-				if (!BigDecimal.isBigDecimal(this.maxSupply)) {
-					return [new InvalidType(this.maxSupply, 'BigDecimal')];
+				if (!BigDecimal.isBigDecimal(val)) {
+					return [new InvalidType(val, 'BigDecimal')];
+				}
+				if (CheckNums.hasMoreDecimals(val, this.decimals)) {
+					return [new InvalidDecimalRange(val, this.decimals)];
 				}
 
-				const bMaxSupply = BigDecimal.fromString(this.maxSupply);
+				const bMaxSupply = BigDecimal.fromString(val, this.decimals);
 				const bInitialSupply =
 					this.initialSupply &&
-					BigDecimal.isBigDecimal(this.initialSupply)
-						? BigDecimal.fromString(this.initialSupply)
+					BigDecimal.isBigDecimal(this.initialSupply) &&
+					!CheckNums.hasMoreDecimals(
+						this.initialSupply,
+						this.decimals,
+					)
+						? BigDecimal.fromString(
+								this.initialSupply,
+								this.decimals,
+						  )
 						: undefined;
 
-				if (CheckNums.hasMoreDecimals(bMaxSupply, this.decimals)) {
-					return [
-						new InvalidDecimalRange(this.maxSupply, this.decimals),
-					];
-				}
-				if (
-					bInitialSupply &&
-					bInitialSupply.isGreaterThan(bMaxSupply)
-				) {
-					return [
-						new InvalidRange(
-							'Initial supply cannot be more than the max supply',
-						),
-					];
-				}
 				return StableCoin.checkMaxSupply(
 					bMaxSupply,
+					this.decimals,
 					bInitialSupply,
 					this.supplyType,
 				);

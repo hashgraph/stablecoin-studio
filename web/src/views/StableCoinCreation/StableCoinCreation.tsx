@@ -21,8 +21,7 @@ import {
 } from '../../store/slices/walletSlice';
 import SDKService from '../../services/SDKService';
 import ModalNotification from '../../components/ModalNotification';
-import { AccountId, PublicKey } from 'hedera-stable-coin-sdk';
-import type { ICreateStableCoinRequest } from 'hedera-stable-coin-sdk';
+import { AccountId, CreateStableCoinRequest, PublicKey } from 'hedera-stable-coin-sdk';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch } from '../../store/store';
 
@@ -162,40 +161,36 @@ const StableCoinCreation = () => {
 			supplyKey,
 		} = getValues();
 
-		let newStableCoinParams: ICreateStableCoinRequest = {
-			account,
+		const newStableCoinParams: CreateStableCoinRequest = new CreateStableCoinRequest({
+			account: {
+				accountId: account.accountId.id,
+			},
 			name,
 			symbol,
 			decimals,
 			initialSupply: initialSupply ? initialSupply.toString() : undefined,
 			maxSupply: maxSupply ? maxSupply.toString() : undefined,
 			autoRenewAccount: autorenewAccount,
-		};
+		});
 
 		if (managementPermissions) {
-			newStableCoinParams = {
-				...newStableCoinParams,
-				adminKey: accountInfo.publicKey,
-				freezeKey: PublicKey.NULL,
-				KYCKey: PublicKey.NULL,
-				wipeKey: PublicKey.NULL,
-				pauseKey: PublicKey.NULL,
-				supplyKey: PublicKey.NULL,
-				treasury: AccountId.NULL,
-			};
+			newStableCoinParams.adminKey = accountInfo.publicKey;
+			newStableCoinParams.freezeKey = PublicKey.NULL;
+			newStableCoinParams.KYCKey = PublicKey.NULL;
+			newStableCoinParams.wipeKey = PublicKey.NULL;
+			newStableCoinParams.pauseKey = PublicKey.NULL;
+			newStableCoinParams.supplyKey = PublicKey.NULL;
+			newStableCoinParams.treasury = AccountId.NULL.id;
 		} else {
-			newStableCoinParams = {
-				...newStableCoinParams,
-				adminKey: accountInfo.publicKey,
-				freezeKey: formatKey(freezeKey.label, 'freezeKey'),
-				wipeKey: formatKey(wipeKey.label, 'wipeKey'),
-				pauseKey: formatKey(pauseKey.label, 'pauseKey'),
-				supplyKey: formatKey(supplyKey.label, 'supplyKey'),
-				treasury:
-					!PublicKey.isNull(formatKey(supplyKey.label, 'supplyKey')) && accountInfo.account
-						? new AccountId(accountInfo.account)
-						: AccountId.NULL,
-			};
+			newStableCoinParams.adminKey = accountInfo.publicKey;
+			newStableCoinParams.freezeKey = formatKey(freezeKey.label, 'freezeKey');
+			newStableCoinParams.wipeKey = formatKey(wipeKey.label, 'wipeKey');
+			newStableCoinParams.pauseKey = formatKey(pauseKey.label, 'pauseKey');
+			newStableCoinParams.supplyKey = formatKey(supplyKey.label, 'supplyKey');
+			newStableCoinParams.treasury =
+				!PublicKey.isNull(formatKey(supplyKey.label, 'supplyKey')) && accountInfo.account
+					? accountInfo.account
+					: AccountId.NULL.id;
 		}
 		console.log(newStableCoinParams);
 		try {

@@ -31,6 +31,10 @@ export default class BigDecimal implements FixedNumber {
 		return this.#fn._isFixedNumber;
 	}
 
+	public get decimals(): number {
+		return this.format.decimals;
+	}
+
 	#fn: FixedNumber;
 
 	public static ZERO: BigDecimal = this.fromString('0', 0);
@@ -141,7 +145,11 @@ export default class BigDecimal implements FixedNumber {
 	}
 
 	public toBigNumber(): BigNumber {
-		return parseFixed(this.#fn._value, this.#fn.format.decimals);
+		return parseFixed(this.value, this.format.decimals);
+	}
+
+	public toFixedNumber(): number {
+		return this.toBigNumber().toNumber();
 	}
 
 	public toString(): string {

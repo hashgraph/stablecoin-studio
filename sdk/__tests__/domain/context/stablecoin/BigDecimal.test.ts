@@ -104,7 +104,7 @@ describe('🧪 [DOMAIN] BigDecimal', () => {
     );
 
     function addUnsafe(val: string): string {
-      return num.addUnsafe(BigDecimal.fromString(val)).toString();
+      return num.addUnsafe(BigDecimal.fromString(val, 18)).toString();
     }
   });
 
@@ -122,7 +122,7 @@ describe('🧪 [DOMAIN] BigDecimal', () => {
     expect(subtractUnsafe(getNumber(18, { integer: '10' }))).toBe('90');
 
     function subtractUnsafe(val: string): string {
-      return num.subUnsafe(BigDecimal.fromString(val)).toString();
+      return num.subUnsafe(BigDecimal.fromString(val, 18)).toString();
     }
   });
 
@@ -198,13 +198,12 @@ describe('🧪 [DOMAIN] BigDecimal', () => {
     // 10000000 --> 6 dec -> 10.0
     // const val = getNumber(17, { integer: '100', decimal: '1' }); // 100.00000000000000001
 
-    
     // 100 => 100.0
-    const num = BigDecimal.isBigDecimal('100.asd')
-    const num2 = BigDecimal.isBigDecimal('100.100.100')
-    const num3 = BigDecimal.isBigDecimal('100100.100')
-    const num4 = BigDecimal.isBigDecimal('asda100,100.100')
-    const num5 = BigDecimal.isBigDecimal('')
+    const num = BigDecimal.isBigDecimal('100.asd');
+    const num2 = BigDecimal.isBigDecimal('100.100.100');
+    const num3 = BigDecimal.isBigDecimal('100100.100');
+    const num4 = BigDecimal.isBigDecimal('asda100,100.100');
+    const num5 = BigDecimal.isBigDecimal('');
     expect(num).toBeFalsy();
     expect(num2).toBeFalsy();
     expect(num3).toBeTruthy();

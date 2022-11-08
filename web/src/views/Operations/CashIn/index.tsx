@@ -14,7 +14,7 @@ import {
 import OperationLayout from './../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
-import { useSelector,useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import {
 	SELECTED_WALLET_ACCOUNT_INFO,
 	SELECTED_WALLET_COIN,
@@ -23,7 +23,7 @@ import {
 } from '../../../store/slices/walletSlice';
 import { useEffect, useState } from 'react';
 import type { AppDispatch } from '../../../store/store.js';
-import { PublicKey } from 'hedera-stable-coin-sdk';
+import { CashInStableCoinRequest, PublicKey } from 'hedera-stable-coin-sdk';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
 
@@ -42,7 +42,7 @@ const CashInOperation = () => {
 	const { decimals = 0, totalSupply, maxSupply } = selectedStableCoin || {};
 
 	const [errorOperation, setErrorOperation] = useState();
-	const navigate = useNavigate()
+	const navigate = useNavigate();
 
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
@@ -52,12 +52,12 @@ const CashInOperation = () => {
 
 	useEffect(() => {
 		handleRefreshCoinInfo();
-	}, [])
-	
+	}, []);
+
 	const handleCloseModal = () => {
 		RouterManager.goBack(navigate);
-	}
-	
+	};
+
 	const handleRefreshCoinInfo = async () => {
 		const stableCoinDetails = await SDKService.getStableCoinDetails({
 			id: selectedStableCoin?.tokenId || '',
@@ -95,17 +95,21 @@ const CashInOperation = () => {
 				onError();
 				return;
 			}
-			await SDKService.cashIn({
-				proxyContractId: selectedStableCoin.memo.proxyContract,
-				account,
-				tokenId: selectedStableCoin.tokenId,
-				targetId: destinationAccount,
-				amount: amount.toString(),
-				publicKey: new PublicKey({
-					key: infoAccount.publicKey?.key ?? '',
-					type: infoAccount.publicKey?.type ?? '',
+			await SDKService.cashIn(
+				new CashInStableCoinRequest({
+					proxyContractId: selectedStableCoin.memo.proxyContract,
+					account: {
+						accountId: account.accountId.id,
+					},
+					tokenId: selectedStableCoin.tokenId,
+					targetId: destinationAccount,
+					amount: amount.toString(),
+					publicKey: new PublicKey({
+						key: infoAccount.publicKey?.key ?? '',
+						type: infoAccount.publicKey?.type ?? '',
+					}),
 				}),
-			});
+			);
 			onSuccess();
 		} catch (error: any) {
 			setErrorOperation(error.toString());
