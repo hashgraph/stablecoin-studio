@@ -3,66 +3,50 @@ import {
 	RequestAccount
 } from './BaseRequest.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
-import { OptionalField } from '../../../../core/decorators/OptionalDecorator.js';
 import Validation from './validation/Validation.js';
 import BaseError from '../../../../core/error/BaseError.js';
 import { InvalidSupplierType } from '../../../../domain/context/stablecoin/error/InvalidSupplierType.js';
+import { OptionalField } from '../../../../core/decorators/OptionalDecorator.js';
 
-export default class GrantRoleRequest
-	extends ValidatedRequest<GrantRoleRequest>
+export default class CheckCashInRoleRequest
+	extends ValidatedRequest<CheckCashInRoleRequest>
 	implements AccountBaseRequest
 {
 	account: RequestAccount;
 	targetId: string;
 	proxyContractId: string;
-	tokenId: string;
-	role: string;
 
-	@OptionalField()
-	supplierType: string | undefined;
-
-	@OptionalField()
-	amount?: string | undefined;
+    @OptionalField()
+	supplierType: string;
 
 	constructor({
 		account,
 		targetId,
 		proxyContractId,
-		tokenId,
-		role,
 		supplierType,
-		amount
 	}: {
 		account: RequestAccount;
-		targetId?: string;
-		proxyContractId?: string;
-		tokenId?: string;
-		role?: string;
+		targetId: string;
+		proxyContractId: string;
 		supplierType?: string;
-		amount?: string;
 	}) {
 		super({
 			account: Validation.checkAccount(),
 			targetId: Validation.checkHederaIdFormat(),
 			proxyContractId: Validation.checkContractId(),
-			tokenId: Validation.checkHederaIdFormat(),
-			role: Validation.checkRole(),	
-			supplierType: GrantRoleRequest.checkSupplierType()
+			supplierType: CheckCashInRoleRequest.checkSupplierType()
 		});
 		this.account = account;
-		this.proxyContractId = proxyContractId!;
-		this.tokenId = tokenId!;
-		this.targetId = targetId!;
-		this.role = role!;
-		this.supplierType = supplierType;
-		this.amount = amount;
+		this.proxyContractId = proxyContractId;
+		this.targetId = targetId;
+		this.supplierType = supplierType!;
 	}
 
 	private static checkSupplierType = () => {
 		return (val: any): BaseError[] => {
 			const err: BaseError[] = [];
 			const supplierTypes: string[] = ['limited', 'unlimited'];
-			if (!supplierTypes.includes(val.toLowerCase())) {
+			if (!supplierTypes.includes(val)) {
 				err.push(new InvalidSupplierType(val));
 			}
 			return err;

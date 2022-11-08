@@ -87,11 +87,11 @@ import {
 	CashInStableCoinRequest,
 	CashOutStableCoinRequest,
 	WipeStableCoinRequest,
-<<<<<<< HEAD
 	GetListStableCoin,
-=======
-	GrantRoleRequest 
->>>>>>> Manage roles initial validations
+	GrantRoleRequest,
+	RevokeRoleRequest,
+	HasRoleRequest,
+	CheckCashInRoleRequest
 } from './request';
 import RequestMapper from './request/mapping/RequestMapper.js';
 import { RequestAccount } from './request/BaseRequest.js';
@@ -380,12 +380,10 @@ export class SDK {
 	 * check unlimited supplier role
 	 */
 	public isUnlimitedSupplierAllowance(
-		request: IBasicRequest,
+		request: CheckCashInRoleRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			const req: IGetBasicRequestModel = {
-				...request,
-			};
+			const req: IGetBasicRequestModel = RequestMapper.map(request);
 			return this.stableCoinService.isUnlimitedSupplierAllowance(req);
 		} catch (error) {
 			console.error(error);
@@ -458,12 +456,10 @@ export class SDK {
 	 * check limited supplier role
 	 */
 	public isLimitedSupplierAllowance(
-		request: IBasicRequest,
+		request: CheckCashInRoleRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			const req: IGetBasicRequestModel = {
-				...request,
-			};
+			const req: IGetBasicRequestModel = RequestMapper.map(request);
 			return this.stableCoinService.isLimitedSupplierAllowance(req);
 		} catch (error) {
 			console.error(error);
@@ -506,24 +502,14 @@ export class SDK {
 	}
 
 	public grantRole(
-		//request: XOR<IRoleStableCoinRequest, ISupplierRoleStableCoinRequest>,
 		request: GrantRoleRequest
 	): Promise<Uint8Array> | null {
 		try {
-			/*const req = {
-				...request,
-			};*/
 			if (request.role === Roles.CASHIN_ROLE) {
-				const grantSupplierRoleReq: ISupplierRoleStableCoinServiceRequestModel = RequestMapper.map(request,{
-					//treasury: AccountId,
-					//autoRenewAccount: AccountId,
-				});
+				const grantSupplierRoleReq: ISupplierRoleStableCoinServiceRequestModel = RequestMapper.map(request);
 				return this.stableCoinService.grantSupplierRole(grantSupplierRoleReq);
 			}
-			const grantRoleReq: IRoleStableCoinServiceRequestModel = RequestMapper.map(request,{
-				//treasury: AccountId,
-				//autoRenewAccount: AccountId,
-			});
+			const grantRoleReq: IRoleStableCoinServiceRequestModel = RequestMapper.map(request);
 			return this.stableCoinService.grantRole(grantRoleReq);
 		} catch (error) {
 			console.error(error);
@@ -532,16 +518,15 @@ export class SDK {
 	}
 
 	public revokeRole(
-		request: IRoleStableCoinRequest,
+		request: RevokeRoleRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			const req: IRoleStableCoinServiceRequestModel = {
-				...request,
-			};
 			if (request.role === StableCoinRole.CASHIN_ROLE) {
-				return this.stableCoinService.revokeSupplierRole(req);
+				const revokeSupplierRoleReq: ISupplierRoleStableCoinServiceRequestModel = RequestMapper.map(request);
+				return this.stableCoinService.revokeSupplierRole(revokeSupplierRoleReq);
 			} else {
-				return this.stableCoinService.revokeRole(req);
+				const revokeRoleReq: IRoleStableCoinServiceRequestModel = RequestMapper.map(request);
+				return this.stableCoinService.revokeRole(revokeRoleReq);
 			}
 		} catch (error) {
 			console.error(error);
@@ -550,13 +535,10 @@ export class SDK {
 	}
 
 	public hasRole(
-		request: IRoleStableCoinRequest,
+		request: HasRoleRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			const req: IRoleStableCoinServiceRequestModel = {
-				...request,
-				role: request.role,
-			};
+			const req: IRoleStableCoinServiceRequestModel = RequestMapper.map(request);
 			return this.stableCoinService.hasRole(req);
 		} catch (error) {
 			console.error(error);
