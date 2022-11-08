@@ -1,4 +1,4 @@
-import { Box, Button, HStack, Tag, Text } from '@chakra-ui/react';
+import { Box, HStack, Tag, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -22,7 +22,6 @@ import { RouterManager } from '../../Router/RouterManager';
 import { matchPath, useLocation, useNavigate } from 'react-router-dom';
 import { NamedRoutes } from '../../Router/NamedRoutes';
 import { HashPackAccount } from 'hedera-stable-coin-sdk';
-import type { IAccountToken } from '../../interfaces/IAccountToken.js';
 import type { IExternalToken } from '../../interfaces/IExternalToken.js';
 
 const CoinDropdown = () => {
@@ -38,7 +37,6 @@ const CoinDropdown = () => {
 	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 
 	const [options, setOptions] = useState<Option[]>([]);
-	const [remove, setRemove] = useState<boolean>(false);
 
 	const isInStableCoinNotSelected = !!matchPath(
 		location.pathname,
@@ -87,31 +85,6 @@ const CoinDropdown = () => {
 		dispatch(walletActions.setCapabilities(capabilities));
 	};
 
-	const handleRemoveExternalToken = (e: any) => {
-		console.log('CLICK');
-		const tokensAccount = JSON.parse(localStorage.tokensAccount);
-		if (tokensAccount) {
-			const currentAcc = tokensAccount.find((acc: IAccountToken) => acc.id === accountId);
-			if (currentAcc) {
-				currentAcc.externalTokens = currentAcc.externalTokens.filter(
-					(coin: IExternalToken) =>
-						coin.id !== e.target.parentElement.parentElement.innerText.split(' - ')[0],
-				);
-				localStorage.setItem('tokensAccount', JSON.stringify(tokensAccount));
-				// window.location.reload();
-				setRemove(true);
-				setValue('coin-dropdown', undefined);
-				dispatch(walletActions.clearSelectedStableCoin());
-				console.log('VALUES', getValues());
-				const id = new HashPackAccount(accountId);
-				dispatch(getStableCoinList(id));
-				dispatch(getExternalTokenList(accountId));
-				RouterManager.to(navigate, NamedRoutes.StableCoinNotSelected);
-				console.log('VALUES', getValues());
-			}
-		}
-	};
-
 	const formatOptionsStableCoins = async () => {
 		let options = [];
 		if (stableCoinList) {
@@ -146,18 +119,6 @@ const CoinDropdown = () => {
 											>
 												External
 											</Tag>
-
-											<Button
-												bgColor='red'
-												size='xs'
-												w='fit-content'
-												fontSize={'sm'}
-												_hover={{ bgColor: 'white', color: 'red' }}
-												onClick={(e) => handleRemoveExternalToken(e)}
-												isDisabled={selectedStableCoin?.tokenId === item.id}
-											>
-												Remove
-											</Button>
 										</HStack>
 									</HStack>
 								),
@@ -167,100 +128,43 @@ const CoinDropdown = () => {
 					);
 			}
 			setOptions(options);
-			/* const tokensAccount = localStorage.tokensAccount;
-			if (tokensAccount) {
-				const tokensAccountStoraged = JSON.parse(tokensAccount);
-				const accountExternalToken = tokensAccountStoraged.find(
-					(account: IAccountToken) => account.id === accountId,
-				);
-				setOptions(
-					options
-						.filter((coin) => {
-							if (
-								accountExternalToken?.externalTokens.find(
-									(externalCoin: IExternalToken) => externalCoin.id === coin.value,
-								)
-							) {
-								return false;
-							}
-							return true;
-						})
-						.concat(
-							accountExternalToken?.externalTokens.map((item: IExternalToken) => {
-								return {
-									label: (
-										<HStack justifyContent={'space-between'} alignItems={'center'}>
-											<Text whiteSpace={'normal'}>{`${item.id} - ${item.symbol}`}</Text>
-											<HStack>
-												<Tag
-													variant='solid'
-													size='md'
-													backgroundColor={'light.purple4'}
-													color={'dark.primary'}
-												>
-													External
-												</Tag>
-
-												<Button
-													bgColor='red'
-													size='xs'
-													w='fit-content'
-													fontSize={'sm'}
-													_hover={{ bgColor: 'white', color: 'red', border: 'red 0.5px solid' }}
-													onClick={(e) => handleRemoveExternalToken(e)}
-													isDisabled={selectedStableCoin?.tokenId === item.id}
-												>
-													Remove
-												</Button>
-											</HStack>
-										</HStack>
-									),
-									value: item.id,
-								};
-							}),
-						),
-				);
-			} */
 		}
 	};
 
 	const handleSelectCoin = async (event: any) => {
-		if (!remove) {
-			const selectedCoin = event.value;
-			console.log('SOY YO', selectedCoin);
-			const stableCoinDetails = await SDKService.getStableCoinDetails({
-				id: selectedCoin,
-			});
+		const selectedCoin = event.value;
+		const stableCoinDetails = await SDKService.getStableCoinDetails({
+			id: selectedCoin,
+		});
 
-			dispatch(
-				walletActions.setSelectedStableCoin({
-					tokenId: stableCoinDetails?.tokenId,
-					initialSupply: stableCoinDetails?.initialSupply,
-					totalSupply: stableCoinDetails?.totalSupply,
-					maxSupply: stableCoinDetails?.maxSupply,
-					name: stableCoinDetails?.name,
-					symbol: stableCoinDetails?.symbol,
-					decimals: stableCoinDetails?.decimals,
-					id: stableCoinDetails?.tokenId,
-					treasuryId: stableCoinDetails?.treasuryId,
-					autoRenewAccount: stableCoinDetails?.autoRenewAccount,
-					memo: stableCoinDetails?.memo,
-					adminKey:
-						stableCoinDetails?.adminKey && JSON.parse(JSON.stringify(stableCoinDetails.adminKey)),
-					kycKey: stableCoinDetails?.kycKey && JSON.parse(JSON.stringify(stableCoinDetails.kycKey)),
-					freezeKey:
-						stableCoinDetails?.freezeKey && JSON.parse(JSON.stringify(stableCoinDetails.freezeKey)),
-					wipeKey:
-						stableCoinDetails?.wipeKey && JSON.parse(JSON.stringify(stableCoinDetails.wipeKey)),
-					supplyKey:
-						stableCoinDetails?.supplyKey && JSON.parse(JSON.stringify(stableCoinDetails.supplyKey)),
-				}),
-			);
-		}
+		dispatch(
+			walletActions.setSelectedStableCoin({
+				tokenId: stableCoinDetails?.tokenId,
+				initialSupply: stableCoinDetails?.initialSupply,
+				totalSupply: stableCoinDetails?.totalSupply,
+				maxSupply: stableCoinDetails?.maxSupply,
+				name: stableCoinDetails?.name,
+				symbol: stableCoinDetails?.symbol,
+				decimals: stableCoinDetails?.decimals,
+				id: stableCoinDetails?.tokenId,
+				treasuryId: stableCoinDetails?.treasuryId,
+				autoRenewAccount: stableCoinDetails?.autoRenewAccount,
+				memo: stableCoinDetails?.memo,
+				adminKey:
+					stableCoinDetails?.adminKey && JSON.parse(JSON.stringify(stableCoinDetails.adminKey)),
+				kycKey: stableCoinDetails?.kycKey && JSON.parse(JSON.stringify(stableCoinDetails.kycKey)),
+				freezeKey:
+					stableCoinDetails?.freezeKey && JSON.parse(JSON.stringify(stableCoinDetails.freezeKey)),
+				wipeKey:
+					stableCoinDetails?.wipeKey && JSON.parse(JSON.stringify(stableCoinDetails.wipeKey)),
+				supplyKey:
+					stableCoinDetails?.supplyKey && JSON.parse(JSON.stringify(stableCoinDetails.supplyKey)),
+			}),
+		);
 	};
 
 	const { t } = useTranslation('global');
-	const { control, getValues, setValue } = useForm();
+	const { control } = useForm();
 	const styles = {
 		menuList: {
 			maxH: '244px',

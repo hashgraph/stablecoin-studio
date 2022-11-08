@@ -67,8 +67,8 @@ const ExternalTokenInfo = (props: ExternalTokenInfoProps) => {
 						rules={{
 							required: t(`global:validations.required`),
 							validate: {
-								validAccount: (value: string) => {
-									return validateAccount(value) || t('global:validations.invalidAccount');
+								validCoinId: (value: string) => {
+									return validateAccount(value) || t('global:validations.invalidCoinId');
 								},
 							},
 						}}
