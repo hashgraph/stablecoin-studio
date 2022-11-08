@@ -1,14 +1,11 @@
 import PublicKey from '../../../../src/domain/context/account/PublicKey.js';
-import {
-  CreateStableCoinRequest,
-  SDK,
-} from '../../../../src/index.js';
+import { CreateStableCoinRequest, SDK } from '../../../../src/index.js';
 import { ACCOUNTS, getSDKAsync, REQUEST_ACCOUNTS } from '../../../core/core.js';
 import { StableCoinRole } from '../../../../src/core/enum.js';
 import CashInStableCoinRequest from '../../../../src/port/in/sdk/request/CashInStableCoinRequest.js';
 import WipeStableCoinRequest from '../../../../src/port/in/sdk/request/WipeStableCoinRequest.js';
 import BaseError from '../../../../src/core/error/BaseError.js';
-
+import GetListStableCoin from '../../../../src/port/in/sdk/request/GetListStableCoin.js';
 
 describe('🧪 [PORT] SDK', () => {
   let sdk: SDK;
@@ -75,9 +72,12 @@ describe('🧪 [PORT] SDK', () => {
   });
 
   it('Gets the token list', async () => {
-    const list = await sdk.getListStableCoin({
-      account: ACCOUNTS.testnet,
-    });
+    const list = await sdk.getListStableCoin(
+      new GetListStableCoin({
+        account: REQUEST_ACCOUNTS.testnet,
+      }),
+    );
+
     expect(list).not.toBeNull();
   });
   it('Gets accountInfo', async () => {
@@ -119,8 +119,8 @@ describe('🧪 [PORT] SDK', () => {
         targetId: REQUEST_ACCOUNTS.testnet.accountId,
         proxyContractId: proxyContractId ?? '',
         tokenId: tokenId ?? '',
-        amount
-      })
+        amount,
+      }),
     );
     const balance = await sdk.getBalanceOf({
       account: ACCOUNTS.testnet,
@@ -143,8 +143,8 @@ describe('🧪 [PORT] SDK', () => {
           targetId: REQUEST_ACCOUNTS.testnet.accountId,
           proxyContractId: proxyContractId ?? '',
           tokenId: tokenId ?? '',
-          amount
-        })
+          amount,
+        }),
       ),
     ).rejects.toThrow(Error);
   }, 15000);

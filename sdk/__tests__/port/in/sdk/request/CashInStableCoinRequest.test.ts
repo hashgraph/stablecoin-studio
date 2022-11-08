@@ -1,9 +1,7 @@
-import ICashInStableCoinServiceRequestModel from '../../../../../src/app/service/stablecoin/model/ICashInStableCoinServiceRequestModel.js';
 import BaseError, {
   ErrorCode,
 } from '../../../../../src/core/error/BaseError.js';
 import { CashInStableCoinRequest } from '../../../../../src/index.js';
-import RequestMapper from '../../../../../src/port/in/sdk/request/mapping/RequestMapper.js';
 import { logValidation, REQUEST_ACCOUNTS } from '../../../../core/core.js';
 
 describe('🧪 SDK CashIn Stable Coin Request', () => {
@@ -19,9 +17,6 @@ describe('🧪 SDK CashIn Stable Coin Request', () => {
       targetId: '',
     });
     expect(request).not.toBeNull();
-    const other: ICashInStableCoinServiceRequestModel =
-      RequestMapper.map(request);
-    // console.log(other);
   });
 
   it('CashIn and validate', () => {

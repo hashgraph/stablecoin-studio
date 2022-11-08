@@ -86,6 +86,7 @@ import {
 	CreateStableCoinRequest,
 	CashInStableCoinRequest,
 	WipeStableCoinRequest,
+	GetListStableCoin,
 } from './request';
 import RequestMapper from './request/mapping/RequestMapper.js';
 import { RequestAccount } from './request/BaseRequest.js';
@@ -221,10 +222,13 @@ export class SDK {
 		request: CreateStableCoinRequest,
 	): Promise<IStableCoinDetail> {
 		try {
-			const req: ICreateStableCoinServiceRequestModel = RequestMapper.map(request,{
-				treasury: AccountId,
-				autoRenewAccount: AccountId,
-			})
+			const req: ICreateStableCoinServiceRequestModel = RequestMapper.map(
+				request,
+				{
+					treasury: AccountId,
+					autoRenewAccount: AccountId,
+				},
+			);
 			return this.stableCoinService.createStableCoin(req);
 		} catch (error) {
 			console.error(error);
@@ -243,11 +247,10 @@ export class SDK {
 	 * getListStableCoin
 	 */
 	public getListStableCoin(
-		request: IGetListStableCoinRequest,
+		request: GetListStableCoin,
 	): Promise<IStableCoinList[]> | null {
-		const req: IListStableCoinServiceRequestModel = {
-			...request,
-		};
+		const req: IListStableCoinServiceRequestModel =
+			RequestMapper.map(request);
 		return this.stableCoinService.getListStableCoins(req);
 	}
 
@@ -257,6 +260,7 @@ export class SDK {
 		const req: IGetStableCoinServiceRequestModel = {
 			...request,
 		};
+
 		return this.stableCoinService.getStableCoinDetails(req);
 	}
 
