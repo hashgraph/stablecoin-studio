@@ -19,6 +19,7 @@ import { InitSupplyInvalid } from './error/InitSupplyInvalid.js';
 import { InitSupplyLargerThanMaxSupply } from './error/InitSupplyLargerThanMaxSupply.js';
 import InvalidMaxSupplySupplyType from './error/InvalidMaxSupplySupplyType.js';
 import { BigNumber } from '@hashgraph/hethers';
+import { MaxSupplyOverLimit } from './error/MaxSupplyOverLimit.js';
 
 const MAX_SUPPLY = 9_223_372_036_854_775_807n;
 const TEN = 10;
@@ -402,10 +403,7 @@ export class StableCoin extends BaseEntity {
 				list.push(new InitSupplyInvalid(initialSupply.toString()));
 			}
 		} else {
-			list = [
-				...list,
-				...StableCoin.checkSupply(maxSupply, initialSupply, supplyType),
-			];
+			list = StableCoin.checkSupply(maxSupply, initialSupply, supplyType);
 		}
 
 		return list;
@@ -417,32 +415,9 @@ export class StableCoin extends BaseEntity {
 		supplyType?: TokenSupplyType,
 	): BaseError[] {
 		let list: BaseError[] = [];
-		if(typeof maxSupply === 'string') maxSupply = BigDecimal.fromString(maxSupply)
-		if(typeof initialSupply === 'string') initialSupply = BigDecimal.fromString(initialSupply);
 		const min = initialSupply ?? BigDecimal.ZERO;
-		// TODO: review decimals max supply
 
-		if (!supplyType) {
-			if (
-				!CheckNums.isWithinRange(
-					maxSupply,
-					min,
-					BigDecimal.fromValue(BigNumber.from(MAX_SUPPLY), 0),
-				)
-			) {
-				list.push(
-					new InitSupplyLargerThanMaxSupply(
-						min.toString(),
-						maxSupply.toString(),
-					),
-				);
-			}
-		} else {
-			list = [
-				...list,
-				...StableCoin.checkSupply(maxSupply, min, supplyType),
-			];
-		}
+		list = StableCoin.checkSupply(maxSupply, min, supplyType);
 
 		return list;
 	}
@@ -453,17 +428,36 @@ export class StableCoin extends BaseEntity {
 		supplyType?: TokenSupplyType,
 	): BaseError[] {
 		const list: BaseError[] = [];
+		const max = BigDecimal.fromValue(
+			BigNumber.from(MAX_SUPPLY),
+			maxSupply.decimals,
+		);
 		if (supplyType && supplyType !== TokenSupplyType.FINITE) {
-			if (CheckNums.isMoreThan(maxSupply, BigDecimal.ZERO)) {
+			if (CheckNums.isGreaterThan(maxSupply, BigDecimal.ZERO)) {
 				list.push(new InvalidMaxSupplySupplyType(maxSupply.toString()));
 			}
+			return list;
 		}
 		if (CheckNums.isLessThan(maxSupply, initialSupply)) {
+			if (initialSupply.isZero()) {
+				list.push(
+					new InvalidAmount(
+						maxSupply.toString(),
+						initialSupply.toString(),
+					),
+				);
+			} else {
+				list.push(
+					new InitSupplyLargerThanMaxSupply(
+						initialSupply.toString(),
+						maxSupply.toString(),
+					),
+				);
+			}
+		}
+		if (CheckNums.isGreaterThan(maxSupply, max)) {
 			list.push(
-				new InitSupplyLargerThanMaxSupply(
-					initialSupply.toString(),
-					maxSupply.toString(),
-				),
+				new MaxSupplyOverLimit(maxSupply.toString(), max.toString()),
 			);
 		}
 		return list;
