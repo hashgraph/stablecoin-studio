@@ -16,6 +16,11 @@ const PK =
   '302e020100300506032b65700422042010f13d4517ae383e2a1a0f915b2f6e70a823f3627e69ab1a8f516666fecdf386';
 const TYPE = 'ED25519';
 
+export const EXAMPLE_TOKEN = {
+  proxyContractId: '0.0.48826169',
+  tokenId: '0.0.48826175',
+};
+
 export const MAX_SUPPLY = 9_223_372_036_854_775_807n;
 
 export const ACCOUNTS: { testnet: EOAccount } = {
@@ -73,6 +78,8 @@ export const baseCoin: { name: string; symbol: string; decimals: number } = {
 
 export const logValidation = (val: ValidationResponse[]): void => {
   val.map((v) =>
-    v.errors.map((e) => console.log(`${v.name} - [${e.errorCode}] ${e.message}`)),
+    v.errors.map((e) =>
+      console.log(`${v.name} - [${e.errorCode}] ${e.message}`),
+    ),
   );
 };

@@ -1,3 +1,4 @@
+import AllowanceRequest from './AllowanceRequest.js';
 import CashInStableCoinRequest from './CashInStableCoinRequest.js';
 import CreateStableCoinRequest from './CreateStableCoinRequest.js';
 import GetListStableCoin from './GetListStableCoin.js';
@@ -11,4 +12,5 @@ export {
 	CashInStableCoinRequest,
 	WipeStableCoinRequest,
 	GetListStableCoin,
+	AllowanceRequest
 };

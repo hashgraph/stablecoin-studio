@@ -52,7 +52,7 @@ import ContractId from '../../../domain/context/contract/ContractId.js';
 import { TokenType } from '../../../domain/context/stablecoin/TokenType.js';
 import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.js';
 import { StableCoinMemo } from '../../../domain/context/stablecoin/StableCoinMemo.js';
-import { AllowanceRequest } from './request/model/ContractRequests.js';
+import AllowanceRequest from './request/AllowanceRequest.js';
 import { RequestRoles } from './request/model/ContractRequests';
 import { AppMetadata } from '../../out/hedera/hashpack/types/types.js';
 import {
@@ -426,9 +426,7 @@ export class SDK {
 		request: AllowanceRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			const req: ISupplierRoleStableCoinServiceRequestModel = {
-				...request,
-			};
+			const req: ISupplierRoleStableCoinServiceRequestModel = RequestMapper.map(request);
 			return this.stableCoinService.increaseSupplierAllowance(req);
 		} catch (error) {
 			console.error(error);
@@ -442,9 +440,7 @@ export class SDK {
 		request: AllowanceRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			const req: ISupplierRoleStableCoinServiceRequestModel = {
-				...request,
-			};
+			const req: ISupplierRoleStableCoinServiceRequestModel = RequestMapper.map(request);
 			return this.stableCoinService.decreaseSupplierAllowance(req);
 		} catch (error) {
 			console.error(error);
