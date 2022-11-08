@@ -9,6 +9,8 @@ import type {
 } from 'hedera-stable-coin-sdk';
 import SDKService from '../../services/SDKService';
 import type { RootState } from '../store';
+import type { IExternalToken } from '../../interfaces/IExternalToken';
+import type { IAccountToken } from '../../interfaces/IAccountToken';
 
 interface InitialStateProps {
 	data: InitializationData;
@@ -18,6 +20,7 @@ interface InitialStateProps {
 	accountInfo: IAccountInfo;
 	selectedStableCoin?: IStableCoinDetail;
 	stableCoinList?: IStableCoinList[];
+	externalTokenList?: IExternalToken[];
 	capabilities?: Capabilities[] | undefined;
 }
 
@@ -34,6 +37,7 @@ export const initialState: InitialStateProps = {
 	accountInfo: {},
 	selectedStableCoin: undefined,
 	stableCoinList: [],
+	externalTokenList: [],
 	capabilities: [],
 };
 
@@ -43,6 +47,26 @@ export const getStableCoinList = createAsyncThunk(
 		try {
 			const stableCoins = await SDKService.getStableCoins({ account });
 			return stableCoins;
+		} catch (e) {
+			console.error(e);
+		}
+	},
+);
+
+export const getExternalTokenList = createAsyncThunk(
+	'wallet/getExternalTokenList',
+	async (accountId: string) => {
+		try {
+			const accountTokens = JSON.parse(localStorage.tokensAccount);
+			console.log('EXTERNAL TOKENS', accountTokens);
+			if (accountTokens) {
+				const myAccount = accountTokens.find((acc: IAccountToken) => acc.id === accountId);
+				console.log('MI CUENTA', myAccount);
+				if (myAccount) {
+					return myAccount.externalTokens;
+				}
+				return [];
+			}
 		} catch (e) {
 			console.error(e);
 		}
@@ -65,6 +89,9 @@ export const walletSlice = createSlice({
 		setStableCoinList: (state, action) => {
 			state.stableCoinList = action.payload;
 		},
+		setExternalTokenList: (state, action) => {
+			state.externalTokenList = action.payload;
+		},
 		setHasWalletExtension(state) {
 			state.hasWalletExtension = true;
 		},
@@ -80,6 +107,9 @@ export const walletSlice = createSlice({
 		clearData: (state) => {
 			state.data = initialState.data;
 		},
+		clearSelectedStableCoin: (state) => {
+			state.selectedStableCoin = initialState.selectedStableCoin;
+		},
 		reset: () => initialState,
 	},
 	extraReducers: (builder) => {
@@ -88,11 +118,17 @@ export const walletSlice = createSlice({
 				state.stableCoinList = action.payload;
 			}
 		});
+		builder.addCase(getExternalTokenList.fulfilled, (state, action) => {
+			if (action.payload) {
+				state.externalTokenList = action.payload;
+			}
+		});
 	},
 });
 
 export const SELECTED_WALLET = (state: RootState) => state.wallet;
 export const STABLE_COIN_LIST = (state: RootState) => state.wallet.stableCoinList;
+export const EXTERNAL_TOKEN_LIST = (state: RootState) => state.wallet.externalTokenList;
 export const SELECTED_WALLET_DATA: any = (state: RootState) => state.wallet.data;
 export const SELECTED_WALLET_COIN = (state: RootState) => state.wallet.selectedStableCoin;
 export const SELECTED_WALLET_PAIRED: any = (state: RootState) => state.wallet.data.savedPairings[0];

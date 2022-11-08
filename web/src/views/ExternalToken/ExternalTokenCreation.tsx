@@ -11,6 +11,7 @@ import { NamedRoutes } from '../../Router/NamedRoutes';
 import { RouterManager } from '../../Router/RouterManager';
 import {
 	getStableCoinList,
+	getExternalTokenList,
 	SELECTED_WALLET_ACCOUNT_INFO,
 	SELECTED_WALLET_PAIRED_ACCOUNT,
 } from '../../store/slices/walletSlice';
@@ -152,6 +153,7 @@ const ExternalTokenCreation = () => {
 					]),
 				);
 			}
+			dispatch(getExternalTokenList(accountInfo.account!));
 			setSuccess(true);
 		} catch (error) {
 			console.log(error);
