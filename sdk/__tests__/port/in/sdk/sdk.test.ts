@@ -65,8 +65,6 @@ describe('🧪 [PORT] SDK', () => {
       supplyKey: PublicKey.NULL,
     });
     const coin = await sdk.createStableCoin(req);
-    proxyContractId = coin?.memo?.proxyContract;
-    tokenId = coin?.tokenId;
     expect(coin).not.toBeNull();
     expect(coin?.tokenId).toBeTruthy();
   }, 120_000);

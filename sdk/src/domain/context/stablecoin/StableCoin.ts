@@ -386,70 +386,38 @@ export class StableCoin extends BaseEntity {
 
 	public static checkInitialSupply(
 		initialSupply: BigDecimal,
+		decimals: number,
 		maxSupply?: BigDecimal,
-		supplyType?: TokenSupplyType,
 	): BaseError[] {
-		let list: BaseError[] = [];
+		const list: BaseError[] = [];
 		const min = BigDecimal.ZERO;
-		// TODO: review decimals max supply
-		if (maxSupply === undefined) {
-			if (
-				!CheckNums.isWithinRange(
-					initialSupply,
-					min,
-					BigDecimal.fromValue(BigNumber.from(MAX_SUPPLY), 0),
-				)
-			) {
-				list.push(new InitSupplyInvalid(initialSupply.toString()));
-			}
-		} else {
-			list = StableCoin.checkSupply(maxSupply, initialSupply, supplyType);
+		const max =
+			maxSupply ??
+			BigDecimal.fromValue(BigNumber.from(MAX_SUPPLY), decimals);
+		if (!CheckNums.isWithinRange(initialSupply, min, max)) {
+			list.push(new InitSupplyInvalid(initialSupply.toString()));
 		}
-
 		return list;
 	}
 
 	public static checkMaxSupply(
 		maxSupply: BigDecimal,
+		decimals: number,
 		initialSupply?: BigDecimal,
 		supplyType?: TokenSupplyType,
 	): BaseError[] {
 		let list: BaseError[] = [];
 		const min = initialSupply ?? BigDecimal.ZERO;
-
-		list = StableCoin.checkSupply(maxSupply, min, supplyType);
-
-		return list;
-	}
-
-	private static checkSupply(
-		maxSupply: BigDecimal,
-		initialSupply: BigDecimal,
-		supplyType?: TokenSupplyType,
-	): BaseError[] {
-		const list: BaseError[] = [];
-		const max = BigDecimal.fromValue(
-			BigNumber.from(MAX_SUPPLY),
-			maxSupply.decimals,
-		);
-		if (supplyType && supplyType !== TokenSupplyType.FINITE) {
-			if (CheckNums.isGreaterThan(maxSupply, BigDecimal.ZERO)) {
-				list.push(new InvalidMaxSupplySupplyType(maxSupply.toString()));
-			}
-			return list;
-		}
-		if (CheckNums.isLessThan(maxSupply, initialSupply)) {
-			if (initialSupply.isZero()) {
+		const max = BigDecimal.fromValue(BigNumber.from(MAX_SUPPLY), decimals);
+		if (CheckNums.isLessThan(maxSupply, min)) {
+			if (min.isZero()) {
 				list.push(
-					new InvalidAmount(
-						maxSupply.toString(),
-						initialSupply.toString(),
-					),
+					new InvalidAmount(maxSupply.toString(), min.toString()),
 				);
 			} else {
 				list.push(
 					new InitSupplyLargerThanMaxSupply(
-						initialSupply.toString(),
+						min.toString(),
 						maxSupply.toString(),
 					),
 				);
@@ -459,6 +427,24 @@ export class StableCoin extends BaseEntity {
 			list.push(
 				new MaxSupplyOverLimit(maxSupply.toString(), max.toString()),
 			);
+		}
+
+		list = [...list, ...StableCoin.checkSupplyType(maxSupply, supplyType)];
+
+		return list;
+	}
+
+	private static checkSupplyType(
+		maxSupply: BigDecimal,
+		supplyType?: TokenSupplyType,
+	): BaseError[] {
+		const list: BaseError[] = [];
+
+		if (supplyType && supplyType !== TokenSupplyType.FINITE) {
+			if (CheckNums.isGreaterThan(maxSupply, BigDecimal.ZERO)) {
+				list.push(new InvalidMaxSupplySupplyType(maxSupply.toString()));
+			}
+			return list;
 		}
 		return list;
 	}

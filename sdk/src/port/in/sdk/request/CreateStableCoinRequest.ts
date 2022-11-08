@@ -135,17 +135,10 @@ export default class CreateStableCoinRequest
 						? BigDecimal.fromString(this.maxSupply, this.decimals)
 						: undefined;
 
-				if (bMaxSupply && bInitialSupply.isGreaterThan(bMaxSupply)) {
-					return [
-						new InvalidRange(
-							'Initial supply cannot be more than the max supply',
-						),
-					];
-				}
 				return StableCoin.checkInitialSupply(
 					bInitialSupply,
+					this.decimals,
 					bMaxSupply,
-					this.supplyType,
 				);
 			},
 			maxSupply: (val) => {
@@ -173,18 +166,9 @@ export default class CreateStableCoinRequest
 						  )
 						: undefined;
 
-				if (
-					bInitialSupply &&
-					bInitialSupply.isGreaterThan(bMaxSupply)
-				) {
-					return [
-						new InvalidRange(
-							'Initial supply cannot be more than the max supply',
-						),
-					];
-				}
 				return StableCoin.checkMaxSupply(
 					bMaxSupply,
+					this.decimals,
 					bInitialSupply,
 					this.supplyType,
 				);
