@@ -361,9 +361,6 @@ export class SDK {
 	 */
 	public wipe(request: WipeStableCoinRequest): Promise<boolean> | null {
 		try {
-			//const req: IWipeStableCoinServiceRequestModel = {
-			//	...request,
-			//};
 			const req: IWipeStableCoinServiceRequestModel =
 				RequestMapper.map(request);
 			return this.stableCoinService.wipe(req);
