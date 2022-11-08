@@ -47,7 +47,8 @@ export default class GrantRoleRequest
 			proxyContractId: Validation.checkContractId(),
 			tokenId: Validation.checkHederaIdFormat(),
 			role: Validation.checkRole(),	
-			supplierType: GrantRoleRequest.checkSupplierType()
+			supplierType: GrantRoleRequest.checkSupplierType(),
+			amount: Validation.checkAmount()
 		});
 		this.account = account;
 		this.proxyContractId = proxyContractId!;

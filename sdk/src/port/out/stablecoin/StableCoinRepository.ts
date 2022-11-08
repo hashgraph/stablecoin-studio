@@ -419,7 +419,6 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			abi: HederaERC20__factory.abi,
 			account,
 		};
-
 		return await this.networkAdapter.provider.callContract(
 			amount ? 'grantSupplierRole' : 'grantUnlimitedSupplierRole',
 			params,

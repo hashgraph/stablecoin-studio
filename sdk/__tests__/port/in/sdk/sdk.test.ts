@@ -21,6 +21,8 @@ import WipeStableCoinRequest from '../../../../src/port/in/sdk/request/WipeStabl
 import BaseError from '../../../../src/core/error/BaseError.js';
 import GetListStableCoin from '../../../../src/port/in/sdk/request/GetListStableCoin.js';
 import { BigNumber } from '@hashgraph/hethers';
+import CheckCashInLimitRequest from '../../../../src/port/in/sdk/request/CheckCashInLimitRequest.js';
+
 
 describe('🧪 [PORT] SDK', () => {
   let sdk: SDK;
@@ -199,12 +201,12 @@ describe('🧪 [PORT] SDK', () => {
   }, 15000);
 
   it('Check limited supplier role when user doesnt have it', async () => {
-    const role = await sdk.supplierAllowance({
-      account: ACCOUNTS.testnet,
-      targetId: ACCOUNTS.testnet.accountId.id,
+    const role = await sdk.supplierAllowance(new CheckCashInLimitRequest ({
+      account: REQUEST_ACCOUNTS.testnet,
+      targetId: REQUEST_ACCOUNTS.testnet.accountId,
       proxyContractId: proxyContractId ?? '',
       tokenId: tokenId ?? '',
-    });
+    }));
     expect(role).not.toBeNull();
     expect(role && role).toBe('0');
   }, 15000);
@@ -317,12 +319,12 @@ describe('🧪 [PORT] SDK', () => {
     }));
     expect(hasRole && hasRole[0]).toBeTruthy();
 
-    const check = await sdk.supplierAllowance({
-      account: ACCOUNTS.testnet,
-      targetId: ACCOUNTS.testnet.accountId.id,
+    const check = await sdk.supplierAllowance(new CheckCashInLimitRequest({
+      account: REQUEST_ACCOUNTS.testnet,
+      targetId: REQUEST_ACCOUNTS.testnet.accountId,
       proxyContractId: proxyContractId ?? '',
       tokenId: tokenId ?? '',
-    });
+    }));
     expect(check).not.toBeNull();
     expect(check && check).toBe('10');
   }, 25000);
@@ -347,33 +349,31 @@ describe('🧪 [PORT] SDK', () => {
       }),
     );
 
-    const check = await sdk.supplierAllowance({
-      account: ACCOUNTS.testnet,
-      targetId: ACCOUNTS.testnet.accountId.id,
+    const check = await sdk.supplierAllowance(new CheckCashInLimitRequest ({
+      account: REQUEST_ACCOUNTS.testnet,
+      targetId: REQUEST_ACCOUNTS.testnet.accountId,
       proxyContractId: proxyContractId ?? '',
       tokenId: tokenId ?? '',
-    });
+    }));
     expect(check).not.toBeNull();
     expect(check && check).toBe('20');
   }, 15000);
 
   it('Decrease Limit supplier role', async () => {
     const amount = '10';
-    await sdk.decreaseSupplierAllowance(
-      new AllowanceRequest({
-        account: REQUEST_ACCOUNTS.testnet,
-        targetId: ACCOUNTS.testnet.accountId.id,
-        proxyContractId: proxyContractId ?? '',
-        tokenId: tokenId ?? '',
-        amount: amount,
-      }),
-    );
-    const check = await sdk.supplierAllowance({
+    await sdk.decreaseSupplierAllowance({
       account: ACCOUNTS.testnet,
       targetId: ACCOUNTS.testnet.accountId.id,
       proxyContractId: proxyContractId ?? '',
       tokenId: tokenId ?? '',
+      amount: amount,
     });
+    const check = await sdk.supplierAllowance(new CheckCashInLimitRequest ({
+      account: REQUEST_ACCOUNTS.testnet,
+      targetId: REQUEST_ACCOUNTS.testnet.accountId,
+      proxyContractId: proxyContractId ?? '',
+      tokenId: tokenId ?? '',
+    }));
     expect(check).not.toBeNull();
     expect(check && check).toBe('10');
   }, 15000);
@@ -395,12 +395,12 @@ describe('🧪 [PORT] SDK', () => {
       proxyContractId: proxyContractId ?? '',
     });
 
-    const check = await sdk.supplierAllowance({
-      account: ACCOUNTS.testnet,
-      targetId: ACCOUNTS.testnet.accountId.id,
+    const check = await sdk.supplierAllowance(new CheckCashInLimitRequest ({
+      account: REQUEST_ACCOUNTS.testnet,
+      targetId: REQUEST_ACCOUNTS.testnet.accountId,
       proxyContractId: proxyContractId ?? '',
       tokenId: tokenId ?? '',
-    });
+    }));
     expect(check).not.toBeNull();
     expect(check && check).toBe('0');
   }, 15000);

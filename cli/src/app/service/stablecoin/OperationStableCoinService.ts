@@ -21,7 +21,8 @@ import {
   GrantRoleRequest,
   RevokeRoleRequest,
   HasRoleRequest,
-  CheckCashInRoleRequest
+  CheckCashInRoleRequest,
+  CheckCashInLimitRequest
 } from 'hedera-stable-coin-sdk';
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 import CashInStableCoinsService from './CashInStableCoinService.js';
@@ -529,11 +530,9 @@ export default class OperationStableCoinService extends Service {
 
           if (StableCoinRole[grantRoleRequest.role] === StableCoinRole.CASHIN_ROLE) {
             await this.grantSupplierRole(grantRoleRequest);
-            break;
+          } else {
+            await this.roleStableCoinService.grantRoleStableCoin(grantRoleRequest);
           }
-
-          //Call to SDK
-          await this.roleStableCoinService.grantRoleStableCoin(grantRoleRequest);
         }
         break;
       case 'Revoke role':
@@ -636,11 +635,16 @@ export default class OperationStableCoinService extends Service {
             }
 
             /*if (
-              await this.checkSupplierType(
+              await this.checkSupplierType(new CheckCashInRoleRequest({
+                account: ,
+		            targetId: ,
+		            proxyContractId: ,
+		            supplierType: 'unlimited'
+
                 accountTarget,
                 'unlimited',
                 currentAccount,
-              )
+              }))
             ) {
               console.log(language.getText('cashin.unlimitedRole') + '\n');
               break;
@@ -822,23 +826,43 @@ export default class OperationStableCoinService extends Service {
               this.stableCoinWithSymbol,
             );
 
-            accountTarget = await utilsService.defaultSingleAsk(
+            const checkCashInLimitRequest = new CheckCashInLimitRequest({
+              account: {
+                accountId: currentAccount.accountId.id,
+                privateKey: {
+                  key: currentAccount.privateKey.key,
+                  type: currentAccount.privateKey.type,
+                },
+              }, 
+              proxyContractId: this.proxyContractId,
+              tokenId: this.stableCoinId,
+              targetId: ''
+            });
+    
+
+            let cashInLimitTargetId = accountTarget;
+            checkCashInLimitRequest.targetId = await utilsService.defaultSingleAsk(
               language.getText('stablecoin.accountTarget'),
               accountTarget,
             );
-            while (!sdk.checkIsAddress(accountTarget)) {
-              console.log(language.getText('validations.wrongFormatAddress'));
-              accountTarget = await utilsService.defaultSingleAsk(
-                language.getText('stablecoin.accountTarget'),
-                '0.0.0',
-              );
-            }
-            /*if (
-              await this.checkSupplierType(
-                accountTarget,
-                'unlimited',
-                currentAccount,
-              )
+            await utilsService.handleValidation(
+              () => checkCashInLimitRequest.validate('targetId'),
+              async () => {
+                cashInLimitTargetId = await utilsService.defaultSingleAsk(
+                  language.getText('stablecoin.accountTarget'),
+                  accountTarget,
+                );
+                checkCashInLimitRequest.targetId = cashInLimitTargetId;
+              },
+            );
+  
+            if (
+              await this.checkSupplierType(new CheckCashInRoleRequest({
+                account: checkCashInLimitRequest.account,
+                targetId: checkCashInLimitRequest.targetId,
+                proxyContractId: checkCashInLimitRequest.proxyContractId,
+                supplierType: 'unlimited'
+              }))
             ) {
               const response = language.getText(
                 'roleManagement.accountHasRoleCashInUnlimited',
@@ -846,15 +870,8 @@ export default class OperationStableCoinService extends Service {
 
               console.log(response.replace('${address}', accountTarget) + '\n');
               break;
-            }*/
-            await this.roleStableCoinService.getSupplierAllowance(
-              this.proxyContractId,
-              this.stableCoinId,
-              accountTarget,
-              currentAccount.privateKey,
-              currentAccount.accountId.id,
-            );
-
+            }
+            await this.roleStableCoinService.getSupplierAllowance(checkCashInLimitRequest);
             break;
           case editOptions[editOptions.length - 1]:
           default:
@@ -1046,10 +1063,8 @@ export default class OperationStableCoinService extends Service {
 
   private async grantSupplierRole(
     grantRoleRequest: GrantRoleRequest
-    //accountTarget: string,
-    //currentAccount: EOAccount,
   ): Promise<void> {
-    //let limit = '';
+    let limit = '';
 
     const supplierRoleType = language.getArray('wizard.supplierRoleType');
     grantRoleRequest.supplierType = await utilsService.defaultMultipleAsk(
@@ -1059,7 +1074,7 @@ export default class OperationStableCoinService extends Service {
     await utilsService.handleValidation(
       () => grantRoleRequest.validate('supplierType'),
       async () => {
-        let supplierType = await utilsService.defaultMultipleAsk(
+        const supplierType = await utilsService.defaultMultipleAsk(
           language.getText('stablecoin.askCashInRoleType'),
           supplierRoleType,
         );
@@ -1083,20 +1098,24 @@ export default class OperationStableCoinService extends Service {
 
       grantRoleRequest.supplierType = 'unlimited';
       await this.roleStableCoinService.giveSupplierRoleStableCoin(grantRoleRequest);
-      /*  this.proxyContractId,
-        this.stableCoinId,
-        accountTarget,
-        currentAccount.privateKey,
-        currentAccount.accountId.id,
-        'unlimited',
-      );*/
     }
     if (grantRoleRequest.supplierType === supplierRoleType[1]) {
-      //Give limited
-      /*limit = await utilsService.defaultSingleAsk(
+
+      grantRoleRequest.amount = await utilsService.defaultSingleAsk(
         language.getText('stablecoin.supplierRoleLimit'),
         '1',
-      );*/
+      );
+      await utilsService.handleValidation(
+        () => grantRoleRequest.validate('amount'),
+        async () => {
+            limit = await utilsService.defaultSingleAsk(
+            language.getText('stablecoin.supplierRoleLimit'),
+            '1',
+          );
+          grantRoleRequest.amount = limit;
+        },
+      );
+
       //Call to SDK
       if (await this.checkSupplierType(new CheckCashInRoleRequest({
         proxyContractId: grantRoleRequest.proxyContractId,
@@ -1109,14 +1128,6 @@ export default class OperationStableCoinService extends Service {
 
       grantRoleRequest.supplierType = 'limited';
       await this.roleStableCoinService.giveSupplierRoleStableCoin(grantRoleRequest);
-        /*this.proxyContractId,
-        this.stableCoinId,
-        accountTarget,
-        currentAccount.privateKey,
-        currentAccount.accountId.id,
-        'limited',
-        limit,
-      );*/
     }
   }
 

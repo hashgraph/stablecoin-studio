@@ -9,7 +9,8 @@ import {
   GrantRoleRequest,
   RevokeRoleRequest,
   HasRoleRequest,
-  CheckCashInRoleRequest
+  CheckCashInRoleRequest,
+  CheckCashInLimitRequest
 } from 'hedera-stable-coin-sdk';
 import colors from 'colors';
 
@@ -25,38 +26,10 @@ export default class RoleStableCoinsService extends Service {
    * give supplier role
    */
   public async giveSupplierRoleStableCoin(req: GrantRoleRequest
-    /*proxyContractId: string,
-    tokenId: string,
-    targetId: string,
-    privateKey: PrivateKey,
-    accountId: string,
-    supplierType: string,
-    amount?: string,*/
   ): Promise<void> {
     const sdk: SDK = utilsService.getSDK();
-    //const role: StableCoinRole = StableCoinRole['CASHIN_ROLE'];
     await utilsService.showSpinner(
-      sdk.grantRole(
-        req.supplierType === 'unlimited'
-          ? req
-            /*{
-              /*proxyContractId,
-              targetId,
-              account: new EOAccount(accountId, privateKey),
-              role,
-              tokenId,
-            }*/
-          : 
-          req
-          /*{
-              proxyContractId,
-              targetId,
-              account: new EOAccount(accountId, privateKey),
-              amount,
-              role,
-              tokenId,
-          },*/
-      ),
+      sdk.grantRole(req),
       {
         text: language.getText('state.loading'),
         successText: language.getText('state.loadCompleted') + '\n',
@@ -243,23 +216,13 @@ export default class RoleStableCoinsService extends Service {
     utilsService.breakLine();
   }
 
-  public async getSupplierAllowance(
-    proxyContractId: string,
-    tokenId: string,
-    targetId: string,
-    privateKey: PrivateKey,
-    accountId: string,
+  public async getSupplierAllowance(req: CheckCashInLimitRequest
   ): Promise<void> {
     const sdk: SDK = utilsService.getSDK();
     let amount;
     await utilsService.showSpinner(
       sdk
-        .supplierAllowance({
-          account: new EOAccount(accountId, privateKey),
-          proxyContractId,
-          targetId,
-          tokenId,
-        })
+        .supplierAllowance(req)
         .then((response) => {
           amount = response;
         }),
@@ -271,7 +234,7 @@ export default class RoleStableCoinsService extends Service {
     const response = language.getText('roleManagement.getAmountAllowance');
     console.log(
       response
-        .replace('${address}', targetId)
+        .replace('${address}', req.targetId)
         .replace('${amount}', colors.yellow(amount)) + '\n',
     );
   }
