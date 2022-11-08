@@ -139,13 +139,13 @@ export default class CreateStableCoinService extends Service {
     try {
       autoRenewAccount = await utilsService.defaultSingleAsk(
         language.getText('stablecoin.askAutoRenewAccountId'),
-        createdStableCoin.autoRenewAccount || currentAccount.accountId,
+        currentAccount.accountId,
       );
       while (autoRenewAccount !== currentAccount.accountId) {
         console.log(language.getText('stablecoin.autoRenewAccountError'));
         autoRenewAccount = await utilsService.defaultSingleAsk(
           language.getText('stablecoin.askAutoRenewAccountId'),
-          createdStableCoin.autoRenewAccount || currentAccount.accountId,
+          currentAccount.accountId,
         );
       }
       sdk.checkIsAddress(autoRenewAccount);
@@ -153,7 +153,7 @@ export default class CreateStableCoinService extends Service {
       console.log(language.getText('account.wrong'));
       autoRenewAccount = await utilsService.defaultSingleAsk(
         language.getText('stablecoin.askAutoRenewAccountId'),
-        createdStableCoin.autoRenewAccount || currentAccount.accountId,
+        currentAccount.accountId,
       );
     }
     createdStableCoin.autoRenewAccount = autoRenewAccount;
