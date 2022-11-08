@@ -4,17 +4,16 @@ import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import DetailsReview from '../../../components/DetailsReview';
 import InputController from '../../../components/Form/InputController';
-import InputNumberController from '../../../components/Form/InputNumberController';
 import SDKService from '../../../services/SDKService';
 import {
 	validateAccount,
-	validateDecimals,
-	validateQuantityOverMaxSupply,
+	validateAmount,
+	validateDecimalsString,
 } from '../../../utils/validationsHelper';
 import OperationLayout from './../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
-import { useSelector,useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import {
 	SELECTED_WALLET_ACCOUNT_INFO,
 	SELECTED_WALLET_COIN,
@@ -39,10 +38,10 @@ const CashInOperation = () => {
 	const infoAccount = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 	const dispatch = useDispatch<AppDispatch>();
 
-	const { decimals = 0, totalSupply, maxSupply } = selectedStableCoin || {};
+	const { decimals = 0 } = selectedStableCoin || {};
 
 	const [errorOperation, setErrorOperation] = useState();
-	const navigate = useNavigate()
+	const navigate = useNavigate();
 
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
@@ -52,12 +51,12 @@ const CashInOperation = () => {
 
 	useEffect(() => {
 		handleRefreshCoinInfo();
-	}, [])
-	
+	}, []);
+
 	const handleCloseModal = () => {
 		RouterManager.goBack(navigate);
-	}
-	
+	};
+
 	const handleRefreshCoinInfo = async () => {
 		const stableCoinDetails = await SDKService.getStableCoinDetails({
 			id: selectedStableCoin?.tokenId || '',
@@ -65,9 +64,9 @@ const CashInOperation = () => {
 		dispatch(
 			walletActions.setSelectedStableCoin({
 				tokenId: stableCoinDetails?.tokenId,
-				initialSupply: Number(stableCoinDetails?.initialSupply),
-				totalSupply: Number(stableCoinDetails?.totalSupply),
-				maxSupply: Number(stableCoinDetails?.maxSupply),
+				initialSupply: stableCoinDetails?.initialSupply,
+				totalSupply: stableCoinDetails?.totalSupply,
+				maxSupply: stableCoinDetails?.maxSupply,
 				name: stableCoinDetails?.name,
 				symbol: stableCoinDetails?.symbol,
 				decimals: stableCoinDetails?.decimals,
@@ -125,28 +124,24 @@ const CashInOperation = () => {
 							{t('cashIn:operationTitle')}
 						</Text>
 						<Stack as='form' spacing={6} maxW='520px'>
-							<InputNumberController
+							<InputController
 								rules={{
-									required: t('global:validations.required'),
+									required: t(`global:validations.required`),
 									validate: {
-										maxDecimals: (value: number) => {
+										validNumber: (value: string) => {
+											return validateAmount(value) || t('global:validations.invalidAmount');
+										},
+										validDecimals: (value: string) => {
 											return (
-												validateDecimals(value, decimals) ||
+												validateDecimalsString(value, decimals) ||
 												t('global:validations.decimalsValidation')
 											);
 										},
-										// quantityOverMaxSupply: (value: number) => {
-										// 	return (
-										// 		validateQuantityOverMaxSupply(value, maxSupply, totalSupply) ||
-										// 		t('global:validations.overMaxSupplyCashIn')
-										// 	);
-										// },
 									},
 								}}
-								decimalScale={decimals}
 								isRequired
 								control={control}
-								name='amount'
+								name={'amount'}
 								label={t('cashIn:amountLabel')}
 								placeholder={t('cashIn:amountPlaceholder')}
 							/>

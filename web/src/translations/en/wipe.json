@@ -1,7 +1,7 @@
 {
     "title": "Wipe operation",
     "operationTitle": "Operation details",
-    "amountLabel": "How much tokens?",
+    "amountLabel": "How many tokens?",
     "amountPlaceholder": "Introduce amount",
     "fromAccountLabel": "From what account?",
     "decimalsValidation": "You have added more decimals than the supported by the stable coin",
