@@ -112,9 +112,7 @@ export default class Validation {
 		return (val: any): BaseError[] => {
 			const regEx = /0\.0\.[1-9]*/;
 			const err: BaseError[] = [];
-			if (regEx.exec(val)) {
-				return err;
-			} else {
+			if (!regEx.exec(val)) {
 				err.push(new InvalidIdFormatHedera(val));
 			}
 			return err;
@@ -127,6 +125,7 @@ export default class Validation {
 			const isBigDecimal: boolean = CheckNums.isBigDecimal(val);
 			if (!isBigDecimal) {
 				err.push(new InvalidType(val, 'BigDecimal'));
+				return err;
 			}
 			const valueDecimals = BigDecimal.getDecimalsFromString(val);
 			const zero = BigDecimal.fromString('0', valueDecimals);
