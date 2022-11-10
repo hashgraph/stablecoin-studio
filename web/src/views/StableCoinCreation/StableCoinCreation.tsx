@@ -21,7 +21,12 @@ import {
 } from '../../store/slices/walletSlice';
 import SDKService from '../../services/SDKService';
 import ModalNotification from '../../components/ModalNotification';
-import { AccountId, CreateStableCoinRequest, PublicKey } from 'hedera-stable-coin-sdk';
+import {
+	AccountId,
+	CreateStableCoinRequest,
+	HashPackAccount,
+	PublicKey,
+} from 'hedera-stable-coin-sdk';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch } from '../../store/store';
 
@@ -162,9 +167,7 @@ const StableCoinCreation = () => {
 		} = getValues();
 
 		const newStableCoinParams: CreateStableCoinRequest = new CreateStableCoinRequest({
-			account: {
-				accountId: account.accountId.id,
-			},
+			account,
 			name,
 			symbol,
 			decimals,
@@ -229,7 +232,7 @@ const StableCoinCreation = () => {
 				isOpen={isOpen}
 				onClose={onClose}
 				onClick={() => {
-					dispatch(getStableCoinList(account));
+					dispatch(getStableCoinList(new HashPackAccount(account.accountId)));
 					RouterManager.to(navigate, NamedRoutes.StableCoinNotSelected);
 				}}
 				closeOnOverlayClick={false}

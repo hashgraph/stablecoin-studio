@@ -38,7 +38,7 @@ const WipeOperation = () => {
 	const [request] = useState(
 		new WipeStableCoinRequest({
 			account: {
-				accountId: account.accountId.id,
+				accountId: account.accountId,
 			},
 			amount: '0',
 			proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',

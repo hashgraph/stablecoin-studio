@@ -19,6 +19,7 @@ import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
 import type { AppDispatch } from '../../../store/store.js';
 import { formatAmountWithDecimals } from '../../../utils/inputHelper';
+import { GetAccountBalanceRequest } from 'hedera-stable-coin-sdk';
 
 const GetBalanceOperation = () => {
 	const {
@@ -30,7 +31,7 @@ const GetBalanceOperation = () => {
 	const [balance, setBalance] = useState<string | null>();
 	const [errorOperation, setErrorOperation] = useState();
 	const dispatch = useDispatch<AppDispatch>();
-	const navigate = useNavigate()
+	const navigate = useNavigate();
 
 	const { t } = useTranslation(['getBalance', 'global', 'operations']);
 
@@ -43,12 +44,12 @@ const GetBalanceOperation = () => {
 
 	useEffect(() => {
 		handleRefreshCoinInfo();
-	}, [])
-	
+	}, []);
+
 	const handleCloseModal = () => {
 		RouterManager.goBack(navigate);
-	}
-	
+	};
+
 	const handleRefreshCoinInfo = async () => {
 		const stableCoinDetails = await SDKService.getStableCoinDetails({
 			id: selectedStableCoin?.tokenId || '',
@@ -91,12 +92,14 @@ const GetBalanceOperation = () => {
 				return;
 			}
 
-			const balance = await SDKService.getBalance({
-				proxyContractId: selectedStableCoin.memo.proxyContract,
-				account,
-				targetId: targetAccount,
-				tokenId: selectedStableCoin.tokenId,
-			});
+			const balance = await SDKService.getBalance(
+				new GetAccountBalanceRequest({
+					proxyContractId: selectedStableCoin.memo.proxyContract,
+					account,
+					targetId: targetAccount,
+					tokenId: selectedStableCoin.tokenId,
+				}),
+			);
 			setBalance(balance);
 			onSuccess();
 		} catch (error: any) {

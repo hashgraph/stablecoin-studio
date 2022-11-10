@@ -27,6 +27,7 @@ import { AmountGreaterThanAllowedSupply } from './error/AmountGreaterThanAllowed
 import { OperationNotAllowed } from './error/OperationNotAllowed.js';
 import { InsufficientFunds } from './error/InsufficientFunds.js';
 import { AmountGreaterThanOwnerBalance } from './error/AmountGreaterThanOwnerBalance.js';
+import InvalidAmount from '../../../domain/context/stablecoin/error/InvalidAmount.js';
 
 export default class StableCoinService extends Service {
 	private repository: IStableCoinRepository;
@@ -234,7 +235,9 @@ export default class StableCoinService extends Service {
 			coin.decimals,
 		);
 		if (amount.isGreaterThan(treasuryAccountBalanceBigDecimal)) {
-			throw new Error('Amount is bigger than treasury account balance');
+			throw new OperationNotAllowed(
+				'The treasury account balance is bigger than the amount, cash out',
+			);
 		}
 
 		let resultCashOut = false;
@@ -299,9 +302,7 @@ export default class StableCoinService extends Service {
 			coin.decimals,
 		);
 		if (balanceBigDecimal.isLowerThan(amount)) {
-			throw new InsufficientFunds(
-				`Insufficient funds on account ${req.targetId}`,
-			);
+			throw new InsufficientFunds(req.targetId);
 		}
 
 		let resultWipe = false;
@@ -326,7 +327,7 @@ export default class StableCoinService extends Service {
 				req.account,
 			);
 		} else {
-			throw new Error('Wipe not allowed');
+			throw new OperationNotAllowed('Wipe');
 		}
 
 		return resultWipe;
@@ -459,8 +460,8 @@ export default class StableCoinService extends Service {
 			: BigDecimal.ZERO;
 
 		if (req.amount && limit.isLowerThan(amount)) {
-			throw new Error(
-				'It is not possible to decrease the limit because the indicated amount is higher than the current limit. To be able to decrease the limit, at most the amount must be equal to the current limit.',
+			throw new OperationNotAllowed(
+				'To be able to decrease the limit, at most the amount must be equal to the current limit. Since the indicated amount is higher than the current limit, decreasing the limit',
 			);
 		}
 

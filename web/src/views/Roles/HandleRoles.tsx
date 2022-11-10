@@ -229,7 +229,6 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 									proxyContractId: selectedStableCoin.memo.proxyContract,
 									account: selectedAccount,
 									targetId: account,
-									tokenId: selectedStableCoin.tokenId,
 								}),
 							);
 							break;

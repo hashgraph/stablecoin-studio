@@ -33,7 +33,7 @@ const BurnOperation = () => {
 	const infoAccount = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 
 	const [errorOperation, setErrorOperation] = useState();
-	const navigate = useNavigate()
+	const navigate = useNavigate();
 	const dispatch = useDispatch<AppDispatch>();
 
 	const { decimals = 0, totalSupply } = selectedStableCoin || {};
@@ -46,11 +46,11 @@ const BurnOperation = () => {
 
 	useEffect(() => {
 		handleRefreshCoinInfo();
-	}, [])
-	
+	}, []);
+
 	const handleCloseModal = () => {
 		RouterManager.goBack(navigate);
-	}
+	};
 
 	const handleBurn: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
 		const { amount } = getValues();
@@ -59,14 +59,15 @@ const BurnOperation = () => {
 				onError();
 				return;
 			}
-			await SDKService.cashOut(new CashOutStableCoinRequest({
-				proxyContractId: selectedStableCoin.memo.proxyContract,
-				account,
-				tokenId: selectedStableCoin.tokenId,
-				amount: amount.toString(),
-				publicKey: infoAccount.publicKey,
-				targetId: account.accountId
-			}));
+			await SDKService.cashOut(
+				new CashOutStableCoinRequest({
+					proxyContractId: selectedStableCoin.memo.proxyContract,
+					account,
+					tokenId: selectedStableCoin.tokenId,
+					amount: amount.toString(),
+					publicKey: infoAccount.publicKey,
+				}),
+			);
 			onSuccess();
 		} catch (error: any) {
 			setErrorOperation(error.toString());

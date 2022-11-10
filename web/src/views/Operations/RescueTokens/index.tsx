@@ -7,11 +7,11 @@ import { validateDecimals } from '../../../utils/validationsHelper';
 import OperationLayout from '../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
-import { useSelector,useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import {
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNT,
-	walletActions
+	walletActions,
 } from '../../../store/slices/walletSlice';
 import SDKService from '../../../services/SDKService';
 import { useEffect, useState } from 'react';
@@ -19,6 +19,7 @@ import { formatAmount } from '../../../utils/inputHelper';
 import type { AppDispatch } from '../../../store/store.js';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
+import { RescueStableCoinRequest } from 'hedera-stable-coin-sdk';
 
 const RescueTokenOperation = () => {
 	const {
@@ -32,7 +33,7 @@ const RescueTokenOperation = () => {
 
 	const [errorOperation, setErrorOperation] = useState();
 	const dispatch = useDispatch<AppDispatch>();
-	const navigate = useNavigate()
+	const navigate = useNavigate();
 
 	const { decimals = 0 } = selectedStableCoin || {};
 
@@ -41,14 +42,14 @@ const RescueTokenOperation = () => {
 	});
 
 	const { t } = useTranslation(['rescueTokens', 'global', 'operations']);
-	
+
 	useEffect(() => {
 		handleRefreshCoinInfo();
-	}, [])
-	
+	}, []);
+
 	const handleCloseModal = () => {
 		RouterManager.goBack(navigate);
-	}
+	};
 	const handleRefreshCoinInfo = async () => {
 		const stableCoinDetails = await SDKService.getStableCoinDetails({
 			id: selectedStableCoin?.tokenId || '',
@@ -89,12 +90,14 @@ const RescueTokenOperation = () => {
 				onError();
 				return;
 			}
-			await SDKService.rescue({
-				proxyContractId: selectedStableCoin.memo.proxyContract,
-				account,
-				tokenId: selectedStableCoin.tokenId,
-				amount: amount.toString(),
-			});
+			await SDKService.rescue(
+				new RescueStableCoinRequest({
+					proxyContractId: selectedStableCoin.memo.proxyContract,
+					account,
+					tokenId: selectedStableCoin.tokenId,
+					amount: amount.toString(),
+				}),
+			);
 			onSuccess();
 		} catch (error: any) {
 			setErrorOperation(error.toString());
