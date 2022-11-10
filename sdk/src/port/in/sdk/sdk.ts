@@ -87,6 +87,7 @@ import {
 	CashInStableCoinRequest,
 	WipeStableCoinRequest,
 	GetListStableCoin,
+	GetStableCoinDetails,
 } from './request';
 import RequestMapper from './request/mapping/RequestMapper.js';
 import { RequestAccount } from './request/BaseRequest.js';
@@ -261,12 +262,10 @@ export class SDK {
 	}
 
 	public getStableCoinDetails(
-		request: IGetStableCoinRequest,
+		request: GetStableCoinDetails,
 	): Promise<IStableCoinDetail> | null {
-		const req: IGetStableCoinServiceRequestModel = {
-			...request,
-		};
-
+		const req: IGetStableCoinServiceRequestModel =
+			RequestMapper.map(request);
 		return this.stableCoinService.getStableCoinDetails(req);
 	}
 

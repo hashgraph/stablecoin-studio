@@ -2,6 +2,7 @@ import PublicKey from '../../../../src/domain/context/account/PublicKey.js';
 import {
   BigDecimal,
   CreateStableCoinRequest,
+  GetStableCoinDetails,
   SDK,
 } from '../../../../src/index.js';
 import {
@@ -95,9 +96,12 @@ describe('🧪 [PORT] SDK', () => {
   }, 120_000);
 
   it('Gets the token info', async () => {
-    const coin = await sdk.getStableCoinDetails({
-      id: tokenId ?? '',
-    });
+    const coin = await sdk.getStableCoinDetails(
+      new GetStableCoinDetails({
+        id: tokenId ?? '',
+      }),
+    );
+
     expect(coin).not.toBeNull();
     expect(coin?.decimals).toBeGreaterThanOrEqual(0);
     //expect(coin?.adminKey).toBeInstanceOf(PublicKey);
