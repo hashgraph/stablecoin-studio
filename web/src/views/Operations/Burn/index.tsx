@@ -19,7 +19,7 @@ import { useState, useEffect } from 'react';
 import type { AppDispatch } from '../../../store/store.js';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
-import { BigDecimal } from 'hedera-stable-coin-sdk';
+import { BigDecimal, CashOutStableCoinRequest } from 'hedera-stable-coin-sdk';
 
 const BurnOperation = () => {
 	const {
@@ -59,13 +59,14 @@ const BurnOperation = () => {
 				onError();
 				return;
 			}
-			await SDKService.burn({
+			await SDKService.cashOut(new CashOutStableCoinRequest({
 				proxyContractId: selectedStableCoin.memo.proxyContract,
 				account,
 				tokenId: selectedStableCoin.tokenId,
 				amount: amount.toString(),
 				publicKey: infoAccount.publicKey,
-			});
+				targetId: account.accountId
+			}));
 			onSuccess();
 		} catch (error: any) {
 			setErrorOperation(error.toString());

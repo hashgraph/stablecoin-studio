@@ -6,11 +6,7 @@ import DetailsReview from '../../../components/DetailsReview';
 import InputController from '../../../components/Form/InputController';
 import InputNumberController from '../../../components/Form/InputNumberController';
 import SDKService from '../../../services/SDKService';
-import {
-	validateAccount,
-	validateDecimals,
-	validateQuantityOverMaxSupply,
-} from '../../../utils/validationsHelper';
+import { validateAccount, validateDecimals } from '../../../utils/validationsHelper';
 import OperationLayout from './../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
@@ -98,9 +94,7 @@ const CashInOperation = () => {
 			await SDKService.cashIn(
 				new CashInStableCoinRequest({
 					proxyContractId: selectedStableCoin.memo.proxyContract,
-					account: {
-						accountId: account.accountId.id,
-					},
+					account,
 					tokenId: selectedStableCoin.tokenId,
 					targetId: destinationAccount,
 					amount: amount.toString(),

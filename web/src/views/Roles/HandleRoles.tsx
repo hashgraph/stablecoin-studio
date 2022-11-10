@@ -20,7 +20,18 @@ import {
 import { SelectController } from '../../components/Form/SelectController';
 import { validateDecimals } from '../../utils/validationsHelper';
 import { formatAmountWithDecimals } from '../../utils/inputHelper';
-import { BigDecimal, Capabilities } from 'hedera-stable-coin-sdk';
+import {
+	BigDecimal,
+	Capabilities,
+	CheckCashInLimitRequest,
+	CheckCashInRoleRequest,
+	DecreaseCashInLimitRequest,
+	GrantRoleRequest,
+	HasRoleRequest,
+	IncreaseCashInLimitRequest,
+	ResetCashInLimitRequest,
+	RevokeRoleRequest,
+} from 'hedera-stable-coin-sdk';
 
 const supplier = 'Cash in';
 
@@ -106,13 +117,15 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 
 			switch (action.toString()) {
 				case 'giveRole':
-					alreadyHasRole = await SDKService.hasRole({
-						proxyContractId: selectedStableCoin.memo.proxyContract,
-						account: selectedAccount,
-						tokenId: selectedStableCoin.tokenId,
-						targetId: account,
-						role: role.value,
-					});
+					alreadyHasRole = await SDKService.hasRole(
+						new HasRoleRequest({
+							proxyContractId: selectedStableCoin.memo.proxyContract,
+							account: selectedAccount,
+							tokenId: selectedStableCoin.tokenId,
+							targetId: account,
+							role: role.value,
+						}),
+					);
 
 					if (alreadyHasRole && alreadyHasRole[0]) {
 						setModalErrorDescription('hasAlreadyRoleError');
@@ -121,31 +134,37 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 					}
 
 					amount
-						? await SDKService.grantRole({
-								proxyContractId: selectedStableCoin.memo.proxyContract,
-								account: selectedAccount,
-								tokenId: selectedStableCoin.tokenId,
-								targetId: account,
-								amount: amount.toString(),
-								role: role.value,
-						  })
-						: await SDKService.grantRole({
-								proxyContractId: selectedStableCoin.memo.proxyContract,
-								account: selectedAccount,
-								tokenId: selectedStableCoin.tokenId,
-								targetId: account,
-								role: role.value,
-						  });
+						? await SDKService.grantRole(
+								new GrantRoleRequest({
+									proxyContractId: selectedStableCoin.memo.proxyContract,
+									account: selectedAccount,
+									tokenId: selectedStableCoin.tokenId,
+									targetId: account,
+									amount: amount.toString(),
+									role: role.value,
+								}),
+						  )
+						: await SDKService.grantRole(
+								new GrantRoleRequest({
+									proxyContractId: selectedStableCoin.memo.proxyContract,
+									account: selectedAccount,
+									tokenId: selectedStableCoin.tokenId,
+									targetId: account,
+									role: role.value,
+								}),
+						  );
 					break;
 
 				case 'revokeRole':
-					alreadyHasRole = await SDKService.hasRole({
-						proxyContractId: selectedStableCoin.memo.proxyContract,
-						account: selectedAccount,
-						tokenId: selectedStableCoin.tokenId,
-						targetId: account,
-						role: role.value,
-					});
+					alreadyHasRole = await SDKService.hasRole(
+						new HasRoleRequest({
+							proxyContractId: selectedStableCoin.memo.proxyContract,
+							account: selectedAccount,
+							tokenId: selectedStableCoin.tokenId,
+							targetId: account,
+							role: role.value,
+						}),
+					);
 
 					if (alreadyHasRole && !alreadyHasRole[0]) {
 						setModalErrorDescription('hasNotRoleError');
@@ -153,21 +172,25 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 						return;
 					}
 
-					await SDKService.revokeRole({
-						proxyContractId: selectedStableCoin.memo.proxyContract,
-						account: selectedAccount,
-						tokenId: selectedStableCoin.tokenId,
-						targetId: account,
-						role: role.value,
-					});
+					await SDKService.revokeRole(
+						new RevokeRoleRequest({
+							proxyContractId: selectedStableCoin.memo.proxyContract,
+							account: selectedAccount,
+							tokenId: selectedStableCoin.tokenId,
+							targetId: account,
+							role: role.value,
+						}),
+					);
 					break;
 
 				case 'editRole':
-					isUnlimitedSupplierAllowance = await SDKService.isUnlimitedSupplierAllowance({
-						proxyContractId: selectedStableCoin.memo.proxyContract,
-						account: selectedAccount,
-						targetId: account,
-					});
+					isUnlimitedSupplierAllowance = await SDKService.isUnlimitedSupplierAllowance(
+						new CheckCashInRoleRequest({
+							proxyContractId: selectedStableCoin.memo.proxyContract,
+							account: selectedAccount,
+							targetId: account,
+						}),
+					);
 
 					if (isUnlimitedSupplierAllowance![0]) {
 						setModalErrorDescription('hasInfiniteAllowance');
@@ -177,40 +200,49 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 
 					switch (supplierLimitOption) {
 						case 'INCREASE':
-							await SDKService.increaseSupplierAllowance({
-								proxyContractId: selectedStableCoin.memo.proxyContract,
-								account: selectedAccount,
-								tokenId: selectedStableCoin.tokenId,
-								targetId: account,
-								amount: amount ? amount.toString() : '',
-							});
+							await SDKService.increaseSupplierAllowance(
+								new IncreaseCashInLimitRequest({
+									proxyContractId: selectedStableCoin.memo.proxyContract,
+									account: selectedAccount,
+									tokenId: selectedStableCoin.tokenId,
+									targetId: account,
+									amount: amount ? amount.toString() : '',
+								}),
+							);
 							break;
 
 						case 'DECREASE':
-							await SDKService.decreaseSupplierAllowance({
-								proxyContractId: selectedStableCoin.memo.proxyContract,
-								account: selectedAccount,
-								tokenId: selectedStableCoin.tokenId,
-								targetId: account,
-								amount: amount ? amount.toString() : '',
-							});
+							await SDKService.decreaseSupplierAllowance(
+								new DecreaseCashInLimitRequest({
+									proxyContractId: selectedStableCoin.memo.proxyContract,
+									account: selectedAccount,
+									tokenId: selectedStableCoin.tokenId,
+									targetId: account,
+									amount: amount ? amount.toString() : '',
+								}),
+							);
 							break;
 
 						case 'RESET':
-							await SDKService.resetSupplierAllowance({
-								proxyContractId: selectedStableCoin.memo.proxyContract,
-								account: selectedAccount,
-								targetId: account,
-							});
+							await SDKService.resetSupplierAllowance(
+								new ResetCashInLimitRequest({
+									proxyContractId: selectedStableCoin.memo.proxyContract,
+									account: selectedAccount,
+									targetId: account,
+									tokenId: selectedStableCoin.tokenId,
+								}),
+							);
 							break;
 
 						case 'CHECK': {
-							const limit = await SDKService.checkSupplierAllowance({
-								proxyContractId: selectedStableCoin.memo.proxyContract,
-								account: selectedAccount,
-								tokenId: selectedStableCoin.tokenId,
-								targetId: account,
-							});
+							const limit = await SDKService.checkSupplierAllowance(
+								new CheckCashInLimitRequest({
+									proxyContractId: selectedStableCoin.memo.proxyContract,
+									account: selectedAccount,
+									tokenId: selectedStableCoin.tokenId,
+									targetId: account,
+								}),
+							);
 							setLimit(limit);
 						}
 					}

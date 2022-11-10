@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { HashPackAccount } from 'hedera-stable-coin-sdk';
 import type {
+	HashPackAccount,
 	InitializationData,
 	IStableCoinDetail,
 	IStableCoinList,
@@ -102,7 +102,8 @@ export const HAS_WALLET_EXTENSION = (state: RootState) => state.wallet.hasWallet
 export const IS_PAIRED = (state: RootState) => state.wallet.isPaired;
 export const SELECTED_WALLET_PAIRED_ACCOUNTID = (state: RootState) =>
 	state.wallet.data.savedPairings[0]?.accountIds[0];
-export const SELECTED_WALLET_PAIRED_ACCOUNT = (state: RootState) =>
-	new HashPackAccount(state.wallet.data.savedPairings[0]?.accountIds[0]);
+export const SELECTED_WALLET_PAIRED_ACCOUNT = (state: RootState) => ({
+	accountId: state.wallet.data.savedPairings[0]?.accountIds[0],
+});
 
 export const walletActions = walletSlice.actions;
