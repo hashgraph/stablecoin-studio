@@ -25,14 +25,12 @@ export default class CashOutStableCoinRequest
 		account,
 		amount,
 		proxyContractId,
-		targetId,
 		tokenId,
 		publicKey,
 	}: {
 		account: RequestAccount;
 		amount: string;
 		proxyContractId: string;
-		targetId: string;
 		tokenId: string;
 		publicKey?: RequestPublicKey;
 	}) {
@@ -40,7 +38,6 @@ export default class CashOutStableCoinRequest
 			account: Validation.checkAccount(),
 			amount: Validation.checkAmount(),
 			proxyContractId: Validation.checkContractId(),
-			targetId: Validation.checkHederaIdFormat(),
 			tokenId: Validation.checkHederaIdFormat(),
 			publicKey: Validation.checkPublicKey(),
 		});
@@ -48,7 +45,6 @@ export default class CashOutStableCoinRequest
 		this.account = account;
 		this.amount = amount;
 		this.proxyContractId = proxyContractId;
-		this.targetId = targetId;
 		this.tokenId = tokenId;
 		this.publicKey = publicKey;
 	}

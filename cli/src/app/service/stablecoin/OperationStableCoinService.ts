@@ -312,24 +312,9 @@ export default class OperationStableCoinService extends Service {
             },
           },
           tokenId: this.stableCoinId,
-          targetId: '',
           amount: '',
         });
 
-        // Call to cash out
-        cashOutRequest.targetId = await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.askTargetAccount'),
-          currentAccount.accountId.id,
-        );
-        await utilsService.handleValidation(
-          () => cashOutRequest.validate('targetId'),
-          async () => {
-            cashOutRequest.targetId = await utilsService.defaultSingleAsk(
-              language.getText('stablecoin.askTargetAccount'),
-              currentAccount.accountId.id,
-            );
-          },
-        );
 
         cashOutRequest.amount = await utilsService
           .defaultSingleAsk(language.getText('stablecoin.askBurnAmount'), '1')
