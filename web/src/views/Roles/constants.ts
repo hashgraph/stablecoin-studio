@@ -21,8 +21,7 @@ export const roleExternalTokens = [
 	{ value: 'BURN_ROLE', label: 'BURN' },
 	{ value: 'WIPE_ROLE', label: 'WIPE' },
 	{ value: 'RESCUE_ROLE', label: 'RESCUE' },
-	{ value: 'PAUSER_ROLE', label: 'PAUSER' },
-	{ value: 'DEFAULT_ADMIN_ROLE', label: 'ADMIN' },
+	{ value: 'PAUSER_ROLE', label: 'PAUSER' }
 ];
 
 export const cashinLimitOptions = [
