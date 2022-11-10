@@ -34,7 +34,6 @@ import CashInStableCoinsService from './CashInStableCoinService.js';
 import WipeStableCoinsService from './WipeStableCoinService.js';
 import RoleStableCoinsService from './RoleStableCoinService.js';
 import RescueStableCoinsService from './RescueStableCoinService.js';
-import colors from 'colors';
 import CapabilitiesStableCoinsService from './CapabilitiesStableCoinService.js';
 import BurnStableCoinsService from './BurnStableCoinService.js';
 import ManageExternalTokenService from './ManageExternalTokenService';
@@ -131,283 +130,295 @@ export default class OperationStableCoinService extends Service {
   }
 
   private async operationsStableCoin(): Promise<void> {
-    const sdk: SDK = utilsService.getSDK();
-    const configAccount = utilsService.getCurrentAccount();
-    const currentAccount = new EOAccount(
-      configAccount.accountId,
-      new PrivateKey(
-        configAccount.privateKey.key,
-        configAccount.privateKey.type,
-      ),
-    );
-    const wizardOperationsStableCoinOptions = language.getArray(
-      'wizard.stableCoinOptions',
-    );
-
-    const capabilitiesStableCoin = await this.getCapabilities(
-      sdk,
-      currentAccount,
-    );
-
-    switch (
-      await utilsService.defaultMultipleAsk(
-        language.getText('stablecoin.askDoSomething'),
-        this.filterMenuOptions(
-          wizardOperationsStableCoinOptions,
-          capabilitiesStableCoin,
-          this.optionTokenListSelected &&
-            this.optionTokenListSelected.split(' - ').length === 3
-            ? configAccount.externalTokens.find(
-                (token) => token.id === this.stableCoinId,
-              ).roles
-            : undefined,
+    try {
+      const sdk: SDK = utilsService.getSDK();
+      const configAccount = utilsService.getCurrentAccount();
+      const currentAccount = new EOAccount(
+        configAccount.accountId,
+        new PrivateKey(
+          configAccount.privateKey.key,
+          configAccount.privateKey.type,
         ),
-        false,
-        configAccount.network,
-        `${currentAccount.accountId} - ${configAccount.alias}`,
-        this.stableCoinWithSymbol,
-      )
-    ) {
-      case 'Cash in':
-        await utilsService.cleanAndShowBanner();
+      );
+      const wizardOperationsStableCoinOptions = language.getArray(
+        'wizard.stableCoinOptions',
+      );
 
-        utilsService.displayCurrentUserInfo(
-          configAccount,
+      const capabilitiesStableCoin = await this.getCapabilities(
+        sdk,
+        currentAccount,
+      );
+
+      switch (
+        await utilsService.defaultMultipleAsk(
+          language.getText('stablecoin.askDoSomething'),
+          this.filterMenuOptions(
+            wizardOperationsStableCoinOptions,
+            capabilitiesStableCoin,
+            this.optionTokenListSelected &&
+              this.optionTokenListSelected.split(' - ').length === 3
+              ? configAccount.externalTokens.find(
+                  (token) => token.id === this.stableCoinId,
+                ).roles
+              : undefined,
+          ),
+          false,
+          configAccount.network,
+          `${currentAccount.accountId} - ${configAccount.alias}`,
           this.stableCoinWithSymbol,
-        );
+        )
+      ) {
+        case 'Cash in':
+          await utilsService.cleanAndShowBanner();
 
-        const cashInRequest = new CashInStableCoinRequest({
-          proxyContractId: this.proxyContractId,
-          account: {
-            accountId: configAccount.accountId,
-            privateKey: {
-              key: currentAccount.privateKey.key,
-              type: currentAccount.privateKey.type,
+          utilsService.displayCurrentUserInfo(
+            configAccount,
+            this.stableCoinWithSymbol,
+          );
+
+          const cashInRequest = new CashInStableCoinRequest({
+            proxyContractId: this.proxyContractId,
+            account: {
+              accountId: configAccount.accountId,
+              privateKey: {
+                key: currentAccount.privateKey.key,
+                type: currentAccount.privateKey.type,
+              },
             },
-          },
-          tokenId: this.stableCoinId,
-          targetId: '',
-          amount: '',
-        });
+            tokenId: this.stableCoinId,
+            targetId: '',
+            amount: '',
+          });
 
-        // Call to mint
-        cashInRequest.targetId = await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.askTargetAccount'),
-          currentAccount.accountId.id,
-        );
-        await utilsService.handleValidation(
-          () => cashInRequest.validate('targetId'),
-          async () => {
-            cashInRequest.targetId = await utilsService.defaultSingleAsk(
-              language.getText('stablecoin.askTargetAccount'),
-              currentAccount.accountId.id,
-            );
-          },
-        );
-
-        cashInRequest.amount = await utilsService
-          .defaultSingleAsk(language.getText('stablecoin.askCashInAmount'), '1')
-          .then((val) => val.replace(',', '.'));
-
-        await utilsService.handleValidation(
-          () => cashInRequest.validate('amount'),
-          async () => {
-            cashInRequest.amount = await utilsService
-              .defaultSingleAsk(
+          // Call to mint
+          cashInRequest.targetId = await utilsService.defaultSingleAsk(
+            language.getText('stablecoin.askTargetAccount'),
+            currentAccount.accountId.id,
+          );
+          await utilsService.handleValidation(
+            () => cashInRequest.validate('targetId'),
+            async () => {
+              cashInRequest.targetId = await utilsService.defaultSingleAsk(
                 language.getText('stablecoin.askTargetAccount'),
-                '1',
-              )
-              .then((val) => val.replace(',', '.'));
-          },
-        );
-        try {
-          await new CashInStableCoinsService().cashInStableCoin(cashInRequest);
-        } catch (error) {
-          console.log(colors.red(error.message));
-          await this.operationsStableCoin();
-        }
+                currentAccount.accountId.id,
+              );
+            },
+          );
 
-        break;
-      case 'Details':
-        await utilsService.cleanAndShowBanner();
+          cashInRequest.amount = await utilsService
+            .defaultSingleAsk(
+              language.getText('stablecoin.askCashInAmount'),
+              '1',
+            )
+            .then((val) => val.replace(',', '.'));
 
-        // Call to details
-        await new DetailsStableCoinsService().getDetailsStableCoins(
-          this.stableCoinId,
-        );
-        break;
-      case 'Balance':
-        await utilsService.cleanAndShowBanner();
+          await utilsService.handleValidation(
+            () => cashInRequest.validate('amount'),
+            async () => {
+              cashInRequest.amount = await utilsService
+                .defaultSingleAsk(
+                  language.getText('stablecoin.askTargetAccount'),
+                  '1',
+                )
+                .then((val) => val.replace(',', '.'));
+            },
+          );
+          try {
+            await new CashInStableCoinsService().cashInStableCoin(
+              cashInRequest,
+            );
+          } catch (error) {
+            await utilsService.askErrorConfirmation(
+              async () => await this.operationsStableCoin(),
+              error,
+            );
+          }
 
-        // Call to balance
-        const targetId = await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.askAccountToBalance'),
-          configAccount.accountId,
-        );
-        // Check Address
-        if (sdk.checkIsAddress(targetId)) {
-          await new BalanceOfStableCoinsService().getBalanceOfStableCoin(
-            this.proxyContractId,
-            currentAccount,
-            targetId,
+          break;
+        case 'Details':
+          await utilsService.cleanAndShowBanner();
+
+          // Call to details
+          await new DetailsStableCoinsService().getDetailsStableCoins(
             this.stableCoinId,
           );
-        } else {
-          console.log(language.getText('validations.wrongFormatAddress'));
+          break;
+        case 'Balance':
+          await utilsService.cleanAndShowBanner();
 
-          await this.operationsStableCoin();
-        }
-
-        break;
-      case 'Burn':
-        await utilsService.cleanAndShowBanner();
-
-        utilsService.displayCurrentUserInfo(
-          configAccount,
-          this.stableCoinWithSymbol,
-        );
-
-        const cashOutRequest = new CashOutStableCoinRequest({
-          proxyContractId: this.proxyContractId,
-          account: {
-            accountId: configAccount.accountId,
-            privateKey: {
-              key: currentAccount.privateKey.key,
-              type: currentAccount.privateKey.type,
-            },
-          },
-          tokenId: this.stableCoinId,
-          targetId: '',
-          amount: '',
-        });
-
-        // Call to cash out
-        cashOutRequest.targetId = await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.askTargetAccount'),
-          currentAccount.accountId.id,
-        );
-        await utilsService.handleValidation(
-          () => cashOutRequest.validate('targetId'),
-          async () => {
-            cashOutRequest.targetId = await utilsService.defaultSingleAsk(
-              language.getText('stablecoin.askTargetAccount'),
-              currentAccount.accountId.id,
+          // Call to balance
+          const targetId = await utilsService.defaultSingleAsk(
+            language.getText('stablecoin.askAccountToBalance'),
+            configAccount.accountId,
+          );
+          // Check Address
+          if (sdk.checkIsAddress(targetId)) {
+            await new BalanceOfStableCoinsService().getBalanceOfStableCoin(
+              this.proxyContractId,
+              currentAccount,
+              targetId,
+              this.stableCoinId,
             );
-          },
-        );
+          } else {
+            console.log(language.getText('validations.wrongFormatAddress'));
 
-        cashOutRequest.amount = await utilsService
-          .defaultSingleAsk(language.getText('stablecoin.askBurnAmount'), '1')
-          .then((val) => val.replace(',', '.'));
+            await this.operationsStableCoin();
+          }
 
-        await utilsService.handleValidation(
-          () => cashOutRequest.validate('amount'),
-          async () => {
-            cashOutRequest.amount = await utilsService
-              .defaultSingleAsk(
+          break;
+        case 'Burn':
+          await utilsService.cleanAndShowBanner();
+
+          utilsService.displayCurrentUserInfo(
+            configAccount,
+            this.stableCoinWithSymbol,
+          );
+
+          const cashOutRequest = new CashOutStableCoinRequest({
+            proxyContractId: this.proxyContractId,
+            account: {
+              accountId: configAccount.accountId,
+              privateKey: {
+                key: currentAccount.privateKey.key,
+                type: currentAccount.privateKey.type,
+              },
+            },
+            tokenId: this.stableCoinId,
+            targetId: '',
+            amount: '',
+          });
+
+          // Call to cash out
+          cashOutRequest.targetId = await utilsService.defaultSingleAsk(
+            language.getText('stablecoin.askTargetAccount'),
+            currentAccount.accountId.id,
+          );
+          await utilsService.handleValidation(
+            () => cashOutRequest.validate('targetId'),
+            async () => {
+              cashOutRequest.targetId = await utilsService.defaultSingleAsk(
                 language.getText('stablecoin.askTargetAccount'),
-                '1',
-              )
-              .then((val) => val.replace(',', '.'));
-          },
-        );
-
-        try {
-          await new BurnStableCoinsService().burnStableCoin(cashOutRequest);
-        } catch (error) {
-          console.log(colors.red(error.message));
-          await this.operationsStableCoin();
-        }
-
-        break;
-      case 'Wipe':
-        await utilsService.cleanAndShowBanner();
-
-        utilsService.displayCurrentUserInfo(
-          configAccount,
-          this.stableCoinWithSymbol,
-        );
-
-        const wipeRequest = new WipeStableCoinRequest({
-          proxyContractId: this.proxyContractId,
-          account: {
-            accountId: configAccount.accountId,
-            privateKey: {
-              key: currentAccount.privateKey.key,
-              type: currentAccount.privateKey.type,
+                currentAccount.accountId.id,
+              );
             },
-          },
-          tokenId: this.stableCoinId,
-          targetId: '',
-          amount: '',
-        });
+          );
 
-        // Call to wipe
-        wipeRequest.targetId = await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.askTargetAccount'),
-          currentAccount.accountId.id,
-        );
-        await utilsService.handleValidation(
-          () => wipeRequest.validate('targetId'),
-          async () => {
-            wipeRequest.targetId = await utilsService.defaultSingleAsk(
-              language.getText('stablecoin.askTargetAccount'),
-              currentAccount.accountId.id,
-            );
-          },
-        );
+          cashOutRequest.amount = await utilsService
+            .defaultSingleAsk(language.getText('stablecoin.askBurnAmount'), '1')
+            .then((val) => val.replace(',', '.'));
 
-        wipeRequest.amount = await utilsService
-          .defaultSingleAsk(language.getText('stablecoin.askWipeAmount'), '1')
-          .then((val) => val.replace(',', '.'));
-
-        await utilsService.handleValidation(
-          () => wipeRequest.validate('amount'),
-          async () => {
-            wipeRequest.amount = await utilsService
-              .defaultSingleAsk(
-                language.getText('stablecoin.askWipeAmount'),
-                '1',
-              )
-              .then((val) => val.replace(',', '.'));
-          },
-        );
-        try {
-          await new WipeStableCoinsService().wipeStableCoin(wipeRequest);
-        } catch (error) {
-          console.log(colors.red(error.message));
-          await this.operationsStableCoin();
-        }
-
-        break;
-      case 'Rescue':
-        await utilsService.cleanAndShowBanner();
-
-        utilsService.displayCurrentUserInfo(
-          configAccount,
-          this.stableCoinWithSymbol,
-        );
-
-        const rescueStableCoinRequest = new RescueStableCoinRequest({
-          proxyContractId: this.proxyContractId,
-          account: {
-            accountId: configAccount.accountId,
-            privateKey: {
-              key: currentAccount.privateKey.key,
-              type: currentAccount.privateKey.type,
+          await utilsService.handleValidation(
+            () => cashOutRequest.validate('amount'),
+            async () => {
+              cashOutRequest.amount = await utilsService
+                .defaultSingleAsk(
+                  language.getText('stablecoin.askTargetAccount'),
+                  '1',
+                )
+                .then((val) => val.replace(',', '.'));
             },
-          },
-          tokenId: this.stableCoinId,
-          amount: '',
-        });
+          );
 
-        let rescuedAmount = '';
-          rescueStableCoinRequest.amount =
-            await utilsService.defaultSingleAsk(
-              language.getText('stablecoin.askRescueAmount'),
-              '1',
+          try {
+            await new BurnStableCoinsService().burnStableCoin(cashOutRequest);
+          } catch (error) {
+            await utilsService.askErrorConfirmation(
+              async () => await this.operationsStableCoin(),
+              error,
             );
-            await utilsService.handleValidation(() => rescueStableCoinRequest.validate('amount'),
+          }
+
+          break;
+        case 'Wipe':
+          await utilsService.cleanAndShowBanner();
+
+          utilsService.displayCurrentUserInfo(
+            configAccount,
+            this.stableCoinWithSymbol,
+          );
+
+          const wipeRequest = new WipeStableCoinRequest({
+            proxyContractId: this.proxyContractId,
+            account: {
+              accountId: configAccount.accountId,
+              privateKey: {
+                key: currentAccount.privateKey.key,
+                type: currentAccount.privateKey.type,
+              },
+            },
+            tokenId: this.stableCoinId,
+            targetId: '',
+            amount: '',
+          });
+
+          // Call to wipe
+          wipeRequest.targetId = await utilsService.defaultSingleAsk(
+            language.getText('stablecoin.askTargetAccount'),
+            currentAccount.accountId.id,
+          );
+          await utilsService.handleValidation(
+            () => wipeRequest.validate('targetId'),
+            async () => {
+              wipeRequest.targetId = await utilsService.defaultSingleAsk(
+                language.getText('stablecoin.askTargetAccount'),
+                currentAccount.accountId.id,
+              );
+            },
+          );
+
+          wipeRequest.amount = await utilsService
+            .defaultSingleAsk(language.getText('stablecoin.askWipeAmount'), '1')
+            .then((val) => val.replace(',', '.'));
+
+          await utilsService.handleValidation(
+            () => wipeRequest.validate('amount'),
+            async () => {
+              wipeRequest.amount = await utilsService
+                .defaultSingleAsk(
+                  language.getText('stablecoin.askWipeAmount'),
+                  '1',
+                )
+                .then((val) => val.replace(',', '.'));
+            },
+          );
+          try {
+            await new WipeStableCoinsService().wipeStableCoin(wipeRequest);
+          } catch (error) {
+            await utilsService.askErrorConfirmation(
+              async () => await this.operationsStableCoin(),
+              error,
+            );
+          }
+
+          break;
+        case 'Rescue':
+          await utilsService.cleanAndShowBanner();
+
+          utilsService.displayCurrentUserInfo(
+            configAccount,
+            this.stableCoinWithSymbol,
+          );
+
+          const rescueStableCoinRequest = new RescueStableCoinRequest({
+            proxyContractId: this.proxyContractId,
+            account: {
+              accountId: configAccount.accountId,
+              privateKey: {
+                key: currentAccount.privateKey.key,
+                type: currentAccount.privateKey.type,
+              },
+            },
+            tokenId: this.stableCoinId,
+            amount: '',
+          });
+
+          let rescuedAmount = '';
+          rescueStableCoinRequest.amount = await utilsService.defaultSingleAsk(
+            language.getText('stablecoin.askRescueAmount'),
+            '1',
+          );
+          await utilsService.handleValidation(
+            () => rescueStableCoinRequest.validate('amount'),
             async () => {
               rescuedAmount = await utilsService.defaultSingleAsk(
                 language.getText('stablecoin.askRescueAmount'),
@@ -415,59 +426,70 @@ export default class OperationStableCoinService extends Service {
               );
               rescueStableCoinRequest.amount = rescuedAmount;
             },
-        );
+          );
 
-        // Call to Rescue
-        try {
-          await new RescueStableCoinsService().rescueStableCoin(rescueStableCoinRequest);
-        } catch (err) {
-          console.log(colors.red(err.message));
-          await this.operationsStableCoin();
-        }
-        break;
-      case 'Role management':
-        await utilsService.cleanAndShowBanner();
+          // Call to Rescue
+          try {
+            await new RescueStableCoinsService().rescueStableCoin(
+              rescueStableCoinRequest,
+            );
+          } catch (error) {
+            await utilsService.askErrorConfirmation(
+              async () => await this.operationsStableCoin(),
+              error,
+            );
+          }
+          break;
+        case 'Role management':
+          await utilsService.cleanAndShowBanner();
 
-        // Call to Supplier Role
-        await this.roleManagementFlow();
-        break;
-      case 'Refresh roles':
-        await utilsService.cleanAndShowBanner();
+          // Call to Supplier Role
+          await this.roleManagementFlow();
+          break;
+        case 'Refresh roles':
+          await utilsService.cleanAndShowBanner();
 
-        // Call to Supplier Role
-        const rolesToRefresh = await new RoleStableCoinsService().getRoles(
-          this.proxyContractId,
-          currentAccount.accountId.id,
-          new PrivateKey(
-            configAccount.privateKey.key,
-            configAccount.privateKey.type,
-          ),
-          currentAccount.accountId.id,
-        );
-        const externalTokensRefreshed = configAccount.externalTokens.map(
-          (token) => {
-            if (token.id === this.stableCoinId) {
-              return {
-                id: token.id,
-                symbol: token.symbol,
-                roles: rolesToRefresh,
-              };
-            }
-            return token;
-          },
-        );
-        new ManageExternalTokenService().updateAccount(externalTokensRefreshed);
-        configAccount.externalTokens = externalTokensRefreshed;
-        break;
-      case wizardOperationsStableCoinOptions[
-        wizardOperationsStableCoinOptions.length - 1
-      ]:
-      default:
-        await utilsService.cleanAndShowBanner();
-        await wizardService.mainMenu();
+          // Call to Supplier Role
+          const rolesToRefresh = await new RoleStableCoinsService().getRoles(
+            this.proxyContractId,
+            currentAccount.accountId.id,
+            new PrivateKey(
+              configAccount.privateKey.key,
+              configAccount.privateKey.type,
+            ),
+            currentAccount.accountId.id,
+          );
+          const externalTokensRefreshed = configAccount.externalTokens.map(
+            (token) => {
+              if (token.id === this.stableCoinId) {
+                return {
+                  id: token.id,
+                  symbol: token.symbol,
+                  roles: rolesToRefresh,
+                };
+              }
+              return token;
+            },
+          );
+          new ManageExternalTokenService().updateAccount(
+            externalTokensRefreshed,
+          );
+          configAccount.externalTokens = externalTokensRefreshed;
+          break;
+        case wizardOperationsStableCoinOptions[
+          wizardOperationsStableCoinOptions.length - 1
+        ]:
+        default:
+          await utilsService.cleanAndShowBanner();
+          await wizardService.mainMenu();
+      }
+      await this.operationsStableCoin();
+    } catch (error) {
+      await utilsService.askErrorConfirmation(
+        async () => await this.operationsStableCoin(),
+        error,
+      );
     }
-
-    await this.operationsStableCoin();
   }
 
   private async getCapabilities(
@@ -594,8 +616,10 @@ export default class OperationStableCoinService extends Service {
               );
             }
           } catch (error) {
-            console.log(colors.red(error.message));
-            await this.operationsStableCoin();
+            await utilsService.askErrorConfirmation(
+              async () => await this.operationsStableCoin(),
+              error,
+            );
           }
         }
         break;
@@ -660,8 +684,10 @@ export default class OperationStableCoinService extends Service {
               revokeRoleRequest,
             );
           } catch (error) {
-            console.log(colors.red(error.message));
-            await this.operationsStableCoin();
+            await utilsService.askErrorConfirmation(
+              async () => await this.operationsStableCoin(),
+              error,
+            );
           }
         }
         break;
@@ -789,7 +815,6 @@ export default class OperationStableCoinService extends Service {
                 }),
               );
             } catch (error) {
-              await utilsService.cleanAndShowBanner();
               await utilsService.askErrorConfirmation(
                 async () => await this.operationsStableCoin(),
                 error,
@@ -902,8 +927,10 @@ export default class OperationStableCoinService extends Service {
                 }),
               );
             } catch (error) {
-              console.log(colors.red(error.message));
-              await this.operationsStableCoin();
+              await utilsService.askErrorConfirmation(
+                async () => await this.operationsStableCoin(),
+                error,
+              );
             }
             break;
           case editOptions[2]:
@@ -984,8 +1011,10 @@ export default class OperationStableCoinService extends Service {
                 console.log(language.getText('cashin.notRole'));
               }
             } catch (error) {
-              console.log(colors.red(error.message));
-              await this.operationsStableCoin();
+              await utilsService.askErrorConfirmation(
+                async () => await this.operationsStableCoin(),
+                error,
+              );
             }
             break;
           case editOptions[3]:
@@ -1056,8 +1085,10 @@ export default class OperationStableCoinService extends Service {
                 checkCashInLimitRequest,
               );
             } catch (error) {
-              console.log(colors.red(error.message));
-              await this.operationsStableCoin();
+              await utilsService.askErrorConfirmation(
+                async () => await this.operationsStableCoin(),
+                error,
+              );
             }
             break;
           case editOptions[editOptions.length - 1]:
@@ -1125,8 +1156,10 @@ export default class OperationStableCoinService extends Service {
           try {
             await this.roleStableCoinService.hasRoleStableCoin(hasRoleRequest);
           } catch (error) {
-            console.log(colors.red(error.message));
-            await this.operationsStableCoin();
+            await utilsService.askErrorConfirmation(
+              async () => await this.operationsStableCoin(),
+              error,
+            );
           }
         }
         break;

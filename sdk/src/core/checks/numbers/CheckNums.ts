@@ -7,9 +7,7 @@ export default class CheckNums {
 		min: T,
 		max: T,
 	): boolean {
-		if (this.isLessThan(value, min) || this.isGreaterThan(value, max))
-			return false;
-		return true;
+		return this.isLessOrEqualThan(value, max) && this.isGreaterOrEqualThan(value, min);
 	}
 
 	public static isLessThan<T extends number | bigint | BigDecimal>(
@@ -18,8 +16,7 @@ export default class CheckNums {
 	): boolean {
 		if (value instanceof BigDecimal && max instanceof BigDecimal)
 			return value.isLowerThan(max);
-		if (value > max) return false;
-		return true;
+		return value < max;
 	}
 
 	public static isGreaterThan<T extends number | bigint | BigDecimal>(
@@ -28,8 +25,25 @@ export default class CheckNums {
 	): boolean {
 		if (value instanceof BigDecimal && max instanceof BigDecimal)
 			return value.isGreaterThan(max);
-		if (value < max) return false;
-		return true;
+		return value > max;
+	}
+
+	public static isLessOrEqualThan<T extends number | bigint | BigDecimal>(
+		value: T,
+		max: T,
+	): boolean {
+		if (value instanceof BigDecimal && max instanceof BigDecimal)
+			return value.isLowerOrEqualThan(max);
+		return value <= max;
+	}
+
+	public static isGreaterOrEqualThan<T extends number | bigint | BigDecimal>(
+		value: T,
+		max: T,
+	): boolean {
+		if (value instanceof BigDecimal && max instanceof BigDecimal)
+			return value.isGreaterOrEqualThan(max);
+		return value >= max;
 	}
 
 	public static isBigInt(value: any): boolean {
