@@ -1,4 +1,3 @@
-import AllowanceRequest from './AllowanceRequest.js';
 import CashInStableCoinRequest from './CashInStableCoinRequest.js';
 import CashOutStableCoinRequest from './CashOutStableCoinRequest.js';
 import CreateStableCoinRequest from './CreateStableCoinRequest.js';
@@ -27,7 +26,6 @@ export {
 	RescueStableCoinRequest,
 	GetListStableCoin,
 	GetStableCoinDetails,
-	AllowanceRequest,
 	GrantRoleRequest,
 	RevokeRoleRequest,
 	HasRoleRequest,

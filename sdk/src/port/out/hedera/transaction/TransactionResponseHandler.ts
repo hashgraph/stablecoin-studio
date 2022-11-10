@@ -124,8 +124,6 @@ export class TransactionResposeHandler {
 				throw new Error('Incorrect response type');
 			}
 		} else {
-			console.log(transactionResponse instanceof TransactionResponse);
-			console.log(transactionResponse);
 			if (transactionResponse instanceof TransactionResponse) {
 				transactionReceipt = await (
 					transactionResponse as TransactionResponse

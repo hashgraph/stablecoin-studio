@@ -179,7 +179,6 @@ export default class ManageExternalTokenService extends Service {
           (tok) => tok.id === token.split(' - ')[0],
         )
       ) {
-        console.log('EL TOKEN FILTRADO ES:', token);
         return false;
       }
       return true;

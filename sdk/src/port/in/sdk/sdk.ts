@@ -52,7 +52,6 @@ import ContractId from '../../../domain/context/contract/ContractId.js';
 import { TokenType } from '../../../domain/context/stablecoin/TokenType.js';
 import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.js';
 import { StableCoinMemo } from '../../../domain/context/stablecoin/StableCoinMemo.js';
-import AllowanceRequest from './request/AllowanceRequest.js';
 import { RequestRoles } from './request/model/ContractRequests';
 import { AppMetadata } from '../../out/hedera/hashpack/types/types.js';
 import {
@@ -75,7 +74,6 @@ import {
 } from 'hashconnect/types';
 import { IGetSupplierAllowance } from './request/IGetSupplierAllowance.js';
 import IGetSupplierAllowanceModel from '../../../app/service/stablecoin/model/IGetSupplierAllowanceModel.js';
-import { XOR } from 'ts-xor';
 import { ISupplierRoleStableCoinRequest } from './request/ISupplierRoleStableCoinRequest.js';
 import Account from '../../../domain/context/account/Account.js';
 import HashPackAccount from '../../../domain/context/account/HashPackAccount.js';
@@ -121,7 +119,6 @@ export {
 	ISupplierRoleStableCoinRequest,
 	IWipeStableCoinRequest,
 	IGetCapabilitiesRequest,
-	AllowanceRequest as IAllowanceRequest,
 	IBasicRequest,
 	IStableCoinDetail,
 	IStableCoinList,
@@ -244,7 +241,6 @@ export class SDK {
 					treasury: AccountId,
 					autoRenewAccount: AccountId,
 					initialSupply: (val, req) => {
-						console.log(val, req);
 						return BigDecimal.fromString(val, req.decimals);
 					},
 					maxSupply: (val, req) =>
