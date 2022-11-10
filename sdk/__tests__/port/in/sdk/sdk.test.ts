@@ -15,6 +15,7 @@ import {
   Roles,
   RescueStableCoinRequest,
   GetAccountBalanceRequest,
+  AssociateTokenRequest,
 } from '../../../../src/index.js';
 import {
   ACCOUNTS,
@@ -148,12 +149,14 @@ describe('🧪 [PORT] SDK', () => {
         amount,
       }),
     );
-    const balance = await sdk.getBalanceOf(new GetAccountBalanceRequest({
-      account: REQUEST_ACCOUNTS.testnet,
-      targetId: REQUEST_ACCOUNTS.testnet.accountId,
-      proxyContractId: proxyContractId ?? '',
-      tokenId: tokenId ?? '',
-    }));
+    const balance = await sdk.getBalanceOf(
+      new GetAccountBalanceRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        targetId: REQUEST_ACCOUNTS.testnet.accountId,
+        proxyContractId: proxyContractId ?? '',
+        tokenId: tokenId ?? '',
+      }),
+    );
     expect(cashin).not.toBeNull();
     expect(cashin).toBeTruthy();
     expect(balance).not.toBeNull();
@@ -171,12 +174,14 @@ describe('🧪 [PORT] SDK', () => {
         amount,
       }),
     );
-    const balance = await sdk.getBalanceOf(new GetAccountBalanceRequest({
-      account: REQUEST_ACCOUNTS.testnet,
-      targetId: REQUEST_ACCOUNTS.testnet.accountId,
-      proxyContractId: proxyContractId ?? '',
-      tokenId: tokenId ?? '',
-    }));
+    const balance = await sdk.getBalanceOf(
+      new GetAccountBalanceRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        targetId: REQUEST_ACCOUNTS.testnet.accountId,
+        proxyContractId: proxyContractId ?? '',
+        tokenId: tokenId ?? '',
+      }),
+    );
     expect(wipe).not.toBeNull();
     expect(wipe).toBeTruthy();
     expect(balance).not.toBeNull();
@@ -491,12 +496,14 @@ describe('🧪 [PORT] SDK', () => {
 
   it('Rescue token', async () => {
     const amount = '1';
-    const rescue = await sdk.rescue(new RescueStableCoinRequest({
-      account: REQUEST_ACCOUNTS.testnet,
-      proxyContractId: proxyContractId ?? '',
-      tokenId: tokenId ?? '',
-      amount,
-    }));
+    const rescue = await sdk.rescue(
+      new RescueStableCoinRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        proxyContractId: proxyContractId ?? '',
+        tokenId: tokenId ?? '',
+        amount,
+      }),
+    );
     expect(rescue).not.toBeNull();
     expect(rescue).toBeTruthy();
   }, 15000);
@@ -504,12 +511,14 @@ describe('🧪 [PORT] SDK', () => {
   it('Rescue token (wrong)', async () => {
     const amount = '100';
     await expect(
-      sdk.rescue(new RescueStableCoinRequest ({
-        account: REQUEST_ACCOUNTS.testnet,
-        proxyContractId: proxyContractId ?? '',
-        tokenId: tokenId ?? '',
-        amount,
-      })),
+      sdk.rescue(
+        new RescueStableCoinRequest({
+          account: REQUEST_ACCOUNTS.testnet,
+          proxyContractId: proxyContractId ?? '',
+          tokenId: tokenId ?? '',
+          amount,
+        }),
+      ),
     ).rejects.toThrow(Error);
   }, 15000);
 
@@ -522,11 +531,12 @@ describe('🧪 [PORT] SDK', () => {
   }, 15000);
 
   it('Associate token', async () => {
-    await expect(
-      sdk.associateToken({
-        account: ACCOUNTS.testnet,
+    const associateToken = sdk.associateToken(
+      new AssociateTokenRequest({
+        account: REQUEST_ACCOUNTS.testnet,
         proxyContractId: proxyContractId ?? '',
       }),
-    ).rejects.toThrow();
+    );
+    await expect(associateToken).rejects.toThrow();
   }, 15000);
 });

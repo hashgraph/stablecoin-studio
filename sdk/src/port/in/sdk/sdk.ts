@@ -85,6 +85,7 @@ import {
 	IncreaseCashInLimitRequest,
 	DecreaseCashInLimitRequest,
 	GetAccountBalanceRequest,
+	AssociateTokenRequest,
 } from './request';
 import ValidatedRequest from './request/validation/ValidatedRequest.js';
 import RequestMapper from './request/mapping/RequestMapper.js';
@@ -308,12 +309,11 @@ export class SDK {
 	 * associateToken
 	 */
 	public associateToken(
-		request: IAssociateStableCoinRequest,
+		request: AssociateTokenRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			const req: IAssociateTokenStableCoinServiceRequestModel = {
-				...request,
-			};
+			const req: IAssociateTokenStableCoinServiceRequestModel =
+				RequestMapper.map(request);
 			return this.stableCoinService.associateToken(req);
 		} catch (error) {
 			console.error(error);
