@@ -16,6 +16,7 @@ import {
   StableCoinRole,
   StableCoinMemo,
   CashInStableCoinRequest,
+  WipeStableCoinRequest,
   CashOutStableCoinRequest,
   GetListStableCoin,
   GrantRoleRequest,
@@ -326,30 +327,52 @@ export default class OperationStableCoinService extends Service {
           this.stableCoinWithSymbol,
         );
 
-        // Call to Wipe
-        const account2Wipe = await utilsService.defaultSingleAsk(
+        const wipeRequest = new WipeStableCoinRequest({
+          proxyContractId: this.proxyContractId,
+          account: {
+            accountId: configAccount.accountId,
+            privateKey: {
+              key: currentAccount.privateKey.key,
+              type: currentAccount.privateKey.type,
+            },
+          },
+          tokenId: this.stableCoinId,
+          targetId: '',
+          amount: '',
+        });
+
+        // Call to wipe
+        wipeRequest.targetId = await utilsService.defaultSingleAsk(
           language.getText('stablecoin.askTargetAccount'),
-          configAccount.accountId,
+          currentAccount.accountId.id,
         );
-        if (!sdk.checkIsAddress(account2Wipe)) {
-          console.log(language.getText('validations.wrongFormatAddress'));
-          await this.operationsStableCoin();
-        }
-        const amount2Wipe = await utilsService
+        await utilsService.handleValidation(
+          () => wipeRequest.validate('targetId'),
+          async () => {
+            wipeRequest.targetId = await utilsService.defaultSingleAsk(
+              language.getText('stablecoin.askTargetAccount'),
+              currentAccount.accountId.id,
+            );
+          },
+        );
+
+        wipeRequest.amount = await utilsService
           .defaultSingleAsk(language.getText('stablecoin.askWipeAmount'), '1')
           .then((val) => val.replace(',', '.'));
-        if (parseFloat(amount2Wipe) < 0) {
-          console.log(language.getText('validations.wrongFormatAddress'));
-          await this.operationsStableCoin();
-        }
 
+        await utilsService.handleValidation(
+          () => wipeRequest.validate('amount'),
+          async () => {
+            wipeRequest.amount = await utilsService
+              .defaultSingleAsk(
+                language.getText('stablecoin.askWipeAmount'),
+                '1',
+              )
+              .then((val) => val.replace(',', '.'));
+          },
+        );
         try {
-          await new WipeStableCoinsService().wipeStableCoin(
-            this.proxyContractId,
-            this.stableCoinId,
-            account2Wipe,
-            amount2Wipe,
-          );
+          await new WipeStableCoinsService().wipeStableCoin(wipeRequest);
         } catch (error) {
           console.log(colors.red(error.message));
           await this.operationsStableCoin();
