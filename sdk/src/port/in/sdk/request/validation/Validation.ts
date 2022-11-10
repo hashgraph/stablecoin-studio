@@ -10,7 +10,6 @@ import {
 	PublicKey,
 	StableCoinRole
 } from '../../sdk.js';
-import { Roles } from '../../../../../domain/context/stablecoin/Roles.js';
 import {
 	RequestAccount,
 	RequestPrivateKey,
@@ -23,6 +22,7 @@ import { InvalidFormatHedera as InvalidIdFormatHedera } from '../error/InvalidFo
 import { InvalidType } from '../error/InvalidType.js';
 import InvalidDecimalRange from '../../../../../domain/context/stablecoin/error/InvalidDecimalRange.js';
 import { InvalidRole } from '../../../../../domain/context/stablecoin/error/InvalidRole.js';
+import { AccountIdNotValid } from '../../../../../domain/context/account/error/AccountIdNotValid.js';
 
 export default class Validation {
 	public static checkPublicKey = () => {
@@ -129,6 +129,8 @@ export default class Validation {
 			const err: BaseError[] = [];
 			if (!regEx.exec(val)) {
 				err.push(new InvalidIdFormatHedera(val));
+			} else if (val === '0.0.0') {
+				err.push(new AccountIdNotValid(val));
 			}
 			return err;
 		};
@@ -148,7 +150,7 @@ export default class Validation {
 			if (value.isLowerOrEqualThan(zero)) {
 				err.push(new InvalidRange(val, '0', undefined));
 			}
-			if(valueDecimals > 18){
+			if (valueDecimals > 18) {
 				err.push(new InvalidDecimalRange(val, 0, 18));
 			}
 			return err;

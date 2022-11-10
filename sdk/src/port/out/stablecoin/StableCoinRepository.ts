@@ -35,6 +35,7 @@ import {
 	PublicKey as HPublicKey,
 } from '@hashgraph/sdk';
 import BigDecimal from '../../../domain/context/stablecoin/BigDecimal.js';
+import { InvalidResponse } from './error/InvalidResponse.js';
 
 export default class StableCoinRepository implements IStableCoinRepository {
 	private networkAdapter: NetworkAdapter;
@@ -807,7 +808,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 			return account;
 		} catch (error) {
-			return Promise.reject<IAccountInfo>(error);
+			return Promise.reject<IAccountInfo>(new InvalidResponse(error));
 		}
 	}
 }

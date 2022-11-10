@@ -20,6 +20,7 @@ export enum ErrorCode {
 	ContractNotFound = '30002',
 	Unexpected = '30003',
 	RuntimeError = '30004',
+	InvalidResponse = '30005',
 }
 
 export enum ErrorCategory {

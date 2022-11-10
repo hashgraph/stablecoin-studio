@@ -477,6 +477,10 @@ export default class OperationStableCoinService extends Service {
         configAccount.privateKey.type,
       ),
     );
+    const currentRequestAccount: RequestAccount = {
+      accountId: currentAccount.accountId.toString(),
+      privateKey: currentAccount.privateKey,
+    };
 
     const capabilitiesStableCoin = await this.getCapabilities(
       sdk,
@@ -724,6 +728,17 @@ export default class OperationStableCoinService extends Service {
                   increaseCashInLimitRequest.amount = increaseAmount;
                 },
               );
+              //Call to SDK
+              if (
+                await this.checkSupplierType(
+                  request.targetId,
+                  'limited',
+                  currentAccount,
+                )
+              ) {
+                await this.roleStableCoinService.increaseLimitSupplierRoleStableCoin(
+                  request,
+                );
 
               //Call to SDK
               await this.roleStableCoinService.increaseLimitSupplierRoleStableCoin(increaseCashInLimitRequest);
