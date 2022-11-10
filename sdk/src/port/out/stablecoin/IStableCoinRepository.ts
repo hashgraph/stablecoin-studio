@@ -20,10 +20,6 @@ export default interface IStableCoinRepository {
 		tokenId: string,
 		account: Account,
 	): Promise<string>;
-	getNameToken(
-		proxyContractId: string,
-		account: Account,
-	): Promise<Uint8Array>;
 	cashIn(
 		proxyContractId: string,
 		targetId: string,
@@ -133,7 +129,7 @@ export default interface IStableCoinRepository {
 		outAccountId: string,
 		inAccountId: string,
 		account: Account,
-		isApproval: boolean
+		isApproval: boolean,
 	): Promise<boolean>;
 	getAccountInfo(accountId: string): Promise<IAccountInfo>;
 	getRoles(

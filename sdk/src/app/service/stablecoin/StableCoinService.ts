@@ -145,12 +145,6 @@ export default class StableCoinService extends Service {
 		);
 	}
 
-	public async getNameToken(
-		req: IGetNameOfStableCoinServiceRequestModel,
-	): Promise<Uint8Array> {
-		return this.repository.getNameToken(req.proxyContractId, req.account);
-	}
-
 	public async cashIn(
 		req: ICashInStableCoinServiceRequestModel,
 	): Promise<boolean> {
