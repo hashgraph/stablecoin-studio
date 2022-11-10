@@ -1,6 +1,5 @@
 import PublicKey from '../../../../src/domain/context/account/PublicKey.js';
 import {
-  AllowanceRequest,
   BigDecimal,
   CreateStableCoinRequest,
   GetStableCoinDetailsRequest,

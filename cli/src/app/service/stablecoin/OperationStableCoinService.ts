@@ -35,7 +35,6 @@ import CashInStableCoinsService from './CashInStableCoinService.js';
 import WipeStableCoinsService from './WipeStableCoinService.js';
 import RoleStableCoinsService from './RoleStableCoinService.js';
 import RescueStableCoinsService from './RescueStableCoinService.js';
-import colors from 'colors';
 import CapabilitiesStableCoinsService from './CapabilitiesStableCoinService.js';
 import BurnStableCoinsService from './BurnStableCoinService.js';
 import ManageExternalTokenService from './ManageExternalTokenService';
@@ -73,61 +72,68 @@ export default class OperationStableCoinService extends Service {
       ),
     );
     let resp: StableCoinList[];
-    if (this.stableCoinId === undefined) {
-      //Get list of stable coins to display
-      await utilsService.showSpinner(
-        sdk
-          .getListStableCoin(
-            new GetListStableCoinRequest({
-              account: {
-                accountId: currentAccount.accountId.id,
-              },
+    try {
+      if (this.stableCoinId === undefined) {
+        //Get list of stable coins to display
+        await utilsService.showSpinner(
+          sdk
+            .getListStableCoin(
+              new GetListStableCoinRequest({
+                account: {
+                  accountId: currentAccount.accountId.id,
+                },
+              }),
+            )
+            .then((response: StableCoinList[]) => (resp = response)),
+          {
+            text: language.getText('state.searching'),
+            successText: language.getText('state.searchingSuccess') + '\n',
+          },
+        );
+
+        this.stableCoinId = await utilsService.defaultMultipleAsk(
+          language.getText('stablecoin.askToken'),
+          new ManageExternalTokenService().mixExternalTokens(
+            resp.map((item) => {
+              return `${item.id} - ${item.symbol}`;
             }),
-          )
-          .then((response: StableCoinList[]) => (resp = response)),
-        {
-          text: language.getText('state.searching'),
-          successText: language.getText('state.searchingSuccess') + '\n',
-        },
-      );
+          ),
+          true,
+          configurationService.getConfiguration()?.defaultNetwork,
+          `${currentAccount.accountId.id} - ${configAccount.alias}`,
+        );
+        this.optionTokenListSelected = this.stableCoinId;
+        this.stableCoinWithSymbol =
+          this.stableCoinId.split(' - ').length === 3
+            ? `${this.stableCoinId.split(' - ')[0]} - ${
+                this.stableCoinId.split(' - ')[1]
+              }`
+            : this.stableCoinId;
+        this.stableCoinId = this.stableCoinId.split(' - ')[0];
 
-      this.stableCoinId = await utilsService.defaultMultipleAsk(
-        language.getText('stablecoin.askToken'),
-        new ManageExternalTokenService().mixExternalTokens(
-          resp.map((item) => {
-            return `${item.id} - ${item.symbol}`;
-          }),
-        ),
-        true,
-        configurationService.getConfiguration()?.defaultNetwork,
-        `${currentAccount.accountId.id} - ${configAccount.alias}`,
-      );
-      this.optionTokenListSelected = this.stableCoinId;
-      this.stableCoinWithSymbol =
-        this.stableCoinId.split(' - ').length === 3
-          ? `${this.stableCoinId.split(' - ')[0]} - ${
-              this.stableCoinId.split(' - ')[1]
-            }`
-          : this.stableCoinId;
-      this.stableCoinId = this.stableCoinId.split(' - ')[0];
+        if (this.stableCoinId === language.getText('wizard.goBack')) {
+          await utilsService.cleanAndShowBanner();
+          await wizardService.mainMenu();
+        } else {
+          // Get details to obtain treasury
+          await new DetailsStableCoinsService()
+            .getDetailsStableCoins(this.stableCoinId, false)
+            .then((response: IStableCoinDetail) => {
+              this.proxyContractId = response.memo.proxyContract;
+            });
 
-      if (this.stableCoinId === language.getText('wizard.goBack')) {
-        await utilsService.cleanAndShowBanner();
-        await wizardService.mainMenu();
+          await utilsService.cleanAndShowBanner();
+          await this.operationsStableCoin();
+        }
       } else {
-        // Get details to obtain treasury
-        await new DetailsStableCoinsService()
-          .getDetailsStableCoins(this.stableCoinId, false)
-          .then((response: IStableCoinDetail) => {
-            this.proxyContractId = response.memo.proxyContract;
-          });
-
         await utilsService.cleanAndShowBanner();
         await this.operationsStableCoin();
       }
-    } else {
-      await utilsService.cleanAndShowBanner();
-      await this.operationsStableCoin();
+    } catch (error) {
+      await utilsService.askErrorConfirmation(
+        async () => await this.operationsStableCoin(),
+        error,
+      );
     }
   }
 
@@ -224,8 +230,10 @@ export default class OperationStableCoinService extends Service {
         try {
           await new CashInStableCoinsService().cashInStableCoin(cashInRequest);
         } catch (error) {
-          console.log(colors.red(error.message));
-          await this.operationsStableCoin();
+          await utilsService.askErrorConfirmation(
+            async () => await this.operationsStableCoin(),
+            error,
+          );
         }
 
         break;
@@ -274,8 +282,10 @@ export default class OperationStableCoinService extends Service {
             getAccountBalanceRequest,
           );
         } catch (error) {
-          console.log(colors.red(error.message));
-          await this.operationsStableCoin();
+          await utilsService.askErrorConfirmation(
+            async () => await this.operationsStableCoin(),
+            error,
+          );
         }
         break;
       case 'Burn':
@@ -334,8 +344,10 @@ export default class OperationStableCoinService extends Service {
         try {
           await new BurnStableCoinsService().burnStableCoin(cashOutRequest);
         } catch (error) {
-          console.log(colors.red(error.message));
-          await this.operationsStableCoin();
+          await utilsService.askErrorConfirmation(
+            async () => await this.operationsStableCoin(),
+            error,
+          );
         }
 
         break;
@@ -394,8 +406,10 @@ export default class OperationStableCoinService extends Service {
         try {
           await new WipeStableCoinsService().wipeStableCoin(wipeRequest);
         } catch (error) {
-          console.log(colors.red(error.message));
-          await this.operationsStableCoin();
+          await utilsService.askErrorConfirmation(
+            async () => await this.operationsStableCoin(),
+            error,
+          );
         }
 
         break;
@@ -441,9 +455,11 @@ export default class OperationStableCoinService extends Service {
           await new RescueStableCoinsService().rescueStableCoin(
             rescueStableCoinRequest,
           );
-        } catch (err) {
-          console.log(colors.red(err.message));
-          await this.operationsStableCoin();
+        } catch (error) {
+          await utilsService.askErrorConfirmation(
+            async () => await this.operationsStableCoin(),
+            error,
+          );
         }
         break;
       case 'Role management':
@@ -487,7 +503,6 @@ export default class OperationStableCoinService extends Service {
         await utilsService.cleanAndShowBanner();
         await wizardService.mainMenu();
     }
-
     await this.operationsStableCoin();
   }
 
@@ -615,8 +630,10 @@ export default class OperationStableCoinService extends Service {
               );
             }
           } catch (error) {
-            console.log(colors.red(error.message));
-            await this.operationsStableCoin();
+            await utilsService.askErrorConfirmation(
+              async () => await this.operationsStableCoin(),
+              error,
+            );
           }
         }
         break;
@@ -681,8 +698,10 @@ export default class OperationStableCoinService extends Service {
               revokeRoleRequest,
             );
           } catch (error) {
-            console.log(colors.red(error.message));
-            await this.operationsStableCoin();
+            await utilsService.askErrorConfirmation(
+              async () => await this.operationsStableCoin(),
+              error,
+            );
           }
         }
         break;
@@ -810,7 +829,6 @@ export default class OperationStableCoinService extends Service {
                 }),
               );
             } catch (error) {
-              await utilsService.cleanAndShowBanner();
               await utilsService.askErrorConfirmation(
                 async () => await this.operationsStableCoin(),
                 error,
@@ -923,8 +941,10 @@ export default class OperationStableCoinService extends Service {
                 }),
               );
             } catch (error) {
-              console.log(colors.red(error.message));
-              await this.operationsStableCoin();
+              await utilsService.askErrorConfirmation(
+                async () => await this.operationsStableCoin(),
+                error,
+              );
             }
             break;
           case editOptions[2]:
@@ -1005,8 +1025,10 @@ export default class OperationStableCoinService extends Service {
                 console.log(language.getText('cashin.notRole'));
               }
             } catch (error) {
-              console.log(colors.red(error.message));
-              await this.operationsStableCoin();
+              await utilsService.askErrorConfirmation(
+                async () => await this.operationsStableCoin(),
+                error,
+              );
             }
             break;
           case editOptions[3]:
@@ -1077,8 +1099,10 @@ export default class OperationStableCoinService extends Service {
                 checkCashInLimitRequest,
               );
             } catch (error) {
-              console.log(colors.red(error.message));
-              await this.operationsStableCoin();
+              await utilsService.askErrorConfirmation(
+                async () => await this.operationsStableCoin(),
+                error,
+              );
             }
             break;
           case editOptions[editOptions.length - 1]:
@@ -1146,8 +1170,10 @@ export default class OperationStableCoinService extends Service {
           try {
             await this.roleStableCoinService.hasRoleStableCoin(hasRoleRequest);
           } catch (error) {
-            console.log(colors.red(error.message));
-            await this.operationsStableCoin();
+            await utilsService.askErrorConfirmation(
+              async () => await this.operationsStableCoin(),
+              error,
+            );
           }
         }
         break;
@@ -1160,7 +1186,10 @@ export default class OperationStableCoinService extends Service {
     await this.roleManagementFlow();
   }
 
-  private async validateNotRequestedData(request: any, params: string[]) {
+  private async validateNotRequestedData(
+    request: any,
+    params: string[],
+  ): Promise<void> {
     for (let i = 0; i < params.length; i++) {
       await utilsService.handleValidation(
         () => request.validate(params[i]),

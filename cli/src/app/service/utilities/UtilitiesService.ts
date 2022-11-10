@@ -89,7 +89,7 @@ export default class UtilitiesService extends Service {
    * @param error Error message
    */
   public showError(error: string): void {
-    console.error(error);
+    console.error(colors.red(error));
   }
 
   /**
@@ -215,6 +215,25 @@ export default class UtilitiesService extends Service {
   }
 
   /**
+   * Function for error confirmation
+   * @param question
+   * @returns
+   */
+  public async defaultErrorConfirm(question: string): Promise<boolean> {
+    const variable = await inquirer.prompt({
+      name: 'response',
+      type: 'input',
+      message: question,
+      prefix: '❌',
+      transformer: () => {
+        return '';
+      },
+      default: '[Enter]',
+    });
+    return variable.response;
+  }
+
+  /**
    * Function for simple ask questions with inquire
    * @param question
    * @param defaultValue
@@ -284,9 +303,12 @@ export default class UtilitiesService extends Service {
     cll?: (cause?: string) => unknown,
     cause?: string,
   ): Promise<void> {
+    await this.cleanAndShowBanner();
     if (cause) {
-      this.showError(`\n 🛑 ${cause}\n\n`);
+      this.showError(`${cause}\n`);
     }
+    await this.defaultErrorConfirm(language.getText('general.error'));
+    this.showMessage('\n\n');
     cll && (await cll(cause));
   }
 

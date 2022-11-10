@@ -203,7 +203,6 @@ export default class CreateStableCoinService extends Service {
     });
     if (managedBySC) {
       const currentAccount: IAccountConfig = utilsService.getCurrentAccount();
-      console.log('Token to create 1:', tokenToCreate);
       tokenToCreate.adminKey = PublicKey.fromPrivateKey(
         currentAccount.privateKey.key,
         currentAccount.privateKey.type,
@@ -214,7 +213,6 @@ export default class CreateStableCoinService extends Service {
       tokenToCreate.supplyKey = PublicKey.NULL;
       tokenToCreate.pauseKey = PublicKey.NULL;
       tokenToCreate.treasury = AccountId.NULL.id;
-      console.log('Token to create:', tokenToCreate);
       if (
         !(await utilsService.defaultConfirmAsk(
           language.getText('stablecoin.askConfirmCreation'),

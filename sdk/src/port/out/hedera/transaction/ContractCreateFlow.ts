@@ -63,8 +63,6 @@ export default class ContractCreateFlow extends CCF {
 			await fileAppendTransaction.executeWithSigner(signer);
 		}
 
-        console.log(response);
-
 		this._contractCreate = (await this._contractCreate
 			.setBytecodeFileId(fileId)
 			.freezeWithSigner(signer)) as ContractCreateTransaction;

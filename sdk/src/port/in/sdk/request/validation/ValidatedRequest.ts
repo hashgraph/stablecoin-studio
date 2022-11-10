@@ -41,11 +41,11 @@ export default class ValidatedRequest<T extends BaseRequest> {
 	}
 
 	private getProperty(propertyName: keyof this): any {
-		if(this[propertyName] === undefined){
+		if (this[propertyName] === undefined) {
 			const privateKeys = {
 				dash: `_${String(propertyName)}` as keyof this,
 				hash: `#${String(propertyName)}` as keyof this,
-			}
+			};
 			if (this[privateKeys.dash]) {
 				return this[privateKeys.dash];
 			} else {
