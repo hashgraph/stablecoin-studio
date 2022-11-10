@@ -694,7 +694,6 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			'getRoles',
 			params,
 		);
-
 		const listRoles: string[] = roles[0]
 			.filter(
 				(role: StableCoinRole) => role !== StableCoinRole.WITHOUT_ROLE,
@@ -778,6 +777,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 	public async getAccountInfo(accountId: string): Promise<IAccountInfo> {
 		try {
+console.log(this.URI_BASE + 'accounts/' + accountId);			
 			const res = await axios.get<IAccount>(
 				this.URI_BASE + 'accounts/' + accountId,
 			);

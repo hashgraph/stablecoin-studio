@@ -21,6 +21,7 @@ import {
   GetListStableCoinRequest,
   RescueStableCoinRequest,
   GetAccountBalanceRequest,
+  GetRolesRequest,
   GrantRoleRequest,
   RevokeRoleRequest,
   HasRoleRequest,
@@ -248,6 +249,11 @@ export default class OperationStableCoinService extends Service {
       case 'Balance':
         await utilsService.cleanAndShowBanner();
 
+        utilsService.displayCurrentUserInfo(
+          configAccount,
+          this.stableCoinWithSymbol,
+        );
+
         const getAccountBalanceRequest = new GetAccountBalanceRequest({
           proxyContractId: this.proxyContractId,
           account: {
@@ -471,16 +477,21 @@ export default class OperationStableCoinService extends Service {
       case 'Refresh roles':
         await utilsService.cleanAndShowBanner();
 
+        const getRolesRequest = new GetRolesRequest({
+          proxyContractId: this.proxyContractId,
+          account: {
+            accountId: configAccount.accountId,
+            privateKey: {
+              key: currentAccount.privateKey.key,
+              type: currentAccount.privateKey.type,
+            },
+          },
+          targetId: currentAccount.accountId.id,
+          tokenId: ''
+        });
+
         // Call to Supplier Role
-        const rolesToRefresh = await new RoleStableCoinsService().getRoles(
-          this.proxyContractId,
-          currentAccount.accountId.id,
-          new PrivateKey(
-            configAccount.privateKey.key,
-            configAccount.privateKey.type,
-          ),
-          currentAccount.accountId.id,
-        );
+        const rolesToRefresh = await new RoleStableCoinsService().getRoles(getRolesRequest);
         const externalTokensRefreshed = configAccount.externalTokens.map(
           (token) => {
             if (token.id === this.stableCoinId) {

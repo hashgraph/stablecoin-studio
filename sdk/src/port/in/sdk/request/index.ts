@@ -15,6 +15,7 @@ import ResetCashInLimitRequest from './ResetCashInLimitRequest.js';
 import IncreaseCashInLimitRequest from './IncreaseCashInLimitRequest.js';
 import DecreaseCashInLimitRequest from './DecreaseCashInLimitRequest.js';
 import GetAccountBalanceRequest from './GetAccountBalanceRequest.js';
+import GetRolesRequest from './GetRolesRequest.js';
 
 export * from './BaseRequest.js';
 export {
@@ -35,4 +36,5 @@ export {
 	IncreaseCashInLimitRequest,
 	DecreaseCashInLimitRequest,
 	GetAccountBalanceRequest,
+	GetRolesRequest
 };

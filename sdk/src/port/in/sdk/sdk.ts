@@ -85,6 +85,7 @@ import {
 	IncreaseCashInLimitRequest,
 	DecreaseCashInLimitRequest,
 	GetAccountBalanceRequest,
+	GetRolesRequest
 } from './request';
 import ValidatedRequest from './request/validation/ValidatedRequest.js';
 import RequestMapper from './request/mapping/RequestMapper.js';
@@ -516,11 +517,9 @@ export class SDK {
 		}
 	}
 
-	public getRoles(request: RequestRoles): Promise<string[]> | null {
+	public getRoles(request: GetRolesRequest): Promise<string[]> | null {
 		try {
-			const req: IGetRolesServiceRequestModel = {
-				...request,
-			};
+			const req: IGetRolesServiceRequestModel = RequestMapper.map(request);
 			return this.stableCoinService.getRoles(req);
 		} catch (error) {
 			console.error(error);
