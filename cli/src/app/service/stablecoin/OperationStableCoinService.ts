@@ -20,6 +20,7 @@ import {
   CashOutStableCoinRequest,
   RescueStableCoinRequest,
   GetListStableCoin,
+  GetAccountBalanceRequest,
   GrantRoleRequest,
   RevokeRoleRequest,
   HasRoleRequest,
@@ -239,25 +240,40 @@ export default class OperationStableCoinService extends Service {
       case 'Balance':
         await utilsService.cleanAndShowBanner();
 
-        // Call to balance
-        const targetId = await utilsService.defaultSingleAsk(
+        const getAccountBalanceRequest = new GetAccountBalanceRequest({
+          proxyContractId: this.proxyContractId,
+          account: {
+            accountId: configAccount.accountId,
+            privateKey: {
+              key: currentAccount.privateKey.key,
+              type: currentAccount.privateKey.type,
+            },
+          },
+          tokenId: this.stableCoinId,
+          targetId: ''
+        });
+
+        // Call to mint
+        getAccountBalanceRequest.targetId = await utilsService.defaultSingleAsk(
           language.getText('stablecoin.askAccountToBalance'),
-          configAccount.accountId,
+          currentAccount.accountId.id,
         );
-        // Check Address
-        if (sdk.checkIsAddress(targetId)) {
-          await new BalanceOfStableCoinsService().getBalanceOfStableCoin(
-            this.proxyContractId,
-            currentAccount,
-            targetId,
-            this.stableCoinId,
-          );
-        } else {
-          console.log(language.getText('validations.wrongFormatAddress'));
+        await utilsService.handleValidation(
+          () => getAccountBalanceRequest.validate('targetId'),
+          async () => {
+            getAccountBalanceRequest.targetId = await utilsService.defaultSingleAsk(
+              language.getText('stablecoin.askAccountToBalance'),
+              currentAccount.accountId.id,
+            );
+          },
+        );
 
+        try {  
+          await new BalanceOfStableCoinsService().getBalanceOfStableCoin(getAccountBalanceRequest);
+        } catch (error) {
+          console.log(colors.red(error.message));
           await this.operationsStableCoin();
-        }
-
+        }          
         break;
       case 'Burn':
         await utilsService.cleanAndShowBanner();

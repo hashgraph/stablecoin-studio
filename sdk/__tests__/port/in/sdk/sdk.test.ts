@@ -14,6 +14,7 @@ import {
   DecreaseCashInLimitRequest,
   Roles,
   RescueStableCoinRequest,
+  GetAccountBalanceRequest,
 } from '../../../../src/index.js';
 import {
   ACCOUNTS,
@@ -148,12 +149,12 @@ describe('🧪 [PORT] SDK', () => {
         amount,
       }),
     );
-    const balance = await sdk.getBalanceOf({
-      account: ACCOUNTS.testnet,
+    const balance = await sdk.getBalanceOf(new GetAccountBalanceRequest({
+      account: REQUEST_ACCOUNTS.testnet,
       targetId: REQUEST_ACCOUNTS.testnet.accountId,
       proxyContractId: proxyContractId ?? '',
       tokenId: tokenId ?? '',
-    });
+    }));
     expect(cashin).not.toBeNull();
     expect(cashin).toBeTruthy();
     expect(balance).not.toBeNull();
@@ -171,12 +172,12 @@ describe('🧪 [PORT] SDK', () => {
         amount,
       }),
     );
-    const balance = await sdk.getBalanceOf({
-      account: ACCOUNTS.testnet,
+    const balance = await sdk.getBalanceOf(new GetAccountBalanceRequest({
+      account: REQUEST_ACCOUNTS.testnet,
       targetId: REQUEST_ACCOUNTS.testnet.accountId,
       proxyContractId: proxyContractId ?? '',
       tokenId: tokenId ?? '',
-    });
+    }));
     expect(wipe).not.toBeNull();
     expect(wipe).toBeTruthy();
     expect(balance).not.toBeNull();
