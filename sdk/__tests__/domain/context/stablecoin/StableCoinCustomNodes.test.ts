@@ -3,12 +3,11 @@ import {
   HederaNetworkEnviroment,
   Configuration,
   NetworkMode,
-  ICreateStableCoinRequest,
   SDK,
   CreateStableCoinRequest,
 } from '../../../../src/index.js';
 import { AccountId as HederaAccountId } from '@hashgraph/sdk';
-import { ACCOUNTS, getSDKAsync, REQUEST_ACCOUNTS } from '../../../core/core.js';
+import { getSDKAsync, REQUEST_ACCOUNTS } from '../../../core/core.js';
 
 describe('🧪 [DOMAIN] StableCoin', () => {
   let sdk: SDK;
