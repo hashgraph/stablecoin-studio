@@ -1186,7 +1186,7 @@ export default class OperationStableCoinService extends Service {
     await this.roleManagementFlow();
   }
 
-  private async validateNotRequestedData(request: any, params: string[]) {
+  private async validateNotRequestedData(request: any, params: string[]): Promise<void> {
     for (let i = 0; i < params.length; i++) {
       await utilsService.handleValidation(
         () => request.validate(params[i]),
