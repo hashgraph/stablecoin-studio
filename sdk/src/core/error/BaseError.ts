@@ -16,11 +16,14 @@ export enum ErrorCode {
 	AccountNotAssociatedToToken = '20001',
 	MaxSupplyReached = '20002',
 	RoleNotAssigned = '20003',
+	OperationNotAllowed = '20004',
+	InsufficientFunds = '20005',
 	ReceiptNotReceived = '30001',
 	ContractNotFound = '30002',
 	Unexpected = '30003',
 	RuntimeError = '30004',
 	InvalidResponse = '30005',
+	NotFound = '30006',
 }
 
 export enum ErrorCategory {
