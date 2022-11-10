@@ -1,7 +1,7 @@
 import { language } from '../../../index.js';
 import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
-import { EOAccount, SDK } from 'hedera-stable-coin-sdk';
+import { CashOutStableCoinRequest, SDK } from 'hedera-stable-coin-sdk';
 
 /**
  * Burn Stable Coin Service
@@ -14,11 +14,7 @@ export default class BurnStableCoinsService extends Service {
   /**
    * Burn Stable Coin
    */
-  public async burnStableCoin(
-    proxyContractId: string,
-    account: EOAccount,
-    tokenId: string,
-    amount?: string,
+  public async burnStableCoin(req: CashOutStableCoinRequest
   ): Promise<void> {
     const sdk: SDK = utilsService.getSDK();
 
@@ -26,12 +22,7 @@ export default class BurnStableCoinsService extends Service {
 
     await utilsService.showSpinner(
       sdk
-        .cashOut({
-          proxyContractId,
-          account,
-          tokenId,
-          amount,
-        })
+        .cashOut(req)
         .then((response) => (respDetail = response)),
       {
         text: language.getText('state.loading'),

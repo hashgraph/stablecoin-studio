@@ -16,6 +16,7 @@ import {
   StableCoinRole,
   StableCoinMemo,
   CashInStableCoinRequest,
+  CashOutStableCoinRequest,
   GetListStableCoin,
   GrantRoleRequest,
   RevokeRoleRequest,
@@ -264,16 +265,53 @@ export default class OperationStableCoinService extends Service {
           this.stableCoinWithSymbol,
         );
 
-        const amount2Burn = await utilsService
+        const cashOutRequest = new CashOutStableCoinRequest({
+          proxyContractId: this.proxyContractId,
+          account: {
+            accountId: configAccount.accountId,
+            privateKey: {
+              key: currentAccount.privateKey.key,
+              type: currentAccount.privateKey.type,
+            },
+          },
+          tokenId: this.stableCoinId,
+          targetId: '',
+          amount: '',
+        });
+
+        // Call to cash out
+        cashOutRequest.targetId = await utilsService.defaultSingleAsk(
+          language.getText('stablecoin.askTargetAccount'),
+          currentAccount.accountId.id,
+        );
+        await utilsService.handleValidation(
+          () => cashOutRequest.validate('targetId'),
+          async () => {
+            cashOutRequest.targetId = await utilsService.defaultSingleAsk(
+              language.getText('stablecoin.askTargetAccount'),
+              currentAccount.accountId.id,
+            );
+          },
+        );
+
+        cashOutRequest.amount = await utilsService
           .defaultSingleAsk(language.getText('stablecoin.askBurnAmount'), '1')
           .then((val) => val.replace(',', '.'));
+
+        await utilsService.handleValidation(
+          () => cashOutRequest.validate('amount'),
+          async () => {
+            cashOutRequest.amount = await utilsService
+              .defaultSingleAsk(
+                language.getText('stablecoin.askTargetAccount'),
+                '1',
+              )
+              .then((val) => val.replace(',', '.'));
+          },
+        );
+
         try {
-          await new BurnStableCoinsService().burnStableCoin(
-            this.proxyContractId,
-            currentAccount,
-            this.stableCoinId,
-            amount2Burn,
-          );
+          await new BurnStableCoinsService().burnStableCoin(cashOutRequest);
         } catch (error) {
           console.log(colors.red(error.message));
           await this.operationsStableCoin();
