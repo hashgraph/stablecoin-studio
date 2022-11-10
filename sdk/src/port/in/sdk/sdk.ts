@@ -98,6 +98,7 @@ import {
 	ResetCashInLimitRequest,
 	IncreaseCashInLimitRequest,
 	DecreaseCashInLimitRequest,
+	GetAccountBalanceRequest
 } from './request';
 import ValidatedRequest from './request/validation/ValidatedRequest.js';
 import RequestMapper from './request/mapping/RequestMapper.js';
@@ -287,13 +288,10 @@ export class SDK {
 	 * getBalanceOf
 	 */
 	public getBalanceOf(
-		request: IGetBalanceStableCoinRequest,
+		request: GetAccountBalanceRequest,
 	): Promise<string> | null {
 		try {
-			const req: IGetBalanceOfStableCoinServiceRequestModel = {
-				...request,
-				targetId: request.targetId,
-			};
+			const req: IGetBalanceOfStableCoinServiceRequestModel = RequestMapper.map(request);
 			return this.stableCoinService.getBalanceOf(req);
 		} catch (error) {
 			console.error(error);
