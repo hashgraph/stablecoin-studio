@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
+import BigDecimal from '../../../../src/domain/context/stablecoin/BigDecimal.js';
 import {
   Account,
   HederaNetwork,
@@ -88,8 +89,6 @@ describe('🧪 [PORT] StableCoinRepository', () => {
       stableCoinDetails.id,
       ACCOUNTS.testnet,
     );
-
-    expect(balance).toBeInstanceOf(Uint8Array);
     expect(balance).not.toBeNull();
   });
 
@@ -111,7 +110,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
     const response = await repository.cashIn(
       stableCoinDetails.memo.proxyContract.toString(),
       ACCOUNTS.testnet.accountId.toString(),
-      10000,
+      BigDecimal.fromString('10000', stableCoinDetails.decimals),
       ACCOUNTS.testnet,
     );
 
@@ -123,7 +122,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
     const coinId = '0.0.48586658';
     const response = await repository.cashInHTS(
       coinId,
-      10000,
+      BigDecimal.fromString('10000', 2),
       ACCOUNTS.testnet,
     );
 
@@ -136,7 +135,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
     const stableCoinDetails = await repository.getStableCoin(coinId);
     const response = await repository.cashOut(
       stableCoinDetails.memo.proxyContract.toString(),
-      10000,
+      BigDecimal.fromString('10000', stableCoinDetails.decimals),
       ACCOUNTS.testnet,
     );
 
@@ -148,7 +147,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
     const coinId = '0.0.48586658';
     const response = await repository.cashOutHTS(
       coinId,
-      10000,
+      BigDecimal.fromString('10000', 2),
       ACCOUNTS.testnet,
     );
 
@@ -174,7 +173,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
     const response = await repository.wipe(
       stableCoinDetails.memo.proxyContract.toString(),
       ACCOUNTS.testnet.accountId.toString(),
-      10000,
+      BigDecimal.fromString('10000', stableCoinDetails.decimals),
       ACCOUNTS.testnet,
     );
 
@@ -187,7 +186,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
     const response = await repository.wipeHTS(
       coinId,
       ACCOUNTS.testnet.accountId.toString(),
-      10000,
+      BigDecimal.fromString('10000', 2),
       ACCOUNTS.testnet,
     );
 
@@ -202,7 +201,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
       stableCoinDetails.memo.proxyContract.toString(),
       ACCOUNTS.testnet.accountId.toString(),
       ACCOUNTS.testnet,
-      10000,
+      BigDecimal.fromString('10000', stableCoinDetails.decimals),
     );
 
     expect(response).toBeInstanceOf(Uint8Array);
@@ -281,7 +280,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
       stableCoinDetails.memo.proxyContract.toString(),
       ACCOUNTS.testnet.accountId.toString(),
       ACCOUNTS.testnet,
-      10000,
+      BigDecimal.fromString('10000', stableCoinDetails.decimals),
     );
 
     expect(response).toBeInstanceOf(Uint8Array);
@@ -295,7 +294,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
       stableCoinDetails.memo.proxyContract.toString(),
       ACCOUNTS.testnet.accountId.toString(),
       ACCOUNTS.testnet,
-      10000,
+      BigDecimal.fromString('10000', stableCoinDetails.decimals),
     );
 
     expect(response).toBeInstanceOf(Uint8Array);
@@ -307,7 +306,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
     const stableCoinDetails = await repository.getStableCoin(coinId);
     const response = await repository.rescue(
       stableCoinDetails.memo.proxyContract.toString(),
-      10000,
+      BigDecimal.fromString('10000', stableCoinDetails.decimals),
       ACCOUNTS.testnet,
     );
 
@@ -389,12 +388,11 @@ function mockRepo(networkAdapter: NetworkAdapter, provider?: IProvider) {
     networkAdapter.provider = provider;
     networkAdapter.provider.deployStableCoin = deployFn;
     networkAdapter.provider.callContract = () => {
-      return Promise.resolve(new Uint8Array());
+      return Promise.resolve(new Uint8Array([255]));
     };
     networkAdapter.provider.cashInHTS = resolveHTS;
     networkAdapter.provider.cashOutHTS = resolveHTS;
     networkAdapter.provider.wipeHTS = resolveHTS;
-    
   }
   networkAdapter.network = new HederaNetwork(HederaNetworkEnviroment.TEST);
   return new StableCoinRepository(networkAdapter);

@@ -9,9 +9,9 @@ export default interface ICreateStableCoinServiceRequestModel
 	name: string;
 	symbol: string;
 	decimals: number;
-	adminKey?: PublicKey,
-	initialSupply?: bigint;
-	maxSupply?: bigint;
+	adminKey?: PublicKey;
+	initialSupply?: string;
+	maxSupply?: string;
 	memo?: string;
 	freezeKey?: PublicKey;
 	freezeDefault?: boolean;

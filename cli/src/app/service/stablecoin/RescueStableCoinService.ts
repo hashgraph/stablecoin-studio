@@ -18,7 +18,7 @@ export default class RescueStableCoinsService extends Service {
     proxyContractId: string,
     account: EOAccount,
     tokenId: string,
-    amount?: number,
+    amount?: string,
   ): Promise<void> {
     const sdk: SDK = utilsService.getSDK();
 

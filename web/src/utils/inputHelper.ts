@@ -19,11 +19,11 @@ export const formatAmountWithDecimals = ({
 	decimals,
 	language = 'en-EN',
 }: {
-	amount: number;
+	amount: string;
 	decimals: number;
 	language?: string;
 }) => {
-	return Number((amount / 10 ** decimals).toFixed(decimals)).toLocaleString(language, {
+	return Number(Number(amount).toFixed(decimals)).toLocaleString(language, {
 		maximumFractionDigits: decimals,
 	});
 };

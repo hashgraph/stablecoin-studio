@@ -343,6 +343,12 @@ const _abi = [
         name: "amount",
         type: "uint256",
       },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
     ],
     name: "TokensBurned",
     type: "event",

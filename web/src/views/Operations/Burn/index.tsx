@@ -19,6 +19,7 @@ import { useState, useEffect } from 'react';
 import type { AppDispatch } from '../../../store/store.js';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
+import { BigDecimal } from 'hedera-stable-coin-sdk';
 
 const BurnOperation = () => {
 	const {
@@ -62,8 +63,8 @@ const BurnOperation = () => {
 				proxyContractId: selectedStableCoin.memo.proxyContract,
 				account,
 				tokenId: selectedStableCoin.tokenId,
-				amount,
-				publicKey: infoAccount.publicKey
+				amount: amount.toString(),
+				publicKey: infoAccount.publicKey,
 			});
 			onSuccess();
 		} catch (error: any) {
@@ -126,7 +127,10 @@ const BurnOperation = () => {
 										},
 										quantityOverTotalSupply: (value: number) => {
 											return (
-												(totalSupply && totalSupply >= value) ||
+												(totalSupply &&
+													BigDecimal.fromString(totalSupply, decimals).isGreaterOrEqualThan(
+														BigDecimal.fromString(value.toString(), decimals),
+													)) ||
 												t('global:validations.overTotalSupply')
 											);
 										},

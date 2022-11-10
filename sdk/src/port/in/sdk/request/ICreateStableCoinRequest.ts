@@ -7,8 +7,8 @@ export interface ICreateStableCoinRequest {
 	name: string;
 	symbol: string;
 	decimals: number;
-	initialSupply?: bigint;
-	maxSupply?: bigint;
+	initialSupply?: string;
+	maxSupply?: string;
 	memo?: string;
 	freezeDefault?: boolean;
 	autoRenewAccount?: string;

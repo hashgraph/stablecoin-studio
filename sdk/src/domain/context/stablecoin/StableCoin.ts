@@ -2,6 +2,7 @@ import BaseEntity from '../../BaseEntity.js';
 import AccountId from '../account/AccountId.js';
 import PublicKey from '../account/PublicKey.js';
 import ContractId from '../contract/ContractId.js';
+import BigDecimal from './BigDecimal.js';
 import InvalidAmountDomainError from './error/InvalidAmountDomainError.js';
 import InvalidDecimalRangeDomainError from './error/InvalidDecimalRangeDomainError.js';
 import { StableCoinMemo } from './StableCoinMemo.js';
@@ -70,33 +71,33 @@ export class StableCoin extends BaseEntity {
 	/**
 	 * Initial Supply
 	 */
-	private _initialSupply: bigint;
-	public get initialSupply(): bigint {
+	private _initialSupply: BigDecimal;
+	public get initialSupply(): BigDecimal {
 		return this._initialSupply;
 	}
-	public set initialSupply(value: bigint) {
+	public set initialSupply(value: BigDecimal) {
 		this._initialSupply = value;
 	}
 
 	/**
 	 * Maximum Supply
 	 */
-	private _maxSupply: bigint;
-	public get maxSupply(): bigint {
+	private _maxSupply: BigDecimal | undefined;
+	public get maxSupply(): BigDecimal | undefined {
 		return this._maxSupply;
 	}
-	public set maxSupply(value: bigint) {
+	public set maxSupply(value: BigDecimal | undefined) {
 		this._maxSupply = value;
 	}
 
 	/**
 	 * Total Supply
 	 */
-	private _totalSupply: bigint;
-	public get totalSupply(): bigint {
+	private _totalSupply: BigDecimal;
+	public get totalSupply(): BigDecimal {
 		return this._totalSupply;
 	}
-	public set totalSupply(value: bigint) {
+	public set totalSupply(value: BigDecimal) {
 		this._totalSupply = value;
 	}
 
@@ -258,9 +259,9 @@ export class StableCoin extends BaseEntity {
 		symbol: string;
 		decimals: number;
 		adminKey?: PublicKey | ContractId;
-		initialSupply?: bigint;
-		totalSupply?: bigint;
-		maxSupply?: bigint;
+		initialSupply?: BigDecimal;
+		totalSupply?: BigDecimal;
+		maxSupply?: BigDecimal;
 		memo?: string;
 		freezeKey?: PublicKey | ContractId;
 		freezeDefault?: boolean;
@@ -306,9 +307,9 @@ export class StableCoin extends BaseEntity {
 		this.name = name;
 		this.symbol = symbol;
 		this.decimals = this.checkDecimals(decimals);
-		this.initialSupply = initialSupply ?? 0n;
-		this.totalSupply = totalSupply ?? 0n;
-		this.maxSupply = maxSupply ?? 0n;
+		this.initialSupply = initialSupply ?? BigDecimal.ZERO;
+		this.totalSupply = totalSupply ?? BigDecimal.ZERO;
+		this.maxSupply = maxSupply ?? undefined;
 		this.memo = memo
 			? StableCoinMemo.fromJson(memo)
 			: StableCoinMemo.empty();
@@ -359,12 +360,5 @@ export class StableCoin extends BaseEntity {
 		const val = amount.toString().split('.');
 		const decimals = val.length > 1 ? val[1]?.length : 0;
 		return decimals;
-	}
-
-	public toInteger(amount: number): number {
-		if (!this.isValidAmount(amount)) {
-			throw new InvalidAmountDomainError(amount, this.decimals);
-		}
-		return amount * this.getDecimalOperator();
 	}
 }
