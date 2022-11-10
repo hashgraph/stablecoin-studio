@@ -2,12 +2,15 @@
 import { isConstructible } from '../../../../../core/cast.js';
 import { Constructible, MapFunction } from '../../../../../core/types.js';
 import { Account, AccountId, PrivateKey, PublicKey } from '../../sdk.js';
+import { StableCoinRole } from '../../../../../core/enum.js';
 import {
 	RequestAccount,
 	RequestPrivateKey,
 	RequestPublicKey,
 } from '../BaseRequest.js';
+import { Roles } from '../../../../../domain/context/stablecoin/Roles.js';
 import ValidatedRequest from '../validation/ValidatedRequest.js';
+import { basename } from 'path/win32';
 
 export default class RequestMapper {
 	public static isPublicKey = (val: any): val is RequestPublicKey => {
@@ -24,6 +27,15 @@ export default class RequestMapper {
 		}
 		const keys = Object.getOwnPropertyNames(val);
 		return keys.includes('accountId');
+	};
+
+
+	public static isRole = (val: any): val is string => {
+		if (val === undefined || !val) {
+			return false;
+		}
+		const keys = Object.getOwnPropertyNames(Roles);
+		return keys.includes(val);
 	};
 
 	public static getAccount(req: RequestAccount): Account {

@@ -1,3 +1,3 @@
-import { IRequestRole } from './IRequestContracts.js';
+import { RequestRole } from './model/ContractRequests.js';
 
-export type IRoleStableCoinRequest = IRequestRole;
+export type IRoleStableCoinRequest = RequestRole;

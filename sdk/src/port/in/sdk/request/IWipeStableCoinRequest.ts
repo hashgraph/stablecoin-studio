@@ -1,3 +1,3 @@
-import { ITargetIdRequestModel, ICoreOperation } from './IRequestContracts.js';
+import { TargetIdRequestModel, ICoreOperation } from './model/ContractRequests.js';
 
-export type IWipeStableCoinRequest = ICoreOperation & ITargetIdRequestModel;
+export type IWipeStableCoinRequest = ICoreOperation & TargetIdRequestModel;

@@ -9,8 +9,10 @@ export enum ErrorCode {
 	InvalidContractId = '10014',
 	InvalidType = '10015',
 	InvalidLength = '10016',
-	InvalidRange = '10018',
 	EmptyValue = '10017',
+	InvalidRange = '10018',
+	InvalidRole = '10019',
+	InvalidSupplierType = '10020',
 	AccountNotAssociatedToToken = '20001',
 	MaxSupplyReached = '20002',
 	RoleNotAssigned = '20003',
@@ -18,6 +20,7 @@ export enum ErrorCode {
 	ContractNotFound = '30002',
 	Unexpected = '30003',
 	RuntimeError = '30004',
+	InvalidResponse = '30005',
 }
 
 export enum ErrorCategory {

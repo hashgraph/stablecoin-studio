@@ -8,8 +8,8 @@ import {
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
 
-export default class CashInStableCoinRequest
-	extends ValidatedRequest<CashInStableCoinRequest>
+export default class CashOutStableCoinRequest
+	extends ValidatedRequest<CashOutStableCoinRequest>
 	implements AccountBaseRequest, ContractBaseRequest
 {
 	account: RequestAccount;

@@ -1,9 +1,18 @@
 import PublicKey from '../../../../src/domain/context/account/PublicKey.js';
 import {
+  AllowanceRequest,
   BigDecimal,
   CreateStableCoinRequest,
   GetStableCoinDetails,
+  GrantRoleRequest,
+  RevokeRoleRequest,
+  HasRoleRequest,
+  CheckCashInRoleRequest,
+  ResetCashInLimitRequest,
   SDK,
+  IncreaseCashInLimitRequest,
+  DecreaseCashInLimitRequest,
+  Roles,
 } from '../../../../src/index.js';
 import {
   ACCOUNTS,
@@ -17,6 +26,7 @@ import WipeStableCoinRequest from '../../../../src/port/in/sdk/request/WipeStabl
 import BaseError from '../../../../src/core/error/BaseError.js';
 import GetListStableCoin from '../../../../src/port/in/sdk/request/GetListStableCoin.js';
 import { BigNumber } from '@hashgraph/hethers';
+import CheckCashInLimitRequest from '../../../../src/port/in/sdk/request/CheckCashInLimitRequest.js';
 
 describe('🧪 [PORT] SDK', () => {
   let sdk: SDK;
@@ -188,229 +198,280 @@ describe('🧪 [PORT] SDK', () => {
   }, 15000);
 
   it('Check unlimited supplier role', async () => {
-    const role = await sdk.isUnlimitedSupplierAllowance({
-      account: ACCOUNTS.testnet,
-      targetId: ACCOUNTS.testnet.accountId.id,
-      proxyContractId: proxyContractId ?? '',
-    });
+    const role = await sdk.isUnlimitedSupplierAllowance(
+      new CheckCashInRoleRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        targetId: REQUEST_ACCOUNTS.testnet.accountId,
+        proxyContractId: proxyContractId ?? '',
+      }),
+    );
     expect(role).not.toBeNull();
     expect(role && role[0]).toBeTruthy();
   }, 15000);
 
   it('Check limited supplier role when user doesnt have it', async () => {
-    const role = await sdk.supplierAllowance({
-      account: ACCOUNTS.testnet,
-      targetId: ACCOUNTS.testnet.accountId.id,
-      proxyContractId: proxyContractId ?? '',
-      tokenId: tokenId ?? '',
-    });
+    const role = await sdk.supplierAllowance(
+      new CheckCashInLimitRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        targetId: REQUEST_ACCOUNTS.testnet.accountId,
+        proxyContractId: proxyContractId ?? '',
+        tokenId: tokenId ?? '',
+      }),
+    );
     expect(role).not.toBeNull();
     expect(role && role).toBe('0');
   }, 15000);
 
   it('Revoke wipe role', async () => {
-    let hasRole = await sdk.hasRole({
-      account: ACCOUNTS.testnet,
-      role: StableCoinRole.WIPE_ROLE,
-      targetId: ACCOUNTS.testnet.accountId.id,
-      proxyContractId: proxyContractId ?? '',
-      tokenId: tokenId ?? '',
-    });
+    let hasRole = await sdk.hasRole(
+      new HasRoleRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        role: StableCoinRole.WIPE_ROLE,
+        targetId: REQUEST_ACCOUNTS.testnet.accountId,
+        proxyContractId: proxyContractId ?? '',
+        tokenId: tokenId ?? '',
+      }),
+    );
     expect(hasRole && hasRole[0]).toBeTruthy();
-    const role = await sdk.revokeRole({
-      account: ACCOUNTS.testnet,
-      targetId: ACCOUNTS.testnet.accountId.id,
-      proxyContractId: proxyContractId ?? '',
-      tokenId: tokenId ?? '',
-      role: StableCoinRole.WIPE_ROLE,
-    });
+    const role = await sdk.revokeRole(
+      new RevokeRoleRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        targetId: REQUEST_ACCOUNTS.testnet.accountId,
+        proxyContractId: proxyContractId ?? '',
+        tokenId: tokenId ?? '',
+        role: StableCoinRole.WIPE_ROLE,
+      }),
+    );
     expect(role).not.toBeNull();
-    hasRole = await sdk.hasRole({
-      account: ACCOUNTS.testnet,
-      role: StableCoinRole.WIPE_ROLE,
-      targetId: ACCOUNTS.testnet.accountId.id,
-      proxyContractId: proxyContractId ?? '',
-      tokenId: tokenId ?? '',
-    });
+    hasRole = await sdk.hasRole(
+      new HasRoleRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        role: StableCoinRole.WIPE_ROLE,
+        targetId: REQUEST_ACCOUNTS.testnet.accountId,
+        proxyContractId: proxyContractId ?? '',
+        tokenId: tokenId ?? '',
+      }),
+    );
     expect(hasRole && hasRole[0]).not.toBeTruthy();
   }, 15000);
 
   it('Revoke cash in role', async () => {
-    let hasRole = await sdk.hasRole({
-      account: ACCOUNTS.testnet,
-      role: StableCoinRole.CASHIN_ROLE,
-      targetId: ACCOUNTS.testnet.accountId.id,
-      proxyContractId: proxyContractId ?? '',
-      tokenId: tokenId ?? '',
-    });
+    let hasRole = await sdk.hasRole(
+      new HasRoleRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        role: StableCoinRole.CASHIN_ROLE,
+        targetId: REQUEST_ACCOUNTS.testnet.accountId,
+        proxyContractId: proxyContractId ?? '',
+        tokenId: tokenId ?? '',
+      }),
+    );
     expect(hasRole && hasRole[0]).toBeTruthy();
-    const role = await sdk.revokeRole({
-      account: ACCOUNTS.testnet,
-      targetId: ACCOUNTS.testnet.accountId.id,
-      proxyContractId: proxyContractId ?? '',
-      tokenId: tokenId ?? '',
-      role: StableCoinRole.CASHIN_ROLE,
-    });
+    const role = await sdk.revokeRole(
+      new RevokeRoleRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        targetId: REQUEST_ACCOUNTS.testnet.accountId,
+        proxyContractId: proxyContractId ?? '',
+        tokenId: tokenId ?? '',
+        role: StableCoinRole.CASHIN_ROLE,
+      }),
+    );
     expect(role).not.toBeNull();
-    hasRole = await sdk.hasRole({
-      account: ACCOUNTS.testnet,
-      role: StableCoinRole.CASHIN_ROLE,
-      targetId: ACCOUNTS.testnet.accountId.id,
-      proxyContractId: proxyContractId ?? '',
-      tokenId: tokenId ?? '',
-    });
+    hasRole = await sdk.hasRole(
+      new HasRoleRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        role: StableCoinRole.CASHIN_ROLE,
+        targetId: REQUEST_ACCOUNTS.testnet.accountId,
+        proxyContractId: proxyContractId ?? '',
+        tokenId: tokenId ?? '',
+      }),
+    );
     expect(hasRole && hasRole[0]).not.toBeTruthy();
   }, 15000);
 
   it('Grant wipe role', async () => {
-    let hasRole = await sdk.hasRole({
-      account: ACCOUNTS.testnet,
-      role: StableCoinRole.WIPE_ROLE,
-      targetId: ACCOUNTS.testnet.accountId.id,
-      proxyContractId: proxyContractId ?? '',
-      tokenId: tokenId ?? '',
-    });
+    let hasRole = await sdk.hasRole(
+      new HasRoleRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        role: StableCoinRole.WIPE_ROLE,
+        targetId: REQUEST_ACCOUNTS.testnet.accountId,
+        proxyContractId: proxyContractId ?? '',
+        tokenId: tokenId ?? '',
+      }),
+    );
     expect(hasRole && hasRole[0]).not.toBeTruthy();
-    const role = await sdk.grantRole({
-      account: ACCOUNTS.testnet,
-      targetId: ACCOUNTS.testnet.accountId.id,
-      proxyContractId: proxyContractId ?? '',
-      tokenId: tokenId ?? '',
-      role: StableCoinRole.WIPE_ROLE,
-    });
+    const role = await sdk.grantRole(
+      new GrantRoleRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        targetId: REQUEST_ACCOUNTS.testnet.accountId,
+        proxyContractId: proxyContractId ?? '',
+        tokenId: tokenId ?? '',
+        role: StableCoinRole.WIPE_ROLE,
+      }),
+    );
     expect(role).not.toBeNull();
-    hasRole = await sdk.hasRole({
-      account: ACCOUNTS.testnet,
-      role: StableCoinRole.WIPE_ROLE,
-      targetId: ACCOUNTS.testnet.accountId.id,
-      proxyContractId: proxyContractId ?? '',
-      tokenId: tokenId ?? '',
-    });
+    hasRole = await sdk.hasRole(
+      new HasRoleRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        role: StableCoinRole.WIPE_ROLE,
+        targetId: REQUEST_ACCOUNTS.testnet.accountId,
+        proxyContractId: proxyContractId ?? '',
+        tokenId: tokenId ?? '',
+      }),
+    );
     expect(hasRole && hasRole[0]).toBeTruthy();
   }, 15000);
   it('Grant limited cash in role', async () => {
     const amount = '10';
-    let hasRole = await sdk.hasRole({
-      account: ACCOUNTS.testnet,
-      role: StableCoinRole.CASHIN_ROLE,
-      targetId: ACCOUNTS.testnet.accountId.id,
-      proxyContractId: proxyContractId ?? '',
-      tokenId: tokenId ?? '',
-    });
+    let hasRole = await sdk.hasRole(
+      new HasRoleRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        role: StableCoinRole.CASHIN_ROLE,
+        targetId: REQUEST_ACCOUNTS.testnet.accountId,
+        proxyContractId: proxyContractId ?? '',
+        tokenId: tokenId ?? '',
+      }),
+    );
     expect(hasRole && hasRole[0]).not.toBeTruthy();
-    const role = await sdk.grantRole({
-      account: ACCOUNTS.testnet,
-      targetId: ACCOUNTS.testnet.accountId.id,
-      proxyContractId: proxyContractId ?? '',
-      tokenId: tokenId ?? '',
-      role: StableCoinRole.CASHIN_ROLE,
-      amount,
-    });
+    const role = await sdk.grantRole(
+      new GrantRoleRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        targetId: REQUEST_ACCOUNTS.testnet.accountId,
+        proxyContractId: proxyContractId ?? '',
+        tokenId: tokenId ?? '',
+        role: StableCoinRole.CASHIN_ROLE,
+        amount,
+      }),
+    );
     expect(role).not.toBeNull();
-    hasRole = await sdk.hasRole({
-      account: ACCOUNTS.testnet,
-      role: StableCoinRole.CASHIN_ROLE,
-      targetId: ACCOUNTS.testnet.accountId.id,
-      proxyContractId: proxyContractId ?? '',
-      tokenId: tokenId ?? '',
-    });
+    hasRole = await sdk.hasRole(
+      new HasRoleRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        role: StableCoinRole.CASHIN_ROLE,
+        targetId: REQUEST_ACCOUNTS.testnet.accountId,
+        proxyContractId: proxyContractId ?? '',
+        tokenId: tokenId ?? '',
+      }),
+    );
     expect(hasRole && hasRole[0]).toBeTruthy();
 
-    const check = await sdk.supplierAllowance({
-      account: ACCOUNTS.testnet,
-      targetId: ACCOUNTS.testnet.accountId.id,
-      proxyContractId: proxyContractId ?? '',
-      tokenId: tokenId ?? '',
-    });
+    const check = await sdk.supplierAllowance(
+      new CheckCashInLimitRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        targetId: REQUEST_ACCOUNTS.testnet.accountId,
+        proxyContractId: proxyContractId ?? '',
+        tokenId: tokenId ?? '',
+      }),
+    );
     expect(check).not.toBeNull();
     expect(check && check).toBe('10');
   }, 25000);
   it('Check limited supplier allowance', async () => {
-    const check = await sdk.isLimitedSupplierAllowance({
-      account: ACCOUNTS.testnet,
-      targetId: ACCOUNTS.testnet.accountId.id,
-      proxyContractId: proxyContractId ?? '',
-    });
+    const check = await sdk.isLimitedSupplierAllowance(
+      new CheckCashInRoleRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        targetId: REQUEST_ACCOUNTS.testnet.accountId,
+        proxyContractId: proxyContractId ?? '',
+      }),
+    );
     expect(check).not.toBeNull();
     expect(check && check[0]).toBeTruthy();
   }, 15000);
   it('Increase Limit supplier role', async () => {
     const amount = '10';
-    await sdk.increaseSupplierAllowance({
-      account: ACCOUNTS.testnet,
-      targetId: ACCOUNTS.testnet.accountId.id,
-      proxyContractId: proxyContractId ?? '',
-      tokenId: tokenId ?? '',
-      amount: amount,
-    });
+    await sdk.increaseSupplierAllowance(
+      new IncreaseCashInLimitRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        targetId: REQUEST_ACCOUNTS.testnet.accountId,
+        proxyContractId: proxyContractId ?? '',
+        tokenId: tokenId ?? '',
+        amount: amount,
+      }),
+    );
 
-    const check = await sdk.supplierAllowance({
-      account: ACCOUNTS.testnet,
-      targetId: ACCOUNTS.testnet.accountId.id,
-      proxyContractId: proxyContractId ?? '',
-      tokenId: tokenId ?? '',
-    });
+    const check = await sdk.supplierAllowance(
+      new CheckCashInLimitRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        targetId: REQUEST_ACCOUNTS.testnet.accountId,
+        proxyContractId: proxyContractId ?? '',
+        tokenId: tokenId ?? '',
+      }),
+    );
     expect(check).not.toBeNull();
     expect(check && check).toBe('20');
   }, 15000);
 
   it('Decrease Limit supplier role', async () => {
     const amount = '10';
-    await sdk.decreaseSupplierAllowance({
-      account: ACCOUNTS.testnet,
-      targetId: ACCOUNTS.testnet.accountId.id,
-      proxyContractId: proxyContractId ?? '',
-      tokenId: tokenId ?? '',
-      amount: amount,
-    });
-    const check = await sdk.supplierAllowance({
-      account: ACCOUNTS.testnet,
-      targetId: ACCOUNTS.testnet.accountId.id,
-      proxyContractId: proxyContractId ?? '',
-      tokenId: tokenId ?? '',
-    });
+    await sdk.decreaseSupplierAllowance(
+      new DecreaseCashInLimitRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        targetId: REQUEST_ACCOUNTS.testnet.accountId,
+        proxyContractId: proxyContractId ?? '',
+        tokenId: tokenId ?? '',
+        amount: amount,
+      }),
+    );
+    const check = await sdk.supplierAllowance(
+      new CheckCashInLimitRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        targetId: REQUEST_ACCOUNTS.testnet.accountId,
+        proxyContractId: proxyContractId ?? '',
+        tokenId: tokenId ?? '',
+      }),
+    );
     expect(check).not.toBeNull();
     expect(check && check).toBe('10');
   }, 15000);
 
   it('reset Limit supplier role', async () => {
     const amount = '10';
-    await sdk.increaseSupplierAllowance({
-      account: ACCOUNTS.testnet,
-      targetId: ACCOUNTS.testnet.accountId.id,
-      proxyContractId: proxyContractId ?? '',
-      tokenId: tokenId ?? '',
-      amount: amount,
-    });
-    await sdk.resetSupplierAllowance({
-      account: ACCOUNTS.testnet,
-      targetId: ACCOUNTS.testnet.accountId.id,
-      proxyContractId: proxyContractId ?? '',
-    });
+    await sdk.increaseSupplierAllowance(
+      new IncreaseCashInLimitRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        targetId: REQUEST_ACCOUNTS.testnet.accountId,
+        proxyContractId: proxyContractId ?? '',
+        tokenId: tokenId ?? '',
+        amount: amount,
+      }),
+    );
+    await sdk.resetSupplierAllowance(
+      new ResetCashInLimitRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        targetId: REQUEST_ACCOUNTS.testnet.accountId,
+        proxyContractId: proxyContractId ?? '',
+        tokenId: tokenId ?? '',
+      }),
+    );
 
-    const check = await sdk.supplierAllowance({
-      account: ACCOUNTS.testnet,
-      targetId: ACCOUNTS.testnet.accountId.id,
-      proxyContractId: proxyContractId ?? '',
-      tokenId: tokenId ?? '',
-    });
+    const check = await sdk.supplierAllowance(
+      new CheckCashInLimitRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        targetId: REQUEST_ACCOUNTS.testnet.accountId,
+        proxyContractId: proxyContractId ?? '',
+        tokenId: tokenId ?? '',
+      }),
+    );
     expect(check).not.toBeNull();
     expect(check && check).toBe('0');
   }, 15000);
 
   it('Grant unlimited supplier role', async () => {
-    await sdk.grantRole({
-      account: ACCOUNTS.testnet,
-      targetId: ACCOUNTS.testnet.accountId.id,
-      proxyContractId: proxyContractId ?? '',
-      tokenId: tokenId ?? '',
-      role: StableCoinRole.CASHIN_ROLE,
-    });
-    const check = await sdk.isUnlimitedSupplierAllowance({
-      account: ACCOUNTS.testnet,
-      targetId: ACCOUNTS.testnet.accountId.id,
-      proxyContractId: proxyContractId ?? '',
-    });
+    await sdk.grantRole(
+      new GrantRoleRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        targetId: REQUEST_ACCOUNTS.testnet.accountId,
+        proxyContractId: proxyContractId ?? '',
+        tokenId: tokenId ?? '',
+        role: StableCoinRole.CASHIN_ROLE,
+      }),
+    );
+    const check = await sdk.isUnlimitedSupplierAllowance(
+      new CheckCashInRoleRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        targetId: REQUEST_ACCOUNTS.testnet.accountId,
+        proxyContractId: proxyContractId ?? '',
+      }),
+    );
     expect(check).not.toBeNull();
     expect(check && check[0]).toBeTruthy();
   }, 15000);

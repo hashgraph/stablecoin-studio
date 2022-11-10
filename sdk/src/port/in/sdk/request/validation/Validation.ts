@@ -8,6 +8,7 @@ import {
 	ContractId,
 	PrivateKey,
 	PublicKey,
+	StableCoinRole
 } from '../../sdk.js';
 import {
 	RequestAccount,
@@ -19,6 +20,9 @@ import { InvalidLength } from '../error/InvalidLength.js';
 import { InvalidRange } from '../error/InvalidRange.js';
 import { InvalidFormatHedera as InvalidIdFormatHedera } from '../error/InvalidFormatHedera.js';
 import { InvalidType } from '../error/InvalidType.js';
+import InvalidDecimalRange from '../../../../../domain/context/stablecoin/error/InvalidDecimalRange.js';
+import { InvalidRole } from '../../../../../domain/context/stablecoin/error/InvalidRole.js';
+import { AccountIdNotValid } from '../../../../../domain/context/account/error/AccountIdNotValid.js';
 
 export default class Validation {
 	public static checkPublicKey = () => {
@@ -93,6 +97,17 @@ export default class Validation {
 		};
 	};
 
+	public static checkRole = () => {
+		return (val: any): BaseError[] => {
+			const err: BaseError[] = [];
+			const roles: string[] = Object.values(StableCoinRole);
+			if (!roles.includes(val)) {
+				err.push(new InvalidRole(val));
+			}
+			return err;
+		};
+	};
+
 	public static checkAccount = () => {
 		return (val: any): void => {
 			const { accountId, privateKey, evmAddress } = val as RequestAccount;
@@ -114,6 +129,8 @@ export default class Validation {
 			const err: BaseError[] = [];
 			if (!regEx.exec(val)) {
 				err.push(new InvalidIdFormatHedera(val));
+			} else if (val === '0.0.0') {
+				err.push(new AccountIdNotValid(val));
 			}
 			return err;
 		};
@@ -132,6 +149,9 @@ export default class Validation {
 			const value = BigDecimal.fromString(val);
 			if (value.isLowerOrEqualThan(zero)) {
 				err.push(new InvalidRange(val, '0', undefined));
+			}
+			if (valueDecimals > 18) {
+				err.push(new InvalidDecimalRange(val, 0, 18));
 			}
 			return err;
 		};

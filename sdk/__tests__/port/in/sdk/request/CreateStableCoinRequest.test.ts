@@ -57,7 +57,7 @@ describe('🧪 SDK Create Stable Coin Request', () => {
     });
     expect(request).not.toBeNull();
     const validations = request.validate();
-    logValidation(validations);
+    
     expect(validations.length).toBeDefined();
     expect(validations.length).toBe(0);
   });
@@ -78,7 +78,7 @@ describe('🧪 SDK Create Stable Coin Request', () => {
     });
     expect(request).not.toBeNull();
     const validations = request.validate();
-    logValidation(validations);
+    
     expect(validations.length).toBeDefined();
     expect(validations.length).toBe(1);
   });
@@ -100,7 +100,7 @@ describe('🧪 SDK Create Stable Coin Request', () => {
     });
     expect(request).not.toBeNull();
     const validations = request.validate();
-    logValidation(validations);
+    
     expect(validations.length).toBeDefined();
     expect(validations.length).toBe(1);
   });
@@ -118,7 +118,7 @@ describe('🧪 SDK Create Stable Coin Request', () => {
     });
     expect(request).not.toBeNull();
     const validations = request.validate();
-    logValidation(validations);
+    
     expect(validations.length).toBeDefined();
     expect(validations.length).toBe(0);
   });
@@ -155,7 +155,7 @@ describe('🧪 SDK Create Stable Coin Request', () => {
     });
     expect(request).not.toBeNull();
     const validations = request.validate();
-    logValidation(validations);
+    
     expect(validations).not.toBeNull();
     expect(validations.length).toBe(1);
     request.initialSupply = '1000';
@@ -182,7 +182,7 @@ describe('🧪 SDK Create Stable Coin Request', () => {
     });
     expect(request).not.toBeNull();
     const validations = request.validate();
-    logValidation(validations);
+    
     expect(validations).not.toBeNull();
     expect(validations.length).toEqual(4);
   });
@@ -209,7 +209,7 @@ describe('🧪 SDK Create Stable Coin Request', () => {
     );
     expect(request).not.toBeNull();
     const validations = request.validate();
-    logValidation(validations);
+    
     expect(validations).not.toBeNull();
     expect(validations.length).toBe(0);
     const mappedRequest: ICreateStableCoinServiceRequestModel =

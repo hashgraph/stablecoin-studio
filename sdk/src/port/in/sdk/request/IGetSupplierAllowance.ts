@@ -1,9 +1,9 @@
 import {
-	IRequestContracts,
-	ITargetIdRequestModel,
-	ITokenIdRequestModel,
-} from './IRequestContracts.js';
+	RequestContracts,
+	TargetIdRequestModel,
+	TokenIdRequestModel,
+} from './model/ContractRequests.js';
 
-export type IGetSupplierAllowance = IRequestContracts &
-	ITargetIdRequestModel &
-	ITokenIdRequestModel;
+export type IGetSupplierAllowance = RequestContracts &
+	TargetIdRequestModel &
+	TokenIdRequestModel;

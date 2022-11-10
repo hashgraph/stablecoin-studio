@@ -52,8 +52,8 @@ import ContractId from '../../../domain/context/contract/ContractId.js';
 import { TokenType } from '../../../domain/context/stablecoin/TokenType.js';
 import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.js';
 import { StableCoinMemo } from '../../../domain/context/stablecoin/StableCoinMemo.js';
-import { IAllowanceRequest } from './request/IRequestContracts.js';
-import { IRequestRoles } from './request/IRequestContracts';
+import AllowanceRequest from './request/AllowanceRequest.js';
+import { RequestRoles } from './request/model/ContractRequests';
 import { AppMetadata } from '../../out/hedera/hashpack/types/types.js';
 import {
 	AcknowledgeMessage,
@@ -85,14 +85,26 @@ import IGetRolesServiceRequestModel from '../../../app/service/stablecoin/model/
 import {
 	CreateStableCoinRequest,
 	CashInStableCoinRequest,
+	CashOutStableCoinRequest,
 	WipeStableCoinRequest,
 	GetListStableCoin,
 	GetStableCoinDetails,
+	GrantRoleRequest,
+	RevokeRoleRequest,
+	HasRoleRequest,
+	CheckCashInRoleRequest,
+	CheckCashInLimitRequest,
+	ResetCashInLimitRequest,
+	IncreaseCashInLimitRequest,
+	DecreaseCashInLimitRequest,
 } from './request';
+import ValidatedRequest from './request/validation/ValidatedRequest.js';
 import RequestMapper from './request/mapping/RequestMapper.js';
 import { RequestAccount } from './request/BaseRequest.js';
+import { Roles } from '../../../domain/context/stablecoin/Roles.js';
 
 export {
+	ValidatedRequest,
 	IAssociateStableCoinRequest,
 	ICashInStableCoinRequest,
 	ICashOutStableCoinRequest,
@@ -107,7 +119,7 @@ export {
 	ISupplierRoleStableCoinRequest,
 	IWipeStableCoinRequest,
 	IGetCapabilitiesRequest,
-	IAllowanceRequest,
+	AllowanceRequest as IAllowanceRequest,
 	IBasicRequest,
 	IStableCoinDetail,
 	IStableCoinList,
@@ -130,6 +142,7 @@ export {
 	ContractId,
 	TokenType,
 	TokenSupplyType,
+	Roles,
 	HederaNetworkEnviroment,
 	getHederaNetwork,
 	StableCoinRole,
@@ -324,13 +337,11 @@ export class SDK {
 	/**
 	 * cashOut
 	 */
-	public cashOut(
-		request: ICashOutStableCoinRequest,
-	): Promise<boolean> | null {
+	public cashOut(request: CashOutStableCoinRequest): Promise<boolean> | null {
 		try {
-			const req: ICashOutStableCoinServiceRequestModel = {
-				...request,
-			};
+			const req: ICashOutStableCoinServiceRequestModel =
+				RequestMapper.map(request);
+
 			return this.stableCoinService.cashOut(req);
 		} catch (error) {
 			console.error(error);
@@ -360,9 +371,6 @@ export class SDK {
 	 */
 	public wipe(request: WipeStableCoinRequest): Promise<boolean> | null {
 		try {
-			//const req: IWipeStableCoinServiceRequestModel = {
-			//	...request,
-			//};
 			const req: IWipeStableCoinServiceRequestModel =
 				RequestMapper.map(request);
 			return this.stableCoinService.wipe(req);
@@ -376,12 +384,10 @@ export class SDK {
 	 * check unlimited supplier role
 	 */
 	public isUnlimitedSupplierAllowance(
-		request: IBasicRequest,
+		request: CheckCashInRoleRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			const req: IGetBasicRequestModel = {
-				...request,
-			};
+			const req: IGetBasicRequestModel = RequestMapper.map(request);
 			return this.stableCoinService.isUnlimitedSupplierAllowance(req);
 		} catch (error) {
 			console.error(error);
@@ -392,12 +398,10 @@ export class SDK {
 	 * check limited supplier role
 	 */
 	public supplierAllowance(
-		request: IGetSupplierAllowance,
+		request: CheckCashInLimitRequest,
 	): Promise<string> | null {
 		try {
-			const req: IGetSupplierAllowanceModel = {
-				...request,
-			};
+			const req: IGetSupplierAllowanceModel = RequestMapper.map(request);
 			return this.stableCoinService.supplierAllowance(req);
 		} catch (error) {
 			console.error(error);
@@ -409,12 +413,10 @@ export class SDK {
 	 * reset supplier allowance
 	 */
 	public resetSupplierAllowance(
-		request: IBasicRequest,
+		request: ResetCashInLimitRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			const req: IGetBasicRequestModel = {
-				...request,
-			};
+			const req: IGetBasicRequestModel = RequestMapper.map(request);
 			return this.stableCoinService.resetSupplierAllowance(req);
 		} catch (error) {
 			console.error(error);
@@ -425,12 +427,11 @@ export class SDK {
 	 * increase supplier allowance
 	 */
 	public increaseSupplierAllowance(
-		request: IAllowanceRequest,
+		request: IncreaseCashInLimitRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			const req: ISupplierRoleStableCoinServiceRequestModel = {
-				...request,
-			};
+			const req: ISupplierRoleStableCoinServiceRequestModel =
+				RequestMapper.map(request);
 			return this.stableCoinService.increaseSupplierAllowance(req);
 		} catch (error) {
 			console.error(error);
@@ -441,12 +442,11 @@ export class SDK {
 	 * decrease supplier allowance
 	 */
 	public decreaseSupplierAllowance(
-		request: IAllowanceRequest,
+		request: DecreaseCashInLimitRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			const req: ISupplierRoleStableCoinServiceRequestModel = {
-				...request,
-			};
+			const req: ISupplierRoleStableCoinServiceRequestModel =
+				RequestMapper.map(request);
 			return this.stableCoinService.decreaseSupplierAllowance(req);
 		} catch (error) {
 			console.error(error);
@@ -458,12 +458,10 @@ export class SDK {
 	 * check limited supplier role
 	 */
 	public isLimitedSupplierAllowance(
-		request: IBasicRequest,
+		request: CheckCashInRoleRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			const req: IGetBasicRequestModel = {
-				...request,
-			};
+			const req: IGetBasicRequestModel = RequestMapper.map(request);
 			return this.stableCoinService.isLimitedSupplierAllowance(req);
 		} catch (error) {
 			console.error(error);
@@ -505,34 +503,36 @@ export class SDK {
 		);
 	}
 
-	public grantRole(
-		request: XOR<IRoleStableCoinRequest, ISupplierRoleStableCoinRequest>,
-	): Promise<Uint8Array> | null {
+	public grantRole(request: GrantRoleRequest): Promise<Uint8Array> | null {
 		try {
-			const req = {
-				...request,
-			};
-			if (req.role === StableCoinRole.CASHIN_ROLE) {
-				return this.stableCoinService.grantSupplierRole(req);
-			}
-			return this.stableCoinService.grantRole(req);
-		} catch (error) {
-			console.error(error);
-			return null;
-		}
-	}
-
-	public revokeRole(
-		request: IRoleStableCoinRequest,
-	): Promise<Uint8Array> | null {
-		try {
-			const req: IRoleStableCoinServiceRequestModel = {
-				...request,
-			};
 			if (request.role === StableCoinRole.CASHIN_ROLE) {
-				return this.stableCoinService.revokeSupplierRole(req);
+				const grantSupplierRoleReq: ISupplierRoleStableCoinServiceRequestModel =
+					RequestMapper.map(request);
+				return this.stableCoinService.grantSupplierRole(
+					grantSupplierRoleReq,
+				);
+			}
+			const grantRoleReq: IRoleStableCoinServiceRequestModel =
+				RequestMapper.map(request);
+			return this.stableCoinService.grantRole(grantRoleReq);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+
+	public revokeRole(request: RevokeRoleRequest): Promise<Uint8Array> | null {
+		try {
+			if (request.role === StableCoinRole.CASHIN_ROLE) {
+				const revokeSupplierRoleReq: ISupplierRoleStableCoinServiceRequestModel =
+					RequestMapper.map(request);
+				return this.stableCoinService.revokeSupplierRole(
+					revokeSupplierRoleReq,
+				);
 			} else {
-				return this.stableCoinService.revokeRole(req);
+				const revokeRoleReq: IRoleStableCoinServiceRequestModel =
+					RequestMapper.map(request);
+				return this.stableCoinService.revokeRole(revokeRoleReq);
 			}
 		} catch (error) {
 			console.error(error);
@@ -540,14 +540,10 @@ export class SDK {
 		}
 	}
 
-	public hasRole(
-		request: IRoleStableCoinRequest,
-	): Promise<Uint8Array> | null {
+	public hasRole(request: HasRoleRequest): Promise<Uint8Array> | null {
 		try {
-			const req: IRoleStableCoinServiceRequestModel = {
-				...request,
-				role: request.role,
-			};
+			const req: IRoleStableCoinServiceRequestModel =
+				RequestMapper.map(request);
 			return this.stableCoinService.hasRole(req);
 		} catch (error) {
 			console.error(error);
@@ -566,7 +562,7 @@ export class SDK {
 		}
 	}
 
-	public getRoles(request: IRequestRoles): Promise<string[]> | null {
+	public getRoles(request: RequestRoles): Promise<string[]> | null {
 		try {
 			const req: IGetRolesServiceRequestModel = {
 				...request,

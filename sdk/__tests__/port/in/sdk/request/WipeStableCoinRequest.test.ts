@@ -1,12 +1,12 @@
 import BaseError, {
   ErrorCode,
 } from '../../../../../src/core/error/BaseError.js';
-import { CashInStableCoinRequest } from '../../../../../src/index.js';
+import { WipeStableCoinRequest } from '../../../../../src/index.js';
 import { EXAMPLE_TOKEN, REQUEST_ACCOUNTS } from '../../../../core/core.js';
 
-describe('🧪 SDK CashIn Stable Coin Request', () => {
+describe('🧪 SDK Wipe Stable Coin Request', () => {
   it('Create simple request', () => {
-    const request: CashInStableCoinRequest = new CashInStableCoinRequest({
+    const request: WipeStableCoinRequest = new WipeStableCoinRequest({
       account: {
         accountId: REQUEST_ACCOUNTS.testnet.accountId,
         privateKey: REQUEST_ACCOUNTS.testnet.privateKey,
@@ -19,8 +19,8 @@ describe('🧪 SDK CashIn Stable Coin Request', () => {
     expect(request).not.toBeNull();
   });
 
-  it('CashIn and validate', () => {
-    const request: CashInStableCoinRequest = new CashInStableCoinRequest({
+  it('Wipe and validate', () => {
+    const request: WipeStableCoinRequest = new WipeStableCoinRequest({
       account: {
         accountId: REQUEST_ACCOUNTS.testnet.accountId,
         privateKey: REQUEST_ACCOUNTS.testnet.privateKey,
@@ -36,8 +36,8 @@ describe('🧪 SDK CashIn Stable Coin Request', () => {
     expect(validations.length).toBe(0);
   });
 
-  it('CashIn and validate simple request with decimals', () => {
-    const request: CashInStableCoinRequest = new CashInStableCoinRequest({
+  it('Wipe and validate simple request with decimals', () => {
+    const request: WipeStableCoinRequest = new WipeStableCoinRequest({
       account: {
         accountId: REQUEST_ACCOUNTS.testnet.accountId,
         privateKey: REQUEST_ACCOUNTS.testnet.privateKey,
@@ -55,7 +55,7 @@ describe('🧪 SDK CashIn Stable Coin Request', () => {
   });
 
   it('Create and validate simple invalid request', () => {
-    const request: CashInStableCoinRequest = new CashInStableCoinRequest({
+    const request: WipeStableCoinRequest = new WipeStableCoinRequest({
       account: {
         accountId: REQUEST_ACCOUNTS.testnet.accountId,
         privateKey: REQUEST_ACCOUNTS.testnet.privateKey,
@@ -74,7 +74,7 @@ describe('🧪 SDK CashIn Stable Coin Request', () => {
   });
 
   it('Create and validate request [amount]', () => {
-    const request: CashInStableCoinRequest = new CashInStableCoinRequest({
+    const request: WipeStableCoinRequest = new WipeStableCoinRequest({
       account: {
         accountId: REQUEST_ACCOUNTS.testnet.accountId,
         privateKey: REQUEST_ACCOUNTS.testnet.privateKey,
@@ -95,7 +95,7 @@ describe('🧪 SDK CashIn Stable Coin Request', () => {
   });
 
   it('Create and validate request, fail with [amount, target]', () => {
-    const request: CashInStableCoinRequest = new CashInStableCoinRequest({
+    const request: WipeStableCoinRequest = new WipeStableCoinRequest({
       account: {
         accountId: REQUEST_ACCOUNTS.testnet.accountId,
         privateKey: REQUEST_ACCOUNTS.testnet.privateKey,
@@ -112,7 +112,7 @@ describe('🧪 SDK CashIn Stable Coin Request', () => {
     expect(validations.length).toEqual(2);
   });
   it('Create and validate request, fail with [amount, target,tokenId]', () => {
-    const request: CashInStableCoinRequest = new CashInStableCoinRequest({
+    const request: WipeStableCoinRequest = new WipeStableCoinRequest({
       account: {
         accountId: REQUEST_ACCOUNTS.testnet.accountId,
         privateKey: REQUEST_ACCOUNTS.testnet.privateKey,

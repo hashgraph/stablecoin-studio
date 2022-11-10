@@ -280,6 +280,16 @@ export default class UtilitiesService extends Service {
     process.exit(code);
   }
 
+  public async askErrorConfirmation(
+    cll?: (cause?: string) => unknown,
+    cause?: string,
+  ): Promise<void> {
+    if (cause) {
+      this.showError(`\n 🛑 ${cause}\n\n`);
+    }
+    cll && (await cll(cause));
+  }
+
   public maskPrivateAccounts(accounts: IAccountConfig[]): IAccountConfig[] {
     const maskJSONOptions = {
       maskWith: '.',
