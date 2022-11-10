@@ -106,8 +106,6 @@ export default class RequestMapper {
 				target[key] = this.getPublicKey(val);
 			} else if (this.isAccount(val)) {
 				target[key] = this.getAccount(val);
-			} else if (this.isRole(val)) {
-				target[key] = StableCoinRole[val as keyof typeof StableCoinRole];
 			} else {
 				target[key] = val;
 			}

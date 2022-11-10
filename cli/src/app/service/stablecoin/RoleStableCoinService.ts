@@ -5,12 +5,17 @@ import {
   AllowanceRequest,
   EOAccount,
   PrivateKey,
+  StableCoinRole,
   SDK,
   GrantRoleRequest,
   RevokeRoleRequest,
   HasRoleRequest,
   CheckCashInRoleRequest,
-  CheckCashInLimitRequest
+  CheckCashInLimitRequest,
+  ResetCashInLimitRequest,
+  IncreaseCashInLimitRequest,
+  DecreaseCashInLimitRequest,
+  Roles
 } from 'hedera-stable-coin-sdk';
 import colors from 'colors';
 
@@ -68,28 +73,11 @@ export default class RoleStableCoinsService extends Service {
     }
   }
 
-  public async increaseLimitSupplierRoleStableCoin(
-    proxyContractId: string,
-    tokenId: string,
-    targetId: string,
-    privateKey: PrivateKey,
-    accountId: string,
-    amount?: string,
+  public async increaseLimitSupplierRoleStableCoin(req: IncreaseCashInLimitRequest    
   ): Promise<void> {
     const sdk: SDK = utilsService.getSDK();
     await utilsService.showSpinner(
-      sdk.increaseSupplierAllowance(
-        new AllowanceRequest({
-          proxyContractId,
-          tokenId,
-          targetId,
-          account: {
-            accountId,
-            privateKey,
-          },
-          amount,
-        }),
-      ),
+      sdk.increaseSupplierAllowance(req),
       {
         text: language.getText('state.loading'),
         successText: language.getText('state.loadCompleted') + '\n',
@@ -100,28 +88,11 @@ export default class RoleStableCoinsService extends Service {
     utilsService.breakLine();
   }
 
-  public async decreaseLimitSupplierRoleStableCoin(
-    proxyContractId: string,
-    tokenId: string,
-    targetId: string,
-    privateKey: PrivateKey,
-    accountId: string,
-    amount?: string,
+  public async decreaseLimitSupplierRoleStableCoin(req: DecreaseCashInLimitRequest
   ): Promise<void> {
     const sdk: SDK = utilsService.getSDK();
     await utilsService.showSpinner(
-      sdk.decreaseSupplierAllowance(
-        new AllowanceRequest({
-          proxyContractId,
-          tokenId,
-          targetId,
-          account: {
-            accountId,
-            privateKey,
-          },
-          amount,
-        }),
-      ),
+      sdk.decreaseSupplierAllowance(req),
       {
         text: language.getText('state.loading'),
         successText: language.getText('state.loadCompleted') + '\n',
@@ -132,20 +103,12 @@ export default class RoleStableCoinsService extends Service {
     utilsService.breakLine();
   }
 
-  public async resetLimitSupplierRoleStableCoin(
-    proxyContractId: string,
-    targetId: string,
-    privateKey: PrivateKey,
-    accountId: string,
+  public async resetLimitSupplierRoleStableCoin(req: ResetCashInLimitRequest
   ): Promise<void> {
     const sdk: SDK = utilsService.getSDK();
 
     await utilsService.showSpinner(
-      sdk.resetSupplierAllowance({
-        proxyContractId,
-        targetId,
-        account: new EOAccount(accountId, privateKey),
-      }),
+      sdk.resetSupplierAllowance(req),
       {
         text: language.getText('state.loading'),
         successText: language.getText('state.loadCompleted') + '\n',
@@ -207,10 +170,12 @@ export default class RoleStableCoinsService extends Service {
       response = language.getText('roleManagement.accountHasRole');
     }
 
+    const indexOfS = Object.values(StableCoinRole).indexOf(req.role as unknown as StableCoinRole);
+    const roleName = Roles[Object.keys(StableCoinRole)[indexOfS]];
     console.log(
       response
         .replace('${address}', req.targetId)
-        .replace('${role}', colors.yellow(req.role)) + '\n',
+        .replace('${role}', colors.yellow(roleName)) + '\n',
     );
 
     utilsService.breakLine();

@@ -7,7 +7,11 @@ import {
   RevokeRoleRequest,
   HasRoleRequest,
   CheckCashInRoleRequest,
+  ResetCashInLimitRequest,
   SDK,
+  IncreaseCashInLimitRequest,
+  DecreaseCashInLimitRequest,
+  Roles
 } from '../../../../src/index.js';
 import {
   ACCOUNTS,
@@ -339,15 +343,13 @@ describe('🧪 [PORT] SDK', () => {
   }, 15000);
   it('Increase Limit supplier role', async () => {
     const amount = '10';
-    await sdk.increaseSupplierAllowance(
-      new AllowanceRequest({
-        account: REQUEST_ACCOUNTS.testnet,
-        targetId: ACCOUNTS.testnet.accountId.id,
-        proxyContractId: proxyContractId ?? '',
-        tokenId: tokenId ?? '',
-        amount: amount,
-      }),
-    );
+    await sdk.increaseSupplierAllowance(new IncreaseCashInLimitRequest({
+      account: REQUEST_ACCOUNTS.testnet,
+      targetId: REQUEST_ACCOUNTS.testnet.accountId,
+      proxyContractId: proxyContractId ?? '',
+      tokenId: tokenId ?? '',
+      amount: amount,
+    }));
 
     const check = await sdk.supplierAllowance(new CheckCashInLimitRequest ({
       account: REQUEST_ACCOUNTS.testnet,
@@ -361,13 +363,13 @@ describe('🧪 [PORT] SDK', () => {
 
   it('Decrease Limit supplier role', async () => {
     const amount = '10';
-    await sdk.decreaseSupplierAllowance({
-      account: ACCOUNTS.testnet,
-      targetId: ACCOUNTS.testnet.accountId.id,
+    await sdk.decreaseSupplierAllowance(new DecreaseCashInLimitRequest ({
+      account: REQUEST_ACCOUNTS.testnet,
+      targetId: REQUEST_ACCOUNTS.testnet.accountId,
       proxyContractId: proxyContractId ?? '',
       tokenId: tokenId ?? '',
       amount: amount,
-    });
+    }));
     const check = await sdk.supplierAllowance(new CheckCashInLimitRequest ({
       account: REQUEST_ACCOUNTS.testnet,
       targetId: REQUEST_ACCOUNTS.testnet.accountId,
@@ -380,20 +382,19 @@ describe('🧪 [PORT] SDK', () => {
 
   it('reset Limit supplier role', async () => {
     const amount = '10';
-    await sdk.increaseSupplierAllowance(
-      new AllowanceRequest({
-        account: REQUEST_ACCOUNTS.testnet,
-        targetId: ACCOUNTS.testnet.accountId.id,
-        proxyContractId: proxyContractId ?? '',
-        tokenId: tokenId ?? '',
-        amount: amount,
-      }),
-    );
-    await sdk.resetSupplierAllowance({
-      account: ACCOUNTS.testnet,
-      targetId: ACCOUNTS.testnet.accountId.id,
+    await sdk.increaseSupplierAllowance(new IncreaseCashInLimitRequest({
+      account: REQUEST_ACCOUNTS.testnet,
+      targetId: REQUEST_ACCOUNTS.testnet.accountId,
       proxyContractId: proxyContractId ?? '',
-    });
+      tokenId: tokenId ?? '',
+      amount: amount,
+    }));
+    await sdk.resetSupplierAllowance(new ResetCashInLimitRequest ({
+      account: REQUEST_ACCOUNTS.testnet,
+      targetId: REQUEST_ACCOUNTS.testnet.accountId,
+      proxyContractId: proxyContractId ?? '',
+      tokenId: tokenId ?? '',
+    }));
 
     const check = await sdk.supplierAllowance(new CheckCashInLimitRequest ({
       account: REQUEST_ACCOUNTS.testnet,

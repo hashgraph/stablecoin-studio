@@ -8,6 +8,7 @@ import {
 	ContractId,
 	PrivateKey,
 	PublicKey,
+	StableCoinRole
 } from '../../sdk.js';
 import { Roles } from '../../../../../domain/context/stablecoin/Roles.js';
 import {
@@ -99,7 +100,7 @@ export default class Validation {
 	public static checkRole = () => {
 		return (val: any): BaseError[] => {
 			const err: BaseError[] = [];
-			const roles: string[] = Object.getOwnPropertyNames(Roles);
+			const roles: string[] = Object.values(StableCoinRole);
 			if (!roles.includes(val)) {
 				err.push(new InvalidRole(val));
 			}

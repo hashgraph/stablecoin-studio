@@ -92,13 +92,18 @@ import {
 	RevokeRoleRequest,
 	HasRoleRequest,
 	CheckCashInRoleRequest,
-	CheckCashInLimitRequest
+	CheckCashInLimitRequest,
+	ResetCashInLimitRequest,
+	IncreaseCashInLimitRequest,
+	DecreaseCashInLimitRequest
 } from './request';
+import ValidatedRequest from './request/validation/ValidatedRequest.js';
 import RequestMapper from './request/mapping/RequestMapper.js';
 import { RequestAccount } from './request/BaseRequest.js';
 import { Roles } from '../../../domain/context/stablecoin/Roles.js';
 
 export {
+	ValidatedRequest,
 	IAssociateStableCoinRequest,
 	ICashInStableCoinRequest,
 	ICashOutStableCoinRequest,
@@ -117,7 +122,7 @@ export {
 	IBasicRequest,
 	IStableCoinDetail,
 	IStableCoinList,
-	IAccountInfo,
+	IAccountInfo
 };
 
 export * from './request';
@@ -136,6 +141,7 @@ export {
 	ContractId,
 	TokenType,
 	TokenSupplyType,
+	Roles,
 	HederaNetworkEnviroment,
 	getHederaNetwork,
 	StableCoinRole,
@@ -410,12 +416,10 @@ export class SDK {
 	 * reset supplier allowance
 	 */
 	public resetSupplierAllowance(
-		request: IBasicRequest,
+		request: ResetCashInLimitRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			const req: IGetBasicRequestModel = {
-				...request,
-			};
+			const req: IGetBasicRequestModel = RequestMapper.map(request);
 			return this.stableCoinService.resetSupplierAllowance(req);
 		} catch (error) {
 			console.error(error);
@@ -426,7 +430,7 @@ export class SDK {
 	 * increase supplier allowance
 	 */
 	public increaseSupplierAllowance(
-		request: AllowanceRequest,
+		request: IncreaseCashInLimitRequest,
 	): Promise<Uint8Array> | null {
 		try {
 			const req: ISupplierRoleStableCoinServiceRequestModel = RequestMapper.map(request);
@@ -440,7 +444,7 @@ export class SDK {
 	 * decrease supplier allowance
 	 */
 	public decreaseSupplierAllowance(
-		request: AllowanceRequest,
+		request: DecreaseCashInLimitRequest,
 	): Promise<Uint8Array> | null {
 		try {
 			const req: ISupplierRoleStableCoinServiceRequestModel = RequestMapper.map(request);
@@ -504,7 +508,7 @@ export class SDK {
 		request: GrantRoleRequest
 	): Promise<Uint8Array> | null {
 		try {
-			if (request.role === 'CASHIN_ROLE') {
+			if (request.role === StableCoinRole.CASHIN_ROLE) {
 				const grantSupplierRoleReq: ISupplierRoleStableCoinServiceRequestModel = RequestMapper.map(request);
 				return this.stableCoinService.grantSupplierRole(grantSupplierRoleReq);
 			}
@@ -520,7 +524,7 @@ export class SDK {
 		request: RevokeRoleRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			if (request.role === 'CASHIN_ROLE') {
+			if (request.role === StableCoinRole.CASHIN_ROLE) {
 				const revokeSupplierRoleReq: ISupplierRoleStableCoinServiceRequestModel = RequestMapper.map(request);
 				return this.stableCoinService.revokeSupplierRole(revokeSupplierRoleReq);
 			} else {

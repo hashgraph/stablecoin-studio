@@ -4,6 +4,7 @@ import {
 } from './BaseRequest.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
+import { StableCoinRole } from '../sdk.js';
 
 export default class HasRoleRequest
 	extends ValidatedRequest<HasRoleRequest>
@@ -13,7 +14,7 @@ export default class HasRoleRequest
 	targetId: string;
 	proxyContractId: string;
 	tokenId: string;
-	role: string;
+	role: StableCoinRole;
 
 	constructor({
 		account,
@@ -23,10 +24,10 @@ export default class HasRoleRequest
 		role
 	}: {
 		account: RequestAccount;
-		targetId?: string;
-		proxyContractId?: string;
-		tokenId?: string;
-		role?: string;
+		targetId: string;
+		proxyContractId: string;
+		tokenId: string;
+		role: StableCoinRole;
 	}) {
 		super({
 			account: Validation.checkAccount(),
@@ -37,8 +38,8 @@ export default class HasRoleRequest
 		});
 		this.account = account;
 		this.proxyContractId = proxyContractId!;
-		this.tokenId = tokenId!;
-		this.targetId = targetId!;
-		this.role = role!;
+		this.tokenId = tokenId;
+		this.targetId = targetId;
+		this.role = role;
 	}
 }

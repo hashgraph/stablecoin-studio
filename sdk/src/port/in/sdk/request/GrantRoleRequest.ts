@@ -7,6 +7,7 @@ import { OptionalField } from '../../../../core/decorators/OptionalDecorator.js'
 import Validation from './validation/Validation.js';
 import BaseError from '../../../../core/error/BaseError.js';
 import { InvalidSupplierType } from '../../../../domain/context/stablecoin/error/InvalidSupplierType.js';
+import { StableCoinRole } from '../sdk.js';
 
 export default class GrantRoleRequest
 	extends ValidatedRequest<GrantRoleRequest>
@@ -16,10 +17,10 @@ export default class GrantRoleRequest
 	targetId: string;
 	proxyContractId: string;
 	tokenId: string;
-	role: string;
+	role: StableCoinRole;
 
 	@OptionalField()
-	supplierType: string | undefined;
+	supplierType?: string | undefined;
 
 	@OptionalField()
 	amount?: string | undefined;
@@ -34,10 +35,10 @@ export default class GrantRoleRequest
 		amount
 	}: {
 		account: RequestAccount;
-		targetId?: string;
-		proxyContractId?: string;
-		tokenId?: string;
-		role?: string;
+		targetId: string;
+		proxyContractId: string;
+		tokenId: string;
+		role: StableCoinRole;
 		supplierType?: string;
 		amount?: string;
 	}) {
@@ -51,10 +52,10 @@ export default class GrantRoleRequest
 			amount: Validation.checkAmount()
 		});
 		this.account = account;
-		this.proxyContractId = proxyContractId!;
-		this.tokenId = tokenId!;
-		this.targetId = targetId!;
-		this.role = role!;
+		this.proxyContractId = proxyContractId;
+		this.tokenId = tokenId;
+		this.targetId = targetId;
+		this.role = role;
 		this.supplierType = supplierType;
 		this.amount = amount;
 	}

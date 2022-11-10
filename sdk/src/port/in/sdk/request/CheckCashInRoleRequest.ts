@@ -1,3 +1,4 @@
+import { OptionalField } from '../../../../core/decorators/OptionalDecorator.js';
 import {
 	AccountBaseRequest,
 	RequestAccount
@@ -6,7 +7,6 @@ import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
 import BaseError from '../../../../core/error/BaseError.js';
 import { InvalidSupplierType } from '../../../../domain/context/stablecoin/error/InvalidSupplierType.js';
-import { OptionalField } from '../../../../core/decorators/OptionalDecorator.js';
 
 export default class CheckCashInRoleRequest
 	extends ValidatedRequest<CheckCashInRoleRequest>
@@ -17,7 +17,7 @@ export default class CheckCashInRoleRequest
 	proxyContractId: string;
 
     @OptionalField()
-	supplierType: string;
+	supplierType?: string;
 
 	constructor({
 		account,
@@ -39,7 +39,7 @@ export default class CheckCashInRoleRequest
 		this.account = account;
 		this.proxyContractId = proxyContractId;
 		this.targetId = targetId;
-		this.supplierType = supplierType!;
+		this.supplierType = supplierType;
 	}
 
 	private static checkSupplierType = () => {
