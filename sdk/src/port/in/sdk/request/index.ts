@@ -26,7 +26,6 @@ export {
 	GetListStableCoinRequest,
 	GetStableCoinDetailsRequest,
 	RescueStableCoinRequest,
-	AllowanceRequest,
 	GrantRoleRequest,
 	RevokeRoleRequest,
 	HasRoleRequest,
