@@ -6,7 +6,6 @@ import {
   SDK,
   IStableCoinDetail,
   CreateStableCoinRequest,
-  IGetCapabilitiesRequest,
   GetStableCoinDetailsRequest,
 } from '../../../../src/index.js';
 import { AccountId } from '@hashgraph/sdk';

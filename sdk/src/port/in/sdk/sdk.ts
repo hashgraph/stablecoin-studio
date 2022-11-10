@@ -32,17 +32,7 @@ import { IAccountWithKeyRequestModel } from '../../../app/service/stablecoin/mod
 
 /* Public requests */
 import { IAssociateStableCoinRequest } from './request/IAssociateStableCoinRequest.js';
-import { ICashInStableCoinRequest } from './request/ICashInStableCoinRequest.js';
-import { ICashOutStableCoinRequest } from './request/ICashOutStableCoinRequest.js';
-import { ICreateStableCoinRequest } from './request/ICreateStableCoinRequest.js';
-import { IGetBalanceStableCoinRequest } from './request/IGetBalanceStableCoinRequest.js';
-import { IGetListStableCoinRequest } from './request/IGetListStableCoinRequest.js';
 import { IGetNameStableCoinRequest } from './request/IGetNameStableCoinRequest.js';
-import { IGetStableCoinRequest } from './request/IGetStableCoinRequest.js';
-import { IRescueStableCoinRequest } from './request/IRescueStableCoinRequest.js';
-import { IRoleStableCoinRequest } from './request/IRoleStableCoinRequest.js';
-import { IWipeStableCoinRequest } from './request/IWipeStableCoinRequest.js';
-import { IGetCapabilitiesRequest } from './request/IGetCapabilitiesRequest.js';
 import { IBasicRequest } from './request/IBasicRequest.js';
 import AccountId from '../../../domain/context/account/AccountId.js';
 import EOAccount from '../../../domain/context/account/EOAccount.js';
@@ -72,9 +62,7 @@ import {
 	HashConnectConnectionState,
 	HashConnectTypes,
 } from 'hashconnect/types';
-import { IGetSupplierAllowance } from './request/IGetSupplierAllowance.js';
 import IGetSupplierAllowanceModel from '../../../app/service/stablecoin/model/IGetSupplierAllowanceModel.js';
-import { ISupplierRoleStableCoinRequest } from './request/ISupplierRoleStableCoinRequest.js';
 import Account from '../../../domain/context/account/Account.js';
 import HashPackAccount from '../../../domain/context/account/HashPackAccount.js';
 import IAccountInfo from './response/IAccountInfo.js';
@@ -106,19 +94,7 @@ import { Roles } from '../../../domain/context/stablecoin/Roles.js';
 export {
 	ValidatedRequest,
 	IAssociateStableCoinRequest,
-	ICashInStableCoinRequest,
-	ICashOutStableCoinRequest,
-	ICreateStableCoinRequest,
-	IGetBalanceStableCoinRequest,
-	IGetListStableCoinRequest,
 	IGetNameStableCoinRequest,
-	IGetStableCoinRequest,
-	IGetSupplierAllowance,
-	IRescueStableCoinRequest,
-	IRoleStableCoinRequest,
-	ISupplierRoleStableCoinRequest,
-	IWipeStableCoinRequest,
-	IGetCapabilitiesRequest,
 	IBasicRequest,
 	IStableCoinDetail,
 	IStableCoinList,
