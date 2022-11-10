@@ -2,7 +2,7 @@ import { language } from '../../../index.js';
 import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
 import {
-  GetStableCoinDetails,
+  GetStableCoinDetailsRequest,
   IStableCoinDetail,
   SDK,
 } from 'hedera-stable-coin-sdk';
@@ -30,7 +30,7 @@ export default class DetailsStableCoinsService extends Service {
     await utilsService.showSpinner(
       sdk
         .getStableCoinDetails(
-          new GetStableCoinDetails({
+          new GetStableCoinDetailsRequest({
             id,
           }),
         )

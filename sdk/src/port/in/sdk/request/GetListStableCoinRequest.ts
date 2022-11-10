@@ -2,8 +2,8 @@ import { AccountBaseRequest, RequestAccount } from './BaseRequest.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
 
-export default class GetListStableCoin
-	extends ValidatedRequest<GetListStableCoin>
+export default class GetListStableCoinRequest
+	extends ValidatedRequest<GetListStableCoinRequest>
 	implements AccountBaseRequest
 {
 	account: RequestAccount;

@@ -17,7 +17,7 @@ import {
   StableCoinMemo,
   CashInStableCoinRequest,
   CashOutStableCoinRequest,
-  GetListStableCoin,
+  GetListStableCoinRequest,
   GrantRoleRequest,
   RevokeRoleRequest,
   HasRoleRequest,
@@ -75,7 +75,7 @@ export default class OperationStableCoinService extends Service {
       await utilsService.showSpinner(
         sdk
           .getListStableCoin(
-            new GetListStableCoin({
+            new GetListStableCoinRequest({
               account: {
                 accountId: currentAccount.accountId.id,
               },

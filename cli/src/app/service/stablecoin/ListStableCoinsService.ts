@@ -2,7 +2,7 @@ import { language } from './../../../index.js';
 import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
 import {
-  GetListStableCoin,
+  GetListStableCoinRequest,
   IStableCoinList,
   SDK,
 } from 'hedera-stable-coin-sdk';
@@ -28,7 +28,7 @@ export default class ListStableCoinsService extends Service {
     await utilsService.showSpinner(
       sdk
         .getListStableCoin(
-          new GetListStableCoin({
+          new GetListStableCoinRequest({
             account: {
               accountId: currentAccount.accountId,
             },

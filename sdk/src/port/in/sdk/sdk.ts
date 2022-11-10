@@ -87,8 +87,8 @@ import {
 	CashInStableCoinRequest,
 	CashOutStableCoinRequest,
 	WipeStableCoinRequest,
-	GetListStableCoin,
-	GetStableCoinDetails,
+	GetListStableCoinRequest,
+	GetStableCoinDetailsRequest,
 	GrantRoleRequest,
 	RevokeRoleRequest,
 	HasRoleRequest,
@@ -267,7 +267,7 @@ export class SDK {
 	 * getListStableCoin
 	 */
 	public getListStableCoin(
-		request: GetListStableCoin,
+		request: GetListStableCoinRequest,
 	): Promise<IStableCoinList[]> | null {
 		const req: IListStableCoinServiceRequestModel =
 			RequestMapper.map(request);
@@ -275,7 +275,7 @@ export class SDK {
 	}
 
 	public getStableCoinDetails(
-		request: GetStableCoinDetails,
+		request: GetStableCoinDetailsRequest,
 	): Promise<IStableCoinDetail> | null {
 		const req: IGetStableCoinServiceRequestModel =
 			RequestMapper.map(request);

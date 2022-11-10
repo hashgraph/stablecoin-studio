@@ -1,13 +1,13 @@
 import BaseError, {
   ErrorCode,
 } from '../../../../../src/core/error/BaseError.js';
-import { GetListStableCoin } from '../../../../../src/index.js';
+import { GetListStableCoinRequest } from '../../../../../src/index.js';
 
 import { logValidation, REQUEST_ACCOUNTS } from '../../../../core/core.js';
 
-describe('🧪 SDK GetListStableCoin Request', () => {
+describe('🧪 SDK GetListStableCoinRequest', () => {
   it('Create simple request', () => {
-    const request: GetListStableCoin = new GetListStableCoin({
+    const request: GetListStableCoinRequest = new GetListStableCoinRequest({
       account: {
         accountId: REQUEST_ACCOUNTS.testnet.accountId,
       },
@@ -15,8 +15,8 @@ describe('🧪 SDK GetListStableCoin Request', () => {
     expect(request).not.toBeNull();
   });
 
-  it('GetListStableCoin and validate', () => {
-    const request: GetListStableCoin = new GetListStableCoin({
+  it('GetListStableCoinRequest and validate', () => {
+    const request: GetListStableCoinRequest = new GetListStableCoinRequest({
       account: {
         accountId: REQUEST_ACCOUNTS.testnet.accountId,
       },
@@ -28,7 +28,7 @@ describe('🧪 SDK GetListStableCoin Request', () => {
   });
 
   it('Create and validate simple invalid request', () => {
-    const request: GetListStableCoin = new GetListStableCoin({
+    const request: GetListStableCoinRequest = new GetListStableCoinRequest({
       account: {
         accountId: 'asd',
       },

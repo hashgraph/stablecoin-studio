@@ -1,7 +1,7 @@
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
 
-export default class GetStableCoinDetails extends ValidatedRequest<GetStableCoinDetails> {
+export default class GetStableCoinDetailsRequest extends ValidatedRequest<GetStableCoinDetailsRequest> {
 	id: string;
 
 	constructor({ id }: { id: string }) {

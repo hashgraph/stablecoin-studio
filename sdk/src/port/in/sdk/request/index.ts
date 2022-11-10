@@ -2,8 +2,8 @@ import AllowanceRequest from './AllowanceRequest.js';
 import CashInStableCoinRequest from './CashInStableCoinRequest.js';
 import CashOutStableCoinRequest from './CashOutStableCoinRequest.js';
 import CreateStableCoinRequest from './CreateStableCoinRequest.js';
-import GetListStableCoin from './GetListStableCoin.js';
-import GetStableCoinDetails from './GetStableCoinDetails.js';
+import GetListStableCoinRequest from './GetListStableCoinRequest.js';
+import GetStableCoinDetailsRequest from './GetStableCoinDetailsRequest.js';
 import GrantRoleRequest from './GrantRoleRequest.js';
 import RevokeRoleRequest from './RevokeRoleRequest.js';
 import HasRoleRequest from './HasRoleRequest.js';
@@ -22,8 +22,8 @@ export {
 	CashInStableCoinRequest,
 	CashOutStableCoinRequest,
 	WipeStableCoinRequest,
-	GetListStableCoin,
-	GetStableCoinDetails,
+	GetListStableCoinRequest,
+	GetStableCoinDetailsRequest,
 	AllowanceRequest,
 	GrantRoleRequest,
 	RevokeRoleRequest,

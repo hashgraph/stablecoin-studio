@@ -3,7 +3,8 @@ import {
   AllowanceRequest,
   BigDecimal,
   CreateStableCoinRequest,
-  GetStableCoinDetails,
+  GetStableCoinDetailsRequest,
+  GetListStableCoinRequest,
   GrantRoleRequest,
   RevokeRoleRequest,
   HasRoleRequest,
@@ -24,7 +25,6 @@ import { StableCoinRole } from '../../../../src/core/enum.js';
 import CashInStableCoinRequest from '../../../../src/port/in/sdk/request/CashInStableCoinRequest.js';
 import WipeStableCoinRequest from '../../../../src/port/in/sdk/request/WipeStableCoinRequest.js';
 import BaseError from '../../../../src/core/error/BaseError.js';
-import GetListStableCoin from '../../../../src/port/in/sdk/request/GetListStableCoin.js';
 import { BigNumber } from '@hashgraph/hethers';
 import CheckCashInLimitRequest from '../../../../src/port/in/sdk/request/CheckCashInLimitRequest.js';
 
@@ -107,8 +107,8 @@ describe('🧪 [PORT] SDK', () => {
 
   it('Gets the token info', async () => {
     const coin = await sdk.getStableCoinDetails(
-      new GetStableCoinDetails({
-        id: tokenId ?? '',
+      new GetStableCoinDetailsRequest({
+        id: tokenId ?? '0.0.48851945',
       }),
     );
 
@@ -121,7 +121,7 @@ describe('🧪 [PORT] SDK', () => {
 
   it('Gets the token list', async () => {
     const list = await sdk.getListStableCoin(
-      new GetListStableCoin({
+      new GetListStableCoinRequest({
         account: REQUEST_ACCOUNTS.testnet,
       }),
     );

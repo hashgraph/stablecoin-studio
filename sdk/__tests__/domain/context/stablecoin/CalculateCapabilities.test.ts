@@ -7,7 +7,7 @@ import {
   IStableCoinDetail,
   CreateStableCoinRequest,
   IGetCapabilitiesRequest,
-  GetStableCoinDetails,
+  GetStableCoinDetailsRequest,
 } from '../../../../src/index.js';
 import { AccountId } from '@hashgraph/sdk';
 import { Capabilities } from '../../../../src/domain/context/stablecoin/Capabilities.js';
@@ -18,7 +18,7 @@ describe('🧪 [DOMAIN] StableCoin', () => {
     const { coin, sdk } = await createStableCoin();
     expect(coin.tokenId).not.toBeFalsy();
     const stableCoinDetails = await sdk.getStableCoinDetails(
-      new GetStableCoinDetails({
+      new GetStableCoinDetailsRequest({
         id: coin.tokenId!,
       }),
     );
