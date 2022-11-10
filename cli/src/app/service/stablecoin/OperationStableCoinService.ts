@@ -21,6 +21,7 @@ import {
   GetListStableCoinRequest,
   RescueStableCoinRequest,
   GetAccountBalanceRequest,
+  GetRolesRequest,
   GrantRoleRequest,
   RevokeRoleRequest,
   HasRoleRequest,
@@ -248,6 +249,11 @@ export default class OperationStableCoinService extends Service {
       case 'Balance':
         await utilsService.cleanAndShowBanner();
 
+        utilsService.displayCurrentUserInfo(
+          configAccount,
+          this.stableCoinWithSymbol,
+        );
+
         const getAccountBalanceRequest = new GetAccountBalanceRequest({
           proxyContractId: this.proxyContractId,
           account: {
@@ -306,24 +312,9 @@ export default class OperationStableCoinService extends Service {
             },
           },
           tokenId: this.stableCoinId,
-          targetId: '',
           amount: '',
         });
 
-        // Call to cash out
-        cashOutRequest.targetId = await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.askTargetAccount'),
-          currentAccount.accountId.id,
-        );
-        await utilsService.handleValidation(
-          () => cashOutRequest.validate('targetId'),
-          async () => {
-            cashOutRequest.targetId = await utilsService.defaultSingleAsk(
-              language.getText('stablecoin.askTargetAccount'),
-              currentAccount.accountId.id,
-            );
-          },
-        );
 
         cashOutRequest.amount = await utilsService
           .defaultSingleAsk(language.getText('stablecoin.askBurnAmount'), '1')
@@ -471,16 +462,21 @@ export default class OperationStableCoinService extends Service {
       case 'Refresh roles':
         await utilsService.cleanAndShowBanner();
 
+        const getRolesRequest = new GetRolesRequest({
+          proxyContractId: this.proxyContractId,
+          account: {
+            accountId: configAccount.accountId,
+            privateKey: {
+              key: currentAccount.privateKey.key,
+              type: currentAccount.privateKey.type,
+            },
+          },
+          targetId: currentAccount.accountId.id,
+          tokenId: ''
+        });
+
         // Call to Supplier Role
-        const rolesToRefresh = await new RoleStableCoinsService().getRoles(
-          this.proxyContractId,
-          currentAccount.accountId.id,
-          new PrivateKey(
-            configAccount.privateKey.key,
-            configAccount.privateKey.type,
-          ),
-          currentAccount.accountId.id,
-        );
+        const rolesToRefresh = await new RoleStableCoinsService().getRoles(getRolesRequest);
         const externalTokensRefreshed = configAccount.externalTokens.map(
           (token) => {
             if (token.id === this.stableCoinId) {
@@ -620,8 +616,7 @@ export default class OperationStableCoinService extends Service {
 
           try {
             if (
-              StableCoinRole[grantRoleRequest.role] ===
-              StableCoinRole.CASHIN_ROLE
+              grantRoleRequest.role === StableCoinRole.CASHIN_ROLE
             ) {
               await this.grantSupplierRole(grantRoleRequest);
             } else {
@@ -964,14 +959,12 @@ export default class OperationStableCoinService extends Service {
                 },
               },
               proxyContractId: this.proxyContractId,
-              tokenId: this.stableCoinId,
-              targetId: '',
+              targetId: ''
             });
 
             await this.validateNotRequestedData(resetCashInLimitRequest, [
               'account',
-              'proxyContractId',
-              'tokenId',
+              'proxyContractId'
             ]);
 
             //Reset

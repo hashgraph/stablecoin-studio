@@ -444,8 +444,7 @@ describe('🧪 [PORT] SDK', () => {
       new ResetCashInLimitRequest({
         account: REQUEST_ACCOUNTS.testnet,
         targetId: REQUEST_ACCOUNTS.testnet.accountId,
-        proxyContractId: proxyContractId ?? '',
-        tokenId: tokenId ?? '',
+        proxyContractId: proxyContractId ?? ''
       }),
     );
 

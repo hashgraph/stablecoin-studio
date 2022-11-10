@@ -2,12 +2,15 @@ import Service from '../Service.js';
 import { IExternalToken } from '../../../domain/configuration/interfaces/IExternalToken';
 import { wizardService } from '../../../index';
 import DetailsStableCoinsService from './DetailsStableCoinService.js';
-import { IStableCoinDetail, PrivateKey } from 'hedera-stable-coin-sdk';
+import { IStableCoinDetail } from 'hedera-stable-coin-sdk';
 import {
   language,
   utilsService,
   configurationService,
 } from '../../../index.js';
+import {
+  GetRolesRequest
+} from 'hedera-stable-coin-sdk';
 import colors from 'colors';
 import RoleStableCoinsService from './RoleStableCoinService';
 
@@ -22,7 +25,6 @@ export default class ManageExternalTokenService extends Service {
     );
     const currentAccount = utilsService.getCurrentAccount();
     let symbol = '';
-    let proxyContractId = '';
     switch (
       await utilsService.defaultMultipleAsk(
         language.getText('wizard.externalTokenMenu'),
@@ -34,37 +36,47 @@ export default class ManageExternalTokenService extends Service {
     ) {
       case manageOptions[0]:
         await utilsService.cleanAndShowBanner();
-        let tokenId = await utilsService.defaultSingleAsk(
+
+        let tokenId = '';
+        let getRolesRequestForAdding: GetRolesRequest = new GetRolesRequest({
+          proxyContractId: '',
+          account: {
+            accountId: currentAccount.accountId,
+            privateKey: {
+              key: currentAccount.privateKey.key,
+              type: currentAccount.privateKey.type,
+            },
+          },
+          targetId: currentAccount.accountId,
+          tokenId: ''
+        })
+
+        getRolesRequestForAdding.tokenId = await utilsService.defaultSingleAsk(
           language.getText('manageExternalToken.tokenId'),
           '',
         );
-        while (!utilsService.validateTokenId(tokenId)) {
-          console.log(language.getText('manageExternalToken.tokenIdError'));
-          tokenId = await utilsService.defaultSingleAsk(
-            language.getText('manageExternalToken.tokenId'),
-            '',
-          );
-        }
+        await utilsService.handleValidation(
+          () => getRolesRequestForAdding.validate('tokenId'),
+          async () => {
+            tokenId = await utilsService.defaultSingleAsk(
+              language.getText('manageExternalToken.tokenId'),
+              '',
+            );
+            getRolesRequestForAdding.tokenId = tokenId;
+          },
+        );
 
         //call to roles
         const externalTokens = currentAccount.externalTokens;
         await new DetailsStableCoinsService()
-          .getDetailsStableCoins(tokenId, false)
+          .getDetailsStableCoins(getRolesRequestForAdding.tokenId, false)
           .then((response: IStableCoinDetail) => {
             symbol = response.symbol;
-            proxyContractId = response.memo.proxyContract;
+            getRolesRequestForAdding.proxyContractId = response.memo.proxyContract
           });
-        const roles = await new RoleStableCoinsService().getRoles(
-          proxyContractId,
-          currentAccount.accountId,
-          new PrivateKey(
-            currentAccount.privateKey.key,
-            currentAccount.privateKey.type,
-          ),
-          currentAccount.accountId,
-        );
+        const roles = await new RoleStableCoinsService().getRoles(getRolesRequestForAdding);
         externalTokens.push({
-          id: tokenId,
+          id: getRolesRequestForAdding.tokenId,
           roles,
           symbol,
         });
@@ -87,21 +99,28 @@ export default class ManageExternalTokenService extends Service {
           ),
         );
 
+        let getRolesRequestForRefreshing: GetRolesRequest = new GetRolesRequest({
+          proxyContractId: '',
+          account: {
+            accountId: currentAccount.accountId,
+            privateKey: {
+              key: currentAccount.privateKey.key,
+              type: currentAccount.privateKey.type,
+            },
+          },
+          targetId: currentAccount.accountId,
+          tokenId: tokenToRefresh
+        })
+
         await new DetailsStableCoinsService()
           .getDetailsStableCoins(tokenToRefresh.split(' - ')[0], false)
           .then((response: IStableCoinDetail) => {
             symbol = response.symbol;
-            proxyContractId = response.memo.proxyContract;
-          });
-        const rolesToRefresh = await new RoleStableCoinsService().getRoles(
-          proxyContractId,
-          currentAccount.accountId,
-          new PrivateKey(
-            currentAccount.privateKey.key,
-            currentAccount.privateKey.type,
-          ),
-          currentAccount.accountId,
-        );
+            getRolesRequestForRefreshing.proxyContractId = response.memo.proxyContract
+        });
+        
+        const rolesToRefresh = await new RoleStableCoinsService().getRoles(getRolesRequestForRefreshing);
+
         const externalTokensRefreshed = currentAccount.externalTokens.map(
           (token) => {
             if (token.id === tokenToRefresh.split(' - ')[0]) {

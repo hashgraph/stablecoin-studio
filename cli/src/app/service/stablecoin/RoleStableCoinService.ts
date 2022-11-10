@@ -2,8 +2,6 @@ import { language } from '../../../index.js';
 import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
 import {
-  EOAccount,
-  PrivateKey,
   StableCoinRole,
   SDK,
   GrantRoleRequest,
@@ -14,7 +12,8 @@ import {
   ResetCashInLimitRequest,
   IncreaseCashInLimitRequest,
   DecreaseCashInLimitRequest,
-  Roles,
+  GetRolesRequest,
+  Roles
 } from 'hedera-stable-coin-sdk';
 import colors from 'colors';
 
@@ -187,21 +186,13 @@ export default class RoleStableCoinsService extends Service {
     );
   }
 
-  public async getRoles(
-    proxyContractId: string,
-    targetId: string,
-    privateKey: PrivateKey,
-    accountId: string,
+  public async getRoles(req: GetRolesRequest
   ): Promise<string[]> {
     const sdk: SDK = utilsService.getSDK();
     let roles;
     await utilsService.showSpinner(
       sdk
-        .getRoles({
-          account: new EOAccount(accountId, privateKey),
-          proxyContractId,
-          targetId,
-        })
+        .getRoles(req)
         .then((response) => {
           roles = response;
         }),

@@ -16,7 +16,6 @@ describe('🧪 SDK CashOut Stable Coin Request', () => {
       amount: '10',
       proxyContractId: '',
       tokenId: '',
-      targetId: '',
     });
     expect(request).not.toBeNull();
     const other: ICashOutStableCoinServiceRequestModel =
@@ -32,8 +31,7 @@ describe('🧪 SDK CashOut Stable Coin Request', () => {
       },
       amount: '100',
       proxyContractId: '0.0.48826121',
-      tokenId: '0.0.48826122',
-      targetId: REQUEST_ACCOUNTS.testnet.accountId,
+      tokenId: '0.0.48826122'
     });
     
     const validations = request.validate();
@@ -49,8 +47,7 @@ describe('🧪 SDK CashOut Stable Coin Request', () => {
       },
       amount: '100',
       proxyContractId: '0.0.48826121',
-      tokenId: '0.0.48826122',
-      targetId: REQUEST_ACCOUNTS.testnet.accountId,
+      tokenId: '0.0.48826122'
     });
    
     const validations = request.validate();
@@ -66,8 +63,7 @@ describe('🧪 SDK CashOut Stable Coin Request', () => {
       },
       amount: '1asd',
       proxyContractId: '0.0.48826169',
-      tokenId: '0.0.48826175',
-      targetId: REQUEST_ACCOUNTS.testnet.accountId,
+      tokenId: '0.0.48826175'
     });
     const validations = request.validate();
     expect(validations.length).toBeDefined();
@@ -84,8 +80,7 @@ describe('🧪 SDK CashOut Stable Coin Request', () => {
       },
       amount: '1asd',
       proxyContractId: '0.0.48826169',
-      tokenId: '0.0.48826175',
-      targetId: REQUEST_ACCOUNTS.testnet.accountId,
+      tokenId: '0.0.48826175'
     });
     expect(request).not.toBeNull();
     const validations = request.validate();
@@ -105,8 +100,7 @@ describe('🧪 SDK CashOut Stable Coin Request', () => {
       },
       amount: '1asd',
       proxyContractId: '0.0.48826169',
-      tokenId: '0.48826175',
-      targetId: 'qwe123',
+      tokenId: '0.48826175'
     });
     expect(request).not.toBeNull();
     const validations = request.validate();
@@ -123,8 +117,7 @@ describe('🧪 SDK CashOut Stable Coin Request', () => {
       },
       amount: 'fail',
       proxyContractId: 'fail',
-      tokenId: 'token',
-      targetId: 'targetId',
+      tokenId: 'token'
     });
     expect(request).not.toBeNull();
     const validations = request.validate();
