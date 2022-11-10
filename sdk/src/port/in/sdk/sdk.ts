@@ -89,6 +89,7 @@ import {
 	WipeStableCoinRequest,
 	GetListStableCoinRequest,
 	GetStableCoinDetailsRequest,
+	RescueStableCoinRequest,
 	GrantRoleRequest,
 	RevokeRoleRequest,
 	HasRoleRequest,
@@ -97,6 +98,7 @@ import {
 	ResetCashInLimitRequest,
 	IncreaseCashInLimitRequest,
 	DecreaseCashInLimitRequest,
+	GetAccountBalanceRequest,
 } from './request';
 import ValidatedRequest from './request/validation/ValidatedRequest.js';
 import RequestMapper from './request/mapping/RequestMapper.js';
@@ -286,13 +288,11 @@ export class SDK {
 	 * getBalanceOf
 	 */
 	public getBalanceOf(
-		request: IGetBalanceStableCoinRequest,
+		request: GetAccountBalanceRequest,
 	): Promise<string> | null {
 		try {
-			const req: IGetBalanceOfStableCoinServiceRequestModel = {
-				...request,
-				targetId: request.targetId,
-			};
+			const req: IGetBalanceOfStableCoinServiceRequestModel =
+				RequestMapper.map(request);
 			return this.stableCoinService.getBalanceOf(req);
 		} catch (error) {
 			console.error(error);
@@ -473,12 +473,11 @@ export class SDK {
 	 * rescue
 	 */
 	public rescue(
-		request: IRescueStableCoinRequest,
+		request: RescueStableCoinRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			const req: IRescueStableCoinServiceRequestModel = {
-				...request,
-			};
+			const req: IRescueStableCoinServiceRequestModel =
+				RequestMapper.map(request);
 			return this.stableCoinService.rescue(req);
 		} catch (error) {
 			console.error(error);

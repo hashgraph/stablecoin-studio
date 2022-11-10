@@ -1,5 +1,7 @@
 import {
 	CashInStableCoinRequest,
+	GetListStableCoinRequest,
+	GetStableCoinDetailsRequest,
 	HederaNetwork,
 	HederaNetworkEnviroment,
 	NetworkMode,
@@ -110,7 +112,13 @@ export class SDKService {
 	}: {
 		account: HashPackAccount;
 	}): Promise<IStableCoinList[] | null> {
-		return (await SDKService.getInstance())?.getListStableCoin({ account });
+		return (await SDKService.getInstance())?.getListStableCoin(
+			new GetListStableCoinRequest({
+				account: {
+					accountId: account.accountId.id,
+				},
+			}),
+		);
 	}
 
 	public static async getStableCoinDetails({
@@ -118,7 +126,9 @@ export class SDKService {
 	}: {
 		id: string;
 	}): Promise<IStableCoinDetail | null> {
-		return (await SDKService.getInstance())?.getStableCoinDetails({ id });
+		return (await SDKService.getInstance())?.getStableCoinDetails(
+			new GetStableCoinDetailsRequest({ id }),
+		);
 	}
 
 	public static async getAccountInfo({

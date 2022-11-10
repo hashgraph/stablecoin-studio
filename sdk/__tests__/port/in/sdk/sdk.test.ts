@@ -14,6 +14,8 @@ import {
   IncreaseCashInLimitRequest,
   DecreaseCashInLimitRequest,
   Roles,
+  RescueStableCoinRequest,
+  GetAccountBalanceRequest,
 } from '../../../../src/index.js';
 import {
   ACCOUNTS,
@@ -147,12 +149,12 @@ describe('🧪 [PORT] SDK', () => {
         amount,
       }),
     );
-    const balance = await sdk.getBalanceOf({
-      account: ACCOUNTS.testnet,
+    const balance = await sdk.getBalanceOf(new GetAccountBalanceRequest({
+      account: REQUEST_ACCOUNTS.testnet,
       targetId: REQUEST_ACCOUNTS.testnet.accountId,
       proxyContractId: proxyContractId ?? '',
       tokenId: tokenId ?? '',
-    });
+    }));
     expect(cashin).not.toBeNull();
     expect(cashin).toBeTruthy();
     expect(balance).not.toBeNull();
@@ -170,12 +172,12 @@ describe('🧪 [PORT] SDK', () => {
         amount,
       }),
     );
-    const balance = await sdk.getBalanceOf({
-      account: ACCOUNTS.testnet,
+    const balance = await sdk.getBalanceOf(new GetAccountBalanceRequest({
+      account: REQUEST_ACCOUNTS.testnet,
       targetId: REQUEST_ACCOUNTS.testnet.accountId,
       proxyContractId: proxyContractId ?? '',
       tokenId: tokenId ?? '',
-    });
+    }));
     expect(wipe).not.toBeNull();
     expect(wipe).toBeTruthy();
     expect(balance).not.toBeNull();
@@ -490,12 +492,12 @@ describe('🧪 [PORT] SDK', () => {
 
   it('Rescue token', async () => {
     const amount = '1';
-    const rescue = await sdk.rescue({
-      account: ACCOUNTS.testnet,
+    const rescue = await sdk.rescue(new RescueStableCoinRequest({
+      account: REQUEST_ACCOUNTS.testnet,
       proxyContractId: proxyContractId ?? '',
       tokenId: tokenId ?? '',
       amount,
-    });
+    }));
     expect(rescue).not.toBeNull();
     expect(rescue).toBeTruthy();
   }, 15000);
@@ -503,12 +505,12 @@ describe('🧪 [PORT] SDK', () => {
   it('Rescue token (wrong)', async () => {
     const amount = '100';
     await expect(
-      sdk.rescue({
-        account: ACCOUNTS.testnet,
+      sdk.rescue(new RescueStableCoinRequest ({
+        account: REQUEST_ACCOUNTS.testnet,
         proxyContractId: proxyContractId ?? '',
         tokenId: tokenId ?? '',
         amount,
-      }),
+      })),
     ).rejects.toThrow(Error);
   }, 15000);
 

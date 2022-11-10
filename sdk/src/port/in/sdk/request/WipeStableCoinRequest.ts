@@ -38,7 +38,7 @@ export default class WipeStableCoinRequest
 	}) {
 		super({
 			account: Validation.checkAccount(),
-			amount: Validation.checkNumber(),
+			amount: Validation.checkAmount(),
 			proxyContractId: Validation.checkContractId(),
 			targetId: Validation.checkHederaIdFormat(),
 			tokenId: Validation.checkHederaIdFormat(),
