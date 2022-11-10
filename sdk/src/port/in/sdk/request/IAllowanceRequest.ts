@@ -1,3 +1,3 @@
-import { IAllowanceRequest } from './IRequestContracts.js';
+import { AllowanceRequest } from './model/ContractRequests.js';
 
-export type IAllowanceStableCoinRequest = IAllowanceRequest;
+export type IAllowanceStableCoinRequest = AllowanceRequest;

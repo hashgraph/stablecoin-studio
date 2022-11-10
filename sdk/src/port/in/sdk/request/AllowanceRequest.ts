@@ -1,25 +1,13 @@
-import { OptionalField } from '../../../../core/decorators/OptionalDecorator.js';
-import {
-	AccountBaseRequest,
-	ContractBaseRequest,
-	RequestAccount,
-	RequestPublicKey,
-} from './BaseRequest.js';
+import { RequestAccount } from '../sdk.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
 
-export default class CashInStableCoinRequest
-	extends ValidatedRequest<CashInStableCoinRequest>
-	implements AccountBaseRequest, ContractBaseRequest
-{
+export default class AllowanceRequest extends ValidatedRequest<AllowanceRequest> {
 	account: RequestAccount;
 	amount: string;
 	proxyContractId: string;
 	targetId: string;
 	tokenId: string;
-
-	@OptionalField()
-	publicKey?: RequestPublicKey;
 
 	constructor({
 		account,
@@ -27,14 +15,12 @@ export default class CashInStableCoinRequest
 		proxyContractId,
 		targetId,
 		tokenId,
-		publicKey,
 	}: {
 		account: RequestAccount;
 		amount: string;
 		proxyContractId: string;
 		targetId: string;
 		tokenId: string;
-		publicKey?: RequestPublicKey;
 	}) {
 		super({
 			account: Validation.checkAccount(),
@@ -42,14 +28,11 @@ export default class CashInStableCoinRequest
 			proxyContractId: Validation.checkContractId(),
 			targetId: Validation.checkHederaIdFormat(),
 			tokenId: Validation.checkHederaIdFormat(),
-			publicKey: Validation.checkPublicKey(),
 		});
-
 		this.account = account;
 		this.amount = amount;
 		this.proxyContractId = proxyContractId;
 		this.targetId = targetId;
 		this.tokenId = tokenId;
-		this.publicKey = publicKey;
 	}
 }

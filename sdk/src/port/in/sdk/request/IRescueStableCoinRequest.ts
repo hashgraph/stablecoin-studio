@@ -1,3 +1,3 @@
-import { ICoreOperation } from './IRequestContracts';
+import { ICoreOperation } from './model/ContractRequests';
 
 export type IRescueStableCoinRequest = ICoreOperation;

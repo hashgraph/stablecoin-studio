@@ -1,5 +1,4 @@
 import { OptionalField } from '../../../../core/decorators/OptionalDecorator.js';
-import PublicKey from '../../../../domain/context/account/PublicKey.js';
 import {
 	AccountBaseRequest,
 	ContractBaseRequest,

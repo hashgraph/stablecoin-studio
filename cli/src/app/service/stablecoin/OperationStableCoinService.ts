@@ -16,6 +16,7 @@ import {
   StableCoinRole,
   StableCoinMemo,
   CashInStableCoinRequest,
+  GetListStableCoin,
 } from 'hedera-stable-coin-sdk';
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 import CashInStableCoinsService from './CashInStableCoinService.js';
@@ -64,9 +65,13 @@ export default class OperationStableCoinService extends Service {
       //Get list of stable coins to display
       await utilsService.showSpinner(
         sdk
-          .getListStableCoin({
-            account: currentAccount,
-          })
+          .getListStableCoin(
+            new GetListStableCoin({
+              account: {
+                accountId: currentAccount.accountId.id,
+              },
+            }),
+          )
           .then((response: StableCoinList[]) => (resp = response)),
         {
           text: language.getText('state.searching'),

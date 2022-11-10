@@ -1,11 +1,12 @@
+import { BigNumber } from '@hashgraph/hethers';
 import ICreateStableCoinServiceRequestModel from '../../../../../src/app/service/stablecoin/model/ICreateStableCoinServiceRequestModel.js';
 import BaseError, {
   ErrorCode,
 } from '../../../../../src/core/error/BaseError.js';
-import { Account, AccountId, BigDecimal } from '../../../../../src/index.js';
+import { Account, AccountId, BigDecimal, TokenSupplyType } from '../../../../../src/index.js';
 import CreateStableCoinRequest from '../../../../../src/port/in/sdk/request/CreateStableCoinRequest.js';
 import RequestMapper from '../../../../../src/port/in/sdk/request/mapping/RequestMapper.js';
-import { logValidation } from '../../../../core/core.js';
+import { logValidation, MAX_SUPPLY } from '../../../../core/core.js';
 
 describe('🧪 SDK Create Stable Coin Request', () => {
   it('Create simple request', () => {
@@ -51,12 +52,73 @@ describe('🧪 SDK Create Stable Coin Request', () => {
       name: 'name',
       symbol: 'symbol',
       decimals: 18,
-      initialSupply: '10.123456789012345677',
-      maxSupply: '10.123456789012345678',
+      initialSupply: '9.123456789012345677',
+      maxSupply: '9.123456789012345677',
     });
     expect(request).not.toBeNull();
     const validations = request.validate();
-    logValidation(validations);
+    
+    expect(validations.length).toBeDefined();
+    expect(validations.length).toBe(0);
+  });
+
+  it('Create and validate simple request with 18 decimals with invalid max supply', () => {
+    const request: CreateStableCoinRequest = new CreateStableCoinRequest({
+      account: {
+        accountId: '0.0.1',
+      },
+      name: 'name',
+      symbol: 'symbol',
+      decimals: 18,
+      initialSupply: '1.123456789012345677',
+      maxSupply: BigDecimal.fromValue(
+        BigNumber.from(MAX_SUPPLY + 1n),
+        18,
+      ).toString(),
+    });
+    expect(request).not.toBeNull();
+    const validations = request.validate();
+    
+    expect(validations.length).toBeDefined();
+    expect(validations.length).toBe(1);
+  });
+
+  it('Create and validate simple request with 18 decimals with invalid supply type', () => {
+    const request: CreateStableCoinRequest = new CreateStableCoinRequest({
+      account: {
+        accountId: '0.0.1',
+      },
+      name: 'name',
+      symbol: 'symbol',
+      decimals: 18,
+      initialSupply: '1.123456789012345677',
+      maxSupply: BigDecimal.fromValue(
+        BigNumber.from(MAX_SUPPLY),
+        18,
+      ).toString(),
+      supplyType: TokenSupplyType.INFINITE
+    });
+    expect(request).not.toBeNull();
+    const validations = request.validate();
+    
+    expect(validations.length).toBeDefined();
+    expect(validations.length).toBe(1);
+  });
+
+  it('Create and validate simple request with 18 decimals with different decimal values', () => {
+    const request: CreateStableCoinRequest = new CreateStableCoinRequest({
+      account: {
+        accountId: '0.0.1',
+      },
+      name: 'name',
+      symbol: 'symbol',
+      decimals: 14,
+      initialSupply: '1.1234',
+      maxSupply: '10.123456789',
+    });
+    expect(request).not.toBeNull();
+    const validations = request.validate();
+    
     expect(validations.length).toBeDefined();
     expect(validations.length).toBe(0);
   });
@@ -93,7 +155,7 @@ describe('🧪 SDK Create Stable Coin Request', () => {
     });
     expect(request).not.toBeNull();
     const validations = request.validate();
-    logValidation(validations);
+    
     expect(validations).not.toBeNull();
     expect(validations.length).toBe(1);
     request.initialSupply = '1000';
@@ -120,7 +182,7 @@ describe('🧪 SDK Create Stable Coin Request', () => {
     });
     expect(request).not.toBeNull();
     const validations = request.validate();
-    logValidation(validations);
+    
     expect(validations).not.toBeNull();
     expect(validations.length).toEqual(4);
   });
@@ -147,7 +209,7 @@ describe('🧪 SDK Create Stable Coin Request', () => {
     );
     expect(request).not.toBeNull();
     const validations = request.validate();
-    logValidation(validations);
+    
     expect(validations).not.toBeNull();
     expect(validations.length).toBe(0);
     const mappedRequest: ICreateStableCoinServiceRequestModel =

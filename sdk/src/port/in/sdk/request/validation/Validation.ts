@@ -19,6 +19,7 @@ import { InvalidLength } from '../error/InvalidLength.js';
 import { InvalidRange } from '../error/InvalidRange.js';
 import { InvalidFormatHedera as InvalidIdFormatHedera } from '../error/InvalidFormatHedera.js';
 import { InvalidType } from '../error/InvalidType.js';
+import InvalidDecimalRange from '../../../../../domain/context/stablecoin/error/InvalidDecimalRange.js';
 
 export default class Validation {
 	public static checkPublicKey = () => {
@@ -80,7 +81,7 @@ export default class Validation {
 						err.push(new InvalidRange(v, min));
 					}
 				} else if (!iMin && iMax) {
-					if (CheckNums.isMoreThan(v, max)) {
+					if (CheckNums.isGreaterThan(v, max)) {
 						err.push(new InvalidRange(v, undefined, max));
 					}
 				} else if (iMin && iMax) {
@@ -132,6 +133,9 @@ export default class Validation {
 			const value = BigDecimal.fromString(val);
 			if (value.isLowerOrEqualThan(zero)) {
 				err.push(new InvalidRange(val, '0', undefined));
+			}
+			if(valueDecimals > 18){
+				err.push(new InvalidDecimalRange(val, 0, 18));
 			}
 			return err;
 		};

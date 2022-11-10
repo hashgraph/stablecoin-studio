@@ -70,7 +70,7 @@ export default class RequestMapper {
 		K extends { [key in keyof T]: any },
 	>(
 		req: T,
-		extra?: Partial<{ [p in keyof K]: Constructible | MapFunction<any, any> }>,
+		extra?: Partial<{ [p in keyof K]: Constructible | MapFunction<any, any, T> }>,
 	): K {
 		const entries = Object.entries(req);
 		const extraKeys = this.renamePrivateProps(Object.keys(extra ?? {}));
@@ -88,7 +88,7 @@ export default class RequestMapper {
 				if (isConstructible(cll)) {
 					target[key] = new cll(val);
 				}else if(cll){
-					target[key] = cll(val);
+					target[key] = cll(val,req);
 				}
 			} else if (this.isPublicKey(val)) {
 				target[key] = this.getPublicKey(val);

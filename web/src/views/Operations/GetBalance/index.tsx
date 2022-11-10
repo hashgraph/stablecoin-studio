@@ -15,7 +15,6 @@ import {
 	SELECTED_WALLET_PAIRED_ACCOUNT,
 	walletActions,
 } from '../../../store/slices/walletSlice';
-import { formatAmount } from '../../../utils/inputHelper';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
 import type { AppDispatch } from '../../../store/store.js';

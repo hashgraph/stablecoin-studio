@@ -1,7 +1,7 @@
 import {
-	IAccountRequestModel,
-	ITokenIdRequestModel,
-} from './IRequestContracts.js';
+	AccountRequestModel,
+	TokenIdRequestModel,
+} from './model/ContractRequests.js';
 
-export type IGetCapabilitiesRequest = IAccountRequestModel &
-	ITokenIdRequestModel;
+export type IGetCapabilitiesRequest = AccountRequestModel &
+	TokenIdRequestModel;

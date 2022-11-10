@@ -1,14 +1,22 @@
 import PublicKey from '../../../../src/domain/context/account/PublicKey.js';
 import {
+  AllowanceRequest,
+  BigDecimal,
   CreateStableCoinRequest,
   SDK,
 } from '../../../../src/index.js';
-import { ACCOUNTS, getSDKAsync, REQUEST_ACCOUNTS } from '../../../core/core.js';
+import {
+  ACCOUNTS,
+  getSDKAsync,
+  MAX_SUPPLY,
+  REQUEST_ACCOUNTS,
+} from '../../../core/core.js';
 import { StableCoinRole } from '../../../../src/core/enum.js';
 import CashInStableCoinRequest from '../../../../src/port/in/sdk/request/CashInStableCoinRequest.js';
 import WipeStableCoinRequest from '../../../../src/port/in/sdk/request/WipeStableCoinRequest.js';
 import BaseError from '../../../../src/core/error/BaseError.js';
-
+import GetListStableCoin from '../../../../src/port/in/sdk/request/GetListStableCoin.js';
+import { BigNumber } from '@hashgraph/hethers';
 
 describe('🧪 [PORT] SDK', () => {
   let sdk: SDK;
@@ -44,6 +52,30 @@ describe('🧪 [PORT] SDK', () => {
     expect(coin?.tokenId).toBeTruthy();
   }, 120_000);
 
+  it('Creates a Stable Coin with EOAccount and 15 decimals and max_supply set to the maximum', async () => {
+    const maxsup = BigDecimal.fromValue(BigNumber.from(MAX_SUPPLY), 15);
+    const req = new CreateStableCoinRequest({
+      account: REQUEST_ACCOUNTS.testnet,
+      name: 'TEST COIN',
+      symbol: 'TC',
+      initialSupply: '1.123456789012345',
+      maxSupply: maxsup.toString(),
+      decimals: 15,
+      adminKey: {
+        key: ACCOUNTS.testnet.privateKey.publicKey.key,
+        type: ACCOUNTS.testnet.privateKey.publicKey.type,
+      },
+      freezeKey: PublicKey.NULL,
+      // KYCKey:PublicKey.NULL,
+      wipeKey: PublicKey.NULL,
+      pauseKey: PublicKey.NULL,
+      supplyKey: PublicKey.NULL,
+    });
+    const coin = await sdk.createStableCoin(req);
+    expect(coin).not.toBeNull();
+    expect(coin?.tokenId).toBeTruthy();
+  }, 120_000);
+
   it('Throw Error initialSupply > maxSupply (wrong)', async () => {
     await expect(
       sdk.createStableCoin(
@@ -75,9 +107,12 @@ describe('🧪 [PORT] SDK', () => {
   });
 
   it('Gets the token list', async () => {
-    const list = await sdk.getListStableCoin({
-      account: ACCOUNTS.testnet,
-    });
+    const list = await sdk.getListStableCoin(
+      new GetListStableCoin({
+        account: REQUEST_ACCOUNTS.testnet,
+      }),
+    );
+
     expect(list).not.toBeNull();
   });
   it('Gets accountInfo', async () => {
@@ -119,8 +154,8 @@ describe('🧪 [PORT] SDK', () => {
         targetId: REQUEST_ACCOUNTS.testnet.accountId,
         proxyContractId: proxyContractId ?? '',
         tokenId: tokenId ?? '',
-        amount
-      })
+        amount,
+      }),
     );
     const balance = await sdk.getBalanceOf({
       account: ACCOUNTS.testnet,
@@ -143,8 +178,8 @@ describe('🧪 [PORT] SDK', () => {
           targetId: REQUEST_ACCOUNTS.testnet.accountId,
           proxyContractId: proxyContractId ?? '',
           tokenId: tokenId ?? '',
-          amount
-        })
+          amount,
+        }),
       ),
     ).rejects.toThrow(Error);
   }, 15000);
@@ -298,13 +333,15 @@ describe('🧪 [PORT] SDK', () => {
   }, 15000);
   it('Increase Limit supplier role', async () => {
     const amount = '10';
-    await sdk.increaseSupplierAllowance({
-      account: ACCOUNTS.testnet,
-      targetId: ACCOUNTS.testnet.accountId.id,
-      proxyContractId: proxyContractId ?? '',
-      tokenId: tokenId ?? '',
-      amount: amount,
-    });
+    await sdk.increaseSupplierAllowance(
+      new AllowanceRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        targetId: ACCOUNTS.testnet.accountId.id,
+        proxyContractId: proxyContractId ?? '',
+        tokenId: tokenId ?? '',
+        amount: amount,
+      }),
+    );
 
     const check = await sdk.supplierAllowance({
       account: ACCOUNTS.testnet,
@@ -318,13 +355,15 @@ describe('🧪 [PORT] SDK', () => {
 
   it('Decrease Limit supplier role', async () => {
     const amount = '10';
-    await sdk.decreaseSupplierAllowance({
-      account: ACCOUNTS.testnet,
-      targetId: ACCOUNTS.testnet.accountId.id,
-      proxyContractId: proxyContractId ?? '',
-      tokenId: tokenId ?? '',
-      amount: amount,
-    });
+    await sdk.decreaseSupplierAllowance(
+      new AllowanceRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        targetId: ACCOUNTS.testnet.accountId.id,
+        proxyContractId: proxyContractId ?? '',
+        tokenId: tokenId ?? '',
+        amount: amount,
+      }),
+    );
     const check = await sdk.supplierAllowance({
       account: ACCOUNTS.testnet,
       targetId: ACCOUNTS.testnet.accountId.id,
@@ -337,13 +376,15 @@ describe('🧪 [PORT] SDK', () => {
 
   it('reset Limit supplier role', async () => {
     const amount = '10';
-    await sdk.increaseSupplierAllowance({
-      account: ACCOUNTS.testnet,
-      targetId: ACCOUNTS.testnet.accountId.id,
-      proxyContractId: proxyContractId ?? '',
-      tokenId: tokenId ?? '',
-      amount: amount,
-    });
+    await sdk.increaseSupplierAllowance(
+      new AllowanceRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        targetId: ACCOUNTS.testnet.accountId.id,
+        proxyContractId: proxyContractId ?? '',
+        tokenId: tokenId ?? '',
+        amount: amount,
+      }),
+    );
     await sdk.resetSupplierAllowance({
       account: ACCOUNTS.testnet,
       targetId: ACCOUNTS.testnet.accountId.id,

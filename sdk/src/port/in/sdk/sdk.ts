@@ -52,8 +52,8 @@ import ContractId from '../../../domain/context/contract/ContractId.js';
 import { TokenType } from '../../../domain/context/stablecoin/TokenType.js';
 import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.js';
 import { StableCoinMemo } from '../../../domain/context/stablecoin/StableCoinMemo.js';
-import { IAllowanceRequest } from './request/IRequestContracts.js';
-import { IRequestRoles } from './request/IRequestContracts';
+import AllowanceRequest from './request/AllowanceRequest.js';
+import { RequestRoles } from './request/model/ContractRequests';
 import { AppMetadata } from '../../out/hedera/hashpack/types/types.js';
 import {
 	AcknowledgeMessage,
@@ -87,6 +87,7 @@ import {
 	CashInStableCoinRequest,
 	CashOutStableCoinRequest,
 	WipeStableCoinRequest,
+	GetListStableCoin,
 } from './request';
 import RequestMapper from './request/mapping/RequestMapper.js';
 import { RequestAccount } from './request/BaseRequest.js';
@@ -106,7 +107,7 @@ export {
 	ISupplierRoleStableCoinRequest,
 	IWipeStableCoinRequest,
 	IGetCapabilitiesRequest,
-	IAllowanceRequest,
+	AllowanceRequest as IAllowanceRequest,
 	IBasicRequest,
 	IStableCoinDetail,
 	IStableCoinList,
@@ -222,10 +223,19 @@ export class SDK {
 		request: CreateStableCoinRequest,
 	): Promise<IStableCoinDetail> {
 		try {
-			const req: ICreateStableCoinServiceRequestModel = RequestMapper.map(request,{
-				treasury: AccountId,
-				autoRenewAccount: AccountId,
-			})
+			const req: ICreateStableCoinServiceRequestModel = RequestMapper.map(
+				request,
+				{
+					treasury: AccountId,
+					autoRenewAccount: AccountId,
+					initialSupply: (val, req) => {
+						console.log(val, req);
+						return BigDecimal.fromString(val, req.decimals);
+					},
+					maxSupply: (val, req) =>
+						BigDecimal.fromString(val, req.decimals),
+				},
+			);
 			return this.stableCoinService.createStableCoin(req);
 		} catch (error) {
 			console.error(error);
@@ -244,11 +254,10 @@ export class SDK {
 	 * getListStableCoin
 	 */
 	public getListStableCoin(
-		request: IGetListStableCoinRequest,
+		request: GetListStableCoin,
 	): Promise<IStableCoinList[]> | null {
-		const req: IListStableCoinServiceRequestModel = {
-			...request,
-		};
+		const req: IListStableCoinServiceRequestModel =
+			RequestMapper.map(request);
 		return this.stableCoinService.getListStableCoins(req);
 	}
 
@@ -258,6 +267,7 @@ export class SDK {
 		const req: IGetStableCoinServiceRequestModel = {
 			...request,
 		};
+
 		return this.stableCoinService.getStableCoinDetails(req);
 	}
 
@@ -352,9 +362,6 @@ export class SDK {
 	 */
 	public wipe(request: WipeStableCoinRequest): Promise<boolean> | null {
 		try {
-			//const req: IWipeStableCoinServiceRequestModel = {
-			//	...request,
-			//};
 			const req: IWipeStableCoinServiceRequestModel =
 				RequestMapper.map(request);
 			return this.stableCoinService.wipe(req);
@@ -417,12 +424,10 @@ export class SDK {
 	 * increase supplier allowance
 	 */
 	public increaseSupplierAllowance(
-		request: IAllowanceRequest,
+		request: AllowanceRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			const req: ISupplierRoleStableCoinServiceRequestModel = {
-				...request,
-			};
+			const req: ISupplierRoleStableCoinServiceRequestModel = RequestMapper.map(request);
 			return this.stableCoinService.increaseSupplierAllowance(req);
 		} catch (error) {
 			console.error(error);
@@ -433,12 +438,10 @@ export class SDK {
 	 * decrease supplier allowance
 	 */
 	public decreaseSupplierAllowance(
-		request: IAllowanceRequest,
+		request: AllowanceRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			const req: ISupplierRoleStableCoinServiceRequestModel = {
-				...request,
-			};
+			const req: ISupplierRoleStableCoinServiceRequestModel = RequestMapper.map(request);
 			return this.stableCoinService.decreaseSupplierAllowance(req);
 		} catch (error) {
 			console.error(error);
@@ -558,7 +561,7 @@ export class SDK {
 		}
 	}
 
-	public getRoles(request: IRequestRoles): Promise<string[]> | null {
+	public getRoles(request: RequestRoles): Promise<string[]> | null {
 		try {
 			const req: IGetRolesServiceRequestModel = {
 				...request,

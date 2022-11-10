@@ -21,6 +21,7 @@ import { validateAccount, validateDecimals } from '../../../utils/validationsHel
 import OperationLayout from './../OperationLayout';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
+import { WipeStableCoinRequest } from 'hedera-stable-coin-sdk';
 
 const WipeOperation = () => {
 	const {
@@ -35,7 +36,7 @@ const WipeOperation = () => {
 
 	const [errorOperation, setErrorOperation] = useState();
 	const dispatch = useDispatch<AppDispatch>();
-	const navigate = useNavigate()
+	const navigate = useNavigate();
 
 	const { decimals = 0 } = selectedStableCoin || {};
 
@@ -47,11 +48,11 @@ const WipeOperation = () => {
 
 	useEffect(() => {
 		handleRefreshCoinInfo();
-	}, [])
-	
+	}, []);
+
 	const handleCloseModal = () => {
 		RouterManager.goBack(navigate);
-	}
+	};
 
 	const handleRefreshCoinInfo = async () => {
 		const stableCoinDetails = await SDKService.getStableCoinDetails({
@@ -89,14 +90,18 @@ const WipeOperation = () => {
 				onError();
 				return;
 			}
-			await SDKService.wipe({
-				proxyContractId: selectedStableCoin.memo.proxyContract,
-				account,
-				tokenId: selectedStableCoin.tokenId,
-				targetId: destinationAccount,
-				amount: amount.toString(),
-				publicKey: infoAccount.publicKey,
-			});
+			await SDKService.wipe(
+				new WipeStableCoinRequest({
+					proxyContractId: selectedStableCoin.memo.proxyContract,
+					account: {
+						accountId: account.accountId.id,
+					},
+					tokenId: selectedStableCoin.tokenId,
+					targetId: destinationAccount,
+					amount: amount.toString(),
+					publicKey: infoAccount.publicKey,
+				}),
+			);
 			onSuccess();
 		} catch (error: any) {
 			setErrorOperation(error.toString());

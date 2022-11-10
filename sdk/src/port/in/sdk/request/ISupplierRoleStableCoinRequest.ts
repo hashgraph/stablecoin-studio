@@ -1,3 +1,3 @@
-import { ISupplierRequestRoleModel } from './IRequestContracts.js';
+import { SupplierRequestRoleModel } from './model/ContractRequests.js';
 
-export type ISupplierRoleStableCoinRequest = ISupplierRequestRoleModel;
+export type ISupplierRoleStableCoinRequest = SupplierRequestRoleModel;

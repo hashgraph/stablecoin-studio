@@ -1,10 +1,8 @@
-import ICashInStableCoinServiceRequestModel from '../../../../../src/app/service/stablecoin/model/ICashInStableCoinServiceRequestModel.js';
 import BaseError, {
   ErrorCode,
 } from '../../../../../src/core/error/BaseError.js';
 import { CashInStableCoinRequest } from '../../../../../src/index.js';
-import RequestMapper from '../../../../../src/port/in/sdk/request/mapping/RequestMapper.js';
-import { logValidation, REQUEST_ACCOUNTS } from '../../../../core/core.js';
+import { EXAMPLE_TOKEN, REQUEST_ACCOUNTS } from '../../../../core/core.js';
 
 describe('🧪 SDK CashIn Stable Coin Request', () => {
   it('Create simple request', () => {
@@ -19,9 +17,6 @@ describe('🧪 SDK CashIn Stable Coin Request', () => {
       targetId: '',
     });
     expect(request).not.toBeNull();
-    const other: ICashInStableCoinServiceRequestModel =
-      RequestMapper.map(request);
-    // console.log(other);
   });
 
   it('CashIn and validate', () => {
@@ -31,8 +26,8 @@ describe('🧪 SDK CashIn Stable Coin Request', () => {
         privateKey: REQUEST_ACCOUNTS.testnet.privateKey,
       },
       amount: '10',
-      proxyContractId: '0.0.48826169',
-      tokenId: '0.0.48826175',
+      proxyContractId: EXAMPLE_TOKEN.proxyContractId,
+      tokenId: EXAMPLE_TOKEN.tokenId,
       targetId: REQUEST_ACCOUNTS.testnet.accountId,
     });
     expect(request).not.toBeNull();
@@ -48,13 +43,13 @@ describe('🧪 SDK CashIn Stable Coin Request', () => {
         privateKey: REQUEST_ACCOUNTS.testnet.privateKey,
       },
       amount: '1.456',
-      proxyContractId: '0.0.48826169',
-      tokenId: '0.0.48826175',
+      proxyContractId: EXAMPLE_TOKEN.proxyContractId,
+      tokenId: EXAMPLE_TOKEN.tokenId,
       targetId: REQUEST_ACCOUNTS.testnet.accountId,
     });
     expect(request).not.toBeNull();
     const validations = request.validate();
-    // logValidation(validations);
+    // 
     expect(validations.length).toBeDefined();
     expect(validations.length).toBe(0);
   });
@@ -66,8 +61,8 @@ describe('🧪 SDK CashIn Stable Coin Request', () => {
         privateKey: REQUEST_ACCOUNTS.testnet.privateKey,
       },
       amount: '1asd',
-      proxyContractId: '0.0.48826169',
-      tokenId: '0.0.48826175',
+      proxyContractId: EXAMPLE_TOKEN.proxyContractId,
+      tokenId: EXAMPLE_TOKEN.tokenId,
       targetId: REQUEST_ACCOUNTS.testnet.accountId,
     });
     expect(request).not.toBeNull();
@@ -85,13 +80,13 @@ describe('🧪 SDK CashIn Stable Coin Request', () => {
         privateKey: REQUEST_ACCOUNTS.testnet.privateKey,
       },
       amount: '1asd',
-      proxyContractId: '0.0.48826169',
-      tokenId: '0.0.48826175',
+      proxyContractId: EXAMPLE_TOKEN.proxyContractId,
+      tokenId: EXAMPLE_TOKEN.tokenId,
       targetId: REQUEST_ACCOUNTS.testnet.accountId,
     });
     expect(request).not.toBeNull();
     const validations = request.validate();
-    // logValidation(validations);
+    // 
     expect(validations).not.toBeNull();
     expect(validations.length).toBe(1);
     request.amount = '1000';
@@ -106,13 +101,13 @@ describe('🧪 SDK CashIn Stable Coin Request', () => {
         privateKey: REQUEST_ACCOUNTS.testnet.privateKey,
       },
       amount: '1asd',
-      proxyContractId: '0.0.48826169',
-      tokenId: '0.0.48826175',
+      proxyContractId: EXAMPLE_TOKEN.proxyContractId,
+      tokenId: EXAMPLE_TOKEN.tokenId,
       targetId: 'qwe123',
     });
     expect(request).not.toBeNull();
     const validations = request.validate();
-    // logValidation(validations);
+    // 
     expect(validations).not.toBeNull();
     expect(validations.length).toEqual(2);
   });
@@ -123,13 +118,13 @@ describe('🧪 SDK CashIn Stable Coin Request', () => {
         privateKey: REQUEST_ACCOUNTS.testnet.privateKey,
       },
       amount: '1asd',
-      proxyContractId: '0.0.48826169',
+      proxyContractId: EXAMPLE_TOKEN.proxyContractId,
       tokenId: '0.48826175',
       targetId: 'qwe123',
     });
     expect(request).not.toBeNull();
     const validations = request.validate();
-    // logValidation(validations);
+    // 
     expect(validations).not.toBeNull();
     expect(validations.length).toEqual(3);
   });

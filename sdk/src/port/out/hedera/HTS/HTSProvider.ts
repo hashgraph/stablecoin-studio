@@ -271,7 +271,7 @@ export default class HTSProvider implements IProvider {
 			stableCoin.name,
 			stableCoin.symbol,
 			stableCoin.decimals,
-			stableCoin.initialSupply.toLong(),
+			stableCoin.initialSupply?.toLong(),
 			stableCoin.maxSupply?.toLong(),
 			stableCoin.memo.toJson(),
 			stableCoin.freezeDefault,
@@ -644,20 +644,19 @@ export default class HTSProvider implements IProvider {
 		}
 
 		this.htsSigner = new HTSSigner(client);
-		const transaction: Transaction = params.isApproval ?
-			TransactionProvider.buildApprovedTransferTransaction(
-				params.tokenId,
-				params.amount,
-				params.outAccountId,
-				params.inAccountId,
-			)
-			:
-			TransactionProvider.buildTransferTransaction(
-				params.tokenId,
-				params.amount,
-				params.outAccountId,
-				params.inAccountId,
-			);
+		const transaction: Transaction = params.isApproval
+			? TransactionProvider.buildApprovedTransferTransaction(
+					params.tokenId,
+					params.amount,
+					params.outAccountId,
+					params.inAccountId,
+			  )
+			: TransactionProvider.buildTransferTransaction(
+					params.tokenId,
+					params.amount,
+					params.outAccountId,
+					params.inAccountId,
+			  );
 		const transactionResponse: TransactionResponse =
 			await this.htsSigner.signAndSendTransaction(transaction);
 		this.logHashScan(transactionResponse, 'Tranfer');

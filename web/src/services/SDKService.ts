@@ -1,14 +1,19 @@
-import { HederaNetwork, HederaNetworkEnviroment, NetworkMode, SDK } from 'hedera-stable-coin-sdk';
+import {
+	CashInStableCoinRequest,
+	HederaNetwork,
+	HederaNetworkEnviroment,
+	NetworkMode,
+	SDK,
+	WipeStableCoinRequest,
+} from 'hedera-stable-coin-sdk';
 import type {
 	AppMetadata,
 	InitializationData,
-	ICreateStableCoinRequest,
 	IStableCoinDetail,
 	IStableCoinList,
 	IRescueStableCoinRequest,
 	HashPackAccount,
 	IGetBalanceStableCoinRequest,
-	IWipeStableCoinRequest,
 	IRoleStableCoinRequest,
 	ISupplierRoleStableCoinRequest,
 	IAllowanceRequest,
@@ -16,8 +21,8 @@ import type {
 	IBasicRequest,
 	IAccountInfo,
 	Capabilities,
-	ICashInStableCoinRequest,
 	ICashOutStableCoinRequest,
+	CreateStableCoinRequest,
 } from 'hedera-stable-coin-sdk';
 
 export enum HashConnectConnectionState {
@@ -131,9 +136,18 @@ export class SDKService {
 		amount,
 		account,
 		publicKey,
-	}: ICashInStableCoinRequest) {
+	}: CashInStableCoinRequest) {
 		return await SDKService.getInstance().then((instance) =>
-			instance.cashIn({ proxyContractId, account, tokenId, targetId, amount, publicKey }),
+			instance.cashIn(
+				new CashInStableCoinRequest({
+					proxyContractId,
+					account,
+					tokenId,
+					targetId,
+					amount,
+					publicKey,
+				}),
+			),
 		);
 	}
 
@@ -150,7 +164,7 @@ export class SDKService {
 	}
 
 	public static async createStableCoin(
-		createStableCoinRequest: ICreateStableCoinRequest,
+		createStableCoinRequest: CreateStableCoinRequest,
 	): Promise<IStableCoinDetail | null> {
 		return (await SDKService.getInstance()).createStableCoin(createStableCoinRequest);
 	}
@@ -170,9 +184,18 @@ export class SDKService {
 		targetId,
 		amount,
 		publicKey,
-	}: IWipeStableCoinRequest) {
+	}: WipeStableCoinRequest) {
 		return SDKService.getInstance().then((instance) =>
-			instance.wipe({ proxyContractId, account, tokenId, targetId, amount, publicKey }),
+			instance.wipe(
+				new WipeStableCoinRequest({
+					proxyContractId,
+					account,
+					tokenId,
+					targetId,
+					amount,
+					publicKey,
+				}),
+			),
 		);
 	}
 
@@ -180,9 +203,9 @@ export class SDKService {
 		id,
 		publicKey,
 	}: {
-		id: string,
+		id: string;
 		publicKey: string;
-	}): Promise<Capabilities[] | null> {		
+	}): Promise<Capabilities[] | null> {
 		return (await SDKService.getInstance())?.getCapabilitiesStableCoin(id, publicKey);
 	}
 
