@@ -23,6 +23,10 @@ import IGetSupplierAllowanceModel from './model/IGetSupplierAllowanceModel.js';
 import BigDecimal from '../../../domain/context/stablecoin/BigDecimal.js';
 import IGetRolesServiceRequestModel from './model/IGetRolesServiceRequest';
 import { InvalidRange } from '../../../port/in/sdk/request/error/InvalidRange.js';
+import { AmountGreaterThanAllowedSupply } from './error/AmountGreaterThanAllowedSupply.js';
+import { OperationNotAllowed } from './error/OperationNotAllowed.js';
+import { InsufficientFunds } from './error/InsufficientFunds.js';
+import { AmountGreaterThanOwnerBalance } from './error/AmountGreaterThanOwnerBalance.js';
 
 export default class StableCoinService extends Service {
 	private repository: IStableCoinRepository;
@@ -156,7 +160,7 @@ export default class StableCoinService extends Service {
 			amount.isGreaterThan(coin.maxSupply.subUnsafe(coin.totalSupply))
 		) {
 			console.log(coin.maxSupply, coin.totalSupply, amount);
-			throw new Error('Amount is bigger than allowed supply');
+			throw new AmountGreaterThanAllowedSupply(amount);
 		}
 		let resultCashIn = false;
 
@@ -204,7 +208,7 @@ export default class StableCoinService extends Service {
 				}
 			}
 		} else {
-			throw new Error('Cash in not allowed');
+			throw new OperationNotAllowed('Cash in');
 		}
 		return resultCashIn;
 	}
@@ -255,7 +259,7 @@ export default class StableCoinService extends Service {
 				req.account,
 			);
 		} else {
-			throw new Error('Cash out not allowed');
+			throw new OperationNotAllowed('Cash out');
 		}
 		return resultCashOut;
 	}
@@ -274,7 +278,9 @@ export default class StableCoinService extends Service {
 		});
 
 		if (coin.treasury.id == req.targetId) {
-			throw new Error('You cannot wipe tokens from the treasury account');
+			throw new OperationNotAllowed(
+				'Wiping tokens from the treasury account',
+			);
 		}
 
 		// Balances
@@ -293,7 +299,9 @@ export default class StableCoinService extends Service {
 			coin.decimals,
 		);
 		if (balanceBigDecimal.isLowerThan(amount)) {
-			throw new Error(`Insufficient funds on account ${req.targetId}`);
+			throw new InsufficientFunds(
+				`Insufficient funds on account ${req.targetId}`,
+			);
 		}
 
 		let resultWipe = false;
@@ -346,7 +354,7 @@ export default class StableCoinService extends Service {
 			coin.decimals,
 		);
 		if (amount.isGreaterThan(treasuryBigDecimal)) {
-			throw new Error('Amount is bigger than token owner balance');
+			throw new AmountGreaterThanOwnerBalance(treasuryBigDecimal);
 		}
 		return this.repository.rescue(req.proxyContractId, amount, req.account);
 	}
