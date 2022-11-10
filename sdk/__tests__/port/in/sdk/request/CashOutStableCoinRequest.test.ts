@@ -115,7 +115,7 @@ describe('🧪 SDK CashOut Stable Coin Request', () => {
     expect(validations.length).toEqual(3);
   });
 
-  it('Create and validate request, all fail ', () => {
+  it('Create and validate request, all fail', () => {
     const request: CashOutStableCoinRequest = new CashOutStableCoinRequest({
       account: {
         accountId: REQUEST_ACCOUNTS.testnet.accountId,

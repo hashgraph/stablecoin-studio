@@ -2,7 +2,6 @@ import { language } from '../../../index.js';
 import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
 import {
-  AllowanceRequest,
   EOAccount,
   PrivateKey,
   StableCoinRole,

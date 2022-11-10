@@ -17,7 +17,6 @@ import {
   StableCoinMemo,
   CashInStableCoinRequest,
   GetListStableCoin,
-  GrantRoleRequest
   GrantRoleRequest,
   RevokeRoleRequest,
   HasRoleRequest,
@@ -1115,10 +1114,6 @@ export default class OperationStableCoinService extends Service {
         ({ role }) => role.name == roleSelected,
       )[0].role.value;
       return roleValue;
-      /*const indexOf = Object.values(StableCoinRole).indexOf(
-        roleValue as unknown as StableCoinRole,
-      );
-      return Object.keys(StableCoinRole)[indexOf];*/
     }
     return roleSelected;
   }
