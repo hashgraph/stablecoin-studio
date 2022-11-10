@@ -258,7 +258,7 @@ export default class OperationStableCoinService extends Service {
             },
           },
           tokenId: this.stableCoinId,
-          targetId: ''
+          targetId: '',
         });
 
         // Call to mint
@@ -269,19 +269,24 @@ export default class OperationStableCoinService extends Service {
         await utilsService.handleValidation(
           () => getAccountBalanceRequest.validate('targetId'),
           async () => {
-            getAccountBalanceRequest.targetId = await utilsService.defaultSingleAsk(
-              language.getText('stablecoin.askAccountToBalance'),
-              currentAccount.accountId.id,
-            );
+            getAccountBalanceRequest.targetId =
+              await utilsService.defaultSingleAsk(
+                language.getText('stablecoin.askAccountToBalance'),
+                currentAccount.accountId.id,
+              );
           },
         );
 
-        try {  
-          await new BalanceOfStableCoinsService().getBalanceOfStableCoin(getAccountBalanceRequest);
+        try {
+          await new BalanceOfStableCoinsService().getBalanceOfStableCoin(
+            getAccountBalanceRequest,
+          );
         } catch (error) {
-          console.log(colors.red(error.message));
-          await this.operationsStableCoin();
-        }          
+          await utilsService.askErrorConfirmation(
+            async () => await this.operationsStableCoin(),
+            error,
+          );
+        }
         break;
       case 'Burn':
         await utilsService.cleanAndShowBanner();
