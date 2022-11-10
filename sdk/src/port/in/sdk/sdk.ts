@@ -273,23 +273,6 @@ export class SDK {
 	}
 
 	/**
-	 * getName
-	 */
-	public getNameToken(
-		request: IGetNameStableCoinRequest,
-	): Promise<Uint8Array> | null {
-		try {
-			const req: IGetNameOfStableCoinServiceRequestModel = {
-				...request,
-			};
-			return this.stableCoinService.getNameToken(req);
-		} catch (error) {
-			console.error(error);
-			return null;
-		}
-	}
-
-	/**
 	 * cashIn
 	 */
 	public cashIn(request: CashInStableCoinRequest): Promise<boolean> | null {

@@ -74,7 +74,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
     const coinId = '0.0.48586658';
     const response = await repository.getCapabilitiesStableCoin(
       coinId,
-      ACCOUNTS.testnet.privateKey.key
+      ACCOUNTS.testnet.privateKey.key,
     );
     expect(Array.isArray(response)).toBeTruthy();
     expect(response).not.toBeNull();
@@ -89,18 +89,6 @@ describe('🧪 [PORT] StableCoinRepository', () => {
       stableCoinDetails.id,
       ACCOUNTS.testnet,
     );
-    expect(balance).not.toBeNull();
-  });
-
-  it('Test getName', async () => {
-    const coinId = '0.0.48586658';
-    const stableCoinDetails = await repository.getStableCoin(coinId);
-    const balance = await repository.getNameToken(
-      stableCoinDetails.memo.proxyContract.toString(),
-      ACCOUNTS.testnet,
-    );
-
-    expect(balance).toBeInstanceOf(Uint8Array);
     expect(balance).not.toBeNull();
   });
 

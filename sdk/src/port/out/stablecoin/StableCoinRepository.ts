@@ -257,21 +257,6 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		return balanceHedera.toString();
 	}
 
-	public async getNameToken(
-		proxyContractId: string,
-		account: Account,
-	): Promise<Uint8Array> {
-		const params: ICallContractWithAccountRequest = {
-			contractId: proxyContractId,
-			parameters: [],
-			gas: 36000,
-			abi: HederaERC20__factory.abi,
-			account,
-		};
-
-		return await this.networkAdapter.provider.callContract('name', params);
-	}
-
 	public async cashIn(
 		proxyContractId: string,
 		targetId: string,
