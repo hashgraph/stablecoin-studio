@@ -89,6 +89,7 @@ import {
 	WipeStableCoinRequest,
 	GetListStableCoin,
 	GetStableCoinDetails,
+	RescueStableCoinRequest,
 	GrantRoleRequest,
 	RevokeRoleRequest,
 	HasRoleRequest,
@@ -473,12 +474,10 @@ export class SDK {
 	 * rescue
 	 */
 	public rescue(
-		request: IRescueStableCoinRequest,
+		request: RescueStableCoinRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			const req: IRescueStableCoinServiceRequestModel = {
-				...request,
-			};
+			const req: IRescueStableCoinServiceRequestModel = RequestMapper.map(request);
 			return this.stableCoinService.rescue(req);
 		} catch (error) {
 			console.error(error);

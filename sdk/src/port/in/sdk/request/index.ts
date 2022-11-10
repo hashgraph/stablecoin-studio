@@ -11,6 +11,7 @@ import CheckCashInRoleRequest from './CheckCashInRoleRequest.js';
 import CheckCashInLimitRequest from './CheckCashInLimitRequest.js';
 import ValidationResponse from './validation/ValidationResponse.js';
 import WipeStableCoinRequest from './WipeStableCoinRequest.js';
+import RescueStableCoinRequest from './RescueStableCoinRequest.js';
 import ResetCashInLimitRequest from './ResetCashInLimitRequest.js';
 import IncreaseCashInLimitRequest from './IncreaseCashInLimitRequest.js';
 import DecreaseCashInLimitRequest from './DecreaseCashInLimitRequest.js';
@@ -22,6 +23,7 @@ export {
 	CashInStableCoinRequest,
 	CashOutStableCoinRequest,
 	WipeStableCoinRequest,
+	RescueStableCoinRequest,
 	GetListStableCoin,
 	GetStableCoinDetails,
 	AllowanceRequest,

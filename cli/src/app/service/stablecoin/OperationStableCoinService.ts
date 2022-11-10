@@ -18,6 +18,7 @@ import {
   CashInStableCoinRequest,
   WipeStableCoinRequest,
   CashOutStableCoinRequest,
+  RescueStableCoinRequest,
   GetListStableCoin,
   GrantRoleRequest,
   RevokeRoleRequest,
@@ -387,46 +388,42 @@ export default class OperationStableCoinService extends Service {
           this.stableCoinWithSymbol,
         );
 
+        const rescueStableCoinRequest = new RescueStableCoinRequest({
+          proxyContractId: this.proxyContractId,
+          account: {
+            accountId: configAccount.accountId,
+            privateKey: {
+              key: currentAccount.privateKey.key,
+              type: currentAccount.privateKey.type,
+            },
+          },
+          tokenId: this.stableCoinId,
+          amount: '',
+        });
+
+        let rescuedAmount = '';
+          rescueStableCoinRequest.amount =
+            await utilsService.defaultSingleAsk(
+              language.getText('stablecoin.askRescueAmount'),
+              '1',
+            );
+            await utilsService.handleValidation(() => rescueStableCoinRequest.validate('amount'),
+            async () => {
+              rescuedAmount = await utilsService.defaultSingleAsk(
+                language.getText('stablecoin.askRescueAmount'),
+                '1',
+              );
+              rescueStableCoinRequest.amount = rescuedAmount;
+            },
+        );
+
         // Call to Rescue
-        const amount2Rescue = await utilsService
-          .defaultSingleAsk(language.getText('stablecoin.askRescueAmount'), '1')
-          .then((val) => val.replace(',', '.'));
-
-        if (parseFloat(amount2Rescue) <= 0) {
-          console.log(language.getText('validations.lessZero'));
-          utilsService.breakLine();
-
-          await this.operationsStableCoin();
-        }
-
         try {
-          await new RescueStableCoinsService().rescueStableCoin(
-            this.proxyContractId,
-            currentAccount,
-            this.stableCoinId,
-            amount2Rescue,
-          );
+          await new RescueStableCoinsService().rescueStableCoin(rescueStableCoinRequest);
         } catch (err) {
           console.log(colors.red(err.message));
           await this.operationsStableCoin();
         }
-
-        console.log(
-          language
-            .getText('rescue.success')
-            .replace('${tokens}', amount2Rescue),
-        );
-
-        utilsService.breakLine();
-
-        // Call to balance
-        await new BalanceOfStableCoinsService().getBalanceOfStableCoin(
-          this.proxyContractId,
-          currentAccount,
-          currentAccount.accountId.id,
-          this.stableCoinId,
-        );
-
         break;
       case 'Role management':
         await utilsService.cleanAndShowBanner();
