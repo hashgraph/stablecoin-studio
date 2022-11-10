@@ -147,7 +147,7 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 									quantityOverTotalSupply: (value: string) => {
 										return (
 											(initialSupply &&
-												BigDecimal.fromString(initialSupply, decimals || 6).isGreaterOrEqualThan(
+												BigDecimal.fromString(initialSupply, decimals).isLowerOrEqualThan(
 													BigDecimal.fromString(value, decimals),
 												)) ||
 											t('global:validations.overMaxSupply')
