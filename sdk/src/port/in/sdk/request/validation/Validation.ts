@@ -125,6 +125,7 @@ export default class Validation {
 
 	public static checkHederaIdFormat = () => {
 		return (val: any): BaseError[] => {
+			// Account Id defined in hip-15 : https://hips.hedera.com/hip/hip-15
 			const regEx = /^(0|(?:[1-9]\d*))\.(0|(?:[1-9]\d*))\.(0|(?:[1-9]\d*))(?:-([a-z]{5}))?$/;
 			const err: BaseError[] = [];
 			if (!regEx.exec(val)) {
