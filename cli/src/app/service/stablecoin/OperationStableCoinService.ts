@@ -631,8 +631,7 @@ export default class OperationStableCoinService extends Service {
 
           try {
             if (
-              StableCoinRole[grantRoleRequest.role] ===
-              StableCoinRole.CASHIN_ROLE
+              grantRoleRequest.role === StableCoinRole.CASHIN_ROLE
             ) {
               await this.grantSupplierRole(grantRoleRequest);
             } else {
@@ -975,14 +974,12 @@ export default class OperationStableCoinService extends Service {
                 },
               },
               proxyContractId: this.proxyContractId,
-              tokenId: this.stableCoinId,
-              targetId: '',
+              targetId: ''
             });
 
             await this.validateNotRequestedData(resetCashInLimitRequest, [
               'account',
-              'proxyContractId',
-              'tokenId',
+              'proxyContractId'
             ]);
 
             //Reset
