@@ -85,6 +85,7 @@ import IGetRolesServiceRequestModel from '../../../app/service/stablecoin/model/
 import {
 	CreateStableCoinRequest,
 	CashInStableCoinRequest,
+	CashOutStableCoinRequest,
 	WipeStableCoinRequest,
 } from './request';
 import RequestMapper from './request/mapping/RequestMapper.js';
@@ -316,12 +317,12 @@ export class SDK {
 	 * cashOut
 	 */
 	public cashOut(
-		request: ICashOutStableCoinRequest,
+		request: CashOutStableCoinRequest,
 	): Promise<boolean> | null {
 		try {
-			const req: ICashOutStableCoinServiceRequestModel = {
-				...request,
-			};
+			const req: ICashOutStableCoinServiceRequestModel =
+				RequestMapper.map(request);
+			
 			return this.stableCoinService.cashOut(req);
 		} catch (error) {
 			console.error(error);
