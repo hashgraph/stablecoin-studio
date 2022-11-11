@@ -17,7 +17,7 @@ import {
 } from '../../../store/slices/walletSlice';
 import type { AppDispatch } from '../../../store/store.js';
 import { formatAmount } from '../../../utils/inputHelper';
-import { handleRequestValidation, validateAccount } from '../../../utils/validationsHelper';
+import { handleRequestValidation } from '../../../utils/validationsHelper';
 import OperationLayout from './../OperationLayout';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
@@ -141,10 +141,12 @@ const WipeOperation = () => {
 								rules={{
 									required: t('global:validations.required'),
 									validate: {
-										validAccount: (value: string) => {
-											return validateAccount(value) || t('global:validations.invalidAccount');
+										validation: (value: string) => {
+											request.targetId =  value;
+											const res = handleRequestValidation(request.validate('targetId'));
+											return res;
 										},
-									},
+									}
 								}}
 								isRequired
 								control={control}
