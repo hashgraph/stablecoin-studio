@@ -4,7 +4,7 @@ export class InvalidFormatHedera extends BaseError {
 	constructor(val: unknown) {
 		super(
 			ErrorCode.InvalidIdFormatHedera,
-			`${val} does not have the correct format`,
+			`"${val}" does not have the correct format (0.0.X)`,
 		);
 	}
 }

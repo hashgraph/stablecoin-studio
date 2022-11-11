@@ -92,7 +92,6 @@ export default class CreateStableCoinService extends Service {
     utilsService.displayCurrentUserInfo(currentAccount);
 
     // Call to create stable coin sdk function
-    const sdk: SDK = utilsService.getSDK();
     let tokenToCreate = new CreateStableCoinRequest({
       account: {
         accountId: currentAccount.accountId,
@@ -106,55 +105,66 @@ export default class CreateStableCoinService extends Service {
       decimals: 6,
     });
 
-    const name = await utilsService.defaultSingleAsk(
+    // Name
+    tokenToCreate.name = await utilsService.defaultSingleAsk(
       language.getText('stablecoin.askName'),
       tokenToCreate.name || 'HEDERACOIN',
     );
-    tokenToCreate.name = name;
+    await utilsService.handleValidation(
+      () => tokenToCreate.validate('autoRenewAccount'),
+      async () => {
+        tokenToCreate.name = await utilsService.defaultSingleAsk(
+          language.getText('stablecoin.askName'),
+          tokenToCreate.name || 'HEDERACOIN',
+        );
+      },
+    );
 
-    const symbol = await utilsService.defaultSingleAsk(
+    // Symbol
+    tokenToCreate.symbol = await utilsService.defaultSingleAsk(
       language.getText('stablecoin.askSymbol'),
       tokenToCreate.symbol || 'HDC',
     );
-    tokenToCreate.symbol = symbol;
-    let autoRenewAccount = '';
-    try {
-      autoRenewAccount = await utilsService.defaultSingleAsk(
-        language.getText('stablecoin.askAutoRenewAccountId'),
-        tokenToCreate.autoRenewAccount || currentAccount.accountId,
-      );
-      while (autoRenewAccount !== currentAccount.accountId) {
-        console.log(language.getText('stablecoin.autoRenewAccountError'));
-        autoRenewAccount = await utilsService.defaultSingleAsk(
+    await utilsService.handleValidation(
+      () => tokenToCreate.validate('symbol'),
+      async () => {
+        tokenToCreate.symbol = await utilsService.defaultSingleAsk(
+          language.getText('stablecoin.askSymbol'),
+          tokenToCreate.symbol || 'HDC',
+        );
+      },
+    );
+
+    // Auto renew account
+    tokenToCreate.autoRenewAccount = await utilsService.defaultSingleAsk(
+      language.getText('stablecoin.askAutoRenewAccountId'),
+      tokenToCreate.autoRenewAccount || currentAccount.accountId,
+    );
+    await utilsService.handleValidation(
+      () => tokenToCreate.validate('autoRenewAccount'),
+      async () => {
+        tokenToCreate.autoRenewAccount = await utilsService.defaultSingleAsk(
           language.getText('stablecoin.askAutoRenewAccountId'),
           tokenToCreate.autoRenewAccount || currentAccount.accountId,
         );
-      }
-      sdk.checkIsAddress(autoRenewAccount);
-    } catch (error) {
-      console.log(language.getText('account.wrong'));
-      autoRenewAccount = await utilsService.defaultSingleAsk(
-        language.getText('stablecoin.askAutoRenewAccountId'),
-        tokenToCreate.autoRenewAccount || currentAccount.accountId,
-      );
-    }
-    tokenToCreate.autoRenewAccount = autoRenewAccount;
+      },
+    );
 
     const optionalProps = await this.askForOptionalProps();
-    let decimals = '6';
     let initialSupply = '';
     let supplyType = true;
     let totalSupply = undefined;
 
     if (optionalProps) {
-      tokenToCreate.decimals = await this.askForDecimals(decimals);
+      tokenToCreate.decimals = await this.askForDecimals(
+        tokenToCreate.decimals.toString(),
+      );
       await utilsService.handleValidation(
         () => tokenToCreate.validate('decimals'),
         async () => {
-          decimals = await this.askForDecimals(
+          tokenToCreate.decimals = await this.askForDecimals(
             tokenToCreate.decimals.toString(),
           );
-          tokenToCreate.decimals = decimals;
         },
       );
 
@@ -192,10 +202,10 @@ export default class CreateStableCoinService extends Service {
 
     const managedBySC = await this.askForManagedFeatures();
     console.log({
-      name,
-      symbol,
-      autoRenewAccount,
-      decimals: parseInt(decimals),
+      name: tokenToCreate.name,
+      symbol: tokenToCreate.symbol,
+      autoRenewAccount: tokenToCreate.autoRenewAccount,
+      decimals: tokenToCreate.decimals,
       initialSupply:
         initialSupply === '' || !initialSupply ? undefined : initialSupply,
       supplyType: supplyType ? 'INFINITE' : 'FINITE',
@@ -240,10 +250,10 @@ export default class CreateStableCoinService extends Service {
     tokenToCreate.treasury = treasury;
 
     console.log({
-      name,
-      symbol,
-      autoRenewAccount,
-      decimals: parseInt(decimals),
+      name: tokenToCreate.name,
+      symbol: tokenToCreate.symbol,
+      autoRenewAccount: tokenToCreate.autoRenewAccount,
+      decimals: tokenToCreate.decimals,
       initialSupply: initialSupply === '' ? undefined : initialSupply,
       supplyType: supplyType ? 'INFINITE' : 'FINITE',
       maxSupply: totalSupply ? BigInt(totalSupply) : totalSupply,

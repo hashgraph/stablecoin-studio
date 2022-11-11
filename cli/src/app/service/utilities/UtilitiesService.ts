@@ -371,10 +371,10 @@ export default class UtilitiesService extends Service {
     const outputError = (res: ValidationResponse[]): void => {
       for (let i = 0; i < res.length; i++) {
         const validation = res[i];
-        this.showError(`Validation failed for ${validation.name}:`);
+        // this.showError(`Validation failed for ${validation.name}:`);
         for (let j = 0; j < validation.errors.length; j++) {
           const error = validation.errors[j];
-          this.showError(`\t- [${error.errorCode}] ${error.message}`);
+          this.showError(`\t${error.message}`);
         }
       }
     };

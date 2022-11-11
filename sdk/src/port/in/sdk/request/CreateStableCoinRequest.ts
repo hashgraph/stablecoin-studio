@@ -11,6 +11,7 @@ import {
 } from './BaseRequest.js';
 import { InvalidRange } from './error/InvalidRange.js';
 import { InvalidType } from './error/InvalidType.js';
+import { InvalidValue } from './error/InvalidValue.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
 
@@ -173,7 +174,20 @@ export default class CreateStableCoinRequest
 					this.supplyType,
 				);
 			},
-			autoRenewAccount: Validation.checkHederaIdFormat(),
+			autoRenewAccount: (val) => {
+				const err = Validation.checkHederaIdFormat()(val);
+				if (err.length > 0) {
+					return err;
+				} else {
+					if (val !== this.account.accountId) {
+						return [
+							new InvalidValue(
+								`The autorenew account (${val}) should be your current account (${this.account.accountId}).`,
+							),
+						];
+					}
+				}
+			},
 			adminKey: Validation.checkPublicKey(),
 			freezeKey: Validation.checkPublicKey(),
 			KYCKey: Validation.checkPublicKey(),
