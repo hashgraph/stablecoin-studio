@@ -19,9 +19,9 @@ import type {
 	HasRoleRequest,
 	ResetCashInLimitRequest,
 	RevokeRoleRequest,
+	CashInStableCoinRequest,
 } from 'hedera-stable-coin-sdk';
 import {
-	CashInStableCoinRequest,
 	GetListStableCoinRequest,
 	GetStableCoinDetailsRequest,
 	HederaNetwork,
@@ -142,26 +142,8 @@ export class SDKService {
 		return (await SDKService.getInstance())?.getAccountInfo({ account });
 	}
 
-	public static async cashIn({
-		proxyContractId,
-		tokenId,
-		targetId,
-		amount,
-		account,
-		publicKey,
-	}: CashInStableCoinRequest) {
-		return await SDKService.getInstance().then((instance) =>
-			instance.cashIn(
-				new CashInStableCoinRequest({
-					proxyContractId,
-					account,
-					tokenId,
-					targetId,
-					amount,
-					publicKey,
-				}),
-			),
-		);
+	public static async cashIn(req: CashInStableCoinRequest) {
+		return await SDKService.getInstance().then((instance) => instance.cashIn(req));
 	}
 
 	public static async cashOut(req: CashOutStableCoinRequest) {

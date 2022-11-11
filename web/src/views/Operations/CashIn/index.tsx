@@ -4,9 +4,8 @@ import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import DetailsReview from '../../../components/DetailsReview';
 import InputController from '../../../components/Form/InputController';
-import InputNumberController from '../../../components/Form/InputNumberController';
 import SDKService from '../../../services/SDKService';
-import { validateAccount, validateDecimals } from '../../../utils/validationsHelper';
+import { handleRequestValidation, validateAccount, validateDecimals } from '../../../utils/validationsHelper';
 import OperationLayout from './../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
@@ -39,6 +38,18 @@ const CashInOperation = () => {
 
 	const [errorOperation, setErrorOperation] = useState();
 	const navigate = useNavigate();
+
+	const [request] = useState(
+		new CashInStableCoinRequest({
+			account: {
+				accountId: account.accountId,
+			},
+			amount: '0',
+			proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
+			targetId: '',
+			tokenId: selectedStableCoin?.tokenId ?? '',
+		}),
+	);
 
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
@@ -84,26 +95,13 @@ const CashInOperation = () => {
 		);
 	};
 
-	const handleCashIn: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
-		const { amount, destinationAccount } = getValues();
+	const handleCashIn: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {		
 		try {
 			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId) {
 				onError();
 				return;
 			}
-			await SDKService.cashIn(
-				new CashInStableCoinRequest({
-					proxyContractId: selectedStableCoin.memo.proxyContract,
-					account,
-					tokenId: selectedStableCoin.tokenId,
-					targetId: destinationAccount,
-					amount: amount.toString(),
-					publicKey: new PublicKey({
-						key: infoAccount.publicKey?.key ?? '',
-						type: infoAccount.publicKey?.type ?? '',
-					}),
-				}),
-			);
+			await SDKService.cashIn(request);
 			onSuccess();
 		} catch (error: any) {
 			setErrorOperation(error.toString());
@@ -123,16 +121,21 @@ const CashInOperation = () => {
 							{t('cashIn:operationTitle')}
 						</Text>
 						<Stack as='form' spacing={6} maxW='520px'>
-							<InputNumberController
+							<InputController
 								rules={{
 									required: t('global:validations.required'),
 									validate: {
-										maxDecimals: (value: number) => {
-											return (
-												validateDecimals(value, decimals) ||
-												t('global:validations.decimalsValidation')
-											);
+										validation: (value: string) => {
+											request.amount = value;
+											const res = handleRequestValidation(request.validate('amount'));
+											return res;
 										},
+										// maxDecimals: (value: number) => {
+										// 	return (
+										// 		validateDecimals(value, decimals) ||
+										// 		t('global:validations.decimalsValidation')
+										// 	);
+										// },
 										// quantityOverMaxSupply: (value: number) => {
 										// 	return (
 										// 		validateQuantityOverMaxSupply(value, maxSupply, totalSupply) ||
@@ -141,7 +144,6 @@ const CashInOperation = () => {
 										// },
 									},
 								}}
-								decimalScale={decimals}
 								isRequired
 								control={control}
 								name='amount'
@@ -152,8 +154,14 @@ const CashInOperation = () => {
 								rules={{
 									required: t('global:validations.required'),
 									validate: {
-										validAccount: (value: string) => {
-											return validateAccount(value) || t('global:validations.invalidAccount');
+										// validAccount: (value: string) => {
+										// 	return validateAccount(value) || t('global:validations.invalidAccount');
+										// },
+										validation: (value: string) => {
+											request.targetId = value;
+											const validate =request.validate('targetId');	
+											const res = handleRequestValidation(validate);											
+											return res;
 										},
 									},
 								}}
