@@ -54,7 +54,8 @@ export class TransactionResposeHandler {
 				} else if (transactionRecord instanceof Uint32Array) {
 					record = transactionRecord;
 				}
-				if (!record) throw new Error('Invalid response type');
+				if (!record)
+					throw new TransactionResponseError('Invalid response type');
 				results = this.decodeFunctionResult(nameFunction, record, abi);
 			}
 			if (record instanceof Uint32Array) {

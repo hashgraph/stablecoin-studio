@@ -185,7 +185,7 @@ export default class HTSProvider implements IProvider {
 		if ('account' in params) {
 			client = this.getClient(params.account);
 		} else {
-			throw new Error('Account must be supplied');
+			throw new ProviderError('Account must be supplied');
 		}
 
 		const functionCallParameters = this.encodeFunctionCall(

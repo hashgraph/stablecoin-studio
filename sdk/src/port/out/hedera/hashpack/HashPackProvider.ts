@@ -197,7 +197,7 @@ export default class HashPackProvider implements IProvider {
 				this.initData.topic,
 			);
 		} else {
-			throw new Error(
+			throw new ProviderError(
 				'You must specify an accountId for operate with HashConnect.',
 			);
 		}
@@ -613,7 +613,7 @@ export default class HashPackProvider implements IProvider {
 	}
 
 	getBalance(): Promise<number> {
-		throw new Error('Method not implemented.');
+		throw new ProviderError('Method not implemented.');
 	}
 
 	getAvailabilityExtension(): boolean {
@@ -675,7 +675,7 @@ export default class HashPackProvider implements IProvider {
 			);
 
 		if (!htsResponse.receipt) {
-			throw new Error(
+			throw new ProviderError(
 				`An error has occurred when wipe the amount ${params.amount} in the account ${params.wipeAccountId} for tokenId ${params.tokenId}`,
 			);
 		}
