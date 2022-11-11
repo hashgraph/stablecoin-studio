@@ -28,12 +28,10 @@ export class TransactionProvider {
 		gas: number,
 	): Transaction {
 		try {
-			const transaction = new ContractExecuteTransaction()
+			return new ContractExecuteTransaction()
 				.setContractId(contractId)
 				.setFunctionParameters(functionCallParameters)
 				.setGas(gas);
-
-			return transaction;
 		} catch (error) {
 			throw new TransactionBuildingError(error);
 		}
@@ -142,26 +140,22 @@ export class TransactionProvider {
 		amount: Long,
 	): Transaction {
 		try {
-			const transaction = new TokenWipeTransaction()
+			return new TokenWipeTransaction()
 				.setAccountId(AccountId.fromString(accountId))
 				.setTokenId(TokenId.fromString(tokenId))
 				.setAmount(amount);
-
-			return transaction;
 		} catch (error) {
 			throw new TransactionBuildingError(error);
 		}
 	}
 
 	public static approveTokenAllowance(): Transaction {
-		const transaction =
-			new AccountAllowanceApproveTransaction().approveTokenAllowance(
-				'0.0.48705516',
-				'0.0.47624288',
-				'0.0.47793222',
-				100000000000000,
-			);
-		return transaction;
+		return new AccountAllowanceApproveTransaction().approveTokenAllowance(
+			'0.0.48705516',
+			'0.0.47624288',
+			'0.0.47793222',
+			100000000000000,
+		);
 	}
 
 	public static buildTokenMintTransaction(
@@ -169,11 +163,9 @@ export class TransactionProvider {
 		amount: Long,
 	): Transaction {
 		try {
-			const transaction = new TokenMintTransaction()
+			return new TokenMintTransaction()
 				.setTokenId(TokenId.fromString(tokenId))
 				.setAmount(amount);
-
-			return transaction;
 		} catch (error) {
 			throw new TransactionBuildingError(error);
 		}
@@ -184,11 +176,9 @@ export class TransactionProvider {
 		amount: Long,
 	): Transaction {
 		try {
-			const transaction = new TokenBurnTransaction()
+			return new TokenBurnTransaction()
 				.setTokenId(TokenId.fromString(tokenId))
 				.setAmount(amount);
-
-			return transaction;
 		} catch (error) {
 			throw new TransactionBuildingError(error);
 		}
@@ -201,7 +191,7 @@ export class TransactionProvider {
 		inAccountId: string,
 	): Transaction {
 		try {
-			const transaction = new TransferTransaction()
+			return new TransferTransaction()
 				.addTokenTransfer(
 					tokenId,
 					AccountId.fromString(outAccountId),
@@ -212,8 +202,6 @@ export class TransactionProvider {
 					AccountId.fromString(inAccountId),
 					amount,
 				);
-
-			return transaction;
 		} catch (error) {
 			throw new TransactionBuildingError(error);
 		}
@@ -226,7 +214,7 @@ export class TransactionProvider {
 		inAccountId: string,
 	): Transaction {
 		try {
-			const transaction = new TransferTransaction()
+			return new TransferTransaction()
 				.addApprovedTokenTransfer(
 					tokenId,
 					AccountId.fromString(outAccountId),
@@ -237,8 +225,6 @@ export class TransactionProvider {
 					AccountId.fromString(inAccountId),
 					amount,
 				);
-
-			return transaction;
 		} catch (error) {
 			throw new TransactionBuildingError(error);
 		}
