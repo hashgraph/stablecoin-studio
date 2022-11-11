@@ -145,9 +145,9 @@ export default class Validation {
 				err.push(new InvalidType(val, 'BigDecimal'));
 				return err;
 			}
-			const valueDecimals = BigDecimal.getDecimalsFromString(val);
+			const valueDecimals = BigDecimal.getDecimalsFromString(val.toString());
 			const zero = BigDecimal.fromString('0', valueDecimals);
-			const value = BigDecimal.fromString(val);
+			const value = BigDecimal.fromString(val.toString());
 			if (value.isLowerOrEqualThan(zero)) {
 				err.push(new InvalidRange(val, '0', undefined));
 			}
