@@ -120,7 +120,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 					alreadyHasRole = await SDKService.hasRole(new HasRoleRequest ({
 						proxyContractId: selectedStableCoin.memo.proxyContract,
 						account: {
-							accountId: selectedAccount.accountId.id,
+							accountId: selectedAccount.accountId
 						},
 						tokenId: selectedStableCoin.tokenId,
 						targetId: account,
@@ -137,7 +137,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 						? await SDKService.grantRole(new GrantRoleRequest ({
 								proxyContractId: selectedStableCoin.memo.proxyContract,
 								account: {
-									accountId: selectedAccount.accountId.id,
+									accountId: selectedAccount.accountId
 								},
 								tokenId: selectedStableCoin.tokenId,
 								targetId: account,
@@ -147,7 +147,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 						: await SDKService.grantRole(new GrantRoleRequest ({
 								proxyContractId: selectedStableCoin.memo.proxyContract,
 								account: {
-									accountId: selectedAccount.accountId.id,
+									accountId: selectedAccount.accountId
 								},
 								tokenId: selectedStableCoin.tokenId,
 								targetId: account,
@@ -159,7 +159,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 					alreadyHasRole = await SDKService.hasRole(new HasRoleRequest({
 						proxyContractId: selectedStableCoin.memo.proxyContract,
 						account: {
-							accountId: selectedAccount.accountId.id,
+							accountId: selectedAccount.accountId
 						},
 						tokenId: selectedStableCoin.tokenId,
 						targetId: account,
@@ -175,7 +175,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 					await SDKService.revokeRole(new RevokeRoleRequest ({
 						proxyContractId: selectedStableCoin.memo.proxyContract,
 						account: {
-							accountId: selectedAccount.accountId.id,
+							accountId: selectedAccount.accountId
 						},
 						tokenId: selectedStableCoin.tokenId,
 						targetId: account,
@@ -187,7 +187,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 					isUnlimitedSupplierAllowance = await SDKService.isUnlimitedSupplierAllowance(new CheckCashInRoleRequest ({
 						proxyContractId: selectedStableCoin.memo.proxyContract,
 						account: {
-							accountId: selectedAccount.accountId.id,
+							accountId: selectedAccount.accountId
 						},
 						targetId: account,
 					}));
@@ -203,7 +203,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 							await SDKService.increaseSupplierAllowance(new IncreaseCashInLimitRequest ({
 								proxyContractId: selectedStableCoin.memo.proxyContract,
 								account: {
-									accountId: selectedAccount.accountId.id,
+									accountId: selectedAccount.accountId
 								},
 								tokenId: selectedStableCoin.tokenId,
 								targetId: account,
@@ -215,7 +215,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 							await SDKService.decreaseSupplierAllowance(new DecreaseCashInLimitRequest ({
 								proxyContractId: selectedStableCoin.memo.proxyContract,
 								account: {
-									accountId: selectedAccount.accountId.id,
+									accountId: selectedAccount.accountId
 								},
 								tokenId: selectedStableCoin.tokenId,
 								targetId: account,
@@ -227,7 +227,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 							await SDKService.resetSupplierAllowance(new ResetCashInLimitRequest ({
 								proxyContractId: selectedStableCoin.memo.proxyContract,
 								account: {
-									accountId: selectedAccount.accountId.id,
+									accountId: selectedAccount.accountId
 								},
 								targetId: account,
 							}));
@@ -237,7 +237,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 							const limit = await SDKService.checkSupplierAllowance(new CheckCashInLimitRequest ({
 								proxyContractId: selectedStableCoin.memo.proxyContract,
 								account: {
-									accountId: selectedAccount.accountId.id,
+									accountId: selectedAccount.accountId
 								},
 								tokenId: selectedStableCoin.tokenId,
 								targetId: account,

@@ -94,7 +94,7 @@ const RescueTokenOperation = () => {
 				new RescueStableCoinRequest({
 					proxyContractId:  selectedStableCoin.memo.proxyContract,
 					account: {
-						accountId: account.accountId.id,
+						accountId: account.accountId
 					},
 					tokenId: selectedStableCoin.tokenId,
 					amount: amount.toString()

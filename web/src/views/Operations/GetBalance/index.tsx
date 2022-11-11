@@ -95,7 +95,7 @@ const GetBalanceOperation = () => {
 			const balance = await SDKService.getBalance(new GetAccountBalanceRequest ({
 				proxyContractId: selectedStableCoin.memo.proxyContract,
 				account: {
-					accountId: account.accountId.id,
+					accountId: account.accountId
 				},
 				targetId: targetAccount,
 				tokenId: selectedStableCoin.tokenId,
