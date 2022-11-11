@@ -14,7 +14,8 @@ import {
 	walletActions,
 } from '../../../store/slices/walletSlice';
 import SDKService from '../../../services/SDKService';
-import { validateDecimals } from '../../../utils/validationsHelper';
+import { formatAmount } from '../../../utils/inputHelper';
+import { handleRequestValidation } from '../../../utils/validationsHelper';
 import { useState, useEffect } from 'react';
 import type { AppDispatch } from '../../../store/store.js';
 import { useNavigate } from 'react-router-dom';
@@ -33,10 +34,21 @@ const BurnOperation = () => {
 	const infoAccount = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 
 	const [errorOperation, setErrorOperation] = useState();
+	const [request] = useState(
+		new CashOutStableCoinRequest({
+			account: {
+				accountId: account.accountId,
+			},
+			amount: '0',
+			proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
+			targetId: '',
+			tokenId: selectedStableCoin?.tokenId ?? '',
+		}),
+	);
 	const navigate = useNavigate();
 	const dispatch = useDispatch<AppDispatch>();
 
-	const { decimals = 0, totalSupply } = selectedStableCoin || {};
+	//const { decimals = 0, totalSupply } = selectedStableCoin || {};
 
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
@@ -50,29 +62,6 @@ const BurnOperation = () => {
 
 	const handleCloseModal = () => {
 		RouterManager.goBack(navigate);
-	};
-
-	const handleBurn: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
-		const { amount } = getValues();
-		try {
-			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId) {
-				onError();
-				return;
-			}
-			await SDKService.cashOut(new CashOutStableCoinRequest ({
-				proxyContractId: selectedStableCoin.memo.proxyContract,
-				account: {
-					accountId: account.accountId,
-				},
-				tokenId: selectedStableCoin.tokenId,
-				amount: amount.toString(),
-				publicKey: infoAccount.publicKey,
-			}));
-			onSuccess();
-		} catch (error: any) {
-			setErrorOperation(error.toString());
-			onError();
-		}
 	};
 
 	const handleRefreshCoinInfo = async () => {
@@ -105,6 +94,21 @@ const BurnOperation = () => {
 		);
 	};
 
+	const handleBurn: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
+		//const { amount } = getValues();
+		try {
+			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId) {
+				onError();
+				return;
+			}
+			await SDKService.cashOut(request);
+			onSuccess();
+		} catch (error: any) {
+			setErrorOperation(error.toString());
+			onError();
+		}
+	};
+
 	return (
 		<>
 			<OperationLayout
@@ -118,7 +122,7 @@ const BurnOperation = () => {
 						</Text>
 						<Stack as='form' spacing={6}>
 							<InputNumberController
-								rules={{
+								/*rules={{
 									required: t('global:validations.required'),
 									validate: {
 										maxDecimals: (value: number) => {
@@ -138,7 +142,18 @@ const BurnOperation = () => {
 										},
 									},
 								}}
-								decimalScale={decimals}
+								decimalScale={decimals}*/
+								rules={{
+									required: t('global:validations.required'),
+									validate: {
+										validation: (value: string) => {
+											// return request.validate('amount') || t('wipe:decimalsValidation');
+											request.amount = value;
+											const res = handleRequestValidation(request.validate('amount'));
+											return res;
+										},
+									},
+								}}
 								isRequired
 								control={control}
 								name='amount'
@@ -154,6 +169,13 @@ const BurnOperation = () => {
 			<ModalsHandler
 				errorNotificationTitle={t('operations:modalErrorTitle')}
 				errorNotificationDescription={errorOperation}
+				successNotificationTitle={t('operations:modalSuccessTitle')}
+				successNotificationDescription={t('burn:modalSuccessDesc', {
+					amount: formatAmount({
+						amount: getValues().amount ?? undefined,
+						decimals: selectedStableCoin?.decimals,
+					}),
+				})}
 				modalActionProps={{
 					isOpen: isOpenModalAction,
 					onClose: onCloseModalAction,
@@ -173,8 +195,6 @@ const BurnOperation = () => {
 						]}
 					/>
 				}
-				successNotificationTitle={t('operations:modalSuccessTitle')}
-				successNotificationDescription={t('operations:modalSuccessDesc')}
 				handleOnCloseModalError={handleCloseModal}
 				handleOnCloseModalSuccess={handleCloseModal}
 			/>
