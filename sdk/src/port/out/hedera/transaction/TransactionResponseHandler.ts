@@ -6,7 +6,6 @@ import {
 	TransactionRecord,
 	TransactionId,
 } from '@hashgraph/sdk';
-import ProviderError from '../error/HederaError.js';
 import Web3 from 'web3';
 import { MessageTypes } from 'hashconnect';
 import { Signer } from '@hashgraph/sdk/lib/Signer.js';

@@ -13,7 +13,6 @@ import {
 	ITransferTokenRequest,
 } from '../hedera/types.js';
 import ITokenList from './types/ITokenList.js';
-import ProviderError from '../hedera/error/HederaError.js';
 import { IToken } from './types/IToken.js';
 import PublicKey from '../../../domain/context/account/PublicKey.js';
 import AccountId from '../../../domain/context/account/AccountId.js';
