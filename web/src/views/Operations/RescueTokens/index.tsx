@@ -2,11 +2,11 @@ import { Heading, Text, Stack, useDisclosure } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import DetailsReview from '../../../components/DetailsReview';
-import InputNumberController from '../../../components/Form/InputNumberController';
-import { validateDecimals } from '../../../utils/validationsHelper';
+import InputController from '../../../components/Form/InputController';
 import OperationLayout from '../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
+import { handleRequestValidation } from '../../../utils/validationsHelper';
 import { useSelector, useDispatch } from 'react-redux';
 import {
 	SELECTED_WALLET_COIN,
@@ -32,10 +32,21 @@ const RescueTokenOperation = () => {
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
 
 	const [errorOperation, setErrorOperation] = useState();
+	const [request] = useState(
+		new RescueStableCoinRequest({
+			proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
+			account: {
+				accountId: account.accountId
+			},
+			tokenId: selectedStableCoin?.tokenId ?? '',
+			amount:  '0'
+		})
+	);
+
 	const dispatch = useDispatch<AppDispatch>();
 	const navigate = useNavigate();
 
-	const { decimals = 0 } = selectedStableCoin || {};
+	// const { decimals = 0 } = selectedStableCoin || {};
 
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
@@ -84,22 +95,12 @@ const RescueTokenOperation = () => {
 		onSuccess,
 		onError,
 	}) => {
-		const { amount } = getValues();
 		try {
 			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId) {
 				onError();
 				return;
 			}
-			await SDKService.rescue(
-				new RescueStableCoinRequest({
-					proxyContractId:  selectedStableCoin.memo.proxyContract,
-					account: {
-						accountId: account.accountId
-					},
-					tokenId: selectedStableCoin.tokenId,
-					amount: amount.toString()
-				})
-			);
+			await SDKService.rescue(request);
 			onSuccess();
 		} catch (error: any) {
 			setErrorOperation(error.toString());
@@ -119,23 +120,22 @@ const RescueTokenOperation = () => {
 							{t('rescueTokens:operationTitle')}
 						</Text>
 						<Stack as='form' spacing={6}>
-							<InputNumberController
+							<InputController
 								rules={{
 									required: t('global:validations.required'),
 									validate: {
-										maxDecimals: (value: number) => {
-											return (
-												validateDecimals(value, decimals) || t('rescueTokens:decimalsValidation')
-											);
+										validation: (value: string) => {
+											request.amount = value;
+											const res = handleRequestValidation(request.validate('amount'));
+											return res;
 										},
-									},
+									}
 								}}
 								isRequired
 								control={control}
 								name='amount'
 								label={t('rescueTokens:amountLabel')}
 								placeholder={t('rescueTokens:amountPlaceholder')}
-								decimalScale={decimals}
 							/>
 						</Stack>
 					</>

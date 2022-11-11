@@ -49,8 +49,6 @@ const WipeOperation = () => {
 	const dispatch = useDispatch<AppDispatch>();
 	const navigate = useNavigate();
 
-	// const { decimals = 0 } = selectedStableCoin || {};
-
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
 	});
