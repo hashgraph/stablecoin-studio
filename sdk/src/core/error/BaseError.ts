@@ -28,6 +28,10 @@ export enum ErrorCode {
 	InitializationError = '40001',
 	PairingError = '40002',
 	TransactionCheck = '40003',
+	SigningError = '40004',
+	TransactionError = '40005',
+	DeplymentError = '40006',
+	ProviderError = '40007',
 }
 
 export enum ErrorCategory {

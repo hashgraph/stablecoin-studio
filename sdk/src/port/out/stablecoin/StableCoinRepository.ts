@@ -13,7 +13,7 @@ import {
 	ITransferTokenRequest,
 } from '../hedera/types.js';
 import ITokenList from './types/ITokenList.js';
-import HederaError from '../hedera/error/HederaError.js';
+import ProviderError from '../hedera/error/HederaError.js';
 import { IToken } from './types/IToken.js';
 import PublicKey from '../../../domain/context/account/PublicKey.js';
 import AccountId from '../../../domain/context/account/AccountId.js';
@@ -58,14 +58,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		coin: StableCoin,
 		account: Account,
 	): Promise<StableCoin> {
-		try {
-			account.evmAddress = await this.accountToEvmAddress(account);
-			return this.networkAdapter.provider.deployStableCoin(coin, account);
-		} catch (error) {
-			throw new HederaError(
-				`There was a fatal error deploying the Stable Coin: ${coin.name}`,
-			);
-		}
+		account.evmAddress = await this.accountToEvmAddress(account);
+		return this.networkAdapter.provider.deployStableCoin(coin, account);
 	}
 
 	public async getListStableCoins(
@@ -777,7 +771,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 	public async getAccountInfo(accountId: string): Promise<IAccountInfo> {
 		try {
-console.log(this.URI_BASE + 'accounts/' + accountId);			
+			console.log(this.URI_BASE + 'accounts/' + accountId);
 			const res = await axios.get<IAccount>(
 				this.URI_BASE + 'accounts/' + accountId,
 			);

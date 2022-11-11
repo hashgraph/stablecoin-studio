@@ -8,7 +8,7 @@ import {
   StableCoin,
   StableCoinRole,
 } from '../../../../src/index.js';
-import HederaError from '../../../../src/port/out/hedera/error/HederaError.js';
+import ProviderError from '../../../../src/port/out/hedera/error/HederaError.js';
 import { IProvider } from '../../../../src/port/out/hedera/Provider.js';
 import NetworkAdapter from '../../../../src/port/out/network/NetworkAdapter.js';
 import StableCoinRepository from '../../../../src/port/out/stablecoin/StableCoinRepository.js';
@@ -50,7 +50,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
         }),
         ACCOUNTS.testnet,
       ),
-    ).rejects.toThrow(HederaError);
+    ).rejects.toThrow(ProviderError);
   });
 
   it('Test getListStableCoins', async () => {

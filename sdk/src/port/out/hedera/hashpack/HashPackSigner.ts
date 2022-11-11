@@ -17,7 +17,7 @@ import HashPackAccount from '../../../../domain/context/account/HashPackAccount.
 import { getHederaNetwork, HederaNetwork } from '../../../../core/enum.js';
 import { HashConnectSigner } from 'hashconnect/provider/signer';
 import { NetworkType } from 'hashconnect/types';
-import HederaError from '../error/HederaError.js';
+import { SigningError } from '../error/SigningError.js';
 
 export class HashPackSigner implements ISigner {
 	private hc: HashConnect;
@@ -53,45 +53,52 @@ export class HashPackSigner implements ISigner {
 			| TokenCreateTransaction
 			| TokenWipeTransaction
 			| TokenMintTransaction
-			| TokenBurnTransaction
+			| TokenBurnTransaction,
 	): Promise<TransactionResponse | MessageTypes.TransactionResponse> {
-		const trans = transaction;
 		if (this.signer) {
-			const pk = await this.getAccountKey(); // Ensure we have the public key
-			if (transaction instanceof ContractCreateFlow) {
-				try {
-					return await transaction.executeWithSigner(this.signer);
-				} catch (err) {
-					console.error(err);
-					throw err;
+			try {
+				await this.getAccountKey(); // Ensure we have the public key
+				if (transaction instanceof ContractCreateFlow) {
+					try {
+						return await transaction.executeWithSigner(this.signer);
+					} catch (err) {
+						console.error(err);
+						throw err;
+					}
+				} else if (
+					transaction instanceof TokenCreateTransaction ||
+					transaction instanceof TokenWipeTransaction ||
+					transaction instanceof TokenBurnTransaction ||
+					transaction instanceof TokenMintTransaction
+				) {
+					let t = await transaction.freezeWithSigner(this.signer);
+					t = await transaction.signWithSigner(this.signer);
+					return await t.executeWithSigner(this.signer);
+				} else if (transaction instanceof Transaction) {
+					let signedT = transaction;
+					if (!transaction.isFrozen()) {
+						signedT = await transaction.freezeWithSigner(
+							this.signer,
+						);
+					}
+					const t = await this.signer.signTransaction(signedT);
+					return await this.hc.sendTransaction(this.topic, {
+						topic: this.topic,
+						byteArray: t.toBytes(),
+						metadata: {
+							accountToSign: this.signer
+								.getAccountId()
+								.toString(),
+							returnTransaction: false,
+							getRecord: true,
+						},
+					});
 				}
-			} else if (
-				transaction instanceof TokenCreateTransaction ||
-				transaction instanceof TokenWipeTransaction ||
-				transaction instanceof TokenBurnTransaction || 
-				transaction instanceof TokenMintTransaction
-			) {
-				let t = await transaction.freezeWithSigner(this.signer);
-				t = await transaction.signWithSigner(this.signer);
-				return await t.executeWithSigner(this.signer);
-			} else if (transaction instanceof Transaction) {
-				let signedT = transaction;
-				if (!transaction.isFrozen()) {
-					signedT = await transaction.freezeWithSigner(this.signer);
-				}
-				const t = await this.signer.signTransaction(signedT);
-				return await this.hc.sendTransaction(this.topic, {
-					topic: this.topic,
-					byteArray: t.toBytes(),
-					metadata: {
-						accountToSign: this.signer.getAccountId().toString(),
-						returnTransaction: false,
-						getRecord: true,
-					},
-				});
+			} catch (error) {
+				throw new SigningError(error);
 			}
 		}
-		throw new Error('Its necessary to have a Signer');
+		throw new SigningError('Signer is empty');
 	}
 
 	async getAccountKey(): Promise<HPublicKey> {
@@ -105,7 +112,7 @@ export class HashPackSigner implements ISigner {
 		if (this.hashConnectSigner.getAccountKey) {
 			return this.hashConnectSigner.getAccountKey();
 		} else {
-			throw new HederaError('Could not fetch account public key');
+			throw new SigningError('Public key is empty');
 		}
 	}
 }
