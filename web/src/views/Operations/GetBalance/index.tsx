@@ -19,7 +19,7 @@ import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
 import type { AppDispatch } from '../../../store/store.js';
 import { formatAmountWithDecimals } from '../../../utils/inputHelper';
-import { GetAccountBalanceRequest } from 'hedera-stable-coin-sdk';
+import { GetAccountBalanceRequest, GetStableCoinDetailsRequest } from 'hedera-stable-coin-sdk';
 
 const GetBalanceOperation = () => {
 	const {
@@ -61,9 +61,11 @@ const GetBalanceOperation = () => {
 	};
 
 	const handleRefreshCoinInfo = async () => {
-		const stableCoinDetails = await SDKService.getStableCoinDetails({
-			id: selectedStableCoin?.tokenId || '',
-		});
+		const stableCoinDetails = await SDKService.getStableCoinDetails(
+			new GetStableCoinDetailsRequest({
+				id: selectedStableCoin?.tokenId ?? '',
+			}) 
+		);
 		dispatch(
 			walletActions.setSelectedStableCoin({
 				tokenId: stableCoinDetails?.tokenId,

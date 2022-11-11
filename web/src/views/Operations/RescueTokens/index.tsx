@@ -19,7 +19,7 @@ import { formatAmount } from '../../../utils/inputHelper';
 import type { AppDispatch } from '../../../store/store.js';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
-import { RescueStableCoinRequest } from 'hedera-stable-coin-sdk';
+import { GetStableCoinDetailsRequest, RescueStableCoinRequest } from 'hedera-stable-coin-sdk';
 
 const RescueTokenOperation = () => {
 	const {
@@ -62,9 +62,11 @@ const RescueTokenOperation = () => {
 		RouterManager.goBack(navigate);
 	};
 	const handleRefreshCoinInfo = async () => {
-		const stableCoinDetails = await SDKService.getStableCoinDetails({
-			id: selectedStableCoin?.tokenId || '',
-		});
+		const stableCoinDetails = await SDKService.getStableCoinDetails(
+			new GetStableCoinDetailsRequest({
+				id: selectedStableCoin?.tokenId ?? '',
+			}) 
+		);
 		dispatch(
 			walletActions.setSelectedStableCoin({
 				tokenId: stableCoinDetails?.tokenId,

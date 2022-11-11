@@ -1,6 +1,7 @@
 import { Box, Flex, HStack, Text, Tooltip, VStack } from '@chakra-ui/react';
 import type { ContractId, PublicKey, StableCoinMemo } from 'hedera-stable-coin-sdk';
-import { useEffect } from 'react';
+import { GetStableCoinDetailsRequest } from 'hedera-stable-coin-sdk';
+import { useEffect,useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
 import BaseContainer from '../../components/BaseContainer';
@@ -18,14 +19,18 @@ const StableCoinDetails = () => {
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 
+	const [request] = useState(
+		new GetStableCoinDetailsRequest({
+			id: selectedStableCoin?.tokenId ?? '',
+		}) 
+	);
+
 	useEffect(() => {
 		handleRefreshCoinInfo();
 	}, [])
 
 	const handleRefreshCoinInfo = async () => {
-		const stableCoinDetails = await SDKService.getStableCoinDetails({
-			id: selectedStableCoin?.tokenId || '',
-		});
+		const stableCoinDetails = await SDKService.getStableCoinDetails(request);
 		dispatch(
 			walletActions.setSelectedStableCoin({
 				tokenId: stableCoinDetails?.tokenId,
