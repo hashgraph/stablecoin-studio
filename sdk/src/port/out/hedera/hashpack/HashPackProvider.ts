@@ -58,6 +58,9 @@ import axios from 'axios';
 import IAccount from '../account/types/IAccount.js';
 import BigDecimal from '../../../../domain/context/stablecoin/BigDecimal.js';
 import Long from 'long';
+import { EmptyMetadata } from './error/EmptyMetadata.js';
+import { InitializationError } from '../error/InitializationError.js';
+import { PairingError } from '../error/PairingError.js';
 
 const logOpts = { newLine: true, clear: true };
 
@@ -93,25 +96,29 @@ export default class HashPackProvider implements IProvider {
 		network,
 		options,
 	}: IniConfig): Promise<HashPackProvider> {
-		this.hc = new HashConnect(options?.appMetadata?.debugMode);
+		try {
+			this.hc = new HashConnect(options?.appMetadata?.debugMode);
 
-		this.setUpHashConnectEvents();
-		this.network = network;
-		if (options && options?.appMetadata) {
-			this.initData = await this.hc.init(
-				options.appMetadata,
-				getHederaNetwork(network)?.name as Partial<
-					'mainnet' | 'testnet' | 'previewnet'
-				>,
-			);
-			this.eventService.emit(
-				ProviderEventNames.providerInitEvent,
-				this.initData,
-			);
-		} else {
-			throw new Error('No app metadata');
+			this.setUpHashConnectEvents();
+			this.network = network;
+			if (options && options?.appMetadata) {
+				this.initData = await this.hc.init(
+					options.appMetadata,
+					getHederaNetwork(network)?.name as Partial<
+						'mainnet' | 'testnet' | 'previewnet'
+					>,
+				);
+				this.eventService.emit(
+					ProviderEventNames.providerInitEvent,
+					this.initData,
+				);
+			} else {
+				throw new EmptyMetadata(this.initData);
+			}
+			return this;
+		} catch (error) {
+			throw new InitializationError(error);
 		}
-		return this;
 	}
 
 	public async connectWallet(): Promise<HashPackProvider> {
@@ -137,17 +144,19 @@ export default class HashPackProvider implements IProvider {
 
 		//This is fired when a wallet approves a pairing
 		this.hc.pairingEvent.on(async (data) => {
-			if (data.pairingData) {
-				this.pairingData = data.pairingData;
-				console.log('Paired with wallet', data);
-				this.eventService.emit(
-					ProviderEventNames.providerPairingEvent,
-					this.pairingData,
-				);
-			} else {
-				throw new Error(
-					'Pairing is not possible since pairing data is undefined.',
-				);
+			try {
+				if (data.pairingData) {
+					this.pairingData = data.pairingData;
+					console.log('Paired with wallet', data);
+					this.eventService.emit(
+						ProviderEventNames.providerPairingEvent,
+						this.pairingData,
+					);
+				} else {
+					throw new PairingError(data);
+				}
+			} catch (error) {
+				throw new PairingError(error);
 			}
 		});
 
@@ -819,7 +828,10 @@ export default class HashPackProvider implements IProvider {
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
-	public async transferHTS(params: ITransferTokenRequest, isApproval = false): Promise<boolean> {
+	public async transferHTS(
+		params: ITransferTokenRequest,
+		isApproval = false,
+	): Promise<boolean> {
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(
 				this.network.hederaNetworkEnviroment as NetworkType,
@@ -838,20 +850,19 @@ export default class HashPackProvider implements IProvider {
 			);
 		}
 
-		const transaction: Transaction = isApproval ?
-			TransactionProvider.buildApprovedTransferTransaction(
-				params.tokenId,
-				params.amount,
-				params.outAccountId,
-				params.inAccountId,
-			)		
-			:
-			TransactionProvider.buildTransferTransaction(
-				params.tokenId,
-				params.amount,
-				params.outAccountId,
-				params.inAccountId,
-			);
+		const transaction: Transaction = isApproval
+			? TransactionProvider.buildApprovedTransferTransaction(
+					params.tokenId,
+					params.amount,
+					params.outAccountId,
+					params.inAccountId,
+			  )
+			: TransactionProvider.buildTransferTransaction(
+					params.tokenId,
+					params.amount,
+					params.outAccountId,
+					params.inAccountId,
+			  );
 
 		const transactionResponse =
 			await this.hashPackSigner.signAndSendTransaction(transaction);

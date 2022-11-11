@@ -25,12 +25,16 @@ export enum ErrorCode {
 	RuntimeError = '30004',
 	InvalidResponse = '30005',
 	NotFound = '30006',
+	InitializationError = '40001',
+	PairingError = '40002',
+	TransactionCheck = '40003',
 }
 
 export enum ErrorCategory {
 	InputData = '1',
 	Logic = '2',
 	System = '3',
+	Provider = '4',
 }
 
 export function getErrorCategory(errorCode: ErrorCode): ErrorCategory {
