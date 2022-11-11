@@ -8,7 +8,7 @@ import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-	SELECTED_WALLET_ACCOUNT_INFO,
+	// SELECTED_WALLET_ACCOUNT_INFO,
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNT,
 	walletActions,
@@ -20,7 +20,7 @@ import { useState, useEffect } from 'react';
 import type { AppDispatch } from '../../../store/store.js';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
-import { BigDecimal, CashOutStableCoinRequest } from 'hedera-stable-coin-sdk';
+import { CashOutStableCoinRequest } from 'hedera-stable-coin-sdk';
 
 const BurnOperation = () => {
 	const {
@@ -31,7 +31,7 @@ const BurnOperation = () => {
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
-	const infoAccount = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
+	// const infoAccount = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 
 	const [errorOperation, setErrorOperation] = useState();
 	const [request] = useState(
@@ -48,7 +48,7 @@ const BurnOperation = () => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch<AppDispatch>();
 
-	//const { decimals = 0, totalSupply } = selectedStableCoin || {};
+	// const { decimals = 0, totalSupply } = selectedStableCoin || {};
 
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
@@ -95,7 +95,7 @@ const BurnOperation = () => {
 	};
 
 	const handleBurn: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
-		//const { amount } = getValues();
+		// const { amount } = getValues();
 		try {
 			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId) {
 				onError();
@@ -122,7 +122,7 @@ const BurnOperation = () => {
 						</Text>
 						<Stack as='form' spacing={6}>
 							<InputNumberController
-								/*rules={{
+								/* rules={{
 									required: t('global:validations.required'),
 									validate: {
 										maxDecimals: (value: number) => {
@@ -142,7 +142,7 @@ const BurnOperation = () => {
 										},
 									},
 								}}
-								decimalScale={decimals}*/
+								decimalScale={decimals} */
 								rules={{
 									required: t('global:validations.required'),
 									validate: {
