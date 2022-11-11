@@ -57,7 +57,7 @@ export default class CheckNums {
 
 	public static isBigDecimal(value: any): boolean {
 		try {
-			BigDecimal.fromString(value.toString());
+			BigDecimal.fromString(value);
 			return true;
 		} catch (err) {
 			return false;

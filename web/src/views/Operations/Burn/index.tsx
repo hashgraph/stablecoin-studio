@@ -2,7 +2,7 @@ import { Heading, Text, Stack, useDisclosure } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import DetailsReview from '../../../components/DetailsReview';
-import InputNumberController from '../../../components/Form/InputNumberController';
+import InputController from '../../../components/Form/InputController';
 import OperationLayout from '../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
@@ -120,7 +120,7 @@ const BurnOperation = () => {
 							{t('burn:operationTitle')}
 						</Text>
 						<Stack as='form' spacing={6}>
-							<InputNumberController
+							<InputController
 								/* rules={{
 									required: t('global:validations.required'),
 									validate: {
