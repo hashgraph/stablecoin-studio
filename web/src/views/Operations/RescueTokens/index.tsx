@@ -92,11 +92,13 @@ const RescueTokenOperation = () => {
 			}
 			await SDKService.rescue(
 				new RescueStableCoinRequest({
-					proxyContractId: selectedStableCoin.memo.proxyContract,
-					account,
+					proxyContractId:  selectedStableCoin.memo.proxyContract,
+					account: {
+						accountId: account.accountId.id,
+					},
 					tokenId: selectedStableCoin.tokenId,
-					amount: amount.toString(),
-				}),
+					amount: amount.toString()
+				})
 			);
 			onSuccess();
 		} catch (error: any) {

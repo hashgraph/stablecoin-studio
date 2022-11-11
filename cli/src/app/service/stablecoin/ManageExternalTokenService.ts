@@ -38,7 +38,7 @@ export default class ManageExternalTokenService extends Service {
         await utilsService.cleanAndShowBanner();
 
         let tokenId = '';
-        let getRolesRequestForAdding: GetRolesRequest = new GetRolesRequest({
+        const getRolesRequestForAdding: GetRolesRequest = new GetRolesRequest({
           proxyContractId: '',
           account: {
             accountId: currentAccount.accountId,
@@ -99,7 +99,7 @@ export default class ManageExternalTokenService extends Service {
           ),
         );
 
-        let getRolesRequestForRefreshing: GetRolesRequest = new GetRolesRequest({
+        const getRolesRequestForRefreshing: GetRolesRequest = new GetRolesRequest({
           proxyContractId: '',
           account: {
             accountId: currentAccount.accountId,

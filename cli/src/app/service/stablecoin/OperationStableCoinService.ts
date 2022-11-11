@@ -618,7 +618,7 @@ export default class OperationStableCoinService extends Service {
             if (
               grantRoleRequest.role === StableCoinRole.CASHIN_ROLE
             ) {
-              await this.grantSupplierRole(grantRoleRequest);
+              await this.grantSupplierRole(grantRoleRequest, sdk);
             } else {
               await this.roleStableCoinService.grantRoleStableCoin(
                 grantRoleRequest,
@@ -1302,6 +1302,7 @@ export default class OperationStableCoinService extends Service {
 
   private async grantSupplierRole(
     grantRoleRequest: GrantRoleRequest,
+    sdk: SDK
   ): Promise<void> {
     let limit = '';
 
@@ -1363,24 +1364,42 @@ export default class OperationStableCoinService extends Service {
         },
       );
 
-      //Call to SDK
-      if (
-        await this.checkSupplierType(
-          new CheckCashInRoleRequest({
-            proxyContractId: grantRoleRequest.proxyContractId,
-            targetId: grantRoleRequest.targetId,
-            account: grantRoleRequest.account,
-            supplierType: 'limited',
-          }),
-        )
-      ) {
-        console.log(language.getText('cashin.alreadyRole'));
-      }
-
-      grantRoleRequest.supplierType = 'limited';
-      await this.roleStableCoinService.giveSupplierRoleStableCoin(
-        grantRoleRequest,
+      let hasRole;
+      await utilsService.showSpinner(sdk.hasRole(new HasRoleRequest({
+        account: grantRoleRequest.account,
+		    targetId: grantRoleRequest.targetId,
+		    proxyContractId: grantRoleRequest.proxyContractId,
+		    tokenId: grantRoleRequest.tokenId,
+		    role: grantRoleRequest.role
+      })).then((response) => (hasRole = response[0])),
+        {
+          text: language.getText('state.loading'),
+          successText: language.getText('state.loadCompleted') + '\n',
+        },
       );
+
+      if (hasRole) {
+        console.log(language.getText('cashin.alreadyRole'));      
+      } else {  
+        //Call to SDK
+        if (
+          await this.checkSupplierType(
+            new CheckCashInRoleRequest({
+              proxyContractId: grantRoleRequest.proxyContractId,
+              targetId: grantRoleRequest.targetId,
+              account: grantRoleRequest.account,
+              supplierType: 'limited',
+            }),
+          )
+        ) {
+          console.log(language.getText('cashin.alreadyRole'));
+        }
+  
+        grantRoleRequest.supplierType = 'limited';
+        await this.roleStableCoinService.giveSupplierRoleStableCoin(
+          grantRoleRequest,
+        );
+      }
     }
   }
 

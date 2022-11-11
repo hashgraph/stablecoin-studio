@@ -92,14 +92,14 @@ const GetBalanceOperation = () => {
 				return;
 			}
 
-			const balance = await SDKService.getBalance(
-				new GetAccountBalanceRequest({
-					proxyContractId: selectedStableCoin.memo.proxyContract,
-					account,
-					targetId: targetAccount,
-					tokenId: selectedStableCoin.tokenId,
-				}),
-			);
+			const balance = await SDKService.getBalance(new GetAccountBalanceRequest ({
+				proxyContractId: selectedStableCoin.memo.proxyContract,
+				account: {
+					accountId: account.accountId.id,
+				},
+				targetId: targetAccount,
+				tokenId: selectedStableCoin.tokenId,
+			}));
 			setBalance(balance);
 			onSuccess();
 		} catch (error: any) {

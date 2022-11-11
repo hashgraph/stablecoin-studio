@@ -59,15 +59,15 @@ const BurnOperation = () => {
 				onError();
 				return;
 			}
-			await SDKService.cashOut(
-				new CashOutStableCoinRequest({
-					proxyContractId: selectedStableCoin.memo.proxyContract,
-					account,
-					tokenId: selectedStableCoin.tokenId,
-					amount: amount.toString(),
-					publicKey: infoAccount.publicKey,
-				}),
-			);
+			await SDKService.burn(new CashOutStableCoinRequest ({
+				proxyContractId: selectedStableCoin.memo.proxyContract,
+				account: {
+					accountId: account.accountId.id,
+				},
+				tokenId: selectedStableCoin.tokenId,
+				amount: amount.toString(),
+				publicKey: infoAccount.publicKey,
+			}));
 			onSuccess();
 		} catch (error: any) {
 			setErrorOperation(error.toString());
