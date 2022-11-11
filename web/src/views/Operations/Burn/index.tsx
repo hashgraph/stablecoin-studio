@@ -41,7 +41,6 @@ const BurnOperation = () => {
 			},
 			amount: '0',
 			proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
-			targetId: '',
 			tokenId: selectedStableCoin?.tokenId ?? '',
 		}),
 	);
