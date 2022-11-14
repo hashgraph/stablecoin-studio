@@ -80,7 +80,7 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes{
         IHederaTokenService.KeyValue memory proxyKey;
         proxyKey.delegatableContractId = StableCoinProxyAddress;
         
-        IHederaTokenService.TokenKey[] memory keys = new IHederaTokenService.TokenKey[](4);
+        IHederaTokenService.TokenKey[] memory keys = new IHederaTokenService.TokenKey[](5);
         keys[0] = IHederaTokenService.TokenKey({keyType: 1, key: senderKey}); // admin
         keys[1] = IHederaTokenService.TokenKey({keyType: 4, key: senderKey}); // freeze
         keys[2] = IHederaTokenService.TokenKey({keyType: 8, key: proxyKey}); // wipe
