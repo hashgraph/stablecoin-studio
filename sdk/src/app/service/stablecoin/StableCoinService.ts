@@ -2,21 +2,21 @@ import Service from '../Service.js';
 import ICreateStableCoinServiceRequestModel from './model/ICreateStableCoinServiceRequestModel.js';
 import { IListStableCoinServiceRequestModel } from './model/IListStableCoinServiceRequestModel.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
-import IStableCoinList from '../../../port/in/sdk/response/IStableCoinList.js';
+import StableCoinList from '../../../port/in/sdk/response/StableCoinList.js';
 import IGetStableCoinServiceRequestModel from './model/IGetStableCoinServiceRequestModel.js';
 import IGetBalanceOfStableCoinServiceRequestModel from './model/IGetBalanceOfStableCoinServiceRequestModel.js';
 import IGetNameOfStableCoinServiceRequestModel from './model/IGetNameOfStableCoinServiceRequestModel.js';
-import ICashInStableCoinServiceRequestModel from './model/ICashInStableCoinServiceRequestModel.js';
+import CashInStableCoinServiceRequestModel from './model/ICashInStableCoinServiceRequestModel.js';
 import ICashOutStableCoinServiceRequestModel from './model/ICashOutStableCoinServiceRequestModel.js';
-import IAssociateTokenStableCoinServiceRequestModel from './model/IAssociateTokenStableCoinServiceRequestModel.js';
+import AssociateTokenStableCoinServiceRequestModel from './model/IAssociateTokenStableCoinServiceRequestModel.js';
 import IWipeStableCoinServiceRequestModel from './model/IWipeStableCoinServiceRequestModel.js';
 import IStableCoinRepository from '../../../port/out/stablecoin/IStableCoinRepository.js';
 import IRescueStableCoinServiceRequestModel from './model/IRescueStableCoinServiceRequestModel.js';
 import IRoleStableCoinServiceRequestModel from './model/IRoleStableCoinServiceRequestModel';
 import IGetBasicRequestModel from './model/IGetBasicRequest.js';
 import ISupplierRoleStableCoinServiceRequestModel from './model/ISupplierRoleStableCoinServiceRequestModel.js';
-import IStableCoinDetail from '../../../port/in/sdk/response/IStableCoinDetail.js';
-import IAccountInfo from '../../../port/in/sdk/response/IAccountInfo.js';
+import StableCoinDetail from '../../../port/in/sdk/response/StableCoinDetail.js';
+import AccountInfo from '../../../port/in/sdk/response/AccountInfo.js';
 import { Capabilities } from '../../../domain/context/stablecoin/Capabilities.js';
 import { IAccountWithKeyRequestModel } from './model/CoreRequestModel.js';
 import IGetSupplierAllowanceModel from './model/IGetSupplierAllowanceModel.js';
@@ -27,7 +27,6 @@ import { AmountGreaterThanAllowedSupply } from './error/AmountGreaterThanAllowed
 import { OperationNotAllowed } from './error/OperationNotAllowed.js';
 import { InsufficientFunds } from './error/InsufficientFunds.js';
 import { AmountGreaterThanOwnerBalance } from './error/AmountGreaterThanOwnerBalance.js';
-import InvalidAmount from '../../../domain/context/stablecoin/error/InvalidAmount.js';
 
 export default class StableCoinService extends Service {
 	private repository: IStableCoinRepository;
@@ -42,7 +41,7 @@ export default class StableCoinService extends Service {
 	 */
 	public async createStableCoin(
 		req: ICreateStableCoinServiceRequestModel,
-	): Promise<IStableCoinDetail> {
+	): Promise<StableCoinDetail> {
 		if (
 			req.maxSupply &&
 			req.initialSupply &&
@@ -81,15 +80,15 @@ export default class StableCoinService extends Service {
 	 */
 	public async getListStableCoins(
 		req: IListStableCoinServiceRequestModel,
-	): Promise<IStableCoinList[]> {
+	): Promise<StableCoinList[]> {
 		return this.repository.getListStableCoins(req.account);
 	}
 
 	public async getStableCoinDetails(
 		req: IGetStableCoinServiceRequestModel,
-	): Promise<IStableCoinDetail> {
+	): Promise<StableCoinDetail> {
 		const stableCoin: StableCoin = await this.getStableCoin(req);
-		const stableCoinDetails: IStableCoinDetail = {
+		const stableCoinDetails: StableCoinDetail = {
 			tokenId: stableCoin.id,
 			name: stableCoin.name,
 			symbol: stableCoin.symbol,
@@ -116,7 +115,6 @@ export default class StableCoinService extends Service {
 			pauseKey: stableCoin.pauseKey,
 		};
 		return stableCoinDetails;
-		// cast
 	}
 
 	/**
@@ -147,7 +145,7 @@ export default class StableCoinService extends Service {
 	}
 
 	public async cashIn(
-		req: ICashInStableCoinServiceRequestModel,
+		req: CashInStableCoinServiceRequestModel,
 	): Promise<boolean> {
 		// TODO validation
 		const coin: StableCoin = await this.getStableCoin({
@@ -268,7 +266,7 @@ export default class StableCoinService extends Service {
 	}
 
 	public async associateToken(
-		req: IAssociateTokenStableCoinServiceRequestModel,
+		req: AssociateTokenStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.associateToken(req.proxyContractId, req.account);
 	}
@@ -518,7 +516,7 @@ export default class StableCoinService extends Service {
 
 	public async getAccountInfo(
 		req: IAccountWithKeyRequestModel,
-	): Promise<IAccountInfo> {
+	): Promise<AccountInfo> {
 		return this.repository.getAccountInfo(req.account.accountId.id);
 	}
 

@@ -121,32 +121,10 @@ const BurnOperation = () => {
 						</Text>
 						<Stack as='form' spacing={6}>
 							<InputController
-								/* rules={{
-									required: t('global:validations.required'),
-									validate: {
-										maxDecimals: (value: number) => {
-											return (
-												validateDecimals(value, decimals) ||
-												t('global:validations.decimalsValidation')
-											);
-										},
-										quantityOverTotalSupply: (value: number) => {
-											return (
-												(totalSupply &&
-													BigDecimal.fromString(totalSupply, decimals).isGreaterOrEqualThan(
-														BigDecimal.fromString(value.toString(), decimals),
-													)) ||
-												t('global:validations.overTotalSupply')
-											);
-										},
-									},
-								}}
-								decimalScale={decimals} */
 								rules={{
 									required: t('global:validations.required'),
 									validate: {
 										validation: (value: string) => {
-											// return request.validate('amount') || t('wipe:decimalsValidation');
 											request.amount = value;
 											const res = handleRequestValidation(request.validate('amount'));
 											return res;

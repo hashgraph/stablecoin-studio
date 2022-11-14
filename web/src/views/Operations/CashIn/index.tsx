@@ -1,24 +1,23 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Heading, Text, Stack, useDisclosure } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import DetailsReview from '../../../components/DetailsReview';
 import InputController from '../../../components/Form/InputController';
 import SDKService from '../../../services/SDKService';
-import { handleRequestValidation, validateAccount, validateDecimals, validateDecimalsString } from '../../../utils/validationsHelper';
+import { handleRequestValidation, validateDecimalsString } from '../../../utils/validationsHelper';
 import OperationLayout from './../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-	SELECTED_WALLET_ACCOUNT_INFO,
+	// SELECTED_WALLET_ACCOUNT_INFO,
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNT,
 	walletActions,
 } from '../../../store/slices/walletSlice';
 import { useEffect, useState } from 'react';
 import type { AppDispatch } from '../../../store/store.js';
-import { CashInStableCoinRequest, PublicKey } from 'hedera-stable-coin-sdk';
+import { CashInStableCoinRequest } from 'hedera-stable-coin-sdk';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
 
@@ -31,10 +30,8 @@ const CashInOperation = () => {
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
-	const infoAccount = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
+	// const infoAccount = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 	const dispatch = useDispatch<AppDispatch>();
-
-	const { decimals = 0, totalSupply, maxSupply } = selectedStableCoin || {};
 
 	const [errorOperation, setErrorOperation] = useState();
 	const navigate = useNavigate();
@@ -95,7 +92,7 @@ const CashInOperation = () => {
 		);
 	};
 
-	const handleCashIn: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {		
+	const handleCashIn: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
 		try {
 			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId) {
 				onError();
@@ -136,13 +133,6 @@ const CashInOperation = () => {
 											const res = handleRequestValidation(request.validate('amount'));
 											return res;
 										},
-										
-										// quantityOverMaxSupply: (value: number) => {
-										// 	return (
-										// 		validateQuantityOverMaxSupply(value, maxSupply, totalSupply) ||
-										// 		t('global:validations.overMaxSupplyCashIn')
-										// 	);
-										// },
 									},
 								}}
 								isRequired
@@ -155,13 +145,9 @@ const CashInOperation = () => {
 								rules={{
 									required: t('global:validations.required'),
 									validate: {
-										// validAccount: (value: string) => {
-										// 	return validateAccount(value) || t('global:validations.invalidAccount');
-										// },
 										validation: (value: string) => {
 											request.targetId = value;
-											const validate =request.validate('targetId');	
-											const res = handleRequestValidation(validate);											
+											const res = handleRequestValidation(request.validate('targetId'));
 											return res;
 										},
 									},

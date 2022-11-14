@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import IStableCoinList from './response/IStableCoinList.js';
-import IStableCoinDetail from './response/IStableCoinDetail.js';
+import StableCoinList from './response/StableCoinList.js';
+import StableCoinDetail from './response/StableCoinDetail.js';
 import StableCoinService from '../../../app/service/stablecoin/StableCoinService.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import StableCoinRepository from '../../out/stablecoin/StableCoinRepository.js';
@@ -18,12 +18,11 @@ import { getHederaNetwork } from '../../../core/enum.js';
 import IWipeStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IWipeStableCoinServiceRequestModel.js';
 import ICreateStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/ICreateStableCoinServiceRequestModel.js';
 import { IListStableCoinServiceRequestModel } from '../../../app/service/stablecoin/model/IListStableCoinServiceRequestModel.js';
-import ICashInStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/ICashInStableCoinServiceRequestModel.js';
+import CashInStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/ICashInStableCoinServiceRequestModel.js';
 import ICashOutStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/ICashOutStableCoinServiceRequestModel.js';
-import IGetNameOfStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IGetNameOfStableCoinServiceRequestModel.js';
 import IGetBalanceOfStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IGetBalanceOfStableCoinServiceRequestModel.js';
 import IGetStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IGetStableCoinServiceRequestModel.js';
-import IAssociateTokenStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IAssociateTokenStableCoinServiceRequestModel.js';
+import AssociateTokenStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IAssociateTokenStableCoinServiceRequestModel.js';
 import ISupplierRoleStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/ISupplierRoleStableCoinServiceRequestModel';
 import IRescueStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IRescueStableCoinServiceRequestModel.js';
 import IRoleStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IRoleStableCoinServiceRequestModel.js';
@@ -42,7 +41,6 @@ import ContractId from '../../../domain/context/contract/ContractId.js';
 import { TokenType } from '../../../domain/context/stablecoin/TokenType.js';
 import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.js';
 import { StableCoinMemo } from '../../../domain/context/stablecoin/StableCoinMemo.js';
-import { RequestRoles } from './request/model/ContractRequests';
 import { AppMetadata } from '../../out/hedera/hashpack/types/types.js';
 import {
 	AcknowledgeMessage,
@@ -65,7 +63,7 @@ import {
 import IGetSupplierAllowanceModel from '../../../app/service/stablecoin/model/IGetSupplierAllowanceModel.js';
 import Account from '../../../domain/context/account/Account.js';
 import HashPackAccount from '../../../domain/context/account/HashPackAccount.js';
-import IAccountInfo from './response/IAccountInfo.js';
+import AccountInfo from './response/AccountInfo.js';
 import BigDecimal from '../../../domain/context/stablecoin/BigDecimal.js';
 import IGetRolesServiceRequestModel from '../../../app/service/stablecoin/model/IGetRolesServiceRequest';
 import {
@@ -98,9 +96,9 @@ export {
 	IAssociateStableCoinRequest,
 	IGetNameStableCoinRequest,
 	IBasicRequest,
-	IStableCoinDetail,
-	IStableCoinList,
-	IAccountInfo,
+	StableCoinDetail as IStableCoinDetail,
+	StableCoinList as IStableCoinList,
+	AccountInfo as IAccountInfo,
 };
 
 export * from './request';
@@ -211,7 +209,7 @@ export class SDK {
 	 */
 	public createStableCoin(
 		request: CreateStableCoinRequest,
-	): Promise<IStableCoinDetail> {
+	): Promise<StableCoinDetail> {
 		try {
 			const req: ICreateStableCoinServiceRequestModel = RequestMapper.map(
 				request,
@@ -244,7 +242,7 @@ export class SDK {
 	 */
 	public getListStableCoin(
 		request: GetListStableCoinRequest,
-	): Promise<IStableCoinList[]> | null {
+	): Promise<StableCoinList[]> | null {
 		const req: IListStableCoinServiceRequestModel =
 			RequestMapper.map(request);
 		return this.stableCoinService.getListStableCoins(req);
@@ -252,7 +250,7 @@ export class SDK {
 
 	public getStableCoinDetails(
 		request: GetStableCoinDetailsRequest,
-	): Promise<IStableCoinDetail> | null {
+	): Promise<StableCoinDetail> | null {
 		const req: IGetStableCoinServiceRequestModel =
 			RequestMapper.map(request);
 		return this.stableCoinService.getStableCoinDetails(req);
@@ -282,7 +280,7 @@ export class SDK {
 			// const req: ICashInStableCoinServiceRequestModel = {
 			// 	...request,
 			// };
-			const req: ICashInStableCoinServiceRequestModel =
+			const req: CashInStableCoinServiceRequestModel =
 				RequestMapper.map(request);
 			return this.stableCoinService.cashIn(req);
 		} catch (error) {
@@ -313,7 +311,7 @@ export class SDK {
 		request: AssociateTokenRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			const req: IAssociateTokenStableCoinServiceRequestModel =
+			const req: AssociateTokenStableCoinServiceRequestModel =
 				RequestMapper.map(request);
 			return this.stableCoinService.associateToken(req);
 		} catch (error) {
@@ -508,7 +506,7 @@ export class SDK {
 
 	public getAccountInfo(
 		request: IAccountWithKeyRequestModel,
-	): Promise<IAccountInfo> | null {
+	): Promise<AccountInfo> | null {
 		try {
 			return this.stableCoinService.getAccountInfo(request);
 		} catch (error) {

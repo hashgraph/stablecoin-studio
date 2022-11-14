@@ -5,7 +5,7 @@ export class InitSupplyInvalid extends BaseError {
 	constructor(initSupply: string) {
 		super(
 			ErrorCode.InvalidRange,
-			`Init supply ${initSupply} is not within 0 and MAX_SUPPLY`,
+			`Initial supply ${initSupply} is not within 0 and MAX_SUPPLY`,
 		);
 	}
 }

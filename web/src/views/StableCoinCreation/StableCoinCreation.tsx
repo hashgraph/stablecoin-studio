@@ -53,6 +53,17 @@ const StableCoinCreation = () => {
 		formState: { errors },
 	} = form;
 
+	const [request] = useState(
+		new CreateStableCoinRequest({
+			account: {
+				accountId: account.accountId,
+			},
+			name: '',
+			symbol: '',
+			decimals: 6,
+		}),
+	);
+
 	const [isValidForm, setIsValidForm] = useState<boolean>(false);
 	const [currentStep, setCurrentStep] = useState<number>(0);
 	const [success, setSuccess] = useState<boolean>();
@@ -68,17 +79,17 @@ const StableCoinCreation = () => {
 		{
 			number: '01',
 			title: t('tabs.basicDetails'),
-			children: <BasicDetails control={control} />,
+			children: <BasicDetails control={control} request={request} />,
 		},
 		{
 			number: '02',
 			title: t('tabs.optionalDetails'),
-			children: <OptionalDetails control={control} form={form} />,
+			children: <OptionalDetails control={control} form={form} request={request} />,
 		},
 		{
 			number: '03',
 			title: t('tabs.managementPermissions'),
-			children: <ManagementPermissions control={control} />,
+			children: <ManagementPermissions control={control} request={request} />,
 		},
 		{
 			number: '04',
@@ -153,12 +164,12 @@ const StableCoinCreation = () => {
 
 	const handleFinish = async () => {
 		const {
-			name,
-			symbol,
-			decimals,
-			initialSupply,
-			autorenewAccount,
-			maxSupply,
+			// name,
+			// symbol,
+			// decimals,
+			// initialSupply,
+			// autorenewAccount,
+			// maxSupply,
 			managementPermissions,
 			freezeKey,
 			wipeKey,
@@ -166,38 +177,37 @@ const StableCoinCreation = () => {
 			supplyKey,
 		} = getValues();
 
-		const newStableCoinParams: CreateStableCoinRequest = new CreateStableCoinRequest({
-			account,
-			name,
-			symbol,
-			decimals,
-			initialSupply: initialSupply ? initialSupply.toString() : undefined,
-			maxSupply: maxSupply ? maxSupply.toString() : undefined,
-			autoRenewAccount: autorenewAccount,
-		});
+		// const newStableCoinParams: CreateStableCoinRequest = new CreateStableCoinRequest({
+		// 	account,
+		// 	name,
+		// 	symbol,
+		// 	decimals,
+		// 	initialSupply: initialSupply ? initialSupply.toString() : undefined,
+		// 	maxSupply: maxSupply ? maxSupply.toString() : undefined,
+		// 	autoRenewAccount: autorenewAccount,
+		// });
 
 		if (managementPermissions) {
-			newStableCoinParams.adminKey = accountInfo.publicKey;
-			newStableCoinParams.freezeKey = PublicKey.NULL;
-			newStableCoinParams.KYCKey = PublicKey.NULL;
-			newStableCoinParams.wipeKey = PublicKey.NULL;
-			newStableCoinParams.pauseKey = PublicKey.NULL;
-			newStableCoinParams.supplyKey = PublicKey.NULL;
-			newStableCoinParams.treasury = AccountId.NULL.id;
+			request.adminKey = accountInfo.publicKey;
+			request.freezeKey = PublicKey.NULL;
+			request.KYCKey = PublicKey.NULL;
+			request.wipeKey = PublicKey.NULL;
+			request.pauseKey = PublicKey.NULL;
+			request.supplyKey = PublicKey.NULL;
+			request.treasury = AccountId.NULL.id;
 		} else {
-			newStableCoinParams.adminKey = accountInfo.publicKey;
-			newStableCoinParams.freezeKey = formatKey(freezeKey.label, 'freezeKey');
-			newStableCoinParams.wipeKey = formatKey(wipeKey.label, 'wipeKey');
-			newStableCoinParams.pauseKey = formatKey(pauseKey.label, 'pauseKey');
-			newStableCoinParams.supplyKey = formatKey(supplyKey.label, 'supplyKey');
-			newStableCoinParams.treasury =
+			request.adminKey = accountInfo.publicKey;
+			request.freezeKey = formatKey(freezeKey.label, 'freezeKey');
+			request.wipeKey = formatKey(wipeKey.label, 'wipeKey');
+			request.pauseKey = formatKey(pauseKey.label, 'pauseKey');
+			request.supplyKey = formatKey(supplyKey.label, 'supplyKey');
+			request.treasury =
 				!PublicKey.isNull(formatKey(supplyKey.label, 'supplyKey')) && accountInfo.account
 					? accountInfo.account
 					: AccountId.NULL.id;
 		}
-		console.log(newStableCoinParams);
 		try {
-			await SDKService.createStableCoin(newStableCoinParams);
+			await SDKService.createStableCoin(request);
 			setSuccess(true);
 		} catch (error) {
 			setSuccess(false);

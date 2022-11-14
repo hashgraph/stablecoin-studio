@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { AxiosInstance } from 'axios';
 import { HederaERC20__factory } from 'hedera-stable-coin-contracts/typechain-types';
-import IStableCoinList from 'port/in/sdk/response/IStableCoinList.js';
+import StableCoinList from 'port/in/sdk/response/StableCoinList.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import IStableCoinRepository from './IStableCoinRepository.js';
 import NetworkAdapter from '../network/NetworkAdapter.js';
@@ -28,7 +28,7 @@ import { Roles } from '../../../domain/context/stablecoin/Roles.js';
 import { Account } from '../../in/sdk/sdk.js';
 import IAccount from '../hedera/account/types/IAccount.js';
 
-import IAccountInfo from '../../in/sdk/response/IAccountInfo.js';
+import AccountInfo from '../../in/sdk/response/AccountInfo.js';
 import {
 	AccountId as HAccountId,
 	PublicKey as HPublicKey,
@@ -63,9 +63,9 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 	public async getListStableCoins(
 		account: Account,
-	): Promise<IStableCoinList[]> {
+	): Promise<StableCoinList[]> {
 		try {
-			const resObject: IStableCoinList[] = [];
+			const resObject: StableCoinList[] = [];
 			const res = await this.instance.get<ITokenList>(
 				this.URI_BASE +
 					'tokens?limit=100&account.id=' +
@@ -79,7 +79,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			});
 			return resObject;
 		} catch (error) {
-			return Promise.reject<IStableCoinList[]>(error);
+			return Promise.reject<StableCoinList[]>(error);
 		}
 	}
 
@@ -735,7 +735,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 	private async getAccountEvmAddress(accountId: string): Promise<string> {
 		try {
-			const accountInfo: IAccountInfo = await this.getAccountInfo(
+			const accountInfo: AccountInfo = await this.getAccountInfo(
 				accountId,
 			);
 			if (accountInfo.accountEvmAddress) {
@@ -768,14 +768,14 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		}
 	}
 
-	public async getAccountInfo(accountId: string): Promise<IAccountInfo> {
+	public async getAccountInfo(accountId: string): Promise<AccountInfo> {
 		try {
 			console.log(this.URI_BASE + 'accounts/' + accountId);
 			const res = await axios.get<IAccount>(
 				this.URI_BASE + 'accounts/' + accountId,
 			);
 
-			const account: IAccountInfo = {
+			const account: AccountInfo = {
 				account: accountId,
 				accountEvmAddress: res.data.evm_address,
 				publicKey: new PublicKey({
@@ -786,7 +786,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 			return account;
 		} catch (error) {
-			return Promise.reject<IAccountInfo>(new InvalidResponse(error));
+			return Promise.reject<AccountInfo>(new InvalidResponse(error));
 		}
 	}
 }
