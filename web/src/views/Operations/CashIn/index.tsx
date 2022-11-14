@@ -31,6 +31,7 @@ const CashInOperation = () => {
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
 	// const infoAccount = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
+	const { decimals = 0} = selectedStableCoin || {};
 	const dispatch = useDispatch<AppDispatch>();
 
 	const [errorOperation, setErrorOperation] = useState();
