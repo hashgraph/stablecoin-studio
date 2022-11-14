@@ -168,7 +168,7 @@ const StableCoinCreation = () => {
 			// symbol,
 			// decimals,
 			// initialSupply,
-			// autorenewAccount,
+			autorenewAccount,
 			// maxSupply,
 			managementPermissions,
 			freezeKey,
@@ -187,6 +187,7 @@ const StableCoinCreation = () => {
 		// 	autoRenewAccount: autorenewAccount,
 		// });
 
+		request.autoRenewAccount = autorenewAccount;
 		if (managementPermissions) {
 			request.adminKey = accountInfo.publicKey;
 			request.freezeKey = PublicKey.NULL;

@@ -175,8 +175,6 @@ const RoleLayout = (props: RoleLayoutProps) => {
 									required: t('global:validations.required'),
 									validate: {
 										validation: (value: string) => {	
-											console.log(request);
-											
 											if(request){
 												request.targetId = value;
 												const res = handleRequestValidation(request.validate('targetId'));

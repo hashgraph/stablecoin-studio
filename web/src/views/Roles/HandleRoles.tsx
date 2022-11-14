@@ -420,7 +420,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 										return res;
 									}
 								},
-								quantityOverMaxSupply: (value: number) => {
+								quantityOverMaxSupply: (value: string) => {
 									return maxSupply && maxSupply !== 'INFINITE'
 										? BigDecimal.fromString(maxSupply, decimals).isGreaterOrEqualThan(
 												BigDecimal.fromString(value.toString(), decimals),
