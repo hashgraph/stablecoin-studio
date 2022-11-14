@@ -20,10 +20,19 @@ import {name,
   Wipe,
   getTotalSupply, 
   getBalanceOf,
-  getTokenAddress} from "../scripts/contractsMethods";
+  getTokenAddress,
+  getImplementation,
+  upgradeTo,
+  getAdmin,
+  changeAdmin,
+  owner,
+  upgrade,
+  changeProxyAdmin} from "../scripts/contractsMethods";
 
 let proxyAddress:any;
 let proxyAdminAddress:any;
+let stableCoinAddress:any;
+
 let client:any ;
 let OPERATOR_ID: string;
 let OPERATOR_KEY: string;
@@ -42,7 +51,7 @@ const INIT_SUPPLY = BigNumber.from(10).mul(TokenFactor);
 const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor);
 const TokenMemo = "Hedera Accelerator Stable Coin"
 
-describe("HederaERC20 Tests", function() {
+describe.skip("HederaERC20 Tests", function() {
   before(async function  () {         
     // Generate Client (token admin) and Client 2
     [client,
@@ -67,7 +76,6 @@ describe("HederaERC20 Tests", function() {
         OPERATOR_PUBLIC); 
         
       proxyAddress = result[0];
-      proxyAdminAddress = result[1];
     });   
   
   it("input parmeters check", async function() {
@@ -85,7 +93,7 @@ describe("HederaERC20 Tests", function() {
  
   });
 
-  it.skip("Only Account can associate and dissociate itself when balance is 0", async function() {
+  it("Only Account can associate and dissociate itself when balance is 0", async function() {
     const amount = BigNumber.from(1);
 
     // associate a token to an account : success
@@ -117,7 +125,7 @@ describe("HederaERC20 Tests", function() {
     await dissociateToken(ContractId, proxyAddress, client2, client2account);
   });
 
-  it.skip("Associate and Dissociate Token", async function() {
+  it("Associate and Dissociate Token", async function() {
     const amountToMint = BigNumber.from(1);
 
     // First we associate a token to an account
@@ -152,7 +160,7 @@ describe("HederaERC20 Tests", function() {
 
   });
 
-  it.skip("Check initialize can only be run once", async function(){
+  it("Check initialize can only be run once", async function(){
     // Retrieve current Token address
     const TokenAddress = await getTokenAddress(ContractId, proxyAddress, client);
 
@@ -162,7 +170,7 @@ describe("HederaERC20 Tests", function() {
 
 });
 
-describe.skip("HederaERC20 Proxy Tests", function() {
+describe("HederaERC20Proxy and HederaERC20ProxyAdmin Tests", function() {
   before(async function  () {         
     // Generate Client (token admin) and Client 2
     [client,
@@ -188,19 +196,72 @@ describe.skip("HederaERC20 Proxy Tests", function() {
         
       proxyAddress = result[0];
       proxyAdminAddress = result[1];
+      stableCoinAddress = result[2];
     });   
 
-  it("Retrieve admin and implementation addresses", async function() {
-    
+  it.skip("Retrieve admin and implementation addresses", async function() {
+     // We retreive the HederaERC20Proxy admin and implementation
+     const implementation = await getImplementation(ContractId, proxyAddress, client);
+     const admin = await getAdmin(ContractId, proxyAddress, client);
 
+     // We check their values : success
+     expect(implementation.toUpperCase()).to.equals("0X" + stableCoinAddress.toSolidityAddress().toUpperCase());
+     expect(admin.toUpperCase()).to.equals("0X" + proxyAdminAddress.toSolidityAddress().toUpperCase());
   });
   
-  it("Upgrade Proxy implementation with non-admin account", async function() {
-    
+  it.skip("Upgrade Proxy implementation with non-admin account", async function() {
+    // Deploy a new contract
+    let result = await deployContractsWithSDK(
+      TokenName, 
+      TokenSymbol, 
+      TokenDecimals, 
+      INIT_SUPPLY.toString(), 
+      MAX_SUPPLY.toString(), 
+      TokenMemo, 
+      OPERATOR_ID, 
+      OPERATOR_KEY, 
+      OPERATOR_PUBLIC); 
+
+    const newImplementationContract = result[2];
+
+    // Non Admin upgrades implementation : fail       
+    await expect(upgradeTo(ContractId, proxyAddress, client, newImplementationContract.toSolidityAddress())).to.eventually.be.rejectedWith(Error);
  
   });
 
-  it("Upgrade Proxy implementation with proxy admin", async function() {
+  it.skip("Change Proxy admin with non-admin account", async function() {
+    // Non Admin changes admin : fail       
+    await expect(changeAdmin(ContractId, proxyAddress, client, client2account)).to.eventually.be.rejectedWith(Error);
+
+  });
+
+  it("Upgrade Proxy implementation with proxy admin using the owner account and a non-owner account", async function() {
+    // Deploy a new contract
+    let result = await deployContractsWithSDK(
+      TokenName, 
+      TokenSymbol, 
+      TokenDecimals, 
+      INIT_SUPPLY.toString(), 
+      MAX_SUPPLY.toString(), 
+      TokenMemo, 
+      OPERATOR_ID, 
+      OPERATOR_KEY, 
+      OPERATOR_PUBLIC); 
+
+    const newImplementationContract = result[2];
+
+    // Upgrading the proxy implementation using the Proxy Admin with an account that is not the owner : fails
+    await expect(upgrade(ContractId, proxyAdminAddress, client2, newImplementationContract.toSolidityAddress(), proxyAddress.toSolidityAddress())).to.eventually.be.rejectedWith(Error);
+
+    // Upgrading the proxy implementation using the Proxy Admin with an account that is the owner : success
+    await upgrade(ContractId, proxyAdminAddress, client, newImplementationContract.toSolidityAddress(), proxyAddress.toSolidityAddress())
+
+    // Check new implementation address
+    const implementation = await getImplementation(ContractId, proxyAddress, client);
+    expect(implementation.toUpperCase()).to.equals("0X" + newImplementationContract.toSolidityAddress().toUpperCase());
+  });
+
+  it("Upgrade Proxy admin with proxy admin", async function() {
     
   });
 

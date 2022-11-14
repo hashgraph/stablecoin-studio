@@ -24,4 +24,17 @@ contract HederaERC20Proxy is TransparentUpgradeableProxy {
     {
         return _implementation();
     }
+
+    /**
+     * @dev Returns the admin controlling the proxy
+     *
+     * @return address The address of the admin account in control of the proxy
+     */
+    function getAdmin() 
+        external 
+        view 
+        returns (address) 
+    {
+        return _getAdmin();
+    }
 }

@@ -118,7 +118,7 @@ export interface StableCoinFactory extends BaseContract {
     deployStableCoin(
       requestedToken: IStableCoinFactory.TokenStructStruct,
       overrides?: CallOverrides
-    ): Promise<[string, string]>;
+    ): Promise<[string, string, string]>;
   };
 
   filters: {};

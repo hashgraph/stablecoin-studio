@@ -1,6 +1,8 @@
 const {AccountId, AccountBalanceQuery, TransferTransaction, HbarUnit, Hbar} = require('@hashgraph/sdk')
 
-import {HederaERC20__factory} from '../typechain-types'
+import {HederaERC20__factory,
+    HederaERC20Proxy__factory,
+    HederaERC20ProxyAdmin__factory} from '../typechain-types'
 
 import { contractCall} from "./utils";
 import { Gas1, Gas2, Gas3, Gas4, Gas5, Gas6} from "./constants";
@@ -85,6 +87,46 @@ export async function decimals(ContractId: any, proxyAddress: string, client: an
 export async function initialize(ContractId: any, proxyAddress: string, client: any, newTokenAddress: string){
     let params = [newTokenAddress];  
     await contractCall(ContractId.fromString(proxyAddress!), 'initialize', params, client, Gas2, HederaERC20__factory.abi);  
+}
+
+// HederaERC20Proxy ///////////////////////////////////////////////////
+export async function getImplementation(ContractId: any, proxyAddress: string, client: any): Promise<string>{
+    let params: any[] = [];  
+    const result = await contractCall(ContractId.fromString(proxyAddress!), 'getImplementation', params, client, Gas2, HederaERC20Proxy__factory.abi);  
+    return result[0];
+}
+
+export async function upgradeTo(ContractId: any, proxyAddress: string, client: any, newImplementationContract: string) {
+    let params : any = [newImplementationContract];  
+    await contractCall(ContractId.fromString(proxyAddress!), 'upgradeTo', params, client, Gas3, HederaERC20Proxy__factory.abi);
+}
+
+export async function getAdmin(ContractId: any, proxyAddress: string, client: any): Promise<string>{
+    let params: any[] = [];  
+    const result = await contractCall(ContractId.fromString(proxyAddress!), 'getAdmin', params, client, Gas2, HederaERC20Proxy__factory.abi);  
+    return result[0];
+}
+
+export async function changeAdmin(ContractId: any, proxyAddress: string, client: any, newAdminAccount: string) {
+    let params : any = [AccountId.fromString(newAdminAccount!).toSolidityAddress()];  
+    await contractCall(ContractId.fromString(proxyAddress!), 'changeAdmin', params, client, Gas3, HederaERC20Proxy__factory.abi);
+}
+
+// HederaERC20ProxyAdmin ///////////////////////////////////////////////////
+export async function owner(ContractId: any, proxyAdminAddress: string, client: any): Promise<string>{
+    let params: any[] = [];  
+    const result = await contractCall(ContractId.fromString(proxyAdminAddress!), 'owner', params, client, Gas2, HederaERC20ProxyAdmin__factory.abi);  
+    return result[0];
+}
+
+export async function upgrade(ContractId: any, proxyAdminAddress: string, client: any, newImplementationContract: string, proxyAddress: string) {
+    let params : any = [proxyAddress, newImplementationContract];  
+    await contractCall(ContractId.fromString(proxyAdminAddress!), 'upgrade', params, client, Gas3, HederaERC20ProxyAdmin__factory.abi);
+}
+
+export async function changeProxyAdmin(ContractId: any, proxyAdminAddress: string, client: any, newAdminAccount: string, proxyAddress: string) {
+    let params : any = [ContractId.fromString(proxyAddress!), AccountId.fromString(newAdminAccount!).toSolidityAddress()];  
+    await contractCall(ContractId.fromString(proxyAdminAddress!), 'changeProxyAdmin', params, client, Gas3, HederaERC20ProxyAdmin__factory.abi);
 }
 
 /* Methods to add

@@ -17,5 +17,5 @@ interface IStableCoinFactory {
 
     function deployStableCoin(
         tokenStruct calldata requestedToken
-    ) external payable returns (address, address);
+    ) external payable returns (address, address, address);
 }
