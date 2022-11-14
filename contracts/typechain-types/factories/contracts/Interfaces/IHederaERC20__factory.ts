@@ -7,7 +7,7 @@ import type { Provider } from "@ethersproject/providers";
 import type {
   IHederaERC20,
   IHederaERC20Interface,
-} from "../../contracts/IHederaERC20";
+} from "../../../contracts/Interfaces/IHederaERC20";
 
 const _abi = [
   {

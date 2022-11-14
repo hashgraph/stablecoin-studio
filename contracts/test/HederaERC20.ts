@@ -23,6 +23,7 @@ import {name,
   getTokenAddress} from "../scripts/contractsMethods";
 
 let proxyAddress:any;
+let proxyAdminAddress:any;
 let client:any ;
 let OPERATOR_ID: string;
 let OPERATOR_KEY: string;
@@ -54,7 +55,7 @@ describe("HederaERC20 Tests", function() {
       client2publickey] = initializeClients();
   
       // Deploy Token using Client
-      proxyAddress = await deployContractsWithSDK(
+      let result = await deployContractsWithSDK(
         TokenName, 
         TokenSymbol, 
         TokenDecimals, 
@@ -63,7 +64,10 @@ describe("HederaERC20 Tests", function() {
         TokenMemo, 
         OPERATOR_ID, 
         OPERATOR_KEY, 
-        OPERATOR_PUBLIC);    
+        OPERATOR_PUBLIC); 
+        
+      proxyAddress = result[0];
+      proxyAdminAddress = result[1];
     });   
   
   it("input parmeters check", async function() {
@@ -81,7 +85,7 @@ describe("HederaERC20 Tests", function() {
  
   });
 
-  it("Only Account can associate and dissociate itself when balance is 0", async function() {
+  it.skip("Only Account can associate and dissociate itself when balance is 0", async function() {
     const amount = BigNumber.from(1);
 
     // associate a token to an account : success
@@ -113,7 +117,7 @@ describe("HederaERC20 Tests", function() {
     await dissociateToken(ContractId, proxyAddress, client2, client2account);
   });
 
-  it("Associate and Dissociate Token", async function() {
+  it.skip("Associate and Dissociate Token", async function() {
     const amountToMint = BigNumber.from(1);
 
     // First we associate a token to an account
@@ -148,12 +152,57 @@ describe("HederaERC20 Tests", function() {
 
   });
 
-  it("Check initialize can only be run once", async function(){
+  it.skip("Check initialize can only be run once", async function(){
     // Retrieve current Token address
     const TokenAddress = await getTokenAddress(ContractId, proxyAddress, client);
 
     // Initiliaze : fail
     await expect(initialize(ContractId, proxyAddress, client, TokenAddress)).to.eventually.be.rejectedWith(Error);
   });
+
+});
+
+describe.skip("HederaERC20 Proxy Tests", function() {
+  before(async function  () {         
+    // Generate Client (token admin) and Client 2
+    [client,
+      OPERATOR_ID, 
+      OPERATOR_KEY,
+      OPERATOR_PUBLIC,
+      client2,
+      client2account,
+      client2privatekey,
+      client2publickey] = initializeClients();
+  
+      // Deploy Token using Client
+      let result = await deployContractsWithSDK(
+        TokenName, 
+        TokenSymbol, 
+        TokenDecimals, 
+        INIT_SUPPLY.toString(), 
+        MAX_SUPPLY.toString(), 
+        TokenMemo, 
+        OPERATOR_ID, 
+        OPERATOR_KEY, 
+        OPERATOR_PUBLIC);   
+        
+      proxyAddress = result[0];
+      proxyAdminAddress = result[1];
+    });   
+
+  it("Retrieve admin and implementation addresses", async function() {
+    
+
+  });
+  
+  it("Upgrade Proxy implementation with non-admin account", async function() {
+    
+ 
+  });
+
+  it("Upgrade Proxy implementation with proxy admin", async function() {
+    
+  });
+
 
 });

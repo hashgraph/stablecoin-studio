@@ -149,13 +149,13 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IHederaERC20__factory>;
     getContractFactory(
-      name: "Roles",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Roles__factory>;
-    getContractFactory(
       name: "IStableCoinFactory",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IStableCoinFactory__factory>;
+    getContractFactory(
+      name: "Roles",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Roles__factory>;
     getContractFactory(
       name: "StableCoinFactory",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -340,15 +340,15 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IHederaERC20>;
     getContractAt(
-      name: "Roles",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Roles>;
-    getContractAt(
       name: "IStableCoinFactory",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IStableCoinFactory>;
+    getContractAt(
+      name: "Roles",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Roles>;
     getContractAt(
       name: "StableCoinFactory",
       address: string,

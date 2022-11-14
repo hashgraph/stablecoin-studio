@@ -6,25 +6,9 @@ import "./hts-precompile/HederaResponseCodes.sol";
 import "./HederaERC20.sol";
 import "./HederaERC20Proxy.sol";
 import "./HederaERC20ProxyAdmin.sol";
+import "./Interfaces/IStableCoinFactory.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
-interface IStableCoinFactory {
-
-    struct tokenStruct{
-        string tokenName;
-        string tokenSymbol;
-        bool freeze;
-        bool supplyType;
-        uint32 tokenMaxSupply;
-        uint tokenInitialSupply;
-        uint tokenDecimals;
-        bytes senderPublicKey;
-    }
-
-    function deployStableCoin(
-        tokenStruct calldata requestedToken
-    ) external payable returns (address);
-}
 
 contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes{
 
@@ -33,7 +17,7 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes{
     string constant memo_1 = "({proxyContract: ";
     string constant memo_2 = "})";
 
-    function deployStableCoin(tokenStruct calldata requestedToken) external payable override returns (address){
+    function deployStableCoin(tokenStruct calldata requestedToken) external payable override returns (address, address){
 
         // Deploy logic contract
         HederaERC20 StableCoinContract = new HederaERC20();
@@ -72,7 +56,7 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes{
         // Associate token
         HederaERC20(address(StableCoinProxy)).associateToken(msg.sender);
 
-        return address(StableCoinProxy);
+        return (address(StableCoinProxy), address(StableCoinProxyAdmin));
     }
 
     function createToken (string memory tokenName,

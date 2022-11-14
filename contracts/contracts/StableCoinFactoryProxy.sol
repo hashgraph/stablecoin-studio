@@ -6,9 +6,7 @@ import "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.so
 
 
 contract StableCoinFactoryProxy is TransparentUpgradeableProxy {
-    constructor(address _logic,
-        address admin_,
-        bytes memory _data) payable TransparentUpgradeableProxy(_logic, admin_, _data) 
+    constructor() payable TransparentUpgradeableProxy(address(0x167), address(0x167), "") 
     {    
     }
 

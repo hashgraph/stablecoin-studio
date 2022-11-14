@@ -21,7 +21,7 @@ import type {
   TypedListener,
   OnEvent,
   PromiseOrValue,
-} from "../../common";
+} from "../common";
 
 export declare namespace IStableCoinFactory {
   export type TokenStructStruct = {
@@ -118,7 +118,7 @@ export interface StableCoinFactory extends BaseContract {
     deployStableCoin(
       requestedToken: IStableCoinFactory.TokenStructStruct,
       overrides?: CallOverrides
-    ): Promise<string>;
+    ): Promise<[string, string]>;
   };
 
   filters: {};

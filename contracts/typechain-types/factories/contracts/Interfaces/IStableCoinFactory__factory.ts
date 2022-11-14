@@ -7,7 +7,7 @@ import type { Provider } from "@ethersproject/providers";
 import type {
   IStableCoinFactory,
   IStableCoinFactoryInterface,
-} from "../../../contracts/StableCoinFactory.sol/IStableCoinFactory";
+} from "../../../contracts/Interfaces/IStableCoinFactory";
 
 const _abi = [
   {
@@ -62,6 +62,11 @@ const _abi = [
     ],
     name: "deployStableCoin",
     outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
       {
         internalType: "address",
         name: "",

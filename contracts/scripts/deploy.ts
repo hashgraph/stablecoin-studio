@@ -5,10 +5,12 @@ const {
     PublicKey,
 } = require('@hashgraph/sdk')
 
-const factoryAddress = "0.0.48787128"; //"0000000000000000000000000000000002e86eb8"; 0.0.48787128
+const factoryAddress = ""; //"0000000000000000000000000000000002e86eb8"; 0.0.48787128
 
 import {
     StableCoinFactory__factory,
+    StableCoinFactoryProxyAdmin__factory,
+    StableCoinFactoryProxy__factory
 } from '../typechain-types'
 
 import {getClient, 
@@ -47,6 +49,7 @@ export async function deployFactory(
     clientOperator: any,
     privateKey: string
 ){
+    // Deploying Factory logic
     console.log(`Deploying Contract Factory. please wait...`);
 
     const factory = await deployContractSDK(
@@ -55,9 +58,36 @@ export async function deployFactory(
         clientOperator
     )
 
-    console.log(`Contract Factory deployed ${factory.toSolidityAddress().toString()}`);
+    console.log(`Contract Factory deployed ${factory.toSolidityAddress()}`);
 
-    return factory;
+    // Deploying Factory proxy admin
+    console.log(`Deploying Contract Factory Proxy Admin. please wait...`);
+
+    const factoryProxyAdmin = await deployContractSDK(
+        StableCoinFactoryProxyAdmin__factory,
+        privateKey,
+        clientOperator
+    )
+
+    console.log(`Contract Factory Proxy Admin deployed ${factoryProxyAdmin.toSolidityAddress()}`);
+
+    // Deploying Factory proxy
+    console.log(`Deploying Contract Factory Proxy. please wait...`);
+
+    let factoryProxyConstructorParam: any[] = []
+
+    console.log(`Constructor parameters ${factoryProxyConstructorParam[0]}, ${factoryProxyConstructorParam[1]}`);
+
+    const factoryProxy = await deployContractSDK(
+        StableCoinFactoryProxy__factory,
+        privateKey,
+        clientOperator,
+        []
+    )
+
+    console.log(`Contract Factory Proxy deployed ${factoryProxy.toSolidityAddress()}`);
+
+    return factoryProxy;
 }
 
 export async function deployContractsWithSDK(
@@ -118,95 +148,8 @@ export async function deployContractsWithSDK(
     )
 
     console.log(`Proxy created: ${proxyContract[0]} , ${ContractId.fromSolidityAddress(proxyContract[0]).toString()}`)
+    console.log(`Proxy Admin created: ${proxyContract[1]} , ${ContractId.fromSolidityAddress(proxyContract[1]).toString()}`)
 
-    return ContractId.fromSolidityAddress(proxyContract[0])
+    return [ContractId.fromSolidityAddress(proxyContract[0]),
+        ContractId.fromSolidityAddress(proxyContract[1])]
 }
-
-/*
-export async function deployContractsWithSDK_old(
-    name: string,
-    symbol: string,
-    decimals = 6,
-    initialSupply: string,
-    maxSupply: string | null,
-    memo: string,
-    account: string,
-    privateKey: string,
-    publicKey: string,
-    freeze = false
-) {
-    console.log(
-        `Creating token  (${name},${symbol},${decimals},${initialSupply},${maxSupply},${memo},${freeze})`
-    )
-
-    const clientSdk = getClient()
-    clientSdk.setOperator(account, privateKey)
-
-    console.log(
-        `Deploying ${HederaERC20__factory.name} contract... please wait.`
-    )
-    const tokenContract = await deployContractSDK(
-        HederaERC20__factory,
-        privateKey,
-        clientSdk
-    )
-
-    console.log(
-        `Deploying ${HederaERC1967Proxy__factory.name} contract... please wait.`
-    )
-    const parameters = new ContractFunctionParameters()
-        .addAddress(tokenContract!.toSolidityAddress())
-        .addBytes(new Uint8Array([]))
-    const proxyContract = await deployContractSDK(
-        HederaERC1967Proxy__factory,
-        privateKey,
-        clientSdk,
-        parameters
-    )
-
-    console.log('Creating token... please wait.')
-    memo = JSON.stringify({
-        proxyContract: String(proxyContract)
-    })
-    const hederaToken = await createToken(
-        proxyContract,
-        name,
-        symbol,
-        decimals,
-        initialSupply,
-        maxSupply,
-        memo,
-        freeze,
-        account!,
-        privateKey!,
-        publicKey!,
-        clientSdk
-    )
-
-    console.log(`Initializing Proxy for Token ${hederaToken.toSolidityAddress()}... please wait.`)
-    let parametersContractCall = [hederaToken.toSolidityAddress()]
-    await contractCall(
-        proxyContract,
-        'initialize',
-        parametersContractCall,
-        clientSdk,
-        250000,
-        HederaERC20__factory.abi
-    )
-   
-
-    console.log('Associate administrator account to token... please wait.')
-    parametersContractCall = [
-        AccountId.fromString(account!).toSolidityAddress(),
-    ]
-    await contractCall(
-        proxyContract,
-        'associateToken',
-        parametersContractCall,
-        clientSdk,
-        1300000,
-        HederaERC20__factory.abi
-    )
-
-    return proxyContract
-}*/
