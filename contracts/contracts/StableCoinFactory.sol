@@ -74,17 +74,18 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes{
         tokenExpiry.autoRenewAccount = msg.sender;
         tokenExpiry.autoRenewPeriod = 7776000;
 
-        IHederaTokenService.KeyValue memory SenderKey;
-        SenderKey.ed25519 = senderPublicKey;
+        IHederaTokenService.KeyValue memory senderKey;
+        senderKey.ed25519 = senderPublicKey;
 
-        IHederaTokenService.KeyValue memory ProxyKey;
-        ProxyKey.delegatableContractId = StableCoinProxyAddress;
+        IHederaTokenService.KeyValue memory proxyKey;
+        proxyKey.delegatableContractId = StableCoinProxyAddress;
         
         IHederaTokenService.TokenKey[] memory keys = new IHederaTokenService.TokenKey[](4);
-        keys[0] = IHederaTokenService.TokenKey({keyType: 1, key: SenderKey}); // admin
-        keys[1] = IHederaTokenService.TokenKey({keyType: 4, key: SenderKey}); // freeze
-        keys[2] = IHederaTokenService.TokenKey({keyType: 8, key: ProxyKey}); // wipe
-        keys[3] = IHederaTokenService.TokenKey({keyType: 16, key: ProxyKey}); // supply
+        keys[0] = IHederaTokenService.TokenKey({keyType: 1, key: senderKey}); // admin
+        keys[1] = IHederaTokenService.TokenKey({keyType: 4, key: senderKey}); // freeze
+        keys[2] = IHederaTokenService.TokenKey({keyType: 8, key: proxyKey}); // wipe
+        keys[3] = IHederaTokenService.TokenKey({keyType: 16, key: proxyKey}); // supply
+        keys[4] = IHederaTokenService.TokenKey({keyType: 64, key: proxyKey}); // pause
 
         IHederaTokenService.HederaToken memory token;
         token.name = tokenName;
