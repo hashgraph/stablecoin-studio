@@ -127,7 +127,8 @@ The available roles are:
 - BURN_ROLE
 - WIPE_ROLE
 - RESCUE_ROLE
-- PAUSER_ROLE
+- PAUSE_ROLE
+- FREEZE_ROLE
 
 #### Configuration menu
 
