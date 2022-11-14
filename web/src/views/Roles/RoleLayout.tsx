@@ -13,7 +13,6 @@ import { NamedRoutes } from '../../Router/NamedRoutes';
 import DetailsReview from '../../components/DetailsReview';
 import { fields } from './constants';
 import { useSelector } from 'react-redux';
-import { formatAmountWithDecimals } from '../../utils/inputHelper';
 import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
 
 const styles = {
@@ -76,30 +75,15 @@ const RoleLayout = (props: RoleLayoutProps) => {
 	const optionalDetailsFinite = [
 		{
 			label: t('operations:details.initialSupply'),
-			value: selectedStableCoin?.initialSupply
-				? formatAmountWithDecimals({
-						amount: selectedStableCoin?.initialSupply,
-						decimals: selectedStableCoin?.decimals || 0,
-				  })
-				: unknown,
+			value: selectedStableCoin?.initialSupply ? selectedStableCoin.initialSupply : unknown,
 		},
 		{
 			label: t('operations:details.totalSupply'),
-			value: selectedStableCoin?.totalSupply
-				? formatAmountWithDecimals({
-						amount: selectedStableCoin?.totalSupply,
-						decimals: selectedStableCoin?.decimals || 0,
-				  })
-				: unknown,
+			value: selectedStableCoin?.totalSupply ? selectedStableCoin.totalSupply : unknown,
 		},
 		{
 			label: t('operations:details.maxSupply'),
-			value: selectedStableCoin?.maxSupply
-				? formatAmountWithDecimals({
-						amount: selectedStableCoin?.maxSupply,
-						decimals: selectedStableCoin?.decimals || 0,
-				  })
-				: unknown,
+			value: selectedStableCoin?.maxSupply ? selectedStableCoin.maxSupply : unknown,
 		},
 		{
 			label: t('operations:details.supplyType'),
@@ -114,21 +98,11 @@ const RoleLayout = (props: RoleLayoutProps) => {
 	const optionalDetailsInfinite = [
 		{
 			label: t('operations:details.initialSupply'),
-			value: selectedStableCoin?.initialSupply
-				? formatAmountWithDecimals({
-						amount: selectedStableCoin?.initialSupply,
-						decimals: selectedStableCoin?.decimals || 0,
-				  })
-				: unknown,
+			value: selectedStableCoin?.initialSupply ? selectedStableCoin.initialSupply : unknown,
 		},
 		{
 			label: t('operations:details.totalSupply'),
-			value: selectedStableCoin?.totalSupply
-				? formatAmountWithDecimals({
-						amount: selectedStableCoin?.totalSupply,
-						decimals: selectedStableCoin?.decimals || 0,
-				  })
-				: unknown,
+			value: selectedStableCoin?.totalSupply ? selectedStableCoin.totalSupply : unknown,
 		},
 		{
 			label: t('operations:details.supplyType'),

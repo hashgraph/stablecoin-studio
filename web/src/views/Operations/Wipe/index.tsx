@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import DetailsReview from '../../../components/DetailsReview';
 import InputController from '../../../components/Form/InputController';
-import InputNumberController from '../../../components/Form/InputNumberController';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
 import ModalsHandler from '../../../components/ModalsHandler';
 import SDKService from '../../../services/SDKService';
@@ -17,7 +16,11 @@ import {
 } from '../../../store/slices/walletSlice';
 import type { AppDispatch } from '../../../store/store.js';
 import { formatAmount } from '../../../utils/inputHelper';
-import { validateAccount, validateDecimals } from '../../../utils/validationsHelper';
+import {
+	validateAccount,
+	validateAmount,
+	validateDecimalsString,
+} from '../../../utils/validationsHelper';
 import OperationLayout from './../OperationLayout';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
@@ -35,7 +38,7 @@ const WipeOperation = () => {
 
 	const [errorOperation, setErrorOperation] = useState();
 	const dispatch = useDispatch<AppDispatch>();
-	const navigate = useNavigate()
+	const navigate = useNavigate();
 
 	const { decimals = 0 } = selectedStableCoin || {};
 
@@ -47,11 +50,11 @@ const WipeOperation = () => {
 
 	useEffect(() => {
 		handleRefreshCoinInfo();
-	}, [])
-	
+	}, []);
+
 	const handleCloseModal = () => {
 		RouterManager.goBack(navigate);
-	}
+	};
 
 	const handleRefreshCoinInfo = async () => {
 		const stableCoinDetails = await SDKService.getStableCoinDetails({
@@ -60,9 +63,9 @@ const WipeOperation = () => {
 		dispatch(
 			walletActions.setSelectedStableCoin({
 				tokenId: stableCoinDetails?.tokenId,
-				initialSupply: Number(stableCoinDetails?.initialSupply),
-				totalSupply: Number(stableCoinDetails?.totalSupply),
-				maxSupply: Number(stableCoinDetails?.maxSupply),
+				initialSupply: stableCoinDetails?.initialSupply,
+				totalSupply: stableCoinDetails?.totalSupply,
+				maxSupply: stableCoinDetails?.maxSupply,
 				name: stableCoinDetails?.name,
 				symbol: stableCoinDetails?.symbol,
 				decimals: stableCoinDetails?.decimals,
@@ -94,7 +97,7 @@ const WipeOperation = () => {
 				account,
 				tokenId: selectedStableCoin.tokenId,
 				targetId: destinationAccount,
-				amount: amount.toString(),
+				amount,
 				publicKey: infoAccount.publicKey,
 			});
 			onSuccess();
@@ -116,21 +119,26 @@ const WipeOperation = () => {
 							{t('wipe:operationTitle')}
 						</Text>
 						<Stack as='form' spacing={6} maxW='520px'>
-							<InputNumberController
+							<InputController
 								rules={{
-									required: t('global:validations.required'),
+									required: t(`global:validations.required`),
 									validate: {
-										maxDecimals: (value: number) => {
-											return validateDecimals(value, decimals) || t('wipe:decimalsValidation');
+										validNumber: (value: string) => {
+											return validateAmount(value) || t('global:validations.invalidAmount');
+										},
+										validDecimals: (value: string) => {
+											return (
+												validateDecimalsString(value, decimals) ||
+												t('global:validations.decimalsValidation')
+											);
 										},
 									},
 								}}
 								isRequired
 								control={control}
-								name='amount'
+								name={'amount'}
 								label={t('wipe:amountLabel')}
 								placeholder={t('wipe:amountPlaceholder')}
-								decimalScale={decimals}
 							/>
 							<InputController
 								rules={{

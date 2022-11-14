@@ -42,6 +42,7 @@
   "validations": {
     "required": "This field is required",
     "invalidAccount": "Incorrect account",
+    "invalidAmount": "Invalid amount",
     "invalidCoinId": "Invalid stable coin id",
     "decimalsValidation": "You have added more decimals than the supported by the stable coin",
     "overTotalSupply": "Quantity over current total supply",

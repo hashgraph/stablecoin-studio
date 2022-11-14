@@ -6,7 +6,6 @@ import RoleLayout from './RoleLayout';
 import ModalsHandler from '../../components/ModalsHandler';
 import DetailsReview from '../../components/DetailsReview';
 import SwitchController from '../../components/Form/SwitchController';
-import InputNumberController from '../../components/Form/InputNumberController';
 import { roleOptions, cashinLimitOptions, fields, actions, roleExternalTokens } from './constants';
 import type { Detail } from '../../components/DetailsReview';
 import type { ModalsHandlerActionsProps } from '../../components/ModalsHandler';
@@ -19,12 +18,13 @@ import {
 	SELECTED_WALLET_PAIRED_ACCOUNTID,
 } from '../../store/slices/walletSlice';
 import { SelectController } from '../../components/Form/SelectController';
-import { validateDecimals } from '../../utils/validationsHelper';
+import { validateAmount, validateDecimalsString } from '../../utils/validationsHelper';
 import type { IAccountToken } from '../../interfaces/IAccountToken';
 import type { IExternalToken } from '../../interfaces/IExternalToken';
 import type { IRole } from '../../interfaces/IRole';
 import { formatAmountWithDecimals } from '../../utils/inputHelper';
 import { BigDecimal, Capabilities } from 'hedera-stable-coin-sdk';
+import InputController from '../../components/Form/InputController';
 
 const supplier = 'Cash in';
 
@@ -261,6 +261,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 	};
 
 	const renderSupplierQuantity = () => {
+		const { decimals = 0 } = selectedStableCoin || {};
 		return (
 			<Box data-testid='supplier-quantity'>
 				<HStack>
@@ -272,10 +273,21 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 				</HStack>
 				{!infinity && (
 					<Box mt='20px'>
-						<InputNumberController
+						<InputController
 							data-testid='input-supplier-quantity'
 							rules={{
 								required: t(`global:validations.required`),
+								validate: {
+									validNumber: (value: string) => {
+										return validateAmount(value) || t('global:validations.invalidAmount');
+									},
+									validDecimals: (value: string) => {
+										return (
+											validateDecimalsString(value, decimals) ||
+											t('global:validations.decimalsValidation')
+										);
+									},
+								},
 							}}
 							isRequired
 							control={control}
@@ -312,25 +324,28 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 		return (
 			<Stack spacing={6}>
 				{increaseOrDecreseOptionSelected && (
-					<InputNumberController
+					<InputController
 						rules={{
-							required: t('global:validations.required'),
+							required: t(`global:validations.required`),
 							validate: {
-								maxDecimals: (value: number) => {
+								validNumber: (value: string) => {
+									return validateAmount(value) || t('global:validations.invalidAmount');
+								},
+								validDecimals: (value: string) => {
 									return (
-										validateDecimals(value, decimals) || t('global:validations.decimalsValidation')
+										validateDecimalsString(value, decimals) ||
+										t('global:validations.decimalsValidation')
 									);
 								},
-								quantityOverMaxSupply: (value: number) => {
+								quantityOverMaxSupply: (value: string) => {
 									return maxSupply && maxSupply !== 'INFINITE'
 										? BigDecimal.fromString(maxSupply, decimals).isGreaterOrEqualThan(
-												BigDecimal.fromString(value.toString(), decimals),
+												BigDecimal.fromString(value, decimals),
 										  ) || t('global:validations.overMaxSupplyCashIn')
 										: true;
 								},
 							},
 						}}
-						decimalScale={decimals}
 						isRequired
 						control={control}
 						name='amount'

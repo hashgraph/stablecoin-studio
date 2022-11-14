@@ -2,7 +2,6 @@ import { Heading, Text, Stack, useDisclosure } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import DetailsReview from '../../../components/DetailsReview';
-import InputNumberController from '../../../components/Form/InputNumberController';
 import OperationLayout from '../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
@@ -14,12 +13,12 @@ import {
 	walletActions,
 } from '../../../store/slices/walletSlice';
 import SDKService from '../../../services/SDKService';
-import { validateDecimals } from '../../../utils/validationsHelper';
 import { useState, useEffect } from 'react';
 import type { AppDispatch } from '../../../store/store.js';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
-import { BigDecimal } from 'hedera-stable-coin-sdk';
+import InputController from '../../../components/Form/InputController';
+import { validateAmount, validateDecimalsString } from '../../../utils/validationsHelper';
 
 const BurnOperation = () => {
 	const {
@@ -33,10 +32,10 @@ const BurnOperation = () => {
 	const infoAccount = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 
 	const [errorOperation, setErrorOperation] = useState();
-	const navigate = useNavigate()
+	const navigate = useNavigate();
 	const dispatch = useDispatch<AppDispatch>();
 
-	const { decimals = 0, totalSupply } = selectedStableCoin || {};
+	const { decimals = 0 } = selectedStableCoin || {};
 
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
@@ -46,11 +45,11 @@ const BurnOperation = () => {
 
 	useEffect(() => {
 		handleRefreshCoinInfo();
-	}, [])
-	
+	}, []);
+
 	const handleCloseModal = () => {
 		RouterManager.goBack(navigate);
-	}
+	};
 
 	const handleBurn: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
 		const { amount } = getValues();
@@ -80,9 +79,9 @@ const BurnOperation = () => {
 		dispatch(
 			walletActions.setSelectedStableCoin({
 				tokenId: stableCoinDetails?.tokenId,
-				initialSupply: Number(stableCoinDetails?.initialSupply),
-				totalSupply: Number(stableCoinDetails?.totalSupply),
-				maxSupply: Number(stableCoinDetails?.maxSupply),
+				initialSupply: stableCoinDetails?.initialSupply,
+				totalSupply: stableCoinDetails?.totalSupply,
+				maxSupply: stableCoinDetails?.maxSupply,
 				name: stableCoinDetails?.name,
 				symbol: stableCoinDetails?.symbol,
 				decimals: stableCoinDetails?.decimals,
@@ -115,31 +114,24 @@ const BurnOperation = () => {
 							{t('burn:operationTitle')}
 						</Text>
 						<Stack as='form' spacing={6}>
-							<InputNumberController
+							<InputController
 								rules={{
-									required: t('global:validations.required'),
+									required: t(`global:validations.required`),
 									validate: {
-										maxDecimals: (value: number) => {
-											return (
-												validateDecimals(value, decimals) ||
-												t('global:validations.decimalsValidation')
-											);
+										validNumber: (value: string) => {
+											return validateAmount(value) || t('global:validations.invalidAmount');
 										},
-										quantityOverTotalSupply: (value: number) => {
+										validDecimals: (value: string) => {
 											return (
-												(totalSupply &&
-													BigDecimal.fromString(totalSupply, decimals).isGreaterOrEqualThan(
-														BigDecimal.fromString(value.toString(), decimals),
-													)) ||
-												t('global:validations.overTotalSupply')
+												validateDecimalsString(value, decimals) ||
+												t('global:validations.decimalsValidation')
 											);
 										},
 									},
 								}}
-								decimalScale={decimals}
 								isRequired
 								control={control}
-								name='amount'
+								name={'amount'}
 								label={t('burn:amountLabel')}
 								placeholder={t('burn:amountPlaceholder')}
 							/>

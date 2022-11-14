@@ -2,16 +2,15 @@ import { Heading, Text, Stack, useDisclosure } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import DetailsReview from '../../../components/DetailsReview';
-import InputNumberController from '../../../components/Form/InputNumberController';
-import { validateDecimals } from '../../../utils/validationsHelper';
+import { validateAmount, validateDecimalsString } from '../../../utils/validationsHelper';
 import OperationLayout from '../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
-import { useSelector,useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import {
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNT,
-	walletActions
+	walletActions,
 } from '../../../store/slices/walletSlice';
 import SDKService from '../../../services/SDKService';
 import { useEffect, useState } from 'react';
@@ -19,6 +18,7 @@ import { formatAmount } from '../../../utils/inputHelper';
 import type { AppDispatch } from '../../../store/store.js';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
+import InputController from '../../../components/Form/InputController';
 
 const RescueTokenOperation = () => {
 	const {
@@ -32,7 +32,7 @@ const RescueTokenOperation = () => {
 
 	const [errorOperation, setErrorOperation] = useState();
 	const dispatch = useDispatch<AppDispatch>();
-	const navigate = useNavigate()
+	const navigate = useNavigate();
 
 	const { decimals = 0 } = selectedStableCoin || {};
 
@@ -41,14 +41,14 @@ const RescueTokenOperation = () => {
 	});
 
 	const { t } = useTranslation(['rescueTokens', 'global', 'operations']);
-	
+
 	useEffect(() => {
 		handleRefreshCoinInfo();
-	}, [])
-	
+	}, []);
+
 	const handleCloseModal = () => {
 		RouterManager.goBack(navigate);
-	}
+	};
 	const handleRefreshCoinInfo = async () => {
 		const stableCoinDetails = await SDKService.getStableCoinDetails({
 			id: selectedStableCoin?.tokenId || '',
@@ -56,9 +56,9 @@ const RescueTokenOperation = () => {
 		dispatch(
 			walletActions.setSelectedStableCoin({
 				tokenId: stableCoinDetails?.tokenId,
-				initialSupply: Number(stableCoinDetails?.initialSupply),
-				totalSupply: Number(stableCoinDetails?.totalSupply),
-				maxSupply: Number(stableCoinDetails?.maxSupply),
+				initialSupply: stableCoinDetails?.initialSupply,
+				totalSupply: stableCoinDetails?.totalSupply,
+				maxSupply: stableCoinDetails?.maxSupply,
 				name: stableCoinDetails?.name,
 				symbol: stableCoinDetails?.symbol,
 				decimals: stableCoinDetails?.decimals,
@@ -114,23 +114,26 @@ const RescueTokenOperation = () => {
 							{t('rescueTokens:operationTitle')}
 						</Text>
 						<Stack as='form' spacing={6}>
-							<InputNumberController
+							<InputController
 								rules={{
-									required: t('global:validations.required'),
+									required: t(`global:validations.required`),
 									validate: {
-										maxDecimals: (value: number) => {
+										validNumber: (value: string) => {
+											return validateAmount(value) || t('global:validations.invalidAmount');
+										},
+										validDecimals: (value: string) => {
 											return (
-												validateDecimals(value, decimals) || t('rescueTokens:decimalsValidation')
+												validateDecimalsString(value, decimals) ||
+												t('global:validations.decimalsValidation')
 											);
 										},
 									},
 								}}
 								isRequired
 								control={control}
-								name='amount'
+								name={'amount'}
 								label={t('rescueTokens:amountLabel')}
 								placeholder={t('rescueTokens:amountPlaceholder')}
-								decimalScale={decimals}
 							/>
 						</Stack>
 					</>
