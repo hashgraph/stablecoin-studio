@@ -23,6 +23,11 @@ export const validateDecimals = (value: number, decimals: number) => {
 	return dec <= decimals;
 };
 
+export const validateDecimalsString = (value: string, decimals: number) => {
+	if (value.split('.').length === 1) return true;
+	return value.split('.')[1].length <= decimals || false;
+};
+
 export const handleRequestValidation = (
 	val: ValidationResponse[],
 	msg?: string,

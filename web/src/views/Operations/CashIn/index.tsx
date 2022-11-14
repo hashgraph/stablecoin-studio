@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import DetailsReview from '../../../components/DetailsReview';
 import InputController from '../../../components/Form/InputController';
 import SDKService from '../../../services/SDKService';
-import { handleRequestValidation } from '../../../utils/validationsHelper';
+import { handleRequestValidation, validateDecimalsString } from '../../../utils/validationsHelper';
 import OperationLayout from './../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
@@ -18,7 +18,7 @@ import {
 } from '../../../store/slices/walletSlice';
 import { useEffect, useState } from 'react';
 import type { AppDispatch } from '../../../store/store.js';
-import { CashInStableCoinRequest } from 'hedera-stable-coin-sdk';
+import { BigDecimal, CashInStableCoinRequest } from 'hedera-stable-coin-sdk';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
 
@@ -32,6 +32,7 @@ const CashInOperation = () => {
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
 	// const infoAccount = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
+	const { decimals = 0,maxSupply} = selectedStableCoin || {};
 	const dispatch = useDispatch<AppDispatch>();
 
 	const [errorOperation, setErrorOperation] = useState();
@@ -123,10 +124,23 @@ const CashInOperation = () => {
 								rules={{
 									required: t(`global:validations.required`),
 									validate: {
+										validDecimals: (value: string) => {
+											return (
+												validateDecimalsString(value, decimals) ||
+												t('global:validations.decimalsValidation')
+											);
+										},
 										validation: (value: string) => {
 											request.amount = value;
 											const res = handleRequestValidation(request.validate('amount'));
 											return res;
+										},
+										quantityOverMaxSupply: (value: string) => {
+											return maxSupply && maxSupply !== 'INFINITE'
+												? BigDecimal.fromString(maxSupply, decimals).isGreaterOrEqualThan(
+														BigDecimal.fromString(value.toString(), decimals),
+												  ) || t('global:validations.overMaxSupplyCashIn')
+												: true;
 										},
 									},
 								}}
