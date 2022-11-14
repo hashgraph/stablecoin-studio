@@ -4,7 +4,7 @@ import BaseError, {
 } from '../../../../../src/core/error/BaseError.js';
 import { CashOutStableCoinRequest } from '../../../../../src/index.js';
 import RequestMapper from '../../../../../src/port/in/sdk/request/mapping/RequestMapper.js';
-import {REQUEST_ACCOUNTS } from '../../../../core/core.js';
+import {logValidation, REQUEST_ACCOUNTS } from '../../../../core/core.js';
  
 describe('🧪 SDK CashOut Stable Coin Request', () => {
   it('Create simple request', () => {
@@ -106,7 +106,7 @@ describe('🧪 SDK CashOut Stable Coin Request', () => {
     const validations = request.validate();
     // logValidation(validations);
     expect(validations).not.toBeNull();
-    expect(validations.length).toEqual(3);
+    expect(validations.length).toEqual(2);
   });
 
   it('Create and validate request, all fail', () => {
@@ -122,7 +122,7 @@ describe('🧪 SDK CashOut Stable Coin Request', () => {
     expect(request).not.toBeNull();
     const validations = request.validate();
     expect(validations).not.toBeNull();
-    expect(validations.length).toEqual(4);
+    expect(validations.length).toEqual(3);
     console.log(validations);
   });
 });

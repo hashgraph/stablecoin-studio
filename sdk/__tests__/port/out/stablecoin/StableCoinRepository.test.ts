@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
+import BaseError from '../../../../src/core/error/BaseError.js';
 import BigDecimal from '../../../../src/domain/context/stablecoin/BigDecimal.js';
 import {
   Account,
@@ -50,7 +51,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
         }),
         ACCOUNTS.testnet,
       ),
-    ).rejects.toThrow(ProviderError);
+    ).rejects.toThrow(BaseError);
   });
 
   it('Test getListStableCoins', async () => {
@@ -361,7 +362,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
 function mockRepo(networkAdapter: NetworkAdapter, provider?: IProvider) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const deployFnErr = (coin: StableCoin, account: Account) => {
-    throw new Error();
+    throw new ProviderError();
   };
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const deployFn = (coin: StableCoin, account: Account) => {
