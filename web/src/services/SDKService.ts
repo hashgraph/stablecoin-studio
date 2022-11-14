@@ -209,6 +209,10 @@ export class SDKService {
 	public static async isUnlimitedSupplierAllowance(req: CheckCashInRoleRequest) {
 		return SDKService.getInstance().then((instance) => instance.isUnlimitedSupplierAllowance(req));
 	}
+
+	public static async getRoles(data: IRequestRoles) {
+		return SDKService.getInstance().then((instance) => instance.getRoles(data));
+	}
 }
 
 export default SDKService;

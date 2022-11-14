@@ -10,6 +10,7 @@ export const RoutesMappingUrl: Record<NamedRoutes, string> = {
 	[NamedRoutes.Dashboard]: '/dashboard',
 	[NamedRoutes.EditRole]: '/roles/edit-role',
 	[NamedRoutes.GiveRole]: '/roles/give-role',
+	[NamedRoutes.RefreshRoles]: '/roles/refresh-roles',
 	[NamedRoutes.Login]: '/login',
 	[NamedRoutes.Operations]: '/operations',
 	[NamedRoutes.RescueTokens]: '/operations/rescue-tokens',
@@ -19,4 +20,5 @@ export const RoutesMappingUrl: Record<NamedRoutes, string> = {
 	[NamedRoutes.StableCoinDetails]: '/stable-coin/details',
 	[NamedRoutes.StableCoinNotSelected]: '/stable-coin/not-selected',
 	[NamedRoutes.Wipe]: '/operations/wipe',
+	[NamedRoutes.ExternalToken]: '/stable-coin/external',
 };

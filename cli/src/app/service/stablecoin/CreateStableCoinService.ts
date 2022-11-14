@@ -285,7 +285,6 @@ export default class CreateStableCoinService extends Service {
           : 'The Smart Contract',
       treasury: treasury !== '0.0.0' ? treasury : 'The Smart Contract',
     });
-
     if (
       !(await utilsService.defaultConfirmAsk(
         language.getText('stablecoin.askConfirmCreation'),

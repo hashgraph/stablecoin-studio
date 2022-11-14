@@ -164,6 +164,7 @@ export const english = {
       'Configuration',
       new inquirer.Separator(),
       'Exit',
+      new inquirer.Separator(' '),
     ],
     changeOptions: [
       'Show configuration',
@@ -172,6 +173,7 @@ export const english = {
       'Manage accounts',
       new inquirer.Separator(),
       'Return to main menu',
+      new inquirer.Separator(' '),
     ],
     manageAccountOptions: [
       'Change account',
@@ -180,6 +182,7 @@ export const english = {
       'Delete account',
       new inquirer.Separator(),
       'Go back',
+      new inquirer.Separator(' '),
     ],
     manageExternalTokens: [
       'Add token',
@@ -187,6 +190,7 @@ export const english = {
       'Remove token',
       new inquirer.Separator(),
       'Go back',
+      new inquirer.Separator(' '),
     ],
     stableCoinOptions: [
       'Cash in',
@@ -199,6 +203,7 @@ export const english = {
       'Refresh roles',
       new inquirer.Separator(),
       'Return to main menu',
+      new inquirer.Separator(' '),
     ],
     roleManagementOptions: [
       'Grant role',
@@ -207,6 +212,7 @@ export const english = {
       'Has role',
       new inquirer.Separator(),
       'Go back',
+      new inquirer.Separator(' '),
     ],
     adminFeatureOptions: ['Current user key', 'None'],
     featureOptions: [
@@ -220,6 +226,7 @@ export const english = {
       'Limited',
       new inquirer.Separator(),
       'Back',
+      new inquirer.Separator(' '),
     ],
     editSupplierRoleOptions: [
       'Increase limit',
@@ -227,9 +234,18 @@ export const english = {
       'Reset limit',
       new inquirer.Separator(),
       'Back',
+      new inquirer.Separator(' '),
     ],
-    backOption: [new inquirer.Separator(), 'Go back'],
-    returnOption: [new inquirer.Separator(), 'Return to main menu'],
+    backOption: [
+      new inquirer.Separator(),
+      'Go back',
+      new inquirer.Separator(' '),
+    ],
+    returnOption: [
+      new inquirer.Separator(),
+      'Return to main menu',
+      new inquirer.Separator(' '),
+    ],
     goBack: 'Go back',
     privateKeyType: ['ED25519', 'ECDSA'],
   },
@@ -300,6 +316,7 @@ export const english = {
       'Check cash in limit',
       new inquirer.Separator(),
       'Go back',
+      new inquirer.Separator(' '),
     ],
     noRoles: 'You do not have any role.',
   },

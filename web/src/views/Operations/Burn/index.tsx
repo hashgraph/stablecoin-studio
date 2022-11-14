@@ -63,6 +63,21 @@ const BurnOperation = () => {
 		RouterManager.goBack(navigate);
 	};
 
+	const handleBurn: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
+		// const { amount } = getValues();
+		try {
+			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId) {
+				onError();
+				return;
+			}
+			await SDKService.cashOut(request);
+			onSuccess();
+		} catch (error: any) {
+			setErrorOperation(error.toString());
+			onError();
+		}
+	};
+
 	const handleRefreshCoinInfo = async () => {
 		const stableCoinDetails = await SDKService.getStableCoinDetails({
 			id: selectedStableCoin?.tokenId || '',
@@ -70,9 +85,9 @@ const BurnOperation = () => {
 		dispatch(
 			walletActions.setSelectedStableCoin({
 				tokenId: stableCoinDetails?.tokenId,
-				initialSupply: Number(stableCoinDetails?.initialSupply),
-				totalSupply: Number(stableCoinDetails?.totalSupply),
-				maxSupply: Number(stableCoinDetails?.maxSupply),
+				initialSupply: stableCoinDetails?.initialSupply,
+				totalSupply: stableCoinDetails?.totalSupply,
+				maxSupply: stableCoinDetails?.maxSupply,
 				name: stableCoinDetails?.name,
 				symbol: stableCoinDetails?.symbol,
 				decimals: stableCoinDetails?.decimals,
@@ -93,21 +108,6 @@ const BurnOperation = () => {
 		);
 	};
 
-	const handleBurn: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
-		// const { amount } = getValues();
-		try {
-			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId) {
-				onError();
-				return;
-			}
-			await SDKService.cashOut(request);
-			onSuccess();
-		} catch (error: any) {
-			setErrorOperation(error.toString());
-			onError();
-		}
-	};
-
 	return (
 		<>
 			<OperationLayout
@@ -122,7 +122,7 @@ const BurnOperation = () => {
 						<Stack as='form' spacing={6}>
 							<InputController
 								rules={{
-									required: t('global:validations.required'),
+									required: t(`global:validations.required`),
 									validate: {
 										validation: (value: string) => {
 											request.amount = value;
@@ -133,7 +133,7 @@ const BurnOperation = () => {
 								}}
 								isRequired
 								control={control}
-								name='amount'
+								name={'amount'}
 								label={t('burn:amountLabel')}
 								placeholder={t('burn:amountPlaceholder')}
 							/>

@@ -6,8 +6,7 @@ import RoleLayout from './RoleLayout';
 import ModalsHandler from '../../components/ModalsHandler';
 import DetailsReview from '../../components/DetailsReview';
 import SwitchController from '../../components/Form/SwitchController';
-import InputNumberController from '../../components/Form/InputNumberController';
-import { roleOptions, cashinLimitOptions, fields, actions } from './constants';
+import { roleOptions, cashinLimitOptions, fields, actions, roleExternalTokens } from './constants';
 import type { Detail } from '../../components/DetailsReview';
 import type { ModalsHandlerActionsProps } from '../../components/ModalsHandler';
 import SDKService from '../../services/SDKService';
@@ -51,14 +50,14 @@ const styles = {
 	},
 };
 
-export type Action = 'editRole' | 'giveRole' | 'revokeRole';
+export type Action = 'editRole' | 'giveRole' | 'revokeRole' | 'refreshRoles';
 
 interface HandleRolesProps {
 	action: Action;
 }
 
 const HandleRoles = ({ action }: HandleRolesProps) => {
-	const { t } = useTranslation(['global', 'roles', 'stableCoinCreation']);
+	const { t } = useTranslation(['global', 'roles', 'stableCoinCreation', 'externalTokenInfo']);
 	const {
 		control,
 		formState: { isValid },
@@ -255,6 +254,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 	};
 
 	const renderSupplierQuantity = () => {
+		const { decimals = 0 } = selectedStableCoin || {};
 		return (
 			<Box data-testid='supplier-quantity'>
 				<HStack>
@@ -266,10 +266,21 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 				</HStack>
 				{!infinity && (
 					<Box mt='20px'>
-						<InputNumberController
+						<InputController
 							data-testid='input-supplier-quantity'
 							rules={{
 								required: t(`global:validations.required`),
+								validate: {
+									validNumber: (value: string) => {
+										return validateAmount(value) || t('global:validations.invalidAmount');
+									},
+									validDecimals: (value: string) => {
+										return (
+											validateDecimalsString(value, decimals) ||
+											t('global:validations.decimalsValidation')
+										);
+									},
+								},
 							}}
 							isRequired
 							control={control}
@@ -306,11 +317,14 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 		return (
 			<Stack spacing={6}>
 				{increaseOrDecreseOptionSelected && (
-					<InputNumberController
+					<InputController
 						rules={{
-							required: t('global:validations.required'),
+							required: t(`global:validations.required`),
 							validate: {
-								maxDecimals: (value: number) => {
+								validNumber: (value: string) => {
+									return validateAmount(value) || t('global:validations.invalidAmount');
+								},
+								validDecimals: (value: string) => {
 									return (
 										validateDecimals(value, decimals) || t('global:validations.decimalsValidation')
 									);
@@ -324,7 +338,6 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 								},
 							},
 						}}
-						decimalScale={decimals}
 						isRequired
 						control={control}
 						name='amount'
@@ -335,16 +348,43 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 			</Stack>
 		);
 	};
+	const renderRoles = () => {
+		return (
+			<Stack>
+				<HStack mb={4}>
+					<Text fontSize='14px' fontWeight='400' lineHeight='17px'>
+						{t('externalTokenInfo:externalTokenInfo.autoCheckRoles')}
+					</Text>
+					<SwitchController control={control} name={fields.autoCheckRoles} defaultValue={false} />
+				</HStack>
+				;
+				{!askRolesToSDK && (
+					<SelectController
+						control={control}
+						name={fields.roles}
+						label={'Roles'}
+						placeholder={t('externalTokenInfo:externalTokenInfo.rolesPlaceholder')}
+						options={roleExternalTokens}
+						addonLeft={true}
+						variant='unstyled'
+						overrideStyles={styles}
+						isMulti
+					/>
+				)}
+			</Stack>
+		);
+	};
 
 	const getDetails: () => Detail[] = () => {
-		const details: Detail[] = [
+		let details: Detail[] = [
 			{
 				label: t(`roles:${action}.modalActionDetailAccount`),
 				value: account as string,
 			},
 		];
-
-		if (action !== actions.edit) {
+		if (action === actions.refresh) {
+			details = [];
+		} else if (action !== actions.edit) {
 			const value = role?.label;
 			const roleAction: Detail = {
 				label: t(`roles:${action}.modalActionDetailRole`),
@@ -390,7 +430,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 			<RoleLayout
 				accountLabel={t(`roles:${action}.accountLabel`)}
 				accountPlaceholder={t(`roles:${action}.accountPlaceholder`)}
-				buttonConfirmEnable={isValid}
+				buttonConfirmEnable={isValid || action === actions.refresh}
 				control={control}
 				onConfirm={onOpen}
 				options={filteredCapabilities}
@@ -399,10 +439,12 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 				// @ts-ignore-next-line
 				title={t(`roles:${action}.title`)}
 				roleRequest={action !== actions.edit}
+				isRefreshRoles={action === actions.refresh}
 			>
 				{role?.label === supplier && action !== actions.revoke && renderSupplierQuantity()}
 				{action === actions.edit && renderCashinLimitOptions()}
 				{action === actions.edit && renderAmount()}
+				{action === actions.refresh && renderRoles()}
 			</RoleLayout>
 			<ModalsHandler
 				errorNotificationTitle={t(`roles:${action}.modalErrorTitle`)}

@@ -34,9 +34,9 @@ const StableCoinDetails = () => {
 		dispatch(
 			walletActions.setSelectedStableCoin({
 				tokenId: stableCoinDetails?.tokenId,
-				initialSupply: Number(stableCoinDetails?.initialSupply),
-				totalSupply: Number(stableCoinDetails?.totalSupply),
-				maxSupply: Number(stableCoinDetails?.maxSupply),
+				initialSupply: stableCoinDetails?.initialSupply,
+				totalSupply: stableCoinDetails?.totalSupply,
+				maxSupply: stableCoinDetails?.maxSupply,
 				name: stableCoinDetails?.name,
 				symbol: stableCoinDetails?.symbol,
 				decimals: stableCoinDetails?.decimals,

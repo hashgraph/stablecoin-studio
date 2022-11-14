@@ -21,6 +21,29 @@
 		- [Example (JS)](#example-js)
 		- [Example (TS)](#example-ts)
 	- [Before using](#before-using)
+- [Basic Types](#basic-types)
+	- [AccountId](#accountid)
+		- [Fields](#fields)
+		- [Example](#example)
+	- [Account](#account)
+		- [Fields](#fields-1)
+	- [EOAccount](#eoaccount)
+		- [Fields](#fields-2)
+		- [Example](#example-1)
+	- [HashPackAccount](#hashpackaccount)
+		- [Fields](#fields-3)
+		- [Example](#example-2)
+	- [PrivateKey](#privatekey)
+		- [Fields](#fields-4)
+		- [Example](#example-3)
+	- [PrivateKeyType [WIP]](#privatekeytype-wip)
+		- [Example](#example-4)
+	- [PublicKey](#publickey)
+		- [Fields](#fields-5)
+		- [Example](#example-5)
+	- [ContractId](#contractid)
+		- [Fields](#fields-6)
+		- [Example](#example-6)
 - [Usage](#usage)
 		- [**Important**](#important)
 	- [Create Stable Coin](#create-stable-coin)
@@ -818,7 +841,8 @@ Grants an account a role in a stable coin.
 		BURN_ROLE,
 		WIPE_ROLE,
 		RESCUE_ROLE,
-		PAUSER_ROLE,
+		PAUSE_ROLE,
+		FREEZE_ROLE
 	}
 
 	interface IRoleStableCoinRequest {
@@ -853,7 +877,8 @@ Revokes an account's role in a stable coin.
 		BURN_ROLE,
 		WIPE_ROLE,
 		RESCUE_ROLE,
-		PAUSER_ROLE,
+		PAUSE_ROLE,
+		FREEZE_ROLE
 	}
 
 	interface IRoleStableCoinRequest {
@@ -887,7 +912,8 @@ Checks if an account has a certain role on the stable coin.
 		BURN_ROLE,
 		WIPE_ROLE,
 		RESCUE_ROLE,
-		PAUSER_ROLE,
+		PAUSE_ROLE,
+		FREEZE_ROLE
 	}
 
 	interface IRoleStableCoinRequest {

@@ -16,6 +16,10 @@ const Topbar = () => {
 		RouterManager.to(navigate, NamedRoutes.StableCoinCreation);
 	};
 
+	const handleNavigateEC = () => {
+		RouterManager.to(navigate, NamedRoutes.ExternalToken);
+	};
+
 	return (
 		<Flex
 			data-testid='topbar'
@@ -44,7 +48,7 @@ const Topbar = () => {
 						<CollapsibleButton
 							nameIcon='ArrowLineDown'
 							text={t('topbar.addSC')}
-							onClick={() => alert('working on it!')}
+							onClick={handleNavigateEC}
 						/>
 					</HStack>
 				</Flex>
