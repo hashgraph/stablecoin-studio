@@ -6,7 +6,7 @@ import RoleLayout from './RoleLayout';
 import ModalsHandler from '../../components/ModalsHandler';
 import DetailsReview from '../../components/DetailsReview';
 import SwitchController from '../../components/Form/SwitchController';
-import { roleOptions, cashinLimitOptions, fields, actions } from './constants';
+import { roleOptions, cashinLimitOptions, fields, actions, roleExternalTokens } from './constants';
 import type { Detail } from '../../components/DetailsReview';
 import type { ModalsHandlerActionsProps } from '../../components/ModalsHandler';
 import SDKService from '../../services/SDKService';
@@ -15,9 +15,13 @@ import {
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNT,
 	SELECTED_WALLET_CAPABILITIES,
+	SELECTED_WALLET_PAIRED_ACCOUNTID,
 } from '../../store/slices/walletSlice';
 import { SelectController } from '../../components/Form/SelectController';
 import { validateAmount, validateDecimalsString } from '../../utils/validationsHelper';
+import type { IAccountToken } from '../../interfaces/IAccountToken';
+import type { IExternalToken } from '../../interfaces/IExternalToken';
+import type { IRole } from '../../interfaces/IRole';
 import { formatAmountWithDecimals } from '../../utils/inputHelper';
 import { BigDecimal, Capabilities } from 'hedera-stable-coin-sdk';
 import InputController from '../../components/Form/InputController';
@@ -40,14 +44,14 @@ const styles = {
 	},
 };
 
-export type Action = 'editRole' | 'giveRole' | 'revokeRole';
+export type Action = 'editRole' | 'giveRole' | 'revokeRole' | 'refreshRoles';
 
 interface HandleRolesProps {
 	action: Action;
 }
 
 const HandleRoles = ({ action }: HandleRolesProps) => {
-	const { t } = useTranslation(['global', 'roles', 'stableCoinCreation']);
+	const { t } = useTranslation(['global', 'roles', 'stableCoinCreation', 'externalTokenInfo']);
 	const {
 		control,
 		formState: { isValid },
@@ -57,9 +61,11 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const selectedAccount = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
+	const accountId = useSelector(SELECTED_WALLET_PAIRED_ACCOUNTID);
 	const capabilities = useSelector(SELECTED_WALLET_CAPABILITIES);
 
 	const [limit, setLimit] = useState<string | null>();
+  
 	const [modalErrorDescription, setModalErrorDescription] =
 		useState<string>('modalErrorDescription');
 
@@ -70,6 +76,9 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 	const amount: string | undefined = watch(fields.amount);
 	const infinity: boolean = watch(fields.supplierQuantitySwitch);
 	const supplierLimitOption = watch(fields.cashinLimitOption)?.value;
+	const askRolesToSDK = watch(fields.autoCheckRoles);
+	const roles = watch(fields.roles);
+
 	const increaseOrDecreseOptionSelected: boolean = ['INCREASE', 'DECREASE'].includes(
 		supplierLimitOption,
 	);
@@ -96,16 +105,24 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 
 	const handleSubmit: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
 		try {
-			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId || !account) {
+			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId) {
 				onError();
 				return;
 			}
-
 			let alreadyHasRole;
 			let isUnlimitedSupplierAllowance;
+			// vars to refresh externalTokens
+			let tokensAccount;
+			let myAccount;
+			let externalTokens;
+			let externalToken;
 
 			switch (action.toString()) {
 				case 'giveRole':
+					if (!account) {
+						onError();
+						return;
+					}
 					alreadyHasRole = await SDKService.hasRole({
 						proxyContractId: selectedStableCoin.memo.proxyContract,
 						account: selectedAccount,
@@ -119,7 +136,6 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 						onError();
 						return;
 					}
-
 					amount
 						? await SDKService.grantRole({
 								proxyContractId: selectedStableCoin.memo.proxyContract,
@@ -137,8 +153,11 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 								role: role.value,
 						  });
 					break;
-
 				case 'revokeRole':
+					if (!account) {
+						onError();
+						return;
+					}
 					alreadyHasRole = await SDKService.hasRole({
 						proxyContractId: selectedStableCoin.memo.proxyContract,
 						account: selectedAccount,
@@ -146,13 +165,11 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 						targetId: account,
 						role: role.value,
 					});
-
 					if (alreadyHasRole && !alreadyHasRole[0]) {
 						setModalErrorDescription('hasNotRoleError');
 						onError();
 						return;
 					}
-
 					await SDKService.revokeRole({
 						proxyContractId: selectedStableCoin.memo.proxyContract,
 						account: selectedAccount,
@@ -161,20 +178,21 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 						role: role.value,
 					});
 					break;
-
 				case 'editRole':
+					if (!account) {
+						onError();
+						return;
+					}
 					isUnlimitedSupplierAllowance = await SDKService.isUnlimitedSupplierAllowance({
 						proxyContractId: selectedStableCoin.memo.proxyContract,
 						account: selectedAccount,
 						targetId: account,
 					});
-
 					if (isUnlimitedSupplierAllowance![0]) {
 						setModalErrorDescription('hasInfiniteAllowance');
 						onError();
 						return;
 					}
-
 					switch (supplierLimitOption) {
 						case 'INCREASE':
 							await SDKService.increaseSupplierAllowance({
@@ -211,9 +229,28 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 								tokenId: selectedStableCoin.tokenId,
 								targetId: account,
 							});
-							setLimit(limit);
+							setLimit(limit?.[0]);
 						}
 					}
+					break;
+				case 'refreshRoles':
+					console.log('ENTRO EN REFRESHROLES');
+					tokensAccount = JSON.parse(localStorage.tokensAccount);
+					myAccount = tokensAccount.find((acc: IAccountToken) => acc.id === accountId);
+					externalTokens = myAccount.externalTokens;
+					externalToken = externalTokens.find(
+						(coin: IExternalToken) => coin.id === selectedStableCoin.tokenId,
+					);
+					if (askRolesToSDK) {
+						externalToken.roles = await SDKService.getRoles({
+							proxyContractId: selectedStableCoin.memo.proxyContract,
+							targetId: accountId,
+							account: selectedAccount,
+						});
+					} else {
+						externalToken.roles = roles.map((role: IRole) => role.label);
+					}
+					localStorage.setItem('tokensAccount', JSON.stringify(tokensAccount));
 					break;
 			}
 			onSuccess();
@@ -319,16 +356,43 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 			</Stack>
 		);
 	};
+	const renderRoles = () => {
+		return (
+			<Stack>
+				<HStack mb={4}>
+					<Text fontSize='14px' fontWeight='400' lineHeight='17px'>
+						{t('externalTokenInfo:externalTokenInfo.autoCheckRoles')}
+					</Text>
+					<SwitchController control={control} name={fields.autoCheckRoles} defaultValue={false} />
+				</HStack>
+				;
+				{!askRolesToSDK && (
+					<SelectController
+						control={control}
+						name={fields.roles}
+						label={'Roles'}
+						placeholder={t('externalTokenInfo:externalTokenInfo.rolesPlaceholder')}
+						options={roleExternalTokens}
+						addonLeft={true}
+						variant='unstyled'
+						overrideStyles={styles}
+						isMulti
+					/>
+				)}
+			</Stack>
+		);
+	};
 
 	const getDetails: () => Detail[] = () => {
-		const details: Detail[] = [
+		let details: Detail[] = [
 			{
 				label: t(`roles:${action}.modalActionDetailAccount`),
 				value: account as string,
 			},
 		];
-
-		if (action !== actions.edit) {
+		if (action === actions.refresh) {
+			details = [];
+		} else if (action !== actions.edit) {
 			const value = role?.label;
 			const roleAction: Detail = {
 				label: t(`roles:${action}.modalActionDetailRole`),
@@ -374,7 +438,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 			<RoleLayout
 				accountLabel={t(`roles:${action}.accountLabel`)}
 				accountPlaceholder={t(`roles:${action}.accountPlaceholder`)}
-				buttonConfirmEnable={isValid}
+				buttonConfirmEnable={isValid || action === actions.refresh}
 				control={control}
 				onConfirm={onOpen}
 				options={filteredCapabilities}
@@ -383,10 +447,12 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 				// @ts-ignore-next-line
 				title={t(`roles:${action}.title`)}
 				roleRequest={action !== actions.edit}
+				isRefreshRoles={action === actions.refresh}
 			>
 				{role?.label === supplier && action !== actions.revoke && renderSupplierQuantity()}
 				{action === actions.edit && renderCashinLimitOptions()}
 				{action === actions.edit && renderAmount()}
+				{action === actions.refresh && renderRoles()}
 			</RoleLayout>
 			<ModalsHandler
 				errorNotificationTitle={t(`roles:${action}.modalErrorTitle`)}

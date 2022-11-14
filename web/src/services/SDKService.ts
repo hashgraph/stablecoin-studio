@@ -18,6 +18,7 @@ import type {
 	Capabilities,
 	ICashInStableCoinRequest,
 	ICashOutStableCoinRequest,
+	IRequestRoles,
 } from 'hedera-stable-coin-sdk';
 
 export enum HashConnectConnectionState {
@@ -180,9 +181,9 @@ export class SDKService {
 		id,
 		publicKey,
 	}: {
-		id: string,
+		id: string;
 		publicKey: string;
-	}): Promise<Capabilities[] | null> {		
+	}): Promise<Capabilities[] | null> {
 		return (await SDKService.getInstance())?.getCapabilitiesStableCoin(id, publicKey);
 	}
 
@@ -216,6 +217,10 @@ export class SDKService {
 
 	public static async isUnlimitedSupplierAllowance(data: IBasicRequest) {
 		return SDKService.getInstance().then((instance) => instance.isUnlimitedSupplierAllowance(data));
+	}
+
+	public static async getRoles(data: IRequestRoles) {
+		return SDKService.getInstance().then((instance) => instance.getRoles(data));
 	}
 }
 

@@ -375,8 +375,8 @@ describe('🧪 [PORT] SDK', () => {
 
   it('Get capabilities', async () => {
     const capabilities = await sdk.getCapabilitiesStableCoin(
-			tokenId ?? '',
-			ACCOUNTS.testnet.privateKey.publicKey.key
+      tokenId ?? '',
+      ACCOUNTS.testnet.privateKey.publicKey.key,
     );
     expect(capabilities).not.toBeNull();
   }, 15000);
@@ -404,4 +404,14 @@ describe('🧪 [PORT] SDK', () => {
       }),
     ).rejects.toThrow(Error);
   }, 120_000);
+
+  it('Get roles', async () => {
+    const roles = await sdk.getRoles({
+      proxyContractId: proxyContractId ?? '',
+      targetId: ACCOUNTS.testnet.accountId.id,
+      account: ACCOUNTS.testnet,
+    });
+    expect(roles).not.toBeNull();
+    expect(roles?.length).toBeGreaterThan(0);
+  }, 15000);
 });

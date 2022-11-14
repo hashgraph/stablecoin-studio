@@ -26,7 +26,6 @@ import IAssociateTokenStableCoinServiceRequestModel from '../../../app/service/s
 import ISupplierRoleStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/ISupplierRoleStableCoinServiceRequestModel';
 import IRescueStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IRescueStableCoinServiceRequestModel.js';
 import IRoleStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IRoleStableCoinServiceRequestModel.js';
-import IGetCapabilitiesServiceRequestModel from '../../../app/service/stablecoin/model/IGetCapabilitiesServiceRequestModel.js';
 import IGetBasicRequestModel from '../../../app/service/stablecoin/model/IGetBasicRequest.js';
 import { IAccountWithKeyRequestModel } from '../../../app/service/stablecoin/model/CoreRequestModel.js';
 
@@ -82,6 +81,7 @@ import HashPackAccount from '../../../domain/context/account/HashPackAccount.js'
 import IAccountInfo from './response/IAccountInfo.js';
 import BigDecimal from '../../../domain/context/stablecoin/BigDecimal.js';
 import IGetRolesServiceRequestModel from '../../../app/service/stablecoin/model/IGetRolesServiceRequest';
+import { Roles } from '../../../domain/context/stablecoin/Roles.js';
 
 export {
 	IAssociateStableCoinRequest,
@@ -103,6 +103,7 @@ export {
 	IStableCoinDetail,
 	IStableCoinList,
 	IAccountInfo,
+	IRequestRoles,
 };
 
 /* Export basic types*/
@@ -133,6 +134,7 @@ export {
 	AuthenticationResponseMessage,
 	Capabilities,
 	StableCoinMemo,
+	Roles,
 	BigDecimal
 };
 
@@ -227,7 +229,7 @@ export class SDK {
 
 	public getCapabilitiesStableCoin(
 		id: string,
-		publicKey: string
+		publicKey: string,
 	): Promise<Capabilities[]> | null {
 		return this.stableCoinService.getCapabilitiesStableCoin(id, publicKey);
 	}

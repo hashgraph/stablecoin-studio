@@ -9,11 +9,12 @@ interface CollapsibleButtonProps {
 	text: string;
 	buttonProps?: ButtonProps;
 	textProps?: TextProps;
+	iconColor?: string;
 	onClick?: MouseEventHandler<HTMLButtonElement>;
 }
 
 const CollapsibleButton = (props: CollapsibleButtonProps) => {
-	const { nameIcon, text, onClick, buttonProps, textProps } = props;
+	const { nameIcon, text, onClick, buttonProps, textProps, iconColor } = props;
 
 	const [isHover, setIsHover] = useState(false);
 
@@ -29,7 +30,7 @@ const CollapsibleButton = (props: CollapsibleButtonProps) => {
 				transition='all 500ms'
 				{...buttonProps}
 			>
-				<Icon name={nameIcon} fontSize='20px' color={'white'} />
+				<Icon name={nameIcon} fontSize='20px' color={iconColor || 'white'} />
 				{isHover && (
 					<Text transition='all 1000ms' ml={2} {...textProps}>
 						{text}
