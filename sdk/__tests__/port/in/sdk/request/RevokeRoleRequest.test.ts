@@ -76,7 +76,7 @@ describe('🧪 SDK Revoke Role Request', () => {
       targetId: REQUEST_ACCOUNTS.testnet.accountId,
       proxyContractId: EXAMPLE_TOKEN.proxyContractId,
       tokenId: EXAMPLE_TOKEN.tokenId,
-      role: StableCoinRole.PAUSER_ROLE
+      role: StableCoinRole.PAUSE_ROLE
     });
     expect(request).not.toBeNull();
     const validations = request.validate();
