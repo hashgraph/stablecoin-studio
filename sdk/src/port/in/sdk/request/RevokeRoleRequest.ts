@@ -13,7 +13,7 @@ export default class RevokeRoleRequest
 	targetId: string;
 	proxyContractId: string;
 	tokenId: string;
-	role: StableCoinRole;
+	role: StableCoinRole | undefined;
 
 	constructor({
 		account,
@@ -26,7 +26,7 @@ export default class RevokeRoleRequest
 		targetId: string;
 		proxyContractId: string;
 		tokenId: string;
-		role: StableCoinRole;
+		role: StableCoinRole | undefined;
 	}) {
 		super({
 			account: Validation.checkAccount(),

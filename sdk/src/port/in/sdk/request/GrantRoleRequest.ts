@@ -17,7 +17,7 @@ export default class GrantRoleRequest
 	targetId: string;
 	proxyContractId: string;
 	tokenId: string;
-	role: StableCoinRole;
+	role: StableCoinRole | undefined;
 
 	@OptionalField()
 	supplierType?: string | undefined;
@@ -38,7 +38,7 @@ export default class GrantRoleRequest
 		targetId: string;
 		proxyContractId: string;
 		tokenId: string;
-		role: StableCoinRole;
+		role: StableCoinRole | undefined;
 		supplierType?: string;
 		amount?: string;
 	}) {

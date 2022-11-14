@@ -1304,97 +1304,70 @@ export default class OperationStableCoinService extends Service {
     grantRoleRequest: GrantRoleRequest,
     sdk: SDK
   ): Promise<void> {
-    let limit = '';
-
-    const supplierRoleType = language.getArray('wizard.supplierRoleType');
-    grantRoleRequest.supplierType = await utilsService.defaultMultipleAsk(
-      language.getText('stablecoin.askCashInRoleType'),
-      supplierRoleType,
-    );
-    await utilsService.handleValidation(
-      () => grantRoleRequest.validate('supplierType'),
-      async () => {
-        const supplierType = await utilsService.defaultMultipleAsk(
-          language.getText('stablecoin.askCashInRoleType'),
-          supplierRoleType,
-        );
-        grantRoleRequest.supplierType = supplierType;
+    let hasRole;
+    await utilsService.showSpinner(sdk.hasRole(new HasRoleRequest({
+      account: grantRoleRequest.account,
+      targetId: grantRoleRequest.targetId,
+      proxyContractId: grantRoleRequest.proxyContractId,
+      tokenId: grantRoleRequest.tokenId,
+      role: grantRoleRequest.role
+    })).then((response) => (hasRole = response[0])),
+      {
+        text: language.getText('state.loading'),
+        successText: language.getText('state.loadCompleted') + '\n',
       },
     );
-
-    if (
-      grantRoleRequest.supplierType ===
-      supplierRoleType[supplierRoleType.length - 1]
-    )
-      await this.roleManagementFlow();
-    if (grantRoleRequest.supplierType === supplierRoleType[0]) {
-      //Give unlimited
-      //Call to SDK
-      if (
-        await this.checkSupplierType(
-          new CheckCashInRoleRequest({
-            proxyContractId: grantRoleRequest.proxyContractId,
-            targetId: grantRoleRequest.targetId,
-            account: grantRoleRequest.account,
-            supplierType: 'unlimited',
-          }),
-        )
-      ) {
-        console.log(language.getText('cashin.alreadyUnlimitedRole'));
-      }
-
-      grantRoleRequest.supplierType = 'unlimited';
-      await this.roleStableCoinService.giveSupplierRoleStableCoin(
-        grantRoleRequest,
-      );
-    }
-    if (grantRoleRequest.supplierType === supplierRoleType[1]) {
-      grantRoleRequest.amount = await utilsService.defaultSingleAsk(
-        language.getText('stablecoin.supplierRoleLimit'),
-        '1',
+    if (hasRole) {
+      console.log(language.getText('cashin.alreadyRole'));          
+    } else {
+      let limit = '';
+      const supplierRoleType = language.getArray('wizard.supplierRoleType');
+      grantRoleRequest.supplierType = await utilsService.defaultMultipleAsk(
+        language.getText('stablecoin.askCashInRoleType'),
+        supplierRoleType,
       );
       await utilsService.handleValidation(
-        () => grantRoleRequest.validate('amount'),
+        () => grantRoleRequest.validate('supplierType'),
         async () => {
-          limit = await utilsService.defaultSingleAsk(
-            language.getText('stablecoin.supplierRoleLimit'),
-            '1',
+          const supplierType = await utilsService.defaultMultipleAsk(
+            language.getText('stablecoin.askCashInRoleType'),
+            supplierRoleType,
           );
-          grantRoleRequest.amount = limit;
+          grantRoleRequest.supplierType = supplierType;
         },
       );
 
-      let hasRole;
-      await utilsService.showSpinner(sdk.hasRole(new HasRoleRequest({
-        account: grantRoleRequest.account,
-		    targetId: grantRoleRequest.targetId,
-		    proxyContractId: grantRoleRequest.proxyContractId,
-		    tokenId: grantRoleRequest.tokenId,
-		    role: grantRoleRequest.role
-      })).then((response) => (hasRole = response[0])),
-        {
-          text: language.getText('state.loading'),
-          successText: language.getText('state.loadCompleted') + '\n',
-        },
-      );
-
-      if (hasRole) {
-        console.log(language.getText('cashin.alreadyRole'));      
-      } else {  
+      if (
+        grantRoleRequest.supplierType ===
+        supplierRoleType[supplierRoleType.length - 1]
+      )
+        await this.roleManagementFlow();
+      if (grantRoleRequest.supplierType === supplierRoleType[0]) {
+        //Give unlimited
         //Call to SDK
-        if (
-          await this.checkSupplierType(
-            new CheckCashInRoleRequest({
-              proxyContractId: grantRoleRequest.proxyContractId,
-              targetId: grantRoleRequest.targetId,
-              account: grantRoleRequest.account,
-              supplierType: 'limited',
-            }),
-          )
-        ) {
-          console.log(language.getText('cashin.alreadyRole'));
-        }
-  
+        grantRoleRequest.supplierType = 'unlimited';
+        await this.roleStableCoinService.giveSupplierRoleStableCoin(
+          grantRoleRequest,
+        );
+      }
+      if (grantRoleRequest.supplierType === supplierRoleType[1]) {
+        grantRoleRequest.amount = await utilsService.defaultSingleAsk(
+          language.getText('stablecoin.supplierRoleLimit'),
+          '1',
+        );
+        await utilsService.handleValidation(
+          () => grantRoleRequest.validate('amount'),
+          async () => {
+            limit = await utilsService.defaultSingleAsk(
+              language.getText('stablecoin.supplierRoleLimit'),
+              '1',
+            );
+            grantRoleRequest.amount = limit;
+          },
+        );
+
+        //Give limited
+        //Call to SDK    
         grantRoleRequest.supplierType = 'limited';
         await this.roleStableCoinService.giveSupplierRoleStableCoin(
           grantRoleRequest,

@@ -14,7 +14,7 @@ export default class HasRoleRequest
 	targetId: string;
 	proxyContractId: string;
 	tokenId: string;
-	role: StableCoinRole;
+	role: StableCoinRole | undefined;
 
 	constructor({
 		account,
@@ -27,7 +27,7 @@ export default class HasRoleRequest
 		targetId: string;
 		proxyContractId: string;
 		tokenId: string;
-		role: StableCoinRole;
+		role: StableCoinRole | undefined;
 	}) {
 		super({
 			account: Validation.checkAccount(),
