@@ -20,6 +20,7 @@ import type {
 	ResetCashInLimitRequest,
 	RevokeRoleRequest,
 	CashInStableCoinRequest,
+	GetRolesRequest,
 } from 'hedera-stable-coin-sdk';
 import {
 	GetListStableCoinRequest,
@@ -210,7 +211,7 @@ export class SDKService {
 		return SDKService.getInstance().then((instance) => instance.isUnlimitedSupplierAllowance(req));
 	}
 
-	public static async getRoles(data: IRequestRoles) {
+	public static async getRoles(data: GetRolesRequest) {
 		return SDKService.getInstance().then((instance) => instance.getRoles(data));
 	}
 }
