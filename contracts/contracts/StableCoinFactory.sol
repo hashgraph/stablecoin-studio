@@ -78,7 +78,7 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes{
         SenderKey.ed25519 = senderPublicKey;
 
         IHederaTokenService.KeyValue memory ProxyKey;
-        SenderKey.delegatableContractId = StableCoinProxyAddress;
+        ProxyKey.delegatableContractId = StableCoinProxyAddress;
         
         IHederaTokenService.TokenKey[] memory keys = new IHederaTokenService.TokenKey[](4);
         keys[0] = IHederaTokenService.TokenKey({keyType: 1, key: SenderKey}); // admin
