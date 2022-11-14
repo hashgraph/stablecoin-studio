@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import DetailsReview from '../../../components/DetailsReview';
 import InputController from '../../../components/Form/InputController';
 import SDKService from '../../../services/SDKService';
-import { handleRequestValidation, validateAccount, validateDecimals } from '../../../utils/validationsHelper';
+import { handleRequestValidation, validateAccount, validateDecimals, validateDecimalsString } from '../../../utils/validationsHelper';
 import OperationLayout from './../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
@@ -125,17 +125,18 @@ const CashInOperation = () => {
 								rules={{
 									required: t('global:validations.required'),
 									validate: {
+										validDecimals: (value: string) => {
+											return (
+												validateDecimalsString(value, decimals) ||
+												t('global:validations.decimalsValidation')
+											);
+										},
 										validation: (value: string) => {
 											request.amount = value;
 											const res = handleRequestValidation(request.validate('amount'));
 											return res;
 										},
-										// maxDecimals: (value: number) => {
-										// 	return (
-										// 		validateDecimals(value, decimals) ||
-										// 		t('global:validations.decimalsValidation')
-										// 	);
-										// },
+										
 										// quantityOverMaxSupply: (value: number) => {
 										// 	return (
 										// 		validateQuantityOverMaxSupply(value, maxSupply, totalSupply) ||

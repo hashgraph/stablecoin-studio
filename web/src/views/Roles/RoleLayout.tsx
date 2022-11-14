@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import type { ReactNode } from 'react';
 import type { Control, FieldValues } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { validateAccount } from '../../utils/validationsHelper';
+import { handleRequestValidation } from '../../utils/validationsHelper';
 import BaseContainer from '../../components/BaseContainer';
 import InputController from '../../components/Form/InputController';
 import type { Option } from '../../components/Form/SelectController';
@@ -15,6 +15,14 @@ import { fields } from './constants';
 import { useSelector } from 'react-redux';
 import { formatAmountWithDecimals } from '../../utils/inputHelper';
 import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
+import type {
+	CheckCashInLimitRequest,
+	DecreaseCashInLimitRequest,
+	GrantRoleRequest,
+	IncreaseCashInLimitRequest,
+	ResetCashInLimitRequest,
+	RevokeRoleRequest,
+} from 'hedera-stable-coin-sdk';
 
 const styles = {
 	menuList: {
@@ -50,6 +58,7 @@ export interface RoleLayoutProps {
 	selectorPlaceholder: string;
 	title: string;
 	roleRequest: boolean;
+	request: GrantRoleRequest | RevokeRoleRequest |IncreaseCashInLimitRequest|CheckCashInLimitRequest|ResetCashInLimitRequest | DecreaseCashInLimitRequest | undefined;
 }
 
 const RoleLayout = (props: RoleLayoutProps) => {
@@ -65,6 +74,7 @@ const RoleLayout = (props: RoleLayoutProps) => {
 		selectorPlaceholder,
 		title,
 		roleRequest = true,
+		request
 	} = props;
 	const { t } = useTranslation(['global', 'roles', 'operations']);
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
@@ -164,8 +174,14 @@ const RoleLayout = (props: RoleLayoutProps) => {
 								rules={{
 									required: t('global:validations.required'),
 									validate: {
-										validAccount: (value: string) => {
-											return validateAccount(value) || t('global:validations.invalidAccount');
+										validation: (value: string) => {	
+											console.log(request);
+											
+											if(request){
+												request.targetId = value;
+												const res = handleRequestValidation(request.validate('targetId'));
+												return res;
+											}
 										},
 									},
 								}}

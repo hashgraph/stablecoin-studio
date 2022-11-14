@@ -1,12 +1,11 @@
 import { useTranslation } from 'react-i18next';
 import { Box, HStack, Text, Stack, useDisclosure } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
-import { useState } from 'react';
+import { useState , useEffect} from 'react';
 import RoleLayout from './RoleLayout';
 import ModalsHandler from '../../components/ModalsHandler';
 import DetailsReview from '../../components/DetailsReview';
 import SwitchController from '../../components/Form/SwitchController';
-import InputNumberController from '../../components/Form/InputNumberController';
 import { roleOptions, cashinLimitOptions, fields, actions } from './constants';
 import type { Detail } from '../../components/DetailsReview';
 import type { ModalsHandlerActionsProps } from '../../components/ModalsHandler';
@@ -18,7 +17,6 @@ import {
 	SELECTED_WALLET_CAPABILITIES,
 } from '../../store/slices/walletSlice';
 import { SelectController } from '../../components/Form/SelectController';
-import { validateDecimals } from '../../utils/validationsHelper';
 import { formatAmountWithDecimals } from '../../utils/inputHelper';
 import {
 	BigDecimal,
@@ -32,6 +30,8 @@ import {
 	ResetCashInLimitRequest,
 	RevokeRoleRequest,
 } from 'hedera-stable-coin-sdk';
+import InputController from '../../components/Form/InputController';
+import { handleRequestValidation, validateDecimalsString } from '../../utils/validationsHelper';
 
 const supplier = 'Cash in';
 
@@ -73,6 +73,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 	const [limit, setLimit] = useState<string | null>();
 	const [modalErrorDescription, setModalErrorDescription] =
 		useState<string>('modalErrorDescription');
+	const [request, setRequest] = useState<GrantRoleRequest | RevokeRoleRequest |IncreaseCashInLimitRequest|CheckCashInLimitRequest|ResetCashInLimitRequest |DecreaseCashInLimitRequest>();
 
 	register(fields.supplierQuantitySwitch, { value: true });
 	const { isOpen, onOpen, onClose } = useDisclosure();
@@ -104,6 +105,88 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 		}
 		return true;
 	});
+
+	useEffect(() => {
+		console.log(action);
+		
+		switch(action.toString()){
+			case 'giveRole':
+				setRequest(new GrantRoleRequest ({
+					proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
+					account: {
+						accountId: selectedAccount.accountId
+					},
+					tokenId: selectedStableCoin?.tokenId ?? '',
+					targetId: '',
+					amount: '0',
+					role: undefined,
+					}))
+				break;
+			case 'revokeRole':
+				setRequest(new RevokeRoleRequest ({
+					proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
+					account: {
+						accountId: selectedAccount.accountId
+					},
+					tokenId: selectedStableCoin?.tokenId ?? '',
+					targetId: '',
+					role: undefined,
+					}))
+				break;
+			case 'editRole':
+				console.log(supplierLimitOption);
+				
+				switch(supplierLimitOption){
+					case 'INCREASE':
+						setRequest(new IncreaseCashInLimitRequest ({
+							proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
+							account: {
+								accountId: selectedAccount.accountId
+							},
+							tokenId: selectedStableCoin?.tokenId ?? '',
+							targetId: '',
+							amount: '0',
+							}))
+						break;
+					case 'DECREASE':
+						setRequest(new DecreaseCashInLimitRequest(
+							{
+								proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
+								account: {
+									accountId: selectedAccount.accountId
+								},
+								tokenId: selectedStableCoin?.tokenId ?? '',
+								targetId: '',
+								amount:'0'
+							}))
+						break;
+					
+					case 'RESET':
+						setRequest(new ResetCashInLimitRequest({
+							proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
+							account: {
+								accountId: selectedAccount.accountId
+							},
+							targetId: '',
+							}))
+						break;
+					case 'CHECK':
+					default:
+					setRequest(new CheckCashInLimitRequest(
+						{
+							proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
+							account: {
+								accountId: selectedAccount.accountId
+							},
+							tokenId: selectedStableCoin?.tokenId ?? '',
+							targetId: '',
+							}		
+						))
+					break;
+				}
+				break;
+		}		
+	}, [supplierLimitOption])
 
 	const handleSubmit: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
 		try {
@@ -255,6 +338,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 	};
 
 	const renderSupplierQuantity = () => {
+		const { decimals = 0} = selectedStableCoin || {};
 		return (
 			<Box data-testid='supplier-quantity'>
 				<HStack>
@@ -266,10 +350,25 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 				</HStack>
 				{!infinity && (
 					<Box mt='20px'>
-						<InputNumberController
+						<InputController
 							data-testid='input-supplier-quantity'
 							rules={{
 								required: t(`global:validations.required`),
+								validate: {
+									validDecimals: (value: string) => {
+										return (
+											validateDecimalsString(value, decimals) ||
+											t('global:validations.decimalsValidation')
+										);
+									},
+									validation: (value: string) => {							
+										if(request && 'amount' in request){
+											request.amount = value;
+											const res = handleRequestValidation(request.validate('amount'));
+											return res;
+										}
+									},
+								},
 							}}
 							isRequired
 							control={control}
@@ -306,14 +405,20 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 		return (
 			<Stack spacing={6}>
 				{increaseOrDecreseOptionSelected && (
-					<InputNumberController
+					<InputController
 						rules={{
 							required: t('global:validations.required'),
 							validate: {
-								maxDecimals: (value: number) => {
-									return (
-										validateDecimals(value, decimals) || t('global:validations.decimalsValidation')
-									);
+								validDecimals: (value: string) => {
+									 return validateDecimalsString(value,decimals) ||
+									 t('global:validations.decimalsValidation')
+								},
+								validation: (value: string) => {							
+									if(request && 'amount' in request){
+										request.amount = value;
+										const res = handleRequestValidation(request.validate('amount'));
+										return res;
+									}
 								},
 								quantityOverMaxSupply: (value: number) => {
 									return maxSupply && maxSupply !== 'INFINITE'
@@ -324,7 +429,6 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 								},
 							},
 						}}
-						decimalScale={decimals}
 						isRequired
 						control={control}
 						name='amount'
@@ -399,6 +503,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 				// @ts-ignore-next-line
 				title={t(`roles:${action}.title`)}
 				roleRequest={action !== actions.edit}
+				request={request}
 			>
 				{role?.label === supplier && action !== actions.revoke && renderSupplierQuantity()}
 				{action === actions.edit && renderCashinLimitOptions()}
