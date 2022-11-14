@@ -142,7 +142,7 @@ export async function deployContractSDK(
     factory: any,
     privateKey: any,
     clientOperator: any,
-    constructorParameters?: any[]
+    constructorParameters?: any
 ) {
     const transaction = new ContractCreateFlow()
         .setBytecode(factory.bytecode)

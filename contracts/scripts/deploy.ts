@@ -3,6 +3,7 @@ const {
     AccountId,
     TokenSupplyType,
     PublicKey,
+    ContractFunctionParameters
 } = require('@hashgraph/sdk')
 
 const factoryAddress = ""; //"0000000000000000000000000000000002e86eb8"; 0.0.48787128
@@ -73,16 +74,16 @@ export async function deployFactory(
 
     // Deploying Factory proxy
     console.log(`Deploying Contract Factory Proxy. please wait...`);
-
-    let factoryProxyConstructorParam: any[] = []
-
-    console.log(`Constructor parameters ${factoryProxyConstructorParam[0]}, ${factoryProxyConstructorParam[1]}`);
+    
+    let factoryProxyConstructorParam = new ContractFunctionParameters();
+    factoryProxyConstructorParam.addAddress(factory.toSolidityAddress());
+    factoryProxyConstructorParam.addAddress(factoryProxyAdmin.toSolidityAddress());
 
     const factoryProxy = await deployContractSDK(
         StableCoinFactoryProxy__factory,
         privateKey,
         clientOperator,
-        []
+        factoryProxyConstructorParam
     )
 
     console.log(`Contract Factory Proxy deployed ${factoryProxy.toSolidityAddress()}`);
