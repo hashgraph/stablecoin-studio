@@ -33,11 +33,11 @@ export default class PublicKey extends ValueObject {
 		return new PrivateKey(key, type).publicKey;
 	}
 
-	public static isNull(val?: {key: string, type: string}): boolean {
-		if(!val) return false;
+	public static isNull(val?: { key: string; type: string }): boolean {
+		if (!val) return false;
 		return (
 			val.key === PublicKey.NULL.key && val.type === PublicKey.NULL.type
-		); 
+		);
 	}
 
 	public toHederaKey(): HPublicKey {
@@ -56,6 +56,9 @@ export default class PublicKey extends ValueObject {
 		if (typeof val === 'string') {
 			if (!CheckStrings.isNotEmpty(val))
 				err.push(new PublicKeyNotValid(val ?? 'undefined'));
+			if (!CheckStrings.isLengthBetween(val, 64, 66)) {
+				err.push(new PublicKeyNotValid(val));
+			}
 		} else if (typeof val === 'object') {
 			const keys = Object.keys(val);
 			if (!(keys.includes('key') && keys.includes('type'))) {

@@ -115,7 +115,7 @@ export default class CreateStableCoinRequest
 				return StableCoin.checkDecimals(val);
 			},
 			initialSupply: (val) => {
-				if (val === undefined) {
+				if (val === undefined || val === '') {
 					return;
 				}
 				if (!BigDecimal.isBigDecimal(val)) {

@@ -1,17 +1,20 @@
 import { Heading, Stack, VStack } from '@chakra-ui/react';
+import type { CreateStableCoinRequest } from 'hedera-stable-coin-sdk';
 import type { Control, FieldValues, UseFormReturn } from 'react-hook-form';
-import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import InputController from '../../components/Form/InputController';
 import InputNumberController from '../../components/Form/InputNumberController';
 import { SelectController } from '../../components/Form/SelectController';
+import { handleRequestValidation } from '../../utils/validationsHelper';
 
 interface OptionalDetailsProps {
 	control: Control<FieldValues>;
 	form: UseFormReturn;
+	request: CreateStableCoinRequest;
 }
 
 const OptionalDetails = (props: OptionalDetailsProps) => {
-	const { control, form } = props;
+	const { control, form, request } = props;
 	const { t } = useTranslation(['global', 'stableCoinCreation']);
 
 	const supplyTypes = [
@@ -48,11 +51,6 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 
 	const isSupplyTypeFinite = form.getValues().supplyType?.value === 1;
 
-	const initialSupply = useWatch({
-		control,
-		name: 'initialSupply',
-	});
-
 	const handleResetMaxSupply = () => {
 		const { maxSupply, initialSupply } = form.getValues();
 
@@ -73,10 +71,14 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 					{t('stableCoinCreation:optionalDetails.title')}
 				</Heading>
 				<Stack as='form' spacing={6}>
-					<InputNumberController
+					<InputController
 						rules={{
-							validate: (value) => {
-								return typeof value !== 'string' || t(`global:validations.required`);
+							validate: {
+								validation: (value: string) => {
+									request.initialSupply = value;
+									const res = handleRequestValidation(request.validate('initialSupply'));
+									return res;
+								},
 							},
 						}}
 						isRequired
@@ -101,15 +103,14 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 						defaultValue={'0'}
 					/>
 					{isSupplyTypeFinite && (
-						<InputNumberController
+						<InputController
 							rules={{
 								required: t(`global:validations.required`),
 								validate: {
-									quantityOverTotalSupply: (value: number) => {
-										return (
-											(initialSupply.toString() && initialSupply <= value) ||
-											t('global:validations.overMaxSupply')
-										);
+									validation: (value: string) => {
+										request.maxSupply = value;
+										const res = handleRequestValidation(request.validate('maxSupply'));
+										return res;
 									},
 								},
 							}}
@@ -125,6 +126,13 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 					<InputNumberController
 						rules={{
 							required: t(`global:validations.required`),
+							validate: {
+								validation: (value: string) => {
+									request.decimals = value;
+									const res = handleRequestValidation(request.validate('decimals'));
+									return res;
+								},
+							},
 						}}
 						isRequired
 						control={control}

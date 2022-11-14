@@ -16,7 +16,6 @@ export const handleRequestValidation = (
 	val: ValidationResponse[],
 	msg?: string,
 ): string | boolean => {
-	console.log(val);
 	if (val.length > 0) {
 		if (msg) return msg;
 		return val.map((v) => v.errors.flatMap((e) => e.message)).join('\n');

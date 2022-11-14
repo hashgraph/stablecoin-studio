@@ -3,16 +3,20 @@ import type { Control, FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import InputController from '../../components/Form/InputController';
 import { useSelector } from 'react-redux';
-import type { SavedPairingData } from 'hedera-stable-coin-sdk';
+import type { CreateStableCoinRequest, SavedPairingData } from 'hedera-stable-coin-sdk';
 import { SELECTED_WALLET_PAIRED } from '../../store/slices/walletSlice';
+import { handleRequestValidation } from '../../utils/validationsHelper';
 interface BasicDetailsProps {
 	control: Control<FieldValues>;
+	request: CreateStableCoinRequest;
 }
 
 const BasicDetails = (props: BasicDetailsProps) => {
 	const { control } = props;
 	const { t } = useTranslation(['global', 'stableCoinCreation']);
 	const pairingData: SavedPairingData = useSelector(SELECTED_WALLET_PAIRED);
+
+	const { request } = props;
 
 	return (
 		<VStack h='full' justify={'space-between'} pt='80px'>
@@ -31,6 +35,13 @@ const BasicDetails = (props: BasicDetailsProps) => {
 					<InputController
 						rules={{
 							required: t(`global:validations.required`),
+							validate: {
+								validation: (value: string) => {
+									request.name = value;
+									const res = handleRequestValidation(request.validate('name'));
+									return res;
+								},
+							},
 						}}
 						isRequired
 						control={control}
@@ -41,6 +52,13 @@ const BasicDetails = (props: BasicDetailsProps) => {
 					<InputController
 						rules={{
 							required: t(`global:validations.required`),
+							validate: {
+								validation: (value: string) => {
+									request.symbol = value;
+									const res = handleRequestValidation(request.validate('symbol'));
+									return res;
+								},
+							},
 						}}
 						isRequired
 						control={control}
