@@ -2,7 +2,7 @@ import Service from '../Service.js';
 import ICreateStableCoinServiceRequestModel from './model/ICreateStableCoinServiceRequestModel.js';
 import { IListStableCoinServiceRequestModel } from './model/IListStableCoinServiceRequestModel.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
-import IStableCoinList from '../../../port/in/sdk/response/IStableCoinList.js';
+import StableCoinList from '../../../port/in/sdk/response/StableCoinList.js';
 import IGetStableCoinServiceRequestModel from './model/IGetStableCoinServiceRequestModel.js';
 import IGetBalanceOfStableCoinServiceRequestModel from './model/IGetBalanceOfStableCoinServiceRequestModel.js';
 import IGetNameOfStableCoinServiceRequestModel from './model/IGetNameOfStableCoinServiceRequestModel.js';
@@ -15,8 +15,8 @@ import IRescueStableCoinServiceRequestModel from './model/IRescueStableCoinServi
 import IRoleStableCoinServiceRequestModel from './model/IRoleStableCoinServiceRequestModel';
 import IGetBasicRequestModel from './model/IGetBasicRequest.js';
 import ISupplierRoleStableCoinServiceRequestModel from './model/ISupplierRoleStableCoinServiceRequestModel.js';
-import IStableCoinDetail from '../../../port/in/sdk/response/IStableCoinDetail.js';
-import IAccountInfo from '../../../port/in/sdk/response/IAccountInfo.js';
+import StableCoinDetail from '../../../port/in/sdk/response/StableCoinDetail.js';
+import AccountInfo from '../../../port/in/sdk/response/AccountInfo.js';
 import { Capabilities } from '../../../domain/context/stablecoin/Capabilities.js';
 import { IAccountWithKeyRequestModel } from './model/CoreRequestModel.js';
 import IGetSupplierAllowanceModel from './model/IGetSupplierAllowanceModel.js';
@@ -41,7 +41,7 @@ export default class StableCoinService extends Service {
 	 */
 	public async createStableCoin(
 		req: ICreateStableCoinServiceRequestModel,
-	): Promise<IStableCoinDetail> {
+	): Promise<StableCoinDetail> {
 		if (
 			req.maxSupply &&
 			req.initialSupply &&
@@ -80,15 +80,15 @@ export default class StableCoinService extends Service {
 	 */
 	public async getListStableCoins(
 		req: IListStableCoinServiceRequestModel,
-	): Promise<IStableCoinList[]> {
+	): Promise<StableCoinList[]> {
 		return this.repository.getListStableCoins(req.account);
 	}
 
 	public async getStableCoinDetails(
 		req: IGetStableCoinServiceRequestModel,
-	): Promise<IStableCoinDetail> {
+	): Promise<StableCoinDetail> {
 		const stableCoin: StableCoin = await this.getStableCoin(req);
-		const stableCoinDetails: IStableCoinDetail = {
+		const stableCoinDetails: StableCoinDetail = {
 			tokenId: stableCoin.id,
 			name: stableCoin.name,
 			symbol: stableCoin.symbol,
@@ -516,7 +516,7 @@ export default class StableCoinService extends Service {
 
 	public async getAccountInfo(
 		req: IAccountWithKeyRequestModel,
-	): Promise<IAccountInfo> {
+	): Promise<AccountInfo> {
 		return this.repository.getAccountInfo(req.account.accountId.id);
 	}
 

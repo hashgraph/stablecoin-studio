@@ -5,7 +5,7 @@ import PublicKey from '../../../../domain/context/account/PublicKey.js';
 import { StableCoinMemo } from '../../../../domain/context/stablecoin/StableCoinMemo.js';
 import { AccountId } from '../sdk.js';
 
-export default interface IStableCoinDetail {
+export default interface StableCoinDetail {
 	tokenId?: string;
 	name?: string;
 	symbol?: string;

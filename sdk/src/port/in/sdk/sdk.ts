@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import IStableCoinList from './response/IStableCoinList.js';
-import IStableCoinDetail from './response/IStableCoinDetail.js';
+import StableCoinList from './response/StableCoinList.js';
+import StableCoinDetail from './response/StableCoinDetail.js';
 import StableCoinService from '../../../app/service/stablecoin/StableCoinService.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import StableCoinRepository from '../../out/stablecoin/StableCoinRepository.js';
@@ -63,7 +63,7 @@ import {
 import IGetSupplierAllowanceModel from '../../../app/service/stablecoin/model/IGetSupplierAllowanceModel.js';
 import Account from '../../../domain/context/account/Account.js';
 import HashPackAccount from '../../../domain/context/account/HashPackAccount.js';
-import IAccountInfo from './response/IAccountInfo.js';
+import AccountInfo from './response/AccountInfo.js';
 import BigDecimal from '../../../domain/context/stablecoin/BigDecimal.js';
 import IGetRolesServiceRequestModel from '../../../app/service/stablecoin/model/IGetRolesServiceRequest';
 import {
@@ -96,9 +96,9 @@ export {
 	IAssociateStableCoinRequest,
 	IGetNameStableCoinRequest,
 	IBasicRequest,
-	IStableCoinDetail,
-	IStableCoinList,
-	IAccountInfo,
+	StableCoinDetail as IStableCoinDetail,
+	StableCoinList as IStableCoinList,
+	AccountInfo as IAccountInfo,
 };
 
 export * from './request';
@@ -209,7 +209,7 @@ export class SDK {
 	 */
 	public createStableCoin(
 		request: CreateStableCoinRequest,
-	): Promise<IStableCoinDetail> {
+	): Promise<StableCoinDetail> {
 		try {
 			const req: ICreateStableCoinServiceRequestModel = RequestMapper.map(
 				request,
@@ -242,7 +242,7 @@ export class SDK {
 	 */
 	public getListStableCoin(
 		request: GetListStableCoinRequest,
-	): Promise<IStableCoinList[]> | null {
+	): Promise<StableCoinList[]> | null {
 		const req: IListStableCoinServiceRequestModel =
 			RequestMapper.map(request);
 		return this.stableCoinService.getListStableCoins(req);
@@ -250,7 +250,7 @@ export class SDK {
 
 	public getStableCoinDetails(
 		request: GetStableCoinDetailsRequest,
-	): Promise<IStableCoinDetail> | null {
+	): Promise<StableCoinDetail> | null {
 		const req: IGetStableCoinServiceRequestModel =
 			RequestMapper.map(request);
 		return this.stableCoinService.getStableCoinDetails(req);
@@ -506,7 +506,7 @@ export class SDK {
 
 	public getAccountInfo(
 		request: IAccountWithKeyRequestModel,
-	): Promise<IAccountInfo> | null {
+	): Promise<AccountInfo> | null {
 		try {
 			return this.stableCoinService.getAccountInfo(request);
 		} catch (error) {
