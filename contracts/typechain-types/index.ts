@@ -24,6 +24,8 @@ export type { ERC165Upgradeable } from "./@openzeppelin/contracts-upgradeable/ut
 export { ERC165Upgradeable__factory } from "./factories/@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable__factory";
 export type { IERC165Upgradeable } from "./@openzeppelin/contracts-upgradeable/utils/introspection/IERC165Upgradeable";
 export { IERC165Upgradeable__factory } from "./factories/@openzeppelin/contracts-upgradeable/utils/introspection/IERC165Upgradeable__factory";
+export type { Ownable } from "./@openzeppelin/contracts/access/Ownable";
+export { Ownable__factory } from "./factories/@openzeppelin/contracts/access/Ownable__factory";
 export type { IERC1822Proxiable } from "./@openzeppelin/contracts/interfaces/draft-IERC1822.sol/IERC1822Proxiable";
 export { IERC1822Proxiable__factory } from "./factories/@openzeppelin/contracts/interfaces/draft-IERC1822.sol/IERC1822Proxiable__factory";
 export type { IBeacon } from "./@openzeppelin/contracts/proxy/beacon/IBeacon";
@@ -34,6 +36,10 @@ export type { ERC1967Upgrade } from "./@openzeppelin/contracts/proxy/ERC1967/ERC
 export { ERC1967Upgrade__factory } from "./factories/@openzeppelin/contracts/proxy/ERC1967/ERC1967Upgrade__factory";
 export type { Proxy } from "./@openzeppelin/contracts/proxy/Proxy";
 export { Proxy__factory } from "./factories/@openzeppelin/contracts/proxy/Proxy__factory";
+export type { ProxyAdmin } from "./@openzeppelin/contracts/proxy/transparent/ProxyAdmin";
+export { ProxyAdmin__factory } from "./factories/@openzeppelin/contracts/proxy/transparent/ProxyAdmin__factory";
+export type { TransparentUpgradeableProxy } from "./@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy";
+export { TransparentUpgradeableProxy__factory } from "./factories/@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy__factory";
 export type { Burnable } from "./contracts/extensions/Burnable";
 export { Burnable__factory } from "./factories/contracts/extensions/Burnable__factory";
 export type { CashIn } from "./contracts/extensions/CashIn";
@@ -62,6 +68,8 @@ export type { HederaERC20 } from "./contracts/HederaERC20";
 export { HederaERC20__factory } from "./factories/contracts/HederaERC20__factory";
 export type { HederaERC20Proxy } from "./contracts/HederaERC20Proxy";
 export { HederaERC20Proxy__factory } from "./factories/contracts/HederaERC20Proxy__factory";
+export type { HederaERC20ProxyAdmin } from "./contracts/HederaERC20ProxyAdmin";
+export { HederaERC20ProxyAdmin__factory } from "./factories/contracts/HederaERC20ProxyAdmin__factory";
 export type { IHederaTokenService } from "./contracts/hts-precompile/IHederaTokenService";
 export { IHederaTokenService__factory } from "./factories/contracts/hts-precompile/IHederaTokenService__factory";
 export type { IHederaERC20 } from "./contracts/IHederaERC20";
@@ -72,3 +80,7 @@ export type { IStableCoinFactory } from "./contracts/StableCoinFactory.sol/IStab
 export { IStableCoinFactory__factory } from "./factories/contracts/StableCoinFactory.sol/IStableCoinFactory__factory";
 export type { StableCoinFactory } from "./contracts/StableCoinFactory.sol/StableCoinFactory";
 export { StableCoinFactory__factory } from "./factories/contracts/StableCoinFactory.sol/StableCoinFactory__factory";
+export type { StableCoinFactoryProxy } from "./contracts/StableCoinFactoryProxy";
+export { StableCoinFactoryProxy__factory } from "./factories/contracts/StableCoinFactoryProxy__factory";
+export type { StableCoinFactoryProxyAdmin } from "./contracts/StableCoinFactoryProxyAdmin";
+export { StableCoinFactoryProxyAdmin__factory } from "./factories/contracts/StableCoinFactoryProxyAdmin__factory";

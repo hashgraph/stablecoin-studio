@@ -5,6 +5,7 @@ import "./hts-precompile/IHederaTokenService.sol";
 import "./hts-precompile/HederaResponseCodes.sol";
 import "./HederaERC20.sol";
 import "./HederaERC20Proxy.sol";
+import "./HederaERC20ProxyAdmin.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
 interface IStableCoinFactory {
@@ -37,8 +38,14 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes{
         // Deploy logic contract
         HederaERC20 StableCoinContract = new HederaERC20();
 
+        // Deploy Proxy Admin
+        HederaERC20ProxyAdmin StableCoinProxyAdmin = new HederaERC20ProxyAdmin();
+
         // Deploy Proxy
-        HederaERC20Proxy StableCoinProxy = new HederaERC20Proxy(address(StableCoinContract), "");
+        HederaERC20Proxy StableCoinProxy = new HederaERC20Proxy(
+            address(StableCoinContract), 
+            address(StableCoinProxyAdmin), 
+            "");
 
         // Create Token
         IHederaTokenService.HederaToken memory token = createToken(

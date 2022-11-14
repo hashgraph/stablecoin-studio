@@ -49,6 +49,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC165Upgradeable__factory>;
     getContractFactory(
+      name: "Ownable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Ownable__factory>;
+    getContractFactory(
       name: "IERC1822Proxiable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC1822Proxiable__factory>;
@@ -68,6 +72,14 @@ declare module "hardhat/types/runtime" {
       name: "Proxy",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Proxy__factory>;
+    getContractFactory(
+      name: "ProxyAdmin",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ProxyAdmin__factory>;
+    getContractFactory(
+      name: "TransparentUpgradeableProxy",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TransparentUpgradeableProxy__factory>;
     getContractFactory(
       name: "Burnable",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -125,6 +137,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.HederaERC20Proxy__factory>;
     getContractFactory(
+      name: "HederaERC20ProxyAdmin",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.HederaERC20ProxyAdmin__factory>;
+    getContractFactory(
       name: "IHederaTokenService",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IHederaTokenService__factory>;
@@ -144,6 +160,14 @@ declare module "hardhat/types/runtime" {
       name: "StableCoinFactory",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.StableCoinFactory__factory>;
+    getContractFactory(
+      name: "StableCoinFactoryProxy",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.StableCoinFactoryProxy__factory>;
+    getContractFactory(
+      name: "StableCoinFactoryProxyAdmin",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.StableCoinFactoryProxyAdmin__factory>;
 
     getContractAt(
       name: "AccessControlUpgradeable",
@@ -191,6 +215,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC165Upgradeable>;
     getContractAt(
+      name: "Ownable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Ownable>;
+    getContractAt(
       name: "IERC1822Proxiable",
       address: string,
       signer?: ethers.Signer
@@ -215,6 +244,16 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Proxy>;
+    getContractAt(
+      name: "ProxyAdmin",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ProxyAdmin>;
+    getContractAt(
+      name: "TransparentUpgradeableProxy",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TransparentUpgradeableProxy>;
     getContractAt(
       name: "Burnable",
       address: string,
@@ -286,6 +325,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.HederaERC20Proxy>;
     getContractAt(
+      name: "HederaERC20ProxyAdmin",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.HederaERC20ProxyAdmin>;
+    getContractAt(
       name: "IHederaTokenService",
       address: string,
       signer?: ethers.Signer
@@ -310,6 +354,16 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.StableCoinFactory>;
+    getContractAt(
+      name: "StableCoinFactoryProxy",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.StableCoinFactoryProxy>;
+    getContractAt(
+      name: "StableCoinFactoryProxyAdmin",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.StableCoinFactoryProxyAdmin>;
 
     // default types
     getContractFactory(

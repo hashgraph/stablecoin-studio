@@ -27,7 +27,7 @@ import type {
   PromiseOrValue,
 } from "../common";
 
-export interface HederaERC20ProxyInterface extends utils.Interface {
+export interface StableCoinFactoryProxyInterface extends utils.Interface {
   functions: {
     "admin()": FunctionFragment;
     "changeAdmin(address)": FunctionFragment;
@@ -127,12 +127,12 @@ export type UpgradedEvent = TypedEvent<[string], UpgradedEventObject>;
 
 export type UpgradedEventFilter = TypedEventFilter<UpgradedEvent>;
 
-export interface HederaERC20Proxy extends BaseContract {
+export interface StableCoinFactoryProxy extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: HederaERC20ProxyInterface;
+  interface: StableCoinFactoryProxyInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,

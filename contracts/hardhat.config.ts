@@ -4,7 +4,7 @@ import "@hashgraph/sdk";
 import "hardhat-abi-exporter";
 import "hardhat-contract-sizer";
 import "@primitivefi/hardhat-dodoc";
-
+import "hardhat-gas-reporter"
 
 
 module.exports = {
@@ -13,7 +13,7 @@ module.exports = {
     settings: {
       optimizer: {
         enabled: true,
-        runs: 100,
+        runs: 1000,
       },
     },
   },
@@ -33,15 +33,15 @@ module.exports = {
           // An array of predefined Externally Owned Accounts
           {
             // OG Account
-            account: "[include your account]",
-            privateKey:"[include your private key]",
-            publicKey:"[include your public key]",
+            account: "0.0.48513659",
+            privateKey:"8830990f02fae1c3a843b8510d0433a73ee47b08d56426a8e416d08727ea0609",
+            publicKey:"c14dbe4c936181b7a2fe7faf086fd95bdc6900e2d19283e3e8ffd00cac1fe607",
             isED25519Type: true
           },
           {
-            account: "[include your account2]",
-            privateKey:"[include your private key2]",
-            publicKey:"[include your public key2]",
+            account: "0.0.47786104",
+            privateKey:"302e020100300506032b657004220420b7ca8f1a5453d5c03b0d8ba99d06306ed6c93ee64d7bf122c21b0981e2b0b679",
+            publicKey:"302a300506032b65700321005705625de5d5a9cdaeb85687391dc7372707c464f9e7cb0efb386cf4244ebdf6",
             isED25519Type: true
           },
         ],
