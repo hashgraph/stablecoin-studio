@@ -36,9 +36,16 @@ abstract contract Roles is AccessControlUpgradeable {
     /**
     * @dev Role that allows to pause the token
     * 
-    * keccak256("PAUSER_ROLE");
+    * keccak256("PAUSE_ROLE");
     */ 
-    bytes32 public constant PAUSER_ROLE = 0x65d7a28e3265b37a6474929f336521b332c1681b933f6cb9f3376673440d862a;
+    bytes32 public constant PAUSE_ROLE = 0x139c2898040ef16910dc9f44dc697df79363da767d8bc92f2e310312b816e46d;
+
+    /**
+    * @dev Role that allows to pause the token
+    * 
+    * keccak256("FREEZE_ROLE");
+    */ 
+    bytes32 public constant FREEZE_ROLE = 0x5789b43a60de35bcedee40618ae90979bab7d1315fd4b079234241bdab19936d;
 
     /**
     * @dev Chain to include in array positions for roles don't available for an account
@@ -51,7 +58,7 @@ abstract contract Roles is AccessControlUpgradeable {
     * @dev Array containing all roles
     *
     */
-    bytes32[6] public ROLES = [CASHIN_ROLE, BURN_ROLE, WIPE_ROLE, RESCUE_ROLE, PAUSER_ROLE, DEFAULT_ADMIN_ROLE];
+    bytes32[6] public ROLES = [CASHIN_ROLE, BURN_ROLE, WIPE_ROLE, RESCUE_ROLE, PAUSE_ROLE, DEFAULT_ADMIN_ROLE];
 
     /**
      * @dev Returns an array of roles the account currently has
@@ -64,13 +71,14 @@ abstract contract Roles is AccessControlUpgradeable {
         view
         returns (bytes32[] memory)
     {
-        bytes32[] memory roles = new bytes32[](6);
+        bytes32[] memory roles = new bytes32[](7);
         roles[0] = hasRole(CASHIN_ROLE, account) ? CASHIN_ROLE : WITHOUT_ROLE;
         roles[1] = hasRole(BURN_ROLE, account) ? BURN_ROLE : WITHOUT_ROLE;
         roles[2] = hasRole(WIPE_ROLE, account) ? WIPE_ROLE : WITHOUT_ROLE;
         roles[3] = hasRole(RESCUE_ROLE, account) ? RESCUE_ROLE : WITHOUT_ROLE;
-        roles[4] = hasRole(PAUSER_ROLE, account) ? PAUSER_ROLE : WITHOUT_ROLE;
-        roles[5] = hasRole(DEFAULT_ADMIN_ROLE, account) ? DEFAULT_ADMIN_ROLE : WITHOUT_ROLE;
+        roles[4] = hasRole(PAUSE_ROLE, account) ? PAUSE_ROLE : WITHOUT_ROLE;
+        roles[5] = hasRole(FREEZE_ROLE, account) ? FREEZE_ROLE : WITHOUT_ROLE;
+        roles[6] = hasRole(DEFAULT_ADMIN_ROLE, account) ? DEFAULT_ADMIN_ROLE : WITHOUT_ROLE;
         return roles;
     }
 }

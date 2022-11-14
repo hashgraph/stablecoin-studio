@@ -13,7 +13,8 @@ export const roleOptions = [
 	{ value: StableCoinRole.BURN_ROLE, label: 'Burn' },
 	{ value: StableCoinRole.WIPE_ROLE, label: 'Wipe' },
 	{ value: StableCoinRole.RESCUE_ROLE, label: 'Rescue' },
-	{ value: StableCoinRole.PAUSER_ROLE, label: 'Pause' },
+	{ value: StableCoinRole.PAUSE_ROLE, label: 'Pause' },
+	{ value: StableCoinRole.FREEZE_ROLE, label: 'Freeze' }
 ];
 
 export const roleExternalTokens = [
@@ -21,7 +22,8 @@ export const roleExternalTokens = [
 	{ value: 'BURN_ROLE', label: 'BURN' },
 	{ value: 'WIPE_ROLE', label: 'WIPE' },
 	{ value: 'RESCUE_ROLE', label: 'RESCUE' },
-	{ value: 'PAUSER_ROLE', label: 'PAUSER' }
+	{ value: 'PAUSE_ROLE', label: 'PAUSE' },
+	{ value: 'FREEZE_ROLE', label: 'FREEZE' }
 ];
 
 export const cashinLimitOptions = [

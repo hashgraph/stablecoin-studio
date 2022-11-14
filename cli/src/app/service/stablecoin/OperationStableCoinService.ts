@@ -908,7 +908,7 @@ export default class OperationStableCoinService extends Service {
         role: {
           availability: capabilities.includes(Capabilities.PAUSE),
           name: 'Pause Role',
-          value: StableCoinRole.PAUSER_ROLE,
+          value: StableCoinRole.PAUSE_ROLE,
         },
       },
     ];
