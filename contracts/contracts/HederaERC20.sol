@@ -9,7 +9,6 @@ import "./extensions/CashIn.sol";
 import "./extensions/Burnable.sol";
 import "./extensions/Wipeable.sol";
 import "./extensions/Rescatable.sol";
-import "./Roles.sol";
 import "./hts-precompile/IHederaTokenService.sol";
 import "./extensions/TokenOwner.sol";
 

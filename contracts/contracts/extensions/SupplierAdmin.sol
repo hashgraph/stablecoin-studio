@@ -3,7 +3,7 @@ pragma solidity ^0.8.10;
 
 import "./Interfaces/ISupplierAdmin.sol";
 import "./TokenOwner.sol";
-import "../Roles.sol";
+import "./Roles.sol";
 
 abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
 

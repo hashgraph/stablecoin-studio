@@ -5,6 +5,7 @@ export * as interfaces from "./Interfaces";
 export { Burnable__factory } from "./Burnable__factory";
 export { CashIn__factory } from "./CashIn__factory";
 export { Rescatable__factory } from "./Rescatable__factory";
+export { Roles__factory } from "./Roles__factory";
 export { SupplierAdmin__factory } from "./SupplierAdmin__factory";
 export { TokenOwner__factory } from "./TokenOwner__factory";
 export { Wipeable__factory } from "./Wipeable__factory";

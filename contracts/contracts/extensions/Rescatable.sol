@@ -2,7 +2,7 @@
 pragma solidity ^0.8.10;
 
 import "./TokenOwner.sol";
-import "../Roles.sol";
+import "./Roles.sol";
 import "./Interfaces/IRescatable.sol";
 import "../hts-precompile/IHederaTokenService.sol";
 
@@ -16,8 +16,8 @@ abstract contract Rescatable is IRescatable, TokenOwner, Roles {
     * @param amount The number of tokens to rescuer
     */
     function rescue(uint256 amount)
-    external
-    onlyRole(RESCUE_ROLE) 
+        external
+        onlyRole(RESCUE_ROLE) 
     {
         require(_balanceOf(address(this)) >= amount, "Amount must not exceed the token balance");
         

@@ -117,6 +117,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Rescatable__factory>;
     getContractFactory(
+      name: "Roles",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Roles__factory>;
+    getContractFactory(
       name: "SupplierAdmin",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.SupplierAdmin__factory>;
@@ -152,10 +156,6 @@ declare module "hardhat/types/runtime" {
       name: "IStableCoinFactory",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IStableCoinFactory__factory>;
-    getContractFactory(
-      name: "Roles",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Roles__factory>;
     getContractFactory(
       name: "StableCoinFactory",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -300,6 +300,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.Rescatable>;
     getContractAt(
+      name: "Roles",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Roles>;
+    getContractAt(
       name: "SupplierAdmin",
       address: string,
       signer?: ethers.Signer
@@ -344,11 +349,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IStableCoinFactory>;
-    getContractAt(
-      name: "Roles",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Roles>;
     getContractAt(
       name: "StableCoinFactory",
       address: string,

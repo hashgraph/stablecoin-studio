@@ -10,7 +10,6 @@ export type { htsPrecompile };
 export type { HederaERC20 } from "./HederaERC20";
 export type { HederaERC20Proxy } from "./HederaERC20Proxy";
 export type { HederaERC20ProxyAdmin } from "./HederaERC20ProxyAdmin";
-export type { Roles } from "./Roles";
 export type { StableCoinFactory } from "./StableCoinFactory";
 export type { StableCoinFactoryProxy } from "./StableCoinFactoryProxy";
 export type { StableCoinFactoryProxyAdmin } from "./StableCoinFactoryProxyAdmin";
