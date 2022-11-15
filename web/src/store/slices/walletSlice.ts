@@ -5,8 +5,9 @@ import type {
 	IStableCoinDetail,
 	IStableCoinList,
 	Capabilities,
-	IAccountInfo,
+	IAccountInfo	
 } from 'hedera-stable-coin-sdk';
+import { GetListStableCoinRequest } from 'hedera-stable-coin-sdk';
 import SDKService from '../../services/SDKService';
 import type { RootState } from '../store';
 import type { IExternalToken } from '../../interfaces/IExternalToken';
@@ -45,7 +46,12 @@ export const getStableCoinList = createAsyncThunk(
 	'wallet/getStableCoinList',
 	async (account: HashPackAccount) => {
 		try {
-			const stableCoins = await SDKService.getStableCoins({ account });
+			const stableCoins = await SDKService.getStableCoins(
+				new GetListStableCoinRequest ({ 
+					account: {
+						accountId: account.accountId.id,
+					}
+				}));
 			return stableCoins;
 		} catch (e) {
 			console.error(e);

@@ -23,7 +23,7 @@ import ExternalTokenInfo from './ExternalTokenInfo';
 import type { IAccountToken } from '../../interfaces/IAccountToken.js';
 import type { IRole } from '../../interfaces/IRole.js';
 import type { IExternalToken } from '../../interfaces/IExternalToken';
-import { GetRolesRequest, HashPackAccount } from 'hedera-stable-coin-sdk';
+import { GetRolesRequest, GetStableCoinDetailsRequest, HashPackAccount } from 'hedera-stable-coin-sdk';
 
 const ExternalTokenCreation = () => {
 	const navigate = useNavigate();
@@ -86,7 +86,11 @@ const ExternalTokenCreation = () => {
 		const { stableCoinId, autoCheckRoles, roles } = getValues();
 		let checkRoles: string[] | null = [];
 		try {
-			const details = await SDKService.getStableCoinDetails({ id: stableCoinId });
+			const details = await SDKService.getStableCoinDetails(
+				new GetStableCoinDetailsRequest({ 
+					id: stableCoinId 
+				})
+			);	
 			if (autoCheckRoles) {
 				checkRoles = await SDKService.getRoles(
 					new GetRolesRequest({

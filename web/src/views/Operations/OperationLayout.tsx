@@ -11,6 +11,7 @@ import { SELECTED_WALLET_COIN, walletActions } from '../../store/slices/walletSl
 import SDKService from '../../services/SDKService';
 import type { AppDispatch } from '../../store/store';
 import { useEffect } from 'react';
+import { GetStableCoinDetailsRequest } from 'hedera-stable-coin-sdk';
 
 export interface OperationLayoutProps {
 	LeftContent: ReactNode;
@@ -75,9 +76,9 @@ const OperationLayout = ({ LeftContent, onConfirm, confirmBtnProps }: OperationL
 	];
 
 	const handleRefreshCoinInfo = async () => {
-		const stableCoinDetails = await SDKService.getStableCoinDetails({
+		const stableCoinDetails = await SDKService.getStableCoinDetails(new GetStableCoinDetailsRequest ({
 			id: selectedStableCoin?.tokenId || '',
-		});
+		}));
 		dispatch(
 			walletActions.setSelectedStableCoin({
 				tokenId: stableCoinDetails?.tokenId,
