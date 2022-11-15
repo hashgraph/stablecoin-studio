@@ -61,33 +61,6 @@ export async function deployFactory(
 
     console.log(`Contract Factory deployed ${factory.toSolidityAddress()}`);
 
-    // Deploying Factory proxy admin
-    /*console.log(`Deploying Contract Factory Proxy Admin. please wait...`);
-
-    const factoryProxyAdmin = await deployContractSDK(
-        StableCoinFactoryProxyAdmin__factory,
-        privateKey,
-        clientOperator
-    )
-
-    console.log(`Contract Factory Proxy Admin deployed ${factoryProxyAdmin.toSolidityAddress()}`);
-
-    // Deploying Factory proxy
-    console.log(`Deploying Contract Factory Proxy. please wait...`);
-    
-    let factoryProxyConstructorParam = new ContractFunctionParameters();
-    factoryProxyConstructorParam.addAddress(factory.toSolidityAddress());
-    factoryProxyConstructorParam.addAddress(factoryProxyAdmin.toSolidityAddress());
-
-    const factoryProxy = await deployContractSDK(
-        StableCoinFactoryProxy__factory,
-        privateKey,
-        clientOperator,
-        factoryProxyConstructorParam
-    )
-
-    console.log(`Contract Factory Proxy deployed ${factoryProxy.toSolidityAddress()}`);*/
-
     return factory;
 }
 

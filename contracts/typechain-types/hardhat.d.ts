@@ -164,14 +164,6 @@ declare module "hardhat/types/runtime" {
       name: "StableCoinFactory",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.StableCoinFactory__factory>;
-    getContractFactory(
-      name: "StableCoinFactoryProxy",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.StableCoinFactoryProxy__factory>;
-    getContractFactory(
-      name: "StableCoinFactoryProxyAdmin",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.StableCoinFactoryProxyAdmin__factory>;
 
     getContractAt(
       name: "AccessControlUpgradeable",
@@ -363,16 +355,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.StableCoinFactory>;
-    getContractAt(
-      name: "StableCoinFactoryProxy",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.StableCoinFactoryProxy>;
-    getContractAt(
-      name: "StableCoinFactoryProxyAdmin",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.StableCoinFactoryProxyAdmin>;
 
     // default types
     getContractFactory(
