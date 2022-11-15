@@ -39,6 +39,7 @@ import RescueStableCoinsService from './RescueStableCoinService.js';
 import CapabilitiesStableCoinsService from './CapabilitiesStableCoinService.js';
 import BurnStableCoinsService from './BurnStableCoinService.js';
 import ManageExternalTokenService from './ManageExternalTokenService';
+import colors from 'colors';
 
 /**
  * Operation Stable Coin Service
@@ -315,7 +316,6 @@ export default class OperationStableCoinService extends Service {
           amount: '',
         });
 
-
         cashOutRequest.amount = await utilsService
           .defaultSingleAsk(language.getText('stablecoin.askBurnAmount'), '1')
           .then((val) => val.replace(',', '.'));
@@ -472,11 +472,13 @@ export default class OperationStableCoinService extends Service {
             },
           },
           targetId: currentAccount.accountId.id,
-          tokenId: ''
+          tokenId: '',
         });
 
         // Call to Supplier Role
-        const rolesToRefresh = await new RoleStableCoinsService().getRoles(getRolesRequest);
+        const rolesToRefresh = await new RoleStableCoinsService().getRoles(
+          getRolesRequest,
+        );
         const externalTokensRefreshed = configAccount.externalTokens.map(
           (token) => {
             if (token.id === this.stableCoinId) {
@@ -491,6 +493,10 @@ export default class OperationStableCoinService extends Service {
         );
         new ManageExternalTokenService().updateAccount(externalTokensRefreshed);
         configAccount.externalTokens = externalTokensRefreshed;
+        break;
+      case colors.red('Danger zone'):
+        await utilsService.cleanAndShowBanner();
+        await this.dangerZone();
         break;
       case wizardOperationsStableCoinOptions[
         wizardOperationsStableCoinOptions.length - 1
@@ -615,9 +621,7 @@ export default class OperationStableCoinService extends Service {
           );
 
           try {
-            if (
-              grantRoleRequest.role === StableCoinRole.CASHIN_ROLE
-            ) {
+            if (grantRoleRequest.role === StableCoinRole.CASHIN_ROLE) {
               await this.grantSupplierRole(grantRoleRequest, sdk);
             } else {
               await this.roleStableCoinService.grantRoleStableCoin(
@@ -959,12 +963,12 @@ export default class OperationStableCoinService extends Service {
                 },
               },
               proxyContractId: this.proxyContractId,
-              targetId: ''
+              targetId: '',
             });
 
             await this.validateNotRequestedData(resetCashInLimitRequest, [
               'account',
-              'proxyContractId'
+              'proxyContractId',
             ]);
 
             //Reset
@@ -1213,6 +1217,9 @@ export default class OperationStableCoinService extends Service {
         (option === 'Wipe' &&
           (capabilities.includes('Wipe') ||
             capabilities.includes('Wipe hts'))) ||
+        (option === colors.red('Danger zone') &&
+          (capabilities.includes('Pause') ||
+            capabilities.includes('Pause hts'))) ||
         (option === 'Role management' &&
           capabilities.includes('Role management')) ||
         option === 'Refresh roles'
@@ -1232,6 +1239,9 @@ export default class OperationStableCoinService extends Service {
             (option === 'Burn' && capabilities.includes('Burn hts')) ||
             (option === 'Wipe' && roles.includes('WIPE')) ||
             (option === 'Wipe' && capabilities.includes('Wipe hts')) ||
+            (option === colors.red('Danger zone') && roles.includes('PAUSE')) ||
+            (option === colors.red('Danger zone') &&
+              capabilities.includes('Pause hts')) ||
             (option === 'Rescue' && roles.includes('RESCUE')) ||
             option === 'Refresh roles' ||
             option === 'Details' ||
@@ -1305,23 +1315,28 @@ export default class OperationStableCoinService extends Service {
 
   private async grantSupplierRole(
     grantRoleRequest: GrantRoleRequest,
-    sdk: SDK
+    sdk: SDK,
   ): Promise<void> {
     let hasRole;
-    await utilsService.showSpinner(sdk.hasRole(new HasRoleRequest({
-      account: grantRoleRequest.account,
-      targetId: grantRoleRequest.targetId,
-      proxyContractId: grantRoleRequest.proxyContractId,
-      tokenId: grantRoleRequest.tokenId,
-      role: grantRoleRequest.role
-    })).then((response) => (hasRole = response[0])),
+    await utilsService.showSpinner(
+      sdk
+        .hasRole(
+          new HasRoleRequest({
+            account: grantRoleRequest.account,
+            targetId: grantRoleRequest.targetId,
+            proxyContractId: grantRoleRequest.proxyContractId,
+            tokenId: grantRoleRequest.tokenId,
+            role: grantRoleRequest.role,
+          }),
+        )
+        .then((response) => (hasRole = response[0])),
       {
         text: language.getText('state.loading'),
         successText: language.getText('state.loadCompleted') + '\n',
       },
     );
     if (hasRole) {
-      console.log(language.getText('cashin.alreadyRole'));          
+      console.log(language.getText('cashin.alreadyRole'));
     } else {
       let limit = '';
       const supplierRoleType = language.getArray('wizard.supplierRoleType');
@@ -1370,7 +1385,7 @@ export default class OperationStableCoinService extends Service {
         );
 
         //Give limited
-        //Call to SDK    
+        //Call to SDK
         grantRoleRequest.supplierType = 'limited';
         await this.roleStableCoinService.giveSupplierRoleStableCoin(
           grantRoleRequest,
@@ -1383,5 +1398,60 @@ export default class OperationStableCoinService extends Service {
     req: CheckCashInRoleRequest,
   ): Promise<boolean> {
     return await this.roleStableCoinService.checkCashInRoleStableCoin(req);
+  }
+
+  private async dangerZone(): Promise<void> {
+    const sdk: SDK = utilsService.getSDK();
+    const configAccount = utilsService.getCurrentAccount();
+    const currentAccount = new EOAccount(
+      configAccount.accountId,
+      new PrivateKey(
+        configAccount.privateKey.key,
+        configAccount.privateKey.type,
+      ),
+    );
+
+    const capabilitiesStableCoin = await this.getCapabilities(
+      sdk,
+      currentAccount,
+    );
+
+    const dangerZoneOptions = language
+      .getArray('dangerZone.options')
+      .filter((option) => {
+        if (option === 'Pause stable coin') {
+          return capabilitiesStableCoin.some((capability) =>
+            [Capabilities.PAUSE, Capabilities.PAUSE_HTS].includes(capability),
+          );
+        }
+
+        return true;
+      });
+
+    // const accountTarget = '0.0.0';
+    switch (
+      await utilsService.defaultMultipleAsk(
+        language.getText('stablecoin.askEditCashInRole'),
+        dangerZoneOptions,
+        false,
+        configAccount.network,
+        `${configAccount.accountId} - ${configAccount.alias}`,
+        this.stableCoinWithSymbol,
+      )
+    ) {
+      case 'Pause stable coin':
+        await utilsService.cleanAndShowBanner();
+
+        utilsService.displayCurrentUserInfo(
+          configAccount,
+          this.stableCoinWithSymbol,
+        );
+        break;
+      case dangerZoneOptions[dangerZoneOptions.length - 1]:
+      default:
+        await utilsService.cleanAndShowBanner();
+        await this.operationsStableCoin();
+    }
+    await this.dangerZone();
   }
 }

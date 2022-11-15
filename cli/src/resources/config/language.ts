@@ -201,6 +201,7 @@ export const english = {
       'Rescue',
       'Role management',
       'Refresh roles',
+      colors.red('Danger zone'),
       new inquirer.Separator(),
       'Return to main menu',
       new inquirer.Separator(' '),
@@ -319,5 +320,13 @@ export const english = {
       new inquirer.Separator(' '),
     ],
     noRoles: 'You do not have any role.',
+  },
+  dangerZone: {
+    options: [
+      'Pause stable coin',
+      new inquirer.Separator(),
+      'Go back',
+      new inquirer.Separator(' '),
+    ],
   },
 };
