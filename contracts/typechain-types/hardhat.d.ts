@@ -101,6 +101,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IRescatable__factory>;
     getContractFactory(
+      name: "IRoles",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IRoles__factory>;
+    getContractFactory(
       name: "ISupplierAdmin",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ISupplierAdmin__factory>;
@@ -279,6 +283,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IRescatable>;
+    getContractAt(
+      name: "IRoles",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IRoles>;
     getContractAt(
       name: "ISupplierAdmin",
       address: string,

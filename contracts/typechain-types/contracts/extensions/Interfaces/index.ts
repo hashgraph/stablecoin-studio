@@ -4,6 +4,7 @@
 export type { IBurnable } from "./IBurnable";
 export type { ICashIn } from "./ICashIn";
 export type { IRescatable } from "./IRescatable";
+export type { IRoles } from "./IRoles";
 export type { ISupplierAdmin } from "./ISupplierAdmin";
 export type { ITokenOwner } from "./ITokenOwner";
 export type { IWipeable } from "./IWipeable";

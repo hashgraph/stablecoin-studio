@@ -50,6 +50,8 @@ export type { ICashIn } from "./contracts/extensions/Interfaces/ICashIn";
 export { ICashIn__factory } from "./factories/contracts/extensions/Interfaces/ICashIn__factory";
 export type { IRescatable } from "./contracts/extensions/Interfaces/IRescatable";
 export { IRescatable__factory } from "./factories/contracts/extensions/Interfaces/IRescatable__factory";
+export type { IRoles } from "./contracts/extensions/Interfaces/IRoles";
+export { IRoles__factory } from "./factories/contracts/extensions/Interfaces/IRoles__factory";
 export type { ISupplierAdmin } from "./contracts/extensions/Interfaces/ISupplierAdmin";
 export { ISupplierAdmin__factory } from "./factories/contracts/extensions/Interfaces/ISupplierAdmin__factory";
 export type { ITokenOwner } from "./contracts/extensions/Interfaces/ITokenOwner";

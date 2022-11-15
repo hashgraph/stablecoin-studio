@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.10;
 
+import "./Interfaces/IRoles.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 
-abstract contract Roles is AccessControlUpgradeable {
+abstract contract Roles is IRoles, AccessControlUpgradeable {
         
     /**
     * @dev Role that allows to mint token

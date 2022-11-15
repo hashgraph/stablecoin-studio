@@ -4,6 +4,7 @@
 export { IBurnable__factory } from "./IBurnable__factory";
 export { ICashIn__factory } from "./ICashIn__factory";
 export { IRescatable__factory } from "./IRescatable__factory";
+export { IRoles__factory } from "./IRoles__factory";
 export { ISupplierAdmin__factory } from "./ISupplierAdmin__factory";
 export { ITokenOwner__factory } from "./ITokenOwner__factory";
 export { IWipeable__factory } from "./IWipeable__factory";
