@@ -1076,6 +1076,51 @@ Gets the public key of a private key.
 
 ## Hashpack
 
+### Utilities
+
+#### Get Availability Extension
+
+Check if the Hashpack extension is available
+
+```Typescript
+	const isAvailable: bool = sdk.getAvailabilityExtension();
+```
+
+#### Get HashConnect Conection Status
+
+Get the HashConncet conection
+
+```Typescript
+	enum HashConnectConnectionState {
+		Connecting = "Connecting",
+		Connected = "Connected",
+		Disconnected = "Disconnected",
+		Paired = "Paired"
+	}
+
+	const status: HashConnectConnectionState = sdk.gethashConnectConectionStatus();
+```
+
+#### Get Init Data
+
+```Typescript
+	const status: InitializationData = sdk.getInitData();
+```
+
+#### Disconect Haspack
+
+Disconect Hashpack
+
+```Typescript
+	sdk.disconectHaspack();
+```
+
+#### Connect Wallet
+
+```Typescript
+	const provider: IProvider = sdk.connectWallet();
+```
+
 ### Events
 
 You can setup callbacks to events from the Hashpack provider:
