@@ -35,6 +35,7 @@ import {
 } from '@hashgraph/sdk';
 import BigDecimal from '../../../domain/context/stablecoin/BigDecimal.js';
 import { InvalidResponse } from './error/InvalidResponse.js';
+import { StableCoinNotFound } from './error/StableCoinNotFound.js';
 
 export default class StableCoinRepository implements IStableCoinRepository {
 	private networkAdapter: NetworkAdapter;
@@ -104,6 +105,11 @@ export default class StableCoinRepository implements IStableCoinRepository {
 					return undefined;
 				}
 			};
+
+			if (response.status !== 200) {
+				throw new StableCoinNotFound(id);
+			}
+
 			const decimals = parseInt(response.data.decimals ?? '0');
 			return new StableCoin({
 				id: response.data.token_id,
