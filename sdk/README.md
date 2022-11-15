@@ -405,13 +405,13 @@ Creates a new stable coin.
 **Spec:**
 
 ```Typescript
-	sdk.createStableCoin = (request: ICreateStableCoinRequest): Promise<StableCoin>
+	sdk.createStableCoin = (request: CreateStableCoinRequest): Promise<StableCoinDetail>
 ```
 
 **Example:**
 
 ```Typescript
-	const stableCoin: StableCoin = await sdk.createStableCoin(
+	const stableCoin: StableCoinDetail = await sdk.createStableCoin(
 		new CreateStableCoinRequest({
 			account: new HashPackAccount("0.0.1"),
 			name: "Hedera Stable Coin",
