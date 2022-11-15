@@ -24,16 +24,21 @@ const Roles = () => {
 	const [isExternal, setIsExternal] = useState<boolean>(false);
 
 	useEffect(() => {
-		const tokensAccount = JSON.parse(localStorage.tokensAccount);
+		const tokensAccount = localStorage?.tokensAccount;
 		if (tokensAccount) {
-			const myAccount = tokensAccount.find((acc: IAccountToken) => accountId === acc.id);
-			if (myAccount) {
-				if (
-					myAccount.externalTokens.find((coin: IExternalToken) => coin.id === coinSelected?.tokenId)
-				) {
-					setIsExternal(true);
-				} else {
-					setIsExternal(false);
+			const tokensAccountParsed = JSON.parse(tokensAccount);
+			if (tokensAccountParsed) {
+				const myAccount = tokensAccountParsed.find((acc: IAccountToken) => accountId === acc.id);
+				if (myAccount) {
+					if (
+						myAccount.externalTokens.find(
+							(coin: IExternalToken) => coin.id === coinSelected?.tokenId,
+						)
+					) {
+						setIsExternal(true);
+					} else {
+						setIsExternal(false);
+					}
 				}
 			}
 		}

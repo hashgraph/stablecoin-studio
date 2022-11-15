@@ -97,7 +97,7 @@ const ExternalTokenCreation = () => {
 					}),
 				);
 			}
-			const tokensAccount = localStorage.tokensAccount;
+			const tokensAccount = localStorage?.tokensAccount;
 			if (tokensAccount) {
 				const tokensAccountParsed = JSON.parse(tokensAccount);
 				const accountToken = tokensAccountParsed.find(

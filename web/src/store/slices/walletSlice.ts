@@ -57,16 +57,17 @@ export const getExternalTokenList = createAsyncThunk(
 	'wallet/getExternalTokenList',
 	async (accountId: string) => {
 		try {
-			const accountTokens = JSON.parse(localStorage.tokensAccount);
-			console.log('EXTERNAL TOKENS', accountTokens);
-			if (accountTokens) {
-				const myAccount = accountTokens.find((acc: IAccountToken) => acc.id === accountId);
-				console.log('MI CUENTA', myAccount);
-				if (myAccount) {
-					return myAccount.externalTokens;
+			const tokensAccount = localStorage?.tokensAccount;
+			if (tokensAccount) {
+				const accountTokens = JSON.parse(tokensAccount);
+				if (accountTokens) {
+					const myAccount = accountTokens.find((acc: IAccountToken) => acc.id === accountId);
+					if (myAccount) {
+						return myAccount.externalTokens;
+					}
 				}
-				return [];
 			}
+			return [];
 		} catch (e) {
 			console.error(e);
 		}
