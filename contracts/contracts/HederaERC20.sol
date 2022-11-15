@@ -4,7 +4,6 @@ pragma solidity ^0.8.10;
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "./Interfaces/IHederaERC20.sol";
 import "./extensions/CashIn.sol";
 import "./extensions/Burnable.sol";
@@ -15,7 +14,7 @@ import "./hts-precompile/IHederaTokenService.sol";
 import "./extensions/TokenOwner.sol";
 
 
-contract HederaERC20 is IHederaERC20, Initializable, IERC20Upgradeable,
+contract HederaERC20 is IHederaERC20, IERC20Upgradeable,
                        CashIn, Burnable, Wipeable, Rescatable {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
@@ -24,8 +23,8 @@ contract HederaERC20 is IHederaERC20, Initializable, IERC20Upgradeable,
         payable 
         initializer 
     {
-        _setTokenAddress(tokenAddress);
-        __AccessControl_init();       
+        tokenOwner_init(tokenAddress);
+        roles_init();       
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender); // Assign Admin role to calling contract/user in order to be able to set all the other roles
         grantUnlimitedSupplierRole(originalSender);
         _grantRole(BURN_ROLE, originalSender);

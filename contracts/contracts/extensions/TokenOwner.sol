@@ -4,8 +4,10 @@ pragma solidity ^0.8.10;
 import "./Interfaces/ITokenOwner.sol";
 import "../hts-precompile/HederaResponseCodes.sol";
 import "../hts-precompile/IHederaTokenService.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
-abstract contract TokenOwner is ITokenOwner, HederaResponseCodes {
+
+abstract contract TokenOwner is ITokenOwner, HederaResponseCodes, Initializable {
     
     // Hedera HTS precompiled contract
     address constant precompileAddress = address(0x167);
@@ -13,7 +15,9 @@ abstract contract TokenOwner is ITokenOwner, HederaResponseCodes {
     address internal _tokenAddress; 
 
     // Initiliazes the token address
-    function _setTokenAddress (address tokenAddress) internal
+    function tokenOwner_init (address tokenAddress) 
+        internal 
+        onlyInitializing
     {
         _tokenAddress = tokenAddress;
     }

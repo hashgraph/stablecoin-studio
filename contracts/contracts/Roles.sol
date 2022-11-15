@@ -43,7 +43,7 @@ abstract contract Roles is AccessControlUpgradeable {
     /**
     * @dev Chain to include in array positions for roles don't available for an account
     * 
-    * keccak256("WITHOU_ROLE");
+    * keccak256("WITHOUT_ROLE");
     */ 
     bytes32 private constant WITHOUT_ROLE = 0xe11b25922c3ff9f0f0a34f0b8929ac96a1f215b99dcb08c2891c220cf3a7e8cc;
 
@@ -51,7 +51,20 @@ abstract contract Roles is AccessControlUpgradeable {
     * @dev Array containing all roles
     *
     */
-    bytes32[6] public ROLES = [CASHIN_ROLE, BURN_ROLE, WIPE_ROLE, RESCUE_ROLE, PAUSER_ROLE, DEFAULT_ADMIN_ROLE];
+    bytes32[] public ROLES;
+
+    function roles_init() 
+        internal
+        onlyInitializing
+    {
+        __AccessControl_init();
+        ROLES.push(CASHIN_ROLE);
+        ROLES.push(BURN_ROLE);
+        ROLES.push(WIPE_ROLE);
+        ROLES.push(RESCUE_ROLE);
+        ROLES.push(PAUSER_ROLE);
+        ROLES.push(DEFAULT_ADMIN_ROLE);
+    }
 
     /**
      * @dev Returns an array of roles the account currently has
@@ -64,13 +77,11 @@ abstract contract Roles is AccessControlUpgradeable {
         view
         returns (bytes32[] memory)
     {
-        bytes32[] memory roles = new bytes32[](6);
-        roles[0] = hasRole(CASHIN_ROLE, account) ? CASHIN_ROLE : WITHOUT_ROLE;
-        roles[1] = hasRole(BURN_ROLE, account) ? BURN_ROLE : WITHOUT_ROLE;
-        roles[2] = hasRole(WIPE_ROLE, account) ? WIPE_ROLE : WITHOUT_ROLE;
-        roles[3] = hasRole(RESCUE_ROLE, account) ? RESCUE_ROLE : WITHOUT_ROLE;
-        roles[4] = hasRole(PAUSER_ROLE, account) ? PAUSER_ROLE : WITHOUT_ROLE;
-        roles[5] = hasRole(DEFAULT_ADMIN_ROLE, account) ? DEFAULT_ADMIN_ROLE : WITHOUT_ROLE;
-        return roles;
+        bytes32[] memory roles = new bytes32[](ROLES.length);
+
+        for(uint i=0; i < ROLES.length; i++){
+            roles[i] = hasRole(ROLES[i], account) ? ROLES[i] : WITHOUT_ROLE;
+        }
+        return (roles);
     }
 }
