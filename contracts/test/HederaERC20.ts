@@ -22,12 +22,13 @@ import {name,
   getBalanceOf,
   getTokenAddress,
   getImplementation,
-  upgradeTo,
+  //upgradeTo,
   getAdmin,
-  changeAdmin,
+  //changeAdmin,
   owner,
-  upgrade,
-  changeProxyAdmin} from "../scripts/contractsMethods";
+  //upgrade,
+  //changeProxyAdmin
+} from "../scripts/contractsMethods";
 
 let proxyAddress:any;
 let proxyAdminAddress:any;
@@ -51,7 +52,7 @@ const INIT_SUPPLY = BigNumber.from(10).mul(TokenFactor);
 const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor);
 const TokenMemo = "Hedera Accelerator Stable Coin"
 
-describe.skip("HederaERC20 Tests", function() {
+describe("HederaERC20 Tests", function() {
   before(async function  () {         
     // Generate Client (token admin) and Client 2
     [client,
@@ -199,7 +200,7 @@ describe("HederaERC20Proxy and HederaERC20ProxyAdmin Tests", function() {
       stableCoinAddress = result[2];
     });   
 
-  it.skip("Retrieve admin and implementation addresses", async function() {
+  it("Retrieve admin and implementation addresses for the Proxy", async function() {
      // We retreive the HederaERC20Proxy admin and implementation
      const implementation = await getImplementation(ContractId, proxyAddress, client);
      const admin = await getAdmin(ContractId, proxyAddress, client);
@@ -208,8 +209,16 @@ describe("HederaERC20Proxy and HederaERC20ProxyAdmin Tests", function() {
      expect(implementation.toUpperCase()).to.equals("0X" + stableCoinAddress.toSolidityAddress().toUpperCase());
      expect(admin.toUpperCase()).to.equals("0X" + proxyAdminAddress.toSolidityAddress().toUpperCase());
   });
+
+  it("Retrieve proxy admin owner", async function() {
+    // We retreive the HederaERC20Proxy admin and implementation
+    const ownerAccount = await owner(ContractId, proxyAdminAddress, client);
+
+    // We check their values : success
+    expect(ownerAccount.toUpperCase()).to.equals("0X" + AccountId.fromString(OPERATOR_ID).toSolidityAddress().toUpperCase());
+ });
   
-  it.skip("Upgrade Proxy implementation with non-admin account", async function() {
+  /*it.skip("Upgrade Proxy implementation with non-admin account", async function() {
     // Deploy a new contract
     let result = await deployContractsWithSDK(
       TokenName, 
@@ -263,7 +272,7 @@ describe("HederaERC20Proxy and HederaERC20ProxyAdmin Tests", function() {
 
   it("Upgrade Proxy admin with proxy admin", async function() {
     
-  });
+  });*/
 
 
 });

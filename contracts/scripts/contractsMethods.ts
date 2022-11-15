@@ -96,10 +96,11 @@ export async function getImplementation(ContractId: any, proxyAddress: string, c
     return result[0];
 }
 
+/*
 export async function upgradeTo(ContractId: any, proxyAddress: string, client: any, newImplementationContract: string) {
     let params : any = [newImplementationContract];  
     await contractCall(ContractId.fromString(proxyAddress!), 'upgradeTo', params, client, Gas3, HederaERC20Proxy__factory.abi);
-}
+}*/
 
 export async function getAdmin(ContractId: any, proxyAddress: string, client: any): Promise<string>{
     let params: any[] = [];  
@@ -107,10 +108,11 @@ export async function getAdmin(ContractId: any, proxyAddress: string, client: an
     return result[0];
 }
 
+/*
 export async function changeAdmin(ContractId: any, proxyAddress: string, client: any, newAdminAccount: string) {
     let params : any = [AccountId.fromString(newAdminAccount!).toSolidityAddress()];  
     await contractCall(ContractId.fromString(proxyAddress!), 'changeAdmin', params, client, Gas3, HederaERC20Proxy__factory.abi);
-}
+}*/
 
 // HederaERC20ProxyAdmin ///////////////////////////////////////////////////
 export async function owner(ContractId: any, proxyAdminAddress: string, client: any): Promise<string>{
@@ -119,6 +121,7 @@ export async function owner(ContractId: any, proxyAdminAddress: string, client: 
     return result[0];
 }
 
+/*
 export async function upgrade(ContractId: any, proxyAdminAddress: string, client: any, newImplementationContract: string, proxyAddress: string) {
     let params : any = [proxyAddress, newImplementationContract];  
     await contractCall(ContractId.fromString(proxyAdminAddress!), 'upgrade', params, client, Gas3, HederaERC20ProxyAdmin__factory.abi);
@@ -127,7 +130,7 @@ export async function upgrade(ContractId: any, proxyAdminAddress: string, client
 export async function changeProxyAdmin(ContractId: any, proxyAdminAddress: string, client: any, newAdminAccount: string, proxyAddress: string) {
     let params : any = [ContractId.fromString(proxyAddress!), AccountId.fromString(newAdminAccount!).toSolidityAddress()];  
     await contractCall(ContractId.fromString(proxyAdminAddress!), 'changeProxyAdmin', params, client, Gas3, HederaERC20ProxyAdmin__factory.abi);
-}
+}*/
 
 /* Methods to add
     - allowance(address,address) (external)
