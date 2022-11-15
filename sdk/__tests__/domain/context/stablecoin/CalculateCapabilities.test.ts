@@ -3,23 +3,29 @@ import {
   HederaNetworkEnviroment,
   Configuration,
   NetworkMode,
-  ICreateStableCoinRequest,
   SDK,
   IStableCoinDetail,
+  CreateStableCoinRequest,
+  GetStableCoinDetailsRequest,
 } from '../../../../src/index.js';
-import { AccountId, PrivateKey } from '@hashgraph/sdk';
+import { AccountId } from '@hashgraph/sdk';
 import { Capabilities } from '../../../../src/domain/context/stablecoin/Capabilities.js';
-import { ACCOUNTS, getSDKAsync } from '../../../core/core.js';
+import { ACCOUNTS, getSDKAsync, REQUEST_ACCOUNTS } from '../../../core/core.js';
 
 describe('🧪 [DOMAIN] StableCoin', () => {
   it('Create an stable coin with all funtionality', async () => {
     const { coin, sdk } = await createStableCoin();
     expect(coin.tokenId).not.toBeFalsy();
+    const stableCoinDetails = await sdk.getStableCoinDetails(
+      new GetStableCoinDetailsRequest({
+        id: coin.tokenId!,
+      }),
+    );
+    expect(stableCoinDetails).not.toBeFalsy();
+    expect(stableCoinDetails?.tokenId).not.toBeFalsy();
     const cap: Capabilities[] | null = await sdk.getCapabilitiesStableCoin(
-      coin.tokenId ?? '',
-      PrivateKey.fromString(
-        ACCOUNTS.testnet.privateKey.key
-      ).publicKey.toString()
+      stableCoinDetails!.tokenId!,
+      ACCOUNTS.testnet.privateKey.publicKey.key,
     );
     expect(cap).not.toBeNull();
   }, 180_000);
@@ -37,17 +43,17 @@ async function createStableCoin(): Promise<{
     ),
     mode: NetworkMode.EOA,
     options: {
-      account: ACCOUNTS.testnet,
+      account: REQUEST_ACCOUNTS.testnet,
     },
   };
 
   const sdk = await getSDKAsync(conf);
-  const create: ICreateStableCoinRequest = {
-    account: ACCOUNTS.testnet,
+  const create: CreateStableCoinRequest = new CreateStableCoinRequest({
+    account: REQUEST_ACCOUNTS.testnet,
     name: 'Custom Nodes',
     symbol: 'CN',
     decimals: 2,
-  };
+  });
   const coin = await sdk.createStableCoin(create);
   if (!coin) throw new Error('Coin could not be created, aborting');
   return { coin, sdk };

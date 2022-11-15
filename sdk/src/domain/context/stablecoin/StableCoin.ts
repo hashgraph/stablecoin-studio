@@ -2,17 +2,35 @@ import BaseEntity from '../../BaseEntity.js';
 import AccountId from '../account/AccountId.js';
 import PublicKey from '../account/PublicKey.js';
 import ContractId from '../contract/ContractId.js';
+import InvalidAmount from './error/InvalidAmount.js';
+import NameLength from './error/NameLength.js';
+import NameEmpty from './error/NameEmpty.js';
+import SymbolLength from './error/SymbolLength.js';
+import SymbolEmpty from './error/SymbolEmpty.js';
 import BigDecimal from './BigDecimal.js';
-import InvalidAmountDomainError from './error/InvalidAmountDomainError.js';
-import InvalidDecimalRangeDomainError from './error/InvalidDecimalRangeDomainError.js';
 import { StableCoinMemo } from './StableCoinMemo.js';
 import { TokenSupplyType } from './TokenSupply.js';
 import { TokenType } from './TokenType.js';
+import InvalidDecimalRange from './error/InvalidDecimalRange.js';
+import BaseError from '../../../core/error/BaseError.js';
+import CheckNums from '../../../core/checks/numbers/CheckNums.js';
+import CheckStrings from '../../../core/checks/strings/CheckStrings.js';
+import { InitSupplyInvalid } from './error/InitSupplyInvalid.js';
+import { InitSupplyLargerThanMaxSupply } from './error/InitSupplyLargerThanMaxSupply.js';
+import InvalidMaxSupplySupplyType from './error/InvalidMaxSupplySupplyType.js';
+import { BigNumber } from '@hashgraph/hethers';
+import { MaxSupplyOverLimit } from './error/MaxSupplyOverLimit.js';
+import { InvalidType } from '../../../port/in/sdk/request/error/InvalidType.js';
 
-const MAX_SUPPLY = 9_223_372_036_854_775_807n; // eslint-disable-line
+const MAX_SUPPLY = 9_223_372_036_854_775_807n;
 const TEN = 10;
+const ONE_HUNDRED = 100;
+const EIGHTEEN = 18;
+const ZERO = 0;
 
 export class StableCoin extends BaseEntity {
+	public static MAX_SUPPLY: bigint = MAX_SUPPLY;
+
 	/**
 	 * Admin PublicKey for the token
 	 */
@@ -254,6 +272,7 @@ export class StableCoin extends BaseEntity {
 	public set deleted(value: string) {
 		this._deleted = value;
 	}
+
 	constructor(params: {
 		name: string;
 		symbol: string;
@@ -303,10 +322,11 @@ export class StableCoin extends BaseEntity {
 			deleted,
 			paused,
 		} = params;
+
 		this.adminKey = adminKey;
 		this.name = name;
 		this.symbol = symbol;
-		this.decimals = this.checkDecimals(decimals);
+		this.decimals = decimals;
 		this.initialSupply = initialSupply ?? BigDecimal.ZERO;
 		this.totalSupply = totalSupply ?? BigDecimal.ZERO;
 		this.maxSupply = maxSupply ?? undefined;
@@ -332,12 +352,114 @@ export class StableCoin extends BaseEntity {
 		this.deleted = deleted ?? '';
 	}
 
-	public checkDecimals(value: number): number {
-		if (value < 0 || value > 18) {
-			throw new InvalidDecimalRangeDomainError(value);
-		} else {
-			return value;
+	public static checkName(value: string): BaseError[] {
+		const maxNameLength = ONE_HUNDRED;
+		const errorList: BaseError[] = [];
+
+		if (!CheckStrings.isNotEmpty(value)) errorList.push(new NameEmpty());
+		if (!CheckStrings.isLengthUnder(value, maxNameLength))
+			errorList.push(new NameLength(value, maxNameLength));
+
+		return errorList;
+	}
+
+	public static checkSymbol(value: string): BaseError[] {
+		const maxSymbolLength = ONE_HUNDRED;
+		const errorList: BaseError[] = [];
+
+		if (!CheckStrings.isNotEmpty(value)) errorList.push(new SymbolEmpty());
+		if (!CheckStrings.isLengthUnder(value, maxSymbolLength))
+			errorList.push(new SymbolLength(value, maxSymbolLength));
+
+		return errorList;
+	}
+
+	public static checkDecimals(value: number): BaseError[] {
+		const errorList: BaseError[] = [];
+		const min = ZERO;
+		const max = EIGHTEEN;
+
+		if (CheckNums.hasMoreDecimals(value.toString(), 0)) {
+			errorList.push(new InvalidType(value, 'integer'));
 		}
+		if (!CheckNums.isWithinRange(value, min, max))
+			errorList.push(new InvalidDecimalRange(value, min, max));
+
+		return errorList;
+	}
+	public static checkInteger(value: number): BaseError[] {
+		const errorList: BaseError[] = [];
+
+		if (!Number.isInteger(value)) {
+			return [new InvalidType(value, 'integer1')];
+		}
+		
+		return errorList;
+	}
+
+	public static checkInitialSupply(
+		initialSupply: BigDecimal,
+		decimals: number,
+		maxSupply?: BigDecimal,
+	): BaseError[] {
+		const list: BaseError[] = [];
+		const min = BigDecimal.ZERO;
+		const max =
+			maxSupply ??
+			BigDecimal.fromValue(BigNumber.from(MAX_SUPPLY), decimals);
+		if (!CheckNums.isWithinRange(initialSupply, min, max)) {
+			list.push(new InitSupplyInvalid(initialSupply.toString()));
+		}
+		return list;
+	}
+
+	public static checkMaxSupply(
+		maxSupply: BigDecimal,
+		decimals: number,
+		initialSupply?: BigDecimal,
+		supplyType?: TokenSupplyType,
+	): BaseError[] {
+		let list: BaseError[] = [];
+		const min = initialSupply ?? BigDecimal.ZERO;
+		const max = BigDecimal.fromValue(BigNumber.from(MAX_SUPPLY), decimals);
+		if (CheckNums.isLessThan(maxSupply, min)) {
+			if (min.isZero()) {
+				list.push(
+					new InvalidAmount(maxSupply.toString(), min.toString()),
+				);
+			} else {
+				list.push(
+					new InitSupplyLargerThanMaxSupply(
+						min.toString(),
+						maxSupply.toString(),
+					),
+				);
+			}
+		}
+		if (CheckNums.isGreaterThan(maxSupply, max)) {
+			list.push(
+				new MaxSupplyOverLimit(maxSupply.toString(), max.toString()),
+			);
+		}
+
+		list = [...list, ...StableCoin.checkSupplyType(maxSupply, supplyType)];
+
+		return list;
+	}
+
+	private static checkSupplyType(
+		maxSupply: BigDecimal,
+		supplyType?: TokenSupplyType,
+	): BaseError[] {
+		const list: BaseError[] = [];
+
+		if (supplyType && supplyType !== TokenSupplyType.FINITE) {
+			if (CheckNums.isGreaterThan(maxSupply, BigDecimal.ZERO)) {
+				list.push(new InvalidMaxSupplySupplyType(maxSupply.toString()));
+			}
+			return list;
+		}
+		return list;
 	}
 
 	public getDecimalOperator(): number {
@@ -347,7 +469,7 @@ export class StableCoin extends BaseEntity {
 	public fromInteger(amount: number): number {
 		const res = amount / this.getDecimalOperator();
 		if (!this.isValidAmount(res)) {
-			throw new InvalidAmountDomainError(res, this.decimals);
+			throw new InvalidAmount(res, this.decimals);
 		}
 		return res;
 	}

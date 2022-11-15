@@ -1,3 +1,5 @@
+import type { ValidationResponse } from 'hedera-stable-coin-sdk';
+
 export const validateAccount = (account: string) => {
 	const regex = /^(0)\.(0)\.(0|(?:[1-9]\d*))$/;
 
@@ -21,13 +23,13 @@ export const validateDecimals = (value: number, decimals: number) => {
 	return dec <= decimals;
 };
 
-export const validateQuantityOverMaxSupply = (
-	value: number,
-	maxSupply?: bigint,
-	totalSupply?: bigint,
-) => {
-	if (maxSupply === (0 as unknown as bigint)) return true; // case when maxSupply is infinite
-	if (totalSupply && maxSupply && totalSupply + (value as unknown as bigint) <= maxSupply)
-		return true;
-	return false;
+export const handleRequestValidation = (
+	val: ValidationResponse[],
+	msg?: string,
+): string | boolean => {
+	if (val.length > 0) {
+		if (msg) return msg;
+		return val.map((v) => v.errors.flatMap((e) => e.message)).join('\n');
+	}
+	return true;
 };

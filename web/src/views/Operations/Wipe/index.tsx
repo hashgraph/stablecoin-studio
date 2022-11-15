@@ -9,21 +9,18 @@ import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandle
 import ModalsHandler from '../../../components/ModalsHandler';
 import SDKService from '../../../services/SDKService';
 import {
-	SELECTED_WALLET_ACCOUNT_INFO,
+	// SELECTED_WALLET_ACCOUNT_INFO,
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNT,
 	walletActions,
 } from '../../../store/slices/walletSlice';
 import type { AppDispatch } from '../../../store/store.js';
 import { formatAmount } from '../../../utils/inputHelper';
-import {
-	validateAccount,
-	validateAmount,
-	validateDecimalsString,
-} from '../../../utils/validationsHelper';
+import { handleRequestValidation } from '../../../utils/validationsHelper';
 import OperationLayout from './../OperationLayout';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
+import { GetStableCoinDetailsRequest, WipeStableCoinRequest } from 'hedera-stable-coin-sdk';
 
 const WipeOperation = () => {
 	const {
@@ -34,13 +31,22 @@ const WipeOperation = () => {
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
-	const infoAccount = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
+	// const infoAccount = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 
 	const [errorOperation, setErrorOperation] = useState();
+	const [request] = useState(
+		new WipeStableCoinRequest({
+			account: {
+				accountId: account.accountId,
+			},
+			amount: '0',
+			proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
+			targetId: '',
+			tokenId: selectedStableCoin?.tokenId ?? '',
+		}),
+	);
 	const dispatch = useDispatch<AppDispatch>();
 	const navigate = useNavigate();
-
-	const { decimals = 0 } = selectedStableCoin || {};
 
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
@@ -57,9 +63,9 @@ const WipeOperation = () => {
 	};
 
 	const handleRefreshCoinInfo = async () => {
-		const stableCoinDetails = await SDKService.getStableCoinDetails({
+		const stableCoinDetails = await SDKService.getStableCoinDetails(new GetStableCoinDetailsRequest ({
 			id: selectedStableCoin?.tokenId || '',
-		});
+		}));
 		dispatch(
 			walletActions.setSelectedStableCoin({
 				tokenId: stableCoinDetails?.tokenId,
@@ -86,20 +92,13 @@ const WipeOperation = () => {
 		);
 	};
 	const handleWipe: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
-		const { amount, destinationAccount } = getValues();
+		// const { amount, destinationAccount } = getValues();
 		try {
 			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId) {
 				onError();
 				return;
 			}
-			await SDKService.wipe({
-				proxyContractId: selectedStableCoin.memo.proxyContract,
-				account,
-				tokenId: selectedStableCoin.tokenId,
-				targetId: destinationAccount,
-				amount,
-				publicKey: infoAccount.publicKey,
-			});
+			await SDKService.wipe(request);
 			onSuccess();
 		} catch (error: any) {
 			setErrorOperation(error.toString());
@@ -123,14 +122,11 @@ const WipeOperation = () => {
 								rules={{
 									required: t(`global:validations.required`),
 									validate: {
-										validNumber: (value: string) => {
-											return validateAmount(value) || t('global:validations.invalidAmount');
-										},
-										validDecimals: (value: string) => {
-											return (
-												validateDecimalsString(value, decimals) ||
-												t('global:validations.decimalsValidation')
-											);
+										validation: (value: string) => {
+											// return request.validate('amount') || t('wipe:decimalsValidation');
+											request.amount = value;
+											const res = handleRequestValidation(request.validate('amount'));
+											return res;
 										},
 									},
 								}}
@@ -144,16 +140,21 @@ const WipeOperation = () => {
 								rules={{
 									required: t('global:validations.required'),
 									validate: {
-										validAccount: (value: string) => {
-											return validateAccount(value) || t('global:validations.invalidAccount');
+										validation: (value: string) => {
+											request.targetId =  value;
+											const res = handleRequestValidation(request.validate('targetId'));
+											return res;
 										},
-									},
+									}
 								}}
 								isRequired
 								control={control}
 								name='destinationAccount'
 								placeholder={t('wipe:fromAccountPlaceholder')}
 								label={t('wipe:fromAccountLabel')}
+								onChangeAux={(e) => {
+									request.targetId = e.target.value;
+								}}
 							/>
 						</Stack>
 					</>

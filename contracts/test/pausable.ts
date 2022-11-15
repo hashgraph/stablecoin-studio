@@ -3,10 +3,10 @@ import "@hashgraph/hardhat-hethers";
 import "@hashgraph/sdk";
 import {BigNumber} from "ethers";
 
-var chai = require("chai");
-var chaiAsPromised = require("chai-as-promised");
+const chai = require("chai");
+const chaiAsPromised = require("chai-as-promised");
 chai.use(chaiAsPromised);
-var expect = chai.expect;
+const expect = chai.expect;
 
 
 import { deployContractsWithSDK, initializeClients } from "../scripts/deploy";

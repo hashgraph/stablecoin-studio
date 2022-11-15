@@ -38,16 +38,19 @@ const Operations = () => {
 	const getAvailableFeatures = () => {
 		let isExternalToken = false;
 		let roles = [];
-		const tokensAccount = JSON.parse(localStorage.tokensAccount);
+		const tokensAccount = localStorage?.tokensAccount;
 		if (tokensAccount) {
-			const myAccount = tokensAccount.find((acc: IAccountToken) => acc.id === accountId);
-			if (myAccount) {
-				const externalToken = myAccount?.externalTokens.find(
-					(coin: IExternalToken) => coin.id === selectedStableCoin?.tokenId,
-				);
-				if (externalToken) {
-					isExternalToken = true;
-					roles = externalToken.roles.map((role: string) => role);
+			const tokensAccountParsed = JSON.parse(tokensAccount);
+			if (tokensAccountParsed) {
+				const myAccount = tokensAccountParsed.find((acc: IAccountToken) => acc.id === accountId);
+				if (myAccount) {
+					const externalToken = myAccount?.externalTokens.find(
+						(coin: IExternalToken) => coin.id === selectedStableCoin?.tokenId,
+					);
+					if (externalToken) {
+						isExternalToken = true;
+						roles = externalToken.roles.map((role: string) => role);
+					}
 				}
 			}
 		}

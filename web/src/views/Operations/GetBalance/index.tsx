@@ -5,10 +5,10 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import DetailsReview from '../../../components/DetailsReview';
 import InputController from '../../../components/Form/InputController';
-import { validateAccount } from '../../../utils/validationsHelper';
 import OperationLayout from './../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
+import { handleRequestValidation } from '../../../utils/validationsHelper';
 import SDKService from '../../../services/SDKService';
 import {
 	SELECTED_WALLET_COIN,
@@ -19,6 +19,7 @@ import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
 import type { AppDispatch } from '../../../store/store.js';
 import { formatAmountWithDecimals } from '../../../utils/inputHelper';
+import { GetAccountBalanceRequest, GetStableCoinDetailsRequest } from 'hedera-stable-coin-sdk';
 
 const GetBalanceOperation = () => {
 	const {
@@ -27,16 +28,26 @@ const GetBalanceOperation = () => {
 		onClose: onCloseModalAction,
 	} = useDisclosure();
 
+	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
+	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
+
 	const [balance, setBalance] = useState<string | null>();
 	const [errorOperation, setErrorOperation] = useState();
+	const [request] = useState(
+		new GetAccountBalanceRequest({
+			proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
+			account: {
+				accountId: account.accountId
+			},
+			tokenId: selectedStableCoin?.tokenId ?? '',
+			targetId: ''
+		})
+	);
+
 	const dispatch = useDispatch<AppDispatch>();
 	const navigate = useNavigate();
 
 	const { t } = useTranslation(['getBalance', 'global', 'operations']);
-
-	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
-	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
-
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
 	});
@@ -50,9 +61,11 @@ const GetBalanceOperation = () => {
 	};
 
 	const handleRefreshCoinInfo = async () => {
-		const stableCoinDetails = await SDKService.getStableCoinDetails({
-			id: selectedStableCoin?.tokenId || '',
-		});
+		const stableCoinDetails = await SDKService.getStableCoinDetails(
+			new GetStableCoinDetailsRequest({
+				id: selectedStableCoin?.tokenId ?? '',
+			}) 
+		);
 		dispatch(
 			walletActions.setSelectedStableCoin({
 				tokenId: stableCoinDetails?.tokenId,
@@ -83,20 +96,13 @@ const GetBalanceOperation = () => {
 		onSuccess,
 		onError,
 	}) => {
-		const { targetAccount } = getValues();
-
 		try {
 			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId) {
 				onError();
 				return;
 			}
 
-			const balance = await SDKService.getBalance({
-				proxyContractId: selectedStableCoin.memo.proxyContract,
-				account,
-				targetId: targetAccount,
-				tokenId: selectedStableCoin.tokenId,
-			});
+			const balance = await SDKService.getBalance(request);
 			setBalance(balance);
 			onSuccess();
 		} catch (error: any) {
@@ -121,10 +127,12 @@ const GetBalanceOperation = () => {
 								rules={{
 									required: t('global:validations.required'),
 									validate: {
-										validAccount: (value: string) => {
-											return validateAccount(value) || t('global:validations.invalidAccount');
+										validation: (value: string) => {
+											request.targetId =  value;
+											const res = handleRequestValidation(request.validate('targetId'));
+											return res;
 										},
-									},
+									}
 								}}
 								isRequired
 								control={control}

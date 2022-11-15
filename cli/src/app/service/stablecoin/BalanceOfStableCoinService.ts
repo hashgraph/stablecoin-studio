@@ -1,7 +1,7 @@
 import { language } from '../../../index.js';
 import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
-import { EOAccount, SDK } from 'hedera-stable-coin-sdk';
+import { SDK, GetAccountBalanceRequest } from 'hedera-stable-coin-sdk';
 
 /**
  * Create Stable Coin Service
@@ -15,10 +15,7 @@ export default class BalanceOfStableCoinsService extends Service {
    * List Stable Coins can be managed
    */
   public async getBalanceOfStableCoin(
-    proxyContractId: string,
-    account: EOAccount,
-    targetId: string,
-    tokenId: string,
+    req: GetAccountBalanceRequest
   ): Promise<void> {
     // Call to list stable coins
     const sdk: SDK = utilsService.getSDK();
@@ -27,12 +24,7 @@ export default class BalanceOfStableCoinsService extends Service {
 
     await utilsService.showSpinner(
       sdk
-        .getBalanceOf({
-          proxyContractId,
-          account,
-          targetId,
-          tokenId,
-        })
+        .getBalanceOf(req)
         .then((response) => {
           respDetail = response;
         }),

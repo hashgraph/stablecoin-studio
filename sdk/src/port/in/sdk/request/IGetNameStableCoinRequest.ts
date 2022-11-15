@@ -1,3 +1,3 @@
-import { IRequestContracts } from './IRequestContracts.js';
+import { RequestContracts } from './model/ContractRequests.js';
 
-export type IGetNameStableCoinRequest = IRequestContracts;
+export type IGetNameStableCoinRequest = RequestContracts;

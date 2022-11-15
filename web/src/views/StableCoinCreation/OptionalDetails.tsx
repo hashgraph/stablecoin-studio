@@ -1,20 +1,20 @@
 import { Heading, Stack, VStack } from '@chakra-ui/react';
-import { BigDecimal } from 'hedera-stable-coin-sdk';
+import type { CreateStableCoinRequest } from 'hedera-stable-coin-sdk';
 import type { Control, FieldValues, UseFormReturn } from 'react-hook-form';
-import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import InputController from '../../components/Form/InputController';
 import InputNumberController from '../../components/Form/InputNumberController';
 import { SelectController } from '../../components/Form/SelectController';
-import { validateAmount, validateDecimalsString } from '../../utils/validationsHelper';
+import { handleRequestValidation } from '../../utils/validationsHelper';
 
 interface OptionalDetailsProps {
 	control: Control<FieldValues>;
 	form: UseFormReturn;
+	request: CreateStableCoinRequest;
 }
 
 const OptionalDetails = (props: OptionalDetailsProps) => {
-	const { control, form } = props;
+	const { control, form, request } = props;
 	const { t } = useTranslation(['global', 'stableCoinCreation']);
 
 	const supplyTypes = [
@@ -51,15 +51,6 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 
 	const isSupplyTypeFinite = form.getValues().supplyType?.value === 1;
 
-	const initialSupply = useWatch({
-		control,
-		name: 'initialSupply',
-	});
-	const decimals = useWatch({
-		control,
-		name: 'decimals',
-	});
-
 	const handleResetMaxSupply = () => {
 		const { maxSupply, initialSupply } = form.getValues();
 
@@ -80,33 +71,13 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 					{t('stableCoinCreation:optionalDetails.title')}
 				</Heading>
 				<Stack as='form' spacing={6}>
-					<InputNumberController
-						rules={{
-							required: t(`global:validations.required`),
-						}}
-						isRequired
-						control={control}
-						name={'decimals'}
-						label={t('stableCoinCreation:optionalDetails.decimals')}
-						placeholder={t('stableCoinCreation:optionalDetails.placeholder', {
-							placeholder: t('stableCoinCreation:optionalDetails.decimals'),
-						})}
-						maxValue={18}
-						initialValue={6}
-						decimalScale={0}
-					/>
 					<InputController
 						rules={{
-							required: t(`global:validations.required`),
 							validate: {
-								validNumber: (value: string) => {
-									return validateAmount(value) || t('global:validations.invalidAmount');
-								},
-								validDecimals: (value: string) => {
-									return (
-										validateDecimalsString(value, decimals || 6) ||
-										t('global:validations.decimalsValidation')
-									);
+								validation: (value: string) => {
+									request.initialSupply = value;
+									const res = handleRequestValidation(request.validate('initialSupply'));
+									return res;
 								},
 							},
 						}}
@@ -135,23 +106,10 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 							rules={{
 								required: t(`global:validations.required`),
 								validate: {
-									validNumber: (value: string) => {
-										return validateAmount(value) || t('global:validations.invalidAmount');
-									},
-									validDecimals: (value: string) => {
-										return (
-											validateDecimalsString(value, decimals || 6) ||
-											t('global:validations.decimalsValidation')
-										);
-									},
-									quantityOverTotalSupply: (value: string) => {
-										return (
-											(initialSupply &&
-												BigDecimal.fromString(initialSupply, decimals).isLowerOrEqualThan(
-													BigDecimal.fromString(value, decimals),
-												)) ||
-											t('global:validations.overMaxSupply')
-										);
+									validation: (value: string) => {
+										request.maxSupply = value;
+										const res = handleRequestValidation(request.validate('maxSupply'));
+										return res;
 									},
 								},
 							}}
@@ -164,6 +122,27 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 							})}
 						/>
 					)}
+					<InputNumberController
+						rules={{
+							required: t(`global:validations.required`),
+							validate: {
+								validation: (value: string) => {
+									request.decimals = value;
+									const res = handleRequestValidation(request.validate('decimals'));
+									return res;
+								},
+							},
+						}}
+						isRequired
+						control={control}
+						name={'decimals'}
+						label={t('stableCoinCreation:optionalDetails.decimals')}
+						placeholder={t('stableCoinCreation:optionalDetails.placeholder', {
+							placeholder: t('stableCoinCreation:optionalDetails.decimals'),
+						})}
+						maxValue={18}
+						initialValue={6}
+					/>
 				</Stack>
 			</Stack>
 		</VStack>

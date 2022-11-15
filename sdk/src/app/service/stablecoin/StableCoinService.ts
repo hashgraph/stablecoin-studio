@@ -2,26 +2,32 @@ import Service from '../Service.js';
 import ICreateStableCoinServiceRequestModel from './model/ICreateStableCoinServiceRequestModel.js';
 import { IListStableCoinServiceRequestModel } from './model/IListStableCoinServiceRequestModel.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
-import IStableCoinList from '../../../port/in/sdk/response/IStableCoinList.js';
+import StableCoinList from '../../../port/in/sdk/response/StableCoinList.js';
 import IGetStableCoinServiceRequestModel from './model/IGetStableCoinServiceRequestModel.js';
 import IGetBalanceOfStableCoinServiceRequestModel from './model/IGetBalanceOfStableCoinServiceRequestModel.js';
 import IGetNameOfStableCoinServiceRequestModel from './model/IGetNameOfStableCoinServiceRequestModel.js';
-import ICashInStableCoinServiceRequestModel from './model/ICashInStableCoinServiceRequestModel.js';
+import CashInStableCoinServiceRequestModel from './model/ICashInStableCoinServiceRequestModel.js';
 import ICashOutStableCoinServiceRequestModel from './model/ICashOutStableCoinServiceRequestModel.js';
-import IAssociateTokenStableCoinServiceRequestModel from './model/IAssociateTokenStableCoinServiceRequestModel.js';
+import AssociateTokenStableCoinServiceRequestModel from './model/IAssociateTokenStableCoinServiceRequestModel.js';
 import IWipeStableCoinServiceRequestModel from './model/IWipeStableCoinServiceRequestModel.js';
 import IStableCoinRepository from '../../../port/out/stablecoin/IStableCoinRepository.js';
 import IRescueStableCoinServiceRequestModel from './model/IRescueStableCoinServiceRequestModel.js';
 import IRoleStableCoinServiceRequestModel from './model/IRoleStableCoinServiceRequestModel';
 import IGetBasicRequestModel from './model/IGetBasicRequest.js';
 import ISupplierRoleStableCoinServiceRequestModel from './model/ISupplierRoleStableCoinServiceRequestModel.js';
-import IStableCoinDetail from '../../../port/in/sdk/response/IStableCoinDetail.js';
-import IAccountInfo from '../../../port/in/sdk/response/IAccountInfo.js';
+import StableCoinDetail from '../../../port/in/sdk/response/StableCoinDetail.js';
+import AccountInfo from '../../../port/in/sdk/response/AccountInfo.js';
 import { Capabilities } from '../../../domain/context/stablecoin/Capabilities.js';
 import { IAccountWithKeyRequestModel } from './model/CoreRequestModel.js';
 import IGetSupplierAllowanceModel from './model/IGetSupplierAllowanceModel.js';
 import BigDecimal from '../../../domain/context/stablecoin/BigDecimal.js';
 import IGetRolesServiceRequestModel from './model/IGetRolesServiceRequest';
+import { InvalidRange } from '../../../port/in/sdk/request/error/InvalidRange.js';
+import { AmountGreaterThanAllowedSupply } from './error/AmountGreaterThanAllowedSupply.js';
+import { OperationNotAllowed } from './error/OperationNotAllowed.js';
+import { InsufficientFunds } from './error/InsufficientFunds.js';
+import { AmountGreaterThanOwnerBalance } from './error/AmountGreaterThanOwnerBalance.js';
+import CheckNums from '../../../core/checks/numbers/CheckNums.js';
 
 export default class StableCoinService extends Service {
 	private repository: IStableCoinRepository;
@@ -36,22 +42,13 @@ export default class StableCoinService extends Service {
 	 */
 	public async createStableCoin(
 		req: ICreateStableCoinServiceRequestModel,
-	): Promise<IStableCoinDetail> {
-		const initialSupply = BigDecimal.fromString(
-			req.initialSupply ?? '0',
-			req.decimals,
-		);
-		const maxSupply = BigDecimal.fromString(
-			req.maxSupply ?? '0',
-			req.decimals,
-		);
-
+	): Promise<StableCoinDetail> {
 		if (
 			req.maxSupply &&
 			req.initialSupply &&
-			initialSupply.isGreaterThan(maxSupply)
+			req.initialSupply.isGreaterThan(req.maxSupply)
 		) {
-			throw new Error(
+			throw new InvalidRange(
 				'Initial supply cannot be more than the max supply',
 			);
 		}
@@ -60,8 +57,8 @@ export default class StableCoinService extends Service {
 			symbol: req.symbol,
 			decimals: req.decimals,
 			adminKey: req.adminKey,
-			initialSupply: req.initialSupply ? initialSupply : undefined,
-			maxSupply: req.maxSupply ? maxSupply : undefined,
+			initialSupply: req.initialSupply ? req.initialSupply : undefined,
+			maxSupply: req.maxSupply ? req.maxSupply : undefined,
 			memo: req.memo,
 			freezeKey: req.freezeKey,
 			freezeDefault: req.freezeDefault,
@@ -84,15 +81,15 @@ export default class StableCoinService extends Service {
 	 */
 	public async getListStableCoins(
 		req: IListStableCoinServiceRequestModel,
-	): Promise<IStableCoinList[]> {
+	): Promise<StableCoinList[]> {
 		return this.repository.getListStableCoins(req.account);
 	}
 
 	public async getStableCoinDetails(
 		req: IGetStableCoinServiceRequestModel,
-	): Promise<IStableCoinDetail> {
+	): Promise<StableCoinDetail> {
 		const stableCoin: StableCoin = await this.getStableCoin(req);
-		const stableCoinDetails: IStableCoinDetail = {
+		const stableCoinDetails: StableCoinDetail = {
 			tokenId: stableCoin.id,
 			name: stableCoin.name,
 			symbol: stableCoin.symbol,
@@ -119,7 +116,6 @@ export default class StableCoinService extends Service {
 			pauseKey: stableCoin.pauseKey,
 		};
 		return stableCoinDetails;
-		// cast
 	}
 
 	/**
@@ -149,28 +145,28 @@ export default class StableCoinService extends Service {
 		);
 	}
 
-	public async getNameToken(
-		req: IGetNameOfStableCoinServiceRequestModel,
-	): Promise<Uint8Array> {
-		return this.repository.getNameToken(req.proxyContractId, req.account);
-	}
-
 	public async cashIn(
-		req: ICashInStableCoinServiceRequestModel,
+		req: CashInStableCoinServiceRequestModel,
 	): Promise<boolean> {
 		// TODO validation
 		const coin: StableCoin = await this.getStableCoin({
 			id: req.tokenId,
 		});
-
+		if (CheckNums.hasMoreDecimals(req.amount, coin.decimals)) {
+			throw new OperationNotAllowed(
+				`The amount has more decimals than the limit (${coin.decimals}), cash in`,
+			);
+		}
 		const amount = BigDecimal.fromString(req.amount, coin.decimals);
 		if (
 			coin.maxSupply &&
 			coin.maxSupply.isGreaterThan(BigDecimal.ZERO) &&
-			amount.isLowerThan(coin.maxSupply.subUnsafe(coin.totalSupply))
+			amount.isGreaterThan(coin.maxSupply.subUnsafe(coin.totalSupply))
 		) {
-			throw new Error('Amount is bigger than allowed supply');
+			console.log(coin.maxSupply, coin.totalSupply, amount);
+			throw new AmountGreaterThanAllowedSupply(amount);
 		}
+
 		let resultCashIn = false;
 
 		const capabilities: Capabilities[] =
@@ -217,7 +213,7 @@ export default class StableCoinService extends Service {
 				}
 			}
 		} else {
-			throw new Error('Cash in not allowed');
+			throw new OperationNotAllowed('Cash in');
 		}
 		return resultCashIn;
 	}
@@ -230,6 +226,11 @@ export default class StableCoinService extends Service {
 			id: req.tokenId,
 		});
 		const treasruyAccount: string = coin.treasury.id;
+		if (CheckNums.hasMoreDecimals(req.amount, coin.decimals)) {
+			throw new OperationNotAllowed(
+				`The amount has more decimals than the limit (${coin.decimals}), burn`,
+			);
+		}
 		const amount = BigDecimal.fromString(req.amount, coin.decimals);
 
 		const treasuryAccountBalance = await this.getBalanceOf({
@@ -243,7 +244,9 @@ export default class StableCoinService extends Service {
 			coin.decimals,
 		);
 		if (amount.isGreaterThan(treasuryAccountBalanceBigDecimal)) {
-			throw new Error('Amount is bigger than treasury account balance');
+			throw new OperationNotAllowed(
+				'The treasury account balance is bigger than the amount, burn',
+			);
 		}
 
 		let resultCashOut = false;
@@ -268,13 +271,13 @@ export default class StableCoinService extends Service {
 				req.account,
 			);
 		} else {
-			throw new Error('Cash out not allowed');
+			throw new OperationNotAllowed('Cash out');
 		}
 		return resultCashOut;
 	}
 
 	public async associateToken(
-		req: IAssociateTokenStableCoinServiceRequestModel,
+		req: AssociateTokenStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
 		return this.repository.associateToken(req.proxyContractId, req.account);
 	}
@@ -287,7 +290,9 @@ export default class StableCoinService extends Service {
 		});
 
 		if (coin.treasury.id == req.targetId) {
-			throw new Error('You cannot wipe tokens from the treasury account');
+			throw new OperationNotAllowed(
+				'Wiping tokens from the treasury account',
+			);
 		}
 
 		// Balances
@@ -299,6 +304,12 @@ export default class StableCoinService extends Service {
 			tokenId: req.tokenId,
 		});
 
+		if (CheckNums.hasMoreDecimals(req.amount, coin.decimals)) {
+			throw new OperationNotAllowed(
+				`The amount has more decimals than the limit (${coin.decimals}), wipe`,
+			);
+		}
+
 		const amount = BigDecimal.fromString(req.amount, coin.decimals);
 
 		const balanceBigDecimal = BigDecimal.fromString(
@@ -306,7 +317,7 @@ export default class StableCoinService extends Service {
 			coin.decimals,
 		);
 		if (balanceBigDecimal.isLowerThan(amount)) {
-			throw new Error(`Insufficient funds on account ${req.targetId}`);
+			throw new InsufficientFunds(req.targetId);
 		}
 
 		let resultWipe = false;
@@ -331,7 +342,7 @@ export default class StableCoinService extends Service {
 				req.account,
 			);
 		} else {
-			throw new Error('Wipe not allowed');
+			throw new OperationNotAllowed('Wipe');
 		}
 
 		return resultWipe;
@@ -345,6 +356,11 @@ export default class StableCoinService extends Service {
 		});
 
 		const treasruyAccount: string = coin.treasury.id;
+		if (CheckNums.hasMoreDecimals(req.amount, coin.decimals)) {
+			throw new OperationNotAllowed(
+				`The amount has more decimals than the limit (${coin.decimals}), rescue`,
+			);
+		}
 		const amount = BigDecimal.fromString(req.amount, coin.decimals);
 
 		const treasuryAccountBalance = await this.getBalanceOf({
@@ -359,7 +375,7 @@ export default class StableCoinService extends Service {
 			coin.decimals,
 		);
 		if (amount.isGreaterThan(treasuryBigDecimal)) {
-			throw new Error('Amount is bigger than token owner balance');
+			throw new AmountGreaterThanOwnerBalance(treasuryBigDecimal);
 		}
 		return this.repository.rescue(req.proxyContractId, amount, req.account);
 	}
@@ -402,7 +418,7 @@ export default class StableCoinService extends Service {
 			id: req.tokenId,
 		});
 
-		return BigDecimal.fromStringHedera(
+		return BigDecimal.fromStringFixed(
 			response[0].toString(),
 			coin.decimals,
 		).toString();
@@ -434,7 +450,11 @@ export default class StableCoinService extends Service {
 		const coin: StableCoin = await this.getStableCoin({
 			id: req.tokenId,
 		});
-
+		if (CheckNums.hasMoreDecimals(req.amount ?? '', coin.decimals)) {
+			throw new OperationNotAllowed(
+				`The amount has more decimals than the limit (${coin.decimals}), increase supplier allowance `,
+			);
+		}
 		return this.repository.increaseSupplierAllowance(
 			req.proxyContractId,
 			req.targetId,
@@ -459,13 +479,19 @@ export default class StableCoinService extends Service {
 			tokenId: req.tokenId,
 		}).then((r) => BigDecimal.fromString(r, coin.decimals));
 
+		if (CheckNums.hasMoreDecimals(req.amount ?? '', coin.decimals)) {
+			throw new OperationNotAllowed(
+				`The amount has more decimals than the limit (${coin.decimals}), decrease supplier allowance`,
+			);
+		}
+
 		const amount = req.amount
 			? BigDecimal.fromString(req.amount, coin.decimals)
 			: BigDecimal.ZERO;
 
 		if (req.amount && limit.isLowerThan(amount)) {
-			throw new Error(
-				'It is not possible to decrease the limit because the indicated amount is higher than the current limit. To be able to decrease the limit, at most the amount must be equal to the current limit.',
+			throw new OperationNotAllowed(
+				'To be able to decrease the limit, at most the amount must be equal to the current limit. Since the indicated amount is higher than the current limit, decreasing the limit',
 			);
 		}
 
@@ -522,7 +548,7 @@ export default class StableCoinService extends Service {
 
 	public async getAccountInfo(
 		req: IAccountWithKeyRequestModel,
-	): Promise<IAccountInfo> {
+	): Promise<AccountInfo> {
 		return this.repository.getAccountInfo(req.account.accountId.id);
 	}
 

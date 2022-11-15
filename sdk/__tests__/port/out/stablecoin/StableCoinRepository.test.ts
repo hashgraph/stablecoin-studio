@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
+import BaseError from '../../../../src/core/error/BaseError.js';
 import BigDecimal from '../../../../src/domain/context/stablecoin/BigDecimal.js';
 import {
   Account,
@@ -8,7 +9,7 @@ import {
   StableCoin,
   StableCoinRole,
 } from '../../../../src/index.js';
-import HederaError from '../../../../src/port/out/hedera/error/HederaError.js';
+import ProviderError from '../../../../src/port/out/hedera/error/HederaError.js';
 import { IProvider } from '../../../../src/port/out/hedera/Provider.js';
 import NetworkAdapter from '../../../../src/port/out/network/NetworkAdapter.js';
 import StableCoinRepository from '../../../../src/port/out/stablecoin/StableCoinRepository.js';
@@ -50,7 +51,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
         }),
         ACCOUNTS.testnet,
       ),
-    ).rejects.toThrow(HederaError);
+    ).rejects.toThrow(BaseError);
   });
 
   it('Test getListStableCoins', async () => {
@@ -74,7 +75,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
     const coinId = '0.0.48586658';
     const response = await repository.getCapabilitiesStableCoin(
       coinId,
-      ACCOUNTS.testnet.privateKey.key
+      ACCOUNTS.testnet.privateKey.key,
     );
     expect(Array.isArray(response)).toBeTruthy();
     expect(response).not.toBeNull();
@@ -89,18 +90,6 @@ describe('🧪 [PORT] StableCoinRepository', () => {
       stableCoinDetails.id,
       ACCOUNTS.testnet,
     );
-    expect(balance).not.toBeNull();
-  });
-
-  it('Test getName', async () => {
-    const coinId = '0.0.48586658';
-    const stableCoinDetails = await repository.getStableCoin(coinId);
-    const balance = await repository.getNameToken(
-      stableCoinDetails.memo.proxyContract.toString(),
-      ACCOUNTS.testnet,
-    );
-
-    expect(balance).toBeInstanceOf(Uint8Array);
     expect(balance).not.toBeNull();
   });
 
@@ -373,7 +362,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
 function mockRepo(networkAdapter: NetworkAdapter, provider?: IProvider) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const deployFnErr = (coin: StableCoin, account: Account) => {
-    throw new Error();
+    throw new ProviderError();
   };
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const deployFn = (coin: StableCoin, account: Account) => {

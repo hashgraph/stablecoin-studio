@@ -3,6 +3,8 @@ import EventEmitter from '../../../core/eventEmitter.js';
 import { InitializationData } from '../../../index.js';
 import { ProviderEventNames } from '../../../port/out/hedera/ProviderEvent.js';
 import Service from '../Service.js';
+import { EventListenerNotFound } from './error/EventListenerNotFound.js';
+import { EventNotFound } from './error/EventNotFound.js';
 
 export default class EventService extends Service {
 	private events: { [key: keyof Event]: Event };
@@ -17,7 +19,7 @@ export default class EventService extends Service {
 		event: E,
 	): EventEmitter<Event> {
 		if (!Object.keys(this.events).includes(event.toString())) {
-			throw new Error(`Event (${event}) not registered yet`);
+			throw new EventNotFound(`Event (${event}) not registered yet`);
 		}
 		if (!Object.keys(this.emitters).includes(event.toString())) {
 			const type = this.events[event];
@@ -28,9 +30,7 @@ export default class EventService extends Service {
 
 	public on<E extends keyof Event>(event: E, listener: Event[E]): void {
 		if (!this.events[event])
-			throw new Error(
-				`Event (${event}) emitter listener not registered yet`,
-			);
+			throw new EventListenerNotFound(event.toString());
 		this.getEventEmitter(event).on(event, listener);
 	}
 

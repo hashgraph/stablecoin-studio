@@ -1,24 +1,34 @@
-import { HederaNetwork, HederaNetworkEnviroment, NetworkMode, SDK } from 'hedera-stable-coin-sdk';
 import type {
 	AppMetadata,
 	InitializationData,
-	ICreateStableCoinRequest,
 	IStableCoinDetail,
 	IStableCoinList,
-	IRescueStableCoinRequest,
-	HashPackAccount,
-	IGetBalanceStableCoinRequest,
-	IWipeStableCoinRequest,
-	IRoleStableCoinRequest,
-	ISupplierRoleStableCoinRequest,
-	IAllowanceRequest,
-	IGetSupplierAllowance,
-	IBasicRequest,
 	IAccountInfo,
 	Capabilities,
-	ICashInStableCoinRequest,
-	ICashOutStableCoinRequest,
-	IRequestRoles,
+	CreateStableCoinRequest,
+	CashOutStableCoinRequest,
+	GetAccountBalanceRequest,
+	IncreaseCashInLimitRequest,
+	RescueStableCoinRequest,
+	WipeStableCoinRequest,
+	CheckCashInLimitRequest,
+	CheckCashInRoleRequest,
+	DecreaseCashInLimitRequest,
+	GrantRoleRequest,
+	HasRoleRequest,
+	ResetCashInLimitRequest,
+	RevokeRoleRequest,
+	CashInStableCoinRequest,
+	GetStableCoinDetailsRequest,
+	GetRolesRequest,
+	GetListStableCoinRequest,
+	GetAccountInfoRequest
+} from 'hedera-stable-coin-sdk';
+import {
+	HederaNetwork,
+	NetworkMode,
+	SDK,
+	HederaNetworkEnviroment,
 } from 'hedera-stable-coin-sdk';
 
 export enum HashConnectConnectionState {
@@ -101,80 +111,45 @@ export class SDKService {
 		return (await SDKService.getInstance()).disconectHaspack();
 	}
 
-	public static async getStableCoins({
-		account,
-	}: {
-		account: HashPackAccount;
-	}): Promise<IStableCoinList[] | null> {
-		return (await SDKService.getInstance())?.getListStableCoin({ account });
+	public static async getStableCoins(req: GetListStableCoinRequest)
+	: Promise<IStableCoinList[] | null> {
+		return (await SDKService.getInstance())?.getListStableCoin(req);
 	}
 
-	public static async getStableCoinDetails({
-		id,
-	}: {
-		id: string;
-	}): Promise<IStableCoinDetail | null> {
-		return (await SDKService.getInstance())?.getStableCoinDetails({ id });
+	public static async getStableCoinDetails(req: GetStableCoinDetailsRequest) 
+	: Promise<IStableCoinDetail | null> {
+		return (await SDKService.getInstance())?.getStableCoinDetails(req);
 	}
 
-	public static async getAccountInfo({
-		account,
-	}: {
-		account: HashPackAccount;
-	}): Promise<IAccountInfo | null> {
-		return (await SDKService.getInstance())?.getAccountInfo({ account });
+	public static async getAccountInfo(req: GetAccountInfoRequest)
+	: Promise<IAccountInfo | null> {
+		return (await SDKService.getInstance())?.getAccountInfo(req);
 	}
 
-	public static async cashIn({
-		proxyContractId,
-		tokenId,
-		targetId,
-		amount,
-		account,
-		publicKey,
-	}: ICashInStableCoinRequest) {
-		return await SDKService.getInstance().then((instance) =>
-			instance.cashIn({ proxyContractId, account, tokenId, targetId, amount, publicKey }),
-		);
+	public static async cashIn(req: CashInStableCoinRequest) {
+		return await SDKService.getInstance().then((instance) => instance.cashIn(req));
 	}
 
-	public static async burn({
-		proxyContractId,
-		tokenId,
-		amount,
-		account,
-		publicKey,
-	}: ICashOutStableCoinRequest) {
-		return await SDKService.getInstance().then((instance) =>
-			instance.cashOut({ proxyContractId, account, tokenId, amount, publicKey }),
-		);
+	public static async cashOut(req: CashOutStableCoinRequest) {
+		return await SDKService.getInstance().then((instance) => instance.cashOut(req));
 	}
 
 	public static async createStableCoin(
-		createStableCoinRequest: ICreateStableCoinRequest,
+		createStableCoinRequest: CreateStableCoinRequest,
 	): Promise<IStableCoinDetail | null> {
 		return (await SDKService.getInstance()).createStableCoin(createStableCoinRequest);
 	}
 
-	public static async getBalance(data: IGetBalanceStableCoinRequest) {
-		return SDKService.getInstance().then((instance) => instance.getBalanceOf(data));
+	public static async getBalance(req: GetAccountBalanceRequest) {
+		return SDKService.getInstance().then((instance) => instance.getBalanceOf(req));
 	}
 
-	public static async rescue(data: IRescueStableCoinRequest) {
-		return SDKService.getInstance().then((instance) => instance.rescue(data));
+	public static async rescue(req: RescueStableCoinRequest) {
+		return SDKService.getInstance().then((instance) => instance.rescue(req));
 	}
 
-	public static async wipe({
-		proxyContractId,
-		account,
-		tokenId,
-		targetId,
-		amount,
-		publicKey,
-	}: IWipeStableCoinRequest) {
-		return SDKService.getInstance().then((instance) =>
-			instance.wipe({ proxyContractId, account, tokenId, targetId, amount, publicKey }),
-		);
+	public static async wipe(req: WipeStableCoinRequest) {
+		return SDKService.getInstance().then((instance) => instance.wipe(req));
 	}
 
 	public static async getCapabilities({
@@ -187,39 +162,39 @@ export class SDKService {
 		return (await SDKService.getInstance())?.getCapabilitiesStableCoin(id, publicKey);
 	}
 
-	public static async increaseSupplierAllowance(data: IAllowanceRequest) {
-		return SDKService.getInstance().then((instance) => instance.increaseSupplierAllowance(data));
+	public static async increaseSupplierAllowance(req: IncreaseCashInLimitRequest) {
+		return SDKService.getInstance().then((instance) => instance.increaseSupplierAllowance(req));
 	}
 
-	public static async decreaseSupplierAllowance(data: IAllowanceRequest) {
-		return SDKService.getInstance().then((instance) => instance.decreaseSupplierAllowance(data));
+	public static async decreaseSupplierAllowance(req: DecreaseCashInLimitRequest) {
+		return SDKService.getInstance().then((instance) => instance.decreaseSupplierAllowance(req));
 	}
 
-	public static async resetSupplierAllowance(data: IBasicRequest) {
-		return SDKService.getInstance().then((instance) => instance.resetSupplierAllowance(data));
+	public static async resetSupplierAllowance(req: ResetCashInLimitRequest) {
+		return SDKService.getInstance().then((instance) => instance.resetSupplierAllowance(req));
 	}
 
-	public static async checkSupplierAllowance(data: IGetSupplierAllowance) {
-		return SDKService.getInstance().then((instance) => instance.supplierAllowance(data));
+	public static async checkSupplierAllowance(req: CheckCashInLimitRequest) {
+		return SDKService.getInstance().then((instance) => instance.supplierAllowance(req));
 	}
 
-	public static async grantRole(data: IRoleStableCoinRequest | ISupplierRoleStableCoinRequest) {
-		return SDKService.getInstance().then((instance) => instance.grantRole(data));
+	public static async grantRole(req: GrantRoleRequest) {
+		return SDKService.getInstance().then((instance) => instance.grantRole(req));
 	}
 
-	public static async revokeRole(data: IRoleStableCoinRequest) {
-		return SDKService.getInstance().then((instance) => instance.revokeRole(data));
+	public static async revokeRole(req: RevokeRoleRequest) {
+		return SDKService.getInstance().then((instance) => instance.revokeRole(req));
 	}
 
-	public static async hasRole(data: IRoleStableCoinRequest) {
-		return SDKService.getInstance().then((instance) => instance.hasRole(data));
+	public static async hasRole(req: HasRoleRequest) {
+		return SDKService.getInstance().then((instance) => instance.hasRole(req));
 	}
 
-	public static async isUnlimitedSupplierAllowance(data: IBasicRequest) {
-		return SDKService.getInstance().then((instance) => instance.isUnlimitedSupplierAllowance(data));
+	public static async isUnlimitedSupplierAllowance(req: CheckCashInRoleRequest) {
+		return SDKService.getInstance().then((instance) => instance.isUnlimitedSupplierAllowance(req));
 	}
 
-	public static async getRoles(data: IRequestRoles) {
+	public static async getRoles(data: GetRolesRequest) {
 		return SDKService.getInstance().then((instance) => instance.getRoles(data));
 	}
 }

@@ -1,9 +1,11 @@
 import { VStack } from '@chakra-ui/react';
+import type { CreateStableCoinRequest } from 'hedera-stable-coin-sdk';
 import type { Control, FieldValues } from 'react-hook-form';
 import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import InputController from '../../../components/Form/InputController';
 import { SelectController } from '../../../components/Form/SelectController';
+import { handleRequestValidation } from '../../../utils/validationsHelper';
 
 export const OTHER_KEY_VALUE = 3;
 
@@ -11,9 +13,10 @@ interface KeySelectorProps {
 	control: Control<FieldValues>;
 	name: string;
 	label: string;
+	request: CreateStableCoinRequest;
 }
 
-const KeySelector = ({ control, name, label }: KeySelectorProps) => {
+const KeySelector = ({ control, name, label, request }: KeySelectorProps) => {
 	const { t } = useTranslation(['global', 'stableCoinCreation']);
 
 	const optionsKeys = [
@@ -84,6 +87,17 @@ const KeySelector = ({ control, name, label }: KeySelectorProps) => {
 				<InputController
 					rules={{
 						required: t(`global:validations.required`),
+						validate: {
+							validation: (value: string) => {
+								// @ts-ignore
+								request[name] = value;
+								// @ts-ignore
+								console.log(request[name]);
+								// @ts-ignore
+								const res = handleRequestValidation(request.validate(name));
+								return res;
+							},
+						},
 					}}
 					isRequired
 					control={control}

@@ -7,6 +7,8 @@ export const english = {
     newLine: '\n',
     incorrectNumber: 'Incorrect number',
     incorrectParam: 'Incorrect input, retrying',
+    error:
+      'An error occurred, see above for details, press any key to continue',
   },
   initialConfiguration: {
     title: '\n\n\t\tHedera Stable Coin initial configuration\n',

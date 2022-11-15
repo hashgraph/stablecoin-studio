@@ -2,10 +2,18 @@ import { language } from '../../../index.js';
 import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
 import {
-  EOAccount,
-  PrivateKey,
-  SDK,
   StableCoinRole,
+  SDK,
+  GrantRoleRequest,
+  RevokeRoleRequest,
+  HasRoleRequest,
+  CheckCashInRoleRequest,
+  CheckCashInLimitRequest,
+  ResetCashInLimitRequest,
+  IncreaseCashInLimitRequest,
+  DecreaseCashInLimitRequest,
+  GetRolesRequest,
+  Roles
 } from 'hedera-stable-coin-sdk';
 import colors from 'colors';
 
@@ -21,40 +29,13 @@ export default class RoleStableCoinsService extends Service {
    * give supplier role
    */
   public async giveSupplierRoleStableCoin(
-    proxyContractId: string,
-    tokenId: string,
-    targetId: string,
-    privateKey: PrivateKey,
-    accountId: string,
-    supplierType: string,
-    amount?: string,
+    req: GrantRoleRequest,
   ): Promise<void> {
     const sdk: SDK = utilsService.getSDK();
-    const role: StableCoinRole = StableCoinRole['CASHIN_ROLE'];
-    await utilsService.showSpinner(
-      sdk.grantRole(
-        supplierType === 'unlimited'
-          ? {
-              proxyContractId,
-              targetId,
-              account: new EOAccount(accountId, privateKey),
-              role,
-              tokenId,
-            }
-          : {
-              proxyContractId,
-              targetId,
-              account: new EOAccount(accountId, privateKey),
-              amount,
-              role,
-              tokenId,
-            },
-      ),
-      {
-        text: language.getText('state.loading'),
-        successText: language.getText('state.loadCompleted') + '\n',
-      },
-    );
+    await utilsService.showSpinner(sdk.grantRole(req), {
+      text: language.getText('state.loading'),
+      successText: language.getText('state.loadCompleted') + '\n',
+    });
 
     console.log(language.getText('operation.success'));
 
@@ -62,24 +43,16 @@ export default class RoleStableCoinsService extends Service {
   }
 
   public async checkCashInRoleStableCoin(
-    proxyContractId: string,
-    targetId: string,
-    privateKey: PrivateKey,
-    accountId: string,
-    supplierType: string,
+    req: CheckCashInRoleRequest,
   ): Promise<boolean> {
     const sdk: SDK = utilsService.getSDK();
 
     let respDetail;
 
-    if (supplierType === 'unlimited') {
+    if (req.supplierType === 'unlimited') {
       await utilsService.showSpinner(
         sdk
-          .isUnlimitedSupplierAllowance({
-            proxyContractId,
-            targetId,
-            account: new EOAccount(accountId, privateKey),
-          })
+          .isUnlimitedSupplierAllowance(req)
           .then((response) => (respDetail = response[0])),
         {
           text: language.getText('state.loading'),
@@ -90,11 +63,7 @@ export default class RoleStableCoinsService extends Service {
     } else {
       await utilsService.showSpinner(
         sdk
-          .isLimitedSupplierAllowance({
-            proxyContractId,
-            targetId,
-            account: new EOAccount(accountId, privateKey),
-          })
+          .isLimitedSupplierAllowance(req)
           .then((response) => (respDetail = response[0])),
         {},
       );
@@ -103,160 +72,75 @@ export default class RoleStableCoinsService extends Service {
   }
 
   public async increaseLimitSupplierRoleStableCoin(
-    proxyContractId: string,
-    tokenId: string,
-    targetId: string,
-    privateKey: PrivateKey,
-    accountId: string,
-    amount?: string,
+    req: IncreaseCashInLimitRequest,
   ): Promise<void> {
     const sdk: SDK = utilsService.getSDK();
-    await utilsService.showSpinner(
-      sdk.increaseSupplierAllowance({
-        proxyContractId,
-        tokenId,
-        targetId,
-        account: new EOAccount(accountId, privateKey),
-        amount,
-      }),
-      {
-        text: language.getText('state.loading'),
-        successText: language.getText('state.loadCompleted') + '\n',
-      },
-    );
+    await utilsService.showSpinner(sdk.increaseSupplierAllowance(req), {
+      text: language.getText('state.loading'),
+      successText: language.getText('state.loadCompleted') + '\n',
+    });
     console.log(language.getText('operation.success'));
 
     utilsService.breakLine();
   }
 
   public async decreaseLimitSupplierRoleStableCoin(
-    proxyContractId: string,
-    tokenId: string,
-    targetId: string,
-    privateKey: PrivateKey,
-    accountId: string,
-    amount?: string,
+    req: DecreaseCashInLimitRequest,
   ): Promise<void> {
     const sdk: SDK = utilsService.getSDK();
-    await utilsService.showSpinner(
-      sdk.decreaseSupplierAllowance({
-        proxyContractId,
-        tokenId,
-        targetId,
-        account: new EOAccount(accountId, privateKey),
-        amount,
-      }),
-      {
-        text: language.getText('state.loading'),
-        successText: language.getText('state.loadCompleted') + '\n',
-      },
-    );
+    await utilsService.showSpinner(sdk.decreaseSupplierAllowance(req), {
+      text: language.getText('state.loading'),
+      successText: language.getText('state.loadCompleted') + '\n',
+    });
     console.log(language.getText('operation.success'));
 
     utilsService.breakLine();
   }
 
   public async resetLimitSupplierRoleStableCoin(
-    proxyContractId: string,
-    targetId: string,
-    privateKey: PrivateKey,
-    accountId: string,
+    req: ResetCashInLimitRequest,
   ): Promise<void> {
     const sdk: SDK = utilsService.getSDK();
 
-    await utilsService.showSpinner(
-      sdk.resetSupplierAllowance({
-        proxyContractId,
-        targetId,
-        account: new EOAccount(accountId, privateKey),
-      }),
-      {
-        text: language.getText('state.loading'),
-        successText: language.getText('state.loadCompleted') + '\n',
-      },
-    );
+    await utilsService.showSpinner(sdk.resetSupplierAllowance(req), {
+      text: language.getText('state.loading'),
+      successText: language.getText('state.loadCompleted') + '\n',
+    });
     console.log(language.getText('operation.success'));
 
     utilsService.breakLine();
   }
 
-  public async grantRoleStableCoin(
-    proxyContractId: string,
-    tokenId: string,
-    targetId: string,
-    privateKey: PrivateKey,
-    accountId: string,
-    role: string,
-  ): Promise<void> {
+  public async grantRoleStableCoin(req: GrantRoleRequest): Promise<void> {
     const sdk: SDK = utilsService.getSDK();
 
-    await utilsService.showSpinner(
-      sdk.grantRole({
-        proxyContractId,
-        tokenId,
-        targetId,
-        account: new EOAccount(accountId, privateKey),
-        role: StableCoinRole[role],
-      }),
-      {
-        text: language.getText('state.loading'),
-        successText: language.getText('state.loadCompleted') + '\n',
-      },
-    );
+    await utilsService.showSpinner(sdk.grantRole(req), {
+      text: language.getText('state.loading'),
+      successText: language.getText('state.loadCompleted') + '\n',
+    });
 
     console.log(language.getText('operation.success'));
     utilsService.breakLine();
   }
 
-  public async revokeRoleStableCoin(
-    proxyContractId: string,
-    tokenId: string,
-    targetId: string,
-    privateKey: PrivateKey,
-    accountId: string,
-    role: string,
-  ): Promise<void> {
+  public async revokeRoleStableCoin(req: RevokeRoleRequest): Promise<void> {
     const sdk: SDK = utilsService.getSDK();
 
-    await utilsService.showSpinner(
-      sdk.revokeRole({
-        proxyContractId,
-        tokenId,
-        targetId,
-        account: new EOAccount(accountId, privateKey),
-        role: StableCoinRole[role],
-      }),
-      {
-        text: language.getText('state.loading'),
-        successText: language.getText('state.loadCompleted') + '\n',
-      },
-    );
+    await utilsService.showSpinner(sdk.revokeRole(req), {
+      text: language.getText('state.loading'),
+      successText: language.getText('state.loadCompleted') + '\n',
+    });
 
     console.log(language.getText('operation.success'));
     utilsService.breakLine();
   }
 
-  public async hasRoleStableCoin(
-    proxyContractId: string,
-    tokenId: string,
-    targetId: string,
-    privateKey: PrivateKey,
-    accountId: string,
-    role: string,
-  ): Promise<void> {
+  public async hasRoleStableCoin(req: HasRoleRequest): Promise<void> {
     const sdk: SDK = utilsService.getSDK();
 
     let hasRole;
     await utilsService.showSpinner(
-      sdk
-        .hasRole({
-          proxyContractId,
-          tokenId,
-          targetId,
-          account: new EOAccount(accountId, privateKey),
-          role: StableCoinRole[role],
-        })
-        .then((response) => (hasRole = response[0])),
+      sdk.hasRole(req).then((response) => (hasRole = response[0])),
       {
         text: language.getText('state.loading'),
         successText: language.getText('state.loadCompleted') + '\n',
@@ -267,35 +151,28 @@ export default class RoleStableCoinsService extends Service {
       response = language.getText('roleManagement.accountHasRole');
     }
 
+    const indexOfS = Object.values(StableCoinRole).indexOf(
+      req.role as unknown as StableCoinRole,
+    );
+    const roleName = Roles[Object.keys(StableCoinRole)[indexOfS]];
     console.log(
       response
-        .replace('${address}', targetId)
-        .replace('${role}', colors.yellow(role)) + '\n',
+        .replace('${address}', req.targetId)
+        .replace('${role}', colors.yellow(roleName)) + '\n',
     );
 
     utilsService.breakLine();
   }
 
   public async getSupplierAllowance(
-    proxyContractId: string,
-    tokenId: string,
-    targetId: string,
-    privateKey: PrivateKey,
-    accountId: string,
+    req: CheckCashInLimitRequest,
   ): Promise<void> {
     const sdk: SDK = utilsService.getSDK();
     let amount;
     await utilsService.showSpinner(
-      sdk
-        .supplierAllowance({
-          account: new EOAccount(accountId, privateKey),
-          proxyContractId,
-          targetId,
-          tokenId,
-        })
-        .then((response) => {
-          amount = response;
-        }),
+      sdk.supplierAllowance(req).then((response) => {
+        amount = response;
+      }),
       {
         text: language.getText('state.loading'),
         successText: language.getText('state.loadCompleted') + '\n',
@@ -304,26 +181,18 @@ export default class RoleStableCoinsService extends Service {
     const response = language.getText('roleManagement.getAmountAllowance');
     console.log(
       response
-        .replace('${address}', targetId)
+        .replace('${address}', req.targetId)
         .replace('${amount}', colors.yellow(amount)) + '\n',
     );
   }
 
-  public async getRoles(
-    proxyContractId: string,
-    targetId: string,
-    privateKey: PrivateKey,
-    accountId: string,
+  public async getRoles(req: GetRolesRequest
   ): Promise<string[]> {
     const sdk: SDK = utilsService.getSDK();
     let roles;
     await utilsService.showSpinner(
       sdk
-        .getRoles({
-          account: new EOAccount(accountId, privateKey),
-          proxyContractId,
-          targetId,
-        })
+        .getRoles(req)
         .then((response) => {
           roles = response;
         }),

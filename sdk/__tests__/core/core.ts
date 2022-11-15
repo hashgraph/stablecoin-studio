@@ -7,15 +7,34 @@ import {
   HederaNetworkEnviroment,
   SDK,
   SDKInitOptions,
+  ValidationResponse,
 } from '../../src/index.js';
+import { RequestAccount } from '../../src/port/in/sdk/request/BaseRequest.js';
 
 const ACCOUNT_ID = '0.0.47822430';
 const PK =
   '302e020100300506032b65700422042010f13d4517ae383e2a1a0f915b2f6e70a823f3627e69ab1a8f516666fecdf386';
 const TYPE = 'ED25519';
 
+export const EXAMPLE_TOKEN = {
+  proxyContractId: '0.0.48826169',
+  tokenId: '0.0.48826175',
+};
+
+export const MAX_SUPPLY = 9_223_372_036_854_775_807n;
+
 export const ACCOUNTS: { testnet: EOAccount } = {
   testnet: new EOAccount(ACCOUNT_ID, new PrivateKey(PK, TYPE)),
+};
+
+export const REQUEST_ACCOUNTS: { testnet: RequestAccount } = {
+  testnet: {
+    accountId: ACCOUNT_ID,
+    privateKey: {
+      key: PK,
+      type: TYPE,
+    },
+  },
 };
 
 export const SDKConfig: { hethers: Configuration; hashpack: Configuration } = {
@@ -23,7 +42,7 @@ export const SDKConfig: { hethers: Configuration; hashpack: Configuration } = {
     network: new HederaNetwork(HederaNetworkEnviroment.TEST),
     mode: NetworkMode.EOA,
     options: {
-      account: ACCOUNTS.testnet,
+      account: REQUEST_ACCOUNTS.testnet,
     },
   },
   hashpack: {
@@ -55,4 +74,12 @@ export const baseCoin: { name: string; symbol: string; decimals: number } = {
   name: 'TEST COIN',
   symbol: 'TEST COIN',
   decimals: 3,
+};
+
+export const logValidation = (val: ValidationResponse[]): void => {
+  val.map((v) =>
+    v.errors.map((e) =>
+      console.log(`${v.name} - [${e.errorCode}] ${e.message}`),
+    ),
+  );
 };

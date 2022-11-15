@@ -28,56 +28,66 @@ export default class WizardService extends Service {
    * Show the wizard main menu
    */
   public async mainMenu(): Promise<void> {
-    const wizardMainOptions: Array<string> =
-      language.getArray('wizard.mainOptions');
-    const currentAccount = utilsService.getCurrentAccount();
+    try {
+      const wizardMainOptions: Array<string> =
+        language.getArray('wizard.mainOptions');
+      const currentAccount = utilsService.getCurrentAccount();
 
-    switch (
-      await utilsService.defaultMultipleAsk(
-        language.getText('wizard.mainMenuTitle'),
-        wizardMainOptions,
-        false,
-        currentAccount.network,
-        `${currentAccount.accountId} - ${currentAccount.alias}`,
-      )
-    ) {
-      case wizardMainOptions[0]:
-        await utilsService.cleanAndShowBanner();
-        const stableCoin: IStableCoinDetail =
-          await new CreateStableCoinService().createStableCoin(undefined, true);
-        const operate = await utilsService.defaultConfirmAsk(
-          `Do you want to operate with ${stableCoin.name}`,
-          true,
-        );
-        if (operate) {
-          await new OperationStableCoinService(
-            stableCoin.tokenId,
-            stableCoin.memo,
-            stableCoin.symbol,
-          ).start();
-        }
-        break;
-      case wizardMainOptions[1]:
-        await utilsService.cleanAndShowBanner();
-        await new ManageExternalTokenService().start();
-        break;
-      case wizardMainOptions[2]:
-        await utilsService.cleanAndShowBanner();
-        await new OperationStableCoinService().start();
-        break;
-      case wizardMainOptions[3]:
-        await utilsService.cleanAndShowBanner();
-        await new ListStableCoinsService().listStableCoins();
-        break;
-      case wizardMainOptions[4]:
-        await utilsService.cleanAndShowBanner();
-        this.setConfigurationService = new SetConfigurationService();
-        await this.configurationMenu();
-        break;
-      case wizardMainOptions[wizardMainOptions.length - 1]:
-      default:
-        clear();
-        process.exit();
+      switch (
+        await utilsService.defaultMultipleAsk(
+          language.getText('wizard.mainMenuTitle'),
+          wizardMainOptions,
+          false,
+          currentAccount.network,
+          `${currentAccount.accountId} - ${currentAccount.alias}`,
+        )
+      ) {
+        case wizardMainOptions[0]:
+          await utilsService.cleanAndShowBanner();
+          const stableCoin: IStableCoinDetail =
+            await new CreateStableCoinService().createStableCoin(
+              undefined,
+              true,
+            );
+          const operate = await utilsService.defaultConfirmAsk(
+            `Do you want to operate with ${stableCoin.name}`,
+            true,
+          );
+          if (operate) {
+            await new OperationStableCoinService(
+              stableCoin.tokenId,
+              stableCoin.memo,
+              stableCoin.symbol,
+            ).start();
+          }
+          break;
+        case wizardMainOptions[1]:
+          await utilsService.cleanAndShowBanner();
+          await new ManageExternalTokenService().start();
+          break;
+        case wizardMainOptions[2]:
+          await utilsService.cleanAndShowBanner();
+          await new OperationStableCoinService().start();
+          break;
+        case wizardMainOptions[3]:
+          await utilsService.cleanAndShowBanner();
+          await new ListStableCoinsService().listStableCoins();
+          break;
+        case wizardMainOptions[4]:
+          await utilsService.cleanAndShowBanner();
+          this.setConfigurationService = new SetConfigurationService();
+          await this.configurationMenu();
+          break;
+        case wizardMainOptions[wizardMainOptions.length - 1]:
+        default:
+          clear();
+          process.exit();
+      }
+    } catch (error) {
+      await utilsService.askErrorConfirmation(
+        async () => await this.mainMenu(),
+        error,
+      );
     }
     utilsService.showMessage(language.getText('general.newLine'));
     await this.mainMenu();

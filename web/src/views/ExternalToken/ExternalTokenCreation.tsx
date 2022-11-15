@@ -23,6 +23,7 @@ import ExternalTokenInfo from './ExternalTokenInfo';
 import type { IAccountToken } from '../../interfaces/IAccountToken.js';
 import type { IRole } from '../../interfaces/IRole.js';
 import type { IExternalToken } from '../../interfaces/IExternalToken';
+import { GetRolesRequest, GetStableCoinDetailsRequest, HashPackAccount } from 'hedera-stable-coin-sdk';
 
 const ExternalTokenCreation = () => {
 	const navigate = useNavigate();
@@ -85,15 +86,22 @@ const ExternalTokenCreation = () => {
 		const { stableCoinId, autoCheckRoles, roles } = getValues();
 		let checkRoles: string[] | null = [];
 		try {
-			const details = await SDKService.getStableCoinDetails({ id: stableCoinId });
+			const details = await SDKService.getStableCoinDetails(
+				new GetStableCoinDetailsRequest({ 
+					id: stableCoinId 
+				})
+			);	
 			if (autoCheckRoles) {
-				checkRoles = await SDKService.getRoles({
-					proxyContractId: details && details.memo ? details?.memo.proxyContract : '',
-					targetId: accountInfo && accountInfo.account ? accountInfo?.account : '',
-					account,
-				});
+				checkRoles = await SDKService.getRoles(
+					new GetRolesRequest({
+						proxyContractId: details && details.memo ? details?.memo.proxyContract : '',
+						targetId: accountInfo && accountInfo.account ? accountInfo?.account : '',
+						tokenId: details?.tokenId ?? '',
+						account,
+					}),
+				);
 			}
-			const tokensAccount = localStorage.tokensAccount;
+			const tokensAccount = localStorage?.tokensAccount;
 			if (tokensAccount) {
 				const tokensAccountParsed = JSON.parse(tokensAccount);
 				const accountToken = tokensAccountParsed.find(
@@ -189,7 +197,7 @@ const ExternalTokenCreation = () => {
 				isOpen={isOpen}
 				onClose={onClose}
 				onClick={() => {
-					dispatch(getStableCoinList(account));
+					dispatch(getStableCoinList(new HashPackAccount(account.accountId)));
 					RouterManager.to(navigate, NamedRoutes.StableCoinNotSelected);
 				}}
 				closeOnOverlayClick={false}

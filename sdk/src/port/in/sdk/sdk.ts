@@ -1,5 +1,6 @@
-import IStableCoinList from './response/IStableCoinList.js';
-import IStableCoinDetail from './response/IStableCoinDetail.js';
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import StableCoinList from './response/StableCoinList.js';
+import StableCoinDetail from './response/StableCoinDetail.js';
 import StableCoinService from '../../../app/service/stablecoin/StableCoinService.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import StableCoinRepository from '../../out/stablecoin/StableCoinRepository.js';
@@ -17,12 +18,11 @@ import { getHederaNetwork } from '../../../core/enum.js';
 import IWipeStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IWipeStableCoinServiceRequestModel.js';
 import ICreateStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/ICreateStableCoinServiceRequestModel.js';
 import { IListStableCoinServiceRequestModel } from '../../../app/service/stablecoin/model/IListStableCoinServiceRequestModel.js';
-import ICashInStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/ICashInStableCoinServiceRequestModel.js';
+import CashInStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/ICashInStableCoinServiceRequestModel.js';
 import ICashOutStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/ICashOutStableCoinServiceRequestModel.js';
-import IGetNameOfStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IGetNameOfStableCoinServiceRequestModel.js';
 import IGetBalanceOfStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IGetBalanceOfStableCoinServiceRequestModel.js';
 import IGetStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IGetStableCoinServiceRequestModel.js';
-import IAssociateTokenStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IAssociateTokenStableCoinServiceRequestModel.js';
+import AssociateTokenStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IAssociateTokenStableCoinServiceRequestModel.js';
 import ISupplierRoleStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/ISupplierRoleStableCoinServiceRequestModel';
 import IRescueStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IRescueStableCoinServiceRequestModel.js';
 import IRoleStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IRoleStableCoinServiceRequestModel.js';
@@ -31,17 +31,7 @@ import { IAccountWithKeyRequestModel } from '../../../app/service/stablecoin/mod
 
 /* Public requests */
 import { IAssociateStableCoinRequest } from './request/IAssociateStableCoinRequest.js';
-import { ICashInStableCoinRequest } from './request/ICashInStableCoinRequest.js';
-import { ICashOutStableCoinRequest } from './request/ICashOutStableCoinRequest.js';
-import { ICreateStableCoinRequest } from './request/ICreateStableCoinRequest.js';
-import { IGetBalanceStableCoinRequest } from './request/IGetBalanceStableCoinRequest.js';
-import { IGetListStableCoinRequest } from './request/IGetListStableCoinRequest.js';
 import { IGetNameStableCoinRequest } from './request/IGetNameStableCoinRequest.js';
-import { IGetStableCoinRequest } from './request/IGetStableCoinRequest.js';
-import { IRescueStableCoinRequest } from './request/IRescueStableCoinRequest.js';
-import { IRoleStableCoinRequest } from './request/IRoleStableCoinRequest.js';
-import { IWipeStableCoinRequest } from './request/IWipeStableCoinRequest.js';
-import { IGetCapabilitiesRequest } from './request/IGetCapabilitiesRequest.js';
 import { IBasicRequest } from './request/IBasicRequest.js';
 import AccountId from '../../../domain/context/account/AccountId.js';
 import EOAccount from '../../../domain/context/account/EOAccount.js';
@@ -51,8 +41,6 @@ import ContractId from '../../../domain/context/contract/ContractId.js';
 import { TokenType } from '../../../domain/context/stablecoin/TokenType.js';
 import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.js';
 import { StableCoinMemo } from '../../../domain/context/stablecoin/StableCoinMemo.js';
-import { IAllowanceRequest } from './request/IRequestContracts.js';
-import { IRequestRoles } from './request/IRequestContracts';
 import { AppMetadata } from '../../out/hedera/hashpack/types/types.js';
 import {
 	AcknowledgeMessage,
@@ -72,39 +60,49 @@ import {
 	HashConnectConnectionState,
 	HashConnectTypes,
 } from 'hashconnect/types';
-import { IGetSupplierAllowance } from './request/IGetSupplierAllowance.js';
 import IGetSupplierAllowanceModel from '../../../app/service/stablecoin/model/IGetSupplierAllowanceModel.js';
-import { XOR } from 'ts-xor';
-import { ISupplierRoleStableCoinRequest } from './request/ISupplierRoleStableCoinRequest.js';
 import Account from '../../../domain/context/account/Account.js';
 import HashPackAccount from '../../../domain/context/account/HashPackAccount.js';
-import IAccountInfo from './response/IAccountInfo.js';
+import AccountInfo from './response/AccountInfo.js';
 import BigDecimal from '../../../domain/context/stablecoin/BigDecimal.js';
 import IGetRolesServiceRequestModel from '../../../app/service/stablecoin/model/IGetRolesServiceRequest';
+import {
+	CreateStableCoinRequest,
+	CashInStableCoinRequest,
+	CashOutStableCoinRequest,
+	WipeStableCoinRequest,
+	GetListStableCoinRequest,
+	GetStableCoinDetailsRequest,
+	RescueStableCoinRequest,
+	GrantRoleRequest,
+	RevokeRoleRequest,
+	HasRoleRequest,
+	CheckCashInRoleRequest,
+	CheckCashInLimitRequest,
+	ResetCashInLimitRequest,
+	IncreaseCashInLimitRequest,
+	DecreaseCashInLimitRequest,
+	GetAccountBalanceRequest,
+	AssociateTokenRequest,
+	GetRolesRequest,
+	GetAccountInfoRequest
+} from './request';
+import ValidatedRequest from './request/validation/ValidatedRequest.js';
+import RequestMapper from './request/mapping/RequestMapper.js';
+import { RequestAccount } from './request/BaseRequest.js';
 import { Roles } from '../../../domain/context/stablecoin/Roles.js';
 
 export {
+	ValidatedRequest,
 	IAssociateStableCoinRequest,
-	ICashInStableCoinRequest,
-	ICashOutStableCoinRequest,
-	ICreateStableCoinRequest,
-	IGetBalanceStableCoinRequest,
-	IGetListStableCoinRequest,
 	IGetNameStableCoinRequest,
-	IGetStableCoinRequest,
-	IGetSupplierAllowance,
-	IRescueStableCoinRequest,
-	IRoleStableCoinRequest,
-	ISupplierRoleStableCoinRequest,
-	IWipeStableCoinRequest,
-	IGetCapabilitiesRequest,
-	IAllowanceRequest,
 	IBasicRequest,
-	IStableCoinDetail,
-	IStableCoinList,
-	IAccountInfo,
-	IRequestRoles,
+	StableCoinDetail as IStableCoinDetail,
+	StableCoinList as IStableCoinList,
+	AccountInfo as IAccountInfo,
 };
+
+export * from './request';
 
 /* Export basic types*/
 export {
@@ -120,6 +118,7 @@ export {
 	ContractId,
 	TokenType,
 	TokenSupplyType,
+	Roles,
 	HederaNetworkEnviroment,
 	getHederaNetwork,
 	StableCoinRole,
@@ -134,13 +133,12 @@ export {
 	AuthenticationResponseMessage,
 	Capabilities,
 	StableCoinMemo,
-	Roles,
-	BigDecimal
+	BigDecimal,
 };
 
 export interface ConfigurationOptions {
 	appMetadata?: AppMetadata;
-	account?: EOAccount;
+	account?: RequestAccount;
 }
 
 export interface Configuration {
@@ -211,19 +209,25 @@ export class SDK {
 	 * createStableCoin
 	 */
 	public createStableCoin(
-		request: ICreateStableCoinRequest,
-	): Promise<IStableCoinDetail> | null {
+		request: CreateStableCoinRequest,
+	): Promise<StableCoinDetail> {
 		try {
-			const req: ICreateStableCoinServiceRequestModel = {
-				...request,
-				autoRenewAccount: request.autoRenewAccount
-					? new AccountId(request.autoRenewAccount)
-					: undefined,
-			};
+			const req: ICreateStableCoinServiceRequestModel = RequestMapper.map(
+				request,
+				{
+					treasury: AccountId,
+					autoRenewAccount: AccountId,
+					initialSupply: (val, req) => {
+						return BigDecimal.fromString(val, req.decimals);
+					},
+					maxSupply: (val, req) =>
+						BigDecimal.fromString(val, req.decimals),
+				},
+			);
 			return this.stableCoinService.createStableCoin(req);
 		} catch (error) {
 			console.error(error);
-			return null;
+			throw error;
 		}
 	}
 
@@ -238,20 +242,18 @@ export class SDK {
 	 * getListStableCoin
 	 */
 	public getListStableCoin(
-		request: IGetListStableCoinRequest,
-	): Promise<IStableCoinList[]> | null {
-		const req: IListStableCoinServiceRequestModel = {
-			...request,
-		};
+		request: GetListStableCoinRequest,
+	): Promise<StableCoinList[]> | null {
+		const req: IListStableCoinServiceRequestModel =
+			RequestMapper.map(request);
 		return this.stableCoinService.getListStableCoins(req);
 	}
 
 	public getStableCoinDetails(
-		request: IGetStableCoinRequest,
-	): Promise<IStableCoinDetail> | null {
-		const req: IGetStableCoinServiceRequestModel = {
-			...request,
-		};
+		request: GetStableCoinDetailsRequest,
+	): Promise<StableCoinDetail> | null {
+		const req: IGetStableCoinServiceRequestModel =
+			RequestMapper.map(request);
 		return this.stableCoinService.getStableCoinDetails(req);
 	}
 
@@ -259,31 +261,12 @@ export class SDK {
 	 * getBalanceOf
 	 */
 	public getBalanceOf(
-		request: IGetBalanceStableCoinRequest,
+		request: GetAccountBalanceRequest,
 	): Promise<string> | null {
 		try {
-			const req: IGetBalanceOfStableCoinServiceRequestModel = {
-				...request,
-				targetId: request.targetId,
-			};
+			const req: IGetBalanceOfStableCoinServiceRequestModel =
+				RequestMapper.map(request);
 			return this.stableCoinService.getBalanceOf(req);
-		} catch (error) {
-			console.error(error);
-			return null;
-		}
-	}
-
-	/**
-	 * getName
-	 */
-	public getNameToken(
-		request: IGetNameStableCoinRequest,
-	): Promise<Uint8Array> | null {
-		try {
-			const req: IGetNameOfStableCoinServiceRequestModel = {
-				...request,
-			};
-			return this.stableCoinService.getNameToken(req);
 		} catch (error) {
 			console.error(error);
 			return null;
@@ -293,11 +276,13 @@ export class SDK {
 	/**
 	 * cashIn
 	 */
-	public cashIn(request: ICashInStableCoinRequest): Promise<boolean> | null {
+	public cashIn(request: CashInStableCoinRequest): Promise<boolean> | null {
 		try {
-			const req: ICashInStableCoinServiceRequestModel = {
-				...request,
-			};
+			// const req: ICashInStableCoinServiceRequestModel = {
+			// 	...request,
+			// };
+			const req: CashInStableCoinServiceRequestModel =
+				RequestMapper.map(request);
 			return this.stableCoinService.cashIn(req);
 		} catch (error) {
 			console.error(error);
@@ -308,13 +293,11 @@ export class SDK {
 	/**
 	 * cashOut
 	 */
-	public cashOut(
-		request: ICashOutStableCoinRequest,
-	): Promise<boolean> | null {
+	public cashOut(request: CashOutStableCoinRequest): Promise<boolean> | null {
 		try {
-			const req: ICashOutStableCoinServiceRequestModel = {
-				...request,
-			};
+			const req: ICashOutStableCoinServiceRequestModel =
+				RequestMapper.map(request);
+
 			return this.stableCoinService.cashOut(req);
 		} catch (error) {
 			console.error(error);
@@ -326,12 +309,11 @@ export class SDK {
 	 * associateToken
 	 */
 	public associateToken(
-		request: IAssociateStableCoinRequest,
+		request: AssociateTokenRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			const req: IAssociateTokenStableCoinServiceRequestModel = {
-				...request,
-			};
+			const req: AssociateTokenStableCoinServiceRequestModel =
+				RequestMapper.map(request);
 			return this.stableCoinService.associateToken(req);
 		} catch (error) {
 			console.error(error);
@@ -342,11 +324,10 @@ export class SDK {
 	/**
 	 * wipeToken
 	 */
-	public wipe(request: IWipeStableCoinRequest): Promise<boolean> | null {
+	public wipe(request: WipeStableCoinRequest): Promise<boolean> | null {
 		try {
-			const req: IWipeStableCoinServiceRequestModel = {
-				...request,
-			};
+			const req: IWipeStableCoinServiceRequestModel =
+				RequestMapper.map(request);
 			return this.stableCoinService.wipe(req);
 		} catch (error) {
 			console.error(error);
@@ -358,12 +339,10 @@ export class SDK {
 	 * check unlimited supplier role
 	 */
 	public isUnlimitedSupplierAllowance(
-		request: IBasicRequest,
+		request: CheckCashInRoleRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			const req: IGetBasicRequestModel = {
-				...request,
-			};
+			const req: IGetBasicRequestModel = RequestMapper.map(request);
 			return this.stableCoinService.isUnlimitedSupplierAllowance(req);
 		} catch (error) {
 			console.error(error);
@@ -374,12 +353,10 @@ export class SDK {
 	 * check limited supplier role
 	 */
 	public supplierAllowance(
-		request: IGetSupplierAllowance,
+		request: CheckCashInLimitRequest,
 	): Promise<string> | null {
 		try {
-			const req: IGetSupplierAllowanceModel = {
-				...request,
-			};
+			const req: IGetSupplierAllowanceModel = RequestMapper.map(request);
 			return this.stableCoinService.supplierAllowance(req);
 		} catch (error) {
 			console.error(error);
@@ -391,12 +368,10 @@ export class SDK {
 	 * reset supplier allowance
 	 */
 	public resetSupplierAllowance(
-		request: IBasicRequest,
+		request: ResetCashInLimitRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			const req: IGetBasicRequestModel = {
-				...request,
-			};
+			const req: IGetBasicRequestModel = RequestMapper.map(request);
 			return this.stableCoinService.resetSupplierAllowance(req);
 		} catch (error) {
 			console.error(error);
@@ -407,12 +382,11 @@ export class SDK {
 	 * increase supplier allowance
 	 */
 	public increaseSupplierAllowance(
-		request: IAllowanceRequest,
+		request: IncreaseCashInLimitRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			const req: ISupplierRoleStableCoinServiceRequestModel = {
-				...request,
-			};
+			const req: ISupplierRoleStableCoinServiceRequestModel =
+				RequestMapper.map(request);
 			return this.stableCoinService.increaseSupplierAllowance(req);
 		} catch (error) {
 			console.error(error);
@@ -423,12 +397,11 @@ export class SDK {
 	 * decrease supplier allowance
 	 */
 	public decreaseSupplierAllowance(
-		request: IAllowanceRequest,
+		request: DecreaseCashInLimitRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			const req: ISupplierRoleStableCoinServiceRequestModel = {
-				...request,
-			};
+			const req: ISupplierRoleStableCoinServiceRequestModel =
+				RequestMapper.map(request);
 			return this.stableCoinService.decreaseSupplierAllowance(req);
 		} catch (error) {
 			console.error(error);
@@ -440,12 +413,10 @@ export class SDK {
 	 * check limited supplier role
 	 */
 	public isLimitedSupplierAllowance(
-		request: IBasicRequest,
+		request: CheckCashInRoleRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			const req: IGetBasicRequestModel = {
-				...request,
-			};
+			const req: IGetBasicRequestModel = RequestMapper.map(request);
 			return this.stableCoinService.isLimitedSupplierAllowance(req);
 		} catch (error) {
 			console.error(error);
@@ -457,12 +428,11 @@ export class SDK {
 	 * rescue
 	 */
 	public rescue(
-		request: IRescueStableCoinRequest,
+		request: RescueStableCoinRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			const req: IRescueStableCoinServiceRequestModel = {
-				...request,
-			};
+			const req: IRescueStableCoinServiceRequestModel =
+				RequestMapper.map(request);
 			return this.stableCoinService.rescue(req);
 		} catch (error) {
 			console.error(error);
@@ -487,34 +457,36 @@ export class SDK {
 		);
 	}
 
-	public grantRole(
-		request: XOR<IRoleStableCoinRequest, ISupplierRoleStableCoinRequest>,
-	): Promise<Uint8Array> | null {
+	public grantRole(request: GrantRoleRequest): Promise<Uint8Array> | null {
 		try {
-			const req = {
-				...request,
-			};
-			if (req.role === StableCoinRole.CASHIN_ROLE) {
-				return this.stableCoinService.grantSupplierRole(req);
-			}
-			return this.stableCoinService.grantRole(req);
-		} catch (error) {
-			console.error(error);
-			return null;
-		}
-	}
-
-	public revokeRole(
-		request: IRoleStableCoinRequest,
-	): Promise<Uint8Array> | null {
-		try {
-			const req: IRoleStableCoinServiceRequestModel = {
-				...request,
-			};
 			if (request.role === StableCoinRole.CASHIN_ROLE) {
-				return this.stableCoinService.revokeSupplierRole(req);
+				const grantSupplierRoleReq: ISupplierRoleStableCoinServiceRequestModel =
+					RequestMapper.map(request);
+				return this.stableCoinService.grantSupplierRole(
+					grantSupplierRoleReq,
+				);
+			}
+			const grantRoleReq: IRoleStableCoinServiceRequestModel =
+				RequestMapper.map(request);
+			return this.stableCoinService.grantRole(grantRoleReq);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+
+	public revokeRole(request: RevokeRoleRequest): Promise<Uint8Array> | null {
+		try {
+			if (request.role === StableCoinRole.CASHIN_ROLE) {
+				const revokeSupplierRoleReq: ISupplierRoleStableCoinServiceRequestModel =
+					RequestMapper.map(request);
+				return this.stableCoinService.revokeSupplierRole(
+					revokeSupplierRoleReq,
+				);
 			} else {
-				return this.stableCoinService.revokeRole(req);
+				const revokeRoleReq: IRoleStableCoinServiceRequestModel =
+					RequestMapper.map(request);
+				return this.stableCoinService.revokeRole(revokeRoleReq);
 			}
 		} catch (error) {
 			console.error(error);
@@ -522,14 +494,10 @@ export class SDK {
 		}
 	}
 
-	public hasRole(
-		request: IRoleStableCoinRequest,
-	): Promise<Uint8Array> | null {
+	public hasRole(request: HasRoleRequest): Promise<Uint8Array> | null {
 		try {
-			const req: IRoleStableCoinServiceRequestModel = {
-				...request,
-				role: request.role,
-			};
+			const req: IRoleStableCoinServiceRequestModel =
+				RequestMapper.map(request);
 			return this.stableCoinService.hasRole(req);
 		} catch (error) {
 			console.error(error);
@@ -538,21 +506,21 @@ export class SDK {
 	}
 
 	public getAccountInfo(
-		request: IAccountWithKeyRequestModel,
-	): Promise<IAccountInfo> | null {
+		request: GetAccountInfoRequest
+	): Promise<AccountInfo> | null {
 		try {
-			return this.stableCoinService.getAccountInfo(request);
+			const req: IAccountWithKeyRequestModel = RequestMapper.map(request);
+			return this.stableCoinService.getAccountInfo(req);
 		} catch (error) {
 			console.error(error);
 			return null;
 		}
 	}
 
-	public getRoles(request: IRequestRoles): Promise<string[]> | null {
+	public getRoles(request: GetRolesRequest): Promise<string[]> | null {
 		try {
-			const req: IGetRolesServiceRequestModel = {
-				...request,
-			};
+			const req: IGetRolesServiceRequestModel =
+				RequestMapper.map(request);
 			return this.stableCoinService.getRoles(req);
 		} catch (error) {
 			console.error(error);

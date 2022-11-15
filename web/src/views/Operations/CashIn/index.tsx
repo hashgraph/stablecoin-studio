@@ -5,24 +5,20 @@ import { useTranslation } from 'react-i18next';
 import DetailsReview from '../../../components/DetailsReview';
 import InputController from '../../../components/Form/InputController';
 import SDKService from '../../../services/SDKService';
-import {
-	validateAccount,
-	validateAmount,
-	validateDecimalsString,
-} from '../../../utils/validationsHelper';
+import { handleRequestValidation, validateDecimalsString } from '../../../utils/validationsHelper';
 import OperationLayout from './../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-	SELECTED_WALLET_ACCOUNT_INFO,
+	// SELECTED_WALLET_ACCOUNT_INFO,
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNT,
 	walletActions,
 } from '../../../store/slices/walletSlice';
 import { useEffect, useState } from 'react';
 import type { AppDispatch } from '../../../store/store.js';
-import { PublicKey } from 'hedera-stable-coin-sdk';
+import { BigDecimal, CashInStableCoinRequest, GetStableCoinDetailsRequest } from 'hedera-stable-coin-sdk';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
 
@@ -35,13 +31,24 @@ const CashInOperation = () => {
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
-	const infoAccount = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
+	// const infoAccount = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
+	const { decimals = 0,maxSupply} = selectedStableCoin || {};
 	const dispatch = useDispatch<AppDispatch>();
-
-	const { decimals = 0 } = selectedStableCoin || {};
 
 	const [errorOperation, setErrorOperation] = useState();
 	const navigate = useNavigate();
+
+	const [request] = useState(
+		new CashInStableCoinRequest({
+			account: {
+				accountId: account.accountId,
+			},
+			amount: '0',
+			proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
+			targetId: '',
+			tokenId: selectedStableCoin?.tokenId ?? '',
+		}),
+	);
 
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
@@ -58,9 +65,9 @@ const CashInOperation = () => {
 	};
 
 	const handleRefreshCoinInfo = async () => {
-		const stableCoinDetails = await SDKService.getStableCoinDetails({
+		const stableCoinDetails = await SDKService.getStableCoinDetails(new GetStableCoinDetailsRequest({
 			id: selectedStableCoin?.tokenId || '',
-		});
+		}));
 		dispatch(
 			walletActions.setSelectedStableCoin({
 				tokenId: stableCoinDetails?.tokenId,
@@ -88,23 +95,12 @@ const CashInOperation = () => {
 	};
 
 	const handleCashIn: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
-		const { amount, destinationAccount } = getValues();
 		try {
 			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId) {
 				onError();
 				return;
 			}
-			await SDKService.cashIn({
-				proxyContractId: selectedStableCoin.memo.proxyContract,
-				account,
-				tokenId: selectedStableCoin.tokenId,
-				targetId: destinationAccount,
-				amount: amount.toString(),
-				publicKey: new PublicKey({
-					key: infoAccount.publicKey?.key ?? '',
-					type: infoAccount.publicKey?.type ?? '',
-				}),
-			});
+			await SDKService.cashIn(request);
 			onSuccess();
 		} catch (error: any) {
 			setErrorOperation(error.toString());
@@ -128,14 +124,23 @@ const CashInOperation = () => {
 								rules={{
 									required: t(`global:validations.required`),
 									validate: {
-										validNumber: (value: string) => {
-											return validateAmount(value) || t('global:validations.invalidAmount');
-										},
 										validDecimals: (value: string) => {
 											return (
 												validateDecimalsString(value, decimals) ||
 												t('global:validations.decimalsValidation')
 											);
+										},
+										validation: (value: string) => {
+											request.amount = value;
+											const res = handleRequestValidation(request.validate('amount'));
+											return res;
+										},
+										quantityOverMaxSupply: (value: string) => {
+											return maxSupply && maxSupply !== 'INFINITE'
+												? BigDecimal.fromString(maxSupply, decimals).isGreaterOrEqualThan(
+														BigDecimal.fromString(value.toString(), decimals),
+												  ) || t('global:validations.overMaxSupplyCashIn')
+												: true;
 										},
 									},
 								}}
@@ -149,8 +154,10 @@ const CashInOperation = () => {
 								rules={{
 									required: t('global:validations.required'),
 									validate: {
-										validAccount: (value: string) => {
-											return validateAccount(value) || t('global:validations.invalidAccount');
+										validation: (value: string) => {
+											request.targetId = value;
+											const res = handleRequestValidation(request.validate('targetId'));
+											return res;
 										},
 									},
 								}}

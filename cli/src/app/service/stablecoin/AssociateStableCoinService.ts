@@ -1,7 +1,7 @@
 import { language } from '../../../index.js';
 import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
-import { EOAccount, SDK } from 'hedera-stable-coin-sdk';
+import { AssociateTokenRequest, EOAccount, SDK } from 'hedera-stable-coin-sdk';
 
 /**
  * Create Stable Coin Service
@@ -25,7 +25,15 @@ export default class AssociateStableCoinsService extends Service {
 
     await utilsService.showSpinner(
       sdk
-        .associateToken({ proxyContractId, account })
+        .associateToken(
+          new AssociateTokenRequest({
+            proxyContractId,
+            account: {
+              accountId: account.accountId.id,
+              privateKey: account.privateKey,
+            },
+          }),
+        )
         .then((response) => (respDetail = response)),
       {
         text: language.getText('state.loading'),

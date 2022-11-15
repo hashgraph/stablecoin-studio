@@ -6,7 +6,7 @@ export default class AccountId extends ValueObject {
 	public readonly id: string;
 	constructor(id: string) {
 		super();
-		this.validate(id);
+		AccountId.validate(id);
 		this.id = id;
 	}
 
@@ -14,7 +14,7 @@ export default class AccountId extends ValueObject {
 		return this.id;
 	}
 
-	public validate(str?: string): void {
+	public static validate(str?: string): void {
 		if (!/\d\.\d\.\d/.test(str ?? '')) {
 			throw new AccountIdNotValid(str ?? 'undefined');
 		}

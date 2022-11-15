@@ -2,10 +2,11 @@ import { Heading, Text, Stack, useDisclosure } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import DetailsReview from '../../../components/DetailsReview';
-import { validateAmount, validateDecimalsString } from '../../../utils/validationsHelper';
+import InputController from '../../../components/Form/InputController';
 import OperationLayout from '../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
+import { handleRequestValidation } from '../../../utils/validationsHelper';
 import { useSelector, useDispatch } from 'react-redux';
 import {
 	SELECTED_WALLET_COIN,
@@ -18,7 +19,7 @@ import { formatAmount } from '../../../utils/inputHelper';
 import type { AppDispatch } from '../../../store/store.js';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
-import InputController from '../../../components/Form/InputController';
+import { GetStableCoinDetailsRequest, RescueStableCoinRequest } from 'hedera-stable-coin-sdk';
 
 const RescueTokenOperation = () => {
 	const {
@@ -31,10 +32,21 @@ const RescueTokenOperation = () => {
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
 
 	const [errorOperation, setErrorOperation] = useState();
+	const [request] = useState(
+		new RescueStableCoinRequest({
+			proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
+			account: {
+				accountId: account.accountId
+			},
+			tokenId: selectedStableCoin?.tokenId ?? '',
+			amount:  '0'
+		})
+	);
+
 	const dispatch = useDispatch<AppDispatch>();
 	const navigate = useNavigate();
 
-	const { decimals = 0 } = selectedStableCoin || {};
+	// const { decimals = 0 } = selectedStableCoin || {};
 
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
@@ -50,15 +62,17 @@ const RescueTokenOperation = () => {
 		RouterManager.goBack(navigate);
 	};
 	const handleRefreshCoinInfo = async () => {
-		const stableCoinDetails = await SDKService.getStableCoinDetails({
-			id: selectedStableCoin?.tokenId || '',
-		});
+		const stableCoinDetails = await SDKService.getStableCoinDetails(
+			new GetStableCoinDetailsRequest({
+				id: selectedStableCoin?.tokenId ?? '',
+			}) 
+		);
 		dispatch(
 			walletActions.setSelectedStableCoin({
 				tokenId: stableCoinDetails?.tokenId,
-				initialSupply: stableCoinDetails?.initialSupply,
-				totalSupply: stableCoinDetails?.totalSupply,
-				maxSupply: stableCoinDetails?.maxSupply,
+				initialSupply: Number(stableCoinDetails?.initialSupply),
+				totalSupply: Number(stableCoinDetails?.totalSupply),
+				maxSupply: Number(stableCoinDetails?.maxSupply),
 				name: stableCoinDetails?.name,
 				symbol: stableCoinDetails?.symbol,
 				decimals: stableCoinDetails?.decimals,
@@ -83,18 +97,12 @@ const RescueTokenOperation = () => {
 		onSuccess,
 		onError,
 	}) => {
-		const { amount } = getValues();
 		try {
 			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId) {
 				onError();
 				return;
 			}
-			await SDKService.rescue({
-				proxyContractId: selectedStableCoin.memo.proxyContract,
-				account,
-				tokenId: selectedStableCoin.tokenId,
-				amount: amount.toString(),
-			});
+			await SDKService.rescue(request);
 			onSuccess();
 		} catch (error: any) {
 			setErrorOperation(error.toString());
@@ -118,16 +126,12 @@ const RescueTokenOperation = () => {
 								rules={{
 									required: t(`global:validations.required`),
 									validate: {
-										validNumber: (value: string) => {
-											return validateAmount(value) || t('global:validations.invalidAmount');
+										validation: (value: string) => {
+											request.amount = value;
+											const res = handleRequestValidation(request.validate('amount'));
+											return res;
 										},
-										validDecimals: (value: string) => {
-											return (
-												validateDecimalsString(value, decimals) ||
-												t('global:validations.decimalsValidation')
-											);
-										},
-									},
+									}
 								}}
 								isRequired
 								control={control}

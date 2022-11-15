@@ -12,3 +12,13 @@ export type RequireAtLeastOne<T, Keys extends keyof T = keyof T> = Pick<
 export abstract class ValueObject {
 	public abstract toString(): string;
 }
+
+export interface IndexableObject {
+	[n: string | number | symbol]: any;
+}
+
+export type Constructible<Params extends readonly any[] = any[], T = any> = new (
+	...params: Params
+) => T;
+
+export type MapFunction<T, K, O> = (value: T, object: O) => K;
