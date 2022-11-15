@@ -27,6 +27,7 @@ import { AmountGreaterThanAllowedSupply } from './error/AmountGreaterThanAllowed
 import { OperationNotAllowed } from './error/OperationNotAllowed.js';
 import { InsufficientFunds } from './error/InsufficientFunds.js';
 import { AmountGreaterThanOwnerBalance } from './error/AmountGreaterThanOwnerBalance.js';
+import CheckNums from '../../../core/checks/numbers/CheckNums.js';
 
 export default class StableCoinService extends Service {
 	private repository: IStableCoinRepository;
@@ -151,7 +152,11 @@ export default class StableCoinService extends Service {
 		const coin: StableCoin = await this.getStableCoin({
 			id: req.tokenId,
 		});
-
+		if (CheckNums.hasMoreDecimals(req.amount, coin.decimals)) {
+			throw new OperationNotAllowed(
+				`The amount has more decimals than the limit (${coin.decimals}), cash in`,
+			);
+		}
 		const amount = BigDecimal.fromString(req.amount, coin.decimals);
 		if (
 			coin.maxSupply &&
@@ -161,6 +166,7 @@ export default class StableCoinService extends Service {
 			console.log(coin.maxSupply, coin.totalSupply, amount);
 			throw new AmountGreaterThanAllowedSupply(amount);
 		}
+
 		let resultCashIn = false;
 
 		const capabilities: Capabilities[] =
@@ -220,6 +226,11 @@ export default class StableCoinService extends Service {
 			id: req.tokenId,
 		});
 		const treasruyAccount: string = coin.treasury.id;
+		if (CheckNums.hasMoreDecimals(req.amount, coin.decimals)) {
+			throw new OperationNotAllowed(
+				`The amount has more decimals than the limit (${coin.decimals}), burn`,
+			);
+		}
 		const amount = BigDecimal.fromString(req.amount, coin.decimals);
 
 		const treasuryAccountBalance = await this.getBalanceOf({
@@ -234,7 +245,7 @@ export default class StableCoinService extends Service {
 		);
 		if (amount.isGreaterThan(treasuryAccountBalanceBigDecimal)) {
 			throw new OperationNotAllowed(
-				'The treasury account balance is bigger than the amount, cash out',
+				'The treasury account balance is bigger than the amount, burn',
 			);
 		}
 
@@ -293,6 +304,12 @@ export default class StableCoinService extends Service {
 			tokenId: req.tokenId,
 		});
 
+		if (CheckNums.hasMoreDecimals(req.amount, coin.decimals)) {
+			throw new OperationNotAllowed(
+				`The amount has more decimals than the limit (${coin.decimals}), wipe`,
+			);
+		}
+
 		const amount = BigDecimal.fromString(req.amount, coin.decimals);
 
 		const balanceBigDecimal = BigDecimal.fromString(
@@ -339,6 +356,11 @@ export default class StableCoinService extends Service {
 		});
 
 		const treasruyAccount: string = coin.treasury.id;
+		if (CheckNums.hasMoreDecimals(req.amount, coin.decimals)) {
+			throw new OperationNotAllowed(
+				`The amount has more decimals than the limit (${coin.decimals}), rescue`,
+			);
+		}
 		const amount = BigDecimal.fromString(req.amount, coin.decimals);
 
 		const treasuryAccountBalance = await this.getBalanceOf({
@@ -428,7 +450,11 @@ export default class StableCoinService extends Service {
 		const coin: StableCoin = await this.getStableCoin({
 			id: req.tokenId,
 		});
-
+		if (CheckNums.hasMoreDecimals(req.amount ?? '', coin.decimals)) {
+			throw new OperationNotAllowed(
+				`The amount has more decimals than the limit (${coin.decimals}), increase supplier allowance `,
+			);
+		}
 		return this.repository.increaseSupplierAllowance(
 			req.proxyContractId,
 			req.targetId,
@@ -452,6 +478,12 @@ export default class StableCoinService extends Service {
 			account: req.account,
 			tokenId: req.tokenId,
 		}).then((r) => BigDecimal.fromString(r, coin.decimals));
+
+		if (CheckNums.hasMoreDecimals(req.amount ?? '', coin.decimals)) {
+			throw new OperationNotAllowed(
+				`The amount has more decimals than the limit (${coin.decimals}), decrease supplier allowance`,
+			);
+		}
 
 		const amount = req.amount
 			? BigDecimal.fromString(req.amount, coin.decimals)

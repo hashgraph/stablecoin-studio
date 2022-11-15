@@ -325,7 +325,7 @@ export default class OperationStableCoinService extends Service {
           async () => {
             cashOutRequest.amount = await utilsService
               .defaultSingleAsk(
-                language.getText('stablecoin.askTargetAccount'),
+                language.getText('stablecoin.askBurnAmount'),
                 '1',
               )
               .then((val) => val.replace(',', '.'));
