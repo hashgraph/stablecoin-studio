@@ -421,6 +421,39 @@ Creates a new stable coin.
 	);
 ```
 
+## Get capabilities stable coin
+
+Get a list of the stable coin capabilities
+
+**Spec:**
+
+```Typescript
+	enum Capabilities {
+		CASH_IN = 'Cash in',
+		CASH_IN_HTS = 'Cash in hts',
+		DETAILS = 'Details',
+		BALANCE = 'Balance',
+		BURN = 'Burn',
+		BURN_HTS = 'Burn hts',
+		WIPE = 'Wipe',
+		WIPE_HTS = 'Wipe hts',
+		RESCUE = 'Rescue',
+		ROLE_MANAGEMENT = 'Role management',
+		PAUSE = 'Pause',
+	}
+
+	sdk.getCapabilitiesStableCoin() = (id: string, publicKey: string) : Capabilities[]
+```
+
+**Example:**
+
+```Typescript
+	const stableCoins: StableCoinList[] = await sdk.getCapabilitiesStableCoin(
+		'0.0.1',
+		'0x1234'
+	)
+```
+
 ## Get stable coin list
 
 Gets a list of the stable coins (id and symbol) managed by an account.
@@ -456,13 +489,13 @@ Gets the details of a stable coin.
 **Spec:**
 
 ```Typescript
-	sdk.getStableCoinDetails = (request: GetStableCoinDetailsRequest): Promise<StableCoinDetail> | null
+	sdk.getStableCoinDetails = (request: GetStableCoinDetailsRequest): Promise<StableCoinDetail>
 ```
 
 **Example:**
 
 ```Typescript
-	const stableCoin: StableCoinDetail | null = await sdk.getStableCoinDetails(
+	const stableCoin: StableCoinDetail = await sdk.getStableCoinDetails(
 		new GetStableCoinDetailsRequest({
 			id: "0.0.21345",
 		})
@@ -476,7 +509,7 @@ Gets the balance of tokens of an account.
 **Spec:**
 
 ```Typescript
-	sdk.getBalanceOf = (request: GetAccountBalanceRequest): Promise<string> | null
+	sdk.getBalanceOf = (request: GetAccountBalanceRequest): Promise<string>
 ```
 
 **Example:**
@@ -505,13 +538,13 @@ Cash in tokens into a stable coin.
 **Spec:**
 
 ```Typescript
-	sdk.cashIn = (request: CashInStableCoinRequest): Promise<bool> | null
+	sdk.cashIn = (request: CashInStableCoinRequest): Promise<bool>
 ```
 
 **Example:**
 
 ```Typescript
-	const res: bool | null = await sdk.cashIn(
+	const res: bool = await sdk.cashIn(
 		new CashInStableCoinRequest({
 			account: {
 				accountId:"0.0.123",
@@ -535,15 +568,13 @@ Cash out tokens of a stable coin.
 **Spec:**
 
 ```Typescript
-
-
-	sdk.cashOut = (request: CashOutStableCoinRequest): Promise<bool> | null
+	sdk.cashOut = (request: CashOutStableCoinRequest): Promise<bool>
 ```
 
 **Example:**
 
 ```Typescript
-	const res: bool | null = await sdk.cashOut(
+	const res: bool = await sdk.cashOut(
 		new CashOutStableCoinRequest({
 			account: {
 				accountId:"0.0.123",
@@ -567,13 +598,13 @@ Associate a stable coin to an account.
 **Spec:**
 
 ```Typescript
-	sdk.associateToken = (request: AssociateTokenRequest): Promise<Uint8Array> | null
+	sdk.associateToken = (request: AssociateTokenRequest): Promise<Uint8Array>
 ```
 
 **Example:**
 
 ```Typescript
-	const res: Uint8Array | null = await sdk.associateToken(
+	const res: Uint8Array = await sdk.associateToken(
 		new AssociateTokenRequest({
 			account: {
 				accountId:"0.0.123",
@@ -594,13 +625,13 @@ Wipes tokens of a stable coin
 **Spec:**
 
 ```Typescript
-	sdk.wipe = (request: WipeStableCoinRequest): Promise<bool> | null
+	sdk.wipe = (request: WipeStableCoinRequest): Promise<bool>
 ```
 
 **Example:**
 
 ```Typescript
-	const res: Uint8Array | null = await sdk.wipe(
+	const res: Uint8Array = await sdk.wipe(
 		new WipeStableCoinRequest({
 			account: {
 				accountId:"0.0.123",
@@ -624,13 +655,13 @@ Rescue tokens from a stable coin.
 **Spec:**
 
 ```Typescript
-	sdk.rescue = (request: RescueStableCoinRequest): Promise<Uint8Array> | null
+	sdk.rescue = (request: RescueStableCoinRequest): Promise<Uint8Array>
 ```
 
 **Example:**
 
 ```Typescript
-	const res: Uint8Array | null = await sdk.rescue(
+	const res: Uint8Array = await sdk.rescue(
 		new RescueStableCoinRequest({
 			account: {
 				accountId:"0.0.123",
@@ -648,18 +679,18 @@ Rescue tokens from a stable coin.
 
 ## Supplier allowance
 
-Sets the supplier allowance for an account.
+Get the supplier allowance amount for an account.
 
 **Spec:**
 
 ```Typescript
-	sdk.supplierAllowance = (request: CheckCashInLimitRequest): Promise<string> | null
+	sdk.supplierAllowance = (request: CheckCashInLimitRequest): Promise<string>
 ```
 
 **Example:**
 
 ```Typescript
-	const res: string | null = await sdk.supplierAllowance(
+	const res: string = await sdk.supplierAllowance(
 		new CheckCashInLimitRequest({
 			account: {
 				accountId:"0.0.123",
@@ -682,13 +713,13 @@ Resets the allowance of a supplier.
 **Spec:**
 
 ```Typescript
-	sdk.resetSupplierAllowance = (request: ResetCashInLimitRequest): Promise<Uint8Array> | null
+	sdk.resetSupplierAllowance = (request: ResetCashInLimitRequest): Promise<Uint8Array>
 ```
 
 **Example:**
 
 ```Typescript
-	const res: Uint8Array | null = await sdk.resetSupplierAllowance(
+	const res: Uint8Array = await sdk.resetSupplierAllowance(
 		new ResetCashInLimitRequest({
 			account: {
 				accountId:"0.0.123",
@@ -787,14 +818,13 @@ Checks if the supplier account passed has it's allowance limited.
 			},
 			targetId: "0.0.3",
 			proxyContractId: "0.0.1",
-			supplierType: "limited"
 		})
 	)
 ```
 
 ## Is supplier allowance unlimited
 
-Decreases the allowance of a supplier.
+Checks if the supplier account passed has it's allowance unlimited.
 
 **Spec:**
 
@@ -816,7 +846,6 @@ Decreases the allowance of a supplier.
 			},
 			targetId: "0.0.3",
 			proxyContractId: "0.0.1",
-			supplierType: "unlimited"
 		})
 	)
 ```
@@ -953,6 +982,63 @@ Checks if an account has a certain role on the stable coin.
 			role: StableCoinRole.WIPE_ROLE,
 		})
 	)
+```
+
+## Get account info
+
+Get the account info
+
+**Spec:**
+
+```Typescript
+	interface IAccountWithKeyRequestModel {
+		account: Account;
+	}
+
+	interface AccountInfo {
+		account?:string,
+		accountEvmAddress?:string,
+		publicKey?:PublicKey,
+	}
+
+	sdk.getAccountInfo = (request: IAccountWithKeyRequestModel): Promise<AccountInfo>
+```
+
+**Example:**
+
+```Typescript
+	const res: AccountInfo = await sdk.getAccountInfo(
+		{
+			account:{
+				accountId:"0.0.1234"
+			}
+		}
+	)
+```
+
+## Get roles
+
+Get the role of an account passed
+
+**Spec:**
+
+```Typescript
+	sdk.getRoles = (request: GetRolesRequest): Promise<string[]>
+```
+
+**Example:**
+
+```Typescript
+	const res: string[] = await sdk.getRoles(
+		new GetRolesRequest({
+			account:{
+				accountId:"0.0.1234"
+			},
+			targetId:"0.0.2",
+			proxyContractId:"0.0.1",
+			tokenId: "0.0.3"
+		})
+	);
 ```
 
 ## Check string is valid address
