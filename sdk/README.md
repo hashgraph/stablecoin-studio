@@ -405,13 +405,13 @@ Creates a new stable coin.
 **Spec:**
 
 ```Typescript
-	sdk.createStableCoin = (request: ICreateStableCoinRequest): Promise<StableCoin>
+	sdk.createStableCoin = (request: CreateStableCoinRequest): Promise<StableCoinDetail>
 ```
 
 **Example:**
 
 ```Typescript
-	const stableCoin: StableCoin = await sdk.createStableCoin(
+	const stableCoin: StableCoinDetail = await sdk.createStableCoin(
 		new CreateStableCoinRequest({
 			account: new HashPackAccount("0.0.1"),
 			name: "Hedera Stable Coin",
@@ -505,13 +505,13 @@ Cash in tokens into a stable coin.
 **Spec:**
 
 ```Typescript
-	sdk.cashIn = (request: CashInStableCoinRequest): Promise<bool>
+	sdk.cashIn = (request: CashInStableCoinRequest): Promise<bool> | null
 ```
 
 **Example:**
 
 ```Typescript
-	const res: bool = await sdk.cashIn(
+	const res: bool | null = await sdk.cashIn(
 		new CashInStableCoinRequest({
 			account: {
 				accountId:"0.0.123",
@@ -537,13 +537,13 @@ Cash out tokens of a stable coin.
 ```Typescript
 
 
-	sdk.cashOut = (request: CashOutStableCoinRequest): Promise<bool>
+	sdk.cashOut = (request: CashOutStableCoinRequest): Promise<bool> | null
 ```
 
 **Example:**
 
 ```Typescript
-	const res: bool = await sdk.cashOut(
+	const res: bool | null = await sdk.cashOut(
 		new CashOutStableCoinRequest({
 			account: {
 				accountId:"0.0.123",
@@ -567,13 +567,13 @@ Associate a stable coin to an account.
 **Spec:**
 
 ```Typescript
-	sdk.associateToken = (request: AssociateTokenRequest): Promise<Uint8Array>
+	sdk.associateToken = (request: AssociateTokenRequest): Promise<Uint8Array> | null
 ```
 
 **Example:**
 
 ```Typescript
-	const res: Uint8Array = await sdk.associateToken(
+	const res: Uint8Array | null = await sdk.associateToken(
 		new AssociateTokenRequest({
 			account: {
 				accountId:"0.0.123",
@@ -594,14 +594,13 @@ Wipes tokens of a stable coin
 **Spec:**
 
 ```Typescript
-
-	sdk.wipe = (request: WipeStableCoinRequest): Promise<bool>
+	sdk.wipe = (request: WipeStableCoinRequest): Promise<bool> | null
 ```
 
 **Example:**
 
 ```Typescript
-	const res: Uint8Array = await sdk.wipe(
+	const res: Uint8Array | null = await sdk.wipe(
 		new WipeStableCoinRequest({
 			account: {
 				accountId:"0.0.123",
@@ -625,13 +624,13 @@ Rescue tokens from a stable coin.
 **Spec:**
 
 ```Typescript
-	sdk.rescue = (request: RescueStableCoinRequest): Promise<Uint8Array>
+	sdk.rescue = (request: RescueStableCoinRequest): Promise<Uint8Array> | null
 ```
 
 **Example:**
 
 ```Typescript
-	const res: Uint8Array = await sdk.rescue(
+	const res: Uint8Array | null = await sdk.rescue(
 		new RescueStableCoinRequest({
 			account: {
 				accountId:"0.0.123",
@@ -654,13 +653,13 @@ Sets the supplier allowance for an account.
 **Spec:**
 
 ```Typescript
-	sdk.supplierAllowance = (request: CheckCashInLimitRequest): Promise<string>
+	sdk.supplierAllowance = (request: CheckCashInLimitRequest): Promise<string> | null
 ```
 
 **Example:**
 
 ```Typescript
-	const res: string = await sdk.supplierAllowance(
+	const res: string | null = await sdk.supplierAllowance(
 		new CheckCashInLimitRequest({
 			account: {
 				accountId:"0.0.123",
@@ -683,13 +682,13 @@ Resets the allowance of a supplier.
 **Spec:**
 
 ```Typescript
-	sdk.resetSupplierAllowance = (request: ResetCashInLimitRequest): Promise<Uint8Array>
+	sdk.resetSupplierAllowance = (request: ResetCashInLimitRequest): Promise<Uint8Array> | null
 ```
 
 **Example:**
 
 ```Typescript
-	const res: Uint8Array = await sdk.resetSupplierAllowance(
+	const res: Uint8Array | null = await sdk.resetSupplierAllowance(
 		new ResetCashInLimitRequest({
 			account: {
 				accountId:"0.0.123",
