@@ -202,8 +202,27 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			if (stableCoin.wipeKey instanceof ContractId) {
 				listCapabilities.push(Capabilities.WIPE);
 			}
+
+			if (stableCoin.pauseKey instanceof PublicKey) {
+				if (
+					stableCoin.pauseKey?.key.toString() == publickey.toString()
+				) {
+					listCapabilities.push(Capabilities.PAUSE_HTS);
+				}
+			}			
 			if (stableCoin.pauseKey instanceof ContractId) {
 				listCapabilities.push(Capabilities.PAUSE);
+			}
+
+			if (stableCoin.freezeKey instanceof PublicKey) {
+				if (
+					stableCoin.freezeKey?.key.toString() == publickey.toString()
+				) {
+					listCapabilities.push(Capabilities.FREEZE_HTS);
+				}
+			}			
+			if (stableCoin.freezeKey instanceof ContractId) {
+				listCapabilities.push(Capabilities.FREEZE);
 			}
 
 			const roleManagement = listCapabilities.some((capability) =>
