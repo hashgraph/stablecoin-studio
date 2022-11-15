@@ -102,7 +102,28 @@ export async function deployContractsWithSDK(
         "tokenMaxSupply": maxSupply,
         "tokenInitialSupply": initialSupply,
         "tokenDecimals": decimals,
-        "senderPublicKey": PublicKey.fromString(publicKey).toBytes()
+        "keys": [
+            {
+                "keyType": 1,
+                "PublicKey": PublicKey.fromString(publicKey).toBytes(),
+            },
+            {
+                "keyType": 4,
+                "PublicKey": PublicKey.fromString(publicKey).toBytes(),
+            },
+            {
+                "keyType": 8,
+                "PublicKey": "0x",
+            },
+            {
+                "keyType": 16,
+                "PublicKey": "0x",
+            },
+            {
+                "keyType": 64,
+                "PublicKey": "0x",
+            }
+        ]
     };
 
     console.log(`Token Object: ${JSON.stringify(tokenObject)}`)

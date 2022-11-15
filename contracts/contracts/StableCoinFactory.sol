@@ -42,7 +42,7 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes{
             requestedToken.supplyType,
             requestedToken.tokenMaxSupply,
             address(StableCoinProxy),
-            requestedToken.senderPublicKey
+            requestedToken.keys
         );
         
         (int64 responseCode, address tokenAddress) = 
@@ -68,27 +68,28 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes{
         bool supplyType,
         uint32 tokenMaxSupply,
         address StableCoinProxyAddress,
-        bytes memory senderPublicKey) 
+        KeysStruct[] memory keysToDefine
+    ) 
     internal view returns (IHederaTokenService.HederaToken memory){
-
+        // token Memo
         string memory tokenMemo = string(abi.encodePacked(memo_1, Strings.toHexString(StableCoinProxyAddress), memo_2));
         
+        // Token Expiry
         IHederaTokenService.Expiry memory tokenExpiry;
         tokenExpiry.autoRenewAccount = msg.sender;
         tokenExpiry.autoRenewPeriod = 7776000;
 
-        IHederaTokenService.KeyValue memory senderKey;
-        senderKey.ed25519 = senderPublicKey;
-
-        IHederaTokenService.KeyValue memory proxyKey;
-        proxyKey.delegatableContractId = StableCoinProxyAddress;
-        
-        IHederaTokenService.TokenKey[] memory keys = new IHederaTokenService.TokenKey[](5);
-        keys[0] = IHederaTokenService.TokenKey({keyType: 1, key: senderKey}); // admin
-        keys[1] = IHederaTokenService.TokenKey({keyType: 4, key: senderKey}); // freeze
-        keys[2] = IHederaTokenService.TokenKey({keyType: 8, key: proxyKey}); // wipe
-        keys[3] = IHederaTokenService.TokenKey({keyType: 16, key: proxyKey}); // supply
-        keys[4] = IHederaTokenService.TokenKey({keyType: 64, key: proxyKey}); // pause
+        // Token Keys
+        IHederaTokenService.TokenKey[] memory keys = new IHederaTokenService.TokenKey[](keysToDefine.length);
+        for(uint i=0; i < keysToDefine.length; i++)
+        {
+            keys[i] = IHederaTokenService.TokenKey(
+                    {
+                        keyType: keysToDefine[i].keyType, 
+                        key: generateKey(keysToDefine[i].PublicKey, StableCoinProxyAddress)
+                    }
+                );
+        }
 
         IHederaTokenService.HederaToken memory token;
         token.name = tokenName;
@@ -102,5 +103,15 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes{
         token.expiry = tokenExpiry;
 
         return token;
+    }
+
+    function generateKey(bytes memory PublicKey, address StableCoinProxyAddress) internal pure returns(IHederaTokenService.KeyValue memory)
+    {
+        // If the Public Key is empty we assume the user has chosen the proxy
+        IHederaTokenService.KeyValue memory Key;
+        if(PublicKey.length == 0) Key.delegatableContractId = StableCoinProxyAddress;
+        else Key.ed25519 = PublicKey;
+
+        return Key;
     }
 }

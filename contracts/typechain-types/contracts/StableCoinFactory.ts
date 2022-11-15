@@ -24,6 +24,16 @@ import type {
 } from "../common";
 
 export declare namespace IStableCoinFactory {
+  export type KeysStructStruct = {
+    keyType: PromiseOrValue<BigNumberish>;
+    PublicKey: PromiseOrValue<BytesLike>;
+  };
+
+  export type KeysStructStructOutput = [BigNumber, string] & {
+    keyType: BigNumber;
+    PublicKey: string;
+  };
+
   export type TokenStructStruct = {
     tokenName: PromiseOrValue<string>;
     tokenSymbol: PromiseOrValue<string>;
@@ -32,7 +42,7 @@ export declare namespace IStableCoinFactory {
     tokenMaxSupply: PromiseOrValue<BigNumberish>;
     tokenInitialSupply: PromiseOrValue<BigNumberish>;
     tokenDecimals: PromiseOrValue<BigNumberish>;
-    senderPublicKey: PromiseOrValue<BytesLike>;
+    keys: IStableCoinFactory.KeysStructStruct[];
   };
 
   export type TokenStructStructOutput = [
@@ -43,7 +53,7 @@ export declare namespace IStableCoinFactory {
     number,
     BigNumber,
     BigNumber,
-    string
+    IStableCoinFactory.KeysStructStructOutput[]
   ] & {
     tokenName: string;
     tokenSymbol: string;
@@ -52,13 +62,13 @@ export declare namespace IStableCoinFactory {
     tokenMaxSupply: number;
     tokenInitialSupply: BigNumber;
     tokenDecimals: BigNumber;
-    senderPublicKey: string;
+    keys: IStableCoinFactory.KeysStructStructOutput[];
   };
 }
 
 export interface StableCoinFactoryInterface extends utils.Interface {
   functions: {
-    "deployStableCoin((string,string,bool,bool,uint32,uint256,uint256,bytes))": FunctionFragment;
+    "deployStableCoin((string,string,bool,bool,uint32,uint256,uint256,(uint256,bytes)[]))": FunctionFragment;
   };
 
   getFunction(nameOrSignatureOrTopic: "deployStableCoin"): FunctionFragment;

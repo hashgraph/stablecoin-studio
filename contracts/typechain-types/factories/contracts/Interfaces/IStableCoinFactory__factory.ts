@@ -50,9 +50,21 @@ const _abi = [
             type: "uint256",
           },
           {
-            internalType: "bytes",
-            name: "senderPublicKey",
-            type: "bytes",
+            components: [
+              {
+                internalType: "uint256",
+                name: "keyType",
+                type: "uint256",
+              },
+              {
+                internalType: "bytes",
+                name: "PublicKey",
+                type: "bytes",
+              },
+            ],
+            internalType: "struct IStableCoinFactory.KeysStruct[]",
+            name: "keys",
+            type: "tuple[]",
           },
         ],
         internalType: "struct IStableCoinFactory.tokenStruct",
