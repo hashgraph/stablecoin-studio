@@ -156,6 +156,8 @@ export const english = {
     pathChanged: '\nPath changed successfully',
     networkChanged: '\nNetwork changed successfully',
     accountsChanged: '\nAccounts changed successfully',
+    freezeAccount: 'Which account do you want to freeze?',
+    unfreezeAccount: 'Which account do you want to unfreeze?',
     mainOptions: [
       'Create a new Stable Coin',
       'Manage external tokens',
@@ -199,6 +201,8 @@ export const english = {
       'Burn',
       'Wipe',
       'Rescue',
+      'Freeze an account',
+      'Unfreeze an account',
       'Role management',
       'Refresh roles',
       new inquirer.Separator(),
