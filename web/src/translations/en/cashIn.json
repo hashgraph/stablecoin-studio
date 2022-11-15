@@ -1,7 +1,7 @@
 {
     "title": "Cash in operation",
     "operationTitle": "Operation details",
-    "amountLabel": "How much tokens?",
+    "amountLabel": "How many tokens?",
     "amountPlaceholder": "Introduce amount",
     "destinationAccountLabel": "What account will receive the tokens?",
     "destinationAccountPlaceholder": "Introduce account",

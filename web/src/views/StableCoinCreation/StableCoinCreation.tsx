@@ -163,29 +163,8 @@ const StableCoinCreation = () => {
 	};
 
 	const handleFinish = async () => {
-		const {
-			// name,
-			// symbol,
-			// decimals,
-			// initialSupply,
-			autorenewAccount,
-			// maxSupply,
-			managementPermissions,
-			freezeKey,
-			wipeKey,
-			pauseKey,
-			supplyKey,
-		} = getValues();
-
-		// const newStableCoinParams: CreateStableCoinRequest = new CreateStableCoinRequest({
-		// 	account,
-		// 	name,
-		// 	symbol,
-		// 	decimals,
-		// 	initialSupply: initialSupply ? initialSupply.toString() : undefined,
-		// 	maxSupply: maxSupply ? maxSupply.toString() : undefined,
-		// 	autoRenewAccount: autorenewAccount,
-		// });
+		const { autorenewAccount, managementPermissions, freezeKey, wipeKey, pauseKey, supplyKey } =
+			getValues();
 
 		request.autoRenewAccount = autorenewAccount;
 		if (managementPermissions) {

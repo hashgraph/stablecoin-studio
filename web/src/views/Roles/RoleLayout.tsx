@@ -13,7 +13,6 @@ import { NamedRoutes } from '../../Router/NamedRoutes';
 import DetailsReview from '../../components/DetailsReview';
 import { fields } from './constants';
 import { useSelector } from 'react-redux';
-import { formatAmountWithDecimals } from '../../utils/inputHelper';
 import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
 import type {
 	CheckCashInLimitRequest,
@@ -58,7 +57,14 @@ export interface RoleLayoutProps {
 	selectorPlaceholder: string;
 	title: string;
 	roleRequest: boolean;
-	request: GrantRoleRequest | RevokeRoleRequest |IncreaseCashInLimitRequest|CheckCashInLimitRequest|ResetCashInLimitRequest | DecreaseCashInLimitRequest | undefined;
+	request:
+		| GrantRoleRequest
+		| RevokeRoleRequest
+		| IncreaseCashInLimitRequest
+		| CheckCashInLimitRequest
+		| ResetCashInLimitRequest
+		| DecreaseCashInLimitRequest
+		| undefined;
 }
 
 const RoleLayout = (props: RoleLayoutProps) => {
@@ -74,7 +80,7 @@ const RoleLayout = (props: RoleLayoutProps) => {
 		selectorPlaceholder,
 		title,
 		roleRequest = true,
-		request
+		request,
 	} = props;
 	const { t } = useTranslation(['global', 'roles', 'operations']);
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
@@ -84,30 +90,15 @@ const RoleLayout = (props: RoleLayoutProps) => {
 	const optionalDetailsFinite = [
 		{
 			label: t('operations:details.initialSupply'),
-			value: selectedStableCoin?.initialSupply
-				? formatAmountWithDecimals({
-						amount: selectedStableCoin?.initialSupply,
-						decimals: selectedStableCoin?.decimals || 0,
-				  })
-				: unknown,
+			value: selectedStableCoin?.initialSupply ? selectedStableCoin.initialSupply : unknown,
 		},
 		{
 			label: t('operations:details.totalSupply'),
-			value: selectedStableCoin?.totalSupply
-				? formatAmountWithDecimals({
-						amount: selectedStableCoin?.totalSupply,
-						decimals: selectedStableCoin?.decimals || 0,
-				  })
-				: unknown,
+			value: selectedStableCoin?.totalSupply ? selectedStableCoin.totalSupply : unknown,
 		},
 		{
 			label: t('operations:details.maxSupply'),
-			value: selectedStableCoin?.maxSupply
-				? formatAmountWithDecimals({
-						amount: selectedStableCoin?.maxSupply,
-						decimals: selectedStableCoin?.decimals || 0,
-				  })
-				: unknown,
+			value: selectedStableCoin?.maxSupply ? selectedStableCoin.maxSupply : unknown,
 		},
 		{
 			label: t('operations:details.supplyType'),
@@ -122,21 +113,11 @@ const RoleLayout = (props: RoleLayoutProps) => {
 	const optionalDetailsInfinite = [
 		{
 			label: t('operations:details.initialSupply'),
-			value: selectedStableCoin?.initialSupply
-				? formatAmountWithDecimals({
-						amount: selectedStableCoin?.initialSupply,
-						decimals: selectedStableCoin?.decimals || 0,
-				  })
-				: unknown,
+			value: selectedStableCoin?.initialSupply ? selectedStableCoin.initialSupply : unknown,
 		},
 		{
 			label: t('operations:details.totalSupply'),
-			value: selectedStableCoin?.totalSupply
-				? formatAmountWithDecimals({
-						amount: selectedStableCoin?.totalSupply,
-						decimals: selectedStableCoin?.decimals || 0,
-				  })
-				: unknown,
+			value: selectedStableCoin?.totalSupply ? selectedStableCoin.totalSupply : unknown,
 		},
 		{
 			label: t('operations:details.supplyType'),
@@ -174,8 +155,8 @@ const RoleLayout = (props: RoleLayoutProps) => {
 								rules={{
 									required: t('global:validations.required'),
 									validate: {
-										validation: (value: string) => {	
-											if(request){
+										validation: (value: string) => {
+											if (request) {
 												request.targetId = value;
 												const res = handleRequestValidation(request.validate('targetId'));
 												return res;
@@ -189,6 +170,7 @@ const RoleLayout = (props: RoleLayoutProps) => {
 								label={accountLabel}
 								placeholder={accountPlaceholder}
 							/>
+
 							{roleRequest && (
 								<SelectController
 									rules={{

@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/react';
+import { Box, HStack, Tag, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -8,7 +8,9 @@ import type { Option } from '../../components/Form/SelectController';
 import SDKService from '../../services/SDKService';
 import type { AppDispatch } from '../../store/store';
 import {
+	EXTERNAL_TOKEN_LIST,
 	getStableCoinList,
+	getExternalTokenList,
 	SELECTED_WALLET_ACCOUNT_INFO,
 	SELECTED_WALLET_CAPABILITIES,
 	SELECTED_WALLET_COIN,
@@ -20,6 +22,7 @@ import { RouterManager } from '../../Router/RouterManager';
 import { matchPath, useLocation, useNavigate } from 'react-router-dom';
 import { NamedRoutes } from '../../Router/NamedRoutes';
 import { HashPackAccount } from 'hedera-stable-coin-sdk';
+import type { IExternalToken } from '../../interfaces/IExternalToken.js';
 
 const CoinDropdown = () => {
 	const dispatch = useDispatch<AppDispatch>();
@@ -27,6 +30,7 @@ const CoinDropdown = () => {
 	const location = useLocation();
 
 	const stableCoinList = useSelector(STABLE_COIN_LIST);
+	const externalTokenList = useSelector(EXTERNAL_TOKEN_LIST);
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const accountId = useSelector(SELECTED_WALLET_PAIRED_ACCOUNTID);
 	const capabilities = useSelector(SELECTED_WALLET_CAPABILITIES);
@@ -55,6 +59,7 @@ const CoinDropdown = () => {
 		if (accountId) {
 			const id = new HashPackAccount(accountId);
 			dispatch(getStableCoinList(id));
+			dispatch(getExternalTokenList(accountId));
 
 			getAccountInfo(id);
 		}
@@ -62,7 +67,7 @@ const CoinDropdown = () => {
 
 	useEffect(() => {
 		formatOptionsStableCoins();
-	}, [stableCoinList]);
+	}, [stableCoinList, externalTokenList, selectedStableCoin]);
 
 	const getAccountInfo = async (hashpackAccount: HashPackAccount) => {
 		const accountInfo = await SDKService.getAccountInfo({ account: hashpackAccount });
@@ -81,18 +86,53 @@ const CoinDropdown = () => {
 	};
 
 	const formatOptionsStableCoins = async () => {
+		let options = [];
 		if (stableCoinList) {
-			const options = stableCoinList.map(({ id, symbol }) => ({
-				label: `${id} - ${symbol}`,
+			options = stableCoinList.map(({ id, symbol }) => ({
+				label: <Text whiteSpace={'normal'}>{`${id} - ${symbol}`}</Text>,
 				value: id,
 			}));
+			if (externalTokenList && externalTokenList.length !== 0) {
+				options = options
+					.filter((coin) => {
+						if (
+							externalTokenList.find(
+								(externalCoin: IExternalToken) => externalCoin.id === coin.value,
+							)
+						) {
+							return false;
+						}
+						return true;
+					})
+					.concat(
+						externalTokenList.map((item: IExternalToken) => {
+							return {
+								label: (
+									<HStack justifyContent={'space-between'} alignItems={'center'}>
+										<Text whiteSpace={'normal'}>{`${item.id} - ${item.symbol}`}</Text>
+										<HStack>
+											<Tag
+												variant='solid'
+												size='md'
+												backgroundColor={'light.purple4'}
+												color={'dark.primary'}
+											>
+												External
+											</Tag>
+										</HStack>
+									</HStack>
+								),
+								value: item.id,
+							};
+						}),
+					);
+			}
 			setOptions(options);
 		}
 	};
 
 	const handleSelectCoin = async (event: any) => {
 		const selectedCoin = event.value;
-
 		const stableCoinDetails = await SDKService.getStableCoinDetails({
 			id: selectedCoin,
 		});
@@ -134,10 +174,13 @@ const CoinDropdown = () => {
 			p: 4,
 		},
 		wrapperOpened: { borderWidth: '0' },
+		container: {
+			w: 'fit-content',
+		},
 	};
 
 	return (
-		<Box w={{ base: 'full', md: '280px' }} data-testid='coin-dropdown'>
+		<Box minW={{ base: 'full', md: '380px' }} data-testid='coin-dropdown'>
 			<SearchSelectController
 				control={control}
 				styles={styles}

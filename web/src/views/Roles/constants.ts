@@ -5,6 +5,7 @@ export const actions: Record<string, Action> = {
 	edit: 'editRole' as Action,
 	give: 'giveRole' as Action,
 	revoke: 'revokeRole' as Action,
+	refresh: 'refreshRoles' as Action,
 };
 
 export const roleOptions = [
@@ -12,7 +13,17 @@ export const roleOptions = [
 	{ value: StableCoinRole.BURN_ROLE, label: 'Burn' },
 	{ value: StableCoinRole.WIPE_ROLE, label: 'Wipe' },
 	{ value: StableCoinRole.RESCUE_ROLE, label: 'Rescue' },
-	{ value: StableCoinRole.PAUSER_ROLE, label: 'Pause' },
+	{ value: StableCoinRole.PAUSE_ROLE, label: 'Pause' },
+	{ value: StableCoinRole.FREEZE_ROLE, label: 'Freeze' }
+];
+
+export const roleExternalTokens = [
+	{ value: 'CASHIN_ROLE', label: 'CASH IN' },
+	{ value: 'BURN_ROLE', label: 'BURN' },
+	{ value: 'WIPE_ROLE', label: 'WIPE' },
+	{ value: 'RESCUE_ROLE', label: 'RESCUE' },
+	{ value: 'PAUSE_ROLE', label: 'PAUSE' },
+	{ value: 'FREEZE_ROLE', label: 'FREEZE' }
 ];
 
 export const cashinLimitOptions = [
@@ -29,4 +40,6 @@ export const fields = {
 	cashinLimitOption: 'cashinLimitOption',
 	name: 'name',
 	supplierQuantitySwitch: 'supplierQuantitySwitch',
+	autoCheckRoles: 'autoCheckRoles',
+	roles: 'roles',
 };

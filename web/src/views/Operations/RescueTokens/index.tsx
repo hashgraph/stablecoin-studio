@@ -124,7 +124,7 @@ const RescueTokenOperation = () => {
 						<Stack as='form' spacing={6}>
 							<InputController
 								rules={{
-									required: t('global:validations.required'),
+									required: t(`global:validations.required`),
 									validate: {
 										validation: (value: string) => {
 											request.amount = value;
@@ -135,7 +135,7 @@ const RescueTokenOperation = () => {
 								}}
 								isRequired
 								control={control}
-								name='amount'
+								name={'amount'}
 								label={t('rescueTokens:amountLabel')}
 								placeholder={t('rescueTokens:amountPlaceholder')}
 							/>

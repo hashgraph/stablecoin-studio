@@ -13,8 +13,37 @@
 - [Hedera Stable Coin SDK](#hedera-stable-coin-sdk)
 - [Table of contents](#table-of-contents)
 - [Overview](#overview)
-- [Installing](#installing) - [Pre-requirements](#pre-requirements) - [Steps](#steps) - [**For projects (WIP - when published)**](#for-projects-wip---when-published) - [**For development**](#for-development) - [Example (JS)](#example-js) - [Example (TS)](#example-ts)
+- [Installing](#installing)
+  - [Pre-requirements](#pre-requirements)
+  - [Steps](#steps)
+  - [**For projects (WIP - when published)**](#for-projects-wip---when-published)
+  - [**For development**](#for-development)
+  - [Example (JS)](#example-js)
+  - [Example (TS)](#example-ts)
   - [Before using](#before-using)
+- [Basic Types](#basic-types)
+  - [AccountId](#accountid)
+    - [Fields](#fields)
+    - [Example](#example)
+  - [Account](#account)
+    - [Fields](#fields-1)
+  - [EOAccount](#eoaccount)
+    - [Fields](#fields-2)
+    - [Example](#example-1)
+  - [HashPackAccount](#hashpackaccount)
+    - [Fields](#fields-3)
+    - [Example](#example-2)
+  - [PrivateKey](#privatekey)
+    - [Fields](#fields-4)
+    - [Example](#example-3)
+  - [PrivateKeyType [WIP]](#privatekeytype-wip)
+    - [Example](#example-4)
+  - [PublicKey](#publickey)
+    - [Fields](#fields-5)
+    - [Example](#example-5)
+  - [ContractId](#contractid)
+    - [Fields](#fields-6)
+    - [Example](#example-6)
 - [Usage](#usage) - [**Important**](#important)
   - [Create Stable Coin](#create-stable-coin)
   - [Get stable coin list](#get-stable-coin-list)
@@ -805,7 +834,8 @@ Grants an account a role in a stable coin.
 		BURN_ROLE,
 		WIPE_ROLE,
 		RESCUE_ROLE,
-		PAUSER_ROLE,
+		PAUSE_ROLE,
+		FREEZE_ROLE
 	}
 
 	sdk.grantRole = (request: GrantRoleRequest): Promise<Uint8Array>
@@ -860,7 +890,8 @@ Revokes an account's role in a stable coin.
 		BURN_ROLE,
 		WIPE_ROLE,
 		RESCUE_ROLE,
-		PAUSER_ROLE,
+		PAUSE_ROLE,
+		FREEZE_ROLE
 	}
 
 	sdk.revokeRole = (request: RevokeRoleRequest): Promise<Uint8Array>
@@ -898,7 +929,8 @@ Checks if an account has a certain role on the stable coin.
 		BURN_ROLE,
 		WIPE_ROLE,
 		RESCUE_ROLE,
-		PAUSER_ROLE,
+		PAUSE_ROLE,
+		FREEZE_ROLE
 	}
 
 	sdk.hasRole = (request: HasRoleRequest): Promise<Uint8Array>

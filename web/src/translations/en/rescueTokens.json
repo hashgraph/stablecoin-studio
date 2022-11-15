@@ -1,7 +1,7 @@
 {
     "title": "Rescue Tokens operation",
     "operationTitle": "Operation details",
-    "amountLabel": "How much tokens?",
+    "amountLabel": "How many tokens?",
     "amountPlaceholder": "Introduce amount",
     "originAccountLabel": "From which account tokens will be rescued?",
     "originAccountPlaceholder": "Introduce account",

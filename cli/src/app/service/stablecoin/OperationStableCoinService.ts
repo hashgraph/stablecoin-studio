@@ -1227,8 +1227,11 @@ export default class OperationStableCoinService extends Service {
       ? capabilitiesFilter.filter((option) => {
           if (
             (option === 'Cash in' && roles.includes('CASH IN')) ||
+            (option === 'Cash in' && capabilities.includes('Cash in hts')) ||
             (option === 'Burn' && roles.includes('BURN')) ||
+            (option === 'Burn' && capabilities.includes('Burn hts')) ||
             (option === 'Wipe' && roles.includes('WIPE')) ||
+            (option === 'Wipe' && capabilities.includes('Wipe hts')) ||
             (option === 'Rescue' && roles.includes('RESCUE')) ||
             option === 'Refresh roles' ||
             option === 'Details' ||
@@ -1277,7 +1280,7 @@ export default class OperationStableCoinService extends Service {
         role: {
           availability: capabilities.includes(Capabilities.PAUSE),
           name: 'Pause Role',
-          value: StableCoinRole.PAUSER_ROLE,
+          value: StableCoinRole.PAUSE_ROLE,
         },
       },
     ];
