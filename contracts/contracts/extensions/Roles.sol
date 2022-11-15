@@ -52,7 +52,7 @@ abstract contract Roles is IRoles, AccessControlUpgradeable {
     * @dev Array containing all roles
     *
     */
-    bytes32[] public ROLES;
+    bytes32[] private ROLES;
 
     function roles_init() 
         internal
@@ -76,7 +76,7 @@ abstract contract Roles is IRoles, AccessControlUpgradeable {
     function getRoles(address account)
         external
         view
-        returns (bytes32[] memory)
+    returns (bytes32[] memory)
     {
         bytes32[] memory roles = new bytes32[](ROLES.length);
 
@@ -84,5 +84,21 @@ abstract contract Roles is IRoles, AccessControlUpgradeable {
             roles[i] = hasRole(ROLES[i], account) ? ROLES[i] : WITHOUT_ROLE;
         }
         return (roles);
+    }
+
+    function getRoleId(roleName role) 
+        external 
+        view 
+    returns(bytes32)
+    {
+        return _getRoleId(role);
+    }
+
+    function _getRoleId(roleName role) 
+        internal 
+        view 
+    returns(bytes32)
+    {
+        return ROLES[uint256(role)];
     }
 }

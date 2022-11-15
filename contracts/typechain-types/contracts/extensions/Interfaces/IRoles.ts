@@ -4,6 +4,7 @@
 import type {
   BaseContract,
   BigNumber,
+  BigNumberish,
   BytesLike,
   CallOverrides,
   PopulatedTransaction,
@@ -22,16 +23,24 @@ import type {
 
 export interface IRolesInterface extends utils.Interface {
   functions: {
+    "getRoleId(uint8)": FunctionFragment;
     "getRoles(address)": FunctionFragment;
   };
 
-  getFunction(nameOrSignatureOrTopic: "getRoles"): FunctionFragment;
+  getFunction(
+    nameOrSignatureOrTopic: "getRoleId" | "getRoles"
+  ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "getRoleId",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(
     functionFragment: "getRoles",
     values: [PromiseOrValue<string>]
   ): string;
 
+  decodeFunctionResult(functionFragment: "getRoleId", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getRoles", data: BytesLike): Result;
 
   events: {};
@@ -64,11 +73,21 @@ export interface IRoles extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    getRoleId(
+      roleNameToReturn: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     getRoles(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[string[]]>;
   };
+
+  getRoleId(
+    roleNameToReturn: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   getRoles(
     account: PromiseOrValue<string>,
@@ -76,6 +95,11 @@ export interface IRoles extends BaseContract {
   ): Promise<string[]>;
 
   callStatic: {
+    getRoleId(
+      roleNameToReturn: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     getRoles(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -85,6 +109,11 @@ export interface IRoles extends BaseContract {
   filters: {};
 
   estimateGas: {
+    getRoleId(
+      roleNameToReturn: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getRoles(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -92,6 +121,11 @@ export interface IRoles extends BaseContract {
   };
 
   populateTransaction: {
+    getRoleId(
+      roleNameToReturn: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getRoles(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides

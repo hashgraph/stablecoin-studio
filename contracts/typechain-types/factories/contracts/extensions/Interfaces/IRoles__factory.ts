@@ -13,6 +13,25 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "enum IRoles.roleName",
+        name: "roleNameToReturn",
+        type: "uint8",
+      },
+    ],
+    name: "getRoleId",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "address",
         name: "account",
         type: "address",

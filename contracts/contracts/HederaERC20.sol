@@ -24,12 +24,12 @@ contract HederaERC20 is IHederaERC20, IERC20Upgradeable,
     {
         tokenOwner_init(tokenAddress);
         roles_init();       
-        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender); // Assign Admin role to calling contract/user in order to be able to set all the other roles
+        _setupRole(_getRoleId(roleName.ADMIN), msg.sender); // Assign Admin role to calling contract/user in order to be able to set all the other roles
         grantUnlimitedSupplierRole(originalSender);
-        _grantRole(BURN_ROLE, originalSender);
-        _grantRole(RESCUE_ROLE, originalSender);
-        _grantRole(WIPE_ROLE, originalSender);
-        _setupRole(DEFAULT_ADMIN_ROLE, originalSender); // Assign Admin role to the provided address
+        _grantRole(_getRoleId(roleName.BURN), originalSender);
+        _grantRole(_getRoleId(roleName.RESCUE), originalSender);
+        _grantRole(_getRoleId(roleName.WIPE), originalSender);
+        _setupRole(_getRoleId(roleName.ADMIN), originalSender); // Assign Admin role to the provided address
     }
 
     /**

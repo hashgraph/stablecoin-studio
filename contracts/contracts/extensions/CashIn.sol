@@ -16,7 +16,7 @@ abstract contract CashIn is ICashIn, SupplierAdmin {
      */
     function mint(address account, uint256 amount) 
         external       
-        onlyRole(CASHIN_ROLE)  
+        onlyRole(_getRoleId(roleName.CASHIN))  
     {         
         if(!_unlimitedSupplierAllowances[msg.sender]) _decreaseSupplierAllowance(msg.sender, amount);
         (int256 responseCode, , ) = IHederaTokenService(precompileAddress).mintToken(_getTokenAddress(), uint64(amount), new bytes[](0));

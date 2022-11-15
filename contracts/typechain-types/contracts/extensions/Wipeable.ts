@@ -34,9 +34,9 @@ export interface WipeableInterface extends utils.Interface {
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
     "PAUSER_ROLE()": FunctionFragment;
     "RESCUE_ROLE()": FunctionFragment;
-    "ROLES(uint256)": FunctionFragment;
     "WIPE_ROLE()": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
+    "getRoleId(uint8)": FunctionFragment;
     "getRoles(address)": FunctionFragment;
     "getTokenAddress()": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
@@ -54,9 +54,9 @@ export interface WipeableInterface extends utils.Interface {
       | "DEFAULT_ADMIN_ROLE"
       | "PAUSER_ROLE"
       | "RESCUE_ROLE"
-      | "ROLES"
       | "WIPE_ROLE"
       | "getRoleAdmin"
+      | "getRoleId"
       | "getRoles"
       | "getTokenAddress"
       | "grantRole"
@@ -84,14 +84,14 @@ export interface WipeableInterface extends utils.Interface {
     functionFragment: "RESCUE_ROLE",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "ROLES",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
   encodeFunctionData(functionFragment: "WIPE_ROLE", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getRoleAdmin",
     values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRoleId",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getRoles",
@@ -143,12 +143,12 @@ export interface WipeableInterface extends utils.Interface {
     functionFragment: "RESCUE_ROLE",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "ROLES", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "WIPE_ROLE", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getRoleAdmin",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getRoleId", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getRoles", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getTokenAddress",
@@ -276,15 +276,15 @@ export interface Wipeable extends BaseContract {
 
     RESCUE_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-    ROLES(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
     WIPE_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    getRoleId(
+      role: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
@@ -341,15 +341,15 @@ export interface Wipeable extends BaseContract {
 
   RESCUE_ROLE(overrides?: CallOverrides): Promise<string>;
 
-  ROLES(
-    arg0: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
   WIPE_ROLE(overrides?: CallOverrides): Promise<string>;
 
   getRoleAdmin(
     role: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  getRoleId(
+    role: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<string>;
 
@@ -406,15 +406,15 @@ export interface Wipeable extends BaseContract {
 
     RESCUE_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    ROLES(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
     WIPE_ROLE(overrides?: CallOverrides): Promise<string>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    getRoleId(
+      role: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -523,15 +523,15 @@ export interface Wipeable extends BaseContract {
 
     RESCUE_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
-    ROLES(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     WIPE_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getRoleId(
+      role: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -591,15 +591,15 @@ export interface Wipeable extends BaseContract {
 
     RESCUE_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    ROLES(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     WIPE_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getRoleId(
+      role: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
