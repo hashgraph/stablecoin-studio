@@ -1,0 +1,6 @@
+Current directory -> Main Contract project folder
+
+Contracts Summary : slither . --print contract-summary &> ./Slither/contract-summary.txt
+Contracts Inheritance : slither . --print inheritance &> ./Slither/contract-inheritance.txt
+Contracts Human Summary : slither . --print human-summary &> ./Slither/human-summary.txt
+Contracts Analysis : slither .  &> ./Slither/contract-analysis.txt

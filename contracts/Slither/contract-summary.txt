@@ -1,27 +1,41 @@
 'npx hardhat compile --force' running
-Generating typings for: 37 artifacts in dir: typechain-types for target: ethers-v5
-Successfully generated 108 typings!
-Compiled 37 Solidity files successfully
- ·------------------------|--------------|----------------·
- |  Contract Name         ·  Size (KiB)  ·  Change (KiB)  │
- ·························|··············|·················
- |  Address               ·       0.084  ·                │
- ·························|··············|·················
- |  AddressUpgradeable    ·       0.084  ·                │
- ·························|··············|·················
- |  ERC1967Proxy          ·       0.755  ·                │
- ·························|··············|·················
- |  HederaERC1967Proxy    ·       0.795  ·                │
- ·························|··············|·················
- |  HederaERC20           ·      10.849  ·                │
- ·························|··············|·················
- |  SafeERC20Upgradeable  ·       0.084  ·                │
- ·························|··············|·················
- |  StorageSlot           ·       0.084  ·                │
- ·························|··············|·················
- |  StringsUpgradeable    ·       0.084  ·                │
- ·------------------------|--------------|----------------·
-✅ Generated documentation for 37 contracts
+Generating typings for: 47 artifacts in dir: typechain-types for target: ethers-v5
+Successfully generated 130 typings!
+Compiled 47 Solidity files successfully
+ ·-------------------------------|--------------|----------------·
+ |  Contract Name                ·  Size (KiB)  ·  Change (KiB)  │
+ ································|··············|·················
+ |  Address                      ·       0.084  ·                │
+ ································|··············|·················
+ |  AddressUpgradeable           ·       0.084  ·                │
+ ································|··············|·················
+ |  ERC1967Proxy                 ·       0.755  ·                │
+ ································|··············|·················
+ |  HederaERC20                  ·      10.859  ·                │
+ ································|··············|·················
+ |  HederaERC20Proxy             ·       2.309  ·                │
+ ································|··············|·················
+ |  HederaERC20ProxyAdmin        ·       1.844  ·                │
+ ································|··············|·················
+ |  ProxyAdmin                   ·       1.844  ·                │
+ ································|··············|·················
+ |  SafeERC20Upgradeable         ·       0.084  ·                │
+ ································|··············|·················
+ |  StableCoinFactory            ·      20.825  ·                │
+ ································|··············|·················
+ |  StableCoinFactoryProxy       ·       2.268  ·                │
+ ································|··············|·················
+ |  StableCoinFactoryProxyAdmin  ·       1.844  ·                │
+ ································|··············|·················
+ |  StorageSlot                  ·       0.084  ·                │
+ ································|··············|·················
+ |  Strings                      ·       0.084  ·                │
+ ································|··············|·················
+ |  StringsUpgradeable           ·       0.084  ·                │
+ ································|··············|·················
+ |  TransparentUpgradeableProxy  ·       2.227  ·                │
+ ·-------------------------------|--------------|----------------·
+✅ Generated documentation for 47 contracts
 
 
 + Contract AccessControlUpgradeable (Upgradeable)
@@ -141,6 +155,18 @@ Compiled 37 Solidity files successfully
   - From IERC165Upgradeable
     - supportsInterface(bytes4) (external)
 
++ Contract Ownable
+  - From Context
+    - _msgData() (internal)
+    - _msgSender() (internal)
+  - From Ownable
+    - _checkOwner() (internal)
+    - _transferOwnership(address) (internal)
+    - constructor() (internal)
+    - owner() (public)
+    - renounceOwnership() (public)
+    - transferOwnership(address) (public)
+
 + Contract IERC1822Proxiable (Most derived contract)
   - From IERC1822Proxiable
     - proxiableUUID() (external)
@@ -195,6 +221,55 @@ Compiled 37 Solidity files successfully
   - From IBeacon
     - implementation() (external)
 
++ Contract ProxyAdmin (Upgradeable Proxy)
+  - From Ownable
+    - _checkOwner() (internal)
+    - _transferOwnership(address) (internal)
+    - constructor() (internal)
+    - owner() (public)
+    - renounceOwnership() (public)
+    - transferOwnership(address) (public)
+  - From Context
+    - _msgData() (internal)
+    - _msgSender() (internal)
+  - From ProxyAdmin
+    - changeProxyAdmin(TransparentUpgradeableProxy,address) (public)
+    - getProxyAdmin(TransparentUpgradeableProxy) (public)
+    - getProxyImplementation(TransparentUpgradeableProxy) (public)
+    - upgrade(TransparentUpgradeableProxy,address) (public)
+    - upgradeAndCall(TransparentUpgradeableProxy,address,bytes) (public)
+
++ Contract TransparentUpgradeableProxy (Upgradeable Proxy)
+  - From ERC1967Proxy
+    - _implementation() (internal)
+    - constructor(address,bytes) (public)
+  - From ERC1967Upgrade
+    - _changeAdmin(address) (internal)
+    - _getAdmin() (internal)
+    - _getBeacon() (internal)
+    - _getImplementation() (internal)
+    - _setAdmin(address) (private)
+    - _setBeacon(address) (private)
+    - _setImplementation(address) (private)
+    - _upgradeBeaconToAndCall(address,bytes,bool) (internal)
+    - _upgradeTo(address) (internal)
+    - _upgradeToAndCall(address,bytes,bool) (internal)
+    - _upgradeToAndCallUUPS(address,bytes,bool) (internal)
+  - From Proxy
+    - _delegate(address) (internal)
+    - _fallback() (internal)
+    - fallback() (external)
+    - receive() (external)
+  - From TransparentUpgradeableProxy
+    - _admin() (internal)
+    - _beforeFallback() (internal)
+    - admin() (external)
+    - changeAdmin(address) (external)
+    - constructor(address,address,bytes) (public)
+    - implementation() (external)
+    - upgradeTo(address) (external)
+    - upgradeToAndCall(address,bytes) (external)
+
 + Contract Address (Most derived contract)
   - From Address
     - functionCall(address,bytes) (internal)
@@ -209,6 +284,11 @@ Compiled 37 Solidity files successfully
     - sendValue(address,uint256) (internal)
     - verifyCallResult(bool,bytes,string) (internal)
 
++ Contract Context
+  - From Context
+    - _msgData() (internal)
+    - _msgSender() (internal)
+
 + Contract StorageSlot (Most derived contract)
   - From StorageSlot
     - getAddressSlot(bytes32) (internal)
@@ -216,34 +296,16 @@ Compiled 37 Solidity files successfully
     - getBytes32Slot(bytes32) (internal)
     - getUint256Slot(bytes32) (internal)
 
-+ Contract HederaERC1967Proxy (Upgradeable Proxy) (Most derived contract)
-  - From ERC1967Proxy
-    - _implementation() (internal)
-  - From ERC1967Upgrade
-    - _changeAdmin(address) (internal)
-    - _getAdmin() (internal)
-    - _getBeacon() (internal)
-    - _getImplementation() (internal)
-    - _setAdmin(address) (private)
-    - _setBeacon(address) (private)
-    - _setImplementation(address) (private)
-    - _upgradeBeaconToAndCall(address,bytes,bool) (internal)
-    - _upgradeTo(address) (internal)
-    - _upgradeToAndCall(address,bytes,bool) (internal)
-    - _upgradeToAndCallUUPS(address,bytes,bool) (internal)
-  - From Proxy
-    - _beforeFallback() (internal)
-    - _delegate(address) (internal)
-    - _fallback() (internal)
-    - fallback() (external)
-    - receive() (external)
-  - From HederaERC1967Proxy
-    - constructor(address,bytes) (public)
-    - getImplementation() (external)
++ Contract Strings (Most derived contract)
+  - From Strings
+    - toHexString(address) (internal)
+    - toHexString(uint256) (internal)
+    - toHexString(uint256,uint256) (internal)
+    - toString(uint256) (internal)
 
 + Contract HederaERC20 (Upgradeable) (Most derived contract)
   - From Rescatable
-    - rescueToken(uint256) (external)
+    - rescue(uint256) (external)
   - From Roles
     - getRoles(address) (external)
   - From AccessControlUpgradeable
@@ -280,7 +342,7 @@ Compiled 37 Solidity files successfully
     - wipe(address,uint32) (external)
   - From Burnable
     - burn(uint256) (external)
-  - From Mintable
+  - From CashIn
     - mint(address,uint256) (external)
   - From SupplierAdmin
     - _decreaseSupplierAllowance(address,uint256) (internal)
@@ -301,12 +363,64 @@ Compiled 37 Solidity files successfully
     - balanceOf(address) (public)
     - decimals() (public)
     - dissociateToken(address) (public)
-    - initialize(address) (external)
+    - initialize(address,address) (external)
     - name() (external)
     - symbol() (external)
     - totalSupply() (external)
     - transfer(address,uint256) (external)
     - transferFrom(address,address,uint256) (external)
+
++ Contract HederaERC20Proxy (Upgradeable Proxy) (Most derived contract)
+  - From TransparentUpgradeableProxy
+    - _admin() (internal)
+    - _beforeFallback() (internal)
+    - admin() (external)
+    - changeAdmin(address) (external)
+    - implementation() (external)
+    - upgradeTo(address) (external)
+    - upgradeToAndCall(address,bytes) (external)
+  - From ERC1967Proxy
+    - _implementation() (internal)
+    - constructor(address,bytes) (public)
+  - From ERC1967Upgrade
+    - _changeAdmin(address) (internal)
+    - _getAdmin() (internal)
+    - _getBeacon() (internal)
+    - _getImplementation() (internal)
+    - _setAdmin(address) (private)
+    - _setBeacon(address) (private)
+    - _setImplementation(address) (private)
+    - _upgradeBeaconToAndCall(address,bytes,bool) (internal)
+    - _upgradeTo(address) (internal)
+    - _upgradeToAndCall(address,bytes,bool) (internal)
+    - _upgradeToAndCallUUPS(address,bytes,bool) (internal)
+  - From Proxy
+    - _delegate(address) (internal)
+    - _fallback() (internal)
+    - fallback() (external)
+    - receive() (external)
+  - From HederaERC20Proxy
+    - constructor(address,address,bytes) (public)
+    - getAdmin() (external)
+    - getImplementation() (external)
+
++ Contract HederaERC20ProxyAdmin (Upgradeable Proxy) (Most derived contract)
+  - From ProxyAdmin
+    - changeProxyAdmin(TransparentUpgradeableProxy,address) (public)
+    - getProxyAdmin(TransparentUpgradeableProxy) (public)
+    - getProxyImplementation(TransparentUpgradeableProxy) (public)
+    - upgrade(TransparentUpgradeableProxy,address) (public)
+    - upgradeAndCall(TransparentUpgradeableProxy,address,bytes) (public)
+  - From Ownable
+    - _checkOwner() (internal)
+    - _transferOwnership(address) (internal)
+    - constructor() (internal)
+    - owner() (public)
+    - renounceOwnership() (public)
+    - transferOwnership(address) (public)
+  - From Context
+    - _msgData() (internal)
+    - _msgSender() (internal)
 
 + Contract IHederaERC20
   - From IHederaERC20
@@ -315,6 +429,10 @@ Compiled 37 Solidity files successfully
     - name() (external)
     - symbol() (external)
     - totalSupply() (external)
+
++ Contract IStableCoinFactory
+  - From IStableCoinFactory
+    - deployStableCoin(IStableCoinFactory.tokenStruct) (external)
 
 + Contract Roles (Upgradeable)
   - From AccessControlUpgradeable
@@ -344,6 +462,63 @@ Compiled 37 Solidity files successfully
     - _msgSender() (internal)
   - From Roles
     - getRoles(address) (external)
+
++ Contract StableCoinFactory (Most derived contract)
+  - From StableCoinFactory
+    - createToken(string,string,bool,bool,uint32,address,bytes) (internal)
+    - deployStableCoin(IStableCoinFactory.tokenStruct) (external)
+
++ Contract StableCoinFactoryProxy (Upgradeable Proxy) (Most derived contract)
+  - From TransparentUpgradeableProxy
+    - _admin() (internal)
+    - _beforeFallback() (internal)
+    - admin() (external)
+    - changeAdmin(address) (external)
+    - constructor(address,address,bytes) (public)
+    - implementation() (external)
+    - upgradeTo(address) (external)
+    - upgradeToAndCall(address,bytes) (external)
+  - From ERC1967Proxy
+    - _implementation() (internal)
+    - constructor(address,bytes) (public)
+  - From ERC1967Upgrade
+    - _changeAdmin(address) (internal)
+    - _getAdmin() (internal)
+    - _getBeacon() (internal)
+    - _getImplementation() (internal)
+    - _setAdmin(address) (private)
+    - _setBeacon(address) (private)
+    - _setImplementation(address) (private)
+    - _upgradeBeaconToAndCall(address,bytes,bool) (internal)
+    - _upgradeTo(address) (internal)
+    - _upgradeToAndCall(address,bytes,bool) (internal)
+    - _upgradeToAndCallUUPS(address,bytes,bool) (internal)
+  - From Proxy
+    - _delegate(address) (internal)
+    - _fallback() (internal)
+    - fallback() (external)
+    - receive() (external)
+  - From StableCoinFactoryProxy
+    - constructor(address,address) (public)
+    - getImplementation() (external)
+
++ Contract StableCoinFactoryProxyAdmin (Upgradeable Proxy) (Most derived contract)
+  - From ProxyAdmin
+    - changeProxyAdmin(TransparentUpgradeableProxy,address) (public)
+    - getProxyAdmin(TransparentUpgradeableProxy) (public)
+    - getProxyImplementation(TransparentUpgradeableProxy) (public)
+    - upgrade(TransparentUpgradeableProxy,address) (public)
+    - upgradeAndCall(TransparentUpgradeableProxy,address,bytes) (public)
+  - From Ownable
+    - _checkOwner() (internal)
+    - _transferOwnership(address) (internal)
+    - constructor() (internal)
+    - owner() (public)
+    - renounceOwnership() (public)
+    - transferOwnership(address) (public)
+  - From Context
+    - _msgData() (internal)
+    - _msgSender() (internal)
 
 + Contract Burnable (Upgradeable)
   - From Roles
@@ -383,38 +558,7 @@ Compiled 37 Solidity files successfully
   - From Burnable
     - burn(uint256) (external)
 
-+ Contract IBurnable
-  - From IBurnable
-    - burn(uint256) (external)
-
-+ Contract IMintable
-  - From IMintable
-    - mint(address,uint256) (external)
-
-+ Contract IRescatable
-  - From IRescatable
-    - rescueToken(uint256) (external)
-
-+ Contract ISupplierAdmin
-  - From ISupplierAdmin
-    - decreaseSupplierAllowance(address,uint256) (external)
-    - grantSupplierRole(address,uint256) (external)
-    - grantUnlimitedSupplierRole(address) (external)
-    - increaseSupplierAllowance(address,uint256) (external)
-    - isUnlimitedSupplierAllowance(address) (external)
-    - resetSupplierAllowance(address) (external)
-    - revokeSupplierRole(address) (external)
-    - supplierAllowance(address) (external)
-
-+ Contract ITokenOwner
-  - From ITokenOwner
-    - getTokenAddress() (external)
-
-+ Contract IWipeable
-  - From IWipeable
-    - wipe(address,uint32) (external)
-
-+ Contract Mintable (Upgradeable)
++ Contract CashIn (Upgradeable)
   - From SupplierAdmin
     - _decreaseSupplierAllowance(address,uint256) (internal)
     - decreaseSupplierAllowance(address,uint256) (external)
@@ -459,8 +603,39 @@ Compiled 37 Solidity files successfully
     - _setTokenAddress(address) (internal)
     - _transfer(address,address,uint256) (internal)
     - getTokenAddress() (external)
-  - From Mintable
+  - From CashIn
     - mint(address,uint256) (external)
+
++ Contract IBurnable
+  - From IBurnable
+    - burn(uint256) (external)
+
++ Contract ICashIn
+  - From ICashIn
+    - mint(address,uint256) (external)
+
++ Contract IRescatable
+  - From IRescatable
+    - rescue(uint256) (external)
+
++ Contract ISupplierAdmin
+  - From ISupplierAdmin
+    - decreaseSupplierAllowance(address,uint256) (external)
+    - grantSupplierRole(address,uint256) (external)
+    - grantUnlimitedSupplierRole(address) (external)
+    - increaseSupplierAllowance(address,uint256) (external)
+    - isUnlimitedSupplierAllowance(address) (external)
+    - resetSupplierAllowance(address) (external)
+    - revokeSupplierRole(address) (external)
+    - supplierAllowance(address) (external)
+
++ Contract ITokenOwner
+  - From ITokenOwner
+    - getTokenAddress() (external)
+
++ Contract IWipeable
+  - From IWipeable
+    - wipe(address,uint32) (external)
 
 + Contract Rescatable (Upgradeable)
   - From Roles
@@ -498,7 +673,7 @@ Compiled 37 Solidity files successfully
     - _transfer(address,address,uint256) (internal)
     - getTokenAddress() (external)
   - From Rescatable
-    - rescueToken(uint256) (external)
+    - rescue(uint256) (external)
 
 + Contract SupplierAdmin (Upgradeable)
   - From Roles
@@ -643,4 +818,4 @@ Compiled 37 Solidity files successfully
     - wipeTokenAccount(address,address,uint32) (external)
     - wipeTokenAccountNFT(address,address,int64[]) (external)
 
-. analyzed (37 contracts)
+. analyzed (47 contracts)
