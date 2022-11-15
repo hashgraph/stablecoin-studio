@@ -25,7 +25,7 @@ import { InvalidType } from '../../../port/in/sdk/request/error/InvalidType.js';
 const MAX_SUPPLY = 9_223_372_036_854_775_807n;
 const TEN = 10;
 const ONE_HUNDRED = 100;
-const EIGHTEEN = 19;
+const EIGHTEEN = 18;
 const ZERO = 0;
 
 export class StableCoin extends BaseEntity {

@@ -12,7 +12,6 @@ import {
   SDK,
   IncreaseCashInLimitRequest,
   DecreaseCashInLimitRequest,
-  Roles,
   RescueStableCoinRequest,
   GetAccountBalanceRequest,
   AssociateTokenRequest,
@@ -119,6 +118,16 @@ describe('🧪 [PORT] SDK', () => {
     //expect(coin?.adminKey).toBeInstanceOf(PublicKey);
     expect(coin?.name).toBeTruthy();
     expect(coin?.symbol).toBeTruthy();
+  });
+
+  it('Gets the token info, fails when not exists', async () => {
+    const coin = sdk.getStableCoinDetails(
+      new GetStableCoinDetailsRequest({
+        id: '0.0.1',
+      }),
+    );
+
+    await expect(coin).rejects.toThrow(BaseError);
   });
 
   it('Gets the token list', async () => {
@@ -444,7 +453,7 @@ describe('🧪 [PORT] SDK', () => {
       new ResetCashInLimitRequest({
         account: REQUEST_ACCOUNTS.testnet,
         targetId: REQUEST_ACCOUNTS.testnet.accountId,
-        proxyContractId: proxyContractId ?? ''
+        proxyContractId: proxyContractId ?? '',
       }),
     );
 

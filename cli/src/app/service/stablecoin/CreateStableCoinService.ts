@@ -153,7 +153,7 @@ export default class CreateStableCoinService extends Service {
     const optionalProps = await this.askForOptionalProps();
     let initialSupply = '';
     let supplyType = true;
-    let totalSupply = undefined;
+    const totalSupply = undefined;
 
     if (optionalProps) {
       tokenToCreate.decimals = await this.askForDecimals(
@@ -174,12 +174,11 @@ export default class CreateStableCoinService extends Service {
         : TokenSupplyType.FINITE;
 
       if (!supplyType) {
-        totalSupply = await this.askForTotalSupply();
+        tokenToCreate.maxSupply = await this.askForTotalSupply();
         await utilsService.handleValidation(
           () => tokenToCreate.validate('maxSupply'),
           async () => {
-            totalSupply = await this.askForTotalSupply();
-            tokenToCreate.maxSupply = totalSupply;
+            tokenToCreate.maxSupply = await this.askForTotalSupply();
           },
         );
         tokenToCreate.maxSupply = totalSupply;
