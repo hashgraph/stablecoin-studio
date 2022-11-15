@@ -28,7 +28,8 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
         _grantRole(BURN_ROLE, msg.sender);
         _grantRole(RESCUE_ROLE, msg.sender);
         _grantRole(WIPE_ROLE, msg.sender);
-        
+        _grantRole(PAUSE_ROLE, msg.sender);
+        _grantRole(FREEZE_ROLE, msg.sender);
     }
 
     /**
