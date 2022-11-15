@@ -177,6 +177,12 @@ export async function getRoles(ContractId: any, proxyAddress: string, client: an
     return result[0];
 }
 
+export async function getRoleId(ContractId: any, proxyAddress: string, client: any, roleName: Number): Promise<string>{
+    let params = [roleName];  
+    const result = await contractCall(ContractId.fromString(proxyAddress!), 'getRoleId', params, client, Gas3, HederaERC20__factory.abi);  
+    return result[0];
+}
+
 // SupplierAdmin ///////////////////////////////////////////////////
 export async function decreaseSupplierAllowance(ContractId: any, proxyAddress: string, amountToDecrease: any, clientDecreasingAllowance: any, accountToDecreaseFrom: string){
     let params = [AccountId.fromString(accountToDecreaseFrom!).toSolidityAddress(), amountToDecrease.toString()];      

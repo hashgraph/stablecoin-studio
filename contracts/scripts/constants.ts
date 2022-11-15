@@ -8,6 +8,17 @@ export const WITHOUT_ROLE  = '0xe11b25922c3ff9f0f0a34f0b8929ac96a1f215b99dcb08c2
 export const DEFAULT_ADMIN_ROLE  = '0x0000000000000000000000000000000000000000000000000000000000000000';
 export const FREEZE_ROLE  = '';
 
+export const RolesId = {
+	Admin: 0,
+	Cashin: 1,
+	Burn: 2,
+	Wipe: 3,
+    Rescue: 4,
+	Pause: 5
+}
+
+
+
 export const Gas1 = 400000;
 export const Gas2 = 60000;
 export const Gas3 = 1800000;

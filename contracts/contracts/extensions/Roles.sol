@@ -59,12 +59,12 @@ abstract contract Roles is IRoles, AccessControlUpgradeable {
         onlyInitializing
     {
         __AccessControl_init();
+        ROLES.push(DEFAULT_ADMIN_ROLE);
         ROLES.push(CASHIN_ROLE);
         ROLES.push(BURN_ROLE);
         ROLES.push(WIPE_ROLE);
         ROLES.push(RESCUE_ROLE);
         ROLES.push(PAUSER_ROLE);
-        ROLES.push(DEFAULT_ADMIN_ROLE);
     }
 
     /**
