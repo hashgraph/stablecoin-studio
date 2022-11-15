@@ -20,6 +20,7 @@ import { InitSupplyLargerThanMaxSupply } from './error/InitSupplyLargerThanMaxSu
 import InvalidMaxSupplySupplyType from './error/InvalidMaxSupplySupplyType.js';
 import { BigNumber } from '@hashgraph/hethers';
 import { MaxSupplyOverLimit } from './error/MaxSupplyOverLimit.js';
+import { InvalidType } from '../../../port/in/sdk/request/error/InvalidType.js';
 
 const MAX_SUPPLY = 9_223_372_036_854_775_807n;
 const TEN = 10;
@@ -378,9 +379,21 @@ export class StableCoin extends BaseEntity {
 		const min = ZERO;
 		const max = EIGHTEEN;
 
+		if (CheckNums.hasMoreDecimals(value.toString(), 0)) {
+			errorList.push(new InvalidType(value, 'integer'));
+		}
 		if (!CheckNums.isWithinRange(value, min, max))
 			errorList.push(new InvalidDecimalRange(value, min, max));
 
+		return errorList;
+	}
+	public static checkInteger(value: number): BaseError[] {
+		const errorList: BaseError[] = [];
+
+		if (!Number.isInteger(value)) {
+			return [new InvalidType(value, 'integer1')];
+		}
+		
 		return errorList;
 	}
 
