@@ -22,12 +22,12 @@ import {name,
   getBalanceOf,
   getTokenAddress,
   getImplementation,
-  //upgradeTo,
+  upgradeTo,
   getAdmin,
-  //changeAdmin,
+  changeAdmin,
   owner,
-  //upgrade,
-  //changeProxyAdmin
+  upgrade,
+  changeProxyAdmin
 } from "../scripts/contractsMethods";
 
 let proxyAddress:any;
@@ -218,7 +218,7 @@ describe("HederaERC20Proxy and HederaERC20ProxyAdmin Tests", function() {
     expect(ownerAccount.toUpperCase()).to.equals("0X" + AccountId.fromString(OPERATOR_ID).toSolidityAddress().toUpperCase());
  });
   
-  /*it.skip("Upgrade Proxy implementation with non-admin account", async function() {
+  it("Upgrade Proxy implementation without the proxy admin", async function() {
     // Deploy a new contract
     let result = await deployContractsWithSDK(
       TokenName, 
@@ -235,16 +235,14 @@ describe("HederaERC20Proxy and HederaERC20ProxyAdmin Tests", function() {
 
     // Non Admin upgrades implementation : fail       
     await expect(upgradeTo(ContractId, proxyAddress, client, newImplementationContract.toSolidityAddress())).to.eventually.be.rejectedWith(Error);
- 
   });
 
-  it.skip("Change Proxy admin with non-admin account", async function() {
+  it("Change Proxy admin without the proxy admin", async function() {
     // Non Admin changes admin : fail       
     await expect(changeAdmin(ContractId, proxyAddress, client, client2account)).to.eventually.be.rejectedWith(Error);
-
   });
 
-  it("Upgrade Proxy implementation with proxy admin using the owner account and a non-owner account", async function() {
+  it("Upgrade Proxy implementation with the proxy admin but without the owner account", async function() {
     // Deploy a new contract
     let result = await deployContractsWithSDK(
       TokenName, 
@@ -261,6 +259,27 @@ describe("HederaERC20Proxy and HederaERC20ProxyAdmin Tests", function() {
 
     // Upgrading the proxy implementation using the Proxy Admin with an account that is not the owner : fails
     await expect(upgrade(ContractId, proxyAdminAddress, client2, newImplementationContract.toSolidityAddress(), proxyAddress.toSolidityAddress())).to.eventually.be.rejectedWith(Error);
+  });
+
+  it("Change Proxy admin with the proxy admin but without the owner account", async function() {
+    // Non Owner changes admin : fail       
+    await expect(changeProxyAdmin(ContractId, proxyAdminAddress, client2, client2account, proxyAddress)).to.eventually.be.rejectedWith(Error);
+  });
+
+  it("Upgrade Proxy implementation with the proxy admin and the owner account", async function() {
+    // Deploy a new contract
+    let result = await deployContractsWithSDK(
+      TokenName, 
+      TokenSymbol, 
+      TokenDecimals, 
+      INIT_SUPPLY.toString(), 
+      MAX_SUPPLY.toString(), 
+      TokenMemo, 
+      OPERATOR_ID, 
+      OPERATOR_KEY, 
+      OPERATOR_PUBLIC); 
+
+    const newImplementationContract = result[2];
 
     // Upgrading the proxy implementation using the Proxy Admin with an account that is the owner : success
     await upgrade(ContractId, proxyAdminAddress, client, newImplementationContract.toSolidityAddress(), proxyAddress.toSolidityAddress())
@@ -268,11 +287,19 @@ describe("HederaERC20Proxy and HederaERC20ProxyAdmin Tests", function() {
     // Check new implementation address
     const implementation = await getImplementation(ContractId, proxyAddress, client);
     expect(implementation.toUpperCase()).to.equals("0X" + newImplementationContract.toSolidityAddress().toUpperCase());
+
+    // reset
+    await upgrade(ContractId, proxyAdminAddress, client, stableCoinAddress.toSolidityAddress(), proxyAddress.toSolidityAddress())
   });
 
-  it("Upgrade Proxy admin with proxy admin", async function() {
-    
-  });*/
+  it("Change Proxy admin with the proxy admin and the owner account", async function() {
+    // Owner changes admin : success     
+    await changeProxyAdmin(ContractId, proxyAdminAddress, client, OPERATOR_ID, proxyAddress.toSolidityAddress());
+
+    // Check that proxy admin has been changed
+    const admin = await getAdmin(ContractId, proxyAddress, client);
+    expect(admin.toUpperCase()).to.equals("0X" + AccountId.fromString(OPERATOR_ID).toSolidityAddress().toUpperCase());
+  });
 
 
 });

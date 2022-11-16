@@ -9,9 +9,7 @@ const {
 const factoryAddress = ""; //"0000000000000000000000000000000002e86eb8"; 0.0.48787128
 
 import {
-    StableCoinFactory__factory,
-    StableCoinFactoryProxyAdmin__factory,
-    StableCoinFactoryProxy__factory
+    StableCoinFactory__factory
 } from '../typechain-types'
 
 import {getClient, 
@@ -104,23 +102,23 @@ export async function deployContractsWithSDK(
         "tokenDecimals": decimals,
         "keys": [
             {
-                "keyType": 1,
-                "PublicKey": PublicKey.fromString(publicKey).toBytes(),
+                "keyType": 1, // admin
+                "PublicKey": "0x", // PublicKey.fromString(publicKey).toBytes(),
             },
             {
-                "keyType": 4,
-                "PublicKey": PublicKey.fromString(publicKey).toBytes(),
+                "keyType": 4, // freeze
+                "PublicKey": "0x", // PublicKey.fromString(publicKey).toBytes(),
             },
             {
-                "keyType": 8,
+                "keyType": 8, // wipe
                 "PublicKey": "0x",
             },
             {
-                "keyType": 16,
+                "keyType": 16, // supply
                 "PublicKey": "0x",
             },
             {
-                "keyType": 64,
+                "keyType": 64, // pause
                 "PublicKey": "0x",
             }
         ]
