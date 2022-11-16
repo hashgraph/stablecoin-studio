@@ -164,10 +164,10 @@ const StableCoinCreation = () => {
 	};
 
 	const handleFinish = async () => {
-		const {  managementPermissions, freezeKey, wipeKey, pauseKey, supplyKey } =
+		const { autorenewAccount, managementPermissions, freezeKey, wipeKey, pauseKey, supplyKey } =
 			getValues();
 
-		// request.autoRenewAccount = autorenewAccount;
+		request.autoRenewAccount = autorenewAccount;
 		if (managementPermissions) {
 			request.adminKey = accountInfo.publicKey;
 			request.freezeKey = PublicKey.NULL;

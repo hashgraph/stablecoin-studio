@@ -15,6 +15,7 @@ import {
   RescueStableCoinRequest,
   GetAccountBalanceRequest,
   AssociateTokenRequest,
+  GetAccountInfoRequest,
 } from '../../../../src/index.js';
 import {
   ACCOUNTS,
@@ -140,9 +141,11 @@ describe('🧪 [PORT] SDK', () => {
     expect(list).not.toBeNull();
   });
   it('Gets accountInfo', async () => {
-    const list = await sdk.getAccountInfo({
-      account: ACCOUNTS.testnet,
-    });
+    const list = await sdk.getAccountInfo(
+      new GetAccountInfoRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+      }),
+    );
     console.log(list);
     expect(list).not.toBeNull();
   });

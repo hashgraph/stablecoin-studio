@@ -85,6 +85,7 @@ import {
 	GetAccountBalanceRequest,
 	AssociateTokenRequest,
 	GetRolesRequest,
+	GetAccountInfoRequest,
 } from './request';
 import ValidatedRequest from './request/validation/ValidatedRequest.js';
 import RequestMapper from './request/mapping/RequestMapper.js';
@@ -505,10 +506,11 @@ export class SDK {
 	}
 
 	public getAccountInfo(
-		request: IAccountWithKeyRequestModel,
+		request: GetAccountInfoRequest,
 	): Promise<AccountInfo> | null {
 		try {
-			return this.stableCoinService.getAccountInfo(request);
+			const req: IAccountWithKeyRequestModel = RequestMapper.map(request);
+			return this.stableCoinService.getAccountInfo(req);
 		} catch (error) {
 			console.error(error);
 			return null;

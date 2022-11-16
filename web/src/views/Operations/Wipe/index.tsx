@@ -20,7 +20,7 @@ import { handleRequestValidation } from '../../../utils/validationsHelper';
 import OperationLayout from './../OperationLayout';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
-import { WipeStableCoinRequest } from 'hedera-stable-coin-sdk';
+import { GetStableCoinDetailsRequest, WipeStableCoinRequest } from 'hedera-stable-coin-sdk';
 
 const WipeOperation = () => {
 	const {
@@ -63,9 +63,9 @@ const WipeOperation = () => {
 	};
 
 	const handleRefreshCoinInfo = async () => {
-		const stableCoinDetails = await SDKService.getStableCoinDetails({
+		const stableCoinDetails = await SDKService.getStableCoinDetails(new GetStableCoinDetailsRequest ({
 			id: selectedStableCoin?.tokenId || '',
-		});
+		}));
 		dispatch(
 			walletActions.setSelectedStableCoin({
 				tokenId: stableCoinDetails?.tokenId,

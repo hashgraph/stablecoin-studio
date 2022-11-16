@@ -3,7 +3,6 @@ import type {
 	InitializationData,
 	IStableCoinDetail,
 	IStableCoinList,
-	HashPackAccount,
 	IAccountInfo,
 	Capabilities,
 	CreateStableCoinRequest,
@@ -20,16 +19,12 @@ import type {
 	ResetCashInLimitRequest,
 	RevokeRoleRequest,
 	CashInStableCoinRequest,
-	GetRolesRequest,
-} from 'hedera-stable-coin-sdk';
-import {
-	GetListStableCoinRequest,
 	GetStableCoinDetailsRequest,
-	HederaNetwork,
-	NetworkMode,
-	SDK,
-	HederaNetworkEnviroment,
+	GetRolesRequest,
+	GetListStableCoinRequest,
+	// GetAccountInfoRequest,
 } from 'hedera-stable-coin-sdk';
+import { HederaNetwork, NetworkMode, SDK, HederaNetworkEnviroment } from 'hedera-stable-coin-sdk';
 
 export enum HashConnectConnectionState {
 	Connected = 'Connected',
@@ -111,36 +106,20 @@ export class SDKService {
 		return (await SDKService.getInstance()).disconectHaspack();
 	}
 
-	public static async getStableCoins({
-		account,
-	}: {
-		account: HashPackAccount;
-	}): Promise<IStableCoinList[] | null> {
-		return (await SDKService.getInstance())?.getListStableCoin(
-			new GetListStableCoinRequest({
-				account: {
-					accountId: account.accountId.id,
-				},
-			}),
-		);
+	public static async getStableCoins(
+		req: GetListStableCoinRequest,
+	): Promise<IStableCoinList[] | null> {
+		return (await SDKService.getInstance())?.getListStableCoin(req);
 	}
 
-	public static async getStableCoinDetails({
-		id,
-	}: {
-		id: string;
-	}): Promise<IStableCoinDetail | null> {
-		return (await SDKService.getInstance())?.getStableCoinDetails(
-			new GetStableCoinDetailsRequest({ id }),
-		);
+	public static async getStableCoinDetails(
+		req: GetStableCoinDetailsRequest,
+	): Promise<IStableCoinDetail | null> {
+		return (await SDKService.getInstance())?.getStableCoinDetails(req);
 	}
 
-	public static async getAccountInfo({
-		account,
-	}: {
-		account: HashPackAccount;
-	}): Promise<IAccountInfo | null> {
-		return (await SDKService.getInstance())?.getAccountInfo({ account });
+	public static async getAccountInfo(req: GetAccountInfoRequest): Promise<IAccountInfo | null> {
+		return (await SDKService.getInstance())?.getAccountInfo(req);
 	}
 
 	public static async cashIn(req: CashInStableCoinRequest) {
