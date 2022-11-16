@@ -5,8 +5,9 @@ import type {
 	IStableCoinDetail,
 	IStableCoinList,
 	Capabilities,
-	IAccountInfo,
+	IAccountInfo	
 } from 'hedera-stable-coin-sdk';
+import { GetListStableCoinRequest } from 'hedera-stable-coin-sdk';
 import SDKService from '../../services/SDKService';
 import type { RootState } from '../store';
 import type { IExternalToken } from '../../interfaces/IExternalToken';
@@ -45,7 +46,12 @@ export const getStableCoinList = createAsyncThunk(
 	'wallet/getStableCoinList',
 	async (account: HashPackAccount) => {
 		try {
-			const stableCoins = await SDKService.getStableCoins({ account });
+			const stableCoins = await SDKService.getStableCoins(
+				new GetListStableCoinRequest ({ 
+					account: {
+						accountId: account.accountId.id,
+					}
+				}));
 			return stableCoins;
 		} catch (e) {
 			console.error(e);
@@ -57,16 +63,17 @@ export const getExternalTokenList = createAsyncThunk(
 	'wallet/getExternalTokenList',
 	async (accountId: string) => {
 		try {
-			const accountTokens = JSON.parse(localStorage.tokensAccount);
-			console.log('EXTERNAL TOKENS', accountTokens);
-			if (accountTokens) {
-				const myAccount = accountTokens.find((acc: IAccountToken) => acc.id === accountId);
-				console.log('MI CUENTA', myAccount);
-				if (myAccount) {
-					return myAccount.externalTokens;
+			const tokensAccount = localStorage?.tokensAccount;
+			if (tokensAccount) {
+				const accountTokens = JSON.parse(tokensAccount);
+				if (accountTokens) {
+					const myAccount = accountTokens.find((acc: IAccountToken) => acc.id === accountId);
+					if (myAccount) {
+						return myAccount.externalTokens;
+					}
 				}
-				return [];
 			}
+			return [];
 		} catch (e) {
 			console.error(e);
 		}

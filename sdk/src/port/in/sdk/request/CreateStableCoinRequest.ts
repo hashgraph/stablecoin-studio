@@ -9,7 +9,6 @@ import {
 	RequestAccount,
 	RequestPublicKey,
 } from './BaseRequest.js';
-import { InvalidRange } from './error/InvalidRange.js';
 import { InvalidType } from './error/InvalidType.js';
 import { InvalidValue } from './error/InvalidValue.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
@@ -27,7 +26,7 @@ export default class CreateStableCoinRequest
 		return this._decimals;
 	}
 	public set decimals(value: number | string) {
-		this._decimals = typeof value === 'number' ? value : parseInt(value);
+		this._decimals = typeof value === 'number' ? value : parseFloat(value);
 	}
 
 	@OptionalField()
@@ -110,9 +109,7 @@ export default class CreateStableCoinRequest
 				return StableCoin.checkSymbol(val);
 			},
 			decimals: (val) => {
-				if (isNaN(this.decimals))
-					return [new InvalidType(this.decimals, 'number')];
-				return StableCoin.checkDecimals(val);
+				return StableCoin.checkInteger(val);				
 			},
 			initialSupply: (val) => {
 				if (val === undefined || val === '') {

@@ -980,12 +980,12 @@ export default class OperationStableCoinService extends Service {
                 },
               },
               proxyContractId: this.proxyContractId,
-              targetId: '',
+              targetId: ''
             });
 
             await this.validateNotRequestedData(resetCashInLimitRequest, [
               'account',
-              'proxyContractId',
+              'proxyContractId'
             ]);
 
             //Reset

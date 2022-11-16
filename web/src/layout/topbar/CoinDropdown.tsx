@@ -21,7 +21,7 @@ import {
 import { RouterManager } from '../../Router/RouterManager';
 import { matchPath, useLocation, useNavigate } from 'react-router-dom';
 import { NamedRoutes } from '../../Router/NamedRoutes';
-import { HashPackAccount } from 'hedera-stable-coin-sdk';
+import { GetStableCoinDetailsRequest, HashPackAccount, GetAccountInfoRequest } from 'hedera-stable-coin-sdk';
 import type { IExternalToken } from '../../interfaces/IExternalToken.js';
 
 const CoinDropdown = () => {
@@ -70,7 +70,13 @@ const CoinDropdown = () => {
 	}, [stableCoinList, externalTokenList, selectedStableCoin]);
 
 	const getAccountInfo = async (hashpackAccount: HashPackAccount) => {
-		const accountInfo = await SDKService.getAccountInfo({ account: hashpackAccount });
+		const accountInfo = await SDKService.getAccountInfo(
+			new GetAccountInfoRequest({ 
+				account: {
+					accountId: hashpackAccount.accountId.id,
+				}
+			})
+		);
 
 		dispatch(walletActions.setAccountInfo(accountInfo));
 	};
@@ -133,9 +139,9 @@ const CoinDropdown = () => {
 
 	const handleSelectCoin = async (event: any) => {
 		const selectedCoin = event.value;
-		const stableCoinDetails = await SDKService.getStableCoinDetails({
+		const stableCoinDetails = await SDKService.getStableCoinDetails(new GetStableCoinDetailsRequest ({
 			id: selectedCoin,
-		});
+		}));
 
 		dispatch(
 			walletActions.setSelectedStableCoin({

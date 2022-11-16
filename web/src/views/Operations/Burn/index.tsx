@@ -20,7 +20,7 @@ import { useState, useEffect } from 'react';
 import type { AppDispatch } from '../../../store/store.js';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
-import { CashOutStableCoinRequest } from 'hedera-stable-coin-sdk';
+import { CashOutStableCoinRequest, GetStableCoinDetailsRequest } from 'hedera-stable-coin-sdk';
 
 const BurnOperation = () => {
 	const {
@@ -79,9 +79,9 @@ const BurnOperation = () => {
 	};
 
 	const handleRefreshCoinInfo = async () => {
-		const stableCoinDetails = await SDKService.getStableCoinDetails({
+		const stableCoinDetails = await SDKService.getStableCoinDetails(new GetStableCoinDetailsRequest({
 			id: selectedStableCoin?.tokenId || '',
-		});
+		}));
 		dispatch(
 			walletActions.setSelectedStableCoin({
 				tokenId: stableCoinDetails?.tokenId,

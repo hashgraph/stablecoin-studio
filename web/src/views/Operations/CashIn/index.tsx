@@ -18,7 +18,7 @@ import {
 } from '../../../store/slices/walletSlice';
 import { useEffect, useState } from 'react';
 import type { AppDispatch } from '../../../store/store.js';
-import { BigDecimal, CashInStableCoinRequest } from 'hedera-stable-coin-sdk';
+import { BigDecimal, CashInStableCoinRequest, GetStableCoinDetailsRequest } from 'hedera-stable-coin-sdk';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
 
@@ -65,9 +65,9 @@ const CashInOperation = () => {
 	};
 
 	const handleRefreshCoinInfo = async () => {
-		const stableCoinDetails = await SDKService.getStableCoinDetails({
+		const stableCoinDetails = await SDKService.getStableCoinDetails(new GetStableCoinDetailsRequest({
 			id: selectedStableCoin?.tokenId || '',
-		});
+		}));
 		dispatch(
 			walletActions.setSelectedStableCoin({
 				tokenId: stableCoinDetails?.tokenId,
