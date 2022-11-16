@@ -90,26 +90,20 @@ export async function initialize(ContractId: any, proxyAddress: string, client: 
 }
 
 // HederaERC20Proxy ///////////////////////////////////////////////////
-export async function getImplementation(ContractId: any, proxyAddress: string, client: any): Promise<string>{
-    let params: any[] = [];  
-    const result = await contractCall(ContractId.fromString(proxyAddress!), 'getImplementation', params, client, Gas2, HederaERC20Proxy__factory.abi);  
-    return result[0];
-}
-
 export async function upgradeTo(ContractId: any, proxyAddress: string, client: any, newImplementationContract: string) {
     let params : any = [newImplementationContract];  
     await contractCall(ContractId.fromString(proxyAddress!), 'upgradeTo', params, client, Gas3, HederaERC20Proxy__factory.abi);
 }
 
-export async function getAdmin(ContractId: any, proxyAddress: string, client: any): Promise<string>{
-    let params: any[] = [];  
-    const result = await contractCall(ContractId.fromString(proxyAddress!), 'getAdmin', params, client, Gas2, HederaERC20Proxy__factory.abi);  
-    return result[0];
-}
-
 export async function changeAdmin(ContractId: any, proxyAddress: string, client: any, newAdminAccount: string) {
     let params : any = [newAdminAccount];  
     await contractCall(ContractId.fromString(proxyAddress!), 'changeAdmin', params, client, Gas3, HederaERC20Proxy__factory.abi);
+}
+
+export async function admin(ContractId: any, proxyAddress: string, client: any): Promise<string>{
+    let params: any[] = [];  
+    const result = await contractCall(ContractId.fromString(proxyAddress!), 'admin', params, client, Gas2, HederaERC20Proxy__factory.abi);  
+    return result[0];
 }
 
 // HederaERC20ProxyAdmin ///////////////////////////////////////////////////
@@ -132,6 +126,18 @@ export async function changeProxyAdmin(ContractId: any, proxyAdminAddress: strin
 export async function transferOwnership(ContractId: any, proxyAdminAddress: string, client: any, newOwnerAccount: string) {
     let params : any = [AccountId.fromString(newOwnerAccount!).toSolidityAddress()];  
     await contractCall(ContractId.fromString(proxyAdminAddress!), 'transferOwnership', params, client, Gas3, HederaERC20ProxyAdmin__factory.abi);
+}
+
+export async function getProxyImplementation(ContractId: any, proxyAdminAddress: string, client: any, proxyAddress: string): Promise<string>{
+    let params: any[] = [proxyAddress];  
+    const result = await contractCall(ContractId.fromString(proxyAdminAddress!), 'getProxyImplementation', params, client, Gas2, HederaERC20ProxyAdmin__factory.abi);  
+    return result[0];
+}
+
+export async function getProxyAdmin(ContractId: any, proxyAdminAddress: string, client: any, proxyAddress: string): Promise<string>{
+    let params: any[] = [proxyAddress];  
+    const result = await contractCall(ContractId.fromString(proxyAdminAddress!), 'getProxyAdmin', params, client, Gas2, HederaERC20ProxyAdmin__factory.abi);  
+    return result[0];
 }
 
 /* Methods to add

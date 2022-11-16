@@ -21,14 +21,15 @@ import {name,
   getTotalSupply, 
   getBalanceOf,
   getTokenAddress,
-  getImplementation,
   upgradeTo,
-  getAdmin,
+  admin,
   changeAdmin,
   owner,
   upgrade,
   changeProxyAdmin,
-  transferOwnership
+  transferOwnership,
+  getProxyAdmin,
+  getProxyImplementation
 } from "../scripts/contractsMethods";
 
 let proxyAddress:any;
@@ -203,8 +204,8 @@ describe("HederaERC20Proxy and HederaERC20ProxyAdmin Tests", function() {
 
   it("Retrieve admin and implementation addresses for the Proxy", async function() {
      // We retreive the HederaERC20Proxy admin and implementation
-     const implementation = await getImplementation(ContractId, proxyAddress, client);
-     const admin = await getAdmin(ContractId, proxyAddress, client);
+     const implementation = await getProxyImplementation(ContractId, proxyAdminAddress, client, proxyAddress.toSolidityAddress());
+     const admin = await getProxyAdmin(ContractId, proxyAdminAddress, client, proxyAddress.toSolidityAddress());
 
      // We check their values : success
      expect(implementation.toUpperCase()).to.equals("0X" + stableCoinAddress.toSolidityAddress().toUpperCase());
@@ -286,7 +287,7 @@ describe("HederaERC20Proxy and HederaERC20ProxyAdmin Tests", function() {
     await upgrade(ContractId, proxyAdminAddress, client, newImplementationContract.toSolidityAddress(), proxyAddress.toSolidityAddress())
 
     // Check new implementation address
-    const implementation = await getImplementation(ContractId, proxyAddress, client);
+    const implementation = await getProxyImplementation(ContractId, proxyAdminAddress, client, proxyAddress.toSolidityAddress());
     expect(implementation.toUpperCase()).to.equals("0X" + newImplementationContract.toSolidityAddress().toUpperCase());
 
     // reset
@@ -297,9 +298,12 @@ describe("HederaERC20Proxy and HederaERC20ProxyAdmin Tests", function() {
     // Owner changes admin : success     
     await changeProxyAdmin(ContractId, proxyAdminAddress, client, OPERATOR_ID, proxyAddress.toSolidityAddress());
 
+    // Now we cannot get the admin using the Proxy admin contract.
+    await expect(getProxyAdmin(ContractId, proxyAdminAddress, client, proxyAddress.toSolidityAddress())).to.eventually.be.rejectedWith(Error);
+
     // Check that proxy admin has been changed
-    const admin = await getAdmin(ContractId, proxyAddress, client);
-    expect(admin.toUpperCase()).to.equals("0X" + AccountId.fromString(OPERATOR_ID).toSolidityAddress().toUpperCase());
+    const _admin = await admin(ContractId, proxyAddress, client);
+    expect(_admin.toUpperCase()).to.equals("0X" + AccountId.fromString(OPERATOR_ID).toSolidityAddress().toUpperCase());
 
     // reset
     await changeAdmin(ContractId, proxyAddress, client, AccountId.fromString(client2account).toSolidityAddress());

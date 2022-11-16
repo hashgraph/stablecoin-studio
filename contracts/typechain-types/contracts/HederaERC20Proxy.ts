@@ -31,8 +31,6 @@ export interface HederaERC20ProxyInterface extends utils.Interface {
   functions: {
     "admin()": FunctionFragment;
     "changeAdmin(address)": FunctionFragment;
-    "getAdmin()": FunctionFragment;
-    "getImplementation()": FunctionFragment;
     "implementation()": FunctionFragment;
     "upgradeTo(address)": FunctionFragment;
     "upgradeToAndCall(address,bytes)": FunctionFragment;
@@ -42,8 +40,6 @@ export interface HederaERC20ProxyInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "admin"
       | "changeAdmin"
-      | "getAdmin"
-      | "getImplementation"
       | "implementation"
       | "upgradeTo"
       | "upgradeToAndCall"
@@ -53,11 +49,6 @@ export interface HederaERC20ProxyInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "changeAdmin",
     values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(functionFragment: "getAdmin", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "getImplementation",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "implementation",
@@ -75,11 +66,6 @@ export interface HederaERC20ProxyInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "admin", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "changeAdmin",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "getAdmin", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "getImplementation",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -167,10 +153,6 @@ export interface HederaERC20Proxy extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    getAdmin(overrides?: CallOverrides): Promise<[string]>;
-
-    getImplementation(overrides?: CallOverrides): Promise<[string]>;
-
     implementation(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -196,10 +178,6 @@ export interface HederaERC20Proxy extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  getAdmin(overrides?: CallOverrides): Promise<string>;
-
-  getImplementation(overrides?: CallOverrides): Promise<string>;
-
   implementation(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -222,10 +200,6 @@ export interface HederaERC20Proxy extends BaseContract {
       newAdmin: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    getAdmin(overrides?: CallOverrides): Promise<string>;
-
-    getImplementation(overrides?: CallOverrides): Promise<string>;
 
     implementation(overrides?: CallOverrides): Promise<string>;
 
@@ -276,10 +250,6 @@ export interface HederaERC20Proxy extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    getAdmin(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getImplementation(overrides?: CallOverrides): Promise<BigNumber>;
-
     implementation(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -305,10 +275,6 @@ export interface HederaERC20Proxy extends BaseContract {
       newAdmin: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
-
-    getAdmin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getImplementation(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     implementation(
       overrides?: Overrides & { from?: PromiseOrValue<string> }

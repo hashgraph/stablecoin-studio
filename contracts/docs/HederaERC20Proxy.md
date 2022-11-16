@@ -43,40 +43,6 @@ function changeAdmin(address newAdmin) external nonpayable
 |---|---|---|
 | newAdmin | address | undefined |
 
-### getAdmin
-
-```solidity
-function getAdmin() external view returns (address)
-```
-
-
-
-*Returns the admin controlling the proxy*
-
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | address | address The address of the admin account in control of the proxy |
-
-### getImplementation
-
-```solidity
-function getImplementation() external view returns (address)
-```
-
-
-
-*Returns the implementation behind the proxy*
-
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | address | address The address of the implementation behind the proxy |
-
 ### implementation
 
 ```solidity
