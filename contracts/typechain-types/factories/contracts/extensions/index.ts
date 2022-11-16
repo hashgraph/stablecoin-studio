@@ -2,12 +2,16 @@
 /* tslint:disable */
 /* eslint-disable */
 export { Burnable__factory } from "./Burnable__factory";
+export { Freezable__factory } from "./Freezable__factory";
 export { IBurnable__factory } from "./IBurnable__factory";
+export { IFreezable__factory } from "./IFreezable__factory";
 export { IMintable__factory } from "./IMintable__factory";
+export { IPausable__factory } from "./IPausable__factory";
 export { IRescatable__factory } from "./IRescatable__factory";
 export { ISupplierAdmin__factory } from "./ISupplierAdmin__factory";
 export { IWipeable__factory } from "./IWipeable__factory";
 export { Mintable__factory } from "./Mintable__factory";
+export { Pausable__factory } from "./Pausable__factory";
 export { Rescatable__factory } from "./Rescatable__factory";
 export { SupplierAdmin__factory } from "./SupplierAdmin__factory";
 export { Wipeable__factory } from "./Wipeable__factory";

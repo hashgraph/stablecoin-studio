@@ -86,9 +86,9 @@ const _abi = [
         type: "address",
       },
       {
-        internalType: "int64",
+        internalType: "uint256",
         name: "serialNumber",
-        type: "int64",
+        type: "uint256",
       },
     ],
     name: "approveNFT",
@@ -214,9 +214,9 @@ const _abi = [
             type: "bool",
           },
           {
-            internalType: "uint32",
+            internalType: "int64",
             name: "maxSupply",
-            type: "uint32",
+            type: "int64",
           },
           {
             internalType: "bool",
@@ -295,14 +295,14 @@ const _abi = [
         type: "tuple",
       },
       {
-        internalType: "uint256",
+        internalType: "uint64",
         name: "initialTotalSupply",
-        type: "uint256",
+        type: "uint64",
       },
       {
-        internalType: "uint256",
+        internalType: "uint32",
         name: "decimals",
-        type: "uint256",
+        type: "uint32",
       },
     ],
     name: "createFungibleToken",
@@ -351,9 +351,9 @@ const _abi = [
             type: "bool",
           },
           {
-            internalType: "uint32",
+            internalType: "int64",
             name: "maxSupply",
-            type: "uint32",
+            type: "int64",
           },
           {
             internalType: "bool",
@@ -432,14 +432,14 @@ const _abi = [
         type: "tuple",
       },
       {
-        internalType: "uint256",
+        internalType: "uint64",
         name: "initialTotalSupply",
-        type: "uint256",
+        type: "uint64",
       },
       {
-        internalType: "uint256",
+        internalType: "uint32",
         name: "decimals",
-        type: "uint256",
+        type: "uint32",
       },
       {
         components: [
@@ -557,9 +557,9 @@ const _abi = [
             type: "bool",
           },
           {
-            internalType: "uint32",
+            internalType: "int64",
             name: "maxSupply",
-            type: "uint32",
+            type: "int64",
           },
           {
             internalType: "bool",
@@ -684,9 +684,9 @@ const _abi = [
             type: "bool",
           },
           {
-            internalType: "uint32",
+            internalType: "int64",
             name: "maxSupply",
-            type: "uint32",
+            type: "int64",
           },
           {
             internalType: "bool",
@@ -855,6 +855,35 @@ const _abi = [
       {
         components: [
           {
+            components: [
+              {
+                internalType: "address",
+                name: "accountID",
+                type: "address",
+              },
+              {
+                internalType: "int64",
+                name: "amount",
+                type: "int64",
+              },
+              {
+                internalType: "bool",
+                name: "isApproval",
+                type: "bool",
+              },
+            ],
+            internalType: "struct IHederaTokenService.AccountAmount[]",
+            name: "transfers",
+            type: "tuple[]",
+          },
+        ],
+        internalType: "struct IHederaTokenService.TransferList",
+        name: "transferList",
+        type: "tuple",
+      },
+      {
+        components: [
+          {
             internalType: "address",
             name: "token",
             type: "address",
@@ -870,6 +899,11 @@ const _abi = [
                 internalType: "int64",
                 name: "amount",
                 type: "int64",
+              },
+              {
+                internalType: "bool",
+                name: "isApproval",
+                type: "bool",
               },
             ],
             internalType: "struct IHederaTokenService.AccountAmount[]",
@@ -892,6 +926,11 @@ const _abi = [
                 internalType: "int64",
                 name: "serialNumber",
                 type: "int64",
+              },
+              {
+                internalType: "bool",
+                name: "isApproval",
+                type: "bool",
               },
             ],
             internalType: "struct IHederaTokenService.NftTransfer[]",
@@ -1014,9 +1053,9 @@ const _abi = [
         type: "address",
       },
       {
-        internalType: "int64",
+        internalType: "uint256",
         name: "serialNumber",
-        type: "int64",
+        type: "uint256",
       },
     ],
     name: "getApproved",
@@ -1082,9 +1121,9 @@ const _abi = [
                     type: "bool",
                   },
                   {
-                    internalType: "uint32",
+                    internalType: "int64",
                     name: "maxSupply",
-                    type: "uint32",
+                    type: "int64",
                   },
                   {
                     internalType: "bool",
@@ -1159,8 +1198,28 @@ const _abi = [
                   },
                 ],
                 internalType: "struct IHederaTokenService.HederaToken",
-                name: "hedera",
+                name: "token",
                 type: "tuple",
+              },
+              {
+                internalType: "uint64",
+                name: "totalSupply",
+                type: "uint64",
+              },
+              {
+                internalType: "bool",
+                name: "deleted",
+                type: "bool",
+              },
+              {
+                internalType: "bool",
+                name: "defaultKycStatus",
+                type: "bool",
+              },
+              {
+                internalType: "bool",
+                name: "pauseStatus",
+                type: "bool",
               },
               {
                 components: [
@@ -1269,29 +1328,9 @@ const _abi = [
                 type: "tuple[]",
               },
               {
-                internalType: "bool",
-                name: "defaultKycStatus",
-                type: "bool",
-              },
-              {
-                internalType: "bool",
-                name: "deleted",
-                type: "bool",
-              },
-              {
                 internalType: "string",
                 name: "ledgerId",
                 type: "string",
-              },
-              {
-                internalType: "bool",
-                name: "pauseStatus",
-                type: "bool",
-              },
-              {
-                internalType: "uint64",
-                name: "totalSupply",
-                type: "uint64",
               },
             ],
             internalType: "struct IHederaTokenService.TokenInfo",
@@ -1364,9 +1403,9 @@ const _abi = [
                     type: "bool",
                   },
                   {
-                    internalType: "uint32",
+                    internalType: "int64",
                     name: "maxSupply",
-                    type: "uint32",
+                    type: "int64",
                   },
                   {
                     internalType: "bool",
@@ -1441,8 +1480,28 @@ const _abi = [
                   },
                 ],
                 internalType: "struct IHederaTokenService.HederaToken",
-                name: "hedera",
+                name: "token",
                 type: "tuple",
+              },
+              {
+                internalType: "uint64",
+                name: "totalSupply",
+                type: "uint64",
+              },
+              {
+                internalType: "bool",
+                name: "deleted",
+                type: "bool",
+              },
+              {
+                internalType: "bool",
+                name: "defaultKycStatus",
+                type: "bool",
+              },
+              {
+                internalType: "bool",
+                name: "pauseStatus",
+                type: "bool",
               },
               {
                 components: [
@@ -1551,29 +1610,9 @@ const _abi = [
                 type: "tuple[]",
               },
               {
-                internalType: "bool",
-                name: "defaultKycStatus",
-                type: "bool",
-              },
-              {
-                internalType: "bool",
-                name: "deleted",
-                type: "bool",
-              },
-              {
                 internalType: "string",
                 name: "ledgerId",
                 type: "string",
-              },
-              {
-                internalType: "bool",
-                name: "pauseStatus",
-                type: "bool",
-              },
-              {
-                internalType: "uint64",
-                name: "totalSupply",
-                type: "uint64",
               },
             ],
             internalType: "struct IHederaTokenService.TokenInfo",
@@ -1873,9 +1912,9 @@ const _abi = [
                 type: "bool",
               },
               {
-                internalType: "uint32",
+                internalType: "int64",
                 name: "maxSupply",
-                type: "uint32",
+                type: "int64",
               },
               {
                 internalType: "bool",
@@ -1950,8 +1989,28 @@ const _abi = [
               },
             ],
             internalType: "struct IHederaTokenService.HederaToken",
-            name: "hedera",
+            name: "token",
             type: "tuple",
+          },
+          {
+            internalType: "uint64",
+            name: "totalSupply",
+            type: "uint64",
+          },
+          {
+            internalType: "bool",
+            name: "deleted",
+            type: "bool",
+          },
+          {
+            internalType: "bool",
+            name: "defaultKycStatus",
+            type: "bool",
+          },
+          {
+            internalType: "bool",
+            name: "pauseStatus",
+            type: "bool",
           },
           {
             components: [
@@ -2060,29 +2119,9 @@ const _abi = [
             type: "tuple[]",
           },
           {
-            internalType: "bool",
-            name: "defaultKycStatus",
-            type: "bool",
-          },
-          {
-            internalType: "bool",
-            name: "deleted",
-            type: "bool",
-          },
-          {
             internalType: "string",
             name: "ledgerId",
             type: "string",
-          },
-          {
-            internalType: "bool",
-            name: "pauseStatus",
-            type: "bool",
-          },
-          {
-            internalType: "uint64",
-            name: "totalSupply",
-            type: "uint64",
           },
         ],
         internalType: "struct IHederaTokenService.TokenInfo",
@@ -2433,6 +2472,74 @@ const _abi = [
       },
       {
         internalType: "address",
+        name: "from",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "to",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+    ],
+    name: "transferFrom",
+    outputs: [
+      {
+        internalType: "int64",
+        name: "responseCode",
+        type: "int64",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "token",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "from",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "to",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "serialNumber",
+        type: "uint256",
+      },
+    ],
+    name: "transferFromNFT",
+    outputs: [
+      {
+        internalType: "int64",
+        name: "responseCode",
+        type: "int64",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "token",
+        type: "address",
+      },
+      {
+        internalType: "address",
         name: "sender",
         type: "address",
       },
@@ -2674,9 +2781,9 @@ const _abi = [
             type: "bool",
           },
           {
-            internalType: "uint32",
+            internalType: "int64",
             name: "maxSupply",
-            type: "uint32",
+            type: "int64",
           },
           {
             internalType: "bool",

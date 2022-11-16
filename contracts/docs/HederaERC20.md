@@ -297,6 +297,56 @@ function decreaseSupplierAllowance(address supplier, uint256 amount) external no
 | supplier | address | The address of the supplier |
 | amount | uint256 | The amount to subtract from the supplier&#39;s current minting allowance |
 
+### delegateTransferFrom
+
+```solidity
+function delegateTransferFrom(address token, address from, address to, uint256 amount) external nonpayable returns (int64 responseCode)
+```
+
+Only applicable to fungible tokens
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token | address | The address of the fungible Hedera token to transfer |
+| from | address | The account address of the owner of the token, on the behalf of which to transfer `amount` tokens |
+| to | address | The account address of the receiver of the `amount` tokens |
+| amount | uint256 | The amount of tokens to transfer from `from` to `to` |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| responseCode | int64 | The response code for the status of the request. SUCCESS is 22. |
+
+### delegateTransferFromNFT
+
+```solidity
+function delegateTransferFromNFT(address token, address from, address to, uint256 serialNumber) external nonpayable returns (int64 responseCode)
+```
+
+Transfers `serialNumber` of `token` from `from` to `to` using the allowance mechanism. Only applicable to NFT tokens
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token | address | The address of the non-fungible Hedera token to transfer |
+| from | address | The account address of the owner of `serialNumber` of `token` |
+| to | address | The account address of the receiver of `serialNumber` |
+| serialNumber | uint256 | The NFT serial number to transfer |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| responseCode | int64 | The response code for the status of the request. SUCCESS is 22. |
+
 ### dissociateToken
 
 ```solidity
@@ -318,6 +368,28 @@ function dissociateToken(address adr) external nonpayable returns (bool)
 | Name | Type | Description |
 |---|---|---|
 | _0 | bool | bool True if the account has been successfully dissociated from the token |
+
+### freeze
+
+```solidity
+function freeze(address account) external nonpayable returns (bool)
+```
+
+
+
+*Freezes transfers of the token for the `account`*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| account | address | The account whose transfers will be freezed for the token |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
 
 ### getRoleAdmin
 
@@ -380,53 +452,6 @@ function getTokenAddress() external view returns (address)
 |---|---|---|
 | _0 | address | address The token address |
 
-### getTokenExpiryInfo
-
-```solidity
-function getTokenExpiryInfo(address token) external nonpayable returns (int256 responseCode, struct IHederaTokenService.Expiry expiryInfo)
-```
-
-Operation to get token expiry info
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| token | address | The token address |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| responseCode | int256 | The response code for the status of the request. SUCCESS is 22. |
-| expiryInfo | IHederaTokenService.Expiry | The expiry info of the token |
-
-### getTokenKey
-
-```solidity
-function getTokenKey(address token, uint256 keyType) external nonpayable returns (int64 responseCode, struct IHederaTokenService.KeyValue key)
-```
-
-Query token KeyValue
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| token | address | The token address to check |
-| keyType | uint256 | The keyType of the desired KeyValue |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| responseCode | int64 | The response code for the status of the request. SUCCESS is 22. |
-| key | IHederaTokenService.KeyValue | KeyValue info for key of type `keyType` |
-
 ### getTokenOwnerAddress
 
 ```solidity
@@ -477,29 +502,6 @@ function grantSupplierRole(address supplier, uint256 amount) external nonpayable
 |---|---|---|
 | supplier | address | The address of the supplier |
 | amount | uint256 | The amount to add to the supplier&#39;s current minting allowance  |
-
-### grantTokenKyc
-
-```solidity
-function grantTokenKyc(address token, address account) external nonpayable returns (int64 responseCode)
-```
-
-Operation to grant kyc to token account
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| token | address | The token address |
-| account | address | The account address to grant kyc |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| responseCode | int64 | The response code for the status of the request. SUCCESS is 22. |
 
 ### grantUnlimitedSupplierRole
 
@@ -568,30 +570,6 @@ function initialize() external payable
 
 
 
-### isKyc
-
-```solidity
-function isKyc(address token, address account) external nonpayable returns (int64 responseCode, bool kycGranted)
-```
-
-Query if token account has kyc granted
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| token | address | The token address to check |
-| account | address | The account address associated with the token |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| responseCode | int64 | The response code for the status of the request. SUCCESS is 22. |
-| kycGranted | bool | True if `account` has kyc granted for `token` |
-
 ### isUnlimitedSupplierAllowance
 
 ```solidity
@@ -654,27 +632,22 @@ function name() external view returns (string)
 |---|---|---|
 | _0 | string | string The the name of the token |
 
-### pauseToken
+### pause
 
 ```solidity
-function pauseToken(address token) external nonpayable returns (int256 responseCode)
+function pause() external nonpayable returns (bool)
 ```
 
-Operation to pause token
 
 
+*Pauses the token in order to prevent it from being involved in any kind of operation*
 
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| token | address | The token address to be paused |
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| responseCode | int256 | The response code for the status of the request. SUCCESS is 22. |
+| _0 | bool | undefined |
 
 ### renounceRole
 
@@ -773,29 +746,6 @@ function revokeSupplierRole(address supplier) external nonpayable
 | Name | Type | Description |
 |---|---|---|
 | supplier | address | The address of the supplier |
-
-### revokeTokenKyc
-
-```solidity
-function revokeTokenKyc(address token, address account) external nonpayable returns (int64 responseCode)
-```
-
-Operation to revoke kyc to token account
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| token | address | The token address |
-| account | address | The account address to revoke kyc |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| responseCode | int64 | The response code for the status of the request. SUCCESS is 22. |
 
 ### setTokenAddress
 
@@ -918,6 +868,31 @@ function transfer(address, uint256) external pure returns (bool)
 ### transferFrom
 
 ```solidity
+function transferFrom(address token, address from, address to, uint256 amount) external nonpayable returns (int64 responseCode)
+```
+
+Only applicable to fungible tokens
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token | address | The address of the fungible Hedera token to transfer |
+| from | address | The account address of the owner of the token, on the behalf of which to transfer `amount` tokens |
+| to | address | The account address of the receiver of the `amount` tokens |
+| amount | uint256 | The amount of tokens to transfer from `from` to `to` |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| responseCode | int64 | The response code for the status of the request. SUCCESS is 22. |
+
+### transferFrom
+
+```solidity
 function transferFrom(address, address, uint256) external pure returns (bool)
 ```
 
@@ -939,13 +914,13 @@ function transferFrom(address, address, uint256) external pure returns (bool)
 |---|---|---|
 | _0 | bool | undefined |
 
-### unpauseToken
+### transferFromNFT
 
 ```solidity
-function unpauseToken(address token) external nonpayable returns (int256 responseCode)
+function transferFromNFT(address token, address from, address to, uint256 serialNumber) external nonpayable returns (int64 responseCode)
 ```
 
-Operation to unpause token
+Transfers `serialNumber` of `token` from `from` to `to` using the allowance mechanism. Only applicable to NFT tokens
 
 
 
@@ -953,59 +928,55 @@ Operation to unpause token
 
 | Name | Type | Description |
 |---|---|---|
-| token | address | The token address to be unpaused |
+| token | address | The address of the non-fungible Hedera token to transfer |
+| from | address | The account address of the owner of `serialNumber` of `token` |
+| to | address | The account address of the receiver of `serialNumber` |
+| serialNumber | uint256 | The NFT serial number to transfer |
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| responseCode | int256 | The response code for the status of the request. SUCCESS is 22. |
+| responseCode | int64 | The response code for the status of the request. SUCCESS is 22. |
 
-### updateTokenExpiryInfo
+### unfreeze
 
 ```solidity
-function updateTokenExpiryInfo(address token, IHederaTokenService.Expiry expiryInfo) external nonpayable returns (int256 responseCode)
+function unfreeze(address account) external nonpayable returns (bool)
 ```
 
 
 
-
+*Freezes transfers of the token for the `account`*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| token | address | undefined |
-| expiryInfo | IHederaTokenService.Expiry | undefined |
+| account | address | The account whose transfers will be unfreezed for the token |
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| responseCode | int256 | undefined |
+| _0 | bool | undefined |
 
-### updateTokenKeys
+### unpause
 
 ```solidity
-function updateTokenKeys(address token, IHederaTokenService.TokenKey[] keys) external nonpayable returns (int64 responseCode)
+function unpause() external nonpayable returns (bool)
 ```
 
 
 
+*Unpauses the token in order to allow it to be involved in any kind of operation*
 
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| token | address | undefined |
-| keys | IHederaTokenService.TokenKey[] | undefined |
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| responseCode | int64 | undefined |
+| _0 | bool | undefined |
 
 ### wipe
 
@@ -1199,6 +1170,22 @@ event SupplierAllowanceReset(address indexed sender, address indexed supplier, u
 | oldAllowance  | uint256 | undefined |
 | newAllowance  | uint256 | undefined |
 
+### TokenPaused
+
+```solidity
+event TokenPaused(address token)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token  | address | undefined |
+
 ### TokenRescued
 
 ```solidity
@@ -1217,6 +1204,22 @@ event TokenRescued(address rescuer, address tokenId, uint256 amount, uint256 old
 | tokenId  | address | undefined |
 | amount  | uint256 | undefined |
 | oldBalance  | uint256 | undefined |
+
+### TokenUnpaused
+
+```solidity
+event TokenUnpaused(address token)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token  | address | undefined |
 
 ### TokensWiped
 
@@ -1253,6 +1256,40 @@ event Transfer(address indexed from, address indexed to, uint256 value)
 | from `indexed` | address | undefined |
 | to `indexed` | address | undefined |
 | value  | uint256 | undefined |
+
+### TransfersFreezed
+
+```solidity
+event TransfersFreezed(address token, address account)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token  | address | undefined |
+| account  | address | undefined |
+
+### TransfersUnfreezed
+
+```solidity
+event TransfersUnfreezed(address token, address account)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token  | address | undefined |
+| account  | address | undefined |
 
 
 

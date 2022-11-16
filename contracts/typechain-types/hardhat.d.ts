@@ -77,13 +77,25 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Burnable__factory>;
     getContractFactory(
+      name: "Freezable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Freezable__factory>;
+    getContractFactory(
       name: "IBurnable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IBurnable__factory>;
     getContractFactory(
+      name: "IFreezable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IFreezable__factory>;
+    getContractFactory(
       name: "IMintable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IMintable__factory>;
+    getContractFactory(
+      name: "IPausable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IPausable__factory>;
     getContractFactory(
       name: "IRescatable",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -100,6 +112,10 @@ declare module "hardhat/types/runtime" {
       name: "Mintable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Mintable__factory>;
+    getContractFactory(
+      name: "Pausable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Pausable__factory>;
     getContractFactory(
       name: "Rescatable",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -234,15 +250,30 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.Burnable>;
     getContractAt(
+      name: "Freezable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Freezable>;
+    getContractAt(
       name: "IBurnable",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IBurnable>;
     getContractAt(
+      name: "IFreezable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IFreezable>;
+    getContractAt(
       name: "IMintable",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IMintable>;
+    getContractAt(
+      name: "IPausable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IPausable>;
     getContractAt(
       name: "IRescatable",
       address: string,
@@ -263,6 +294,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Mintable>;
+    getContractAt(
+      name: "Pausable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Pausable>;
     getContractAt(
       name: "Rescatable",
       address: string,

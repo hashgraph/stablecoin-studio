@@ -100,6 +100,45 @@ contract HTSTokenOwner is IHTSTokenOwner, HederaTokenService {
         return _checkResponse(responseCode);
     }
 
+    function pause(address tokenAddress) 
+        external 
+        onlyHederaERC20() 
+        returns (bool) 
+    {
+        int256 responseCode = HederaTokenService.pauseToken(tokenAddress);
+        return _checkResponse(responseCode);
+    }
+
+
+    function unpause(address tokenAddress) 
+        external 
+        onlyHederaERC20() 
+        returns (bool) 
+    {
+        int256 responseCode = HederaTokenService.unpauseToken(tokenAddress);
+        return _checkResponse(responseCode);
+    }
+
+
+    function freeze(address tokenAddress, address account) 
+        external 
+        onlyHederaERC20() 
+        returns (bool) 
+    {
+        int256 responseCode = HederaTokenService.freezeToken(tokenAddress, account);
+        return _checkResponse(responseCode);
+    }
+
+
+    function unfreeze(address tokenAddress, address account) 
+        external 
+        onlyHederaERC20() 
+        returns (bool) 
+    {
+        int256 responseCode = HederaTokenService.unfreezeToken(tokenAddress, account);
+        return _checkResponse(responseCode);
+    }
+
    /**
     * @dev Transfers an amount of token from the token owner contract to an account
     *    

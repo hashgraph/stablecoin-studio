@@ -23,89 +23,41 @@ import type {
   PromiseOrValue,
 } from "../common";
 
-export declare namespace IHederaTokenService {
-  export type ExpiryStruct = {
-    second: PromiseOrValue<BigNumberish>;
-    autoRenewAccount: PromiseOrValue<string>;
-    autoRenewPeriod: PromiseOrValue<BigNumberish>;
-  };
-
-  export type ExpiryStructOutput = [number, string, number] & {
-    second: number;
-    autoRenewAccount: string;
-    autoRenewPeriod: number;
-  };
-
-  export type KeyValueStruct = {
-    inheritAccountKey: PromiseOrValue<boolean>;
-    contractId: PromiseOrValue<string>;
-    ed25519: PromiseOrValue<BytesLike>;
-    ECDSA_secp256k1: PromiseOrValue<BytesLike>;
-    delegatableContractId: PromiseOrValue<string>;
-  };
-
-  export type KeyValueStructOutput = [
-    boolean,
-    string,
-    string,
-    string,
-    string
-  ] & {
-    inheritAccountKey: boolean;
-    contractId: string;
-    ed25519: string;
-    ECDSA_secp256k1: string;
-    delegatableContractId: string;
-  };
-
-  export type TokenKeyStruct = {
-    keyType: PromiseOrValue<BigNumberish>;
-    key: IHederaTokenService.KeyValueStruct;
-  };
-
-  export type TokenKeyStructOutput = [
-    BigNumber,
-    IHederaTokenService.KeyValueStructOutput
-  ] & { keyType: BigNumber; key: IHederaTokenService.KeyValueStructOutput };
-}
-
 export interface HTSTokenOwnerInterface extends utils.Interface {
   functions: {
     "burnToken(address,uint256)": FunctionFragment;
+    "delegateTransferFrom(address,address,address,uint256)": FunctionFragment;
+    "delegateTransferFromNFT(address,address,address,uint256)": FunctionFragment;
     "erc20address()": FunctionFragment;
-    "getTokenExpiryInfo(address)": FunctionFragment;
-    "getTokenKey(address,uint256)": FunctionFragment;
-    "grantTokenKyc(address,address)": FunctionFragment;
-    "isKyc(address,address)": FunctionFragment;
+    "freeze(address,address)": FunctionFragment;
     "mintToken(address,uint256)": FunctionFragment;
-    "pauseToken(address)": FunctionFragment;
-    "revokeTokenKyc(address,address)": FunctionFragment;
+    "pause(address)": FunctionFragment;
     "setERC20Address(address)": FunctionFragment;
     "tranferContract(address,address,uint256)": FunctionFragment;
     "transfer(address,address,address,uint256)": FunctionFragment;
-    "unpauseToken(address)": FunctionFragment;
-    "updateTokenExpiryInfo(address,(uint32,address,uint32))": FunctionFragment;
-    "updateTokenKeys(address,(uint256,(bool,address,bytes,bytes,address))[])": FunctionFragment;
+    "transferFrom(address,address,address,uint256)": FunctionFragment;
+    "transferFromNFT(address,address,address,uint256)": FunctionFragment;
+    "unfreeze(address,address)": FunctionFragment;
+    "unpause(address)": FunctionFragment;
     "wipeToken(address,address,uint32)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
       | "burnToken"
+      | "delegateTransferFrom"
+      | "delegateTransferFromNFT"
       | "erc20address"
-      | "getTokenExpiryInfo"
-      | "getTokenKey"
-      | "grantTokenKyc"
-      | "isKyc"
+      | "freeze"
       | "mintToken"
-      | "pauseToken"
-      | "revokeTokenKyc"
+      | "pause"
       | "setERC20Address"
       | "tranferContract"
       | "transfer"
-      | "unpauseToken"
-      | "updateTokenExpiryInfo"
-      | "updateTokenKeys"
+      | "transferFrom"
+      | "transferFromNFT"
+      | "unfreeze"
+      | "unpause"
       | "wipeToken"
   ): FunctionFragment;
 
@@ -114,23 +66,29 @@ export interface HTSTokenOwnerInterface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "delegateTransferFrom",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "delegateTransferFromNFT",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
+  encodeFunctionData(
     functionFragment: "erc20address",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getTokenExpiryInfo",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getTokenKey",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "grantTokenKyc",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "isKyc",
+    functionFragment: "freeze",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -138,12 +96,8 @@ export interface HTSTokenOwnerInterface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "pauseToken",
+    functionFragment: "pause",
     values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "revokeTokenKyc",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setERC20Address",
@@ -167,16 +121,30 @@ export interface HTSTokenOwnerInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "unpauseToken",
+    functionFragment: "transferFrom",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "transferFromNFT",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "unfreeze",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "unpause",
     values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "updateTokenExpiryInfo",
-    values: [PromiseOrValue<string>, IHederaTokenService.ExpiryStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "updateTokenKeys",
-    values: [PromiseOrValue<string>, IHederaTokenService.TokenKeyStruct[]]
   ): string;
   encodeFunctionData(
     functionFragment: "wipeToken",
@@ -189,28 +157,20 @@ export interface HTSTokenOwnerInterface extends utils.Interface {
 
   decodeFunctionResult(functionFragment: "burnToken", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "delegateTransferFrom",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "delegateTransferFromNFT",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "erc20address",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "getTokenExpiryInfo",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getTokenKey",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "grantTokenKyc",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "isKyc", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "freeze", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "mintToken", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "pauseToken", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "revokeTokenKyc",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setERC20Address",
     data: BytesLike
@@ -221,17 +181,15 @@ export interface HTSTokenOwnerInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "transfer", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "unpauseToken",
+    functionFragment: "transferFrom",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "updateTokenExpiryInfo",
+    functionFragment: "transferFromNFT",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "updateTokenKeys",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "unfreeze", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "wipeToken", data: BytesLike): Result;
 
   events: {};
@@ -270,27 +228,26 @@ export interface HTSTokenOwner extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    delegateTransferFrom(
+      token: PromiseOrValue<string>,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    delegateTransferFromNFT(
+      token: PromiseOrValue<string>,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      serialNumber: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     erc20address(overrides?: CallOverrides): Promise<[string]>;
 
-    getTokenExpiryInfo(
-      token: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    getTokenKey(
-      token: PromiseOrValue<string>,
-      keyType: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    grantTokenKyc(
-      token: PromiseOrValue<string>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    isKyc(
-      token: PromiseOrValue<string>,
+    freeze(
+      tokenAddress: PromiseOrValue<string>,
       account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -301,14 +258,8 @@ export interface HTSTokenOwner extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    pauseToken(
-      token: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    revokeTokenKyc(
-      token: PromiseOrValue<string>,
-      account: PromiseOrValue<string>,
+    pause(
+      tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -332,20 +283,30 @@ export interface HTSTokenOwner extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    unpauseToken(
+    transferFrom(
       token: PromiseOrValue<string>,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    updateTokenExpiryInfo(
+    transferFromNFT(
       token: PromiseOrValue<string>,
-      expiryInfo: IHederaTokenService.ExpiryStruct,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      serialNumber: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    updateTokenKeys(
-      token: PromiseOrValue<string>,
-      keys: IHederaTokenService.TokenKeyStruct[],
+    unfreeze(
+      tokenAddress: PromiseOrValue<string>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    unpause(
+      tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -363,27 +324,26 @@ export interface HTSTokenOwner extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  delegateTransferFrom(
+    token: PromiseOrValue<string>,
+    from: PromiseOrValue<string>,
+    to: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  delegateTransferFromNFT(
+    token: PromiseOrValue<string>,
+    from: PromiseOrValue<string>,
+    to: PromiseOrValue<string>,
+    serialNumber: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   erc20address(overrides?: CallOverrides): Promise<string>;
 
-  getTokenExpiryInfo(
-    token: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  getTokenKey(
-    token: PromiseOrValue<string>,
-    keyType: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  grantTokenKyc(
-    token: PromiseOrValue<string>,
-    account: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  isKyc(
-    token: PromiseOrValue<string>,
+  freeze(
+    tokenAddress: PromiseOrValue<string>,
     account: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -394,14 +354,8 @@ export interface HTSTokenOwner extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  pauseToken(
-    token: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  revokeTokenKyc(
-    token: PromiseOrValue<string>,
-    account: PromiseOrValue<string>,
+  pause(
+    tokenAddress: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -425,20 +379,30 @@ export interface HTSTokenOwner extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  unpauseToken(
+  transferFrom(
     token: PromiseOrValue<string>,
+    from: PromiseOrValue<string>,
+    to: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  updateTokenExpiryInfo(
+  transferFromNFT(
     token: PromiseOrValue<string>,
-    expiryInfo: IHederaTokenService.ExpiryStruct,
+    from: PromiseOrValue<string>,
+    to: PromiseOrValue<string>,
+    serialNumber: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  updateTokenKeys(
-    token: PromiseOrValue<string>,
-    keys: IHederaTokenService.TokenKeyStruct[],
+  unfreeze(
+    tokenAddress: PromiseOrValue<string>,
+    account: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  unpause(
+    tokenAddress: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -456,42 +420,29 @@ export interface HTSTokenOwner extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    erc20address(overrides?: CallOverrides): Promise<string>;
-
-    getTokenExpiryInfo(
+    delegateTransferFrom(
       token: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, IHederaTokenService.ExpiryStructOutput] & {
-        responseCode: BigNumber;
-        expiryInfo: IHederaTokenService.ExpiryStructOutput;
-      }
-    >;
-
-    getTokenKey(
-      token: PromiseOrValue<string>,
-      keyType: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, IHederaTokenService.KeyValueStructOutput] & {
-        responseCode: BigNumber;
-        key: IHederaTokenService.KeyValueStructOutput;
-      }
-    >;
-
-    grantTokenKyc(
-      token: PromiseOrValue<string>,
-      account: PromiseOrValue<string>,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    isKyc(
+    delegateTransferFromNFT(
       token: PromiseOrValue<string>,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      serialNumber: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    erc20address(overrides?: CallOverrides): Promise<string>;
+
+    freeze(
+      tokenAddress: PromiseOrValue<string>,
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, boolean] & { responseCode: BigNumber; kycGranted: boolean }
-    >;
+    ): Promise<boolean>;
 
     mintToken(
       tokenAddress: PromiseOrValue<string>,
@@ -499,16 +450,10 @@ export interface HTSTokenOwner extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    pauseToken(
-      token: PromiseOrValue<string>,
+    pause(
+      tokenAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    revokeTokenKyc(
-      token: PromiseOrValue<string>,
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<boolean>;
 
     setERC20Address(
       _erc20address: PromiseOrValue<string>,
@@ -530,22 +475,32 @@ export interface HTSTokenOwner extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    unpauseToken(
+    transferFrom(
       token: PromiseOrValue<string>,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    updateTokenExpiryInfo(
+    transferFromNFT(
       token: PromiseOrValue<string>,
-      expiryInfo: IHederaTokenService.ExpiryStruct,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      serialNumber: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    updateTokenKeys(
-      token: PromiseOrValue<string>,
-      keys: IHederaTokenService.TokenKeyStruct[],
+    unfreeze(
+      tokenAddress: PromiseOrValue<string>,
+      account: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<boolean>;
+
+    unpause(
+      tokenAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     wipeToken(
       tokenAddress: PromiseOrValue<string>,
@@ -564,27 +519,26 @@ export interface HTSTokenOwner extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    delegateTransferFrom(
+      token: PromiseOrValue<string>,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    delegateTransferFromNFT(
+      token: PromiseOrValue<string>,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      serialNumber: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     erc20address(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getTokenExpiryInfo(
-      token: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    getTokenKey(
-      token: PromiseOrValue<string>,
-      keyType: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    grantTokenKyc(
-      token: PromiseOrValue<string>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    isKyc(
-      token: PromiseOrValue<string>,
+    freeze(
+      tokenAddress: PromiseOrValue<string>,
       account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -595,14 +549,8 @@ export interface HTSTokenOwner extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    pauseToken(
-      token: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    revokeTokenKyc(
-      token: PromiseOrValue<string>,
-      account: PromiseOrValue<string>,
+    pause(
+      tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -626,20 +574,30 @@ export interface HTSTokenOwner extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    unpauseToken(
+    transferFrom(
       token: PromiseOrValue<string>,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    updateTokenExpiryInfo(
+    transferFromNFT(
       token: PromiseOrValue<string>,
-      expiryInfo: IHederaTokenService.ExpiryStruct,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      serialNumber: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    updateTokenKeys(
-      token: PromiseOrValue<string>,
-      keys: IHederaTokenService.TokenKeyStruct[],
+    unfreeze(
+      tokenAddress: PromiseOrValue<string>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    unpause(
+      tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -658,27 +616,26 @@ export interface HTSTokenOwner extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    delegateTransferFrom(
+      token: PromiseOrValue<string>,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    delegateTransferFromNFT(
+      token: PromiseOrValue<string>,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      serialNumber: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     erc20address(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getTokenExpiryInfo(
-      token: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    getTokenKey(
-      token: PromiseOrValue<string>,
-      keyType: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    grantTokenKyc(
-      token: PromiseOrValue<string>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    isKyc(
-      token: PromiseOrValue<string>,
+    freeze(
+      tokenAddress: PromiseOrValue<string>,
       account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -689,14 +646,8 @@ export interface HTSTokenOwner extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    pauseToken(
-      token: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    revokeTokenKyc(
-      token: PromiseOrValue<string>,
-      account: PromiseOrValue<string>,
+    pause(
+      tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -720,20 +671,30 @@ export interface HTSTokenOwner extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    unpauseToken(
+    transferFrom(
       token: PromiseOrValue<string>,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    updateTokenExpiryInfo(
+    transferFromNFT(
       token: PromiseOrValue<string>,
-      expiryInfo: IHederaTokenService.ExpiryStruct,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      serialNumber: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    updateTokenKeys(
-      token: PromiseOrValue<string>,
-      keys: IHederaTokenService.TokenKeyStruct[],
+    unfreeze(
+      tokenAddress: PromiseOrValue<string>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    unpause(
+      tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

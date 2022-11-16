@@ -246,7 +246,7 @@ export default class HTSProvider implements IProvider {
 		await this.callContract('initialize', {
 			contractId: String(proxyContract),
 			parameters: [],
-			gas: 250_000,
+			gas: 260_000,
 			abi: HederaERC20__factory.abi,
 			account,
 		});

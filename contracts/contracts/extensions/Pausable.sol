@@ -9,32 +9,32 @@ import "../hts-precompile/IHederaTokenService.sol";
 abstract contract Pausable is IPausable, TokenOwner, Roles {
     
     /**
-     * @dev Pauses an `token` in order to prevent it from being involved in any kind of operation
+     * @dev Pauses the token in order to prevent it from being involved in any kind of operation
      *
-     * @param token The token to be paused
      */
-    function pause(address token) 
+    function pause() 
         external       
         onlyRole(PAUSE_ROLE)  
+        returns (bool) 
     {         
-        int responseCode = IHederaTokenService(precompiledAddress).pauseToken(token);
-        _checkResponsecode(responseCode);
+        bool success = HTSTokenOwner(_getTokenOwnerAddress()).pause(_getTokenAddress());
         
-        emit TokenPaused(token); 
+        emit TokenPaused(_getTokenAddress()); 
+        return success;
     }
 
     /**
-     * @dev Unpauses a `token` in order to allow it to be involved in any kind of operation
+     * @dev Unpauses the token in order to allow it to be involved in any kind of operation
      *
-     * @param token The token to be unpaused
      */
-    function unpause(address token)
+    function unpause()
         external       
         onlyRole(PAUSE_ROLE)  
+        returns (bool) 
     {         
-        int responseCode = IHederaTokenService(precompiledAddress).unpauseToken(token);
-        _checkResponsecode(responseCode);
+        bool success = HTSTokenOwner(_getTokenOwnerAddress()).unpause(_getTokenAddress());
         
-        emit TokenUnpaused(token); 
+        emit TokenUnpaused(_getTokenAddress()); 
+        return success;
     }
 }
