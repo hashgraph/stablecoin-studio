@@ -90,12 +90,17 @@ describe("Delete Tests", function() {
       await revokeRole(DELETE_ROLE, ContractId, proxyAddress, client, client2account)
     });
 
-    it("An account with delete role can delete a token", async function() {
+    it("An account without delete role can't delete a token", async function() {
+      await expect(deleteToken(ContractId, proxyAddress, client2)).to.eventually.be.rejectedWith(Error);
+    });  
+
+
+    /*it("An account with delete role can delete a token", async function() {
       await grantRole(DELETE_ROLE, ContractId, proxyAddress, client, client2account);
 
-      await deleteToken(ContractId, proxyAddress, client);
+      await expect(deleteToken(ContractId, proxyAddress, client2)).not.to.eventually.be.rejectedWith(Error);
 
       //Reset status
-      await revokeRole(DELETE_ROLE, ContractId, proxyAddress, client, client2account)
-    });  
-  });
+      await revokeRole(DELETE_ROLE, ContractId, proxyAddress, client, client2account);
+    });*/  
+});

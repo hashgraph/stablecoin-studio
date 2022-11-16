@@ -132,7 +132,7 @@ export async function pause(ContractId: any, proxyAddress: string, clientPausing
 export async function unpause(ContractId: any, proxyAddress: string, clientPausingToken: any){
     let params: any[] = [];  
     let result = await contractCall(ContractId.fromString(proxyAddress!), 'unpause', params, clientPausingToken, Gas1, HederaERC20__factory.abi);
-    if(!result[0]) throw new Error("Pause unsucessful!!!");
+    if(!result[0]) throw new Error("Unpause unsucessful!!!");
 }
 
 // Freezable ///////////////////////////////////////////////////
