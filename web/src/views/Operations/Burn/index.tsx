@@ -2,24 +2,25 @@ import { Heading, Text, Stack, useDisclosure } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import DetailsReview from '../../../components/DetailsReview';
-import InputNumberController from '../../../components/Form/InputNumberController';
+import InputController from '../../../components/Form/InputController';
 import OperationLayout from '../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-	SELECTED_WALLET_ACCOUNT_INFO,
+	// SELECTED_WALLET_ACCOUNT_INFO,
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNT,
 	walletActions,
 } from '../../../store/slices/walletSlice';
 import SDKService from '../../../services/SDKService';
-import { validateDecimals } from '../../../utils/validationsHelper';
+import { formatAmount } from '../../../utils/inputHelper';
+import { handleRequestValidation } from '../../../utils/validationsHelper';
 import { useState, useEffect } from 'react';
 import type { AppDispatch } from '../../../store/store.js';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
-import { BigDecimal } from 'hedera-stable-coin-sdk';
+import { CashOutStableCoinRequest, GetStableCoinDetailsRequest } from 'hedera-stable-coin-sdk';
 
 const BurnOperation = () => {
 	const {
@@ -30,13 +31,23 @@ const BurnOperation = () => {
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
-	const infoAccount = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
+	// const infoAccount = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 
 	const [errorOperation, setErrorOperation] = useState();
-	const navigate = useNavigate()
+	const [request] = useState(
+		new CashOutStableCoinRequest({
+			account: {
+				accountId: account.accountId,
+			},
+			amount: '0',
+			proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
+			tokenId: selectedStableCoin?.tokenId ?? '',
+		}),
+	);
+	const navigate = useNavigate();
 	const dispatch = useDispatch<AppDispatch>();
 
-	const { decimals = 0, totalSupply } = selectedStableCoin || {};
+	// const { decimals = 0, totalSupply } = selectedStableCoin || {};
 
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
@@ -46,26 +57,20 @@ const BurnOperation = () => {
 
 	useEffect(() => {
 		handleRefreshCoinInfo();
-	}, [])
-	
+	}, []);
+
 	const handleCloseModal = () => {
 		RouterManager.goBack(navigate);
-	}
+	};
 
 	const handleBurn: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
-		const { amount } = getValues();
+		// const { amount } = getValues();
 		try {
 			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId) {
 				onError();
 				return;
 			}
-			await SDKService.burn({
-				proxyContractId: selectedStableCoin.memo.proxyContract,
-				account,
-				tokenId: selectedStableCoin.tokenId,
-				amount: amount.toString(),
-				publicKey: infoAccount.publicKey,
-			});
+			await SDKService.cashOut(request);
 			onSuccess();
 		} catch (error: any) {
 			setErrorOperation(error.toString());
@@ -74,15 +79,15 @@ const BurnOperation = () => {
 	};
 
 	const handleRefreshCoinInfo = async () => {
-		const stableCoinDetails = await SDKService.getStableCoinDetails({
+		const stableCoinDetails = await SDKService.getStableCoinDetails(new GetStableCoinDetailsRequest({
 			id: selectedStableCoin?.tokenId || '',
-		});
+		}));
 		dispatch(
 			walletActions.setSelectedStableCoin({
 				tokenId: stableCoinDetails?.tokenId,
-				initialSupply: Number(stableCoinDetails?.initialSupply),
-				totalSupply: Number(stableCoinDetails?.totalSupply),
-				maxSupply: Number(stableCoinDetails?.maxSupply),
+				initialSupply: stableCoinDetails?.initialSupply,
+				totalSupply: stableCoinDetails?.totalSupply,
+				maxSupply: stableCoinDetails?.maxSupply,
 				name: stableCoinDetails?.name,
 				symbol: stableCoinDetails?.symbol,
 				decimals: stableCoinDetails?.decimals,
@@ -115,31 +120,20 @@ const BurnOperation = () => {
 							{t('burn:operationTitle')}
 						</Text>
 						<Stack as='form' spacing={6}>
-							<InputNumberController
+							<InputController
 								rules={{
-									required: t('global:validations.required'),
+									required: t(`global:validations.required`),
 									validate: {
-										maxDecimals: (value: number) => {
-											return (
-												validateDecimals(value, decimals) ||
-												t('global:validations.decimalsValidation')
-											);
-										},
-										quantityOverTotalSupply: (value: number) => {
-											return (
-												(totalSupply &&
-													BigDecimal.fromString(totalSupply, decimals).isGreaterOrEqualThan(
-														BigDecimal.fromString(value.toString(), decimals),
-													)) ||
-												t('global:validations.overTotalSupply')
-											);
+										validation: (value: string) => {
+											request.amount = value;
+											const res = handleRequestValidation(request.validate('amount'));
+											return res;
 										},
 									},
 								}}
-								decimalScale={decimals}
 								isRequired
 								control={control}
-								name='amount'
+								name={'amount'}
 								label={t('burn:amountLabel')}
 								placeholder={t('burn:amountPlaceholder')}
 							/>
@@ -152,6 +146,13 @@ const BurnOperation = () => {
 			<ModalsHandler
 				errorNotificationTitle={t('operations:modalErrorTitle')}
 				errorNotificationDescription={errorOperation}
+				successNotificationTitle={t('operations:modalSuccessTitle')}
+				successNotificationDescription={t('burn:modalSuccessDesc', {
+					amount: formatAmount({
+						amount: getValues().amount ?? undefined,
+						decimals: selectedStableCoin?.decimals,
+					}),
+				})}
 				modalActionProps={{
 					isOpen: isOpenModalAction,
 					onClose: onCloseModalAction,
@@ -171,8 +172,6 @@ const BurnOperation = () => {
 						]}
 					/>
 				}
-				successNotificationTitle={t('operations:modalSuccessTitle')}
-				successNotificationDescription={t('operations:modalSuccessDesc')}
 				handleOnCloseModalError={handleCloseModal}
 				handleOnCloseModalSuccess={handleCloseModal}
 			/>

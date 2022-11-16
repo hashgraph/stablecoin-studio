@@ -2,13 +2,13 @@ import { StableCoinRole } from '../../../core/enum.js';
 import Account from '../../../domain/context/account/Account.js';
 import { Capabilities } from '../../../domain/context/stablecoin/Capabilities.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
-import IStableCoinList from '../../in/sdk/response/IStableCoinList.js';
-import IAccountInfo from '../../in/sdk/response/IAccountInfo.js';
+import StableCoinList from '../../in/sdk/response/StableCoinList.js';
+import AccountInfo from '../../in/sdk/response/AccountInfo.js';
 import BigDecimal from '../../../domain/context/stablecoin/BigDecimal.js';
 
 export default interface IStableCoinRepository {
 	saveCoin(coin: StableCoin, account: Account): Promise<StableCoin>;
-	getListStableCoins(account: Account): Promise<IStableCoinList[]>;
+	getListStableCoins(account: Account): Promise<StableCoinList[]>;
 	getStableCoin(id: string): Promise<StableCoin>;
 	getCapabilitiesStableCoin(
 		tokenId: string,
@@ -20,10 +20,6 @@ export default interface IStableCoinRepository {
 		tokenId: string,
 		account: Account,
 	): Promise<string>;
-	getNameToken(
-		proxyContractId: string,
-		account: Account,
-	): Promise<Uint8Array>;
 	cashIn(
 		proxyContractId: string,
 		targetId: string,
@@ -133,9 +129,9 @@ export default interface IStableCoinRepository {
 		outAccountId: string,
 		inAccountId: string,
 		account: Account,
-		isApproval: boolean
+		isApproval: boolean,
 	): Promise<boolean>;
-	getAccountInfo(accountId: string): Promise<IAccountInfo>;
+	getAccountInfo(accountId: string): Promise<AccountInfo>;
 	getRoles(
 		proxyContractId: string,
 		address: string,

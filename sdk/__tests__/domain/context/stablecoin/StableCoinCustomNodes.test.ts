@@ -3,11 +3,11 @@ import {
   HederaNetworkEnviroment,
   Configuration,
   NetworkMode,
-  ICreateStableCoinRequest,
   SDK,
+  CreateStableCoinRequest,
 } from '../../../../src/index.js';
 import { AccountId as HederaAccountId } from '@hashgraph/sdk';
-import { ACCOUNTS, getSDKAsync } from '../../../core/core.js';
+import { getSDKAsync, REQUEST_ACCOUNTS } from '../../../core/core.js';
 
 describe('🧪 [DOMAIN] StableCoin', () => {
   let sdk: SDK;
@@ -21,17 +21,17 @@ describe('🧪 [DOMAIN] StableCoin', () => {
       ),
       mode: NetworkMode.EOA,
       options: {
-        account: ACCOUNTS.testnet,
+        account: REQUEST_ACCOUNTS.testnet,
       },
     };
 
     sdk = await getSDKAsync(conf);
-    const create: ICreateStableCoinRequest = {
-      account: ACCOUNTS.testnet,
+    const create: CreateStableCoinRequest = new CreateStableCoinRequest({
+      account: REQUEST_ACCOUNTS.testnet,
       name: 'Custom Nodes',
       symbol: 'CN',
       decimals: 2,
-    };
+    });
 
     const stableCoin = await sdk.createStableCoin(create);
     expect(stableCoin).not.toBeNull();
@@ -44,17 +44,17 @@ describe('🧪 [DOMAIN] StableCoin', () => {
       network: new HederaNetwork(HederaNetworkEnviroment.TEST),
       mode: NetworkMode.EOA,
       options: {
-        account: ACCOUNTS.testnet,
+        account: REQUEST_ACCOUNTS.testnet,
       },
     };
 
     sdk = await getSDKAsync(conf);
-    const create: ICreateStableCoinRequest = {
-      account: ACCOUNTS.testnet,
+    const create: CreateStableCoinRequest = new CreateStableCoinRequest({
+      account: REQUEST_ACCOUNTS.testnet,
       name: 'Custom Nodes',
       symbol: 'CN',
       decimals: 2,
-    };
+    });
 
     const stableCoin = await sdk.createStableCoin(create);
     expect(stableCoin).not.toBeNull();

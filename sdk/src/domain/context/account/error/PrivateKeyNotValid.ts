@@ -1,7 +1,7 @@
-import DomainError from "../../../error/DomainError.js";
+import BaseError, { ErrorCode } from "../../../../core/error/BaseError.js";
 
-export class PrivateKeyNotValid extends DomainError {
-	constructor(val: string) {
-		super(`Private Key ${val} is not a valid key`);
+export class PrivateKeyNotValid extends BaseError {
+	constructor(privateKey: string) {
+		super(ErrorCode.PrivateKeyInvalid, `Private Key ${privateKey} is not a valid key`);
 	}
 }

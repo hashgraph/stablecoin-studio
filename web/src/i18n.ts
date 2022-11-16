@@ -14,6 +14,7 @@ import ROLES_EN from './translations/en/roles.json';
 import STABLE_COIN_CREATION_EN from './translations/en/stableCoinCreation.json';
 import STABLE_COIN_DETAILS_EN from './translations/en/stableCoinDetails.json';
 import WIPE_EN from './translations/en/wipe.json';
+import EXTERNAL_TOKEN_INFO_EN from './translations/en/externalTokenInfo.json';
 
 const options = {
 	order: ['localStorage', 'navigator'],
@@ -40,6 +41,7 @@ i18n
 				stableCoinCreation: STABLE_COIN_CREATION_EN,
 				stableCoinDetails: STABLE_COIN_DETAILS_EN,
 				wipe: WIPE_EN,
+				externalTokenInfo: EXTERNAL_TOKEN_INFO_EN,
 			},
 			es: {
 				global: GLOBAL_ES,

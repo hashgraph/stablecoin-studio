@@ -8,10 +8,10 @@ import { RouterManager } from '../../Router/RouterManager';
 import BaseContainer from '../../components/BaseContainer';
 import DetailsReview from '../../components/DetailsReview';
 import { SELECTED_WALLET_COIN, walletActions } from '../../store/slices/walletSlice';
-import { formatAmountWithDecimals } from '../../utils/inputHelper';
 import SDKService from '../../services/SDKService';
 import type { AppDispatch } from '../../store/store';
 import { useEffect } from 'react';
+import { GetStableCoinDetailsRequest } from 'hedera-stable-coin-sdk';
 
 export interface OperationLayoutProps {
 	LeftContent: ReactNode;
@@ -31,20 +31,60 @@ const OperationLayout = ({ LeftContent, onConfirm, confirmBtnProps }: OperationL
 	};
 
 	useEffect(() => {
-		handleRefreshCoinInfo()
-	},[])
-	
+		handleRefreshCoinInfo();
+	}, []);
+	const optionalDetailsFinite = [
+		{
+			label: t('operations:details.initialSupply'),
+			value: selectedStableCoin?.initialSupply ? selectedStableCoin?.initialSupply : unknown,
+		},
+		{
+			label: t('operations:details.totalSupply'),
+			value: selectedStableCoin?.totalSupply ? selectedStableCoin?.totalSupply : unknown,
+		},
+		{
+			label: t('operations:details.maxSupply'),
+			value: selectedStableCoin?.maxSupply ? selectedStableCoin?.maxSupply : unknown,
+		},
+		{
+			label: t('operations:details.supplyType'),
+			// @ts-ignore Property 'supplyType' does not exist on type 'IStableCoinDetail'.
+			value:
+				selectedStableCoin?.maxSupply === 'INFINITE'
+					? t('operations:details.infinite')
+					: t('operations:details.finite'),
+		},
+	];
+
+	const optionalDetailsInfinite = [
+		{
+			label: t('operations:details.initialSupply'),
+			value: selectedStableCoin?.initialSupply ? selectedStableCoin.initialSupply : unknown,
+		},
+		{
+			label: t('operations:details.totalSupply'),
+			value: selectedStableCoin?.totalSupply ? selectedStableCoin?.totalSupply : unknown,
+		},
+		{
+			label: t('operations:details.supplyType'),
+			// @ts-ignore Property 'supplyType' does not exist on type 'IStableCoinDetail'.
+			value:
+				selectedStableCoin?.maxSupply === 'INFINITE'
+					? t('operations:details.infinite')
+					: t('operations:details.finite'),
+		},
+	];
 
 	const handleRefreshCoinInfo = async () => {
-		const stableCoinDetails = await SDKService.getStableCoinDetails({
+		const stableCoinDetails = await SDKService.getStableCoinDetails(new GetStableCoinDetailsRequest ({
 			id: selectedStableCoin?.tokenId || '',
-		});
+		}));
 		dispatch(
 			walletActions.setSelectedStableCoin({
 				tokenId: stableCoinDetails?.tokenId,
-				initialSupply: Number(stableCoinDetails?.initialSupply),
-				totalSupply: Number(stableCoinDetails?.totalSupply),
-				maxSupply: Number(stableCoinDetails?.maxSupply),
+				initialSupply: stableCoinDetails?.initialSupply,
+				totalSupply: stableCoinDetails?.totalSupply,
+				maxSupply: stableCoinDetails?.maxSupply,
 				name: stableCoinDetails?.name,
 				symbol: stableCoinDetails?.symbol,
 				decimals: stableCoinDetails?.decimals,
@@ -103,33 +143,11 @@ const OperationLayout = ({ LeftContent, onConfirm, confirmBtnProps }: OperationL
 							<DetailsReview
 								title={t('operations:details.optionalTitle')}
 								titleProps={{ fontWeight: 700, color: 'brand.secondary' }}
-								details={[
-									{
-										label: t('operations:details.initialSupply'),
-										value: selectedStableCoin?.initialSupply
-											? formatAmountWithDecimals({
-													amount: selectedStableCoin?.initialSupply,
-													decimals: selectedStableCoin?.decimals || 0,
-											  })
-											: unknown,
-									},
-									{
-										label: t('operations:details.totalSupply'),
-										value: selectedStableCoin?.totalSupply
-											? formatAmountWithDecimals({
-													amount: selectedStableCoin?.totalSupply,
-													decimals: selectedStableCoin?.decimals || 0,
-											  })
-											: unknown,
-									},
-									{
-										label: t('operations:details.supplyType'),
-										value:
-											selectedStableCoin?.maxSupply === 'INFINITE'
-												? t('operations:details.infinite')
-												: t('operations:details.finite'),
-									},
-								]}
+								details={
+									selectedStableCoin?.maxSupply === 'INFINITE'
+										? optionalDetailsInfinite
+										: optionalDetailsFinite
+								}
 							/>
 						</Stack>
 					</Stack>

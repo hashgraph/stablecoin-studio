@@ -5,8 +5,11 @@ import {
 } from '@hashgraph/sdk';
 import { ValueObject } from '../../../core/types.js';
 import { proto } from '@hashgraph/proto';
-import InvalidKeyForContractIdDomainError from './error/InvalidKeyForContractIdDomainError.js';
 import Long from 'long';
+import InvalidKeyForContract from './error/InvalidKeyForContract.js';
+import BaseError from '../../../core/error/BaseError.js';
+import CheckStrings from '../../../core/checks/strings/CheckStrings.js';
+import { InvalidContractId } from './error/InvalidContractId.js';
 
 export default class ContractId extends ValueObject {
 	public readonly id: string;
@@ -30,7 +33,7 @@ export default class ContractId extends ValueObject {
 			out?.contractID?.contractNum ||
 			out?.delegatableContractId?.contractNum;
 		if (options.strict && !id) {
-			throw new InvalidKeyForContractIdDomainError(out);
+			throw new InvalidKeyForContract(out);
 		} else if (!id) {
 			id = Long.ZERO;
 		}
@@ -39,6 +42,20 @@ export default class ContractId extends ValueObject {
 
 	public static fromHederaContractId(con: HContractId | DelegateContractId) {
 		return new ContractId(String(con));
+	}
+
+	public static validate(id: string): BaseError[] {
+		const err: BaseError[] = [];
+		if (!CheckStrings.isNotEmpty(id)) {
+			err.push(new InvalidContractId(id));
+		} else {
+			try {
+				HContractId.fromString(id);
+			} catch (error) {
+				err.push(new InvalidContractId(id));
+			}
+		}
+		return err;
 	}
 
 	public toDelegateContractId(): DelegateContractId {

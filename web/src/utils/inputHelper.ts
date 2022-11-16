@@ -7,8 +7,6 @@ export const formatAmount = ({
 	decimals?: number;
 	language?: string;
 }) => {
-	if (typeof amount !== 'number' || Number.isNaN(amount)) return '';
-
 	return amount?.toLocaleString(language, {
 		maximumFractionDigits: decimals ?? 0,
 	});

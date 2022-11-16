@@ -1,1 +1,5 @@
-export default class BaseEntity {}
+export default class BaseEntity {
+	constructor() {
+		return;
+	}
+}

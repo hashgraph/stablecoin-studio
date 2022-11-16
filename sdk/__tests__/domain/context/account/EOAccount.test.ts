@@ -1,6 +1,6 @@
 import EOAccount from '../../../../src/domain/context/account/EOAccount.js';
 import PrivateKey from '../../../../src/domain/context/account/PrivateKey.js';
-import DomainError from '../../../../src/domain/error/DomainError.js';
+import DomainError from '../../../../src/core/error/BaseError.js';
 import { ACCOUNTS } from '../../../core/core.js';
 
 describe('🧪 [DOMAIN] EOAccount', () => {

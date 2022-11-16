@@ -1,5 +1,5 @@
 import { ContractId } from '../../../../../src/index.js';
-import DomainError from '../../../../../src/domain/error/DomainError.js';
+import DomainError from '../../../../../src/core/error/BaseError.js';
 
 describe('🧪 [DOMAIN] InvalidKeyForContractIdDomainError', () => {
   it('Throw exception', () => {

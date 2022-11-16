@@ -2,36 +2,17 @@ import { configurationService, language } from './../../../index.js';
 import { utilsService } from '../../../index.js';
 import {
   SDK,
-  ICreateStableCoinRequest,
   AccountId,
   PrivateKey,
   PublicKey,
   IStableCoinDetail,
-  EOAccount,
+  CreateStableCoinRequest,
+  TokenSupplyType,
 } from 'hedera-stable-coin-sdk';
 import { IManagedFeatures } from '../../../domain/configuration/interfaces/IManagedFeatures.js';
 import Service from '../Service.js';
 import SetConfigurationService from '../configuration/SetConfigurationService.js';
-import { StableCoin } from '../../../domain/stablecoin/StableCoin.js';
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
-
-export const createdStableCoin = {
-  name: '',
-  symbol: '',
-  autoRenewAccount: '',
-  decimals: '',
-  initialSupply: undefined,
-  supplyType: true,
-  totalSupply: '',
-  supplyKey: undefined,
-  freezeKey: undefined,
-  adminKey: undefined,
-  KYCKey: undefined,
-  wipeKey: undefined,
-  pauseKey: undefined,
-  treasury: undefined,
-  autoRenewAccountId: undefined,
-};
 
 /**
  * Create Stable Coin Service
@@ -47,7 +28,7 @@ export default class CreateStableCoinService extends Service {
    * @param isWizard
    */
   public async createStableCoin(
-    stableCoin: StableCoin,
+    stableCoin: CreateStableCoinRequest,
     isWizard = false,
   ): Promise<IStableCoinDetail> {
     if (isWizard) {
@@ -76,18 +57,8 @@ export default class CreateStableCoinService extends Service {
     utilsService.showMessage('\n');
     await utilsService.showSpinner(
       new Promise((resolve, reject) => {
-        const req: ICreateStableCoinRequest = {
-          account: new EOAccount(
-            currentAccount.accountId,
-            new PrivateKey(
-              currentAccount.privateKey.key,
-              currentAccount.privateKey.type,
-            ),
-          ),
-          ...stableCoin,
-        };
         sdk
-          .createStableCoin(req)
+          .createStableCoin(stableCoin)
           .then((coin) => {
             console.log(coin);
             createdToken = coin;
@@ -115,118 +86,142 @@ export default class CreateStableCoinService extends Service {
    * Specific function for wizard to create stable coin
    * @returns
    */
-  public async wizardCreateStableCoin(): Promise<StableCoin> {
+  public async wizardCreateStableCoin(): Promise<CreateStableCoinRequest> {
     const currentAccount = utilsService.getCurrentAccount();
 
     utilsService.displayCurrentUserInfo(currentAccount);
 
     // Call to create stable coin sdk function
-    const sdk: SDK = utilsService.getSDK();
-    let tokenToCreate: StableCoin;
+    let tokenToCreate = new CreateStableCoinRequest({
+      account: {
+        accountId: currentAccount.accountId,
+        privateKey: {
+          key: currentAccount.privateKey.key,
+          type: currentAccount.privateKey.type,
+        },
+      },
+      name: '',
+      symbol: '',
+      decimals: 6,
+    });
 
-    const name = await utilsService.defaultSingleAsk(
+    // Name
+    tokenToCreate.name = await utilsService.defaultSingleAsk(
       language.getText('stablecoin.askName'),
-      createdStableCoin.name || 'HEDERACOIN',
+      tokenToCreate.name || 'HEDERACOIN',
     );
-    createdStableCoin.name = name;
-
-    const symbol = await utilsService.defaultSingleAsk(
-      language.getText('stablecoin.askSymbol'),
-      createdStableCoin.symbol || 'HDC',
-    );
-    createdStableCoin.symbol = symbol;
-    let autoRenewAccount = '';
-    try {
-      autoRenewAccount = await utilsService.defaultSingleAsk(
-        language.getText('stablecoin.askAutoRenewAccountId'),
-        createdStableCoin.autoRenewAccount || currentAccount.accountId,
-      );
-      while (autoRenewAccount !== currentAccount.accountId) {
-        console.log(language.getText('stablecoin.autoRenewAccountError'));
-        autoRenewAccount = await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.askAutoRenewAccountId'),
-          createdStableCoin.autoRenewAccount || currentAccount.accountId,
+    await utilsService.handleValidation(
+      () => tokenToCreate.validate('autoRenewAccount'),
+      async () => {
+        tokenToCreate.name = await utilsService.defaultSingleAsk(
+          language.getText('stablecoin.askName'),
+          tokenToCreate.name || 'HEDERACOIN',
         );
-      }
-      sdk.checkIsAddress(autoRenewAccount);
-    } catch (error) {
-      console.log(language.getText('account.wrong'));
-      autoRenewAccount = await utilsService.defaultSingleAsk(
-        language.getText('stablecoin.askAutoRenewAccountId'),
-        createdStableCoin.autoRenewAccount || currentAccount.accountId,
-      );
-    }
-    createdStableCoin.autoRenewAccount = autoRenewAccount;
+      },
+    );
+
+    // Symbol
+    tokenToCreate.symbol = await utilsService.defaultSingleAsk(
+      language.getText('stablecoin.askSymbol'),
+      tokenToCreate.symbol || 'HDC',
+    );
+    await utilsService.handleValidation(
+      () => tokenToCreate.validate('symbol'),
+      async () => {
+        tokenToCreate.symbol = await utilsService.defaultSingleAsk(
+          language.getText('stablecoin.askSymbol'),
+          tokenToCreate.symbol || 'HDC',
+        );
+      },
+    );
+
+    // Auto renew account
+    tokenToCreate.autoRenewAccount = await utilsService.defaultSingleAsk(
+      language.getText('stablecoin.askAutoRenewAccountId'),
+      tokenToCreate.autoRenewAccount || currentAccount.accountId,
+    );
+    await utilsService.handleValidation(
+      () => tokenToCreate.validate('autoRenewAccount'),
+      async () => {
+        tokenToCreate.autoRenewAccount = await utilsService.defaultSingleAsk(
+          language.getText('stablecoin.askAutoRenewAccountId'),
+          tokenToCreate.autoRenewAccount || currentAccount.accountId,
+        );
+      },
+    );
 
     const optionalProps = await this.askForOptionalProps();
-    let decimals = '6';
     let initialSupply = '';
     let supplyType = true;
-    let totalSupply = undefined;
+    const totalSupply = undefined;
 
     if (optionalProps) {
-      decimals = await this.askForDecimals();
-
-      while (isNaN(Number(decimals))) {
-        utilsService.showError(language.getText('general.incorrectParam'));
-        decimals = await this.askForDecimals();
-      }
-      createdStableCoin.decimals = decimals;
+      tokenToCreate.decimals = await this.askForDecimals(
+        tokenToCreate.decimals.toString(),
+      );
+      await utilsService.handleValidation(
+        () => tokenToCreate.validate('decimals'),
+        async () => {
+          tokenToCreate.decimals = await this.askForDecimals(
+            tokenToCreate.decimals.toString(),
+          );
+        },
+      );
 
       supplyType = await this.askForSupplyType();
-      createdStableCoin.supplyType = supplyType;
+      tokenToCreate.supplyType = supplyType
+        ? TokenSupplyType.INFINITE
+        : TokenSupplyType.FINITE;
 
       if (!supplyType) {
-        totalSupply = await this.askForTotalSupply();
-        while (parseFloat(initialSupply) > parseFloat(totalSupply)) {
-          console.error(language.getText('stablecoin.initialSupplyError'));
-          totalSupply = await this.askForTotalSupply();
-        }
-        createdStableCoin.totalSupply = totalSupply;
+        tokenToCreate.maxSupply = await this.askForTotalSupply();
+        await utilsService.handleValidation(
+          () => tokenToCreate.validate('maxSupply'),
+          async () => {
+            tokenToCreate.maxSupply = await this.askForTotalSupply();
+          },
+        );
+        tokenToCreate.maxSupply = totalSupply;
       }
 
-      initialSupply = await this.askForInitialSupply();
-      if (totalSupply) {
-        while (parseFloat(initialSupply) > parseFloat(totalSupply)) {
-          console.error(language.getText('stablecoin.initialSupplyError'));
-          initialSupply = await this.askForInitialSupply();
-        }
-      }
-      createdStableCoin.initialSupply = initialSupply;
+      initialSupply = await this.askForInitialSupply(
+        tokenToCreate.initialSupply?.toString(),
+      );
+      tokenToCreate.initialSupply = initialSupply;
+      await utilsService.handleValidation(
+        () => tokenToCreate.validate('initialSupply'),
+        async () => {
+          initialSupply = await this.askForInitialSupply(
+            tokenToCreate.initialSupply?.toString(),
+          );
+          tokenToCreate.initialSupply = initialSupply;
+        },
+      );
     }
 
     const managedBySC = await this.askForManagedFeatures();
     console.log({
-      name,
-      symbol,
-      autoRenewAccount,
-      decimals: parseInt(decimals),
-      initialSupply: initialSupply === '' ? undefined : initialSupply,
+      name: tokenToCreate.name,
+      symbol: tokenToCreate.symbol,
+      autoRenewAccount: tokenToCreate.autoRenewAccount,
+      decimals: tokenToCreate.decimals,
+      initialSupply:
+        initialSupply === '' || !initialSupply ? undefined : initialSupply,
       supplyType: supplyType ? 'INFINITE' : 'FINITE',
-      maxSupply: totalSupply ?? '',
+      maxSupply: totalSupply === '' || !totalSupply ? undefined : totalSupply,
     });
     if (managedBySC) {
       const currentAccount: IAccountConfig = utilsService.getCurrentAccount();
-      const privateKey: PrivateKey = new PrivateKey(
+      tokenToCreate.adminKey = PublicKey.fromPrivateKey(
         currentAccount.privateKey.key,
         currentAccount.privateKey.type,
       );
-      tokenToCreate = {
-        name,
-        symbol,
-        autoRenewAccount,
-        decimals: parseInt(decimals),
-        initialSupply: initialSupply === '' ? undefined : initialSupply,
-        supplyType: supplyType ? 'INFINITE' : 'FINITE',
-        maxSupply: totalSupply ?? undefined,
-        adminKey: privateKey.publicKey,
-        freezeKey: PublicKey.NULL,
-        //KYCKey,
-        wipeKey: PublicKey.NULL,
-        supplyKey: PublicKey.NULL,
-        pauseKey: PublicKey.NULL,
-        treasury: AccountId.NULL,
-      };
+      tokenToCreate.freezeKey = PublicKey.NULL;
+      //KYCKey,
+      tokenToCreate.wipeKey = PublicKey.NULL;
+      tokenToCreate.supplyKey = PublicKey.NULL;
+      tokenToCreate.pauseKey = PublicKey.NULL;
+      tokenToCreate.treasury = AccountId.NULL.id;
       if (
         !(await utilsService.defaultConfirmAsk(
           language.getText('stablecoin.askConfirmCreation'),
@@ -243,19 +238,21 @@ export default class CreateStableCoinService extends Service {
     const { adminKey, supplyKey, freezeKey, wipeKey, pauseKey } =
       await this.configureManagedFeatures();
 
-    createdStableCoin.adminKey = adminKey;
-    createdStableCoin.supplyKey = supplyKey;
-    //createdStableCoin.KYCKey = KYCKey;
-    createdStableCoin.freezeKey = freezeKey;
-    createdStableCoin.wipeKey = wipeKey;
-    createdStableCoin.pauseKey = pauseKey;
+    tokenToCreate.adminKey = adminKey;
+    tokenToCreate.supplyKey = supplyKey;
+    //tokenToCreate.KYCKey = KYCKey;
+    tokenToCreate.freezeKey = freezeKey;
+    tokenToCreate.wipeKey = wipeKey;
+    tokenToCreate.pauseKey = pauseKey;
 
     const treasury = this.getTreasuryAccountFromSupplyKey(supplyKey);
+    tokenToCreate.treasury = treasury;
+
     console.log({
-      name,
-      symbol,
-      autoRenewAccount,
-      decimals: parseInt(decimals),
+      name: tokenToCreate.name,
+      symbol: tokenToCreate.symbol,
+      autoRenewAccount: tokenToCreate.autoRenewAccount,
+      decimals: tokenToCreate.decimals,
       initialSupply: initialSupply === '' ? undefined : initialSupply,
       supplyType: supplyType ? 'INFINITE' : 'FINITE',
       maxSupply: totalSupply ? BigInt(totalSupply) : totalSupply,
@@ -285,24 +282,8 @@ export default class CreateStableCoinService extends Service {
           : pauseKey.key !== 'null'
           ? pauseKey
           : 'The Smart Contract',
-      treasury: treasury.id !== '0.0.0' ? treasury : 'The Smart Contract',
+      treasury: treasury !== '0.0.0' ? treasury : 'The Smart Contract',
     });
-    tokenToCreate = {
-      name,
-      symbol,
-      autoRenewAccount,
-      decimals: parseInt(decimals),
-      initialSupply: initialSupply === '' ? undefined : initialSupply,
-      supplyType: supplyType ? 'INFINITE' : 'FINITE',
-      maxSupply: totalSupply ?? undefined,
-      freezeKey,
-      //KYCKey,
-      wipeKey,
-      adminKey,
-      supplyKey,
-      pauseKey,
-      treasury,
-    };
     if (
       !(await utilsService.defaultConfirmAsk(
         language.getText('stablecoin.askConfirmCreation'),
@@ -316,10 +297,10 @@ export default class CreateStableCoinService extends Service {
     return tokenToCreate;
   }
 
-  private async askForDecimals(): Promise<string> {
+  private async askForDecimals(val?: string): Promise<string> {
     return await utilsService.defaultSingleAsk(
       language.getText('stablecoin.askDecimals'),
-      createdStableCoin.decimals || '6',
+      val || '6',
     );
   }
 
@@ -330,24 +311,24 @@ export default class CreateStableCoinService extends Service {
     );
   }
 
-  private async askForInitialSupply(): Promise<string> {
+  private async askForInitialSupply(val?: string): Promise<string> {
     return await utilsService.defaultSingleAsk(
       language.getText('stablecoin.askInitialSupply'),
-      createdStableCoin.initialSupply || undefined,
+      val || undefined,
     );
   }
 
-  private async askForSupplyType(): Promise<boolean> {
+  private async askForSupplyType(val?: boolean): Promise<boolean> {
     return await utilsService.defaultConfirmAsk(
       language.getText('stablecoin.askSupplyType'),
-      createdStableCoin.supplyType || true,
+      val || true,
     );
   }
 
-  private async askForTotalSupply(): Promise<string> {
+  private async askForTotalSupply(val?: string): Promise<string> {
     return await utilsService.defaultSingleAsk(
       language.getText('stablecoin.askTotalSupply'),
-      createdStableCoin.totalSupply || createdStableCoin.initialSupply || '1',
+      val || '1',
     );
   }
 
@@ -432,12 +413,12 @@ export default class CreateStableCoinService extends Service {
     }
   }
 
-  private getTreasuryAccountFromSupplyKey(supplyKey: PublicKey): AccountId {
-    if (supplyKey && supplyKey !== PublicKey.NULL) {
+  private getTreasuryAccountFromSupplyKey(supplyKey: PublicKey): string {
+    if (supplyKey && !PublicKey.isNull(supplyKey)) {
       const currentAccount = utilsService.getCurrentAccount();
-      return new AccountId(currentAccount.accountId);
+      return currentAccount.accountId;
     } else {
-      return AccountId.NULL;
+      return AccountId.NULL.id;
     }
   }
 }
