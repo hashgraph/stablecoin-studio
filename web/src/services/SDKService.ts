@@ -22,7 +22,7 @@ import type {
 	GetStableCoinDetailsRequest,
 	GetRolesRequest,
 	GetListStableCoinRequest,
-	// GetAccountInfoRequest,
+	GetAccountInfoRequest,
 } from 'hedera-stable-coin-sdk';
 import { HederaNetwork, NetworkMode, SDK, HederaNetworkEnviroment } from 'hedera-stable-coin-sdk';
 
