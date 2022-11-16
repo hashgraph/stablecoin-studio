@@ -235,6 +235,17 @@ export default class StableCoinRepository implements IStableCoinRepository {
 				listCapabilities.push(Capabilities.FREEZE);
 			}
 
+			if (stableCoin.adminKey instanceof PublicKey) {
+				if (
+					stableCoin.adminKey?.key.toString() == publickey.toString()
+				) {
+					listCapabilities.push(Capabilities.DELETE_HTS);
+				}
+			}			
+			if (stableCoin.adminKey instanceof ContractId) {
+				listCapabilities.push(Capabilities.DELETE);
+			}
+
 			const roleManagement = listCapabilities.some((capability) =>
 				[
 					Capabilities.PAUSE,
@@ -242,6 +253,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 					Capabilities.CASH_IN,
 					Capabilities.BURN,
 					Capabilities.RESCUE,
+					Capabilities.FREEZE,
+					Capabilities.DELETE
 				].includes(capability),
 			);
 			if (roleManagement) {
