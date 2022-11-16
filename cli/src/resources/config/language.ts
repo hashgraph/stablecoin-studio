@@ -277,6 +277,8 @@ export const english = {
     detailsCompleted: 'Details loaded',
     balanceCompleted: 'Balance loaded',
     associteCompleted: 'Stable coin associated',
+    deleteCompleted: 'Stable coin deleted',
+    pauseCompleted: 'Stable coin paused',
   },
   operation: {
     success: colors.green('Operation has been completed successfully.'),
@@ -322,8 +324,11 @@ export const english = {
     noRoles: 'You do not have any role.',
   },
   dangerZone: {
+    confirmDelete: 'Are you sure you want to delete the stable coin?',
+    confirmPause: 'Are you sure you want to pause the stable coin?',
     options: [
       'Pause stable coin',
+      'Delete stable coin',
       new inquirer.Separator(),
       'Go back',
       new inquirer.Separator(' '),

@@ -30,6 +30,8 @@ import {
   ResetCashInLimitRequest,
   IncreaseCashInLimitRequest,
   DecreaseCashInLimitRequest,
+  DeleteStableCoinRequest,
+  PauseStableCoinRequest,
 } from 'hedera-stable-coin-sdk';
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 import CashInStableCoinsService from './CashInStableCoinService.js';
@@ -40,6 +42,8 @@ import CapabilitiesStableCoinsService from './CapabilitiesStableCoinService.js';
 import BurnStableCoinsService from './BurnStableCoinService.js';
 import ManageExternalTokenService from './ManageExternalTokenService';
 import colors from 'colors';
+import DeleteStableCoinService from './DeleteStableCoinService.js';
+import PauseStableCoinService from './PauseStableCoinService.js';
 
 /**
  * Operation Stable Coin Service
@@ -1229,7 +1233,8 @@ export default class OperationStableCoinService extends Service {
 
       return capabilities.includes(option);
     });
-
+    // TODO QUITAR
+    roles.push('PAUSE');
     result = roles
       ? capabilitiesFilter.filter((option) => {
           if (
@@ -1424,7 +1429,7 @@ export default class OperationStableCoinService extends Service {
             [Capabilities.PAUSE, Capabilities.PAUSE_HTS].includes(capability),
           );
         }
-
+        // TODO DELETE STABLE COIN
         return true;
       });
 
@@ -1440,12 +1445,61 @@ export default class OperationStableCoinService extends Service {
       )
     ) {
       case 'Pause stable coin':
-        await utilsService.cleanAndShowBanner();
-
-        utilsService.displayCurrentUserInfo(
-          configAccount,
-          this.stableCoinWithSymbol,
+        const confirmPause = await utilsService.defaultConfirmAsk(
+          language.getText('dangerZone.confirmPause'),
+          true,
         );
+        if (confirmPause) {
+          try {
+            const req = new PauseStableCoinRequest({
+              account: {
+                accountId: currentAccount.accountId.id,
+                privateKey: {
+                  key: currentAccount.privateKey.key,
+                  type: currentAccount.privateKey.type,
+                },
+              },
+              proxyContractId: this.proxyContractId,
+              tokenId: this.stableCoinId,
+            });
+            await new PauseStableCoinService().pauseStableCoin(req);
+          } catch (error) {
+            await utilsService.askErrorConfirmation(
+              async () => await this.operationsStableCoin(),
+              error,
+            );
+          }
+        }
+
+        break;
+      case 'Delete stable coin':
+        const confirmDelete = await utilsService.defaultConfirmAsk(
+          language.getText('dangerZone.confirmDelete'),
+          true,
+        );
+        if (confirmDelete) {
+          try {
+            const req = new DeleteStableCoinRequest({
+              account: {
+                accountId: currentAccount.accountId.id,
+                privateKey: {
+                  key: currentAccount.privateKey.key,
+                  type: currentAccount.privateKey.type,
+                },
+              },
+              proxyContractId: this.proxyContractId,
+              tokenId: this.stableCoinId,
+            });
+
+            await new DeleteStableCoinService().deleteStableCoin(req);
+            await wizardService.mainMenu();
+          } catch (error) {
+            await utilsService.askErrorConfirmation(
+              async () => await this.operationsStableCoin(),
+              error,
+            );
+          }
+        }
         break;
       case dangerZoneOptions[dangerZoneOptions.length - 1]:
       default:
