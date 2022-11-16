@@ -61,7 +61,7 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes{
         tokenStruct memory requestedToken,
         address StableCoinProxyAddress
     ) 
-    internal view returns (IHederaTokenService.HederaToken memory){
+    internal pure returns (IHederaTokenService.HederaToken memory){
         // token Memo
         string memory tokenMemo = string(abi.encodePacked(memo_1, Strings.toHexString(StableCoinProxyAddress), memo_2));
         

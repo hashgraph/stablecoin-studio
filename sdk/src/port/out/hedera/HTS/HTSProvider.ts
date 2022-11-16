@@ -8,14 +8,14 @@ import {
 	ContractFunctionParameters,
 	PrivateKey as HPrivateKey,
 	PublicKey as HPublicKey,
+	AccountId as HAccountId,
 	TokenId,
 	Transaction,
 	Status,
 } from '@hashgraph/sdk';
 import {
-	HederaERC1967Proxy__factory,
 	HederaERC20__factory,
-	HTSTokenOwner__factory,
+	StableCoinFactory__factory
 } from 'hedera-stable-coin-contracts/typechain-types/index.js';
 import {
 	HederaNetwork,
@@ -29,7 +29,6 @@ import { log } from '../../../../core/log.js';
 import {
 	ICallContractRequest,
 	ICallContractWithAccountRequest,
-	ICreateTokenResponse,
 	IHTSTokenRequest,
 	IWipeTokenRequest,
 	ITransferTokenRequest,
@@ -45,12 +44,15 @@ import EOAccount from '../../../../domain/context/account/EOAccount.js';
 import { HashConnectConnectionState } from 'hashconnect/types';
 import ProviderEvent, { ProviderEventNames } from '../ProviderEvent.js';
 import EventService from '../../../../app/service/event/EventService.js';
-import { Account, ContractId } from '../../../in/sdk/sdk.js';
+import { Account, ContractId, TokenSupplyType } from '../../../in/sdk/sdk.js';
 import { safeCast } from '../../../../core/cast.js';
 import { StableCoinMemo } from '../../../../domain/context/stablecoin/StableCoinMemo.js';
+import { FactoryStableCoin } from '../../../../domain/context/stablecoin/FactoryStableCoin.js';
+
 import BigDecimal from '../../../../domain/context/stablecoin/BigDecimal.js';
 import Long from 'long';
 import ProviderError from '../error/HederaError.js';
+import { FactoryKey } from 'domain/context/stablecoin/FactoryKey.js';
 
 type DefaultHederaProvider = hethers.providers.DefaultHederaProvider;
 
@@ -219,158 +221,91 @@ export default class HTSProvider implements IProvider {
 	public async deployStableCoin(
 		stableCoin: StableCoin,
 		account: EOAccount,
-	): Promise<StableCoin> {
-		const client = this.getClient(account);
+		stableCoinFactory: ContractId
+	): Promise<string> {
+
 		log(
-			`Deploying ${HederaERC20__factory.name} contract... please wait.`,
+			`Using the Factory contract at ${stableCoinFactory.id} to create a new stable coin... please wait.`,
 			logOpts,
 		);
-		const tokenContract = await this.deployContract(
-			HederaERC20__factory,
-			account.privateKey,
-			client,
-		);
-		log(
-			`Deploying ${HederaERC1967Proxy__factory.name} contract... please wait.`,
-			logOpts,
-		);
-		const proxyContract: HContractId = await this.deployContract(
-			HederaERC1967Proxy__factory,
-			account.privateKey,
-			client,
-			new ContractFunctionParameters()
-				.addAddress(tokenContract?.toSolidityAddress())
-				.addBytes(new Uint8Array([])),
-		);
 
-		await this.callContract('initialize', {
-			contractId: String(proxyContract),
-			parameters: [],
-			gas: 250_000,
-			abi: HederaERC20__factory.abi,
-			account,
-		});
-		log(
-			`Deploying ${HTSTokenOwner__factory.name} contract... please wait.`,
-			logOpts,
-		);
-		const tokenOwnerContract = await this.deployContract(
-			HTSTokenOwner__factory,
-			account.privateKey,
-			client,
-		);
+		const keys:FactoryKey[]  = [];
 
-		stableCoin.memo = new StableCoinMemo(
-			String(proxyContract),
-			String(tokenOwnerContract),
-		);
-
-		log('Creating token... please wait.', logOpts);
-		const hederaToken = await this.createToken(
-			tokenOwnerContract,
-			stableCoin.name,
-			stableCoin.symbol,
-			stableCoin.decimals,
-			stableCoin.initialSupply?.toLong(),
-			stableCoin.maxSupply?.toLong(),
-			stableCoin.memo.toJson(),
-			stableCoin.freezeDefault,
-			client,
-			stableCoin.treasury,
-			safeCast<PublicKey>(stableCoin.adminKey),
-			safeCast<PublicKey>(stableCoin.freezeKey),
-			safeCast<PublicKey>(stableCoin.kycKey),
-			safeCast<PublicKey>(stableCoin.wipeKey),
-			safeCast<PublicKey>(stableCoin.pauseKey),
-			safeCast<PublicKey>(stableCoin.supplyKey),
-			stableCoin.autoRenewAccount,
-		);
-		log('Setting up contract... please wait.', logOpts);
-		await this.callContract('setTokenAddress', {
-			contractId: stableCoin.memo.proxyContract,
-			parameters: [
-				tokenOwnerContract.toSolidityAddress(),
-				TokenId.fromString(
-					hederaToken.tokenId.toString(),
-				).toSolidityAddress(),
-			],
-			gas: 80_000,
-			abi: HederaERC20__factory.abi,
-			account: account,
-		});
-		await this.callContract('setERC20Address', {
-			contractId: String(tokenOwnerContract),
-			parameters: [proxyContract.toSolidityAddress()],
-			gas: 60_000,
-			abi: HTSTokenOwner__factory.abi,
-			account: account,
-		});
-
-		if (
-			hederaToken.treasuryAccountId.toString() !== account.accountId.id &&
-			account.evmAddress
-		) {
-			log(
-				'Associating administrator account to token... please wait.',
-				logOpts,
-			);
-
-			await this.callContract('associateToken', {
-				contractId: stableCoin.memo.proxyContract,
-				parameters: [account.evmAddress],
-				gas: 1_300_000,
-				abi: HederaERC20__factory.abi,
-				account: account,
-			});
+		if(stableCoin.adminKey){
+			const adminKey = new FactoryKey();
+			adminKey.keyType = 1;
+			adminKey.PublicKey = (stableCoin.adminKey === PublicKey.NULL)? stableCoin.adminKey : "";
+			keys.push(adminKey);
 		}
 
-		return new StableCoin({
-			name: hederaToken.name,
-			symbol: hederaToken.symbol,
-			decimals: hederaToken.decimals,
-			initialSupply: BigDecimal.fromString(
-				hederaToken.initialSupply.toString(),
-				hederaToken.decimals,
-			),
-			maxSupply: BigDecimal.fromString(
-				hederaToken.maxSupply.toString(),
-				hederaToken.decimals,
-			),
-			memo: hederaToken.memo,
-			freezeDefault: hederaToken.freezeDefault,
-			treasury: new AccountId(hederaToken.treasuryAccountId.toString()),
-			adminKey:
-				hederaToken.adminKey &&
-				hederaToken.adminKey instanceof HPublicKey
-					? PublicKey.fromHederaKey(hederaToken.adminKey)
-					: hederaToken.adminKey,
-			freezeKey:
-				hederaToken.freezeKey &&
-				hederaToken.freezeKey instanceof HPublicKey
-					? PublicKey.fromHederaKey(hederaToken.freezeKey)
-					: hederaToken.freezeKey,
-			kycKey:
-				hederaToken.kycKey && hederaToken.kycKey instanceof HPublicKey
-					? PublicKey.fromHederaKey(hederaToken.kycKey)
-					: hederaToken.kycKey,
-			wipeKey:
-				hederaToken.wipeKey && hederaToken.wipeKey instanceof HPublicKey
-					? PublicKey.fromHederaKey(hederaToken.wipeKey)
-					: hederaToken.wipeKey,
-			pauseKey:
-				hederaToken.pauseKey &&
-				hederaToken.pauseKey instanceof HPublicKey
-					? PublicKey.fromHederaKey(hederaToken.pauseKey)
-					: hederaToken.pauseKey,
-			supplyKey:
-				hederaToken.supplyKey &&
-				hederaToken.supplyKey instanceof HPublicKey
-					? PublicKey.fromHederaKey(hederaToken.supplyKey)
-					: hederaToken.supplyKey,
-			id: hederaToken.tokenId.toString(),
-			tokenType: stableCoin.tokenType,
-			supplyType: stableCoin.supplyType,
-		});
+		if(stableCoin.kycKey){
+			const kycKey = new FactoryKey();
+			kycKey.keyType = 2;
+			kycKey.PublicKey = (stableCoin.kycKey === PublicKey.NULL)? stableCoin.kycKey : "";
+			keys.push(kycKey);
+		}
+
+		if(stableCoin.freezeKey){
+			const freezeKey = new FactoryKey();
+			freezeKey.keyType = 4;
+			freezeKey.PublicKey = (stableCoin.freezeKey === PublicKey.NULL)? stableCoin.freezeKey : "";
+			keys.push(freezeKey);
+		}
+
+		if(stableCoin.wipeKey){
+			const wipeKey = new FactoryKey();
+			wipeKey.keyType = 8;
+			wipeKey.PublicKey = (stableCoin.wipeKey === PublicKey.NULL)? stableCoin.wipeKey : "";
+			keys.push(wipeKey);
+		}
+
+		if(stableCoin.supplyKey){
+			const supplyKey = new FactoryKey();
+			supplyKey.keyType = 16;
+			supplyKey.PublicKey = (stableCoin.supplyKey === PublicKey.NULL)? stableCoin.supplyKey : "";
+			keys.push(supplyKey);
+		}
+
+		if(stableCoin.pauseKey){
+			const pauseKey = new FactoryKey();
+			pauseKey.keyType = 64;
+			pauseKey.PublicKey = (stableCoin.pauseKey === PublicKey.NULL)? stableCoin.pauseKey : "";
+			keys.push(pauseKey);
+		}
+
+
+		const stableCoinToCreate = new FactoryStableCoin(
+			stableCoin.name,
+			stableCoin.symbol,
+			stableCoin.freezeDefault,
+			(stableCoin.supplyType == TokenSupplyType.FINITE),
+			stableCoin.maxSupply?.toLong(),
+			stableCoin.initialSupply?.toLong(),
+			stableCoin.decimals,
+			HAccountId.fromString(stableCoin.autoRenewAccount.toString()).toSolidityAddress(),
+			keys
+		);
+
+		const parameters = [
+			JSON.stringify(stableCoinToCreate)
+		];
+
+		const params: ICallContractWithAccountRequest = {
+			contractId: stableCoinFactory.id,
+			parameters,
+			gas: 15000000,
+			abi: StableCoinFactory__factory.abi,
+			account,
+		};
+
+		const deployStableCoinResponse: any = await this.callContract(
+			'deployStableCoin', 
+			params
+		);
+
+		const stableCoinContractsAddresses: string[] = deployStableCoinResponse[0]
+
+		return stableCoinContractsAddresses[3];
 	}
 
 	private async deployContract(
@@ -427,7 +362,7 @@ export default class HTSProvider implements IProvider {
 		}
 	}
 
-	private async createToken(
+	/*private async createToken(
 		contractId: HContractId,
 		name: string,
 		symbol: string,
@@ -498,7 +433,7 @@ export default class HTSProvider implements IProvider {
 			logOpts,
 		);
 		return values;
-	}
+	}*/
 
 	getAvailabilityExtension(): boolean {
 		return false;

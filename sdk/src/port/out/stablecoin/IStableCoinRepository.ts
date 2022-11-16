@@ -1,5 +1,6 @@
 import { StableCoinRole } from '../../../core/enum.js';
 import Account from '../../../domain/context/account/Account.js';
+import ContractId from '../../../domain/context/contract/ContractId.js';
 import { Capabilities } from '../../../domain/context/stablecoin/Capabilities.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import StableCoinList from '../../in/sdk/response/StableCoinList.js';
@@ -7,7 +8,7 @@ import AccountInfo from '../../in/sdk/response/AccountInfo.js';
 import BigDecimal from '../../../domain/context/stablecoin/BigDecimal.js';
 
 export default interface IStableCoinRepository {
-	saveCoin(coin: StableCoin, account: Account): Promise<StableCoin>;
+	saveCoin(coin: StableCoin, account: Account, stableCoinFactory: ContractId): Promise<StableCoin>;
 	getListStableCoins(account: Account): Promise<StableCoinList[]>;
 	getStableCoin(id: string): Promise<StableCoin>;
 	getCapabilitiesStableCoin(

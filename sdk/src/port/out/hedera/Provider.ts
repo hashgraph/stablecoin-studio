@@ -14,7 +14,7 @@ import {
 	InitializationData } from './types.js';
 
 import EventService from '../../../app/service/event/EventService.js';
-import { Account } from '../../in/sdk/sdk.js';
+import { Account, ContractId } from '../../in/sdk/sdk.js';
 
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -48,7 +48,8 @@ export interface IProvider {
 	deployStableCoin(
 		stableCoin: StableCoin,
 		account: Account,
-	): Promise<StableCoin>;
+		stableCoinFactory: ContractId
+	): Promise<string>;
 	getAvailabilityExtension(): boolean;
 	gethashConnectConectionState(): HashConnectConnectionState;
 	disconectHaspack(): void;

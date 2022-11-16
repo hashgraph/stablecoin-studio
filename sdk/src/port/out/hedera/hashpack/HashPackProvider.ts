@@ -11,6 +11,7 @@ import {
 	StableCoinMemo,
 	PrivateKeyType,
 	Account,
+	TokenSupplyType
 } from '../../../in/sdk/sdk.js';
 import {
 	AccountId as HAccountId,
@@ -41,9 +42,8 @@ import ProviderError from '../error/HederaError.js';
 import Web3 from 'web3';
 import { log } from '../../../../core/log.js';
 import {
-	HederaERC1967Proxy__factory,
 	HederaERC20__factory,
-	HTSTokenOwner__factory,
+	StableCoinFactory__factory
 } from 'hedera-stable-coin-contracts/typechain-types/index.js';
 import { HashConnectProvider } from 'hashconnect/provider/provider';
 import ProviderEvent, { ProviderEventNames } from '../ProviderEvent.js';
@@ -62,6 +62,9 @@ import { EmptyMetadata } from './error/EmptyMetadata.js';
 import { InitializationError } from '../error/InitializationError.js';
 import { PairingError } from '../error/PairingError.js';
 import { DeploymentError } from '../error/DeploymentError.js';
+import { FactoryKey } from 'domain/context/stablecoin/FactoryKey.js';
+import { FactoryStableCoin } from '../../../../domain/context/stablecoin/FactoryStableCoin.js';
+
 
 const logOpts = { newLine: true, clear: true };
 
@@ -298,6 +301,96 @@ export default class HashPackProvider implements IProvider {
 	public async deployStableCoin(
 		stableCoin: StableCoin,
 		account: HashPackAccount,
+		stableCoinFactory: ContractId
+	): Promise<string> {
+
+		log(
+			`Using the Factory contract at ${stableCoinFactory.id} to create a new stable coin... please wait.`,
+			logOpts,
+		);
+
+		const keys:FactoryKey[]  = [];
+
+		if(stableCoin.adminKey){
+			const adminKey = new FactoryKey();
+			adminKey.keyType = 1;
+			adminKey.PublicKey = (stableCoin.adminKey === PublicKey.NULL)? stableCoin.adminKey : "";
+			keys.push(adminKey);
+		}
+
+		if(stableCoin.kycKey){
+			const kycKey = new FactoryKey();
+			kycKey.keyType = 2;
+			kycKey.PublicKey = (stableCoin.kycKey === PublicKey.NULL)? stableCoin.kycKey : "";
+			keys.push(kycKey);
+		}
+
+		if(stableCoin.freezeKey){
+			const freezeKey = new FactoryKey();
+			freezeKey.keyType = 4;
+			freezeKey.PublicKey = (stableCoin.freezeKey === PublicKey.NULL)? stableCoin.freezeKey : "";
+			keys.push(freezeKey);
+		}
+
+		if(stableCoin.wipeKey){
+			const wipeKey = new FactoryKey();
+			wipeKey.keyType = 8;
+			wipeKey.PublicKey = (stableCoin.wipeKey === PublicKey.NULL)? stableCoin.wipeKey : "";
+			keys.push(wipeKey);
+		}
+
+		if(stableCoin.supplyKey){
+			const supplyKey = new FactoryKey();
+			supplyKey.keyType = 16;
+			supplyKey.PublicKey = (stableCoin.supplyKey === PublicKey.NULL)? stableCoin.supplyKey : "";
+			keys.push(supplyKey);
+		}
+
+		if(stableCoin.pauseKey){
+			const pauseKey = new FactoryKey();
+			pauseKey.keyType = 64;
+			pauseKey.PublicKey = (stableCoin.pauseKey === PublicKey.NULL)? stableCoin.pauseKey : "";
+			keys.push(pauseKey);
+		}
+
+
+		const stableCoinToCreate = new FactoryStableCoin(
+			stableCoin.name,
+			stableCoin.symbol,
+			stableCoin.freezeDefault,
+			(stableCoin.supplyType == TokenSupplyType.FINITE),
+			stableCoin.maxSupply?.toLong(),
+			stableCoin.initialSupply?.toLong(),
+			stableCoin.decimals,
+			HAccountId.fromString(stableCoin.autoRenewAccount.toString()).toSolidityAddress(),
+			keys
+		);
+
+		const parameters = [
+			JSON.stringify(stableCoinToCreate)
+		];
+
+		const params: ICallContractWithAccountRequest = {
+			contractId: stableCoinFactory.id,
+			parameters,
+			gas: 15000000,
+			abi: StableCoinFactory__factory.abi,
+			account,
+		};
+
+		const deployStableCoinResponse: any = await this.callContract(
+			'deployStableCoin', 
+			params
+		);
+
+		const stableCoinContractsAddresses: string[] = deployStableCoinResponse[0]
+
+		return stableCoinContractsAddresses[3];
+	}
+
+	/*public async deployStableCoin(
+		stableCoin: StableCoin,
+		account: HashPackAccount,
 	): Promise<StableCoin> {
 		try {
 			if (account) {
@@ -465,7 +558,7 @@ export default class HashPackProvider implements IProvider {
 		} catch (error) {
 			throw new DeploymentError(error);
 		}
-	}
+	}*/
 
 	private async deployContract(
 		factory: any,
