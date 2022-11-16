@@ -108,7 +108,7 @@ export async function getAdmin(ContractId: any, proxyAddress: string, client: an
 }
 
 export async function changeAdmin(ContractId: any, proxyAddress: string, client: any, newAdminAccount: string) {
-    let params : any = [AccountId.fromString(newAdminAccount!).toSolidityAddress()];  
+    let params : any = [newAdminAccount];  
     await contractCall(ContractId.fromString(proxyAddress!), 'changeAdmin', params, client, Gas3, HederaERC20Proxy__factory.abi);
 }
 
@@ -127,6 +127,11 @@ export async function upgrade(ContractId: any, proxyAdminAddress: string, client
 export async function changeProxyAdmin(ContractId: any, proxyAdminAddress: string, client: any, newAdminAccount: string, proxyAddress: string) {
     let params : any = [proxyAddress, AccountId.fromString(newAdminAccount!).toSolidityAddress()];  
     await contractCall(ContractId.fromString(proxyAdminAddress!), 'changeProxyAdmin', params, client, Gas3, HederaERC20ProxyAdmin__factory.abi);
+}
+
+export async function transferOwnership(ContractId: any, proxyAdminAddress: string, client: any, newOwnerAccount: string) {
+    let params : any = [AccountId.fromString(newOwnerAccount!).toSolidityAddress()];  
+    await contractCall(ContractId.fromString(proxyAdminAddress!), 'transferOwnership', params, client, Gas3, HederaERC20ProxyAdmin__factory.abi);
 }
 
 /* Methods to add

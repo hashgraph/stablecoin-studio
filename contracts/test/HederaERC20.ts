@@ -27,7 +27,8 @@ import {name,
   changeAdmin,
   owner,
   upgrade,
-  changeProxyAdmin
+  changeProxyAdmin,
+  transferOwnership
 } from "../scripts/contractsMethods";
 
 let proxyAddress:any;
@@ -239,7 +240,7 @@ describe("HederaERC20Proxy and HederaERC20ProxyAdmin Tests", function() {
 
   it("Change Proxy admin without the proxy admin", async function() {
     // Non Admin changes admin : fail       
-    await expect(changeAdmin(ContractId, proxyAddress, client, client2account)).to.eventually.be.rejectedWith(Error);
+    await expect(changeAdmin(ContractId, proxyAddress, client, AccountId.fromString(client2account).toSolidityAddress())).to.eventually.be.rejectedWith(Error);
   });
 
   it("Upgrade Proxy implementation with the proxy admin but without the owner account", async function() {
@@ -263,7 +264,7 @@ describe("HederaERC20Proxy and HederaERC20ProxyAdmin Tests", function() {
 
   it("Change Proxy admin with the proxy admin but without the owner account", async function() {
     // Non Owner changes admin : fail       
-    await expect(changeProxyAdmin(ContractId, proxyAdminAddress, client2, client2account, proxyAddress)).to.eventually.be.rejectedWith(Error);
+    await expect(changeProxyAdmin(ContractId, proxyAdminAddress, client2, client2account, proxyAddress.toSolidityAddress())).to.eventually.be.rejectedWith(Error);
   });
 
   it("Upgrade Proxy implementation with the proxy admin and the owner account", async function() {
@@ -299,6 +300,27 @@ describe("HederaERC20Proxy and HederaERC20ProxyAdmin Tests", function() {
     // Check that proxy admin has been changed
     const admin = await getAdmin(ContractId, proxyAddress, client);
     expect(admin.toUpperCase()).to.equals("0X" + AccountId.fromString(OPERATOR_ID).toSolidityAddress().toUpperCase());
+
+    // reset
+    await changeAdmin(ContractId, proxyAddress, client, AccountId.fromString(client2account).toSolidityAddress());
+    await changeAdmin(ContractId, proxyAddress, client2, proxyAdminAddress.toSolidityAddress());
+  });
+
+  it("Transfers Proxy admin owner without the owner account", async function() {
+   // Non Owner transfers owner : fail       
+   await expect(transferOwnership(ContractId, proxyAdminAddress, client2, client2account)).to.eventually.be.rejectedWith(Error);
+  });
+
+  it("Transfers Proxy admin owner with the owner account", async function() {
+   // Owner transfers owner : success       
+   await transferOwnership(ContractId, proxyAdminAddress, client, client2account);
+
+   // Check
+   const ownerAccount = await owner(ContractId, proxyAdminAddress, client);
+   expect(ownerAccount.toUpperCase()).to.equals("0X" + AccountId.fromString(client2account).toSolidityAddress().toUpperCase());
+
+   // reset      
+   await transferOwnership(ContractId, proxyAdminAddress, client2, OPERATOR_ID);
   });
 
 
