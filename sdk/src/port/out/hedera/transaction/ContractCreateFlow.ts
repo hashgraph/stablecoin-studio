@@ -4,8 +4,9 @@ import {
 	FileAppendTransaction,
 	FileCreateTransaction,
 	ContractCreateTransaction,
-    TransactionResponse,
+	TransactionResponse,
 } from '@hashgraph/sdk';
+import { TransactionBuildingError } from './error/TransactionBuildingError.js';
 
 export default class ContractCreateFlow extends CCF {
 	constructor() {
@@ -18,11 +19,13 @@ export default class ContractCreateFlow extends CCF {
 	 */
 	async executeWithSigner(signer: Signer): Promise<TransactionResponse> {
 		if (this._bytecode == null) {
-			throw new Error('cannot create contract with no bytecode');
+			throw new TransactionBuildingError(
+				'cannot create contract with no bytecode',
+			);
 		}
 
 		if (signer.getAccountKey == null) {
-			throw new Error(
+			throw new TransactionBuildingError(
 				'`Signer.getAccountKey()` is not implemented, but is required for `ContractCreateFlow`',
 			);
 		}
@@ -43,7 +46,7 @@ export default class ContractCreateFlow extends CCF {
 		let response = await fileCreateTransaction.executeWithSigner(signer);
 		const receipt = await response.getReceiptWithSigner(signer);
 		if (!receipt.fileId) {
-			throw new Error('Cannot create without recipt');
+			throw new TransactionBuildingError('Cannot create without recipt');
 		}
 		const fileId = /** @type {FileId} */ receipt.fileId;
 
@@ -62,8 +65,6 @@ export default class ContractCreateFlow extends CCF {
 
 			await fileAppendTransaction.executeWithSigner(signer);
 		}
-
-        console.log(response);
 
 		this._contractCreate = (await this._contractCreate
 			.setBytecodeFileId(fileId)

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { AxiosInstance } from 'axios';
 import { HederaERC20__factory } from 'hedera-stable-coin-contracts/typechain-types';
-import IStableCoinList from 'port/in/sdk/response/IStableCoinList.js';
+import StableCoinList from 'port/in/sdk/response/StableCoinList.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import IStableCoinRepository from './IStableCoinRepository.js';
 import NetworkAdapter from '../network/NetworkAdapter.js';
@@ -13,7 +13,6 @@ import {
 	ITransferTokenRequest,
 } from '../hedera/types.js';
 import ITokenList from './types/ITokenList.js';
-import HederaError from '../hedera/error/HederaError.js';
 import { IToken } from './types/IToken.js';
 import PublicKey from '../../../domain/context/account/PublicKey.js';
 import AccountId from '../../../domain/context/account/AccountId.js';
@@ -29,12 +28,14 @@ import { Roles } from '../../../domain/context/stablecoin/Roles.js';
 import { Account } from '../../in/sdk/sdk.js';
 import IAccount from '../hedera/account/types/IAccount.js';
 
-import IAccountInfo from '../../in/sdk/response/IAccountInfo.js';
+import AccountInfo from '../../in/sdk/response/AccountInfo.js';
 import {
 	AccountId as HAccountId,
 	PublicKey as HPublicKey,
 } from '@hashgraph/sdk';
 import BigDecimal from '../../../domain/context/stablecoin/BigDecimal.js';
+import { InvalidResponse } from './error/InvalidResponse.js';
+import { StableCoinNotFound } from './error/StableCoinNotFound.js';
 
 export default class StableCoinRepository implements IStableCoinRepository {
 	private networkAdapter: NetworkAdapter;
@@ -57,21 +58,15 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		coin: StableCoin,
 		account: Account,
 	): Promise<StableCoin> {
-		try {
-			account.evmAddress = await this.accountToEvmAddress(account);
-			return this.networkAdapter.provider.deployStableCoin(coin, account);
-		} catch (error) {
-			throw new HederaError(
-				`There was a fatal error deploying the Stable Coin: ${coin.name}`,
-			);
-		}
+		account.evmAddress = await this.accountToEvmAddress(account);
+		return this.networkAdapter.provider.deployStableCoin(coin, account);
 	}
 
 	public async getListStableCoins(
 		account: Account,
-	): Promise<IStableCoinList[]> {
+	): Promise<StableCoinList[]> {
 		try {
-			const resObject: IStableCoinList[] = [];
+			const resObject: StableCoinList[] = [];
 			const res = await this.instance.get<ITokenList>(
 				this.URI_BASE +
 					'tokens?limit=100&account.id=' +
@@ -85,7 +80,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			});
 			return resObject;
 		} catch (error) {
-			return Promise.reject<IStableCoinList[]>(error);
+			return Promise.reject<StableCoinList[]>(error);
 		}
 	}
 
@@ -110,6 +105,11 @@ export default class StableCoinRepository implements IStableCoinRepository {
 					return undefined;
 				}
 			};
+
+			if (response.status !== 200) {
+				throw new StableCoinNotFound(id);
+			}
+
 			const decimals = parseInt(response.data.decimals ?? '0');
 			return new StableCoin({
 				id: response.data.token_id,
@@ -117,19 +117,19 @@ export default class StableCoinRepository implements IStableCoinRepository {
 				symbol: response.data.symbol ?? '',
 				decimals: decimals,
 				initialSupply: response.data.initial_supply
-					? BigDecimal.fromStringHedera(
+					? BigDecimal.fromStringFixed(
 							response.data.initial_supply,
 							decimals,
 					  )
 					: BigDecimal.ZERO,
 				totalSupply: response.data.total_supply
-					? BigDecimal.fromStringHedera(
+					? BigDecimal.fromStringFixed(
 							response.data.total_supply,
 							decimals,
 					  )
 					: BigDecimal.ZERO,
 				maxSupply: response.data.max_supply
-					? BigDecimal.fromStringHedera(
+					? BigDecimal.fromStringFixed(
 							response.data.max_supply,
 							decimals,
 					  )
@@ -202,8 +202,27 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			if (stableCoin.wipeKey instanceof ContractId) {
 				listCapabilities.push(Capabilities.WIPE);
 			}
+
+			if (stableCoin.pauseKey instanceof PublicKey) {
+				if (
+					stableCoin.pauseKey?.key.toString() == publickey.toString()
+				) {
+					listCapabilities.push(Capabilities.PAUSE_HTS);
+				}
+			}			
 			if (stableCoin.pauseKey instanceof ContractId) {
 				listCapabilities.push(Capabilities.PAUSE);
+			}
+
+			if (stableCoin.freezeKey instanceof PublicKey) {
+				if (
+					stableCoin.freezeKey?.key.toString() == publickey.toString()
+				) {
+					listCapabilities.push(Capabilities.FREEZE_HTS);
+				}
+			}			
+			if (stableCoin.freezeKey instanceof ContractId) {
+				listCapabilities.push(Capabilities.FREEZE);
 			}
 
 			const roleManagement = listCapabilities.some((capability) =>
@@ -248,27 +267,12 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		);
 
 		const coin: StableCoin = await this.getStableCoin(tokenId);
-		const balanceHedera = BigDecimal.fromStringHedera(
+		const balanceHedera = BigDecimal.fromStringFixed(
 			response[0].toString(),
 			coin.decimals,
 		);
 
 		return balanceHedera.toString();
-	}
-
-	public async getNameToken(
-		proxyContractId: string,
-		account: Account,
-	): Promise<Uint8Array> {
-		const params: ICallContractWithAccountRequest = {
-			contractId: proxyContractId,
-			parameters: [],
-			gas: 36000,
-			abi: HederaERC20__factory.abi,
-			account,
-		};
-
-		return await this.networkAdapter.provider.callContract('name', params);
 	}
 
 	public async cashIn(
@@ -419,7 +423,6 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			abi: HederaERC20__factory.abi,
 			account,
 		};
-
 		return await this.networkAdapter.provider.callContract(
 			amount ? 'grantSupplierRole' : 'grantUnlimitedSupplierRole',
 			params,
@@ -709,7 +712,6 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			'getRoles',
 			params,
 		);
-
 		const listRoles: string[] = roles[0]
 			.filter(
 				(role: StableCoinRole) => role !== StableCoinRole.WITHOUT_ROLE,
@@ -758,7 +760,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 	private async getAccountEvmAddress(accountId: string): Promise<string> {
 		try {
-			const accountInfo: IAccountInfo = await this.getAccountInfo(
+			const accountInfo: AccountInfo = await this.getAccountInfo(
 				accountId,
 			);
 			if (accountInfo.accountEvmAddress) {
@@ -791,13 +793,14 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		}
 	}
 
-	public async getAccountInfo(accountId: string): Promise<IAccountInfo> {
+	public async getAccountInfo(accountId: string): Promise<AccountInfo> {
 		try {
+			console.log(this.URI_BASE + 'accounts/' + accountId);
 			const res = await axios.get<IAccount>(
 				this.URI_BASE + 'accounts/' + accountId,
 			);
 
-			const account: IAccountInfo = {
+			const account: AccountInfo = {
 				account: accountId,
 				accountEvmAddress: res.data.evm_address,
 				publicKey: new PublicKey({
@@ -808,7 +811,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 			return account;
 		} catch (error) {
-			return Promise.reject<IAccountInfo>(error);
+			return Promise.reject<AccountInfo>(new InvalidResponse(error));
 		}
 	}
 }

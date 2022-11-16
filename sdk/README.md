@@ -14,53 +14,74 @@
 - [Table of contents](#table-of-contents)
 - [Overview](#overview)
 - [Installing](#installing)
-		- [Pre-requirements](#pre-requirements)
-		- [Steps](#steps)
-			- [**For projects (WIP - when published)**](#for-projects-wip---when-published)
-			- [**For development**](#for-development)
-		- [Example (JS)](#example-js)
-		- [Example (TS)](#example-ts)
-	- [Before using](#before-using)
-- [Usage](#usage)
-		- [**Important**](#important)
-	- [Create Stable Coin](#create-stable-coin)
-	- [Get stable coin list](#get-stable-coin-list)
-	- [Get Stable Coin](#get-stable-coin)
-	- [Get Balance Of](#get-balance-of)
-	- [Get Token Name](#get-token-name)
-	- [Cash in](#cash-in)
-	- [Cash out](#cash-out)
-	- [Associate token](#associate-token)
-	- [Wipe tokens](#wipe-tokens)
-	- [Rescue tokens](#rescue-tokens)
-	- [Grant supplier role](#grant-supplier-role)
-	- [Revoke supplier role](#revoke-supplier-role)
-	- [Supplier allowance](#supplier-allowance)
-	- [Reset supplier allowance](#reset-supplier-allowance)
-	- [Increase supplier allowance](#increase-supplier-allowance)
-	- [Decrease supplier allowance](#decrease-supplier-allowance)
-	- [Is supplier allowance limited](#is-supplier-allowance-limited)
-	- [Is supplier allowance unlimited](#is-supplier-allowance-unlimited)
-	- [Grant Role](#grant-role)
-	- [Revoke Role](#revoke-role)
-	- [Has role](#has-role)
-	- [Check string is valid address](#check-string-is-valid-address)
-	- [Public key from private key](#public-key-from-private-key)
-	- [Hashpack](#hashpack)
-		- [Events](#events)
-- [Testing](#testing)
-		- [Jest](#jest)
+  - [Pre-requirements](#pre-requirements)
+  - [Steps](#steps)
+  - [**For projects (WIP - when published)**](#for-projects-wip---when-published)
+  - [**For development**](#for-development)
+  - [Example (JS)](#example-js)
+  - [Example (TS)](#example-ts)
+  - [Before using](#before-using)
+- [Basic Types](#basic-types)
+  - [AccountId](#accountid)
+    - [Fields](#fields)
+    - [Example](#example)
+  - [Account](#account)
+    - [Fields](#fields-1)
+  - [EOAccount](#eoaccount)
+    - [Fields](#fields-2)
+    - [Example](#example-1)
+  - [HashPackAccount](#hashpackaccount)
+    - [Fields](#fields-3)
+    - [Example](#example-2)
+  - [PrivateKey](#privatekey)
+    - [Fields](#fields-4)
+    - [Example](#example-3)
+  - [PrivateKeyType [WIP]](#privatekeytype-wip)
+    - [Example](#example-4)
+  - [PublicKey](#publickey)
+    - [Fields](#fields-5)
+    - [Example](#example-5)
+  - [ContractId](#contractid)
+    - [Fields](#fields-6)
+    - [Example](#example-6)
+- [Usage](#usage) - [**Important**](#important)
+  - [Create Stable Coin](#create-stable-coin)
+  - [Get stable coin list](#get-stable-coin-list)
+  - [Get Stable Coin](#get-stable-coin)
+  - [Get Balance Of](#get-balance-of)
+  - [Get Token Name](#get-token-name)
+  - [Cash in](#cash-in)
+  - [Cash out](#cash-out)
+  - [Associate token](#associate-token)
+  - [Wipe tokens](#wipe-tokens)
+  - [Rescue tokens](#rescue-tokens)
+  - [Grant supplier role](#grant-supplier-role)
+  - [Revoke supplier role](#revoke-supplier-role)
+  - [Supplier allowance](#supplier-allowance)
+  - [Reset supplier allowance](#reset-supplier-allowance)
+  - [Increase supplier allowance](#increase-supplier-allowance)
+  - [Decrease supplier allowance](#decrease-supplier-allowance)
+  - [Is supplier allowance limited](#is-supplier-allowance-limited)
+  - [Is supplier allowance unlimited](#is-supplier-allowance-unlimited)
+  - [Grant Role](#grant-role)
+  - [Revoke Role](#revoke-role)
+  - [Has role](#has-role)
+  - [Check string is valid address](#check-string-is-valid-address)
+  - [Public key from private key](#public-key-from-private-key)
+  - [Hashpack](#hashpack)
+    - [Events](#events)
+- [Testing](#testing) - [Jest](#jest)
 - [Typescript](#typescript)
-	- [Tsconfig](#tsconfig)
-		- [Client side](#client-side)
-		- [Server side](#server-side)
+  - [Tsconfig](#tsconfig)
+    - [Client side](#client-side)
+    - [Server side](#server-side)
 - [Support](#support)
 - [Contributing](#contributing)
 - [Code of Conduct](#code-of-conduct)
-	- [License](#license)
-
+  - [License](#license)
 
 # Overview
+
 Hedera supports the creation of tokens and stable coins. This SDK aims to help in deploying, managing and operating with stable coins in the Hedera network.
 
 # Installing
@@ -73,11 +94,14 @@ You must have installed
 - [npm](https://www.npmjs.com/)
 
 ### Steps
+
 #### **For projects (WIP - when published)**
+
 1. Run `npm install hedera-stable-coin-sdk`. To install the dependency.
 2. Import and use the SDK.
 
 #### **For development**
+
 1. Clone the repo and open a terminal in the root folder
 2. Run `node install.js`. To install all the dependencies and links.
 3. `cd` into `./contracts`
@@ -89,7 +113,7 @@ You must have installed
 
 ### Example (JS)
 
-````JavaScript
+```JavaScript
 // ES5
 const { SDK, NetworkMode, HederaNetwork, HederaNetworkEnviroment, EOAccount } = require('hedera-stable-coin-sdk');
 
@@ -127,11 +151,11 @@ try {
 	console.error(error);
 }
 
-````
+```
 
 ### Example (TS)
 
-````TypeScript
+```TypeScript
 import {
 	SDK,
 	NetworkMode,
@@ -174,8 +198,10 @@ try {
 }
 
 
-````
+```
+
 ## Before using
+
 The SDK supports both client-side and server-side implementations, keeping in mind that only one `NetworkMode` is currently available for each environment.
 
 On client-side applications, such as React, use `NetworkMode.HASHPACK`.
@@ -184,97 +210,117 @@ On server-side applications, such as Node applications, use `NetworkMode.EOA` an
 # Basic Types
 
 ## AccountId
+
 An account id on Hedera.
 
 ### Fields
- - `**id**`: [string] The account id
+
+- `id`: [string] The account id
 
 ### Example
-````Typescript
+
+`````Typescript
 	const haccount = new HashPackAccount('0.0.1')
 
 ## Account
 Represents a base account, cannot be used directly. Instead, use EOAccount or HashPackAccount
 
 ### Fields
- - `**accountId**`: [AccountId] The account id
- - `**privateKey?**`: [PrivateKey](Optional) PrivateKey instance
+ - `accountId`: [AccountId] The account id
+ - `privateKey?`: [PrivateKey](Optional) PrivateKey instance
 
 ## EOAccount
 Represent an **e**xtenrally **o**wned **a**ccount, a private key must be provided
 
 ### Fields
- - `**accountId**`: [AccountId] The account id
- - `**privateKey**`: [string] PrivateKey instance
+ - `accountId`: [AccountId] The account id
+ - `privateKey`: [string] PrivateKey instance
 
 ### Example
 ````Typescript
 	const eoa = new EOAccount('0.0.1', new PrivateKey('1234'))
-````
+`````
 
 ## HashPackAccount
+
 Represents a HashPackAccount.
 
 ### Fields
- - `**accountId**`: [AccountId] The account id
+
+- `accountId`: [AccountId] The account id
 
 ### Example
-````Typescript
+
+```Typescript
 	const haccount = new HashPackAccount('0.0.1')
-````
+```
 
 ## PrivateKey
+
 A private key, which has the key string and the type of key (ECDSA or ED25519 [default]).
 
 ### Fields
- - `**key**`: [string] The private key
- - `**type**`: [PrivateKeyType] The private key type (ECDSA or ED25519 [default])
-	- default: ED25519
+
+- `key`: [string] The private key
+- `type`: [PrivateKeyType] The private key type (ECDSA or ED25519 [default])
+  - default: ED25519
 
 ### Example
-````Typescript
+
+```Typescript
 	const pk = new PrivateKey('1234')
 	const pkECDSA = new PrivateKey('1234' , PrivateKeyType.ECDSA)
-````
+```
 
 ## PrivateKeyType [WIP]
+
 A private key type (ECDSA or ED25519 [default]).
 
 ### Example
-````Typescript
-````
+
+```Typescript
+
+```
 
 ## PublicKey
+
 A public key on Hedera.
 
 ### Fields
- - `**key**`: The public key
+
+- `key`: The public key
 
 ### Example
-````Typescript
+
+```Typescript
 	const pk = new PublicKey('1234')
-````
+```
 
 ## ContractId
 
 Represents a contract id on Hedera.
 
 ### Fields
- - `**id**`: The contract id
+
+- `id`: The contract id
 
 ### Example
-````Typescript
+
+```Typescript
 	const contractId = new ContractId('0.0.1')
-````
+```
 
 # Usage
+
 To use the SDK, simply instantiate with the `new` keyword:
 
-````Javascript
+```Javascript
 	const sdk = new SDK(options);
-````
+```
+
 Where `options` can be:
-````Javascript
+
+```Javascript
 	interface Configuration {
 		network: HederaNetwork;
 		mode: NetworkMode;
@@ -297,10 +343,11 @@ Where `options` can be:
 		'EOA' = 'EOA',
 		'HASHPACK' = 'HASHPACK',
 	}
-````
+```
+
 So for example:
 
-````JavaScript
+```JavaScript
 // EOA Account
 	const sdk = new SDK({
 		mode: NetworkMode.EOA,
@@ -325,13 +372,16 @@ So for example:
 				url: 'localhost',
 			},
 		});
-````
+```
+
 ### **Important**
+
 - When using **EOA** network mode, an `EOAccount` must be specified.
 - When using **HASHPACK** network mode, `AppMetadata` must be specified.
 
 The SDK has an `async` function to initialize the SDK, to which you optionally can pass a callback to the initialization event:
-````Typescript
+
+```Typescript
 	// data
 	interface InitilizationData {
 		topic: string;
@@ -346,605 +396,736 @@ The SDK has an `async` function to initialize the SDK, to which you optionally c
 			console.log("SDK initialized");
 		}
 	})
-````
+```
 
 ## Create Stable Coin
 
 Creates a new stable coin.
 
 **Spec:**
-````Typescript
-	interface ICreateStableCoinRequest {
-		account: Account;
-		name: string;
-		symbol: string;
-		decimals: number;
-		initialSupply?: bigint;
-		maxSupply?: bigint;
-		memo?: string;
-		freezeDefault?: boolean;
-		autoRenewAccount?: string;
-		adminKey?: PublicKey;
-		freezeKey?: PublicKey;
-		KYCKey?: PublicKey;
-		wipeKey?: PublicKey;
-		pauseKey?: PublicKey;
-		supplyKey?: PublicKey;
-		treasury?: AccountId;
-	}
 
-	sdk.createStableCoin = (request: ICreateStableCoinRequest): Promise<StableCoin>
-````
+```Typescript
+	sdk.createStableCoin = (request: CreateStableCoinRequest): Promise<StableCoinDetail>
+```
 
 **Example:**
-````Typescript
-	const stableCoin: StableCoin = await sdk.createStableCoin({
-		account: new HashPackAccount("0.0.1"),
-		name: "Hedera Stable Coin",
-		symbol: "HSC",
-		decimals: 6
-	})
-````
+
+```Typescript
+	const stableCoin: StableCoinDetail = await sdk.createStableCoin(
+		new CreateStableCoinRequest({
+			account: new HashPackAccount("0.0.1"),
+			name: "Hedera Stable Coin",
+			symbol: "HSC",
+			decimals: 6
+		})
+	);
+```
+
+## Get capabilities stable coin
+
+Get a list of the stable coin capabilities
+
+**Spec:**
+
+```Typescript
+	enum Capabilities {
+		CASH_IN = 'Cash in',
+		CASH_IN_HTS = 'Cash in hts',
+		DETAILS = 'Details',
+		BALANCE = 'Balance',
+		BURN = 'Burn',
+		BURN_HTS = 'Burn hts',
+		WIPE = 'Wipe',
+		WIPE_HTS = 'Wipe hts',
+		RESCUE = 'Rescue',
+		ROLE_MANAGEMENT = 'Role management',
+		PAUSE = 'Pause',
+	}
+
+	sdk.getCapabilitiesStableCoin() = (id: string, publicKey: string) : Capabilities[]
+```
+
+**Example:**
+
+```Typescript
+	const stableCoins: StableCoinList[] = await sdk.getCapabilitiesStableCoin(
+		'0.0.1',
+		'0x1234'
+	)
+```
 
 ## Get stable coin list
 
 Gets a list of the stable coins (id and symbol) managed by an account.
 
 **Spec:**
-````Typescript
-	interface IGetListStableCoinRequest {
-		account: Account;
-	}
 
-	interface IStableCoinList {
+```Typescript
+
+	interface StableCoinList {
 		symbol: string;
 		id: string;
 	}
 
-	sdk.getListStableCoin = (request: IGetListStableCoinRequest): Promise<IStableCoinList[]>
-````
+	sdk.getListStableCoin = (request: GetListStableCoinRequest): Promise<StableCoinList[]>
+```
 
 **Example:**
-````Typescript
-	const stableCoins: IStableCoinList[] = await sdk.getListStableCoin({
-		account: new EOAccount("0.0.1", new PrivateKey("1234")),
-	})
-````
+
+```Typescript
+	const stableCoins: StableCoinList[] = await sdk.getListStableCoin(
+		new GetListStableCoinRequest({
+			account:{
+				accountId:'0.0.123'
+			},
+		})
+	)
+```
 
 ## Get Stable Coin
 
 Gets the details of a stable coin.
 
 **Spec:**
-````Typescript
-	interface IGetStableCoinRequest {
-		accountId: AccountId;
-	}
 
-	sdk.getStableCoin = (request: IGetStableCoinRequest): Promise<StableCoin> | null
-````
+```Typescript
+	sdk.getStableCoinDetails = (request: GetStableCoinDetailsRequest): Promise<StableCoinDetail>
+```
 
 **Example:**
-````Typescript
-	const stableCoin: StableCoin | null = await sdk.getStableCoin({
-		accountId: new AccountId("0.0.1"),
-	})
-````
+
+```Typescript
+	const stableCoin: StableCoinDetail = await sdk.getStableCoinDetails(
+		new GetStableCoinDetailsRequest({
+			id: "0.0.21345",
+		})
+	)
+```
 
 ## Get Balance Of
 
 Gets the balance of tokens of an account.
 
 **Spec:**
-````Typescript
-	interface IGetBalanceStableCoinRequest {
-		proxyContractId: ContractId;
-		account: Account;
-		targetId: AccountId;
-		tokenId: AccountId;
-	}
 
-	sdk.getBalanceOf = (request: IGetBalanceStableCoinRequest): Promise<Uint8Array> | null
-````
+```Typescript
+	sdk.getBalanceOf = (request: GetAccountBalanceRequest): Promise<string>
+```
 
 **Example:**
-````Typescript
-	const balance: Uint8Array | null = await sdk.getBalanceOf({
-		proxyContractId: new ContractId("0.0.1"),
-		account: new EOAccount("0.0.1", new PrivateKey("1234")),
-		targetId: new AccountId("0.0.2"),
-		tokenId: new AccountId("0.0.3")
-	})
-````
 
-## Get Token Name
-
-Gets the token name of a stable coin.
-
-**Spec:**
-````Typescript
-	interface IGetNameStableCoinRequest {
-		proxyContractId: ContractId;
-		account: Account;
-	}
-
-	sdk.getNameToken = (request: IGetNameStableCoinRequest): Promise<Uint8Array> | null
-````
-
-**Example:**
-````Typescript
-	const res: Uint8Array = await sdk.getNameToken({
-		proxyContractId: new ContractId("0.0.1"),
-		account: new EOAccount("0.0.1", new PrivateKey("1234")),
-	})
-````
+```Typescript
+	const balance: string | null = await sdk.getBalanceOf(
+		new GetAccountBalanceRequest({
+			proxyContractId: "0.0.1",
+			account: {
+				accountId:"0.0.123",
+				privateKey:{
+					key:"",
+					type:""
+				},
+			},
+			targetId: "0.0.2",
+			tokenId: "0.0.3"
+		})
+	)
+```
 
 ## Cash in
 
 Cash in tokens into a stable coin.
 
 **Spec:**
-````Typescript
-	interface ICashInStableCoinServiceRequestModel {
-		proxyContractId: ContractId;
-		account: Account;
-		targetId: AccountId;
-		tokenId: AccountId;
-	}
 
-	sdk.cashIn = (request: ICashInStableCoinServiceRequestModel): Promise<Uint8Array>
-````
+```Typescript
+	sdk.cashIn = (request: CashInStableCoinRequest): Promise<bool>
+```
 
 **Example:**
-````Typescript
-	const res: Uint8Array = await sdk.cashIn({
-		proxyContractId: new ContractId("0.0.1"),
-		account: new EOAccount("0.0.1", new PrivateKey("1234")),
-		targetId: new AccountId("0.0.2"),
-		tokenId: new AccountId("0.0.3")
-	})
-````
+
+```Typescript
+	const res: bool = await sdk.cashIn(
+		new CashInStableCoinRequest({
+			account: {
+				accountId:"0.0.123",
+				privateKey:{
+					key:"",
+					type:""
+				},
+			},
+			amount: "10",
+			proxyContractId: "0.0.1",
+			targetId: "0.0.2",
+			tokenId: "0.0.3",
+		})
+	)
+```
 
 ## Cash out
 
 Cash out tokens of a stable coin.
 
 **Spec:**
-````Typescript
-	interface ICashOutStableCoinServiceRequestModel {
-		proxyContractId: ContractId;
-		account: Account;
-		targetId: AccountId;
-		tokenId: AccountId;
-	}
 
-	sdk.cashOut = (request: ICashOutStableCoinServiceRequestModel): Promise<Uint8Array>
-````
+```Typescript
+	sdk.cashOut = (request: CashOutStableCoinRequest): Promise<bool>
+```
 
 **Example:**
-````Typescript
-	const res: Uint8Array = await sdk.cashOut({
-		proxyContractId: new ContractId("0.0.1"),
-		account: new EOAccount("0.0.1", new PrivateKey("1234")),
-		targetId: new AccountId("0.0.2"),
-		tokenId: new AccountId("0.0.3")
-	})
-````
+
+```Typescript
+	const res: bool = await sdk.cashOut(
+		new CashOutStableCoinRequest({
+			account: {
+				accountId:"0.0.123",
+				privateKey:{
+					key:"",
+					type:""
+				},
+			},
+			amount: "10",
+			proxyContractId: "0.0.1",
+			targetId: "0.0.2",
+			tokenId: "0.0.3",
+		})
+	)
+```
 
 ## Associate token
 
 Associate a stable coin to an account.
 
 **Spec:**
-````Typescript
-	interface IAssociateTokenStableCoinServiceRequestModel {
-		proxyContractId: ContractId;
-		account: Account;
-	}
 
-	sdk.associateToken = (request: IAssociateTokenStableCoinServiceRequestModel): Promise<Uint8Array>
-````
+```Typescript
+	sdk.associateToken = (request: AssociateTokenRequest): Promise<Uint8Array>
+```
 
 **Example:**
-````Typescript
-	const res: Uint8Array = await sdk.cashOut({
-		proxyContractId: new ContractId("0.0.1"),
-		account: new EOAccount("0.0.1", new PrivateKey("1234")),
-	})
-````
+
+```Typescript
+	const res: Uint8Array = await sdk.associateToken(
+		new AssociateTokenRequest({
+			account: {
+				accountId:"0.0.123",
+				privateKey:{
+					key:"",
+					type:""
+				},
+			},
+			proxyContractId: "0.0.1",
+		})
+	)
+```
 
 ## Wipe tokens
 
 Wipes tokens of a stable coin
 
 **Spec:**
-````Typescript
-	interface IWipeStableCoinServiceRequestModel {
-		proxyContractId: ContractId;
-		account: Account;
-		targetId: AccountId;
-		tokenId: AccountId;
-		amount: number;
-	}
 
-	sdk.wipe = (request: IAssociateTokenStableCoinServiceRequestModel): Promise<Uint8Array>
-````
+```Typescript
+	sdk.wipe = (request: WipeStableCoinRequest): Promise<bool>
+```
 
 **Example:**
-````Typescript
-	const res: Uint8Array = await sdk.wipe({
-		proxyContractId: new ContractId("0.0.1"),
-		account: new EOAccount("0.0.1", new PrivateKey("1234")),
-		targetId: new AccountId("0.0.3"),
-		tokenId: new AccountId("0.0.4"),
-		amount: 10.42,
-	})
-````
+
+```Typescript
+	const res: Uint8Array = await sdk.wipe(
+		new WipeStableCoinRequest({
+			account: {
+				accountId:"0.0.123",
+				privateKey:{
+					key:"",
+					type:""
+				},
+			},
+			amount: "10.42",
+			proxyContractId:"0.0.1",
+			targetId: "0.0.3",
+			tokenId: "0.0.4",
+		})
+	)
+```
 
 ## Rescue tokens
 
 Rescue tokens from a stable coin.
 
 **Spec:**
-````Typescript
-	interface IRescueStableCoinRequest {
-		proxyContractId: ContractId;
-		account: Account;
-		targetId: AccountId;
-		tokenId: AccountId;
-		amount: number;
-	}
 
-	sdk.rescue = (request: IRescueStableCoinRequest): Promise<Uint8Array>
-````
+```Typescript
+	sdk.rescue = (request: RescueStableCoinRequest): Promise<Uint8Array>
+```
 
 **Example:**
-````Typescript
-	const res: Uint8Array = await sdk.rescue({
-		proxyContractId: new ContractId("0.0.1"),
-		account: new EOAccount("0.0.1", new PrivateKey("1234")),
-		targetId: new AccountId("0.0.3"),
-		tokenId: new AccountId("0.0.4"),
-		amount: 10.42,
-	})
-````
 
-## Grant supplier role
-
-Grants the supplier role to an account.
-
-**Spec:**
-````Typescript
-	interface ISupplierRoleStableCoinServiceRequestModel {
-		proxyContractId: ContractId;
-		account: Account;
-		targetId: AccountId;
-		amount: number;
-	}
-
-	sdk.grantSupplierRole = (request: ISupplierRoleStableCoinServiceRequestModel): Promise<Uint8Array>
-````
-
-**Example:**
-````Typescript
-	const res: Uint8Array = await sdk.grantSupplierRole({
-		proxyContractId: new ContractId("0.0.1"),
-		account: new EOAccount("0.0.1", new PrivateKey("1234")),
-		targetId: new AccountId("0.0.3"),
-		amount: 10.42,
-	})
-````
-
-## Revoke supplier role
-
-Revokes the supplier role to an account.
-
-**Spec:**
-````Typescript
-	interface IBasicRequest {
-		proxyContractId: ContractId;
-		account: Account;
-		targetId: AccountId;
-	}
-
-	sdk.revokeSupplierRole = (request: IBasicRequest): Promise<Uint8Array>
-````
-
-**Example:**
-````Typescript
-	const res: Uint8Array = await sdk.revokeSupplierRole({
-		proxyContractId: new ContractId("0.0.1"),
-		account: new EOAccount("0.0.1", new PrivateKey("1234")),
-		targetId: new AccountId("0.0.3"),
-	})
-````
+```Typescript
+	const res: Uint8Array = await sdk.rescue(
+		new RescueStableCoinRequest({
+			account: {
+				accountId:"0.0.123",
+				privateKey:{
+					key:"",
+					type:""
+				},
+			},
+			proxyContractId: "0.0.1",
+			tokenId: "0.0.4",
+			amount: "10.42",
+		})
+	)
+```
 
 ## Supplier allowance
 
-Sets the supplier allowance for an account.
+Get the supplier allowance amount for an account.
 
 **Spec:**
-````Typescript
-	interface IBasicRequest {
-		proxyContractId: ContractId;
-		account: Account;
-		targetId: AccountId;
-	}
 
-	sdk.supplierAllowance = (request: IBasicRequest): Promise<Uint8Array>
-````
+```Typescript
+	sdk.supplierAllowance = (request: CheckCashInLimitRequest): Promise<string>
+```
 
 **Example:**
-````Typescript
-	const res: Uint8Array = await sdk.supplierAllowance({
-		proxyContractId: new ContractId("0.0.1"),
-		account: new EOAccount("0.0.1", new PrivateKey("1234")),
-		targetId: new AccountId("0.0.3"),
-	})
-````
 
+```Typescript
+	const res: string = await sdk.supplierAllowance(
+		new CheckCashInLimitRequest({
+			account: {
+				accountId:"0.0.123",
+				privateKey:{
+					key:"",
+					type:""
+				},
+			},
+			targetId: "0.0.3",
+			proxyContractId: "0.0.1",
+			tokenId: "0.0.2"
+		})
+	)
+```
 
 ## Reset supplier allowance
 
 Resets the allowance of a supplier.
 
 **Spec:**
-````Typescript
-	interface IBasicRequest {
-		proxyContractId: ContractId;
-		account: Account;
-		targetId: AccountId;
-	}
 
-	sdk.resetSupplierAllowance = (request: IBasicRequest): Promise<Uint8Array>
-````
+```Typescript
+	sdk.resetSupplierAllowance = (request: ResetCashInLimitRequest): Promise<Uint8Array>
+```
 
 **Example:**
-````Typescript
-	const res: Uint8Array = await sdk.resetSupplierAllowance({
-		proxyContractId: new ContractId("0.0.1"),
-		account: new EOAccount("0.0.1", new PrivateKey("1234")),
-		targetId: new AccountId("0.0.3"),
-	})
-````
+
+```Typescript
+	const res: Uint8Array = await sdk.resetSupplierAllowance(
+		new ResetCashInLimitRequest({
+			account: {
+				accountId:"0.0.123",
+				privateKey:{
+					key:"",
+					type:""
+				},
+			},
+			targetId: "0.0.3",
+			proxyContractId: "0.0.1",
+		})
+	)
+```
 
 ## Increase supplier allowance
 
 Increases the allowance of a supplier.
 
 **Spec:**
-````Typescript
-	interface IAllowanceRequest {
-		proxyContractId: ContractId;
-		account: Account;
-		targetId: AccountId;
-		amount: number;
-	}
 
-	sdk.increaseSupplierAllowance = (request: IAllowanceRequest): Promise<Uint8Array>
-````
+```Typescript
+	sdk.increaseSupplierAllowance = (request: IncreaseCashInLimitRequest): Promise<Uint8Array>
+```
 
 **Example:**
-````Typescript
-	const res: Uint8Array = await sdk.increaseSupplierAllowance({
-		proxyContractId: new ContractId("0.0.1"),
-		account: new EOAccount("0.0.1", new PrivateKey("1234")),
-		targetId: new AccountId("0.0.3"),
-		amount: 10.42,
-	})
-````
+
+```Typescript
+	const res: Uint8Array = await sdk.increaseSupplierAllowance(
+		new IncreaseCashInLimitRequest({
+			account: {
+				accountId:"0.0.123",
+				privateKey:{
+					key:"",
+					type:""
+				},
+			},
+			targetId:"0.0.3",
+			proxyContractId:"0.0.1",
+			tokenId: "0.0.2"
+			amount: "10.42",
+		})
+	)
+```
 
 ## Decrease supplier allowance
 
 Decreases the allowance of a supplier.
 
 **Spec:**
-````Typescript
-	interface IAllowanceRequest {
-		proxyContractId: ContractId;
-		account: Account;
-		targetId: AccountId;
-		amount: number;
-	}
 
-	sdk.decreaseSupplierAllowance = (request: IAllowanceRequest): Promise<Uint8Array>
-````
+```Typescript
+	sdk.decreaseSupplierAllowance = (request: DecreaseCashInLimitRequest): Promise<Uint8Array>
+```
 
 **Example:**
-````Typescript
-	const res: Uint8Array = await sdk.decreaseSupplierAllowance({
-		proxyContractId: new ContractId("0.0.1"),
-		account: new EOAccount("0.0.1", new PrivateKey("1234")),
-		targetId: new AccountId("0.0.3"),
-		amount: 10.42,
-	})
-````
+
+```Typescript
+	const res: Uint8Array = await sdk.decreaseSupplierAllowance(
+		new DecreaseCashInLimitRequest({
+			account: {
+				accountId:"0.0.123",
+				privateKey:{
+					key:"",
+					type:""
+				},
+			},
+			targetId:"0.0.3",
+			proxyContractId:"0.0.1",
+			tokenId: "0.0.2"
+			amount: "10.42",
+		})
+	)
+```
 
 ## Is supplier allowance limited
 
 Checks if the supplier account passed has it's allowance limited.
 
 **Spec:**
-````Typescript
-	interface IBasicRequest {
-		proxyContractId: ContractId;
-		account: Account;
-		targetId: AccountId;
-	}
 
-	sdk.isLimitedSupplierAllowance = (request: IBasicRequest): Promise<Uint8Array>
-````
+```Typescript
+	sdk.isLimitedSupplierAllowance = (request: CheckCashInRoleRequest): Promise<Uint8Array>
+```
 
 **Example:**
-````Typescript
-	const res: Uint8Array = await sdk.isLimitedSupplierAllowance({
-		proxyContractId: new ContractId("0.0.1"),
-		account: new EOAccount("0.0.1", new PrivateKey("1234")),
-		targetId: new AccountId("0.0.3"),
-	})
-````
+
+```Typescript
+	const res: Uint8Array = await sdk.isLimitedSupplierAllowance(
+		new CheckCashInRoleRequest({
+			account: {
+				accountId:"0.0.123",
+				privateKey:{
+					key:"",
+					type:""
+				},
+			},
+			targetId: "0.0.3",
+			proxyContractId: "0.0.1",
+		})
+	)
+```
+
 ## Is supplier allowance unlimited
 
-Decreases the allowance of a supplier.
+Checks if the supplier account passed has it's allowance unlimited.
 
 **Spec:**
-````Typescript
-	interface IBasicRequest {
-		proxyContractId: ContractId;
-		account: Account;
-		targetId: AccountId;
-	}
 
-	sdk.isUnlimitedSupplierAllowance = (request: IBasicRequest): Promise<Uint8Array>
-````
+```Typescript
+	sdk.isUnlimitedSupplierAllowance = (request: CheckCashInRoleRequest): Promise<Uint8Array>
+```
 
 **Example:**
-````Typescript
-	const res: Uint8Array = await sdk.isUnlimitedSupplierAllowance({
-		proxyContractId: new ContractId("0.0.1"),
-		account: new EOAccount("0.0.1", new PrivateKey("1234")),
-		targetId: new AccountId("0.0.3"),
-	})
-````
+
+```Typescript
+	const res: Uint8Array = await sdk.isUnlimitedSupplierAllowance(
+		new CheckCashInRoleRequest({
+			account: {
+				accountId:"0.0.123",
+				privateKey:{
+					key:"",
+					type:""
+				},
+			},
+			targetId: "0.0.3",
+			proxyContractId: "0.0.1",
+		})
+	)
+```
 
 ## Grant Role
 
 Grants an account a role in a stable coin.
 
 **Spec:**
-````Typescript
+
+```Typescript
 	enum StableCoinRole {
 		CASHIN_ROLE,
 		BURN_ROLE,
 		WIPE_ROLE,
 		RESCUE_ROLE,
-		PAUSER_ROLE,
+		PAUSE_ROLE,
+		FREEZE_ROLE
 	}
 
-	interface IRoleStableCoinRequest {
-		proxyContractId: ContractId;
-		account: Account;
-		targetId: AccountId;
-		role: StableCoinRole;
-		amount?: number;
-	}
-
-	sdk.grantRole = (request: IRoleStableCoinRequest): Promise<Uint8Array>
-````
+	sdk.grantRole = (request: GrantRoleRequest): Promise<Uint8Array>
+```
 
 **Example:**
-````Typescript
-	const res: Uint8Array = await sdk.grantRole({
-		proxyContractId: new ContractId("0.0.1"),
-		account: new EOAccount("0.0.1", new PrivateKey("1234")),
-		targetId: new AccountId("0.0.3"),
-		role: StableCoinRole.WIPE_ROLE
-	})
-````
+
+```Typescript
+	const res: Uint8Array = await sdk.grantRole(
+		new GrantRoleRequest({
+			account: {
+				accountId:"0.0.123",
+				privateKey:{
+					key:"",
+					type:""
+				},
+			},
+			targetId: "0.0.3",
+			proxyContractId: "0.0.1",
+			tokenId: "0.0.2"
+			role: StableCoinRole.CASHIN_ROLE,
+			amount: "10.42"
+		})
+	)
+
+	const res: Uint8Array = await sdk.grantRole(
+		new GrantRoleRequest({
+			account: {
+				accountId:"0.0.123",
+				privateKey:{
+					key:"",
+					type:""
+				},
+			},
+			targetId: "0.0.3",
+			proxyContractId: "0.0.1",
+			tokenId: "0.0.2"
+			role: StableCoinRole.WIPE_ROLE
+		})
+	)
+```
 
 ## Revoke Role
 
 Revokes an account's role in a stable coin.
 
 **Spec:**
-````Typescript
+
+```Typescript
 	enum StableCoinRole {
 		CASHIN_ROLE,
 		BURN_ROLE,
 		WIPE_ROLE,
 		RESCUE_ROLE,
-		PAUSER_ROLE,
+		PAUSE_ROLE,
+		FREEZE_ROLE
 	}
 
-	interface IRoleStableCoinRequest {
-		proxyContractId: ContractId;
-		account: Account;
-		targetId: AccountId;
-		role: StableCoinRole;
-		amount?: number;
-	}
-
-	sdk.revokeRole = (request: IRoleStableCoinRequest): Promise<Uint8Array>
-````
+	sdk.revokeRole = (request: RevokeRoleRequest): Promise<Uint8Array>
+```
 
 **Example:**
-````Typescript
-	const res: Uint8Array = await sdk.revokeRole({
-		proxyContractId: new ContractId("0.0.1"),
-		account: new EOAccount("0.0.1", new PrivateKey("1234")),
-		targetId: new AccountId("0.0.3"),
-		role: StableCoinRole.WIPE_ROLE
-	})
-````
+
+```Typescript
+	const res: Uint8Array = await sdk.revokeRole(
+		new RevokeRoleRequest({
+			account: {
+				accountId:"0.0.123",
+				privateKey:{
+					key:"",
+					type:""
+				},
+			},
+			targetId: "0.0.3",
+			proxyContractId: "0.0.1",
+			tokenId: "0.0.2"
+			role: StableCoinRole.CASHIN_ROLE,
+		})
+	)
+```
+
 ## Has role
 
 Checks if an account has a certain role on the stable coin.
 
 **Spec:**
-````Typescript
+
+```Typescript
 	enum StableCoinRole {
 		CASHIN_ROLE,
 		BURN_ROLE,
 		WIPE_ROLE,
 		RESCUE_ROLE,
-		PAUSER_ROLE,
+		PAUSE_ROLE,
+		FREEZE_ROLE
 	}
 
-	interface IRoleStableCoinRequest {
-		proxyContractId: ContractId;
-		account: Account;
-		targetId: AccountId;
-		role: StableCoinRole;
-		amount?: number;
-	}
-
-	sdk.hasRole = (request: IRoleStableCoinRequest): Promise<Uint8Array>
-````
+	sdk.hasRole = (request: HasRoleRequest): Promise<Uint8Array>
+```
 
 **Example:**
-````Typescript
-	const res: Uint8Array = await sdk.hasRole({
-		proxyContractId: new ContractId("0.0.1"),
-		account: new EOAccount("0.0.1", new PrivateKey("1234")),
-		targetId: new AccountId("0.0.3"),
-		role: StableCoinRole.WIPE_ROLE
-	})
-````
+
+```Typescript
+	const res: Uint8Array = await sdk.hasRole(
+		new HasRoleRequest({
+			account: {
+					accountId:"0.0.123",
+					privateKey:{
+						key:"",
+						type:""
+					},
+				},
+			targetId: "0.0.3",
+			proxyContractId: "0.0.1",
+			tokenId: "0.0.2"
+			role: StableCoinRole.WIPE_ROLE,
+		})
+	)
+```
+
+## Get account info
+
+Get the account info
+
+**Spec:**
+
+```Typescript
+	interface IAccountWithKeyRequestModel {
+		account: Account;
+	}
+
+	interface AccountInfo {
+		account?:string,
+		accountEvmAddress?:string,
+		publicKey?:PublicKey,
+	}
+
+	sdk.getAccountInfo = (request: IAccountWithKeyRequestModel): Promise<AccountInfo>
+```
+
+**Example:**
+
+```Typescript
+	const res: AccountInfo = await sdk.getAccountInfo(
+		{
+			account:{
+				accountId:"0.0.1234"
+			}
+		}
+	)
+```
+
+## Get roles
+
+Get the role of an account passed
+
+**Spec:**
+
+```Typescript
+	sdk.getRoles = (request: GetRolesRequest): Promise<string[]>
+```
+
+**Example:**
+
+```Typescript
+	const res: string[] = await sdk.getRoles(
+		new GetRolesRequest({
+			account:{
+				accountId:"0.0.1234"
+			},
+			targetId:"0.0.2",
+			proxyContractId:"0.0.1",
+			tokenId: "0.0.3"
+		})
+	);
+```
 
 ## Check string is valid address
 
 Checks if a string is a valid Hedera address.
 
 **Spec:**
-````Typescript
+
+```Typescript
 	sdk.checkIsAddress = (str?: string): boolean;
-````
+```
 
 **Example:**
-````Typescript
+
+```Typescript
 	const isAddress: boolean = sdk.checkIsAddress("0.0.1"); // true
 	const isNotAddress: boolean = sdk.checkIsAddress("1234"); // false
-````
+```
+
 ## Public key from private key
 
 Gets the public key of a private key.
 
 **Spec:**
-````Typescript
+
+```Typescript
 	sdk.getPublicKey = (str?: string): string;
-````
+```
 
 **Example:**
-````Typescript
+
+```Typescript
 	const publicKey: string = sdk.getPublicKey("1234");
-````
+```
+
 ## Hashpack
+
+### Utilities
+
+#### Get Availability Extension
+
+Check if the Hashpack extension is available
+
+```Typescript
+	const isAvailable: bool = sdk.getAvailabilityExtension();
+```
+
+#### Get HashConnect Conection Status
+
+Get the HashConncet conection
+
+```Typescript
+	enum HashConnectConnectionState {
+		Connecting = "Connecting",
+		Connected = "Connected",
+		Disconnected = "Disconnected",
+		Paired = "Paired"
+	}
+
+	const status: HashConnectConnectionState = sdk.gethashConnectConectionStatus();
+```
+
+#### Get Init Data
+
+```Typescript
+	const status: InitializationData = sdk.getInitData();
+```
+
+#### Disconect Haspack
+
+Disconect Hashpack
+
+```Typescript
+	sdk.disconectHaspack();
+```
+
+#### Connect Wallet
+
+```Typescript
+	const provider: IProvider = sdk.connectWallet();
+```
 
 ### Events
 
 You can setup callbacks to events from the Hashpack provider:
 
-````typescript
+```typescript
 
 	public onInit(listener: (data: InitializationData) => void): void
 
@@ -952,7 +1133,7 @@ You can setup callbacks to events from the Hashpack provider:
 
 	public onWalletConnectionChanged(
 		listener: (state: HashConnectConnectionState) => void,
-	): void 
+	): void
 
 	public onWalletPaired(
 		listener: (data: HashConnectTypes.SavedPairingData) => void,
@@ -962,60 +1143,67 @@ You can setup callbacks to events from the Hashpack provider:
 		listener: (state: AcknowledgeMessage) => void,
 	): void
 
-````
+```
 
 For example:
 
-````typescript
-	const sdk: SDK = await (new SDK().init());
-	sdk.onWalletPaired((data: HashConnectTypes.SavedPairingData) => {
-		console.log("New wallet is paired on network " + data.network)
-	})
-````
+```typescript
+const sdk: SDK = await(new SDK().init());
+sdk.onWalletPaired((data: HashConnectTypes.SavedPairingData) => {
+  console.log('New wallet is paired on network ' + data.network);
+});
+```
 
 The following events are supported:
 
 - **OnInit:** Is emitted when the SDK has finished initialization.
-````typescript
-	interface InitilizationData {
-        topic: string;
-        pairingString: string;
-        encryptionKey: string;
-        savedPairings: SavedPairingData[];
-    }
-````
+
+```typescript
+interface InitilizationData {
+  topic: string;
+  pairingString: string;
+  encryptionKey: string;
+  savedPairings: SavedPairingData[];
+}
+```
+
 - **OnWalletExtensionFound:** Is emitted when the Hashpack extension is found.
 - **OnWalletConnectionChanged:** Is emitted when the connection changes. The new state is passed.
-````typescript
-	enum HashConnectConnectionState {
-		Connecting = "Connecting",
-		Connected = "Connected",
-		Disconnected = "Disconnected",
-		Paired = "Paired"
-	}
-````
+
+```typescript
+enum HashConnectConnectionState {
+  Connecting = 'Connecting',
+  Connected = 'Connected',
+  Disconnected = 'Disconnected',
+  Paired = 'Paired',
+}
+```
+
 - **OnWalletPaired:** Is emitted when a wallet is paired in the extension.
-````typescript
-	interface SavedPairingData {
-        metadata: HashConnectTypes.AppMetadata | HashConnectTypes.WalletMetadata;
-        topic: string;
-        encryptionKey?: string;
-        network: string;
-        origin?: string;
-        accountIds: string[];
-        lastUsed: number;
-    }
-````
+
+```typescript
+interface SavedPairingData {
+  metadata: HashConnectTypes.AppMetadata | HashConnectTypes.WalletMetadata;
+  topic: string;
+  encryptionKey?: string;
+  network: string;
+  origin?: string;
+  accountIds: string[];
+  lastUsed: number;
+}
+```
+
 - **OnWalletAcknowledgeMessageEvent**: Is emitted when an interaction is acknoledged in the extension.
-````typescript
-    interface Acknowledge {
-		topic: string;
-        id?: string;
-        origin?: string;
-        result: boolean;
-        msg_id: string;
-    }
-````
+
+```typescript
+interface Acknowledge {
+  topic: string;
+  id?: string;
+  origin?: string;
+  result: boolean;
+  msg_id: string;
+}
+```
 
 # Testing
 
@@ -1028,16 +1216,19 @@ The project uses Jest for testing. To execute the tests, simply run `npm run tes
 Typescript 4.7 or higher is highly reccomended to work with the SDK.
 
 ## Tsconfig
+
 ### Client side
+
 An example of a tsconfig.json for client-side applications (React):
-````json
+
+```json
 {
   "compilerOptions": {
     "noImplicitAny": true,
     "allowJs": false,
     "target": "ES2020",
     "module": "ESNext",
-    "moduleResolution":"node",
+    "moduleResolution": "node",
     "declaration": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -1046,29 +1237,29 @@ An example of a tsconfig.json for client-side applications (React):
     "forceConsistentCasingInFileNames": true,
     "jsx": "react-jsx",
     "types": ["node", "jest"],
-    "resolveJsonModule": true,
+    "resolveJsonModule": true
   },
   "include": ["src", "svg.d.ts"],
   "exclude": ["node_modules"]
 }
-
-````
+```
 
 ### Server side
+
 An example of a tsconfig.json for server-side applications (Node):
-````json
+
+```json
 {
   "compilerOptions": {
     "target": "es2016",
     "module": "commonjs",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "strict": true,                    
+    "strict": true,
     "skipLibCheck": true
   }
 }
-
-````
+```
 
 # Support
 

@@ -1,6 +1,7 @@
 import {
-	IRequestContracts,
-	ITargetIdRequestModel,
-} from './IRequestContracts.js';
+	RequestContracts,
+	TargetIdRequestModel,
+} from './model/ContractRequests.js';
 
-export type IBasicRequest = IRequestContracts & ITargetIdRequestModel;
+export type IBasicRequest = RequestContracts & TargetIdRequestModel;
+

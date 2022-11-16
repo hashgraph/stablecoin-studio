@@ -1,4 +1,5 @@
 import { Heading, HStack, Stack, Text, VStack } from '@chakra-ui/react';
+import type { CreateStableCoinRequest } from 'hedera-stable-coin-sdk';
 import type { Control, FieldValues } from 'react-hook-form';
 import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -7,6 +8,7 @@ import KeySelector from './components/KeySelector';
 
 interface ManagementPermissionsProps {
 	control: Control<FieldValues>;
+	request: CreateStableCoinRequest;
 }
 
 const ManagementPermissions = (props: ManagementPermissionsProps) => {
@@ -74,6 +76,7 @@ const ManagementPermissions = (props: ManagementPermissionsProps) => {
 										control={control}
 										name={item.name}
 										label={item.nameTranslate}
+										request={props.request}
 									/>
 								);
 							})}

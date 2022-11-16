@@ -61,15 +61,32 @@ function DEFAULT_ADMIN_ROLE() external view returns (bytes32)
 |---|---|---|
 | _0 | bytes32 | undefined |
 
-### PAUSER_ROLE
+### FREEZE_ROLE
 
 ```solidity
-function PAUSER_ROLE() external view returns (bytes32)
+function FREEZE_ROLE() external view returns (bytes32)
 ```
 
 
 
-*Role that allows to pause the token  keccak256(&quot;PAUSER_ROLE&quot;);*
+*Role that allows to pause the token  keccak256(&quot;FREEZE_ROLE&quot;);*
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bytes32 | undefined |
+
+### PAUSE_ROLE
+
+```solidity
+function PAUSE_ROLE() external view returns (bytes32)
+```
+
+
+
+*Role that allows to pause the token  keccak256(&quot;PAUSE_ROLE&quot;);*
 
 
 #### Returns

@@ -3,7 +3,8 @@ import { Command } from 'commander';
 import Service from '../Service.js';
 import pkg from '../../../../package.json';
 import { utilsService, wizardService } from '../../../index.js';
-import CreateStableCoinService from '../stablecoin/CreateStableCoinService.js';
+// import CreateStableCoinService from '../stablecoin/CreateStableCoinService.js';
+// import { CreateStableCoinRequest } from 'hedera-stable-coin-sdk';
 
 /**
  * Commander Service
@@ -99,17 +100,18 @@ export default class CommanderService extends Service {
           process.exit();
         }
 
-        const createStableCoinService: CreateStableCoinService =
-          new CreateStableCoinService();
-        await createStableCoinService.createStableCoin(
-          {
-            name: options.name,
-            symbol: options.symbol,
-            decimals: options.decimals,
-            autoRenewAccount: options.autoRenewAccount,
-          },
-          false,
-        );
+        // const createStableCoinService: CreateStableCoinService =
+        //   new CreateStableCoinService();
+        // await createStableCoinService.createStableCoin(
+        //   new CreateStableCoinRequest({
+        //     account: options.
+        //     name: options.name,
+        //     symbol: options.symbol,
+        //     decimals: options.decimals,
+        //     autoRenewAccount: options.autoRenewAccount,
+        //   }),
+        //   false,
+        // );
       });
 
     token

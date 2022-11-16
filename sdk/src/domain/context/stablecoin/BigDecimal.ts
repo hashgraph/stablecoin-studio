@@ -1,9 +1,11 @@
 import { FixedFormat, parseFixed } from '@ethersproject/bignumber';
 import { BigNumber, FixedNumber } from '@hashgraph/hethers';
 import Long from 'long';
+import CheckNums from '../../../core/checks/numbers/CheckNums.js';
 
 export type BigDecimalFormat = string | number | FixedFormat | undefined;
 
+const SEPARATOR = '.';
 export default class BigDecimal implements FixedNumber {
 	readonly _hex: string;
 	readonly _value: string;
@@ -29,9 +31,14 @@ export default class BigDecimal implements FixedNumber {
 		return this.#fn._isFixedNumber;
 	}
 
+	public get decimals(): number {
+		return this.format.decimals;
+	}
+
 	#fn: FixedNumber;
 
-	public static ZERO: BigDecimal = this.fromString('0');
+	public static ZERO: BigDecimal = this.fromString('0', 0);
+	public static MINUSONE: BigDecimal = this.fromString('-1', 0);
 
 	constructor(
 		value: string | BigNumber,
@@ -138,7 +145,11 @@ export default class BigDecimal implements FixedNumber {
 	}
 
 	public toBigNumber(): BigNumber {
-		return parseFixed(this.#fn._value, this.#fn.format.decimals);
+		return parseFixed(this.value, this.format.decimals);
+	}
+
+	public toFixedNumber(): number {
+		return this.toBigNumber().toNumber();
 	}
 
 	public toString(): string {
@@ -152,10 +163,34 @@ export default class BigDecimal implements FixedNumber {
 		// this.#fn.toString() => 10.0
 	}
 
+	public setDecimals(value: number): BigDecimal {
+		// eslint-disable-next-line prefer-const
+		let [int, float] = this.value.split(SEPARATOR);
+		if (float.length > value) {
+			float = float.substring(0, float.length - value);
+		}
+		return BigDecimal.fromString(
+			`${int}${SEPARATOR}${float}`,
+			Math.max(float.length, value),
+		);
+	}
+
 	private splitNumber(): string[] {
 		const splitNumber = this.#fn.toString().split('.');
-		splitNumber[1] = splitNumber[1].padEnd(this.format.decimals, '0');
+		if (splitNumber.length > 1) {
+			splitNumber[1] = splitNumber[1].padEnd(this.format.decimals, '0');
+		} else {
+			splitNumber[1] = '';
+		}
 		return splitNumber;
+	}
+
+	static getDecimalsFromString(val: string): number {
+		if (val.length === 0) return 0;
+		const [, dec] = val.split(SEPARATOR);
+		if (!dec) return 0;
+		if (!CheckNums.isNumber(dec)) return 0;
+		return (dec as string).replace(/\.0+$/, '').length;
 	}
 
 	public toLong(): Long {
@@ -167,9 +202,13 @@ export default class BigDecimal implements FixedNumber {
 		value: string,
 		format?: string | number | FixedFormat | undefined,
 	): BigDecimal {
+		if (format === undefined) {
+			format = this.getDecimalsFromString(value);
+		}
 		return new BigDecimal(value, format);
 	}
-	static fromStringHedera(value: string, decimals: number): BigDecimal {
+
+	static fromStringFixed(value: string, decimals: number): BigDecimal {
 		const position = value.length - decimals;
 		value = value.substring(0, position) + '.' + value.substring(position);
 		return new BigDecimal(value, decimals);
@@ -181,5 +220,16 @@ export default class BigDecimal implements FixedNumber {
 		format?: FixedFormat | string | number,
 	): BigDecimal {
 		return new BigDecimal(value, format, decimals);
+	}
+
+	public static isBigDecimal(value: string | BigDecimal): boolean {
+		try {
+			if (value instanceof BigDecimal) return true;
+			BigDecimal.fromString(value);
+			return true;
+		} catch (err) {
+			console.error(err);
+			return false;
+		}
 	}
 }

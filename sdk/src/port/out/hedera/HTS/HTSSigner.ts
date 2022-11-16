@@ -5,6 +5,7 @@ import {
 	TransactionResponse,
 	ContractCreateFlow,
 } from '@hashgraph/sdk';
+import { SigningError } from '../error/SigningError.js';
 
 export class HTSSigner implements ISigner {
 	client: Client;
@@ -16,6 +17,10 @@ export class HTSSigner implements ISigner {
 	async signAndSendTransaction(
 		transaction: Transaction | ContractCreateFlow,
 	): Promise<TransactionResponse> {
-		return await transaction.execute(this.client);
+		try {
+			return await transaction.execute(this.client);
+		} catch (error) {
+			throw new SigningError(error);
+		}
 	}
 }

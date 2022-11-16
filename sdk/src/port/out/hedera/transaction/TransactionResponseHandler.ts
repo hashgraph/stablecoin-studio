@@ -6,10 +6,10 @@ import {
 	TransactionRecord,
 	TransactionId,
 } from '@hashgraph/sdk';
-import HederaError from '../error/HederaError.js';
 import Web3 from 'web3';
 import { MessageTypes } from 'hashconnect';
 import { Signer } from '@hashgraph/sdk/lib/Signer.js';
+import { TransactionResponseError } from './error/TransactionResponseError.js';
 
 export class TransactionResposeHandler {
 	public async manageResponse(
@@ -54,7 +54,8 @@ export class TransactionResposeHandler {
 				} else if (transactionRecord instanceof Uint32Array) {
 					record = transactionRecord;
 				}
-				if (!record) throw new Error('Invalid response type');
+				if (!record)
+					throw new TransactionResponseError('Invalid response type');
 				results = this.decodeFunctionResult(nameFunction, record, abi);
 			}
 			if (record instanceof Uint32Array) {
@@ -75,7 +76,9 @@ export class TransactionResposeHandler {
 			}
 		}
 
-		throw new Error('The response type is neither RECORD nor RECEIPT.');
+		throw new TransactionResponseError(
+			'The response type is neither RECORD nor RECEIPT.',
+		);
 	}
 
 	private async getRecord(
@@ -121,11 +124,9 @@ export class TransactionResposeHandler {
 					clientOrSigner,
 				);
 			} else {
-				throw new Error('Incorrect response type');
+				throw new TransactionResponseError('Incorrect response type');
 			}
 		} else {
-			console.log(transactionResponse instanceof TransactionResponse);
-			console.log(transactionResponse);
 			if (transactionResponse instanceof TransactionResponse) {
 				transactionReceipt = await (
 					transactionResponse as TransactionResponse
@@ -143,29 +144,31 @@ export class TransactionResposeHandler {
 	private async getHashconnectTransactionReceipt(
 		transactionResponse: MessageTypes.TransactionResponse,
 	): Promise<TransactionReceipt> {
-		let receipt;
-		if ((transactionResponse as MessageTypes.TransactionResponse).receipt) {
-			receipt = TransactionReceipt.fromBytes(
+		try {
+			let receipt;
+			if (
 				(transactionResponse as MessageTypes.TransactionResponse)
-					.receipt as Uint8Array,
-			);
-		// } else if (
-		// 	(transactionResponse as TransactionResponse).getReceiptWithSigner
-		// ) {
-		// 	receipt = (
-		// 		transactionResponse as TransactionResponse
-		// 	).getReceiptWithSigner(null as unknown as Signer);
-		} else {
-			throw new Error(
-				`Unexpected receipt type from Hashpack: ${receipt}`,
-			);
-		}
-		if (receipt) {
-			return receipt;
-		} else {
-			throw new Error(
-				`Unexpected receipt type from Hashpack: ${receipt}`,
-			);
+					.receipt
+			) {
+				receipt = TransactionReceipt.fromBytes(
+					(transactionResponse as MessageTypes.TransactionResponse)
+						.receipt as Uint8Array,
+				);
+			} else {
+				const res = transactionResponse.error;
+				if (res) {
+					throw new TransactionResponseError(res);
+				} else {
+					throw new TransactionResponseError(transactionResponse.id);
+				}
+			}
+			if (receipt) {
+				return receipt;
+			} else {
+				throw new TransactionResponseError(transactionResponse.error);
+			}
+		} catch (error) {
+			throw new TransactionResponseError(transactionResponse.error);
 		}
 	}
 
@@ -174,13 +177,18 @@ export class TransactionResposeHandler {
 	): Uint32Array | undefined {
 		const record = transactionResponse.record;
 		if (!record) {
-			throw new Error(`Unexpected record type from Hashpack: ${record}`);
+			throw new TransactionResponseError(
+				transactionResponse.error ??
+					transactionResponse.id ??
+					transactionResponse.topic,
+			);
 		} else {
 			try {
 				return new Uint32Array(Object.values(record));
 			} catch (err) {
-				console.log('Could not determine response type for: ', record);
-				return undefined;
+				throw new TransactionResponseError(
+					`Could not determine response type for: ${record}`,
+				);
 			}
 		}
 	}
@@ -204,32 +212,38 @@ export class TransactionResposeHandler {
 		resultAsBytes: ArrayBuffer,
 		abi: any, // eslint-disable-line
 	): Uint8Array {
-		const web3 = new Web3();
+		try {
+			const web3 = new Web3();
 
-		let functionAbi;
-		if (abi) {
-			functionAbi = abi.find(
-				(func: { name: string }) => func.name === functionName,
+			let functionAbi;
+			if (abi) {
+				functionAbi = abi.find(
+					(func: { name: string }) => func.name === functionName,
+				);
+			} else {
+				throw new TransactionResponseError(
+					`ABI is undefined, so it could not be possible to find contract function`,
+				);
+			}
+			if (!functionAbi?.outputs)
+				throw new TransactionResponseError(
+					`Contract function ${functionName} not found in ABI, are you using the right version?`,
+				);
+			const functionParameters = functionAbi?.outputs;
+			const resultHex = '0x'.concat(
+				Buffer.from(resultAsBytes).toString('hex'),
 			);
-		} else {
-			throw new HederaError(
-				`ABI is undefined, so it could not be possible to find contract function`,
+			const result = web3.eth.abi.decodeParameters(
+				functionParameters || [],
+				resultHex,
+			);
+
+			const jsonParsedArray = JSON.parse(JSON.stringify(result));
+			return jsonParsedArray;
+		} catch (error) {
+			throw new TransactionResponseError(
+				'Could not decode function result',
 			);
 		}
-		if (!functionAbi?.outputs)
-			throw new HederaError(
-				`Contract function ${functionName} not found in ABI, are you using the right version?`,
-			);
-		const functionParameters = functionAbi?.outputs;
-		const resultHex = '0x'.concat(
-			Buffer.from(resultAsBytes).toString('hex'),
-		);
-		const result = web3.eth.abi.decodeParameters(
-			functionParameters || [],
-			resultHex,
-		);
-
-		const jsonParsedArray = JSON.parse(JSON.stringify(result));
-		return jsonParsedArray;
 	}
 }

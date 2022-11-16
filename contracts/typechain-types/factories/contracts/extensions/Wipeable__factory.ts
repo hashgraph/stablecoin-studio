@@ -170,7 +170,20 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "PAUSER_ROLE",
+    name: "FREEZE_ROLE",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "PAUSE_ROLE",
     outputs: [
       {
         internalType: "bytes32",

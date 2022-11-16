@@ -3,15 +3,15 @@ import "@hashgraph/hardhat-hethers";
 import "@hashgraph/sdk";
 import {BigNumber} from "ethers";
 
-var chai = require("chai");
-var chaiAsPromised = require("chai-as-promised");
+const chai = require("chai");
+const chaiAsPromised = require("chai-as-promised");
 chai.use(chaiAsPromised);
-var expect = chai.expect;
+const expect = chai.expect;
 
 
 import { deployContractsWithSDK, initializeClients } from "../scripts/deploy";
 import {grantRole, revokeRole, hasRole, Burn, getTotalSupply} from "../scripts/contractsMethods";
-import {PAUSER_ROLE} from "../scripts/constants";
+import {PAUSE_ROLE} from "../scripts/constants";
 
 let proxyAddress:any;
 let client:any ;
@@ -63,33 +63,33 @@ describe("Pause Tests", function() {
 
     it("Admin account can grant and revoke pauser role to an account", async function() {    
       // Admin grants pauser role : success    
-      let result = await hasRole(PAUSER_ROLE, ContractId, proxyAddress, client, client2account);
+      let result = await hasRole(PAUSE_ROLE, ContractId, proxyAddress, client, client2account);
       expect(result).to.equals(false);
   
-      await grantRole(PAUSER_ROLE, ContractId, proxyAddress, client, client2account);
+      await grantRole(PAUSE_ROLE, ContractId, proxyAddress, client, client2account);
   
-      result = await hasRole(PAUSER_ROLE, ContractId, proxyAddress, client, client2account);
+      result = await hasRole(PAUSE_ROLE, ContractId, proxyAddress, client, client2account);
       expect(result).to.equals(true);
   
       // Admin revokes pauser role : success    
-      await revokeRole(PAUSER_ROLE, ContractId, proxyAddress, client, client2account);
-      result = await hasRole(PAUSER_ROLE, ContractId, proxyAddress, client, client2account);
+      await revokeRole(PAUSE_ROLE, ContractId, proxyAddress, client, client2account);
+      result = await hasRole(PAUSE_ROLE, ContractId, proxyAddress, client, client2account);
       expect(result).to.equals(false);
   
     });
   
     it("Non Admin account can not grant pauser role to an account", async function() {   
       // Non Admin grants pauser role : fail       
-      await expect(grantRole(PAUSER_ROLE, ContractId, proxyAddress, client2, client2account)).to.eventually.be.rejectedWith(Error);
+      await expect(grantRole(PAUSE_ROLE, ContractId, proxyAddress, client2, client2account)).to.eventually.be.rejectedWith(Error);
     });
   
     it("Non Admin account can not revoke pauser role to an account", async function() {
       // Non Admin revokes pauser role : fail       
-      await grantRole(PAUSER_ROLE, ContractId, proxyAddress, client, client2account);
-      await expect(revokeRole(PAUSER_ROLE, ContractId, proxyAddress, client2, client2account)).to.eventually.be.rejectedWith(Error);
+      await grantRole(PAUSE_ROLE, ContractId, proxyAddress, client, client2account);
+      await expect(revokeRole(PAUSE_ROLE, ContractId, proxyAddress, client2, client2account)).to.eventually.be.rejectedWith(Error);
   
       //Reset status
-      await revokeRole(PAUSER_ROLE, ContractId, proxyAddress, client, client2account)
+      await revokeRole(PAUSE_ROLE, ContractId, proxyAddress, client, client2account)
     });
   
 });

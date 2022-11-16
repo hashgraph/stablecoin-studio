@@ -21,8 +21,12 @@ import {
 } from '../../store/slices/walletSlice';
 import SDKService from '../../services/SDKService';
 import ModalNotification from '../../components/ModalNotification';
-import { AccountId, PublicKey } from 'hedera-stable-coin-sdk';
-import type { ICreateStableCoinRequest } from 'hedera-stable-coin-sdk';
+import {
+	AccountId,
+	CreateStableCoinRequest,
+	HashPackAccount,
+	PublicKey,
+} from 'hedera-stable-coin-sdk';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch } from '../../store/store';
 
@@ -49,6 +53,17 @@ const StableCoinCreation = () => {
 		formState: { errors },
 	} = form;
 
+	const [request] = useState(
+		new CreateStableCoinRequest({
+			account: {
+				accountId: account.accountId,
+			},
+			name: '',
+			symbol: '',
+			decimals: 6,
+		}),
+	);
+
 	const [isValidForm, setIsValidForm] = useState<boolean>(false);
 	const [currentStep, setCurrentStep] = useState<number>(0);
 	const [success, setSuccess] = useState<boolean>();
@@ -64,17 +79,17 @@ const StableCoinCreation = () => {
 		{
 			number: '01',
 			title: t('tabs.basicDetails'),
-			children: <BasicDetails control={control} />,
+			children: <BasicDetails control={control} request={request} />,
 		},
 		{
 			number: '02',
 			title: t('tabs.optionalDetails'),
-			children: <OptionalDetails control={control} form={form} />,
+			children: <OptionalDetails control={control} form={form} request={request} />,
 		},
 		{
 			number: '03',
 			title: t('tabs.managementPermissions'),
-			children: <ManagementPermissions control={control} />,
+			children: <ManagementPermissions control={control} request={request} />,
 		},
 		{
 			number: '04',
@@ -148,58 +163,31 @@ const StableCoinCreation = () => {
 	};
 
 	const handleFinish = async () => {
-		const {
-			name,
-			symbol,
-			decimals,
-			initialSupply,
-			autorenewAccount,
-			maxSupply,
-			managementPermissions,
-			freezeKey,
-			wipeKey,
-			pauseKey,
-			supplyKey,
-		} = getValues();
+		const { autorenewAccount, managementPermissions, freezeKey, wipeKey, pauseKey, supplyKey } =
+			getValues();
 
-		let newStableCoinParams: ICreateStableCoinRequest = {
-			account,
-			name,
-			symbol,
-			decimals,
-			initialSupply: initialSupply ? initialSupply.toString() : undefined,
-			maxSupply: maxSupply ? maxSupply.toString() : undefined,
-			autoRenewAccount: autorenewAccount,
-		};
-
+		request.autoRenewAccount = autorenewAccount;
 		if (managementPermissions) {
-			newStableCoinParams = {
-				...newStableCoinParams,
-				adminKey: accountInfo.publicKey,
-				freezeKey: PublicKey.NULL,
-				KYCKey: PublicKey.NULL,
-				wipeKey: PublicKey.NULL,
-				pauseKey: PublicKey.NULL,
-				supplyKey: PublicKey.NULL,
-				treasury: AccountId.NULL,
-			};
+			request.adminKey = accountInfo.publicKey;
+			request.freezeKey = PublicKey.NULL;
+			request.KYCKey = PublicKey.NULL;
+			request.wipeKey = PublicKey.NULL;
+			request.pauseKey = PublicKey.NULL;
+			request.supplyKey = PublicKey.NULL;
+			request.treasury = AccountId.NULL.id;
 		} else {
-			newStableCoinParams = {
-				...newStableCoinParams,
-				adminKey: accountInfo.publicKey,
-				freezeKey: formatKey(freezeKey.label, 'freezeKey'),
-				wipeKey: formatKey(wipeKey.label, 'wipeKey'),
-				pauseKey: formatKey(pauseKey.label, 'pauseKey'),
-				supplyKey: formatKey(supplyKey.label, 'supplyKey'),
-				treasury:
-					formatKey(supplyKey.label, 'supplyKey') !== PublicKey.NULL && accountInfo.account
-						? new AccountId(accountInfo.account)
-						: AccountId.NULL,
-			};
+			request.adminKey = accountInfo.publicKey;
+			request.freezeKey = formatKey(freezeKey.label, 'freezeKey');
+			request.wipeKey = formatKey(wipeKey.label, 'wipeKey');
+			request.pauseKey = formatKey(pauseKey.label, 'pauseKey');
+			request.supplyKey = formatKey(supplyKey.label, 'supplyKey');
+			request.treasury =
+				!PublicKey.isNull(formatKey(supplyKey.label, 'supplyKey')) && accountInfo.account
+					? accountInfo.account
+					: AccountId.NULL.id;
 		}
-		console.log(newStableCoinParams);
 		try {
-			await SDKService.createStableCoin(newStableCoinParams);
+			await SDKService.createStableCoin(request);
 			setSuccess(true);
 		} catch (error) {
 			setSuccess(false);
@@ -234,7 +222,7 @@ const StableCoinCreation = () => {
 				isOpen={isOpen}
 				onClose={onClose}
 				onClick={() => {
-					dispatch(getStableCoinList(account));
+					dispatch(getStableCoinList(new HashPackAccount(account.accountId)));
 					RouterManager.to(navigate, NamedRoutes.StableCoinNotSelected);
 				}}
 				closeOnOverlayClick={false}

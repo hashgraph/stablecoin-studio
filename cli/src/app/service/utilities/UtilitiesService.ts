@@ -9,6 +9,7 @@ import {
   HederaNetworkEnviroment,
   NetworkMode,
   SDK,
+  ValidationResponse,
 } from 'hedera-stable-coin-sdk';
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
@@ -88,7 +89,7 @@ export default class UtilitiesService extends Service {
    * @param error Error message
    */
   public showError(error: string): void {
-    console.error(error);
+    console.error(colors.red(error));
   }
 
   /**
@@ -214,6 +215,25 @@ export default class UtilitiesService extends Service {
   }
 
   /**
+   * Function for error confirmation
+   * @param question
+   * @returns
+   */
+  public async defaultErrorConfirm(question: string): Promise<boolean> {
+    const variable = await inquirer.prompt({
+      name: 'response',
+      type: 'input',
+      message: question,
+      prefix: '❌',
+      transformer: () => {
+        return '';
+      },
+      default: '[Enter]',
+    });
+    return variable.response;
+  }
+
+  /**
    * Function for simple ask questions with inquire
    * @param question
    * @param defaultValue
@@ -279,6 +299,19 @@ export default class UtilitiesService extends Service {
     process.exit(code);
   }
 
+  public async askErrorConfirmation(
+    cll?: (cause?: string) => unknown,
+    cause?: string,
+  ): Promise<void> {
+    await this.cleanAndShowBanner();
+    if (cause) {
+      this.showError(`${cause}\n`);
+    }
+    await this.defaultErrorConfirm(language.getText('general.error'));
+    this.showMessage('\n\n');
+    cll && (await cll(cause));
+  }
+
   public maskPrivateAccounts(accounts: IAccountConfig[]): IAccountConfig[] {
     const maskJSONOptions = {
       maskWith: '.',
@@ -328,5 +361,33 @@ export default class UtilitiesService extends Service {
 
   public validateTokenId(str: string): boolean {
     return /\d\.\d\.\d/.test(str);
+  }
+
+  public async handleValidation(
+    val: () => ValidationResponse[],
+    cll?: (res: ValidationResponse[]) => Promise<void>,
+    consoleOut = true,
+  ): Promise<void> {
+    const outputError = (res: ValidationResponse[]): void => {
+      for (let i = 0; i < res.length; i++) {
+        const validation = res[i];
+        // this.showError(`Validation failed for ${validation.name}:`);
+        for (let j = 0; j < validation.errors.length; j++) {
+          const error = validation.errors[j];
+          this.showError(`\t${error.message}`);
+        }
+      }
+    };
+
+    let res = val();
+    if (cll) {
+      while (res.length > 0) {
+        consoleOut && outputError(res);
+        await cll(res);
+        res = val();
+      }
+    } else {
+      if (res.length > 0) consoleOut && outputError(res);
+    }
   }
 }

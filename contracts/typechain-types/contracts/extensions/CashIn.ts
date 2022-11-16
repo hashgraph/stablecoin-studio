@@ -32,7 +32,8 @@ export interface CashInInterface extends utils.Interface {
     "BURN_ROLE()": FunctionFragment;
     "CASHIN_ROLE()": FunctionFragment;
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
-    "PAUSER_ROLE()": FunctionFragment;
+    "FREEZE_ROLE()": FunctionFragment;
+    "PAUSE_ROLE()": FunctionFragment;
     "RESCUE_ROLE()": FunctionFragment;
     "WIPE_ROLE()": FunctionFragment;
     "decreaseSupplierAllowance(address,uint256)": FunctionFragment;
@@ -60,7 +61,8 @@ export interface CashInInterface extends utils.Interface {
       | "BURN_ROLE"
       | "CASHIN_ROLE"
       | "DEFAULT_ADMIN_ROLE"
-      | "PAUSER_ROLE"
+      | "FREEZE_ROLE"
+      | "PAUSE_ROLE"
       | "RESCUE_ROLE"
       | "WIPE_ROLE"
       | "decreaseSupplierAllowance"
@@ -93,7 +95,11 @@ export interface CashInInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "PAUSER_ROLE",
+    functionFragment: "FREEZE_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "PAUSE_ROLE",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -184,9 +190,10 @@ export interface CashInInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "PAUSER_ROLE",
+    functionFragment: "FREEZE_ROLE",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "PAUSE_ROLE", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "RESCUE_ROLE",
     data: BytesLike
@@ -402,7 +409,9 @@ export interface CashIn extends BaseContract {
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-    PAUSER_ROLE(overrides?: CallOverrides): Promise<[string]>;
+    FREEZE_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    PAUSE_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     RESCUE_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
@@ -510,7 +519,9 @@ export interface CashIn extends BaseContract {
 
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
-  PAUSER_ROLE(overrides?: CallOverrides): Promise<string>;
+  FREEZE_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  PAUSE_ROLE(overrides?: CallOverrides): Promise<string>;
 
   RESCUE_ROLE(overrides?: CallOverrides): Promise<string>;
 
@@ -618,7 +629,9 @@ export interface CashIn extends BaseContract {
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    PAUSER_ROLE(overrides?: CallOverrides): Promise<string>;
+    FREEZE_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    PAUSE_ROLE(overrides?: CallOverrides): Promise<string>;
 
     RESCUE_ROLE(overrides?: CallOverrides): Promise<string>;
 
@@ -821,7 +834,9 @@ export interface CashIn extends BaseContract {
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
-    PAUSER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+    FREEZE_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    PAUSE_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     RESCUE_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -932,7 +947,9 @@ export interface CashIn extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    PAUSER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    FREEZE_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    PAUSE_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     RESCUE_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

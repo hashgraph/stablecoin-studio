@@ -7,7 +7,10 @@ export enum Capabilities {
 	BURN_HTS = 'Burn hts',
 	WIPE = 'Wipe',
 	WIPE_HTS = 'Wipe hts',
+	FREEZE = 'Freeze',
+	FREEZE_HTS = 'Freeze hts',
+	PAUSE = 'Pause',
+	PAUSE_HTS = 'Pause hts',
 	RESCUE = 'Rescue',
 	ROLE_MANAGEMENT = 'Role management',
-	PAUSE = 'Pause',
 }

@@ -1,0 +1,61 @@
+{
+    "common": {
+      "nextStep" : "Next step",
+      "goBack" : "Go back",
+      "createStableCoin": "Create Stable coin",
+      "createNewStableCoin": "Add new External Token",
+      "cancel": "Cancel",
+      "addExternalToken": "Add External Token"
+    },
+    "tabs": {
+      "externalTokenInfo": "External token info"
+    },
+    "externalTokenInfo": {
+      "stableCoinId": "Stable Coin Id",
+      "stableCoinIdPlaceholder": "Introduce stable coin id (e.g. 0.0.123456)",
+      "title": "External token",
+      "autoCheckRoles": "Do you want to get the roles automatically? This operation will incur a cost",
+      "rolesPlaceholder": "Select the roles you should have for the indicated stable coin"
+    },
+    "optionalDetails": {
+      "decimals": "Decimals",
+      "expirationDate": "Expiration date",
+      "finite": "Finite",
+      "initialSupply": "Initial supply",
+      "infinite": "Infinite",
+      "placeholder": "Introduce {{placeholder}}",
+      "maxSupply": "Max supply",
+      "title": "Stable Coin optional details",
+      "typeSupply": "Type supply",
+      "typeSupplyPlaceholder": "Choose type supply"
+    },
+    "managementPermissions": {
+      "currentUserKey": "Current user key",
+      "description": "Allow all the following features to be managed through Smart Contract",
+      "pause": "Pause",
+      "freeze": "Freeze",
+      "introduce": "Introduce {{name}}",
+      "none": "None",
+      "otherKey": "Other key",
+      "placeholder": "Introduce {{placeholder}}",
+      "rescue": "Rescue",
+      "admin": "Admin",
+      "supply": "Supply",
+      "theSmartContract": "The smart contract",
+      "title": "Stable Coin management permissions",
+      "totalSupply": "Total supply",
+      "treasuryAccountAddress": "Treasury account address",
+      "wipe": "Wipe"
+    },
+    "review": {
+      "basicDetails": "Basic details",
+      "managementPermissions": "Management Permissions",
+      "optionalDetails": "Optional details",
+      "title": "Stable Coin review"
+    },
+    "notification": {
+      "title": "{{ result }} creating the Stable Coin",
+      "descriptionSuccess": "The Stable Coin was created",
+      "descriptionError": "Sorry, there was an error creating the Stable Coin"
+    }
+  }

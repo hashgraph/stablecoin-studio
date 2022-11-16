@@ -5,22 +5,22 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import DetailsReview from '../../../components/DetailsReview';
 import InputController from '../../../components/Form/InputController';
-import InputNumberController from '../../../components/Form/InputNumberController';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
 import ModalsHandler from '../../../components/ModalsHandler';
 import SDKService from '../../../services/SDKService';
 import {
-	SELECTED_WALLET_ACCOUNT_INFO,
+	// SELECTED_WALLET_ACCOUNT_INFO,
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNT,
 	walletActions,
 } from '../../../store/slices/walletSlice';
 import type { AppDispatch } from '../../../store/store.js';
 import { formatAmount } from '../../../utils/inputHelper';
-import { validateAccount, validateDecimals } from '../../../utils/validationsHelper';
+import { handleRequestValidation } from '../../../utils/validationsHelper';
 import OperationLayout from './../OperationLayout';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
+import { GetStableCoinDetailsRequest, WipeStableCoinRequest } from 'hedera-stable-coin-sdk';
 
 const WipeOperation = () => {
 	const {
@@ -31,13 +31,22 @@ const WipeOperation = () => {
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
-	const infoAccount = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
+	// const infoAccount = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 
 	const [errorOperation, setErrorOperation] = useState();
+	const [request] = useState(
+		new WipeStableCoinRequest({
+			account: {
+				accountId: account.accountId,
+			},
+			amount: '0',
+			proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
+			targetId: '',
+			tokenId: selectedStableCoin?.tokenId ?? '',
+		}),
+	);
 	const dispatch = useDispatch<AppDispatch>();
-	const navigate = useNavigate()
-
-	const { decimals = 0 } = selectedStableCoin || {};
+	const navigate = useNavigate();
 
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
@@ -47,22 +56,22 @@ const WipeOperation = () => {
 
 	useEffect(() => {
 		handleRefreshCoinInfo();
-	}, [])
-	
+	}, []);
+
 	const handleCloseModal = () => {
 		RouterManager.goBack(navigate);
-	}
+	};
 
 	const handleRefreshCoinInfo = async () => {
-		const stableCoinDetails = await SDKService.getStableCoinDetails({
+		const stableCoinDetails = await SDKService.getStableCoinDetails(new GetStableCoinDetailsRequest ({
 			id: selectedStableCoin?.tokenId || '',
-		});
+		}));
 		dispatch(
 			walletActions.setSelectedStableCoin({
 				tokenId: stableCoinDetails?.tokenId,
-				initialSupply: Number(stableCoinDetails?.initialSupply),
-				totalSupply: Number(stableCoinDetails?.totalSupply),
-				maxSupply: Number(stableCoinDetails?.maxSupply),
+				initialSupply: stableCoinDetails?.initialSupply,
+				totalSupply: stableCoinDetails?.totalSupply,
+				maxSupply: stableCoinDetails?.maxSupply,
 				name: stableCoinDetails?.name,
 				symbol: stableCoinDetails?.symbol,
 				decimals: stableCoinDetails?.decimals,
@@ -83,20 +92,13 @@ const WipeOperation = () => {
 		);
 	};
 	const handleWipe: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
-		const { amount, destinationAccount } = getValues();
+		// const { amount, destinationAccount } = getValues();
 		try {
 			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId) {
 				onError();
 				return;
 			}
-			await SDKService.wipe({
-				proxyContractId: selectedStableCoin.memo.proxyContract,
-				account,
-				tokenId: selectedStableCoin.tokenId,
-				targetId: destinationAccount,
-				amount: amount.toString(),
-				publicKey: infoAccount.publicKey,
-			});
+			await SDKService.wipe(request);
 			onSuccess();
 		} catch (error: any) {
 			setErrorOperation(error.toString());
@@ -116,36 +118,43 @@ const WipeOperation = () => {
 							{t('wipe:operationTitle')}
 						</Text>
 						<Stack as='form' spacing={6} maxW='520px'>
-							<InputNumberController
+							<InputController
 								rules={{
-									required: t('global:validations.required'),
+									required: t(`global:validations.required`),
 									validate: {
-										maxDecimals: (value: number) => {
-											return validateDecimals(value, decimals) || t('wipe:decimalsValidation');
+										validation: (value: string) => {
+											// return request.validate('amount') || t('wipe:decimalsValidation');
+											request.amount = value;
+											const res = handleRequestValidation(request.validate('amount'));
+											return res;
 										},
 									},
 								}}
 								isRequired
 								control={control}
-								name='amount'
+								name={'amount'}
 								label={t('wipe:amountLabel')}
 								placeholder={t('wipe:amountPlaceholder')}
-								decimalScale={decimals}
 							/>
 							<InputController
 								rules={{
 									required: t('global:validations.required'),
 									validate: {
-										validAccount: (value: string) => {
-											return validateAccount(value) || t('global:validations.invalidAccount');
+										validation: (value: string) => {
+											request.targetId =  value;
+											const res = handleRequestValidation(request.validate('targetId'));
+											return res;
 										},
-									},
+									}
 								}}
 								isRequired
 								control={control}
 								name='destinationAccount'
 								placeholder={t('wipe:fromAccountPlaceholder')}
 								label={t('wipe:fromAccountLabel')}
+								onChangeAux={(e) => {
+									request.targetId = e.target.value;
+								}}
 							/>
 						</Stack>
 					</>

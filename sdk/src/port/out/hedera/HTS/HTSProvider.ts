@@ -35,7 +35,6 @@ import {
 	ITransferTokenRequest,
 	InitializationData,
 } from '../types.js';
-import HederaError from '../error/HederaError.js';
 import PublicKey from '../../../../domain/context/account/PublicKey.js';
 import AccountId from '../../../../domain/context/account/AccountId.js';
 import { TransactionProvider } from '../transaction/TransactionProvider.js';
@@ -51,6 +50,7 @@ import { safeCast } from '../../../../core/cast.js';
 import { StableCoinMemo } from '../../../../domain/context/stablecoin/StableCoinMemo.js';
 import BigDecimal from '../../../../domain/context/stablecoin/BigDecimal.js';
 import Long from 'long';
+import ProviderError from '../error/HederaError.js';
 
 type DefaultHederaProvider = hethers.providers.DefaultHederaProvider;
 
@@ -109,16 +109,16 @@ export default class HTSProvider implements IProvider {
 		) {
 			client = Client.forName(this.network.hederaNetworkEnviroment);
 		} else {
-			throw new Error('Cannot get client: Invalid configuration');
+			throw new ProviderError('Cannot get client: Invalid configuration');
 		}
 
-		if (account && account instanceof EOAccount) {
+		if (account && account.privateKey) {
 			client.setOperator(
 				account.accountId.id,
 				account.privateKey.toHashgraphKey(),
 			);
 		} else {
-			throw new Error('Cannot get client: No private key');
+			throw new ProviderError('Cannot get client: No private key');
 		}
 		return client;
 	}
@@ -134,7 +134,7 @@ export default class HTSProvider implements IProvider {
 				func.name === functionName && func.type === 'function',
 		);
 		if (!functionAbi)
-			throw new HederaError(
+			throw new ProviderError(
 				`Contract function ${functionName} not found in ABI, are you using the right version?`,
 			);
 		const encodedParametersHex = this.web3.eth.abi
@@ -154,7 +154,7 @@ export default class HTSProvider implements IProvider {
 			publicKey = privateKey.toHashgraphKey().publicKey;
 		} else {
 			key = privateKey;
-			if (!key) throw new HederaError('No private key provided');
+			if (!key) throw new ProviderError('No private key provided');
 			switch (privateKeyType) {
 				case PrivateKeyType.ECDSA:
 					publicKey = HPrivateKey.fromStringECDSA(key).publicKey;
@@ -185,7 +185,7 @@ export default class HTSProvider implements IProvider {
 		if ('account' in params) {
 			client = this.getClient(params.account);
 		} else {
-			throw new Error('Account must be supplied');
+			throw new ProviderError('Account must be supplied');
 		}
 
 		const functionCallParameters = this.encodeFunctionCall(
@@ -271,7 +271,7 @@ export default class HTSProvider implements IProvider {
 			stableCoin.name,
 			stableCoin.symbol,
 			stableCoin.decimals,
-			stableCoin.initialSupply.toLong(),
+			stableCoin.initialSupply?.toLong(),
 			stableCoin.maxSupply?.toLong(),
 			stableCoin.memo.toJson(),
 			stableCoin.freezeDefault,
@@ -399,14 +399,14 @@ export default class HTSProvider implements IProvider {
 				);
 
 			if (!htsResponse?.receipt?.contractId) {
-				throw new Error(
+				throw new ProviderError(
 					`An error ocurred during deployment of ${factory.name}`,
 				);
 			} else {
 				return htsResponse.receipt.contractId;
 			}
 		} catch (error) {
-			throw new Error(
+			throw new ProviderError(
 				`An error ocurred during deployment of ${factory.name} : ${error}`,
 			);
 		}
@@ -423,7 +423,7 @@ export default class HTSProvider implements IProvider {
 				);
 			case HederaNetworkEnviroment.LOCAL:
 			default:
-				throw new Error('Network not supported');
+				throw new ProviderError('Network not supported');
 		}
 	}
 
@@ -486,7 +486,7 @@ export default class HTSProvider implements IProvider {
 			);
 
 		if (!htsResponse?.receipt?.tokenId) {
-			throw new Error(
+			throw new ProviderError(
 				`An error ocurred creating the stable coin ${name}`,
 			);
 		}
@@ -521,7 +521,7 @@ export default class HTSProvider implements IProvider {
 	}
 
 	getInitData(): InitializationData {
-		throw new Error('not haspack');
+		throw new ProviderError('not haspack');
 	}
 
 	public async wipeHTS(params: IWipeTokenRequest): Promise<boolean> {
@@ -530,7 +530,7 @@ export default class HTSProvider implements IProvider {
 		if ('account' in params) {
 			client = this.getClient(params.account);
 		} else {
-			throw new Error('Account must be supplied');
+			throw new ProviderError('Account must be supplied');
 		}
 
 		this.htsSigner = new HTSSigner(client);
@@ -551,7 +551,7 @@ export default class HTSProvider implements IProvider {
 			);
 
 		if (!htsResponse.receipt) {
-			throw new Error(
+			throw new ProviderError(
 				`An error has occurred when wipe the amount ${params.amount} in the account ${params.wipeAccountId} for tokenId ${params.tokenId}`,
 			);
 		}
@@ -564,14 +564,14 @@ export default class HTSProvider implements IProvider {
 		if ('account' in params) {
 			client = this.getClient(params.account);
 		} else {
-			throw new Error('Account must be supplied');
+			throw new ProviderError('Account must be supplied');
 		}
 
 		/*const transactionApprove: Transaction = TransactionProvider.approveTokenAllowance();
 		const transactionApproveResponse: TransactionResponse = await this.htsSigner.signAndSendTransaction(transactionApprove);
 		const htsApproveResponse: HTSResponse = await this.transactionResposeHandler.manageResponse(transactionApproveResponse, TransactionType.RECEIPT, client);
 		if (!htsApproveResponse.receipt) {
-		 	throw new Error(
+		 	throw new ProviderError(
 		 		`An error has occurred when approving`,
 		 	);
 		}
@@ -594,7 +594,7 @@ export default class HTSProvider implements IProvider {
 			);
 
 		if (!htsResponse.receipt) {
-			throw new Error(
+			throw new ProviderError(
 				`An error has occurred when cash in the amount ${params.amount} in the account ${params?.account?.accountId.id} for tokenId ${params.tokenId}`,
 			);
 		}
@@ -607,7 +607,7 @@ export default class HTSProvider implements IProvider {
 		if ('account' in params) {
 			client = this.getClient(params.account);
 		} else {
-			throw new Error('Account must be supplied');
+			throw new ProviderError('Account must be supplied');
 		}
 
 		this.htsSigner = new HTSSigner(client);
@@ -627,7 +627,7 @@ export default class HTSProvider implements IProvider {
 			);
 
 		if (!htsResponse.receipt) {
-			throw new Error(
+			throw new ProviderError(
 				`An error has occurred when cash out the amount ${params.amount} in the account ${params?.account?.accountId.id} for tokenId ${params.tokenId}`,
 			);
 		}
@@ -640,24 +640,23 @@ export default class HTSProvider implements IProvider {
 		if ('account' in params) {
 			client = this.getClient(params.account);
 		} else {
-			throw new Error('Account must be supplied');
+			throw new ProviderError('Account must be supplied');
 		}
 
 		this.htsSigner = new HTSSigner(client);
-		const transaction: Transaction = params.isApproval ?
-			TransactionProvider.buildApprovedTransferTransaction(
-				params.tokenId,
-				params.amount,
-				params.outAccountId,
-				params.inAccountId,
-			)
-			:
-			TransactionProvider.buildTransferTransaction(
-				params.tokenId,
-				params.amount,
-				params.outAccountId,
-				params.inAccountId,
-			);
+		const transaction: Transaction = params.isApproval
+			? TransactionProvider.buildApprovedTransferTransaction(
+					params.tokenId,
+					params.amount,
+					params.outAccountId,
+					params.inAccountId,
+			  )
+			: TransactionProvider.buildTransferTransaction(
+					params.tokenId,
+					params.amount,
+					params.outAccountId,
+					params.inAccountId,
+			  );
 		const transactionResponse: TransactionResponse =
 			await this.htsSigner.signAndSendTransaction(transaction);
 		this.logHashScan(transactionResponse, 'Tranfer');
@@ -669,7 +668,7 @@ export default class HTSProvider implements IProvider {
 			);
 
 		if (!htsResponse.receipt) {
-			throw new Error(
+			throw new ProviderError(
 				`An error has occurred when transfer the amount ${params.amount} to the account ${params.inAccountId} for tokenId ${params.tokenId}`,
 			);
 		}

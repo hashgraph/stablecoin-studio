@@ -4,7 +4,9 @@ import PublicKey from './PublicKey.js';
 import { PrivateKey as HPrivateKey } from '@hashgraph/sdk';
 import { PrivateKeyTypeNotValid } from './error/PrivateKeyTypeNotValid.js';
 import { PrivateKeyType } from '../../../core/enum.js';
-import DomainError from '../../error/DomainError.js';
+import BaseError from '../../../core/error/BaseError.js';
+import CheckStrings from '../../../core/checks/strings/CheckStrings.js';
+import { RequestPrivateKey } from '../../../port/in/sdk/request/BaseRequest.js';
 
 export default class PrivateKey extends ValueObject {
 	public readonly key: string;
@@ -18,6 +20,27 @@ export default class PrivateKey extends ValueObject {
 		this.publicKey = PublicKey.fromHederaKey(
 			this.toHashgraphKey().publicKey,
 		);
+	}
+
+	public static validate(val?: string | object): BaseError[] {
+		const err: BaseError[] = [];
+		if (typeof val === 'string') {
+			if (!CheckStrings.isNotEmpty(val))
+				err.push(new PrivateKeyNotValid(val ?? 'undefined'));
+		} else if (typeof val === 'object') {
+			const keys = Object.keys(val);
+			if (!(keys.includes('key') && keys.includes('type'))) {
+				err.push(new PrivateKeyNotValid(JSON.stringify(val)));
+			} else {
+				const pk = val as RequestPrivateKey;
+				if (!CheckStrings.isNotEmpty(pk.key)) {
+					err.push(new PrivateKeyNotValid(JSON.stringify(val)));
+				} else if (!CheckStrings.isLengthBetween(pk.key, 64, 66)) {
+					err.push(new PrivateKeyNotValid(pk.key));
+				}
+			}
+		}
+		return err;
 	}
 
 	public toString(): string {
@@ -41,7 +64,7 @@ export default class PrivateKey extends ValueObject {
 				? HPrivateKey.fromStringED25519(this.key)
 				: HPrivateKey.fromStringECDSA(this.key);
 		} catch (error) {
-			throw new DomainError(String(error));
+			throw new PrivateKeyNotValid(this.key);
 		}
 	}
 }

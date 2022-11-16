@@ -12,7 +12,7 @@ var expect = chai.expect;
 import { deployContractsWithSDK, initializeClients } from "../scripts/deploy";
 import {grantRole, revokeRole, getRoles, getRoleId} from "../scripts/contractsMethods";
 import {BURN_ROLE, 
-  PAUSER_ROLE,
+  PAUSE_ROLE,
   RESCUE_ROLE,
   WIPE_ROLE,
   CASHIN_ROLE,
@@ -83,7 +83,7 @@ describe("Roles Tests", function() {
       await grantRole(DEFAULT_ADMIN_ROLE, ContractId, proxyAddress, client, client2account);
       await grantRole(CASHIN_ROLE, ContractId, proxyAddress, client, client2account);
       await grantRole(BURN_ROLE, ContractId, proxyAddress, client, client2account);
-      await grantRole(PAUSER_ROLE, ContractId, proxyAddress, client, client2account);
+      await grantRole(PAUSE_ROLE, ContractId, proxyAddress, client, client2account);
       await grantRole(RESCUE_ROLE, ContractId, proxyAddress, client, client2account);
       await grantRole(WIPE_ROLE, ContractId, proxyAddress, client, client2account);
 
@@ -95,7 +95,7 @@ describe("Roles Tests", function() {
         else if(i == RolesId.Burn) expect(result[i].toUpperCase()).to.equals(BURN_ROLE.toUpperCase());
         else if(i == RolesId.Wipe) expect(result[i].toUpperCase()).to.equals(WIPE_ROLE.toUpperCase());
         else if(i == RolesId.Rescue) expect(result[i].toUpperCase()).to.equals(RESCUE_ROLE.toUpperCase());
-        else if(i == RolesId.Pause) expect(result[i].toUpperCase()).to.equals(PAUSER_ROLE.toUpperCase());
+        else if(i == RolesId.Pause) expect(result[i].toUpperCase()).to.equals(PAUSE_ROLE.toUpperCase());
         else if(i == RolesId.Admin) expect(result[i].toUpperCase()).to.equals(DEFAULT_ADMIN_ROLE.toUpperCase());
         else expect(result[i].toUpperCase()).to.equals(WITHOUT_ROLE.toUpperCase());
       }
@@ -103,7 +103,7 @@ describe("Roles Tests", function() {
       // Revoking roles
       await revokeRole(CASHIN_ROLE, ContractId, proxyAddress, client, client2account);
       await revokeRole(BURN_ROLE, ContractId, proxyAddress, client, client2account);
-      await revokeRole(PAUSER_ROLE, ContractId, proxyAddress, client, client2account);
+      await revokeRole(PAUSE_ROLE, ContractId, proxyAddress, client, client2account);
       await revokeRole(RESCUE_ROLE, ContractId, proxyAddress, client, client2account);
       await revokeRole(WIPE_ROLE, ContractId, proxyAddress, client, client2account);
       await revokeRole(DEFAULT_ADMIN_ROLE, ContractId, proxyAddress, client, client2account);
@@ -132,7 +132,7 @@ describe("Roles Tests", function() {
       expect(roleAdmin.toUpperCase()).to.equals(DEFAULT_ADMIN_ROLE.toUpperCase());
       expect(roleCashin.toUpperCase()).to.equals(CASHIN_ROLE.toUpperCase());
       expect(roleBurn.toUpperCase()).to.equals(BURN_ROLE.toUpperCase());
-      expect(rolePause.toUpperCase()).to.equals(PAUSER_ROLE.toUpperCase());
+      expect(rolePause.toUpperCase()).to.equals(PAUSE_ROLE.toUpperCase());
       expect(roleWipe.toUpperCase()).to.equals(WIPE_ROLE.toUpperCase());
       expect(roleRescue.toUpperCase()).to.equals(RESCUE_ROLE.toUpperCase());
     });

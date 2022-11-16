@@ -5,6 +5,7 @@ export enum NamedRoutes {
 	Dashboard = 'dashboard',
 	EditRole = 'editRole',
 	GiveRole = 'giveRole',
+	RefreshRoles = 'refreshRoles',
 	Login = 'login',
 	Operations = 'operations',
 	RescueTokens = 'rescueTokens',
@@ -14,4 +15,5 @@ export enum NamedRoutes {
 	StableCoinDetails = 'stableCoinDetails',
 	StableCoinNotSelected = 'stableCoinNotSelected',
 	Wipe = 'wipe',
+	ExternalToken = 'externalToken',
 }

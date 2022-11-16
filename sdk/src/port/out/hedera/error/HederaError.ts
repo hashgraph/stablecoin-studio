@@ -1,9 +1,10 @@
-export default class HederaError extends Error {
+import BaseError, { ErrorCode } from '../../../../core/error/BaseError.js';
+
+export default class ProviderError extends BaseError {
 	/**
 	 * Domain Error Constructor
 	 */
 	constructor(cause?: string) {
-		super(`🛑 ${cause}`);
-		Object.setPrototypeOf(this, HederaError.prototype);
+		super(ErrorCode.ProviderError, cause ?? 'An unexpected error ocurred');
 	}
 }
