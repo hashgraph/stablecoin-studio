@@ -218,10 +218,17 @@ export class SDK {
 					treasury: AccountId,
 					autoRenewAccount: AccountId,
 					initialSupply: (val, req) => {
-						return BigDecimal.fromString(val, req.decimals);
+						if(val){
+							return BigDecimal.fromString(val, req.decimals);
+						}
+						return BigDecimal.ZERO;
 					},
-					maxSupply: (val, req) =>
-						BigDecimal.fromString(val, req.decimals),
+					maxSupply: (val, req) =>{
+					if(val){
+						BigDecimal.fromString(val, req.decimals);
+					}
+					return BigDecimal.ZERO;
+				}
 				},
 			);
 			return this.stableCoinService.createStableCoin(req);
