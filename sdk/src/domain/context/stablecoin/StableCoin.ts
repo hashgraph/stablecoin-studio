@@ -379,9 +379,6 @@ export class StableCoin extends BaseEntity {
 		const min = ZERO;
 		const max = EIGHTEEN;
 
-		if (CheckNums.hasMoreDecimals(value.toString(), 0)) {
-			errorList.push(new InvalidType(value, 'integer'));
-		}
 		if (!CheckNums.isWithinRange(value, min, max))
 			errorList.push(new InvalidDecimalRange(value, min, max));
 
@@ -391,7 +388,7 @@ export class StableCoin extends BaseEntity {
 		const errorList: BaseError[] = [];
 
 		if (!Number.isInteger(value)) {
-			return [new InvalidType(value, 'integer1')];
+			return [new InvalidType(value, 'integer')];
 		}
 		
 		return errorList;
