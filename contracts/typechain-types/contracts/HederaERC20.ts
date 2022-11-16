@@ -33,6 +33,7 @@ export interface HederaERC20Interface extends utils.Interface {
     "BURN_ROLE()": FunctionFragment;
     "CASHIN_ROLE()": FunctionFragment;
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
+    "DELETE_ROLE()": FunctionFragment;
     "FREEZE_ROLE()": FunctionFragment;
     "PAUSE_ROLE()": FunctionFragment;
     "RESCUE_ROLE()": FunctionFragment;
@@ -47,6 +48,7 @@ export interface HederaERC20Interface extends utils.Interface {
     "decreaseSupplierAllowance(address,uint256)": FunctionFragment;
     "delegateTransferFrom(address,address,address,uint256)": FunctionFragment;
     "delegateTransferFromNFT(address,address,address,uint256)": FunctionFragment;
+    "deleteToken()": FunctionFragment;
     "dissociateToken(address)": FunctionFragment;
     "freeze(address)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
@@ -88,6 +90,7 @@ export interface HederaERC20Interface extends utils.Interface {
       | "BURN_ROLE"
       | "CASHIN_ROLE"
       | "DEFAULT_ADMIN_ROLE"
+      | "DELETE_ROLE"
       | "FREEZE_ROLE"
       | "PAUSE_ROLE"
       | "RESCUE_ROLE"
@@ -102,6 +105,7 @@ export interface HederaERC20Interface extends utils.Interface {
       | "decreaseSupplierAllowance"
       | "delegateTransferFrom"
       | "delegateTransferFromNFT"
+      | "deleteToken"
       | "dissociateToken"
       | "freeze"
       | "getRoleAdmin"
@@ -145,6 +149,10 @@ export interface HederaERC20Interface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "DEFAULT_ADMIN_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "DELETE_ROLE",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -206,6 +214,10 @@ export interface HederaERC20Interface extends utils.Interface {
       PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "deleteToken",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "dissociateToken",
@@ -356,6 +368,10 @@ export interface HederaERC20Interface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "DELETE_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "FREEZE_ROLE",
     data: BytesLike
   ): Result;
@@ -385,6 +401,10 @@ export interface HederaERC20Interface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "delegateTransferFromNFT",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "deleteToken",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -489,6 +509,7 @@ export interface HederaERC20Interface extends utils.Interface {
     "SupplierAllowanceDecreased(address,address,uint256,uint256,uint256)": EventFragment;
     "SupplierAllowanceIncreased(address,address,uint256,uint256,uint256)": EventFragment;
     "SupplierAllowanceReset(address,address,uint256,uint256)": EventFragment;
+    "TokenDeleted(address)": EventFragment;
     "TokenPaused(address)": EventFragment;
     "TokenRescued(address,address,uint256,uint256)": EventFragment;
     "TokenUnpaused(address)": EventFragment;
@@ -507,6 +528,7 @@ export interface HederaERC20Interface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "SupplierAllowanceDecreased"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SupplierAllowanceIncreased"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SupplierAllowanceReset"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TokenDeleted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TokenPaused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TokenRescued"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TokenUnpaused"): EventFragment;
@@ -628,6 +650,13 @@ export type SupplierAllowanceResetEvent = TypedEvent<
 export type SupplierAllowanceResetEventFilter =
   TypedEventFilter<SupplierAllowanceResetEvent>;
 
+export interface TokenDeletedEventObject {
+  token: string;
+}
+export type TokenDeletedEvent = TypedEvent<[string], TokenDeletedEventObject>;
+
+export type TokenDeletedEventFilter = TypedEventFilter<TokenDeletedEvent>;
+
 export interface TokenPausedEventObject {
   token: string;
 }
@@ -736,6 +765,8 @@ export interface HederaERC20 extends BaseContract {
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
+    DELETE_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
     FREEZE_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     PAUSE_ROLE(overrides?: CallOverrides): Promise<[string]>;
@@ -797,6 +828,10 @@ export interface HederaERC20 extends BaseContract {
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
       serialNumber: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    deleteToken(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -977,6 +1012,8 @@ export interface HederaERC20 extends BaseContract {
 
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
+  DELETE_ROLE(overrides?: CallOverrides): Promise<string>;
+
   FREEZE_ROLE(overrides?: CallOverrides): Promise<string>;
 
   PAUSE_ROLE(overrides?: CallOverrides): Promise<string>;
@@ -1038,6 +1075,10 @@ export interface HederaERC20 extends BaseContract {
     from: PromiseOrValue<string>,
     to: PromiseOrValue<string>,
     serialNumber: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  deleteToken(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1218,6 +1259,8 @@ export interface HederaERC20 extends BaseContract {
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
+    DELETE_ROLE(overrides?: CallOverrides): Promise<string>;
+
     FREEZE_ROLE(overrides?: CallOverrides): Promise<string>;
 
     PAUSE_ROLE(overrides?: CallOverrides): Promise<string>;
@@ -1281,6 +1324,8 @@ export interface HederaERC20 extends BaseContract {
       serialNumber: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    deleteToken(overrides?: CallOverrides): Promise<boolean>;
 
     dissociateToken(
       adr: PromiseOrValue<string>,
@@ -1549,6 +1594,9 @@ export interface HederaERC20 extends BaseContract {
       newAllowance?: null
     ): SupplierAllowanceResetEventFilter;
 
+    "TokenDeleted(address)"(token?: null): TokenDeletedEventFilter;
+    TokenDeleted(token?: null): TokenDeletedEventFilter;
+
     "TokenPaused(address)"(token?: null): TokenPausedEventFilter;
     TokenPaused(token?: null): TokenPausedEventFilter;
 
@@ -1613,6 +1661,8 @@ export interface HederaERC20 extends BaseContract {
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
+    DELETE_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
     FREEZE_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     PAUSE_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1674,6 +1724,10 @@ export interface HederaERC20 extends BaseContract {
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
       serialNumber: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    deleteToken(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1857,6 +1911,8 @@ export interface HederaERC20 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    DELETE_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     FREEZE_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     PAUSE_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1918,6 +1974,10 @@ export interface HederaERC20 extends BaseContract {
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
       serialNumber: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    deleteToken(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -32,6 +32,7 @@ export interface HTSTokenOwnerInterface extends utils.Interface {
     "freeze(address,address)": FunctionFragment;
     "mintToken(address,uint256)": FunctionFragment;
     "pause(address)": FunctionFragment;
+    "remove(address)": FunctionFragment;
     "setERC20Address(address)": FunctionFragment;
     "tranferContract(address,address,uint256)": FunctionFragment;
     "transfer(address,address,address,uint256)": FunctionFragment;
@@ -51,6 +52,7 @@ export interface HTSTokenOwnerInterface extends utils.Interface {
       | "freeze"
       | "mintToken"
       | "pause"
+      | "remove"
       | "setERC20Address"
       | "tranferContract"
       | "transfer"
@@ -97,6 +99,10 @@ export interface HTSTokenOwnerInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "pause",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "remove",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -171,6 +177,7 @@ export interface HTSTokenOwnerInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "freeze", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "mintToken", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "remove", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setERC20Address",
     data: BytesLike
@@ -259,6 +266,11 @@ export interface HTSTokenOwner extends BaseContract {
     ): Promise<ContractTransaction>;
 
     pause(
+      tokenAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    remove(
       tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -359,6 +371,11 @@ export interface HTSTokenOwner extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  remove(
+    tokenAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   setERC20Address(
     _erc20address: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -451,6 +468,11 @@ export interface HTSTokenOwner extends BaseContract {
     ): Promise<boolean>;
 
     pause(
+      tokenAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    remove(
       tokenAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
@@ -554,6 +576,11 @@ export interface HTSTokenOwner extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    remove(
+      tokenAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     setERC20Address(
       _erc20address: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -647,6 +674,11 @@ export interface HTSTokenOwner extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     pause(
+      tokenAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    remove(
       tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

@@ -168,6 +168,28 @@ function pause(address tokenAddress) external nonpayable returns (bool)
 |---|---|---|
 | _0 | bool | undefined |
 
+### remove
+
+```solidity
+function remove(address tokenAddress) external nonpayable returns (bool)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| tokenAddress | address | undefined |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
+
 ### setERC20Address
 
 ```solidity

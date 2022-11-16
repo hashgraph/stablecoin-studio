@@ -139,6 +139,15 @@ contract HTSTokenOwner is IHTSTokenOwner, HederaTokenService {
         return _checkResponse(responseCode);
     }
 
+    function remove(address tokenAddress) 
+        external 
+        onlyHederaERC20() 
+        returns (bool) 
+    {
+        int256 responseCode = HederaTokenService.deleteToken(tokenAddress);
+        return _checkResponse(responseCode);
+    }
+
    /**
     * @dev Transfers an amount of token from the token owner contract to an account
     *    

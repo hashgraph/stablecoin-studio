@@ -61,6 +61,23 @@ function DEFAULT_ADMIN_ROLE() external view returns (bytes32)
 |---|---|---|
 | _0 | bytes32 | undefined |
 
+### DELETE_ROLE
+
+```solidity
+function DELETE_ROLE() external view returns (bytes32)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bytes32 | undefined |
+
 ### FREEZE_ROLE
 
 ```solidity
@@ -346,6 +363,23 @@ Transfers `serialNumber` of `token` from `from` to `to` using the allowance mech
 | Name | Type | Description |
 |---|---|---|
 | responseCode | int64 | The response code for the status of the request. SUCCESS is 22. |
+
+### deleteToken
+
+```solidity
+function deleteToken() external nonpayable returns (bool)
+```
+
+
+
+*Deletes the token *
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
 
 ### dissociateToken
 
@@ -1169,6 +1203,22 @@ event SupplierAllowanceReset(address indexed sender, address indexed supplier, u
 | supplier `indexed` | address | undefined |
 | oldAllowance  | uint256 | undefined |
 | newAllowance  | uint256 | undefined |
+
+### TokenDeleted
+
+```solidity
+event TokenDeleted(address token)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token  | address | undefined |
 
 ### TokenPaused
 

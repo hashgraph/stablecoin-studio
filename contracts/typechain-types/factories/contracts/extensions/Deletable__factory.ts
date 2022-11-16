@@ -4,7 +4,10 @@
 
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
-import type { Roles, RolesInterface } from "../../contracts/Roles";
+import type {
+  Deletable,
+  DeletableInterface,
+} from "../../../contracts/extensions/Deletable";
 
 const _abi = [
   {
@@ -93,6 +96,19 @@ const _abi = [
       },
     ],
     name: "RoleRevoked",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "token",
+        type: "address",
+      },
+    ],
+    name: "TokenDeleted",
     type: "event",
   },
   {
@@ -219,6 +235,19 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "deleteToken",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "bytes32",
@@ -251,6 +280,32 @@ const _abi = [
         internalType: "bytes32[]",
         name: "",
         type: "bytes32[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getTokenAddress",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getTokenOwnerAddress",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
       },
     ],
     stateMutability: "view",
@@ -337,6 +392,24 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "contract HTSTokenOwner",
+        name: "htsTokenOwnerAddress",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "tokenAddress",
+        type: "address",
+      },
+    ],
+    name: "setTokenAddress",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "bytes4",
         name: "interfaceId",
         type: "bytes4",
@@ -355,12 +428,15 @@ const _abi = [
   },
 ];
 
-export class Roles__factory {
+export class Deletable__factory {
   static readonly abi = _abi;
-  static createInterface(): RolesInterface {
-    return new utils.Interface(_abi) as RolesInterface;
+  static createInterface(): DeletableInterface {
+    return new utils.Interface(_abi) as DeletableInterface;
   }
-  static connect(address: string, signerOrProvider: Signer | Provider): Roles {
-    return new Contract(address, _abi, signerOrProvider) as Roles;
+  static connect(
+    address: string,
+    signerOrProvider: Signer | Provider
+  ): Deletable {
+    return new Contract(address, _abi, signerOrProvider) as Deletable;
   }
 }

@@ -11,6 +11,8 @@ export enum Capabilities {
 	FREEZE_HTS = 'Freeze hts',
 	PAUSE = 'Pause',
 	PAUSE_HTS = 'Pause hts',
+	DELETE = 'Delete',
+	DELETE_HTS = 'Delete hts',
 	RESCUE = 'Rescue',
 	ROLE_MANAGEMENT = 'Role management',
 }

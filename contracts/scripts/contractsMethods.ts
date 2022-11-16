@@ -139,15 +139,21 @@ export async function unpause(ContractId: any, proxyAddress: string, clientPausi
 export async function freeze(ContractId: any, proxyAddress: string, clientPausingToken: any, accountToFreeze: string){
     let params: any[] = [AccountId.fromString(accountToFreeze!).toSolidityAddress()];  
     let result = await contractCall(ContractId.fromString(proxyAddress!), 'freeze', params, clientPausingToken, Gas1, HederaERC20__factory.abi);
-    if(!result[0]) throw new Error("Pause unsucessful!!!");
+    if(!result[0]) throw new Error("Freeze unsucessful!!!");
 }
 
 export async function unfreeze(ContractId: any, proxyAddress: string, clientPausingToken: any, accountToFreeze: string){
     let params: any[] = [AccountId.fromString(accountToFreeze!).toSolidityAddress()];  
     let result = await contractCall(ContractId.fromString(proxyAddress!), 'unfreeze', params, clientPausingToken, Gas1, HederaERC20__factory.abi);
-    if(!result[0]) throw new Error("Pause unsucessful!!!");
+    if(!result[0]) throw new Error("Unfreeze unsucessful!!!");
 }
 
+// Deletable ///////////////////////////////////////////////////
+export async function deleteToken(ContractId: any, proxyAddress: string, clientPausingToken: any){
+    let params: any[] = [];  
+    let result = await contractCall(ContractId.fromString(proxyAddress!), 'deleteToken', params, clientPausingToken, Gas1, HederaERC20__factory.abi);
+    if(!result[0]) throw new Error("Delete unsucessful!!!");
+}
 
 // Rescueable ///////////////////////////////////////////////////
 export async function rescueHbar(ContractId: any, proxyAddress: string, amountOfHBarToRescue: any, clientRescueingHBar: any){

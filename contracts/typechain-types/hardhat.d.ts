@@ -77,6 +77,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Burnable__factory>;
     getContractFactory(
+      name: "Deletable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Deletable__factory>;
+    getContractFactory(
       name: "Freezable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Freezable__factory>;
@@ -84,6 +88,10 @@ declare module "hardhat/types/runtime" {
       name: "IBurnable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IBurnable__factory>;
+    getContractFactory(
+      name: "IDeletable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IDeletable__factory>;
     getContractFactory(
       name: "IFreezable",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -250,6 +258,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.Burnable>;
     getContractAt(
+      name: "Deletable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Deletable>;
+    getContractAt(
       name: "Freezable",
       address: string,
       signer?: ethers.Signer
@@ -259,6 +272,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IBurnable>;
+    getContractAt(
+      name: "IDeletable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IDeletable>;
     getContractAt(
       name: "IFreezable",
       address: string,

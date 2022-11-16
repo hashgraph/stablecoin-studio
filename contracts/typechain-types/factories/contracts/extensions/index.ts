@@ -2,8 +2,10 @@
 /* tslint:disable */
 /* eslint-disable */
 export { Burnable__factory } from "./Burnable__factory";
+export { Deletable__factory } from "./Deletable__factory";
 export { Freezable__factory } from "./Freezable__factory";
 export { IBurnable__factory } from "./IBurnable__factory";
+export { IDeletable__factory } from "./IDeletable__factory";
 export { IFreezable__factory } from "./IFreezable__factory";
 export { IMintable__factory } from "./IMintable__factory";
 export { IPausable__factory } from "./IPausable__factory";

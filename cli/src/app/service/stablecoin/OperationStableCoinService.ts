@@ -1323,6 +1323,13 @@ export default class OperationStableCoinService extends Service {
           value: StableCoinRole.FREEZE_ROLE,
         },
       },
+      {
+        role: {
+          availability: capabilities.includes(Capabilities.DELETE),
+          name: 'Delete Role',
+          value: StableCoinRole.DELETE_ROLE,
+        },
+      },      
     ];
     const rolesAvailable = rolesAvailability.filter(
       ({ role }) => role.availability,

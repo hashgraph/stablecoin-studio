@@ -88,7 +88,7 @@ export async function deployContractsWithSDK(
         'initialize',
         parametersContractCall,
         clientSdk,
-        260000,
+        280000,
         HederaERC20__factory.abi
     )
 

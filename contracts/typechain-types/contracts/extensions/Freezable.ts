@@ -32,6 +32,7 @@ export interface FreezableInterface extends utils.Interface {
     "BURN_ROLE()": FunctionFragment;
     "CASHIN_ROLE()": FunctionFragment;
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
+    "DELETE_ROLE()": FunctionFragment;
     "FREEZE_ROLE()": FunctionFragment;
     "PAUSE_ROLE()": FunctionFragment;
     "RESCUE_ROLE()": FunctionFragment;
@@ -56,6 +57,7 @@ export interface FreezableInterface extends utils.Interface {
       | "BURN_ROLE"
       | "CASHIN_ROLE"
       | "DEFAULT_ADMIN_ROLE"
+      | "DELETE_ROLE"
       | "FREEZE_ROLE"
       | "PAUSE_ROLE"
       | "RESCUE_ROLE"
@@ -82,6 +84,10 @@ export interface FreezableInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "DEFAULT_ADMIN_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "DELETE_ROLE",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -157,6 +163,10 @@ export interface FreezableInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "DEFAULT_ADMIN_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "DELETE_ROLE",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -319,6 +329,8 @@ export interface Freezable extends BaseContract {
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
+    DELETE_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
     FREEZE_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     PAUSE_ROLE(overrides?: CallOverrides): Promise<[string]>;
@@ -398,6 +410,8 @@ export interface Freezable extends BaseContract {
 
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
+  DELETE_ROLE(overrides?: CallOverrides): Promise<string>;
+
   FREEZE_ROLE(overrides?: CallOverrides): Promise<string>;
 
   PAUSE_ROLE(overrides?: CallOverrides): Promise<string>;
@@ -476,6 +490,8 @@ export interface Freezable extends BaseContract {
     CASHIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    DELETE_ROLE(overrides?: CallOverrides): Promise<string>;
 
     FREEZE_ROLE(overrides?: CallOverrides): Promise<string>;
 
@@ -610,6 +626,8 @@ export interface Freezable extends BaseContract {
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
+    DELETE_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
     FREEZE_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     PAUSE_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
@@ -691,6 +709,8 @@ export interface Freezable extends BaseContract {
     DEFAULT_ADMIN_ROLE(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    DELETE_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     FREEZE_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

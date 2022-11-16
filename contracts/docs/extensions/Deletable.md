@@ -1,4 +1,4 @@
-# Wipeable
+# Deletable
 
 
 
@@ -167,6 +167,23 @@ function WIPE_ROLE() external view returns (bytes32)
 | Name | Type | Description |
 |---|---|---|
 | _0 | bytes32 | undefined |
+
+### deleteToken
+
+```solidity
+function deleteToken() external nonpayable returns (bool)
+```
+
+
+
+*Deletes the token *
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
 
 ### getRoleAdmin
 
@@ -359,29 +376,6 @@ function supportsInterface(bytes4 interfaceId) external view returns (bool)
 |---|---|---|
 | _0 | bool | undefined |
 
-### wipe
-
-```solidity
-function wipe(address account, uint32 amount) external nonpayable returns (bool)
-```
-
-
-
-*Operation to wipe a token amount (`amount`) from account (`account`).     Validate that there is sufficient token balance before wipe. Only the &#39;WIPE ROLE` can execute Emits a TokensWiped event *
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| account | address | The address of the account where to wipe the token |
-| amount | uint32 | The number of tokens to wipe |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | bool | True if successful     |
-
 
 
 ## Events
@@ -456,10 +450,10 @@ event RoleRevoked(bytes32 indexed role, address indexed account, address indexed
 | account `indexed` | address | undefined |
 | sender `indexed` | address | undefined |
 
-### TokensWiped
+### TokenDeleted
 
 ```solidity
-event TokensWiped(address token, address account, uint32 amount)
+event TokenDeleted(address token)
 ```
 
 
@@ -471,8 +465,6 @@ event TokensWiped(address token, address account, uint32 amount)
 | Name | Type | Description |
 |---|---|---|
 | token  | address | undefined |
-| account  | address | undefined |
-| amount  | uint32 | undefined |
 
 
 

@@ -13,10 +13,11 @@ import "./extensions/Wipeable.sol";
 import "./extensions/Pausable.sol";
 import "./extensions/Freezable.sol";
 import "./extensions/Rescatable.sol";
+import "./extensions/Deletable.sol";
 import "./Roles.sol";
 
 contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20Upgradeable, 
-                       Mintable, Burnable, Wipeable, Pausable, Freezable, Rescatable {
+                       Mintable, Burnable, Wipeable, Pausable, Freezable, Deletable, Rescatable {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     function initialize () 
@@ -32,6 +33,7 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
         _grantRole(WIPE_ROLE, msg.sender);
         _grantRole(PAUSE_ROLE, msg.sender);
         _grantRole(FREEZE_ROLE, msg.sender);
+        _grantRole(DELETE_ROLE, msg.sender);
     }
 
     /**
