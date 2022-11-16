@@ -613,15 +613,15 @@ export default class OperationStableCoinService extends Service {
         ]);
 
         grantRoleRequest.role = await this.getRole(capabilitiesStableCoin);
-        await utilsService.handleValidation(
-          () => grantRoleRequest.validate('role'),
-          async () => {
-            grantRoleRequest.role = await this.getRole(capabilitiesStableCoin);
-          },
-        );
-
-        let grantAccountTargetId = accountTarget;
         if (grantRoleRequest.role !== language.getText('wizard.goBack')) {
+          await utilsService.handleValidation(
+            () => grantRoleRequest.validate('role'),
+            async () => {
+              grantRoleRequest.role = await this.getRole(capabilitiesStableCoin);
+            },
+          );
+
+          let grantAccountTargetId = accountTarget;
           grantRoleRequest.targetId = await utilsService.defaultSingleAsk(
             language.getText('stablecoin.accountTarget'),
             accountTarget,
@@ -684,15 +684,15 @@ export default class OperationStableCoinService extends Service {
         ]);
 
         revokeRoleRequest.role = await this.getRole(capabilitiesStableCoin);
-        await utilsService.handleValidation(
-          () => revokeRoleRequest.validate('role'),
-          async () => {
-            revokeRoleRequest.role = await this.getRole(capabilitiesStableCoin);
-          },
-        );
-
-        let revokeAccountTargetId = accountTarget;
         if (revokeRoleRequest.role !== language.getText('wizard.goBack')) {
+          await utilsService.handleValidation(
+            () => revokeRoleRequest.validate('role'),
+            async () => {
+              revokeRoleRequest.role = await this.getRole(capabilitiesStableCoin);
+            },
+          );
+
+          let revokeAccountTargetId = accountTarget;
           revokeRoleRequest.targetId = await utilsService.defaultSingleAsk(
             language.getText('stablecoin.accountTarget'),
             accountTarget,
@@ -1156,15 +1156,15 @@ export default class OperationStableCoinService extends Service {
         ]);
 
         hasRoleRequest.role = await this.getRole(capabilitiesStableCoin);
-        await utilsService.handleValidation(
-          () => hasRoleRequest.validate('role'),
-          async () => {
-            hasRoleRequest.role = await this.getRole(capabilitiesStableCoin);
-          },
-        );
-
-        let hasRoleAccountTargetId = accountTarget;
         if (hasRoleRequest.role !== language.getText('wizard.goBack')) {
+          await utilsService.handleValidation(
+            () => hasRoleRequest.validate('role'),
+            async () => {
+              hasRoleRequest.role = await this.getRole(capabilitiesStableCoin);
+            },
+          );
+
+          let hasRoleAccountTargetId = accountTarget;
           hasRoleRequest.targetId = await utilsService.defaultSingleAsk(
             language.getText('stablecoin.accountTarget'),
             accountTarget,
