@@ -8,7 +8,8 @@
     "yes": "Yes",
     "unknown": "-",
     "copy": "Copy",
-    "copied": "Copied!"
+    "copied": "Copied!",
+    "see-transaction": "See transaction"
   },
   "innactivity": {
     "title":"Your session has expired!",

@@ -62,6 +62,7 @@ import { EmptyMetadata } from './error/EmptyMetadata.js';
 import { InitializationError } from '../error/InitializationError.js';
 import { PairingError } from '../error/PairingError.js';
 import { DeploymentError } from '../error/DeploymentError.js';
+import { ErrorCode } from '../../../../core/error/BaseError.js';
 
 const logOpts = { newLine: true, clear: true };
 
@@ -462,8 +463,15 @@ export default class HashPackProvider implements IProvider {
 				tokenType: stableCoin.tokenType,
 				supplyType: stableCoin.supplyType,
 			});
-		} catch (error) {
-			throw new DeploymentError(error);
+		} catch (error: any) {
+			if (
+				'errorCode' in error &&
+				error.errorCode === ErrorCode.TransactionError
+			) {
+				throw new DeploymentError(error.error.message, error);
+			} else {
+				throw new DeploymentError(error);
+			}
 		}
 	}
 

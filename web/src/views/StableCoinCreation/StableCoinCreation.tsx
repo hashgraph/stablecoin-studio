@@ -67,6 +67,7 @@ const StableCoinCreation = () => {
 	const [isValidForm, setIsValidForm] = useState<boolean>(false);
 	const [currentStep, setCurrentStep] = useState<number>(0);
 	const [success, setSuccess] = useState<boolean>();
+	const [error, setError] = useState<any>();
 	const { isOpen, onOpen, onClose } = useDisclosure();
 
 	useEffect(() => {
@@ -163,10 +164,10 @@ const StableCoinCreation = () => {
 	};
 
 	const handleFinish = async () => {
-		const { autorenewAccount, managementPermissions, freezeKey, wipeKey, pauseKey, supplyKey } =
+		const {  managementPermissions, freezeKey, wipeKey, pauseKey, supplyKey } =
 			getValues();
 
-		request.autoRenewAccount = autorenewAccount;
+		// request.autoRenewAccount = autorenewAccount;
 		if (managementPermissions) {
 			request.adminKey = accountInfo.publicKey;
 			request.freezeKey = PublicKey.NULL;
@@ -189,7 +190,8 @@ const StableCoinCreation = () => {
 		try {
 			await SDKService.createStableCoin(request);
 			setSuccess(true);
-		} catch (error) {
+		} catch (error:any) {
+			setError(error)
 			setSuccess(false);
 		}
 
@@ -227,6 +229,7 @@ const StableCoinCreation = () => {
 				}}
 				closeOnOverlayClick={false}
 				closeButton={false}
+				error={error}
 			/>
 		</Stack>
 	);

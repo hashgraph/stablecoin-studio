@@ -1,6 +1,7 @@
 import {
 	Button,
 	Image,
+	Link,
 	Modal,
 	ModalBody,
 	ModalCloseButton,
@@ -26,6 +27,7 @@ interface ModalNotificationProps extends Omit<ModalProps, 'children'> {
 	variant?: 'error' | 'success';
 	onClick?: () => void;
 	closeButton?: boolean;
+	error?:any,
 }
 
 const ModalNotification = (props: ModalNotificationProps) => {
@@ -38,6 +40,7 @@ const ModalNotification = (props: ModalNotificationProps) => {
 		title,
 		variant,
 		closeButton = true,
+		error,
 		...othersProps
 	} = props;
 	const { t } = useTranslation('global');
@@ -87,6 +90,11 @@ const ModalNotification = (props: ModalNotificationProps) => {
 						>
 							{description}
 						</Text>
+					)}
+					{error?.transactionError?.transactionUrl && (
+						<Link href={error.transactionError.transactionUrl} isExternal textDecoration="underline">
+							{t('common.see-transaction')}
+						</Link>
 					)}
 				</ModalBody>
 				<ModalFooter alignSelf='center' pt='24px' pb='0'>
