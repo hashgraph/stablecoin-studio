@@ -28,6 +28,7 @@ import { OperationNotAllowed } from './error/OperationNotAllowed.js';
 import { InsufficientFunds } from './error/InsufficientFunds.js';
 import { AmountGreaterThanOwnerBalance } from './error/AmountGreaterThanOwnerBalance.js';
 import CheckNums from '../../../core/checks/numbers/CheckNums.js';
+import IDeleteStableCoinRequestModel from './model/IDeleteStableCoinRequestModel.js';
 
 export default class StableCoinService extends Service {
 	private repository: IStableCoinRepository;
@@ -558,6 +559,24 @@ export default class StableCoinService extends Service {
 		return this.repository.getRoles(
 			req.proxyContractId,
 			req.targetId,
+			req.account,
+		);
+	}
+
+	public async deleteStableCoin(
+		req: IDeleteStableCoinRequestModel,
+	): Promise<boolean> {
+		return this.repository.deleteStableCoin(
+			req.proxyContractId,
+			req.account,
+		);
+	}
+
+	public async pauseStableCoin(
+		req: IDeleteStableCoinRequestModel,
+	): Promise<boolean> {
+		return this.repository.pauseStableCoin(
+			req.proxyContractId,
 			req.account,
 		);
 	}

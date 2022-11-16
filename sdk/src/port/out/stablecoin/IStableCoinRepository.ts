@@ -137,4 +137,12 @@ export default interface IStableCoinRepository {
 		address: string,
 		account: Account,
 	): Promise<string[]>;
+	deleteStableCoin(
+		proxyContractId: string,
+		account: Account,
+	): Promise<boolean>;
+	pauseStableCoin(
+		proxyContractId: string,
+		account: Account,
+	): Promise<boolean>;
 }

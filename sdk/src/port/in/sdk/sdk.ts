@@ -28,6 +28,7 @@ import IRescueStableCoinServiceRequestModel from '../../../app/service/stablecoi
 import IRoleStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IRoleStableCoinServiceRequestModel.js';
 import IGetBasicRequestModel from '../../../app/service/stablecoin/model/IGetBasicRequest.js';
 import { IAccountWithKeyRequestModel } from '../../../app/service/stablecoin/model/CoreRequestModel.js';
+import IDeleteStableCoinRequestModel from '../../../app/service/stablecoin/model/IDeleteStableCoinRequestModel.js';
 
 /* Public requests */
 import { IAssociateStableCoinRequest } from './request/IAssociateStableCoinRequest.js';
@@ -85,11 +86,14 @@ import {
 	GetAccountBalanceRequest,
 	AssociateTokenRequest,
 	GetRolesRequest,
+	DeleteStableCoinRequest,
+	PauseStableCoinRequest,
 } from './request';
 import ValidatedRequest from './request/validation/ValidatedRequest.js';
 import RequestMapper from './request/mapping/RequestMapper.js';
 import { RequestAccount } from './request/BaseRequest.js';
 import { Roles } from '../../../domain/context/stablecoin/Roles.js';
+import IPauseStableCoinRequestModel from '../../../app/service/stablecoin/model/IPauseStableCoinRequestModel.js';
 
 export {
 	ValidatedRequest,
@@ -520,6 +524,32 @@ export class SDK {
 			const req: IGetRolesServiceRequestModel =
 				RequestMapper.map(request);
 			return this.stableCoinService.getRoles(req);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+
+	public deteleStableCoin(
+		request: DeleteStableCoinRequest,
+	): Promise<boolean> | null {
+		try {
+			const req: IDeleteStableCoinRequestModel =
+				RequestMapper.map(request);
+			return this.stableCoinService.deleteStableCoin(req);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+
+	public pauseStableCoin(
+		request: PauseStableCoinRequest,
+	): Promise<boolean> | null {
+		try {
+			const req: IPauseStableCoinRequestModel =
+				RequestMapper.map(request);
+			return this.stableCoinService.pauseStableCoin(req);
 		} catch (error) {
 			console.error(error);
 			return null;

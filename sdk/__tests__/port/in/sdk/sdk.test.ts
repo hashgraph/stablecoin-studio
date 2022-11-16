@@ -15,6 +15,8 @@ import {
   RescueStableCoinRequest,
   GetAccountBalanceRequest,
   AssociateTokenRequest,
+  PauseStableCoinRequest,
+  DeleteStableCoinRequest,
 } from '../../../../src/index.js';
 import {
   ACCOUNTS,
@@ -546,5 +548,29 @@ describe('🧪 [PORT] SDK', () => {
       }),
     );
     await expect(associateToken).rejects.toThrow();
+  }, 15000);
+
+  // eslint-disable-next-line jest/no-disabled-tests
+  it.skip('Pause token', async () => {
+    const pauseToken = sdk.pauseStableCoin(
+      new PauseStableCoinRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        proxyContractId: proxyContractId ?? '',
+        tokenId: tokenId ?? '',
+      }),
+    );
+    await expect(pauseToken).rejects.toThrow();
+  }, 15000);
+
+  // eslint-disable-next-line jest/no-disabled-tests
+  it.skip('Delete token', async () => {
+    const deleteToken = sdk.deteleStableCoin(
+      new DeleteStableCoinRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        proxyContractId: proxyContractId ?? '',
+        tokenId: tokenId ?? '',
+      }),
+    );
+    await expect(deleteToken).rejects.toThrow();
   }, 15000);
 });

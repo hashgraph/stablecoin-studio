@@ -17,6 +17,8 @@ import DecreaseCashInLimitRequest from './DecreaseCashInLimitRequest.js';
 import GetAccountBalanceRequest from './GetAccountBalanceRequest.js';
 import AssociateTokenRequest from './AssociateTokenRequest.js';
 import GetRolesRequest from './GetRolesRequest.js';
+import DeleteStableCoinRequest from './DeleteStableCoinRequest.js';
+import PauseStableCoinRequest from './PauseStableCoinRequest.js';
 
 export * from './BaseRequest.js';
 export {
@@ -39,4 +41,6 @@ export {
 	GetAccountBalanceRequest,
 	AssociateTokenRequest,
 	GetRolesRequest,
+	DeleteStableCoinRequest,
+	PauseStableCoinRequest,
 };
