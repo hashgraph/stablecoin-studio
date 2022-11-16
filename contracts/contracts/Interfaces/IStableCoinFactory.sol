@@ -17,10 +17,11 @@ interface IStableCoinFactory {
         uint32 tokenMaxSupply;
         uint tokenInitialSupply;
         uint tokenDecimals;
+        address autoRenewAccountAddress;
         KeysStruct[] keys;
     }
 
     function deployStableCoin(
         tokenStruct calldata requestedToken
-    ) external payable returns (address, address, address);
+    ) external payable returns (address, address, address, address);
 }

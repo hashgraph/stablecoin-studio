@@ -42,6 +42,7 @@ export declare namespace IStableCoinFactory {
     tokenMaxSupply: PromiseOrValue<BigNumberish>;
     tokenInitialSupply: PromiseOrValue<BigNumberish>;
     tokenDecimals: PromiseOrValue<BigNumberish>;
+    autoRenewAccountAddress: PromiseOrValue<string>;
     keys: IStableCoinFactory.KeysStructStruct[];
   };
 
@@ -53,6 +54,7 @@ export declare namespace IStableCoinFactory {
     number,
     BigNumber,
     BigNumber,
+    string,
     IStableCoinFactory.KeysStructStructOutput[]
   ] & {
     tokenName: string;
@@ -62,13 +64,14 @@ export declare namespace IStableCoinFactory {
     tokenMaxSupply: number;
     tokenInitialSupply: BigNumber;
     tokenDecimals: BigNumber;
+    autoRenewAccountAddress: string;
     keys: IStableCoinFactory.KeysStructStructOutput[];
   };
 }
 
 export interface IStableCoinFactoryInterface extends utils.Interface {
   functions: {
-    "deployStableCoin((string,string,bool,bool,uint32,uint256,uint256,(uint256,bytes)[]))": FunctionFragment;
+    "deployStableCoin((string,string,bool,bool,uint32,uint256,uint256,address,(uint256,bytes)[]))": FunctionFragment;
   };
 
   getFunction(nameOrSignatureOrTopic: "deployStableCoin"): FunctionFragment;
@@ -128,7 +131,7 @@ export interface IStableCoinFactory extends BaseContract {
     deployStableCoin(
       requestedToken: IStableCoinFactory.TokenStructStruct,
       overrides?: CallOverrides
-    ): Promise<[string, string, string]>;
+    ): Promise<[string, string, string, string]>;
   };
 
   filters: {};

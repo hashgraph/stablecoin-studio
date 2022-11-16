@@ -100,6 +100,7 @@ export async function deployContractsWithSDK(
         "tokenMaxSupply": maxSupply,
         "tokenInitialSupply": initialSupply,
         "tokenDecimals": decimals,
+        "autoRenewAccountAddress": AccountId.fromString(account).toSolidityAddress(),
         "keys": [
             {
                 "keyType": 1, // admin
@@ -143,6 +144,7 @@ export async function deployContractsWithSDK(
     console.log(`Proxy created: ${proxyContract[0]} , ${ContractId.fromSolidityAddress(proxyContract[0]).toString()}`)
     console.log(`Proxy Admin created: ${proxyContract[1]} , ${ContractId.fromSolidityAddress(proxyContract[1]).toString()}`)
     console.log(`Implementation created: ${proxyContract[2]} , ${ContractId.fromSolidityAddress(proxyContract[2]).toString()}`)
+    console.log(`Underlying token created: ${proxyContract[3]} , ${ContractId.fromSolidityAddress(proxyContract[3]).toString()}`)
 
 
     return [ContractId.fromSolidityAddress(proxyContract[0]),

@@ -50,6 +50,11 @@ const _abi = [
             type: "uint256",
           },
           {
+            internalType: "address",
+            name: "autoRenewAccountAddress",
+            type: "address",
+          },
+          {
             components: [
               {
                 internalType: "uint256",
@@ -74,6 +79,11 @@ const _abi = [
     ],
     name: "deployStableCoin",
     outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
       {
         internalType: "address",
         name: "",

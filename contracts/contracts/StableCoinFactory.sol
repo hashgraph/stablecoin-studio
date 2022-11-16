@@ -17,7 +17,7 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes{
     string constant memo_1 = "({proxyContract: ";
     string constant memo_2 = "})";
 
-    function deployStableCoin(tokenStruct calldata requestedToken) external payable override returns (address, address, address){
+    function deployStableCoin(tokenStruct calldata requestedToken) external payable override returns (address, address, address, address){
 
         // Deploy logic contract
         HederaERC20 StableCoinContract = new HederaERC20();
@@ -36,13 +36,8 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes{
 
         // Create Token
         IHederaTokenService.HederaToken memory token = createToken(
-            requestedToken.tokenName,
-            requestedToken.tokenSymbol,
-            requestedToken.freeze,
-            requestedToken.supplyType,
-            requestedToken.tokenMaxSupply,
-            address(StableCoinProxy),
-            requestedToken.keys
+            requestedToken,
+            address(StableCoinProxy)
         );
         
         (int64 responseCode, address tokenAddress) = 
@@ -59,16 +54,12 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes{
         // Associate token
         HederaERC20(address(StableCoinProxy)).associateToken(msg.sender);
 
-        return (address(StableCoinProxy), address(StableCoinProxyAdmin), address(StableCoinContract));
+        return (address(StableCoinProxy), address(StableCoinProxyAdmin), address(StableCoinContract), tokenAddress);
     }
 
-    function createToken (string memory tokenName,
-        string memory tokenSymbol,
-        bool freeze,
-        bool supplyType,
-        uint32 tokenMaxSupply,
-        address StableCoinProxyAddress,
-        KeysStruct[] memory keysToDefine
+    function createToken (
+        tokenStruct memory requestedToken,
+        address StableCoinProxyAddress
     ) 
     internal view returns (IHederaTokenService.HederaToken memory){
         // token Memo
@@ -76,29 +67,29 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes{
         
         // Token Expiry
         IHederaTokenService.Expiry memory tokenExpiry;
-        tokenExpiry.autoRenewAccount = msg.sender;
+        tokenExpiry.autoRenewAccount = requestedToken.autoRenewAccountAddress;
         tokenExpiry.autoRenewPeriod = 7776000;
 
         // Token Keys
-        IHederaTokenService.TokenKey[] memory keys = new IHederaTokenService.TokenKey[](keysToDefine.length);
-        for(uint i=0; i < keysToDefine.length; i++)
+        IHederaTokenService.TokenKey[] memory keys = new IHederaTokenService.TokenKey[](requestedToken.keys.length);
+        for(uint i=0; i < requestedToken.keys.length; i++)
         {
             keys[i] = IHederaTokenService.TokenKey(
                     {
-                        keyType: keysToDefine[i].keyType, 
-                        key: generateKey(keysToDefine[i].PublicKey, StableCoinProxyAddress)
+                        keyType: requestedToken.keys[i].keyType, 
+                        key: generateKey(requestedToken.keys[i].PublicKey, StableCoinProxyAddress)
                     }
                 );
         }
 
         IHederaTokenService.HederaToken memory token;
-        token.name = tokenName;
-        token.symbol = tokenSymbol;
+        token.name = requestedToken.tokenName;
+        token.symbol = requestedToken.tokenSymbol;
         token.treasury = StableCoinProxyAddress;
         token.memo = tokenMemo;
-        token.tokenSupplyType = supplyType;
-        token.maxSupply = tokenMaxSupply;
-        token.freezeDefault = freeze;
+        token.tokenSupplyType = requestedToken.supplyType;
+        token.maxSupply = requestedToken.tokenMaxSupply;
+        token.freezeDefault = requestedToken.freeze;
         token.tokenKeys = keys;
         token.expiry = tokenExpiry;
 
