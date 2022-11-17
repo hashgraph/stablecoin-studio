@@ -60,8 +60,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		stableCoinFactory: ContractId
 	): Promise<StableCoin> {
 		account.evmAddress = await this.accountToEvmAddress(account);
-		const tokenId: string = await this.networkAdapter.provider.deployStableCoin(coin, account, stableCoinFactory);
-		return this.getStableCoin(HAccountId.fromSolidityAddress(tokenId).toString());
+		return this.networkAdapter.provider.deployStableCoin(coin, account, stableCoinFactory);
 	}
 
 	public async getListStableCoins(
@@ -171,10 +170,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 			listCapabilities.push(Capabilities.DETAILS);
 			listCapabilities.push(Capabilities.BALANCE);
-
-			if (stableCoin.memo.htsAccount == stableCoin.treasury.toString()) {
-				listCapabilities.push(Capabilities.RESCUE);
-			}
+			listCapabilities.push(Capabilities.RESCUE)
 
 			if (
 				stableCoin.supplyKey?.toString() ===

@@ -4,9 +4,10 @@ import { Account, AccountId, PublicKey } from '../../in/sdk/sdk.js';
 
 export interface ICallContractRequest {
 	contractId: string;
-	parameters: string[];
+	parameters: any[];
 	gas: number;
 	abi: object[];
+	value?: number;
 }
 
 export interface ICallContractWithAccountRequest extends ICallContractRequest {

@@ -177,9 +177,9 @@ export default class HTSProvider implements IProvider {
 
 	public async callContract(
 		name: string,
-		params: ICallContractRequest | ICallContractWithAccountRequest,
+		params: ICallContractRequest | ICallContractWithAccountRequest
 	): Promise<Uint8Array> {
-		const { contractId, parameters, gas, abi } = params;
+		const { contractId, parameters, gas, abi, value } = params;
 
 		let client;
 
@@ -201,6 +201,7 @@ export default class HTSProvider implements IProvider {
 				contractId,
 				functionCallParameters,
 				gas,
+				value
 			);
 		const transactionResponse: TransactionResponse =
 			await this.htsSigner.signAndSendTransaction(transaction);
@@ -242,7 +243,6 @@ export default class HTSProvider implements IProvider {
 			(providedKey, index) => {
 				if(providedKey){
 					const key = new FactoryKey();
-					key.PublicKey = (providedKey === PublicKey.NULL)? providedKey : "0x";
 					switch(index){
 						case 0: {
 							key.keyType = 1; // admin
@@ -269,10 +269,10 @@ export default class HTSProvider implements IProvider {
 							break;
 						}
 					}
+					key.PublicKey = (providedKey === PublicKey.NULL)? providedKey : "0x";
 					keys.push(key);
 				}
 			});
-
 
 		const stableCoinToCreate = new FactoryStableCoin(
 			stableCoin.name,
@@ -282,16 +282,13 @@ export default class HTSProvider implements IProvider {
 			(stableCoin.maxSupply) ? stableCoin.maxSupply.toLong().toString(): "0",
 			(stableCoin.initialSupply) ? stableCoin.initialSupply.toLong().toString(): "0",
 			stableCoin.decimals,
-			HAccountId.fromString(stableCoin.autoRenewAccount.toString()).toSolidityAddress(),
+			"0x" + HAccountId.fromString(stableCoin.autoRenewAccount.toString()).toSolidityAddress(),
 			keys
 		);
-		console.log("input parameters for the Factory method " + JSON.stringify(stableCoinToCreate))
 
 		const parameters = [
-			JSON.stringify(stableCoinToCreate)
+			stableCoinToCreate
 		];
-
-		console.log("parameters" + parameters)
 
 		const params: ICallContractWithAccountRequest = {
 			contractId: stableCoinFactory.id,
@@ -299,24 +296,15 @@ export default class HTSProvider implements IProvider {
 			gas: 15000000,
 			abi: StableCoinFactory__factory.abi,
 			account,
+			value: 25
 		};
-
-		console.log("params" + params)
 
 		const deployStableCoinResponse: any = await this.callContract(
 			'deployStableCoin', 
 			params
 		);
 
-		console.log("contract called, response : " + deployStableCoinResponse)
-
-		const stableCoinContractsAddresses: string[] = deployStableCoinResponse[0]
-
-		console.log("stableCoinContractsAddresses: " + stableCoinContractsAddresses)
-		console.log("returned value: " + stableCoinContractsAddresses[3])
-
-
-		return stableCoinContractsAddresses[3];
+		return deployStableCoinResponse[3];
 	}
 
 	private async deployContract(

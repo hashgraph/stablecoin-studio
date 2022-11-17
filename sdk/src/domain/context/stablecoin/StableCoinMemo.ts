@@ -1,17 +1,14 @@
 export class StableCoinMemo {
 	proxyContract: string;
-	htsAccount: string;
 
-	constructor(proxyContract: string, htsAccount: string) {
+	constructor(proxyContract: string) {
 		this.proxyContract = proxyContract;
-		this.htsAccount = htsAccount;
 	}
 
 	public static fromJson(json: string): StableCoinMemo {
 		const jsonObject = JSON.parse(json);
 		return new StableCoinMemo(
 			jsonObject.proxyContract,
-			jsonObject.htsAccount,
 		);
 	}
 
@@ -26,7 +23,6 @@ export class StableCoinMemo {
 	public toJson(): string {
 		return JSON.stringify({
 			proxyContract: this.proxyContract,
-			htsAccount: this.htsAccount,
 		});
 	}
 }

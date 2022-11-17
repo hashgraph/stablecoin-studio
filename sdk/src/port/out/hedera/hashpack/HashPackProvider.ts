@@ -389,6 +389,7 @@ export default class HashPackProvider implements IProvider {
 				gas: 15000000,
 				abi: StableCoinFactory__factory.abi,
 				account,
+				value: 25
 			};
 	
 			const deployStableCoinResponse: any = await this.callContract(

@@ -26,12 +26,18 @@ export class TransactionProvider {
 		contractId: string,
 		functionCallParameters: Uint8Array,
 		gas: number,
+		value?: number
 	): Transaction {
 		try {
-			return new ContractExecuteTransaction()
+			const transaction =  new ContractExecuteTransaction()
 				.setContractId(contractId)
 				.setFunctionParameters(functionCallParameters)
 				.setGas(gas);
+
+			if(value) transaction.setPayableAmount(value);
+
+			return transaction;
+			
 		} catch (error) {
 			throw new TransactionBuildingError(error);
 		}
