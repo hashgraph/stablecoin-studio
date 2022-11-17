@@ -109,14 +109,14 @@ export default class CreateStableCoinService extends Service {
     // Factory
     tokenToCreate.stableCoinFactory = await utilsService.defaultSingleAsk(
       language.getText('stablecoin.askFactory'),
-      tokenToCreate.stableCoinFactory || '',
+      tokenToCreate.stableCoinFactory || '0.0.0',
     );
     await utilsService.handleValidation(
       () => tokenToCreate.validate('stableCoinFactory'),
       async () => {
         tokenToCreate.stableCoinFactory = await utilsService.defaultSingleAsk(
           language.getText('stablecoin.askFactory'),
-          tokenToCreate.stableCoinFactory || '',
+          tokenToCreate.stableCoinFactory || '0.0.0',
         );
       },
     );

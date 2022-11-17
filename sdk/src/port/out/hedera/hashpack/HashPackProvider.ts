@@ -62,7 +62,7 @@ import { EmptyMetadata } from './error/EmptyMetadata.js';
 import { InitializationError } from '../error/InitializationError.js';
 import { PairingError } from '../error/PairingError.js';
 import { DeploymentError } from '../error/DeploymentError.js';
-import { FactoryKey } from 'domain/context/factory/FactoryKey.js';
+import { FactoryKey } from '../../../../domain/context/factory/FactoryKey.js';
 import { FactoryStableCoin } from '../../../../domain/context/factory/FactoryStableCoin.js';
 
 
@@ -303,89 +303,106 @@ export default class HashPackProvider implements IProvider {
 		account: HashPackAccount,
 		stableCoinFactory: ContractId
 	): Promise<string> {
+		try{
+			if (account) {
+				this.provider = this.hc.getProvider(
+					this.network.hederaNetworkEnviroment as NetworkType,
+					this.initData.topic,
+					account.accountId.id,
+				);
+			} else {
+				throw new DeploymentError(
+					'You must specify an accountId for operate with HashConnect.',
+				);
+			}
+			
+			log(
+				`Using the Factory contract at ${stableCoinFactory.id} to create a new stable coin... please wait.`,
+				logOpts,
+			);
+	
+			const keys:FactoryKey[]  = [];
+	
+			const providedKeys = [stableCoin.adminKey,
+				stableCoin.kycKey,
+				stableCoin.freezeKey,
+				stableCoin.wipeKey,
+				stableCoin.supplyKey,
+				stableCoin.pauseKey
+			]
+	
+			providedKeys.forEach(
+				(providedKey, index) => {
+					if(providedKey){
+						const key = new FactoryKey();
+						key.PublicKey = (providedKey === PublicKey.NULL)? providedKey : "";
+						switch(index){
+							case 0: {
+								key.keyType = 1; // admin
+								break;
+							}
+							case 1: {
+								key.keyType = 2; // kyc
+								break;
+							}
+							case 2: {
+								key.keyType = 4; // freeze
+								break;
+							}
+							case 3: {
+								key.keyType = 8; // wipe
+								break;
+							}
+							case 4: {
+								key.keyType = 16; // supply
+								break;
+							}
+							case 5: {
+								key.keyType = 64; // pause
+								break;
+							}
+						}
+						keys.push(key);
+					}
+				});
+	
+	
+			const stableCoinToCreate = new FactoryStableCoin(
+				stableCoin.name,
+				stableCoin.symbol,
+				stableCoin.freezeDefault,
+				(stableCoin.supplyType == TokenSupplyType.FINITE),
+				(stableCoin.maxSupply) ? stableCoin.maxSupply.toLong().toString(): "0",
+				(stableCoin.initialSupply) ? stableCoin.initialSupply.toLong().toString(): "0",
+				stableCoin.decimals,
+				HAccountId.fromString(stableCoin.autoRenewAccount.toString()).toSolidityAddress(),
+				keys
+			);
+	
+			const parameters = [
+				JSON.stringify(stableCoinToCreate)
+			];
+	
+			const params: ICallContractWithAccountRequest = {
+				contractId: stableCoinFactory.id,
+				parameters,
+				gas: 15000000,
+				abi: StableCoinFactory__factory.abi,
+				account,
+			};
+	
+			const deployStableCoinResponse: any = await this.callContract(
+				'deployStableCoin', 
+				params
+			);
+	
+			const stableCoinContractsAddresses: string[] = deployStableCoinResponse[0]
+	
+			return stableCoinContractsAddresses[3];
 
-		log(
-			`Using the Factory contract at ${stableCoinFactory.id} to create a new stable coin... please wait.`,
-			logOpts,
-		);
-
-		const keys:FactoryKey[]  = [];
-
-		if(stableCoin.adminKey){
-			const adminKey = new FactoryKey();
-			adminKey.keyType = 1;
-			adminKey.PublicKey = (stableCoin.adminKey === PublicKey.NULL)? stableCoin.adminKey : "";
-			keys.push(adminKey);
+		} catch (error) {
+			throw new DeploymentError(error);
 		}
-
-		if(stableCoin.kycKey){
-			const kycKey = new FactoryKey();
-			kycKey.keyType = 2;
-			kycKey.PublicKey = (stableCoin.kycKey === PublicKey.NULL)? stableCoin.kycKey : "";
-			keys.push(kycKey);
-		}
-
-		if(stableCoin.freezeKey){
-			const freezeKey = new FactoryKey();
-			freezeKey.keyType = 4;
-			freezeKey.PublicKey = (stableCoin.freezeKey === PublicKey.NULL)? stableCoin.freezeKey : "";
-			keys.push(freezeKey);
-		}
-
-		if(stableCoin.wipeKey){
-			const wipeKey = new FactoryKey();
-			wipeKey.keyType = 8;
-			wipeKey.PublicKey = (stableCoin.wipeKey === PublicKey.NULL)? stableCoin.wipeKey : "";
-			keys.push(wipeKey);
-		}
-
-		if(stableCoin.supplyKey){
-			const supplyKey = new FactoryKey();
-			supplyKey.keyType = 16;
-			supplyKey.PublicKey = (stableCoin.supplyKey === PublicKey.NULL)? stableCoin.supplyKey : "";
-			keys.push(supplyKey);
-		}
-
-		if(stableCoin.pauseKey){
-			const pauseKey = new FactoryKey();
-			pauseKey.keyType = 64;
-			pauseKey.PublicKey = (stableCoin.pauseKey === PublicKey.NULL)? stableCoin.pauseKey : "";
-			keys.push(pauseKey);
-		}
-
-
-		const stableCoinToCreate = new FactoryStableCoin(
-			stableCoin.name,
-			stableCoin.symbol,
-			stableCoin.freezeDefault,
-			(stableCoin.supplyType == TokenSupplyType.FINITE),
-			stableCoin.maxSupply?.toLong(),
-			stableCoin.initialSupply?.toLong(),
-			stableCoin.decimals,
-			HAccountId.fromString(stableCoin.autoRenewAccount.toString()).toSolidityAddress(),
-			keys
-		);
-
-		const parameters = [
-			JSON.stringify(stableCoinToCreate)
-		];
-
-		const params: ICallContractWithAccountRequest = {
-			contractId: stableCoinFactory.id,
-			parameters,
-			gas: 15000000,
-			abi: StableCoinFactory__factory.abi,
-			account,
-		};
-
-		const deployStableCoinResponse: any = await this.callContract(
-			'deployStableCoin', 
-			params
-		);
-
-		const stableCoinContractsAddresses: string[] = deployStableCoinResponse[0]
-
-		return stableCoinContractsAddresses[3];
 	}
 
 	/*public async deployStableCoin(

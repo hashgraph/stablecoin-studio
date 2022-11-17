@@ -222,6 +222,7 @@ export class SDK {
 					},
 					maxSupply: (val, req) =>
 						BigDecimal.fromString(val, req.decimals),
+					stableCoinFactory: ContractId
 				},
 			);
 			return this.stableCoinService.createStableCoin(req);

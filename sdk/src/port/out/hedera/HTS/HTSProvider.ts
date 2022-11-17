@@ -48,7 +48,7 @@ import { Account, ContractId, TokenSupplyType } from '../../../in/sdk/sdk.js';
 import { safeCast } from '../../../../core/cast.js';
 import { StableCoinMemo } from '../../../../domain/context/stablecoin/StableCoinMemo.js';
 import { FactoryStableCoin } from '../../../../domain/context/factory/FactoryStableCoin.js';
-import { FactoryKey } from 'domain/context/factory/FactoryKey.js';
+import { FactoryKey } from '../../../../domain/context/factory/FactoryKey.js';
 import BigDecimal from '../../../../domain/context/stablecoin/BigDecimal.js';
 import Long from 'long';
 import ProviderError from '../error/HederaError.js';
@@ -242,7 +242,7 @@ export default class HTSProvider implements IProvider {
 			(providedKey, index) => {
 				if(providedKey){
 					const key = new FactoryKey();
-					key.PublicKey = (providedKey === PublicKey.NULL)? providedKey : "";
+					key.PublicKey = (providedKey === PublicKey.NULL)? providedKey : "0x";
 					switch(index){
 						case 0: {
 							key.keyType = 1; // admin
@@ -279,16 +279,19 @@ export default class HTSProvider implements IProvider {
 			stableCoin.symbol,
 			stableCoin.freezeDefault,
 			(stableCoin.supplyType == TokenSupplyType.FINITE),
-			stableCoin.maxSupply?.toLong(),
-			stableCoin.initialSupply?.toLong(),
+			(stableCoin.maxSupply) ? stableCoin.maxSupply.toLong().toString(): "0",
+			(stableCoin.initialSupply) ? stableCoin.initialSupply.toLong().toString(): "0",
 			stableCoin.decimals,
 			HAccountId.fromString(stableCoin.autoRenewAccount.toString()).toSolidityAddress(),
 			keys
 		);
+		console.log("input parameters for the Factory method " + JSON.stringify(stableCoinToCreate))
 
 		const parameters = [
 			JSON.stringify(stableCoinToCreate)
 		];
+
+		console.log("parameters" + parameters)
 
 		const params: ICallContractWithAccountRequest = {
 			contractId: stableCoinFactory.id,
@@ -298,12 +301,20 @@ export default class HTSProvider implements IProvider {
 			account,
 		};
 
+		console.log("params" + params)
+
 		const deployStableCoinResponse: any = await this.callContract(
 			'deployStableCoin', 
 			params
 		);
 
+		console.log("contract called, response : " + deployStableCoinResponse)
+
 		const stableCoinContractsAddresses: string[] = deployStableCoinResponse[0]
+
+		console.log("stableCoinContractsAddresses: " + stableCoinContractsAddresses)
+		console.log("returned value: " + stableCoinContractsAddresses[3])
+
 
 		return stableCoinContractsAddresses[3];
 	}
