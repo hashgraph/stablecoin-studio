@@ -5,7 +5,6 @@ import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import StableCoinList from '../../../port/in/sdk/response/StableCoinList.js';
 import IGetStableCoinServiceRequestModel from './model/IGetStableCoinServiceRequestModel.js';
 import IGetBalanceOfStableCoinServiceRequestModel from './model/IGetBalanceOfStableCoinServiceRequestModel.js';
-import IGetNameOfStableCoinServiceRequestModel from './model/IGetNameOfStableCoinServiceRequestModel.js';
 import CashInStableCoinServiceRequestModel from './model/ICashInStableCoinServiceRequestModel.js';
 import ICashOutStableCoinServiceRequestModel from './model/ICashOutStableCoinServiceRequestModel.js';
 import AssociateTokenStableCoinServiceRequestModel from './model/IAssociateTokenStableCoinServiceRequestModel.js';
@@ -576,20 +575,42 @@ export default class StableCoinService extends Service {
 	public async pauseStableCoin(
 		req: IPauseStableCoinRequestModel,
 	): Promise<boolean> {
-		return Boolean(
-			await this.repository
-				.pauseStableCoin(req.proxyContractId, req.account)
-				.then((r) => r[0]),
-		);
+		const capabilities: Capabilities[] =
+			await this.getCapabilitiesStableCoin(
+				req.tokenId,
+				req.account?.privateKey?.publicKey?.key ?? '',
+			);
+		let result = false;
+		if (capabilities.includes(Capabilities.PAUSE)) {
+			result = Boolean(
+				await this.repository
+					.pause(req.proxyContractId, req.account)
+					.then((r) => r[0]),
+			);
+		} else if (capabilities.includes(Capabilities.PAUSE_HTS)) {
+			result = await this.repository.pauseHTS(req.tokenId, req.account);
+		}
+		return result;
 	}
 
 	public async unpauseStableCoin(
 		req: IPauseStableCoinRequestModel,
 	): Promise<boolean> {
-		return Boolean(
-			await this.repository
-				.unpauseStableCoin(req.proxyContractId, req.account)
-				.then((r) => r[0]),
-		);
+		const capabilities: Capabilities[] =
+			await this.getCapabilitiesStableCoin(
+				req.tokenId,
+				req.account?.privateKey?.publicKey?.key ?? '',
+			);
+		let result = false;
+		if (capabilities.includes(Capabilities.PAUSE)) {
+			result = Boolean(
+				await this.repository
+					.unpause(req.proxyContractId, req.account)
+					.then((r) => r[0]),
+			);
+		} else if (capabilities.includes(Capabilities.PAUSE_HTS)) {
+			result = await this.repository.unpauseHTS(req.tokenId, req.account);
+		}
+		return result;
 	}
 }

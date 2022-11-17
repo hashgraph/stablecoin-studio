@@ -32,6 +32,11 @@ export interface ICreateTokenResponse {
 	autoRenewAccountId?: AccountId;
 }
 
+export interface IHTSPauseRequest {
+	account: Account;
+	tokenId: string;
+}
+
 export interface IHTSTokenRequest {
 	account: Account;
 	tokenId: string;

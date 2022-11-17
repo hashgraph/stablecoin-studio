@@ -12,6 +12,7 @@ import {
 	IWipeTokenRequest,
 	ITransferTokenRequest,
 	InitializationData,
+	IHTSPauseRequest,
 } from './types.js';
 
 import EventService from '../../../app/service/event/EventService.js';
@@ -61,4 +62,6 @@ export interface IProvider {
 	cashInHTS(parameters: IHTSTokenRequest): Promise<boolean>;
 	cashOutHTS(parameters: IHTSTokenRequest): Promise<boolean>;
 	transferHTS(parameters: ITransferTokenRequest): Promise<boolean>;
+	pauseHTS(parameters: IHTSPauseRequest): Promise<boolean>;
+	unpauseHTS(parameters: IHTSPauseRequest): Promise<boolean>;
 }

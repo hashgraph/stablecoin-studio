@@ -11,6 +11,7 @@ import {
 	IHTSTokenRequest,
 	IWipeTokenRequest,
 	ITransferTokenRequest,
+	IHTSPauseRequest,
 } from '../hedera/types.js';
 import ITokenList from './types/ITokenList.js';
 import { IToken } from './types/IToken.js';
@@ -852,7 +853,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		return Promise.resolve(true);
 	}
 
-	public async pauseStableCoin(
+	public async pause(
 		proxyContractId: string,
 		account: Account,
 	): Promise<Uint8Array> {
@@ -871,7 +872,16 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		return response;
 	}
 
-	public async unpauseStableCoin(
+	public async pauseHTS(tokenId: string, account: Account): Promise<boolean> {
+		const params: IHTSPauseRequest = {
+			account,
+			tokenId: tokenId,
+		};
+
+		return await this.networkAdapter.provider.pauseHTS(params);
+	}
+
+	public async unpause(
 		proxyContractId: string,
 		account: Account,
 	): Promise<Uint8Array> {
@@ -888,5 +898,17 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		);
 
 		return response;
+	}
+
+	public async unpauseHTS(
+		tokenId: string,
+		account: Account,
+	): Promise<boolean> {
+		const params: IHTSPauseRequest = {
+			account,
+			tokenId: tokenId,
+		};
+
+		return await this.networkAdapter.provider.unpauseHTS(params);
 	}
 }

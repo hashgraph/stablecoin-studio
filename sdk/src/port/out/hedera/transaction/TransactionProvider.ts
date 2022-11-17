@@ -15,6 +15,8 @@ import {
 	DelegateContractId,
 	ContractFunctionParameters,
 	AccountAllowanceApproveTransaction,
+	TokenPauseTransaction,
+	TokenUnpauseTransaction,
 } from '@hashgraph/sdk';
 import { ContractId, PublicKey } from '../../../in/sdk/sdk.js';
 import { ICreateTokenResponse } from '../types.js';
@@ -202,6 +204,22 @@ export class TransactionProvider {
 					AccountId.fromString(inAccountId),
 					amount,
 				);
+		} catch (error) {
+			throw new TransactionBuildingError(error);
+		}
+	}
+
+	public static buildPausedTransaction(tokenId: string): Transaction {
+		try {
+			return new TokenPauseTransaction().setTokenId(tokenId);
+		} catch (error) {
+			throw new TransactionBuildingError(error);
+		}
+	}
+
+	public static buildUnpausedTransaction(tokenId: string): Transaction {
+		try {
+			return new TokenUnpauseTransaction().setTokenId(tokenId);
 		} catch (error) {
 			throw new TransactionBuildingError(error);
 		}

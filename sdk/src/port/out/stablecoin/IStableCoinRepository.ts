@@ -141,12 +141,8 @@ export default interface IStableCoinRepository {
 		proxyContractId: string,
 		account: Account,
 	): Promise<boolean>;
-	pauseStableCoin(
-		proxyContractId: string,
-		account: Account,
-	): Promise<Uint8Array>;
-	unpauseStableCoin(
-		proxyContractId: string,
-		account: Account,
-	): Promise<Uint8Array>;
+	pause(proxyContractId: string, account: Account): Promise<Uint8Array>;
+	pauseHTS(tokenId: string, account: Account): Promise<boolean>;
+	unpause(proxyContractId: string, account: Account): Promise<Uint8Array>;
+	unpauseHTS(tokenId: string, account: Account): Promise<boolean>;
 }

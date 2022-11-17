@@ -32,6 +32,7 @@ import {
 	IWipeTokenRequest,
 	ITransferTokenRequest,
 	InitializationData,
+	IHTSPauseRequest,
 } from '../types.js';
 import { HashPackSigner } from './HashPackSigner.js';
 import { TransactionProvider } from '../transaction/TransactionProvider.js';
@@ -835,5 +836,12 @@ export default class HashPackProvider implements IProvider {
 		}
 
 		return htsResponse.receipt.status == Status.Success ? true : false;
+	}
+	public async pauseHTS(params: IHTSPauseRequest): Promise<boolean> {
+		throw Error('Method pauseHTS not implemented');
+	}
+
+	public async unpauseHTS(params: IHTSPauseRequest): Promise<boolean> {
+		throw Error('Method unpauseHTS not implemented');
 	}
 }
