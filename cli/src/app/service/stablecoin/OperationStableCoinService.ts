@@ -54,6 +54,7 @@ export default class OperationStableCoinService extends Service {
   private stableCoinWithSymbol;
   private optionTokenListSelected;
   private roleStableCoinService = new RoleStableCoinsService();
+  private stableCoinPaused;
 
   constructor(tokenId?: string, memo?: StableCoinMemo, symbol?: string) {
     super('Operation Stable Coin');
@@ -107,6 +108,7 @@ export default class OperationStableCoinService extends Service {
           true,
           configurationService.getConfiguration()?.defaultNetwork,
           `${currentAccount.accountId.id} - ${configAccount.alias}`,
+          this.stableCoinPaused,
         );
         this.optionTokenListSelected = this.stableCoinId;
         this.stableCoinWithSymbol =
@@ -126,6 +128,7 @@ export default class OperationStableCoinService extends Service {
             .getDetailsStableCoins(this.stableCoinId, false)
             .then((response: IStableCoinDetail) => {
               this.proxyContractId = response.memo.proxyContract;
+              this.stableCoinPaused = response.paused === 'PAUSED';
             });
 
           await utilsService.cleanAndShowBanner();
@@ -168,17 +171,13 @@ export default class OperationStableCoinService extends Service {
         this.filterMenuOptions(
           wizardOperationsStableCoinOptions,
           capabilitiesStableCoin,
-          this.optionTokenListSelected &&
-            this.optionTokenListSelected.split(' - ').length === 3
-            ? configAccount.externalTokens.find(
-                (token) => token.id === this.stableCoinId,
-              ).roles
-            : undefined,
+          this.getRolesAccount(),
         ),
         false,
         configAccount.network,
         `${currentAccount.accountId} - ${configAccount.alias}`,
         this.stableCoinWithSymbol,
+        this.stableCoinPaused,
       )
     ) {
       case 'Cash in':
@@ -589,6 +588,7 @@ export default class OperationStableCoinService extends Service {
         configAccount.network,
         `${configAccount.accountId} - ${configAccount.alias}`,
         this.stableCoinWithSymbol,
+        this.stableCoinPaused,
       )
     ) {
       case 'Grant role':
@@ -747,6 +747,7 @@ export default class OperationStableCoinService extends Service {
             configAccount.network,
             `${currentAccount.accountId.id} - ${configAccount.alias}`,
             this.stableCoinWithSymbol,
+            this.stableCoinPaused,
           )
         ) {
           case editOptions[0]:
@@ -1255,6 +1256,8 @@ export default class OperationStableCoinService extends Service {
             capabilities.includes('Freeze hts'))) ||
         (option === colors.red('Danger zone') &&
           (capabilities.includes('Pause') ||
+            capabilities.includes('Pause hts') ||
+            capabilities.includes('Delete hts') ||
             capabilities.includes('Pause hts'))) ||
         (option === 'Role management' &&
           capabilities.includes('Role management')) ||
@@ -1265,8 +1268,7 @@ export default class OperationStableCoinService extends Service {
 
       return capabilities.includes(option);
     });
-    // TODO QUITAR
-    roles.push('PAUSE');
+
     result = roles
       ? capabilitiesFilter.filter((option) => {
           if (
@@ -1285,6 +1287,10 @@ export default class OperationStableCoinService extends Service {
             (option === colors.red('Danger zone') && roles.includes('PAUSE')) ||
             (option === colors.red('Danger zone') &&
               capabilities.includes('Pause hts')) ||
+            (option === colors.red('Danger zone') &&
+              roles.includes('DELETE')) ||
+            (option === colors.red('Danger zone') &&
+              capabilities.includes('Delete hts')) ||
             (option === 'Rescue' && roles.includes('RESCUE')) ||
             option === 'Refresh roles' ||
             option === 'Details' ||
@@ -1345,7 +1351,10 @@ export default class OperationStableCoinService extends Service {
       },
       {
         role: {
-          availability: capabilities.includes(Capabilities.DELETE),
+          // TODO Eliminar el DELETE HTS cuando se pueda eliminar desde contrato (SOLO para ver la opción)
+          availability: capabilities.some((capability) =>
+            [Capabilities.DELETE, Capabilities.DELETE_HTS].includes(capability),
+          ),
           name: 'Delete Role',
           value: StableCoinRole.DELETE_ROLE,
         },
@@ -1370,6 +1379,17 @@ export default class OperationStableCoinService extends Service {
     return roleSelected;
   }
 
+  private getRolesAccount(): string[] {
+    const configAccount = utilsService.getCurrentAccount();
+    const roles =
+      this.optionTokenListSelected &&
+      this.optionTokenListSelected.split(' - ').length === 3
+        ? configAccount.externalTokens.find(
+            (token) => token.id === this.stableCoinId,
+          ).roles
+        : undefined;
+    return roles;
+  }
   private async grantSupplierRole(
     grantRoleRequest: GrantRoleRequest,
     sdk: SDK,
@@ -1473,13 +1493,39 @@ export default class OperationStableCoinService extends Service {
       currentAccount,
     );
 
+    const rolesAccount = this.getRolesAccount();
     const dangerZoneOptions = language
       .getArray('dangerZone.options')
       .filter((option) => {
-        if (option === 'Pause stable coin') {
-          return capabilitiesStableCoin.some((capability) =>
-            [Capabilities.PAUSE, Capabilities.PAUSE_HTS].includes(capability),
-          );
+        switch (option) {
+          case 'Pause stable coin':
+          case 'Unpause stable coin':
+            let showPauser: boolean =
+              capabilitiesStableCoin.some((capability) =>
+                [Capabilities.PAUSE, Capabilities.PAUSE_HTS].includes(
+                  capability,
+                ),
+              ) &&
+              (option == 'Pause stable coin'
+                ? !this.stableCoinPaused
+                : this.stableCoinPaused);
+            if (showPauser && rolesAccount) {
+              showPauser = rolesAccount.includes('PAUSE');
+            }
+            return showPauser;
+            break;
+          case 'Delete stable coin':
+            let showDelete: boolean = capabilitiesStableCoin.some(
+              (capability) =>
+                [Capabilities.DELETE, Capabilities.DELETE_HTS].includes(
+                  capability,
+                ),
+            );
+            if (showDelete && rolesAccount) {
+              showDelete = rolesAccount.includes('DELETE');
+            }
+            return showDelete;
+            break;
         }
         // TODO DELETE STABLE COIN
         return true;
@@ -1494,6 +1540,7 @@ export default class OperationStableCoinService extends Service {
         configAccount.network,
         `${configAccount.accountId} - ${configAccount.alias}`,
         this.stableCoinWithSymbol,
+        this.stableCoinPaused,
       )
     ) {
       case 'Pause stable coin':
@@ -1515,6 +1562,36 @@ export default class OperationStableCoinService extends Service {
               tokenId: this.stableCoinId,
             });
             await new PauseStableCoinService().pauseStableCoin(req);
+            this.stableCoinPaused = true;
+          } catch (error) {
+            await utilsService.askErrorConfirmation(
+              async () => await this.operationsStableCoin(),
+              error,
+            );
+          }
+        }
+
+        break;
+      case 'Unpause stable coin':
+        const confirmUnpause = await utilsService.defaultConfirmAsk(
+          language.getText('dangerZone.confirmUnpause'),
+          true,
+        );
+        if (confirmUnpause) {
+          try {
+            const req = new PauseStableCoinRequest({
+              account: {
+                accountId: currentAccount.accountId.id,
+                privateKey: {
+                  key: currentAccount.privateKey.key,
+                  type: currentAccount.privateKey.type,
+                },
+              },
+              proxyContractId: this.proxyContractId,
+              tokenId: this.stableCoinId,
+            });
+            await new PauseStableCoinService().unpauseStableCoin(req);
+            this.stableCoinPaused = false;
           } catch (error) {
             await utilsService.askErrorConfirmation(
               async () => await this.operationsStableCoin(),

@@ -1,3 +1,4 @@
+/* eslint-disable jest/no-disabled-tests */
 import PublicKey from '../../../../src/domain/context/account/PublicKey.js';
 import {
   BigDecimal,
@@ -18,6 +19,9 @@ import {
   GetAccountInfoRequest,
   PauseStableCoinRequest,
   DeleteStableCoinRequest,
+  CashInStableCoinRequest,
+  WipeStableCoinRequest,
+  CheckCashInLimitRequest,
 } from '../../../../src/index.js';
 import {
   ACCOUNTS,
@@ -26,11 +30,8 @@ import {
   REQUEST_ACCOUNTS,
 } from '../../../core/core.js';
 import { StableCoinRole } from '../../../../src/core/enum.js';
-import CashInStableCoinRequest from '../../../../src/port/in/sdk/request/CashInStableCoinRequest.js';
-import WipeStableCoinRequest from '../../../../src/port/in/sdk/request/WipeStableCoinRequest.js';
 import BaseError from '../../../../src/core/error/BaseError.js';
 import { BigNumber } from '@hashgraph/hethers';
-import CheckCashInLimitRequest from '../../../../src/port/in/sdk/request/CheckCashInLimitRequest.js';
 
 describe('🧪 [PORT] SDK', () => {
   let sdk: SDK;
@@ -385,6 +386,20 @@ describe('🧪 [PORT] SDK', () => {
     expect(check).not.toBeNull();
     expect(check && check).toBe('10');
   }, 25000);
+
+  it('Has role', async () => {
+    const hasRole = await sdk.hasRole(
+      new HasRoleRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        role: StableCoinRole.WIPE_ROLE,
+        targetId: '0.0.46824819',
+        proxyContractId: proxyContractId ?? '0.0.48908568',
+        tokenId: tokenId ?? '0.0.48908571',
+      }),
+    );
+    expect(hasRole && hasRole[0]).toBeTruthy();
+  });
+
   it('Check limited supplier allowance', async () => {
     const check = await sdk.isLimitedSupplierAllowance(
       new CheckCashInRoleRequest({
@@ -553,19 +568,49 @@ describe('🧪 [PORT] SDK', () => {
     await expect(associateToken).rejects.toThrow();
   }, 15000);
 
-  // eslint-disable-next-line jest/no-disabled-tests
-  it.skip('Pause token', async () => {
-    const pauseToken = sdk.pauseStableCoin(
+  it('Pause token', async () => {
+    const detailsRequest = new GetStableCoinDetailsRequest({
+      id: tokenId ?? '0.0.48908359',
+    });
+    const detailsPrev = await sdk.getStableCoinDetails(detailsRequest);
+
+    const pauseToken = await sdk.pauseStableCoin(
       new PauseStableCoinRequest({
         account: REQUEST_ACCOUNTS.testnet,
-        proxyContractId: proxyContractId ?? '',
-        tokenId: tokenId ?? '',
+        proxyContractId: proxyContractId ?? '0.0.48908356',
+        tokenId: tokenId ?? '0.0.48908359',
       }),
     );
-    await expect(pauseToken).rejects.toThrow();
+    const detailsPost = await sdk.getStableCoinDetails(detailsRequest);
+
+    await expect(pauseToken).not.toBeNull();
+    await expect(pauseToken).toBeTruthy();
+    await expect(detailsPrev?.paused).toBe('UNPAUSED');
+    await expect(detailsPost?.paused).toBe('PAUSED');
+  }, 150000);
+
+  it('Unpause token', async () => {
+    const detailsRequest = new GetStableCoinDetailsRequest({
+      id: tokenId ?? '0.0.48908359',
+    });
+    const detailsPrev = await sdk.getStableCoinDetails(detailsRequest);
+
+    const unpauseToken = await sdk.unpauseStableCoin(
+      new PauseStableCoinRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        proxyContractId: proxyContractId ?? '0.0.48908356',
+        tokenId: tokenId ?? '0.0.48908359',
+      }),
+    );
+
+    const detailsPost = await sdk.getStableCoinDetails(detailsRequest);
+
+    await expect(unpauseToken).not.toBeNull();
+    await expect(unpauseToken).toBeTruthy();
+    await expect(detailsPrev?.paused).toBe('PAUSED');
+    await expect(detailsPost?.paused).toBe('UNPAUSED');
   }, 15000);
 
-  // eslint-disable-next-line jest/no-disabled-tests
   it.skip('Delete token', async () => {
     const deleteToken = sdk.deteleStableCoin(
       new DeleteStableCoinRequest({

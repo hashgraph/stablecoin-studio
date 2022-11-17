@@ -565,6 +565,19 @@ export class SDK {
 		}
 	}
 
+	public unpauseStableCoin(
+		request: PauseStableCoinRequest,
+	): Promise<boolean> | null {
+		try {
+			const req: IPauseStableCoinRequestModel =
+				RequestMapper.map(request);
+			return this.stableCoinService.unpauseStableCoin(req);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+
 	public getAvailabilityExtension(): boolean {
 		console.log('=====getAvailabilityExtension=====');
 		return this.networkAdapter.provider.getAvailabilityExtension();

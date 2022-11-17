@@ -29,6 +29,7 @@ import { InsufficientFunds } from './error/InsufficientFunds.js';
 import { AmountGreaterThanOwnerBalance } from './error/AmountGreaterThanOwnerBalance.js';
 import CheckNums from '../../../core/checks/numbers/CheckNums.js';
 import IDeleteStableCoinRequestModel from './model/IDeleteStableCoinRequestModel.js';
+import IPauseStableCoinRequestModel from './model/IPauseStableCoinRequestModel.js';
 
 export default class StableCoinService extends Service {
 	private repository: IStableCoinRepository;
@@ -573,11 +574,22 @@ export default class StableCoinService extends Service {
 	}
 
 	public async pauseStableCoin(
-		req: IDeleteStableCoinRequestModel,
+		req: IPauseStableCoinRequestModel,
 	): Promise<boolean> {
-		return this.repository.pauseStableCoin(
-			req.proxyContractId,
-			req.account,
+		return Boolean(
+			await this.repository
+				.pauseStableCoin(req.proxyContractId, req.account)
+				.then((r) => r[0]),
+		);
+	}
+
+	public async unpauseStableCoin(
+		req: IPauseStableCoinRequestModel,
+	): Promise<boolean> {
+		return Boolean(
+			await this.repository
+				.unpauseStableCoin(req.proxyContractId, req.account)
+				.then((r) => r[0]),
 		);
 	}
 }

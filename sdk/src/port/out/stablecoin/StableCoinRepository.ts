@@ -84,13 +84,11 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		}
 	}
 
-
-
 	public async getStableCoin(id: string): Promise<StableCoin> {
 		try {
-			const retry = 5 ;
+			const retry = 5;
 			let i = 0;
-			
+
 			let response;
 			do {
 				response = await this.instance.get<IHederaStableCoinDetail>(
@@ -99,7 +97,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 				i++;
 			} while (response.status !== 200 || i < retry);
-			
+
 			const getKeyOrDefault = (
 				val?: IPublicKey,
 			): ContractId | PublicKey | undefined => {
@@ -175,25 +173,31 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	): Promise<Capabilities[]> {
 		try {
 			const stableCoin: StableCoin = await this.getStableCoin(tokenId);
+			const paused = stableCoin.paused === 'PAUSED';
+
 			const listCapabilities: Capabilities[] = [];
 
 			listCapabilities.push(Capabilities.DETAILS);
 			listCapabilities.push(Capabilities.BALANCE);
 
-			if (stableCoin.memo.htsAccount == stableCoin.treasury.toString()) {
+			if (
+				!paused &&
+				stableCoin.memo.htsAccount == stableCoin.treasury.toString()
+			) {
 				listCapabilities.push(Capabilities.RESCUE);
 			}
 
 			if (
+				!paused &&
 				stableCoin.supplyKey?.toString() ===
-				stableCoin.treasury.toString()
+					stableCoin.treasury.toString()
 			) {
 				//TODO add Roles
 				listCapabilities.push(Capabilities.CASH_IN);
 				listCapabilities.push(Capabilities.BURN);
 			}
 
-			if (stableCoin.supplyKey instanceof PublicKey) {
+			if (!paused && stableCoin.supplyKey instanceof PublicKey) {
 				if (
 					stableCoin.supplyKey?.key.toString() == publickey.toString()
 				) {
@@ -202,14 +206,14 @@ export default class StableCoinRepository implements IStableCoinRepository {
 				}
 			}
 
-			if (stableCoin.wipeKey instanceof PublicKey) {
+			if (!paused && stableCoin.wipeKey instanceof PublicKey) {
 				if (
 					stableCoin.wipeKey?.key.toString() == publickey.toString()
 				) {
 					listCapabilities.push(Capabilities.WIPE_HTS);
 				}
 			}
-			if (stableCoin.wipeKey instanceof ContractId) {
+			if (!paused && stableCoin.wipeKey instanceof ContractId) {
 				listCapabilities.push(Capabilities.WIPE);
 			}
 
@@ -224,14 +228,14 @@ export default class StableCoinRepository implements IStableCoinRepository {
 				listCapabilities.push(Capabilities.PAUSE);
 			}
 
-			if (stableCoin.freezeKey instanceof PublicKey) {
+			if (!paused && stableCoin.freezeKey instanceof PublicKey) {
 				if (
 					stableCoin.freezeKey?.key.toString() == publickey.toString()
 				) {
 					listCapabilities.push(Capabilities.FREEZE_HTS);
 				}
 			}
-			if (stableCoin.freezeKey instanceof ContractId) {
+			if (!paused && stableCoin.freezeKey instanceof ContractId) {
 				listCapabilities.push(Capabilities.FREEZE);
 			}
 
@@ -241,7 +245,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 				) {
 					listCapabilities.push(Capabilities.DELETE_HTS);
 				}
-			}			
+			}
 			if (stableCoin.adminKey instanceof ContractId) {
 				listCapabilities.push(Capabilities.DELETE);
 			}
@@ -254,7 +258,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 					Capabilities.BURN,
 					Capabilities.RESCUE,
 					Capabilities.FREEZE,
-					Capabilities.DELETE
+					Capabilities.DELETE,
 				].includes(capability),
 			);
 			if (roleManagement) {
@@ -838,7 +842,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		}
 	}
 
-	deleteStableCoin(
+	public async deleteStableCoin(
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		proxyContractId: string,
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -848,13 +852,41 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		return Promise.resolve(true);
 	}
 
-	pauseStableCoin(
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	public async pauseStableCoin(
 		proxyContractId: string,
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		account: Account,
-	): Promise<boolean> {
-		// throw new InvalidResponse('Error pause');
-		return Promise.resolve(true);
+	): Promise<Uint8Array> {
+		const params: ICallContractWithAccountRequest = {
+			contractId: proxyContractId,
+			parameters: [],
+			gas: 400000,
+			abi: HederaERC20__factory.abi,
+			account,
+		};
+		const response = await this.networkAdapter.provider.callContract(
+			'pause',
+			params,
+		);
+
+		return response;
+	}
+
+	public async unpauseStableCoin(
+		proxyContractId: string,
+		account: Account,
+	): Promise<Uint8Array> {
+		const params: ICallContractWithAccountRequest = {
+			contractId: proxyContractId,
+			parameters: [],
+			gas: 400000,
+			abi: HederaERC20__factory.abi,
+			account,
+		};
+		const response = await this.networkAdapter.provider.callContract(
+			'unpause',
+			params,
+		);
+
+		return response;
 	}
 }

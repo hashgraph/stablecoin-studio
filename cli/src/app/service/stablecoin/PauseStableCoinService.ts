@@ -12,14 +12,28 @@ export default class PauseStableCoinService extends Service {
   }
 
   /**
-   * give supplier role
+   * pause stable coin
    */
   public async pauseStableCoin(req: PauseStableCoinRequest): Promise<void> {
     const sdk: SDK = utilsService.getSDK();
-
     await utilsService.showSpinner(sdk.pauseStableCoin(req), {
       text: language.getText('state.loading'),
       successText: language.getText('state.pauseCompleted') + '\n',
+    });
+
+    console.log(language.getText('operation.success'));
+
+    utilsService.breakLine();
+  }
+
+  /**
+   * unpause stable coin
+   */
+  public async unpauseStableCoin(req: PauseStableCoinRequest): Promise<void> {
+    const sdk: SDK = utilsService.getSDK();
+    await utilsService.showSpinner(sdk.unpauseStableCoin(req), {
+      text: language.getText('state.loading'),
+      successText: language.getText('state.unpauseCompleted') + '\n',
     });
 
     console.log(language.getText('operation.success'));

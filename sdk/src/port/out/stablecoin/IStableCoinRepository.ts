@@ -144,5 +144,9 @@ export default interface IStableCoinRepository {
 	pauseStableCoin(
 		proxyContractId: string,
 		account: Account,
-	): Promise<boolean>;
+	): Promise<Uint8Array>;
+	unpauseStableCoin(
+		proxyContractId: string,
+		account: Account,
+	): Promise<Uint8Array>;
 }
