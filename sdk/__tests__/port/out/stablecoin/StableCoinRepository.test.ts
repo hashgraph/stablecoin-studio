@@ -370,7 +370,7 @@ function mockRepo(networkAdapter: NetworkAdapter, provider?: IProvider) {
   };
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const deployFn = (coin: StableCoin, account: Account, stableCoinFactory: ContractId) => {
-    return Promise.resolve("0x0000000000000000000000000000000000000001");
+    return Promise.resolve(coin);
   };
   const resolveHTS = () => {
     return Promise.resolve(true);

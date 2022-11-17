@@ -302,7 +302,7 @@ export default class HashPackProvider implements IProvider {
 		stableCoin: StableCoin,
 		account: HashPackAccount,
 		stableCoinFactory: ContractId
-	): Promise<string> {
+	): Promise<StableCoin> {
 		try{
 			if (account) {
 				this.provider = this.hc.getProvider(
@@ -397,9 +397,11 @@ export default class HashPackProvider implements IProvider {
 				params
 			);
 	
-			const stableCoinContractsAddresses: string[] = deployStableCoinResponse[0]
 	
-			return stableCoinContractsAddresses[3];
+			const coinToReturn = stableCoin;
+			coinToReturn.id = HAccountId.fromSolidityAddress(deployStableCoinResponse[3]).toString();
+
+			return coinToReturn;
 
 		} catch (error) {
 			throw new DeploymentError(error);

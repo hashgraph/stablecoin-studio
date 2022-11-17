@@ -222,7 +222,7 @@ export default class HTSProvider implements IProvider {
 		stableCoin: StableCoin,
 		account: EOAccount,
 		stableCoinFactory: ContractId
-	): Promise<string> {
+	): Promise<StableCoin> {
 
 		log(
 			`Using the Factory contract at ${stableCoinFactory.id} to create a new stable coin... please wait.`,
@@ -304,7 +304,10 @@ export default class HTSProvider implements IProvider {
 			params
 		);
 
-		return deployStableCoinResponse[3];
+		const coinToReturn = stableCoin;
+		coinToReturn.id = HAccountId.fromSolidityAddress(deployStableCoinResponse[3]).toString();
+
+		return coinToReturn;
 	}
 
 	private async deployContract(

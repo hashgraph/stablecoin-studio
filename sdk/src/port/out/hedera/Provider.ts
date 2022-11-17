@@ -49,7 +49,7 @@ export interface IProvider {
 		stableCoin: StableCoin,
 		account: Account,
 		stableCoinFactory: ContractId
-	): Promise<string>;
+	): Promise<StableCoin>;
 	getAvailabilityExtension(): boolean;
 	gethashConnectConectionState(): HashConnectConnectionState;
 	disconectHaspack(): void;
