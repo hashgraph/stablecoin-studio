@@ -19,7 +19,6 @@ import {
 import { SelectController } from '../../components/Form/SelectController';
 import { formatAmountWithDecimals } from '../../utils/inputHelper';
 import {
-	BigDecimal,
 	Capabilities,
 	CheckCashInLimitRequest,
 	CheckCashInRoleRequest,
@@ -437,7 +436,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 	};
 
 	const renderAmount = () => {
-		const { decimals = 0, maxSupply } = selectedStableCoin || {};
+		const { decimals = 0 } = selectedStableCoin || {};
 		return (
 			<Stack spacing={6}>
 				{increaseOrDecreseOptionSelected && (
@@ -457,13 +456,6 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 										const res = handleRequestValidation(request.validate('amount'));
 										return res;
 									}
-								},
-								quantityOverMaxSupply: (value: string) => {
-									return maxSupply && maxSupply !== 'INFINITE'
-										? BigDecimal.fromString(maxSupply, decimals).isGreaterOrEqualThan(
-												BigDecimal.fromString(value.toString(), decimals),
-										  ) || t('global:validations.overMaxSupplyCashIn')
-										: true;
 								},
 							},
 						}}
