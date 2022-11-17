@@ -62,8 +62,8 @@ import { EmptyMetadata } from './error/EmptyMetadata.js';
 import { InitializationError } from '../error/InitializationError.js';
 import { PairingError } from '../error/PairingError.js';
 import { DeploymentError } from '../error/DeploymentError.js';
-import { FactoryKey } from 'domain/context/stablecoin/FactoryKey.js';
-import { FactoryStableCoin } from '../../../../domain/context/stablecoin/FactoryStableCoin.js';
+import { FactoryKey } from 'domain/context/factory/FactoryKey.js';
+import { FactoryStableCoin } from '../../../../domain/context/factory/FactoryStableCoin.js';
 
 
 const logOpts = { newLine: true, clear: true };

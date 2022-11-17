@@ -72,7 +72,7 @@ export default class StableCoinService extends Service {
 			id: req.id,
 			autoRenewAccount: req.autoRenewAccount,
 		});
-		coin = await this.repository.saveCoin(coin, req.account);
+		coin = await this.repository.saveCoin(coin, req.account, req.stableCoinFactory);
 		return this.getStableCoinDetails({ id: coin.id });
 	}
 

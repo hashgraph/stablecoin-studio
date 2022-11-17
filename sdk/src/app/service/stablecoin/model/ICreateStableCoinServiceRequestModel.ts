@@ -4,6 +4,7 @@ import BigDecimal from '../../../../domain/context/stablecoin/BigDecimal.js';
 import { TokenSupplyType } from '../../../../domain/context/stablecoin/TokenSupply.js';
 import { TokenType } from '../../../../domain/context/stablecoin/TokenType.js';
 import { IAccountWithKeyRequestModel } from './CoreRequestModel.js';
+import ContractId from '../../../../domain/context/contract/ContractId.js';
 
 export default interface ICreateStableCoinServiceRequestModel
 	extends IAccountWithKeyRequestModel {
@@ -25,4 +26,5 @@ export default interface ICreateStableCoinServiceRequestModel
 	supplyType?: TokenSupplyType;
 	id?: string;
 	autoRenewAccount?: AccountId;
+	stableCoinFactory: ContractId;
 }

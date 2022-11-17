@@ -61,7 +61,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	): Promise<StableCoin> {
 		account.evmAddress = await this.accountToEvmAddress(account);
 		const tokenId: string = await this.networkAdapter.provider.deployStableCoin(coin, account, stableCoinFactory);
-		return this.getStableCoin(tokenId);
+		return this.getStableCoin(HAccountId.fromSolidityAddress(tokenId).toString());
 	}
 
 	public async getListStableCoins(

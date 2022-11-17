@@ -7,7 +7,7 @@ import {
   CreateStableCoinRequest,
 } from '../../../../src/index.js';
 import { AccountId as HederaAccountId } from '@hashgraph/sdk';
-import { getSDKAsync, REQUEST_ACCOUNTS } from '../../../core/core.js';
+import { getSDKAsync, REQUEST_ACCOUNTS, FACTORY_ID } from '../../../core/core.js';
 
 describe('🧪 [DOMAIN] StableCoin', () => {
   let sdk: SDK;
@@ -31,6 +31,7 @@ describe('🧪 [DOMAIN] StableCoin', () => {
       name: 'Custom Nodes',
       symbol: 'CN',
       decimals: 2,
+      stableCoinFactory: FACTORY_ID
     });
 
     const stableCoin = await sdk.createStableCoin(create);
@@ -54,6 +55,7 @@ describe('🧪 [DOMAIN] StableCoin', () => {
       name: 'Custom Nodes',
       symbol: 'CN',
       decimals: 2,
+      stableCoinFactory: FACTORY_ID
     });
 
     const stableCoin = await sdk.createStableCoin(create);

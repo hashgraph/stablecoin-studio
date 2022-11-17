@@ -103,7 +103,23 @@ export default class CreateStableCoinService extends Service {
       name: '',
       symbol: '',
       decimals: 6,
+      stableCoinFactory: ''
     });
+
+    // Factory
+    tokenToCreate.stableCoinFactory = await utilsService.defaultSingleAsk(
+      language.getText('stablecoin.askFactory'),
+      tokenToCreate.stableCoinFactory || '',
+    );
+    await utilsService.handleValidation(
+      () => tokenToCreate.validate('stableCoinFactory'),
+      async () => {
+        tokenToCreate.stableCoinFactory = await utilsService.defaultSingleAsk(
+          language.getText('stablecoin.askFactory'),
+          tokenToCreate.stableCoinFactory || '',
+        );
+      },
+    );
 
     // Name
     tokenToCreate.name = await utilsService.defaultSingleAsk(
@@ -111,7 +127,7 @@ export default class CreateStableCoinService extends Service {
       tokenToCreate.name || 'HEDERACOIN',
     );
     await utilsService.handleValidation(
-      () => tokenToCreate.validate('autoRenewAccount'),
+      () => tokenToCreate.validate('name'),
       async () => {
         tokenToCreate.name = await utilsService.defaultSingleAsk(
           language.getText('stablecoin.askName'),

@@ -30,6 +30,8 @@ export default class CreateStableCoinRequest
 		this._decimals = typeof value === 'number' ? value : parseFloat(value);
 	}
 
+	stableCoinFactory: string;
+
 	@OptionalField()
 	initialSupply?: string | undefined;
 
@@ -83,6 +85,7 @@ export default class CreateStableCoinRequest
 		supplyKey,
 		treasury,
 		supplyType,
+		stableCoinFactory
 	}: {
 		account: RequestAccount;
 		name: string;
@@ -100,6 +103,7 @@ export default class CreateStableCoinRequest
 		supplyKey?: RequestPublicKey;
 		treasury?: string;
 		supplyType?: TokenSupplyType;
+		stableCoinFactory: string;
 	}) {
 		super({
 			account: Validation.checkAccount(),
@@ -194,6 +198,7 @@ export default class CreateStableCoinRequest
 			pauseKey: Validation.checkPublicKey(),
 			supplyKey: Validation.checkPublicKey(),
 			treasury: Validation.checkHederaIdFormat(),
+			stableCoinFactory: Validation.checkContractId()
 		});
 		this.account = account;
 		this.name = name;
@@ -212,5 +217,6 @@ export default class CreateStableCoinRequest
 		this.supplyKey = supplyKey;
 		this.treasury = treasury;
 		this.supplyType = supplyType;
+		this.stableCoinFactory = stableCoinFactory;
 	}
 }

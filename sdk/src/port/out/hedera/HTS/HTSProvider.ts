@@ -47,12 +47,11 @@ import EventService from '../../../../app/service/event/EventService.js';
 import { Account, ContractId, TokenSupplyType } from '../../../in/sdk/sdk.js';
 import { safeCast } from '../../../../core/cast.js';
 import { StableCoinMemo } from '../../../../domain/context/stablecoin/StableCoinMemo.js';
-import { FactoryStableCoin } from '../../../../domain/context/stablecoin/FactoryStableCoin.js';
-
+import { FactoryStableCoin } from '../../../../domain/context/factory/FactoryStableCoin.js';
+import { FactoryKey } from 'domain/context/factory/FactoryKey.js';
 import BigDecimal from '../../../../domain/context/stablecoin/BigDecimal.js';
 import Long from 'long';
 import ProviderError from '../error/HederaError.js';
-import { FactoryKey } from 'domain/context/stablecoin/FactoryKey.js';
 
 type DefaultHederaProvider = hethers.providers.DefaultHederaProvider;
 
@@ -231,47 +230,48 @@ export default class HTSProvider implements IProvider {
 
 		const keys:FactoryKey[]  = [];
 
-		if(stableCoin.adminKey){
-			const adminKey = new FactoryKey();
-			adminKey.keyType = 1;
-			adminKey.PublicKey = (stableCoin.adminKey === PublicKey.NULL)? stableCoin.adminKey : "";
-			keys.push(adminKey);
-		}
+		const providedKeys = [stableCoin.adminKey,
+			stableCoin.kycKey,
+			stableCoin.freezeKey,
+			stableCoin.wipeKey,
+			stableCoin.supplyKey,
+			stableCoin.pauseKey
+		]
 
-		if(stableCoin.kycKey){
-			const kycKey = new FactoryKey();
-			kycKey.keyType = 2;
-			kycKey.PublicKey = (stableCoin.kycKey === PublicKey.NULL)? stableCoin.kycKey : "";
-			keys.push(kycKey);
-		}
-
-		if(stableCoin.freezeKey){
-			const freezeKey = new FactoryKey();
-			freezeKey.keyType = 4;
-			freezeKey.PublicKey = (stableCoin.freezeKey === PublicKey.NULL)? stableCoin.freezeKey : "";
-			keys.push(freezeKey);
-		}
-
-		if(stableCoin.wipeKey){
-			const wipeKey = new FactoryKey();
-			wipeKey.keyType = 8;
-			wipeKey.PublicKey = (stableCoin.wipeKey === PublicKey.NULL)? stableCoin.wipeKey : "";
-			keys.push(wipeKey);
-		}
-
-		if(stableCoin.supplyKey){
-			const supplyKey = new FactoryKey();
-			supplyKey.keyType = 16;
-			supplyKey.PublicKey = (stableCoin.supplyKey === PublicKey.NULL)? stableCoin.supplyKey : "";
-			keys.push(supplyKey);
-		}
-
-		if(stableCoin.pauseKey){
-			const pauseKey = new FactoryKey();
-			pauseKey.keyType = 64;
-			pauseKey.PublicKey = (stableCoin.pauseKey === PublicKey.NULL)? stableCoin.pauseKey : "";
-			keys.push(pauseKey);
-		}
+		providedKeys.forEach(
+			(providedKey, index) => {
+				if(providedKey){
+					const key = new FactoryKey();
+					key.PublicKey = (providedKey === PublicKey.NULL)? providedKey : "";
+					switch(index){
+						case 0: {
+							key.keyType = 1; // admin
+							break;
+						}
+						case 1: {
+							key.keyType = 2; // kyc
+							break;
+						}
+						case 2: {
+							key.keyType = 4; // freeze
+							break;
+						}
+						case 3: {
+							key.keyType = 8; // wipe
+							break;
+						}
+						case 4: {
+							key.keyType = 16; // supply
+							break;
+						}
+						case 5: {
+							key.keyType = 64; // pause
+							break;
+						}
+					}
+					keys.push(key);
+				}
+			});
 
 
 		const stableCoinToCreate = new FactoryStableCoin(

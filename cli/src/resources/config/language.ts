@@ -46,6 +46,7 @@ export const english = {
     description: 'Creating Stable Coin',
     askName: 'What is your stable coin name?',
     askSymbol: 'What is your stable coin symbol?',
+    askFactory: 'What is your factory contract id?',
     askAutoRenewAccountId: 'What will be the autorenew account?',
     askDecimals: 'How many decimals do you want to use?',
     askToken: 'What is the id of the stable coin you want to operate with?',

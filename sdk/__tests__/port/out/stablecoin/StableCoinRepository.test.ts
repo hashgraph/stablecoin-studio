@@ -3,6 +3,7 @@ import BaseError from '../../../../src/core/error/BaseError.js';
 import BigDecimal from '../../../../src/domain/context/stablecoin/BigDecimal.js';
 import {
   Account,
+  ContractId,
   HederaNetwork,
   HederaNetworkEnviroment,
   IStableCoinList,
@@ -24,6 +25,7 @@ const provider = () =>
 
 describe('🧪 [PORT] StableCoinRepository', () => {
   let repository: StableCoinRepository;
+  const stableCoinFactory = new ContractId("1");
 
   beforeAll(async () => {
     // Mock
@@ -37,6 +39,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
         decimals: baseCoin.decimals,
       }),
       ACCOUNTS.testnet,
+      stableCoinFactory
     );
     expect(coin).not.toBeNull();
   });
@@ -50,6 +53,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
           decimals: baseCoin.decimals,
         }),
         ACCOUNTS.testnet,
+        stableCoinFactory
       ),
     ).rejects.toThrow(BaseError);
   });
@@ -361,12 +365,12 @@ describe('🧪 [PORT] StableCoinRepository', () => {
 
 function mockRepo(networkAdapter: NetworkAdapter, provider?: IProvider) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const deployFnErr = (coin: StableCoin, account: Account) => {
+  const deployFnErr = (coin: StableCoin, account: Account, stableCoinFactory: ContractId) => {
     throw new ProviderError();
   };
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const deployFn = (coin: StableCoin, account: Account) => {
-    return Promise.resolve(coin);
+  const deployFn = (coin: StableCoin, account: Account, stableCoinFactory: ContractId) => {
+    return Promise.resolve("0x0000000000000000000000000000000000000001");
   };
   const resolveHTS = () => {
     return Promise.resolve(true);
