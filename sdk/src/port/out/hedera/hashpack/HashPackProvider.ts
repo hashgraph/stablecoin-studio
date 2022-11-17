@@ -838,10 +838,92 @@ export default class HashPackProvider implements IProvider {
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 	public async pauseHTS(params: IHTSPauseRequest): Promise<boolean> {
-		throw Error('Method pauseHTS not implemented');
+		if ('account' in params) {
+			this.provider = this.hc.getProvider(
+				this.network.hederaNetworkEnviroment as NetworkType,
+				this.initData.topic,
+				params.account.accountId.id,
+			);
+			this.hashPackSigner = new HashPackSigner(
+				this.hc,
+				params.account,
+				this.network,
+				this.initData.topic,
+			);
+		} else {
+			throw new ProviderError(
+				'You must specify an accountId for operate with HashConnect.',
+			);
+		}
+
+		const transaction: Transaction =
+			TransactionProvider.buildPausedTransaction(params.tokenId);
+
+		const transactionResponse =
+			await this.hashPackSigner.signAndSendTransaction(transaction);
+
+		const htsResponse: HTSResponse =
+			await this.transactionResposeHandler.manageResponse(
+				transactionResponse,
+				TransactionType.RECEIPT,
+				this.getSigner(),
+			);
+
+		if (!htsResponse.receipt) {
+			throw new ProviderError(
+				`An error has occurred when paused with the account ${params?.account?.accountId.id} for tokenId ${params.tokenId}`,
+			);
+		}
+		log(
+			`Result paused ${htsResponse.receipt.status}: account ${params.account.accountId}, tokenId ${params.tokenId}`,
+			logOpts,
+		);
+
+		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
 	public async unpauseHTS(params: IHTSPauseRequest): Promise<boolean> {
-		throw Error('Method unpauseHTS not implemented');
+		if ('account' in params) {
+			this.provider = this.hc.getProvider(
+				this.network.hederaNetworkEnviroment as NetworkType,
+				this.initData.topic,
+				params.account.accountId.id,
+			);
+			this.hashPackSigner = new HashPackSigner(
+				this.hc,
+				params.account,
+				this.network,
+				this.initData.topic,
+			);
+		} else {
+			throw new ProviderError(
+				'You must specify an accountId for operate with HashConnect.',
+			);
+		}
+
+		const transaction: Transaction =
+			TransactionProvider.buildUnpausedTransaction(params.tokenId);
+
+		const transactionResponse =
+			await this.hashPackSigner.signAndSendTransaction(transaction);
+
+		const htsResponse: HTSResponse =
+			await this.transactionResposeHandler.manageResponse(
+				transactionResponse,
+				TransactionType.RECEIPT,
+				this.getSigner(),
+			);
+
+		if (!htsResponse.receipt) {
+			throw new ProviderError(
+				`An error has occurred when unpaused with the account ${params?.account?.accountId.id} for tokenId ${params.tokenId}`,
+			);
+		}
+		log(
+			`Result unpaused ${htsResponse.receipt.status}: account ${params.account.accountId}, tokenId ${params.tokenId}`,
+			logOpts,
+		);
+
+		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 }
