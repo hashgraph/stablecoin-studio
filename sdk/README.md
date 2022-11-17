@@ -223,7 +223,7 @@ An account id on Hedera.
 
 ### Fields
 
-- `**id**`: [string] The account id
+- `id`: [string] The account id
 
 ### Example
 
@@ -255,7 +255,7 @@ Represents a HashPackAccount.
 
 ### Fields
 
-- `**accountId**`: [AccountId] The account id
+- `accountId`: [AccountId] The account id
 
 ### Example
 
@@ -269,8 +269,8 @@ A private key, which has the key string and the type of key (ECDSA or ED25519 [d
 
 ### Fields
 
-- `**key**`: [string] The private key
-- `**type**`: [PrivateKeyType] The private key type (ECDSA or ED25519 [default])
+- `key`: [string] The private key
+- `type`: [PrivateKeyType] The private key type (ECDSA or ED25519 [default])
   - default: ED25519
 
 ### Example
@@ -296,7 +296,7 @@ A public key on Hedera.
 
 ### Fields
 
-- `**key**`: The public key
+- `key`: The public key
 
 ### Example
 
@@ -310,7 +310,7 @@ Represents a contract id on Hedera.
 
 ### Fields
 
-- `**id**`: The contract id
+- `id`: The contract id
 
 ### Example
 

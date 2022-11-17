@@ -379,19 +379,21 @@ export class StableCoin extends BaseEntity {
 		const min = ZERO;
 		const max = EIGHTEEN;
 
+		if (CheckNums.hasMoreDecimals(value.toString(), 0)) {
+			errorList.push(new InvalidType(value, 'integer'));
+		}
 		if (!CheckNums.isWithinRange(value, min, max))
 			errorList.push(new InvalidDecimalRange(value, min, max));
 
 		return errorList;
 	}
-	
 	public static checkInteger(value: number): BaseError[] {
 		const errorList: BaseError[] = [];
 
 		if (!Number.isInteger(value)) {
 			return [new InvalidType(value, 'integer')];
 		}
-		
+
 		return errorList;
 	}
 

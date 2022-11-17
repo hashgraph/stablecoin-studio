@@ -109,7 +109,7 @@ export default class CreateStableCoinRequest
 				return StableCoin.checkSymbol(val);
 			},
 			decimals: (val) => {
-				return StableCoin.checkInteger(val);				
+				return StableCoin.checkInteger(val);
 			},
 			initialSupply: (val) => {
 				if (val === undefined || val === '') {

@@ -219,7 +219,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 				) {
 					listCapabilities.push(Capabilities.PAUSE_HTS);
 				}
-			}			
+			}
 			if (stableCoin.pauseKey instanceof ContractId) {
 				listCapabilities.push(Capabilities.PAUSE);
 			}
@@ -230,7 +230,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 				) {
 					listCapabilities.push(Capabilities.FREEZE_HTS);
 				}
-			}			
+			}
 			if (stableCoin.freezeKey instanceof ContractId) {
 				listCapabilities.push(Capabilities.FREEZE);
 			}
@@ -836,5 +836,25 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		} catch (error) {
 			return Promise.reject<AccountInfo>(new InvalidResponse(error));
 		}
+	}
+
+	deleteStableCoin(
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		proxyContractId: string,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		account: Account,
+	): Promise<boolean> {
+		// throw new InvalidResponse('Error delete');
+		return Promise.resolve(true);
+	}
+
+	pauseStableCoin(
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		proxyContractId: string,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		account: Account,
+	): Promise<boolean> {
+		// throw new InvalidResponse('Error pause');
+		return Promise.resolve(true);
 	}
 }
