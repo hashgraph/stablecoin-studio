@@ -11,7 +11,8 @@ import { IConsensusNodeConfig } from '../../../domain/configuration/interfaces/I
 import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
 import { IFactoryConfig } from 'domain/configuration/interfaces/IFactoryConfig.js';
 import {
-  SDK
+  FactoryAddressTestnet,
+  FactoryAddressPreviewnet
 } from 'hedera-stable-coin-sdk';
 const colors = require('colors');
 
@@ -200,15 +201,13 @@ export default class SetConfigurationService extends Service {
   }
 
   public async configureFactories(): Promise<IFactoryConfig[]> {
-    const sdk: SDK = utilsService.getSDK();
-
     const factories: IFactoryConfig[] = [];
     factories.push({
-      id: sdk.FactoryAddressTestnet,
+      id: FactoryAddressTestnet,
       network: "testnet"
     });
     factories.push({
-      id: sdk.FactoryAddressPreviewnet,
+      id: FactoryAddressPreviewnet,
       network: "previewnet"
     });
 

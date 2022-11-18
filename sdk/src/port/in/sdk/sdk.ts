@@ -156,10 +156,10 @@ export interface SDKInitOptions {
 	onInit: (data: InitializationData) => void;
 }
 
-export class SDK {
-	public FactoryAddressTestnet = "0.0.48917309";
-	public FactoryAddressPreviewnet = "0.0.11111111";
+export const FactoryAddressTestnet = "0.0.48917309";
+export const FactoryAddressPreviewnet = "0.0.11111111";
 
+export class SDK {
 	private config: Configuration;
 
 	private networkAdapter: NetworkAdapter;
