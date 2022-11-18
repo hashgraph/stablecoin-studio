@@ -17,6 +17,7 @@ import {
 	AccountAllowanceApproveTransaction,
 	TokenPauseTransaction,
 	TokenUnpauseTransaction,
+	TokenDeleteTransaction,
 } from '@hashgraph/sdk';
 import { ContractId, PublicKey } from '../../../in/sdk/sdk.js';
 import { ICreateTokenResponse } from '../types.js';
@@ -204,6 +205,14 @@ export class TransactionProvider {
 					AccountId.fromString(inAccountId),
 					amount,
 				);
+		} catch (error) {
+			throw new TransactionBuildingError(error);
+		}
+	}
+
+	public static buildDeleteTransaction(tokenId: string): Transaction {
+		try {
+			return new TokenDeleteTransaction().setTokenId(tokenId);
 		} catch (error) {
 			throw new TransactionBuildingError(error);
 		}

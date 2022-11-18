@@ -8,11 +8,11 @@ import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import { AppMetadata } from './hashpack/types/types.js';
 import {
 	ICallContractRequest,
-	IHTSTokenRequest,
+	IHTSTokenRequestAmount,
 	IWipeTokenRequest,
 	ITransferTokenRequest,
 	InitializationData,
-	IHTSPauseRequest,
+	IHTSTokenRequest,
 } from './types.js';
 
 import EventService from '../../../app/service/event/EventService.js';
@@ -59,9 +59,10 @@ export interface IProvider {
 	connectWallet(): Promise<IProvider>;
 	getInitData(): InitializationData;
 	wipeHTS(parameters: IWipeTokenRequest): Promise<boolean>;
-	cashInHTS(parameters: IHTSTokenRequest): Promise<boolean>;
-	cashOutHTS(parameters: IHTSTokenRequest): Promise<boolean>;
+	cashInHTS(parameters: IHTSTokenRequestAmount): Promise<boolean>;
+	cashOutHTS(parameters: IHTSTokenRequestAmount): Promise<boolean>;
 	transferHTS(parameters: ITransferTokenRequest): Promise<boolean>;
-	pauseHTS(parameters: IHTSPauseRequest): Promise<boolean>;
-	unpauseHTS(parameters: IHTSPauseRequest): Promise<boolean>;
+	deleteHTS(parameters: IHTSTokenRequest): Promise<boolean>;
+	pauseHTS(parameters: IHTSTokenRequest): Promise<boolean>;
+	unpauseHTS(parameters: IHTSTokenRequest): Promise<boolean>;
 }

@@ -17,7 +17,7 @@ export default class DeleteStableCoinService extends Service {
   public async deleteStableCoin(req: DeleteStableCoinRequest): Promise<void> {
     const sdk: SDK = utilsService.getSDK();
 
-    await utilsService.showSpinner(sdk.deteleStableCoin(req), {
+    await utilsService.showSpinner(sdk.deleteStableCoin(req), {
       text: language.getText('state.loading'),
       successText: language.getText('state.deleteCompleted') + '\n',
     });

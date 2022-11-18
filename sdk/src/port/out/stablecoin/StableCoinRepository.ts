@@ -8,10 +8,10 @@ import NetworkAdapter from '../network/NetworkAdapter.js';
 import IHederaStableCoinDetail from './types/IHederaStableCoinDetail.js';
 import {
 	ICallContractWithAccountRequest,
-	IHTSTokenRequest,
+	IHTSTokenRequestAmount,
 	IWipeTokenRequest,
 	ITransferTokenRequest,
-	IHTSPauseRequest,
+	IHTSTokenRequest,
 } from '../hedera/types.js';
 import ITokenList from './types/ITokenList.js';
 import { IToken } from './types/IToken.js';
@@ -152,7 +152,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 				paused: response.data.pause_status,
 				freezeDefault: response.data.freeze_default,
 				// kycStatus: string;
-				deleted: response.data.deleted ?? '',
+				deleted: response.data.deleted ?? false,
 				autoRenewAccount: response.data.auto_renew_account,
 				autoRenewAccountPeriod:
 					response.data.auto_renew_period / (3600 * 24),
@@ -175,6 +175,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		try {
 			const stableCoin: StableCoin = await this.getStableCoin(tokenId);
 			const paused = stableCoin.paused === 'PAUSED';
+			const deleted = stableCoin.deleted;
 
 			const listCapabilities: Capabilities[] = [];
 
@@ -182,6 +183,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			listCapabilities.push(Capabilities.BALANCE);
 
 			if (
+				!deleted &&
 				!paused &&
 				stableCoin.memo.htsAccount == stableCoin.treasury.toString()
 			) {
@@ -189,6 +191,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			}
 
 			if (
+				!deleted &&
 				!paused &&
 				stableCoin.supplyKey?.toString() ===
 					stableCoin.treasury.toString()
@@ -198,7 +201,11 @@ export default class StableCoinRepository implements IStableCoinRepository {
 				listCapabilities.push(Capabilities.BURN);
 			}
 
-			if (!paused && stableCoin.supplyKey instanceof PublicKey) {
+			if (
+				!deleted &&
+				!paused &&
+				stableCoin.supplyKey instanceof PublicKey
+			) {
 				if (
 					stableCoin.supplyKey?.key.toString() == publickey.toString()
 				) {
@@ -207,47 +214,63 @@ export default class StableCoinRepository implements IStableCoinRepository {
 				}
 			}
 
-			if (!paused && stableCoin.wipeKey instanceof PublicKey) {
+			if (
+				!deleted &&
+				!paused &&
+				stableCoin.wipeKey instanceof PublicKey
+			) {
 				if (
 					stableCoin.wipeKey?.key.toString() == publickey.toString()
 				) {
 					listCapabilities.push(Capabilities.WIPE_HTS);
 				}
 			}
-			if (!paused && stableCoin.wipeKey instanceof ContractId) {
+			if (
+				!deleted &&
+				!paused &&
+				stableCoin.wipeKey instanceof ContractId
+			) {
 				listCapabilities.push(Capabilities.WIPE);
 			}
 
-			if (stableCoin.pauseKey instanceof PublicKey) {
+			if (!deleted && stableCoin.pauseKey instanceof PublicKey) {
 				if (
 					stableCoin.pauseKey?.key.toString() == publickey.toString()
 				) {
 					listCapabilities.push(Capabilities.PAUSE_HTS);
 				}
 			}
-			if (stableCoin.pauseKey instanceof ContractId) {
+			if (!deleted && stableCoin.pauseKey instanceof ContractId) {
 				listCapabilities.push(Capabilities.PAUSE);
 			}
 
-			if (!paused && stableCoin.freezeKey instanceof PublicKey) {
+			if (
+				!deleted &&
+				!paused &&
+				stableCoin.freezeKey instanceof PublicKey
+			) {
 				if (
 					stableCoin.freezeKey?.key.toString() == publickey.toString()
 				) {
 					listCapabilities.push(Capabilities.FREEZE_HTS);
 				}
 			}
-			if (!paused && stableCoin.freezeKey instanceof ContractId) {
+			if (
+				!deleted &&
+				!paused &&
+				stableCoin.freezeKey instanceof ContractId
+			) {
 				listCapabilities.push(Capabilities.FREEZE);
 			}
 
-			if (stableCoin.adminKey instanceof PublicKey) {
+			if (!deleted && stableCoin.adminKey instanceof PublicKey) {
 				if (
 					stableCoin.adminKey?.key.toString() == publickey.toString()
 				) {
 					listCapabilities.push(Capabilities.DELETE_HTS);
 				}
 			}
-			if (stableCoin.adminKey instanceof ContractId) {
+			if (!deleted && stableCoin.adminKey instanceof ContractId) {
 				listCapabilities.push(Capabilities.DELETE);
 			}
 
@@ -330,7 +353,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		amount: BigDecimal,
 		account: Account,
 	): Promise<boolean> {
-		const params: IHTSTokenRequest = {
+		const params: IHTSTokenRequestAmount = {
 			account,
 			tokenId: tokenId,
 			amount: amount.toLong(),
@@ -361,7 +384,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		amount: BigDecimal,
 		account: Account,
 	): Promise<boolean> {
-		const params: IHTSTokenRequest = {
+		const params: IHTSTokenRequestAmount = {
 			account,
 			tokenId: tokenId,
 			amount: amount.toLong(),
@@ -843,14 +866,34 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		}
 	}
 
-	public async deleteStableCoin(
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	public async delete(
 		proxyContractId: string,
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		account: Account,
+	): Promise<Uint8Array> {
+		const params: ICallContractWithAccountRequest = {
+			contractId: proxyContractId,
+			parameters: [],
+			gas: 400000,
+			abi: HederaERC20__factory.abi,
+			account,
+		};
+		const response = await this.networkAdapter.provider.callContract(
+			'delete',
+			params,
+		);
+
+		return response;
+	}
+	public async deleteHTS(
+		tokenId: string,
 		account: Account,
 	): Promise<boolean> {
-		// throw new InvalidResponse('Error delete');
-		return Promise.resolve(true);
+		const params: IHTSTokenRequest = {
+			account,
+			tokenId: tokenId,
+		};
+
+		return await this.networkAdapter.provider.deleteHTS(params);
 	}
 
 	public async pause(
@@ -873,7 +916,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	}
 
 	public async pauseHTS(tokenId: string, account: Account): Promise<boolean> {
-		const params: IHTSPauseRequest = {
+		const params: IHTSTokenRequest = {
 			account,
 			tokenId: tokenId,
 		};
@@ -904,7 +947,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		tokenId: string,
 		account: Account,
 	): Promise<boolean> {
-		const params: IHTSPauseRequest = {
+		const params: IHTSTokenRequest = {
 			account,
 			tokenId: tokenId,
 		};

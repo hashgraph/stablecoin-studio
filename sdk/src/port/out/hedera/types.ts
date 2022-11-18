@@ -32,22 +32,20 @@ export interface ICreateTokenResponse {
 	autoRenewAccountId?: AccountId;
 }
 
-export interface IHTSPauseRequest {
-	account: Account;
-	tokenId: string;
-}
-
 export interface IHTSTokenRequest {
 	account: Account;
 	tokenId: string;
+}
+
+export interface IHTSTokenRequestAmount extends IHTSTokenRequest {
 	amount: Long;
 }
 
-export interface IWipeTokenRequest extends IHTSTokenRequest {
+export interface IWipeTokenRequest extends IHTSTokenRequestAmount {
 	wipeAccountId: string;
 }
 
-export interface ITransferTokenRequest extends IHTSTokenRequest {
+export interface ITransferTokenRequest extends IHTSTokenRequestAmount {
 	outAccountId: string;
 	inAccountId: string;
 	isApproval: boolean;

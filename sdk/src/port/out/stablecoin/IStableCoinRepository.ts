@@ -137,10 +137,8 @@ export default interface IStableCoinRepository {
 		address: string,
 		account: Account,
 	): Promise<string[]>;
-	deleteStableCoin(
-		proxyContractId: string,
-		account: Account,
-	): Promise<boolean>;
+	delete(proxyContractId: string, account: Account): Promise<Uint8Array>;
+	deleteHTS(tokenId: string, account: Account): Promise<boolean>;
 	pause(proxyContractId: string, account: Account): Promise<Uint8Array>;
 	pauseHTS(tokenId: string, account: Account): Promise<boolean>;
 	unpause(proxyContractId: string, account: Account): Promise<Uint8Array>;

@@ -30,11 +30,11 @@ import {
 	ICallContractRequest,
 	ICallContractWithAccountRequest,
 	ICreateTokenResponse,
-	IHTSTokenRequest,
+	IHTSTokenRequestAmount,
 	IWipeTokenRequest,
 	ITransferTokenRequest,
 	InitializationData,
-	IHTSPauseRequest,
+	IHTSTokenRequest,
 } from '../types.js';
 import PublicKey from '../../../../domain/context/account/PublicKey.js';
 import AccountId from '../../../../domain/context/account/AccountId.js';
@@ -559,7 +559,7 @@ export default class HTSProvider implements IProvider {
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
-	public async cashInHTS(params: IHTSTokenRequest): Promise<boolean> {
+	public async cashInHTS(params: IHTSTokenRequestAmount): Promise<boolean> {
 		let client;
 
 		if ('account' in params) {
@@ -602,7 +602,7 @@ export default class HTSProvider implements IProvider {
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
-	public async cashOutHTS(params: IHTSTokenRequest): Promise<boolean> {
+	public async cashOutHTS(params: IHTSTokenRequestAmount): Promise<boolean> {
 		let client;
 
 		if ('account' in params) {
@@ -677,7 +677,37 @@ export default class HTSProvider implements IProvider {
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
-	public async pauseHTS(params: IHTSPauseRequest): Promise<boolean> {
+	public async deleteHTS(params: IHTSTokenRequest): Promise<boolean> {
+		let client;
+
+		if ('account' in params) {
+			client = this.getClient(params.account);
+		} else {
+			throw new ProviderError('Account must be supplied');
+		}
+
+		this.htsSigner = new HTSSigner(client);
+		const transaction: Transaction =
+			TransactionProvider.buildDeleteTransaction(params.tokenId);
+		const transactionResponse: TransactionResponse =
+			await this.htsSigner.signAndSendTransaction(transaction);
+		this.logHashScan(transactionResponse, 'Delete');
+		const htsResponse: HTSResponse =
+			await this.transactionResposeHandler.manageResponse(
+				transactionResponse,
+				TransactionType.RECEIPT,
+				client,
+			);
+
+		if (!htsResponse.receipt) {
+			throw new ProviderError(
+				`An error has occurred when delete with the account ${params?.account?.accountId.id} for tokenId ${params.tokenId}`,
+			);
+		}
+		return htsResponse.receipt.status == Status.Success ? true : false;
+	}
+
+	public async pauseHTS(params: IHTSTokenRequest): Promise<boolean> {
 		let client;
 
 		if ('account' in params) {
@@ -691,7 +721,7 @@ export default class HTSProvider implements IProvider {
 			TransactionProvider.buildPausedTransaction(params.tokenId);
 		const transactionResponse: TransactionResponse =
 			await this.htsSigner.signAndSendTransaction(transaction);
-		this.logHashScan(transactionResponse, 'Paused');
+		this.logHashScan(transactionResponse, 'Pause');
 		const htsResponse: HTSResponse =
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,
@@ -707,7 +737,7 @@ export default class HTSProvider implements IProvider {
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
-	public async unpauseHTS(params: IHTSPauseRequest): Promise<boolean> {
+	public async unpauseHTS(params: IHTSTokenRequest): Promise<boolean> {
 		let client;
 
 		if ('account' in params) {
@@ -721,7 +751,7 @@ export default class HTSProvider implements IProvider {
 			TransactionProvider.buildUnpausedTransaction(params.tokenId);
 		const transactionResponse: TransactionResponse =
 			await this.htsSigner.signAndSendTransaction(transaction);
-		this.logHashScan(transactionResponse, 'Unpaused');
+		this.logHashScan(transactionResponse, 'Unpause');
 		const htsResponse: HTSResponse =
 			await this.transactionResposeHandler.manageResponse(
 				transactionResponse,

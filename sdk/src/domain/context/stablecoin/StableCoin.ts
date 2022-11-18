@@ -265,11 +265,11 @@ export class StableCoin extends BaseEntity {
 	/**
 	 * deleted Status
 	 */
-	private _deleted: string;
-	public get deleted(): string {
+	private _deleted: boolean;
+	public get deleted(): boolean {
 		return this._deleted;
 	}
-	public set deleted(value: string) {
+	public set deleted(value: boolean) {
 		this._deleted = value;
 	}
 
@@ -295,7 +295,7 @@ export class StableCoin extends BaseEntity {
 		id?: string;
 		autoRenewAccount?: AccountId;
 		autoRenewAccountPeriod?: number;
-		deleted?: string;
+		deleted?: boolean;
 	}) {
 		super();
 		const {
@@ -349,7 +349,7 @@ export class StableCoin extends BaseEntity {
 		this.autoRenewAccount = autoRenewAccount ?? new AccountId('0.0.0');
 		this.autoRenewAccountPeriod = autoRenewAccountPeriod ?? 0;
 		this.paused = paused ?? '';
-		this.deleted = deleted ?? '';
+		this.deleted = deleted ?? false;
 	}
 
 	public static checkName(value: string): BaseError[] {

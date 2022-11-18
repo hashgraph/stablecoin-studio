@@ -539,7 +539,7 @@ export class SDK {
 		}
 	}
 
-	public deteleStableCoin(
+	public deleteStableCoin(
 		request: DeleteStableCoinRequest,
 	): Promise<boolean> | null {
 		try {

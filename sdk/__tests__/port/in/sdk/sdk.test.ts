@@ -42,7 +42,7 @@ describe('🧪 [PORT] SDK', () => {
     sdk = await getSDKAsync();
   });
 
-  it.skip('Creates a Stable Coin with EOAccount', async () => {
+  it('Creates a Stable Coin with EOAccount', async () => {
     const coin = await sdk.createStableCoin(
       new CreateStableCoinRequest({
         account: REQUEST_ACCOUNTS.testnet,
@@ -70,7 +70,7 @@ describe('🧪 [PORT] SDK', () => {
     expect(coin?.tokenId).toBeTruthy();
   }, 120_000);
 
-  it.skip('Creates a Stable Coin with EOAccount and 15 decimals and max_supply set to the maximum', async () => {
+  it('Creates a Stable Coin with EOAccount and 15 decimals and max_supply set to the maximum', async () => {
     const maxsup = BigDecimal.fromValue(BigNumber.from(MAX_SUPPLY), 15);
     const req = new CreateStableCoinRequest({
       account: REQUEST_ACCOUNTS.testnet,
@@ -94,7 +94,7 @@ describe('🧪 [PORT] SDK', () => {
     expect(coin?.tokenId).toBeTruthy();
   }, 120_000);
 
-  it.skip('Throw Error initialSupply > maxSupply (wrong)', async () => {
+  it('Throw Error initialSupply > maxSupply (wrong)', async () => {
     await expect(
       sdk.createStableCoin(
         new CreateStableCoinRequest({
@@ -113,7 +113,7 @@ describe('🧪 [PORT] SDK', () => {
     ).rejects.toThrow(BaseError);
   }, 120_000);
 
-  it.skip('Gets the token info', async () => {
+  it('Gets the token info', async () => {
     const coin = await sdk.getStableCoinDetails(
       new GetStableCoinDetailsRequest({
         id: tokenId ?? '0.0.48851945',
@@ -127,7 +127,7 @@ describe('🧪 [PORT] SDK', () => {
     expect(coin?.symbol).toBeTruthy();
   });
 
-  it.skip('Gets the token info, fails when not exists', async () => {
+  it('Gets the token info, fails when not exists', async () => {
     const coin = sdk.getStableCoinDetails(
       new GetStableCoinDetailsRequest({
         id: '0.0.1',
@@ -137,7 +137,7 @@ describe('🧪 [PORT] SDK', () => {
     await expect(coin).rejects.toThrow(BaseError);
   });
 
-  it.skip('Gets the token list', async () => {
+  it('Gets the token list', async () => {
     const list = await sdk.getListStableCoin(
       new GetListStableCoinRequest({
         account: REQUEST_ACCOUNTS.testnet,
@@ -146,7 +146,7 @@ describe('🧪 [PORT] SDK', () => {
 
     expect(list).not.toBeNull();
   });
-  it.skip('Gets accountInfo', async () => {
+  it('Gets accountInfo', async () => {
     const list = await sdk.getAccountInfo(
       new GetAccountInfoRequest({
         account: REQUEST_ACCOUNTS.testnet,
@@ -156,7 +156,7 @@ describe('🧪 [PORT] SDK', () => {
     expect(list).not.toBeNull();
   });
 
-  it.skip('Cash in token', async () => {
+  it('Cash in token', async () => {
     const amount = '10';
     const cashin = await sdk.cashIn(
       new CashInStableCoinRequest({
@@ -181,7 +181,7 @@ describe('🧪 [PORT] SDK', () => {
     expect(balance && balance).toBe(amount);
   }, 1500000);
 
-  it.skip('Wipe token', async () => {
+  it('Wipe token', async () => {
     const amount = '1';
     const wipe = await sdk.wipe(
       new WipeStableCoinRequest({
@@ -206,7 +206,7 @@ describe('🧪 [PORT] SDK', () => {
     expect(balance && balance).toBe('9');
   }, 55000);
 
-  it.skip('Wipe token (wrong)', async () => {
+  it('Wipe token (wrong)', async () => {
     const amount = '100';
     await expect(
       sdk.wipe(
@@ -221,7 +221,7 @@ describe('🧪 [PORT] SDK', () => {
     ).rejects.toThrow(Error);
   }, 15000);
 
-  it.skip('Check unlimited supplier role', async () => {
+  it('Check unlimited supplier role', async () => {
     const role = await sdk.isUnlimitedSupplierAllowance(
       new CheckCashInRoleRequest({
         account: REQUEST_ACCOUNTS.testnet,
@@ -233,7 +233,7 @@ describe('🧪 [PORT] SDK', () => {
     expect(role && role[0]).toBeTruthy();
   }, 15000);
 
-  it.skip('Check limited supplier role when user doesnt have it', async () => {
+  it('Check limited supplier role when user doesnt have it', async () => {
     const role = await sdk.supplierAllowance(
       new CheckCashInLimitRequest({
         account: REQUEST_ACCOUNTS.testnet,
@@ -246,7 +246,7 @@ describe('🧪 [PORT] SDK', () => {
     expect(role && role).toBe('0');
   }, 15000);
 
-  it.skip('Revoke wipe role', async () => {
+  it('Revoke wipe role', async () => {
     let hasRole = await sdk.hasRole(
       new HasRoleRequest({
         account: REQUEST_ACCOUNTS.testnet,
@@ -279,7 +279,7 @@ describe('🧪 [PORT] SDK', () => {
     expect(hasRole && hasRole[0]).not.toBeTruthy();
   }, 15000);
 
-  it.skip('Revoke cash in role', async () => {
+  it('Revoke cash in role', async () => {
     let hasRole = await sdk.hasRole(
       new HasRoleRequest({
         account: REQUEST_ACCOUNTS.testnet,
@@ -312,7 +312,7 @@ describe('🧪 [PORT] SDK', () => {
     expect(hasRole && hasRole[0]).not.toBeTruthy();
   }, 15000);
 
-  it.skip('Grant wipe role', async () => {
+  it('Grant wipe role', async () => {
     let hasRole = await sdk.hasRole(
       new HasRoleRequest({
         account: REQUEST_ACCOUNTS.testnet,
@@ -344,7 +344,7 @@ describe('🧪 [PORT] SDK', () => {
     );
     expect(hasRole && hasRole[0]).toBeTruthy();
   }, 15000);
-  it.skip('Grant limited cash in role', async () => {
+  it('Grant limited cash in role', async () => {
     const amount = '10';
     let hasRole = await sdk.hasRole(
       new HasRoleRequest({
@@ -390,7 +390,7 @@ describe('🧪 [PORT] SDK', () => {
     expect(check && check).toBe('10');
   }, 25000);
 
-  it.skip('Has role', async () => {
+  it('Has role', async () => {
     const hasRole = await sdk.hasRole(
       new HasRoleRequest({
         account: REQUEST_ACCOUNTS.testnet,
@@ -403,7 +403,7 @@ describe('🧪 [PORT] SDK', () => {
     expect(hasRole && hasRole[0]).toBeTruthy();
   });
 
-  it.skip('Check limited supplier allowance', async () => {
+  it('Check limited supplier allowance', async () => {
     const check = await sdk.isLimitedSupplierAllowance(
       new CheckCashInRoleRequest({
         account: REQUEST_ACCOUNTS.testnet,
@@ -414,7 +414,7 @@ describe('🧪 [PORT] SDK', () => {
     expect(check).not.toBeNull();
     expect(check && check[0]).toBeTruthy();
   }, 15000);
-  it.skip('Increase Limit supplier role', async () => {
+  it('Increase Limit supplier role', async () => {
     const amount = '10';
     await sdk.increaseSupplierAllowance(
       new IncreaseCashInLimitRequest({
@@ -438,7 +438,7 @@ describe('🧪 [PORT] SDK', () => {
     expect(check && check).toBe('20');
   }, 15000);
 
-  it.skip('Decrease Limit supplier role', async () => {
+  it('Decrease Limit supplier role', async () => {
     const amount = '10';
     await sdk.decreaseSupplierAllowance(
       new DecreaseCashInLimitRequest({
@@ -461,7 +461,7 @@ describe('🧪 [PORT] SDK', () => {
     expect(check && check).toBe('10');
   }, 15000);
 
-  it.skip('reset Limit supplier role', async () => {
+  it('reset Limit supplier role', async () => {
     const amount = '10';
     await sdk.increaseSupplierAllowance(
       new IncreaseCashInLimitRequest({
@@ -492,7 +492,7 @@ describe('🧪 [PORT] SDK', () => {
     expect(check && check).toBe('0');
   }, 15000);
 
-  it.skip('Grant unlimited supplier role', async () => {
+  it('Grant unlimited supplier role', async () => {
     await sdk.grantRole(
       new GrantRoleRequest({
         account: REQUEST_ACCOUNTS.testnet,
@@ -513,19 +513,19 @@ describe('🧪 [PORT] SDK', () => {
     expect(check && check[0]).toBeTruthy();
   }, 15000);
 
-  it.skip('Check account is address', async () => {
+  it('Check account is address', async () => {
     const address = sdk.checkIsAddress(ACCOUNTS.testnet.accountId.id);
     expect(address).not.toBeNull();
     expect(address).toBeTruthy();
   }, 15000);
 
-  it.skip('Check account is address (wrong address)', async () => {
+  it('Check account is address (wrong address)', async () => {
     const address = sdk.checkIsAddress('0.0,0');
     expect(address).not.toBeNull();
     expect(address).not.toBeTruthy();
   }, 15000);
 
-  it.skip('Rescue token', async () => {
+  it('Rescue token', async () => {
     const amount = '1';
     const rescue = await sdk.rescue(
       new RescueStableCoinRequest({
@@ -539,7 +539,7 @@ describe('🧪 [PORT] SDK', () => {
     expect(rescue).toBeTruthy();
   }, 15000);
 
-  it.skip('Rescue token (wrong)', async () => {
+  it('Rescue token (wrong)', async () => {
     const amount = '100';
     await expect(
       sdk.rescue(
@@ -553,7 +553,7 @@ describe('🧪 [PORT] SDK', () => {
     ).rejects.toThrow(Error);
   }, 15000);
 
-  it.skip('Get capabilities', async () => {
+  it('Get capabilities', async () => {
     const capabilities = await sdk.getCapabilitiesStableCoin(
       tokenId ?? '',
       ACCOUNTS.testnet.privateKey.publicKey.key,
@@ -561,7 +561,7 @@ describe('🧪 [PORT] SDK', () => {
     expect(capabilities).not.toBeNull();
   }, 15000);
 
-  it.skip('Associate token', async () => {
+  it('Associate token', async () => {
     const associateToken = sdk.associateToken(
       new AssociateTokenRequest({
         account: REQUEST_ACCOUNTS.testnet,
@@ -613,14 +613,14 @@ describe('🧪 [PORT] SDK', () => {
     // await expect(detailsPost?.paused).toBe('UNPAUSED');
   }, 15000);
 
-  it.skip('Delete token', async () => {
-    const deleteToken = sdk.deteleStableCoin(
+  it('Delete token', async () => {
+    const deleteToken = sdk.deleteStableCoin(
       new DeleteStableCoinRequest({
         account: REQUEST_ACCOUNTS.testnet,
         proxyContractId: proxyContractId ?? '',
         tokenId: tokenId ?? '',
       }),
     );
-    await expect(deleteToken).rejects.toThrow();
+    await expect(deleteToken).toBeTruthy();
   }, 15000);
 });

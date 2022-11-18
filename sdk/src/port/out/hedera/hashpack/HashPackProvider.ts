@@ -28,11 +28,11 @@ import {
 	ICallContractRequest,
 	ICallContractWithAccountRequest,
 	ICreateTokenResponse,
-	IHTSTokenRequest,
+	IHTSTokenRequestAmount,
 	IWipeTokenRequest,
 	ITransferTokenRequest,
 	InitializationData,
-	IHTSPauseRequest,
+	IHTSTokenRequest,
 } from '../types.js';
 import { HashPackSigner } from './HashPackSigner.js';
 import { TransactionProvider } from '../transaction/TransactionProvider.js';
@@ -688,7 +688,7 @@ export default class HashPackProvider implements IProvider {
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
-	public async cashInHTS(params: IHTSTokenRequest): Promise<boolean> {
+	public async cashInHTS(params: IHTSTokenRequestAmount): Promise<boolean> {
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(
 				this.network.hederaNetworkEnviroment as NetworkType,
@@ -735,7 +735,7 @@ export default class HashPackProvider implements IProvider {
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
-	public async cashOutHTS(params: IHTSTokenRequest): Promise<boolean> {
+	public async cashOutHTS(params: IHTSTokenRequestAmount): Promise<boolean> {
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(
 				this.network.hederaNetworkEnviroment as NetworkType,
@@ -837,7 +837,53 @@ export default class HashPackProvider implements IProvider {
 
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
-	public async pauseHTS(params: IHTSPauseRequest): Promise<boolean> {
+
+	public async deleteHTS(params: IHTSTokenRequest): Promise<boolean> {
+		if ('account' in params) {
+			this.provider = this.hc.getProvider(
+				this.network.hederaNetworkEnviroment as NetworkType,
+				this.initData.topic,
+				params.account.accountId.id,
+			);
+			this.hashPackSigner = new HashPackSigner(
+				this.hc,
+				params.account,
+				this.network,
+				this.initData.topic,
+			);
+		} else {
+			throw new ProviderError(
+				'You must specify an accountId for operate with HashConnect.',
+			);
+		}
+
+		const transaction: Transaction =
+			TransactionProvider.buildDeleteTransaction(params.tokenId);
+
+		const transactionResponse =
+			await this.hashPackSigner.signAndSendTransaction(transaction);
+
+		const htsResponse: HTSResponse =
+			await this.transactionResposeHandler.manageResponse(
+				transactionResponse,
+				TransactionType.RECEIPT,
+				this.getSigner(),
+			);
+
+		if (!htsResponse.receipt) {
+			throw new ProviderError(
+				`An error has occurred when delete with the account ${params?.account?.accountId.id} for tokenId ${params.tokenId}`,
+			);
+		}
+		log(
+			`Result deleted ${htsResponse.receipt.status}: account ${params.account.accountId}, tokenId ${params.tokenId}`,
+			logOpts,
+		);
+
+		return htsResponse.receipt.status == Status.Success ? true : false;
+	}
+
+	public async pauseHTS(params: IHTSTokenRequest): Promise<boolean> {
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(
 				this.network.hederaNetworkEnviroment as NetworkType,
@@ -882,7 +928,7 @@ export default class HashPackProvider implements IProvider {
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
-	public async unpauseHTS(params: IHTSPauseRequest): Promise<boolean> {
+	public async unpauseHTS(params: IHTSTokenRequest): Promise<boolean> {
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(
 				this.network.hederaNetworkEnviroment as NetworkType,
