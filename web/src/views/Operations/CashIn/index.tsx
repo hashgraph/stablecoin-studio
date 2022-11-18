@@ -18,7 +18,11 @@ import {
 } from '../../../store/slices/walletSlice';
 import { useEffect, useState } from 'react';
 import type { AppDispatch } from '../../../store/store.js';
-import { BigDecimal, CashInStableCoinRequest, GetStableCoinDetailsRequest } from 'hedera-stable-coin-sdk';
+import {
+	BigDecimal,
+	CashInStableCoinRequest,
+	GetStableCoinDetailsRequest,
+} from 'hedera-stable-coin-sdk';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
 
@@ -32,7 +36,7 @@ const CashInOperation = () => {
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
 	// const infoAccount = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
-	const { decimals = 0,maxSupply} = selectedStableCoin || {};
+	const { decimals = 0, maxSupply } = selectedStableCoin || {};
 	const dispatch = useDispatch<AppDispatch>();
 
 	const [errorOperation, setErrorOperation] = useState();
@@ -65,9 +69,11 @@ const CashInOperation = () => {
 	};
 
 	const handleRefreshCoinInfo = async () => {
-		const stableCoinDetails = await SDKService.getStableCoinDetails(new GetStableCoinDetailsRequest({
-			id: selectedStableCoin?.tokenId || '',
-		}));
+		const stableCoinDetails = await SDKService.getStableCoinDetails(
+			new GetStableCoinDetailsRequest({
+				id: selectedStableCoin?.tokenId || '',
+			}),
+		);
 		dispatch(
 			walletActions.setSelectedStableCoin({
 				tokenId: stableCoinDetails?.tokenId,
@@ -134,13 +140,6 @@ const CashInOperation = () => {
 											request.amount = value;
 											const res = handleRequestValidation(request.validate('amount'));
 											return res;
-										},
-										quantityOverMaxSupply: (value: string) => {
-											return maxSupply && maxSupply !== 'INFINITE'
-												? BigDecimal.fromString(maxSupply, decimals).isGreaterOrEqualThan(
-														BigDecimal.fromString(value.toString(), decimals),
-												  ) || t('global:validations.overMaxSupplyCashIn')
-												: true;
 										},
 									},
 								}}

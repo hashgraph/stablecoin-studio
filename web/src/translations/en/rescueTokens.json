@@ -1,15 +1,15 @@
 {
     "title": "Rescue Tokens operation",
     "operationTitle": "Operation details",
-    "amountLabel": "How many tokens?",
-    "amountPlaceholder": "Introduce amount",
-    "originAccountLabel": "From which account tokens will be rescued?",
-    "originAccountPlaceholder": "Introduce account",
+    "amountLabel": "Introduce amount",
+    "amountPlaceholder": "0",
+    "originAccountLabel": "Target account",
+    "originAccountPlaceholder": "0.0.0",
     "modalSuccessDesc": "You have rescued {{amount}} tokens",
-    "decimalsValidation": "You have added more decimals than the supported by the stable coin",
+    "decimalsValidation": "The amount has an invalid number of decimales",
     "modalAction": {
         "subtitle": "Operation details review",
-        "originAccount": "Account to rescue tokens",
+        "originAccount": "Account",
         "amount": "Amount",
         "accept": "Rescue tokens"
     }
