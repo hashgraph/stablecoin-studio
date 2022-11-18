@@ -159,7 +159,7 @@ export class SDKService {
 	}
 
 	public static async delete(req: DeleteStableCoinRequest) {
-		return SDKService.getInstance().then((instance) => instance.deteleStableCoin(req));
+		return SDKService.getInstance().then((instance) => instance.deleteStableCoin(req));
 	}
 
 	public static async getCapabilities({
