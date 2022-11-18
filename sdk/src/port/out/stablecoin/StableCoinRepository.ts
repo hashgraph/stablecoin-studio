@@ -94,10 +94,11 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			
 			let response;
 			do {
+				if(i > 0) await new Promise( resolve => setTimeout(resolve, 2000) );
+
 				response = await this.instance.get<IHederaStableCoinDetail>(
 					this.URI_BASE + 'tokens/' + id,
 				);
-
 				i++;
 			} while (response.status !== 200 || i < retry);
 			

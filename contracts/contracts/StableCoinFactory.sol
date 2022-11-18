@@ -14,8 +14,8 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes{
 
     // Hedera HTS precompiled contract
     address constant precompileAddress = address(0x167);
-    string constant memo_1 = "({proxyContract: ";
-    string constant memo_2 = "})";
+    string constant memo_1 = "{\"proxyContract\": \"";
+    string constant memo_2 = "\"}";
 
     function deployStableCoin(tokenStruct calldata requestedToken) external payable override returns (address, address, address, address){
 
