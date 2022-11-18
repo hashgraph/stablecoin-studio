@@ -12,7 +12,7 @@ import { GetRolesRequest } from 'hedera-stable-coin-sdk';
 import colors from 'colors';
 import RoleStableCoinsService from './RoleStableCoinService';
 
-export default class ManageExternalTokenService extends Service {
+export default class ManageImportedTokenService extends Service {
   constructor() {
     super('Manage External Tokens');
   }
@@ -20,13 +20,13 @@ export default class ManageExternalTokenService extends Service {
   public async start(): Promise<void> {
     await utilsService.cleanAndShowBanner();
     const manageOptions: Array<string> = language.getArray(
-      'wizard.manageExternalTokens',
+      'wizard.manageImportedTokens',
     );
     const currentAccount = utilsService.getCurrentAccount();
     let symbol = '';
     switch (
       await utilsService.defaultMultipleAsk(
-        language.getText('wizard.externalTokenMenu'),
+        language.getText('wizard.importedTokenMenu'),
         manageOptions,
         false,
         currentAccount.network,
@@ -51,14 +51,14 @@ export default class ManageExternalTokenService extends Service {
         });
 
         getRolesRequestForAdding.tokenId = await utilsService.defaultSingleAsk(
-          language.getText('manageExternalToken.tokenId'),
+          language.getText('manageImportedToken.tokenId'),
           '0.0.1234567',
         );
         await utilsService.handleValidation(
           () => getRolesRequestForAdding.validate('tokenId'),
           async () => {
             tokenId = await utilsService.defaultSingleAsk(
-              language.getText('manageExternalToken.tokenId'),
+              language.getText('manageImportedToken.tokenId'),
               '',
             );
             getRolesRequestForAdding.tokenId = tokenId;
@@ -90,13 +90,13 @@ export default class ManageExternalTokenService extends Service {
         await utilsService.cleanAndShowBanner();
         if (currentAccount.externalTokens.length === 0) {
           console.log(
-            language.getText('manageExternalToken.noExternalTokensRefresh'),
+            language.getText('manageImportedToken.noImportedTokensRefresh'),
           );
           await this.start();
         }
         //show list to refresh
         const tokenToRefresh = await utilsService.defaultMultipleAsk(
-          language.getText('manageExternalToken.tokenToRefresh'),
+          language.getText('manageImportedToken.tokenToRefresh'),
           currentAccount.externalTokens.map(
             (token) => `${token.id} - ${token.symbol}`,
           ),
@@ -151,13 +151,13 @@ export default class ManageExternalTokenService extends Service {
         await utilsService.cleanAndShowBanner();
         if (currentAccount.externalTokens.length === 0) {
           console.log(
-            language.getText('manageExternalToken.noExternalTokensDelete'),
+            language.getText('manageImportedToken.noImportedTokensDelete'),
           );
           await this.start();
         }
         //show list to delete
         const tokenToDelete = await utilsService.defaultMultipleAsk(
-          language.getText('manageExternalToken.tokenToDelete'),
+          language.getText('manageImportedToken.tokenToDelete'),
           currentAccount.externalTokens.map(
             (token) => `${token.id} - ${token.symbol}`,
           ),
@@ -218,7 +218,7 @@ export default class ManageExternalTokenService extends Service {
       return true;
     });
     const result = filterTokens.concat(
-      language.getText('manageExternalToken.separator'),
+      language.getText('manageImportedToken.separator'),
       currentAccount.externalTokens.map(
         (token) =>
           `${token.id} - ${token.symbol} - ` +

@@ -2,25 +2,25 @@
   "common": {
     "nextStep" : "Next step",
     "goBack" : "Go back",
-    "createStableCoin": "Create Stable coin",
-    "createNewStableCoin": "Create new Stable coin",
+    "createStableCoin": "Create stable coin",
+    "createNewStableCoin": "Create new stable coin",
     "cancel": "Cancel"
   },
   "tabs": {
     "basicDetails": "Basic details",
     "optionalDetails": "Optional details",
-    "managementPermissions": "Management Permissions",
+    "managementPermissions": "Manage permissions",
     "supplierKey": "Supplier key",
     "review": "Review"
   },
   "basicDetails": {
     "autorenewAccount": "Autorenew account",
-    "autorenewAccountPlaceholder": "Introduce autorenew account (e.g. 0.0.123456)",
+    "autorenewAccountPlaceholder": "0.0.0",
     "name": "Name",
-    "namePlaceholder": "Introduce name",
+    "namePlaceholder": "Name",
     "symbol": "Symbol",
-    "symbolPlaceholder": "Introduce Symbol",
-    "title": "Stable Coin basic details"
+    "symbolPlaceholder": "Symbol",
+    "title": "Stable coin basic details"
   },
   "optionalDetails": {
     "decimals": "Decimals",
@@ -30,13 +30,13 @@
     "infinite": "Infinite",
     "placeholder": "Introduce {{placeholder}}",
     "maxSupply": "Max supply",
-    "title": "Stable Coin optional details",
-    "typeSupply": "Type supply",
-    "typeSupplyPlaceholder": "Choose type supply"
+    "title": "Stable coin optional details",
+    "typeSupply": "Supply type",
+    "typeSupplyPlaceholder": "Choose supply type"
   },
   "managementPermissions": {
     "currentUserKey": "Current user key",
-    "description": "Allow all the following features to be managed through Smart Contract",
+    "description": "Allow all the following features to be managed through smart contract",
     "pause": "Pause",
     "freeze": "Freeze",
     "introduce": "Introduce {{name}}",
@@ -47,20 +47,20 @@
     "admin": "Admin",
     "supply": "Supply",
     "theSmartContract": "The smart contract",
-    "title": "Stable Coin management permissions",
+    "title": "Permission management",
     "totalSupply": "Total supply",
     "treasuryAccountAddress": "Treasury account address",
     "wipe": "Wipe"
   },
   "review": {
     "basicDetails": "Basic details",
-    "managementPermissions": "Management Permissions",
+    "managementPermissions": "Manage permissions",
     "optionalDetails": "Optional details",
-    "title": "Stable Coin review"
+    "title": "Stable coin review"
   },
   "notification": {
-    "title": "{{ result }} creating the Stable Coin",
-    "descriptionSuccess": "The Stable Coin was created",
-    "descriptionError": "Sorry, there was an error creating the Stable Coin"
+    "title": "{{ result }} creating the stable coin",
+    "descriptionSuccess": "The stable coin was created",
+    "descriptionError": "Sorry, there was an error creating the stable coin"
   }
 }

@@ -38,7 +38,7 @@ import RoleStableCoinsService from './RoleStableCoinService.js';
 import RescueStableCoinsService from './RescueStableCoinService.js';
 import CapabilitiesStableCoinsService from './CapabilitiesStableCoinService.js';
 import BurnStableCoinsService from './BurnStableCoinService.js';
-import ManageExternalTokenService from './ManageExternalTokenService';
+import ManageImportedTokenService from './ManageImportedTokenService';
 
 /**
  * Operation Stable Coin Service
@@ -94,7 +94,7 @@ export default class OperationStableCoinService extends Service {
 
         this.stableCoinId = await utilsService.defaultMultipleAsk(
           language.getText('stablecoin.askToken'),
-          new ManageExternalTokenService().mixExternalTokens(
+          new ManageImportedTokenService().mixExternalTokens(
             resp.map((item) => {
               return `${item.id} - ${item.symbol}`;
             }),
@@ -315,7 +315,6 @@ export default class OperationStableCoinService extends Service {
           amount: '',
         });
 
-
         cashOutRequest.amount = await utilsService
           .defaultSingleAsk(language.getText('stablecoin.askBurnAmount'), '1')
           .then((val) => val.replace(',', '.'));
@@ -472,11 +471,13 @@ export default class OperationStableCoinService extends Service {
             },
           },
           targetId: currentAccount.accountId.id,
-          tokenId: ''
+          tokenId: '',
         });
 
         // Call to Supplier Role
-        const rolesToRefresh = await new RoleStableCoinsService().getRoles(getRolesRequest);
+        const rolesToRefresh = await new RoleStableCoinsService().getRoles(
+          getRolesRequest,
+        );
         const externalTokensRefreshed = configAccount.externalTokens.map(
           (token) => {
             if (token.id === this.stableCoinId) {
@@ -489,7 +490,7 @@ export default class OperationStableCoinService extends Service {
             return token;
           },
         );
-        new ManageExternalTokenService().updateAccount(externalTokensRefreshed);
+        new ManageImportedTokenService().updateAccount(externalTokensRefreshed);
         configAccount.externalTokens = externalTokensRefreshed;
         break;
       case wizardOperationsStableCoinOptions[
@@ -615,9 +616,7 @@ export default class OperationStableCoinService extends Service {
           );
 
           try {
-            if (
-              grantRoleRequest.role === StableCoinRole.CASHIN_ROLE
-            ) {
+            if (grantRoleRequest.role === StableCoinRole.CASHIN_ROLE) {
               await this.grantSupplierRole(grantRoleRequest, sdk);
             } else {
               await this.roleStableCoinService.grantRoleStableCoin(
@@ -959,12 +958,12 @@ export default class OperationStableCoinService extends Service {
                 },
               },
               proxyContractId: this.proxyContractId,
-              targetId: ''
+              targetId: '',
             });
 
             await this.validateNotRequestedData(resetCashInLimitRequest, [
               'account',
-              'proxyContractId'
+              'proxyContractId',
             ]);
 
             //Reset
@@ -1305,23 +1304,28 @@ export default class OperationStableCoinService extends Service {
 
   private async grantSupplierRole(
     grantRoleRequest: GrantRoleRequest,
-    sdk: SDK
+    sdk: SDK,
   ): Promise<void> {
     let hasRole;
-    await utilsService.showSpinner(sdk.hasRole(new HasRoleRequest({
-      account: grantRoleRequest.account,
-      targetId: grantRoleRequest.targetId,
-      proxyContractId: grantRoleRequest.proxyContractId,
-      tokenId: grantRoleRequest.tokenId,
-      role: grantRoleRequest.role
-    })).then((response) => (hasRole = response[0])),
+    await utilsService.showSpinner(
+      sdk
+        .hasRole(
+          new HasRoleRequest({
+            account: grantRoleRequest.account,
+            targetId: grantRoleRequest.targetId,
+            proxyContractId: grantRoleRequest.proxyContractId,
+            tokenId: grantRoleRequest.tokenId,
+            role: grantRoleRequest.role,
+          }),
+        )
+        .then((response) => (hasRole = response[0])),
       {
         text: language.getText('state.loading'),
         successText: language.getText('state.loadCompleted') + '\n',
       },
     );
     if (hasRole) {
-      console.log(language.getText('cashin.alreadyRole'));          
+      console.log(language.getText('cashin.alreadyRole'));
     } else {
       let limit = '';
       const supplierRoleType = language.getArray('wizard.supplierRoleType');
@@ -1370,7 +1374,7 @@ export default class OperationStableCoinService extends Service {
         );
 
         //Give limited
-        //Call to SDK    
+        //Call to SDK
         grantRoleRequest.supplierType = 'limited';
         await this.roleStableCoinService.giveSupplierRoleStableCoin(
           grantRoleRequest,

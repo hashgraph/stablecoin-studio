@@ -1,16 +1,16 @@
 {
     "title": "Wipe operation",
     "operationTitle": "Operation details",
-    "amountLabel": "How many tokens?",
-    "amountPlaceholder": "Introduce amount",
-    "fromAccountLabel": "From what account?",
-    "decimalsValidation": "You have added more decimals than the supported by the stable coin",
+    "amountLabel": "Introduce amount",
+    "amountPlaceholder": "0",
+    "fromAccountLabel": "Target account",
+    "decimalsValidation": "The amount has an invalid number of decimales",
     "fromAccountPlaceholder": "Introduce account",
     "modalAction": {
         "subtitle": "Operation details review",
-        "fromAccount": "Account to wipe from",
+        "fromAccount": "Account",
         "amount": "Amount",
         "accept": "Wipe tokens"
     },
-    "modalSuccessDesc": "You have wiped {{amount}} tokens from {{account}}"
+    "modalSuccessDesc": "{{amount}} tokens have been wiped from {{account}}"
 }

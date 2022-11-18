@@ -37,7 +37,7 @@ export default class AssociateStableCoinsService extends Service {
         .then((response) => (respDetail = response)),
       {
         text: language.getText('state.loading'),
-        successText: language.getText('state.associteCompleted') + '\n',
+        successText: language.getText('state.associateCompleted') + '\n',
       },
     );
 
