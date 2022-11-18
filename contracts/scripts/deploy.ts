@@ -7,6 +7,7 @@ const {
 } = require('@hashgraph/sdk')
 
 const factoryAddress = ""; //"0000000000000000000000000000000002e86eb8"; 0.0.48787128
+const address_0 = "0x0000000000000000000000000000000000000000";
 
 import {
     StableCoinFactory__factory
@@ -101,6 +102,7 @@ export async function deployContractsWithSDK(
         "tokenInitialSupply": initialSupply,
         "tokenDecimals": decimals,
         "autoRenewAccountAddress": AccountId.fromString(account).toSolidityAddress(),
+        "treasuryAddress": address_0,
         "keys": [
             {
                 "keyType": 1, // admin

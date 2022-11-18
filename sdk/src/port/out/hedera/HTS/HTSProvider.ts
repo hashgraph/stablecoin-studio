@@ -284,6 +284,9 @@ export default class HTSProvider implements IProvider {
 			(stableCoin.initialSupply) ? stableCoin.initialSupply.toLong().toString(): "0",
 			stableCoin.decimals,
 			"0x" + HAccountId.fromString(stableCoin.autoRenewAccount.toString()).toSolidityAddress(),
+			(stableCoin.treasury.toString() == '0.0.0') ? 
+				"0x0000000000000000000000000000000000000000"
+				: ("0x" + HAccountId.fromString(stableCoin.treasury.toString()).toSolidityAddress()),
 			keys
 		);
 

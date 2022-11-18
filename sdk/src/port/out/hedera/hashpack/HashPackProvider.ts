@@ -376,7 +376,10 @@ export default class HashPackProvider implements IProvider {
 				(stableCoin.maxSupply) ? stableCoin.maxSupply.toLong().toString(): "0",
 				(stableCoin.initialSupply) ? stableCoin.initialSupply.toLong().toString(): "0",
 				stableCoin.decimals,
-				HAccountId.fromString(stableCoin.autoRenewAccount.toString()).toSolidityAddress(),
+				"0x" + HAccountId.fromString(stableCoin.autoRenewAccount.toString()).toSolidityAddress(),
+				(stableCoin.treasury.toString() == '0.0.0') ? 
+					"0x0000000000000000000000000000000000000000"
+					: ("0x" + HAccountId.fromString(stableCoin.treasury.toString()).toSolidityAddress()),
 				keys
 			);
 	

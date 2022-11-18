@@ -52,7 +52,7 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes{
         HederaERC20(address(StableCoinProxy)).initialize(tokenAddress, msg.sender);
 
         // Associate token
-        HederaERC20(address(StableCoinProxy)).associateToken(msg.sender);
+        if(treasuryIsContract(requestedToken.treasuryAddress))HederaERC20(address(StableCoinProxy)).associateToken(msg.sender);
 
         return (address(StableCoinProxy), address(StableCoinProxyAdmin), address(StableCoinContract), tokenAddress);
     }
@@ -85,7 +85,9 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes{
         IHederaTokenService.HederaToken memory token;
         token.name = requestedToken.tokenName;
         token.symbol = requestedToken.tokenSymbol;
-        token.treasury = StableCoinProxyAddress;
+        token.treasury = treasuryIsContract(requestedToken.treasuryAddress) ? 
+            StableCoinProxyAddress 
+            : requestedToken.treasuryAddress;
         token.memo = tokenMemo;
         token.tokenSupplyType = requestedToken.supplyType;
         token.maxSupply = requestedToken.tokenMaxSupply;
@@ -104,5 +106,10 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes{
         else Key.ed25519 = PublicKey;
 
         return Key;
+    }
+
+    function treasuryIsContract(address treasuryAddress) internal pure returns(bool)
+    {
+        return treasuryAddress == address(0);
     }
 }

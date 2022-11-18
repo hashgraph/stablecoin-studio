@@ -44,6 +44,11 @@ export class FactoryStableCoin {
 	 */
 	public autoRenewAccountAddress: string;
 
+	/**
+	 * Token treasury account
+	 */
+	 public treasuryAddress: string;
+
     /**
 	 * Token Keys
 	 */
@@ -58,6 +63,7 @@ export class FactoryStableCoin {
         tokenInitialSupply: string,
         tokenDecimals: number,
 		autoRenewAccountAddress: string,
+		treasuryAddress: string,
         keys: FactoryKey[]
     ) {
 
@@ -69,6 +75,7 @@ export class FactoryStableCoin {
         this.tokenInitialSupply = tokenInitialSupply;
         this.tokenDecimals = tokenDecimals;
         this.autoRenewAccountAddress = autoRenewAccountAddress;
+		this.treasuryAddress = treasuryAddress;
         this.keys = keys;
 	}
 

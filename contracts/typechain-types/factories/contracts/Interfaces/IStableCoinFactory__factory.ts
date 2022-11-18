@@ -55,6 +55,11 @@ const _abi = [
             type: "address",
           },
           {
+            internalType: "address",
+            name: "treasuryAddress",
+            type: "address",
+          },
+          {
             components: [
               {
                 internalType: "uint256",
