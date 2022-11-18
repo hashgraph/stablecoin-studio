@@ -335,7 +335,6 @@ export default class HashPackProvider implements IProvider {
 				(providedKey, index) => {
 					if(providedKey){
 						const key = new FactoryKey();
-						key.PublicKey = (providedKey === PublicKey.NULL)? providedKey : "";
 						switch(index){
 							case 0: {
 								key.keyType = 1; // admin
@@ -362,6 +361,7 @@ export default class HashPackProvider implements IProvider {
 								break;
 							}
 						}
+						key.PublicKey = (providedKey == PublicKey.NULL)? "0x" : HPublicKey.fromString((providedKey as PublicKey).key).toBytes();
 						keys.push(key);
 					}
 				});
@@ -407,178 +407,6 @@ export default class HashPackProvider implements IProvider {
 			throw new DeploymentError(error);
 		}
 	}
-
-	/*public async deployStableCoin(
-		stableCoin: StableCoin,
-		account: HashPackAccount,
-	): Promise<StableCoin> {
-		try {
-			if (account) {
-				this.provider = this.hc.getProvider(
-					this.network.hederaNetworkEnviroment as NetworkType,
-					this.initData.topic,
-					account.accountId.id,
-				);
-			} else {
-				throw new DeploymentError(
-					'You must specify an accountId for operate with HashConnect.',
-				);
-			}
-
-			const tokenContract = await this.deployContract(
-				HederaERC20__factory,
-				account,
-			);
-			log(
-				`Deploying ${HederaERC1967Proxy__factory.name} contract... please wait.`,
-				logOpts,
-			);
-			const proxyContract: HContractId = await this.deployContract(
-				HederaERC1967Proxy__factory,
-				account,
-				new ContractFunctionParameters()
-					.addAddress(tokenContract?.toSolidityAddress())
-					.addBytes(new Uint8Array([])),
-			);
-
-			await this.callContract('initialize', {
-				contractId: String(proxyContract),
-				parameters: [],
-				gas: 250_000,
-				abi: HederaERC20__factory.abi,
-				account: account,
-			});
-			log(
-				`Deploying ${HTSTokenOwner__factory.name} contract... please wait.`,
-				logOpts,
-			);
-			const tokenOwnerContract = await this.deployContract(
-				HTSTokenOwner__factory,
-				account,
-			);
-
-			stableCoin.memo = new StableCoinMemo(
-				String(proxyContract),
-				String(tokenOwnerContract),
-			);
-			log('Creating token... please wait.', logOpts);
-			const hederaToken = await this.createToken(
-				tokenOwnerContract,
-				stableCoin.name,
-				stableCoin.symbol,
-				stableCoin.decimals,
-				stableCoin.initialSupply.toLong(),
-				stableCoin.maxSupply?.toLong(),
-				stableCoin.memo.toJson(),
-				stableCoin.freezeDefault,
-				account,
-				stableCoin.treasury,
-				safeCast<PublicKey>(stableCoin.adminKey),
-				safeCast<PublicKey>(stableCoin.freezeKey),
-				safeCast<PublicKey>(stableCoin.kycKey),
-				safeCast<PublicKey>(stableCoin.wipeKey),
-				safeCast<PublicKey>(stableCoin.pauseKey),
-				safeCast<PublicKey>(stableCoin.supplyKey),
-				stableCoin.autoRenewAccount,
-			);
-			log('Setting up contract... please wait.', logOpts);
-			await this.callContract('setTokenAddress', {
-				contractId: stableCoin.memo.proxyContract,
-				parameters: [
-					tokenOwnerContract.toSolidityAddress(),
-					TokenId.fromString(
-						hederaToken.tokenId.toString(),
-					).toSolidityAddress(),
-				],
-				gas: 80_000,
-				abi: HederaERC20__factory.abi,
-				account,
-			});
-			await this.callContract('setERC20Address', {
-				contractId: String(tokenOwnerContract),
-				parameters: [proxyContract.toSolidityAddress()],
-				gas: 60_000,
-				abi: HTSTokenOwner__factory.abi,
-				account,
-			});
-
-			if (
-				hederaToken.treasuryAccountId.toString() !==
-					account.accountId.id &&
-				account.evmAddress
-			) {
-				log(
-					'Associating administrator account to token... please wait.',
-					logOpts,
-				);
-				await this.callContract('associateToken', {
-					contractId: stableCoin.memo.proxyContract,
-					parameters: [
-						HAccountId.fromString(
-							account.accountId.id,
-						).toSolidityAddress(),
-					],
-					gas: 1_300_000,
-					abi: HederaERC20__factory.abi,
-					account,
-				});
-			}
-
-			return new StableCoin({
-				name: hederaToken.name,
-				symbol: hederaToken.symbol,
-				decimals: hederaToken.decimals,
-				initialSupply: BigDecimal.fromString(
-					hederaToken.initialSupply.toString(),
-					hederaToken.decimals,
-				),
-				maxSupply: BigDecimal.fromString(
-					hederaToken.maxSupply.toString(),
-					hederaToken.decimals,
-				),
-				memo: hederaToken.memo,
-				freezeDefault: hederaToken.freezeDefault,
-				treasury: new AccountId(
-					hederaToken.treasuryAccountId.toString(),
-				),
-				adminKey:
-					hederaToken.adminKey &&
-					hederaToken.adminKey instanceof HPublicKey
-						? PublicKey.fromHederaKey(hederaToken.adminKey)
-						: hederaToken.adminKey,
-				freezeKey:
-					hederaToken.freezeKey &&
-					hederaToken.freezeKey instanceof HPublicKey
-						? PublicKey.fromHederaKey(hederaToken.freezeKey)
-						: hederaToken.freezeKey,
-				kycKey:
-					hederaToken.kycKey &&
-					hederaToken.kycKey instanceof HPublicKey
-						? PublicKey.fromHederaKey(hederaToken.kycKey)
-						: hederaToken.kycKey,
-				wipeKey:
-					hederaToken.wipeKey &&
-					hederaToken.wipeKey instanceof HPublicKey
-						? PublicKey.fromHederaKey(hederaToken.wipeKey)
-						: hederaToken.wipeKey,
-				pauseKey:
-					hederaToken.pauseKey &&
-					hederaToken.pauseKey instanceof HPublicKey
-						? PublicKey.fromHederaKey(hederaToken.pauseKey)
-						: hederaToken.pauseKey,
-				supplyKey:
-					hederaToken.supplyKey &&
-					hederaToken.supplyKey instanceof HPublicKey
-						? PublicKey.fromHederaKey(hederaToken.supplyKey)
-						: hederaToken.supplyKey,
-				id: hederaToken.tokenId.toString(),
-				tokenType: stableCoin.tokenType,
-				supplyType: stableCoin.supplyType,
-			});
-		} catch (error) {
-			throw new DeploymentError(error);
-		}
-	}*/
 
 	private async deployContract(
 		factory: any,

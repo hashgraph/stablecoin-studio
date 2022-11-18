@@ -269,7 +269,8 @@ export default class HTSProvider implements IProvider {
 							break;
 						}
 					}
-					key.PublicKey = (providedKey === PublicKey.NULL)? providedKey : "0x";
+					const providedKeyCasted = providedKey as PublicKey;
+					key.PublicKey = (providedKeyCasted.key == PublicKey.NULL.key)? "0x" : HPublicKey.fromString(providedKeyCasted.key).toBytes();
 					keys.push(key);
 				}
 			});
@@ -308,45 +309,6 @@ export default class HTSProvider implements IProvider {
 		coinToReturn.id = HAccountId.fromSolidityAddress(deployStableCoinResponse[3]).toString();
 
 		return coinToReturn;
-	}
-
-	private async deployContract(
-		factory: any,
-		privateKey: PrivateKey,
-		client: Client,
-		params?: any,
-	): Promise<HContractId> {
-		try {
-			this.htsSigner = new HTSSigner(client);
-			const transaction =
-				TransactionProvider.buildContractCreateFlowTransaction(
-					factory,
-					params,
-					220_000,
-					privateKey.publicKey.toHederaKey(),
-				);
-			const transactionResponse: TransactionResponse =
-				await this.htsSigner.signAndSendTransaction(transaction);
-			this.logHashScan(transactionResponse, 'Deploy contract');
-			const htsResponse: HTSResponse =
-				await this.transactionResposeHandler.manageResponse(
-					transactionResponse,
-					TransactionType.RECEIPT,
-					client,
-				);
-
-			if (!htsResponse?.receipt?.contractId) {
-				throw new ProviderError(
-					`An error ocurred during deployment of ${factory.name}`,
-				);
-			} else {
-				return htsResponse.receipt.contractId;
-			}
-		} catch (error) {
-			throw new ProviderError(
-				`An error ocurred during deployment of ${factory.name} : ${error}`,
-			);
-		}
 	}
 
 	private getHTSProvider(network: HederaNetwork): DefaultHederaProvider {
