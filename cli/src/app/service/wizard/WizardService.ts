@@ -141,7 +141,7 @@ export default class WizardService extends Service {
 
   public async chooseAccount(mainMenu = true, network?: string): Promise<void> {
     const configuration = configurationService.getConfiguration();
-    const { networks, accounts } = configuration;
+    const { networks, accounts, factories } = configuration;
     let options = network
       ? accounts
           .filter((acc) => acc.network === network)
@@ -171,10 +171,18 @@ export default class WizardService extends Service {
       (acc) => acc.accountId === account.split(' - ')[0],
     );
     utilsService.setCurrentAccount(currentAccount);
+
     const currentNetwork = networks.find(
       (network) => currentAccount.network === network.name,
     );
     utilsService.setCurrentNetwotk(currentNetwork);
+
+    const currentFactory = factories.find(
+      (factory) => currentAccount.network === factory.network,
+    );
+      
+    utilsService.setCurrentFactory(currentFactory);
+
     if (mainMenu) await this.mainMenu();
   }
 

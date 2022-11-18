@@ -157,6 +157,9 @@ export interface SDKInitOptions {
 }
 
 export class SDK {
+	public FactoryAddressTestnet = "0.0.48917309";
+	public FactoryAddressPreviewnet = "0.0.11111111";
+
 	private config: Configuration;
 
 	private networkAdapter: NetworkAdapter;

@@ -48,7 +48,7 @@ export default class CommanderService extends Service {
         // Check if default configuration exists, if not, start init command
         await configurationService.init(
           {
-            defaultNetwork: options.network,
+            defaultNetwork: options.network
           },
           options.config,
         );

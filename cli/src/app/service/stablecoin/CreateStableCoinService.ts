@@ -87,6 +87,7 @@ export default class CreateStableCoinService extends Service {
    */
   public async wizardCreateStableCoin(): Promise<CreateStableCoinRequest> {
     const currentAccount = utilsService.getCurrentAccount();
+    const currentFactory = utilsService.getCurrentFactory();
 
     utilsService.displayCurrentUserInfo(currentAccount);
 
@@ -102,11 +103,11 @@ export default class CreateStableCoinService extends Service {
       name: '',
       symbol: '',
       decimals: 6,
-      stableCoinFactory: ''
+      stableCoinFactory: currentFactory.id
     });
 
     // Factory
-    tokenToCreate.stableCoinFactory = await utilsService.defaultSingleAsk(
+    /*tokenToCreate.stableCoinFactory = await utilsService.defaultSingleAsk(
       language.getText('stablecoin.askFactory'),
       tokenToCreate.stableCoinFactory || '0.0.0',
     );
@@ -118,7 +119,7 @@ export default class CreateStableCoinService extends Service {
           tokenToCreate.stableCoinFactory || '0.0.0',
         );
       },
-    );
+    );*/
 
     // Name
     tokenToCreate.name = await utilsService.defaultSingleAsk(
