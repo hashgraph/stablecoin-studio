@@ -361,7 +361,8 @@ export default class HashPackProvider implements IProvider {
 								break;
 							}
 						}
-						key.PublicKey = (providedKey == PublicKey.NULL)? "0x" : HPublicKey.fromString((providedKey as PublicKey).key).toBytes();
+						const providedKeyCasted = providedKey as PublicKey;
+						key.PublicKey = (providedKeyCasted.key == PublicKey.NULL.key)? "0x" : HPublicKey.fromString(providedKeyCasted.key).toBytes();
 						keys.push(key);
 					}
 				});
