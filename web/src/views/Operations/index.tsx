@@ -28,6 +28,7 @@ const Operations = () => {
 		balance: false,
 		rescue: false,
 		wipe: false,
+		freeze: false,
 	});
 	useEffect(() => {
 		if (selectedStableCoin) {
@@ -71,6 +72,10 @@ const Operations = () => {
 				? !capabilities?.includes(Capabilities.WIPE) &&
 				  !capabilities?.includes(Capabilities.WIPE_HTS)
 				: !roles.includes(Roles.WIPE_ROLE) && !capabilities?.includes(Capabilities.WIPE_HTS),
+			freeze: !isExternalToken
+				? !capabilities?.includes(Capabilities.FREEZE) &&
+				  !capabilities?.includes(Capabilities.FREEZE_HTS)
+				: !roles.includes(Roles.FREEZE_ROLE) && !capabilities?.includes(Capabilities.FREEZE_HTS),
 		};
 
 		setDisabledFeatures(areDisabled);
@@ -106,6 +111,18 @@ const Operations = () => {
 			route: NamedRoutes.Wipe,
 			title: t('wipeOperation'),
 			isDisabled: disabledFeatures?.wipe,
+		},
+		{
+			icon: 'Snowflake',
+			route: NamedRoutes.Freeze,
+			title: t('freezeOperation'),
+			isDisabled: disabledFeatures?.freeze,
+		},
+		{
+			icon: 'SunHorizon',
+			route: NamedRoutes.Unfreeze,
+			title: t('unfreezeOperation'),
+			isDisabled: disabledFeatures?.freeze,
 		},
 	];
 

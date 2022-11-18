@@ -37,7 +37,8 @@
   "sidebar": {
     "operations": "Operations",
     "role": "Role management",
-    "details": "Stable coin details"
+    "details": "Stable coin details",
+    "dangerZone": "Danger zone"
   },
   "validations": {
     "required": "This field is required",

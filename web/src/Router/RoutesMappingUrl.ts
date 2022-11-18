@@ -21,4 +21,7 @@ export const RoutesMappingUrl: Record<NamedRoutes, string> = {
 	[NamedRoutes.StableCoinNotSelected]: '/stable-coin/not-selected',
 	[NamedRoutes.Wipe]: '/operations/wipe',
 	[NamedRoutes.ExternalToken]: '/stable-coin/external',
+	[NamedRoutes.DangerZone]: '/stable-coin/dangerZone',
+	[NamedRoutes.Freeze]: '/operations/freeze',
+	[NamedRoutes.Unfreeze]: '/operations/unfreeze',
 };

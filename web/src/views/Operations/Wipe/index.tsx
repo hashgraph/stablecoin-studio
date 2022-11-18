@@ -63,9 +63,11 @@ const WipeOperation = () => {
 	};
 
 	const handleRefreshCoinInfo = async () => {
-		const stableCoinDetails = await SDKService.getStableCoinDetails(new GetStableCoinDetailsRequest ({
-			id: selectedStableCoin?.tokenId || '',
-		}));
+		const stableCoinDetails = await SDKService.getStableCoinDetails(
+			new GetStableCoinDetailsRequest({
+				id: selectedStableCoin?.tokenId || '',
+			}),
+		);
 		dispatch(
 			walletActions.setSelectedStableCoin({
 				tokenId: stableCoinDetails?.tokenId,
@@ -79,6 +81,8 @@ const WipeOperation = () => {
 				treasuryId: stableCoinDetails?.treasuryId,
 				autoRenewAccount: stableCoinDetails?.autoRenewAccount,
 				memo: stableCoinDetails?.memo,
+				paused: stableCoinDetails?.paused,
+				deleted: stableCoinDetails?.deleted,
 				adminKey:
 					stableCoinDetails?.adminKey && JSON.parse(JSON.stringify(stableCoinDetails.adminKey)),
 				kycKey: stableCoinDetails?.kycKey && JSON.parse(JSON.stringify(stableCoinDetails.kycKey)),
@@ -141,11 +145,11 @@ const WipeOperation = () => {
 									required: t('global:validations.required'),
 									validate: {
 										validation: (value: string) => {
-											request.targetId =  value;
+											request.targetId = value;
 											const res = handleRequestValidation(request.validate('targetId'));
 											return res;
 										},
-									}
+									},
 								}}
 								isRequired
 								control={control}

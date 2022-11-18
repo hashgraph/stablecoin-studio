@@ -23,5 +23,39 @@
         "supplyType": "Supply type",
         "infinite": "Infinite",
         "finite": "Finite"
+    },
+    "dangerZone": {
+        "pauseOperation": "Pause",
+        "unpauseOperation": "Unpause",
+        "deleteOperation": "Delete"
+    },
+    "freezeOperation": "Freeze",
+    "unfreezeOperation": "Unfreeze",
+    "pause":{
+        "title": "Pause",
+        "modalSuccessTitle": "Operation successfully completed",
+        "modalSuccessDesc": "Pause successfully completed",
+        "modalAction": {
+            "accept": "Pause",
+            "subtitle": "Are you sure to continue with pause operation?"
+        }
+    },
+    "unpause":{
+        "title": "Unpause",
+        "modalSuccessTitle": "Operation successfully completed",
+        "modalSuccessDesc": "Unpause successfully completed",
+        "modalAction": {
+            "accept": "Unpause",
+            "subtitle": "Are you sure to continue with unpause operation?"
+        }
+    },
+    "delete":{
+        "title": "Delete",
+        "modalSuccessTitle": "Operation successfully completed",
+        "modalSuccessDesc": "Freeze successfully completed",
+        "modalAction": {
+            "accept": "Delete",
+            "subtitle": "Are you sure to continue with delete operation?"
+        }
     }
 }

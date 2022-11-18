@@ -8,9 +8,11 @@ interface SidebarOptionProps {
 	icon: string;
 	route: NamedRoutes;
 	title: string;
+	bgColor?: string;
+	color?: string;
 }
 
-const SidebarOption = ({ icon, title, route }: SidebarOptionProps) => {
+const SidebarOption = ({ icon, title, route, bgColor, color }: SidebarOptionProps) => {
 	const navigate = useNavigate();
 	const { pathname } = useLocation();
 
@@ -28,12 +30,12 @@ const SidebarOption = ({ icon, title, route }: SidebarOptionProps) => {
 			gap='10px'
 			alignItems='center'
 			borderRadius='12px'
-			color='gray.600'
-			bgColor={isActive ? 'light.purple' : ''}
+			color={color || 'gray.600'}
+			bgColor={bgColor || (isActive ? 'light.purple' : '')}
 			pl='15px'
 			_hover={{
 				cursor: 'pointer',
-				bgColor: 'light.purple',
+				bgColor: bgColor ? 'light.red' : 'light.purple',
 			}}
 			onClick={handleNavigate}
 		>

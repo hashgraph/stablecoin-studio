@@ -1,7 +1,7 @@
 import { Box, Flex, HStack, Text, Tooltip, VStack } from '@chakra-ui/react';
 import type { ContractId, PublicKey, StableCoinMemo } from 'hedera-stable-coin-sdk';
 import { GetStableCoinDetailsRequest } from 'hedera-stable-coin-sdk';
-import { useEffect,useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
 import BaseContainer from '../../components/BaseContainer';
@@ -22,12 +22,12 @@ const StableCoinDetails = () => {
 	const [request] = useState(
 		new GetStableCoinDetailsRequest({
 			id: selectedStableCoin?.tokenId ?? '',
-		}) 
+		}),
 	);
 
 	useEffect(() => {
 		handleRefreshCoinInfo();
-	}, [])
+	}, []);
 
 	const handleRefreshCoinInfo = async () => {
 		const stableCoinDetails = await SDKService.getStableCoinDetails(request);
@@ -44,6 +44,8 @@ const StableCoinDetails = () => {
 				treasuryId: stableCoinDetails?.treasuryId,
 				autoRenewAccount: stableCoinDetails?.autoRenewAccount,
 				memo: stableCoinDetails?.memo,
+				paused: stableCoinDetails?.paused,
+				deleted: stableCoinDetails?.deleted,
 				adminKey:
 					stableCoinDetails?.adminKey && JSON.parse(JSON.stringify(stableCoinDetails.adminKey)),
 				kycKey: stableCoinDetails?.kycKey && JSON.parse(JSON.stringify(stableCoinDetails.kycKey)),
@@ -189,6 +191,14 @@ const StableCoinDetails = () => {
 								{
 									label: t('memo'),
 									value: getMemoInformation(selectedStableCoin?.memo),
+								},
+								{
+									label: t('paused'),
+									value: selectedStableCoin?.paused,
+								},
+								{
+									label: t('deleted'),
+									value: selectedStableCoin?.deleted,
 								},
 								{
 									label: t('adminKey'),

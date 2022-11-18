@@ -1,28 +1,27 @@
+import { useEffect, useState } from 'react';
 import { Heading, Text, Stack, useDisclosure } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
 import DetailsReview from '../../../components/DetailsReview';
 import InputController from '../../../components/Form/InputController';
 import OperationLayout from '../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
-import { useSelector, useDispatch } from 'react-redux';
+import { handleRequestValidation } from '../../../utils/validationsHelper';
+import SDKService from '../../../services/SDKService';
 import {
-	// SELECTED_WALLET_ACCOUNT_INFO,
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNT,
 	walletActions,
 } from '../../../store/slices/walletSlice';
-import SDKService from '../../../services/SDKService';
-import { formatAmount } from '../../../utils/inputHelper';
-import { handleRequestValidation } from '../../../utils/validationsHelper';
-import { useState, useEffect } from 'react';
-import type { AppDispatch } from '../../../store/store.js';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
-import { CashOutStableCoinRequest, GetStableCoinDetailsRequest } from 'hedera-stable-coin-sdk';
+import type { AppDispatch } from '../../../store/store.js';
+import { formatAmountWithDecimals } from '../../../utils/inputHelper';
+import { GetAccountBalanceRequest, GetStableCoinDetailsRequest } from 'hedera-stable-coin-sdk';
 
-const BurnOperation = () => {
+const UnfreezeOperation = () => {
 	const {
 		isOpen: isOpenModalAction,
 		onOpen: onOpenModalAction,
@@ -31,29 +30,27 @@ const BurnOperation = () => {
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
-	// const infoAccount = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 
+	const [balance, setBalance] = useState<string | null>();
 	const [errorOperation, setErrorOperation] = useState();
 	const [request] = useState(
-		new CashOutStableCoinRequest({
+		new GetAccountBalanceRequest({
+			proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
 			account: {
 				accountId: account.accountId,
 			},
-			amount: '0',
-			proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
 			tokenId: selectedStableCoin?.tokenId ?? '',
+			targetId: '',
 		}),
 	);
-	const navigate = useNavigate();
+
 	const dispatch = useDispatch<AppDispatch>();
+	const navigate = useNavigate();
 
-	// const { decimals = 0, totalSupply } = selectedStableCoin || {};
-
+	const { t } = useTranslation(['getBalance', 'global', 'operations']);
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
 	});
-
-	const { t } = useTranslation(['burn', 'global', 'operations']);
 
 	useEffect(() => {
 		handleRefreshCoinInfo();
@@ -63,25 +60,10 @@ const BurnOperation = () => {
 		RouterManager.goBack(navigate);
 	};
 
-	const handleBurn: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
-		// const { amount } = getValues();
-		try {
-			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId) {
-				onError();
-				return;
-			}
-			await SDKService.cashOut(request);
-			onSuccess();
-		} catch (error: any) {
-			setErrorOperation(error.toString());
-			onError();
-		}
-	};
-
 	const handleRefreshCoinInfo = async () => {
 		const stableCoinDetails = await SDKService.getStableCoinDetails(
 			new GetStableCoinDetailsRequest({
-				id: selectedStableCoin?.tokenId || '',
+				id: selectedStableCoin?.tokenId ?? '',
 			}),
 		);
 		dispatch(
@@ -112,34 +94,50 @@ const BurnOperation = () => {
 		);
 	};
 
+	const handleUnfreeze: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
+		try {
+			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId) {
+				onError();
+				return;
+			}
+
+			const balance = await SDKService.getBalance(request);
+			setBalance(balance);
+			onSuccess();
+		} catch (error: any) {
+			setErrorOperation(error.toString());
+			onError();
+		}
+	};
+
 	return (
 		<>
 			<OperationLayout
 				LeftContent={
 					<>
 						<Heading data-testid='title' fontSize='24px' fontWeight='700' mb={10} lineHeight='16px'>
-							{t('burn:title')}
+							{t('getBalance:title')}
 						</Heading>
 						<Text color='brand.gray' data-testid='operation-title'>
-							{t('burn:operationTitle')}
+							{t('getBalance:operationTitle')}
 						</Text>
-						<Stack as='form' spacing={6}>
+						<Stack as='form' spacing={6} maxW='520px'>
 							<InputController
 								rules={{
-									required: t(`global:validations.required`),
+									required: t('global:validations.required'),
 									validate: {
 										validation: (value: string) => {
-											request.amount = value;
-											const res = handleRequestValidation(request.validate('amount'));
+											request.targetId = value;
+											const res = handleRequestValidation(request.validate('targetId'));
 											return res;
 										},
 									},
 								}}
 								isRequired
 								control={control}
-								name={'amount'}
-								label={t('burn:amountLabel')}
-								placeholder={t('burn:amountPlaceholder')}
+								name='targetAccount'
+								placeholder={t('getBalance:accountPlaceholder')}
+								label={t('getBalance:accountLabel')}
 							/>
 						</Stack>
 					</>
@@ -150,32 +148,32 @@ const BurnOperation = () => {
 			<ModalsHandler
 				errorNotificationTitle={t('operations:modalErrorTitle')}
 				errorNotificationDescription={errorOperation}
-				successNotificationTitle={t('operations:modalSuccessTitle')}
-				successNotificationDescription={t('burn:modalSuccessDesc', {
-					amount: formatAmount({
-						amount: getValues().amount ?? undefined,
-						decimals: selectedStableCoin?.decimals,
-					}),
-				})}
 				modalActionProps={{
 					isOpen: isOpenModalAction,
 					onClose: onCloseModalAction,
-					title: t('burn:modalAction.subtitle'),
-					confirmButtonLabel: t('burn:modalAction.accept'),
-					onConfirm: handleBurn,
+					title: t('getBalance:modalAction.subtitle'),
+					confirmButtonLabel: t('getBalance:modalAction.accept'),
+					onConfirm: handleUnfreeze,
 				}}
 				ModalActionChildren={
 					<DetailsReview
-						title={t('burn:modalAction.subtitle')}
+						title={t('getBalance:modalAction.subtitle')}
 						details={[
 							{
-								label: t('burn:modalAction.amount'),
-								value: getValues().amount,
-								valueInBold: true,
+								label: t('getBalance:modalAction.account'),
+								value: getValues().targetAccount,
 							},
 						]}
 					/>
 				}
+				successNotificationTitle={t('operations:modalSuccessTitle')}
+				successNotificationDescription={t('getBalance:modalSuccessBalance', {
+					account: getValues().targetAccount,
+					balance: formatAmountWithDecimals({
+						amount: balance ?? '',
+						decimals: selectedStableCoin?.decimals ?? 0,
+					}),
+				})}
 				handleOnCloseModalError={handleCloseModal}
 				handleOnCloseModalSuccess={handleCloseModal}
 			/>
@@ -183,4 +181,4 @@ const BurnOperation = () => {
 	);
 };
 
-export default BurnOperation;
+export default UnfreezeOperation;
