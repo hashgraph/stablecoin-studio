@@ -113,6 +113,11 @@ const DangerZoneOperations = () => {
 			}
 
 			await SDKService.pause(requestPause);
+			setDisabledFeatures({
+				...disabledFeatures,
+				pause: !disabledFeatures.pause,
+				unpause: !disabledFeatures.unpause,
+			});
 			onSuccess();
 		} catch (error: any) {
 			setErrorPauseOperation(error.toString());
@@ -127,6 +132,11 @@ const DangerZoneOperations = () => {
 			}
 
 			await SDKService.unpause(requestPause);
+			setDisabledFeatures({
+				...disabledFeatures,
+				pause: !disabledFeatures.pause,
+				unpause: !disabledFeatures.unpause,
+			});
 			onSuccess();
 		} catch (error: any) {
 			setErrorUnpauseOperation(error.toString());
