@@ -221,7 +221,7 @@ An account id on Hedera.
 
 `````Typescript
 	const haccount = new HashPackAccount('0.0.1')
-
+`````
 ## Account
 Represents a base account, cannot be used directly. Instead, use EOAccount or HashPackAccount
 
@@ -272,13 +272,18 @@ A private key, which has the key string and the type of key (ECDSA or ED25519 [d
 	const pkECDSA = new PrivateKey('1234' , PrivateKeyType.ECDSA)
 ```
 
-## PrivateKeyType [WIP]
+## PrivateKeyType
 
 A private key type (ECDSA or ED25519 [default]).
 
 ### Example
 
 ```Typescript
+
+enum PrivateKeyType {
+	ECDSA = 'ECDSA',
+	ED25519 = 'ED25519',
+}
 
 ```
 

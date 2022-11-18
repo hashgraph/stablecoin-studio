@@ -85,12 +85,22 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		}
 	}
 
+
+
 	public async getStableCoin(id: string): Promise<StableCoin> {
 		try {
-			const response = await this.instance.get<IHederaStableCoinDetail>(
-				this.URI_BASE + 'tokens/' + id,
-			);
+			const retry = 5 ;
+			let i = 0;
+			
+			let response;
+			do {
+				response = await this.instance.get<IHederaStableCoinDetail>(
+					this.URI_BASE + 'tokens/' + id,
+				);
 
+				i++;
+			} while (response.status !== 200 || i < retry);
+			
 			const getKeyOrDefault = (
 				val?: IPublicKey,
 			): ContractId | PublicKey | undefined => {
