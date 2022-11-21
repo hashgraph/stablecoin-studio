@@ -11,7 +11,7 @@ import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-	// SELECTED_WALLET_ACCOUNT_INFO,
+	SELECTED_WALLET_ACCOUNT_INFO,
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNT,
 	walletActions,
@@ -31,7 +31,7 @@ const CashInOperation = () => {
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
-	// const infoAccount = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
+	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 	const { decimals = 0,maxSupply} = selectedStableCoin || {};
 	const dispatch = useDispatch<AppDispatch>();
 
@@ -47,6 +47,10 @@ const CashInOperation = () => {
 			proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
 			targetId: '',
 			tokenId: selectedStableCoin?.tokenId ?? '',
+			publicKey:{
+				key:accountInfo.publicKey?.key??'',
+				type:accountInfo.publicKey?.type ??'ED25519'
+			}
 		}),
 	);
 
@@ -106,6 +110,8 @@ const CashInOperation = () => {
 			onSuccess();
 		} catch (error: any) {
 			setErrorOperation(error.toString());
+			console.log({error});
+			
 			onError();
 		}
 	};
