@@ -35,7 +35,7 @@ contract StableCoinFactoryWrapper is IStableCoinFactory, Ownable {
     function deployStableCoin(
         tokenStruct calldata requestedToken
     ) external payable returns (address, address, address, address){
-        return IStableCoinFactory(_factory).deployStableCoin(requestedToken);
+        return IStableCoinFactory(_factory).deployStableCoin{value: msg.value}(requestedToken);
     }
 
 
