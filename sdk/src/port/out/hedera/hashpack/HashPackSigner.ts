@@ -10,6 +10,11 @@ import {
 	TokenMintTransaction,
 	TokenBurnTransaction,
 	TokenWipeTransaction,
+	TokenDeleteTransaction,
+	TokenPauseTransaction,
+	TokenUnpauseTransaction,
+	TokenFreezeTransaction,
+	TokenUnfreezeTransaction,
 } from '@hashgraph/sdk';
 import { HashConnect, MessageTypes } from 'hashconnect';
 import { HashConnectProvider } from 'hashconnect/provider/provider';
@@ -69,7 +74,12 @@ export class HashPackSigner implements ISigner {
 					transaction instanceof TokenCreateTransaction ||
 					transaction instanceof TokenWipeTransaction ||
 					transaction instanceof TokenBurnTransaction ||
-					transaction instanceof TokenMintTransaction
+					transaction instanceof TokenMintTransaction ||
+					transaction instanceof TokenPauseTransaction ||
+					transaction instanceof TokenUnpauseTransaction ||
+					transaction instanceof TokenDeleteTransaction ||
+					transaction instanceof TokenFreezeTransaction ||
+					transaction instanceof TokenUnfreezeTransaction
 				) {
 					let t = await transaction.freezeWithSigner(this.signer);
 					t = await transaction.signWithSigner(this.signer);

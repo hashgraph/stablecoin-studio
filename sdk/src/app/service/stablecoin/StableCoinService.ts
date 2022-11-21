@@ -566,11 +566,13 @@ export default class StableCoinService extends Service {
 	public async deleteStableCoin(
 		req: IDeleteStableCoinRequestModel,
 	): Promise<boolean> {
+		let key = req.account?.privateKey?.publicKey?.key;
+		if (!key) {
+			key = req.account.publicKey?.key;
+		}
 		const capabilities: Capabilities[] =
-			await this.getCapabilitiesStableCoin(
-				req.tokenId,
-				req.account?.privateKey?.publicKey?.key ?? '',
-			);
+			await this.getCapabilitiesStableCoin(req.tokenId, key ?? '');
+
 		let result = false;
 		if (capabilities.includes(Capabilities.DELETE)) {
 			result = Boolean(

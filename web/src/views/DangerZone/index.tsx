@@ -8,6 +8,7 @@ import {
 	SELECTED_WALLET_CAPABILITIES,
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNTID,
+	SELECTED_WALLET_ACCOUNT_INFO
 } from '../../store/slices/walletSlice';
 import type { DirectActionProps } from '../../components/DirectAction';
 import {
@@ -27,7 +28,8 @@ const DangerZoneOperations = () => {
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const accountId = useSelector(SELECTED_WALLET_PAIRED_ACCOUNTID);
 	const capabilities: Capabilities[] | undefined = useSelector(SELECTED_WALLET_CAPABILITIES);
-
+	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
+	
 	const [disabledFeatures, setDisabledFeatures] = useState({
 		pause: false,
 		delete: false,
@@ -41,6 +43,10 @@ const DangerZoneOperations = () => {
 		new PauseStableCoinRequest({
 			account: {
 				accountId,
+				publicKey:{
+					key:accountInfo.publicKey?.key??'',
+					type:accountInfo.publicKey?.type ??'ED25519'
+				}
 			},
 			proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
 			tokenId: selectedStableCoin?.tokenId ?? '',
@@ -50,6 +56,10 @@ const DangerZoneOperations = () => {
 		new DeleteStableCoinRequest({
 			account: {
 				accountId,
+				publicKey:{
+					key:accountInfo.publicKey?.key??'',
+					type:accountInfo.publicKey?.type ??'ED25519'
+				}
 			},
 			proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
 			tokenId: selectedStableCoin?.tokenId ?? '',
