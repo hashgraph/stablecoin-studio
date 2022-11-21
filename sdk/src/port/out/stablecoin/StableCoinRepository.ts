@@ -265,7 +265,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		const params: ICallContractWithAccountRequest = {
 			contractId: proxyContractId,
 			parameters,
-			gas: 36000,
+			gas: 40000,
 			abi: HederaERC20__factory.abi,
 			account,
 		};
