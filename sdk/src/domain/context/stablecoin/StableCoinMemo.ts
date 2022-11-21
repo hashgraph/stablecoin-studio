@@ -1,8 +1,13 @@
+import {
+	AccountId as HAccountId,
+} from '@hashgraph/sdk';
+
 export class StableCoinMemo {
 	proxyContract: string;
 
 	constructor(proxyContract: string) {
-		this.proxyContract = proxyContract;
+		if(proxyContract.length >= 40) this.proxyContract = HAccountId.fromSolidityAddress(proxyContract).toString();
+		else this.proxyContract = proxyContract;
 	}
 
 	public static fromJson(json: string): StableCoinMemo {
@@ -15,7 +20,6 @@ export class StableCoinMemo {
 	public static empty(): StableCoinMemo {
 		const emptyObject = {
 			proxyContract: '',
-			htsAccount: '',
 		};
 		return this.fromJson(JSON.stringify(emptyObject));
 	}
