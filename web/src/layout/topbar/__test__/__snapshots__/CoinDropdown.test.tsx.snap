@@ -3,7 +3,7 @@
 exports[`<CoinDropdown /> should render correctly 1`] = `
 <DocumentFragment>
   <div
-    class="css-1hg55h3"
+    class="css-1rc4l3d"
     data-testid="coin-dropdown"
   >
     <div
@@ -17,7 +17,7 @@ exports[`<CoinDropdown /> should render correctly 1`] = `
         <span
           data-testid="select-placeholder"
         >
-          Choose Stable coin 
+          Choose stable coin 
         </span>
         <select
           data-testid="select-coin-dropdown"

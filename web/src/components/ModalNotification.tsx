@@ -15,8 +15,11 @@ import type { ModalProps } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import SUCCESS_ICON from '../assets/svg/success.svg';
 import ERROR_ICON from '../assets/svg/error.svg';
+import WARNING_ICON from '../assets/svg/warning.svg';
 
 const SUCCESS = 'success';
+const WARNING = 'warning';
+const ERROR = 'error';
 
 interface ModalNotificationProps extends Omit<ModalProps, 'children'> {
 	description?: string;
@@ -24,7 +27,7 @@ interface ModalNotificationProps extends Omit<ModalProps, 'children'> {
 	isOpen: boolean;
 	onClose: () => void;
 	title: string;
-	variant?: 'error' | 'success';
+	variant?: 'error' | 'success' | 'warning';
 	onClick?: () => void;
 	closeButton?: boolean;
 	error?:any,
@@ -45,7 +48,17 @@ const ModalNotification = (props: ModalNotificationProps) => {
 	} = props;
 	const { t } = useTranslation('global');
 
-	const getIcon = () => icon || (variant === SUCCESS ? SUCCESS_ICON : ERROR_ICON);
+	const getIcon = () => {
+		if(icon) return icon;
+		switch (variant) {
+			case SUCCESS:
+				return SUCCESS_ICON;
+			case WARNING:
+				return WARNING_ICON;
+			case ERROR:
+				return ERROR_ICON;
+		}
+	};
 
 	return (
 		<Modal

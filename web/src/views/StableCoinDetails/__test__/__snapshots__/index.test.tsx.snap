@@ -28,7 +28,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
               class="chakra-text css-hduy72"
               data-testid="details-review-title"
             >
-              Stable coin basic information
+              Basic information
             </p>
             <div
               class="css-0"
@@ -43,7 +43,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                   <p
                     class="chakra-text css-bpirlf"
                   >
-                    Token ID
+                    Token id
                   </p>
                   <div
                     class="chakra-stack css-1c8ysgd"
@@ -229,7 +229,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                     <p
                       class="chakra-text css-mgupmj"
                     >
-                      100,000
+                      100000
                     </p>
                   </div>
                 </div>
@@ -277,7 +277,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                   <p
                     class="chakra-text css-bpirlf"
                   >
-                    Treasury ID
+                    Treasury id
                   </p>
                   <div
                     class="chakra-stack css-1c8ysgd"
@@ -545,7 +545,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                   <p
                     class="chakra-text css-bpirlf"
                   >
-                    Kyc key
+                    KYC key
                   </p>
                   <div
                     class="chakra-stack css-1c8ysgd"
