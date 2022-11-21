@@ -78,12 +78,12 @@ describe("Pause Tests", function() {
   
     });
   
-    it("Non Admin account can not grant pauser role to an account", async function() {   
+    it.skip("Non Admin account can not grant pauser role to an account", async function() {   
       // Non Admin grants pauser role : fail       
       await expect(grantRole(PAUSE_ROLE, ContractId, proxyAddress, client2, client2account)).to.eventually.be.rejectedWith(Error);
     });
   
-    it("Non Admin account can not revoke pauser role to an account", async function() {
+    it.skip("Non Admin account can not revoke pauser role to an account", async function() {
       // Non Admin revokes pauser role : fail       
       await grantRole(PAUSE_ROLE, ContractId, proxyAddress, client, client2account);
       await expect(revokeRole(PAUSE_ROLE, ContractId, proxyAddress, client2, client2account)).to.eventually.be.rejectedWith(Error);

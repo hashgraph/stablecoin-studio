@@ -142,12 +142,15 @@ export async function deployContractSDK(
     factory: any,
     privateKey: any,
     clientOperator: any,
-    constructorParameters?: any
+    constructorParameters?: any,
+    adminKey?: any
 ) {
+    const Key = (adminKey)? adminKey: PrivateKey.fromStringED25519(privateKey);
+
     const transaction = new ContractCreateFlow()
         .setBytecode(factory.bytecode)
         .setGas(250_000)
-        .setAdminKey(PrivateKey.fromStringED25519(privateKey))
+        .setAdminKey(Key)
     if (constructorParameters) {
         transaction.setConstructorParameters(constructorParameters)
     }

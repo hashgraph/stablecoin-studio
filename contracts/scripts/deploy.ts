@@ -1,10 +1,12 @@
 const {
     ContractId,
+    DelegateContractId,
     AccountId,
     TokenSupplyType,
     PrivateKey,
     ContractFunctionParameters,
-    ContractUpdateTransaction
+    ContractUpdateTransaction,
+    Key
 } = require('@hashgraph/sdk')
 
 const factoryAddress = ""; //"0000000000000000000000000000000002e86eb8"; 0.0.48787128
@@ -51,48 +53,45 @@ export async function deployFactory(
     clientOperator: any,
     privateKey: string
 ){
+    // Deploying Wrapper logic
+    console.log(`Deploying Wrapper. please wait...`);
+
+    const wrapper = await deployContractSDK(
+        StableCoinFactoryWrapper__factory,
+        privateKey,
+        clientOperator,
+    )
+
+    console.log(`Wrapper deployed ${wrapper.toSolidityAddress()} - ${wrapper.toString()}`);
+
     // Deploying Factory logic
     console.log(`Deploying Contract Factory. please wait...`);
 
     const factory = await deployContractSDK(
         StableCoinFactory__factory,
         privateKey,
-        clientOperator
+        clientOperator,
+        null,
+        ContractId.fromString(wrapper.toString())
     )
 
     console.log(`Contract Factory deployed ${factory.toSolidityAddress()}`);
 
-    // Deploying Wrapper logic
-    console.log(`Deploying Wrapper. please wait...`);
+    // Setting the wrapper Factory address
+    let parametersContractCall = [factory.toSolidityAddress()]
 
-    let wrapperConstructorParam = new ContractFunctionParameters();
-    wrapperConstructorParam.addAddress(factory.toSolidityAddress());
+    console.log(`setting the wrapper Factory address... please wait.`)
 
-    const wrapper = await deployContractSDK(
-        StableCoinFactoryWrapper__factory,
-        privateKey,
+    await contractCall(
+        wrapper,
+        'changeFactory',
+        parametersContractCall,
         clientOperator,
-        wrapperConstructorParam
+        10000000,
+        StableCoinFactoryWrapper__factory.abi
     )
 
-    console.log(`Wrapper deployed ${wrapper.toSolidityAddress()} - ${wrapper.toString()}`);
-
-    // Updating Factory Admin to Wrapper contract
-    console.log(`Changing Factory admin to wrapper. please wait...`);
-
-    const transaction = await new ContractUpdateTransaction()
-        .setContractId(factory)
-        .setAdminKey(ContractId.fromString(wrapper.toString()));
-
-    transaction.freezeWith(clientOperator)
-
-    const transactionSign = await transaction.sign(
-        PrivateKey.fromStringED25519(privateKey)
-    )
-
-    const response = await transactionSign.execute(clientOperator);
-
-    console.log(`Factory admin changed : ${response}`);
+    console.log(`Wrapper Address set`)
 
     return wrapper;
 }

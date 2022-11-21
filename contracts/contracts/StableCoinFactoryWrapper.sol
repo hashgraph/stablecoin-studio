@@ -14,12 +14,11 @@ contract StableCoinFactoryWrapper is IStableCoinFactory, Ownable {
     event newFactoryAddress(address indexed previousFactory, address indexed newFactory);
 
 
-    constructor(address factory) Ownable()
+    constructor() Ownable()
     {    
-        changeFactory(factory);
     }
 
-    function changeFactory(address newFactory) public onlyOwner
+    function changeFactory(address newFactory) external onlyOwner
     {
         require(newFactory != address(0), "Factory address cannot be address 0");
         address oldFactory = _factory;
