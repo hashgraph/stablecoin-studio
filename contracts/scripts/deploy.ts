@@ -2,15 +2,17 @@ const {
     ContractId,
     AccountId,
     TokenSupplyType,
-    PublicKey,
-    ContractFunctionParameters
+    PrivateKey,
+    ContractFunctionParameters,
+    ContractUpdateTransaction
 } = require('@hashgraph/sdk')
 
 const factoryAddress = ""; //"0000000000000000000000000000000002e86eb8"; 0.0.48787128
 const address_0 = "0x0000000000000000000000000000000000000000";
 
 import {
-    StableCoinFactory__factory
+    StableCoinFactory__factory,
+    StableCoinFactoryWrapper__factory
 } from '../typechain-types'
 
 import {getClient, 
@@ -60,7 +62,40 @@ export async function deployFactory(
 
     console.log(`Contract Factory deployed ${factory.toSolidityAddress()}`);
 
-    return factory;
+    // Deploying Wrapper logic
+    console.log(`Deploying Wrapper. please wait...`);
+
+    let wrapperConstructorParam = new ContractFunctionParameters();
+    wrapperConstructorParam.addAddress(factory.toSolidityAddress());
+
+    const wrapper = await deployContractSDK(
+        StableCoinFactoryWrapper__factory,
+        privateKey,
+        clientOperator,
+        wrapperConstructorParam
+    )
+
+    console.log(`Wrapper deployed ${wrapper.toSolidityAddress()} - ${wrapper.toString()}`);
+
+    // Updating Factory Admin to Wrapper contract
+    console.log(`Changing Factory admin to wrapper. please wait...`);
+
+    const transaction = await new ContractUpdateTransaction()
+        .setContractId(factory)
+        .setGas(250_000)
+        .setAdminKey(ContractId.fromString(wrapper.toString()));
+
+    transaction.freezeWith(clientOperator)
+
+    const transactionSign = await transaction.sign(
+        PrivateKey.fromStringED25519(privateKey)
+    )
+
+    const response = await transactionSign.execute(clientOperator);
+
+    console.log(`Factory admin changed : ${response}`);
+
+    return wrapper;
 }
 
 export async function deployContractsWithSDK(

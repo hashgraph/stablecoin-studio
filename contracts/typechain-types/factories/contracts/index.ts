@@ -8,3 +8,4 @@ export { HederaERC20__factory } from "./HederaERC20__factory";
 export { HederaERC20Proxy__factory } from "./HederaERC20Proxy__factory";
 export { HederaERC20ProxyAdmin__factory } from "./HederaERC20ProxyAdmin__factory";
 export { StableCoinFactory__factory } from "./StableCoinFactory__factory";
+export { StableCoinFactoryWrapper__factory } from "./StableCoinFactoryWrapper__factory";
