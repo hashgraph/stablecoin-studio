@@ -44,11 +44,10 @@ exports[`<BurnOperation /> should render correctly 1`] = `
               >
                 <div
                   class="chakra-form-control css-1kxonj9"
-                  data-testid="formControl"
                   role="group"
                 >
                   <label
-                    class="chakra-form__label css-1hfoxt1"
+                    class="chakra-form__label css-1y854pg"
                     for="field-:r1:"
                     id="field-:r1:-label"
                   >
@@ -58,7 +57,7 @@ exports[`<BurnOperation /> should render correctly 1`] = `
                       <p
                         class="chakra-text css-mgupmj"
                       >
-                        How much tokens?
+                        Introduce amount
                       </p>
                       <p
                         class="chakra-text css-ftb7fv"
@@ -72,16 +71,13 @@ exports[`<BurnOperation /> should render correctly 1`] = `
                     class="chakra-input__group css-4302v8"
                   >
                     <input
-                      class="chakra-input css-l1kxkf"
+                      autocomplete="off"
+                      class="chakra-input css-16lr1fk"
                       data-testid="amount"
                       id="field-:r1:"
-                      inputmode="numeric"
-                      placeholder="Introduce amount"
-                      type="text"
+                      name="amount"
+                      placeholder="0"
                       value=""
-                    />
-                    <div
-                      class="chakra-input__right-element css-y1u7d2"
                     />
                   </div>
                 </div>
@@ -251,7 +247,7 @@ exports[`<BurnOperation /> should render correctly 1`] = `
                         <p
                           class="chakra-text css-mgupmj"
                         >
-                          100,000
+                          100000
                         </p>
                       </div>
                     </div>
@@ -267,6 +263,34 @@ exports[`<BurnOperation /> should render correctly 1`] = `
                     <div
                       class="css-gg4vpm"
                       data-testid="details-review-detail-2"
+                    >
+                      <p
+                        class="chakra-text css-bpirlf"
+                      >
+                        Max supply
+                      </p>
+                      <div
+                        class="chakra-stack css-1c8ysgd"
+                      >
+                        <p
+                          class="chakra-text css-mgupmj"
+                        >
+                          0
+                        </p>
+                      </div>
+                    </div>
+                    <hr
+                      aria-orientation="horizontal"
+                      class="chakra-divider css-zaaihy"
+                      title="divider"
+                    />
+                  </div>
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-3"
                     >
                       <p
                         class="chakra-text css-bpirlf"
@@ -296,14 +320,14 @@ exports[`<BurnOperation /> should render correctly 1`] = `
             class="chakra-stack css-1amf41o"
           >
             <button
-              class="chakra-button css-1nrhi9n"
+              class="chakra-button css-p7zmz8"
               data-testid="cancel-btn"
               type="button"
             >
               Go back
             </button>
             <button
-              class="chakra-button css-1178n6s"
+              class="chakra-button css-1lcy27"
               data-testid="confirm-btn"
               disabled=""
               type="button"
