@@ -225,7 +225,7 @@ export class SDK {
 					},
 					maxSupply: (val, req) =>{
 					if(val){
-						BigDecimal.fromString(val, req.decimals);
+						return BigDecimal.fromString(val, req.decimals);
 					}
 					return BigDecimal.ZERO;
 				}
