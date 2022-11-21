@@ -40,5 +40,5 @@ export {
 	GetAccountBalanceRequest,
 	AssociateTokenRequest,
 	GetRolesRequest,
-	GetAccountInfoRequest
+	GetAccountInfoRequest,
 };
