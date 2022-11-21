@@ -7,13 +7,14 @@ import {
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
 
-export default class DeleteStableCoinRequest
-	extends ValidatedRequest<DeleteStableCoinRequest>
+export default class FreezeAccountStableCoinRequest
+	extends ValidatedRequest<FreezeAccountStableCoinRequest>
 	implements AccountBaseRequest
 {
 	account: RequestAccount;
 	proxyContractId: string;
 	tokenId: string;
+	targetId: string;
 
 	@OptionalField()
 	publicKey?: RequestPublicKey;
@@ -22,22 +23,26 @@ export default class DeleteStableCoinRequest
 		account,
 		proxyContractId,
 		tokenId,
+		targetId,
 		publicKey,
 	}: {
 		account: RequestAccount;
 		proxyContractId: string;
 		tokenId: string;
+		targetId: string;
 		publicKey?: RequestPublicKey;
 	}) {
 		super({
 			account: Validation.checkAccount(),
 			proxyContractId: Validation.checkContractId(),
+			targetId: Validation.checkHederaIdFormat(),
 			tokenId: Validation.checkHederaIdFormat(),
 			publicKey: Validation.checkPublicKey(),
 		});
 		this.account = account;
 		this.proxyContractId = proxyContractId;
 		this.tokenId = tokenId;
+		this.targetId = targetId;
 		this.publicKey = publicKey;
 	}
 }

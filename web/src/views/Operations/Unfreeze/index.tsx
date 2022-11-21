@@ -18,8 +18,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
 import type { AppDispatch } from '../../../store/store.js';
-import { formatAmountWithDecimals } from '../../../utils/inputHelper';
-import { GetAccountBalanceRequest, GetStableCoinDetailsRequest } from 'hedera-stable-coin-sdk';
+import { FreezeAccountRequest, GetStableCoinDetailsRequest } from 'hedera-stable-coin-sdk';
 
 const UnfreezeOperation = () => {
 	const {
@@ -31,10 +30,9 @@ const UnfreezeOperation = () => {
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
 
-	const [balance, setBalance] = useState<string | null>();
 	const [errorOperation, setErrorOperation] = useState();
 	const [request] = useState(
-		new GetAccountBalanceRequest({
+		new FreezeAccountRequest({
 			proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
 			account: {
 				accountId: account.accountId,
@@ -47,7 +45,7 @@ const UnfreezeOperation = () => {
 	const dispatch = useDispatch<AppDispatch>();
 	const navigate = useNavigate();
 
-	const { t } = useTranslation(['getBalance', 'global', 'operations']);
+	const { t } = useTranslation(['unfreeze', 'global', 'operations']);
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
 	});
@@ -101,8 +99,7 @@ const UnfreezeOperation = () => {
 				return;
 			}
 
-			const balance = await SDKService.getBalance(request);
-			setBalance(balance);
+			await SDKService.unfreeze(request);		
 			onSuccess();
 		} catch (error: any) {
 			setErrorOperation(error.toString());
@@ -116,10 +113,10 @@ const UnfreezeOperation = () => {
 				LeftContent={
 					<>
 						<Heading data-testid='title' fontSize='24px' fontWeight='700' mb={10} lineHeight='16px'>
-							{t('getBalance:title')}
+							{t('unfreeze:title')}
 						</Heading>
 						<Text color='brand.gray' data-testid='operation-title'>
-							{t('getBalance:operationTitle')}
+							{t('unfreeze:operationTitle')}
 						</Text>
 						<Stack as='form' spacing={6} maxW='520px'>
 							<InputController
@@ -136,8 +133,8 @@ const UnfreezeOperation = () => {
 								isRequired
 								control={control}
 								name='targetAccount'
-								placeholder={t('getBalance:accountPlaceholder')}
-								label={t('getBalance:accountLabel')}
+								placeholder={t('unfreeze:accountPlaceholder')}
+								label={t('unfreeze:accountLabel')}
 							/>
 						</Stack>
 					</>
@@ -151,28 +148,25 @@ const UnfreezeOperation = () => {
 				modalActionProps={{
 					isOpen: isOpenModalAction,
 					onClose: onCloseModalAction,
-					title: t('getBalance:modalAction.subtitle'),
-					confirmButtonLabel: t('getBalance:modalAction.accept'),
+					title: t('unfreeze:modalAction.subtitle'),
+					confirmButtonLabel: t('unfreeze:modalAction.accept'),
 					onConfirm: handleUnfreeze,
 				}}
 				ModalActionChildren={
 					<DetailsReview
-						title={t('getBalance:modalAction.subtitle')}
+						title={t('unfreeze:modalAction.subtitle')}
 						details={[
 							{
-								label: t('getBalance:modalAction.account'),
+								label: t('unfreeze:modalAction.account'),
 								value: getValues().targetAccount,
 							},
 						]}
 					/>
 				}
 				successNotificationTitle={t('operations:modalSuccessTitle')}
-				successNotificationDescription={t('getBalance:modalSuccessBalance', {
+				successNotificationDescription={t('unfreeze:modalSuccess',{
 					account: getValues().targetAccount,
-					balance: formatAmountWithDecimals({
-						amount: balance ?? '',
-						decimals: selectedStableCoin?.decimals ?? 0,
-					}),
+				
 				})}
 				handleOnCloseModalError={handleCloseModal}
 				handleOnCloseModalSuccess={handleCloseModal}

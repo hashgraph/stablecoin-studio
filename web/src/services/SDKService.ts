@@ -25,6 +25,7 @@ import type {
 	GetAccountInfoRequest,
 	PauseStableCoinRequest,
 	DeleteStableCoinRequest,
+	FreezeAccountRequest,
 } from 'hedera-stable-coin-sdk';
 import { HederaNetwork, NetworkMode, SDK, HederaNetworkEnviroment } from 'hedera-stable-coin-sdk';
 
@@ -156,6 +157,14 @@ export class SDKService {
 
 	public static async unpause(req: PauseStableCoinRequest) {
 		return SDKService.getInstance().then((instance) => instance.unpauseStableCoin(req));
+	}
+
+	public static async freeze(req: FreezeAccountRequest) {
+		return SDKService.getInstance().then((instance) => instance.freezeAccount(req));
+	}
+
+	public static async unfreeze(req: FreezeAccountRequest) {
+		return SDKService.getInstance().then((instance) => instance.unfreezeAccount(req));
 	}
 
 	public static async delete(req: DeleteStableCoinRequest) {

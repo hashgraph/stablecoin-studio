@@ -22,6 +22,7 @@ import {
   CashInStableCoinRequest,
   WipeStableCoinRequest,
   CheckCashInLimitRequest,
+  FreezeAccountRequest,
 } from '../../../../src/index.js';
 import {
   ACCOUNTS,
@@ -611,6 +612,34 @@ describe('🧪 [PORT] SDK', () => {
     await expect(unpauseToken).toBeTruthy();
     // await expect(detailsPrev?.paused).toBe('PAUSED');
     // await expect(detailsPost?.paused).toBe('UNPAUSED');
+  }, 15000);
+
+  it('Freeze Account token', async () => {
+    const freezeAccount = await sdk.freezeAccount(
+      new FreezeAccountRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        proxyContractId: proxyContractId ?? '0.0.48938795',
+        tokenId: tokenId ?? '0.0.48938799',
+        targetId: REQUEST_ACCOUNTS.testnet.accountId,
+      }),
+    );
+
+    await expect(freezeAccount).not.toBeNull();
+    await expect(freezeAccount).toBeTruthy();
+  }, 15000);
+
+  it('Unfreeze Account token', async () => {
+    const freezeAccount = await sdk.unfreezeAccount(
+      new FreezeAccountRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        proxyContractId: proxyContractId ?? '0.0.48938795',
+        tokenId: tokenId ?? '0.0.48938799',
+        targetId: REQUEST_ACCOUNTS.testnet.accountId,
+      }),
+    );
+
+    await expect(freezeAccount).not.toBeNull();
+    await expect(freezeAccount).toBeTruthy();
   }, 15000);
 
   it('Delete token', async () => {

@@ -89,12 +89,14 @@ import {
 	GetAccountInfoRequest,
 	DeleteStableCoinRequest,
 	PauseStableCoinRequest,
+	FreezeAccountRequest,
 } from './request';
 import ValidatedRequest from './request/validation/ValidatedRequest.js';
 import RequestMapper from './request/mapping/RequestMapper.js';
 import { RequestAccount } from './request/BaseRequest.js';
 import { Roles } from '../../../domain/context/stablecoin/Roles.js';
 import IPauseStableCoinRequestModel from '../../../app/service/stablecoin/model/IPauseStableCoinRequestModel.js';
+import IFreezeAccountRequestModel from '../../../app/service/stablecoin/model/IFreezeAccountRequestModel.js';
 
 export {
 	ValidatedRequest,
@@ -572,6 +574,30 @@ export class SDK {
 			const req: IPauseStableCoinRequestModel =
 				RequestMapper.map(request);
 			return this.stableCoinService.unpauseStableCoin(req);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+
+	public freezeAccount(
+		request: FreezeAccountRequest,
+	): Promise<boolean> | null {
+		try {
+			const req: IFreezeAccountRequestModel = RequestMapper.map(request);
+			return this.stableCoinService.freezeAccount(req);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+
+	public unfreezeAccount(
+		request: FreezeAccountRequest,
+	): Promise<boolean> | null {
+		try {
+			const req: IFreezeAccountRequestModel = RequestMapper.map(request);
+			return this.stableCoinService.unfreezeAccount(req);
 		} catch (error) {
 			console.error(error);
 			return null;

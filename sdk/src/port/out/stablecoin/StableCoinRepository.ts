@@ -12,6 +12,7 @@ import {
 	IWipeTokenRequest,
 	ITransferTokenRequest,
 	IHTSTokenRequest,
+	IHTSTokenRequestTargetId,
 } from '../hedera/types.js';
 import ITokenList from './types/ITokenList.js';
 import { IToken } from './types/IToken.js';
@@ -953,5 +954,79 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		};
 
 		return await this.networkAdapter.provider.unpauseHTS(params);
+	}
+
+	public async freeze(
+		proxyContractId: string,
+		account: Account,
+		targetId: string,
+	): Promise<Uint8Array> {
+		const parameters = [
+			await this.accountToEvmAddress(new Account(targetId)),
+		];
+
+		const params: ICallContractWithAccountRequest = {
+			contractId: proxyContractId,
+			parameters,
+			gas: 60000,
+			abi: HederaERC20__factory.abi,
+			account,
+		};
+
+		return await this.networkAdapter.provider.callContract(
+			'freeze',
+			params,
+		);
+	}
+
+	public async freezeHTS(
+		tokenId: string,
+		account: Account,
+		targetId: string,
+	): Promise<boolean> {
+		const params: IHTSTokenRequestTargetId = {
+			account,
+			tokenId,
+			targetId,
+		};
+
+		return await this.networkAdapter.provider.freezeHTS(params);
+	}
+
+	public async unfreeze(
+		proxyContractId: string,
+		account: Account,
+		targetId: string,
+	): Promise<Uint8Array> {
+		const parameters = [
+			await this.accountToEvmAddress(new Account(targetId)),
+		];
+
+		const params: ICallContractWithAccountRequest = {
+			contractId: proxyContractId,
+			parameters,
+			gas: 60000,
+			abi: HederaERC20__factory.abi,
+			account,
+		};
+
+		return await this.networkAdapter.provider.callContract(
+			'unfreeze',
+			params,
+		);
+	}
+
+	public async unfreezeHTS(
+		tokenId: string,
+		account: Account,
+		targetId: string,
+	): Promise<boolean> {
+		const params: IHTSTokenRequestTargetId = {
+			account,
+			tokenId,
+			targetId,
+		};
+
+		return await this.networkAdapter.provider.unfreezeHTS(params);
 	}
 }

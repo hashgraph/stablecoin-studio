@@ -37,6 +37,10 @@ export interface IHTSTokenRequest {
 	tokenId: string;
 }
 
+export interface IHTSTokenRequestTargetId extends IHTSTokenRequest {
+	targetId: string;
+}
+
 export interface IHTSTokenRequestAmount extends IHTSTokenRequest {
 	amount: Long;
 }

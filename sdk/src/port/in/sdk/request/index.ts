@@ -20,6 +20,7 @@ import GetRolesRequest from './GetRolesRequest.js';
 import GetAccountInfoRequest from './GetAccountInfoRequest.js';
 import DeleteStableCoinRequest from './DeleteStableCoinRequest.js';
 import PauseStableCoinRequest from './PauseStableCoinRequest.js';
+import FreezeAccountRequest from './FreezeAccountRequest.js';
 
 export * from './BaseRequest.js';
 export {
@@ -45,4 +46,5 @@ export {
 	GetAccountInfoRequest,
 	DeleteStableCoinRequest,
 	PauseStableCoinRequest,
+	FreezeAccountRequest,
 };

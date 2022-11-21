@@ -29,6 +29,7 @@ import { AmountGreaterThanOwnerBalance } from './error/AmountGreaterThanOwnerBal
 import CheckNums from '../../../core/checks/numbers/CheckNums.js';
 import IDeleteStableCoinRequestModel from './model/IDeleteStableCoinRequestModel.js';
 import IPauseStableCoinRequestModel from './model/IPauseStableCoinRequestModel.js';
+import IFreezeAccountRequestModel from './model/IFreezeAccountRequestModel.js';
 
 export default class StableCoinService extends Service {
 	private repository: IStableCoinRepository;
@@ -631,6 +632,60 @@ export default class StableCoinService extends Service {
 			);
 		} else if (capabilities.includes(Capabilities.PAUSE_HTS)) {
 			result = await this.repository.unpauseHTS(req.tokenId, req.account);
+		}
+		return result;
+	}
+
+	public async freezeAccount(
+		req: IFreezeAccountRequestModel,
+	): Promise<boolean> {
+		const capabilities: Capabilities[] =
+			await this.getCapabilitiesStableCoin(
+				req.tokenId,
+				req.publicKey
+					? req.publicKey?.key
+					: req.account?.privateKey?.publicKey?.key ?? '',
+			);
+		let result = false;
+		if (capabilities.includes(Capabilities.FREEZE)) {
+			result = Boolean(
+				await this.repository
+					.freeze(req.proxyContractId, req.account, req.targetId)
+					.then((r) => r[0]),
+			);
+		} else if (capabilities.includes(Capabilities.FREEZE_HTS)) {
+			result = await this.repository.freezeHTS(
+				req.tokenId,
+				req.account,
+				req.targetId,
+			);
+		}
+		return result;
+	}
+
+	public async unfreezeAccount(
+		req: IFreezeAccountRequestModel,
+	): Promise<boolean> {
+		const capabilities: Capabilities[] =
+			await this.getCapabilitiesStableCoin(
+				req.tokenId,
+				req.publicKey
+					? req.publicKey?.key
+					: req.account?.privateKey?.publicKey?.key ?? '',
+			);
+		let result = false;
+		if (capabilities.includes(Capabilities.FREEZE)) {
+			result = Boolean(
+				await this.repository
+					.unfreeze(req.proxyContractId, req.account, req.targetId)
+					.then((r) => r[0]),
+			);
+		} else if (capabilities.includes(Capabilities.FREEZE_HTS)) {
+			result = await this.repository.unfreezeHTS(
+				req.tokenId,
+				req.account,
+				req.targetId,
+			);
 		}
 		return result;
 	}

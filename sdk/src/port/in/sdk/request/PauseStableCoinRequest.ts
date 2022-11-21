@@ -33,6 +33,7 @@ export default class PauseStableCoinRequest
 			account: Validation.checkAccount(),
 			proxyContractId: Validation.checkContractId(),
 			tokenId: Validation.checkHederaIdFormat(),
+			publicKey: Validation.checkPublicKey(),
 		});
 		this.account = account;
 		this.proxyContractId = proxyContractId;
