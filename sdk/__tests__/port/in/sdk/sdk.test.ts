@@ -142,9 +142,10 @@ describe('🧪 [PORT] SDK', () => {
   });
   it('Gets accountInfo', async () => {
     const list = await sdk.getAccountInfo(
-      new GetAccountInfoRequest ({
-      account: REQUEST_ACCOUNTS.testnet,
-    }));
+      new GetAccountInfoRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+      }),
+    );
     console.log(list);
     expect(list).not.toBeNull();
   });

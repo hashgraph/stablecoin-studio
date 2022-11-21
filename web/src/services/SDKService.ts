@@ -22,14 +22,9 @@ import type {
 	GetStableCoinDetailsRequest,
 	GetRolesRequest,
 	GetListStableCoinRequest,
-	GetAccountInfoRequest
+	GetAccountInfoRequest,
 } from 'hedera-stable-coin-sdk';
-import {
-	HederaNetwork,
-	NetworkMode,
-	SDK,
-	HederaNetworkEnviroment,
-} from 'hedera-stable-coin-sdk';
+import { HederaNetwork, NetworkMode, SDK, HederaNetworkEnviroment } from 'hedera-stable-coin-sdk';
 
 export enum HashConnectConnectionState {
 	Connected = 'Connected',
@@ -111,18 +106,19 @@ export class SDKService {
 		return (await SDKService.getInstance()).disconectHaspack();
 	}
 
-	public static async getStableCoins(req: GetListStableCoinRequest)
-	: Promise<IStableCoinList[] | null> {
+	public static async getStableCoins(
+		req: GetListStableCoinRequest,
+	): Promise<IStableCoinList[] | null> {
 		return (await SDKService.getInstance())?.getListStableCoin(req);
 	}
 
-	public static async getStableCoinDetails(req: GetStableCoinDetailsRequest) 
-	: Promise<IStableCoinDetail | null> {
+	public static async getStableCoinDetails(
+		req: GetStableCoinDetailsRequest,
+	): Promise<IStableCoinDetail | null> {
 		return (await SDKService.getInstance())?.getStableCoinDetails(req);
 	}
 
-	public static async getAccountInfo(req: GetAccountInfoRequest)
-	: Promise<IAccountInfo | null> {
+	public static async getAccountInfo(req: GetAccountInfoRequest): Promise<IAccountInfo | null> {
 		return (await SDKService.getInstance())?.getAccountInfo(req);
 	}
 

@@ -85,7 +85,7 @@ import {
 	GetAccountBalanceRequest,
 	AssociateTokenRequest,
 	GetRolesRequest,
-	GetAccountInfoRequest
+	GetAccountInfoRequest,
 } from './request';
 import ValidatedRequest from './request/validation/ValidatedRequest.js';
 import RequestMapper from './request/mapping/RequestMapper.js';
@@ -513,7 +513,7 @@ export class SDK {
 	}
 
 	public getAccountInfo(
-		request: GetAccountInfoRequest
+		request: GetAccountInfoRequest,
 	): Promise<AccountInfo> | null {
 		try {
 			const req: IAccountWithKeyRequestModel = RequestMapper.map(request);

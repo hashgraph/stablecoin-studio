@@ -390,7 +390,7 @@ export class StableCoin extends BaseEntity {
 		if (!Number.isInteger(value)) {
 			return [new InvalidType(value, 'integer')];
 		}
-		
+
 		return errorList;
 	}
 
