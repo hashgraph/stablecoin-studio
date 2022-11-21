@@ -13,6 +13,7 @@ export interface ModalsHandlerActionsProps
 export interface ModalsHandlerProps {
 	errorNotificationDescription?: string;
 	errorNotificationTitle: string;
+	errorTransactionUrl?:string;
 	ModalActionChildren: ReactNode;
 	modalActionProps: ModalsHandlerActionsProps;
 	successNotificationDescription?: string;
@@ -25,6 +26,7 @@ const ModalsHandler = (props: ModalsHandlerProps) => {
 	const {
 		errorNotificationDescription,
 		errorNotificationTitle,
+		errorTransactionUrl,
 		modalActionProps,
 		ModalActionChildren,
 		successNotificationDescription,
@@ -69,6 +71,7 @@ const ModalsHandler = (props: ModalsHandlerProps) => {
 				description={errorNotificationDescription}
 				isOpen={isOpenModalError}
 				onClose={handleOnCloseModalError ?? onCloseModalError}
+				errorTransactionUrl={errorTransactionUrl}
 			/>
 		</>
 	);

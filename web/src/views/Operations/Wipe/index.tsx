@@ -33,6 +33,7 @@ const WipeOperation = () => {
 	// const infoAccount = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 
 	const [errorOperation, setErrorOperation] = useState();
+	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
 	const [request] = useState(
 		new WipeStableCoinRequest({
 			account: {
@@ -102,6 +103,7 @@ const WipeOperation = () => {
 			await SDKService.wipe(request);
 			onSuccess();
 		} catch (error: any) {
+			setErrorTransactionUrl(error.transactionUrl);
 			setErrorOperation(error.toString());
 			onError();
 		}
@@ -166,6 +168,7 @@ const WipeOperation = () => {
 			<ModalsHandler
 				errorNotificationTitle={t('operations:modalErrorTitle')}
 				errorNotificationDescription={errorOperation}
+				errorTransactionUrl={errorTransactionUrl}
 				successNotificationTitle={t('operations:modalSuccessTitle')}
 				successNotificationDescription={t('wipe:modalSuccessDesc', {
 					amount: getValues().amount,

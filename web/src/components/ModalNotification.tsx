@@ -27,7 +27,7 @@ interface ModalNotificationProps extends Omit<ModalProps, 'children'> {
 	variant?: 'error' | 'success';
 	onClick?: () => void;
 	closeButton?: boolean;
-	error?:any,
+	errorTransactionUrl?:string,
 }
 
 const ModalNotification = (props: ModalNotificationProps) => {
@@ -40,7 +40,7 @@ const ModalNotification = (props: ModalNotificationProps) => {
 		title,
 		variant,
 		closeButton = true,
-		error,
+		errorTransactionUrl,
 		...othersProps
 	} = props;
 	const { t } = useTranslation('global');
@@ -91,8 +91,8 @@ const ModalNotification = (props: ModalNotificationProps) => {
 							{description}
 						</Text>
 					)}
-					{error?.transactionError?.transactionUrl && (
-						<Link href={error.transactionError.transactionUrl} isExternal textDecoration="underline">
+					{errorTransactionUrl && (
+						<Link href={errorTransactionUrl} isExternal textDecoration="underline">
 							{t('common.see-transaction')}
 						</Link>
 					)}

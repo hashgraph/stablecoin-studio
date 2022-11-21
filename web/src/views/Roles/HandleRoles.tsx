@@ -84,6 +84,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 	register(fields.supplierQuantitySwitch, { value: true });
 	const { isOpen, onOpen, onClose } = useDisclosure();
 
+	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
 	const account: string | undefined = watch(fields.account);
 	const amount: string | undefined = watch(fields.amount);
 	const infinity: boolean = watch(fields.supplierQuantitySwitch);
@@ -367,6 +368,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 			}
 			onSuccess();
 		} catch (error: any) {
+			setErrorTransactionUrl(error.transactionUrl);
 			console.log(error.toString());
 			onError();
 		}
@@ -575,6 +577,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 				errorNotificationTitle={t(`roles:${action}.modalErrorTitle`)}
 				// @ts-ignore-next-line
 				errorNotificationDescription={t(`roles:${action}.${modalErrorDescription}`)}
+				errorTransactionUrl={errorTransactionUrl}
 				modalActionProps={{
 					isOpen,
 					onClose,
