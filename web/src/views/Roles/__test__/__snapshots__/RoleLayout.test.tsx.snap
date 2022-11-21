@@ -41,7 +41,7 @@ exports[`<RoleLayout /> should render correctly 1`] = `
                   role="group"
                 >
                   <label
-                    class="chakra-form__label css-1hfoxt1"
+                    class="chakra-form__label css-1y854pg"
                     for="field-:r0:"
                     id="field-:r0:-label"
                   >
@@ -66,11 +66,11 @@ exports[`<RoleLayout /> should render correctly 1`] = `
                   >
                     <input
                       autocomplete="off"
-                      class="chakra-input css-l1kxkf"
+                      class="chakra-input css-16lr1fk"
                       data-testid="account"
                       id="field-:r0:"
                       name="account"
-                      placeholder="Introduce account"
+                      placeholder="0.0.0"
                       value=""
                     />
                   </div>
@@ -85,7 +85,7 @@ exports[`<RoleLayout /> should render correctly 1`] = `
                   role="group"
                 >
                   <label
-                    class="chakra-form__label css-1hfoxt1"
+                    class="chakra-form__label css-1y854pg"
                     for="field-:r1:"
                     id="field-:r1:-label"
                   >
@@ -96,7 +96,7 @@ exports[`<RoleLayout /> should render correctly 1`] = `
                         class="chakra-text css-mgupmj"
                         data-testid="selector-label"
                       >
-                        Select role to give
+                        Select role to grant
                       </p>
                       <p
                         class="chakra-text css-x3tq0c"
@@ -122,7 +122,7 @@ exports[`<RoleLayout /> should render correctly 1`] = `
                       class="css-1f43avz-a11yText-A11yText"
                     />
                     <div
-                      class=" css-17n5zh"
+                      class=" css-1ugyojt"
                     >
                       <div
                         class="css-3y2vuh"
@@ -131,7 +131,7 @@ exports[`<RoleLayout /> should render correctly 1`] = `
                           class="chakra-text css-4pvr19"
                           data-testid="select-placeholder"
                         >
-                          Select role to give
+                          Select role to grant
                         </span>
                         <div
                           class=" css-svnjlw"
@@ -360,7 +360,7 @@ exports[`<RoleLayout /> should render correctly 1`] = `
                         <p
                           class="chakra-text css-mgupmj"
                         >
-                          100,000
+                          100000
                         </p>
                       </div>
                     </div>
@@ -433,14 +433,14 @@ exports[`<RoleLayout /> should render correctly 1`] = `
             class="chakra-stack css-1amf41o"
           >
             <button
-              class="chakra-button css-1nrhi9n"
+              class="chakra-button css-p7zmz8"
               data-testid="cancel-btn"
               type="button"
             >
               Go back
             </button>
             <button
-              class="chakra-button css-1178n6s"
+              class="chakra-button css-1lcy27"
               data-testid="confirm-btn"
               type="button"
             >

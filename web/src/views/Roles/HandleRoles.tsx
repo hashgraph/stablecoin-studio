@@ -204,7 +204,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 		}
 	}, [supplierLimitOption]);
 
-	const handleSubmit: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
+	const handleSubmit: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError, onWarning }) => {
 		try {
 			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId || !account) {
 				onError();
@@ -305,7 +305,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 
 					if (isUnlimitedSupplierAllowance![0]) {
 						setModalErrorDescription('hasInfiniteAllowance');
-						onError();
+						onWarning();
 						return;
 					}
 
@@ -578,6 +578,8 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 				// @ts-ignore-next-line
 				errorNotificationDescription={t(`roles:${action}.${modalErrorDescription}`)}
 				errorTransactionUrl={errorTransactionUrl}
+				// @ts-ignore-next-line
+				warningNotificationDescription={t(`roles:${action}.${modalErrorDescription}`)}
 				modalActionProps={{
 					isOpen,
 					onClose,

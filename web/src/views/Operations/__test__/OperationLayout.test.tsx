@@ -69,6 +69,9 @@ describe(`<${OperationLayout.name} />`, () => {
 			translations.details.totalSupply,
 		);
 		expect(component.queryAllByTestId('details-review-detail-2')[1]).toHaveTextContent(
+			translations.details.maxSupply,
+		);
+		expect(component.queryAllByTestId('details-review-detail-3')[0]).toHaveTextContent(
 			translations.details.supplyType,
 		);
 	});

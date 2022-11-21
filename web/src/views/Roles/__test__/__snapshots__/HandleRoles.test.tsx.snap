@@ -41,7 +41,7 @@ exports[`<HandleRoles /> should render correctly on all actions: edit 1`] = `
                   role="group"
                 >
                   <label
-                    class="chakra-form__label css-1hfoxt1"
+                    class="chakra-form__label css-1y854pg"
                     for="field-:r1:"
                     id="field-:r1:-label"
                   >
@@ -66,7 +66,7 @@ exports[`<HandleRoles /> should render correctly on all actions: edit 1`] = `
                   >
                     <input
                       autocomplete="off"
-                      class="chakra-input css-l1kxkf"
+                      class="chakra-input css-16lr1fk"
                       data-testid="account"
                       id="field-:r1:"
                       name="account"
@@ -85,7 +85,7 @@ exports[`<HandleRoles /> should render correctly on all actions: edit 1`] = `
                   role="group"
                 >
                   <label
-                    class="chakra-form__label css-1hfoxt1"
+                    class="chakra-form__label css-1y854pg"
                     for="field-:r2:"
                     id="field-:r2:-label"
                   >
@@ -122,7 +122,7 @@ exports[`<HandleRoles /> should render correctly on all actions: edit 1`] = `
                       class="css-1f43avz-a11yText-A11yText"
                     />
                     <div
-                      class=" css-17n5zh"
+                      class=" css-1ugyojt"
                     >
                       <div
                         class="css-3y2vuh"
@@ -360,7 +360,7 @@ exports[`<HandleRoles /> should render correctly on all actions: edit 1`] = `
                         <p
                           class="chakra-text css-mgupmj"
                         >
-                          100,000
+                          100000
                         </p>
                       </div>
                     </div>
@@ -433,14 +433,14 @@ exports[`<HandleRoles /> should render correctly on all actions: edit 1`] = `
             class="chakra-stack css-1amf41o"
           >
             <button
-              class="chakra-button css-1nrhi9n"
+              class="chakra-button css-p7zmz8"
               data-testid="cancel-btn"
               type="button"
             >
               Go back
             </button>
             <button
-              class="chakra-button css-1178n6s"
+              class="chakra-button css-1lcy27"
               data-testid="confirm-btn"
               disabled=""
               type="button"
@@ -500,9 +500,9 @@ exports[`<HandleRoles /> should render correctly on all actions: give 1`] = `
                   role="group"
                 >
                   <label
-                    class="chakra-form__label css-1hfoxt1"
-                    for="field-:r9:"
-                    id="field-:r9:-label"
+                    class="chakra-form__label css-1y854pg"
+                    for="field-:rb:"
+                    id="field-:rb:-label"
                   >
                     <div
                       class="chakra-stack css-84zodg"
@@ -525,9 +525,9 @@ exports[`<HandleRoles /> should render correctly on all actions: give 1`] = `
                   >
                     <input
                       autocomplete="off"
-                      class="chakra-input css-l1kxkf"
+                      class="chakra-input css-16lr1fk"
                       data-testid="account"
-                      id="field-:r9:"
+                      id="field-:rb:"
                       name="account"
                       placeholder="give.accountPlaceholder"
                       value=""
@@ -544,9 +544,9 @@ exports[`<HandleRoles /> should render correctly on all actions: give 1`] = `
                   role="group"
                 >
                   <label
-                    class="chakra-form__label css-1hfoxt1"
-                    for="field-:ra:"
-                    id="field-:ra:-label"
+                    class="chakra-form__label css-1y854pg"
+                    for="field-:rc:"
+                    id="field-:rc:-label"
                   >
                     <div
                       class="chakra-stack css-84zodg"
@@ -581,7 +581,7 @@ exports[`<HandleRoles /> should render correctly on all actions: give 1`] = `
                       class="css-1f43avz-a11yText-A11yText"
                     />
                     <div
-                      class=" css-17n5zh"
+                      class=" css-1ugyojt"
                     >
                       <div
                         class="css-3y2vuh"
@@ -605,7 +605,7 @@ exports[`<HandleRoles /> should render correctly on all actions: give 1`] = `
                             autocomplete="off"
                             autocorrect="off"
                             class=" css-146k1ar-input"
-                            id="field-:ra:"
+                            id="field-:rc:"
                             role="combobox"
                             spellcheck="false"
                             tabindex="0"
@@ -819,7 +819,7 @@ exports[`<HandleRoles /> should render correctly on all actions: give 1`] = `
                         <p
                           class="chakra-text css-mgupmj"
                         >
-                          100,000
+                          100000
                         </p>
                       </div>
                     </div>
@@ -892,14 +892,473 @@ exports[`<HandleRoles /> should render correctly on all actions: give 1`] = `
             class="chakra-stack css-1amf41o"
           >
             <button
-              class="chakra-button css-1nrhi9n"
+              class="chakra-button css-p7zmz8"
               data-testid="cancel-btn"
               type="button"
             >
               Go back
             </button>
             <button
-              class="chakra-button css-1178n6s"
+              class="chakra-button css-1lcy27"
+              data-testid="confirm-btn"
+              disabled=""
+              type="button"
+            >
+              Accept
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;
+
+exports[`<HandleRoles /> should render correctly on all actions: refresh 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-stack css-16oka5y"
+  >
+    <h2
+      class="chakra-heading css-llrpa2"
+      data-testid="base-container-heading"
+    >
+      Role management
+    </h2>
+    <div
+      class="css-1b6lda7"
+      data-testid="base-container-children"
+    >
+      <div
+        class="css-1us6gcn"
+      >
+        <div
+          class="css-1r9sqqd"
+        >
+          <div
+            class="chakra-stack css-135a0es"
+          >
+            <h2
+              class="chakra-heading css-uig24d"
+              data-testid="title"
+            >
+              refresh.title
+            </h2>
+            <form
+              class="chakra-stack css-b5leqj"
+            >
+              <div
+                class="chakra-stack css-1h0sumw"
+              >
+                <div
+                  class="chakra-form-control css-1kxonj9"
+                  role="group"
+                >
+                  <label
+                    class="chakra-form__label css-1y854pg"
+                    for="field-:rv:"
+                    id="field-:rv:-label"
+                  >
+                    <div
+                      class="chakra-stack css-84zodg"
+                    >
+                      <p
+                        class="chakra-text css-mgupmj"
+                      >
+                        refresh.accountLabel
+                      </p>
+                      <p
+                        class="chakra-text css-ftb7fv"
+                        data-testid="required"
+                      >
+                        *
+                      </p>
+                    </div>
+                  </label>
+                  <div
+                    class="chakra-input__group css-4302v8"
+                  >
+                    <input
+                      autocomplete="off"
+                      class="chakra-input css-16lr1fk"
+                      data-testid="account"
+                      id="field-:rv:"
+                      name="account"
+                      placeholder="refresh.accountPlaceholder"
+                      value=""
+                    />
+                  </div>
+                </div>
+              </div>
+              <div
+                class="chakra-stack css-1h0sumw"
+              >
+                <div
+                  class="chakra-form-control css-1kxonj9"
+                  data-testid="form_control"
+                  role="group"
+                >
+                  <label
+                    class="chakra-form__label css-1y854pg"
+                    for="field-:r10:"
+                    id="field-:r10:-label"
+                  >
+                    <div
+                      class="chakra-stack css-84zodg"
+                    >
+                      <p
+                        class="chakra-text css-mgupmj"
+                        data-testid="selector-label"
+                      >
+                        refresh.selectLabel
+                      </p>
+                      <p
+                        class="chakra-text css-x3tq0c"
+                      >
+                        *
+                      </p>
+                    </div>
+                  </label>
+                  <div
+                    class="css-svkhat"
+                  >
+                    <div
+                      class="css-3qrqo0"
+                    />
+                    <span
+                      class="css-1f43avz-a11yText-A11yText"
+                      id="react-select-5-live-region"
+                    />
+                    <span
+                      aria-atomic="false"
+                      aria-live="polite"
+                      aria-relevant="additions text"
+                      class="css-1f43avz-a11yText-A11yText"
+                    />
+                    <div
+                      class=" css-1ugyojt"
+                    >
+                      <div
+                        class="css-3y2vuh"
+                      >
+                        <span
+                          class="chakra-text css-4pvr19"
+                          data-testid="select-placeholder"
+                        >
+                          refresh.selectPlaceholder
+                        </span>
+                        <div
+                          class=" css-svnjlw"
+                          data-value=""
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            aria-describedby="react-select-5-placeholder"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            class=" css-146k1ar-input"
+                            id="field-:r10:"
+                            role="combobox"
+                            spellcheck="false"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                        </div>
+                      </div>
+                      <div
+                        class=" css-hfbj6y"
+                      >
+                        <div
+                          class="css-1aabyhj"
+                        >
+                          <svg
+                            class="chakra-icon css-13otjrl"
+                            fill="currentColor"
+                            focusable="false"
+                            height="1em"
+                            viewBox="0 0 256 256"
+                            width="1em"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <rect
+                              fill="none"
+                              height="256"
+                              width="256"
+                            />
+                            <polyline
+                              fill="none"
+                              points="208 96 128 176 48 96"
+                              stroke="currentColor"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="16"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                    <input
+                      name="role"
+                      type="hidden"
+                      value=""
+                    />
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div
+            class="chakra-stack css-eunu1i"
+          >
+            <div
+              class="chakra-stack css-wqnj46"
+            >
+              <h2
+                class="chakra-heading css-m8uvwu"
+                data-testid="details-title"
+              >
+                Stable coin details
+              </h2>
+              <div
+                class="css-13brihr"
+              >
+                <p
+                  class="chakra-text css-53sllx"
+                  data-testid="details-review-title"
+                >
+                  Basic details
+                </p>
+                <div
+                  class="css-0"
+                >
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-0"
+                    >
+                      <p
+                        class="chakra-text css-bpirlf"
+                      >
+                        Name
+                      </p>
+                      <div
+                        class="chakra-stack css-1c8ysgd"
+                      >
+                        <p
+                          class="chakra-text css-mgupmj"
+                        >
+                          ManuCoin2
+                        </p>
+                      </div>
+                    </div>
+                    <hr
+                      aria-orientation="horizontal"
+                      class="chakra-divider css-zaaihy"
+                      title="divider"
+                    />
+                  </div>
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-1"
+                    >
+                      <p
+                        class="chakra-text css-bpirlf"
+                      >
+                        Symbol
+                      </p>
+                      <div
+                        class="chakra-stack css-1c8ysgd"
+                      >
+                        <p
+                          class="chakra-text css-mgupmj"
+                        >
+                          MCC2
+                        </p>
+                      </div>
+                    </div>
+                    <hr
+                      aria-orientation="horizontal"
+                      class="chakra-divider css-zaaihy"
+                      title="divider"
+                    />
+                  </div>
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-2"
+                    >
+                      <p
+                        class="chakra-text css-bpirlf"
+                      >
+                        Decimals
+                      </p>
+                      <div
+                        class="chakra-stack css-1c8ysgd"
+                      >
+                        <p
+                          class="chakra-text css-mgupmj"
+                        >
+                          3
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="css-13brihr"
+              >
+                <p
+                  class="chakra-text css-53sllx"
+                  data-testid="details-review-title"
+                >
+                  Optional details
+                </p>
+                <div
+                  class="css-0"
+                >
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-0"
+                    >
+                      <p
+                        class="chakra-text css-bpirlf"
+                      >
+                        Initial supply
+                      </p>
+                      <div
+                        class="chakra-stack css-1c8ysgd"
+                      >
+                        <p
+                          class="chakra-text css-mgupmj"
+                        >
+                          0
+                        </p>
+                      </div>
+                    </div>
+                    <hr
+                      aria-orientation="horizontal"
+                      class="chakra-divider css-zaaihy"
+                      title="divider"
+                    />
+                  </div>
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-1"
+                    >
+                      <p
+                        class="chakra-text css-bpirlf"
+                      >
+                        Total supply
+                      </p>
+                      <div
+                        class="chakra-stack css-1c8ysgd"
+                      >
+                        <p
+                          class="chakra-text css-mgupmj"
+                        >
+                          100000
+                        </p>
+                      </div>
+                    </div>
+                    <hr
+                      aria-orientation="horizontal"
+                      class="chakra-divider css-zaaihy"
+                      title="divider"
+                    />
+                  </div>
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-2"
+                    >
+                      <p
+                        class="chakra-text css-bpirlf"
+                      >
+                        Max supply
+                      </p>
+                      <div
+                        class="chakra-stack css-1c8ysgd"
+                      >
+                        <p
+                          class="chakra-text css-mgupmj"
+                        >
+                          0
+                        </p>
+                      </div>
+                    </div>
+                    <hr
+                      aria-orientation="horizontal"
+                      class="chakra-divider css-zaaihy"
+                      title="divider"
+                    />
+                  </div>
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-3"
+                    >
+                      <p
+                        class="chakra-text css-bpirlf"
+                      >
+                        Supply type
+                      </p>
+                      <div
+                        class="chakra-stack css-1c8ysgd"
+                      >
+                        <p
+                          class="chakra-text css-mgupmj"
+                        >
+                          Finite
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="css-3gu2fl"
+        >
+          <div
+            class="chakra-stack css-1amf41o"
+          >
+            <button
+              class="chakra-button css-p7zmz8"
+              data-testid="cancel-btn"
+              type="button"
+            >
+              Go back
+            </button>
+            <button
+              class="chakra-button css-1lcy27"
               data-testid="confirm-btn"
               disabled=""
               type="button"
@@ -959,9 +1418,9 @@ exports[`<HandleRoles /> should render correctly on all actions: revoke 1`] = `
                   role="group"
                 >
                   <label
-                    class="chakra-form__label css-1hfoxt1"
-                    for="field-:rh:"
-                    id="field-:rh:-label"
+                    class="chakra-form__label css-1y854pg"
+                    for="field-:rl:"
+                    id="field-:rl:-label"
                   >
                     <div
                       class="chakra-stack css-84zodg"
@@ -984,9 +1443,9 @@ exports[`<HandleRoles /> should render correctly on all actions: revoke 1`] = `
                   >
                     <input
                       autocomplete="off"
-                      class="chakra-input css-l1kxkf"
+                      class="chakra-input css-16lr1fk"
                       data-testid="account"
-                      id="field-:rh:"
+                      id="field-:rl:"
                       name="account"
                       placeholder="revoke.accountPlaceholder"
                       value=""
@@ -1003,9 +1462,9 @@ exports[`<HandleRoles /> should render correctly on all actions: revoke 1`] = `
                   role="group"
                 >
                   <label
-                    class="chakra-form__label css-1hfoxt1"
-                    for="field-:ri:"
-                    id="field-:ri:-label"
+                    class="chakra-form__label css-1y854pg"
+                    for="field-:rm:"
+                    id="field-:rm:-label"
                   >
                     <div
                       class="chakra-stack css-84zodg"
@@ -1040,7 +1499,7 @@ exports[`<HandleRoles /> should render correctly on all actions: revoke 1`] = `
                       class="css-1f43avz-a11yText-A11yText"
                     />
                     <div
-                      class=" css-17n5zh"
+                      class=" css-1ugyojt"
                     >
                       <div
                         class="css-3y2vuh"
@@ -1064,7 +1523,7 @@ exports[`<HandleRoles /> should render correctly on all actions: revoke 1`] = `
                             autocomplete="off"
                             autocorrect="off"
                             class=" css-146k1ar-input"
-                            id="field-:ri:"
+                            id="field-:rm:"
                             role="combobox"
                             spellcheck="false"
                             tabindex="0"
@@ -1278,7 +1737,7 @@ exports[`<HandleRoles /> should render correctly on all actions: revoke 1`] = `
                         <p
                           class="chakra-text css-mgupmj"
                         >
-                          100,000
+                          100000
                         </p>
                       </div>
                     </div>
@@ -1351,14 +1810,14 @@ exports[`<HandleRoles /> should render correctly on all actions: revoke 1`] = `
             class="chakra-stack css-1amf41o"
           >
             <button
-              class="chakra-button css-1nrhi9n"
+              class="chakra-button css-p7zmz8"
               data-testid="cancel-btn"
               type="button"
             >
               Go back
             </button>
             <button
-              class="chakra-button css-1178n6s"
+              class="chakra-button css-1lcy27"
               data-testid="confirm-btn"
               disabled=""
               type="button"
