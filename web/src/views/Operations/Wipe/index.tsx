@@ -15,7 +15,6 @@ import {
 	walletActions,
 } from '../../../store/slices/walletSlice';
 import type { AppDispatch } from '../../../store/store.js';
-import { formatAmount } from '../../../utils/inputHelper';
 import { handleRequestValidation } from '../../../utils/validationsHelper';
 import OperationLayout from './../OperationLayout';
 import { useNavigate } from 'react-router-dom';
@@ -175,10 +174,7 @@ const WipeOperation = () => {
 				errorNotificationDescription={errorOperation}
 				successNotificationTitle={t('operations:modalSuccessTitle')}
 				successNotificationDescription={t('wipe:modalSuccessDesc', {
-					amount: formatAmount({
-						amount: getValues().amount ?? undefined,
-						decimals: selectedStableCoin?.decimals,
-					}),
+					amount: getValues().amount,
 					account: getValues().destinationAccount,
 				})}
 				modalActionProps={{

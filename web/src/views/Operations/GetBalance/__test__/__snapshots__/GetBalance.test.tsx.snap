@@ -47,7 +47,7 @@ exports[`<GetBalanceOperation /> should render correctly 1`] = `
                   role="group"
                 >
                   <label
-                    class="chakra-form__label css-1hfoxt1"
+                    class="chakra-form__label css-1y854pg"
                     for="field-:r1:"
                     id="field-:r1:-label"
                   >
@@ -57,7 +57,7 @@ exports[`<GetBalanceOperation /> should render correctly 1`] = `
                       <p
                         class="chakra-text css-mgupmj"
                       >
-                        What account?
+                        Introduce account
                       </p>
                       <p
                         class="chakra-text css-ftb7fv"
@@ -72,11 +72,11 @@ exports[`<GetBalanceOperation /> should render correctly 1`] = `
                   >
                     <input
                       autocomplete="off"
-                      class="chakra-input css-l1kxkf"
+                      class="chakra-input css-16lr1fk"
                       data-testid="targetAccount"
                       id="field-:r1:"
                       name="targetAccount"
-                      placeholder="Introduce account"
+                      placeholder="0.0.0"
                       value=""
                     />
                   </div>
@@ -247,7 +247,7 @@ exports[`<GetBalanceOperation /> should render correctly 1`] = `
                         <p
                           class="chakra-text css-mgupmj"
                         >
-                          100,000
+                          100000
                         </p>
                       </div>
                     </div>
@@ -263,6 +263,34 @@ exports[`<GetBalanceOperation /> should render correctly 1`] = `
                     <div
                       class="css-gg4vpm"
                       data-testid="details-review-detail-2"
+                    >
+                      <p
+                        class="chakra-text css-bpirlf"
+                      >
+                        Max supply
+                      </p>
+                      <div
+                        class="chakra-stack css-1c8ysgd"
+                      >
+                        <p
+                          class="chakra-text css-mgupmj"
+                        >
+                          0
+                        </p>
+                      </div>
+                    </div>
+                    <hr
+                      aria-orientation="horizontal"
+                      class="chakra-divider css-zaaihy"
+                      title="divider"
+                    />
+                  </div>
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-3"
                     >
                       <p
                         class="chakra-text css-bpirlf"
@@ -292,14 +320,14 @@ exports[`<GetBalanceOperation /> should render correctly 1`] = `
             class="chakra-stack css-1amf41o"
           >
             <button
-              class="chakra-button css-1nrhi9n"
+              class="chakra-button css-p7zmz8"
               data-testid="cancel-btn"
               type="button"
             >
               Go back
             </button>
             <button
-              class="chakra-button css-1178n6s"
+              class="chakra-button css-1lcy27"
               data-testid="confirm-btn"
               disabled=""
               type="button"

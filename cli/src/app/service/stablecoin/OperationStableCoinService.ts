@@ -40,10 +40,10 @@ import RoleStableCoinsService from './RoleStableCoinService.js';
 import RescueStableCoinsService from './RescueStableCoinService.js';
 import CapabilitiesStableCoinsService from './CapabilitiesStableCoinService.js';
 import BurnStableCoinsService from './BurnStableCoinService.js';
-import ManageExternalTokenService from './ManageExternalTokenService';
 import colors from 'colors';
 import DeleteStableCoinService from './DeleteStableCoinService.js';
 import PauseStableCoinService from './PauseStableCoinService.js';
+import ManageImportedTokenService from './ManageImportedTokenService';
 
 /**
  * Operation Stable Coin Service
@@ -100,7 +100,7 @@ export default class OperationStableCoinService extends Service {
 
         this.stableCoinId = await utilsService.defaultMultipleAsk(
           language.getText('stablecoin.askToken'),
-          new ManageExternalTokenService().mixExternalTokens(
+          new ManageImportedTokenService().mixExternalTokens(
             resp.map((item) => {
               return `${item.id} - ${item.symbol}`;
             }),
@@ -516,7 +516,7 @@ export default class OperationStableCoinService extends Service {
             return token;
           },
         );
-        new ManageExternalTokenService().updateAccount(externalTokensRefreshed);
+        new ManageImportedTokenService().updateAccount(externalTokensRefreshed);
         configAccount.externalTokens = externalTokensRefreshed;
         break;
       case colors.red('Danger zone'):

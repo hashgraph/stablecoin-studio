@@ -69,9 +69,11 @@ const CashInOperation = () => {
 	};
 
 	const handleRefreshCoinInfo = async () => {
-		const stableCoinDetails = await SDKService.getStableCoinDetails(new GetStableCoinDetailsRequest({
-			id: selectedStableCoin?.tokenId || '',
-		}));
+		const stableCoinDetails = await SDKService.getStableCoinDetails(
+			new GetStableCoinDetailsRequest({
+				id: selectedStableCoin?.tokenId || '',
+			}),
+		);
 		dispatch(
 			walletActions.setSelectedStableCoin({
 				tokenId: stableCoinDetails?.tokenId,
@@ -142,13 +144,6 @@ const CashInOperation = () => {
 											request.amount = value;
 											const res = handleRequestValidation(request.validate('amount'));
 											return res;
-										},
-										quantityOverMaxSupply: (value: string) => {
-											return maxSupply && maxSupply !== 'INFINITE'
-												? BigDecimal.fromString(maxSupply, decimals).isGreaterOrEqualThan(
-														BigDecimal.fromString(value.toString(), decimals),
-												  ) || t('global:validations.overMaxSupplyCashIn')
-												: true;
 										},
 									},
 								}}

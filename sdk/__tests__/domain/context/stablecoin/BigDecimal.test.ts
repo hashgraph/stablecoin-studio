@@ -1,5 +1,6 @@
 import { BigNumber } from '@hashgraph/hethers';
 import BigDecimal from '../../../../src/domain/context/stablecoin/BigDecimal.js';
+import { MAX_SUPPLY } from '../../../core/core.js';
 
 const getNumber = (
   decimals: number,
@@ -199,15 +200,15 @@ describe('🧪 [DOMAIN] BigDecimal', () => {
     // const val = getNumber(17, { integer: '100', decimal: '1' }); // 100.00000000000000001
 
     // 100 => 100.0
-    const num = BigDecimal.isBigDecimal('100.asd');
-    const num2 = BigDecimal.isBigDecimal('100.100.100');
-    const num3 = BigDecimal.isBigDecimal('100100.100');
-    const num4 = BigDecimal.isBigDecimal('asda100,100.100');
-    const num5 = BigDecimal.isBigDecimal('');
-    expect(num).toBeFalsy();
-    expect(num2).toBeFalsy();
-    expect(num3).toBeTruthy();
-    expect(num4).toBeFalsy();
-    expect(num5).toBeFalsy();
+    const num = '0.' + '0'.repeat(17) + '1';
+    const num2 = '0.' + '0'.repeat(16) + '1';
+    const data = '1';
+    const data2 = '1' + '0'.repeat(17);
+    const req = BigDecimal.fromStringFixed(data, 18);
+    const req2 = BigDecimal.fromStringFixed(data, 17);
+    const req3 = BigDecimal.fromStringFixed(data2, 18);
+    expect(req.toString()).toEqual(num);
+    expect(req2.toString()).toEqual(num2);
+    expect(req3.toString()).toEqual('0.1');
   });
 });

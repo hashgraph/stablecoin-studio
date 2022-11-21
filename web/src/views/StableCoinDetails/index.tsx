@@ -9,12 +9,12 @@ import DetailsReview from '../../components/DetailsReview';
 import Icon from '../../components/Icon';
 import TooltipCopy from '../../components/TooltipCopy';
 import { SELECTED_WALLET_COIN, walletActions } from '../../store/slices/walletSlice';
-import { formatAmountWithDecimals, formatShortKey } from '../../utils/inputHelper';
+import { formatShortKey } from '../../utils/inputHelper';
 import SDKService from '../../services/SDKService';
 import type { AppDispatch } from '../../store/store';
 
 const StableCoinDetails = () => {
-	const { t, i18n } = useTranslation('stableCoinDetails');
+	const { t } = useTranslation('stableCoinDetails');
 	const dispatch = useDispatch<AppDispatch>();
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
@@ -149,33 +149,17 @@ const StableCoinDetails = () => {
 								},
 								{
 									label: t('initialSupply'),
-									value: selectedStableCoin?.initialSupply
-										? formatAmountWithDecimals({
-												amount: selectedStableCoin.initialSupply,
-												decimals: selectedStableCoin.decimals || 0,
-												language: i18n.language,
-										  })
-										: 0,
+									value: selectedStableCoin?.initialSupply ?? 0,
 								},
 								{
 									label: t('totalSupply'),
-									value: selectedStableCoin?.totalSupply
-										? formatAmountWithDecimals({
-												amount: selectedStableCoin.totalSupply,
-												decimals: selectedStableCoin.decimals || 0,
-												language: i18n.language,
-										  })
-										: 0,
+									value: selectedStableCoin?.totalSupply ?? 0,
 								},
 								{
 									label: t('maxSupply'),
 									value:
 										selectedStableCoin?.maxSupply && selectedStableCoin?.maxSupply !== 'INFINITE'
-											? formatAmountWithDecimals({
-													amount: selectedStableCoin.maxSupply,
-													decimals: selectedStableCoin.decimals || 0,
-													language: i18n.language,
-											  })
+											? selectedStableCoin?.maxSupply
 											: 'INFINITE',
 								},
 								{

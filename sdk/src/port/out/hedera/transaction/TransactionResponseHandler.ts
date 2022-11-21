@@ -55,7 +55,9 @@ export class TransactionResposeHandler {
 					record = transactionRecord;
 				}
 				if (!record)
-					throw new TransactionResponseError('Invalid response type');
+					throw new TransactionResponseError({
+						message: 'Invalid response type',
+					});
 				results = this.decodeFunctionResult(nameFunction, record, abi);
 			}
 			if (record instanceof Uint32Array) {
@@ -76,9 +78,9 @@ export class TransactionResposeHandler {
 			}
 		}
 
-		throw new TransactionResponseError(
-			'The response type is neither RECORD nor RECEIPT.',
-		);
+		throw new TransactionResponseError({
+			message: 'The response type is neither RECORD nor RECEIPT.',
+		});
 	}
 
 	private async getRecord(
@@ -124,7 +126,9 @@ export class TransactionResposeHandler {
 					clientOrSigner,
 				);
 			} else {
-				throw new TransactionResponseError('Incorrect response type');
+				throw new TransactionResponseError({
+					message: 'Incorrect response type',
+				});
 			}
 		} else {
 			if (transactionResponse instanceof TransactionResponse) {
@@ -155,20 +159,40 @@ export class TransactionResposeHandler {
 						.receipt as Uint8Array,
 				);
 			} else {
-				const res = transactionResponse.error;
+				const res: any = transactionResponse.error;
 				if (res) {
-					throw new TransactionResponseError(res);
+					throw new TransactionResponseError({
+						message: res.message,
+						name: res.name,
+						status: res.status,
+						transactionId: res.transactionId,
+					});
 				} else {
-					throw new TransactionResponseError(transactionResponse.id);
+					throw new TransactionResponseError({
+						transactionId: transactionResponse.id,
+						message: transactionResponse.id ?? '',
+					});
 				}
 			}
 			if (receipt) {
 				return receipt;
 			} else {
-				throw new TransactionResponseError(transactionResponse.error);
+				const res: any = transactionResponse.error;
+				throw new TransactionResponseError({
+					message: res.message,
+					name: res.name,
+					status: res.status,
+					transactionId: res.transactionId,
+				});
 			}
 		} catch (error) {
-			throw new TransactionResponseError(transactionResponse.error);
+			const res: any = transactionResponse.error;
+			throw new TransactionResponseError({
+				message: res.message,
+				name: res.name,
+				status: res.status,
+				transactionId: res.transactionId,
+			});
 		}
 	}
 
@@ -177,18 +201,32 @@ export class TransactionResposeHandler {
 	): Uint32Array | undefined {
 		const record = transactionResponse.record;
 		if (!record) {
-			throw new TransactionResponseError(
-				transactionResponse.error ??
-					transactionResponse.id ??
-					transactionResponse.topic,
-			);
+			let transactionError;
+			if (transactionResponse.error) {
+				const res: any = transactionResponse.error;
+				transactionError = {
+					message: res.message,
+					name: res.name,
+					status: res.status,
+					transactionId: res.transactionId,
+				};
+			} else if (transactionResponse.id) {
+				transactionError = {
+					message: transactionResponse.id,
+					transactionId: transactionResponse.id,
+				};
+			} else {
+				transactionError = { message: transactionResponse.topic };
+			}
+
+			throw new TransactionResponseError(transactionError);
 		} else {
 			try {
 				return new Uint32Array(Object.values(record));
 			} catch (err) {
-				throw new TransactionResponseError(
-					`Could not determine response type for: ${record}`,
-				);
+				throw new TransactionResponseError({
+					message: `Could not determine response type for: ${record}`,
+				});
 			}
 		}
 	}
@@ -221,14 +259,14 @@ export class TransactionResposeHandler {
 					(func: { name: string }) => func.name === functionName,
 				);
 			} else {
-				throw new TransactionResponseError(
-					`ABI is undefined, so it could not be possible to find contract function`,
-				);
+				throw new TransactionResponseError({
+					message: `ABI is undefined, so it could not be possible to find contract function`,
+				});
 			}
 			if (!functionAbi?.outputs)
-				throw new TransactionResponseError(
-					`Contract function ${functionName} not found in ABI, are you using the right version?`,
-				);
+				throw new TransactionResponseError({
+					message: `Contract function ${functionName} not found in ABI, are you using the right version?`,
+				});
 			const functionParameters = functionAbi?.outputs;
 			const resultHex = '0x'.concat(
 				Buffer.from(resultAsBytes).toString('hex'),
@@ -241,9 +279,9 @@ export class TransactionResposeHandler {
 			const jsonParsedArray = JSON.parse(JSON.stringify(result));
 			return jsonParsedArray;
 		} catch (error) {
-			throw new TransactionResponseError(
-				'Could not decode function result',
-			);
+			throw new TransactionResponseError({
+				message: 'Could not decode function result',
+			});
 		}
 	}
 }

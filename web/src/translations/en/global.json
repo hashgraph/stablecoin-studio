@@ -8,28 +8,29 @@
     "yes": "Yes",
     "unknown": "-",
     "copy": "Copy",
-    "copied": "Copied!"
+    "copied": "Copied!",
+    "see-transaction": "See transaction"
   },
   "innactivity": {
     "title":"Your session has expired!",
-    "description":"Please, connect your wallet again."
+    "description":"Please, reconnect your wallet."
   },
   "hashpack-no-installed": {
-    "title": "Your haspack extension is not installed yet",
-    "description": "Click in the button bellow to download the extension.",
+    "title": "Hashpack extension is not installed yet",
+    "description": "Click on the button bellow to download the extension.",
     "button": "Download Hashpack"
   },
   "hashpack-no-connected": {
     "title": "Your wallet is not connected yet",
-    "description": "Click in the button bellow to connect your wallet",
+    "description": "Click On the button bellow to connect to your wallet",
     "button": "Connect your wallet"
   },
   "topbar": {
     "network": "Op. network",
     "account": "Op. account",
     "coinDropdown": {
-      "placeholder": "Choose Stable coin",
-      "noStableCoin": "No Stable Coins"
+      "placeholder": "Choose stable coin",
+      "noStableCoin": "No stable Coins"
     },
     "createSC": "Create coin",
     "addSC": "Add coin"
@@ -45,10 +46,7 @@
     "invalidAccount": "Incorrect account",
     "invalidAmount": "Invalid amount",
     "invalidCoinId": "Invalid stable coin id",
-    "decimalsValidation": "You have added more decimals than the supported by the stable coin",
-    "overTotalSupply": "Quantity over current total supply",
-    "overMaxSupply": "Initial supply cannot be more than the total supply",
-    "overMaxSupplyCashIn": "The total of the amounts exceeds maxSupply"
+    "decimalsValidation": "The amount has an invalid number of decimales"
   },
   "operations": {
     "title": "Operations"
