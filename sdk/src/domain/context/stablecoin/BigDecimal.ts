@@ -148,8 +148,8 @@ export default class BigDecimal implements FixedNumber {
 		return parseFixed(this.value, this.format.decimals);
 	}
 
-	public toFixedNumber(): number {
-		return this.toBigNumber().toNumber();
+	public toFixedNumber(): string {
+		return this.toBigNumber().toString();
 	}
 
 	public toString(): string {
@@ -209,8 +209,13 @@ export default class BigDecimal implements FixedNumber {
 	}
 
 	static fromStringFixed(value: string, decimals: number): BigDecimal {
-		const position = value.length - decimals;
-		value = value.substring(0, position) + '.' + value.substring(position);
+		if (value.length < decimals) {
+			value = '0.' + value.padStart(decimals - value.length + 1, '0');
+		} else {
+			const position = value.length - decimals;
+			value =
+				value.substring(0, position) + '.' + value.substring(position);
+		}
 		return new BigDecimal(value, decimals);
 	}
 
