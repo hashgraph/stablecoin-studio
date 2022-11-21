@@ -82,7 +82,6 @@ export async function deployFactory(
 
     const transaction = await new ContractUpdateTransaction()
         .setContractId(factory)
-        .setGas(250_000)
         .setAdminKey(ContractId.fromString(wrapper.toString()));
 
     transaction.freezeWith(clientOperator)

@@ -26,7 +26,7 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes{
         HederaERC20ProxyAdmin StableCoinProxyAdmin = new HederaERC20ProxyAdmin();
 
         // Transfer Proxy Admin ownership
-        StableCoinProxyAdmin.transferOwnership(msg.sender);
+        StableCoinProxyAdmin.transferOwnership(tx.origin);
 
         // Deploy Proxy
         HederaERC20Proxy StableCoinProxy = new HederaERC20Proxy(
@@ -49,10 +49,10 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes{
         require(responseCode == HederaResponseCodes.SUCCESS, "Token Creation failed");
 
         // Initialize Proxy
-        HederaERC20(address(StableCoinProxy)).initialize(tokenAddress, msg.sender);
+        HederaERC20(address(StableCoinProxy)).initialize(tokenAddress, tx.origin);
 
         // Associate token
-        if(treasuryIsContract(requestedToken.treasuryAddress))HederaERC20(address(StableCoinProxy)).associateToken(msg.sender);
+        if(treasuryIsContract(requestedToken.treasuryAddress))HederaERC20(address(StableCoinProxy)).associateToken(tx.origin);
 
         return (address(StableCoinProxy), address(StableCoinProxyAdmin), address(StableCoinContract), tokenAddress);
     }
