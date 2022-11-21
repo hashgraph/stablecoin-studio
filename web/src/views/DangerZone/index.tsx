@@ -42,27 +42,27 @@ const DangerZoneOperations = () => {
 	const [requestPause] = useState(
 		new PauseStableCoinRequest({
 			account: {
-				accountId,
-				publicKey:{
-					key:accountInfo.publicKey?.key??'',
-					type:accountInfo.publicKey?.type ??'ED25519'
-				}
+				accountId
 			},
 			proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
 			tokenId: selectedStableCoin?.tokenId ?? '',
+			publicKey:{
+				key:accountInfo.publicKey?.key??'',
+				type:accountInfo.publicKey?.type ??'ED25519'
+			}
 		}),
 	);
 	const [requestDelete] = useState(
 		new DeleteStableCoinRequest({
 			account: {
 				accountId,
-				publicKey:{
-					key:accountInfo.publicKey?.key??'',
-					type:accountInfo.publicKey?.type ??'ED25519'
-				}
 			},
 			proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
 			tokenId: selectedStableCoin?.tokenId ?? '',
+			publicKey:{
+				key:accountInfo.publicKey?.key??'',
+				type:accountInfo.publicKey?.type ??'ED25519'
+			}
 		}),
 	);
 	useEffect(() => {

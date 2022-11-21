@@ -40,7 +40,6 @@ export default class RequestMapper {
 			req.accountId,
 			this.getPrivateKey(req.privateKey),
 			req.evmAddress,
-			this.getPublicKey(req.publicKey),
 		);
 	}
 

@@ -7,7 +7,6 @@ export interface RequestAccount {
 	accountId: string;
 	privateKey?: RequestPrivateKey;
 	evmAddress?: string;
-	publicKey?: RequestPublicKey;
 }
 
 interface RequestKey {
