@@ -11,10 +11,10 @@ export class BaseRouterManager {
 		navigate: NavigateFunction,
 		namedUrl: NamedRoutes,
 		params?: ReverseParams,
-		state?: object,
+		options?: object,
 		extra?: string,
 	) {
-		return navigate(reverse(`${this.routes[namedUrl]}${extra || ''}`, params), state);
+		return navigate(reverse(`${this.routes[namedUrl]}${extra || ''}`, params), options);
 	}
 
 	getUrl(namedUrl: NamedRoutes, params?: ReverseParams, extra?: string) {

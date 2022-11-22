@@ -30,7 +30,7 @@
     "account": "Op. account",
     "coinDropdown": {
       "placeholder": "Choose stable coin",
-      "noStableCoin": "No stable Coins"
+      "noStableCoin": "No stable coins found with that id, would you like to import it?"
     },
     "createSC": "Create coin",
     "addSC": "Add coin"

@@ -36,11 +36,11 @@ const styles = {
 	},
 };
 
-interface ExternalTokenInfoProps {
+interface ImportedTokenInfoProps {
 	control: Control<FieldValues>;
 }
 
-const ExternalTokenInfo = (props: ExternalTokenInfoProps) => {
+const ImportedTokenInfo = (props: ImportedTokenInfoProps) => {
 	const { control } = props;
 	const { t } = useTranslation(['global', 'externalTokenInfo']);
 
@@ -103,4 +103,4 @@ const ExternalTokenInfo = (props: ExternalTokenInfoProps) => {
 	);
 };
 
-export default ExternalTokenInfo;
+export default ImportedTokenInfo;
