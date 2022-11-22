@@ -38,6 +38,7 @@ const DangerZoneOperations = () => {
 	const [errorPauseOperation, setErrorPauseOperation] = useState('');
 	const [errorUnpauseOperation, setErrorUnpauseOperation] = useState('');
 	const [errorDeleteOperation, setErrorDeleteOperation] = useState('');
+	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
 
 	const [requestPause] = useState(
 		new PauseStableCoinRequest({
@@ -130,6 +131,7 @@ const DangerZoneOperations = () => {
 			});
 			onSuccess();
 		} catch (error: any) {
+			setErrorTransactionUrl(error.transactionUrl);
 			setErrorPauseOperation(error.toString());
 			onError();
 		}
@@ -149,6 +151,7 @@ const DangerZoneOperations = () => {
 			});
 			onSuccess();
 		} catch (error: any) {
+			setErrorTransactionUrl(error.transactionUrl);
 			setErrorUnpauseOperation(error.toString());
 			onError();
 		}
@@ -164,6 +167,7 @@ const DangerZoneOperations = () => {
 			await SDKService.delete(requestDelete);
 			onSuccess();
 		} catch (error: any) {
+			setErrorTransactionUrl(error.transactionUrl);
 			setErrorDeleteOperation(error.toString());
 			onError();
 		}
@@ -176,6 +180,7 @@ const DangerZoneOperations = () => {
 			title: t('dangerZone.pauseOperation'),
 			isDisabled: disabledFeatures?.pause,
 			errorNotification: errorPauseOperation,
+			errorTransactionUrl,
 			operationTranslate: 'pause',
 		},
 		{
@@ -184,6 +189,7 @@ const DangerZoneOperations = () => {
 			title: t('dangerZone.unpauseOperation'),
 			isDisabled: disabledFeatures?.unpause,
 			errorNotification: errorUnpauseOperation,
+			errorTransactionUrl,
 			operationTranslate: 'unpause',
 		},
 		{
@@ -192,6 +198,7 @@ const DangerZoneOperations = () => {
 			title: t('dangerZone.deleteOperation'),
 			isDisabled: disabledFeatures?.delete,
 			errorNotification: errorDeleteOperation,
+			errorTransactionUrl,
 			operationTranslate: 'delete',
 		},
 	];

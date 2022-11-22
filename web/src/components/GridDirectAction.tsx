@@ -28,6 +28,7 @@ const GridDirectAction = (props: GridDirectActionProps) => {
 						title={directAction.title}
 						isDisabled={directAction.isDisabled}
 						errorNotification={directAction.errorNotification}
+						errorTransactionUrl={directAction.errorTransactionUrl}
 						operationTranslate={directAction.operationTranslate}
 					/>
 				</GridItem>

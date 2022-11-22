@@ -15,6 +15,7 @@ export interface DirectActionProps extends FlexProps {
 	isDisabled?: boolean;
 	handleAction: ModalsHandlerActionsProps['onConfirm'];
 	errorNotification: string;
+	errorTransactionUrl?: string;
 	operationTranslate: OperationTraslateType;
 }
 
@@ -25,6 +26,7 @@ const DirectAction = ({
 	variant = 'primary',
 	handleAction,
 	errorNotification,
+	errorTransactionUrl,
 	operationTranslate,
 	...props
 }: DirectActionProps) => {
@@ -66,6 +68,7 @@ const DirectAction = ({
 			<ModalsHandler
 				errorNotificationTitle={t('operations:modalErrorTitle')}
 				errorNotificationDescription={errorNotification}
+				errorTransactionUrl={errorTransactionUrl}
 				successNotificationTitle={t(`operations:${operationTranslate}.modalSuccessTitle`)}
 				successNotificationDescription={t(`operations:${operationTranslate}.modalSuccessDesc`)}
 				modalActionProps={{

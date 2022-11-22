@@ -31,6 +31,7 @@ const FreezeOperation = () => {
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
 
 	const [errorOperation, setErrorOperation] = useState();
+	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
 	const [request] = useState(
 		new FreezeAccountRequest({
 			proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
@@ -102,6 +103,7 @@ const FreezeOperation = () => {
 			await SDKService.freeze(request);		
 			onSuccess();
 		} catch (error: any) {
+			setErrorTransactionUrl(error.transactionUrl);
 			setErrorOperation(error.toString());
 			onError();
 		}
@@ -145,6 +147,7 @@ const FreezeOperation = () => {
 			<ModalsHandler
 				errorNotificationTitle={t('operations:modalErrorTitle')}
 				errorNotificationDescription={errorOperation}
+				errorTransactionUrl={errorTransactionUrl}
 				modalActionProps={{
 					isOpen: isOpenModalAction,
 					onClose: onCloseModalAction,
