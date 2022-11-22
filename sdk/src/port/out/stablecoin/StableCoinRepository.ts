@@ -88,7 +88,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 	public async getStableCoin(id: string): Promise<StableCoin> {
 		try {
-			const retry = 5;
+			const retry = 10;
 			let i = 0;
 
 			let response;
@@ -98,7 +98,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 				);
 
 				i++;
-			} while (response.status !== 200 || i < retry);
+			} while (response.status !== 200 && i < retry);
 
 			const getKeyOrDefault = (
 				val?: IPublicKey,
