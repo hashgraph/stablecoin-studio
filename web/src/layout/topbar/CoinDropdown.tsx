@@ -26,8 +26,9 @@ import {
 	HashPackAccount,
 	GetAccountInfoRequest,
 } from 'hedera-stable-coin-sdk';
-import type { IExternalToken } from '../../interfaces/IExternalToken.js';
+import type { IExternalToken } from '../../interfaces/IExternalToken';
 import type { GroupBase, SelectInstance } from 'chakra-react-select';
+import { validateAccount } from '../../utils/validationsHelper';
 
 const CoinDropdown = () => {
 	const dispatch = useDispatch<AppDispatch>();
@@ -175,18 +176,23 @@ const CoinDropdown = () => {
 	};
 
 	const handleNoOptionsMessage = (obj: { inputValue: string }) => {
-		return (
-			<VStack gap={1}>
-				<Text>{t('topbar.coinDropdown.noStableCoin')}</Text>
-				<Button
-					data-testid='topbar-action-import-search'
-					onClick={() => onImportSearch(obj.inputValue)}
-					flex={1}
-				>
-					Import
-				</Button>
-			</VStack>
-		);
+		const { inputValue } = obj;
+		if (validateAccount(inputValue)) {
+			return (
+				<VStack gap={1}>
+					<Text>{t('topbar.coinDropdown.noStableCoin')}</Text>
+					<Button
+						data-testid='topbar-action-import-search'
+						onClick={() => onImportSearch(inputValue)}
+						flex={1}
+					>
+						Import
+					</Button>
+				</VStack>
+			);
+		} else {
+			return <Text>{t('topbar.coinDropdown.invalidStableCoinId')}</Text>;
+		}
 	};
 
 	const { t } = useTranslation('global');
