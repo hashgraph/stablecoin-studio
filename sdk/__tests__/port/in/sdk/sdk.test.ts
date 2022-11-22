@@ -133,7 +133,7 @@ describe('🧪 [PORT] SDK', () => {
     );
 
     await expect(coin).rejects.toThrow(BaseError);
-  });
+  }, 10_000);
 
   it('Gets the token list', async () => {
     const list = await sdk.getListStableCoin(
@@ -146,9 +146,10 @@ describe('🧪 [PORT] SDK', () => {
   });
   it('Gets accountInfo', async () => {
     const list = await sdk.getAccountInfo(
-      new GetAccountInfoRequest ({
-      account: REQUEST_ACCOUNTS.testnet,
-    }));
+      new GetAccountInfoRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+      }),
+    );
     console.log(list);
     expect(list).not.toBeNull();
   });

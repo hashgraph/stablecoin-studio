@@ -22,7 +22,7 @@ exports[`<Operations /> should render correctly 1`] = `
           class="chakra-heading css-1bjzvf5"
           data-testid="subtitle"
         >
-          Create new operation
+          Choose an operation
         </h2>
         <div
           class="css-nxcc5s"
@@ -76,9 +76,9 @@ exports[`<Operations /> should render correctly 1`] = `
               </div>
               <p
                 class="chakra-text css-1mbt7nu"
-                data-testid="direct-access-Cash in tokens"
+                data-testid="direct-access-Cash in"
               >
-                Cash in tokens
+                Cash in
               </p>
             </button>
           </div>
@@ -131,9 +131,9 @@ exports[`<Operations /> should render correctly 1`] = `
               </div>
               <p
                 class="chakra-text css-1mbt7nu"
-                data-testid="direct-access-Burn tokens"
+                data-testid="direct-access-Burn"
               >
-                Burn tokens
+                Burn
               </p>
             </button>
           </div>
@@ -293,9 +293,9 @@ exports[`<Operations /> should render correctly 1`] = `
               </div>
               <p
                 class="chakra-text css-1mbt7nu"
-                data-testid="direct-access-Rescue tokens"
+                data-testid="direct-access-Rescue"
               >
-                Rescue tokens
+                Rescue
               </p>
             </button>
           </div>
@@ -349,9 +349,9 @@ exports[`<Operations /> should render correctly 1`] = `
               </div>
               <p
                 class="chakra-text css-1mbt7nu"
-                data-testid="direct-access-Wipe tokens"
+                data-testid="direct-access-Wipe"
               >
-                Wipe tokens
+                Wipe
               </p>
             </button>
           </div>

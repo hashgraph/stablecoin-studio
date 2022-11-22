@@ -331,7 +331,7 @@ export default class CreateStableCoinService extends Service {
   private async askForInitialSupply(val?: string): Promise<string> {
     return await utilsService.defaultSingleAsk(
       language.getText('stablecoin.askInitialSupply'),
-      val || undefined,
+      val || '0',
     );
   }
 

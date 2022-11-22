@@ -85,7 +85,7 @@ import {
 	GetAccountBalanceRequest,
 	AssociateTokenRequest,
 	GetRolesRequest,
-	GetAccountInfoRequest
+	GetAccountInfoRequest,
 } from './request';
 import ValidatedRequest from './request/validation/ValidatedRequest.js';
 import RequestMapper from './request/mapping/RequestMapper.js';
@@ -226,8 +226,12 @@ export class SDK {
 						}
 						return BigDecimal.ZERO;
 					},
-					maxSupply: (val, req) =>
-						BigDecimal.fromString(val, req.decimals)
+					maxSupply: (val, req) =>{
+					if(val){
+						return BigDecimal.fromString(val, req.decimals);
+					}
+					return BigDecimal.ZERO;
+				}
 				},
 			);
 			return this.stableCoinService.createStableCoin(req);
@@ -512,7 +516,7 @@ export class SDK {
 	}
 
 	public getAccountInfo(
-		request: GetAccountInfoRequest
+		request: GetAccountInfoRequest,
 	): Promise<AccountInfo> | null {
 		try {
 			const req: IAccountWithKeyRequestModel = RequestMapper.map(request);

@@ -19,7 +19,6 @@ import {
 import { SelectController } from '../../components/Form/SelectController';
 import { formatAmountWithDecimals } from '../../utils/inputHelper';
 import {
-	BigDecimal,
 	Capabilities,
 	CheckCashInLimitRequest,
 	CheckCashInRoleRequest,
@@ -85,6 +84,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 	register(fields.supplierQuantitySwitch, { value: true });
 	const { isOpen, onOpen, onClose } = useDisclosure();
 
+	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
 	const account: string | undefined = watch(fields.account);
 	const amount: string | undefined = watch(fields.amount);
 	const infinity: boolean = watch(fields.supplierQuantitySwitch);
@@ -204,7 +204,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 		}
 	}, [supplierLimitOption]);
 
-	const handleSubmit: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
+	const handleSubmit: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError, onWarning }) => {
 		try {
 			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId || !account) {
 				onError();
@@ -305,7 +305,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 
 					if (isUnlimitedSupplierAllowance![0]) {
 						setModalErrorDescription('hasInfiniteAllowance');
-						onError();
+						onWarning();
 						return;
 					}
 
@@ -368,6 +368,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 			}
 			onSuccess();
 		} catch (error: any) {
+			setErrorTransactionUrl(error.transactionUrl);
 			console.log(error.toString());
 			onError();
 		}
@@ -437,7 +438,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 	};
 
 	const renderAmount = () => {
-		const { decimals = 0, maxSupply } = selectedStableCoin || {};
+		const { decimals = 0 } = selectedStableCoin || {};
 		return (
 			<Stack spacing={6}>
 				{increaseOrDecreseOptionSelected && (
@@ -457,13 +458,6 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 										const res = handleRequestValidation(request.validate('amount'));
 										return res;
 									}
-								},
-								quantityOverMaxSupply: (value: string) => {
-									return maxSupply && maxSupply !== 'INFINITE'
-										? BigDecimal.fromString(maxSupply, decimals).isGreaterOrEqualThan(
-												BigDecimal.fromString(value.toString(), decimals),
-										  ) || t('global:validations.overMaxSupplyCashIn')
-										: true;
 								},
 							},
 						}}
@@ -583,6 +577,9 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 				errorNotificationTitle={t(`roles:${action}.modalErrorTitle`)}
 				// @ts-ignore-next-line
 				errorNotificationDescription={t(`roles:${action}.${modalErrorDescription}`)}
+				errorTransactionUrl={errorTransactionUrl}
+				// @ts-ignore-next-line
+				warningNotificationDescription={t(`roles:${action}.${modalErrorDescription}`)}
 				modalActionProps={{
 					isOpen,
 					onClose,

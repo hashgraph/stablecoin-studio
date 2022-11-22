@@ -14,7 +14,6 @@ import {
 	walletActions,
 } from '../../../store/slices/walletSlice';
 import SDKService from '../../../services/SDKService';
-import { formatAmount } from '../../../utils/inputHelper';
 import { handleRequestValidation } from '../../../utils/validationsHelper';
 import { useState, useEffect } from 'react';
 import type { AppDispatch } from '../../../store/store.js';
@@ -34,6 +33,7 @@ const BurnOperation = () => {
 	// const infoAccount = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 
 	const [errorOperation, setErrorOperation] = useState();
+	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
 	const [request] = useState(
 		new CashOutStableCoinRequest({
 			account: {
@@ -46,8 +46,6 @@ const BurnOperation = () => {
 	);
 	const navigate = useNavigate();
 	const dispatch = useDispatch<AppDispatch>();
-
-	// const { decimals = 0, totalSupply } = selectedStableCoin || {};
 
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
@@ -73,15 +71,18 @@ const BurnOperation = () => {
 			await SDKService.cashOut(request);
 			onSuccess();
 		} catch (error: any) {
+			setErrorTransactionUrl(error.transactionUrl)
 			setErrorOperation(error.toString());
 			onError();
 		}
 	};
 
 	const handleRefreshCoinInfo = async () => {
-		const stableCoinDetails = await SDKService.getStableCoinDetails(new GetStableCoinDetailsRequest({
-			id: selectedStableCoin?.tokenId || '',
-		}));
+		const stableCoinDetails = await SDKService.getStableCoinDetails(
+			new GetStableCoinDetailsRequest({
+				id: selectedStableCoin?.tokenId || '',
+			}),
+		);
 		dispatch(
 			walletActions.setSelectedStableCoin({
 				tokenId: stableCoinDetails?.tokenId,
@@ -146,12 +147,11 @@ const BurnOperation = () => {
 			<ModalsHandler
 				errorNotificationTitle={t('operations:modalErrorTitle')}
 				errorNotificationDescription={errorOperation}
+				errorTransactionUrl={errorTransactionUrl}
 				successNotificationTitle={t('operations:modalSuccessTitle')}
 				successNotificationDescription={t('burn:modalSuccessDesc', {
-					amount: formatAmount({
-						amount: getValues().amount ?? undefined,
-						decimals: selectedStableCoin?.decimals,
-					}),
+					amount: getValues().amount,
+					account: getValues().destinationAccount,
 				})}
 				modalActionProps={{
 					isOpen: isOpenModalAction,

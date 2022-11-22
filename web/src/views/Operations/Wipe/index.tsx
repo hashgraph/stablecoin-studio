@@ -15,7 +15,6 @@ import {
 	walletActions,
 } from '../../../store/slices/walletSlice';
 import type { AppDispatch } from '../../../store/store.js';
-import { formatAmount } from '../../../utils/inputHelper';
 import { handleRequestValidation } from '../../../utils/validationsHelper';
 import OperationLayout from './../OperationLayout';
 import { useNavigate } from 'react-router-dom';
@@ -34,6 +33,7 @@ const WipeOperation = () => {
 	// const infoAccount = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 
 	const [errorOperation, setErrorOperation] = useState();
+	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
 	const [request] = useState(
 		new WipeStableCoinRequest({
 			account: {
@@ -63,9 +63,11 @@ const WipeOperation = () => {
 	};
 
 	const handleRefreshCoinInfo = async () => {
-		const stableCoinDetails = await SDKService.getStableCoinDetails(new GetStableCoinDetailsRequest ({
-			id: selectedStableCoin?.tokenId || '',
-		}));
+		const stableCoinDetails = await SDKService.getStableCoinDetails(
+			new GetStableCoinDetailsRequest({
+				id: selectedStableCoin?.tokenId || '',
+			}),
+		);
 		dispatch(
 			walletActions.setSelectedStableCoin({
 				tokenId: stableCoinDetails?.tokenId,
@@ -101,6 +103,7 @@ const WipeOperation = () => {
 			await SDKService.wipe(request);
 			onSuccess();
 		} catch (error: any) {
+			setErrorTransactionUrl(error.transactionUrl);
 			setErrorOperation(error.toString());
 			onError();
 		}
@@ -141,11 +144,11 @@ const WipeOperation = () => {
 									required: t('global:validations.required'),
 									validate: {
 										validation: (value: string) => {
-											request.targetId =  value;
+											request.targetId = value;
 											const res = handleRequestValidation(request.validate('targetId'));
 											return res;
 										},
-									}
+									},
 								}}
 								isRequired
 								control={control}
@@ -165,12 +168,10 @@ const WipeOperation = () => {
 			<ModalsHandler
 				errorNotificationTitle={t('operations:modalErrorTitle')}
 				errorNotificationDescription={errorOperation}
+				errorTransactionUrl={errorTransactionUrl}
 				successNotificationTitle={t('operations:modalSuccessTitle')}
 				successNotificationDescription={t('wipe:modalSuccessDesc', {
-					amount: formatAmount({
-						amount: getValues().amount ?? undefined,
-						decimals: selectedStableCoin?.decimals,
-					}),
+					amount: getValues().amount,
 					account: getValues().destinationAccount,
 				})}
 				modalActionProps={{

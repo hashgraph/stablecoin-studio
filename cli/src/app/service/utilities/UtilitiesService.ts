@@ -100,11 +100,27 @@ export default class UtilitiesService extends Service {
   }
 
   /**
+   * Show application warning banner
+   */
+  public async showCostWarningBanner(): Promise<void> {
+    this.showWarning(language.getText('general.warning'));
+    this.breakLine(1);
+  }
+
+  /**
    * Function through which all errors pass
    * @param error Error message
    */
   public showError(error: string): void {
     console.error(colors.red(error));
+  }
+
+  /**
+   * Function through which all warnings pass
+   * @param warn Warning message
+   */
+  public showWarning(warn: string): void {
+    console.warn(colors.yellow(warn));
   }
 
   /**
