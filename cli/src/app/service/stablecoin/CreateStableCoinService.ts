@@ -87,7 +87,6 @@ export default class CreateStableCoinService extends Service {
    */
   public async wizardCreateStableCoin(): Promise<CreateStableCoinRequest> {
     const currentAccount = utilsService.getCurrentAccount();
-    const currentFactory = utilsService.getCurrentFactory();
 
     utilsService.displayCurrentUserInfo(currentAccount);
 
@@ -103,7 +102,6 @@ export default class CreateStableCoinService extends Service {
       name: '',
       symbol: '',
       decimals: 6,
-      stableCoinFactory: currentFactory.id
     });
 
     // Factory
