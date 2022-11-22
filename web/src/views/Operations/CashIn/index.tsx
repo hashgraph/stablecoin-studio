@@ -36,6 +36,7 @@ const CashInOperation = () => {
 	const dispatch = useDispatch<AppDispatch>();
 
 	const [errorOperation, setErrorOperation] = useState();
+	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
 	const navigate = useNavigate();
 
 	const [request] = useState(
@@ -110,7 +111,8 @@ const CashInOperation = () => {
 			}
 			await SDKService.cashIn(request);
 			onSuccess();
-		} catch (error: any) {
+		} catch (error: any) {				
+			setErrorTransactionUrl(error.transactionUrl);
 			setErrorOperation(error.toString());
 			console.log({error});
 			
@@ -179,6 +181,7 @@ const CashInOperation = () => {
 			<ModalsHandler
 				errorNotificationTitle={t('operations:modalErrorTitle')}
 				errorNotificationDescription={errorOperation}
+				errorTransactionUrl={errorTransactionUrl}
 				modalActionProps={{
 					isOpen: isOpenModalAction,
 					onClose: onCloseModalAction,

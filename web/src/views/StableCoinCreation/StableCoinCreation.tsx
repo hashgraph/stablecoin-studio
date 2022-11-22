@@ -191,7 +191,7 @@ const StableCoinCreation = () => {
 			await SDKService.createStableCoin(request);
 			setSuccess(true);
 		} catch (error:any) {
-			setError(error)
+			setError(error.transactionError.transactionUrl)
 			setSuccess(false);
 		}
 
@@ -229,7 +229,7 @@ const StableCoinCreation = () => {
 				}}
 				closeOnOverlayClick={false}
 				closeButton={false}
-				error={error}
+				errorTransactionUrl={error}
 			/>
 		</Stack>
 	);

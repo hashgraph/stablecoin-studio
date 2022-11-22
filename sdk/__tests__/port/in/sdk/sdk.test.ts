@@ -136,7 +136,7 @@ describe('🧪 [PORT] SDK', () => {
     );
 
     await expect(coin).rejects.toThrow(BaseError);
-  });
+  }, 10_000);
 
   it('Gets the token list', async () => {
     const list = await sdk.getListStableCoin(

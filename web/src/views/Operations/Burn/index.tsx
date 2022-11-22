@@ -33,6 +33,7 @@ const BurnOperation = () => {
 	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 
 	const [errorOperation, setErrorOperation] = useState();
+	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
 	const [request] = useState(
 		new CashOutStableCoinRequest({
 			account: {
@@ -74,6 +75,7 @@ const BurnOperation = () => {
 			await SDKService.cashOut(request);
 			onSuccess();
 		} catch (error: any) {
+			setErrorTransactionUrl(error.transactionUrl)
 			setErrorOperation(error.toString());
 			onError();
 		}
@@ -151,6 +153,7 @@ const BurnOperation = () => {
 			<ModalsHandler
 				errorNotificationTitle={t('operations:modalErrorTitle')}
 				errorNotificationDescription={errorOperation}
+				errorTransactionUrl={errorTransactionUrl}
 				successNotificationTitle={t('operations:modalSuccessTitle')}
 				successNotificationDescription={t('burn:modalSuccessDesc', {
 					amount: getValues().amount,

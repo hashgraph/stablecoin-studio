@@ -102,7 +102,7 @@ export default class OperationStableCoinService extends Service {
 
         this.stableCoinId = await utilsService.defaultMultipleAsk(
           language.getText('stablecoin.askToken'),
-          new ManageImportedTokenService().mixExternalTokens(
+          new ManageImportedTokenService().mixImportedTokens(
             resp.map((item) => {
               return `${item.id} - ${item.symbol}`;
             }),
@@ -574,7 +574,7 @@ export default class OperationStableCoinService extends Service {
         const rolesToRefresh = await new RoleStableCoinsService().getRoles(
           getRolesRequest,
         );
-        const externalTokensRefreshed = configAccount.externalTokens.map(
+        const importedTokensRefreshed = configAccount.importedTokens.map(
           (token) => {
             if (token.id === this.stableCoinId) {
               return {
@@ -586,8 +586,8 @@ export default class OperationStableCoinService extends Service {
             return token;
           },
         );
-        new ManageImportedTokenService().updateAccount(externalTokensRefreshed);
-        configAccount.externalTokens = externalTokensRefreshed;
+        new ManageImportedTokenService().updateAccount(importedTokensRefreshed);
+        configAccount.importedTokens = importedTokensRefreshed;
         break;
       case colors.red('Danger zone'):
         await utilsService.cleanAndShowBanner();

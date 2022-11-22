@@ -33,6 +33,7 @@ const GetBalanceOperation = () => {
 
 	const [balance, setBalance] = useState<string | null>();
 	const [errorOperation, setErrorOperation] = useState();
+	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
 	const [request] = useState(
 		new GetAccountBalanceRequest({
 			proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
@@ -108,6 +109,7 @@ const GetBalanceOperation = () => {
 			setBalance(balance);
 			onSuccess();
 		} catch (error: any) {
+			setErrorTransactionUrl(error.transactionUrl)
 			setErrorOperation(error.toString());
 			onError();
 		}
@@ -151,6 +153,7 @@ const GetBalanceOperation = () => {
 			<ModalsHandler
 				errorNotificationTitle={t('operations:modalErrorTitle')}
 				errorNotificationDescription={errorOperation}
+				errorTransactionUrl={errorTransactionUrl}
 				modalActionProps={{
 					isOpen: isOpenModalAction,
 					onClose: onCloseModalAction,

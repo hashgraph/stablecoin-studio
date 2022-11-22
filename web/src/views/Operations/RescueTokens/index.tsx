@@ -32,6 +32,7 @@ const RescueTokenOperation = () => {
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
 
 	const [errorOperation, setErrorOperation] = useState();
+	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
 	const [request] = useState(
 		new RescueStableCoinRequest({
 			proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
@@ -107,6 +108,7 @@ const RescueTokenOperation = () => {
 			await SDKService.rescue(request);
 			onSuccess();
 		} catch (error: any) {
+			setErrorTransactionUrl(error.transactionUrl);
 			setErrorOperation(error.toString());
 			onError();
 		}
@@ -150,6 +152,7 @@ const RescueTokenOperation = () => {
 			<ModalsHandler
 				errorNotificationTitle={t('operations:modalErrorTitle')}
 				errorNotificationDescription={errorOperation}
+				errorTransactionUrl={errorTransactionUrl}
 				modalActionProps={{
 					isOpen: isOpenModalAction,
 					onClose: onCloseModalAction,
