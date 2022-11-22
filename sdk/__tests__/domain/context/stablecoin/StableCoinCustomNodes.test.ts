@@ -31,7 +31,6 @@ describe('🧪 [DOMAIN] StableCoin', () => {
       name: 'Custom Nodes',
       symbol: 'CN',
       decimals: 2,
-      stableCoinFactory: FACTORY_ID
     });
 
     const stableCoin = await sdk.createStableCoin(create);
@@ -55,7 +54,6 @@ describe('🧪 [DOMAIN] StableCoin', () => {
       name: 'Custom Nodes',
       symbol: 'CN',
       decimals: 2,
-      stableCoinFactory: FACTORY_ID
     });
 
     const stableCoin = await sdk.createStableCoin(create);

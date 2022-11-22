@@ -53,7 +53,6 @@ async function createStableCoin(): Promise<{
     name: 'Custom Nodes',
     symbol: 'CN',
     decimals: 2,
-    stableCoinFactory: FACTORY_ID
   });
   const coin = await sdk.createStableCoin(create);
   if (!coin) throw new Error('Coin could not be created, aborting');

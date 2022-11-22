@@ -25,7 +25,6 @@ const provider = () =>
 
 describe('🧪 [PORT] StableCoinRepository', () => {
   let repository: StableCoinRepository;
-  const stableCoinFactory = new ContractId("1");
 
   beforeAll(async () => {
     // Mock
@@ -38,8 +37,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
         symbol: baseCoin.symbol,
         decimals: baseCoin.decimals,
       }),
-      ACCOUNTS.testnet,
-      stableCoinFactory
+      ACCOUNTS.testnet
     );
     expect(coin).not.toBeNull();
   });
@@ -52,8 +50,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
           symbol: baseCoin.symbol,
           decimals: baseCoin.decimals,
         }),
-        ACCOUNTS.testnet,
-        stableCoinFactory
+        ACCOUNTS.testnet
       ),
     ).rejects.toThrow(BaseError);
   });
@@ -365,11 +362,11 @@ describe('🧪 [PORT] StableCoinRepository', () => {
 
 function mockRepo(networkAdapter: NetworkAdapter, provider?: IProvider) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const deployFnErr = (coin: StableCoin, account: Account, stableCoinFactory: ContractId) => {
+  const deployFnErr = (coin: StableCoin, account: Account) => {
     throw new ProviderError();
   };
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const deployFn = (coin: StableCoin, account: Account, stableCoinFactory: ContractId) => {
+  const deployFn = (coin: StableCoin, account: Account) => {
     return Promise.resolve(coin);
   };
   const resolveHTS = () => {
