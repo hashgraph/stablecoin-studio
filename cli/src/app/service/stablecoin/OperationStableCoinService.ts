@@ -57,6 +57,7 @@ export default class OperationStableCoinService extends Service {
   private optionTokenListSelected;
   private roleStableCoinService = new RoleStableCoinsService();
   private stableCoinPaused;
+  private stableCoinDeleted;
 
   constructor(tokenId?: string, memo?: StableCoinMemo, symbol?: string) {
     super('Operation Stable Coin');
@@ -111,6 +112,7 @@ export default class OperationStableCoinService extends Service {
           configurationService.getConfiguration()?.defaultNetwork,
           `${currentAccount.accountId.id} - ${configAccount.alias}`,
           this.stableCoinPaused,
+          this.stableCoinDeleted,
         );
         this.optionTokenListSelected = this.stableCoinId;
         this.stableCoinWithSymbol =
@@ -131,6 +133,7 @@ export default class OperationStableCoinService extends Service {
             .then((response: IStableCoinDetail) => {
               this.proxyContractId = response.memo.proxyContract;
               this.stableCoinPaused = response.paused === 'PAUSED';
+              this.stableCoinDeleted = response.deleted;
             });
 
           await utilsService.cleanAndShowBanner();
@@ -180,6 +183,7 @@ export default class OperationStableCoinService extends Service {
         `${currentAccount.accountId} - ${configAccount.alias}`,
         this.stableCoinWithSymbol,
         this.stableCoinPaused,
+        this.stableCoinDeleted,
       )
     ) {
       case 'Cash in':
@@ -659,6 +663,7 @@ export default class OperationStableCoinService extends Service {
         `${configAccount.accountId} - ${configAccount.alias}`,
         this.stableCoinWithSymbol,
         this.stableCoinPaused,
+        this.stableCoinDeleted,
       )
     ) {
       case 'Grant role':
@@ -818,6 +823,7 @@ export default class OperationStableCoinService extends Service {
             `${currentAccount.accountId.id} - ${configAccount.alias}`,
             this.stableCoinWithSymbol,
             this.stableCoinPaused,
+            this.stableCoinDeleted,
           )
         ) {
           case editOptions[0]:
@@ -1331,7 +1337,7 @@ export default class OperationStableCoinService extends Service {
             capabilities.includes('Pause hts'))) ||
         (option === 'Role management' &&
           capabilities.includes('Role management')) ||
-        option === 'Refresh roles'
+        (option === 'Refresh roles' && !this.stableCoinDeleted)
       ) {
         return true;
       }
@@ -1611,6 +1617,7 @@ export default class OperationStableCoinService extends Service {
         `${configAccount.accountId} - ${configAccount.alias}`,
         this.stableCoinWithSymbol,
         this.stableCoinPaused,
+        this.stableCoinDeleted,
       )
     ) {
       case 'Pause stable coin':
@@ -1691,6 +1698,7 @@ export default class OperationStableCoinService extends Service {
             });
 
             await new DeleteStableCoinService().deleteStableCoin(req);
+            this.stableCoinDeleted = true;
             await wizardService.mainMenu();
           } catch (error) {
             await utilsService.askErrorConfirmation(
