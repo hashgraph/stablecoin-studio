@@ -1,5 +1,5 @@
 import Service from '../Service.js';
-import { IExternalToken } from '../../../domain/configuration/interfaces/IExternalToken';
+import { IImportedToken } from '../../../domain/configuration/interfaces/IImportedToken';
 import { wizardService } from '../../../index';
 import DetailsStableCoinsService from './DetailsStableCoinService.js';
 import { IStableCoinDetail } from 'hedera-stable-coin-sdk';
@@ -14,7 +14,7 @@ import RoleStableCoinsService from './RoleStableCoinService';
 
 export default class ManageImportedTokenService extends Service {
   constructor() {
-    super('Manage External Tokens');
+    super('Manage Imported Tokens');
   }
 
   public async start(): Promise<void> {
@@ -66,7 +66,7 @@ export default class ManageImportedTokenService extends Service {
         );
 
         //call to roles
-        const externalTokens = currentAccount.externalTokens;
+        const importedTokens = currentAccount.importedTokens;
         await new DetailsStableCoinsService()
           .getDetailsStableCoins(getRolesRequestForAdding.tokenId, false)
           .then((response: IStableCoinDetail) => {
@@ -78,17 +78,17 @@ export default class ManageImportedTokenService extends Service {
         const roles = await new RoleStableCoinsService().getRoles(
           getRolesRequestForAdding,
         );
-        externalTokens.push({
+        importedTokens.push({
           id: getRolesRequestForAdding.tokenId,
           roles,
           symbol,
         });
-        this.updateAccount(externalTokens);
-        currentAccount.externalTokens = externalTokens;
+        this.updateAccount(importedTokens);
+        currentAccount.importedTokens = importedTokens;
         break;
       case manageOptions[1]:
         await utilsService.cleanAndShowBanner();
-        if (currentAccount.externalTokens.length === 0) {
+        if (currentAccount.importedTokens.length === 0) {
           console.log(
             language.getText('manageImportedToken.noImportedTokensRefresh'),
           );
@@ -97,7 +97,7 @@ export default class ManageImportedTokenService extends Service {
         //show list to refresh
         const tokenToRefresh = await utilsService.defaultMultipleAsk(
           language.getText('manageImportedToken.tokenToRefresh'),
-          currentAccount.externalTokens.map(
+          currentAccount.importedTokens.map(
             (token) => `${token.id} - ${token.symbol}`,
           ),
           true,
@@ -132,7 +132,7 @@ export default class ManageImportedTokenService extends Service {
           getRolesRequestForRefreshing,
         );
 
-        const externalTokensRefreshed = currentAccount.externalTokens.map(
+        const importedTokensRefreshed = currentAccount.importedTokens.map(
           (token) => {
             if (token.id === tokenToRefresh.split(' - ')[0]) {
               return {
@@ -144,12 +144,12 @@ export default class ManageImportedTokenService extends Service {
             return token;
           },
         );
-        this.updateAccount(externalTokensRefreshed);
-        currentAccount.externalTokens = externalTokensRefreshed;
+        this.updateAccount(importedTokensRefreshed);
+        currentAccount.importedTokens = importedTokensRefreshed;
         break;
       case manageOptions[2]:
         await utilsService.cleanAndShowBanner();
-        if (currentAccount.externalTokens.length === 0) {
+        if (currentAccount.importedTokens.length === 0) {
           console.log(
             language.getText('manageImportedToken.noImportedTokensDelete'),
           );
@@ -158,7 +158,7 @@ export default class ManageImportedTokenService extends Service {
         //show list to delete
         const tokenToDelete = await utilsService.defaultMultipleAsk(
           language.getText('manageImportedToken.tokenToDelete'),
-          currentAccount.externalTokens.map(
+          currentAccount.importedTokens.map(
             (token) => `${token.id} - ${token.symbol}`,
           ),
           true,
@@ -166,11 +166,11 @@ export default class ManageImportedTokenService extends Service {
         if (tokenToDelete === 'Go back') {
           await this.start();
         }
-        const newExternalTokens = currentAccount.externalTokens.filter(
+        const newImportedTokens = currentAccount.importedTokens.filter(
           (token) => token.id !== tokenToDelete.split(' - ')[0],
         );
-        this.updateAccount(newExternalTokens);
-        currentAccount.externalTokens = newExternalTokens;
+        this.updateAccount(newImportedTokens);
+        currentAccount.importedTokens = newImportedTokens;
         break;
       case manageOptions[manageOptions.length - 1]:
       default:
@@ -181,7 +181,7 @@ export default class ManageImportedTokenService extends Service {
     await this.start();
   }
 
-  public updateAccount(externalTokens: IExternalToken[]): void {
+  public updateAccount(importedTokens: IImportedToken[]): void {
     const defaultCfgData = configurationService.getConfiguration();
     const currentAccount = utilsService.getCurrentAccount();
     const accounts = defaultCfgData.accounts;
@@ -195,7 +195,7 @@ export default class ManageImportedTokenService extends Service {
           network: acc.network,
           alias: acc.alias,
           privateKey: acc.privateKey,
-          externalTokens: externalTokens,
+          importedTokens: importedTokens,
         };
       }
       return acc;
@@ -205,11 +205,11 @@ export default class ManageImportedTokenService extends Service {
     configurationService.setConfiguration(defaultCfgData);
   }
 
-  public mixExternalTokens(tokens: string[]): string[] {
+  public mixImportedTokens(tokens: string[]): string[] {
     const currentAccount = utilsService.getCurrentAccount();
     const filterTokens = tokens.filter((token) => {
       if (
-        currentAccount.externalTokens.find(
+        currentAccount.importedTokens.find(
           (tok) => tok.id === token.split(' - ')[0],
         )
       ) {
@@ -218,8 +218,8 @@ export default class ManageImportedTokenService extends Service {
       return true;
     });
     const result = filterTokens.concat(
-      language.getText('manageImportedToken.separator'),
-      currentAccount.externalTokens.map(
+      // language.getText('manageImportedToken.separator'),
+      currentAccount.importedTokens.map(
         (token) =>
           `${token.id} - ${token.symbol} - ` +
           colors.yellow(colors.underline('Roles:')) +
