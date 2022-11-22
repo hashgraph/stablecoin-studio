@@ -4,6 +4,7 @@ import * as inquirer from 'inquirer';
 export const english = {
   general: {
     title: 'Hedera Stable Coin',
+    warning: '⚠️ All the transactions could incur a cost in HBar',
     newLine: '\n',
     incorrectNumber: 'Incorrect number',
     incorrectParam: 'Incorrect input, retrying',

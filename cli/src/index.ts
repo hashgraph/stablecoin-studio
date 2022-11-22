@@ -19,6 +19,7 @@ export const commanderService: CommanderService = new CommanderService();
 const main = async (): Promise<void> => {
   // Show initial banner
   await utilsService.showBanner();
+  await utilsService.showCostWarningBanner();
   commanderService.start();
 };
 
