@@ -29,12 +29,7 @@ const Sidebar = () => {
 			route: NamedRoutes.StableCoinDetails,
 		},
 	];
-	const dangerZone: optionsProps = {
-		icon: 'Warning',
-		title: t('sidebar.dangerZone'),
-		route: NamedRoutes.DangerZone,
-	};
-
+	
 	return (
 		<Flex
 			data-testid='sidebar'
@@ -50,9 +45,6 @@ const Sidebar = () => {
 
 					return <SidebarOption key={title} {...option} />;
 				})}
-			</Flex>
-			<Flex flexDirection='column' alignItems='center'>
-				<SidebarOption key={dangerZone.title} {...dangerZone} color='white' bgColor='red' />
 			</Flex>
 		</Flex>
 	);

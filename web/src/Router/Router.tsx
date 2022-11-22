@@ -30,7 +30,7 @@ import {
 } from '../store/slices/walletSlice';
 import type { SavedPairingData } from 'hedera-stable-coin-sdk';
 import ExternalTokenCreation from '../views/ExternalToken/ExternalTokenCreation';
-import DangerZoneOperations from '../views/DangerZone';
+import DangerZoneOperations from '../views/Operations/DangerZone';
 
 const PrivateRoute = ({ status }: { status?: HashConnectConnectionState }) => {
 	return (

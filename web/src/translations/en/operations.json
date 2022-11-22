@@ -5,6 +5,7 @@
     "wipeOperation": "Wipe",
     "rescueOperation": "Rescue",
     "burnOperation": "Burn",
+    "dangerZoneOperation":"Danger Zone",
     "getBalanceOperation": "Get balance",
     "modalSuccessTitle": "Operation successfully completed",
     "modalSuccessDesc": "You can follow the order in the list of operations.",

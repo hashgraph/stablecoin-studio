@@ -1,7 +1,7 @@
 import { Box, Heading } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import BaseContainer from '../../components/BaseContainer';
-import GridDirectAction from '../../components/GridDirectAction';
+import BaseContainer from '../../../components/BaseContainer';
+import GridDirectAction from '../../../components/GridDirectAction';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
@@ -9,18 +9,18 @@ import {
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNTID,
 	SELECTED_WALLET_ACCOUNT_INFO
-} from '../../store/slices/walletSlice';
-import type { DirectActionProps } from '../../components/DirectAction';
+} from '../../../store/slices/walletSlice';
+import type { DirectActionProps } from '../../../components/DirectAction';
 import {
 	Capabilities,
 	Roles,
 	PauseStableCoinRequest,
 	DeleteStableCoinRequest,
 } from 'hedera-stable-coin-sdk';
-import type { IAccountToken } from '../../interfaces/IAccountToken';
-import type { IExternalToken } from '../../interfaces/IExternalToken';
-import type { ModalsHandlerActionsProps } from '../../components/ModalsHandler';
-import SDKService from '../../services/SDKService';
+import type { IAccountToken } from '../../../interfaces/IAccountToken';
+import type { IExternalToken } from '../../../interfaces/IExternalToken';
+import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
+import SDKService from '../../../services/SDKService';
 
 const DangerZoneOperations = () => {
 	const { t } = useTranslation('operations');
