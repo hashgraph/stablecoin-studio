@@ -32,6 +32,7 @@ import {
   DecreaseCashInLimitRequest,
   DeleteStableCoinRequest,
   PauseStableCoinRequest,
+  FreezeAccountRequest,
 } from 'hedera-stable-coin-sdk';
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 import CashInStableCoinsService from './CashInStableCoinService.js';
@@ -44,6 +45,7 @@ import colors from 'colors';
 import DeleteStableCoinService from './DeleteStableCoinService.js';
 import PauseStableCoinService from './PauseStableCoinService.js';
 import ManageImportedTokenService from './ManageImportedTokenService';
+import FreezeStableCoinService from './FreezeStableCoinService.js';
 
 /**
  * Operation Stable Coin Service
@@ -462,10 +464,44 @@ export default class OperationStableCoinService extends Service {
           configAccount,
           this.stableCoinWithSymbol,
         );
-        await utilsService.defaultSingleAsk(
+
+        const freezeAccountRequest = new FreezeAccountRequest({
+          account: {
+            accountId: configAccount.accountId,
+            privateKey: {
+              key: currentAccount.privateKey.key,
+              type: currentAccount.privateKey.type,
+            },
+          },
+          proxyContractId: this.proxyContractId,
+          tokenId: this.stableCoinId,
+          targetId: '',
+        });
+        freezeAccountRequest.targetId = await utilsService.defaultSingleAsk(
           language.getText('wizard.freezeAccount'),
           '0.0.0',
         );
+
+        await utilsService.handleValidation(
+          () => freezeAccountRequest.validate('targetId'),
+          async () => {
+            freezeAccountRequest.targetId = await utilsService.defaultSingleAsk(
+              language.getText('wizard.freezeAccount'),
+              '0.0.0',
+            );
+          },
+        );
+        try {
+          await new FreezeStableCoinService().freezeAccount(
+            freezeAccountRequest,
+          );
+        } catch (error) {
+          await utilsService.askErrorConfirmation(
+            async () => await this.operationsStableCoin(),
+            error,
+          );
+        }
+
         break;
       case 'Unfreeze an account':
         await utilsService.cleanAndShowBanner();
@@ -473,10 +509,44 @@ export default class OperationStableCoinService extends Service {
           configAccount,
           this.stableCoinWithSymbol,
         );
-        await utilsService.defaultSingleAsk(
+
+        const unfreezeAccountRequest = new FreezeAccountRequest({
+          account: {
+            accountId: configAccount.accountId,
+            privateKey: {
+              key: currentAccount.privateKey.key,
+              type: currentAccount.privateKey.type,
+            },
+          },
+          proxyContractId: this.proxyContractId,
+          tokenId: this.stableCoinId,
+          targetId: '',
+        });
+        unfreezeAccountRequest.targetId = await utilsService.defaultSingleAsk(
           language.getText('wizard.unfreezeAccount'),
           '0.0.0',
         );
+
+        await utilsService.handleValidation(
+          () => unfreezeAccountRequest.validate('targetId'),
+          async () => {
+            unfreezeAccountRequest.targetId =
+              await utilsService.defaultSingleAsk(
+                language.getText('wizard.unfreezeAccount'),
+                '0.0.0',
+              );
+          },
+        );
+        try {
+          await new FreezeStableCoinService().unfreezeAccount(
+            unfreezeAccountRequest,
+          );
+        } catch (error) {
+          await utilsService.askErrorConfirmation(
+            async () => await this.operationsStableCoin(),
+            error,
+          );
+        }
         break;
       case 'Role management':
         await utilsService.cleanAndShowBanner();

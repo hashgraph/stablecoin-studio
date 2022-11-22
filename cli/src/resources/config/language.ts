@@ -285,6 +285,8 @@ export const english = {
     deleteCompleted: 'Stable coin deleted',
     pauseCompleted: 'Stable coin paused',
     unpauseCompleted: 'Stable coin unpaused',
+    freezeCompleted: 'Account freezed',
+    unfreezeCompleted: 'Account unfreezed',
   },
   operation: {
     success: colors.green('Operation has been completed successfully.'),
