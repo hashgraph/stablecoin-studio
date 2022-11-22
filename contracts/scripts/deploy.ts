@@ -54,7 +54,7 @@ export async function deployFactory(
     privateKey: string
 ){
     // Deploying Wrapper logic
-    console.log(`Deploying Wrapper. please wait...`);
+    /*console.log(`Deploying Wrapper. please wait...`);
 
     const wrapper = await deployContractSDK(
         StableCoinFactoryWrapper__factory,
@@ -62,7 +62,7 @@ export async function deployFactory(
         clientOperator,
     )
 
-    console.log(`Wrapper deployed ${wrapper.toSolidityAddress()} - ${wrapper.toString()}`);
+    console.log(`Wrapper deployed ${wrapper.toSolidityAddress()} - ${wrapper.toString()}`);*/
 
     // Deploying Factory logic
     console.log(`Deploying Contract Factory. please wait...`);
@@ -71,14 +71,14 @@ export async function deployFactory(
         StableCoinFactory__factory,
         privateKey,
         clientOperator,
-        null,
-        ContractId.fromString(wrapper.toString())
+        //null,
+        //ContractId.fromString(wrapper.toString())
     )
 
     console.log(`Contract Factory deployed ${factory.toSolidityAddress()}`);
 
     // Setting the wrapper Factory address
-    let parametersContractCall = [factory.toSolidityAddress()]
+    /*let parametersContractCall = [factory.toSolidityAddress()]
 
     console.log(`setting the wrapper Factory address... please wait.`)
 
@@ -91,9 +91,9 @@ export async function deployFactory(
         StableCoinFactoryWrapper__factory.abi
     )
 
-    console.log(`Wrapper Address set`)
+    console.log(`Wrapper Address set`)*/
 
-    return wrapper;
+    return factory;
 }
 
 export async function deployContractsWithSDK(
