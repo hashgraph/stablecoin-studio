@@ -227,8 +227,7 @@ export class SDK {
 						return BigDecimal.ZERO;
 					},
 					maxSupply: (val, req) =>
-						BigDecimal.fromString(val, req.decimals),
-					stableCoinFactory: ContractId
+						BigDecimal.fromString(val, req.decimals)
 				},
 			);
 			return this.stableCoinService.createStableCoin(req);
