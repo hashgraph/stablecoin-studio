@@ -1454,7 +1454,7 @@ export default class OperationStableCoinService extends Service {
     const roles =
       this.optionTokenListSelected &&
       this.optionTokenListSelected.split(' - ').length === 3
-        ? configAccount.externalTokens.find(
+        ? configAccount.importedTokens.find(
             (token) => token.id === this.stableCoinId,
           ).roles
         : undefined;
