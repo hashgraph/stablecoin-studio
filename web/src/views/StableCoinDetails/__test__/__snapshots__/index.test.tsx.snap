@@ -479,6 +479,44 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                   <p
                     class="chakra-text css-bpirlf"
                   >
+                    Paused
+                  </p>
+                </div>
+                <hr
+                  aria-orientation="horizontal"
+                  class="chakra-divider css-zaaihy"
+                  title="divider"
+                />
+              </div>
+              <div
+                class="css-0"
+              >
+                <div
+                  class="css-3fqpsw"
+                  data-testid="details-review-detail-11"
+                >
+                  <p
+                    class="chakra-text css-bpirlf"
+                  >
+                    Deleted
+                  </p>
+                </div>
+                <hr
+                  aria-orientation="horizontal"
+                  class="chakra-divider css-zaaihy"
+                  title="divider"
+                />
+              </div>
+              <div
+                class="css-0"
+              >
+                <div
+                  class="css-3fqpsw"
+                  data-testid="details-review-detail-12"
+                >
+                  <p
+                    class="chakra-text css-bpirlf"
+                  >
                     Admin key
                   </p>
                   <div
@@ -540,7 +578,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
               >
                 <div
                   class="css-3fqpsw"
-                  data-testid="details-review-detail-11"
+                  data-testid="details-review-detail-13"
                 >
                   <p
                     class="chakra-text css-bpirlf"
@@ -568,7 +606,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
               >
                 <div
                   class="css-3fqpsw"
-                  data-testid="details-review-detail-12"
+                  data-testid="details-review-detail-14"
                 >
                   <p
                     class="chakra-text css-bpirlf"
@@ -596,7 +634,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
               >
                 <div
                   class="css-3fqpsw"
-                  data-testid="details-review-detail-13"
+                  data-testid="details-review-detail-15"
                 >
                   <p
                     class="chakra-text css-bpirlf"
@@ -624,7 +662,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
               >
                 <div
                   class="css-3fqpsw"
-                  data-testid="details-review-detail-14"
+                  data-testid="details-review-detail-16"
                 >
                   <p
                     class="chakra-text css-bpirlf"
