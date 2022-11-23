@@ -111,8 +111,16 @@ const DangerZoneOperations = () => {
 					!capabilities?.includes(Capabilities.DELETE_HTS)) &&
 			      (selectedStableCoin?.paused === 'PAUSED' || !!selectedStableCoin?.deleted )
 				: !roles.includes(Roles.DELETE_ROLE) && !capabilities?.includes(Capabilities.DELETE_HTS) && 
-					(selectedStableCoin?.paused === 'PAUSED' ||	!!selectedStableCoin?.deleted),
+					(selectedStableCoin?.paused === 'UNPAUSED' ||	!selectedStableCoin?.deleted),
 		};
+		console.log(isExternalToken);
+		console.log(capabilities);
+		console.log(roles);
+		console.log(!roles.includes(Roles.DELETE_ROLE) , !capabilities?.includes(Capabilities.DELETE_HTS) , 
+		selectedStableCoin?.paused === 'UNPAUSED' ,	selectedStableCoin?.deleted);
+		
+		
+		
 
 		setDisabledFeatures(areDisabled);
 	};
@@ -129,7 +137,7 @@ const DangerZoneOperations = () => {
 				...disabledFeatures,
 				pause: !disabledFeatures.pause,
 				unpause: !disabledFeatures.unpause,
-				delete: !disabledFeatures.delete
+				
 			});
 			onSuccess();
 		} catch (error: any) {
@@ -150,7 +158,6 @@ const DangerZoneOperations = () => {
 				...disabledFeatures,
 				pause: !disabledFeatures.pause,
 				unpause: !disabledFeatures.unpause,
-				delete: !disabledFeatures.delete
 			});
 			onSuccess();
 		} catch (error: any) {
