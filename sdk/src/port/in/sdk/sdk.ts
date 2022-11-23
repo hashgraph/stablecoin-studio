@@ -195,8 +195,10 @@ export class SDK {
 	// TODO should probably be decoupled from the dependency injection
 	public async init(options?: SDKInitOptions): Promise<SDK> {
 		const providerEvents = this.getEventNames();
+		LogService.logTrace('Event names found: ', providerEvents);
 		this.eventService = new EventService({ ...providerEvents });
 		if (options && options?.onInit) {
+			LogService.logTrace('Invoking onInit listeners...');
 			this.eventService.on(
 				ProviderEventNames.providerInitEvent,
 				options.onInit,
@@ -209,13 +211,16 @@ export class SDK {
 			{
 				appMetadata: this.config.options?.appMetadata,
 			},
-		).init();
+			).init();
+		LogService.logTrace('Network adapter initialized');
 		this.stableCoinRepository = new StableCoinRepository(
 			this.networkAdapter,
-		);
+			);
+		LogService.logTrace('Stable coin repository initialized');
 		this.stableCoinService = new StableCoinService(
 			this.stableCoinRepository,
-		);
+			);
+		LogService.logTrace('Stable coin service initialized');
 		return this;
 	}
 
@@ -234,6 +239,7 @@ export class SDK {
 		request: CreateStableCoinRequest,
 	): Promise<StableCoinDetail> {
 		try {
+			LogService.logTrace(request);
 			const req: ICreateStableCoinServiceRequestModel = RequestMapper.map(
 				request,
 				{
@@ -255,7 +261,7 @@ export class SDK {
 			);
 			return this.stableCoinService.createStableCoin(req);
 		} catch (error) {
-			console.error(error);
+			LogService.logError(error);
 			throw error;
 		}
 	}
@@ -273,6 +279,7 @@ export class SDK {
 	public getListStableCoin(
 		request: GetListStableCoinRequest,
 	): Promise<StableCoinList[]> | null {
+		LogService.logTrace(request);
 		const req: IListStableCoinServiceRequestModel =
 			RequestMapper.map(request);
 		return this.stableCoinService.getListStableCoins(req);
@@ -281,6 +288,7 @@ export class SDK {
 	public getStableCoinDetails(
 		request: GetStableCoinDetailsRequest,
 	): Promise<StableCoinDetail> | null {
+		LogService.logTrace(request);
 		const req: IGetStableCoinServiceRequestModel =
 			RequestMapper.map(request);
 		return this.stableCoinService.getStableCoinDetails(req);
@@ -293,11 +301,12 @@ export class SDK {
 		request: GetAccountBalanceRequest,
 	): Promise<string> | null {
 		try {
+			LogService.logTrace(request);
 			const req: IGetBalanceOfStableCoinServiceRequestModel =
 				RequestMapper.map(request);
 			return this.stableCoinService.getBalanceOf(req);
 		} catch (error) {
-			console.error(error);
+			LogService.logError(error);
 			return null;
 		}
 	}
@@ -307,14 +316,12 @@ export class SDK {
 	 */
 	public cashIn(request: CashInStableCoinRequest): Promise<boolean> | null {
 		try {
-			// const req: ICashInStableCoinServiceRequestModel = {
-			// 	...request,
-			// };
+			LogService.logTrace(request);
 			const req: CashInStableCoinServiceRequestModel =
 				RequestMapper.map(request);
 			return this.stableCoinService.cashIn(req);
 		} catch (error) {
-			console.error(error);
+			LogService.logError(error);
 			return null;
 		}
 	}
@@ -324,12 +331,13 @@ export class SDK {
 	 */
 	public cashOut(request: CashOutStableCoinRequest): Promise<boolean> | null {
 		try {
+			LogService.logTrace(request);
 			const req: ICashOutStableCoinServiceRequestModel =
 				RequestMapper.map(request);
 
 			return this.stableCoinService.cashOut(req);
 		} catch (error) {
-			console.error(error);
+			LogService.logError(error);
 			return null;
 		}
 	}
@@ -341,11 +349,12 @@ export class SDK {
 		request: AssociateTokenRequest,
 	): Promise<Uint8Array> | null {
 		try {
+			LogService.logTrace(request);
 			const req: AssociateTokenStableCoinServiceRequestModel =
 				RequestMapper.map(request);
 			return this.stableCoinService.associateToken(req);
 		} catch (error) {
-			console.error(error);
+			LogService.logError(error);
 			return null;
 		}
 	}
@@ -355,11 +364,12 @@ export class SDK {
 	 */
 	public wipe(request: WipeStableCoinRequest): Promise<boolean> | null {
 		try {
+			LogService.logTrace(request);
 			const req: IWipeStableCoinServiceRequestModel =
 				RequestMapper.map(request);
 			return this.stableCoinService.wipe(req);
 		} catch (error) {
-			console.error(error);
+			LogService.logError(error);
 			return null;
 		}
 	}
@@ -371,10 +381,11 @@ export class SDK {
 		request: CheckCashInRoleRequest,
 	): Promise<Uint8Array> | null {
 		try {
+			LogService.logTrace(request);
 			const req: IGetBasicRequestModel = RequestMapper.map(request);
 			return this.stableCoinService.isUnlimitedSupplierAllowance(req);
 		} catch (error) {
-			console.error(error);
+			LogService.logError(error);
 			return null;
 		}
 	}
@@ -385,10 +396,11 @@ export class SDK {
 		request: CheckCashInLimitRequest,
 	): Promise<string> | null {
 		try {
+			LogService.logTrace(request);
 			const req: IGetSupplierAllowanceModel = RequestMapper.map(request);
 			return this.stableCoinService.supplierAllowance(req);
 		} catch (error) {
-			console.error(error);
+			LogService.logError(error);
 			return null;
 		}
 	}
@@ -400,10 +412,11 @@ export class SDK {
 		request: ResetCashInLimitRequest,
 	): Promise<Uint8Array> | null {
 		try {
+			LogService.logTrace(request);
 			const req: IGetBasicRequestModel = RequestMapper.map(request);
 			return this.stableCoinService.resetSupplierAllowance(req);
 		} catch (error) {
-			console.error(error);
+			LogService.logError(error);
 			return null;
 		}
 	}
@@ -414,11 +427,12 @@ export class SDK {
 		request: IncreaseCashInLimitRequest,
 	): Promise<Uint8Array> | null {
 		try {
+			LogService.logTrace(request);
 			const req: ISupplierRoleStableCoinServiceRequestModel =
 				RequestMapper.map(request);
 			return this.stableCoinService.increaseSupplierAllowance(req);
 		} catch (error) {
-			console.error(error);
+			LogService.logError(error);
 			return null;
 		}
 	}
@@ -429,11 +443,12 @@ export class SDK {
 		request: DecreaseCashInLimitRequest,
 	): Promise<Uint8Array> | null {
 		try {
+			LogService.logTrace(request);
 			const req: ISupplierRoleStableCoinServiceRequestModel =
 				RequestMapper.map(request);
 			return this.stableCoinService.decreaseSupplierAllowance(req);
 		} catch (error) {
-			console.error(error);
+			LogService.logError(error);
 			return null;
 		}
 	}
@@ -445,10 +460,11 @@ export class SDK {
 		request: CheckCashInRoleRequest,
 	): Promise<Uint8Array> | null {
 		try {
+			LogService.logTrace(request);
 			const req: IGetBasicRequestModel = RequestMapper.map(request);
 			return this.stableCoinService.isLimitedSupplierAllowance(req);
 		} catch (error) {
-			console.error(error);
+			LogService.logError(error);
 			return null;
 		}
 	}
@@ -460,11 +476,12 @@ export class SDK {
 		request: RescueStableCoinRequest,
 	): Promise<Uint8Array> | null {
 		try {
+			LogService.logTrace(request);
 			const req: IRescueStableCoinServiceRequestModel =
 				RequestMapper.map(request);
 			return this.stableCoinService.rescue(req);
 		} catch (error) {
-			console.error(error);
+			LogService.logError(error);
 			return null;
 		}
 	}
@@ -499,7 +516,7 @@ export class SDK {
 				RequestMapper.map(request);
 			return this.stableCoinService.grantRole(grantRoleReq);
 		} catch (error) {
-			console.error(error);
+			LogService.logError(error);
 			return null;
 		}
 	}
@@ -518,18 +535,19 @@ export class SDK {
 				return this.stableCoinService.revokeRole(revokeRoleReq);
 			}
 		} catch (error) {
-			console.error(error);
+			LogService.logError(error);
 			return null;
 		}
 	}
 
 	public hasRole(request: HasRoleRequest): Promise<Uint8Array> | null {
 		try {
+			LogService.logTrace(request);
 			const req: IRoleStableCoinServiceRequestModel =
 				RequestMapper.map(request);
 			return this.stableCoinService.hasRole(req);
 		} catch (error) {
-			console.error(error);
+			LogService.logError(error);
 			return null;
 		}
 	}
@@ -538,21 +556,23 @@ export class SDK {
 		request: GetAccountInfoRequest,
 	): Promise<AccountInfo> | null {
 		try {
+			LogService.logTrace(request);
 			const req: IAccountWithKeyRequestModel = RequestMapper.map(request);
 			return this.stableCoinService.getAccountInfo(req);
 		} catch (error) {
-			console.error(error);
+			LogService.logError(error);
 			return null;
 		}
 	}
 
 	public getRoles(request: GetRolesRequest): Promise<string[]> | null {
 		try {
+			LogService.logTrace(request);
 			const req: IGetRolesServiceRequestModel =
 				RequestMapper.map(request);
 			return this.stableCoinService.getRoles(req);
 		} catch (error) {
-			console.error(error);
+			LogService.logError(error);
 			return null;
 		}
 	}
@@ -561,11 +581,12 @@ export class SDK {
 		request: DeleteStableCoinRequest,
 	): Promise<boolean> | null {
 		try {
+			LogService.logTrace(request);
 			const req: IDeleteStableCoinRequestModel =
 				RequestMapper.map(request);
 			return this.stableCoinService.deleteStableCoin(req);
 		} catch (error) {
-			console.error(error);
+			LogService.logError(error);
 			return null;
 		}
 	}
@@ -574,11 +595,12 @@ export class SDK {
 		request: PauseStableCoinRequest,
 	): Promise<boolean> | null {
 		try {
+			LogService.logTrace(request);
 			const req: IPauseStableCoinRequestModel =
 				RequestMapper.map(request);
 			return this.stableCoinService.pauseStableCoin(req);
 		} catch (error) {
-			console.error(error);
+			LogService.logError(error);
 			return null;
 		}
 	}
@@ -587,11 +609,12 @@ export class SDK {
 		request: PauseStableCoinRequest,
 	): Promise<boolean> | null {
 		try {
+			LogService.logTrace(request);
 			const req: IPauseStableCoinRequestModel =
 				RequestMapper.map(request);
 			return this.stableCoinService.unpauseStableCoin(req);
 		} catch (error) {
-			console.error(error);
+			LogService.logError(error);
 			return null;
 		}
 	}
@@ -600,10 +623,11 @@ export class SDK {
 		request: FreezeAccountRequest,
 	): Promise<boolean> | null {
 		try {
+			LogService.logTrace(request);
 			const req: IFreezeAccountRequestModel = RequestMapper.map(request);
 			return this.stableCoinService.freezeAccount(req);
 		} catch (error) {
-			console.error(error);
+			LogService.logError(error);
 			return null;
 		}
 	}
@@ -612,10 +636,11 @@ export class SDK {
 		request: FreezeAccountRequest,
 	): Promise<boolean> | null {
 		try {
+			LogService.logTrace(request);
 			const req: IFreezeAccountRequestModel = RequestMapper.map(request);
 			return this.stableCoinService.unfreezeAccount(req);
 		} catch (error) {
-			console.error(error);
+			LogService.logError(error);
 			return null;
 		}
 	}
@@ -623,35 +648,34 @@ export class SDK {
 	// HashPack
 
 	public getAvailabilityExtension(): boolean {
-		LogService.logTrace('=====getAvailabilityExtension=====');
 		return this.networkAdapter.provider.getAvailabilityExtension();
 	}
 
 	gethashConnectConectionStatus(): HashConnectConnectionState {
-		LogService.logTrace('=====getAvailabilityExtension=====');
 		return this.networkAdapter.provider.gethashConnectConectionState();
 	}
 
 	getInitData(): InitializationData {
-		LogService.logTrace('=====getInitData=====');
 		return this.networkAdapter.provider.getInitData();
 	}
 
 	disconectHaspack(): void {
-		LogService.logTrace('=====disconect Haspack=====');
+		LogService.logTrace('HashPack: Disconnected');
 		return this.networkAdapter.provider.disconectHaspack();
 	}
 
 	connectWallet(): Promise<IProvider> {
-		LogService.logTrace('=====connectWallet Haspack=====');
+		LogService.logTrace('HashPack: Connected');
 		return this.networkAdapter.provider.connectWallet();
 	}
 
 	public onInit(listener: (data: InitializationData) => void): void {
+		LogService.logTrace('HashPack: Initialized');
 		this.eventService.on(ProviderEventNames.providerInitEvent, listener);
 	}
 
 	public onWalletExtensionFound(listener: () => void): void {
+		LogService.logTrace('HashPack: Extension Found');
 		this.eventService.on(
 			ProviderEventNames.providerFoundExtensionEvent,
 			listener,
@@ -661,6 +685,7 @@ export class SDK {
 	public onWalletConnectionChanged(
 		listener: (state: HashConnectConnectionState) => void,
 	): void {
+		LogService.logTrace('HashPack: Wallet connection state changed');
 		this.eventService.on(
 			ProviderEventNames.providerConnectionStatusChangeEvent,
 			listener,
@@ -670,12 +695,14 @@ export class SDK {
 	public onWalletPaired(
 		listener: (data: HashConnectTypes.SavedPairingData) => void,
 	): void {
+		LogService.logTrace('HashPack: Wallet paired');
 		this.eventService.on(ProviderEventNames.providerPairingEvent, listener);
 	}
 
 	public onWalletAcknowledgeMessageEvent(
 		listener: (state: AcknowledgeMessage) => void,
 	): void {
+		LogService.logTrace('HashPack: Wallet acknowledged message');
 		this.eventService.on(
 			ProviderEventNames.providerAcknowledgeMessageEvent,
 			listener,

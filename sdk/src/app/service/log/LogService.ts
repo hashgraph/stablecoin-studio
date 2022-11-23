@@ -65,9 +65,10 @@ export default class LogService {
 		});
 	}
 
+	public static logError(error: unknown, ...params: any[]): void;
 	public static logError(error: BaseError, ...params: any[]): void {
 		let other = params;
-		if (error) other = [error.stack, ...params];
+		if (error && error?.stack) other = [error.stack, ...params];
 		this.log(LogLevel.ERROR, error, other);
 	}
 
