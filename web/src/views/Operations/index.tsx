@@ -88,12 +88,10 @@ const Operations = () => {
 						!capabilities?.includes(Capabilities.DELETE_HTS)
 				: !roles.includes(Roles.DELETE_ROLE) && !capabilities?.includes(Capabilities.DELETE_HTS),
 		};
+		
 		console.log(capabilities);
-		console.log(!capabilities?.includes(Capabilities.DELETE) ||
-		!capabilities?.includes(Capabilities.DELETE_HTS));
 		
 		
-		console.log(areDisabled);
 		
 		setDisabledFeatures(areDisabled);
 	};
@@ -145,7 +143,7 @@ const Operations = () => {
 			icon: 'Warning',
 			route: NamedRoutes.DangerZone,
 			title: t('dangerZoneOperation'),
-			isDisabled: disabledFeatures?.pause || disabledFeatures.delete,
+			isDisabled: disabledFeatures?.pause &&  !disabledFeatures?.delete,
 		},
 	];
 

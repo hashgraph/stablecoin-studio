@@ -103,14 +103,15 @@ const DangerZoneOperations = () => {
 				? (!capabilities?.includes(Capabilities.PAUSE) ||
 						!capabilities?.includes(Capabilities.PAUSE_HTS)) &&
 				  selectedStableCoin?.paused === 'UNPAUSED'
-				: !roles.includes(Roles.PAUSE_ROLE) &&
-				  !capabilities?.includes(Capabilities.PAUSE_HTS) &&
+				: (!roles.includes(Roles.PAUSE_ROLE) &&
+				  !capabilities?.includes(Capabilities.PAUSE_HTS)) &&
 				  selectedStableCoin?.paused === 'UNPAUSED',
 			delete: !isExternalToken
 				? (!capabilities?.includes(Capabilities.DELETE) ||
-						!capabilities?.includes(Capabilities.DELETE_HTS)) &&
-				  !!selectedStableCoin?.deleted
-				: !roles.includes(Roles.DELETE_ROLE) && !capabilities?.includes(Capabilities.DELETE_HTS),
+					!capabilities?.includes(Capabilities.DELETE_HTS)) &&
+			      (selectedStableCoin?.paused === 'PAUSED' || !!selectedStableCoin?.deleted )
+				: !roles.includes(Roles.DELETE_ROLE) && !capabilities?.includes(Capabilities.DELETE_HTS) && 
+					(selectedStableCoin?.paused === 'PAUSED' ||	!!selectedStableCoin?.deleted),
 		};
 
 		setDisabledFeatures(areDisabled);
@@ -128,6 +129,7 @@ const DangerZoneOperations = () => {
 				...disabledFeatures,
 				pause: !disabledFeatures.pause,
 				unpause: !disabledFeatures.unpause,
+				delete: !disabledFeatures.delete
 			});
 			onSuccess();
 		} catch (error: any) {
@@ -148,6 +150,7 @@ const DangerZoneOperations = () => {
 				...disabledFeatures,
 				pause: !disabledFeatures.pause,
 				unpause: !disabledFeatures.unpause,
+				delete: !disabledFeatures.delete
 			});
 			onSuccess();
 		} catch (error: any) {
