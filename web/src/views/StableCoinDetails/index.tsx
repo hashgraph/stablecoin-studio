@@ -77,14 +77,6 @@ const StableCoinDetails = () => {
 						<Icon name='Copy' />
 					</TooltipCopy>
 				</HStack>
-				<HStack>
-					<Text>
-						{t('htsAccount')} : {memo?.htsAccount}
-					</Text>
-					<TooltipCopy valueToCopy={memo?.htsAccount ?? ''}>
-						<Icon name='Copy' />
-					</TooltipCopy>
-				</HStack>
 			</VStack>
 		);
 	};

@@ -360,6 +360,11 @@ export default class HashPackProvider implements IProvider {
 
 			// Creating the token
 			log('Creating token... please wait.', logOpts);
+
+			stableCoin.memo = new StableCoinMemo(
+				String(proxyContract)
+			);
+	
 			const hederaToken = await this.createToken(
 				proxyContract,
 				stableCoin.name,
@@ -385,7 +390,7 @@ export default class HashPackProvider implements IProvider {
 			await this.callContract('initialize', {
 				contractId: String(proxyContract),
 				parameters: [hederaToken.tokenId.toSolidityAddress(), HAccountId.fromString(account.accountId.id).toSolidityAddress()],
-				gas: 250_000,
+				gas: 15000000,
 				abi: HederaERC20__factory.abi,
 				account,
 			});
