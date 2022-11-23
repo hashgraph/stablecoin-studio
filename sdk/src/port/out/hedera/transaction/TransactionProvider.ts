@@ -15,6 +15,11 @@ import {
 	DelegateContractId,
 	ContractFunctionParameters,
 	AccountAllowanceApproveTransaction,
+	TokenPauseTransaction,
+	TokenUnpauseTransaction,
+	TokenDeleteTransaction,
+	TokenFreezeTransaction,
+	TokenUnfreezeTransaction,
 } from '@hashgraph/sdk';
 import { ContractId, PublicKey } from '../../../in/sdk/sdk.js';
 import { ICreateTokenResponse } from '../types.js';
@@ -208,6 +213,56 @@ export class TransactionProvider {
 					AccountId.fromString(inAccountId),
 					amount,
 				);
+		} catch (error) {
+			throw new TransactionBuildingError(error);
+		}
+	}
+
+	public static buildDeleteTransaction(tokenId: string): Transaction {
+		try {
+			return new TokenDeleteTransaction().setTokenId(tokenId);
+		} catch (error) {
+			throw new TransactionBuildingError(error);
+		}
+	}
+
+	public static buildPausedTransaction(tokenId: string): Transaction {
+		try {
+			return new TokenPauseTransaction().setTokenId(tokenId);
+		} catch (error) {
+			throw new TransactionBuildingError(error);
+		}
+	}
+
+	public static buildUnpausedTransaction(tokenId: string): Transaction {
+		try {
+			return new TokenUnpauseTransaction().setTokenId(tokenId);
+		} catch (error) {
+			throw new TransactionBuildingError(error);
+		}
+	}
+
+	public static buildFreezeTransaction(
+		tokenId: string,
+		targetId: string,
+	): Transaction {
+		try {
+			return new TokenFreezeTransaction()
+				.setTokenId(tokenId)
+				.setAccountId(targetId);
+		} catch (error) {
+			throw new TransactionBuildingError(error);
+		}
+	}
+
+	public static buildUnfreezeTransaction(
+		tokenId: string,
+		targetId: string,
+	): Transaction {
+		try {
+			return new TokenUnfreezeTransaction()
+				.setTokenId(tokenId)
+				.setAccountId(targetId);
 		} catch (error) {
 			throw new TransactionBuildingError(error);
 		}

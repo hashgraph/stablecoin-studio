@@ -14,7 +14,7 @@ import { deployContractsWithSDK, initializeClients } from "../scripts/deploy";
 import {grantRole, 
   revokeRole, 
   hasRole, 
-  Rescue, 
+  rescue, 
   getBalanceOf, 
   associateToken
 } from "../scripts/contractsMethods";
@@ -107,7 +107,7 @@ describe("Rescue Tests", function() {
       const initialClientBalance = await getBalanceOf(ContractId, proxyAddress, client, OPERATOR_ID);
  
       // rescue some tokens
-      await Rescue(ContractId, proxyAddress, AmountToRescue, client);
+      await rescue(ContractId, proxyAddress, AmountToRescue, client);
 
       // check new balances : success
       const finalTokenOwnerBalance = await getBalanceOf(ContractId, proxyAddress, client, proxyAddress.toSolidityAddress(), false);
@@ -125,12 +125,12 @@ describe("Rescue Tests", function() {
       const TokenOwnerBalance = await getBalanceOf(ContractId, proxyAddress, client, proxyAddress.toSolidityAddress(), false);
 
       // Rescue TokenOwnerBalance + 1 : fail
-      await expect(Rescue(ContractId, proxyAddress, TokenOwnerBalance.add(1), client)).to.eventually.be.rejectedWith(Error);
+      await expect(rescue(ContractId, proxyAddress, TokenOwnerBalance.add(1), client)).to.eventually.be.rejectedWith(Error);
     });
 
     it("User without rescue role cannot rescue tokens", async function() {
       // Account without rescue role, rescues tokens : fail
-      await expect(Rescue(ContractId, proxyAddress, BigNumber.from(1), client2)).to.eventually.be.rejectedWith(Error);
+      await expect(rescue(ContractId, proxyAddress, BigNumber.from(1), client2)).to.eventually.be.rejectedWith(Error);
     });
   
     it("User with granted rescue role can rescue tokens", async function() {
@@ -147,7 +147,7 @@ describe("Rescue Tests", function() {
       await associateToken(ContractId, proxyAddress, client2, client2account);
         
       // Rescue tokens with newly granted account
-      await Rescue(ContractId, proxyAddress, AmountToRescue, client2);
+      await rescue(ContractId, proxyAddress, AmountToRescue, client2);
 
       // Check final balances : success
       const finalTokenOwnerBalance = await getBalanceOf(ContractId, proxyAddress, client, proxyAddress.toSolidityAddress(), false);

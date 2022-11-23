@@ -16,6 +16,8 @@ import {BURN_ROLE,
   RESCUE_ROLE,
   WIPE_ROLE,
   CASHIN_ROLE,
+  FREEZE_ROLE,
+  DELETE_ROLE,
   WITHOUT_ROLE,
   DEFAULT_ADMIN_ROLE,
   RolesId
@@ -83,6 +85,8 @@ describe("Roles Tests", function() {
       await grantRole(DEFAULT_ADMIN_ROLE, ContractId, proxyAddress, client, client2account);
       await grantRole(CASHIN_ROLE, ContractId, proxyAddress, client, client2account);
       await grantRole(BURN_ROLE, ContractId, proxyAddress, client, client2account);
+      await grantRole(DELETE_ROLE, ContractId, proxyAddress, client, client2account);
+      await grantRole(FREEZE_ROLE, ContractId, proxyAddress, client, client2account);
       await grantRole(PAUSE_ROLE, ContractId, proxyAddress, client, client2account);
       await grantRole(RESCUE_ROLE, ContractId, proxyAddress, client, client2account);
       await grantRole(WIPE_ROLE, ContractId, proxyAddress, client, client2account);
@@ -93,6 +97,8 @@ describe("Roles Tests", function() {
       for (let i = 0; i < result.length; i++) {
         if(i == RolesId.Cashin) expect(result[i].toUpperCase()).to.equals(CASHIN_ROLE.toUpperCase());
         else if(i == RolesId.Burn) expect(result[i].toUpperCase()).to.equals(BURN_ROLE.toUpperCase());
+        else if(i == RolesId.Delete) expect(result[i].toUpperCase()).to.equals(DELETE_ROLE.toUpperCase());
+        else if(i == RolesId.Freeze) expect(result[i].toUpperCase()).to.equals(FREEZE_ROLE.toUpperCase());
         else if(i == RolesId.Wipe) expect(result[i].toUpperCase()).to.equals(WIPE_ROLE.toUpperCase());
         else if(i == RolesId.Rescue) expect(result[i].toUpperCase()).to.equals(RESCUE_ROLE.toUpperCase());
         else if(i == RolesId.Pause) expect(result[i].toUpperCase()).to.equals(PAUSE_ROLE.toUpperCase());
@@ -106,6 +112,8 @@ describe("Roles Tests", function() {
       await revokeRole(PAUSE_ROLE, ContractId, proxyAddress, client, client2account);
       await revokeRole(RESCUE_ROLE, ContractId, proxyAddress, client, client2account);
       await revokeRole(WIPE_ROLE, ContractId, proxyAddress, client, client2account);
+      await revokeRole(FREEZE_ROLE, ContractId, proxyAddress, client, client2account);
+      await revokeRole(DELETE_ROLE, ContractId, proxyAddress, client, client2account);
       await revokeRole(DEFAULT_ADMIN_ROLE, ContractId, proxyAddress, client, client2account);
 
       // Checking roles    
@@ -127,6 +135,8 @@ describe("Roles Tests", function() {
       let rolePause = await getRoleId(ContractId, proxyAddress, client, RolesId.Pause);
       let roleWipe = await getRoleId(ContractId, proxyAddress, client, RolesId.Wipe);
       let roleRescue = await getRoleId(ContractId, proxyAddress, client, RolesId.Rescue);
+      let roleFreeze = await getRoleId(ContractId, proxyAddress, client, RolesId.Freeze);
+      let roleDelete = await getRoleId(ContractId, proxyAddress, client, RolesId.Delete);
 
       // Checking
       expect(roleAdmin.toUpperCase()).to.equals(DEFAULT_ADMIN_ROLE.toUpperCase());
@@ -135,6 +145,8 @@ describe("Roles Tests", function() {
       expect(rolePause.toUpperCase()).to.equals(PAUSE_ROLE.toUpperCase());
       expect(roleWipe.toUpperCase()).to.equals(WIPE_ROLE.toUpperCase());
       expect(roleRescue.toUpperCase()).to.equals(RESCUE_ROLE.toUpperCase());
+      expect(roleFreeze.toUpperCase()).to.equals(FREEZE_ROLE.toUpperCase());
+      expect(roleDelete.toUpperCase()).to.equals(DELETE_ROLE.toUpperCase());
     });
   
   

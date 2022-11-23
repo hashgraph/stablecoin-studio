@@ -4,8 +4,8 @@ import BaseError, {
 } from '../../../../../src/core/error/BaseError.js';
 import { CashOutStableCoinRequest } from '../../../../../src/index.js';
 import RequestMapper from '../../../../../src/port/in/sdk/request/mapping/RequestMapper.js';
-import {logValidation, REQUEST_ACCOUNTS } from '../../../../core/core.js';
- 
+import { logValidation, REQUEST_ACCOUNTS } from '../../../../core/core.js';
+
 describe('🧪 SDK CashOut Stable Coin Request', () => {
   it('Create simple request', () => {
     const request: CashOutStableCoinRequest = new CashOutStableCoinRequest({
@@ -20,7 +20,6 @@ describe('🧪 SDK CashOut Stable Coin Request', () => {
     expect(request).not.toBeNull();
     const other: ICashOutStableCoinServiceRequestModel =
       RequestMapper.map(request);
-  
   });
 
   it('CashOut and validate', () => {
@@ -31,9 +30,9 @@ describe('🧪 SDK CashOut Stable Coin Request', () => {
       },
       amount: '100',
       proxyContractId: '0.0.48826121',
-      tokenId: '0.0.48826122'
+      tokenId: '0.0.48826122',
     });
-    
+
     const validations = request.validate();
     expect(validations.length).toBeDefined();
     expect(validations.length).toBe(0);
@@ -47,9 +46,9 @@ describe('🧪 SDK CashOut Stable Coin Request', () => {
       },
       amount: '100',
       proxyContractId: '0.0.48826121',
-      tokenId: '0.0.48826122'
+      tokenId: '0.0.48826122',
     });
-   
+
     const validations = request.validate();
     expect(validations.length).toBeDefined();
     expect(validations.length).toBe(0);
@@ -63,7 +62,7 @@ describe('🧪 SDK CashOut Stable Coin Request', () => {
       },
       amount: '1asd',
       proxyContractId: '0.0.48826169',
-      tokenId: '0.0.48826175'
+      tokenId: '0.0.48826175',
     });
     const validations = request.validate();
     expect(validations.length).toBeDefined();
@@ -80,7 +79,7 @@ describe('🧪 SDK CashOut Stable Coin Request', () => {
       },
       amount: '1asd',
       proxyContractId: '0.0.48826169',
-      tokenId: '0.0.48826175'
+      tokenId: '0.0.48826175',
     });
     expect(request).not.toBeNull();
     const validations = request.validate();
@@ -91,7 +90,6 @@ describe('🧪 SDK CashOut Stable Coin Request', () => {
     expect(validationsOk.length).toBe(0);
   });
 
-  
   it('Create and validate request, fail with [amount, target,tokenId]', () => {
     const request: CashOutStableCoinRequest = new CashOutStableCoinRequest({
       account: {
@@ -100,7 +98,7 @@ describe('🧪 SDK CashOut Stable Coin Request', () => {
       },
       amount: '1asd',
       proxyContractId: '0.0.48826169',
-      tokenId: '0.48826175'
+      tokenId: '0.48826175',
     });
     expect(request).not.toBeNull();
     const validations = request.validate();
@@ -117,12 +115,12 @@ describe('🧪 SDK CashOut Stable Coin Request', () => {
       },
       amount: 'fail',
       proxyContractId: 'fail',
-      tokenId: 'token'
+      tokenId: 'token',
     });
     expect(request).not.toBeNull();
     const validations = request.validate();
     expect(validations).not.toBeNull();
     expect(validations.length).toEqual(3);
-    console.log(validations);
+    // console.log(validations);
   });
 });

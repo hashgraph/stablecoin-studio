@@ -61,6 +61,23 @@ function DEFAULT_ADMIN_ROLE() external view returns (bytes32)
 |---|---|---|
 | _0 | bytes32 | undefined |
 
+### DELETE_ROLE
+
+```solidity
+function DELETE_ROLE() external view returns (bytes32)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bytes32 | undefined |
+
 ### FREEZE_ROLE
 
 ```solidity
@@ -263,6 +280,17 @@ function decreaseSupplierAllowance(address supplier, uint256 amount) external no
 | supplier | address | The address of the supplier |
 | amount | uint256 | The amount to subtract from the supplier&#39;s current minting allowance |
 
+### deleteToken
+
+```solidity
+function deleteToken() external nonpayable
+```
+
+
+
+*Deletes the token *
+
+
 ### dissociateToken
 
 ```solidity
@@ -278,6 +306,22 @@ function dissociateToken(address adr) external nonpayable
 | Name | Type | Description |
 |---|---|---|
 | adr | address | The address of the account to dissociate |
+
+### freeze
+
+```solidity
+function freeze(address account) external nonpayable
+```
+
+
+
+*Freezes transfers of the token for the `account`*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| account | address | The account whose transfers will be freezed for the token |
 
 ### getRoleAdmin
 
@@ -525,6 +569,17 @@ function name() external view returns (string)
 |---|---|---|
 | _0 | string | string The the name of the token |
 
+### pause
+
+```solidity
+function pause() external nonpayable
+```
+
+
+
+*Pauses the token in order to prevent it from being involved in any kind of operation*
+
+
 ### renounceRole
 
 ```solidity
@@ -732,6 +787,33 @@ function transferFrom(address, address, uint256) external pure returns (bool)
 |---|---|---|
 | _0 | bool | undefined |
 
+### unfreeze
+
+```solidity
+function unfreeze(address account) external nonpayable
+```
+
+
+
+*Freezes transfers of the token for the `account`*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| account | address | The account whose transfers will be unfreezed for the token |
+
+### unpause
+
+```solidity
+function unpause() external nonpayable
+```
+
+
+
+*Unpauses the token in order to allow it to be involved in any kind of operation*
+
+
 ### wipe
 
 ```solidity
@@ -917,6 +999,22 @@ event TokenAssociated(address token, address account)
 | token  | address | undefined |
 | account  | address | undefined |
 
+### TokenDeleted
+
+```solidity
+event TokenDeleted(address token)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token  | address | undefined |
+
 ### TokenDissociated
 
 ```solidity
@@ -933,6 +1031,22 @@ event TokenDissociated(address token, address account)
 |---|---|---|
 | token  | address | undefined |
 | account  | address | undefined |
+
+### TokenPaused
+
+```solidity
+event TokenPaused(address token)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token  | address | undefined |
 
 ### TokenRescued
 
@@ -970,6 +1084,22 @@ event TokenTransfer(address token, address sender, address receiver, uint256 amo
 | sender  | address | undefined |
 | receiver  | address | undefined |
 | amount  | uint256 | undefined |
+
+### TokenUnpaused
+
+```solidity
+event TokenUnpaused(address token)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token  | address | undefined |
 
 ### TokensBurned
 
@@ -1044,6 +1174,40 @@ event Transfer(address indexed from, address indexed to, uint256 value)
 | from `indexed` | address | undefined |
 | to `indexed` | address | undefined |
 | value  | uint256 | undefined |
+
+### TransfersFreezed
+
+```solidity
+event TransfersFreezed(address token, address account)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token  | address | undefined |
+| account  | address | undefined |
+
+### TransfersUnfreezed
+
+```solidity
+event TransfersUnfreezed(address token, address account)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token  | address | undefined |
+| account  | address | undefined |
 
 
 

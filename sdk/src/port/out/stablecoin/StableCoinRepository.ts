@@ -8,9 +8,11 @@ import NetworkAdapter from '../network/NetworkAdapter.js';
 import IHederaStableCoinDetail from './types/IHederaStableCoinDetail.js';
 import {
 	ICallContractWithAccountRequest,
-	IHTSTokenRequest,
+	IHTSTokenRequestAmount,
 	IWipeTokenRequest,
 	ITransferTokenRequest,
+	IHTSTokenRequest,
+	IHTSTokenRequestTargetId,
 } from '../hedera/types.js';
 import ITokenList from './types/ITokenList.js';
 import { IToken } from './types/IToken.js';
@@ -84,13 +86,11 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		}
 	}
 
-
-
 	public async getStableCoin(id: string): Promise<StableCoin> {
 		try {
-			const retry = 5 ;
+			const retry = 10;
 			let i = 0;
-			
+
 			let response;
 			do {
 				if(i > 0) await new Promise( resolve => setTimeout(resolve, 2000) );
@@ -99,8 +99,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 					this.URI_BASE + 'tokens/' + id,
 				);
 				i++;
-			} while (response.status !== 200 || i < retry);
-			
+			} while (response.status !== 200 && i < retry);
+
 			const getKeyOrDefault = (
 				val?: IPublicKey,
 			): ContractId | PublicKey | undefined => {
@@ -154,7 +154,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 				paused: response.data.pause_status,
 				freezeDefault: response.data.freeze_default,
 				// kycStatus: string;
-				deleted: response.data.deleted ?? '',
+				deleted: response.data.deleted ?? false,
 				autoRenewAccount: response.data.auto_renew_account,
 				autoRenewAccountPeriod:
 					response.data.auto_renew_period / (3600 * 24),
@@ -176,22 +176,38 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	): Promise<Capabilities[]> {
 		try {
 			const stableCoin: StableCoin = await this.getStableCoin(tokenId);
+			const paused = stableCoin.paused === 'PAUSED';
+			const deleted = stableCoin.deleted;
+
 			const listCapabilities: Capabilities[] = [];
 
 			listCapabilities.push(Capabilities.DETAILS);
 			listCapabilities.push(Capabilities.BALANCE);
-			listCapabilities.push(Capabilities.RESCUE)
 
 			if (
+				!deleted &&
+				!paused &&
+				stableCoin.memo.htsAccount == stableCoin.treasury.toString()
+			) {
+				listCapabilities.push(Capabilities.RESCUE);
+			}
+
+			if (
+				!deleted &&
+				!paused &&
 				stableCoin.supplyKey?.toString() ===
-				stableCoin.treasury.toString()
+					stableCoin.treasury.toString()
 			) {
 				//TODO add Roles
 				listCapabilities.push(Capabilities.CASH_IN);
 				listCapabilities.push(Capabilities.BURN);
 			}
 
-			if (stableCoin.supplyKey instanceof PublicKey) {
+			if (
+				!deleted &&
+				!paused &&
+				stableCoin.supplyKey instanceof PublicKey
+			) {
 				if (
 					stableCoin.supplyKey?.key.toString() == publickey.toString()
 				) {
@@ -200,37 +216,64 @@ export default class StableCoinRepository implements IStableCoinRepository {
 				}
 			}
 
-			if (stableCoin.wipeKey instanceof PublicKey) {
+			if (
+				!deleted &&
+				!paused &&
+				stableCoin.wipeKey instanceof PublicKey
+			) {
 				if (
 					stableCoin.wipeKey?.key.toString() == publickey.toString()
 				) {
 					listCapabilities.push(Capabilities.WIPE_HTS);
 				}
 			}
-			if (stableCoin.wipeKey instanceof ContractId) {
+			if (
+				!deleted &&
+				!paused &&
+				stableCoin.wipeKey instanceof ContractId
+			) {
 				listCapabilities.push(Capabilities.WIPE);
 			}
 
-			if (stableCoin.pauseKey instanceof PublicKey) {
+			if (!deleted && stableCoin.pauseKey instanceof PublicKey) {
 				if (
 					stableCoin.pauseKey?.key.toString() == publickey.toString()
 				) {
 					listCapabilities.push(Capabilities.PAUSE_HTS);
 				}
-			}			
-			if (stableCoin.pauseKey instanceof ContractId) {
+			}
+			if (!deleted && stableCoin.pauseKey instanceof ContractId) {
 				listCapabilities.push(Capabilities.PAUSE);
 			}
 
-			if (stableCoin.freezeKey instanceof PublicKey) {
+			if (
+				!deleted &&
+				!paused &&
+				stableCoin.freezeKey instanceof PublicKey
+			) {
 				if (
 					stableCoin.freezeKey?.key.toString() == publickey.toString()
 				) {
 					listCapabilities.push(Capabilities.FREEZE_HTS);
 				}
-			}			
-			if (stableCoin.freezeKey instanceof ContractId) {
+			}
+			if (
+				!deleted &&
+				!paused &&
+				stableCoin.freezeKey instanceof ContractId
+			) {
 				listCapabilities.push(Capabilities.FREEZE);
+			}
+
+			if (!deleted && stableCoin.adminKey instanceof PublicKey) {
+				if (
+					stableCoin.adminKey?.key.toString() == publickey.toString()
+				) {
+					listCapabilities.push(Capabilities.DELETE_HTS);
+				}
+			}
+			if (!deleted && stableCoin.adminKey instanceof ContractId) {
+				listCapabilities.push(Capabilities.DELETE);
 			}
 
 			const roleManagement = listCapabilities.some((capability) =>
@@ -240,6 +283,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 					Capabilities.CASH_IN,
 					Capabilities.BURN,
 					Capabilities.RESCUE,
+					Capabilities.FREEZE,
+					Capabilities.DELETE,
 				].includes(capability),
 			);
 			if (roleManagement) {
@@ -310,7 +355,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		amount: BigDecimal,
 		account: Account,
 	): Promise<boolean> {
-		const params: IHTSTokenRequest = {
+		const params: IHTSTokenRequestAmount = {
 			account,
 			tokenId: tokenId,
 			amount: amount.toLong(),
@@ -341,7 +386,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		amount: BigDecimal,
 		account: Account,
 	): Promise<boolean> {
-		const params: IHTSTokenRequest = {
+		const params: IHTSTokenRequestAmount = {
 			account,
 			tokenId: tokenId,
 			amount: amount.toLong(),
@@ -821,5 +866,168 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		} catch (error) {
 			return Promise.reject<AccountInfo>(new InvalidResponse(error));
 		}
+	}
+
+	public async delete(
+		proxyContractId: string,
+		account: Account,
+	): Promise<Uint8Array> {
+		const params: ICallContractWithAccountRequest = {
+			contractId: proxyContractId,
+			parameters: [],
+			gas: 400000,
+			abi: HederaERC20__factory.abi,
+			account,
+		};
+		const response = await this.networkAdapter.provider.callContract(
+			'delete',
+			params,
+		);
+
+		return response;
+	}
+	public async deleteHTS(
+		tokenId: string,
+		account: Account,
+	): Promise<boolean> {
+		const params: IHTSTokenRequest = {
+			account,
+			tokenId: tokenId,
+		};
+
+		return await this.networkAdapter.provider.deleteHTS(params);
+	}
+
+	public async pause(
+		proxyContractId: string,
+		account: Account,
+	): Promise<Uint8Array> {
+		const params: ICallContractWithAccountRequest = {
+			contractId: proxyContractId,
+			parameters: [],
+			gas: 400000,
+			abi: HederaERC20__factory.abi,
+			account,
+		};
+		const response = await this.networkAdapter.provider.callContract(
+			'pause',
+			params,
+		);
+
+		return response;
+	}
+
+	public async pauseHTS(tokenId: string, account: Account): Promise<boolean> {
+		const params: IHTSTokenRequest = {
+			account,
+			tokenId: tokenId,
+		};
+
+		return await this.networkAdapter.provider.pauseHTS(params);
+	}
+
+	public async unpause(
+		proxyContractId: string,
+		account: Account,
+	): Promise<Uint8Array> {
+		const params: ICallContractWithAccountRequest = {
+			contractId: proxyContractId,
+			parameters: [],
+			gas: 400000,
+			abi: HederaERC20__factory.abi,
+			account,
+		};
+		const response = await this.networkAdapter.provider.callContract(
+			'unpause',
+			params,
+		);
+
+		return response;
+	}
+
+	public async unpauseHTS(
+		tokenId: string,
+		account: Account,
+	): Promise<boolean> {
+		const params: IHTSTokenRequest = {
+			account,
+			tokenId: tokenId,
+		};
+
+		return await this.networkAdapter.provider.unpauseHTS(params);
+	}
+
+	public async freeze(
+		proxyContractId: string,
+		account: Account,
+		targetId: string,
+	): Promise<Uint8Array> {
+		const parameters = [
+			await this.accountToEvmAddress(new Account(targetId)),
+		];
+
+		const params: ICallContractWithAccountRequest = {
+			contractId: proxyContractId,
+			parameters,
+			gas: 60000,
+			abi: HederaERC20__factory.abi,
+			account,
+		};
+
+		return await this.networkAdapter.provider.callContract(
+			'freeze',
+			params,
+		);
+	}
+
+	public async freezeHTS(
+		tokenId: string,
+		account: Account,
+		targetId: string,
+	): Promise<boolean> {
+		const params: IHTSTokenRequestTargetId = {
+			account,
+			tokenId,
+			targetId,
+		};
+
+		return await this.networkAdapter.provider.freezeHTS(params);
+	}
+
+	public async unfreeze(
+		proxyContractId: string,
+		account: Account,
+		targetId: string,
+	): Promise<Uint8Array> {
+		const parameters = [
+			await this.accountToEvmAddress(new Account(targetId)),
+		];
+
+		const params: ICallContractWithAccountRequest = {
+			contractId: proxyContractId,
+			parameters,
+			gas: 60000,
+			abi: HederaERC20__factory.abi,
+			account,
+		};
+
+		return await this.networkAdapter.provider.callContract(
+			'unfreeze',
+			params,
+		);
+	}
+
+	public async unfreezeHTS(
+		tokenId: string,
+		account: Account,
+		targetId: string,
+	): Promise<boolean> {
+		const params: IHTSTokenRequestTargetId = {
+			account,
+			tokenId,
+			targetId,
+		};
+
+		return await this.networkAdapter.provider.unfreezeHTS(params);
 	}
 }

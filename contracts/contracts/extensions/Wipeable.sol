@@ -6,7 +6,6 @@ import "./Roles.sol";
 import "./Interfaces/IWipeable.sol";
 import "../hts-precompile/IHederaTokenService.sol";
 
-
 abstract contract Wipeable is IWipeable, TokenOwner, Roles {
 
     /**

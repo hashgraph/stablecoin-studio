@@ -22,7 +22,7 @@ export default interface StableCoinDetail {
 	autoRenewAccount?: AccountId;
 	autoRenewAccountPeriod?: number;
 	paused?: string;
-	deleted?: string;
+	deleted?: boolean;
 	adminKey?: ContractId | PublicKey | undefined;
 	kycKey?: ContractId | PublicKey | undefined;
 	freezeKey?: ContractId | PublicKey | undefined;

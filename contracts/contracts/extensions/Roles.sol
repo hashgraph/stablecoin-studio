@@ -49,6 +49,13 @@ abstract contract Roles is IRoles, AccessControlUpgradeable {
     bytes32 public constant FREEZE_ROLE = 0x5789b43a60de35bcedee40618ae90979bab7d1315fd4b079234241bdab19936d;
 
     /**
+    * @dev Role that allows to pause the token
+    * 
+    * keccak256("DELETE_ROLE");
+    */ 
+    bytes32 public constant DELETE_ROLE = 0x2b73f0f98ad60ca619bbdee4bcd175da1127db86346339f8b718e3f8b4a006e2;
+
+    /**
     * @dev Chain to include in array positions for roles don't available for an account
     * 
     * keccak256("WITHOUT_ROLE");
@@ -72,6 +79,8 @@ abstract contract Roles is IRoles, AccessControlUpgradeable {
         ROLES.push(WIPE_ROLE);
         ROLES.push(RESCUE_ROLE);
         ROLES.push(PAUSE_ROLE);
+        ROLES.push(FREEZE_ROLE);
+        ROLES.push(DELETE_ROLE);        
     }
 
     /**

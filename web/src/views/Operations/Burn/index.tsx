@@ -8,7 +8,7 @@ import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-	// SELECTED_WALLET_ACCOUNT_INFO,
+	SELECTED_WALLET_ACCOUNT_INFO,
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNT,
 	walletActions,
@@ -30,7 +30,7 @@ const BurnOperation = () => {
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
-	// const infoAccount = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
+	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 
 	const [errorOperation, setErrorOperation] = useState();
 	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
@@ -42,6 +42,10 @@ const BurnOperation = () => {
 			amount: '0',
 			proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
 			tokenId: selectedStableCoin?.tokenId ?? '',
+			publicKey:{
+				key:accountInfo.publicKey?.key??'',
+				type:accountInfo.publicKey?.type ??'ED25519'
+			}
 		}),
 	);
 	const navigate = useNavigate();
@@ -96,6 +100,8 @@ const BurnOperation = () => {
 				treasuryId: stableCoinDetails?.treasuryId,
 				autoRenewAccount: stableCoinDetails?.autoRenewAccount,
 				memo: stableCoinDetails?.memo,
+				paused: stableCoinDetails?.paused,
+				deleted: stableCoinDetails?.deleted,
 				adminKey:
 					stableCoinDetails?.adminKey && JSON.parse(JSON.stringify(stableCoinDetails.adminKey)),
 				kycKey: stableCoinDetails?.kycKey && JSON.parse(JSON.stringify(stableCoinDetails.kycKey)),

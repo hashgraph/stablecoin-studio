@@ -9,6 +9,8 @@ import BurnOperation from '../views/Operations/Burn';
 import GetBalanceOperation from '../views/Operations/GetBalance';
 import RescueTokenOperation from '../views/Operations/RescueTokens';
 import WipeOperation from '../views/Operations/Wipe';
+import FreezeOperation from '../views/Operations/Freeze';
+import UnfreezeOperation from '../views/Operations/Unfreeze';
 import Dashboard from '../views/Dashboard';
 import HandleRoles from '../views/Roles/HandleRoles';
 import { actions } from '../views/Roles/constants';
@@ -27,7 +29,8 @@ import {
 	walletActions,
 } from '../store/slices/walletSlice';
 import type { SavedPairingData } from 'hedera-stable-coin-sdk';
-import ExternalTokenCreation from '../views/ExternalToken/ExternalTokenCreation';
+import ImportedTokenCreation from '../views/ImportedToken/ImportedTokenCreation';
+import DangerZoneOperations from '../views/Operations/DangerZone';
 
 const PrivateRoute = ({ status }: { status?: HashConnectConnectionState }) => {
 	return (
@@ -144,6 +147,8 @@ const Router = () => {
 								<Route path={RoutesMappingUrl.burn} element={<BurnOperation />} />
 								<Route path={RoutesMappingUrl.rescueTokens} element={<RescueTokenOperation />} />
 								<Route path={RoutesMappingUrl.wipe} element={<WipeOperation />} />
+								<Route path={RoutesMappingUrl.freeze} element={<FreezeOperation />} />
+								<Route path={RoutesMappingUrl.unfreeze} element={<UnfreezeOperation />} />
 								<Route path={RoutesMappingUrl.dashboard} element={<Dashboard />} />
 								<Route
 									path={RoutesMappingUrl.editRole}
@@ -154,6 +159,7 @@ const Router = () => {
 									element={<HandleRoles action={actions.give} />}
 								/>
 								<Route path={RoutesMappingUrl.operations} element={<Operations />} />
+								<Route path={RoutesMappingUrl.dangerZone} element={<DangerZoneOperations />} />
 								<Route
 									path={RoutesMappingUrl.revokeRole}
 									element={<HandleRoles action={actions.revoke} />}
@@ -167,7 +173,7 @@ const Router = () => {
 							</>
 						)}
 						<Route path={RoutesMappingUrl.stableCoinCreation} element={<StableCoinCreation />} />
-						<Route path={RoutesMappingUrl.externalToken} element={<ExternalTokenCreation />} />
+						<Route path={RoutesMappingUrl.importedToken} element={<ImportedTokenCreation />} />
 						<Route
 							path={RoutesMappingUrl.stableCoinNotSelected}
 							element={<StableCoinNotSelected />}

@@ -11,18 +11,14 @@ import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-	// SELECTED_WALLET_ACCOUNT_INFO,
+	SELECTED_WALLET_ACCOUNT_INFO,
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNT,
 	walletActions,
 } from '../../../store/slices/walletSlice';
 import { useEffect, useState } from 'react';
 import type { AppDispatch } from '../../../store/store.js';
-import {
-	BigDecimal,
-	CashInStableCoinRequest,
-	GetStableCoinDetailsRequest,
-} from 'hedera-stable-coin-sdk';
+import { BigDecimal, CashInStableCoinRequest, GetStableCoinDetailsRequest } from 'hedera-stable-coin-sdk';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
 
@@ -35,8 +31,8 @@ const CashInOperation = () => {
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
-	// const infoAccount = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
-	const { decimals = 0, maxSupply } = selectedStableCoin || {};
+	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
+	const { decimals = 0,maxSupply} = selectedStableCoin || {};
 	const dispatch = useDispatch<AppDispatch>();
 
 	const [errorOperation, setErrorOperation] = useState();
@@ -52,6 +48,10 @@ const CashInOperation = () => {
 			proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
 			targetId: '',
 			tokenId: selectedStableCoin?.tokenId ?? '',
+			publicKey:{
+				key:accountInfo.publicKey?.key??'',
+				type:accountInfo.publicKey?.type ??'ED25519'
+			}
 		}),
 	);
 
@@ -88,6 +88,8 @@ const CashInOperation = () => {
 				treasuryId: stableCoinDetails?.treasuryId,
 				autoRenewAccount: stableCoinDetails?.autoRenewAccount,
 				memo: stableCoinDetails?.memo,
+				paused: stableCoinDetails?.paused,
+				deleted: stableCoinDetails?.deleted,
 				adminKey:
 					stableCoinDetails?.adminKey && JSON.parse(JSON.stringify(stableCoinDetails.adminKey)),
 				kycKey: stableCoinDetails?.kycKey && JSON.parse(JSON.stringify(stableCoinDetails.kycKey)),
@@ -112,6 +114,8 @@ const CashInOperation = () => {
 		} catch (error: any) {				
 			setErrorTransactionUrl(error.transactionUrl);
 			setErrorOperation(error.toString());
+			console.log({error});
+			
 			onError();
 		}
 	};

@@ -1,0 +1,72 @@
+# IPausable
+
+
+
+
+
+
+
+
+
+## Methods
+
+### pause
+
+```solidity
+function pause() external nonpayable
+```
+
+
+
+*Pauses the token in order to prevent it from being involved in any kind of operation*
+
+
+### unpause
+
+```solidity
+function unpause() external nonpayable
+```
+
+
+
+*Unpauses the token in order to allow it to be involved in any kind of operation*
+
+
+
+
+## Events
+
+### TokenPaused
+
+```solidity
+event TokenPaused(address token)
+```
+
+
+
+*Emitted when the token is paused*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token  | address | Token address |
+
+### TokenUnpaused
+
+```solidity
+event TokenUnpaused(address token)
+```
+
+
+
+*Emitted when the token is unpaused*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token  | address | Token address |
+
+
+

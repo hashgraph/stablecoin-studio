@@ -8,13 +8,16 @@ import "./Interfaces/IHederaERC20.sol";
 import "./extensions/CashIn.sol";
 import "./extensions/Burnable.sol";
 import "./extensions/Wipeable.sol";
+import "./extensions/Pausable.sol";
+import "./extensions/Freezable.sol";
 import "./extensions/Rescatable.sol";
+import "./extensions/Deletable.sol";
 import "./hts-precompile/IHederaTokenService.sol";
 import "./extensions/TokenOwner.sol";
+//import "./Roles.sol";
 
-
-contract HederaERC20 is IHederaERC20, IERC20Upgradeable,
-                       CashIn, Burnable, Wipeable, Rescatable {
+contract HederaERC20 is IHederaERC20, IERC20Upgradeable, 
+                        CashIn, Burnable, Wipeable, Pausable, Freezable, Deletable, Rescatable {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     function initialize (address tokenAddress, address originalSender) 
@@ -29,6 +32,9 @@ contract HederaERC20 is IHederaERC20, IERC20Upgradeable,
         _grantRole(_getRoleId(roleName.BURN), originalSender);
         _grantRole(_getRoleId(roleName.RESCUE), originalSender);
         _grantRole(_getRoleId(roleName.WIPE), originalSender);
+        _grantRole(_getRoleId(roleName.PAUSE), originalSender);
+        _grantRole(_getRoleId(roleName.FREEZE), originalSender);
+        _grantRole(_getRoleId(roleName.DELETE), originalSender);
         _setupRole(_getRoleId(roleName.ADMIN), originalSender); // Assign Admin role to the provided address
     }
 
@@ -212,6 +218,5 @@ contract HederaERC20 is IHederaERC20, IERC20Upgradeable,
     {
         require(false, "function not already implemented");
         return true;
-    }
-    
+    }    
 }

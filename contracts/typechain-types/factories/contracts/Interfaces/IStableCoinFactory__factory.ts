@@ -35,19 +35,19 @@ const _abi = [
             type: "bool",
           },
           {
-            internalType: "uint32",
+            internalType: "int64",
             name: "tokenMaxSupply",
-            type: "uint32",
+            type: "int64",
           },
           {
-            internalType: "uint256",
+            internalType: "uint64",
             name: "tokenInitialSupply",
-            type: "uint256",
+            type: "uint64",
           },
           {
-            internalType: "uint256",
+            internalType: "uint32",
             name: "tokenDecimals",
-            type: "uint256",
+            type: "uint32",
           },
           {
             internalType: "address",

@@ -5,7 +5,6 @@ import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import StableCoinList from '../../../port/in/sdk/response/StableCoinList.js';
 import IGetStableCoinServiceRequestModel from './model/IGetStableCoinServiceRequestModel.js';
 import IGetBalanceOfStableCoinServiceRequestModel from './model/IGetBalanceOfStableCoinServiceRequestModel.js';
-import IGetNameOfStableCoinServiceRequestModel from './model/IGetNameOfStableCoinServiceRequestModel.js';
 import CashInStableCoinServiceRequestModel from './model/ICashInStableCoinServiceRequestModel.js';
 import ICashOutStableCoinServiceRequestModel from './model/ICashOutStableCoinServiceRequestModel.js';
 import AssociateTokenStableCoinServiceRequestModel from './model/IAssociateTokenStableCoinServiceRequestModel.js';
@@ -28,6 +27,9 @@ import { OperationNotAllowed } from './error/OperationNotAllowed.js';
 import { InsufficientFunds } from './error/InsufficientFunds.js';
 import { AmountGreaterThanOwnerBalance } from './error/AmountGreaterThanOwnerBalance.js';
 import CheckNums from '../../../core/checks/numbers/CheckNums.js';
+import IDeleteStableCoinRequestModel from './model/IDeleteStableCoinRequestModel.js';
+import IPauseStableCoinRequestModel from './model/IPauseStableCoinRequestModel.js';
+import IFreezeAccountRequestModel from './model/IFreezeAccountRequestModel.js';
 
 export default class StableCoinService extends Service {
 	private repository: IStableCoinRepository;
@@ -324,7 +326,9 @@ export default class StableCoinService extends Service {
 		const capabilities: Capabilities[] =
 			await this.getCapabilitiesStableCoin(
 				req.tokenId,
-				req.account?.privateKey?.publicKey?.key ?? '',
+				req.publicKey
+					? req.publicKey?.key
+					: req.account?.privateKey?.publicKey?.key ?? '',
 			);
 		if (capabilities.includes(Capabilities.WIPE)) {
 			const result = await this.repository.wipe(
@@ -560,5 +564,129 @@ export default class StableCoinService extends Service {
 			req.targetId,
 			req.account,
 		);
+	}
+
+	public async deleteStableCoin(
+		req: IDeleteStableCoinRequestModel,
+	): Promise<boolean> {
+		const capabilities: Capabilities[] =
+			await this.getCapabilitiesStableCoin(
+				req.tokenId,
+				req.publicKey
+					? req.publicKey?.key
+					: req.account?.privateKey?.publicKey?.key ?? '',
+			);
+
+		let result = false;
+		if (capabilities.includes(Capabilities.DELETE)) {
+			result = Boolean(
+				await this.repository
+					.delete(req.proxyContractId, req.account)
+					.then((r) => r[0]),
+			);
+		} else if (capabilities.includes(Capabilities.DELETE_HTS)) {
+			result = await this.repository.deleteHTS(req.tokenId, req.account);
+		}
+		return result;
+	}
+
+	public async pauseStableCoin(
+		req: IPauseStableCoinRequestModel,
+	): Promise<boolean> {
+		const capabilities: Capabilities[] =
+			await this.getCapabilitiesStableCoin(
+				req.tokenId,
+				req.publicKey
+					? req.publicKey?.key
+					: req.account?.privateKey?.publicKey?.key ?? '',
+			);
+		let result = false;
+		if (capabilities.includes(Capabilities.PAUSE)) {
+			result = Boolean(
+				await this.repository
+					.pause(req.proxyContractId, req.account)
+					.then((r) => r[0]),
+			);
+		} else if (capabilities.includes(Capabilities.PAUSE_HTS)) {
+			result = await this.repository.pauseHTS(req.tokenId, req.account);
+		}
+		return result;
+	}
+
+	public async unpauseStableCoin(
+		req: IPauseStableCoinRequestModel,
+	): Promise<boolean> {
+		const capabilities: Capabilities[] =
+			await this.getCapabilitiesStableCoin(
+				req.tokenId,
+				req.publicKey
+					? req.publicKey?.key
+					: req.account?.privateKey?.publicKey?.key ?? '',
+			);
+		let result = false;
+		if (capabilities.includes(Capabilities.PAUSE)) {
+			result = Boolean(
+				await this.repository
+					.unpause(req.proxyContractId, req.account)
+					.then((r) => r[0]),
+			);
+		} else if (capabilities.includes(Capabilities.PAUSE_HTS)) {
+			result = await this.repository.unpauseHTS(req.tokenId, req.account);
+		}
+		return result;
+	}
+
+	public async freezeAccount(
+		req: IFreezeAccountRequestModel,
+	): Promise<boolean> {
+		const capabilities: Capabilities[] =
+			await this.getCapabilitiesStableCoin(
+				req.tokenId,
+				req.publicKey
+					? req.publicKey?.key
+					: req.account?.privateKey?.publicKey?.key ?? '',
+			);
+		let result = false;
+		if (capabilities.includes(Capabilities.FREEZE)) {
+			result = Boolean(
+				await this.repository
+					.freeze(req.proxyContractId, req.account, req.targetId)
+					.then((r) => r[0]),
+			);
+		} else if (capabilities.includes(Capabilities.FREEZE_HTS)) {
+			result = await this.repository.freezeHTS(
+				req.tokenId,
+				req.account,
+				req.targetId,
+			);
+		}
+		return result;
+	}
+
+	public async unfreezeAccount(
+		req: IFreezeAccountRequestModel,
+	): Promise<boolean> {
+		const capabilities: Capabilities[] =
+			await this.getCapabilitiesStableCoin(
+				req.tokenId,
+				req.publicKey
+					? req.publicKey?.key
+					: req.account?.privateKey?.publicKey?.key ?? '',
+			);
+		let result = false;
+		if (capabilities.includes(Capabilities.FREEZE)) {
+			result = Boolean(
+				await this.repository
+					.unfreeze(req.proxyContractId, req.account, req.targetId)
+					.then((r) => r[0]),
+			);
+		} else if (capabilities.includes(Capabilities.FREEZE_HTS)) {
+			result = await this.repository.unfreezeHTS(
+				req.tokenId,
+				req.account,
+				req.targetId,
+			);
+		}
+		return result;
 	}
 }

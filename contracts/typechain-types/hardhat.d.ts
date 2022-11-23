@@ -89,6 +89,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.CashIn__factory>;
     getContractFactory(
+      name: "Deletable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Deletable__factory>;
+    getContractFactory(
+      name: "Freezable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Freezable__factory>;
+    getContractFactory(
       name: "IBurnable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IBurnable__factory>;
@@ -96,6 +104,18 @@ declare module "hardhat/types/runtime" {
       name: "ICashIn",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ICashIn__factory>;
+    getContractFactory(
+      name: "IDeletable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IDeletable__factory>;
+    getContractFactory(
+      name: "IFreezable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IFreezable__factory>;
+    getContractFactory(
+      name: "IPausable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IPausable__factory>;
     getContractFactory(
       name: "IRescatable",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -116,6 +136,10 @@ declare module "hardhat/types/runtime" {
       name: "IWipeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IWipeable__factory>;
+    getContractFactory(
+      name: "Pausable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Pausable__factory>;
     getContractFactory(
       name: "Rescatable",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -265,6 +289,16 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.CashIn>;
     getContractAt(
+      name: "Deletable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Deletable>;
+    getContractAt(
+      name: "Freezable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Freezable>;
+    getContractAt(
       name: "IBurnable",
       address: string,
       signer?: ethers.Signer
@@ -274,6 +308,21 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ICashIn>;
+    getContractAt(
+      name: "IDeletable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IDeletable>;
+    getContractAt(
+      name: "IFreezable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IFreezable>;
+    getContractAt(
+      name: "IPausable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IPausable>;
     getContractAt(
       name: "IRescatable",
       address: string,
@@ -299,6 +348,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IWipeable>;
+    getContractAt(
+      name: "Pausable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Pausable>;
     getContractAt(
       name: "Rescatable",
       address: string,

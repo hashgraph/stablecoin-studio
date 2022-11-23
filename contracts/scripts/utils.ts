@@ -116,8 +116,9 @@ export async function createToken(
         .setFreezeDefault(freeze)
         .setTreasuryAccountId(AccountId.fromString(contractId.toString()))
         .setAdminKey(PublicKey.fromString(publicKey))
-        .setFreezeKey(PublicKey.fromString(publicKey))
+        .setFreezeKey(DelegateContractId.fromString(contractId))
         .setWipeKey(DelegateContractId.fromString(contractId))
+        .setPauseKey(DelegateContractId.fromString(contractId))
         .setSupplyKey(DelegateContractId.fromString(contractId))
 
     if (maxSupply !== null) {

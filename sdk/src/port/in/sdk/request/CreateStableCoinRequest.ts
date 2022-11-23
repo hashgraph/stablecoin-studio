@@ -9,7 +9,6 @@ import {
 	RequestAccount,
 	RequestPublicKey,
 } from './BaseRequest.js';
-import { InvalidRange } from './error/InvalidRange.js';
 import { InvalidType } from './error/InvalidType.js';
 import { InvalidValue } from './error/InvalidValue.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';

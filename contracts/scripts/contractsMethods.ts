@@ -172,8 +172,36 @@ export async function Wipe(ContractId: any, proxyAddress: string, amountOfTokenT
     await contractCall(ContractId.fromString(proxyAddress!), 'wipe', params, clientWipingToken, Gas1, HederaERC20__factory.abi);
 }
 
+// Pausable ///////////////////////////////////////////////////
+export async function pause(ContractId: any, proxyAddress: string, clientPausingToken: any){
+    let params: any[] = [];  
+    await contractCall(ContractId.fromString(proxyAddress!), 'pause', params, clientPausingToken, Gas1, HederaERC20__factory.abi);
+}
+
+export async function unpause(ContractId: any, proxyAddress: string, clientPausingToken: any){
+    let params: any[] = [];  
+    await contractCall(ContractId.fromString(proxyAddress!), 'unpause', params, clientPausingToken, Gas1, HederaERC20__factory.abi);
+}
+
+// Freezable ///////////////////////////////////////////////////
+export async function freeze(ContractId: any, proxyAddress: string, clientPausingToken: any, accountToFreeze: string){
+    let params: any[] = [AccountId.fromString(accountToFreeze!).toSolidityAddress()];  
+    await contractCall(ContractId.fromString(proxyAddress!), 'freeze', params, clientPausingToken, Gas1, HederaERC20__factory.abi);
+}
+
+export async function unfreeze(ContractId: any, proxyAddress: string, clientPausingToken: any, accountToFreeze: string){
+    let params: any[] = [AccountId.fromString(accountToFreeze!).toSolidityAddress()];  
+    await contractCall(ContractId.fromString(proxyAddress!), 'unfreeze', params, clientPausingToken, Gas1, HederaERC20__factory.abi);
+}
+
+// Deletable ///////////////////////////////////////////////////
+export async function deleteToken(ContractId: any, proxyAddress: string, clientPausingToken: any){
+    let params: any[] = [];  
+    await contractCall(ContractId.fromString(proxyAddress!), 'deleteToken', params, clientPausingToken, Gas1, HederaERC20__factory.abi);
+}
+
 // Rescueable ///////////////////////////////////////////////////
-export async function Rescue(ContractId: any, proxyAddress: string, amountOfTokenToRescue: any, clientRescueingToken: any){
+export async function rescue(ContractId: any, proxyAddress: string, amountOfTokenToRescue: any, clientRescueingToken: any){
     let params = [amountOfTokenToRescue.toString()];      
     await contractCall(ContractId.fromString(proxyAddress!), 'rescue', params, clientRescueingToken, Gas6, HederaERC20__factory.abi)  
 }

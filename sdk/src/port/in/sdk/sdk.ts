@@ -28,6 +28,7 @@ import IRescueStableCoinServiceRequestModel from '../../../app/service/stablecoi
 import IRoleStableCoinServiceRequestModel from '../../../app/service/stablecoin/model/IRoleStableCoinServiceRequestModel.js';
 import IGetBasicRequestModel from '../../../app/service/stablecoin/model/IGetBasicRequest.js';
 import { IAccountWithKeyRequestModel } from '../../../app/service/stablecoin/model/CoreRequestModel.js';
+import IDeleteStableCoinRequestModel from '../../../app/service/stablecoin/model/IDeleteStableCoinRequestModel.js';
 
 /* Public requests */
 import { IAssociateStableCoinRequest } from './request/IAssociateStableCoinRequest.js';
@@ -86,11 +87,16 @@ import {
 	AssociateTokenRequest,
 	GetRolesRequest,
 	GetAccountInfoRequest,
+	DeleteStableCoinRequest,
+	PauseStableCoinRequest,
+	FreezeAccountRequest,
 } from './request';
 import ValidatedRequest from './request/validation/ValidatedRequest.js';
 import RequestMapper from './request/mapping/RequestMapper.js';
 import { RequestAccount } from './request/BaseRequest.js';
 import { Roles } from '../../../domain/context/stablecoin/Roles.js';
+import IPauseStableCoinRequestModel from '../../../app/service/stablecoin/model/IPauseStableCoinRequestModel.js';
+import IFreezeAccountRequestModel from '../../../app/service/stablecoin/model/IFreezeAccountRequestModel.js';
 
 export {
 	ValidatedRequest,
@@ -221,17 +227,17 @@ export class SDK {
 					treasury: AccountId,
 					autoRenewAccount: AccountId,
 					initialSupply: (val, req) => {
-						if(val){
+						if (val) {
 							return BigDecimal.fromString(val, req.decimals);
 						}
 						return BigDecimal.ZERO;
 					},
-					maxSupply: (val, req) =>{
-					if(val){
-						return BigDecimal.fromString(val, req.decimals);
-					}
-					return BigDecimal.ZERO;
-				}
+					maxSupply: (val, req) => {
+						if (val) {
+							return BigDecimal.fromString(val, req.decimals);
+						}
+						return BigDecimal.ZERO;
+					},
 				},
 			);
 			return this.stableCoinService.createStableCoin(req);
@@ -532,6 +538,69 @@ export class SDK {
 			const req: IGetRolesServiceRequestModel =
 				RequestMapper.map(request);
 			return this.stableCoinService.getRoles(req);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+
+	public deleteStableCoin(
+		request: DeleteStableCoinRequest,
+	): Promise<boolean> | null {
+		try {
+			const req: IDeleteStableCoinRequestModel =
+				RequestMapper.map(request);
+			return this.stableCoinService.deleteStableCoin(req);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+
+	public pauseStableCoin(
+		request: PauseStableCoinRequest,
+	): Promise<boolean> | null {
+		try {
+			const req: IPauseStableCoinRequestModel =
+				RequestMapper.map(request);
+			return this.stableCoinService.pauseStableCoin(req);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+
+	public unpauseStableCoin(
+		request: PauseStableCoinRequest,
+	): Promise<boolean> | null {
+		try {
+			const req: IPauseStableCoinRequestModel =
+				RequestMapper.map(request);
+			return this.stableCoinService.unpauseStableCoin(req);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+
+	public freezeAccount(
+		request: FreezeAccountRequest,
+	): Promise<boolean> | null {
+		try {
+			const req: IFreezeAccountRequestModel = RequestMapper.map(request);
+			return this.stableCoinService.freezeAccount(req);
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+
+	public unfreezeAccount(
+		request: FreezeAccountRequest,
+	): Promise<boolean> | null {
+		try {
+			const req: IFreezeAccountRequestModel = RequestMapper.map(request);
+			return this.stableCoinService.unfreezeAccount(req);
 		} catch (error) {
 			console.error(error);
 			return null;

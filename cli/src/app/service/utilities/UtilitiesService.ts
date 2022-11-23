@@ -187,6 +187,8 @@ export default class UtilitiesService extends Service {
     network?: string,
     account?: string,
     token?: string,
+    tokenPaused?: boolean,
+    tokenDeleted?: boolean,
   ): Promise<string> {
     if (network) {
       question =
@@ -211,6 +213,12 @@ export default class UtilitiesService extends Service {
         colors.underline(colors.bold('Stablecoin:')) +
         ' ' +
         colors.yellow('(' + token + ')');
+    }
+    if (tokenPaused) {
+      question = question + ' | ' + colors.red('PAUSED');
+    }
+    if (tokenDeleted) {
+      question = question + ' | ' + colors.red('DELETED');
     }
     question = question + '\n';
     const variable = await inquirer.prompt({

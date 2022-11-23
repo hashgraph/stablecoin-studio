@@ -1,5 +1,5 @@
-import { Box, HStack, Tag, Text } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { Box, Button, HStack, Text, VStack } from '@chakra-ui/react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -21,13 +21,21 @@ import {
 import { RouterManager } from '../../Router/RouterManager';
 import { matchPath, useLocation, useNavigate } from 'react-router-dom';
 import { NamedRoutes } from '../../Router/NamedRoutes';
-import { GetStableCoinDetailsRequest, HashPackAccount, GetAccountInfoRequest } from 'hedera-stable-coin-sdk';
-import type { IExternalToken } from '../../interfaces/IExternalToken.js';
+import {
+	GetStableCoinDetailsRequest,
+	HashPackAccount,
+	GetAccountInfoRequest,
+} from 'hedera-stable-coin-sdk';
+import type { IExternalToken } from '../../interfaces/IExternalToken';
+import type { GroupBase, SelectInstance } from 'chakra-react-select';
+import { validateAccount } from '../../utils/validationsHelper';
 
 const CoinDropdown = () => {
 	const dispatch = useDispatch<AppDispatch>();
 	const navigate = useNavigate();
 	const location = useLocation();
+
+	const searcheableRef = useRef<SelectInstance<unknown, boolean, GroupBase<unknown>>>(null);
 
 	const stableCoinList = useSelector(STABLE_COIN_LIST);
 	const externalTokenList = useSelector(EXTERNAL_TOKEN_LIST);
@@ -71,11 +79,11 @@ const CoinDropdown = () => {
 
 	const getAccountInfo = async (hashpackAccount: HashPackAccount) => {
 		const accountInfo = await SDKService.getAccountInfo(
-			new GetAccountInfoRequest({ 
+			new GetAccountInfoRequest({
 				account: {
 					accountId: hashpackAccount.accountId.id,
-				}
-			})
+				},
+			}),
 		);
 
 		dispatch(walletActions.setAccountInfo(accountInfo));
@@ -86,7 +94,7 @@ const CoinDropdown = () => {
 
 		const capabilities = await SDKService.getCapabilities({
 			id: selectedStableCoin.tokenId,
-			publicKey: accountInfo.publicKey.key
+			publicKey: accountInfo.publicKey.key,
 		});
 		dispatch(walletActions.setCapabilities(capabilities));
 	};
@@ -116,16 +124,6 @@ const CoinDropdown = () => {
 								label: (
 									<HStack justifyContent={'space-between'} alignItems={'center'}>
 										<Text whiteSpace={'normal'}>{`${item.id} - ${item.symbol}`}</Text>
-										<HStack>
-											<Tag
-												variant='solid'
-												size='md'
-												backgroundColor={'light.purple4'}
-												color={'dark.primary'}
-											>
-												External
-											</Tag>
-										</HStack>
 									</HStack>
 								),
 								value: item.id,
@@ -139,9 +137,11 @@ const CoinDropdown = () => {
 
 	const handleSelectCoin = async (event: any) => {
 		const selectedCoin = event.value;
-		const stableCoinDetails = await SDKService.getStableCoinDetails(new GetStableCoinDetailsRequest ({
-			id: selectedCoin,
-		}));
+		const stableCoinDetails = await SDKService.getStableCoinDetails(
+			new GetStableCoinDetailsRequest({
+				id: selectedCoin,
+			}),
+		);
 
 		dispatch(
 			walletActions.setSelectedStableCoin({
@@ -156,6 +156,8 @@ const CoinDropdown = () => {
 				treasuryId: stableCoinDetails?.treasuryId,
 				autoRenewAccount: stableCoinDetails?.autoRenewAccount,
 				memo: stableCoinDetails?.memo,
+				paused: stableCoinDetails?.paused,
+				deleted: stableCoinDetails?.deleted,
 				adminKey:
 					stableCoinDetails?.adminKey && JSON.parse(JSON.stringify(stableCoinDetails.adminKey)),
 				kycKey: stableCoinDetails?.kycKey && JSON.parse(JSON.stringify(stableCoinDetails.kycKey)),
@@ -169,8 +171,35 @@ const CoinDropdown = () => {
 		);
 	};
 
+	const onImportSearch = (value: string) => {
+		const params = { tokenId: value };
+		RouterManager.to(navigate, NamedRoutes.ImportedToken, undefined, { state: params });
+		searcheableRef.current?.blur();
+	};
+
+	const handleNoOptionsMessage = (obj: { inputValue: string }) => {
+		const { inputValue } = obj;
+		if (validateAccount(inputValue)) {
+			return (
+				<VStack gap={1}>
+					<Text>{t('topbar.coinDropdown.noStableCoin')}</Text>
+					<Button
+						data-testid='topbar-action-import-search'
+						onClick={() => onImportSearch(inputValue)}
+						flex={1}
+					>
+						Import
+					</Button>
+				</VStack>
+			);
+		} else {
+			return <Text>{t('topbar.coinDropdown.invalidStableCoinId')}</Text>;
+		}
+	};
+
 	const { t } = useTranslation('global');
 	const { control } = useForm();
+
 	const styles = {
 		menuList: {
 			maxH: '244px',
@@ -195,7 +224,8 @@ const CoinDropdown = () => {
 				placeholder={t('topbar.coinDropdown.placeholder')}
 				iconStyles={{ color: 'brand.primary200' }}
 				onChangeAux={handleSelectCoin}
-				noOptionsMessage={() => t('topbar.coinDropdown.noStableCoin')}
+				noOptionsMessage={handleNoOptionsMessage}
+				ref={searcheableRef}
 			/>
 		</Box>
 	);

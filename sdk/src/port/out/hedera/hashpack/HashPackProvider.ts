@@ -29,10 +29,12 @@ import {
 	ICallContractRequest,
 	ICallContractWithAccountRequest,
 	ICreateTokenResponse,
-	IHTSTokenRequest,
+	IHTSTokenRequestAmount,
 	IWipeTokenRequest,
 	ITransferTokenRequest,
 	InitializationData,
+	IHTSTokenRequest,
+	IHTSTokenRequestTargetId,
 } from '../types.js';
 import { HashPackSigner } from './HashPackSigner.js';
 import { TransactionProvider } from '../transaction/TransactionProvider.js';
@@ -697,7 +699,7 @@ export default class HashPackProvider implements IProvider {
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
-	public async cashInHTS(params: IHTSTokenRequest): Promise<boolean> {
+	public async cashInHTS(params: IHTSTokenRequestAmount): Promise<boolean> {
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(
 				this.network.hederaNetworkEnviroment as NetworkType,
@@ -744,7 +746,7 @@ export default class HashPackProvider implements IProvider {
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
-	public async cashOutHTS(params: IHTSTokenRequest): Promise<boolean> {
+	public async cashOutHTS(params: IHTSTokenRequestAmount): Promise<boolean> {
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(
 				this.network.hederaNetworkEnviroment as NetworkType,
@@ -843,6 +845,239 @@ export default class HashPackProvider implements IProvider {
 				`An error has occurred when transfer the amount ${params.amount} to the account ${params.inAccountId} for tokenId ${params.tokenId}`,
 			);
 		}
+
+		return htsResponse.receipt.status == Status.Success ? true : false;
+	}
+
+	public async deleteHTS(params: IHTSTokenRequest): Promise<boolean> {
+		if ('account' in params) {
+			this.provider = this.hc.getProvider(
+				this.network.hederaNetworkEnviroment as NetworkType,
+				this.initData.topic,
+				params.account.accountId.id,
+			);
+			this.hashPackSigner = new HashPackSigner(
+				this.hc,
+				params.account,
+				this.network,
+				this.initData.topic,
+			);
+		} else {
+			throw new ProviderError(
+				'You must specify an accountId for operate with HashConnect.',
+			);
+		}
+
+		const transaction: Transaction =
+			TransactionProvider.buildDeleteTransaction(params.tokenId);
+
+		const transactionResponse =
+			await this.hashPackSigner.signAndSendTransaction(transaction);
+
+		const htsResponse: HTSResponse =
+			await this.transactionResposeHandler.manageResponse(
+				transactionResponse,
+				TransactionType.RECEIPT,
+				this.getSigner(),
+			);
+
+		if (!htsResponse.receipt) {
+			throw new ProviderError(
+				`An error has occurred when delete with the account ${params?.account?.accountId.id} for tokenId ${params.tokenId}`,
+			);
+		}
+		log(
+			`Result deleted ${htsResponse.receipt.status}: account ${params.account.accountId}, tokenId ${params.tokenId}`,
+			logOpts,
+		);
+
+		return htsResponse.receipt.status == Status.Success ? true : false;
+	}
+
+	public async pauseHTS(params: IHTSTokenRequest): Promise<boolean> {
+		if ('account' in params) {
+			this.provider = this.hc.getProvider(
+				this.network.hederaNetworkEnviroment as NetworkType,
+				this.initData.topic,
+				params.account.accountId.id,
+			);
+			this.hashPackSigner = new HashPackSigner(
+				this.hc,
+				params.account,
+				this.network,
+				this.initData.topic,
+			);
+		} else {
+			throw new ProviderError(
+				'You must specify an accountId for operate with HashConnect.',
+			);
+		}
+
+		const transaction: Transaction =
+			TransactionProvider.buildPausedTransaction(params.tokenId);
+
+		const transactionResponse =
+			await this.hashPackSigner.signAndSendTransaction(transaction);
+
+		const htsResponse: HTSResponse =
+			await this.transactionResposeHandler.manageResponse(
+				transactionResponse,
+				TransactionType.RECEIPT,
+				this.getSigner(),
+			);
+
+		if (!htsResponse.receipt) {
+			throw new ProviderError(
+				`An error has occurred when paused with the account ${params?.account?.accountId.id} for tokenId ${params.tokenId}`,
+			);
+		}
+		log(
+			`Result paused ${htsResponse.receipt.status}: account ${params.account.accountId}, tokenId ${params.tokenId}`,
+			logOpts,
+		);
+
+		return htsResponse.receipt.status == Status.Success ? true : false;
+	}
+
+	public async unpauseHTS(params: IHTSTokenRequest): Promise<boolean> {
+		if ('account' in params) {
+			this.provider = this.hc.getProvider(
+				this.network.hederaNetworkEnviroment as NetworkType,
+				this.initData.topic,
+				params.account.accountId.id,
+			);
+			this.hashPackSigner = new HashPackSigner(
+				this.hc,
+				params.account,
+				this.network,
+				this.initData.topic,
+			);
+		} else {
+			throw new ProviderError(
+				'You must specify an accountId for operate with HashConnect.',
+			);
+		}
+
+		const transaction: Transaction =
+			TransactionProvider.buildUnpausedTransaction(params.tokenId);
+
+		const transactionResponse =
+			await this.hashPackSigner.signAndSendTransaction(transaction);
+
+		const htsResponse: HTSResponse =
+			await this.transactionResposeHandler.manageResponse(
+				transactionResponse,
+				TransactionType.RECEIPT,
+				this.getSigner(),
+			);
+
+		if (!htsResponse.receipt) {
+			throw new ProviderError(
+				`An error has occurred when unpaused with the account ${params?.account?.accountId.id} for tokenId ${params.tokenId}`,
+			);
+		}
+		log(
+			`Result unpaused ${htsResponse.receipt.status}: account ${params.account.accountId}, tokenId ${params.tokenId}`,
+			logOpts,
+		);
+
+		return htsResponse.receipt.status == Status.Success ? true : false;
+	}
+
+	public async freezeHTS(params: IHTSTokenRequestTargetId): Promise<boolean> {
+		if ('account' in params) {
+			this.provider = this.hc.getProvider(
+				this.network.hederaNetworkEnviroment as NetworkType,
+				this.initData.topic,
+				params.account.accountId.id,
+			);
+			this.hashPackSigner = new HashPackSigner(
+				this.hc,
+				params.account,
+				this.network,
+				this.initData.topic,
+			);
+		} else {
+			throw new ProviderError(
+				'You must specify an accountId for operate with HashConnect.',
+			);
+		}
+
+		const transaction: Transaction =
+			TransactionProvider.buildFreezeTransaction(
+				params.tokenId,
+				params.targetId,
+			);
+
+		const transactionResponse =
+			await this.hashPackSigner.signAndSendTransaction(transaction);
+
+		const htsResponse: HTSResponse =
+			await this.transactionResposeHandler.manageResponse(
+				transactionResponse,
+				TransactionType.RECEIPT,
+				this.getSigner(),
+			);
+
+		if (!htsResponse.receipt) {
+			throw new ProviderError(
+				`An error has occurred when freeze the account ${params.targetId} with the account ${params?.account?.accountId.id} for tokenId ${params.tokenId}`,
+			);
+		}
+		log(
+			`Result freeze ${htsResponse.receipt.status}: account ${params.account.accountId}, tokenId ${params.tokenId}, targetId ${params.targetId}`,
+			logOpts,
+		);
+
+		return htsResponse.receipt.status == Status.Success ? true : false;
+	}
+
+	public async unfreezeHTS(
+		params: IHTSTokenRequestTargetId,
+	): Promise<boolean> {
+		if ('account' in params) {
+			this.provider = this.hc.getProvider(
+				this.network.hederaNetworkEnviroment as NetworkType,
+				this.initData.topic,
+				params.account.accountId.id,
+			);
+			this.hashPackSigner = new HashPackSigner(
+				this.hc,
+				params.account,
+				this.network,
+				this.initData.topic,
+			);
+		} else {
+			throw new ProviderError(
+				'You must specify an accountId for operate with HashConnect.',
+			);
+		}
+
+		const transaction: Transaction =
+			TransactionProvider.buildUnfreezeTransaction(
+				params.tokenId,
+				params.targetId,
+			);
+
+		const transactionResponse =
+			await this.hashPackSigner.signAndSendTransaction(transaction);
+
+		const htsResponse: HTSResponse =
+			await this.transactionResposeHandler.manageResponse(
+				transactionResponse,
+				TransactionType.RECEIPT,
+				this.getSigner(),
+			);
+
+		if (!htsResponse.receipt) {
+			throw new ProviderError(
+				`An error has occurred when unfreeze the account ${params.targetId} with the account ${params?.account?.accountId.id} for tokenId ${params.tokenId}`,
+			);
+		}
+		log(
+			`Result unfreeze ${htsResponse.receipt.status}: account ${params.account.accountId}, tokenId ${params.tokenId}, targetId ${params.targetId}`,
+			logOpts,
+		);
 
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}

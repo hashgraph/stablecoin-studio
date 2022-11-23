@@ -14,9 +14,9 @@ interface IStableCoinFactory {
         string tokenSymbol;
         bool freeze;
         bool supplyType;
-        uint32 tokenMaxSupply;
-        uint tokenInitialSupply;
-        uint tokenDecimals;
+        int64 tokenMaxSupply;
+        uint64 tokenInitialSupply;
+        uint32 tokenDecimals;
         address autoRenewAccountAddress;
         address treasuryAddress;
         KeysStruct[] keys;

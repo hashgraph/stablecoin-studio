@@ -9,7 +9,7 @@ import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandle
 import ModalsHandler from '../../../components/ModalsHandler';
 import SDKService from '../../../services/SDKService';
 import {
-	// SELECTED_WALLET_ACCOUNT_INFO,
+	SELECTED_WALLET_ACCOUNT_INFO,
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNT,
 	walletActions,
@@ -30,7 +30,7 @@ const WipeOperation = () => {
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
-	// const infoAccount = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
+	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 
 	const [errorOperation, setErrorOperation] = useState();
 	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
@@ -43,6 +43,10 @@ const WipeOperation = () => {
 			proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
 			targetId: '',
 			tokenId: selectedStableCoin?.tokenId ?? '',
+			publicKey:{
+				key:accountInfo.publicKey?.key??'',
+				type:accountInfo.publicKey?.type ??'ED25519'
+			}
 		}),
 	);
 	const dispatch = useDispatch<AppDispatch>();
@@ -81,6 +85,8 @@ const WipeOperation = () => {
 				treasuryId: stableCoinDetails?.treasuryId,
 				autoRenewAccount: stableCoinDetails?.autoRenewAccount,
 				memo: stableCoinDetails?.memo,
+				paused: stableCoinDetails?.paused,
+				deleted: stableCoinDetails?.deleted,
 				adminKey:
 					stableCoinDetails?.adminKey && JSON.parse(JSON.stringify(stableCoinDetails.adminKey)),
 				kycKey: stableCoinDetails?.kycKey && JSON.parse(JSON.stringify(stableCoinDetails.kycKey)),

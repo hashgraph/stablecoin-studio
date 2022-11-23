@@ -8,14 +8,16 @@ import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import { AppMetadata } from './hashpack/types/types.js';
 import {
 	ICallContractRequest,
-	IHTSTokenRequest,
+	IHTSTokenRequestAmount,
 	IWipeTokenRequest,
 	ITransferTokenRequest,
-	InitializationData } from './types.js';
+	InitializationData,
+	IHTSTokenRequest,
+	IHTSTokenRequestTargetId,
+} from './types.js';
 
 import EventService from '../../../app/service/event/EventService.js';
 import { Account, ContractId } from '../../in/sdk/sdk.js';
-
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface Contract extends hethers.Contract {}
@@ -44,7 +46,10 @@ export interface IProvider {
 		parameters: any[],
 		abi: Array<any>,
 	): Uint8Array;
-	getPublicKeyString(privateKey?: PrivateKey | string | undefined, privateKeyType?: string): string;
+	getPublicKeyString(
+		privateKey?: PrivateKey | string | undefined,
+		privateKeyType?: string,
+	): string;
 	deployStableCoin(
 		stableCoin: StableCoin,
 		account: Account,
@@ -55,7 +60,12 @@ export interface IProvider {
 	connectWallet(): Promise<IProvider>;
 	getInitData(): InitializationData;
 	wipeHTS(parameters: IWipeTokenRequest): Promise<boolean>;
-	cashInHTS(parameters: IHTSTokenRequest): Promise<boolean>;
-	cashOutHTS(parameters: IHTSTokenRequest): Promise<boolean>;
+	cashInHTS(parameters: IHTSTokenRequestAmount): Promise<boolean>;
+	cashOutHTS(parameters: IHTSTokenRequestAmount): Promise<boolean>;
 	transferHTS(parameters: ITransferTokenRequest): Promise<boolean>;
+	deleteHTS(parameters: IHTSTokenRequest): Promise<boolean>;
+	pauseHTS(parameters: IHTSTokenRequest): Promise<boolean>;
+	unpauseHTS(parameters: IHTSTokenRequest): Promise<boolean>;
+	freezeHTS(parameters: IHTSTokenRequestTargetId): Promise<boolean>;
+	unfreezeHTS(parameters: IHTSTokenRequestTargetId): Promise<boolean>;
 }
