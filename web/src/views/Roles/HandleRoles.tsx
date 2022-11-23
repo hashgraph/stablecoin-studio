@@ -230,7 +230,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 
 					if (alreadyHasRole && alreadyHasRole[0]) {
 						setModalErrorDescription('hasAlreadyRoleError');
-						onError();
+						onWarning();
 						return;
 					}
 
@@ -275,7 +275,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 
 					if (alreadyHasRole && !alreadyHasRole[0]) {
 						setModalErrorDescription('hasNotRoleError');
-						onError();
+						onWarning();
 						return;
 					}
 
