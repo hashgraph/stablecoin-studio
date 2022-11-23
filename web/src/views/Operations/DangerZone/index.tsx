@@ -96,14 +96,14 @@ const DangerZoneOperations = () => {
 				? (!capabilities?.includes(Capabilities.PAUSE) ||
 						!capabilities?.includes(Capabilities.PAUSE_HTS)) &&
 				  selectedStableCoin?.paused === 'PAUSED'
-				: !roles.includes(Roles.PAUSE_ROLE) &&
-				  !capabilities?.includes(Capabilities.PAUSE_HTS) &&
+				: (!roles.includes(Roles.PAUSE_ROLE) ||
+				  !capabilities?.includes(Capabilities.PAUSE_HTS)) &&
 				  selectedStableCoin?.paused === 'PAUSED',
 			unpause: !isExternalToken
 				? (!capabilities?.includes(Capabilities.PAUSE) ||
 						!capabilities?.includes(Capabilities.PAUSE_HTS)) &&
 				  selectedStableCoin?.paused === 'UNPAUSED'
-				: (!roles.includes(Roles.PAUSE_ROLE) &&
+				: (!roles.includes(Roles.PAUSE_ROLE) ||
 				  !capabilities?.includes(Capabilities.PAUSE_HTS)) &&
 				  selectedStableCoin?.paused === 'UNPAUSED',
 			delete: !isExternalToken

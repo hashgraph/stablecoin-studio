@@ -466,9 +466,9 @@ exports[`<Operations /> should render correctly 1`] = `
               </div>
               <p
                 class="chakra-text css-1mbt7nu"
-                data-testid="direct-access-Freeze"
+                data-testid="direct-access-Freeze account"
               >
-                Freeze
+                Freeze account
               </p>
             </button>
           </div>
@@ -576,9 +576,68 @@ exports[`<Operations /> should render correctly 1`] = `
               </div>
               <p
                 class="chakra-text css-1mbt7nu"
-                data-testid="direct-access-Unfreeze"
+                data-testid="direct-access-Unfreeze account"
               >
-                Unfreeze
+                Unfreeze account
+              </p>
+            </button>
+          </div>
+          <div
+            class="css-180e663"
+          >
+            <button
+              class="css-1g500l7"
+              data-testid="direct-access-dangerZone"
+            >
+              <div
+                class="css-bv4l9q"
+              >
+                <svg
+                  class="chakra-icon css-1f9qa95"
+                  data-testid="direct-access-Warning"
+                  fill="currentColor"
+                  focusable="false"
+                  height="1em"
+                  viewBox="0 0 256 256"
+                  width="1em"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect
+                    fill="none"
+                    height="256"
+                    width="256"
+                  />
+                  <line
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                    x1="128"
+                    x2="128"
+                    y1="104"
+                    y2="144"
+                  />
+                  <path
+                    d="M114.2,40l-88,152A16,16,0,0,0,40,216H216a16,16,0,0,0,13.8-24l-88-152A15.9,15.9,0,0,0,114.2,40Z"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                  />
+                  <circle
+                    cx="128"
+                    cy="180"
+                    r="12"
+                  />
+                </svg>
+              </div>
+              <p
+                class="chakra-text css-1mbt7nu"
+                data-testid="direct-access-Danger Zone"
+              >
+                Danger Zone
               </p>
             </button>
           </div>
