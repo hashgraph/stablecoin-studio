@@ -124,7 +124,7 @@ export default class HashPackProvider implements IProvider {
 	}
 
 	public async connectWallet(): Promise<HashPackProvider> {
-		LogService.logTrace('=====CONNECT WALLET HASPACKPROVIDER=====');
+		LogService.logInfo('=====CONNECT WALLET HASPACKPROVIDER=====');
 		this.hc.connectToLocalWallet();
 		return this;
 	}
@@ -149,7 +149,7 @@ export default class HashPackProvider implements IProvider {
 			try {
 				if (data.pairingData) {
 					this.pairingData = data.pairingData;
-					LogService.logTrace('Paired with wallet', data);
+					LogService.logInfo('Paired with wallet', data);
 					this.eventService.emit(
 						ProviderEventNames.providerPairingEvent,
 						this.pairingData,
@@ -645,6 +645,9 @@ export default class HashPackProvider implements IProvider {
 	}
 
 	public async wipeHTS(params: IWipeTokenRequest): Promise<boolean> {
+		LogService.logInfo('cashInHts');
+		LogService.logTrace('Params ', params);
+	
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(
 				this.network.hederaNetworkEnviroment as NetworkType,

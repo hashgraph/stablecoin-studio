@@ -40,6 +40,7 @@ import { InvalidResponse } from './error/InvalidResponse.js';
 import { StableCoinNotFound } from './error/StableCoinNotFound.js';
 import LogService from '../../../app/service/log/LogService.js';
 
+
 export default class StableCoinRepository implements IStableCoinRepository {
 	private networkAdapter: NetworkAdapter;
 	private URI_BASE;
@@ -69,11 +70,14 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		account: Account,
 	): Promise<StableCoinList[]> {
 		try {
+			const url = this.URI_BASE +
+			'tokens?limit=100&account.id=' +
+			account.accountId.id
+
+			LogService.logTrace("Get stable coin list from mirrornode ->" , url )
 			const resObject: StableCoinList[] = [];
 			const res = await this.instance.get<ITokenList>(
-				this.URI_BASE +
-					'tokens?limit=100&account.id=' +
-					account.accountId.id,
+				url
 			);
 			res.data.tokens.map((item: IToken) => {
 				resObject.push({
@@ -89,13 +93,15 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 	public async getStableCoin(id: string): Promise<StableCoin> {
 		try {
+			const url = this.URI_BASE + 'tokens/' + id
+			LogService.logTrace("Get stable coin from mirrornode -> ",url)
 			const retry = 10;
 			let i = 0;
 
 			let response;
 			do {
 				response = await this.instance.get<IHederaStableCoinDetail>(
-					this.URI_BASE + 'tokens/' + id,
+					url
 				);
 
 				i++;
