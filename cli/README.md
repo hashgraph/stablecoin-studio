@@ -129,6 +129,7 @@ The available roles are:
 - RESCUE_ROLE
 - PAUSE_ROLE
 - FREEZE_ROLE
+- DELETE_ROLE
 
 #### Configuration menu
 

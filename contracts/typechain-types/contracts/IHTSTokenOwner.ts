@@ -27,7 +27,9 @@ export interface IHTSTokenOwnerInterface extends utils.Interface {
   functions: {
     "burnToken(address,uint256)": FunctionFragment;
     "mintToken(address,uint256)": FunctionFragment;
+    "pause(address)": FunctionFragment;
     "tranferContract(address,address,uint256)": FunctionFragment;
+    "unpause(address)": FunctionFragment;
     "wipeToken(address,address,uint32)": FunctionFragment;
   };
 
@@ -35,7 +37,9 @@ export interface IHTSTokenOwnerInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "burnToken"
       | "mintToken"
+      | "pause"
       | "tranferContract"
+      | "unpause"
       | "wipeToken"
   ): FunctionFragment;
 
@@ -48,12 +52,20 @@ export interface IHTSTokenOwnerInterface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "pause",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "tranferContract",
     values: [
       PromiseOrValue<string>,
       PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "unpause",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "wipeToken",
@@ -66,10 +78,12 @@ export interface IHTSTokenOwnerInterface extends utils.Interface {
 
   decodeFunctionResult(functionFragment: "burnToken", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "mintToken", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "tranferContract",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "wipeToken", data: BytesLike): Result;
 
   events: {};
@@ -114,10 +128,20 @@ export interface IHTSTokenOwner extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    pause(
+      tokenAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     tranferContract(
       tokenAddress: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    unpause(
+      tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -141,10 +165,20 @@ export interface IHTSTokenOwner extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  pause(
+    tokenAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   tranferContract(
     tokenAddress: PromiseOrValue<string>,
     to: PromiseOrValue<string>,
     amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  unpause(
+    tokenAddress: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -168,10 +202,20 @@ export interface IHTSTokenOwner extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    pause(
+      tokenAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     tranferContract(
       tokenAddress: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    unpause(
+      tokenAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -198,10 +242,20 @@ export interface IHTSTokenOwner extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    pause(
+      tokenAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     tranferContract(
       tokenAddress: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    unpause(
+      tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -226,10 +280,20 @@ export interface IHTSTokenOwner extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    pause(
+      tokenAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     tranferContract(
       tokenAddress: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    unpause(
+      tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

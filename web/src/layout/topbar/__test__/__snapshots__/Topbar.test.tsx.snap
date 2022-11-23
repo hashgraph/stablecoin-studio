@@ -50,7 +50,7 @@ exports[`<Topbar /> should render correctly 1`] = `
                   class="css-1f43avz-a11yText-A11yText"
                 />
                 <div
-                  class=" css-1ugyojt"
+                  class=" css-17n5zh"
                 >
                   <div
                     class="css-3y2vuh"
@@ -131,7 +131,7 @@ exports[`<Topbar /> should render correctly 1`] = `
             class="css-0"
           >
             <button
-              class="chakra-button css-18trpna"
+              class="chakra-button css-16hro5k"
               type="button"
             >
               <svg
@@ -177,7 +177,7 @@ exports[`<Topbar /> should render correctly 1`] = `
             class="css-0"
           >
             <button
-              class="chakra-button css-18trpna"
+              class="chakra-button css-16hro5k"
               type="button"
             >
               <svg

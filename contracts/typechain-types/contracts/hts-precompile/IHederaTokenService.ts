@@ -87,7 +87,7 @@ export declare namespace IHederaTokenService {
     string,
     string,
     boolean,
-    number,
+    BigNumber,
     boolean,
     IHederaTokenService.TokenKeyStructOutput[],
     IHederaTokenService.ExpiryStructOutput
@@ -97,7 +97,7 @@ export declare namespace IHederaTokenService {
     treasury: string;
     memo: string;
     tokenSupplyType: boolean;
-    maxSupply: number;
+    maxSupply: BigNumber;
     freezeDefault: boolean;
     tokenKeys: IHederaTokenService.TokenKeyStructOutput[];
     expiry: IHederaTokenService.ExpiryStructOutput;
@@ -178,23 +178,35 @@ export declare namespace IHederaTokenService {
   export type AccountAmountStruct = {
     accountID: PromiseOrValue<string>;
     amount: PromiseOrValue<BigNumberish>;
+    isApproval: PromiseOrValue<boolean>;
   };
 
-  export type AccountAmountStructOutput = [string, BigNumber] & {
+  export type AccountAmountStructOutput = [string, BigNumber, boolean] & {
     accountID: string;
     amount: BigNumber;
+    isApproval: boolean;
   };
+
+  export type TransferListStruct = {
+    transfers: IHederaTokenService.AccountAmountStruct[];
+  };
+
+  export type TransferListStructOutput = [
+    IHederaTokenService.AccountAmountStructOutput[]
+  ] & { transfers: IHederaTokenService.AccountAmountStructOutput[] };
 
   export type NftTransferStruct = {
     senderAccountID: PromiseOrValue<string>;
     receiverAccountID: PromiseOrValue<string>;
     serialNumber: PromiseOrValue<BigNumberish>;
+    isApproval: PromiseOrValue<boolean>;
   };
 
-  export type NftTransferStructOutput = [string, string, BigNumber] & {
+  export type NftTransferStructOutput = [string, string, BigNumber, boolean] & {
     senderAccountID: string;
     receiverAccountID: string;
     serialNumber: BigNumber;
+    isApproval: boolean;
   };
 
   export type TokenTransferListStruct = {
@@ -214,37 +226,37 @@ export declare namespace IHederaTokenService {
   };
 
   export type TokenInfoStruct = {
-    hedera: IHederaTokenService.HederaTokenStruct;
+    token: IHederaTokenService.HederaTokenStruct;
+    totalSupply: PromiseOrValue<BigNumberish>;
+    deleted: PromiseOrValue<boolean>;
+    defaultKycStatus: PromiseOrValue<boolean>;
+    pauseStatus: PromiseOrValue<boolean>;
     fixedFees: IHederaTokenService.FixedFeeStruct[];
     fractionalFees: IHederaTokenService.FractionalFeeStruct[];
     royaltyFees: IHederaTokenService.RoyaltyFeeStruct[];
-    defaultKycStatus: PromiseOrValue<boolean>;
-    deleted: PromiseOrValue<boolean>;
     ledgerId: PromiseOrValue<string>;
-    pauseStatus: PromiseOrValue<boolean>;
-    totalSupply: PromiseOrValue<BigNumberish>;
   };
 
   export type TokenInfoStructOutput = [
     IHederaTokenService.HederaTokenStructOutput,
+    BigNumber,
+    boolean,
+    boolean,
+    boolean,
     IHederaTokenService.FixedFeeStructOutput[],
     IHederaTokenService.FractionalFeeStructOutput[],
     IHederaTokenService.RoyaltyFeeStructOutput[],
-    boolean,
-    boolean,
-    string,
-    boolean,
-    BigNumber
+    string
   ] & {
-    hedera: IHederaTokenService.HederaTokenStructOutput;
+    token: IHederaTokenService.HederaTokenStructOutput;
+    totalSupply: BigNumber;
+    deleted: boolean;
+    defaultKycStatus: boolean;
+    pauseStatus: boolean;
     fixedFees: IHederaTokenService.FixedFeeStructOutput[];
     fractionalFees: IHederaTokenService.FractionalFeeStructOutput[];
     royaltyFees: IHederaTokenService.RoyaltyFeeStructOutput[];
-    defaultKycStatus: boolean;
-    deleted: boolean;
     ledgerId: string;
-    pauseStatus: boolean;
-    totalSupply: BigNumber;
   };
 
   export type FungibleTokenInfoStruct = {
@@ -290,20 +302,20 @@ export interface IHederaTokenServiceInterface extends utils.Interface {
   functions: {
     "allowance(address,address,address)": FunctionFragment;
     "approve(address,address,uint256)": FunctionFragment;
-    "approveNFT(address,address,int64)": FunctionFragment;
+    "approveNFT(address,address,uint256)": FunctionFragment;
     "associateToken(address,address)": FunctionFragment;
     "associateTokens(address,address[])": FunctionFragment;
     "burnToken(address,uint64,int64[])": FunctionFragment;
-    "createFungibleToken((string,string,address,string,bool,uint32,bool,(uint256,(bool,address,bytes,bytes,address))[],(uint32,address,uint32)),uint256,uint256)": FunctionFragment;
-    "createFungibleTokenWithCustomFees((string,string,address,string,bool,uint32,bool,(uint256,(bool,address,bytes,bytes,address))[],(uint32,address,uint32)),uint256,uint256,(uint32,address,bool,bool,address)[],(uint32,uint32,uint32,uint32,bool,address)[])": FunctionFragment;
-    "createNonFungibleToken((string,string,address,string,bool,uint32,bool,(uint256,(bool,address,bytes,bytes,address))[],(uint32,address,uint32)))": FunctionFragment;
-    "createNonFungibleTokenWithCustomFees((string,string,address,string,bool,uint32,bool,(uint256,(bool,address,bytes,bytes,address))[],(uint32,address,uint32)),(uint32,address,bool,bool,address)[],(uint32,uint32,uint32,address,bool,address)[])": FunctionFragment;
-    "cryptoTransfer((address,(address,int64)[],(address,address,int64)[])[])": FunctionFragment;
+    "createFungibleToken((string,string,address,string,bool,int64,bool,(uint256,(bool,address,bytes,bytes,address))[],(uint32,address,uint32)),uint64,uint32)": FunctionFragment;
+    "createFungibleTokenWithCustomFees((string,string,address,string,bool,int64,bool,(uint256,(bool,address,bytes,bytes,address))[],(uint32,address,uint32)),uint64,uint32,(uint32,address,bool,bool,address)[],(uint32,uint32,uint32,uint32,bool,address)[])": FunctionFragment;
+    "createNonFungibleToken((string,string,address,string,bool,int64,bool,(uint256,(bool,address,bytes,bytes,address))[],(uint32,address,uint32)))": FunctionFragment;
+    "createNonFungibleTokenWithCustomFees((string,string,address,string,bool,int64,bool,(uint256,(bool,address,bytes,bytes,address))[],(uint32,address,uint32)),(uint32,address,bool,bool,address)[],(uint32,uint32,uint32,address,bool,address)[])": FunctionFragment;
+    "cryptoTransfer(((address,int64,bool)[]),(address,(address,int64,bool)[],(address,address,int64,bool)[])[])": FunctionFragment;
     "deleteToken(address)": FunctionFragment;
     "dissociateToken(address,address)": FunctionFragment;
     "dissociateTokens(address,address[])": FunctionFragment;
     "freezeToken(address,address)": FunctionFragment;
-    "getApproved(address,int64)": FunctionFragment;
+    "getApproved(address,uint256)": FunctionFragment;
     "getFungibleTokenInfo(address)": FunctionFragment;
     "getNonFungibleTokenInfo(address,int64)": FunctionFragment;
     "getTokenCustomFees(address)": FunctionFragment;
@@ -322,6 +334,8 @@ export interface IHederaTokenServiceInterface extends utils.Interface {
     "pauseToken(address)": FunctionFragment;
     "revokeTokenKyc(address,address)": FunctionFragment;
     "setApprovalForAll(address,address,bool)": FunctionFragment;
+    "transferFrom(address,address,address,uint256)": FunctionFragment;
+    "transferFromNFT(address,address,address,uint256)": FunctionFragment;
     "transferNFT(address,address,address,int64)": FunctionFragment;
     "transferNFTs(address,address[],address[],int64[])": FunctionFragment;
     "transferToken(address,address,address,int64)": FunctionFragment;
@@ -329,7 +343,7 @@ export interface IHederaTokenServiceInterface extends utils.Interface {
     "unfreezeToken(address,address)": FunctionFragment;
     "unpauseToken(address)": FunctionFragment;
     "updateTokenExpiryInfo(address,(uint32,address,uint32))": FunctionFragment;
-    "updateTokenInfo(address,(string,string,address,string,bool,uint32,bool,(uint256,(bool,address,bytes,bytes,address))[],(uint32,address,uint32)))": FunctionFragment;
+    "updateTokenInfo(address,(string,string,address,string,bool,int64,bool,(uint256,(bool,address,bytes,bytes,address))[],(uint32,address,uint32)))": FunctionFragment;
     "updateTokenKeys(address,(uint256,(bool,address,bytes,bytes,address))[])": FunctionFragment;
     "wipeTokenAccount(address,address,uint32)": FunctionFragment;
     "wipeTokenAccountNFT(address,address,int64[])": FunctionFragment;
@@ -371,6 +385,8 @@ export interface IHederaTokenServiceInterface extends utils.Interface {
       | "pauseToken"
       | "revokeTokenKyc"
       | "setApprovalForAll"
+      | "transferFrom"
+      | "transferFromNFT"
       | "transferNFT"
       | "transferNFTs"
       | "transferToken"
@@ -456,7 +472,10 @@ export interface IHederaTokenServiceInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "cryptoTransfer",
-    values: [IHederaTokenService.TokenTransferListStruct[]]
+    values: [
+      IHederaTokenService.TransferListStruct,
+      IHederaTokenService.TokenTransferListStruct[]
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "deleteToken",
@@ -560,6 +579,24 @@ export interface IHederaTokenServiceInterface extends utils.Interface {
       PromiseOrValue<string>,
       PromiseOrValue<string>,
       PromiseOrValue<boolean>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "transferFrom",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "transferFromNFT",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
     ]
   ): string;
   encodeFunctionData(
@@ -744,6 +781,14 @@ export interface IHederaTokenServiceInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "transferFrom",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "transferFromNFT",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "transferNFT",
     data: BytesLike
   ): Result;
@@ -887,6 +932,7 @@ export interface IHederaTokenService extends BaseContract {
     ): Promise<ContractTransaction>;
 
     cryptoTransfer(
+      transferList: IHederaTokenService.TransferListStruct,
       tokenTransfers: IHederaTokenService.TokenTransferListStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -1019,6 +1065,22 @@ export interface IHederaTokenService extends BaseContract {
       token: PromiseOrValue<string>,
       operator: PromiseOrValue<string>,
       approved: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    transferFrom(
+      token: PromiseOrValue<string>,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    transferFromNFT(
+      token: PromiseOrValue<string>,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      serialNumber: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1166,6 +1228,7 @@ export interface IHederaTokenService extends BaseContract {
   ): Promise<ContractTransaction>;
 
   cryptoTransfer(
+    transferList: IHederaTokenService.TransferListStruct,
     tokenTransfers: IHederaTokenService.TokenTransferListStruct[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -1298,6 +1361,22 @@ export interface IHederaTokenService extends BaseContract {
     token: PromiseOrValue<string>,
     operator: PromiseOrValue<string>,
     approved: PromiseOrValue<boolean>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  transferFrom(
+    token: PromiseOrValue<string>,
+    from: PromiseOrValue<string>,
+    to: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  transferFromNFT(
+    token: PromiseOrValue<string>,
+    from: PromiseOrValue<string>,
+    to: PromiseOrValue<string>,
+    serialNumber: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1460,6 +1539,7 @@ export interface IHederaTokenService extends BaseContract {
     >;
 
     cryptoTransfer(
+      transferList: IHederaTokenService.TransferListStruct,
       tokenTransfers: IHederaTokenService.TokenTransferListStruct[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1660,6 +1740,22 @@ export interface IHederaTokenService extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    transferFrom(
+      token: PromiseOrValue<string>,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    transferFromNFT(
+      token: PromiseOrValue<string>,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      serialNumber: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     transferNFT(
       token: PromiseOrValue<string>,
       sender: PromiseOrValue<string>,
@@ -1807,6 +1903,7 @@ export interface IHederaTokenService extends BaseContract {
     ): Promise<BigNumber>;
 
     cryptoTransfer(
+      transferList: IHederaTokenService.TransferListStruct,
       tokenTransfers: IHederaTokenService.TokenTransferListStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -1939,6 +2036,22 @@ export interface IHederaTokenService extends BaseContract {
       token: PromiseOrValue<string>,
       operator: PromiseOrValue<string>,
       approved: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    transferFrom(
+      token: PromiseOrValue<string>,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    transferFromNFT(
+      token: PromiseOrValue<string>,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      serialNumber: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -2087,6 +2200,7 @@ export interface IHederaTokenService extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     cryptoTransfer(
+      transferList: IHederaTokenService.TransferListStruct,
       tokenTransfers: IHederaTokenService.TokenTransferListStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -2219,6 +2333,22 @@ export interface IHederaTokenService extends BaseContract {
       token: PromiseOrValue<string>,
       operator: PromiseOrValue<string>,
       approved: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    transferFrom(
+      token: PromiseOrValue<string>,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    transferFromNFT(
+      token: PromiseOrValue<string>,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      serialNumber: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
