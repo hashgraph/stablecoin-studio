@@ -595,7 +595,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		};
 
 		return await this.networkAdapter.provider.callContract(
-			'rescueToken',
+			'rescue',
 			params,
 		);
 	}
@@ -711,7 +711,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		const params: ICallContractWithAccountRequest = {
 			contractId: proxyContractId,
 			parameters,
-			gas: 60000,
+			gas: 70000,
 			abi: HederaERC20__factory.abi,
 			account,
 		};
