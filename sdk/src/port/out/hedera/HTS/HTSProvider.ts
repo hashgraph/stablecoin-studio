@@ -265,7 +265,7 @@ export default class HTSProvider implements IProvider {
 			`Deploying ${HederaERC20Proxy__factory.name} contract... please wait.`,
 			logOpts,
 		);
-		const proxyContract: HContractId = await this.deployContract(
+		const proxyContract = await this.deployContract(
 			HederaERC20Proxy__factory,
 			account.privateKey,
 			client,
@@ -277,9 +277,6 @@ export default class HTSProvider implements IProvider {
 
 		// Creating the token
 		log('Creating token... please wait.', logOpts);
-		log('stable coin : ' + JSON.stringify(stableCoin), logOpts);
-
-		await new Promise(r => setTimeout(r, 10000));
 
 		stableCoin.memo = new StableCoinMemo(
 			String(proxyContract)
@@ -477,10 +474,6 @@ export default class HTSProvider implements IProvider {
 				: new AccountId('0.0.0'),
 		};
 
-		log("values : " + JSON.stringify(values));
-		log("proxy contract : " + ContractId.fromHederaContractId(contractId).toString());
-		await new Promise(r => setTimeout(r, 15000));
-
 		this.htsSigner = new HTSSigner(client);
 		const transaction: Transaction =
 			TransactionProvider.buildTokenCreateTransaction(
@@ -488,7 +481,6 @@ export default class HTSProvider implements IProvider {
 				values,
 				maxSupply,
 			);
-
 		
 		const transactionResponse: TransactionResponse =
 			await this.htsSigner.signAndSendTransaction(transaction);

@@ -216,7 +216,7 @@ export const english = {
       'Go back',
       new inquirer.Separator(' '),
     ],
-    adminFeatureOptions: ['The Smart Contract', 'Current user key', 'None'],
+    adminFeatureOptions: ['Current user key', 'None'],
     featureOptions: [
       'The Smart Contract',
       'Current user key',

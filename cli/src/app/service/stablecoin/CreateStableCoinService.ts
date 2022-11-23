@@ -12,6 +12,8 @@ import {
 import { IManagedFeatures } from '../../../domain/configuration/interfaces/IManagedFeatures.js';
 import Service from '../Service.js';
 import SetConfigurationService from '../configuration/SetConfigurationService.js';
+import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
+
 
 /**
  * Create Stable Coin Service
@@ -225,7 +227,11 @@ export default class CreateStableCoinService extends Service {
       maxSupply: totalSupply === '' || !totalSupply ? undefined : totalSupply,
     });
     if (managedBySC) {
-      tokenToCreate.adminKey = PublicKey.NULL;
+      const currentAccount: IAccountConfig = utilsService.getCurrentAccount();
+      tokenToCreate.adminKey = PublicKey.fromPrivateKey(
+        currentAccount.privateKey.key,
+        currentAccount.privateKey.type,
+      );
       tokenToCreate.freezeKey = PublicKey.NULL;
       //KYCKey,
       tokenToCreate.wipeKey = PublicKey.NULL;

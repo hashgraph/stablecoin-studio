@@ -177,9 +177,10 @@ export default class WizardService extends Service {
     );
     utilsService.setCurrentNetwotk(currentNetwork);
 
-    const currentFactory = factories.find(
+    const currentFactory = (factories) ? 
+      factories.find(
       (factory) => currentAccount.network === factory.network,
-    );
+      ) : null;
       
     utilsService.setCurrentFactory(currentFactory);
 
