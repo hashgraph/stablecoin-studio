@@ -64,7 +64,6 @@ export class HashPackSigner implements ISigner {
 		if (this.signer) {
 			try {
 				await this.getAccountKey(); // Ensure we have the public key
-				console.log(transaction);
 				if (transaction instanceof ContractCreateFlow) {
 					try {
 						return await transaction.executeWithSigner(this.signer);
