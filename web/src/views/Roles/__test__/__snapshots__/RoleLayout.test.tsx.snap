@@ -41,7 +41,7 @@ exports[`<RoleLayout /> should render correctly 1`] = `
                   role="group"
                 >
                   <label
-                    class="chakra-form__label css-1y854pg"
+                    class="chakra-form__label css-1hfoxt1"
                     for="field-:r0:"
                     id="field-:r0:-label"
                   >
@@ -66,7 +66,7 @@ exports[`<RoleLayout /> should render correctly 1`] = `
                   >
                     <input
                       autocomplete="off"
-                      class="chakra-input css-16lr1fk"
+                      class="chakra-input css-l1kxkf"
                       data-testid="account"
                       id="field-:r0:"
                       name="account"
@@ -85,7 +85,7 @@ exports[`<RoleLayout /> should render correctly 1`] = `
                   role="group"
                 >
                   <label
-                    class="chakra-form__label css-1y854pg"
+                    class="chakra-form__label css-1hfoxt1"
                     for="field-:r1:"
                     id="field-:r1:-label"
                   >
@@ -122,7 +122,7 @@ exports[`<RoleLayout /> should render correctly 1`] = `
                       class="css-1f43avz-a11yText-A11yText"
                     />
                     <div
-                      class=" css-1ugyojt"
+                      class=" css-17n5zh"
                     >
                       <div
                         class="css-3y2vuh"
@@ -433,14 +433,14 @@ exports[`<RoleLayout /> should render correctly 1`] = `
             class="chakra-stack css-1amf41o"
           >
             <button
-              class="chakra-button css-p7zmz8"
+              class="chakra-button css-1nrhi9n"
               data-testid="cancel-btn"
               type="button"
             >
               Go back
             </button>
             <button
-              class="chakra-button css-1lcy27"
+              class="chakra-button css-1178n6s"
               data-testid="confirm-btn"
               type="button"
             >

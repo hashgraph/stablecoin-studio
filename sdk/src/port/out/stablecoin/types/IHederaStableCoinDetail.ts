@@ -20,7 +20,7 @@ export default interface IHederaStableCoinDetail {
 	// kycStatus: string;
 	autoRenewAccount: AccountId;
 	auto_renew_period: number;
-	deleted?: string;
+	deleted?: boolean;
 	admin_key?: IPublicKey;
 	kyc_key?: IPublicKey;
 	freeze_key?: IPublicKey;

@@ -56,6 +56,28 @@ function mintToken(address tokenAddress, uint256 amount) external nonpayable ret
 |---|---|---|
 | _0 | bool | undefined |
 
+### pause
+
+```solidity
+function pause(address tokenAddress) external nonpayable returns (bool)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| tokenAddress | address | undefined |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
+
 ### tranferContract
 
 ```solidity
@@ -79,6 +101,28 @@ function tranferContract(address tokenAddress, address to, uint256 amount) exter
 | Name | Type | Description |
 |---|---|---|
 | _0 | bool | boolean True if successful        |
+
+### unpause
+
+```solidity
+function unpause(address tokenAddress) external nonpayable returns (bool)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| tokenAddress | address | undefined |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
 
 ### wipeToken
 

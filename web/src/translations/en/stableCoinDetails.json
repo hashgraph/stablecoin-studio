@@ -11,6 +11,8 @@
     "treasuryId": "Treasury id",
     "autoRenewAccount": "Autorenew account",
     "memo": "Memo",
+    "paused": "Paused",
+    "deleted": "Deleted",
     "adminKey": "Admin key",
     "kycKey": "KYC key",
     "freezeKey": "Freeze key",

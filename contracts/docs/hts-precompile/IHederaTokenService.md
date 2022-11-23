@@ -62,7 +62,7 @@ Allows spender to withdraw from your account multiple times, up to the value amo
 ### approveNFT
 
 ```solidity
-function approveNFT(address token, address approved, int64 serialNumber) external nonpayable returns (int64 responseCode)
+function approveNFT(address token, address approved, uint256 serialNumber) external nonpayable returns (int64 responseCode)
 ```
 
 Allow or reaffirm the approved address to transfer an NFT the approved address does not own. Only Applicable to NFT Tokens
@@ -75,7 +75,7 @@ Allow or reaffirm the approved address to transfer an NFT the approved address d
 |---|---|---|
 | token | address | The Hedera NFT token address to approve |
 | approved | address | The new approved NFT controller.  To revoke approvals pass in the zero address. |
-| serialNumber | int64 | The NFT serial number  to approve |
+| serialNumber | uint256 | The NFT serial number  to approve |
 
 #### Returns
 
@@ -157,7 +157,7 @@ Burns an amount of the token from the defined treasury account
 ### createFungibleToken
 
 ```solidity
-function createFungibleToken(IHederaTokenService.HederaToken token, uint256 initialTotalSupply, uint256 decimals) external payable returns (int64 responseCode, address tokenAddress)
+function createFungibleToken(IHederaTokenService.HederaToken token, uint64 initialTotalSupply, uint32 decimals) external payable returns (int64 responseCode, address tokenAddress)
 ```
 
 
@@ -169,8 +169,8 @@ function createFungibleToken(IHederaTokenService.HederaToken token, uint256 init
 | Name | Type | Description |
 |---|---|---|
 | token | IHederaTokenService.HederaToken | undefined |
-| initialTotalSupply | uint256 | undefined |
-| decimals | uint256 | undefined |
+| initialTotalSupply | uint64 | undefined |
+| decimals | uint32 | undefined |
 
 #### Returns
 
@@ -182,7 +182,7 @@ function createFungibleToken(IHederaTokenService.HederaToken token, uint256 init
 ### createFungibleTokenWithCustomFees
 
 ```solidity
-function createFungibleTokenWithCustomFees(IHederaTokenService.HederaToken token, uint256 initialTotalSupply, uint256 decimals, IHederaTokenService.FixedFee[] fixedFees, IHederaTokenService.FractionalFee[] fractionalFees) external payable returns (int64 responseCode, address tokenAddress)
+function createFungibleTokenWithCustomFees(IHederaTokenService.HederaToken token, uint64 initialTotalSupply, uint32 decimals, IHederaTokenService.FixedFee[] fixedFees, IHederaTokenService.FractionalFee[] fractionalFees) external payable returns (int64 responseCode, address tokenAddress)
 ```
 
 
@@ -194,8 +194,8 @@ function createFungibleTokenWithCustomFees(IHederaTokenService.HederaToken token
 | Name | Type | Description |
 |---|---|---|
 | token | IHederaTokenService.HederaToken | undefined |
-| initialTotalSupply | uint256 | undefined |
-| decimals | uint256 | undefined |
+| initialTotalSupply | uint64 | undefined |
+| decimals | uint32 | undefined |
 | fixedFees | IHederaTokenService.FixedFee[] | undefined |
 | fractionalFees | IHederaTokenService.FractionalFee[] | undefined |
 
@@ -257,7 +257,7 @@ function createNonFungibleTokenWithCustomFees(IHederaTokenService.HederaToken to
 ### cryptoTransfer
 
 ```solidity
-function cryptoTransfer(IHederaTokenService.TokenTransferList[] tokenTransfers) external nonpayable returns (int64 responseCode)
+function cryptoTransfer(IHederaTokenService.TransferList transferList, IHederaTokenService.TokenTransferList[] tokenTransfers) external nonpayable returns (int64 responseCode)
 ```
 
 
@@ -268,6 +268,7 @@ function cryptoTransfer(IHederaTokenService.TokenTransferList[] tokenTransfers) 
 
 | Name | Type | Description |
 |---|---|---|
+| transferList | IHederaTokenService.TransferList | undefined |
 | tokenTransfers | IHederaTokenService.TokenTransferList[] | undefined |
 
 #### Returns
@@ -370,7 +371,7 @@ Operation to freeze token account
 ### getApproved
 
 ```solidity
-function getApproved(address token, int64 serialNumber) external nonpayable returns (int64 responseCode, address approved)
+function getApproved(address token, uint256 serialNumber) external nonpayable returns (int64 responseCode, address approved)
 ```
 
 Get the approved address for a single NFT Only Applicable to NFT Tokens
@@ -382,7 +383,7 @@ Get the approved address for a single NFT Only Applicable to NFT Tokens
 | Name | Type | Description |
 |---|---|---|
 | token | address | The Hedera NFT token address to check approval |
-| serialNumber | int64 | The NFT to find the approved address for |
+| serialNumber | uint256 | The NFT to find the approved address for |
 
 #### Returns
 
@@ -809,6 +810,56 @@ Enable or disable approval for a third party (&quot;operator&quot;) to manage  a
 | token | address | The Hedera NFT token address to approve |
 | operator | address | Address to add to the set of authorized operators |
 | approved | bool | True if the operator is approved, false to revoke approval |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| responseCode | int64 | The response code for the status of the request. SUCCESS is 22. |
+
+### transferFrom
+
+```solidity
+function transferFrom(address token, address from, address to, uint256 amount) external nonpayable returns (int64 responseCode)
+```
+
+Only applicable to fungible tokens
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token | address | The address of the fungible Hedera token to transfer |
+| from | address | The account address of the owner of the token, on the behalf of which to transfer `amount` tokens |
+| to | address | The account address of the receiver of the `amount` tokens |
+| amount | uint256 | The amount of tokens to transfer from `from` to `to` |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| responseCode | int64 | The response code for the status of the request. SUCCESS is 22. |
+
+### transferFromNFT
+
+```solidity
+function transferFromNFT(address token, address from, address to, uint256 serialNumber) external nonpayable returns (int64 responseCode)
+```
+
+Transfers `serialNumber` of `token` from `from` to `to` using the allowance mechanism. Only applicable to NFT tokens
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token | address | The address of the non-fungible Hedera token to transfer |
+| from | address | The account address of the owner of `serialNumber` of `token` |
+| to | address | The account address of the receiver of `serialNumber` |
+| serialNumber | uint256 | The NFT serial number to transfer |
 
 #### Returns
 

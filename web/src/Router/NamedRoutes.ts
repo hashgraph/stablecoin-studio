@@ -16,4 +16,7 @@ export enum NamedRoutes {
 	StableCoinNotSelected = 'stableCoinNotSelected',
 	Wipe = 'wipe',
 	ImportedToken = 'importedToken',
+	DangerZone = 'dangerZone',
+	Freeze = 'freeze',
+	Unfreeze = 'unfreeze',
 }

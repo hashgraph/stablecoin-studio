@@ -21,19 +21,6 @@ export default class CashInStableCoinsService extends Service {
     const sdk: SDK = utilsService.getSDK();
     // const currentAccount = utilsService.getCurrentAccount();
     let respDetail;
-    // const request = new CashInStableCoinRequest({
-    //   proxyContractId,
-    //   account: {
-    //     accountId: currentAccount.accountId,
-    //     privateKey: {
-    //       key: currentAccount.privateKey.key,
-    //       type: currentAccount.privateKey.type,
-    //     },
-    //   },
-    //   tokenId,
-    //   targetId,
-    //   amount,
-    // });
     await utilsService.showSpinner(
       sdk.cashIn(request).then((response) => (respDetail = response)),
       {

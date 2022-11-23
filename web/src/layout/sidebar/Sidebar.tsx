@@ -1,4 +1,4 @@
-import { Box, Flex } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { NamedRoutes } from '../../Router/NamedRoutes';
 import SidebarOption from './SidebarOption';
@@ -29,9 +29,16 @@ const Sidebar = () => {
 			route: NamedRoutes.StableCoinDetails,
 		},
 	];
-
+	
 	return (
-		<Box data-testid='sidebar' bgColor='brand.white' minW='240px' p='32px 12px'>
+		<Flex
+			data-testid='sidebar'
+			bgColor='brand.white'
+			minW='240px'
+			p='32px 12px'
+			justifyContent={'space-between'}
+			flexDirection='column'
+		>
 			<Flex flexDirection='column' alignItems='center' gap={3}>
 				{options.map((option) => {
 					const { title } = option;
@@ -39,7 +46,7 @@ const Sidebar = () => {
 					return <SidebarOption key={title} {...option} />;
 				})}
 			</Flex>
-		</Box>
+		</Flex>
 	);
 };
 

@@ -8,6 +8,7 @@ import { Heading } from './components/Heading';
 import { Tabs } from './components/Tabs';
 import { FormError } from './components/FormError';
 import { DirectAccess } from './components/DirectAccess';
+import { DirectAction } from './components/DirectAction';
 
 const theme = extendTheme({
 	config: {
@@ -72,6 +73,7 @@ const theme = extendTheme({
 		Tabs,
 		FormError,
 		DirectAccess,
+		DirectAction,
 	},
 	styles: {
 		global: {

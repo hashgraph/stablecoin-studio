@@ -13,6 +13,8 @@ import type STABLE_COIN_CREATION_EN from './translations/en/stableCoinCreation.j
 import type STABLE_COIN_DETAILS_EN from './translations/en/stableCoinDetails.json';
 import type WIPE_EN from './translations/en/wipe.json';
 import type EXTERNAL_TOKEN_INFO_EN from './translations/en/externalTokenInfo.json';
+import type FREEZE_EN from './translations/en/freeze.json';
+import type UNFREEZE_EN from './translations/en/unfreeze.json';
 
 declare module 'react-i18next' {
 	interface Resources {
@@ -28,6 +30,8 @@ declare module 'react-i18next' {
 		stableCoinDetails: typeof STABLE_COIN_DETAILS_EN;
 		wipe: typeof WIPE_EN;
 		externalTokenInfo: typeof EXTERNAL_TOKEN_INFO_EN;
+		freeze: typeof FREEZE_EN;
+		unfreeze: typeof UNFREEZE_EN;
 	}
 }
 
@@ -49,6 +53,8 @@ declare module 'react-i18next' {
 			stableCoinDetails: typeof STABLE_COIN_DETAILS_EN;
 			wipe: typeof WIPE_EN;
 			externalTokenInfo: typeof EXTERNAL_TOKEN_INFO_EN;
+			freeze: typeof FREEZE_EN;
+			unfreeze: typeof UNFREEZE_EN;
 		};
 	}
 }
