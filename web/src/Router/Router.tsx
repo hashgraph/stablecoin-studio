@@ -29,7 +29,7 @@ import {
 	walletActions,
 } from '../store/slices/walletSlice';
 import type { SavedPairingData } from 'hedera-stable-coin-sdk';
-import ExternalTokenCreation from '../views/ExternalToken/ExternalTokenCreation';
+import ImportedTokenCreation from '../views/ImportedToken/ImportedTokenCreation';
 import DangerZoneOperations from '../views/Operations/DangerZone';
 
 const PrivateRoute = ({ status }: { status?: HashConnectConnectionState }) => {
@@ -173,7 +173,7 @@ const Router = () => {
 							</>
 						)}
 						<Route path={RoutesMappingUrl.stableCoinCreation} element={<StableCoinCreation />} />
-						<Route path={RoutesMappingUrl.externalToken} element={<ExternalTokenCreation />} />
+						<Route path={RoutesMappingUrl.importedToken} element={<ImportedTokenCreation />} />
 						<Route
 							path={RoutesMappingUrl.stableCoinNotSelected}
 							element={<StableCoinNotSelected />}
