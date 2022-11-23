@@ -1,5 +1,7 @@
 # Hedera Stable Coin WEB
 
+[![WEB - Test](https://github.com/hashgraph/hedera-accelerator-stablecoin/actions/workflows/web.test.yml/badge.svg)](https://github.com/hashgraph/hedera-accelerator-stablecoin/actions/workflows/web.test.yml)
+
 ## Getting started
 
 To make it easy for you to get started with GitLab, here's a list of recommended next steps.

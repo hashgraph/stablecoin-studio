@@ -1,58 +1,59 @@
 {
-  "common": {
-    "accept": "Accept",
-    "account": "Account",
-    "cancel": "Cancel",
-    "goBack": "Go back",
-    "no": "No",
-    "yes": "Yes",
-    "unknown": "-",
-    "copy": "Copy",
-    "copied": "Copied!",
-    "see-transaction": "See transaction"
-  },
-  "innactivity": {
-    "title":"Your session has expired!",
-    "description":"Please, reconnect your wallet."
-  },
-  "hashpack-no-installed": {
-    "title": "Hashpack extension is not installed yet",
-    "description": "Click on the button bellow to download the extension.",
-    "button": "Download Hashpack"
-  },
-  "hashpack-no-connected": {
-    "title": "Your wallet is not connected yet",
-    "description": "Click On the button bellow to connect to your wallet",
-    "button": "Connect your wallet"
-  },
-  "topbar": {
-    "network": "Op. network",
-    "account": "Op. account",
-    "coinDropdown": {
-      "placeholder": "Choose stable coin",
-      "noStableCoin": "No stable Coins"
-    },
-    "createSC": "Create coin",
-    "addSC": "Add coin"
-  },
-  "sidebar": {
-    "operations": "Operations",
-    "role": "Role management",
-    "details": "Stable coin details"
-  },
-  "validations": {
-    "required": "This field is required",
-    "invalidAccount": "Incorrect account",
-    "invalidAmount": "Invalid amount",
-    "invalidCoinId": "Invalid stable coin id",
-    "decimalsValidation": "The amount has an invalid number of decimales"
-  },
-  "operations": {
-    "title": "Operations"
-  },
-  "stepper": {
-    "goBack": "Go back",
-    "finish": "Finish",
-    "nextStep": "Next step"
-  }
+	"common": {
+		"accept": "Accept",
+		"account": "Account",
+		"cancel": "Cancel",
+		"goBack": "Go back",
+		"no": "No",
+		"yes": "Yes",
+		"unknown": "-",
+		"copy": "Copy",
+		"copied": "Copied!",
+		"see-transaction": "See transaction"
+	},
+	"innactivity": {
+		"title": "Your session has expired!",
+		"description": "Please, reconnect your wallet."
+	},
+	"hashpack-no-installed": {
+		"title": "Hashpack extension is not installed yet",
+		"description": "Click on the button bellow to download the extension.",
+		"button": "Download Hashpack"
+	},
+	"hashpack-no-connected": {
+		"title": "Your wallet is not connected yet",
+		"description": "Click On the button bellow to connect to your wallet",
+		"button": "Connect your wallet"
+	},
+	"topbar": {
+		"network": "Op. network",
+		"account": "Op. account",
+		"coinDropdown": {
+			"placeholder": "Choose stable coin",
+			"noStableCoin": "No stable coins found with that id, would you like to import it?",
+			"invalidStableCoinId": "Input a valid token id"
+		},
+		"createSC": "Create coin",
+		"addSC": "Add coin"
+	},
+	"sidebar": {
+		"operations": "Operations",
+		"role": "Role management",
+		"details": "Stable coin details"
+	},
+	"validations": {
+		"required": "This field is required",
+		"invalidAccount": "Incorrect account",
+		"invalidAmount": "Invalid amount",
+		"invalidCoinId": "Invalid stable coin id",
+		"decimalsValidation": "The amount has an invalid number of decimales"
+	},
+	"operations": {
+		"title": "Operations"
+	},
+	"stepper": {
+		"goBack": "Go back",
+		"finish": "Finish",
+		"nextStep": "Next step"
+	}
 }
