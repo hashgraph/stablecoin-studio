@@ -30,8 +30,8 @@
         "unpauseOperation": "Unpause",
         "deleteOperation": "Delete"
     },
-    "freezeOperation": "Freeze",
-    "unfreezeOperation": "Unfreeze",
+    "freezeOperation": "Freeze account",
+    "unfreezeOperation": "Unfreeze account",
     "pause":{
         "title": "Pause",
         "modalSuccessTitle": "Operation successfully completed",
