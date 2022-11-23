@@ -1,4 +1,10 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+
+// Logging
+import { LoggerOptions, transports, format } from 'winston';
+import DailyRotateFile from 'winston-daily-rotate-file';
+
+// Responses
 import StableCoinList from './response/StableCoinList.js';
 import StableCoinDetail from './response/StableCoinDetail.js';
 import StableCoinService from '../../../app/service/stablecoin/StableCoinService.js';
@@ -97,6 +103,9 @@ import { RequestAccount } from './request/BaseRequest.js';
 import { Roles } from '../../../domain/context/stablecoin/Roles.js';
 import IPauseStableCoinRequestModel from '../../../app/service/stablecoin/model/IPauseStableCoinRequestModel.js';
 import IFreezeAccountRequestModel from '../../../app/service/stablecoin/model/IFreezeAccountRequestModel.js';
+import LogService from '../../../app/service/log/LogService.js';
+
+const DefaultLoggerFormat = LogService.defaultFormat;
 
 export {
 	ValidatedRequest,
@@ -106,6 +115,11 @@ export {
 	StableCoinDetail as IStableCoinDetail,
 	StableCoinList as IStableCoinList,
 	AccountInfo as IAccountInfo,
+	LoggerOptions,
+	transports as LoggerTransports,
+	format as LoggerFormat,
+	DailyRotateFile,
+	DefaultLoggerFormat,
 };
 
 export * from './request';
@@ -145,6 +159,7 @@ export {
 export interface ConfigurationOptions {
 	appMetadata?: AppMetadata;
 	account?: RequestAccount;
+	logOptions?: LoggerOptions;
 }
 
 export interface Configuration {
@@ -169,10 +184,11 @@ export class SDK {
 	private stableCoinRepository: IStableCoinRepository;
 	private stableCoinService: StableCoinService;
 	private eventService: EventService;
+	private logService: LogService;
 
 	constructor(config: Configuration) {
 		this.config = config;
-		// console.log('SDK Initialised');
+		this.logService = new LogService(this.config.options?.logOptions);
 	}
 
 	// Initializes the SDK,
@@ -604,28 +620,30 @@ export class SDK {
 		}
 	}
 
+	// HashPack
+
 	public getAvailabilityExtension(): boolean {
-		console.log('=====getAvailabilityExtension=====');
+		LogService.logTrace('=====getAvailabilityExtension=====');
 		return this.networkAdapter.provider.getAvailabilityExtension();
 	}
 
 	gethashConnectConectionStatus(): HashConnectConnectionState {
-		console.log('=====getAvailabilityExtension=====');
+		LogService.logTrace('=====getAvailabilityExtension=====');
 		return this.networkAdapter.provider.gethashConnectConectionState();
 	}
 
 	getInitData(): InitializationData {
-		console.log('=====getInitData=====');
+		LogService.logTrace('=====getInitData=====');
 		return this.networkAdapter.provider.getInitData();
 	}
 
 	disconectHaspack(): void {
-		console.log('=====disconect Haspack=====');
+		LogService.logTrace('=====disconect Haspack=====');
 		return this.networkAdapter.provider.disconectHaspack();
 	}
 
 	connectWallet(): Promise<IProvider> {
-		console.log('=====connectWallet Haspack=====');
+		LogService.logTrace('=====connectWallet Haspack=====');
 		return this.networkAdapter.provider.connectWallet();
 	}
 

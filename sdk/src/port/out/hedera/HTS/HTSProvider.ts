@@ -25,7 +25,6 @@ import { IniConfig, IProvider } from '../Provider.js';
 import Web3 from 'web3';
 import { StableCoin } from '../../../../domain/context/stablecoin/StableCoin.js';
 import { getHederaNetwork, PrivateKeyType } from '../../../../core/enum.js';
-import { log } from '../../../../core/log.js';
 import {
 	ICallContractRequest,
 	ICallContractWithAccountRequest,
@@ -53,10 +52,10 @@ import { StableCoinMemo } from '../../../../domain/context/stablecoin/StableCoin
 import BigDecimal from '../../../../domain/context/stablecoin/BigDecimal.js';
 import Long from 'long';
 import ProviderError from '../error/HederaError.js';
+import LogService from '../../../../app/service/log/LogService.js';
 
 type DefaultHederaProvider = hethers.providers.DefaultHederaProvider;
 
-const logOpts = { newLine: true, clear: true };
 export default class HTSProvider implements IProvider {
 	public HTSProvider: DefaultHederaProvider;
 	private network: HederaNetwork;
@@ -181,7 +180,8 @@ export default class HTSProvider implements IProvider {
 		params: ICallContractRequest | ICallContractWithAccountRequest,
 	): Promise<Uint8Array> {
 		const { contractId, parameters, gas, abi } = params;
-
+		LogService.logInfo('Call contract ' + contractId);
+		LogService.logTrace('Params ', params);
 		let client;
 
 		if ('account' in params) {
@@ -214,7 +214,6 @@ export default class HTSProvider implements IProvider {
 				name,
 				abi,
 			);
-
 		return htsResponse.reponseParam;
 	}
 
@@ -223,18 +222,16 @@ export default class HTSProvider implements IProvider {
 		account: EOAccount,
 	): Promise<StableCoin> {
 		const client = this.getClient(account);
-		log(
-			`Deploying ${HederaERC20__factory.name} contract... please wait.`,
-			logOpts,
+		LogService.logTrace(
+			`Deploying ${HederaERC20__factory.name} contract...`,
 		);
 		const tokenContract = await this.deployContract(
 			HederaERC20__factory,
 			account.privateKey,
 			client,
 		);
-		log(
-			`Deploying ${HederaERC1967Proxy__factory.name} contract... please wait.`,
-			logOpts,
+		LogService.logTrace(
+			`Deploying ${HederaERC1967Proxy__factory.name} contract...`,
 		);
 		const proxyContract: HContractId = await this.deployContract(
 			HederaERC1967Proxy__factory,
@@ -252,9 +249,8 @@ export default class HTSProvider implements IProvider {
 			abi: HederaERC20__factory.abi,
 			account,
 		});
-		log(
-			`Deploying ${HTSTokenOwner__factory.name} contract... please wait.`,
-			logOpts,
+		LogService.logTrace(
+			`Deploying ${HTSTokenOwner__factory.name} contract...`,
 		);
 		const tokenOwnerContract = await this.deployContract(
 			HTSTokenOwner__factory,
@@ -267,7 +263,7 @@ export default class HTSProvider implements IProvider {
 			String(tokenOwnerContract),
 		);
 
-		log('Creating token... please wait.', logOpts);
+		LogService.logTrace('Creating token...');
 		const hederaToken = await this.createToken(
 			tokenOwnerContract,
 			stableCoin.name,
@@ -287,7 +283,7 @@ export default class HTSProvider implements IProvider {
 			safeCast<PublicKey>(stableCoin.supplyKey),
 			stableCoin.autoRenewAccount,
 		);
-		log('Setting up contract... please wait.', logOpts);
+		LogService.logTrace('Setting up contract...');
 		await this.callContract('setTokenAddress', {
 			contractId: stableCoin.memo.proxyContract,
 			parameters: [
@@ -312,9 +308,8 @@ export default class HTSProvider implements IProvider {
 			hederaToken.treasuryAccountId.toString() !== account.accountId.id &&
 			account.evmAddress
 		) {
-			log(
-				'Associating administrator account to token... please wait.',
-				logOpts,
+			LogService.logTrace(
+				'Associating administrator account to token...',
 			);
 
 			await this.callContract('associateToken', {
@@ -382,6 +377,9 @@ export default class HTSProvider implements IProvider {
 		params?: any,
 	): Promise<HContractId> {
 		try {
+			LogService.logInfo('deployContractHts');
+			LogService.logTrace('Params: ',  params);
+		
 			this.htsSigner = new HTSSigner(client);
 			const transaction =
 				TransactionProvider.buildContractCreateFlowTransaction(
@@ -493,11 +491,10 @@ export default class HTSProvider implements IProvider {
 			);
 		}
 		values.tokenId = htsResponse.receipt.tokenId;
-		log(
+		LogService.logTrace(
 			`Token ${name} created tokenId ${
 				values.tokenId
 			} - tokenAddress ${values.tokenId?.toSolidityAddress()}`,
-			logOpts,
 		);
 		return values;
 	}
@@ -527,6 +524,9 @@ export default class HTSProvider implements IProvider {
 	}
 
 	public async wipeHTS(params: IWipeTokenRequest): Promise<boolean> {
+		LogService.logInfo('wipeHts');
+		LogService.logTrace('Params: ',  params);
+		
 		let client;
 
 		if ('account' in params) {
@@ -561,23 +561,14 @@ export default class HTSProvider implements IProvider {
 	}
 
 	public async cashInHTS(params: IHTSTokenRequestAmount): Promise<boolean> {
+		LogService.logInfo('cashInHts');
 		let client;
-
+		LogService.logTrace('Params ', params);
 		if ('account' in params) {
 			client = this.getClient(params.account);
 		} else {
 			throw new ProviderError('Account must be supplied');
 		}
-
-		/*const transactionApprove: Transaction = TransactionProvider.approveTokenAllowance();
-		const transactionApproveResponse: TransactionResponse = await this.htsSigner.signAndSendTransaction(transactionApprove);
-		const htsApproveResponse: HTSResponse = await this.transactionResposeHandler.manageResponse(transactionApproveResponse, TransactionType.RECEIPT, client);
-		if (!htsApproveResponse.receipt) {
-		 	throw new ProviderError(
-		 		`An error has occurred when approving`,
-		 	);
-		}
-		console.log("xxx SE HA HECHO UN APPROVE DE LA CUENTA 0.0.47624288 A LA CUENTA 0.0.48692645 DE 100 TOKENS");*/
 
 		this.htsSigner = new HTSSigner(client);
 		const transaction: Transaction =
@@ -595,17 +586,20 @@ export default class HTSProvider implements IProvider {
 				client,
 			);
 
+		
 		if (!htsResponse.receipt) {
 			throw new ProviderError(
 				`An error has occurred when cash in the amount ${params.amount} in the account ${params?.account?.accountId.id} for tokenId ${params.tokenId}`,
 			);
 		}
+	
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
 	public async cashOutHTS(params: IHTSTokenRequestAmount): Promise<boolean> {
 		let client;
-
+		LogService.logInfo('cashOutHTS');
+		LogService.logTrace('Params ', params);
 		if ('account' in params) {
 			client = this.getClient(params.account);
 		} else {
@@ -637,6 +631,8 @@ export default class HTSProvider implements IProvider {
 	}
 
 	public async transferHTS(params: ITransferTokenRequest): Promise<boolean> {
+		LogService.logInfo('transferHTS');
+		LogService.logTrace('Params: ',  params);
 		let client;
 
 		if ('account' in params) {
@@ -679,6 +675,9 @@ export default class HTSProvider implements IProvider {
 	}
 
 	public async deleteHTS(params: IHTSTokenRequest): Promise<boolean> {
+		LogService.logInfo('deleteHts');
+		LogService.logTrace('Params: ',  params);
+		
 		let client;
 
 		if ('account' in params) {
@@ -709,6 +708,10 @@ export default class HTSProvider implements IProvider {
 	}
 
 	public async pauseHTS(params: IHTSTokenRequest): Promise<boolean> {
+		LogService.logInfo('pauseHts');
+		LogService.logTrace('Params: ',  params);
+		
+
 		let client;
 
 		if ('account' in params) {
@@ -739,6 +742,9 @@ export default class HTSProvider implements IProvider {
 	}
 
 	public async unpauseHTS(params: IHTSTokenRequest): Promise<boolean> {
+		LogService.logInfo('unpauseHts');
+		LogService.logTrace('Params: ',  params);
+		
 		let client;
 
 		if ('account' in params) {
@@ -769,6 +775,9 @@ export default class HTSProvider implements IProvider {
 	}
 
 	public async freezeHTS(params: IHTSTokenRequestTargetId): Promise<boolean> {
+		LogService.logInfo('freezeHts');
+		LogService.logTrace('Params: ',  params);
+		
 		let client;
 
 		if ('account' in params) {
@@ -804,6 +813,10 @@ export default class HTSProvider implements IProvider {
 	public async unfreezeHTS(
 		params: IHTSTokenRequestTargetId,
 	): Promise<boolean> {
+		
+		LogService.logInfo('unfreezeHts');
+		LogService.logTrace('Params: ',  params);
+		
 		let client;
 
 		if ('account' in params) {
@@ -849,6 +862,6 @@ export default class HTSProvider implements IProvider {
 		const num: number = hs.lastIndexOf('.');
 
 		hs = hs.substring(0, num) + '-' + hs.substring(num + 1, hs.length);
-		log(`${hs} \n`, logOpts);
+		LogService.logInfo(`${hs} \n`);
 	}
 }

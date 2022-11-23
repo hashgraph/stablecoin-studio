@@ -165,7 +165,6 @@ export default class StableCoinService extends Service {
 			coin.maxSupply.isGreaterThan(BigDecimal.ZERO) &&
 			amount.isGreaterThan(coin.maxSupply.subUnsafe(coin.totalSupply))
 		) {
-			console.log(coin.maxSupply, coin.totalSupply, amount);
 			throw new AmountGreaterThanAllowedSupply(amount);
 		}
 

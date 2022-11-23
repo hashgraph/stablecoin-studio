@@ -113,6 +113,8 @@ export const english = {
     options: {
       config: 'Path to the configuration file',
       network: 'Network to use',
+      logLevel: 'Log level to use',
+      logPath: 'Directory to save the logs to',
     },
     token: {
       createDescription:

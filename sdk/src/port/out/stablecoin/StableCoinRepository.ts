@@ -38,6 +38,7 @@ import {
 import BigDecimal from '../../../domain/context/stablecoin/BigDecimal.js';
 import { InvalidResponse } from './error/InvalidResponse.js';
 import { StableCoinNotFound } from './error/StableCoinNotFound.js';
+import LogService from '../../../app/service/log/LogService.js';
 
 export default class StableCoinRepository implements IStableCoinRepository {
 	private networkAdapter: NetworkAdapter;
@@ -153,7 +154,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 				paused: response.data.pause_status,
 				freezeDefault: response.data.freeze_default,
 				// kycStatus: string;
-				deleted: response.data.deleted ?? false,
+				deleted: Boolean(response.data.deleted) ?? false,
 				autoRenewAccount: response.data.auto_renew_account,
 				autoRenewAccountPeriod:
 					response.data.auto_renew_period / (3600 * 24),
@@ -847,7 +848,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 	public async getAccountInfo(accountId: string): Promise<AccountInfo> {
 		try {
-			console.log(this.URI_BASE + 'accounts/' + accountId);
+			LogService.logTrace(this.URI_BASE + 'accounts/' + accountId);
 			const res = await axios.get<IAccount>(
 				this.URI_BASE + 'accounts/' + accountId,
 			);

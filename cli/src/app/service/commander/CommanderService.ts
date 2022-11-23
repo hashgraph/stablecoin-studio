@@ -43,12 +43,28 @@ export default class CommanderService extends Service {
         '-n, --network [network]',
         language.getText('commander.options.network'),
       )
+      .option(
+        '-lv, --log-level [logLevel]',
+        language.getText('commander.options.logLevel'),
+      )
+      .option(
+        '-lp, --log-path [logPath]',
+        language.getText('commander.options.logPath'),
+      )
       .description(language.getText('commander.wizardDescription'))
       .action(async (options): Promise<void> => {
         // Check if default configuration exists, if not, start init command
+        console.log("options", options)
         await configurationService.init(
           {
             defaultNetwork: options.network,
+            logs:
+              options.logLevel || options.logPath
+                ? {
+                    level: options.logLevel,
+                    path: options.logPath,
+                  }
+                : undefined,
           },
           options.config,
         );
