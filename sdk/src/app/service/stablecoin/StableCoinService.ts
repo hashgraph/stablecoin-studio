@@ -30,6 +30,7 @@ import CheckNums from '../../../core/checks/numbers/CheckNums.js';
 import IDeleteStableCoinRequestModel from './model/IDeleteStableCoinRequestModel.js';
 import IPauseStableCoinRequestModel from './model/IPauseStableCoinRequestModel.js';
 import IFreezeAccountRequestModel from './model/IFreezeAccountRequestModel.js';
+import LogService from '../log/LogService.js';
 
 export default class StableCoinService extends Service {
 	private repository: IStableCoinRepository;
@@ -74,7 +75,9 @@ export default class StableCoinService extends Service {
 			id: req.id,
 			autoRenewAccount: req.autoRenewAccount,
 		});
+		LogService.logTrace('Saving coin: ', coin);
 		coin = await this.repository.saveCoin(coin, req.account);
+		LogService.logTrace('Coin saved: ', coin);
 		return this.getStableCoinDetails({ id: coin.id });
 	}
 
@@ -84,12 +87,14 @@ export default class StableCoinService extends Service {
 	public async getListStableCoins(
 		req: IListStableCoinServiceRequestModel,
 	): Promise<StableCoinList[]> {
+		LogService.logTrace('Fetching stable coins for: ', req.account);
 		return this.repository.getListStableCoins(req.account);
 	}
 
 	public async getStableCoinDetails(
 		req: IGetStableCoinServiceRequestModel,
 	): Promise<StableCoinDetail> {
+		LogService.logTrace('Getting stable coin details: ', req);
 		const stableCoin: StableCoin = await this.getStableCoin(req);
 		const stableCoinDetails: StableCoinDetail = {
 			tokenId: stableCoin.id,
@@ -117,6 +122,7 @@ export default class StableCoinService extends Service {
 			supplyKey: stableCoin.supplyKey,
 			pauseKey: stableCoin.pauseKey,
 		};
+		LogService.logTrace('Details: ', stableCoinDetails);
 		return stableCoinDetails;
 	}
 
@@ -126,6 +132,7 @@ export default class StableCoinService extends Service {
 	public async getStableCoin(
 		req: IGetStableCoinServiceRequestModel,
 	): Promise<StableCoin> {
+		LogService.logTrace('Getting stable coin: ', req.id);
 		return this.repository.getStableCoin(req.id);
 	}
 
@@ -133,12 +140,18 @@ export default class StableCoinService extends Service {
 		id: string,
 		publickey: string,
 	): Promise<Capabilities[]> {
+		LogService.logTrace(
+			'Getting stable coin capabilities: ',
+			id,
+			publickey,
+		);
 		return this.repository.getCapabilitiesStableCoin(id, publickey);
 	}
 
 	public async getBalanceOf(
 		req: IGetBalanceOfStableCoinServiceRequestModel,
 	): Promise<string> {
+		LogService.logTrace('Getting balance: ', req);
 		return this.repository.getBalanceOf(
 			req.proxyContractId,
 			req.targetId,
@@ -151,6 +164,7 @@ export default class StableCoinService extends Service {
 		req: CashInStableCoinServiceRequestModel,
 	): Promise<boolean> {
 		// TODO validation
+		LogService.logTrace('Doing cash in for: ', req);
 		const coin: StableCoin = await this.getStableCoin({
 			id: req.tokenId,
 		});
@@ -167,9 +181,9 @@ export default class StableCoinService extends Service {
 		) {
 			throw new AmountGreaterThanAllowedSupply(amount);
 		}
+		LogService.logTrace('Request validated, starting');
 
 		let resultCashIn = false;
-
 		const capabilities: Capabilities[] =
 			await this.getCapabilitiesStableCoin(
 				req.tokenId,
@@ -223,6 +237,7 @@ export default class StableCoinService extends Service {
 		req: ICashOutStableCoinServiceRequestModel,
 	): Promise<boolean> {
 		// TODO validate
+		LogService.logTrace('Doing burn for: ', req);
 		const coin: StableCoin = await this.getStableCoin({
 			id: req.tokenId,
 		});
@@ -232,6 +247,7 @@ export default class StableCoinService extends Service {
 				`The amount has more decimals than the limit (${coin.decimals}), burn`,
 			);
 		}
+		LogService.logTrace('Request was validated, starting burn...');
 		const amount = BigDecimal.fromString(req.amount, coin.decimals);
 
 		const treasuryAccountBalance = await this.getBalanceOf({
@@ -286,6 +302,7 @@ export default class StableCoinService extends Service {
 	public async wipe(
 		req: IWipeStableCoinServiceRequestModel,
 	): Promise<boolean> {
+		LogService.logTrace('Doing wipe for: ', req);
 		const coin: StableCoin = await this.getStableCoin({
 			id: req.tokenId,
 		});
@@ -310,7 +327,7 @@ export default class StableCoinService extends Service {
 				`The amount has more decimals than the limit (${coin.decimals}), wipe`,
 			);
 		}
-
+		LogService.logTrace('Request was validated, starting wipe...');
 		const amount = BigDecimal.fromString(req.amount, coin.decimals);
 
 		const balanceBigDecimal = BigDecimal.fromString(
@@ -354,6 +371,7 @@ export default class StableCoinService extends Service {
 	public async rescue(
 		req: IRescueStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
+		LogService.logTrace('Doing rescue for: ', req);
 		const coin: StableCoin = await this.getStableCoin({
 			id: req.tokenId,
 		});
@@ -364,6 +382,7 @@ export default class StableCoinService extends Service {
 				`The amount has more decimals than the limit (${coin.decimals}), rescue`,
 			);
 		}
+		LogService.logTrace('Request was validated, starting rescue...');
 		const amount = BigDecimal.fromString(req.amount, coin.decimals);
 
 		const treasuryAccountBalance = await this.getBalanceOf({
@@ -386,6 +405,7 @@ export default class StableCoinService extends Service {
 	public async grantSupplierRole(
 		req: ISupplierRoleStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
+		LogService.logTrace('Granting supplier role: ', req);
 		const coin: StableCoin = await this.getStableCoin({
 			id: req.tokenId,
 		});
@@ -402,6 +422,7 @@ export default class StableCoinService extends Service {
 	public async isUnlimitedSupplierAllowance(
 		req: IGetBasicRequestModel,
 	): Promise<Uint8Array> {
+		LogService.logTrace('Checking if supplier role is unlimited: ', req);
 		return this.repository.isUnlimitedSupplierAllowance(
 			req.proxyContractId,
 			req.targetId,
@@ -412,6 +433,7 @@ export default class StableCoinService extends Service {
 	public async supplierAllowance(
 		req: IGetSupplierAllowanceModel,
 	): Promise<string> {
+		LogService.logTrace("Checking supplier's allowance: ", req);
 		const response = await this.repository.supplierAllowance(
 			req.proxyContractId,
 			req.targetId,
@@ -430,6 +452,7 @@ export default class StableCoinService extends Service {
 	public async revokeSupplierRole(
 		req: IGetBasicRequestModel,
 	): Promise<Uint8Array> {
+		LogService.logTrace('Revoking supplier role: ', req);
 		return this.repository.revokeSupplierRole(
 			req.proxyContractId,
 			req.targetId,
@@ -440,6 +463,7 @@ export default class StableCoinService extends Service {
 	public async resetSupplierAllowance(
 		req: IGetBasicRequestModel,
 	): Promise<Uint8Array> {
+		LogService.logTrace("Resetting supplier's allowance: ", req);
 		return this.repository.resetSupplierAllowance(
 			req.proxyContractId,
 			req.targetId,
@@ -450,6 +474,7 @@ export default class StableCoinService extends Service {
 	public async increaseSupplierAllowance(
 		req: ISupplierRoleStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
+		LogService.logTrace("Increasing supplier's allowance: ", req);
 		const coin: StableCoin = await this.getStableCoin({
 			id: req.tokenId,
 		});
@@ -471,6 +496,7 @@ export default class StableCoinService extends Service {
 	public async decreaseSupplierAllowance(
 		req: ISupplierRoleStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
+		LogService.logTrace("Decreasing supplier's allowance: ", req);
 		const coin: StableCoin = await this.getStableCoin({
 			id: req.tokenId,
 		});
@@ -509,6 +535,10 @@ export default class StableCoinService extends Service {
 	public async isLimitedSupplierAllowance(
 		req: IGetBasicRequestModel,
 	): Promise<Uint8Array> {
+		LogService.logTrace(
+			"Checking if supplier's allowance is limited: ",
+			req,
+		);
 		return this.repository.isLimitedSupplierAllowance(
 			req.proxyContractId,
 			req.targetId,
@@ -519,6 +549,7 @@ export default class StableCoinService extends Service {
 	public async grantRole(
 		req: IRoleStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
+		LogService.logTrace('Granting role: ', req);
 		return this.repository.grantRole(
 			req.proxyContractId,
 			req.targetId,
@@ -530,6 +561,7 @@ export default class StableCoinService extends Service {
 	public async revokeRole(
 		req: IRoleStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
+		LogService.logTrace('Revoking role: ', req);
 		return this.repository.revokeRole(
 			req.proxyContractId,
 			req.targetId,
@@ -541,6 +573,7 @@ export default class StableCoinService extends Service {
 	public async hasRole(
 		req: IRoleStableCoinServiceRequestModel,
 	): Promise<Uint8Array> {
+		LogService.logTrace('Checking role: ', req);
 		return this.repository.hasRole(
 			req.proxyContractId,
 			req.targetId,
@@ -552,12 +585,14 @@ export default class StableCoinService extends Service {
 	public async getAccountInfo(
 		req: IAccountWithKeyRequestModel,
 	): Promise<AccountInfo> {
+		LogService.logTrace('Getting account info: ', req);
 		return this.repository.getAccountInfo(req.account.accountId.id);
 	}
 
 	public async getRoles(
 		req: IGetRolesServiceRequestModel,
 	): Promise<string[]> {
+		LogService.logTrace('Getting roles: ', req);
 		return this.repository.getRoles(
 			req.proxyContractId,
 			req.targetId,
@@ -568,6 +603,7 @@ export default class StableCoinService extends Service {
 	public async deleteStableCoin(
 		req: IDeleteStableCoinRequestModel,
 	): Promise<boolean> {
+		LogService.logTrace('Deleting stable coin: ', req);
 		const capabilities: Capabilities[] =
 			await this.getCapabilitiesStableCoin(
 				req.tokenId,
@@ -592,6 +628,7 @@ export default class StableCoinService extends Service {
 	public async pauseStableCoin(
 		req: IPauseStableCoinRequestModel,
 	): Promise<boolean> {
+		LogService.logTrace('Pausing stable coin: ', req);
 		const capabilities: Capabilities[] =
 			await this.getCapabilitiesStableCoin(
 				req.tokenId,
@@ -615,6 +652,7 @@ export default class StableCoinService extends Service {
 	public async unpauseStableCoin(
 		req: IPauseStableCoinRequestModel,
 	): Promise<boolean> {
+		LogService.logTrace('Unpausing stable coin: ', req);
 		const capabilities: Capabilities[] =
 			await this.getCapabilitiesStableCoin(
 				req.tokenId,
@@ -638,6 +676,7 @@ export default class StableCoinService extends Service {
 	public async freezeAccount(
 		req: IFreezeAccountRequestModel,
 	): Promise<boolean> {
+		LogService.logTrace('Freezing account: ', req);
 		const capabilities: Capabilities[] =
 			await this.getCapabilitiesStableCoin(
 				req.tokenId,
@@ -665,6 +704,7 @@ export default class StableCoinService extends Service {
 	public async unfreezeAccount(
 		req: IFreezeAccountRequestModel,
 	): Promise<boolean> {
+		LogService.logTrace('Unfreezing account: ', req);
 		const capabilities: Capabilities[] =
 			await this.getCapabilitiesStableCoin(
 				req.tokenId,

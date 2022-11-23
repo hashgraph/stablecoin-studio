@@ -9,6 +9,7 @@ import {
 } from '../BaseRequest.js';
 import { Roles } from '../../../../../domain/context/stablecoin/Roles.js';
 import ValidatedRequest from '../validation/ValidatedRequest.js';
+import LogService from '../../../../../app/service/log/LogService.js';
 
 export default class RequestMapper {
 	public static isPublicKey = (val: any): val is RequestPublicKey => {
@@ -83,6 +84,7 @@ export default class RequestMapper {
 			[p in keyof K]: Constructible | MapFunction<any, any, T>;
 		}>,
 	): K {
+		LogService.logTrace('Mapping: ', req);
 		const entries = Object.entries(req);
 		const extraKeys = this.renamePrivateProps(Object.keys(extra ?? {}));
 		const target: { [n: string]: any } = {};
@@ -109,6 +111,7 @@ export default class RequestMapper {
 				target[key] = val;
 			}
 		});
+		LogService.logTrace('To: ', target);
 		return target as K;
 	}
 
