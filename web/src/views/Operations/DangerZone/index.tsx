@@ -113,15 +113,7 @@ const DangerZoneOperations = () => {
 				: !roles.includes(Roles.DELETE_ROLE) && !capabilities?.includes(Capabilities.DELETE_HTS) && 
 					(selectedStableCoin?.paused === 'UNPAUSED' ||	!selectedStableCoin?.deleted),
 		};
-		console.log(isExternalToken);
-		console.log(capabilities);
-		console.log(roles);
-		console.log(!roles.includes(Roles.DELETE_ROLE) , !capabilities?.includes(Capabilities.DELETE_HTS) , 
-		selectedStableCoin?.paused === 'UNPAUSED' ,	selectedStableCoin?.deleted);
 		
-		
-		
-
 		setDisabledFeatures(areDisabled);
 	};
 
