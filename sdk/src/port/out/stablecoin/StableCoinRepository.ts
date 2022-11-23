@@ -187,7 +187,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			if (
 				!deleted &&
 				!paused &&
-				stableCoin.memo.htsAccount == stableCoin.treasury.toString()
+				stableCoin.memo.proxyContract == stableCoin.treasury.toString()
 			) {
 				listCapabilities.push(Capabilities.RESCUE);
 			}

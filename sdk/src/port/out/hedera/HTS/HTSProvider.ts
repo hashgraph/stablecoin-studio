@@ -34,9 +34,9 @@ import {
 	IWipeTokenRequest,
 	ITransferTokenRequest,
 	InitializationData,
-	ICreateTokenResponse
+	ICreateTokenResponse,
 	IHTSTokenRequestAmount,
-	IHTSTokenRequestTargetId,
+	IHTSTokenRequestTargetId
 } from '../types.js';
 import PublicKey from '../../../../domain/context/account/PublicKey.js';
 import AccountId from '../../../../domain/context/account/AccountId.js';
