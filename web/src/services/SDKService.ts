@@ -23,6 +23,9 @@ import type {
 	GetRolesRequest,
 	GetListStableCoinRequest,
 	GetAccountInfoRequest,
+	PauseStableCoinRequest,
+	DeleteStableCoinRequest,
+	FreezeAccountRequest,
 } from 'hedera-stable-coin-sdk';
 import { HederaNetwork, NetworkMode, SDK, HederaNetworkEnviroment } from 'hedera-stable-coin-sdk';
 
@@ -146,6 +149,26 @@ export class SDKService {
 
 	public static async wipe(req: WipeStableCoinRequest) {
 		return SDKService.getInstance().then((instance) => instance.wipe(req));
+	}
+
+	public static async pause(req: PauseStableCoinRequest) {
+		return SDKService.getInstance().then((instance) => instance.pauseStableCoin(req));
+	}
+
+	public static async unpause(req: PauseStableCoinRequest) {
+		return SDKService.getInstance().then((instance) => instance.unpauseStableCoin(req));
+	}
+
+	public static async freeze(req: FreezeAccountRequest) {
+		return SDKService.getInstance().then((instance) => instance.freezeAccount(req));
+	}
+
+	public static async unfreeze(req: FreezeAccountRequest) {
+		return SDKService.getInstance().then((instance) => instance.unfreezeAccount(req));
+	}
+
+	public static async delete(req: DeleteStableCoinRequest) {
+		return SDKService.getInstance().then((instance) => instance.deleteStableCoin(req));
 	}
 
 	public static async getCapabilities({

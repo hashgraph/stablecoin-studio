@@ -44,6 +44,8 @@ const StableCoinDetails = () => {
 				treasuryId: stableCoinDetails?.treasuryId,
 				autoRenewAccount: stableCoinDetails?.autoRenewAccount,
 				memo: stableCoinDetails?.memo,
+				paused: stableCoinDetails?.paused,
+				deleted: stableCoinDetails?.deleted ,
 				adminKey:
 					stableCoinDetails?.adminKey && JSON.parse(JSON.stringify(stableCoinDetails.adminKey)),
 				kycKey: stableCoinDetails?.kycKey && JSON.parse(JSON.stringify(stableCoinDetails.kycKey)),
@@ -173,6 +175,14 @@ const StableCoinDetails = () => {
 								{
 									label: t('memo'),
 									value: getMemoInformation(selectedStableCoin?.memo),
+								},
+								{
+									label: t('paused'),
+									value: selectedStableCoin?.paused,
+								},
+								{
+									label: t('deleted'),
+									value: selectedStableCoin?.deleted?.toString().toUpperCase(),
 								},
 								{
 									label: t('adminKey'),

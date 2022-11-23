@@ -30,6 +30,11 @@ interface IHTSTokenOwner {
     */
     function wipeToken(address tokenAddress, address account, uint32 amount) external returns (bool);
     
+
+    function pause(address tokenAddress) external returns (bool);
+
+    function unpause(address tokenAddress) external returns (bool);
+
    /**
     * @dev Transfers an amount of token from the token owner contract to an account
     *    

@@ -10,13 +10,13 @@
 
 ## Methods
 
-### getTokenExpiryInfo
+### delegateTransferFrom
 
 ```solidity
-function getTokenExpiryInfo(address token) external nonpayable returns (int256 responseCode, struct IHederaTokenService.Expiry expiryInfo)
+function delegateTransferFrom(address token, address from, address to, uint256 amount) external nonpayable returns (int64 responseCode)
 ```
 
-Operation to get token expiry info
+Only applicable to fungible tokens
 
 
 
@@ -24,55 +24,10 @@ Operation to get token expiry info
 
 | Name | Type | Description |
 |---|---|---|
-| token | address | The token address |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| responseCode | int256 | The response code for the status of the request. SUCCESS is 22. |
-| expiryInfo | IHederaTokenService.Expiry | The expiry info of the token |
-
-### getTokenKey
-
-```solidity
-function getTokenKey(address token, uint256 keyType) external nonpayable returns (int64 responseCode, struct IHederaTokenService.KeyValue key)
-```
-
-Query token KeyValue
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| token | address | The token address to check |
-| keyType | uint256 | The keyType of the desired KeyValue |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| responseCode | int64 | The response code for the status of the request. SUCCESS is 22. |
-| key | IHederaTokenService.KeyValue | KeyValue info for key of type `keyType` |
-
-### grantTokenKyc
-
-```solidity
-function grantTokenKyc(address token, address account) external nonpayable returns (int64 responseCode)
-```
-
-Operation to grant kyc to token account
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| token | address | The token address |
-| account | address | The account address to grant kyc |
+| token | address | The address of the fungible Hedera token to transfer |
+| from | address | The account address of the owner of the token, on the behalf of which to transfer `amount` tokens |
+| to | address | The account address of the receiver of the `amount` tokens |
+| amount | uint256 | The amount of tokens to transfer from `from` to `to` |
 
 #### Returns
 
@@ -80,13 +35,13 @@ Operation to grant kyc to token account
 |---|---|---|
 | responseCode | int64 | The response code for the status of the request. SUCCESS is 22. |
 
-### isKyc
+### delegateTransferFromNFT
 
 ```solidity
-function isKyc(address token, address account) external nonpayable returns (int64 responseCode, bool kycGranted)
+function delegateTransferFromNFT(address token, address from, address to, uint256 serialNumber) external nonpayable returns (int64 responseCode)
 ```
 
-Query if token account has kyc granted
+Transfers `serialNumber` of `token` from `from` to `to` using the allowance mechanism. Only applicable to NFT tokens
 
 
 
@@ -94,54 +49,10 @@ Query if token account has kyc granted
 
 | Name | Type | Description |
 |---|---|---|
-| token | address | The token address to check |
-| account | address | The account address associated with the token |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| responseCode | int64 | The response code for the status of the request. SUCCESS is 22. |
-| kycGranted | bool | True if `account` has kyc granted for `token` |
-
-### pauseToken
-
-```solidity
-function pauseToken(address token) external nonpayable returns (int256 responseCode)
-```
-
-Operation to pause token
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| token | address | The token address to be paused |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| responseCode | int256 | The response code for the status of the request. SUCCESS is 22. |
-
-### revokeTokenKyc
-
-```solidity
-function revokeTokenKyc(address token, address account) external nonpayable returns (int64 responseCode)
-```
-
-Operation to revoke kyc to token account
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| token | address | The token address |
-| account | address | The account address to revoke kyc |
+| token | address | The address of the non-fungible Hedera token to transfer |
+| from | address | The account address of the owner of `serialNumber` of `token` |
+| to | address | The account address of the receiver of `serialNumber` |
+| serialNumber | uint256 | The NFT serial number to transfer |
 
 #### Returns
 
@@ -149,13 +60,13 @@ Operation to revoke kyc to token account
 |---|---|---|
 | responseCode | int64 | The response code for the status of the request. SUCCESS is 22. |
 
-### unpauseToken
+### transferFrom
 
 ```solidity
-function unpauseToken(address token) external nonpayable returns (int256 responseCode)
+function transferFrom(address token, address from, address to, uint256 amount) external nonpayable returns (int64 responseCode)
 ```
 
-Operation to unpause token
+Only applicable to fungible tokens
 
 
 
@@ -163,21 +74,24 @@ Operation to unpause token
 
 | Name | Type | Description |
 |---|---|---|
-| token | address | The token address to be unpaused |
+| token | address | The address of the fungible Hedera token to transfer |
+| from | address | The account address of the owner of the token, on the behalf of which to transfer `amount` tokens |
+| to | address | The account address of the receiver of the `amount` tokens |
+| amount | uint256 | The amount of tokens to transfer from `from` to `to` |
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| responseCode | int256 | The response code for the status of the request. SUCCESS is 22. |
+| responseCode | int64 | The response code for the status of the request. SUCCESS is 22. |
 
-### updateTokenExpiryInfo
+### transferFromNFT
 
 ```solidity
-function updateTokenExpiryInfo(address token, IHederaTokenService.Expiry expiryInfo) external nonpayable returns (int256 responseCode)
+function transferFromNFT(address token, address from, address to, uint256 serialNumber) external nonpayable returns (int64 responseCode)
 ```
 
-
+Transfers `serialNumber` of `token` from `from` to `to` using the allowance mechanism. Only applicable to NFT tokens
 
 
 
@@ -185,37 +99,16 @@ function updateTokenExpiryInfo(address token, IHederaTokenService.Expiry expiryI
 
 | Name | Type | Description |
 |---|---|---|
-| token | address | undefined |
-| expiryInfo | IHederaTokenService.Expiry | undefined |
+| token | address | The address of the non-fungible Hedera token to transfer |
+| from | address | The account address of the owner of `serialNumber` of `token` |
+| to | address | The account address of the receiver of `serialNumber` |
+| serialNumber | uint256 | The NFT serial number to transfer |
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| responseCode | int256 | undefined |
-
-### updateTokenKeys
-
-```solidity
-function updateTokenKeys(address token, IHederaTokenService.TokenKey[] keys) external nonpayable returns (int64 responseCode)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| token | address | undefined |
-| keys | IHederaTokenService.TokenKey[] | undefined |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| responseCode | int64 | undefined |
+| responseCode | int64 | The response code for the status of the request. SUCCESS is 22. |
 
 
 

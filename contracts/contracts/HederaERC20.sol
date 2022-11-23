@@ -10,11 +10,14 @@ import "./IHederaERC20.sol";
 import "./extensions/Mintable.sol";
 import "./extensions/Burnable.sol";
 import "./extensions/Wipeable.sol";
+import "./extensions/Pausable.sol";
+import "./extensions/Freezable.sol";
 import "./extensions/Rescatable.sol";
+import "./extensions/Deletable.sol";
 import "./Roles.sol";
 
 contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20Upgradeable, 
-                       Mintable, Burnable, Wipeable, Rescatable {
+                       Mintable, Burnable, Wipeable, Pausable, Freezable, Deletable, Rescatable {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     function initialize () 
@@ -28,7 +31,9 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
         _grantRole(BURN_ROLE, msg.sender);
         _grantRole(RESCUE_ROLE, msg.sender);
         _grantRole(WIPE_ROLE, msg.sender);
-        
+        _grantRole(PAUSE_ROLE, msg.sender);
+        _grantRole(FREEZE_ROLE, msg.sender);
+        _grantRole(DELETE_ROLE, msg.sender);
     }
 
     /**
@@ -112,7 +117,8 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
         returns (bool) 
     {         
         int256 responseCode = HederaTokenService.associateToken(adr, _tokenAddress);
-        return _checkResponse(responseCode);        
+        _checkResponse(responseCode);        
+        return true;
     }
 
     /**
@@ -127,7 +133,8 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
         returns (bool) 
     {         
         int256 responseCode = HederaTokenService.dissociateToken(adr, _tokenAddress);
-        return _checkResponse(responseCode);        
+        _checkResponse(responseCode);
+        return true;     
     }
 
     /**
@@ -196,20 +203,5 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
     {
         require(false, "function not already implemented");
         return true;
-    }
-    
-    /**
-    * @dev Transforms the response from a HederaResponseCodes to a boolean
-    *
-    * @param responseCode The Hedera response code to transform
-    * @return bool True if successful
-    */
-    function _checkResponse(int256 responseCode) 
-        internal 
-        pure
-        returns (bool) 
-    {
-        require(responseCode == HederaResponseCodes.SUCCESS, "Error");
-        return true;
-    }
+    }    
 }

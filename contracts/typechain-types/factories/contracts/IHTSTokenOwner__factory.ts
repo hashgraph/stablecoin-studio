@@ -65,6 +65,25 @@ const _abi = [
         name: "tokenAddress",
         type: "address",
       },
+    ],
+    name: "pause",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "tokenAddress",
+        type: "address",
+      },
       {
         internalType: "address",
         name: "to",
@@ -77,6 +96,25 @@ const _abi = [
       },
     ],
     name: "tranferContract",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "tokenAddress",
+        type: "address",
+      },
+    ],
+    name: "unpause",
     outputs: [
       {
         internalType: "bool",

@@ -17,110 +17,23 @@ const _abi = [
         name: "token",
         type: "address",
       },
-    ],
-    name: "getTokenExpiryInfo",
-    outputs: [
-      {
-        internalType: "int256",
-        name: "responseCode",
-        type: "int256",
-      },
-      {
-        components: [
-          {
-            internalType: "uint32",
-            name: "second",
-            type: "uint32",
-          },
-          {
-            internalType: "address",
-            name: "autoRenewAccount",
-            type: "address",
-          },
-          {
-            internalType: "uint32",
-            name: "autoRenewPeriod",
-            type: "uint32",
-          },
-        ],
-        internalType: "struct IHederaTokenService.Expiry",
-        name: "expiryInfo",
-        type: "tuple",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
       {
         internalType: "address",
-        name: "token",
+        name: "from",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "to",
         type: "address",
       },
       {
         internalType: "uint256",
-        name: "keyType",
+        name: "amount",
         type: "uint256",
       },
     ],
-    name: "getTokenKey",
-    outputs: [
-      {
-        internalType: "int64",
-        name: "responseCode",
-        type: "int64",
-      },
-      {
-        components: [
-          {
-            internalType: "bool",
-            name: "inheritAccountKey",
-            type: "bool",
-          },
-          {
-            internalType: "address",
-            name: "contractId",
-            type: "address",
-          },
-          {
-            internalType: "bytes",
-            name: "ed25519",
-            type: "bytes",
-          },
-          {
-            internalType: "bytes",
-            name: "ECDSA_secp256k1",
-            type: "bytes",
-          },
-          {
-            internalType: "address",
-            name: "delegatableContractId",
-            type: "address",
-          },
-        ],
-        internalType: "struct IHederaTokenService.KeyValue",
-        name: "key",
-        type: "tuple",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "token",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-    ],
-    name: "grantTokenKyc",
+    name: "delegateTransferFrom",
     outputs: [
       {
         internalType: "int64",
@@ -140,59 +53,21 @@ const _abi = [
       },
       {
         internalType: "address",
-        name: "account",
-        type: "address",
-      },
-    ],
-    name: "isKyc",
-    outputs: [
-      {
-        internalType: "int64",
-        name: "responseCode",
-        type: "int64",
-      },
-      {
-        internalType: "bool",
-        name: "kycGranted",
-        type: "bool",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "token",
-        type: "address",
-      },
-    ],
-    name: "pauseToken",
-    outputs: [
-      {
-        internalType: "int256",
-        name: "responseCode",
-        type: "int256",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "token",
+        name: "from",
         type: "address",
       },
       {
         internalType: "address",
-        name: "account",
+        name: "to",
         type: "address",
       },
+      {
+        internalType: "uint256",
+        name: "serialNumber",
+        type: "uint256",
+      },
     ],
-    name: "revokeTokenKyc",
+    name: "delegateTransferFromNFT",
     outputs: [
       {
         internalType: "int64",
@@ -210,13 +85,28 @@ const _abi = [
         name: "token",
         type: "address",
       },
+      {
+        internalType: "address",
+        name: "from",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "to",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
     ],
-    name: "unpauseToken",
+    name: "transferFrom",
     outputs: [
       {
-        internalType: "int256",
+        internalType: "int64",
         name: "responseCode",
-        type: "int256",
+        type: "int64",
       },
     ],
     stateMutability: "nonpayable",
@@ -230,92 +120,22 @@ const _abi = [
         type: "address",
       },
       {
-        components: [
-          {
-            internalType: "uint32",
-            name: "second",
-            type: "uint32",
-          },
-          {
-            internalType: "address",
-            name: "autoRenewAccount",
-            type: "address",
-          },
-          {
-            internalType: "uint32",
-            name: "autoRenewPeriod",
-            type: "uint32",
-          },
-        ],
-        internalType: "struct IHederaTokenService.Expiry",
-        name: "expiryInfo",
-        type: "tuple",
-      },
-    ],
-    name: "updateTokenExpiryInfo",
-    outputs: [
-      {
-        internalType: "int256",
-        name: "responseCode",
-        type: "int256",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
         internalType: "address",
-        name: "token",
+        name: "from",
         type: "address",
       },
       {
-        components: [
-          {
-            internalType: "uint256",
-            name: "keyType",
-            type: "uint256",
-          },
-          {
-            components: [
-              {
-                internalType: "bool",
-                name: "inheritAccountKey",
-                type: "bool",
-              },
-              {
-                internalType: "address",
-                name: "contractId",
-                type: "address",
-              },
-              {
-                internalType: "bytes",
-                name: "ed25519",
-                type: "bytes",
-              },
-              {
-                internalType: "bytes",
-                name: "ECDSA_secp256k1",
-                type: "bytes",
-              },
-              {
-                internalType: "address",
-                name: "delegatableContractId",
-                type: "address",
-              },
-            ],
-            internalType: "struct IHederaTokenService.KeyValue",
-            name: "key",
-            type: "tuple",
-          },
-        ],
-        internalType: "struct IHederaTokenService.TokenKey[]",
-        name: "keys",
-        type: "tuple[]",
+        internalType: "address",
+        name: "to",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "serialNumber",
+        type: "uint256",
       },
     ],
-    name: "updateTokenKeys",
+    name: "transferFromNFT",
     outputs: [
       {
         internalType: "int64",

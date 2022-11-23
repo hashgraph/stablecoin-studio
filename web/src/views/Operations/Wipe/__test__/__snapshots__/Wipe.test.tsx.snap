@@ -47,7 +47,7 @@ exports[`<WipeOperation /> should render correctly 1`] = `
                   role="group"
                 >
                   <label
-                    class="chakra-form__label css-1y854pg"
+                    class="chakra-form__label css-1hfoxt1"
                     for="field-:r1:"
                     id="field-:r1:-label"
                   >
@@ -72,7 +72,7 @@ exports[`<WipeOperation /> should render correctly 1`] = `
                   >
                     <input
                       autocomplete="off"
-                      class="chakra-input css-16lr1fk"
+                      class="chakra-input css-l1kxkf"
                       data-testid="amount"
                       id="field-:r1:"
                       name="amount"
@@ -90,7 +90,7 @@ exports[`<WipeOperation /> should render correctly 1`] = `
                   role="group"
                 >
                   <label
-                    class="chakra-form__label css-1y854pg"
+                    class="chakra-form__label css-1hfoxt1"
                     for="field-:r2:"
                     id="field-:r2:-label"
                   >
@@ -115,7 +115,7 @@ exports[`<WipeOperation /> should render correctly 1`] = `
                   >
                     <input
                       autocomplete="off"
-                      class="chakra-input css-16lr1fk"
+                      class="chakra-input css-l1kxkf"
                       data-testid="destinationAccount"
                       id="field-:r2:"
                       name="destinationAccount"
@@ -363,14 +363,14 @@ exports[`<WipeOperation /> should render correctly 1`] = `
             class="chakra-stack css-1amf41o"
           >
             <button
-              class="chakra-button css-p7zmz8"
+              class="chakra-button css-1nrhi9n"
               data-testid="cancel-btn"
               type="button"
             >
               Go back
             </button>
             <button
-              class="chakra-button css-1lcy27"
+              class="chakra-button css-1178n6s"
               data-testid="confirm-btn"
               disabled=""
               type="button"

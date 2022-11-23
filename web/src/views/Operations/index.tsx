@@ -28,6 +28,9 @@ const Operations = () => {
 		balance: false,
 		rescue: false,
 		wipe: false,
+		freeze: false,
+		pause:false,
+		delete:false,
 	});
 	useEffect(() => {
 		if (selectedStableCoin) {
@@ -71,8 +74,27 @@ const Operations = () => {
 				? !capabilities?.includes(Capabilities.WIPE) &&
 				  !capabilities?.includes(Capabilities.WIPE_HTS)
 				: !roles.includes(Roles.WIPE_ROLE) && !capabilities?.includes(Capabilities.WIPE_HTS),
+			freeze: !isExternalToken
+				? !capabilities?.includes(Capabilities.FREEZE) &&
+				  !capabilities?.includes(Capabilities.FREEZE_HTS)
+				: !roles.includes(Roles.FREEZE_ROLE) && !capabilities?.includes(Capabilities.FREEZE_HTS),
+			pause: !isExternalToken
+				? (!capabilities?.includes(Capabilities.PAUSE) &&
+						!capabilities?.includes(Capabilities.PAUSE_HTS))
+				: !roles.includes(Roles.PAUSE_ROLE) &&
+				  !capabilities?.includes(Capabilities.PAUSE_HTS) ,
+			delete: !isExternalToken
+				? !capabilities?.includes(Capabilities.DELETE) &&
+						!capabilities?.includes(Capabilities.DELETE_HTS)
+				: !roles.includes(Roles.DELETE_ROLE) && !capabilities?.includes(Capabilities.DELETE_HTS),
 		};
-
+		console.log(capabilities);
+		console.log(!capabilities?.includes(Capabilities.DELETE) ||
+		!capabilities?.includes(Capabilities.DELETE_HTS));
+		
+		
+		console.log(areDisabled);
+		
 		setDisabledFeatures(areDisabled);
 	};
 
@@ -106,6 +128,24 @@ const Operations = () => {
 			route: NamedRoutes.Wipe,
 			title: t('wipeOperation'),
 			isDisabled: disabledFeatures?.wipe,
+		},
+		{
+			icon: 'Snowflake',
+			route: NamedRoutes.Freeze,
+			title: t('freezeOperation'),
+			isDisabled: disabledFeatures?.freeze,
+		},
+		{
+			icon: 'SunHorizon',
+			route: NamedRoutes.Unfreeze,
+			title: t('unfreezeOperation'),
+			isDisabled: disabledFeatures?.freeze,
+		},
+		{
+			icon: 'Warning',
+			route: NamedRoutes.DangerZone,
+			title: t('dangerZoneOperation'),
+			isDisabled: disabledFeatures?.pause || disabledFeatures.delete,
 		},
 	];
 

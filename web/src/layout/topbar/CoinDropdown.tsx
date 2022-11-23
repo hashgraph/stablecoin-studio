@@ -21,7 +21,11 @@ import {
 import { RouterManager } from '../../Router/RouterManager';
 import { matchPath, useLocation, useNavigate } from 'react-router-dom';
 import { NamedRoutes } from '../../Router/NamedRoutes';
-import { GetStableCoinDetailsRequest, HashPackAccount, GetAccountInfoRequest } from 'hedera-stable-coin-sdk';
+import {
+	GetStableCoinDetailsRequest,
+	HashPackAccount,
+	GetAccountInfoRequest,
+} from 'hedera-stable-coin-sdk';
 import type { IExternalToken } from '../../interfaces/IExternalToken.js';
 
 const CoinDropdown = () => {
@@ -71,11 +75,11 @@ const CoinDropdown = () => {
 
 	const getAccountInfo = async (hashpackAccount: HashPackAccount) => {
 		const accountInfo = await SDKService.getAccountInfo(
-			new GetAccountInfoRequest({ 
+			new GetAccountInfoRequest({
 				account: {
 					accountId: hashpackAccount.accountId.id,
-				}
-			})
+				},
+			}),
 		);
 
 		dispatch(walletActions.setAccountInfo(accountInfo));
@@ -86,7 +90,7 @@ const CoinDropdown = () => {
 
 		const capabilities = await SDKService.getCapabilities({
 			id: selectedStableCoin.tokenId,
-			publicKey: accountInfo.publicKey.key
+			publicKey: accountInfo.publicKey.key,
 		});
 		dispatch(walletActions.setCapabilities(capabilities));
 	};
@@ -139,9 +143,11 @@ const CoinDropdown = () => {
 
 	const handleSelectCoin = async (event: any) => {
 		const selectedCoin = event.value;
-		const stableCoinDetails = await SDKService.getStableCoinDetails(new GetStableCoinDetailsRequest ({
-			id: selectedCoin,
-		}));
+		const stableCoinDetails = await SDKService.getStableCoinDetails(
+			new GetStableCoinDetailsRequest({
+				id: selectedCoin,
+			}),
+		);
 
 		dispatch(
 			walletActions.setSelectedStableCoin({
@@ -156,6 +162,8 @@ const CoinDropdown = () => {
 				treasuryId: stableCoinDetails?.treasuryId,
 				autoRenewAccount: stableCoinDetails?.autoRenewAccount,
 				memo: stableCoinDetails?.memo,
+				paused: stableCoinDetails?.paused,
+				deleted: stableCoinDetails?.deleted,
 				adminKey:
 					stableCoinDetails?.adminKey && JSON.parse(JSON.stringify(stableCoinDetails.adminKey)),
 				kycKey: stableCoinDetails?.kycKey && JSON.parse(JSON.stringify(stableCoinDetails.kycKey)),

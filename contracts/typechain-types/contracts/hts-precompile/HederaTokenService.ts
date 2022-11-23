@@ -23,143 +23,73 @@ import type {
   PromiseOrValue,
 } from "../../common";
 
-export declare namespace IHederaTokenService {
-  export type ExpiryStruct = {
-    second: PromiseOrValue<BigNumberish>;
-    autoRenewAccount: PromiseOrValue<string>;
-    autoRenewPeriod: PromiseOrValue<BigNumberish>;
-  };
-
-  export type ExpiryStructOutput = [number, string, number] & {
-    second: number;
-    autoRenewAccount: string;
-    autoRenewPeriod: number;
-  };
-
-  export type KeyValueStruct = {
-    inheritAccountKey: PromiseOrValue<boolean>;
-    contractId: PromiseOrValue<string>;
-    ed25519: PromiseOrValue<BytesLike>;
-    ECDSA_secp256k1: PromiseOrValue<BytesLike>;
-    delegatableContractId: PromiseOrValue<string>;
-  };
-
-  export type KeyValueStructOutput = [
-    boolean,
-    string,
-    string,
-    string,
-    string
-  ] & {
-    inheritAccountKey: boolean;
-    contractId: string;
-    ed25519: string;
-    ECDSA_secp256k1: string;
-    delegatableContractId: string;
-  };
-
-  export type TokenKeyStruct = {
-    keyType: PromiseOrValue<BigNumberish>;
-    key: IHederaTokenService.KeyValueStruct;
-  };
-
-  export type TokenKeyStructOutput = [
-    BigNumber,
-    IHederaTokenService.KeyValueStructOutput
-  ] & { keyType: BigNumber; key: IHederaTokenService.KeyValueStructOutput };
-}
-
 export interface HederaTokenServiceInterface extends utils.Interface {
   functions: {
-    "getTokenExpiryInfo(address)": FunctionFragment;
-    "getTokenKey(address,uint256)": FunctionFragment;
-    "grantTokenKyc(address,address)": FunctionFragment;
-    "isKyc(address,address)": FunctionFragment;
-    "pauseToken(address)": FunctionFragment;
-    "revokeTokenKyc(address,address)": FunctionFragment;
-    "unpauseToken(address)": FunctionFragment;
-    "updateTokenExpiryInfo(address,(uint32,address,uint32))": FunctionFragment;
-    "updateTokenKeys(address,(uint256,(bool,address,bytes,bytes,address))[])": FunctionFragment;
+    "delegateTransferFrom(address,address,address,uint256)": FunctionFragment;
+    "delegateTransferFromNFT(address,address,address,uint256)": FunctionFragment;
+    "transferFrom(address,address,address,uint256)": FunctionFragment;
+    "transferFromNFT(address,address,address,uint256)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "getTokenExpiryInfo"
-      | "getTokenKey"
-      | "grantTokenKyc"
-      | "isKyc"
-      | "pauseToken"
-      | "revokeTokenKyc"
-      | "unpauseToken"
-      | "updateTokenExpiryInfo"
-      | "updateTokenKeys"
+      | "delegateTransferFrom"
+      | "delegateTransferFromNFT"
+      | "transferFrom"
+      | "transferFromNFT"
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "getTokenExpiryInfo",
-    values: [PromiseOrValue<string>]
+    functionFragment: "delegateTransferFrom",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
-    functionFragment: "getTokenKey",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+    functionFragment: "delegateTransferFromNFT",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
-    functionFragment: "grantTokenKyc",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+    functionFragment: "transferFrom",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
-    functionFragment: "isKyc",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "pauseToken",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "revokeTokenKyc",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "unpauseToken",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "updateTokenExpiryInfo",
-    values: [PromiseOrValue<string>, IHederaTokenService.ExpiryStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "updateTokenKeys",
-    values: [PromiseOrValue<string>, IHederaTokenService.TokenKeyStruct[]]
+    functionFragment: "transferFromNFT",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "getTokenExpiryInfo",
+    functionFragment: "delegateTransferFrom",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getTokenKey",
+    functionFragment: "delegateTransferFromNFT",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "grantTokenKyc",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "isKyc", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "pauseToken", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "revokeTokenKyc",
+    functionFragment: "transferFrom",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "unpauseToken",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "updateTokenExpiryInfo",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "updateTokenKeys",
+    functionFragment: "transferFromNFT",
     data: BytesLike
   ): Result;
 
@@ -193,170 +123,101 @@ export interface HederaTokenService extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    getTokenExpiryInfo(
+    delegateTransferFrom(
       token: PromiseOrValue<string>,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    getTokenKey(
+    delegateTransferFromNFT(
       token: PromiseOrValue<string>,
-      keyType: PromiseOrValue<BigNumberish>,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      serialNumber: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    grantTokenKyc(
+    transferFrom(
       token: PromiseOrValue<string>,
-      account: PromiseOrValue<string>,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    isKyc(
+    transferFromNFT(
       token: PromiseOrValue<string>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    pauseToken(
-      token: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    revokeTokenKyc(
-      token: PromiseOrValue<string>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    unpauseToken(
-      token: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    updateTokenExpiryInfo(
-      token: PromiseOrValue<string>,
-      expiryInfo: IHederaTokenService.ExpiryStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    updateTokenKeys(
-      token: PromiseOrValue<string>,
-      keys: IHederaTokenService.TokenKeyStruct[],
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      serialNumber: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
-  getTokenExpiryInfo(
+  delegateTransferFrom(
     token: PromiseOrValue<string>,
+    from: PromiseOrValue<string>,
+    to: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  getTokenKey(
+  delegateTransferFromNFT(
     token: PromiseOrValue<string>,
-    keyType: PromiseOrValue<BigNumberish>,
+    from: PromiseOrValue<string>,
+    to: PromiseOrValue<string>,
+    serialNumber: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  grantTokenKyc(
+  transferFrom(
     token: PromiseOrValue<string>,
-    account: PromiseOrValue<string>,
+    from: PromiseOrValue<string>,
+    to: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  isKyc(
+  transferFromNFT(
     token: PromiseOrValue<string>,
-    account: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  pauseToken(
-    token: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  revokeTokenKyc(
-    token: PromiseOrValue<string>,
-    account: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  unpauseToken(
-    token: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  updateTokenExpiryInfo(
-    token: PromiseOrValue<string>,
-    expiryInfo: IHederaTokenService.ExpiryStruct,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  updateTokenKeys(
-    token: PromiseOrValue<string>,
-    keys: IHederaTokenService.TokenKeyStruct[],
+    from: PromiseOrValue<string>,
+    to: PromiseOrValue<string>,
+    serialNumber: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    getTokenExpiryInfo(
+    delegateTransferFrom(
       token: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, IHederaTokenService.ExpiryStructOutput] & {
-        responseCode: BigNumber;
-        expiryInfo: IHederaTokenService.ExpiryStructOutput;
-      }
-    >;
-
-    getTokenKey(
-      token: PromiseOrValue<string>,
-      keyType: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, IHederaTokenService.KeyValueStructOutput] & {
-        responseCode: BigNumber;
-        key: IHederaTokenService.KeyValueStructOutput;
-      }
-    >;
-
-    grantTokenKyc(
-      token: PromiseOrValue<string>,
-      account: PromiseOrValue<string>,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    isKyc(
+    delegateTransferFromNFT(
       token: PromiseOrValue<string>,
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, boolean] & { responseCode: BigNumber; kycGranted: boolean }
-    >;
-
-    pauseToken(
-      token: PromiseOrValue<string>,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      serialNumber: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    revokeTokenKyc(
+    transferFrom(
       token: PromiseOrValue<string>,
-      account: PromiseOrValue<string>,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    unpauseToken(
+    transferFromNFT(
       token: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    updateTokenExpiryInfo(
-      token: PromiseOrValue<string>,
-      expiryInfo: IHederaTokenService.ExpiryStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    updateTokenKeys(
-      token: PromiseOrValue<string>,
-      keys: IHederaTokenService.TokenKeyStruct[],
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      serialNumber: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
@@ -364,107 +225,69 @@ export interface HederaTokenService extends BaseContract {
   filters: {};
 
   estimateGas: {
-    getTokenExpiryInfo(
+    delegateTransferFrom(
       token: PromiseOrValue<string>,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    getTokenKey(
+    delegateTransferFromNFT(
       token: PromiseOrValue<string>,
-      keyType: PromiseOrValue<BigNumberish>,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      serialNumber: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    grantTokenKyc(
+    transferFrom(
       token: PromiseOrValue<string>,
-      account: PromiseOrValue<string>,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    isKyc(
+    transferFromNFT(
       token: PromiseOrValue<string>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    pauseToken(
-      token: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    revokeTokenKyc(
-      token: PromiseOrValue<string>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    unpauseToken(
-      token: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    updateTokenExpiryInfo(
-      token: PromiseOrValue<string>,
-      expiryInfo: IHederaTokenService.ExpiryStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    updateTokenKeys(
-      token: PromiseOrValue<string>,
-      keys: IHederaTokenService.TokenKeyStruct[],
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      serialNumber: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    getTokenExpiryInfo(
+    delegateTransferFrom(
       token: PromiseOrValue<string>,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    getTokenKey(
+    delegateTransferFromNFT(
       token: PromiseOrValue<string>,
-      keyType: PromiseOrValue<BigNumberish>,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      serialNumber: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    grantTokenKyc(
+    transferFrom(
       token: PromiseOrValue<string>,
-      account: PromiseOrValue<string>,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    isKyc(
+    transferFromNFT(
       token: PromiseOrValue<string>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    pauseToken(
-      token: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    revokeTokenKyc(
-      token: PromiseOrValue<string>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    unpauseToken(
-      token: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    updateTokenExpiryInfo(
-      token: PromiseOrValue<string>,
-      expiryInfo: IHederaTokenService.ExpiryStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    updateTokenKeys(
-      token: PromiseOrValue<string>,
-      keys: IHederaTokenService.TokenKeyStruct[],
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      serialNumber: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };

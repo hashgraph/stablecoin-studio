@@ -1,3 +1,4 @@
+/* eslint-disable jest/no-disabled-tests */
 import PublicKey from '../../../../src/domain/context/account/PublicKey.js';
 import {
   BigDecimal,
@@ -16,6 +17,12 @@ import {
   GetAccountBalanceRequest,
   AssociateTokenRequest,
   GetAccountInfoRequest,
+  PauseStableCoinRequest,
+  DeleteStableCoinRequest,
+  CashInStableCoinRequest,
+  WipeStableCoinRequest,
+  CheckCashInLimitRequest,
+  FreezeAccountRequest,
 } from '../../../../src/index.js';
 import {
   ACCOUNTS,
@@ -24,11 +31,8 @@ import {
   REQUEST_ACCOUNTS,
 } from '../../../core/core.js';
 import { StableCoinRole } from '../../../../src/core/enum.js';
-import CashInStableCoinRequest from '../../../../src/port/in/sdk/request/CashInStableCoinRequest.js';
-import WipeStableCoinRequest from '../../../../src/port/in/sdk/request/WipeStableCoinRequest.js';
 import BaseError from '../../../../src/core/error/BaseError.js';
 import { BigNumber } from '@hashgraph/hethers';
-import CheckCashInLimitRequest from '../../../../src/port/in/sdk/request/CheckCashInLimitRequest.js';
 
 describe('🧪 [PORT] SDK', () => {
   let sdk: SDK;
@@ -54,7 +58,10 @@ describe('🧪 [PORT] SDK', () => {
         freezeKey: PublicKey.NULL,
         // KYCKey:PublicKey.NULL,
         wipeKey: PublicKey.NULL,
-        pauseKey: PublicKey.NULL,
+        pauseKey: {
+          key: ACCOUNTS.testnet.privateKey.publicKey.key,
+          type: ACCOUNTS.testnet.privateKey.publicKey.type,
+        },
         supplyKey: PublicKey.NULL,
       }),
     );
@@ -119,7 +126,7 @@ describe('🧪 [PORT] SDK', () => {
     //expect(coin?.adminKey).toBeInstanceOf(PublicKey);
     expect(coin?.name).toBeTruthy();
     expect(coin?.symbol).toBeTruthy();
-  });
+  }, 10_000);
 
   it('Gets the token info, fails when not exists', async () => {
     const coin = sdk.getStableCoinDetails(
@@ -383,6 +390,20 @@ describe('🧪 [PORT] SDK', () => {
     expect(check).not.toBeNull();
     expect(check && check).toBe('10');
   }, 25000);
+
+  it.skip('Has role', async () => {
+    const hasRole = await sdk.hasRole(
+      new HasRoleRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        role: StableCoinRole.WIPE_ROLE,
+        targetId: '0.0.46824819',
+        proxyContractId: proxyContractId ?? '',
+        tokenId: tokenId ?? '',
+      }),
+    );
+    expect(hasRole && hasRole[0]).toBeFalsy();
+  });
+
   it('Check limited supplier allowance', async () => {
     const check = await sdk.isLimitedSupplierAllowance(
       new CheckCashInRoleRequest({
@@ -439,7 +460,7 @@ describe('🧪 [PORT] SDK', () => {
     );
     expect(check).not.toBeNull();
     expect(check && check).toBe('10');
-  }, 15000);
+  }, 170_000);
 
   it('reset Limit supplier role', async () => {
     const amount = '10';
@@ -470,7 +491,7 @@ describe('🧪 [PORT] SDK', () => {
     );
     expect(check).not.toBeNull();
     expect(check && check).toBe('0');
-  }, 15000);
+  }, 170_000);
 
   it('Grant unlimited supplier role', async () => {
     await sdk.grantRole(
@@ -549,5 +570,86 @@ describe('🧪 [PORT] SDK', () => {
       }),
     );
     await expect(associateToken).rejects.toThrow();
+  }, 15000);
+
+  it('Freeze Account token', async () => {
+    const freezeAccount = await sdk.freezeAccount(
+      new FreezeAccountRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        proxyContractId: proxyContractId ?? '0.0.48944071',
+        tokenId: tokenId ?? '0.0.48944082',
+        targetId: REQUEST_ACCOUNTS.testnet.accountId,
+      }),
+    );
+
+    await expect(freezeAccount).not.toBeNull();
+    await expect(freezeAccount).toBeTruthy();
+  }, 15000);
+
+  it('Unfreeze Account token', async () => {
+    const freezeAccount = await sdk.unfreezeAccount(
+      new FreezeAccountRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        proxyContractId: proxyContractId ?? '0.0.48938795',
+        tokenId: tokenId ?? '0.0.48938799',
+        targetId: REQUEST_ACCOUNTS.testnet.accountId,
+      }),
+    );
+
+    await expect(freezeAccount).not.toBeNull();
+    await expect(freezeAccount).toBeTruthy();
+  }, 15000);
+
+  it('Pause token', async () => {
+    // const detailsRequest = new GetStableCoinDetailsRequest({
+    //   id: tokenId ?? '0.0.48913786',
+    // });
+    // const detailsPrev = await sdk.getStableCoinDetails(detailsRequest);
+
+    const pauseToken = await sdk.pauseStableCoin(
+      new PauseStableCoinRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        proxyContractId: proxyContractId ?? '0.0.48913780',
+        tokenId: tokenId ?? '0.0.48913786',
+      }),
+    );
+    // const detailsPost = await sdk.getStableCoinDetails(detailsRequest);
+
+    await expect(pauseToken).not.toBeNull();
+    await expect(pauseToken).toBeTruthy();
+    // await expect(detailsPrev?.paused).toBe('UNPAUSED');
+    // await expect(detailsPost?.paused).toBe('PAUSED');
+  }, 150000);
+
+  it('Unpause token', async () => {
+    // const detailsRequest = new GetStableCoinDetailsRequest({
+    //   id: tokenId ?? '0.0.48913786', //PAUSED HTS -> 0.0.48913786
+    // });
+    // const detailsPrev = await sdk.getStableCoinDetails(detailsRequest);
+
+    const unpauseToken = await sdk.unpauseStableCoin(
+      new PauseStableCoinRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        proxyContractId: proxyContractId ?? '0.0.48913780',
+        tokenId: tokenId ?? '0.0.48913786',
+      }),
+    );
+    // const detailsPost = await sdk.getStableCoinDetails(detailsRequest);
+
+    await expect(unpauseToken).not.toBeNull();
+    await expect(unpauseToken).toBeTruthy();
+    // await expect(detailsPrev?.paused).toBe('PAUSED');
+    // await expect(detailsPost?.paused).toBe('UNPAUSED');
+  }, 15000);
+
+  it('Delete token', async () => {
+    const deleteToken = sdk.deleteStableCoin(
+      new DeleteStableCoinRequest({
+        account: REQUEST_ACCOUNTS.testnet,
+        proxyContractId: proxyContractId ?? '',
+        tokenId: tokenId ?? '',
+      }),
+    );
+    await expect(deleteToken).toBeTruthy();
   }, 15000);
 });

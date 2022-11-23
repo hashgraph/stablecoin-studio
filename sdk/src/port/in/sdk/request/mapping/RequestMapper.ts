@@ -2,7 +2,6 @@
 import { isConstructible } from '../../../../../core/cast.js';
 import { Constructible, MapFunction } from '../../../../../core/types.js';
 import { Account, AccountId, PrivateKey, PublicKey } from '../../sdk.js';
-import { StableCoinRole } from '../../../../../core/enum.js';
 import {
 	RequestAccount,
 	RequestPrivateKey,
@@ -10,7 +9,6 @@ import {
 } from '../BaseRequest.js';
 import { Roles } from '../../../../../domain/context/stablecoin/Roles.js';
 import ValidatedRequest from '../validation/ValidatedRequest.js';
-import { basename } from 'path/win32';
 
 export default class RequestMapper {
 	public static isPublicKey = (val: any): val is RequestPublicKey => {
@@ -28,7 +26,6 @@ export default class RequestMapper {
 		const keys = Object.getOwnPropertyNames(val);
 		return keys.includes('accountId');
 	};
-
 
 	public static isRole = (val: any): val is string => {
 		if (val === undefined || !val) {
@@ -82,7 +79,9 @@ export default class RequestMapper {
 		K extends { [key in keyof T]: any },
 	>(
 		req: T,
-		extra?: Partial<{ [p in keyof K]: Constructible | MapFunction<any, any, T> }>,
+		extra?: Partial<{
+			[p in keyof K]: Constructible | MapFunction<any, any, T>;
+		}>,
 	): K {
 		const entries = Object.entries(req);
 		const extraKeys = this.renamePrivateProps(Object.keys(extra ?? {}));
@@ -99,8 +98,8 @@ export default class RequestMapper {
 				const cll = extra[key as keyof K];
 				if (isConstructible(cll)) {
 					target[key] = new cll(val);
-				}else if(cll){
-					target[key] = cll(val,req);
+				} else if (cll) {
+					target[key] = cll(val, req);
 				}
 			} else if (this.isPublicKey(val)) {
 				target[key] = this.getPublicKey(val);

@@ -2,12 +2,18 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { Burnable } from "./Burnable";
+export type { Deletable } from "./Deletable";
+export type { Freezable } from "./Freezable";
 export type { IBurnable } from "./IBurnable";
+export type { IDeletable } from "./IDeletable";
+export type { IFreezable } from "./IFreezable";
 export type { IMintable } from "./IMintable";
+export type { IPausable } from "./IPausable";
 export type { IRescatable } from "./IRescatable";
 export type { ISupplierAdmin } from "./ISupplierAdmin";
 export type { IWipeable } from "./IWipeable";
 export type { Mintable } from "./Mintable";
+export type { Pausable } from "./Pausable";
 export type { Rescatable } from "./Rescatable";
 export type { SupplierAdmin } from "./SupplierAdmin";
 export type { Wipeable } from "./Wipeable";

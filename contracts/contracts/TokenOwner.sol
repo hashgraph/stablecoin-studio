@@ -2,9 +2,13 @@
 pragma solidity ^0.8.10;
 
 import "./ITokenOwner.sol";
+import "./hts-precompile/HederaResponseCodes.sol";
 
 abstract contract TokenOwner is ITokenOwner {
     
+    // Hedera HTS precompiled contract
+    address constant precompiledAddress = address(0x167);
+
     HTSTokenOwner internal _htsTokenOwnerAddress;
     address internal _tokenAddress; 
 
@@ -75,4 +79,16 @@ abstract contract TokenOwner is ITokenOwner {
     {
         return address(_htsTokenOwnerAddress);
     }
+
+   /**
+    * @dev Transforms the response from a HederaResponseCodes to a boolean
+    *
+    * @param responseCode The Hedera response code to transform
+    */
+    function _checkResponse(int256 responseCode) 
+        internal 
+        pure
+    {
+        require(responseCode == HederaResponseCodes.SUCCESS, "Error");
+    }    
 }
