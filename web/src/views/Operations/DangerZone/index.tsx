@@ -179,7 +179,7 @@ const DangerZoneOperations = () => {
 				delete:true
 			});
 			onSuccess();
-			RouterManager.to(navigate, NamedRoutes.StableCoinNotSelected);
+			RouterManager.to(navigate, NamedRoutes.Operations);
 		} catch (error: any) {
 			setErrorTransactionUrl(error.transactionUrl);
 			setErrorDeleteOperation(error.toString());
