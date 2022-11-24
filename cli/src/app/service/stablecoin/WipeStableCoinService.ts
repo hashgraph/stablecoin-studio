@@ -20,21 +20,15 @@ export default class WipeStableCoinsService extends Service {
   ): Promise<void> {
     // Call to list stable coins
     const sdk: SDK = utilsService.getSDK();
-    let respDetail;
 
     await utilsService.showSpinner(
-      sdk.wipe(request).then((response) => (respDetail = response)),
-      {
+      sdk.wipe(request), {
         text: language.getText('state.loading'),
         successText: language.getText('state.wipeCompleted') + '\n',
       },
     );
 
-    console.log(
-      respDetail
-        ? language.getText('operation.success')
-        : language.getText('operation.reject'),
-    );
+    console.log(language.getText('operation.success'));
 
     utilsService.breakLine();
   }
