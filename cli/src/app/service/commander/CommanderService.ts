@@ -54,7 +54,6 @@ export default class CommanderService extends Service {
       .description(language.getText('commander.wizardDescription'))
       .action(async (options): Promise<void> => {
         // Check if default configuration exists, if not, start init command
-        console.log("options", options)
         await configurationService.init(
           {
             defaultNetwork: options.network,

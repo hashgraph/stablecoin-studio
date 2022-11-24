@@ -65,6 +65,7 @@ import { PairingError } from '../error/PairingError.js';
 import { DeploymentError } from '../error/DeploymentError.js';
 import { ErrorCode } from '../../../../core/error/BaseError.js';
 import LogService from '../../../../app/service/log/LogService.js';
+import { LogOperation } from '../../../../core/decorators/LogOperationDecorator.js';
 
 export default class HashPackProvider implements IProvider {
 	private hc: HashConnect;
@@ -185,13 +186,13 @@ export default class HashPackProvider implements IProvider {
 		return this.hashPackSigner.signer;
 	}
 
+	@LogOperation
 	public async callContract(
 		name: string,
 		params: ICallContractRequest | ICallContractWithAccountRequest,
 	): Promise<Uint8Array> {
 		const { contractId, parameters, gas, abi } = params;
-		LogService.logInfo('Call contract ' + contractId);
-		LogService.logTrace('Params ', params);
+
 		if ('account' in params) {
 			this.hashPackSigner = new HashPackSigner(
 				this.hc,
@@ -298,6 +299,7 @@ export default class HashPackProvider implements IProvider {
 		}
 	}
 
+	@LogOperation
 	public async deployStableCoin(
 		stableCoin: StableCoin,
 		account: HashPackAccount,
@@ -518,6 +520,7 @@ export default class HashPackProvider implements IProvider {
 		}
 	}
 
+	@LogOperation
 	private async createToken(
 		contractId: HContractId,
 		name: string,
@@ -644,10 +647,8 @@ export default class HashPackProvider implements IProvider {
 		return this.initData;
 	}
 
+	@LogOperation
 	public async wipeHTS(params: IWipeTokenRequest): Promise<boolean> {
-		LogService.logInfo('cashInHts');
-		LogService.logTrace('Params ', params);
-	
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(
 				this.network.hederaNetworkEnviroment as NetworkType,
@@ -695,9 +696,8 @@ export default class HashPackProvider implements IProvider {
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
+	@LogOperation
 	public async cashInHTS(params: IHTSTokenRequestAmount): Promise<boolean> {
-		LogService.logInfo('cashInHts');
-		LogService.logTrace('Params ', params);
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(
 				this.network.hederaNetworkEnviroment as NetworkType,
@@ -743,9 +743,8 @@ export default class HashPackProvider implements IProvider {
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
+	@LogOperation
 	public async cashOutHTS(params: IHTSTokenRequestAmount): Promise<boolean> {
-		LogService.logInfo('cashOutHTS');
-		LogService.logTrace('Params ', params);
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(
 				this.network.hederaNetworkEnviroment as NetworkType,
@@ -792,12 +791,11 @@ export default class HashPackProvider implements IProvider {
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
+	@LogOperation
 	public async transferHTS(
 		params: ITransferTokenRequest,
 		isApproval = false,
 	): Promise<boolean> {
-		LogService.logInfo('transferHTS');
-		LogService.logTrace('Params ', params);
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(
 				this.network.hederaNetworkEnviroment as NetworkType,
@@ -849,9 +847,8 @@ export default class HashPackProvider implements IProvider {
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
+	@LogOperation
 	public async deleteHTS(params: IHTSTokenRequest): Promise<boolean> {
-		LogService.logInfo('deleteHTS');
-		LogService.logTrace('Params ', params);
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(
 				this.network.hederaNetworkEnviroment as NetworkType,
@@ -895,9 +892,8 @@ export default class HashPackProvider implements IProvider {
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
+	@LogOperation
 	public async pauseHTS(params: IHTSTokenRequest): Promise<boolean> {
-		LogService.logInfo('pauseHTS');
-		LogService.logTrace('Params ', params);
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(
 				this.network.hederaNetworkEnviroment as NetworkType,
@@ -941,9 +937,8 @@ export default class HashPackProvider implements IProvider {
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
+	@LogOperation
 	public async unpauseHTS(params: IHTSTokenRequest): Promise<boolean> {
-		LogService.logInfo('unpauseHTS');
-		LogService.logTrace('Params ', params);
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(
 				this.network.hederaNetworkEnviroment as NetworkType,
@@ -987,9 +982,8 @@ export default class HashPackProvider implements IProvider {
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
+	@LogOperation
 	public async freezeHTS(params: IHTSTokenRequestTargetId): Promise<boolean> {
-		LogService.logInfo('freezeHTS');
-		LogService.logTrace('Params ', params);
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(
 				this.network.hederaNetworkEnviroment as NetworkType,
@@ -1036,11 +1030,10 @@ export default class HashPackProvider implements IProvider {
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
+	@LogOperation
 	public async unfreezeHTS(
 		params: IHTSTokenRequestTargetId,
 	): Promise<boolean> {
-		LogService.logInfo('unfreezeHTS');
-		LogService.logTrace('Params ', params);
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(
 				this.network.hederaNetworkEnviroment as NetworkType,

@@ -74,7 +74,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			'tokens?limit=100&account.id=' +
 			account.accountId.id
 
-			LogService.logTrace("Get stable coin list from mirrornode ->" , url )
+			LogService.logTrace("Getting stable coin list from mirror node ->" , url )
 			const resObject: StableCoinList[] = [];
 			const res = await this.instance.get<ITokenList>(
 				url
@@ -94,7 +94,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	public async getStableCoin(id: string): Promise<StableCoin> {
 		try {
 			const url = this.URI_BASE + 'tokens/' + id
-			LogService.logTrace("Get stable coin from mirrornode -> ",url)
+			LogService.logTrace("Getting stable coin from mirror node -> ",url)
 			const retry = 10;
 			let i = 0;
 

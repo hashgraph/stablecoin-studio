@@ -211,15 +211,15 @@ export class SDK {
 			{
 				appMetadata: this.config.options?.appMetadata,
 			},
-			).init();
+		).init();
 		LogService.logTrace('Network adapter initialized');
 		this.stableCoinRepository = new StableCoinRepository(
 			this.networkAdapter,
-			);
+		);
 		LogService.logTrace('Stable coin repository initialized');
 		this.stableCoinService = new StableCoinService(
 			this.stableCoinRepository,
-			);
+		);
 		LogService.logTrace('Stable coin service initialized');
 		return this;
 	}
@@ -288,10 +288,15 @@ export class SDK {
 	public getStableCoinDetails(
 		request: GetStableCoinDetailsRequest,
 	): Promise<StableCoinDetail> | null {
-		LogService.logTrace(request);
-		const req: IGetStableCoinServiceRequestModel =
-			RequestMapper.map(request);
-		return this.stableCoinService.getStableCoinDetails(req);
+		try {
+			LogService.logTrace(request);
+			const req: IGetStableCoinServiceRequestModel =
+				RequestMapper.map(request);
+			return this.stableCoinService.getStableCoinDetails(req);
+		} catch (error) {
+			LogService.logError(error);
+			return null;
+		}
 	}
 
 	/**
@@ -675,7 +680,7 @@ export class SDK {
 	}
 
 	public onWalletExtensionFound(listener: () => void): void {
-		LogService.logTrace('HashPack: Extension Found');
+		LogService.logTrace('HashPack: Extension found');
 		this.eventService.on(
 			ProviderEventNames.providerFoundExtensionEvent,
 			listener,

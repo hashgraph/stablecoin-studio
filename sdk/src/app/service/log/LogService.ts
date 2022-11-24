@@ -18,7 +18,7 @@ export const LoggerOptionLevels = {
 };
 
 export default class LogService {
-	public static instance: LogService;
+	public static instance: LogService = new LogService();
 	public static defaultFormat = printf(
 		({ level, message, timestamp, other }) => {
 			const formatOther = (val: any[]): string => {

@@ -53,6 +53,7 @@ import BigDecimal from '../../../../domain/context/stablecoin/BigDecimal.js';
 import Long from 'long';
 import ProviderError from '../error/HederaError.js';
 import LogService from '../../../../app/service/log/LogService.js';
+import { LogOperation } from '../../../../core/decorators/LogOperationDecorator.js';
 
 type DefaultHederaProvider = hethers.providers.DefaultHederaProvider;
 
@@ -175,13 +176,12 @@ export default class HTSProvider implements IProvider {
 		return this.getPublicKey(privateKey, privateKeyType).toStringRaw();
 	}
 
+	@LogOperation
 	public async callContract(
 		name: string,
 		params: ICallContractRequest | ICallContractWithAccountRequest,
 	): Promise<Uint8Array> {
 		const { contractId, parameters, gas, abi } = params;
-		LogService.logInfo('Call contract ' + contractId);
-		LogService.logTrace('Params ', params);
 		let client;
 
 		if ('account' in params) {
@@ -217,6 +217,7 @@ export default class HTSProvider implements IProvider {
 		return htsResponse.reponseParam;
 	}
 
+	@LogOperation
 	public async deployStableCoin(
 		stableCoin: StableCoin,
 		account: EOAccount,
@@ -377,9 +378,6 @@ export default class HTSProvider implements IProvider {
 		params?: any,
 	): Promise<HContractId> {
 		try {
-			LogService.logInfo('deployContractHts');
-			LogService.logTrace('Params: ',  params);
-		
 			this.htsSigner = new HTSSigner(client);
 			const transaction =
 				TransactionProvider.buildContractCreateFlowTransaction(
@@ -427,6 +425,7 @@ export default class HTSProvider implements IProvider {
 		}
 	}
 
+	@LogOperation
 	private async createToken(
 		contractId: HContractId,
 		name: string,
@@ -523,10 +522,8 @@ export default class HTSProvider implements IProvider {
 		throw new ProviderError('not haspack');
 	}
 
+	@LogOperation
 	public async wipeHTS(params: IWipeTokenRequest): Promise<boolean> {
-		LogService.logInfo('wipeHts');
-		LogService.logTrace('Params: ',  params);
-		
 		let client;
 
 		if ('account' in params) {
@@ -560,10 +557,9 @@ export default class HTSProvider implements IProvider {
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
+	@LogOperation
 	public async cashInHTS(params: IHTSTokenRequestAmount): Promise<boolean> {
-		LogService.logInfo('cashInHts');
 		let client;
-		LogService.logTrace('Params ', params);
 		if ('account' in params) {
 			client = this.getClient(params.account);
 		} else {
@@ -586,20 +582,18 @@ export default class HTSProvider implements IProvider {
 				client,
 			);
 
-		
 		if (!htsResponse.receipt) {
 			throw new ProviderError(
 				`An error has occurred when cash in the amount ${params.amount} in the account ${params?.account?.accountId.id} for tokenId ${params.tokenId}`,
 			);
 		}
-	
+
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
+	@LogOperation
 	public async cashOutHTS(params: IHTSTokenRequestAmount): Promise<boolean> {
 		let client;
-		LogService.logInfo('cashOutHTS');
-		LogService.logTrace('Params ', params);
 		if ('account' in params) {
 			client = this.getClient(params.account);
 		} else {
@@ -630,9 +624,8 @@ export default class HTSProvider implements IProvider {
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
+	@LogOperation
 	public async transferHTS(params: ITransferTokenRequest): Promise<boolean> {
-		LogService.logInfo('transferHTS');
-		LogService.logTrace('Params: ',  params);
 		let client;
 
 		if ('account' in params) {
@@ -674,10 +667,8 @@ export default class HTSProvider implements IProvider {
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
+	@LogOperation
 	public async deleteHTS(params: IHTSTokenRequest): Promise<boolean> {
-		LogService.logInfo('deleteHts');
-		LogService.logTrace('Params: ',  params);
-		
 		let client;
 
 		if ('account' in params) {
@@ -707,11 +698,8 @@ export default class HTSProvider implements IProvider {
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
+	@LogOperation
 	public async pauseHTS(params: IHTSTokenRequest): Promise<boolean> {
-		LogService.logInfo('pauseHts');
-		LogService.logTrace('Params: ',  params);
-		
-
 		let client;
 
 		if ('account' in params) {
@@ -741,10 +729,8 @@ export default class HTSProvider implements IProvider {
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
+	@LogOperation
 	public async unpauseHTS(params: IHTSTokenRequest): Promise<boolean> {
-		LogService.logInfo('unpauseHts');
-		LogService.logTrace('Params: ',  params);
-		
 		let client;
 
 		if ('account' in params) {
@@ -774,10 +760,8 @@ export default class HTSProvider implements IProvider {
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
+	@LogOperation
 	public async freezeHTS(params: IHTSTokenRequestTargetId): Promise<boolean> {
-		LogService.logInfo('freezeHts');
-		LogService.logTrace('Params: ',  params);
-		
 		let client;
 
 		if ('account' in params) {
@@ -810,13 +794,10 @@ export default class HTSProvider implements IProvider {
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
+	@LogOperation
 	public async unfreezeHTS(
 		params: IHTSTokenRequestTargetId,
 	): Promise<boolean> {
-		
-		LogService.logInfo('unfreezeHts');
-		LogService.logTrace('Params: ',  params);
-		
 		let client;
 
 		if ('account' in params) {
