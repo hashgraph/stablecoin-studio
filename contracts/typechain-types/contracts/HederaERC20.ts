@@ -429,8 +429,8 @@ export interface HederaERC20Interface extends utils.Interface {
     "TokensMinted(address,address,uint256,address)": EventFragment;
     "TokensWiped(address,address,address,uint32)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
-    "TransfersFreezed(address,address)": EventFragment;
-    "TransfersUnfreezed(address,address)": EventFragment;
+    "TransfersFrozen(address,address)": EventFragment;
+    "TransfersUnfrozen(address,address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
@@ -452,8 +452,8 @@ export interface HederaERC20Interface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "TokensMinted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TokensWiped"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TransfersFreezed"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TransfersUnfreezed"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TransfersFrozen"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TransfersUnfrozen"): EventFragment;
 }
 
 export interface ApprovalEventObject {
@@ -675,29 +675,28 @@ export type TransferEvent = TypedEvent<
 
 export type TransferEventFilter = TypedEventFilter<TransferEvent>;
 
-export interface TransfersFreezedEventObject {
+export interface TransfersFrozenEventObject {
   token: string;
   account: string;
 }
-export type TransfersFreezedEvent = TypedEvent<
+export type TransfersFrozenEvent = TypedEvent<
   [string, string],
-  TransfersFreezedEventObject
+  TransfersFrozenEventObject
 >;
 
-export type TransfersFreezedEventFilter =
-  TypedEventFilter<TransfersFreezedEvent>;
+export type TransfersFrozenEventFilter = TypedEventFilter<TransfersFrozenEvent>;
 
-export interface TransfersUnfreezedEventObject {
+export interface TransfersUnfrozenEventObject {
   token: string;
   account: string;
 }
-export type TransfersUnfreezedEvent = TypedEvent<
+export type TransfersUnfrozenEvent = TypedEvent<
   [string, string],
-  TransfersUnfreezedEventObject
+  TransfersUnfrozenEventObject
 >;
 
-export type TransfersUnfreezedEventFilter =
-  TypedEventFilter<TransfersUnfreezedEvent>;
+export type TransfersUnfrozenEventFilter =
+  TypedEventFilter<TransfersUnfrozenEvent>;
 
 export interface HederaERC20 extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -1516,20 +1515,20 @@ export interface HederaERC20 extends BaseContract {
       value?: null
     ): TransferEventFilter;
 
-    "TransfersFreezed(address,address)"(
+    "TransfersFrozen(address,address)"(
       token?: null,
       account?: null
-    ): TransfersFreezedEventFilter;
-    TransfersFreezed(token?: null, account?: null): TransfersFreezedEventFilter;
+    ): TransfersFrozenEventFilter;
+    TransfersFrozen(token?: null, account?: null): TransfersFrozenEventFilter;
 
-    "TransfersUnfreezed(address,address)"(
+    "TransfersUnfrozen(address,address)"(
       token?: null,
       account?: null
-    ): TransfersUnfreezedEventFilter;
-    TransfersUnfreezed(
+    ): TransfersUnfrozenEventFilter;
+    TransfersUnfrozen(
       token?: null,
       account?: null
-    ): TransfersUnfreezedEventFilter;
+    ): TransfersUnfrozenEventFilter;
   };
 
   estimateGas: {

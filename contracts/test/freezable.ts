@@ -95,7 +95,7 @@ describe("Freeze Tests", function() {
       await expect(freeze(ContractId, proxyAddress, client2, OPERATOR_ID)).to.eventually.be.rejectedWith(Error);
     });  
 
-    it("An account without pause role can't unfreeze transfers of the token for the account", async function() {
+    it("An account without freeze role can't unfreeze transfers of the token for the account", async function() {
       await expect(unfreeze(ContractId, proxyAddress, client2, OPERATOR_ID)).to.eventually.be.rejectedWith(Error);
     });  
 

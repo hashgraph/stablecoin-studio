@@ -15,12 +15,12 @@ abstract contract Freezable is IFreezable, TokenOwner, Roles {
      */
      function freeze(address account) 
         external       
-        onlyRole(FREEZE_ROLE)  
+        onlyRole(_getRoleId(roleName.FREEZE))  
     {         
         int256 responseCode = IHederaTokenService(precompileAddress).freezeToken(_getTokenAddress(), account);
         _checkResponse(responseCode); 
         
-        emit TransfersFreezed(_getTokenAddress(), account); 
+        emit TransfersFrozen(_getTokenAddress(), account); 
     }
 
     /**
@@ -35,6 +35,6 @@ abstract contract Freezable is IFreezable, TokenOwner, Roles {
         int256 responseCode = IHederaTokenService(precompileAddress).unfreezeToken(_getTokenAddress(), account);
         _checkResponse(responseCode); 
         
-        emit TransfersUnfreezed(_getTokenAddress(), account);  
+        emit TransfersUnfrozen(_getTokenAddress(), account);  
     }
 }

@@ -1175,10 +1175,10 @@ event Transfer(address indexed from, address indexed to, uint256 value)
 | to `indexed` | address | undefined |
 | value  | uint256 | undefined |
 
-### TransfersFreezed
+### TransfersFrozen
 
 ```solidity
-event TransfersFreezed(address token, address account)
+event TransfersFrozen(address token, address account)
 ```
 
 
@@ -1192,10 +1192,10 @@ event TransfersFreezed(address token, address account)
 | token  | address | undefined |
 | account  | address | undefined |
 
-### TransfersUnfreezed
+### TransfersUnfrozen
 
 ```solidity
-event TransfersUnfreezed(address token, address account)
+event TransfersUnfrozen(address token, address account)
 ```
 
 

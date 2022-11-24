@@ -47,37 +47,36 @@ export interface IFreezableInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "unfreeze", data: BytesLike): Result;
 
   events: {
-    "TransfersFreezed(address,address)": EventFragment;
-    "TransfersUnfreezed(address,address)": EventFragment;
+    "TransfersFrozen(address,address)": EventFragment;
+    "TransfersUnfrozen(address,address)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "TransfersFreezed"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TransfersUnfreezed"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TransfersFrozen"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TransfersUnfrozen"): EventFragment;
 }
 
-export interface TransfersFreezedEventObject {
+export interface TransfersFrozenEventObject {
   token: string;
   account: string;
 }
-export type TransfersFreezedEvent = TypedEvent<
+export type TransfersFrozenEvent = TypedEvent<
   [string, string],
-  TransfersFreezedEventObject
+  TransfersFrozenEventObject
 >;
 
-export type TransfersFreezedEventFilter =
-  TypedEventFilter<TransfersFreezedEvent>;
+export type TransfersFrozenEventFilter = TypedEventFilter<TransfersFrozenEvent>;
 
-export interface TransfersUnfreezedEventObject {
+export interface TransfersUnfrozenEventObject {
   token: string;
   account: string;
 }
-export type TransfersUnfreezedEvent = TypedEvent<
+export type TransfersUnfrozenEvent = TypedEvent<
   [string, string],
-  TransfersUnfreezedEventObject
+  TransfersUnfrozenEventObject
 >;
 
-export type TransfersUnfreezedEventFilter =
-  TypedEventFilter<TransfersUnfreezedEvent>;
+export type TransfersUnfrozenEventFilter =
+  TypedEventFilter<TransfersUnfrozenEvent>;
 
 export interface IFreezable extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -140,20 +139,20 @@ export interface IFreezable extends BaseContract {
   };
 
   filters: {
-    "TransfersFreezed(address,address)"(
+    "TransfersFrozen(address,address)"(
       token?: null,
       account?: null
-    ): TransfersFreezedEventFilter;
-    TransfersFreezed(token?: null, account?: null): TransfersFreezedEventFilter;
+    ): TransfersFrozenEventFilter;
+    TransfersFrozen(token?: null, account?: null): TransfersFrozenEventFilter;
 
-    "TransfersUnfreezed(address,address)"(
+    "TransfersUnfrozen(address,address)"(
       token?: null,
       account?: null
-    ): TransfersUnfreezedEventFilter;
-    TransfersUnfreezed(
+    ): TransfersUnfrozenEventFilter;
+    TransfersUnfrozen(
       token?: null,
       account?: null
-    ): TransfersUnfreezedEventFilter;
+    ): TransfersUnfrozenEventFilter;
   };
 
   estimateGas: {

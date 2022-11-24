@@ -431,10 +431,10 @@ event RoleRevoked(bytes32 indexed role, address indexed account, address indexed
 | account `indexed` | address | undefined |
 | sender `indexed` | address | undefined |
 
-### TransfersFreezed
+### TransfersFrozen
 
 ```solidity
-event TransfersFreezed(address token, address account)
+event TransfersFrozen(address token, address account)
 ```
 
 
@@ -448,10 +448,10 @@ event TransfersFreezed(address token, address account)
 | token  | address | undefined |
 | account  | address | undefined |
 
-### TransfersUnfreezed
+### TransfersUnfrozen
 
 ```solidity
-event TransfersUnfreezed(address token, address account)
+event TransfersUnfrozen(address token, address account)
 ```
 
 

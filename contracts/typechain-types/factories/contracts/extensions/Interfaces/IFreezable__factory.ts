@@ -26,7 +26,7 @@ const _abi = [
         type: "address",
       },
     ],
-    name: "TransfersFreezed",
+    name: "TransfersFrozen",
     type: "event",
   },
   {
@@ -45,7 +45,7 @@ const _abi = [
         type: "address",
       },
     ],
-    name: "TransfersUnfreezed",
+    name: "TransfersUnfrozen",
     type: "event",
   },
   {

@@ -14,7 +14,6 @@ import "./extensions/Rescatable.sol";
 import "./extensions/Deletable.sol";
 import "./hts-precompile/IHederaTokenService.sol";
 import "./extensions/TokenOwner.sol";
-//import "./Roles.sol";
 
 contract HederaERC20 is IHederaERC20, IERC20Upgradeable, 
                         CashIn, Burnable, Wipeable, Pausable, Freezable, Deletable, Rescatable {

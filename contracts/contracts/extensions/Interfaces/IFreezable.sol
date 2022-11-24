@@ -9,7 +9,7 @@ interface IFreezable {
     * @param account Token address
     * @param account Account address
     */  
-    event TransfersFreezed (address token, address account);
+    event TransfersFrozen (address token, address account);
 
    /**
     * @dev Emitted when unfreezing transfers of the token for the `account`
@@ -17,7 +17,7 @@ interface IFreezable {
     * @param account Token address
     * @param account Account address
     */  
-    event TransfersUnfreezed (address token, address account);
+    event TransfersUnfrozen (address token, address account);
 
     
     /**

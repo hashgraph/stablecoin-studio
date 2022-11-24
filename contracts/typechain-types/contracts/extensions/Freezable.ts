@@ -196,16 +196,16 @@ export interface FreezableInterface extends utils.Interface {
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
-    "TransfersFreezed(address,address)": EventFragment;
-    "TransfersUnfreezed(address,address)": EventFragment;
+    "TransfersFrozen(address,address)": EventFragment;
+    "TransfersUnfrozen(address,address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TransfersFreezed"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TransfersUnfreezed"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TransfersFrozen"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TransfersUnfrozen"): EventFragment;
 }
 
 export interface InitializedEventObject {
@@ -252,29 +252,28 @@ export type RoleRevokedEvent = TypedEvent<
 
 export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
 
-export interface TransfersFreezedEventObject {
+export interface TransfersFrozenEventObject {
   token: string;
   account: string;
 }
-export type TransfersFreezedEvent = TypedEvent<
+export type TransfersFrozenEvent = TypedEvent<
   [string, string],
-  TransfersFreezedEventObject
+  TransfersFrozenEventObject
 >;
 
-export type TransfersFreezedEventFilter =
-  TypedEventFilter<TransfersFreezedEvent>;
+export type TransfersFrozenEventFilter = TypedEventFilter<TransfersFrozenEvent>;
 
-export interface TransfersUnfreezedEventObject {
+export interface TransfersUnfrozenEventObject {
   token: string;
   account: string;
 }
-export type TransfersUnfreezedEvent = TypedEvent<
+export type TransfersUnfrozenEvent = TypedEvent<
   [string, string],
-  TransfersUnfreezedEventObject
+  TransfersUnfrozenEventObject
 >;
 
-export type TransfersUnfreezedEventFilter =
-  TypedEventFilter<TransfersUnfreezedEvent>;
+export type TransfersUnfrozenEventFilter =
+  TypedEventFilter<TransfersUnfrozenEvent>;
 
 export interface Freezable extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -559,20 +558,20 @@ export interface Freezable extends BaseContract {
       sender?: PromiseOrValue<string> | null
     ): RoleRevokedEventFilter;
 
-    "TransfersFreezed(address,address)"(
+    "TransfersFrozen(address,address)"(
       token?: null,
       account?: null
-    ): TransfersFreezedEventFilter;
-    TransfersFreezed(token?: null, account?: null): TransfersFreezedEventFilter;
+    ): TransfersFrozenEventFilter;
+    TransfersFrozen(token?: null, account?: null): TransfersFrozenEventFilter;
 
-    "TransfersUnfreezed(address,address)"(
+    "TransfersUnfrozen(address,address)"(
       token?: null,
       account?: null
-    ): TransfersUnfreezedEventFilter;
-    TransfersUnfreezed(
+    ): TransfersUnfrozenEventFilter;
+    TransfersUnfrozen(
       token?: null,
       account?: null
-    ): TransfersUnfreezedEventFilter;
+    ): TransfersUnfrozenEventFilter;
   };
 
   estimateGas: {

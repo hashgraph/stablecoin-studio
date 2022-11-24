@@ -203,7 +203,7 @@ export async function deleteToken(ContractId: any, proxyAddress: string, clientP
 // Rescueable ///////////////////////////////////////////////////
 export async function rescue(ContractId: any, proxyAddress: string, amountOfTokenToRescue: any, clientRescueingToken: any){
     let params = [amountOfTokenToRescue.toString()];      
-    await contractCall(ContractId.fromString(proxyAddress!), 'rescue', params, clientRescueingToken, Gas6, HederaERC20__factory.abi)  
+    await contractCall(ContractId.fromString(proxyAddress!), 'rescue', params, clientRescueingToken, Gas4, HederaERC20__factory.abi)  
 }
 
 // Roles ///////////////////////////////////////////////////

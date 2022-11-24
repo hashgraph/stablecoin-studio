@@ -46,10 +46,10 @@ function unfreeze(address account) external nonpayable
 
 ## Events
 
-### TransfersFreezed
+### TransfersFrozen
 
 ```solidity
-event TransfersFreezed(address token, address account)
+event TransfersFrozen(address token, address account)
 ```
 
 
@@ -63,10 +63,10 @@ event TransfersFreezed(address token, address account)
 | token  | address | undefined |
 | account  | address | Account address |
 
-### TransfersUnfreezed
+### TransfersUnfrozen
 
 ```solidity
-event TransfersUnfreezed(address token, address account)
+event TransfersUnfrozen(address token, address account)
 ```
 
 
