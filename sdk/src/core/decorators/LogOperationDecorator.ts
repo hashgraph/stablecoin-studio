@@ -10,9 +10,9 @@ export const LogOperation = (
 	descriptor.value = function (...args: unknown[]): unknown {
 		LogService.logTrace(`Method called: ${propertyKey}`);
 		LogService.logTrace('Args: ', args);
-		const start = Date.now();
+		const start = performance.now();
 		const result = originalMethod.apply(this, args);
-		const finish = Date.now();
+		const finish = performance.now();
 		LogService.logTrace(`Execution time [${propertyKey}]: ${finish - start} milliseconds`);
 		return result;
 	};
