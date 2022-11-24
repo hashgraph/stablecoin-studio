@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { Heading, Text, Stack, useDisclosure } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -9,18 +9,17 @@ import { handleRequestValidation, validateDecimalsString } from '../../../utils/
 import OperationLayout from './../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import {
 	SELECTED_WALLET_ACCOUNT_INFO,
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNT,
-	walletActions,
 } from '../../../store/slices/walletSlice';
-import { useEffect, useState } from 'react';
-import type { AppDispatch } from '../../../store/store.js';
-import { BigDecimal, CashInStableCoinRequest, GetStableCoinDetailsRequest } from 'hedera-stable-coin-sdk';
+import { useState } from 'react';
+import { CashInStableCoinRequest } from 'hedera-stable-coin-sdk';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
+import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 
 const CashInOperation = () => {
 	const {
@@ -32,8 +31,7 @@ const CashInOperation = () => {
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
 	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
-	const { decimals = 0,maxSupply} = selectedStableCoin || {};
-	const dispatch = useDispatch<AppDispatch>();
+	const { decimals = 0} = selectedStableCoin || {};
 
 	const [errorOperation, setErrorOperation] = useState();
 	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
@@ -61,47 +59,11 @@ const CashInOperation = () => {
 
 	const { t } = useTranslation(['cashIn', 'global', 'operations']);
 
-	useEffect(() => {
-		handleRefreshCoinInfo();
-	}, []);
-
 	const handleCloseModal = () => {
 		RouterManager.goBack(navigate);
 	};
 
-	const handleRefreshCoinInfo = async () => {
-		const stableCoinDetails = await SDKService.getStableCoinDetails(
-			new GetStableCoinDetailsRequest({
-				id: selectedStableCoin?.tokenId || '',
-			}),
-		);
-		dispatch(
-			walletActions.setSelectedStableCoin({
-				tokenId: stableCoinDetails?.tokenId,
-				initialSupply: stableCoinDetails?.initialSupply,
-				totalSupply: stableCoinDetails?.totalSupply,
-				maxSupply: stableCoinDetails?.maxSupply,
-				name: stableCoinDetails?.name,
-				symbol: stableCoinDetails?.symbol,
-				decimals: stableCoinDetails?.decimals,
-				id: stableCoinDetails?.tokenId,
-				treasuryId: stableCoinDetails?.treasuryId,
-				autoRenewAccount: stableCoinDetails?.autoRenewAccount,
-				memo: stableCoinDetails?.memo,
-				paused: stableCoinDetails?.paused,
-				deleted: stableCoinDetails?.deleted,
-				adminKey:
-					stableCoinDetails?.adminKey && JSON.parse(JSON.stringify(stableCoinDetails.adminKey)),
-				kycKey: stableCoinDetails?.kycKey && JSON.parse(JSON.stringify(stableCoinDetails.kycKey)),
-				freezeKey:
-					stableCoinDetails?.freezeKey && JSON.parse(JSON.stringify(stableCoinDetails.freezeKey)),
-				wipeKey:
-					stableCoinDetails?.wipeKey && JSON.parse(JSON.stringify(stableCoinDetails.wipeKey)),
-				supplyKey:
-					stableCoinDetails?.supplyKey && JSON.parse(JSON.stringify(stableCoinDetails.supplyKey)),
-			}),
-		);
-	};
+	useRefreshCoinInfo();
 
 	const handleCashIn: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
 		try {

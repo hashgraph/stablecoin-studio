@@ -7,19 +7,19 @@ import OperationLayout from '../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
 import { handleRequestValidation } from '../../../utils/validationsHelper';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import {
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNT,
-	walletActions,
 } from '../../../store/slices/walletSlice';
 import SDKService from '../../../services/SDKService';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { formatAmount } from '../../../utils/inputHelper';
-import type { AppDispatch } from '../../../store/store.js';
+
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
-import { GetStableCoinDetailsRequest, RescueStableCoinRequest } from 'hedera-stable-coin-sdk';
+import { RescueStableCoinRequest } from 'hedera-stable-coin-sdk';
+import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 
 const RescueTokenOperation = () => {
 	const {
@@ -44,7 +44,6 @@ const RescueTokenOperation = () => {
 		})
 	);
 
-	const dispatch = useDispatch<AppDispatch>();
 	const navigate = useNavigate();
 
 	// const { decimals = 0 } = selectedStableCoin || {};
@@ -55,47 +54,12 @@ const RescueTokenOperation = () => {
 
 	const { t } = useTranslation(['rescueTokens', 'global', 'operations']);
 
-	useEffect(() => {
-		handleRefreshCoinInfo();
-	}, []);
-
 	const handleCloseModal = () => {
 		RouterManager.goBack(navigate);
 	};
-	const handleRefreshCoinInfo = async () => {
-		const stableCoinDetails = await SDKService.getStableCoinDetails(
-			new GetStableCoinDetailsRequest({
-				id: selectedStableCoin?.tokenId ?? '',
-			}) 
-		);
-		dispatch(
-			walletActions.setSelectedStableCoin({
-				tokenId: stableCoinDetails?.tokenId,
-				initialSupply: Number(stableCoinDetails?.initialSupply),
-				totalSupply: Number(stableCoinDetails?.totalSupply),
-				maxSupply: Number(stableCoinDetails?.maxSupply),
-				name: stableCoinDetails?.name,
-				symbol: stableCoinDetails?.symbol,
-				decimals: stableCoinDetails?.decimals,
-				id: stableCoinDetails?.tokenId,
-				treasuryId: stableCoinDetails?.treasuryId,
-				autoRenewAccount: stableCoinDetails?.autoRenewAccount,
-				memo: stableCoinDetails?.memo,
-				paused: stableCoinDetails?.paused,
-				deleted: stableCoinDetails?.deleted,
-				adminKey:
-					stableCoinDetails?.adminKey && JSON.parse(JSON.stringify(stableCoinDetails.adminKey)),
-				kycKey: stableCoinDetails?.kycKey && JSON.parse(JSON.stringify(stableCoinDetails.kycKey)),
-				freezeKey:
-					stableCoinDetails?.freezeKey && JSON.parse(JSON.stringify(stableCoinDetails.freezeKey)),
-				wipeKey:
-					stableCoinDetails?.wipeKey && JSON.parse(JSON.stringify(stableCoinDetails.wipeKey)),
-				supplyKey:
-					stableCoinDetails?.supplyKey && JSON.parse(JSON.stringify(stableCoinDetails.supplyKey)),
-			}),
-		);
-	};
-
+	
+	useRefreshCoinInfo();
+	
 	const handleRescueToken: ModalsHandlerActionsProps['onConfirm'] = async ({
 		onSuccess,
 		onError,
