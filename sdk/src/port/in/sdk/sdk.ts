@@ -241,31 +241,26 @@ export class SDK {
 	public createStableCoin(
 		request: CreateStableCoinRequest,
 	): Promise<StableCoinDetail> {
-		try {
-			const req: ICreateStableCoinServiceRequestModel = RequestMapper.map(
-				request,
-				{
-					treasury: AccountId,
-					autoRenewAccount: AccountId,
-					initialSupply: (val, req) => {
-						if (val) {
-							return BigDecimal.fromString(val, req.decimals);
-						}
-						return BigDecimal.ZERO;
-					},
-					maxSupply: (val, req) => {
-						if (val) {
-							return BigDecimal.fromString(val, req.decimals);
-						}
-						return BigDecimal.ZERO;
-					},
+		const req: ICreateStableCoinServiceRequestModel = RequestMapper.map(
+			request,
+			{
+				treasury: AccountId,
+				autoRenewAccount: AccountId,
+				initialSupply: (val, req) => {
+					if (val) {
+						return BigDecimal.fromString(val, req.decimals);
+					}
+					return BigDecimal.ZERO;
 				},
-			);
-			return this.stableCoinService.createStableCoin(req);
-		} catch (error) {
-			LogService.logError(error);
-			throw error;
-		}
+				maxSupply: (val, req) => {
+					if (val) {
+						return BigDecimal.fromString(val, req.decimals);
+					}
+					return BigDecimal.ZERO;
+				},
+			},
+		);
+		return this.stableCoinService.createStableCoin(req);
 	}
 
 	@LogOperation
@@ -292,14 +287,9 @@ export class SDK {
 	public getStableCoinDetails(
 		request: GetStableCoinDetailsRequest,
 	): Promise<StableCoinDetail> | null {
-		try {
-			const req: IGetStableCoinServiceRequestModel =
-				RequestMapper.map(request);
-			return this.stableCoinService.getStableCoinDetails(req);
-		} catch (error) {
-			LogService.logError(error);
-			return null;
-		}
+		const req: IGetStableCoinServiceRequestModel =
+			RequestMapper.map(request);
+		return this.stableCoinService.getStableCoinDetails(req);
 	}
 
 	/**
@@ -309,14 +299,9 @@ export class SDK {
 	public getBalanceOf(
 		request: GetAccountBalanceRequest,
 	): Promise<string> | null {
-		try {
-			const req: IGetBalanceOfStableCoinServiceRequestModel =
-				RequestMapper.map(request);
-			return this.stableCoinService.getBalanceOf(req);
-		} catch (error) {
-			LogService.logError(error);
-			return null;
-		}
+		const req: IGetBalanceOfStableCoinServiceRequestModel =
+			RequestMapper.map(request);
+		return this.stableCoinService.getBalanceOf(req);
 	}
 
 	/**
@@ -324,14 +309,9 @@ export class SDK {
 	 */
 	@LogOperation
 	public cashIn(request: CashInStableCoinRequest): Promise<boolean> | null {
-		try {
-			const req: CashInStableCoinServiceRequestModel =
-				RequestMapper.map(request);
-			return this.stableCoinService.cashIn(req);
-		} catch (error) {
-			LogService.logError(error);
-			return null;
-		}
+		const req: CashInStableCoinServiceRequestModel =
+			RequestMapper.map(request);
+		return this.stableCoinService.cashIn(req);
 	}
 
 	/**
@@ -339,15 +319,10 @@ export class SDK {
 	 */
 	@LogOperation
 	public cashOut(request: CashOutStableCoinRequest): Promise<boolean> | null {
-		try {
-			const req: ICashOutStableCoinServiceRequestModel =
-				RequestMapper.map(request);
+		const req: ICashOutStableCoinServiceRequestModel =
+			RequestMapper.map(request);
 
-			return this.stableCoinService.cashOut(req);
-		} catch (error) {
-			LogService.logError(error);
-			return null;
-		}
+		return this.stableCoinService.cashOut(req);
 	}
 
 	/**
@@ -357,14 +332,9 @@ export class SDK {
 	public associateToken(
 		request: AssociateTokenRequest,
 	): Promise<Uint8Array> | null {
-		try {
-			const req: AssociateTokenStableCoinServiceRequestModel =
-				RequestMapper.map(request);
-			return this.stableCoinService.associateToken(req);
-		} catch (error) {
-			LogService.logError(error);
-			return null;
-		}
+		const req: AssociateTokenStableCoinServiceRequestModel =
+			RequestMapper.map(request);
+		return this.stableCoinService.associateToken(req);
 	}
 
 	/**
@@ -372,14 +342,9 @@ export class SDK {
 	 */
 	@LogOperation
 	public wipe(request: WipeStableCoinRequest): Promise<boolean> | null {
-		try {
-			const req: IWipeStableCoinServiceRequestModel =
-				RequestMapper.map(request);
-			return this.stableCoinService.wipe(req);
-		} catch (error) {
-			LogService.logError(error);
-			return null;
-		}
+		const req: IWipeStableCoinServiceRequestModel =
+			RequestMapper.map(request);
+		return this.stableCoinService.wipe(req);
 	}
 
 	/**
@@ -389,13 +354,8 @@ export class SDK {
 	public isUnlimitedSupplierAllowance(
 		request: CheckCashInRoleRequest,
 	): Promise<Uint8Array> | null {
-		try {
-			const req: IGetBasicRequestModel = RequestMapper.map(request);
-			return this.stableCoinService.isUnlimitedSupplierAllowance(req);
-		} catch (error) {
-			LogService.logError(error);
-			return null;
-		}
+		const req: IGetBasicRequestModel = RequestMapper.map(request);
+		return this.stableCoinService.isUnlimitedSupplierAllowance(req);
 	}
 	/**
 	 * check limited supplier role
@@ -404,13 +364,8 @@ export class SDK {
 	public supplierAllowance(
 		request: CheckCashInLimitRequest,
 	): Promise<string> | null {
-		try {
-			const req: IGetSupplierAllowanceModel = RequestMapper.map(request);
-			return this.stableCoinService.supplierAllowance(req);
-		} catch (error) {
-			LogService.logError(error);
-			return null;
-		}
+		const req: IGetSupplierAllowanceModel = RequestMapper.map(request);
+		return this.stableCoinService.supplierAllowance(req);
 	}
 
 	/**
@@ -420,13 +375,8 @@ export class SDK {
 	public resetSupplierAllowance(
 		request: ResetCashInLimitRequest,
 	): Promise<Uint8Array> | null {
-		try {
-			const req: IGetBasicRequestModel = RequestMapper.map(request);
-			return this.stableCoinService.resetSupplierAllowance(req);
-		} catch (error) {
-			LogService.logError(error);
-			return null;
-		}
+		const req: IGetBasicRequestModel = RequestMapper.map(request);
+		return this.stableCoinService.resetSupplierAllowance(req);
 	}
 	/**
 	 * increase supplier allowance
@@ -435,14 +385,9 @@ export class SDK {
 	public increaseSupplierAllowance(
 		request: IncreaseCashInLimitRequest,
 	): Promise<Uint8Array> | null {
-		try {
-			const req: ISupplierRoleStableCoinServiceRequestModel =
-				RequestMapper.map(request);
-			return this.stableCoinService.increaseSupplierAllowance(req);
-		} catch (error) {
-			LogService.logError(error);
-			return null;
-		}
+		const req: ISupplierRoleStableCoinServiceRequestModel =
+			RequestMapper.map(request);
+		return this.stableCoinService.increaseSupplierAllowance(req);
 	}
 	/**
 	 * decrease supplier allowance
@@ -451,14 +396,9 @@ export class SDK {
 	public decreaseSupplierAllowance(
 		request: DecreaseCashInLimitRequest,
 	): Promise<Uint8Array> | null {
-		try {
-			const req: ISupplierRoleStableCoinServiceRequestModel =
-				RequestMapper.map(request);
-			return this.stableCoinService.decreaseSupplierAllowance(req);
-		} catch (error) {
-			LogService.logError(error);
-			return null;
-		}
+		const req: ISupplierRoleStableCoinServiceRequestModel =
+			RequestMapper.map(request);
+		return this.stableCoinService.decreaseSupplierAllowance(req);
 	}
 
 	/**
@@ -468,13 +408,8 @@ export class SDK {
 	public isLimitedSupplierAllowance(
 		request: CheckCashInRoleRequest,
 	): Promise<Uint8Array> | null {
-		try {
-			const req: IGetBasicRequestModel = RequestMapper.map(request);
-			return this.stableCoinService.isLimitedSupplierAllowance(req);
-		} catch (error) {
-			LogService.logError(error);
-			return null;
-		}
+		const req: IGetBasicRequestModel = RequestMapper.map(request);
+		return this.stableCoinService.isLimitedSupplierAllowance(req);
 	}
 
 	/**
@@ -484,24 +419,16 @@ export class SDK {
 	public rescue(
 		request: RescueStableCoinRequest,
 	): Promise<Uint8Array> | null {
-		try {
-			const req: IRescueStableCoinServiceRequestModel =
-				RequestMapper.map(request);
-			return this.stableCoinService.rescue(req);
-		} catch (error) {
-			LogService.logError(error);
-			return null;
-		}
+		const req: IRescueStableCoinServiceRequestModel =
+			RequestMapper.map(request);
+		return this.stableCoinService.rescue(req);
 	}
 
 	@LogOperation
 	public checkIsAddress(str?: string): boolean {
 		if (!str) return false;
-		try {
-			new AccountId(str);
-		} catch (error) {
-			return false;
-		}
+
+		new AccountId(str);
 		return true;
 	}
 
@@ -515,146 +442,92 @@ export class SDK {
 
 	@LogOperation
 	public grantRole(request: GrantRoleRequest): Promise<Uint8Array> | null {
-		try {
-			if (request.role === StableCoinRole.CASHIN_ROLE) {
-				const grantSupplierRoleReq: ISupplierRoleStableCoinServiceRequestModel =
-					RequestMapper.map(request);
-				return this.stableCoinService.grantSupplierRole(
-					grantSupplierRoleReq,
-				);
-			}
-			const grantRoleReq: IRoleStableCoinServiceRequestModel =
+		if (request.role === StableCoinRole.CASHIN_ROLE) {
+			const grantSupplierRoleReq: ISupplierRoleStableCoinServiceRequestModel =
 				RequestMapper.map(request);
-			return this.stableCoinService.grantRole(grantRoleReq);
-		} catch (error) {
-			LogService.logError(error);
-			return null;
+			return this.stableCoinService.grantSupplierRole(
+				grantSupplierRoleReq,
+			);
 		}
+		const grantRoleReq: IRoleStableCoinServiceRequestModel =
+			RequestMapper.map(request);
+		return this.stableCoinService.grantRole(grantRoleReq);
 	}
 
 	@LogOperation
 	public revokeRole(request: RevokeRoleRequest): Promise<Uint8Array> | null {
-		try {
-			if (request.role === StableCoinRole.CASHIN_ROLE) {
-				const revokeSupplierRoleReq: ISupplierRoleStableCoinServiceRequestModel =
-					RequestMapper.map(request);
-				return this.stableCoinService.revokeSupplierRole(
-					revokeSupplierRoleReq,
-				);
-			} else {
-				const revokeRoleReq: IRoleStableCoinServiceRequestModel =
-					RequestMapper.map(request);
-				return this.stableCoinService.revokeRole(revokeRoleReq);
-			}
-		} catch (error) {
-			LogService.logError(error);
-			return null;
+		if (request.role === StableCoinRole.CASHIN_ROLE) {
+			const revokeSupplierRoleReq: ISupplierRoleStableCoinServiceRequestModel =
+				RequestMapper.map(request);
+			return this.stableCoinService.revokeSupplierRole(
+				revokeSupplierRoleReq,
+			);
+		} else {
+			const revokeRoleReq: IRoleStableCoinServiceRequestModel =
+				RequestMapper.map(request);
+			return this.stableCoinService.revokeRole(revokeRoleReq);
 		}
 	}
 
 	@LogOperation
 	public hasRole(request: HasRoleRequest): Promise<Uint8Array> | null {
-		try {
-			const req: IRoleStableCoinServiceRequestModel =
-				RequestMapper.map(request);
-			return this.stableCoinService.hasRole(req);
-		} catch (error) {
-			LogService.logError(error);
-			return null;
-		}
+		const req: IRoleStableCoinServiceRequestModel =
+			RequestMapper.map(request);
+		return this.stableCoinService.hasRole(req);
 	}
 
 	@LogOperation
 	public getAccountInfo(
 		request: GetAccountInfoRequest,
 	): Promise<AccountInfo> | null {
-		try {
-			const req: IAccountWithKeyRequestModel = RequestMapper.map(request);
-			return this.stableCoinService.getAccountInfo(req);
-		} catch (error) {
-			LogService.logError(error);
-			return null;
-		}
+		const req: IAccountWithKeyRequestModel = RequestMapper.map(request);
+		return this.stableCoinService.getAccountInfo(req);
 	}
 
 	@LogOperation
 	public getRoles(request: GetRolesRequest): Promise<string[]> | null {
-		try {
-			const req: IGetRolesServiceRequestModel =
-				RequestMapper.map(request);
-			return this.stableCoinService.getRoles(req);
-		} catch (error) {
-			LogService.logError(error);
-			return null;
-		}
+		const req: IGetRolesServiceRequestModel = RequestMapper.map(request);
+		return this.stableCoinService.getRoles(req);
 	}
 
 	@LogOperation
 	public deleteStableCoin(
 		request: DeleteStableCoinRequest,
 	): Promise<boolean> | null {
-		try {
-			const req: IDeleteStableCoinRequestModel =
-				RequestMapper.map(request);
-			return this.stableCoinService.deleteStableCoin(req);
-		} catch (error) {
-			LogService.logError(error);
-			return null;
-		}
+		const req: IDeleteStableCoinRequestModel = RequestMapper.map(request);
+		return this.stableCoinService.deleteStableCoin(req);
 	}
 
 	@LogOperation
 	public pauseStableCoin(
 		request: PauseStableCoinRequest,
 	): Promise<boolean> | null {
-		try {
-			const req: IPauseStableCoinRequestModel =
-				RequestMapper.map(request);
-			return this.stableCoinService.pauseStableCoin(req);
-		} catch (error) {
-			LogService.logError(error);
-			return null;
-		}
+		const req: IPauseStableCoinRequestModel = RequestMapper.map(request);
+		return this.stableCoinService.pauseStableCoin(req);
 	}
 
 	@LogOperation
 	public unpauseStableCoin(
 		request: PauseStableCoinRequest,
 	): Promise<boolean> | null {
-		try {
-			const req: IPauseStableCoinRequestModel =
-				RequestMapper.map(request);
-			return this.stableCoinService.unpauseStableCoin(req);
-		} catch (error) {
-			LogService.logError(error);
-			return null;
-		}
+		const req: IPauseStableCoinRequestModel = RequestMapper.map(request);
+		return this.stableCoinService.unpauseStableCoin(req);
 	}
 
 	@LogOperation
 	public freezeAccount(
 		request: FreezeAccountRequest,
 	): Promise<boolean> | null {
-		try {
-			const req: IFreezeAccountRequestModel = RequestMapper.map(request);
-			return this.stableCoinService.freezeAccount(req);
-		} catch (error) {
-			LogService.logError(error);
-			return null;
-		}
+		const req: IFreezeAccountRequestModel = RequestMapper.map(request);
+		return this.stableCoinService.freezeAccount(req);
 	}
 
 	@LogOperation
 	public unfreezeAccount(
 		request: FreezeAccountRequest,
 	): Promise<boolean> | null {
-		try {
-			const req: IFreezeAccountRequestModel = RequestMapper.map(request);
-			return this.stableCoinService.unfreezeAccount(req);
-		} catch (error) {
-			LogService.logError(error);
-			return null;
-		}
+		const req: IFreezeAccountRequestModel = RequestMapper.map(request);
+		return this.stableCoinService.unfreezeAccount(req);
 	}
 
 	// HashPack
