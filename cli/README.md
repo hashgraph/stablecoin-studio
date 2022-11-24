@@ -48,7 +48,9 @@ npm start wizard [TASK OPTIONS]
 
 TASK OPTIONS:
     -cp, --config      A path of config file.
-    -n, --network     Type of network that you want to use it. (mainnet | testnet | previewnet)
+    -n, --network      Type of network that you want to use it. (mainnet | testnet | previewnet)
+    -lv, --log-level   Log level to use (TRACE, INFO, ERROR)
+    -lp, --log-path    Log path, default is ./logs
 ```
 
 # Usage
@@ -61,24 +63,38 @@ The configuration file that is generated populates its fields with dynamic quest
 The file format is .yaml and the structure is as follows:
 
 ```
-defaultNetwork: testnet
+defaultNetwork: 'testnet'
 networks:
-  - name: mainnet
-    consensusNodes: []
-    mirrorNodeUrl: https://mainnet.mirrornode.hedera.com/
-  - name: previewnet
-    consensusNodes: []
-    mirrorNodeUrl: https://previewnet.mirrornode.hedera.com/
-  - name: testnet
-    consensusNodes: []
-    mirrorNodeUrl: https://testnet.mirrornode.hedera.com
+  [
+    {
+      name: 'mainnet',
+      consensusNodes: [],
+      mirrorNodeUrl: 'https://mainnet.mirrornode.hedera.com/',
+    },
+    {
+      name: 'previewnet',
+      consensusNodes: [],
+      mirrorNodeUrl: 'https://previewnet.mirrornode.hedera.com/',
+    },
+    {
+      name: 'testnet',
+      consensusNodes: [],
+      mirrorNodeUrl: 'https://testnet.mirrornode.hedera.com',
+    },
+  ]
 accounts:
-  - accountId:
-    privateKey:
-      key:
-      type:
-    network:
-    alias:
+  [
+    {
+      accountId: '',
+      privateKey: { key: '', type: '' },
+      network: '',
+      alias: '',
+      importedTokens: [],
+    },
+  ]
+logs:
+  path: './logs'
+  level: 'ERROR'
 ```
 
 ## CLI flow
@@ -95,10 +111,11 @@ When an account is selected, the main menu shown in the previous image is access
 
 From the main menu users are able to use the following functions:
 
-1. Create new stable coins
-2. Operate with previously created stable coins
-3. List the stable coins for which they have permissions.
-4. Access the configuration menu.
+1. Create a new Stable Coin
+2. Manage imported tokens
+3. Operate with an existing Stable Coin
+4. List Stable Coins
+5. Configuration
 
 #### Operate with stable coin
 
