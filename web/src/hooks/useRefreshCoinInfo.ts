@@ -11,7 +11,7 @@ export const useRefreshCoinInfo = async (): Promise<void> => {
 	const dispatch = useDispatch();
 	useEffect(() => {
 		getStableCoinDetails();
-	}, [selectedStableCoin?.deleted, selectedStableCoin?.paused]);
+	}, [selectedStableCoin?.deleted, selectedStableCoin?.paused, selectedStableCoin]);
 
 	const getStableCoinDetails = async () => {
 		const resp = await SDKService.getStableCoinDetails(
