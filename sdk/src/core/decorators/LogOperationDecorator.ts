@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import LogService from '../../app/service/log/LogService.js';
+import { performance } from 'perf_hooks';
 
 export const LogOperation = (
 	target: unknown,
