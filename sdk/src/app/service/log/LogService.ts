@@ -53,7 +53,7 @@ export default class LogService {
 	constructor(opts?: LoggerOptions) {
 		LogService.instance = this;
 		this.logger = createLogger({
-			...(opts ? opts : this.defaultConfig),
+			...(opts ? { ...this.defaultConfig, ...opts } : this.defaultConfig),
 			...this.coreConfig,
 		});
 	}

@@ -104,6 +104,7 @@ import { Roles } from '../../../domain/context/stablecoin/Roles.js';
 import IPauseStableCoinRequestModel from '../../../app/service/stablecoin/model/IPauseStableCoinRequestModel.js';
 import IFreezeAccountRequestModel from '../../../app/service/stablecoin/model/IFreezeAccountRequestModel.js';
 import LogService from '../../../app/service/log/LogService.js';
+import { LogOperation } from '../../../core/decorators/LogOperationDecorator.js';
 
 const DefaultLoggerFormat = LogService.defaultFormat;
 
@@ -193,6 +194,7 @@ export class SDK {
 
 	// Initializes the SDK,
 	// TODO should probably be decoupled from the dependency injection
+	@LogOperation
 	public async init(options?: SDKInitOptions): Promise<SDK> {
 		const providerEvents = this.getEventNames();
 		LogService.logTrace('Event names found: ', providerEvents);
@@ -235,11 +237,11 @@ export class SDK {
 	/**
 	 * createStableCoin
 	 */
+	@LogOperation
 	public createStableCoin(
 		request: CreateStableCoinRequest,
 	): Promise<StableCoinDetail> {
 		try {
-			LogService.logTrace(request);
 			const req: ICreateStableCoinServiceRequestModel = RequestMapper.map(
 				request,
 				{
@@ -266,6 +268,7 @@ export class SDK {
 		}
 	}
 
+	@LogOperation
 	public getCapabilitiesStableCoin(
 		id: string,
 		publicKey: string,
@@ -276,20 +279,20 @@ export class SDK {
 	/**
 	 * getListStableCoin
 	 */
+	@LogOperation
 	public getListStableCoin(
 		request: GetListStableCoinRequest,
 	): Promise<StableCoinList[]> | null {
-		LogService.logTrace(request);
 		const req: IListStableCoinServiceRequestModel =
 			RequestMapper.map(request);
 		return this.stableCoinService.getListStableCoins(req);
 	}
 
+	@LogOperation
 	public getStableCoinDetails(
 		request: GetStableCoinDetailsRequest,
 	): Promise<StableCoinDetail> | null {
 		try {
-			LogService.logTrace(request);
 			const req: IGetStableCoinServiceRequestModel =
 				RequestMapper.map(request);
 			return this.stableCoinService.getStableCoinDetails(req);
@@ -302,11 +305,11 @@ export class SDK {
 	/**
 	 * getBalanceOf
 	 */
+	@LogOperation
 	public getBalanceOf(
 		request: GetAccountBalanceRequest,
 	): Promise<string> | null {
 		try {
-			LogService.logTrace(request);
 			const req: IGetBalanceOfStableCoinServiceRequestModel =
 				RequestMapper.map(request);
 			return this.stableCoinService.getBalanceOf(req);
@@ -319,9 +322,9 @@ export class SDK {
 	/**
 	 * cashIn
 	 */
+	@LogOperation
 	public cashIn(request: CashInStableCoinRequest): Promise<boolean> | null {
 		try {
-			LogService.logTrace(request);
 			const req: CashInStableCoinServiceRequestModel =
 				RequestMapper.map(request);
 			return this.stableCoinService.cashIn(req);
@@ -334,9 +337,9 @@ export class SDK {
 	/**
 	 * cashOut
 	 */
+	@LogOperation
 	public cashOut(request: CashOutStableCoinRequest): Promise<boolean> | null {
 		try {
-			LogService.logTrace(request);
 			const req: ICashOutStableCoinServiceRequestModel =
 				RequestMapper.map(request);
 
@@ -350,11 +353,11 @@ export class SDK {
 	/**
 	 * associateToken
 	 */
+	@LogOperation
 	public associateToken(
 		request: AssociateTokenRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			LogService.logTrace(request);
 			const req: AssociateTokenStableCoinServiceRequestModel =
 				RequestMapper.map(request);
 			return this.stableCoinService.associateToken(req);
@@ -367,9 +370,9 @@ export class SDK {
 	/**
 	 * wipeToken
 	 */
+	@LogOperation
 	public wipe(request: WipeStableCoinRequest): Promise<boolean> | null {
 		try {
-			LogService.logTrace(request);
 			const req: IWipeStableCoinServiceRequestModel =
 				RequestMapper.map(request);
 			return this.stableCoinService.wipe(req);
@@ -382,11 +385,11 @@ export class SDK {
 	/**
 	 * check unlimited supplier role
 	 */
+	@LogOperation
 	public isUnlimitedSupplierAllowance(
 		request: CheckCashInRoleRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			LogService.logTrace(request);
 			const req: IGetBasicRequestModel = RequestMapper.map(request);
 			return this.stableCoinService.isUnlimitedSupplierAllowance(req);
 		} catch (error) {
@@ -397,11 +400,11 @@ export class SDK {
 	/**
 	 * check limited supplier role
 	 */
+	@LogOperation
 	public supplierAllowance(
 		request: CheckCashInLimitRequest,
 	): Promise<string> | null {
 		try {
-			LogService.logTrace(request);
 			const req: IGetSupplierAllowanceModel = RequestMapper.map(request);
 			return this.stableCoinService.supplierAllowance(req);
 		} catch (error) {
@@ -413,11 +416,11 @@ export class SDK {
 	/**
 	 * reset supplier allowance
 	 */
+	@LogOperation
 	public resetSupplierAllowance(
 		request: ResetCashInLimitRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			LogService.logTrace(request);
 			const req: IGetBasicRequestModel = RequestMapper.map(request);
 			return this.stableCoinService.resetSupplierAllowance(req);
 		} catch (error) {
@@ -428,11 +431,11 @@ export class SDK {
 	/**
 	 * increase supplier allowance
 	 */
+	@LogOperation
 	public increaseSupplierAllowance(
 		request: IncreaseCashInLimitRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			LogService.logTrace(request);
 			const req: ISupplierRoleStableCoinServiceRequestModel =
 				RequestMapper.map(request);
 			return this.stableCoinService.increaseSupplierAllowance(req);
@@ -444,11 +447,11 @@ export class SDK {
 	/**
 	 * decrease supplier allowance
 	 */
+	@LogOperation
 	public decreaseSupplierAllowance(
 		request: DecreaseCashInLimitRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			LogService.logTrace(request);
 			const req: ISupplierRoleStableCoinServiceRequestModel =
 				RequestMapper.map(request);
 			return this.stableCoinService.decreaseSupplierAllowance(req);
@@ -461,11 +464,11 @@ export class SDK {
 	/**
 	 * check limited supplier role
 	 */
+	@LogOperation
 	public isLimitedSupplierAllowance(
 		request: CheckCashInRoleRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			LogService.logTrace(request);
 			const req: IGetBasicRequestModel = RequestMapper.map(request);
 			return this.stableCoinService.isLimitedSupplierAllowance(req);
 		} catch (error) {
@@ -477,11 +480,11 @@ export class SDK {
 	/**
 	 * rescue
 	 */
+	@LogOperation
 	public rescue(
 		request: RescueStableCoinRequest,
 	): Promise<Uint8Array> | null {
 		try {
-			LogService.logTrace(request);
 			const req: IRescueStableCoinServiceRequestModel =
 				RequestMapper.map(request);
 			return this.stableCoinService.rescue(req);
@@ -491,6 +494,7 @@ export class SDK {
 		}
 	}
 
+	@LogOperation
 	public checkIsAddress(str?: string): boolean {
 		if (!str) return false;
 		try {
@@ -501,6 +505,7 @@ export class SDK {
 		return true;
 	}
 
+	@LogOperation
 	public getPublicKey(privateKey?: string, privateKeyType?: string): string {
 		return this.networkAdapter.provider.getPublicKeyString(
 			privateKey,
@@ -508,6 +513,7 @@ export class SDK {
 		);
 	}
 
+	@LogOperation
 	public grantRole(request: GrantRoleRequest): Promise<Uint8Array> | null {
 		try {
 			if (request.role === StableCoinRole.CASHIN_ROLE) {
@@ -526,6 +532,7 @@ export class SDK {
 		}
 	}
 
+	@LogOperation
 	public revokeRole(request: RevokeRoleRequest): Promise<Uint8Array> | null {
 		try {
 			if (request.role === StableCoinRole.CASHIN_ROLE) {
@@ -545,9 +552,9 @@ export class SDK {
 		}
 	}
 
+	@LogOperation
 	public hasRole(request: HasRoleRequest): Promise<Uint8Array> | null {
 		try {
-			LogService.logTrace(request);
 			const req: IRoleStableCoinServiceRequestModel =
 				RequestMapper.map(request);
 			return this.stableCoinService.hasRole(req);
@@ -557,11 +564,11 @@ export class SDK {
 		}
 	}
 
+	@LogOperation
 	public getAccountInfo(
 		request: GetAccountInfoRequest,
 	): Promise<AccountInfo> | null {
 		try {
-			LogService.logTrace(request);
 			const req: IAccountWithKeyRequestModel = RequestMapper.map(request);
 			return this.stableCoinService.getAccountInfo(req);
 		} catch (error) {
@@ -570,9 +577,9 @@ export class SDK {
 		}
 	}
 
+	@LogOperation
 	public getRoles(request: GetRolesRequest): Promise<string[]> | null {
 		try {
-			LogService.logTrace(request);
 			const req: IGetRolesServiceRequestModel =
 				RequestMapper.map(request);
 			return this.stableCoinService.getRoles(req);
@@ -582,11 +589,11 @@ export class SDK {
 		}
 	}
 
+	@LogOperation
 	public deleteStableCoin(
 		request: DeleteStableCoinRequest,
 	): Promise<boolean> | null {
 		try {
-			LogService.logTrace(request);
 			const req: IDeleteStableCoinRequestModel =
 				RequestMapper.map(request);
 			return this.stableCoinService.deleteStableCoin(req);
@@ -596,11 +603,11 @@ export class SDK {
 		}
 	}
 
+	@LogOperation
 	public pauseStableCoin(
 		request: PauseStableCoinRequest,
 	): Promise<boolean> | null {
 		try {
-			LogService.logTrace(request);
 			const req: IPauseStableCoinRequestModel =
 				RequestMapper.map(request);
 			return this.stableCoinService.pauseStableCoin(req);
@@ -610,11 +617,11 @@ export class SDK {
 		}
 	}
 
+	@LogOperation
 	public unpauseStableCoin(
 		request: PauseStableCoinRequest,
 	): Promise<boolean> | null {
 		try {
-			LogService.logTrace(request);
 			const req: IPauseStableCoinRequestModel =
 				RequestMapper.map(request);
 			return this.stableCoinService.unpauseStableCoin(req);
@@ -624,11 +631,11 @@ export class SDK {
 		}
 	}
 
+	@LogOperation
 	public freezeAccount(
 		request: FreezeAccountRequest,
 	): Promise<boolean> | null {
 		try {
-			LogService.logTrace(request);
 			const req: IFreezeAccountRequestModel = RequestMapper.map(request);
 			return this.stableCoinService.freezeAccount(req);
 		} catch (error) {
@@ -637,11 +644,11 @@ export class SDK {
 		}
 	}
 
+	@LogOperation
 	public unfreezeAccount(
 		request: FreezeAccountRequest,
 	): Promise<boolean> | null {
 		try {
-			LogService.logTrace(request);
 			const req: IFreezeAccountRequestModel = RequestMapper.map(request);
 			return this.stableCoinService.unfreezeAccount(req);
 		} catch (error) {
@@ -652,33 +659,40 @@ export class SDK {
 
 	// HashPack
 
+	@LogOperation
 	public getAvailabilityExtension(): boolean {
 		return this.networkAdapter.provider.getAvailabilityExtension();
 	}
 
-	gethashConnectConectionStatus(): HashConnectConnectionState {
+	@LogOperation
+	public gethashConnectConectionStatus(): HashConnectConnectionState {
 		return this.networkAdapter.provider.gethashConnectConectionState();
 	}
 
-	getInitData(): InitializationData {
+	@LogOperation
+	public getInitData(): InitializationData {
 		return this.networkAdapter.provider.getInitData();
 	}
 
-	disconectHaspack(): void {
+	@LogOperation
+	public disconectHaspack(): void {
 		LogService.logTrace('HashPack: Disconnected');
 		return this.networkAdapter.provider.disconectHaspack();
 	}
 
-	connectWallet(): Promise<IProvider> {
+	@LogOperation
+	public connectWallet(): Promise<IProvider> {
 		LogService.logTrace('HashPack: Connected');
 		return this.networkAdapter.provider.connectWallet();
 	}
 
+	@LogOperation
 	public onInit(listener: (data: InitializationData) => void): void {
 		LogService.logTrace('HashPack: Initialized');
 		this.eventService.on(ProviderEventNames.providerInitEvent, listener);
 	}
 
+	@LogOperation
 	public onWalletExtensionFound(listener: () => void): void {
 		LogService.logTrace('HashPack: Extension found');
 		this.eventService.on(
@@ -687,6 +701,7 @@ export class SDK {
 		);
 	}
 
+	@LogOperation
 	public onWalletConnectionChanged(
 		listener: (state: HashConnectConnectionState) => void,
 	): void {
@@ -697,6 +712,7 @@ export class SDK {
 		);
 	}
 
+	@LogOperation
 	public onWalletPaired(
 		listener: (data: HashConnectTypes.SavedPairingData) => void,
 	): void {
@@ -704,6 +720,7 @@ export class SDK {
 		this.eventService.on(ProviderEventNames.providerPairingEvent, listener);
 	}
 
+	@LogOperation
 	public onWalletAcknowledgeMessageEvent(
 		listener: (state: AcknowledgeMessage) => void,
 	): void {

@@ -520,7 +520,6 @@ export default class HashPackProvider implements IProvider {
 		}
 	}
 
-	@LogOperation
 	private async createToken(
 		contractId: HContractId,
 		name: string,
