@@ -265,14 +265,22 @@ export default class StableCoinRepository implements IStableCoinRepository {
 				listCapabilities.push(Capabilities.FREEZE);
 			}
 
-			if (!deleted && stableCoin.adminKey instanceof PublicKey) {
+			if (
+				!deleted &&
+				!paused &&
+				stableCoin.adminKey instanceof PublicKey
+			) {
 				if (
 					stableCoin.adminKey?.key.toString() == publickey.toString()
 				) {
 					listCapabilities.push(Capabilities.DELETE_HTS);
 				}
 			}
-			if (!deleted && stableCoin.adminKey instanceof ContractId) {
+			if (
+				!deleted &&
+				!paused &&
+				stableCoin.adminKey instanceof ContractId
+			) {
 				listCapabilities.push(Capabilities.DELETE);
 			}
 

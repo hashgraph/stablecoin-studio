@@ -110,12 +110,13 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 		if (!capabilities!.includes(Capabilities.RESCUE) && option.label === 'Rescue') {
 			return false;
 		}
+		if (!capabilities!.includes(Capabilities.FREEZE) && option.label === 'Freeze') {
+			return false;
+		}
 		return true;
 	});
 
 	useEffect(() => {
-		console.log(action);
-
 		switch (action.toString()) {
 			case 'giveRole':
 				setRequest(
