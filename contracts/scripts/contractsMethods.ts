@@ -184,20 +184,20 @@ export async function unpause(ContractId: any, proxyAddress: string, clientPausi
 }
 
 // Freezable ///////////////////////////////////////////////////
-export async function freeze(ContractId: any, proxyAddress: string, clientPausingToken: any, accountToFreeze: string){
+export async function freeze(ContractId: any, proxyAddress: string, clientFreezingToken: any, accountToFreeze: string){
     let params: any[] = [AccountId.fromString(accountToFreeze!).toSolidityAddress()];  
-    await contractCall(ContractId.fromString(proxyAddress!), 'freeze', params, clientPausingToken, Gas1, HederaERC20__factory.abi);
+    await contractCall(ContractId.fromString(proxyAddress!), 'freeze', params, clientFreezingToken, Gas1, HederaERC20__factory.abi);
 }
 
-export async function unfreeze(ContractId: any, proxyAddress: string, clientPausingToken: any, accountToFreeze: string){
-    let params: any[] = [AccountId.fromString(accountToFreeze!).toSolidityAddress()];  
-    await contractCall(ContractId.fromString(proxyAddress!), 'unfreeze', params, clientPausingToken, Gas1, HederaERC20__factory.abi);
+export async function unfreeze(ContractId: any, proxyAddress: string, clientUnFreezingToken: any, accountToUnFreeze: string){
+    let params: any[] = [AccountId.fromString(accountToUnFreeze!).toSolidityAddress()];  
+    await contractCall(ContractId.fromString(proxyAddress!), 'unfreeze', params, clientUnFreezingToken, Gas1, HederaERC20__factory.abi);
 }
 
 // Deletable ///////////////////////////////////////////////////
-export async function deleteToken(ContractId: any, proxyAddress: string, clientPausingToken: any){
+export async function deleteToken(ContractId: any, proxyAddress: string, clientDeletingToken: any){
     let params: any[] = [];  
-    await contractCall(ContractId.fromString(proxyAddress!), 'deleteToken', params, clientPausingToken, Gas1, HederaERC20__factory.abi);
+    await contractCall(ContractId.fromString(proxyAddress!), 'deleteToken', params, clientDeletingToken, Gas1, HederaERC20__factory.abi);
 }
 
 // Rescueable ///////////////////////////////////////////////////
