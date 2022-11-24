@@ -10,6 +10,7 @@ import { configurationService, utilsService } from '../../../index.js';
 import SetConfigurationService from './SetConfigurationService.js';
 import MaskData from 'maskdata';
 import { LoggerOptions, DailyRotateFile, DefaultLoggerFormat } from 'hedera-stable-coin-sdk';
+import { ILogConfig } from '../../../domain/configuration/interfaces/ILogConfig.js';
 
 /**
  * Configuration Service
@@ -54,11 +55,11 @@ export default class ConfigurationService extends Service {
   public getLogConfiguration(): LoggerOptions {
     if (!this.configuration.logs) return undefined;
     return {
-      level: this.configuration.logs.level ?? 'ERROR',
+      level: 'TRACE',
       transports: [
         new DailyRotateFile({
           filename: `%DATE%.log`,
-          dirname: this.configuration.logs.path ?? './logs',
+          dirname: './logs',
           datePattern: 'YYYY_MM_DD',
           maxSize: '500k',
           maxFiles: '14d',
@@ -142,6 +143,7 @@ export default class ConfigurationService extends Service {
       defaultNetwork: defaultConfigRaw['defaultNetwork'],
       networks: defaultConfigRaw['networks'] as unknown as INetworkConfig[],
       accounts: defaultConfigRaw['accounts'] as unknown as IAccountConfig[],
+      logs: defaultConfigRaw['logs'] as unknown as ILogConfig,
     };
     this.setConfiguration(config);
     return config;
