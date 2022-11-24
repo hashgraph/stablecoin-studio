@@ -125,14 +125,14 @@ const DangerZoneOperations = () => {
 			}
 
 			await SDKService.pause(requestPause);
-			// setDisabledFeatures({
-			// 	...disabledFeatures,
-			// 	pause: !disabledFeatures.pause,
-			// 	unpause: !disabledFeatures.unpause,
-				
-			// });
+			setDisabledFeatures({
+				...disabledFeatures,
+				pause: !disabledFeatures.pause,
+				unpause: !disabledFeatures.unpause,
+				delete: true,
+			});
 			onSuccess();
-			getAvailableFeatures()
+			
 		} catch (error: any) {
 			setErrorTransactionUrl(error.transactionUrl);
 			setErrorPauseOperation(error.toString());
@@ -147,12 +147,11 @@ const DangerZoneOperations = () => {
 			}
 
 			await SDKService.unpause(requestPause);
-			// setDisabledFeatures({
-			// 	...disabledFeatures,
-			// 	pause: !disabledFeatures.pause,
-			// 	unpause: !disabledFeatures.unpause,
-			// });
-			getAvailableFeatures();
+			setDisabledFeatures({
+				...disabledFeatures,
+				pause: !disabledFeatures.pause,
+				unpause: !disabledFeatures.unpause,
+			});
 			onSuccess();
 		} catch (error: any) {
 			setErrorTransactionUrl(error.transactionUrl);
@@ -169,6 +168,12 @@ const DangerZoneOperations = () => {
 			}
 
 			await SDKService.delete(requestDelete);
+			setDisabledFeatures({
+				...disabledFeatures,
+				pause: true,
+				unpause: true,
+				delete:true
+			});
 			onSuccess();
 		} catch (error: any) {
 			setErrorTransactionUrl(error.transactionUrl);

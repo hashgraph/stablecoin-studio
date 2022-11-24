@@ -116,7 +116,8 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 		}
 		return true;
 	});
-
+	// console.log(filteredCapabilities);
+	// console.log(capabilities);	
 	useEffect(() => {
 		switch (action.toString()) {
 			case 'giveRole':

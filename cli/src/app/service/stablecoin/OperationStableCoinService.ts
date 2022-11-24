@@ -1428,14 +1428,13 @@ export default class OperationStableCoinService extends Service {
       {
         role: {
           // TODO Eliminar el DELETE HTS cuando se pueda eliminar desde contrato (SOLO para ver la opción)
-          availability: capabilities.some((capability) =>
-            [Capabilities.DELETE, Capabilities.DELETE_HTS].includes(capability),
-          ),
+          availability: capabilities.includes(Capabilities.DELETE),
           name: 'Delete Role',
           value: StableCoinRole.DELETE_ROLE,
         },
       },
     ];
+
     const rolesAvailable = rolesAvailability.filter(
       ({ role }) => role.availability,
     );
