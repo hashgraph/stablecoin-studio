@@ -14,6 +14,10 @@ import type { DirectAccessProps } from '../../components/DirectAccess';
 import { Capabilities, Roles } from 'hedera-stable-coin-sdk';
 import type { IAccountToken } from '../../interfaces/IAccountToken';
 import type { IExternalToken } from '../../interfaces/IExternalToken';
+// import type { AppDispatch } from '../../store/store.js';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { useRefreshCoinInfo } from '../../hooks/useRefreshCoinInfo';
+
 
 const Operations = () => {
 	const { t } = useTranslation('operations');
@@ -32,6 +36,9 @@ const Operations = () => {
 		pause:false,
 		delete:false,
 	});
+	
+	useRefreshCoinInfo();
+
 	useEffect(() => {
 		if (selectedStableCoin) {
 			getAvailableFeatures();
@@ -88,7 +95,9 @@ const Operations = () => {
 						!capabilities?.includes(Capabilities.DELETE_HTS)
 				: !roles.includes(Roles.DELETE_ROLE) && !capabilities?.includes(Capabilities.DELETE_HTS),
 		};
-
+		// console.log(capabilities);
+		// console.log(areDisabled);
+		
 		setDisabledFeatures(areDisabled);
 	};
 
@@ -139,7 +148,7 @@ const Operations = () => {
 			icon: 'Warning',
 			route: NamedRoutes.DangerZone,
 			title: t('dangerZoneOperation'),
-			isDisabled: disabledFeatures?.pause &&  disabledFeatures?.delete,
+			isDisabled: disabledFeatures?.pause && disabledFeatures.delete,
 		},
 	];
 
