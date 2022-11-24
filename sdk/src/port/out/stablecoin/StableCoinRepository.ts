@@ -40,7 +40,6 @@ import { InvalidResponse } from './error/InvalidResponse.js';
 import { StableCoinNotFound } from './error/StableCoinNotFound.js';
 import LogService from '../../../app/service/log/LogService.js';
 
-
 export default class StableCoinRepository implements IStableCoinRepository {
 	private networkAdapter: NetworkAdapter;
 	private URI_BASE;
@@ -62,23 +61,30 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		coin: StableCoin,
 		account: Account,
 	): Promise<StableCoin> {
-		account.evmAddress = await this.accountToEvmAddress(account);
-		return this.networkAdapter.provider.deployStableCoin(coin, account);
+		try {
+			account.evmAddress = await this.accountToEvmAddress(account);
+			return this.networkAdapter.provider.deployStableCoin(coin, account);
+		} catch (error) {
+			LogService.logError(error);
+			throw error;
+		}
 	}
 
 	public async getListStableCoins(
 		account: Account,
 	): Promise<StableCoinList[]> {
 		try {
-			const url = this.URI_BASE +
-			'tokens?limit=100&account.id=' +
-			account.accountId.id
+			const url =
+				this.URI_BASE +
+				'tokens?limit=100&account.id=' +
+				account.accountId.id;
 
-			LogService.logTrace("Getting stable coin list from mirror node ->" , url )
-			const resObject: StableCoinList[] = [];
-			const res = await this.instance.get<ITokenList>(
-				url
+			LogService.logTrace(
+				'Getting stable coin list from mirror node ->',
+				url,
 			);
+			const resObject: StableCoinList[] = [];
+			const res = await this.instance.get<ITokenList>(url);
 			res.data.tokens.map((item: IToken) => {
 				resObject.push({
 					id: item.token_id,
@@ -93,15 +99,18 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 	public async getStableCoin(id: string): Promise<StableCoin> {
 		try {
-			const url = this.URI_BASE + 'tokens/' + id
-			LogService.logTrace("Getting stable coin from mirror node -> ",url)
+			const url = this.URI_BASE + 'tokens/' + id;
+			LogService.logTrace(
+				'Getting stable coin from mirror node -> ',
+				url,
+			);
 			const retry = 10;
 			let i = 0;
 
 			let response;
 			do {
 				response = await this.instance.get<IHederaStableCoinDetail>(
-					url
+					url,
 				);
 
 				i++;
@@ -316,7 +325,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		tokenId: string,
 		account: Account,
 	): Promise<string> {
-		const parameters = [
+		try {
+	const parameters = [
 			await this.accountToEvmAddress(new Account(targetId)),
 		];
 
@@ -340,6 +350,10 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		);
 
 		return balanceHedera.toString();
+} catch (error) {
+	LogService.logError(error);
+	throw error;
+}
 	}
 
 	public async cashIn(
