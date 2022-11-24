@@ -472,7 +472,7 @@ export interface Rescatable extends BaseContract {
     rescue(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<boolean>;
 
     revokeRole(
       role: PromiseOrValue<BytesLike>,

@@ -328,7 +328,7 @@ function supportsInterface(bytes4 interfaceId) external view returns (bool)
 ### wipe
 
 ```solidity
-function wipe(address account, uint32 amount) external nonpayable
+function wipe(address account, uint32 amount) external nonpayable returns (bool)
 ```
 
 
@@ -341,6 +341,12 @@ function wipe(address account, uint32 amount) external nonpayable
 |---|---|---|
 | account | address | The address of the account where to wipe the token |
 | amount | uint32 | The number of tokens to wipe |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
 
 
 

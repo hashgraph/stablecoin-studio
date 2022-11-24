@@ -22,11 +22,11 @@ interface IPausable {
      * @dev Pauses the token in order to prevent it from being involved in any kind of operation
      *
      */
-    function pause() external; 
+    function pause() external returns (bool); 
 
     /**
      * @dev Unpauses the token in order to allow it to be involved in any kind of operation
      *
      */
-    function unpause() external; 
+    function unpause() external returns (bool); 
 }

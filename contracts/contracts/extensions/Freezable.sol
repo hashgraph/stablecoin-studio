@@ -16,11 +16,14 @@ abstract contract Freezable is IFreezable, TokenOwner, Roles {
      function freeze(address account) 
         external       
         onlyRole(_getRoleId(roleName.FREEZE))  
+        returns (bool)
     {         
         int256 responseCode = IHederaTokenService(precompileAddress).freezeToken(_getTokenAddress(), account);
-        _checkResponse(responseCode); 
+        bool success = _checkResponse(responseCode);
         
         emit TransfersFrozen(_getTokenAddress(), account); 
+
+        return success;
     }
 
     /**
@@ -31,10 +34,13 @@ abstract contract Freezable is IFreezable, TokenOwner, Roles {
     function unfreeze(address account)
         external       
         onlyRole(FREEZE_ROLE)  
+        returns (bool)
     {         
         int256 responseCode = IHederaTokenService(precompileAddress).unfreezeToken(_getTokenAddress(), account);
-        _checkResponse(responseCode); 
+        bool success = _checkResponse(responseCode);
         
         emit TransfersUnfrozen(_getTokenAddress(), account);  
+
+        return success;
     }
 }

@@ -108,9 +108,9 @@ export interface IPausable extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    pause(overrides?: CallOverrides): Promise<void>;
+    pause(overrides?: CallOverrides): Promise<boolean>;
 
-    unpause(overrides?: CallOverrides): Promise<void>;
+    unpause(overrides?: CallOverrides): Promise<boolean>;
   };
 
   filters: {

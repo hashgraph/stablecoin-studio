@@ -233,7 +233,7 @@ function balanceOf(address account) external view returns (uint256)
 ### burn
 
 ```solidity
-function burn(uint256 amount) external nonpayable
+function burn(uint256 amount) external nonpayable returns (bool)
 ```
 
 
@@ -245,6 +245,12 @@ function burn(uint256 amount) external nonpayable
 | Name | Type | Description |
 |---|---|---|
 | amount | uint256 | The number of tokens to be burned |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
 
 ### decimals
 
@@ -283,13 +289,19 @@ function decreaseSupplierAllowance(address supplier, uint256 amount) external no
 ### deleteToken
 
 ```solidity
-function deleteToken() external nonpayable
+function deleteToken() external nonpayable returns (bool)
 ```
 
 
 
 *Deletes the token *
 
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
 
 ### dissociateToken
 
@@ -310,7 +322,7 @@ function dissociateToken(address adr) external nonpayable
 ### freeze
 
 ```solidity
-function freeze(address account) external nonpayable
+function freeze(address account) external nonpayable returns (bool)
 ```
 
 
@@ -322,6 +334,12 @@ function freeze(address account) external nonpayable
 | Name | Type | Description |
 |---|---|---|
 | account | address | The account whose transfers will be freezed for the token |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
 
 ### getRoleAdmin
 
@@ -538,7 +556,7 @@ function isUnlimitedSupplierAllowance(address supplier) external view returns (b
 ### mint
 
 ```solidity
-function mint(address account, uint256 amount) external nonpayable
+function mint(address account, uint256 amount) external nonpayable returns (bool)
 ```
 
 
@@ -551,6 +569,12 @@ function mint(address account, uint256 amount) external nonpayable
 |---|---|---|
 | account | address | The address that receives minted tokens |
 | amount | uint256 | The number of tokens to be minted |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
 
 ### name
 
@@ -572,13 +596,19 @@ function name() external view returns (string)
 ### pause
 
 ```solidity
-function pause() external nonpayable
+function pause() external nonpayable returns (bool)
 ```
 
 
 
 *Pauses the token in order to prevent it from being involved in any kind of operation*
 
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
 
 ### renounceRole
 
@@ -600,7 +630,7 @@ function renounceRole(bytes32 role, address account) external nonpayable
 ### rescue
 
 ```solidity
-function rescue(uint256 amount) external nonpayable
+function rescue(uint256 amount) external nonpayable returns (bool)
 ```
 
 
@@ -612,6 +642,12 @@ function rescue(uint256 amount) external nonpayable
 | Name | Type | Description |
 |---|---|---|
 | amount | uint256 | The number of tokens to rescuer |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
 
 ### resetSupplierAllowance
 
@@ -790,7 +826,7 @@ function transferFrom(address, address, uint256) external pure returns (bool)
 ### unfreeze
 
 ```solidity
-function unfreeze(address account) external nonpayable
+function unfreeze(address account) external nonpayable returns (bool)
 ```
 
 
@@ -803,10 +839,16 @@ function unfreeze(address account) external nonpayable
 |---|---|---|
 | account | address | The account whose transfers will be unfreezed for the token |
 
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
+
 ### unpause
 
 ```solidity
-function unpause() external nonpayable
+function unpause() external nonpayable returns (bool)
 ```
 
 
@@ -814,10 +856,16 @@ function unpause() external nonpayable
 *Unpauses the token in order to allow it to be involved in any kind of operation*
 
 
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
+
 ### wipe
 
 ```solidity
-function wipe(address account, uint32 amount) external nonpayable
+function wipe(address account, uint32 amount) external nonpayable returns (bool)
 ```
 
 
@@ -830,6 +878,12 @@ function wipe(address account, uint32 amount) external nonpayable
 |---|---|---|
 | account | address | The address of the account where to wipe the token |
 | amount | uint32 | The number of tokens to wipe |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
 
 
 

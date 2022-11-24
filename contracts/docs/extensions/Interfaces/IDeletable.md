@@ -13,13 +13,19 @@
 ### deleteToken
 
 ```solidity
-function deleteToken() external nonpayable
+function deleteToken() external nonpayable returns (bool)
 ```
 
 
 
 *Deletes the token*
 
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
 
 
 

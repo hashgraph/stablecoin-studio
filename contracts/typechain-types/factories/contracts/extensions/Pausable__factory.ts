@@ -343,7 +343,13 @@ const _abi = [
   {
     inputs: [],
     name: "pause",
-    outputs: [],
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -405,7 +411,13 @@ const _abi = [
   {
     inputs: [],
     name: "unpause",
-    outputs: [],
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },

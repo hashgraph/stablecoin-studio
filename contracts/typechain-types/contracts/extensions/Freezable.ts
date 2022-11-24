@@ -467,7 +467,7 @@ export interface Freezable extends BaseContract {
     freeze(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<boolean>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
@@ -518,7 +518,7 @@ export interface Freezable extends BaseContract {
     unfreeze(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<boolean>;
   };
 
   filters: {

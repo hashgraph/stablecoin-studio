@@ -102,7 +102,7 @@ export interface IRescatable extends BaseContract {
     rescue(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<boolean>;
   };
 
   filters: {

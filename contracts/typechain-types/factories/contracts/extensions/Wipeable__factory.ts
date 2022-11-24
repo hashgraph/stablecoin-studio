@@ -414,7 +414,13 @@ const _abi = [
       },
     ],
     name: "wipe",
-    outputs: [],
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },

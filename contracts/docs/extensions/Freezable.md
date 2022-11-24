@@ -149,7 +149,7 @@ function WIPE_ROLE() external view returns (bytes32)
 ### freeze
 
 ```solidity
-function freeze(address account) external nonpayable
+function freeze(address account) external nonpayable returns (bool)
 ```
 
 
@@ -161,6 +161,12 @@ function freeze(address account) external nonpayable
 | Name | Type | Description |
 |---|---|---|
 | account | address | The account whose transfers will be freezed for the token |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
 
 ### getRoleAdmin
 
@@ -344,7 +350,7 @@ function supportsInterface(bytes4 interfaceId) external view returns (bool)
 ### unfreeze
 
 ```solidity
-function unfreeze(address account) external nonpayable
+function unfreeze(address account) external nonpayable returns (bool)
 ```
 
 
@@ -356,6 +362,12 @@ function unfreeze(address account) external nonpayable
 | Name | Type | Description |
 |---|---|---|
 | account | address | The account whose transfers will be unfreezed for the token |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
 
 
 

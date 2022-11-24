@@ -430,7 +430,7 @@ export interface Deletable extends BaseContract {
 
     WIPE_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    deleteToken(overrides?: CallOverrides): Promise<void>;
+    deleteToken(overrides?: CallOverrides): Promise<boolean>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,

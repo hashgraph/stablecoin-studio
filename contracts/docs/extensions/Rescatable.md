@@ -289,7 +289,7 @@ function renounceRole(bytes32 role, address account) external nonpayable
 ### rescue
 
 ```solidity
-function rescue(uint256 amount) external nonpayable
+function rescue(uint256 amount) external nonpayable returns (bool)
 ```
 
 
@@ -301,6 +301,12 @@ function rescue(uint256 amount) external nonpayable
 | Name | Type | Description |
 |---|---|---|
 | amount | uint256 | The number of tokens to rescuer |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
 
 ### revokeRole
 

@@ -714,7 +714,7 @@ export interface CashIn extends BaseContract {
       account: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<boolean>;
 
     renounceRole(
       role: PromiseOrValue<BytesLike>,

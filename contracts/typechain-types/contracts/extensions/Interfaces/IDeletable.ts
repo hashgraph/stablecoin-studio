@@ -94,7 +94,7 @@ export interface IDeletable extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    deleteToken(overrides?: CallOverrides): Promise<void>;
+    deleteToken(overrides?: CallOverrides): Promise<boolean>;
   };
 
   filters: {

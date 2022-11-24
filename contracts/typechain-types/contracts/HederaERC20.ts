@@ -1174,7 +1174,7 @@ export interface HederaERC20 extends BaseContract {
     burn(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<boolean>;
 
     decimals(overrides?: CallOverrides): Promise<number>;
 
@@ -1184,7 +1184,7 @@ export interface HederaERC20 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    deleteToken(overrides?: CallOverrides): Promise<void>;
+    deleteToken(overrides?: CallOverrides): Promise<boolean>;
 
     dissociateToken(
       adr: PromiseOrValue<string>,
@@ -1194,7 +1194,7 @@ export interface HederaERC20 extends BaseContract {
     freeze(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<boolean>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
@@ -1257,11 +1257,11 @@ export interface HederaERC20 extends BaseContract {
       account: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<boolean>;
 
     name(overrides?: CallOverrides): Promise<string>;
 
-    pause(overrides?: CallOverrides): Promise<void>;
+    pause(overrides?: CallOverrides): Promise<boolean>;
 
     renounceRole(
       role: PromiseOrValue<BytesLike>,
@@ -1272,7 +1272,7 @@ export interface HederaERC20 extends BaseContract {
     rescue(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<boolean>;
 
     resetSupplierAllowance(
       supplier: PromiseOrValue<string>,
@@ -1320,15 +1320,15 @@ export interface HederaERC20 extends BaseContract {
     unfreeze(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<boolean>;
 
-    unpause(overrides?: CallOverrides): Promise<void>;
+    unpause(overrides?: CallOverrides): Promise<boolean>;
 
     wipe(
       account: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<boolean>;
   };
 
   filters: {

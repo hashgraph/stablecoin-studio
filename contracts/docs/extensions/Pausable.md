@@ -272,13 +272,19 @@ function hasRole(bytes32 role, address account) external view returns (bool)
 ### pause
 
 ```solidity
-function pause() external nonpayable
+function pause() external nonpayable returns (bool)
 ```
 
 
 
 *Pauses the token in order to prevent it from being involved in any kind of operation*
 
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
 
 ### renounceRole
 
@@ -339,13 +345,19 @@ function supportsInterface(bytes4 interfaceId) external view returns (bool)
 ### unpause
 
 ```solidity
-function unpause() external nonpayable
+function unpause() external nonpayable returns (bool)
 ```
 
 
 
 *Unpauses the token in order to allow it to be involved in any kind of operation*
 
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
 
 
 

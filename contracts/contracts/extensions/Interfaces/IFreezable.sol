@@ -25,12 +25,12 @@ interface IFreezable {
      *
      * @param account The account whose transfers will be freezed for the token
      */
-    function freeze(address account) external; 
+    function freeze(address account) external returns (bool); 
 
     /**
      * @dev Freezes transfers of the token for the `account`
      *
      * @param account The account whose transfers will be unfreezed for the token
      */
-    function unfreeze(address account) external; 
+    function unfreeze(address account) external returns (bool); 
 }

@@ -14,5 +14,5 @@ interface IDeletable {
      * @dev Deletes the token
      *
      */
-    function deleteToken() external; 
+    function deleteToken() external returns (bool); 
 }

@@ -19,6 +19,6 @@ interface IWipeable   {
     * @param account The address of the account where to wipe the token
     * @param amount The number of tokens to wipe
     */
-    function wipe(address account, uint32 amount) external;
+    function wipe(address account, uint32 amount) external returns (bool);
     
 }

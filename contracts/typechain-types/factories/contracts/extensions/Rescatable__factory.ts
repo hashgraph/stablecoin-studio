@@ -366,7 +366,13 @@ const _abi = [
       },
     ],
     name: "rescue",
-    outputs: [],
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },

@@ -474,7 +474,7 @@ export interface Pausable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    pause(overrides?: CallOverrides): Promise<void>;
+    pause(overrides?: CallOverrides): Promise<boolean>;
 
     renounceRole(
       role: PromiseOrValue<BytesLike>,
@@ -493,7 +493,7 @@ export interface Pausable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    unpause(overrides?: CallOverrides): Promise<void>;
+    unpause(overrides?: CallOverrides): Promise<boolean>;
   };
 
   filters: {

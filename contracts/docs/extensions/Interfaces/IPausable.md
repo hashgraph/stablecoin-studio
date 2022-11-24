@@ -13,7 +13,7 @@
 ### pause
 
 ```solidity
-function pause() external nonpayable
+function pause() external nonpayable returns (bool)
 ```
 
 
@@ -21,16 +21,28 @@ function pause() external nonpayable
 *Pauses the token in order to prevent it from being involved in any kind of operation*
 
 
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
+
 ### unpause
 
 ```solidity
-function unpause() external nonpayable
+function unpause() external nonpayable returns (bool)
 ```
 
 
 
 *Unpauses the token in order to allow it to be involved in any kind of operation*
 
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
 
 
 

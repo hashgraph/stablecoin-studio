@@ -56,8 +56,10 @@ abstract contract TokenOwner is ITokenOwner, HederaResponseCodes, Initializable 
     function _checkResponse(int256 responseCode) 
         internal 
         pure
+        returns (bool)
     {
         require(responseCode == HederaResponseCodes.SUCCESS, "Error");
+        return true;
     }
 
     /**
