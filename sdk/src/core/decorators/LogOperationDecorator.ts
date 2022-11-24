@@ -1,6 +1,5 @@
 import 'reflect-metadata';
 import LogService from '../../app/service/log/LogService.js';
-import { performance } from 'perf_hooks';
 
 export const LogOperation = (
 	target: unknown,
@@ -11,9 +10,9 @@ export const LogOperation = (
 	descriptor.value = function (...args: unknown[]): unknown {
 		LogService.logTrace(`Method called: ${propertyKey}`);
 		LogService.logTrace('Args: ', args);
-		const start = performance.now();
+		const start = Date.now();
 		const result = originalMethod.apply(this, args);
-		const finish = performance.now();
+		const finish = Date.now();
 		LogService.logTrace(`Execution time [${propertyKey}]: ${finish - start} milliseconds`);
 		return result;
 	};
