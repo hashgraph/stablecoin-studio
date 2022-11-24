@@ -43,12 +43,27 @@ export default class CommanderService extends Service {
         '-n, --network [network]',
         language.getText('commander.options.network'),
       )
+      .option(
+        '-lv, --log-level [logLevel]',
+        language.getText('commander.options.logLevel'),
+      )
+      .option(
+        '-lp, --log-path [logPath]',
+        language.getText('commander.options.logPath'),
+      )
       .description(language.getText('commander.wizardDescription'))
       .action(async (options): Promise<void> => {
         // Check if default configuration exists, if not, start init command
         await configurationService.init(
           {
-            defaultNetwork: options.network
+            defaultNetwork: options.network,
+            logs:
+              options.logLevel || options.logPath
+                ? {
+                    level: options.logLevel,
+                    path: options.logPath,
+                  }
+                : undefined,
           },
           options.config,
         );
@@ -57,6 +72,7 @@ export default class CommanderService extends Service {
           configurationService.getConfiguration().defaultNetwork,
         );
         // Initialize SDK
+        
         await utilsService.initSDK(utilsService.getCurrentNetwork().name);
         await utilsService.cleanAndShowBanner();
         await wizardService.mainMenu();

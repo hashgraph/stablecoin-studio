@@ -1,7 +1,7 @@
 import * as inquirer from 'inquirer';
 import figlet from 'figlet-promised';
 import Service from '../Service.js';
-import { language } from '../../../index.js';
+import { configurationService, language } from '../../../index.js';
 import Table from 'cli-table3';
 import { StableCoinList } from '../../../domain/stablecoin/StableCoinList.js';
 import {
@@ -42,6 +42,9 @@ export default class UtilitiesService extends Service {
     this.sdk = await new SDK({
       network: new HederaNetwork(networks[network]),
       mode: NetworkMode.EOA,
+      options: {
+        logOptions: configurationService.getLogConfiguration()
+      }
     }).init();
     return this.sdk;
   }

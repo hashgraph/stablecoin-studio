@@ -213,7 +213,6 @@ export default class SetConfigurationService extends Service {
 
     // Set a default factories
     const defaultCfgData = configurationService.getConfiguration();
-    defaultCfgData.factories = factories;
     configurationService.setConfiguration(defaultCfgData);
     return factories;
   }
