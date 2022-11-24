@@ -92,7 +92,6 @@ const KeySelector = ({ control, name, label, request }: KeySelectorProps) => {
 								// @ts-ignore
 								request[name] = value;
 								// @ts-ignore
-								console.log(request[name]);
 								// @ts-ignore
 								const res = handleRequestValidation(request.validate(name));
 								return res;
