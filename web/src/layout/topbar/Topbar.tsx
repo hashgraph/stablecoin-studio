@@ -17,7 +17,7 @@ const Topbar = () => {
 	};
 
 	const handleNavigateEC = () => {
-		RouterManager.to(navigate, NamedRoutes.ExternalToken);
+		RouterManager.to(navigate, NamedRoutes.ImportedToken);
 	};
 
 	return (

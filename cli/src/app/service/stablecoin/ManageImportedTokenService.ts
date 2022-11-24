@@ -9,7 +9,6 @@ import {
   configurationService,
 } from '../../../index.js';
 import { GetRolesRequest } from 'hedera-stable-coin-sdk';
-import colors from 'colors';
 import RoleStableCoinsService from './RoleStableCoinService';
 
 export default class ManageImportedTokenService extends Service {
@@ -209,6 +208,7 @@ export default class ManageImportedTokenService extends Service {
     const currentAccount = utilsService.getCurrentAccount();
     const filterTokens = tokens.filter((token) => {
       if (
+        currentAccount.importedTokens &&
         currentAccount.importedTokens.find(
           (tok) => tok.id === token.split(' - ')[0],
         )
@@ -217,15 +217,6 @@ export default class ManageImportedTokenService extends Service {
       }
       return true;
     });
-    const result = filterTokens.concat(
-      // language.getText('manageImportedToken.separator'),
-      currentAccount.importedTokens.map(
-        (token) =>
-          `${token.id} - ${token.symbol} - ` +
-          colors.yellow(colors.underline('Roles:')) +
-          colors.yellow(` ${token.roles.join(' | ')}`),
-      ),
-    );
-    return result;
+    return filterTokens;
   }
 }

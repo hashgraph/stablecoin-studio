@@ -60,6 +60,9 @@ const Roles = () => {
 		if (!capabilities!.includes(Capabilities.RESCUE) && option.label === 'Rescue') {
 			return false;
 		}
+		if (!capabilities!.includes(Capabilities.FREEZE) && option.label === 'Freeze') {
+			return false;
+		}
 		return true;
 	});
 

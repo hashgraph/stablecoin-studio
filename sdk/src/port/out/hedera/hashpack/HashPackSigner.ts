@@ -15,6 +15,7 @@ import {
 	TokenUnpauseTransaction,
 	TokenFreezeTransaction,
 	TokenUnfreezeTransaction,
+	TransferTransaction,
 } from '@hashgraph/sdk';
 import { HashConnect, MessageTypes } from 'hashconnect';
 import { HashConnectProvider } from 'hashconnect/provider/provider';
@@ -79,7 +80,8 @@ export class HashPackSigner implements ISigner {
 					transaction instanceof TokenUnpauseTransaction ||
 					transaction instanceof TokenDeleteTransaction ||
 					transaction instanceof TokenFreezeTransaction ||
-					transaction instanceof TokenUnfreezeTransaction
+					transaction instanceof TokenUnfreezeTransaction ||
+					transaction instanceof TransferTransaction
 				) {
 					let t = await transaction.freezeWithSigner(this.signer);
 					t = await transaction.signWithSigner(this.signer);

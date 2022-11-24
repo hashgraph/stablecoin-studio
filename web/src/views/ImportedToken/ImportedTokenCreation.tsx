@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Stack, useDisclosure } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import type { FieldValues } from 'react-hook-form';
 import BaseContainer from '../../components/BaseContainer';
@@ -19,25 +19,30 @@ import SDKService from '../../services/SDKService';
 import ModalNotification from '../../components/ModalNotification';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch } from '../../store/store';
-import ExternalTokenInfo from './ExternalTokenInfo';
+import ImportedTokenInfo from './ImportedTokenInfo';
 import type { IAccountToken } from '../../interfaces/IAccountToken.js';
 import type { IRole } from '../../interfaces/IRole.js';
 import type { IExternalToken } from '../../interfaces/IExternalToken';
-import { GetRolesRequest, GetStableCoinDetailsRequest, HashPackAccount } from 'hedera-stable-coin-sdk';
+import {
+	GetRolesRequest,
+	GetStableCoinDetailsRequest,
+	HashPackAccount,
+} from 'hedera-stable-coin-sdk';
 
-const ExternalTokenCreation = () => {
+const ImportedTokenCreation = () => {
 	const navigate = useNavigate();
+	const location = useLocation();
 	const dispatch = useDispatch<AppDispatch>();
 	const { t } = useTranslation('externalTokenInfo');
-
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
 	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
+
+	const stateTokenId = location?.state?.tokenId;
 
 	const form = useForm<FieldValues>({
 		mode: 'onChange',
 		defaultValues: {
-			autorenewAccount: accountInfo.account,
-			initialSupply: 0,
+			stableCoinId: stateTokenId,
 		},
 	});
 
@@ -59,11 +64,17 @@ const ExternalTokenCreation = () => {
 		}
 	}, [getValues(), currentStep]);
 
+	useEffect(() => {
+		if (stateTokenId) {
+			form.resetField('stableCoinId', { defaultValue: stateTokenId });
+		}
+	}, [location.state]);
+
 	const steps: Step[] = [
 		{
 			number: '01',
 			title: t('tabs.externalTokenInfo'),
-			children: <ExternalTokenInfo control={control} />,
+			children: <ImportedTokenInfo control={control} />,
 		},
 	];
 
@@ -87,10 +98,10 @@ const ExternalTokenCreation = () => {
 		let checkRoles: string[] | null = [];
 		try {
 			const details = await SDKService.getStableCoinDetails(
-				new GetStableCoinDetailsRequest({ 
-					id: stableCoinId 
-				})
-			);	
+				new GetStableCoinDetailsRequest({
+					id: stableCoinId,
+				}),
+			);
 			if (autoCheckRoles) {
 				checkRoles = await SDKService.getRoles(
 					new GetRolesRequest({
@@ -207,4 +218,4 @@ const ExternalTokenCreation = () => {
 	);
 };
 
-export default ExternalTokenCreation;
+export default ImportedTokenCreation;
