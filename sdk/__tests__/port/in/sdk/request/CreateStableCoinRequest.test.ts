@@ -184,7 +184,7 @@ describe('🧪 SDK Create Stable Coin Request', () => {
     const validations = request.validate();
     
     expect(validations).not.toBeNull();
-    expect(validations.length).toEqual(5);
+    expect(validations.length).toEqual(4);
   });
 
   it('Create and map a full request', () => {
