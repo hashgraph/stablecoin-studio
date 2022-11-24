@@ -192,7 +192,6 @@ export default class StableCoinService extends Service {
 				amount,
 				req.account,
 			);
-
 			if (resultCashIn && coin.treasury.id != req.targetId) {
 				if (coin.treasury.id === req?.account?.accountId.id) {
 					resultCashIn = await this.repository.transferHTS(

@@ -17,21 +17,14 @@ export default class BurnStableCoinsService extends Service {
   public async burnStableCoin(req: CashOutStableCoinRequest): Promise<void> {
     const sdk: SDK = utilsService.getSDK();
 
-    let respDetail;
-
     await utilsService.showSpinner(
-      sdk.cashOut(req).then((response) => (respDetail = response)),
-      {
+      sdk.cashOut(req), {
         text: language.getText('state.loading'),
         successText: language.getText('state.burnCompleted') + '\n',
       },
     );
 
-    console.log(
-      respDetail
-        ? language.getText('operation.success')
-        : language.getText('operation.reject'),
-    );
+    console.log(language.getText('operation.success'));
 
     utilsService.breakLine();
   }
