@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TransactionType, HTSResponse } from '../sign/ISigner.js';
 import {
 	TransactionResponse,
@@ -10,6 +11,7 @@ import Web3 from 'web3';
 import { MessageTypes } from 'hashconnect';
 import { Signer } from '@hashgraph/sdk/lib/Signer.js';
 import { TransactionResponseError } from './error/TransactionResponseError.js';
+import LogService from '../../../../app/service/log/LogService.js';
 
 export class TransactionResposeHandler {
 	public async manageResponse(
@@ -31,6 +33,7 @@ export class TransactionResposeHandler {
 			} else {
 				transId = transactionResponse.id;
 			}
+			LogService.logTrace('Response status: ', transactionReceipt.status);
 			return this.createHTSResponse(
 				transId,
 				responseType,
@@ -51,6 +54,10 @@ export class TransactionResposeHandler {
 			if (nameFunction) {
 				if (transactionRecord instanceof TransactionRecord) {
 					record = transactionRecord?.contractFunctionResult?.bytes;
+					LogService.logTrace(
+						'Response status: ',
+						transactionRecord.receipt,
+					);
 				} else if (transactionRecord instanceof Uint32Array) {
 					record = transactionRecord;
 				}

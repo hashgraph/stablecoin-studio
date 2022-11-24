@@ -41,7 +41,6 @@ import { HTSResponse, TransactionType } from '../sign/ISigner.js';
 import { TransactionResposeHandler } from '../transaction/TransactionResponseHandler.js';
 import ProviderError from '../error/HederaError.js';
 import Web3 from 'web3';
-import { log } from '../../../../core/log.js';
 import {
 	HederaERC1967Proxy__factory,
 	HederaERC20__factory,
@@ -65,8 +64,8 @@ import { InitializationError } from '../error/InitializationError.js';
 import { PairingError } from '../error/PairingError.js';
 import { DeploymentError } from '../error/DeploymentError.js';
 import { ErrorCode } from '../../../../core/error/BaseError.js';
-
-const logOpts = { newLine: true, clear: true };
+import LogService from '../../../../app/service/log/LogService.js';
+import { LogOperation } from '../../../../core/decorators/LogOperationDecorator.js';
 
 export default class HashPackProvider implements IProvider {
 	private hc: HashConnect;
@@ -126,7 +125,7 @@ export default class HashPackProvider implements IProvider {
 	}
 
 	public async connectWallet(): Promise<HashPackProvider> {
-		console.log('=====CONNECT WALLET HASPACKPROVIDER=====');
+		LogService.logInfo('=====CONNECT WALLET HASPACKPROVIDER=====');
 		this.hc.connectToLocalWallet();
 		return this;
 	}
@@ -134,10 +133,10 @@ export default class HashPackProvider implements IProvider {
 	public setUpHashConnectEvents(): void {
 		//This is fired when a extension is found
 		this.hc.foundExtensionEvent.on((data) => {
-			console.log('Found extension', data);
+			LogService.logTrace('Found extension', data);
 			if (data) {
 				this.availableExtension = true;
-				console.log(
+				LogService.logTrace(
 					'Emitted found',
 					this.eventService.emit(
 						ProviderEventNames.providerFoundExtensionEvent,
@@ -151,7 +150,7 @@ export default class HashPackProvider implements IProvider {
 			try {
 				if (data.pairingData) {
 					this.pairingData = data.pairingData;
-					console.log('Paired with wallet', data);
+					LogService.logInfo('Paired with wallet', data);
 					this.eventService.emit(
 						ProviderEventNames.providerPairingEvent,
 						this.pairingData,
@@ -167,7 +166,7 @@ export default class HashPackProvider implements IProvider {
 		//This is fired when HashConnect loses connection, pairs successfully, or is starting connection
 		this.hc.connectionStatusChangeEvent.on((state) => {
 			this.hashConnectConectionState = state;
-			console.log('hashconnect state change event', state);
+			LogService.logTrace('hashconnect state change event', state);
 			this.eventService.emit(
 				ProviderEventNames.providerConnectionStatusChangeEvent,
 				this.hashConnectConectionState,
@@ -187,11 +186,13 @@ export default class HashPackProvider implements IProvider {
 		return this.hashPackSigner.signer;
 	}
 
+	@LogOperation
 	public async callContract(
 		name: string,
 		params: ICallContractRequest | ICallContractWithAccountRequest,
 	): Promise<Uint8Array> {
 		const { contractId, parameters, gas, abi } = params;
+
 		if ('account' in params) {
 			this.hashPackSigner = new HashPackSigner(
 				this.hc,
@@ -298,6 +299,7 @@ export default class HashPackProvider implements IProvider {
 		}
 	}
 
+	@LogOperation
 	public async deployStableCoin(
 		stableCoin: StableCoin,
 		account: HashPackAccount,
@@ -319,9 +321,8 @@ export default class HashPackProvider implements IProvider {
 				HederaERC20__factory,
 				account,
 			);
-			log(
-				`Deploying ${HederaERC1967Proxy__factory.name} contract... please wait.`,
-				logOpts,
+			LogService.logTrace(
+				`Deploying ${HederaERC1967Proxy__factory.name} contract...`,
 			);
 			const proxyContract: HContractId = await this.deployContract(
 				HederaERC1967Proxy__factory,
@@ -338,9 +339,8 @@ export default class HashPackProvider implements IProvider {
 				abi: HederaERC20__factory.abi,
 				account: account,
 			});
-			log(
-				`Deploying ${HTSTokenOwner__factory.name} contract... please wait.`,
-				logOpts,
+			LogService.logTrace(
+				`Deploying ${HTSTokenOwner__factory.name} contract...`,
 			);
 			const tokenOwnerContract = await this.deployContract(
 				HTSTokenOwner__factory,
@@ -351,7 +351,7 @@ export default class HashPackProvider implements IProvider {
 				String(proxyContract),
 				String(tokenOwnerContract),
 			);
-			log('Creating token... please wait.', logOpts);
+			LogService.logTrace('Creating token...');
 			const hederaToken = await this.createToken(
 				tokenOwnerContract,
 				stableCoin.name,
@@ -371,7 +371,7 @@ export default class HashPackProvider implements IProvider {
 				safeCast<PublicKey>(stableCoin.supplyKey),
 				stableCoin.autoRenewAccount,
 			);
-			log('Setting up contract... please wait.', logOpts);
+			LogService.logTrace('Setting up contract...');
 			await this.callContract('setTokenAddress', {
 				contractId: stableCoin.memo.proxyContract,
 				parameters: [
@@ -397,9 +397,8 @@ export default class HashPackProvider implements IProvider {
 					account.accountId.id &&
 				account.evmAddress
 			) {
-				log(
-					'Associating administrator account to token... please wait.',
-					logOpts,
+				LogService.logTrace(
+					'Associating administrator account to token...',
 				);
 				await this.callContract('associateToken', {
 					contractId: stableCoin.memo.proxyContract,
@@ -499,7 +498,7 @@ export default class HashPackProvider implements IProvider {
 				);
 			const transactionResponse =
 				await this.hashPackSigner.signAndSendTransaction(transaction);
-			console.log(transactionResponse);
+			LogService.logTrace(transactionResponse);
 			const htsResponse: HTSResponse =
 				await this.transactionResposeHandler.manageResponse(
 					transactionResponse,
@@ -589,11 +588,10 @@ export default class HashPackProvider implements IProvider {
 			);
 		}
 		values.tokenId = htsResponse.receipt.tokenId;
-		log(
+		LogService.logTrace(
 			`Token ${name} created tokenId ${
 				values.tokenId
 			} - tokenAddress ${values.tokenId?.toSolidityAddress()}`,
-			logOpts,
 		);
 		return values;
 	}
@@ -648,6 +646,7 @@ export default class HashPackProvider implements IProvider {
 		return this.initData;
 	}
 
+	@LogOperation
 	public async wipeHTS(params: IWipeTokenRequest): Promise<boolean> {
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(
@@ -689,14 +688,14 @@ export default class HashPackProvider implements IProvider {
 				`An error has occurred when wipe the amount ${params.amount} in the account ${params.wipeAccountId} for tokenId ${params.tokenId}`,
 			);
 		}
-		log(
+		LogService.logTrace(
 			`Result wipe ${htsResponse.receipt.status}: account ${params.wipeAccountId}, tokenId ${params.tokenId}, amount ${params.amount}`,
-			logOpts,
 		);
 
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
+	@LogOperation
 	public async cashInHTS(params: IHTSTokenRequestAmount): Promise<boolean> {
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(
@@ -736,14 +735,14 @@ export default class HashPackProvider implements IProvider {
 				`An error has occurred when cash in the amount ${params.amount} in the account ${params.account.accountId.id} for tokenId ${params.tokenId}`,
 			);
 		}
-		log(
-			`Result Cash In ${htsResponse.receipt.status}: account ${params.account.accountId.id}, tokenId ${params.tokenId}, amount ${params.amount}`,
-			logOpts,
+		LogService.logTrace(
+			`Result cash In ${htsResponse.receipt.status}: account ${params.account.accountId.id}, tokenId ${params.tokenId}, amount ${params.amount}`,
 		);
 
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
+	@LogOperation
 	public async cashOutHTS(params: IHTSTokenRequestAmount): Promise<boolean> {
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(
@@ -784,14 +783,14 @@ export default class HashPackProvider implements IProvider {
 				`An error has occurred when cash out the amount ${params.amount} in the account ${params.account.accountId} for tokenId ${params.tokenId}`,
 			);
 		}
-		log(
+		LogService.logTrace(
 			`Result cash out ${htsResponse.receipt.status}: account ${params.account.accountId}, tokenId ${params.tokenId}, amount ${params.amount}`,
-			logOpts,
 		);
 
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
+	@LogOperation
 	public async transferHTS(params: ITransferTokenRequest): Promise<boolean> {
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(
@@ -844,6 +843,7 @@ export default class HashPackProvider implements IProvider {
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
+	@LogOperation
 	public async deleteHTS(params: IHTSTokenRequest): Promise<boolean> {
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(
@@ -881,14 +881,14 @@ export default class HashPackProvider implements IProvider {
 				`An error has occurred when delete with the account ${params?.account?.accountId.id} for tokenId ${params.tokenId}`,
 			);
 		}
-		log(
+		LogService.logTrace(
 			`Result deleted ${htsResponse.receipt.status}: account ${params.account.accountId}, tokenId ${params.tokenId}`,
-			logOpts,
 		);
 
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
+	@LogOperation
 	public async pauseHTS(params: IHTSTokenRequest): Promise<boolean> {
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(
@@ -926,14 +926,14 @@ export default class HashPackProvider implements IProvider {
 				`An error has occurred when paused with the account ${params?.account?.accountId.id} for tokenId ${params.tokenId}`,
 			);
 		}
-		log(
+		LogService.logTrace(
 			`Result paused ${htsResponse.receipt.status}: account ${params.account.accountId}, tokenId ${params.tokenId}`,
-			logOpts,
 		);
 
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
+	@LogOperation
 	public async unpauseHTS(params: IHTSTokenRequest): Promise<boolean> {
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(
@@ -971,14 +971,14 @@ export default class HashPackProvider implements IProvider {
 				`An error has occurred when unpaused with the account ${params?.account?.accountId.id} for tokenId ${params.tokenId}`,
 			);
 		}
-		log(
+		LogService.logTrace(
 			`Result unpaused ${htsResponse.receipt.status}: account ${params.account.accountId}, tokenId ${params.tokenId}`,
-			logOpts,
 		);
 
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
+	@LogOperation
 	public async freezeHTS(params: IHTSTokenRequestTargetId): Promise<boolean> {
 		if ('account' in params) {
 			this.provider = this.hc.getProvider(
@@ -1019,14 +1019,14 @@ export default class HashPackProvider implements IProvider {
 				`An error has occurred when freeze the account ${params.targetId} with the account ${params?.account?.accountId.id} for tokenId ${params.tokenId}`,
 			);
 		}
-		log(
+		LogService.logTrace(
 			`Result freeze ${htsResponse.receipt.status}: account ${params.account.accountId}, tokenId ${params.tokenId}, targetId ${params.targetId}`,
-			logOpts,
 		);
 
 		return htsResponse.receipt.status == Status.Success ? true : false;
 	}
 
+	@LogOperation
 	public async unfreezeHTS(
 		params: IHTSTokenRequestTargetId,
 	): Promise<boolean> {
@@ -1069,9 +1069,8 @@ export default class HashPackProvider implements IProvider {
 				`An error has occurred when unfreeze the account ${params.targetId} with the account ${params?.account?.accountId.id} for tokenId ${params.tokenId}`,
 			);
 		}
-		log(
+		LogService.logTrace(
 			`Result unfreeze ${htsResponse.receipt.status}: account ${params.account.accountId}, tokenId ${params.tokenId}, targetId ${params.targetId}`,
-			logOpts,
 		);
 
 		return htsResponse.receipt.status == Status.Success ? true : false;

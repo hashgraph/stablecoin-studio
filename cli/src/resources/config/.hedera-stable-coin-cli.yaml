@@ -27,3 +27,7 @@ accounts:
       importedTokens: [],
     },
   ]
+logs:
+  path: './logs'
+  level: 'ERROR'
+  

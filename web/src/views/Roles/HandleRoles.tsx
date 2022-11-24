@@ -146,7 +146,6 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 				);
 				break;
 			case 'editRole':
-				console.log(supplierLimitOption);
 
 				switch (supplierLimitOption) {
 					case 'INCREASE':
@@ -370,7 +369,6 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 			onSuccess();
 		} catch (error: any) {
 			setErrorTransactionUrl(error.transactionUrl);
-			console.log(error.toString());
 			onError();
 		}
 	};

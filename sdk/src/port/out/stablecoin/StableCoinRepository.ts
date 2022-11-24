@@ -38,6 +38,7 @@ import {
 import BigDecimal from '../../../domain/context/stablecoin/BigDecimal.js';
 import { InvalidResponse } from './error/InvalidResponse.js';
 import { StableCoinNotFound } from './error/StableCoinNotFound.js';
+import LogService from '../../../app/service/log/LogService.js';
 
 export default class StableCoinRepository implements IStableCoinRepository {
 	private networkAdapter: NetworkAdapter;
@@ -60,20 +61,30 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		coin: StableCoin,
 		account: Account,
 	): Promise<StableCoin> {
-		account.evmAddress = await this.accountToEvmAddress(account);
-		return this.networkAdapter.provider.deployStableCoin(coin, account);
+		try {
+			account.evmAddress = await this.accountToEvmAddress(account);
+			return this.networkAdapter.provider.deployStableCoin(coin, account);
+		} catch (error) {
+			LogService.logError(error);
+			throw error;
+		}
 	}
 
 	public async getListStableCoins(
 		account: Account,
 	): Promise<StableCoinList[]> {
 		try {
-			const resObject: StableCoinList[] = [];
-			const res = await this.instance.get<ITokenList>(
+			const url =
 				this.URI_BASE +
-					'tokens?limit=100&account.id=' +
-					account.accountId.id,
+				'tokens?limit=100&account.id=' +
+				account.accountId.id;
+
+			LogService.logTrace(
+				'Getting stable coin list from mirror node ->',
+				url,
 			);
+			const resObject: StableCoinList[] = [];
+			const res = await this.instance.get<ITokenList>(url);
 			res.data.tokens.map((item: IToken) => {
 				resObject.push({
 					id: item.token_id,
@@ -88,13 +99,18 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 	public async getStableCoin(id: string): Promise<StableCoin> {
 		try {
+			const url = this.URI_BASE + 'tokens/' + id;
+			LogService.logTrace(
+				'Getting stable coin from mirror node -> ',
+				url,
+			);
 			const retry = 10;
 			let i = 0;
 
 			let response;
 			do {
 				response = await this.instance.get<IHederaStableCoinDetail>(
-					this.URI_BASE + 'tokens/' + id,
+					url,
 				);
 
 				i++;
@@ -153,7 +169,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 				paused: response.data.pause_status,
 				freezeDefault: response.data.freeze_default,
 				// kycStatus: string;
-				deleted: response.data.deleted ?? false,
+				deleted: Boolean(response.data.deleted) ?? false,
 				autoRenewAccount: response.data.auto_renew_account,
 				autoRenewAccountPeriod:
 					response.data.auto_renew_period / (3600 * 24),
@@ -309,7 +325,8 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		tokenId: string,
 		account: Account,
 	): Promise<string> {
-		const parameters = [
+		try {
+	const parameters = [
 			await this.accountToEvmAddress(new Account(targetId)),
 		];
 
@@ -333,6 +350,10 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		);
 
 		return balanceHedera.toString();
+} catch (error) {
+	LogService.logError(error);
+	throw error;
+}
 	}
 
 	public async cashIn(
@@ -855,7 +876,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 	public async getAccountInfo(accountId: string): Promise<AccountInfo> {
 		try {
-			console.log(this.URI_BASE + 'accounts/' + accountId);
+			LogService.logTrace(this.URI_BASE + 'accounts/' + accountId);
 			const res = await axios.get<IAccount>(
 				this.URI_BASE + 'accounts/' + accountId,
 			);

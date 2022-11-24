@@ -25,9 +25,10 @@ import type {
 	GetAccountInfoRequest,
 	PauseStableCoinRequest,
 	DeleteStableCoinRequest,
-	FreezeAccountRequest,
-} from 'hedera-stable-coin-sdk';
-import { HederaNetwork, NetworkMode, SDK, HederaNetworkEnviroment } from 'hedera-stable-coin-sdk';
+	FreezeAccountRequest} from 'hedera-stable-coin-sdk';
+import {
+	LoggerTransports,
+ HederaNetwork, NetworkMode, SDK, HederaNetworkEnviroment } from 'hedera-stable-coin-sdk';
 
 export enum HashConnectConnectionState {
 	Connected = 'Connected',
@@ -63,6 +64,10 @@ export class SDKService {
 				mode: NetworkMode.HASHPACK,
 				options: {
 					appMetadata,
+					logOptions: {
+						level: process.env.REACT_APP_LOG_LEVEL ?? 'ERROR',
+						transports: new LoggerTransports.Console(),
+					},
 				},
 			});
 

@@ -140,6 +140,9 @@ const main = async () => {
 				description: 'description example for test app',
 				url: 'localhost',
 			},
+			logOptions: {
+				level: 'INFO',
+			}
 	});
 	// Init event listener
 	const onInit = () => {
@@ -186,6 +189,9 @@ const main = async (): Promise<void> => {
 				description: 'description example for test app',
 				url: 'localhost',
 			},
+			logOptions: {
+				level: 'INFO',
+			}
 	});
 	// Init event listener
 	const onInit = (): void => {
@@ -370,6 +376,10 @@ So for example:
 				accountId: '0.0.1',
 				privateKey: '1234',
 			}),
+			logOptions: {
+				level: 'INFO',
+				path: './logs'
+			}
 		},
 	});
 
@@ -401,7 +411,7 @@ The SDK has an `async` function to initialize the SDK, to which you optionally c
 		pairingString: string;
 		encryptionKey: string;
 		savedPairings: SavedPairingData[];
-         }
+	}
 
 
 	new SDK().init({
