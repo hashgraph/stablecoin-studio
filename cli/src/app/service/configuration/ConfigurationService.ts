@@ -55,7 +55,7 @@ export default class ConfigurationService extends Service {
   public getLogConfiguration(): LoggerOptions {
     if (!this.configuration.logs) return undefined;
     return {
-      level: 'TRACE',
+      level: this.configuration.logs.level,
       transports: [
         new DailyRotateFile({
           filename: `%DATE%.log`,
