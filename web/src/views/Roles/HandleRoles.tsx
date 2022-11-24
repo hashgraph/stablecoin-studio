@@ -31,6 +31,7 @@ import {
 } from 'hedera-stable-coin-sdk';
 import InputController from '../../components/Form/InputController';
 import { handleRequestValidation, validateDecimalsString } from '../../utils/validationsHelper';
+import { useRefreshCoinInfo } from '../../hooks/useRefreshCoinInfo';
 
 const supplier = 'Cash in';
 
@@ -115,7 +116,8 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 		}
 		return true;
 	});
-
+	// console.log(filteredCapabilities);
+	// console.log(capabilities);	
 	useEffect(() => {
 		switch (action.toString()) {
 			case 'giveRole':
@@ -548,6 +550,8 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 
 		return details;
 	};
+
+	useRefreshCoinInfo();
 
 	const details = getDetails();
 

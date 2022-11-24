@@ -6,20 +6,20 @@ import InputController from '../../../components/Form/InputController';
 import OperationLayout from '../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import {
 	SELECTED_WALLET_ACCOUNT_INFO,
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNT,
-	walletActions,
+	
 } from '../../../store/slices/walletSlice';
 import SDKService from '../../../services/SDKService';
 import { handleRequestValidation } from '../../../utils/validationsHelper';
-import { useState, useEffect } from 'react';
-import type { AppDispatch } from '../../../store/store.js';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
-import { CashOutStableCoinRequest, GetStableCoinDetailsRequest } from 'hedera-stable-coin-sdk';
+import { CashOutStableCoinRequest } from 'hedera-stable-coin-sdk';
+import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 
 const BurnOperation = () => {
 	const {
@@ -49,7 +49,7 @@ const BurnOperation = () => {
 		}),
 	);
 	const navigate = useNavigate();
-	const dispatch = useDispatch<AppDispatch>();
+	useRefreshCoinInfo();
 
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
@@ -57,9 +57,6 @@ const BurnOperation = () => {
 
 	const { t } = useTranslation(['burn', 'global', 'operations']);
 
-	useEffect(() => {
-		handleRefreshCoinInfo();
-	}, []);
 
 	const handleCloseModal = () => {
 		RouterManager.goBack(navigate);
@@ -81,39 +78,7 @@ const BurnOperation = () => {
 		}
 	};
 
-	const handleRefreshCoinInfo = async () => {
-		const stableCoinDetails = await SDKService.getStableCoinDetails(
-			new GetStableCoinDetailsRequest({
-				id: selectedStableCoin?.tokenId || '',
-			}),
-		);
-		dispatch(
-			walletActions.setSelectedStableCoin({
-				tokenId: stableCoinDetails?.tokenId,
-				initialSupply: stableCoinDetails?.initialSupply,
-				totalSupply: stableCoinDetails?.totalSupply,
-				maxSupply: stableCoinDetails?.maxSupply,
-				name: stableCoinDetails?.name,
-				symbol: stableCoinDetails?.symbol,
-				decimals: stableCoinDetails?.decimals,
-				id: stableCoinDetails?.tokenId,
-				treasuryId: stableCoinDetails?.treasuryId,
-				autoRenewAccount: stableCoinDetails?.autoRenewAccount,
-				memo: stableCoinDetails?.memo,
-				paused: stableCoinDetails?.paused,
-				deleted: stableCoinDetails?.deleted,
-				adminKey:
-					stableCoinDetails?.adminKey && JSON.parse(JSON.stringify(stableCoinDetails.adminKey)),
-				kycKey: stableCoinDetails?.kycKey && JSON.parse(JSON.stringify(stableCoinDetails.kycKey)),
-				freezeKey:
-					stableCoinDetails?.freezeKey && JSON.parse(JSON.stringify(stableCoinDetails.freezeKey)),
-				wipeKey:
-					stableCoinDetails?.wipeKey && JSON.parse(JSON.stringify(stableCoinDetails.wipeKey)),
-				supplyKey:
-					stableCoinDetails?.supplyKey && JSON.parse(JSON.stringify(stableCoinDetails.supplyKey)),
-			}),
-		);
-	};
+	
 
 	return (
 		<>

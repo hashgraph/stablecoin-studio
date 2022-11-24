@@ -21,9 +21,13 @@ import type { IAccountToken } from '../../../interfaces/IAccountToken';
 import type { IExternalToken } from '../../../interfaces/IExternalToken';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
 import SDKService from '../../../services/SDKService';
-
+import { useNavigate } from 'react-router-dom';
+import { NamedRoutes } from '../../../Router/NamedRoutes';
+import { RouterManager } from '../../../Router/RouterManager';
 const DangerZoneOperations = () => {
 	const { t } = useTranslation('operations');
+
+	const navigate = useNavigate();
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const accountId = useSelector(SELECTED_WALLET_PAIRED_ACCOUNTID);
@@ -129,7 +133,7 @@ const DangerZoneOperations = () => {
 				...disabledFeatures,
 				pause: !disabledFeatures.pause,
 				unpause: !disabledFeatures.unpause,
-				
+				delete: true,
 			});
 			onSuccess();
 		} catch (error: any) {
@@ -138,6 +142,7 @@ const DangerZoneOperations = () => {
 			onError();
 		}
 	};
+
 	const handleUnpause: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
 		try {
 			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId) {
@@ -167,7 +172,14 @@ const DangerZoneOperations = () => {
 			}
 
 			await SDKService.delete(requestDelete);
+			setDisabledFeatures({
+				...disabledFeatures,
+				pause: true,
+				unpause: true,
+				delete:true
+			});
 			onSuccess();
+			RouterManager.to(navigate, NamedRoutes.Operations);
 		} catch (error: any) {
 			setErrorTransactionUrl(error.transactionUrl);
 			setErrorDeleteOperation(error.toString());
