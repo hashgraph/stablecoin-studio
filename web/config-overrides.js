@@ -12,7 +12,6 @@ module.exports = function override(config) {
 		url: require.resolve('url'),
 		path: require.resolve('path-browserify'),
 		zlib: require.resolve('browserify-zlib'),
-		perf_hooks: require.resolve('perf_hooks'),
 		fs: false,
 	});
 	config.resolve.fallback = fallback;
