@@ -13,6 +13,8 @@ import SDKService from '../../../services/SDKService';
 import {
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNT,
+	SELECTED_WALLET_ACCOUNT_INFO,
+	walletActions,
 } from '../../../store/slices/walletSlice';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
@@ -29,6 +31,7 @@ const UnfreezeOperation = () => {
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
+	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 
 	const [errorOperation, setErrorOperation] = useState();
 	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
@@ -39,6 +42,10 @@ const UnfreezeOperation = () => {
 				accountId: account.accountId,
 			},
 			tokenId: selectedStableCoin?.tokenId ?? '',
+			publicKey:{
+				key:accountInfo.publicKey?.key??'',
+				type:accountInfo.publicKey?.type ??'ED25519'
+			},			
 			targetId: '',
 		}),
 	);
