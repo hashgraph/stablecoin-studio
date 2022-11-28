@@ -10,7 +10,7 @@ const expect = chai.expect;
 
 
 import { deployContractsWithSDK, initializeClients } from "../scripts/deploy";
-import {grantRole, revokeRole, hasRole, freeze, unfreeze, rescueToken, getBalanceOf } from "../scripts/contractsMethods";
+import {grantRole, revokeRole, hasRole, freeze, unfreeze, rescue, getBalanceOf } from "../scripts/contractsMethods";
 import {FREEZE_ROLE} from "../scripts/constants";
 
 let proxyAddress:any;
@@ -46,7 +46,7 @@ describe("Freeze Tests", function() {
       client2publickey] = initializeClients();
   
       // Deploy Token using Client
-      proxyAddress = await deployContractsWithSDK(
+      let result = await deployContractsWithSDK(
         TokenName, 
         TokenSymbol, 
         TokenDecimals, 
@@ -56,8 +56,9 @@ describe("Freeze Tests", function() {
         OPERATOR_ID, 
         OPERATOR_KEY, 
         OPERATOR_PUBLIC);    
-    });    
 
+      proxyAddress = result[0];
+    });    
 
     it("Admin account can grant and revoke freeze role to an account", async function() {    
       // Admin grants freeze role : success    
@@ -94,7 +95,7 @@ describe("Freeze Tests", function() {
       await expect(freeze(ContractId, proxyAddress, client2, OPERATOR_ID)).to.eventually.be.rejectedWith(Error);
     });  
 
-    it("An account without pause role can't unfreeze transfers of the token for the account", async function() {
+    it("An account without freeze role can't unfreeze transfers of the token for the account", async function() {
       await expect(unfreeze(ContractId, proxyAddress, client2, OPERATOR_ID)).to.eventually.be.rejectedWith(Error);
     });  
 
@@ -121,7 +122,7 @@ describe("Freeze Tests", function() {
       const AmountToRescue = BigNumber.from(1).mul(TokenFactor);
 
       await freeze(ContractId, proxyAddress, client, OPERATOR_ID);
-      await expect(rescueToken(ContractId, proxyAddress, AmountToRescue, client)).to.eventually.be.rejectedWith(Error);
+      await expect(rescue(ContractId, proxyAddress, AmountToRescue, client)).to.eventually.be.rejectedWith(Error);
 
       //Reset status
       await unfreeze(ContractId, proxyAddress, client, OPERATOR_ID);
@@ -132,7 +133,7 @@ describe("Freeze Tests", function() {
 
       await freeze(ContractId, proxyAddress, client, OPERATOR_ID);
       await unfreeze(ContractId, proxyAddress, client, OPERATOR_ID);
-      await rescueToken(ContractId, proxyAddress, AmountToRescue, client);
+      await rescue(ContractId, proxyAddress, AmountToRescue, client);
       const balance = await getBalanceOf(ContractId, proxyAddress, client, OPERATOR_ID);  
       expect(balance.toString()).to.equals(AmountToRescue.toString());
     });  

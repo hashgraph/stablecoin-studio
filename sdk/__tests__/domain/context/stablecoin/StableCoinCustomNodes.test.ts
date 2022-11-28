@@ -7,7 +7,7 @@ import {
   CreateStableCoinRequest,
 } from '../../../../src/index.js';
 import { AccountId as HederaAccountId } from '@hashgraph/sdk';
-import { getSDKAsync, REQUEST_ACCOUNTS } from '../../../core/core.js';
+import { getSDKAsync, REQUEST_ACCOUNTS, FACTORY_ID } from '../../../core/core.js';
 
 describe('🧪 [DOMAIN] StableCoin', () => {
   let sdk: SDK;

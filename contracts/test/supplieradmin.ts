@@ -37,7 +37,7 @@ let client2publickey: string;
 
 const TokenName = "MIDAS";
 const TokenSymbol = "MD";
-const TokenDecimals = 10;
+const TokenDecimals = 6;
 const TokenFactor = BigNumber.from(10).pow(TokenDecimals);
 const INIT_SUPPLY = BigNumber.from(0).mul(TokenFactor);
 const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor);
@@ -57,7 +57,7 @@ describe("Only Admin can grant, revoke, increase, decrease and reset cashin role
       client2publickey] = initializeClients();
   
       // Deploy Token using Client
-      proxyAddress = await deployContractsWithSDK(
+      let result = await deployContractsWithSDK(
         TokenName, 
         TokenSymbol, 
         TokenDecimals, 
@@ -66,7 +66,9 @@ describe("Only Admin can grant, revoke, increase, decrease and reset cashin role
         TokenMemo, 
         OPERATOR_ID, 
         OPERATOR_KEY, 
-        OPERATOR_PUBLIC);      
+        OPERATOR_PUBLIC); 
+        
+      proxyAddress = result[0];      
   });
 
   it("Admin account can grant and revoke supplier(s) role to an account", async function() {
@@ -197,7 +199,7 @@ describe("Grant unlimited supplier role and test its cashin right, maxsupply lim
       client2publickey] = initializeClients();
   
       // Deploy Token using Client
-      proxyAddress = await deployContractsWithSDK(
+      let result = await deployContractsWithSDK(
         TokenName, 
         TokenSymbol, 
         TokenDecimals, 
@@ -206,7 +208,9 @@ describe("Grant unlimited supplier role and test its cashin right, maxsupply lim
         TokenMemo, 
         OPERATOR_ID, 
         OPERATOR_KEY, 
-        OPERATOR_PUBLIC);      
+        OPERATOR_PUBLIC); 
+        
+      proxyAddress = result[0];     
     
     // Grant unlimited supplier role
     await grantUnlimitedSupplierRole(ContractId, proxyAddress, client, client2account);
@@ -274,7 +278,7 @@ describe("Grant limited supplier role and test its cashin right and cashin/maxsu
       client2publickey] = initializeClients();
   
       // Deploy Token using Client
-      proxyAddress = await deployContractsWithSDK(
+      let result = await deployContractsWithSDK(
         TokenName, 
         TokenSymbol, 
         TokenDecimals, 
@@ -283,7 +287,9 @@ describe("Grant limited supplier role and test its cashin right and cashin/maxsu
         TokenMemo, 
         OPERATOR_ID, 
         OPERATOR_KEY, 
-        OPERATOR_PUBLIC);      
+        OPERATOR_PUBLIC); 
+        
+      proxyAddress = result[0];     
        
     // Associate account to token
     await associateToken(ContractId, proxyAddress, client2, client2account); 

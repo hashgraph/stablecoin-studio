@@ -11,6 +11,7 @@ import {
 	StableCoinMemo,
 	PrivateKeyType,
 	Account,
+	TokenSupplyType
 } from '../../../in/sdk/sdk.js';
 import {
 	AccountId as HAccountId,
@@ -42,9 +43,9 @@ import { TransactionResposeHandler } from '../transaction/TransactionResponseHan
 import ProviderError from '../error/HederaError.js';
 import Web3 from 'web3';
 import {
-	HederaERC1967Proxy__factory,
 	HederaERC20__factory,
-	HTSTokenOwner__factory,
+	HederaERC20ProxyAdmin__factory,
+	HederaERC20Proxy__factory
 } from 'hedera-stable-coin-contracts/typechain-types/index.js';
 import { HashConnectProvider } from 'hashconnect/provider/provider';
 import ProviderEvent, { ProviderEventNames } from '../ProviderEvent.js';
@@ -322,38 +323,45 @@ export default class HashPackProvider implements IProvider {
 				account,
 			);
 			LogService.logTrace(
-				`Deploying ${HederaERC1967Proxy__factory.name} contract...`,
+				`Deploying ${HederaERC20ProxyAdmin__factory.name} contract...`,
+			);
+			const tokenProxyAdminContract = await this.deployContract(
+				HederaERC20ProxyAdmin__factory,
+				account,
+			);
+
+			// Set Proxy admin owner
+			LogService.logTrace(
+				`Setting the Proxy admin owner contract... please wait.`,
+			);
+			await this.callContract('transferOwnership', {
+				contractId: String(tokenProxyAdminContract),
+				parameters: [HAccountId.fromString(account.accountId.id).toSolidityAddress()],
+				gas: 250_000,
+				abi: HederaERC20ProxyAdmin__factory.abi,
+				account,
+			});
+			LogService.logTrace(
+				`Deploying ${HederaERC20Proxy__factory.name} contract...`,
 			);
 			const proxyContract: HContractId = await this.deployContract(
-				HederaERC1967Proxy__factory,
+				HederaERC20Proxy__factory,
 				account,
 				new ContractFunctionParameters()
 					.addAddress(tokenContract?.toSolidityAddress())
+					.addAddress(tokenProxyAdminContract?.toSolidityAddress())
 					.addBytes(new Uint8Array([])),
 			);
 
-			await this.callContract('initialize', {
-				contractId: String(proxyContract),
-				parameters: [],
-				gas: 280_000,
-				abi: HederaERC20__factory.abi,
-				account: account,
-			});
-			LogService.logTrace(
-				`Deploying ${HTSTokenOwner__factory.name} contract...`,
-			);
-			const tokenOwnerContract = await this.deployContract(
-				HTSTokenOwner__factory,
-				account,
-			);
+			// Creating the token
+			LogService.logTrace('Creating token... please wait.',);
 
 			stableCoin.memo = new StableCoinMemo(
-				String(proxyContract),
-				String(tokenOwnerContract),
+				String(proxyContract)
 			);
 			LogService.logTrace('Creating token...');
 			const hederaToken = await this.createToken(
-				tokenOwnerContract,
+				proxyContract,
 				stableCoin.name,
 				stableCoin.symbol,
 				stableCoin.decimals,
@@ -371,27 +379,21 @@ export default class HashPackProvider implements IProvider {
 				safeCast<PublicKey>(stableCoin.supplyKey),
 				stableCoin.autoRenewAccount,
 			);
-			LogService.logTrace('Setting up contract...');
-			await this.callContract('setTokenAddress', {
-				contractId: stableCoin.memo.proxyContract,
-				parameters: [
-					tokenOwnerContract.toSolidityAddress(),
-					TokenId.fromString(
-						hederaToken.tokenId.toString(),
-					).toSolidityAddress(),
-				],
-				gas: 80_000,
+
+			// Initialize Proxy
+			LogService.logTrace('Initializing the Proxy... please wait.');
+			await this.callContract('initialize', {
+				contractId: String(proxyContract),
+				parameters: [hederaToken.tokenId.toSolidityAddress(), HAccountId.fromString(account.accountId.id).toSolidityAddress()],
+				gas: 15000000,
 				abi: HederaERC20__factory.abi,
 				account,
 			});
-			await this.callContract('setERC20Address', {
-				contractId: String(tokenOwnerContract),
-				parameters: [proxyContract.toSolidityAddress()],
-				gas: 60_000,
-				abi: HTSTokenOwner__factory.abi,
-				account,
-			});
 
+			stableCoin.memo = new StableCoinMemo(
+				String(proxyContract)
+			);
+			
 			if (
 				hederaToken.treasuryAccountId.toString() !==
 					account.accountId.id &&

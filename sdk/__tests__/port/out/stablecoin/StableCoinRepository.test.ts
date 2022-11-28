@@ -3,6 +3,7 @@ import BaseError from '../../../../src/core/error/BaseError.js';
 import BigDecimal from '../../../../src/domain/context/stablecoin/BigDecimal.js';
 import {
   Account,
+  ContractId,
   HederaNetwork,
   HederaNetworkEnviroment,
   IStableCoinList,
@@ -36,7 +37,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
         symbol: baseCoin.symbol,
         decimals: baseCoin.decimals,
       }),
-      ACCOUNTS.testnet,
+      ACCOUNTS.testnet
     );
     expect(coin).not.toBeNull();
   });
@@ -49,7 +50,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
           symbol: baseCoin.symbol,
           decimals: baseCoin.decimals,
         }),
-        ACCOUNTS.testnet,
+        ACCOUNTS.testnet
       ),
     ).rejects.toThrow(BaseError);
   });

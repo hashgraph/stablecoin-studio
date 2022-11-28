@@ -10,7 +10,7 @@ const expect = chai.expect;
 
 
 import { deployContractsWithSDK, initializeClients } from "../scripts/deploy";
-import {grantRole, revokeRole, hasRole, deleteToken } from "../scripts/contractsMethods";
+import {grantRole, revokeRole, hasRole, deleteToken, Mint } from "../scripts/contractsMethods";
 import {DELETE_ROLE} from "../scripts/constants";
 
 let proxyAddress:any;
@@ -28,8 +28,8 @@ const TokenName = "MIDAS";
 const TokenSymbol = "MD";
 const TokenDecimals = 3;
 const TokenFactor = BigNumber.from(10).pow(TokenDecimals);
-const INIT_SUPPLY = BigNumber.from(0).mul(TokenFactor);
-const MAX_SUPPLY = BigNumber.from(1).mul(TokenFactor);
+const INIT_SUPPLY = BigNumber.from(1).mul(TokenFactor);
+const MAX_SUPPLY = BigNumber.from(10).mul(TokenFactor);
 const TokenMemo = "Hedera Accelerator Stable Coin"
 
 describe("Delete Tests", function() {
@@ -46,7 +46,7 @@ describe("Delete Tests", function() {
       client2publickey] = initializeClients();
   
       // Deploy Token using Client
-      proxyAddress = await deployContractsWithSDK(
+      let result = await deployContractsWithSDK(
         TokenName, 
         TokenSymbol, 
         TokenDecimals, 
@@ -56,6 +56,8 @@ describe("Delete Tests", function() {
         OPERATOR_ID, 
         OPERATOR_KEY, 
         OPERATOR_PUBLIC);    
+
+      proxyAddress = result[0];
     });    
 
 
@@ -63,12 +65,10 @@ describe("Delete Tests", function() {
       // Admin grants delete role : success    
       let result = await hasRole(DELETE_ROLE, ContractId, proxyAddress, client, client2account);
       expect(result).to.equals(false);
-  
       await grantRole(DELETE_ROLE, ContractId, proxyAddress, client, client2account);
-  
       result = await hasRole(DELETE_ROLE, ContractId, proxyAddress, client, client2account);
       expect(result).to.equals(true);
-  
+
       // Admin revokes delete role : success    
       await revokeRole(DELETE_ROLE, ContractId, proxyAddress, client, client2account);
       result = await hasRole(DELETE_ROLE, ContractId, proxyAddress, client, client2account);
@@ -95,12 +95,19 @@ describe("Delete Tests", function() {
     });  
 
 
-    /*it("An account with delete role can delete a token", async function() {
+    it("An account with delete role can delete a token", async function() {
+      // We first grant delete role to account
       await grantRole(DELETE_ROLE, ContractId, proxyAddress, client, client2account);
 
-      await expect(deleteToken(ContractId, proxyAddress, client2)).not.to.eventually.be.rejectedWith(Error);
+      // We check that the token exists by minting 1
+      await Mint(ContractId, proxyAddress, 1, client, OPERATOR_ID);
 
-      //Reset status
-      await revokeRole(DELETE_ROLE, ContractId, proxyAddress, client, client2account);
-    });*/  
+      // Delete the token
+      await deleteToken(ContractId, proxyAddress, client2);
+
+      // We check that the token does not exist by unsucessfully trying to mint 1
+      await expect(Mint(ContractId, proxyAddress, 1, client, OPERATOR_ID)).to.eventually.be.rejectedWith(Error);
+
+      //The status CANNOT BE revertedsince we deleted the token
+    });
 });

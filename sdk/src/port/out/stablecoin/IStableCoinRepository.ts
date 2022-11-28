@@ -1,5 +1,6 @@
 import { StableCoinRole } from '../../../core/enum.js';
 import Account from '../../../domain/context/account/Account.js';
+import ContractId from '../../../domain/context/contract/ContractId.js';
 import { Capabilities } from '../../../domain/context/stablecoin/Capabilities.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import StableCoinList from '../../in/sdk/response/StableCoinList.js';

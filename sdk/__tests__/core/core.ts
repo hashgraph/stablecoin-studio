@@ -15,6 +15,8 @@ const ACCOUNT_ID = '0.0.47822430';
 const PK =
   '302e020100300506032b65700422042010f13d4517ae383e2a1a0f915b2f6e70a823f3627e69ab1a8f516666fecdf386';
 const TYPE = 'ED25519';
+export const FACTORY_ID = '0.0.48908427';
+
 
 export const EXAMPLE_TOKEN = {
   proxyContractId: '0.0.48826169',

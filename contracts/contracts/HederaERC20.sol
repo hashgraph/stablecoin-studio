@@ -4,36 +4,37 @@ pragma solidity ^0.8.10;
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "./hts-precompile/HederaTokenService.sol";
-import "./IHederaERC20.sol";
-import "./extensions/Mintable.sol";
+import "./Interfaces/IHederaERC20.sol";
+import "./extensions/CashIn.sol";
 import "./extensions/Burnable.sol";
 import "./extensions/Wipeable.sol";
 import "./extensions/Pausable.sol";
 import "./extensions/Freezable.sol";
 import "./extensions/Rescatable.sol";
 import "./extensions/Deletable.sol";
-import "./Roles.sol";
+import "./hts-precompile/IHederaTokenService.sol";
+import "./extensions/TokenOwner.sol";
 
-contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20Upgradeable, 
-                       Mintable, Burnable, Wipeable, Pausable, Freezable, Deletable, Rescatable {
+contract HederaERC20 is IHederaERC20, IERC20Upgradeable, 
+                        CashIn, Burnable, Wipeable, Pausable, Freezable, Deletable, Rescatable {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
-    function initialize () 
+    function initialize (address tokenAddress, address originalSender) 
         external 
         payable 
         initializer 
     {
-        __AccessControl_init();       
-        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        grantUnlimitedSupplierRole(msg.sender);
-        _grantRole(BURN_ROLE, msg.sender);
-        _grantRole(RESCUE_ROLE, msg.sender);
-        _grantRole(WIPE_ROLE, msg.sender);
-        _grantRole(PAUSE_ROLE, msg.sender);
-        _grantRole(FREEZE_ROLE, msg.sender);
-        _grantRole(DELETE_ROLE, msg.sender);
+        tokenOwner_init(tokenAddress);
+        roles_init();       
+        _setupRole(_getRoleId(roleName.ADMIN), msg.sender); // Assign Admin role to calling contract/user in order to be able to set all the other roles
+        grantUnlimitedSupplierRole(originalSender);
+        _grantRole(_getRoleId(roleName.BURN), originalSender);
+        _grantRole(_getRoleId(roleName.RESCUE), originalSender);
+        _grantRole(_getRoleId(roleName.WIPE), originalSender);
+        _grantRole(_getRoleId(roleName.PAUSE), originalSender);
+        _grantRole(_getRoleId(roleName.FREEZE), originalSender);
+        _grantRole(_getRoleId(roleName.DELETE), originalSender);
+        _setupRole(_getRoleId(roleName.ADMIN), originalSender); // Assign Admin role to the provided address
     }
 
     /**
@@ -46,7 +47,7 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
         view 
         returns(string memory) 
     {
-        return IERC20MetadataUpgradeable(_tokenAddress).name();        
+        return IERC20MetadataUpgradeable(_getTokenAddress()).name();        
     }
 
     /**
@@ -59,7 +60,7 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
         view 
         returns(string memory) 
     {
-        return IERC20MetadataUpgradeable(_tokenAddress).symbol();
+        return IERC20MetadataUpgradeable(_getTokenAddress()).symbol();
     }
 
     /**
@@ -72,7 +73,7 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
         view 
         returns (uint8) 
     {
-        return IERC20MetadataUpgradeable(_tokenAddress).decimals();
+        return IERC20MetadataUpgradeable(_getTokenAddress()).decimals();
     }
 
     /**
@@ -86,7 +87,7 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
         override(IHederaERC20, IERC20Upgradeable) 
         returns (uint256) 
     {
-        return IERC20Upgradeable(_tokenAddress).totalSupply();
+        return IERC20Upgradeable(_getTokenAddress()).totalSupply();
     }
 
     /**
@@ -99,10 +100,27 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
     function balanceOf(address account) 
         public 
         view 
-        override(IHederaERC20, IERC20Upgradeable, Burnable) 
+        override(IHederaERC20, IERC20Upgradeable) 
         returns (uint256) 
     {
-        return IERC20Upgradeable(_tokenAddress).balanceOf(account);
+        return _balanceOf(account);
+    }
+
+    /**
+     * @dev Returns the number tokens that an account has
+     *
+     * @param account The address of the account to be consulted
+     *
+     * @return uint256 The number number tokens that an account has
+     */
+
+    function _balanceOf(address account) 
+        internal 
+        view 
+        override(TokenOwner) 
+        returns (uint256) 
+    {
+        return IERC20Upgradeable(_getTokenAddress()).balanceOf(account);
     }
 
     /**
@@ -110,15 +128,14 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
      *
      * @param adr The address of the account to associate
      *
-     * @return bool True if the account has been successfully associated with the token
      */
     function associateToken(address adr) 
         public 
-        returns (bool) 
     {         
-        int256 responseCode = HederaTokenService.associateToken(adr, _tokenAddress);
-        _checkResponse(responseCode);        
-        return true;
+        int256 responseCode = IHederaTokenService(precompileAddress).associateToken(adr, _getTokenAddress());
+        _checkResponse(responseCode);   
+
+        emit TokenAssociated (_getTokenAddress(), adr);
     }
 
     /**
@@ -126,15 +143,14 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
      *
      * @param adr The address of the account to dissociate
      *
-     * @return bool True if the account has been successfully dissociated from the token
      */
     function dissociateToken(address adr) 
         public 
-        returns (bool) 
     {         
-        int256 responseCode = HederaTokenService.dissociateToken(adr, _tokenAddress);
-        _checkResponse(responseCode);
-        return true;     
+        int256 responseCode = IHederaTokenService(precompileAddress).dissociateToken(adr, _getTokenAddress());
+        _checkResponse(responseCode);     
+
+        emit TokenDissociated (_getTokenAddress(), adr);
     }
 
     /**
@@ -142,19 +158,17 @@ contract HederaERC20 is IHederaERC20, HederaTokenService, Initializable, IERC20U
      *
      * @param from The address the tokens are transferred from
      * @param to The address the tokens are transferred to
-     * @return bool True if tokens were successfully transferred 
      */
     function _transfer(address from, address to, uint256 amount) 
         internal 
-        override
-        returns (bool) 
+        override(TokenOwner)
     {
-        require(balanceOf(from) >= amount, "Insufficient token balance");
+        require(_balanceOf(from) >= amount, "Insufficient token balance");
+
+        int256 responseCode = IHederaTokenService(precompileAddress).transferToken(_getTokenAddress(), from, to, int64(int256(amount)));
+        _checkResponse(responseCode); 
     
-        bool result = _htsTokenOwnerAddress.transfer(_tokenAddress, from, to, amount);
-        require(result, "Transfer error");
-    
-        return true;
+        emit TokenTransfer(_getTokenAddress(), from, to, amount);
     }
 
     /**

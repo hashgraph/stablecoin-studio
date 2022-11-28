@@ -16,6 +16,7 @@ import { INetworkConfig } from '../../../domain/configuration/interfaces/INetwor
 import colors from 'colors';
 import MaskData from 'maskdata';
 import { clear } from 'console';
+import { IFactoryConfig } from 'domain/configuration/interfaces/IFactoryConfig.js';
 
 /**
  * Utilities Service
@@ -24,6 +25,8 @@ export default class UtilitiesService extends Service {
   private sdk: SDK;
   private currentAccount: IAccountConfig;
   private currentNetwork: INetworkConfig;
+  private currentFactory: IFactoryConfig;
+
 
   constructor() {
     super('Utilities');
@@ -75,6 +78,18 @@ export default class UtilitiesService extends Service {
       throw new Error('Network not initialized');
     } else {
       return this.currentNetwork;
+    }
+  }
+
+  public setCurrentFactory(factory: IFactoryConfig): void {
+    this.currentFactory = factory;
+  }
+
+  public getCurrentFactory(): IFactoryConfig {
+    if (!this.currentFactory) {
+      throw new Error('Factory not initialized');
+    } else {
+      return this.currentFactory;
     }
   }
 

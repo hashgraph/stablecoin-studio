@@ -37,7 +37,6 @@ export interface HederaERC20Interface extends utils.Interface {
     "FREEZE_ROLE()": FunctionFragment;
     "PAUSE_ROLE()": FunctionFragment;
     "RESCUE_ROLE()": FunctionFragment;
-    "ROLES(uint256)": FunctionFragment;
     "WIPE_ROLE()": FunctionFragment;
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
@@ -46,40 +45,34 @@ export interface HederaERC20Interface extends utils.Interface {
     "burn(uint256)": FunctionFragment;
     "decimals()": FunctionFragment;
     "decreaseSupplierAllowance(address,uint256)": FunctionFragment;
-    "delegateTransferFrom(address,address,address,uint256)": FunctionFragment;
-    "delegateTransferFromNFT(address,address,address,uint256)": FunctionFragment;
     "deleteToken()": FunctionFragment;
     "dissociateToken(address)": FunctionFragment;
     "freeze(address)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
+    "getRoleId(uint8)": FunctionFragment;
     "getRoles(address)": FunctionFragment;
     "getTokenAddress()": FunctionFragment;
-    "getTokenOwnerAddress()": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "grantSupplierRole(address,uint256)": FunctionFragment;
     "grantUnlimitedSupplierRole(address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
     "increaseSupplierAllowance(address,uint256)": FunctionFragment;
-    "initialize()": FunctionFragment;
+    "initialize(address,address)": FunctionFragment;
     "isUnlimitedSupplierAllowance(address)": FunctionFragment;
     "mint(address,uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "pause()": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
-    "rescueHbar(uint256)": FunctionFragment;
-    "rescueToken(uint256)": FunctionFragment;
+    "rescue(uint256)": FunctionFragment;
     "resetSupplierAllowance(address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "revokeSupplierRole(address)": FunctionFragment;
-    "setTokenAddress(address,address)": FunctionFragment;
     "supplierAllowance(address)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "symbol()": FunctionFragment;
     "totalSupply()": FunctionFragment;
     "transfer(address,uint256)": FunctionFragment;
-    "transferFrom(address,address,address,uint256)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
-    "transferFromNFT(address,address,address,uint256)": FunctionFragment;
     "unfreeze(address)": FunctionFragment;
     "unpause()": FunctionFragment;
     "wipe(address,uint32)": FunctionFragment;
@@ -94,7 +87,6 @@ export interface HederaERC20Interface extends utils.Interface {
       | "FREEZE_ROLE"
       | "PAUSE_ROLE"
       | "RESCUE_ROLE"
-      | "ROLES"
       | "WIPE_ROLE"
       | "allowance"
       | "approve"
@@ -103,15 +95,13 @@ export interface HederaERC20Interface extends utils.Interface {
       | "burn"
       | "decimals"
       | "decreaseSupplierAllowance"
-      | "delegateTransferFrom"
-      | "delegateTransferFromNFT"
       | "deleteToken"
       | "dissociateToken"
       | "freeze"
       | "getRoleAdmin"
+      | "getRoleId"
       | "getRoles"
       | "getTokenAddress"
-      | "getTokenOwnerAddress"
       | "grantRole"
       | "grantSupplierRole"
       | "grantUnlimitedSupplierRole"
@@ -123,20 +113,16 @@ export interface HederaERC20Interface extends utils.Interface {
       | "name"
       | "pause"
       | "renounceRole"
-      | "rescueHbar"
-      | "rescueToken"
+      | "rescue"
       | "resetSupplierAllowance"
       | "revokeRole"
       | "revokeSupplierRole"
-      | "setTokenAddress"
       | "supplierAllowance"
       | "supportsInterface"
       | "symbol"
       | "totalSupply"
       | "transfer"
-      | "transferFrom(address,address,address,uint256)"
-      | "transferFrom(address,address,uint256)"
-      | "transferFromNFT"
+      | "transferFrom"
       | "unfreeze"
       | "unpause"
       | "wipe"
@@ -167,10 +153,6 @@ export interface HederaERC20Interface extends utils.Interface {
     functionFragment: "RESCUE_ROLE",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "ROLES",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
   encodeFunctionData(functionFragment: "WIPE_ROLE", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "allowance",
@@ -198,24 +180,6 @@ export interface HederaERC20Interface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "delegateTransferFrom",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "delegateTransferFromNFT",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>
-    ]
-  ): string;
-  encodeFunctionData(
     functionFragment: "deleteToken",
     values?: undefined
   ): string;
@@ -232,15 +196,15 @@ export interface HederaERC20Interface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
+    functionFragment: "getRoleId",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getRoles",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "getTokenAddress",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getTokenOwnerAddress",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -265,7 +229,7 @@ export interface HederaERC20Interface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "initialize",
-    values?: undefined
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "isUnlimitedSupplierAllowance",
@@ -282,11 +246,7 @@ export interface HederaERC20Interface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "rescueHbar",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "rescueToken",
+    functionFragment: "rescue",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -300,10 +260,6 @@ export interface HederaERC20Interface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "revokeSupplierRole",
     values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setTokenAddress",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "supplierAllowance",
@@ -323,26 +279,8 @@ export interface HederaERC20Interface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "transferFrom(address,address,address,uint256)",
+    functionFragment: "transferFrom",
     values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferFrom(address,address,uint256)",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferFromNFT",
-    values: [
-      PromiseOrValue<string>,
       PromiseOrValue<string>,
       PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>
@@ -380,7 +318,6 @@ export interface HederaERC20Interface extends utils.Interface {
     functionFragment: "RESCUE_ROLE",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "ROLES", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "WIPE_ROLE", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
@@ -396,14 +333,6 @@ export interface HederaERC20Interface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "delegateTransferFrom",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "delegateTransferFromNFT",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "deleteToken",
     data: BytesLike
   ): Result;
@@ -416,13 +345,10 @@ export interface HederaERC20Interface extends utils.Interface {
     functionFragment: "getRoleAdmin",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getRoleId", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getRoles", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getTokenAddress",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getTokenOwnerAddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
@@ -451,11 +377,7 @@ export interface HederaERC20Interface extends utils.Interface {
     functionFragment: "renounceRole",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "rescueHbar", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "rescueToken",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "rescue", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "resetSupplierAllowance",
     data: BytesLike
@@ -463,10 +385,6 @@ export interface HederaERC20Interface extends utils.Interface {
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "revokeSupplierRole",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setTokenAddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -484,15 +402,7 @@ export interface HederaERC20Interface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "transfer", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "transferFrom(address,address,address,uint256)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "transferFrom(address,address,uint256)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "transferFromNFT",
+    functionFragment: "transferFrom",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "unfreeze", data: BytesLike): Result;
@@ -501,7 +411,6 @@ export interface HederaERC20Interface extends utils.Interface {
 
   events: {
     "Approval(address,address,uint256)": EventFragment;
-    "HbarRescued(address,uint256,uint256)": EventFragment;
     "Initialized(uint8)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
@@ -509,18 +418,22 @@ export interface HederaERC20Interface extends utils.Interface {
     "SupplierAllowanceDecreased(address,address,uint256,uint256,uint256)": EventFragment;
     "SupplierAllowanceIncreased(address,address,uint256,uint256,uint256)": EventFragment;
     "SupplierAllowanceReset(address,address,uint256,uint256)": EventFragment;
+    "TokenAssociated(address,address)": EventFragment;
     "TokenDeleted(address)": EventFragment;
+    "TokenDissociated(address,address)": EventFragment;
     "TokenPaused(address)": EventFragment;
-    "TokenRescued(address,address,uint256,uint256)": EventFragment;
+    "TokenRescued(address,address,uint256)": EventFragment;
+    "TokenTransfer(address,address,address,uint256)": EventFragment;
     "TokenUnpaused(address)": EventFragment;
-    "TokensWiped(address,address,uint32)": EventFragment;
+    "TokensBurned(address,address,uint256)": EventFragment;
+    "TokensMinted(address,address,uint256,address)": EventFragment;
+    "TokensWiped(address,address,address,uint32)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
-    "TransfersFreezed(address,address)": EventFragment;
-    "TransfersUnfreezed(address,address)": EventFragment;
+    "TransfersFrozen(address,address)": EventFragment;
+    "TransfersUnfrozen(address,address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "HbarRescued"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
@@ -528,14 +441,19 @@ export interface HederaERC20Interface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "SupplierAllowanceDecreased"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SupplierAllowanceIncreased"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SupplierAllowanceReset"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TokenAssociated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TokenDeleted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TokenDissociated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TokenPaused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TokenRescued"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TokenTransfer"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TokenUnpaused"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TokensBurned"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TokensMinted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TokensWiped"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TransfersFreezed"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TransfersUnfreezed"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TransfersFrozen"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TransfersUnfrozen"): EventFragment;
 }
 
 export interface ApprovalEventObject {
@@ -549,18 +467,6 @@ export type ApprovalEvent = TypedEvent<
 >;
 
 export type ApprovalEventFilter = TypedEventFilter<ApprovalEvent>;
-
-export interface HbarRescuedEventObject {
-  rescuer: string;
-  amount: BigNumber;
-  oldAmount: BigNumber;
-}
-export type HbarRescuedEvent = TypedEvent<
-  [string, BigNumber, BigNumber],
-  HbarRescuedEventObject
->;
-
-export type HbarRescuedEventFilter = TypedEventFilter<HbarRescuedEvent>;
 
 export interface InitializedEventObject {
   version: number;
@@ -650,12 +556,35 @@ export type SupplierAllowanceResetEvent = TypedEvent<
 export type SupplierAllowanceResetEventFilter =
   TypedEventFilter<SupplierAllowanceResetEvent>;
 
+export interface TokenAssociatedEventObject {
+  token: string;
+  account: string;
+}
+export type TokenAssociatedEvent = TypedEvent<
+  [string, string],
+  TokenAssociatedEventObject
+>;
+
+export type TokenAssociatedEventFilter = TypedEventFilter<TokenAssociatedEvent>;
+
 export interface TokenDeletedEventObject {
   token: string;
 }
 export type TokenDeletedEvent = TypedEvent<[string], TokenDeletedEventObject>;
 
 export type TokenDeletedEventFilter = TypedEventFilter<TokenDeletedEvent>;
+
+export interface TokenDissociatedEventObject {
+  token: string;
+  account: string;
+}
+export type TokenDissociatedEvent = TypedEvent<
+  [string, string],
+  TokenDissociatedEventObject
+>;
+
+export type TokenDissociatedEventFilter =
+  TypedEventFilter<TokenDissociatedEvent>;
 
 export interface TokenPausedEventObject {
   token: string;
@@ -668,14 +597,26 @@ export interface TokenRescuedEventObject {
   rescuer: string;
   tokenId: string;
   amount: BigNumber;
-  oldBalance: BigNumber;
 }
 export type TokenRescuedEvent = TypedEvent<
-  [string, string, BigNumber, BigNumber],
+  [string, string, BigNumber],
   TokenRescuedEventObject
 >;
 
 export type TokenRescuedEventFilter = TypedEventFilter<TokenRescuedEvent>;
+
+export interface TokenTransferEventObject {
+  token: string;
+  sender: string;
+  receiver: string;
+  amount: BigNumber;
+}
+export type TokenTransferEvent = TypedEvent<
+  [string, string, string, BigNumber],
+  TokenTransferEventObject
+>;
+
+export type TokenTransferEventFilter = TypedEventFilter<TokenTransferEvent>;
 
 export interface TokenUnpausedEventObject {
   token: string;
@@ -684,13 +625,39 @@ export type TokenUnpausedEvent = TypedEvent<[string], TokenUnpausedEventObject>;
 
 export type TokenUnpausedEventFilter = TypedEventFilter<TokenUnpausedEvent>;
 
+export interface TokensBurnedEventObject {
+  burner: string;
+  token: string;
+  amount: BigNumber;
+}
+export type TokensBurnedEvent = TypedEvent<
+  [string, string, BigNumber],
+  TokensBurnedEventObject
+>;
+
+export type TokensBurnedEventFilter = TypedEventFilter<TokensBurnedEvent>;
+
+export interface TokensMintedEventObject {
+  minter: string;
+  token: string;
+  amount: BigNumber;
+  account: string;
+}
+export type TokensMintedEvent = TypedEvent<
+  [string, string, BigNumber, string],
+  TokensMintedEventObject
+>;
+
+export type TokensMintedEventFilter = TypedEventFilter<TokensMintedEvent>;
+
 export interface TokensWipedEventObject {
+  wiper: string;
   token: string;
   account: string;
   amount: number;
 }
 export type TokensWipedEvent = TypedEvent<
-  [string, string, number],
+  [string, string, string, number],
   TokensWipedEventObject
 >;
 
@@ -708,29 +675,28 @@ export type TransferEvent = TypedEvent<
 
 export type TransferEventFilter = TypedEventFilter<TransferEvent>;
 
-export interface TransfersFreezedEventObject {
+export interface TransfersFrozenEventObject {
   token: string;
   account: string;
 }
-export type TransfersFreezedEvent = TypedEvent<
+export type TransfersFrozenEvent = TypedEvent<
   [string, string],
-  TransfersFreezedEventObject
+  TransfersFrozenEventObject
 >;
 
-export type TransfersFreezedEventFilter =
-  TypedEventFilter<TransfersFreezedEvent>;
+export type TransfersFrozenEventFilter = TypedEventFilter<TransfersFrozenEvent>;
 
-export interface TransfersUnfreezedEventObject {
+export interface TransfersUnfrozenEventObject {
   token: string;
   account: string;
 }
-export type TransfersUnfreezedEvent = TypedEvent<
+export type TransfersUnfrozenEvent = TypedEvent<
   [string, string],
-  TransfersUnfreezedEventObject
+  TransfersUnfrozenEventObject
 >;
 
-export type TransfersUnfreezedEventFilter =
-  TypedEventFilter<TransfersUnfreezedEvent>;
+export type TransfersUnfrozenEventFilter =
+  TypedEventFilter<TransfersUnfrozenEvent>;
 
 export interface HederaERC20 extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -773,11 +739,6 @@ export interface HederaERC20 extends BaseContract {
 
     RESCUE_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-    ROLES(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
     WIPE_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     allowance(
@@ -815,22 +776,6 @@ export interface HederaERC20 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    delegateTransferFrom(
-      token: PromiseOrValue<string>,
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    delegateTransferFromNFT(
-      token: PromiseOrValue<string>,
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      serialNumber: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     deleteToken(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -850,14 +795,17 @@ export interface HederaERC20 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    getRoleId(
+      role: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     getRoles(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[string[]]>;
 
     getTokenAddress(overrides?: CallOverrides): Promise<[string]>;
-
-    getTokenOwnerAddress(overrides?: CallOverrides): Promise<[string]>;
 
     grantRole(
       role: PromiseOrValue<BytesLike>,
@@ -889,6 +837,8 @@ export interface HederaERC20 extends BaseContract {
     ): Promise<ContractTransaction>;
 
     initialize(
+      tokenAddress: PromiseOrValue<string>,
+      originalSender: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -915,12 +865,7 @@ export interface HederaERC20 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    rescueHbar(
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    rescueToken(
+    rescue(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -938,12 +883,6 @@ export interface HederaERC20 extends BaseContract {
 
     revokeSupplierRole(
       supplier: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    setTokenAddress(
-      htsTokenOwnerAddress: PromiseOrValue<string>,
-      tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -967,28 +906,12 @@ export interface HederaERC20 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    "transferFrom(address,address,address,uint256)"(
-      token: PromiseOrValue<string>,
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "transferFrom(address,address,uint256)"(
+    transferFrom(
       arg0: PromiseOrValue<string>,
       arg1: PromiseOrValue<string>,
       arg2: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
-
-    transferFromNFT(
-      token: PromiseOrValue<string>,
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      serialNumber: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
 
     unfreeze(
       account: PromiseOrValue<string>,
@@ -1019,11 +942,6 @@ export interface HederaERC20 extends BaseContract {
   PAUSE_ROLE(overrides?: CallOverrides): Promise<string>;
 
   RESCUE_ROLE(overrides?: CallOverrides): Promise<string>;
-
-  ROLES(
-    arg0: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
 
   WIPE_ROLE(overrides?: CallOverrides): Promise<string>;
 
@@ -1062,22 +980,6 @@ export interface HederaERC20 extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  delegateTransferFrom(
-    token: PromiseOrValue<string>,
-    from: PromiseOrValue<string>,
-    to: PromiseOrValue<string>,
-    amount: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  delegateTransferFromNFT(
-    token: PromiseOrValue<string>,
-    from: PromiseOrValue<string>,
-    to: PromiseOrValue<string>,
-    serialNumber: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   deleteToken(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -1097,14 +999,17 @@ export interface HederaERC20 extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  getRoleId(
+    role: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   getRoles(
     account: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<string[]>;
 
   getTokenAddress(overrides?: CallOverrides): Promise<string>;
-
-  getTokenOwnerAddress(overrides?: CallOverrides): Promise<string>;
 
   grantRole(
     role: PromiseOrValue<BytesLike>,
@@ -1136,6 +1041,8 @@ export interface HederaERC20 extends BaseContract {
   ): Promise<ContractTransaction>;
 
   initialize(
+    tokenAddress: PromiseOrValue<string>,
+    originalSender: PromiseOrValue<string>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1162,12 +1069,7 @@ export interface HederaERC20 extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  rescueHbar(
-    amount: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  rescueToken(
+  rescue(
     amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -1185,12 +1087,6 @@ export interface HederaERC20 extends BaseContract {
 
   revokeSupplierRole(
     supplier: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  setTokenAddress(
-    htsTokenOwnerAddress: PromiseOrValue<string>,
-    tokenAddress: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1214,28 +1110,12 @@ export interface HederaERC20 extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  "transferFrom(address,address,address,uint256)"(
-    token: PromiseOrValue<string>,
-    from: PromiseOrValue<string>,
-    to: PromiseOrValue<string>,
-    amount: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "transferFrom(address,address,uint256)"(
+  transferFrom(
     arg0: PromiseOrValue<string>,
     arg1: PromiseOrValue<string>,
     arg2: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<boolean>;
-
-  transferFromNFT(
-    token: PromiseOrValue<string>,
-    from: PromiseOrValue<string>,
-    to: PromiseOrValue<string>,
-    serialNumber: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
 
   unfreeze(
     account: PromiseOrValue<string>,
@@ -1267,11 +1147,6 @@ export interface HederaERC20 extends BaseContract {
 
     RESCUE_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    ROLES(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
     WIPE_ROLE(overrides?: CallOverrides): Promise<string>;
 
     allowance(
@@ -1289,7 +1164,7 @@ export interface HederaERC20 extends BaseContract {
     associateToken(
       adr: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
     balanceOf(
       account: PromiseOrValue<string>,
@@ -1309,28 +1184,12 @@ export interface HederaERC20 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    delegateTransferFrom(
-      token: PromiseOrValue<string>,
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    delegateTransferFromNFT(
-      token: PromiseOrValue<string>,
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      serialNumber: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     deleteToken(overrides?: CallOverrides): Promise<boolean>;
 
     dissociateToken(
       adr: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
     freeze(
       account: PromiseOrValue<string>,
@@ -1342,14 +1201,17 @@ export interface HederaERC20 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
+    getRoleId(
+      role: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     getRoles(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string[]>;
 
     getTokenAddress(overrides?: CallOverrides): Promise<string>;
-
-    getTokenOwnerAddress(overrides?: CallOverrides): Promise<string>;
 
     grantRole(
       role: PromiseOrValue<BytesLike>,
@@ -1380,7 +1242,11 @@ export interface HederaERC20 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    initialize(overrides?: CallOverrides): Promise<void>;
+    initialize(
+      tokenAddress: PromiseOrValue<string>,
+      originalSender: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     isUnlimitedSupplierAllowance(
       supplier: PromiseOrValue<string>,
@@ -1403,15 +1269,10 @@ export interface HederaERC20 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    rescueHbar(
+    rescue(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<void>;
-
-    rescueToken(
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<boolean>;
 
     resetSupplierAllowance(
       supplier: PromiseOrValue<string>,
@@ -1426,12 +1287,6 @@ export interface HederaERC20 extends BaseContract {
 
     revokeSupplierRole(
       supplier: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setTokenAddress(
-      htsTokenOwnerAddress: PromiseOrValue<string>,
-      tokenAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1455,28 +1310,12 @@ export interface HederaERC20 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    "transferFrom(address,address,address,uint256)"(
-      token: PromiseOrValue<string>,
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "transferFrom(address,address,uint256)"(
+    transferFrom(
       arg0: PromiseOrValue<string>,
       arg1: PromiseOrValue<string>,
       arg2: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
-
-    transferFromNFT(
-      token: PromiseOrValue<string>,
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      serialNumber: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     unfreeze(
       account: PromiseOrValue<string>,
@@ -1503,17 +1342,6 @@ export interface HederaERC20 extends BaseContract {
       spender?: PromiseOrValue<string> | null,
       value?: null
     ): ApprovalEventFilter;
-
-    "HbarRescued(address,uint256,uint256)"(
-      rescuer?: null,
-      amount?: null,
-      oldAmount?: null
-    ): HbarRescuedEventFilter;
-    HbarRescued(
-      rescuer?: null,
-      amount?: null,
-      oldAmount?: null
-    ): HbarRescuedEventFilter;
 
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
@@ -1594,34 +1422,83 @@ export interface HederaERC20 extends BaseContract {
       newAllowance?: null
     ): SupplierAllowanceResetEventFilter;
 
+    "TokenAssociated(address,address)"(
+      token?: null,
+      account?: null
+    ): TokenAssociatedEventFilter;
+    TokenAssociated(token?: null, account?: null): TokenAssociatedEventFilter;
+
     "TokenDeleted(address)"(token?: null): TokenDeletedEventFilter;
     TokenDeleted(token?: null): TokenDeletedEventFilter;
+
+    "TokenDissociated(address,address)"(
+      token?: null,
+      account?: null
+    ): TokenDissociatedEventFilter;
+    TokenDissociated(token?: null, account?: null): TokenDissociatedEventFilter;
 
     "TokenPaused(address)"(token?: null): TokenPausedEventFilter;
     TokenPaused(token?: null): TokenPausedEventFilter;
 
-    "TokenRescued(address,address,uint256,uint256)"(
+    "TokenRescued(address,address,uint256)"(
       rescuer?: null,
       tokenId?: null,
-      amount?: null,
-      oldBalance?: null
+      amount?: null
     ): TokenRescuedEventFilter;
     TokenRescued(
       rescuer?: null,
       tokenId?: null,
-      amount?: null,
-      oldBalance?: null
+      amount?: null
     ): TokenRescuedEventFilter;
+
+    "TokenTransfer(address,address,address,uint256)"(
+      token?: null,
+      sender?: null,
+      receiver?: null,
+      amount?: null
+    ): TokenTransferEventFilter;
+    TokenTransfer(
+      token?: null,
+      sender?: null,
+      receiver?: null,
+      amount?: null
+    ): TokenTransferEventFilter;
 
     "TokenUnpaused(address)"(token?: null): TokenUnpausedEventFilter;
     TokenUnpaused(token?: null): TokenUnpausedEventFilter;
 
-    "TokensWiped(address,address,uint32)"(
+    "TokensBurned(address,address,uint256)"(
+      burner?: null,
+      token?: null,
+      amount?: null
+    ): TokensBurnedEventFilter;
+    TokensBurned(
+      burner?: null,
+      token?: null,
+      amount?: null
+    ): TokensBurnedEventFilter;
+
+    "TokensMinted(address,address,uint256,address)"(
+      minter?: null,
+      token?: null,
+      amount?: null,
+      account?: null
+    ): TokensMintedEventFilter;
+    TokensMinted(
+      minter?: null,
+      token?: null,
+      amount?: null,
+      account?: null
+    ): TokensMintedEventFilter;
+
+    "TokensWiped(address,address,address,uint32)"(
+      wiper?: null,
       token?: null,
       account?: null,
       amount?: null
     ): TokensWipedEventFilter;
     TokensWiped(
+      wiper?: null,
       token?: null,
       account?: null,
       amount?: null
@@ -1638,20 +1515,20 @@ export interface HederaERC20 extends BaseContract {
       value?: null
     ): TransferEventFilter;
 
-    "TransfersFreezed(address,address)"(
+    "TransfersFrozen(address,address)"(
       token?: null,
       account?: null
-    ): TransfersFreezedEventFilter;
-    TransfersFreezed(token?: null, account?: null): TransfersFreezedEventFilter;
+    ): TransfersFrozenEventFilter;
+    TransfersFrozen(token?: null, account?: null): TransfersFrozenEventFilter;
 
-    "TransfersUnfreezed(address,address)"(
+    "TransfersUnfrozen(address,address)"(
       token?: null,
       account?: null
-    ): TransfersUnfreezedEventFilter;
-    TransfersUnfreezed(
+    ): TransfersUnfrozenEventFilter;
+    TransfersUnfrozen(
       token?: null,
       account?: null
-    ): TransfersUnfreezedEventFilter;
+    ): TransfersUnfrozenEventFilter;
   };
 
   estimateGas: {
@@ -1668,11 +1545,6 @@ export interface HederaERC20 extends BaseContract {
     PAUSE_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     RESCUE_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
-
-    ROLES(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     WIPE_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1711,22 +1583,6 @@ export interface HederaERC20 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    delegateTransferFrom(
-      token: PromiseOrValue<string>,
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    delegateTransferFromNFT(
-      token: PromiseOrValue<string>,
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      serialNumber: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     deleteToken(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -1746,14 +1602,17 @@ export interface HederaERC20 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getRoleId(
+      role: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getRoles(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getTokenAddress(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getTokenOwnerAddress(overrides?: CallOverrides): Promise<BigNumber>;
 
     grantRole(
       role: PromiseOrValue<BytesLike>,
@@ -1785,6 +1644,8 @@ export interface HederaERC20 extends BaseContract {
     ): Promise<BigNumber>;
 
     initialize(
+      tokenAddress: PromiseOrValue<string>,
+      originalSender: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1811,12 +1672,7 @@ export interface HederaERC20 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    rescueHbar(
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    rescueToken(
+    rescue(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -1834,12 +1690,6 @@ export interface HederaERC20 extends BaseContract {
 
     revokeSupplierRole(
       supplier: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setTokenAddress(
-      htsTokenOwnerAddress: PromiseOrValue<string>,
-      tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1863,27 +1713,11 @@ export interface HederaERC20 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "transferFrom(address,address,address,uint256)"(
-      token: PromiseOrValue<string>,
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "transferFrom(address,address,uint256)"(
+    transferFrom(
       arg0: PromiseOrValue<string>,
       arg1: PromiseOrValue<string>,
       arg2: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    transferFromNFT(
-      token: PromiseOrValue<string>,
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      serialNumber: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     unfreeze(
@@ -1918,11 +1752,6 @@ export interface HederaERC20 extends BaseContract {
     PAUSE_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     RESCUE_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    ROLES(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     WIPE_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1961,22 +1790,6 @@ export interface HederaERC20 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    delegateTransferFrom(
-      token: PromiseOrValue<string>,
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    delegateTransferFromNFT(
-      token: PromiseOrValue<string>,
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      serialNumber: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     deleteToken(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -1996,16 +1809,17 @@ export interface HederaERC20 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getRoleId(
+      role: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getRoles(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getTokenAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getTokenOwnerAddress(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     grantRole(
       role: PromiseOrValue<BytesLike>,
@@ -2037,6 +1851,8 @@ export interface HederaERC20 extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     initialize(
+      tokenAddress: PromiseOrValue<string>,
+      originalSender: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2063,12 +1879,7 @@ export interface HederaERC20 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    rescueHbar(
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    rescueToken(
+    rescue(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -2086,12 +1897,6 @@ export interface HederaERC20 extends BaseContract {
 
     revokeSupplierRole(
       supplier: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setTokenAddress(
-      htsTokenOwnerAddress: PromiseOrValue<string>,
-      tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2115,27 +1920,11 @@ export interface HederaERC20 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "transferFrom(address,address,address,uint256)"(
-      token: PromiseOrValue<string>,
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "transferFrom(address,address,uint256)"(
+    transferFrom(
       arg0: PromiseOrValue<string>,
       arg1: PromiseOrValue<string>,
       arg2: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    transferFromNFT(
-      token: PromiseOrValue<string>,
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      serialNumber: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     unfreeze(

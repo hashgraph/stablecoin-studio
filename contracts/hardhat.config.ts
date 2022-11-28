@@ -4,7 +4,7 @@ import "@hashgraph/sdk";
 import "hardhat-abi-exporter";
 import "hardhat-contract-sizer";
 import "@primitivefi/hardhat-dodoc";
-
+import "hardhat-gas-reporter"
 
 
 module.exports = {
@@ -13,7 +13,7 @@ module.exports = {
     settings: {
       optimizer: {
         enabled: true,
-        runs: 100,
+        runs: 1000,
       },
     },
   },
@@ -39,9 +39,27 @@ module.exports = {
             isED25519Type: true
           },
           {
-            account: "[include your account2]",
-            privateKey:"[include your private key2]",
-            publicKey:"[include your public key2]",
+            account: "[include your account]",
+            publicKey: "[include your private key]",
+            privateKey: "[include your public key]",
+            isED25519Type: true
+          },
+          {
+            account: "[include your account]",
+            privateKey:"[include your private key]",
+            publicKey:"[include your public key]",
+            isED25519Type: true
+          },
+          {
+            account: "[include your account]",
+            publicKey: "[include your private key]",
+            privateKey: "[include your public key]",
+            isED25519Type: true
+          },
+          {
+            account: "[include your account]",
+            publicKey: "[include your private key]",
+            privateKey: "[include your public key]",
             isED25519Type: true
           },
         ],

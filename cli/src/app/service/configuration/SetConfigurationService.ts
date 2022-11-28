@@ -9,6 +9,11 @@ import fs from 'fs-extra';
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 import { IConsensusNodeConfig } from '../../../domain/configuration/interfaces/IConsensusNodeConfig.js';
 import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
+import { IFactoryConfig } from 'domain/configuration/interfaces/IFactoryConfig.js';
+import {
+  FactoryAddressTestnet,
+  FactoryAddressPreviewnet
+} from 'hedera-stable-coin-sdk';
 const colors = require('colors');
 
 /**
@@ -30,6 +35,7 @@ export default class SetConfigurationService extends Service {
     await this.configurePath(path);
     await this.configureDefaultNetwork(network);
     await this.configureAccounts();
+    await this.configureFactories();
   }
 
   /**
@@ -192,6 +198,23 @@ export default class SetConfigurationService extends Service {
     defaultCfgData.accounts = accounts;
     configurationService.setConfiguration(defaultCfgData);
     return accounts;
+  }
+
+  public async configureFactories(): Promise<IFactoryConfig[]> {
+    const factories: IFactoryConfig[] = [];
+    factories.push({
+      id: FactoryAddressTestnet,
+      network: "testnet"
+    });
+    factories.push({
+      id: FactoryAddressPreviewnet,
+      network: "previewnet"
+    });
+
+    // Set a default factories
+    const defaultCfgData = configurationService.getConfiguration();
+    configurationService.setConfiguration(defaultCfgData);
+    return factories;
   }
 
   public async manageAccountMenu(): Promise<void> {

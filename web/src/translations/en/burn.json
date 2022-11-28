@@ -4,7 +4,7 @@
     "amountLabel": "Introduce amount",
     "amountPlaceholder": "0",
     "originAccountPlaceholder": "0.0.0",
-    "modalSuccessDesc": "{{amount}} tokens have been wiped from {{account}}.",
+    "modalSuccessDesc": "{{amount}} tokens have been burned.",
     "modalAction": {
         "subtitle": "Operation details review",
         "originAccount": "Account",

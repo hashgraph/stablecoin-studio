@@ -17,7 +17,7 @@ import {
 } from './types.js';
 
 import EventService from '../../../app/service/event/EventService.js';
-import { Account } from '../../in/sdk/sdk.js';
+import { Account, ContractId } from '../../in/sdk/sdk.js';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface Contract extends hethers.Contract {}

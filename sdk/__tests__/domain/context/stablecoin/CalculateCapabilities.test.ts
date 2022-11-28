@@ -10,7 +10,7 @@ import {
 } from '../../../../src/index.js';
 import { AccountId } from '@hashgraph/sdk';
 import { Capabilities } from '../../../../src/domain/context/stablecoin/Capabilities.js';
-import { ACCOUNTS, getSDKAsync, REQUEST_ACCOUNTS } from '../../../core/core.js';
+import { ACCOUNTS, getSDKAsync, REQUEST_ACCOUNTS, FACTORY_ID } from '../../../core/core.js';
 
 describe('🧪 [DOMAIN] StableCoin', () => {
   it('Create an stable coin with all funtionality', async () => {

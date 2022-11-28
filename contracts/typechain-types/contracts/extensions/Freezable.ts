@@ -36,18 +36,16 @@ export interface FreezableInterface extends utils.Interface {
     "FREEZE_ROLE()": FunctionFragment;
     "PAUSE_ROLE()": FunctionFragment;
     "RESCUE_ROLE()": FunctionFragment;
-    "ROLES(uint256)": FunctionFragment;
     "WIPE_ROLE()": FunctionFragment;
     "freeze(address)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
+    "getRoleId(uint8)": FunctionFragment;
     "getRoles(address)": FunctionFragment;
     "getTokenAddress()": FunctionFragment;
-    "getTokenOwnerAddress()": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
-    "setTokenAddress(address,address)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "unfreeze(address)": FunctionFragment;
   };
@@ -61,18 +59,16 @@ export interface FreezableInterface extends utils.Interface {
       | "FREEZE_ROLE"
       | "PAUSE_ROLE"
       | "RESCUE_ROLE"
-      | "ROLES"
       | "WIPE_ROLE"
       | "freeze"
       | "getRoleAdmin"
+      | "getRoleId"
       | "getRoles"
       | "getTokenAddress"
-      | "getTokenOwnerAddress"
       | "grantRole"
       | "hasRole"
       | "renounceRole"
       | "revokeRole"
-      | "setTokenAddress"
       | "supportsInterface"
       | "unfreeze"
   ): FunctionFragment;
@@ -102,10 +98,6 @@ export interface FreezableInterface extends utils.Interface {
     functionFragment: "RESCUE_ROLE",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "ROLES",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
   encodeFunctionData(functionFragment: "WIPE_ROLE", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "freeze",
@@ -116,15 +108,15 @@ export interface FreezableInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
+    functionFragment: "getRoleId",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getRoles",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "getTokenAddress",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getTokenOwnerAddress",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -142,10 +134,6 @@ export interface FreezableInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "revokeRole",
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setTokenAddress",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
@@ -178,20 +166,16 @@ export interface FreezableInterface extends utils.Interface {
     functionFragment: "RESCUE_ROLE",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "ROLES", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "WIPE_ROLE", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "freeze", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getRoleAdmin",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getRoleId", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getRoles", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getTokenAddress",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getTokenOwnerAddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
@@ -201,10 +185,6 @@ export interface FreezableInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "setTokenAddress",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
     data: BytesLike
@@ -216,16 +196,16 @@ export interface FreezableInterface extends utils.Interface {
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
-    "TransfersFreezed(address,address)": EventFragment;
-    "TransfersUnfreezed(address,address)": EventFragment;
+    "TransfersFrozen(address,address)": EventFragment;
+    "TransfersUnfrozen(address,address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TransfersFreezed"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TransfersUnfreezed"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TransfersFrozen"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TransfersUnfrozen"): EventFragment;
 }
 
 export interface InitializedEventObject {
@@ -272,29 +252,28 @@ export type RoleRevokedEvent = TypedEvent<
 
 export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
 
-export interface TransfersFreezedEventObject {
+export interface TransfersFrozenEventObject {
   token: string;
   account: string;
 }
-export type TransfersFreezedEvent = TypedEvent<
+export type TransfersFrozenEvent = TypedEvent<
   [string, string],
-  TransfersFreezedEventObject
+  TransfersFrozenEventObject
 >;
 
-export type TransfersFreezedEventFilter =
-  TypedEventFilter<TransfersFreezedEvent>;
+export type TransfersFrozenEventFilter = TypedEventFilter<TransfersFrozenEvent>;
 
-export interface TransfersUnfreezedEventObject {
+export interface TransfersUnfrozenEventObject {
   token: string;
   account: string;
 }
-export type TransfersUnfreezedEvent = TypedEvent<
+export type TransfersUnfrozenEvent = TypedEvent<
   [string, string],
-  TransfersUnfreezedEventObject
+  TransfersUnfrozenEventObject
 >;
 
-export type TransfersUnfreezedEventFilter =
-  TypedEventFilter<TransfersUnfreezedEvent>;
+export type TransfersUnfrozenEventFilter =
+  TypedEventFilter<TransfersUnfrozenEvent>;
 
 export interface Freezable extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -337,11 +316,6 @@ export interface Freezable extends BaseContract {
 
     RESCUE_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-    ROLES(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
     WIPE_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     freeze(
@@ -354,14 +328,17 @@ export interface Freezable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    getRoleId(
+      role: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     getRoles(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[string[]]>;
 
     getTokenAddress(overrides?: CallOverrides): Promise<[string]>;
-
-    getTokenOwnerAddress(overrides?: CallOverrides): Promise<[string]>;
 
     grantRole(
       role: PromiseOrValue<BytesLike>,
@@ -384,12 +361,6 @@ export interface Freezable extends BaseContract {
     revokeRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    setTokenAddress(
-      htsTokenOwnerAddress: PromiseOrValue<string>,
-      tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -418,11 +389,6 @@ export interface Freezable extends BaseContract {
 
   RESCUE_ROLE(overrides?: CallOverrides): Promise<string>;
 
-  ROLES(
-    arg0: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
   WIPE_ROLE(overrides?: CallOverrides): Promise<string>;
 
   freeze(
@@ -435,14 +401,17 @@ export interface Freezable extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  getRoleId(
+    role: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   getRoles(
     account: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<string[]>;
 
   getTokenAddress(overrides?: CallOverrides): Promise<string>;
-
-  getTokenOwnerAddress(overrides?: CallOverrides): Promise<string>;
 
   grantRole(
     role: PromiseOrValue<BytesLike>,
@@ -465,12 +434,6 @@ export interface Freezable extends BaseContract {
   revokeRole(
     role: PromiseOrValue<BytesLike>,
     account: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  setTokenAddress(
-    htsTokenOwnerAddress: PromiseOrValue<string>,
-    tokenAddress: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -499,11 +462,6 @@ export interface Freezable extends BaseContract {
 
     RESCUE_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    ROLES(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
     WIPE_ROLE(overrides?: CallOverrides): Promise<string>;
 
     freeze(
@@ -516,14 +474,17 @@ export interface Freezable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
+    getRoleId(
+      role: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     getRoles(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string[]>;
 
     getTokenAddress(overrides?: CallOverrides): Promise<string>;
-
-    getTokenOwnerAddress(overrides?: CallOverrides): Promise<string>;
 
     grantRole(
       role: PromiseOrValue<BytesLike>,
@@ -546,12 +507,6 @@ export interface Freezable extends BaseContract {
     revokeRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setTokenAddress(
-      htsTokenOwnerAddress: PromiseOrValue<string>,
-      tokenAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -603,20 +558,20 @@ export interface Freezable extends BaseContract {
       sender?: PromiseOrValue<string> | null
     ): RoleRevokedEventFilter;
 
-    "TransfersFreezed(address,address)"(
+    "TransfersFrozen(address,address)"(
       token?: null,
       account?: null
-    ): TransfersFreezedEventFilter;
-    TransfersFreezed(token?: null, account?: null): TransfersFreezedEventFilter;
+    ): TransfersFrozenEventFilter;
+    TransfersFrozen(token?: null, account?: null): TransfersFrozenEventFilter;
 
-    "TransfersUnfreezed(address,address)"(
+    "TransfersUnfrozen(address,address)"(
       token?: null,
       account?: null
-    ): TransfersUnfreezedEventFilter;
-    TransfersUnfreezed(
+    ): TransfersUnfrozenEventFilter;
+    TransfersUnfrozen(
       token?: null,
       account?: null
-    ): TransfersUnfreezedEventFilter;
+    ): TransfersUnfrozenEventFilter;
   };
 
   estimateGas: {
@@ -634,11 +589,6 @@ export interface Freezable extends BaseContract {
 
     RESCUE_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
-    ROLES(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     WIPE_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     freeze(
@@ -651,14 +601,17 @@ export interface Freezable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getRoleId(
+      role: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getRoles(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getTokenAddress(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getTokenOwnerAddress(overrides?: CallOverrides): Promise<BigNumber>;
 
     grantRole(
       role: PromiseOrValue<BytesLike>,
@@ -681,12 +634,6 @@ export interface Freezable extends BaseContract {
     revokeRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setTokenAddress(
-      htsTokenOwnerAddress: PromiseOrValue<string>,
-      tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -718,11 +665,6 @@ export interface Freezable extends BaseContract {
 
     RESCUE_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    ROLES(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     WIPE_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     freeze(
@@ -735,16 +677,17 @@ export interface Freezable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getRoleId(
+      role: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getRoles(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getTokenAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getTokenOwnerAddress(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     grantRole(
       role: PromiseOrValue<BytesLike>,
@@ -767,12 +710,6 @@ export interface Freezable extends BaseContract {
     revokeRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setTokenAddress(
-      htsTokenOwnerAddress: PromiseOrValue<string>,
-      tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

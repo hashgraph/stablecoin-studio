@@ -225,7 +225,7 @@ export const english = {
     ],
     adminFeatureOptions: ['Current user key', 'None'],
     featureOptions: [
-      'The smart contract',
+      'The Smart Contract',
       'Current user key',
       'Other key',
       'None',

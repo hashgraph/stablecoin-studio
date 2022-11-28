@@ -14,6 +14,7 @@ import Service from '../Service.js';
 import SetConfigurationService from '../configuration/SetConfigurationService.js';
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 
+
 /**
  * Create Stable Coin Service
  */
@@ -105,13 +106,28 @@ export default class CreateStableCoinService extends Service {
       decimals: 6,
     });
 
+    // Factory
+    /*tokenToCreate.stableCoinFactory = await utilsService.defaultSingleAsk(
+      language.getText('stablecoin.askFactory'),
+      tokenToCreate.stableCoinFactory || '0.0.0',
+    );
+    await utilsService.handleValidation(
+      () => tokenToCreate.validate('stableCoinFactory'),
+      async () => {
+        tokenToCreate.stableCoinFactory = await utilsService.defaultSingleAsk(
+          language.getText('stablecoin.askFactory'),
+          tokenToCreate.stableCoinFactory || '0.0.0',
+        );
+      },
+    );*/
+
     // Name
     tokenToCreate.name = await utilsService.defaultSingleAsk(
       language.getText('stablecoin.askName'),
       tokenToCreate.name || 'HEDERACOIN',
     );
     await utilsService.handleValidation(
-      () => tokenToCreate.validate('autoRenewAccount'),
+      () => tokenToCreate.validate('name'),
       async () => {
         tokenToCreate.name = await utilsService.defaultSingleAsk(
           language.getText('stablecoin.askName'),
@@ -269,7 +285,12 @@ export default class CreateStableCoinService extends Service {
           : wipeKey.key !== 'null'
           ? wipeKey
           : 'The Smart Contract',
-      adminKey: adminKey ?? 'None',
+      adminKey: 
+        adminKey === undefined
+          ? 'None'
+          : adminKey.key !== 'null'
+          ? adminKey
+          : 'The Smart Contract',
       supplyKey:
         supplyKey === undefined
           ? 'None'

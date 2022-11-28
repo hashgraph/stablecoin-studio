@@ -47,7 +47,7 @@ describe("Wipe Tests", function() {
       client2publickey] = initializeClients();
   
       // Deploy Token using Client
-      proxyAddress = await deployContractsWithSDK(
+      let result = await deployContractsWithSDK(
         TokenName, 
         TokenSymbol, 
         TokenDecimals, 
@@ -56,7 +56,9 @@ describe("Wipe Tests", function() {
         TokenMemo, 
         OPERATOR_ID, 
         OPERATOR_KEY, 
-        OPERATOR_PUBLIC);       
+        OPERATOR_PUBLIC); 
+        
+      proxyAddress = result[0];    
   });
 
   it("Admin account can grant and revoke wipe role to an account", async function() {     

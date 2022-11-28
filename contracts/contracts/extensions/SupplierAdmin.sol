@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.10;
 
-import "./ISupplierAdmin.sol";
-import "../TokenOwner.sol";
-import "../Roles.sol";
+import "./Interfaces/ISupplierAdmin.sol";
+import "./TokenOwner.sol";
+import "./Roles.sol";
 
 abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
 
@@ -87,11 +87,11 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
     function grantSupplierRole(address supplier, uint256 amount)
         external 
         virtual 
-        onlyRole(DEFAULT_ADMIN_ROLE) 
+        onlyRole(_getRoleId(roleName.ADMIN)) 
     {
         require(!_unlimitedSupplierAllowances[supplier], "Account already has unlimited supplier allowance");
         _supplierAllowances[supplier] = amount;
-        _grantRole(CASHIN_ROLE, supplier);
+        _grantRole(_getRoleId(roleName.CASHIN), supplier);
         
     }
 
@@ -105,11 +105,11 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
     function grantUnlimitedSupplierRole(address supplier)
         public 
         virtual 
-        onlyRole(DEFAULT_ADMIN_ROLE) 
+        onlyRole(_getRoleId(roleName.ADMIN)) 
     {
         _unlimitedSupplierAllowances[supplier] = true;
         _supplierAllowances[supplier] = 0;
-        _grantRole(CASHIN_ROLE, supplier);
+        _grantRole(_getRoleId(roleName.CASHIN), supplier);
     }
 
     /**
@@ -122,11 +122,11 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
     function revokeSupplierRole(address supplier)
         external 
         virtual 
-        onlyRole(DEFAULT_ADMIN_ROLE) 
+        onlyRole(_getRoleId(roleName.ADMIN)) 
     {
         _supplierAllowances[supplier] = 0;
         _unlimitedSupplierAllowances[supplier] = false;
-        _revokeRole(CASHIN_ROLE, supplier);
+        _revokeRole(_getRoleId(roleName.CASHIN), supplier);
     }
 
     /**
@@ -139,7 +139,7 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
     function resetSupplierAllowance(address supplier) 
         external 
         virtual 
-        onlyRole(DEFAULT_ADMIN_ROLE) 
+        onlyRole(_getRoleId(roleName.ADMIN)) 
     {    
         uint256 oldAllowance = _supplierAllowances[supplier];
         uint256 newAllowance = 0;
@@ -160,7 +160,7 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
     function increaseSupplierAllowance(address supplier, uint256 amount) 
         external 
         virtual 
-        onlyRole(DEFAULT_ADMIN_ROLE) 
+        onlyRole(_getRoleId(roleName.ADMIN)) 
     {
         require(amount > 0, "Amount must be greater than zero");
         
@@ -183,7 +183,7 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
     function decreaseSupplierAllowance(address supplier, uint256 amount) 
         external 
         virtual 
-        onlyRole(DEFAULT_ADMIN_ROLE) 
+        onlyRole(_getRoleId(roleName.ADMIN)) 
     {    
         _decreaseSupplierAllowance(supplier, amount);
     }    

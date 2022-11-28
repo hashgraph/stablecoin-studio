@@ -17,7 +17,7 @@ describe('🧪 SDK Create Stable Coin Request', () => {
       name: 'name',
       symbol: 'symbol',
       decimals: 5,
-      treasury: '0.0.1',
+      treasury: '0.0.1'
     });
     expect(request).not.toBeNull();
     const other: ICreateStableCoinServiceRequestModel = RequestMapper.map(
@@ -96,7 +96,7 @@ describe('🧪 SDK Create Stable Coin Request', () => {
         BigNumber.from(MAX_SUPPLY),
         18,
       ).toString(),
-      supplyType: TokenSupplyType.INFINITE
+      supplyType: TokenSupplyType.INFINITE,
     });
     expect(request).not.toBeNull();
     const validations = request.validate();
@@ -163,7 +163,7 @@ describe('🧪 SDK Create Stable Coin Request', () => {
     expect(validationsOk.length).toBe(0);
   });
 
-  it('Create and validate request, fail with [initialSupply, adminKey, treasury, autoRenewAccount]', () => {
+  it('Create and validate request, fail with [initialSupply, adminKey, treasury, autoRenewAccount, factory]', () => {
     const request: CreateStableCoinRequest = new CreateStableCoinRequest({
       account: {
         accountId: '0.0.1',

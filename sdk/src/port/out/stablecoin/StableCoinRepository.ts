@@ -59,7 +59,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 	public async saveCoin(
 		coin: StableCoin,
-		account: Account,
+		account: Account
 	): Promise<StableCoin> {
 		try {
 			account.evmAddress = await this.accountToEvmAddress(account);
@@ -109,10 +109,11 @@ export default class StableCoinRepository implements IStableCoinRepository {
 
 			let response;
 			do {
+				if(i > 0) await new Promise( resolve => setTimeout(resolve, 2000) );
+
 				response = await this.instance.get<IHederaStableCoinDetail>(
 					url,
 				);
-
 				i++;
 			} while (response.status !== 200 && i < retry);
 
@@ -202,7 +203,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 			if (
 				!deleted &&
 				!paused &&
-				stableCoin.memo.htsAccount == stableCoin.treasury.toString()
+				stableCoin.memo.proxyContract == stableCoin.treasury.toString()
 			) {
 				listCapabilities.push(Capabilities.RESCUE);
 			}
@@ -333,7 +334,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		const params: ICallContractWithAccountRequest = {
 			contractId: proxyContractId,
 			parameters,
-			gas: 36000,
+			gas: 40000,
 			abi: HederaERC20__factory.abi,
 			account,
 		};
@@ -668,7 +669,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		};
 
 		return await this.networkAdapter.provider.callContract(
-			'rescueToken',
+			'rescue',
 			params,
 		);
 	}
@@ -784,7 +785,7 @@ export default class StableCoinRepository implements IStableCoinRepository {
 		const params: ICallContractWithAccountRequest = {
 			contractId: proxyContractId,
 			parameters,
-			gas: 60000,
+			gas: 80000,
 			abi: HederaERC20__factory.abi,
 			account,
 		};
