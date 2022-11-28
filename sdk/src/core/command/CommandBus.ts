@@ -56,7 +56,7 @@ export class CommandBus<CommandBase extends Command = Command>
 
 	protected registerHandlers(handlers: CommandHandlerType[]): void {
 		handlers.forEach((handler) => {
-			const instance = Injectable.getHandler(handler);
+			const instance = Injectable.getCommandHandler(handler);
 			if (!instance) {
 				return;
 			}
