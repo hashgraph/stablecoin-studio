@@ -94,5 +94,3 @@ export type { IStableCoinFactory } from "./contracts/Interfaces/IStableCoinFacto
 export { IStableCoinFactory__factory } from "./factories/contracts/Interfaces/IStableCoinFactory__factory";
 export type { StableCoinFactory } from "./contracts/StableCoinFactory";
 export { StableCoinFactory__factory } from "./factories/contracts/StableCoinFactory__factory";
-export type { StableCoinFactoryWrapper } from "./contracts/StableCoinFactoryWrapper";
-export { StableCoinFactoryWrapper__factory } from "./factories/contracts/StableCoinFactoryWrapper__factory";

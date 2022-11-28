@@ -17,7 +17,7 @@ const hre = require('hardhat')
 
 const web3 = new Web3()
 
-export const clientId = 1;
+export const clientId = 2;
 
 export async function contractCall(
     contractId: any,

@@ -188,10 +188,6 @@ declare module "hardhat/types/runtime" {
       name: "StableCoinFactory",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.StableCoinFactory__factory>;
-    getContractFactory(
-      name: "StableCoinFactoryWrapper",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.StableCoinFactoryWrapper__factory>;
 
     getContractAt(
       name: "AccessControlUpgradeable",
@@ -413,11 +409,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.StableCoinFactory>;
-    getContractAt(
-      name: "StableCoinFactoryWrapper",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.StableCoinFactoryWrapper>;
 
     // default types
     getContractFactory(
