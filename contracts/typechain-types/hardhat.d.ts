@@ -25,10 +25,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Initializable__factory>;
     getContractFactory(
-      name: "ERC20Upgradeable",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ERC20Upgradeable__factory>;
-    getContractFactory(
       name: "IERC20PermitUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20PermitUpgradeable__factory>;
@@ -53,6 +49,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC165Upgradeable__factory>;
     getContractFactory(
+      name: "Ownable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Ownable__factory>;
+    getContractFactory(
       name: "IERC1822Proxiable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC1822Proxiable__factory>;
@@ -73,9 +73,21 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Proxy__factory>;
     getContractFactory(
+      name: "ProxyAdmin",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ProxyAdmin__factory>;
+    getContractFactory(
+      name: "TransparentUpgradeableProxy",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TransparentUpgradeableProxy__factory>;
+    getContractFactory(
       name: "Burnable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Burnable__factory>;
+    getContractFactory(
+      name: "CashIn",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.CashIn__factory>;
     getContractFactory(
       name: "Deletable",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -89,6 +101,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IBurnable__factory>;
     getContractFactory(
+      name: "ICashIn",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ICashIn__factory>;
+    getContractFactory(
       name: "IDeletable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IDeletable__factory>;
@@ -96,10 +112,6 @@ declare module "hardhat/types/runtime" {
       name: "IFreezable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IFreezable__factory>;
-    getContractFactory(
-      name: "IMintable",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IMintable__factory>;
     getContractFactory(
       name: "IPausable",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -109,17 +121,21 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IRescatable__factory>;
     getContractFactory(
+      name: "IRoles",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IRoles__factory>;
+    getContractFactory(
       name: "ISupplierAdmin",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ISupplierAdmin__factory>;
     getContractFactory(
+      name: "ITokenOwner",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ITokenOwner__factory>;
+    getContractFactory(
       name: "IWipeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IWipeable__factory>;
-    getContractFactory(
-      name: "Mintable",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Mintable__factory>;
     getContractFactory(
       name: "Pausable",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -129,53 +145,53 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Rescatable__factory>;
     getContractFactory(
+      name: "Roles",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Roles__factory>;
+    getContractFactory(
       name: "SupplierAdmin",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.SupplierAdmin__factory>;
+    getContractFactory(
+      name: "TokenOwner",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TokenOwner__factory>;
     getContractFactory(
       name: "Wipeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Wipeable__factory>;
     getContractFactory(
-      name: "HederaERC1967Proxy",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.HederaERC1967Proxy__factory>;
-    getContractFactory(
       name: "HederaERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.HederaERC20__factory>;
     getContractFactory(
-      name: "HederaTokenService",
+      name: "HederaERC20Proxy",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.HederaTokenService__factory>;
+    ): Promise<Contracts.HederaERC20Proxy__factory>;
+    getContractFactory(
+      name: "HederaERC20ProxyAdmin",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.HederaERC20ProxyAdmin__factory>;
     getContractFactory(
       name: "IHederaTokenService",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IHederaTokenService__factory>;
     getContractFactory(
-      name: "HTSTokenOwner",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.HTSTokenOwner__factory>;
-    getContractFactory(
       name: "IHederaERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IHederaERC20__factory>;
     getContractFactory(
-      name: "IHTSTokenOwner",
+      name: "IStableCoinFactory",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IHTSTokenOwner__factory>;
+    ): Promise<Contracts.IStableCoinFactory__factory>;
     getContractFactory(
-      name: "ITokenOwner",
+      name: "StableCoinFactory",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ITokenOwner__factory>;
+    ): Promise<Contracts.StableCoinFactory__factory>;
     getContractFactory(
-      name: "Roles",
+      name: "StableCoinFactoryWrapper",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Roles__factory>;
-    getContractFactory(
-      name: "TokenOwner",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.TokenOwner__factory>;
+    ): Promise<Contracts.StableCoinFactoryWrapper__factory>;
 
     getContractAt(
       name: "AccessControlUpgradeable",
@@ -192,11 +208,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Initializable>;
-    getContractAt(
-      name: "ERC20Upgradeable",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ERC20Upgradeable>;
     getContractAt(
       name: "IERC20PermitUpgradeable",
       address: string,
@@ -228,6 +239,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC165Upgradeable>;
     getContractAt(
+      name: "Ownable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Ownable>;
+    getContractAt(
       name: "IERC1822Proxiable",
       address: string,
       signer?: ethers.Signer
@@ -253,10 +269,25 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.Proxy>;
     getContractAt(
+      name: "ProxyAdmin",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ProxyAdmin>;
+    getContractAt(
+      name: "TransparentUpgradeableProxy",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TransparentUpgradeableProxy>;
+    getContractAt(
       name: "Burnable",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Burnable>;
+    getContractAt(
+      name: "CashIn",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.CashIn>;
     getContractAt(
       name: "Deletable",
       address: string,
@@ -273,6 +304,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IBurnable>;
     getContractAt(
+      name: "ICashIn",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ICashIn>;
+    getContractAt(
       name: "IDeletable",
       address: string,
       signer?: ethers.Signer
@@ -282,11 +318,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IFreezable>;
-    getContractAt(
-      name: "IMintable",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IMintable>;
     getContractAt(
       name: "IPausable",
       address: string,
@@ -298,20 +329,25 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IRescatable>;
     getContractAt(
+      name: "IRoles",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IRoles>;
+    getContractAt(
       name: "ISupplierAdmin",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ISupplierAdmin>;
     getContractAt(
+      name: "ITokenOwner",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ITokenOwner>;
+    getContractAt(
       name: "IWipeable",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IWipeable>;
-    getContractAt(
-      name: "Mintable",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Mintable>;
     getContractAt(
       name: "Pausable",
       address: string,
@@ -323,65 +359,65 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.Rescatable>;
     getContractAt(
+      name: "Roles",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Roles>;
+    getContractAt(
       name: "SupplierAdmin",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.SupplierAdmin>;
+    getContractAt(
+      name: "TokenOwner",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TokenOwner>;
     getContractAt(
       name: "Wipeable",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Wipeable>;
     getContractAt(
-      name: "HederaERC1967Proxy",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.HederaERC1967Proxy>;
-    getContractAt(
       name: "HederaERC20",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.HederaERC20>;
     getContractAt(
-      name: "HederaTokenService",
+      name: "HederaERC20Proxy",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.HederaTokenService>;
+    ): Promise<Contracts.HederaERC20Proxy>;
+    getContractAt(
+      name: "HederaERC20ProxyAdmin",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.HederaERC20ProxyAdmin>;
     getContractAt(
       name: "IHederaTokenService",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IHederaTokenService>;
     getContractAt(
-      name: "HTSTokenOwner",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.HTSTokenOwner>;
-    getContractAt(
       name: "IHederaERC20",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IHederaERC20>;
     getContractAt(
-      name: "IHTSTokenOwner",
+      name: "IStableCoinFactory",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.IHTSTokenOwner>;
+    ): Promise<Contracts.IStableCoinFactory>;
     getContractAt(
-      name: "ITokenOwner",
+      name: "StableCoinFactory",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.ITokenOwner>;
+    ): Promise<Contracts.StableCoinFactory>;
     getContractAt(
-      name: "Roles",
+      name: "StableCoinFactoryWrapper",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.Roles>;
-    getContractAt(
-      name: "TokenOwner",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.TokenOwner>;
+    ): Promise<Contracts.StableCoinFactoryWrapper>;
 
     // default types
     getContractFactory(

@@ -129,28 +129,6 @@ function RESCUE_ROLE() external view returns (bytes32)
 |---|---|---|
 | _0 | bytes32 | undefined |
 
-### ROLES
-
-```solidity
-function ROLES(uint256) external view returns (bytes32)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | bytes32 | undefined |
-
 ### WIPE_ROLE
 
 ```solidity
@@ -212,6 +190,28 @@ function getRoleAdmin(bytes32 role) external view returns (bytes32)
 |---|---|---|
 | _0 | bytes32 | undefined |
 
+### getRoleId
+
+```solidity
+function getRoleId(enum IRoles.roleName role) external view returns (bytes32)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| role | enum IRoles.roleName | undefined |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bytes32 | undefined |
+
 ### getRoles
 
 ```solidity
@@ -249,24 +249,7 @@ function getTokenAddress() external view returns (address)
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | address | address The token address |
-
-### getTokenOwnerAddress
-
-```solidity
-function getTokenOwnerAddress() external view returns (address)
-```
-
-
-
-*Returns the HTSTokenOwner contract address  *
-
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | address | address HTSTokenOwner contract address |
+| _0 | address | address of The token address |
 
 ### grantRole
 
@@ -341,23 +324,6 @@ function revokeRole(bytes32 role, address account) external nonpayable
 |---|---|---|
 | role | bytes32 | undefined |
 | account | address | undefined |
-
-### setTokenAddress
-
-```solidity
-function setTokenAddress(contract HTSTokenOwner htsTokenOwnerAddress, address tokenAddress) external nonpayable
-```
-
-
-
-*Assigns the HTSTokenOwner contract address and the token address, validating that the  token address was not already assigned*
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| htsTokenOwnerAddress | contract HTSTokenOwner | The  contract address HTSTokenOwner |
-| tokenAddress | address | The token address created |
 
 ### supportsInterface
 
@@ -477,10 +443,10 @@ event RoleRevoked(bytes32 indexed role, address indexed account, address indexed
 | account `indexed` | address | undefined |
 | sender `indexed` | address | undefined |
 
-### TransfersFreezed
+### TransfersFrozen
 
 ```solidity
-event TransfersFreezed(address token, address account)
+event TransfersFrozen(address token, address account)
 ```
 
 
@@ -494,10 +460,10 @@ event TransfersFreezed(address token, address account)
 | token  | address | undefined |
 | account  | address | undefined |
 
-### TransfersUnfreezed
+### TransfersUnfrozen
 
 ```solidity
-event TransfersUnfreezed(address token, address account)
+event TransfersUnfrozen(address token, address account)
 ```
 
 

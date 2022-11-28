@@ -8,14 +8,15 @@ import {
 	ContractFunctionParameters,
 	PrivateKey as HPrivateKey,
 	PublicKey as HPublicKey,
+	AccountId as HAccountId,
 	TokenId,
 	Transaction,
 	Status,
 } from '@hashgraph/sdk';
 import {
-	HederaERC1967Proxy__factory,
 	HederaERC20__factory,
-	HTSTokenOwner__factory,
+	HederaERC20Proxy__factory,
+	HederaERC20ProxyAdmin__factory
 } from 'hedera-stable-coin-contracts/typechain-types/index.js';
 import {
 	HederaNetwork,
@@ -28,13 +29,13 @@ import { getHederaNetwork, PrivateKeyType } from '../../../../core/enum.js';
 import {
 	ICallContractRequest,
 	ICallContractWithAccountRequest,
-	ICreateTokenResponse,
-	IHTSTokenRequestAmount,
+	IHTSTokenRequest,
 	IWipeTokenRequest,
 	ITransferTokenRequest,
 	InitializationData,
-	IHTSTokenRequest,
-	IHTSTokenRequestTargetId,
+	ICreateTokenResponse,
+	IHTSTokenRequestAmount,
+	IHTSTokenRequestTargetId
 } from '../types.js';
 import PublicKey from '../../../../domain/context/account/PublicKey.js';
 import AccountId from '../../../../domain/context/account/AccountId.js';
@@ -46,7 +47,7 @@ import EOAccount from '../../../../domain/context/account/EOAccount.js';
 import { HashConnectConnectionState } from 'hashconnect/types';
 import ProviderEvent, { ProviderEventNames } from '../ProviderEvent.js';
 import EventService from '../../../../app/service/event/EventService.js';
-import { Account, ContractId } from '../../../in/sdk/sdk.js';
+import { Account, ContractId, TokenSupplyType } from '../../../in/sdk/sdk.js';
 import { safeCast } from '../../../../core/cast.js';
 import { StableCoinMemo } from '../../../../domain/context/stablecoin/StableCoinMemo.js';
 import BigDecimal from '../../../../domain/context/stablecoin/BigDecimal.js';
@@ -54,6 +55,7 @@ import Long from 'long';
 import ProviderError from '../error/HederaError.js';
 import LogService from '../../../../app/service/log/LogService.js';
 import { LogOperation } from '../../../../core/decorators/LogOperationDecorator.js';
+
 
 type DefaultHederaProvider = hethers.providers.DefaultHederaProvider;
 
@@ -179,9 +181,10 @@ export default class HTSProvider implements IProvider {
 	@LogOperation
 	public async callContract(
 		name: string,
-		params: ICallContractRequest | ICallContractWithAccountRequest,
+		params: ICallContractRequest | ICallContractWithAccountRequest
 	): Promise<Uint8Array> {
-		const { contractId, parameters, gas, abi } = params;
+		const { contractId, parameters, gas, abi, value } = params;
+
 		let client;
 
 		if ('account' in params) {
@@ -202,6 +205,7 @@ export default class HTSProvider implements IProvider {
 				contractId,
 				functionCallParameters,
 				gas,
+				value
 			);
 		const transactionResponse: TransactionResponse =
 			await this.htsSigner.signAndSendTransaction(transaction);
@@ -232,41 +236,48 @@ export default class HTSProvider implements IProvider {
 			client,
 		);
 		LogService.logTrace(
-			`Deploying ${HederaERC1967Proxy__factory.name} contract...`,
+			`Deploying ${HederaERC20ProxyAdmin__factory.name} contract...`,
 		);
-		const proxyContract: HContractId = await this.deployContract(
-			HederaERC1967Proxy__factory,
+		const tokenProxyAdminContract = await this.deployContract(
+			HederaERC20ProxyAdmin__factory,
+			account.privateKey,
+			client,
+		);
+
+		// Set Proxy admin owner
+		LogService.logTrace(
+			`Setting the Proxy admin owner contract... please wait.`
+		);
+		await this.callContract('transferOwnership', {
+			contractId: String(tokenProxyAdminContract),
+			parameters: [HAccountId.fromString(account.accountId.id).toSolidityAddress()],
+			gas: 250_000,
+			abi: HederaERC20ProxyAdmin__factory.abi,
+			account,
+		});
+		LogService.logTrace(
+			`Deploying ${HederaERC20Proxy__factory.name} contract...`,
+		);
+		const proxyContract = await this.deployContract(
+			HederaERC20Proxy__factory,
 			account.privateKey,
 			client,
 			new ContractFunctionParameters()
 				.addAddress(tokenContract?.toSolidityAddress())
+				.addAddress(tokenProxyAdminContract?.toSolidityAddress())
 				.addBytes(new Uint8Array([])),
 		);
 
-		await this.callContract('initialize', {
-			contractId: String(proxyContract),
-			parameters: [],
-			gas: 280_000,
-			abi: HederaERC20__factory.abi,
-			account,
-		});
-		LogService.logTrace(
-			`Deploying ${HTSTokenOwner__factory.name} contract...`,
-		);
-		const tokenOwnerContract = await this.deployContract(
-			HTSTokenOwner__factory,
-			account.privateKey,
-			client,
-		);
+		// Creating the token
+		LogService.logTrace('Creating token... please wait.');
 
 		stableCoin.memo = new StableCoinMemo(
-			String(proxyContract),
-			String(tokenOwnerContract),
+			String(proxyContract)
 		);
 
 		LogService.logTrace('Creating token...');
 		const hederaToken = await this.createToken(
-			tokenOwnerContract,
+			proxyContract,
 			stableCoin.name,
 			stableCoin.symbol,
 			stableCoin.decimals,
@@ -284,25 +295,15 @@ export default class HTSProvider implements IProvider {
 			safeCast<PublicKey>(stableCoin.supplyKey),
 			stableCoin.autoRenewAccount,
 		);
-		LogService.logTrace('Setting up contract...');
-		await this.callContract('setTokenAddress', {
-			contractId: stableCoin.memo.proxyContract,
-			parameters: [
-				tokenOwnerContract.toSolidityAddress(),
-				TokenId.fromString(
-					hederaToken.tokenId.toString(),
-				).toSolidityAddress(),
-			],
-			gas: 80_000,
+
+		// Initialize Proxy
+		LogService.logTrace('Initializing the Proxy... please wait.');
+		await this.callContract('initialize', {
+			contractId: String(proxyContract),
+			parameters: [hederaToken.tokenId.toSolidityAddress(), HAccountId.fromString(account.accountId.id).toSolidityAddress()],
+			gas: 15000000,
 			abi: HederaERC20__factory.abi,
-			account: account,
-		});
-		await this.callContract('setERC20Address', {
-			contractId: String(tokenOwnerContract),
-			parameters: [proxyContract.toSolidityAddress()],
-			gas: 60_000,
-			abi: HTSTokenOwner__factory.abi,
-			account: account,
+			account,
 		});
 
 		if (
@@ -474,6 +475,7 @@ export default class HTSProvider implements IProvider {
 				values,
 				maxSupply,
 			);
+		
 		const transactionResponse: TransactionResponse =
 			await this.htsSigner.signAndSendTransaction(transaction);
 		this.logHashScan(transactionResponse, 'Create token');

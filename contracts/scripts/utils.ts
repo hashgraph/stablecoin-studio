@@ -23,7 +23,8 @@ export async function contractCall(
     parameters: any[],
     clientOperator: any,
     gas: any,
-    abi: any
+    abi: any,
+    value: any = null
 ) {
     const functionCallParameters = encodeFunctionCall(
         functionName,
@@ -31,10 +32,11 @@ export async function contractCall(
         abi
     )
 
-    const contractTx = await new ContractExecuteTransaction()
+    let contractTx = await new ContractExecuteTransaction()
         .setContractId(contractId)
         .setFunctionParameters(functionCallParameters)
         .setGas(gas)
+        .setPayableAmount(value)
         .execute(clientOperator)
 
     const record = await contractTx.getRecord(clientOperator)
@@ -141,12 +143,15 @@ export async function deployContractSDK(
     factory: any,
     privateKey: any,
     clientOperator: any,
-    constructorParameters?: any
+    constructorParameters?: any,
+    adminKey?: any
 ) {
+    const Key = (adminKey)? adminKey: PrivateKey.fromStringED25519(privateKey);
+
     const transaction = new ContractCreateFlow()
         .setBytecode(factory.bytecode)
         .setGas(250_000)
-        .setAdminKey(PrivateKey.fromStringED25519(privateKey))
+        .setAdminKey(Key)
     if (constructorParameters) {
         transaction.setConstructorParameters(constructorParameters)
     }

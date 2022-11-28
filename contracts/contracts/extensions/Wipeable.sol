@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.10;
 
-import "./../TokenOwner.sol";
-import "./../Roles.sol";
-import "./../IHederaERC20.sol";
-import "./IWipeable.sol";
+import "./TokenOwner.sol";
+import "./Roles.sol";
+import "./Interfaces/IWipeable.sol";
+import "../hts-precompile/IHederaTokenService.sol";
 
 abstract contract Wipeable is IWipeable, TokenOwner, Roles {
 
@@ -18,20 +18,20 @@ abstract contract Wipeable is IWipeable, TokenOwner, Roles {
     * 
     * @param account The address of the account where to wipe the token
     * @param amount The number of tokens to wipe
-    * @return True if successful    
     */
     function wipe(address account, uint32 amount) 
         external       
-        onlyRole(WIPE_ROLE)  
-        returns (bool) 
+        onlyRole(_getRoleId(roleName.WIPE))  
+        returns (bool)
     {      
-        require(IHederaERC20(address(this)).balanceOf(account) >= amount, "Insufficient token balance for wiped");   
+        require(_balanceOf(account) >= amount, "Insufficient token balance for wiped"); 
 
-        (bool success) = HTSTokenOwner(_getTokenOwnerAddress()).wipeToken(_getTokenAddress(), account, amount);
-        require(success, "Wiped error");
+        int256 responseCode = IHederaTokenService(precompileAddress).wipeTokenAccount(_getTokenAddress(), account,  amount);
+        bool success = _checkResponse(responseCode);
 
-        emit TokensWiped (_getTokenAddress(), account, amount);
+        emit TokensWiped (msg.sender, _getTokenAddress(), account, amount);
 
-        return true;        
+        return success;
     }
+
 }

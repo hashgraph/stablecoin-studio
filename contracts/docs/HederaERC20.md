@@ -129,28 +129,6 @@ function RESCUE_ROLE() external view returns (bytes32)
 |---|---|---|
 | _0 | bytes32 | undefined |
 
-### ROLES
-
-```solidity
-function ROLES(uint256) external view returns (bytes32)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | bytes32 | undefined |
-
 ### WIPE_ROLE
 
 ```solidity
@@ -217,7 +195,7 @@ function approve(address, uint256) external pure returns (bool)
 ### associateToken
 
 ```solidity
-function associateToken(address adr) external nonpayable returns (bool)
+function associateToken(address adr) external nonpayable
 ```
 
 
@@ -229,12 +207,6 @@ function associateToken(address adr) external nonpayable returns (bool)
 | Name | Type | Description |
 |---|---|---|
 | adr | address | The address of the account to associate |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | bool | bool True if the account has been successfully associated with the token |
 
 ### balanceOf
 
@@ -314,56 +286,6 @@ function decreaseSupplierAllowance(address supplier, uint256 amount) external no
 | supplier | address | The address of the supplier |
 | amount | uint256 | The amount to subtract from the supplier&#39;s current minting allowance |
 
-### delegateTransferFrom
-
-```solidity
-function delegateTransferFrom(address token, address from, address to, uint256 amount) external nonpayable returns (int64 responseCode)
-```
-
-Only applicable to fungible tokens
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| token | address | The address of the fungible Hedera token to transfer |
-| from | address | The account address of the owner of the token, on the behalf of which to transfer `amount` tokens |
-| to | address | The account address of the receiver of the `amount` tokens |
-| amount | uint256 | The amount of tokens to transfer from `from` to `to` |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| responseCode | int64 | The response code for the status of the request. SUCCESS is 22. |
-
-### delegateTransferFromNFT
-
-```solidity
-function delegateTransferFromNFT(address token, address from, address to, uint256 serialNumber) external nonpayable returns (int64 responseCode)
-```
-
-Transfers `serialNumber` of `token` from `from` to `to` using the allowance mechanism. Only applicable to NFT tokens
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| token | address | The address of the non-fungible Hedera token to transfer |
-| from | address | The account address of the owner of `serialNumber` of `token` |
-| to | address | The account address of the receiver of `serialNumber` |
-| serialNumber | uint256 | The NFT serial number to transfer |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| responseCode | int64 | The response code for the status of the request. SUCCESS is 22. |
-
 ### deleteToken
 
 ```solidity
@@ -384,7 +306,7 @@ function deleteToken() external nonpayable returns (bool)
 ### dissociateToken
 
 ```solidity
-function dissociateToken(address adr) external nonpayable returns (bool)
+function dissociateToken(address adr) external nonpayable
 ```
 
 
@@ -396,12 +318,6 @@ function dissociateToken(address adr) external nonpayable returns (bool)
 | Name | Type | Description |
 |---|---|---|
 | adr | address | The address of the account to dissociate |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | bool | bool True if the account has been successfully dissociated from the token |
 
 ### freeze
 
@@ -447,6 +363,28 @@ function getRoleAdmin(bytes32 role) external view returns (bytes32)
 |---|---|---|
 | _0 | bytes32 | undefined |
 
+### getRoleId
+
+```solidity
+function getRoleId(enum IRoles.roleName role) external view returns (bytes32)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| role | enum IRoles.roleName | undefined |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bytes32 | undefined |
+
 ### getRoles
 
 ```solidity
@@ -484,24 +422,7 @@ function getTokenAddress() external view returns (address)
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | address | address The token address |
-
-### getTokenOwnerAddress
-
-```solidity
-function getTokenOwnerAddress() external view returns (address)
-```
-
-
-
-*Returns the HTSTokenOwner contract address  *
-
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| _0 | address | address HTSTokenOwner contract address |
+| _0 | address | address of The token address |
 
 ### grantRole
 
@@ -596,13 +517,19 @@ function increaseSupplierAllowance(address supplier, uint256 amount) external no
 ### initialize
 
 ```solidity
-function initialize() external payable
+function initialize(address tokenAddress, address originalSender) external payable
 ```
 
 
 
 
 
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| tokenAddress | address | undefined |
+| originalSender | address | undefined |
 
 ### isUnlimitedSupplierAllowance
 
@@ -700,26 +627,10 @@ function renounceRole(bytes32 role, address account) external nonpayable
 | role | bytes32 | undefined |
 | account | address | undefined |
 
-### rescueHbar
+### rescue
 
 ```solidity
-function rescueHbar(uint256 amount) external nonpayable
-```
-
-
-
-*Rescue `value` hbar from contractTokenOwner to rescuer Must be protected with RESCUE_ROLE*
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| amount | uint256 | The amount of tinyhbar to rescue |
-
-### rescueToken
-
-```solidity
-function rescueToken(uint256 amount) external nonpayable
+function rescue(uint256 amount) external nonpayable returns (bool)
 ```
 
 
@@ -731,6 +642,12 @@ function rescueToken(uint256 amount) external nonpayable
 | Name | Type | Description |
 |---|---|---|
 | amount | uint256 | The number of tokens to rescuer |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
 
 ### resetSupplierAllowance
 
@@ -780,23 +697,6 @@ function revokeSupplierRole(address supplier) external nonpayable
 | Name | Type | Description |
 |---|---|---|
 | supplier | address | The address of the supplier |
-
-### setTokenAddress
-
-```solidity
-function setTokenAddress(contract HTSTokenOwner htsTokenOwnerAddress, address tokenAddress) external nonpayable
-```
-
-
-
-*Assigns the HTSTokenOwner contract address and the token address, validating that the  token address was not already assigned*
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| htsTokenOwnerAddress | contract HTSTokenOwner | The  contract address HTSTokenOwner |
-| tokenAddress | address | The token address created |
 
 ### supplierAllowance
 
@@ -902,31 +802,6 @@ function transfer(address, uint256) external pure returns (bool)
 ### transferFrom
 
 ```solidity
-function transferFrom(address token, address from, address to, uint256 amount) external nonpayable returns (int64 responseCode)
-```
-
-Only applicable to fungible tokens
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| token | address | The address of the fungible Hedera token to transfer |
-| from | address | The account address of the owner of the token, on the behalf of which to transfer `amount` tokens |
-| to | address | The account address of the receiver of the `amount` tokens |
-| amount | uint256 | The amount of tokens to transfer from `from` to `to` |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| responseCode | int64 | The response code for the status of the request. SUCCESS is 22. |
-
-### transferFrom
-
-```solidity
 function transferFrom(address, address, uint256) external pure returns (bool)
 ```
 
@@ -947,31 +822,6 @@ function transferFrom(address, address, uint256) external pure returns (bool)
 | Name | Type | Description |
 |---|---|---|
 | _0 | bool | undefined |
-
-### transferFromNFT
-
-```solidity
-function transferFromNFT(address token, address from, address to, uint256 serialNumber) external nonpayable returns (int64 responseCode)
-```
-
-Transfers `serialNumber` of `token` from `from` to `to` using the allowance mechanism. Only applicable to NFT tokens
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| token | address | The address of the non-fungible Hedera token to transfer |
-| from | address | The account address of the owner of `serialNumber` of `token` |
-| to | address | The account address of the receiver of `serialNumber` |
-| serialNumber | uint256 | The NFT serial number to transfer |
-
-#### Returns
-
-| Name | Type | Description |
-|---|---|---|
-| responseCode | int64 | The response code for the status of the request. SUCCESS is 22. |
 
 ### unfreeze
 
@@ -1033,7 +883,7 @@ function wipe(address account, uint32 amount) external nonpayable returns (bool)
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | bool | True if successful     |
+| _0 | bool | undefined |
 
 
 
@@ -1056,24 +906,6 @@ event Approval(address indexed owner, address indexed spender, uint256 value)
 | owner `indexed` | address | undefined |
 | spender `indexed` | address | undefined |
 | value  | uint256 | undefined |
-
-### HbarRescued
-
-```solidity
-event HbarRescued(address rescuer, uint256 amount, uint256 oldAmount)
-```
-
-
-
-
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| rescuer  | address | undefined |
-| amount  | uint256 | undefined |
-| oldAmount  | uint256 | undefined |
 
 ### Initialized
 
@@ -1204,6 +1036,23 @@ event SupplierAllowanceReset(address indexed sender, address indexed supplier, u
 | oldAllowance  | uint256 | undefined |
 | newAllowance  | uint256 | undefined |
 
+### TokenAssociated
+
+```solidity
+event TokenAssociated(address token, address account)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token  | address | undefined |
+| account  | address | undefined |
+
 ### TokenDeleted
 
 ```solidity
@@ -1219,6 +1068,23 @@ event TokenDeleted(address token)
 | Name | Type | Description |
 |---|---|---|
 | token  | address | undefined |
+
+### TokenDissociated
+
+```solidity
+event TokenDissociated(address token, address account)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token  | address | undefined |
+| account  | address | undefined |
 
 ### TokenPaused
 
@@ -1239,7 +1105,7 @@ event TokenPaused(address token)
 ### TokenRescued
 
 ```solidity
-event TokenRescued(address rescuer, address tokenId, uint256 amount, uint256 oldBalance)
+event TokenRescued(address rescuer, address tokenId, uint256 amount)
 ```
 
 
@@ -1253,7 +1119,25 @@ event TokenRescued(address rescuer, address tokenId, uint256 amount, uint256 old
 | rescuer  | address | undefined |
 | tokenId  | address | undefined |
 | amount  | uint256 | undefined |
-| oldBalance  | uint256 | undefined |
+
+### TokenTransfer
+
+```solidity
+event TokenTransfer(address token, address sender, address receiver, uint256 amount)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token  | address | undefined |
+| sender  | address | undefined |
+| receiver  | address | undefined |
+| amount  | uint256 | undefined |
 
 ### TokenUnpaused
 
@@ -1271,10 +1155,10 @@ event TokenUnpaused(address token)
 |---|---|---|
 | token  | address | undefined |
 
-### TokensWiped
+### TokensBurned
 
 ```solidity
-event TokensWiped(address token, address account, uint32 amount)
+event TokensBurned(address burner, address token, uint256 amount)
 ```
 
 
@@ -1285,6 +1169,44 @@ event TokensWiped(address token, address account, uint32 amount)
 
 | Name | Type | Description |
 |---|---|---|
+| burner  | address | undefined |
+| token  | address | undefined |
+| amount  | uint256 | undefined |
+
+### TokensMinted
+
+```solidity
+event TokensMinted(address minter, address token, uint256 amount, address account)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| minter  | address | undefined |
+| token  | address | undefined |
+| amount  | uint256 | undefined |
+| account  | address | undefined |
+
+### TokensWiped
+
+```solidity
+event TokensWiped(address wiper, address token, address account, uint32 amount)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| wiper  | address | undefined |
 | token  | address | undefined |
 | account  | address | undefined |
 | amount  | uint32 | undefined |
@@ -1307,10 +1229,10 @@ event Transfer(address indexed from, address indexed to, uint256 value)
 | to `indexed` | address | undefined |
 | value  | uint256 | undefined |
 
-### TransfersFreezed
+### TransfersFrozen
 
 ```solidity
-event TransfersFreezed(address token, address account)
+event TransfersFrozen(address token, address account)
 ```
 
 
@@ -1324,10 +1246,10 @@ event TransfersFreezed(address token, address account)
 | token  | address | undefined |
 | account  | address | undefined |
 
-### TransfersUnfreezed
+### TransfersUnfrozen
 
 ```solidity
-event TransfersUnfreezed(address token, address account)
+event TransfersUnfrozen(address token, address account)
 ```
 
 

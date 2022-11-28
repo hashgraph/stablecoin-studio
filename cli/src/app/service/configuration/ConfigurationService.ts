@@ -147,7 +147,7 @@ export default class ConfigurationService extends Service {
       defaultNetwork: defaultConfigRaw['defaultNetwork'],
       networks: defaultConfigRaw['networks'] as unknown as INetworkConfig[],
       accounts: defaultConfigRaw['accounts'] as unknown as IAccountConfig[],
-      logs: defaultConfigRaw['logs'] as unknown as ILogConfig,
+      logs: defaultConfigRaw['logs'] as unknown as ILogConfig
     };
     this.setConfiguration(config);
     return config;

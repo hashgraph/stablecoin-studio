@@ -81,7 +81,7 @@ export default class CreateStableCoinRequest
 		pauseKey,
 		supplyKey,
 		treasury,
-		supplyType,
+		supplyType
 	}: {
 		account: RequestAccount;
 		name: string;

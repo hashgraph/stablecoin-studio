@@ -15,31 +15,6 @@ const _abi = [
     inputs: [
       {
         indexed: false,
-        internalType: "address",
-        name: "rescuer",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "oldAmount",
-        type: "uint256",
-      },
-    ],
-    name: "HbarRescued",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
         internalType: "uint8",
         name: "version",
         type: "uint8",
@@ -144,12 +119,6 @@ const _abi = [
         name: "amount",
         type: "uint256",
       },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "oldBalance",
-        type: "uint256",
-      },
     ],
     name: "TokenRescued",
     type: "event",
@@ -246,25 +215,6 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    name: "ROLES",
-    outputs: [
-      {
-        internalType: "bytes32",
-        name: "",
-        type: "bytes32",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [],
     name: "WIPE_ROLE",
     outputs: [
@@ -299,6 +249,25 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "enum IRoles.roleName",
+        name: "role",
+        type: "uint8",
+      },
+    ],
+    name: "getRoleId",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "address",
         name: "account",
         type: "address",
@@ -318,19 +287,6 @@ const _abi = [
   {
     inputs: [],
     name: "getTokenAddress",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "getTokenOwnerAddress",
     outputs: [
       {
         internalType: "address",
@@ -409,21 +365,14 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "rescueHbar",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
+    name: "rescue",
+    outputs: [
       {
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
+        internalType: "bool",
+        name: "",
+        type: "bool",
       },
     ],
-    name: "rescueToken",
-    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -441,24 +390,6 @@ const _abi = [
       },
     ],
     name: "revokeRole",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "contract HTSTokenOwner",
-        name: "htsTokenOwnerAddress",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "tokenAddress",
-        type: "address",
-      },
-    ],
-    name: "setTokenAddress",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

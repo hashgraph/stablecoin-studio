@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.10;
 
-import "./IFreezable.sol";
-import "../TokenOwner.sol";
-import "../Roles.sol";
+import "./TokenOwner.sol";
+import "./Roles.sol";
+import "./Interfaces/IFreezable.sol";
 import "../hts-precompile/IHederaTokenService.sol";
 
 abstract contract Freezable is IFreezable, TokenOwner, Roles {
@@ -15,12 +15,14 @@ abstract contract Freezable is IFreezable, TokenOwner, Roles {
      */
      function freeze(address account) 
         external       
-        onlyRole(FREEZE_ROLE)  
-        returns (bool) 
+        onlyRole(_getRoleId(roleName.FREEZE))  
+        returns (bool)
     {         
-        bool success = HTSTokenOwner(_getTokenOwnerAddress()).freeze(_getTokenAddress(), account);
+        int256 responseCode = IHederaTokenService(precompileAddress).freezeToken(_getTokenAddress(), account);
+        bool success = _checkResponse(responseCode);
         
-        emit TransfersFreezed(_getTokenAddress(), account); 
+        emit TransfersFrozen(_getTokenAddress(), account); 
+
         return success;
     }
 
@@ -32,12 +34,13 @@ abstract contract Freezable is IFreezable, TokenOwner, Roles {
     function unfreeze(address account)
         external       
         onlyRole(FREEZE_ROLE)  
-        returns (bool) 
+        returns (bool)
     {         
-        bool success = HTSTokenOwner(_getTokenOwnerAddress()).unfreeze(_getTokenAddress(), account);
+        int256 responseCode = IHederaTokenService(precompileAddress).unfreezeToken(_getTokenAddress(), account);
+        bool success = _checkResponse(responseCode);
         
-        emit TransfersUnfreezed(_getTokenAddress(), account); 
+        emit TransfersUnfrozen(_getTokenAddress(), account);  
+
         return success;
- 
     }
 }

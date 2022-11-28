@@ -295,25 +295,6 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    name: "ROLES",
-    outputs: [
-      {
-        internalType: "bytes32",
-        name: "",
-        type: "bytes32",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [],
     name: "WIPE_ROLE",
     outputs: [
@@ -366,6 +347,25 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "enum IRoles.roleName",
+        name: "role",
+        type: "uint8",
+      },
+    ],
+    name: "getRoleId",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "address",
         name: "account",
         type: "address",
@@ -385,19 +385,6 @@ const _abi = [
   {
     inputs: [],
     name: "getTokenAddress",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "getTokenOwnerAddress",
     outputs: [
       {
         internalType: "address",
@@ -576,24 +563,6 @@ const _abi = [
       },
     ],
     name: "revokeSupplierRole",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "contract HTSTokenOwner",
-        name: "htsTokenOwnerAddress",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "tokenAddress",
-        type: "address",
-      },
-    ],
-    name: "setTokenAddress",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

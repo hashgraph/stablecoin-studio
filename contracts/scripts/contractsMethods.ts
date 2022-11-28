@@ -1,6 +1,8 @@
 const {AccountId, AccountBalanceQuery, TransferTransaction, HbarUnit, Hbar} = require('@hashgraph/sdk')
 
-import {HederaERC20__factory} from '../typechain-types'
+import {HederaERC20__factory,
+    HederaERC20Proxy__factory,
+    HederaERC20ProxyAdmin__factory} from '../typechain-types'
 
 import { contractCall} from "./utils";
 import { Gas1, Gas2, Gas3, Gas4, Gas5, Gas6} from "./constants";
@@ -82,9 +84,60 @@ export async function decimals(ContractId: any, proxyAddress: string, client: an
     return Number(result[0]);
 }
 
-export async function initialize(ContractId: any, proxyAddress: string, client: any){
-    let params: any[] = [];  
+export async function initialize(ContractId: any, proxyAddress: string, client: any, newTokenAddress: string){
+    let params = [newTokenAddress];  
     await contractCall(ContractId.fromString(proxyAddress!), 'initialize', params, client, Gas2, HederaERC20__factory.abi);  
+}
+
+// HederaERC20Proxy ///////////////////////////////////////////////////
+export async function upgradeTo(ContractId: any, proxyAddress: string, client: any, newImplementationContract: string) {
+    let params : any = [newImplementationContract];  
+    await contractCall(ContractId.fromString(proxyAddress!), 'upgradeTo', params, client, Gas3, HederaERC20Proxy__factory.abi);
+}
+
+export async function changeAdmin(ContractId: any, proxyAddress: string, client: any, newAdminAccount: string) {
+    let params : any = [newAdminAccount];  
+    await contractCall(ContractId.fromString(proxyAddress!), 'changeAdmin', params, client, Gas3, HederaERC20Proxy__factory.abi);
+}
+
+export async function admin(ContractId: any, proxyAddress: string, client: any): Promise<string>{
+    let params: any[] = [];  
+    const result = await contractCall(ContractId.fromString(proxyAddress!), 'admin', params, client, Gas2, HederaERC20Proxy__factory.abi);  
+    return result[0];
+}
+
+// HederaERC20ProxyAdmin ///////////////////////////////////////////////////
+export async function owner(ContractId: any, proxyAdminAddress: string, client: any): Promise<string>{
+    let params: any[] = [];  
+    const result = await contractCall(ContractId.fromString(proxyAdminAddress!), 'owner', params, client, Gas2, HederaERC20ProxyAdmin__factory.abi);  
+    return result[0];
+}
+
+export async function upgrade(ContractId: any, proxyAdminAddress: string, client: any, newImplementationContract: string, proxyAddress: string) {
+    let params : any = [proxyAddress, newImplementationContract];  
+    await contractCall(ContractId.fromString(proxyAdminAddress!), 'upgrade', params, client, Gas3, HederaERC20ProxyAdmin__factory.abi);
+}
+
+export async function changeProxyAdmin(ContractId: any, proxyAdminAddress: string, client: any, newAdminAccount: string, proxyAddress: string) {
+    let params : any = [proxyAddress, AccountId.fromString(newAdminAccount!).toSolidityAddress()];  
+    await contractCall(ContractId.fromString(proxyAdminAddress!), 'changeProxyAdmin', params, client, Gas3, HederaERC20ProxyAdmin__factory.abi);
+}
+
+export async function transferOwnership(ContractId: any, proxyAdminAddress: string, client: any, newOwnerAccount: string) {
+    let params : any = [AccountId.fromString(newOwnerAccount!).toSolidityAddress()];  
+    await contractCall(ContractId.fromString(proxyAdminAddress!), 'transferOwnership', params, client, Gas3, HederaERC20ProxyAdmin__factory.abi);
+}
+
+export async function getProxyImplementation(ContractId: any, proxyAdminAddress: string, client: any, proxyAddress: string): Promise<string>{
+    let params: any[] = [proxyAddress];  
+    const result = await contractCall(ContractId.fromString(proxyAdminAddress!), 'getProxyImplementation', params, client, Gas2, HederaERC20ProxyAdmin__factory.abi);  
+    return result[0];
+}
+
+export async function getProxyAdmin(ContractId: any, proxyAdminAddress: string, client: any, proxyAddress: string): Promise<string>{
+    let params: any[] = [proxyAddress];  
+    const result = await contractCall(ContractId.fromString(proxyAdminAddress!), 'getProxyAdmin', params, client, Gas2, HederaERC20ProxyAdmin__factory.abi);  
+    return result[0];
 }
 
 /* Methods to add
@@ -95,9 +148,9 @@ export async function initialize(ContractId: any, proxyAddress: string, client: 
 */
 
 // TokenOwner ///////////////////////////////////////////////////
-export async function getTokenOwnerAddress(ContractId: any, proxyAddress: string, client: any): Promise<string>{
+export async function getTokenAddress(ContractId: any, proxyAddress: string, client: any): Promise<string>{
     let params: any[] = [];  
-    const response = await contractCall(ContractId.fromString(proxyAddress!), 'getTokenOwnerAddress', params, client, Gas5, HederaERC20__factory.abi) 
+    const response = await contractCall(ContractId.fromString(proxyAddress!), 'getTokenAddress', params, client, Gas5, HederaERC20__factory.abi) 
     return response[0];
 }
 
@@ -105,65 +158,74 @@ export async function getTokenOwnerAddress(ContractId: any, proxyAddress: string
 export async function Burn(ContractId: any, proxyAddress: string, amountOfTokenToBurn: any, clientBurningToken: any){
     let params = [amountOfTokenToBurn.toString()];        
     let result = await contractCall(ContractId.fromString(proxyAddress!), 'burn', params, clientBurningToken, Gas4, HederaERC20__factory.abi);
-    if(!result[0]) throw new Error("Burn unsucessful!!!");
+    if(result[0] != true) throw Error;
 }
 
 // Minteable ///////////////////////////////////////////////////
 export async function Mint(ContractId: any, proxyAddress: string, amountOfTokenToMint: any, clientMintingToken: any, clientToAssignTokensTo: string){
     let params: any[] = [AccountId.fromString(clientToAssignTokensTo!).toSolidityAddress(), amountOfTokenToMint.toString()];      
     let result = await contractCall(ContractId.fromString(proxyAddress!), 'mint', params, clientMintingToken, Gas1, HederaERC20__factory.abi);
-    if(!result[0]) throw new Error("Mint unsucessful!!!");
+    if(result[0] != true) throw Error;
 }
 
 // Wipeable ///////////////////////////////////////////////////
 export async function Wipe(ContractId: any, proxyAddress: string, amountOfTokenToWipe: any, clientWipingToken: any, accountToWipeFrom: string){
     let params = [AccountId.fromString(accountToWipeFrom!).toSolidityAddress(), amountOfTokenToWipe.toString()];      
     let result = await contractCall(ContractId.fromString(proxyAddress!), 'wipe', params, clientWipingToken, Gas1, HederaERC20__factory.abi);
-    if(!result[0]) throw new Error("Wipe unsucessful!!!");
+    if(result[0] != true) throw Error;
 }
 
 // Pausable ///////////////////////////////////////////////////
 export async function pause(ContractId: any, proxyAddress: string, clientPausingToken: any){
     let params: any[] = [];  
     let result = await contractCall(ContractId.fromString(proxyAddress!), 'pause', params, clientPausingToken, Gas1, HederaERC20__factory.abi);
-    if(!result[0]) throw new Error("Pause unsucessful!!!");
+    if(result[0] != true) throw Error;
 }
 
 export async function unpause(ContractId: any, proxyAddress: string, clientPausingToken: any){
     let params: any[] = [];  
     let result = await contractCall(ContractId.fromString(proxyAddress!), 'unpause', params, clientPausingToken, Gas1, HederaERC20__factory.abi);
-    if(!result[0]) throw new Error("Unpause unsucessful!!!");
+    if(result[0] != true) throw Error;
 }
 
 // Freezable ///////////////////////////////////////////////////
-export async function freeze(ContractId: any, proxyAddress: string, clientPausingToken: any, accountToFreeze: string){
+export async function freeze(ContractId: any, proxyAddress: string, clientFreezingToken: any, accountToFreeze: string){
     let params: any[] = [AccountId.fromString(accountToFreeze!).toSolidityAddress()];  
-    let result = await contractCall(ContractId.fromString(proxyAddress!), 'freeze', params, clientPausingToken, Gas1, HederaERC20__factory.abi);
-    if(!result[0]) throw new Error("Freeze unsucessful!!!");
+    let result = await contractCall(ContractId.fromString(proxyAddress!), 'freeze', params, clientFreezingToken, Gas1, HederaERC20__factory.abi);
+    if(result[0] != true) throw Error;
 }
 
-export async function unfreeze(ContractId: any, proxyAddress: string, clientPausingToken: any, accountToFreeze: string){
-    let params: any[] = [AccountId.fromString(accountToFreeze!).toSolidityAddress()];  
-    let result = await contractCall(ContractId.fromString(proxyAddress!), 'unfreeze', params, clientPausingToken, Gas1, HederaERC20__factory.abi);
-    if(!result[0]) throw new Error("Unfreeze unsucessful!!!");
+export async function unfreeze(ContractId: any, proxyAddress: string, clientUnFreezingToken: any, accountToUnFreeze: string){
+    let params: any[] = [AccountId.fromString(accountToUnFreeze!).toSolidityAddress()];  
+    let result = await contractCall(ContractId.fromString(proxyAddress!), 'unfreeze', params, clientUnFreezingToken, Gas1, HederaERC20__factory.abi);
+    if(result[0] != true) throw Error;
 }
 
 // Deletable ///////////////////////////////////////////////////
-export async function deleteToken(ContractId: any, proxyAddress: string, clientPausingToken: any){
+export async function deleteToken(ContractId: any, proxyAddress: string, clientDeletingToken: any){
     let params: any[] = [];  
-    let result = await contractCall(ContractId.fromString(proxyAddress!), 'deleteToken', params, clientPausingToken, Gas1, HederaERC20__factory.abi);
-    if(!result[0]) throw new Error("Delete unsucessful!!!");
+    let result = await contractCall(ContractId.fromString(proxyAddress!), 'deleteToken', params, clientDeletingToken, Gas1, HederaERC20__factory.abi);
+    if(result[0] != true) throw Error;
 }
 
 // Rescueable ///////////////////////////////////////////////////
-export async function rescueHbar(ContractId: any, proxyAddress: string, amountOfHBarToRescue: any, clientRescueingHBar: any){
-    let params = [amountOfHBarToRescue.toString()];      
-    await contractCall(ContractId.fromString(proxyAddress!), 'rescueHbar', params, clientRescueingHBar, Gas6, HederaERC20__factory.abi)  
+export async function rescue(ContractId: any, proxyAddress: string, amountOfTokenToRescue: any, clientRescueingToken: any){
+    let params = [amountOfTokenToRescue.toString()];      
+    let result = await contractCall(ContractId.fromString(proxyAddress!), 'rescue', params, clientRescueingToken, Gas4, HederaERC20__factory.abi)  
+    if(result[0] != true) throw Error;
 }
 
-export async function rescueToken(ContractId: any, proxyAddress: string, amountOfTokenToRescue: any, clientRescueingToken: any){
-    let params = [amountOfTokenToRescue.toString()];      
-    await contractCall(ContractId.fromString(proxyAddress!), 'rescueToken', params, clientRescueingToken, Gas6, HederaERC20__factory.abi)  
+// Roles ///////////////////////////////////////////////////
+export async function getRoles(ContractId: any, proxyAddress: string, client: any, accountToGetRolesFrom: string): Promise<any[]>{
+    let params = [AccountId.fromString(accountToGetRolesFrom!).toSolidityAddress()];  
+    const result = await contractCall(ContractId.fromString(proxyAddress!), 'getRoles', params, client, Gas3, HederaERC20__factory.abi);  
+    return result[0];
+}
+
+export async function getRoleId(ContractId: any, proxyAddress: string, client: any, roleName: Number): Promise<string>{
+    let params = [roleName];  
+    const result = await contractCall(ContractId.fromString(proxyAddress!), 'getRoleId', params, client, Gas3, HederaERC20__factory.abi);  
+    return result[0];
 }
 
 // SupplierAdmin ///////////////////////////////////////////////////

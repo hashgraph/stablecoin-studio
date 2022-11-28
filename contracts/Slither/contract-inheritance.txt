@@ -1,0 +1,320 @@
+'npx hardhat compile --force' running
+Generating typings for: 47 artifacts in dir: typechain-types for target: ethers-v5
+Successfully generated 130 typings!
+Compiled 47 Solidity files successfully
+ ·-------------------------------|--------------|----------------·
+ |  Contract Name                ·  Size (KiB)  ·  Change (KiB)  │
+ ································|··············|·················
+ |  Address                      ·       0.084  ·                │
+ ································|··············|·················
+ |  AddressUpgradeable           ·       0.084  ·                │
+ ································|··············|·················
+ |  ERC1967Proxy                 ·       0.755  ·                │
+ ································|··············|·················
+ |  HederaERC20                  ·      10.859  ·                │
+ ································|··············|·················
+ |  HederaERC20Proxy             ·       2.309  ·                │
+ ································|··············|·················
+ |  HederaERC20ProxyAdmin        ·       1.844  ·                │
+ ································|··············|·················
+ |  ProxyAdmin                   ·       1.844  ·                │
+ ································|··············|·················
+ |  SafeERC20Upgradeable         ·       0.084  ·                │
+ ································|··············|·················
+ |  StableCoinFactory            ·      20.825  ·                │
+ ································|··············|·················
+ |  StableCoinFactoryProxy       ·       2.268  ·                │
+ ································|··············|·················
+ |  StableCoinFactoryProxyAdmin  ·       1.844  ·                │
+ ································|··············|·················
+ |  StorageSlot                  ·       0.084  ·                │
+ ································|··············|·················
+ |  Strings                      ·       0.084  ·                │
+ ································|··············|·················
+ |  StringsUpgradeable           ·       0.084  ·                │
+ ································|··············|·················
+ |  TransparentUpgradeableProxy  ·       2.227  ·                │
+ ·-------------------------------|--------------|----------------·
+✅ Generated documentation for 47 contracts
+
+Inheritance
+Child_Contract -> Immediate_Base_Contracts [Not_Immediate_Base_Contracts]
++ AccessControlUpgradeable
+ -> Initializable, ContextUpgradeable, IAccessControlUpgradeable, ERC165Upgradeable
+, [IERC165Upgradeable]
+
++ IAccessControlUpgradeable
+
++ Initializable
+
++ IERC20Upgradeable
+
++ IERC20MetadataUpgradeable
+ -> IERC20Upgradeable
+
++ IERC20PermitUpgradeable
+
++ SafeERC20Upgradeable
+
++ AddressUpgradeable
+
++ ContextUpgradeable
+ -> Initializable
+
++ StringsUpgradeable
+
++ ERC165Upgradeable
+ -> Initializable, IERC165Upgradeable
+
++ IERC165Upgradeable
+
++ Ownable
+ -> Context
+
++ IERC1822Proxiable
+
++ ERC1967Proxy
+ -> Proxy, ERC1967Upgrade
+
++ ERC1967Upgrade
+
++ Proxy
+
++ IBeacon
+
++ ProxyAdmin
+ -> Ownable
+, [Context]
+
++ TransparentUpgradeableProxy
+ -> ERC1967Proxy
+, [ERC1967Upgrade, Proxy]
+
++ Address
+
++ Context
+
++ StorageSlot
+
++ Strings
+
++ HederaERC20
+ -> IHederaERC20, Initializable, IERC20Upgradeable, CashIn, Burnable, Wipeable, Rescatable
+, [SupplierAdmin, Roles, AccessControlUpgradeable, ERC165Upgradeable, IERC165Upgradeable, IAccessControlUpgradeable, ContextUpgradeable, TokenOwner, HederaResponseCodes, ITokenOwner, IRescatable, IWipeable, IBurnable, ISupplierAdmin, ICashIn]
+
++ HederaERC20Proxy
+ -> TransparentUpgradeableProxy
+, [ERC1967Proxy, ERC1967Upgrade, Proxy]
+
++ HederaERC20ProxyAdmin
+ -> ProxyAdmin
+, [Ownable, Context]
+
++ IHederaERC20
+
++ IStableCoinFactory
+
++ Roles
+ -> AccessControlUpgradeable
+, [ERC165Upgradeable, IERC165Upgradeable, IAccessControlUpgradeable, ContextUpgradeable, Initializable]
+
++ StableCoinFactory
+ -> IStableCoinFactory, HederaResponseCodes
+
++ StableCoinFactoryProxy
+ -> TransparentUpgradeableProxy
+, [ERC1967Proxy, ERC1967Upgrade, Proxy]
+
++ StableCoinFactoryProxyAdmin
+ -> ProxyAdmin
+, [Ownable, Context]
+
++ Burnable
+ -> IBurnable, TokenOwner, Roles
+, [AccessControlUpgradeable, ERC165Upgradeable, IERC165Upgradeable, IAccessControlUpgradeable, ContextUpgradeable, Initializable, HederaResponseCodes, ITokenOwner]
+
++ CashIn
+ -> ICashIn, SupplierAdmin
+, [Roles, AccessControlUpgradeable, ERC165Upgradeable, IERC165Upgradeable, IAccessControlUpgradeable, ContextUpgradeable, Initializable, TokenOwner, HederaResponseCodes, ITokenOwner, ISupplierAdmin]
+
++ IBurnable
+
++ ICashIn
+
++ IRescatable
+
++ ISupplierAdmin
+
++ ITokenOwner
+
++ IWipeable
+
++ Rescatable
+ -> IRescatable, TokenOwner, Roles
+, [AccessControlUpgradeable, ERC165Upgradeable, IERC165Upgradeable, IAccessControlUpgradeable, ContextUpgradeable, Initializable, HederaResponseCodes, ITokenOwner]
+
++ SupplierAdmin
+ -> ISupplierAdmin, TokenOwner, Roles
+, [AccessControlUpgradeable, ERC165Upgradeable, IERC165Upgradeable, IAccessControlUpgradeable, ContextUpgradeable, Initializable, HederaResponseCodes, ITokenOwner]
+
++ TokenOwner
+ -> ITokenOwner, HederaResponseCodes
+
++ Wipeable
+ -> IWipeable, TokenOwner, Roles
+, [AccessControlUpgradeable, ERC165Upgradeable, IERC165Upgradeable, IAccessControlUpgradeable, ContextUpgradeable, Initializable, HederaResponseCodes, ITokenOwner]
+
++ HederaResponseCodes
+
++ IHederaTokenService
+
+
+Base_Contract -> Immediate_Child_Contracts
+ [Not_Immediate_Child_Contracts]
+
++ AccessControlUpgradeable
+ -> Roles
+, [HederaERC20, Burnable, CashIn, Rescatable, SupplierAdmin, Wipeable]
+
++ IAccessControlUpgradeable
+ -> AccessControlUpgradeable
+, [HederaERC20, Roles, Burnable, CashIn, Rescatable, SupplierAdmin, Wipeable]
+
++ Initializable
+ -> AccessControlUpgradeable, ContextUpgradeable, ERC165Upgradeable, HederaERC20
+, [Roles, Burnable, CashIn, Rescatable, SupplierAdmin, Wipeable]
+
++ IERC20Upgradeable
+ -> IERC20MetadataUpgradeable, HederaERC20
+
++ IERC20MetadataUpgradeable
+
++ IERC20PermitUpgradeable
+
++ SafeERC20Upgradeable
+
++ AddressUpgradeable
+
++ ContextUpgradeable
+ -> AccessControlUpgradeable
+, [HederaERC20, Roles, Burnable, CashIn, Rescatable, SupplierAdmin, Wipeable]
+
++ StringsUpgradeable
+
++ ERC165Upgradeable
+ -> AccessControlUpgradeable
+, [HederaERC20, Roles, Burnable, CashIn, Rescatable, SupplierAdmin, Wipeable]
+
++ IERC165Upgradeable
+ -> ERC165Upgradeable
+, [AccessControlUpgradeable, HederaERC20, Roles, Burnable, CashIn, Rescatable, SupplierAdmin, Wipeable]
+
++ Ownable
+ -> ProxyAdmin
+, [HederaERC20ProxyAdmin, StableCoinFactoryProxyAdmin]
+
++ IERC1822Proxiable
+
++ ERC1967Proxy
+ -> TransparentUpgradeableProxy
+, [HederaERC20Proxy, StableCoinFactoryProxy]
+
++ ERC1967Upgrade
+ -> ERC1967Proxy
+, [TransparentUpgradeableProxy, HederaERC20Proxy, StableCoinFactoryProxy]
+
++ Proxy
+ -> ERC1967Proxy
+, [TransparentUpgradeableProxy, HederaERC20Proxy, StableCoinFactoryProxy]
+
++ IBeacon
+
++ ProxyAdmin
+ -> HederaERC20ProxyAdmin, StableCoinFactoryProxyAdmin
+
++ TransparentUpgradeableProxy
+ -> HederaERC20Proxy, StableCoinFactoryProxy
+
++ Address
+
++ Context
+ -> Ownable
+, [ProxyAdmin, HederaERC20ProxyAdmin, StableCoinFactoryProxyAdmin]
+
++ StorageSlot
+
++ Strings
+
++ HederaERC20
+
++ HederaERC20Proxy
+
++ HederaERC20ProxyAdmin
+
++ IHederaERC20
+ -> HederaERC20
+
++ IStableCoinFactory
+ -> StableCoinFactory
+
++ Roles
+ -> Burnable, Rescatable, SupplierAdmin, Wipeable
+, [HederaERC20, CashIn]
+
++ StableCoinFactory
+
++ StableCoinFactoryProxy
+
++ StableCoinFactoryProxyAdmin
+
++ Burnable
+ -> HederaERC20
+
++ CashIn
+ -> HederaERC20
+
++ IBurnable
+ -> Burnable
+, [HederaERC20]
+
++ ICashIn
+ -> CashIn
+, [HederaERC20]
+
++ IRescatable
+ -> Rescatable
+, [HederaERC20]
+
++ ISupplierAdmin
+ -> SupplierAdmin
+, [HederaERC20, CashIn]
+
++ ITokenOwner
+ -> TokenOwner
+, [HederaERC20, Burnable, CashIn, Rescatable, SupplierAdmin, Wipeable]
+
++ IWipeable
+ -> Wipeable
+, [HederaERC20]
+
++ Rescatable
+ -> HederaERC20
+
++ SupplierAdmin
+ -> CashIn
+, [HederaERC20]
+
++ TokenOwner
+ -> Burnable, Rescatable, SupplierAdmin, Wipeable
+, [HederaERC20, CashIn]
+
++ Wipeable
+ -> HederaERC20
+
++ HederaResponseCodes
+ -> StableCoinFactory, TokenOwner
+, [HederaERC20, Burnable, CashIn, Rescatable, SupplierAdmin, Wipeable]
+
++ IHederaTokenService
+
+. analyzed (47 contracts)

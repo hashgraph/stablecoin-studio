@@ -29,6 +29,7 @@ import {
   getSDKAsync,
   MAX_SUPPLY,
   REQUEST_ACCOUNTS,
+  FACTORY_ID
 } from '../../../core/core.js';
 import { StableCoinRole } from '../../../../src/core/enum.js';
 import BaseError from '../../../../src/core/error/BaseError.js';
@@ -136,7 +137,7 @@ describe('🧪 [PORT] SDK', () => {
     );
 
     await expect(coin).rejects.toThrow(BaseError);
-  }, 12_000);
+  }, 30_000);
 
   it('Gets the token list', async () => {
     const list = await sdk.getListStableCoin(
@@ -177,7 +178,6 @@ describe('🧪 [PORT] SDK', () => {
       }),
     );
     expect(cashin).not.toBeNull();
-    expect(cashin).toBeTruthy();
     expect(balance).not.toBeNull();
     expect(balance && balance).toBe(amount);
   }, 1500000);
@@ -202,7 +202,6 @@ describe('🧪 [PORT] SDK', () => {
       }),
     );
     expect(wipe).not.toBeNull();
-    expect(wipe).toBeTruthy();
     expect(balance).not.toBeNull();
     expect(balance && balance).toBe('9');
   }, 55000);
@@ -583,7 +582,6 @@ describe('🧪 [PORT] SDK', () => {
     );
 
     await expect(freezeAccount).not.toBeNull();
-    await expect(freezeAccount).toBeTruthy();
   }, 15000);
 
   it('Unfreeze Account token', async () => {
@@ -597,7 +595,6 @@ describe('🧪 [PORT] SDK', () => {
     );
 
     await expect(freezeAccount).not.toBeNull();
-    await expect(freezeAccount).toBeTruthy();
   }, 15000);
 
   it('Pause token', async () => {

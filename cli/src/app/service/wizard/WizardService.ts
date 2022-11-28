@@ -171,10 +171,12 @@ export default class WizardService extends Service {
       (acc) => acc.accountId === account.split(' - ')[0],
     );
     utilsService.setCurrentAccount(currentAccount);
+
     const currentNetwork = networks.find(
       (network) => currentAccount.network === network.name,
     );
     utilsService.setCurrentNetwotk(currentNetwork);
+
     if (mainMenu) await this.mainMenu();
   }
 
