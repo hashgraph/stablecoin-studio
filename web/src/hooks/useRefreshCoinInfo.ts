@@ -10,7 +10,6 @@ export const useRefreshCoinInfo = async (): Promise<void> => {
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const dispatch = useDispatch();
 	useEffect(() => {
-		console.log('useEffect');
 		getStableCoinDetails();
 	}, [selectedStableCoin?.deleted, selectedStableCoin?.paused, selectedStableCoin?.tokenId]);
 
