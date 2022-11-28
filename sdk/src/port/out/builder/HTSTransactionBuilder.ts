@@ -136,6 +136,7 @@ export class HTSTransactionBuilder {
 		}
 	}
     */
+
 	public static buildTokenWipeTransaction(
 		accountId: string,
 		tokenId: string,

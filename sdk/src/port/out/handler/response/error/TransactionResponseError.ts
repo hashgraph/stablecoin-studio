@@ -1,4 +1,3 @@
-import LogService from '../../../../../app/service/log/LogService.js';
 import BaseError, { ErrorCode } from '../../../../../core/error/BaseError.js';
 
 const REGEX_TRANSACTION =
@@ -21,7 +20,6 @@ export class TransactionResponseError extends BaseError {
 			const transaction =
 				val.transactionId.match(REGEX_TRANSACTION) ?? [];
 			this.transactionUrl = `${HASHSCAN_URL}${transaction[1]}.${transaction[2]}.${transaction[3]}-${transaction[5]}-${transaction[6]}`;
-			LogService.logError(this);
 		}
 	}
 }
