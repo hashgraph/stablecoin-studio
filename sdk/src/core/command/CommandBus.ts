@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { COMMAND_HANDLER_METADATA, COMMAND_METADATA } from '../Constants.js';
 import { CommandMetadata } from '../decorator/CommandMetadata.js';
+import { Injectable } from '../Injectable.js';
 import { Type } from '../Type.js';
 import { Command } from './Command.js';
 import { CommandHandler } from './CommandHandler.js';
@@ -8,6 +9,7 @@ import { CommandHandlerNotFoundException } from './error/CommandHandlerNotFoundE
 import { InvalidCommandHandlerException } from './error/InvalidCommandHandlerException.js';
 
 export type CommandHandlerType = Type<CommandHandler<Command>>;
+export type CommandBase = Command;
 
 export interface CommandBus<CommandBase extends Command = Command> {
 	execute<T extends CommandBase, R = any>(command: T): Promise<R>;
@@ -16,15 +18,24 @@ export interface CommandBus<CommandBase extends Command = Command> {
 export class CommandBus<CommandBase extends Command = Command>
 	implements CommandBus<CommandBase>
 {
-	private handlers = new Map<string, CommandHandler<CommandBase>>();
+	public handlers = new Map<string, CommandHandler<CommandBase>>();
+
+	constructor(handlers: CommandHandlerType[]) {
+		this.registerHandlers(handlers);
+	}
 
 	execute<T extends CommandBase, R = any>(command: T): Promise<R> {
-		const commandId = this.getCommandId(command);
-		const handler = this.handlers.get(commandId);
-		if (!handler) {
-			throw new CommandHandlerNotFoundException(commandId);
+		try {
+			const commandId = this.getCommandId(command);
+			const handler = this.handlers.get(commandId);
+			if (!handler) {
+				throw new CommandHandlerNotFoundException(commandId);
+			}
+			return handler.execute(command);
+		} catch (err) {
+			console.error(err);
+			throw err;
 		}
-		return handler.execute(command);
 	}
 
 	bind<T extends CommandBase>(handler: CommandHandler<T>, id: string): void {
@@ -44,16 +55,18 @@ export class CommandBus<CommandBase extends Command = Command>
 		return commandMetadata.id;
 	}
 
-	protected registerHandler(handler: CommandHandlerType): void {
-		const instance = this.moduleRef.get(handler, { strict: false });
-		if (!instance) {
-			return;
-		}
-		const target = this.reflectCommandId(handler);
-		if (!target) {
-			throw new InvalidCommandHandlerException();
-		}
-		this.bind(instance as CommandHandler<CommandBase>, target);
+	protected registerHandlers(handlers: CommandHandlerType[]): void {
+		handlers.forEach((handler) => {
+			const instance = Injectable.getHandler(handler);
+			if (!instance) {
+				return;
+			}
+			const target = this.reflectCommandId(handler);
+			if (!target) {
+				throw new InvalidCommandHandlerException();
+			}
+			this.bind(instance, target);
+		});
 	}
 
 	private reflectCommandId(handler: CommandHandlerType): string | undefined {
