@@ -1,4 +1,6 @@
-import { CommandHandler } from '../../../../src/core/command/CommandHandler.js';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { CommandHandler as ICommandHandler } from '../../../../src/core/command/CommandHandler.js';
+import { CommandHandler } from '../../../../src/core/decorator/CommandHandlerDecorator.js';
 
 export class ConcreteCommand {
 	constructor(
@@ -8,17 +10,19 @@ export class ConcreteCommand {
 }
 
 export class ConcreteCommandRepository {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	public map = new Map<ConcreteCommand, any>();
 }
 
-export class ConcreteCommandHandler implements CommandHandler<ConcreteCommand> {
+@CommandHandler(ConcreteCommand)
+export class ConcreteCommandHandler
+	implements ICommandHandler<ConcreteCommand>
+{
 	constructor(
 		public readonly repo: ConcreteCommandRepository = new ConcreteCommandRepository(),
 	) {}
 
 	execute(command: ConcreteCommand): Promise<any> {
-        this.repo.map.set(command, 'Hello world')
-		return Promise.resolve(true); 
+		this.repo.map.set(command, 'Hello world');
+		return Promise.resolve(true);
 	}
 }

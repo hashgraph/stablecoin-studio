@@ -51,7 +51,6 @@ export class CommandBus<CommandBase extends Command = Command>
 		if (!commandMetadata) {
 			throw new CommandHandlerNotFoundException(commandType.name);
 		}
-
 		return commandMetadata.id;
 	}
 
