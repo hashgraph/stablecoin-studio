@@ -8,20 +8,35 @@ import "./Interfaces/IHederaERC20.sol";
 import "./extensions/CashIn.sol";
 import "./extensions/Burnable.sol";
 import "./extensions/Wipeable.sol";
+import "./extensions/Pausable.sol";
+import "./extensions/Freezable.sol";
 import "./extensions/Rescatable.sol";
+import "./extensions/Deletable.sol";
 import "./hts-precompile/IHederaTokenService.sol";
 import "./extensions/TokenOwner.sol";
 
-
-contract HederaERC20 is IHederaERC20, IERC20Upgradeable,
-                       CashIn, Burnable, Wipeable, Rescatable {
+contract HederaERC20 is IHederaERC20, IERC20Upgradeable, 
+                        CashIn, Burnable, Wipeable, Pausable, Freezable, Deletable, Rescatable {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
-    function initialize (address tokenAddress, address originalSender) 
+    function initialize (IHederaTokenService.HederaToken calldata token, 
+        uint64 initialTotalSupply,
+        uint32 tokenDecimals,
+        address originalSender) 
         external 
         payable 
         initializer 
+        returns (address)
     {
+
+        (int64 responseCode, address tokenAddress) = 
+            IHederaTokenService(precompileAddress).createFungibleToken{value: msg.value}
+                (token, 
+                initialTotalSupply, 
+                tokenDecimals);
+
+        require(responseCode == HederaResponseCodes.SUCCESS, "Token Creation failed");
+
         tokenOwner_init(tokenAddress);
         roles_init();       
         _setupRole(_getRoleId(roleName.ADMIN), msg.sender); // Assign Admin role to calling contract/user in order to be able to set all the other roles
@@ -29,7 +44,12 @@ contract HederaERC20 is IHederaERC20, IERC20Upgradeable,
         _grantRole(_getRoleId(roleName.BURN), originalSender);
         _grantRole(_getRoleId(roleName.RESCUE), originalSender);
         _grantRole(_getRoleId(roleName.WIPE), originalSender);
+        _grantRole(_getRoleId(roleName.PAUSE), originalSender);
+        _grantRole(_getRoleId(roleName.FREEZE), originalSender);
+        _grantRole(_getRoleId(roleName.DELETE), originalSender);
         _setupRole(_getRoleId(roleName.ADMIN), originalSender); // Assign Admin role to the provided address
+
+        return tokenAddress;
     }
 
     /**
@@ -212,6 +232,5 @@ contract HederaERC20 is IHederaERC20, IERC20Upgradeable,
     {
         require(false, "function not already implemented");
         return true;
-    }
-    
+    }    
 }

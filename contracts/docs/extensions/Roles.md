@@ -61,6 +61,23 @@ function DEFAULT_ADMIN_ROLE() external view returns (bytes32)
 |---|---|---|
 | _0 | bytes32 | undefined |
 
+### DELETE_ROLE
+
+```solidity
+function DELETE_ROLE() external view returns (bytes32)
+```
+
+
+
+*Role that allows to pause the token  keccak256(&quot;DELETE_ROLE&quot;);*
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bytes32 | undefined |
+
 ### FREEZE_ROLE
 
 ```solidity

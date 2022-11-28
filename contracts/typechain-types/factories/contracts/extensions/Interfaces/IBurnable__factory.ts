@@ -44,7 +44,13 @@ const _abi = [
       },
     ],
     name: "burn",
-    outputs: [],
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },

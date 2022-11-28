@@ -20,5 +20,5 @@ interface IRescatable   {
     * 
     * @param amount The number of tokens to rescuer
     */
-    function rescue( uint256 amount) external; 
+    function rescue( uint256 amount) external returns (bool); 
 }

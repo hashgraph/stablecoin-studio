@@ -57,9 +57,9 @@ export declare namespace IStableCoinFactory {
     string,
     boolean,
     boolean,
+    BigNumber,
+    BigNumber,
     number,
-    BigNumber,
-    BigNumber,
     string,
     string,
     IStableCoinFactory.KeysStructStructOutput[]
@@ -68,9 +68,9 @@ export declare namespace IStableCoinFactory {
     tokenSymbol: string;
     freeze: boolean;
     supplyType: boolean;
-    tokenMaxSupply: number;
+    tokenMaxSupply: BigNumber;
     tokenInitialSupply: BigNumber;
-    tokenDecimals: BigNumber;
+    tokenDecimals: number;
     autoRenewAccountAddress: string;
     treasuryAddress: string;
     keys: IStableCoinFactory.KeysStructStructOutput[];
@@ -80,7 +80,7 @@ export declare namespace IStableCoinFactory {
 export interface StableCoinFactoryWrapperInterface extends utils.Interface {
   functions: {
     "changeFactory(address)": FunctionFragment;
-    "deployStableCoin((string,string,bool,bool,uint32,uint256,uint256,address,address,(uint256,bytes)[]))": FunctionFragment;
+    "deployStableCoin((string,string,bool,bool,int64,uint64,uint32,address,address,(uint256,bytes)[]))": FunctionFragment;
     "getFactory()": FunctionFragment;
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;

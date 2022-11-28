@@ -61,6 +61,23 @@ function DEFAULT_ADMIN_ROLE() external view returns (bytes32)
 |---|---|---|
 | _0 | bytes32 | undefined |
 
+### DELETE_ROLE
+
+```solidity
+function DELETE_ROLE() external view returns (bytes32)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bytes32 | undefined |
+
 ### FREEZE_ROLE
 
 ```solidity
@@ -216,7 +233,7 @@ function balanceOf(address account) external view returns (uint256)
 ### burn
 
 ```solidity
-function burn(uint256 amount) external nonpayable
+function burn(uint256 amount) external nonpayable returns (bool)
 ```
 
 
@@ -228,6 +245,12 @@ function burn(uint256 amount) external nonpayable
 | Name | Type | Description |
 |---|---|---|
 | amount | uint256 | The number of tokens to be burned |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
 
 ### decimals
 
@@ -263,6 +286,23 @@ function decreaseSupplierAllowance(address supplier, uint256 amount) external no
 | supplier | address | The address of the supplier |
 | amount | uint256 | The amount to subtract from the supplier&#39;s current minting allowance |
 
+### deleteToken
+
+```solidity
+function deleteToken() external nonpayable returns (bool)
+```
+
+
+
+*Deletes the token *
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
+
 ### dissociateToken
 
 ```solidity
@@ -278,6 +318,28 @@ function dissociateToken(address adr) external nonpayable
 | Name | Type | Description |
 |---|---|---|
 | adr | address | The address of the account to dissociate |
+
+### freeze
+
+```solidity
+function freeze(address account) external nonpayable returns (bool)
+```
+
+
+
+*Freezes transfers of the token for the `account`*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| account | address | The account whose transfers will be freezed for the token |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
 
 ### getRoleAdmin
 
@@ -455,7 +517,7 @@ function increaseSupplierAllowance(address supplier, uint256 amount) external no
 ### initialize
 
 ```solidity
-function initialize(address tokenAddress, address originalSender) external payable
+function initialize(IHederaTokenService.HederaToken token, uint64 initialTotalSupply, uint32 tokenDecimals, address originalSender) external payable returns (address)
 ```
 
 
@@ -466,8 +528,16 @@ function initialize(address tokenAddress, address originalSender) external payab
 
 | Name | Type | Description |
 |---|---|---|
-| tokenAddress | address | undefined |
+| token | IHederaTokenService.HederaToken | undefined |
+| initialTotalSupply | uint64 | undefined |
+| tokenDecimals | uint32 | undefined |
 | originalSender | address | undefined |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | address | undefined |
 
 ### isUnlimitedSupplierAllowance
 
@@ -494,7 +564,7 @@ function isUnlimitedSupplierAllowance(address supplier) external view returns (b
 ### mint
 
 ```solidity
-function mint(address account, uint256 amount) external nonpayable
+function mint(address account, uint256 amount) external nonpayable returns (bool)
 ```
 
 
@@ -507,6 +577,12 @@ function mint(address account, uint256 amount) external nonpayable
 |---|---|---|
 | account | address | The address that receives minted tokens |
 | amount | uint256 | The number of tokens to be minted |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
 
 ### name
 
@@ -524,6 +600,23 @@ function name() external view returns (string)
 | Name | Type | Description |
 |---|---|---|
 | _0 | string | string The the name of the token |
+
+### pause
+
+```solidity
+function pause() external nonpayable returns (bool)
+```
+
+
+
+*Pauses the token in order to prevent it from being involved in any kind of operation*
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
 
 ### renounceRole
 
@@ -545,7 +638,7 @@ function renounceRole(bytes32 role, address account) external nonpayable
 ### rescue
 
 ```solidity
-function rescue(uint256 amount) external nonpayable
+function rescue(uint256 amount) external nonpayable returns (bool)
 ```
 
 
@@ -557,6 +650,12 @@ function rescue(uint256 amount) external nonpayable
 | Name | Type | Description |
 |---|---|---|
 | amount | uint256 | The number of tokens to rescuer |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
 
 ### resetSupplierAllowance
 
@@ -732,10 +831,49 @@ function transferFrom(address, address, uint256) external pure returns (bool)
 |---|---|---|
 | _0 | bool | undefined |
 
+### unfreeze
+
+```solidity
+function unfreeze(address account) external nonpayable returns (bool)
+```
+
+
+
+*Freezes transfers of the token for the `account`*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| account | address | The account whose transfers will be unfreezed for the token |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
+
+### unpause
+
+```solidity
+function unpause() external nonpayable returns (bool)
+```
+
+
+
+*Unpauses the token in order to allow it to be involved in any kind of operation*
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
+
 ### wipe
 
 ```solidity
-function wipe(address account, uint32 amount) external nonpayable
+function wipe(address account, uint32 amount) external nonpayable returns (bool)
 ```
 
 
@@ -748,6 +886,12 @@ function wipe(address account, uint32 amount) external nonpayable
 |---|---|---|
 | account | address | The address of the account where to wipe the token |
 | amount | uint32 | The number of tokens to wipe |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
 
 
 
@@ -917,6 +1061,22 @@ event TokenAssociated(address token, address account)
 | token  | address | undefined |
 | account  | address | undefined |
 
+### TokenDeleted
+
+```solidity
+event TokenDeleted(address token)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token  | address | undefined |
+
 ### TokenDissociated
 
 ```solidity
@@ -933,6 +1093,22 @@ event TokenDissociated(address token, address account)
 |---|---|---|
 | token  | address | undefined |
 | account  | address | undefined |
+
+### TokenPaused
+
+```solidity
+event TokenPaused(address token)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token  | address | undefined |
 
 ### TokenRescued
 
@@ -970,6 +1146,22 @@ event TokenTransfer(address token, address sender, address receiver, uint256 amo
 | sender  | address | undefined |
 | receiver  | address | undefined |
 | amount  | uint256 | undefined |
+
+### TokenUnpaused
+
+```solidity
+event TokenUnpaused(address token)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token  | address | undefined |
 
 ### TokensBurned
 
@@ -1044,6 +1236,40 @@ event Transfer(address indexed from, address indexed to, uint256 value)
 | from `indexed` | address | undefined |
 | to `indexed` | address | undefined |
 | value  | uint256 | undefined |
+
+### TransfersFrozen
+
+```solidity
+event TransfersFrozen(address token, address account)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token  | address | undefined |
+| account  | address | undefined |
+
+### TransfersUnfrozen
+
+```solidity
+event TransfersUnfrozen(address token, address account)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| token  | address | undefined |
+| account  | address | undefined |
 
 
 

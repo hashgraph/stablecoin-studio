@@ -61,6 +61,23 @@ function DEFAULT_ADMIN_ROLE() external view returns (bytes32)
 |---|---|---|
 | _0 | bytes32 | undefined |
 
+### DELETE_ROLE
+
+```solidity
+function DELETE_ROLE() external view returns (bytes32)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bytes32 | undefined |
+
 ### FREEZE_ROLE
 
 ```solidity
@@ -272,7 +289,7 @@ function renounceRole(bytes32 role, address account) external nonpayable
 ### rescue
 
 ```solidity
-function rescue(uint256 amount) external nonpayable
+function rescue(uint256 amount) external nonpayable returns (bool)
 ```
 
 
@@ -284,6 +301,12 @@ function rescue(uint256 amount) external nonpayable
 | Name | Type | Description |
 |---|---|---|
 | amount | uint256 | The number of tokens to rescuer |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
 
 ### revokeRole
 

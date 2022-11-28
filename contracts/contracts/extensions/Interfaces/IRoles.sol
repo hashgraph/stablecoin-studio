@@ -8,7 +8,9 @@ interface IRoles {
         BURN,
         WIPE,
         RESCUE,
-        PAUSE
+        PAUSE,
+        FREEZE,
+        DELETE
     }
     
     function getRoles(address account) external view returns (bytes32[] memory);

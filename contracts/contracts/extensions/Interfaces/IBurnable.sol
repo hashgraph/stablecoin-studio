@@ -17,5 +17,5 @@ interface IBurnable {
      *
      * @param amount The number of tokens to be burned
      */
-    function burn(uint256 amount) external; 
+    function burn(uint256 amount) external returns (bool); 
 }

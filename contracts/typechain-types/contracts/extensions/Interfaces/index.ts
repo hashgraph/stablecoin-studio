@@ -3,6 +3,9 @@
 /* eslint-disable */
 export type { IBurnable } from "./IBurnable";
 export type { ICashIn } from "./ICashIn";
+export type { IDeletable } from "./IDeletable";
+export type { IFreezable } from "./IFreezable";
+export type { IPausable } from "./IPausable";
 export type { IRescatable } from "./IRescatable";
 export type { IRoles } from "./IRoles";
 export type { ISupplierAdmin } from "./ISupplierAdmin";

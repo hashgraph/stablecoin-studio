@@ -13,7 +13,7 @@
 ### burn
 
 ```solidity
-function burn(uint256 amount) external nonpayable
+function burn(uint256 amount) external nonpayable returns (bool)
 ```
 
 
@@ -25,6 +25,12 @@ function burn(uint256 amount) external nonpayable
 | Name | Type | Description |
 |---|---|---|
 | amount | uint256 | The number of tokens to be burned |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
 
 
 

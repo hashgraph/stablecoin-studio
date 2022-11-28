@@ -19,5 +19,5 @@ interface ICashIn {
      * @param account The address that receives minted tokens
      * @param amount The number of tokens to be minted
      */
-    function mint(address account, uint256 amount) external; 
+    function mint(address account, uint256 amount) external returns (bool); 
 }

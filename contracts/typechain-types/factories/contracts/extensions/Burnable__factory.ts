@@ -164,6 +164,19 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "DELETE_ROLE",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "FREEZE_ROLE",
     outputs: [
       {
@@ -223,7 +236,13 @@ const _abi = [
       },
     ],
     name: "burn",
-    outputs: [],
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },

@@ -2,19 +2,28 @@ const {
     ContractId,
     DelegateContractId,
     AccountId,
+    PublicKey,
     TokenSupplyType,
     PrivateKey,
     ContractFunctionParameters,
     ContractUpdateTransaction,
-    Key
+    Key,
+    TokenCreateTransaction,
+    Hbar,
+    TransactionResponse
 } = require('@hashgraph/sdk')
 
-const factoryAddress = ""; //"0000000000000000000000000000000002e86eb8"; 0.0.48787128
+import {
+    associateToken, 
+  } from "./contractsMethods";
+
+const factoryAddress = "0.0.48974149" //"0.0.48968373";
 const address_0 = "0x0000000000000000000000000000000000000000";
 
 import {
     StableCoinFactory__factory,
-    StableCoinFactoryWrapper__factory
+    StableCoinFactoryWrapper__factory,
+    HederaERC20__factory
 } from '../typechain-types'
 
 import {getClient, 
@@ -48,13 +57,44 @@ export function initializeClients(){
     client2publickey]
 }
 
+export function getOperatorClient(client1 : any, client2 : any, clientId : number): any{
+    return (clientId == 1) ? client1 : client2;
+}
+
+export function getOperatorAccount(client1account : any, client2account : any, clientId : number): any{
+    return (clientId == 1) ? client1account : client2account;
+}
+
+export function getOperatorPrivateKey(client1privatekey : any, client2privatekey : any, clientId : number): any{
+    return (clientId == 1) ? client1privatekey : client2privatekey;
+}
+
+export function getOperatorPublicKey(client1publickey : any, client2publickey : any, clientId : number): any{
+    return (clientId == 1) ? client1publickey : client2publickey;
+}
+
+export function getNonOperatorClient(client1 : any, client2 : any, clientId : number): any{
+    return (clientId == 2) ? client1 : client2;
+}
+
+export function getNonOperatorAccount(client1account : any, client2account : any, clientId : number): any{
+    return (clientId == 2) ? client1account : client2account;
+}
+
+export function getNonOperatorPrivateKey(client1privatekey : any, client2privatekey : any, clientId : number): any{
+    return (clientId == 2) ? client1privatekey : client2privatekey;
+}
+
+export function getNonOperatorPublicKey(client1publickey : any, client2publickey : any, clientId : number): any{
+    return (clientId == 2) ? client1publickey : client2publickey;
+}
 
 export async function deployFactory(
     clientOperator: any,
     privateKey: string
 ){
     // Deploying Wrapper logic
-    console.log(`Deploying Wrapper. please wait...`);
+    /*console.log(`Deploying Wrapper. please wait...`);
 
     const wrapper = await deployContractSDK(
         StableCoinFactoryWrapper__factory,
@@ -62,7 +102,7 @@ export async function deployFactory(
         clientOperator,
     )
 
-    console.log(`Wrapper deployed ${wrapper.toSolidityAddress()} - ${wrapper.toString()}`);
+    console.log(`Wrapper deployed ${wrapper.toSolidityAddress()} - ${wrapper.toString()}`);*/
 
     // Deploying Factory logic
     console.log(`Deploying Contract Factory. please wait...`);
@@ -71,14 +111,14 @@ export async function deployFactory(
         StableCoinFactory__factory,
         privateKey,
         clientOperator,
-        null,
-        ContractId.fromString(wrapper.toString())
+        //null,
+        //ContractId.fromString(wrapper.toString())
     )
 
     console.log(`Contract Factory deployed ${factory.toSolidityAddress()}`);
 
     // Setting the wrapper Factory address
-    let parametersContractCall = [factory.toSolidityAddress()]
+    /*let parametersContractCall = [factory.toSolidityAddress()]
 
     console.log(`setting the wrapper Factory address... please wait.`)
 
@@ -91,10 +131,47 @@ export async function deployFactory(
         StableCoinFactoryWrapper__factory.abi
     )
 
-    console.log(`Wrapper Address set`)
+    console.log(`Wrapper Address set`)*/
 
-    return wrapper;
+    return factory;
 }
+
+/*
+export async function createTokenHTS(tokenObject: any, client: any){
+
+    console.log("---------------------------------------")
+
+
+    const transaction = new TokenCreateTransaction()
+				.setMaxTransactionFee(new Hbar(25))
+				.setTokenName(tokenObject.tokenName)
+				.setTokenSymbol(tokenObject.tokenSymbol)
+				.setDecimals(tokenObject.tokenDecimals)
+				.setInitialSupply(tokenObject.tokenInitialSupply)
+				.setTokenMemo("")
+				.setFreezeDefault(tokenObject.freeze)
+				.setTreasuryAccountId(
+                    AccountId.fromString(tokenObject.treasuryAddress)
+
+				)
+                .setAutoRenewAccountId(
+					AccountId.fromSolidityAddress(tokenObject.autoRenewAccountAddress)
+				)
+                //.setAdminKey(DelegateContractId.fromString(tokenObject.keys[0].PublicKey))
+                .setFreezeKey(DelegateContractId.fromString(tokenObject.keys[1].PublicKey))
+                .setWipeKey(DelegateContractId.fromString(tokenObject.keys[2].PublicKey))
+                .setSupplyKey(DelegateContractId.fromString(tokenObject.keys[3].PublicKey))
+                .setPauseKey(DelegateContractId.fromString(tokenObject.keys[4].PublicKey))
+                .setMaxSupply(tokenObject.tokenMaxSupply)
+                .setSupplyType(tokenObject.supplyType)
+                ;
+			
+    let txResponse = await transaction.execute(client);
+
+    let txReceipt = await txResponse.getReceipt(client);
+
+    return txReceipt.tokenId;
+}*/
 
 export async function deployContractsWithSDK(
     name: string,
@@ -179,7 +256,36 @@ export async function deployContractsWithSDK(
     console.log(`Proxy created: ${proxyContract[0]} , ${ContractId.fromSolidityAddress(proxyContract[0]).toString()}`)
     console.log(`Proxy Admin created: ${proxyContract[1]} , ${ContractId.fromSolidityAddress(proxyContract[1]).toString()}`)
     console.log(`Implementation created: ${proxyContract[2]} , ${ContractId.fromSolidityAddress(proxyContract[2]).toString()}`)
-    console.log(`Underlying token created: ${proxyContract[3]} , ${ContractId.fromSolidityAddress(proxyContract[3]).toString()}`)
+
+    /*tokenObject.treasuryAddress = ContractId.fromSolidityAddress(proxyContract[0]).toString();
+    tokenObject.keys[0].PublicKey = ContractId.fromSolidityAddress(proxyContract[0]).toString();
+    tokenObject.keys[1].PublicKey = ContractId.fromSolidityAddress(proxyContract[0]).toString();
+    tokenObject.keys[2].PublicKey = ContractId.fromSolidityAddress(proxyContract[0]).toString();
+    tokenObject.keys[3].PublicKey = ContractId.fromSolidityAddress(proxyContract[0]).toString();
+    tokenObject.keys[4].PublicKey = ContractId.fromSolidityAddress(proxyContract[0]).toString();
+
+    console.log(`Token Object: ${JSON.stringify(tokenObject)}`)
+
+    proxyContract[3] = await createTokenHTS(tokenObject^, clientSdk);*/
+
+    console.log(`Underlying token created: ${proxyContract[3]}, ${ContractId.fromSolidityAddress(proxyContract[3]).toString()}`)
+
+    /*parametersContractCall = [AccountId.fromString(proxyContract[3]).toSolidityAddress(), AccountId.fromString(account).toSolidityAddress()]
+
+    console.log(`Initializing Proxy with parameters ${parametersContractCall}, please wait...`)
+
+    await contractCall(
+        ContractId.fromSolidityAddress(proxyContract[0]),
+        'initialize',
+        parametersContractCall,
+        clientSdk,
+        15000000,
+        HederaERC20__factory.abi
+    )
+
+    console.log(`Associating Token trough Proxy ${ContractId.fromSolidityAddress(proxyContract[0])}, please wait...`)
+
+    await associateToken(ContractId, ContractId.fromSolidityAddress(proxyContract[0]).toString(), clientSdk, account);*/
 
 
     return [ContractId.fromSolidityAddress(proxyContract[0]),

@@ -3,6 +3,9 @@
 /* eslint-disable */
 export { IBurnable__factory } from "./IBurnable__factory";
 export { ICashIn__factory } from "./ICashIn__factory";
+export { IDeletable__factory } from "./IDeletable__factory";
+export { IFreezable__factory } from "./IFreezable__factory";
+export { IPausable__factory } from "./IPausable__factory";
 export { IRescatable__factory } from "./IRescatable__factory";
 export { IRoles__factory } from "./IRoles__factory";
 export { ISupplierAdmin__factory } from "./ISupplierAdmin__factory";

@@ -55,7 +55,13 @@ const _abi = [
       },
     ],
     name: "mint",
-    outputs: [],
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },
