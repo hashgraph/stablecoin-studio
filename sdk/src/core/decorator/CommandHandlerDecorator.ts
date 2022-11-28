@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { COMMAND_HANDLER_METADATA, COMMAND_METADATA } from '../Constants';
 import { v4 } from 'uuid';
-import { Command } from '../command/Command.js';
+import { Command } from '../command/Command.interface.js';
 
 /**
  * This decorator determines that a class is a command handler

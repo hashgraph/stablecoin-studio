@@ -1,13 +1,14 @@
-import { CommandBase, CommandHandlerType } from './command/CommandBus.js';
-import { CommandHandler } from './command/CommandHandler.js';
+import { Command } from './command/Command.interface.js';
+import { CommandHandlerType } from './command/CommandBus.js';
+import { ICommandHandler } from './command/CommandHandler.interface.js';
 import { QueryBase, QueryHandlerType } from './query/QueryBus.js';
 import { QueryHandler } from './query/QueryHandler.js';
 
 export class Injectable {
 
-	static getCommandHandler<T extends CommandBase, K extends T>(
+	static getCommandHandler<T extends Command, K extends T>(
 		handler: CommandHandlerType,
-	): CommandHandler<K> {
+	): ICommandHandler<K> {
 		return new handler();
 	}
 
