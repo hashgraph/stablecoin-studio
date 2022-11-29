@@ -11,11 +11,9 @@ import { MessageTypes } from 'hashconnect';
 import { TransactionResponseHandler } from './TransactionResponseHandler.js';
 import { TransactionResponseError } from './error/TransactionResponseError.js';
 
-export class HTSTransactionResponseHandler {
+export class HTSTransactionResponseHandler extends TransactionResponseHandler {
 	public static async manageResponse(
-		transactionResponse:
-			| TransactionResponse
-			| MessageTypes.TransactionResponse,
+		transactionResponse: TransactionResponse,
 		responseType: TransactionType,
 		client: Client,
 		nameFunction?: string,
@@ -23,14 +21,9 @@ export class HTSTransactionResponseHandler {
 	): Promise<HTSResponse> {
 		let results: Uint8Array = new Uint8Array();
 		if (responseType === TransactionType.RECEIPT) {
-			const transactionReceipt: TransactionReceipt | undefined =
-				await this.getReceipt(client, transactionResponse);
+			const transactionReceipt: TransactionReceipt | undefined = await this.getReceipt(client, transactionResponse);
 			let transId;
-			if (transactionResponse instanceof TransactionResponse) {
-				transId = transactionResponse.transactionId;
-			} else {
-				transId = transactionResponse.id;
-			}
+			transId = transactionResponse.transactionId;
 			return this.createHTSResponse(
 				transId,
 				responseType,
@@ -58,7 +51,7 @@ export class HTSTransactionResponseHandler {
 					throw new TransactionResponseError({
 						message: 'Invalid response type',
 					});
-				results = TransactionResponseHandler.decodeFunctionResult(nameFunction, record, abi);
+				results = this.decodeFunctionResult(nameFunction, record, abi);
 			}
 			if (record instanceof Uint32Array) {
 				return this.createHTSResponse(
@@ -85,32 +78,16 @@ export class HTSTransactionResponseHandler {
 
 	private static async getRecord(
 		client: Client,
-		transactionResponse:
-			| TransactionResponse
-			| MessageTypes.TransactionResponse,
+		transactionResponse: TransactionResponse
 	): Promise<TransactionRecord | Uint32Array | undefined> {
-		let transactionRecord: TransactionRecord | Uint32Array | undefined;
-        if (transactionResponse instanceof TransactionResponse) {
-		    transactionRecord = await transactionResponse.getRecord(
-			    client
-		    );
-        }
-		return transactionRecord;
+	    return await transactionResponse.getRecord(client);
 	}
 
 	private static async getReceipt(
 		client: Client,
-		transactionResponse:
-			| TransactionResponse
-			| MessageTypes.TransactionResponse,
+		transactionResponse: TransactionResponse
 	): Promise<TransactionReceipt | undefined> {
-		let transactionReceipt: TransactionReceipt | undefined;
-        if (transactionResponse instanceof TransactionResponse) {
-		    transactionReceipt = await transactionResponse.getReceipt(
-			    client
-		    );
-        }
-		return transactionReceipt;
+ 		return await transactionResponse.getReceipt(client);
 	}
 
 	public static createHTSResponse(

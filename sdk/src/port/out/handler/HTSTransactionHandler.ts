@@ -1,7 +1,9 @@
 import { Transaction,Client, TransactionResponse } from '@hashgraph/sdk';
-import {HTSTransactionBuilder} from   './../builder/HTSTransactionBuilder.js'
-export class HTSTransactionHandler{
+import { HTSTransactionBuilder } from   './../builder/HTSTransactionBuilder.js'
+import { HTSTransactionResponseHandler } from './response/HTSTransactionResponseHandler.js';
+import { HTSResponse, TransactionType } from './response/TransactionResponse.js';
 
+export class HTSTransactionHandler{
     private _client:Client;
 
     public get client (){
@@ -66,9 +68,9 @@ export class HTSTransactionHandler{
     private async signAndSendTransaction(t: Transaction): Promise<TransactionResponse> { 	
 		try {
 			let tr:TransactionResponse = await t.execute(this.client);
-            return tr
+            return tr;
 		} catch (error) {
-            console.log("echo3 -> ")
+            console.log(`echo3 -> ${error}`)
 			throw error;
 		}
     }
