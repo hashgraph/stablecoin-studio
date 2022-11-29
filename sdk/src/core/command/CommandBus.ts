@@ -3,61 +3,47 @@ import { COMMAND_HANDLER_METADATA, COMMAND_METADATA } from '../Constants.js';
 import { CommandMetadata } from '../decorator/CommandMetadata.js';
 import { Injectable } from '../Injectable.js';
 import { Type } from '../Type.js';
-import { Command } from './Command.interface.js';
+import { Command } from './Command.js';
 import { ICommandHandler } from './CommandHandler.interface.js';
 import { CommandResponse } from './CommandResponse.interface.js';
 import { CommandHandlerNotFoundException } from './error/CommandHandlerNotFoundException.js';
 import { InvalidCommandHandlerException } from './error/InvalidCommandHandlerException.js';
 
-export type CommandHandlerType = Type<ICommandHandler<Command, CommandResponse>>;
+export type CommandHandlerType = Type<
+	ICommandHandler<Command<CommandResponse>>
+>;
 
-export interface ICommandBus<
-	CommandBase extends Command = Command,
-	ResponseBase extends CommandResponse = CommandResponse,
-> {
-	execute<T extends CommandBase, K extends ResponseBase>(
-		command: T,
-	): Promise<K>;
+export interface ICommandBus<T extends CommandResponse> {
+	execute<X extends T>(command: Command<X>): Promise<X>;
+	bind<X extends T>(handler: ICommandHandler<Command<X>>, id: string): void;
 }
 
-export class CommandBus<
-	CommandBase extends Command = Command,
-	ResponseBase extends CommandResponse = CommandResponse,
-> implements ICommandBus<CommandBase, ResponseBase>
-{
-	public handlers = new Map<
-		string,
-		ICommandHandler<CommandBase, ResponseBase>
-	>();
+export class CommandBus<T extends CommandResponse> implements ICommandBus<T> {
+	public handlers = new Map<string, ICommandHandler<Command<T>>>();
 
 	constructor(handlers: CommandHandlerType[]) {
 		this.registerHandlers(handlers);
 	}
 
-	execute<T extends CommandBase, K extends ResponseBase>(
-		command: T,
-	): Promise<K> {
+	execute<X extends T>(command: Command<X>): Promise<X> {
 		try {
 			const commandId = this.getCommandId(command);
 			const handler = this.handlers.get(commandId);
 			if (!handler) {
 				throw new CommandHandlerNotFoundException(commandId);
 			}
-			return handler.execute(command) as Promise<K>;
+			return handler.execute(command) as Promise<X>;
 		} catch (err) {
 			console.error(err);
 			throw err;
 		}
 	}
 
-	bind<T extends CommandBase, K extends ResponseBase>(
-		handler: ICommandHandler<T, K>,
-		id: string,
-	): void {
+	bind<X extends T>(handler: ICommandHandler<Command<X>>, id: string): void {
 		this.handlers.set(id, handler);
 	}
 
-	private getCommandId(command: CommandBase): string {
+	private getCommandId<X>(command: Command<X>): string {
 		const { constructor: commandType } = Object.getPrototypeOf(command);
 		const commandMetadata: CommandMetadata = Reflect.getMetadata(
 			COMMAND_METADATA,
@@ -79,15 +65,12 @@ export class CommandBus<
 			if (!target) {
 				throw new InvalidCommandHandlerException();
 			}
-			this.bind(
-				instance as ICommandHandler<CommandBase, ResponseBase>,
-				target,
-			);
+			this.bind(instance as ICommandHandler<Command<T>>, target);
 		});
 	}
 
 	private reflectCommandId(handler: CommandHandlerType): string | undefined {
-		const command: Type<Command> = Reflect.getMetadata(
+		const command: Type<Command<CommandResponse>> = Reflect.getMetadata(
 			COMMAND_HANDLER_METADATA,
 			handler,
 		);

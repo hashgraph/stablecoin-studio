@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Command } from '../../../../src/core/command/Command.interface.js';
+import { Command } from '../../../../src/core/command/Command.js';
 import { ICommandHandler } from '../../../../src/core/command/CommandHandler.interface.js';
 import { CommandResponse } from '../../../../src/core/command/CommandResponse.interface.js';
 import { CommandHandler } from '../../../../src/core/decorator/CommandHandlerDecorator.js';
@@ -8,11 +8,13 @@ export class ConcreteCommandResponse implements CommandResponse {
 	constructor(public readonly payload: number) {}
 }
 
-export class ConcreteCommand implements Command {
+export class ConcreteCommand extends Command<ConcreteCommandResponse> {
 	constructor(
 		public readonly itemId: string,
 		public readonly payload: number,
-	) {}
+	) {
+		super();
+	}
 }
 
 export class ConcreteCommandRepository {
@@ -21,7 +23,7 @@ export class ConcreteCommandRepository {
 
 @CommandHandler(ConcreteCommand)
 export class ConcreteCommandHandler
-	implements ICommandHandler<ConcreteCommand, ConcreteCommandResponse>
+	implements ICommandHandler<ConcreteCommand>
 {
 	constructor(
 		public readonly repo: ConcreteCommandRepository = new ConcreteCommandRepository(),
