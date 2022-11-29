@@ -4,8 +4,8 @@ import { ICommandHandler } from './command/CommandHandler.js';
 import { CommandResponse } from './command/CommandResponse.js';
 import { Query } from './query/Query.js';
 import { QueryHandlerType } from './query/QueryBus.js';
-import { IQueryHandler } from './query/QueryHandler.interface.js';
-import { QueryResponse } from './query/QueryResponse.interface.js';
+import { IQueryHandler } from './query/QueryHandler.js';
+import { QueryResponse } from './query/QueryResponse.js';
 
 
 export class Injectable {

@@ -4,8 +4,8 @@ import { QueryMetadata } from '../decorator/QueryMetadata.js';
 import { Injectable } from '../Injectable.js';
 import { Type } from '../Type.js';
 import { Query } from './Query.js';
-import { IQueryHandler } from './QueryHandler.interface.js';
-import { QueryResponse } from './QueryResponse.interface.js';
+import { IQueryHandler } from './QueryHandler.js';
+import { QueryResponse } from './QueryResponse.js';
 import { QueryHandlerNotFoundException } from './error/QueryHandlerNotFoundException.js';
 import { InvalidQueryHandlerException } from './error/InvalidQueryHandlerException.js';
 
