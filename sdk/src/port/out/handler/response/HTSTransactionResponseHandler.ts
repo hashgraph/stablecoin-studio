@@ -1,30 +1,30 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { TransactionType, HTSResponse } from './TransactionResponse.js';
+import { TransactionType } from './TransactionResponse.js';
 import {
     Client,
-	TransactionResponse,
+	TransactionResponse as HTransactionResponse,
 	TransactionReceipt,
 	TransactionRecord,
 	TransactionId
 } from '@hashgraph/sdk';
-import { MessageTypes } from 'hashconnect';
+import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
 import { TransactionResponseHandler } from './TransactionResponseHandler.js';
 import { TransactionResponseError } from './error/TransactionResponseError.js';
 
 export class HTSTransactionResponseHandler extends TransactionResponseHandler {
 	public static async manageResponse(
-		transactionResponse: TransactionResponse,
+		transactionResponse: HTransactionResponse,
 		responseType: TransactionType,
 		client: Client,
 		nameFunction?: string,
 		abi?: object[],
-	): Promise<HTSResponse> {
+	): Promise<TransactionResponse> {
 		let results: Uint8Array = new Uint8Array();
 		if (responseType === TransactionType.RECEIPT) {
 			const transactionReceipt: TransactionReceipt | undefined = await this.getReceipt(client, transactionResponse);
 			let transId;
 			transId = transactionResponse.transactionId;
-			return this.createHTSResponse(
+			return this.createTransactionResponse(
 				transId,
 				responseType,
 				results,
@@ -54,7 +54,7 @@ export class HTSTransactionResponseHandler extends TransactionResponseHandler {
 				results = this.decodeFunctionResult(nameFunction, record, abi);
 			}
 			if (record instanceof Uint32Array) {
-				return this.createHTSResponse(
+				return this.createTransactionResponse(
 					undefined,
 					responseType,
 					results,
@@ -62,7 +62,7 @@ export class HTSTransactionResponseHandler extends TransactionResponseHandler {
 				);
 			} else {
 				const tr = transactionRecord as TransactionRecord;
-				return this.createHTSResponse(
+				return this.createTransactionResponse(
 					tr?.transactionId,
 					responseType,
 					results,
@@ -78,29 +78,29 @@ export class HTSTransactionResponseHandler extends TransactionResponseHandler {
 
 	private static async getRecord(
 		client: Client,
-		transactionResponse: TransactionResponse
+		transactionResponse: HTransactionResponse
 	): Promise<TransactionRecord | Uint32Array | undefined> {
 	    return await transactionResponse.getRecord(client);
 	}
 
 	private static async getReceipt(
 		client: Client,
-		transactionResponse: TransactionResponse
+		transactionResponse: HTransactionResponse
 	): Promise<TransactionReceipt | undefined> {
  		return await transactionResponse.getReceipt(client);
 	}
 
-	public static createHTSResponse(
-		transactionId: string | TransactionId | undefined,
+	public static createTransactionResponse(
+		transactionId: TransactionId | undefined,
 		responseType: TransactionType,
 		responseParam: Uint8Array,
 		receipt?: TransactionReceipt,
-	): HTSResponse {
-		return new HTSResponse(
-			transactionId,
-			responseType,
-			responseParam,
-			receipt,
+	): TransactionResponse {
+		const record: Record<string, any> = {"value": "value"};
+		
+		return new TransactionResponse(
+			record,
+			transactionId!.toString()
 		);
 	}
 }
