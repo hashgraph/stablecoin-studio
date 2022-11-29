@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { COMMAND_HANDLER_METADATA, COMMAND_METADATA } from '../Constants';
 import { v4 } from 'uuid';
 import { ICommand } from '../command/Command.js';

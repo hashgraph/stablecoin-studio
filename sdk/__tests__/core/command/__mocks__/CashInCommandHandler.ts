@@ -3,6 +3,7 @@ import { Command } from '../../../../src/core/command/Command.js';
 import { ICommandHandler } from '../../../../src/core/command/CommandHandler.js';
 import { CommandResponse } from '../../../../src/core/command/CommandResponse.js';
 import { CommandHandler } from '../../../../src/core/decorator/CommandHandlerDecorator.js';
+import Account from '../../../../src/domain/context/account/Account.js';
 
 export class CashInCommandResponse implements CommandResponse {
 	constructor(public readonly payload: boolean) {}
@@ -10,7 +11,7 @@ export class CashInCommandResponse implements CommandResponse {
 
 export class CashInCommand extends Command<CashInCommandResponse> {
 	constructor(
-		public readonly account: { id: string; privateKey?: string },
+		public readonly account: Account,
 		public readonly amount: string,
 		public readonly proxyContractId: string,
 		public readonly targetId: string,

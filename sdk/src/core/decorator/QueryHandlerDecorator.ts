@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { QUERY_HANDLER_METADATA, QUERY_METADATA } from '../Constants';
 import { v4 } from 'uuid';
 import { IQuery } from '../query/Query.js';

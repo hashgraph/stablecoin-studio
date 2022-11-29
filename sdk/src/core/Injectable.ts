@@ -7,6 +7,7 @@ import { QueryHandlerType } from './query/QueryBus.js';
 import { IQueryHandler } from './query/QueryHandler.js';
 import { QueryResponse } from './query/QueryResponse.js';
 
+import { container, InjectionToken } from 'tsyringe';
 
 export class Injectable {
 	static getCommandHandler<T extends Command<K>, K extends CommandResponse>(
@@ -21,4 +22,7 @@ export class Injectable {
 		return new handler() as IQueryHandler<T>;
 	}
 
+	static resolve<T = unknown>(cls: InjectionToken<T>): T {
+		return container.resolve(cls);
+	}
 }

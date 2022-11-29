@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import RequestMapper from '../../port/in/sdk/request/mapping/RequestMapper.js';
 import { IndexableObject } from '../types.js';
 

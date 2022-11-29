@@ -71,6 +71,7 @@
     "reflect-metadata": "^0.1.13",
     "ts-xor": "^1.0.8",
     "tslib": "~2.4",
+    "tsyringe": "^4.7.0",
     "uuid": "^9.0.0",
     "web3": "^1.8.0",
     "winston": "^3.8.2",

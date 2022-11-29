@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { injectable } from 'tsyringe';
+import { CashInCommandHandler } from '../../app/usecase/stablecoin/cashin/CashInCommandHandler.js';
 import { COMMAND_HANDLER_METADATA, COMMAND_METADATA } from '../Constants.js';
 import { CommandMetadata } from '../decorator/CommandMetadata.js';
 import { Injectable } from '../Injectable.js';
@@ -18,11 +20,14 @@ export interface ICommandBus<T extends CommandResponse> {
 	bind<X extends T>(handler: ICommandHandler<Command<X>>, id: string): void;
 }
 
-export class CommandBus<T extends CommandResponse> implements ICommandBus<T> {
+@injectable()
+export class CommandBus<T extends CommandResponse = CommandResponse>
+	implements ICommandBus<T>
+{
 	public handlers = new Map<string, ICommandHandler<Command<T>>>();
 
-	constructor(handlers: CommandHandlerType[]) {
-		this.registerHandlers(handlers);
+	constructor() {
+		this.registerHandlers([CashInCommandHandler]);
 	}
 
 	execute<X extends T>(command: Command<X>): Promise<X> {

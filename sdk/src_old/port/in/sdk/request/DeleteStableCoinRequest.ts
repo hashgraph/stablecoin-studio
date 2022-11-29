@@ -1,4 +1,4 @@
-import { OptionalField } from '../../../../core/decorators/OptionalDecorator.js';
+import { OptionalField } from '../../../core/decorator/OptionalDecorator.js';
 import {
 	AccountBaseRequest,
 	RequestAccount,
