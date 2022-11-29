@@ -1,12 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { QueryHandler as IQueryHandler } from '../../../../src/core/query/QueryHandler.js';
+import { Query } from '../../../../src/core/query/Query.js';
+import { IQueryHandler } from '../../../../src/core/query/QueryHandler.interface.js';
+import { QueryResponse } from '../../../../src/core/query/QueryResponse.interface.js';
 import { QueryHandler } from '../../../../src/core/decorator/QueryHandlerDecorator.js';
 
-export class ConcreteQuery {
+export class ConcreteQueryResponse implements QueryResponse {
+	constructor(public readonly payload: number) {}
+}
+
+export class ConcreteQuery extends Query<ConcreteQueryResponse> {
 	constructor(
 		public readonly itemId: string,
 		public readonly payload: number,
-	) {}
+	) {
+		super();
+	}
 }
 
 export class ConcreteQueryRepository {
@@ -21,8 +29,8 @@ export class ConcreteQueryHandler
 		public readonly repo: ConcreteQueryRepository = new ConcreteQueryRepository(),
 	) {}
 
-	execute(query: ConcreteQuery): Promise<any> {
+	execute(query: ConcreteQuery): Promise<ConcreteQueryResponse> {
 		this.repo.map.set(query, 'Hello world');
-		return Promise.resolve(true);
+		return Promise.resolve(new ConcreteQueryResponse(query.payload));
 	}
 }

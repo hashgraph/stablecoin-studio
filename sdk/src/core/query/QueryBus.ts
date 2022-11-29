@@ -4,45 +4,46 @@ import { QueryMetadata } from '../decorator/QueryMetadata.js';
 import { Injectable } from '../Injectable.js';
 import { Type } from '../Type.js';
 import { Query } from './Query.js';
-import { QueryHandler } from './QueryHandler.js';
+import { IQueryHandler } from './QueryHandler.interface.js';
+import { QueryResponse } from './QueryResponse.interface.js';
 import { QueryHandlerNotFoundException } from './error/QueryHandlerNotFoundException.js';
 import { InvalidQueryHandlerException } from './error/InvalidQueryHandlerException.js';
 
-export type QueryHandlerType = Type<QueryHandler<Query>>;
-export type QueryBase = Query;
+export type QueryHandlerType = Type<
+	IQueryHandler<Query<QueryResponse>>
+>;
 
-export interface QueryBus<QueryBase extends Query = Query> {
-	execute<T extends QueryBase, R = any>(query: T): Promise<R>;
+export interface IQueryBus<T extends QueryResponse> {
+	execute<X extends T>(query: Query<X>): Promise<X>;
+	bind<X extends T>(handler: IQueryHandler<Query<X>>, id: string): void;
 }
 
-export class QueryBus<QueryBase extends Query = Query>
-	implements QueryBus<QueryBase>
-{
-	public handlers = new Map<string, QueryHandler<QueryBase>>();
+export class QueryBus<T extends QueryResponse> implements IQueryBus<T> {
+	public handlers = new Map<string, IQueryHandler<Query<T>>>();
 
 	constructor(handlers: QueryHandlerType[]) {
 		this.registerHandlers(handlers);
 	}
 
-	execute<T extends QueryBase, R = any>(query: T): Promise<R> {
+	execute<X extends T>(query: Query<X>): Promise<X> {
 		try {
 			const queryId = this.getQueryId(query);
 			const handler = this.handlers.get(queryId);
 			if (!handler) {
 				throw new QueryHandlerNotFoundException(queryId);
 			}
-			return handler.execute(query);
+			return handler.execute(query) as Promise<X>;
 		} catch (err) {
 			console.error(err);
 			throw err;
 		}
 	}
 
-	bind<T extends QueryBase>(handler: QueryHandler<T>, id: string): void {
+	bind<X extends T>(handler: IQueryHandler<Query<X>>, id: string): void {
 		this.handlers.set(id, handler);
 	}
 
-	private getQueryId(query: QueryBase): string {
+	private getQueryId<X>(query: Query<X>): string {
 		const { constructor: queryType } = Object.getPrototypeOf(query);
 		const queryMetadata: QueryMetadata = Reflect.getMetadata(
 			QUERY_METADATA,
@@ -64,12 +65,12 @@ export class QueryBus<QueryBase extends Query = Query>
 			if (!target) {
 				throw new InvalidQueryHandlerException();
 			}
-			this.bind(instance, target);
+			this.bind(instance as IQueryHandler<Query<T>>, target);
 		});
 	}
 
 	private reflectQueryId(handler: QueryHandlerType): string | undefined {
-		const query: Type<Query> = Reflect.getMetadata(
+		const query: Type<Query<QueryResponse>> = Reflect.getMetadata(
 			QUERY_HANDLER_METADATA,
 			handler,
 		);
