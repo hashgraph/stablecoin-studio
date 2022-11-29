@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Command } from '../../../../src/core/command/Command.js';
-import { ICommandHandler } from '../../../../src/core/command/CommandHandler.interface.js';
-import { CommandResponse } from '../../../../src/core/command/CommandResponse.interface.js';
+import { ICommandHandler } from '../../../../src/core/command/CommandHandler.js';
+import { CommandResponse } from '../../../../src/core/command/CommandResponse.js';
 import { CommandHandler } from '../../../../src/core/decorator/CommandHandlerDecorator.js';
 
 export class CashInCommandResponse implements CommandResponse {

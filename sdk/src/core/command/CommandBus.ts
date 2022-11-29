@@ -4,8 +4,8 @@ import { CommandMetadata } from '../decorator/CommandMetadata.js';
 import { Injectable } from '../Injectable.js';
 import { Type } from '../Type.js';
 import { Command } from './Command.js';
-import { ICommandHandler } from './CommandHandler.interface.js';
-import { CommandResponse } from './CommandResponse.interface.js';
+import { ICommandHandler } from './CommandHandler.js';
+import { CommandResponse } from './CommandResponse.js';
 import { CommandHandlerNotFoundException } from './error/CommandHandlerNotFoundException.js';
 import { InvalidCommandHandlerException } from './error/InvalidCommandHandlerException.js';
 

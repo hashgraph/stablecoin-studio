@@ -1,7 +1,7 @@
 import { Command } from './command/Command.js';
 import { CommandHandlerType } from './command/CommandBus.js';
-import { ICommandHandler } from './command/CommandHandler.interface.js';
-import { CommandResponse } from './command/CommandResponse.interface.js';
+import { ICommandHandler } from './command/CommandHandler.js';
+import { CommandResponse } from './command/CommandResponse.js';
 import { Query } from './query/Query.js';
 import { QueryHandlerType } from './query/QueryBus.js';
 import { IQueryHandler } from './query/QueryHandler.interface.js';
