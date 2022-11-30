@@ -11,7 +11,7 @@ export default interface TransactionHandler<K> {
 	unfreeze(coin: StableCoin, targetId: string): Promise<TransactionResponse>;
 	pause(coin: StableCoin): Promise<TransactionResponse>;
 	unpause(coin: StableCoin): Promise<TransactionResponse>;
-	rescue(coin: StableCoin): Promise<TransactionResponse>;
+	rescue(coin: StableCoin, amount: Long): Promise<TransactionResponse>;
 	delete(coin: StableCoin): Promise<TransactionResponse>;
 	/*contractCall(
 		contract: Contract,
