@@ -1,22 +1,12 @@
-import {
-	Client,
-	TransactionResponse as HTRansactionResponse,
-} from '@hashgraph/sdk';
-import Long from 'long';
-import { HTSTransactionHandler } from '../../../../src/port/out/handler/HTSTransactionHandler.js';
-import { HTSTransactionResponseHandler } from '../../../../src/port/out/handler/response/HTSTransactionResponseHandler.js';
-
-import { Status } from '@hashgraph/sdk';
+import { Client } from '@hashgraph/sdk';
 import RPCTransactionHandler from '../../../../src/port/out/handler/RPCTransactionHandler.js';
 import { StableCoin } from '../../../../src/domain/context/stablecoin/StableCoin.js';
-
-import {
-	HederaERC20__factory,
-	HederaERC20ProxyAdmin__factory,
-	HederaERC20Proxy__factory,
-} from 'hedera-stable-coin-contracts/typechain-types/index.js';
 import TransactionResponse from '../../../../src/domain/context/transaction/TransactionResponse.js';
 import { HederaId } from '../../../../src/domain/context/shared/HederaId.js';
+import StableCoinCapabilities from '../../../../src/domain/context/stablecoin/StableCoinCapabilities.js';
+import { Capability } from '../../../../src/domain/context/stablecoin/Capability.js';
+import Account from '../../../../src/domain/context/account/Account.js';
+import BigDecimal from '../../../../src/domain/context/shared/BigDecimal.js';
 
 describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	const clientAccountId = '0.0.47792863';
@@ -37,15 +27,49 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 
 	// eslint-disable-next-line jest/expect-expect
 	it('Test mint', async () => {
-		const stablecoin = new StableCoin({
-			name: 'TEST',
-			symbol: 'TEST',
-			decimals: 16,
-			proxyAddress: HederaId.from('0.0.48995254'),
-			evmProxyAddress: '0x0000000000000000000000000000000002eb9bb6',
-			tokenId: HederaId.from('0.0.48995256'),
-		});
-		tr = await th.mint(stablecoin, Long.ONE);
+		const stableCoinCapabilities = new StableCoinCapabilities(
+			new StableCoin({
+				name: 'TEST',
+				symbol: 'TEST',
+				decimals: 16,
+				proxyAddress: HederaId.from('0.0.49001866'),
+				evmProxyAddress: '0x0000000000000000000000000000000002ebb58a',
+				tokenId: HederaId.from('0.0.49001869'),
+			}),
+			[Capability.CASH_IN],
+			new Account({
+				environment: 'testnet',
+				evmAddress: '0x367710d1076ed07d52162d3f45012a89f8bc3335',
+			}),
+		);
+
+		tr = await th.cashin(
+			stableCoinCapabilities,
+			'0x367710d1076ed07d52162d3f45012a89f8bc3335',
+			BigDecimal.fromString('1'),
+		);
+	}, 1500000);
+
+	// eslint-disable-next-line jest/expect-expect
+	it('Test balance', async () => {
+		const stableCoinCapabilities = new StableCoinCapabilities(
+			new StableCoin({
+				name: 'TEST',
+				symbol: 'TEST',
+				decimals: 16,
+				proxyAddress: HederaId.from('0.0.49001866'),
+				evmProxyAddress: '0x0000000000000000000000000000000002ebb58a',
+				tokenId: HederaId.from('0.0.49001869'),
+			}),
+			[Capability.CASH_IN],
+			new Account({
+				environment: 'testnet',
+				evmAddress: '0x367710d1076ed07d52162d3f45012a89f8bc3335',
+			}),
+		);
+
+		tr = await th.balance(stableCoinCapabilities);
+		console.log(tr);
 	}, 1500000);
 
 	// it('Test burn', async () => {

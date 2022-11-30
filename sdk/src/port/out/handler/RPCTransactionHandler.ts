@@ -15,10 +15,10 @@ export default class RPCTransactionHandler
 		'https://testnet.hashio.io/api',
 	);
 	wallet = new ethers.Wallet(
-		'1404d4a4a67fb21e7181d147bfdaa7c9b55ebeb7e1a9048bf18d5da6e169c09c',
+		'5011cb95478060ccb35b7d9141317eb326f43d6cfb047c0c852bf0fd6f46a929',
 		this.provider,
 	);
-	metamaskAccount = '0x320D33046B60DBc5a027cFB7E4124F75b0417240';
+	metamaskAccount = '0x367710d1076ed07d52162d3f45012a89f8bc3335';
 
 	async wipe(
 		coin: StableCoinCapabilities,

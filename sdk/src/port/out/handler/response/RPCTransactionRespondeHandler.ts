@@ -4,7 +4,7 @@ import { HederaERC20__factory } from 'hedera-stable-coin-contracts/typechain-typ
 import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
 import { TransactionResponseHandler } from './TransactionResponseHandler.js';
 
-const ERROR_STATUS = 1;
+const ERROR_STATUS = 0;
 
 export class RPCTransactionResponseHandler extends TransactionResponseHandler {
 	public static async manageResponse(
@@ -16,10 +16,11 @@ export class RPCTransactionResponseHandler extends TransactionResponseHandler {
 			data: response.data,
 			value: response.value,
 		});
-		console.log(r);
+		// console.log(r);
 
 		//let decodedData = iface.parseTransaction();
 		const receipt = await response.wait();
+		console.log(receipt);
 		if (receipt.status === ERROR_STATUS) {
 			return Promise.reject(
 				new TransactionResponse(
