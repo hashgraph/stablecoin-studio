@@ -16,8 +16,9 @@ import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 export abstract class HederaTransactionHandler implements TransactionHandler<Transaction> {
     private web3 = new Web3(); 
 
-    public async wipe(coin: StableCoinCapabilities, targetId: string, amount: BigDecimal): Promise<TransactionResponse> {
-        throw new Error("not implemented");
+    public async wipe(stableCoinCapabilities: StableCoinCapabilities, targetId: string, amount: BigDecimal): Promise<TransactionResponse> {
+        const t: Transaction = HTSTransactionBuilder.buildTokenWipeTransaction(targetId, stableCoinCapabilities.coin.tokenId?.value!, amount.toLong());    
+        return this.signAndSendTransaction(t, TransactionType.RECEIPT)    
     }
 
     public async cashin(coin: StableCoinCapabilities, targetId: string, amount: BigDecimal): Promise<TransactionResponse> {
@@ -40,44 +41,52 @@ export abstract class HederaTransactionHandler implements TransactionHandler<Tra
                 default:
                     let tokenId = coin.coin.tokenId ? coin.coin.tokenId.value : "";
                     const OperationNotAllowed = new CapabilityError(this.getAccount(), Operations.CASH_IN, tokenId);
-                    return new TransactionResponse(undefined, undefined, OperationNotAllowed)
+                    return new TransactionResponse(undefined, undefined, OperationNotAllowed);
             }
         }catch(error){
             throw new Error("Unexpected error in HederaTransactionHandler Cashin operation : " + error)
         }
     }
 
-    public async burn(coin: StableCoinCapabilities, amount: BigDecimal): Promise<TransactionResponse> {
-        throw new Error("not implemented");
+    public async burn(stableCoinCapabilities: StableCoinCapabilities, amount: BigDecimal): Promise<TransactionResponse> {
+        const t:Transaction = HTSTransactionBuilder.buildTokenBurnTransaction(stableCoinCapabilities.coin.tokenId?.value!, amount.toLong());
+        return this.signAndSendTransaction(t, TransactionType.RECEIPT)
     }
 
-    public async freeze(coin: StableCoinCapabilities, targetId: string): Promise<TransactionResponse> {
-        throw new Error("not implemented");
+    public async freeze(stableCoinCapabilities: StableCoinCapabilities, targetId: string): Promise<TransactionResponse> {
+        const t:Transaction = HTSTransactionBuilder.buildFreezeTransaction(stableCoinCapabilities.coin.tokenId?.value!, targetId);
+        return this.signAndSendTransaction(t, TransactionType.RECEIPT)
     }
 
-    public async unfreeze(coin: StableCoinCapabilities, targetId: string): Promise<TransactionResponse> {
-        throw new Error("not implemented");
+    public async unfreeze(stableCoinCapabilities: StableCoinCapabilities, targetId: string): Promise<TransactionResponse> {
+        const t:Transaction = HTSTransactionBuilder.buildUnfreezeTransaction(stableCoinCapabilities.coin.tokenId?.value!, targetId);
+        return this.signAndSendTransaction(t, TransactionType.RECEIPT)
     }
 
-    public async pause(coin: StableCoinCapabilities): Promise<TransactionResponse> {
-        throw new Error("not implemented");
+    public async pause(stableCoinCapabilities: StableCoinCapabilities): Promise<TransactionResponse> {
+        const t:Transaction = HTSTransactionBuilder.buildPausedTransaction(stableCoinCapabilities.coin.tokenId?.value!);
+        return this.signAndSendTransaction(t, TransactionType.RECEIPT)
     }
 
-    public async unpause(coin: StableCoinCapabilities): Promise<TransactionResponse> {
-        throw new Error("not implemented");
+    public async unpause(stableCoinCapabilities: StableCoinCapabilities): Promise<TransactionResponse> {
+        const t:Transaction = HTSTransactionBuilder.buildUnpausedTransaction(stableCoinCapabilities.coin.tokenId?.value!);
+        return this.signAndSendTransaction(t, TransactionType.RECEIPT);
     }
 
-    public async transfer(coin: StableCoinCapabilities, amount: BigDecimal, inAccountId: string, outAccountId: string): Promise<TransactionResponse> {
-        throw new Error("not implemented");
+    public async transfer(stableCoinCapabilities: StableCoinCapabilities, amount: BigDecimal, inAccountId: string, outAccountId: string): Promise<TransactionResponse> {
+        const t:Transaction = HTSTransactionBuilder.buildTransferTransaction(stableCoinCapabilities.coin.tokenId?.value!, amount.toLong(), inAccountId, outAccountId);
+        return this.signAndSendTransaction(t, TransactionType.RECEIPT)
     }
 
-    public async rescue(coin: StableCoinCapabilities): Promise<TransactionResponse> {
-        throw new Error('not implemented.');
+    public async rescue(stableCoinCapabilities: StableCoinCapabilities): Promise<TransactionResponse> {
+        throw new Error('Method not implemented.');
     }
 
-    public async delete(coin: StableCoinCapabilities): Promise<TransactionResponse> {
-        throw new Error("not implemented");
+    public async delete(stableCoinCapabilities: StableCoinCapabilities): Promise<TransactionResponse> {
+        const t:Transaction = HTSTransactionBuilder.buildDeleteTransaction(stableCoinCapabilities.coin.tokenId?.value!);
+        return this.signAndSendTransaction(t, TransactionType.RECEIPT)
     }
+
 
     public async contractCall(contractAddress: string, 
         functionName: string, 

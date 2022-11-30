@@ -3,13 +3,15 @@ import { Client } from "@hashgraph/sdk";
 import Long from "long";
 import { HTSTransactionHandler } from "../../../../src/port/out/handler/HTSTransactionHandler.js";
 import TransactionResponse from '../../../../src/domain/context/transaction/TransactionResponse.js';
-import StableCoin from '../../../../src/domain/context/stablecoin/StableCoin.js';
-import Contract from '../../../../src/domain/context/contract/Contract.js';
 import {
 	HederaERC20__factory
 } from 'hedera-stable-coin-contracts/typechain-types/index.js';
 import { AccountId as HAccountId,
          Status } from '@hashgraph/sdk';
+import StableCoinCapabilities from "../../../../src/domain/context/stablecoin/StableCoinCapabilities.js";
+import { StableCoin } from "../../../../src/domain/context/stablecoin/StableCoin.js";
+import Account from "../../../../src/domain/context/account/Account.js";
+import AccountProps from "../../../../src/domain/context/account/Account.js";
 
 describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
     const clientAccountId = '0.0.47792863';
@@ -20,7 +22,20 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
     const tokenId = '0.0.48987373';
     const proxyContractId = '0.0.48987372';
     const evmProxyAddress = '0x0000000000000000000000000000000002eb7cec';
-    const proxyContract: Contract = new Contract(
+    const stableCoin = new StableCoin({
+        name: '',
+        symbol: '',
+        decimals: 3
+    });
+    const capabilities: Capability[];
+    const account: Account = new Account();
+    const stableCoinCapabilities = new StableCoinCapabilities(
+        stableCoin,
+        capabilities,
+        account
+    );
+
+    /*const proxyContract: Contract = new Contract(
         proxyContractId,
         HederaERC20__factory.abi,
         'stablecoin',
@@ -29,13 +44,13 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
         proxyContract,
         evmProxyAddress,
         tokenId
-    );
+    );*/
 
     // token to operate through contract
     const tokenId2 = '0.0.48989058';
     const proxyContractId2 = '0.0.48989057';
     const evmProxyAddress2 = '0x0000000000000000000000000000000002eb8381';
-    const proxyContract2: Contract = new Contract(
+    /*const proxyContract2: Contract = new Contract(
         proxyContractId2,
         HederaERC20__factory.abi,
         'stablecoin',
@@ -44,7 +59,14 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
         proxyContract2,
         evmProxyAddress2,
         tokenId2
-    );
+    );*/
+
+
+    constructor(
+		public readonly coin: StableCoin,
+		public readonly capabilities: Capability[],
+		public readonly account: Account,
+	) {}
 
     let th:HTSTransactionHandler
     let client:Client
