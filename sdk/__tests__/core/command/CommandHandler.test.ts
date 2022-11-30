@@ -1,23 +1,28 @@
 /* eslint-disable jest/no-mocks-import */
-import { CommandBus } from '../../../src/core/command/CommandBus.js';
 import {
 	CashInCommand,
-	CashInCommandHandler,
 	CashInCommandResponse,
-} from './__mocks__/CashInCommandHandler.js';
+} from '../../../src/app/usecase/stablecoin/cashin/CashInCommand.js';
+import { CommandBus } from '../../../src/core/command/CommandBus.js';
+import { Injectable } from '../../../src/core/Injectable.js';
+import BigDecimal from '../../../src/domain/context/shared/BigDecimal.js';
+import { HederaId } from '../../../src/domain/context/shared/HederaId.js';
 import {
 	ConcreteCommand,
-	ConcreteCommandHandler,
 	ConcreteCommandResponse,
 } from './__mocks__/ConcreteCommandHandler.js';
-const EXAMPLE_AID = '0.0.1';
+const EXAMPLE_AID = HederaId.from('0.0.1');
+
+const commandBus = Injectable.resolve(CommandBus);
+
 describe('🧪 CommandHandler Test', () => {
+	// beforeAll(() => {
+
+	// })
 	it('Executes a simple command', async () => {
-		const commandBus = new CommandBus([ConcreteCommandHandler]);
 		const execSpy = jest.spyOn(commandBus, 'execute');
 		const command = new ConcreteCommand('1', 4);
 		console.log('Command: ', command);
-		expect(commandBus.handlers.size).toBe(1);
 		console.log('Command Bus Handlers: ', commandBus.handlers);
 		const res = await commandBus.execute(command);
 		console.log('Response was: ', res);
@@ -27,20 +32,15 @@ describe('🧪 CommandHandler Test', () => {
 	});
 
 	it('Executes a cash in mock command', async () => {
-		const commandBus = new CommandBus([
-			ConcreteCommandHandler,
-			CashInCommandHandler,
-		]);
 		const execSpy = jest.spyOn(commandBus, 'execute');
 		const cashInCommand = new CashInCommand(
-			{ id: EXAMPLE_AID },
-			'1.1234',
+			{ id: EXAMPLE_AID, environment: 'testnet', evmAddress: '0x000' },
+			BigDecimal.fromString('1.1234'),
 			EXAMPLE_AID,
 			EXAMPLE_AID,
 			EXAMPLE_AID,
 		);
 		console.log('Command: ', cashInCommand);
-		expect(commandBus.handlers.size).toBe(2);
 		console.log('Command Bus Handlers: ', commandBus.handlers);
 		const res = await commandBus.execute(cashInCommand);
 		console.log('Response was: ', res);

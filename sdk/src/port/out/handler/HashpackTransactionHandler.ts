@@ -1,12 +1,12 @@
 import { Transaction, Signer, PublicKey as HPublicKey } from '@hashgraph/sdk';
 import { HederaTransactionHandler } from './HederaTransactionHandler.js';
-import { HashConnect, MessageTypes } from 'hashconnect';
+import { HashConnect } from 'hashconnect';
 import { HashConnectProvider } from 'hashconnect/provider/provider';
 import { HashConnectSigner } from 'hashconnect/provider/signer';
 import { NetworkType } from 'hashconnect/types';
 import { SigningError } from './error/SigningError.js';
 import Account from '../../../domain/context/account/Account.js';
-import Network from '../../../domain/context/network/Network.js';
+import { Environment } from '../../../domain/context/network/Environment.js';
 import { HashpackTransactionResponseHandler } from './response/HashpackTransactionResponseHandler.js';
 import { TransactionType } from './response/TransactionResponseEnums.js';
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
@@ -23,7 +23,7 @@ export class HashpackTransactionHandler extends HederaTransactionHandler{
 	constructor(
 		hc: HashConnect,
 		account: Account,
-		network: Network,
+		environment: Environment,
 		topic: string,
 	) {
 		if (!account.id) throw new Error("HashpackTransactionHandler cannot be created if account id is empty");
@@ -32,7 +32,7 @@ export class HashpackTransactionHandler extends HederaTransactionHandler{
 		this.account = account;
 		this.topic = topic;
 		this.provider = this.hc.getProvider(
-			network.environment as NetworkType,
+			environment as NetworkType,
 			topic,
 			account.id.value,
 		);

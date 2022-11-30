@@ -18,7 +18,7 @@ export interface IQueryBus<T extends QueryResponse> {
 }
 
 @injectable()
-export class QueryBus<T extends QueryResponse> implements IQueryBus<T> {
+export class QueryBus<T extends QueryResponse = QueryResponse> implements IQueryBus<T> {
 	public handlers = new Map<string, IQueryHandler<Query<T>>>();
 
 	constructor() {

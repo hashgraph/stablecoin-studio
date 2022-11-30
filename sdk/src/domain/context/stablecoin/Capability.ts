@@ -17,27 +17,26 @@
 	ROLE_MANAGEMENT = 'Role management',
 }*/
 
-
-export enum Operations{
-	CASH_IN = "Cash_in",
-	BURN = "Burn",
-	WIPE = "Wipe",
-	FREEZE = "Freeze",
-	PAUSE = "Pause",
-	DELETE = "Delete",
-	RESCUE = "Rescue",
-	ROLE_MANAGEMENT = "Role_Management"
+export enum Operation {
+	CASH_IN = 'Cash_in',
+	BURN = 'Burn',
+	WIPE = 'Wipe',
+	FREEZE = 'Freeze',
+	PAUSE = 'Pause',
+	DELETE = 'Delete',
+	RESCUE = 'Rescue',
+	ROLE_MANAGEMENT = 'Role_Management',
 }
 
-export enum Accesses{
+export enum Access {
 	HTS,
-	CONTRACT
+	CONTRACT,
 }
 
 
 export class Capability{
 	constructor(
-		public readonly operation: Operations,
-		public readonly access: Accesses,
+		public readonly operation: Operation,
+		public readonly access: Access,
 	) {}
 }
