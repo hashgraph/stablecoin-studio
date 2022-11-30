@@ -27,7 +27,12 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
         decimals: 6,
         tokenId: new HederaId(tokenId)
     });
-    const capabilities: Capability[] = [new Capability(Operation.CASH_IN, Access.HTS)];
+    const capabilities: Capability[] = [new Capability(Operation.CASH_IN, Access.HTS),
+                                        new Capability(Operation.BURN, Access.HTS),
+                                        new Capability(Operation.FREEZE, Access.HTS),
+                                        new Capability(Operation.UNFREEZE, Access.HTS),
+                                        new Capability(Operation.PAUSE, Access.HTS),
+                                        new Capability(Operation.UNPAUSE, Access.HTS)];
     const stableCoinCapabilities = new StableCoinCapabilities(
         stableCoin,
         capabilities,
@@ -35,17 +40,21 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
     );
 
     // token to operate through contract
-    const tokenId2 = '0.0.48989058';
-    const proxyContractId2 = '0.0.48989057';
-    //const evmProxyAddress2 = '0x0000000000000000000000000000000002eb8381';
+    const tokenId2 = '0.0.48971712';
+    const proxyContractId2 = '0.0.48971708';
     const stableCoin2 = new StableCoin({
         name: 'HEDERACOIN',
         symbol: 'HDC',
-        decimals: 3,
+        decimals: 4,
         tokenId: new HederaId(tokenId2),
         proxyAddress: new HederaId(proxyContractId2)
     });
-    const capabilities2: Capability[] = [new Capability(Operation.CASH_IN, Access.CONTRACT)];
+    const capabilities2: Capability[] = [new Capability(Operation.CASH_IN, Access.CONTRACT),
+                                         new Capability(Operation.BURN, Access.CONTRACT),
+                                         new Capability(Operation.FREEZE, Access.CONTRACT),
+                                         new Capability(Operation.UNFREEZE, Access.CONTRACT),
+                                         new Capability(Operation.PAUSE, Access.CONTRACT),
+                                         new Capability(Operation.UNPAUSE, Access.CONTRACT),];
     const stableCoinCapabilities2 = new StableCoinCapabilities(
         stableCoin2,
         capabilities2,
@@ -62,11 +71,11 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
     });
 
     it('Test cashIn', async () => {
-        tr = await th.cashin(stableCoinCapabilities, accountId, new BigDecimal('1'));
+        tr = await th.cashin(stableCoinCapabilities, accountId, new BigDecimal('0.0000000000001'));
     });
 
     it('Test burn', async () => {
-        tr = await th.burn(stableCoinCapabilities, new BigDecimal('1'));
+        tr = await th.burn(stableCoinCapabilities, new BigDecimal('0.0000000000001'));
     });
 
     /*it('Test transfer', async () => {
@@ -98,30 +107,30 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 
     it('Test cashIn contract function', async () => {
         const accountEvmAddress: string = HAccountId.fromString(clientAccountId).toSolidityAddress();
-        tr = await th.cashin(stableCoinCapabilities2, accountEvmAddress, new BigDecimal('1'));
+        tr = await th.cashin(stableCoinCapabilities2, accountEvmAddress, new BigDecimal('0.0000000000001'));
     });
 
-    /*it('Test burn contract function', async () => {
-        tr = await th.contractCall(proxyContract2, 'burn', [1], 400000);
+    it('Test burn contract function', async () => {
+        tr = await th.burn(stableCoinCapabilities2, new BigDecimal('0.0000000000001'));
     });
 
     it('Test freeze contract function', async () => {
-        const accountEvmAddress: string = HAccountId.fromString(clientAccountId).toSolidityAddress();
-        tr = await th.contractCall(proxyContract2, 'freeze', [accountEvmAddress], 60000);
+        const accountEvmAddress: string = HAccountId.fromString(accountId).toSolidityAddress();
+        tr = await th.freeze(stableCoinCapabilities2, accountEvmAddress);
     });
 
     it('Test unfreeze contract function', async () => {
-        const accountEvmAddress: string = HAccountId.fromString(clientAccountId).toSolidityAddress();
-        tr = await th.contractCall(proxyContract2, 'unfreeze', [accountEvmAddress], 60000);
+        const accountEvmAddress: string = HAccountId.fromString(accountId).toSolidityAddress();
+        tr = await th.unfreeze(stableCoinCapabilities2, accountEvmAddress);
     });
 
     it('Test pause contract function', async () => {
-        tr = await th.contractCall(proxyContract2, 'pause', [], 400000);
+        tr = await th.pause(stableCoinCapabilities2);
     });
 
     it('Test unpause contract function', async () => {
-        tr = await th.contractCall(proxyContract2, 'unpause', [], 400000);
-    });*/
+        tr = await th.unpause(stableCoinCapabilities2);
+    });
 
     afterEach(async () => {
         expect(tr).not.toBeNull;
