@@ -5,7 +5,7 @@ import { TransactionResponse as HTransactionResponse,
 import { HederaTransactionHandler } from './HederaTransactionHandler.js';
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
 import { HTSTransactionResponseHandler } from './response/HTSTransactionResponseHandler.js';
-import { TransactionType } from '../../../../src/port/out/handler/response/TransactionResponse.js';
+import { TransactionType } from './response/TransactionResponseEnums.js';
 
 
 export class HTSTransactionHandler extends HederaTransactionHandler {

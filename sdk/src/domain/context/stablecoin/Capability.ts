@@ -16,3 +16,28 @@ export enum Capability {
 	RESCUE = 'Rescue',
 	ROLE_MANAGEMENT = 'Role management',
 }
+
+
+export enum Operations{
+	CASH_IN,
+	BURN,
+	WIPE,
+	FREEZE,
+	PAUSE,
+	DELETE,
+	RESCUE,
+	ROLE_MANAGEMENT
+}
+
+export enum Accesses{
+	HTS,
+	CONTRACT
+}
+
+/*
+export class Capability{
+	constructor(
+		public readonly operation: Operations,
+		public readonly access: Accesses,
+	) {}
+}*/

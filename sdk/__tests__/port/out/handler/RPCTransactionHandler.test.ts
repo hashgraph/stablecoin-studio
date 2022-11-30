@@ -8,7 +8,7 @@ import { HTSTransactionResponseHandler } from '../../../../src/port/out/handler/
 import {
 	TransactionType,
 	HTSResponse,
-} from '../../../../src/port/out/handler/response/TransactionResponse.js';
+} from '../../../../src/port/out/handler/response/TransactionResponseEnums.js';
 import { Status } from '@hashgraph/sdk';
 import RPCTransactionHandler from '../../../../src/port/out/handler/RPCTransactionHandler.js';
 import StableCoin from '../../../../src/domain/context/stablecoin/StableCoin.js';

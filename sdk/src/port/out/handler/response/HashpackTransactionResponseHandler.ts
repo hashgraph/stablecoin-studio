@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { TransactionType, HTSResponse } from './TransactionResponse.js';
+import { TransactionType, HTSResponse } from './TransactionResponseEnums.js';
 import {
 	TransactionResponse,
 	TransactionReceipt,

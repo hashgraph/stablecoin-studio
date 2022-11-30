@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { TransactionType } from './TransactionResponse.js';
+import { TransactionType } from './TransactionResponseEnums.js';
 import {
     Client,
 	TransactionResponse as HTransactionResponse,

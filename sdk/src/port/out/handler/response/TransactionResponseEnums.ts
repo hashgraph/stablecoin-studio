@@ -1,7 +1,7 @@
-import {
+/*import {
 	TransactionReceipt,
 	TransactionId
-} from '@hashgraph/sdk';
+} from '@hashgraph/sdk';*/
 
 export enum TransactionType {
 	RECORD,
@@ -11,7 +11,7 @@ export enum Status {
 	SUCCES,
 	ERROR,
 }
-export class HTSResponse {
+/*export class HTSResponse {
 	idTransaction: string| TransactionId | undefined;
 	transactionType: TransactionType;
 	reponseParam: Uint8Array;
@@ -28,4 +28,4 @@ export class HTSResponse {
 		this.reponseParam = reponseParam;
 		this.receipt = receipt;
 	}
-}
+}*/
