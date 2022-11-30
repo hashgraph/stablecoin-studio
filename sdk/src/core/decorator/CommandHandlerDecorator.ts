@@ -1,6 +1,8 @@
 import { COMMAND_HANDLER_METADATA, COMMAND_METADATA } from '../Constants';
 import { v4 } from 'uuid';
 import { ICommand } from '../command/Command.js';
+import { injectable } from 'tsyringe';
+import { Constructor } from '../Type.js';
 
 /**
  * This decorator determines that a class is a command handler
@@ -11,6 +13,7 @@ import { ICommand } from '../command/Command.js';
  */
 export const CommandHandler = (command: ICommand): ClassDecorator => {
 	return (target: object) => {
+		injectable()(target as Constructor<typeof target>);
 		if (!Reflect.hasMetadata(COMMAND_METADATA, command)) {
 			Reflect.defineMetadata(COMMAND_METADATA, { id: v4() }, command);
 		}

@@ -11,6 +11,7 @@ import WipeRequest from './request/WipeRequest.js';
 import StableCoinDetail from './response/StableCoinDetail.js';
 import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import { HederaId } from '../../domain/context/shared/HederaId.js';
+import NetworkService from '../../app/service/NetworkService.js';
 
 interface IStableCoinInPort {
 	create(request: CreateRequest): Promise<StableCoinDetail>;
@@ -23,8 +24,8 @@ interface IStableCoinInPort {
 
 class StableCoinInPort implements IStableCoinInPort {
 	constructor(
-		private readonly networkService: Service = Injectable.resolve<Service>(
-			StableCoinService,
+		private readonly networkService: NetworkService = Injectable.resolve<NetworkService>(
+			NetworkService,
 		),
 		private readonly stableCoinService: StableCoinService = Injectable.resolve(
 			StableCoinService,

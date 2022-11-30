@@ -1,20 +1,23 @@
-import { Command } from './command/Command.js';
 import { CommandHandlerType } from './command/CommandBus.js';
-import { ICommandHandler } from './command/CommandHandler.js';
-import { CommandResponse } from './command/CommandResponse.js';
 import { Query } from './query/Query.js';
 import { QueryHandlerType } from './query/QueryBus.js';
 import { IQueryHandler } from './query/QueryHandler.js';
 import { QueryResponse } from './query/QueryResponse.js';
 
-import { container, InjectionToken } from 'tsyringe';
+import { registry, container, InjectionToken } from 'tsyringe';
+import { CashInCommandHandler } from '../app/usecase/stablecoin/cashin/CashInCommandHandler.js';
 
+const TOKENS = {
+	COMMAND_HANDLER: 'CommandHandler',
+};
+
+@registry([
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: CashInCommandHandler,
+	},
+])
 export class Injectable {
-	static getCommandHandler<T extends Command<K>, K extends CommandResponse>(
-		handler: CommandHandlerType,
-	): ICommandHandler<T> {
-		return new handler() as ICommandHandler<T>;
-	}
 
 	static getQueryHandler<T extends Query<K>, K extends QueryResponse>(
 		handler: QueryHandlerType,
@@ -24,5 +27,9 @@ export class Injectable {
 
 	static resolve<T = unknown>(cls: InjectionToken<T>): T {
 		return container.resolve(cls);
+	}
+
+	static getCommandHandlers(): CommandHandlerType[] {
+		return container.resolveAll<CommandHandlerType>(TOKENS.COMMAND_HANDLER);
 	}
 }

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { injectable } from 'tsyringe';
+import { singleton } from 'tsyringe';
 import { CommandBus } from '../../core/command/CommandBus.js';
 import { Injectable } from '../../core/Injectable.js';
 import BigDecimal from '../../domain/context/shared/BigDecimal.js';
@@ -11,11 +11,11 @@ import Service from './Service.js';
 import { CashInCommand } from '../usecase/stablecoin/cashin/CashInCommand.js';
 import { EmptyValue } from './error/EmptyValue.js';
 
-@injectable()
+@singleton()
 export default class StableCoinService extends Service {
 	constructor(
 		public readonly commandBus: CommandBus = Injectable.resolve<CommandBus>(
-			'CommandBus',
+			CommandBus,
 		),
 		public readonly accountService: AccountService = Injectable.resolve<AccountService>(
 			AccountService,

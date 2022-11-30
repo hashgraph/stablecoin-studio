@@ -1,8 +1,8 @@
-import { injectable } from 'tsyringe';
+import { singleton } from 'tsyringe';
 import Account from '../../domain/context/account/Account.js';
 import Service from './Service.js';
 
-@injectable()
+@singleton()
 export default class AccountService extends Service {
 	constructor(
 		public readonly mirrorNodeAdapter: Service,
