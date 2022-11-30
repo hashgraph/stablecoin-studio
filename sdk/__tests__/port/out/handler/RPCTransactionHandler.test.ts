@@ -1,4 +1,7 @@
-import { Client, TransactionResponse } from '@hashgraph/sdk';
+import {
+	Client,
+	TransactionResponse as HTRansactionResponse,
+} from '@hashgraph/sdk';
 import Long from 'long';
 import { HTSTransactionHandler } from '../../../../src/port/out/handler/HTSTransactionHandler.js';
 import { HTSTransactionResponseHandler } from '../../../../src/port/out/handler/response/HTSTransactionResponseHandler.js';
@@ -9,42 +12,39 @@ import {
 import { Status } from '@hashgraph/sdk';
 import RPCTransactionHandler from '../../../../src/port/out/handler/RPCTransactionHandler.js';
 import StableCoin from '../../../../src/domain/context/stablecoin/StableCoin.js';
-import Contract from '../../../../src/domain/context/contract/Contract.js';
+
 import {
 	HederaERC20__factory,
 	HederaERC20ProxyAdmin__factory,
 	HederaERC20Proxy__factory,
 } from 'hedera-stable-coin-contracts/typechain-types/index.js';
-import Transaction from '../../../../src/domain/context/transaction/Transaction.js';
+import TransactionResponse from '../../../../src/domain/context/transaction/TransactionResponse.js';
 
 describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
-	const clientAccountId: string = '0.0.47792863';
-	const clientPrivateKey: string =
+	const clientAccountId = '0.0.47792863';
+	const clientPrivateKey =
 		'302e020100300506032b65700422042078068d0d381ec19047ca0f6612a66b9a3c990fb1f8adc2fd2735b78423c2e10c';
-	const accountId: string = '0.0.47793222';
-	const tokenId: string = '0.0.48987373';
-	const proxy: string = '0.0.48987372';
+	const accountId = '0.0.47793222';
+	const tokenId = '0.0.48987373';
+	const proxy = '0.0.48987372';
 
 	let th: RPCTransactionHandler;
 	let client: Client;
-	let tr: Transaction;
+	let tr: TransactionResponse;
 	beforeAll(async () => {
 		client = Client.forTestnet();
 		client.setOperator(clientAccountId, clientPrivateKey);
 		th = new RPCTransactionHandler();
 	});
 
-	it('Test cashIn', async () => {
+	// eslint-disable-next-line jest/expect-expect
+	it('Test balance', async () => {
 		const stablecoin = new StableCoin(
-			new Contract(
-				'0.0.48995254',
-				HederaERC20Proxy__factory.abi,
-				'stablecoin',
-			),
-			tokenId,
-			'0x0000000000000000000000000000000002eb9bb8',
+			'0.0.48995254',
+			'0x0000000000000000000000000000000002eb9bb6',
+			'0.0.48995256',
 		);
-		tr = await th.balance(stablecoin, Long.ONE);
+		tr = await th.balance(stablecoin);
 	}, 1500000);
 
 	// it('Test burn', async () => {
