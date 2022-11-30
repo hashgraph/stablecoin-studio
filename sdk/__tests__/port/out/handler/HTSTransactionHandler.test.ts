@@ -1,18 +1,12 @@
 /* eslint-disable jest/valid-expect */
 import { Client } from "@hashgraph/sdk";
-import Long from "long";
 import { HTSTransactionHandler } from "../../../../src/port/out/handler/HTSTransactionHandler.js";
 import TransactionResponse from '../../../../src/domain/context/transaction/TransactionResponse.js';
-import {
-	HederaERC20__factory
-} from 'hedera-stable-coin-contracts/typechain-types/index.js';
-import { AccountId as HAccountId,
-         Status } from '@hashgraph/sdk';
+import { AccountId as HAccountId } from '@hashgraph/sdk';
 import StableCoinCapabilities from "../../../../src/domain/context/stablecoin/StableCoinCapabilities.js";
 import { StableCoin } from "../../../../src/domain/context/stablecoin/StableCoin.js";
 import Account from "../../../../src/domain/context/account/Account.js";
-import { getEnvironmentData } from "worker_threads";
-import { Capability } from "../../../../src/domain/context/stablecoin/Capability.js";
+import { Accesses, Capability, Operations } from "../../../../src/domain/context/stablecoin/Capability.js";
 import BigDecimal from '../../../../src/domain/context/shared/BigDecimal.js';
 import { HederaId } from "../../../../src/domain/context/shared/HederaId.js";
 
@@ -33,7 +27,7 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
         decimals: 6,
         tokenId: new HederaId(tokenId)
     });
-    const capabilities: Capability[] = [Capability.CASH_IN_HTS];
+    const capabilities: Capability[] = [new Capability(Operations.CASH_IN, Accesses.HTS)];
     const stableCoinCapabilities = new StableCoinCapabilities(
         stableCoin,
         capabilities,
@@ -42,15 +36,16 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 
     // token to operate through contract
     const tokenId2 = '0.0.48989058';
-    //const proxyContractId2 = '0.0.48989057';
+    const proxyContractId2 = '0.0.48989057';
     //const evmProxyAddress2 = '0x0000000000000000000000000000000002eb8381';
     const stableCoin2 = new StableCoin({
         name: 'HEDERACOIN',
         symbol: 'HDC',
         decimals: 3,
-        tokenId: new HederaId(tokenId2)
+        tokenId: new HederaId(tokenId2),
+        proxyAddress: new HederaId(proxyContractId2)
     });
-    const capabilities2: Capability[] = [Capability.CASH_IN];
+    const capabilities2: Capability[] = [new Capability(Operations.CASH_IN, Accesses.CONTRACT)];
     const stableCoinCapabilities2 = new StableCoinCapabilities(
         stableCoin2,
         capabilities2,
@@ -103,8 +98,7 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 
     it('Test cashIn contract function', async () => {
         const accountEvmAddress: string = HAccountId.fromString(clientAccountId).toSolidityAddress();
-        tr = await th.cashin(stableCoinCapabilities2, accountId, new BigDecimal('1'));
-        //tr = await th.contractCall(proxyContract2, 'mint', [accountEvmAddress, 1], 400000);
+        tr = await th.cashin(stableCoinCapabilities2, accountEvmAddress, new BigDecimal('1'));
     });
 
     /*it('Test burn contract function', async () => {
