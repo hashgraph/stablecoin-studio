@@ -14,6 +14,7 @@ import TransactionHandler from '../TransactionHandler';
 import { BigNumber, ethers } from 'ethers';
 import { Response } from '../../../domain/context/transaction/Response.js';
 import { RPCTransactionResponseHandler } from './response/RPCTransactionRespondeHandler.js';
+import StableCoinCapabilities from '../../../domain/context/stablecoin/StableCoinCapabilities.js';
 
 export default class RPCTransactionHandler
 	implements TransactionHandler<RPCTransactionHandler>
@@ -28,17 +29,20 @@ export default class RPCTransactionHandler
 	metamaskAccount = '0x320D33046B60DBc5a027cFB7E4124F75b0417240';
 
 	async wipe(
-		coin: StableCoin,
+		coin: StableCoinCapabilities,
 		targetId: string,
 		amount: Long,
 	): Promise<TransactionResponse> {
 		throw new Error('Method not implemented.');
 	}
 
-	async cashin(coin: StableCoin, targetId: string, amount: Long): Promise<TransactionResponse> {
+	async mint(
+		coin: StableCoinCapabilities,
+		amount: Long,
+	): Promise<TransactionResponse> {
 		try {
 			const response = await HederaERC20__factory.connect(
-				coin.evmProxyAddress ?? '',
+				coin.coin.evmProxyAddress ?? '',
 				this.wallet,
 			).mint(
 				'0x320D33046B60DBc5a027cFB7E4124F75b0417240',
@@ -53,38 +57,41 @@ export default class RPCTransactionHandler
 		}
 	}
 
-	async balance(coin: StableCoin): Promise<TransactionResponse> {
+	async balance(coin: StableCoinCapabilities): Promise<TransactionResponse> {
 		const res = await HederaERC20__factory.connect(
-			coin.evmProxyAddress ?? '',
+			coin.coin.evmProxyAddress ?? '',
 			this.wallet,
 		).balanceOf(this.metamaskAccount);
 		return new TransactionResponse('000.001', res);
 	}
-	async burn(coin: StableCoin, amount: Long): Promise<TransactionResponse> {
+	async burn(
+		coin: StableCoinCapabilities,
+		amount: Long,
+	): Promise<TransactionResponse> {
 		throw new Error('Method not implemented.');
 	}
 	async freeze(
-		coin: StableCoin,
+		coin: StableCoinCapabilities,
 		targetId: string,
 	): Promise<TransactionResponse> {
 		throw new Error('Method not implemented.');
 	}
 	async unfreeze(
-		coin: StableCoin,
+		coin: StableCoinCapabilities,
 		targetId: string,
 	): Promise<TransactionResponse> {
 		throw new Error('Method not implemented.');
 	}
-	async pause(coin: StableCoin): Promise<TransactionResponse> {
+	async pause(coin: StableCoinCapabilities): Promise<TransactionResponse> {
 		throw new Error('Method not implemented.');
 	}
-	async unpause(coin: StableCoin): Promise<TransactionResponse> {
+	async unpause(coin: StableCoinCapabilities): Promise<TransactionResponse> {
 		throw new Error('Method not implemented.');
 	}
-	async rescue(coin: StableCoin): Promise<TransactionResponse> {
+	async rescue(coin: StableCoinCapabilities): Promise<TransactionResponse> {
 		throw new Error('Method not implemented.');
 	}
-	async delete(coin: StableCoin): Promise<TransactionResponse> {
+	async delete(coin: StableCoinCapabilities): Promise<TransactionResponse> {
 		throw new Error('Method not implemented.');
 	}
 	async contractCall(
@@ -95,7 +102,7 @@ export default class RPCTransactionHandler
 		throw new Error('Method not implemented.');
 	}
 	async transfer(
-		coin: StableCoin,
+		coin: StableCoinCapabilities,
 		amount: Long,
 		sourceId: string,
 		targetId: string,
