@@ -1,20 +1,12 @@
-import { Long } from 'long';
-
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
-import {
-	HederaERC20__factory,
-	HederaERC20ProxyAdmin__factory,
-	HederaERC20Proxy__factory,
-	IHederaTokenService,
-	IHederaTokenService__factory,
-	HederaERC20,
-} from 'hedera-stable-coin-contracts/typechain-types/index.js';
+import { HederaERC20__factory } from 'hedera-stable-coin-contracts/typechain-types/index.js';
 import TransactionHandler from '../TransactionHandler';
 import { BigNumber, ethers } from 'ethers';
 import { Response } from '../../../domain/context/transaction/Response.js';
 import { RPCTransactionResponseHandler } from './response/RPCTransactionRespondeHandler.js';
 import StableCoinCapabilities from '../../../domain/context/stablecoin/StableCoinCapabilities.js';
+import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 
 export default class RPCTransactionHandler
 	implements TransactionHandler<RPCTransactionHandler>
@@ -31,7 +23,7 @@ export default class RPCTransactionHandler
 	async wipe(
 		coin: StableCoinCapabilities,
 		targetId: string,
-		amount: Long,
+		amount: BigDecimal,
 	): Promise<TransactionResponse> {
 		throw new Error('Method not implemented.');
 	}
@@ -39,16 +31,13 @@ export default class RPCTransactionHandler
 	async cashin(
 		coin: StableCoinCapabilities,
 		targetId: string,
-		amount: Long,
+		amount: BigDecimal,
 	): Promise<TransactionResponse> {
 		try {
 			const response = await HederaERC20__factory.connect(
 				coin.coin.evmProxyAddress ?? '',
 				this.wallet,
-			).mint(
-				'0x320D33046B60DBc5a027cFB7E4124F75b0417240',
-				BigNumber.from('1'),
-			);
+			).mint(targetId, amount.toBigNumber());
 
 			return RPCTransactionResponseHandler.manageResponse(response);
 		} catch (error) {
@@ -67,7 +56,7 @@ export default class RPCTransactionHandler
 	}
 	async burn(
 		coin: StableCoinCapabilities,
-		amount: Long,
+		amount: BigDecimal,
 	): Promise<TransactionResponse> {
 		throw new Error('Method not implemented.');
 	}
@@ -104,7 +93,7 @@ export default class RPCTransactionHandler
 	}
 	async transfer(
 		coin: StableCoinCapabilities,
-		amount: Long,
+		amount: BigDecimal,
 		sourceId: string,
 		targetId: string,
 	): Promise<TransactionResponse> {
