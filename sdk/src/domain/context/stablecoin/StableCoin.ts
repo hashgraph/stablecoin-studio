@@ -34,7 +34,7 @@ export interface StableCoinProps {
 	totalSupply?: BigDecimal;
 	maxSupply?: BigDecimal;
 	proxyAddress?: HederaId;
-	evmProxyAddress?: HederaId;
+	evmProxyAddress?: string;
 	freezeKey?: PublicKey | HederaId;
 	freezeDefault?: boolean;
 	kycKey?: PublicKey | HederaId;
@@ -61,7 +61,7 @@ export class StableCoin implements StableCoinProps {
 	totalSupply?: BigDecimal;
 	maxSupply?: BigDecimal;
 	proxyAddress?: HederaId;
-	evmProxyAddress?: HederaId;
+	evmProxyAddress?: string;
 	freezeKey?: PublicKey | HederaId;
 	freezeDefault?: boolean;
 	kycKey?: PublicKey | HederaId;

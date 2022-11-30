@@ -7,6 +7,9 @@ import Web3 from 'web3';
 import { CapabilityDecider, Decision } from './decider/CapabilityDecider.js';
 import { CapabilityError } from './error/CapabilityError.js';
 import StableCoinCapabilities from '../../../domain/context/stablecoin/StableCoinCapabilities.js';
+import {
+    HederaERC20__factory,
+} from 'hedera-stable-coin-contracts/typechain-types/index.js';
 
 
 export abstract class HederaTransactionHandler implements TransactionHandler<Transaction> {
@@ -75,7 +78,7 @@ export abstract class HederaTransactionHandler implements TransactionHandler<Tra
         return this.signAndSendTransaction(t)
     }
 
-    public async contractCall(contract: Contract, 
+    public async contractCall(contractAddress: string, 
         functionName: string, 
         parameters: any[],
         gas: number,
@@ -84,12 +87,12 @@ export abstract class HederaTransactionHandler implements TransactionHandler<Tra
 		const functionCallParameters = this.encodeFunctionCall(
 			functionName,
 			parameters,
-			contract.abi,
+			HederaERC20__factory,
 		);
 
 		const transaction: Transaction =
             HTSTransactionBuilder.buildContractExecuteTransaction(
-				contract.address,
+				contractAddress,
 				functionCallParameters,
 				gas,
 				value
