@@ -1,14 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { TransactionType, HTSResponse } from './TransactionResponseEnums.js';
+import { TransactionType } from './TransactionResponseEnums.js';
 import {
-	TransactionResponse,
+	TransactionResponse as HTransactionResponse,
 	TransactionReceipt,
-	TransactionRecord,
-	TransactionId
+	TransactionRecord
 } from '@hashgraph/sdk';
 import { MessageTypes } from 'hashconnect';
 import { TransactionResponseHandler } from './TransactionResponseHandler.js';
 import { TransactionResponseError } from './error/TransactionResponseError.js';
+import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
+
 
 export class HashpackTransactionResponseHandler extends TransactionResponseHandler {
 	public static async manageResponse(
@@ -16,18 +17,18 @@ export class HashpackTransactionResponseHandler extends TransactionResponseHandl
 		responseType: TransactionType,
 		nameFunction?: string,
 		abi?: object[],
-	): Promise<HTSResponse> {
+	): Promise<TransactionResponse> {
 		let results: Uint8Array = new Uint8Array();
 		if (responseType === TransactionType.RECEIPT) {
 			const transactionReceipt: TransactionReceipt | undefined =
 				await this.getReceipt(transactionResponse);
 			let transId;
-			if (transactionResponse instanceof TransactionResponse) {
-				transId = transactionResponse.transactionId;
+			if (transactionResponse instanceof HTransactionResponse) {
+				transId = transactionResponse.transactionId.toString();
 			} else {
 				transId = transactionResponse.id;
 			}
-			return this.createHTSResponse(
+			return this.createTransactionResponse(
 				transId,
 				responseType,
 				results,
@@ -55,8 +56,8 @@ export class HashpackTransactionResponseHandler extends TransactionResponseHandl
 					});
 				results = this.decodeFunctionResult(nameFunction, record, abi);
 			}
-            return this.createHTSResponse(
-                undefined,
+            return this.createTransactionResponse(
+                transactionResponse.id,
                 responseType,
                 results,
                 undefined,
@@ -154,17 +155,14 @@ export class HashpackTransactionResponseHandler extends TransactionResponseHandl
 		}
 	}
 
-	public static createHTSResponse(
-		transactionId: string | TransactionId | undefined,
+	public static createTransactionResponse(
+		transactionId: string | undefined,
 		responseType: TransactionType,
 		responseParam: Uint8Array,
 		receipt?: TransactionReceipt,
-	): HTSResponse {
-		return new HTSResponse(
-			transactionId,
-			responseType,
-			responseParam,
-			receipt,
+	): TransactionResponse {
+		return new TransactionResponse(
+			(transactionId) ? transactionId : ""
 		);
 	}
 }

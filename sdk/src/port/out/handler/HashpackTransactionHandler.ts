@@ -7,6 +7,8 @@ import { NetworkType } from 'hashconnect/types';
 import { SigningError } from './error/SigningError.js';
 import Account from '../../../domain/context/account/Account.js';
 import Network from '../../../domain/context/network/Network.js';
+import { HashpackTransactionResponseHandler } from './response/HashpackTransactionResponseHandler.js';
+import { TransactionType } from './response/TransactionResponseEnums.js';
 
 
 export class HashpackTransactionHandler extends HederaTransactionHandler{
@@ -60,9 +62,9 @@ export class HashpackTransactionHandler extends HederaTransactionHandler{
                     },
                 });
 
-                const tResponse: TransactionResponse = new TransactionResponse();
-
-                return tResponse;
+				return HashpackTransactionResponseHandler.manageResponse(
+					HashPackTransactionResponse, 
+					TransactionType.RECEIPT);
 
             }
 			catch (error) {

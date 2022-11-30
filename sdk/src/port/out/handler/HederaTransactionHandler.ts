@@ -5,6 +5,7 @@ import TransactionResponse from '../../../domain/context/transaction/Transaction
 import StableCoin from '../../../domain/context/stablecoin/StableCoin.js';
 import { Operations } from '../../../domain/context/stablecoin/Capability.js';
 import Contract from '../../../domain/context/contract/Contract.js';
+import { ABI} from '../../../domain/context/contract/Contract.js';
 import Web3 from 'web3';
 import { CapabilityDecider, Decision } from './decider/CapabilityDecider.js';
 import { CapabilityError } from './error/CapabilityError.js';
@@ -13,25 +14,26 @@ export abstract class HederaTransactionHandler implements TransactionHandler<Tra
     private web3 = new Web3(); 
 
     public async wipe(coin: StableCoin, targetId: string, amount: Long): Promise<TransactionResponse> {
+        let t: Transaction = HTSTransactionBuilder.buildTokenWipeTransaction(targetId, coin.tokenId, amount);    
+        return this.signAndSendTransaction(t)
+    }
+
+    public async cashin(coin: StableCoin, targetId: string, amount: Long): Promise<TransactionResponse> {
         let t: Transaction;
         switch(CapabilityDecider.decide()){
             case Decision.CONTRACT:
-                return this.contractCall(new Contract(coin.proxyAddress, new ABI, ""), 
-                    "wipe", 
+                const abi: ABI = {"value": "value"};
+                return this.contractCall(new Contract(coin.proxyAddress, abi, ""), 
+                    "mint", 
                     [targetId, amount],
                     150000000);
             case Decision.HTS:
-                t = HTSTransactionBuilder.buildTokenWipeTransaction(targetId, coin.tokenId, amount);    
+                t = HTSTransactionBuilder.buildTokenMintTransaction(coin.tokenId, amount);
                 return this.signAndSendTransaction(t)    
             default:
                 const OperationNotAllowed = new CapabilityError(this.getAccount(), Operations.WIPE, coin.tokenId);
                 return new TransactionResponse(undefined, undefined, OperationNotAllowed)
         }
-    }
-
-    public async mint(coin: StableCoin, amount: Long): Promise<TransactionResponse> {
-        let t:Transaction = HTSTransactionBuilder.buildTokenMintTransaction(coin.tokenId, amount);
-        return this.signAndSendTransaction(t)
     }
 
     public async burn(coin: StableCoin, amount: Long): Promise<TransactionResponse> {
@@ -100,7 +102,7 @@ export abstract class HederaTransactionHandler implements TransactionHandler<Tra
 		functionName: string,
 		parameters: string[],
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		abi: any[],
+		abi: ABI,
 	): Uint8Array {
 		const functionAbi = abi.find(
 			(func: { name: string; type: string }) =>

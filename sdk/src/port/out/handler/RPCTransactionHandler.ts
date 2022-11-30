@@ -35,7 +35,7 @@ export default class RPCTransactionHandler
 		throw new Error('Method not implemented.');
 	}
 
-	async mint(coin: StableCoin, amount: Long): Promise<TransactionResponse> {
+	async cashin(coin: StableCoin, targetId: string, amount: Long): Promise<TransactionResponse> {
 		try {
 			const response = await HederaERC20__factory.connect(
 				coin.evmProxyAddress,
