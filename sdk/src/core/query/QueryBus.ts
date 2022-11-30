@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { injectable } from 'tsyringe';
 import { QUERY_HANDLER_METADATA, QUERY_METADATA } from '../Constants.js';
 import { QueryMetadata } from '../decorator/QueryMetadata.js';
 import { Injectable } from '../Injectable.js';
@@ -9,19 +10,19 @@ import { QueryResponse } from './QueryResponse.js';
 import { QueryHandlerNotFoundException } from './error/QueryHandlerNotFoundException.js';
 import { InvalidQueryHandlerException } from './error/InvalidQueryHandlerException.js';
 
-export type QueryHandlerType = Type<
-	IQueryHandler<Query<QueryResponse>>
->;
+export type QueryHandlerType = IQueryHandler<Query<QueryResponse>>;
 
 export interface IQueryBus<T extends QueryResponse> {
 	execute<X extends T>(query: Query<X>): Promise<X>;
 	bind<X extends T>(handler: IQueryHandler<Query<X>>, id: string): void;
 }
 
+@injectable()
 export class QueryBus<T extends QueryResponse> implements IQueryBus<T> {
 	public handlers = new Map<string, IQueryHandler<Query<T>>>();
 
-	constructor(handlers: QueryHandlerType[]) {
+	constructor() {
+		const handlers = Injectable.getQueryHandlers();
 		this.registerHandlers(handlers);
 	}
 
@@ -57,22 +58,19 @@ export class QueryBus<T extends QueryResponse> implements IQueryBus<T> {
 
 	protected registerHandlers(handlers: QueryHandlerType[]): void {
 		handlers.forEach((handler) => {
-			const instance = Injectable.getQueryHandler(handler);
-			if (!instance) {
-				return;
-			}
 			const target = this.reflectQueryId(handler);
 			if (!target) {
 				throw new InvalidQueryHandlerException();
 			}
-			this.bind(instance as IQueryHandler<Query<T>>, target);
+			this.bind(handler as IQueryHandler<Query<T>>, target);
 		});
 	}
 
 	private reflectQueryId(handler: QueryHandlerType): string | undefined {
+		const { constructor: handlerType } = Object.getPrototypeOf(handler);
 		const query: Type<Query<QueryResponse>> = Reflect.getMetadata(
 			QUERY_HANDLER_METADATA,
-			handler,
+			handlerType,
 		);
 		const queryMetadata: QueryMetadata = Reflect.getMetadata(
 			QUERY_METADATA,

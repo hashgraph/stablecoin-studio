@@ -1,6 +1,8 @@
 import { QUERY_HANDLER_METADATA, QUERY_METADATA } from '../Constants';
 import { v4 } from 'uuid';
 import { IQuery } from '../query/Query.js';
+import { Constructor } from '../Type.js';
+import { injectable } from 'tsyringe';
 
 /**
  * This decorator determines that a class is a query handler
@@ -11,6 +13,7 @@ import { IQuery } from '../query/Query.js';
  */
 export const QueryHandler = (query: IQuery): ClassDecorator => {
 	return (target: object) => {
+		injectable()(target as Constructor<typeof target>);
 		if (!Reflect.hasMetadata(QUERY_METADATA, query)) {
 			Reflect.defineMetadata(QUERY_METADATA, { id: v4() }, query);
 		}
