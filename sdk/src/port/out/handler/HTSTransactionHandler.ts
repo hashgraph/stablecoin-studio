@@ -29,4 +29,8 @@ export class HTSTransactionHandler extends HederaTransactionHandler {
 			throw error;
 		}
     }
+
+    getAccount(): string {
+        throw new Error('Method not implemented.');
+    }
 }

@@ -41,17 +41,17 @@ export abstract class HederaTransactionHandler
 			let t: Transaction;
 			switch (CapabilityDecider.decide(coin, Operation.CASH_IN)) {
 				case Decision.CONTRACT:
-					if (!coin.coin.prox)
+					if (!coin.coin.proxyAddress)
 						throw new Error(
 							'StableCoin ' +
 								coin.coin.name +
 								' does not have a proxy Address',
 						);
 					return this.contractCall(
-						coin.coin.proxyAddress.value,
+						coin.coin.proxyAddress!.value,
 						'mint',
 						[targetId, amount],
-						150000000,
+						1500000,
 						TransactionType.RECEIPT,
 					);
 				case Decision.HTS:

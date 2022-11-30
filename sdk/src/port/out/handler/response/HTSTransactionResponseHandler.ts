@@ -95,9 +95,7 @@ export class HTSTransactionResponseHandler extends TransactionResponseHandler {
 		responseParam: Uint8Array,
 		receipt?: TransactionReceipt,
 	): TransactionResponse {
-		const record: Record<string, any> = {"value": "value"};
 		return new TransactionResponse(
-			record,
 			transactionId!.toString()
 		);
 	}
