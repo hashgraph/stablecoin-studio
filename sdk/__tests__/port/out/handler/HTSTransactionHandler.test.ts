@@ -1,3 +1,4 @@
+/* eslint-disable jest/valid-expect */
 import { Client } from "@hashgraph/sdk";
 import Long from "long";
 import { HTSTransactionHandler } from "../../../../src/port/out/handler/HTSTransactionHandler.js";
@@ -11,14 +12,14 @@ import { AccountId as HAccountId,
          Status } from '@hashgraph/sdk';
 
 describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
-    const clientAccountId:string = '0.0.47792863';
-    const clientPrivateKey:string = '302e020100300506032b65700422042078068d0d381ec19047ca0f6612a66b9a3c990fb1f8adc2fd2735b78423c2e10c';
-    const accountId:string = '0.0.47793222';
+    const clientAccountId = '0.0.47792863';
+    const clientPrivateKey = '302e020100300506032b65700422042078068d0d381ec19047ca0f6612a66b9a3c990fb1f8adc2fd2735b78423c2e10c';
+    const accountId = '0.0.47793222';
     
     // token to operate through HTS
-    const tokenId:string = '0.0.48987373';
-    const proxyContractId:string = '0.0.48987372';
-    const evmProxyAddress:string = '0x0000000000000000000000000000000002eb7cec';
+    const tokenId = '0.0.48987373';
+    const proxyContractId = '0.0.48987372';
+    const evmProxyAddress = '0x0000000000000000000000000000000002eb7cec';
     const proxyContract: Contract = new Contract(
         proxyContractId,
         HederaERC20__factory.abi,
@@ -31,9 +32,9 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
     );
 
     // token to operate through contract
-    const tokenId2:string = '0.0.48989058';
-    const proxyContractId2:string = '0.0.48989057';
-    const evmProxyAddress2:string = '0x0000000000000000000000000000000002eb8381';
+    const tokenId2 = '0.0.48989058';
+    const proxyContractId2 = '0.0.48989057';
+    const evmProxyAddress2 = '0x0000000000000000000000000000000002eb8381';
     const proxyContract2: Contract = new Contract(
         proxyContractId2,
         HederaERC20__factory.abi,

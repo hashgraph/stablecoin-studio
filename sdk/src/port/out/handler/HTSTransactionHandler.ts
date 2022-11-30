@@ -22,7 +22,7 @@ export class HTSTransactionHandler extends HederaTransactionHandler {
 
     public async signAndSendTransaction(t: Transaction): Promise<TransactionResponse> { 	
 		try {
-			let tr:HTransactionResponse = await t.execute(this.client);
+			const tr:HTransactionResponse = await t.execute(this.client);
             return HTSTransactionResponseHandler.manageResponse(tr, TransactionType.RECEIPT, this.client);
 		} catch (error) {
             console.log(`echo3 -> ${error}`)

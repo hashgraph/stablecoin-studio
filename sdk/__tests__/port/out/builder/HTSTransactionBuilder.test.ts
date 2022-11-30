@@ -18,19 +18,15 @@ import nodeTest from "node:test";
 import { HTSTransactionBuilder } from "../../../../src/port/out/builder/HTSTransactionBuilder.js";
 
 describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
-  const contractId:string = '1111';
-  const accountId:string = '2222'
-  const tokenId:string = '3333';
+  const contractId = '1111';
+  const accountId = '2222'
+  const tokenId = '3333';
 
-  const contractId2:string = '1110';
-  const accountId2:string = '2220'
-  const tokenId2:string = '3330';
+  const contractId2 = '1110';
+  const accountId2 = '2220'
+  const tokenId2 = '3330';
 
-  const accountId3:string = '2200';
-
-  beforeAll(async () => {
-    
-  });
+  const accountId3 = '2200';
  
   it('Test create contractExecuteTransaction', () => {
     const t:ContractExecuteTransaction = HTSTransactionBuilder.buildContractExecuteTransaction(contractId, new Uint8Array, 1000, 1) as ContractExecuteTransaction;    expect(t?.gas?.low).toEqual(1000);
