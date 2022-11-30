@@ -4,10 +4,10 @@ import StableCoinCapabilities from "../../../../domain/context/stablecoin/Stable
 export class CapabilityDecider{
 
     static decide(
-        capabilities: StableCoinCapabilities,
-        operation: Operations
+        capabilities?: StableCoinCapabilities,
+        operation?: Operations
     ) : Decision{
-        return Decision.CONTRACT;
+        return Decision.HTS;
     }
 }
 

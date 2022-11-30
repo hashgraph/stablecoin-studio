@@ -3,15 +3,30 @@ import { HTSTransactionBuilder } from   './../builder/HTSTransactionBuilder.js'
 import TransactionHandler from '../TransactionHandler';
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
 import StableCoin from '../../../domain/context/stablecoin/StableCoin.js';
+import { Operations } from '../../../domain/context/stablecoin/Capability.js';
 import Contract from '../../../domain/context/contract/Contract.js';
 import Web3 from 'web3';
+import { CapabilityDecider, Decision } from './decider/CapabilityDecider.js';
+import { CapabilityError } from './error/CapabilityError.js';
 
 export abstract class HederaTransactionHandler implements TransactionHandler<Transaction> {
     private web3 = new Web3(); 
 
     public async wipe(coin: StableCoin, targetId: string, amount: Long): Promise<TransactionResponse> {
-        let t:Transaction = HTSTransactionBuilder.buildTokenWipeTransaction(targetId, coin.tokenId, amount);        
-        return this.signAndSendTransaction(t)
+        let t: Transaction;
+        switch(CapabilityDecider.decide()){
+            case Decision.CONTRACT:
+                return this.contractCall(new Contract(coin.proxyAddress, new ABI, ""), 
+                    "wipe", 
+                    [targetId, amount],
+                    150000000);
+            case Decision.HTS:
+                t = HTSTransactionBuilder.buildTokenWipeTransaction(targetId, coin.tokenId, amount);    
+                return this.signAndSendTransaction(t)    
+            default:
+                const OperationNotAllowed = new CapabilityError(this.getAccount(), Operations.WIPE, coin.tokenId);
+                return new TransactionResponse(undefined, undefined, OperationNotAllowed)
+        }
     }
 
     public async mint(coin: StableCoin, amount: Long): Promise<TransactionResponse> {
@@ -101,6 +116,8 @@ export abstract class HederaTransactionHandler implements TransactionHandler<Tra
 
 		return Buffer.from(encodedParametersHex, 'hex');
 	}
+
+    abstract getAccount(): string;
 
     abstract signAndSendTransaction(t: Transaction): Promise<TransactionResponse> ;
     

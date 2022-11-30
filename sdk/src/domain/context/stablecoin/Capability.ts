@@ -19,14 +19,14 @@ export enum Capability {
 
 
 export enum Operations{
-	CASH_IN,
-	BURN,
-	WIPE,
-	FREEZE,
-	PAUSE,
-	DELETE,
-	RESCUE,
-	ROLE_MANAGEMENT
+	CASH_IN = "Cash_in",
+	BURN = "Burn",
+	WIPE = "Wipe",
+	FREEZE = "Freeze",
+	PAUSE = "Pause",
+	DELETE = "Delete",
+	RESCUE = "Rescue",
+	ROLE_MANAGEMENT = "Role_Management"
 }
 
 export enum Accesses{
