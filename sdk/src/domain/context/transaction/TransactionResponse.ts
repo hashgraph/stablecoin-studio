@@ -7,14 +7,12 @@ export enum TransactionType {
 }
 
 export default class TransactionResponse<
-	K = Record<string, any>,
-	X extends Error = Error,
 	T extends Response = Response,
+	X extends Error = Error,
 > {
 	constructor(
-		protected readonly $returnType: K,
-		public readonly id: string,
-		public readonly error?: X,
+		public readonly id?: string,
 		public readonly response?: T,
+		public readonly error?: X,
 	) {}
 }
