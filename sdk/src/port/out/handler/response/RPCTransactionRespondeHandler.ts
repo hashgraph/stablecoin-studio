@@ -10,17 +10,7 @@ export class RPCTransactionResponseHandler extends TransactionResponseHandler {
 	public static async manageResponse(
 		response: ethers.ContractTransaction,
 	): Promise<TransactionResponse> {
-		response.data;
-		response.value;
-		const r = HederaERC20__factory.createInterface().parseTransaction({
-			data: response.data,
-			value: response.value,
-		});
-		// console.log(r);
-
-		//let decodedData = iface.parseTransaction();
 		const receipt = await response.wait();
-		console.log(receipt);
 		if (receipt.status === ERROR_STATUS) {
 			return Promise.reject(
 				new TransactionResponse(
@@ -32,7 +22,7 @@ export class RPCTransactionResponseHandler extends TransactionResponseHandler {
 		}
 
 		return Promise.resolve(
-			new TransactionResponse(receipt.transactionHash),
+			new TransactionResponse(receipt.transactionHash, receipt.status),
 		);
 	}
 }

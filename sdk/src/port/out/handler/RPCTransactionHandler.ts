@@ -42,7 +42,6 @@ export default class RPCTransactionHandler
 			return RPCTransactionResponseHandler.manageResponse(response);
 		} catch (error) {
 			// should throw RPCHandlerError
-			console.error(error);
 			throw new Error('Error');
 		}
 	}
