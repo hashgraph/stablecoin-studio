@@ -1,6 +1,6 @@
 import { Long } from 'long';
 
-import StableCoin from '../../../domain/context/stablecoin/StableCoin.js';
+import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
 import {
 	HederaERC20__factory,
@@ -13,8 +13,8 @@ import {
 import TransactionHandler from '../TransactionHandler';
 import { BigNumber, ethers } from 'ethers';
 import { Response } from '../../../domain/context/transaction/Response.js';
+import { RPCTransactionResponseHandler } from './response/RPCTransactionRespondeHandler.js';
 
-const ERROR_STATUS = 1;
 export default class RPCTransactionHandler
 	implements TransactionHandler<RPCTransactionHandler>
 {
@@ -38,26 +38,14 @@ export default class RPCTransactionHandler
 	async mint(coin: StableCoin, amount: Long): Promise<TransactionResponse> {
 		try {
 			const response = await HederaERC20__factory.connect(
-				coin.evmProxyAddress,
+				coin.evmProxyAddress ?? '',
 				this.wallet,
 			).mint(
 				'0x320D33046B60DBc5a027cFB7E4124F75b0417240',
 				BigNumber.from('1'),
 			);
-			const receipt = await response.wait();
-			// Check transaction for error
-			if (receipt.status === ERROR_STATUS) {
-				return new TransactionResponse(
-					receipt.transactionHash,
-					undefined,
-					new Error('Some error'),
-				);
-			}
-			console.log(response.value);
-			return new TransactionResponse(
-				receipt.transactionHash,
-				response.value,
-			);
+
+			return RPCTransactionResponseHandler.manageResponse(response);
 		} catch (error) {
 			// should throw RPCHandlerError
 			console.error(error);
@@ -67,7 +55,7 @@ export default class RPCTransactionHandler
 
 	async balance(coin: StableCoin): Promise<TransactionResponse> {
 		const res = await HederaERC20__factory.connect(
-			coin.evmProxyAddress,
+			coin.evmProxyAddress ?? '',
 			this.wallet,
 		).balanceOf(this.metamaskAccount);
 		return new TransactionResponse('000.001', res);

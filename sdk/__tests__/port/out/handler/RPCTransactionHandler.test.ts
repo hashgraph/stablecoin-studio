@@ -5,13 +5,10 @@ import {
 import Long from 'long';
 import { HTSTransactionHandler } from '../../../../src/port/out/handler/HTSTransactionHandler.js';
 import { HTSTransactionResponseHandler } from '../../../../src/port/out/handler/response/HTSTransactionResponseHandler.js';
-import {
-	TransactionType,
-	HTSResponse,
-} from '../../../../src/port/out/handler/response/TransactionResponseEnums.js';
+
 import { Status } from '@hashgraph/sdk';
 import RPCTransactionHandler from '../../../../src/port/out/handler/RPCTransactionHandler.js';
-import StableCoin from '../../../../src/domain/context/stablecoin/StableCoin.js';
+import { StableCoin } from '../../../../src/domain/context/stablecoin/StableCoin.js';
 
 import {
 	HederaERC20__factory,
@@ -19,6 +16,7 @@ import {
 	HederaERC20Proxy__factory,
 } from 'hedera-stable-coin-contracts/typechain-types/index.js';
 import TransactionResponse from '../../../../src/domain/context/transaction/TransactionResponse.js';
+import { HederaId } from '../../../../src/domain/context/shared/HederaId.js';
 
 describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	const clientAccountId = '0.0.47792863';
@@ -38,13 +36,16 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	});
 
 	// eslint-disable-next-line jest/expect-expect
-	it('Test balance', async () => {
-		const stablecoin = new StableCoin(
-			'0.0.48995254',
-			'0x0000000000000000000000000000000002eb9bb6',
-			'0.0.48995256',
-		);
-		tr = await th.balance(stablecoin);
+	it('Test mint', async () => {
+		const stablecoin = new StableCoin({
+			name: 'TEST',
+			symbol: 'TEST',
+			decimals: 16,
+			proxyAddress: HederaId.from('0.0.48995254'),
+			evmProxyAddress: '0x0000000000000000000000000000000002eb9bb6',
+			tokenId: HederaId.from('0.0.48995256'),
+		});
+		tr = await th.mint(stablecoin, Long.ONE);
 	}, 1500000);
 
 	// it('Test burn', async () => {
