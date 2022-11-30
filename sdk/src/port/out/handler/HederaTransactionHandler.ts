@@ -16,66 +16,63 @@ export abstract class HederaTransactionHandler implements TransactionHandler<Tra
     private web3 = new Web3(); 
 
     public async wipe(coin: StableCoinCapabilities, targetId: string, amount: Long): Promise<TransactionResponse> {
-        const t: Transaction = HTSTransactionBuilder.buildTokenWipeTransaction(targetId, coin.tokenId, amount);    
-        return this.signAndSendTransaction(t)
+        throw new Error("not implemented");
     }
 
     public async cashin(coin: StableCoinCapabilities, targetId: string, amount: Long): Promise<TransactionResponse> {
-        let t: Transaction;
-        switch(CapabilityDecider.decide()){
-            case Decision.CONTRACT:
-                const abi: ABI = {"value": "value"};
-                return this.contractCall(new Contract(coin.proxyAddress, abi, ""), 
-                    "mint", 
-                    [targetId, amount],
-                    150000000);
-            case Decision.HTS:
-                t = HTSTransactionBuilder.buildTokenMintTransaction(coin.coin.tokenId, amount);
-                return this.signAndSendTransaction(t)
-            default:
-                const OperationNotAllowed = new CapabilityError(this.getAccount(), Operations.WIPE, coin.coin.tokenId);
-                return new TransactionResponse(undefined, undefined, OperationNotAllowed)
+        try{
+            let t: Transaction;
+            switch(CapabilityDecider.decide()){
+                case Decision.CONTRACT:
+                    if(!coin.coin.proxyAddress) throw new Error("StableCoin " + coin.coin.name + " does not have a proxy Address");
+                    return this.contractCall(coin.coin.proxyAddress.value, 
+                        "mint", 
+                        [targetId, amount],
+                        150000000);
+                case Decision.HTS:
+                    if(!coin.coin.tokenId) throw new Error("StableCoin " + coin.coin.name + " does not have an underlying token");
+                    t = HTSTransactionBuilder.buildTokenMintTransaction(coin.coin.tokenId.value, amount);
+                    return this.signAndSendTransaction(t)
+                default:
+                    let tokenId = coin.coin.tokenId ? coin.coin.tokenId.value : "";
+                    const OperationNotAllowed = new CapabilityError(this.getAccount(), Operations.CASH_IN, tokenId);
+                    return new TransactionResponse(undefined, undefined, OperationNotAllowed)
+            }
+        }catch(error){
+            throw new Error("Unexpected error in HederaTransactionHandler Cashin operation : " + error)
         }
-        
     }
 
     public async burn(coin: StableCoinCapabilities, amount: Long): Promise<TransactionResponse> {
-        const t:Transaction = HTSTransactionBuilder.buildTokenBurnTransaction(coin.tokenId, amount);
-        return this.signAndSendTransaction(t)
+        throw new Error("not implemented");
     }
 
     public async freeze(coin: StableCoinCapabilities, targetId: string): Promise<TransactionResponse> {
-        const t:Transaction = HTSTransactionBuilder.buildFreezeTransaction(coin.tokenId, targetId);
-        return this.signAndSendTransaction(t)
+        throw new Error("not implemented");
     }
 
     public async unfreeze(coin: StableCoinCapabilities, targetId: string): Promise<TransactionResponse> {
-        const t:Transaction = HTSTransactionBuilder.buildUnfreezeTransaction(coin.tokenId, targetId);
-        return this.signAndSendTransaction(t)
+        throw new Error("not implemented");
     }
 
     public async pause(coin: StableCoinCapabilities): Promise<TransactionResponse> {
-        const t:Transaction = HTSTransactionBuilder.buildPausedTransaction(coin.tokenId);
-        return this.signAndSendTransaction(t)
+        throw new Error("not implemented");
     }
 
     public async unpause(coin: StableCoinCapabilities): Promise<TransactionResponse> {
-        const t:Transaction = HTSTransactionBuilder.buildUnpausedTransaction(coin.tokenId);
-        return this.signAndSendTransaction(t)
+        throw new Error("not implemented");
     }
 
     public async transfer(coin: StableCoinCapabilities, amount: Long, inAccountId: string, outAccountId: string): Promise<TransactionResponse> {
-        const t:Transaction = HTSTransactionBuilder.buildTransferTransaction(coin.tokenId, amount, inAccountId, outAccountId);
-        return this.signAndSendTransaction(t)
+        throw new Error("not implemented");
     }
 
     public async rescue(coin: StableCoinCapabilities): Promise<TransactionResponse> {
-        throw new Error('Method not implemented.');
+        throw new Error('not implemented.');
     }
 
     public async delete(coin: StableCoinCapabilities): Promise<TransactionResponse> {
-        const t:Transaction = HTSTransactionBuilder.buildDeleteTransaction(coin.tokenId);
-        return this.signAndSendTransaction(t)
+        throw new Error("not implemented");
     }
 
     public async contractCall(contractAddress: string, 
@@ -87,7 +84,8 @@ export abstract class HederaTransactionHandler implements TransactionHandler<Tra
 		const functionCallParameters = this.encodeFunctionCall(
 			functionName,
 			parameters,
-			HederaERC20__factory,
+			HederaERC20__factory.abi,
+            value
 		);
 
 		const transaction: Transaction =
@@ -103,18 +101,19 @@ export abstract class HederaTransactionHandler implements TransactionHandler<Tra
 
     private encodeFunctionCall(
 		functionName: string,
-		parameters: string[],
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		abi: ABI,
+		parameters: any[],
+        abi: any[],
+        value?: number
 	): Uint8Array {
 		const functionAbi = abi.find(
-			(func: { name: string; type: string }) =>
+			(func: { name: any; type: string }) =>
 				func.name === functionName && func.type === 'function',
 		);
 		if (!functionAbi) {
-			console.log(`Contract function ${functionName} not found in ABI, are you using the right version?`);
+            let message = `Contract function ${functionName} not found in ABI, are you using the right version?`;
+			console.log(message);
+            throw new Error(message);
         }
-
 		const encodedParametersHex = this.web3.eth.abi
 			.encodeFunctionCall(functionAbi, parameters)
 			.slice(2);
