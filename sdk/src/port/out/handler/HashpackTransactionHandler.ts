@@ -89,4 +89,5 @@ export class HashpackTransactionHandler extends HederaTransactionHandler{
 		}
 	}
     
+	getAccount(): string{ return ""}
 }
