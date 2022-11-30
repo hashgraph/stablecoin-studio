@@ -6,7 +6,7 @@ import { AccountId as HAccountId } from '@hashgraph/sdk';
 import StableCoinCapabilities from "../../../../src/domain/context/stablecoin/StableCoinCapabilities.js";
 import { StableCoin } from "../../../../src/domain/context/stablecoin/StableCoin.js";
 import Account from "../../../../src/domain/context/account/Account.js";
-import { Accesses, Capability, Operations } from "../../../../src/domain/context/stablecoin/Capability.js";
+import { Access, Capability, Operation } from "../../../../src/domain/context/stablecoin/Capability.js";
 import BigDecimal from '../../../../src/domain/context/shared/BigDecimal.js';
 import { HederaId } from "../../../../src/domain/context/shared/HederaId.js";
 
@@ -27,7 +27,7 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
         decimals: 6,
         tokenId: new HederaId(tokenId)
     });
-    const capabilities: Capability[] = [new Capability(Operations.CASH_IN, Accesses.HTS)];
+    const capabilities: Capability[] = [new Capability(Operation.CASH_IN, Access.HTS)];
     const stableCoinCapabilities = new StableCoinCapabilities(
         stableCoin,
         capabilities,
@@ -45,7 +45,7 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
         tokenId: new HederaId(tokenId2),
         proxyAddress: new HederaId(proxyContractId2)
     });
-    const capabilities2: Capability[] = [new Capability(Operations.CASH_IN, Accesses.CONTRACT)];
+    const capabilities2: Capability[] = [new Capability(Operation.CASH_IN, Access.CONTRACT)];
     const stableCoinCapabilities2 = new StableCoinCapabilities(
         stableCoin2,
         capabilities2,
