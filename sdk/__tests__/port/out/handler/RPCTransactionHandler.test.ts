@@ -5,9 +5,9 @@ import TransactionResponse from '../../../../src/domain/context/transaction/Tran
 import { HederaId } from '../../../../src/domain/context/shared/HederaId.js';
 import StableCoinCapabilities from '../../../../src/domain/context/stablecoin/StableCoinCapabilities.js';
 import {
-	Accesses,
+	Access,
 	Capability,
-	Operations,
+	Operation,
 } from '../../../../src/domain/context/stablecoin/Capability.js';
 import Account from '../../../../src/domain/context/account/Account.js';
 import BigDecimal from '../../../../src/domain/context/shared/BigDecimal.js';
@@ -40,7 +40,7 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 				evmProxyAddress: '0x0000000000000000000000000000000002ebb58a',
 				tokenId: HederaId.from('0.0.49001869'),
 			}),
-			[new Capability(Operations.CASH_IN, Accesses.CONTRACT)],
+			[new Capability(Operation.CASH_IN, Access.CONTRACT)],
 			new Account({
 				environment: 'testnet',
 				evmAddress: '0x367710d1076ed07d52162d3f45012a89f8bc3335',
@@ -66,7 +66,7 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 				evmProxyAddress: '0x0000000000000000000000000000000002ebb58a',
 				tokenId: HederaId.from('0.0.49001869'),
 			}),
-			[new Capability(Operations.CASH_IN, Accesses.CONTRACT)],
+			[new Capability(Operation.CASH_IN, Access.CONTRACT)],
 			new Account({
 				environment: 'testnet',
 				evmAddress: '0x367710d1076ed07d52162d3f45012a89f8bc3335',
