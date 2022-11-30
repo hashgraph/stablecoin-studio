@@ -13,6 +13,8 @@ import {
 import TransactionHandler from '../TransactionHandler';
 import { BigNumber, ethers } from 'ethers';
 import { Response } from '../../../domain/context/transaction/Response.js';
+import StableCoinCapabilities from '../../../domain/context/stablecoin/StableCoinCapabilities.js';
+
 
 const ERROR_STATUS = 1;
 export default class RPCTransactionHandler
@@ -35,7 +37,7 @@ export default class RPCTransactionHandler
 		throw new Error('Method not implemented.');
 	}
 
-	async cashin(coin: StableCoin, targetId: string, amount: Long): Promise<TransactionResponse> {
+	async cashin(coin: StableCoinCapabilities, targetId: string, amount: Long): Promise<TransactionResponse> {
 		try {
 			const response = await HederaERC20__factory.connect(
 				coin.evmProxyAddress,
