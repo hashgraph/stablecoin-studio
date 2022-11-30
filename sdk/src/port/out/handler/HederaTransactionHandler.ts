@@ -14,12 +14,7 @@ export abstract class HederaTransactionHandler implements TransactionHandler<Tra
     private web3 = new Web3(); 
 
     public async wipe(coin: StableCoin, targetId: string, amount: Long): Promise<TransactionResponse> {
-        let t: Transaction = HTSTransactionBuilder.buildTokenWipeTransaction(targetId, coin.tokenId, amount);    
-        return this.signAndSendTransaction(t)
-    }
-
-    public async cashin(coin: StableCoin, targetId: string, amount: Long): Promise<TransactionResponse> {
-        let t: Transaction;
+        /*const t: Transaction;
         switch(CapabilityDecider.decide()){
             case Decision.CONTRACT:
                 const abi: ABI = {"value": "value"};
@@ -27,42 +22,49 @@ export abstract class HederaTransactionHandler implements TransactionHandler<Tra
                     "mint", 
                     [targetId, amount],
                     150000000);
-            case Decision.HTS:
-                t = HTSTransactionBuilder.buildTokenMintTransaction(coin.tokenId, amount);
+            
+            case Decision.HTS:*/
+                const t: Transaction = HTSTransactionBuilder.buildTokenWipeTransaction(targetId, coin.tokenId, amount);    
                 return this.signAndSendTransaction(t)    
-            default:
+                
+            /*default:
                 const OperationNotAllowed = new CapabilityError(this.getAccount(), Operations.WIPE, coin.tokenId);
                 return new TransactionResponse(undefined, undefined, OperationNotAllowed)
-        }
+        }*/
+    }
+
+    public async mint(coin: StableCoin, amount: Long): Promise<TransactionResponse> {
+        const t:Transaction = HTSTransactionBuilder.buildTokenMintTransaction(coin.tokenId, amount);
+        return this.signAndSendTransaction(t)
     }
 
     public async burn(coin: StableCoin, amount: Long): Promise<TransactionResponse> {
-        let t:Transaction = HTSTransactionBuilder.buildTokenBurnTransaction(coin.tokenId, amount);
+        const t:Transaction = HTSTransactionBuilder.buildTokenBurnTransaction(coin.tokenId, amount);
         return this.signAndSendTransaction(t)
     }
 
     public async freeze(coin: StableCoin, targetId: string): Promise<TransactionResponse> {
-        let t:Transaction = HTSTransactionBuilder.buildFreezeTransaction(coin.tokenId, targetId);
+        const t:Transaction = HTSTransactionBuilder.buildFreezeTransaction(coin.tokenId, targetId);
         return this.signAndSendTransaction(t)
     }
 
     public async unfreeze(coin: StableCoin, targetId: string): Promise<TransactionResponse> {
-        let t:Transaction = HTSTransactionBuilder.buildUnfreezeTransaction(coin.tokenId, targetId);
+        const t:Transaction = HTSTransactionBuilder.buildUnfreezeTransaction(coin.tokenId, targetId);
         return this.signAndSendTransaction(t)
     }
 
     public async pause(coin: StableCoin): Promise<TransactionResponse> {
-        let t:Transaction = HTSTransactionBuilder.buildPausedTransaction(coin.tokenId);
+        const t:Transaction = HTSTransactionBuilder.buildPausedTransaction(coin.tokenId);
         return this.signAndSendTransaction(t)
     }
 
     public async unpause(coin: StableCoin): Promise<TransactionResponse> {
-        let t:Transaction = HTSTransactionBuilder.buildUnpausedTransaction(coin.tokenId);
+        const t:Transaction = HTSTransactionBuilder.buildUnpausedTransaction(coin.tokenId);
         return this.signAndSendTransaction(t)
     }
 
     public async transfer(coin: StableCoin, amount: Long, inAccountId: string, outAccountId: string): Promise<TransactionResponse> {
-        let t:Transaction = HTSTransactionBuilder.buildTransferTransaction(coin.tokenId, amount, inAccountId, outAccountId);
+        const t:Transaction = HTSTransactionBuilder.buildTransferTransaction(coin.tokenId, amount, inAccountId, outAccountId);
         return this.signAndSendTransaction(t)
     }
 
@@ -71,7 +73,7 @@ export abstract class HederaTransactionHandler implements TransactionHandler<Tra
     }
 
     public async delete(coin: StableCoin): Promise<TransactionResponse> {
-        let t:Transaction = HTSTransactionBuilder.buildDeleteTransaction(coin.tokenId);
+        const t:Transaction = HTSTransactionBuilder.buildDeleteTransaction(coin.tokenId);
         return this.signAndSendTransaction(t)
     }
 

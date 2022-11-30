@@ -22,8 +22,7 @@ export class HTSTransactionResponseHandler extends TransactionResponseHandler {
 		let results: Uint8Array = new Uint8Array();
 		if (responseType === TransactionType.RECEIPT) {
 			const transactionReceipt: TransactionReceipt | undefined = await this.getReceipt(client, transactionResponse);
-			let transId;
-			transId = transactionResponse.transactionId;
+			const transId = transactionResponse.transactionId;
 			return this.createTransactionResponse(
 				transId,
 				responseType,
