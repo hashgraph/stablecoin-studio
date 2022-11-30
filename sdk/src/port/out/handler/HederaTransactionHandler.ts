@@ -13,6 +13,7 @@ import {
 import { TransactionType } from './response/TransactionResponseEnums.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 
+
 export abstract class HederaTransactionHandler implements TransactionHandler<Transaction> {
     private web3 = new Web3(); 
 
@@ -24,7 +25,7 @@ export abstract class HederaTransactionHandler implements TransactionHandler<Tra
     public async cashin(coin: StableCoinCapabilities, targetId: string, amount: BigDecimal): Promise<TransactionResponse> {
         try{
             let t: Transaction;
-            switch(CapabilityDecider.decide()){
+            switch(CapabilityDecider.decide(coin, Operations.CASH_IN)){
                 case Decision.CONTRACT:
                     if(!coin.coin.proxyAddress) throw new Error("StableCoin " + coin.coin.name + " does not have a proxy Address");
                     return this.contractCall(

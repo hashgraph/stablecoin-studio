@@ -1,4 +1,4 @@
-export enum Capability {
+/*export enum Capability {
 	CASH_IN = 'Cash in',
 	CASH_IN_HTS = 'Cash in hts',
 	DETAILS = 'Details',
@@ -15,7 +15,7 @@ export enum Capability {
 	DELETE_HTS = 'Delete hts',
 	RESCUE = 'Rescue',
 	ROLE_MANAGEMENT = 'Role management',
-}
+}*/
 
 
 export enum Operations{
@@ -34,10 +34,10 @@ export enum Accesses{
 	CONTRACT
 }
 
-/*
+
 export class Capability{
 	constructor(
 		public readonly operation: Operations,
 		public readonly access: Accesses,
 	) {}
-}*/
+}
