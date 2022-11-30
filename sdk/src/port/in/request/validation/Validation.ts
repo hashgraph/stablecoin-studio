@@ -1,15 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import CheckNums from '../../../../../core/checks/numbers/CheckNums.js';
-import CheckStrings from '../../../../../core/checks/strings/CheckStrings.js';
-import BaseError from '../../../../../core/error/BaseError.js';
-import {
-	Account,
-	BigDecimal,
-	ContractId,
-	PrivateKey,
-	PublicKey,
-	StableCoinRole
-} from '../../sdk.js';
 import {
 	RequestAccount,
 	RequestPrivateKey,
@@ -20,9 +9,14 @@ import { InvalidLength } from '../error/InvalidLength.js';
 import { InvalidRange } from '../error/InvalidRange.js';
 import { InvalidFormatHedera as InvalidIdFormatHedera } from '../error/InvalidFormatHedera.js';
 import { InvalidType } from '../error/InvalidType.js';
-import InvalidDecimalRange from '../../../../../domain/context/stablecoin/error/InvalidDecimalRange.js';
-import { InvalidRole } from '../../../../../domain/context/stablecoin/error/InvalidRole.js';
-import { AccountIdNotValid } from '../../../../../domain/context/account/error/AccountIdNotValid.js';
+import BaseError from '../../../../core/error/BaseError.js';
+import PublicKey from '../../../../domain/context/account/PublicKey.js';
+import PrivateKey from '../../../../domain/context/account/PrivateKey.js';
+import CheckStrings from '../../../../core/checks/strings/CheckStrings.js';
+import CheckNums from '../../../../core/checks/numbers/CheckNums.js';
+import { AccountIdNotValid } from '../../../../domain/context/account/error/AccountIdNotValid.js';
+import BigDecimal from '../../../../domain/context/shared/BigDecimal.js';
+import Account from '../../../../domain/context/account/Account.js';
 
 export default class Validation {
 	public static checkPublicKey = () => {
@@ -40,9 +34,9 @@ export default class Validation {
 	};
 
 	public static checkContractId = () => {
-		return (val: any): BaseError[] => {
-			return ContractId.validate(val as string);
-		};
+		// return (val: any): BaseError[] => {
+		// 	return ContractId.validate(val as string);
+		// };
 	};
 
 	public static checkString = ({
@@ -114,11 +108,19 @@ export default class Validation {
 			if (privateKey) {
 				new Account(
 					accountId,
+					'testnet',
 					new PrivateKey(privateKey.key, privateKey.type),
+					undefined,
 					evmAddress,
 				);
 			} else {
-				new Account(accountId, undefined, evmAddress);
+				new Account(
+					accountId,
+					'testnet',
+					undefined,
+					undefined,
+					evmAddress,
+				);
 			}
 		};
 	};
@@ -126,7 +128,8 @@ export default class Validation {
 	public static checkHederaIdFormat = () => {
 		return (val: any): BaseError[] => {
 			// Account Id defined in hip-15 : https://hips.hedera.com/hip/hip-15
-			const regEx = /^(0|(?:[1-9]\d*))\.(0|(?:[1-9]\d*))\.(0|(?:[1-9]\d*))(?:-([a-z]{5}))?$/;
+			const regEx =
+				/^(0|(?:[1-9]\d*))\.(0|(?:[1-9]\d*))\.(0|(?:[1-9]\d*))(?:-([a-z]{5}))?$/;
 			const err: BaseError[] = [];
 			if (!regEx.exec(val)) {
 				err.push(new InvalidIdFormatHedera(val));

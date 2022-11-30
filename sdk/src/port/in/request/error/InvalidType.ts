@@ -1,4 +1,4 @@
-import BaseError, { ErrorCode } from '../../../../../core/error/BaseError.js';
+import BaseError, { ErrorCode } from '../../../../core/error/BaseError.js';
 
 export class InvalidType extends BaseError {
 	constructor(val: unknown, type?: string) {
