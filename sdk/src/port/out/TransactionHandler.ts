@@ -4,7 +4,7 @@ import StableCoinCapabilities from '../../domain/context/stablecoin/StableCoinCa
 
 export default interface TransactionHandler<K> {
 	wipe(coin: StableCoinCapabilities, targetId: string, amount: Long): Promise<TransactionResponse>;
-	mint(coin: StableCoinCapabilities, amount: Long): Promise<TransactionResponse>;
+	cashin(coin: StableCoinCapabilities, targetId: string, amount: Long): Promise<TransactionResponse>;
 	burn(coin: StableCoinCapabilities, amount: Long): Promise<TransactionResponse>;
 	freeze(coin: StableCoinCapabilities, targetId: string): Promise<TransactionResponse>;
 	unfreeze(coin: StableCoinCapabilities, targetId: string): Promise<TransactionResponse>;

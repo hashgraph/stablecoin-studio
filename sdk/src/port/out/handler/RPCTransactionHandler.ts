@@ -36,8 +36,9 @@ export default class RPCTransactionHandler
 		throw new Error('Method not implemented.');
 	}
 
-	async mint(
+	async cashin(
 		coin: StableCoinCapabilities,
+		targetId: string,
 		amount: Long,
 	): Promise<TransactionResponse> {
 		try {
