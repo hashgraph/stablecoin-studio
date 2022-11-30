@@ -1,4 +1,4 @@
-import AccountId from "../../../domain/context/account/AccountId.js";
+import { HederaId } from "../../../domain/context/shared/HederaId.js";
 
 export default class CheckStrings {
 	public static isNotEmpty(value?: string): boolean {
@@ -23,7 +23,7 @@ export default class CheckStrings {
 
 	public static isAccountId(value: string): boolean {
 		try {
-			new AccountId(value);
+			HederaId.from(value);
 			return true;
 		} catch (err) {
 			return false

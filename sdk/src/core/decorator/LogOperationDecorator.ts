@@ -1,4 +1,4 @@
-import LogService from '../../app/service/log/LogService.js';
+import LogService from '../../app/service/LogService.js';
 
 const p = performance ? performance : Date;
 

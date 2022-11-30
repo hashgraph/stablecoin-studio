@@ -17,6 +17,8 @@ import CheckNums from '../../../../core/checks/numbers/CheckNums.js';
 import { AccountIdNotValid } from '../../../../domain/context/account/error/AccountIdNotValid.js';
 import BigDecimal from '../../../../domain/context/shared/BigDecimal.js';
 import Account from '../../../../domain/context/account/Account.js';
+import InvalidDecimalRange from '../../../../domain/context/stablecoin/error/InvalidDecimalRange.js';
+import { InvalidRole } from '../../../../domain/context/stablecoin/error/InvalidRole.js';
 
 export default class Validation {
 	public static checkPublicKey = () => {
@@ -94,10 +96,10 @@ export default class Validation {
 	public static checkRole = () => {
 		return (val: any): BaseError[] => {
 			const err: BaseError[] = [];
-			const roles: string[] = Object.values(StableCoinRole);
-			if (!roles.includes(val)) {
-				err.push(new InvalidRole(val));
-			}
+			// const roles: string[] = Object.values(StableCoinRole);
+			// if (!roles.includes(val)) {
+			// 	err.push(new InvalidRole(val));
+			// }
 			return err;
 		};
 	};
@@ -106,21 +108,19 @@ export default class Validation {
 		return (val: any): void => {
 			const { accountId, privateKey, evmAddress } = val as RequestAccount;
 			if (privateKey) {
-				new Account(
-					accountId,
-					'testnet',
-					new PrivateKey(privateKey.key, privateKey.type),
-					undefined,
+				new Account({
+					id: accountId,
+					environment: 'testnet',
+					privateKey: new PrivateKey(privateKey),
+					publicKey: new PrivateKey(privateKey).publicKey,
 					evmAddress,
-				);
+				});
 			} else {
-				new Account(
-					accountId,
-					'testnet',
-					undefined,
-					undefined,
+				new Account({
+					id: accountId,
+					environment: 'testnet',
 					evmAddress,
-				);
+				});
 			}
 		};
 	};

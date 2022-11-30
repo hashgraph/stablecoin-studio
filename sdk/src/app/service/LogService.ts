@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createLogger, LoggerOptions, transports, format } from 'winston';
-import BaseError from '../../../core/error/BaseError.js';
+import BaseError from '../../core/error/BaseError.js';
 
 const { Console } = transports;
 const { printf } = format;

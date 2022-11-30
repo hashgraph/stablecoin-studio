@@ -1,6 +1,5 @@
 import TransactionResponse from '../../domain/context/transaction/TransactionResponse.js';
 import Long from 'long';
-import Contract, { ABI } from '../../domain/context/contract/Contract.js';
 import StableCoin from '../../domain/context/stablecoin/StableCoin.js';
 
 export default interface TransactionHandler<K> {

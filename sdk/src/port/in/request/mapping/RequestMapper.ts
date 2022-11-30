@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import LogService from '../../../../app/service/log/LogService.js';
+import LogService from '../../../../app/service/LogService.js';
 import { isConstructible } from '../../../../core/Cast.js';
 import { Constructible, MapFunction } from '../../../../core/Type.js';
 import Account from '../../../../domain/context/account/Account.js';
@@ -38,20 +38,20 @@ export default class RequestMapper {
 	};
 
 	public static getAccount(req: RequestAccount): Account {
-		return new Account(
-			req.accountId,
-			'testnet',
-			this.getPrivateKey(req.privateKey),
-			this.getPrivateKey(req.privateKey)?.publicKey,
-			req.evmAddress,
-		);
+		return new Account({
+			id: req.accountId,
+			environment: 'testnet',
+			privateKey: this.getPrivateKey(req.privateKey),
+			publicKey: this.getPrivateKey(req.privateKey)?.publicKey,
+			evmAddress: req.evmAddress,
+		});
 	}
 
 	public static getPrivateKey(
 		req?: RequestPrivateKey,
 	): PrivateKey | undefined {
 		if (req) {
-			return new PrivateKey(req.key, req.type);
+			return new PrivateKey(req);
 		} else return undefined;
 	}
 

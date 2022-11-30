@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Service from '../../app/service/Service.js';
-import StableCoinService from '../../app/StableCoinService.js';
+import StableCoinService from '../../app/service/StableCoinService.js';
 import { Injectable } from '../../core/Injectable.js';
 import CreateRequest from './request/CreateRequest.js';
 import CashInRequest from './request/CashInRequest.js';
@@ -9,6 +9,8 @@ import CashOutRequest from './request/CashOutRequest.js';
 import RescueRequest from './request/RescueRequest.js';
 import WipeRequest from './request/WipeRequest.js';
 import StableCoinDetail from './response/StableCoinDetail.js';
+import BigDecimal from '../../domain/context/shared/BigDecimal.js';
+import { HederaId } from '../../domain/context/shared/HederaId.js';
 
 interface IStableCoinInPort {
 	create(request: CreateRequest): Promise<StableCoinDetail>;
@@ -39,7 +41,11 @@ class StableCoinInPort implements IStableCoinInPort {
 		amount,
 		targetId,
 	}: CashInRequest): Promise<boolean> {
-		return !!(await this.stableCoinService.mint(tokenId, amount, targetId));
+		return !!(await this.stableCoinService.mint(
+			tokenId,
+			BigDecimal.fromString(amount),
+			HederaId.from(targetId),
+		));
 	}
 	cashOut(request: CashOutRequest): Promise<boolean> {
 		throw new Error('Method not implemented.');
