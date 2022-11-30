@@ -66,6 +66,7 @@
   "dependencies": {
     "@hashgraph/hethers": "^1.2.2",
     "@hashgraph/sdk": "^2.18.4",
+    "ethers": "^5.7.2",
     "hashconnect": "file:../hashconnect/lib",
     "perf_hooks": "^0.0.1",
     "reflect-metadata": "^0.1.13",

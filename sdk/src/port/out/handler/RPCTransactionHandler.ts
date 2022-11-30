@@ -8,12 +8,13 @@ import {
 	HederaERC20Proxy__factory,
 	IHederaTokenService,
 	IHederaTokenService__factory,
+	HederaERC20,
 } from 'hedera-stable-coin-contracts/typechain-types/index.js';
 import TransactionHandler from '../TransactionHandler';
 import { BigNumber, ethers } from 'ethers';
-import ContractService from '../../../domain/services/ContractService.js';
 import { Response } from '../../../domain/context/transaction/Response.js';
 
+const ERROR_STATUS = 1;
 export default class RPCTransactionHandler
 	implements TransactionHandler<RPCTransactionHandler>
 {
@@ -25,57 +26,51 @@ export default class RPCTransactionHandler
 		this.provider,
 	);
 	metamaskAccount = '0x320D33046B60DBc5a027cFB7E4124F75b0417240';
-	stableCoinFactory: HederaERC20__factory;
-	precompileFactory: IHederaTokenService__factory;
-	constructor() {
-		this.stableCoinFactory = ContractService.getContractFactory(
-			'HederaERC20',
-		) as HederaERC20__factory;
-		console.log(this.stableCoinFactory);
 
-		this.precompileFactory =
-			ContractService.getContractFactory<IHederaTokenService__factory>(
-				'HederaPrecompiled',
-			);
-	}
 	async wipe(
 		coin: StableCoin,
 		targetId: string,
 		amount: Long,
-	): Promise<TransactionResponse<Record<string, any>, Error, Response>> {
+	): Promise<TransactionResponse> {
 		throw new Error('Method not implemented.');
 	}
 
 	async mint(coin: StableCoin, amount: Long): Promise<TransactionResponse> {
-		const response = await this.stableCoinFactory
-			.connect(this.wallet)
-			.attach(coin.evmProxyAddress)
-			.mint(
+		try {
+			const response = await HederaERC20__factory.connect(
+				coin.evmProxyAddress,
+				this.wallet,
+			).mint(
 				'0x320D33046B60DBc5a027cFB7E4124F75b0417240',
 				BigNumber.from('1'),
 			);
-		console.log(response);
-
-		throw new Error('asd');
+			const receipt = await response.wait();
+			// Check transaction for error
+			if (receipt.status === ERROR_STATUS) {
+				return new TransactionResponse(
+					receipt.transactionHash,
+					undefined,
+					new Error('Some error'),
+				);
+			}
+			console.log(response.value);
+			return new TransactionResponse(
+				receipt.transactionHash,
+				response.value,
+			);
+		} catch (error) {
+			// should throw RPCHandlerError
+			console.error(error);
+			throw new Error('Error');
+		}
 	}
 
 	async balance(coin: StableCoin): Promise<TransactionResponse> {
-		console.log(
-			await HederaERC20__factory.connect(
-				coin.evmProxyAddress,
-				this.wallet,
-			).balanceOf(this.metamaskAccount),
-		);
-		const factory = await this.stableCoinFactory
-			.connect(this.wallet)
-			.attach(coin.evmProxyAddress)
-			.balanceOf(this.metamaskAccount);
-
-		// const factWithAddress = await factory.attach(coin.evmProxyAddress);
-		// const response = await factWithAddress.balanceOf(this.metamaskAccount);
-		console.log(factory);
-
-		throw new Error('asd');
+		const res = await HederaERC20__factory.connect(
+			coin.evmProxyAddress,
+			this.wallet,
+		).balanceOf(this.metamaskAccount);
+		return new TransactionResponse('000.001', res);
 	}
 	async burn(coin: StableCoin, amount: Long): Promise<TransactionResponse> {
 		throw new Error('Method not implemented.');
