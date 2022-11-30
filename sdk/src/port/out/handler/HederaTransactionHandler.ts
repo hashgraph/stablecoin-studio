@@ -10,29 +10,35 @@ import StableCoinCapabilities from '../../../domain/context/stablecoin/StableCoi
 import {
     HederaERC20__factory,
 } from 'hedera-stable-coin-contracts/typechain-types/index.js';
+import { TransactionType } from './response/TransactionResponseEnums.js';
+import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
+
 
 
 export abstract class HederaTransactionHandler implements TransactionHandler<Transaction> {
     private web3 = new Web3(); 
 
-    public async wipe(coin: StableCoinCapabilities, targetId: string, amount: Long): Promise<TransactionResponse> {
+    public async wipe(coin: StableCoinCapabilities, targetId: string, amount: BigDecimal): Promise<TransactionResponse> {
         throw new Error("not implemented");
     }
 
-    public async cashin(coin: StableCoinCapabilities, targetId: string, amount: Long): Promise<TransactionResponse> {
+    public async cashin(coin: StableCoinCapabilities, targetId: string, amount: BigDecimal): Promise<TransactionResponse> {
         try{
             let t: Transaction;
             switch(CapabilityDecider.decide()){
                 case Decision.CONTRACT:
                     if(!coin.coin.proxyAddress) throw new Error("StableCoin " + coin.coin.name + " does not have a proxy Address");
-                    return this.contractCall(coin.coin.proxyAddress.value, 
+                    return this.contractCall(
+                        coin.coin.proxyAddress.value, 
                         "mint", 
                         [targetId, amount],
-                        150000000);
+                        150000000,
+                        TransactionType.RECEIPT
+                        );
                 case Decision.HTS:
                     if(!coin.coin.tokenId) throw new Error("StableCoin " + coin.coin.name + " does not have an underlying token");
-                    t = HTSTransactionBuilder.buildTokenMintTransaction(coin.coin.tokenId.value, amount);
-                    return this.signAndSendTransaction(t)
+                    t = HTSTransactionBuilder.buildTokenMintTransaction(coin.coin.tokenId.value, amount.toLong());
+                    return this.signAndSendTransaction(t, TransactionType.RECEIPT)
                 default:
                     let tokenId = coin.coin.tokenId ? coin.coin.tokenId.value : "";
                     const OperationNotAllowed = new CapabilityError(this.getAccount(), Operations.CASH_IN, tokenId);
@@ -43,7 +49,7 @@ export abstract class HederaTransactionHandler implements TransactionHandler<Tra
         }
     }
 
-    public async burn(coin: StableCoinCapabilities, amount: Long): Promise<TransactionResponse> {
+    public async burn(coin: StableCoinCapabilities, amount: BigDecimal): Promise<TransactionResponse> {
         throw new Error("not implemented");
     }
 
@@ -63,7 +69,7 @@ export abstract class HederaTransactionHandler implements TransactionHandler<Tra
         throw new Error("not implemented");
     }
 
-    public async transfer(coin: StableCoinCapabilities, amount: Long, inAccountId: string, outAccountId: string): Promise<TransactionResponse> {
+    public async transfer(coin: StableCoinCapabilities, amount: BigDecimal, inAccountId: string, outAccountId: string): Promise<TransactionResponse> {
         throw new Error("not implemented");
     }
 
@@ -79,13 +85,13 @@ export abstract class HederaTransactionHandler implements TransactionHandler<Tra
         functionName: string, 
         parameters: any[],
         gas: number,
+        trxType: TransactionType,
         value?: number): Promise<TransactionResponse> {
 
 		const functionCallParameters = this.encodeFunctionCall(
 			functionName,
 			parameters,
-			HederaERC20__factory.abi,
-            value
+			HederaERC20__factory.abi
 		);
 
 		const transaction: Transaction =
@@ -96,14 +102,13 @@ export abstract class HederaTransactionHandler implements TransactionHandler<Tra
 				value
 		);
 		
-        return await this.signAndSendTransaction(transaction);
+        return await this.signAndSendTransaction(transaction, trxType);
     }
 
     private encodeFunctionCall(
 		functionName: string,
 		parameters: any[],
-        abi: any[],
-        value?: number
+        abi: any[]
 	): Uint8Array {
 		const functionAbi = abi.find(
 			(func: { name: any; type: string }) =>
@@ -123,6 +128,9 @@ export abstract class HederaTransactionHandler implements TransactionHandler<Tra
 
     abstract getAccount(): string;
 
-    abstract signAndSendTransaction(t: Transaction): Promise<TransactionResponse> ;
+    abstract signAndSendTransaction(t: Transaction, 
+        transactionType: TransactionType, 
+        nameFunction?: string,
+        abi?: any[]): Promise<TransactionResponse> ;
     
 }

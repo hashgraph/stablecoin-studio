@@ -1,4 +1,4 @@
-import { Transaction, TransactionResponse, Signer, PublicKey as HPublicKey } from '@hashgraph/sdk';
+import { Transaction, Signer, PublicKey as HPublicKey } from '@hashgraph/sdk';
 import { HederaTransactionHandler } from './HederaTransactionHandler.js';
 import { HashConnect, MessageTypes } from 'hashconnect';
 import { HashConnectProvider } from 'hashconnect/provider/provider';
@@ -9,6 +9,7 @@ import Account from '../../../domain/context/account/Account.js';
 import Network from '../../../domain/context/network/Network.js';
 import { HashpackTransactionResponseHandler } from './response/HashpackTransactionResponseHandler.js';
 import { TransactionType } from './response/TransactionResponseEnums.js';
+import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
 
 
 export class HashpackTransactionHandler extends HederaTransactionHandler{
@@ -25,6 +26,7 @@ export class HashpackTransactionHandler extends HederaTransactionHandler{
 		network: Network,
 		topic: string,
 	) {
+		if (!account.id) throw new Error("HashpackTransactionHandler cannot be created if account id is empty");
         super();
 		this.hc = hc;
 		this.account = account;
@@ -32,46 +34,51 @@ export class HashpackTransactionHandler extends HederaTransactionHandler{
 		this.provider = this.hc.getProvider(
 			network.environment as NetworkType,
 			topic,
-			account.id,
+			account.id.value,
 		);
 		this.hashConnectSigner = this.hc.getSigner(this.provider);
 		this.signer = this.hashConnectSigner as unknown as Signer;
 	}
 
 
-    async signAndSendTransaction(t: Transaction): Promise<TransactionResponse> {
-		if (this.signer) {
-			try {
-				await this.getAccountKey(); // Ensure we have the public key
-                let signedT = t;
-                if (!t.isFrozen()) {
-                    signedT = await t.freezeWithSigner(
-                        this.signer,
-                    );
-                }
-                const trx = await this.signer.signTransaction(signedT);
-                const HashPackTransactionResponse = await this.hc.sendTransaction(this.topic, {
-                    topic: this.topic,
-                    byteArray: trx.toBytes(),
-                    metadata: {
-                        accountToSign: this.signer
-                            .getAccountId()
-                            .toString(),
-                        returnTransaction: false,
-                        getRecord: true,
-                    },
-                });
-
-				return HashpackTransactionResponseHandler.manageResponse(
-					HashPackTransactionResponse, 
-					TransactionType.RECEIPT);
-
-            }
-			catch (error) {
-				throw new SigningError(error);
+    async signAndSendTransaction(
+		t: Transaction, 
+		transactionType: TransactionType, 
+		nameFunction?: string,
+		abi?: any[]): Promise<TransactionResponse> {
+		if (!this.signer) throw new SigningError('Signer is empty');
+		try {
+			await this.getAccountKey(); // Ensure we have the public key
+			let signedT = t;
+			if (!t.isFrozen()) {
+				signedT = await t.freezeWithSigner(
+					this.signer,
+				);
 			}
+			const trx = await this.signer.signTransaction(signedT);
+			const HashPackTransactionResponse = await this.hc.sendTransaction(this.topic, {
+				topic: this.topic,
+				byteArray: trx.toBytes(),
+				metadata: {
+					accountToSign: this.signer
+						.getAccountId()
+						.toString(),
+					returnTransaction: false,
+					getRecord: true,
+				},
+			});
+
+			return HashpackTransactionResponseHandler.manageResponse(
+				HashPackTransactionResponse, 
+				transactionType,
+				nameFunction,
+				abi
+			);
+
 		}
-		throw new SigningError('Signer is empty');
+		catch (error) {
+			throw new SigningError(error);
+		}
 	}
 
     async getAccountKey(): Promise<HPublicKey> {
@@ -89,5 +96,8 @@ export class HashpackTransactionHandler extends HederaTransactionHandler{
 		}
 	}
     
-	getAccount(): string{ return ""}
+	getAccount(): string{ 
+		if(this.account.id) return this.account.id.value;
+		return "";
+	}
 }

@@ -44,5 +44,5 @@ export default interface TransactionHandler<K> {
 		sourceId: string,
 		targetId: string,
 	): Promise<TransactionResponse>;
-	signAndSendTransaction(t: K): Promise<TransactionResponse>;
+	//signAndSendTransaction(t: K): Promise<TransactionResponse>;
 }
