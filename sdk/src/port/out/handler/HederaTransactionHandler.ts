@@ -10,11 +10,15 @@ import StableCoinCapabilities from '../../../domain/context/stablecoin/StableCoi
 import {
     HederaERC20__factory,
 } from 'hedera-stable-coin-contracts/typechain-types/index.js';
+<<<<<<< HEAD
 
+=======
+>>>>>>> HederaTransactionHandler changes
 
 export abstract class HederaTransactionHandler implements TransactionHandler<Transaction> {
     private web3 = new Web3(); 
 
+<<<<<<< HEAD
     public async wipe(coin: StableCoinCapabilities, targetId: string, amount: Long): Promise<TransactionResponse> {
         throw new Error("not implemented");
     }
@@ -76,6 +80,73 @@ export abstract class HederaTransactionHandler implements TransactionHandler<Tra
     }
 
     public async contractCall(contractAddress: string, 
+=======
+    public async wipe(stableCoinCapabilities: StableCoinCapabilities, targetId: string, amount: Long): Promise<TransactionResponse> {
+        /*const t: Transaction;
+        switch(CapabilityDecider.decide()){
+            case Decision.CONTRACT:
+                const abi: ABI = {"value": "value"};
+                return this.contractCall(new Contract(coin.proxyAddress, abi, ""), 
+                    "mint", 
+                    [targetId, amount],
+                    150000000);
+            
+            case Decision.HTS:*/
+                const t: Transaction = HTSTransactionBuilder.buildTokenWipeTransaction(targetId, stableCoinCapabilities.coin.tokenId, amount);    
+                return this.signAndSendTransaction(t)    
+                
+            /*default:
+                const OperationNotAllowed = new CapabilityError(this.getAccount(), Operations.WIPE, coin.tokenId);
+                return new TransactionResponse(undefined, undefined, OperationNotAllowed)
+        }*/
+    }
+
+    public async mint(stableCoinCapabilities: StableCoinCapabilities, amount: Long): Promise<TransactionResponse> {
+        const t:Transaction = HTSTransactionBuilder.buildTokenMintTransaction(stableCoinCapabilities.coin.tokenId, amount);
+        return this.signAndSendTransaction(t)
+    }
+
+    public async burn(stableCoinCapabilities: StableCoinCapabilities, amount: Long): Promise<TransactionResponse> {
+        const t:Transaction = HTSTransactionBuilder.buildTokenBurnTransaction(stableCoinCapabilities.coin.tokenId, amount);
+        return this.signAndSendTransaction(t)
+    }
+
+    public async freeze(stableCoinCapabilities: StableCoinCapabilities, targetId: string): Promise<TransactionResponse> {
+        const t:Transaction = HTSTransactionBuilder.buildFreezeTransaction(stableCoinCapabilities.coin.tokenId, targetId);
+        return this.signAndSendTransaction(t)
+    }
+
+    public async unfreeze(stableCoinCapabilities: StableCoinCapabilities, targetId: string): Promise<TransactionResponse> {
+        const t:Transaction = HTSTransactionBuilder.buildUnfreezeTransaction(stableCoinCapabilities.coin.tokenId, targetId);
+        return this.signAndSendTransaction(t)
+    }
+
+    public async pause(stableCoinCapabilities: StableCoinCapabilities): Promise<TransactionResponse> {
+        const t:Transaction = HTSTransactionBuilder.buildPausedTransaction(stableCoinCapabilities.coin.tokenId);
+        return this.signAndSendTransaction(t)
+    }
+
+    public async unpause(stableCoinCapabilities: StableCoinCapabilities): Promise<TransactionResponse> {
+        const t:Transaction = HTSTransactionBuilder.buildUnpausedTransaction(stableCoinCapabilities.coin.tokenId);
+        return this.signAndSendTransaction(t)
+    }
+
+    public async transfer(stableCoinCapabilities: StableCoinCapabilities, amount: Long, inAccountId: string, outAccountId: string): Promise<TransactionResponse> {
+        const t:Transaction = HTSTransactionBuilder.buildTransferTransaction(stableCoinCapabilities.coin.tokenId, amount, inAccountId, outAccountId);
+        return this.signAndSendTransaction(t)
+    }
+
+    public async rescue(stableCoinCapabilities: StableCoinCapabilities): Promise<TransactionResponse> {
+        throw new Error('Method not implemented.');
+    }
+
+    public async delete(stableCoinCapabilities: StableCoinCapabilities): Promise<TransactionResponse> {
+        const t:Transaction = HTSTransactionBuilder.buildDeleteTransaction(stableCoinCapabilities.coin.tokenId);
+        return this.signAndSendTransaction(t)
+    }
+
+    public async contractCall(stableCoinCapabilities: StableCoinCapabilities, 
+>>>>>>> HederaTransactionHandler changes
         functionName: string, 
         parameters: any[],
         gas: number,
@@ -85,12 +156,19 @@ export abstract class HederaTransactionHandler implements TransactionHandler<Tra
 			functionName,
 			parameters,
 			HederaERC20__factory.abi,
+<<<<<<< HEAD
             value
+=======
+>>>>>>> HederaTransactionHandler changes
 		);
 
 		const transaction: Transaction =
             HTSTransactionBuilder.buildContractExecuteTransaction(
+<<<<<<< HEAD
 				contractAddress,
+=======
+				stableCoinCapabilities.coin.address,
+>>>>>>> HederaTransactionHandler changes
 				functionCallParameters,
 				gas,
 				value
