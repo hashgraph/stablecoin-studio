@@ -1,5 +1,5 @@
-import Transaction from '../../domain/context/transaction/TransactionResponse.js';
+import TransactionResponse from '../../domain/context/transaction/TransactionResponse.js';
 
 export default interface TransactionResponseHandler {
-	manageResponse(): Transaction;
+	manageResponse(): TransactionResponse;
 }

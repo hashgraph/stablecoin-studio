@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import CheckNums from '../../../../core/checks/numbers/CheckNums.js';
 import CheckStrings from '../../../../core/checks/strings/CheckStrings.js';
-import { OptionalField } from '../../../../core/decorators/OptionalDecorator.js';
+import { OptionalField } from '../../../core/decorator/OptionalDecorator.js';
 import InvalidDecimalRange from '../../../../domain/context/stablecoin/error/InvalidDecimalRange.js';
 import { AccountId, BigDecimal, StableCoin, TokenSupplyType } from '../sdk.js';
 import {
