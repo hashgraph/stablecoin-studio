@@ -39,7 +39,7 @@ export abstract class HederaTransactionHandler
 	): Promise<TransactionResponse> {
 		try {
 			let t: Transaction;
-			switch (CapabilityDecider.decide()) {
+			switch (CapabilityDecider.decide(coin, Operation.CASH_IN)) {
 				case Decision.CONTRACT:
 					if (!coin.coin.prox)
 						throw new Error(
