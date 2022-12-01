@@ -61,7 +61,7 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
         tr = await th.burn(stableCoinCapabilities, BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals));
     });
 
-	it('Test burn', async () => {
+	it('Test burn2', async () => {
 		tr = await th.burn(
 			stableCoinCapabilities,
 			new BigDecimal('0.0000000000001'),
