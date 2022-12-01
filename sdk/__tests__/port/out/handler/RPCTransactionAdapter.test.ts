@@ -79,37 +79,48 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 		th.signerOrProvider = new Wallet(clientPrivateKey, th.provider);
 	});
 
+	it('Test wipe', async () => {
+		tr = await th.cashin(
+			stableCoinCapabilitiesSC,
+			evmAddress,
+			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
+		);
+		tr = await th.wipe(
+			stableCoinCapabilitiesSC,
+			evmAddress,
+			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
+		);
+	}, 1500000);
+
 	it('Test mint', async () => {
 		tr = await th.cashin(
 			stableCoinCapabilitiesSC,
 			evmAddress,
 			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
 		);
-		// console.log(tr);
 	}, 1500000);
 
-	// it('Test burn', async () => {
-	//     tr = await th.burn(tokenId, Long.ONE);
-	// });
+	it('Test burn', async () => {
+		tr = await th.burn(
+			stableCoinCapabilitiesSC,
+			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
+		);
+	}, 1500000);
 
 	// it('Test transfer', async () => {
 	//     tr = await th.mint(tokenId, Long.ONE);
 	//     tr = await th.transfer(tokenId, Long.ONE, clientAccountId, accountId);
 	// });
 
-	// it('Test wipe', async () => {
-	//     tr = await th.mint(tokenId, Long.ONE);
-	//     tr = await th.transfer(tokenId, Long.ONE, clientAccountId, accountId);
-	//     tr = await th.wipe(accountId, tokenId, Long.ONE);
-	// });
+	it('Test freeze', async () => {
+		await th.unfreeze(stableCoinCapabilitiesSC, evmAddress);
+		tr = await th.freeze(stableCoinCapabilitiesSC, evmAddress);
+	}, 1500000);
 
-	// it('Test freeze', async () => {
-	//     tr = await th.freeze(tokenId, accountId);
-	// });
-
-	// it('Test unfreeze', async () => {
-	//     tr = await th.unfreeze(tokenId, accountId);
-	// });
+	it('Test unfreeze', async () => {
+		await th.freeze(stableCoinCapabilitiesSC, evmAddress);
+		tr = await th.unfreeze(stableCoinCapabilitiesSC, evmAddress);
+	}, 1500000);
 
 	// it('Test pause', async () => {
 	//     tr = await th.pause(tokenId);

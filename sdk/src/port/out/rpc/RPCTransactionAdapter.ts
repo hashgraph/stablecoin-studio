@@ -288,7 +288,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 					return RPCTransactionResponseAdapter.manageResponse(
 						response,
 					);
-					
+
 				case Decision.HTS:
 					if (!coin.coin.tokenId)
 						throw new Error(
@@ -334,7 +334,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 					return RPCTransactionResponseAdapter.manageResponse(
 						response,
 					);
-					
+
 				case Decision.HTS:
 					if (!coin.coin.tokenId)
 						throw new Error(
@@ -362,7 +362,10 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 			throw new Error('Error');
 		}
 	}
-	async rescue(coin: StableCoinCapabilities, amount: BigDecimal): Promise<TransactionResponse> {
+	async rescue(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+	): Promise<TransactionResponse> {
 		try {
 			switch (CapabilityDecider.decide(coin, Operation.RESCUE)) {
 				case Decision.CONTRACT:
@@ -380,9 +383,11 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 					return RPCTransactionResponseAdapter.manageResponse(
 						response,
 					);
-					
+
 				case Decision.HTS:
-					throw Error("RESCUE operation CANNOT be performed through HTS...");
+					throw Error(
+						'RESCUE operation CANNOT be performed through HTS...',
+					);
 
 				default:
 					const tokenId = coin.coin.tokenId
@@ -422,7 +427,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 					return RPCTransactionResponseAdapter.manageResponse(
 						response,
 					);
-					
+
 				case Decision.HTS:
 					if (!coin.coin.tokenId)
 						throw new Error(
