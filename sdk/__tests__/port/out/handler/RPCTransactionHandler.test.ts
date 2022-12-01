@@ -11,14 +11,43 @@ import {
 import Account from '../../../../src/domain/context/account/Account.js';
 import BigDecimal from '../../../../src/domain/context/shared/BigDecimal.js';
 import RPCTransactionAdapter from '../../../../src/port/out/rpc/RPCTransactionAdapter.js';
+import { Wallet } from 'ethers';
 
 describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
-	const clientAccountId = '0.0.47792863';
+	const clientAccountId = '0.0.48471385';
 	const clientPrivateKey =
-		'302e020100300506032b65700422042078068d0d381ec19047ca0f6612a66b9a3c990fb1f8adc2fd2735b78423c2e10c';
-	const accountId = '0.0.47793222';
-	const tokenId = '0.0.48987373';
-	const proxy = '0.0.48987372';
+		'1404d4a4a67fb21e7181d147bfdaa7c9b55ebeb7e1a9048bf18d5da6e169c09c';
+	const evmAddress = '0x320d33046b60dbc5a027cfb7e4124f75b0417240';
+	const stableCoinCapabilitiesHTS = new StableCoinCapabilities(
+		new StableCoin({
+			name: 'HEDERACOIN',
+			symbol: 'HTSECDSA',
+			decimals: 6,
+			proxyAddress: HederaId.from('0.0.49006492'),
+			evmProxyAddress: '0x0000000000000000000000000000000002ebc79c',
+			tokenId: HederaId.from('0.0.49006494'),
+		}),
+		[new Capability(Operation.CASH_IN, Access.HTS)],
+		new Account({
+			environment: 'testnet',
+			evmAddress,
+		}),
+	);
+	const stableCoinCapabilitiesSC = new StableCoinCapabilities(
+		new StableCoin({
+			name: 'SMARTCONTRACT',
+			symbol: 'SMARTCONTRACT',
+			decimals: 6,
+			proxyAddress: HederaId.from('0.0.49006552'),
+			evmProxyAddress: '0x0000000000000000000000000000000002ebc7d8',
+			tokenId: HederaId.from('0.0.49006555'),
+		}),
+		[new Capability(Operation.CASH_IN, Access.CONTRACT)],
+		new Account({
+			environment: 'testnet',
+			evmAddress,
+		}),
+	);
 
 	let th: RPCTransactionAdapter;
 	let client: Client;
@@ -27,53 +56,16 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 		client = Client.forTestnet();
 		client.setOperator(clientAccountId, clientPrivateKey);
 		th = new RPCTransactionAdapter();
+		th.signerOrProvider = new Wallet(clientPrivateKey, th.provider);
 	});
 
 	// eslint-disable-next-line jest/expect-expect
 	it('Test mint', async () => {
-		const stableCoinCapabilities = new StableCoinCapabilities(
-			new StableCoin({
-				name: 'TEST',
-				symbol: 'TEST',
-				decimals: 2,
-				proxyAddress: HederaId.from('0.0.49001866'),
-				evmProxyAddress: '0x0000000000000000000000000000000002ebb58a',
-				tokenId: HederaId.from('0.0.49001869'),
-			}),
-			[new Capability(Operation.CASH_IN, Access.CONTRACT)],
-			new Account({
-				environment: 'testnet',
-				evmAddress: '0x367710d1076ed07d52162d3f45012a89f8bc3335',
-			}),
-		);
-
 		tr = await th.cashin(
-			stableCoinCapabilities,
-			'0x367710d1076ed07d52162d3f45012a89f8bc3335',
-			BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals),
+			stableCoinCapabilitiesSC,
+			evmAddress,
+			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
 		);
-		console.log(tr);
-	}, 1500000);
-
-	// eslint-disable-next-line jest/expect-expect
-	it('Test balance', async () => {
-		const stableCoinCapabilities = new StableCoinCapabilities(
-			new StableCoin({
-				name: 'TEST',
-				symbol: 'TEST',
-				decimals: 16,
-				proxyAddress: HederaId.from('0.0.49001866'),
-				evmProxyAddress: '0x0000000000000000000000000000000002ebb58a',
-				tokenId: HederaId.from('0.0.49001869'),
-			}),
-			[new Capability(Operation.CASH_IN, Access.CONTRACT)],
-			new Account({
-				environment: 'testnet',
-				evmAddress: '0x367710d1076ed07d52162d3f45012a89f8bc3335',
-			}),
-		);
-
-		tr = await th.balance(stableCoinCapabilities);
 		console.log(tr);
 	}, 1500000);
 

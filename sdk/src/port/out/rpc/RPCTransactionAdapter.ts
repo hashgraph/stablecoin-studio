@@ -1,29 +1,27 @@
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
 import { HederaERC20__factory } from 'hedera-stable-coin-contracts/typechain-types/index.js';
 import TransactionAdapter from '../TransactionAdapter';
-import { ethers } from 'ethers';
+import { ethers, Signer } from 'ethers';
 import { singleton, container } from 'tsyringe';
 import StableCoinCapabilities from '../../../domain/context/stablecoin/StableCoinCapabilities.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import { Injectable } from '../../../core/Injectable.js';
 import { RPCTransactionResponseAdapter } from './RPCTransactionRespondeAdapter.js';
+import type { Provider } from '@ethersproject/providers';
 
 @singleton()
 export default class RPCTransactionAdapter implements TransactionAdapter {
+	provider = new ethers.providers.JsonRpcProvider(
+		'https://testnet.hashio.io/api',
+	);
+	signerOrProvider: Signer | Provider;
+
 	register(): boolean {
 		return !!Injectable.registerTransactionHandler(this);
 	}
 	stop(): Promise<boolean> {
 		return Promise.resolve(!!Injectable.disposeTransactionHandler(this));
 	}
-	provider = new ethers.providers.JsonRpcProvider(
-		'https://testnet.hashio.io/api',
-	);
-	wallet = new ethers.Wallet(
-		'5011cb95478060ccb35b7d9141317eb326f43d6cfb047c0c852bf0fd6f46a929',
-		this.provider,
-	);
-	metamaskAccount = '0x367710d1076ed07d52162d3f45012a89f8bc3335';
 
 	async wipe(
 		coin: StableCoinCapabilities,
@@ -41,7 +39,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 		try {
 			const response = await HederaERC20__factory.connect(
 				coin.coin.evmProxyAddress ?? '',
-				this.wallet,
+				this.signerOrProvider,
 			).mint(targetId, amount.toBigNumber());
 
 			return RPCTransactionResponseAdapter.manageResponse(response);
@@ -51,13 +49,6 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 		}
 	}
 
-	async balance(coin: StableCoinCapabilities): Promise<TransactionResponse> {
-		const res = await HederaERC20__factory.connect(
-			coin.coin.evmProxyAddress ?? '',
-			this.wallet,
-		).balanceOf(this.metamaskAccount);
-		return new TransactionResponse('000.001', res);
-	}
 	async burn(
 		coin: StableCoinCapabilities,
 		amount: BigDecimal,
