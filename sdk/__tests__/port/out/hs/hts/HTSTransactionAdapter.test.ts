@@ -97,31 +97,31 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 
     it('Test cashIn contract function', async () => {
         const accountEvmAddress: string = HAccountId.fromString(clientAccountId).toSolidityAddress();
-        tr = await th.cashin(stableCoinCapabilities2, accountEvmAddress, BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals));
+        tr = await th.cashin(stableCoinCapabilities, accountEvmAddress, BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals));
     });
 
     it('Test burn contract function', async () => {
-        tr = await th.burn(stableCoinCapabilities2, BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals));
+        tr = await th.burn(stableCoinCapabilities, BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals));
     });
 
 	it('Test freeze contract function', async () => {
 		const accountEvmAddress: string =
 			HAccountId.fromString(accountId).toSolidityAddress();
-		tr = await th.freeze(stableCoinCapabilities2, accountEvmAddress);
+		tr = await th.freeze(stableCoinCapabilities, accountEvmAddress);
 	});
 
 	it('Test unfreeze contract function', async () => {
 		const accountEvmAddress: string =
 			HAccountId.fromString(accountId).toSolidityAddress();
-		tr = await th.unfreeze(stableCoinCapabilities2, accountEvmAddress);
+		tr = await th.unfreeze(stableCoinCapabilities, accountEvmAddress);
 	});
 
 	it('Test pause contract function', async () => {
-		tr = await th.pause(stableCoinCapabilities2);
+		tr = await th.pause(stableCoinCapabilities);
 	});
 
 	it('Test unpause contract function', async () => {
-		tr = await th.unpause(stableCoinCapabilities2);
+		tr = await th.unpause(stableCoinCapabilities);
 	});
 
     afterEach(async () => {
