@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { Constructible } from "./Type.js";
+import { BaseContract } from 'ethers';
+import { Constructible } from './Type.js';
 
 export const safeCast = <TYPE>(
 	val?: TYPE | Partial<TYPE> | undefined,
@@ -21,3 +22,6 @@ export const isConstructible = (value: any): value is Constructible => {
 		return false;
 	}
 };
+
+export type CallableContract<T extends BaseContract> = T['functions'];
+
