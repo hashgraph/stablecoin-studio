@@ -71,11 +71,11 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
     });
 
     it('Test cashIn', async () => {
-        tr = await th.cashin(stableCoinCapabilities, accountId, new BigDecimal('0.0000000000001'));
+        tr = await th.cashin(stableCoinCapabilities, accountId, BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals));
     });
 
     it('Test burn', async () => {
-        tr = await th.burn(stableCoinCapabilities, new BigDecimal('0.0000000000001'));
+        tr = await th.burn(stableCoinCapabilities, BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals));
     });
 
     /*it('Test transfer', async () => {
@@ -107,11 +107,11 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 
     it('Test cashIn contract function', async () => {
         const accountEvmAddress: string = HAccountId.fromString(clientAccountId).toSolidityAddress();
-        tr = await th.cashin(stableCoinCapabilities2, accountEvmAddress, new BigDecimal('0.0000000000001'));
+        tr = await th.cashin(stableCoinCapabilities2, accountEvmAddress, BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals));
     });
 
     it('Test burn contract function', async () => {
-        tr = await th.burn(stableCoinCapabilities2, new BigDecimal('0.0000000000001'));
+        tr = await th.burn(stableCoinCapabilities2, BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals));
     });
 
     it('Test freeze contract function', async () => {
@@ -133,7 +133,7 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
     });
 
     afterEach(async () => {
-        expect(tr).not.toBeNull;
-        //expect(tr.receipt?.status).toEqual(Status.Success);
+        expect(tr).not.toBeNull();
+        expect(tr.error).toEqual(undefined);
     });
 });
