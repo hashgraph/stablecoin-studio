@@ -1,9 +1,12 @@
 /* eslint-disable no-case-declarations */
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
-import { HederaERC20__factory } from 'hedera-stable-coin-contracts/typechain-types/index.js';
+import {
+	HederaERC20__factory,
+	IHederaTokenService__factory,
+} from 'hedera-stable-coin-contracts/typechain-types/index.js';
 import TransactionAdapter from '../TransactionAdapter';
 import { ContractTransaction, ethers, Signer } from 'ethers';
-import { singleton, container } from 'tsyringe';
+import { singleton } from 'tsyringe';
 import StableCoinCapabilities from '../../../domain/context/stablecoin/StableCoinCapabilities.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import { Injectable } from '../../../core/Injectable.js';
@@ -12,6 +15,8 @@ import type { Provider } from '@ethersproject/providers';
 import { CapabilityDecider, Decision } from '../CapabilityDecider.js';
 import { Operation } from '../../../domain/context/stablecoin/Capability.js';
 import { CapabilityError } from '../hs/error/CapabilityError.js';
+import { CallableContract } from '../../../core/Cast.js';
+import { TokenId } from '@hashgraph/sdk';
 
 @singleton()
 export default class RPCTransactionAdapter implements TransactionAdapter {
@@ -104,10 +109,13 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 						throw new Error(
 							`StableCoin ${coin.coin.name}  does not have an underlying token`,
 						);
+
 					return RPCTransactionResponseAdapter.manageResponse(
 						await this.precompiledCall('mintToken', [
-							targetId,
-							amount.toBigNumber(),
+							TokenId.fromString(
+								coin.coin.tokenId.value,
+							).toSolidityAddress(),
+							amount,
 							[],
 						]),
 					);
@@ -130,6 +138,8 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 			}
 		} catch (error) {
 			// should throw RPCHandlerError
+			console.log(error);
+
 			throw new Error('Error');
 		}
 	}
@@ -455,17 +465,15 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 		}
 	}
 	async contractCall(
-		evmProxyAddress: string,
+		contractAddress: string,
 		functionName: string,
 		param: unknown[],
 	): Promise<ContractTransaction> {
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		//@ts-ignore todo
-		return await IHederaTokenService__factory.connect(
-			evmProxyAddress,
+		const erc20: CallableContract = IHederaTokenService__factory.connect(
+			contractAddress,
 			this.signerOrProvider,
-		)[functionName](...param);
-		// throw new Error('Method not implemented.');
+		).functions;
+		return erc20[functionName](...param);
 	}
 	async transfer(
 		coin: StableCoinCapabilities,
