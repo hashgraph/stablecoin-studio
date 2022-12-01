@@ -34,7 +34,49 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 		targetId: string,
 		amount: BigDecimal,
 	): Promise<TransactionResponse> {
-		throw new Error('Method not implemented.');
+		try {
+			switch (CapabilityDecider.decide(coin, Operation.WIPE)) {
+				case Decision.CONTRACT:
+					if (!coin.coin.evmProxyAddress)
+						throw new Error(
+							`StableCoin ${coin.coin.name} does not have a proxy Address`,
+						);
+
+					// eslint-disable-next-line no-case-declarations
+					const response = await HederaERC20__factory.connect(
+						coin.coin.evmProxyAddress ?? '',
+						this.signerOrProvider,
+					).wipe(targetId, amount.toBigNumber());
+
+					return RPCTransactionResponseAdapter.manageResponse(
+						response,
+					);
+				case Decision.HTS:
+					if (!coin.coin.tokenId)
+						throw new Error(
+							`StableCoin ${coin.coin.name}  does not have an underlying token`,
+						);
+					throw Error('Not be implemented');
+
+				default:
+					const tokenId = coin.coin.tokenId
+						? coin.coin.tokenId.value
+						: '';
+					const OperationNotAllowed = new CapabilityError(
+						this.getAccount(),
+						Operation.WIPE,
+						tokenId,
+					);
+					return new TransactionResponse(
+						undefined,
+						undefined,
+						OperationNotAllowed,
+					);
+			}
+		} catch (error) {
+			// should throw RPCHandlerError
+			throw new Error('Error');
+		}
 	}
 
 	async cashin(
@@ -50,7 +92,6 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 							`StableCoin ${coin.coin.name} does not have a proxy Address`,
 						);
 
-					// eslint-disable-next-line no-case-declarations
 					const response = await HederaERC20__factory.connect(
 						coin.coin.evmProxyAddress ?? '',
 						this.signerOrProvider,
@@ -91,19 +132,142 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 		coin: StableCoinCapabilities,
 		amount: BigDecimal,
 	): Promise<TransactionResponse> {
-		throw new Error('Method not implemented.');
+		try {
+			switch (CapabilityDecider.decide(coin, Operation.BURN)) {
+				case Decision.CONTRACT:
+					if (!coin.coin.evmProxyAddress)
+						throw new Error(
+							`StableCoin ${coin.coin.name} does not have a proxy Address`,
+						);
+
+					const response = await HederaERC20__factory.connect(
+						coin.coin.evmProxyAddress ?? '',
+						this.signerOrProvider,
+					).burn(amount.toBigNumber());
+
+					return RPCTransactionResponseAdapter.manageResponse(
+						response,
+					);
+				case Decision.HTS:
+					if (!coin.coin.tokenId)
+						throw new Error(
+							`StableCoin ${coin.coin.name}  does not have an underlying token`,
+						);
+					throw Error('Not be implemented');
+
+				default:
+					const tokenId = coin.coin.tokenId
+						? coin.coin.tokenId.value
+						: '';
+					const OperationNotAllowed = new CapabilityError(
+						this.getAccount(),
+						Operation.BURN,
+						tokenId,
+					);
+					return new TransactionResponse(
+						undefined,
+						undefined,
+						OperationNotAllowed,
+					);
+			}
+		} catch (error) {
+			// should throw RPCHandlerError
+			throw new Error('Error');
+		}
 	}
 	async freeze(
 		coin: StableCoinCapabilities,
 		targetId: string,
 	): Promise<TransactionResponse> {
-		throw new Error('Method not implemented.');
+		try {
+			switch (CapabilityDecider.decide(coin, Operation.FREEZE)) {
+				case Decision.CONTRACT:
+					if (!coin.coin.evmProxyAddress)
+						throw new Error(
+							`StableCoin ${coin.coin.name} does not have a proxy Address`,
+						);
+
+					const response = await HederaERC20__factory.connect(
+						coin.coin.evmProxyAddress ?? '',
+						this.signerOrProvider,
+					).freeze(targetId);
+
+					return RPCTransactionResponseAdapter.manageResponse(
+						response,
+					);
+				case Decision.HTS:
+					if (!coin.coin.tokenId)
+						throw new Error(
+							`StableCoin ${coin.coin.name}  does not have an underlying token`,
+						);
+					throw Error('Not be implemented');
+
+				default:
+					const tokenId = coin.coin.tokenId
+						? coin.coin.tokenId.value
+						: '';
+					const OperationNotAllowed = new CapabilityError(
+						this.getAccount(),
+						Operation.FREEZE,
+						tokenId,
+					);
+					return new TransactionResponse(
+						undefined,
+						undefined,
+						OperationNotAllowed,
+					);
+			}
+		} catch (error) {
+			// should throw RPCHandlerError
+			throw new Error('Error');
+		}
 	}
 	async unfreeze(
 		coin: StableCoinCapabilities,
 		targetId: string,
 	): Promise<TransactionResponse> {
-		throw new Error('Method not implemented.');
+		try {
+			switch (CapabilityDecider.decide(coin, Operation.UNFREEZE)) {
+				case Decision.CONTRACT:
+					if (!coin.coin.evmProxyAddress)
+						throw new Error(
+							`StableCoin ${coin.coin.name} does not have a proxy Address`,
+						);
+
+					const response = await HederaERC20__factory.connect(
+						coin.coin.evmProxyAddress ?? '',
+						this.signerOrProvider,
+					).unfreeze(targetId);
+
+					return RPCTransactionResponseAdapter.manageResponse(
+						response,
+					);
+				case Decision.HTS:
+					if (!coin.coin.tokenId)
+						throw new Error(
+							`StableCoin ${coin.coin.name}  does not have an underlying token`,
+						);
+					throw Error('Not be implemented');
+
+				default:
+					const tokenId = coin.coin.tokenId
+						? coin.coin.tokenId.value
+						: '';
+					const OperationNotAllowed = new CapabilityError(
+						this.getAccount(),
+						Operation.UNFREEZE,
+						tokenId,
+					);
+					return new TransactionResponse(
+						undefined,
+						undefined,
+						OperationNotAllowed,
+					);
+			}
+		} catch (error) {
+			// should throw RPCHandlerError
+			throw new Error('Error');
+		}
 	}
 	async pause(coin: StableCoinCapabilities): Promise<TransactionResponse> {
 		throw new Error('Method not implemented.');
