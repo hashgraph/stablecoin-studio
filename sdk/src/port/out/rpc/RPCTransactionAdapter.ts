@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable no-case-declarations */
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
 import { HederaERC20__factory } from 'hedera-stable-coin-contracts/typechain-types/index.js';
 import TransactionAdapter from '../TransactionAdapter';
@@ -8,6 +11,9 @@ import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import { Injectable } from '../../../core/Injectable.js';
 import { RPCTransactionResponseAdapter } from './RPCTransactionRespondeAdapter.js';
 import type { Provider } from '@ethersproject/providers';
+import { CapabilityDecider, Decision } from '../CapabilityDecider.js';
+import { Operation } from '../../../domain/context/stablecoin/Capability.js';
+import { CapabilityError } from '../hs/error/CapabilityError.js';
 
 @singleton()
 export default class RPCTransactionAdapter implements TransactionAdapter {
@@ -37,12 +43,44 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 		amount: BigDecimal,
 	): Promise<TransactionResponse> {
 		try {
-			const response = await HederaERC20__factory.connect(
-				coin.coin.evmProxyAddress ?? '',
-				this.signerOrProvider,
-			).mint(targetId, amount.toBigNumber());
+			switch (CapabilityDecider.decide(coin, Operation.CASH_IN)) {
+				case Decision.CONTRACT:
+					if (!coin.coin.evmProxyAddress)
+						throw new Error(
+							`StableCoin ${coin.coin.name} does not have a proxy Address`,
+						);
 
-			return RPCTransactionResponseAdapter.manageResponse(response);
+					// eslint-disable-next-line no-case-declarations
+					const response = await HederaERC20__factory.connect(
+						coin.coin.evmProxyAddress ?? '',
+						this.signerOrProvider,
+					).mint(targetId, amount.toBigNumber());
+
+					return RPCTransactionResponseAdapter.manageResponse(
+						response,
+					);
+				case Decision.HTS:
+					if (!coin.coin.tokenId)
+						throw new Error(
+							`StableCoin ${coin.coin.name}  does not have an underlying token`,
+						);
+					throw Error('Not be implemented');
+
+				default:
+					const tokenId = coin.coin.tokenId
+						? coin.coin.tokenId.value
+						: '';
+					const OperationNotAllowed = new CapabilityError(
+						this.getAccount(),
+						Operation.CASH_IN,
+						tokenId,
+					);
+					return new TransactionResponse(
+						undefined,
+						undefined,
+						OperationNotAllowed,
+					);
+			}
 		} catch (error) {
 			// should throw RPCHandlerError
 			throw new Error('Error');
@@ -97,6 +135,10 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 	async signAndSendTransaction(
 		t: RPCTransactionAdapter,
 	): Promise<TransactionResponse> {
+		throw new Error('Method not implemented.');
+	}
+
+	getAccount(): string {
 		throw new Error('Method not implemented.');
 	}
 }

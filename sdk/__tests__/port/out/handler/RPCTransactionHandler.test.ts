@@ -1,3 +1,4 @@
+/* eslint-disable jest/expect-expect */
 import { Client } from '@hashgraph/sdk';
 import { StableCoin } from '../../../../src/domain/context/stablecoin/StableCoin.js';
 import TransactionResponse from '../../../../src/domain/context/transaction/TransactionResponse.js';
@@ -50,23 +51,19 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	);
 
 	let th: RPCTransactionAdapter;
-	let client: Client;
 	let tr: TransactionResponse;
 	beforeAll(async () => {
-		client = Client.forTestnet();
-		client.setOperator(clientAccountId, clientPrivateKey);
 		th = new RPCTransactionAdapter();
 		th.signerOrProvider = new Wallet(clientPrivateKey, th.provider);
 	});
 
-	// eslint-disable-next-line jest/expect-expect
 	it('Test mint', async () => {
 		tr = await th.cashin(
 			stableCoinCapabilitiesSC,
 			evmAddress,
 			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
 		);
-		console.log(tr);
+		// console.log(tr);
 	}, 1500000);
 
 	// it('Test burn', async () => {
@@ -100,14 +97,15 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	//     tr = await th.unpause(tokenId);
 	// });
 
-	// afterEach(async () => {
-	// 	expect(tr).not.toBeNull;
-	// 	const response: HTSResponse =
-	// 		await HTSTransactionResponseHandler.manageResponse(
-	// 			tr,
-	// 			TransactionType.RECEIPT,
-	// 			client,
-	// 		);
-	// 	expect(response.receipt?.status).toEqual(Status.Success);
-	// });
+	afterEach(async () => {
+		expect(tr).not.toBeNull();
+		expect(tr.error).toEqual(undefined);
+		// 	const response: HTSResponse =
+		// 		await HTSTransactionResponseHandler.manageResponse(
+		// 			tr,
+		// 			TransactionType.RECEIPT,
+		// 			client,
+		// 		);
+		// 	expect(response.receipt?.status).toEqual(Status.Success);
+	});
 });
