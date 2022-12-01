@@ -2,7 +2,7 @@
 import {
 	CashInCommand,
 	CashInCommandResponse,
-} from '../../../src/app/usecase/stablecoin/cashin/CashInCommand.js';
+} from '../../../src/app/usecase/command/stablecoin/cashin/CashInCommand.js';
 import { CommandBus } from '../../../src/core/command/CommandBus.js';
 import { Injectable } from '../../../src/core/Injectable.js';
 import BigDecimal from '../../../src/domain/context/shared/BigDecimal.js';

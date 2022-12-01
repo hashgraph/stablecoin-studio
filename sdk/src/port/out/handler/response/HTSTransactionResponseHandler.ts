@@ -96,6 +96,7 @@ export class HTSTransactionResponseHandler extends TransactionResponseHandler {
 		receipt?: TransactionReceipt,
 	): TransactionResponse {
 		return new TransactionResponse(
+			'00.00',
 			transactionId!.toString()
 		);
 	}

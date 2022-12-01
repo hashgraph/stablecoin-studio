@@ -1,31 +1,40 @@
-import { TransactionResponse as HTransactionResponse,
-         Transaction, 
-         Client
-       } from '@hashgraph/sdk';
+import {
+	TransactionResponse as HTransactionResponse,
+	Transaction,
+	Client,
+} from '@hashgraph/sdk';
+import { singleton } from 'tsyringe';
 import { HederaTransactionHandler } from './HederaTransactionHandler.js';
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
 import { HTSTransactionResponseHandler } from './response/HTSTransactionResponseHandler.js';
 import { TransactionType } from './response/TransactionResponseEnums.js';
 
-
+@singleton()
 export class HTSTransactionHandler extends HederaTransactionHandler {
-    private _client:Client;
 
-    public get client () {
-        return this._client
-    }
+	private _client: Client;
 
-    constructor (client:Client) {
-        super();
-        this._client = client
-    }
+	public get client() {
+		return this._client;
+	}
 
-    public async signAndSendTransaction(t: Transaction): Promise<TransactionResponse> { 	
+	constructor(client: Client) {
+		super();
+		this._client = client;
+	}
+
+	public async signAndSendTransaction(
+		t: Transaction,
+	): Promise<TransactionResponse> {
 		try {
-			const tr:HTransactionResponse = await t.execute(this.client);
-            return HTSTransactionResponseHandler.manageResponse(tr, TransactionType.RECEIPT, this.client);
+			const tr: HTransactionResponse = await t.execute(this.client);
+			return HTSTransactionResponseHandler.manageResponse(
+				tr,
+				TransactionType.RECEIPT,
+				this.client,
+			);
 		} catch (error) {
-            console.log(`echo3 -> ${error}`)
+			console.log(`echo3 -> ${error}`);
 			throw error;
 		}
     }

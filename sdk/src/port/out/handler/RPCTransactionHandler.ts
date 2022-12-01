@@ -1,16 +1,21 @@
-import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
 import { HederaERC20__factory } from 'hedera-stable-coin-contracts/typechain-types/index.js';
 import TransactionHandler from '../TransactionHandler';
-import { BigNumber, ethers } from 'ethers';
-import { Response } from '../../../domain/context/transaction/Response.js';
+import { ethers } from 'ethers';
+import { singleton, container } from 'tsyringe';
 import { RPCTransactionResponseHandler } from './response/RPCTransactionRespondeHandler.js';
 import StableCoinCapabilities from '../../../domain/context/stablecoin/StableCoinCapabilities.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
+import { Injectable } from '../../../core/Injectable.js';
 
-export default class RPCTransactionHandler
-	implements TransactionHandler<RPCTransactionHandler>
-{
+@singleton()
+export default class RPCTransactionHandler implements TransactionHandler {
+	register(): boolean {
+		return !!Injectable.registerTransactionHandler(this);
+	}
+	stop(): Promise<boolean> {
+		return Promise.resolve(!!Injectable.disposeTransactionHandler(this));
+	}
 	provider = new ethers.providers.JsonRpcProvider(
 		'https://testnet.hashio.io/api',
 	);

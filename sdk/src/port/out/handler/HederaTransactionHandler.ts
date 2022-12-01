@@ -13,11 +13,17 @@ import StableCoinCapabilities from '../../../domain/context/stablecoin/StableCoi
 import { HederaERC20__factory } from 'hedera-stable-coin-contracts/typechain-types/index.js';
 import { TransactionType } from './response/TransactionResponseEnums.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
+import { Injectable } from '../../../core/Injectable.js';
 
-export abstract class HederaTransactionHandler
-	implements TransactionHandler<Transaction>
-{
+export abstract class HederaTransactionHandler implements TransactionHandler {
 	private web3 = new Web3();
+
+	register(): boolean {
+		return !!Injectable.registerTransactionHandler(this);
+	}
+	stop(): Promise<boolean> {
+		return Promise.resolve(!!Injectable.disposeTransactionHandler(this));
+	}
 
 	public async wipe(
 		stableCoinCapabilities: StableCoinCapabilities,
@@ -42,18 +48,31 @@ export abstract class HederaTransactionHandler
 			switch (CapabilityDecider.decide(coin, Operation.CASH_IN)) {
 				case Decision.CONTRACT:
 					if (!coin.coin.proxyAddress)
-						throw new Error(`StableCoin ${coin.coin.name} does not have a proxy Address`);
-					return await this.contractCall(coin.coin.proxyAddress!.value, 'mint', [targetId, amount], 400000, TransactionType.RECEIPT);
-				
+						throw new Error(
+							`StableCoin ${coin.coin.name} does not have a proxy Address`,
+						);
+					return await this.contractCall(
+						coin.coin.proxyAddress!.value,
+						'mint',
+						[targetId, amount],
+						400000,
+						TransactionType.RECEIPT,
+					);
+
 				case Decision.HTS:
 					if (!coin.coin.tokenId)
-						throw new Error(`StableCoin ${coin.coin.name}  does not have an underlying token`);
+						throw new Error(
+							`StableCoin ${coin.coin.name}  does not have an underlying token`,
+						);
 					t = HTSTransactionBuilder.buildTokenMintTransaction(
 						coin.coin.tokenId.value,
 						amount.toLong(),
 					);
-					return this.signAndSendTransaction(t, TransactionType.RECEIPT);
-			
+					return this.signAndSendTransaction(
+						t,
+						TransactionType.RECEIPT,
+					);
+
 				default:
 					const tokenId = coin.coin.tokenId
 						? coin.coin.tokenId.value
@@ -70,7 +89,9 @@ export abstract class HederaTransactionHandler
 					);
 			}
 		} catch (error) {
-			throw new Error(`Unexpected error in HederaTransactionHandler Cash in operation : ${error}`);
+			throw new Error(
+				`Unexpected error in HederaTransactionHandler Cash in operation : ${error}`,
+			);
 		}
 	}
 
@@ -84,15 +105,31 @@ export abstract class HederaTransactionHandler
 			switch (CapabilityDecider.decide(coin, Operation.BURN)) {
 				case Decision.CONTRACT:
 					if (!coin.coin.proxyAddress)
-						throw new Error(`StableCoin ${coin.coin.name} does not have a proxy Address`);
-					return await this.contractCall(coin.coin.proxyAddress!.value, 'burn', [amount], 400000, TransactionType.RECEIPT);
-				
-				case Decision.HTS:		
+						throw new Error(
+							`StableCoin ${coin.coin.name} does not have a proxy Address`,
+						);
+					return await this.contractCall(
+						coin.coin.proxyAddress!.value,
+						'burn',
+						[amount],
+						400000,
+						TransactionType.RECEIPT,
+					);
+
+				case Decision.HTS:
 					if (!coin.coin.tokenId)
-						throw new Error(`StableCoin ${coin.coin.name} does not have an underlying token`);	
-					t = HTSTransactionBuilder.buildTokenBurnTransaction(coin.coin.tokenId?.value!, amount.toLong());
-					return this.signAndSendTransaction(t, TransactionType.RECEIPT);
-				
+						throw new Error(
+							`StableCoin ${coin.coin.name} does not have an underlying token`,
+						);
+					t = HTSTransactionBuilder.buildTokenBurnTransaction(
+						coin.coin.tokenId?.value!,
+						amount.toLong(),
+					);
+					return this.signAndSendTransaction(
+						t,
+						TransactionType.RECEIPT,
+					);
+
 				default:
 					const tokenId = coin.coin.tokenId
 						? coin.coin.tokenId.value
@@ -107,10 +144,12 @@ export abstract class HederaTransactionHandler
 						undefined,
 						OperationNotAllowed,
 					);
-			}			
+			}
 		} catch (error) {
-			throw new Error(`Unexpected error in HederaTransactionHandler Burn operation : ${error}`);
-		}					
+			throw new Error(
+				`Unexpected error in HederaTransactionHandler Burn operation : ${error}`,
+			);
+		}
 	}
 
 	public async freeze(
@@ -123,14 +162,30 @@ export abstract class HederaTransactionHandler
 			switch (CapabilityDecider.decide(coin, Operation.FREEZE)) {
 				case Decision.CONTRACT:
 					if (!coin.coin.proxyAddress)
-						throw new Error(`StableCoin ${coin.coin.name} does not have a proxy Address`);	
-					return await this.contractCall(coin.coin.proxyAddress!.value, 'freeze', [targetId], 60000, TransactionType.RECEIPT);						
-						
-				case Decision.HTS:		
+						throw new Error(
+							`StableCoin ${coin.coin.name} does not have a proxy Address`,
+						);
+					return await this.contractCall(
+						coin.coin.proxyAddress!.value,
+						'freeze',
+						[targetId],
+						60000,
+						TransactionType.RECEIPT,
+					);
+
+				case Decision.HTS:
 					if (!coin.coin.tokenId)
-						throw new Error(`StableCoin ${coin.coin.name} does not have an underlying token`);						
-					t = HTSTransactionBuilder.buildFreezeTransaction(coin.coin.tokenId?.value!, targetId);
-					return this.signAndSendTransaction(t, TransactionType.RECEIPT);
+						throw new Error(
+							`StableCoin ${coin.coin.name} does not have an underlying token`,
+						);
+					t = HTSTransactionBuilder.buildFreezeTransaction(
+						coin.coin.tokenId?.value!,
+						targetId,
+					);
+					return this.signAndSendTransaction(
+						t,
+						TransactionType.RECEIPT,
+					);
 
 				default:
 					const tokenId = coin.coin.tokenId
@@ -146,10 +201,12 @@ export abstract class HederaTransactionHandler
 						undefined,
 						OperationNotAllowed,
 					);
-			}			
+			}
 		} catch (error) {
-			throw new Error(`Unexpected error in HederaTransactionHandler Freeze operation : ${error}`);
-		}									
+			throw new Error(
+				`Unexpected error in HederaTransactionHandler Freeze operation : ${error}`,
+			);
+		}
 	}
 
 	public async unfreeze(
@@ -162,14 +219,30 @@ export abstract class HederaTransactionHandler
 			switch (CapabilityDecider.decide(coin, Operation.UNFREEZE)) {
 				case Decision.CONTRACT:
 					if (!coin.coin.proxyAddress)
-						throw new Error(`StableCoin ${coin.coin.name} does not have a proxy Address`);	
-					return await this.contractCall(coin.coin.proxyAddress!.value, 'unfreeze', [targetId], 60000, TransactionType.RECEIPT);						
-						
-				case Decision.HTS:		
+						throw new Error(
+							`StableCoin ${coin.coin.name} does not have a proxy Address`,
+						);
+					return await this.contractCall(
+						coin.coin.proxyAddress!.value,
+						'unfreeze',
+						[targetId],
+						60000,
+						TransactionType.RECEIPT,
+					);
+
+				case Decision.HTS:
 					if (!coin.coin.tokenId)
-						throw new Error(`StableCoin ${coin.coin.name} does not have an underlying token`);						
-					t = HTSTransactionBuilder.buildUnfreezeTransaction(coin.coin.tokenId?.value!, targetId);
-					return this.signAndSendTransaction(t, TransactionType.RECEIPT);
+						throw new Error(
+							`StableCoin ${coin.coin.name} does not have an underlying token`,
+						);
+					t = HTSTransactionBuilder.buildUnfreezeTransaction(
+						coin.coin.tokenId?.value!,
+						targetId,
+					);
+					return this.signAndSendTransaction(
+						t,
+						TransactionType.RECEIPT,
+					);
 
 				default:
 					const tokenId = coin.coin.tokenId
@@ -185,9 +258,11 @@ export abstract class HederaTransactionHandler
 						undefined,
 						OperationNotAllowed,
 					);
-			}			
+			}
 		} catch (error) {
-			throw new Error(`Unexpected error in HederaTransactionHandler Unfreeze operation : ${error}`);
+			throw new Error(
+				`Unexpected error in HederaTransactionHandler Unfreeze operation : ${error}`,
+			);
 		}
 	}
 
@@ -200,14 +275,29 @@ export abstract class HederaTransactionHandler
 			switch (CapabilityDecider.decide(coin, Operation.PAUSE)) {
 				case Decision.CONTRACT:
 					if (!coin.coin.proxyAddress)
-						throw new Error(`StableCoin ${coin.coin.name} does not have a proxy Address`);	
-					return await this.contractCall(coin.coin.proxyAddress!.value, 'pause', [], 60000, TransactionType.RECEIPT);						
-						
-				case Decision.HTS:		
+						throw new Error(
+							`StableCoin ${coin.coin.name} does not have a proxy Address`,
+						);
+					return await this.contractCall(
+						coin.coin.proxyAddress!.value,
+						'pause',
+						[],
+						60000,
+						TransactionType.RECEIPT,
+					);
+
+				case Decision.HTS:
 					if (!coin.coin.tokenId)
-						throw new Error(`StableCoin ${coin.coin.name} does not have an underlying token`);						
-					t = HTSTransactionBuilder.buildPausedTransaction(coin.coin.tokenId?.value!);
-					return this.signAndSendTransaction(t, TransactionType.RECEIPT);
+						throw new Error(
+							`StableCoin ${coin.coin.name} does not have an underlying token`,
+						);
+					t = HTSTransactionBuilder.buildPausedTransaction(
+						coin.coin.tokenId?.value!,
+					);
+					return this.signAndSendTransaction(
+						t,
+						TransactionType.RECEIPT,
+					);
 
 				default:
 					const tokenId = coin.coin.tokenId
@@ -223,9 +313,11 @@ export abstract class HederaTransactionHandler
 						undefined,
 						OperationNotAllowed,
 					);
-			}			
+			}
 		} catch (error) {
-			throw new Error(`Unexpected error in HederaTransactionHandler Pause operation : ${error}`);
+			throw new Error(
+				`Unexpected error in HederaTransactionHandler Pause operation : ${error}`,
+			);
 		}
 	}
 
@@ -238,14 +330,29 @@ export abstract class HederaTransactionHandler
 			switch (CapabilityDecider.decide(coin, Operation.UNPAUSE)) {
 				case Decision.CONTRACT:
 					if (!coin.coin.proxyAddress)
-						throw new Error(`StableCoin ${coin.coin.name} does not have a proxy Address`);	
-					return await this.contractCall(coin.coin.proxyAddress!.value, 'unpause', [], 60000, TransactionType.RECEIPT);						
-						
-				case Decision.HTS:		
+						throw new Error(
+							`StableCoin ${coin.coin.name} does not have a proxy Address`,
+						);
+					return await this.contractCall(
+						coin.coin.proxyAddress!.value,
+						'unpause',
+						[],
+						60000,
+						TransactionType.RECEIPT,
+					);
+
+				case Decision.HTS:
 					if (!coin.coin.tokenId)
-						throw new Error(`StableCoin ${coin.coin.name} does not have an underlying token`);						
-					t = HTSTransactionBuilder.buildUnpausedTransaction(coin.coin.tokenId?.value!);
-					return this.signAndSendTransaction(t, TransactionType.RECEIPT);
+						throw new Error(
+							`StableCoin ${coin.coin.name} does not have an underlying token`,
+						);
+					t = HTSTransactionBuilder.buildUnpausedTransaction(
+						coin.coin.tokenId?.value!,
+					);
+					return this.signAndSendTransaction(
+						t,
+						TransactionType.RECEIPT,
+					);
 
 				default:
 					const tokenId = coin.coin.tokenId
@@ -261,9 +368,11 @@ export abstract class HederaTransactionHandler
 						undefined,
 						OperationNotAllowed,
 					);
-			}			
+			}
 		} catch (error) {
-			throw new Error(`Unexpected error in HederaTransactionHandler Unpause operation : ${error}`);
+			throw new Error(
+				`Unexpected error in HederaTransactionHandler Unpause operation : ${error}`,
+			);
 		}
 	}
 
