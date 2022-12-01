@@ -12,10 +12,16 @@ const {
 } = require('@hashgraph/sdk')
 
 import Web3 from 'web3'
+import axios from 'axios';
 
 const hre = require('hardhat')
 
 const web3 = new Web3()
+
+const URI_BASE = `${
+    getHederaNetworkMirrorNodeURL()
+}/api/v1/`;
+
 
 export const clientId = 2;
 
@@ -172,4 +178,40 @@ export async function deployContractSDK(
         } - contractId ${contractId} -contractId ${contractId?.toSolidityAddress()}   `
     )
     return contractId
+}
+
+export async function toEvmAddress(accountId: string): Promise<string>{
+    try {
+        const url = URI_BASE + 'accounts/' + accountId;
+        const res = await axios.get<IAccount>(
+            url,
+        );
+        return res.data.evm_address;
+
+    } catch (error) {
+        throw new Error("Error retrieving the Evm Address : " + error);
+    }
+}
+
+interface IAccount {
+	evm_address: string;
+	key: IKey;
+}
+
+interface IKey {
+	_type: string;
+	key: string;
+}
+
+function getHederaNetworkMirrorNodeURL(): string {
+	switch (hre.network.name) {
+		case "mainnet":
+			return 'https://mainnet.mirrornode.hedera.com';
+		case "previewnet":
+			return 'https://previewnet.mirrornode.hedera.com';
+		case "testnet":
+			return 'https://testnet.mirrornode.hedera.com';
+		default:
+			return 'http://127.0.0.1:5551';
+	}
 }
