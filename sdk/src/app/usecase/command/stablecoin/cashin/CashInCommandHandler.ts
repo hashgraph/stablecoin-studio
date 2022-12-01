@@ -11,27 +11,26 @@ import {
 import AccountService from '../../../../service/AccountService.js';
 import StableCoinService from '../../../../service/StableCoinService.js';
 import { CashInCommand, CashInCommandResponse } from './CashInCommand.js';
-import TransactionAdapter from '../../../../../port/out/TransactionAdapter.js';
+import TransactionService from '../../../../service/TransactionService.js';
+import { lazyInject } from '../../../../../core/decorator/LazyInjectDecorator.js';
 
 @CommandHandler(CashInCommand)
 export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
-	
-	private handler: TransactionAdapter;
-
 	constructor(
-		@inject(delay(() => StableCoinService))
+		@lazyInject(StableCoinService)
 		public readonly stableCoinService: StableCoinService,
-		@inject(delay(() => AccountService))
+		@lazyInject(AccountService)
 		public readonly accountService: AccountService,
+		@lazyInject(TransactionService)
+		public readonly transactionService: TransactionService,
 	) {}
 
 	async execute(command: CashInCommand): Promise<CashInCommandResponse> {
-		this.handler = Injectable.resolveTransactionhandler();
 		const { amount, targetId, tokenId } = command;
-		console.log(this.handler);
+		const handler = this.transactionService.getHandler();
 		const coin = await this.stableCoinService.get(tokenId);
 		const account = this.accountService.getCurrentAccount();
-		const res = await this.handler.cashin(
+		const res = await handler.cashin(
 			{
 				account: account,
 				capabilities: [

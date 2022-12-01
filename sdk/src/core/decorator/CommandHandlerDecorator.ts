@@ -13,9 +13,11 @@ import { Constructor } from '../Type.js';
  */
 export const CommandHandler = (command: ICommand): ClassDecorator => {
 	return (target: object) => {
-		injectable()(target as Constructor<typeof target>);
+		const tgt = target as Constructor<typeof target>;
+		injectable()(tgt);
+		const id = v4();
 		if (!Reflect.hasMetadata(COMMAND_METADATA, command)) {
-			Reflect.defineMetadata(COMMAND_METADATA, { id: v4() }, command);
+			Reflect.defineMetadata(COMMAND_METADATA, { id }, command);
 		}
 		Reflect.defineMetadata(COMMAND_HANDLER_METADATA, command, target);
 	};

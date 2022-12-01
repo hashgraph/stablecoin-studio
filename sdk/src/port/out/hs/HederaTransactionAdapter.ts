@@ -11,7 +11,6 @@ import { CapabilityError } from './error/CapabilityError.js';
 import StableCoinCapabilities from '../../../domain/context/stablecoin/StableCoinCapabilities.js';
 import { HederaERC20__factory } from 'hedera-stable-coin-contracts/typechain-types/index.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
-import { Injectable } from '../../../core/Injectable.js';
 import { TransactionType } from '../TransactionResponseEnums.js';
 import { HTSTransactionBuilder } from './HTSTransactionBuilder.js';
 
@@ -19,10 +18,10 @@ export abstract class HederaTransactionAdapter implements TransactionAdapter {
 	private web3 = new Web3();
 
 	register(): boolean {
-		return !!Injectable.registerTransactionHandler(this);
+		throw Error('Not implemented');
 	}
 	stop(): Promise<boolean> {
-		return Promise.resolve(!!Injectable.disposeTransactionHandler(this));
+		throw Error('Not implemented');
 	}
 
 	public async wipe(

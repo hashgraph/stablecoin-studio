@@ -1,9 +1,8 @@
 import TransactionResponse from '../../domain/context/transaction/TransactionResponse.js';
 import StableCoinCapabilities from '../../domain/context/stablecoin/StableCoinCapabilities.js';
 import BigDecimal from '../../domain/context/shared/BigDecimal.js';
-import { injectable } from 'tsyringe';
 
-interface ITransactionAdapter {
+interface ITransactionHandler {
 	register(): boolean;
 	stop(): Promise<boolean>;
 	wipe(
@@ -50,7 +49,7 @@ interface ITransactionAdapter {
 }
 
 export default abstract class TransactionAdapter
-	implements ITransactionAdapter
+	implements ITransactionHandler
 {
 	register(): boolean {
 		throw new Error('Method not implemented.');
