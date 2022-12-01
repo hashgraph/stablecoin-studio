@@ -1,12 +1,10 @@
 import { ethers } from 'ethers';
-import { HederaERC20 } from 'hedera-stable-coin-contracts/typechain-types/contracts/index.js';
-import { HederaERC20__factory } from 'hedera-stable-coin-contracts/typechain-types/index.js';
-import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
-import { TransactionResponseHandler } from './TransactionResponseHandler.js';
+import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
+import { TransactionResponseAdapter } from '../TransactionResponseAdapter.js';
 
 const ERROR_STATUS = 0;
 
-export class RPCTransactionResponseHandler extends TransactionResponseHandler {
+export class RPCTransactionResponseAdapter extends TransactionResponseAdapter {
 	public static async manageResponse(
 		response: ethers.ContractTransaction,
 	): Promise<TransactionResponse> {

@@ -4,13 +4,13 @@ import {
 	Client,
 } from '@hashgraph/sdk';
 import { singleton } from 'tsyringe';
-import { HederaTransactionHandler } from './HederaTransactionHandler.js';
-import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
-import { HTSTransactionResponseHandler } from './response/HTSTransactionResponseHandler.js';
-import { TransactionType } from './response/TransactionResponseEnums.js';
+import { HederaTransactionAdapter } from '../HederaTransactionAdapter.js';
+import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
+import { TransactionType } from '../../TransactionResponseEnums.js';
+import { HTSTransactionResponseAdapter } from './HTSTransactionResponseAdapter.js';
 
 @singleton()
-export class HTSTransactionHandler extends HederaTransactionHandler {
+export class HTSTransactionAdapter extends HederaTransactionAdapter {
 
 	private _client: Client;
 
@@ -28,7 +28,7 @@ export class HTSTransactionHandler extends HederaTransactionHandler {
 	): Promise<TransactionResponse> {
 		try {
 			const tr: HTransactionResponse = await t.execute(this.client);
-			return HTSTransactionResponseHandler.manageResponse(
+			return HTSTransactionResponseAdapter.manageResponse(
 				tr,
 				TransactionType.RECEIPT,
 				this.client,

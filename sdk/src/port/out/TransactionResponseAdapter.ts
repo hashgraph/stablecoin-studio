@@ -1,7 +1,12 @@
 import Web3 from 'web3';
+import TransactionResponse from '../../domain/context/transaction/TransactionResponse.js';
 import { TransactionResponseError } from './error/TransactionResponseError.js';
 
-export class TransactionResponseHandler {
+export interface TransactionResponseAdapter {
+	manageResponse(): TransactionResponse;
+}
+
+export class TransactionResponseAdapter {
     public static decodeFunctionResult(
         functionName: string,
         resultAsBytes: ArrayBuffer,

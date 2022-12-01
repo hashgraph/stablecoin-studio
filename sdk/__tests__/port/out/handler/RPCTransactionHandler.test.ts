@@ -1,5 +1,4 @@
 import { Client } from '@hashgraph/sdk';
-import RPCTransactionHandler from '../../../../src/port/out/handler/RPCTransactionHandler.js';
 import { StableCoin } from '../../../../src/domain/context/stablecoin/StableCoin.js';
 import TransactionResponse from '../../../../src/domain/context/transaction/TransactionResponse.js';
 import { HederaId } from '../../../../src/domain/context/shared/HederaId.js';
@@ -11,6 +10,7 @@ import {
 } from '../../../../src/domain/context/stablecoin/Capability.js';
 import Account from '../../../../src/domain/context/account/Account.js';
 import BigDecimal from '../../../../src/domain/context/shared/BigDecimal.js';
+import RPCTransactionAdapter from '../../../../src/port/out/rpc/RPCTransactionAdapter.js';
 
 describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	const clientAccountId = '0.0.47792863';
@@ -20,13 +20,13 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	const tokenId = '0.0.48987373';
 	const proxy = '0.0.48987372';
 
-	let th: RPCTransactionHandler;
+	let th: RPCTransactionAdapter;
 	let client: Client;
 	let tr: TransactionResponse;
 	beforeAll(async () => {
 		client = Client.forTestnet();
 		client.setOperator(clientAccountId, clientPrivateKey);
-		th = new RPCTransactionHandler();
+		th = new RPCTransactionAdapter();
 	});
 
 	// eslint-disable-next-line jest/expect-expect

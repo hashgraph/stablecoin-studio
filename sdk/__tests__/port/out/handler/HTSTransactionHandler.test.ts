@@ -1,7 +1,7 @@
 /* eslint-disable jest/valid-expect */
 import { Client } from "@hashgraph/sdk";
 import { HTSTransactionHandler } from "../../../../src/port/out/handler/HTSTransactionHandler.js";
-import TransactionResponse from '../../../../src/domain/context/transaction/TransactionResponse.js';
+import TransactionResponse from '../../../../../../src/port/out/hts/hs/HTSTransactionHandler.jsjs';
 import { AccountId as HAccountId } from '@hashgraph/sdk';
 import StableCoinCapabilities from "../../../../src/domain/context/stablecoin/StableCoinCapabilities.js";
 import { StableCoin } from "../../../../src/domain/context/stablecoin/StableCoin.js";

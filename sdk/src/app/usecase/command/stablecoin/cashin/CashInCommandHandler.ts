@@ -11,12 +11,12 @@ import {
 import AccountService from '../../../../service/AccountService.js';
 import StableCoinService from '../../../../service/StableCoinService.js';
 import { CashInCommand, CashInCommandResponse } from './CashInCommand.js';
-import TransactionHandler from '../../../../../port/out/TransactionHandler.js';
+import TransactionAdapter from '../../../../../port/out/TransactionAdapter.js';
 
 @CommandHandler(CashInCommand)
 export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
 	
-	private handler: TransactionHandler;
+	private handler: TransactionAdapter;
 
 	constructor(
 		@inject(delay(() => StableCoinService))

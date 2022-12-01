@@ -2,7 +2,7 @@ import { Capability, Operation, Access } from "../../../../src/domain/context/st
 import StableCoinCapabilities from "../../../../src/domain/context/stablecoin/StableCoinCapabilities";
 import { StableCoin } from "../../../../src/domain/context/stablecoin/StableCoin";
 import  Account  from "../../../../src/domain/context/account/Account";
-import  { CapabilityDecider, Decision }  from "../../../../src/port/out/handler/decider/CapabilityDecider";
+import  { CapabilityDecider, Decision }  from "../../../../src/port/out/CapabilityDecider";
 
 
 describe('🧪 [BUILDER] HTSTransactionBuilder', () => {

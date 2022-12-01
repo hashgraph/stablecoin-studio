@@ -2,20 +2,20 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable no-case-declarations */
 import { Transaction } from '@hashgraph/sdk';
-import { HTSTransactionBuilder } from './../builder/HTSTransactionBuilder.js';
-import TransactionHandler from '../TransactionHandler';
+import TransactionAdapter from '../TransactionAdapter';
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
 import { Operation } from '../../../domain/context/stablecoin/Capability.js';
 import Web3 from 'web3';
-import { CapabilityDecider, Decision } from './decider/CapabilityDecider.js';
+import { CapabilityDecider, Decision } from '../CapabilityDecider.js';
 import { CapabilityError } from './error/CapabilityError.js';
 import StableCoinCapabilities from '../../../domain/context/stablecoin/StableCoinCapabilities.js';
 import { HederaERC20__factory } from 'hedera-stable-coin-contracts/typechain-types/index.js';
-import { TransactionType } from './response/TransactionResponseEnums.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import { Injectable } from '../../../core/Injectable.js';
+import { TransactionType } from '../TransactionResponseEnums.js';
+import { HTSTransactionBuilder } from './HTSTransactionBuilder.js';
 
-export abstract class HederaTransactionHandler implements TransactionHandler {
+export abstract class HederaTransactionAdapter implements TransactionAdapter {
 	private web3 = new Web3();
 
 	register(): boolean {

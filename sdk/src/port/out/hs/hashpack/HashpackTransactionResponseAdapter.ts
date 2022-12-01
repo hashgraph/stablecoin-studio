@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { TransactionType } from './TransactionResponseEnums.js';
 import {
 	TransactionResponse as HTransactionResponse,
 	TransactionReceipt,
 	TransactionRecord
 } from '@hashgraph/sdk';
 import { MessageTypes } from 'hashconnect';
-import { TransactionResponseHandler } from './TransactionResponseHandler.js';
-import { TransactionResponseError } from './error/TransactionResponseError.js';
 import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
+import { TransactionResponseError } from '../../error/TransactionResponseError.js';
+import { TransactionType } from '../../TransactionResponseEnums.js';
+import { TransactionResponseAdapter } from '../../TransactionResponseAdapter.js';
 
 
-export class HashpackTransactionResponseHandler extends TransactionResponseHandler {
+export class HashpackTransactionResponseAdapter extends TransactionResponseAdapter {
 	public static async manageResponse(
 		transactionResponse: MessageTypes.TransactionResponse,
 		responseType: TransactionType,

@@ -1,15 +1,15 @@
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
 import { HederaERC20__factory } from 'hedera-stable-coin-contracts/typechain-types/index.js';
-import TransactionHandler from '../TransactionHandler';
+import TransactionAdapter from '../TransactionAdapter';
 import { ethers } from 'ethers';
 import { singleton, container } from 'tsyringe';
-import { RPCTransactionResponseHandler } from './response/RPCTransactionRespondeHandler.js';
 import StableCoinCapabilities from '../../../domain/context/stablecoin/StableCoinCapabilities.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import { Injectable } from '../../../core/Injectable.js';
+import { RPCTransactionResponseAdapter } from './RPCTransactionRespondeAdapter.js';
 
 @singleton()
-export default class RPCTransactionHandler implements TransactionHandler {
+export default class RPCTransactionAdapter implements TransactionAdapter {
 	register(): boolean {
 		return !!Injectable.registerTransactionHandler(this);
 	}
@@ -44,7 +44,7 @@ export default class RPCTransactionHandler implements TransactionHandler {
 				this.wallet,
 			).mint(targetId, amount.toBigNumber());
 
-			return RPCTransactionResponseHandler.manageResponse(response);
+			return RPCTransactionResponseAdapter.manageResponse(response);
 		} catch (error) {
 			// should throw RPCHandlerError
 			throw new Error('Error');
@@ -104,7 +104,7 @@ export default class RPCTransactionHandler implements TransactionHandler {
 		throw new Error('Method not implemented.');
 	}
 	async signAndSendTransaction(
-		t: RPCTransactionHandler,
+		t: RPCTransactionAdapter,
 	): Promise<TransactionResponse> {
 		throw new Error('Method not implemented.');
 	}

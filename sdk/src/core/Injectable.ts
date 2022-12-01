@@ -13,13 +13,13 @@ import { NetworkProps } from '../app/service/NetworkService.js';
 import { ConcreteQueryHandler } from '../../__tests__/core/command/__mocks__/ConcreteQueryHandler.js';
 // eslint-disable-next-line jest/no-mocks-import
 import { ConcreteCommandHandler } from '../../__tests__/core/command/__mocks__/ConcreteCommandHandler.js';
-import TransactionHandler from '../port/out/TransactionHandler.js';
+import TransactionAdapter from '../port/out/TransactionAdapter.js';
 import { RuntimeError } from './error/RuntimeError.js';
-import { HTSTransactionHandler } from '../port/out/handler/HTSTransactionHandler.js';
-import RPCTransactionHandler from '../port/out/handler/RPCTransactionHandler.js';
-import { HashpackTransactionHandler } from '../port/out/handler/HashpackTransactionHandler.js';
-import { NullTransactionHandler } from '../port/out/handler/NullTransactionHandler.js';
+import { HTSTransactionAdapter } from '../port/out/hs/hts/HTSTransactionAdapter.js';
+import { HashpackTransactionAdapter } from '../port/out/hs/hashpack/HashpackTransactionAdapter.js';
 import { GetStableCoinQueryHandler } from '../app/usecase/query/stablecoin/GetStableCoinQueryHandler.js';
+import { NullTransactionAdapter } from '../port/out/NullTransactionAdapter.js';
+import RPCTransactionAdapter from '../port/out/rpc/RPCTransactionAdapter.js';
 
 export const TOKENS = {
 	COMMAND_HANDLER: Symbol('CommandHandler'),
@@ -52,15 +52,15 @@ const QUERY_HANDLERS = [
 const TRANSACTION_HANDLER = [
 	{
 		token: TOKENS.TRANSACTION_HANDLER,
-		useClass: RPCTransactionHandler,
+		useClass: RPCTransactionAdapter,
 	},
 	{
 		token: TOKENS.TRANSACTION_HANDLER,
-		useClass: HTSTransactionHandler,
+		useClass: HTSTransactionAdapter,
 	},
 	{
 		token: TOKENS.TRANSACTION_HANDLER,
-		useClass: HashpackTransactionHandler,
+		useClass: HashpackTransactionAdapter,
 	},
 ];
 
@@ -76,7 +76,7 @@ export class Injectable {
 	static readonly TOKENS = TOKENS;
 	
 	private static currentTransactionHandler = Injectable.resolve(
-		NullTransactionHandler,
+		NullTransactionAdapter,
 	);
 
 	static resolve<T = unknown>(cls: InjectionToken<T>): T {
@@ -104,14 +104,14 @@ export class Injectable {
 		return container.register(TOKENS.COMMAND_HANDLER, cls);
 	}
 
-	static registerTransactionHandler<T extends TransactionHandler>(
+	static registerTransactionHandler<T extends TransactionAdapter>(
 		cls: T,
 	): boolean {
 		this.currentTransactionHandler = cls;
 		return true;
 	}
 
-	static disposeTransactionHandler<T extends TransactionHandler>(
+	static disposeTransactionHandler<T extends TransactionAdapter>(
 		cls: T,
 	): boolean {
 		this.disposeTransactionHandlers();
@@ -120,16 +120,16 @@ export class Injectable {
 
 	private static disposeTransactionHandlers(): boolean {
 		this.currentTransactionHandler = Injectable.resolve(
-			NullTransactionHandler,
+			NullTransactionAdapter,
 		);
 		return true;
 	}
 
-	static resolveTransactionhandler(): TransactionHandler {
+	static resolveTransactionhandler(): TransactionAdapter {
 		try {
 			if (
 				this.currentTransactionHandler instanceof
-					NullTransactionHandler ||
+					NullTransactionAdapter ||
 				null
 			) {
 				throw new RuntimeError('No Transaction Handler registered!');

@@ -1,7 +1,7 @@
 import { QueryHandler } from '../../../../core/decorator/QueryHandlerDecorator.js';
 import { Injectable } from '../../../../core/Injectable.js';
 import { IQueryHandler } from '../../../../core/query/QueryHandler.js';
-import MirrorNodeQueryHandler from '../../../../port/out/query/mirror/MirrorNodeQueryHandler.js';
+import MirrorNodeAdapter from '../../../../port/out/hs/mirror/MirrorNodeAdapter.js';
 import {
 	GetStableCoinQuery,
 	GetStableCoinQueryResponse,
@@ -10,8 +10,8 @@ import {
 @QueryHandler(GetStableCoinQuery)
 export class GetStableCoinQueryHandler implements IQueryHandler<GetStableCoinQuery> {
 	constructor(
-		public readonly repo: MirrorNodeQueryHandler = Injectable.resolve(
-			MirrorNodeQueryHandler,
+		public readonly repo: MirrorNodeAdapter = Injectable.resolve(
+			MirrorNodeAdapter,
 		),
 	) {}
 

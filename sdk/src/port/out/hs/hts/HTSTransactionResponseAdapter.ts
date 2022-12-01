@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { TransactionType } from './TransactionResponseEnums.js';
 import {
     Client,
 	TransactionResponse as HTransactionResponse,
@@ -8,10 +7,11 @@ import {
 	TransactionId
 } from '@hashgraph/sdk';
 import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
-import { TransactionResponseHandler } from './TransactionResponseHandler.js';
-import { TransactionResponseError } from './error/TransactionResponseError.js';
+import { TransactionResponseError } from '../../error/TransactionResponseError.js';
+import { TransactionType } from '../../TransactionResponseEnums.js';
+import { TransactionResponseAdapter } from '../../TransactionResponseAdapter.js';
 
-export class HTSTransactionResponseHandler extends TransactionResponseHandler {
+export class HTSTransactionResponseAdapter extends TransactionResponseAdapter {
 	public static async manageResponse(
 		transactionResponse: HTransactionResponse,
 		responseType: TransactionType,
