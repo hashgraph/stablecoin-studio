@@ -4,6 +4,7 @@ import {
 	InjectionToken,
 	ValueProvider,
 	DependencyContainer,
+	delay,
 } from 'tsyringe';
 import { CommandHandlerType } from './command/CommandBus.js';
 import { QueryHandlerType } from './query/QueryBus.js';
@@ -20,6 +21,7 @@ import { HashpackTransactionAdapter } from '../port/out/hs/hashpack/HashpackTran
 import { GetStableCoinQueryHandler } from '../app/usecase/query/stablecoin/GetStableCoinQueryHandler.js';
 import { NullTransactionAdapter } from '../port/out/NullTransactionAdapter.js';
 import RPCTransactionAdapter from '../port/out/rpc/RPCTransactionAdapter.js';
+import { Constructor } from './Type.js';
 
 export const TOKENS = {
 	COMMAND_HANDLER: Symbol('CommandHandler'),
@@ -74,13 +76,17 @@ container.register<NetworkProps>('NetworkProps', {
 @registry([...COMMAND_HANDLERS, ...QUERY_HANDLERS, ...TRANSACTION_HANDLER])
 export class Injectable {
 	static readonly TOKENS = TOKENS;
-	
+
 	private static currentTransactionHandler = Injectable.resolve(
 		NullTransactionAdapter,
 	);
 
 	static resolve<T = unknown>(cls: InjectionToken<T>): T {
 		return container.resolve(cls);
+	}
+
+	static lazyResolve<T = unknown>(cls: Constructor<T>): T {
+		return container.resolve(delay(() => cls));
 	}
 
 	static getQueryHandlers(): QueryHandlerType[] {
@@ -114,15 +120,7 @@ export class Injectable {
 	static disposeTransactionHandler<T extends TransactionAdapter>(
 		cls: T,
 	): boolean {
-		this.disposeTransactionHandlers();
 		return this.registerTransactionHandler(cls);
-	}
-
-	private static disposeTransactionHandlers(): boolean {
-		this.currentTransactionHandler = Injectable.resolve(
-			NullTransactionAdapter,
-		);
-		return true;
 	}
 
 	static resolveTransactionhandler(): TransactionAdapter {

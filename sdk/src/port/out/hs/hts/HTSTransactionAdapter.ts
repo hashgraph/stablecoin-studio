@@ -8,10 +8,10 @@ import { HederaTransactionAdapter } from '../HederaTransactionAdapter.js';
 import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
 import { TransactionType } from '../../TransactionResponseEnums.js';
 import { HTSTransactionResponseAdapter } from './HTSTransactionResponseAdapter.js';
+import { Injectable } from '../../../../core/Injectable.js';
 
 @singleton()
 export class HTSTransactionAdapter extends HederaTransactionAdapter {
-
 	private _client: Client;
 
 	public get client() {
@@ -21,6 +21,13 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 	constructor(client: Client) {
 		super();
 		this._client = client;
+	}
+
+	register(): boolean {
+		return !!Injectable.registerTransactionHandler(this);
+	}
+	stop(): Promise<boolean> {
+		return Promise.resolve(!!Injectable.disposeTransactionHandler(this));
 	}
 
 	public async signAndSendTransaction(
@@ -37,9 +44,9 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 			console.log(`echo3 -> ${error}`);
 			throw error;
 		}
-    }
+	}
 
-    getAccount(): string {
-        throw new Error('Method not implemented.');
-    }
+	getAccount(): string {
+		throw new Error('Method not implemented.');
+	}
 }

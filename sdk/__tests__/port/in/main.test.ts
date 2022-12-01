@@ -17,4 +17,17 @@ describe('🧪 SDK test', () => {
 			),
 		).rejects.toThrow();
 	});
+
+	// it('Does a CashIn', async () => {
+
+	// 	await expect(
+	// 		StableCoin.cashIn(
+	// 			new CashInRequest({
+	// 				amount: '1',
+	// 				tokenId: '0.0.1',
+	// 				targetId: '0.0.1',
+	// 			}),
+	// 		),
+	// 	).rejects.toThrow();
+	// });
 });

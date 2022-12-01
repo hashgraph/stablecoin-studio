@@ -1,11 +1,6 @@
-/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable no-case-declarations */
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
-import {
-	HederaERC20__factory,
-	IHederaTokenService__factory,
-} from 'hedera-stable-coin-contracts/typechain-types/index.js';
+import { HederaERC20__factory } from 'hedera-stable-coin-contracts/typechain-types/index.js';
 import TransactionAdapter from '../TransactionAdapter';
 import { ContractTransaction, ethers, Signer } from 'ethers';
 import { singleton, container } from 'tsyringe';

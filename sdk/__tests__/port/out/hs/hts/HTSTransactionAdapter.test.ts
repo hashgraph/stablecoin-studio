@@ -1,14 +1,16 @@
 /* eslint-disable jest/valid-expect */
+/* eslint-disable jest/expect-expect */
+/* eslint-disable jest/no-standalone-expect */
 import { Client } from "@hashgraph/sdk";
-import { HTSTransactionHandler } from "../../../../src/port/out/handler/HTSTransactionHandler.js";
-import TransactionResponse from '../../../../../../src/port/out/hts/hs/HTSTransactionHandler.jsjs';
+import { HTSTransactionAdapter } from "../../../../../src/port/out/hs/hts/HTSTransactionAdapter.js";
+import TransactionResponse from '../../../../../src/domain/context/transaction/TransactionResponse.js';
 import { AccountId as HAccountId } from '@hashgraph/sdk';
-import StableCoinCapabilities from "../../../../src/domain/context/stablecoin/StableCoinCapabilities.js";
-import { StableCoin } from "../../../../src/domain/context/stablecoin/StableCoin.js";
-import Account from "../../../../src/domain/context/account/Account.js";
-import { Access, Capability, Operation } from "../../../../src/domain/context/stablecoin/Capability.js";
-import BigDecimal from '../../../../src/domain/context/shared/BigDecimal.js';
-import { HederaId } from "../../../../src/domain/context/shared/HederaId.js";
+import StableCoinCapabilities from "../../../../../src/domain/context/stablecoin/StableCoinCapabilities.js";
+import { StableCoin } from "../../../../../src/domain/context/stablecoin/StableCoin.js";
+import Account from "../../../../../src/domain/context/account/Account.js";
+import { Access, Capability, Operation } from "../../../../../src/domain/context/stablecoin/Capability.js";
+import BigDecimal from '../../../../../src/domain/context/shared/BigDecimal.js';
+import { HederaId } from "../../../../../src/domain/context/shared/HederaId.js";
 
 describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
     const clientAccountId = '0.0.47792863';
@@ -61,13 +63,13 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
         account
     );
 
-    let th:HTSTransactionHandler
+    let th:HTSTransactionAdapter
     let client:Client
     let tr:TransactionResponse;
     beforeAll(async () => {
         client= Client.forTestnet();
         client.setOperator(clientAccountId, clientPrivateKey);
-        th = new HTSTransactionHandler(client);
+        th = new HTSTransactionAdapter(client);
     });
 
     it('Test cashIn', async () => {
@@ -81,13 +83,13 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
     /*it('Test transfer', async () => {
         tr = await th.mint(stableCoinCapabilities, new BigDecimal('1'));
         tr = await th.transfer(stableCoinCapabilities, new BigDecimal('1'), clientAccountId, accountId);
-    });
+    });*/
 
     it('Test wipe', async () => {
-        tr = await th.mint(stableCoinCapabilities, new BigDecimal('1'));
-        tr = await th.transfer(stableCoinCapabilities, new BigDecimal('1'), clientAccountId, accountId);
+        tr = await th.cashin(stableCoinCapabilities, accountId, BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals));
+        tr = await th.transfer(stableCoinCapabilities, BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals), clientAccountId, accountId);
         tr = await th.wipe(stableCoinCapabilities, accountId, new BigDecimal('1'));
-    });*/
+    });
 
     it('Test freeze', async () => {
         tr = await th.freeze(stableCoinCapabilities, accountId);
@@ -111,6 +113,10 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
     });
 
     it('Test burn contract function', async () => {
+        tr = await th.burn(stableCoinCapabilities2, BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals));
+    });
+
+    it('Test wipe contract function', async () => {
         tr = await th.burn(stableCoinCapabilities2, BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals));
     });
 
