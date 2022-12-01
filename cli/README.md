@@ -176,6 +176,80 @@ Tests may be run using the following command
 npm run test
 ```
 
+<div align="center">
+
+# Hedera Stable Coin quickstart
+
+
+</div>
+
+
+- [Introduction](#Introduction)<br>
+- [First run](#First-run)<br>
+- [Configure accounts](#Configure-accounts)<br>
+- [Main menu](#Main-menu)<br>
+  - [Create a new Stable Coin](#Create-a-new-stable-coin)<br>
+  - [Manage imported tokens](#Manage-imported-tokens)<br>
+  - [Operate with an existing Stable Coin](#Operate-with-an-existing-Stable-coin)<br>
+  - [List Stable Coins](#List-stable-coins)<br>
+  - [Configuration](#Configuration)<br>
+
+
+<br></br>
+
+
+# Introduction
+This Stable Coin Accelerator is a tool that help developers and companies to generate an Stable Coin in a easiest way and enable start with some common test that could be extend as you like.
+
+
+# First run
+First time you execute the "accelerator wizard" command in your terminal, if you haven't added your default configuration path the interface will ask you wether you want create a new configuration file in the default path. When the configuration file is created you must configure the default network and at least, one default account. This account could be created through [HashPack](https://www.hashpack.app/download) or [Hedera Developer Portal](https://portal.hedera.com/register). 
+
+*Note that for testing purpose you should create a **Testnet** account instead of Mainnet account. Everything executed on Mainnet will incur a cost with real money.*
+
+
+## Main menu
+When your configuration file is set up and at lest one account is added and selected, you are able to see the differents options that ara availables.
+
+## Create a new Stable Coin
+With this option you are able to create a new stable coin adding the mandatory details like Name, Symbol and Autorenew account. Autorenew account in that case should be the same like the user current account.
+
+After the minimum details has been added, you have been asked if you want to add optional details like the number of decimals places a token is divisibly by, initial supply or max supply. If you say no, you will be set the default values.
+
+Another question is prompt asking if you would like that smart contracts will be used for role management. This feature is only available when the smart contract keys are set for some of the following token options: supply, wipe, freeze, pause, delete. If you let the smart contract to execute this operation, you are able to grant and revoke this features to other accounts. By default, the user that creates the stable coin are granted with all the roles only if the smartContract is the owner for all the operations.
+
+
+TODO: Explain keys and operate with imported tokens
+
+
+## Manage imported tokens
+If you have granted with a role or your key matches with some of the keys from the stable coin operations and you are not the stable coin creator, you could added to you command line and operate with. 
+
+## Operate with an existing Stable Coin
+Once a stable coin is created or added, you can operate with it. When you select this option all stable coins creatd by you or added will be displayed and you were able to choose with which want to operate
+
+The following list has all the possible operations which the user will can perform wether they has the role to do it.
+- **Cash in**: Min tokens and transfer to an account
+- **Details**: Get the stable coin details
+- **Balance**: Get the balance from an account
+- **Burn**: Burn tokens from treasury account
+- **Wipe**: Burn tokens from an account
+- **Rescue**: Transfer tokens from the treasury account to the rescue account. This option is only available through the Smart Cotnracts
+- **Freeze**: Freeze an account. This option freeze transfers of the specified token for the account.
+- **Unfreeze**: Unfreeze an account. This option unfreeze transfers of the specified token for the account.
+- **Role management**: Grant/Revoke/Edit/Check roles from the operations whose keys are set to the smart contract
+- **Danger Zone**:
+- - **Un/Pause**: Pause and unpause prevents the token from being involved in any kind of operations.
+- - **Delete**: Marks a token as deleted. This actions cannot be undone.
+
+
+## List Stable Coins
+This operation display all the stable coins that the user has been created or added.
+
+## Configuration
+This last option allows the users to display the current configuration file, modify the configuration path, change the default network and manage the accounts allowing it change the current account, add new ones or remove some of them from the configuration.
+
+
 ## Support
 
 If you have a question on how to use the product, please see our
