@@ -1,9 +1,9 @@
-import Key from './Key.js';
+import KeyProps from './KeyProps.js';
 import { PublicKey as HPublicKey } from '@hashgraph/sdk';
 import PrivateKey from './PrivateKey.js';
 import BaseError from '../../../core/error/BaseError.js';
 
-export default class PublicKey implements Key {
+export default class PublicKey implements KeyProps {
 	public static readonly NULL: PublicKey = new PublicKey({
 		key: 'null',
 		type: 'null',
@@ -11,7 +11,7 @@ export default class PublicKey implements Key {
 
 	public readonly key: string;
 	public readonly type: string;
-	constructor(params: { key: string; type: string }) {
+	constructor(params: KeyProps) {
 		const { key, type } = params;
 		PublicKey.validate(key);
 		this.key = key;
@@ -26,7 +26,7 @@ export default class PublicKey implements Key {
 	}
 
 	public static fromPrivateKey(key: string, type: string): PublicKey {
-		return new PrivateKey(key, type).publicKey;
+		return new PrivateKey({ key, type }).publicKey;
 	}
 
 	public static isNull(val?: { key: string; type: string }): boolean {

@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { injectable } from 'tsyringe';
-import { CashInCommandHandler } from '../../app/usecase/stablecoin/cashin/CashInCommandHandler.js';
 import { COMMAND_HANDLER_METADATA, COMMAND_METADATA } from '../Constants.js';
 import { CommandMetadata } from '../decorator/CommandMetadata.js';
 import { Injectable } from '../Injectable.js';
@@ -11,9 +10,7 @@ import { CommandResponse } from './CommandResponse.js';
 import { CommandHandlerNotFoundException } from './error/CommandHandlerNotFoundException.js';
 import { InvalidCommandHandlerException } from './error/InvalidCommandHandlerException.js';
 
-export type CommandHandlerType = Type<
-	ICommandHandler<Command<CommandResponse>>
->;
+export type CommandHandlerType = ICommandHandler<Command<CommandResponse>>;
 
 export interface ICommandBus<T extends CommandResponse> {
 	execute<X extends T>(command: Command<X>): Promise<X>;
@@ -27,7 +24,8 @@ export class CommandBus<T extends CommandResponse = CommandResponse>
 	public handlers = new Map<string, ICommandHandler<Command<T>>>();
 
 	constructor() {
-		this.registerHandlers([CashInCommandHandler]);
+		const handlers = Injectable.getCommandHandlers();
+		this.registerHandlers(handlers);
 	}
 
 	execute<X extends T>(command: Command<X>): Promise<X> {
@@ -62,22 +60,19 @@ export class CommandBus<T extends CommandResponse = CommandResponse>
 
 	protected registerHandlers(handlers: CommandHandlerType[]): void {
 		handlers.forEach((handler) => {
-			const instance = Injectable.getCommandHandler(handler);
-			if (!instance) {
-				return;
-			}
 			const target = this.reflectCommandId(handler);
 			if (!target) {
 				throw new InvalidCommandHandlerException();
 			}
-			this.bind(instance as ICommandHandler<Command<T>>, target);
+			this.bind(handler as ICommandHandler<Command<T>>, target);
 		});
 	}
 
 	private reflectCommandId(handler: CommandHandlerType): string | undefined {
+		const { constructor: handlerType } = Object.getPrototypeOf(handler);
 		const command: Type<Command<CommandResponse>> = Reflect.getMetadata(
 			COMMAND_HANDLER_METADATA,
-			handler,
+			handlerType,
 		);
 		const commandMetadata: CommandMetadata = Reflect.getMetadata(
 			COMMAND_METADATA,

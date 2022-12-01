@@ -1,4 +1,4 @@
-import Key from './Key.js';
+import KeyProps from './KeyProps.js';
 import { PrivateKey as HPrivateKey } from '@hashgraph/sdk';
 import PublicKey from './PublicKey.js';
 import BaseError from '../../../core/error/BaseError.js';
@@ -9,19 +9,20 @@ export enum PrivateKeyType {
 	ED25519 = 'ED25519',
 }
 
-export default class PrivateKey implements Key {
+export default class PrivateKey implements KeyProps {
 	public readonly key: string;
 	public readonly type: string;
 	public readonly publicKey: PublicKey;
 
-	constructor(key: string, type: string) {
+	constructor(props: KeyProps) {
+		const { key, type } = props;
 		this.type = this.validateType(type);
 		this.key = key;
 		this.publicKey = PublicKey.fromHederaKey(
 			this.toHashgraphKey().publicKey,
 		);
 	}
-	
+
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public static validate(val?: string | object): BaseError[] {
 		const err: BaseError[] = [];

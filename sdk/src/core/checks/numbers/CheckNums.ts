@@ -1,4 +1,5 @@
-import BigDecimal from '../../../domain/context/stablecoin/BigDecimal.js';
+import BigDecimal from "../../../domain/context/shared/BigDecimal.js";
+
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export default class CheckNums {

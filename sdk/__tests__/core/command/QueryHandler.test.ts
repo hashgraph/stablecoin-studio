@@ -2,10 +2,9 @@ import { QueryBus } from '../../../src/core/query/QueryBus.js';
 // eslint-disable-next-line jest/no-mocks-import
 import {
 	ConcreteQuery,
-	ConcreteQueryHandler,
 	ConcreteQueryResponse,
 } from './__mocks__/ConcreteQueryHandler.js';
-const queryBus = new QueryBus([ConcreteQueryHandler]);
+const queryBus = new QueryBus();
 describe('🧪 QueryHandler Test', () => {
 	it('Executes a simple query', async () => {
 		const execSpy = jest.spyOn(queryBus, 'execute');
