@@ -111,13 +111,33 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	//     tr = await th.unfreeze(tokenId, accountId);
 	// });
 
-	// it('Test pause', async () => {
-	//     tr = await th.pause(tokenId);
-	// });
+	it('Test pause', async () => {
+	     tr = await th.pause(
+			stableCoinCapabilitiesSC
+		 );
+	 }, 1500000);
 
-	// it('Test unpause', async () => {
-	//     tr = await th.unpause(tokenId);
-	// });
+	it('Test unpause', async () => {
+		tr = await th.unpause(
+			stableCoinCapabilitiesSC,
+		);
+		// console.log(tr);
+	}, 1500000);
+
+	it('Test rescue', async () => {
+		tr = await th.rescue(
+		   stableCoinCapabilitiesSC,
+		   BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals)
+		);
+	}, 1500000);
+
+	it('Test delete', async () => {
+		tr = await th.delete(
+		   stableCoinCapabilitiesSC
+		);
+	}, 1500000);
+
+	
 
 	afterEach(async () => {
 		expect(tr).not.toBeNull();
