@@ -14,27 +14,64 @@ import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import { TransactionType } from '../TransactionResponseEnums.js';
 import { HTSTransactionBuilder } from './HTSTransactionBuilder.js';
 
-export abstract class HederaTransactionAdapter implements TransactionAdapter {
+export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	private web3 = new Web3();
 
-	register(): boolean {
-		throw Error('Not implemented');
-	}
-	stop(): Promise<boolean> {
-		throw Error('Not implemented');
-	}
 
 	public async wipe(
-		stableCoinCapabilities: StableCoinCapabilities,
+		coin: StableCoinCapabilities,
 		targetId: string,
 		amount: BigDecimal,
 	): Promise<TransactionResponse> {
-		const t: Transaction = HTSTransactionBuilder.buildTokenWipeTransaction(
-			targetId,
-			stableCoinCapabilities.coin.tokenId?.value!,
-			amount.toLong(),
-		);
-		return this.signAndSendTransaction(t, TransactionType.RECEIPT);
+		try {
+			let t: Transaction;
+			switch (CapabilityDecider.decide(coin, Operation.WIPE)) {
+				case Decision.CONTRACT:
+					if (!coin.coin.proxyAddress)
+						throw new Error(
+							`StableCoin ${coin.coin.name} does not have a proxy Address`,
+						);
+					return await this.contractCall(
+						coin.coin.proxyAddress!.value,
+						'wipe',
+						[amount],
+						400000,
+						TransactionType.RECEIPT,
+					);
+
+				case Decision.HTS:
+					if (!coin.coin.tokenId)
+						throw new Error(
+							`StableCoin ${coin.coin.name} does not have an underlying token`,
+						);
+
+					t = HTSTransactionBuilder.buildTokenWipeTransaction(
+						targetId,
+						coin.coin.tokenId?.value!,
+						amount.toLong(),
+					);
+					return this.signAndSendTransaction(t, TransactionType.RECEIPT);					
+
+				default:
+					const tokenId = coin.coin.tokenId
+						? coin.coin.tokenId.value
+						: '';
+					const OperationNotAllowed = new CapabilityError(
+						this.getAccount(),
+						Operation.WIPE,
+						tokenId,
+					);
+					return new TransactionResponse(
+						undefined,
+						undefined,
+						OperationNotAllowed,
+					);
+			}
+		} catch (error) {
+			throw new Error(
+				`Unexpected error in HederaTransactionHandler Wipe operation : ${error}`,
+			);
+		}
 	}
 
 	public async cashin(
@@ -100,7 +137,6 @@ export abstract class HederaTransactionAdapter implements TransactionAdapter {
 	): Promise<TransactionResponse> {
 		try {
 			let t: Transaction;
-
 			switch (CapabilityDecider.decide(coin, Operation.BURN)) {
 				case Decision.CONTRACT:
 					if (!coin.coin.proxyAddress)
@@ -157,7 +193,6 @@ export abstract class HederaTransactionAdapter implements TransactionAdapter {
 	): Promise<TransactionResponse> {
 		try {
 			let t: Transaction;
-
 			switch (CapabilityDecider.decide(coin, Operation.FREEZE)) {
 				case Decision.CONTRACT:
 					if (!coin.coin.proxyAddress)
@@ -214,7 +249,6 @@ export abstract class HederaTransactionAdapter implements TransactionAdapter {
 	): Promise<TransactionResponse> {
 		try {
 			let t: Transaction;
-
 			switch (CapabilityDecider.decide(coin, Operation.UNFREEZE)) {
 				case Decision.CONTRACT:
 					if (!coin.coin.proxyAddress)
@@ -270,7 +304,6 @@ export abstract class HederaTransactionAdapter implements TransactionAdapter {
 	): Promise<TransactionResponse> {
 		try {
 			let t: Transaction;
-
 			switch (CapabilityDecider.decide(coin, Operation.PAUSE)) {
 				case Decision.CONTRACT:
 					if (!coin.coin.proxyAddress)
@@ -325,7 +358,6 @@ export abstract class HederaTransactionAdapter implements TransactionAdapter {
 	): Promise<TransactionResponse> {
 		try {
 			let t: Transaction;
-
 			switch (CapabilityDecider.decide(coin, Operation.UNPAUSE)) {
 				case Decision.CONTRACT:
 					if (!coin.coin.proxyAddress)
