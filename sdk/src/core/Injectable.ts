@@ -120,15 +120,7 @@ export class Injectable {
 	static disposeTransactionHandler<T extends TransactionAdapter>(
 		cls: T,
 	): boolean {
-		this.disposeTransactionHandlers();
 		return this.registerTransactionHandler(cls);
-	}
-
-	private static disposeTransactionHandlers(): boolean {
-		this.currentTransactionHandler = Injectable.resolve(
-			NullTransactionAdapter,
-		);
-		return true;
 	}
 
 	static resolveTransactionhandler(): TransactionAdapter {
