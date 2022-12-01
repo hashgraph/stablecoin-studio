@@ -59,6 +59,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 					return RPCTransactionResponseAdapter.manageResponse(
 						response,
 					);
+
 				case Decision.HTS:
 					if (!coin.coin.tokenId)
 						throw new Error(
@@ -115,7 +116,50 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 		throw new Error('Method not implemented.');
 	}
 	async delete(coin: StableCoinCapabilities): Promise<TransactionResponse> {
-		throw new Error('Method not implemented.');
+		try {
+			switch (CapabilityDecider.decide(coin, Operation.DELETE)) {
+				case Decision.CONTRACT:
+					if (!coin.coin.evmProxyAddress)
+						throw new Error(
+							`StableCoin ${coin.coin.name} does not have a proxy Address`,
+						);
+
+					// eslint-disable-next-line no-case-declarations
+					const response = await HederaERC20__factory.connect(
+						coin.coin.evmProxyAddress ?? '',
+						this.signerOrProvider,
+					).deleteToken();
+
+					return RPCTransactionResponseAdapter.manageResponse(
+						response,
+					);
+					
+				case Decision.HTS:
+					if (!coin.coin.tokenId)
+						throw new Error(
+							`StableCoin ${coin.coin.name}  does not have an underlying token`,
+						);
+					throw Error('Not be implemented');
+
+				default:
+					const tokenId = coin.coin.tokenId
+						? coin.coin.tokenId.value
+						: '';
+					const OperationNotAllowed = new CapabilityError(
+						this.getAccount(),
+						Operation.DELETE,
+						tokenId,
+					);
+					return new TransactionResponse(
+						undefined,
+						undefined,
+						OperationNotAllowed,
+					);
+			}
+		} catch (error) {
+			// should throw RPCHandlerError
+			throw new Error('Error');
+		}
 	}
 	async contractCall(
 		evmProxyAddress: string,
