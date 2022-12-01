@@ -12,7 +12,6 @@ export function lazyInject<T>(token: Constructor<T>): any {
 		propertyKey: string | symbol,
 		parameterIndex: number,
 	) => {
-		const p = propertyKey;
 		inject(delay(() => token))(target, propertyKey, parameterIndex);
 	};
 }
