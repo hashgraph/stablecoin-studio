@@ -100,6 +100,14 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 		);
 	}, 1500000);
 
+	it('Test mint HTS', async () => {
+		tr = await th.cashin(
+			stableCoinCapabilitiesHTS,
+			evmAddress,
+			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
+		);
+	}, 1500000);
+
 	it('Test burn', async () => {
 		tr = await th.burn(
 			stableCoinCapabilitiesSC,
@@ -123,32 +131,24 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	}, 1500000);
 
 	it('Test pause', async () => {
-	     tr = await th.pause(
-			stableCoinCapabilitiesSC
-		 );
-	 }, 1500000);
+		tr = await th.pause(stableCoinCapabilitiesSC);
+	}, 1500000);
 
 	it('Test unpause', async () => {
-		tr = await th.unpause(
-			stableCoinCapabilitiesSC,
-		);
+		tr = await th.unpause(stableCoinCapabilitiesSC);
 		// console.log(tr);
 	}, 1500000);
 
 	it('Test rescue', async () => {
 		tr = await th.rescue(
-		   stableCoinCapabilitiesSC,
-		   BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals)
+			stableCoinCapabilitiesSC,
+			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
 		);
 	}, 1500000);
 
 	it('Test delete', async () => {
-		tr = await th.delete(
-		   stableCoinCapabilitiesSC
-		);
+		tr = await th.delete(stableCoinCapabilitiesSC);
 	}, 1500000);
-
-	
 
 	afterEach(async () => {
 		expect(tr).not.toBeNull();

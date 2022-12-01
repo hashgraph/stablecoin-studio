@@ -2,9 +2,12 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable no-case-declarations */
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
-import { HederaERC20__factory } from 'hedera-stable-coin-contracts/typechain-types/index.js';
+import {
+	HederaERC20__factory,
+	IHederaTokenService__factory,
+} from 'hedera-stable-coin-contracts/typechain-types/index.js';
 import TransactionAdapter from '../TransactionAdapter';
-import { ethers, Signer } from 'ethers';
+import { ContractTransaction, ethers, Signer } from 'ethers';
 import { singleton, container } from 'tsyringe';
 import StableCoinCapabilities from '../../../domain/context/stablecoin/StableCoinCapabilities.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
@@ -42,22 +45,20 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 							`StableCoin ${coin.coin.name} does not have a proxy Address`,
 						);
 
-					// eslint-disable-next-line no-case-declarations
-					const response = await HederaERC20__factory.connect(
-						coin.coin.evmProxyAddress ?? '',
-						this.signerOrProvider,
-					).wipe(targetId, amount.toBigNumber());
-
 					return RPCTransactionResponseAdapter.manageResponse(
-						response,
+						await HederaERC20__factory.connect(
+							coin.coin.evmProxyAddress ?? '',
+							this.signerOrProvider,
+						).mint(targetId, amount.toBigNumber()),
 					);
+					break;
 				case Decision.HTS:
 					if (!coin.coin.tokenId)
 						throw new Error(
 							`StableCoin ${coin.coin.name}  does not have an underlying token`,
 						);
 					throw Error('Not be implemented');
-
+					break;
 				default:
 					const tokenId = coin.coin.tokenId
 						? coin.coin.tokenId.value
@@ -92,22 +93,31 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 							`StableCoin ${coin.coin.name} does not have a proxy Address`,
 						);
 
-					const response = await HederaERC20__factory.connect(
-						coin.coin.evmProxyAddress ?? '',
-						this.signerOrProvider,
-					).mint(targetId, amount.toBigNumber());
-
 					return RPCTransactionResponseAdapter.manageResponse(
-						response,
+						await HederaERC20__factory.connect(
+							coin.coin.evmProxyAddress ?? '',
+							this.signerOrProvider,
+						).mint(targetId, amount.toBigNumber()),
 					);
-
+					break;
 				case Decision.HTS:
+					if (!coin.coin.evmProxyAddress)
+						throw new Error(
+							`StableCoin ${coin.coin.name} does not have a proxy Address`,
+						);
 					if (!coin.coin.tokenId)
 						throw new Error(
 							`StableCoin ${coin.coin.name}  does not have an underlying token`,
 						);
-					throw Error('Not be implemented');
+					return RPCTransactionResponseAdapter.manageResponse(
+						await this.precompiledCall('mintToken', [
+							targetId,
+							amount.toBigNumber(),
+							[],
+						]),
+					);
 
+					break;
 				default:
 					const tokenId = coin.coin.tokenId
 						? coin.coin.tokenId.value
@@ -141,21 +151,20 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 							`StableCoin ${coin.coin.name} does not have a proxy Address`,
 						);
 
-					const response = await HederaERC20__factory.connect(
-						coin.coin.evmProxyAddress ?? '',
-						this.signerOrProvider,
-					).burn(amount.toBigNumber());
-
 					return RPCTransactionResponseAdapter.manageResponse(
-						response,
+						await HederaERC20__factory.connect(
+							coin.coin.evmProxyAddress ?? '',
+							this.signerOrProvider,
+						).burn(amount.toBigNumber()),
 					);
+					break;
 				case Decision.HTS:
 					if (!coin.coin.tokenId)
 						throw new Error(
 							`StableCoin ${coin.coin.name}  does not have an underlying token`,
 						);
 					throw Error('Not be implemented');
-
+					break;
 				default:
 					const tokenId = coin.coin.tokenId
 						? coin.coin.tokenId.value
@@ -170,6 +179,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 						undefined,
 						OperationNotAllowed,
 					);
+					break;
 			}
 		} catch (error) {
 			// should throw RPCHandlerError
@@ -188,21 +198,20 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 							`StableCoin ${coin.coin.name} does not have a proxy Address`,
 						);
 
-					const response = await HederaERC20__factory.connect(
-						coin.coin.evmProxyAddress ?? '',
-						this.signerOrProvider,
-					).freeze(targetId);
-
 					return RPCTransactionResponseAdapter.manageResponse(
-						response,
+						await HederaERC20__factory.connect(
+							coin.coin.evmProxyAddress ?? '',
+							this.signerOrProvider,
+						).freeze(targetId),
 					);
+					break;
 				case Decision.HTS:
 					if (!coin.coin.tokenId)
 						throw new Error(
 							`StableCoin ${coin.coin.name}  does not have an underlying token`,
 						);
 					throw Error('Not be implemented');
-
+					break;
 				default:
 					const tokenId = coin.coin.tokenId
 						? coin.coin.tokenId.value
@@ -217,6 +226,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 						undefined,
 						OperationNotAllowed,
 					);
+					break;
 			}
 		} catch (error) {
 			// should throw RPCHandlerError
@@ -235,21 +245,20 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 							`StableCoin ${coin.coin.name} does not have a proxy Address`,
 						);
 
-					const response = await HederaERC20__factory.connect(
-						coin.coin.evmProxyAddress ?? '',
-						this.signerOrProvider,
-					).unfreeze(targetId);
-
 					return RPCTransactionResponseAdapter.manageResponse(
-						response,
+						await HederaERC20__factory.connect(
+							coin.coin.evmProxyAddress ?? '',
+							this.signerOrProvider,
+						).unfreeze(targetId),
 					);
+					break;
 				case Decision.HTS:
 					if (!coin.coin.tokenId)
 						throw new Error(
 							`StableCoin ${coin.coin.name}  does not have an underlying token`,
 						);
 					throw Error('Not be implemented');
-
+					break;
 				default:
 					const tokenId = coin.coin.tokenId
 						? coin.coin.tokenId.value
@@ -264,6 +273,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 						undefined,
 						OperationNotAllowed,
 					);
+					break;
 			}
 		} catch (error) {
 			// should throw RPCHandlerError
@@ -279,23 +289,20 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 							`StableCoin ${coin.coin.name} does not have a proxy Address`,
 						);
 
-					// eslint-disable-next-line no-case-declarations
-					const response = await HederaERC20__factory.connect(
-						coin.coin.evmProxyAddress ?? '',
-						this.signerOrProvider,
-					).pause();
-
 					return RPCTransactionResponseAdapter.manageResponse(
-						response,
+						await HederaERC20__factory.connect(
+							coin.coin.evmProxyAddress ?? '',
+							this.signerOrProvider,
+						).pause(),
 					);
-
+					break;
 				case Decision.HTS:
 					if (!coin.coin.tokenId)
 						throw new Error(
 							`StableCoin ${coin.coin.name}  does not have an underlying token`,
 						);
 					throw Error('Not be implemented');
-
+					break;
 				default:
 					const tokenId = coin.coin.tokenId
 						? coin.coin.tokenId.value
@@ -310,6 +317,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 						undefined,
 						OperationNotAllowed,
 					);
+					break;
 			}
 		} catch (error) {
 			// should throw RPCHandlerError
@@ -325,23 +333,20 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 							`StableCoin ${coin.coin.name} does not have a proxy Address`,
 						);
 
-					// eslint-disable-next-line no-case-declarations
-					const response = await HederaERC20__factory.connect(
-						coin.coin.evmProxyAddress ?? '',
-						this.signerOrProvider,
-					).unpause();
-
 					return RPCTransactionResponseAdapter.manageResponse(
-						response,
+						await HederaERC20__factory.connect(
+							coin.coin.evmProxyAddress ?? '',
+							this.signerOrProvider,
+						).unpause(),
 					);
-
+					break;
 				case Decision.HTS:
 					if (!coin.coin.tokenId)
 						throw new Error(
 							`StableCoin ${coin.coin.name}  does not have an underlying token`,
 						);
 					throw Error('Not be implemented');
-
+					break;
 				default:
 					const tokenId = coin.coin.tokenId
 						? coin.coin.tokenId.value
@@ -356,6 +361,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 						undefined,
 						OperationNotAllowed,
 					);
+					break;
 			}
 		} catch (error) {
 			// should throw RPCHandlerError
@@ -374,21 +380,19 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 							`StableCoin ${coin.coin.name} does not have a proxy Address`,
 						);
 
-					// eslint-disable-next-line no-case-declarations
-					const response = await HederaERC20__factory.connect(
-						coin.coin.evmProxyAddress ?? '',
-						this.signerOrProvider,
-					).rescue(amount.toBigNumber());
-
 					return RPCTransactionResponseAdapter.manageResponse(
-						response,
+						await HederaERC20__factory.connect(
+							coin.coin.evmProxyAddress ?? '',
+							this.signerOrProvider,
+						).rescue(amount.toBigNumber()),
 					);
+					break;
 
 				case Decision.HTS:
 					throw Error(
 						'RESCUE operation CANNOT be performed through HTS...',
 					);
-
+					break;
 				default:
 					const tokenId = coin.coin.tokenId
 						? coin.coin.tokenId.value
@@ -403,6 +407,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 						undefined,
 						OperationNotAllowed,
 					);
+					break;
 			}
 		} catch (error) {
 			// should throw RPCHandlerError
@@ -418,15 +423,13 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 							`StableCoin ${coin.coin.name} does not have a proxy Address`,
 						);
 
-					// eslint-disable-next-line no-case-declarations
-					const response = await HederaERC20__factory.connect(
-						coin.coin.evmProxyAddress ?? '',
-						this.signerOrProvider,
-					).deleteToken();
-
 					return RPCTransactionResponseAdapter.manageResponse(
-						response,
+						await HederaERC20__factory.connect(
+							coin.coin.evmProxyAddress ?? '',
+							this.signerOrProvider,
+						).deleteToken(),
 					);
+					break;
 
 				case Decision.HTS:
 					if (!coin.coin.tokenId)
@@ -434,7 +437,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 							`StableCoin ${coin.coin.name}  does not have an underlying token`,
 						);
 					throw Error('Not be implemented');
-
+					break;
 				default:
 					const tokenId = coin.coin.tokenId
 						? coin.coin.tokenId.value
@@ -449,6 +452,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 						undefined,
 						OperationNotAllowed,
 					);
+					break;
 			}
 		} catch (error) {
 			// should throw RPCHandlerError
@@ -459,8 +463,14 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 		evmProxyAddress: string,
 		functionName: string,
 		param: unknown[],
-	): Promise<TransactionResponse> {
-		throw new Error('Method not implemented.');
+	): Promise<ContractTransaction> {
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		//@ts-ignore todo
+		return await IHederaTokenService__factory.connect(
+			evmProxyAddress,
+			this.signerOrProvider,
+		)[functionName](...param);
+		// throw new Error('Method not implemented.');
 	}
 	async transfer(
 		coin: StableCoinCapabilities,
@@ -478,5 +488,12 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 
 	getAccount(): string {
 		throw new Error('Method not implemented.');
+	}
+	async precompiledCall(
+		functionName: string,
+		param: unknown[],
+	): Promise<ContractTransaction> {
+		const precompiledAddress = '0000000000000000000000000000000000000167';
+		return await this.contractCall(precompiledAddress, functionName, param);
 	}
 }
