@@ -114,13 +114,125 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		return this.performOperation(coin, Operation.DELETE, 'deleteToken', 400000);
 	}
 
+	public async grantRole(
+		coin: StableCoinCapabilities,
+		role: string,
+		targetId: string
+	): Promise<TransactionResponse> {
+		const params = new Params({
+			role: role,
+			targetId: targetId
+		});
+		return this.performOperation(coin, Operation.ROLE_MANAGEMENT, 'grantRole', 400000, params);
+	}
+
+	public async grantUnlimitedSupplierRole(
+		coin: StableCoinCapabilities,
+		targetId: string
+	): Promise<TransactionResponse> {
+		const params = new Params({
+			targetId: targetId
+		});
+		return this.performOperation(coin, Operation.ROLE_MANAGEMENT, 'grantUnlimitedSupplierRole', 250000, params);
+	}
+
+	public async grantSupplierRole(
+		coin: StableCoinCapabilities,
+		targetId: string,
+		amount: BigDecimal
+	): Promise<TransactionResponse> {
+		const params = new Params({
+			targetId: targetId,
+			amount: amount
+		});
+		return this.performOperation(coin, Operation.ROLE_MANAGEMENT, 'grantSupplierRole', 250000, params);
+	}
+
+	public async revokeRole(
+		coin: StableCoinCapabilities,
+		role: string,
+		targetId: string
+	): Promise<TransactionResponse> {
+		const params = new Params({
+			role: role,
+			targetId: targetId
+		});
+		return this.performOperation(coin, Operation.ROLE_MANAGEMENT, 'revokeRole', 400000, params);
+	}
+
+	public async hasRole(
+		coin: StableCoinCapabilities,
+		role: string,
+		targetId: string
+	): Promise<TransactionResponse> {
+		const params = new Params({
+			role: role,
+			targetId: targetId
+		});
+		return this.performOperation(coin, Operation.ROLE_MANAGEMENT, 'hasRole', 400000, params, TransactionType.RECORD);
+	}
+
+	public async getRoles(
+		coin: StableCoinCapabilities,
+		targetId: string
+	): Promise<TransactionResponse> {
+		const params = new Params({
+			targetId: targetId
+		});
+		return this.performOperation(coin, Operation.ROLE_MANAGEMENT, 'getRoles', 80000, params, TransactionType.RECORD);
+	}
+
+	public async supplierAllowance(
+		coin: StableCoinCapabilities,
+		targetId: string
+	): Promise<TransactionResponse> {
+		const params = new Params({
+			targetId: targetId
+		});
+		return this.performOperation(coin, Operation.ROLE_MANAGEMENT, 'supplierAllowance', 60000, params, TransactionType.RECORD);
+	}
+
+	public async increaseSupplierAllowance(
+		coin: StableCoinCapabilities,
+		targetId: string,
+		amount: BigDecimal
+	): Promise<TransactionResponse> {
+		const params = new Params({
+			targetId: targetId,
+			amount: amount
+		});
+		return this.performOperation(coin, Operation.ROLE_MANAGEMENT, 'increaseSupplierAllowance', 130000, params);
+	}
+
+	public async decreaseSupplierAllowance(
+		coin: StableCoinCapabilities,
+		targetId: string,
+		amount: BigDecimal
+	): Promise<TransactionResponse> {
+		const params = new Params({
+			targetId: targetId,
+			amount: amount
+		});
+		return this.performOperation(coin, Operation.ROLE_MANAGEMENT, 'decreaseSupplierAllowance', 130000, params);
+	}
+
+	public async resetSupplierAllowance(
+		coin: StableCoinCapabilities,
+		targetId: string,
+	): Promise<TransactionResponse> {
+		const params = new Params({
+			targetId: targetId
+		});
+		return this.performOperation(coin, Operation.ROLE_MANAGEMENT, 'resetSupplierAllowance', 120000, params);
+	}
 
 	private async performOperation(
 		coin: StableCoinCapabilities,
 		operation: Operation,
 		operationName: string,
 		gas: number,
-		params?: Params
+		params?: Params,
+		transactionType: TransactionType = TransactionType.RECEIPT,
 	): Promise<TransactionResponse> {
 		try {
 			let t: Transaction;
@@ -130,7 +242,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 						throw new Error(
 							`StableCoin ${coin.coin.name} does not have a proxy Address`,
 						);
-					return this.performSmartContractOperation(coin, operationName, gas, params);
+					return this.performSmartContractOperation(coin, operationName, gas, params, transactionType);
 
 				case Decision.HTS:
 					if (!coin.coin.tokenId)
@@ -162,17 +274,18 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	private async performSmartContractOperation(coin: StableCoinCapabilities,
 		operationName: string,
 		gas: number,
-		params?: Params									  
+		params?: Params,
+		transactionType: TransactionType = TransactionType.RECEIPT									  
 	): Promise<TransactionResponse> {
 		const contractParams: any[] = (params === undefined || params === null) ? [] : 
-		Object.values(params!).filter(element => {
-			return element !== undefined;
-		 }); 		
+			Object.values(params!).filter(element => {
+				return element !== undefined;
+		 	}); 		
 		return await this.contractCall(coin.coin.proxyAddress!.value,
 									   operationName,
 									   contractParams,
 									   gas,
-									   TransactionType.RECEIPT);
+									   transactionType);
 	}
 
 	private async performHTSOperation(coin: StableCoinCapabilities,
@@ -193,6 +306,9 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				t = HTSTransactionBuilder.buildTokenWipeTransaction(params!.targetId!, coin.coin.tokenId?.value!, params!.amount!.toLong());
 				break;
 
+			case Operation.RESCUE:
+				throw new Error(`Rescue operation does not exist through HTS`);
+	
 			case Operation.FREEZE:
 				t = HTSTransactionBuilder.buildFreezeTransaction(coin.coin.tokenId?.value!, params!.targetId!);
 				break;
@@ -237,7 +353,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				value,
 			);
 
-		return await this.signAndSendTransaction(transaction, trxType);
+		return await this.signAndSendTransaction(transaction, trxType, functionName, HederaERC20__factory.abi);
 	}
 
 	private encodeFunctionCall(
@@ -272,11 +388,22 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 }
 
 class Params{
+	role?: string;
 	targetId?: string;
 	amount?: BigDecimal;
 
-	constructor({ targetId, amount }: { targetId?: string, amount?: BigDecimal }) {
+	constructor({ role, targetId, amount }: { role?: string, targetId?: string, amount?: BigDecimal }) {
+		this.role = role;
 		this.targetId = targetId;
 		this.amount = amount;
+	}
+}
+
+class RoleParams extends Params {
+	role?: string;
+
+	constructor({ targetId, amount, role }: { targetId?: string, amount?: BigDecimal, role?: string }) {
+		super({targetId, amount});		
+		this.role = role;
 	}
 }

@@ -59,7 +59,8 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
                                          new Capability(Operation.FREEZE, Access.CONTRACT),
                                          new Capability(Operation.UNFREEZE, Access.CONTRACT),
                                          new Capability(Operation.PAUSE, Access.CONTRACT),
-                                         new Capability(Operation.UNPAUSE, Access.CONTRACT),];
+                                         new Capability(Operation.UNPAUSE, Access.CONTRACT),
+										 new Capability(Operation.ROLE_MANAGEMENT, Access.CONTRACT)];
     const stableCoinCapabilities2 = new StableCoinCapabilities(
         stableCoin2,
         capabilities2,
@@ -141,6 +142,61 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
     it('Test unpause contract function', async () => {
         tr = await th.unpause(stableCoinCapabilities2);
     });
+
+	it('Test grant role contract function', async () => {
+		const accountEvmAddress: string = HAccountId.fromString(accountId).toSolidityAddress();
+        tr = await th.grantRole(stableCoinCapabilities2, '0xe97b137254058bd94f28d2f3eb79e2d34074ffb488d042e3bc958e0a57d2fa22', accountEvmAddress);
+		tr = await th.hasRole(stableCoinCapabilities2, '0xe97b137254058bd94f28d2f3eb79e2d34074ffb488d042e3bc958e0a57d2fa22', accountEvmAddress);
+		expect(tr.response[0]).toEqual(true);
+    });
+
+	it('Test revoke role contract function', async () => {
+		const accountEvmAddress: string = HAccountId.fromString(accountId).toSolidityAddress();
+        tr = await th.revokeRole(stableCoinCapabilities2, '0xe97b137254058bd94f28d2f3eb79e2d34074ffb488d042e3bc958e0a57d2fa22', accountEvmAddress);
+		tr = await th.hasRole(stableCoinCapabilities2, '0xe97b137254058bd94f28d2f3eb79e2d34074ffb488d042e3bc958e0a57d2fa22', accountEvmAddress);
+		expect(tr.response[0]).toEqual(false);
+    });
+
+	it('Test has role contract function', async () => {
+		const accountEvmAddress: string = HAccountId.fromString(accountId).toSolidityAddress();
+        tr = await th.revokeRole(stableCoinCapabilities2, '0xe97b137254058bd94f28d2f3eb79e2d34074ffb488d042e3bc958e0a57d2fa22', accountEvmAddress);
+		tr = await th.hasRole(stableCoinCapabilities2, '0xe97b137254058bd94f28d2f3eb79e2d34074ffb488d042e3bc958e0a57d2fa22', accountEvmAddress);
+		expect(tr.response[0]).toEqual(false);
+    });
+
+	it('Test get roles contract function', async () => {
+		const accountEvmAddress: string = HAccountId.fromString(accountId).toSolidityAddress();
+        tr = await th.getRoles(stableCoinCapabilities2, accountEvmAddress);
+    });
+
+	it('Test supplier allowance contract function', async () => {
+		const accountEvmAddress: string = HAccountId.fromString(accountId).toSolidityAddress();
+        tr = await th.supplierAllowance(stableCoinCapabilities2, accountEvmAddress);
+    });
+
+	it('Test increase supplier allowance contract function', async () => {
+		const accountEvmAddress: string = HAccountId.fromString(accountId).toSolidityAddress();
+		tr = await th.revokeRole(stableCoinCapabilities2, '0x53300d27a2268d3ff3ecb0ec8e628321ecfba1a08aed8b817e8acf589a52d25c', accountEvmAddress);
+		tr = await th.grantSupplierRole(stableCoinCapabilities2, accountEvmAddress, BigDecimal.fromString('10', stableCoinCapabilities2.coin.decimals));
+        tr = await th.increaseSupplierAllowance(stableCoinCapabilities2, accountEvmAddress, BigDecimal.fromString('1', stableCoinCapabilities2.coin.decimals));
+    });
+
+	it('Test decrease supplier allowance contract function', async () => {
+		const accountEvmAddress: string = HAccountId.fromString(accountId).toSolidityAddress();
+        tr = await th.decreaseSupplierAllowance(stableCoinCapabilities2, accountEvmAddress, BigDecimal.fromString('1', stableCoinCapabilities2.coin.decimals));
+    });
+
+	it('Test reset supplier allowance contract function', async () => {
+		const accountEvmAddress: string = HAccountId.fromString(accountId).toSolidityAddress();
+        tr = await th.resetSupplierAllowance(stableCoinCapabilities2, accountEvmAddress);
+    });
+
+	it('Test grant unlimited supplier allowance contract function', async () => {
+		const accountEvmAddress: string = HAccountId.fromString(accountId).toSolidityAddress();
+		tr = await th.revokeRole(stableCoinCapabilities2, '0x53300d27a2268d3ff3ecb0ec8e628321ecfba1a08aed8b817e8acf589a52d25c', accountEvmAddress);
+		tr = await th.grantUnlimitedSupplierRole(stableCoinCapabilities2, accountEvmAddress);
+    });
+
 
     afterEach(async () => {
         expect(tr).not.toBeNull();

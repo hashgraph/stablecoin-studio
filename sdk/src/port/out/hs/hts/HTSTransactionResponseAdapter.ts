@@ -92,12 +92,12 @@ export class HTSTransactionResponseAdapter extends TransactionResponseAdapter {
 	public static createTransactionResponse(
 		transactionId: TransactionId | undefined,
 		responseType: TransactionType,
-		responseParam: Uint8Array,
+		response: Uint8Array,
 		receipt?: TransactionReceipt,
 	): TransactionResponse {
 		return new TransactionResponse(
-			'00.00',
-			transactionId!.toString()
+			transactionId!.toString(),
+			response
 		);
 	}
 }
