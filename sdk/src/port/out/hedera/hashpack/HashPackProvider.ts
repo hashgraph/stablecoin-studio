@@ -362,26 +362,27 @@ export default class HashPackProvider implements IProvider {
 							}
 						}
 						const providedKeyCasted = providedKey as PublicKey;
-						key.PublicKey = (providedKeyCasted.key == PublicKey.NULL.key)? "0x" : HPublicKey.fromString(providedKeyCasted.key).toBytes();
+						key.PublicKey = (providedKeyCasted.key == PublicKey.NULL.key)? "0x" : HPublicKey.fromString(providedKeyCasted.key).toBytesRaw();
+						key.isED25519 = (providedKeyCasted.type == 'ED25519');
 						keys.push(key);
 					}
 				});
 	
 	
-			const stableCoinToCreate = new FactoryStableCoin(
-				stableCoin.name,
-				stableCoin.symbol,
-				stableCoin.freezeDefault,
-				(stableCoin.supplyType == TokenSupplyType.FINITE),
-				(stableCoin.maxSupply) ? stableCoin.maxSupply.toLong().toString(): "0",
-				(stableCoin.initialSupply) ? stableCoin.initialSupply.toLong().toString(): "0",
-				stableCoin.decimals,
-				"0x" + HAccountId.fromString(stableCoin.autoRenewAccount.toString()).toSolidityAddress(),
-				(stableCoin.treasury.toString() == '0.0.0') ? 
-					"0x0000000000000000000000000000000000000000"
-					: ("0x" + HAccountId.fromString(stableCoin.treasury.toString()).toSolidityAddress()),
-				keys
-			);
+				const stableCoinToCreate = new FactoryStableCoin(
+					stableCoin.name,
+					stableCoin.symbol,
+					stableCoin.freezeDefault,
+					(stableCoin.supplyType == TokenSupplyType.FINITE),
+					(stableCoin.maxSupply) ? stableCoin.maxSupply.toLong().toString(): "0",
+					(stableCoin.initialSupply) ? stableCoin.initialSupply.toLong().toString(): "0",
+					stableCoin.decimals,
+					await this.accountToEvmAddress(new Account(stableCoin.autoRenewAccount.toString())),
+					(stableCoin.treasury.toString() == '0.0.0') ? 
+						"0x0000000000000000000000000000000000000000"
+						: await this.accountToEvmAddress(new Account(stableCoin.treasury.toString())),
+					keys
+				);
 	
 			const parameters = [
 				JSON.stringify(stableCoinToCreate)

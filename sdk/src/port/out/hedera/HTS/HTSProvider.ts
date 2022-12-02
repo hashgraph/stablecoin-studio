@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import axios from 'axios';
+import IAccount from '../account/types/IAccount';
 import { hethers } from '@hashgraph/hethers';
 import PrivateKey from '../../../../domain/context/account/PrivateKey.js';
 import {
@@ -218,6 +220,53 @@ export default class HTSProvider implements IProvider {
 		return htsResponse.reponseParam;
 	}
 
+	public async accountToEvmAddress(account: Account): Promise<string> {
+		if (account.privateKey) {
+			return this.getAccountEvmAddressFromPrivateKeyType(
+				account.privateKey?.type, 
+				account.privateKey.publicKey.key, 
+				account.accountId.id);
+		} else {
+			return await this.getAccountEvmAddress(account.accountId.id);
+		}
+	}	
+
+	private async getAccountEvmAddress(
+		accountId: string,
+	): Promise<string> {
+		try {
+			const URI_BASE = `${getHederaNetwork(this.network)?.mirrorNodeUrl}/api/v1/`;
+			const res = await axios.get<IAccount>(
+				URI_BASE + 'accounts/' + accountId
+			);
+
+			if (res.data.evm_address) {
+				return res.data.evm_address;
+			} else {
+				return this.getAccountEvmAddressFromPrivateKeyType(
+					res.data.key._type, 
+					res.data.key.key, 
+					accountId);
+			}
+		} catch (error) {
+			return Promise.reject<string>(error);
+		}
+	}	
+
+	private getAccountEvmAddressFromPrivateKeyType(
+		privateKeyType: string, 
+		publicKey: string,
+		accountId: string): string {
+			
+		switch(privateKeyType) {
+			case PrivateKeyType.ECDSA:
+				return HPublicKey.fromString(publicKey).toEthereumAddress();
+
+			default:
+				return "0x" + HAccountId.fromString(accountId).toSolidityAddress();
+		}
+	}
+
 	public async deployStableCoin(
 		stableCoin: StableCoin,
 		account: EOAccount,
@@ -270,7 +319,8 @@ export default class HTSProvider implements IProvider {
 						}
 					}
 					const providedKeyCasted = providedKey as PublicKey;
-					key.PublicKey = (providedKeyCasted.key == PublicKey.NULL.key)? "0x" : HPublicKey.fromString(providedKeyCasted.key).toBytes();
+					key.PublicKey = (providedKeyCasted.key == PublicKey.NULL.key)? "0x" : HPublicKey.fromString(providedKeyCasted.key).toBytesRaw();
+					key.isED25519 = (providedKeyCasted.type == 'ED25519');
 					keys.push(key);
 				}
 			});
@@ -283,10 +333,10 @@ export default class HTSProvider implements IProvider {
 			(stableCoin.maxSupply) ? stableCoin.maxSupply.toLong().toString(): "0",
 			(stableCoin.initialSupply) ? stableCoin.initialSupply.toLong().toString(): "0",
 			stableCoin.decimals,
-			"0x" + HAccountId.fromString(stableCoin.autoRenewAccount.toString()).toSolidityAddress(),
+			await this.accountToEvmAddress(new Account(stableCoin.autoRenewAccount.toString())),
 			(stableCoin.treasury.toString() == '0.0.0') ? 
 				"0x0000000000000000000000000000000000000000"
-				: ("0x" + HAccountId.fromString(stableCoin.treasury.toString()).toSolidityAddress()),
+				: await this.accountToEvmAddress(new Account(stableCoin.treasury.toString())),
 			keys
 		);
 
