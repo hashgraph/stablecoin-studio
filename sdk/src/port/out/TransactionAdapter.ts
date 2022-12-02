@@ -62,6 +62,7 @@ interface RoleTransactionHandler {
 	hasRole(
 		coin: StableCoinCapabilities,
 		targetId: string,
+		role: StableCoinRole,
 	): Promise<TransactionResponse>;
 	grantSupplierRole(
 		coin: StableCoinCapabilities,
@@ -95,10 +96,12 @@ interface RoleTransactionHandler {
 	increaseSupplierAllowance(
 		coin: StableCoinCapabilities,
 		targetId: string,
+		amount: BigDecimal,
 	): Promise<TransactionResponse>;
 	decreaseSupplierAllowance(
 		coin: StableCoinCapabilities,
 		targetId: string,
+		amount: BigDecimal,
 	): Promise<TransactionResponse>;
 	isLimitedSupplierAllowance(
 		coin: StableCoinCapabilities,
@@ -130,6 +133,7 @@ export default abstract class TransactionAdapter
 	hasRole(
 		coin: StableCoinCapabilities,
 		targetId: string,
+		role: StableCoinRole,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
@@ -179,12 +183,14 @@ export default abstract class TransactionAdapter
 	increaseSupplierAllowance(
 		coin: StableCoinCapabilities,
 		targetId: string,
+		amount: BigDecimal,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
 	decreaseSupplierAllowance(
 		coin: StableCoinCapabilities,
 		targetId: string,
+		amount: BigDecimal,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
