@@ -26,7 +26,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			targetId: targetId,
 			amount: amount
 		});
-		return this.perform(coin, Operation.CASH_IN, 'mint', 400000, params);		
+		return this.performOperation(coin, Operation.CASH_IN, 'mint', 400000, params);		
 	}
 
 	public async wipe(
@@ -38,7 +38,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			targetId: targetId,
 			amount: amount
 		});
-		return this.perform(coin, Operation.WIPE, 'wipe', 400000, params);		
+		return this.performOperation(coin, Operation.WIPE, 'wipe', 400000, params);		
 	}
 
 	public async burn(
@@ -48,7 +48,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		const params = new Params({
 			amount: amount
 		});
-		return this.perform(coin, Operation.BURN, 'burn', 400000, params);		
+		return this.performOperation(coin, Operation.BURN, 'burn', 400000, params);		
 	}
 
 	public async freeze(
@@ -58,7 +58,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		const params = new Params({
 			targetId: targetId
 		});
-		return this.perform(coin, Operation.FREEZE, 'freeze', 60000, params);		
+		return this.performOperation(coin, Operation.FREEZE, 'freeze', 60000, params);		
 	}
 
 	public async unfreeze(
@@ -68,19 +68,19 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		const params = new Params({
 			targetId: targetId
 		});
-		return this.perform(coin, Operation.UNFREEZE, 'unfreeze', 60000, params);		
+		return this.performOperation(coin, Operation.UNFREEZE, 'unfreeze', 60000, params);		
 	}
 
 	public async pause(
 		coin: StableCoinCapabilities,
 	): Promise<TransactionResponse> {
-		return this.perform(coin, Operation.PAUSE, 'pause', 60000);
+		return this.performOperation(coin, Operation.PAUSE, 'pause', 60000);
 	}
 
 	public async unpause(
 		coin: StableCoinCapabilities,
 	): Promise<TransactionResponse> {
-		return this.perform(coin, Operation.UNPAUSE, 'unpause', 60000);
+		return this.performOperation(coin, Operation.UNPAUSE, 'unpause', 60000);
 	}
 
 	public async transfer(
@@ -105,17 +105,17 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		const params = new Params({
 			amount: amount
 		});
-		return this.perform(coin, Operation.RESCUE, 'rescue', 120000, params);		
+		return this.performOperation(coin, Operation.RESCUE, 'rescue', 120000, params);		
 	}
 
 	public async delete(
 		coin: StableCoinCapabilities,
 	): Promise<TransactionResponse> {
-		return this.perform(coin, Operation.DELETE, 'deleteToken', 400000);
+		return this.performOperation(coin, Operation.DELETE, 'deleteToken', 400000);
 	}
 
 
-	private async perform(
+	private async performOperation(
 		coin: StableCoinCapabilities,
 		operation: Operation,
 		operationName: string,
@@ -130,17 +130,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 						throw new Error(
 							`StableCoin ${coin.coin.name} does not have a proxy Address`,
 						);
-					const contractParams: any[] = (params === undefined || params === null) ? [] : 
-						Object.values(params!).filter(element => {
-							return element !== undefined;
-					 	}); 		
-					return await this.contractCall(
-						coin.coin.proxyAddress!.value,
-						operationName,
-						contractParams,
-						gas,
-						TransactionType.RECEIPT,
-					);
+					return this.performSmartContractOperation(coin, operationName, gas, params);
 
 				case Decision.HTS:
 					if (!coin.coin.tokenId)
@@ -167,6 +157,22 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				`Unexpected error in HederaTransactionHandler ${operationName} operation : ${error}`,
 			);
 		}
+	}
+
+	private async performSmartContractOperation(coin: StableCoinCapabilities,
+		operationName: string,
+		gas: number,
+		params?: Params									  
+	): Promise<TransactionResponse> {
+		const contractParams: any[] = (params === undefined || params === null) ? [] : 
+		Object.values(params!).filter(element => {
+			return element !== undefined;
+		 }); 		
+		return await this.contractCall(coin.coin.proxyAddress!.value,
+									   operationName,
+									   contractParams,
+									   gas,
+									   TransactionType.RECEIPT);
 	}
 
 	private async performHTSOperation(coin: StableCoinCapabilities,
