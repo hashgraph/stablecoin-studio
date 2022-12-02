@@ -1,7 +1,7 @@
 /* eslint-disable jest/valid-expect */
 /* eslint-disable jest/expect-expect */
 /* eslint-disable jest/no-standalone-expect */
-import { Client } from "@hashgraph/sdk";
+import { Client, TokenId } from "@hashgraph/sdk";
 import { HTSTransactionAdapter } from "../../../../../src/port/out/hs/hts/HTSTransactionAdapter.js";
 import TransactionResponse from '../../../../../src/domain/context/transaction/TransactionResponse.js';
 import { AccountId as HAccountId } from '@hashgraph/sdk';
@@ -31,6 +31,7 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
     });
     const capabilities: Capability[] = [new Capability(Operation.CASH_IN, Access.HTS),
                                         new Capability(Operation.BURN, Access.HTS),
+										new Capability(Operation.WIPE, Access.HTS),
                                         new Capability(Operation.FREEZE, Access.HTS),
                                         new Capability(Operation.UNFREEZE, Access.HTS),
                                         new Capability(Operation.PAUSE, Access.HTS),
@@ -53,6 +54,8 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
     });
     const capabilities2: Capability[] = [new Capability(Operation.CASH_IN, Access.CONTRACT),
                                          new Capability(Operation.BURN, Access.CONTRACT),
+										 new Capability(Operation.WIPE, Access.CONTRACT),
+										 new Capability(Operation.RESCUE, Access.CONTRACT),
                                          new Capability(Operation.FREEZE, Access.CONTRACT),
                                          new Capability(Operation.UNFREEZE, Access.CONTRACT),
                                          new Capability(Operation.PAUSE, Access.CONTRACT),
@@ -80,16 +83,16 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
         tr = await th.burn(stableCoinCapabilities, BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals));
     });
 
-    /*it('Test transfer', async () => {
-        tr = await th.mint(stableCoinCapabilities, new BigDecimal('1'));
-        tr = await th.transfer(stableCoinCapabilities, new BigDecimal('1'), clientAccountId, accountId);
-    });*/
+    it('Test transfer', async () => {
+        tr = await th.cashin(stableCoinCapabilities, accountId, BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals));
+        tr = await th.transfer(stableCoinCapabilities, BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals), clientAccountId, accountId);
+    });
 
     it('Test wipe', async () => {
         tr = await th.cashin(stableCoinCapabilities, accountId, BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals));
         tr = await th.transfer(stableCoinCapabilities, BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals), clientAccountId, accountId);
-        tr = await th.wipe(stableCoinCapabilities, accountId, new BigDecimal('1'));
-    });
+        tr = await th.wipe(stableCoinCapabilities, accountId, BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals));
+    }, 20000);
 
     it('Test freeze', async () => {
         tr = await th.freeze(stableCoinCapabilities, accountId);
@@ -109,15 +112,20 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 
     it('Test cashIn contract function', async () => {
         const accountEvmAddress: string = HAccountId.fromString(clientAccountId).toSolidityAddress();
-        tr = await th.cashin(stableCoinCapabilities2, accountEvmAddress, BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals));
+        tr = await th.cashin(stableCoinCapabilities2, accountEvmAddress, BigDecimal.fromString('1', stableCoinCapabilities2.coin.decimals));
     });
 
     it('Test burn contract function', async () => {
-        tr = await th.burn(stableCoinCapabilities2, BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals));
+        tr = await th.burn(stableCoinCapabilities2, BigDecimal.fromString('1', stableCoinCapabilities2.coin.decimals));
     });
 
     it('Test wipe contract function', async () => {
-        tr = await th.burn(stableCoinCapabilities2, BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals));
+		const accountEvmAddress: string = HAccountId.fromString(clientAccountId).toSolidityAddress();
+        tr = await th.wipe(stableCoinCapabilities2, accountEvmAddress, BigDecimal.fromString('1', stableCoinCapabilities2.coin.decimals));
+    });
+
+	it('Test rescue contract function', async () => {
+        tr = await th.rescue(stableCoinCapabilities2, BigDecimal.fromString('1', stableCoinCapabilities2.coin.decimals));
     });
 
     it('Test freeze contract function', async () => {

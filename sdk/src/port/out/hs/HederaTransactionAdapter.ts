@@ -18,7 +18,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	private web3 = new Web3();
 
 
-	public async wipe(
+	public async wipe2(
 		coin: StableCoinCapabilities,
 		targetId: string,
 		amount: BigDecimal,
@@ -34,7 +34,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					return await this.contractCall(
 						coin.coin.proxyAddress!.value,
 						'wipe',
-						[amount],
+						[targetId, amount],
 						400000,
 						TransactionType.RECEIPT,
 					);
@@ -44,7 +44,6 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 						throw new Error(
 							`StableCoin ${coin.coin.name} does not have an underlying token`,
 						);
-
 					t = HTSTransactionBuilder.buildTokenWipeTransaction(
 						targetId,
 						coin.coin.tokenId?.value!,
@@ -74,7 +73,19 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
-	public async cashin(
+	public async wipe(
+		coin: StableCoinCapabilities,
+		targetId: string,
+		amount: BigDecimal,
+	): Promise<TransactionResponse> {
+		const params = new Params({
+			targetId: targetId,
+			amount: amount
+		});
+		return this.perform(coin, Operation.WIPE, 'wipe', params);		
+	}
+
+	public async cashin2(
 		coin: StableCoinCapabilities,
 		targetId: string,
 		amount: BigDecimal,
@@ -101,7 +112,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 							`StableCoin ${coin.coin.name}  does not have an underlying token`,
 						);
 					t = HTSTransactionBuilder.buildTokenMintTransaction(
-						coin.coin.tokenId.value,
+						coin.coin.tokenId?.value!,
 						amount.toLong(),
 					);
 					return this.signAndSendTransaction(
@@ -131,7 +142,19 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
-	public async burn(
+	public async cashin(
+		coin: StableCoinCapabilities,
+		targetId: string,
+		amount: BigDecimal,
+	): Promise<TransactionResponse> {
+		const params = new Params({
+			targetId: targetId,
+			amount: amount
+		});
+		return this.perform(coin, Operation.CASH_IN, 'mint', params);		
+	}
+
+	public async burn2(
 		coin: StableCoinCapabilities,
 		amount: BigDecimal,
 	): Promise<TransactionResponse> {
@@ -187,7 +210,17 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
-	public async freeze(
+	public async burn(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+	): Promise<TransactionResponse> {
+		const params = new Params({
+			amount: amount
+		});
+		return this.perform(coin, Operation.BURN, 'burn', params);		
+	}
+
+	public async freeze2(
 		coin: StableCoinCapabilities,
 		targetId: string,
 	): Promise<TransactionResponse> {
@@ -243,7 +276,17 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
-	public async unfreeze(
+	public async freeze(
+		coin: StableCoinCapabilities,
+		targetId: string,
+	): Promise<TransactionResponse> {
+		const params = new Params({
+			targetId: targetId
+		});
+		return this.perform(coin, Operation.FREEZE, 'freeze', params);		
+	}
+
+	public async unfreeze2(
 		coin: StableCoinCapabilities,
 		targetId: string,
 	): Promise<TransactionResponse> {
@@ -299,7 +342,18 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
-	public async pause(
+	public async unfreeze(
+		coin: StableCoinCapabilities,
+		targetId: string,
+	): Promise<TransactionResponse> {
+		const params = new Params({
+			targetId: targetId
+		});
+		return this.perform(coin, Operation.UNFREEZE, 'unfreeze', params);		
+	}
+
+
+	public async pause2(
 		coin: StableCoinCapabilities,
 	): Promise<TransactionResponse> {
 		try {
@@ -353,7 +407,13 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
-	public async unpause(
+	public async pause(
+		coin: StableCoinCapabilities,
+	): Promise<TransactionResponse> {
+		return this.perform(coin, Operation.PAUSE, 'pause');
+	}
+
+	public async unpause2(
 		coin: StableCoinCapabilities,
 	): Promise<TransactionResponse> {
 		try {
@@ -407,6 +467,12 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
+	public async unpause(
+		coin: StableCoinCapabilities,
+	): Promise<TransactionResponse> {
+		return this.perform(coin, Operation.UNPAUSE, 'unpause');
+	}
+
 	public async transfer(
 		stableCoinCapabilities: StableCoinCapabilities,
 		amount: BigDecimal,
@@ -422,10 +488,151 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		return this.signAndSendTransaction(t, TransactionType.RECEIPT);
 	}
 
-	public async rescue(
-		stableCoinCapabilities: StableCoinCapabilities,
+	public async rescue2(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal
 	): Promise<TransactionResponse> {
-		throw new Error('Method not implemented.');
+		try {
+			let t: Transaction;
+			switch (CapabilityDecider.decide(coin, Operation.RESCUE)) {
+				case Decision.CONTRACT:
+					if (!coin.coin.proxyAddress)
+						throw new Error(
+							`StableCoin ${coin.coin.name} does not have a proxy Address`,
+						);
+					return await this.contractCall(
+						coin.coin.proxyAddress!.value,
+						'rescue',
+						[amount],
+						120000,
+						TransactionType.RECEIPT,
+					);
+
+				default:
+					const tokenId = coin.coin.tokenId
+						? coin.coin.tokenId.value
+						: '';
+					const OperationNotAllowed = new CapabilityError(
+						this.getAccount(),
+						Operation.RESCUE,
+						tokenId,
+					);
+					return new TransactionResponse(
+						undefined,
+						undefined,
+						OperationNotAllowed,
+					);
+			}
+		} catch (error) {
+			throw new Error(
+				`Unexpected error in HederaTransactionHandler Rescue operation : ${error}`,
+			);
+		}
+	}
+
+	public async rescue(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal
+	): Promise<TransactionResponse> {
+		const params = new Params({
+			amount: amount
+		});
+		return this.perform(coin, Operation.RESCUE, 'rescue', params);		
+	}
+
+	private async perform(
+		coin: StableCoinCapabilities,
+		operation: Operation,
+		operationName: string,
+		params?: Params
+	): Promise<TransactionResponse> {
+		try {
+			let t: Transaction;
+			switch (CapabilityDecider.decide(coin, operation)) {
+				case Decision.CONTRACT:
+					if (!coin.coin.proxyAddress)
+						throw new Error(
+							`StableCoin ${coin.coin.name} does not have a proxy Address`,
+						);
+					const contractParams: any[] = (params === undefined || params === null) ? [] : 
+						Object.values(params!).filter(element => {
+							return element !== undefined;
+					 	}); 		
+console.log(contractParams);					
+					return await this.contractCall(
+						coin.coin.proxyAddress!.value,
+						operationName,
+						contractParams,
+						120000,
+						TransactionType.RECEIPT,
+					);
+
+				case Decision.HTS:
+					if (!coin.coin.tokenId)
+						throw new Error(`StableCoin ${coin.coin.name} does not have an underlying token`,);
+					return this.performHTSOperation(coin, operation, params);					
+	
+				default:
+					const tokenId = coin.coin.tokenId
+						? coin.coin.tokenId.value
+						: '';
+					const OperationNotAllowed = new CapabilityError(
+						this.getAccount(),
+						operation,
+						tokenId,
+					);
+					return new TransactionResponse(
+						undefined,
+						undefined,
+						OperationNotAllowed,
+					);
+			}
+		} catch (error) {
+			throw new Error(
+				`Unexpected error in HederaTransactionHandler ${operationName} operation : ${error}`,
+			);
+		}
+	}
+
+	private async performHTSOperation(coin: StableCoinCapabilities,
+									  operation: Operation,
+									  params?: Params									  
+	): Promise<TransactionResponse> {
+		let t: Transaction = new Transaction();
+		switch(operation) {
+			case Operation.CASH_IN:
+				t = HTSTransactionBuilder.buildTokenMintTransaction(coin.coin.tokenId?.value!, params!.amount!.toLong());		
+				break;		
+			
+			case Operation.BURN:
+				t = HTSTransactionBuilder.buildTokenBurnTransaction(coin.coin.tokenId?.value!, params!.amount!.toLong());
+				break;
+
+			case Operation.WIPE:
+				t = HTSTransactionBuilder.buildTokenWipeTransaction(params!.targetId!, coin.coin.tokenId?.value!, params!.amount!.toLong());
+				break;
+
+			case Operation.FREEZE:
+				t = HTSTransactionBuilder.buildFreezeTransaction(coin.coin.tokenId?.value!, params!.targetId!);
+				break;
+
+			case Operation.UNFREEZE:
+				t = HTSTransactionBuilder.buildUnfreezeTransaction(coin.coin.tokenId?.value!, params!.targetId!);
+				break;
+
+			case Operation.PAUSE:
+				t = HTSTransactionBuilder.buildPausedTransaction(coin.coin.tokenId?.value!);
+				break;
+
+			case Operation.UNPAUSE:
+				t = HTSTransactionBuilder.buildUnpausedTransaction(coin.coin.tokenId?.value!);
+				break;
+
+			case Operation.DELETE:
+				t = HTSTransactionBuilder.buildDeleteTransaction(coin.coin.tokenId?.value!);
+				break;
+		}
+		return this.signAndSendTransaction(t, TransactionType.RECEIPT);			
 	}
 
 	public async delete(
@@ -490,4 +697,14 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		nameFunction?: string,
 		abi?: any[],
 	): Promise<TransactionResponse>;
+}
+
+class Params{
+	targetId?: string;
+	amount?: BigDecimal;
+
+	constructor({ targetId, amount }: { targetId?: string, amount?: BigDecimal }) {
+		this.targetId = targetId;
+		this.amount = amount;
+	}
 }
