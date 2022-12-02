@@ -12,7 +12,6 @@ import { Injectable } from '../../../../core/Injectable.js';
 
 @singleton()
 export class HTSTransactionAdapter extends HederaTransactionAdapter {
-
 	private _client: Client;
 
 	public get client() {
@@ -50,9 +49,9 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 			console.log(`echo3 -> ${error}`);
 			throw error;
 		}
-    }
+	}
 
-    getAccount(): string {
-        throw new Error('Method not implemented.');
-    }
+	getAccount(): string {
+		throw new Error('Method not implemented.');
+	}
 }
