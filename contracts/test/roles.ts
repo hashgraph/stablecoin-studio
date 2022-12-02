@@ -13,11 +13,13 @@ import { deployContractsWithSDK, initializeClients,
   getOperatorClient,
   getOperatorAccount,
   getOperatorPrivateKey,
+  getOperatorE25519,
 getOperatorPublicKey,
 getNonOperatorClient,
 getNonOperatorAccount,
 getNonOperatorPrivateKey,
-getNonOperatorPublicKey
+getNonOperatorPublicKey,
+getNonOperatorE25519
  } from "../scripts/deploy";
  import {grantRole, revokeRole, getRoles, getRoleId} from "../scripts/contractsMethods";
 import {BURN_ROLE, 
@@ -45,17 +47,22 @@ let operatorPriKey: string;
 let nonOperatorPriKey: string;
 let operatorPubKey: string;
 let nonOperatorPubKey: string;
+let operatorIsE25519: boolean;
+let nonOperatorIsE25519: boolean;
 
 
 let client1:any;
 let client1account: string;
 let client1privatekey: string;
 let client1publickey: string;
+let client1isED25519Type: boolean;
+
 
 let client2:any;
 let client2account: string;
 let client2privatekey: string;
 let client2publickey: string;
+let client2isED25519Type: boolean;
 
 const TokenName = "MIDAS";
 const TokenSymbol = "MD";
@@ -73,10 +80,12 @@ describe("Roles Tests", function() {
       client1account, 
       client1privatekey,
       client1publickey,
+      client1isED25519Type,
       client2,
       client2account,
       client2privatekey,
-      client2publickey] = initializeClients();
+      client2publickey,
+      client2isED25519Type] = initializeClients();
 
       operatorClient = getOperatorClient(client1, client2, clientId);
       nonOperatorClient = getNonOperatorClient(client1, client2, clientId);
@@ -84,6 +93,9 @@ describe("Roles Tests", function() {
       nonOperatorAccount = getNonOperatorAccount(client1account, client2account, clientId);
       operatorPriKey = getOperatorPrivateKey(client1privatekey, client2privatekey, clientId);
       operatorPubKey = getOperatorPublicKey(client1publickey, client2publickey, clientId);
+      operatorIsE25519 = getOperatorE25519(client1isED25519Type, client2isED25519Type, clientId);
+      nonOperatorIsE25519 = getNonOperatorE25519(client1isED25519Type, client2isED25519Type, clientId);
+
 
       // Deploy Token using Client
       let result = await deployContractsWithSDK(
@@ -95,7 +107,8 @@ describe("Roles Tests", function() {
         TokenMemo, 
         operatorAccount, 
         operatorPriKey, 
-        operatorPubKey
+        operatorPubKey,
+        operatorIsE25519
         ); 
         
       proxyAddress = result[0];
@@ -104,7 +117,7 @@ describe("Roles Tests", function() {
 
     it("Getting roles", async function() {    
       // Checking roles    
-      let result = await getRoles(ContractId, proxyAddress, operatorClient, nonOperatorAccount);
+      let result = await getRoles(ContractId, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519);
 
       result.forEach(
         (role: string) => {
@@ -113,17 +126,17 @@ describe("Roles Tests", function() {
       );
 
       // Assigning roles
-      await grantRole(DEFAULT_ADMIN_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount);
-      await grantRole(CASHIN_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount);
-      await grantRole(BURN_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount);
-      await grantRole(DELETE_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount);
-      await grantRole(FREEZE_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount);
-      await grantRole(PAUSE_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount);
-      await grantRole(RESCUE_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount);
-      await grantRole(WIPE_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount);
+      await grantRole(DEFAULT_ADMIN_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519);
+      await grantRole(CASHIN_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519);
+      await grantRole(BURN_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519);
+      await grantRole(DELETE_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519);
+      await grantRole(FREEZE_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519);
+      await grantRole(PAUSE_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519);
+      await grantRole(RESCUE_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519);
+      await grantRole(WIPE_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519);
 
       // Checking roles    
-      result = await getRoles(ContractId, proxyAddress, operatorClient, nonOperatorAccount);
+      result = await getRoles(ContractId, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519);
 
       for (let i = 0; i < result.length; i++) {
         if(i == RolesId.Cashin) expect(result[i].toUpperCase()).to.equals(CASHIN_ROLE.toUpperCase());
@@ -138,17 +151,17 @@ describe("Roles Tests", function() {
       }
 
       // Revoking roles
-      await revokeRole(CASHIN_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount);
-      await revokeRole(BURN_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount);
-      await revokeRole(PAUSE_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount);
-      await revokeRole(RESCUE_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount);
-      await revokeRole(WIPE_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount);
-      await revokeRole(FREEZE_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount);
-      await revokeRole(DELETE_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount);
-      await revokeRole(DEFAULT_ADMIN_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount);
+      await revokeRole(CASHIN_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519);
+      await revokeRole(BURN_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519);
+      await revokeRole(PAUSE_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519);
+      await revokeRole(RESCUE_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519);
+      await revokeRole(WIPE_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519);
+      await revokeRole(FREEZE_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519);
+      await revokeRole(DELETE_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519);
+      await revokeRole(DEFAULT_ADMIN_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519);
 
       // Checking roles    
-      result = await getRoles(ContractId, proxyAddress, operatorClient, nonOperatorAccount);
+      result = await getRoles(ContractId, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519);
 
       result.forEach(
         (role: string) => {

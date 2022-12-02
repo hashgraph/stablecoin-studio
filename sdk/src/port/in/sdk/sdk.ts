@@ -156,7 +156,7 @@ export interface SDKInitOptions {
 	onInit: (data: InitializationData) => void;
 }
 
-export const FactoryAddressTestnet = "0.0.48974149";
+export const FactoryAddressTestnet = "0.0.49015451";//"0.0.48974149";
 export const FactoryAddressPreviewnet = "0.0.11111111";
 
 export class SDK {

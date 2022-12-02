@@ -27,11 +27,13 @@ export declare namespace IStableCoinFactory {
   export type KeysStructStruct = {
     keyType: PromiseOrValue<BigNumberish>;
     PublicKey: PromiseOrValue<BytesLike>;
+    isED25519: PromiseOrValue<boolean>;
   };
 
-  export type KeysStructStructOutput = [BigNumber, string] & {
+  export type KeysStructStructOutput = [BigNumber, string, boolean] & {
     keyType: BigNumber;
     PublicKey: string;
+    isED25519: boolean;
   };
 
   export type TokenStructStruct = {
@@ -74,7 +76,7 @@ export declare namespace IStableCoinFactory {
 
 export interface StableCoinFactoryInterface extends utils.Interface {
   functions: {
-    "deployStableCoin((string,string,bool,bool,int64,uint64,uint32,address,address,(uint256,bytes)[]))": FunctionFragment;
+    "deployStableCoin((string,string,bool,bool,int64,uint64,uint32,address,address,(uint256,bytes,bool)[]))": FunctionFragment;
   };
 
   getFunction(nameOrSignatureOrTopic: "deployStableCoin"): FunctionFragment;

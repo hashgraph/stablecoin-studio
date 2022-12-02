@@ -1,12 +1,13 @@
 
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.10;
+pragma solidity 0.8.10;
 
 interface IStableCoinFactory {
 
     struct KeysStruct{
         uint256 keyType; // Key id as defined for the Hedera Tokens
         bytes PublicKey; // Public Key bytes of the EOA that will be assigned to the key Role. If "0x" (empty bytes) the stable coin proxy will be selected.
+        bool isED25519; // If the PublicKey is an EOA (not empty) indicates whether it is an ED25519 or ECDSA key
     }
 
     struct tokenStruct{

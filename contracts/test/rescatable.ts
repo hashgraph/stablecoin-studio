@@ -14,11 +14,13 @@ import { deployContractsWithSDK, initializeClients,
   getOperatorClient,
   getOperatorAccount,
   getOperatorPrivateKey,
+  getOperatorE25519,
 getOperatorPublicKey,
 getNonOperatorClient,
 getNonOperatorAccount,
 getNonOperatorPrivateKey,
-getNonOperatorPublicKey
+getNonOperatorPublicKey,
+getNonOperatorE25519
  } from "../scripts/deploy";
  import {grantRole, 
   revokeRole, 
@@ -42,17 +44,22 @@ let operatorPriKey: string;
 let nonOperatorPriKey: string;
 let operatorPubKey: string;
 let nonOperatorPubKey: string;
+let operatorIsE25519: boolean;
+let nonOperatorIsE25519: boolean;
 
 
 let client1:any;
 let client1account: string;
 let client1privatekey: string;
 let client1publickey: string;
+let client1isED25519Type: boolean;
+
 
 let client2:any;
 let client2account: string;
 let client2privatekey: string;
 let client2publickey: string;
+let client2isED25519Type: boolean;
 
 const TokenName = "MIDAS";
 const TokenSymbol = "MD";
@@ -70,10 +77,12 @@ describe("Rescue Tests", function() {
       client1account, 
       client1privatekey,
       client1publickey,
+      client1isED25519Type,
       client2,
       client2account,
       client2privatekey,
-      client2publickey] = initializeClients();
+      client2publickey,
+      client2isED25519Type] = initializeClients();
 
       operatorClient = getOperatorClient(client1, client2, clientId);
       nonOperatorClient = getNonOperatorClient(client1, client2, clientId);
@@ -81,6 +90,9 @@ describe("Rescue Tests", function() {
       nonOperatorAccount = getNonOperatorAccount(client1account, client2account, clientId);
       operatorPriKey = getOperatorPrivateKey(client1privatekey, client2privatekey, clientId);
       operatorPubKey = getOperatorPublicKey(client1publickey, client2publickey, clientId);
+      operatorIsE25519 = getOperatorE25519(client1isED25519Type, client2isED25519Type, clientId);
+      nonOperatorIsE25519 = getNonOperatorE25519(client1isED25519Type, client2isED25519Type, clientId);
+
 
       // Deploy Token using Client
       let result = await deployContractsWithSDK(
@@ -92,7 +104,8 @@ describe("Rescue Tests", function() {
         TokenMemo, 
         operatorAccount, 
         operatorPriKey, 
-        operatorPubKey
+        operatorPubKey,
+        operatorIsE25519
         ); 
         
       proxyAddress = result[0];  
@@ -101,33 +114,33 @@ describe("Rescue Tests", function() {
 
     it("Admin account can grant and revoke rescue role to an account", async function() {    
       // Admin grants rescue role : success    
-      let result = await hasRole(RESCUE_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount);
+      let result = await hasRole(RESCUE_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519);
       expect(result).to.equals(false);
   
-      await grantRole(RESCUE_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount);
+      await grantRole(RESCUE_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519);
   
-      result = await hasRole(RESCUE_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount);
+      result = await hasRole(RESCUE_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519);
       expect(result).to.equals(true);
   
       // Admin revokes rescue role : success    
-      await revokeRole(RESCUE_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount);
-      result = await hasRole(RESCUE_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount);
+      await revokeRole(RESCUE_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519);
+      result = await hasRole(RESCUE_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519);
       expect(result).to.equals(false);
   
     });
   
     it("Non Admin account can not grant rescue role to an account", async function() {   
       // Non Admin grants rescue role : fail       
-      await expect(grantRole(RESCUE_ROLE, ContractId, proxyAddress, nonOperatorClient, nonOperatorAccount)).to.eventually.be.rejectedWith(Error);
+      await expect(grantRole(RESCUE_ROLE, ContractId, proxyAddress, nonOperatorClient, nonOperatorAccount, nonOperatorIsE25519)).to.eventually.be.rejectedWith(Error);
     });
   
     it("Non Admin account can not revoke rescue role to an account", async function() {
       // Non Admin revokes rescue role : fail       
-      await grantRole(RESCUE_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount);
-      await expect(revokeRole(RESCUE_ROLE, ContractId, proxyAddress, nonOperatorClient, nonOperatorAccount)).to.eventually.be.rejectedWith(Error);
+      await grantRole(RESCUE_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519);
+      await expect(revokeRole(RESCUE_ROLE, ContractId, proxyAddress, nonOperatorClient, nonOperatorAccount, nonOperatorIsE25519)).to.eventually.be.rejectedWith(Error);
   
       //Reset status
-      await revokeRole(RESCUE_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount)
+      await revokeRole(RESCUE_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519)
     });
 
     it("Should rescue 10 token", async function() {
@@ -135,14 +148,14 @@ describe("Rescue Tests", function() {
 
       // Get the initial balance of the token owner and client
       const initialTokenOwnerBalance = await getBalanceOf(ContractId, proxyAddress, operatorClient, proxyAddress.toSolidityAddress(), false);
-      const initialClientBalance = await getBalanceOf(ContractId, proxyAddress, operatorClient, operatorAccount);
+      const initialClientBalance = await getBalanceOf(ContractId, proxyAddress, operatorClient, operatorAccount, operatorIsE25519);
  
       // rescue some tokens
       await rescue(ContractId, proxyAddress, AmountToRescue, operatorClient);
 
       // check new balances : success
       const finalTokenOwnerBalance = await getBalanceOf(ContractId, proxyAddress, operatorClient, proxyAddress.toSolidityAddress(), false);
-      const finalClientBalance = await getBalanceOf(ContractId, proxyAddress, operatorClient, operatorAccount);
+      const finalClientBalance = await getBalanceOf(ContractId, proxyAddress, operatorClient, operatorAccount, operatorIsE25519);
 
       const expectedTokenOwnerBalance = initialTokenOwnerBalance.sub(AmountToRescue);
       const expectedClientBalance = initialClientBalance.add(AmountToRescue);
@@ -169,20 +182,20 @@ describe("Rescue Tests", function() {
 
       // Retrieve original balances
       const initialTokenOwnerBalance = await getBalanceOf(ContractId, proxyAddress, operatorClient, proxyAddress.toSolidityAddress(), false);
-      const initialClientBalance = await getBalanceOf(ContractId, proxyAddress, operatorClient, nonOperatorAccount);
+      const initialClientBalance = await getBalanceOf(ContractId, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519);
 
       // Grant rescue role to account
-      await grantRole(RESCUE_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount);
+      await grantRole(RESCUE_ROLE, ContractId, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519);
 
       // Associate account to token
-      await associateToken(ContractId, proxyAddress, nonOperatorClient, nonOperatorAccount);
+      await associateToken(ContractId, proxyAddress, nonOperatorClient, nonOperatorAccount, nonOperatorIsE25519);
         
       // Rescue tokens with newly granted account
       await rescue(ContractId, proxyAddress, AmountToRescue, nonOperatorClient);
 
       // Check final balances : success
       const finalTokenOwnerBalance = await getBalanceOf(ContractId, proxyAddress, operatorClient, proxyAddress.toSolidityAddress(), false);
-      const finalClientBalance = await getBalanceOf(ContractId, proxyAddress, operatorClient, nonOperatorAccount);
+      const finalClientBalance = await getBalanceOf(ContractId, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519);
 
       const expectedTokenOwnerBalance = initialTokenOwnerBalance.sub(AmountToRescue);
       const expectedClientBalance = initialClientBalance.add(AmountToRescue);

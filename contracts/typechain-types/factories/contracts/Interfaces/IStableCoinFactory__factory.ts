@@ -71,6 +71,11 @@ const _abi = [
                 name: "PublicKey",
                 type: "bytes",
               },
+              {
+                internalType: "bool",
+                name: "isED25519",
+                type: "bool",
+              },
             ],
             internalType: "struct IStableCoinFactory.KeysStruct[]",
             name: "keys",

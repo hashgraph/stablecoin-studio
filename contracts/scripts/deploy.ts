@@ -1,15 +1,22 @@
 const {
     ContractId,
     AccountId,
+    PublicKey,
     TokenSupplyType,
-    PrivateKey
+    PrivateKey,
+    ContractFunctionParameters
 } = require('@hashgraph/sdk')
 
-const factoryAddress = "0.0.48974149" //"0.0.48968373";
+const factoryProxyAddress = "0.0.49015451"; 
+const factoryProxyAdminAddress = "0.0.49015446"; 
+const factoryAddress = "0.0.49015443";
+
 const address_0 = "0x0000000000000000000000000000000000000000";
 
 import {
     StableCoinFactory__factory,
+    StableCoinFactoryProxyAdmin__factory,
+    StableCoinFactoryProxy__factory,
     HederaERC20__factory
 } from '../typechain-types'
 
@@ -51,7 +58,7 @@ export function initializeClients(){
     ]
 }
 
-function toHashgraphKey(privateKey: string, isED25519: boolean): any{
+export function toHashgraphKey(privateKey: string, isED25519: boolean): any{
     return (isED25519) ? 
         PrivateKey.fromStringED25519(privateKey)
         : PrivateKey.fromStringECDSA(privateKey);
@@ -112,7 +119,37 @@ export async function deployFactory(
 
     console.log(`Contract Factory deployed ${factory.toSolidityAddress()}`);
 
-    return factory;
+    // Deploying Factory Proxy Admin
+    console.log(`Deploying Contract Factory Proxy Admin. please wait...`);
+
+    const factoryProxyAdmin = await deployContractSDK(
+        StableCoinFactoryProxyAdmin__factory,
+        privateKey,
+        clientOperator,
+    )
+
+    console.log(`Contract Factory Proxy Admin deployed ${factoryProxyAdmin.toSolidityAddress()}`);
+
+    // Deploying Factory Proxy
+    console.log(`Deploying Contract Factory Proxy. please wait...`);
+
+    let params = new ContractFunctionParameters()
+        .addAddress(factory.toSolidityAddress())
+        .addAddress(factoryProxyAdmin.toSolidityAddress())
+        .addBytes(new Uint8Array([]));
+
+    const factoryProxy = await deployContractSDK(
+        StableCoinFactoryProxy__factory,
+        privateKey,
+        clientOperator,
+        params
+    )
+
+    console.log(`Contract Factory Proxy deployed ${factoryProxy.toSolidityAddress()}`);
+
+    return [factoryProxy,
+        factoryProxyAdmin,
+        factory];
 }
 
 export async function deployContractsWithSDK(
@@ -126,7 +163,8 @@ export async function deployContractsWithSDK(
     privateKey: string,
     publicKey: string,
     isED25519Type: boolean,
-    freeze = false
+    freeze = false,
+    allToContract = true,
 ) {
 
     let AccountEvmAddress = await toEvmAddress(account, isED25519Type);
@@ -143,12 +181,24 @@ export async function deployContractsWithSDK(
     const clientSdk = getClient()
     clientSdk.setOperator(account, toHashgraphKey(privateKey, isED25519Type))
 
-    let f_address = ""
+    let f_address: any;
+    let f_proxyAdminAddress: any;
+    let f_proxyAddress: any;
 
-    if(!factoryAddress) f_address = await deployFactory(clientSdk, privateKey);
-    else f_address = ContractId.fromString(factoryAddress);
 
-    console.log(`Invoking Factory at ${f_address}... please wait.`)
+    if(!factoryAddress) {
+        let result = await deployFactory(clientSdk, privateKey);
+        f_proxyAddress = result[0];
+        f_proxyAdminAddress = result[1];
+        f_address = result[2];
+    }
+    else {
+        f_address = ContractId.fromString(factoryAddress);
+        f_proxyAdminAddress = ContractId.fromString(factoryProxyAdminAddress);
+        f_proxyAddress = ContractId.fromString(factoryProxyAddress);
+    }
+
+    console.log(`Invoking Factory Proxy at ${f_proxyAddress}... please wait.`)
 
     let tokenObject = {
         "tokenName": name,
@@ -160,28 +210,7 @@ export async function deployContractsWithSDK(
         "tokenDecimals": decimals,
         "autoRenewAccountAddress": AccountEvmAddress,
         "treasuryAddress": address_0,
-        "keys": [
-            {
-                "keyType": 1, // admin
-                "PublicKey": "0x", // PublicKey.fromString(publicKey).toBytes(),
-            },
-            {
-                "keyType": 4, // freeze
-                "PublicKey": "0x", // PublicKey.fromString(publicKey).toBytes(),
-            },
-            {
-                "keyType": 8, // wipe
-                "PublicKey": "0x",
-            },
-            {
-                "keyType": 16, // supply
-                "PublicKey": "0x",
-            },
-            {
-                "keyType": 64, // pause
-                "PublicKey": "0x",
-            }
-        ]
+        "keys": (allToContract) ? tokenKeystoContract(): tokenKeystoKey(publicKey, isED25519Type)
     };
 
     console.log(`Token Object: ${JSON.stringify(tokenObject)}`)
@@ -191,21 +220,93 @@ export async function deployContractsWithSDK(
     console.log(`deploying stableCoin... please wait.`)
 
     let proxyContract = await contractCall(
-        f_address,
+        f_proxyAddress,
         'deployStableCoin',
         parametersContractCall,
         clientSdk,
         15000000,
         StableCoinFactory__factory.abi,
-        25
+        35
     )
 
     console.log(`Proxy created: ${proxyContract[0]} , ${ContractId.fromSolidityAddress(proxyContract[0]).toString()}`)
     console.log(`Proxy Admin created: ${proxyContract[1]} , ${ContractId.fromSolidityAddress(proxyContract[1]).toString()}`)
     console.log(`Implementation created: ${proxyContract[2]} , ${ContractId.fromSolidityAddress(proxyContract[2]).toString()}`)
     console.log(`Underlying token created: ${proxyContract[3]}, ${ContractId.fromSolidityAddress(proxyContract[3]).toString()}`)
+    console.log(`Factory Proxy: ${f_proxyAddress.toSolidityAddress()}, ${f_proxyAddress}`)
+    console.log(`Factory Proxy Admin: ${f_proxyAdminAddress.toSolidityAddress()}, ${f_proxyAdminAddress}`)
+    console.log(`Factory Implementation: ${f_address.toSolidityAddress()}, ${f_address}`)
 
     return [ContractId.fromSolidityAddress(proxyContract[0]),
         ContractId.fromSolidityAddress(proxyContract[1]),
-        ContractId.fromSolidityAddress(proxyContract[2])]
+        ContractId.fromSolidityAddress(proxyContract[2]),
+        f_proxyAddress,
+        f_proxyAdminAddress,
+        f_address]
+}
+
+
+function tokenKeystoContract(){
+    let keys =[
+            {
+                "keyType": 1, // admin
+                "PublicKey": "0x", // PublicKey.fromString(publicKey).toBytes(),
+                "isED25519": false
+            },
+            {
+                "keyType": 4, // freeze
+                "PublicKey": "0x", // PublicKey.fromString(publicKey).toBytes(),
+                "isED25519": false
+            },
+            {
+                "keyType": 8, // wipe
+                "PublicKey": "0x",
+                "isED25519": false
+            },
+            {
+                "keyType": 16, // supply
+                "PublicKey": "0x",
+                "isED25519": false
+            },
+            {
+                "keyType": 64, // pause
+                "PublicKey": "0x",
+                "isED25519": false
+            }
+        ];
+
+    return keys;
+}
+
+function tokenKeystoKey(publicKey: string, isED25519: boolean){
+    let PK = PublicKey.fromString(publicKey).toBytesRaw();
+    let keys =[
+            {
+                "keyType": 1, // admin
+                "PublicKey": PK,
+                "isED25519": isED25519
+            },
+            {
+                "keyType": 4, // freeze
+                "PublicKey": PK,
+                "isED25519": isED25519
+            },
+            {
+                "keyType": 8, // wipe
+                "PublicKey": PK,
+                "isED25519": isED25519
+            },
+            {
+                "keyType": 16, // supply
+                "PublicKey": PK,
+                "isED25519": isED25519
+            },
+            {
+                "keyType": 64, // pause
+                "PublicKey": PK,
+                "isED25519": isED25519
+            }
+        ];
+
+    return keys;
 }

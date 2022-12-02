@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.10;
+pragma solidity 0.8.10;
 
 import "./hts-precompile/IHederaTokenService.sol";
 import "./hts-precompile/HederaResponseCodes.sol";
@@ -83,7 +83,7 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes{
             keys[i] = IHederaTokenService.TokenKey(
                     {
                         keyType: requestedToken.keys[i].keyType, 
-                        key: generateKey(requestedToken.keys[i].PublicKey, StableCoinProxyAddress)
+                        key: generateKey(requestedToken.keys[i].PublicKey, StableCoinProxyAddress, requestedToken.keys[i].isED25519)
                     }
                 );
         }
@@ -104,12 +104,13 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes{
         return token;
     }
 
-    function generateKey(bytes memory PublicKey, address StableCoinProxyAddress) internal pure returns(IHederaTokenService.KeyValue memory)
+    function generateKey(bytes memory PublicKey, address StableCoinProxyAddress, bool isED25519) internal pure returns(IHederaTokenService.KeyValue memory)
     {
         // If the Public Key is empty we assume the user has chosen the proxy
         IHederaTokenService.KeyValue memory Key;
         if(PublicKey.length == 0) Key.delegatableContractId = StableCoinProxyAddress;
-        else Key.ed25519 = PublicKey;
+        else if(isED25519) Key.ed25519 = PublicKey;
+        else Key.ECDSA_secp256k1 = PublicKey;
 
         return Key;
     }
