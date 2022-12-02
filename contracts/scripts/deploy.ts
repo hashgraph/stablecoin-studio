@@ -2,6 +2,7 @@ const {
     ContractId,
     AccountId,
     TokenSupplyType,
+    PrivateKey
 } = require('@hashgraph/sdk')
 
 const factoryAddress = "0.0.48974149" //"0.0.48968373";
@@ -14,7 +15,8 @@ import {
 
 import {getClient, 
     deployContractSDK,
-    contractCall}
+    contractCall,
+    toEvmAddress}
  from './utils'
 
 const hre = require('hardhat')
@@ -25,22 +27,34 @@ export function initializeClients(){
     const client1account = hreConfig.accounts[0].account;  
     const client1privatekey = hreConfig.accounts[0].privateKey
     const client1publickey = hreConfig.accounts[0].publicKey
-    client1.setOperator(client1account, client1privatekey);
+    const client1isED25519 = hreConfig.accounts[0].isED25519Type
+    client1.setOperator(client1account, toHashgraphKey(client1privatekey, client1isED25519));
 
     const client2 = getClient();
     const client2account = hreConfig.accounts[1].account;  
     const client2privatekey = hreConfig.accounts[1].privateKey
     const client2publickey = hreConfig.accounts[1].publicKey
-    client2.setOperator(client2account, client2privatekey);  
+    const client2isED25519 = hreConfig.accounts[1].isED25519Type
+    client2.setOperator(client2account, toHashgraphKey(client2privatekey, client2isED25519));  
 
-    return [client1,
-    client1account,
-    client1privatekey,
-    client1publickey,
-    client2,
-    client2account,
-    client2privatekey,
-    client2publickey]
+    return [
+        client1,
+        client1account,
+        client1privatekey,
+        client1publickey,
+        client1isED25519,
+        client2,
+        client2account,
+        client2privatekey,
+        client2publickey,
+        client2isED25519
+    ]
+}
+
+function toHashgraphKey(privateKey: string, isED25519: boolean): any{
+    return (isED25519) ? 
+        PrivateKey.fromStringED25519(privateKey)
+        : PrivateKey.fromStringECDSA(privateKey);
 }
 
 export function getOperatorClient(client1 : any, client2 : any, clientId : number): any{
@@ -53,6 +67,10 @@ export function getOperatorAccount(client1account : any, client2account : any, c
 
 export function getOperatorPrivateKey(client1privatekey : any, client2privatekey : any, clientId : number): any{
     return (clientId == 1) ? client1privatekey : client2privatekey;
+}
+
+export function getOperatorE25519(client1isED25519Type : boolean, client2isED25519Type : boolean, clientId : number): boolean{
+    return (clientId == 1) ? client1isED25519Type : client2isED25519Type;
 }
 
 export function getOperatorPublicKey(client1publickey : any, client2publickey : any, clientId : number): any{
@@ -69,6 +87,10 @@ export function getNonOperatorAccount(client1account : any, client2account : any
 
 export function getNonOperatorPrivateKey(client1privatekey : any, client2privatekey : any, clientId : number): any{
     return (clientId == 2) ? client1privatekey : client2privatekey;
+}
+
+export function getNonOperatorE25519(client1isED25519Type : boolean, client2isED25519Type : boolean, clientId : number): boolean{
+    return (clientId == 2) ? client1isED25519Type : client2isED25519Type;
 }
 
 export function getNonOperatorPublicKey(client1publickey : any, client2publickey : any, clientId : number): any{
@@ -103,18 +125,23 @@ export async function deployContractsWithSDK(
     account: string,
     privateKey: string,
     publicKey: string,
+    isED25519Type: boolean,
     freeze = false
 ) {
+
+    let AccountEvmAddress = await toEvmAddress(account, isED25519Type);
+
+
     console.log(
         `Creating token  (${name},${symbol},${decimals},${initialSupply},${maxSupply},${memo},${freeze})`
     )
 
     console.log(
-        `With user account  (${account}, ${AccountId.fromString(account).toSolidityAddress()})`
+        `With user account  (${account}, ${AccountEvmAddress})`
     )
 
     const clientSdk = getClient()
-    clientSdk.setOperator(account, privateKey)
+    clientSdk.setOperator(account, toHashgraphKey(privateKey, isED25519Type))
 
     let f_address = ""
 
@@ -131,7 +158,7 @@ export async function deployContractsWithSDK(
         "tokenMaxSupply": maxSupply,
         "tokenInitialSupply": initialSupply,
         "tokenDecimals": decimals,
-        "autoRenewAccountAddress": AccountId.fromString(account).toSolidityAddress(),
+        "autoRenewAccountAddress": AccountEvmAddress,
         "treasuryAddress": address_0,
         "keys": [
             {

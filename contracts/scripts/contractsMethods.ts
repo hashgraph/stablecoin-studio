@@ -4,7 +4,7 @@ import {HederaERC20__factory,
     HederaERC20Proxy__factory,
     HederaERC20ProxyAdmin__factory} from '../typechain-types'
 
-import { contractCall} from "./utils";
+import { contractCall, toEvmAddress} from "./utils";
 import { Gas1, Gas2, Gas3, Gas4, Gas5, Gas6} from "./constants";
 
 
@@ -28,18 +28,18 @@ export async function transferHBAR(senderAccountId: string, receiver: string, am
 }
 
 // AccessControlUpgradeable ///////////////////////////////////////////////////
-export async function grantRole(ROLE: string, ContractId: any, proxyAddress: string, clientGrantingRole: any, accountToGrantRoleTo: string){
-    let params: any[] = [ROLE, AccountId.fromString(accountToGrantRoleTo!).toSolidityAddress()];  
+export async function grantRole(ROLE: string, ContractId: any, proxyAddress: string, clientGrantingRole: any, accountToGrantRoleTo: string, isE25519: boolean){
+    let params: any[] = [ROLE, await toEvmAddress(accountToGrantRoleTo!, isE25519)];  
     await contractCall(ContractId.fromString(proxyAddress!), 'grantRole', params, clientGrantingRole, Gas1, HederaERC20__factory.abi);
 }
 
-export async function revokeRole(ROLE: string, ContractId: any, proxyAddress: string, clientRevokingRole: any, accountToRevokeRoleFrom: string){
-    let params: any[] = [ROLE, AccountId.fromString(accountToRevokeRoleFrom!).toSolidityAddress()];  
+export async function revokeRole(ROLE: string, ContractId: any, proxyAddress: string, clientRevokingRole: any, accountToRevokeRoleFrom: string, isE25519: boolean){
+    let params: any[] = [ROLE, await toEvmAddress(accountToRevokeRoleFrom!, isE25519)];  
     await contractCall(ContractId.fromString(proxyAddress!), 'revokeRole', params, clientRevokingRole, Gas1, HederaERC20__factory.abi);  
 }
 
-export async function hasRole(ROLE: string, ContractId: any, proxyAddress: string, clientCheckingRole: any, accountToCheckRoleFrom: string): Promise<boolean>{
-    let params: any[] = [ROLE, AccountId.fromString(accountToCheckRoleFrom!).toSolidityAddress()];  
+export async function hasRole(ROLE: string, ContractId: any, proxyAddress: string, clientCheckingRole: any, accountToCheckRoleFrom: string, isE25519: boolean): Promise<boolean>{
+    let params: any[] = [ROLE, await toEvmAddress(accountToCheckRoleFrom!, isE25519)];  
     let result = await contractCall(ContractId.fromString(proxyAddress!), 'hasRole', params, clientCheckingRole, Gas2, HederaERC20__factory.abi);
     return result[0]; 
 }

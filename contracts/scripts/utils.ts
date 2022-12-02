@@ -23,7 +23,7 @@ const URI_BASE = `${
 }/api/v1/`;
 
 
-export const clientId = 2;
+export const clientId = 1;
 
 export async function contractCall(
     contractId: any,
@@ -180,8 +180,11 @@ export async function deployContractSDK(
     return contractId
 }
 
-export async function toEvmAddress(accountId: string): Promise<string>{
+export async function toEvmAddress(accountId: string, isE25519: boolean): Promise<string>{
     try {
+
+        if (isE25519) return AccountId.fromString(accountId).toSolidityAddress() ;
+
         const url = URI_BASE + 'accounts/' + accountId;
         const res = await axios.get<IAccount>(
             url,
