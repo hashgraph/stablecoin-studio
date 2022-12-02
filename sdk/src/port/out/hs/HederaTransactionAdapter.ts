@@ -17,7 +17,6 @@ import { HTSTransactionBuilder } from './HTSTransactionBuilder.js';
 export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	private web3 = new Web3();
 
-
 	public async wipe(
 		coin: StableCoinCapabilities,
 		targetId: string,
@@ -50,7 +49,10 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 						coin.coin.tokenId?.value!,
 						amount.toLong(),
 					);
-					return this.signAndSendTransaction(t, TransactionType.RECEIPT);					
+					return this.signAndSendTransaction(
+						t,
+						TransactionType.RECEIPT,
+					);
 
 				default:
 					const tokenId = coin.coin.tokenId

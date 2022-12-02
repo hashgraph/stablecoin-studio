@@ -23,5 +23,5 @@ export const isConstructible = (value: any): value is Constructible => {
 	}
 };
 
-export type CallableContract<T extends BaseContract> = T['functions'];
-
+export type CallableContract<T extends BaseContract = BaseContract> =
+	T['functions'];
