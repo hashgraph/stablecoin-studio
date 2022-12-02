@@ -43,8 +43,8 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
     );
 
     // token to operate through contract
-    const tokenId2 = '0.0.48971712';
-    const proxyContractId2 = '0.0.48971708';
+    const tokenId2 = '0.0.49013686';
+    const proxyContractId2 = '0.0.49013685';
     const stableCoin2 = new StableCoin({
         name: 'HEDERACOIN',
         symbol: 'HDC',
@@ -74,11 +74,7 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
         client.setOperator(clientAccountId, clientPrivateKey);
         th = new HTSTransactionAdapter(client);
     });
-
-    it('Test cashIn', async () => {
-        tr = await th.cashin(stableCoinCapabilities, accountId, BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals));
-    });
-
+    
     it('Test burn', async () => {
         tr = await th.burn(stableCoinCapabilities, BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals));
     });
