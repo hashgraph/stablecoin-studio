@@ -13,6 +13,7 @@ import Account from '../../../../src/domain/context/account/Account.js';
 import BigDecimal from '../../../../src/domain/context/shared/BigDecimal.js';
 import RPCTransactionAdapter from '../../../../src/port/out/rpc/RPCTransactionAdapter.js';
 import { Wallet } from 'ethers';
+import { StableCoinRole } from '../../../../src/domain/context/stablecoin/StableCoinRole.js';
 
 describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	const clientAccountId = '0.0.48471385';
@@ -96,7 +97,10 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 		tr = await th.cashin(
 			stableCoinCapabilitiesSC,
 			evmAddress,
-			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
+			BigDecimal.fromString(
+				'0.5',
+				stableCoinCapabilitiesSC.coin.decimals,
+			),
 		);
 	}, 1500000);
 
@@ -148,6 +152,105 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 
 	it('Test delete', async () => {
 		tr = await th.delete(stableCoinCapabilitiesSC);
+	}, 1500000);
+
+	it('Test grantRole', async () => {
+		tr = await th.grantRole(
+			stableCoinCapabilitiesSC,
+			evmAddress,
+			StableCoinRole.WIPE_ROLE,
+		);
+	}, 1500000);
+
+	it('Test revokeRole', async () => {
+		tr = await th.revokeRole(
+			stableCoinCapabilitiesSC,
+			evmAddress,
+			StableCoinRole.WIPE_ROLE,
+		);
+	}, 1500000);
+
+	it('Test grantSupplierRole', async () => {
+		tr = await th.grantSupplierRole(
+			stableCoinCapabilitiesSC,
+			evmAddress,
+			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
+		);
+	}, 1500000);
+
+	it('Test grantUnlimitedSupplierRole', async () => {
+		tr = await th.grantUnlimitedSupplierRole(
+			stableCoinCapabilitiesSC,
+			evmAddress,
+		);
+	}, 1500000);
+
+	it('Test revokeSupplierRole', async () => {
+		tr = await th.revokeSupplierRole(stableCoinCapabilitiesSC, evmAddress);
+	}, 1500000);
+
+	it('Test hasRole', async () => {
+		tr = await th.hasRole(
+			stableCoinCapabilitiesSC,
+			evmAddress,
+			StableCoinRole.CASHIN_ROLE,
+		);
+		expect(typeof tr.response === 'boolean').toBeTruthy();
+		console.log(tr);
+	}, 1500000);
+
+	it('Test getBalanceOf', async () => {
+		tr = await th.getBalanceOf(stableCoinCapabilitiesSC, evmAddress);
+		console.log(tr.response.toString());
+	}, 1500000);
+
+	it('Test isUnlimitedSupplierAllowance', async () => {
+		tr = await th.isUnlimitedSupplierAllowance(
+			stableCoinCapabilitiesSC,
+			evmAddress,
+		);
+		console.log(tr);
+	}, 1500000);
+
+	it('Test supplierAllowance', async () => {
+		tr = await th.supplierAllowance(stableCoinCapabilitiesSC, evmAddress);
+		console.log(tr.response.toString());
+	}, 1500000);
+
+	it('Test resetSupplierAllowance', async () => {
+		tr = await th.resetSupplierAllowance(
+			stableCoinCapabilitiesSC,
+			evmAddress,
+		);
+	}, 1500000);
+
+	it('Test increaseSupplierAllowance', async () => {
+		tr = await th.increaseSupplierAllowance(
+			stableCoinCapabilitiesSC,
+			evmAddress,
+			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
+		);
+	}, 1500000);
+
+	it('Test decreaseSupplierAllowance', async () => {
+		tr = await th.decreaseSupplierAllowance(
+			stableCoinCapabilitiesSC,
+			evmAddress,
+			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
+		);
+	}, 1500000);
+
+	it('Test getRoles', async () => {
+		tr = await th.getRoles(stableCoinCapabilitiesSC, evmAddress);
+	}, 1500000);
+
+	//  TODO To test
+	it('Test associateToken', async () => {
+		tr = await th.associateToken(
+			stableCoinCapabilitiesSC,
+			'0x367710d1076ed07d52162d3f45012a89f8bc3335',
+		);
+		console.log(tr);
 	}, 1500000);
 
 	afterEach(async () => {
