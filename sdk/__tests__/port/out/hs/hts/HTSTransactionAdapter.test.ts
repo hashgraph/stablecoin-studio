@@ -1,7 +1,7 @@
 /* eslint-disable jest/valid-expect */
 /* eslint-disable jest/expect-expect */
 /* eslint-disable jest/no-standalone-expect */
-import { Client, TokenId } from "@hashgraph/sdk";
+import { Client } from "@hashgraph/sdk";
 import { HTSTransactionAdapter } from "../../../../../src/port/out/hs/hts/HTSTransactionAdapter.js";
 import TransactionResponse from '../../../../../src/domain/context/transaction/TransactionResponse.js';
 import { AccountId as HAccountId } from '@hashgraph/sdk';
@@ -196,7 +196,6 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 		tr = await th.revokeRole(stableCoinCapabilities2, '0x53300d27a2268d3ff3ecb0ec8e628321ecfba1a08aed8b817e8acf589a52d25c', accountEvmAddress);
 		tr = await th.grantUnlimitedSupplierRole(stableCoinCapabilities2, accountEvmAddress);
     });
-
 
     afterEach(async () => {
         expect(tr).not.toBeNull();
