@@ -13,9 +13,32 @@ import { HederaERC20__factory } from 'hedera-stable-coin-contracts/typechain-typ
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import { TransactionType } from '../TransactionResponseEnums.js';
 import { HTSTransactionBuilder } from './HTSTransactionBuilder.js';
+import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
 
 export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	private web3 = new Web3();
+
+	public async associateToken(
+		coin: StableCoinCapabilities,
+		targetId: string,
+	): Promise<TransactionResponse<any, Error>> {
+		const params = new Params({
+			targetId: targetId
+		});
+
+		return this.performSmartContractOperation(coin, 'associateToken', 1300000, params);
+	}
+
+	public async dissociateToken(
+		coin: StableCoinCapabilities,
+		targetId: string,
+	): Promise<TransactionResponse<any, Error>> {
+		const params = new Params({
+			targetId: targetId
+		});
+
+		return this.performSmartContractOperation(coin, 'dissociateToken', 1300000, params);
+	}
 
 	public async cashin(
 		coin: StableCoinCapabilities,
@@ -51,6 +74,20 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		return this.performOperation(coin, Operation.BURN, 'burn', 400000, params);		
 	}
 
+	public async balanceOf(
+		coin: StableCoinCapabilities,
+		targetId: string,
+	): Promise<TransactionResponse> {
+		const params = new Params({
+			targetId: targetId
+		});
+
+		let transactionResponse = await this.performSmartContractOperation(coin, 
+			'balanceOf', 40000, params, TransactionType.RECORD);
+		transactionResponse.response = BigDecimal.fromStringFixed(transactionResponse.response[0].toString(), coin.coin.decimals).toString();
+		return transactionResponse;
+	}
+
 	public async freeze(
 		coin: StableCoinCapabilities,
 		targetId: string,
@@ -84,17 +121,22 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	}
 
 	public async transfer(
-		stableCoinCapabilities: StableCoinCapabilities,
+		coin: StableCoinCapabilities,
 		amount: BigDecimal,
-		inAccountId: string,
-		outAccountId: string,
+		sourceId: string,
+		targetId: string,
+		isApproval = false
 	): Promise<TransactionResponse> {
-		const t: Transaction = HTSTransactionBuilder.buildTransferTransaction(
-			stableCoinCapabilities.coin.tokenId?.value!,
+		const t: Transaction = isApproval ? HTSTransactionBuilder.buildApprovedTransferTransaction(
+			coin.coin.tokenId?.value!,
 			amount.toLong(),
-			inAccountId,
-			outAccountId,
-		);
+			sourceId,
+			targetId,
+		) : HTSTransactionBuilder.buildTransferTransaction(
+			coin.coin.tokenId?.value!,
+			amount.toLong(),
+			sourceId,
+			targetId);
 		return this.signAndSendTransaction(t, TransactionType.RECEIPT);
 	}
 
@@ -116,8 +158,8 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 
 	public async grantRole(
 		coin: StableCoinCapabilities,
-		role: string,
-		targetId: string
+		targetId: string,
+		role: StableCoinRole
 	): Promise<TransactionResponse> {
 		const params = new Params({
 			role: role,
@@ -150,8 +192,8 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 
 	public async revokeRole(
 		coin: StableCoinCapabilities,
-		role: string,
-		targetId: string
+		targetId: string,
+		role: StableCoinRole
 	): Promise<TransactionResponse> {
 		const params = new Params({
 			role: role,
@@ -160,16 +202,28 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		return this.performOperation(coin, Operation.ROLE_MANAGEMENT, 'revokeRole', 400000, params);
 	}
 
+	public async revokeSupplierRole(
+		coin: StableCoinCapabilities,
+		targetId: string
+	): Promise<TransactionResponse> {
+		const params = new Params({
+			targetId: targetId
+		});
+		return this.performOperation(coin, Operation.ROLE_MANAGEMENT, 'revokeSupplierRole', 130000, params);
+	}
+
 	public async hasRole(
 		coin: StableCoinCapabilities,
-		role: string,
-		targetId: string
+		targetId: string,
+		role: StableCoinRole
 	): Promise<TransactionResponse> {
 		const params = new Params({
 			role: role,
 			targetId: targetId
 		});
-		return this.performOperation(coin, Operation.ROLE_MANAGEMENT, 'hasRole', 400000, params, TransactionType.RECORD);
+		let transactionResponse = await this.performOperation(coin, Operation.ROLE_MANAGEMENT, 'hasRole', 400000, params, TransactionType.RECORD);
+		transactionResponse.response = transactionResponse.response[0];
+		return transactionResponse;
 	}
 
 	public async getRoles(
@@ -179,7 +233,9 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		const params = new Params({
 			targetId: targetId
 		});
-		return this.performOperation(coin, Operation.ROLE_MANAGEMENT, 'getRoles', 80000, params, TransactionType.RECORD);
+		let transactionResponse = await this.performOperation(coin, Operation.ROLE_MANAGEMENT, 'getRoles', 80000, params, TransactionType.RECORD);
+		transactionResponse.response = transactionResponse.response[0];
+		return transactionResponse;
 	}
 
 	public async supplierAllowance(
@@ -189,7 +245,21 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		const params = new Params({
 			targetId: targetId
 		});
-		return this.performOperation(coin, Operation.ROLE_MANAGEMENT, 'supplierAllowance', 60000, params, TransactionType.RECORD);
+		let transactionResponse = await this.performOperation(coin, Operation.ROLE_MANAGEMENT, 'supplierAllowance', 60000, params, TransactionType.RECORD);
+		transactionResponse.response = BigDecimal.fromStringFixed(transactionResponse.response[0].toString(), coin.coin.decimals).toString();
+		return transactionResponse;
+	}
+
+	public async isUnlimitedSupplierAllowance(
+		coin: StableCoinCapabilities,
+		targetId: string,
+	): Promise<TransactionResponse<boolean, Error>> {
+		const params = new Params({
+			targetId: targetId
+		});
+		let transactionResponse = await this.performOperation(coin, Operation.ROLE_MANAGEMENT, 'isUnlimitedSupplierAllowance', 60000, params, TransactionType.RECORD);
+		transactionResponse.response = transactionResponse.response[0];
+		return transactionResponse;
 	}
 
 	public async increaseSupplierAllowance(
@@ -305,9 +375,6 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			case Operation.WIPE:
 				t = HTSTransactionBuilder.buildTokenWipeTransaction(params!.targetId!, coin.coin.tokenId?.value!, params!.amount!.toLong());
 				break;
-
-			case Operation.RESCUE:
-				throw new Error(`Rescue operation does not exist through HTS`);
 	
 			case Operation.FREEZE:
 				t = HTSTransactionBuilder.buildFreezeTransaction(coin.coin.tokenId?.value!, params!.targetId!);
@@ -328,6 +395,10 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			case Operation.DELETE:
 				t = HTSTransactionBuilder.buildDeleteTransaction(coin.coin.tokenId?.value!);
 				break;
+			
+			default:
+				throw new Error(`Rescue operation does not exist through HTS`);
+					
 		}
 		return this.signAndSendTransaction(t, TransactionType.RECEIPT);			
 	}
@@ -367,7 +438,6 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		);
 		if (!functionAbi) {
 			const message = `Contract function ${functionName} not found in ABI, are you using the right version?`;
-			console.log(message);
 			throw new Error(message);
 		}
 		const encodedParametersHex = this.web3.eth.abi
