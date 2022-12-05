@@ -6,7 +6,7 @@ import Service from './Service.js';
 import { QueryBus } from '../../core/query/QueryBus.js';
 import { HederaId } from '../../domain/context/shared/HederaId.js';
 import { StableCoin } from '../../domain/context/stablecoin/StableCoin.js';
-import { GetStableCoinQuery } from '../usecase/query/stablecoin/GetStableCoinQuery.js';
+import { GetStableCoinQuery } from '../usecase/query/stablecoin/get/GetStableCoinQuery.js';
 import StableCoinCapabilities from '../../domain/context/stablecoin/StableCoinCapabilities.js';
 import {
 	Access,
