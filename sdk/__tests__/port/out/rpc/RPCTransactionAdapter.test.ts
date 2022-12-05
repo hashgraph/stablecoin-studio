@@ -123,12 +123,10 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	// });
 
 	it('Test freeze', async () => {
-		await th.unfreeze(stableCoinCapabilitiesSC, evmAddress);
 		tr = await th.freeze(stableCoinCapabilitiesSC, evmAddress);
 	}, 1500000);
 
 	it('Test unfreeze', async () => {
-		await th.freeze(stableCoinCapabilitiesSC, evmAddress);
 		tr = await th.unfreeze(stableCoinCapabilitiesSC, evmAddress);
 	}, 1500000);
 
@@ -198,7 +196,7 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	}, 1500000);
 
 	it('Test getBalanceOf', async () => {
-		tr = await th.getBalanceOf(stableCoinCapabilitiesSC, evmAddress);
+		tr = await th.balanceOf(stableCoinCapabilitiesSC, evmAddress);
 		console.log(tr.response.toString());
 	}, 1500000);
 
@@ -252,8 +250,10 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	}, 1500000);
 
 	afterEach(async () => {
-		// expect(tr).not.toBeNull();
-		// expect(tr.error).toEqual(undefined);
+		// eslint-disable-next-line jest/no-standalone-expect
+		expect(tr).not.toBeNull();
+		// eslint-disable-next-line jest/no-standalone-expect
+		expect(tr.error).toEqual(undefined);
 		// 	const response: HTSResponse =
 		// 		await HTSTransactionResponseHandler.manageResponse(
 		// 			tr,

@@ -77,7 +77,7 @@ interface RoleTransactionHandler {
 		coin: StableCoinCapabilities,
 		role: StableCoinRole,
 	): Promise<TransactionResponse>;
-	getBalanceOf(
+	balanceOf(
 		coin: StableCoinCapabilities,
 		targetId: string,
 	): Promise<TransactionResponse<BigDecimal, Error>>;
@@ -180,6 +180,7 @@ export default abstract class TransactionAdapter
 		amount: BigDecimal,
 		sourceId: string,
 		targetId: string,
+		isApproval = false
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
@@ -206,24 +207,24 @@ export default abstract class TransactionAdapter
 	}
 	grantSupplierRole(
 		coin: StableCoinCapabilities,
-		role: StableCoinRole,
-		amount: BigDecimal,
+		targetId: string,
+		amount: BigDecimal
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
 	grantUnlimitedSupplierRole(
 		coin: StableCoinCapabilities,
-		role: StableCoinRole,
+		targetId: string
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
 	revokeSupplierRole(
 		coin: StableCoinCapabilities,
-		role: StableCoinRole,
+		targetId: string,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
-	getBalanceOf(
+	balanceOf(
 		coin: StableCoinCapabilities,
 		targetId: string,
 	): Promise<TransactionResponse<BigDecimal, Error>> {

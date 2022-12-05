@@ -598,7 +598,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 			throw new Error('Error');
 		}
 	}
-	async getBalanceOf(
+	async balanceOf(
 		coin: StableCoinCapabilities,
 		targetId: string,
 	): Promise<TransactionResponse<BigDecimal, Error>> {
@@ -690,6 +690,9 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 			throw new Error('Error');
 		}
 	}
+
+
+	
 	async resetSupplierAllowance(
 		coin: StableCoinCapabilities,
 		targetId: string,
