@@ -1,18 +1,17 @@
 import axios from 'axios';
 import { AxiosInstance } from 'axios';
 import { singleton } from 'tsyringe';
-import StableCoinList from '../../in/response/StableCoinList.js';
+import StableCoinList from '../../out/mirror/response/StableCoinListViewModel.js';
+import StableCoinDetail from '../../out/mirror/response/StableCoinViewModel.js';
+import AccountInfo from '../../out/mirror/response/AccountViewModel.js';
 import { Environment } from '../../../domain/context/network/Environment.js';
 import LogService from '../../../app/service/LogService.js';
-import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import { StableCoinNotFound } from './error/StableCoinNotFound.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
-import { HederaId } from '../../../domain/context/shared/HederaId.js';
 import { ContractId as HContractId} from '@hashgraph/sdk';
 import PublicKey from '../../../domain/context/account/PublicKey.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
 import { InvalidResponse } from './error/InvalidResponse.js';
-import AccountInfo from '../../in/response/AccountInfo.js';
 
 @singleton()
 export class MirrorNodeAdapter {
@@ -51,7 +50,7 @@ export class MirrorNodeAdapter {
 		}
 	}
 
-    public async getStableCoin(tokenId: string): Promise<StableCoin> {
+    public async getStableCoin(tokenId: string): Promise<StableCoinDetail> {
 		try {
 			const url = `${this.URI_BASE}tokens/${tokenId}`;
 
@@ -88,9 +87,9 @@ export class MirrorNodeAdapter {
 			}
 
 			const decimals = parseInt(response.data.decimals ?? '0');
-            const proxyAddress = new HederaId(JSON.parse(response.data.memo!).proxyContract ?? '0.0.0');
-			return new StableCoin({
-                tokenId: new HederaId(response.data.token_id!),
+            const proxyAddress = JSON.parse(response.data.memo!).proxyContract ?? '0.0.0';
+			const stableCoinDetail: StableCoinDetail = {
+                tokenId: response.data.token_id!,
                 name: response.data.name ?? '',
 				symbol: response.data.symbol ?? '',
                 decimals: decimals,
@@ -113,12 +112,12 @@ export class MirrorNodeAdapter {
 					  )
 					: undefined,
                 proxyAddress: proxyAddress,
-	            evmProxyAddress: HContractId.fromString(proxyAddress.value).toSolidityAddress(),
-                treasury: new HederaId(response.data.treasury_account_id ?? '0.0.0'),
+	            evmProxyAddress: HContractId.fromString(proxyAddress).toSolidityAddress(),
+                treasury: response.data.treasury_account_id ?? '0.0.0',
                 paused: Boolean(response.data.paused) ?? false,
                 deleted: Boolean(response.data.deleted) ?? false,
                 freezeDefault: Boolean(response.data.freeze_default) ?? false,
-                autoRenewAccount: new HederaId(response.data.auto_renew_account),
+                autoRenewAccount: response.data.auto_renew_account,
 				autoRenewAccountPeriod:response.data.auto_renew_period / (3600 * 24),
 				adminKey: getKeyOrDefault(response.data.admin_key) as PublicKey,
 				kycKey: getKeyOrDefault(response.data.kyc_key) as PublicKey,
@@ -126,9 +125,10 @@ export class MirrorNodeAdapter {
 				wipeKey: getKeyOrDefault(response.data.wipe_key) as PublicKey,
 				supplyKey: getKeyOrDefault(response.data.supply_key) as PublicKey,
 				pauseKey: getKeyOrDefault(response.data.pause_key) as PublicKey
-			});
+			};
+            return stableCoinDetail;
 		} catch (error) {
-			return Promise.reject<StableCoin>(new InvalidResponse(error));
+			return Promise.reject<StableCoinDetail>(new InvalidResponse(error));
 		}
 	} 
 

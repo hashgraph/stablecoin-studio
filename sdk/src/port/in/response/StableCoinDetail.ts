@@ -1,9 +1,5 @@
-import ContractId from '../../../../domain/context/contract/ContractId.js';
-import { ICustomFees } from '../../../../app/service/stablecoin/model/stablecoindetail/ICustomFees.js';
-import PublicKey from '../../../../domain/context/account/PublicKey.js';
+import { AccountId, ContractId, PublicKey } from "@hashgraph/sdk";
 
-import { StableCoinMemo } from '../../../../domain/context/stablecoin/StableCoinMemo.js';
-import { AccountId } from '../sdk.js';
 
 export default interface StableCoinDetail {
 	tokenId?: string;
@@ -13,9 +9,7 @@ export default interface StableCoinDetail {
 	totalSupply?: string;
 	maxSupply?: string;
 	initialSupply?: string;
-	customFee?: ICustomFees;
 	treasuryId?: string;
-	memo?: StableCoinMemo;
 	expirationTime?: string;
 	freezeDefault?: boolean;
 	// kycStatus: string;

@@ -1,9 +1,9 @@
+import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
 import {
 	AccountBaseRequest,
 	RequestAccount
 } from './BaseRequest.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';import Validation from './validation/Validation.js';
-import { StableCoinRole } from '../sdk.js';
 
 export default class RevokeRoleRequest
 	extends ValidatedRequest<RevokeRoleRequest>

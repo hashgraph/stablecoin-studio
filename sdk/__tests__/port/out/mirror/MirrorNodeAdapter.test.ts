@@ -1,9 +1,8 @@
 import { ContractId } from "@hashgraph/sdk";
 import PublicKey from "../../../../src/domain/context/account/PublicKey.js";
-import { HederaId } from "../../../../src/domain/context/shared/HederaId.js";
-import { StableCoin } from "../../../../src/domain/context/stablecoin/StableCoin.js";
-import StableCoinList from "../../../../src/port/in/response/StableCoinList.js";
-import AccountInfo from "../../../../src/port/in/response/AccountInfo.js";
+import StableCoinList from "../../../../src/port/out/mirror/response/StableCoinListViewModel.js";
+import StableCoinDetail from "../../../../src/port/out/mirror/response/StableCoinViewModel.js";
+import AccountInfo from "../../../../src/port/out/mirror/response/AccountViewModel.js";
 import { MirrorNodeAdapter } from "../../../../src/port/out/mirror/MirrorNodeAdapter.js";
 
 describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
@@ -25,26 +24,24 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
     });
 
     it('Test get stable coin', async () => {
-        const stableCoin: StableCoin = await mn.getStableCoin(tokenId);
-        expect(stableCoin.tokenId).toEqual(new HederaId(tokenId));     
-        expect(stableCoin.name).toEqual('HEDERACOIN');     
-        expect(stableCoin.symbol).toEqual('HDC');     
-        expect(stableCoin.decimals).toEqual(6);     
-        expect(stableCoin.proxyAddress).toEqual(new HederaId(proxyId));     
-        expect(stableCoin.evmProxyAddress).toEqual(ContractId.fromString(proxyId).toSolidityAddress());     
-        expect(stableCoin.autoRenewAccount).toEqual(new HederaId(ed25519_accountId));   
-        expect(stableCoin.autoRenewAccountPeriod).toEqual(90);  
-        expect(stableCoin.treasury).toEqual(new HederaId(ed25519_accountId));
-        expect(stableCoin.tokenType).toEqual('FUNGIBLE_COMMON');
-        expect(stableCoin.supplyType).toEqual('INFINITE');
-        expect(stableCoin.paused).toEqual(false);
-        expect(stableCoin.deleted).toEqual(false);
-        expect(stableCoin.adminKey).toEqual(ed25519_publicKey);
-        expect(stableCoin.supplyKey).toEqual(ed25519_publicKey);
-        expect(stableCoin.wipeKey).toEqual(ed25519_publicKey);
-        expect(stableCoin.freezeKey).toEqual(ed25519_publicKey);
-        expect(stableCoin.kycKey).toEqual(undefined);
-        expect(stableCoin.pauseKey).toEqual(ed25519_publicKey);
+        const stableCoinDetail: StableCoinDetail = await mn.getStableCoin(tokenId);
+        expect(stableCoinDetail.tokenId).toEqual(tokenId);     
+        expect(stableCoinDetail.name).toEqual('HEDERACOIN');     
+        expect(stableCoinDetail.symbol).toEqual('HDC');     
+        expect(stableCoinDetail.decimals).toEqual(6);     
+        expect(stableCoinDetail.proxyAddress).toEqual(proxyId);     
+        expect(stableCoinDetail.evmProxyAddress).toEqual(ContractId.fromString(proxyId).toSolidityAddress());     
+        expect(stableCoinDetail.autoRenewAccount).toEqual(ed25519_accountId);   
+        expect(stableCoinDetail.autoRenewAccountPeriod).toEqual(90);  
+        expect(stableCoinDetail.treasury).toEqual(ed25519_accountId);
+        expect(stableCoinDetail.paused).toEqual(false);
+        expect(stableCoinDetail.deleted).toEqual(false);
+        expect(stableCoinDetail.adminKey).toEqual(ed25519_publicKey);
+        expect(stableCoinDetail.supplyKey).toEqual(ed25519_publicKey);
+        expect(stableCoinDetail.wipeKey).toEqual(ed25519_publicKey);
+        expect(stableCoinDetail.freezeKey).toEqual(ed25519_publicKey);
+        expect(stableCoinDetail.kycKey).toEqual(undefined);
+        expect(stableCoinDetail.pauseKey).toEqual(ed25519_publicKey);
     });
 
     it('Test get ed25519 account info', async () => {

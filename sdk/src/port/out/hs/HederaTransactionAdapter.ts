@@ -82,7 +82,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			targetId: targetId
 		});
 
-		let transactionResponse = await this.performSmartContractOperation(coin, 
+		const transactionResponse = await this.performSmartContractOperation(coin, 
 			'balanceOf', 40000, params, TransactionType.RECORD);
 		transactionResponse.response = BigDecimal.fromStringFixed(transactionResponse.response[0].toString(), coin.coin.decimals).toString();
 		return transactionResponse;
@@ -221,7 +221,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			role: role,
 			targetId: targetId
 		});
-		let transactionResponse = await this.performOperation(coin, Operation.ROLE_MANAGEMENT, 'hasRole', 400000, params, TransactionType.RECORD);
+		const transactionResponse = await this.performOperation(coin, Operation.ROLE_MANAGEMENT, 'hasRole', 400000, params, TransactionType.RECORD);
 		transactionResponse.response = transactionResponse.response[0];
 		return transactionResponse;
 	}
@@ -233,7 +233,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		const params = new Params({
 			targetId: targetId
 		});
-		let transactionResponse = await this.performOperation(coin, Operation.ROLE_MANAGEMENT, 'getRoles', 80000, params, TransactionType.RECORD);
+		const transactionResponse = await this.performOperation(coin, Operation.ROLE_MANAGEMENT, 'getRoles', 80000, params, TransactionType.RECORD);
 		transactionResponse.response = transactionResponse.response[0];
 		return transactionResponse;
 	}
@@ -245,7 +245,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		const params = new Params({
 			targetId: targetId
 		});
-		let transactionResponse = await this.performOperation(coin, Operation.ROLE_MANAGEMENT, 'supplierAllowance', 60000, params, TransactionType.RECORD);
+		const transactionResponse = await this.performOperation(coin, Operation.ROLE_MANAGEMENT, 'supplierAllowance', 60000, params, TransactionType.RECORD);
 		transactionResponse.response = BigDecimal.fromStringFixed(transactionResponse.response[0].toString(), coin.coin.decimals).toString();
 		return transactionResponse;
 	}
@@ -257,7 +257,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		const params = new Params({
 			targetId: targetId
 		});
-		let transactionResponse = await this.performOperation(coin, Operation.ROLE_MANAGEMENT, 'isUnlimitedSupplierAllowance', 60000, params, TransactionType.RECORD);
+		const transactionResponse = await this.performOperation(coin, Operation.ROLE_MANAGEMENT, 'isUnlimitedSupplierAllowance', 60000, params, TransactionType.RECORD);
 		transactionResponse.response = transactionResponse.response[0];
 		return transactionResponse;
 	}
