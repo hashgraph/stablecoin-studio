@@ -1,9 +1,10 @@
 import axios from 'axios';
 import { AxiosInstance } from 'axios';
 import { singleton } from 'tsyringe';
-import StableCoinList from '../../out/mirror/response/StableCoinListViewModel.js';
-import StableCoinDetail from '../../out/mirror/response/StableCoinViewModel.js';
-import AccountInfo from '../../out/mirror/response/AccountViewModel.js';
+import { IQueryAdapter } from '../QueryAdapter';
+import StableCoinViewModel from '../../out/mirror/response/StableCoinViewModel.js';
+import AccountViewModel from '../../out/mirror/response/AccountViewModel.js';
+import StableCoinListViewModel from '../../out/mirror/response/StableCoinListViewModel.js';
 import { Environment } from '../../../domain/context/network/Environment.js';
 import LogService from '../../../app/service/LogService.js';
 import { StableCoinNotFound } from './error/StableCoinNotFound.js';
@@ -14,7 +15,7 @@ import ContractId from '../../../domain/context/contract/ContractId.js';
 import { InvalidResponse } from './error/InvalidResponse.js';
 
 @singleton()
-export class MirrorNodeAdapter {
+export class MirrorNodeAdapter implements IQueryAdapter {
 
     private instance: AxiosInstance;
     private URI_BASE: string;
@@ -30,13 +31,13 @@ export class MirrorNodeAdapter {
 
     public async getstableCoinsList(
 		accountId: string,
-	): Promise<StableCoinList[]> {
+	): Promise<StableCoinListViewModel[]> {
 		try {
 			const url = `${this.URI_BASE}tokens?limit=100&account.id=${accountId}`;
 
 			LogService.logTrace('Getting stable coin list from mirror node ->', url);
 			
-            const resObject: StableCoinList[] = [];
+            const resObject: StableCoinListViewModel[] = [];
 			const res = await this.instance.get<ITokenList>(url);
 			res.data.tokens.map((item: IToken) => {
 				resObject.push({
@@ -46,11 +47,11 @@ export class MirrorNodeAdapter {
 			});
 			return resObject;
 		} catch (error) {
-			return Promise.reject<StableCoinList[]>(new InvalidResponse(error));
+			return Promise.reject<StableCoinListViewModel[]>(new InvalidResponse(error));
 		}
 	}
 
-    public async getStableCoin(tokenId: string): Promise<StableCoinDetail> {
+    public async getStableCoin(tokenId: string): Promise<StableCoinViewModel> {
 		try {
 			const url = `${this.URI_BASE}tokens/${tokenId}`;
 
@@ -88,7 +89,7 @@ export class MirrorNodeAdapter {
 
 			const decimals = parseInt(response.data.decimals ?? '0');
             const proxyAddress = JSON.parse(response.data.memo!).proxyContract ?? '0.0.0';
-			const stableCoinDetail: StableCoinDetail = {
+			const stableCoinDetail: StableCoinViewModel = {
                 tokenId: response.data.token_id!,
                 name: response.data.name ?? '',
 				symbol: response.data.symbol ?? '',
@@ -128,18 +129,18 @@ export class MirrorNodeAdapter {
 			};
             return stableCoinDetail;
 		} catch (error) {
-			return Promise.reject<StableCoinDetail>(new InvalidResponse(error));
+			return Promise.reject<StableCoinViewModel>(new InvalidResponse(error));
 		}
 	} 
 
-    public async getAccountInfo(accountId: string): Promise<AccountInfo> {
+    public async getAccountInfo(accountId: string): Promise<AccountViewModel> {
 		try {
 			LogService.logTrace(this.URI_BASE + 'accounts/' + accountId);
 			const res = await axios.get<IAccount>(
 				this.URI_BASE + 'accounts/' + accountId,
 			);
 
-			const account: AccountInfo = {
+			const account: AccountViewModel = {
 				account: accountId,
 				accountEvmAddress: res.data.evm_address,
 				publicKey: new PublicKey({
@@ -151,7 +152,7 @@ export class MirrorNodeAdapter {
 
 			return account;
 		} catch (error) {
-			return Promise.reject<AccountInfo>(new InvalidResponse(error));
+			return Promise.reject<AccountViewModel>(new InvalidResponse(error));
 		}
 	}
 
