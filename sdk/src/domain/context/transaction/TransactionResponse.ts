@@ -7,7 +7,7 @@ export default class TransactionResponse<
 > {
 	constructor(
 		public readonly id?: string,
-		public  response?: T,
+		public response?: T,
 		public readonly error?: X,
 	) {}
 }

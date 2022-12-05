@@ -48,6 +48,7 @@ interface ITransactionHandler {
 	): Promise<TransactionResponse>;
 	//signAndSendTransaction(t: K): Promise<TransactionResponse>;
 }
+
 interface RoleTransactionHandler {
 	grantRole(
 		coin: StableCoinCapabilities,
@@ -224,6 +225,10 @@ export default abstract class TransactionAdapter
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
+	balanceOf(
+		coin: StableCoinCapabilities,
+		targetId: string,
+	): Promise<TransactionResponse<BigDecimal, Error>>;
 	balanceOf(
 		coin: StableCoinCapabilities,
 		targetId: string,

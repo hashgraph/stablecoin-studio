@@ -1,16 +1,8 @@
 import { HashConnectTypes, MessageTypes } from 'hashconnect';
 import { HashConnectConnectionState } from 'hashconnect/types';
-import Event from '../../../core/event.js';
+import Event from '../../../core/Event.js';
 
 export const HaspackEventNames = {
-	providerInitEvent: 'providerInitEvent',
-	providerFoundExtensionEvent: 'providerFoundExtensionEvent',
-	providerPairingEvent: 'providerPairingEvent',
-	providerConnectionStatusChangeEvent: 'providerConnectionStatusChangeEvent',
-	providerAcknowledgeMessageEvent: 'providerAcknowledgeMessageEvent',
-};
-
-export const ProviderEventNames = {
 	providerInitEvent: 'providerInitEvent',
 	providerFoundExtensionEvent: 'providerFoundExtensionEvent',
 	providerPairingEvent: 'providerPairingEvent',

@@ -1,10 +1,8 @@
-import { HashConnectTypes } from 'hashconnect/types';
-import Event from '../../../core/event.js';
-import EventEmitter from '../../../core/eventEmitter.js';
+import Event from '../../../core/Event.js';
+import EventEmitter from '../../../core/EventEmitter.js';
 import Service from '../Service.js';
 import { EventListenerNotFound } from './error/EventListenerNotFound.js';
 import { EventNotFound } from './error/EventNotFound.js';
-import { HaspackEventNames } from './ProviderEvent.js';
 
 export default class EventService extends Service {
 	
@@ -33,13 +31,6 @@ export default class EventService extends Service {
 		if (!this.events[event])
 			throw new EventListenerNotFound(event.toString());
 		this.getEventEmitter(event).on(event, listener);
-	}
-
-	public emitInit(data:  HashConnectTypes.SavedPairingData): void {
-		this.getEventEmitter(HaspackEventNames.providerInitEvent).emit(
-			HaspackEventNames.providerInitEvent,
-			data,
-		);
 	}
 
 	public emit<E extends keyof Event>(

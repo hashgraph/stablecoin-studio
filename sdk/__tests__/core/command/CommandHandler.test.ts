@@ -5,8 +5,8 @@ import { Injectable } from '../../../src/core/Injectable.js';
 
 import {
 	ConcreteCommand,
-	ConcreteCommandResponse,
-} from './__mocks__/ConcreteCommandHandler.js';
+	ConcreteCommandResponse../../../src/domain/context/_shared/BigDecimal.js
+} from './__mocks__/Concre../../../src/domain/context/_shared/HederaId.js
 
 const commandBus = Injectable.resolve(CommandBus);
 

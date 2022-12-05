@@ -8,12 +8,12 @@ import {
 } from '../../../../../domain/context/stablecoin/Capability.js';
 import AccountService from '../../../../service/AccountService.js';
 import StableCoinService from '../../../../service/StableCoinService.js';
-import { CashInCommand, CashInCommandResponse } from './CashInCommand.js';
+import { BurnCommand, BurnCommandResponse } from './BurnCommand.js';
 import TransactionService from '../../../../service/TransactionService.js';
 import { lazyInject } from '../../../../../core/decorator/LazyInjectDecorator.js';
 
-@CommandHandler(CashInCommand)
-export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
+@CommandHandler(BurnCommand)
+export class BurnCommandHandler implements ICommandHandler<BurnCommand> {
 	constructor(
 		@lazyInject(StableCoinService)
 		public readonly stableCoinService: StableCoinService,
@@ -23,11 +23,13 @@ export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
 		public readonly transactionService: TransactionService,
 	) {}
 
-	async execute(command: CashInCommand): Promise<CashInCommandResponse> {
+	async execute(command: BurnCommand): Promise<BurnCommandResponse> {
 		const { amount, targetId, tokenId } = command;
 		const handler = this.transactionService.getHandler();
 		const coin = await this.stableCoinService.get(tokenId);
 		const account = this.accountService.getCurrentAccount();
+		const capabilities = await this.stableCoinService.getCapabilities(account, coin);
+		const balance = handler.balanceOf(capabilities, targetId.value)
 		const res = await handler.cashin(
 			{
 				account: account,

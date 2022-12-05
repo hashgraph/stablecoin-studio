@@ -8,12 +8,12 @@ import {
 } from '../../../../../domain/context/stablecoin/Capability.js';
 import AccountService from '../../../../service/AccountService.js';
 import StableCoinService from '../../../../service/StableCoinService.js';
-import { CashInCommand, CashInCommandResponse } from './CashInCommand.js';
+import { PauseCommand, PauseCommandResponse } from './PauseCommand.js';
 import TransactionService from '../../../../service/TransactionService.js';
 import { lazyInject } from '../../../../../core/decorator/LazyInjectDecorator.js';
 
-@CommandHandler(CashInCommand)
-export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
+@CommandHandler(PauseCommand)
+export class PauseCommandHandler implements ICommandHandler<PauseCommand> {
 	constructor(
 		@lazyInject(StableCoinService)
 		public readonly stableCoinService: StableCoinService,
@@ -23,7 +23,7 @@ export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
 		public readonly transactionService: TransactionService,
 	) {}
 
-	async execute(command: CashInCommand): Promise<CashInCommandResponse> {
+	async execute(command: PauseCommand): Promise<PauseCommandResponse> {
 		const { amount, targetId, tokenId } = command;
 		const handler = this.transactionService.getHandler();
 		const coin = await this.stableCoinService.get(tokenId);

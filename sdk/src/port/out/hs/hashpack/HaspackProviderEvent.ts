@@ -1,6 +1,6 @@
 import { HashConnectTypes, MessageTypes } from 'hashconnect';
 import { HashConnectConnectionState } from 'hashconnect/types';
-import Event from '../../../../core/event.js';
+import Event from '../../../../core/Event.js';
 
 export const HaspackEventNames = {
 	providerInitEvent: 'providerInitEvent',
