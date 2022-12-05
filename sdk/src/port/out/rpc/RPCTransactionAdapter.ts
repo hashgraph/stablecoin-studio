@@ -598,6 +598,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 			throw new Error('Error');
 		}
 	}
+	
 	async balanceOf(
 		coin: StableCoinCapabilities,
 		targetId: string,
@@ -623,6 +624,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 			throw new Error('Error');
 		}
 	}
+
 	async associateToken(
 		coin: StableCoinCapabilities,
 		targetId: string,

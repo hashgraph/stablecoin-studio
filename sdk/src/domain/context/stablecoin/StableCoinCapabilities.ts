@@ -5,7 +5,7 @@ import {StableCoin} from './StableCoin.js';
 export default class StableCoinCapabilities {
 	constructor(
 		public readonly coin: StableCoin,
-		public readonly capabilities: Capability[],
+		public readonly capabilities: Capability[] = [],
 		public readonly account: Account,
 	) {}
 }

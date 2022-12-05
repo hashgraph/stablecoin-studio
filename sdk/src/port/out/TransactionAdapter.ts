@@ -6,6 +6,14 @@ import { StableCoinRole } from '../../domain/context/stablecoin/StableCoinRole.j
 interface ITransactionHandler {
 	register(): boolean;
 	stop(): Promise<boolean>;
+	associateToken(
+		coin: StableCoinCapabilities | string,
+		targetId: string,
+	): Promise<TransactionResponse>;
+	balanceOf(
+		coin: StableCoinCapabilities,
+		targetId: string,
+	): Promise<TransactionResponse<BigDecimal, Error>>;
 	wipe(
 		coin: StableCoinCapabilities,
 		targetId: string,
@@ -77,14 +85,6 @@ interface RoleTransactionHandler {
 	revokeSupplierRole(
 		coin: StableCoinCapabilities,
 		role: StableCoinRole,
-	): Promise<TransactionResponse>;
-	balanceOf(
-		coin: StableCoinCapabilities,
-		targetId: string,
-	): Promise<TransactionResponse<BigDecimal, Error>>;
-	associateToken(
-		coin: StableCoinCapabilities,
-		targetId: string,
 	): Promise<TransactionResponse>;
 	isUnlimitedSupplierAllowance(
 		coin: StableCoinCapabilities,
@@ -181,7 +181,7 @@ export default abstract class TransactionAdapter
 		amount: BigDecimal,
 		sourceId: string,
 		targetId: string,
-		isApproval = false
+		isApproval = false,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
@@ -209,13 +209,13 @@ export default abstract class TransactionAdapter
 	grantSupplierRole(
 		coin: StableCoinCapabilities,
 		targetId: string,
-		amount: BigDecimal
+		amount: BigDecimal,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
 	grantUnlimitedSupplierRole(
 		coin: StableCoinCapabilities,
-		targetId: string
+		targetId: string,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
@@ -226,7 +226,7 @@ export default abstract class TransactionAdapter
 		throw new Error('Method not implemented.');
 	}
 	balanceOf(
-		coin: StableCoinCapabilities,
+		coin: StableCoinCapabilities | string,
 		targetId: string,
 	): Promise<TransactionResponse<BigDecimal, Error>>;
 	balanceOf(

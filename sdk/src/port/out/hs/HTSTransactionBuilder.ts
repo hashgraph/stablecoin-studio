@@ -13,6 +13,7 @@ import {
 	TokenDeleteTransaction,
 	TokenFreezeTransaction,
 	TokenUnfreezeTransaction,
+	TokenAssociateTransaction,
 } from '@hashgraph/sdk';
 import { TransactionBuildingError } from './error/TransactionBuildingError.js';
 
@@ -21,22 +22,21 @@ export class HTSTransactionBuilder {
 		contractId: string,
 		functionCallParameters: Uint8Array,
 		gas: number,
-		value?: number
+		value?: number,
 	): Transaction {
 		try {
-			const transaction =  new ContractExecuteTransaction()
+			const transaction = new ContractExecuteTransaction()
 				.setContractId(contractId)
 				.setFunctionParameters(functionCallParameters)
 				.setGas(gas);
 
-			if(value) transaction.setPayableAmount(value);
+			if (value) transaction.setPayableAmount(value);
 
 			return transaction;
-			
 		} catch (error) {
 			throw new TransactionBuildingError(error);
 		}
-	} 
+	}
 
 	public static buildTokenWipeTransaction(
 		accountId: string,
@@ -183,4 +183,19 @@ export class HTSTransactionBuilder {
 			throw new TransactionBuildingError(error);
 		}
 	}
+
+	public static buildAssociateTokenTransaction(
+		tokenId: string,
+		targetId: string,
+	): Transaction {
+		try {
+			return new TokenAssociateTransaction({
+				accountId: targetId,
+				tokenIds: [tokenId],
+			});
+		} catch (error) {
+			throw new TransactionBuildingError(error);
+		}
+	}
+
 }
