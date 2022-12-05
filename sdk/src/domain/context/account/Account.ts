@@ -18,6 +18,6 @@ export default class Account {
 	public privateKey?: PrivateKey;
 	public publicKey?: PublicKey;
 	constructor(props: AccountProps) {
-		Object.assign(this, props);
+		Object.assign(this, { ...props, id: HederaId.from(props.id ?? '') });
 	}
 }

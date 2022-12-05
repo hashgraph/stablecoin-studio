@@ -1,7 +1,6 @@
 /* eslint-disable jest/valid-expect */
 /* eslint-disable jest/expect-expect */
 /* eslint-disable jest/no-standalone-expect */
-import { Client } from '@hashgraph/sdk';
 import { HTSTransactionAdapter } from '../../../../../src/port/out/hs/hts/HTSTransactionAdapter.js';
 import TransactionResponse from '../../../../../src/domain/context/transaction/TransactionResponse.js';
 import { AccountId as HAccountId } from '@hashgraph/sdk';
@@ -82,11 +81,8 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 	);
 
 	let th: HTSTransactionAdapter;
-	let client: Client;
 	let tr: TransactionResponse;
 	beforeAll(async () => {
-		client = Client.forTestnet();
-		client.setOperator(clientAccountId, clientPrivateKey);
 		th = new HTSTransactionAdapter('testnet', account);
 	});
 
