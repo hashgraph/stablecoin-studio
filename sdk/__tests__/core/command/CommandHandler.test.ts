@@ -2,11 +2,7 @@
 
 import { CommandBus } from '../../../src/core/command/CommandBus.js';
 import { Injectable } from '../../../src/core/Injectable.js';
-
-import {
-	ConcreteCommand,
-	ConcreteCommandResponse../../../src/domain/context/_shared/BigDecimal.js
-} from './__mocks__/Concre../../../src/domain/context/_shared/HederaId.js
+import { ConcreteCommand, ConcreteCommandResponse } from './__mocks__/ConcreteCommandHandler.js';
 
 const commandBus = Injectable.resolve(CommandBus);
 

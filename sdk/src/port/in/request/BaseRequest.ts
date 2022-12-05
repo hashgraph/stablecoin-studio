@@ -5,6 +5,7 @@ export interface BaseRequest {
 
 export interface RequestAccount {
 	accountId: string;
+	network: 'testnet' | 'mainnet' | 'previewnet' | 'local';
 	privateKey?: RequestPrivateKey;
 	evmAddress?: string;
 }

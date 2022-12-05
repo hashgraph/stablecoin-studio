@@ -2,9 +2,16 @@ import TransactionResponse from '../../domain/context/transaction/TransactionRes
 import StableCoinCapabilities from '../../domain/context/stablecoin/StableCoinCapabilities.js';
 import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import { StableCoinRole } from '../../domain/context/stablecoin/StableCoinRole.js';
+import Account from '../../domain/context/account/Account.js';
 
-interface ITransactionHandler {
-	register(): boolean;
+export interface TransactionAdapterInitializationData {
+	account: Account;
+	pairing?: string;
+	topic?: string;
+}
+
+interface ITransactionAdapter {
+	register(): Promise<TransactionAdapterInitializationData>;
 	stop(): Promise<boolean>;
 	associateToken(
 		coin: StableCoinCapabilities | string,
@@ -43,21 +50,16 @@ interface ITransactionHandler {
 		amount: BigDecimal,
 	): Promise<TransactionResponse>;
 	delete(coin: StableCoinCapabilities): Promise<TransactionResponse>;
-	/*contractCall(
-		contract: Contract,
-		functionName: keyof ABI,
-		param: unknown[],
-	): Promise<TransactionResponse>;*/
 	transfer(
 		coin: StableCoinCapabilities,
 		amount: BigDecimal,
 		sourceId: string,
 		targetId: string,
 	): Promise<TransactionResponse>;
-	//signAndSendTransaction(t: K): Promise<TransactionResponse>;
+	getAccount(): Account;
 }
 
-interface RoleTransactionHandler {
+interface RoleTransactionAdapter {
 	grantRole(
 		coin: StableCoinCapabilities,
 		targetId: string,
@@ -115,9 +117,12 @@ interface RoleTransactionHandler {
 }
 
 export default abstract class TransactionAdapter
-	implements ITransactionHandler, RoleTransactionHandler
+	implements ITransactionAdapter, RoleTransactionAdapter
 {
-	register(): boolean {
+	getAccount(): Account {
+		throw new Error('Method not implemented.');
+	}
+	register(): Promise<TransactionAdapterInitializationData> {
 		throw new Error('Method not implemented.');
 	}
 	stop(): Promise<boolean> {

@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import LogService from '../../../../app/service/LogService.js';
 import { isConstructible } from '../../../../core/Cast.js';
+import { Command } from '../../../../core/command/Command.js';
+import { CommandResponse } from '../../../../core/command/CommandResponse.js';
 import { Constructible, MapFunction } from '../../../../core/Type.js';
 import Account from '../../../../domain/context/account/Account.js';
 import PrivateKey from '../../../../domain/context/account/PrivateKey.js';
@@ -146,5 +148,17 @@ export default class RequestMapper {
 				(key) => key.startsWith('_') || key.startsWith('#'),
 			);
 		}
+	}
+
+	public static mapAccount(account: RequestAccount): Account {
+		return new Account({
+			id: account.accountId,
+			evmAddress: account.evmAddress,
+			privateKey: new PrivateKey({
+				key: account.privateKey?.key ?? '',
+				type: account.privateKey?.type ?? '',
+			}),
+			environment: account.network,
+		});
 	}
 }

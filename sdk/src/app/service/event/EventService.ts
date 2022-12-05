@@ -1,11 +1,12 @@
-import Event from '../../../core/Event.js';
 import EventEmitter from '../../../core/EventEmitter.js';
+import Event from '../../../core/Event.js';
 import Service from '../Service.js';
 import { EventListenerNotFound } from './error/EventListenerNotFound.js';
 import { EventNotFound } from './error/EventNotFound.js';
+import { singleton } from 'tsyringe';
 
+@singleton()
 export default class EventService extends Service {
-	
 	private events: { [key: keyof Event]: Event };
 	private emitters: { [key: keyof Event]: EventEmitter<Event> } = {};
 

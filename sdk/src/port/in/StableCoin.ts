@@ -14,8 +14,8 @@ import { HederaId } from '../../domain/context/shared/HederaId.js';
 import NetworkService from '../../app/service/NetworkService.js';
 import { QueryBus } from '../../core/query/QueryBus.js';
 import { CommandBus } from '../../core/command/CommandBus.js';
-import { CashInCommand } from '../../app/usecase/command/stablecoin/cashin/CashInCommand.js';
 import { GetCurrentAccountQuery } from '../../app/usecase/query/account/GetCurrentAccountQuery.js';
+import { CashInCommand } from '../../app/usecase/command/stablecoin/operations/cashin/CashInCommand.js';
 
 interface IStableCoinInPort {
 	create(request: CreateRequest): Promise<StableCoinDetail>;

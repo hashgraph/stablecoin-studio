@@ -14,6 +14,7 @@ import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import { TransactionType } from '../TransactionResponseEnums.js';
 import { HTSTransactionBuilder } from './HTSTransactionBuilder.js';
 import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
+import Account from '../../../domain/context/account/Account.js';
 
 export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	private web3 = new Web3();
@@ -22,21 +23,26 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		coin: StableCoinCapabilities | string,
 		targetId: string,
 	): Promise<TransactionResponse<any, Error>> {
-		if(coin instanceof StableCoinCapabilities){
+		if (coin instanceof StableCoinCapabilities) {
 			const params = new Params({
 				targetId: targetId,
 			});
-	
+
 			return this.performSmartContractOperation(
 				coin,
 				'associateToken',
 				1300000,
 				params,
 			);
-		}else{
-			return await this.signAndSendTransaction(HTSTransactionBuilder.buildAssociateTokenTransaction(coin, targetId), TransactionType.RECEIPT);
+		} else {
+			return await this.signAndSendTransaction(
+				HTSTransactionBuilder.buildAssociateTokenTransaction(
+					coin,
+					targetId,
+				),
+				TransactionType.RECEIPT,
+			);
 		}
-
 	}
 
 	public async dissociateToken(
@@ -479,7 +485,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 						? coin.coin.tokenId.value
 						: '';
 					const OperationNotAllowed = new CapabilityError(
-						this.getAccount(),
+						this.getAccount().id?.value ?? '',
 						operation,
 						tokenId,
 					);
@@ -634,7 +640,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		return Buffer.from(encodedParametersHex, 'hex');
 	}
 
-	abstract getAccount(): string;
+	abstract getAccount(): Account;
 
 	abstract signAndSendTransaction(
 		t: Transaction,
@@ -644,12 +650,20 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse>;
 }
 
-class Params{
+class Params {
 	role?: string;
 	targetId?: string;
 	amount?: BigDecimal;
 
-	constructor({ role, targetId, amount }: { role?: string, targetId?: string, amount?: BigDecimal }) {
+	constructor({
+		role,
+		targetId,
+		amount,
+	}: {
+		role?: string;
+		targetId?: string;
+		amount?: BigDecimal;
+	}) {
 		this.role = role;
 		this.targetId = targetId;
 		this.amount = amount;
@@ -659,8 +673,16 @@ class Params{
 class RoleParams extends Params {
 	role?: string;
 
-	constructor({ targetId, amount, role }: { targetId?: string, amount?: BigDecimal, role?: string }) {
-		super({targetId, amount});		
+	constructor({
+		targetId,
+		amount,
+		role,
+	}: {
+		targetId?: string;
+		amount?: BigDecimal;
+		role?: string;
+	}) {
+		super({ targetId, amount });
 		this.role = role;
 	}
 }

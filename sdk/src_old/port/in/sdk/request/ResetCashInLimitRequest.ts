@@ -25,7 +25,7 @@ export default class ResetCashInLimitRequest
 		super({
 			account: Validation.checkAccount(),
 			targetId: Validation.checkHederaIdFormat(),
-			proxyContractId: Validation.checkContractId(),
+			proxyContractId: Validation.checkHederaIdFormat(),
 		});
 		this.account = account;
 		this.proxyContractId = proxyContractId;

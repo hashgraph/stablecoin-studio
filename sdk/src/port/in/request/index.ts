@@ -6,14 +6,14 @@ import GetStableCoinDetailsRequest from './GetStableCoinDetailsRequest.js';
 import GrantRoleRequest from './GrantRoleRequest.js';
 import RevokeRoleRequest from './RevokeRoleRequest.js';
 import HasRoleRequest from './HasRoleRequest.js';
-import CheckCashInRoleRequest from './CheckCashInRoleRequest.js';
-import CheckCashInLimitRequest from './CheckCashInLimitRequest.js';
+import CheckSupplierLimitRequest from './CheckSupplierLimitRequest.js';
+import GetSupplierAllowanceRequest from './GetSupplierAllowanceRequest.js';
 import ValidationResponse from './validation/ValidationResponse.js';
 import WipeRequest from './WipeRequest.js';
 import RescueRequest from './RescueRequest.js';
-import ResetCashInLimitRequest from './ResetCashInLimitRequest.js';
-import IncreaseCashInLimitRequest from './IncreaseCashInLimitRequest.js';
-import DecreaseCashInLimitRequest from './DecreaseCashInLimitRequest.js';
+import ResetSupplierAllowanceRequest from './ResetSupplierAllowanceRequest.js';
+import IncreaseSupplierAllowanceRequest from './IncreaseSupplierAllowanceRequest.js';
+import DecreaseSupplierAllowanceRequest from './DecreaseSupplierAllowanceRequest.js';
 import GetAccountBalanceRequest from './GetAccountBalanceRequest.js';
 import AssociateTokenRequest from './AssociateTokenRequest.js';
 import GetRolesRequest from './GetRolesRequest.js';
@@ -35,11 +35,11 @@ export {
 	GrantRoleRequest,
 	RevokeRoleRequest,
 	HasRoleRequest,
-	CheckCashInRoleRequest,
-	CheckCashInLimitRequest,
-	ResetCashInLimitRequest,
-	IncreaseCashInLimitRequest,
-	DecreaseCashInLimitRequest,
+	CheckSupplierLimitRequest as CheckCashInRoleRequest,
+	GetSupplierAllowanceRequest as CheckCashInLimitRequest,
+	ResetSupplierAllowanceRequest as ResetCashInLimitRequest,
+	IncreaseSupplierAllowanceRequest as IncreaseCashInLimitRequest,
+	DecreaseSupplierAllowanceRequest as DecreaseCashInLimitRequest,
 	GetAccountBalanceRequest,
 	AssociateTokenRequest as AssociateTokenRequest,
 	GetRolesRequest,

@@ -22,7 +22,7 @@ export default class AssociateTokenRequest
 	}) {
 		super({
 			account: Validation.checkAccount(),
-			proxyContractId: Validation.checkContractId(),
+			proxyContractId: Validation.checkHederaIdFormat(),
 		});
 		this.account = account;
 		this.proxyContractId = proxyContractId;

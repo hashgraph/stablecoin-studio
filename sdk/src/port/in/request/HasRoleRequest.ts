@@ -1,10 +1,10 @@
+import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
 import {
 	AccountBaseRequest,
 	RequestAccount
 } from './BaseRequest.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
-import { StableCoinRole } from '../sdk.js';
 
 export default class HasRoleRequest
 	extends ValidatedRequest<HasRoleRequest>
@@ -32,7 +32,7 @@ export default class HasRoleRequest
 		super({
 			account: Validation.checkAccount(),
 			targetId: Validation.checkHederaIdFormat(),
-			proxyContractId: Validation.checkContractId(),
+			proxyContractId: Validation.checkHederaIdFormat(),
 			tokenId: Validation.checkHederaIdFormat(),
 			role: Validation.checkRole()	
 		});

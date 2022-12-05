@@ -1,4 +1,4 @@
-import BaseError from '../../../../../core/error/BaseError.js';
+import BaseError from '../../../../core/error/BaseError.js';
 import { BaseRequest } from '../BaseRequest.js';
 
 export type ValidatedRequestKey<T extends BaseRequest> = keyof Omit<

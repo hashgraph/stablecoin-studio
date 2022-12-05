@@ -1,9 +1,6 @@
-import ContractId from '../../../../domain/context/contract/ContractId.js';
-import { ICustomFees } from '../../../../app/service/stablecoin/model/stablecoindetail/ICustomFees.js';
-import PublicKey from '../../../../domain/context/account/PublicKey.js';
+import PublicKey from "../../../domain/context/account/PublicKey.js";
+import { HederaId } from "../../../domain/context/shared/HederaId.js";
 
-import { StableCoinMemo } from '../../../../domain/context/stablecoin/StableCoinMemo.js';
-import { AccountId } from '../sdk.js';
 
 export default interface StableCoinDetail {
 	tokenId?: string;
@@ -13,20 +10,20 @@ export default interface StableCoinDetail {
 	totalSupply?: string;
 	maxSupply?: string;
 	initialSupply?: string;
-	customFee?: ICustomFees;
+	// customFee?: ICustomFees;
 	treasuryId?: string;
-	memo?: StableCoinMemo;
+	memo?: string;
 	expirationTime?: string;
 	freezeDefault?: boolean;
 	// kycStatus: string;
-	autoRenewAccount?: AccountId;
+	autoRenewAccount?: HederaId;
 	autoRenewAccountPeriod?: number;
 	paused?: string;
 	deleted?: boolean;
-	adminKey?: ContractId | PublicKey | undefined;
-	kycKey?: ContractId | PublicKey | undefined;
-	freezeKey?: ContractId | PublicKey | undefined;
-	wipeKey?: ContractId | PublicKey | undefined;
-	supplyKey?: ContractId | PublicKey | undefined;
-	pauseKey?: ContractId | PublicKey | undefined;
+	adminKey?: HederaId | PublicKey | undefined;
+	kycKey?: HederaId | PublicKey | undefined;
+	freezeKey?: HederaId | PublicKey | undefined;
+	wipeKey?: HederaId | PublicKey | undefined;
+	supplyKey?: HederaId | PublicKey | undefined;
+	pauseKey?: HederaId | PublicKey | undefined;
 }
