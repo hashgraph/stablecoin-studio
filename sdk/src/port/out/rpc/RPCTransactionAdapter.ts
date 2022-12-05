@@ -18,18 +18,17 @@ import { CapabilityError } from '../hs/error/CapabilityError.js';
 import { CallableContract } from '../../../core/Cast.js';
 import { TokenId } from '@hashgraph/sdk';
 import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
-import detectEthereumProvider from '@metamask/detect-provider'
+import detectEthereumProvider from '@metamask/detect-provider';
 
-export interface Window {
-	ethereum: any
-  }
-  
+// eslint-disable-next-line no-var
+declare var ethereum: any;
+
 @singleton()
 export default class RPCTransactionAdapter implements TransactionAdapter {
 	provider = new ethers.providers.JsonRpcProvider(
 		'https://testnet.hashio.io/api',
 	);
-	signerOrProvider: Signer | Provider 
+	signerOrProvider: Signer | Provider;
 
 	register(): boolean {
 		return !!Injectable.registerTransactionHandler(this);
@@ -38,7 +37,6 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 		return Promise.resolve(!!Injectable.disposeTransactionHandler(this));
 	}
 
-	
 	async wipe(
 		coin: StableCoinCapabilities,
 		targetId: string,
@@ -818,25 +816,20 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 	 * TODO consider leaving this as a service and putting two implementations on top for rpc and web wallet.
 	 */
 
-	 async connectMetamask (){
-		let ethProvider = await detectEthereumProvider()
+	async connectMetamask(): Promise<void> {
+		const ethProvider = await detectEthereumProvider();
 
-	 if (ethProvider) {
-	 
-	   console.log('Ethereum successfully detected!')
-	 
-	
-	   if (ethProvider.isMetaMask){
-			const provider = new ethers.providers.Web3Provider(window.ethereum)
-			this.signerOrProvider = provider.getSigner();
-	   }else{
-			console.error('You have found!', Error)
-	   }
-	   		
-	 } else {
-	 
-	   console.error('Manage metaMask not found!', Error)
-	 }
-	 }
-	 
+		if (ethProvider) {
+			console.log('Ethereum successfully detected!');
+
+			if (ethProvider.isMetaMask) {
+				const provider = new ethers.providers.Web3Provider(ethereum);
+				this.signerOrProvider = provider.getSigner();
+			} else {
+				console.error('You have found!', Error);
+			}
+		} else {
+			console.error('Manage metaMask not found!', Error);
+		}
+	}
 }

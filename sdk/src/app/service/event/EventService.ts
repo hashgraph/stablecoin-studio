@@ -4,7 +4,7 @@ import EventEmitter from '../../../core/eventEmitter.js';
 import Service from '../Service.js';
 import { EventListenerNotFound } from './error/EventListenerNotFound.js';
 import { EventNotFound } from './error/EventNotFound.js';
-import { HaspackEventNames } from './HaspackProviderEvent.js';
+import { HaspackEventNames } from './ProviderEvent.js';
 
 export default class EventService extends Service {
 	
