@@ -76,7 +76,6 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	beforeAll(async () => {
 		th = new RPCTransactionAdapter();
 		th.signerOrProvider = new Wallet(clientPrivateKey, th.provider);
-		await th.connectMetamask();
 	});
 
 	it('Test wipe', async () => {
