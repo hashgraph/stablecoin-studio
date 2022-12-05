@@ -14,8 +14,6 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes{
 
     // Hedera HTS precompiled contract
     address constant precompileAddress = address(0x167);
-    string constant memo_1 = "{\"proxyContract\": \"";
-    string constant memo_2 = "\"}";
 
     function deployStableCoin(tokenStruct calldata requestedToken) external payable override returns (address, address, address, address){
 
@@ -40,14 +38,6 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes{
             address(StableCoinProxy)
         );
         
-        /*(int64 responseCode, address tokenAddress) = 
-            IHederaTokenService(precompileAddress).createFungibleToken{value: msg.value}
-                (token, 
-                requestedToken.tokenInitialSupply, 
-                requestedToken.tokenDecimals);
-
-        require(responseCode == HederaResponseCodes.SUCCESS, "Token Creation failed");*/
-
         // Initialize Proxy
         address tokenAddress = HederaERC20(address(StableCoinProxy)).initialize{value: msg.value}
             (
@@ -69,7 +59,7 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes{
     ) 
     internal pure returns (IHederaTokenService.HederaToken memory){
         // token Memo
-        string memory tokenMemo = string(abi.encodePacked(memo_1, Strings.toHexString(StableCoinProxyAddress), memo_2));
+        string memory tokenMemo = Strings.toHexString(StableCoinProxyAddress);
         
         // Token Expiry
         IHederaTokenService.Expiry memory tokenExpiry;
