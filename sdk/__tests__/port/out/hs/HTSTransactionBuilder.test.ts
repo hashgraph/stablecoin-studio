@@ -14,8 +14,7 @@ import { AccountId,
          TokenUnfreezeTransaction,
          ContractId } from "@hashgraph/sdk";
 import Long from "long";
-import nodeTest from "node:test";
-import { HTSTransactionBuilder } from "../../../../src/port/out/builder/HTSTransactionBuilder.js";
+import { HTSTransactionBuilder } from "../../../../src/port/out/hs/HTSTransactionBuilder.js";
 
 describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
   const contractId = '1111';
