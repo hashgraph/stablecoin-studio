@@ -4,6 +4,7 @@ export default interface AccountInfo {
     account?:string,
     accountEvmAddress?:string,
     publicKey?:PublicKey,
+    alias?:string
 }
  
   
