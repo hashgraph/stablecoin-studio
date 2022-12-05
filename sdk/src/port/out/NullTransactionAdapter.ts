@@ -114,7 +114,7 @@ export class NullTransactionAdapter implements TransactionAdapter {
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
-	getBalanceOf(
+	balanceOf(
 		coin: StableCoinCapabilities,
 		targetId: string,
 	): Promise<TransactionResponse<BigDecimal, Error>> {
