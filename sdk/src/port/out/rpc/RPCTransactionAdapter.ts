@@ -21,8 +21,9 @@ import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRol
 import detectEthereumProvider from '@metamask/detect-provider'
 
 export interface Window {
-	ethereum: string
+	ethereum: any
   }
+  
 @singleton()
 export default class RPCTransactionAdapter implements TransactionAdapter {
 	provider = new ethers.providers.JsonRpcProvider(
