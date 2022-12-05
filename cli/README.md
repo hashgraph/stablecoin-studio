@@ -19,7 +19,7 @@ You must have installed
 
 You must have installed and built
 
-1. [Contracts installation](https://github.com/hashgraph/hedera-accelerator-stablecoin/blob/main/contracts/README.md#installation)
+1. [Contract installation](https://github.com/hashgraph/hedera-accelerator-stablecoin/blob/main/contracts/README.md#installation)
 2. [SDK installation](https://github.com/hashgraph/hedera-accelerator-stablecoin/blob/main/sdk/README.md#installation)
 3. [Hashconnect installation](https://github.com/hashgraph/hedera-accelerator-stablecoin/blob/main/hashconnect/lib/README.md#installation)
 
@@ -37,18 +37,18 @@ or
 
 ## Commands
 
-The CLI has the following commands availables:
+The CLI has the following commands available:
 
 ### Wizard
 
-Wizard may be run using the following command
+Wizard may be run using the following command:
 
 ```
 npm start wizard [TASK OPTIONS]
 
 TASK OPTIONS:
-    -cp, --config      A path of config file.
-    -n, --network      Type of network that you want to use it. (mainnet | testnet | previewnet)
+    -cp, --config      The path of the config file.
+    -n, --network      Type of network that you want to use. (mainnet | testnet | previewnet)
     -lv, --log-level   Log level to use (TRACE, INFO, ERROR)
     -lp, --log-path    Log path, default is ./logs
 ```
@@ -105,11 +105,11 @@ When the CLI is started with the configuration file properly configured. The fir
 
 If there are no accounts in the file for the default network, a warning message will be displayed and a list of all the accounts in the file will be shown.
 
-When an account is selected, the main menu shown in the previous image is accessed. It will operate in the network to which the account belongs.
+When an account is selected, the main menu (shown in the previous image) is accessed. It will operate in the network to which the account belongs.
 
 #### Main Menu
 
-From the main menu users are able to use the following functions:
+From the main menu users are able to use the following actions:
 
 1. Create a new Stable Coin
 2. Manage imported tokens
@@ -117,7 +117,7 @@ From the main menu users are able to use the following functions:
 4. List Stable Coins
 5. Configuration
 
-#### Operate with stable coin
+#### Operate with Stable Coin
 
 The operations that can be performed with a stable coin are as follows:
 
