@@ -160,5 +160,22 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 			);
 		});
 	}
+	getAvailabilityExtension(): boolean {
+		return this.availableExtension;
+	}
+
+	gethashConnectConectionState(): HashConnectConnectionState {
+		return this.hashConnectConectionState;
+	}
+
+	disconectHaspack(): void {
+		if (this.initData?.topic) this.hc.disconnect(this.initData.topic);
+
+		this.pairingData = null;
+		this.eventService.emit(
+			HaspackEventNames.providerConnectionStatusChangeEvent,
+			HashConnectConnectionState.Disconnected,
+		);
+	}
 
 }

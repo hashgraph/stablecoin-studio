@@ -18,13 +18,17 @@ import { CapabilityError } from '../hs/error/CapabilityError.js';
 import { CallableContract } from '../../../core/Cast.js';
 import { TokenId } from '@hashgraph/sdk';
 import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
+import detectEthereumProvider from '@metamask/detect-provider'
 
+export interface Window {
+	ethereum: string
+  }
 @singleton()
 export default class RPCTransactionAdapter implements TransactionAdapter {
 	provider = new ethers.providers.JsonRpcProvider(
 		'https://testnet.hashio.io/api',
 	);
-	signerOrProvider: Signer | Provider;
+	signerOrProvider: Signer | Provider 
 
 	register(): boolean {
 		return !!Injectable.registerTransactionHandler(this);
@@ -32,6 +36,8 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 	stop(): Promise<boolean> {
 		return Promise.resolve(!!Injectable.disposeTransactionHandler(this));
 	}
+
+	
 	async wipe(
 		coin: StableCoinCapabilities,
 		targetId: string,
@@ -806,4 +812,30 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 		const precompiledAddress = '0000000000000000000000000000000000000167';
 		return await this.contractCall(precompiledAddress, functionName, param);
 	}
+
+	/**
+	 * TODO consider leaving this as a service and putting two implementations on top for rpc and web wallet.
+	 */
+
+	 async connectMetamask (){
+		let ethProvider = await detectEthereumProvider()
+
+	 if (ethProvider) {
+	 
+	   console.log('Ethereum successfully detected!')
+	 
+	
+	   if (ethProvider.isMetaMask){
+			const provider = new ethers.providers.Web3Provider(window.ethereum)
+			this.signerOrProvider = provider.getSigner();
+	   }else{
+			console.error('You have found!', Error)
+	   }
+	   		
+	 } else {
+	 
+	   console.error('Manage metaMask not found!', Error)
+	 }
+	 }
+	 
 }
