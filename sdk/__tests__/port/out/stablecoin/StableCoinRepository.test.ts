@@ -89,7 +89,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
     const coinId = '0.0.48586658';
     const stableCoinDetails = await repository.getStableCoin(coinId);
     const balance = await repository.getBalanceOf(
-      stableCoinDetails.memo.proxyContract.toString(),
+      stableCoinDetails.memo,
       ACCOUNTS.testnet.accountId.toString(),
       stableCoinDetails.id,
       ACCOUNTS.testnet,
@@ -101,7 +101,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
     const coinId = '0.0.48586658';
     const stableCoinDetails = await repository.getStableCoin(coinId);
     const response = await repository.cashIn(
-      stableCoinDetails.memo.proxyContract.toString(),
+      stableCoinDetails.memo,
       ACCOUNTS.testnet.accountId.toString(),
       BigDecimal.fromString('10000', stableCoinDetails.decimals),
       ACCOUNTS.testnet,
@@ -127,7 +127,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
     const coinId = '0.0.48586658';
     const stableCoinDetails = await repository.getStableCoin(coinId);
     const response = await repository.cashOut(
-      stableCoinDetails.memo.proxyContract.toString(),
+      stableCoinDetails.memo,
       BigDecimal.fromString('10000', stableCoinDetails.decimals),
       ACCOUNTS.testnet,
     );
@@ -152,7 +152,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
     const coinId = '0.0.48586658';
     const stableCoinDetails = await repository.getStableCoin(coinId);
     const response = await repository.associateToken(
-      stableCoinDetails.memo.proxyContract.toString(),
+      stableCoinDetails.memo,
       ACCOUNTS.testnet,
     );
 
@@ -164,7 +164,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
     const coinId = '0.0.48586658';
     const stableCoinDetails = await repository.getStableCoin(coinId);
     const response = await repository.wipe(
-      stableCoinDetails.memo.proxyContract.toString(),
+      stableCoinDetails.memo,
       ACCOUNTS.testnet.accountId.toString(),
       BigDecimal.fromString('10000', stableCoinDetails.decimals),
       ACCOUNTS.testnet,
@@ -191,7 +191,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
     const coinId = '0.0.48586658';
     const stableCoinDetails = await repository.getStableCoin(coinId);
     const response = await repository.grantSupplierRole(
-      stableCoinDetails.memo.proxyContract.toString(),
+      stableCoinDetails.memo,
       ACCOUNTS.testnet.accountId.toString(),
       ACCOUNTS.testnet,
       BigDecimal.fromString('10000', stableCoinDetails.decimals),
@@ -205,7 +205,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
     const coinId = '0.0.48586658';
     const stableCoinDetails = await repository.getStableCoin(coinId);
     const response = await repository.grantSupplierRole(
-      stableCoinDetails.memo.proxyContract.toString(),
+      stableCoinDetails.memo,
       ACCOUNTS.testnet.accountId.toString(),
       ACCOUNTS.testnet,
     );
@@ -218,7 +218,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
     const coinId = '0.0.48586658';
     const stableCoinDetails = await repository.getStableCoin(coinId);
     const response = await repository.isUnlimitedSupplierAllowance(
-      stableCoinDetails.memo.proxyContract.toString(),
+      stableCoinDetails.memo,
       ACCOUNTS.testnet.accountId.toString(),
       ACCOUNTS.testnet,
     );
@@ -231,7 +231,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
     const coinId = '0.0.48586658';
     const stableCoinDetails = await repository.getStableCoin(coinId);
     const response = await repository.supplierAllowance(
-      stableCoinDetails.memo.proxyContract.toString(),
+      stableCoinDetails.memo,
       ACCOUNTS.testnet.accountId.toString(),
       ACCOUNTS.testnet,
     );
@@ -244,7 +244,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
     const coinId = '0.0.48586658';
     const stableCoinDetails = await repository.getStableCoin(coinId);
     const response = await repository.revokeSupplierRole(
-      stableCoinDetails.memo.proxyContract.toString(),
+      stableCoinDetails.memo,
       ACCOUNTS.testnet.accountId.toString(),
       ACCOUNTS.testnet,
     );
@@ -257,7 +257,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
     const coinId = '0.0.48586658';
     const stableCoinDetails = await repository.getStableCoin(coinId);
     const response = await repository.resetSupplierAllowance(
-      stableCoinDetails.memo.proxyContract.toString(),
+      stableCoinDetails.memo,
       ACCOUNTS.testnet.accountId.toString(),
       ACCOUNTS.testnet,
     );
@@ -270,7 +270,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
     const coinId = '0.0.48586658';
     const stableCoinDetails = await repository.getStableCoin(coinId);
     const response = await repository.increaseSupplierAllowance(
-      stableCoinDetails.memo.proxyContract.toString(),
+      stableCoinDetails.memo,
       ACCOUNTS.testnet.accountId.toString(),
       ACCOUNTS.testnet,
       BigDecimal.fromString('10000', stableCoinDetails.decimals),
@@ -284,7 +284,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
     const coinId = '0.0.48586658';
     const stableCoinDetails = await repository.getStableCoin(coinId);
     const response = await repository.decreaseSupplierAllowance(
-      stableCoinDetails.memo.proxyContract.toString(),
+      stableCoinDetails.memo,
       ACCOUNTS.testnet.accountId.toString(),
       ACCOUNTS.testnet,
       BigDecimal.fromString('10000', stableCoinDetails.decimals),
@@ -298,7 +298,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
     const coinId = '0.0.48586658';
     const stableCoinDetails = await repository.getStableCoin(coinId);
     const response = await repository.rescue(
-      stableCoinDetails.memo.proxyContract.toString(),
+      stableCoinDetails.memo,
       BigDecimal.fromString('10000', stableCoinDetails.decimals),
       ACCOUNTS.testnet,
     );
@@ -311,7 +311,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
     const coinId = '0.0.48586658';
     const stableCoinDetails = await repository.getStableCoin(coinId);
     const response = await repository.isLimitedSupplierAllowance(
-      stableCoinDetails.memo.proxyContract.toString(),
+      stableCoinDetails.memo,
       ACCOUNTS.testnet.accountId.toString(),
       ACCOUNTS.testnet,
     );
@@ -324,7 +324,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
     const coinId = '0.0.48586658';
     const stableCoinDetails = await repository.getStableCoin(coinId);
     const response = await repository.grantRole(
-      stableCoinDetails.memo.proxyContract.toString(),
+      stableCoinDetails.memo,
       ACCOUNTS.testnet.accountId.toString(),
       StableCoinRole.BURN_ROLE,
       ACCOUNTS.testnet,
@@ -338,7 +338,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
     const coinId = '0.0.48586658';
     const stableCoinDetails = await repository.getStableCoin(coinId);
     const response = await repository.revokeRole(
-      stableCoinDetails.memo.proxyContract.toString(),
+      stableCoinDetails.memo,
       ACCOUNTS.testnet.accountId.toString(),
       StableCoinRole.BURN_ROLE,
       ACCOUNTS.testnet,
@@ -352,7 +352,7 @@ describe('🧪 [PORT] StableCoinRepository', () => {
     const coinId = '0.0.48586658';
     const stableCoinDetails = await repository.getStableCoin(coinId);
     const response = await repository.hasRole(
-      stableCoinDetails.memo.proxyContract.toString(),
+      stableCoinDetails.memo,
       ACCOUNTS.testnet.accountId.toString(),
       StableCoinRole.BURN_ROLE,
       ACCOUNTS.testnet,

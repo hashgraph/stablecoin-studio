@@ -73,7 +73,7 @@ export default class ManageExternalTokenService extends Service {
             console.log('Mirror:', response);
             symbol = response.symbol;
             getRolesRequestForAdding.proxyContractId =
-              response.memo.proxyContract;
+              response.memo;
           });
         const roles = await new RoleStableCoinsService().getRoles(
           getRolesRequestForAdding,
@@ -125,7 +125,7 @@ export default class ManageExternalTokenService extends Service {
           .then((response: IStableCoinDetail) => {
             symbol = response.symbol;
             getRolesRequestForRefreshing.proxyContractId =
-              response.memo.proxyContract;
+              response.memo;
           });
 
         const rolesToRefresh = await new RoleStableCoinsService().getRoles(

@@ -8,7 +8,6 @@ import {
 	PrivateKey,
 	AccountId,
 	ContractId,
-	StableCoinMemo,
 	PrivateKeyType,
 	Account,
 	TokenSupplyType
@@ -413,7 +412,7 @@ export default class HashPackProvider implements IProvider {
 		}
 	}
 
-	private async deployContract(
+	/*private async deployContract(
 		factory: any,
 		account: HashPackAccount,
 		params?: any,
@@ -455,9 +454,9 @@ export default class HashPackProvider implements IProvider {
 				`An error ocurred during deployment of ${factory.name} : ${error}`,
 			);
 		}
-	}
+	}*/
 
-	private async createToken(
+	/*private async createToken(
 		contractId: HContractId,
 		name: string,
 		symbol: string,
@@ -532,7 +531,7 @@ export default class HashPackProvider implements IProvider {
 			logOpts,
 		);
 		return values;
-	}
+	}*/
 
 	public getPublicKeyString(
 		privateKey?: PrivateKey | string | undefined,

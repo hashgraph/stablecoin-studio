@@ -7,9 +7,9 @@ const {
     ContractFunctionParameters
 } = require('@hashgraph/sdk')
 
-const factoryProxyAddress = "0.0.49015451"; 
-const factoryProxyAdminAddress = "0.0.49015446"; 
-const factoryAddress = "0.0.49015443";
+const factoryProxyAddress = "0.0.49045465";//"0.0.49015451"; 
+const factoryProxyAdminAddress = "0.0.49045463";//"0.0.49015446"; 
+const factoryAddress = "0.0.49045460";//"0.0.49015443";
 
 const address_0 = "0x0000000000000000000000000000000000000000";
 

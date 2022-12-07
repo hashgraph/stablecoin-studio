@@ -60,7 +60,7 @@ describe('🧪 [PORT] SDK', () => {
         stableCoinFactory: FACTORY_ID
       }),
     );
-    proxyContractId = coin?.memo?.proxyContract;
+    proxyContractId = coin?.memo;
     tokenId = coin?.tokenId;
     expect(coin).not.toBeNull();
     expect(coin?.tokenId).toBeTruthy();

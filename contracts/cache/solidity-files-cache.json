@@ -1415,8 +1415,8 @@
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-3/hedera-accelerator-stablecoin/contracts/contracts/StableCoinFactory.sol": {
-      "lastModificationDate": 1669976799252,
-      "contentHash": "1f4610bc32528536a3e7264b52e39a35",
+      "lastModificationDate": 1670398790102,
+      "contentHash": "d88f6c3dd368e6f47110a8a62daf92a7",
       "sourceName": "contracts/StableCoinFactory.sol",
       "solcConfig": {
         "version": "0.8.10",

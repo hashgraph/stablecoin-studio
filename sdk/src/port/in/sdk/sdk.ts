@@ -40,7 +40,6 @@ import PublicKey from '../../../domain/context/account/PublicKey.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
 import { TokenType } from '../../../domain/context/stablecoin/TokenType.js';
 import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.js';
-import { StableCoinMemo } from '../../../domain/context/stablecoin/StableCoinMemo.js';
 import { AppMetadata } from '../../out/hedera/hashpack/types/types.js';
 import {
 	AcknowledgeMessage,
@@ -132,7 +131,6 @@ export {
 	AuthenticationRequestMessage,
 	AuthenticationResponseMessage,
 	Capabilities,
-	StableCoinMemo,
 	BigDecimal,
 };
 
@@ -156,7 +154,7 @@ export interface SDKInitOptions {
 	onInit: (data: InitializationData) => void;
 }
 
-export const FactoryAddressTestnet = "0.0.49015451";//"0.0.48974149";
+export const FactoryAddressTestnet = "0.0.49045465";
 export const FactoryAddressPreviewnet = "0.0.11111111";
 
 export class SDK {

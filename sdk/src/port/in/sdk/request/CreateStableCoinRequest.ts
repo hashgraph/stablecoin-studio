@@ -115,7 +115,6 @@ export default class CreateStableCoinRequest
 			},
 			decimals: (val) => {
 				return StableCoin.checkInteger(val);
-				
 			},
 			initialSupply: (val) => {
 				if (val === undefined || val === '') {

@@ -48,7 +48,6 @@ import ProviderEvent, { ProviderEventNames } from '../ProviderEvent.js';
 import EventService from '../../../../app/service/event/EventService.js';
 import { Account, ContractId, TokenSupplyType } from '../../../in/sdk/sdk.js';
 import { safeCast } from '../../../../core/cast.js';
-import { StableCoinMemo } from '../../../../domain/context/stablecoin/StableCoinMemo.js';
 import { FactoryStableCoin } from '../../../../domain/context/factory/FactoryStableCoin.js';
 import { FactoryKey } from '../../../../domain/context/factory/FactoryKey.js';
 import BigDecimal from '../../../../domain/context/stablecoin/BigDecimal.js';

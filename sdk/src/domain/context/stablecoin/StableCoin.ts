@@ -6,9 +6,9 @@ import InvalidAmount from './error/InvalidAmount.js';
 import NameLength from './error/NameLength.js';
 import NameEmpty from './error/NameEmpty.js';
 import SymbolLength from './error/SymbolLength.js';
+import MemoLength from './error/MemoLength.js';
 import SymbolEmpty from './error/SymbolEmpty.js';
 import BigDecimal from './BigDecimal.js';
-import { StableCoinMemo } from './StableCoinMemo.js';
 import { TokenSupplyType } from './TokenSupply.js';
 import { TokenType } from './TokenType.js';
 import InvalidDecimalRange from './error/InvalidDecimalRange.js';
@@ -21,6 +21,9 @@ import InvalidMaxSupplySupplyType from './error/InvalidMaxSupplySupplyType.js';
 import { BigNumber } from '@hashgraph/hethers';
 import { MaxSupplyOverLimit } from './error/MaxSupplyOverLimit.js';
 import { InvalidType } from '../../../port/in/sdk/request/error/InvalidType.js';
+import {
+	ContractId as HContractId
+} from '@hashgraph/sdk';
 
 const MAX_SUPPLY = 9_223_372_036_854_775_807n;
 const TEN = 10;
@@ -122,11 +125,11 @@ export class StableCoin extends BaseEntity {
 	/**
 	 * Memo field
 	 */
-	private _memo: StableCoinMemo;
-	public get memo(): StableCoinMemo {
+	private _memo: string;
+	public get memo(): string {
 		return this._memo;
 	}
-	public set memo(value: StableCoinMemo) {
+	public set memo(value: string) {
 		this._memo = value;
 	}
 
@@ -330,9 +333,9 @@ export class StableCoin extends BaseEntity {
 		this.initialSupply = initialSupply ?? BigDecimal.ZERO;
 		this.totalSupply = totalSupply ?? BigDecimal.ZERO;
 		this.maxSupply = maxSupply ?? undefined;
-		this.memo = memo
-			? StableCoinMemo.fromJson(memo)
-			: StableCoinMemo.empty();
+		this.memo = (memo) ? 
+			HContractId.fromSolidityAddress(memo).toString()
+			: '';
 		this.freezeKey = freezeKey;
 		this.freezeDefault = freezeDefault ?? false;
 		this.kycKey = kycKey;
@@ -442,6 +445,16 @@ export class StableCoin extends BaseEntity {
 		list = [...list, ...StableCoin.checkSupplyType(maxSupply, supplyType)];
 
 		return list;
+	}
+
+	public static checkMemo(value: string): BaseError[] {
+		const maxMemoLength = ONE_HUNDRED;
+		const errorList: BaseError[] = [];
+
+		if (CheckStrings.isNotEmpty(value) && !CheckStrings.isLengthUnder(value, maxMemoLength))
+			errorList.push(new MemoLength(value, maxMemoLength));
+
+		return errorList;
 	}
 
 	private static checkSupplyType(
