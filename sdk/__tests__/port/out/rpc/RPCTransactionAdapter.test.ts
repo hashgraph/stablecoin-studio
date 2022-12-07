@@ -1,4 +1,7 @@
+/* eslint-disable jest/valid-expect */
 /* eslint-disable jest/expect-expect */
+/* eslint-disable jest/no-standalone-expect */
+
 import { Client } from '@hashgraph/sdk';
 import { StableCoin } from '../../../../src/domain/context/stablecoin/StableCoin.js';
 import TransactionResponse from '../../../../src/domain/context/transaction/TransactionResponse.js';
