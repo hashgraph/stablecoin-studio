@@ -1,7 +1,7 @@
-import { QueryHandler } from '../../../../core/decorator/QueryHandlerDecorator.js';
-import { Injectable } from '../../../../core/Injectable.js';
-import { IQueryHandler } from '../../../../core/query/QueryHandler.js';
-import { MirrorNodeAdapter } from '../../../../port/out/mirror/MirrorNodeAdapter.js';
+import { QueryHandler } from '../../../../../core/decorator/QueryHandlerDecorator.js';
+import { Injectable } from '../../../../../core/Injectable.js';
+import { IQueryHandler } from '../../../../../core/query/QueryHandler.js';
+import { MirrorNodeAdapter } from '../../../../../port/out/mirror/MirrorNodeAdapter.js';
 import {
 	GetAccountInfoQuery,
 	GetAccountInfoQueryResponse,

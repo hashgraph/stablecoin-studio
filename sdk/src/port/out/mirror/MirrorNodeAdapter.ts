@@ -8,7 +8,7 @@ import { Environment } from '../../../domain/context/network/Environment.js';
 import LogService from '../../../app/service/LogService.js';
 import { StableCoinNotFound } from './error/StableCoinNotFound.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
-import { ContractId as HContractId} from '@hashgraph/sdk';
+import { ContractId as HContractId } from '@hashgraph/sdk';
 import PublicKey from '../../../domain/context/account/PublicKey.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
 import { InvalidResponse } from './error/InvalidResponse.js';
@@ -16,11 +16,10 @@ import { HederaId } from '../../../domain/context/shared/HederaId.js';
 
 @singleton()
 export class MirrorNodeAdapter {
+	private instance: AxiosInstance;
+	private URI_BASE: string;
 
-    private instance: AxiosInstance;
-    private URI_BASE: string;
-
-    constructor(environment: Environment) {
+	constructor(environment: Environment) {
 		this.URI_BASE = `${this.getMirrorNodeURL(environment)}/api/v1/`;
 		this.instance = axios.create({
 			validateStatus: function (status: number) {
@@ -29,15 +28,20 @@ export class MirrorNodeAdapter {
 		});
 	}
 
-    public async getStableCoinsList(
+	public async getStableCoinsList(
 		accountId: HederaId,
 	): Promise<StableCoinListViewModel[]> {
 		try {
-			const url = `${this.URI_BASE}tokens?limit=100&account.id=${accountId.toString()}`;
+			const url = `${
+				this.URI_BASE
+			}tokens?limit=100&account.id=${accountId.toString()}`;
 
-			LogService.logTrace('Getting stable coin list from mirror node ->', url);
-			
-            const resObject: StableCoinListViewModel[] = [];
+			LogService.logTrace(
+				'Getting stable coin list from mirror node ->',
+				url,
+			);
+
+			const resObject: StableCoinListViewModel[] = [];
 			const res = await this.instance.get<ITokenList>(url);
 			res.data.tokens.map((item: IToken) => {
 				resObject.push({
@@ -47,23 +51,33 @@ export class MirrorNodeAdapter {
 			});
 			return resObject;
 		} catch (error) {
-			return Promise.reject<StableCoinListViewModel[]>(new InvalidResponse(error));
+			return Promise.reject<StableCoinListViewModel[]>(
+				new InvalidResponse(error),
+			);
 		}
 	}
 
-    public async getStableCoin(tokenId: HederaId): Promise<StableCoinViewModel> {
+	public async getStableCoin(
+		tokenId: HederaId,
+	): Promise<StableCoinViewModel> {
 		try {
 			const url = `${this.URI_BASE}tokens/${tokenId.toString()}`;
 
-			LogService.logTrace('Getting stable coin from mirror node -> ', url);
-			
-            const retry = 10;
+			LogService.logTrace(
+				'Getting stable coin from mirror node -> ',
+				url,
+			);
+
+			const retry = 10;
 			let i = 0;
 
 			let response;
 			do {
-				if(i > 0) await new Promise( resolve => setTimeout(resolve, 2000) );
-				response = await this.instance.get<IHederaStableCoinDetail>(url);
+				if (i > 0)
+					await new Promise((resolve) => setTimeout(resolve, 2000));
+				response = await this.instance.get<IHederaStableCoinDetail>(
+					url,
+				);
 				i++;
 			} while (response.status !== 200 && i < retry);
 
@@ -88,13 +102,14 @@ export class MirrorNodeAdapter {
 			}
 
 			const decimals = parseInt(response.data.decimals ?? '0');
-            const proxyAddress = JSON.parse(response.data.memo ?? '').proxyContract ?? '0.0.0';
+			const proxyAddress =
+				JSON.parse(response.data.memo ?? '').proxyContract ?? '0.0.0';
 			const stableCoinDetail: StableCoinViewModel = {
-                tokenId: response.data.token_id,
-                name: response.data.name ?? '',
+				tokenId: HederaId.from(response.data.token_id),
+				name: response.data.name ?? '',
 				symbol: response.data.symbol ?? '',
-                decimals: decimals,
-                initialSupply: response.data.initial_supply
+				decimals: decimals,
+				initialSupply: response.data.initial_supply
 					? BigDecimal.fromStringFixed(
 							response.data.initial_supply,
 							decimals,
@@ -112,28 +127,40 @@ export class MirrorNodeAdapter {
 							decimals,
 					  )
 					: undefined,
-                proxyAddress: proxyAddress,
-	            evmProxyAddress: HContractId.fromString(proxyAddress).toSolidityAddress(),
-                treasury: response.data.treasury_account_id ?? '0.0.0',
-                paused: Boolean(response.data.paused) ?? false,
-                deleted: Boolean(response.data.deleted) ?? false,
-                freezeDefault: Boolean(response.data.freeze_default) ?? false,
-                autoRenewAccount: response.data.auto_renew_account,
-				autoRenewAccountPeriod:response.data.auto_renew_period / (3600 * 24),
+				proxyAddress: new ContractId(proxyAddress),
+				evmProxyAddress:
+					HContractId.fromString(proxyAddress).toSolidityAddress(),
+				treasury: HederaId.from(response.data.treasury_account_id),
+				paused: Boolean(response.data.paused) ?? false,
+				deleted: Boolean(response.data.deleted) ?? false,
+				freezeDefault: Boolean(response.data.freeze_default) ?? false,
+				autoRenewAccount: HederaId.from(
+					response.data.auto_renew_account,
+				),
+				autoRenewAccountPeriod:
+					response.data.auto_renew_period / (3600 * 24),
 				adminKey: getKeyOrDefault(response.data.admin_key) as PublicKey,
 				kycKey: getKeyOrDefault(response.data.kyc_key) as PublicKey,
-				freezeKey: getKeyOrDefault(response.data.freeze_key) as PublicKey,
+				freezeKey: getKeyOrDefault(
+					response.data.freeze_key,
+				) as PublicKey,
 				wipeKey: getKeyOrDefault(response.data.wipe_key) as PublicKey,
-				supplyKey: getKeyOrDefault(response.data.supply_key) as PublicKey,
-				pauseKey: getKeyOrDefault(response.data.pause_key) as PublicKey
+				supplyKey: getKeyOrDefault(
+					response.data.supply_key,
+				) as PublicKey,
+				pauseKey: getKeyOrDefault(response.data.pause_key) as PublicKey,
 			};
-            return stableCoinDetail;
+			return stableCoinDetail;
 		} catch (error) {
-			return Promise.reject<StableCoinViewModel>(new InvalidResponse(error));
+			return Promise.reject<StableCoinViewModel>(
+				new InvalidResponse(error),
+			);
 		}
-	} 
+	}
 
-    public async getAccountInfo(accountId: HederaId): Promise<AccountViewModel> {
+	public async getAccountInfo(
+		accountId: HederaId,
+	): Promise<AccountViewModel> {
 		try {
 			LogService.logTrace(this.URI_BASE + 'accounts/' + accountId);
 			const res = await axios.get<IAccount>(
@@ -147,7 +174,7 @@ export class MirrorNodeAdapter {
 					key: res.data.key.key,
 					type: res.data.key._type,
 				}),
-                alias: res.data.alias
+				alias: res.data.alias,
 			};
 
 			return account;
@@ -156,20 +183,20 @@ export class MirrorNodeAdapter {
 		}
 	}
 
-    private getMirrorNodeURL(environment: Environment): string {
-        switch(environment) {
-            case 'mainnet':
-                return 'https://mainnet.mirrornode.hedera.com';
-            case 'previewnet':
-                return 'https://previewnet.mirrornode.hedera.com';
-            case 'testnet':
-                return 'https://testnet.mirrornode.hedera.com';
-            case 'local':
-                return 'http://127.0.0.1:5551';
-            default:
-                return 'https://mainnet.mirrornode.hedera.com';
-        }
-    }
+	private getMirrorNodeURL(environment: Environment): string {
+		switch (environment) {
+			case 'mainnet':
+				return 'https://mainnet.mirrornode.hedera.com';
+			case 'previewnet':
+				return 'https://previewnet.mirrornode.hedera.com';
+			case 'testnet':
+				return 'https://testnet.mirrornode.hedera.com';
+			case 'local':
+				return 'http://127.0.0.1:5551';
+			default:
+				return 'https://mainnet.mirrornode.hedera.com';
+		}
+	}
 }
 
 interface IToken {
@@ -221,7 +248,7 @@ interface IPublicKey {
 interface IAccount {
 	evm_address: string;
 	key: IKey;
-    alias: string;
+	alias: string;
 }
 
 interface IKey {

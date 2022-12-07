@@ -4,6 +4,8 @@ import CheckStrings from '../../../core/checks/strings/CheckStrings.js';
 import BaseError from '../../../core/error/BaseError.js';
 import { InvalidType } from '../../../port/in/request/error/InvalidType.js';
 import PublicKey from '../account/PublicKey.js';
+import BaseEntity from '../BaseEntity.js';
+import ContractId from '../contract/ContractId.js';
 import BigDecimal from '../shared/BigDecimal.js';
 import { HederaId } from '../shared/HederaId.js';
 import { InitSupplyInvalid } from './error/InitSupplyInvalid.js';
@@ -29,19 +31,19 @@ export interface StableCoinProps {
 	name: string;
 	symbol: string;
 	decimals: number;
-	adminKey?: PublicKey | HederaId;
+	adminKey?: PublicKey | ContractId;
 	initialSupply?: BigDecimal;
 	totalSupply?: BigDecimal;
 	maxSupply?: BigDecimal;
 	proxyAddress?: HederaId;
 	evmProxyAddress?: string;
-	freezeKey?: PublicKey | HederaId;
+	freezeKey?: PublicKey | ContractId;
 	freezeDefault?: boolean;
-	kycKey?: PublicKey | HederaId;
-	wipeKey?: PublicKey | HederaId;
-	pauseKey?: PublicKey | HederaId;
+	kycKey?: PublicKey | ContractId;
+	wipeKey?: PublicKey | ContractId;
+	pauseKey?: PublicKey | ContractId;
 	paused?: boolean;
-	supplyKey?: PublicKey | HederaId;
+	supplyKey?: PublicKey | ContractId;
 	treasury?: HederaId;
 	tokenType?: TokenType;
 	supplyType?: TokenSupplyType;
@@ -51,24 +53,24 @@ export interface StableCoinProps {
 	deleted?: boolean;
 }
 
-export class StableCoin implements StableCoinProps {
+export class StableCoin extends BaseEntity implements StableCoinProps {
 	public static MAX_SUPPLY: bigint = MAX_SUPPLY;
 	name: string;
 	symbol: string;
 	decimals: number;
-	adminKey?: PublicKey | HederaId;
+	adminKey?: PublicKey | ContractId;
 	initialSupply?: BigDecimal;
 	totalSupply?: BigDecimal;
 	maxSupply?: BigDecimal;
 	proxyAddress?: HederaId;
 	evmProxyAddress?: string;
-	freezeKey?: PublicKey | HederaId;
+	freezeKey?: PublicKey | ContractId;
 	freezeDefault?: boolean;
-	kycKey?: PublicKey | HederaId;
-	wipeKey?: PublicKey | HederaId;
-	pauseKey?: PublicKey | HederaId;
+	kycKey?: PublicKey | ContractId;
+	wipeKey?: PublicKey | ContractId;
+	pauseKey?: PublicKey | ContractId;
 	paused?: boolean;
-	supplyKey?: PublicKey | HederaId;
+	supplyKey?: PublicKey | ContractId;
 	treasury?: HederaId;
 	tokenType?: TokenType;
 	supplyType?: TokenSupplyType;
@@ -103,7 +105,7 @@ export class StableCoin implements StableCoinProps {
 			evmProxyAddress,
 			proxyAddress,
 		} = params;
-
+		super();
 		this.adminKey = adminKey;
 		this.name = name;
 		this.symbol = symbol;

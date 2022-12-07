@@ -4,7 +4,7 @@ import {
 	InjectionToken,
 	ValueProvider,
 	DependencyContainer,
-	delay
+	delay,
 } from 'tsyringe';
 import { CommandHandlerType } from './command/CommandBus.js';
 import { QueryHandlerType } from './query/QueryBus.js';
@@ -21,6 +21,7 @@ import { GetStableCoinQueryHandler } from '../app/usecase/query/stablecoin/get/G
 import RPCTransactionAdapter from '../port/out/rpc/RPCTransactionAdapter.js';
 import { Constructor } from './Type.js';
 import { CashInCommandHandler } from '../app/usecase/command/stablecoin/operations/cashin/CashInCommandHandler.js';
+import { MirrorNodeAdapter } from '../port/out/mirror/MirrorNodeAdapter.js';
 
 export const TOKENS = {
 	COMMAND_HANDLER: Symbol('CommandHandler'),
@@ -70,6 +71,12 @@ const defaultNetworkProps: NetworkProps = {
 };
 container.register<NetworkProps>('NetworkProps', {
 	useValue: defaultNetworkProps,
+});
+
+container.register<MirrorNodeAdapter>(MirrorNodeAdapter, {
+	useFactory: () => {
+		return new MirrorNodeAdapter('testnet');
+	},
 });
 
 @registry([...COMMAND_HANDLERS, ...QUERY_HANDLERS, ...TRANSACTION_HANDLER])

@@ -15,6 +15,9 @@ import Account from '../../domain/context/account/Account.js';
 import { StableCoin } from '../../domain/context/stablecoin/StableCoin.js';
 import PublicKey from '../../domain/context/account/PublicKey.js';
 import { GetStableCoinQuery } from '../usecase/query/stablecoin/get/GetStableCoinQuery.js';
+import { StableCoinNotFound } from '../../port/out/mirror/error/StableCoinNotFound.js';
+import StableCoinViewModel from '../../port/out/mirror/response/StableCoinViewModel.js';
+import BaseEntity from '../../domain/context/BaseEntity.js';
 
 @singleton()
 export default class StableCoinService extends Service {
@@ -30,9 +33,13 @@ export default class StableCoinService extends Service {
 	}
 
 	async get(tokenId: HederaId): Promise<StableCoin> {
-		return new StableCoin(
-			(await this.queryBus.execute(new GetStableCoinQuery(tokenId))).coin,
-		);
+		const viewModel = (
+			await this.queryBus.execute(new GetStableCoinQuery(tokenId))
+		).coin;
+		const { name, decimals, symbol } = viewModel;
+		if (!name || !decimals || !symbol)
+			throw new StableCoinNotFound(tokenId);
+		return new StableCoin({ ...viewModel, name, decimals, symbol });
 	}
 
 	async getCapabilities(
