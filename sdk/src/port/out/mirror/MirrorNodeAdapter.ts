@@ -12,6 +12,7 @@ import { ContractId as HContractId} from '@hashgraph/sdk';
 import PublicKey from '../../../domain/context/account/PublicKey.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
 import { InvalidResponse } from './error/InvalidResponse.js';
+import { HederaId } from '../../../domain/context/shared/HederaId.js';
 
 @singleton()
 export class MirrorNodeAdapter {
@@ -28,11 +29,11 @@ export class MirrorNodeAdapter {
 		});
 	}
 
-    public async getstableCoinsList(
-		accountId: string,
+    public async getStableCoinsList(
+		accountId: HederaId,
 	): Promise<StableCoinListViewModel[]> {
 		try {
-			const url = `${this.URI_BASE}tokens?limit=100&account.id=${accountId}`;
+			const url = `${this.URI_BASE}tokens?limit=100&account.id=${accountId.toString()}`;
 
 			LogService.logTrace('Getting stable coin list from mirror node ->', url);
 			
@@ -50,9 +51,9 @@ export class MirrorNodeAdapter {
 		}
 	}
 
-    public async getStableCoin(tokenId: string): Promise<StableCoinViewModel> {
+    public async getStableCoin(tokenId: HederaId): Promise<StableCoinViewModel> {
 		try {
-			const url = `${this.URI_BASE}tokens/${tokenId}`;
+			const url = `${this.URI_BASE}tokens/${tokenId.toString()}`;
 
 			LogService.logTrace('Getting stable coin from mirror node -> ', url);
 			
@@ -83,7 +84,7 @@ export class MirrorNodeAdapter {
 			};
 
 			if (response.status !== 200) {
-				throw new StableCoinNotFound(tokenId);
+				throw new StableCoinNotFound(tokenId.toString());
 			}
 
 			const decimals = parseInt(response.data.decimals ?? '0');
@@ -132,7 +133,7 @@ export class MirrorNodeAdapter {
 		}
 	} 
 
-    public async getAccountInfo(accountId: string): Promise<AccountViewModel> {
+    public async getAccountInfo(accountId: HederaId): Promise<AccountViewModel> {
 		try {
 			LogService.logTrace(this.URI_BASE + 'accounts/' + accountId);
 			const res = await axios.get<IAccount>(
@@ -140,7 +141,7 @@ export class MirrorNodeAdapter {
 			);
 
 			const account: AccountViewModel = {
-				account: accountId,
+				account: accountId.toString(),
 				accountEvmAddress: res.data.evm_address,
 				publicKey: new PublicKey({
 					key: res.data.key.key,

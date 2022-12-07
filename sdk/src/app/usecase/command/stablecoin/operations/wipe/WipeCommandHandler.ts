@@ -20,21 +20,12 @@ export class WipeCommandHandler implements ICommandHandler<WipeCommand> {
 	async execute(command: WipeCommand): Promise<WipeCommandResponse> {
 		const { amount, targetId, tokenId } = command;
 		const handler = this.transactionService.getHandler();
-		const coin = await this.stableCoinService.get(tokenId);
 		const account = this.accountService.getCurrentAccount();
 		const capabilities = await this.stableCoinService.getCapabilities(
 			account,
-			coin,
+			tokenId,
 		);
-		const res = await handler.wipe(
-			{
-				account: account,
-				capabilities: capabilities.capabilities,
-				coin: coin,
-			},
-			targetId.value,
-			amount,
-		);
+		const res = await handler.wipe(capabilities, targetId.value, amount);
 		return Promise.resolve(res.response);
 	}
 }

@@ -20,20 +20,12 @@ export class FreezeCommandHandler implements ICommandHandler<FreezeCommand> {
 	async execute(command: FreezeCommand): Promise<FreezeCommandResponse> {
 		const { targetId, tokenId } = command;
 		const handler = this.transactionService.getHandler();
-		const coin = await this.stableCoinService.get(tokenId);
 		const account = this.accountService.getCurrentAccount();
 		const capabilities = await this.stableCoinService.getCapabilities(
 			account,
-			coin,
+			tokenId,
 		);
-		const res = await handler.freeze(
-			{
-				account: account,
-				capabilities: capabilities.capabilities,
-				coin: coin,
-			},
-			targetId.value,
-		);
+		const res = await handler.freeze(capabilities, targetId.value);
 		return Promise.resolve(res.response);
 	}
 }

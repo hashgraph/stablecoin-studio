@@ -22,20 +22,12 @@ export class UnFreezeCommandHandler
 	async execute(command: UnFreezeCommand): Promise<UnFreezeCommandResponse> {
 		const { targetId, tokenId } = command;
 		const handler = this.transactionService.getHandler();
-		const coin = await this.stableCoinService.get(tokenId);
 		const account = this.accountService.getCurrentAccount();
 		const capabilities = await this.stableCoinService.getCapabilities(
 			account,
-			coin,
+			tokenId,
 		);
-		const res = await handler.unfreeze(
-			{
-				account: account,
-				capabilities: capabilities.capabilities,
-				coin: coin,
-			},
-			targetId.value,
-		);
+		const res = await handler.unfreeze(capabilities, targetId.value);
 		return Promise.resolve(res.response);
 	}
 }

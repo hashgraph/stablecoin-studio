@@ -27,18 +27,13 @@ export class ResetAllowanceCommandHandler
 	): Promise<ResetAllowanceCommandResponse> {
 		const { targetId, tokenId } = command;
 		const handler = this.transactionService.getHandler();
-		const coin = await this.stableCoinService.get(tokenId);
 		const account = this.accountService.getCurrentAccount();
 		const capabilities = await this.stableCoinService.getCapabilities(
 			account,
-			coin,
+			tokenId,
 		);
 		const res = await handler.resetSupplierAllowance(
-			{
-				account: account,
-				capabilities: capabilities.capabilities,
-				coin: coin,
-			},
+			capabilities,
 			targetId.value,
 		);
 		return Promise.resolve({ payload: res.response ?? false });

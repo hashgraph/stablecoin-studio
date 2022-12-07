@@ -8,7 +8,6 @@ import {
 } from './BalanceOfCommand.js';
 import TransactionService from '../../../../../service/TransactionService.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
-import StableCoinCapabilities from '../../../../../../domain/context/stablecoin/StableCoinCapabilities.js';
 import NetworkService from '../../../../../service/NetworkService.js';
 
 @CommandHandler(BalanceOfCommand)
@@ -31,12 +30,10 @@ export class BalanceOfCommandHandler
 	): Promise<BalanceOfCommandResponse> {
 		const { targetId, tokenId } = command;
 		const handler = this.transactionService.getHandler();
-		const coin = await this.stableCoinService.get(tokenId);
-		const env = this.networkService.environment;
-		const capabilities = new StableCoinCapabilities(
-			coin,
-			[],
-			this.accountService.getAccountById(targetId.value, env),
+		const account = this.accountService.getCurrentAccount();
+		const capabilities = await this.stableCoinService.getCapabilities(
+			account,
+			tokenId,
 		);
 		const res = await handler.balanceOf(capabilities, targetId.value);
 		// TODO Do some work here

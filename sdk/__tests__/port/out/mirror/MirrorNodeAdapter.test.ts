@@ -19,7 +19,7 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
     });
 
     it('Test get stable coins list', async () => {
-        const stableCoinList: StableCoinList[] = await mn.getstableCoinsList(ed25519_accountId);
+        const stableCoinList: StableCoinList[] = await mn.getStableCoinsList(ed25519_accountId);
         expect(stableCoinList.length).toEqual(32);      
     });
 

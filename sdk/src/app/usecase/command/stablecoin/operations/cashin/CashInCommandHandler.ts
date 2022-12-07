@@ -25,20 +25,12 @@ export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
 	async execute(command: CashInCommand): Promise<CashInCommandResponse> {
 		const { amount, targetId, tokenId } = command;
 		const handler = this.transactionService.getHandler();
-		const coin = await this.stableCoinService.get(tokenId);
 		const account = this.accountService.getCurrentAccount();
-		const res = await handler.cashin(
-			{
-				account: account,
-				capabilities: [
-					new Capability(Operation.CASH_IN, Access.CONTRACT),
-				],
-				coin: coin,
-			},
-			targetId.value,
-			amount,
+		const capabilities = await this.stableCoinService.getCapabilities(
+			account,
+			tokenId,
 		);
-		// TODO Do some work here
+		const res = await handler.cashin(capabilities, targetId.value, amount);
 		return Promise.resolve(res.response);
 	}
 }

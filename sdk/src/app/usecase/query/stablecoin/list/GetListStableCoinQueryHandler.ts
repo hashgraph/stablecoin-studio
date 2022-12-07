@@ -3,13 +3,13 @@ import { Injectable } from '../../../../../core/Injectable.js';
 import { IQueryHandler } from '../../../../../core/query/QueryHandler.js';
 import { MirrorNodeAdapter } from '../../../../../port/out/mirror/MirrorNodeAdapter.js';
 import {
-	GetStableCoinQuery,
-	GetStableCoinQueryResponse,
-} from './GetStableCoinQuery.js';
+	GetListStableCoinQuery,
+	GetListStableCoinQueryResponse,
+} from './GetListStableCoinQuery.js';
 
-@QueryHandler(GetStableCoinQuery)
-export class GetStableCoinQueryHandler
-	implements IQueryHandler<GetStableCoinQuery>
+@QueryHandler(GetListStableCoinQuery)
+export class GetListStableCoinQueryHandler
+	implements IQueryHandler<GetListStableCoinQuery>
 {
 	constructor(
 		public readonly repo: MirrorNodeAdapter = Injectable.resolve(
@@ -18,9 +18,9 @@ export class GetStableCoinQueryHandler
 	) {}
 
 	async execute(
-		query: GetStableCoinQuery,
-	): Promise<GetStableCoinQueryResponse> {
-		const coin = await this.repo.getStableCoin(query.tokenId);
-		return Promise.resolve(new GetStableCoinQueryResponse(coin));
+		query: GetListStableCoinQuery,
+	): Promise<GetListStableCoinQueryResponse> {
+		const list = await this.repo.getStableCoinsList(query.accountId);
+		return Promise.resolve(new GetListStableCoinQueryResponse(list));
 	}
 }
