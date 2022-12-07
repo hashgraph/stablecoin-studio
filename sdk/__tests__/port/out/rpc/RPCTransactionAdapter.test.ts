@@ -255,7 +255,9 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	}, 1500000);
 
 	afterEach(async () => {
+		// eslint-disable-next-line jest/no-standalone-expect
 		expect(tr).not.toBeNull();
+		// eslint-disable-next-line jest/no-standalone-expect
 		expect(tr.error).toEqual(undefined);
 		// 	const response: HTSResponse =
 		// 		await HTSTransactionResponseHandler.manageResponse(

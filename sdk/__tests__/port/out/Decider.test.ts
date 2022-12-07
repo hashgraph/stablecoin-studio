@@ -1,8 +1,9 @@
 import Account from "../../../src/domain/context/account/Account.js";
-import { Access, Capability, Operation } from "../../../src/domain/context/stablecoin/Capability.js";
+import { Capability, Operation, Access } from "../../../src/domain/context/stablecoin/Capability.js";
 import { StableCoin } from "../../../src/domain/context/stablecoin/StableCoin.js";
 import StableCoinCapabilities from "../../../src/domain/context/stablecoin/StableCoinCapabilities.js";
 import { CapabilityDecider, Decision } from "../../../src/port/out/CapabilityDecider.js";
+
 
 describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 
