@@ -4,7 +4,7 @@ import {
 	InjectionToken,
 	ValueProvider,
 	DependencyContainer,
-	delay,
+	delay
 } from 'tsyringe';
 import { CommandHandlerType } from './command/CommandBus.js';
 import { QueryHandlerType } from './query/QueryBus.js';

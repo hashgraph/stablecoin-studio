@@ -40,7 +40,7 @@ export interface StableCoinProps {
 	kycKey?: PublicKey | HederaId;
 	wipeKey?: PublicKey | HederaId;
 	pauseKey?: PublicKey | HederaId;
-	paused?: string;
+	paused?: boolean;
 	supplyKey?: PublicKey | HederaId;
 	treasury?: HederaId;
 	tokenType?: TokenType;
@@ -67,7 +67,7 @@ export class StableCoin implements StableCoinProps {
 	kycKey?: PublicKey | HederaId;
 	wipeKey?: PublicKey | HederaId;
 	pauseKey?: PublicKey | HederaId;
-	paused?: string;
+	paused?: boolean;
 	supplyKey?: PublicKey | HederaId;
 	treasury?: HederaId;
 	tokenType?: TokenType;
@@ -126,7 +126,7 @@ export class StableCoin implements StableCoinProps {
 		this.tokenId = tokenId ?? HederaId.from('0.0.0');
 		this.autoRenewAccount = autoRenewAccount ?? HederaId.from('0.0.0');
 		this.autoRenewAccountPeriod = autoRenewAccountPeriod ?? 0;
-		this.paused = paused ?? '';
+		this.paused = paused ?? false;
 		this.deleted = deleted ?? false;
 		this.evmProxyAddress = evmProxyAddress;
 		this.proxyAddress = proxyAddress;
