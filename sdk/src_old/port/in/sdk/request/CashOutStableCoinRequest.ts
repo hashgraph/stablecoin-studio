@@ -37,7 +37,7 @@ export default class CashOutStableCoinRequest
 		super({
 			account: Validation.checkAccount(),
 			amount: Validation.checkAmount(),
-			proxyContractId: Validation.checkContractId(),
+			proxyContractId: Validation.checkHederaIdFormat(),
 			tokenId: Validation.checkHederaIdFormat(),
 			publicKey: Validation.checkPublicKey(),
 		});

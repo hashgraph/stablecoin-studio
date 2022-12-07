@@ -8,7 +8,6 @@ import {
 } from 'tsyringe';
 import { CommandHandlerType } from './command/CommandBus.js';
 import { QueryHandlerType } from './query/QueryBus.js';
-import { CashInCommandHandler } from '../app/usecase/command/stablecoin/cashin/CashInCommandHandler.js';
 import { NetworkProps } from '../app/service/NetworkService.js';
 // eslint-disable-next-line jest/no-mocks-import
 import { ConcreteQueryHandler } from '../../__tests__/core/command/__mocks__/ConcreteQueryHandler.js';
@@ -18,10 +17,10 @@ import TransactionAdapter from '../port/out/TransactionAdapter.js';
 import { RuntimeError } from './error/RuntimeError.js';
 import { HTSTransactionAdapter } from '../port/out/hs/hts/HTSTransactionAdapter.js';
 import { HashpackTransactionAdapter } from '../port/out/hs/hashpack/HashpackTransactionAdapter.js';
-import { GetStableCoinQueryHandler } from '../app/usecase/query/stablecoin/GetStableCoinQueryHandler.js';
-import { NullTransactionAdapter } from '../port/out/NullTransactionAdapter.js';
+import { GetStableCoinQueryHandler } from '../app/usecase/query/stablecoin/get/GetStableCoinQueryHandler.js';
 import RPCTransactionAdapter from '../port/out/rpc/RPCTransactionAdapter.js';
 import { Constructor } from './Type.js';
+import { CashInCommandHandler } from '../app/usecase/command/stablecoin/operations/cashin/CashInCommandHandler.js';
 
 export const TOKENS = {
 	COMMAND_HANDLER: Symbol('CommandHandler'),
@@ -77,9 +76,7 @@ container.register<NetworkProps>('NetworkProps', {
 export class Injectable {
 	static readonly TOKENS = TOKENS;
 
-	private static currentTransactionHandler = Injectable.resolve(
-		NullTransactionAdapter,
-	);
+	private static currentTransactionHandler: TransactionAdapter;
 
 	static resolve<T = unknown>(cls: InjectionToken<T>): T {
 		return container.resolve(cls);
@@ -113,6 +110,8 @@ export class Injectable {
 	static registerTransactionHandler<T extends TransactionAdapter>(
 		cls: T,
 	): boolean {
+		if (this.currentTransactionHandler)
+			this.currentTransactionHandler.stop();
 		this.currentTransactionHandler = cls;
 		return true;
 	}
@@ -123,13 +122,9 @@ export class Injectable {
 		return this.registerTransactionHandler(cls);
 	}
 
-	static resolveTransactionhandler(): TransactionAdapter {
+	static resolveTransactionHandler(): TransactionAdapter {
 		try {
-			if (
-				this.currentTransactionHandler instanceof
-					NullTransactionAdapter ||
-				null
-			) {
+			if (!this.currentTransactionHandler) {
 				throw new RuntimeError('No Transaction Handler registered!');
 			} else {
 				return this.currentTransactionHandler;

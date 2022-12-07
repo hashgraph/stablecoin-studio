@@ -31,7 +31,7 @@ export default class PauseStableCoinRequest
 	}) {
 		super({
 			account: Validation.checkAccount(),
-			proxyContractId: Validation.checkContractId(),
+			proxyContractId: Validation.checkHederaIdFormat(),
 			tokenId: Validation.checkHederaIdFormat(),
 			publicKey: Validation.checkPublicKey(),
 		});

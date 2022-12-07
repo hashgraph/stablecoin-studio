@@ -9,24 +9,37 @@ import TransactionResponse from '../../../../domain/context/transaction/Transact
 import { TransactionType } from '../../TransactionResponseEnums.js';
 import { HTSTransactionResponseAdapter } from './HTSTransactionResponseAdapter.js';
 import { Injectable } from '../../../../core/Injectable.js';
+import { TransactionAdapterInitializationData } from '../../TransactionAdapter.js';
+import Account from '../../../../domain/context/account/Account.js';
+import { Environment } from '../../../../domain/context/network/Environment.js';
 
 @singleton()
 export class HTSTransactionAdapter extends HederaTransactionAdapter {
 	private _client: Client;
 
-	public get client() {
+	public get client(): Client {
 		return this._client;
 	}
 
-	constructor(client: Client) {
+	constructor(
+		public readonly network: Environment,
+		public readonly account: Account,
+	) {
 		super();
-		this._client = client;
+		this._client = Client.forName(network);
+		const id = this.account.id?.value ?? '';
+		const privateKey = account.privateKey?.toHashgraphKey() ?? '';
+		this._client.setOperator(id, privateKey);
 	}
 
-	register(): boolean {
-		return !!Injectable.registerTransactionHandler(this);
+	register(): Promise<TransactionAdapterInitializationData> {
+		Injectable.registerTransactionHandler(this);
+		return Promise.resolve({
+			account: this.getAccount(),
+		});
 	}
 	stop(): Promise<boolean> {
+		this.client.close();
 		return Promise.resolve(!!Injectable.disposeTransactionHandler(this));
 	}
 
@@ -34,7 +47,7 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 		t: Transaction,
 		transactionType: TransactionType,
 		functionName: string,
-		abi: object[]
+		abi: object[],
 	): Promise<TransactionResponse> {
 		try {
 			const tr: HTransactionResponse = await t.execute(this.client);
@@ -43,7 +56,7 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 				transactionType,
 				this.client,
 				functionName,
-				abi
+				abi,
 			);
 		} catch (error) {
 			console.log(`echo3 -> ${error}`);
@@ -51,7 +64,10 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 		}
 	}
 
-	getAccount(): string {
-		throw new Error('Method not implemented.');
+	getAccount(): Account {
+		return new Account({
+			id: this.client?.operatorAccountId?.toString(),
+			environment: this.network,
+		});
 	}
 }

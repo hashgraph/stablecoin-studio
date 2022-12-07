@@ -4,7 +4,9 @@ import {
 	HederaERC20__factory,
 	IHederaTokenService__factory,
 } from 'hedera-stable-coin-contracts/typechain-types/index.js';
-import TransactionAdapter from '../TransactionAdapter';
+import TransactionAdapter, {
+	TransactionAdapterInitializationData,
+} from '../TransactionAdapter';
 import { ContractTransaction, ethers, Signer } from 'ethers';
 import { singleton } from 'tsyringe';
 import StableCoinCapabilities from '../../../domain/context/stablecoin/StableCoinCapabilities.js';
@@ -18,6 +20,12 @@ import { CapabilityError } from '../hs/error/CapabilityError.js';
 import { CallableContract } from '../../../core/Cast.js';
 import { TokenId } from '@hashgraph/sdk';
 import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
+import detectEthereumProvider from '@metamask/detect-provider';
+import { RuntimeError } from '../../../core/error/RuntimeError.js';
+import Account from '../../../domain/context/account/Account.js';
+
+// eslint-disable-next-line no-var
+declare var ethereum: any;
 
 @singleton()
 export default class RPCTransactionAdapter implements TransactionAdapter {
@@ -26,12 +34,17 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 	);
 	signerOrProvider: Signer | Provider;
 
-	register(): boolean {
-		return !!Injectable.registerTransactionHandler(this);
+	async register(): Promise<TransactionAdapterInitializationData> {
+		this.connectMetamask();
+		Injectable.registerTransactionHandler(this);
+		const account = this.getAccount();
+		return Promise.resolve({ account });
 	}
+
 	stop(): Promise<boolean> {
 		return Promise.resolve(!!Injectable.disposeTransactionHandler(this));
 	}
+
 	async wipe(
 		coin: StableCoinCapabilities,
 		targetId: string,
@@ -64,7 +77,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 						? coin.coin.tokenId.value
 						: '';
 					const OperationNotAllowed = new CapabilityError(
-						this.getAccount(),
+						(await this.getAccount()).id?.value ?? '',
 						Operation.WIPE,
 						tokenId,
 					);
@@ -125,7 +138,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 						? coin.coin.tokenId.value
 						: '';
 					const OperationNotAllowed = new CapabilityError(
-						this.getAccount(),
+						(await this.getAccount()).id?.value ?? '',
 						Operation.CASH_IN,
 						tokenId,
 					);
@@ -173,7 +186,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 						? coin.coin.tokenId.value
 						: '';
 					const OperationNotAllowed = new CapabilityError(
-						this.getAccount(),
+						(await this.getAccount()).id?.value ?? '',
 						Operation.BURN,
 						tokenId,
 					);
@@ -220,7 +233,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 						? coin.coin.tokenId.value
 						: '';
 					const OperationNotAllowed = new CapabilityError(
-						this.getAccount(),
+						(await this.getAccount()).id?.value ?? '',
 						Operation.FREEZE,
 						tokenId,
 					);
@@ -267,7 +280,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 						? coin.coin.tokenId.value
 						: '';
 					const OperationNotAllowed = new CapabilityError(
-						this.getAccount(),
+						(await this.getAccount()).id?.value ?? '',
 						Operation.UNFREEZE,
 						tokenId,
 					);
@@ -311,7 +324,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 						? coin.coin.tokenId.value
 						: '';
 					const OperationNotAllowed = new CapabilityError(
-						this.getAccount(),
+						(await this.getAccount()).id?.value ?? '',
 						Operation.PAUSE,
 						tokenId,
 					);
@@ -355,7 +368,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 						? coin.coin.tokenId.value
 						: '';
 					const OperationNotAllowed = new CapabilityError(
-						this.getAccount(),
+						(await this.getAccount()).id?.value ?? '',
 						Operation.UNPAUSE,
 						tokenId,
 					);
@@ -401,7 +414,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 						? coin.coin.tokenId.value
 						: '';
 					const OperationNotAllowed = new CapabilityError(
-						this.getAccount(),
+						(await this.getAccount()).id?.value ?? '',
 						Operation.RESCUE,
 						tokenId,
 					);
@@ -446,7 +459,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 						? coin.coin.tokenId.value
 						: '';
 					const OperationNotAllowed = new CapabilityError(
-						this.getAccount(),
+						(await this.getAccount()).id?.value ?? '',
 						Operation.DELETE,
 						tokenId,
 					);
@@ -593,6 +606,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 			throw new Error('Error');
 		}
 	}
+
 	async balanceOf(
 		coin: StableCoinCapabilities,
 		targetId: string,
@@ -618,6 +632,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 			throw new Error('Error');
 		}
 	}
+
 	async associateToken(
 		coin: StableCoinCapabilities,
 		targetId: string,
@@ -686,8 +701,6 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 		}
 	}
 
-
-	
 	async resetSupplierAllowance(
 		coin: StableCoinCapabilities,
 		targetId: string,
@@ -799,7 +812,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 	): Promise<TransactionResponse> {
 		throw new Error('Method not implemented.');
 	}
-	getAccount(): string {
+	getAccount(): Account {
 		throw new Error('Method not implemented.');
 	}
 	async precompiledCall(
@@ -808,5 +821,31 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 	): Promise<ContractTransaction> {
 		const precompiledAddress = '0000000000000000000000000000000000000167';
 		return await this.contractCall(precompiledAddress, functionName, param);
+	}
+
+	/**
+	 * TODO consider leaving this as a service and putting two implementations on top for rpc and web wallet.
+	 */
+
+	async connectMetamask(): Promise<void> {
+		try {
+			const ethProvider = await detectEthereumProvider();
+			if (ethProvider) {
+				console.log('Ethereum successfully detected!');
+
+				if (ethProvider.isMetaMask) {
+					const provider = new ethers.providers.Web3Provider(
+						ethereum,
+					);
+					this.signerOrProvider = provider.getSigner();
+				} else {
+					console.error('You have found!', Error);
+				}
+			} else {
+				console.error('Manage metaMask not found!', Error);
+			}
+		} catch (error) {
+			throw new RuntimeError((error as Error).message);
+		}
 	}
 }

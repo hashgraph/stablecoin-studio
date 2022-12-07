@@ -5,9 +5,9 @@ import {
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import { OptionalField } from '../../../core/decorator/OptionalDecorator.js';
 import Validation from './validation/Validation.js';
-import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
 import BaseError from '../../../core/error/BaseError.js';
 import { InvalidSupplierType } from '../../../domain/context/stablecoin/error/InvalidSupplierType.js';
+import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
 
 export default class GrantRoleRequest
 	extends ValidatedRequest<GrantRoleRequest>
@@ -45,7 +45,7 @@ export default class GrantRoleRequest
 		super({
 			account: Validation.checkAccount(),
 			targetId: Validation.checkHederaIdFormat(),
-			proxyContractId: Validation.checkContractId(),
+			proxyContractId: Validation.checkHederaIdFormat(),
 			tokenId: Validation.checkHederaIdFormat(),
 			role: Validation.checkRole(),	
 			supplierType: GrantRoleRequest.checkSupplierType(),

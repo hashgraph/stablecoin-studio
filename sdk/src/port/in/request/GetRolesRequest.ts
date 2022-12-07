@@ -28,7 +28,7 @@ export default class GetRolesRequest
 		super({
 			account: Validation.checkAccount(),
 			targetId: Validation.checkHederaIdFormat(),
-			proxyContractId: Validation.checkContractId(),
+			proxyContractId: Validation.checkHederaIdFormat(),
             tokenId: Validation.checkHederaIdFormat(),
 		});
 		this.account = account;

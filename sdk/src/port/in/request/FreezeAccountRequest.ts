@@ -34,7 +34,7 @@ export default class FreezeAccountStableCoinRequest
 	}) {
 		super({
 			account: Validation.checkAccount(),
-			proxyContractId: Validation.checkContractId(),
+			proxyContractId: Validation.checkHederaIdFormat(),
 			targetId: Validation.checkHederaIdFormat(),
 			tokenId: Validation.checkHederaIdFormat(),
 			publicKey: Validation.checkPublicKey(),

@@ -33,7 +33,7 @@ export default class CheckCashInRoleRequest
 		super({
 			account: Validation.checkAccount(),
 			targetId: Validation.checkHederaIdFormat(),
-			proxyContractId: Validation.checkContractId(),
+			proxyContractId: Validation.checkHederaIdFormat(),
 			supplierType: CheckCashInRoleRequest.checkSupplierType()
 		});
 		this.account = account;

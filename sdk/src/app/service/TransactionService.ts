@@ -11,6 +11,6 @@ export default class TransactionService extends Service {
 	}
 
 	getHandler(): TransactionAdapter {
-        return Injectable.resolveTransactionhandler()
+        return Injectable.resolveTransactionHandler()
     }
 }

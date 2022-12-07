@@ -31,7 +31,7 @@ export default class RevokeRoleRequest
 		super({
 			account: Validation.checkAccount(),
 			targetId: Validation.checkHederaIdFormat(),
-			proxyContractId: Validation.checkContractId(),
+			proxyContractId: Validation.checkHederaIdFormat(),
 			tokenId: Validation.checkHederaIdFormat(),
 			role: Validation.checkRole()	
 		});
