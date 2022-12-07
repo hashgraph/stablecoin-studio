@@ -1,19 +1,18 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ICommandHandler } from '../../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
-import {
-	Capability,
-	Operation,
-	Access,
-} from '../../../../../../domain/context/stablecoin/Capability.js';
 import AccountService from '../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
-import { IsUnlimitedCommand, IsUnlimitedCommandResponse } from './IsUnlimitedCommand.js';
+import {
+	IsUnlimitedCommand,
+	IsUnlimitedCommandResponse,
+} from './IsUnlimitedCommand.js';
 
 @CommandHandler(IsUnlimitedCommand)
-export class IsUnlimitedCommandHandler implements ICommandHandler<IsUnlimitedCommand> {
+export class IsUnlimitedCommandHandler
+	implements ICommandHandler<IsUnlimitedCommand>
+{
 	constructor(
 		@lazyInject(StableCoinService)
 		public readonly stableCoinService: StableCoinService,
@@ -23,23 +22,25 @@ export class IsUnlimitedCommandHandler implements ICommandHandler<IsUnlimitedCom
 		public readonly transactionService: TransactionService,
 	) {}
 
-	async execute(command: IsUnlimitedCommand): Promise<IsUnlimitedCommandResponse> {
-		const { role, targetId, tokenId } = command;
+	async execute(
+		command: IsUnlimitedCommand,
+	): Promise<IsUnlimitedCommandResponse> {
+		const { targetId, tokenId } = command;
 		const handler = this.transactionService.getHandler();
 		const coin = await this.stableCoinService.get(tokenId);
-		// const account = this.accountService.getCurrentAccount();
-		// const res = await handler.cashin(
-		// 	{
-		// 		account: account,
-		// 		capabilities: [
-		// 			new Capability(Operation.CASH_IN, Access.CONTRACT),
-		// 		],
-		// 		coin: coin,
-		// 	},
-		// 	targetId.value,
-		// 	role,
-		// );
-		// // TODO Do some work here
-		return Promise.resolve({ payload: true });
+		const account = this.accountService.getCurrentAccount();
+		const capabilities = await this.stableCoinService.getCapabilities(
+			account,
+			coin,
+		);
+		const res = await handler.isUnlimitedSupplierAllowance(
+			{
+				account: account,
+				capabilities: capabilities.capabilities,
+				coin: coin,
+			},
+			targetId.value,
+		);
+		return Promise.resolve({ payload: res.response ?? false });
 	}
 }

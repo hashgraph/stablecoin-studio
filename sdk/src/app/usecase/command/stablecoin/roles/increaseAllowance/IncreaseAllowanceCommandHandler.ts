@@ -1,19 +1,18 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ICommandHandler } from '../../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
-import {
-	Capability,
-	Operation,
-	Access,
-} from '../../../../../../domain/context/stablecoin/Capability.js';
 import AccountService from '../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
-import { IncreaseAllowanceCommand, IncreaseAllowanceCommandResponse } from './IncreaseAllowanceCommand.js';
+import {
+	IncreaseAllowanceCommand,
+	IncreaseAllowanceCommandResponse,
+} from './IncreaseAllowanceCommand.js';
 
 @CommandHandler(IncreaseAllowanceCommand)
-export class IncreaseAllowanceCommandHandler implements ICommandHandler<IncreaseAllowanceCommand> {
+export class IncreaseAllowanceCommandHandler
+	implements ICommandHandler<IncreaseAllowanceCommand>
+{
 	constructor(
 		@lazyInject(StableCoinService)
 		public readonly stableCoinService: StableCoinService,
@@ -23,23 +22,26 @@ export class IncreaseAllowanceCommandHandler implements ICommandHandler<Increase
 		public readonly transactionService: TransactionService,
 	) {}
 
-	async execute(command: IncreaseAllowanceCommand): Promise<IncreaseAllowanceCommandResponse> {
-		const { role, targetId, tokenId } = command;
+	async execute(
+		command: IncreaseAllowanceCommand,
+	): Promise<IncreaseAllowanceCommandResponse> {
+		const { amount, targetId, tokenId } = command;
 		const handler = this.transactionService.getHandler();
 		const coin = await this.stableCoinService.get(tokenId);
-		// const account = this.accountService.getCurrentAccount();
-		// const res = await handler.cashin(
-		// 	{
-		// 		account: account,
-		// 		capabilities: [
-		// 			new Capability(Operation.CASH_IN, Access.CONTRACT),
-		// 		],
-		// 		coin: coin,
-		// 	},
-		// 	targetId.value,
-		// 	role,
-		// );
-		// // TODO Do some work here
-		return Promise.resolve({ payload: true });
+		const account = this.accountService.getCurrentAccount();
+		const capabilities = await this.stableCoinService.getCapabilities(
+			account,
+			coin,
+		);
+		const res = await handler.increaseSupplierAllowance(
+			{
+				account: account,
+				capabilities: capabilities.capabilities,
+				coin: coin,
+			},
+			targetId.value,
+			amount,
+		);
+		return Promise.resolve({ payload: res.response });
 	}
 }

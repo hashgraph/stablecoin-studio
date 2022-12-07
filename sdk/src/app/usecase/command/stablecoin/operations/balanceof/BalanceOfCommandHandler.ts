@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ICommandHandler } from '../../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
 import AccountService from '../../../../../service/AccountService.js';
@@ -41,7 +40,7 @@ export class BalanceOfCommandHandler
 		);
 		const res = await handler.balanceOf(capabilities, targetId.value);
 		// TODO Do some work here
-		if(res.error || res.response === undefined){
+		if (res.error || res.response === undefined) {
 			throw res.error;
 		}
 		return new BalanceOfCommandResponse(res.response);

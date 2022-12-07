@@ -1,19 +1,18 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ICommandHandler } from '../../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
-import {
-	Capability,
-	Operation,
-	Access,
-} from '../../../../../../domain/context/stablecoin/Capability.js';
 import AccountService from '../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
-import { GrantRoleCommand, GrantRoleCommandResponse } from './GrantRoleCommand.js';
+import {
+	GrantRoleCommand,
+	GrantRoleCommandResponse,
+} from './GrantRoleCommand.js';
 
 @CommandHandler(GrantRoleCommand)
-export class GrantRoleCommandHandler implements ICommandHandler<GrantRoleCommand> {
+export class GrantRoleCommandHandler
+	implements ICommandHandler<GrantRoleCommand>
+{
 	constructor(
 		@lazyInject(StableCoinService)
 		public readonly stableCoinService: StableCoinService,
@@ -23,23 +22,26 @@ export class GrantRoleCommandHandler implements ICommandHandler<GrantRoleCommand
 		public readonly transactionService: TransactionService,
 	) {}
 
-	async execute(command: GrantRoleCommand): Promise<GrantRoleCommandResponse> {
+	async execute(
+		command: GrantRoleCommand,
+	): Promise<GrantRoleCommandResponse> {
 		const { role, targetId, tokenId } = command;
 		const handler = this.transactionService.getHandler();
 		const coin = await this.stableCoinService.get(tokenId);
-		// const account = this.accountService.getCurrentAccount();
-		// const res = await handler.cashin(
-		// 	{
-		// 		account: account,
-		// 		capabilities: [
-		// 			new Capability(Operation.CASH_IN, Access.CONTRACT),
-		// 		],
-		// 		coin: coin,
-		// 	},
-		// 	targetId.value,
-		// 	role,
-		// );
-		// // TODO Do some work here
-		return Promise.resolve({ payload: true });
+		const account = this.accountService.getCurrentAccount();
+		const capabilities = await this.stableCoinService.getCapabilities(
+			account,
+			coin,
+		);
+		const res = await handler.grantRole(
+			{
+				account: account,
+				capabilities: capabilities.capabilities,
+				coin: coin,
+			},
+			targetId.value,
+			role,
+		);
+		return Promise.resolve({ payload: res.response });
 	}
 }
