@@ -10,7 +10,6 @@ export class RescueCommandResponse implements CommandResponse {
 export class RescueCommand extends Command<RescueCommandResponse> {
 	constructor(
 		public readonly amount: BigDecimal,
-		public readonly targetId: HederaId,
 		public readonly tokenId: HederaId,
 	) {
 		super();

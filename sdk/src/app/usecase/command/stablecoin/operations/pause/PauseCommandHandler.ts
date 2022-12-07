@@ -1,11 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ICommandHandler } from '../../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
-import {
-	Access,
-	Capability,
-	Operation,
-} from '../../../../../../domain/context/stablecoin/Capability.js';
 import AccountService from '../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import { PauseCommand, PauseCommandResponse } from './PauseCommand.js';
@@ -24,22 +19,19 @@ export class PauseCommandHandler implements ICommandHandler<PauseCommand> {
 	) {}
 
 	async execute(command: PauseCommand): Promise<PauseCommandResponse> {
-		const { amount, targetId, tokenId } = command;
+		const { tokenId } = command;
 		const handler = this.transactionService.getHandler();
 		const coin = await this.stableCoinService.get(tokenId);
 		const account = this.accountService.getCurrentAccount();
-		const res = await handler.cashin(
-			{
-				account: account,
-				capabilities: [
-					new Capability(Operation.CASH_IN, Access.CONTRACT),
-				],
-				coin: coin,
-			},
-			targetId.value,
-			amount,
+		const capabilities = await this.stableCoinService.getCapabilities(
+			account,
+			coin,
 		);
-		// TODO Do some work here
+		const res = await handler.pause({
+			account: account,
+			capabilities: capabilities.capabilities,
+			coin: coin,
+		});
 		return Promise.resolve(res.response);
 	}
 }

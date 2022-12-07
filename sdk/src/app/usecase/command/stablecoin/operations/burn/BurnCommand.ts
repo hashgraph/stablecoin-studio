@@ -10,7 +10,6 @@ export class BurnCommandResponse implements CommandResponse {
 export class BurnCommand extends Command<BurnCommandResponse> {
 	constructor(
 		public readonly amount: BigDecimal,
-		public readonly targetId: HederaId,
 		public readonly tokenId: HederaId,
 	) {
 		super();
