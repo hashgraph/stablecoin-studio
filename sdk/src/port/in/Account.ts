@@ -9,17 +9,20 @@ import {
 	GetAccountInfoRequest,
 	GetListStableCoinRequest,
 } from './request/index.js';
-import StableCoinList from './response/StableCoinList.js';
-import AccountInfo from './response/AccountInfo.js';
 import GetPublicKeyRequest from './request/GetPublicKeyRequest.js';
 import PublicKey from '../../domain/context/account/PublicKey.js';
 import { Balance } from '../../domain/context/stablecoin/Balance.js';
+import StableCoinListViewModel from '../out/mirror/response/StableCoinListViewModel.js';
+import AccountViewModel from '../out/mirror/response/AccountViewModel.js';
+import { MirrorNodeAdapter } from '../out/mirror/MirrorNodeAdapter.js';
 
 interface IAccountInPort {
 	getPublicKey(request: GetPublicKeyRequest): Promise<PublicKey>;
 	getBalanceOf(request: GetAccountBalanceRequest): Promise<Balance>;
-	listStableCoins(request: GetListStableCoinRequest): Promise<StableCoinList>;
-	getInfo(request: GetAccountInfoRequest): Promise<AccountInfo>;
+	listStableCoins(
+		request: GetListStableCoinRequest,
+	): Promise<StableCoinListViewModel>;
+	getInfo(request: GetAccountInfoRequest): Promise<AccountViewModel>;
 }
 
 class AccountInPort implements IAccountInPort {
@@ -31,8 +34,8 @@ class AccountInPort implements IAccountInPort {
 		private readonly commandBus: CommandBus = Injectable.resolve(
 			CommandBus,
 		),
-		private readonly transactionService: TransactionService = Injectable.resolve(
-			TransactionService,
+		private readonly mirrorClient: MirrorNodeAdapter = Injectable.resolve(
+			MirrorNodeAdapter,
 		),
 	) {}
 	getPublicKey(request: GetPublicKeyRequest): Promise<PublicKey> {
@@ -43,10 +46,10 @@ class AccountInPort implements IAccountInPort {
 	}
 	listStableCoins(
 		request: GetListStableCoinRequest,
-	): Promise<StableCoinList> {
+	): Promise<StableCoinListViewModel> {
 		throw new Error('Method not implemented.');
 	}
-	getInfo(request: GetAccountInfoRequest): Promise<AccountInfo> {
+	getInfo(request: GetAccountInfoRequest): Promise<AccountViewModel> {
 		throw new Error('Method not implemented.');
 	}
 }

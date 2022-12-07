@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { AxiosInstance } from 'axios';
 import { singleton } from 'tsyringe';
-import { IQueryAdapter } from '../QueryAdapter';
 import StableCoinViewModel from '../../out/mirror/response/StableCoinViewModel.js';
 import AccountViewModel from '../../out/mirror/response/AccountViewModel.js';
 import StableCoinListViewModel from '../../out/mirror/response/StableCoinListViewModel.js';
@@ -15,7 +14,7 @@ import ContractId from '../../../domain/context/contract/ContractId.js';
 import { InvalidResponse } from './error/InvalidResponse.js';
 
 @singleton()
-export class MirrorNodeAdapter implements IQueryAdapter {
+export class MirrorNodeAdapter {
 
     private instance: AxiosInstance;
     private URI_BASE: string;
@@ -88,9 +87,9 @@ export class MirrorNodeAdapter implements IQueryAdapter {
 			}
 
 			const decimals = parseInt(response.data.decimals ?? '0');
-            const proxyAddress = JSON.parse(response.data.memo!).proxyContract ?? '0.0.0';
+            const proxyAddress = JSON.parse(response.data.memo ?? '').proxyContract ?? '0.0.0';
 			const stableCoinDetail: StableCoinViewModel = {
-                tokenId: response.data.token_id!,
+                tokenId: response.data.token_id,
                 name: response.data.name ?? '',
 				symbol: response.data.symbol ?? '',
                 decimals: decimals,

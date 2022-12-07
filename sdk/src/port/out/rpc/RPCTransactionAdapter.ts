@@ -23,7 +23,6 @@ import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRol
 import detectEthereumProvider from '@metamask/detect-provider';
 import { RuntimeError } from '../../../core/error/RuntimeError.js';
 import Account from '../../../domain/context/account/Account.js';
-import { HederaId } from '../../../domain/context/shared/HederaId.js';
 
 // eslint-disable-next-line no-var
 declare var ethereum: any;

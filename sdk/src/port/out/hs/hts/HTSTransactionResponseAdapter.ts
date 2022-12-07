@@ -96,7 +96,7 @@ export class HTSTransactionResponseAdapter extends TransactionResponseAdapter {
 		receipt?: TransactionReceipt,
 	): TransactionResponse {
 		return new TransactionResponse(
-			transactionId!.toString(),
+			(transactionId ?? '').toString(),
 			response
 		);
 	}
