@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
-export interface IQuery {}
-export class Query<T> implements IQuery {
+export interface BaseQuery {}
+export class Query<T> implements BaseQuery {
 	private $resultType!: T;
 }

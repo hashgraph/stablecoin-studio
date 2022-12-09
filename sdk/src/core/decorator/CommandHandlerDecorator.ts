@@ -1,6 +1,6 @@
 import { COMMAND_HANDLER_METADATA, COMMAND_METADATA } from '../Constants';
 import { v4 } from 'uuid';
-import { ICommand } from '../command/Command.js';
+import { BaseCommand } from '../command/Command.js';
 import { injectable } from 'tsyringe';
 import { Constructor } from '../Type.js';
 
@@ -11,7 +11,7 @@ import { Constructor } from '../Type.js';
  *
  * @param command command *type* to be handled by this handler.
  */
-export const CommandHandler = (command: ICommand): ClassDecorator => {
+export const CommandHandler = (command: BaseCommand): ClassDecorator => {
 	return (target: object) => {
 		const tgt = target as Constructor<typeof target>;
 		injectable()(tgt);
