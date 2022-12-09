@@ -23,7 +23,7 @@ const URI_BASE = `${
 }/api/v1/`;
 
 
-export const clientId = 2;
+export const clientId = 1;
 
 export async function contractCall(
     contractId: any,

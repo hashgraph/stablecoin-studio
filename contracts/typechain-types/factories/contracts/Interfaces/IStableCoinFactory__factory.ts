@@ -86,6 +86,11 @@ const _abi = [
         name: "requestedToken",
         type: "tuple",
       },
+      {
+        internalType: "address",
+        name: "StableCoinContractAddress",
+        type: "address",
+      },
     ],
     name: "deployStableCoin",
     outputs: [

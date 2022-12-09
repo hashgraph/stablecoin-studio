@@ -7,9 +7,11 @@ const {
     ContractFunctionParameters
 } = require('@hashgraph/sdk')
 
-const factoryProxyAddress = "0.0.49045465";//"0.0.49015451"; 
-const factoryProxyAdminAddress = "0.0.49045463";//"0.0.49015446"; 
-const factoryAddress = "0.0.49045460";//"0.0.49015443";
+const hederaERC20Address = "0.0.49059747";
+
+const factoryProxyAddress = "0.0.49059753";
+const factoryProxyAdminAddress = "0.0.49059751";
+const factoryAddress = "0.0.49059749";
 
 const address_0 = "0x0000000000000000000000000000000000000000";
 
@@ -104,6 +106,24 @@ export function getNonOperatorPublicKey(client1publickey : any, client2publickey
     return (clientId == 2) ? client1publickey : client2publickey;
 }
 
+export async function deployHederaERC20(
+    clientOperator: any,
+    privateKey: string
+){
+    // Deploying Factory logic
+    console.log(`Deploying HederaERC20 logic. please wait...`);
+
+    const hederaERC20 = await deployContractSDK(
+        HederaERC20__factory,
+        privateKey,
+        clientOperator,
+    )
+
+    console.log(`HederaERC20 logic deployed ${hederaERC20.toSolidityAddress()}`);
+
+    return hederaERC20;
+}
+
 export async function deployFactory(
     clientOperator: any,
     privateKey: string
@@ -169,7 +189,6 @@ export async function deployContractsWithSDK(
 
     let AccountEvmAddress = await toEvmAddress(account, isED25519Type);
 
-
     console.log(
         `Creating token  (${name},${symbol},${decimals},${initialSupply},${maxSupply},${memo},${freeze})`
     )
@@ -181,11 +200,22 @@ export async function deployContractsWithSDK(
     const clientSdk = getClient()
     clientSdk.setOperator(account, toHashgraphKey(privateKey, isED25519Type))
 
+    let hederaERC20: any;
     let f_address: any;
     let f_proxyAdminAddress: any;
     let f_proxyAddress: any;
 
+    // Deploying HederaERC20 or using an already deployed one
+    if(!hederaERC20Address) {
+        hederaERC20 = await deployHederaERC20(clientSdk, privateKey);
+    }
+    else {
+        hederaERC20 = ContractId.fromString(hederaERC20Address);
+    }
 
+    console.log(`Using the HederaERC20 logic contract at ${hederaERC20}.`)
+
+    // Deploying a Factory or using an already deployed one
     if(!factoryAddress) {
         let result = await deployFactory(clientSdk, privateKey);
         f_proxyAddress = result[0];
@@ -215,7 +245,7 @@ export async function deployContractsWithSDK(
 
     console.log(`Token Object: ${JSON.stringify(tokenObject)}`)
 
-    let parametersContractCall = [tokenObject]
+    let parametersContractCall = [tokenObject, hederaERC20.toSolidityAddress()]
 
     console.log(`deploying stableCoin... please wait.`)
 

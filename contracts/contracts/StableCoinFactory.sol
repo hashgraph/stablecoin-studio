@@ -15,10 +15,11 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes{
     // Hedera HTS precompiled contract
     address constant precompileAddress = address(0x167);
 
-    function deployStableCoin(tokenStruct calldata requestedToken) external payable override returns (address, address, address, address){
+    function deployStableCoin(tokenStruct calldata requestedToken,
+        address StableCoinContractAddress) external payable override returns (address, address, address, address){
 
-        // Deploy logic contract
-        HederaERC20 StableCoinContract = new HederaERC20();
+        // logic contract
+        HederaERC20 StableCoinContract = HederaERC20(StableCoinContractAddress);
 
         // Deploy Proxy Admin
         HederaERC20ProxyAdmin StableCoinProxyAdmin = new HederaERC20ProxyAdmin();
