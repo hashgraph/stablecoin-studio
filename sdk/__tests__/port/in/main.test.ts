@@ -56,19 +56,6 @@ describe('🧪 SDK test', () => {
 	});
 
 	it('Performs a cash in', async () => {
-		await Network.connect(
-			new ConnectRequest({
-				account: {
-					accountId: '0.0.47820993',
-					privateKey: {
-						key: '0x4e3a8e419d6a10765ad1db628e1e86343a971543d14548e023143675f55a6875',
-						type: 'ED25519',
-					},
-					network: 'testnet',
-				},
-				wallet: SupportedWallets.CLIENT,
-			}),
-		);
 		const handler = Injectable.resolveTransactionHandler();
 		expect(handler).not.toBeNull();
 		const result = await StableCoin.cashIn(
