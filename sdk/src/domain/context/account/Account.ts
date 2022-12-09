@@ -1,20 +1,23 @@
-import BaseEntity from '../../BaseEntity.js';
-import AccountId from './AccountId.js';
+import { Environment } from '../network/Environment.js';
+import { HederaId } from '../shared/HederaId.js';
 import PrivateKey from './PrivateKey.js';
+import PublicKey from './PublicKey.js';
 
-export default class Account extends BaseEntity {
-	public accountId: AccountId;
+export interface AccountProps {
+	environment: Environment;
+	id?: string;
+	privateKey?: PrivateKey;
+	publicKey?: PublicKey;
+	evmAddress?: string;
+}
+
+export default class Account {
+	public environment: Environment;
+	public id?: HederaId;
+	public evmAddress: string;
 	public privateKey?: PrivateKey;
-	public evmAddress?: string
-
-	constructor(
-		accountId: string,
-		privateKey?: PrivateKey,
-		evmAddress?: string
-	) {
-		super();
-		this.accountId = new AccountId(accountId);
-		this.privateKey = privateKey;
-		this.evmAddress = evmAddress;
+	public publicKey?: PublicKey;
+	constructor(props: AccountProps) {
+		Object.assign(this, { ...props, id: HederaId.from(props.id ?? '') });
 	}
 }

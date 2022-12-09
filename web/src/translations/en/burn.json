@@ -1,14 +1,13 @@
 {
     "title": "Burn tokens operation",
     "operationTitle": "Operation details",
-    "amountLabel": "How many tokens?",
-    "amountPlaceholder": "Introduce amount",
-    "originAccountLabel": "From which account tokens will be burned?",
-    "originAccountPlaceholder": "Introduce account",
-    "modalSuccessDesc": "The Burn tokens operation finished successfully.",
+    "amountLabel": "Introduce amount",
+    "amountPlaceholder": "0",
+    "originAccountPlaceholder": "0.0.0",
+    "modalSuccessDesc": "{{amount}} tokens have been burned.",
     "modalAction": {
         "subtitle": "Operation details review",
-        "originAccount": "Account to Burn tokens",
+        "originAccount": "Account",
         "amount": "Amount",
         "accept": "Burn tokens"
     }

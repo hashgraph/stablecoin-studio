@@ -1,12 +1,9 @@
-import { ValueObject } from '../../../core/types.js';
-import { PublicKeyNotValid } from './error/PublicKeyNotValid.js';
+import KeyProps from './KeyProps.js';
 import { PublicKey as HPublicKey } from '@hashgraph/sdk';
-import CheckStrings from '../../../core/checks/strings/CheckStrings.js';
-import { RequestPublicKey } from '../../../port/in/sdk/request/BaseRequest.js';
-import BaseError from '../../../core/error/BaseError.js';
 import PrivateKey from './PrivateKey.js';
+import BaseError from '../../../core/error/BaseError.js';
 
-export default class PublicKey extends ValueObject {
+export default class PublicKey implements KeyProps {
 	public static readonly NULL: PublicKey = new PublicKey({
 		key: 'null',
 		type: 'null',
@@ -14,9 +11,8 @@ export default class PublicKey extends ValueObject {
 
 	public readonly key: string;
 	public readonly type: string;
-	constructor(params: { key: string; type: string }) {
+	constructor(params: KeyProps) {
 		const { key, type } = params;
-		super();
 		PublicKey.validate(key);
 		this.key = key;
 		this.type = type;
@@ -30,7 +26,7 @@ export default class PublicKey extends ValueObject {
 	}
 
 	public static fromPrivateKey(key: string, type: string): PublicKey {
-		return new PrivateKey(key, type).publicKey;
+		return new PrivateKey({ key, type }).publicKey;
 	}
 
 	public static isNull(val?: { key: string; type: string }): boolean {
@@ -51,27 +47,9 @@ export default class PublicKey extends ValueObject {
 		});
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public static validate(val?: string | object): BaseError[] {
 		const err: BaseError[] = [];
-		if (typeof val === 'string') {
-			if (!CheckStrings.isNotEmpty(val))
-				err.push(new PublicKeyNotValid(val ?? 'undefined'));
-			if (!CheckStrings.isLengthBetween(val, 64, 66)) {
-				err.push(new PublicKeyNotValid(val));
-			}
-		} else if (typeof val === 'object') {
-			const keys = Object.keys(val);
-			if (!(keys.includes('key') && keys.includes('type'))) {
-				err.push(new PublicKeyNotValid(JSON.stringify(val)));
-			} else {
-				const pk = val as RequestPublicKey;
-				if (!CheckStrings.isNotEmpty(pk.key)) {
-					err.push(new PublicKeyNotValid(JSON.stringify(val)));
-				} else if (!CheckStrings.isLengthBetween(pk.key, 64, 66)) {
-					err.push(new PublicKeyNotValid(pk.key, pk.type));
-				}
-			}
-		}
 		return err;
 	}
 }

@@ -15,6 +15,8 @@ import STABLE_COIN_CREATION_EN from './translations/en/stableCoinCreation.json';
 import STABLE_COIN_DETAILS_EN from './translations/en/stableCoinDetails.json';
 import WIPE_EN from './translations/en/wipe.json';
 import EXTERNAL_TOKEN_INFO_EN from './translations/en/externalTokenInfo.json';
+import FREEZE_EN from './translations/en/freeze.json';
+import UNFREEZE_EN from './translations/en/unfreeze.json';
 
 const options = {
 	order: ['localStorage', 'navigator'],
@@ -42,6 +44,8 @@ i18n
 				stableCoinDetails: STABLE_COIN_DETAILS_EN,
 				wipe: WIPE_EN,
 				externalTokenInfo: EXTERNAL_TOKEN_INFO_EN,
+				freeze: FREEZE_EN,
+				unfreeze: UNFREEZE_EN,
 			},
 			es: {
 				global: GLOBAL_ES,

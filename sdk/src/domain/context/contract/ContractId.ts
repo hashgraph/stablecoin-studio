@@ -1,22 +1,17 @@
-import {
-	DelegateContractId,
-	PublicKey as HPublicKey,
-	ContractId as HContractId,
-} from '@hashgraph/sdk';
-import { ValueObject } from '../../../core/types.js';
+import { DelegateContractId, ContractId as HContractId } from '@hashgraph/sdk';
 import { proto } from '@hashgraph/proto';
 import Long from 'long';
 import InvalidKeyForContract from './error/InvalidKeyForContract.js';
 import BaseError from '../../../core/error/BaseError.js';
 import CheckStrings from '../../../core/checks/strings/CheckStrings.js';
 import { InvalidContractId } from './error/InvalidContractId.js';
+import { HederaId } from '../shared/HederaId.js';
 
-export default class ContractId extends ValueObject {
-	public readonly id: string;
+export default class ContractId extends HederaId {
+	public readonly value: string;
 
-	constructor(id: string) {
-		super();
-		this.id = id;
+	constructor(value: string) {
+		super(value);
 	}
 
 	public static fromProtoBufKey(
@@ -59,10 +54,10 @@ export default class ContractId extends ValueObject {
 	}
 
 	public toDelegateContractId(): DelegateContractId {
-		return DelegateContractId.fromString(this.id);
+		return DelegateContractId.fromString(this.value);
 	}
 
 	public toString(): string {
-		return this.id;
+		return this.value;
 	}
 }

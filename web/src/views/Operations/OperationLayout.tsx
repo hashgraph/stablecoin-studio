@@ -2,16 +2,13 @@ import type { ReactNode } from 'react';
 import type { ButtonProps as ChakraButtonProps } from '@chakra-ui/react';
 import { Button, Flex, Stack, Heading, SimpleGrid } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { RouterManager } from '../../Router/RouterManager';
 import BaseContainer from '../../components/BaseContainer';
 import DetailsReview from '../../components/DetailsReview';
-import { SELECTED_WALLET_COIN, walletActions } from '../../store/slices/walletSlice';
-import SDKService from '../../services/SDKService';
-import type { AppDispatch } from '../../store/store';
-import { useEffect } from 'react';
-import { GetStableCoinDetailsRequest } from 'hedera-stable-coin-sdk';
+import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
+import { useRefreshCoinInfo } from '../../hooks/useRefreshCoinInfo';
 
 export interface OperationLayoutProps {
 	LeftContent: ReactNode;
@@ -23,16 +20,13 @@ const OperationLayout = ({ LeftContent, onConfirm, confirmBtnProps }: OperationL
 	const navigate = useNavigate();
 	const { t } = useTranslation(['operations', 'global']);
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
-	const dispatch = useDispatch<AppDispatch>();
 	const unknown = t('global:common.unknown');
 
 	const handleGoBack = () => {
 		RouterManager.goBack(navigate);
 	};
 
-	useEffect(() => {
-		handleRefreshCoinInfo();
-	}, []);
+	useRefreshCoinInfo();
 	const optionalDetailsFinite = [
 		{
 			label: t('operations:details.initialSupply'),
@@ -75,35 +69,6 @@ const OperationLayout = ({ LeftContent, onConfirm, confirmBtnProps }: OperationL
 		},
 	];
 
-	const handleRefreshCoinInfo = async () => {
-		const stableCoinDetails = await SDKService.getStableCoinDetails(new GetStableCoinDetailsRequest ({
-			id: selectedStableCoin?.tokenId || '',
-		}));
-		dispatch(
-			walletActions.setSelectedStableCoin({
-				tokenId: stableCoinDetails?.tokenId,
-				initialSupply: stableCoinDetails?.initialSupply,
-				totalSupply: stableCoinDetails?.totalSupply,
-				maxSupply: stableCoinDetails?.maxSupply,
-				name: stableCoinDetails?.name,
-				symbol: stableCoinDetails?.symbol,
-				decimals: stableCoinDetails?.decimals,
-				id: stableCoinDetails?.tokenId,
-				treasuryId: stableCoinDetails?.treasuryId,
-				autoRenewAccount: stableCoinDetails?.autoRenewAccount,
-				memo: stableCoinDetails?.memo,
-				adminKey:
-					stableCoinDetails?.adminKey && JSON.parse(JSON.stringify(stableCoinDetails.adminKey)),
-				kycKey: stableCoinDetails?.kycKey && JSON.parse(JSON.stringify(stableCoinDetails.kycKey)),
-				freezeKey:
-					stableCoinDetails?.freezeKey && JSON.parse(JSON.stringify(stableCoinDetails.freezeKey)),
-				wipeKey:
-					stableCoinDetails?.wipeKey && JSON.parse(JSON.stringify(stableCoinDetails.wipeKey)),
-				supplyKey:
-					stableCoinDetails?.supplyKey && JSON.parse(JSON.stringify(stableCoinDetails.supplyKey)),
-			}),
-		);
-	};
 
 	return (
 		<BaseContainer title={t('global:operations.title')}>

@@ -6,11 +6,16 @@ import fs from 'fs-extra';
 import { IConfiguration } from '../../../domain/configuration/interfaces/IConfiguration.js';
 import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
-import { IFactoryConfig } from '../../../domain/configuration/interfaces/IFactoryConfig.js';
 import { IHederaERC20Config } from '../../../domain/configuration/interfaces/IHederaERC20Config.js';
 import { configurationService, utilsService } from '../../../index.js';
 import SetConfigurationService from './SetConfigurationService.js';
 import MaskData from 'maskdata';
+import {
+  LoggerOptions,
+  DailyRotateFile,
+  DefaultLoggerFormat,
+} from 'hedera-stable-coin-sdk';
+import { ILogConfig } from '../../../domain/configuration/interfaces/ILogConfig.js';
 
 /**
  * Configuration Service
@@ -43,10 +48,30 @@ export default class ConfigurationService extends Service {
     if (overrides?.defaultNetwork) {
       this.configuration.defaultNetwork = overrides.defaultNetwork;
     }
+    if (overrides?.logs) {
+      this.configuration.logs = overrides.logs;
+    }
   }
 
   public getConfiguration(): IConfiguration {
     return this.configuration;
+  }
+
+  public getLogConfiguration(): LoggerOptions {
+    if (!this.configuration.logs) return undefined;
+    return {
+      level: this.configuration.logs.level ?? 'ERROR',
+      transports: [
+        new DailyRotateFile({
+          filename: `%DATE%.log`,
+          dirname: this.configuration.logs.path ?? './logs',
+          datePattern: 'YYYY_MM_DD',
+          maxSize: '500k',
+          maxFiles: '14d',
+          format: DefaultLoggerFormat,
+        }),
+      ],
+    };
   }
 
   /**
@@ -86,7 +111,7 @@ export default class ConfigurationService extends Service {
         accountId: acc.accountId,
         network: acc.network,
         alias: acc.alias,
-        externalTokens: acc.externalTokens,
+        importedTokens: acc.importedTokens,
       };
     });
     console.dir(result, { depth: null });
@@ -98,7 +123,9 @@ export default class ConfigurationService extends Service {
   public createDefaultConfiguration(path?: string): void {
     try {
       const defaultConfig = yaml.load(
-        fs.readFileSync(`${this.getGlobalPath()}/src/resources/config/${this.configFileName}`),
+        fs.readFileSync(
+          `${this.getGlobalPath()}/src/resources/config/${this.configFileName}`,
+        ),
       );
       const filePath = path ?? this.getDefaultConfigurationPath();
       this.path = filePath;
@@ -121,7 +148,7 @@ export default class ConfigurationService extends Service {
       defaultNetwork: defaultConfigRaw['defaultNetwork'],
       networks: defaultConfigRaw['networks'] as unknown as INetworkConfig[],
       accounts: defaultConfigRaw['accounts'] as unknown as IAccountConfig[],
-      factories: defaultConfigRaw['factories'] as unknown as IFactoryConfig[],
+      logs: defaultConfigRaw['logs'] as unknown as ILogConfig,
       hederaERC20s: defaultConfigRaw['hederaERC20s'] as unknown as IHederaERC20Config[]
     };
     this.setConfiguration(config);

@@ -3,15 +3,16 @@
 exports[`<Sidebar /> should render correctly 1`] = `
 <DocumentFragment>
   <div
-    class="css-6i4ah3"
+    class="css-jefzb5"
     data-testid="sidebar"
   >
     <div
       class="css-17lnxuq"
     >
-      <div
-        class="css-18m8sk"
+      <button
+        class="chakra-button css-16b3c4e"
         data-testid="sidebar-option-Coin"
+        type="button"
       >
         <svg
           class="chakra-icon css-wrbp2a"
@@ -86,10 +87,11 @@ exports[`<Sidebar /> should render correctly 1`] = `
         >
           Operations
         </p>
-      </div>
-      <div
-        class="css-18m8sk"
+      </button>
+      <button
+        class="chakra-button css-16b3c4e"
         data-testid="sidebar-option-Users"
+        type="button"
       >
         <svg
           class="chakra-icon css-wrbp2a"
@@ -145,10 +147,11 @@ exports[`<Sidebar /> should render correctly 1`] = `
         >
           Role management
         </p>
-      </div>
-      <div
-        class="css-18m8sk"
+      </button>
+      <button
+        class="chakra-button css-16b3c4e"
         data-testid="sidebar-option-Gear"
+        type="button"
       >
         <svg
           class="chakra-icon css-wrbp2a"
@@ -189,7 +192,7 @@ exports[`<Sidebar /> should render correctly 1`] = `
         >
           Stable coin details
         </p>
-      </div>
+      </button>
     </div>
   </div>
   <span

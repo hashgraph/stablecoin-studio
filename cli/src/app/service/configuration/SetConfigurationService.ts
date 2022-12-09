@@ -185,7 +185,7 @@ export default class SetConfigurationService extends Service {
         privateKey: accountFromPrivKey.privateKey,
         network: network,
         alias: alias,
-        externalTokens: [],
+        importedTokens: [],
       });
 
       const response = await utilsService.defaultConfirmAsk(

@@ -1,11 +1,11 @@
-import Event from '../../../core/event.js';
-import EventEmitter from '../../../core/eventEmitter.js';
-import { InitializationData } from '../../../index.js';
-import { ProviderEventNames } from '../../../port/out/hedera/ProviderEvent.js';
+import EventEmitter from '../../../core/EventEmitter.js';
+import Event from '../../../core/Event.js';
 import Service from '../Service.js';
 import { EventListenerNotFound } from './error/EventListenerNotFound.js';
 import { EventNotFound } from './error/EventNotFound.js';
+import { singleton } from 'tsyringe';
 
+@singleton()
 export default class EventService extends Service {
 	private events: { [key: keyof Event]: Event };
 	private emitters: { [key: keyof Event]: EventEmitter<Event> } = {};
@@ -32,13 +32,6 @@ export default class EventService extends Service {
 		if (!this.events[event])
 			throw new EventListenerNotFound(event.toString());
 		this.getEventEmitter(event).on(event, listener);
-	}
-
-	public emitInit(data: InitializationData): void {
-		this.getEventEmitter(ProviderEventNames.providerInitEvent).emit(
-			ProviderEventNames.providerInitEvent,
-			data,
-		);
 	}
 
 	public emit<E extends keyof Event>(

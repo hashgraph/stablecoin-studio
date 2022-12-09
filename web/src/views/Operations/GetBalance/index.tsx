@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Heading, Text, Stack, useDisclosure } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import DetailsReview from '../../../components/DetailsReview';
 import InputController from '../../../components/Form/InputController';
 import OperationLayout from './../OperationLayout';
@@ -13,13 +13,12 @@ import SDKService from '../../../services/SDKService';
 import {
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNT,
-	walletActions,
 } from '../../../store/slices/walletSlice';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
-import type { AppDispatch } from '../../../store/store.js';
 import { formatAmountWithDecimals } from '../../../utils/inputHelper';
-import { GetAccountBalanceRequest, GetStableCoinDetailsRequest } from 'hedera-stable-coin-sdk';
+import { GetAccountBalanceRequest} from 'hedera-stable-coin-sdk';
+import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 
 const GetBalanceOperation = () => {
 	const {
@@ -33,6 +32,7 @@ const GetBalanceOperation = () => {
 
 	const [balance, setBalance] = useState<string | null>();
 	const [errorOperation, setErrorOperation] = useState();
+	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
 	const [request] = useState(
 		new GetAccountBalanceRequest({
 			proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
@@ -44,7 +44,6 @@ const GetBalanceOperation = () => {
 		})
 	);
 
-	const dispatch = useDispatch<AppDispatch>();
 	const navigate = useNavigate();
 
 	const { t } = useTranslation(['getBalance', 'global', 'operations']);
@@ -52,45 +51,11 @@ const GetBalanceOperation = () => {
 		mode: 'onChange',
 	});
 
-	useEffect(() => {
-		handleRefreshCoinInfo();
-	}, []);
-
 	const handleCloseModal = () => {
 		RouterManager.goBack(navigate);
 	};
 
-	const handleRefreshCoinInfo = async () => {
-		const stableCoinDetails = await SDKService.getStableCoinDetails(
-			new GetStableCoinDetailsRequest({
-				id: selectedStableCoin?.tokenId ?? '',
-			}) 
-		);
-		dispatch(
-			walletActions.setSelectedStableCoin({
-				tokenId: stableCoinDetails?.tokenId,
-				initialSupply: stableCoinDetails?.initialSupply,
-				totalSupply: stableCoinDetails?.totalSupply,
-				maxSupply: stableCoinDetails?.maxSupply,
-				name: stableCoinDetails?.name,
-				symbol: stableCoinDetails?.symbol,
-				decimals: stableCoinDetails?.decimals,
-				id: stableCoinDetails?.tokenId,
-				treasuryId: stableCoinDetails?.treasuryId,
-				autoRenewAccount: stableCoinDetails?.autoRenewAccount,
-				memo: stableCoinDetails?.memo,
-				adminKey:
-					stableCoinDetails?.adminKey && JSON.parse(JSON.stringify(stableCoinDetails.adminKey)),
-				kycKey: stableCoinDetails?.kycKey && JSON.parse(JSON.stringify(stableCoinDetails.kycKey)),
-				freezeKey:
-					stableCoinDetails?.freezeKey && JSON.parse(JSON.stringify(stableCoinDetails.freezeKey)),
-				wipeKey:
-					stableCoinDetails?.wipeKey && JSON.parse(JSON.stringify(stableCoinDetails.wipeKey)),
-				supplyKey:
-					stableCoinDetails?.supplyKey && JSON.parse(JSON.stringify(stableCoinDetails.supplyKey)),
-			}),
-		);
-	};
+	useRefreshCoinInfo();
 
 	const handleGetBalance: ModalsHandlerActionsProps['onConfirm'] = async ({
 		onSuccess,
@@ -106,6 +71,7 @@ const GetBalanceOperation = () => {
 			setBalance(balance);
 			onSuccess();
 		} catch (error: any) {
+			setErrorTransactionUrl(error.transactionUrl)
 			setErrorOperation(error.toString());
 			onError();
 		}
@@ -149,6 +115,7 @@ const GetBalanceOperation = () => {
 			<ModalsHandler
 				errorNotificationTitle={t('operations:modalErrorTitle')}
 				errorNotificationDescription={errorOperation}
+				errorTransactionUrl={errorTransactionUrl}
 				modalActionProps={{
 					isOpen: isOpenModalAction,
 					onClose: onCloseModalAction,

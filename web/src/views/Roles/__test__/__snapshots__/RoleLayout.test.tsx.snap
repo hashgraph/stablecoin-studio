@@ -70,7 +70,7 @@ exports[`<RoleLayout /> should render correctly 1`] = `
                       data-testid="account"
                       id="field-:r0:"
                       name="account"
-                      placeholder="Introduce account"
+                      placeholder="0.0.0"
                       value=""
                     />
                   </div>
@@ -96,7 +96,7 @@ exports[`<RoleLayout /> should render correctly 1`] = `
                         class="chakra-text css-mgupmj"
                         data-testid="selector-label"
                       >
-                        Select role to give
+                        Select role to grant
                       </p>
                       <p
                         class="chakra-text css-x3tq0c"
@@ -131,7 +131,7 @@ exports[`<RoleLayout /> should render correctly 1`] = `
                           class="chakra-text css-4pvr19"
                           data-testid="select-placeholder"
                         >
-                          Select role to give
+                          Select role to grant
                         </span>
                         <div
                           class=" css-svnjlw"
@@ -360,7 +360,7 @@ exports[`<RoleLayout /> should render correctly 1`] = `
                         <p
                           class="chakra-text css-mgupmj"
                         >
-                          100,000
+                          100000
                         </p>
                       </div>
                     </div>

@@ -31,9 +31,8 @@ exports[`<Roles /> should render correctly 1`] = `
             class="css-180e663"
           >
             <button
-              class="css-kly7w1"
+              class="css-1g500l7"
               data-testid="direct-access-giveRole"
-              disabled=""
             >
               <div
                 class="css-bv4l9q"
@@ -98,9 +97,8 @@ exports[`<Roles /> should render correctly 1`] = `
             class="css-180e663"
           >
             <button
-              class="css-kly7w1"
+              class="css-1g500l7"
               data-testid="direct-access-revokeRole"
-              disabled=""
             >
               <div
                 class="css-bv4l9q"
@@ -202,6 +200,74 @@ exports[`<Roles /> should render correctly 1`] = `
                 data-testid="direct-access-Manage cash in limit"
               >
                 Manage cash in limit
+              </p>
+            </button>
+          </div>
+          <div
+            class="css-180e663"
+          >
+            <button
+              class="css-kly7w1"
+              data-testid="direct-access-refreshRoles"
+              disabled=""
+            >
+              <div
+                class="css-bv4l9q"
+              >
+                <svg
+                  class="chakra-icon css-1f9qa95"
+                  data-testid="direct-access-ArrowsClockwise"
+                  fill="currentColor"
+                  focusable="false"
+                  height="1em"
+                  viewBox="0 0 256 256"
+                  width="1em"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect
+                    fill="none"
+                    height="256"
+                    width="256"
+                  />
+                  <polyline
+                    fill="none"
+                    points="176.2 99.7 224.2 99.7 224.2 51.7"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                  />
+                  <path
+                    d="M65.8,65.8a87.9,87.9,0,0,1,124.4,0l34,33.9"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                  />
+                  <polyline
+                    fill="none"
+                    points="79.8 156.3 31.8 156.3 31.8 204.3"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                  />
+                  <path
+                    d="M190.2,190.2a87.9,87.9,0,0,1-124.4,0l-34-33.9"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                  />
+                </svg>
+              </div>
+              <p
+                class="chakra-text css-1mbt7nu"
+                data-testid="direct-access-Refresh roles"
+              >
+                Refresh roles
               </p>
             </button>
           </div>

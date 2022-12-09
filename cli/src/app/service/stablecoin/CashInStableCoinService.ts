@@ -19,34 +19,13 @@ export default class CashInStableCoinsService extends Service {
   ): Promise<void> {
     // Call to list stable coins
     const sdk: SDK = utilsService.getSDK();
-    // const currentAccount = utilsService.getCurrentAccount();
-    let respDetail;
-    // const request = new CashInStableCoinRequest({
-    //   proxyContractId,
-    //   account: {
-    //     accountId: currentAccount.accountId,
-    //     privateKey: {
-    //       key: currentAccount.privateKey.key,
-    //       type: currentAccount.privateKey.type,
-    //     },
-    //   },
-    //   tokenId,
-    //   targetId,
-    //   amount,
-    // });
-    await utilsService.showSpinner(
-      sdk.cashIn(request).then((response) => (respDetail = response)),
-      {
+    await utilsService.showSpinner(sdk.cashIn(request), {
         text: language.getText('state.loading'),
         successText: language.getText('state.cashInCompleted') + '\n',
       },
     );
 
-    console.log(
-      respDetail
-        ? language.getText('operation.success')
-        : language.getText('operation.reject'),
-    );
+    console.log(language.getText('operation.success'));
 
     utilsService.breakLine();
   }

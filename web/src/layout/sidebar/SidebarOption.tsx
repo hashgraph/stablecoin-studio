@@ -1,4 +1,5 @@
-import { Flex, Text } from '@chakra-ui/react';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { Button, Flex, Text } from '@chakra-ui/react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Icon from '../../components/Icon';
 import { RouterManager } from '../../Router/RouterManager';
@@ -8,13 +9,16 @@ interface SidebarOptionProps {
 	icon: string;
 	route: NamedRoutes;
 	title: string;
+	bgColor?: string;
+	color?: string;
+	isDisabled?: boolean;
 }
 
-const SidebarOption = ({ icon, title, route }: SidebarOptionProps) => {
+const SidebarOption = ({ icon, title, route, bgColor, color, isDisabled = false, }: SidebarOptionProps) => {
 	const navigate = useNavigate();
 	const { pathname } = useLocation();
 
-	const isActive = pathname.includes(route);
+	const isActive = pathname.includes(RouterManager.getUrl(route));
 
 	const handleNavigate = () => {
 		RouterManager.to(navigate, route);
@@ -28,14 +32,18 @@ const SidebarOption = ({ icon, title, route }: SidebarOptionProps) => {
 			gap='10px'
 			alignItems='center'
 			borderRadius='12px'
-			color='gray.600'
-			bgColor={isActive ? 'light.purple' : ''}
+			color={color || 'gray.600'}
+			bgColor={bgColor || (isActive ? 'light.purple' : '')}
 			pl='15px'
 			_hover={{
 				cursor: 'pointer',
-				bgColor: 'light.purple',
+				bgColor: bgColor ? 'light.red' : 'light.purple',
 			}}
 			onClick={handleNavigate}
+			isDisabled={isDisabled}
+			as={Button}
+			variant='unstyled'
+			justify='flex-start'
 		>
 			<Icon name={icon} fontSize='22px' />
 			<Text data-testid='sidebar-option-title' fontSize='14px' fontWeight='700'>

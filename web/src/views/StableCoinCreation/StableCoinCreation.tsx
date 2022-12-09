@@ -67,6 +67,7 @@ const StableCoinCreation = () => {
 	const [isValidForm, setIsValidForm] = useState<boolean>(false);
 	const [currentStep, setCurrentStep] = useState<number>(0);
 	const [success, setSuccess] = useState<boolean>();
+	const [error, setError] = useState<any>();
 	const { isOpen, onOpen, onClose } = useDisclosure();
 
 	useEffect(() => {
@@ -189,7 +190,8 @@ const StableCoinCreation = () => {
 		try {
 			await SDKService.createStableCoin(request);
 			setSuccess(true);
-		} catch (error) {
+		} catch (error:any) {
+			setError(error.transactionError.transactionUrl)
 			setSuccess(false);
 		}
 
@@ -227,6 +229,7 @@ const StableCoinCreation = () => {
 				}}
 				closeOnOverlayClick={false}
 				closeButton={false}
+				errorTransactionUrl={error}
 			/>
 		</Stack>
 	);

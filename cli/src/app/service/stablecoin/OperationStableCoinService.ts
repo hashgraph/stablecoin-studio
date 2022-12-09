@@ -29,6 +29,9 @@ import {
   ResetCashInLimitRequest,
   IncreaseCashInLimitRequest,
   DecreaseCashInLimitRequest,
+  DeleteStableCoinRequest,
+  PauseStableCoinRequest,
+  FreezeAccountRequest,
 } from 'hedera-stable-coin-sdk';
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 import CashInStableCoinsService from './CashInStableCoinService.js';
@@ -37,7 +40,11 @@ import RoleStableCoinsService from './RoleStableCoinService.js';
 import RescueStableCoinsService from './RescueStableCoinService.js';
 import CapabilitiesStableCoinsService from './CapabilitiesStableCoinService.js';
 import BurnStableCoinsService from './BurnStableCoinService.js';
-import ManageExternalTokenService from './ManageExternalTokenService';
+import colors from 'colors';
+import DeleteStableCoinService from './DeleteStableCoinService.js';
+import PauseStableCoinService from './PauseStableCoinService.js';
+import ManageImportedTokenService from './ManageImportedTokenService';
+import FreezeStableCoinService from './FreezeStableCoinService.js';
 
 /**
  * Operation Stable Coin Service
@@ -48,6 +55,8 @@ export default class OperationStableCoinService extends Service {
   private stableCoinWithSymbol;
   private optionTokenListSelected;
   private roleStableCoinService = new RoleStableCoinsService();
+  private stableCoinPaused;
+  private stableCoinDeleted;
 
   constructor(tokenId?: string, memo?: string, symbol?: string) {
     super('Operation Stable Coin');
@@ -93,7 +102,7 @@ export default class OperationStableCoinService extends Service {
 
         this.stableCoinId = await utilsService.defaultMultipleAsk(
           language.getText('stablecoin.askToken'),
-          new ManageExternalTokenService().mixExternalTokens(
+          new ManageImportedTokenService().mixImportedTokens(
             resp.map((item) => {
               return `${item.id} - ${item.symbol}`;
             }),
@@ -101,6 +110,8 @@ export default class OperationStableCoinService extends Service {
           true,
           configurationService.getConfiguration()?.defaultNetwork,
           `${currentAccount.accountId.id} - ${configAccount.alias}`,
+          this.stableCoinPaused,
+          this.stableCoinDeleted,
         );
         this.optionTokenListSelected = this.stableCoinId;
         this.stableCoinWithSymbol =
@@ -120,6 +131,8 @@ export default class OperationStableCoinService extends Service {
             .getDetailsStableCoins(this.stableCoinId, false)
             .then((response: IStableCoinDetail) => {
               this.proxyContractId = response.memo;
+              this.stableCoinPaused = response.paused === 'PAUSED';
+              this.stableCoinDeleted = response.deleted;
             });
 
           await utilsService.cleanAndShowBanner();
@@ -162,17 +175,14 @@ export default class OperationStableCoinService extends Service {
         this.filterMenuOptions(
           wizardOperationsStableCoinOptions,
           capabilitiesStableCoin,
-          this.optionTokenListSelected &&
-            this.optionTokenListSelected.split(' - ').length === 3
-            ? configAccount.externalTokens.find(
-                (token) => token.id === this.stableCoinId,
-              ).roles
-            : undefined,
+          this.getRolesAccount(),
         ),
         false,
         configAccount.network,
         `${currentAccount.accountId} - ${configAccount.alias}`,
         this.stableCoinWithSymbol,
+        this.stableCoinPaused,
+        this.stableCoinDeleted,
       )
     ) {
       case 'Cash in':
@@ -314,7 +324,6 @@ export default class OperationStableCoinService extends Service {
           amount: '',
         });
 
-
         cashOutRequest.amount = await utilsService
           .defaultSingleAsk(language.getText('stablecoin.askBurnAmount'), '1')
           .then((val) => val.replace(',', '.'));
@@ -452,6 +461,96 @@ export default class OperationStableCoinService extends Service {
           );
         }
         break;
+      case 'Freeze an account':
+        await utilsService.cleanAndShowBanner();
+        utilsService.displayCurrentUserInfo(
+          configAccount,
+          this.stableCoinWithSymbol,
+        );
+
+        const freezeAccountRequest = new FreezeAccountRequest({
+          account: {
+            accountId: configAccount.accountId,
+            privateKey: {
+              key: currentAccount.privateKey.key,
+              type: currentAccount.privateKey.type,
+            },
+          },
+          proxyContractId: this.proxyContractId,
+          tokenId: this.stableCoinId,
+          targetId: '',
+        });
+        freezeAccountRequest.targetId = await utilsService.defaultSingleAsk(
+          language.getText('wizard.freezeAccount'),
+          '0.0.0',
+        );
+
+        await utilsService.handleValidation(
+          () => freezeAccountRequest.validate('targetId'),
+          async () => {
+            freezeAccountRequest.targetId = await utilsService.defaultSingleAsk(
+              language.getText('wizard.freezeAccount'),
+              '0.0.0',
+            );
+          },
+        );
+        try {
+          await new FreezeStableCoinService().freezeAccount(
+            freezeAccountRequest,
+          );
+        } catch (error) {
+          await utilsService.askErrorConfirmation(
+            async () => await this.operationsStableCoin(),
+            error,
+          );
+        }
+
+        break;
+      case 'Unfreeze an account':
+        await utilsService.cleanAndShowBanner();
+        utilsService.displayCurrentUserInfo(
+          configAccount,
+          this.stableCoinWithSymbol,
+        );
+
+        const unfreezeAccountRequest = new FreezeAccountRequest({
+          account: {
+            accountId: configAccount.accountId,
+            privateKey: {
+              key: currentAccount.privateKey.key,
+              type: currentAccount.privateKey.type,
+            },
+          },
+          proxyContractId: this.proxyContractId,
+          tokenId: this.stableCoinId,
+          targetId: '',
+        });
+        unfreezeAccountRequest.targetId = await utilsService.defaultSingleAsk(
+          language.getText('wizard.unfreezeAccount'),
+          '0.0.0',
+        );
+
+        await utilsService.handleValidation(
+          () => unfreezeAccountRequest.validate('targetId'),
+          async () => {
+            unfreezeAccountRequest.targetId =
+              await utilsService.defaultSingleAsk(
+                language.getText('wizard.unfreezeAccount'),
+                '0.0.0',
+              );
+          },
+        );
+        try {
+          await new FreezeStableCoinService().unfreezeAccount(
+            unfreezeAccountRequest,
+          );
+        } catch (error) {
+          await utilsService.askErrorConfirmation(
+            async () => await this.operationsStableCoin(),
+            error,
+          );
+        }
+        break;
       case 'Role management':
         await utilsService.cleanAndShowBanner();
 
@@ -471,12 +570,14 @@ export default class OperationStableCoinService extends Service {
             },
           },
           targetId: currentAccount.accountId.id,
-          tokenId: ''
+          tokenId: '',
         });
 
         // Call to Supplier Role
-        const rolesToRefresh = await new RoleStableCoinsService().getRoles(getRolesRequest);
-        const externalTokensRefreshed = configAccount.externalTokens.map(
+        const rolesToRefresh = await new RoleStableCoinsService().getRoles(
+          getRolesRequest,
+        );
+        const importedTokensRefreshed = configAccount.importedTokens.map(
           (token) => {
             if (token.id === this.stableCoinId) {
               return {
@@ -488,8 +589,12 @@ export default class OperationStableCoinService extends Service {
             return token;
           },
         );
-        new ManageExternalTokenService().updateAccount(externalTokensRefreshed);
-        configAccount.externalTokens = externalTokensRefreshed;
+        new ManageImportedTokenService().updateAccount(importedTokensRefreshed);
+        configAccount.importedTokens = importedTokensRefreshed;
+        break;
+      case colors.red('Danger zone'):
+        await utilsService.cleanAndShowBanner();
+        await this.dangerZone();
         break;
       case wizardOperationsStableCoinOptions[
         wizardOperationsStableCoinOptions.length - 1
@@ -556,6 +661,8 @@ export default class OperationStableCoinService extends Service {
         configAccount.network,
         `${configAccount.accountId} - ${configAccount.alias}`,
         this.stableCoinWithSymbol,
+        this.stableCoinPaused,
+        this.stableCoinDeleted,
       )
     ) {
       case 'Grant role':
@@ -589,15 +696,17 @@ export default class OperationStableCoinService extends Service {
         ]);
 
         grantRoleRequest.role = await this.getRole(capabilitiesStableCoin);
-        await utilsService.handleValidation(
-          () => grantRoleRequest.validate('role'),
-          async () => {
-            grantRoleRequest.role = await this.getRole(capabilitiesStableCoin);
-          },
-        );
-
-        let grantAccountTargetId = accountTarget;
         if (grantRoleRequest.role !== language.getText('wizard.goBack')) {
+          await utilsService.handleValidation(
+            () => grantRoleRequest.validate('role'),
+            async () => {
+              grantRoleRequest.role = await this.getRole(
+                capabilitiesStableCoin,
+              );
+            },
+          );
+
+          let grantAccountTargetId = accountTarget;
           grantRoleRequest.targetId = await utilsService.defaultSingleAsk(
             language.getText('stablecoin.accountTarget'),
             accountTarget,
@@ -614,9 +723,7 @@ export default class OperationStableCoinService extends Service {
           );
 
           try {
-            if (
-              grantRoleRequest.role === StableCoinRole.CASHIN_ROLE
-            ) {
+            if (grantRoleRequest.role === StableCoinRole.CASHIN_ROLE) {
               await this.grantSupplierRole(grantRoleRequest, sdk);
             } else {
               await this.roleStableCoinService.grantRoleStableCoin(
@@ -662,15 +769,17 @@ export default class OperationStableCoinService extends Service {
         ]);
 
         revokeRoleRequest.role = await this.getRole(capabilitiesStableCoin);
-        await utilsService.handleValidation(
-          () => revokeRoleRequest.validate('role'),
-          async () => {
-            revokeRoleRequest.role = await this.getRole(capabilitiesStableCoin);
-          },
-        );
-
-        let revokeAccountTargetId = accountTarget;
         if (revokeRoleRequest.role !== language.getText('wizard.goBack')) {
+          await utilsService.handleValidation(
+            () => revokeRoleRequest.validate('role'),
+            async () => {
+              revokeRoleRequest.role = await this.getRole(
+                capabilitiesStableCoin,
+              );
+            },
+          );
+
+          let revokeAccountTargetId = accountTarget;
           revokeRoleRequest.targetId = await utilsService.defaultSingleAsk(
             language.getText('stablecoin.accountTarget'),
             accountTarget,
@@ -712,6 +821,8 @@ export default class OperationStableCoinService extends Service {
             configAccount.network,
             `${currentAccount.accountId.id} - ${configAccount.alias}`,
             this.stableCoinWithSymbol,
+            this.stableCoinPaused,
+            this.stableCoinDeleted,
           )
         ) {
           case editOptions[0]:
@@ -958,12 +1069,12 @@ export default class OperationStableCoinService extends Service {
                 },
               },
               proxyContractId: this.proxyContractId,
-              targetId: ''
+              targetId: '',
             });
 
             await this.validateNotRequestedData(resetCashInLimitRequest, [
               'account',
-              'proxyContractId'
+              'proxyContractId',
             ]);
 
             //Reset
@@ -1134,15 +1245,15 @@ export default class OperationStableCoinService extends Service {
         ]);
 
         hasRoleRequest.role = await this.getRole(capabilitiesStableCoin);
-        await utilsService.handleValidation(
-          () => hasRoleRequest.validate('role'),
-          async () => {
-            hasRoleRequest.role = await this.getRole(capabilitiesStableCoin);
-          },
-        );
-
-        let hasRoleAccountTargetId = accountTarget;
         if (hasRoleRequest.role !== language.getText('wizard.goBack')) {
+          await utilsService.handleValidation(
+            () => hasRoleRequest.validate('role'),
+            async () => {
+              hasRoleRequest.role = await this.getRole(capabilitiesStableCoin);
+            },
+          );
+
+          let hasRoleAccountTargetId = accountTarget;
           hasRoleRequest.targetId = await utilsService.defaultSingleAsk(
             language.getText('stablecoin.accountTarget'),
             accountTarget,
@@ -1212,9 +1323,20 @@ export default class OperationStableCoinService extends Service {
         (option === 'Wipe' &&
           (capabilities.includes('Wipe') ||
             capabilities.includes('Wipe hts'))) ||
+        (option === 'Freeze an account' &&
+          (capabilities.includes('Freeze') ||
+            capabilities.includes('Freeze hts'))) ||
+        (option === 'Unfreeze an account' &&
+          (capabilities.includes('Freeze') ||
+            capabilities.includes('Freeze hts'))) ||
+        (option === colors.red('Danger zone') &&
+          (capabilities.includes('Pause') ||
+            capabilities.includes('Pause hts') ||
+            capabilities.includes('Delete hts') ||
+            capabilities.includes('Pause hts'))) ||
         (option === 'Role management' &&
           capabilities.includes('Role management')) ||
-        option === 'Refresh roles'
+        (option === 'Refresh roles' && !this.stableCoinDeleted)
       ) {
         return true;
       }
@@ -1231,6 +1353,19 @@ export default class OperationStableCoinService extends Service {
             (option === 'Burn' && capabilities.includes('Burn hts')) ||
             (option === 'Wipe' && roles.includes('WIPE')) ||
             (option === 'Wipe' && capabilities.includes('Wipe hts')) ||
+            (option === 'Freeze an account' && roles.includes('FREEZE')) ||
+            (option === 'Freeze an account' &&
+              capabilities.includes('Freeze hts')) ||
+            (option === 'Unfreeze an account' && roles.includes('FREEZE')) ||
+            (option === 'Unfreeze an account' &&
+              capabilities.includes('Freeze hts')) ||
+            (option === colors.red('Danger zone') && roles.includes('PAUSE')) ||
+            (option === colors.red('Danger zone') &&
+              capabilities.includes('Pause hts')) ||
+            (option === colors.red('Danger zone') &&
+              roles.includes('DELETE')) ||
+            (option === colors.red('Danger zone') &&
+              capabilities.includes('Delete hts')) ||
             (option === 'Rescue' && roles.includes('RESCUE')) ||
             option === 'Refresh roles' ||
             option === 'Details' ||
@@ -1282,7 +1417,23 @@ export default class OperationStableCoinService extends Service {
           value: StableCoinRole.PAUSE_ROLE,
         },
       },
+      {
+        role: {
+          availability: capabilities.includes(Capabilities.FREEZE),
+          name: 'Freeze Role',
+          value: StableCoinRole.FREEZE_ROLE,
+        },
+      },
+      {
+        role: {
+          // TODO Eliminar el DELETE HTS cuando se pueda eliminar desde contrato (SOLO para ver la opción)
+          availability: capabilities.includes(Capabilities.DELETE),
+          name: 'Delete Role',
+          value: StableCoinRole.DELETE_ROLE,
+        },
+      },
     ];
+
     const rolesAvailable = rolesAvailability.filter(
       ({ role }) => role.availability,
     );
@@ -1302,25 +1453,41 @@ export default class OperationStableCoinService extends Service {
     return roleSelected;
   }
 
+  private getRolesAccount(): string[] {
+    const configAccount = utilsService.getCurrentAccount();
+    const roles =
+      this.optionTokenListSelected &&
+      this.optionTokenListSelected.split(' - ').length === 3
+        ? configAccount.importedTokens.find(
+            (token) => token.id === this.stableCoinId,
+          ).roles
+        : undefined;
+    return roles;
+  }
   private async grantSupplierRole(
     grantRoleRequest: GrantRoleRequest,
-    sdk: SDK
+    sdk: SDK,
   ): Promise<void> {
     let hasRole;
-    await utilsService.showSpinner(sdk.hasRole(new HasRoleRequest({
-      account: grantRoleRequest.account,
-      targetId: grantRoleRequest.targetId,
-      proxyContractId: grantRoleRequest.proxyContractId,
-      tokenId: grantRoleRequest.tokenId,
-      role: grantRoleRequest.role
-    })).then((response) => (hasRole = response[0])),
+    await utilsService.showSpinner(
+      sdk
+        .hasRole(
+          new HasRoleRequest({
+            account: grantRoleRequest.account,
+            targetId: grantRoleRequest.targetId,
+            proxyContractId: grantRoleRequest.proxyContractId,
+            tokenId: grantRoleRequest.tokenId,
+            role: grantRoleRequest.role,
+          }),
+        )
+        .then((response) => (hasRole = response[0])),
       {
         text: language.getText('state.loading'),
         successText: language.getText('state.loadCompleted') + '\n',
       },
     );
     if (hasRole) {
-      console.log(language.getText('cashin.alreadyRole'));          
+      console.log(language.getText('cashin.alreadyRole'));
     } else {
       let limit = '';
       const supplierRoleType = language.getArray('wizard.supplierRoleType');
@@ -1369,7 +1536,7 @@ export default class OperationStableCoinService extends Service {
         );
 
         //Give limited
-        //Call to SDK    
+        //Call to SDK
         grantRoleRequest.supplierType = 'limited';
         await this.roleStableCoinService.giveSupplierRoleStableCoin(
           grantRoleRequest,
@@ -1382,5 +1549,168 @@ export default class OperationStableCoinService extends Service {
     req: CheckCashInRoleRequest,
   ): Promise<boolean> {
     return await this.roleStableCoinService.checkCashInRoleStableCoin(req);
+  }
+
+  private async dangerZone(): Promise<void> {
+    const sdk: SDK = utilsService.getSDK();
+    const configAccount = utilsService.getCurrentAccount();
+    const currentAccount = new EOAccount(
+      configAccount.accountId,
+      new PrivateKey(
+        configAccount.privateKey.key,
+        configAccount.privateKey.type,
+      ),
+    );
+
+    const capabilitiesStableCoin = await this.getCapabilities(
+      sdk,
+      currentAccount,
+    );
+
+    const rolesAccount = this.getRolesAccount();
+    const dangerZoneOptions = language
+      .getArray('dangerZone.options')
+      .filter((option) => {
+        switch (option) {
+          case 'Pause stable coin':
+          case 'Unpause stable coin':
+            let showPauser: boolean =
+              capabilitiesStableCoin.some((capability) =>
+                [Capabilities.PAUSE, Capabilities.PAUSE_HTS].includes(
+                  capability,
+                ),
+              ) &&
+              (option == 'Pause stable coin'
+                ? !this.stableCoinPaused
+                : this.stableCoinPaused);
+            if (showPauser && rolesAccount) {
+              showPauser = rolesAccount.includes('PAUSE');
+            }
+            return showPauser;
+            break;
+          case 'Delete stable coin':
+            let showDelete: boolean = capabilitiesStableCoin.some(
+              (capability) =>
+                [Capabilities.DELETE, Capabilities.DELETE_HTS].includes(
+                  capability,
+                ),
+            );
+            if (showDelete && rolesAccount) {
+              showDelete = rolesAccount.includes('DELETE');
+            }
+            return showDelete;
+            break;
+        }
+        // TODO DELETE STABLE COIN
+        return true;
+      });
+
+    // const accountTarget = '0.0.0';
+    switch (
+      await utilsService.defaultMultipleAsk(
+        language.getText('stablecoin.askEditCashInRole'),
+        dangerZoneOptions,
+        false,
+        configAccount.network,
+        `${configAccount.accountId} - ${configAccount.alias}`,
+        this.stableCoinWithSymbol,
+        this.stableCoinPaused,
+        this.stableCoinDeleted,
+      )
+    ) {
+      case 'Pause stable coin':
+        const confirmPause = await utilsService.defaultConfirmAsk(
+          language.getText('dangerZone.confirmPause'),
+          true,
+        );
+        if (confirmPause) {
+          try {
+            const req = new PauseStableCoinRequest({
+              account: {
+                accountId: currentAccount.accountId.id,
+                privateKey: {
+                  key: currentAccount.privateKey.key,
+                  type: currentAccount.privateKey.type,
+                },
+              },
+              proxyContractId: this.proxyContractId,
+              tokenId: this.stableCoinId,
+            });
+            await new PauseStableCoinService().pauseStableCoin(req);
+            this.stableCoinPaused = true;
+          } catch (error) {
+            await utilsService.askErrorConfirmation(
+              async () => await this.operationsStableCoin(),
+              error,
+            );
+          }
+        }
+
+        break;
+      case 'Unpause stable coin':
+        const confirmUnpause = await utilsService.defaultConfirmAsk(
+          language.getText('dangerZone.confirmUnpause'),
+          true,
+        );
+        if (confirmUnpause) {
+          try {
+            const req = new PauseStableCoinRequest({
+              account: {
+                accountId: currentAccount.accountId.id,
+                privateKey: {
+                  key: currentAccount.privateKey.key,
+                  type: currentAccount.privateKey.type,
+                },
+              },
+              proxyContractId: this.proxyContractId,
+              tokenId: this.stableCoinId,
+            });
+            await new PauseStableCoinService().unpauseStableCoin(req);
+            this.stableCoinPaused = false;
+          } catch (error) {
+            await utilsService.askErrorConfirmation(
+              async () => await this.operationsStableCoin(),
+              error,
+            );
+          }
+        }
+
+        break;
+      case 'Delete stable coin':
+        const confirmDelete = await utilsService.defaultConfirmAsk(
+          language.getText('dangerZone.confirmDelete'),
+          true,
+        );
+        if (confirmDelete) {
+          try {
+            const req = new DeleteStableCoinRequest({
+              account: {
+                accountId: currentAccount.accountId.id,
+                privateKey: {
+                  key: currentAccount.privateKey.key,
+                  type: currentAccount.privateKey.type,
+                },
+              },
+              proxyContractId: this.proxyContractId,
+              tokenId: this.stableCoinId,
+            });
+
+            await new DeleteStableCoinService().deleteStableCoin(req);
+            this.stableCoinDeleted = true;
+            await wizardService.mainMenu();
+          } catch (error) {
+            await utilsService.askErrorConfirmation(
+              async () => await this.operationsStableCoin(),
+              error,
+            );
+          }
+        }
+        break;
+      case dangerZoneOptions[dangerZoneOptions.length - 1]:
+      default:
+        await utilsService.cleanAndShowBanner();
+        await this.operationsStableCoin();
+    }
+    await this.dangerZone();
   }
 }

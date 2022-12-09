@@ -22,14 +22,13 @@ import type {
 	GetStableCoinDetailsRequest,
 	GetRolesRequest,
 	GetListStableCoinRequest,
-	GetAccountInfoRequest
-} from 'hedera-stable-coin-sdk';
+	GetAccountInfoRequest,
+	PauseStableCoinRequest,
+	DeleteStableCoinRequest,
+	FreezeAccountRequest} from 'hedera-stable-coin-sdk';
 import {
-	HederaNetwork,
-	NetworkMode,
-	SDK,
-	HederaNetworkEnviroment,
-} from 'hedera-stable-coin-sdk';
+	LoggerTransports,
+ HederaNetwork, NetworkMode, SDK, HederaNetworkEnviroment } from 'hedera-stable-coin-sdk';
 
 export enum HashConnectConnectionState {
 	Connected = 'Connected',
@@ -65,6 +64,10 @@ export class SDKService {
 				mode: NetworkMode.HASHPACK,
 				options: {
 					appMetadata,
+					logOptions: {
+						level: process.env.REACT_APP_LOG_LEVEL ?? 'ERROR',
+						transports: new LoggerTransports.Console(),
+					},
 				},
 			});
 
@@ -111,18 +114,19 @@ export class SDKService {
 		return (await SDKService.getInstance()).disconectHaspack();
 	}
 
-	public static async getStableCoins(req: GetListStableCoinRequest)
-	: Promise<IStableCoinList[] | null> {
+	public static async getStableCoins(
+		req: GetListStableCoinRequest,
+	): Promise<IStableCoinList[] | null> {
 		return (await SDKService.getInstance())?.getListStableCoin(req);
 	}
 
-	public static async getStableCoinDetails(req: GetStableCoinDetailsRequest) 
-	: Promise<IStableCoinDetail | null> {
+	public static async getStableCoinDetails(
+		req: GetStableCoinDetailsRequest,
+	): Promise<IStableCoinDetail | null> {
 		return (await SDKService.getInstance())?.getStableCoinDetails(req);
 	}
 
-	public static async getAccountInfo(req: GetAccountInfoRequest)
-	: Promise<IAccountInfo | null> {
+	public static async getAccountInfo(req: GetAccountInfoRequest): Promise<IAccountInfo | null> {
 		return (await SDKService.getInstance())?.getAccountInfo(req);
 	}
 
@@ -150,6 +154,26 @@ export class SDKService {
 
 	public static async wipe(req: WipeStableCoinRequest) {
 		return SDKService.getInstance().then((instance) => instance.wipe(req));
+	}
+
+	public static async pause(req: PauseStableCoinRequest) {
+		return SDKService.getInstance().then((instance) => instance.pauseStableCoin(req));
+	}
+
+	public static async unpause(req: PauseStableCoinRequest) {
+		return SDKService.getInstance().then((instance) => instance.unpauseStableCoin(req));
+	}
+
+	public static async freeze(req: FreezeAccountRequest) {
+		return SDKService.getInstance().then((instance) => instance.freezeAccount(req));
+	}
+
+	public static async unfreeze(req: FreezeAccountRequest) {
+		return SDKService.getInstance().then((instance) => instance.unfreezeAccount(req));
+	}
+
+	public static async delete(req: DeleteStableCoinRequest) {
+		return SDKService.getInstance().then((instance) => instance.deleteStableCoin(req));
 	}
 
 	public static async getCapabilities({

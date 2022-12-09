@@ -25,7 +25,7 @@ exports[`<Topbar /> should render correctly 1`] = `
         class="css-16czca"
       >
         <div
-          class="css-1hg55h3"
+          class="css-1rc4l3d"
           data-testid="coin-dropdown"
         >
           <div
@@ -59,7 +59,7 @@ exports[`<Topbar /> should render correctly 1`] = `
                       class="chakra-text css-4pvr19"
                       data-testid="select-placeholder"
                     >
-                      Choose Stable coin
+                      Choose stable coin
                     </span>
                     <div
                       class=" css-svnjlw"

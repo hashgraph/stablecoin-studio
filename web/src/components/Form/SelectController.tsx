@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, forwardRef } from 'react';
 import {
 	FormControl,
 	FormErrorMessage,
@@ -11,7 +11,7 @@ import {
 	type SystemStyleObject,
 	Box,
 } from '@chakra-ui/react';
-import type { ChangeEvent, ReactNode } from 'react';
+import type { ChangeEvent, ReactNode , Ref } from 'react';
 import { Controller } from 'react-hook-form';
 import type { Props as ReactSelectProps } from 'react-select';
 import type { Control, UseControllerProps } from 'react-hook-form';
@@ -20,6 +20,7 @@ import {
 	Select as ChakraSelect,
 	type SelectComponentsConfig,
 	type GroupBase,
+	type SelectInstance,
 } from 'chakra-react-select';
 import Icon from '../Icon';
 import { merge as _merge } from 'lodash';
@@ -87,7 +88,7 @@ export interface SelectControllerProps {
 	size?: ReactSelectProps['size'];
 	overrideStyles?: Partial<SelectThemeStyle>;
 	noOptionsMessage?: ReactSelectProps['noOptionsMessage'];
-	isMulti?: ReactSelectProps['isMulti']
+	isMulti?: ReactSelectProps['isMulti'];
 }
 
 export type SelectConfigProps = {
@@ -207,116 +208,126 @@ const useComponents = ({
 	};
 };
 
-export const SelectController = ({
-	name,
-	rules,
-	label,
-	placeholder,
-	options,
-	control,
-	isRequired = false,
-	isDisabled = false,
-	onChangeAux,
-	onBlurAux,
-	showErrors = true,
-	size,
-	variant = 'outline',
-	addonLeft,
-	addonRight,
-	addonError,
-	addonDown = <Icon name='CaretDown' />,
-	labelProps,
-	overrideStyles,
-	defaultValue,
-	...props
-}: SelectControllerProps) => {
-	const styles = useStyles({
-		variant,
-		addonRight,
-		addonError,
-		addonDown,
-		addonLeft,
-		size,
-		isInvalid: false,
-		isDisabled,
-		overrideStyles,
-	});
-	const components = useComponents({
-		addonLeft,
-		addonRight,
-		addonError,
-		addonDown,
-		placeholder,
-		isInvalid: false,
-		isDisabled,
-		styles,
-		variant,
-	});
+const SelectController = forwardRef(
+	(
+		{
+			name,
+			rules,
+			label,
+			placeholder,
+			options,
+			control,
+			isRequired = false,
+			isDisabled = false,
+			onChangeAux,
+			onBlurAux,
+			showErrors = true,
+			size,
+			variant = 'outline',
+			addonLeft,
+			addonRight,
+			addonError,
+			addonDown = <Icon name='CaretDown' />,
+			labelProps,
+			overrideStyles,
+			defaultValue,
+			...props
+		}: SelectControllerProps,
+		ref: Ref<SelectInstance<unknown, boolean, GroupBase<unknown>>>,
+	) => {
+		const styles = useStyles({
+			variant,
+			addonRight,
+			addonError,
+			addonDown,
+			addonLeft,
+			size,
+			isInvalid: false,
+			isDisabled,
+			overrideStyles,
+		});
+		const components = useComponents({
+			addonLeft,
+			addonRight,
+			addonError,
+			addonDown,
+			placeholder,
+			isInvalid: false,
+			isDisabled,
+			styles,
+			variant,
+		});
 
-	return (
-		<Controller
-			control={control}
-			name={name}
-			defaultValue={defaultValue}
-			rules={rules}
-			render={({ field: { onChange, value }, fieldState: { invalid, error } }) => {
-				useEffect(() => {
-					if (defaultValue) {
-						const index = parseInt(defaultValue as string);
-						const defaultOption = options[index];
+		return (
+			<Controller
+				control={control}
+				name={name}
+				defaultValue={defaultValue}
+				rules={rules}
+				render={({ field: { onChange, value }, fieldState: { invalid, error } }) => {
+					useEffect(() => {
+						if (defaultValue) {
+							const index = parseInt(defaultValue as string);
+							const defaultOption = options[index];
 
-						onChange(defaultOption);
-					}
-				}, []);
-				const onChangeCustom = (event: ChangeEvent<HTMLInputElement>) => {
-					onChange(event);
-					onChangeAux && onChangeAux(event);
-				};
+							onChange(defaultOption);
+						}
+					}, []);
+					const onChangeCustom = (event: ChangeEvent<HTMLInputElement>) => {
+						onChange(event);
+						onChangeAux && onChangeAux(event);
+					};
 
-				const onBlurCustom = (event: React.FocusEvent<HTMLInputElement>) => {
-					onBlurAux && onBlurAux(event);
-				};
+					const onBlurCustom = (event: React.FocusEvent<HTMLInputElement>) => {
+						onBlurAux && onBlurAux(event);
+					};
 
-				return (
-					<Stack w='full'>
-						<FormControl data-testid='form_control' isInvalid={invalid}>
-							{label && (
-								<FormLabel {...labelProps}>
-									<HStack>
-										<Text data-testid='selector-label'>{label}</Text>
-										{isRequired && <Text color='red'>*</Text>}
-									</HStack>
-								</FormLabel>
-							)}
+					return (
+						<Stack w='full'>
+							<FormControl data-testid='form_control' isInvalid={invalid}>
+								{label && (
+									<FormLabel {...labelProps}>
+										<HStack>
+											<Text data-testid='selector-label'>{label}</Text>
+											{isRequired && <Text color='red'>*</Text>}
+										</HStack>
+									</FormLabel>
+								)}
 
-							<ChakraSelect
-								isInvalid={invalid}
-								name={name}
-								options={options}
-								onChange={onChangeCustom as ReactSelectProps['onChange']}
-								onBlur={onBlurCustom as ReactSelectProps['onBlur']}
-								placeholder={placeholder}
-								value={value}
-								components={components}
-								chakraStyles={{
-									option: (_, state) => ({
-										// option needs to be styled like this, otherwise it doesn't let user select the options
-										...styles.option,
-										...(state.isSelected && styles.optionSelected),
-									}),
-								}}
-								variant={variant}
-								{...props}
-							/>
-							{showErrors && (
-								<FormErrorMessage data-testid='form-error-msg'>
-									{error && error.message}
-								</FormErrorMessage>
-							)}
-						</FormControl>
-					</Stack>
-				);
-			}}
-		/>
-	);
-};
+								<ChakraSelect
+									isInvalid={invalid}
+									name={name}
+									options={options}
+									onChange={onChangeCustom as ReactSelectProps['onChange']}
+									onBlur={onBlurCustom as ReactSelectProps['onBlur']}
+									placeholder={placeholder}
+									value={value}
+									components={components}
+									ref={ref}
+									chakraStyles={{
+										option: (_, state) => ({
+											// option needs to be styled like this, otherwise it doesn't let user select the options
+											...styles.option,
+											...(state.isSelected && styles.optionSelected),
+										}),
+									}}
+									variant={variant}
+									{...props}
+								/>
+								{showErrors && (
+									<FormErrorMessage data-testid='form-error-msg'>
+										{error && error.message}
+									</FormErrorMessage>
+								)}
+							</FormControl>
+						</Stack>
+					);
+				}}
+			/>
+		);
+	},
+);
+
+SelectController.displayName = 'SelectController';
+
+export { SelectController };

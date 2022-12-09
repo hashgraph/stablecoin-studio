@@ -24,6 +24,10 @@ accounts:
       privateKey: { key: '', type: '' },
       network: '',
       alias: '',
-      externalTokens: [],
+      importedTokens: [],
     },
   ]
+logs:
+  path: './logs'
+  level: 'ERROR'
+  

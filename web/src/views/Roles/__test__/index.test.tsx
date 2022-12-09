@@ -27,6 +27,6 @@ describe(`<${Roles.name} />`, () => {
 		const component = render(<Roles />);
 
 		const directAccesses = component.getAllByRole('button');
-		expect(directAccesses).toHaveLength(3);
+		expect(directAccesses).toHaveLength(4);
 	});
 });

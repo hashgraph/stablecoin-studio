@@ -10,7 +10,7 @@ module.exports = {
 		'^(\\.{1,2}/.*)\\.(m)?js$': '$1',
 	},
 	testMatch: ['**/__tests__/**/*.(test|spec).[jt]s?(x)'],
-	testPathIgnorePatterns: ['/build/'],
+	testPathIgnorePatterns: ['/build/', '/src_old/'],
 	coverageDirectory: 'coverage',
 	collectCoverageFrom: [
 		'src/**/*.ts',
@@ -22,7 +22,6 @@ module.exports = {
 		'^.+\\.ts?$': 'ts-jest',
 		'^.+\\.[t|j]sx?$': 'babel-jest',
 	},
-	transformIgnorePatterns: [
-		'node_modules/(?!@ngrx|(?!deck.gl)|ng-dynamic)',
-	],
+	transformIgnorePatterns: ['node_modules/(?!@ngrx|(?!deck.gl)|ng-dynamic)'],
+	setupFilesAfterEnv: ['./__tests__/jest-setup-file.ts'],
 };

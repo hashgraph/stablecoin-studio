@@ -1,4 +1,2 @@
-
-
-/* SDK */
-export * from './port/in/sdk/sdk';
+import 'reflect-metadata';
+export * from './port/in/index';

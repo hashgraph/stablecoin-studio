@@ -83,7 +83,7 @@ From an accounts's perspective, there are two kinds of stable coins:
 
  Every stable coin created using the account, independently of the roles the account might have.
 
- - *External Stable Coins*
+ - *Imported Stable Coins*
 
 Every stable coin for which the account has at least one role but was created using a different account.
 

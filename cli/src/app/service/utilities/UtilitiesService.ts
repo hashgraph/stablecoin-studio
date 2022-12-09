@@ -1,7 +1,7 @@
 import * as inquirer from 'inquirer';
 import figlet from 'figlet-promised';
 import Service from '../Service.js';
-import { language } from '../../../index.js';
+import { configurationService, language } from '../../../index.js';
 import Table from 'cli-table3';
 import { StableCoinList } from '../../../domain/stablecoin/StableCoinList.js';
 import {
@@ -44,6 +44,9 @@ export default class UtilitiesService extends Service {
     this.sdk = await new SDK({
       network: new HederaNetwork(networks[network]),
       mode: NetworkMode.EOA,
+      options: {
+        logOptions: configurationService.getLogConfiguration()
+      }
     }).init();
     return this.sdk;
   }
@@ -114,11 +117,27 @@ export default class UtilitiesService extends Service {
   }
 
   /**
+   * Show application warning banner
+   */
+  public async showCostWarningBanner(): Promise<void> {
+    this.showWarning(language.getText('general.warning'));
+    this.breakLine(1);
+  }
+
+  /**
    * Function through which all errors pass
    * @param error Error message
    */
   public showError(error: string): void {
     console.error(colors.red(error));
+  }
+
+  /**
+   * Function through which all warnings pass
+   * @param warn Warning message
+   */
+  public showWarning(warn: string): void {
+    console.warn(colors.yellow(warn));
   }
 
   /**
@@ -185,6 +204,8 @@ export default class UtilitiesService extends Service {
     network?: string,
     account?: string,
     token?: string,
+    tokenPaused?: boolean,
+    tokenDeleted?: boolean,
   ): Promise<string> {
     if (network) {
       question =
@@ -209,6 +230,12 @@ export default class UtilitiesService extends Service {
         colors.underline(colors.bold('Stablecoin:')) +
         ' ' +
         colors.yellow('(' + token + ')');
+    }
+    if (tokenPaused) {
+      question = question + ' | ' + colors.red('PAUSED');
+    }
+    if (tokenDeleted) {
+      question = question + ' | ' + colors.red('DELETED');
     }
     question = question + '\n';
     const variable = await inquirer.prompt({
