@@ -51,11 +51,11 @@ The remaining smart contracts have been implemented by IOBuilders for this proje
  - `HederaERC20.sol`: Main Stable coin contract. Contains all the stable coin related logic. Inherits all the contracts defined in the "extension" folder as well as the Role.sol contract.
  - `HederaERC20Proxy.sol`: Extends the OpenZeppelin transaparent proxy implemention. This proxy will delegate business method calls to a *HederaERC20* smart contract and will implement the upgradable logic.
  - `HederaERC20ProxyAdmin.sol`: Extends the OpenZeppelin proxy admin implementation. This proxy will be the admin of the HederaERC20Proxy, that way, users will be able to invoke the HederaERC20 functionality through the HederaERC20Proxy and upgrade the HederaERC20Proxy implementation through the HederaERC20ProxyAdmin.
- - `StableCoinFactory.sol`: Implements the flow to create a new stable coin. Every time a new stable coin is created, several smart contracts must be deployed and initialized and an underlying token must be created through the `HTS precompiled smart contract`. This multi-transaction process is encapsulated in this contract so that users can create new stable coins in a single transaction. **IMPORTANT** : IoBuilders will deploy and maintain a Factory contract that anybody can use. Users are also free to deploy and use their own Factory contract's.
+ - `StableCoinFactory.sol`: Implements the flow to create a new stable coin. Every time a new stable coin is created, several smart contracts must be deployed and initialized and an underlying token must be created through the `HTS precompiled smart contract`. This multi-transaction process is encapsulated in this contract so that users can create new stable coins in a single transaction. **IMPORTANT** : IoBuilders will deploy and maintain a Factory contract that anybody can use. Users are also free to deploy and use their own Factory contract.
  - `StableCoinFactoryProxy.sol`: Extends the OpenZeppelin transaparent proxy implemention. This proxy will delegate business method calls to a *StableCoinFactory* smart contract and will implement the upgradable logic.
  - `StableCoinFactoryProxyAdmin.sol`: Extends the OpenZeppelin proxy admin implementation. This proxy will be the admin of the StableCoinFactoryProxy, that way, users will be able to invoke the StableCoinFactory functionality through the StableCoinFactoryProxy and upgrade the StableCoinFactoryProxy implementation through the StableCoinFactoryProxyAdmin.
 
- > Every stable coin is made of a **HederaERC20Proxy** contract , a **HederaERC20** contract and an **underlying token** managed through the *HTS precompiled smart contract*.
+ > Every stable coin is made of an **HederaERC20ProxyAdmin** contract, an **HederaERC20Proxy** contract , an **HederaERC20** contract and an **underlying token** managed through the *HTS precompiled smart contract*.
 
 # Architecture
 ## Overall Architecture
@@ -202,12 +202,12 @@ npm test:previewnet:mintable
 
 # Deploy
 The stable coin solution is made of two major components. 
-- The Factory: Smart contracts encapsulating the complexity of the creation of new stable coins.
-- The Stable Coin: Smart contracts that are deployed by the factory, exposing the functionalities and services of the stable coin solution and interacting with an underlying token.
+- **The Factory** : Smart contracts encapsulating the complexity of the creation of new stable coins.
+- **The Stable Coin** : Smart contracts that are deployed by the factory, exposing the functionalities and services of the stable coin solution and interacting with an underlying token.
 
 In order to create stable coins, the Factory must be deployed first. Once deployed, creating stable coins will be as simple as invoking the "createStableCoin" method of the Factory.
 
-IoBuilders will provide a common Factory for everbody to use. The address of the Factory contract is hardcoded in the SDK module.
+> IoBuilders will provide a common Factory for everbody to use. The address of the Factory Proxy contract is hardcoded in the SDK module.
 
 ## Deploy Factory
 If you want to deploy your own Factory contract do the following steps:
