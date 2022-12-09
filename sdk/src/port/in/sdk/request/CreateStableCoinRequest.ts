@@ -32,6 +32,8 @@ export default class CreateStableCoinRequest
 
 	stableCoinFactory: string;
 
+	hederaERC20: string;
+
 	@OptionalField()
 	initialSupply?: string | undefined;
 
@@ -85,7 +87,8 @@ export default class CreateStableCoinRequest
 		supplyKey,
 		treasury,
 		supplyType,
-		stableCoinFactory
+		stableCoinFactory,
+		hederaERC20
 	}: {
 		account: RequestAccount;
 		name: string;
@@ -104,6 +107,7 @@ export default class CreateStableCoinRequest
 		treasury?: string;
 		supplyType?: TokenSupplyType;
 		stableCoinFactory: string;
+		hederaERC20: string;
 	}) {
 		super({
 			account: Validation.checkAccount(),
@@ -197,7 +201,8 @@ export default class CreateStableCoinRequest
 			pauseKey: Validation.checkPublicKey(),
 			supplyKey: Validation.checkPublicKey(),
 			treasury: Validation.checkHederaIdFormat(),
-			stableCoinFactory: Validation.checkContractId()
+			stableCoinFactory: Validation.checkContractId(),
+			hederaERC20: Validation.checkContractId()
 		});
 		this.account = account;
 		this.name = name;
@@ -217,5 +222,6 @@ export default class CreateStableCoinRequest
 		this.treasury = treasury;
 		this.supplyType = supplyType;
 		this.stableCoinFactory = stableCoinFactory;
+		this.hederaERC20 = hederaERC20;
 	}
 }

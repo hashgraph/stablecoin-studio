@@ -16,7 +16,8 @@ import { INetworkConfig } from '../../../domain/configuration/interfaces/INetwor
 import colors from 'colors';
 import MaskData from 'maskdata';
 import { clear } from 'console';
-import { IFactoryConfig } from 'domain/configuration/interfaces/IFactoryConfig.js';
+import { IFactoryConfig } from '../../../domain/configuration/interfaces/IFactoryConfig.js';
+import { IHederaERC20Config } from '../../../domain/configuration/interfaces/IHederaERC20Config.js';
 
 /**
  * Utilities Service
@@ -26,6 +27,7 @@ export default class UtilitiesService extends Service {
   private currentAccount: IAccountConfig;
   private currentNetwork: INetworkConfig;
   private currentFactory: IFactoryConfig;
+  private currentHederaERC20: IHederaERC20Config;
 
 
   constructor() {
@@ -82,11 +84,23 @@ export default class UtilitiesService extends Service {
     this.currentFactory = factory;
   }
 
+  public setCurrentHederaERC20(hederaERC20: IHederaERC20Config): void {
+    this.currentHederaERC20 = hederaERC20;
+  }
+
   public getCurrentFactory(): IFactoryConfig {
     if (!this.currentFactory) {
       throw new Error('Factory not initialized');
     } else {
       return this.currentFactory;
+    }
+  }
+
+  public getCurrentHederaERC20(): IHederaERC20Config {
+    if (!this.currentHederaERC20) {
+      throw new Error('HederaERC20 not initialized');
+    } else {
+      return this.currentHederaERC20;
     }
   }
 

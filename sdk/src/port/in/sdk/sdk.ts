@@ -153,8 +153,10 @@ export enum NetworkMode {
 export interface SDKInitOptions {
 	onInit: (data: InitializationData) => void;
 }
+export const HederaERC20AddressTestnet = "0.0.49059747";
+export const HederaERC20AddressPreviewnet = "0.0.11111111";
 
-export const FactoryAddressTestnet = "0.0.49045465";
+export const FactoryAddressTestnet = "0.0.49059753";
 export const FactoryAddressPreviewnet = "0.0.11111111";
 
 export class SDK {
@@ -226,7 +228,8 @@ export class SDK {
 					},
 					maxSupply: (val, req) =>
 						BigDecimal.fromString(val, req.decimals),
-					stableCoinFactory: ContractId
+					stableCoinFactory: ContractId,
+					hederaERC20: ContractId
 				},
 			);
 			return this.stableCoinService.createStableCoin(req);

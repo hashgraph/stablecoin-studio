@@ -10,7 +10,7 @@ import {
 } from '../../../../src/index.js';
 import { AccountId } from '@hashgraph/sdk';
 import { Capabilities } from '../../../../src/domain/context/stablecoin/Capabilities.js';
-import { ACCOUNTS, getSDKAsync, REQUEST_ACCOUNTS, FACTORY_ID } from '../../../core/core.js';
+import { ACCOUNTS, getSDKAsync, REQUEST_ACCOUNTS, FACTORY_ID, HEDERAERC20_ID } from '../../../core/core.js';
 
 describe('🧪 [DOMAIN] StableCoin', () => {
   it('Create an stable coin with all funtionality', async () => {
@@ -53,7 +53,8 @@ async function createStableCoin(): Promise<{
     name: 'Custom Nodes',
     symbol: 'CN',
     decimals: 2,
-    stableCoinFactory: FACTORY_ID
+    stableCoinFactory: FACTORY_ID,
+    hederaERC20: HEDERAERC20_ID
   });
   const coin = await sdk.createStableCoin(create);
   if (!coin) throw new Error('Coin could not be created, aborting');

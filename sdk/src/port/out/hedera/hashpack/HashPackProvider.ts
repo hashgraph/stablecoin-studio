@@ -300,7 +300,8 @@ export default class HashPackProvider implements IProvider {
 	public async deployStableCoin(
 		stableCoin: StableCoin,
 		account: HashPackAccount,
-		stableCoinFactory: ContractId
+		stableCoinFactory: ContractId,
+		hederaERC20: ContractId
 	): Promise<StableCoin> {
 		try{
 			if (account) {
@@ -316,7 +317,7 @@ export default class HashPackProvider implements IProvider {
 			}
 			
 			log(
-				`Using the Factory contract at ${stableCoinFactory.id} to create a new stable coin... please wait.`,
+				`Using the Factory contract at ${stableCoinFactory.id} and the HederaERC20 logic at ${hederaERC20.id} to create a new stable coin... please wait.`,
 				logOpts,
 			);
 	
@@ -384,7 +385,8 @@ export default class HashPackProvider implements IProvider {
 				);
 	
 			const parameters = [
-				JSON.stringify(stableCoinToCreate)
+				stableCoinToCreate,
+				HContractId.fromString(hederaERC20.id).toSolidityAddress()
 			];
 	
 			const params: ICallContractWithAccountRequest = {

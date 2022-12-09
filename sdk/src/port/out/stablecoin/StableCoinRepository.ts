@@ -57,10 +57,11 @@ export default class StableCoinRepository implements IStableCoinRepository {
 	public async saveCoin(
 		coin: StableCoin,
 		account: Account,
-		stableCoinFactory: ContractId
+		stableCoinFactory: ContractId,
+		hederaERC20: ContractId
 	): Promise<StableCoin> {
 		account.evmAddress = await this.accountToEvmAddress(account);
-		return this.networkAdapter.provider.deployStableCoin(coin, account, stableCoinFactory);
+		return this.networkAdapter.provider.deployStableCoin(coin, account, stableCoinFactory, hederaERC20);
 	}
 
 	public async getListStableCoins(

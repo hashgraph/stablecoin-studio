@@ -18,7 +18,8 @@ describe('🧪 SDK Create Stable Coin Request', () => {
       symbol: 'symbol',
       decimals: 5,
       treasury: '0.0.1',
-      stableCoinFactory: '0.0.2'
+      stableCoinFactory: '0.0.2',
+      hederaERC20: '0.0.3'
     });
     expect(request).not.toBeNull();
     const other: ICreateStableCoinServiceRequestModel = RequestMapper.map(
@@ -38,7 +39,8 @@ describe('🧪 SDK Create Stable Coin Request', () => {
       name: 'name',
       symbol: 'symbol',
       decimals: 5,
-      stableCoinFactory: '0.0.2'
+      stableCoinFactory: '0.0.2',
+      hederaERC20: '0.0.3'
     });
     expect(request).not.toBeNull();
     const validations = request.validate();
@@ -56,7 +58,8 @@ describe('🧪 SDK Create Stable Coin Request', () => {
       decimals: 18,
       initialSupply: '9.123456789012345677',
       maxSupply: '9.123456789012345677',
-      stableCoinFactory: '0.0.2'
+      stableCoinFactory: '0.0.2',
+      hederaERC20: '0.0.3'
     });
     expect(request).not.toBeNull();
     const validations = request.validate();
@@ -78,7 +81,8 @@ describe('🧪 SDK Create Stable Coin Request', () => {
         BigNumber.from(MAX_SUPPLY + 1n),
         18,
       ).toString(),
-      stableCoinFactory: '0.0.2'
+      stableCoinFactory: '0.0.2',
+      hederaERC20: '0.0.3'
     });
     expect(request).not.toBeNull();
     const validations = request.validate();
@@ -101,7 +105,8 @@ describe('🧪 SDK Create Stable Coin Request', () => {
         18,
       ).toString(),
       supplyType: TokenSupplyType.INFINITE,
-      stableCoinFactory: '0.0.2'
+      stableCoinFactory: '0.0.2',
+      hederaERC20: '0.0.3'
     });
     expect(request).not.toBeNull();
     const validations = request.validate();
@@ -120,7 +125,8 @@ describe('🧪 SDK Create Stable Coin Request', () => {
       decimals: 14,
       initialSupply: '1.1234',
       maxSupply: '10.123456789',
-      stableCoinFactory: '0.0.2'
+      stableCoinFactory: '0.0.2',
+      hederaERC20: '0.0.3'
     });
     expect(request).not.toBeNull();
     const validations = request.validate();
@@ -137,7 +143,8 @@ describe('🧪 SDK Create Stable Coin Request', () => {
       name: '_'.repeat(159),
       symbol: 'symbol',
       decimals: 5,
-      stableCoinFactory: '0.0.2'
+      stableCoinFactory: '0.0.2',
+      hederaERC20: '0.0.3'
     });
     expect(request).not.toBeNull();
     console.log(request);
@@ -159,7 +166,8 @@ describe('🧪 SDK Create Stable Coin Request', () => {
       decimals: 5,
       initialSupply: '1000.adsda.asdqw',
       maxSupply: '1000.12345',
-      stableCoinFactory: '0.0.2'
+      stableCoinFactory: '0.0.2',
+      hederaERC20: '0.0.3'
     });
     expect(request).not.toBeNull();
     const validations = request.validate();
@@ -171,7 +179,7 @@ describe('🧪 SDK Create Stable Coin Request', () => {
     expect(validationsOk.length).toBe(0);
   });
 
-  it('Create and validate request, fail with [initialSupply, adminKey, treasury, autoRenewAccount, factory]', () => {
+  it('Create and validate request, fail with [initialSupply, adminKey, treasury, autoRenewAccount, factory, hederaERC20]', () => {
     const request: CreateStableCoinRequest = new CreateStableCoinRequest({
       account: {
         accountId: '0.0.1',
@@ -187,13 +195,14 @@ describe('🧪 SDK Create Stable Coin Request', () => {
       },
       treasury: '1234',
       autoRenewAccount: '1234',
-      stableCoinFactory: 'asada'
+      stableCoinFactory: 'asada',
+      hederaERC20:'hjhjhj'
     });
     expect(request).not.toBeNull();
     const validations = request.validate();
     
     expect(validations).not.toBeNull();
-    expect(validations.length).toEqual(5);
+    expect(validations.length).toEqual(6);
   });
 
   it('Create and map a full request', () => {
@@ -212,7 +221,8 @@ describe('🧪 SDK Create Stable Coin Request', () => {
       },
       autoRenewAccount: '0.0.1',
       freezeDefault: false,
-      stableCoinFactory: '0.0.2'
+      stableCoinFactory: '0.0.2',
+      hederaERC20: '0.0.3'
     };
     const request: CreateStableCoinRequest = new CreateStableCoinRequest(
       requestVals,

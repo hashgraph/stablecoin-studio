@@ -22,7 +22,8 @@ import {
   getSDKAsync,
   MAX_SUPPLY,
   REQUEST_ACCOUNTS,
-  FACTORY_ID
+  FACTORY_ID,
+  HEDERAERC20_ID
 } from '../../../core/core.js';
 import { StableCoinRole } from '../../../../src/core/enum.js';
 import CashInStableCoinRequest from '../../../../src/port/in/sdk/request/CashInStableCoinRequest.js';
@@ -57,7 +58,8 @@ describe('🧪 [PORT] SDK', () => {
         wipeKey: PublicKey.NULL,
         pauseKey: PublicKey.NULL,
         supplyKey: PublicKey.NULL,
-        stableCoinFactory: FACTORY_ID
+        stableCoinFactory: FACTORY_ID,
+        hederaERC20: HEDERAERC20_ID
       }),
     );
     proxyContractId = coin?.memo;
@@ -84,7 +86,8 @@ describe('🧪 [PORT] SDK', () => {
       wipeKey: PublicKey.NULL,
       pauseKey: PublicKey.NULL,
       supplyKey: PublicKey.NULL,
-      stableCoinFactory: FACTORY_ID
+      stableCoinFactory: FACTORY_ID,
+      hederaERC20: HEDERAERC20_ID
     });
     const coin = await sdk.createStableCoin(req);
     expect(coin).not.toBeNull();
@@ -105,7 +108,8 @@ describe('🧪 [PORT] SDK', () => {
             key: ACCOUNTS.testnet.privateKey.publicKey.key,
             type: ACCOUNTS.testnet.privateKey.publicKey.type,
           },
-          stableCoinFactory: FACTORY_ID
+          stableCoinFactory: FACTORY_ID,
+          hederaERC20: HEDERAERC20_ID
         }),
       ),
     ).rejects.toThrow(BaseError);

@@ -88,6 +88,7 @@ export default class CreateStableCoinService extends Service {
   public async wizardCreateStableCoin(): Promise<CreateStableCoinRequest> {
     const currentAccount = utilsService.getCurrentAccount();
     const currentFactory = utilsService.getCurrentFactory();
+    const currentHederaERC20 = utilsService.getCurrentHederaERC20();
 
     utilsService.displayCurrentUserInfo(currentAccount);
 
@@ -103,7 +104,8 @@ export default class CreateStableCoinService extends Service {
       name: '',
       symbol: '',
       decimals: 6,
-      stableCoinFactory: currentFactory.id
+      stableCoinFactory: currentFactory.id,
+      hederaERC20: currentHederaERC20.id
     });
 
     // Factory
