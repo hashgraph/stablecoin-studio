@@ -15,6 +15,7 @@ import { TransactionType } from '../TransactionResponseEnums.js';
 import { HTSTransactionBuilder } from './HTSTransactionBuilder.js';
 import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
 import Account from '../../../domain/context/account/Account.js';
+import { HederaId } from '../../../domain/context/shared/HederaId.js';
 
 export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	private web3 = new Web3();
@@ -512,9 +513,15 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		const contractParams: any[] =
 			params === undefined || params === null
 				? []
-				: Object.values(params!).filter((element) => {
-						return element !== undefined;
-				  });
+				: Object.values(params!)
+						.map((x: any) => {
+							if (x instanceof HederaId) {
+								return x.toHederaAddress().toSolidityAddress();
+							} else return x;
+						})
+						.filter((element: any) => {
+							return element !== undefined;
+						});
 		return await this.contractCall(
 			coin.coin.proxyAddress!.value,
 			operationName,
