@@ -67,8 +67,8 @@ class StableCoinInPort implements IStableCoinInPort {
 		return !!(await this.commandBus.execute(
 			new CashInCommand(
 				BigDecimal.fromString(amount),
-				HederaId.from(tokenId),
 				HederaId.from(targetId),
+				HederaId.from(tokenId),
 			),
 		));
 	}

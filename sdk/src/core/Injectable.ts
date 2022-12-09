@@ -21,7 +21,30 @@ import { GetStableCoinQueryHandler } from '../app/usecase/query/stablecoin/get/G
 import RPCTransactionAdapter from '../port/out/rpc/RPCTransactionAdapter.js';
 import { Constructor } from './Type.js';
 import { CashInCommandHandler } from '../app/usecase/command/stablecoin/operations/cashin/CashInCommandHandler.js';
-import { MirrorNodeAdapter } from '../port/out/mirror/MirrorNodeAdapter.js';
+import { BurnCommandHandler } from '../app/usecase/command/stablecoin/operations/burn/BurnCommandHandler.js';
+import { BalanceOfCommandHandler } from '../app/usecase/command/stablecoin/operations/balanceof/BalanceOfCommandHandler.js';
+import { DeleteCommandHandler } from '../app/usecase/command/stablecoin/operations/delete/DeleteCommandHandler.js';
+import { FreezeCommandHandler } from '../app/usecase/command/stablecoin/operations/freeze/FreezeCommandHandler.js';
+import { PauseCommandHandler } from '../app/usecase/command/stablecoin/operations/pause/PauseCommandHandler.js';
+import { RescueCommandHandler } from '../app/usecase/command/stablecoin/operations/rescue/RescueCommandHandler.js';
+import { UnFreezeCommandHandler } from '../app/usecase/command/stablecoin/operations/unfreeze/UnFreezeCommandHandler.js';
+import { UnPauseCommandHandler } from '../app/usecase/command/stablecoin/operations/unpause/UnPauseCommandHandler.js';
+import { WipeCommandHandler } from '../app/usecase/command/stablecoin/operations/wipe/WipeCommandHandler.js';
+import { DecreaseAllowanceCommandHandler } from '../app/usecase/command/stablecoin/roles/decreaseAllowance/DecreaseAllowanceCommandHandler.js';
+import { GetAllowanceCommandHandler } from '../app/usecase/command/stablecoin/roles/getAllowance/GetAllowanceCommandHandler.js';
+import { GetRolesCommandHandler } from '../app/usecase/command/stablecoin/roles/getRoles/GetRolesCommandHandler.js';
+import { GrantRoleCommandHandler } from '../app/usecase/command/stablecoin/roles/grantRole/GrantRoleCommandHandler.js';
+import { HasRoleCommandHandler } from '../app/usecase/command/stablecoin/roles/hasRole/HasRoleCommandHandler.js';
+import { IncreaseAllowanceCommandHandler } from '../app/usecase/command/stablecoin/roles/increaseAllowance/IncreaseAllowanceCommandHandler.js';
+import { IsLimitedCommandHandler } from '../app/usecase/command/stablecoin/roles/isLimited/IsLimitedCommandHandler.js';
+import { IsUnlimitedCommandHandler } from '../app/usecase/command/stablecoin/roles/isUnlimited/IsUnlimitedCommandHandler.js';
+import { ResetAllowanceCommandHandler } from '../app/usecase/command/stablecoin/roles/resetAllowance/ResetAllowanceCommandHandler.js';
+import { RevokeRoleCommandHandler } from '../app/usecase/command/stablecoin/roles/revokeRole/RevokeRoleCommandHandler.js';
+import { ConnectCommandHandler } from '../app/usecase/command/network/connect/ConnectCommandHandler.js';
+import { DisconnectCommandHandler } from '../app/usecase/command/network/disconnect/DisconnectCommandHandler.js';
+import { GetListStableCoinQueryHandler } from '../app/usecase/query/stablecoin/list/GetListStableCoinQueryHandler.js';
+import { GetAccountInfoQueryHandler } from '../app/usecase/query/account/info/GetAccountInfoQueryHandler.js';
+import { SetNetworkCommandHandler } from '../app/usecase/command/network/setNetwork/SetNetworkCommandHandler.js';
 
 export const TOKENS = {
 	COMMAND_HANDLER: Symbol('CommandHandler'),
@@ -30,13 +53,109 @@ export const TOKENS = {
 };
 
 const COMMAND_HANDLERS = [
+	// Mock
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: ConcreteCommandHandler,
+	},
+	// Stable Coin Operations
 	{
 		token: TOKENS.COMMAND_HANDLER,
 		useClass: CashInCommandHandler,
 	},
 	{
 		token: TOKENS.COMMAND_HANDLER,
-		useClass: ConcreteCommandHandler,
+		useClass: BurnCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: BalanceOfCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: BurnCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: DeleteCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: FreezeCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: PauseCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: RescueCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: UnFreezeCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: UnPauseCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: WipeCommandHandler,
+	},
+	// Stable Coin Role Operations
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: DecreaseAllowanceCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: GetAllowanceCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: GetRolesCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: GrantRoleCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: HasRoleCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: IncreaseAllowanceCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: IsLimitedCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: IsUnlimitedCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: ResetAllowanceCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: RevokeRoleCommandHandler,
+	},
+	// Network Operations
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: ConnectCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: DisconnectCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: SetNetworkCommandHandler,
 	},
 ];
 
@@ -48,6 +167,14 @@ const QUERY_HANDLERS = [
 	{
 		token: TOKENS.QUERY_HANDLER,
 		useClass: GetStableCoinQueryHandler,
+	},
+	{
+		token: TOKENS.QUERY_HANDLER,
+		useClass: GetListStableCoinQueryHandler,
+	},
+	{
+		token: TOKENS.QUERY_HANDLER,
+		useClass: GetAccountInfoQueryHandler,
 	},
 ];
 
@@ -71,12 +198,6 @@ const defaultNetworkProps: NetworkProps = {
 };
 container.register<NetworkProps>('NetworkProps', {
 	useValue: defaultNetworkProps,
-});
-
-container.register<MirrorNodeAdapter>(MirrorNodeAdapter, {
-	useFactory: () => {
-		return new MirrorNodeAdapter('testnet');
-	},
 });
 
 @registry([...COMMAND_HANDLERS, ...QUERY_HANDLERS, ...TRANSACTION_HANDLER])

@@ -8,12 +8,23 @@ import { ConnectCommand } from '../../app/usecase/command/network/connect/Connec
 import ConnectRequest from './request/ConnectRequest.js';
 import RequestMapper from './request/mapping/RequestMapper.js';
 import TransactionService from '../../app/service/TransactionService.js';
+import SetNetworkRequest from './request/SetNetworkRequest.js';
+import { SetNetworkCommand } from '../../app/usecase/command/network/setNetwork/SetNetworkCommand.js';
+import { Environment } from '../../domain/context/network/Environment.js';
 
 export { InitalizationData };
+
+export type NetworkResponse = {
+	environment: Environment;
+	mirrorNode: string;
+	rpcNode: string;
+	consensusNodes: string;
+};
 
 interface INetworkInPort {
 	connect(req: ConnectRequest): Promise<InitalizationData>;
 	disconnect(): Promise<boolean>;
+	setNetwork(req: SetNetworkRequest): Promise<NetworkResponse>;
 }
 
 class NetworkInPort implements INetworkInPort {
@@ -30,10 +41,25 @@ class NetworkInPort implements INetworkInPort {
 		),
 	) {}
 
+	async setNetwork(req: SetNetworkRequest): Promise<NetworkResponse> {
+		const res = await this.commandBus.execute(
+			new SetNetworkCommand(
+				req.environment,
+				req.mirrorNode,
+				req.rpcNode,
+				req.consensusNodes,
+			),
+		);
+		return res;
+	}
+
 	async connect(req: ConnectRequest): Promise<InitalizationData> {
 		const account = RequestMapper.mapAccount(req.account);
 		const res = await this.commandBus.execute(
 			new ConnectCommand(account, req.wallet),
+		);
+		await this.commandBus.execute(
+			new SetNetworkCommand(account.environment),
 		);
 		return res.payload;
 	}

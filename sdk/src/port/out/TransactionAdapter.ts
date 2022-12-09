@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import TransactionResponse from '../../domain/context/transaction/TransactionResponse.js';
 import StableCoinCapabilities from '../../domain/context/stablecoin/StableCoinCapabilities.js';
 import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import { StableCoinRole } from '../../domain/context/stablecoin/StableCoinRole.js';
 import Account from '../../domain/context/account/Account.js';
+import { Environment } from '../../domain/context/network/Environment.js';
 
 export interface TransactionAdapterInitializationData {
 	account: Account;
@@ -11,7 +14,7 @@ export interface TransactionAdapterInitializationData {
 }
 
 interface ITransactionAdapter {
-	register(): Promise<TransactionAdapterInitializationData>;
+	register(account: Account): Promise<TransactionAdapterInitializationData>;
 	stop(): Promise<boolean>;
 	associateToken(
 		coin: StableCoinCapabilities | string,
@@ -130,7 +133,7 @@ export default abstract class TransactionAdapter
 	getAccount(): Account {
 		throw new Error('Method not implemented.');
 	}
-	register(): Promise<TransactionAdapterInitializationData> {
+	register(account: Account): Promise<TransactionAdapterInitializationData> {
 		throw new Error('Method not implemented.');
 	}
 	stop(): Promise<boolean> {
@@ -222,13 +225,13 @@ export default abstract class TransactionAdapter
 	grantSupplierRole(
 		coin: StableCoinCapabilities,
 		targetId: string,
-		amount: BigDecimal
+		amount: BigDecimal,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
 	grantUnlimitedSupplierRole(
 		coin: StableCoinCapabilities,
-		targetId: string
+		targetId: string,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}

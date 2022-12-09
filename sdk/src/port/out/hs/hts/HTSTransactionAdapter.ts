@@ -16,24 +16,21 @@ import { Environment } from '../../../../domain/context/network/Environment.js';
 @singleton()
 export class HTSTransactionAdapter extends HederaTransactionAdapter {
 	private _client: Client;
+	public network: Environment;
+	public account: Account;
 
 	public get client(): Client {
 		return this._client;
 	}
 
-	constructor(
-		public readonly network: Environment,
-		public readonly account: Account,
-	) {
-		super();
-		this._client = Client.forName(network);
+	register(account: Account): Promise<TransactionAdapterInitializationData> {
+		Injectable.registerTransactionHandler(this);
+		this.account = account;
+		this.network = account.environment;
+		this._client = Client.forName(this.account.environment);
 		const id = this.account.id?.value ?? '';
 		const privateKey = account.privateKey?.toHashgraphKey() ?? '';
 		this._client.setOperator(id, privateKey);
-	}
-
-	register(): Promise<TransactionAdapterInitializationData> {
-		Injectable.registerTransactionHandler(this);
 		return Promise.resolve({
 			account: this.getAccount(),
 		});
@@ -65,9 +62,6 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 	}
 
 	getAccount(): Account {
-		return new Account({
-			id: this.client?.operatorAccountId?.toString(),
-			environment: this.network,
-		});
+		return this.account;
 	}
 }

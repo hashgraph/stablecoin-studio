@@ -83,7 +83,8 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 	let th: HTSTransactionAdapter;
 	let tr: TransactionResponse;
 	beforeAll(async () => {
-		th = new HTSTransactionAdapter('testnet', account);
+		th = new HTSTransactionAdapter();
+		th.register(account);
 	});
 
 	it('Test cashin', async () => {

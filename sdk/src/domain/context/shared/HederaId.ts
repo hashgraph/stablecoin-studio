@@ -1,3 +1,4 @@
+import { AccountId } from '@hashgraph/sdk';
 import { InvalidIdFormat } from './error/InvalidIdFormat.js';
 
 const HEDERA_FORMAT_ID_REGEX =
@@ -14,6 +15,10 @@ export class HederaId {
 
 	static from(value?: string): HederaId {
 		return new HederaId(value ?? '');
+	}
+
+	toHederaAddress(): AccountId {
+		return AccountId.fromString(this.value);
 	}
 
 	toString(): string {

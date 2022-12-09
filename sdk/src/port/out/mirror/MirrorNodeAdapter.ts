@@ -19,7 +19,11 @@ export class MirrorNodeAdapter {
 	private instance: AxiosInstance;
 	private URI_BASE: string;
 
-	constructor(environment: Environment) {
+	constructor() {
+		this.setEnvironment('testnet');
+	}
+
+	public setEnvironment(environment: Environment): void {
 		this.URI_BASE = `${this.getMirrorNodeURL(environment)}/api/v1/`;
 		this.instance = axios.create({
 			validateStatus: function (status: number) {

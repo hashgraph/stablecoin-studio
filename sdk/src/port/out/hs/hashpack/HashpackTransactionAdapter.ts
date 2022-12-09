@@ -50,9 +50,19 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 		this.hc = new HashConnect();
 	}
 
-	register(): Promise<TransactionAdapterInitializationData> {
+	async register(
+		account: Account,
+	): Promise<TransactionAdapterInitializationData> {
 		Injectable.registerTransactionHandler(this);
-		// await this.hc.init(metadata, network)
+		this.account = account;
+		this.initData = await this.hc.init(
+			{
+				description: '',
+				icon: '',
+				name: 'HSC',
+			},
+			this.account.environment as 'testnet' | 'previewnet' | 'mainnet',
+		);
 		return Promise.resolve({
 			account: this.account,
 			pairing: this.initData.pairingString,
@@ -60,7 +70,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 		});
 	}
 	async stop(): Promise<boolean> {
-		await this.hc.disconnect(this._initData.topic)
+		await this.hc.disconnect(this._initData.topic);
 		return Promise.resolve(!!Injectable.disposeTransactionHandler(this));
 	}
 

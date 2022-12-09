@@ -29,15 +29,19 @@ declare var ethereum: any;
 
 @singleton()
 export default class RPCTransactionAdapter implements TransactionAdapter {
-	provider = new ethers.providers.JsonRpcProvider(
-		'https://testnet.hashio.io/api',
-	);
+	provider: ethers.providers.JsonRpcProvider;
+	account: Account;
 	signerOrProvider: Signer | Provider;
 
-	async register(): Promise<TransactionAdapterInitializationData> {
+	async register(
+		account: Account,
+	): Promise<TransactionAdapterInitializationData> {
+		this.account = account;
+		this.provider = new ethers.providers.JsonRpcProvider(
+			`https://${account.environment.toString()}.hashio.io/api`,
+		);
 		this.connectMetamask();
 		Injectable.registerTransactionHandler(this);
-		const account = this.getAccount();
 		return Promise.resolve({ account });
 	}
 
@@ -64,14 +68,12 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 							this.signerOrProvider,
 						).mint(targetId, amount.toBigNumber()),
 					);
-					break;
 				case Decision.HTS:
 					if (!coin.coin.tokenId)
 						throw new Error(
 							`StableCoin ${coin.coin.name}  does not have an underlying token`,
 						);
 					throw Error('Not be implemented');
-					break;
 				default:
 					const tokenId = coin.coin.tokenId
 						? coin.coin.tokenId.value
@@ -813,7 +815,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 		throw new Error('Method not implemented.');
 	}
 	getAccount(): Account {
-		throw new Error('Method not implemented.');
+		return this.account;
 	}
 	async precompiledCall(
 		functionName: string,

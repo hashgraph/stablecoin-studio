@@ -1,5 +1,9 @@
-import { StableCoin } from '../../../src/index.js';
+import { Injectable } from '../../../src/core/Injectable.js';
+import { Network, StableCoin } from '../../../src/index.js';
 import CashInRequest from '../../../src/port/in/request/CashInRequest.js';
+import ConnectRequest, {
+	SupportedWallets,
+} from '../../../src/port/in/request/ConnectRequest.js';
 import GetStableCoinDetailsRequest from '../../../src/port/in/request/GetStableCoinDetailsRequest.js';
 
 describe('🧪 SDK test', () => {
@@ -31,4 +35,50 @@ describe('🧪 SDK test', () => {
 		expect(res.treasury).not.toBeNull();
 		expect(res.tokenId).not.toBeNull();
 	});
+
+	it('Initializes network for operation', async () => {
+		const connection = await Network.connect(
+			new ConnectRequest({
+				account: {
+					accountId: '0.0.47820993',
+					privateKey: {
+						key: '0x4e3a8e419d6a10765ad1db628e1e86343a971543d14548e023143675f55a6875',
+						type: 'ED25519',
+					},
+					network: 'testnet',
+				},
+				wallet: SupportedWallets.CLIENT,
+			}),
+		);
+		const handler = Injectable.resolveTransactionHandler();
+		expect(connection).not.toBeNull();
+		expect(handler).not.toBeNull();
+	});
+
+	it('Performs a cash in', async () => {
+		await Network.connect(
+			new ConnectRequest({
+				account: {
+					accountId: '0.0.47820993',
+					privateKey: {
+						key: '0x4e3a8e419d6a10765ad1db628e1e86343a971543d14548e023143675f55a6875',
+						type: 'ED25519',
+					},
+					network: 'testnet',
+				},
+				wallet: SupportedWallets.CLIENT,
+			}),
+		);
+		const handler = Injectable.resolveTransactionHandler();
+		expect(handler).not.toBeNull();
+		const result = await StableCoin.cashIn(
+			new CashInRequest({
+				amount: '1',
+				tokenId: '0.0.48957315',
+				targetId: '0.0.47820993',
+			}),
+		);
+		expect(result).not.toBeNull();
+		expect(result).toBe(true);
+	}, 60_000);
 });

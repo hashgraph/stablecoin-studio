@@ -4,42 +4,27 @@ import { Injectable } from '../../core/Injectable.js';
 import { QueryBus } from '../../core/query/QueryBus.js';
 import Account from '../../domain/context/account/Account.js';
 import { Environment } from '../../domain/context/network/Environment.js';
-import { SupportedWallets } from '../../domain/context/network/Wallet.js';
-import {
-	ConnectCommand,
-	ConnectCommandResponse,
-} from '../usecase/command/network/connect/ConnectCommand.js';
 import NetworkService from './NetworkService.js';
 import Service from './Service.js';
+import TransactionService from './TransactionService.js';
 
 @singleton()
 export default class AccountService extends Service {
-	private account: Account;
-
 	constructor(
 		public readonly queryBus: QueryBus = Injectable.resolve(QueryBus),
 		public readonly commandBus: CommandBus = Injectable.resolve(CommandBus),
 		public readonly networkService: NetworkService = Injectable.resolve(
 			NetworkService,
 		),
+		public readonly transactionService: TransactionService = Injectable.resolve(
+			TransactionService,
+		),
 	) {
 		super();
 	}
 
-	async connect(
-		account: Account,
-		wallet: SupportedWallets,
-	): Promise<ConnectCommandResponse> {
-		const res = await this.commandBus.execute(
-			new ConnectCommand(account, wallet),
-		);
-		this.account = account;
-		return res;
-	}
-
 	getCurrentAccount(): Account {
-		// TODO
-		return this.account;
+		return this.transactionService.getHandler().getAccount();
 	}
 
 	getAccountById(accountId: string, env: Environment): Account {
