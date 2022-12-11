@@ -33,7 +33,6 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 		this._client = Client.forName(network);
 		const id = this.account.id?.value ?? '';
 		const privateKey = account.privateKey?.toHashgraphKey() ?? '';
-console.log(`${id}: ${privateKey}`);		
 		this._client.setOperator(id, privateKey);
 	}
 
