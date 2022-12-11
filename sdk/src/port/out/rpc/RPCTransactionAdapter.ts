@@ -47,7 +47,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 
 	async wipe(
 		coin: StableCoinCapabilities,
-		targetId: string,
+		targetId: Account,
 		amount: BigDecimal,
 	): Promise<TransactionResponse> {
 		try {
@@ -62,7 +62,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 						await HederaERC20__factory.connect(
 							coin.coin.evmProxyAddress,
 							this.signerOrProvider,
-						).mint(targetId, amount.toBigNumber()),
+						).mint(targetId.evmAddress, amount.toBigNumber()),
 					);
 					break;
 				case Decision.HTS:
@@ -94,7 +94,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 	}
 	async cashin(
 		coin: StableCoinCapabilities,
-		targetId: string,
+		targetId: Account,
 		amount: BigDecimal,
 	): Promise<TransactionResponse> {
 		try {
@@ -109,7 +109,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 						await HederaERC20__factory.connect(
 							coin.coin.evmProxyAddress,
 							this.signerOrProvider,
-						).mint(targetId, amount.toBigNumber()),
+						).mint(targetId.evmAddress, amount.toBigNumber()),
 					);
 					break;
 				case Decision.HTS:
@@ -204,7 +204,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 	}
 	async freeze(
 		coin: StableCoinCapabilities,
-		targetId: string,
+		targetId: Account,
 	): Promise<TransactionResponse> {
 		try {
 			switch (CapabilityDecider.decide(coin, Operation.FREEZE)) {
@@ -218,7 +218,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 						await HederaERC20__factory.connect(
 							coin.coin.evmProxyAddress,
 							this.signerOrProvider,
-						).freeze(targetId),
+						).freeze(targetId.evmAddress),
 					);
 					break;
 				case Decision.HTS:
@@ -251,7 +251,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 	}
 	async unfreeze(
 		coin: StableCoinCapabilities,
-		targetId: string,
+		targetId: Account,
 	): Promise<TransactionResponse> {
 		try {
 			switch (CapabilityDecider.decide(coin, Operation.UNFREEZE)) {
@@ -265,7 +265,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 						await HederaERC20__factory.connect(
 							coin.coin.evmProxyAddress,
 							this.signerOrProvider,
-						).unfreeze(targetId),
+						).unfreeze(targetId.evmAddress),
 					);
 					break;
 				case Decision.HTS:
@@ -402,13 +402,11 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 							this.signerOrProvider,
 						).rescue(amount.toBigNumber()),
 					);
-					break;
 
 				case Decision.HTS:
 					throw Error(
 						'RESCUE operation CANNOT be performed through HTS...',
 					);
-					break;
 				default:
 					const tokenId = coin.coin.tokenId
 						? coin.coin.tokenId.value
@@ -423,7 +421,6 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 						undefined,
 						OperationNotAllowed,
 					);
-					break;
 			}
 		} catch (error) {
 			// should throw RPCHandlerError
@@ -477,7 +474,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 	}
 	async grantRole(
 		coin: StableCoinCapabilities,
-		targetId: string,
+		targetId: Account,
 		role: StableCoinRole,
 	): Promise<TransactionResponse> {
 		try {
@@ -490,7 +487,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 				await HederaERC20__factory.connect(
 					coin.coin.evmProxyAddress,
 					this.signerOrProvider,
-				).grantRole(role, targetId),
+				).grantRole(role, targetId.evmAddress),
 			);
 		} catch (error) {
 			// should throw RPCHandlerError
@@ -499,7 +496,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 	}
 	async revokeRole(
 		coin: StableCoinCapabilities,
-		targetId: string,
+		targetId: Account,
 		role: StableCoinRole,
 	): Promise<TransactionResponse> {
 		try {
@@ -512,7 +509,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 				await HederaERC20__factory.connect(
 					coin.coin.evmProxyAddress,
 					this.signerOrProvider,
-				).revokeRole(role, targetId),
+				).revokeRole(role, targetId.evmAddress),
 			);
 		} catch (error) {
 			// should throw RPCHandlerError
@@ -521,7 +518,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 	}
 	async grantSupplierRole(
 		coin: StableCoinCapabilities,
-		targetId: string,
+		targetId: Account,
 		amount: BigDecimal,
 	): Promise<TransactionResponse> {
 		try {
@@ -534,7 +531,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 				await HederaERC20__factory.connect(
 					coin.coin.evmProxyAddress,
 					this.signerOrProvider,
-				).grantSupplierRole(targetId, amount.toBigNumber()),
+				).grantSupplierRole(targetId.evmAddress, amount.toBigNumber()),
 			);
 		} catch (error) {
 			// should throw RPCHandlerError
@@ -543,7 +540,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 	}
 	async grantUnlimitedSupplierRole(
 		coin: StableCoinCapabilities,
-		targetId: string,
+		targetId: Account,
 	): Promise<TransactionResponse> {
 		try {
 			if (!coin.coin.evmProxyAddress)
@@ -555,7 +552,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 				await HederaERC20__factory.connect(
 					coin.coin.evmProxyAddress,
 					this.signerOrProvider,
-				).grantUnlimitedSupplierRole(targetId),
+				).grantUnlimitedSupplierRole(targetId.evmAddress),
 			);
 		} catch (error) {
 			// should throw RPCHandlerError
@@ -564,7 +561,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 	}
 	async revokeSupplierRole(
 		coin: StableCoinCapabilities,
-		targetId: string,
+		targetId: Account,
 	): Promise<TransactionResponse> {
 		try {
 			if (!coin.coin.evmProxyAddress)
@@ -576,7 +573,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 				await HederaERC20__factory.connect(
 					coin.coin.evmProxyAddress,
 					this.signerOrProvider,
-				).revokeSupplierRole(targetId),
+				).revokeSupplierRole(targetId.evmAddress),
 			);
 		} catch (error) {
 			// should throw RPCHandlerError
@@ -585,7 +582,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 	}
 	async hasRole(
 		coin: StableCoinCapabilities,
-		targetId: string,
+		targetId: Account,
 		role: StableCoinRole,
 	): Promise<TransactionResponse<boolean, Error>> {
 		try {
@@ -599,7 +596,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 				await HederaERC20__factory.connect(
 					coin.coin.evmProxyAddress,
 					this.signerOrProvider,
-				).hasRole(role, targetId),
+				).hasRole(role, targetId.evmAddress),
 			);
 		} catch (error) {
 			// should throw RPCHandlerError
@@ -609,7 +606,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 
 	async balanceOf(
 		coin: StableCoinCapabilities,
-		targetId: string,
+		targetId: Account,
 	): Promise<TransactionResponse<BigDecimal, Error>> {
 		try {
 			if (!coin.coin.evmProxyAddress)
@@ -619,7 +616,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 			const res = await HederaERC20__factory.connect(
 				coin.coin.evmProxyAddress,
 				this.signerOrProvider,
-			).balanceOf(targetId);
+			).balanceOf(targetId.evmAddress);
 
 			return new TransactionResponse(
 				undefined,
@@ -635,7 +632,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 
 	async associateToken(
 		coin: StableCoinCapabilities,
-		targetId: string,
+		targetId: Account,
 	): Promise<TransactionResponse> {
 		try {
 			if (!coin.coin.evmProxyAddress)
@@ -647,7 +644,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 				await HederaERC20__factory.connect(
 					coin.coin.evmProxyAddress,
 					this.signerOrProvider,
-				).associateToken(targetId),
+				).associateToken(targetId.evmAddress),
 			);
 		} catch (error) {
 			// should throw RPCHandlerError
@@ -656,7 +653,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 	}
 	async isUnlimitedSupplierAllowance(
 		coin: StableCoinCapabilities,
-		targetId: string,
+		targetId: Account,
 	): Promise<TransactionResponse> {
 		try {
 			if (!coin.coin.evmProxyAddress)
@@ -669,7 +666,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 				await HederaERC20__factory.connect(
 					coin.coin.evmProxyAddress,
 					this.signerOrProvider,
-				).isUnlimitedSupplierAllowance(targetId),
+				).isUnlimitedSupplierAllowance(targetId.evmAddress),
 			);
 		} catch (error) {
 			// should throw RPCHandlerError
@@ -678,7 +675,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 	}
 	async supplierAllowance(
 		coin: StableCoinCapabilities,
-		targetId: string,
+		targetId: Account,
 	): Promise<TransactionResponse<BigDecimal, Error>> {
 		try {
 			if (!coin.coin.evmProxyAddress)
@@ -689,7 +686,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 			const res = await HederaERC20__factory.connect(
 				coin.coin.evmProxyAddress,
 				this.signerOrProvider,
-			).supplierAllowance(targetId);
+			).supplierAllowance(targetId.evmAddress);
 
 			return new TransactionResponse(
 				undefined,
@@ -703,7 +700,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 
 	async resetSupplierAllowance(
 		coin: StableCoinCapabilities,
-		targetId: string,
+		targetId: Account,
 	): Promise<TransactionResponse> {
 		try {
 			if (!coin.coin.evmProxyAddress)
@@ -715,7 +712,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 				await HederaERC20__factory.connect(
 					coin.coin.evmProxyAddress,
 					this.signerOrProvider,
-				).resetSupplierAllowance(targetId),
+				).resetSupplierAllowance(targetId.evmAddress),
 			);
 		} catch (error) {
 			// should throw RPCHandlerError
@@ -724,7 +721,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 	}
 	async increaseSupplierAllowance(
 		coin: StableCoinCapabilities,
-		targetId: string,
+		targetId: Account,
 		amount: BigDecimal,
 	): Promise<TransactionResponse> {
 		try {
@@ -737,7 +734,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 				await HederaERC20__factory.connect(
 					coin.coin.evmProxyAddress,
 					this.signerOrProvider,
-				).increaseSupplierAllowance(targetId, amount.toBigNumber()),
+				).increaseSupplierAllowance(targetId.evmAddress, amount.toBigNumber()),
 			);
 		} catch (error) {
 			// should throw RPCHandlerError
@@ -746,7 +743,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 	}
 	async decreaseSupplierAllowance(
 		coin: StableCoinCapabilities,
-		targetId: string,
+		targetId: Account,
 		amount: BigDecimal,
 	): Promise<TransactionResponse> {
 		try {
@@ -759,7 +756,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 				await HederaERC20__factory.connect(
 					coin.coin.evmProxyAddress,
 					this.signerOrProvider,
-				).decreaseSupplierAllowance(targetId, amount.toBigNumber()),
+				).decreaseSupplierAllowance(targetId.evmAddress, amount.toBigNumber()),
 			);
 		} catch (error) {
 			// should throw RPCHandlerError
@@ -768,7 +765,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 	}
 	async getRoles(
 		coin: StableCoinCapabilities,
-		targetId: string,
+		targetId: Account,
 	): Promise<TransactionResponse<string[], Error>> {
 		try {
 			if (!coin.coin.evmProxyAddress)
@@ -781,7 +778,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 				await HederaERC20__factory.connect(
 					coin.coin.evmProxyAddress,
 					this.signerOrProvider,
-				).getRoles(targetId),
+				).getRoles(targetId.evmAddress),
 			);
 		} catch (error) {
 			// should throw RPCHandlerError
@@ -802,8 +799,8 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 	async transfer(
 		coin: StableCoinCapabilities,
 		amount: BigDecimal,
-		sourceId: string,
-		targetId: string,
+		sourceId: Account,
+		targetId: Account,
 	): Promise<TransactionResponse> {
 		throw new Error('Method not implemented.');
 	}

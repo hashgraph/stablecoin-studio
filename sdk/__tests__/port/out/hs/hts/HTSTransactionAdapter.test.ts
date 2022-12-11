@@ -3,7 +3,6 @@
 /* eslint-disable jest/no-standalone-expect */
 import { HTSTransactionAdapter } from '../../../../../src/port/out/hs/hts/HTSTransactionAdapter.js';
 import TransactionResponse from '../../../../../src/domain/context/transaction/TransactionResponse.js';
-import { AccountId as HAccountId } from '@hashgraph/sdk';
 import StableCoinCapabilities from '../../../../../src/domain/context/stablecoin/StableCoinCapabilities.js';
 import { StableCoin } from '../../../../../src/domain/context/stablecoin/StableCoin.js';
 import Account from '../../../../../src/domain/context/account/Account.js';
@@ -16,6 +15,8 @@ import BigDecimal from '../../../../../src/domain/context/shared/BigDecimal.js';
 import { HederaId } from '../../../../../src/domain/context/shared/HederaId.js';
 import { StableCoinRole } from '../../../../../src/domain/context/stablecoin/StableCoinRole.js';
 import PrivateKey from '../../../../../src/domain/context/account/PrivateKey.js';
+import { MirrorNodeAdapter } from '../../../../../src/port/out/mirror/MirrorNodeAdapter.js';
+import NetworkService from '../../../../../src/app/service/NetworkService.js';
 
 describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 	const clientAccountId = '0.0.47792863';
@@ -83,127 +84,130 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 	let th: HTSTransactionAdapter;
 	let tr: TransactionResponse;
 	beforeAll(async () => {
-		th = new HTSTransactionAdapter('testnet', account);
+		const networkService: NetworkService = new NetworkService({
+			environment: 'testnet'
+		});
+		th = new HTSTransactionAdapter('testnet', account, new MirrorNodeAdapter(networkService));
 	});
 
 	it('Test cashin', async () => {
-		const accountEvmAddress: string =
-			HAccountId.fromString(accountId).toSolidityAddress();
+		const accountFromAccountId: Account = new Account({
+			environment: 'testnet',
+			id: accountId
+		});
 		const accountInitialBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities, accountEvmAddress)
+			await th.balanceOf(stableCoinCapabilities, accountFromAccountId)
 		).response;
 		tr = await th.cashin(
 			stableCoinCapabilities,
-			accountId,
+			accountFromAccountId,
 			BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals),
 		);
 		tr = await th.transfer(
 			stableCoinCapabilities,
 			BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals),
-			clientAccountId,
-			accountId,
+			account,
+			accountFromAccountId,
 		);
 		const accountFinalBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities, accountEvmAddress)
+			await th.balanceOf(stableCoinCapabilities, accountFromAccountId)
 		).response;
 		expect(accountFinalBalance).toEqual(accountInitialBalance + 1);
-	}, 20000);
+	}, 50000);
 
 	it('Test burn', async () => {
-		const accountEvmAddress: string =
-			HAccountId.fromString(clientAccountId).toSolidityAddress();
 		const accountInitialBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities, accountEvmAddress)
+			await th.balanceOf(stableCoinCapabilities, account)
 		).response;
 		tr = await th.burn(
 			stableCoinCapabilities,
 			BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals),
 		);
 		const accountFinalBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities, accountEvmAddress)
+			await th.balanceOf(stableCoinCapabilities, account)
 		).response;
 		expect(accountFinalBalance).toEqual(accountInitialBalance - 1);
-	}, 20000);
+	}, 50000);
 
 	it('Test wipe', async () => {
-		const accountEvmAddress: string =
-			HAccountId.fromString(accountId).toSolidityAddress();
+		const accountFromAccountId: Account = new Account({
+			environment: 'testnet',
+			id: accountId
+		});
 		const accountInitialBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities, accountEvmAddress)
+			await th.balanceOf(stableCoinCapabilities, accountFromAccountId)
 		).response;
 		tr = await th.wipe(
 			stableCoinCapabilities,
-			accountId,
+			accountFromAccountId,
 			BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals),
 		);
 		const accountFinalBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities, accountEvmAddress)
+			await th.balanceOf(stableCoinCapabilities, accountFromAccountId)
 		).response;
 		expect(accountFinalBalance).toEqual(accountInitialBalance - 1);
-	}, 20000);
+	}, 50000);
 
 	it('Test freeze', async () => {
-		tr = await th.freeze(stableCoinCapabilities, accountId);
-	});
+		tr = await th.freeze(stableCoinCapabilities, account);
+	}, 20000);
 
 	it('Test unfreeze', async () => {
-		tr = await th.unfreeze(stableCoinCapabilities, accountId);
-	});
+		tr = await th.unfreeze(stableCoinCapabilities, account);
+	}, 20000);
 
 	it('Test pause', async () => {
 		tr = await th.pause(stableCoinCapabilities);
-	});
+	}, 20000);
 
 	it('Test unpause', async () => {
 		tr = await th.unpause(stableCoinCapabilities);
-	});
+	}, 20000);
 
 	it('Test cashIn contract function', async () => {
-		const accountEvmAddress: string =
-			HAccountId.fromString(clientAccountId).toSolidityAddress();
 		const accountInitialBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities2, accountEvmAddress)
+			await th.balanceOf(stableCoinCapabilities2, account)
 		).response;
 		tr = await th.cashin(
 			stableCoinCapabilities2,
-			accountEvmAddress,
+			account,
 			BigDecimal.fromString('1', stableCoinCapabilities2.coin.decimals),
 		);
 		const accountFinalBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities2, accountEvmAddress)
+			await th.balanceOf(stableCoinCapabilities2, account)
 		).response;
 		expect(accountFinalBalance).toEqual(accountInitialBalance + 1);
 	}, 20000);
 
 	it('Test burn contract function', async () => {
-		const accountEvmAddress: string =
-			HAccountId.fromString(proxyContractId2).toSolidityAddress();
+		const accountFromProxyContractId2: Account = new Account({
+			environment: 'testnet',
+			id: proxyContractId2
+		});
 		const accountInitialBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities2, accountEvmAddress)
+			await th.balanceOf(stableCoinCapabilities2, accountFromProxyContractId2)
 		).response;
 		tr = await th.burn(
 			stableCoinCapabilities2,
 			BigDecimal.fromString('1', stableCoinCapabilities2.coin.decimals),
 		);
 		const accountFinalBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities2, accountEvmAddress)
+			await th.balanceOf(stableCoinCapabilities2, accountFromProxyContractId2)
 		).response;
 		expect(accountFinalBalance).toEqual(accountInitialBalance - 1);
 	}, 20000);
 
 	it('Test wipe contract function', async () => {
-		const accountEvmAddress: string =
-			HAccountId.fromString(clientAccountId).toSolidityAddress();
 		const accountInitialBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities2, accountEvmAddress)
+			await th.balanceOf(stableCoinCapabilities2, account)
 		).response;
 		tr = await th.wipe(
 			stableCoinCapabilities2,
-			accountEvmAddress,
+			account,
 			BigDecimal.fromString('1', stableCoinCapabilities2.coin.decimals),
 		);
 		const accountFinalBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities2, accountEvmAddress)
+			await th.balanceOf(stableCoinCapabilities2, account)
 		).response;
 		expect(accountFinalBalance).toEqual(accountInitialBalance - 1);
 	}, 20000);
@@ -216,15 +220,19 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 	});
 
 	it('Test freeze contract function', async () => {
-		const accountEvmAddress: string =
-			HAccountId.fromString(accountId).toSolidityAddress();
-		tr = await th.freeze(stableCoinCapabilities2, accountEvmAddress);
+		const accountFromAccountId: Account = new Account({
+			environment: 'testnet',
+			id: accountId
+		});
+		tr = await th.freeze(stableCoinCapabilities2, accountFromAccountId);
 	});
 
 	it('Test unfreeze contract function', async () => {
-		const accountEvmAddress: string =
-			HAccountId.fromString(accountId).toSolidityAddress();
-		tr = await th.unfreeze(stableCoinCapabilities2, accountEvmAddress);
+		const accountFromAccountId: Account = new Account({
+			environment: 'testnet',
+			id: accountId
+		});
+		tr = await th.unfreeze(stableCoinCapabilities2, accountFromAccountId);
 	});
 
 	it('Test pause contract function', async () => {
@@ -236,41 +244,46 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 	});
 
 	it('Test grant role contract function', async () => {
-		const accountEvmAddress: string =
-			HAccountId.fromString(accountId).toSolidityAddress();
+		const accountFromAccountId: Account = new Account({
+			environment: 'testnet',
+			id: accountId
+		});
+
 		tr = await th.grantRole(
 			stableCoinCapabilities2,
-			accountEvmAddress,
+			accountFromAccountId,
 			StableCoinRole.BURN_ROLE,
 		);
 		tr = await th.hasRole(
 			stableCoinCapabilities2,
-			accountEvmAddress,
+			accountFromAccountId,
 			StableCoinRole.BURN_ROLE,
 		);
 		expect(tr.response).toEqual(true);
-	});
+	}, 10000);
 
 	it('Test revoke role contract function', async () => {
-		const accountEvmAddress: string =
-			HAccountId.fromString(accountId).toSolidityAddress();
+		const accountFromAccountId: Account = new Account({
+			environment: 'testnet',
+			id: accountId
+		});
 		tr = await th.revokeRole(
 			stableCoinCapabilities2,
-			accountEvmAddress,
+			accountFromAccountId,
 			StableCoinRole.BURN_ROLE,
 		);
 		tr = await th.hasRole(
 			stableCoinCapabilities2,
-			accountEvmAddress,
+			accountFromAccountId,
 			StableCoinRole.BURN_ROLE,
 		);
 		expect(tr.response).toEqual(false);
-	});
+	}, 10000);
 
 	it('Test get roles contract function', async () => {
-		const accountEvmAddress: string =
-			HAccountId.fromString(clientAccountId).toSolidityAddress();
-		tr = await th.getRoles(stableCoinCapabilities2, accountEvmAddress);
+		//const accountEvmAddress: string =
+		//	HAccountId.fromString(clientAccountId).toSolidityAddress();
+		tr = await th.getRoles(stableCoinCapabilities2, account);
 		expect(tr.response).toEqual([
 			StableCoinRole.DEFAULT_ADMIN_ROLE,
 			StableCoinRole.CASHIN_ROLE,
@@ -284,92 +297,102 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 	});
 
 	it('Test supplier allowance contract function', async () => {
-		const accountEvmAddress: string =
-			HAccountId.fromString(accountId).toSolidityAddress();
+		const accountFromAccountId: Account = new Account({
+			environment: 'testnet',
+			id: accountId
+		});
 		tr = await th.supplierAllowance(
 			stableCoinCapabilities2,
-			accountEvmAddress,
+			accountFromAccountId,
 		);
 		expect(tr.response).toEqual('0');
 	});
 
 	it('Test increase supplier allowance contract function', async () => {
-		const accountEvmAddress: string =
-			HAccountId.fromString(accountId).toSolidityAddress();
+		const accountFromAccountId: Account = new Account({
+			environment: 'testnet',
+			id: accountId
+		});
 		tr = await th.revokeSupplierRole(
 			stableCoinCapabilities2,
-			accountEvmAddress,
+			accountFromAccountId,
 		);
 		tr = await th.grantSupplierRole(
 			stableCoinCapabilities2,
-			accountEvmAddress,
+			accountFromAccountId,
 			BigDecimal.fromString('10', stableCoinCapabilities2.coin.decimals),
 		);
 		tr = await th.increaseSupplierAllowance(
 			stableCoinCapabilities2,
-			accountEvmAddress,
+			accountFromAccountId,
 			BigDecimal.fromString('1', stableCoinCapabilities2.coin.decimals),
 		);
 		tr = await th.supplierAllowance(
 			stableCoinCapabilities2,
-			accountEvmAddress,
+			accountFromAccountId,
 		);
 		expect(tr.response).toEqual('11');
 		tr = await th.isUnlimitedSupplierAllowance(
 			stableCoinCapabilities2,
-			accountEvmAddress,
+			accountFromAccountId,
 		);
 		expect(tr.response).toEqual(false);
 	}, 20000);
 
 	it('Test decrease supplier allowance contract function', async () => {
-		const accountEvmAddress: string =
-			HAccountId.fromString(accountId).toSolidityAddress();
+		const accountFromAccountId: Account = new Account({
+			environment: 'testnet',
+			id: accountId
+		});
 		tr = await th.decreaseSupplierAllowance(
 			stableCoinCapabilities2,
-			accountEvmAddress,
+			accountFromAccountId,
 			BigDecimal.fromString('1', stableCoinCapabilities2.coin.decimals),
 		);
 		tr = await th.supplierAllowance(
 			stableCoinCapabilities2,
-			accountEvmAddress,
+			accountFromAccountId,
 		);
 		expect(tr.response).toEqual('10');
 		tr = await th.isUnlimitedSupplierAllowance(
 			stableCoinCapabilities2,
-			accountEvmAddress,
+			accountFromAccountId,
 		);
 		expect(tr.response).toEqual(false);
 	}, 20000);
 
 	it('Test reset supplier allowance contract function', async () => {
-		const accountEvmAddress: string =
-			HAccountId.fromString(accountId).toSolidityAddress();
+		const accountFromAccountId: Account = new Account({
+			environment: 'testnet',
+			id: accountId
+		});
 		tr = await th.resetSupplierAllowance(
 			stableCoinCapabilities2,
-			accountEvmAddress,
+			accountFromAccountId,
 		);
 		tr = await th.supplierAllowance(
 			stableCoinCapabilities2,
-			accountEvmAddress,
+			accountFromAccountId,
 		);
 		expect(tr.response).toEqual('0');
-	});
+	}, 20000);
 
 	it('Test grant unlimited supplier allowance contract function', async () => {
-		const accountEvmAddress: string =
-			HAccountId.fromString(accountId).toSolidityAddress();
+		const accountFromAccountId: Account = new Account({
+			environment: 'testnet',
+			id: accountId
+		});
 		tr = await th.revokeSupplierRole(
 			stableCoinCapabilities2,
-			accountEvmAddress,
+			accountFromAccountId,
 		);
 		tr = await th.grantUnlimitedSupplierRole(
 			stableCoinCapabilities2,
-			accountEvmAddress,
+			accountFromAccountId,
 		);
 		tr = await th.isUnlimitedSupplierAllowance(
 			stableCoinCapabilities2,
-			accountEvmAddress,
+			accountFromAccountId,
 		);
 		expect(tr.response).toEqual(true);
 	}, 20000);

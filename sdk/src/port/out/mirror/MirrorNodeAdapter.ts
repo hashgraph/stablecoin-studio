@@ -12,6 +12,8 @@ import { ContractId as HContractId} from '@hashgraph/sdk';
 import PublicKey from '../../../domain/context/account/PublicKey.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
 import { InvalidResponse } from './error/InvalidResponse.js';
+import { lazyInject } from '../../../core/decorator/LazyInjectDecorator.js';
+import NetworkService from '../../../app/service/NetworkService.js';
 
 @singleton()
 export class MirrorNodeAdapter {
@@ -19,8 +21,11 @@ export class MirrorNodeAdapter {
     private instance: AxiosInstance;
     private URI_BASE: string;
 
-    constructor(environment: Environment) {
-		this.URI_BASE = `${this.getMirrorNodeURL(environment)}/api/v1/`;
+    constructor(
+		@lazyInject(NetworkService)
+		public readonly networkService: NetworkService
+	) {
+		this.URI_BASE = `${this.getMirrorNodeURL(networkService.environment)}/api/v1/`;
 		this.instance = axios.create({
 			validateStatus: function (status: number) {
 				return (status >= 200 && status < 300) || status == 404;

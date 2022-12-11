@@ -20,6 +20,7 @@ import { TransactionAdapterInitializationData } from '../../TransactionAdapter.j
 import { lazyInject } from '../../../../core/decorator/LazyInjectDecorator.js';
 import NetworkService from '../../../../app/service/NetworkService.js';
 import { RuntimeError } from '../../../../core/error/RuntimeError.js';
+import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter.js';
 
 @singleton()
 export class HashpackTransactionAdapter extends HederaTransactionAdapter {
@@ -42,11 +43,14 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 	}
 
 	constructor(
-		@lazyInject(EventService) public readonly eventService: EventService,
+		@lazyInject(EventService) 
+		public readonly eventService: EventService,
 		@lazyInject(NetworkService)
 		public readonly networkService: NetworkService,
+		@lazyInject(MirrorNodeAdapter) 
+		public readonly mirrorNodeAdapter: MirrorNodeAdapter		
 	) {
-		super();
+		super(mirrorNodeAdapter);
 		this.hc = new HashConnect();
 	}
 

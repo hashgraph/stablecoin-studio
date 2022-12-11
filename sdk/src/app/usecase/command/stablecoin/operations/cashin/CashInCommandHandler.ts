@@ -7,6 +7,7 @@ import {
 	Access,
 } from '../../../../../../domain/context/stablecoin/Capability.js';
 import AccountService from '../../../../../service/AccountService.js';
+import NetworkService from '../../../../../service/NetworkService.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
 import { CashInCommand, CashInCommandResponse } from './CashInCommand.js';
@@ -20,6 +21,8 @@ export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
 		public readonly accountService: AccountService,
 		@lazyInject(TransactionService)
 		public readonly transactionService: TransactionService,
+		@lazyInject(NetworkService)
+		public readonly networkService: NetworkService,
 	) {}
 
 	async execute(command: CashInCommand): Promise<CashInCommandResponse> {
@@ -35,7 +38,7 @@ export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
 				],
 				coin: coin,
 			},
-			targetId.value,
+			this.accountService.getAccountById(targetId.value, this.networkService.environment),
 			amount,
 		);
 		// TODO Do some work here

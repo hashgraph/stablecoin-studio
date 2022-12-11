@@ -12,6 +12,8 @@ import { Injectable } from '../../../../core/Injectable.js';
 import { TransactionAdapterInitializationData } from '../../TransactionAdapter.js';
 import Account from '../../../../domain/context/account/Account.js';
 import { Environment } from '../../../../domain/context/network/Environment.js';
+import { lazyInject } from '../../../../core/decorator/LazyInjectDecorator.js';
+import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter.js';
 
 @singleton()
 export class HTSTransactionAdapter extends HederaTransactionAdapter {
@@ -24,11 +26,14 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 	constructor(
 		public readonly network: Environment,
 		public readonly account: Account,
+		@lazyInject(MirrorNodeAdapter) 
+		public readonly mirrorNodeAdapter: MirrorNodeAdapter
 	) {
-		super();
+		super(mirrorNodeAdapter);
 		this._client = Client.forName(network);
 		const id = this.account.id?.value ?? '';
 		const privateKey = account.privateKey?.toHashgraphKey() ?? '';
+console.log(`${id}: ${privateKey}`);		
 		this._client.setOperator(id, privateKey);
 	}
 
