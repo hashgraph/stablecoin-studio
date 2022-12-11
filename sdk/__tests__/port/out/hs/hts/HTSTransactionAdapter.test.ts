@@ -18,7 +18,7 @@ import PrivateKey from '../../../../../src/domain/context/account/PrivateKey.js'
 import { MirrorNodeAdapter } from '../../../../../src/port/out/mirror/MirrorNodeAdapter.js';
 import NetworkService from '../../../../../src/app/service/NetworkService.js';
 
-/*describe('🧪 [ADAPTER] HTSTransactionAdapter with Ed25519 accounts', () => {
+describe('🧪 [ADAPTER] HTSTransactionAdapter with Ed25519 accounts', () => {
 	const clientAccountId = '0.0.47792863';
 	const clientPrivateKey =
 		'302e020100300506032b65700422042078068d0d381ec19047ca0f6612a66b9a3c990fb1f8adc2fd2735b78423c2e10c';
@@ -399,7 +399,7 @@ import NetworkService from '../../../../../src/app/service/NetworkService.js';
 		expect(tr).not.toBeNull();
 		expect(tr.error).toEqual(undefined);
 	});
-});*/
+});
 
 describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 	const clientAccountId = '0.0.49032538';
@@ -578,7 +578,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			await th.balanceOf(stableCoinCapabilities2, accountFromProxyContractId2)
 		).response;
 		expect(accountFinalBalance).toEqual(accountInitialBalance - 1);
-	}, 20000);
+	}, 30000);
 
 	it('Test wipe contract function', async () => {
 		const accountInitialBalance: number = +(
@@ -673,7 +673,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			StableCoinRole.RESCUE_ROLE,
 			StableCoinRole.PAUSE_ROLE,
 			StableCoinRole.FREEZE_ROLE,
-			StableCoinRole.DELETE_ROLE,
+			StableCoinRole.WITHOUT_ROLE
 		]);
 	});
 
