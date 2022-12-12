@@ -34,6 +34,10 @@ import { FactoryStableCoin } from '../../../domain/context/factory/FactoryStable
 export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	private web3 = new Web3();
 
+	constructor(public readonly mirrorNodeAdapter: MirrorNodeAdapter) {
+		super();
+	}
+
 	public async create(
 		coin: StableCoin, 
 		factory: ContractId, 
