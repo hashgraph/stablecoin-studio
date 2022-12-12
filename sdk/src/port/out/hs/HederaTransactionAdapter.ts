@@ -725,7 +725,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		const functionCallParameters = this.encodeFunctionCall(
 			functionName,
 			parameters,
-			abi, //HederaERC20__factory.abi,
+			abi,
 		);
 		const transaction: Transaction =
 			HTSTransactionBuilder.buildContractExecuteTransaction(
@@ -739,7 +739,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			transaction,
 			trxType,
 			functionName,
-			abi, //HederaERC20__factory.abi,
+			abi,
 		);
 	}
 
