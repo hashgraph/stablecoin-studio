@@ -10,7 +10,10 @@ import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccoun
 import { IConsensusNodeConfig } from '../../../domain/configuration/interfaces/IConsensusNodeConfig.js';
 import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
 import { IFactoryConfig } from 'domain/configuration/interfaces/IFactoryConfig.js';
+import { IHederaERC20Config } from 'domain/configuration/interfaces/IHederaERC20Config.js';
 import {
+  HederaERC20AddressTestnet,
+  HederaERC20AddressPreviewnet,
   FactoryAddressTestnet,
   FactoryAddressPreviewnet
 } from 'hedera-stable-coin-sdk';
@@ -36,6 +39,7 @@ export default class SetConfigurationService extends Service {
     await this.configureDefaultNetwork(network);
     await this.configureAccounts();
     await this.configureFactories();
+    await this.configureHederaERC20s();
   }
 
   /**
@@ -213,8 +217,27 @@ export default class SetConfigurationService extends Service {
 
     // Set a default factories
     const defaultCfgData = configurationService.getConfiguration();
+    defaultCfgData.factories = factories;
     configurationService.setConfiguration(defaultCfgData);
     return factories;
+  }
+
+  public async configureHederaERC20s(): Promise<IHederaERC20Config[]> {
+    const hederaERC20s: IHederaERC20Config[] = [];
+    hederaERC20s.push({
+      id: HederaERC20AddressTestnet,
+      network: "testnet"
+    });
+    hederaERC20s.push({
+      id: HederaERC20AddressPreviewnet,
+      network: "previewnet"
+    });
+
+    // Set a default hederaERC20s
+    const defaultCfgData = configurationService.getConfiguration();
+    defaultCfgData.hederaERC20s = hederaERC20s;
+    configurationService.setConfiguration(defaultCfgData);
+    return hederaERC20s;
   }
 
   public async manageAccountMenu(): Promise<void> {

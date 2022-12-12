@@ -223,7 +223,7 @@ export const english = {
       'Go back',
       new inquirer.Separator(' '),
     ],
-    adminFeatureOptions: ['Current user key', 'None'],
+    adminFeatureOptions: ['The Smart Contract', 'Current user key', 'None'],
     featureOptions: [
       'The Smart Contract',
       'Current user key',

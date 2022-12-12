@@ -14,7 +14,6 @@ import {
   PrivateKey,
   SDK,
   StableCoinRole,
-  StableCoinMemo,
   CashInStableCoinRequest,
   WipeStableCoinRequest,
   CashOutStableCoinRequest,
@@ -59,11 +58,11 @@ export default class OperationStableCoinService extends Service {
   private stableCoinPaused;
   private stableCoinDeleted;
 
-  constructor(tokenId?: string, memo?: StableCoinMemo, symbol?: string) {
+  constructor(tokenId?: string, memo?: string, symbol?: string) {
     super('Operation Stable Coin');
     if (tokenId && memo && symbol) {
       this.stableCoinId = tokenId; //TODO Cambiar name por el id que llegue en la creación del token
-      this.proxyContractId = memo.proxyContract;
+      this.proxyContractId = memo;
       this.stableCoinWithSymbol = `${tokenId} - ${symbol}`;
     }
   }
@@ -131,7 +130,7 @@ export default class OperationStableCoinService extends Service {
           await new DetailsStableCoinsService()
             .getDetailsStableCoins(this.stableCoinId, false)
             .then((response: IStableCoinDetail) => {
-              this.proxyContractId = response.memo.proxyContract;
+              this.proxyContractId = response.memo;
               this.stableCoinPaused = response.paused === 'PAUSED';
               this.stableCoinDeleted = response.deleted;
             });

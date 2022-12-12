@@ -27,11 +27,13 @@ export declare namespace IStableCoinFactory {
   export type KeysStructStruct = {
     keyType: PromiseOrValue<BigNumberish>;
     PublicKey: PromiseOrValue<BytesLike>;
+    isED25519: PromiseOrValue<boolean>;
   };
 
-  export type KeysStructStructOutput = [BigNumber, string] & {
+  export type KeysStructStructOutput = [BigNumber, string, boolean] & {
     keyType: BigNumber;
     PublicKey: string;
+    isED25519: boolean;
   };
 
   export type TokenStructStruct = {
@@ -74,14 +76,14 @@ export declare namespace IStableCoinFactory {
 
 export interface StableCoinFactoryInterface extends utils.Interface {
   functions: {
-    "deployStableCoin((string,string,bool,bool,int64,uint64,uint32,address,address,(uint256,bytes)[]))": FunctionFragment;
+    "deployStableCoin((string,string,bool,bool,int64,uint64,uint32,address,address,(uint256,bytes,bool)[]),address)": FunctionFragment;
   };
 
   getFunction(nameOrSignatureOrTopic: "deployStableCoin"): FunctionFragment;
 
   encodeFunctionData(
     functionFragment: "deployStableCoin",
-    values: [IStableCoinFactory.TokenStructStruct]
+    values: [IStableCoinFactory.TokenStructStruct, PromiseOrValue<string>]
   ): string;
 
   decodeFunctionResult(
@@ -121,18 +123,21 @@ export interface StableCoinFactory extends BaseContract {
   functions: {
     deployStableCoin(
       requestedToken: IStableCoinFactory.TokenStructStruct,
+      StableCoinContractAddress: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
   deployStableCoin(
     requestedToken: IStableCoinFactory.TokenStructStruct,
+    StableCoinContractAddress: PromiseOrValue<string>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     deployStableCoin(
       requestedToken: IStableCoinFactory.TokenStructStruct,
+      StableCoinContractAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[string, string, string, string]>;
   };
@@ -142,6 +147,7 @@ export interface StableCoinFactory extends BaseContract {
   estimateGas: {
     deployStableCoin(
       requestedToken: IStableCoinFactory.TokenStructStruct,
+      StableCoinContractAddress: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
@@ -149,6 +155,7 @@ export interface StableCoinFactory extends BaseContract {
   populateTransaction: {
     deployStableCoin(
       requestedToken: IStableCoinFactory.TokenStructStruct,
+      StableCoinContractAddress: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };

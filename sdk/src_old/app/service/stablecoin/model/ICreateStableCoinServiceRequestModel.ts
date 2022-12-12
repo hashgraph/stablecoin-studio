@@ -25,4 +25,6 @@ export default interface ICreateStableCoinServiceRequestModel
 	supplyType?: TokenSupplyType;
 	id?: string;
 	autoRenewAccount?: AccountId;
+	stableCoinFactory: ContractId;
+	hederaERC20: ContractId;
 }

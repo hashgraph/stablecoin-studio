@@ -141,7 +141,7 @@ export default class WizardService extends Service {
 
   public async chooseAccount(mainMenu = true, network?: string): Promise<void> {
     const configuration = configurationService.getConfiguration();
-    const { networks, accounts } = configuration;
+    const { networks, accounts, factories, hederaERC20s } = configuration;
     let options = network
       ? accounts
           .filter((acc) => acc.network === network)
@@ -176,6 +176,18 @@ export default class WizardService extends Service {
       (network) => currentAccount.network === network.name,
     );
     utilsService.setCurrentNetwotk(currentNetwork);
+
+    const currentFactory = factories.find(
+      (factory) => currentAccount.network === factory.network,
+    );
+      
+    utilsService.setCurrentFactory(currentFactory);
+
+    const currentHederaERC20 = hederaERC20s.find(
+      (hederaERC20) => currentAccount.network === hederaERC20.network,
+    );
+      
+    utilsService.setCurrentHederaERC20(currentHederaERC20);
 
     if (mainMenu) await this.mainMenu();
   }

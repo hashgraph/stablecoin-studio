@@ -1,4 +1,5 @@
 import { BigNumber } from 'ethers';
+import MemoLength from './error/MemoLength.js';
 import CheckNums from '../../../core/checks/numbers/CheckNums.js';
 import CheckStrings from '../../../core/checks/strings/CheckStrings.js';
 import BaseError from '../../../core/error/BaseError.js';
@@ -18,6 +19,9 @@ import SymbolEmpty from './error/SymbolEmpty.js';
 import SymbolLength from './error/SymbolLength.js';
 import { TokenSupplyType } from './TokenSupply.js';
 import { TokenType } from './TokenType.js';
+import {
+	ContractId as HContractId
+} from '@hashgraph/sdk';
 
 const MAX_SUPPLY = 9_223_372_036_854_775_807n;
 const TEN = 10;
@@ -33,6 +37,7 @@ export interface StableCoinProps {
 	initialSupply?: BigDecimal;
 	totalSupply?: BigDecimal;
 	maxSupply?: BigDecimal;
+	memo?: string;
 	proxyAddress?: HederaId;
 	evmProxyAddress?: string;
 	freezeKey?: PublicKey | HederaId;
@@ -60,6 +65,7 @@ export class StableCoin implements StableCoinProps {
 	initialSupply?: BigDecimal;
 	totalSupply?: BigDecimal;
 	maxSupply?: BigDecimal;
+	memo?: string;
 	proxyAddress?: HederaId;
 	evmProxyAddress?: string;
 	freezeKey?: PublicKey | HederaId;
@@ -86,6 +92,7 @@ export class StableCoin implements StableCoinProps {
 			initialSupply,
 			totalSupply,
 			maxSupply,
+			memo,
 			freezeKey,
 			freezeDefault,
 			kycKey,
@@ -111,6 +118,9 @@ export class StableCoin implements StableCoinProps {
 		this.initialSupply = initialSupply ?? BigDecimal.ZERO;
 		this.totalSupply = totalSupply ?? BigDecimal.ZERO;
 		this.maxSupply = maxSupply ?? undefined;
+		this.memo = (memo) ? 
+			HContractId.fromSolidityAddress(memo).toString()
+			: '';
 		this.freezeKey = freezeKey;
 		this.freezeDefault = freezeDefault ?? false;
 		this.kycKey = kycKey;
@@ -225,6 +235,16 @@ export class StableCoin implements StableCoinProps {
 		list = [...list, ...StableCoin.checkSupplyType(maxSupply, supplyType)];
 
 		return list;
+	}
+
+	public static checkMemo(value: string): BaseError[] {
+		const maxMemoLength = ONE_HUNDRED;
+		const errorList: BaseError[] = [];
+
+		if (CheckStrings.isNotEmpty(value) && !CheckStrings.isLengthUnder(value, maxMemoLength))
+			errorList.push(new MemoLength(value, maxMemoLength));
+
+		return errorList;
 	}
 
 	private static checkSupplyType(

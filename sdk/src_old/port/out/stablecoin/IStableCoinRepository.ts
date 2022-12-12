@@ -8,7 +8,7 @@ import AccountInfo from '../../in/sdk/response/AccountInfo.js';
 import BigDecimal from '../../../domain/context/stablecoin/BigDecimal.js';
 
 export default interface IStableCoinRepository {
-	saveCoin(coin: StableCoin, account: Account): Promise<StableCoin>;
+	saveCoin(coin: StableCoin, account: Account, stableCoinFactory: ContractId, hederaERC20: ContractId): Promise<StableCoin>;
 	getListStableCoins(account: Account): Promise<StableCoinList[]>;
 	getStableCoin(id: string): Promise<StableCoin>;
 	getCapabilitiesStableCoin(
