@@ -4,6 +4,7 @@ import StableCoinList from "../../../../src/port/out/mirror/response/StableCoinL
 import StableCoinDetail from "../../../../src/port/out/mirror/response/StableCoinViewModel.js";
 import AccountInfo from "../../../../src/port/out/mirror/response/AccountViewModel.js";
 import { MirrorNodeAdapter } from "../../../../src/port/out/mirror/MirrorNodeAdapter.js";
+import NetworkService from "../../../../src/app/service/NetworkService.js";
 
 describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
     const ed25519_accountId = '0.0.47792863';
@@ -15,12 +16,15 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 
     let mn:MirrorNodeAdapter;
     beforeAll(async () => {
-        mn = new MirrorNodeAdapter('testnet');
+        const networkService: NetworkService = new NetworkService({
+			environment: 'testnet'
+		});
+        mn = new MirrorNodeAdapter(networkService);
     });
 
     it('Test get stable coins list', async () => {
         const stableCoinList: StableCoinList[] = await mn.getstableCoinsList(ed25519_accountId);
-        expect(stableCoinList.length).toEqual(32);      
+        expect(stableCoinList.length).toEqual(33);      
     });
 
     it('Test get stable coin', async () => {
