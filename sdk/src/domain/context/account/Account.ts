@@ -13,11 +13,11 @@ export interface AccountProps {
 
 export default class Account {
 	public environment: Environment;
-	public id?: HederaId;
+	public id: HederaId;
 	public evmAddress: string;
 	public privateKey?: PrivateKey;
 	public publicKey?: PublicKey;
 	constructor(props: AccountProps) {
-		Object.assign(this, { ...props, id: HederaId.from(props.id ?? '') });
+		Object.assign(this, { ...props, id: HederaId.from(props.id) });
 	}
 }

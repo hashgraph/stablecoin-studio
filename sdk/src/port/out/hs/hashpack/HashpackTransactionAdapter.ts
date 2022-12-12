@@ -21,6 +21,7 @@ import NetworkService from '../../../../app/service/NetworkService.js';
 import { RuntimeError } from '../../../../core/error/RuntimeError.js';
 import { WalletEvents, WalletInitEvent } from '../../../../app/service/event/WalletEvent.js';
 import { SupportedWallets } from '../../../in/request/ConnectRequest.js';
+import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter.js';
 
 @singleton()
 export class HashpackTransactionAdapter extends HederaTransactionAdapter {
@@ -46,8 +47,10 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 		@lazyInject(EventService) public readonly eventService: EventService,
 		@lazyInject(NetworkService)
 		public readonly networkService: NetworkService,
+		@lazyInject(MirrorNodeAdapter)
+		public readonly mirrorNodeAdapter: MirrorNodeAdapter,
 	) {
-		super();
+		super(mirrorNodeAdapter);
 		this.hc = new HashConnect();
 	}
 
@@ -147,7 +150,6 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 			'There are no accounts currently paired with HashPack!',
 		);
 	}
-
 	public setUpHashConnectEvents(): void {
 		//This is fired when a extension is found
 		this.hc.foundExtensionEvent.on((data) => {

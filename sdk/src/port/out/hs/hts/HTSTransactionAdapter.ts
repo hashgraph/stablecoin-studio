@@ -19,6 +19,7 @@ import {
 import { SupportedWallets } from '../../../in/request/ConnectRequest.js';
 import EventService from '../../../../app/service/event/EventService.js';
 import { lazyInject } from '../../../../core/decorator/LazyInjectDecorator.js';
+import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter.js';
 
 @singleton()
 export class HTSTransactionAdapter extends HederaTransactionAdapter {
@@ -32,8 +33,10 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 
 	constructor(
 		@lazyInject(EventService) public readonly eventService: EventService,
+		@lazyInject(MirrorNodeAdapter) 
+		public readonly mirrorNodeAdapter: MirrorNodeAdapter
 	) {
-		super();
+		super(mirrorNodeAdapter);
 	}
 
 	register(account: Account): Promise<TransactionAdapterInitializationData> {
