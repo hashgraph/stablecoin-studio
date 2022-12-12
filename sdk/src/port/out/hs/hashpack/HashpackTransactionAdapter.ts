@@ -70,7 +70,10 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 				icon: '',
 				name: 'HSC',
 			},
-			this.account.environment as 'testnet' | 'previewnet' | 'mainnet',
+			this.networkService.environment as
+				| 'testnet'
+				| 'previewnet'
+				| 'mainnet',
 		);
 		const eventData: WalletInitEvent = {
 			wallet: SupportedWallets.HASHPACK,
@@ -149,7 +152,6 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 		if (this.account.id)
 			return new Account({
 				id: this.account.id.value,
-				environment: this.networkService.environment,
 			});
 		throw new RuntimeError(
 			'There are no accounts currently paired with HashPack!',
@@ -175,7 +177,6 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 					this.pairingData = data.pairingData;
 					LogService.logInfo('Paired with wallet', data);
 					this.account = new Account({
-						environment: this.pairingData.network,
 						id: this.pairingData.accountIds[0],
 					});
 					this.eventService.emit(WalletEvents.walletPaired, {

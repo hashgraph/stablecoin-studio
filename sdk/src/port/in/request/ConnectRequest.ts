@@ -1,3 +1,4 @@
+import { Environment } from '../../../domain/context/network/Environment.js';
 import { SupportedWallets } from '../../../domain/context/network/Wallet.js';
 import {
 	BaseRequest,
@@ -13,13 +14,16 @@ export default class ConnectRequest
 	implements BaseRequest
 {
 	account: RequestAccount;
+	network: Environment;
 	wallet: SupportedWallets;
 
 	constructor({
 		account,
+		network,
 		wallet,
 	}: {
 		account: RequestAccount;
+		network: Environment;
 		wallet: SupportedWallets;
 	}) {
 		super({
@@ -27,6 +31,7 @@ export default class ConnectRequest
 			wallet: Validation.checkString({ emptyCheck: true }),
 		});
 		this.account = account;
+		this.network = network;
 		this.wallet = wallet;
 	}
 }

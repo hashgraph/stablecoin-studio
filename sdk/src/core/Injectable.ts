@@ -45,6 +45,7 @@ import { DisconnectCommandHandler } from '../app/usecase/command/network/disconn
 import { GetListStableCoinQueryHandler } from '../app/usecase/query/stablecoin/list/GetListStableCoinQueryHandler.js';
 import { GetAccountInfoQueryHandler } from '../app/usecase/query/account/info/GetAccountInfoQueryHandler.js';
 import { SetNetworkCommandHandler } from '../app/usecase/command/network/setNetwork/SetNetworkCommandHandler.js';
+import { WalletEvents } from '../app/service/event/WalletEvent.js';
 
 export const TOKENS = {
 	COMMAND_HANDLER: Symbol('CommandHandler'),
@@ -196,8 +197,15 @@ const TRANSACTION_HANDLER = [
 const defaultNetworkProps: NetworkProps = {
 	environment: 'testnet',
 };
+
+// Network default props
 container.register<NetworkProps>('NetworkProps', {
 	useValue: defaultNetworkProps,
+});
+
+// Wallet events
+container.register<typeof WalletEvents>('WalletEvents', {
+	useValue: WalletEvents,
 });
 
 @registry([...COMMAND_HANDLERS, ...QUERY_HANDLERS, ...TRANSACTION_HANDLER])

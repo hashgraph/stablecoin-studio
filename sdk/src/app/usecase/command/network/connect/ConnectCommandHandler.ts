@@ -17,7 +17,7 @@ export class ConnectCommandHandler implements ICommandHandler<ConnectCommand> {
 
 		// Change mirror node adapter network
 		const adapter = Injectable.resolve(MirrorNodeAdapter);
-		adapter.setEnvironment(command.account.environment);
+		adapter.setEnvironment(command.environment);
 
 		return Promise.resolve(
 			new ConnectCommandResponse(registration, command.wallet),

@@ -16,6 +16,8 @@ import { CashInCommand } from '../../app/usecase/command/stablecoin/operations/c
 import StableCoinViewModel from '../out/mirror/response/StableCoinViewModel.js';
 import StableCoinService from '../../app/service/StableCoinService.js';
 import { GetStableCoinQuery } from '../../app/usecase/query/stablecoin/get/GetStableCoinQuery.js';
+import AccountService from '../../app/service/AccountService.js';
+import Account from '../../domain/context/account/Account.js';
 
 interface IStableCoinInPort {
 	create(request: CreateRequest): Promise<StableCoinDetail>;
@@ -37,6 +39,9 @@ class StableCoinInPort implements IStableCoinInPort {
 		),
 		private readonly stableCoinService: StableCoinService = Injectable.resolve(
 			StableCoinService,
+		),
+		private readonly accountService: AccountService = Injectable.resolve(
+			AccountService,
 		),
 	) {}
 
@@ -72,7 +77,7 @@ class StableCoinInPort implements IStableCoinInPort {
 			),
 		));
 	}
-	
+
 	cashOut(request: CashOutRequest): Promise<boolean> {
 		throw new Error('Method not implemented.');
 	}

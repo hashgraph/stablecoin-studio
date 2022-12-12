@@ -20,6 +20,7 @@ import { SupportedWallets } from '../../../in/request/ConnectRequest.js';
 import EventService from '../../../../app/service/event/EventService.js';
 import { lazyInject } from '../../../../core/decorator/LazyInjectDecorator.js';
 import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter.js';
+import NetworkService from '../../../../app/service/NetworkService.js';
 
 @singleton()
 export class HTSTransactionAdapter extends HederaTransactionAdapter {
@@ -33,8 +34,10 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 
 	constructor(
 		@lazyInject(EventService) public readonly eventService: EventService,
-		@lazyInject(MirrorNodeAdapter) 
-		public readonly mirrorNodeAdapter: MirrorNodeAdapter
+		@lazyInject(MirrorNodeAdapter)
+		public readonly mirrorNodeAdapter: MirrorNodeAdapter,
+		@lazyInject(NetworkService)
+		public readonly networkService: NetworkService,
 	) {
 		super(mirrorNodeAdapter);
 	}
@@ -42,8 +45,8 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 	register(account: Account): Promise<TransactionAdapterInitializationData> {
 		Injectable.registerTransactionHandler(this);
 		this.account = account;
-		this.network = account.environment;
-		this._client = Client.forName(this.account.environment);
+		this.network = this.networkService.environment;
+		this._client = Client.forName(this.networkService.environment);
 		const id = this.account.id?.value ?? '';
 		const privateKey = account.privateKey?.toHashgraphKey() ?? '';
 		this._client.setOperator(id, privateKey);

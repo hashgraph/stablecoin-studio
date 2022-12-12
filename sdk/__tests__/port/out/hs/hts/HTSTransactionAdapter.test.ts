@@ -15,9 +15,11 @@ import BigDecimal from '../../../../../src/domain/context/shared/BigDecimal.js';
 import { HederaId } from '../../../../../src/domain/context/shared/HederaId.js';
 import { StableCoinRole } from '../../../../../src/domain/context/stablecoin/StableCoinRole.js';
 import PrivateKey from '../../../../../src/domain/context/account/PrivateKey.js';
-import { MirrorNodeAdapter } from '../../../../../src/port/out/mirror/MirrorNodeAdapter.js';
-import EventService from '../../../../../src/app/service/event/EventService.js';
-import { WalletEvents } from '../../../../../src/app/service/event/WalletEvent.js';
+import { Injectable } from '../../../../../src/core/Injectable.js';
+import { Network } from '../../../../../src/index.js';
+import ConnectRequest, {
+	SupportedWallets,
+} from '../../../../../src/port/in/request/ConnectRequest.js';
 
 describe('🧪 [ADAPTER] HTSTransactionAdapter with Ed25519 accounts', () => {
 	const clientAccountId = '0.0.47792863';
@@ -25,8 +27,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with Ed25519 accounts', () => {
 		'302e020100300506032b65700422042078068d0d381ec19047ca0f6612a66b9a3c990fb1f8adc2fd2735b78423c2e10c';
 	const accountId = '0.0.47793222';
 	const account: Account = new Account({
-		environment: 'testnet',
-		id: clientAccountId,
+		id: accountId,
 		privateKey: new PrivateKey({ key: clientPrivateKey, type: 'ED25519' }),
 	});
 
@@ -85,49 +86,47 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with Ed25519 accounts', () => {
 	let th: HTSTransactionAdapter;
 	let tr: TransactionResponse;
 	beforeAll(async () => {
-		initTest(th, account)
+		await initTest(account);
+		th = Injectable.resolve(HTSTransactionAdapter);
 	});
 
 	it('Test cashin', async () => {
 		const accountInitialBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities, account)
+			await th.balanceOf(stableCoinCapabilities, account.id)
 		).response;
 		tr = await th.cashin(
 			stableCoinCapabilities,
-			account,
+			account.id,
 			BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals),
 		);
 		tr = await th.transfer(
 			stableCoinCapabilities,
 			BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals),
 			account,
-			account,
+			account.id,
 		);
 		const accountFinalBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities, account)
+			await th.balanceOf(stableCoinCapabilities, account.id)
 		).response;
 		expect(accountFinalBalance).toEqual(accountInitialBalance + 1);
 	}, 50000);
 
 	it('Test burn', async () => {
 		const accountInitialBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities, account)
+			await th.balanceOf(stableCoinCapabilities, account.id)
 		).response;
 		tr = await th.burn(
 			stableCoinCapabilities,
 			BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals),
 		);
 		const accountFinalBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities, account)
+			await th.balanceOf(stableCoinCapabilities, account.id)
 		).response;
 		expect(accountFinalBalance).toEqual(accountInitialBalance - 1);
 	}, 50000);
 
 	it('Test wipe', async () => {
-		const accountFromAccountId: Account = new Account({
-			environment: 'testnet',
-			id: accountId,
-		});
+		const accountFromAccountId = HederaId.from(accountId);
 		const accountInitialBalance: number = +(
 			await th.balanceOf(stableCoinCapabilities, accountFromAccountId)
 		).response;
@@ -143,11 +142,11 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with Ed25519 accounts', () => {
 	}, 50000);
 
 	it('Test freeze', async () => {
-		tr = await th.freeze(stableCoinCapabilities, account);
+		tr = await th.freeze(stableCoinCapabilities, account.id);
 	}, 20000);
 
 	it('Test unfreeze', async () => {
-		tr = await th.unfreeze(stableCoinCapabilities, account);
+		tr = await th.unfreeze(stableCoinCapabilities, account.id);
 	}, 20000);
 
 	it('Test pause', async () => {
@@ -160,24 +159,21 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with Ed25519 accounts', () => {
 
 	it('Test cashIn contract function', async () => {
 		const accountInitialBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities2, account)
+			await th.balanceOf(stableCoinCapabilities2, account.id)
 		).response;
 		tr = await th.cashin(
 			stableCoinCapabilities2,
-			account,
+			account.id,
 			BigDecimal.fromString('1', stableCoinCapabilities2.coin.decimals),
 		);
 		const accountFinalBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities2, account)
+			await th.balanceOf(stableCoinCapabilities2, account.id)
 		).response;
 		expect(accountFinalBalance).toEqual(accountInitialBalance + 1);
 	}, 20000);
 
 	it('Test burn contract function', async () => {
-		const accountFromProxyContractId2: Account = new Account({
-			environment: 'testnet',
-			id: proxyContractId2,
-		});
+		const accountFromProxyContractId2 = HederaId.from(proxyContractId2);
 		const accountInitialBalance: number = +(
 			await th.balanceOf(
 				stableCoinCapabilities2,
@@ -199,15 +195,15 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with Ed25519 accounts', () => {
 
 	it('Test wipe contract function', async () => {
 		const accountInitialBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities2, account)
+			await th.balanceOf(stableCoinCapabilities2, account.id)
 		).response;
 		tr = await th.wipe(
 			stableCoinCapabilities2,
-			account,
+			account.id,
 			BigDecimal.fromString('1', stableCoinCapabilities2.coin.decimals),
 		);
 		const accountFinalBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities2, account)
+			await th.balanceOf(stableCoinCapabilities2, account.id)
 		).response;
 		expect(accountFinalBalance).toEqual(accountInitialBalance - 1);
 	}, 20000);
@@ -220,18 +216,12 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with Ed25519 accounts', () => {
 	});
 
 	it('Test freeze contract function', async () => {
-		const accountFromAccountId: Account = new Account({
-			environment: 'testnet',
-			id: accountId,
-		});
+		const accountFromAccountId = HederaId.from(accountId);
 		tr = await th.freeze(stableCoinCapabilities2, accountFromAccountId);
 	});
 
 	it('Test unfreeze contract function', async () => {
-		const accountFromAccountId: Account = new Account({
-			environment: 'testnet',
-			id: accountId,
-		});
+		const accountFromAccountId = HederaId.from(accountId);
 		tr = await th.unfreeze(stableCoinCapabilities2, accountFromAccountId);
 	});
 
@@ -244,10 +234,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with Ed25519 accounts', () => {
 	});
 
 	it('Test grant role contract function', async () => {
-		const accountFromAccountId: Account = new Account({
-			environment: 'testnet',
-			id: accountId,
-		});
+		const accountFromAccountId = HederaId.from(accountId);
 
 		tr = await th.grantRole(
 			stableCoinCapabilities2,
@@ -263,10 +250,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with Ed25519 accounts', () => {
 	}, 10000);
 
 	it('Test revoke role contract function', async () => {
-		const accountFromAccountId: Account = new Account({
-			environment: 'testnet',
-			id: accountId,
-		});
+		const accountFromAccountId = HederaId.from(accountId);
 		tr = await th.revokeRole(
 			stableCoinCapabilities2,
 			accountFromAccountId,
@@ -281,7 +265,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with Ed25519 accounts', () => {
 	}, 10000);
 
 	it('Test get roles contract function', async () => {
-		tr = await th.getRoles(stableCoinCapabilities2, account);
+		tr = await th.getRoles(stableCoinCapabilities2, account.id);
 		expect(tr.response).toEqual([
 			StableCoinRole.DEFAULT_ADMIN_ROLE,
 			StableCoinRole.CASHIN_ROLE,
@@ -295,10 +279,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with Ed25519 accounts', () => {
 	});
 
 	it('Test supplier allowance contract function', async () => {
-		const accountFromAccountId: Account = new Account({
-			environment: 'testnet',
-			id: accountId,
-		});
+		const accountFromAccountId = HederaId.from(accountId);
 		tr = await th.supplierAllowance(
 			stableCoinCapabilities2,
 			accountFromAccountId,
@@ -307,10 +288,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with Ed25519 accounts', () => {
 	});
 
 	it('Test increase supplier allowance contract function', async () => {
-		const accountFromAccountId: Account = new Account({
-			environment: 'testnet',
-			id: accountId,
-		});
+		const accountFromAccountId = HederaId.from(accountId);
 		tr = await th.revokeSupplierRole(
 			stableCoinCapabilities2,
 			accountFromAccountId,
@@ -338,10 +316,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with Ed25519 accounts', () => {
 	}, 20000);
 
 	it('Test decrease supplier allowance contract function', async () => {
-		const accountFromAccountId: Account = new Account({
-			environment: 'testnet',
-			id: accountId,
-		});
+		const accountFromAccountId = HederaId.from(accountId);
 		tr = await th.decreaseSupplierAllowance(
 			stableCoinCapabilities2,
 			accountFromAccountId,
@@ -360,10 +335,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with Ed25519 accounts', () => {
 	}, 20000);
 
 	it('Test reset supplier allowance contract function', async () => {
-		const accountFromAccountId: Account = new Account({
-			environment: 'testnet',
-			id: accountId,
-		});
+		const accountFromAccountId = HederaId.from(accountId);
 		tr = await th.resetSupplierAllowance(
 			stableCoinCapabilities2,
 			accountFromAccountId,
@@ -376,10 +348,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with Ed25519 accounts', () => {
 	}, 20000);
 
 	it('Test grant unlimited supplier allowance contract function', async () => {
-		const accountFromAccountId: Account = new Account({
-			environment: 'testnet',
-			id: accountId,
-		});
+		const accountFromAccountId = HederaId.from(accountId);
 		tr = await th.revokeSupplierRole(
 			stableCoinCapabilities2,
 			accountFromAccountId,
@@ -407,7 +376,6 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		'305d4d5de3c94df00069916ab28f7650d378be35c88698682025f500f321461c';
 	const accountId = '0.0.49069513';
 	const account: Account = new Account({
-		environment: 'testnet',
 		id: clientAccountId,
 		privateKey: new PrivateKey({ key: clientPrivateKey, type: 'ECDSA' }),
 	});
@@ -467,14 +435,12 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 	let th: HTSTransactionAdapter;
 	let tr: TransactionResponse;
 	beforeAll(async () => {
-		th = initTest(th);
+		await initTest(account);
+		th = Injectable.resolve(HTSTransactionAdapter);
 	});
 
 	it('Test cashin', async () => {
-		const accountFromAccountId: Account = new Account({
-			environment: 'testnet',
-			id: accountId,
-		});
+		const accountFromAccountId = HederaId.from(accountId);
 		const accountInitialBalance: number = +(
 			await th.balanceOf(stableCoinCapabilities, accountFromAccountId)
 		).response;
@@ -497,23 +463,20 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 
 	it('Test burn', async () => {
 		const accountInitialBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities, account)
+			await th.balanceOf(stableCoinCapabilities, account.id)
 		).response;
 		tr = await th.burn(
 			stableCoinCapabilities,
 			BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals),
 		);
 		const accountFinalBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities, account)
+			await th.balanceOf(stableCoinCapabilities, account.id)
 		).response;
 		expect(accountFinalBalance).toEqual(accountInitialBalance - 1);
 	}, 50000);
 
 	it('Test wipe', async () => {
-		const accountFromAccountId: Account = new Account({
-			environment: 'testnet',
-			id: accountId,
-		});
+		const accountFromAccountId = HederaId.from(accountId);
 		const accountInitialBalance: number = +(
 			await th.balanceOf(stableCoinCapabilities, accountFromAccountId)
 		).response;
@@ -529,11 +492,11 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 	}, 50000);
 
 	it('Test freeze', async () => {
-		tr = await th.freeze(stableCoinCapabilities, account);
+		tr = await th.freeze(stableCoinCapabilities, account.id);
 	}, 20000);
 
 	it('Test unfreeze', async () => {
-		tr = await th.unfreeze(stableCoinCapabilities, account);
+		tr = await th.unfreeze(stableCoinCapabilities, account.id);
 	}, 20000);
 
 	it('Test pause', async () => {
@@ -546,28 +509,27 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 
 	it('Test cashIn contract function', async () => {
 		const accountInitialBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities2, account)
+			await th.balanceOf(stableCoinCapabilities2, account.id)
 		).response;
 		tr = await th.cashin(
 			stableCoinCapabilities2,
-			account,
+			account.id,
 			BigDecimal.fromString('1', stableCoinCapabilities2.coin.decimals),
 		);
 		const accountFinalBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities2, account)
+			await th.balanceOf(stableCoinCapabilities2, account.id)
 		).response;
 		expect(accountFinalBalance).toEqual(accountInitialBalance + 1);
 	}, 20000);
 
 	it('Test burn contract function', async () => {
 		const accountFromProxyContractId2: Account = new Account({
-			environment: 'testnet',
 			id: proxyContractId2,
 		});
 		const accountInitialBalance: number = +(
 			await th.balanceOf(
 				stableCoinCapabilities2,
-				accountFromProxyContractId2,
+				accountFromProxyContractId2.id,
 			)
 		).response;
 		tr = await th.burn(
@@ -577,7 +539,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		const accountFinalBalance: number = +(
 			await th.balanceOf(
 				stableCoinCapabilities2,
-				accountFromProxyContractId2,
+				accountFromProxyContractId2.id,
 			)
 		).response;
 		expect(accountFinalBalance).toEqual(accountInitialBalance - 1);
@@ -585,15 +547,15 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 
 	it('Test wipe contract function', async () => {
 		const accountInitialBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities2, account)
+			await th.balanceOf(stableCoinCapabilities2, account.id)
 		).response;
 		tr = await th.wipe(
 			stableCoinCapabilities2,
-			account,
+			account.id,
 			BigDecimal.fromString('1', stableCoinCapabilities2.coin.decimals),
 		);
 		const accountFinalBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities2, account)
+			await th.balanceOf(stableCoinCapabilities2, account.id)
 		).response;
 		expect(accountFinalBalance).toEqual(accountInitialBalance - 1);
 	}, 20000);
@@ -606,18 +568,12 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 	});
 
 	it('Test freeze contract function', async () => {
-		const accountFromAccountId: Account = new Account({
-			environment: 'testnet',
-			id: accountId,
-		});
+		const accountFromAccountId = HederaId.from(accountId);
 		tr = await th.freeze(stableCoinCapabilities2, accountFromAccountId);
 	});
 
 	it('Test unfreeze contract function', async () => {
-		const accountFromAccountId: Account = new Account({
-			environment: 'testnet',
-			id: accountId,
-		});
+		const accountFromAccountId = HederaId.from(accountId);
 		tr = await th.unfreeze(stableCoinCapabilities2, accountFromAccountId);
 	});
 
@@ -630,10 +586,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 	});
 
 	it('Test grant role contract function', async () => {
-		const accountFromAccountId: Account = new Account({
-			environment: 'testnet',
-			id: accountId,
-		});
+		const accountFromAccountId = HederaId.from(accountId);
 
 		tr = await th.grantRole(
 			stableCoinCapabilities2,
@@ -649,10 +602,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 	}, 10000);
 
 	it('Test revoke role contract function', async () => {
-		const accountFromAccountId: Account = new Account({
-			environment: 'testnet',
-			id: accountId,
-		});
+		const accountFromAccountId = HederaId.from(accountId);
 		tr = await th.revokeRole(
 			stableCoinCapabilities2,
 			accountFromAccountId,
@@ -667,7 +617,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 	}, 10000);
 
 	it('Test get roles contract function', async () => {
-		tr = await th.getRoles(stableCoinCapabilities2, account);
+		tr = await th.getRoles(stableCoinCapabilities2, account.id);
 		expect(tr.response).toEqual([
 			StableCoinRole.DEFAULT_ADMIN_ROLE,
 			StableCoinRole.CASHIN_ROLE,
@@ -681,10 +631,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 	});
 
 	it('Test supplier allowance contract function', async () => {
-		const accountFromAccountId: Account = new Account({
-			environment: 'testnet',
-			id: accountId,
-		});
+		const accountFromAccountId = HederaId.from(accountId);
 		tr = await th.supplierAllowance(
 			stableCoinCapabilities2,
 			accountFromAccountId,
@@ -693,10 +640,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 	});
 
 	it('Test increase supplier allowance contract function', async () => {
-		const accountFromAccountId: Account = new Account({
-			environment: 'testnet',
-			id: accountId,
-		});
+		const accountFromAccountId = HederaId.from(accountId);
 		tr = await th.revokeSupplierRole(
 			stableCoinCapabilities2,
 			accountFromAccountId,
@@ -724,10 +668,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 	}, 20000);
 
 	it('Test decrease supplier allowance contract function', async () => {
-		const accountFromAccountId: Account = new Account({
-			environment: 'testnet',
-			id: accountId,
-		});
+		const accountFromAccountId = HederaId.from(accountId);
 		tr = await th.decreaseSupplierAllowance(
 			stableCoinCapabilities2,
 			accountFromAccountId,
@@ -746,10 +687,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 	}, 20000);
 
 	it('Test reset supplier allowance contract function', async () => {
-		const accountFromAccountId: Account = new Account({
-			environment: 'testnet',
-			id: accountId,
-		});
+		const accountFromAccountId = HederaId.from(accountId);
 		tr = await th.resetSupplierAllowance(
 			stableCoinCapabilities2,
 			accountFromAccountId,
@@ -762,10 +700,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 	}, 20000);
 
 	it('Test grant unlimited supplier allowance contract function', async () => {
-		const accountFromAccountId: Account = new Account({
-			environment: 'testnet',
-			id: accountId,
-		});
+		const accountFromAccountId = HederaId.from(accountId);
 		tr = await th.revokeSupplierRole(
 			stableCoinCapabilities2,
 			accountFromAccountId,
@@ -786,11 +721,17 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		expect(tr.error).toEqual(undefined);
 	});
 });
-function initTest(th: HTSTransactionAdapter, account: Account) {
-	const mirrorNode: MirrorNodeAdapter = new MirrorNodeAdapter();
-	mirrorNode.setEnvironment('testnet');
-	const eventService: EventService = new EventService(WalletEvents);
-	th = new HTSTransactionAdapter(eventService, mirrorNode);
-	th.register(account);
-	return th;
+
+async function initTest(account: Account): Promise<void> {
+	await Network.connect(
+		new ConnectRequest({
+			account: {
+				accountId: account.id.toString(),
+				evmAddress: account.evmAddress,
+				privateKey: account.privateKey,
+			},
+			network: 'testnet',
+			wallet: SupportedWallets.CLIENT,
+		}),
+	);
 }

@@ -5,6 +5,7 @@ import StableCoinCapabilities from '../../domain/context/stablecoin/StableCoinCa
 import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import { StableCoinRole } from '../../domain/context/stablecoin/StableCoinRole.js';
 import Account from '../../domain/context/account/Account.js';
+import { HederaId } from '../../domain/context/shared/HederaId.js';
 
 export interface TransactionAdapterInitializationData {
 	account: Account;
@@ -17,20 +18,20 @@ interface ITransactionAdapter {
 	stop(): Promise<boolean>;
 	associateToken(
 		coin: StableCoinCapabilities | string,
-		targetId: Account,
+		targetId: HederaId,
 	): Promise<TransactionResponse>;
 	balanceOf(
 		coin: StableCoinCapabilities,
-		targetId: Account,
+		targetId: HederaId,
 	): Promise<TransactionResponse<BigDecimal, Error>>;
 	wipe(
 		coin: StableCoinCapabilities,
-		targetId: Account,
+		targetId: HederaId,
 		amount: BigDecimal,
 	): Promise<TransactionResponse>;
 	cashin(
 		coin: StableCoinCapabilities,
-		targetId: Account,
+		targetId: HederaId,
 		amount: BigDecimal,
 	): Promise<TransactionResponse>;
 	burn(
@@ -39,11 +40,11 @@ interface ITransactionAdapter {
 	): Promise<TransactionResponse>;
 	freeze(
 		coin: StableCoinCapabilities,
-		targetId: Account,
+		targetId: HederaId,
 	): Promise<TransactionResponse>;
 	unfreeze(
 		coin: StableCoinCapabilities,
-		targetId: Account,
+		targetId: HederaId,
 	): Promise<TransactionResponse>;
 	pause(coin: StableCoinCapabilities): Promise<TransactionResponse>;
 	unpause(coin: StableCoinCapabilities): Promise<TransactionResponse>;
@@ -56,7 +57,7 @@ interface ITransactionAdapter {
 		coin: StableCoinCapabilities,
 		amount: BigDecimal,
 		sourceId: Account,
-		targetId: Account,
+		targetId: HederaId,
 	): Promise<TransactionResponse>;
 	getAccount(): Account;
 }
@@ -64,65 +65,65 @@ interface ITransactionAdapter {
 interface RoleTransactionAdapter {
 	grantRole(
 		coin: StableCoinCapabilities,
-		targetId: Account,
+		targetId: HederaId,
 		role: StableCoinRole,
 	): Promise<TransactionResponse>;
 	revokeRole(
 		coin: StableCoinCapabilities,
-		targetId: Account,
+		targetId: HederaId,
 		role: StableCoinRole,
 	): Promise<TransactionResponse>;
 	hasRole(
 		coin: StableCoinCapabilities,
-		targetId: Account,
+		targetId: HederaId,
 		role: StableCoinRole,
 	): Promise<TransactionResponse<boolean, Error>>;
 	grantSupplierRole(
 		coin: StableCoinCapabilities,
-		targetId: Account,
-		amount: BigDecimal
+		targetId: HederaId,
+		amount: BigDecimal,
 	): Promise<TransactionResponse>;
 	grantUnlimitedSupplierRole(
 		coin: StableCoinCapabilities,
-		targetId: Account,
+		targetId: HederaId,
 	): Promise<TransactionResponse>;
 	revokeSupplierRole(
 		coin: StableCoinCapabilities,
-		targetId: Account,
+		targetId: HederaId,
 	): Promise<TransactionResponse>;
 	balanceOf(
 		coin: StableCoinCapabilities,
-		targetId: Account,
+		targetId: HederaId,
 	): Promise<TransactionResponse<BigDecimal, Error>>;
 	associateToken(
 		coin: StableCoinCapabilities,
-		targetId: Account,
+		targetId: HederaId,
 	): Promise<TransactionResponse>;
 	isUnlimitedSupplierAllowance(
 		coin: StableCoinCapabilities,
-		targetId: Account,
+		targetId: HederaId,
 	): Promise<TransactionResponse<boolean, Error>>;
 	supplierAllowance(
 		coin: StableCoinCapabilities,
-		targetId: Account,
+		targetId: HederaId,
 	): Promise<TransactionResponse<BigDecimal, Error>>;
 	resetSupplierAllowance(
 		coin: StableCoinCapabilities,
-		targetId: Account,
+		targetId: HederaId,
 	): Promise<TransactionResponse>;
 	increaseSupplierAllowance(
 		coin: StableCoinCapabilities,
-		targetId: Account,
+		targetId: HederaId,
 		amount: BigDecimal,
 	): Promise<TransactionResponse>;
 	decreaseSupplierAllowance(
 		coin: StableCoinCapabilities,
-		targetId: Account,
+		targetId: HederaId,
 		amount: BigDecimal,
 	): Promise<TransactionResponse>;
 	getRoles(
 		coin: StableCoinCapabilities,
-		targetId: Account,
+		targetId: HederaId,
 	): Promise<TransactionResponse<string[], Error>>;
 }
 
@@ -140,14 +141,14 @@ export default abstract class TransactionAdapter
 	}
 	wipe(
 		coin: StableCoinCapabilities,
-		targetId: Account,
+		targetId: HederaId,
 		amount: BigDecimal,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
 	cashin(
 		coin: StableCoinCapabilities,
-		targetId: Account,
+		targetId: HederaId,
 		amount: BigDecimal,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
@@ -160,13 +161,13 @@ export default abstract class TransactionAdapter
 	}
 	freeze(
 		coin: StableCoinCapabilities,
-		targetId: Account,
+		targetId: HederaId,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
 	unfreeze(
 		coin: StableCoinCapabilities,
-		targetId: Account,
+		targetId: HederaId,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
@@ -195,98 +196,98 @@ export default abstract class TransactionAdapter
 		coin: StableCoinCapabilities,
 		amount: BigDecimal,
 		sourceId: Account,
-		targetId: Account,
+		targetId: HederaId,
 		isApproval = false,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
 	grantRole(
 		coin: StableCoinCapabilities,
-		targetId: Account,
+		targetId: HederaId,
 		role: StableCoinRole,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
 	revokeRole(
 		coin: StableCoinCapabilities,
-		targetId: Account,
+		targetId: HederaId,
 		role: StableCoinRole,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
 	hasRole(
 		coin: StableCoinCapabilities,
-		targetId: Account,
+		targetId: HederaId,
 		role: StableCoinRole,
 	): Promise<TransactionResponse<boolean, Error>> {
 		throw new Error('Method not implemented.');
 	}
 	grantSupplierRole(
 		coin: StableCoinCapabilities,
-		targetId: Account,
-		amount: BigDecimal
+		targetId: HederaId,
+		amount: BigDecimal,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
 	grantUnlimitedSupplierRole(
 		coin: StableCoinCapabilities,
-		targetId: Account
+		targetId: HederaId,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
 	revokeSupplierRole(
 		coin: StableCoinCapabilities,
-		targetId: Account,
+		targetId: HederaId,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
 	balanceOf(
 		coin: StableCoinCapabilities,
-		targetId: Account,
+		targetId: HederaId,
 	): Promise<TransactionResponse<BigDecimal, Error>> {
 		throw new Error('Method not implemented.');
 	}
 	associateToken(
 		coin: StableCoinCapabilities,
-		targetId: Account,
+		targetId: HederaId,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
 	isUnlimitedSupplierAllowance(
 		coin: StableCoinCapabilities,
-		targetId: Account,
+		targetId: HederaId,
 	): Promise<TransactionResponse<boolean, Error>> {
 		throw new Error('Method not implemented.');
 	}
 	supplierAllowance(
 		coin: StableCoinCapabilities,
-		targetId: Account,
+		targetId: HederaId,
 	): Promise<TransactionResponse<BigDecimal, Error>> {
 		throw new Error('Method not implemented.');
 	}
 	resetSupplierAllowance(
 		coin: StableCoinCapabilities,
-		targetId: Account,
+		targetId: HederaId,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
 	increaseSupplierAllowance(
 		coin: StableCoinCapabilities,
-		targetId: Account,
+		targetId: HederaId,
 		amount: BigDecimal,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
 	decreaseSupplierAllowance(
 		coin: StableCoinCapabilities,
-		targetId: Account,
+		targetId: HederaId,
 		amount: BigDecimal,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
 	getRoles(
 		coin: StableCoinCapabilities,
-		targetId: Account,
+		targetId: HederaId,
 	): Promise<TransactionResponse<string[], Error>> {
 		throw new Error('Method not implemented.');
 	}

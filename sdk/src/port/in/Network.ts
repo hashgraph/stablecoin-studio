@@ -56,11 +56,9 @@ class NetworkInPort implements INetworkInPort {
 	async connect(req: ConnectRequest): Promise<InitalizationData> {
 		const account = RequestMapper.mapAccount(req.account);
 		const res = await this.commandBus.execute(
-			new ConnectCommand(account, req.wallet),
+			new ConnectCommand(account, req.network, req.wallet),
 		);
-		await this.commandBus.execute(
-			new SetNetworkCommand(account.environment),
-		);
+		await this.commandBus.execute(new SetNetworkCommand(req.network));
 		return res.payload;
 	}
 

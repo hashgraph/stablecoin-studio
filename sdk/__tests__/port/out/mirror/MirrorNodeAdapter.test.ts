@@ -22,7 +22,7 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 
     it('Test get stable coins list', async () => {
         const stableCoinList: StableCoinList[] = await mn.getStableCoinsList(ed25519_accountId);
-        expect(stableCoinList.length).toEqual(32);      
+        expect(stableCoinList.length).toBeGreaterThan(0);      
     });
 
     it('Test get stable coin', async () => {
@@ -48,7 +48,7 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 
     it('Test get ed25519 account info', async () => {
         const accountInfo: AccountInfo = await mn.getAccountInfo(ed25519_accountId);
-        expect(accountInfo.account).toEqual(ed25519_accountId);     
+        expect(accountInfo.account).toEqual(ed25519_accountId.toString());     
         expect(accountInfo.accountEvmAddress).toBeNull();     
         expect(accountInfo.publicKey).toEqual(ed25519_publicKey);    
         expect(accountInfo.alias).toBeNull(); 
@@ -56,7 +56,7 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 
     it('Test get ecdsa account info', async () => {
         const accountInfo: AccountInfo = await mn.getAccountInfo(ecdsa_accountId);
-        expect(accountInfo.account).toEqual(ecdsa_accountId);     
+        expect(accountInfo.account).toEqual(ecdsa_accountId.toString());     
         expect(accountInfo.accountEvmAddress).toEqual('0xb58c62f798d132a865429ee3c8968fed20b38116');     
         expect(accountInfo.publicKey).toEqual(ecdsa_publicKey);   
         expect(accountInfo.alias).toEqual('HIQQFY4QQVVCIRNDY3UEMWEW6TZ7RXPJRRUHUTTW3LRPDEHSOSXRVUXR');  
