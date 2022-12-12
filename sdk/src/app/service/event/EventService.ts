@@ -1,4 +1,4 @@
-import EventEmitter from '../../../core/EventEmitter.js';
+import EventEmitter from '../../../core/eventEmitter.js';
 import Service from '../Service.js';
 import { EventListenerNotFound } from './error/EventListenerNotFound.js';
 import { EventNotFound } from './error/EventNotFound.js';
