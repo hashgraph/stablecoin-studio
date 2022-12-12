@@ -20,6 +20,11 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	const clientPrivateKey =
 		'1404d4a4a67fb21e7181d147bfdaa7c9b55ebeb7e1a9048bf18d5da6e169c09c';
 	const evmAddress = '0x320d33046b60dbc5a027cfb7e4124f75b0417240';
+	const accountFromAEvmAddress: Account = new Account({
+		environment: 'testnet',		
+		id: '0.0.48471385',
+		evmAddress: evmAddress
+	});
 	const stableCoinCapabilitiesHTS = new StableCoinCapabilities(
 		new StableCoin({
 			name: 'HEDERACOIN',
@@ -41,10 +46,7 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 			new Capability(Operation.RESCUE, Access.HTS),
 			new Capability(Operation.ROLE_MANAGEMENT, Access.HTS),
 		],
-		new Account({
-			environment: 'testnet',
-			evmAddress,
-		}),
+		accountFromAEvmAddress,
 	);
 	const stableCoinCapabilitiesSC = new StableCoinCapabilities(
 		new StableCoin({
@@ -67,10 +69,7 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 			new Capability(Operation.RESCUE, Access.CONTRACT),
 			new Capability(Operation.ROLE_MANAGEMENT, Access.CONTRACT),
 		],
-		new Account({
-			environment: 'testnet',
-			evmAddress,
-		}),
+		accountFromAEvmAddress,
 	);
 
 	let th: RPCTransactionAdapter;
@@ -78,17 +77,18 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	beforeAll(async () => {
 		th = new RPCTransactionAdapter();
 		th.signerOrProvider = new Wallet(clientPrivateKey, th.provider);
+		await th.register(accountFromAEvmAddress, true);
 	});
 
 	it('Test wipe', async () => {
 		tr = await th.cashin(
 			stableCoinCapabilitiesSC,
-			evmAddress,
+			accountFromAEvmAddress,
 			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
 		);
 		tr = await th.wipe(
 			stableCoinCapabilitiesSC,
-			evmAddress,
+			accountFromAEvmAddress,
 			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
 		);
 	}, 1500000);
@@ -96,7 +96,7 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	it('Test mint', async () => {
 		tr = await th.cashin(
 			stableCoinCapabilitiesSC,
-			evmAddress,
+			accountFromAEvmAddress,
 			BigDecimal.fromString(
 				'0.5',
 				stableCoinCapabilitiesSC.coin.decimals,
@@ -107,7 +107,7 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	it('Test mint HTS', async () => {
 		tr = await th.cashin(
 			stableCoinCapabilitiesHTS,
-			evmAddress,
+			accountFromAEvmAddress,
 			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
 		);
 	}, 1500000);
@@ -125,11 +125,11 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	// });
 
 	it('Test freeze', async () => {
-		tr = await th.freeze(stableCoinCapabilitiesSC, evmAddress);
+		tr = await th.freeze(stableCoinCapabilitiesSC, accountFromAEvmAddress);
 	}, 1500000);
 
 	it('Test unfreeze', async () => {
-		tr = await th.unfreeze(stableCoinCapabilitiesSC, evmAddress);
+		tr = await th.unfreeze(stableCoinCapabilitiesSC, accountFromAEvmAddress);
 	}, 1500000);
 
 	it('Test pause', async () => {
@@ -155,7 +155,7 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	it('Test grantRole', async () => {
 		tr = await th.grantRole(
 			stableCoinCapabilitiesSC,
-			evmAddress,
+			accountFromAEvmAddress,
 			StableCoinRole.WIPE_ROLE,
 		);
 	}, 1500000);
@@ -163,7 +163,7 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	it('Test revokeRole', async () => {
 		tr = await th.revokeRole(
 			stableCoinCapabilitiesSC,
-			evmAddress,
+			accountFromAEvmAddress,
 			StableCoinRole.WIPE_ROLE,
 		);
 	}, 1500000);
@@ -171,7 +171,7 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	it('Test grantSupplierRole', async () => {
 		tr = await th.grantSupplierRole(
 			stableCoinCapabilitiesSC,
-			evmAddress,
+			accountFromAEvmAddress,
 			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
 		);
 	}, 1500000);
@@ -179,18 +179,18 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	it('Test grantUnlimitedSupplierRole', async () => {
 		tr = await th.grantUnlimitedSupplierRole(
 			stableCoinCapabilitiesSC,
-			evmAddress,
+			accountFromAEvmAddress,
 		);
 	}, 1500000);
 
 	it('Test revokeSupplierRole', async () => {
-		tr = await th.revokeSupplierRole(stableCoinCapabilitiesSC, evmAddress);
+		tr = await th.revokeSupplierRole(stableCoinCapabilitiesSC, accountFromAEvmAddress);
 	}, 1500000);
 
 	it('Test hasRole', async () => {
 		tr = await th.hasRole(
 			stableCoinCapabilitiesSC,
-			evmAddress,
+			accountFromAEvmAddress,
 			StableCoinRole.CASHIN_ROLE,
 		);
 		expect(typeof tr.response === 'boolean').toBeTruthy();
@@ -198,34 +198,34 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	}, 1500000);
 
 	it('Test getBalanceOf', async () => {
-		tr = await th.balanceOf(stableCoinCapabilitiesSC, evmAddress);
+		tr = await th.balanceOf(stableCoinCapabilitiesSC, accountFromAEvmAddress);
 		console.log(tr.response.toString());
 	}, 1500000);
 
 	it('Test isUnlimitedSupplierAllowance', async () => {
 		tr = await th.isUnlimitedSupplierAllowance(
 			stableCoinCapabilitiesSC,
-			evmAddress,
+			accountFromAEvmAddress,
 		);
 		console.log(tr);
 	}, 1500000);
 
 	it('Test supplierAllowance', async () => {
-		tr = await th.supplierAllowance(stableCoinCapabilitiesSC, evmAddress);
+		tr = await th.supplierAllowance(stableCoinCapabilitiesSC, accountFromAEvmAddress);
 		console.log(tr.response.toString());
 	}, 1500000);
 
 	it('Test resetSupplierAllowance', async () => {
 		tr = await th.resetSupplierAllowance(
 			stableCoinCapabilitiesSC,
-			evmAddress,
+			accountFromAEvmAddress,
 		);
 	}, 1500000);
 
 	it('Test increaseSupplierAllowance', async () => {
 		tr = await th.increaseSupplierAllowance(
 			stableCoinCapabilitiesSC,
-			evmAddress,
+			accountFromAEvmAddress,
 			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
 		);
 	}, 1500000);
@@ -233,20 +233,25 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	it('Test decreaseSupplierAllowance', async () => {
 		tr = await th.decreaseSupplierAllowance(
 			stableCoinCapabilitiesSC,
-			evmAddress,
+			accountFromAEvmAddress,
 			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
 		);
 	}, 1500000);
 
 	it('Test getRoles', async () => {
-		tr = await th.getRoles(stableCoinCapabilitiesSC, evmAddress);
+		tr = await th.getRoles(stableCoinCapabilitiesSC, accountFromAEvmAddress);
 	}, 1500000);
 
 	//  TODO To test
 	it('Test associateToken', async () => {
+		const account: Account = new Account({
+			environment: 'testnet',
+			id: '0.0.48517685',
+			evmAddress: '0x367710d1076ed07d52162d3f45012a89f8bc3335'
+		});
 		tr = await th.associateToken(
 			stableCoinCapabilitiesSC,
-			'0x367710d1076ed07d52162d3f45012a89f8bc3335',
+			account,
 		);
 		console.log(tr);
 	}, 1500000);

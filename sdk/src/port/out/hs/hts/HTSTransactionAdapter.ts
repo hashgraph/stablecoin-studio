@@ -12,34 +12,61 @@ import { Injectable } from '../../../../core/Injectable.js';
 import { TransactionAdapterInitializationData } from '../../TransactionAdapter.js';
 import Account from '../../../../domain/context/account/Account.js';
 import { Environment } from '../../../../domain/context/network/Environment.js';
+import {
+	WalletInitEvent,
+	WalletEvents,
+} from '../../../../app/service/event/WalletEvent.js';
+import { SupportedWallets } from '../../../in/request/ConnectRequest.js';
+import EventService from '../../../../app/service/event/EventService.js';
+import { lazyInject } from '../../../../core/decorator/LazyInjectDecorator.js';
+import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter.js';
+import NetworkService from '../../../../app/service/NetworkService.js';
 
 @singleton()
 export class HTSTransactionAdapter extends HederaTransactionAdapter {
 	private _client: Client;
+	public network: Environment;
+	public account: Account;
 
 	public get client(): Client {
 		return this._client;
 	}
 
 	constructor(
-		public readonly network: Environment,
-		public readonly account: Account,
+		@lazyInject(EventService) public readonly eventService: EventService,
+		@lazyInject(MirrorNodeAdapter)
+		public readonly mirrorNodeAdapter: MirrorNodeAdapter,
+		@lazyInject(NetworkService)
+		public readonly networkService: NetworkService,
 	) {
-		super();
-		this._client = Client.forName(network);
+		super(mirrorNodeAdapter);
+	}
+
+	register(account: Account): Promise<TransactionAdapterInitializationData> {
+		Injectable.registerTransactionHandler(this);
+		this.account = account;
+		this.network = this.networkService.environment;
+		this._client = Client.forName(this.networkService.environment);
 		const id = this.account.id?.value ?? '';
 		const privateKey = account.privateKey?.toHashgraphKey() ?? '';
 		this._client.setOperator(id, privateKey);
-	}
-
-	register(): Promise<TransactionAdapterInitializationData> {
-		Injectable.registerTransactionHandler(this);
+		const eventData: WalletInitEvent = {
+			wallet: SupportedWallets.HASHPACK,
+			initData: {
+				account: this.account,
+				pairing: '',
+				topic: '',
+			},
+		};
+		this.eventService.emit(WalletEvents.walletInit, eventData);
 		return Promise.resolve({
 			account: this.getAccount(),
 		});
 	}
+
 	stop(): Promise<boolean> {
 		this.client.close();
+		this.eventService.emit(WalletEvents.walletDisconnect);
 		return Promise.resolve(!!Injectable.disposeTransactionHandler(this));
 	}
 
@@ -65,9 +92,6 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 	}
 
 	getAccount(): Account {
-		return new Account({
-			id: this.client?.operatorAccountId?.toString(),
-			environment: this.network,
-		});
+		return this.account;
 	}
 }

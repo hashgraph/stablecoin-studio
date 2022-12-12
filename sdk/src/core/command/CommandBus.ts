@@ -35,6 +35,7 @@ export class CommandBus<T extends CommandResponse = CommandResponse>
 			if (!handler) {
 				throw new CommandHandlerNotFoundException(commandId);
 			}
+			// Has to be casted to return type as it its inferred based off the parameter
 			return handler.execute(command) as Promise<X>;
 		} catch (err) {
 			console.error(err);

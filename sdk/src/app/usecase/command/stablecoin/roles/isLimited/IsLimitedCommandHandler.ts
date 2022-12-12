@@ -27,19 +27,14 @@ export class IsLimitedCommandHandler
 	): Promise<IsLimitedCommandResponse> {
 		const { targetId, tokenId } = command;
 		const handler = this.transactionService.getHandler();
-		const coin = await this.stableCoinService.get(tokenId);
 		const account = this.accountService.getCurrentAccount();
 		const capabilities = await this.stableCoinService.getCapabilities(
 			account,
-			coin,
+			tokenId,
 		);
 		const res = await handler.isUnlimitedSupplierAllowance(
-			{
-				account: account,
-				capabilities: capabilities.capabilities,
-				coin: coin,
-			},
-			targetId.value,
+			capabilities,
+			targetId,
 		);
 		return Promise.resolve({ payload: res.response === false ?? false });
 	}

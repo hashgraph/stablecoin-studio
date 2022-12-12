@@ -28,19 +28,14 @@ export class GetAllowanceCommandHandler
 	): Promise<GetAllowanceCommandResponse> {
 		const { targetId, tokenId } = command;
 		const handler = this.transactionService.getHandler();
-		const coin = await this.stableCoinService.get(tokenId);
 		const account = this.accountService.getCurrentAccount();
 		const capabilities = await this.stableCoinService.getCapabilities(
 			account,
-			coin,
+			tokenId,
 		);
 		const res = await handler.supplierAllowance(
-			{
-				account: account,
-				capabilities: capabilities.capabilities,
-				coin: coin,
-			},
-			targetId.value,
+			capabilities,
+			targetId,
 		);
 		return Promise.resolve({ payload: res.response ?? BigDecimal.ZERO });
 	}

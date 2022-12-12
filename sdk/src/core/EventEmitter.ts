@@ -1,6 +1,6 @@
 import BaseEmitter from 'events';
 import TypedEmitter from 'typed-emitter';
-import Event from './Event.js';
+import WalletEvent from '../app/service/event/WalletEvent.js';
 
 /**
  * Allows to emit events to be received by a listener, based on the NodeJS.EventEmitter
@@ -33,6 +33,6 @@ import Event from './Event.js';
  * run();
  * ```
  */
-export default class EventEmitter<T extends Event> extends (BaseEmitter as {
-	new <T extends Event>(): TypedEmitter<T>;
+export default class EventEmitter<T extends WalletEvent> extends (BaseEmitter as {
+	new <T extends WalletEvent>(): TypedEmitter<T>;
 })<T> {}
