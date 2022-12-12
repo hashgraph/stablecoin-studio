@@ -20,6 +20,10 @@ import { Network } from '../../../../../src/index.js';
 import ConnectRequest, {
 	SupportedWallets,
 } from '../../../../../src/port/in/request/ConnectRequest.js';
+import {HederaERC20AddressTestnet, FactoryAddressTestnet} from '../../../../../src/port/in/StableCoin.js';
+import PublicKey from '../../../../../src/domain/context/account/PublicKey.js';
+import ContractId from '../../../../../src/domain/context/contract/ContractId.js';
+
 
 describe('🧪 [ADAPTER] HTSTransactionAdapter with Ed25519 accounts', () => {
 	const clientAccountId = '0.0.47792863';
@@ -90,7 +94,21 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with Ed25519 accounts', () => {
 		th = Injectable.resolve(HTSTransactionAdapter);
 	});
 
-
+	it('create coin', async () => {
+		const coin = new StableCoin({
+			name: "TestCoin",
+			symbol: "TC",
+			decimals: 6,
+			adminKey: PublicKey.NULL,
+			autoRenewAccount: account.id
+		});
+		tr = await th.create(
+			coin,
+			new ContractId(FactoryAddressTestnet),
+			new ContractId(HederaERC20AddressTestnet)
+		);
+		
+	}, 50000);
 
 	it('Test cashin', async () => {
 		const accountInitialBalance: number = +(
