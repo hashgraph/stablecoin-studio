@@ -47,7 +47,6 @@ import PublicKey from '../../../domain/context/account/PublicKey.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
 import { TokenType } from '../../../domain/context/stablecoin/TokenType.js';
 import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.js';
-import { StableCoinMemo } from '../../../domain/context/stablecoin/StableCoinMemo.js';
 import { AppMetadata } from '../../out/hedera/hashpack/types/types.js';
 import {
 	AcknowledgeMessage,
@@ -153,7 +152,6 @@ export {
 	AuthenticationRequestMessage,
 	AuthenticationResponseMessage,
 	Capabilities,
-	StableCoinMemo,
 	BigDecimal,
 };
 
@@ -177,8 +175,10 @@ export enum NetworkMode {
 export interface SDKInitOptions {
 	onInit: (data: InitializationData) => void;
 }
+export const HederaERC20AddressTestnet = "0.0.49070407";
+export const HederaERC20AddressPreviewnet = "0.0.11111111";
 
-export const FactoryAddressTestnet = "0.0.48921078";
+export const FactoryAddressTestnet = "0.0.49070413";
 export const FactoryAddressPreviewnet = "0.0.11111111";
 
 export class SDK {
@@ -244,26 +244,29 @@ export class SDK {
 	public createStableCoin(
 		request: CreateStableCoinRequest,
 	): Promise<StableCoinDetail> {
-		const req: ICreateStableCoinServiceRequestModel = RequestMapper.map(
-			request,
-			{
-				treasury: AccountId,
-				autoRenewAccount: AccountId,
-				initialSupply: (val, req) => {
-					if (val) {
-						return BigDecimal.fromString(val, req.decimals);
-					}
-					return BigDecimal.ZERO;
+		try {
+			const req: ICreateStableCoinServiceRequestModel = RequestMapper.map(
+				request,
+				{
+					treasury: AccountId,
+					autoRenewAccount: AccountId,
+					initialSupply: (val, req) => {
+						if(val){
+							return BigDecimal.fromString(val, req.decimals);
+						}
+						return BigDecimal.ZERO;
+					},
+					maxSupply: (val, req) =>
+						BigDecimal.fromString(val, req.decimals),
+					stableCoinFactory: ContractId,
+					hederaERC20: ContractId
 				},
-				maxSupply: (val, req) => {
-					if (val) {
-						return BigDecimal.fromString(val, req.decimals);
-					}
-					return BigDecimal.ZERO;
-				},
-			},
-		);
-		return this.stableCoinService.createStableCoin(req);
+			);
+			return this.stableCoinService.createStableCoin(req);
+		} catch (error) {
+			console.error(error);
+			throw error;
+		}
 	}
 
 	@LogOperation

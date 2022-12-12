@@ -3,8 +3,7 @@ import { TokenSupplyType } from '../../../../src_old/domain/context/stablecoin/T
 import { TokenType } from '../../../../src_old/domain/context/stablecoin/TokenType.js.js';
 import { AccountId } from '../../../../src_old/index.js.js';
 import { baseCoin } from '../../../core/core.js';
-import { StableCoinMemo } from '../../../../src_old/domain/context/stablecoin/StableCoinMemo';
-import BigDecimal from '../../../../src_old/domain/context/stablecoin/BigDecimal.js.js';
+import BigDecimal from '../../../../src/domain/context/stablecoin/BigDecimal.js';
 
 describe('🧪 [DOMAIN] StableCoin', () => {
   it('Instantiate the class', () => {
@@ -28,7 +27,7 @@ describe('🧪 [DOMAIN] StableCoin', () => {
     expect(coin.decimals).toBe(baseCoin.decimals);
     expect(coin.initialSupply).toBe(BigDecimal.ZERO);
     expect(coin.maxSupply).toBe(undefined);
-    expect(coin.memo).toStrictEqual(StableCoinMemo.empty());
+    expect(coin.memo).toStrictEqual("");
     expect(coin.freezeKey).toStrictEqual(undefined);
     expect(coin.freezeDefault).toBe(false);
     expect(coin.kycKey).toStrictEqual(undefined);

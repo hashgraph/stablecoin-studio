@@ -4,7 +4,6 @@
 import type {
   BaseContract,
   BigNumber,
-  BigNumberish,
   BytesLike,
   CallOverrides,
   ContractTransaction,
@@ -28,86 +27,41 @@ import type {
   PromiseOrValue,
 } from "../common";
 
-export declare namespace IStableCoinFactory {
-  export type KeysStructStruct = {
-    keyType: PromiseOrValue<BigNumberish>;
-    PublicKey: PromiseOrValue<BytesLike>;
-  };
-
-  export type KeysStructStructOutput = [BigNumber, string] & {
-    keyType: BigNumber;
-    PublicKey: string;
-  };
-
-  export type TokenStructStruct = {
-    tokenName: PromiseOrValue<string>;
-    tokenSymbol: PromiseOrValue<string>;
-    freeze: PromiseOrValue<boolean>;
-    supplyType: PromiseOrValue<boolean>;
-    tokenMaxSupply: PromiseOrValue<BigNumberish>;
-    tokenInitialSupply: PromiseOrValue<BigNumberish>;
-    tokenDecimals: PromiseOrValue<BigNumberish>;
-    autoRenewAccountAddress: PromiseOrValue<string>;
-    treasuryAddress: PromiseOrValue<string>;
-    keys: IStableCoinFactory.KeysStructStruct[];
-  };
-
-  export type TokenStructStructOutput = [
-    string,
-    string,
-    boolean,
-    boolean,
-    BigNumber,
-    BigNumber,
-    number,
-    string,
-    string,
-    IStableCoinFactory.KeysStructStructOutput[]
-  ] & {
-    tokenName: string;
-    tokenSymbol: string;
-    freeze: boolean;
-    supplyType: boolean;
-    tokenMaxSupply: BigNumber;
-    tokenInitialSupply: BigNumber;
-    tokenDecimals: number;
-    autoRenewAccountAddress: string;
-    treasuryAddress: string;
-    keys: IStableCoinFactory.KeysStructStructOutput[];
-  };
-}
-
-export interface StableCoinFactoryWrapperInterface extends utils.Interface {
+export interface StableCoinFactoryProxyAdminInterface extends utils.Interface {
   functions: {
-    "changeFactory(address)": FunctionFragment;
-    "deployStableCoin((string,string,bool,bool,int64,uint64,uint32,address,address,(uint256,bytes)[]))": FunctionFragment;
-    "getFactory()": FunctionFragment;
+    "changeProxyAdmin(address,address)": FunctionFragment;
+    "getProxyAdmin(address)": FunctionFragment;
+    "getProxyImplementation(address)": FunctionFragment;
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
+    "upgrade(address,address)": FunctionFragment;
+    "upgradeAndCall(address,address,bytes)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "changeFactory"
-      | "deployStableCoin"
-      | "getFactory"
+      | "changeProxyAdmin"
+      | "getProxyAdmin"
+      | "getProxyImplementation"
       | "owner"
       | "renounceOwnership"
       | "transferOwnership"
+      | "upgrade"
+      | "upgradeAndCall"
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "changeFactory",
+    functionFragment: "changeProxyAdmin",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getProxyAdmin",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "deployStableCoin",
-    values: [IStableCoinFactory.TokenStructStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getFactory",
-    values?: undefined
+    functionFragment: "getProxyImplementation",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -118,16 +72,31 @@ export interface StableCoinFactoryWrapperInterface extends utils.Interface {
     functionFragment: "transferOwnership",
     values: [PromiseOrValue<string>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "upgrade",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "upgradeAndCall",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BytesLike>
+    ]
+  ): string;
 
   decodeFunctionResult(
-    functionFragment: "changeFactory",
+    functionFragment: "changeProxyAdmin",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "deployStableCoin",
+    functionFragment: "getProxyAdmin",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "getFactory", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getProxyImplementation",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
@@ -137,14 +106,17 @@ export interface StableCoinFactoryWrapperInterface extends utils.Interface {
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "upgrade", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "upgradeAndCall",
+    data: BytesLike
+  ): Result;
 
   events: {
     "OwnershipTransferred(address,address)": EventFragment;
-    "newFactoryAddress(address,address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "newFactoryAddress"): EventFragment;
 }
 
 export interface OwnershipTransferredEventObject {
@@ -159,24 +131,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
-export interface newFactoryAddressEventObject {
-  previousFactory: string;
-  newFactory: string;
-}
-export type newFactoryAddressEvent = TypedEvent<
-  [string, string],
-  newFactoryAddressEventObject
->;
-
-export type newFactoryAddressEventFilter =
-  TypedEventFilter<newFactoryAddressEvent>;
-
-export interface StableCoinFactoryWrapper extends BaseContract {
+export interface StableCoinFactoryProxyAdmin extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: StableCoinFactoryWrapperInterface;
+  interface: StableCoinFactoryProxyAdminInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -198,17 +158,21 @@ export interface StableCoinFactoryWrapper extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    changeFactory(
-      newFactory: PromiseOrValue<string>,
+    changeProxyAdmin(
+      proxy: PromiseOrValue<string>,
+      newAdmin: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    deployStableCoin(
-      requestedToken: IStableCoinFactory.TokenStructStruct,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+    getProxyAdmin(
+      proxy: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
-    getFactory(overrides?: CallOverrides): Promise<[string]>;
+    getProxyImplementation(
+      proxy: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
@@ -220,19 +184,36 @@ export interface StableCoinFactoryWrapper extends BaseContract {
       newOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    upgrade(
+      proxy: PromiseOrValue<string>,
+      implementation: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    upgradeAndCall(
+      proxy: PromiseOrValue<string>,
+      implementation: PromiseOrValue<string>,
+      data: PromiseOrValue<BytesLike>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
   };
 
-  changeFactory(
-    newFactory: PromiseOrValue<string>,
+  changeProxyAdmin(
+    proxy: PromiseOrValue<string>,
+    newAdmin: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  deployStableCoin(
-    requestedToken: IStableCoinFactory.TokenStructStruct,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  getProxyAdmin(
+    proxy: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
-  getFactory(overrides?: CallOverrides): Promise<string>;
+  getProxyImplementation(
+    proxy: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -245,18 +226,35 @@ export interface StableCoinFactoryWrapper extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  upgrade(
+    proxy: PromiseOrValue<string>,
+    implementation: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  upgradeAndCall(
+    proxy: PromiseOrValue<string>,
+    implementation: PromiseOrValue<string>,
+    data: PromiseOrValue<BytesLike>,
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
-    changeFactory(
-      newFactory: PromiseOrValue<string>,
+    changeProxyAdmin(
+      proxy: PromiseOrValue<string>,
+      newAdmin: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    deployStableCoin(
-      requestedToken: IStableCoinFactory.TokenStructStruct,
+    getProxyAdmin(
+      proxy: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<[string, string, string, string]>;
+    ): Promise<string>;
 
-    getFactory(overrides?: CallOverrides): Promise<string>;
+    getProxyImplementation(
+      proxy: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -264,6 +262,19 @@ export interface StableCoinFactoryWrapper extends BaseContract {
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    upgrade(
+      proxy: PromiseOrValue<string>,
+      implementation: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    upgradeAndCall(
+      proxy: PromiseOrValue<string>,
+      implementation: PromiseOrValue<string>,
+      data: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -277,29 +288,24 @@ export interface StableCoinFactoryWrapper extends BaseContract {
       previousOwner?: PromiseOrValue<string> | null,
       newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
-
-    "newFactoryAddress(address,address)"(
-      previousFactory?: PromiseOrValue<string> | null,
-      newFactory?: PromiseOrValue<string> | null
-    ): newFactoryAddressEventFilter;
-    newFactoryAddress(
-      previousFactory?: PromiseOrValue<string> | null,
-      newFactory?: PromiseOrValue<string> | null
-    ): newFactoryAddressEventFilter;
   };
 
   estimateGas: {
-    changeFactory(
-      newFactory: PromiseOrValue<string>,
+    changeProxyAdmin(
+      proxy: PromiseOrValue<string>,
+      newAdmin: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    deployStableCoin(
-      requestedToken: IStableCoinFactory.TokenStructStruct,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    getProxyAdmin(
+      proxy: PromiseOrValue<string>,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getFactory(overrides?: CallOverrides): Promise<BigNumber>;
+    getProxyImplementation(
+      proxy: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -311,20 +317,37 @@ export interface StableCoinFactoryWrapper extends BaseContract {
       newOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    upgrade(
+      proxy: PromiseOrValue<string>,
+      implementation: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    upgradeAndCall(
+      proxy: PromiseOrValue<string>,
+      implementation: PromiseOrValue<string>,
+      data: PromiseOrValue<BytesLike>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    changeFactory(
-      newFactory: PromiseOrValue<string>,
+    changeProxyAdmin(
+      proxy: PromiseOrValue<string>,
+      newAdmin: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    deployStableCoin(
-      requestedToken: IStableCoinFactory.TokenStructStruct,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    getProxyAdmin(
+      proxy: PromiseOrValue<string>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getFactory(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getProxyImplementation(
+      proxy: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -335,6 +358,19 @@ export interface StableCoinFactoryWrapper extends BaseContract {
     transferOwnership(
       newOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    upgrade(
+      proxy: PromiseOrValue<string>,
+      implementation: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    upgradeAndCall(
+      proxy: PromiseOrValue<string>,
+      implementation: PromiseOrValue<string>,
+      data: PromiseOrValue<BytesLike>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

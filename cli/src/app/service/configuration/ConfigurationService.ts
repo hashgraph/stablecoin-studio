@@ -6,6 +6,7 @@ import fs from 'fs-extra';
 import { IConfiguration } from '../../../domain/configuration/interfaces/IConfiguration.js';
 import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
+import { IHederaERC20Config } from '../../../domain/configuration/interfaces/IHederaERC20Config.js';
 import { configurationService, utilsService } from '../../../index.js';
 import SetConfigurationService from './SetConfigurationService.js';
 import MaskData from 'maskdata';
@@ -147,7 +148,8 @@ export default class ConfigurationService extends Service {
       defaultNetwork: defaultConfigRaw['defaultNetwork'],
       networks: defaultConfigRaw['networks'] as unknown as INetworkConfig[],
       accounts: defaultConfigRaw['accounts'] as unknown as IAccountConfig[],
-      logs: defaultConfigRaw['logs'] as unknown as ILogConfig
+      logs: defaultConfigRaw['logs'] as unknown as ILogConfig,
+      hederaERC20s: defaultConfigRaw['hederaERC20s'] as unknown as IHederaERC20Config[]
     };
     this.setConfiguration(config);
     return config;

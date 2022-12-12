@@ -71,6 +71,11 @@ const _abi = [
                 name: "PublicKey",
                 type: "bytes",
               },
+              {
+                internalType: "bool",
+                name: "isED25519",
+                type: "bool",
+              },
             ],
             internalType: "struct IStableCoinFactory.KeysStruct[]",
             name: "keys",
@@ -80,6 +85,11 @@ const _abi = [
         internalType: "struct IStableCoinFactory.tokenStruct",
         name: "requestedToken",
         type: "tuple",
+      },
+      {
+        internalType: "address",
+        name: "StableCoinContractAddress",
+        type: "address",
       },
     ],
     name: "deployStableCoin",

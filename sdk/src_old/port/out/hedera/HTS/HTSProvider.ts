@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import axios from 'axios';
+import IAccount from '../account/types/IAccount';
 import { hethers } from '@hashgraph/hethers';
 import PrivateKey from '../../../../domain/context/account/PrivateKey.js';
 import {
@@ -49,7 +51,8 @@ import ProviderEvent, { ProviderEventNames } from '../ProviderEvent.js';
 import EventService from '../../../../app/service/event/EventService.js';
 import { Account, ContractId, TokenSupplyType } from '../../../in/sdk/sdk.js';
 import { safeCast } from '../../../../core/cast.js';
-import { StableCoinMemo } from '../../../../domain/context/stablecoin/StableCoinMemo.js';
+import { FactoryStableCoin } from '../../../../domain/context/factory/FactoryStableCoin.js';
+import { FactoryKey } from '../../../../domain/context/factory/FactoryKey.js';
 import BigDecimal from '../../../../domain/context/stablecoin/BigDecimal.js';
 import Long from 'long';
 import ProviderError from '../error/HederaError.js';
@@ -221,10 +224,58 @@ export default class HTSProvider implements IProvider {
 		return htsResponse.reponseParam;
 	}
 
-	@LogOperation
+	public async accountToEvmAddress(account: Account): Promise<string> {
+		if (account.privateKey) {
+			return this.getAccountEvmAddressFromPrivateKeyType(
+				account.privateKey?.type, 
+				account.privateKey.publicKey.key, 
+				account.accountId.id);
+		} else {
+			return await this.getAccountEvmAddress(account.accountId.id);
+		}
+	}	
+
+	private async getAccountEvmAddress(
+		accountId: string,
+	): Promise<string> {
+		try {
+			const URI_BASE = `${getHederaNetwork(this.network)?.mirrorNodeUrl}/api/v1/`;
+			const res = await axios.get<IAccount>(
+				URI_BASE + 'accounts/' + accountId
+			);
+
+			if (res.data.evm_address) {
+				return res.data.evm_address;
+			} else {
+				return this.getAccountEvmAddressFromPrivateKeyType(
+					res.data.key._type, 
+					res.data.key.key, 
+					accountId);
+			}
+		} catch (error) {
+			return Promise.reject<string>(error);
+		}
+	}	
+
+	private getAccountEvmAddressFromPrivateKeyType(
+		privateKeyType: string, 
+		publicKey: string,
+		accountId: string): string {
+			
+		switch(privateKeyType) {
+			case PrivateKeyType.ECDSA:
+				return HPublicKey.fromString(publicKey).toEthereumAddress();
+
+			default:
+				return "0x" + HAccountId.fromString(accountId).toSolidityAddress();
+		}
+	}
+
 	public async deployStableCoin(
 		stableCoin: StableCoin,
 		account: EOAccount,
+		stableCoinFactory: ContractId,
+		hederaERC20: ContractId
 	): Promise<StableCoin> {
 		const client = this.getClient(account);
 		LogService.logTrace(
@@ -244,28 +295,9 @@ export default class HTSProvider implements IProvider {
 			client,
 		);
 
-		// Set Proxy admin owner
-		LogService.logTrace(
-			`Setting the Proxy admin owner contract... please wait.`
-		);
-		await this.callContract('transferOwnership', {
-			contractId: String(tokenProxyAdminContract),
-			parameters: [HAccountId.fromString(account.accountId.id).toSolidityAddress()],
-			gas: 250_000,
-			abi: HederaERC20ProxyAdmin__factory.abi,
-			account,
-		});
-		LogService.logTrace(
-			`Deploying ${HederaERC20Proxy__factory.name} contract...`,
-		);
-		const proxyContract = await this.deployContract(
-			HederaERC20Proxy__factory,
-			account.privateKey,
-			client,
-			new ContractFunctionParameters()
-				.addAddress(tokenContract?.toSolidityAddress())
-				.addAddress(tokenProxyAdminContract?.toSolidityAddress())
-				.addBytes(new Uint8Array([])),
+		log(
+			`Using the Factory contract at ${stableCoinFactory.id} and the HederaERC20 logic at ${hederaERC20.id} to create a new stable coin... please wait.`,
+			logOpts,
 		);
 
 		// Creating the token
@@ -275,9 +307,44 @@ export default class HTSProvider implements IProvider {
 			String(proxyContract)
 		);
 
-		LogService.logTrace('Creating token...');
-		const hederaToken = await this.createToken(
-			proxyContract,
+		providedKeys.forEach(
+			(providedKey, index) => {
+				if(providedKey){
+					const key = new FactoryKey();
+					switch(index){
+						case 0: {
+							key.keyType = 1; // admin
+							break;
+						}
+						case 1: {
+							key.keyType = 2; // kyc
+							break;
+						}
+						case 2: {
+							key.keyType = 4; // freeze
+							break;
+						}
+						case 3: {
+							key.keyType = 8; // wipe
+							break;
+						}
+						case 4: {
+							key.keyType = 16; // supply
+							break;
+						}
+						case 5: {
+							key.keyType = 64; // pause
+							break;
+						}
+					}
+					const providedKeyCasted = providedKey as PublicKey;
+					key.PublicKey = (providedKeyCasted.key == PublicKey.NULL.key)? "0x" : HPublicKey.fromString(providedKeyCasted.key).toBytesRaw();
+					key.isED25519 = (providedKeyCasted.type == 'ED25519');
+					keys.push(key);
+				}
+			});
+
+		const stableCoinToCreate = new FactoryStableCoin(
 			stableCoin.name,
 			stableCoin.symbol,
 			stableCoin.decimals,
@@ -285,22 +352,25 @@ export default class HTSProvider implements IProvider {
 			stableCoin.maxSupply?.toLong(),
 			stableCoin.memo.toJson(),
 			stableCoin.freezeDefault,
-			client,
-			stableCoin.treasury,
-			safeCast<PublicKey>(stableCoin.adminKey),
-			safeCast<PublicKey>(stableCoin.freezeKey),
-			safeCast<PublicKey>(stableCoin.kycKey),
-			safeCast<PublicKey>(stableCoin.wipeKey),
-			safeCast<PublicKey>(stableCoin.pauseKey),
-			safeCast<PublicKey>(stableCoin.supplyKey),
-			stableCoin.autoRenewAccount,
+			(stableCoin.supplyType == TokenSupplyType.FINITE),
+			(stableCoin.maxSupply) ? stableCoin.maxSupply.toLong().toString(): "0",
+			(stableCoin.initialSupply) ? stableCoin.initialSupply.toLong().toString(): "0",
+			stableCoin.decimals,
+			await this.accountToEvmAddress(new Account(stableCoin.autoRenewAccount.toString())),
+			(stableCoin.treasury.toString() == '0.0.0') ? 
+				"0x0000000000000000000000000000000000000000"
+				: await this.accountToEvmAddress(new Account(stableCoin.treasury.toString())),
+			keys
 		);
 
-		// Initialize Proxy
-		LogService.logTrace('Initializing the Proxy... please wait.');
-		await this.callContract('initialize', {
-			contractId: String(proxyContract),
-			parameters: [hederaToken.tokenId.toSolidityAddress(), HAccountId.fromString(account.accountId.id).toSolidityAddress()],
+		const parameters = [
+			stableCoinToCreate,
+			HContractId.fromString(hederaERC20.id).toSolidityAddress()
+		];
+
+		const params: ICallContractWithAccountRequest = {
+			contractId: stableCoinFactory.id,
+			parameters,
 			gas: 15000000,
 			abi: HederaERC20__factory.abi,
 			account,
