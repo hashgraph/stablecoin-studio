@@ -48,7 +48,6 @@
     "start": "node build/src/index.js",
     "clean": "rimraf coverage build",
     "prebuild": "npm run lint",
-    "postbuild": "node ./scripts/postbuild.js",
     "build": "rimraf build && npx tsc -p tsconfig.json && npx tsc -p tsconfig-cjs.json",
     "build:types": "npx tsc -p tsconfig.json --emitDeclarationOnly",
     "build:tsc": "rm -rf build && npx tsc -p tsconfig.json",
