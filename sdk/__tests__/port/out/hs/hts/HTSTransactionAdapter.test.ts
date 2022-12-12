@@ -90,6 +90,8 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with Ed25519 accounts', () => {
 		th = Injectable.resolve(HTSTransactionAdapter);
 	});
 
+
+
 	it('Test cashin', async () => {
 		const accountInitialBalance: number = +(
 			await th.balanceOf(stableCoinCapabilities, account.id)

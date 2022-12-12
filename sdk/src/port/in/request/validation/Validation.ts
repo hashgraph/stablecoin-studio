@@ -17,6 +17,7 @@ import CheckNums from '../../../../core/checks/numbers/CheckNums.js';
 import { AccountIdNotValid } from '../../../../domain/context/account/error/AccountIdNotValid.js';
 import BigDecimal from '../../../../domain/context/shared/BigDecimal.js';
 import Account from '../../../../domain/context/account/Account.js';
+import ContractId from '../../../../domain/context/contract/ContractId.js';
 import InvalidDecimalRange from '../../../../domain/context/stablecoin/error/InvalidDecimalRange.js';
 import { InvalidRole } from '../../../../domain/context/stablecoin/error/InvalidRole.js';
 
@@ -36,9 +37,9 @@ export default class Validation {
 	};
 
 	public static checkContractId = () => {
-		// return (val: any): BaseError[] => {
-		// 	return ContractId.validate(val as string);
-		// };
+		 return (val: any): BaseError[] => {
+		 	return ContractId.validate(val as string);
+		 };
 	};
 
 	public static checkString = ({

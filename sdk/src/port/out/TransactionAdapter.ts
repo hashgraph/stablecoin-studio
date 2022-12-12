@@ -2,6 +2,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import TransactionResponse from '../../domain/context/transaction/TransactionResponse.js';
 import StableCoinCapabilities from '../../domain/context/stablecoin/StableCoinCapabilities.js';
+import {StableCoin} from '../../domain/context/stablecoin/StableCoin.js';
+import ContractId from '../../domain/context/contract/ContractId.js';
 import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import { StableCoinRole } from '../../domain/context/stablecoin/StableCoinRole.js';
 import Account from '../../domain/context/account/Account.js';
@@ -14,6 +16,11 @@ export interface TransactionAdapterInitializationData {
 }
 
 interface ITransactionAdapter {
+	create(
+		coin: StableCoin,
+		factory: ContractId,
+		hederaERC20: ContractId,
+	): Promise<TransactionResponse>;
 	register(account: Account): Promise<TransactionAdapterInitializationData>;
 	stop(): Promise<boolean>;
 	associateToken(
@@ -130,6 +137,9 @@ interface RoleTransactionAdapter {
 export default abstract class TransactionAdapter
 	implements ITransactionAdapter, RoleTransactionAdapter
 {
+	create(coin: StableCoin, factory: ContractId, hederaERC20: ContractId): Promise<TransactionResponse<any, Error>> {
+		throw new Error('Method not implemented.');
+	}
 	getAccount(): Account {
 		throw new Error('Method not implemented.');
 	}
