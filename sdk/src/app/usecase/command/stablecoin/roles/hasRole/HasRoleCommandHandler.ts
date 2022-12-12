@@ -20,21 +20,12 @@ export class HasRoleCommandHandler implements ICommandHandler<HasRoleCommand> {
 	async execute(command: HasRoleCommand): Promise<HasRoleCommandResponse> {
 		const { role, targetId, tokenId } = command;
 		const handler = this.transactionService.getHandler();
-		const coin = await this.stableCoinService.get(tokenId);
 		const account = this.accountService.getCurrentAccount();
 		const capabilities = await this.stableCoinService.getCapabilities(
 			account,
-			coin,
+			tokenId,
 		);
-		const res = await handler.hasRole(
-			{
-				account: account,
-				capabilities: capabilities.capabilities,
-				coin: coin,
-			},
-			targetId.value,
-			role,
-		);
+		const res = await handler.hasRole(capabilities, targetId, role);
 		return Promise.resolve({ payload: res.response ?? false });
 	}
 }

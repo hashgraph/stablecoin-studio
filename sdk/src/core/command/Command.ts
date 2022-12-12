@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
-export interface ICommand {}
-export class Command<T = unknown> implements ICommand {
-	private $resultType!: T;
+export interface BaseCommand {}
+export class Command<T = unknown> implements BaseCommand {
+	resultType!: T;
 }

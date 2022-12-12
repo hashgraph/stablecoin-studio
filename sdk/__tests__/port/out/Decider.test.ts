@@ -18,8 +18,8 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
     });
 
     const account = new Account({
-        "environment": "testnet"
-    });
+		id: '0.0.47820993',
+	});
 
     const stableCoin = new StableCoinCapabilities(coin, capabilities, account);
 

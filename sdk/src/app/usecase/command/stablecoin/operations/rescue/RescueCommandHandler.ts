@@ -20,20 +20,12 @@ export class RescueCommandHandler implements ICommandHandler<RescueCommand> {
 	async execute(command: RescueCommand): Promise<RescueCommandResponse> {
 		const { amount, tokenId } = command;
 		const handler = this.transactionService.getHandler();
-		const coin = await this.stableCoinService.get(tokenId);
 		const account = this.accountService.getCurrentAccount();
 		const capabilities = await this.stableCoinService.getCapabilities(
 			account,
-			coin,
+			tokenId,
 		);
-		const res = await handler.rescue(
-			{
-				account: account,
-				capabilities: capabilities.capabilities,
-				coin: coin,
-			},
-			amount,
-		);
+		const res = await handler.rescue(capabilities, amount);
 		return Promise.resolve(res.response);
 	}
 }

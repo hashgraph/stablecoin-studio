@@ -1,6 +1,6 @@
 import { QUERY_HANDLER_METADATA, QUERY_METADATA } from '../Constants';
 import { v4 } from 'uuid';
-import { IQuery } from '../query/Query.js';
+import { BaseQuery } from '../query/Query.js';
 import { Constructor } from '../Type.js';
 import { injectable } from 'tsyringe';
 
@@ -11,7 +11,7 @@ import { injectable } from 'tsyringe';
  *
  * @param query query *type* to be handled by this handler.
  */
-export const QueryHandler = (query: IQuery): ClassDecorator => {
+export const QueryHandler = (query: BaseQuery): ClassDecorator => {
 	return (target: object) => {
 		injectable()(target as Constructor<typeof target>);
 		if (!Reflect.hasMetadata(QUERY_METADATA, query)) {

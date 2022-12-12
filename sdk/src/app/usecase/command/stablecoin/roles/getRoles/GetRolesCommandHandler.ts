@@ -22,20 +22,12 @@ export class GetRolesCommandHandler
 	async execute(command: GetRolesCommand): Promise<GetRolesCommandResponse> {
 		const { targetId, tokenId } = command;
 		const handler = this.transactionService.getHandler();
-		const coin = await this.stableCoinService.get(tokenId);
 		const account = this.accountService.getCurrentAccount();
 		const capabilities = await this.stableCoinService.getCapabilities(
 			account,
-			coin,
+			tokenId,
 		);
-		const res = await handler.getRoles(
-			{
-				account: account,
-				capabilities: capabilities.capabilities,
-				coin: coin,
-			},
-			targetId.value,
-		);
+		const res = await handler.getRoles(capabilities, targetId);
 		return Promise.resolve({ payload: res.response ?? [] });
 	}
 }

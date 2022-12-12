@@ -110,7 +110,6 @@ export default class Validation {
 			if (privateKey) {
 				new Account({
 					id: accountId,
-					environment: 'testnet',
 					privateKey: new PrivateKey(privateKey),
 					publicKey: new PrivateKey(privateKey).publicKey,
 					evmAddress,
@@ -118,7 +117,6 @@ export default class Validation {
 			} else {
 				new Account({
 					id: accountId,
-					environment: 'testnet',
 					evmAddress,
 				});
 			}

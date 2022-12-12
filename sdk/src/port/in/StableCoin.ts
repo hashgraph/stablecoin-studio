@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import Service from '../../app/service/Service.js';
-import StableCoinService from '../../app/service/StableCoinService.js';
 import { Injectable } from '../../core/Injectable.js';
 import CreateRequest from './request/CreateRequest.js';
 import CashInRequest from './request/CashInRequest.js';
@@ -14,12 +12,16 @@ import { HederaId } from '../../domain/context/shared/HederaId.js';
 import NetworkService from '../../app/service/NetworkService.js';
 import { QueryBus } from '../../core/query/QueryBus.js';
 import { CommandBus } from '../../core/command/CommandBus.js';
-import { GetCurrentAccountQuery } from '../../app/usecase/query/account/GetCurrentAccountQuery.js';
 import { CashInCommand } from '../../app/usecase/command/stablecoin/operations/cashin/CashInCommand.js';
+import StableCoinViewModel from '../out/mirror/response/StableCoinViewModel.js';
+import StableCoinService from '../../app/service/StableCoinService.js';
+import { GetStableCoinQuery } from '../../app/usecase/query/stablecoin/get/GetStableCoinQuery.js';
+import AccountService from '../../app/service/AccountService.js';
+import Account from '../../domain/context/account/Account.js';
 
 interface IStableCoinInPort {
 	create(request: CreateRequest): Promise<StableCoinDetail>;
-	getInfo(request: GetStableCoinDetailsRequest): Promise<StableCoinDetail>;
+	getInfo(request: GetStableCoinDetailsRequest): Promise<StableCoinViewModel>;
 	cashIn(request: CashInRequest): Promise<boolean>;
 	cashOut(request: CashOutRequest): Promise<boolean>;
 	rescue(request: RescueRequest): Promise<boolean>;
@@ -35,27 +37,47 @@ class StableCoinInPort implements IStableCoinInPort {
 		private readonly commandBus: CommandBus = Injectable.resolve(
 			CommandBus,
 		),
+		private readonly stableCoinService: StableCoinService = Injectable.resolve(
+			StableCoinService,
+		),
+		private readonly accountService: AccountService = Injectable.resolve(
+			AccountService,
+		),
 	) {}
+
 	create(request: CreateRequest): Promise<StableCoinDetail> {
 		throw new Error('Method not implemented.');
 	}
-	getInfo(request: GetStableCoinDetailsRequest): Promise<StableCoinDetail> {
-		throw new Error('Method not implemented.');
+
+	async getInfo(
+		request: GetStableCoinDetailsRequest,
+	): Promise<StableCoinViewModel> {
+		const { id } = request;
+		const validation = request.validate();
+		// TODO return validation
+		if (validation.length > 0) throw new Error('Validation error');
+		return (
+			await this.queryBus.execute(
+				new GetStableCoinQuery(HederaId.from(id)),
+			)
+		).coin;
 	}
-	async cashIn(req: CashInRequest): Promise<boolean> {
-		const { tokenId, amount, targetId } = req;
-		const validation = req.validate();
+
+	async cashIn(request: CashInRequest): Promise<boolean> {
+		const { tokenId, amount, targetId } = request;
+		const validation = request.validate();
 		// TODO return validation
 		if (validation.length > 0) return false;
 
 		return !!(await this.commandBus.execute(
 			new CashInCommand(
 				BigDecimal.fromString(amount),
-				HederaId.from(tokenId),
 				HederaId.from(targetId),
+				HederaId.from(tokenId),
 			),
 		));
 	}
+
 	cashOut(request: CashOutRequest): Promise<boolean> {
 		throw new Error('Method not implemented.');
 	}

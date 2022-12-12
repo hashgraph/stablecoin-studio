@@ -15,11 +15,23 @@ import BigDecimal from '../../../../src/domain/context/shared/BigDecimal.js';
 import RPCTransactionAdapter from '../../../../src/port/out/rpc/RPCTransactionAdapter.js';
 import { Wallet } from 'ethers';
 import { StableCoinRole } from '../../../../src/domain/context/stablecoin/StableCoinRole.js';
+import { Network } from '../../../../src/index.js';
+import ConnectRequest, {
+	SupportedWallets,
+} from '../../../../src/port/in/request/ConnectRequest.js';
+import PrivateKey from '../../../../src/domain/context/account/PrivateKey.js';
+import { Injectable } from '../../../../src/core/Injectable.js';
+import { MirrorNodeAdapter } from '../../../../src/port/out/mirror/MirrorNodeAdapter.js';
+
+const evmAddress = '0x320d33046b60dbc5a027cfb7e4124f75b0417240';
+const clientPrivateKey =
+	'1404d4a4a67fb21e7181d147bfdaa7c9b55ebeb7e1a9048bf18d5da6e169c09c';
 
 describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
-	const clientPrivateKey =
-		'1404d4a4a67fb21e7181d147bfdaa7c9b55ebeb7e1a9048bf18d5da6e169c09c';
-	const evmAddress = '0x320d33046b60dbc5a027cfb7e4124f75b0417240';
+	const accountFromAEvmAddress: Account = new Account({
+		id: '0.0.48471385',
+		evmAddress: evmAddress,
+	});
 	const stableCoinCapabilitiesHTS = new StableCoinCapabilities(
 		new StableCoin({
 			name: 'HEDERACOIN',
@@ -41,10 +53,7 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 			new Capability(Operation.RESCUE, Access.HTS),
 			new Capability(Operation.ROLE_MANAGEMENT, Access.HTS),
 		],
-		new Account({
-			environment: 'testnet',
-			evmAddress,
-		}),
+		accountFromAEvmAddress,
 	);
 	const stableCoinCapabilitiesSC = new StableCoinCapabilities(
 		new StableCoin({
@@ -67,28 +76,33 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 			new Capability(Operation.RESCUE, Access.CONTRACT),
 			new Capability(Operation.ROLE_MANAGEMENT, Access.CONTRACT),
 		],
-		new Account({
-			environment: 'testnet',
-			evmAddress,
-		}),
+		accountFromAEvmAddress,
 	);
 
 	let th: RPCTransactionAdapter;
 	let tr: TransactionResponse;
+	const account: Account = new Account({
+		id: '0.0.48471385',
+		privateKey: new PrivateKey({ key: clientPrivateKey, type: 'ECDSA' }),
+	});
+
 	beforeAll(async () => {
-		th = new RPCTransactionAdapter();
+		th = Injectable.resolve(RPCTransactionAdapter);
+		await th.register(accountFromAEvmAddress, true);
 		th.signerOrProvider = new Wallet(clientPrivateKey, th.provider);
+		const mirrorNodeAdapter = Injectable.resolve(MirrorNodeAdapter);
+		mirrorNodeAdapter.setEnvironment('testnet');
 	});
 
 	it('Test wipe', async () => {
 		tr = await th.cashin(
 			stableCoinCapabilitiesSC,
-			evmAddress,
+			HederaId.from('0.0.48471385'),
 			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
 		);
 		tr = await th.wipe(
 			stableCoinCapabilitiesSC,
-			evmAddress,
+			HederaId.from('0.0.48471385'),
 			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
 		);
 	}, 1500000);
@@ -96,7 +110,7 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	it('Test mint', async () => {
 		tr = await th.cashin(
 			stableCoinCapabilitiesSC,
-			evmAddress,
+			HederaId.from('0.0.48471385'),
 			BigDecimal.fromString(
 				'0.5',
 				stableCoinCapabilitiesSC.coin.decimals,
@@ -107,7 +121,7 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	it('Test mint HTS', async () => {
 		tr = await th.cashin(
 			stableCoinCapabilitiesHTS,
-			evmAddress,
+			HederaId.from('0.0.48471385'),
 			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
 		);
 	}, 1500000);
@@ -125,11 +139,17 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	// });
 
 	it('Test freeze', async () => {
-		tr = await th.freeze(stableCoinCapabilitiesSC, evmAddress);
+		tr = await th.freeze(
+			stableCoinCapabilitiesSC,
+			HederaId.from('0.0.48471385'),
+		);
 	}, 1500000);
 
 	it('Test unfreeze', async () => {
-		tr = await th.unfreeze(stableCoinCapabilitiesSC, evmAddress);
+		tr = await th.unfreeze(
+			stableCoinCapabilitiesSC,
+			HederaId.from('0.0.48471385'),
+		);
 	}, 1500000);
 
 	it('Test pause', async () => {
@@ -155,7 +175,7 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	it('Test grantRole', async () => {
 		tr = await th.grantRole(
 			stableCoinCapabilitiesSC,
-			evmAddress,
+			HederaId.from('0.0.48471385'),
 			StableCoinRole.WIPE_ROLE,
 		);
 	}, 1500000);
@@ -163,7 +183,7 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	it('Test revokeRole', async () => {
 		tr = await th.revokeRole(
 			stableCoinCapabilitiesSC,
-			evmAddress,
+			HederaId.from('0.0.48471385'),
 			StableCoinRole.WIPE_ROLE,
 		);
 	}, 1500000);
@@ -171,7 +191,7 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	it('Test grantSupplierRole', async () => {
 		tr = await th.grantSupplierRole(
 			stableCoinCapabilitiesSC,
-			evmAddress,
+			HederaId.from('0.0.48471385'),
 			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
 		);
 	}, 1500000);
@@ -179,18 +199,21 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	it('Test grantUnlimitedSupplierRole', async () => {
 		tr = await th.grantUnlimitedSupplierRole(
 			stableCoinCapabilitiesSC,
-			evmAddress,
+			HederaId.from('0.0.48471385'),
 		);
 	}, 1500000);
 
 	it('Test revokeSupplierRole', async () => {
-		tr = await th.revokeSupplierRole(stableCoinCapabilitiesSC, evmAddress);
+		tr = await th.revokeSupplierRole(
+			stableCoinCapabilitiesSC,
+			HederaId.from('0.0.48471385'),
+		);
 	}, 1500000);
 
 	it('Test hasRole', async () => {
 		tr = await th.hasRole(
 			stableCoinCapabilitiesSC,
-			evmAddress,
+			HederaId.from('0.0.48471385'),
 			StableCoinRole.CASHIN_ROLE,
 		);
 		expect(typeof tr.response === 'boolean').toBeTruthy();
@@ -198,34 +221,40 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	}, 1500000);
 
 	it('Test getBalanceOf', async () => {
-		tr = await th.balanceOf(stableCoinCapabilitiesSC, evmAddress);
+		tr = await th.balanceOf(
+			stableCoinCapabilitiesSC,
+			HederaId.from('0.0.48471385'),
+		);
 		console.log(tr.response.toString());
 	}, 1500000);
 
 	it('Test isUnlimitedSupplierAllowance', async () => {
 		tr = await th.isUnlimitedSupplierAllowance(
 			stableCoinCapabilitiesSC,
-			evmAddress,
+			HederaId.from('0.0.48471385'),
 		);
 		console.log(tr);
 	}, 1500000);
 
 	it('Test supplierAllowance', async () => {
-		tr = await th.supplierAllowance(stableCoinCapabilitiesSC, evmAddress);
+		tr = await th.supplierAllowance(
+			stableCoinCapabilitiesSC,
+			HederaId.from('0.0.48471385'),
+		);
 		console.log(tr.response.toString());
 	}, 1500000);
 
 	it('Test resetSupplierAllowance', async () => {
 		tr = await th.resetSupplierAllowance(
 			stableCoinCapabilitiesSC,
-			evmAddress,
+			HederaId.from('0.0.48471385'),
 		);
 	}, 1500000);
 
 	it('Test increaseSupplierAllowance', async () => {
 		tr = await th.increaseSupplierAllowance(
 			stableCoinCapabilitiesSC,
-			evmAddress,
+			HederaId.from('0.0.48471385'),
 			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
 		);
 	}, 1500000);
@@ -233,20 +262,23 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	it('Test decreaseSupplierAllowance', async () => {
 		tr = await th.decreaseSupplierAllowance(
 			stableCoinCapabilitiesSC,
-			evmAddress,
+			HederaId.from('0.0.48471385'),
 			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
 		);
 	}, 1500000);
 
 	it('Test getRoles', async () => {
-		tr = await th.getRoles(stableCoinCapabilitiesSC, evmAddress);
+		tr = await th.getRoles(
+			stableCoinCapabilitiesSC,
+			HederaId.from('0.0.48471385'),
+		);
 	}, 1500000);
 
 	//  TODO To test
 	it('Test associateToken', async () => {
 		tr = await th.associateToken(
 			stableCoinCapabilitiesSC,
-			'0x367710d1076ed07d52162d3f45012a89f8bc3335',
+			HederaId.from('0.0.48471385'),
 		);
 		console.log(tr);
 	}, 1500000);

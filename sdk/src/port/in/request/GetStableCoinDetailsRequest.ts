@@ -7,7 +7,6 @@ export default class GetStableCoinDetailsRequest extends ValidatedRequest<GetSta
 	constructor({ id }: { id: string }) {
 		super({
 			id: Validation.checkHederaIdFormat(),
-			// id: Validation.checkHederaIdFormat(),
 		});
 
 		this.id = id;

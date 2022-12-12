@@ -27,19 +27,14 @@ export class RevokeRoleCommandHandler
 	): Promise<RevokeRoleCommandResponse> {
 		const { role, targetId, tokenId } = command;
 		const handler = this.transactionService.getHandler();
-		const coin = await this.stableCoinService.get(tokenId);
 		const account = this.accountService.getCurrentAccount();
 		const capabilities = await this.stableCoinService.getCapabilities(
 			account,
-			coin,
+			tokenId,
 		);
 		const res = await handler.revokeRole(
-			{
-				account: account,
-				capabilities: capabilities.capabilities,
-				coin: coin,
-			},
-			targetId.value,
+			capabilities,
+			targetId,
 			role,
 		);
 		return Promise.resolve({ payload: res.response ?? false });
