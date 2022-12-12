@@ -5,7 +5,7 @@ import { HashConnect } from 'hashconnect';
 import { HashConnectProvider } from 'hashconnect/provider/provider';
 import { HashConnectSigner } from 'hashconnect/provider/signer';
 import { HashConnectTypes } from 'hashconnect';
-import { HashConnectConnectionState, NetworkType } from 'hashconnect/types';
+import { HashConnectConnectionState } from 'hashconnect/types';
 import Account from '../../../../domain/context/account/Account.js';
 import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
 import { Injectable } from '../../../../core/Injectable.js';
@@ -14,12 +14,13 @@ import { HashpackTransactionResponseAdapter } from './HashpackTransactionRespons
 import { TransactionType } from '../../TransactionResponseEnums.js';
 import LogService from '../../../../app/service/LogService.js';
 import EventService from '../../../../app/service/event/EventService.js';
-import { HaspackEventNames } from './HaspackProviderEvent.js';
 import { PairingError } from './error/PairingError.js';
 import { TransactionAdapterInitializationData } from '../../TransactionAdapter.js';
 import { lazyInject } from '../../../../core/decorator/LazyInjectDecorator.js';
 import NetworkService from '../../../../app/service/NetworkService.js';
 import { RuntimeError } from '../../../../core/error/RuntimeError.js';
+import { WalletEvents, WalletInitEvent } from '../../../../app/service/event/WalletEvent.js';
+import { SupportedWallets } from '../../../in/request/ConnectRequest.js';
 
 @singleton()
 export class HashpackTransactionAdapter extends HederaTransactionAdapter {
@@ -63,6 +64,15 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 			},
 			this.account.environment as 'testnet' | 'previewnet' | 'mainnet',
 		);
+		const eventData: WalletInitEvent = {
+			wallet: SupportedWallets.HASHPACK,
+			initData: {
+				account: this.account,
+				pairing: this.initData.pairingString,
+				topic: this.initData.topic,
+			},
+		};
+		this.eventService.emit(WalletEvents.walletInit, eventData);
 		return Promise.resolve({
 			account: this.account,
 			pairing: this.initData.pairingString,
@@ -137,6 +147,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 			'There are no accounts currently paired with HashPack!',
 		);
 	}
+
 	public setUpHashConnectEvents(): void {
 		//This is fired when a extension is found
 		this.hc.foundExtensionEvent.on((data) => {
@@ -145,9 +156,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 				this.availableExtension = true;
 				LogService.logTrace(
 					'Emitted found',
-					this.eventService.emit(
-						HaspackEventNames.providerFoundExtensionEvent,
-					),
+					this.eventService.emit(WalletEvents.walletFound),
 				);
 			}
 		});
@@ -159,7 +168,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 					this.pairingData = data.pairingData;
 					LogService.logInfo('Paired with wallet', data);
 					this.eventService.emit(
-						HaspackEventNames.providerPairingEvent,
+						WalletEvents.walletPaired,
 						this.pairingData,
 					);
 				} else {
@@ -175,19 +184,17 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 			this.hashConnectConectionState = state;
 			LogService.logTrace('hashconnect state change event', state);
 			this.eventService.emit(
-				HaspackEventNames.providerConnectionStatusChangeEvent,
+				WalletEvents.walletConnectionStatusChanged,
 				this.hashConnectConectionState,
 			);
 			// this.state = state;
 		});
 
 		this.hc.acknowledgeMessageEvent.on((msg) => {
-			this.eventService.emit(
-				HaspackEventNames.providerAcknowledgeMessageEvent,
-				msg,
-			);
+			this.eventService.emit(WalletEvents.walletAcknowledgeMessage, msg);
 		});
 	}
+
 	getAvailabilityExtension(): boolean {
 		return this.availableExtension;
 	}
@@ -200,9 +207,6 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 		if (this.initData?.topic) this.hc.disconnect(this.initData.topic);
 
 		this.pairingData = null;
-		this.eventService.emit(
-			HaspackEventNames.providerConnectionStatusChangeEvent,
-			HashConnectConnectionState.Disconnected,
-		);
+		this.eventService.emit(WalletEvents.walletDisconnect);
 	}
 }

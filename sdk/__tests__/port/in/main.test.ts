@@ -1,3 +1,5 @@
+import EventService from '../../../src/app/service/event/EventService.js';
+import { WalletEvents } from '../../../src/app/service/event/WalletEvent.js';
 import { Injectable } from '../../../src/core/Injectable.js';
 import { Network, StableCoin } from '../../../src/index.js';
 import CashInRequest from '../../../src/port/in/request/CashInRequest.js';
@@ -58,6 +60,11 @@ describe('🧪 SDK test', () => {
 	it('Performs a cash in', async () => {
 		const handler = Injectable.resolveTransactionHandler();
 		expect(handler).not.toBeNull();
+		const eventService = Injectable.resolve(EventService);
+		expect(eventService).not.toBeNull();
+		eventService.on(WalletEvents.walletInit, (data) => {
+			console.log(`Wallet: ${data.wallet} initialized`);
+		});
 		const result = await StableCoin.cashIn(
 			new CashInRequest({
 				amount: '1',
