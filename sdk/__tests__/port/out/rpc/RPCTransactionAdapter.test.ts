@@ -53,12 +53,12 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	);
 	const stableCoinCapabilitiesSC = new StableCoinCapabilities(
 		new StableCoin({
-			name: 'SMARTCONTRACT',
-			symbol: 'SMARTCONTRACT',
-			decimals: 6,
-			proxyAddress: HederaId.from('0.0.49006552'),
-			evmProxyAddress: '0x0000000000000000000000000000000002ebc7d8',
-			tokenId: HederaId.from('0.0.49006555'),
+			name: 'HEDERACOIN',
+			symbol: 'HDC',
+			decimals: 3,
+			proxyAddress: HederaId.from('0.0.49072315'),
+			evmProxyAddress: '0x0000000000000000000000000000000002ecc8bb',
+			tokenId: HederaId.from('0.0.49072316'),
 		}),
 		[
 			new Capability(Operation.CASH_IN, Access.CONTRACT),
@@ -194,6 +194,11 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	}, 1500000);
 
 	it('Test grantSupplierRole', async () => {
+		tr = await th.revokeSupplierRole(
+			stableCoinCapabilitiesSC,
+			HederaId.from('0.0.48471385'),
+		);
+
 		tr = await th.grantSupplierRole(
 			stableCoinCapabilitiesSC,
 			HederaId.from('0.0.48471385'),
