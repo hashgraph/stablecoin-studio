@@ -17,7 +17,9 @@ import {StableCoin} from '../../../domain/context/stablecoin/StableCoin.js';
 import {TokenSupplyType} from '../../../domain/context/stablecoin/TokenSupply.js';
 import PublicKey from '../../../domain/context/account/PublicKey.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
-import { HederaERC20__factory } from 'hedera-stable-coin-contracts/typechain-types/index.js';
+import { HederaERC20__factory,
+	StableCoinFactory__factory
+ } from 'hedera-stable-coin-contracts/typechain-types/index.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import { TransactionType } from '../TransactionResponseEnums.js';
 import { HTSTransactionBuilder } from './HTSTransactionBuilder.js';
@@ -100,10 +102,10 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			(coin.maxSupply) ? coin.maxSupply.toLong().toString(): "0",
 			(coin.initialSupply) ? coin.initialSupply.toLong().toString(): "0",
 			coin.decimals,
-			await this.accountToEvmAddress(coin.autoRenewAccount!),
+			"0x" + await this.accountToEvmAddress(coin.autoRenewAccount!),
 			(coin.treasury == undefined || coin.treasury.toString() == '0.0.0') ? 
 				"0x0000000000000000000000000000000000000000"
-				: await this.accountToEvmAddress(coin.treasury),
+				: "0x" + await this.accountToEvmAddress(coin.treasury),
 			keys
 		);
 
@@ -118,6 +120,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			params,
 			15000000,
 			TransactionType.RECORD,
+			StableCoinFactory__factory.abi,
 			25
 		);
 
@@ -639,6 +642,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			filteredContractParams,
 			gas,
 			transactionType,
+			HederaERC20__factory.abi
 		);
 	}
 
@@ -715,12 +719,13 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		parameters: any[],
 		gas: number,
 		trxType: TransactionType,
+		abi: any[],
 		value?: number,
 	): Promise<TransactionResponse> {
 		const functionCallParameters = this.encodeFunctionCall(
 			functionName,
 			parameters,
-			HederaERC20__factory.abi,
+			abi, //HederaERC20__factory.abi,
 		);
 		const transaction: Transaction =
 			HTSTransactionBuilder.buildContractExecuteTransaction(
@@ -734,7 +739,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			transaction,
 			trxType,
 			functionName,
-			HederaERC20__factory.abi,
+			abi, //HederaERC20__factory.abi,
 		);
 	}
 
