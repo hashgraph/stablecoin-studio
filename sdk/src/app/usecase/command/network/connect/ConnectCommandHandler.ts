@@ -3,27 +3,38 @@ import { CommandHandler } from '../../../../../core/decorator/CommandHandlerDeco
 import { Injectable } from '../../../../../core/Injectable.js';
 import Account from '../../../../../domain/context/account/Account.js';
 import { InvalidWalletAccountTypeError } from '../../../../../domain/context/network/error/InvalidWalletAccountTypeError.js';
+import { WalletConnectError } from '../../../../../domain/context/network/error/WalletConnectError.js';
 import { SupportedWallets } from '../../../../../domain/context/network/Wallet.js';
 import { HashpackTransactionAdapter } from '../../../../../port/out/hs/hashpack/HashpackTransactionAdapter.js';
 import { HTSTransactionAdapter } from '../../../../../port/out/hs/hts/HTSTransactionAdapter.js';
 import { MirrorNodeAdapter } from '../../../../../port/out/mirror/MirrorNodeAdapter.js';
 import RPCTransactionAdapter from '../../../../../port/out/rpc/RPCTransactionAdapter.js';
 import TransactionAdapter from '../../../../../port/out/TransactionAdapter.js';
+import LogService from '../../../../service/LogService.js';
 import { ConnectCommand, ConnectCommandResponse } from './ConnectCommand.js';
 
 @CommandHandler(ConnectCommand)
 export class ConnectCommandHandler implements ICommandHandler<ConnectCommand> {
 	async execute(command: ConnectCommand): Promise<ConnectCommandResponse> {
-		const handler = this.getHandlerClass(command.wallet, command.account);
-		const registration = await handler.register(command.account);
+		try {
+			const handler = this.getHandlerClass(
+				command.wallet,
+				command.account,
+			);
+			const registration = await handler.register(command.account);
 
-		// Change mirror node adapter network
-		const adapter = Injectable.resolve(MirrorNodeAdapter);
-		adapter.setEnvironment(command.environment);
+			// Change mirror node adapter network
+			const adapter = Injectable.resolve(MirrorNodeAdapter);
+			adapter.setEnvironment(command.environment);
 
-		return Promise.resolve(
-			new ConnectCommandResponse(registration, command.wallet),
-		);
+			return Promise.resolve(
+				new ConnectCommandResponse(registration, command.wallet),
+			);
+		} catch (error) {
+			const err = new WalletConnectError((error as Error).message);
+			LogService.logError(err);
+			throw err;
+		}
 	}
 
 	private getHandlerClass(
@@ -52,7 +63,7 @@ export class ConnectCommandHandler implements ICommandHandler<ConnectCommand> {
 		}
 	}
 
-	private isWeb() {
-		return global.window;
+	private isWeb(): boolean {
+		return !!global.window;
 	}
 }
