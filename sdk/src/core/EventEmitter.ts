@@ -33,6 +33,8 @@ import WalletEvent from '../app/service/event/WalletEvent.js';
  * run();
  * ```
  */
-export default class EventEmitter<T extends WalletEvent> extends (BaseEmitter as {
+export default class EventEmitter<
+	T extends WalletEvent,
+> extends (BaseEmitter as {
 	new <T extends WalletEvent>(): TypedEmitter<T>;
 })<T> {}

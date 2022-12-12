@@ -92,7 +92,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 	}
 	async stop(): Promise<boolean> {
 		await this.hc.disconnect(this._initData.topic);
-		return Promise.resolve(!!Injectable.disposeTransactionHandler(this));
+		return Promise.resolve(true);
 	}
 
 	async signAndSendTransaction(

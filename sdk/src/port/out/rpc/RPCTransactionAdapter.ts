@@ -59,7 +59,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 	}
 
 	stop(): Promise<boolean> {
-		return Promise.resolve(!!Injectable.disposeTransactionHandler(this));
+		return Promise.resolve(true);
 	}
 
 	async wipe(

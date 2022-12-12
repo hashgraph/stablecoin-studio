@@ -252,12 +252,6 @@ export class Injectable {
 		return true;
 	}
 
-	static disposeTransactionHandler<T extends TransactionAdapter>(
-		cls: T,
-	): boolean {
-		return this.registerTransactionHandler(cls);
-	}
-
 	static resolveTransactionHandler(): TransactionAdapter {
 		try {
 			if (!this.currentTransactionHandler) {

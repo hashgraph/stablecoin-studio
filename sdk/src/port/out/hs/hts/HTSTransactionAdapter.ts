@@ -67,7 +67,7 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 	stop(): Promise<boolean> {
 		this.client.close();
 		this.eventService.emit(WalletEvents.walletDisconnect);
-		return Promise.resolve(!!Injectable.disposeTransactionHandler(this));
+		return Promise.resolve(true);
 	}
 
 	public async signAndSendTransaction(
