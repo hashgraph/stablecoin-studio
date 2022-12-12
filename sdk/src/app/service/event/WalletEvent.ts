@@ -1,5 +1,4 @@
-import { HashConnectTypes, MessageTypes } from 'hashconnect';
-import { HashConnectConnectionState } from 'hashconnect/types';
+import { Environment } from '../../../domain/context/network/Environment.js';
 import { SupportedWallets } from '../../../domain/context/network/Wallet.js';
 import { TransactionAdapterInitializationData } from '../../../port/out/TransactionAdapter.js';
 
@@ -10,6 +9,13 @@ export enum WalletEvents {
 	walletConnectionStatusChanged = 'walletConnectionStatusChanged',
 	walletAcknowledgeMessage = 'walletAcknowledgeMessage',
 	walletDisconnect = 'walletDisconnect',
+}
+
+export enum ConnectionState {
+	Connecting = 'Connecting',
+	Connected = 'Connected',
+	Disconnected = 'Disconnected',
+	Paired = 'Paired',
 }
 
 export interface WalletBaseEvent {
@@ -23,13 +29,25 @@ export interface WalletInitEvent extends WalletBaseEvent {
 export interface WalletFoundEvent {
 	name: string;
 }
+export interface WalletPairedEvent {
+	data: TransactionAdapterInitializationData;
+	network: Environment;
+}
+export interface WalletConnectionStatusChangedEvent {
+	status: ConnectionState;
+}
+export interface WalletAcknowledgeMessageEvent {
+	result: boolean;
+}
 
 type WalletEvent = {
 	walletInit: (data: WalletInitEvent) => void;
 	walletFound: () => void;
-	walletPaired: (data: HashConnectTypes.SavedPairingData) => void;
-	walletConnectionStatusChanged: (state: HashConnectConnectionState) => void;
-	walletAcknowledgeMessage: (state: MessageTypes.Acknowledge) => void;
+	walletPaired: (data: WalletPairedEvent) => void;
+	walletConnectionStatusChanged: (
+		data: WalletConnectionStatusChangedEvent,
+	) => void;
+	walletAcknowledgeMessage: (data: WalletAcknowledgeMessageEvent) => void;
 	walletDisconnect: () => void;
 };
 

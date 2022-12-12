@@ -19,7 +19,11 @@ import { TransactionAdapterInitializationData } from '../../TransactionAdapter.j
 import { lazyInject } from '../../../../core/decorator/LazyInjectDecorator.js';
 import NetworkService from '../../../../app/service/NetworkService.js';
 import { RuntimeError } from '../../../../core/error/RuntimeError.js';
-import { WalletEvents, WalletInitEvent } from '../../../../app/service/event/WalletEvent.js';
+import {
+	ConnectionState,
+	WalletEvents,
+	WalletInitEvent,
+} from '../../../../app/service/event/WalletEvent.js';
 import { SupportedWallets } from '../../../in/request/ConnectRequest.js';
 import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter.js';
 
@@ -35,6 +39,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 	private hashConnectConectionState: HashConnectConnectionState;
 	private availableExtension = false;
 	private pairingData: HashConnectTypes.SavedPairingData | null = null;
+	state: HashConnectConnectionState;
 
 	public get initData(): HashConnectTypes.InitilizationData {
 		return this._initData;
@@ -169,10 +174,18 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 				if (data.pairingData) {
 					this.pairingData = data.pairingData;
 					LogService.logInfo('Paired with wallet', data);
-					this.eventService.emit(
-						WalletEvents.walletPaired,
-						this.pairingData,
-					);
+					this.account = new Account({
+						environment: this.pairingData.network,
+						id: this.pairingData.accountIds[0],
+					});
+					this.eventService.emit(WalletEvents.walletPaired, {
+						data: {
+							account: this.account,
+							pairing: this.initData.pairingString,
+							topic: this.pairingData.topic,
+						},
+						network: this.pairingData.network,
+					});
 				} else {
 					throw new PairingError(data);
 				}
@@ -185,11 +198,11 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 		this.hc.connectionStatusChangeEvent.on((state) => {
 			this.hashConnectConectionState = state;
 			LogService.logTrace('hashconnect state change event', state);
-			this.eventService.emit(
-				WalletEvents.walletConnectionStatusChanged,
-				this.hashConnectConectionState,
-			);
-			// this.state = state;
+			this.eventService.emit(WalletEvents.walletConnectionStatusChanged, {
+				status: this
+					.hashConnectConectionState as unknown as ConnectionState,
+			});
+			this.state = state;
 		});
 
 		this.hc.acknowledgeMessageEvent.on((msg) => {

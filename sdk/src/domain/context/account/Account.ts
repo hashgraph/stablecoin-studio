@@ -5,7 +5,7 @@ import PublicKey from './PublicKey.js';
 
 export interface AccountProps {
 	environment: Environment;
-	id?: string;
+	id: string;
 	privateKey?: PrivateKey;
 	publicKey?: PublicKey;
 	evmAddress?: string;
