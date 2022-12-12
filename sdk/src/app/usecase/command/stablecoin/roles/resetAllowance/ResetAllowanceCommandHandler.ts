@@ -34,7 +34,7 @@ export class ResetAllowanceCommandHandler
 		);
 		const res = await handler.resetSupplierAllowance(
 			capabilities,
-			targetId.value,
+			targetId,
 		);
 		return Promise.resolve({ payload: res.response ?? false });
 	}

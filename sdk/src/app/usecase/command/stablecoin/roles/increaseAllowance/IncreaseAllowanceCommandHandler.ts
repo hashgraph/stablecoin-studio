@@ -34,7 +34,7 @@ export class IncreaseAllowanceCommandHandler
 		);
 		const res = await handler.increaseSupplierAllowance(
 			capabilities,
-			targetId.value,
+			targetId,
 			amount,
 		);
 		return Promise.resolve({ payload: res.response });

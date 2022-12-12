@@ -27,7 +27,7 @@ export class GetRolesCommandHandler
 			account,
 			tokenId,
 		);
-		const res = await handler.getRoles(capabilities, targetId.value);
+		const res = await handler.getRoles(capabilities, targetId);
 		return Promise.resolve({ payload: res.response ?? [] });
 	}
 }

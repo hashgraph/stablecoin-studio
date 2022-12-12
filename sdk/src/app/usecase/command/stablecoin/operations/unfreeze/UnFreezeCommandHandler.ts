@@ -27,7 +27,7 @@ export class UnFreezeCommandHandler
 			account,
 			tokenId,
 		);
-		const res = await handler.unfreeze(capabilities, targetId.value);
+		const res = await handler.unfreeze(capabilities, targetId);
 		return Promise.resolve(res.response);
 	}
 }

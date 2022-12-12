@@ -35,7 +35,7 @@ export class BalanceOfCommandHandler
 			account,
 			tokenId,
 		);
-		const res = await handler.balanceOf(capabilities, targetId.value);
+		const res = await handler.balanceOf(capabilities, targetId);
 		// TODO Do some work here
 		if (res.error || res.response === undefined) {
 			throw res.error;

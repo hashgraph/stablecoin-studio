@@ -25,7 +25,7 @@ export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
 			account,
 			tokenId,
 		);
-		const res = await handler.cashin(capabilities, targetId.value, amount);
+		const res = await handler.cashin(capabilities, targetId, amount);
 		return Promise.resolve(res.response);
 	}
 }

@@ -32,7 +32,7 @@ export class GrantRoleCommandHandler
 			account,
 			tokenId,
 		);
-		const res = await handler.grantRole(capabilities, targetId.value, role);
+		const res = await handler.grantRole(capabilities, targetId, role);
 		return Promise.resolve({ payload: res.response });
 	}
 }

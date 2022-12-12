@@ -25,7 +25,7 @@ export class FreezeCommandHandler implements ICommandHandler<FreezeCommand> {
 			account,
 			tokenId,
 		);
-		const res = await handler.freeze(capabilities, targetId.value);
+		const res = await handler.freeze(capabilities, targetId);
 		return Promise.resolve(res.response);
 	}
 }

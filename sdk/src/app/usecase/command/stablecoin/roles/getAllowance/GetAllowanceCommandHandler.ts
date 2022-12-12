@@ -35,7 +35,7 @@ export class GetAllowanceCommandHandler
 		);
 		const res = await handler.supplierAllowance(
 			capabilities,
-			targetId.value,
+			targetId,
 		);
 		return Promise.resolve({ payload: res.response ?? BigDecimal.ZERO });
 	}

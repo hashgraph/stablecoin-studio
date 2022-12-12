@@ -34,7 +34,7 @@ export class DecreaseAllowanceCommandHandler
 		);
 		const res = await handler.decreaseSupplierAllowance(
 			capabilities,
-			targetId.value,
+			targetId,
 			amount,
 		);
 		return Promise.resolve({ payload: res.response });

@@ -25,7 +25,7 @@ export class HasRoleCommandHandler implements ICommandHandler<HasRoleCommand> {
 			account,
 			tokenId,
 		);
-		const res = await handler.hasRole(capabilities, targetId.value, role);
+		const res = await handler.hasRole(capabilities, targetId, role);
 		return Promise.resolve({ payload: res.response ?? false });
 	}
 }

@@ -3,7 +3,7 @@ import Service from '../Service.js';
 import { EventListenerNotFound } from './error/EventListenerNotFound.js';
 import { EventNotFound } from './error/EventNotFound.js';
 import { singleton } from 'tsyringe';
-import WalletEvent from './WalletEvent.js';
+import WalletEvent, { WalletEvents } from './WalletEvent.js';
 
 type WalletEventIndex = Record<keyof WalletEvent, WalletEvent>;
 type WalletEventEmitterIndex = Partial<
@@ -15,9 +15,12 @@ export default class EventService extends Service {
 	private events: WalletEventIndex;
 	private emitters: WalletEventEmitterIndex = {};
 
-	constructor(events: WalletEventIndex) {
+	constructor(events: typeof WalletEvents) {
 		super();
-		this.events = events;
+		this.events = Object.keys(events).reduce(
+			(p, c) => ({ ...p, [c]: events }),
+			{},
+		) as WalletEventIndex;
 	}
 
 	private getEventEmitter<E extends keyof WalletEvent>(
@@ -28,9 +31,7 @@ export default class EventService extends Service {
 				`WalletEvent (${event}) not registered yet`,
 			);
 		}
-		if (
-			!Object.keys(this.emitters).includes(event.toString())
-		) {
+		if (!Object.keys(this.emitters).includes(event.toString())) {
 			const type = this.events[event];
 			this.emitters[event] = new EventEmitter<typeof type>();
 		}

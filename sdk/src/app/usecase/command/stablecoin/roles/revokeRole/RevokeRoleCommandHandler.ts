@@ -34,7 +34,7 @@ export class RevokeRoleCommandHandler
 		);
 		const res = await handler.revokeRole(
 			capabilities,
-			targetId.value,
+			targetId,
 			role,
 		);
 		return Promise.resolve({ payload: res.response ?? false });

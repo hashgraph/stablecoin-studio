@@ -34,7 +34,7 @@ export class IsLimitedCommandHandler
 		);
 		const res = await handler.isUnlimitedSupplierAllowance(
 			capabilities,
-			targetId.value,
+			targetId,
 		);
 		return Promise.resolve({ payload: res.response === false ?? false });
 	}

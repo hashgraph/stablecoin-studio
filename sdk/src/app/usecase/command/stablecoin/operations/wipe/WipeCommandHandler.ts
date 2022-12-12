@@ -25,7 +25,7 @@ export class WipeCommandHandler implements ICommandHandler<WipeCommand> {
 			account,
 			tokenId,
 		);
-		const res = await handler.wipe(capabilities, targetId.value, amount);
+		const res = await handler.wipe(capabilities, targetId, amount);
 		return Promise.resolve(res.response);
 	}
 }
