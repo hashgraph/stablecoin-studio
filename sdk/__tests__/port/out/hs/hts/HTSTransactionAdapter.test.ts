@@ -27,7 +27,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with Ed25519 accounts', () => {
 		'302e020100300506032b65700422042078068d0d381ec19047ca0f6612a66b9a3c990fb1f8adc2fd2735b78423c2e10c';
 	const accountId = '0.0.47793222';
 	const account: Account = new Account({
-		id: accountId,
+		id: clientAccountId,
 		privateKey: new PrivateKey({ key: clientPrivateKey, type: 'ED25519' }),
 	});
 
@@ -363,11 +363,6 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with Ed25519 accounts', () => {
 		);
 		expect(tr.response).toEqual(true);
 	}, 20000);
-
-	afterEach(async () => {
-		expect(tr).not.toBeNull();
-		expect(tr.error).toEqual(undefined);
-	});
 });
 
 describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
@@ -715,11 +710,6 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		);
 		expect(tr.response).toEqual(true);
 	}, 20000);
-
-	afterEach(async () => {
-		expect(tr).not.toBeNull();
-		expect(tr.error).toEqual(undefined);
-	});
 });
 
 async function initTest(account: Account): Promise<void> {

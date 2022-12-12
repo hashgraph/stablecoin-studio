@@ -4,7 +4,7 @@ import { EventListenerNotFound } from './error/EventListenerNotFound.js';
 import { EventNotFound } from './error/EventNotFound.js';
 import { singleton } from 'tsyringe';
 import WalletEvent, { WalletEvents } from './WalletEvent.js';
-import { Injectable } from '../../../core/Injectable.js';
+import { inject } from 'tsyringe';
 
 type WalletEventIndex = Record<keyof WalletEvent, WalletEvent>;
 type WalletEventEmitterIndex = Partial<
@@ -17,7 +17,8 @@ export default class EventService extends Service {
 	private emitters: WalletEventEmitterIndex = {};
 
 	constructor(
-		events = Injectable.resolve<typeof WalletEvents>('WalletEvents'),
+		@inject('WalletEvents')
+		events: typeof WalletEvents,
 	) {
 		super();
 		this.registerEvents(events);
@@ -26,7 +27,7 @@ export default class EventService extends Service {
 	private registerEvents(events: typeof WalletEvents): void {
 		this.events = Object.keys(events).reduce(
 			(p, c) => ({ ...p, [c]: events }),
-			{}
+			{},
 		) as WalletEventIndex;
 	}
 

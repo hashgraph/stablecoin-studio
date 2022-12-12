@@ -524,7 +524,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				  });
 
 		for (let i = 0; i < filteredContractParams.length; i++) {
-			if (filteredContractParams[i] instanceof Account) {
+			if (filteredContractParams[i] instanceof HederaId) {
 				filteredContractParams[i] = await this.accountToEvmAddress(
 					filteredContractParams[i],
 				);
@@ -656,16 +656,8 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		return Buffer.from(encodedParametersHex, 'hex');
 	}
 
-	private async accountToEvmAddress(account: Account): Promise<string> {
-		if (account.privateKey) {
-			return this.getAccountEvmAddressFromPrivateKeyType(
-				account.privateKey?.type,
-				account.privateKey.publicKey.key,
-				account.id,
-			);
-		} else {
-			return await this.getAccountEvmAddress(account.id);
-		}
+	private async accountToEvmAddress(account: HederaId): Promise<string> {
+		return await this.getAccountEvmAddress(account);
 	}
 
 	private async getAccountEvmAddress(accountId: HederaId): Promise<string> {
