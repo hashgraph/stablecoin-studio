@@ -47,8 +47,8 @@ describe('🧪 SDK test', () => {
 						key: '0x4e3a8e419d6a10765ad1db628e1e86343a971543d14548e023143675f55a6875',
 						type: 'ED25519',
 					},
-					network: 'testnet',
 				},
+				network: 'testnet',
 				wallet: SupportedWallets.CLIENT,
 			}),
 		);
