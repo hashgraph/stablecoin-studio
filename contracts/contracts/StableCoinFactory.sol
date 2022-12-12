@@ -18,9 +18,6 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes{
     function deployStableCoin(tokenStruct calldata requestedToken,
         address StableCoinContractAddress) external payable override returns (address, address, address, address){
 
-        // logic contract
-        HederaERC20 StableCoinContract = HederaERC20(StableCoinContractAddress);
-
         // Deploy Proxy Admin
         HederaERC20ProxyAdmin StableCoinProxyAdmin = new HederaERC20ProxyAdmin();
 
@@ -29,7 +26,7 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes{
 
         // Deploy Proxy
         HederaERC20Proxy StableCoinProxy = new HederaERC20Proxy(
-            address(StableCoinContract), 
+            StableCoinContractAddress, 
             address(StableCoinProxyAdmin), 
             "");
 
@@ -51,7 +48,7 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes{
         // Associate token
         if(treasuryIsContract(requestedToken.treasuryAddress))HederaERC20(address(StableCoinProxy)).associateToken(msg.sender);
 
-        return (address(StableCoinProxy), address(StableCoinProxyAdmin), address(StableCoinContract), tokenAddress);
+        return (address(StableCoinProxy), address(StableCoinProxyAdmin), StableCoinContractAddress, tokenAddress);
     }
 
     function createToken (

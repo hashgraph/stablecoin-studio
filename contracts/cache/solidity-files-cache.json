@@ -1415,8 +1415,8 @@
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-3/hedera-accelerator-stablecoin/contracts/contracts/StableCoinFactory.sol": {
-      "lastModificationDate": 1670580842211,
-      "contentHash": "a4cfcff74bd4a98444c358ccf2831aa8",
+      "lastModificationDate": 1670835909270,
+      "contentHash": "7f4cc4f74d0675c0126f1a8b095f4e1c",
       "sourceName": "contracts/StableCoinFactory.sol",
       "solcConfig": {
         "version": "0.8.10",
@@ -1769,43 +1769,6 @@
         "ERC1967Upgrade"
       ]
     },
-    "/home/iobuilders/Git/hedera-accelerator-stablecoin-3/hedera-accelerator-stablecoin/contracts/node_modules/@openzeppelin/contracts/proxy/beacon/IBeacon.sol": {
-      "lastModificationDate": 1669627045308,
-      "contentHash": "b6bd23bf19e90b771337037706470933",
-      "sourceName": "@openzeppelin/contracts/proxy/beacon/IBeacon.sol",
-      "solcConfig": {
-        "version": "0.8.10",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "devdoc",
-                "userdoc"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "IBeacon"
-      ]
-    },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-3/hedera-accelerator-stablecoin/contracts/node_modules/@openzeppelin/contracts/interfaces/draft-IERC1822.sol": {
       "lastModificationDate": 1669627045380,
       "contentHash": "2858d98e74e67987ec81b39605230b74",
@@ -1843,10 +1806,10 @@
         "IERC1822Proxiable"
       ]
     },
-    "/home/iobuilders/Git/hedera-accelerator-stablecoin-3/hedera-accelerator-stablecoin/contracts/node_modules/@openzeppelin/contracts/utils/Address.sol": {
-      "lastModificationDate": 1669627045272,
-      "contentHash": "c476b3895a94798b88a4bb97399e6dfe",
-      "sourceName": "@openzeppelin/contracts/utils/Address.sol",
+    "/home/iobuilders/Git/hedera-accelerator-stablecoin-3/hedera-accelerator-stablecoin/contracts/node_modules/@openzeppelin/contracts/proxy/beacon/IBeacon.sol": {
+      "lastModificationDate": 1669627045308,
+      "contentHash": "b6bd23bf19e90b771337037706470933",
+      "sourceName": "@openzeppelin/contracts/proxy/beacon/IBeacon.sol",
       "solcConfig": {
         "version": "0.8.10",
         "settings": {
@@ -1874,10 +1837,10 @@
       },
       "imports": [],
       "versionPragmas": [
-        "^0.8.1"
+        "^0.8.0"
       ],
       "artifacts": [
-        "Address"
+        "IBeacon"
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-3/hedera-accelerator-stablecoin/contracts/node_modules/@openzeppelin/contracts/utils/StorageSlot.sol": {
@@ -1915,6 +1878,43 @@
       ],
       "artifacts": [
         "StorageSlot"
+      ]
+    },
+    "/home/iobuilders/Git/hedera-accelerator-stablecoin-3/hedera-accelerator-stablecoin/contracts/node_modules/@openzeppelin/contracts/utils/Address.sol": {
+      "lastModificationDate": 1669627045272,
+      "contentHash": "c476b3895a94798b88a4bb97399e6dfe",
+      "sourceName": "@openzeppelin/contracts/utils/Address.sol",
+      "solcConfig": {
+        "version": "0.8.10",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.1"
+      ],
+      "artifacts": [
+        "Address"
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-3/hedera-accelerator-stablecoin/contracts/node_modules/@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol": {

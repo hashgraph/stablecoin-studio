@@ -175,10 +175,10 @@ export enum NetworkMode {
 export interface SDKInitOptions {
 	onInit: (data: InitializationData) => void;
 }
-export const HederaERC20AddressTestnet = "0.0.49059747";
+export const HederaERC20AddressTestnet = "0.0.49070407";
 export const HederaERC20AddressPreviewnet = "0.0.11111111";
 
-export const FactoryAddressTestnet = "0.0.49059753";
+export const FactoryAddressTestnet = "0.0.49070413";
 export const FactoryAddressPreviewnet = "0.0.11111111";
 
 export class SDK {
