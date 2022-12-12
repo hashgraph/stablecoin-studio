@@ -36,7 +36,7 @@ export default class EventService extends Service {
 	): EventEmitter<WalletEvent> {
 		if (!Object.keys(this.events).includes(event.toString())) {
 			throw new EventNotFound(
-				`WalletEvent (${event}) not registered yet`,
+				`WalletEvent (${String(event)}) not registered yet`,
 			);
 		}
 		if (!Object.keys(this.emitters).includes(event.toString())) {
