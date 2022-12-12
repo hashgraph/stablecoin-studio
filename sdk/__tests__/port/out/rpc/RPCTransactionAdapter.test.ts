@@ -163,7 +163,6 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 
 	it('Test unpause', async () => {
 		tr = await th.unpause(stableCoinCapabilitiesSC);
-		// console.log(tr);
 	}, 1500000);
 
 	it('Test rescue', async () => {
@@ -227,7 +226,6 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 			StableCoinRole.CASHIN_ROLE,
 		);
 		expect(typeof tr.response === 'boolean').toBeTruthy();
-		console.log(tr);
 	}, 1500000);
 
 	it('Test getBalanceOf', async () => {
@@ -235,7 +233,6 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 			stableCoinCapabilitiesSC,
 			HederaId.from('0.0.48471385'),
 		);
-		console.log(tr.response.toString());
 	}, 1500000);
 
 	it('Test isUnlimitedSupplierAllowance', async () => {
@@ -243,7 +240,6 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 			stableCoinCapabilitiesSC,
 			HederaId.from('0.0.48471385'),
 		);
-		console.log(tr);
 	}, 1500000);
 
 	it('Test supplierAllowance', async () => {
@@ -251,7 +247,6 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 			stableCoinCapabilitiesSC,
 			HederaId.from('0.0.48471385'),
 		);
-		console.log(tr.response.toString());
 	}, 1500000);
 
 	it('Test resetSupplierAllowance', async () => {
@@ -289,7 +284,6 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 			stableCoinCapabilitiesSC,
 			HederaId.from('0.0.48471385'),
 		);
-		console.log(tr);
 	}, 1500000);
 
 	it('Test associateToken', async () => {
@@ -297,7 +291,6 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 			stableCoinCapabilitiesSC,
 			HederaId.from('0.0.48471385'),
 		);
-		console.log(tr);
 	}, 1500000);
 
 	afterEach(async () => {
