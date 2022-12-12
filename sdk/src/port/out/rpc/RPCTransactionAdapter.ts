@@ -677,6 +677,29 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 			throw new Error('Error');
 		}
 	}
+
+	async dissociateToken(
+		coin: StableCoinCapabilities,
+		targetId: HederaId,
+	): Promise<TransactionResponse> {
+		try {
+			if (!coin.coin.evmProxyAddress)
+				throw new Error(
+					`StableCoin ${coin.coin.name} does not have a proxy Address`,
+				);
+
+			return RPCTransactionResponseAdapter.manageResponse(
+				await HederaERC20__factory.connect(
+					coin.coin.evmProxyAddress,
+					this.signerOrProvider,
+				).dissociateToken(this.getAccountEvmAddress(targetId)),
+			);
+		} catch (error) {
+			// should throw RPCHandlerError
+			throw new Error('Error');
+		}
+	}
+
 	async isUnlimitedSupplierAllowance(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,

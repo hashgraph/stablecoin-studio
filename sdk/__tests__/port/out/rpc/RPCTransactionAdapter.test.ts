@@ -15,10 +15,6 @@ import BigDecimal from '../../../../src/domain/context/shared/BigDecimal.js';
 import RPCTransactionAdapter from '../../../../src/port/out/rpc/RPCTransactionAdapter.js';
 import { Wallet } from 'ethers';
 import { StableCoinRole } from '../../../../src/domain/context/stablecoin/StableCoinRole.js';
-import { Network } from '../../../../src/index.js';
-import ConnectRequest, {
-	SupportedWallets,
-} from '../../../../src/port/in/request/ConnectRequest.js';
 import PrivateKey from '../../../../src/domain/context/account/PrivateKey.js';
 import { Injectable } from '../../../../src/core/Injectable.js';
 import { MirrorNodeAdapter } from '../../../../src/port/out/mirror/MirrorNodeAdapter.js';
@@ -94,17 +90,13 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 		mirrorNodeAdapter.setEnvironment('testnet');
 	});
 
-	it('Test wipe', async () => {
-		tr = await th.cashin(
+	it('Test hasRole', async () => {
+		tr = await th.hasRole(
 			stableCoinCapabilitiesSC,
 			HederaId.from('0.0.48471385'),
-			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
+			StableCoinRole.CASHIN_ROLE,
 		);
-		tr = await th.wipe(
-			stableCoinCapabilitiesSC,
-			HederaId.from('0.0.48471385'),
-			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
-		);
+		expect(typeof tr.response === 'boolean').toBeTruthy();
 	}, 1500000);
 
 	it('Test mint', async () => {
@@ -115,6 +107,19 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 				'0.5',
 				stableCoinCapabilitiesSC.coin.decimals,
 			),
+		);
+	}, 1500000);
+
+	it('Test wipe', async () => {
+		tr = await th.cashin(
+			stableCoinCapabilitiesSC,
+			HederaId.from('0.0.48471385'),
+			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
+		);
+		tr = await th.wipe(
+			stableCoinCapabilitiesSC,
+			HederaId.from('0.0.48471385'),
+			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
 		);
 	}, 1500000);
 
@@ -168,20 +173,20 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 		);
 	}, 1500000);
 
-	it('Test delete', async () => {
-		tr = await th.delete(stableCoinCapabilitiesSC);
-	}, 1500000);
+	//it('Test delete', async () => {
+	//	tr = await th.delete(stableCoinCapabilitiesSC);
+	//}, 1500000);
 
-	it('Test grantRole', async () => {
-		tr = await th.grantRole(
+	it('Test revokeRole', async () => {
+		tr = await th.revokeRole(
 			stableCoinCapabilitiesSC,
 			HederaId.from('0.0.48471385'),
 			StableCoinRole.WIPE_ROLE,
 		);
 	}, 1500000);
 
-	it('Test revokeRole', async () => {
-		tr = await th.revokeRole(
+	it('Test grantRole', async () => {
+		tr = await th.grantRole(
 			stableCoinCapabilitiesSC,
 			HederaId.from('0.0.48471385'),
 			StableCoinRole.WIPE_ROLE,
@@ -196,15 +201,15 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 		);
 	}, 1500000);
 
-	it('Test grantUnlimitedSupplierRole', async () => {
-		tr = await th.grantUnlimitedSupplierRole(
+	it('Test revokeSupplierRole', async () => {
+		tr = await th.revokeSupplierRole(
 			stableCoinCapabilitiesSC,
 			HederaId.from('0.0.48471385'),
 		);
 	}, 1500000);
 
-	it('Test revokeSupplierRole', async () => {
-		tr = await th.revokeSupplierRole(
+	it('Test grantUnlimitedSupplierRole', async () => {
+		tr = await th.grantUnlimitedSupplierRole(
 			stableCoinCapabilitiesSC,
 			HederaId.from('0.0.48471385'),
 		);
@@ -274,7 +279,14 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 		);
 	}, 1500000);
 
-	//  TODO To test
+	it('Test dissociateToken', async () => {
+		tr = await th.dissociateToken(
+			stableCoinCapabilitiesSC,
+			HederaId.from('0.0.48471385'),
+		);
+		console.log(tr);
+	}, 1500000);
+
 	it('Test associateToken', async () => {
 		tr = await th.associateToken(
 			stableCoinCapabilitiesSC,
@@ -284,16 +296,7 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	}, 1500000);
 
 	afterEach(async () => {
-		// eslint-disable-next-line jest/no-standalone-expect
 		expect(tr).not.toBeNull();
-		// eslint-disable-next-line jest/no-standalone-expect
 		expect(tr.error).toEqual(undefined);
-		// 	const response: HTSResponse =
-		// 		await HTSTransactionResponseHandler.manageResponse(
-		// 			tr,
-		// 			TransactionType.RECEIPT,
-		// 			client,
-		// 		);
-		// 	expect(response.receipt?.status).toEqual(Status.Success);
 	});
 });
