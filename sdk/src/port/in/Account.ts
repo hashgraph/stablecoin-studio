@@ -13,6 +13,7 @@ import PublicKey from '../../domain/context/account/PublicKey.js';
 import StableCoinListViewModel from '../out/mirror/response/StableCoinListViewModel.js';
 import AccountViewModel from '../out/mirror/response/AccountViewModel.js';
 import { MirrorNodeAdapter } from '../out/mirror/MirrorNodeAdapter.js';
+import { Balance } from '../../domain/context/stablecoin/Balance.js';
 
 export { AccountViewModel, Balance};
 
