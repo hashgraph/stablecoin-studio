@@ -17,7 +17,7 @@ import { MirrorNodeAdapter } from '../out/mirror/MirrorNodeAdapter.js';
 import { Balance } from '../../domain/context/stablecoin/Balance.js';
 import PrivateKey from '../../domain/context/account/PrivateKey.js';
 
-export { AccountViewModel, StableCoinListViewModel };
+export { AccountViewModel, Balance, StableCoinListViewModel };
 
 interface IAccountInPort {
 	getPublicKey(request: GetPublicKeyRequest): Promise<PublicKey>;
@@ -43,6 +43,7 @@ class AccountInPort implements IAccountInPort {
 			MirrorNodeAdapter,
 		),
 	) {}
+	
 	getPublicKey(request: GetPublicKeyRequest): Promise<PublicKey> {
 		throw new Error('Method not implemented.');
 	}

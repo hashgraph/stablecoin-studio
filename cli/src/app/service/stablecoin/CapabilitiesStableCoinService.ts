@@ -1,4 +1,3 @@
-import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
 import {
   CapabilitiesRequest,
