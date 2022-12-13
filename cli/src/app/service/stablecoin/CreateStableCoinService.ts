@@ -7,12 +7,13 @@ import {
   TokenSupplyType,
   RequestPrivateKey,
   RequestPublicKey,
+  GetPublicKeyRequest,
+  RequestAccount,
   Account,
 } from 'hedera-stable-coin-sdk';
 import { IManagedFeatures } from '../../../domain/configuration/interfaces/IManagedFeatures.js';
 import Service from '../Service.js';
 import SetConfigurationService from '../configuration/SetConfigurationService.js';
-import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 
 /**
  * Create Stable Coin Service
@@ -213,7 +214,6 @@ export default class CreateStableCoinService extends Service {
       maxSupply: totalSupply === '' || !totalSupply ? undefined : totalSupply,
     });
     if (managedBySC) {
-      const currentAccount: IAccountConfig = utilsService.getCurrentAccount();
       tokenToCreate.adminKey = Account.NullPublicKey;
       tokenToCreate.freezeKey = Account.NullPublicKey;
       //KYCKey,
@@ -393,16 +393,23 @@ export default class CreateStableCoinService extends Service {
     switch (answer) {
       case 'Current user key': {
         const currentAccount = utilsService.getCurrentAccount();
-        const privateKey: RequestPrivateKey = new RequestPrivateKey({
+        const privateKey: RequestPrivateKey = ({
           key: currentAccount.privateKey.key,
           type: currentAccount.privateKey.type
       });
-        return privateKey.publicKey;
+        const reqAccount: RequestAccount = ({
+          accountId: currentAccount.accountId,
+          privateKey: privateKey
+        });
+        const req: GetPublicKeyRequest= new GetPublicKeyRequest({
+          account: reqAccount
+        })
+        return Account.getPublicKey(req)
       }
 
       case 'Other key': {
         const key = await utilsService.defaultPublicKeyAsk();
-        return new RequestPublicKey({
+        return ({
           key: key,
           type: 'ED25519',
         });

@@ -1,3 +1,5 @@
+import { constructor } from "@hashgraph/sdk/lib/EntityIdHelper.js";
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface BaseRequest {
 	[n: string]: any;
