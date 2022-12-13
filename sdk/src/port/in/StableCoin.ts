@@ -24,10 +24,10 @@ import { CreateCommand } from '../../app/usecase/command/stablecoin/create/Creat
 import PublicKey from '../../domain/context/account/PublicKey.js';
 import Mapper from '../../core/mapping/Mapper.js';
 
-export const HederaERC20AddressTestnet = "0.0.49070407";
+export const HederaERC20AddressTestnet = "0.0.49077027";
 export const HederaERC20AddressPreviewnet = "0.0.11111111";
 
-export const FactoryAddressTestnet = "0.0.49070413";
+export const FactoryAddressTestnet = "0.0.49077033";
 export const FactoryAddressPreviewnet = "0.0.11111111";
 
 
