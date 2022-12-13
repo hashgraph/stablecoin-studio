@@ -5,7 +5,7 @@ import type {
 	IStableCoinDetail,
 	IStableCoinList,
 	Capabilities,
-	IAccountInfo	
+	IAccountInfo,
 } from 'hedera-stable-coin-sdk';
 import { GetListStableCoinRequest } from 'hedera-stable-coin-sdk';
 import SDKService from '../../services/SDKService';
@@ -14,7 +14,7 @@ import type { IExternalToken } from '../../interfaces/IExternalToken';
 import type { IAccountToken } from '../../interfaces/IAccountToken';
 
 interface InitialStateProps {
-	data: InitializationData;
+	data?: InitializationData;
 	hasWalletExtension: boolean;
 	isPaired: boolean;
 	loading: boolean;
@@ -26,12 +26,6 @@ interface InitialStateProps {
 }
 
 export const initialState: InitialStateProps = {
-	data: {
-		topic: '',
-		pairingString: '',
-		encryptionKey: '',
-		savedPairings: [],
-	},
 	hasWalletExtension: false,
 	isPaired: false,
 	loading: false,
@@ -47,11 +41,12 @@ export const getStableCoinList = createAsyncThunk(
 	async (account: HashPackAccount) => {
 		try {
 			const stableCoins = await SDKService.getStableCoins(
-				new GetListStableCoinRequest ({ 
+				new GetListStableCoinRequest({
 					account: {
 						accountId: account.accountId.id,
-					}
-				}));
+					},
+				}),
+			);
 			return stableCoins;
 		} catch (e) {
 			console.error(e);
@@ -86,9 +81,6 @@ export const walletSlice = createSlice({
 	reducers: {
 		setData: (state, action) => {
 			state.data = action.payload;
-		},
-		setSavedPairings: (state, action) => {
-			state.data.savedPairings = action.payload;
 		},
 		setSelectedStableCoin: (state, action) => {
 			state.selectedStableCoin = action.payload;
@@ -138,15 +130,14 @@ export const STABLE_COIN_LIST = (state: RootState) => state.wallet.stableCoinLis
 export const EXTERNAL_TOKEN_LIST = (state: RootState) => state.wallet.externalTokenList;
 export const SELECTED_WALLET_DATA: any = (state: RootState) => state.wallet.data;
 export const SELECTED_WALLET_COIN = (state: RootState) => state.wallet.selectedStableCoin;
-export const SELECTED_WALLET_PAIRED: any = (state: RootState) => state.wallet.data.savedPairings[0];
+export const SELECTED_WALLET_PAIRED: any = (state: RootState) => state.wallet.data?.account.id;
 export const SELECTED_WALLET_CAPABILITIES = (state: RootState) => state.wallet.capabilities;
 export const SELECTED_WALLET_ACCOUNT_INFO = (state: RootState) => state.wallet.accountInfo;
 export const HAS_WALLET_EXTENSION = (state: RootState) => state.wallet.hasWalletExtension;
 export const IS_PAIRED = (state: RootState) => state.wallet.isPaired;
-export const SELECTED_WALLET_PAIRED_ACCOUNTID = (state: RootState) =>
-	state.wallet.data.savedPairings[0]?.accountIds[0];
+export const SELECTED_WALLET_PAIRED_ACCOUNTID = (state: RootState) => state.wallet.data?.account.id;
 export const SELECTED_WALLET_PAIRED_ACCOUNT = (state: RootState) => ({
-	accountId: state.wallet.data.savedPairings[0]?.accountIds[0],
+	accountId: state.wallet.data?.account.id,
 });
 
 export const walletActions = walletSlice.actions;

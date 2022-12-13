@@ -5,7 +5,7 @@ import {
 	IHederaTokenService__factory,
 } from 'hedera-stable-coin-contracts/typechain-types/index.js';
 import TransactionAdapter, {
-	TransactionAdapterInitializationData,
+	InitializationData,
 } from '../TransactionAdapter';
 import { ContractTransaction, ethers, Signer } from 'ethers';
 import { singleton } from 'tsyringe';
@@ -48,7 +48,7 @@ export default class RPCTransactionAdapter implements TransactionAdapter {
 	async register(
 		account: Account,
 		debug = false,
-	): Promise<TransactionAdapterInitializationData> {
+	): Promise<InitializationData> {
 		this.account = account;
 		this.provider = new ethers.providers.JsonRpcProvider(
 			`https://${this.networkService.environment.toString()}.hashio.io/api`,

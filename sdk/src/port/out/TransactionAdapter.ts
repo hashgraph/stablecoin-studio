@@ -6,15 +6,16 @@ import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import { StableCoinRole } from '../../domain/context/stablecoin/StableCoinRole.js';
 import Account from '../../domain/context/account/Account.js';
 import { HederaId } from '../../domain/context/shared/HederaId.js';
+import { HashConnectTypes } from 'hashconnect/types';
 
-export interface TransactionAdapterInitializationData {
+export interface InitializationData {
 	account: Account;
 	pairing?: string;
 	topic?: string;
 }
 
 interface ITransactionAdapter {
-	register(account: Account): Promise<TransactionAdapterInitializationData>;
+	register(account?: Account): Promise<InitializationData>;
 	stop(): Promise<boolean>;
 	associateToken(
 		coin: StableCoinCapabilities | string,
@@ -133,7 +134,7 @@ export default abstract class TransactionAdapter
 	getAccount(): Account {
 		throw new Error('Method not implemented.');
 	}
-	register(account: Account): Promise<TransactionAdapterInitializationData> {
+	register(account?: Account): Promise<InitializationData> {
 		throw new Error('Method not implemented.');
 	}
 	stop(): Promise<boolean> {

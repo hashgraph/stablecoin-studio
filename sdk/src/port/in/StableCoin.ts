@@ -6,7 +6,6 @@ import GetStableCoinDetailsRequest from './request/GetStableCoinDetailsRequest.j
 import CashOutRequest from './request/CashOutRequest.js';
 import RescueRequest from './request/RescueRequest.js';
 import WipeRequest from './request/WipeRequest.js';
-import StableCoinDetail from './response/StableCoinDetail.js';
 import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import { HederaId } from '../../domain/context/shared/HederaId.js';
 import NetworkService from '../../app/service/NetworkService.js';
@@ -17,10 +16,9 @@ import StableCoinViewModel from '../out/mirror/response/StableCoinViewModel.js';
 import StableCoinService from '../../app/service/StableCoinService.js';
 import { GetStableCoinQuery } from '../../app/usecase/query/stablecoin/get/GetStableCoinQuery.js';
 import AccountService from '../../app/service/AccountService.js';
-import Account from '../../domain/context/account/Account.js';
 
 interface IStableCoinInPort {
-	create(request: CreateRequest): Promise<StableCoinDetail>;
+	create(request: CreateRequest): Promise<StableCoinViewModel>;
 	getInfo(request: GetStableCoinDetailsRequest): Promise<StableCoinViewModel>;
 	cashIn(request: CashInRequest): Promise<boolean>;
 	cashOut(request: CashOutRequest): Promise<boolean>;
@@ -45,8 +43,13 @@ class StableCoinInPort implements IStableCoinInPort {
 		),
 	) {}
 
-	create(request: CreateRequest): Promise<StableCoinDetail> {
-		throw new Error('Method not implemented.');
+	async create(request: CreateRequest): Promise<StableCoinViewModel> {
+		// Create
+		return (
+			await this.queryBus.execute(
+				new GetStableCoinQuery(HederaId.from('0.0.0')),
+			)
+		).coin;
 	}
 
 	async getInfo(

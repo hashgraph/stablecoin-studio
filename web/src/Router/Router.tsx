@@ -83,13 +83,12 @@ const Router = () => {
 	}, [status]);
 
 	const getWalletData = async () => {
-		const walletData = await SDKService.getWalletData();
+		const walletData = SDKService.getWalletData();
 		let result = { ...walletData };
 
 		if (selectedWalletPairedAccount) {
 			result = {
 				...result,
-				savedPairings: [selectedWalletPairedAccount as any as SavedPairingData],
 			};
 		}
 		dispatch(walletActions.setData(result));

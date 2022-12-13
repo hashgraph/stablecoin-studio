@@ -15,7 +15,7 @@ import { TransactionType } from '../../TransactionResponseEnums.js';
 import LogService from '../../../../app/service/LogService.js';
 import EventService from '../../../../app/service/event/EventService.js';
 import { PairingError } from './error/PairingError.js';
-import { TransactionAdapterInitializationData } from '../../TransactionAdapter.js';
+import { InitializationData } from '../../TransactionAdapter.js';
 import { lazyInject } from '../../../../core/decorator/LazyInjectDecorator.js';
 import NetworkService from '../../../../app/service/NetworkService.js';
 import { RuntimeError } from '../../../../core/error/RuntimeError.js';
@@ -26,6 +26,7 @@ import {
 } from '../../../../app/service/event/WalletEvent.js';
 import { SupportedWallets } from '../../../in/request/ConnectRequest.js';
 import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter.js';
+import { SDK } from '../../../../index.js';
 
 @singleton()
 export class HashpackTransactionAdapter extends HederaTransactionAdapter {
@@ -35,18 +36,11 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 	public provider: HashConnectProvider;
 	public signer: Signer;
 	public hashConnectSigner: HashConnectSigner;
-	private _initData: HashConnectTypes.InitilizationData;
+	private initData: HashConnectTypes.InitilizationData;
 	private hashConnectConectionState: HashConnectConnectionState;
 	private availableExtension = false;
 	private pairingData: HashConnectTypes.SavedPairingData | null = null;
 	state: HashConnectConnectionState;
-
-	public get initData(): HashConnectTypes.InitilizationData {
-		return this._initData;
-	}
-	public set initData(value: HashConnectTypes.InitilizationData) {
-		this._initData = value;
-	}
 
 	constructor(
 		@lazyInject(EventService) public readonly eventService: EventService,
@@ -59,22 +53,20 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 		this.hc = new HashConnect();
 	}
 
-	async register(
-		account: Account,
-	): Promise<TransactionAdapterInitializationData> {
+	async register(): Promise<InitializationData> {
 		Injectable.registerTransactionHandler(this);
-		this.account = account;
 		this.initData = await this.hc.init(
-			{
-				description: '',
-				icon: '',
-				name: 'HSC',
-			},
+			SDK.appMetadata,
 			this.networkService.environment as
 				| 'testnet'
 				| 'previewnet'
 				| 'mainnet',
 		);
+		this.account = new Account({
+			id: this.filterAccountIdFromPairingData(
+				this.initData.savedPairings,
+			),
+		});
 		const eventData: WalletInitEvent = {
 			wallet: SupportedWallets.HASHPACK,
 			initData: {
@@ -87,11 +79,21 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 		return Promise.resolve({
 			account: this.account,
 			pairing: this.initData.pairingString,
+			savedPairings: this.initData.savedPairings,
 			topic: this.initData.topic,
 		});
 	}
+	
+	private filterAccountIdFromPairingData(
+		pairings: HashConnectTypes.SavedPairingData[],
+	): string {
+		const filtered = pairings.filter((x) => x.accountIds.length > 0);
+		if(filtered.length === 0) throw new PairingError(filtered);
+		return filtered[0].accountIds[0];
+	}
+
 	async stop(): Promise<boolean> {
-		await this.hc.disconnect(this._initData.topic);
+		await this.hc.disconnect(this.initData.topic);
 		return Promise.resolve(true);
 	}
 

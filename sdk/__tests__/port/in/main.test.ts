@@ -1,7 +1,7 @@
 import EventService from '../../../src/app/service/event/EventService.js';
 import { WalletEvents } from '../../../src/app/service/event/WalletEvent.js';
 import { Injectable } from '../../../src/core/Injectable.js';
-import { InvalidWalletAccountTypeError } from '../../../src/domain/context/network/error/InvalidWalletAccountTypeError.js';
+import { InvalidWalletTypeError } from '../../../src/domain/context/network/error/InvalidWalletAccountTypeError.js';
 import { Network, StableCoin } from '../../../src/index.js';
 import CashInRequest from '../../../src/port/in/request/CashInRequest.js';
 import ConnectRequest, {
@@ -53,7 +53,7 @@ describe('🧪 SDK test', () => {
 				wallet: SupportedWallets.HASHPACK,
 			}),
 		);
-		await expect(connection).rejects.toThrow(InvalidWalletAccountTypeError);
+		await expect(connection).rejects.toThrow(InvalidWalletTypeError);
 	});
 
 	it('Initializes network for operation', async () => {

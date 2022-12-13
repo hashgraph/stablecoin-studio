@@ -3,7 +3,7 @@ import { Injectable } from '../../core/Injectable.js';
 import NetworkService from '../../app/service/NetworkService.js';
 import { QueryBus } from '../../core/query/QueryBus.js';
 import { CommandBus } from '../../core/command/CommandBus.js';
-import { TransactionAdapterInitializationData as InitalizationData } from '../out/TransactionAdapter.js';
+import { InitializationData } from '../out/TransactionAdapter.js';
 import { ConnectCommand } from '../../app/usecase/command/network/connect/ConnectCommand.js';
 import ConnectRequest from './request/ConnectRequest.js';
 import RequestMapper from './request/mapping/RequestMapper.js';
@@ -12,7 +12,7 @@ import SetNetworkRequest from './request/SetNetworkRequest.js';
 import { SetNetworkCommand } from '../../app/usecase/command/network/setNetwork/SetNetworkCommand.js';
 import { Environment } from '../../domain/context/network/Environment.js';
 
-export { InitalizationData };
+export { InitializationData };
 
 export type NetworkResponse = {
 	environment: Environment;
@@ -22,7 +22,7 @@ export type NetworkResponse = {
 };
 
 interface INetworkInPort {
-	connect(req: ConnectRequest): Promise<InitalizationData>;
+	connect(req: ConnectRequest): Promise<InitializationData>;
 	disconnect(): Promise<boolean>;
 	setNetwork(req: SetNetworkRequest): Promise<NetworkResponse>;
 }
@@ -53,10 +53,10 @@ class NetworkInPort implements INetworkInPort {
 		return res;
 	}
 
-	async connect(req: ConnectRequest): Promise<InitalizationData> {
+	async connect(req: ConnectRequest): Promise<InitializationData> {
 		const account = RequestMapper.mapAccount(req.account);
 		const res = await this.commandBus.execute(
-			new ConnectCommand(account, req.network, req.wallet),
+			new ConnectCommand(req.network, req.wallet, account),
 		);
 		await this.commandBus.execute(new SetNetworkCommand(req.network));
 		return res.payload;
