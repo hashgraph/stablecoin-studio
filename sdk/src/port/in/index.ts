@@ -7,6 +7,8 @@ import StableCoin from './StableCoin.js';
 
 export { StableCoin, Account, Network, Role as Roles };
 
+export * from './request';
+
 export * from './StableCoin.js';
 export * from './Network.js';
 export * from './Account.js';
