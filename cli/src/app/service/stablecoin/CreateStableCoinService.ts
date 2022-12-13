@@ -1,12 +1,12 @@
 import { configurationService, language } from './../../../index.js';
 import { utilsService } from '../../../index.js';
 import {
-  SDK,
+  StableCoin,
   AccountId,
   PrivateKey,
   PublicKey,
-  IStableCoinDetail,
-  CreateStableCoinRequest,
+  StableCoinViewModel,
+  CreateRequest,
   TokenSupplyType,
 } from 'hedera-stable-coin-sdk';
 import { IManagedFeatures } from '../../../domain/configuration/interfaces/IManagedFeatures.js';
@@ -29,15 +29,15 @@ export default class CreateStableCoinService extends Service {
    * @param isWizard
    */
   public async createStableCoin(
-    stableCoin: CreateStableCoinRequest,
+    stableCoin: CreateRequest,
     isWizard = false,
-  ): Promise<IStableCoinDetail> {
+  ): Promise<StableCoinViewModel> {
     if (isWizard) {
       stableCoin = await this.wizardCreateStableCoin();
     }
 
     // Call to create stable coin sdk function
-    const sdk: SDK = utilsService.getSDK();
+    //const sdk: SDK = utilsService.getSDK();
     const currentAccount = utilsService.getCurrentAccount();
 
     if (
@@ -58,8 +58,8 @@ export default class CreateStableCoinService extends Service {
     utilsService.showMessage('\n');
     await utilsService.showSpinner(
       new Promise((resolve, reject) => {
-        sdk
-          .createStableCoin(stableCoin)
+        StableCoin
+          .create(stableCoin)
           .then((coin) => {
             console.log(coin);
             createdToken = coin;
@@ -87,7 +87,7 @@ export default class CreateStableCoinService extends Service {
    * Specific function for wizard to create stable coin
    * @returns
    */
-  public async wizardCreateStableCoin(): Promise<CreateStableCoinRequest> {
+  public async wizardCreateStableCoin(): Promise<CreateRequest> {
     const currentAccount = utilsService.getCurrentAccount();
     const currentFactory = utilsService.getCurrentFactory();
     const currentHederaERC20 = utilsService.getCurrentHederaERC20();
@@ -95,7 +95,7 @@ export default class CreateStableCoinService extends Service {
     utilsService.displayCurrentUserInfo(currentAccount);
 
     // Call to create stable coin sdk function
-    let tokenToCreate = new CreateStableCoinRequest({
+    let tokenToCreate = new CreateRequest({
       account: {
         accountId: currentAccount.accountId,
         privateKey: {
@@ -109,21 +109,6 @@ export default class CreateStableCoinService extends Service {
       stableCoinFactory: currentFactory.id,
       hederaERC20: currentHederaERC20.id
     });
-
-    // Factory
-    /*tokenToCreate.stableCoinFactory = await utilsService.defaultSingleAsk(
-      language.getText('stablecoin.askFactory'),
-      tokenToCreate.stableCoinFactory || '0.0.0',
-    );
-    await utilsService.handleValidation(
-      () => tokenToCreate.validate('stableCoinFactory'),
-      async () => {
-        tokenToCreate.stableCoinFactory = await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.askFactory'),
-          tokenToCreate.stableCoinFactory || '0.0.0',
-        );
-      },
-    );*/
 
     // Name
     tokenToCreate.name = await utilsService.defaultSingleAsk(

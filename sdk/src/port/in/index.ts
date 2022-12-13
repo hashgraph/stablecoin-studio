@@ -1,10 +1,19 @@
 import Account from './Account.js';
 import Network from './Network.js';
 import Role from './Role.js';
-import StableCoin from './StableCoin.js';
+import StableCoin, 
+    {HederaERC20AddressTestnet,
+    HederaERC20AddressPreviewnet,
+    FactoryAddressTestnet,
+    FactoryAddressPreviewnet} 
+    from './StableCoin.js';
 import Event from './Event.js';
 
-export { StableCoin, Account, Network, Role, Event };
+export { StableCoin, Account, Network, Role, Event,
+    HederaERC20AddressTestnet,  
+    HederaERC20AddressPreviewnet,
+    FactoryAddressTestnet,
+    FactoryAddressPreviewnet};
 
 export * from './request';
 
