@@ -10,14 +10,14 @@ import {
 } from './request/index.js';
 import GetPublicKeyRequest from './request/GetPublicKeyRequest.js';
 import PublicKey from '../../domain/context/account/PublicKey.js';
+import {default as HederaAccount} from '../../domain/context/account/Account.js';
 import StableCoinListViewModel from '../out/mirror/response/StableCoinListViewModel.js';
 import AccountViewModel from '../out/mirror/response/AccountViewModel.js';
 import { MirrorNodeAdapter } from '../out/mirror/MirrorNodeAdapter.js';
 import { Balance } from '../../domain/context/stablecoin/Balance.js';
 import PrivateKey from '../../domain/context/account/PrivateKey.js';
 
-export { AccountViewModel, Balance };
-export { PublicKey, PrivateKey };
+export { AccountViewModel };
 
 interface IAccountInPort {
 	getPublicKey(request: GetPublicKeyRequest): Promise<PublicKey>;
@@ -28,6 +28,9 @@ interface IAccountInPort {
 }
 
 class AccountInPort implements IAccountInPort {
+	public readonly NullHederaAccount: HederaAccount = HederaAccount.NULL;
+	public readonly NullPublicKey: PublicKey = PublicKey.NULL;
+
 	constructor(
 		private readonly networkService: NetworkService = Injectable.resolve(
 			NetworkService,
@@ -51,6 +54,13 @@ class AccountInPort implements IAccountInPort {
 	}
 	getInfo(request: GetAccountInfoRequest): Promise<AccountViewModel> {
 		throw new Error('Method not implemented.');
+	}
+
+	isPublicKeyNull(val?: { key: string; type: string }): boolean {
+		if (!val) return false;
+		return (
+			val.key === PublicKey.NULL.key && val.type === PublicKey.NULL.type
+		);
 	}
 }
 

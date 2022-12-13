@@ -5,8 +5,8 @@ import {
   StableCoin,
   StableCoinViewModel,
   TokenSupplyType,
-  PublicKey,
-  PrivateKey,
+  RequestPrivateKey,
+  RequestPublicKey,
   Account,
 } from 'hedera-stable-coin-sdk';
 import { IManagedFeatures } from '../../../domain/configuration/interfaces/IManagedFeatures.js';
@@ -28,7 +28,7 @@ export default class CreateStableCoinService extends Service {
    * @param isWizard
    */
   public async createStableCoin(
-    stableCoin: CreateRequest,
+    stableCoin: CreateStableCoinRequest,
     isWizard = false,
   ): Promise<StableCoinViewModel> {
     if (isWizard) {
@@ -84,7 +84,7 @@ export default class CreateStableCoinService extends Service {
    * Specific function for wizard to create stable coin
    * @returns
    */
-  public async wizardCreateStableCoin(): Promise<CreateRequest> {
+  public async wizardCreateStableCoin(): Promise<CreateStableCoinRequest> {
     const currentAccount = utilsService.getCurrentAccount();
     const currentFactory = utilsService.getCurrentFactory();
     const currentHederaERC20 = utilsService.getCurrentHederaERC20();
@@ -92,7 +92,7 @@ export default class CreateStableCoinService extends Service {
     utilsService.displayCurrentUserInfo(currentAccount);
 
     // Call to create stable coin sdk function
-    let tokenToCreate = new CreateRequest({
+    let tokenToCreate = new CreateStableCoinRequest({
       account: {
         accountId: currentAccount.accountId,
         privateKey: {
@@ -214,16 +214,13 @@ export default class CreateStableCoinService extends Service {
     });
     if (managedBySC) {
       const currentAccount: IAccountConfig = utilsService.getCurrentAccount();
-      tokenToCreate.adminKey = PublicKey.fromPrivateKey(
-        currentAccount.privateKey.key,
-        currentAccount.privateKey.type,
-      );
-      tokenToCreate.freezeKey = PublicKey.NULL;
+      tokenToCreate.adminKey = Account.NullPublicKey;
+      tokenToCreate.freezeKey = Account.NullPublicKey;
       //KYCKey,
-      tokenToCreate.wipeKey = PublicKey.NULL;
-      tokenToCreate.supplyKey = PublicKey.NULL;
-      tokenToCreate.pauseKey = PublicKey.NULL;
-      tokenToCreate.treasury = Account.NULL.id;
+      tokenToCreate.wipeKey = Account.NullPublicKey;
+      tokenToCreate.supplyKey = Account.NullPublicKey;
+      tokenToCreate.pauseKey = Account.NullPublicKey;
+      tokenToCreate.treasury = Account.NullHederaAccount.id;
       if (
         !(await utilsService.defaultConfirmAsk(
           language.getText('stablecoin.askConfirmCreation'),
@@ -392,20 +389,20 @@ export default class CreateStableCoinService extends Service {
     return { adminKey, supplyKey, freezeKey, wipeKey, pauseKey };
   }
 
-  private async checkAnswer(answer: string): Promise<PublicKey> {
+  private async checkAnswer(answer: string): Promise<RequestPublicKey> {
     switch (answer) {
       case 'Current user key': {
         const currentAccount = utilsService.getCurrentAccount();
-        const privateKey: PrivateKey = new PrivateKey(
-          currentAccount.privateKey.key,
-          currentAccount.privateKey.type,
-        );
+        const privateKey: RequestPrivateKey = new RequestPrivateKey({
+          key: currentAccount.privateKey.key,
+          type: currentAccount.privateKey.type
+      });
         return privateKey.publicKey;
       }
 
       case 'Other key': {
         const key = await utilsService.defaultPublicKeyAsk();
-        return new PublicKey({
+        return new RequestPublicKey({
           key: key,
           type: 'ED25519',
         });
@@ -416,16 +413,16 @@ export default class CreateStableCoinService extends Service {
 
       case 'The Smart Contract':
       default:
-        return PublicKey.NULL;
+        return Account.NullPublicKey;
     }
   }
 
-  private getTreasuryAccountFromSupplyKey(supplyKey: PublicKey): string {
-    if (supplyKey && !PublicKey.isNull(supplyKey)) {
+  private getTreasuryAccountFromSupplyKey(supplyKey: RequestPublicKey): string {
+    if (supplyKey && !Account.isPublicKeyNull(supplyKey)) {
       const currentAccount = utilsService.getCurrentAccount();
       return currentAccount.accountId;
     } else {
-      return Account.NULL.id;
+      return Account.NullHederaAccount.id;
     }
   }
 }

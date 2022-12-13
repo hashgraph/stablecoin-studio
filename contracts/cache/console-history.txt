@@ -1,0 +1,10 @@
+const precompiled_2 = await ethers.getContractAt("IHederaTokenService.sol", "0x167")
+const precompiled = await ethers.getContractAt("hts-precompiled/IHederaTokenService.sol", "0x167")
+const precompiled_2 = await ethers.getContractAt("hts-precompiled/IHederaTokenService.sol", "0x167")
+await precompiled.createFungibleToken()
+precompiled.createFungibleToken()
+precompiled
+const precompiled = await ethers.getContractAt("hts-precompiled/IHederaTokenService.sol", "0x167")
+config
+const precompiled = await ethers.getContractAt("hts-precompiled/IHederaTokenService.sol", "0x167")
+const precompiled = await ethers.getContractAt("hts-precompile/IHederaTokenService.sol","0x167")
