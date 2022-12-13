@@ -17,17 +17,23 @@ import DecreaseSupplierAllowanceRequest from './request/DecreaseSupplierAllowanc
 import CheckSupplierLimitRequest from './request/CheckSupplierLimitRequest.js';
 
 interface IRole {
-	hasRole(request: HasRoleRequest): boolean;
-	grantRole(request: GrantRoleRequest): boolean;
-	revokeRole(request: RevokeRoleRequest): boolean;
-	getRoles(request: GetRolesRequest): boolean;
+	hasRole(request: HasRoleRequest): Promise<boolean>;
+	grantRole(request: GrantRoleRequest): Promise<boolean>;
+	revokeRole(request: RevokeRoleRequest): Promise<boolean>;
+	getRoles(request: GetRolesRequest): Promise<string[]>;
 	Supplier: {
-		getAllowance(request: GetSupplierAllowanceRequest): string;
-		resetAllowance(request: ResetSupplierAllowanceRequest): boolean;
-		increaseAllowance(request: IncreaseSupplierAllowanceRequest): boolean;
-		decreaseAllowance(request: DecreaseSupplierAllowanceRequest): boolean;
-		isLimited(request: CheckSupplierLimitRequest): boolean;
-		isUnlimited(request: CheckSupplierLimitRequest): boolean;
+		getAllowance(request: GetSupplierAllowanceRequest): Promise<string>;
+		resetAllowance(
+			request: ResetSupplierAllowanceRequest,
+		): Promise<boolean>;
+		increaseAllowance(
+			request: IncreaseSupplierAllowanceRequest,
+		): Promise<boolean>;
+		decreaseAllowance(
+			request: DecreaseSupplierAllowanceRequest,
+		): Promise<boolean>;
+		isLimited(request: CheckSupplierLimitRequest): Promise<boolean>;
+		isUnlimited(request: CheckSupplierLimitRequest): Promise<boolean>;
 	};
 }
 
@@ -44,25 +50,31 @@ class RoleInPort implements IRole {
 			TransactionService,
 		),
 	) {}
-	hasRole(request: HasRoleRequest): boolean {
+	hasRole(request: HasRoleRequest): Promise<boolean> {
 		throw new Error('Method not implemented.');
 	}
-	grantRole(request: GrantRoleRequest): boolean {
+	grantRole(request: GrantRoleRequest): Promise<boolean> {
 		throw new Error('Method not implemented.');
 	}
-	revokeRole(request: RevokeRoleRequest): boolean {
+	revokeRole(request: RevokeRoleRequest): Promise<boolean> {
 		throw new Error('Method not implemented.');
 	}
-	getRoles(request: GetRolesRequest): boolean {
+	getRoles(request: GetRolesRequest): Promise<string[]> {
 		throw new Error('Method not implemented.');
 	}
 	Supplier: {
-		getAllowance(request: GetSupplierAllowanceRequest): string;
-		resetAllowance(request: ResetSupplierAllowanceRequest): boolean;
-		increaseAllowance(request: IncreaseSupplierAllowanceRequest): boolean;
-		decreaseAllowance(request: DecreaseSupplierAllowanceRequest): boolean;
-		isLimited(request: CheckSupplierLimitRequest): boolean;
-		isUnlimited(request: CheckSupplierLimitRequest): boolean;
+		getAllowance(request: GetSupplierAllowanceRequest): Promise<string>;
+		resetAllowance(
+			request: ResetSupplierAllowanceRequest,
+		): Promise<boolean>;
+		increaseAllowance(
+			request: IncreaseSupplierAllowanceRequest,
+		): Promise<boolean>;
+		decreaseAllowance(
+			request: DecreaseSupplierAllowanceRequest,
+		): Promise<boolean>;
+		isLimited(request: CheckSupplierLimitRequest): Promise<boolean>;
+		isUnlimited(request: CheckSupplierLimitRequest): Promise<boolean>;
 	};
 }
 

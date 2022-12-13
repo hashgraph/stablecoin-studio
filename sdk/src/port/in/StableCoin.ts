@@ -6,6 +6,7 @@ import GetStableCoinDetailsRequest from './request/GetStableCoinDetailsRequest.j
 import CashOutRequest from './request/CashOutRequest.js';
 import RescueRequest from './request/RescueRequest.js';
 import WipeRequest from './request/WipeRequest.js';
+import AssociateTokenRequest from './request/AssociateTokenRequest.js';
 import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import { HederaId } from '../../domain/context/shared/HederaId.js';
 import NetworkService from '../../app/service/NetworkService.js';
@@ -16,6 +17,15 @@ import StableCoinViewModel from '../out/mirror/response/StableCoinViewModel.js';
 import StableCoinService from '../../app/service/StableCoinService.js';
 import { GetStableCoinQuery } from '../../app/usecase/query/stablecoin/get/GetStableCoinQuery.js';
 import AccountService from '../../app/service/AccountService.js';
+import GetAccountBalanceRequest from './request/GetAccountBalanceRequest.js';
+import { Balance } from '../../domain/context/stablecoin/Balance.js';
+import CapabilitiesRequest from './request/CapabilitiesRequest.js';
+import StableCoinCapabilities from '../../domain/context/stablecoin/StableCoinCapabilities.js';
+import DeleteRequest from './request/DeleteRequest.js';
+import FreezeAccountStableCoinRequest from './request/FreezeAccountRequest.js';
+import PauseRequest from './request/PauseRequest.js';
+
+export { StableCoinViewModel };
 
 interface IStableCoinInPort {
 	create(request: CreateRequest): Promise<StableCoinViewModel>;
@@ -24,6 +34,14 @@ interface IStableCoinInPort {
 	cashOut(request: CashOutRequest): Promise<boolean>;
 	rescue(request: RescueRequest): Promise<boolean>;
 	wipe(request: WipeRequest): Promise<boolean>;
+	delete(request: DeleteRequest): Promise<boolean>;
+	associate(request: AssociateTokenRequest): Promise<boolean>;
+	getBalanceOf(request: GetAccountBalanceRequest): Promise<Balance>;
+	capabilities(request: CapabilitiesRequest): Promise<StableCoinCapabilities>;
+	freeze(request: FreezeAccountStableCoinRequest): Promise<boolean>;
+	unfreeze(request: FreezeAccountStableCoinRequest): Promise<boolean>;
+	pause(request: PauseRequest): Promise<boolean>;
+	unpause(request: PauseRequest): Promise<boolean>;
 }
 
 class StableCoinInPort implements IStableCoinInPort {
@@ -88,6 +106,32 @@ class StableCoinInPort implements IStableCoinInPort {
 		throw new Error('Method not implemented.');
 	}
 	wipe(request: WipeRequest): Promise<boolean> {
+		throw new Error('Method not implemented.');
+	}
+	delete(request: DeleteRequest): Promise<boolean> {
+		throw new Error('Method not implemented.');
+	}
+	associate(request: AssociateTokenRequest): Promise<boolean> {
+		throw new Error('Method not implemented.');
+	}
+	getBalanceOf(request: GetAccountBalanceRequest): Promise<Balance> {
+		throw new Error('Method not implemented.');
+	}
+	capabilities(
+		request: CapabilitiesRequest,
+	): Promise<StableCoinCapabilities> {
+		throw new Error('Method not implemented.');
+	}
+	freeze(request: FreezeAccountStableCoinRequest): Promise<boolean> {
+		throw new Error('Method not implemented.');
+	}
+	unfreeze(request: FreezeAccountStableCoinRequest): Promise<boolean> {
+		throw new Error('Method not implemented.');
+	}
+	pause(request: PauseRequest): Promise<boolean> {
+		throw new Error('Method not implemented.');
+	}
+	unpause(request: PauseRequest): Promise<boolean> {
 		throw new Error('Method not implemented.');
 	}
 }

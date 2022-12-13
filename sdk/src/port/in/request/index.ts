@@ -21,6 +21,8 @@ import GetAccountInfoRequest from './GetAccountInfoRequest.js';
 import DeleteRequest from './DeleteRequest.js';
 import PauseRequest from './PauseRequest.js';
 import FreezeAccountRequest from './FreezeAccountRequest.js';
+import ConnectRequest from './ConnectRequest.js';
+import CapabilitiesRequest from './CapabilitiesRequest.js';
 
 export * from './BaseRequest.js';
 export {
@@ -47,4 +49,6 @@ export {
 	DeleteRequest as DeleteStableCoinRequest,
 	PauseRequest as PauseStableCoinRequest,
 	FreezeAccountRequest,
+	ConnectRequest,
+	CapabilitiesRequest,
 };
