@@ -25,22 +25,23 @@ import { ResetAllowanceCommand } from '../../app/usecase/command/stablecoin/role
 import { IncreaseAllowanceCommand } from '../../app/usecase/command/stablecoin/roles/increaseAllowance/IncreaseAllowanceCommand.js';
 import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import { DecreaseAllowanceCommand } from '../../app/usecase/command/stablecoin/roles/decreaseAllowance/DecreaseAllowanceCommand.js';
-import { IsLimitedCommand } from '../../app/usecase/command/stablecoin/roles/isLimited/IsLimitedCommand.js';
 import { IsUnlimitedCommand } from '../../app/usecase/command/stablecoin/roles/isUnlimited/IsUnlimitedCommand.js';
+import { StableCoinRole } from '../../domain/context/stablecoin/StableCoinRole.js';
+import { GrantSupplierRoleCommand } from '../../app/usecase/command/stablecoin/roles/grantSupplierRole/GrantSupplierRoleCommand.js';
+import { GrantUnlimitedSupplierRoleCommand } from '../../app/usecase/command/stablecoin/roles/granUnlimitedSupplierRole/GrantUnlimitedSupplierRoleCommand.js';
+import { RevokeSupplierRoleCommand } from '../../app/usecase/command/stablecoin/roles/revokeSupplierRole/RevokeSupplierRoleCommand.js';
 
 interface IRole {
 	hasRole(request: HasRoleRequest): Promise<boolean>;
 	grantRole(request: GrantRoleRequest): Promise<boolean>;
 	revokeRole(request: RevokeRoleRequest): Promise<boolean>;
 	getRoles(request: GetRolesRequest): Promise<string[]>;
-	//Supplier: {
-		getAllowance(request: GetSupplierAllowanceRequest): Promise<BigDecimal>;
-		resetAllowance(request: ResetSupplierAllowanceRequest): Promise<boolean>;
-		increaseAllowance(request: IncreaseSupplierAllowanceRequest): Promise<boolean>;
-		decreaseAllowance(request: DecreaseSupplierAllowanceRequest): Promise<boolean>;
-		isLimited(request: CheckSupplierLimitRequest): Promise<boolean>;
-		isUnlimited(request: CheckSupplierLimitRequest): Promise<boolean>;
-	//};
+	getSupplierAllowance(request: GetSupplierAllowanceRequest): Promise<BigDecimal>;
+	resetSupplierAllowance(request: ResetSupplierAllowanceRequest): Promise<boolean>;
+	increaseSupplierAllowance(request: IncreaseSupplierAllowanceRequest): Promise<boolean>;
+	decreaseSupplierAllowance(request: DecreaseSupplierAllowanceRequest): Promise<boolean>;
+	isLimitedSupplierAllowance(request: CheckSupplierLimitRequest): Promise<boolean>;
+	isUnlimitedSupplierAllowance(request: CheckSupplierLimitRequest): Promise<boolean>;
 }
 
 class RoleInPort implements IRole {
@@ -60,53 +61,81 @@ class RoleInPort implements IRole {
 	async hasRole(request: HasRoleRequest): Promise<boolean> {
 		const { tokenId, targetId, role } = request;
 		const validation = request.validate();
-		// TODO return validation
-		if (validation.length > 0) return false;
 
-		return !!(await this.commandBus.execute(
+		if (validation.length > 0) throw new Error("validation error");
+
+		return (await this.commandBus.execute(
 			new HasRoleCommand(
 				role!,
 				HederaId.from(targetId),
 				HederaId.from(tokenId)
 			)
-		));
+		)).payload;
 	}
 
 	async grantRole(request: GrantRoleRequest): Promise<boolean> {
-		const { tokenId, targetId, role } = request;
+		const { tokenId, targetId, role, supplierType, amount } = request;
 		const validation = request.validate();
-		// TODO return validation
-		if (validation.length > 0) return false;
 
-		return !!(await this.commandBus.execute(
-			new GrantRoleCommand(
-				role!,
-				HederaId.from(targetId),
-				HederaId.from(tokenId)
-			)
-		));
+		if (validation.length > 0) throw new Error("validation error");
+
+		if (role === StableCoinRole.CASHIN_ROLE) {
+			if (supplierType == 'limited') {
+				return (await this.commandBus.execute(
+					new GrantSupplierRoleCommand(
+						HederaId.from(targetId),
+						HederaId.from(tokenId),
+						BigDecimal.fromString(amount!)
+					)
+				)).payload;
+			} else {
+				return (await this.commandBus.execute(
+					new GrantUnlimitedSupplierRoleCommand(
+						HederaId.from(targetId),
+						HederaId.from(tokenId)
+					)
+				)).payload;
+			}	
+		} else {
+			return (await this.commandBus.execute(
+				new GrantRoleCommand(
+					role!,
+					HederaId.from(targetId),
+					HederaId.from(tokenId)
+				)
+			)).payload;
+		}
 	}
 
 	async revokeRole(request: RevokeRoleRequest): Promise<boolean> {
 		const { tokenId, targetId, role } = request;
 		const validation = request.validate();
-		// TODO return validation
-		if (validation.length > 0) return false;
 
-		return !!(await this.commandBus.execute(
-			new RevokeRoleCommand(
-				role!,
-				HederaId.from(targetId),
-				HederaId.from(tokenId)
-			)
-		));
+		if (validation.length > 0) throw new Error("validation error");
+
+		if (role === StableCoinRole.CASHIN_ROLE) {
+			return (await this.commandBus.execute(
+				new RevokeSupplierRoleCommand(
+					HederaId.from(targetId),
+					HederaId.from(tokenId)
+				)
+			)).payload;
+		} else {
+			return (await this.commandBus.execute(
+				new RevokeRoleCommand(
+					role!,
+					HederaId.from(targetId),
+					HederaId.from(tokenId)
+				)
+			)).payload;
+		}
 	}
 
 	async getRoles(request: GetRolesRequest): Promise<string[]> {
 		const { tokenId, targetId } = request;
 		const validation = request.validate();
-		// TODO return validation
-		if (validation.length > 0) return [];
+
+		if (validation.length > 0) throw new Error("validation error");
 
 		return (await this.commandBus.execute(
 			new GetRolesCommand(
@@ -116,93 +145,88 @@ class RoleInPort implements IRole {
 		)).payload;
 	}
 
-	//Supplier: {
-		async getAllowance(request: GetSupplierAllowanceRequest): Promise<BigDecimal> {
-			const { tokenId, targetId } = request;
-			const validation = request.validate();
-			// TODO return validation
-			if (validation.length > 0) return BigDecimal.ZERO;
-	
-			return (await this.commandBus.execute(
-				new GetAllowanceCommand(
-					HederaId.from(targetId),
-					HederaId.from(tokenId)
-				)
-			)).payload;
-		}
+	async getSupplierAllowance(request: GetSupplierAllowanceRequest): Promise<BigDecimal> {
+		const { tokenId, targetId } = request;
+		const validation = request.validate();
 
-		async resetAllowance(request: ResetSupplierAllowanceRequest): Promise<boolean> {
-			const { tokenId, targetId } = request;
-			const validation = request.validate();
-			// TODO return validation
-			if (validation.length > 0) return false;
-	
-			return !!(await this.commandBus.execute(
-				new ResetAllowanceCommand(
-					HederaId.from(targetId),
-					HederaId.from(tokenId)
-				)
-			));			
-		}
+		if (validation.length > 0) throw new Error("validation error");
 
-		async increaseAllowance(request: IncreaseSupplierAllowanceRequest): Promise<boolean> {
-			const { tokenId, amount, targetId } = request;
-			const validation = request.validate();
-			// TODO return validation
-			if (validation.length > 0) return false;
-	
-			return !!(await this.commandBus.execute(
-				new IncreaseAllowanceCommand(
-					BigDecimal.fromString(amount),
-					HederaId.from(targetId),
-					HederaId.from(tokenId)
-				)
-			));						
-		}
+		return (await this.commandBus.execute(
+			new GetAllowanceCommand(
+				HederaId.from(targetId),
+				HederaId.from(tokenId)
+			)
+		)).payload;
+	}
 
-		async decreaseAllowance(request: DecreaseSupplierAllowanceRequest): Promise<boolean> {
-			const { tokenId, amount, targetId } = request;
-			const validation = request.validate();
-			// TODO return validation
-			if (validation.length > 0) return false;
-	
-			return !!(await this.commandBus.execute(
-				new DecreaseAllowanceCommand(
-					BigDecimal.fromString(amount),
-					HederaId.from(targetId),
-					HederaId.from(tokenId)
-				)
-			));			
-		}
+	async resetSupplierAllowance(request: ResetSupplierAllowanceRequest): Promise<boolean> {
+		const { tokenId, targetId } = request;
+		const validation = request.validate();
 
-		async isLimited(request: CheckSupplierLimitRequest): Promise<boolean> {
-			const { tokenId, targetId } = request;
-			const validation = request.validate();
-			// TODO return validation
-			if (validation.length > 0) return false;
-	
-			return !!(await this.commandBus.execute(
-				new IsLimitedCommand(
-					HederaId.from(targetId),
-					HederaId.from(tokenId)
-				)
-			));			
-		}
+		if (validation.length > 0) return false;
 
-		async isUnlimited(request: CheckSupplierLimitRequest): Promise<boolean> {
-			const { tokenId, targetId } = request;
-			const validation = request.validate();
-			// TODO return validation
-			if (validation.length > 0) return false;
-	
-			return !!(await this.commandBus.execute(
-				new IsUnlimitedCommand(
-					HederaId.from(targetId),
-					HederaId.from(tokenId)
-				)
-			));			
-		}
-	//};
+		return (await this.commandBus.execute(
+			new ResetAllowanceCommand(
+				HederaId.from(targetId),
+				HederaId.from(tokenId)
+			)
+		)).payload;			
+	}
+
+	async increaseSupplierAllowance(request: IncreaseSupplierAllowanceRequest): Promise<boolean> {
+		const { tokenId, amount, targetId } = request;
+		const validation = request.validate();
+
+		if (validation.length > 0) throw new Error("validation error");
+
+		return (await this.commandBus.execute(
+			new IncreaseAllowanceCommand(
+				BigDecimal.fromString(amount),
+				HederaId.from(targetId),
+				HederaId.from(tokenId)
+			)
+		)).payload;						
+	}
+
+	async decreaseSupplierAllowance(request: DecreaseSupplierAllowanceRequest): Promise<boolean> {
+		const { tokenId, amount, targetId } = request;
+		const validation = request.validate();
+
+		if (validation.length > 0) throw new Error("validation error");
+
+		return (await this.commandBus.execute(
+			new DecreaseAllowanceCommand(
+				BigDecimal.fromString(amount),
+				HederaId.from(targetId),
+				HederaId.from(tokenId)
+			)
+		)).payload;			
+	}
+
+	async isLimitedSupplierAllowance(request: CheckSupplierLimitRequest): Promise<boolean> {
+		const { tokenId, targetId } = request;
+		const validation = request.validate();
+
+		if (validation.length > 0) throw new Error("validation error");
+
+		return this.hasRole(new HasRoleRequest({targetId: targetId,
+			tokenId: tokenId,
+			role: StableCoinRole.CASHIN_ROLE }));
+	}
+
+	async isUnlimitedSupplierAllowance(request: CheckSupplierLimitRequest): Promise<boolean> {
+		const { tokenId, targetId } = request;
+		const validation = request.validate();
+
+		if (validation.length > 0) throw new Error("validation error");
+
+		return (await this.commandBus.execute(
+			new IsUnlimitedCommand(
+				HederaId.from(targetId),
+				HederaId.from(tokenId)
+			)
+		)).payload;			
+	}
 }
 
 const Role = new RoleInPort();
