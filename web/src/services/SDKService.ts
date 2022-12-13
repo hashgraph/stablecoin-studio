@@ -1,49 +1,20 @@
-import type {
-	AppMetadata,
-	InitializationData,
-	IStableCoinDetail,
-	IStableCoinList,
-	IAccountInfo,
-	Capabilities,
-	CreateStableCoinRequest,
-	CashOutStableCoinRequest,
-	GetAccountBalanceRequest,
-	IncreaseCashInLimitRequest,
-	RescueStableCoinRequest,
-	WipeStableCoinRequest,
-	CheckCashInLimitRequest,
-	CheckCashInRoleRequest,
-	DecreaseCashInLimitRequest,
-	GrantRoleRequest,
-	HasRoleRequest,
-	ResetCashInLimitRequest,
-	RevokeRoleRequest,
-	CashInStableCoinRequest,
-	GetStableCoinDetailsRequest,
-	GetRolesRequest,
-	GetListStableCoinRequest,
-	GetAccountInfoRequest,
-	PauseStableCoinRequest,
-	DeleteStableCoinRequest,
-	FreezeAccountRequest} from 'hedera-stable-coin-sdk';
-import {
-	LoggerTransports,
- HederaNetwork, NetworkMode, SDK, HederaNetworkEnviroment } from 'hedera-stable-coin-sdk';
-
-export enum HashConnectConnectionState {
-	Connected = 'Connected',
-	Disconnected = 'Disconnected',
-	Paired = 'Paired',
-	Connecting = 'Connecting',
-}
+import type { InitializationData } from 'hedera-stable-coin-sdk';
+import { LoggerTransports, Network, SDK } from 'hedera-stable-coin-sdk';
+import type { SupportedWallets } from 'hedera-stable-coin-sdk/build/esm/src/domain/context/network/Wallet.js';
+import ConnectRequest from 'hedera-stable-coin-sdk/build/esm/src/port/in/request/ConnectRequest.js';
 
 export type StableCoinListRaw = Array<Record<'id' | 'symbol', string>>;
 
-const appMetadata: AppMetadata = {
+SDK.appMetadata = {
 	name: 'Hedera Stable Coin',
 	description: 'An hedera dApp',
 	icon: 'https://dashboard-assets.dappradar.com/document/15402/hashpack-dapp-defi-hedera-logo-166x166_696a701b42fd20aaa41f2591ef2339c7.png',
 	url: '',
+};
+
+SDK.log = {
+	level: process.env.REACT_APP_LOG_LEVEL ?? 'ERROR',
+	transport: new LoggerTransports.Console(),
 };
 
 interface EventsSetter {
@@ -54,48 +25,25 @@ interface EventsSetter {
 }
 
 export class SDKService {
-	private static instance: SDK | undefined;
-
-	constructor() {}
-	public static async getInstance(events?: EventsSetter) {
-		if (!SDKService.instance) {
-			SDKService.instance = new SDK({
-				network: new HederaNetwork(HederaNetworkEnviroment.TEST), // TODO: dynamic data
-				mode: NetworkMode.HASHPACK,
-				options: {
-					appMetadata,
-					logOptions: {
-						level: process.env.REACT_APP_LOG_LEVEL ?? 'ERROR',
-						transports: new LoggerTransports.Console(),
-					},
-				},
-			});
-
-			const { onInit, onWalletExtensionFound, onWalletPaired, onWalletConnectionChanged } =
-				events || {
-					onInit: () => {},
-					onWalletAcknowledgeMessageEvent: () => {},
-					onWalletExtensionFound: () => {},
-					onWalletPaired: () => {},
-					onWalletConnectionChanged: () => {},
-				};
-
-			await SDKService.instance.init({ onInit });
-			SDKService.instance.onWalletExtensionFound(onWalletExtensionFound);
-			SDKService.instance.onWalletPaired(onWalletPaired);
-			SDKService.instance.onWalletConnectionChanged(onWalletConnectionChanged);
-		}
-
-		return SDKService.instance;
-	}
+	static initData?: InitializationData = undefined;
 
 	public static isInit() {
 		// @ts-ignore
 		return !!this.instance?.networkAdapter?._provider;
 	}
 
-	public static connectWallet() {
-		SDKService.getInstance().then((instance) => instance?.connectWallet());
+	public static async connectWallet(wallet: SupportedWallets) {
+		try {
+			this.initData = await Network.connect(
+				new ConnectRequest({
+					network: 'testnet',
+					wallet,
+				}),
+			);
+			return this.initData;
+		} catch (error) {
+			console.error(error);
+		}
 	}
 
 	public static async getAvailabilityExtension(): Promise<boolean> {
@@ -106,8 +54,8 @@ export class SDKService {
 		return (await SDKService.getInstance())?.gethashConnectConectionStatus();
 	}
 
-	public static async getWalletData(): Promise<InitializationData> {
-		return (await SDKService.getInstance()).getInitData();
+	public static getWalletData(): InitializationData | undefined {
+		return this.initData;
 	}
 
 	public static async disconnectWallet(): Promise<void> {

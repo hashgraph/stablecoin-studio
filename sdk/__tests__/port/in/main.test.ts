@@ -1,6 +1,7 @@
 import EventService from '../../../src/app/service/event/EventService.js';
 import { WalletEvents } from '../../../src/app/service/event/WalletEvent.js';
 import { Injectable } from '../../../src/core/Injectable.js';
+import { WalletConnectError } from '../../../src/domain/context/network/error/WalletConnectError.js';
 import { Network, StableCoin } from '../../../src/index.js';
 import CashInRequest from '../../../src/port/in/request/CashInRequest.js';
 import ConnectRequest, {
@@ -36,6 +37,23 @@ describe('🧪 SDK test', () => {
 		expect(res.symbol).not.toBeNull();
 		expect(res.treasury).not.toBeNull();
 		expect(res.tokenId).not.toBeNull();
+	});
+
+	it('Fails to initialize HashPack', async () => {
+		const connection = Network.connect(
+			new ConnectRequest({
+				account: {
+					accountId: '0.0.47820993',
+					privateKey: {
+						key: '0x4e3a8e419d6a10765ad1db628e1e86343a971543d14548e023143675f55a6875',
+						type: 'ED25519',
+					},
+				},
+				network: 'testnet',
+				wallet: SupportedWallets.HASHPACK,
+			}),
+		);
+		await expect(connection).rejects.toThrow(WalletConnectError);
 	});
 
 	it('Initializes network for operation', async () => {

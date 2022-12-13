@@ -147,14 +147,19 @@ export default class RequestMapper {
 		}
 	}
 
-	public static mapAccount(account: RequestAccount): Account {
-		return new Account({
-			id: account.accountId,
-			evmAddress: account.evmAddress,
-			privateKey: new PrivateKey({
-				key: account.privateKey?.key ?? '',
-				type: account.privateKey?.type ?? '',
-			}),
-		});
+	public static mapAccount(account?: RequestAccount): Account | undefined {
+		return account
+			? new Account({
+					id: account.accountId,
+					evmAddress: account.evmAddress,
+					privateKey:
+						account.privateKey?.key && account.privateKey.type
+							? new PrivateKey({
+									key: account.privateKey?.key ?? '',
+									type: account.privateKey?.type ?? '',
+							  })
+							: undefined,
+			  })
+			: undefined;
 	}
 }

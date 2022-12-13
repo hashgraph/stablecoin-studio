@@ -9,7 +9,7 @@ import TransactionResponse from '../../../../domain/context/transaction/Transact
 import { TransactionType } from '../../TransactionResponseEnums.js';
 import { HTSTransactionResponseAdapter } from './HTSTransactionResponseAdapter.js';
 import { Injectable } from '../../../../core/Injectable.js';
-import { TransactionAdapterInitializationData } from '../../TransactionAdapter.js';
+import { InitializationData } from '../../TransactionAdapter.js';
 import Account from '../../../../domain/context/account/Account.js';
 import { Environment } from '../../../../domain/context/network/Environment.js';
 import {
@@ -42,7 +42,7 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 		super(mirrorNodeAdapter);
 	}
 
-	register(account: Account): Promise<TransactionAdapterInitializationData> {
+	register(account: Account): Promise<InitializationData> {
 		Injectable.registerTransactionHandler(this);
 		this.account = account;
 		this.network = this.networkService.environment;

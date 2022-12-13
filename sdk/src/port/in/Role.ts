@@ -16,7 +16,7 @@ import IncreaseSupplierAllowanceRequest from './request/IncreaseSupplierAllowanc
 import DecreaseSupplierAllowanceRequest from './request/DecreaseSupplierAllowanceRequest.js';
 import CheckSupplierLimitRequest from './request/CheckSupplierLimitRequest.js';
 
-interface IRoles {
+interface IRole {
 	hasRole(request: HasRoleRequest): boolean;
 	grantRole(request: GrantRoleRequest): boolean;
 	revokeRole(request: RevokeRoleRequest): boolean;
@@ -31,7 +31,7 @@ interface IRoles {
 	};
 }
 
-class RolesInPort implements IRoles {
+class RoleInPort implements IRole {
 	constructor(
 		private readonly networkService: NetworkService = Injectable.resolve(
 			NetworkService,
@@ -66,5 +66,5 @@ class RolesInPort implements IRoles {
 	};
 }
 
-const Roles = new RolesInPort();
-export default Roles;
+const Role = new RoleInPort();
+export default Role;

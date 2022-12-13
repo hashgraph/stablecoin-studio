@@ -11,7 +11,7 @@ export interface AccountProps {
 
 export default class Account {
 	public id: HederaId;
-	public evmAddress: string;
+	public evmAddress?: string;
 	public privateKey?: PrivateKey;
 	public publicKey?: PublicKey;
 	constructor(props: AccountProps) {
