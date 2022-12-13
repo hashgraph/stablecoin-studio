@@ -32,7 +32,7 @@ export const FactoryAddressPreviewnet = "0.0.11111111";
 
 
 interface IStableCoinInPort {
-	create(request: CreateRequest): Promise<StableCoinDetail>;
+	create(request: CreateRequest): Promise<StableCoinViewModel>;
 	getInfo(request: GetStableCoinDetailsRequest): Promise<StableCoinViewModel>;
 	cashIn(request: CashInRequest): Promise<boolean>;
 	cashOut(request: CashOutRequest): Promise<boolean>;
@@ -56,7 +56,7 @@ class StableCoinInPort implements IStableCoinInPort {
 			AccountService,
 		),
 	) {}
-	async create(req: CreateRequest): Promise<StableCoinDetail> {
+	async create(req: CreateRequest): Promise<StableCoinViewModel> {
 		const validation = req.validate();
 		if (validation.length > 0) throw new Error("validation error");
 
@@ -88,13 +88,11 @@ class StableCoinInPort implements IStableCoinInPort {
 			),
 		));
 
-		const details = (await this.queryBus.execute(
+		return (await this.queryBus.execute(
 			new GetStableCoinQuery(
 				createResponse.tokenId
 			)
 		)).coin;
-
-		return Mapper.mapToView(details);
 
 	}
 
