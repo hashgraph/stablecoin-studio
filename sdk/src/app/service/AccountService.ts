@@ -1,6 +1,6 @@
 import { singleton } from 'tsyringe';
 import { CommandBus } from '../../core/command/CommandBus.js';
-import { Injectable } from '../../core/Injectable.js';
+import Injectable from '../../core/Injectable.js';
 import { QueryBus } from '../../core/query/QueryBus.js';
 import Account from '../../domain/context/account/Account.js';
 import NetworkService from './NetworkService.js';

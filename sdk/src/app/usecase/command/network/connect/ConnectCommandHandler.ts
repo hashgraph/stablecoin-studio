@@ -1,6 +1,6 @@
 import { ICommandHandler } from '../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../core/decorator/CommandHandlerDecorator.js';
-import { Injectable } from '../../../../../core/Injectable.js';
+import Injectable from '../../../../../core/Injectable.js';
 import { InvalidWalletTypeError as InvalidWalletTypeError } from '../../../../../domain/context/network/error/InvalidWalletAccountTypeError.js';
 import { WalletConnectError } from '../../../../../domain/context/network/error/WalletConnectError.js';
 import { SupportedWallets } from '../../../../../domain/context/network/Wallet.js';

@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Injectable } from '../../core/Injectable.js';
+import Injectable from '../../core/Injectable.js';
 import NetworkService from '../../app/service/NetworkService.js';
 import { QueryBus } from '../../core/query/QueryBus.js';
 import { CommandBus } from '../../core/command/CommandBus.js';
-import TransactionService from '../../app/service/TransactionService.js';
 import {
 	GetAccountBalanceRequest,
 	GetAccountInfoRequest,
@@ -14,6 +13,8 @@ import PublicKey from '../../domain/context/account/PublicKey.js';
 import StableCoinListViewModel from '../out/mirror/response/StableCoinListViewModel.js';
 import AccountViewModel from '../out/mirror/response/AccountViewModel.js';
 import { MirrorNodeAdapter } from '../out/mirror/MirrorNodeAdapter.js';
+
+export { AccountViewModel, Balance};
 
 interface IAccountInPort {
 	getPublicKey(request: GetPublicKeyRequest): Promise<PublicKey>;

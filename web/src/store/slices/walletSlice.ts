@@ -15,7 +15,7 @@ interface InitialStateProps {
 	foundWallets: SupportedWallets[];
 	isPaired: boolean;
 	loading: boolean;
-	accountInfo: IAccountInfo;
+	accountInfo: AccountViewModel;
 	selectedStableCoin?: IStableCoinDetail;
 	stableCoinList?: IStableCoinList[];
 	externalTokenList?: IExternalToken[];

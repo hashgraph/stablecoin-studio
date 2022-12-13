@@ -127,7 +127,7 @@ export class SDKService {
 	}
 
 	public static async unpause(req: PauseStableCoinRequest) {
-		return await StableCoin.unpause(req);
+		return await StableCoin.unPause(req);
 	}
 
 	public static async freeze(req: FreezeAccountRequest) {
@@ -135,11 +135,11 @@ export class SDKService {
 	}
 
 	public static async unfreeze(req: FreezeAccountRequest) {
-		return await StableCoin.unfreeze(req);
+		return await StableCoin.unFrezze(req);
 	}
 
 	public static async delete(req: DeleteStableCoinRequest) {
-		return await StableCoin.rescue(req);
+		return await StableCoin.delete(req);
 	}
 
 	public static async getCapabilities({
@@ -161,31 +161,31 @@ export class SDKService {
 	}
 
 	public static async resetSupplierAllowance(req: ResetCashInLimitRequest) {
-		return await Role.rescue(req);
+		return await Role.Supplier.resetAllowance(req);
 	}
 
 	public static async checkSupplierAllowance(req: CheckCashInLimitRequest) {
-		return await Role.rescue(req);
+		return await Role.Supplier.getAllowance(req);
 	}
 
 	public static async grantRole(req: GrantRoleRequest) {
-		return await Role.rescue(req);
+		return await Role.grantRole(req);
 	}
 
 	public static async revokeRole(req: RevokeRoleRequest) {
-		return await Role.rescue(req);
+		return await Role.revokeRole(req);
 	}
 
 	public static async hasRole(req: HasRoleRequest) {
-		return await Role.rescue(req);
+		return await Role.hasRole(req);
 	}
 
 	public static async isUnlimitedSupplierAllowance(req: CheckCashInRoleRequest) {
-		return await Role.rescue(req);
+		return await Role.Supplier.isUnlimited(req);
 	}
 
 	public static async getRoles(data: GetRolesRequest) {
-		return await Role.rescue(req);
+		return await Role.getRoles(data);
 	}
 }
 

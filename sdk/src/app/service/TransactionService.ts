@@ -1,5 +1,5 @@
 import { singleton } from 'tsyringe';
-import { Injectable } from '../../core/Injectable.js';
+import Injectable from '../../core/Injectable.js';
 import TransactionAdapter from '../../port/out/TransactionAdapter.js';
 import Service from './Service.js';
 

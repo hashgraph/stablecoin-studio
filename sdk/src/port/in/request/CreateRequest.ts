@@ -30,6 +30,10 @@ export default class CreateRequest
 		this._decimals = typeof value === 'number' ? value : parseFloat(value);
 	}
 
+	stableCoinFactory: string;
+
+	hederaERC20: string;
+
 	@OptionalField()
 	initialSupply?: string | undefined;
 
@@ -82,7 +86,9 @@ export default class CreateRequest
 		pauseKey,
 		supplyKey,
 		treasury,
-		supplyType
+		supplyType,
+		stableCoinFactory,
+		hederaERC20
 	}: {
 		account: RequestAccount;
 		name: string;
@@ -100,6 +106,8 @@ export default class CreateRequest
 		supplyKey?: RequestPublicKey;
 		treasury?: string;
 		supplyType?: TokenSupplyType;
+		stableCoinFactory: string;
+		hederaERC20: string;
 	}) {
 		super({
 			account: Validation.checkAccount(),
@@ -193,6 +201,8 @@ export default class CreateRequest
 			pauseKey: Validation.checkPublicKey(),
 			supplyKey: Validation.checkPublicKey(),
 			treasury: Validation.checkHederaIdFormat(),
+			stableCoinFactory: Validation.checkContractId(),
+			hederaERC20: Validation.checkContractId()
 		});
 		this.account = account;
 		this.name = name;
@@ -211,5 +221,7 @@ export default class CreateRequest
 		this.supplyKey = supplyKey;
 		this.treasury = treasury;
 		this.supplyType = supplyType;
+		this.stableCoinFactory = stableCoinFactory;
+		this.hederaERC20 = hederaERC20;
 	}
 }

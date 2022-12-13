@@ -8,7 +8,7 @@ import { HederaTransactionAdapter } from '../HederaTransactionAdapter.js';
 import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
 import { TransactionType } from '../../TransactionResponseEnums.js';
 import { HTSTransactionResponseAdapter } from './HTSTransactionResponseAdapter.js';
-import { Injectable } from '../../../../core/Injectable.js';
+import Injectable from '../../../../core/Injectable.js';
 import { InitializationData } from '../../TransactionAdapter.js';
 import Account from '../../../../domain/context/account/Account.js';
 import { Environment } from '../../../../domain/context/network/Environment.js';
