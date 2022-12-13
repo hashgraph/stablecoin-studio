@@ -11,7 +11,7 @@ import { ContractTransaction, ethers, Signer } from 'ethers';
 import { singleton } from 'tsyringe';
 import StableCoinCapabilities from '../../../domain/context/stablecoin/StableCoinCapabilities.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
-import { Injectable } from '../../../core/Injectable.js';
+import Injectable from '../../../core/Injectable.js';
 import { RPCTransactionResponseAdapter } from './RPCTransactionRespondeAdapter.js';
 import type { Provider } from '@ethersproject/providers';
 import { CapabilityDecider, Decision } from '../CapabilityDecider.js';

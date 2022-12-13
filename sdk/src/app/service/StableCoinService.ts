@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { singleton } from 'tsyringe';
-import { Injectable } from '../../core/Injectable.js';
+import Injectable from '../../core/Injectable.js';
 import AccountService from './AccountService.js';
 import Service from './Service.js';
 import { QueryBus } from '../../core/query/QueryBus.js';

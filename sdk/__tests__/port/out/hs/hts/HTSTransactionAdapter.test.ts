@@ -15,7 +15,7 @@ import BigDecimal from '../../../../../src/domain/context/shared/BigDecimal.js';
 import { HederaId } from '../../../../../src/domain/context/shared/HederaId.js';
 import { StableCoinRole } from '../../../../../src/domain/context/stablecoin/StableCoinRole.js';
 import PrivateKey from '../../../../../src/domain/context/account/PrivateKey.js';
-import { Injectable } from '../../../../../src/core/Injectable.js';
+import Injectable from '../../../../../src/core/Injectable.js';
 import { Network } from '../../../../../src/index.js';
 import ConnectRequest, {
 	SupportedWallets,
