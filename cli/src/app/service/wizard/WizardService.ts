@@ -12,7 +12,6 @@ import ManageImportedTokenService from '../stablecoin/ManageImportedTokenService
 import ListStableCoinsService from '../stablecoin/ListStableCoinsService.js';
 import colors from 'colors';
 import { clear } from 'console';
-import { IStableCoinDetail } from 'hedera-stable-coin-sdk';
 
 /**
  * Wizard Service
@@ -44,7 +43,7 @@ export default class WizardService extends Service {
       ) {
         case wizardMainOptions[0]:
           await utilsService.cleanAndShowBanner();
-          const stableCoin: IStableCoinDetail =
+          const stableCoin =
             await new CreateStableCoinService().createStableCoin(
               undefined,
               true,
@@ -55,8 +54,8 @@ export default class WizardService extends Service {
           );
           if (operate) {
             await new OperationStableCoinService(
-              stableCoin.tokenId,
-              stableCoin.memo,
+              stableCoin.tokenId.toString(),
+              stableCoin.proxyAddress.toString(),
               stableCoin.symbol,
             ).start();
           }
