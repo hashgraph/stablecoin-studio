@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Constructor } from '../Type.js';
 import { inject, delay } from 'tsyringe';
 
@@ -6,9 +7,9 @@ import { inject, delay } from 'tsyringe';
  *
  * @param cls Class to lazy load
  */
-export function lazyInject<T>(token: Constructor<T>): unknown {
+export function lazyInject<T>(token: Constructor<T>): any {
 	return (
-		target: unknown,
+		target: any,
 		propertyKey: string | symbol,
 		parameterIndex: number,
 	) => {
