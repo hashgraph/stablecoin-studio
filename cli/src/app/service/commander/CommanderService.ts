@@ -72,8 +72,7 @@ export default class CommanderService extends Service {
           configurationService.getConfiguration().defaultNetwork,
         );
         // Initialize SDK
-        
-        await utilsService.initSDK(utilsService.getCurrentNetwork().name);
+        await utilsService.initSDK();
         await utilsService.cleanAndShowBanner();
         await wizardService.mainMenu();
       });

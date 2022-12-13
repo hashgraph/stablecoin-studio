@@ -2,9 +2,9 @@ import { language } from './../../../index.js';
 import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
 import {
+  Account,
   GetListStableCoinRequest,
-  IStableCoinList,
-  SDK,
+  StableCoinListViewModel,
 } from 'hedera-stable-coin-sdk';
 
 /**
@@ -20,21 +20,18 @@ export default class ListStableCoinsService extends Service {
    */
   public async listStableCoins(): Promise<void> {
     // Call to list stable coins
-    const sdk: SDK = utilsService.getSDK();
     const currentAccount = utilsService.getCurrentAccount();
 
-    let resp: IStableCoinList[];
+    let resp: StableCoinListViewModel;
 
     await utilsService.showSpinner(
-      sdk
-        .getListStableCoin(
-          new GetListStableCoinRequest({
-            account: {
-              accountId: currentAccount.accountId,
-            },
-          }),
-        )
-        .then((response: IStableCoinList[]) => (resp = response)),
+      Account.listStableCoins(
+        new GetListStableCoinRequest({
+          account: {
+            accountId: currentAccount.accountId,
+          },
+        }),
+      ).then((response: StableCoinListViewModel) => (resp = response)),
       {
         text: language.getText('state.searching'),
         successText: language.getText('state.searchingSuccess') + '\n',
