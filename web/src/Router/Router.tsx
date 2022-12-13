@@ -19,23 +19,23 @@ import Operations from '../views/Operations';
 import Roles from '../views/Roles';
 import StableCoinCreation from '../views/StableCoinCreation/StableCoinCreation';
 import StableCoinNotSelected from '../views/ErrorPage/StableCoinNotSelected';
-import SDKService, { HashConnectConnectionState } from '../services/SDKService';
+import SDKService from '../services/SDKService';
 import StableCoinDetails from '../views/StableCoinDetails';
 import { hashpackActions, IS_INITIALIZED } from '../store/slices/hashpackSlice';
 import {
-	HAS_WALLET_EXTENSION,
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED,
 	walletActions,
 } from '../store/slices/walletSlice';
-import type { SavedPairingData } from 'hedera-stable-coin-sdk';
 import ImportedTokenCreation from '../views/ImportedToken/ImportedTokenCreation';
 import DangerZoneOperations from '../views/Operations/DangerZone';
+import type { EventParameter } from 'hedera-stable-coin-sdk';
+import { ConnectionState } from 'hedera-stable-coin-sdk';
 
-const PrivateRoute = ({ status }: { status?: HashConnectConnectionState }) => {
+const PrivateRoute = ({ status }: { status?: ConnectionState }) => {
 	return (
 		<Layout>
-			{status === HashConnectConnectionState.Paired ? (
+			{status === ConnectionState.Paired ? (
 				<Outlet />
 			) : (
 				<Navigate to={RoutesMappingUrl.login} replace />
@@ -44,8 +44,8 @@ const PrivateRoute = ({ status }: { status?: HashConnectConnectionState }) => {
 	);
 };
 
-const OnboardingRoute = ({ status }: { status?: HashConnectConnectionState }) => {
-	return status !== HashConnectConnectionState.Paired ? (
+const OnboardingRoute = ({ status }: { status?: ConnectionState }) => {
+	return status !== ConnectionState.Paired ? (
 		<Outlet />
 	) : (
 		<Navigate to={RoutesMappingUrl.stableCoinNotSelected} replace />
@@ -53,12 +53,11 @@ const OnboardingRoute = ({ status }: { status?: HashConnectConnectionState }) =>
 };
 
 const Router = () => {
-	const [status, setStatus] = useState<HashConnectConnectionState>();
+	const [status, setStatus] = useState<ConnectionState>();
 
 	const dispatch = useDispatch();
 
 	const haspackInitialized = useSelector(IS_INITIALIZED);
-	const hasWalletExtension = useSelector(HAS_WALLET_EXTENSION);
 	const selectedWalletCoin = !!useSelector(SELECTED_WALLET_COIN);
 	const selectedWalletPairedAccount = useSelector(SELECTED_WALLET_PAIRED);
 
@@ -67,17 +66,11 @@ const Router = () => {
 	}, []);
 
 	useEffect(() => {
-		if (haspackInitialized || hasWalletExtension) {
-			getStatus();
-		}
-	}, [haspackInitialized, hasWalletExtension]);
-
-	useEffect(() => {
 		if (!status) return;
 
 		dispatch(hashpackActions.setStatus(status));
 
-		if (status === HashConnectConnectionState.Paired) {
+		if (status === ConnectionState.Paired) {
 			getWalletData();
 		}
 	}, [status]);
@@ -94,40 +87,31 @@ const Router = () => {
 		dispatch(walletActions.setData(result));
 	};
 
-	const onInit = () => dispatch(hashpackActions.setInitialized());
+	const walletInit = () => dispatch(hashpackActions.setInitialized());
 
-	const onWalletExtensionFound = () => dispatch(walletActions.setHasWalletExtension());
-
-	const onWalletPaired = (savedPairings: any) => {
-		if (savedPairings) {
-			dispatch(walletActions.setSavedPairings([savedPairings]));
-		}
-
-		setStatus(HashConnectConnectionState.Paired);
+	const walletFound = (event: EventParameter<'walletFound'>) => {
+		dispatch(walletActions.setHasWalletExtension(event.name));
 	};
 
-	const onWalletConnectionChanged = (newStatus: any) => {
-		if (newStatus === HashConnectConnectionState.Disconnected) {
-			setStatus(HashConnectConnectionState.Disconnected);
+	const walletPaired = (event: EventParameter<'walletPaired'>) => {
+		if (event) {
+			dispatch(walletActions.setData(event.data));
 		}
+
+		setStatus(ConnectionState.Paired);
+	};
+
+	const walletConnectionStatusChanged = (newStatus: any) => {
+		setStatus(newStatus);
 	};
 
 	const instanceSDK = async () =>
-		await SDKService.getInstance({
-			onInit,
-			onWalletExtensionFound,
-			onWalletPaired,
-			onWalletConnectionChanged,
+		await SDKService.registerEvents({
+			walletInit,
+			walletFound,
+			walletPaired,
+			walletConnectionStatusChanged,
 		});
-
-	const getStatus = async () => {
-		try {
-			const status = await SDKService.getStatus();
-			setStatus(status);
-		} catch {
-			setStatus(HashConnectConnectionState.Disconnected);
-		}
-	};
 
 	return (
 		<main>

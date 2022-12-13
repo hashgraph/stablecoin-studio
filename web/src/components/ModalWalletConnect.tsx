@@ -9,6 +9,7 @@ import {
 	Text,
 	VStack,
 } from '@chakra-ui/react';
+import { SupportedWallets } from 'hedera-stable-coin-sdk/build/esm/src/domain/context/network/Wallet.js';
 import HEDERA_LOGO from '../assets/png/hashpackLogo.png';
 import METAMASK_LOGO from '../assets/svg/MetaMask_Fox.svg';
 import SDKService from '../services/SDKService';
@@ -33,11 +34,11 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 	};
 
 	const handleConnectHashpackWallet = async () => {
-		SDKService.connectWallet();
+		await SDKService.connectWallet(SupportedWallets.HASHPACK);
 	};
 
 	const handleConnectMetamaskWallet = async () => {
-		// TODO
+		await SDKService.connectWallet(SupportedWallets.METAMASK);
 	};
 
 	return (
