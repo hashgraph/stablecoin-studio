@@ -47,7 +47,7 @@ export default class RoleStableCoinsService extends Service {
 
     if (req.supplierType === 'unlimited') {
       await utilsService.showSpinner(
-        Role.supplier.isUnlimited(req).then(
+        Role.Supplier.isUnlimited(req).then(
           (response) => (respDetail = response[0]),
         ),
         {
@@ -58,7 +58,7 @@ export default class RoleStableCoinsService extends Service {
       return respDetail;
     } else {
       await utilsService.showSpinner(
-        Role.supplier.isLimited(req).then(
+        Role.Supplier.isLimited(req).then(
           (response) => (respDetail = response[0]),
         ),
         {},
@@ -70,7 +70,7 @@ export default class RoleStableCoinsService extends Service {
   public async increaseLimitSupplierRoleStableCoin(
     req: IncreaseCashInLimitRequest,
   ): Promise<void> {
-    await utilsService.showSpinner(Role.supplier.increaseAllowance(req), {
+    await utilsService.showSpinner(Role.Supplier.increaseAllowance(req), {
       text: language.getText('state.loading'),
       successText: language.getText('state.loadCompleted') + '\n',
     });
@@ -82,7 +82,7 @@ export default class RoleStableCoinsService extends Service {
   public async decreaseLimitSupplierRoleStableCoin(
     req: DecreaseCashInLimitRequest,
   ): Promise<void> {
-    await utilsService.showSpinner(Role.supplier.decreaseAllowance(req), {
+    await utilsService.showSpinner(Role.Supplier.decreaseAllowance(req), {
       text: language.getText('state.loading'),
       successText: language.getText('state.loadCompleted') + '\n',
     });
@@ -94,7 +94,7 @@ export default class RoleStableCoinsService extends Service {
   public async resetLimitSupplierRoleStableCoin(
     req: ResetCashInLimitRequest,
   ): Promise<void> {
-    await utilsService.showSpinner(Role.supplier.resetAllowance(req), {
+    await utilsService.showSpinner(Role.Supplier.resetAllowance(req), {
       text: language.getText('state.loading'),
       successText: language.getText('state.loadCompleted') + '\n',
     });
@@ -155,7 +155,7 @@ export default class RoleStableCoinsService extends Service {
   ): Promise<void> {
     let amount;
     await utilsService.showSpinner(
-      Role.supplier.getAllowance(req).then((response) => {
+      Role.Supplier.getAllowance(req).then((response) => {
         amount = response;
       }),
       {
