@@ -7,7 +7,7 @@ import {
   TokenSupplyType,
   PublicKey,
   PrivateKey,
-  Account,
+  AccountD,
 } from 'hedera-stable-coin-sdk';
 import { IManagedFeatures } from '../../../domain/configuration/interfaces/IManagedFeatures.js';
 import Service from '../Service.js';
@@ -237,7 +237,7 @@ export default class CreateStableCoinService extends Service {
       tokenToCreate.wipeKey = PublicKey.NULL;
       tokenToCreate.supplyKey = PublicKey.NULL;
       tokenToCreate.pauseKey = PublicKey.NULL;
-      tokenToCreate.treasury = Account.NULL.id;
+      tokenToCreate.treasury = Account.NULL.id.toString();
       if (
         !(await utilsService.defaultConfirmAsk(
           language.getText('stablecoin.askConfirmCreation'),
@@ -410,10 +410,10 @@ export default class CreateStableCoinService extends Service {
     switch (answer) {
       case 'Current user key': {
         const currentAccount = utilsService.getCurrentAccount();
-        const privateKey: PrivateKey = new PrivateKey(
-          currentAccount.privateKey.key,
-          currentAccount.privateKey.type,
-        );
+        const privateKey: PrivateKey = new PrivateKey({
+          key: currentAccount.privateKey.key,
+          type: currentAccount.privateKey.type,
+        });
         return privateKey.publicKey;
       }
 
@@ -439,7 +439,7 @@ export default class CreateStableCoinService extends Service {
       const currentAccount = utilsService.getCurrentAccount();
       return currentAccount.accountId;
     } else {
-      return Account.NULL.id;
+      return Account.NULL.id.toString();
     }
   }
 }
