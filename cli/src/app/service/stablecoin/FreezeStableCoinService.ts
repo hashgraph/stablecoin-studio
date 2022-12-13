@@ -23,7 +23,7 @@ export default class FreezeStableCoinService extends Service {
   }
 
   public async unfreezeAccount(req: FreezeAccountRequest): Promise<void> {
-    await utilsService.showSpinner(StableCoin.unfreeze(req), {
+    await utilsService.showSpinner(StableCoin.unFreeze(req), {
       text: language.getText('state.loading'),
       successText: language.getText('state.unfreezeCompleted') + '\n',
     });

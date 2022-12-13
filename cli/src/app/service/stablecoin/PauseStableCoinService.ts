@@ -29,7 +29,7 @@ export default class PauseStableCoinService extends Service {
    * unpause stable coin
    */
   public async unpauseStableCoin(req: PauseStableCoinRequest): Promise<void> {
-    await utilsService.showSpinner(StableCoin.unpause(req), {
+    await utilsService.showSpinner(StableCoin.unPause(req), {
       text: language.getText('state.loading'),
       successText: language.getText('state.unpauseCompleted') + '\n',
     });

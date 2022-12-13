@@ -55,8 +55,8 @@ export default class WizardService extends Service {
           );
           if (operate) {
             await new OperationStableCoinService(
-              stableCoin.tokenId,
-              stableCoin.memo,
+              stableCoin.tokenId.toString(),
+              stableCoin.proxyAddress.toString(),
               stableCoin.symbol,
             ).start();
           }

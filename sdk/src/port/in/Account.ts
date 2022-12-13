@@ -17,13 +17,13 @@ import { MirrorNodeAdapter } from '../out/mirror/MirrorNodeAdapter.js';
 import { Balance } from '../../domain/context/stablecoin/Balance.js';
 import PrivateKey from '../../domain/context/account/PrivateKey.js';
 
-export { AccountViewModel };
+export { AccountViewModel, StableCoinListViewModel };
 
 interface IAccountInPort {
 	getPublicKey(request: GetPublicKeyRequest): Promise<PublicKey>;
 	listStableCoins(
 		request: GetListStableCoinRequest,
-	): Promise<StableCoinListViewModel>;
+	): Promise<StableCoinListViewModel[]>;
 	getInfo(request: GetAccountInfoRequest): Promise<AccountViewModel>;
 }
 
@@ -49,7 +49,7 @@ class AccountInPort implements IAccountInPort {
 
 	listStableCoins(
 		request: GetListStableCoinRequest,
-	): Promise<StableCoinListViewModel> {
+	): Promise<StableCoinListViewModel[]> {
 		throw new Error('Method not implemented.');
 	}
 	getInfo(request: GetAccountInfoRequest): Promise<AccountViewModel> {

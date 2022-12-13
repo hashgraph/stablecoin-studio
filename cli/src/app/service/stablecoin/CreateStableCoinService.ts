@@ -220,7 +220,7 @@ export default class CreateStableCoinService extends Service {
       tokenToCreate.wipeKey = Account.NullPublicKey;
       tokenToCreate.supplyKey = Account.NullPublicKey;
       tokenToCreate.pauseKey = Account.NullPublicKey;
-      tokenToCreate.treasury = Account.NullHederaAccount.id;
+      tokenToCreate.treasury = Account.NullHederaAccount.id.toString();
       if (
         !(await utilsService.defaultConfirmAsk(
           language.getText('stablecoin.askConfirmCreation'),
@@ -422,7 +422,7 @@ export default class CreateStableCoinService extends Service {
       const currentAccount = utilsService.getCurrentAccount();
       return currentAccount.accountId;
     } else {
-      return Account.NullHederaAccount.id;
+      return Account.NullHederaAccount.id.toString();
     }
   }
 }

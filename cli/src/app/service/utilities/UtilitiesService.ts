@@ -9,6 +9,7 @@ import {
   Network,
   ConnectRequest,
   SupportedWallets,
+  StableCoinListViewModel,
 } from 'hedera-stable-coin-sdk';
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
@@ -315,7 +316,9 @@ export default class UtilitiesService extends Service {
     return publicKey;
   }
 
-  public async drawTableListStableCoin(data?: StableCoinList[]): Promise<void> {
+  public async drawTableListStableCoin(
+    data?: StableCoinListViewModel[],
+  ): Promise<void> {
     if (data.length === 0) {
       console.log('There are no stable coins available at this time.');
     } else {

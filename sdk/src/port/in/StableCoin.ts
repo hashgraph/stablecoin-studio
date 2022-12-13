@@ -55,7 +55,7 @@ interface IStableCoinInPort {
 	unPause(request: PauseRequest): Promise<boolean>;
 	delete(request: DeleteRequest): Promise<boolean>;
 	freeze(request: FreezeAccountRequest): Promise<boolean>;
-	unFrezze(request: FreezeAccountRequest): Promise<boolean>;
+	unFreeze(request: FreezeAccountRequest): Promise<boolean>;
 }
 
 class StableCoinInPort implements IStableCoinInPort {
@@ -202,7 +202,7 @@ class StableCoinInPort implements IStableCoinInPort {
 	freeze(request: FreezeAccountRequest): Promise<boolean> {
 		throw new Error('Method not implemented.');
 	}
-	unFrezze(request: FreezeAccountRequest): Promise<boolean> {
+	unFreeze(request: FreezeAccountRequest): Promise<boolean> {
 		throw new Error('Method not implemented.');
 	}
 }

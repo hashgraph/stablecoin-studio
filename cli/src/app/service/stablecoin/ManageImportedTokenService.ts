@@ -1,8 +1,6 @@
 import Service from '../Service.js';
 import { IImportedToken } from '../../../domain/configuration/interfaces/IImportedToken';
 import { wizardService } from '../../../index';
-import DetailsStableCoinsService from './DetailsStableCoinService.js';
-import { StableCoinViewModel } from 'hedera-stable-coin-sdk';
 import {
   language,
   utilsService,
@@ -22,7 +20,7 @@ export default class ManageImportedTokenService extends Service {
       'wizard.manageImportedTokens',
     );
     const currentAccount = utilsService.getCurrentAccount();
-    let symbol = '';
+    const symbol = '';
     switch (
       await utilsService.defaultMultipleAsk(
         language.getText('wizard.importedTokenMenu'),
@@ -37,14 +35,6 @@ export default class ManageImportedTokenService extends Service {
 
         let tokenId = '';
         const getRolesRequestForAdding: GetRolesRequest = new GetRolesRequest({
-          proxyContractId: '',
-          account: {
-            accountId: currentAccount.accountId,
-            privateKey: {
-              key: currentAccount.privateKey.key,
-              type: currentAccount.privateKey.type,
-            },
-          },
           targetId: currentAccount.accountId,
           tokenId: '',
         });
@@ -66,14 +56,6 @@ export default class ManageImportedTokenService extends Service {
 
         //call to roles
         const importedTokens = currentAccount.importedTokens;
-        await new DetailsStableCoinsService()
-          .getDetailsStableCoins(getRolesRequestForAdding.tokenId, false)
-          .then((response: StableCoinViewModel) => {
-            console.log('Mirror:', response);
-            symbol = response.symbol;
-            getRolesRequestForAdding.proxyContractId =
-              response.proxyAddress.toString();
-          });
         const roles = await new RoleStableCoinsService().getRoles(
           getRolesRequestForAdding,
         );
@@ -107,24 +89,8 @@ export default class ManageImportedTokenService extends Service {
 
         const getRolesRequestForRefreshing: GetRolesRequest =
           new GetRolesRequest({
-            proxyContractId: '',
-            account: {
-              accountId: currentAccount.accountId,
-              privateKey: {
-                key: currentAccount.privateKey.key,
-                type: currentAccount.privateKey.type,
-              },
-            },
             targetId: currentAccount.accountId,
             tokenId: tokenToRefresh,
-          });
-
-        await new DetailsStableCoinsService()
-          .getDetailsStableCoins(tokenToRefresh.split(' - ')[0], false)
-          .then((response: StableCoinViewModel) => {
-            symbol = response.symbol;
-            getRolesRequestForRefreshing.proxyContractId =
-              response.proxyAddress.toString();
           });
 
         const rolesToRefresh = await new RoleStableCoinsService().getRoles(
