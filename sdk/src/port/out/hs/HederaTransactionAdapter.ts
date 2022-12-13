@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable no-case-declarations */
-import { PublicKey as HPublicKey, Transaction } from '@hashgraph/sdk';
+import { Transaction } from '@hashgraph/sdk';
 import TransactionAdapter from '../TransactionAdapter';
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
 import { Operation } from '../../../domain/context/stablecoin/Capability.js';
@@ -15,9 +15,7 @@ import { TransactionType } from '../TransactionResponseEnums.js';
 import { HTSTransactionBuilder } from './HTSTransactionBuilder.js';
 import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
 import Account from '../../../domain/context/account/Account.js';
-import { PrivateKeyType } from '../../../domain/context/account/PrivateKey.js';
 import { MirrorNodeAdapter } from '../mirror/MirrorNodeAdapter.js';
-import AccountViewModel from '../mirror/response/AccountViewModel.js';
 import { HederaId } from '../../../domain/context/shared/HederaId.js';
 
 export abstract class HederaTransactionAdapter extends TransactionAdapter {
@@ -25,6 +23,10 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 
 	constructor(public readonly mirrorNodeAdapter: MirrorNodeAdapter) {
 		super();
+	}
+
+	getMirrorNodeAdapter(): MirrorNodeAdapter {
+		return this.mirrorNodeAdapter;
 	}
 
 	public async associateToken(
@@ -654,44 +656,6 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			.slice(2);
 
 		return Buffer.from(encodedParametersHex, 'hex');
-	}
-
-	private async accountToEvmAddress(account: HederaId): Promise<string> {
-		return await this.getAccountEvmAddress(account);
-	}
-
-	private async getAccountEvmAddress(accountId: HederaId): Promise<string> {
-		try {
-			const accountInfoViewModel: AccountViewModel =
-				await this.mirrorNodeAdapter.getAccountInfo(accountId);
-			if (accountInfoViewModel.accountEvmAddress) {
-				return accountInfoViewModel.accountEvmAddress;
-			} else if (accountInfoViewModel.publicKey) {
-				return this.getAccountEvmAddressFromPrivateKeyType(
-					accountInfoViewModel.publicKey.type,
-					accountInfoViewModel.publicKey.key,
-					accountId,
-				);
-			} else {
-				return Promise.reject<string>('');
-			}
-		} catch (error) {
-			return Promise.reject<string>(error);
-		}
-	}
-
-	private async getAccountEvmAddressFromPrivateKeyType(
-		privateKeyType: string,
-		publicKey: string,
-		accountId: HederaId,
-	): Promise<string> {
-		switch (privateKeyType) {
-			case PrivateKeyType.ECDSA:
-				return HPublicKey.fromString(publicKey).toEthereumAddress();
-
-			default:
-				return accountId.toHederaAddress().toSolidityAddress();
-		}
 	}
 
 	abstract getAccount(): Account;

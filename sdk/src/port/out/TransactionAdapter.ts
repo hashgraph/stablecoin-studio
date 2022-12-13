@@ -6,6 +6,10 @@ import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import { StableCoinRole } from '../../domain/context/stablecoin/StableCoinRole.js';
 import Account from '../../domain/context/account/Account.js';
 import { HederaId } from '../../domain/context/shared/HederaId.js';
+import { PrivateKeyType } from '../../domain/context/account/PrivateKey.js';
+import AccountViewModel from './mirror/response/AccountViewModel.js';
+import { PublicKey as HPublicKey } from '@hashgraph/sdk';
+import { MirrorNodeAdapter } from './mirror/MirrorNodeAdapter.js';
 
 export interface TransactionAdapterInitializationData {
 	account: Account;
@@ -60,6 +64,7 @@ interface ITransactionAdapter {
 		targetId: HederaId,
 	): Promise<TransactionResponse>;
 	getAccount(): Account;
+	getMirrorNodeAdapter(): MirrorNodeAdapter;
 }
 
 interface RoleTransactionAdapter {
@@ -285,10 +290,50 @@ export default abstract class TransactionAdapter
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
+
 	getRoles(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
 	): Promise<TransactionResponse<string[], Error>> {
 		throw new Error('Method not implemented.');
 	}
+
+	getMirrorNodeAdapter(
+	): MirrorNodeAdapter {
+		throw new Error('Method not implemented.');
+	}
+
+	async accountToEvmAddress(accountId: HederaId): Promise<string> {
+		try {
+			const accountInfoViewModel: AccountViewModel =
+				await this.getMirrorNodeAdapter().getAccountInfo(accountId);
+			if (accountInfoViewModel.accountEvmAddress) {
+				return accountInfoViewModel.accountEvmAddress;
+			} else if (accountInfoViewModel.publicKey) {
+				return this.getAccountEvmAddressFromPrivateKeyType(
+					accountInfoViewModel.publicKey.type,
+					accountInfoViewModel.publicKey.key,
+					accountId,
+				);
+			} else {
+				return Promise.reject<string>('');
+			}
+		} catch (error) {
+			return Promise.reject<string>(error);
+		}
+	}
+
+	private async getAccountEvmAddressFromPrivateKeyType(
+		privateKeyType: string,
+		publicKey: string,
+		accountId: HederaId,
+	): Promise<string> {
+		switch (privateKeyType) {
+			case PrivateKeyType.ECDSA:
+				return HPublicKey.fromString(publicKey).toEthereumAddress();
+
+			default:
+				return accountId.toHederaAddress().toSolidityAddress();
+		}
+	}	
 }
