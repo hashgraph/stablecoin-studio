@@ -127,7 +127,7 @@ export class SDKService {
 	}
 
 	public static async unpause(req: PauseStableCoinRequest) {
-		return await StableCoin.unpause(req);
+		return await StableCoin.unPause(req);
 	}
 
 	public static async freeze(req: FreezeAccountRequest) {
@@ -135,7 +135,7 @@ export class SDKService {
 	}
 
 	public static async unfreeze(req: FreezeAccountRequest) {
-		return await StableCoin.unfreeze(req);
+		return await StableCoin.unFrezze(req);
 	}
 
 	public static async delete(req: DeleteStableCoinRequest) {
