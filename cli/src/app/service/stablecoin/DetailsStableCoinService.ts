@@ -3,8 +3,8 @@ import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
 import {
   GetStableCoinDetailsRequest,
-  IStableCoinDetail,
-  SDK,
+  StableCoin,
+  StableCoinViewModel,
 } from 'hedera-stable-coin-sdk';
 
 /**
@@ -15,26 +15,20 @@ export default class DetailsStableCoinsService extends Service {
     super('Details Stable Coin');
   }
 
-  /**
-   * List Stable Coins can be managed
-   */
   public async getDetailsStableCoins(
     id: string,
     show = true,
-  ): Promise<IStableCoinDetail> {
+  ): Promise<StableCoinViewModel> {
     // Call to list stable coins
-    const sdk: SDK = utilsService.getSDK();
 
-    let respDetail: IStableCoinDetail;
+    let respDetail: StableCoinViewModel;
 
     await utilsService.showSpinner(
-      sdk
-        .getStableCoinDetails(
-          new GetStableCoinDetailsRequest({
-            id,
-          }),
-        )
-        .then((response) => (respDetail = response)),
+      StableCoin.getInfo(
+        new GetStableCoinDetailsRequest({
+          id,
+        }),
+      ).then((response) => (respDetail = response)),
       {
         text: language.getText('state.loading'),
         successText: language.getText('state.detailsCompleted') + '\n',

@@ -14,8 +14,10 @@ import StableCoinListViewModel from '../out/mirror/response/StableCoinListViewMo
 import AccountViewModel from '../out/mirror/response/AccountViewModel.js';
 import { MirrorNodeAdapter } from '../out/mirror/MirrorNodeAdapter.js';
 import { Balance } from '../../domain/context/stablecoin/Balance.js';
+import PrivateKey from '../../domain/context/account/PrivateKey.js';
 
-export { AccountViewModel, Balance};
+export { AccountViewModel, Balance };
+export { PublicKey, PrivateKey };
 
 interface IAccountInPort {
 	getPublicKey(request: GetPublicKeyRequest): Promise<PublicKey>;

@@ -1,19 +1,18 @@
 import { configurationService, language } from './../../../index.js';
 import { utilsService } from '../../../index.js';
 import {
+  CreateStableCoinRequest,
   StableCoin,
-  AccountId,
-  PrivateKey,
-  PublicKey,
   StableCoinViewModel,
-  CreateRequest,
   TokenSupplyType,
+  PublicKey,
+  PrivateKey,
+  Account,
 } from 'hedera-stable-coin-sdk';
 import { IManagedFeatures } from '../../../domain/configuration/interfaces/IManagedFeatures.js';
 import Service from '../Service.js';
 import SetConfigurationService from '../configuration/SetConfigurationService.js';
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
-
 
 /**
  * Create Stable Coin Service
@@ -36,8 +35,6 @@ export default class CreateStableCoinService extends Service {
       stableCoin = await this.wizardCreateStableCoin();
     }
 
-    // Call to create stable coin sdk function
-    //const sdk: SDK = utilsService.getSDK();
     const currentAccount = utilsService.getCurrentAccount();
 
     if (
@@ -107,7 +104,7 @@ export default class CreateStableCoinService extends Service {
       symbol: '',
       decimals: 6,
       stableCoinFactory: currentFactory.id,
-      hederaERC20: currentHederaERC20.id
+      hederaERC20: currentHederaERC20.id,
     });
 
     // Name
@@ -226,7 +223,7 @@ export default class CreateStableCoinService extends Service {
       tokenToCreate.wipeKey = PublicKey.NULL;
       tokenToCreate.supplyKey = PublicKey.NULL;
       tokenToCreate.pauseKey = PublicKey.NULL;
-      tokenToCreate.treasury = AccountId.NULL.id;
+      tokenToCreate.treasury = Account.NULL.id;
       if (
         !(await utilsService.defaultConfirmAsk(
           language.getText('stablecoin.askConfirmCreation'),
@@ -274,7 +271,7 @@ export default class CreateStableCoinService extends Service {
           : wipeKey.key !== 'null'
           ? wipeKey
           : 'The Smart Contract',
-      adminKey: 
+      adminKey:
         adminKey === undefined
           ? 'None'
           : adminKey.key !== 'null'
@@ -428,7 +425,7 @@ export default class CreateStableCoinService extends Service {
       const currentAccount = utilsService.getCurrentAccount();
       return currentAccount.accountId;
     } else {
-      return AccountId.NULL.id;
+      return Account.NULL.id;
     }
   }
 }

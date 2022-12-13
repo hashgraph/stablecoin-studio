@@ -180,13 +180,13 @@ export default class WizardService extends Service {
     const currentFactory = factories.find(
       (factory) => currentAccount.network === factory.network,
     );
-      
+
     utilsService.setCurrentFactory(currentFactory);
 
     const currentHederaERC20 = hederaERC20s.find(
       (hederaERC20) => currentAccount.network === hederaERC20.network,
     );
-      
+
     utilsService.setCurrentHederaERC20(currentHederaERC20);
 
     if (mainMenu) await this.mainMenu();

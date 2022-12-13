@@ -5,11 +5,10 @@ import { configurationService, language } from '../../../index.js';
 import Table from 'cli-table3';
 import { StableCoinList } from '../../../domain/stablecoin/StableCoinList.js';
 import {
-  HederaNetwork,
-  HederaNetworkEnviroment,
-  NetworkMode,
-  SDK,
   ValidationResponse,
+  Network,
+  ConnectRequest,
+  SupportedWallets,
 } from 'hedera-stable-coin-sdk';
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
@@ -23,40 +22,30 @@ import { IHederaERC20Config } from '../../../domain/configuration/interfaces/IHe
  * Utilities Service
  */
 export default class UtilitiesService extends Service {
-  private sdk: SDK;
   private currentAccount: IAccountConfig;
   private currentNetwork: INetworkConfig;
   private currentFactory: IFactoryConfig;
   private currentHederaERC20: IHederaERC20Config;
 
-
   constructor() {
     super('Utilities');
   }
 
-  public async initSDK(network: string): Promise<SDK> {
-    const networks = {
-      testnet: HederaNetworkEnviroment.TEST,
-      previewnet: HederaNetworkEnviroment.PREVIEW,
-      mainnet: HederaNetworkEnviroment.MAIN,
-      local: HederaNetworkEnviroment.LOCAL,
-    };
-    this.sdk = await new SDK({
-      network: new HederaNetwork(networks[network]),
-      mode: NetworkMode.EOA,
-      options: {
-        logOptions: configurationService.getLogConfiguration()
-      }
-    }).init();
-    return this.sdk;
-  }
-
-  public getSDK(): SDK {
-    if (!this.sdk) {
-      throw new Error('SDK not initialized');
-    } else {
-      return this.sdk;
-    }
+  public async initSDK(): Promise<void> {
+    const account = this.getCurrentAccount();
+    await Network.connect(
+      new ConnectRequest({
+        account: {
+          accountId: account.accountId,
+          privateKey: {
+            key: account.privateKey.key,
+            type: account.privateKey.type,
+          },
+        },
+        network: this.getCurrentNetwork().name,
+        wallet: SupportedWallets.CLIENT,
+      }),
+    );
   }
 
   public setCurrentAccount(account: IAccountConfig): void {

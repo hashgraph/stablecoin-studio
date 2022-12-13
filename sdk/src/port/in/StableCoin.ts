@@ -22,13 +22,6 @@ import AccountService from '../../app/service/AccountService.js';
 import { CreateCommand } from '../../app/usecase/command/stablecoin/create/CreateCommand.js';
 import PublicKey from '../../domain/context/account/PublicKey.js';
 import Mapper from '../../core/mapping/Mapper.js';
-
-export const HederaERC20AddressTestnet = '0.0.49077027';
-export const HederaERC20AddressPreviewnet = '0.0.11111111';
-
-export const FactoryAddressTestnet = '0.0.49077033';
-export const FactoryAddressPreviewnet = '0.0.11111111';
-
 import DeleteRequest from './request/DeleteRequest.js';
 import FreezeAccountRequest from './request/FreezeAccountRequest.js';
 import PauseRequest from './request/PauseRequest.js';
@@ -36,6 +29,17 @@ import GetAccountBalanceRequest from './request/GetAccountBalanceRequest.js';
 import CapabilitiesRequest from './request/CapabilitiesRequest.js';
 import { Balance } from '../../domain/context/stablecoin/Balance.js';
 import StableCoinCapabilities from '../../domain/context/stablecoin/StableCoinCapabilities.js';
+import { TokenSupplyType } from '../../domain/context/stablecoin/TokenSupply.js';
+
+export const HederaERC20AddressTestnet = '0.0.49077027';
+export const HederaERC20AddressPreviewnet = '0.0.11111111';
+
+export const FactoryAddressTestnet = '0.0.49077033';
+export const FactoryAddressPreviewnet = '0.0.11111111';
+
+export { StableCoinViewModel };
+export { StableCoinCapabilities };
+export { TokenSupplyType };
 
 interface IStableCoinInPort {
 	create(request: CreateRequest): Promise<StableCoinViewModel>;
