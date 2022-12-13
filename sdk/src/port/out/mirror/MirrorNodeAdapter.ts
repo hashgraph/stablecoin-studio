@@ -34,7 +34,7 @@ export class MirrorNodeAdapter {
 
 	public async getStableCoinsList(
 		accountId: HederaId,
-	): Promise<StableCoinListViewModel[]> {
+	): Promise<StableCoinListViewModel> {
 		try {
 			const url = `${
 				this.URI_BASE
@@ -45,17 +45,19 @@ export class MirrorNodeAdapter {
 				url,
 			);
 
-			const resObject: StableCoinListViewModel[] = [];
+			const resObject: StableCoinListViewModel = {
+                coins:[] 
+            };
 			const res = await this.instance.get<ITokenList>(url);
 			res.data.tokens.map((item: IToken) => {
-				resObject.push({
+				 resObject.coins.push({
 					id: item.token_id,
 					symbol: item.symbol,
 				});
 			});
 			return resObject;
 		} catch (error) {
-			return Promise.reject<StableCoinListViewModel[]>(
+			return Promise.reject<StableCoinListViewModel>(
 				new InvalidResponse(error),
 			);
 		}
