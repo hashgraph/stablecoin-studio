@@ -1,6 +1,6 @@
 import EventService from '../../../src/app/service/event/EventService.js';
 import { WalletEvents } from '../../../src/app/service/event/WalletEvent.js';
-import { Injectable } from '../../../src/core/Injectable.js';
+import Injectable from '../../../src/core/Injectable.js';
 import { WalletConnectError } from '../../../src/domain/context/network/error/WalletConnectError.js';
 import { Network, StableCoin } from '../../../src/index.js';
 import CashInRequest from '../../../src/port/in/request/CashInRequest.js';

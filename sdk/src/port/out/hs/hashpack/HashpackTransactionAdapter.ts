@@ -8,7 +8,7 @@ import { HashConnectTypes } from 'hashconnect';
 import { HashConnectConnectionState } from 'hashconnect/types';
 import Account from '../../../../domain/context/account/Account.js';
 import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
-import { Injectable } from '../../../../core/Injectable.js';
+import Injectable from '../../../../core/Injectable.js';
 import { SigningError } from '../error/SigningError.js';
 import { HashpackTransactionResponseAdapter } from './HashpackTransactionResponseAdapter.js';
 import { TransactionType } from '../../TransactionResponseEnums.js';
@@ -26,7 +26,7 @@ import {
 } from '../../../../app/service/event/WalletEvent.js';
 import { SupportedWallets } from '../../../in/request/ConnectRequest.js';
 import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter.js';
-import { SDK } from '../../../../index.js';
+import { SDK } from '../../../in/Common.js';
 
 @singleton()
 export class HashpackTransactionAdapter extends HederaTransactionAdapter {
@@ -43,7 +43,8 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 	state: HashConnectConnectionState;
 
 	constructor(
-		@lazyInject(EventService) public readonly eventService: EventService,
+		@lazyInject(EventService)
+		public readonly eventService: EventService,
 		@lazyInject(NetworkService)
 		public readonly networkService: NetworkService,
 		@lazyInject(MirrorNodeAdapter)
@@ -83,12 +84,12 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 			topic: this.initData.topic,
 		});
 	}
-	
+
 	private filterAccountIdFromPairingData(
 		pairings: HashConnectTypes.SavedPairingData[],
 	): string {
 		const filtered = pairings.filter((x) => x.accountIds.length > 0);
-		if(filtered.length === 0) throw new PairingError(filtered);
+		if (filtered.length === 0) throw new PairingError(filtered);
 		return filtered[0].accountIds[0];
 	}
 
@@ -167,7 +168,9 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 				this.availableExtension = true;
 				LogService.logTrace(
 					'Emitted found',
-					this.eventService.emit(WalletEvents.walletFound),
+					this.eventService.emit(WalletEvents.walletFound, {
+						name: SupportedWallets.HASHPACK,
+					}),
 				);
 			}
 		});

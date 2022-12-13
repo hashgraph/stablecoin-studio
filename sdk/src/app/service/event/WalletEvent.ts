@@ -42,7 +42,7 @@ export interface WalletAcknowledgeMessageEvent {
 
 type WalletEvent = {
 	walletInit: (data: WalletInitEvent) => void;
-	walletFound: () => void;
+	walletFound: (data: WalletFoundEvent) => void;
 	walletPaired: (data: WalletPairedEvent) => void;
 	walletConnectionStatusChanged: (
 		data: WalletConnectionStatusChangedEvent,

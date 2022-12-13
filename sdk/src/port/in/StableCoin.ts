@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Injectable } from '../../core/Injectable.js';
+import Injectable from '../../core/Injectable.js';
 import CreateRequest from './request/CreateRequest.js';
 import CashInRequest from './request/CashInRequest.js';
 import GetStableCoinDetailsRequest from './request/GetStableCoinDetailsRequest.js';
@@ -28,6 +28,9 @@ export const HederaERC20AddressPreviewnet = "0.0.11111111";
 export const FactoryAddressTestnet = "0.0.49077033";
 export const FactoryAddressPreviewnet = "0.0.11111111";
 
+import DeleteRequest from './request/DeleteRequest.js';
+import FreezeAccountRequest from './request/FreezeAccountRequest.js';
+import PauseRequest from './request/PauseRequest.js';
 
 interface IStableCoinInPort {
 	create(request: CreateRequest): Promise<StableCoinViewModel>;
@@ -36,6 +39,11 @@ interface IStableCoinInPort {
 	cashOut(request: CashOutRequest): Promise<boolean>;
 	rescue(request: RescueRequest): Promise<boolean>;
 	wipe(request: WipeRequest): Promise<boolean>;
+	pause(request: PauseRequest): Promise<boolean>;
+	unPause(request: PauseRequest): Promise<boolean>;
+	delete(request: DeleteRequest): Promise<boolean>;
+	freeze(request: FreezeAccountRequest): Promise<boolean>;
+	unFrezze(request: FreezeAccountRequest): Promise<boolean>;
 }
 
 class StableCoinInPort implements IStableCoinInPort {
@@ -131,6 +139,21 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 	wipe(request: WipeRequest): Promise<boolean> {
 		throw new Error('Method not implemented.');
+	}
+	pause(request: PauseRequest): Promise<boolean> {
+		throw new Error('Method not implemented');
+	}
+	unPause(request: PauseRequest): Promise<boolean> {
+		throw new Error('Method not implemented');
+	}
+	delete(request: DeleteRequest): Promise<boolean> {
+		throw new Error('Method not implemented');
+	}
+	freeze(request: FreezeAccountRequest): Promise<boolean> {
+		throw new Error('Method not implemented');
+	}
+	unFrezze(request: FreezeAccountRequest): Promise<boolean> {
+		throw new Error('Method not implemented');
 	}
 }
 

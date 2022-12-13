@@ -1,24 +1,21 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import type {
-	HashPackAccount,
-	InitializationData,
-	IStableCoinDetail,
-	IStableCoinList,
-	Capabilities,
-	IAccountInfo,
-} from 'hedera-stable-coin-sdk';
 import { GetListStableCoinRequest } from 'hedera-stable-coin-sdk';
 import SDKService from '../../services/SDKService';
 import type { RootState } from '../store';
 import type { IExternalToken } from '../../interfaces/IExternalToken';
 import type { IAccountToken } from '../../interfaces/IAccountToken';
+import type {
+	SupportedWallets,
+	InitializationData,
+} from 'hedera-stable-coin-sdk';
 
 interface InitialStateProps {
 	data?: InitializationData;
 	hasWalletExtension: boolean;
+	foundWallets: SupportedWallets[];
 	isPaired: boolean;
 	loading: boolean;
-	accountInfo: IAccountInfo;
+	accountInfo: AccountViewModel;
 	selectedStableCoin?: IStableCoinDetail;
 	stableCoinList?: IStableCoinList[];
 	externalTokenList?: IExternalToken[];
@@ -27,6 +24,7 @@ interface InitialStateProps {
 
 export const initialState: InitialStateProps = {
 	hasWalletExtension: false,
+	foundWallets: [],
 	isPaired: false,
 	loading: false,
 	accountInfo: {},
@@ -91,7 +89,8 @@ export const walletSlice = createSlice({
 		setExternalTokenList: (state, action) => {
 			state.externalTokenList = action.payload;
 		},
-		setHasWalletExtension(state) {
+		setHasWalletExtension(state, action) {
+			state.foundWallets.push(action.payload);
 			state.hasWalletExtension = true;
 		},
 		setIsPaired(state) {

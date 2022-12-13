@@ -6,17 +6,6 @@ import {
 	DependencyContainer,
 	delay,
 } from 'tsyringe';
-import { CommandHandlerType } from './command/CommandBus.js';
-import { QueryHandlerType } from './query/QueryBus.js';
-import { NetworkProps } from '../app/service/NetworkService.js';
-// eslint-disable-next-line jest/no-mocks-import
-import { ConcreteQueryHandler } from '../../__tests__/core/command/__mocks__/ConcreteQueryHandler.js';
-// eslint-disable-next-line jest/no-mocks-import
-import { ConcreteCommandHandler } from '../../__tests__/core/command/__mocks__/ConcreteCommandHandler.js';
-import TransactionAdapter from '../port/out/TransactionAdapter.js';
-import { RuntimeError } from './error/RuntimeError.js';
-import { HTSTransactionAdapter } from '../port/out/hs/hts/HTSTransactionAdapter.js';
-import { HashpackTransactionAdapter } from '../port/out/hs/hashpack/HashpackTransactionAdapter.js';
 import { GetStableCoinQueryHandler } from '../app/usecase/query/stablecoin/get/GetStableCoinQueryHandler.js';
 import RPCTransactionAdapter from '../port/out/rpc/RPCTransactionAdapter.js';
 import { Constructor } from './Type.js';
@@ -46,6 +35,17 @@ import { GetListStableCoinQueryHandler } from '../app/usecase/query/stablecoin/l
 import { GetAccountInfoQueryHandler } from '../app/usecase/query/account/info/GetAccountInfoQueryHandler.js';
 import { SetNetworkCommandHandler } from '../app/usecase/command/network/setNetwork/SetNetworkCommandHandler.js';
 import { WalletEvents } from '../app/service/event/WalletEvent.js';
+import { CommandHandlerType } from './command/CommandBus.js';
+import { QueryHandlerType } from './query/QueryBus.js';
+import { NetworkProps } from '../app/service/NetworkService.js';
+// eslint-disable-next-line jest/no-mocks-import
+import { ConcreteQueryHandler } from '../../__tests__/core/command/__mocks__/ConcreteQueryHandler.js';
+// eslint-disable-next-line jest/no-mocks-import
+import { ConcreteCommandHandler } from '../../__tests__/core/command/__mocks__/ConcreteCommandHandler.js';
+import TransactionAdapter from '../port/out/TransactionAdapter.js';
+import { RuntimeError } from './error/RuntimeError.js';
+import { HTSTransactionAdapter } from '../port/out/hs/hts/HTSTransactionAdapter.js';
+import { HashpackTransactionAdapter } from '../port/out/hs/hashpack/HashpackTransactionAdapter.js';
 
 export const TOKENS = {
 	COMMAND_HANDLER: Symbol('CommandHandler'),
@@ -209,7 +209,7 @@ container.register<typeof WalletEvents>('WalletEvents', {
 });
 
 @registry([...COMMAND_HANDLERS, ...QUERY_HANDLERS, ...TRANSACTION_HANDLER])
-export class Injectable {
+export default class Injectable {
 	static readonly TOKENS = TOKENS;
 
 	private static currentTransactionHandler: TransactionAdapter;

@@ -16,7 +16,7 @@ import RPCTransactionAdapter from '../../../../src/port/out/rpc/RPCTransactionAd
 import { Wallet } from 'ethers';
 import { StableCoinRole } from '../../../../src/domain/context/stablecoin/StableCoinRole.js';
 import PrivateKey from '../../../../src/domain/context/account/PrivateKey.js';
-import { Injectable } from '../../../../src/core/Injectable.js';
+import Injectable from '../../../../src/core/Injectable.js';
 import { MirrorNodeAdapter } from '../../../../src/port/out/mirror/MirrorNodeAdapter.js';
 
 const evmAddress = '0x320d33046b60dbc5a027cfb7e4124f75b0417240';
