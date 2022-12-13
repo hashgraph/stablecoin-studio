@@ -1,9 +1,8 @@
 import * as inquirer from 'inquirer';
 import figlet from 'figlet-promised';
 import Service from '../Service.js';
-import { configurationService, language } from '../../../index.js';
+import { language } from '../../../index.js';
 import Table from 'cli-table3';
-import { StableCoinList } from '../../../domain/stablecoin/StableCoinList.js';
 import {
   ValidationResponse,
   Network,
@@ -317,9 +316,9 @@ export default class UtilitiesService extends Service {
   }
 
   public async drawTableListStableCoin(
-    data?: StableCoinListViewModel[],
+    data?: StableCoinListViewModel,
   ): Promise<void> {
-    if (data.length === 0) {
+    if (data.coins.length === 0) {
       console.log('There are no stable coins available at this time.');
     } else {
       const table = new Table({
@@ -328,8 +327,8 @@ export default class UtilitiesService extends Service {
         colWidths: [15, 20],
       });
 
-      if (data) {
-        data.forEach((item) => table.push([item.id, item.symbol]));
+      if (data.coins) {
+        data.coins.forEach((item) => table.push([item.id, item.symbol]));
       } else {
         table.push(['-', '-']);
       }

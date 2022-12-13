@@ -31,20 +31,28 @@ import { GrantSupplierRoleCommand } from '../../app/usecase/command/stablecoin/r
 import { GrantUnlimitedSupplierRoleCommand } from '../../app/usecase/command/stablecoin/roles/granUnlimitedSupplierRole/GrantUnlimitedSupplierRoleCommand.js';
 import { RevokeSupplierRoleCommand } from '../../app/usecase/command/stablecoin/roles/revokeSupplierRole/RevokeSupplierRoleCommand.js';
 
+export { StableCoinRole };
+
 interface IRole {
 	hasRole(request: HasRoleRequest): Promise<boolean>;
 	grantRole(request: GrantRoleRequest): Promise<boolean>;
 	revokeRole(request: RevokeRoleRequest): Promise<boolean>;
 	getRoles(request: GetRolesRequest): Promise<string[]>;
-	
+
 	supplier: {
 		getAllowance(request: GetSupplierAllowanceRequest): Promise<BigDecimal>;
-		resetAllowance(request: ResetSupplierAllowanceRequest): Promise<boolean>;
-		increaseAllowance(request: IncreaseSupplierAllowanceRequest): Promise<boolean>;
-		decreaseAllowance(request: DecreaseSupplierAllowanceRequest): Promise<boolean>;
+		resetAllowance(
+			request: ResetSupplierAllowanceRequest,
+		): Promise<boolean>;
+		increaseAllowance(
+			request: IncreaseSupplierAllowanceRequest,
+		): Promise<boolean>;
+		decreaseAllowance(
+			request: DecreaseSupplierAllowanceRequest,
+		): Promise<boolean>;
 		isLimited(request: CheckSupplierLimitRequest): Promise<boolean>;
 		isUnlimited(request: CheckSupplierLimitRequest): Promise<boolean>;
-	}
+	};
 }
 
 class RoleInPort implements IRole {
@@ -65,48 +73,56 @@ class RoleInPort implements IRole {
 		const { tokenId, targetId, role } = request;
 		const validation = request.validate();
 
-		if (validation.length > 0) throw new Error("validation error");
+		if (validation.length > 0) throw new Error('validation error');
 
-		return (await this.commandBus.execute(
-			new HasRoleCommand(
-				role!,
-				HederaId.from(targetId),
-				HederaId.from(tokenId)
+		return (
+			await this.commandBus.execute(
+				new HasRoleCommand(
+					role!,
+					HederaId.from(targetId),
+					HederaId.from(tokenId),
+				),
 			)
-		)).payload;
+		).payload;
 	}
 
 	async grantRole(request: GrantRoleRequest): Promise<boolean> {
 		const { tokenId, targetId, role, supplierType, amount } = request;
 		const validation = request.validate();
 
-		if (validation.length > 0) throw new Error("validation error");
+		if (validation.length > 0) throw new Error('validation error');
 
 		if (role === StableCoinRole.CASHIN_ROLE) {
 			if (supplierType == 'limited') {
-				return (await this.commandBus.execute(
-					new GrantSupplierRoleCommand(
+				return (
+					await this.commandBus.execute(
+						new GrantSupplierRoleCommand(
+							HederaId.from(targetId),
+							HederaId.from(tokenId),
+							BigDecimal.fromString(amount!),
+						),
+					)
+				).payload;
+			} else {
+				return (
+					await this.commandBus.execute(
+						new GrantUnlimitedSupplierRoleCommand(
+							HederaId.from(targetId),
+							HederaId.from(tokenId),
+						),
+					)
+				).payload;
+			}
+		} else {
+			return (
+				await this.commandBus.execute(
+					new GrantRoleCommand(
+						role!,
 						HederaId.from(targetId),
 						HederaId.from(tokenId),
-						BigDecimal.fromString(amount!)
-					)
-				)).payload;
-			} else {
-				return (await this.commandBus.execute(
-					new GrantUnlimitedSupplierRoleCommand(
-						HederaId.from(targetId),
-						HederaId.from(tokenId)
-					)
-				)).payload;
-			}	
-		} else {
-			return (await this.commandBus.execute(
-				new GrantRoleCommand(
-					role!,
-					HederaId.from(targetId),
-					HederaId.from(tokenId)
+					),
 				)
-			)).payload;
+			).payload;
 		}
 	}
 
@@ -114,23 +130,27 @@ class RoleInPort implements IRole {
 		const { tokenId, targetId, role } = request;
 		const validation = request.validate();
 
-		if (validation.length > 0) throw new Error("validation error");
+		if (validation.length > 0) throw new Error('validation error');
 
 		if (role === StableCoinRole.CASHIN_ROLE) {
-			return (await this.commandBus.execute(
-				new RevokeSupplierRoleCommand(
-					HederaId.from(targetId),
-					HederaId.from(tokenId)
+			return (
+				await this.commandBus.execute(
+					new RevokeSupplierRoleCommand(
+						HederaId.from(targetId),
+						HederaId.from(tokenId),
+					),
 				)
-			)).payload;
+			).payload;
 		} else {
-			return (await this.commandBus.execute(
-				new RevokeRoleCommand(
-					role!,
-					HederaId.from(targetId),
-					HederaId.from(tokenId)
+			return (
+				await this.commandBus.execute(
+					new RevokeRoleCommand(
+						role!,
+						HederaId.from(targetId),
+						HederaId.from(tokenId),
+					),
 				)
-			)).payload;
+			).payload;
 		}
 	}
 
@@ -138,107 +158,139 @@ class RoleInPort implements IRole {
 		const { tokenId, targetId } = request;
 		const validation = request.validate();
 
-		if (validation.length > 0) throw new Error("validation error");
+		if (validation.length > 0) throw new Error('validation error');
 
-		return (await this.commandBus.execute(
-			new GetRolesCommand(
-				HederaId.from(targetId),
-				HederaId.from(tokenId)
+		return (
+			await this.commandBus.execute(
+				new GetRolesCommand(
+					HederaId.from(targetId),
+					HederaId.from(tokenId),
+				),
 			)
-		)).payload;
+		).payload;
 	}
-	
-	supplier: { 
+
+	supplier: {
 		getAllowance(request: GetSupplierAllowanceRequest): Promise<BigDecimal>;
-		resetAllowance(request: ResetSupplierAllowanceRequest): Promise<boolean>;
-		increaseAllowance(request: IncreaseSupplierAllowanceRequest): Promise<boolean>;
-		decreaseAllowance(request: DecreaseSupplierAllowanceRequest): Promise<boolean>;
+		resetAllowance(
+			request: ResetSupplierAllowanceRequest,
+		): Promise<boolean>;
+		increaseAllowance(
+			request: IncreaseSupplierAllowanceRequest,
+		): Promise<boolean>;
+		decreaseAllowance(
+			request: DecreaseSupplierAllowanceRequest,
+		): Promise<boolean>;
 		isLimited(request: CheckSupplierLimitRequest): Promise<boolean>;
 		isUnlimited(request: CheckSupplierLimitRequest): Promise<boolean>;
 	} = {
-		async getAllowance(request: GetSupplierAllowanceRequest): Promise<BigDecimal> {
+		async getAllowance(
+			request: GetSupplierAllowanceRequest,
+		): Promise<BigDecimal> {
 			const { tokenId, targetId } = request;
 			const validation = request.validate();
 
-			if (validation.length > 0) throw new Error("validation error");
+			if (validation.length > 0) throw new Error('validation error');
 
-			return (await super.commandBus.execute(
-				new GetAllowanceCommand(
-					HederaId.from(targetId),
-					HederaId.from(tokenId)
+			return (
+				await super.commandBus.execute(
+					new GetAllowanceCommand(
+						HederaId.from(targetId),
+						HederaId.from(tokenId),
+					),
 				)
-			)).payload;
+			).payload;
 		},
 
-		async resetAllowance(request: ResetSupplierAllowanceRequest): Promise<boolean> {
+		async resetAllowance(
+			request: ResetSupplierAllowanceRequest,
+		): Promise<boolean> {
 			const { tokenId, targetId } = request;
 			const validation = request.validate();
 
 			if (validation.length > 0) return false;
 
-			return (await super.commandBus.execute(
-				new ResetAllowanceCommand(
-					HederaId.from(targetId),
-					HederaId.from(tokenId)
+			return (
+				await super.commandBus.execute(
+					new ResetAllowanceCommand(
+						HederaId.from(targetId),
+						HederaId.from(tokenId),
+					),
 				)
-			)).payload;			
+			).payload;
 		},
 
-		async increaseAllowance(request: IncreaseSupplierAllowanceRequest): Promise<boolean> {
+		async increaseAllowance(
+			request: IncreaseSupplierAllowanceRequest,
+		): Promise<boolean> {
 			const { tokenId, amount, targetId } = request;
 			const validation = request.validate();
 
-			if (validation.length > 0) throw new Error("validation error");
+			if (validation.length > 0) throw new Error('validation error');
 
-			return (await super.commandBus.execute(
-				new IncreaseAllowanceCommand(
-					BigDecimal.fromString(amount),
-					HederaId.from(targetId),
-					HederaId.from(tokenId)
+			return (
+				await super.commandBus.execute(
+					new IncreaseAllowanceCommand(
+						BigDecimal.fromString(amount),
+						HederaId.from(targetId),
+						HederaId.from(tokenId),
+					),
 				)
-			)).payload;						
+			).payload;
 		},
 
-		async decreaseAllowance(request: DecreaseSupplierAllowanceRequest): Promise<boolean> {
+		async decreaseAllowance(
+			request: DecreaseSupplierAllowanceRequest,
+		): Promise<boolean> {
 			const { tokenId, amount, targetId } = request;
 			const validation = request.validate();
 
-			if (validation.length > 0) throw new Error("validation error");
+			if (validation.length > 0) throw new Error('validation error');
 
-			return (await super.commandBus.execute(
-				new DecreaseAllowanceCommand(
-					BigDecimal.fromString(amount),
-					HederaId.from(targetId),
-					HederaId.from(tokenId)
+			return (
+				await super.commandBus.execute(
+					new DecreaseAllowanceCommand(
+						BigDecimal.fromString(amount),
+						HederaId.from(targetId),
+						HederaId.from(tokenId),
+					),
 				)
-			)).payload;			
+			).payload;
 		},
 
 		async isLimited(request: CheckSupplierLimitRequest): Promise<boolean> {
 			const { tokenId, targetId } = request;
 			const validation = request.validate();
 
-			if (validation.length > 0) throw new Error("validation error");
+			if (validation.length > 0) throw new Error('validation error');
 
-			return super.hasRole(new HasRoleRequest({targetId: targetId,
-				tokenId: tokenId,
-				role: StableCoinRole.CASHIN_ROLE }));
+			return super.hasRole(
+				new HasRoleRequest({
+					targetId: targetId,
+					tokenId: tokenId,
+					role: StableCoinRole.CASHIN_ROLE,
+				}),
+			);
 		},
 
-		async isUnlimited(request: CheckSupplierLimitRequest): Promise<boolean> {
+		async isUnlimited(
+			request: CheckSupplierLimitRequest,
+		): Promise<boolean> {
 			const { tokenId, targetId } = request;
 			const validation = request.validate();
 
-			if (validation.length > 0) throw new Error("validation error");
+			if (validation.length > 0) throw new Error('validation error');
 
-			return (await super.commandBus.execute(
-				new IsUnlimitedCommand(
-					HederaId.from(targetId),
-					HederaId.from(tokenId)
+			return (
+				await super.commandBus.execute(
+					new IsUnlimitedCommand(
+						HederaId.from(targetId),
+						HederaId.from(tokenId),
+					),
 				)
-			)).payload;			
-		}
-	}
+			).payload;
+		},
+	};
 }
 
 const Role = new RoleInPort();
