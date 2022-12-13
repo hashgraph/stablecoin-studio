@@ -15,26 +15,32 @@ import ResetSupplierAllowanceRequest from './request/ResetSupplierAllowanceReque
 import IncreaseSupplierAllowanceRequest from './request/IncreaseSupplierAllowanceRequest.js';
 import DecreaseSupplierAllowanceRequest from './request/DecreaseSupplierAllowanceRequest.js';
 import CheckSupplierLimitRequest from './request/CheckSupplierLimitRequest.js';
+import { HasRoleCommand } from '../../app/usecase/command/stablecoin/roles/hasRole/HasRoleCommand.js';
+import { HederaId } from '../../domain/context/shared/HederaId.js';
+import { GrantRoleCommand } from '../../app/usecase/command/stablecoin/roles/grantRole/GrantRoleCommand.js';
+import { RevokeRoleCommand } from '../../app/usecase/command/stablecoin/roles/revokeRole/RevokeRoleCommand.js';
+import { GetRolesCommand } from '../../app/usecase/command/stablecoin/roles/getRoles/GetRolesCommand.js';
+import { GetAllowanceCommand } from '../../app/usecase/command/stablecoin/roles/getAllowance/GetAllowanceCommand.js';
+import { ResetAllowanceCommand } from '../../app/usecase/command/stablecoin/roles/resetAllowance/ResetAllowanceCommand.js';
+import { IncreaseAllowanceCommand } from '../../app/usecase/command/stablecoin/roles/increaseAllowance/IncreaseAllowanceCommand.js';
+import BigDecimal from '../../domain/context/shared/BigDecimal.js';
+import { DecreaseAllowanceCommand } from '../../app/usecase/command/stablecoin/roles/decreaseAllowance/DecreaseAllowanceCommand.js';
+import { IsLimitedCommand } from '../../app/usecase/command/stablecoin/roles/isLimited/IsLimitedCommand.js';
+import { IsUnlimitedCommand } from '../../app/usecase/command/stablecoin/roles/isUnlimited/IsUnlimitedCommand.js';
 
 interface IRole {
 	hasRole(request: HasRoleRequest): Promise<boolean>;
 	grantRole(request: GrantRoleRequest): Promise<boolean>;
 	revokeRole(request: RevokeRoleRequest): Promise<boolean>;
 	getRoles(request: GetRolesRequest): Promise<string[]>;
-	Supplier: {
-		getAllowance(request: GetSupplierAllowanceRequest): Promise<string>;
-		resetAllowance(
-			request: ResetSupplierAllowanceRequest,
-		): Promise<boolean>;
-		increaseAllowance(
-			request: IncreaseSupplierAllowanceRequest,
-		): Promise<boolean>;
-		decreaseAllowance(
-			request: DecreaseSupplierAllowanceRequest,
-		): Promise<boolean>;
+	//Supplier: {
+		getAllowance(request: GetSupplierAllowanceRequest): Promise<BigDecimal>;
+		resetAllowance(request: ResetSupplierAllowanceRequest): Promise<boolean>;
+		increaseAllowance(request: IncreaseSupplierAllowanceRequest): Promise<boolean>;
+		decreaseAllowance(request: DecreaseSupplierAllowanceRequest): Promise<boolean>;
 		isLimited(request: CheckSupplierLimitRequest): Promise<boolean>;
 		isUnlimited(request: CheckSupplierLimitRequest): Promise<boolean>;
-	};
+	//};
 }
 
 class RoleInPort implements IRole {
@@ -50,32 +56,153 @@ class RoleInPort implements IRole {
 			TransactionService,
 		),
 	) {}
-	hasRole(request: HasRoleRequest): Promise<boolean> {
-		throw new Error('Method not implemented.');
+
+	async hasRole(request: HasRoleRequest): Promise<boolean> {
+		const { tokenId, targetId, role } = request;
+		const validation = request.validate();
+		// TODO return validation
+		if (validation.length > 0) return false;
+
+		return !!(await this.commandBus.execute(
+			new HasRoleCommand(
+				role!,
+				HederaId.from(targetId),
+				HederaId.from(tokenId)
+			)
+		));
 	}
-	grantRole(request: GrantRoleRequest): Promise<boolean> {
-		throw new Error('Method not implemented.');
+
+	async grantRole(request: GrantRoleRequest): Promise<boolean> {
+		const { tokenId, targetId, role } = request;
+		const validation = request.validate();
+		// TODO return validation
+		if (validation.length > 0) return false;
+
+		return !!(await this.commandBus.execute(
+			new GrantRoleCommand(
+				role!,
+				HederaId.from(targetId),
+				HederaId.from(tokenId)
+			)
+		));
 	}
-	revokeRole(request: RevokeRoleRequest): Promise<boolean> {
-		throw new Error('Method not implemented.');
+
+	async revokeRole(request: RevokeRoleRequest): Promise<boolean> {
+		const { tokenId, targetId, role } = request;
+		const validation = request.validate();
+		// TODO return validation
+		if (validation.length > 0) return false;
+
+		return !!(await this.commandBus.execute(
+			new RevokeRoleCommand(
+				role!,
+				HederaId.from(targetId),
+				HederaId.from(tokenId)
+			)
+		));
 	}
-	getRoles(request: GetRolesRequest): Promise<string[]> {
-		throw new Error('Method not implemented.');
+
+	async getRoles(request: GetRolesRequest): Promise<string[]> {
+		const { tokenId, targetId } = request;
+		const validation = request.validate();
+		// TODO return validation
+		if (validation.length > 0) return [];
+
+		return (await this.commandBus.execute(
+			new GetRolesCommand(
+				HederaId.from(targetId),
+				HederaId.from(tokenId)
+			)
+		)).payload;
 	}
-	Supplier: {
-		getAllowance(request: GetSupplierAllowanceRequest): Promise<string>;
-		resetAllowance(
-			request: ResetSupplierAllowanceRequest,
-		): Promise<boolean>;
-		increaseAllowance(
-			request: IncreaseSupplierAllowanceRequest,
-		): Promise<boolean>;
-		decreaseAllowance(
-			request: DecreaseSupplierAllowanceRequest,
-		): Promise<boolean>;
-		isLimited(request: CheckSupplierLimitRequest): Promise<boolean>;
-		isUnlimited(request: CheckSupplierLimitRequest): Promise<boolean>;
-	};
+
+	//Supplier: {
+		async getAllowance(request: GetSupplierAllowanceRequest): Promise<BigDecimal> {
+			const { tokenId, targetId } = request;
+			const validation = request.validate();
+			// TODO return validation
+			if (validation.length > 0) return BigDecimal.ZERO;
+	
+			return (await this.commandBus.execute(
+				new GetAllowanceCommand(
+					HederaId.from(targetId),
+					HederaId.from(tokenId)
+				)
+			)).payload;
+		}
+
+		async resetAllowance(request: ResetSupplierAllowanceRequest): Promise<boolean> {
+			const { tokenId, targetId } = request;
+			const validation = request.validate();
+			// TODO return validation
+			if (validation.length > 0) return false;
+	
+			return !!(await this.commandBus.execute(
+				new ResetAllowanceCommand(
+					HederaId.from(targetId),
+					HederaId.from(tokenId)
+				)
+			));			
+		}
+
+		async increaseAllowance(request: IncreaseSupplierAllowanceRequest): Promise<boolean> {
+			const { tokenId, amount, targetId } = request;
+			const validation = request.validate();
+			// TODO return validation
+			if (validation.length > 0) return false;
+	
+			return !!(await this.commandBus.execute(
+				new IncreaseAllowanceCommand(
+					BigDecimal.fromString(amount),
+					HederaId.from(targetId),
+					HederaId.from(tokenId)
+				)
+			));						
+		}
+
+		async decreaseAllowance(request: DecreaseSupplierAllowanceRequest): Promise<boolean> {
+			const { tokenId, amount, targetId } = request;
+			const validation = request.validate();
+			// TODO return validation
+			if (validation.length > 0) return false;
+	
+			return !!(await this.commandBus.execute(
+				new DecreaseAllowanceCommand(
+					BigDecimal.fromString(amount),
+					HederaId.from(targetId),
+					HederaId.from(tokenId)
+				)
+			));			
+		}
+
+		async isLimited(request: CheckSupplierLimitRequest): Promise<boolean> {
+			const { tokenId, targetId } = request;
+			const validation = request.validate();
+			// TODO return validation
+			if (validation.length > 0) return false;
+	
+			return !!(await this.commandBus.execute(
+				new IsLimitedCommand(
+					HederaId.from(targetId),
+					HederaId.from(tokenId)
+				)
+			));			
+		}
+
+		async isUnlimited(request: CheckSupplierLimitRequest): Promise<boolean> {
+			const { tokenId, targetId } = request;
+			const validation = request.validate();
+			// TODO return validation
+			if (validation.length > 0) return false;
+	
+			return !!(await this.commandBus.execute(
+				new IsUnlimitedCommand(
+					HederaId.from(targetId),
+					HederaId.from(tokenId)
+				)
+			));			
+		}
+	//};
 }
 
 const Role = new RoleInPort();
