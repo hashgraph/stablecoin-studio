@@ -27,6 +27,8 @@ import { HederaId } from '../../../domain/context/shared/HederaId.js';
 import { lazyInject } from '../../../core/decorator/LazyInjectDecorator.js';
 import { MirrorNodeAdapter } from '../mirror/MirrorNodeAdapter.js';
 import NetworkService from '../../../app/service/NetworkService.js';
+import ContractId from '../../../domain/context/contract/ContractId.js';
+import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 
 // eslint-disable-next-line no-var
 declare var ethereum: any;
@@ -44,6 +46,9 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		private readonly networkService: NetworkService,
 	) {
 		super();
+	}
+	create(coin: StableCoin, factory: ContractId, hederaERC20: ContractId): Promise<TransactionResponse<any, Error>> {
+		throw new Error('Method not implemented.');
 	}
 
 	async register(

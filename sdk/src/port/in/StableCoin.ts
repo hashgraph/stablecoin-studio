@@ -8,6 +8,8 @@ import RescueRequest from './request/RescueRequest.js';
 import WipeRequest from './request/WipeRequest.js';
 import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import { HederaId } from '../../domain/context/shared/HederaId.js';
+import ContractId from '../../domain/context/contract/ContractId.js';
+import { StableCoin as  StableCoinObject} from '../../domain/context/stablecoin/StableCoin.js';
 import NetworkService from '../../app/service/NetworkService.js';
 import { QueryBus } from '../../core/query/QueryBus.js';
 import { CommandBus } from '../../core/command/CommandBus.js';
@@ -16,6 +18,16 @@ import StableCoinViewModel from '../out/mirror/response/StableCoinViewModel.js';
 import StableCoinService from '../../app/service/StableCoinService.js';
 import { GetStableCoinQuery } from '../../app/usecase/query/stablecoin/get/GetStableCoinQuery.js';
 import AccountService from '../../app/service/AccountService.js';
+import { CreateCommand } from '../../app/usecase/command/stablecoin/create/CreateCommand.js';
+import PublicKey from '../../domain/context/account/PublicKey.js';
+import Mapper from '../../core/mapping/Mapper.js';
+
+export const HederaERC20AddressTestnet = "0.0.49077027";
+export const HederaERC20AddressPreviewnet = "0.0.11111111";
+
+export const FactoryAddressTestnet = "0.0.49077033";
+export const FactoryAddressPreviewnet = "0.0.11111111";
+
 import DeleteRequest from './request/DeleteRequest.js';
 import FreezeAccountRequest from './request/FreezeAccountRequest.js';
 import PauseRequest from './request/PauseRequest.js';
@@ -50,14 +62,44 @@ class StableCoinInPort implements IStableCoinInPort {
 			AccountService,
 		),
 	) {}
+	async create(req: CreateRequest): Promise<StableCoinViewModel> {
+		const validation = req.validate();
+		if (validation.length > 0) throw new Error("validation error");
 
-	async create(request: CreateRequest): Promise<StableCoinViewModel> {
-		// Create
-		return (
-			await this.queryBus.execute(
-				new GetStableCoinQuery(HederaId.from('0.0.0')),
+		const { stableCoinFactory, hederaERC20 } = req;
+
+		const coin: StableCoinObject = new StableCoinObject({
+			name: req.name,
+			symbol: req.symbol,
+			decimals: req.decimals,
+			adminKey: req.adminKey? new PublicKey({key: req.adminKey.key, type: req.adminKey.type}) : PublicKey.NULL,
+			initialSupply: BigDecimal.fromString(req.initialSupply ?? '0'),
+			maxSupply: BigDecimal.fromString(req.maxSupply ?? '0'),
+			freezeKey: req.freezeKey? new PublicKey({key: req.freezeKey.key, type: req.freezeKey.type}) : PublicKey.NULL,
+			freezeDefault: req.freezeDefault,
+			kycKey: req.KYCKey? new PublicKey({key: req.KYCKey.key, type: req.KYCKey.type}) : PublicKey.NULL,
+			wipeKey: req.wipeKey? new PublicKey({key: req.wipeKey.key, type: req.wipeKey.type}) : PublicKey.NULL,
+			pauseKey: req.pauseKey? new PublicKey({key: req.pauseKey.key, type: req.pauseKey.type}) : PublicKey.NULL,
+			supplyKey: req.supplyKey? new PublicKey({key: req.supplyKey.key, type: req.supplyKey.type}) : PublicKey.NULL,
+			treasury: new HederaId(req.treasury ?? '0.0.0'),
+			supplyType: req.supplyType,
+			autoRenewAccount: new HederaId(req.autoRenewAccount!),
+		});
+
+		const createResponse = (await this.commandBus.execute(
+			new CreateCommand(
+				coin,
+				new ContractId(stableCoinFactory),
+				new ContractId(hederaERC20)
+			),
+		));
+
+		return (await this.queryBus.execute(
+			new GetStableCoinQuery(
+				createResponse.tokenId
 			)
-		).coin;
+		)).coin;
+
 	}
 
 	async getInfo(

@@ -7,11 +7,11 @@ const {
     ContractFunctionParameters
 } = require('@hashgraph/sdk')
 
-const hederaERC20Address = "0.0.49070407";//"0.0.49059747";
+const hederaERC20Address = "0.0.49077027";//"0.0.49070407";
 
-const factoryProxyAddress = "0.0.49070413";//"0.0.49059753";
-const factoryProxyAdminAddress = "0.0.49070411";//"0.0.49059751";
-const factoryAddress = "0.0.49070409";//"0.0.49059749";
+const factoryProxyAddress = "0.0.49077033";//"0.0.49070413";
+const factoryProxyAdminAddress = "0.0.49077031";//"0.0.49070411";
+const factoryAddress = "0.0.49077029";//"0.0.49070409";
 
 const address_0 = "0x0000000000000000000000000000000000000000";
 
