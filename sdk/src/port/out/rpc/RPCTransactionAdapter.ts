@@ -603,33 +603,34 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		params?: Params									  
 		): Promise<TransactionResponse> 
 	{
+		const evmProxy = coin.coin.evmProxyAddress ?? '';
 		switch(operation) {
 			case Operation.CASH_IN:
-				return RPCTransactionResponseAdapter.manageResponse(await HederaERC20__factory.connect(coin.coin.evmProxyAddress!, this.signerOrProvider).mint(params!.targetId!, params!.amount!.toBigNumber()));
+				return RPCTransactionResponseAdapter.manageResponse(await HederaERC20__factory.connect(evmProxy, this.signerOrProvider).mint(params!.targetId!, params!.amount!.toBigNumber()));
 
 			case Operation.BURN:
-				return RPCTransactionResponseAdapter.manageResponse(await HederaERC20__factory.connect(coin.coin.evmProxyAddress!, this.signerOrProvider).burn(params!.amount!.toBigNumber()));
+				return RPCTransactionResponseAdapter.manageResponse(await HederaERC20__factory.connect(evmProxy, this.signerOrProvider).burn(params!.amount!.toBigNumber()));
 
 			case Operation.WIPE:
-				return RPCTransactionResponseAdapter.manageResponse(await HederaERC20__factory.connect(coin.coin.evmProxyAddress!, this.signerOrProvider).wipe(params!.targetId!, params!.amount!.toBigNumber()));
+				return RPCTransactionResponseAdapter.manageResponse(await HederaERC20__factory.connect(evmProxy, this.signerOrProvider).wipe(params!.targetId!, params!.amount!.toBigNumber()));
 
 			case Operation.RESCUE:
-				return RPCTransactionResponseAdapter.manageResponse(await HederaERC20__factory.connect(coin.coin.evmProxyAddress!, this.signerOrProvider).rescue(params!.amount!.toBigNumber()));
+				return RPCTransactionResponseAdapter.manageResponse(await HederaERC20__factory.connect(evmProxy, this.signerOrProvider).rescue(params!.amount!.toBigNumber()));
 	
 			case Operation.FREEZE:
-				return RPCTransactionResponseAdapter.manageResponse(await HederaERC20__factory.connect(coin.coin.evmProxyAddress!, this.signerOrProvider).freeze(params!.targetId!));
+				return RPCTransactionResponseAdapter.manageResponse(await HederaERC20__factory.connect(evmProxy, this.signerOrProvider).freeze(params!.targetId!));
 
 			case Operation.UNFREEZE:
-				return RPCTransactionResponseAdapter.manageResponse(await HederaERC20__factory.connect(coin.coin.evmProxyAddress!, this.signerOrProvider).unfreeze(params!.targetId!));
+				return RPCTransactionResponseAdapter.manageResponse(await HederaERC20__factory.connect(evmProxy, this.signerOrProvider).unfreeze(params!.targetId!));
 
 			case Operation.PAUSE:
-				return RPCTransactionResponseAdapter.manageResponse(await HederaERC20__factory.connect(coin.coin.evmProxyAddress!, this.signerOrProvider).pause());
+				return RPCTransactionResponseAdapter.manageResponse(await HederaERC20__factory.connect(evmProxy, this.signerOrProvider).pause());
 
 			case Operation.UNPAUSE:
-				return RPCTransactionResponseAdapter.manageResponse(await HederaERC20__factory.connect(coin.coin.evmProxyAddress!, this.signerOrProvider).unpause());
+				return RPCTransactionResponseAdapter.manageResponse(await HederaERC20__factory.connect(evmProxy, this.signerOrProvider).unpause());
 
 			case Operation.DELETE:
-				return RPCTransactionResponseAdapter.manageResponse(await HederaERC20__factory.connect(coin.coin.evmProxyAddress!, this.signerOrProvider).deleteToken());
+				return RPCTransactionResponseAdapter.manageResponse(await HederaERC20__factory.connect(evmProxy, this.signerOrProvider).deleteToken());
 	
 			default:
 				throw new Error(`Operation not implemented through Smart Contracts`);

@@ -1,5 +1,5 @@
-export class FactoryKey{
-    public keyType: number;
-    public PublicKey: any;
-    public isED25519: boolean;
-} 
+export class FactoryKey {
+	public keyType: number;
+	public PublicKey: unknown;
+	public isED25519: boolean;
+}

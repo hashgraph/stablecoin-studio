@@ -1,3 +1,4 @@
+/* eslint-disable jest/no-commented-out-tests */
 /* eslint-disable jest/valid-expect */
 /* eslint-disable jest/expect-expect */
 /* eslint-disable jest/no-standalone-expect */
@@ -15,7 +16,6 @@ import BigDecimal from '../../../../src/domain/context/shared/BigDecimal.js';
 import RPCTransactionAdapter from '../../../../src/port/out/rpc/RPCTransactionAdapter.js';
 import { Wallet } from 'ethers';
 import { StableCoinRole } from '../../../../src/domain/context/stablecoin/StableCoinRole.js';
-import PrivateKey from '../../../../src/domain/context/account/PrivateKey.js';
 import Injectable from '../../../../src/core/Injectable.js';
 import { MirrorNodeAdapter } from '../../../../src/port/out/mirror/MirrorNodeAdapter.js';
 
@@ -77,10 +77,6 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 
 	let th: RPCTransactionAdapter;
 	let tr: TransactionResponse;
-	const account: Account = new Account({
-		id: '0.0.48471385',
-		privateKey: new PrivateKey({ key: clientPrivateKey, type: 'ECDSA' }),
-	});
 
 	beforeAll(async () => {
 		th = Injectable.resolve(RPCTransactionAdapter);
@@ -219,7 +215,7 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 		);
 	}, 1500000);
 
-	it('Test hasRole', async () => {
+	it('Test hasRole (2)', async () => {
 		tr = await th.hasRole(
 			stableCoinCapabilitiesSC,
 			HederaId.from('0.0.48471385'),

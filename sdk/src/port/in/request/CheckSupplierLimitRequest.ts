@@ -43,6 +43,7 @@ export default class CheckSupplierLimitRequest
 	}
 
 	private static checkSupplierType = () => {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		return (val: any): BaseError[] => {
 			const err: BaseError[] = [];
 			const supplierTypes: string[] = ['limited', 'unlimited'];

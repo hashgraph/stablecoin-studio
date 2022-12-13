@@ -6,9 +6,9 @@ import { inject, delay } from 'tsyringe';
  *
  * @param cls Class to lazy load
  */
-export function lazyInject<T>(token: Constructor<T>): any {
+export function lazyInject<T>(token: Constructor<T>): unknown {
 	return (
-		target: any,
+		target: unknown,
 		propertyKey: string | symbol,
 		parameterIndex: number,
 	) => {
