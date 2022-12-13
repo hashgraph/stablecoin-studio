@@ -22,7 +22,7 @@ export default class ListStableCoinsService extends Service {
     // Call to list stable coins
     const currentAccount = utilsService.getCurrentAccount();
 
-    let resp: StableCoinListViewModel;
+    let resp: StableCoinListViewModel[];
 
     await utilsService.showSpinner(
       Account.listStableCoins(
@@ -31,7 +31,7 @@ export default class ListStableCoinsService extends Service {
             accountId: currentAccount.accountId,
           },
         }),
-      ).then((response: StableCoinListViewModel) => (resp = response)),
+      ).then((response: StableCoinListViewModel[]) => (resp = response)),
       {
         text: language.getText('state.searching'),
         successText: language.getText('state.searchingSuccess') + '\n',
