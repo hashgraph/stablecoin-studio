@@ -8,16 +8,13 @@ import {
 import Service from '../Service.js';
 import DetailsStableCoinsService from './DetailsStableCoinService.js';
 import {
-  Capabilities,
   EOAccount,
   IStableCoinDetail,
   PrivateKey,
-  SDK,
   StableCoinRole,
   CashInStableCoinRequest,
   WipeStableCoinRequest,
   CashOutStableCoinRequest,
-  GetListStableCoinRequest,
   RescueStableCoinRequest,
   GetAccountBalanceRequest,
   GetRolesRequest,
@@ -32,19 +29,23 @@ import {
   DeleteStableCoinRequest,
   PauseStableCoinRequest,
   FreezeAccountRequest,
+  StableCoinCapabilities,
+  Access,
+  Operation,
 } from 'hedera-stable-coin-sdk';
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 import CashInStableCoinsService from './CashInStableCoinService.js';
 import WipeStableCoinsService from './WipeStableCoinService.js';
 import RoleStableCoinsService from './RoleStableCoinService.js';
 import RescueStableCoinsService from './RescueStableCoinService.js';
-import CapabilitiesStableCoinsService from './CapabilitiesStableCoinService.js';
 import BurnStableCoinsService from './BurnStableCoinService.js';
 import colors from 'colors';
 import DeleteStableCoinService from './DeleteStableCoinService.js';
 import PauseStableCoinService from './PauseStableCoinService.js';
 import ManageImportedTokenService from './ManageImportedTokenService';
 import FreezeStableCoinService from './FreezeStableCoinService.js';
+import ListStableCoinsService from './ListStableCoinsService.js';
+import CapabilitiesStableCoinService from './CapabilitiesStableCoinService.js';
 
 /**
  * Operation Stable Coin Service
@@ -55,6 +56,8 @@ export default class OperationStableCoinService extends Service {
   private stableCoinWithSymbol;
   private optionTokenListSelected;
   private roleStableCoinService = new RoleStableCoinsService();
+  private capabilitiesStableCoinService = new CapabilitiesStableCoinService();
+  private listStableCoinService = new ListStableCoinsService();
   private stableCoinPaused;
   private stableCoinDeleted;
 
@@ -71,29 +74,21 @@ export default class OperationStableCoinService extends Service {
    * Start the wizard for operation a stable coin
    */
   public async start(): Promise<void> {
-    const sdk: SDK = utilsService.getSDK();
     const configAccount = utilsService.getCurrentAccount();
     const currentAccount = new EOAccount(
       configAccount.accountId,
-      new PrivateKey(
-        configAccount.privateKey.key,
-        configAccount.privateKey.type,
-      ),
+      new PrivateKey({
+        key: configAccount.privateKey.key,
+        type: configAccount.privateKey.type
+      }),
     );
     let resp: StableCoinList[];
     try {
       if (this.stableCoinId === undefined) {
         //Get list of stable coins to display
         await utilsService.showSpinner(
-          sdk
-            .getListStableCoin(
-              new GetListStableCoinRequest({
-                account: {
-                  accountId: currentAccount.accountId.id,
-                },
-              }),
-            )
-            .then((response: StableCoinList[]) => (resp = response)),
+          this.listStableCoinService.listStableCoins(
+            ).then((response: StableCoinList[]) => (resp = response)),
           {
             text: language.getText('state.searching'),
             successText: language.getText('state.searchingSuccess') + '\n',
@@ -151,7 +146,6 @@ export default class OperationStableCoinService extends Service {
   }
 
   private async operationsStableCoin(): Promise<void> {
-    const sdk: SDK = utilsService.getSDK();
     const configAccount = utilsService.getCurrentAccount();
     const currentAccount = new EOAccount(
       configAccount.accountId,
@@ -164,9 +158,8 @@ export default class OperationStableCoinService extends Service {
       'wizard.stableCoinOptions',
     );
 
-    const capabilitiesStableCoin = await this.getCapabilities(
-      sdk,
-      currentAccount,
+    const capabilitiesStableCoin: StableCoinCapabilities = await this.getCapabilities(
+      currentAccount
     );
 
     switch (
@@ -194,14 +187,6 @@ export default class OperationStableCoinService extends Service {
         );
 
         const cashInRequest = new CashInStableCoinRequest({
-          proxyContractId: this.proxyContractId,
-          account: {
-            accountId: configAccount.accountId,
-            privateKey: {
-              key: currentAccount.privateKey.key,
-              type: currentAccount.privateKey.type,
-            },
-          },
           tokenId: this.stableCoinId,
           targetId: '',
           amount: '',
@@ -561,16 +546,8 @@ export default class OperationStableCoinService extends Service {
         await utilsService.cleanAndShowBanner();
 
         const getRolesRequest = new GetRolesRequest({
-          proxyContractId: this.proxyContractId,
-          account: {
-            accountId: configAccount.accountId,
-            privateKey: {
-              key: currentAccount.privateKey.key,
-              type: currentAccount.privateKey.type,
-            },
-          },
           targetId: currentAccount.accountId.id,
-          tokenId: '',
+          tokenId: ''
         });
 
         // Call to Supplier Role
@@ -607,15 +584,11 @@ export default class OperationStableCoinService extends Service {
   }
 
   private async getCapabilities(
-    sdk: SDK,
-    currentAccount: EOAccount,
-  ): Promise<Capabilities[]> {
-    return await new CapabilitiesStableCoinsService().getCapabilitiesStableCoins(
+    currentAccount: EOAccount
+  ): Promise<StableCoinCapabilities> {
+    return await this.capabilitiesStableCoinService.getCapabilitiesStableCoins(
       this.stableCoinId,
-      sdk.getPublicKey(
-        currentAccount.privateKey.key,
-        currentAccount.privateKey.type,
-      ),
+      currentAccount
     );
   }
 
@@ -624,7 +597,6 @@ export default class OperationStableCoinService extends Service {
    */
 
   private async roleManagementFlow(): Promise<void> {
-    const sdk: SDK = utilsService.getSDK();
     const configAccount = utilsService.getCurrentAccount();
     const currentAccount = new EOAccount(
       configAccount.accountId,
@@ -634,19 +606,16 @@ export default class OperationStableCoinService extends Service {
       ),
     );
 
-    const capabilitiesStableCoin = await this.getCapabilities(
-      sdk,
-      currentAccount,
+    const stableCoinCapabilities = await this.getCapabilities(
+      currentAccount
     );
+    const capabilities: Operation[] = stableCoinCapabilities.capabilities.map(a => a.operation);
+
     const roleManagementOptions = language
       .getArray('wizard.roleManagementOptions')
       .filter((option) => {
         if (option == 'Edit role') {
-          return capabilitiesStableCoin.some((capability) =>
-            [Capabilities.CASH_IN, Capabilities.CASH_IN_HTS].includes(
-              capability,
-            ),
-          );
+          return capabilities.includes(Operation.CASH_IN);
         }
 
         return true;
@@ -676,14 +645,6 @@ export default class OperationStableCoinService extends Service {
         // Grant role
         //Lists all roles
         const grantRoleRequest = new GrantRoleRequest({
-          account: {
-            accountId: currentAccount.accountId.id,
-            privateKey: {
-              key: currentAccount.privateKey.key,
-              type: currentAccount.privateKey.type,
-            },
-          },
-          proxyContractId: this.proxyContractId,
           tokenId: this.stableCoinId,
           targetId: '',
           role: undefined,
@@ -695,13 +656,13 @@ export default class OperationStableCoinService extends Service {
           'tokenId',
         ]);
 
-        grantRoleRequest.role = await this.getRole(capabilitiesStableCoin);
+        grantRoleRequest.role = await this.getRole(stableCoinCapabilities);
         if (grantRoleRequest.role !== language.getText('wizard.goBack')) {
           await utilsService.handleValidation(
             () => grantRoleRequest.validate('role'),
             async () => {
               grantRoleRequest.role = await this.getRole(
-                capabilitiesStableCoin,
+                stableCoinCapabilities,
               );
             },
           );
@@ -724,7 +685,7 @@ export default class OperationStableCoinService extends Service {
 
           try {
             if (grantRoleRequest.role === StableCoinRole.CASHIN_ROLE) {
-              await this.grantSupplierRole(grantRoleRequest, sdk);
+              await this.grantSupplierRole(grantRoleRequest);
             } else {
               await this.roleStableCoinService.grantRoleStableCoin(
                 grantRoleRequest,
@@ -749,14 +710,6 @@ export default class OperationStableCoinService extends Service {
         // Revoke role
         //Lists all roles
         const revokeRoleRequest = new RevokeRoleRequest({
-          account: {
-            accountId: currentAccount.accountId.id,
-            privateKey: {
-              key: currentAccount.privateKey.key,
-              type: currentAccount.privateKey.type,
-            },
-          },
-          proxyContractId: this.proxyContractId,
           tokenId: this.stableCoinId,
           targetId: '',
           role: undefined,
@@ -768,13 +721,13 @@ export default class OperationStableCoinService extends Service {
           'tokenId',
         ]);
 
-        revokeRoleRequest.role = await this.getRole(capabilitiesStableCoin);
+        revokeRoleRequest.role = await this.getRole(stableCoinCapabilities);
         if (revokeRoleRequest.role !== language.getText('wizard.goBack')) {
           await utilsService.handleValidation(
             () => revokeRoleRequest.validate('role'),
             async () => {
               revokeRoleRequest.role = await this.getRole(
-                capabilitiesStableCoin,
+                stableCoinCapabilities,
               );
             },
           );
@@ -837,14 +790,6 @@ export default class OperationStableCoinService extends Service {
               //Increase limit
               const increaseCashInLimitRequest = new IncreaseCashInLimitRequest(
                 {
-                  account: {
-                    accountId: currentAccount.accountId.id,
-                    privateKey: {
-                      key: currentAccount.privateKey.key,
-                      type: currentAccount.privateKey.type,
-                    },
-                  },
-                  proxyContractId: this.proxyContractId,
                   tokenId: this.stableCoinId,
                   targetId: '',
                   amount: '',
@@ -879,9 +824,8 @@ export default class OperationStableCoinService extends Service {
               if (
                 await this.checkSupplierType(
                   new CheckCashInRoleRequest({
-                    account: increaseCashInLimitRequest.account,
                     targetId: increaseCashInLimitRequest.targetId,
-                    proxyContractId: increaseCashInLimitRequest.proxyContractId,
+                    tokenId: increaseCashInLimitRequest.tokenId,
                     supplierType: 'unlimited',
                   }),
                 )
@@ -893,9 +837,8 @@ export default class OperationStableCoinService extends Service {
               if (
                 !(await this.checkSupplierType(
                   new CheckCashInRoleRequest({
-                    account: increaseCashInLimitRequest.account,
                     targetId: increaseCashInLimitRequest.targetId,
-                    proxyContractId: increaseCashInLimitRequest.proxyContractId,
+                    tokenId: increaseCashInLimitRequest.tokenId,
                     supplierType: 'limited',
                   }),
                 ))
@@ -927,9 +870,7 @@ export default class OperationStableCoinService extends Service {
 
               await this.roleStableCoinService.getSupplierAllowance(
                 new CheckCashInLimitRequest({
-                  account: increaseCashInLimitRequest.account,
                   targetId: increaseCashInLimitRequest.targetId,
-                  proxyContractId: increaseCashInLimitRequest.proxyContractId,
                   tokenId: increaseCashInLimitRequest.tokenId,
                 }),
               );
@@ -950,14 +891,6 @@ export default class OperationStableCoinService extends Service {
 
             //Decrease limit
             const decreaseCashInLimitRequest = new DecreaseCashInLimitRequest({
-              account: {
-                accountId: currentAccount.accountId.id,
-                privateKey: {
-                  key: currentAccount.privateKey.key,
-                  type: currentAccount.privateKey.type,
-                },
-              },
-              proxyContractId: this.proxyContractId,
               tokenId: this.stableCoinId,
               targetId: '',
               amount: '',
@@ -992,9 +925,8 @@ export default class OperationStableCoinService extends Service {
               if (
                 await this.checkSupplierType(
                   new CheckCashInRoleRequest({
-                    account: decreaseCashInLimitRequest.account,
                     targetId: decreaseCashInLimitRequest.targetId,
-                    proxyContractId: decreaseCashInLimitRequest.proxyContractId,
+                    tokenId: decreaseCashInLimitRequest.tokenId,
                     supplierType: 'unlimited',
                   }),
                 )
@@ -1006,9 +938,8 @@ export default class OperationStableCoinService extends Service {
               if (
                 !(await this.checkSupplierType(
                   new CheckCashInRoleRequest({
-                    account: decreaseCashInLimitRequest.account,
                     targetId: decreaseCashInLimitRequest.targetId,
-                    proxyContractId: decreaseCashInLimitRequest.proxyContractId,
+                    tokenId: decreaseCashInLimitRequest.targetId,  
                     supplierType: 'limited',
                   }),
                 ))
@@ -1039,10 +970,8 @@ export default class OperationStableCoinService extends Service {
               );
               await this.roleStableCoinService.getSupplierAllowance(
                 new CheckCashInLimitRequest({
-                  account: decreaseCashInLimitRequest.account,
-                  targetId: decreaseCashInLimitRequest.targetId,
-                  proxyContractId: decreaseCashInLimitRequest.proxyContractId,
-                  tokenId: decreaseCashInLimitRequest.tokenId,
+                  targetId: decreaseCashInLimitRequest.targetId,                  
+                  tokenId: decreaseCashInLimitRequest.tokenId
                 }),
               );
             } catch (error) {
@@ -1061,15 +990,8 @@ export default class OperationStableCoinService extends Service {
             );
 
             const resetCashInLimitRequest = new ResetCashInLimitRequest({
-              account: {
-                accountId: currentAccount.accountId.id,
-                privateKey: {
-                  key: currentAccount.privateKey.key,
-                  type: currentAccount.privateKey.type,
-                },
-              },
-              proxyContractId: this.proxyContractId,
               targetId: '',
+              tokenId: this.stableCoinId
             });
 
             await this.validateNotRequestedData(resetCashInLimitRequest, [
@@ -1099,9 +1021,8 @@ export default class OperationStableCoinService extends Service {
               if (
                 await this.checkSupplierType(
                   new CheckCashInRoleRequest({
-                    account: resetCashInLimitRequest.account,
                     targetId: resetCashInLimitRequest.targetId,
-                    proxyContractId: resetCashInLimitRequest.proxyContractId,
+                    tokenId: resetCashInLimitRequest.tokenId,
                     supplierType: 'unlimited',
                   }),
                 )
@@ -1114,9 +1035,8 @@ export default class OperationStableCoinService extends Service {
               if (
                 await this.checkSupplierType(
                   new CheckCashInRoleRequest({
-                    account: resetCashInLimitRequest.account,
                     targetId: resetCashInLimitRequest.targetId,
-                    proxyContractId: resetCashInLimitRequest.proxyContractId,
+                    tokenId: resetCashInLimitRequest.tokenId,
                     supplierType: 'limited',
                   }),
                 )
@@ -1143,14 +1063,6 @@ export default class OperationStableCoinService extends Service {
             );
 
             const checkCashInLimitRequest = new CheckCashInLimitRequest({
-              account: {
-                accountId: currentAccount.accountId.id,
-                privateKey: {
-                  key: currentAccount.privateKey.key,
-                  type: currentAccount.privateKey.type,
-                },
-              },
-              proxyContractId: this.proxyContractId,
               tokenId: this.stableCoinId,
               targetId: '',
             });
@@ -1182,9 +1094,8 @@ export default class OperationStableCoinService extends Service {
               if (
                 await this.checkSupplierType(
                   new CheckCashInRoleRequest({
-                    account: checkCashInLimitRequest.account,
                     targetId: checkCashInLimitRequest.targetId,
-                    proxyContractId: checkCashInLimitRequest.proxyContractId,
+                    tokenId: checkCashInLimitRequest.tokenId,
                     supplierType: 'unlimited',
                   }),
                 )
@@ -1225,17 +1136,9 @@ export default class OperationStableCoinService extends Service {
 
         //Lists all roles
         const hasRoleRequest = new HasRoleRequest({
-          account: {
-            accountId: currentAccount.accountId.id,
-            privateKey: {
-              key: currentAccount.privateKey.key,
-              type: currentAccount.privateKey.type,
-            },
-          },
-          proxyContractId: this.proxyContractId,
           tokenId: this.stableCoinId,
           targetId: '',
-          role: undefined,
+          role: undefined
         });
 
         await this.validateNotRequestedData(hasRoleRequest, [
@@ -1244,12 +1147,12 @@ export default class OperationStableCoinService extends Service {
           'tokenId',
         ]);
 
-        hasRoleRequest.role = await this.getRole(capabilitiesStableCoin);
+        hasRoleRequest.role = await this.getRole(stableCoinCapabilities);
         if (hasRoleRequest.role !== language.getText('wizard.goBack')) {
           await utilsService.handleValidation(
             () => hasRoleRequest.validate('role'),
             async () => {
-              hasRoleRequest.role = await this.getRole(capabilitiesStableCoin);
+              hasRoleRequest.role = await this.getRole(stableCoinCapabilities);
             },
           );
 
@@ -1305,67 +1208,49 @@ export default class OperationStableCoinService extends Service {
 
   private filterMenuOptions(
     options: string[],
-    capabilities: string[],
+    stableCoinCapabilities: StableCoinCapabilities,
     roles?: string[],
   ): string[] {
     let result = [];
     let capabilitiesFilter = [];
-    if (capabilities.length === 0) return options;
+    if (stableCoinCapabilities.capabilities.length === 0) return options;
+    const capabilities: Operation[] = stableCoinCapabilities.capabilities.map(a => a.operation);
 
     capabilitiesFilter = options.filter((option) => {
       if (
-        (option === 'Cash in' &&
-          (capabilities.includes('Cash in') ||
-            capabilities.includes('Cash in hts'))) ||
-        (option === 'Burn' &&
-          (capabilities.includes('Burn') ||
-            capabilities.includes('Burn hts'))) ||
-        (option === 'Wipe' &&
-          (capabilities.includes('Wipe') ||
-            capabilities.includes('Wipe hts'))) ||
-        (option === 'Freeze an account' &&
-          (capabilities.includes('Freeze') ||
-            capabilities.includes('Freeze hts'))) ||
-        (option === 'Unfreeze an account' &&
-          (capabilities.includes('Freeze') ||
-            capabilities.includes('Freeze hts'))) ||
-        (option === colors.red('Danger zone') &&
-          (capabilities.includes('Pause') ||
-            capabilities.includes('Pause hts') ||
-            capabilities.includes('Delete hts') ||
-            capabilities.includes('Pause hts'))) ||
-        (option === 'Role management' &&
-          capabilities.includes('Role management')) ||
-        (option === 'Refresh roles' && !this.stableCoinDeleted)
+        (option === 'Cash in' && capabilities.includes(Operation.CASH_IN)) ||
+        (option === 'Burn' && capabilities.includes(Operation.BURN)) ||
+        (option === 'Wipe' && capabilities.includes(Operation.WIPE)) ||
+        (option === 'Freeze an account' && capabilities.includes(Operation.FREEZE)) ||
+        (option === 'Unfreeze an account' && capabilities.includes(Operation.UNFREEZE)) ||
+        (option === colors.red('Danger zone') && (capabilities.includes(Operation.PAUSE) || capabilities.includes(Operation.DELETE))) ||
+        (option === 'Role management' && capabilities.includes(Operation.ROLE_MANAGEMENT)) ||
+        (option === 'Refresh roles' && !this.stableCoinDeleted) ||
+        (option === 'Details' && !this.stableCoinDeleted) ||
+        (option === 'Balance' && !this.stableCoinDeleted)
       ) {
         return true;
       }
-
-      return capabilities.includes(option);
+      return false;
     });
 
     result = roles
       ? capabilitiesFilter.filter((option) => {
           if (
             (option === 'Cash in' && roles.includes('CASH IN')) ||
-            (option === 'Cash in' && capabilities.includes('Cash in hts')) ||
+            (option === 'Cash in' && this.isOperationAccess(stableCoinCapabilities, Operation.CASH_IN, Access.HTS)) ||
             (option === 'Burn' && roles.includes('BURN')) ||
-            (option === 'Burn' && capabilities.includes('Burn hts')) ||
+            (option === 'Burn' && this.isOperationAccess(stableCoinCapabilities, Operation.BURN, Access.HTS)) ||
             (option === 'Wipe' && roles.includes('WIPE')) ||
-            (option === 'Wipe' && capabilities.includes('Wipe hts')) ||
+            (option === 'Wipe' && this.isOperationAccess(stableCoinCapabilities, Operation.WIPE, Access.HTS)) ||
             (option === 'Freeze an account' && roles.includes('FREEZE')) ||
-            (option === 'Freeze an account' &&
-              capabilities.includes('Freeze hts')) ||
+            (option === 'Freeze an account' && this.isOperationAccess(stableCoinCapabilities, Operation.FREEZE, Access.HTS)) ||
             (option === 'Unfreeze an account' && roles.includes('FREEZE')) ||
-            (option === 'Unfreeze an account' &&
-              capabilities.includes('Freeze hts')) ||
+            (option === 'Unfreeze an account' && this.isOperationAccess(stableCoinCapabilities, Operation.UNFREEZE, Access.HTS)) ||
             (option === colors.red('Danger zone') && roles.includes('PAUSE')) ||
-            (option === colors.red('Danger zone') &&
-              capabilities.includes('Pause hts')) ||
-            (option === colors.red('Danger zone') &&
-              roles.includes('DELETE')) ||
-            (option === colors.red('Danger zone') &&
-              capabilities.includes('Delete hts')) ||
+            (option === colors.red('Danger zone') && this.isOperationAccess(stableCoinCapabilities, Operation.PAUSE, Access.HTS)) ||
+            (option === colors.red('Danger zone') && roles.includes('DELETE')) ||
+            (option === colors.red('Danger zone') && this.isOperationAccess(stableCoinCapabilities, Operation.DELETE, Access.HTS)) ||
             (option === 'Rescue' && roles.includes('RESCUE')) ||
             option === 'Refresh roles' ||
             option === 'Details' ||
@@ -1380,46 +1265,53 @@ export default class OperationStableCoinService extends Service {
     return result.concat(language.getArray('wizard.returnOption'));
   }
 
-  private async getRole(capabilities: Capabilities[]): Promise<any> {
+  private isOperationAccess(stableCoinCapabilities: StableCoinCapabilities,
+                            operation: Operation,
+                            access: Access): boolean {
+    return stableCoinCapabilities.capabilities.some(e => e.operation === operation && e.access === access);
+  }
+
+  private async getRole(stableCoinCapabilities: StableCoinCapabilities): Promise<any> {
+    const capabilities: Operation[] = stableCoinCapabilities.capabilities.map(a => a.operation);
     const rolesAvailability = [
       {
         role: {
-          availability: capabilities.includes(Capabilities.CASH_IN),
+          availability: capabilities.includes(Operation.CASH_IN),
           name: 'Cash in Role',
           value: StableCoinRole.CASHIN_ROLE,
         },
       },
       {
         role: {
-          availability: capabilities.includes(Capabilities.BURN),
+          availability: capabilities.includes(Operation.BURN),
           name: 'Burn Role',
           value: StableCoinRole.BURN_ROLE,
         },
       },
       {
         role: {
-          availability: capabilities.includes(Capabilities.WIPE),
+          availability: capabilities.includes(Operation.WIPE),
           name: 'Wipe Role',
           value: StableCoinRole.WIPE_ROLE,
         },
       },
       {
         role: {
-          availability: capabilities.includes(Capabilities.RESCUE),
+          availability: capabilities.includes(Operation.RESCUE),
           name: 'Rescue Role',
           value: StableCoinRole.RESCUE_ROLE,
         },
       },
       {
         role: {
-          availability: capabilities.includes(Capabilities.PAUSE),
+          availability: capabilities.includes(Operation.PAUSE),
           name: 'Pause Role',
           value: StableCoinRole.PAUSE_ROLE,
         },
       },
       {
         role: {
-          availability: capabilities.includes(Capabilities.FREEZE),
+          availability: capabilities.includes(Operation.FREEZE),
           name: 'Freeze Role',
           value: StableCoinRole.FREEZE_ROLE,
         },
@@ -1427,7 +1319,7 @@ export default class OperationStableCoinService extends Service {
       {
         role: {
           // TODO Eliminar el DELETE HTS cuando se pueda eliminar desde contrato (SOLO para ver la opción)
-          availability: capabilities.includes(Capabilities.DELETE),
+          availability: capabilities.includes(Operation.DELETE),
           name: 'Delete Role',
           value: StableCoinRole.DELETE_ROLE,
         },
@@ -1464,18 +1356,16 @@ export default class OperationStableCoinService extends Service {
         : undefined;
     return roles;
   }
+  
   private async grantSupplierRole(
-    grantRoleRequest: GrantRoleRequest,
-    sdk: SDK,
+    grantRoleRequest: GrantRoleRequest
   ): Promise<void> {
     let hasRole;
     await utilsService.showSpinner(
-      sdk
-        .hasRole(
+      this.roleStableCoinService
+        .hasRoleStableCoin(
           new HasRoleRequest({
-            account: grantRoleRequest.account,
             targetId: grantRoleRequest.targetId,
-            proxyContractId: grantRoleRequest.proxyContractId,
             tokenId: grantRoleRequest.tokenId,
             role: grantRoleRequest.role,
           }),
@@ -1552,7 +1442,6 @@ export default class OperationStableCoinService extends Service {
   }
 
   private async dangerZone(): Promise<void> {
-    const sdk: SDK = utilsService.getSDK();
     const configAccount = utilsService.getCurrentAccount();
     const currentAccount = new EOAccount(
       configAccount.accountId,
@@ -1562,10 +1451,10 @@ export default class OperationStableCoinService extends Service {
       ),
     );
 
-    const capabilitiesStableCoin = await this.getCapabilities(
-      sdk,
-      currentAccount,
+    const stableCoinCapabilities = await this.getCapabilities(
+      currentAccount
     );
+    const capabilities: Operation[] = stableCoinCapabilities.capabilities.map(a => a.operation);
 
     const rolesAccount = this.getRolesAccount();
     const dangerZoneOptions = language
@@ -1575,11 +1464,8 @@ export default class OperationStableCoinService extends Service {
           case 'Pause stable coin':
           case 'Unpause stable coin':
             let showPauser: boolean =
-              capabilitiesStableCoin.some((capability) =>
-                [Capabilities.PAUSE, Capabilities.PAUSE_HTS].includes(
-                  capability,
-                ),
-              ) &&
+              this.isOperationAccess(stableCoinCapabilities, Operation.PAUSE, Access.HTS)
+               &&
               (option == 'Pause stable coin'
                 ? !this.stableCoinPaused
                 : this.stableCoinPaused);
@@ -1589,12 +1475,7 @@ export default class OperationStableCoinService extends Service {
             return showPauser;
             break;
           case 'Delete stable coin':
-            let showDelete: boolean = capabilitiesStableCoin.some(
-              (capability) =>
-                [Capabilities.DELETE, Capabilities.DELETE_HTS].includes(
-                  capability,
-                ),
-            );
+            let showDelete: boolean = capabilities.includes(Operation.DELETE);
             if (showDelete && rolesAccount) {
               showDelete = rolesAccount.includes('DELETE');
             }
