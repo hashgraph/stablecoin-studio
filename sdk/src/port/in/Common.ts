@@ -14,7 +14,7 @@ export type AppMetadata = {
 
 export type LogOptions = {
 	level: 'TRACE' | 'INFO' | 'ERROR' | string;
-	transport: TransportStream;
+	transport: TransportStream | TransportStream[];
 };
 
 const DefaultLoggerFormat = LogService.defaultFormat;

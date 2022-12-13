@@ -11,9 +11,9 @@ import { configurationService, utilsService } from '../../../index.js';
 import SetConfigurationService from './SetConfigurationService.js';
 import MaskData from 'maskdata';
 import {
-  LoggerOptions,
   DailyRotateFile,
   DefaultLoggerFormat,
+  LogOptions,
 } from 'hedera-stable-coin-sdk';
 import { ILogConfig } from '../../../domain/configuration/interfaces/ILogConfig.js';
 
@@ -57,11 +57,11 @@ export default class ConfigurationService extends Service {
     return this.configuration;
   }
 
-  public getLogConfiguration(): LoggerOptions {
+  public getLogConfiguration(): LogOptions {
     if (!this.configuration.logs) return undefined;
     return {
       level: this.configuration.logs.level ?? 'ERROR',
-      transports: [
+      transport: [
         new DailyRotateFile({
           filename: `%DATE%.log`,
           dirname: this.configuration.logs.path ?? './logs',
