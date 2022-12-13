@@ -94,12 +94,42 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with Ed25519 accounts', () => {
 		th = Injectable.resolve(HTSTransactionAdapter);
 	});
 
-	it('create coin', async () => {
+	it('create coin and assign to SC', async () => {
 		const coin = new StableCoin({
-			name: "TestCoin",
-			symbol: "TC",
+			name: "TestCoinSC",
+			symbol: "TCSC",
 			decimals: 6,
+			initialSupply: BigDecimal.fromString('1.60', 6),
+			freezeDefault: false,
 			adminKey: PublicKey.NULL,
+			freezeKey: PublicKey.NULL,
+			kycKey: PublicKey.NULL,
+			wipeKey: PublicKey.NULL,
+			pauseKey: PublicKey.NULL,
+			supplyKey: PublicKey.NULL,
+			autoRenewAccount: account.id
+		});
+		tr = await th.create(
+			coin,
+			new ContractId(FactoryAddressTestnet),
+			new ContractId(HederaERC20AddressTestnet)
+		);
+		
+	}, 50000);
+
+	it('create coin and assign to account', async () => {
+		const coin = new StableCoin({
+			name: "TestCoinAccount",
+			symbol: "TCA",
+			decimals: 6,
+			initialSupply: BigDecimal.fromString('1.60', 6),
+			freezeDefault: false,
+			adminKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ED25519'),
+			freezeKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ED25519'),
+			kycKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ED25519'),
+			wipeKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ED25519'),
+			pauseKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ED25519'),
+			supplyKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ED25519'),
 			autoRenewAccount: account.id
 		});
 		tr = await th.create(
