@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import { OptionalField } from '../../../core/decorator/OptionalDecorator.js';
 import Validation from './validation/Validation.js';

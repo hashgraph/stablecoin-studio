@@ -4,8 +4,7 @@
 /* eslint-disable no-case-declarations */
 import { Transaction,
 	PublicKey as HPublicKey,
-	ContractId as HContractId,
-	AccountId as HAccountId
+	ContractId as HContractId
 } from '@hashgraph/sdk';
 import TransactionAdapter from '../TransactionAdapter';
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';

@@ -1,4 +1,7 @@
 /* eslint-disable no-case-declarations */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
 import {
 	HederaERC20__factory,

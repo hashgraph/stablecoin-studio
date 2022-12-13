@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import Injectable from '../../core/Injectable.js';
 import NetworkService from '../../app/service/NetworkService.js';
 import { QueryBus } from '../../core/query/QueryBus.js';
@@ -38,8 +39,8 @@ interface IRole {
 	grantRole(request: GrantRoleRequest): Promise<boolean>;
 	revokeRole(request: RevokeRoleRequest): Promise<boolean>;
 	getRoles(request: GetRolesRequest): Promise<string[]>;
-
-	supplier: {
+	
+	Supplier: {
 		getAllowance(request: GetSupplierAllowanceRequest): Promise<BigDecimal>;
 		resetAllowance(
 			request: ResetSupplierAllowanceRequest,
@@ -169,8 +170,8 @@ class RoleInPort implements IRole {
 			)
 		).payload;
 	}
-
-	supplier: {
+	
+	Supplier: { 
 		getAllowance(request: GetSupplierAllowanceRequest): Promise<BigDecimal>;
 		resetAllowance(
 			request: ResetSupplierAllowanceRequest,

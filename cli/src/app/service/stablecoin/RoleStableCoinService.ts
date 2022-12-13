@@ -12,7 +12,7 @@ import {
   DecreaseCashInLimitRequest,
   GetRolesRequest,
   Role,
-  StableCoinRole,
+  StableCoinRole
 } from 'hedera-stable-coin-sdk';
 import colors from 'colors';
 

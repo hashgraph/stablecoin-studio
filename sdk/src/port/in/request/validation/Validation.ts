@@ -19,7 +19,6 @@ import BigDecimal from '../../../../domain/context/shared/BigDecimal.js';
 import Account from '../../../../domain/context/account/Account.js';
 import ContractId from '../../../../domain/context/contract/ContractId.js';
 import InvalidDecimalRange from '../../../../domain/context/stablecoin/error/InvalidDecimalRange.js';
-import { InvalidRole } from '../../../../domain/context/stablecoin/error/InvalidRole.js';
 
 export default class Validation {
 	public static checkPublicKey = () => {
