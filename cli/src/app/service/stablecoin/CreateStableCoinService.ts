@@ -5,9 +5,9 @@ import {
   StableCoin,
   StableCoinViewModel,
   TokenSupplyType,
-  PublicKey,
-  PrivateKey,
-  AccountD,
+  RequestPrivateKey,
+  RequestPublicKey,
+  Account,
 } from 'hedera-stable-coin-sdk';
 import { IManagedFeatures } from '../../../domain/configuration/interfaces/IManagedFeatures.js';
 import Service from '../Service.js';
@@ -55,7 +55,8 @@ export default class CreateStableCoinService extends Service {
     utilsService.showMessage('\n');
     await utilsService.showSpinner(
       new Promise((resolve, reject) => {
-        StableCoin.create(stableCoin)
+        StableCoin
+          .create(stableCoin)
           .then((coin) => {
             console.log(coin);
             createdToken = coin;
@@ -105,21 +106,6 @@ export default class CreateStableCoinService extends Service {
       stableCoinFactory: currentFactory.id,
       hederaERC20: currentHederaERC20.id,
     });
-
-    // Factory
-    /*tokenToCreate.stableCoinFactory = await utilsService.defaultSingleAsk(
-      language.getText('stablecoin.askFactory'),
-      tokenToCreate.stableCoinFactory || '0.0.0',
-    );
-    await utilsService.handleValidation(
-      () => tokenToCreate.validate('stableCoinFactory'),
-      async () => {
-        tokenToCreate.stableCoinFactory = await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.askFactory'),
-          tokenToCreate.stableCoinFactory || '0.0.0',
-        );
-      },
-    );*/
 
     // Name
     tokenToCreate.name = await utilsService.defaultSingleAsk(
@@ -228,16 +214,13 @@ export default class CreateStableCoinService extends Service {
     });
     if (managedBySC) {
       const currentAccount: IAccountConfig = utilsService.getCurrentAccount();
-      tokenToCreate.adminKey = PublicKey.fromPrivateKey(
-        currentAccount.privateKey.key,
-        currentAccount.privateKey.type,
-      );
-      tokenToCreate.freezeKey = PublicKey.NULL;
+      tokenToCreate.adminKey = Account.NullPublicKey;
+      tokenToCreate.freezeKey = Account.NullPublicKey;
       //KYCKey,
-      tokenToCreate.wipeKey = PublicKey.NULL;
-      tokenToCreate.supplyKey = PublicKey.NULL;
-      tokenToCreate.pauseKey = PublicKey.NULL;
-      tokenToCreate.treasury = Account.NULL.id.toString();
+      tokenToCreate.wipeKey = Account.NullPublicKey;
+      tokenToCreate.supplyKey = Account.NullPublicKey;
+      tokenToCreate.pauseKey = Account.NullPublicKey;
+      tokenToCreate.treasury = Account.NullHederaAccount.id.toString();
       if (
         !(await utilsService.defaultConfirmAsk(
           language.getText('stablecoin.askConfirmCreation'),
@@ -406,20 +389,20 @@ export default class CreateStableCoinService extends Service {
     return { adminKey, supplyKey, freezeKey, wipeKey, pauseKey };
   }
 
-  private async checkAnswer(answer: string): Promise<PublicKey> {
+  private async checkAnswer(answer: string): Promise<RequestPublicKey> {
     switch (answer) {
       case 'Current user key': {
         const currentAccount = utilsService.getCurrentAccount();
-        const privateKey: PrivateKey = new PrivateKey({
+        const privateKey: RequestPrivateKey = new RequestPrivateKey({
           key: currentAccount.privateKey.key,
-          type: currentAccount.privateKey.type,
-        });
+          type: currentAccount.privateKey.type
+      });
         return privateKey.publicKey;
       }
 
       case 'Other key': {
         const key = await utilsService.defaultPublicKeyAsk();
-        return new PublicKey({
+        return new RequestPublicKey({
           key: key,
           type: 'ED25519',
         });
@@ -430,16 +413,16 @@ export default class CreateStableCoinService extends Service {
 
       case 'The Smart Contract':
       default:
-        return PublicKey.NULL;
+        return Account.NullPublicKey;
     }
   }
 
-  private getTreasuryAccountFromSupplyKey(supplyKey: PublicKey): string {
-    if (supplyKey && !PublicKey.isNull(supplyKey)) {
+  private getTreasuryAccountFromSupplyKey(supplyKey: RequestPublicKey): string {
+    if (supplyKey && !Account.isPublicKeyNull(supplyKey)) {
       const currentAccount = utilsService.getCurrentAccount();
       return currentAccount.accountId;
     } else {
-      return Account.NULL.id.toString();
+      return Account.NullHederaAccount.id.toString();
     }
   }
 }

@@ -9,8 +9,8 @@ import fs from 'fs-extra';
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 import { IConsensusNodeConfig } from '../../../domain/configuration/interfaces/IConsensusNodeConfig.js';
 import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
-import { IFactoryConfig } from 'domain/configuration/interfaces/IFactoryConfig.js';
-import { IHederaERC20Config } from 'domain/configuration/interfaces/IHederaERC20Config.js';
+import { IFactoryConfig } from '../../../domain/configuration/interfaces/IFactoryConfig.js';
+import { IHederaERC20Config } from '../../../domain/configuration/interfaces/IHederaERC20Config.js';
 import {
   HederaERC20AddressTestnet,
   HederaERC20AddressPreviewnet,
