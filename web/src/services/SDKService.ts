@@ -139,7 +139,7 @@ export class SDKService {
 	}
 
 	public static async delete(req: DeleteStableCoinRequest) {
-		return await StableCoin.rescue(req);
+		return await StableCoin.delete(req);
 	}
 
 	public static async getCapabilities({
@@ -161,31 +161,31 @@ export class SDKService {
 	}
 
 	public static async resetSupplierAllowance(req: ResetCashInLimitRequest) {
-		return await Role.rescue(req);
+		return await Role.Supplier.resetAllowance(req);
 	}
 
 	public static async checkSupplierAllowance(req: CheckCashInLimitRequest) {
-		return await Role.rescue(req);
+		return await Role.Supplier.getAllowance(req);
 	}
 
 	public static async grantRole(req: GrantRoleRequest) {
-		return await Role.rescue(req);
+		return await Role.grantRole(req);
 	}
 
 	public static async revokeRole(req: RevokeRoleRequest) {
-		return await Role.rescue(req);
+		return await Role.revokeRole(req);
 	}
 
 	public static async hasRole(req: HasRoleRequest) {
-		return await Role.rescue(req);
+		return await Role.hasRole(req);
 	}
 
 	public static async isUnlimitedSupplierAllowance(req: CheckCashInRoleRequest) {
-		return await Role.rescue(req);
+		return await Role.Supplier.isUnlimited(req);
 	}
 
 	public static async getRoles(data: GetRolesRequest) {
-		return await Role.rescue(req);
+		return await Role.getRoles(data);
 	}
 }
 

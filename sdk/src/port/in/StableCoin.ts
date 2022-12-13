@@ -16,6 +16,9 @@ import StableCoinViewModel from '../out/mirror/response/StableCoinViewModel.js';
 import StableCoinService from '../../app/service/StableCoinService.js';
 import { GetStableCoinQuery } from '../../app/usecase/query/stablecoin/get/GetStableCoinQuery.js';
 import AccountService from '../../app/service/AccountService.js';
+import DeleteRequest from './request/DeleteRequest.js';
+import FreezeAccountRequest from './request/FreezeAccountRequest.js';
+import PauseRequest from './request/PauseRequest.js';
 
 interface IStableCoinInPort {
 	create(request: CreateRequest): Promise<StableCoinViewModel>;
@@ -24,6 +27,11 @@ interface IStableCoinInPort {
 	cashOut(request: CashOutRequest): Promise<boolean>;
 	rescue(request: RescueRequest): Promise<boolean>;
 	wipe(request: WipeRequest): Promise<boolean>;
+	pause(request: PauseRequest): Promise<boolean>;
+	unPause(request: PauseRequest): Promise<boolean>;
+	delete(request: DeleteRequest): Promise<boolean>;
+	freeze(request: FreezeAccountRequest): Promise<boolean>;
+	unFrezze(request: FreezeAccountRequest): Promise<boolean>;
 }
 
 class StableCoinInPort implements IStableCoinInPort {
@@ -89,6 +97,21 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 	wipe(request: WipeRequest): Promise<boolean> {
 		throw new Error('Method not implemented.');
+	}
+	pause(request: PauseRequest): Promise<boolean> {
+		throw new Error('Method not implemented');
+	}
+	unPause(request: PauseRequest): Promise<boolean> {
+		throw new Error('Method not implemented');
+	}
+	delete(request: DeleteRequest): Promise<boolean> {
+		throw new Error('Method not implemented');
+	}
+	freeze(request: FreezeAccountRequest): Promise<boolean> {
+		throw new Error('Method not implemented');
+	}
+	unFrezze(request: FreezeAccountRequest): Promise<boolean> {
+		throw new Error('Method not implemented');
 	}
 }
 
