@@ -646,7 +646,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				return RPCTransactionResponseAdapter.manageResponse(
 					await this.precompiledCall('mintToken', [
 						TokenId.fromString(
-							coin.coin.tokenId?.value!,
+							coin.coin.tokenId?.value ?? '',
 						).toSolidityAddress(),
 						params?.amount,
 						[],
@@ -657,7 +657,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				return RPCTransactionResponseAdapter.manageResponse(
 					await this.precompiledCall('burnToken', [
 						TokenId.fromString(
-							coin.coin.tokenId?.value!,
+							coin.coin.tokenId?.value ?? '',
 						).toSolidityAddress(),
 						params?.amount,
 						[],
@@ -668,7 +668,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				return RPCTransactionResponseAdapter.manageResponse(
 					await this.precompiledCall('wipeTokenAccount', [
 						TokenId.fromString(
-							coin.coin.tokenId?.value!,
+							coin.coin.tokenId?.value ?? '',
 						).toSolidityAddress(),
 						params?.targetId,
 						params?.amount
@@ -679,7 +679,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				return RPCTransactionResponseAdapter.manageResponse(
 					await this.precompiledCall('freezeToken', [
 						TokenId.fromString(
-							coin.coin.tokenId?.value!,
+							coin.coin.tokenId?.value ?? '',
 						).toSolidityAddress(),
 						params?.targetId
 					]),
@@ -689,7 +689,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				return RPCTransactionResponseAdapter.manageResponse(
 					await this.precompiledCall('unfreezeToken', [
 						TokenId.fromString(
-							coin.coin.tokenId?.value!,
+							coin.coin.tokenId?.value ?? '',
 						).toSolidityAddress(),
 						params?.targetId
 					]),
@@ -699,7 +699,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				return RPCTransactionResponseAdapter.manageResponse(
 					await this.precompiledCall('pauseToken', [
 						TokenId.fromString(
-							coin.coin.tokenId?.value!,
+							coin.coin.tokenId?.value ?? '',
 						).toSolidityAddress()
 					]),
 				);
@@ -708,7 +708,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				return RPCTransactionResponseAdapter.manageResponse(
 					await this.precompiledCall('unpauseToken', [
 						TokenId.fromString(
-							coin.coin.tokenId?.value!,
+							coin.coin.tokenId?.value ?? '',
 						).toSolidityAddress()
 					]),
 				);
@@ -717,7 +717,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				return RPCTransactionResponseAdapter.manageResponse(
 					await this.precompiledCall('deleteToken', [
 						TokenId.fromString(
-							coin.coin.tokenId?.value!,
+							coin.coin.tokenId?.value ?? '',
 						).toSolidityAddress()
 					]),
 				);
