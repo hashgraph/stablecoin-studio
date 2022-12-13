@@ -3,8 +3,7 @@ import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
 import {
   Account,
-  GetListStableCoinRequest,
-  StableCoinListViewModel,
+  GetListStableCoinRequest
 } from 'hedera-stable-coin-sdk';
 
 /**
@@ -22,7 +21,7 @@ export default class ListStableCoinsService extends Service {
     // Call to list stable coins
     const currentAccount = utilsService.getCurrentAccount();
 
-    let resp: StableCoinListViewModel[];
+    let resp;
 
     await utilsService.showSpinner(
       Account.listStableCoins(
@@ -31,7 +30,7 @@ export default class ListStableCoinsService extends Service {
             accountId: currentAccount.accountId,
           },
         }),
-      ).then((response: StableCoinListViewModel[]) => (resp = response)),
+      ).then((response) => (resp = response)),
       {
         text: language.getText('state.searching'),
         successText: language.getText('state.searchingSuccess') + '\n',

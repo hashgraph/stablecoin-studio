@@ -31,7 +31,7 @@ import {
   FreezeAccountRequest,
   StableCoinCapabilities,
   Access,
-  Operation,
+  Operation
 } from 'hedera-stable-coin-sdk';
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 import CashInStableCoinsService from './CashInStableCoinService.js';
@@ -75,20 +75,13 @@ export default class OperationStableCoinService extends Service {
    */
   public async start(): Promise<void> {
     const configAccount = utilsService.getCurrentAccount();
-    const currentAccount = new EOAccount(
-      configAccount.accountId,
-      new PrivateKey({
-        key: configAccount.privateKey.key,
-        type: configAccount.privateKey.type
-      }),
-    );
     let resp: StableCoinList[];
     try {
       if (this.stableCoinId === undefined) {
         //Get list of stable coins to display
         await utilsService.showSpinner(
           this.listStableCoinService.listStableCoins(
-            ).then((response: StableCoinList[]) => (resp = response)),
+            ).then((response) => (resp = response)),
           {
             text: language.getText('state.searching'),
             successText: language.getText('state.searchingSuccess') + '\n',
@@ -104,7 +97,7 @@ export default class OperationStableCoinService extends Service {
           ),
           true,
           configurationService.getConfiguration()?.defaultNetwork,
-          `${currentAccount.accountId.id} - ${configAccount.alias}`,
+          `${configAccount.accountId} - ${configAccount.alias}`,
           this.stableCoinPaused,
           this.stableCoinDeleted,
         );
@@ -149,11 +142,11 @@ export default class OperationStableCoinService extends Service {
     const configAccount = utilsService.getCurrentAccount();
     const currentAccount = new EOAccount(
       configAccount.accountId,
-      new PrivateKey(
-        configAccount.privateKey.key,
-        configAccount.privateKey.type,
-      ),
-    );
+      new PrivateKey({
+        key: configAccount.privateKey.key,
+        type: configAccount.privateKey.type
+      }),
+    );    
     const wizardOperationsStableCoinOptions = language.getArray(
       'wizard.stableCoinOptions',
     );
@@ -600,10 +593,10 @@ export default class OperationStableCoinService extends Service {
     const configAccount = utilsService.getCurrentAccount();
     const currentAccount = new EOAccount(
       configAccount.accountId,
-      new PrivateKey(
-        configAccount.privateKey.key,
-        configAccount.privateKey.type,
-      ),
+      new PrivateKey({
+        key: configAccount.privateKey.key,
+        type: configAccount.privateKey.type
+      }),
     );
 
     const stableCoinCapabilities = await this.getCapabilities(
@@ -1445,10 +1438,10 @@ export default class OperationStableCoinService extends Service {
     const configAccount = utilsService.getCurrentAccount();
     const currentAccount = new EOAccount(
       configAccount.accountId,
-      new PrivateKey(
-        configAccount.privateKey.key,
-        configAccount.privateKey.type,
-      ),
+      new PrivateKey({
+        key: configAccount.privateKey.key,
+        type: configAccount.privateKey.type
+      })
     );
 
     const stableCoinCapabilities = await this.getCapabilities(

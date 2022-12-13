@@ -16,6 +16,7 @@ import { QueryBus } from '../../core/query/QueryBus.js';
 import { CommandBus } from '../../core/command/CommandBus.js';
 import { CashInCommand } from '../../app/usecase/command/stablecoin/operations/cashin/CashInCommand.js';
 import StableCoinViewModel from '../out/mirror/response/StableCoinViewModel.js';
+import StableCoinListViewModel from '../out/mirror/response/StableCoinListViewModel.js';
 import StableCoinService from '../../app/service/StableCoinService.js';
 import { GetStableCoinQuery } from '../../app/usecase/query/stablecoin/get/GetStableCoinQuery.js';
 import AccountService from '../../app/service/AccountService.js';
@@ -29,6 +30,7 @@ import GetAccountBalanceRequest from './request/GetAccountBalanceRequest.js';
 import CapabilitiesRequest from './request/CapabilitiesRequest.js';
 import { Balance } from '../../domain/context/stablecoin/Balance.js';
 import StableCoinCapabilities from '../../domain/context/stablecoin/StableCoinCapabilities.js';
+import { Capability, Access, Operation } from '../../domain/context/stablecoin/Capability.js';
 import { TokenSupplyType } from '../../domain/context/stablecoin/TokenSupply.js';
 
 export const HederaERC20AddressTestnet = '0.0.49077027';
@@ -37,8 +39,8 @@ export const HederaERC20AddressPreviewnet = '0.0.11111111';
 export const FactoryAddressTestnet = '0.0.49077033';
 export const FactoryAddressPreviewnet = '0.0.11111111';
 
-export { StableCoinViewModel };
-export { StableCoinCapabilities };
+export { StableCoinViewModel, StableCoinListViewModel };
+export { StableCoinCapabilities, Capability, Access, Operation };
 export { TokenSupplyType };
 
 interface IStableCoinInPort {
