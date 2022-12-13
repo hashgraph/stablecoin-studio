@@ -1,5 +1,7 @@
 import { transports } from 'winston';
+import DailyRotateFile from 'winston-daily-rotate-file';
 import TransportStream from 'winston-transport';
+import LogService from '../../app/service/LogService.js';
 
 // App Metadata
 export type AppMetadata = {
@@ -15,8 +17,12 @@ export type LogOptions = {
 	transport: TransportStream;
 };
 
+const DefaultLoggerFormat = LogService.defaultFormat;
+
 // Log transports
 export { transports as LoggerTransports };
+export { DailyRotateFile };
+export { DefaultLoggerFormat };
 
 const SDK: {
 	log: LogOptions;
