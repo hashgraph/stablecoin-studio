@@ -29,8 +29,13 @@ import GetAccountBalanceRequest from './request/GetAccountBalanceRequest.js';
 import CapabilitiesRequest from './request/CapabilitiesRequest.js';
 import { Balance } from '../../domain/context/stablecoin/Balance.js';
 import StableCoinCapabilities from '../../domain/context/stablecoin/StableCoinCapabilities.js';
-import { Capability, Access, Operation } from '../../domain/context/stablecoin/Capability.js';
+import {
+	Capability,
+	Access,
+	Operation,
+} from '../../domain/context/stablecoin/Capability.js';
 import { TokenSupplyType } from '../../domain/context/stablecoin/TokenSupply.js';
+import Account from '../../domain/context/account/Account.js';
 
 export const HederaERC20AddressTestnet = '0.0.49077027';
 export const HederaERC20AddressPreviewnet = '0.0.11111111';
@@ -189,7 +194,14 @@ class StableCoinInPort implements IStableCoinInPort {
 	capabilities(
 		request: CapabilitiesRequest,
 	): Promise<StableCoinCapabilities> {
-		throw new Error('Method not implemented.');
+		const validation = request.validate();
+		// TODO return validation
+		if (validation.length > 0) throw new Error('validation error');
+
+		return this.stableCoinService.getCapabilities(
+			new Account({ id: request.account.accountId }),
+			HederaId.from(request.tokenId),
+		);
 	}
 	pause(request: PauseRequest): Promise<boolean> {
 		throw new Error('Method not implemented.');
