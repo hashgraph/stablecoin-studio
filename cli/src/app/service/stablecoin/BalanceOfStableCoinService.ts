@@ -1,7 +1,11 @@
 import { language } from '../../../index.js';
 import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
-import { GetAccountBalanceRequest, StableCoin } from 'hedera-stable-coin-sdk';
+import {
+  GetAccountBalanceRequest,
+  StableCoin,
+  Balance,
+} from 'hedera-stable-coin-sdk';
 
 export default class BalanceOfStableCoinsService extends Service {
   constructor() {
@@ -11,7 +15,7 @@ export default class BalanceOfStableCoinsService extends Service {
   public async getBalanceOfStableCoin(
     req: GetAccountBalanceRequest,
   ): Promise<void> {
-    let respDetail;
+    let respDetail: Balance;
 
     await utilsService.showSpinner(
       StableCoin.getBalanceOf(req).then((response) => {
@@ -23,7 +27,7 @@ export default class BalanceOfStableCoinsService extends Service {
       },
     );
 
-    console.log('Balance of Stable Coin: ', respDetail);
+    console.log('Balance of Stable Coin: ', respDetail.value);
 
     utilsService.breakLine();
   }

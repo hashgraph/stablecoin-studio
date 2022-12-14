@@ -54,7 +54,7 @@ export const FactoryAddressTestnet = '0.0.49077033';
 export const FactoryAddressPreviewnet = '0.0.11111111';
 
 export { StableCoinViewModel, StableCoinListViewModel };
-export { StableCoinCapabilities, Capability, Access, Operation };
+export { StableCoinCapabilities, Capability, Access, Operation, Balance };
 export { TokenSupplyType };
 
 interface IStableCoinInPort {
@@ -182,7 +182,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		return (
 			await this.commandBus.execute(
 				new CashInCommand(
-					BigDecimal.fromString(amount),
+					amount,
 					HederaId.from(targetId),
 					HederaId.from(tokenId),
 				),
@@ -198,10 +198,7 @@ class StableCoinInPort implements IStableCoinInPort {
 
 		return (
 			await this.commandBus.execute(
-				new BurnCommand(
-					BigDecimal.fromString(amount),
-					HederaId.from(tokenId),
-				),
+				new BurnCommand(amount, HederaId.from(tokenId)),
 			)
 		).payload;
 	}
@@ -214,10 +211,7 @@ class StableCoinInPort implements IStableCoinInPort {
 
 		return (
 			await this.commandBus.execute(
-				new RescueCommand(
-					BigDecimal.fromString(amount ?? ''),
-					HederaId.from(tokenId),
-				),
+				new RescueCommand(amount, HederaId.from(tokenId)),
 			)
 		).payload;
 	}
@@ -231,7 +225,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		return (
 			await this.commandBus.execute(
 				new WipeCommand(
-					BigDecimal.fromString(amount ?? ''),
+					amount,
 					HederaId.from(targetId),
 					HederaId.from(tokenId),
 				),
