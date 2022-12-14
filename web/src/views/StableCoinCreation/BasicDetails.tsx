@@ -3,12 +3,12 @@ import type { Control, FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import InputController from '../../components/Form/InputController';
 import { useSelector } from 'react-redux';
-import type { CreateStableCoinRequest, SavedPairingData } from 'hedera-stable-coin-sdk';
+import type { CreateRequest, SavedPairingData } from 'hedera-stable-coin-sdk';
 import { SELECTED_WALLET_PAIRED } from '../../store/slices/walletSlice';
 import { handleRequestValidation } from '../../utils/validationsHelper';
 interface BasicDetailsProps {
 	control: Control<FieldValues>;
-	request: CreateStableCoinRequest;
+	request: CreateRequest;
 }
 
 const BasicDetails = (props: BasicDetailsProps) => {

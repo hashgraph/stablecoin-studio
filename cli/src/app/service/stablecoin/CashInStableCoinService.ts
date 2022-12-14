@@ -1,7 +1,7 @@
 import { language } from '../../../index.js';
 import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
-import { CashInStableCoinRequest, StableCoin } from 'hedera-stable-coin-sdk';
+import { CashInRequest, StableCoin } from 'hedera-stable-coin-sdk';
 
 export default class CashInStableCoinsService extends Service {
   constructor() {
@@ -9,7 +9,7 @@ export default class CashInStableCoinsService extends Service {
   }
 
   public async cashInStableCoin(
-    request: CashInStableCoinRequest,
+    request: CashInRequest,
   ): Promise<void> {
     await utilsService.showSpinner(StableCoin.cashIn(request), {
       text: language.getText('state.loading'),

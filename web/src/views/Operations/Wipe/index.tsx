@@ -19,7 +19,7 @@ import { handleRequestValidation } from '../../../utils/validationsHelper';
 import OperationLayout from './../OperationLayout';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
-import { WipeStableCoinRequest } from 'hedera-stable-coin-sdk';
+import { WipeRequest } from 'hedera-stable-coin-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 
 const WipeOperation = () => {
@@ -36,7 +36,7 @@ const WipeOperation = () => {
 	const [errorOperation, setErrorOperation] = useState();
 	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
 	const [request] = useState(
-		new WipeStableCoinRequest({
+		new WipeRequest({
 			account: {
 				accountId: account.accountId,
 			},

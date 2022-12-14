@@ -1,7 +1,7 @@
 import { language } from '../../../index.js';
 import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
-import { PauseStableCoinRequest, StableCoin } from 'hedera-stable-coin-sdk';
+import { PauseRequest, StableCoin } from 'hedera-stable-coin-sdk';
 
 /**
  * Create Role Stable Coin Service
@@ -14,7 +14,7 @@ export default class PauseStableCoinService extends Service {
   /**
    * pause stable coin
    */
-  public async pauseStableCoin(req: PauseStableCoinRequest): Promise<void> {
+  public async pauseStableCoin(req: PauseRequest): Promise<void> {
     await utilsService.showSpinner(StableCoin.pause(req), {
       text: language.getText('state.loading'),
       successText: language.getText('state.pauseCompleted') + '\n',
@@ -28,7 +28,7 @@ export default class PauseStableCoinService extends Service {
   /**
    * unpause stable coin
    */
-  public async unpauseStableCoin(req: PauseStableCoinRequest): Promise<void> {
+  public async unpauseStableCoin(req: PauseRequest): Promise<void> {
     await utilsService.showSpinner(StableCoin.unPause(req), {
       text: language.getText('state.loading'),
       successText: language.getText('state.unpauseCompleted') + '\n',

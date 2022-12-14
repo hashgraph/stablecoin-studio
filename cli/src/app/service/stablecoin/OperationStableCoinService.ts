@@ -10,27 +10,27 @@ import DetailsStableCoinsService from './DetailsStableCoinService.js';
 import {
   RequestAccount,
   StableCoinRole,
-  CashInStableCoinRequest,
-  WipeStableCoinRequest,
-  CashOutStableCoinRequest,
-  RescueStableCoinRequest,
+  BurnRequest,
   GetAccountBalanceRequest,
   GetRolesRequest,
   GrantRoleRequest,
   RevokeRoleRequest,
   HasRoleRequest,
-  CheckCashInRoleRequest,
-  CheckCashInLimitRequest,
-  ResetCashInLimitRequest,
-  IncreaseCashInLimitRequest,
-  DecreaseCashInLimitRequest,
-  DeleteStableCoinRequest,
-  PauseStableCoinRequest,
   FreezeAccountRequest,
   StableCoinCapabilities,
   Access,
   Operation,
   RequestPrivateKey,
+  CashInRequest,
+  WipeRequest,
+  RescueRequest,
+  IncreaseSupplierAllowanceRequest,
+  CheckSupplierLimitRequest,
+  DecreaseSupplierAllowanceRequest,
+  ResetSupplierAllowanceRequest,
+  PauseRequest,
+  DeleteRequest,
+  GetSupplierAllowanceRequest,
 } from 'hedera-stable-coin-sdk';
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 import CashInStableCoinsService from './CashInStableCoinService.js';
@@ -170,7 +170,7 @@ export default class OperationStableCoinService extends Service {
           this.stableCoinWithSymbol,
         );
 
-        const cashInRequest = new CashInStableCoinRequest({
+        const cashInRequest = new CashInRequest({
           tokenId: this.stableCoinId,
           targetId: '',
           amount: '',
@@ -280,15 +280,7 @@ export default class OperationStableCoinService extends Service {
           this.stableCoinWithSymbol,
         );
 
-        const cashOutRequest = new CashOutStableCoinRequest({
-          proxyContractId: this.proxyContractId,
-          account: {
-            accountId: configAccount.accountId,
-            privateKey: {
-              key: currentAccount.privateKey.key,
-              type: currentAccount.privateKey.type,
-            },
-          },
+        const cashOutRequest = new BurnRequest({
           tokenId: this.stableCoinId,
           amount: '',
         });
@@ -327,7 +319,7 @@ export default class OperationStableCoinService extends Service {
           this.stableCoinWithSymbol,
         );
 
-        const wipeRequest = new WipeStableCoinRequest({
+        const wipeRequest = new WipeRequest({
           proxyContractId: this.proxyContractId,
           account: {
             accountId: configAccount.accountId,
@@ -389,7 +381,7 @@ export default class OperationStableCoinService extends Service {
           this.stableCoinWithSymbol,
         );
 
-        const rescueStableCoinRequest = new RescueStableCoinRequest({
+        const rescueRequest = new RescueRequest({
           proxyContractId: this.proxyContractId,
           account: {
             accountId: configAccount.accountId,
@@ -403,26 +395,24 @@ export default class OperationStableCoinService extends Service {
         });
 
         let rescuedAmount = '';
-        rescueStableCoinRequest.amount = await utilsService.defaultSingleAsk(
+        rescueRequest.amount = await utilsService.defaultSingleAsk(
           language.getText('stablecoin.askRescueAmount'),
           '1',
         );
         await utilsService.handleValidation(
-          () => rescueStableCoinRequest.validate('amount'),
+          () => rescueRequest.validate('amount'),
           async () => {
             rescuedAmount = await utilsService.defaultSingleAsk(
               language.getText('stablecoin.askRescueAmount'),
               '1',
             );
-            rescueStableCoinRequest.amount = rescuedAmount;
+            rescueRequest.amount = rescuedAmount;
           },
         );
 
         // Call to Rescue
         try {
-          await new RescueStableCoinsService().rescueStableCoin(
-            rescueStableCoinRequest,
-          );
+          await new RescueStableCoinsService().rescueStableCoin(rescueRequest);
         } catch (error) {
           await utilsService.askErrorConfirmation(
             async () => await this.operationsStableCoin(),
@@ -773,13 +763,12 @@ export default class OperationStableCoinService extends Service {
               );
 
               //Increase limit
-              const increaseCashInLimitRequest = new IncreaseCashInLimitRequest(
-                {
+              const increaseCashInLimitRequest =
+                new IncreaseSupplierAllowanceRequest({
                   tokenId: this.stableCoinId,
                   targetId: '',
                   amount: '',
-                },
-              );
+                });
 
               await this.validateNotRequestedData(increaseCashInLimitRequest, [
                 'account',
@@ -808,7 +797,7 @@ export default class OperationStableCoinService extends Service {
 
               if (
                 await this.checkSupplierType(
-                  new CheckCashInRoleRequest({
+                  new CheckSupplierLimitRequest({
                     targetId: increaseCashInLimitRequest.targetId,
                     tokenId: increaseCashInLimitRequest.tokenId,
                     supplierType: 'unlimited',
@@ -821,7 +810,7 @@ export default class OperationStableCoinService extends Service {
 
               if (
                 !(await this.checkSupplierType(
-                  new CheckCashInRoleRequest({
+                  new CheckSupplierLimitRequest({
                     targetId: increaseCashInLimitRequest.targetId,
                     tokenId: increaseCashInLimitRequest.tokenId,
                     supplierType: 'limited',
@@ -854,7 +843,7 @@ export default class OperationStableCoinService extends Service {
               );
 
               await this.roleStableCoinService.getSupplierAllowance(
-                new CheckCashInLimitRequest({
+                new GetSupplierAllowanceRequest({
                   targetId: increaseCashInLimitRequest.targetId,
                   tokenId: increaseCashInLimitRequest.tokenId,
                 }),
@@ -875,11 +864,12 @@ export default class OperationStableCoinService extends Service {
             );
 
             //Decrease limit
-            const decreaseCashInLimitRequest = new DecreaseCashInLimitRequest({
-              tokenId: this.stableCoinId,
-              targetId: '',
-              amount: '',
-            });
+            const decreaseCashInLimitRequest =
+              new DecreaseSupplierAllowanceRequest({
+                tokenId: this.stableCoinId,
+                targetId: '',
+                amount: '',
+              });
 
             await this.validateNotRequestedData(decreaseCashInLimitRequest, [
               'account',
@@ -909,7 +899,7 @@ export default class OperationStableCoinService extends Service {
             try {
               if (
                 await this.checkSupplierType(
-                  new CheckCashInRoleRequest({
+                  new CheckSupplierLimitRequest({
                     targetId: decreaseCashInLimitRequest.targetId,
                     tokenId: decreaseCashInLimitRequest.tokenId,
                     supplierType: 'unlimited',
@@ -922,7 +912,7 @@ export default class OperationStableCoinService extends Service {
 
               if (
                 !(await this.checkSupplierType(
-                  new CheckCashInRoleRequest({
+                  new CheckSupplierLimitRequest({
                     targetId: decreaseCashInLimitRequest.targetId,
                     tokenId: decreaseCashInLimitRequest.targetId,
                     supplierType: 'limited',
@@ -954,7 +944,7 @@ export default class OperationStableCoinService extends Service {
                 decreaseCashInLimitRequest,
               );
               await this.roleStableCoinService.getSupplierAllowance(
-                new CheckCashInLimitRequest({
+                new GetSupplierAllowanceRequest({
                   targetId: decreaseCashInLimitRequest.targetId,
                   tokenId: decreaseCashInLimitRequest.tokenId,
                 }),
@@ -974,7 +964,7 @@ export default class OperationStableCoinService extends Service {
               this.stableCoinWithSymbol,
             );
 
-            const resetCashInLimitRequest = new ResetCashInLimitRequest({
+            const resetCashInLimitRequest = new ResetSupplierAllowanceRequest({
               targetId: '',
               tokenId: this.stableCoinId,
             });
@@ -1005,7 +995,7 @@ export default class OperationStableCoinService extends Service {
             try {
               if (
                 await this.checkSupplierType(
-                  new CheckCashInRoleRequest({
+                  new CheckSupplierLimitRequest({
                     targetId: resetCashInLimitRequest.targetId,
                     tokenId: resetCashInLimitRequest.tokenId,
                     supplierType: 'unlimited',
@@ -1019,7 +1009,7 @@ export default class OperationStableCoinService extends Service {
               //Call to SDK
               if (
                 await this.checkSupplierType(
-                  new CheckCashInRoleRequest({
+                  new CheckSupplierLimitRequest({
                     targetId: resetCashInLimitRequest.targetId,
                     tokenId: resetCashInLimitRequest.tokenId,
                     supplierType: 'limited',
@@ -1047,7 +1037,7 @@ export default class OperationStableCoinService extends Service {
               this.stableCoinWithSymbol,
             );
 
-            const checkCashInLimitRequest = new CheckCashInLimitRequest({
+            const checkCashInLimitRequest = new CheckSupplierLimitRequest({
               tokenId: this.stableCoinId,
               targetId: '',
             });
@@ -1078,10 +1068,9 @@ export default class OperationStableCoinService extends Service {
             try {
               if (
                 await this.checkSupplierType(
-                  new CheckCashInRoleRequest({
+                  new GetSupplierAllowanceRequest({
                     targetId: checkCashInLimitRequest.targetId,
                     tokenId: checkCashInLimitRequest.tokenId,
-                    supplierType: 'unlimited',
                   }),
                 )
               ) {
@@ -1095,7 +1084,10 @@ export default class OperationStableCoinService extends Service {
                 break;
               }
               await this.roleStableCoinService.getSupplierAllowance(
-                checkCashInLimitRequest,
+                new GetSupplierAllowanceRequest({
+                  targetId: checkCashInLimitRequest.targetId,
+                  tokenId: checkCashInLimitRequest.tokenId,
+                }),
               );
             } catch (error) {
               await utilsService.askErrorConfirmation(
@@ -1472,7 +1464,7 @@ export default class OperationStableCoinService extends Service {
   }
 
   private async checkSupplierType(
-    req: CheckCashInRoleRequest,
+    req: CheckSupplierLimitRequest,
   ): Promise<boolean> {
     return await this.roleStableCoinService.checkCashInRoleStableCoin(req);
   }
@@ -1546,7 +1538,7 @@ export default class OperationStableCoinService extends Service {
         );
         if (confirmPause) {
           try {
-            const req = new PauseStableCoinRequest({
+            const req = new PauseRequest({
               account: {
                 accountId: currentAccount.accountId,
                 privateKey: {
@@ -1575,7 +1567,7 @@ export default class OperationStableCoinService extends Service {
         );
         if (confirmUnpause) {
           try {
-            const req = new PauseStableCoinRequest({
+            const req = new PauseRequest({
               account: {
                 accountId: currentAccount.accountId,
                 privateKey: {
@@ -1604,7 +1596,7 @@ export default class OperationStableCoinService extends Service {
         );
         if (confirmDelete) {
           try {
-            const req = new DeleteStableCoinRequest({
+            const req = new DeleteRequest({
               account: {
                 accountId: currentAccount.accountId,
                 privateKey: {

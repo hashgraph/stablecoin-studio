@@ -132,9 +132,11 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 		this.treasury = treasury;
 		this.tokenType = tokenType ?? TokenType.FUNGIBLE_COMMON;
 		this.supplyType =
-			(supplyType && !maxSupply) || !supplyType
-				? TokenSupplyType.INFINITE
-				: TokenSupplyType.FINITE;
+			(supplyType)
+				? supplyType
+				: (maxSupply && maxSupply.isGreaterThan(BigDecimal.ZERO)) 
+					? TokenSupplyType.FINITE
+					: TokenSupplyType.INFINITE;
 		this.tokenId = tokenId ?? HederaId.from('0.0.0');
 		this.autoRenewAccount = autoRenewAccount ?? HederaId.from('0.0.0');
 		this.autoRenewAccountPeriod = autoRenewAccountPeriod ?? 0;

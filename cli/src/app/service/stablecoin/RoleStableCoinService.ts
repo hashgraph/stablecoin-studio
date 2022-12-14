@@ -5,14 +5,14 @@ import {
   GrantRoleRequest,
   RevokeRoleRequest,
   HasRoleRequest,
-  CheckCashInRoleRequest,
-  CheckCashInLimitRequest,
-  ResetCashInLimitRequest,
-  IncreaseCashInLimitRequest,
-  DecreaseCashInLimitRequest,
   GetRolesRequest,
   Role,
-  StableCoinRole
+  StableCoinRole,
+  CheckSupplierLimitRequest,
+  IncreaseSupplierAllowanceRequest,
+  DecreaseSupplierAllowanceRequest,
+  ResetSupplierAllowanceRequest,
+  GetSupplierAllowanceRequest
 } from 'hedera-stable-coin-sdk';
 import colors from 'colors';
 
@@ -41,7 +41,7 @@ export default class RoleStableCoinsService extends Service {
   }
 
   public async checkCashInRoleStableCoin(
-    req: CheckCashInRoleRequest,
+    req: CheckSupplierLimitRequest,
   ): Promise<boolean> {
     let respDetail;
 
@@ -68,7 +68,7 @@ export default class RoleStableCoinsService extends Service {
   }
 
   public async increaseLimitSupplierRoleStableCoin(
-    req: IncreaseCashInLimitRequest,
+    req: IncreaseSupplierAllowanceRequest,
   ): Promise<void> {
     await utilsService.showSpinner(Role.Supplier.increaseAllowance(req), {
       text: language.getText('state.loading'),
@@ -80,7 +80,7 @@ export default class RoleStableCoinsService extends Service {
   }
 
   public async decreaseLimitSupplierRoleStableCoin(
-    req: DecreaseCashInLimitRequest,
+    req: DecreaseSupplierAllowanceRequest,
   ): Promise<void> {
     await utilsService.showSpinner(Role.Supplier.decreaseAllowance(req), {
       text: language.getText('state.loading'),
@@ -92,7 +92,7 @@ export default class RoleStableCoinsService extends Service {
   }
 
   public async resetLimitSupplierRoleStableCoin(
-    req: ResetCashInLimitRequest,
+    req: ResetSupplierAllowanceRequest,
   ): Promise<void> {
     await utilsService.showSpinner(Role.Supplier.resetAllowance(req), {
       text: language.getText('state.loading'),
@@ -151,7 +151,7 @@ export default class RoleStableCoinsService extends Service {
   }
 
   public async getSupplierAllowance(
-    req: CheckCashInLimitRequest,
+    req: GetSupplierAllowanceRequest,
   ): Promise<void> {
     let amount;
     await utilsService.showSpinner(

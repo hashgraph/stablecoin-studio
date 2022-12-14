@@ -3,7 +3,7 @@ import Injectable from '../../core/Injectable.js';
 import CreateRequest from './request/CreateRequest.js';
 import CashInRequest from './request/CashInRequest.js';
 import GetStableCoinDetailsRequest from './request/GetStableCoinDetailsRequest.js';
-import CashOutRequest from './request/CashOutRequest.js';
+import BurnRequest from './request/BurnRequest.js';
 import RescueRequest from './request/RescueRequest.js';
 import WipeRequest from './request/WipeRequest.js';
 import AssociateTokenRequest from './request/AssociateTokenRequest.js';
@@ -36,6 +36,7 @@ import {
 } from '../../domain/context/stablecoin/Capability.js';
 import { TokenSupplyType } from '../../domain/context/stablecoin/TokenSupply.js';
 import Account from '../../domain/context/account/Account.js';
+import { BurnCommand } from '../../app/usecase/command/stablecoin/operations/burn/BurnCommand.js';
 
 export const HederaERC20AddressTestnet = '0.0.49077027';
 export const HederaERC20AddressPreviewnet = '0.0.11111111';
@@ -51,7 +52,7 @@ interface IStableCoinInPort {
 	create(request: CreateRequest): Promise<StableCoinViewModel>;
 	getInfo(request: GetStableCoinDetailsRequest): Promise<StableCoinViewModel>;
 	cashIn(request: CashInRequest): Promise<boolean>;
-	cashOut(request: CashOutRequest): Promise<boolean>;
+	burn(request: BurnRequest): Promise<boolean>;
 	rescue(request: RescueRequest): Promise<boolean>;
 	wipe(request: WipeRequest): Promise<boolean>;
 	associate(request: AssociateTokenRequest): Promise<boolean>;
@@ -176,22 +177,37 @@ class StableCoinInPort implements IStableCoinInPort {
 		));
 	}
 
-	cashOut(request: CashOutRequest): Promise<boolean> {
+	async burn(request: BurnRequest): Promise<boolean> {
+		const { tokenId, amount } = request;
+		const validation = request.validate();
+		// TODO return validation
+		if (validation.length > 0) return false;
+
+		return !!(await this.commandBus.execute(
+			new BurnCommand(
+				BigDecimal.fromString(amount),
+				HederaId.from(tokenId),
+			),
+		));
+	}
+
+	async rescue(request: RescueRequest): Promise<boolean> {
 		throw new Error('Method not implemented.');
 	}
-	rescue(request: RescueRequest): Promise<boolean> {
+
+	async wipe(request: WipeRequest): Promise<boolean> {
 		throw new Error('Method not implemented.');
 	}
-	wipe(request: WipeRequest): Promise<boolean> {
+
+	async associate(request: AssociateTokenRequest): Promise<boolean> {
 		throw new Error('Method not implemented.');
 	}
-	associate(request: AssociateTokenRequest): Promise<boolean> {
+
+	async getBalanceOf(request: GetAccountBalanceRequest): Promise<Balance> {
 		throw new Error('Method not implemented.');
 	}
-	getBalanceOf(request: GetAccountBalanceRequest): Promise<Balance> {
-		throw new Error('Method not implemented.');
-	}
-	capabilities(
+
+	async capabilities(
 		request: CapabilitiesRequest,
 	): Promise<StableCoinCapabilities> {
 		const validation = request.validate();
@@ -203,19 +219,24 @@ class StableCoinInPort implements IStableCoinInPort {
 			HederaId.from(request.tokenId),
 		);
 	}
-	pause(request: PauseRequest): Promise<boolean> {
+
+	async pause(request: PauseRequest): Promise<boolean> {
 		throw new Error('Method not implemented.');
 	}
-	unPause(request: PauseRequest): Promise<boolean> {
+
+	async unPause(request: PauseRequest): Promise<boolean> {
 		throw new Error('Method not implemented.');
 	}
-	delete(request: DeleteRequest): Promise<boolean> {
+
+	async delete(request: DeleteRequest): Promise<boolean> {
 		throw new Error('Method not implemented.');
 	}
-	freeze(request: FreezeAccountRequest): Promise<boolean> {
+
+	async freeze(request: FreezeAccountRequest): Promise<boolean> {
 		throw new Error('Method not implemented.');
 	}
-	unFreeze(request: FreezeAccountRequest): Promise<boolean> {
+
+	async unFreeze(request: FreezeAccountRequest): Promise<boolean> {
 		throw new Error('Method not implemented.');
 	}
 }
