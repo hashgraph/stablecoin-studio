@@ -98,7 +98,7 @@ export default class ManageImportedTokenService extends Service {
         const getRolesRequestForRefreshing: GetRolesRequest =
           new GetRolesRequest({
             targetId: currentAccount.accountId,
-            tokenId: tokenToRefresh,
+            tokenId: tokenToRefresh.split(' - ')[0],
           });
 
         const rolesToRefresh = await new RoleStableCoinsService().getRoles(

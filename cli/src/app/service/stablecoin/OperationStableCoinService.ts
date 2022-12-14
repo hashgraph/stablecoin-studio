@@ -52,7 +52,6 @@ import CapabilitiesStableCoinService from './CapabilitiesStableCoinService.js';
 export default class OperationStableCoinService extends Service {
   private stableCoinId;
   private stableCoinWithSymbol;
-  private optionTokenListSelected;
   private roleStableCoinService = new RoleStableCoinsService();
   private capabilitiesStableCoinService = new CapabilitiesStableCoinService();
   private listStableCoinService = new ListStableCoinsService();
@@ -92,7 +91,6 @@ export default class OperationStableCoinService extends Service {
           this.stableCoinPaused,
           this.stableCoinDeleted,
         );
-        this.optionTokenListSelected = this.stableCoinId;
         this.stableCoinWithSymbol =
           this.stableCoinId.split(' - ').length === 3
             ? `${this.stableCoinId.split(' - ')[0]} - ${
@@ -1135,6 +1133,7 @@ export default class OperationStableCoinService extends Service {
         (option === 'Cash in' && capabilities.includes(Operation.CASH_IN)) ||
         (option === 'Burn' && capabilities.includes(Operation.BURN)) ||
         (option === 'Wipe' && capabilities.includes(Operation.WIPE)) ||
+        (option === 'Rescue' && capabilities.includes(Operation.RESCUE)) ||
         (option === 'Freeze an account' &&
           capabilities.includes(Operation.FREEZE)) ||
         (option === 'Unfreeze an account' &&
@@ -1156,42 +1155,46 @@ export default class OperationStableCoinService extends Service {
     result = roles
       ? capabilitiesFilter.filter((option) => {
           if (
-            (option === 'Cash in' && roles.includes('CASH IN')) ||
+            (option === 'Cash in' &&
+              roles.includes(StableCoinRole.CASHIN_ROLE)) ||
             (option === 'Cash in' &&
               this.isOperationAccess(
                 stableCoinCapabilities,
                 Operation.CASH_IN,
                 Access.HTS,
               )) ||
-            (option === 'Burn' && roles.includes('BURN')) ||
+            (option === 'Burn' && roles.includes(StableCoinRole.BURN_ROLE)) ||
             (option === 'Burn' &&
               this.isOperationAccess(
                 stableCoinCapabilities,
                 Operation.BURN,
                 Access.HTS,
               )) ||
-            (option === 'Wipe' && roles.includes('WIPE')) ||
+            (option === 'Wipe' && roles.includes(StableCoinRole.WIPE_ROLE)) ||
             (option === 'Wipe' &&
               this.isOperationAccess(
                 stableCoinCapabilities,
                 Operation.WIPE,
                 Access.HTS,
               )) ||
-            (option === 'Freeze an account' && roles.includes('FREEZE')) ||
+            (option === 'Freeze an account' &&
+              roles.includes(StableCoinRole.FREEZE_ROLE)) ||
             (option === 'Freeze an account' &&
               this.isOperationAccess(
                 stableCoinCapabilities,
                 Operation.FREEZE,
                 Access.HTS,
               )) ||
-            (option === 'Unfreeze an account' && roles.includes('FREEZE')) ||
+            (option === 'Unfreeze an account' &&
+              roles.includes(StableCoinRole.FREEZE_ROLE)) ||
             (option === 'Unfreeze an account' &&
               this.isOperationAccess(
                 stableCoinCapabilities,
                 Operation.UNFREEZE,
                 Access.HTS,
               )) ||
-            (option === colors.red('Danger zone') && roles.includes('PAUSE')) ||
+            (option === colors.red('Danger zone') &&
+              roles.includes(StableCoinRole.PAUSE_ROLE)) ||
             (option === colors.red('Danger zone') &&
               this.isOperationAccess(
                 stableCoinCapabilities,
@@ -1199,14 +1202,15 @@ export default class OperationStableCoinService extends Service {
                 Access.HTS,
               )) ||
             (option === colors.red('Danger zone') &&
-              roles.includes('DELETE')) ||
+              roles.includes(StableCoinRole.DELETE_ROLE)) ||
             (option === colors.red('Danger zone') &&
               this.isOperationAccess(
                 stableCoinCapabilities,
                 Operation.DELETE,
                 Access.HTS,
               )) ||
-            (option === 'Rescue' && roles.includes('RESCUE')) ||
+            (option === 'Rescue' &&
+              roles.includes(StableCoinRole.RESCUE_ROLE)) ||
             option === 'Refresh roles' ||
             option === 'Details' ||
             option === 'Balance'
@@ -1310,14 +1314,10 @@ export default class OperationStableCoinService extends Service {
 
   private getRolesAccount(): string[] {
     const configAccount = utilsService.getCurrentAccount();
-    const roles =
-      this.optionTokenListSelected &&
-      this.optionTokenListSelected.split(' - ').length === 3
-        ? configAccount.importedTokens.find(
-            (token) => token.id === this.stableCoinId,
-          ).roles
-        : undefined;
-    return roles;
+    const importedToken = configAccount.importedTokens.find(
+      (token) => token.id === this.stableCoinId,
+    );
+    return importedToken.roles ?? undefined;
   }
 
   private async grantSupplierRole(
