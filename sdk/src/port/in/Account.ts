@@ -14,10 +14,8 @@ import {default as HederaAccount} from '../../domain/context/account/Account.js'
 import StableCoinListViewModel from '../out/mirror/response/StableCoinListViewModel.js';
 import AccountViewModel from '../out/mirror/response/AccountViewModel.js';
 import { MirrorNodeAdapter } from '../out/mirror/MirrorNodeAdapter.js';
-import { Balance } from '../../domain/context/stablecoin/Balance.js';
-import PrivateKey from '../../domain/context/account/PrivateKey.js';
 
-export { AccountViewModel, Balance, StableCoinListViewModel };
+export { AccountViewModel, StableCoinListViewModel };
 
 interface IAccountInPort {
 	getPublicKey(request: GetPublicKeyRequest): Promise<PublicKey>;
