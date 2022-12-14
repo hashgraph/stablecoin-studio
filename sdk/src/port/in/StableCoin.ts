@@ -29,9 +29,22 @@ import GetAccountBalanceRequest from './request/GetAccountBalanceRequest.js';
 import CapabilitiesRequest from './request/CapabilitiesRequest.js';
 import { Balance } from '../../domain/context/stablecoin/Balance.js';
 import StableCoinCapabilities from '../../domain/context/stablecoin/StableCoinCapabilities.js';
-import { Capability, Access, Operation } from '../../domain/context/stablecoin/Capability.js';
+import {
+	Capability,
+	Access,
+	Operation,
+} from '../../domain/context/stablecoin/Capability.js';
 import { TokenSupplyType } from '../../domain/context/stablecoin/TokenSupply.js';
+import Account from '../../domain/context/account/Account.js';
 import { BurnCommand } from '../../app/usecase/command/stablecoin/operations/burn/BurnCommand.js';
+import { BalanceOfCommand } from '../../app/usecase/command/stablecoin/operations/balanceof/BalanceOfCommand.js';
+import { RescueCommand } from '../../app/usecase/command/stablecoin/operations/rescue/RescueCommand.js';
+import { WipeCommand } from '../../app/usecase/command/stablecoin/operations/wipe/WipeCommand.js';
+import { PauseCommand } from '../../app/usecase/command/stablecoin/operations/pause/PauseCommand.js';
+import { UnPauseCommand } from '../../app/usecase/command/stablecoin/operations/unpause/UnPauseCommand.js';
+import { DeleteCommand } from '../../app/usecase/command/stablecoin/operations/delete/DeleteCommand.js';
+import { FreezeCommand } from '../../app/usecase/command/stablecoin/operations/freeze/FreezeCommand.js';
+import { UnFreezeCommand } from '../../app/usecase/command/stablecoin/operations/unfreeze/UnFreezeCommand.js';
 
 export const HederaERC20AddressTestnet = '0.0.49077027';
 export const HederaERC20AddressPreviewnet = '0.0.11111111';
@@ -163,13 +176,15 @@ class StableCoinInPort implements IStableCoinInPort {
 		// TODO return validation
 		if (validation.length > 0) return false;
 
-		return !!(await this.commandBus.execute(
-			new CashInCommand(
-				BigDecimal.fromString(amount),
-				HederaId.from(targetId),
-				HederaId.from(tokenId),
-			),
-		));
+		return (
+			await this.commandBus.execute(
+				new CashInCommand(
+					BigDecimal.fromString(amount),
+					HederaId.from(targetId),
+					HederaId.from(tokenId),
+				),
+			)
+		).payload;
 	}
 
 	async burn(request: BurnRequest): Promise<boolean> {
@@ -178,20 +193,47 @@ class StableCoinInPort implements IStableCoinInPort {
 		// TODO return validation
 		if (validation.length > 0) return false;
 
-		return !!(await this.commandBus.execute(
-			new BurnCommand(
-				BigDecimal.fromString(amount),
-				HederaId.from(tokenId),
-			),
-		));
+		return (
+			await this.commandBus.execute(
+				new BurnCommand(
+					BigDecimal.fromString(amount),
+					HederaId.from(tokenId),
+				),
+			)
+		).payload;
 	}
 
 	async rescue(request: RescueRequest): Promise<boolean> {
-		throw new Error('Method not implemented.');
+		const { tokenId, amount } = request;
+		const validation = request.validate();
+		// TODO return validation
+		if (validation.length > 0) return false;
+
+		return (
+			await this.commandBus.execute(
+				new RescueCommand(
+					BigDecimal.fromString(amount ?? ''),
+					HederaId.from(tokenId),
+				),
+			)
+		).payload;
 	}
 
 	async wipe(request: WipeRequest): Promise<boolean> {
-		throw new Error('Method not implemented.');
+		const { tokenId, amount, targetId } = request;
+		const validation = request.validate();
+		// TODO return validation
+		if (validation.length > 0) return false;
+
+		return (
+			await this.commandBus.execute(
+				new WipeCommand(
+					BigDecimal.fromString(amount ?? ''),
+					HederaId.from(targetId),
+					HederaId.from(tokenId),
+				),
+			)
+		).payload;
 	}
 
 	async associate(request: AssociateTokenRequest): Promise<boolean> {
@@ -199,35 +241,103 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 
 	async getBalanceOf(request: GetAccountBalanceRequest): Promise<Balance> {
-		throw new Error('Method not implemented.');
+		const validation = request.validate();
+		// TODO return validation
+		if (validation.length > 0) throw new Error('validation error');
+
+		const res = await this.commandBus.execute(
+			new BalanceOfCommand(
+				HederaId.from(request.targetId),
+				HederaId.from(request.targetId),
+			),
+		);
+
+		return { value: res.payload };
 	}
 
 	async capabilities(
 		request: CapabilitiesRequest,
 	): Promise<StableCoinCapabilities> {
-		throw new Error('Method not implemented.');
+		const validation = request.validate();
+		// TODO return validation
+		if (validation.length > 0) throw new Error('validation error');
+
+		return this.stableCoinService.getCapabilities(
+			new Account({ id: request.account.accountId }),
+			HederaId.from(request.tokenId),
+		);
 	}
 
 	async pause(request: PauseRequest): Promise<boolean> {
-		throw new Error('Method not implemented.');
+		const { tokenId } = request;
+		const validation = request.validate();
+		// TODO return validation
+		if (validation.length > 0) return false;
+
+		return (
+			await this.commandBus.execute(
+				new PauseCommand(HederaId.from(tokenId)),
+			)
+		).payload;
 	}
 
 	async unPause(request: PauseRequest): Promise<boolean> {
-		throw new Error('Method not implemented.');
+		const { tokenId } = request;
+		const validation = request.validate();
+		// TODO return validation
+		if (validation.length > 0) return false;
+
+		return (
+			await this.commandBus.execute(
+				new UnPauseCommand(HederaId.from(tokenId)),
+			)
+		).payload;
 	}
 
 	async delete(request: DeleteRequest): Promise<boolean> {
-		throw new Error('Method not implemented.');
+		const { tokenId } = request;
+		const validation = request.validate();
+		// TODO return validation
+		if (validation.length > 0) return false;
+
+		return (
+			await this.commandBus.execute(
+				new DeleteCommand(HederaId.from(tokenId)),
+			)
+		).payload;
 	}
 
 	async freeze(request: FreezeAccountRequest): Promise<boolean> {
-		throw new Error('Method not implemented.');
+		const { tokenId, targetId } = request;
+		const validation = request.validate();
+		// TODO return validation
+		if (validation.length > 0) return false;
+
+		return (
+			await this.commandBus.execute(
+				new FreezeCommand(
+					HederaId.from(targetId),
+					HederaId.from(tokenId),
+				),
+			)
+		).payload;
 	}
 
 	async unFreeze(request: FreezeAccountRequest): Promise<boolean> {
-		throw new Error('Method not implemented.');
-	}
+		const { tokenId, targetId } = request;
+		const validation = request.validate();
+		// TODO return validation
+		if (validation.length > 0) return false;
 
+		return (
+			await this.commandBus.execute(
+				new UnFreezeCommand(
+					HederaId.from(targetId),
+					HederaId.from(tokenId),
+				),
+			)
+		).payload;
+	}
 }
 
 const StableCoin = new StableCoinInPort();
