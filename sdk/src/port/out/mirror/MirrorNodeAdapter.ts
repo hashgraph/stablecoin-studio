@@ -41,7 +41,7 @@ export class MirrorNodeAdapter {
 			}tokens?limit=100&account.id=${accountId.toString()}`;
 
 			LogService.logTrace(
-				'Getting stable coin list from mirror node ->',
+				'Getting stable coin list from mirror node -> ',
 				url,
 			);
 
