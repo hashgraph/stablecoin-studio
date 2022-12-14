@@ -109,7 +109,7 @@ export class MirrorNodeAdapter {
 
 			const decimals = parseInt(response.data.decimals ?? '0');
 			const proxyAddress = 
-				(response.data.memo) ?  
+				(response.data.memo) ? 
 				HContractId.fromSolidityAddress(response.data.memo).toString()
 				: '0.0.0';
 			const stableCoinDetail: StableCoinViewModel = {
