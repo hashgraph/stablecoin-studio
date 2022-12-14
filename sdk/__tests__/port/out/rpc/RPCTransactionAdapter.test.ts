@@ -113,6 +113,31 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 		
 	}, 1500000);
 
+	it('create coin and assign to account', async () => {
+		const coin = new StableCoin({
+			name: "TestCoinAccount",
+			symbol: "TCA",
+			decimals: 6,
+			initialSupply: BigDecimal.fromString('1.60', 6),
+			maxSupply: BigDecimal.fromString('1000', 6),
+			freezeDefault: false,
+			adminKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ECDSA'),
+			freezeKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ECDSA'),
+			kycKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ECDSA'),
+			wipeKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ECDSA'),
+			pauseKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ECDSA'),
+			supplyKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ECDSA'),
+			autoRenewAccount: accountFromAEvmAddress.id,
+			supplyType: TokenSupplyType.FINITE
+		});
+		tr = await th.create(
+			coin,
+			new ContractId(FactoryAddressTestnet),
+			new ContractId(HederaERC20AddressTestnet)
+		);
+		
+	}, 1500000);
+
 	it('Test hasRole', async () => {
 		tr = await th.hasRole(
 			stableCoinCapabilitiesSC,
