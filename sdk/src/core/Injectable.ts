@@ -47,6 +47,7 @@ import TransactionAdapter from '../port/out/TransactionAdapter.js';
 import { RuntimeError } from './error/RuntimeError.js';
 import { HTSTransactionAdapter } from '../port/out/hs/hts/HTSTransactionAdapter.js';
 import { HashpackTransactionAdapter } from '../port/out/hs/hashpack/HashpackTransactionAdapter.js';
+import TransactionService from '../app/service/TransactionService.js';
 
 export const TOKENS = {
 	COMMAND_HANDLER: Symbol('CommandHandler'),
@@ -270,4 +271,22 @@ export default class Injectable {
 			throw new RuntimeError('No Transaction Handler registered!');
 		}
 	}
+
+	static registerInstances(): TransactionAdapter[] {
+		const adapters: TransactionAdapter[] = [];
+		if (this.isWeb()) {
+			adapters.push(Injectable.resolve(HashpackTransactionAdapter));
+			adapters.push(Injectable.resolve(RPCTransactionAdapter));
+		} else {
+			adapters.push(Injectable.resolve(HTSTransactionAdapter));
+		}
+		console.log(adapters)
+		return adapters;
+	}
+
+	static isWeb(): boolean {
+		return !!global.window;
+	}
 }
+
+Injectable.registerInstances();

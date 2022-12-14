@@ -53,6 +53,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 	) {
 		super(mirrorNodeAdapter);
 		this.hc = new HashConnect();
+		this.setUpHashConnectEvents();
 	}
 
 	async register(): Promise<InitializationData> {
@@ -173,6 +174,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 						name: SupportedWallets.HASHPACK,
 					}),
 				);
+				console.log('Emitted found')
 			}
 		});
 

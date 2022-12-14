@@ -54,6 +54,8 @@ SDK.log = {
 	transport: new LoggerTransports.Console(),
 };
 
+console.log(SDK.log);
+
 export class SDKService {
 	static initData?: InitializationData = undefined;
 

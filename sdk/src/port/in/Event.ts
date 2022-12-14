@@ -31,7 +31,7 @@ class EventInPort implements EventInPortBase {
 		Object.entries(events).map(([name, cll]) => {
 			if (name in WalletEvents)
 				this.eventService.on(name as keyof WalletEvent, cll);
-		});
+			});
 	}
 }
 
