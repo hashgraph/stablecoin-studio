@@ -18,7 +18,7 @@ export default class ListStableCoinsService extends Service {
   /**
    * List Stable Coins can be managed
    */
-  public async listStableCoins(): Promise<StableCoinListViewModel> {
+  public async listStableCoins(draw = true): Promise<StableCoinListViewModel> {
     // Call to list stable coins
     const currentAccount = utilsService.getCurrentAccount();
 
@@ -38,6 +38,7 @@ export default class ListStableCoinsService extends Service {
       },
     );
 
+    draw && utilsService.drawTableListStableCoin(resp);
     return resp;
   }
 }
