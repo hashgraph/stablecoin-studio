@@ -11,6 +11,10 @@ import TransactionService from '../../app/service/TransactionService.js';
 import SetNetworkRequest from './request/SetNetworkRequest.js';
 import { SetNetworkCommand } from '../../app/usecase/command/network/setNetwork/SetNetworkCommand.js';
 import { Environment } from '../../domain/context/network/Environment.js';
+import InitializationRequest from './request/InitializationRequest.js';
+import Event, { WalletEvents } from './Event.js';
+import RPCTransactionAdapter from '../out/rpc/RPCTransactionAdapter.js';
+import { HashpackTransactionAdapter } from '../out/hs/hashpack/HashpackTransactionAdapter.js';
 
 export { InitializationData, SupportedWallets };
 
@@ -51,6 +55,24 @@ class NetworkInPort implements INetworkInPort {
 			),
 		);
 		return res;
+	}
+
+	async init(req: InitializationRequest): Promise<SupportedWallets[]> {
+		await this.commandBus.execute(new SetNetworkCommand(req.network));
+		req.events && Event.register(req.events);
+		const wallets: SupportedWallets[] = [];
+		const instances = Injectable.registerTransactionAdapterInstances();
+		for (const val of instances) {
+			if (val instanceof RPCTransactionAdapter) {
+				wallets.push(SupportedWallets.METAMASK);
+			} else if (val instanceof HashpackTransactionAdapter) {
+				wallets.push(SupportedWallets.HASHPACK);
+			} else {
+				wallets.push(SupportedWallets.CLIENT);
+			}
+			await val.init();
+		}
+		return wallets;
 	}
 
 	async connect(req: ConnectRequest): Promise<InitializationData> {

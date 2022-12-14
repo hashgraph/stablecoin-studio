@@ -1,13 +1,11 @@
 import {
 	StableCoin,
-	Event,
-	LoggerTransports,
 	Network,
-	SDK,
 	Account,
 	Role,
 	CapabilitiesRequest,
-	ConnectRequest
+	ConnectRequest,
+	InitializationRequest,
 } from 'hedera-stable-coin-sdk';
 import type {
 	WalletEvent,
@@ -31,30 +29,15 @@ import type {
 	StableCoinListViewModel,
 	StableCoinViewModel,
 	StableCoinCapabilities,
-
 	BurnRequest,
 	IncreaseSupplierAllowanceRequest,
 	DecreaseSupplierAllowanceRequest,
 	ResetSupplierAllowanceRequest,
 	GetSupplierAllowanceRequest,
-	CheckSupplierLimitRequest
+	CheckSupplierLimitRequest,
 } from 'hedera-stable-coin-sdk';
 
 export type StableCoinListRaw = Array<Record<'id' | 'symbol', string>>;
-
-SDK.appMetadata = {
-	name: 'Hedera Stable Coin',
-	description: 'An hedera dApp',
-	icon: 'https://dashboard-assets.dappradar.com/document/15402/hashpack-dapp-defi-hedera-logo-166x166_696a701b42fd20aaa41f2591ef2339c7.png',
-	url: '',
-};
-
-SDK.log = {
-	level: process.env.REACT_APP_LOG_LEVEL ?? 'ERROR',
-	transport: new LoggerTransports.Console(),
-};
-
-console.log(SDK.log);
 
 export class SDKService {
 	static initData?: InitializationData = undefined;
@@ -78,9 +61,14 @@ export class SDKService {
 		}
 	}
 
-	public static async registerEvents(events: Partial<WalletEvent>) {
+	public static async init(events: Partial<WalletEvent>) {
 		try {
-			Event.register(events);
+			return await Network.init(
+				new InitializationRequest({
+					network: 'testnet',
+					events,
+				}),
+			);
 		} catch (error) {
 			console.error(error);
 		}

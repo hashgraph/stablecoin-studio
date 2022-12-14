@@ -24,7 +24,7 @@ import FreezeAccountRequest from './FreezeAccountRequest.js';
 import ConnectRequest from './ConnectRequest.js';
 import CapabilitiesRequest from './CapabilitiesRequest.js';
 import GetPublicKeyRequest from './GetPublicKeyRequest.js';
-
+import InitializationRequest from './InitializationRequest.js';
 
 export * from './BaseRequest.js';
 export {
@@ -53,5 +53,6 @@ export {
 	FreezeAccountRequest,
 	ConnectRequest,
 	CapabilitiesRequest,
-	GetPublicKeyRequest
+	GetPublicKeyRequest,
+	InitializationRequest,
 };

@@ -12,6 +12,7 @@ import { PrivateKeyType } from '../../domain/context/account/PrivateKey.js';
 import AccountViewModel from './mirror/response/AccountViewModel.js';
 import { PublicKey as HPublicKey } from '@hashgraph/sdk';
 import { MirrorNodeAdapter } from './mirror/MirrorNodeAdapter.js';
+import { Environment } from '../../domain/context/network/Environment.js';
 
 export interface InitializationData {
 	account: Account;
@@ -25,6 +26,7 @@ interface ITransactionAdapter {
 		factory: ContractId,
 		hederaERC20: ContractId,
 	): Promise<TransactionResponse>;
+	init(): Promise<Environment>;
 	register(account?: Account): Promise<InitializationData>;
 	stop(): Promise<boolean>;
 	associateToken(
@@ -142,6 +144,9 @@ interface RoleTransactionAdapter {
 export default abstract class TransactionAdapter
 	implements ITransactionAdapter, RoleTransactionAdapter
 {
+	init(): Promise<Environment> {
+		throw new Error('Method not implemented.');
+	}
 	create(coin: StableCoin, factory: ContractId, hederaERC20: ContractId): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}

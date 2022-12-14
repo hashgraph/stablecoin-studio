@@ -157,14 +157,18 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
+	async init(): Promise<string> {
+		this.provider = new ethers.providers.JsonRpcProvider(
+			`https://${this.networkService.environment.toString()}.hashio.io/api`,
+		);
+		return this.networkService.environment;
+	}
+
 	async register(
 		account: Account,
 		debug = false,
 	): Promise<InitializationData> {
 		this.account = account;
-		this.provider = new ethers.providers.JsonRpcProvider(
-			`https://${this.networkService.environment.toString()}.hashio.io/api`,
-		);
 		!debug && this.connectMetamask();
 		Injectable.registerTransactionHandler(this);
 		return Promise.resolve({ account });

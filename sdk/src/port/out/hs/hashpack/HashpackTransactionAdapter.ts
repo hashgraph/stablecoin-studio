@@ -24,6 +24,7 @@ import {
 	ConnectionState,
 	WalletEvents,
 	WalletInitEvent,
+	WalletPairedEvent,
 } from '../../../../app/service/event/WalletEvent.js';
 import { SupportedWallets } from '../../../in/request/ConnectRequest.js';
 import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter.js';
@@ -56,8 +57,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 		this.setUpHashConnectEvents();
 	}
 
-	async register(): Promise<InitializationData> {
-		Injectable.registerTransactionHandler(this);
+	async init(): Promise<string> {
 		this.initData = await this.hc.init(
 			SDK.appMetadata,
 			this.networkService.environment as
@@ -65,11 +65,6 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 				| 'previewnet'
 				| 'mainnet',
 		);
-		this.account = new Account({
-			id: this.filterAccountIdFromPairingData(
-				this.initData.savedPairings,
-			),
-		});
 		const eventData: WalletInitEvent = {
 			wallet: SupportedWallets.HASHPACK,
 			initData: {
@@ -79,6 +74,28 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 			},
 		};
 		this.eventService.emit(WalletEvents.walletInit, eventData);
+		console.log(eventData)
+		return this.networkService.environment;
+	}
+
+	async register(): Promise<InitializationData> {
+		Injectable.registerTransactionHandler(this);
+		this.hc.connectToLocalWallet();
+		this.account = new Account({
+			id: this.filterAccountIdFromPairingData(
+				this.initData.savedPairings,
+			),
+		})
+		console.log(this.account);
+		const eventData: WalletPairedEvent = {
+			data: {
+				account: this.account,
+				pairing: this.initData.pairingString,
+				topic: this.initData.topic,
+			},
+			network: this.networkService.environment
+		};
+		this.eventService.emit(WalletEvents.walletPaired, eventData);
 		return Promise.resolve({
 			account: this.account,
 			pairing: this.initData.pairingString,
@@ -168,13 +185,10 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 			LogService.logTrace('Found extension', data);
 			if (data) {
 				this.availableExtension = true;
-				LogService.logTrace(
-					'Emitted found',
-					this.eventService.emit(WalletEvents.walletFound, {
-						name: SupportedWallets.HASHPACK,
-					}),
-				);
-				console.log('Emitted found')
+				LogService.logTrace('Emitted found');
+				this.eventService.emit(WalletEvents.walletFound, {
+					name: SupportedWallets.HASHPACK,
+				});
 			}
 		});
 

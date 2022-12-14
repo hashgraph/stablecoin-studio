@@ -272,7 +272,7 @@ export default class Injectable {
 		}
 	}
 
-	static registerInstances(): TransactionAdapter[] {
+	static registerTransactionAdapterInstances(): TransactionAdapter[] {
 		const adapters: TransactionAdapter[] = [];
 		if (this.isWeb()) {
 			adapters.push(Injectable.resolve(HashpackTransactionAdapter));
@@ -288,5 +288,3 @@ export default class Injectable {
 		return !!global.window;
 	}
 }
-
-Injectable.registerInstances();

@@ -5,6 +5,8 @@ import { EventNotFound } from './error/EventNotFound.js';
 import { singleton } from 'tsyringe';
 import WalletEvent, { WalletEvents } from './WalletEvent.js';
 import { inject } from 'tsyringe';
+import LogService from '../LogService.js';
+import { RuntimeError } from '../../../core/error/RuntimeError.js';
 
 type WalletEventIndex = Record<keyof WalletEvent, WalletEvent>;
 type WalletEventEmitterIndex = Partial<

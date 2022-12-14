@@ -42,6 +42,10 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 		super(mirrorNodeAdapter);
 	}
 
+	init(): Promise<string> {
+		return Promise.resolve(this.networkService.environment);
+	}
+
 	register(account: Account): Promise<InitializationData> {
 		Injectable.registerTransactionHandler(this);
 		this.account = account;

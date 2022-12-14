@@ -30,7 +30,7 @@ import {
 import ImportedTokenCreation from '../views/ImportedToken/ImportedTokenCreation';
 import DangerZoneOperations from '../views/Operations/DangerZone';
 import type { EventParameter } from 'hedera-stable-coin-sdk';
-import { ConnectionState } from 'hedera-stable-coin-sdk';
+import { LoggerTransports, SDK, ConnectionState } from 'hedera-stable-coin-sdk';
 
 const PrivateRoute = ({ status }: { status?: ConnectionState }) => {
 	return (
@@ -79,25 +79,20 @@ const Router = () => {
 		const walletData = SDKService.getWalletData();
 		let result = { ...walletData };
 
-		if (selectedWalletPairedAccount) {
+		if (!selectedWalletPairedAccount) {
 			result = {
 				...result,
 			};
 		}
+		console.log(result)
 		dispatch(walletActions.setData(result));
-	};
-
-	const walletInit = () => dispatch(hashpackActions.setInitialized());
-
-	const walletFound = (event: EventParameter<'walletFound'>) => {
-		dispatch(walletActions.setHasWalletExtension(event.name));
 	};
 
 	const walletPaired = (event: EventParameter<'walletPaired'>) => {
 		if (event) {
 			dispatch(walletActions.setData(event.data));
 		}
-
+		console.log(event);
 		setStatus(ConnectionState.Paired);
 	};
 
@@ -106,12 +101,25 @@ const Router = () => {
 	};
 
 	const instanceSDK = async () => {
-		await SDKService.registerEvents({
-			walletInit,
-			walletFound,
+		SDK.appMetadata = {
+			name: 'Hedera Stable Coin',
+			description: 'An hedera dApp',
+			icon: 'https://dashboard-assets.dappradar.com/document/15402/hashpack-dapp-defi-hedera-logo-166x166_696a701b42fd20aaa41f2591ef2339c7.png',
+			url: '',
+		};
+
+		SDK.log = {
+			level: process.env.REACT_APP_LOG_LEVEL ?? 'ERROR',
+			transport: new LoggerTransports.Console(),
+		};
+		const wallets = await SDKService.init({
 			walletPaired,
 			walletConnectionStatusChanged,
 		});
+		wallets?.map((val) => {
+			return dispatch(walletActions.setHasWalletExtension(val));
+		});
+		dispatch(hashpackActions.setInitialized());
 	};
 
 	return (

@@ -29,9 +29,10 @@ class EventInPort implements EventInPortBase {
 
 	register(events: Partial<WalletEvent>): void {
 		Object.entries(events).map(([name, cll]) => {
-			if (name in WalletEvents)
+			if (name in WalletEvents) {
 				this.eventService.on(name as keyof WalletEvent, cll);
-			});
+			}
+		});
 	}
 }
 

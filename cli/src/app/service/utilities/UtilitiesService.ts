@@ -9,6 +9,7 @@ import {
   ConnectRequest,
   SupportedWallets,
   StableCoinListViewModel,
+  InitializationRequest,
 } from 'hedera-stable-coin-sdk';
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
@@ -33,6 +34,11 @@ export default class UtilitiesService extends Service {
 
   public async initSDK(): Promise<void> {
     const account = this.getCurrentAccount();
+    await Network.init(
+      new InitializationRequest({
+        network: this.getCurrentNetwork().name,
+      }),
+    );
     await Network.connect(
       new ConnectRequest({
         account: {
