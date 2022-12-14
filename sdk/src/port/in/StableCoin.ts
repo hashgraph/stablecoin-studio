@@ -22,7 +22,6 @@ import { GetStableCoinQuery } from '../../app/usecase/query/stablecoin/get/GetSt
 import AccountService from '../../app/service/AccountService.js';
 import { CreateCommand } from '../../app/usecase/command/stablecoin/create/CreateCommand.js';
 import PublicKey from '../../domain/context/account/PublicKey.js';
-import Mapper from '../../core/mapping/Mapper.js';
 import DeleteRequest from './request/DeleteRequest.js';
 import FreezeAccountRequest from './request/FreezeAccountRequest.js';
 import PauseRequest from './request/PauseRequest.js';
