@@ -81,8 +81,7 @@ export default class StableCoinService extends Service {
 
 			if (operable && _coin.supplyKey instanceof PublicKey) {
 				if (
-					_coin.supplyKey?.key.toString() ===
-					account.publicKey?.toString()
+					_coin.supplyKey?.key.toString() === account.publicKey?.key
 				) {
 					listCapabilities.push(
 						new Capability(Operation.CASH_IN, Access.HTS),
@@ -94,10 +93,7 @@ export default class StableCoinService extends Service {
 			}
 
 			if (operable && _coin.wipeKey instanceof PublicKey) {
-				if (
-					_coin.wipeKey?.key.toString() ===
-					account.publicKey?.toString()
-				) {
+				if (_coin.wipeKey?.key.toString() === account.publicKey?.key) {
 					listCapabilities.push(
 						new Capability(Operation.WIPE, Access.HTS),
 					);
@@ -110,10 +106,7 @@ export default class StableCoinService extends Service {
 			}
 
 			if (!deleted && _coin.pauseKey instanceof PublicKey) {
-				if (
-					_coin.pauseKey?.key.toString() ===
-					account.publicKey?.toString()
-				) {
+				if (_coin.pauseKey?.key.toString() === account.publicKey?.key) {
 					listCapabilities.push(
 						new Capability(Operation.PAUSE, Access.HTS),
 					);
@@ -133,8 +126,7 @@ export default class StableCoinService extends Service {
 
 			if (operable && _coin.freezeKey instanceof PublicKey) {
 				if (
-					_coin.freezeKey?.key.toString() ===
-					account.publicKey?.toString()
+					_coin.freezeKey?.key.toString() === account.publicKey?.key
 				) {
 					listCapabilities.push(
 						new Capability(Operation.FREEZE, Access.HTS),
@@ -154,10 +146,7 @@ export default class StableCoinService extends Service {
 			}
 
 			if (operable && _coin.adminKey instanceof PublicKey) {
-				if (
-					_coin.adminKey?.key.toString() ===
-					account.publicKey?.toString()
-				) {
+				if (_coin.adminKey?.key.toString() === account.publicKey?.key) {
 					listCapabilities.push(
 						new Capability(Operation.DELETE, Access.HTS),
 					);

@@ -74,7 +74,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 			},
 		};
 		this.eventService.emit(WalletEvents.walletInit, eventData);
-		console.log(eventData)
+		console.log(eventData);
 		return this.networkService.environment;
 	}
 
@@ -85,15 +85,14 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 			id: this.filterAccountIdFromPairingData(
 				this.initData.savedPairings,
 			),
-		})
-		console.log(this.account);
+		});
 		const eventData: WalletPairedEvent = {
 			data: {
 				account: this.account,
 				pairing: this.initData.pairingString,
 				topic: this.initData.topic,
 			},
-			network: this.networkService.environment
+			network: this.networkService.environment,
 		};
 		this.eventService.emit(WalletEvents.walletPaired, eventData);
 		return Promise.resolve({

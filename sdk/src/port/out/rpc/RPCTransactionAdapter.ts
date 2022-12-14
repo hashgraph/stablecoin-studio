@@ -34,9 +34,7 @@ import { lazyInject } from '../../../core/decorator/LazyInjectDecorator.js';
 import { MirrorNodeAdapter } from '../mirror/MirrorNodeAdapter.js';
 import NetworkService from '../../../app/service/NetworkService.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
-import {
-	StableCoinProps,
-} from '../../../domain/context/stablecoin/StableCoin.js';
+import { StableCoinProps } from '../../../domain/context/stablecoin/StableCoin.js';
 import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.js';
 import { FactoryStableCoin } from '../../../domain/context/factory/FactoryStableCoin.js';
 import { FactoryKey } from '../../../domain/context/factory/FactoryKey.js';
@@ -140,16 +138,25 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 
 			return RPCTransactionResponseAdapter.manageResponse(
 				await StableCoinFactory__factory.connect(
-					'0x' + HContractId.fromString(factory.value).toSolidityAddress(),
+					'0x' +
+						HContractId.fromString(
+							factory.value,
+						).toSolidityAddress(),
 					this.signerOrProvider,
 				).deployStableCoin(
-					stableCoinToCreate, 
-					'0x' + HContractId.fromString(hederaERC20.value).toSolidityAddress(),
-					{value: ethers.utils.parseEther(TOKEN_CREATION_COST_HBAR.toString()),
-					gasLimit: 15000000}
-				  )
+					stableCoinToCreate,
+					'0x' +
+						HContractId.fromString(
+							hederaERC20.value,
+						).toSolidityAddress(),
+					{
+						value: ethers.utils.parseEther(
+							TOKEN_CREATION_COST_HBAR.toString(),
+						),
+						gasLimit: 15000000,
+					},
+				),
 			);
-
 		} catch (error) {
 			throw new Error(
 				`Unexpected error in HederaTransactionHandler create operation : ${error}`,
@@ -168,7 +175,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		account: Account,
 		debug = false,
 	): Promise<InitializationData> {
+		const accountMirror = await this.mirrorNodeAdapter.getAccountInfo(
+			account.id,
+		);
 		this.account = account;
+		this.account.publicKey = accountMirror.publicKey;
 		!debug && this.connectMetamask();
 		Injectable.registerTransactionHandler(this);
 		return Promise.resolve({ account });

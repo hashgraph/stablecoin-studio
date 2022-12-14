@@ -46,9 +46,14 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 		return Promise.resolve(this.networkService.environment);
 	}
 
-	register(account: Account): Promise<InitializationData> {
+	async register(account: Account): Promise<InitializationData> {
 		Injectable.registerTransactionHandler(this);
+
+		const accountMirror = await this.mirrorNodeAdapter.getAccountInfo(
+			account.id,
+		);
 		this.account = account;
+		this.account.publicKey = accountMirror.publicKey;
 		this.network = this.networkService.environment;
 		this._client = Client.forName(this.networkService.environment);
 		const id = this.account.id?.value ?? '';
