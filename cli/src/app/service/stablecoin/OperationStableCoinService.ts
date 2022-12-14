@@ -586,9 +586,7 @@ export default class OperationStableCoinService extends Service {
         });
 
         await this.validateNotRequestedData(grantRoleRequest, [
-          'account',
-          'proxyContractId',
-          'tokenId',
+          'tokenId'
         ]);
 
         grantRoleRequest.role = await this.getRole(stableCoinCapabilities);
@@ -651,9 +649,7 @@ export default class OperationStableCoinService extends Service {
         });
 
         await this.validateNotRequestedData(revokeRoleRequest, [
-          'account',
-          'proxyContractId',
-          'tokenId',
+          'tokenId'
         ]);
 
         revokeRoleRequest.role = await this.getRole(stableCoinCapabilities);
@@ -731,9 +727,7 @@ export default class OperationStableCoinService extends Service {
                 });
 
               await this.validateNotRequestedData(increaseCashInLimitRequest, [
-                'account',
-                'proxyContractId',
-                'tokenId',
+                'tokenId'
               ]);
 
               let increaseCashInLimitTargetId = accountTarget;
@@ -832,9 +826,7 @@ export default class OperationStableCoinService extends Service {
               });
 
             await this.validateNotRequestedData(decreaseCashInLimitRequest, [
-              'account',
-              'proxyContractId',
-              'tokenId',
+              'tokenId'
             ]);
 
             let decreaseCashInLimitTargetId = accountTarget;
@@ -929,11 +921,6 @@ export default class OperationStableCoinService extends Service {
               tokenId: this.stableCoinId,
             });
 
-            await this.validateNotRequestedData(resetCashInLimitRequest, [
-              'account',
-              'proxyContractId',
-            ]);
-
             //Reset
             let resetCashInLimitTargetId = accountTarget;
             resetCashInLimitRequest.targetId =
@@ -1003,9 +990,7 @@ export default class OperationStableCoinService extends Service {
             });
 
             await this.validateNotRequestedData(checkCashInLimitRequest, [
-              'account',
-              'proxyContractId',
-              'tokenId',
+              'tokenId'
             ]);
 
             let cashInLimitTargetId = accountTarget;
@@ -1079,9 +1064,7 @@ export default class OperationStableCoinService extends Service {
         });
 
         await this.validateNotRequestedData(hasRoleRequest, [
-          'account',
-          'proxyContractId',
-          'tokenId',
+          'tokenId'
         ]);
 
         hasRoleRequest.role = await this.getRole(stableCoinCapabilities);
