@@ -131,9 +131,9 @@ export const walletSlice = createSlice({
 export const SELECTED_WALLET = (state: RootState) => state.wallet;
 export const STABLE_COIN_LIST = (state: RootState) => state.wallet.stableCoinList;
 export const EXTERNAL_TOKEN_LIST = (state: RootState) => state.wallet.externalTokenList;
-export const SELECTED_WALLET_DATA: any = (state: RootState) => state.wallet.data;
+export const SELECTED_WALLET_DATA = (state: RootState) => state.wallet.data;
 export const SELECTED_WALLET_COIN = (state: RootState) => state.wallet.selectedStableCoin;
-export const SELECTED_WALLET_PAIRED: any = (state: RootState) => state.wallet.data?.account.id;
+export const SELECTED_WALLET_PAIRED = (state: RootState) => state.wallet.data;
 export const SELECTED_WALLET_CAPABILITIES = (state: RootState) => state.wallet.capabilities;
 export const SELECTED_WALLET_ACCOUNT_INFO = (state: RootState) => state.wallet.accountInfo;
 export const HAS_WALLET_EXTENSION = (state: RootState) => state.wallet.hasWalletExtension;

@@ -11,11 +11,7 @@ import type { Detail } from '../../components/DetailsReview';
 import type { ModalsHandlerActionsProps } from '../../components/ModalsHandler';
 import SDKService from '../../services/SDKService';
 import { useSelector } from 'react-redux';
-import {
-	SELECTED_WALLET_COIN,
-	SELECTED_WALLET_PAIRED_ACCOUNT,
-	SELECTED_WALLET_CAPABILITIES,
-} from '../../store/slices/walletSlice';
+import { SELECTED_WALLET_COIN, SELECTED_WALLET_CAPABILITIES } from '../../store/slices/walletSlice';
 import { SelectController } from '../../components/Form/SelectController';
 import { formatAmountWithDecimals } from '../../utils/inputHelper';
 import {
@@ -68,7 +64,6 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 	} = useForm({ mode: 'onChange' });
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
-	const selectedAccount = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
 	const capabilities = useSelector(SELECTED_WALLET_CAPABILITIES);
 
 	const [limit, setLimit] = useState<string | null>();
@@ -336,6 +331,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 							await SDKService.resetSupplierAllowance(
 								new ResetSupplierAllowanceRequest({
 									targetId: account,
+									tokenId: selectedStableCoin.tokenId.toString(),
 								}),
 							);
 							break;
@@ -347,7 +343,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 									targetId: account,
 								}),
 							);
-							setLimit(limit);
+							setLimit(limit.toString());
 						}
 					}
 					break;

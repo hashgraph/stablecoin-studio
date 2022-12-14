@@ -67,7 +67,6 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 	supplyType?: TokenSupplyType;
 
 	constructor({
-		account,
 		name,
 		symbol,
 		decimals,
@@ -86,7 +85,6 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		stableCoinFactory,
 		hederaERC20,
 	}: {
-		account: RequestAccount;
 		name: string;
 		symbol: string;
 		decimals: number | string;

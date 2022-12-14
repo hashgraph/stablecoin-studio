@@ -1,21 +1,20 @@
 import { Box, Flex, HStack, Image, Text, VStack } from '@chakra-ui/react';
 import { useDispatch, useSelector } from 'react-redux';
 import Icon from '../../components/Icon';
-import SDKService from '../../services/SDKService';
 import { SELECTED_WALLET_PAIRED, walletActions } from '../../store/slices/walletSlice';
-import type { SavedPairingData } from 'hedera-stable-coin-sdk';
 import HEDERA_LOGO from '../../assets/png/hashpackLogo.png';
 import METAMASK_LOGO from '../../assets/svg/MetaMask_Fox.svg';
 import TooltipCopy from '../../components/TooltipCopy';
+import { Network, SDK } from 'hedera-stable-coin-sdk';
 
 const TopbarRight = () => {
 	const dispatch = useDispatch();
 
-	const pairingData: SavedPairingData = useSelector(SELECTED_WALLET_PAIRED);
-	const dAppName = pairingData?.metadata?.name;
+	const initData = useSelector(SELECTED_WALLET_PAIRED);
+	const dAppName = SDK.appMetadata.name;
 
-	const handleDisconnect = () => {
-		SDKService.getInstance().then((instance) => instance?.disconectHaspack());
+	const handleDisconnect = async () => {
+		await Network.disconnect()
 
 		dispatch(walletActions.clearData());
 		dispatch(walletActions.setSelectedStableCoin(undefined));
@@ -41,13 +40,13 @@ const TopbarRight = () => {
 				bgColor='#4a4a4a'
 			>
 				<VStack spacing={0}>
-					<TooltipCopy valueToCopy={pairingData ? pairingData.accountIds[0] : ''}>
+					<TooltipCopy valueToCopy={initData?.account.id?.toString() ?? ''}>
 						<Text data-testid='topbar-right-account' fontSize='12px' fontWeight={600}>
-							{pairingData ? pairingData.accountIds[0] : ''}
+							{initData?.account.id?.toString() ?? ''}
 						</Text>
 					</TooltipCopy>
 					<Text data-testid='topbar-right-network' fontSize='10px' textTransform='uppercase'>
-						{pairingData ? pairingData.network : ''}
+						{'testnet'}
 					</Text>
 				</VStack>
 				<Image src={getIcon()} alt={dAppName} w='25px' h='25px' alignSelf='center' />
