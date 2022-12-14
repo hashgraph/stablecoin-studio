@@ -1317,7 +1317,7 @@ export default class OperationStableCoinService extends Service {
     const importedToken = configAccount.importedTokens.find(
       (token) => token.id === this.stableCoinId,
     );
-    return importedToken.roles ?? undefined;
+    return importedToken?.roles;
   }
 
   private async grantSupplierRole(
