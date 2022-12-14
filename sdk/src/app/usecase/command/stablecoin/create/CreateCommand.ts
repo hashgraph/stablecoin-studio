@@ -1,7 +1,7 @@
 import { Command } from '../../../../../core/command/Command.js';
 import { CommandResponse } from '../../../../../core/command/CommandResponse.js';
 import ContractId from '../../../../../domain/context/contract/ContractId.js';
-import { StableCoin } from '../../../../../domain/context/stablecoin/StableCoin.js';
+import { StableCoin, StableCoinProps } from '../../../../../domain/context/stablecoin/StableCoin.js';
 
 
 export class CreateCommandResponse implements CommandResponse {
@@ -10,7 +10,7 @@ export class CreateCommandResponse implements CommandResponse {
 
 export class CreateCommand extends Command<CreateCommandResponse> {
 	constructor(
-		public readonly coin: StableCoin,
+		public readonly coin: StableCoinProps,
 		public readonly factory: ContractId,
 		public readonly hederaERC20: ContractId,
 	) {

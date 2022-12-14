@@ -36,7 +36,13 @@ export default class DetailsStableCoinsService extends Service {
     );
 
     if (show) {
-      console.log(respDetail);
+      const out = {
+        ...respDetail,
+        initialSupply: respDetail.initialSupply.toString(),
+        maxSupply: respDetail.maxSupply.toString(),
+        totalSupply: respDetail.totalSupply.toString(),
+      };
+      console.log(out);
       utilsService.breakLine();
     }
     return respDetail;

@@ -10,8 +10,10 @@ import AssociateTokenRequest from './request/AssociateTokenRequest.js';
 import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import { HederaId } from '../../domain/context/shared/HederaId.js';
 import ContractId from '../../domain/context/contract/ContractId.js';
-import { StableCoin as StableCoinObject } from '../../domain/context/stablecoin/StableCoin.js';
-import NetworkService from '../../app/service/NetworkService.js';
+import {
+	StableCoin as StableCoinObject,
+	StableCoinProps,
+} from '../../domain/context/stablecoin/StableCoin.js';
 import { QueryBus } from '../../core/query/QueryBus.js';
 import { CommandBus } from '../../core/command/CommandBus.js';
 import { CashInCommand } from '../../app/usecase/command/stablecoin/operations/cashin/CashInCommand.js';
@@ -19,7 +21,6 @@ import StableCoinViewModel from '../out/mirror/response/StableCoinViewModel.js';
 import StableCoinListViewModel from '../out/mirror/response/StableCoinListViewModel.js';
 import StableCoinService from '../../app/service/StableCoinService.js';
 import { GetStableCoinQuery } from '../../app/usecase/query/stablecoin/get/GetStableCoinQuery.js';
-import AccountService from '../../app/service/AccountService.js';
 import { CreateCommand } from '../../app/usecase/command/stablecoin/create/CreateCommand.js';
 import PublicKey from '../../domain/context/account/PublicKey.js';
 import DeleteRequest from './request/DeleteRequest.js';
@@ -75,18 +76,12 @@ interface IStableCoinInPort {
 
 class StableCoinInPort implements IStableCoinInPort {
 	constructor(
-		private readonly networkService: NetworkService = Injectable.resolve<NetworkService>(
-			NetworkService,
-		),
 		private readonly queryBus: QueryBus = Injectable.resolve(QueryBus),
 		private readonly commandBus: CommandBus = Injectable.resolve(
 			CommandBus,
 		),
 		private readonly stableCoinService: StableCoinService = Injectable.resolve(
 			StableCoinService,
-		),
-		private readonly accountService: AccountService = Injectable.resolve(
-			AccountService,
 		),
 	) {}
 
@@ -96,7 +91,7 @@ class StableCoinInPort implements IStableCoinInPort {
 
 		const { stableCoinFactory, hederaERC20 } = req;
 
-		const coin: StableCoinObject = new StableCoinObject({
+		const coin: StableCoinProps = {
 			name: req.name,
 			symbol: req.symbol,
 			decimals: req.decimals,
@@ -121,9 +116,9 @@ class StableCoinInPort implements IStableCoinInPort {
 				  })
 				: PublicKey.NULL,
 			freezeDefault: req.freezeDefault,
-			kycKey: req.KYCKey
-				? new PublicKey({ key: req.KYCKey.key, type: req.KYCKey.type })
-				: PublicKey.NULL,
+			// kycKey: req.KYCKey
+			// 	? new PublicKey({ key: req.KYCKey.key, type: req.KYCKey.type })
+			// 	: PublicKey.NULL,
 			wipeKey: req.wipeKey
 				? new PublicKey({
 						key: req.wipeKey.key,
@@ -144,8 +139,10 @@ class StableCoinInPort implements IStableCoinInPort {
 				: PublicKey.NULL,
 			treasury: new HederaId(req.treasury ?? '0.0.0'),
 			supplyType: req.supplyType,
-			autoRenewAccount: new HederaId(req.autoRenewAccount!),
-		});
+			autoRenewAccount: req.autoRenewAccount
+				? new HederaId(req.autoRenewAccount)
+				: undefined,
+		};
 
 		const createResponse = await this.commandBus.execute(
 			new CreateCommand(

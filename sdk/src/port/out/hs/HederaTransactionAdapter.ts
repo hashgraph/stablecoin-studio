@@ -2,9 +2,10 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable no-case-declarations */
-import { Transaction,
+import {
+	Transaction,
 	PublicKey as HPublicKey,
-	ContractId as HContractId
+	ContractId as HContractId,
 } from '@hashgraph/sdk';
 import TransactionAdapter from '../TransactionAdapter';
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
@@ -13,13 +14,14 @@ import Web3 from 'web3';
 import { CapabilityDecider, Decision } from '../CapabilityDecider.js';
 import { CapabilityError } from './error/CapabilityError.js';
 import StableCoinCapabilities from '../../../domain/context/stablecoin/StableCoinCapabilities.js';
-import {StableCoin} from '../../../domain/context/stablecoin/StableCoin.js';
-import {TokenSupplyType} from '../../../domain/context/stablecoin/TokenSupply.js';
+import { StableCoinProps } from '../../../domain/context/stablecoin/StableCoin.js';
+import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.js';
 import PublicKey from '../../../domain/context/account/PublicKey.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
-import { HederaERC20__factory,
-	StableCoinFactory__factory
- } from 'hedera-stable-coin-contracts/typechain-types/index.js';
+import {
+	HederaERC20__factory,
+	StableCoinFactory__factory,
+} from 'hedera-stable-coin-contracts/typechain-types/index.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import { TransactionType } from '../TransactionResponseEnums.js';
 import { HTSTransactionBuilder } from './HTSTransactionBuilder.js';
@@ -29,8 +31,6 @@ import { MirrorNodeAdapter } from '../mirror/MirrorNodeAdapter.js';
 import { HederaId } from '../../../domain/context/shared/HederaId.js';
 import { FactoryKey } from '../../../domain/context/factory/FactoryKey.js';
 import { FactoryStableCoin } from '../../../domain/context/factory/FactoryStableCoin.js';
-import { BigNumber, FixedNumber } from 'ethers';
-
 
 export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	private web3 = new Web3();
@@ -40,27 +40,26 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	}
 
 	public async create(
-		coin: StableCoin, 
-		factory: ContractId, 
-		hederaERC20: ContractId
+		coin: StableCoinProps,
+		factory: ContractId,
+		hederaERC20: ContractId,
 	): Promise<TransactionResponse<any, Error>> {
+		try {
+			const keys: FactoryKey[] = [];
 
-		try{
-		const keys:FactoryKey[]  = [];
+			const providedKeys = [
+				coin.adminKey,
+				coin.kycKey,
+				coin.freezeKey,
+				coin.wipeKey,
+				coin.supplyKey,
+				coin.pauseKey,
+			];
 
-		const providedKeys = [coin.adminKey,
-			coin.kycKey,
-			coin.freezeKey,
-			coin.wipeKey,
-			coin.supplyKey,
-			coin.pauseKey
-		]
-
-		providedKeys.forEach(
-			(providedKey, index) => {
-				if(providedKey){
+			providedKeys.forEach((providedKey, index) => {
+				if (providedKey) {
 					const key = new FactoryKey();
-					switch(index){
+					switch (index) {
 						case 0: {
 							key.keyType = 1; // admin
 							break;
@@ -87,48 +86,55 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 						}
 					}
 					const providedKeyCasted = providedKey as PublicKey;
-					key.PublicKey = (providedKeyCasted.key == PublicKey.NULL.key)? "0x" : HPublicKey.fromString(providedKeyCasted.key).toBytesRaw();
-					key.isED25519 = (providedKeyCasted.type == 'ED25519');
+					key.PublicKey =
+						providedKeyCasted.key == PublicKey.NULL.key
+							? '0x'
+							: HPublicKey.fromString(
+									providedKeyCasted.key,
+							  ).toBytesRaw();
+					key.isED25519 = providedKeyCasted.type == 'ED25519';
 					keys.push(key);
 				}
 			});
 
-		const stableCoinToCreate = new FactoryStableCoin(
-			coin.name,
-			coin.symbol,
-			coin.freezeDefault ?? false,
-			coin.supplyType == TokenSupplyType.FINITE,
-			coin.maxSupply
-				? coin.maxSupply.toFixedNumber()
-				: BigDecimal.ZERO.toFixedNumber(),
-			coin.initialSupply
-				? coin.initialSupply.toFixedNumber()
-				: BigDecimal.ZERO.toFixedNumber(),
-			coin.decimals,
-			await this.accountToEvmAddress(coin.autoRenewAccount!),
-			coin.treasury == undefined || coin.treasury.toString() == '0.0.0'
-				? '0x0000000000000000000000000000000000000000'
-				: await this.accountToEvmAddress(coin.treasury),
-			keys,
-		);
+			const stableCoinToCreate = new FactoryStableCoin(
+				coin.name,
+				coin.symbol,
+				coin.freezeDefault ?? false,
+				coin.supplyType == TokenSupplyType.FINITE,
+				coin.maxSupply
+					? coin.maxSupply.toFixedNumber()
+					: BigDecimal.ZERO.toFixedNumber(),
+				coin.initialSupply
+					? coin.initialSupply.toFixedNumber()
+					: BigDecimal.ZERO.toFixedNumber(),
+				coin.decimals,
+				await this.accountToEvmAddress(coin.autoRenewAccount!),
+				coin.treasury == undefined ||
+				coin.treasury.toString() == '0.0.0'
+					? '0x0000000000000000000000000000000000000000'
+					: await this.accountToEvmAddress(coin.treasury),
+				keys,
+			);
 
-		const params = [
-			stableCoinToCreate,
-			"0x" + HContractId.fromString(hederaERC20.value).toSolidityAddress()
-		];
+			const params = [
+				stableCoinToCreate,
+				'0x' +
+					HContractId.fromString(
+						hederaERC20.value,
+					).toSolidityAddress(),
+			];
 
-		return await this.contractCall(
-			factory.value,
-			'deployStableCoin',
-			params,
-			15000000,
-			TransactionType.RECORD,
-			StableCoinFactory__factory.abi,
-			25
-		);
-
-		}
-		catch (error) {
+			return await this.contractCall(
+				factory.value,
+				'deployStableCoin',
+				params,
+				15000000,
+				TransactionType.RECORD,
+				StableCoinFactory__factory.abi,
+				25,
+			);
+		} catch (error) {
 			throw new Error(
 				`Unexpected error in HederaTransactionHandler create operation : ${error}`,
 			);
@@ -649,7 +655,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			filteredContractParams,
 			gas,
 			transactionType,
-			HederaERC20__factory.abi
+			HederaERC20__factory.abi,
 		);
 	}
 

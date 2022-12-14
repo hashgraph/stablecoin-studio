@@ -7,9 +7,7 @@ import {
 	HederaERC20__factory,
 	IHederaTokenService__factory,
 } from 'hedera-stable-coin-contracts/typechain-types/index.js';
-import TransactionAdapter, {
-	InitializationData,
-} from '../TransactionAdapter';
+import TransactionAdapter, { InitializationData } from '../TransactionAdapter';
 import { ContractTransaction, ethers, Signer } from 'ethers';
 import { singleton } from 'tsyringe';
 import StableCoinCapabilities from '../../../domain/context/stablecoin/StableCoinCapabilities.js';
@@ -31,7 +29,9 @@ import { lazyInject } from '../../../core/decorator/LazyInjectDecorator.js';
 import { MirrorNodeAdapter } from '../mirror/MirrorNodeAdapter.js';
 import NetworkService from '../../../app/service/NetworkService.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
-import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
+import {
+	StableCoinProps,
+} from '../../../domain/context/stablecoin/StableCoin.js';
 
 // eslint-disable-next-line no-var
 declare var ethereum: any;
@@ -50,7 +50,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	) {
 		super();
 	}
-	create(coin: StableCoin, factory: ContractId, hederaERC20: ContractId): Promise<TransactionResponse<any, Error>> {
+	create(
+		coin: StableCoinProps,
+		factory: ContractId,
+		hederaERC20: ContractId,
+	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
 
@@ -82,8 +86,8 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse> {
 		const params = new Params({
 			targetId: await this.accountToEvmAddress(targetId),
-			amount: amount
-		});	
+			amount: amount,
+		});
 		return this.performOperation(coin, Operation.WIPE, params);
 	}
 
@@ -94,7 +98,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse> {
 		const params = new Params({
 			targetId: await this.accountToEvmAddress(targetId),
-			amount: amount
+			amount: amount,
 		});
 		return this.performOperation(coin, Operation.CASH_IN, params);
 	}
@@ -104,9 +108,9 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		amount: BigDecimal,
 	): Promise<TransactionResponse> {
 		const params = new Params({
-			amount: amount
+			amount: amount,
 		});
-		return this.performOperation(coin, Operation.BURN, params);		
+		return this.performOperation(coin, Operation.BURN, params);
 	}
 
 	async freeze(
@@ -114,27 +118,27 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		targetId: HederaId,
 	): Promise<TransactionResponse> {
 		const params = new Params({
-			targetId: await this.accountToEvmAddress(targetId)
+			targetId: await this.accountToEvmAddress(targetId),
 		});
-		return this.performOperation(coin, Operation.FREEZE, params);		
+		return this.performOperation(coin, Operation.FREEZE, params);
 	}
-	 
+
 	async unfreeze(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
 	): Promise<TransactionResponse> {
 		const params = new Params({
-			targetId: await this.accountToEvmAddress(targetId)
+			targetId: await this.accountToEvmAddress(targetId),
 		});
-		return this.performOperation(coin, Operation.UNFREEZE, params);		
+		return this.performOperation(coin, Operation.UNFREEZE, params);
 	}
 
 	async pause(coin: StableCoinCapabilities): Promise<TransactionResponse> {
-		return this.performOperation(coin, Operation.PAUSE);		
+		return this.performOperation(coin, Operation.PAUSE);
 	}
 
 	async unpause(coin: StableCoinCapabilities): Promise<TransactionResponse> {
-		return this.performOperation(coin, Operation.UNPAUSE);		
+		return this.performOperation(coin, Operation.UNPAUSE);
 	}
 
 	async rescue(
@@ -142,13 +146,13 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		amount: BigDecimal,
 	): Promise<TransactionResponse> {
 		const params = new Params({
-			amount: amount
+			amount: amount,
 		});
 		return this.performOperation(coin, Operation.RESCUE, params);
 	}
 
 	async delete(coin: StableCoinCapabilities): Promise<TransactionResponse> {
-		return this.performOperation(coin, Operation.DELETE);		
+		return this.performOperation(coin, Operation.DELETE);
 	}
 
 	async grantRole(
@@ -565,7 +569,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	async performOperation(
 		coin: StableCoinCapabilities,
 		operation: Operation,
-		params?: Params
+		params?: Params,
 	): Promise<TransactionResponse> {
 		try {
 			switch (CapabilityDecider.decide(coin, operation)) {
@@ -574,7 +578,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 						throw new Error(
 							`StableCoin ${coin.coin.name} does not have a proxy Address`,
 						);
-					return this.performSmartContractOperation(coin, operation, params);						
+					return this.performSmartContractOperation(
+						coin,
+						operation,
+						params,
+					);
 
 				case Decision.HTS:
 					if (!coin.coin.evmProxyAddress)
@@ -586,12 +594,22 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 							`StableCoin ${coin.coin.name}  does not have an underlying token`,
 						);
 
-					return this.performHTSOperation(coin, operation, params);				
+					return this.performHTSOperation(coin, operation, params);
 
 				default:
-					const tokenId = coin.coin.tokenId ? coin.coin.tokenId.value : '';
-					const OperationNotAllowed = new CapabilityError(this.getAccount().id.value, operation, tokenId);
-					return new TransactionResponse(undefined, undefined, OperationNotAllowed);
+					const tokenId = coin.coin.tokenId
+						? coin.coin.tokenId.value
+						: '';
+					const OperationNotAllowed = new CapabilityError(
+						this.getAccount().id.value,
+						operation,
+						tokenId,
+					);
+					return new TransactionResponse(
+						undefined,
+						undefined,
+						OperationNotAllowed,
+					);
 			}
 		} catch (error) {
 			// should throw RPCHandlerError
@@ -601,42 +619,89 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
-	private async performSmartContractOperation(coin: StableCoinCapabilities,
+	private async performSmartContractOperation(
+		coin: StableCoinCapabilities,
 		operation: Operation,
-		params?: Params									  
-		): Promise<TransactionResponse> 
-	{
+		params?: Params,
+	): Promise<TransactionResponse> {
 		const evmProxy = coin.coin.evmProxyAddress ?? '';
-		switch(operation) {
+		switch (operation) {
 			case Operation.CASH_IN:
-				return RPCTransactionResponseAdapter.manageResponse(await HederaERC20__factory.connect(evmProxy, this.signerOrProvider).mint(params!.targetId!, params!.amount!.toBigNumber()));
+				return RPCTransactionResponseAdapter.manageResponse(
+					await HederaERC20__factory.connect(
+						evmProxy,
+						this.signerOrProvider,
+					).mint(params!.targetId!, params!.amount!.toBigNumber()),
+				);
 
 			case Operation.BURN:
-				return RPCTransactionResponseAdapter.manageResponse(await HederaERC20__factory.connect(evmProxy, this.signerOrProvider).burn(params!.amount!.toBigNumber()));
+				return RPCTransactionResponseAdapter.manageResponse(
+					await HederaERC20__factory.connect(
+						evmProxy,
+						this.signerOrProvider,
+					).burn(params!.amount!.toBigNumber()),
+				);
 
 			case Operation.WIPE:
-				return RPCTransactionResponseAdapter.manageResponse(await HederaERC20__factory.connect(evmProxy, this.signerOrProvider).wipe(params!.targetId!, params!.amount!.toBigNumber()));
+				return RPCTransactionResponseAdapter.manageResponse(
+					await HederaERC20__factory.connect(
+						evmProxy,
+						this.signerOrProvider,
+					).wipe(params!.targetId!, params!.amount!.toBigNumber()),
+				);
 
 			case Operation.RESCUE:
-				return RPCTransactionResponseAdapter.manageResponse(await HederaERC20__factory.connect(evmProxy, this.signerOrProvider).rescue(params!.amount!.toBigNumber()));
-	
+				return RPCTransactionResponseAdapter.manageResponse(
+					await HederaERC20__factory.connect(
+						evmProxy,
+						this.signerOrProvider,
+					).rescue(params!.amount!.toBigNumber()),
+				);
+
 			case Operation.FREEZE:
-				return RPCTransactionResponseAdapter.manageResponse(await HederaERC20__factory.connect(evmProxy, this.signerOrProvider).freeze(params!.targetId!));
+				return RPCTransactionResponseAdapter.manageResponse(
+					await HederaERC20__factory.connect(
+						evmProxy,
+						this.signerOrProvider,
+					).freeze(params!.targetId!),
+				);
 
 			case Operation.UNFREEZE:
-				return RPCTransactionResponseAdapter.manageResponse(await HederaERC20__factory.connect(evmProxy, this.signerOrProvider).unfreeze(params!.targetId!));
+				return RPCTransactionResponseAdapter.manageResponse(
+					await HederaERC20__factory.connect(
+						evmProxy,
+						this.signerOrProvider,
+					).unfreeze(params!.targetId!),
+				);
 
 			case Operation.PAUSE:
-				return RPCTransactionResponseAdapter.manageResponse(await HederaERC20__factory.connect(evmProxy, this.signerOrProvider).pause());
+				return RPCTransactionResponseAdapter.manageResponse(
+					await HederaERC20__factory.connect(
+						evmProxy,
+						this.signerOrProvider,
+					).pause(),
+				);
 
 			case Operation.UNPAUSE:
-				return RPCTransactionResponseAdapter.manageResponse(await HederaERC20__factory.connect(evmProxy, this.signerOrProvider).unpause());
+				return RPCTransactionResponseAdapter.manageResponse(
+					await HederaERC20__factory.connect(
+						evmProxy,
+						this.signerOrProvider,
+					).unpause(),
+				);
 
 			case Operation.DELETE:
-				return RPCTransactionResponseAdapter.manageResponse(await HederaERC20__factory.connect(evmProxy, this.signerOrProvider).deleteToken());
-	
+				return RPCTransactionResponseAdapter.manageResponse(
+					await HederaERC20__factory.connect(
+						evmProxy,
+						this.signerOrProvider,
+					).deleteToken(),
+				);
+
 			default:
-				throw new Error(`Operation not implemented through Smart Contracts`);
+				throw new Error(
+					`Operation not implemented through Smart Contracts`,
+				);
 		}
 	}
 
@@ -675,7 +740,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 							coin.coin.tokenId?.value ?? '',
 						).toSolidityAddress(),
 						params?.targetId,
-						params?.amount
+						params?.amount,
 					]),
 				);
 
@@ -685,7 +750,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 						TokenId.fromString(
 							coin.coin.tokenId?.value ?? '',
 						).toSolidityAddress(),
-						params?.targetId
+						params?.targetId,
 					]),
 				);
 
@@ -695,7 +760,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 						TokenId.fromString(
 							coin.coin.tokenId?.value ?? '',
 						).toSolidityAddress(),
-						params?.targetId
+						params?.targetId,
 					]),
 				);
 
@@ -704,7 +769,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					await this.precompiledCall('pauseToken', [
 						TokenId.fromString(
 							coin.coin.tokenId?.value ?? '',
-						).toSolidityAddress()
+						).toSolidityAddress(),
 					]),
 				);
 
@@ -713,7 +778,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					await this.precompiledCall('unpauseToken', [
 						TokenId.fromString(
 							coin.coin.tokenId?.value ?? '',
-						).toSolidityAddress()
+						).toSolidityAddress(),
 					]),
 				);
 
@@ -722,7 +787,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					await this.precompiledCall('deleteToken', [
 						TokenId.fromString(
 							coin.coin.tokenId?.value ?? '',
-						).toSolidityAddress()
+						).toSolidityAddress(),
 					]),
 				);
 
@@ -732,12 +797,20 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	}
 }
 
-class Params{
+class Params {
 	role?: string;
 	targetId?: string;
 	amount?: BigDecimal;
 
-	constructor({ role, targetId, amount }: { role?: string, targetId?: string, amount?: BigDecimal }) {
+	constructor({
+		role,
+		targetId,
+		amount,
+	}: {
+		role?: string;
+		targetId?: string;
+		amount?: BigDecimal;
+	}) {
 		this.role = role;
 		this.targetId = targetId;
 		this.amount = amount;
