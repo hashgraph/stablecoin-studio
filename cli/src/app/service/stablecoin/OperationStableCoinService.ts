@@ -78,7 +78,7 @@ export default class OperationStableCoinService extends Service {
     try {
       if (this.stableCoinId === undefined) {
         //Get list of stable coins to display
-        const resp = await this.listStableCoinService.listStableCoins();
+        const resp = await this.listStableCoinService.listStableCoins(false);
         coins = resp.coins;
 
         this.stableCoinId = await utilsService.defaultMultipleAsk(
@@ -233,14 +233,6 @@ export default class OperationStableCoinService extends Service {
         );
 
         const getAccountBalanceRequest = new GetAccountBalanceRequest({
-          proxyContractId: this.proxyContractId,
-          account: {
-            accountId: configAccount.accountId,
-            privateKey: {
-              key: currentAccount.privateKey.key,
-              type: currentAccount.privateKey.type,
-            },
-          },
           tokenId: this.stableCoinId,
           targetId: '',
         });
@@ -320,14 +312,6 @@ export default class OperationStableCoinService extends Service {
         );
 
         const wipeRequest = new WipeRequest({
-          proxyContractId: this.proxyContractId,
-          account: {
-            accountId: configAccount.accountId,
-            privateKey: {
-              key: currentAccount.privateKey.key,
-              type: currentAccount.privateKey.type,
-            },
-          },
           tokenId: this.stableCoinId,
           targetId: '',
           amount: '',
@@ -382,14 +366,6 @@ export default class OperationStableCoinService extends Service {
         );
 
         const rescueRequest = new RescueRequest({
-          proxyContractId: this.proxyContractId,
-          account: {
-            accountId: configAccount.accountId,
-            privateKey: {
-              key: currentAccount.privateKey.key,
-              type: currentAccount.privateKey.type,
-            },
-          },
           tokenId: this.stableCoinId,
           amount: '',
         });
@@ -428,14 +404,6 @@ export default class OperationStableCoinService extends Service {
         );
 
         const freezeAccountRequest = new FreezeAccountRequest({
-          account: {
-            accountId: configAccount.accountId,
-            privateKey: {
-              key: currentAccount.privateKey.key,
-              type: currentAccount.privateKey.type,
-            },
-          },
-          proxyContractId: this.proxyContractId,
           tokenId: this.stableCoinId,
           targetId: '',
         });
@@ -473,14 +441,6 @@ export default class OperationStableCoinService extends Service {
         );
 
         const unfreezeAccountRequest = new FreezeAccountRequest({
-          account: {
-            accountId: configAccount.accountId,
-            privateKey: {
-              key: currentAccount.privateKey.key,
-              type: currentAccount.privateKey.type,
-            },
-          },
-          proxyContractId: this.proxyContractId,
           tokenId: this.stableCoinId,
           targetId: '',
         });
@@ -1539,14 +1499,6 @@ export default class OperationStableCoinService extends Service {
         if (confirmPause) {
           try {
             const req = new PauseRequest({
-              account: {
-                accountId: currentAccount.accountId,
-                privateKey: {
-                  key: currentAccount.privateKey.key,
-                  type: currentAccount.privateKey.type,
-                },
-              },
-              proxyContractId: this.proxyContractId,
               tokenId: this.stableCoinId,
             });
             await new PauseStableCoinService().pauseStableCoin(req);
@@ -1568,14 +1520,6 @@ export default class OperationStableCoinService extends Service {
         if (confirmUnpause) {
           try {
             const req = new PauseRequest({
-              account: {
-                accountId: currentAccount.accountId,
-                privateKey: {
-                  key: currentAccount.privateKey.key,
-                  type: currentAccount.privateKey.type,
-                },
-              },
-              proxyContractId: this.proxyContractId,
               tokenId: this.stableCoinId,
             });
             await new PauseStableCoinService().unpauseStableCoin(req);
