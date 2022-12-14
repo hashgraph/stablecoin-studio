@@ -8,9 +8,7 @@ import {
 import Service from '../Service.js';
 import DetailsStableCoinsService from './DetailsStableCoinService.js';
 import {
-  EOAccount,
   IStableCoinDetail,
-  PrivateKey,
   StableCoinRole,
   CashInStableCoinRequest,
   WipeStableCoinRequest,
@@ -31,7 +29,8 @@ import {
   FreezeAccountRequest,
   StableCoinCapabilities,
   Access,
-  Operation
+  Operation,
+  RequestAccount
 } from 'hedera-stable-coin-sdk';
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 import CashInStableCoinsService from './CashInStableCoinService.js';
@@ -140,13 +139,13 @@ export default class OperationStableCoinService extends Service {
 
   private async operationsStableCoin(): Promise<void> {
     const configAccount = utilsService.getCurrentAccount();
-    const currentAccount = new EOAccount(
-      configAccount.accountId,
-      new PrivateKey({
+    const currentAccount: RequestAccount = {
+      accountId: configAccount.accountId,
+      privateKey: {
         key: configAccount.privateKey.key,
         type: configAccount.privateKey.type
-      }),
-    );    
+      },
+    };
     const wizardOperationsStableCoinOptions = language.getArray(
       'wizard.stableCoinOptions',
     );
@@ -188,14 +187,14 @@ export default class OperationStableCoinService extends Service {
         // Call to mint
         cashInRequest.targetId = await utilsService.defaultSingleAsk(
           language.getText('stablecoin.askTargetAccount'),
-          currentAccount.accountId.id,
+          currentAccount.accountId,
         );
         await utilsService.handleValidation(
           () => cashInRequest.validate('targetId'),
           async () => {
             cashInRequest.targetId = await utilsService.defaultSingleAsk(
               language.getText('stablecoin.askTargetAccount'),
-              currentAccount.accountId.id,
+              currentAccount.accountId,
             );
           },
         );
@@ -257,7 +256,7 @@ export default class OperationStableCoinService extends Service {
         // Call to mint
         getAccountBalanceRequest.targetId = await utilsService.defaultSingleAsk(
           language.getText('stablecoin.askAccountToBalance'),
-          currentAccount.accountId.id,
+          currentAccount.accountId,
         );
         await utilsService.handleValidation(
           () => getAccountBalanceRequest.validate('targetId'),
@@ -265,7 +264,7 @@ export default class OperationStableCoinService extends Service {
             getAccountBalanceRequest.targetId =
               await utilsService.defaultSingleAsk(
                 language.getText('stablecoin.askAccountToBalance'),
-                currentAccount.accountId.id,
+                currentAccount.accountId,
               );
           },
         );
@@ -353,14 +352,14 @@ export default class OperationStableCoinService extends Service {
         // Call to wipe
         wipeRequest.targetId = await utilsService.defaultSingleAsk(
           language.getText('stablecoin.askTargetAccount'),
-          currentAccount.accountId.id,
+          currentAccount.accountId,
         );
         await utilsService.handleValidation(
           () => wipeRequest.validate('targetId'),
           async () => {
             wipeRequest.targetId = await utilsService.defaultSingleAsk(
               language.getText('stablecoin.askTargetAccount'),
-              currentAccount.accountId.id,
+              currentAccount.accountId,
             );
           },
         );
@@ -539,7 +538,7 @@ export default class OperationStableCoinService extends Service {
         await utilsService.cleanAndShowBanner();
 
         const getRolesRequest = new GetRolesRequest({
-          targetId: currentAccount.accountId.id,
+          targetId: currentAccount.accountId,
           tokenId: ''
         });
 
@@ -577,7 +576,7 @@ export default class OperationStableCoinService extends Service {
   }
 
   private async getCapabilities(
-    currentAccount: EOAccount
+    currentAccount: RequestAccount
   ): Promise<StableCoinCapabilities> {
     return await this.capabilitiesStableCoinService.getCapabilitiesStableCoins(
       this.stableCoinId,
@@ -591,13 +590,13 @@ export default class OperationStableCoinService extends Service {
 
   private async roleManagementFlow(): Promise<void> {
     const configAccount = utilsService.getCurrentAccount();
-    const currentAccount = new EOAccount(
-      configAccount.accountId,
-      new PrivateKey({
+    const currentAccount: RequestAccount = {
+      accountId: configAccount.accountId,
+      privateKey: {
         key: configAccount.privateKey.key,
         type: configAccount.privateKey.type
-      }),
-    );
+      },
+    };
 
     const stableCoinCapabilities = await this.getCapabilities(
       currentAccount
@@ -765,7 +764,7 @@ export default class OperationStableCoinService extends Service {
             editOptions,
             false,
             configAccount.network,
-            `${currentAccount.accountId.id} - ${configAccount.alias}`,
+            `${currentAccount.accountId} - ${configAccount.alias}`,
             this.stableCoinWithSymbol,
             this.stableCoinPaused,
             this.stableCoinDeleted,
@@ -1436,13 +1435,13 @@ export default class OperationStableCoinService extends Service {
 
   private async dangerZone(): Promise<void> {
     const configAccount = utilsService.getCurrentAccount();
-    const currentAccount = new EOAccount(
-      configAccount.accountId,
-      new PrivateKey({
+    const currentAccount: RequestAccount = {
+      accountId: configAccount.accountId,
+      privateKey: {
         key: configAccount.privateKey.key,
         type: configAccount.privateKey.type
-      })
-    );
+      },
+    };
 
     const stableCoinCapabilities = await this.getCapabilities(
       currentAccount
@@ -1501,7 +1500,7 @@ export default class OperationStableCoinService extends Service {
           try {
             const req = new PauseStableCoinRequest({
               account: {
-                accountId: currentAccount.accountId.id,
+                accountId: currentAccount.accountId,
                 privateKey: {
                   key: currentAccount.privateKey.key,
                   type: currentAccount.privateKey.type,
@@ -1530,7 +1529,7 @@ export default class OperationStableCoinService extends Service {
           try {
             const req = new PauseStableCoinRequest({
               account: {
-                accountId: currentAccount.accountId.id,
+                accountId: currentAccount.accountId,
                 privateKey: {
                   key: currentAccount.privateKey.key,
                   type: currentAccount.privateKey.type,
@@ -1559,7 +1558,7 @@ export default class OperationStableCoinService extends Service {
           try {
             const req = new DeleteStableCoinRequest({
               account: {
-                accountId: currentAccount.accountId.id,
+                accountId: currentAccount.accountId,
                 privateKey: {
                   key: currentAccount.privateKey.key,
                   type: currentAccount.privateKey.type,
