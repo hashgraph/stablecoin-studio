@@ -1,5 +1,5 @@
 export class FactoryKey {
 	public keyType: number;
-	public PublicKey: unknown;
+	public PublicKey: any;
 	public isED25519: boolean;
 }

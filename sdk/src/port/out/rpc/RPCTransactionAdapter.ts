@@ -4,7 +4,12 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
 import {
+	PublicKey as HPublicKey,
+	ContractId as HContractId,
+} from '@hashgraph/sdk';
+import {
 	HederaERC20__factory,
+	StableCoinFactory__factory,
 	IHederaTokenService__factory,
 } from 'hedera-stable-coin-contracts/typechain-types/index.js';
 import TransactionAdapter, { InitializationData } from '../TransactionAdapter';
@@ -32,6 +37,10 @@ import ContractId from '../../../domain/context/contract/ContractId.js';
 import {
 	StableCoinProps,
 } from '../../../domain/context/stablecoin/StableCoin.js';
+import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.js';
+import { FactoryStableCoin } from '../../../domain/context/factory/FactoryStableCoin.js';
+import { FactoryKey } from '../../../domain/context/factory/FactoryKey.js';
+import PublicKey from '../../../domain/context/account/PublicKey.js';
 
 // eslint-disable-next-line no-var
 declare var ethereum: any;
@@ -50,12 +59,101 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	) {
 		super();
 	}
-	create(
+	public async create(
 		coin: StableCoinProps,
 		factory: ContractId,
 		hederaERC20: ContractId,
 	): Promise<TransactionResponse<any, Error>> {
-		throw new Error('Method not implemented.');
+		try {
+			const keys: FactoryKey[] = [];
+
+			const providedKeys = [
+				coin.adminKey,
+				coin.kycKey,
+				coin.freezeKey,
+				coin.wipeKey,
+				coin.supplyKey,
+				coin.pauseKey,
+			];
+
+			providedKeys.forEach((providedKey, index) => {
+				if (providedKey) {
+					const key = new FactoryKey();
+					switch (index) {
+						case 0: {
+							key.keyType = 1; // admin
+							break;
+						}
+						case 1: {
+							key.keyType = 2; // kyc
+							break;
+						}
+						case 2: {
+							key.keyType = 4; // freeze
+							break;
+						}
+						case 3: {
+							key.keyType = 8; // wipe
+							break;
+						}
+						case 4: {
+							key.keyType = 16; // supply
+							break;
+						}
+						case 5: {
+							key.keyType = 64; // pause
+							break;
+						}
+					}
+					const providedKeyCasted = providedKey as PublicKey;
+					key.PublicKey =
+						providedKeyCasted.key == PublicKey.NULL.key
+							? '0x'
+							: HPublicKey.fromString(
+									providedKeyCasted.key,
+							  ).toBytesRaw();
+					key.isED25519 = providedKeyCasted.type == 'ED25519';
+					keys.push(key);
+				}
+			});
+
+			const stableCoinToCreate = new FactoryStableCoin(
+				coin.name,
+				coin.symbol,
+				coin.freezeDefault ?? false,
+				coin.supplyType == TokenSupplyType.FINITE,
+				coin.maxSupply
+					? coin.maxSupply.toFixedNumber()
+					: BigDecimal.ZERO.toFixedNumber(),
+				coin.initialSupply
+					? coin.initialSupply.toFixedNumber()
+					: BigDecimal.ZERO.toFixedNumber(),
+				coin.decimals,
+				await this.accountToEvmAddress(coin.autoRenewAccount!),
+				coin.treasury == undefined ||
+				coin.treasury.toString() == '0.0.0'
+					? '0x0000000000000000000000000000000000000000'
+					: await this.accountToEvmAddress(coin.treasury),
+				keys,
+			);
+
+			return RPCTransactionResponseAdapter.manageResponse(
+				await StableCoinFactory__factory.connect(
+					'0x' + HContractId.fromString(factory.value).toSolidityAddress(),
+					this.signerOrProvider,
+				).deployStableCoin(
+					stableCoinToCreate, 
+					'0x' + HContractId.fromString(hederaERC20.value).toSolidityAddress(),
+					{value: ethers.utils.parseEther("25.0"),
+					gasLimit: 15000000}
+				  )
+			);
+
+		} catch (error) {
+			throw new Error(
+				`Unexpected error in HederaTransactionHandler create operation : ${error}`,
+			);
+		}
 	}
 
 	async register(

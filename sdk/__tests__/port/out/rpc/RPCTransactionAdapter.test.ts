@@ -18,6 +18,9 @@ import { Wallet } from 'ethers';
 import { StableCoinRole } from '../../../../src/domain/context/stablecoin/StableCoinRole.js';
 import Injectable from '../../../../src/core/Injectable.js';
 import { MirrorNodeAdapter } from '../../../../src/port/out/mirror/MirrorNodeAdapter.js';
+import PublicKey from '../../../../src/domain/context/account/PublicKey.js';
+import ContractId from '../../../../src/domain/context/contract/ContractId.js';
+import {HederaERC20AddressTestnet, FactoryAddressTestnet, TokenSupplyType} from '../../../../src/port/in/StableCoin.js';
 
 const evmAddress = '0x320d33046b60dbc5a027cfb7e4124f75b0417240';
 const clientPrivateKey =
@@ -85,6 +88,30 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 		const mirrorNodeAdapter = Injectable.resolve(MirrorNodeAdapter);
 		mirrorNodeAdapter.setEnvironment('testnet');
 	});
+
+	it('create coin and assign to SC', async () => {
+		const coin = new StableCoin({
+			name: "TestCoinSC",
+			symbol: "TCSC",
+			decimals: 6,
+			initialSupply: BigDecimal.fromString('1.60', 6),
+			freezeDefault: false,
+			adminKey: PublicKey.NULL,
+			freezeKey: PublicKey.NULL,
+			kycKey: PublicKey.NULL,
+			wipeKey: PublicKey.NULL,
+			pauseKey: PublicKey.NULL,
+			supplyKey: PublicKey.NULL,
+			autoRenewAccount: accountFromAEvmAddress.id, 
+			supplyType: TokenSupplyType.INFINITE
+		});
+		tr = await th.create(
+			coin,
+			new ContractId(FactoryAddressTestnet),
+			new ContractId(HederaERC20AddressTestnet)
+		);
+		
+	}, 1500000);
 
 	it('Test hasRole', async () => {
 		tr = await th.hasRole(
