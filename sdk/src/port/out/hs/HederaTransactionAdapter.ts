@@ -100,10 +100,10 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			(coin.maxSupply) ? coin.maxSupply.toLong().toString(): "0",
 			(coin.initialSupply) ? coin.initialSupply.toLong().toString(): "0",
 			coin.decimals,
-			"0x" + await this.accountToEvmAddress(coin.autoRenewAccount!),
+			await this.accountToEvmAddress(coin.autoRenewAccount!),
 			(coin.treasury == undefined || coin.treasury.toString() == '0.0.0') ? 
 				"0x0000000000000000000000000000000000000000"
-				: "0x" + await this.accountToEvmAddress(coin.treasury),
+				: await this.accountToEvmAddress(coin.treasury),
 			keys
 		);
 

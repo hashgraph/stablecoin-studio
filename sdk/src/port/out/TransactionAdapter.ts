@@ -343,7 +343,7 @@ export default abstract class TransactionAdapter
 				return HPublicKey.fromString(publicKey).toEthereumAddress();
 
 			default:
-				return accountId.toHederaAddress().toSolidityAddress();
+				return "0x" + accountId.toHederaAddress().toSolidityAddress();
 		}
 	}	
 }
