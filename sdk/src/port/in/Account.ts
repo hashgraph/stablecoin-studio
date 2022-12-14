@@ -16,6 +16,7 @@ import StableCoinListViewModel from '../out/mirror/response/StableCoinListViewMo
 import AccountViewModel from '../out/mirror/response/AccountViewModel.js';
 import { MirrorNodeAdapter } from '../out/mirror/MirrorNodeAdapter.js';
 import { HederaId } from '../../domain/context/shared/HederaId.js';
+import { GetAccountInfoQuery } from '../../app/usecase/query/account/info/GetAccountInfoQuery.js';
 
 export { AccountViewModel, StableCoinListViewModel };
 
@@ -44,8 +45,12 @@ class AccountInPort implements IAccountInPort {
 		),
 	) {}
 	
-	getPublicKey(request: GetPublicKeyRequest): Promise<PublicKey> {
-		throw new Error('Method not implemented.');
+	async getPublicKey(request: GetPublicKeyRequest): Promise<PublicKey> {
+		return (
+			await this.queryBus.execute(
+				new GetAccountInfoQuery(HederaId.from(request.account.accountId)),
+			)
+		).account.publicKey!;
 	}
 
 	async listStableCoins(
