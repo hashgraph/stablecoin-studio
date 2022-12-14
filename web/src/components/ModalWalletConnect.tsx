@@ -9,7 +9,7 @@ import {
 	Text,
 	VStack,
 } from '@chakra-ui/react';
-import { SupportedWallets } from 'hedera-stable-coin-sdk/build/esm/src/domain/context/network/Wallet.js';
+import { SupportedWallets } from 'hedera-stable-coin-sdk';
 import HEDERA_LOGO from '../assets/png/hashpackLogo.png';
 import METAMASK_LOGO from '../assets/svg/MetaMask_Fox.svg';
 import SDKService from '../services/SDKService';

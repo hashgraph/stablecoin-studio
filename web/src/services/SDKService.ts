@@ -1,5 +1,18 @@
 import {
+	StableCoin,
+	Event,
+	LoggerTransports,
+	Network,
+	SDK,
 	Account,
+	Role,
+	CapabilitiesRequest,
+	ConnectRequest,
+} from 'hedera-stable-coin-sdk';
+import type {
+	WalletEvent,
+	SupportedWallets,
+	WipeStableCoinRequest,
 	CashInStableCoinRequest,
 	CashOutStableCoinRequest,
 	CheckCashInLimitRequest,
@@ -21,14 +34,10 @@ import {
 	RescueStableCoinRequest,
 	ResetCashInLimitRequest,
 	RevokeRoleRequest,
-	Role,
-	WalletEvent,
-	WipeStableCoinRequest} from 'hedera-stable-coin-sdk';
-import {
-	StableCoin
- Event, LoggerTransports, Network, SDK } from 'hedera-stable-coin-sdk';
-import type { SupportedWallets } from 'hedera-stable-coin-sdk/build/esm/src/domain/context/network/Wallet.js';
-import ConnectRequest from 'hedera-stable-coin-sdk/build/esm/src/port/in/request/ConnectRequest.js';
+	StableCoinListViewModel,
+	StableCoinViewModel,
+	StableCoinCapabilities,
+} from 'hedera-stable-coin-sdk';
 
 export type StableCoinListRaw = Array<Record<'id' | 'symbol', string>>;
 
@@ -84,15 +93,15 @@ export class SDKService {
 
 	public static async getStableCoins(
 		req: GetListStableCoinRequest,
-	): Promise<IStableCoinList[] | null> {
-		return await StableCoin.getListStableCoin(req);
+	): Promise<StableCoinListViewModel | null> {
+		return await Account.listStableCoins(req);
 	}
 
 	public static async getStableCoinDetails(req: GetStableCoinDetailsRequest) {
 		return await StableCoin.getInfo(req);
 	}
 
-	public static async getAccountInfo(req: GetAccountInfoRequest){
+	public static async getAccountInfo(req: GetAccountInfoRequest) {
 		return await Account.getInfo(req);
 	}
 
@@ -101,17 +110,17 @@ export class SDKService {
 	}
 
 	public static async cashOut(req: CashOutStableCoinRequest) {
-		return await StableCoin.cashOut(req)
+		return await StableCoin.cashOut(req);
 	}
 
 	public static async createStableCoin(
 		createStableCoinRequest: CreateStableCoinRequest,
-	): Promise<IStableCoinDetail | null> {
-		// return (StableCoin.).createStableCoin(createStableCoinRequest);
+	): Promise<StableCoinViewModel | null> {
+		return await StableCoin.create(createStableCoinRequest);
 	}
 
 	public static async getBalance(req: GetAccountBalanceRequest) {
-		return await Account.getBalanceOf(req)
+		return await StableCoin.getBalanceOf(req);
 	}
 
 	public static async rescue(req: RescueStableCoinRequest) {
@@ -135,7 +144,7 @@ export class SDKService {
 	}
 
 	public static async unfreeze(req: FreezeAccountRequest) {
-		return await StableCoin.unFrezze(req);
+		return await StableCoin.unFreeze(req);
 	}
 
 	public static async delete(req: DeleteStableCoinRequest) {
@@ -144,12 +153,17 @@ export class SDKService {
 
 	public static async getCapabilities({
 		id,
-		publicKey,
 	}: {
 		id: string;
-		publicKey: string;
-	}): Promise<Capabilities[] | null> {
-		return await StableCoin.getCapabilitiesStableCoin(id, publicKey);
+	}): Promise<StableCoinCapabilities | null> {
+		if (this.initData?.account)
+			return await StableCoin.capabilities(
+				new CapabilitiesRequest({
+					account: { ...this.initData?.account, accountId: this.initData.account.id.toString() },
+					tokenId: id,
+				}),
+			);
+		return null;
 	}
 
 	public static async increaseSupplierAllowance(req: IncreaseCashInLimitRequest) {

@@ -7,6 +7,10 @@ import type { IAccountToken } from '../../interfaces/IAccountToken';
 import type {
 	SupportedWallets,
 	InitializationData,
+	AccountViewModel,
+	StableCoinCapabilities,
+	StableCoinListViewModel,
+	StableCoinViewModel,
 } from 'hedera-stable-coin-sdk';
 
 interface InitialStateProps {
@@ -16,10 +20,10 @@ interface InitialStateProps {
 	isPaired: boolean;
 	loading: boolean;
 	accountInfo: AccountViewModel;
-	selectedStableCoin?: IStableCoinDetail;
-	stableCoinList?: IStableCoinList[];
+	selectedStableCoin?: StableCoinViewModel;
+	stableCoinList?: StableCoinListViewModel;
 	externalTokenList?: IExternalToken[];
-	capabilities?: Capabilities[] | undefined;
+	capabilities?: StableCoinCapabilities | undefined;
 }
 
 export const initialState: InitialStateProps = {
@@ -29,19 +33,19 @@ export const initialState: InitialStateProps = {
 	loading: false,
 	accountInfo: {},
 	selectedStableCoin: undefined,
-	stableCoinList: [],
+	stableCoinList: undefined,
 	externalTokenList: [],
-	capabilities: [],
+	capabilities: undefined,
 };
 
 export const getStableCoinList = createAsyncThunk(
 	'wallet/getStableCoinList',
-	async (account: HashPackAccount) => {
+	async (id: string) => {
 		try {
 			const stableCoins = await SDKService.getStableCoins(
 				new GetListStableCoinRequest({
 					account: {
-						accountId: account.accountId.id,
+						accountId: id,
 					},
 				}),
 			);
@@ -54,13 +58,13 @@ export const getStableCoinList = createAsyncThunk(
 
 export const getExternalTokenList = createAsyncThunk(
 	'wallet/getExternalTokenList',
-	async (accountId: string) => {
+	async (id: string) => {
 		try {
 			const tokensAccount = localStorage?.tokensAccount;
 			if (tokensAccount) {
 				const accountTokens = JSON.parse(tokensAccount);
 				if (accountTokens) {
-					const myAccount = accountTokens.find((acc: IAccountToken) => acc.id === accountId);
+					const myAccount = accountTokens.find((acc: IAccountToken) => acc.id === id);
 					if (myAccount) {
 						return myAccount.externalTokens;
 					}

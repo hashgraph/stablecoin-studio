@@ -26,7 +26,6 @@ import type { IExternalToken } from '../../interfaces/IExternalToken';
 import {
 	GetRolesRequest,
 	GetStableCoinDetailsRequest,
-	HashPackAccount,
 } from 'hedera-stable-coin-sdk';
 
 const ImportedTokenCreation = () => {
@@ -105,10 +104,8 @@ const ImportedTokenCreation = () => {
 			if (autoCheckRoles) {
 				checkRoles = await SDKService.getRoles(
 					new GetRolesRequest({
-						proxyContractId: details && details.memo ? details?.memo.proxyContract : '',
 						targetId: accountInfo && accountInfo.account ? accountInfo?.account : '',
-						tokenId: details?.tokenId ?? '',
-						account,
+						tokenId: details?.tokenId?.toString() ?? '',
 					}),
 				);
 			}
@@ -208,7 +205,7 @@ const ImportedTokenCreation = () => {
 				isOpen={isOpen}
 				onClose={onClose}
 				onClick={() => {
-					dispatch(getStableCoinList(new HashPackAccount(account.accountId)));
+					dispatch(getStableCoinList(account.accountId?.toString() ?? ''));
 					RouterManager.to(navigate, NamedRoutes.StableCoinNotSelected);
 				}}
 				closeOnOverlayClick={false}
