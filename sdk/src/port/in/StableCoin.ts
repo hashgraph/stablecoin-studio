@@ -106,8 +106,14 @@ class StableCoinInPort implements IStableCoinInPort {
 						type: req.adminKey.type,
 				  })
 				: PublicKey.NULL,
-			initialSupply: BigDecimal.fromString(req.initialSupply ?? '0'),
-			maxSupply: BigDecimal.fromString(req.maxSupply ?? '0'),
+			initialSupply: BigDecimal.fromString(
+				req.initialSupply ?? '0',
+				req.decimals,
+			),
+			maxSupply: BigDecimal.fromString(
+				req.maxSupply ?? '0',
+				req.decimals,
+			),
 			freezeKey: req.freezeKey
 				? new PublicKey({
 						key: req.freezeKey.key,

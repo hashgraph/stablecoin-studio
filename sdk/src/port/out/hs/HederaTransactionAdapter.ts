@@ -29,6 +29,7 @@ import { MirrorNodeAdapter } from '../mirror/MirrorNodeAdapter.js';
 import { HederaId } from '../../../domain/context/shared/HederaId.js';
 import { FactoryKey } from '../../../domain/context/factory/FactoryKey.js';
 import { FactoryStableCoin } from '../../../domain/context/factory/FactoryStableCoin.js';
+import { BigNumber, FixedNumber } from 'ethers';
 
 
 export abstract class HederaTransactionAdapter extends TransactionAdapter {
@@ -96,15 +97,19 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			coin.name,
 			coin.symbol,
 			coin.freezeDefault ?? false,
-			(coin.supplyType == TokenSupplyType.FINITE),
-			(coin.maxSupply) ? coin.maxSupply.toLong().toString(): "0",
-			(coin.initialSupply) ? coin.initialSupply.toLong().toString(): "0",
+			coin.supplyType == TokenSupplyType.FINITE,
+			coin.maxSupply
+				? coin.maxSupply.toFixedNumber()
+				: BigDecimal.ZERO.toFixedNumber(),
+			coin.initialSupply
+				? coin.initialSupply.toFixedNumber()
+				: BigDecimal.ZERO.toFixedNumber(),
 			coin.decimals,
 			await this.accountToEvmAddress(coin.autoRenewAccount!),
-			(coin.treasury == undefined || coin.treasury.toString() == '0.0.0') ? 
-				"0x0000000000000000000000000000000000000000"
+			coin.treasury == undefined || coin.treasury.toString() == '0.0.0'
+				? '0x0000000000000000000000000000000000000000'
 				: await this.accountToEvmAddress(coin.treasury),
-			keys
+			keys,
 		);
 
 		const params = [
