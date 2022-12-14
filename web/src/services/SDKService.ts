@@ -7,18 +7,14 @@ import {
 	Account,
 	Role,
 	CapabilitiesRequest,
-	ConnectRequest,
+	ConnectRequest
 } from 'hedera-stable-coin-sdk';
 import type {
 	WalletEvent,
 	SupportedWallets,
 	WipeRequest,
 	CashInRequest,
-	CashOutStableCoinRequest,
-	CheckCashInLimitRequest,
-	CheckCashInRoleRequest,
 	CreateRequest,
-	DecreaseCashInLimitRequest,
 	DeleteRequest,
 	FreezeAccountRequest,
 	GetAccountBalanceRequest,
@@ -28,15 +24,20 @@ import type {
 	GetStableCoinDetailsRequest,
 	GrantRoleRequest,
 	HasRoleRequest,
-	IncreaseCashInLimitRequest,
 	InitializationData,
 	PauseRequest,
 	RescueRequest,
-	ResetCashInLimitRequest,
 	RevokeRoleRequest,
 	StableCoinListViewModel,
 	StableCoinViewModel,
 	StableCoinCapabilities,
+
+	BurnRequest,
+	IncreaseSupplierAllowanceRequest,
+	DecreaseSupplierAllowanceRequest,
+	ResetSupplierAllowanceRequest,
+	GetSupplierAllowanceRequest,
+	CheckSupplierLimitRequest
 } from 'hedera-stable-coin-sdk';
 
 export type StableCoinListRaw = Array<Record<'id' | 'symbol', string>>;
@@ -109,8 +110,8 @@ export class SDKService {
 		return await StableCoin.cashIn(req);
 	}
 
-	public static async cashOut(req: CashOutStableCoinRequest) {
-		return await StableCoin.cashOut(req);
+	public static async burn(req: BurnRequest) {
+		return await StableCoin.burn(req);
 	}
 
 	public static async createStableCoin(
@@ -166,19 +167,19 @@ export class SDKService {
 		return null;
 	}
 
-	public static async increaseSupplierAllowance(req: IncreaseCashInLimitRequest) {
+	public static async increaseSupplierAllowance(req: IncreaseSupplierAllowanceRequest) {
 		return await Role.Supplier.increaseAllowance(req);
 	}
 
-	public static async decreaseSupplierAllowance(req: DecreaseCashInLimitRequest) {
+	public static async decreaseSupplierAllowance(req: DecreaseSupplierAllowanceRequest) {
 		return await Role.Supplier.decreaseAllowance(req);
 	}
 
-	public static async resetSupplierAllowance(req: ResetCashInLimitRequest) {
+	public static async resetSupplierAllowance(req: ResetSupplierAllowanceRequest) {
 		return await Role.Supplier.resetAllowance(req);
 	}
 
-	public static async checkSupplierAllowance(req: CheckCashInLimitRequest) {
+	public static async checkSupplierAllowance(req: GetSupplierAllowanceRequest) {
 		return await Role.Supplier.getAllowance(req);
 	}
 
@@ -194,7 +195,7 @@ export class SDKService {
 		return await Role.hasRole(req);
 	}
 
-	public static async isUnlimitedSupplierAllowance(req: CheckCashInRoleRequest) {
+	public static async isUnlimitedSupplierAllowance(req: CheckSupplierLimitRequest) {
 		return await Role.Supplier.isUnlimited(req);
 	}
 

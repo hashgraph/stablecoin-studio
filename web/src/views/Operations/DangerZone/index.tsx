@@ -8,14 +8,15 @@ import {
 	SELECTED_WALLET_CAPABILITIES,
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNTID,
-	SELECTED_WALLET_ACCOUNT_INFO
 } from '../../../store/slices/walletSlice';
 import type { DirectActionProps } from '../../../components/DirectAction';
+import type { StableCoinCapabilities } from 'hedera-stable-coin-sdk';
 import {
-	Capabilities,
-	Roles,
 	PauseRequest,
 	DeleteRequest,
+	Operation,
+	Access,
+	StableCoinRole,
 } from 'hedera-stable-coin-sdk';
 import type { IAccountToken } from '../../../interfaces/IAccountToken';
 import type { IExternalToken } from '../../../interfaces/IExternalToken';
@@ -24,6 +25,7 @@ import SDKService from '../../../services/SDKService';
 import { useNavigate } from 'react-router-dom';
 import { NamedRoutes } from '../../../Router/NamedRoutes';
 import { RouterManager } from '../../../Router/RouterManager';
+
 const DangerZoneOperations = () => {
 	const { t } = useTranslation('operations');
 
@@ -31,9 +33,10 @@ const DangerZoneOperations = () => {
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const accountId = useSelector(SELECTED_WALLET_PAIRED_ACCOUNTID);
-	const capabilities: Capabilities[] | undefined = useSelector(SELECTED_WALLET_CAPABILITIES);
-	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
-	
+	const capabilities: StableCoinCapabilities | undefined = useSelector(
+		SELECTED_WALLET_CAPABILITIES,
+	);
+
 	const [disabledFeatures, setDisabledFeatures] = useState({
 		pause: false,
 		delete: false,
@@ -46,28 +49,12 @@ const DangerZoneOperations = () => {
 
 	const [requestPause] = useState(
 		new PauseRequest({
-			account: {
-				accountId
-			},
-			proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
-			tokenId: selectedStableCoin?.tokenId ?? '',
-			publicKey:{
-				key:accountInfo.publicKey?.key??'',
-				type:accountInfo.publicKey?.type ??'ED25519'
-			}
+			tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
 		}),
 	);
 	const [requestDelete] = useState(
 		new DeleteRequest({
-			account: {
-				accountId,
-			},
-			proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
-			tokenId: selectedStableCoin?.tokenId ?? '',
-			publicKey:{
-				key:accountInfo.publicKey?.key??'',
-				type:accountInfo.publicKey?.type ??'ED25519'
-			}
+			tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
 		}),
 	);
 	useEffect(() => {
@@ -83,10 +70,12 @@ const DangerZoneOperations = () => {
 		if (tokensAccount) {
 			const tokensAccountParsed = JSON.parse(tokensAccount);
 			if (tokensAccountParsed) {
-				const myAccount = tokensAccountParsed.find((acc: IAccountToken) => acc.id === accountId);
+				const myAccount = tokensAccountParsed.find(
+					(acc: IAccountToken) => acc.id === accountId?.toString(),
+				);
 				if (myAccount) {
 					const externalToken = myAccount?.externalTokens.find(
-						(coin: IExternalToken) => coin.id === selectedStableCoin?.tokenId,
+						(coin: IExternalToken) => coin.id === selectedStableCoin?.tokenId?.toString(),
 					);
 					if (externalToken) {
 						isExternalToken = true;
@@ -95,35 +84,42 @@ const DangerZoneOperations = () => {
 				}
 			}
 		}
-		const areDisabled = {
+		const canPause =
+			!hasCapability(Operation.PAUSE, Access.CONTRACT) ||
+			!hasCapability(Operation.PAUSE, Access.HTS);
+		const areDisabled: {
+			pause: boolean;
+			unpause: boolean;
+			delete: boolean;
+		} = {
 			pause: !isExternalToken
-				? (!capabilities?.includes(Capabilities.PAUSE) ||
-						!capabilities?.includes(Capabilities.PAUSE_HTS)) &&
-				  selectedStableCoin?.paused === 'PAUSED'
-				: (!roles.includes(Roles.PAUSE_ROLE) ||
-				  !capabilities?.includes(Capabilities.PAUSE_HTS)) &&
-				  selectedStableCoin?.paused === 'PAUSED',
+				? (canPause && selectedStableCoin?.paused) ?? false
+				: ((!roles.includes(StableCoinRole.PAUSE_ROLE) ||
+						!hasCapability(Operation.PAUSE, Access.HTS)) &&
+						selectedStableCoin?.paused) ??
+				  false,
 			unpause: !isExternalToken
-				? (!capabilities?.includes(Capabilities.PAUSE) ||
-						!capabilities?.includes(Capabilities.PAUSE_HTS)) &&
-				  selectedStableCoin?.paused === 'UNPAUSED'
-				: (!roles.includes(Roles.PAUSE_ROLE) ||
-				  !capabilities?.includes(Capabilities.PAUSE_HTS)) &&
-				  selectedStableCoin?.paused === 'UNPAUSED',
+				? canPause && !selectedStableCoin?.paused
+				: (!roles.includes(StableCoinRole.PAUSE_ROLE) ||
+						!hasCapability(Operation.PAUSE, Access.HTS)) &&
+				  !selectedStableCoin?.paused,
 			delete: !isExternalToken
-				? (!capabilities?.includes(Capabilities.DELETE) ||
-					!capabilities?.includes(Capabilities.DELETE_HTS)) &&
-			      (selectedStableCoin?.paused === 'PAUSED' || !!selectedStableCoin?.deleted )
-				: !roles.includes(Roles.DELETE_ROLE) && !capabilities?.includes(Capabilities.DELETE_HTS) && 
-					(selectedStableCoin?.paused === 'UNPAUSED' ||	!selectedStableCoin?.deleted),
+				? canPause && (selectedStableCoin?.paused || !!selectedStableCoin?.deleted)
+				: !roles.includes(StableCoinRole.DELETE_ROLE) &&
+				  !hasCapability(Operation.DELETE, Access.HTS) &&
+				  (!selectedStableCoin?.paused || !selectedStableCoin?.deleted),
 		};
-		
+
 		setDisabledFeatures(areDisabled);
+
+		function hasCapability(op: Operation, ac: Access) {
+			return capabilities?.capabilities.includes({ operation: op, access: ac });
+		}
 	};
 
 	const handlePause: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
 		try {
-			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId) {
+			if (!selectedStableCoin?.proxyAddress || !selectedStableCoin?.tokenId) {
 				onError();
 				return;
 			}
@@ -145,7 +141,7 @@ const DangerZoneOperations = () => {
 
 	const handleUnpause: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
 		try {
-			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId) {
+			if (!selectedStableCoin?.proxyAddress || !selectedStableCoin?.tokenId) {
 				onError();
 				return;
 			}
@@ -166,7 +162,7 @@ const DangerZoneOperations = () => {
 
 	const handleDelete: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
 		try {
-			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId) {
+			if (!selectedStableCoin?.proxyAddress || !selectedStableCoin?.tokenId) {
 				onError();
 				return;
 			}
@@ -176,7 +172,7 @@ const DangerZoneOperations = () => {
 				...disabledFeatures,
 				pause: true,
 				unpause: true,
-				delete:true
+				delete: true,
 			});
 			onSuccess();
 			RouterManager.to(navigate, NamedRoutes.Operations);
