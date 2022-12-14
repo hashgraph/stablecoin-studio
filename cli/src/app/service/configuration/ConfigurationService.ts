@@ -16,6 +16,7 @@ import {
   LogOptions,
 } from 'hedera-stable-coin-sdk';
 import { ILogConfig } from '../../../domain/configuration/interfaces/ILogConfig.js';
+import { IFactoryConfig } from '../../../domain/configuration/interfaces/IFactoryConfig.js';
 
 /**
  * Configuration Service
@@ -149,6 +150,7 @@ export default class ConfigurationService extends Service {
       networks: defaultConfigRaw['networks'] as unknown as INetworkConfig[],
       accounts: defaultConfigRaw['accounts'] as unknown as IAccountConfig[],
       logs: defaultConfigRaw['logs'] as unknown as ILogConfig,
+      factories: defaultConfigRaw['factories'] as unknown as IFactoryConfig[],
       hederaERC20s: defaultConfigRaw['hederaERC20s'] as unknown as IHederaERC20Config[]
     };
     this.setConfiguration(config);
