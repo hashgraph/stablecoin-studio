@@ -31,6 +31,7 @@ import { MirrorNodeAdapter } from '../mirror/MirrorNodeAdapter.js';
 import { HederaId } from '../../../domain/context/shared/HederaId.js';
 import { FactoryKey } from '../../../domain/context/factory/FactoryKey.js';
 import { FactoryStableCoin } from '../../../domain/context/factory/FactoryStableCoin.js';
+import { TOKEN_CREATION_COST_HBAR } from '../../../core/Constants.js';
 
 export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	private web3 = new Web3();
@@ -132,7 +133,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				15000000,
 				TransactionType.RECORD,
 				StableCoinFactory__factory.abi,
-				25,
+				TOKEN_CREATION_COST_HBAR,
 			);
 		} catch (error) {
 			throw new Error(

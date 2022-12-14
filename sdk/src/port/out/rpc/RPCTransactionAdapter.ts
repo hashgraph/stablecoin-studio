@@ -41,6 +41,7 @@ import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.
 import { FactoryStableCoin } from '../../../domain/context/factory/FactoryStableCoin.js';
 import { FactoryKey } from '../../../domain/context/factory/FactoryKey.js';
 import PublicKey from '../../../domain/context/account/PublicKey.js';
+import { TOKEN_CREATION_COST_HBAR } from '../../../core/Constants.js';
 
 // eslint-disable-next-line no-var
 declare var ethereum: any;
@@ -144,7 +145,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				).deployStableCoin(
 					stableCoinToCreate, 
 					'0x' + HContractId.fromString(hederaERC20.value).toSolidityAddress(),
-					{value: ethers.utils.parseEther("25.0"),
+					{value: ethers.utils.parseEther(TOKEN_CREATION_COST_HBAR.toString()),
 					gasLimit: 15000000}
 				  )
 			);
