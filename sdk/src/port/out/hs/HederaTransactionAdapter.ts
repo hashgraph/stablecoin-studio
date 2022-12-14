@@ -109,7 +109,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 
 		const params = [
 			stableCoinToCreate,
-			HContractId.fromString(hederaERC20.value).toSolidityAddress()
+			"0x" + HContractId.fromString(hederaERC20.value).toSolidityAddress()
 		];
 
 		return await this.contractCall(
