@@ -169,6 +169,8 @@ export default class CreateStableCoinService extends Service {
         ? TokenSupplyType.INFINITE
         : TokenSupplyType.FINITE;
 
+      tokenToCreate.maxSupply = totalSupply;
+
       if (!supplyType) {
         tokenToCreate.maxSupply = await this.askForTotalSupply();
         await utilsService.handleValidation(
@@ -177,7 +179,6 @@ export default class CreateStableCoinService extends Service {
             tokenToCreate.maxSupply = await this.askForTotalSupply();
           },
         );
-        tokenToCreate.maxSupply = totalSupply;
       }
 
       initialSupply = await this.askForInitialSupply(
@@ -204,7 +205,7 @@ export default class CreateStableCoinService extends Service {
       initialSupply:
         initialSupply === '' || !initialSupply ? undefined : initialSupply,
       supplyType: supplyType ? 'INFINITE' : 'FINITE',
-      maxSupply: totalSupply === '' || !totalSupply ? undefined : totalSupply,
+      maxSupply: tokenToCreate.maxSupply
     });
     if (managedBySC) {
       tokenToCreate.adminKey = Account.NullPublicKey;

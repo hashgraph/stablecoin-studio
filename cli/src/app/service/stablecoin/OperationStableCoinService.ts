@@ -51,7 +51,6 @@ import CapabilitiesStableCoinService from './CapabilitiesStableCoinService.js';
  */
 export default class OperationStableCoinService extends Service {
   private stableCoinId;
-  //private proxyContractId;
   private stableCoinWithSymbol;
   private optionTokenListSelected;
   private roleStableCoinService = new RoleStableCoinsService();
@@ -64,7 +63,6 @@ export default class OperationStableCoinService extends Service {
     super('Operation Stable Coin');
     if (tokenId && memo && symbol) {
       this.stableCoinId = tokenId; //TODO Cambiar name por el id que llegue en la creación del token
-      //this.proxyContractId = memo;
       this.stableCoinWithSymbol = `${tokenId} - ${symbol}`;
     }
   }
