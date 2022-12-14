@@ -481,7 +481,7 @@ export default class OperationStableCoinService extends Service {
 
         const getRolesRequest = new GetRolesRequest({
           targetId: currentAccount.accountId,
-          tokenId: '',
+          tokenId: this.stableCoinId,
         });
 
         // Call to Supplier Role
