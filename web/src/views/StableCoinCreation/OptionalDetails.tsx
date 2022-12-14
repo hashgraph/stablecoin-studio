@@ -1,5 +1,5 @@
 import { Heading, Stack, VStack } from '@chakra-ui/react';
-import type { CreateStableCoinRequest } from 'hedera-stable-coin-sdk';
+import type { CreateRequest } from 'hedera-stable-coin-sdk';
 import type { Control, FieldValues, UseFormReturn } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import InputController from '../../components/Form/InputController';
@@ -10,7 +10,7 @@ import { handleRequestValidation } from '../../utils/validationsHelper';
 interface OptionalDetailsProps {
 	control: Control<FieldValues>;
 	form: UseFormReturn;
-	request: CreateStableCoinRequest;
+	request: CreateRequest;
 }
 
 const OptionalDetails = (props: OptionalDetailsProps) => {

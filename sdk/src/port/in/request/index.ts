@@ -1,5 +1,5 @@
 import CashInRequest from './CashInRequest.js';
-import CashOutRequest from './CashOutRequest.js';
+import BurnRequest from './BurnRequest.js';
 import CreateRequest from './CreateRequest.js';
 import GetListStableCoinRequest from './GetListStableCoinRequest.js';
 import GetStableCoinDetailsRequest from './GetStableCoinDetailsRequest.js';
@@ -28,28 +28,28 @@ import GetPublicKeyRequest from './GetPublicKeyRequest.js';
 
 export * from './BaseRequest.js';
 export {
-	CreateRequest as CreateStableCoinRequest,
+	CreateRequest,
 	ValidationResponse,
-	CashInRequest as CashInStableCoinRequest,
-	CashOutRequest as CashOutStableCoinRequest,
-	WipeRequest as WipeStableCoinRequest,
+	CashInRequest,
+	BurnRequest,
+	WipeRequest,
 	GetListStableCoinRequest,
 	GetStableCoinDetailsRequest,
-	RescueRequest as RescueStableCoinRequest,
+	RescueRequest,
 	GrantRoleRequest,
 	RevokeRoleRequest,
 	HasRoleRequest,
-	CheckSupplierLimitRequest as CheckCashInRoleRequest,
-	GetSupplierAllowanceRequest as CheckCashInLimitRequest,
-	ResetSupplierAllowanceRequest as ResetCashInLimitRequest,
-	IncreaseSupplierAllowanceRequest as IncreaseCashInLimitRequest,
-	DecreaseSupplierAllowanceRequest as DecreaseCashInLimitRequest,
+	CheckSupplierLimitRequest,
+	GetSupplierAllowanceRequest,
+	ResetSupplierAllowanceRequest,
+	IncreaseSupplierAllowanceRequest,
+	DecreaseSupplierAllowanceRequest,
 	GetAccountBalanceRequest,
-	AssociateTokenRequest as AssociateTokenRequest,
+	AssociateTokenRequest,
 	GetRolesRequest,
 	GetAccountInfoRequest,
-	DeleteRequest as DeleteStableCoinRequest,
-	PauseRequest as PauseStableCoinRequest,
+	DeleteRequest,
+	PauseRequest,
 	FreezeAccountRequest,
 	ConnectRequest,
 	CapabilitiesRequest,

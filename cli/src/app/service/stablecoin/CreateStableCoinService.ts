@@ -1,7 +1,7 @@
 import { configurationService, language } from './../../../index.js';
 import { utilsService } from '../../../index.js';
 import {
-  CreateStableCoinRequest,
+  CreateRequest,
   StableCoin,
   StableCoinViewModel,
   TokenSupplyType,
@@ -29,7 +29,7 @@ export default class CreateStableCoinService extends Service {
    * @param isWizard
    */
   public async createStableCoin(
-    stableCoin: CreateStableCoinRequest,
+    stableCoin: CreateRequest,
     isWizard = false,
   ): Promise<StableCoinViewModel> {
     if (isWizard) {
@@ -85,7 +85,7 @@ export default class CreateStableCoinService extends Service {
    * Specific function for wizard to create stable coin
    * @returns
    */
-  public async wizardCreateStableCoin(): Promise<CreateStableCoinRequest> {
+  public async wizardCreateStableCoin(): Promise<CreateRequest> {
     const currentAccount = utilsService.getCurrentAccount();
     const currentFactory = utilsService.getCurrentFactory();
     const currentHederaERC20 = utilsService.getCurrentHederaERC20();
@@ -93,7 +93,7 @@ export default class CreateStableCoinService extends Service {
     utilsService.displayCurrentUserInfo(currentAccount);
 
     // Call to create stable coin sdk function
-    let tokenToCreate = new CreateStableCoinRequest({
+    let tokenToCreate = new CreateRequest({
       account: {
         accountId: currentAccount.accountId,
         privateKey: {

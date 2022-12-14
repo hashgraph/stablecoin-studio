@@ -16,7 +16,7 @@ import {
 	SELECTED_WALLET_PAIRED_ACCOUNT,
 } from '../../../store/slices/walletSlice';
 import { useState } from 'react';
-import { CashInStableCoinRequest } from 'hedera-stable-coin-sdk';
+import { CashInRequest } from 'hedera-stable-coin-sdk';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
@@ -38,7 +38,7 @@ const CashInOperation = () => {
 	const navigate = useNavigate();
 
 	const [request] = useState(
-		new CashInStableCoinRequest({
+		new CashInRequest({
 			account: {
 				accountId: account.accountId,
 			},

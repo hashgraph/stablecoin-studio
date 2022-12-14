@@ -14,8 +14,8 @@ import type { DirectActionProps } from '../../../components/DirectAction';
 import {
 	Capabilities,
 	Roles,
-	PauseStableCoinRequest,
-	DeleteStableCoinRequest,
+	PauseRequest,
+	DeleteRequest,
 } from 'hedera-stable-coin-sdk';
 import type { IAccountToken } from '../../../interfaces/IAccountToken';
 import type { IExternalToken } from '../../../interfaces/IExternalToken';
@@ -45,7 +45,7 @@ const DangerZoneOperations = () => {
 	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
 
 	const [requestPause] = useState(
-		new PauseStableCoinRequest({
+		new PauseRequest({
 			account: {
 				accountId
 			},
@@ -58,7 +58,7 @@ const DangerZoneOperations = () => {
 		}),
 	);
 	const [requestDelete] = useState(
-		new DeleteStableCoinRequest({
+		new DeleteRequest({
 			account: {
 				accountId,
 			},

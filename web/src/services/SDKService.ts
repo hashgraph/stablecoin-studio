@@ -12,14 +12,14 @@ import {
 import type {
 	WalletEvent,
 	SupportedWallets,
-	WipeStableCoinRequest,
-	CashInStableCoinRequest,
+	WipeRequest,
+	CashInRequest,
 	CashOutStableCoinRequest,
 	CheckCashInLimitRequest,
 	CheckCashInRoleRequest,
-	CreateStableCoinRequest,
+	CreateRequest,
 	DecreaseCashInLimitRequest,
-	DeleteStableCoinRequest,
+	DeleteRequest,
 	FreezeAccountRequest,
 	GetAccountBalanceRequest,
 	GetAccountInfoRequest,
@@ -30,8 +30,8 @@ import type {
 	HasRoleRequest,
 	IncreaseCashInLimitRequest,
 	InitializationData,
-	PauseStableCoinRequest,
-	RescueStableCoinRequest,
+	PauseRequest,
+	RescueRequest,
 	ResetCashInLimitRequest,
 	RevokeRoleRequest,
 	StableCoinListViewModel,
@@ -105,7 +105,7 @@ export class SDKService {
 		return await Account.getInfo(req);
 	}
 
-	public static async cashIn(req: CashInStableCoinRequest) {
+	public static async cashIn(req: CashInRequest) {
 		return await StableCoin.cashIn(req);
 	}
 
@@ -114,28 +114,28 @@ export class SDKService {
 	}
 
 	public static async createStableCoin(
-		createStableCoinRequest: CreateStableCoinRequest,
+		CreateRequest: CreateRequest,
 	): Promise<StableCoinViewModel | null> {
-		return await StableCoin.create(createStableCoinRequest);
+		return await StableCoin.create(CreateRequest);
 	}
 
 	public static async getBalance(req: GetAccountBalanceRequest) {
 		return await StableCoin.getBalanceOf(req);
 	}
 
-	public static async rescue(req: RescueStableCoinRequest) {
+	public static async rescue(req: RescueRequest) {
 		return await StableCoin.rescue(req);
 	}
 
-	public static async wipe(req: WipeStableCoinRequest) {
+	public static async wipe(req: WipeRequest) {
 		return await StableCoin.wipe(req);
 	}
 
-	public static async pause(req: PauseStableCoinRequest) {
+	public static async pause(req: PauseRequest) {
 		return await StableCoin.pause(req);
 	}
 
-	public static async unpause(req: PauseStableCoinRequest) {
+	public static async unpause(req: PauseRequest) {
 		return await StableCoin.unPause(req);
 	}
 
@@ -147,7 +147,7 @@ export class SDKService {
 		return await StableCoin.unFreeze(req);
 	}
 
-	public static async delete(req: DeleteStableCoinRequest) {
+	public static async delete(req: DeleteRequest) {
 		return await StableCoin.delete(req);
 	}
 
