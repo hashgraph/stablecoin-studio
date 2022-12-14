@@ -107,7 +107,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with Ed25519 accounts', () => {
 			wipeKey: PublicKey.NULL,
 			pauseKey: PublicKey.NULL,
 			supplyKey: PublicKey.NULL,
-			autoRenewAccount: account.id,
+			autoRenewAccount: account.id, 
 			supplyType: TokenSupplyType.INFINITE
 
 		});
