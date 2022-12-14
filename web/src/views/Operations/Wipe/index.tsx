@@ -8,12 +8,7 @@ import InputController from '../../../components/Form/InputController';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
 import ModalsHandler from '../../../components/ModalsHandler';
 import SDKService from '../../../services/SDKService';
-import {
-	SELECTED_WALLET_ACCOUNT_INFO,
-	SELECTED_WALLET_COIN,
-	SELECTED_WALLET_PAIRED_ACCOUNT,
-
-} from '../../../store/slices/walletSlice';
+import { SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
 
 import { handleRequestValidation } from '../../../utils/validationsHelper';
 import OperationLayout from './../OperationLayout';
@@ -30,24 +25,14 @@ const WipeOperation = () => {
 	} = useDisclosure();
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
-	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
-	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 
 	const [errorOperation, setErrorOperation] = useState();
 	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
 	const [request] = useState(
 		new WipeRequest({
-			account: {
-				accountId: account.accountId,
-			},
 			amount: '0',
-			proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
 			targetId: '',
-			tokenId: selectedStableCoin?.tokenId ?? '',
-			publicKey:{
-				key:accountInfo.publicKey?.key??'',
-				type:accountInfo.publicKey?.type ??'ED25519'
-			}
+			tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
 		}),
 	);
 
@@ -68,7 +53,7 @@ const WipeOperation = () => {
 	const handleWipe: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
 		// const { amount, destinationAccount } = getValues();
 		try {
-			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId) {
+			if (!selectedStableCoin?.proxyAddress || !selectedStableCoin?.tokenId) {
 				onError();
 				return;
 			}

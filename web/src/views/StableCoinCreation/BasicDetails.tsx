@@ -3,7 +3,7 @@ import type { Control, FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import InputController from '../../components/Form/InputController';
 import { useSelector } from 'react-redux';
-import type { CreateRequest, SavedPairingData } from 'hedera-stable-coin-sdk';
+import type { CreateRequest } from 'hedera-stable-coin-sdk';
 import { SELECTED_WALLET_PAIRED } from '../../store/slices/walletSlice';
 import { handleRequestValidation } from '../../utils/validationsHelper';
 interface BasicDetailsProps {
@@ -14,7 +14,7 @@ interface BasicDetailsProps {
 const BasicDetails = (props: BasicDetailsProps) => {
 	const { control } = props;
 	const { t } = useTranslation(['global', 'stableCoinCreation']);
-	const pairingData: SavedPairingData = useSelector(SELECTED_WALLET_PAIRED);
+	const pairingData = useSelector(SELECTED_WALLET_PAIRED);
 
 	const { request } = props;
 
@@ -72,7 +72,7 @@ const BasicDetails = (props: BasicDetailsProps) => {
 						name={'autorenewAccount'}
 						label={t('stableCoinCreation:basicDetails.autorenewAccount')}
 						placeholder={t('stableCoinCreation:basicDetails.autorenewAccountPlaceholder')}
-						value={pairingData ? pairingData.accountIds[0] : ''}
+						value={pairingData ? pairingData.account.id.toString() : ''}
 						isReadOnly
 					/>
 				</Stack>

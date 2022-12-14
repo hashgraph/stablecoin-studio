@@ -15,11 +15,11 @@ import { fields } from './constants';
 import { useSelector } from 'react-redux';
 import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
 import type {
-	CheckCashInLimitRequest,
-	DecreaseCashInLimitRequest,
+	CheckSupplierLimitRequest,
+	DecreaseSupplierAllowanceRequest,
 	GrantRoleRequest,
-	IncreaseCashInLimitRequest,
-	ResetCashInLimitRequest,
+	IncreaseSupplierAllowanceRequest,
+	ResetSupplierAllowanceRequest,
 	RevokeRoleRequest,
 } from 'hedera-stable-coin-sdk';
 
@@ -60,10 +60,10 @@ export interface RoleLayoutProps {
 	request:
 		| GrantRoleRequest
 		| RevokeRoleRequest
-		| IncreaseCashInLimitRequest
-		| CheckCashInLimitRequest
-		| ResetCashInLimitRequest
-		| DecreaseCashInLimitRequest
+		| IncreaseSupplierAllowanceRequest
+		| CheckSupplierLimitRequest
+		| ResetSupplierAllowanceRequest
+		| DecreaseSupplierAllowanceRequest
 		| undefined;
 }
 
@@ -104,7 +104,7 @@ const RoleLayout = (props: RoleLayoutProps) => {
 			label: t('operations:details.supplyType'),
 			// @ts-ignore Property 'supplyType' does not exist on type 'IStableCoinDetail'.
 			value:
-				selectedStableCoin?.maxSupply === 'INFINITE'
+				selectedStableCoin?.maxSupply?.isZero()
 					? t('operations:details.infinite')
 					: t('operations:details.finite'),
 		},
@@ -123,7 +123,7 @@ const RoleLayout = (props: RoleLayoutProps) => {
 			label: t('operations:details.supplyType'),
 			// @ts-ignore Property 'supplyType' does not exist on type 'IStableCoinDetail'.
 			value:
-				selectedStableCoin?.maxSupply === 'INFINITE'
+				selectedStableCoin?.maxSupply?.isZero()
 					? t('operations:details.infinite')
 					: t('operations:details.finite'),
 		},
@@ -220,7 +220,7 @@ const RoleLayout = (props: RoleLayoutProps) => {
 								title={t('operations:details.optionalTitle')}
 								titleProps={{ fontWeight: 700, color: 'brand.secondary' }}
 								details={
-									selectedStableCoin?.maxSupply === 'INFINITE'
+									selectedStableCoin?.maxSupply?.isZero()
 										? optionalDetailsInfinite
 										: optionalDetailsFinite
 								}

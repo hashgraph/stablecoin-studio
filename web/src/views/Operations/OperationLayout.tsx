@@ -1,3 +1,4 @@
+
 import type { ReactNode } from 'react';
 import type { ButtonProps as ChakraButtonProps } from '@chakra-ui/react';
 import { Button, Flex, Stack, Heading, SimpleGrid } from '@chakra-ui/react';
@@ -44,7 +45,7 @@ const OperationLayout = ({ LeftContent, onConfirm, confirmBtnProps }: OperationL
 			label: t('operations:details.supplyType'),
 			// @ts-ignore Property 'supplyType' does not exist on type 'IStableCoinDetail'.
 			value:
-				selectedStableCoin?.maxSupply === 'INFINITE'
+				selectedStableCoin?.maxSupply?.isZero()
 					? t('operations:details.infinite')
 					: t('operations:details.finite'),
 		},
@@ -63,7 +64,7 @@ const OperationLayout = ({ LeftContent, onConfirm, confirmBtnProps }: OperationL
 			label: t('operations:details.supplyType'),
 			// @ts-ignore Property 'supplyType' does not exist on type 'IStableCoinDetail'.
 			value:
-				selectedStableCoin?.maxSupply === 'INFINITE'
+				selectedStableCoin?.maxSupply?.isZero()
 					? t('operations:details.infinite')
 					: t('operations:details.finite'),
 		},
@@ -109,7 +110,7 @@ const OperationLayout = ({ LeftContent, onConfirm, confirmBtnProps }: OperationL
 								title={t('operations:details.optionalTitle')}
 								titleProps={{ fontWeight: 700, color: 'brand.secondary' }}
 								details={
-									selectedStableCoin?.maxSupply === 'INFINITE'
+									selectedStableCoin?.maxSupply?.isZero()
 										? optionalDetailsInfinite
 										: optionalDetailsFinite
 								}

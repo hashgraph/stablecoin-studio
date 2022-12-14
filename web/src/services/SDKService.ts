@@ -59,7 +59,7 @@ export class SDKService {
 
 	public static isInit() {
 		// @ts-ignore
-		return !!this.instance?.networkAdapter?._provider;
+		return !!this.initData;
 	}
 
 	public static async connectWallet(wallet: SupportedWallets) {

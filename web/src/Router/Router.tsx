@@ -105,13 +105,14 @@ const Router = () => {
 		setStatus(newStatus);
 	};
 
-	const instanceSDK = async () =>
+	const instanceSDK = async () => {
 		await SDKService.registerEvents({
 			walletInit,
 			walletFound,
 			walletPaired,
 			walletConnectionStatusChanged,
 		});
+	};
 
 	return (
 		<main>
