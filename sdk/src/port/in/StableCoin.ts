@@ -248,7 +248,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		const res = await this.commandBus.execute(
 			new BalanceOfCommand(
 				HederaId.from(request.targetId),
-				HederaId.from(request.targetId),
+				HederaId.from(request.tokenId),
 			),
 		);
 
