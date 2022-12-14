@@ -20,7 +20,7 @@ import { Network } from '../../../../../src/index.js';
 import ConnectRequest, {
 	SupportedWallets,
 } from '../../../../../src/port/in/request/ConnectRequest.js';
-import {HederaERC20AddressTestnet, FactoryAddressTestnet} from '../../../../../src/port/in/StableCoin.js';
+import {HederaERC20AddressTestnet, FactoryAddressTestnet, TokenSupplyType} from '../../../../../src/port/in/StableCoin.js';
 import PublicKey from '../../../../../src/domain/context/account/PublicKey.js';
 import ContractId from '../../../../../src/domain/context/contract/ContractId.js';
 
@@ -123,6 +123,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with Ed25519 accounts', () => {
 			symbol: "TCA",
 			decimals: 6,
 			initialSupply: BigDecimal.fromString('1.60', 6),
+			maxSupply: BigDecimal.fromString('1000', 6),
 			freezeDefault: false,
 			adminKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ED25519'),
 			freezeKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ED25519'),
@@ -130,7 +131,8 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with Ed25519 accounts', () => {
 			wipeKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ED25519'),
 			pauseKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ED25519'),
 			supplyKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ED25519'),
-			autoRenewAccount: account.id
+			autoRenewAccount: account.id,
+			supplyType: TokenSupplyType.FINITE
 		});
 		tr = await th.create(
 			coin,
