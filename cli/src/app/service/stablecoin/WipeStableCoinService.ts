@@ -1,14 +1,14 @@
 import { language } from '../../../index.js';
 import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
-import { WipeStableCoinRequest, StableCoin } from 'hedera-stable-coin-sdk';
+import { WipeRequest, StableCoin } from 'hedera-stable-coin-sdk';
 
 export default class WipeStableCoinsService extends Service {
   constructor() {
     super('Wipe Stable Coin');
   }
 
-  public async wipeStableCoin(request: WipeStableCoinRequest): Promise<void> {
+  public async wipeStableCoin(request: WipeRequest): Promise<void> {
     await utilsService.showSpinner(StableCoin.wipe(request), {
       text: language.getText('state.loading'),
       successText: language.getText('state.wipeCompleted') + '\n',

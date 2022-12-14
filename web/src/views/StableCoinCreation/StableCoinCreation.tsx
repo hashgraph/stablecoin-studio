@@ -23,7 +23,7 @@ import SDKService from '../../services/SDKService';
 import ModalNotification from '../../components/ModalNotification';
 import {
 	AccountId,
-	CreateStableCoinRequest,
+	CreateRequest,
 	HashPackAccount,
 	PublicKey,
 } from 'hedera-stable-coin-sdk';
@@ -54,7 +54,7 @@ const StableCoinCreation = () => {
 	} = form;
 
 	const [request] = useState(
-		new CreateStableCoinRequest({
+		new CreateRequest({
 			account: {
 				accountId: account.accountId,
 			},

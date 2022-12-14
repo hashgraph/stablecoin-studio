@@ -18,7 +18,7 @@ import { formatAmount } from '../../../utils/inputHelper';
 
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
-import { RescueStableCoinRequest } from 'hedera-stable-coin-sdk';
+import { RescueRequest } from 'hedera-stable-coin-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 
 const RescueTokenOperation = () => {
@@ -34,7 +34,7 @@ const RescueTokenOperation = () => {
 	const [errorOperation, setErrorOperation] = useState();
 	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
 	const [request] = useState(
-		new RescueStableCoinRequest({
+		new RescueRequest({
 			proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
 			account: {
 				accountId: account.accountId
