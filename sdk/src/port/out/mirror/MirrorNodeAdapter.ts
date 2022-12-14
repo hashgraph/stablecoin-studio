@@ -46,11 +46,11 @@ export class MirrorNodeAdapter {
 			);
 
 			const resObject: StableCoinListViewModel = {
-                coins:[] 
-            };
+				coins: [],
+			};
 			const res = await this.instance.get<ITokenList>(url);
 			res.data.tokens.map((item: IToken) => {
-				 resObject.coins.push({
+				resObject.coins.push({
 					id: item.token_id,
 					symbol: item.symbol,
 				});
@@ -108,9 +108,8 @@ export class MirrorNodeAdapter {
 			}
 
 			const decimals = parseInt(response.data.decimals ?? '0');
-			const proxyAddress = 
-				(response.data.memo) ? 
-				HContractId.fromSolidityAddress(response.data.memo).toString()
+			const proxyAddress = response.data.memo
+				? HContractId.fromSolidityAddress(response.data.memo).toString()
 				: '0.0.0';
 			const stableCoinDetail: StableCoinViewModel = {
 				tokenId: HederaId.from(response.data.token_id),
@@ -139,7 +138,7 @@ export class MirrorNodeAdapter {
 				evmProxyAddress:
 					HContractId.fromString(proxyAddress).toSolidityAddress(),
 				treasury: HederaId.from(response.data.treasury_account_id),
-				paused: Boolean(response.data.paused) ?? false,
+				paused: response.data.pause_status === 'PAUSED',
 				deleted: Boolean(response.data.deleted) ?? false,
 				freezeDefault: Boolean(response.data.freeze_default) ?? false,
 				autoRenewAccount: HederaId.from(
@@ -229,7 +228,7 @@ interface IHederaStableCoinDetail {
 	treasury_account_id?: string;
 	expiry_timestamp?: string;
 	memo?: string;
-	paused?: boolean;
+	pause_status?: string;
 	freeze_default?: boolean;
 	auto_renew_account: string;
 	auto_renew_period: number;

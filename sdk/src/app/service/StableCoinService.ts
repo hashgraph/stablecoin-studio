@@ -117,11 +117,17 @@ export default class StableCoinService extends Service {
 					listCapabilities.push(
 						new Capability(Operation.PAUSE, Access.HTS),
 					);
+					listCapabilities.push(
+						new Capability(Operation.UNPAUSE, Access.HTS),
+					);
 				}
 			}
 			if (!deleted && _coin.pauseKey instanceof HederaId) {
 				listCapabilities.push(
 					new Capability(Operation.PAUSE, Access.CONTRACT),
+				);
+				listCapabilities.push(
+					new Capability(Operation.UNPAUSE, Access.CONTRACT),
 				);
 			}
 

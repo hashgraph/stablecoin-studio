@@ -191,6 +191,11 @@ export default class ManageImportedTokenService extends Service {
       }
       return true;
     });
-    return filterTokens;
+
+    return filterTokens.concat(
+      currentAccount.importedTokens.map(
+        (token) => `${token.id} - ${token.symbol}`,
+      ),
+    );
   }
 }

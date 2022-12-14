@@ -583,9 +583,7 @@ export default class OperationStableCoinService extends Service {
           role: undefined,
         });
 
-        await this.validateNotRequestedData(grantRoleRequest, [
-          'tokenId'
-        ]);
+        await this.validateNotRequestedData(grantRoleRequest, ['tokenId']);
 
         grantRoleRequest.role = await this.getRole(stableCoinCapabilities);
         if (grantRoleRequest.role !== language.getText('wizard.goBack')) {
@@ -646,9 +644,7 @@ export default class OperationStableCoinService extends Service {
           role: undefined,
         });
 
-        await this.validateNotRequestedData(revokeRoleRequest, [
-          'tokenId'
-        ]);
+        await this.validateNotRequestedData(revokeRoleRequest, ['tokenId']);
 
         revokeRoleRequest.role = await this.getRole(stableCoinCapabilities);
         if (revokeRoleRequest.role !== language.getText('wizard.goBack')) {
@@ -725,7 +721,7 @@ export default class OperationStableCoinService extends Service {
                 });
 
               await this.validateNotRequestedData(increaseCashInLimitRequest, [
-                'tokenId'
+                'tokenId',
               ]);
 
               let increaseCashInLimitTargetId = accountTarget;
@@ -824,7 +820,7 @@ export default class OperationStableCoinService extends Service {
               });
 
             await this.validateNotRequestedData(decreaseCashInLimitRequest, [
-              'tokenId'
+              'tokenId',
             ]);
 
             let decreaseCashInLimitTargetId = accountTarget;
@@ -988,7 +984,7 @@ export default class OperationStableCoinService extends Service {
             });
 
             await this.validateNotRequestedData(checkCashInLimitRequest, [
-              'tokenId'
+              'tokenId',
             ]);
 
             let cashInLimitTargetId = accountTarget;
@@ -1061,9 +1057,7 @@ export default class OperationStableCoinService extends Service {
           role: undefined,
         });
 
-        await this.validateNotRequestedData(hasRoleRequest, [
-          'tokenId'
-        ]);
+        await this.validateNotRequestedData(hasRoleRequest, ['tokenId']);
 
         hasRoleRequest.role = await this.getRole(stableCoinCapabilities);
         if (hasRoleRequest.role !== language.getText('wizard.goBack')) {
@@ -1434,14 +1428,9 @@ export default class OperationStableCoinService extends Service {
           case 'Pause stable coin':
           case 'Unpause stable coin':
             let showPauser: boolean =
-              this.isOperationAccess(
-                stableCoinCapabilities,
-                Operation.PAUSE,
-                Access.HTS,
-              ) &&
-              (option == 'Pause stable coin'
+              option == 'Pause stable coin'
                 ? !this.stableCoinPaused
-                : this.stableCoinPaused);
+                : this.stableCoinPaused;
             if (showPauser && rolesAccount) {
               showPauser = rolesAccount.includes('PAUSE');
             }
