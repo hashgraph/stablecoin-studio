@@ -94,13 +94,6 @@ export default class CreateStableCoinService extends Service {
 
     // Call to create stable coin sdk function
     let tokenToCreate = new CreateRequest({
-      account: {
-        accountId: currentAccount.accountId,
-        privateKey: {
-          key: currentAccount.privateKey.key,
-          type: currentAccount.privateKey.type,
-        },
-      },
       name: '',
       symbol: '',
       decimals: 6,
