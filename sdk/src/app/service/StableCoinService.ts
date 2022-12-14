@@ -133,11 +133,17 @@ export default class StableCoinService extends Service {
 					listCapabilities.push(
 						new Capability(Operation.FREEZE, Access.HTS),
 					);
+					listCapabilities.push(
+						new Capability(Operation.UNFREEZE, Access.HTS),
+					);
 				}
 			}
 			if (operable && _coin.freezeKey instanceof HederaId) {
 				listCapabilities.push(
 					new Capability(Operation.FREEZE, Access.CONTRACT),
+				);
+				listCapabilities.push(
+					new Capability(Operation.UNFREEZE, Access.CONTRACT),
 				);
 			}
 
@@ -157,16 +163,8 @@ export default class StableCoinService extends Service {
 				);
 			}
 
-			const roleManagement = listCapabilities.some((capability) =>
-				[
-					new Capability(Operation.PAUSE, Access.CONTRACT),
-					new Capability(Operation.WIPE, Access.CONTRACT),
-					new Capability(Operation.CASH_IN, Access.CONTRACT),
-					new Capability(Operation.BURN, Access.CONTRACT),
-					new Capability(Operation.RESCUE, Access.CONTRACT),
-					new Capability(Operation.FREEZE, Access.CONTRACT),
-					new Capability(Operation.DELETE, Access.CONTRACT),
-				].includes(capability),
+			const roleManagement = listCapabilities.some(
+				(capability) => capability.access === Access.CONTRACT,
 			);
 			if (roleManagement) {
 				listCapabilities.push(
