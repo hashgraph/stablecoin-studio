@@ -1490,7 +1490,7 @@ export default class OperationStableCoinService extends Service {
         );
         if (confirmPause) {
           try {
-            const req = new PauseStableCoinRequest({
+            const req = new PauseStableCoinRequest( {
               account: {
                 accountId: currentAccount.accountId,
                 privateKey: {
