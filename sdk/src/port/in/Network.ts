@@ -58,7 +58,9 @@ class NetworkInPort implements INetworkInPort {
 	}
 
 	async init(req: InitializationRequest): Promise<SupportedWallets[]> {
-		await this.commandBus.execute(new SetNetworkCommand(req.network));
+		await this.setNetwork(
+			new SetNetworkRequest({ environment: req.network }),
+		);
 		req.events && Event.register(req.events);
 		const wallets: SupportedWallets[] = [];
 		const instances = Injectable.registerTransactionAdapterInstances();

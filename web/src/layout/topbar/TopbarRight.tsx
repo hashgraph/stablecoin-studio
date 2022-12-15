@@ -1,17 +1,17 @@
 import { Box, Flex, HStack, Image, Text, VStack } from '@chakra-ui/react';
 import { useDispatch, useSelector } from 'react-redux';
 import Icon from '../../components/Icon';
-import { SELECTED_WALLET_PAIRED, walletActions } from '../../store/slices/walletSlice';
+import { SELECTED_WALLET_PAIRED, SELECTED_WALLET_TYPE, walletActions } from '../../store/slices/walletSlice';
 import HEDERA_LOGO from '../../assets/png/hashpackLogo.png';
 import METAMASK_LOGO from '../../assets/svg/MetaMask_Fox.svg';
 import TooltipCopy from '../../components/TooltipCopy';
-import { Network, SDK } from 'hedera-stable-coin-sdk';
+import { Network, SupportedWallets } from 'hedera-stable-coin-sdk';
 
 const TopbarRight = () => {
 	const dispatch = useDispatch();
 
 	const initData = useSelector(SELECTED_WALLET_PAIRED);
-	const dAppName = SDK.appMetadata.name;
+	const selectedWallet = useSelector(SELECTED_WALLET_TYPE);
 
 	const handleDisconnect = async () => {
 		await Network.disconnect()
@@ -22,7 +22,7 @@ const TopbarRight = () => {
 	};
 
 	const getIcon = (): string => {
-		if (dAppName === 'HashPack') return HEDERA_LOGO;
+		if (selectedWallet === SupportedWallets.HASHPACK) return HEDERA_LOGO;
 
 		return METAMASK_LOGO;
 	};
@@ -49,7 +49,7 @@ const TopbarRight = () => {
 						{'testnet'}
 					</Text>
 				</VStack>
-				<Image src={getIcon()} alt={dAppName} w='25px' h='25px' alignSelf='center' />
+				<Image src={getIcon()} alt={selectedWallet} w='25px' h='25px' alignSelf='center' />
 			</HStack>
 			<Box borderLeft='2px solid' borderLeftColor='light.primary' w='1px' />
 			<Flex
