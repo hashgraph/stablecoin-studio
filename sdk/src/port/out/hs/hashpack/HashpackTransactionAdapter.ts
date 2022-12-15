@@ -73,6 +73,17 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 			},
 		};
 		this.eventService.emit(WalletEvents.walletInit, eventData);
+		if (this.initData.savedPairings.length > 0) {
+			this.account = new Account({
+				id: this.initData.savedPairings[0].accountIds[0],
+			});
+			eventData.initData.account = this.account;
+			this.eventService.emit(WalletEvents.walletPaired, {
+				data: eventData.initData,
+				network: this.networkService.environment,
+				wallet: SupportedWallets.HASHPACK,
+			});
+		}
 		console.log('HashPack Initialized ', eventData);
 		return this.networkService.environment;
 	}
@@ -80,12 +91,12 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 	async register(): Promise<InitializationData> {
 		Injectable.registerTransactionHandler(this);
 		console.log('register Hashconnect');
-		this.hc.connectToLocalWallet();
-		this.account = new Account({
-			id: this.filterAccountIdFromPairingData(
-				this.initData.savedPairings,
-			),
-		});
+		const savedPairing = this.filterAccountIdFromPairingData(
+			this.initData.savedPairings,
+		);
+		if (!this.account && !savedPairing) {
+			this.hc.connectToLocalWallet();
+		}
 		return Promise.resolve({
 			name: SupportedWallets.HASHPACK,
 			account: this.account,
@@ -97,9 +108,9 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 
 	private filterAccountIdFromPairingData(
 		pairings: HashConnectTypes.SavedPairingData[],
-	): string {
+	): string | undefined {
 		const filtered = pairings.filter((x) => x.accountIds.length > 0);
-		if (filtered.length === 0) throw new PairingError(filtered);
+		if (filtered.length === 0) return undefined;
 		return filtered[0].accountIds[0];
 	}
 

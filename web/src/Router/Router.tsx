@@ -24,6 +24,7 @@ import StableCoinDetails from '../views/StableCoinDetails';
 import { hashpackActions } from '../store/slices/hashpackSlice';
 import {
 	AVAILABLE_WALLETS,
+	LAST_WALLET_SELECTED,
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_TYPE,
 	walletActions,
@@ -49,6 +50,7 @@ const Router = () => {
 	const selectedWallet = useSelector(SELECTED_WALLET_TYPE);
 	const availableWallets = useSelector(AVAILABLE_WALLETS);
 	const selectedWalletCoin = !!useSelector(SELECTED_WALLET_COIN);
+	const lastWallet = useSelector(LAST_WALLET_SELECTED);
 
 	useEffect(() => {
 		instanceSDK();
@@ -63,7 +65,10 @@ const Router = () => {
 		console.log(event);
 		if (event) {
 			dispatch(walletActions.setData(event.data));
-			dispatch(walletActions.setSelectedWallet(event.wallet));
+			console.log('Paring...', lastWallet, event.wallet, selectedWallet);
+			if (lastWallet && lastWallet === event.wallet) {
+				dispatch(walletActions.setSelectedWallet(event.wallet));
+			}
 		}
 		setStatus(ConnectionState.Paired);
 	};
@@ -102,7 +107,13 @@ const Router = () => {
 			{availableWallets.length > 0 ? (
 				<Routes>
 					{/* Public routes */}
-					<Route element={<OnboardingRoute allow={Boolean(!selectedWallet || status !== ConnectionState.Paired)} />}>
+					<Route
+						element={
+							<OnboardingRoute
+								allow={Boolean(!selectedWallet || status !== ConnectionState.Paired)}
+							/>
+						}
+					>
 						<Route path={RoutesMappingUrl.login} element={<Login />} />
 					</Route>
 					{/* Private routes */}

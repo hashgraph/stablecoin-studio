@@ -192,6 +192,7 @@ const StableCoinCreation = () => {
 			await SDKService.createStableCoin(request);
 			setSuccess(true);
 		} catch (error: any) {
+			console.log(error);
 			setError(error.transactionError.transactionUrl);
 			setSuccess(false);
 		}

@@ -25,6 +25,7 @@ interface InitialStateProps {
 	externalTokenList?: IExternalToken[];
 	capabilities?: StableCoinCapabilities | undefined;
 	selectedWallet?: SupportedWallets;
+	lastWallet?: SupportedWallets;
 }
 
 export const initialState: InitialStateProps = {
@@ -38,6 +39,7 @@ export const initialState: InitialStateProps = {
 	externalTokenList: [],
 	capabilities: undefined,
 	selectedWallet: undefined,
+	lastWallet: localStorage?.getItem('lastWallet') as SupportedWallets ?? undefined,
 };
 
 export const getStableCoinList = createAsyncThunk(
@@ -85,6 +87,7 @@ export const walletSlice = createSlice({
 	reducers: {
 		setSelectedWallet: (state, action) => {
 			state.selectedWallet = action.payload;
+			localStorage?.setItem('lastWallet', action.payload);
 		},
 		setData: (state, action) => {
 			state.data = action.payload;
@@ -101,9 +104,6 @@ export const walletSlice = createSlice({
 		setHasWalletExtension(state, action) {
 			state.foundWallets.push(action.payload);
 			state.hasWalletExtension = true;
-		},
-		setIsPaired(state) {
-			state.isPaired = true;
 		},
 		setCapabilities: (state, action) => {
 			state.capabilities = action.payload;
@@ -144,7 +144,7 @@ export const SELECTED_WALLET_PAIRED = (state: RootState) => state.wallet.data;
 export const SELECTED_WALLET_CAPABILITIES = (state: RootState) => state.wallet.capabilities;
 export const SELECTED_WALLET_ACCOUNT_INFO = (state: RootState) => state.wallet.accountInfo;
 export const HAS_WALLET_EXTENSION = (state: RootState) => state.wallet.hasWalletExtension;
-export const IS_PAIRED = (state: RootState) => state.wallet.isPaired;
+export const LAST_WALLET_SELECTED = (state: RootState) => state.wallet.lastWallet;
 export const SELECTED_WALLET_PAIRED_ACCOUNTID = (state: RootState) =>
 	state.wallet.data?.account?.id;
 export const SELECTED_WALLET_PAIRED_ACCOUNT = (state: RootState) => ({

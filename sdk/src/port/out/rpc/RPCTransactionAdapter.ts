@@ -42,6 +42,9 @@ import PublicKey from '../../../domain/context/account/PublicKey.js';
 import { TOKEN_CREATION_COST_HBAR } from '../../../core/Constants.js';
 import { MetaMaskInpageProvider } from '@metamask/providers';
 import { WalletConnectError } from '../../../domain/context/network/error/WalletConnectError.js';
+import EventService from '../../../app/service/event/EventService.js';
+import { WalletEvents } from '../../../app/service/event/WalletEvent.js';
+import { SupportedWallets } from '../../../domain/context/network/Wallet.js';
 
 // eslint-disable-next-line no-var
 declare var ethereum: MetaMaskInpageProvider;
@@ -57,6 +60,8 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		private readonly mirrorNodeAdapter: MirrorNodeAdapter,
 		@lazyInject(NetworkService)
 		private readonly networkService: NetworkService,
+		@lazyInject(EventService)
+		private readonly eventService: EventService,
 	) {
 		super();
 	}
@@ -170,6 +175,14 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		this.provider = new ethers.providers.JsonRpcProvider(
 			`https://${this.networkService.environment.toString()}.hashio.io/api`,
 		);
+		this.eventService.emit(WalletEvents.walletInit, {
+			initData: {
+				account: this.account,
+				pairing: '',
+				topic: '',
+			},
+			wallet: SupportedWallets.METAMASK,
+		});
 		return this.networkService.environment;
 	}
 
@@ -683,15 +696,22 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 						if (!mirrorAccount.account) {
 							throw new WalletConnectError('Invalid account!');
 						}
-						console.log(mirrorAccount);
 						this.account = new Account({
 							id: mirrorAccount.account,
 							evmAddress: mirrorAccount.accountEvmAddress,
 							publicKey: mirrorAccount.publicKey,
 						});
+						this.eventService.emit(WalletEvents.walletPaired, {
+							data: {
+								account: this.account,
+								pairing: '',
+								topic: '',
+							},
+							network: this.networkService.environment,
+							wallet: SupportedWallets.METAMASK,
+						});
 					}
 					// this.signerOrProvider = ;
-					ethereum;
 				} else {
 					throw new WalletConnectError('Metamask was not found!');
 				}

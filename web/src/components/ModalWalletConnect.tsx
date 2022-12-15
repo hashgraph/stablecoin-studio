@@ -10,9 +10,11 @@ import {
 	VStack,
 } from '@chakra-ui/react';
 import { SupportedWallets } from 'hedera-stable-coin-sdk';
+import { useDispatch } from 'react-redux';
 import HEDERA_LOGO from '../assets/png/hashpackLogo.png';
 import METAMASK_LOGO from '../assets/svg/MetaMask_Fox.svg';
 import SDKService from '../services/SDKService';
+import { walletActions } from '../store/slices/walletSlice';
 
 interface ModalWalletConnectProps {
 	isOpen: boolean;
@@ -20,6 +22,7 @@ interface ModalWalletConnectProps {
 }
 
 const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
+	const dispatch = useDispatch();
 	const styles = {
 		providerStyle: {
 			boxShadow: '0 0 12px 2px #E0E0E0',
@@ -35,10 +38,12 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 
 	const handleConnectHashpackWallet = async () => {
 		console.log(await SDKService.connectWallet(SupportedWallets.HASHPACK));
+		dispatch(walletActions.setSelectedWallet(SupportedWallets.HASHPACK));
 	};
 
 	const handleConnectMetamaskWallet = async () => {
 		await SDKService.connectWallet(SupportedWallets.METAMASK);
+		dispatch(walletActions.setSelectedWallet(SupportedWallets.METAMASK));
 	};
 
 	return (
