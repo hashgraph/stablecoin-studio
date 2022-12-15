@@ -1127,7 +1127,7 @@ export default class OperationStableCoinService extends Service {
   ): string[] {
     let result = [];
     let capabilitiesFilter = [];
-    if (stableCoinCapabilities.capabilities.length === 0) return options;
+    // if (stableCoinCapabilities.capabilities.length === 0) return options;
     const capabilities: Operation[] = stableCoinCapabilities.capabilities.map(
       (a) => a.operation,
     );
