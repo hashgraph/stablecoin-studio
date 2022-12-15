@@ -69,8 +69,6 @@ const GetBalanceOperation = () => {
 		}
 	};
 
-	console.log(getValues());
-
 	return (
 		<>
 			<OperationLayout
