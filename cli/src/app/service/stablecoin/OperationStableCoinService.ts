@@ -962,7 +962,7 @@ export default class OperationStableCoinService extends Service {
                 console.log(language.getText('cashin.notRole'));
               }
             } catch (error) {
-             await utilsService.askErrorConfirmation(
+              await utilsService.askErrorConfirmation(
                 async () => await this.operationsStableCoin(),
                 error,
               );
@@ -1008,7 +1008,7 @@ export default class OperationStableCoinService extends Service {
                   new CheckSupplierLimitRequest({
                     targetId: checkCashInLimitRequest.targetId,
                     tokenId: checkCashInLimitRequest.tokenId,
-                    supplierType: 'unlimited'
+                    supplierType: 'unlimited',
                   }),
                 )
               ) {
@@ -1017,7 +1017,10 @@ export default class OperationStableCoinService extends Service {
                 );
 
                 console.log(
-                  response.replace('${address}', checkCashInLimitRequest.targetId) + '\n',
+                  response.replace(
+                    '${address}',
+                    checkCashInLimitRequest.targetId,
+                  ) + '\n',
                 );
                 break;
               }
@@ -1433,14 +1436,20 @@ export default class OperationStableCoinService extends Service {
                 ? !this.stableCoinPaused
                 : this.stableCoinPaused;
             if (showPauser && rolesAccount) {
-              showPauser = rolesAccount.includes('PAUSE');
+              showPauser =
+                rolesAccount.includes(StableCoinRole.PAUSE_ROLE) ||
+                this.isOperationAccess(
+                  stableCoinCapabilities,
+                  Operation.PAUSE,
+                  Access.HTS,
+                );
             }
             return showPauser;
             break;
           case 'Delete stable coin':
             let showDelete: boolean = capabilities.includes(Operation.DELETE);
             if (showDelete && rolesAccount) {
-              showDelete = rolesAccount.includes('DELETE');
+              showDelete = rolesAccount.includes(StableCoinRole.DELETE_ROLE);
             }
             return showDelete;
             break;

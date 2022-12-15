@@ -471,9 +471,8 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		const params = new Params({
 			targetId: targetId,
 		});
-		const transactionResponse = await this.performOperation(
+		const transactionResponse = await this.performSmartContractOperation(
 			coin,
-			Operation.ROLE_MANAGEMENT,
 			'getRoles',
 			80000,
 			params,
