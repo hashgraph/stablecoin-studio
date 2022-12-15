@@ -171,7 +171,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
-	async init(): Promise<string> {
+	async init(debug = false): Promise<string> {
 		this.provider = new ethers.providers.JsonRpcProvider(
 			`https://${this.networkService.environment.toString()}.hashio.io/api`,
 		);
@@ -183,6 +183,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			},
 			wallet: SupportedWallets.METAMASK,
 		});
+		!debug && this.connectMetamask();
 		return this.networkService.environment;
 	}
 
@@ -675,7 +676,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	/**
 	 * TODO consider leaving this as a service and putting two implementations on top for rpc and web wallet.
 	 */
-	async connectMetamask(): Promise<void> {
+	async connectMetamask(): Promise<Account> {
 		try {
 			const ethProvider = await detectEthereumProvider();
 			if (ethProvider) {
@@ -712,6 +713,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 						});
 					}
 					this.signerOrProvider = this.provider;
+					return this.account;
 				} else {
 					throw new WalletConnectError('Metamask was not found!');
 				}
