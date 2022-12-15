@@ -17,6 +17,12 @@ module.exports = {
       },
     },
   },
+  networks : {
+    testnet: {
+      url: "https://testnet.hashio.io/api",
+      accounts: ["0x3c8055953320b1001b93f6c99518ec0a1daf7210f1bb02dd11c64f3dec96fdb6"]
+    },
+  },
   contractSizer: {
     alphaSort: true,
     disambiguatePaths: false,
@@ -32,17 +38,18 @@ module.exports = {
         accounts: [
           // An array of predefined Externally Owned Accounts
           {
-            // OG Account
+            // ED25519 Account
             account: "0.0.48513659",
             privateKey:"8830990f02fae1c3a843b8510d0433a73ee47b08d56426a8e416d08727ea0609",
             publicKey:"c14dbe4c936181b7a2fe7faf086fd95bdc6900e2d19283e3e8ffd00cac1fe607",
             isED25519Type: true
           },
           {
-            account: "0.0.30873854",
-            publicKey: "302a300506032b65700321002e815865c92c036dc2e40b9d76a63b78feae4716030d50250f65267eba060a7e",
-            privateKey: "302e020100300506032b6570042204201360ffdfc64c5cea21600d7b2e5126867bc9ea2550f302508b7c55d03be2e1dc",
-            isED25519Type: true
+            // ECDSA Account
+            account: "0.0.48587748",
+            privateKey:"3c8055953320b1001b93f6c99518ec0a1daf7210f1bb02dd11c64f3dec96fdb6",
+            publicKey:"024d7906cba70ad272e93b94f2bbd4276b55cb3172403013973071163a6b7656a0",
+            isED25519Type: false
           },
           {
             account: "0.0.47786104",
