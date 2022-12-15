@@ -6,6 +6,7 @@ import BaseError from '../../../core/error/BaseError.js';
 import { InvalidType } from '../../../port/in/request/error/InvalidType.js';
 import PublicKey from '../account/PublicKey.js';
 import BaseEntity from '../BaseEntity.js';
+import { StableCoinMemo } from './StableCoinMemo.js';
 import ContractId from '../contract/ContractId.js';
 import BigDecimal from '../shared/BigDecimal.js';
 import { HederaId } from '../shared/HederaId.js';
@@ -21,9 +22,6 @@ import SymbolEmpty from './error/SymbolEmpty.js';
 import SymbolLength from './error/SymbolLength.js';
 import { TokenSupplyType } from './TokenSupply.js';
 import { TokenType } from './TokenType.js';
-import {
-	ContractId as HContractId
-} from '@hashgraph/sdk';
 
 const MAX_SUPPLY = 9_223_372_036_854_775_807n;
 const TEN = 10;
@@ -120,9 +118,9 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 		this.initialSupply = initialSupply ?? BigDecimal.ZERO;
 		this.totalSupply = totalSupply ?? BigDecimal.ZERO;
 		this.maxSupply = maxSupply ?? undefined;
-		this.memo = (memo) ? 
-			HContractId.fromSolidityAddress(memo).toString()
-			: '';
+		this.memo = memo ? 
+				 memo
+				 : StableCoinMemo.empty().toJson();
 		this.freezeKey = freezeKey;
 		this.freezeDefault = freezeDefault ?? false;
 		this.kycKey = kycKey;

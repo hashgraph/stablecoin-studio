@@ -24,7 +24,6 @@ import {
 	ConnectionState,
 	WalletEvents,
 	WalletInitEvent,
-	WalletPairedEvent,
 } from '../../../../app/service/event/WalletEvent.js';
 import { SupportedWallets } from '../../../in/request/ConnectRequest.js';
 import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter.js';
@@ -74,28 +73,21 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 			},
 		};
 		this.eventService.emit(WalletEvents.walletInit, eventData);
-		console.log(eventData);
+		console.log('HashPack Initialized ', eventData);
 		return this.networkService.environment;
 	}
 
 	async register(): Promise<InitializationData> {
 		Injectable.registerTransactionHandler(this);
+		console.log('register Hashconnect');
 		this.hc.connectToLocalWallet();
 		this.account = new Account({
 			id: this.filterAccountIdFromPairingData(
 				this.initData.savedPairings,
 			),
 		});
-		const eventData: WalletPairedEvent = {
-			data: {
-				account: this.account,
-				pairing: this.initData.pairingString,
-				topic: this.initData.topic,
-			},
-			network: this.networkService.environment,
-		};
-		this.eventService.emit(WalletEvents.walletPaired, eventData);
 		return Promise.resolve({
+			name: SupportedWallets.HASHPACK,
 			account: this.account,
 			pairing: this.initData.pairingString,
 			savedPairings: this.initData.savedPairings,
@@ -170,10 +162,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 	}
 
 	getAccount(): Account {
-		if (this.account.id)
-			return new Account({
-				id: this.account.id.value,
-			});
+		if (this.account) return this.account;
 		throw new RuntimeError(
 			'There are no accounts currently paired with HashPack!',
 		);
@@ -186,6 +175,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 				this.availableExtension = true;
 				LogService.logTrace('Emitted found');
 				this.eventService.emit(WalletEvents.walletFound, {
+					wallet: SupportedWallets.HASHPACK,
 					name: SupportedWallets.HASHPACK,
 				});
 			}
@@ -201,6 +191,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 						id: this.pairingData.accountIds[0],
 					});
 					this.eventService.emit(WalletEvents.walletPaired, {
+						wallet: SupportedWallets.HASHPACK,
 						data: {
 							account: this.account,
 							pairing: this.initData.pairingString,
@@ -221,6 +212,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 			this.hashConnectConectionState = state;
 			LogService.logTrace('hashconnect state change event', state);
 			this.eventService.emit(WalletEvents.walletConnectionStatusChanged, {
+				wallet: SupportedWallets.HASHPACK,
 				status: this
 					.hashConnectConectionState as unknown as ConnectionState,
 			});
@@ -228,7 +220,10 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 		});
 
 		this.hc.acknowledgeMessageEvent.on((msg) => {
-			this.eventService.emit(WalletEvents.walletAcknowledgeMessage, msg);
+			this.eventService.emit(WalletEvents.walletAcknowledgeMessage, {
+				wallet: SupportedWallets.HASHPACK,
+				result: !!msg,
+			});
 		});
 	}
 

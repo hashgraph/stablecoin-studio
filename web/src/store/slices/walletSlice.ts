@@ -24,6 +24,7 @@ interface InitialStateProps {
 	stableCoinList?: StableCoinListViewModel;
 	externalTokenList?: IExternalToken[];
 	capabilities?: StableCoinCapabilities | undefined;
+	selectedWallet?: SupportedWallets;
 }
 
 export const initialState: InitialStateProps = {
@@ -36,6 +37,7 @@ export const initialState: InitialStateProps = {
 	stableCoinList: undefined,
 	externalTokenList: [],
 	capabilities: undefined,
+	selectedWallet: undefined,
 };
 
 export const getStableCoinList = createAsyncThunk(
@@ -81,6 +83,9 @@ export const walletSlice = createSlice({
 	name: 'wallet',
 	initialState,
 	reducers: {
+		setSelectedWallet: (state, action) => {
+			state.selectedWallet = action.payload;
+		},
 		setData: (state, action) => {
 			state.data = action.payload;
 		},
@@ -130,6 +135,8 @@ export const walletSlice = createSlice({
 
 export const SELECTED_WALLET = (state: RootState) => state.wallet;
 export const STABLE_COIN_LIST = (state: RootState) => state.wallet.stableCoinList;
+export const AVAILABLE_WALLETS = (state: RootState) => state.wallet.foundWallets;
+export const SELECTED_WALLET_TYPE = (state: RootState) => state.wallet.selectedWallet;
 export const EXTERNAL_TOKEN_LIST = (state: RootState) => state.wallet.externalTokenList;
 export const SELECTED_WALLET_DATA = (state: RootState) => state.wallet.data;
 export const SELECTED_WALLET_COIN = (state: RootState) => state.wallet.selectedStableCoin;
@@ -138,7 +145,8 @@ export const SELECTED_WALLET_CAPABILITIES = (state: RootState) => state.wallet.c
 export const SELECTED_WALLET_ACCOUNT_INFO = (state: RootState) => state.wallet.accountInfo;
 export const HAS_WALLET_EXTENSION = (state: RootState) => state.wallet.hasWalletExtension;
 export const IS_PAIRED = (state: RootState) => state.wallet.isPaired;
-export const SELECTED_WALLET_PAIRED_ACCOUNTID = (state: RootState) => state.wallet.data?.account?.id;
+export const SELECTED_WALLET_PAIRED_ACCOUNTID = (state: RootState) =>
+	state.wallet.data?.account?.id;
 export const SELECTED_WALLET_PAIRED_ACCOUNT = (state: RootState) => ({
 	accountId: state.wallet.data?.account?.id,
 });

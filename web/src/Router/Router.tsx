@@ -21,10 +21,11 @@ import StableCoinCreation from '../views/StableCoinCreation/StableCoinCreation';
 import StableCoinNotSelected from '../views/ErrorPage/StableCoinNotSelected';
 import SDKService from '../services/SDKService';
 import StableCoinDetails from '../views/StableCoinDetails';
-import { hashpackActions, IS_INITIALIZED } from '../store/slices/hashpackSlice';
+import { hashpackActions } from '../store/slices/hashpackSlice';
 import {
+	AVAILABLE_WALLETS,
 	SELECTED_WALLET_COIN,
-	SELECTED_WALLET_PAIRED,
+	SELECTED_WALLET_TYPE,
 	walletActions,
 } from '../store/slices/walletSlice';
 import ImportedTokenCreation from '../views/ImportedToken/ImportedTokenCreation';
@@ -32,24 +33,12 @@ import DangerZoneOperations from '../views/Operations/DangerZone';
 import type { EventParameter } from 'hedera-stable-coin-sdk';
 import { LoggerTransports, SDK, ConnectionState } from 'hedera-stable-coin-sdk';
 
-const PrivateRoute = ({ status }: { status?: ConnectionState }) => {
-	return (
-		<Layout>
-			{status === ConnectionState.Paired ? (
-				<Outlet />
-			) : (
-				<Navigate to={RoutesMappingUrl.login} replace />
-			)}
-		</Layout>
-	);
+const PrivateRoute = ({ allow }: { allow: boolean }) => {
+	return <Layout>{allow ? <Outlet /> : <Navigate to={RoutesMappingUrl.login} replace />}</Layout>;
 };
 
-const OnboardingRoute = ({ status }: { status?: ConnectionState }) => {
-	return status !== ConnectionState.Paired ? (
-		<Outlet />
-	) : (
-		<Navigate to={RoutesMappingUrl.stableCoinNotSelected} replace />
-	);
+const OnboardingRoute = ({ allow }: { allow: boolean }) => {
+	return allow ? <Outlet /> : <Navigate to={RoutesMappingUrl.stableCoinNotSelected} replace />;
 };
 
 const Router = () => {
@@ -57,9 +46,9 @@ const Router = () => {
 
 	const dispatch = useDispatch();
 
-	const haspackInitialized = useSelector(IS_INITIALIZED);
+	const selectedWallet = useSelector(SELECTED_WALLET_TYPE);
+	const availableWallets = useSelector(AVAILABLE_WALLETS);
 	const selectedWalletCoin = !!useSelector(SELECTED_WALLET_COIN);
-	const selectedWalletPairedAccount = useSelector(SELECTED_WALLET_PAIRED);
 
 	useEffect(() => {
 		instanceSDK();
@@ -67,37 +56,27 @@ const Router = () => {
 
 	useEffect(() => {
 		if (!status) return;
-
 		dispatch(hashpackActions.setStatus(status));
-
-		if (status === ConnectionState.Paired) {
-			getWalletData();
-		}
 	}, [status]);
 
-	const getWalletData = async () => {
-		const walletData = SDKService.getWalletData();
-		let result = { ...walletData };
-
-		if (!selectedWalletPairedAccount) {
-			result = {
-				...result,
-			};
-		}
-		console.log(result)
-		dispatch(walletActions.setData(result));
-	};
-
 	const walletPaired = (event: EventParameter<'walletPaired'>) => {
+		console.log(event);
 		if (event) {
 			dispatch(walletActions.setData(event.data));
+			dispatch(walletActions.setSelectedWallet(event.wallet));
 		}
-		console.log(event);
 		setStatus(ConnectionState.Paired);
 	};
 
 	const walletConnectionStatusChanged = (newStatus: any) => {
-		setStatus(newStatus);
+		console.log(newStatus);
+		setStatus(newStatus.status);
+	};
+
+	const walletFound = (event: EventParameter<'walletFound'>) => {
+		if (event) {
+			dispatch(walletActions.setHasWalletExtension(event.name));
+		}
 	};
 
 	const instanceSDK = async () => {
@@ -107,31 +86,31 @@ const Router = () => {
 			icon: 'https://dashboard-assets.dappradar.com/document/15402/hashpack-dapp-defi-hedera-logo-166x166_696a701b42fd20aaa41f2591ef2339c7.png',
 			url: '',
 		};
-
 		SDK.log = {
 			level: process.env.REACT_APP_LOG_LEVEL ?? 'ERROR',
 			transport: new LoggerTransports.Console(),
 		};
-		const wallets = await SDKService.init({
+		await SDKService.init({
+			walletFound,
 			walletPaired,
 			walletConnectionStatusChanged,
 		});
-		wallets?.map((val) => {
-			return dispatch(walletActions.setHasWalletExtension(val));
-		});
-		dispatch(hashpackActions.setInitialized());
 	};
 
 	return (
 		<main>
-			{haspackInitialized ? (
+			{availableWallets.length > 0 ? (
 				<Routes>
 					{/* Public routes */}
-					<Route element={<OnboardingRoute status={status} />}>
+					<Route element={<OnboardingRoute allow={Boolean(!selectedWallet || status !== ConnectionState.Paired)} />}>
 						<Route path={RoutesMappingUrl.login} element={<Login />} />
 					</Route>
 					{/* Private routes */}
-					<Route element={<PrivateRoute status={status} />}>
+					<Route
+						element={
+							<PrivateRoute allow={Boolean(selectedWallet && status === ConnectionState.Paired)} />
+						}
+					>
 						{selectedWalletCoin && (
 							<>
 								<Route path={RoutesMappingUrl.balance} element={<GetBalanceOperation />} />

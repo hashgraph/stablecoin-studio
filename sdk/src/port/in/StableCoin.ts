@@ -11,7 +11,6 @@ import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import { HederaId } from '../../domain/context/shared/HederaId.js';
 import ContractId from '../../domain/context/contract/ContractId.js';
 import {
-	StableCoin as StableCoinObject,
 	StableCoinProps,
 } from '../../domain/context/stablecoin/StableCoin.js';
 import { QueryBus } from '../../core/query/QueryBus.js';
@@ -48,10 +47,10 @@ import { FreezeCommand } from '../../app/usecase/command/stablecoin/operations/f
 import { UnFreezeCommand } from '../../app/usecase/command/stablecoin/operations/unfreeze/UnFreezeCommand.js';
 import { GetAccountInfoQuery } from '../../app/usecase/query/account/info/GetAccountInfoQuery.js';
 
-export const HederaERC20AddressTestnet = '0.0.49077027';
+export const HederaERC20AddressTestnet = '0.0.49094604';
 export const HederaERC20AddressPreviewnet = '0.0.11111111';
 
-export const FactoryAddressTestnet = '0.0.49077033';
+export const FactoryAddressTestnet = '0.0.49094610';
 export const FactoryAddressPreviewnet = '0.0.11111111';
 
 export { StableCoinViewModel, StableCoinListViewModel };
@@ -101,7 +100,7 @@ class StableCoinInPort implements IStableCoinInPort {
 						key: req.adminKey.key,
 						type: req.adminKey.type,
 				  })
-				: PublicKey.NULL,
+				: undefined,
 			initialSupply: BigDecimal.fromString(
 				req.initialSupply ?? '0',
 				req.decimals,
@@ -115,29 +114,26 @@ class StableCoinInPort implements IStableCoinInPort {
 						key: req.freezeKey.key,
 						type: req.freezeKey.type,
 				  })
-				: PublicKey.NULL,
+				: undefined,
 			freezeDefault: req.freezeDefault,
-			// kycKey: req.KYCKey
-			// 	? new PublicKey({ key: req.KYCKey.key, type: req.KYCKey.type })
-			// 	: PublicKey.NULL,
 			wipeKey: req.wipeKey
 				? new PublicKey({
 						key: req.wipeKey.key,
 						type: req.wipeKey.type,
 				  })
-				: PublicKey.NULL,
+				: undefined,
 			pauseKey: req.pauseKey
 				? new PublicKey({
 						key: req.pauseKey.key,
 						type: req.pauseKey.type,
 				  })
-				: PublicKey.NULL,
+				: undefined,
 			supplyKey: req.supplyKey
 				? new PublicKey({
 						key: req.supplyKey.key,
 						type: req.supplyKey.type,
 				  })
-				: PublicKey.NULL,
+				: undefined,
 			treasury: new HederaId(req.treasury ?? '0.0.0'),
 			supplyType: req.supplyType,
 			autoRenewAccount: req.autoRenewAccount

@@ -26,17 +26,17 @@ export interface WalletInitEvent extends WalletBaseEvent {
 	initData: InitializationData;
 }
 
-export interface WalletFoundEvent {
+export interface WalletFoundEvent extends WalletBaseEvent {
 	name: string;
 }
-export interface WalletPairedEvent {
+export interface WalletPairedEvent extends WalletBaseEvent {
 	data: InitializationData;
 	network: Environment;
 }
-export interface WalletConnectionStatusChangedEvent {
+export interface WalletConnectionStatusChangedEvent extends WalletBaseEvent {
 	status: ConnectionState;
 }
-export interface WalletAcknowledgeMessageEvent {
+export interface WalletAcknowledgeMessageEvent extends WalletBaseEvent {
 	result: boolean;
 }
 
