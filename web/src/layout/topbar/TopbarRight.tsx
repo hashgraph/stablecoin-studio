@@ -40,9 +40,9 @@ const TopbarRight = () => {
 				bgColor='#4a4a4a'
 			>
 				<VStack spacing={0}>
-					<TooltipCopy valueToCopy={initData?.account.id?.toString() ?? ''}>
+					<TooltipCopy valueToCopy={initData?.account?.id?.toString() ?? ''}>
 						<Text data-testid='topbar-right-account' fontSize='12px' fontWeight={600}>
-							{initData?.account.id?.toString() ?? ''}
+							{initData?.account?.id?.toString() ?? ''}
 						</Text>
 					</TooltipCopy>
 					<Text data-testid='topbar-right-network' fontSize='10px' textTransform='uppercase'>

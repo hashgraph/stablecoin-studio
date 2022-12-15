@@ -15,7 +15,7 @@ import { MirrorNodeAdapter } from './mirror/MirrorNodeAdapter.js';
 import { Environment } from '../../domain/context/network/Environment.js';
 
 export interface InitializationData {
-	account: Account;
+	account?: Account;
 	pairing?: string;
 	topic?: string;
 }

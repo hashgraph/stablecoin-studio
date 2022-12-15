@@ -166,16 +166,16 @@ export class MirrorNodeAdapter {
 	}
 
 	public async getAccountInfo(
-		accountId: HederaId,
+		accountId: HederaId | string,
 	): Promise<AccountViewModel> {
 		try {
 			LogService.logTrace(this.URI_BASE + 'accounts/' + accountId);
 			const res = await axios.get<IAccount>(
-				this.URI_BASE + 'accounts/' + accountId,
+				this.URI_BASE + 'accounts/' + accountId.toString(),
 			);
 
 			const account: AccountViewModel = {
-				account: accountId.toString(),
+				account: res.data.account.toString(),
 				accountEvmAddress: res.data.evm_address,
 				publicKey: new PublicKey({
 					key: res.data.key.key,
@@ -256,6 +256,7 @@ interface IAccount {
 	evm_address: string;
 	key: IKey;
 	alias: string;
+	account: string;
 }
 
 interface IKey {

@@ -40,9 +40,11 @@ import { FactoryStableCoin } from '../../../domain/context/factory/FactoryStable
 import { FactoryKey } from '../../../domain/context/factory/FactoryKey.js';
 import PublicKey from '../../../domain/context/account/PublicKey.js';
 import { TOKEN_CREATION_COST_HBAR } from '../../../core/Constants.js';
+import { MetaMaskInpageProvider } from '@metamask/providers';
+import { WalletConnectError } from '../../../domain/context/network/error/WalletConnectError.js';
 
 // eslint-disable-next-line no-var
-declare var ethereum: any;
+declare var ethereum: MetaMaskInpageProvider;
 
 @singleton()
 export default class RPCTransactionAdapter extends TransactionAdapter {
@@ -172,14 +174,16 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	}
 
 	async register(
-		account: Account,
+		account?: Account,
 		debug = false,
 	): Promise<InitializationData> {
-		const accountMirror = await this.mirrorNodeAdapter.getAccountInfo(
-			account.id,
-		);
-		this.account = account;
-		this.account.publicKey = accountMirror.publicKey;
+		if (account) {
+			const accountMirror = await this.mirrorNodeAdapter.getAccountInfo(
+				account.id,
+			);
+			this.account = account;
+			this.account.publicKey = accountMirror.publicKey;
+		}
 		!debug && this.connectMetamask();
 		Injectable.registerTransactionHandler(this);
 		return Promise.resolve({ account });
@@ -662,20 +666,45 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		try {
 			const ethProvider = await detectEthereumProvider();
 			if (ethProvider) {
-				console.log('Ethereum successfully detected!');
-
 				if (ethProvider.isMetaMask) {
-					const provider = new ethers.providers.Web3Provider(
-						ethereum,
-					);
-					this.signerOrProvider = provider.getSigner();
+					if (!ethereum.isConnected())
+						throw new WalletConnectError(
+							'Metamask is not connected!',
+						);
+					const accts = await ethereum.request({
+						method: 'eth_requestAccounts',
+					});
+					if (accts && 'length' in accts) {
+						const evmAddress = (accts as string[])[0];
+						const mirrorAccount =
+							await this.mirrorNodeAdapter.getAccountInfo(
+								evmAddress,
+							);
+						if (!mirrorAccount.account) {
+							throw new WalletConnectError('Invalid account!');
+						}
+						console.log(mirrorAccount);
+						this.account = new Account({
+							id: mirrorAccount.account,
+							evmAddress: mirrorAccount.accountEvmAddress,
+							publicKey: mirrorAccount.publicKey,
+						});
+					}
+					// this.signerOrProvider = ;
+					ethereum;
 				} else {
-					console.error('You have found!', Error);
+					throw new WalletConnectError('Metamask was not found!');
 				}
 			} else {
-				console.error('Manage metaMask not found!', Error);
+				throw new WalletConnectError('Metamask was not found!');
 			}
-		} catch (error) {
+		} catch (error: any) {
+			if ('code' in error && error.code === 4001) {
+				throw new RuntimeError('User rejected the request to connect');
+			}
+			if (error instanceof WalletConnectError) {
+				throw error;
+			}
 			throw new RuntimeError((error as Error).message);
 		}
 	}

@@ -138,9 +138,9 @@ export const SELECTED_WALLET_CAPABILITIES = (state: RootState) => state.wallet.c
 export const SELECTED_WALLET_ACCOUNT_INFO = (state: RootState) => state.wallet.accountInfo;
 export const HAS_WALLET_EXTENSION = (state: RootState) => state.wallet.hasWalletExtension;
 export const IS_PAIRED = (state: RootState) => state.wallet.isPaired;
-export const SELECTED_WALLET_PAIRED_ACCOUNTID = (state: RootState) => state.wallet.data?.account.id;
+export const SELECTED_WALLET_PAIRED_ACCOUNTID = (state: RootState) => state.wallet.data?.account?.id;
 export const SELECTED_WALLET_PAIRED_ACCOUNT = (state: RootState) => ({
-	accountId: state.wallet.data?.account.id,
+	accountId: state.wallet.data?.account?.id,
 });
 
 export const walletActions = walletSlice.actions;

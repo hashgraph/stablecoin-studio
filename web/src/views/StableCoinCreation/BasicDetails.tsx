@@ -72,7 +72,7 @@ const BasicDetails = (props: BasicDetailsProps) => {
 						name={'autorenewAccount'}
 						label={t('stableCoinCreation:basicDetails.autorenewAccount')}
 						placeholder={t('stableCoinCreation:basicDetails.autorenewAccountPlaceholder')}
-						value={pairingData ? pairingData.account.id.toString() : ''}
+						value={pairingData ? pairingData.account?.id.toString() : ''}
 						isReadOnly
 					/>
 				</Stack>
