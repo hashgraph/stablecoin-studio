@@ -99,7 +99,7 @@ class StableCoinInPort implements IStableCoinInPort {
 						key: req.adminKey.key,
 						type: req.adminKey.type,
 				  })
-				: PublicKey.NULL,
+				: undefined,
 			initialSupply: BigDecimal.fromString(
 				req.initialSupply ?? '0',
 				req.decimals,
@@ -113,29 +113,26 @@ class StableCoinInPort implements IStableCoinInPort {
 						key: req.freezeKey.key,
 						type: req.freezeKey.type,
 				  })
-				: PublicKey.NULL,
+				: undefined,
 			freezeDefault: req.freezeDefault,
-			// kycKey: req.KYCKey
-			// 	? new PublicKey({ key: req.KYCKey.key, type: req.KYCKey.type })
-			// 	: PublicKey.NULL,
 			wipeKey: req.wipeKey
 				? new PublicKey({
 						key: req.wipeKey.key,
 						type: req.wipeKey.type,
 				  })
-				: PublicKey.NULL,
+				: undefined,
 			pauseKey: req.pauseKey
 				? new PublicKey({
 						key: req.pauseKey.key,
 						type: req.pauseKey.type,
 				  })
-				: PublicKey.NULL,
+				: undefined,
 			supplyKey: req.supplyKey
 				? new PublicKey({
 						key: req.supplyKey.key,
 						type: req.supplyKey.type,
 				  })
-				: PublicKey.NULL,
+				: undefined,
 			treasury: new HederaId(req.treasury ?? '0.0.0'),
 			supplyType: req.supplyType,
 			autoRenewAccount: req.autoRenewAccount
