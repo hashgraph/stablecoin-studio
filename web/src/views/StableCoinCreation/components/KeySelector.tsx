@@ -66,7 +66,7 @@ const KeySelector = ({ control, name, label, request }: KeySelectorProps) => {
 
 	const availableOptions = () => {
 		if (name === 'adminKey')
-			return optionsKeys.filter((option) => option.value !== 2 && option.value !== 3);
+			return optionsKeys.filter((option) => option.value !== 3);
 
 		return optionsKeys;
 	};

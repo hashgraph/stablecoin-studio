@@ -169,7 +169,7 @@ const StableCoinCreation = () => {
 
 		request.autoRenewAccount = autorenewAccount;
 		if (managementPermissions) {
-			request.adminKey = accountInfo.publicKey;
+			request.adminKey = Account.NullPublicKey; // accountInfo.publicKey;
 			request.freezeKey = Account.NullPublicKey;
 			request.KYCKey = Account.NullPublicKey;
 			request.wipeKey = Account.NullPublicKey;
