@@ -8,6 +8,7 @@ import {
   GetRolesRequest,
   Role,
   StableCoinRole,
+  StableCoinRoleLabel,
   CheckSupplierLimitRequest,
   IncreaseSupplierAllowanceRequest,
   DecreaseSupplierAllowanceRequest,
@@ -46,22 +47,24 @@ export default class RoleStableCoinsService extends Service {
     let respDetail;
 
     if (req.supplierType === 'unlimited') {
+      await utilsService.showSpinner(Role.isUnlimited(req).then(
+          (response) => (respDetail = response)
+        ),
+        {
+          text: language.getText('state.loading'),
+          successText: language.getText('state.loadCompleted') + '\n',
+        }
+      );
+      return respDetail;
+    } else {
       await utilsService.showSpinner(
-        Role.Supplier.isUnlimited(req).then(
-          (response) => (respDetail = response[0]),
+        Role.isLimited(req).then(
+          (response) => (respDetail = response),
         ),
         {
           text: language.getText('state.loading'),
           successText: language.getText('state.loadCompleted') + '\n',
         },
-      );
-      return respDetail;
-    } else {
-      await utilsService.showSpinner(
-        Role.Supplier.isLimited(req).then(
-          (response) => (respDetail = response[0]),
-        ),
-        {},
       );
       return respDetail;
     }
@@ -70,7 +73,7 @@ export default class RoleStableCoinsService extends Service {
   public async increaseLimitSupplierRoleStableCoin(
     req: IncreaseSupplierAllowanceRequest,
   ): Promise<void> {
-    await utilsService.showSpinner(Role.Supplier.increaseAllowance(req), {
+    await utilsService.showSpinner(Role.increaseAllowance(req), {
       text: language.getText('state.loading'),
       successText: language.getText('state.loadCompleted') + '\n',
     });
@@ -82,7 +85,7 @@ export default class RoleStableCoinsService extends Service {
   public async decreaseLimitSupplierRoleStableCoin(
     req: DecreaseSupplierAllowanceRequest,
   ): Promise<void> {
-    await utilsService.showSpinner(Role.Supplier.decreaseAllowance(req), {
+    await utilsService.showSpinner(Role.decreaseAllowance(req), {
       text: language.getText('state.loading'),
       successText: language.getText('state.loadCompleted') + '\n',
     });
@@ -94,7 +97,7 @@ export default class RoleStableCoinsService extends Service {
   public async resetLimitSupplierRoleStableCoin(
     req: ResetSupplierAllowanceRequest,
   ): Promise<void> {
-    await utilsService.showSpinner(Role.Supplier.resetAllowance(req), {
+    await utilsService.showSpinner(Role.resetAllowance(req), {
       text: language.getText('state.loading'),
       successText: language.getText('state.loadCompleted') + '\n',
     });
@@ -123,28 +126,29 @@ export default class RoleStableCoinsService extends Service {
     utilsService.breakLine();
   }
 
-  public async hasRoleStableCoin(req: HasRoleRequest): Promise<void> {
+  public async hasRole(req: HasRoleRequest): Promise<boolean> {
     let hasRole;
     await utilsService.showSpinner(
-      Role.hasRole(req).then((response) => (hasRole = response[0])),
+      Role.hasRole(req).then((response) => (hasRole = response)),
       {
         text: language.getText('state.loading'),
         successText: language.getText('state.loadCompleted') + '\n',
       },
-    );
+    );    
+    return hasRole;
+  }  
+
+  public async hasRoleStableCoin(req: HasRoleRequest): Promise<void> {
+    let hasRole = await this.hasRole(req);
     let response = language.getText('roleManagement.accountNotHasRole');
     if (hasRole) {
       response = language.getText('roleManagement.accountHasRole');
     }
 
-    const indexOfS = Object.values(StableCoinRole).indexOf(
-      req.role as unknown as StableCoinRole,
-    );
-    const roleName = Role[Object.keys(StableCoinRole)[indexOfS]];
     console.log(
       response
         .replace('${address}', req.targetId)
-        .replace('${role}', colors.yellow(roleName)) + '\n',
+        .replace('${role}', colors.yellow(StableCoinRoleLabel.get(req.role))) + '\n',
     );
 
     utilsService.breakLine();
@@ -155,7 +159,7 @@ export default class RoleStableCoinsService extends Service {
   ): Promise<void> {
     let amount;
     await utilsService.showSpinner(
-      Role.Supplier.getAllowance(req).then((response) => {
+      Role.getAllowance(req).then((response) => {
         amount = response;
       }),
       {
@@ -182,10 +186,11 @@ export default class RoleStableCoinsService extends Service {
         successText: language.getText('state.loadCompleted') + '\n',
       },
     );
-
     console.log(language.getText('operation.success'));
     roles.length > 0
-      ? console.log(colors.yellow(roles.join(' | ')))
+      ? roles.forEach((role: StableCoinRole) => { 
+        console.log(colors.yellow(StableCoinRoleLabel.get(role)))
+      })
       : console.log(colors.red(language.getText('roleManagement.noRoles')));
     utilsService.breakLine();
 

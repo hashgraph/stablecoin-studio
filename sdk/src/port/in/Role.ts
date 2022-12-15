@@ -27,12 +27,12 @@ import { IncreaseAllowanceCommand } from '../../app/usecase/command/stablecoin/r
 import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import { DecreaseAllowanceCommand } from '../../app/usecase/command/stablecoin/roles/decreaseAllowance/DecreaseAllowanceCommand.js';
 import { IsUnlimitedCommand } from '../../app/usecase/command/stablecoin/roles/isUnlimited/IsUnlimitedCommand.js';
-import { StableCoinRole } from '../../domain/context/stablecoin/StableCoinRole.js';
+import { StableCoinRole, StableCoinRoleLabel } from '../../domain/context/stablecoin/StableCoinRole.js';
 import { GrantSupplierRoleCommand } from '../../app/usecase/command/stablecoin/roles/grantSupplierRole/GrantSupplierRoleCommand.js';
 import { GrantUnlimitedSupplierRoleCommand } from '../../app/usecase/command/stablecoin/roles/granUnlimitedSupplierRole/GrantUnlimitedSupplierRoleCommand.js';
 import { RevokeSupplierRoleCommand } from '../../app/usecase/command/stablecoin/roles/revokeSupplierRole/RevokeSupplierRoleCommand.js';
 
-export { StableCoinRole };
+export { StableCoinRole, StableCoinRoleLabel };
 
 interface IRole {
 	hasRole(request: HasRoleRequest): Promise<boolean>;
@@ -40,7 +40,7 @@ interface IRole {
 	revokeRole(request: RevokeRoleRequest): Promise<boolean>;
 	getRoles(request: GetRolesRequest): Promise<string[]>;
 	
-	Supplier: {
+	//Supplier: {
 		getAllowance(request: GetSupplierAllowanceRequest): Promise<BigDecimal>;
 		resetAllowance(
 			request: ResetSupplierAllowanceRequest,
@@ -53,7 +53,7 @@ interface IRole {
 		): Promise<boolean>;
 		isLimited(request: CheckSupplierLimitRequest): Promise<boolean>;
 		isUnlimited(request: CheckSupplierLimitRequest): Promise<boolean>;
-	};
+	//};
 }
 
 class RoleInPort implements IRole {
@@ -75,7 +75,6 @@ class RoleInPort implements IRole {
 		const validation = request.validate();
 
 		if (validation.length > 0) throw new Error('validation error');
-
 		return (
 			await this.commandBus.execute(
 				new HasRoleCommand(
@@ -100,7 +99,7 @@ class RoleInPort implements IRole {
 						new GrantSupplierRoleCommand(
 							HederaId.from(targetId),
 							HederaId.from(tokenId),
-							BigDecimal.fromString(amount!),
+							amount!,
 						),
 					)
 				).payload;
@@ -171,7 +170,7 @@ class RoleInPort implements IRole {
 		).payload;
 	}
 	
-	Supplier: { 
+	/*Supplier: { 
 		getAllowance(request: GetSupplierAllowanceRequest): Promise<BigDecimal>;
 		resetAllowance(
 			request: ResetSupplierAllowanceRequest,
@@ -184,7 +183,7 @@ class RoleInPort implements IRole {
 		): Promise<boolean>;
 		isLimited(request: CheckSupplierLimitRequest): Promise<boolean>;
 		isUnlimited(request: CheckSupplierLimitRequest): Promise<boolean>;
-	} = {
+	} = {*/
 		async getAllowance(
 			request: GetSupplierAllowanceRequest,
 		): Promise<BigDecimal> {
@@ -194,14 +193,14 @@ class RoleInPort implements IRole {
 			if (validation.length > 0) throw new Error('validation error');
 
 			return (
-				await super.commandBus.execute(
+				await this.commandBus.execute(
 					new GetAllowanceCommand(
 						HederaId.from(targetId),
 						HederaId.from(tokenId),
 					),
 				)
 			).payload;
-		},
+		}//,
 
 		async resetAllowance(
 			request: ResetSupplierAllowanceRequest,
@@ -212,14 +211,14 @@ class RoleInPort implements IRole {
 			if (validation.length > 0) return false;
 
 			return (
-				await super.commandBus.execute(
+				await this.commandBus.execute(
 					new ResetAllowanceCommand(
 						HederaId.from(targetId),
 						HederaId.from(tokenId),
 					),
 				)
 			).payload;
-		},
+		}//,
 
 		async increaseAllowance(
 			request: IncreaseSupplierAllowanceRequest,
@@ -230,15 +229,15 @@ class RoleInPort implements IRole {
 			if (validation.length > 0) throw new Error('validation error');
 
 			return (
-				await super.commandBus.execute(
+				await this.commandBus.execute(
 					new IncreaseAllowanceCommand(
-						BigDecimal.fromString(amount),
+						amount,
 						HederaId.from(targetId),
 						HederaId.from(tokenId),
 					),
 				)
 			).payload;
-		},
+		}//,
 
 		async decreaseAllowance(
 			request: DecreaseSupplierAllowanceRequest,
@@ -249,15 +248,15 @@ class RoleInPort implements IRole {
 			if (validation.length > 0) throw new Error('validation error');
 
 			return (
-				await super.commandBus.execute(
+				await this.commandBus.execute(
 					new DecreaseAllowanceCommand(
-						BigDecimal.fromString(amount),
+						amount,
 						HederaId.from(targetId),
 						HederaId.from(tokenId),
 					),
 				)
 			).payload;
-		},
+		}//,
 
 		async isLimited(request: CheckSupplierLimitRequest): Promise<boolean> {
 			const { tokenId, targetId } = request;
@@ -265,33 +264,29 @@ class RoleInPort implements IRole {
 
 			if (validation.length > 0) throw new Error('validation error');
 
-			return super.hasRole(
+			return this.hasRole(
 				new HasRoleRequest({
 					targetId: targetId,
 					tokenId: tokenId,
 					role: StableCoinRole.CASHIN_ROLE,
 				}),
 			);
-		},
+		}//,
 
 		async isUnlimited(
 			request: CheckSupplierLimitRequest,
 		): Promise<boolean> {
 			const { tokenId, targetId } = request;
-			const validation = request.validate();
-
-			if (validation.length > 0) throw new Error('validation error');
-
 			return (
-				await super.commandBus.execute(
+				await this.commandBus.execute(
 					new IsUnlimitedCommand(
 						HederaId.from(targetId),
 						HederaId.from(tokenId),
 					),
 				)
 			).payload;
-		},
-	};
+		}//,
+	//};
 }
 
 const Role = new RoleInPort();

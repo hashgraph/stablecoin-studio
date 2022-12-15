@@ -47,7 +47,9 @@ import TransactionAdapter from '../port/out/TransactionAdapter.js';
 import { RuntimeError } from './error/RuntimeError.js';
 import { HTSTransactionAdapter } from '../port/out/hs/hts/HTSTransactionAdapter.js';
 import { HashpackTransactionAdapter } from '../port/out/hs/hashpack/HashpackTransactionAdapter.js';
-import TransactionService from '../app/service/TransactionService.js';
+import { RevokeSupplierRoleCommandHandler } from '../app/usecase/command/stablecoin/roles/revokeSupplierRole/RevokeSupplierRoleCommandHandler.js';
+import { GrantSupplierRoleCommandHandler } from '../app/usecase/command/stablecoin/roles/grantSupplierRole/GrantSupplierRoleCommandHandler.js';
+import { GrantUnlimitedSupplierRoleCommandHandler } from '../app/usecase/command/stablecoin/roles/granUnlimitedSupplierRole/GrantUnlimitedSupplierRoleCommandHandler.js';
 
 export const TOKENS = {
 	COMMAND_HANDLER: Symbol('CommandHandler'),
@@ -151,6 +153,18 @@ const COMMAND_HANDLERS = [
 	{
 		token: TOKENS.COMMAND_HANDLER,
 		useClass: RevokeRoleCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: RevokeSupplierRoleCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: GrantSupplierRoleCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: GrantUnlimitedSupplierRoleCommandHandler,
 	},
 	// Network Operations
 	{

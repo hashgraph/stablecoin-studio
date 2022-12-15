@@ -11,7 +11,7 @@ export class GrantSupplierRoleCommand extends Command<GrantSupplierRoleCommandRe
 	constructor(
 		public readonly targetId: HederaId,
 		public readonly tokenId: HederaId,
-		public readonly amount: BigDecimal
+		public readonly amount: string
 	) {
 		super();
 	}

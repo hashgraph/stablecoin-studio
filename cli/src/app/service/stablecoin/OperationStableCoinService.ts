@@ -858,7 +858,7 @@ export default class OperationStableCoinService extends Service {
                 !(await this.checkSupplierType(
                   new CheckSupplierLimitRequest({
                     targetId: decreaseCashInLimitRequest.targetId,
-                    tokenId: decreaseCashInLimitRequest.targetId,
+                    tokenId: decreaseCashInLimitRequest.tokenId,
                     supplierType: 'limited',
                   }),
                 ))
@@ -962,7 +962,7 @@ export default class OperationStableCoinService extends Service {
                 console.log(language.getText('cashin.notRole'));
               }
             } catch (error) {
-              await utilsService.askErrorConfirmation(
+             await utilsService.askErrorConfirmation(
                 async () => await this.operationsStableCoin(),
                 error,
               );
@@ -1005,9 +1005,10 @@ export default class OperationStableCoinService extends Service {
             try {
               if (
                 await this.checkSupplierType(
-                  new GetSupplierAllowanceRequest({
+                  new CheckSupplierLimitRequest({
                     targetId: checkCashInLimitRequest.targetId,
                     tokenId: checkCashInLimitRequest.tokenId,
+                    supplierType: 'unlimited'
                   }),
                 )
               ) {
@@ -1016,7 +1017,7 @@ export default class OperationStableCoinService extends Service {
                 );
 
                 console.log(
-                  response.replace('${address}', accountTarget) + '\n',
+                  response.replace('${address}', checkCashInLimitRequest.targetId) + '\n',
                 );
                 break;
               }
@@ -1326,14 +1327,14 @@ export default class OperationStableCoinService extends Service {
     let hasRole;
     await utilsService.showSpinner(
       this.roleStableCoinService
-        .hasRoleStableCoin(
+        .hasRole(
           new HasRoleRequest({
             targetId: grantRoleRequest.targetId,
             tokenId: grantRoleRequest.tokenId,
             role: grantRoleRequest.role,
           }),
         )
-        .then((response) => (hasRole = response[0])),
+        .then((response) => (hasRole = response)),
       {
         text: language.getText('state.loading'),
         successText: language.getText('state.loadCompleted') + '\n',
