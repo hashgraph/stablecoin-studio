@@ -46,6 +46,7 @@ import { UnPauseCommand } from '../../app/usecase/command/stablecoin/operations/
 import { DeleteCommand } from '../../app/usecase/command/stablecoin/operations/delete/DeleteCommand.js';
 import { FreezeCommand } from '../../app/usecase/command/stablecoin/operations/freeze/FreezeCommand.js';
 import { UnFreezeCommand } from '../../app/usecase/command/stablecoin/operations/unfreeze/UnFreezeCommand.js';
+import { GetAccountInfoQuery } from '../../app/usecase/query/account/info/GetAccountInfoQuery.js';
 
 export const HederaERC20AddressTestnet = '0.0.49077027';
 export const HederaERC20AddressPreviewnet = '0.0.11111111';
@@ -259,8 +260,14 @@ class StableCoinInPort implements IStableCoinInPort {
 		// TODO return validation
 		if (validation.length > 0) throw new Error('validation error');
 
+		const resp = await this.queryBus.execute(
+			new GetAccountInfoQuery(HederaId.from(request.account.accountId)),
+		);
 		return this.stableCoinService.getCapabilities(
-			new Account({ id: request.account.accountId }),
+			new Account({
+				id: resp.account.account ?? request.account.accountId,
+				publicKey: resp.account.publicKey,
+			}),
 			HederaId.from(request.tokenId),
 		);
 	}
