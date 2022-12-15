@@ -1,7 +1,7 @@
 import * as inquirer from 'inquirer';
 import figlet from 'figlet-promised';
 import Service from '../Service.js';
-import { language } from '../../../index.js';
+import { configurationService, language } from '../../../index.js';
 import Table from 'cli-table3';
 import {
   ValidationResponse,
@@ -10,6 +10,7 @@ import {
   SupportedWallets,
   StableCoinListViewModel,
   InitializationRequest,
+  SDK,
 } from 'hedera-stable-coin-sdk';
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
@@ -34,6 +35,7 @@ export default class UtilitiesService extends Service {
 
   public async initSDK(): Promise<void> {
     const account = this.getCurrentAccount();
+    SDK.log = configurationService.getLogConfiguration();
     await Network.init(
       new InitializationRequest({
         network: this.getCurrentNetwork().name,

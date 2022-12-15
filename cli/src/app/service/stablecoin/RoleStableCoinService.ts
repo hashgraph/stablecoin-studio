@@ -139,7 +139,7 @@ export default class RoleStableCoinsService extends Service {
   }  
 
   public async hasRoleStableCoin(req: HasRoleRequest): Promise<void> {
-    let hasRole = await this.hasRole(req);
+    const hasRole = await this.hasRole(req);
     let response = language.getText('roleManagement.accountNotHasRole');
     if (hasRole) {
       response = language.getText('roleManagement.accountHasRole');
