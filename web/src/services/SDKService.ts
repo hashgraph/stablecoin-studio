@@ -158,19 +158,19 @@ export class SDKService {
 	}
 
 	public static async increaseSupplierAllowance(req: IncreaseSupplierAllowanceRequest) {
-		return await Role.Supplier.increaseAllowance(req);
+		return await Role.increaseAllowance(req);
 	}
 
 	public static async decreaseSupplierAllowance(req: DecreaseSupplierAllowanceRequest) {
-		return await Role.Supplier.decreaseAllowance(req);
+		return await Role.decreaseAllowance(req);
 	}
 
 	public static async resetSupplierAllowance(req: ResetSupplierAllowanceRequest) {
-		return await Role.Supplier.resetAllowance(req);
+		return await Role.resetAllowance(req);
 	}
 
 	public static async checkSupplierAllowance(req: GetSupplierAllowanceRequest) {
-		return await Role.Supplier.getAllowance(req);
+		return await Role.getAllowance(req);
 	}
 
 	public static async grantRole(req: GrantRoleRequest) {
@@ -186,7 +186,7 @@ export class SDKService {
 	}
 
 	public static async isUnlimitedSupplierAllowance(req: CheckSupplierLimitRequest) {
-		return await Role.Supplier.isUnlimited(req);
+		return await Role.isUnlimited(req);
 	}
 
 	public static async getRoles(data: GetRolesRequest) {

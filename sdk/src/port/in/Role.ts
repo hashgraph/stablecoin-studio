@@ -27,7 +27,10 @@ import { IncreaseAllowanceCommand } from '../../app/usecase/command/stablecoin/r
 import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import { DecreaseAllowanceCommand } from '../../app/usecase/command/stablecoin/roles/decreaseAllowance/DecreaseAllowanceCommand.js';
 import { IsUnlimitedCommand } from '../../app/usecase/command/stablecoin/roles/isUnlimited/IsUnlimitedCommand.js';
-import { StableCoinRole, StableCoinRoleLabel } from '../../domain/context/stablecoin/StableCoinRole.js';
+import {
+	StableCoinRole,
+	StableCoinRoleLabel,
+} from '../../domain/context/stablecoin/StableCoinRole.js';
 import { GrantSupplierRoleCommand } from '../../app/usecase/command/stablecoin/roles/grantSupplierRole/GrantSupplierRoleCommand.js';
 import { GrantUnlimitedSupplierRoleCommand } from '../../app/usecase/command/stablecoin/roles/granUnlimitedSupplierRole/GrantUnlimitedSupplierRoleCommand.js';
 import { RevokeSupplierRoleCommand } from '../../app/usecase/command/stablecoin/roles/revokeSupplierRole/RevokeSupplierRoleCommand.js';
@@ -39,34 +42,23 @@ interface IRole {
 	grantRole(request: GrantRoleRequest): Promise<boolean>;
 	revokeRole(request: RevokeRoleRequest): Promise<boolean>;
 	getRoles(request: GetRolesRequest): Promise<string[]>;
-	
-	//Supplier: {
-		getAllowance(request: GetSupplierAllowanceRequest): Promise<BigDecimal>;
-		resetAllowance(
-			request: ResetSupplierAllowanceRequest,
-		): Promise<boolean>;
-		increaseAllowance(
-			request: IncreaseSupplierAllowanceRequest,
-		): Promise<boolean>;
-		decreaseAllowance(
-			request: DecreaseSupplierAllowanceRequest,
-		): Promise<boolean>;
-		isLimited(request: CheckSupplierLimitRequest): Promise<boolean>;
-		isUnlimited(request: CheckSupplierLimitRequest): Promise<boolean>;
-	//};
+	//Supplier
+	getAllowance(request: GetSupplierAllowanceRequest): Promise<BigDecimal>;
+	resetAllowance(request: ResetSupplierAllowanceRequest): Promise<boolean>;
+	increaseAllowance(
+		request: IncreaseSupplierAllowanceRequest,
+	): Promise<boolean>;
+	decreaseAllowance(
+		request: DecreaseSupplierAllowanceRequest,
+	): Promise<boolean>;
+	isLimited(request: CheckSupplierLimitRequest): Promise<boolean>;
+	isUnlimited(request: CheckSupplierLimitRequest): Promise<boolean>;
 }
 
 class RoleInPort implements IRole {
 	constructor(
-		private readonly networkService: NetworkService = Injectable.resolve(
-			NetworkService,
-		),
-		private readonly queryBus: QueryBus = Injectable.resolve(QueryBus),
 		private readonly commandBus: CommandBus = Injectable.resolve(
 			CommandBus,
-		),
-		private readonly transactionService: TransactionService = Injectable.resolve(
-			TransactionService,
 		),
 	) {}
 
@@ -169,124 +161,107 @@ class RoleInPort implements IRole {
 			)
 		).payload;
 	}
-	
-	/*Supplier: { 
-		getAllowance(request: GetSupplierAllowanceRequest): Promise<BigDecimal>;
-		resetAllowance(
-			request: ResetSupplierAllowanceRequest,
-		): Promise<boolean>;
-		increaseAllowance(
-			request: IncreaseSupplierAllowanceRequest,
-		): Promise<boolean>;
-		decreaseAllowance(
-			request: DecreaseSupplierAllowanceRequest,
-		): Promise<boolean>;
-		isLimited(request: CheckSupplierLimitRequest): Promise<boolean>;
-		isUnlimited(request: CheckSupplierLimitRequest): Promise<boolean>;
-	} = {*/
-		async getAllowance(
-			request: GetSupplierAllowanceRequest,
-		): Promise<BigDecimal> {
-			const { tokenId, targetId } = request;
-			const validation = request.validate();
 
-			if (validation.length > 0) throw new Error('validation error');
+	async getAllowance(
+		request: GetSupplierAllowanceRequest,
+	): Promise<BigDecimal> {
+		const { tokenId, targetId } = request;
+		const validation = request.validate();
 
-			return (
-				await this.commandBus.execute(
-					new GetAllowanceCommand(
-						HederaId.from(targetId),
-						HederaId.from(tokenId),
-					),
-				)
-			).payload;
-		}//,
+		if (validation.length > 0) throw new Error('validation error');
 
-		async resetAllowance(
-			request: ResetSupplierAllowanceRequest,
-		): Promise<boolean> {
-			const { tokenId, targetId } = request;
-			const validation = request.validate();
+		return (
+			await this.commandBus.execute(
+				new GetAllowanceCommand(
+					HederaId.from(targetId),
+					HederaId.from(tokenId),
+				),
+			)
+		).payload;
+	}
 
-			if (validation.length > 0) return false;
+	async resetAllowance(
+		request: ResetSupplierAllowanceRequest,
+	): Promise<boolean> {
+		const { tokenId, targetId } = request;
+		const validation = request.validate();
 
-			return (
-				await this.commandBus.execute(
-					new ResetAllowanceCommand(
-						HederaId.from(targetId),
-						HederaId.from(tokenId),
-					),
-				)
-			).payload;
-		}//,
+		if (validation.length > 0) return false;
 
-		async increaseAllowance(
-			request: IncreaseSupplierAllowanceRequest,
-		): Promise<boolean> {
-			const { tokenId, amount, targetId } = request;
-			const validation = request.validate();
+		return (
+			await this.commandBus.execute(
+				new ResetAllowanceCommand(
+					HederaId.from(targetId),
+					HederaId.from(tokenId),
+				),
+			)
+		).payload;
+	}
 
-			if (validation.length > 0) throw new Error('validation error');
+	async increaseAllowance(
+		request: IncreaseSupplierAllowanceRequest,
+	): Promise<boolean> {
+		const { tokenId, amount, targetId } = request;
+		const validation = request.validate();
 
-			return (
-				await this.commandBus.execute(
-					new IncreaseAllowanceCommand(
-						amount,
-						HederaId.from(targetId),
-						HederaId.from(tokenId),
-					),
-				)
-			).payload;
-		}//,
+		if (validation.length > 0) throw new Error('validation error');
 
-		async decreaseAllowance(
-			request: DecreaseSupplierAllowanceRequest,
-		): Promise<boolean> {
-			const { tokenId, amount, targetId } = request;
-			const validation = request.validate();
+		return (
+			await this.commandBus.execute(
+				new IncreaseAllowanceCommand(
+					amount,
+					HederaId.from(targetId),
+					HederaId.from(tokenId),
+				),
+			)
+		).payload;
+	}
 
-			if (validation.length > 0) throw new Error('validation error');
+	async decreaseAllowance(
+		request: DecreaseSupplierAllowanceRequest,
+	): Promise<boolean> {
+		const { tokenId, amount, targetId } = request;
+		const validation = request.validate();
 
-			return (
-				await this.commandBus.execute(
-					new DecreaseAllowanceCommand(
-						amount,
-						HederaId.from(targetId),
-						HederaId.from(tokenId),
-					),
-				)
-			).payload;
-		}//,
+		if (validation.length > 0) throw new Error('validation error');
 
-		async isLimited(request: CheckSupplierLimitRequest): Promise<boolean> {
-			const { tokenId, targetId } = request;
-			const validation = request.validate();
+		return (
+			await this.commandBus.execute(
+				new DecreaseAllowanceCommand(
+					amount,
+					HederaId.from(targetId),
+					HederaId.from(tokenId),
+				),
+			)
+		).payload;
+	}
 
-			if (validation.length > 0) throw new Error('validation error');
+	async isLimited(request: CheckSupplierLimitRequest): Promise<boolean> {
+		const { tokenId, targetId } = request;
+		const validation = request.validate();
 
-			return this.hasRole(
-				new HasRoleRequest({
-					targetId: targetId,
-					tokenId: tokenId,
-					role: StableCoinRole.CASHIN_ROLE,
-				}),
-			);
-		}//,
+		if (validation.length > 0) throw new Error('validation error');
 
-		async isUnlimited(
-			request: CheckSupplierLimitRequest,
-		): Promise<boolean> {
-			const { tokenId, targetId } = request;
-			return (
-				await this.commandBus.execute(
-					new IsUnlimitedCommand(
-						HederaId.from(targetId),
-						HederaId.from(tokenId),
-					),
-				)
-			).payload;
-		}//,
-	//};
+		return this.hasRole(
+			new HasRoleRequest({
+				targetId: targetId,
+				tokenId: tokenId,
+				role: StableCoinRole.CASHIN_ROLE,
+			}),
+		);
+	}
+
+	async isUnlimited(request: CheckSupplierLimitRequest): Promise<boolean> {
+		const { tokenId, targetId } = request;
+		return (
+			await this.commandBus.execute(
+				new IsUnlimitedCommand(
+					HederaId.from(targetId),
+					HederaId.from(tokenId),
+				),
+			)
+		).payload;
+	}
 }
 
 const Role = new RoleInPort();
