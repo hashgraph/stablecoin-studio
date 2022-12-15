@@ -87,10 +87,11 @@ const CoinDropdown = () => {
 
 	const getCapabilities = async () => {
 		if (!selectedStableCoin?.tokenId || !accountInfo.publicKey?.key) return;
-
 		const capabilities = await SDKService.getCapabilities({
 			id: selectedStableCoin.tokenId.toString(),
 		});
+
+		console.log('Capabilities', capabilities);
 		dispatch(walletActions.setCapabilities(capabilities));
 	};
 

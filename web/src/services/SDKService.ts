@@ -147,13 +147,15 @@ export class SDKService {
 	}: {
 		id: string;
 	}): Promise<StableCoinCapabilities | null> {
-		if (this.initData?.account)
+		console.log(this.initData);
+		if (this.initData?.account) {
 			return await StableCoin.capabilities(
 				new CapabilitiesRequest({
 					account: { ...this.initData?.account, accountId: this.initData.account.id.toString() },
 					tokenId: id,
 				}),
 			);
+		}
 		return null;
 	}
 

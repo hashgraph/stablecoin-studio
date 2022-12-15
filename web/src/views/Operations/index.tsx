@@ -68,6 +68,7 @@ const Operations = () => {
 				}
 			}
 		}
+		console.log(capabilities)
 		const areDisabled = {
 			cashIn: !isExternalToken
 				? !capabilities?.capabilities.includes({
