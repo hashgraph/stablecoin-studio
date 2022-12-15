@@ -69,8 +69,6 @@ export class MirrorNodeAdapter {
 	): Promise<StableCoinViewModel> {
 		try {
 			const url = `${this.URI_BASE}tokens/${tokenId.toString()}`;
-			console.log(url);
-
 			LogService.logTrace(
 				'Getting stable coin from mirror node -> ',
 				url,

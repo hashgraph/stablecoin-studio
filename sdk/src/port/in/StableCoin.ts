@@ -10,9 +10,7 @@ import AssociateTokenRequest from './request/AssociateTokenRequest.js';
 import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import { HederaId } from '../../domain/context/shared/HederaId.js';
 import ContractId from '../../domain/context/contract/ContractId.js';
-import {
-	StableCoinProps,
-} from '../../domain/context/stablecoin/StableCoin.js';
+import { StableCoinProps } from '../../domain/context/stablecoin/StableCoin.js';
 import { QueryBus } from '../../core/query/QueryBus.js';
 import { CommandBus } from '../../core/command/CommandBus.js';
 import { CashInCommand } from '../../app/usecase/command/stablecoin/operations/cashin/CashInCommand.js';
@@ -163,11 +161,12 @@ class StableCoinInPort implements IStableCoinInPort {
 		const validation = request.validate();
 		// TODO return validation
 		if (validation.length > 0) throw new Error('Validation error');
-		return (
+		const coin = (
 			await this.queryBus.execute(
 				new GetStableCoinQuery(HederaId.from(id)),
 			)
 		).coin;
+		return coin;
 	}
 
 	async cashIn(request: CashInRequest): Promise<boolean> {

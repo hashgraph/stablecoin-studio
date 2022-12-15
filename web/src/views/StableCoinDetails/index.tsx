@@ -18,7 +18,7 @@ const StableCoinDetails = () => {
 
 	const renderKeys = ({ key }: { key: any }) => {
 		if (!key) return t('none');
-		if ('id' in key) return t('smartContract');
+		if ('value' in key) return t('smartContract');
 		if (key.key === 'same as user')
 			// TODO: check current public key
 			return t('currentUser');
