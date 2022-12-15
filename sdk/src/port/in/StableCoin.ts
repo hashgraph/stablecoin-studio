@@ -11,7 +11,6 @@ import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import { HederaId } from '../../domain/context/shared/HederaId.js';
 import ContractId from '../../domain/context/contract/ContractId.js';
 import {
-	StableCoin as StableCoinObject,
 	StableCoinProps,
 } from '../../domain/context/stablecoin/StableCoin.js';
 import { QueryBus } from '../../core/query/QueryBus.js';
@@ -47,10 +46,10 @@ import { DeleteCommand } from '../../app/usecase/command/stablecoin/operations/d
 import { FreezeCommand } from '../../app/usecase/command/stablecoin/operations/freeze/FreezeCommand.js';
 import { UnFreezeCommand } from '../../app/usecase/command/stablecoin/operations/unfreeze/UnFreezeCommand.js';
 
-export const HederaERC20AddressTestnet = '0.0.49077027';
+export const HederaERC20AddressTestnet = '0.0.49094604';
 export const HederaERC20AddressPreviewnet = '0.0.11111111';
 
-export const FactoryAddressTestnet = '0.0.49077033';
+export const FactoryAddressTestnet = '0.0.49094610';
 export const FactoryAddressPreviewnet = '0.0.11111111';
 
 export { StableCoinViewModel, StableCoinListViewModel };

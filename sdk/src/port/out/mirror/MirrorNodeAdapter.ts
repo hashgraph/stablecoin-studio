@@ -10,6 +10,7 @@ import { StableCoinNotFound } from './error/StableCoinNotFound.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import { ContractId as HContractId } from '@hashgraph/sdk';
 import PublicKey from '../../../domain/context/account/PublicKey.js';
+import { StableCoinMemo } from '../../../domain/context/stablecoin/StableCoinMemo.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
 import { InvalidResponse } from './error/InvalidResponse.js';
 import { HederaId } from '../../../domain/context/shared/HederaId.js';
@@ -108,8 +109,8 @@ export class MirrorNodeAdapter {
 			}
 
 			const decimals = parseInt(response.data.decimals ?? '0');
-			const proxyAddress = response.data.memo
-				? HContractId.fromSolidityAddress(response.data.memo).toString()
+			const proxyAddress = response.data.memo? 
+				StableCoinMemo.fromJson(response.data.memo).proxyContract
 				: '0.0.0';
 			const stableCoinDetail: StableCoinViewModel = {
 				tokenId: HederaId.from(response.data.token_id),
