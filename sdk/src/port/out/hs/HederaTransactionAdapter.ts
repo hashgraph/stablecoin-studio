@@ -478,7 +478,9 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			params,
 			TransactionType.RECORD,
 		);
-		transactionResponse.response = transactionResponse.response[0];
+		transactionResponse.response = transactionResponse.response[0].filter((value: string) =>
+			value !== StableCoinRole.WITHOUT_ROLE
+		);
 		return transactionResponse;
 	}
 
