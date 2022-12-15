@@ -69,6 +69,7 @@ export class MirrorNodeAdapter {
 	): Promise<StableCoinViewModel> {
 		try {
 			const url = `${this.URI_BASE}tokens/${tokenId.toString()}`;
+			console.log(url);
 
 			LogService.logTrace(
 				'Getting stable coin from mirror node -> ',
@@ -109,8 +110,8 @@ export class MirrorNodeAdapter {
 			}
 
 			const decimals = parseInt(response.data.decimals ?? '0');
-			const proxyAddress = response.data.memo? 
-				StableCoinMemo.fromJson(response.data.memo).proxyContract
+			const proxyAddress = response.data.memo
+				? StableCoinMemo.fromJson(response.data.memo).proxyContract
 				: '0.0.0';
 			const stableCoinDetail: StableCoinViewModel = {
 				tokenId: HederaId.from(response.data.token_id),

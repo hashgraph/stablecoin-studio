@@ -15,6 +15,7 @@ import { Environment } from '../../../../domain/context/network/Environment.js';
 import {
 	WalletInitEvent,
 	WalletEvents,
+	WalletPairedEvent,
 } from '../../../../app/service/event/WalletEvent.js';
 import { SupportedWallets } from '../../../in/request/ConnectRequest.js';
 import EventService from '../../../../app/service/event/EventService.js';
@@ -43,6 +44,10 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 	}
 
 	init(): Promise<string> {
+		this.eventService.emit(WalletEvents.walletInit, {
+			wallet: SupportedWallets.CLIENT,
+			initData: {},
+		});
 		return Promise.resolve(this.networkService.environment);
 	}
 
@@ -59,15 +64,16 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 		const id = this.account.id?.value ?? '';
 		const privateKey = account.privateKey?.toHashgraphKey() ?? '';
 		this._client.setOperator(id, privateKey);
-		const eventData: WalletInitEvent = {
+		const eventData: WalletPairedEvent = {
 			wallet: SupportedWallets.HASHPACK,
-			initData: {
+			data: {
 				account: this.account,
 				pairing: '',
 				topic: '',
 			},
+			network: this.networkService.environment,
 		};
-		this.eventService.emit(WalletEvents.walletInit, eventData);
+		this.eventService.emit(WalletEvents.walletPaired, eventData);
 		return Promise.resolve({
 			account: this.getAccount(),
 		});

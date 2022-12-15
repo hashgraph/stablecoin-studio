@@ -711,7 +711,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 							wallet: SupportedWallets.METAMASK,
 						});
 					}
-					// this.signerOrProvider = ;
+					this.signerOrProvider = this.provider;
 				} else {
 					throw new WalletConnectError('Metamask was not found!');
 				}
