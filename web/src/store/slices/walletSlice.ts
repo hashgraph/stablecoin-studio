@@ -39,7 +39,7 @@ export const initialState: InitialStateProps = {
 	externalTokenList: [],
 	capabilities: undefined,
 	selectedWallet: undefined,
-	lastWallet: localStorage?.getItem('lastWallet') as SupportedWallets ?? undefined,
+	lastWallet: (localStorage?.getItem('lastWallet') as SupportedWallets) ?? undefined,
 };
 
 export const getStableCoinList = createAsyncThunk(
@@ -91,6 +91,9 @@ export const walletSlice = createSlice({
 		},
 		setData: (state, action) => {
 			state.data = action.payload;
+		},
+		setAccount: (state, action) => {
+			if (state.data?.account) state.data.account = action.payload;
 		},
 		setSelectedStableCoin: (state, action) => {
 			state.selectedStableCoin = action.payload;

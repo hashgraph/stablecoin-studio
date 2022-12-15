@@ -1,3 +1,4 @@
+import { Account } from '@hashgraph/hethers/lib/utils.js';
 import { Environment } from '../../../domain/context/network/Environment.js';
 import { SupportedWallets } from '../../../domain/context/network/Wallet.js';
 import { InitializationData } from '../../../port/out/TransactionAdapter.js';
@@ -36,6 +37,10 @@ export interface WalletPairedEvent extends WalletBaseEvent {
 export interface WalletConnectionStatusChangedEvent extends WalletBaseEvent {
 	status: ConnectionState;
 }
+
+export interface WalletAccountChanged extends WalletBaseEvent {
+	account: Account;
+}
 export interface WalletAcknowledgeMessageEvent extends WalletBaseEvent {
 	result: boolean;
 }
@@ -48,6 +53,7 @@ type WalletEvent = {
 		data: WalletConnectionStatusChangedEvent,
 	) => void;
 	walletAcknowledgeMessage: (data: WalletAcknowledgeMessageEvent) => void;
+	walletAccountChanged: (data: WalletAccountChanged) => void;
 	walletDisconnect: () => void;
 };
 
