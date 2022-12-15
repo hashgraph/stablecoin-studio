@@ -18,7 +18,6 @@ import { singleton } from 'tsyringe';
 import StableCoinCapabilities from '../../../domain/context/stablecoin/StableCoinCapabilities.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import Injectable from '../../../core/Injectable.js';
-import { RPCTransactionResponseAdapter } from './RPCTransactionRespondeAdapter.js';
 import type { Provider } from '@ethersproject/providers';
 import { CapabilityDecider, Decision } from '../CapabilityDecider.js';
 import { Operation } from '../../../domain/context/stablecoin/Capability.js';
@@ -45,6 +44,7 @@ import { WalletConnectError } from '../../../domain/context/network/error/Wallet
 import EventService from '../../../app/service/event/EventService.js';
 import { WalletEvents } from '../../../app/service/event/WalletEvent.js';
 import { SupportedWallets } from '../../../domain/context/network/Wallet.js';
+import { RPCTransactionResponseAdapter } from './RPCTransactionResponseAdapter.js';
 
 // eslint-disable-next-line no-var
 declare var ethereum: MetaMaskInpageProvider;
@@ -184,6 +184,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			wallet: SupportedWallets.METAMASK,
 		});
 		!debug && this.connectMetamask();
+
 		return this.networkService.environment;
 	}
 
@@ -710,6 +711,15 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 							},
 							network: this.networkService.environment,
 							wallet: SupportedWallets.METAMASK,
+						});
+						ethereum.on('accountsChanged', (acct) => {
+							this.eventService.emit(
+								WalletEvents.walletAccountChanged,
+								{
+									account: this.account,
+									wallet: SupportedWallets.METAMASK,
+								},
+							);
 						});
 					}
 					this.signerOrProvider = this.provider;

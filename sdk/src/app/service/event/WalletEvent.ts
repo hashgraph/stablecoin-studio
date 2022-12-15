@@ -1,4 +1,4 @@
-import { Account } from '@hashgraph/hethers/lib/utils.js';
+import Account from '../../../domain/context/account/Account.js';
 import { Environment } from '../../../domain/context/network/Environment.js';
 import { SupportedWallets } from '../../../domain/context/network/Wallet.js';
 import { InitializationData } from '../../../port/out/TransactionAdapter.js';
@@ -9,6 +9,7 @@ export enum WalletEvents {
 	walletPaired = 'walletPaired',
 	walletConnectionStatusChanged = 'walletConnectionStatusChanged',
 	walletAcknowledgeMessage = 'walletAcknowledgeMessage',
+	walletAccountChanged = 'walletAccountChanged',
 	walletDisconnect = 'walletDisconnect',
 }
 
