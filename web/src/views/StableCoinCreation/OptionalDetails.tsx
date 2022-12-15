@@ -1,5 +1,6 @@
 import { Heading, Stack, VStack } from '@chakra-ui/react';
 import type { CreateRequest } from 'hedera-stable-coin-sdk';
+import { TokenSupplyType } from 'hedera-stable-coin-sdk';
 import type { Control, FieldValues, UseFormReturn } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import InputController from '../../components/Form/InputController';
@@ -50,6 +51,7 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 	};
 
 	const isSupplyTypeFinite = form.getValues().supplyType?.value === 1;
+	request.supplyType = isSupplyTypeFinite ? TokenSupplyType.FINITE: TokenSupplyType.INFINITE;
 
 	const handleResetMaxSupply = () => {
 		const { maxSupply, initialSupply } = form.getValues();

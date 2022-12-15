@@ -85,7 +85,7 @@ class StableCoinInPort implements IStableCoinInPort {
 
 	async create(req: CreateRequest): Promise<StableCoinViewModel> {
 		const validation = req.validate();
-		if (validation.length > 0) throw new Error('validation error');
+		if (validation.length > 0) throw new Error('validation error : ' + JSON.stringify(validation));
 
 		const { stableCoinFactory, hederaERC20 } = req;
 
