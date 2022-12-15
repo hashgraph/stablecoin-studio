@@ -33,7 +33,7 @@ abstract contract Freezable is IFreezable, TokenOwner, Roles {
      */
     function unfreeze(address account)
         external       
-        onlyRole(FREEZE_ROLE)  
+        onlyRole(_getRoleId(roleName.FREEZE))  
         returns (bool)
     {         
         int256 responseCode = IHederaTokenService(precompileAddress).unfreezeToken(_getTokenAddress(), account);
