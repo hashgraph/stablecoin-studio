@@ -73,6 +73,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 			},
 		};
 		this.eventService.emit(WalletEvents.walletInit, eventData);
+		console.log(this.initData.savedPairings);
 		if (this.initData.savedPairings.length > 0) {
 			this.account = new Account({
 				id: this.initData.savedPairings[0].accountIds[0],
@@ -83,9 +84,26 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 				network: this.networkService.environment,
 				wallet: SupportedWallets.HASHPACK,
 			});
+			this.setSigner();
 		}
 		LogService.logTrace('HashPack Initialized ', eventData);
 		return this.networkService.environment;
+	}
+
+	private async setSigner(): Promise<void> {
+		this.hashConnectSigner = await this.hc.getSignerWithAccountKey(
+			this.hc.getProvider(
+				this.networkService.environment as
+					| 'testnet'
+					| 'previewnet'
+					| 'mainnet',
+				this.initData.topic,
+				this.account.id.toString(),
+			),
+		);
+		this.signer = this.hashConnectSigner
+		await this.getAccountKey();
+		console.log(this.signer);
 	}
 
 	async register(): Promise<InitializationData> {
@@ -94,12 +112,27 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 		const savedPairing = this.filterAccountIdFromPairingData(
 			this.initData.savedPairings,
 		);
+		console.log('parings', this.initData);
 		if (!this.account || !savedPairing) {
 			LogService.logTrace('Asking for new pairing', {
 				account: this.account,
 				savedPairing,
 			});
 			this.hc.connectToLocalWallet();
+		} else if (
+			this.account &&
+			savedPairing &&
+			this.account.id.toString() === savedPairing
+		) {
+			this.eventService.emit(WalletEvents.walletPaired, {
+				wallet: SupportedWallets.HASHPACK,
+				data: {
+					account: this.account,
+					pairing: this.initData.pairingString,
+					topic: this.initData.topic,
+				},
+				network: this.networkService.environment,
+			});
 		}
 		return Promise.resolve({
 			name: SupportedWallets.HASHPACK,
@@ -131,7 +164,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 	): Promise<TransactionResponse> {
 		if (!this.signer) throw new SigningError('Signer is empty');
 		try {
-			await this.getAccountKey(); // Ensure we have the public key
+			console.log(await this.getAccountKey()); // Ensure we have the public key)
 			let signedT = t;
 			if (!t.isFrozen()) {
 				signedT = await t.freezeWithSigner(this.signer);
@@ -143,7 +176,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 					topic: this.topic,
 					byteArray: trx.toBytes(),
 					metadata: {
-						accountToSign: this.signer.getAccountId().toString(),
+						accountToSign: this.account.id.toString(),
 						returnTransaction: false,
 						getRecord: true,
 					},
@@ -162,7 +195,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 	}
 
 	async getAccountKey(): Promise<HPublicKey> {
-		if (this.hashConnectSigner.getAccountKey) {
+		if (this.hashConnectSigner?.getAccountKey) {
 			return this.hashConnectSigner.getAccountKey();
 		}
 		this.hashConnectSigner = await this.hc.getSignerWithAccountKey(
@@ -205,6 +238,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 					this.account = new Account({
 						id: this.pairingData.accountIds[0],
 					});
+					this.setSigner();
 					this.eventService.emit(WalletEvents.walletPaired, {
 						wallet: SupportedWallets.HASHPACK,
 						data: {

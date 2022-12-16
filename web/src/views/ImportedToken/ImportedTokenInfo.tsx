@@ -6,7 +6,7 @@ import InputController from '../../components/Form/InputController';
 import { SelectController } from '../../components/Form/SelectController';
 import SwitchController from '../../components/Form/SwitchController';
 import { validateAccount } from '../../utils/validationsHelper';
-import { roleExternalTokens } from '../Roles/constants';
+import { roleOptions } from '../Roles/constants';
 
 const styles = {
 	menuList: {
@@ -90,7 +90,7 @@ const ImportedTokenInfo = (props: ImportedTokenInfoProps) => {
 							name={'roles'}
 							label={'Roles'}
 							placeholder={t('externalTokenInfo:externalTokenInfo.rolesPlaceholder')}
-							options={roleExternalTokens}
+							options={roleOptions}
 							addonLeft={true}
 							variant='unstyled'
 							overrideStyles={styles}

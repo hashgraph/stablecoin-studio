@@ -16,8 +16,8 @@ import type { IExternalToken } from '../../interfaces/IExternalToken';
 // import type { AppDispatch } from '../../store/store.js';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useRefreshCoinInfo } from '../../hooks/useRefreshCoinInfo';
-import type { StableCoinCapabilities} from 'hedera-stable-coin-sdk';
-import { Operation, StableCoinRole } from 'hedera-stable-coin-sdk';
+import { Access, Operation, StableCoinRole } from 'hedera-stable-coin-sdk';
+import type { StableCoinCapabilities } from 'hedera-stable-coin-sdk';
 
 const Operations = () => {
 	const { t } = useTranslation('operations');
@@ -68,37 +68,51 @@ const Operations = () => {
 				}
 			}
 		}
+
+		function getAccessByOperation(operation: Operation): Access | undefined {
+			return capabilities?.capabilities.filter((capability) => {
+				return (capability.operation === operation);
+			})[0].access ?? undefined;
+		}
+
 		const operations = capabilities?.capabilities.map((x) => x.operation);
 		const areDisabled = {
 			cashIn: !isExternalToken
 				? !operations?.includes(Operation.CASH_IN)
 				: (!operations?.includes(Operation.CASH_IN) ||
-				  (operations?.includes(Operation.CASH_IN) && !roles.includes(StableCoinRole.CASHIN_ROLE))),
+				  (operations?.includes(Operation.CASH_IN) && ((getAccessByOperation(Operation.CASH_IN) !== Access.HTS) && 
+				  !roles.includes(StableCoinRole.CASHIN_ROLE)))),
 			burn: !isExternalToken
 				? !operations?.includes(Operation.BURN)
 				: (!operations?.includes(Operation.BURN) ||
-				(operations?.includes(Operation.BURN) && !roles.includes(StableCoinRole.BURN_ROLE))),
+				(operations?.includes(Operation.BURN) && ((getAccessByOperation(Operation.BURN) !== Access.HTS) &&
+				!roles.includes(StableCoinRole.BURN_ROLE)))),
 			balance: false,
 			rescue: !isExternalToken
 				? !operations?.includes(Operation.RESCUE)
 				: (!operations?.includes(Operation.RESCUE) ||
-				(operations?.includes(Operation.RESCUE) && !roles.includes(StableCoinRole.RESCUE_ROLE))),
+				(operations?.includes(Operation.RESCUE) && ((getAccessByOperation(Operation.RESCUE) !== Access.HTS) && 
+				!roles.includes(StableCoinRole.RESCUE_ROLE)))),
 			wipe: !isExternalToken
 				? !operations?.includes(Operation.WIPE)
 				: (!operations?.includes(Operation.WIPE) ||
-				(operations?.includes(Operation.WIPE) && !roles.includes(StableCoinRole.WIPE_ROLE))),
+				(operations?.includes(Operation.WIPE) && ((getAccessByOperation(Operation.WIPE) !== Access.HTS) && 
+				!roles.includes(StableCoinRole.WIPE_ROLE)))),
 			freeze: !isExternalToken
 				? !operations?.includes(Operation.FREEZE)
 				: (!operations?.includes(Operation.FREEZE) ||
-				(operations?.includes(Operation.FREEZE) && !roles.includes(StableCoinRole.FREEZE_ROLE))),
+				(operations?.includes(Operation.FREEZE) && ((getAccessByOperation(Operation.FREEZE) !== Access.HTS) &&
+				!roles.includes(StableCoinRole.FREEZE_ROLE)))),
 			pause: !isExternalToken
 				? !operations?.includes(Operation.PAUSE)
 				: (!operations?.includes(Operation.PAUSE) ||
-				(operations?.includes(Operation.PAUSE) && !roles.includes(StableCoinRole.PAUSE_ROLE))),
+				(operations?.includes(Operation.PAUSE) && ((getAccessByOperation(Operation.PAUSE) !== Access.HTS) &&
+				!roles.includes(StableCoinRole.PAUSE_ROLE)))),
 			delete: !isExternalToken
 				? !operations?.includes(Operation.DELETE)
 				: (!operations?.includes(Operation.DELETE) ||
-				(operations?.includes(Operation.DELETE) && !roles.includes(StableCoinRole.DELETE_ROLE))),
+				(operations?.includes(Operation.DELETE) && ((getAccessByOperation(Operation.DELETE) !== Access.HTS) && 
+				!roles.includes(StableCoinRole.DELETE_ROLE)))),
 		};
 		setDisabledFeatures(areDisabled);
 	};

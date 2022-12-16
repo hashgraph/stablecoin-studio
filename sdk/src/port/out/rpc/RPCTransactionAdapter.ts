@@ -722,7 +722,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 							wallet: SupportedWallets.METAMASK,
 						});
 					}
-					this.signerOrProvider = this.provider;
+					this.signerOrProvider = new ethers.providers.Web3Provider(
+						// @ts-expect-error No TS compatibility
+						ethereum
+					).getSigner();
 					return this.account;
 				} else {
 					throw new WalletConnectError('Metamask was not found!');

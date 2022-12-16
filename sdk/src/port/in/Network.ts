@@ -15,8 +15,6 @@ import InitializationRequest from './request/InitializationRequest.js';
 import Event, { WalletEvents } from './Event.js';
 import RPCTransactionAdapter from '../out/rpc/RPCTransactionAdapter.js';
 import { HashpackTransactionAdapter } from '../out/hs/hashpack/HashpackTransactionAdapter.js';
-import { SelectWalletRequest } from './request/index.js';
-import { SelectWalletCommand } from '../../app/usecase/command/network/chooseWallet/SelectWalletCommand.js';
 
 export { InitializationData, SupportedWallets };
 
@@ -57,13 +55,6 @@ class NetworkInPort implements INetworkInPort {
 			),
 		);
 		return res;
-	}
-
-	async selectWallet(req: SelectWalletRequest): Promise<SupportedWallets> {
-		const res = await this.commandBus.execute(
-			new SelectWalletCommand(req.network, req.wallet),
-		);
-		return res.walletType;
 	}
 
 	async init(req: InitializationRequest): Promise<SupportedWallets[]> {

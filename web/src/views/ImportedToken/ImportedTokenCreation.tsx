@@ -130,7 +130,7 @@ const ImportedTokenCreation = () => {
 							roles: autoCheckRoles
 								? checkRoles
 								: roles
-								? roles.map((role: IRole) => role.label)
+								? roles.map((role: IRole) => role.value)
 								: [],
 					  })
 					: tokensAccountParsed.push({
@@ -142,7 +142,7 @@ const ImportedTokenCreation = () => {
 									roles: autoCheckRoles
 										? checkRoles
 										: roles
-										? roles.map((role: IRole) => role.label)
+										? roles.map((role: IRole) => role.value)
 										: [],
 								},
 							],
@@ -161,7 +161,7 @@ const ImportedTokenCreation = () => {
 									roles: autoCheckRoles
 										? checkRoles
 										: roles
-										? roles.map((role: IRole) => role.label)
+										? roles.map((role: IRole) => role.value)
 										: [],
 								},
 							],

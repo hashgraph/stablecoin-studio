@@ -47,7 +47,7 @@
         "modalSuccessTitle": "Role revoked successfully",
         "modalErrorTitle": "Error revoking the role",
         "modalErrorDescription": "Please try again later.",
-        "hasNotRoleError": "This account has not the provided role",
+        "hasNotRoleError": "This account does not have the provided role",
         "selectLabel": "Select role to revoke",
         "selectPlaceholder": "Select role to revoke",
         "supplierQuantityInputPlaceholder": "",

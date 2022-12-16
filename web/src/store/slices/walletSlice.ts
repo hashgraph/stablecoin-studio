@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { GetListStableCoinRequest } from 'hedera-stable-coin-sdk';
+import { ConnectionState, GetListStableCoinRequest } from 'hedera-stable-coin-sdk';
 import SDKService from '../../services/SDKService';
 import type { RootState } from '../store';
 import type { IExternalToken } from '../../interfaces/IExternalToken';
@@ -24,8 +24,8 @@ interface InitialStateProps {
 	stableCoinList?: StableCoinListViewModel;
 	externalTokenList?: IExternalToken[];
 	capabilities?: StableCoinCapabilities | undefined;
-	selectedWallet?: SupportedWallets;
 	lastWallet?: SupportedWallets;
+	status: ConnectionState;
 }
 
 export const initialState: InitialStateProps = {
@@ -38,8 +38,8 @@ export const initialState: InitialStateProps = {
 	stableCoinList: undefined,
 	externalTokenList: [],
 	capabilities: undefined,
-	selectedWallet: undefined,
 	lastWallet: (localStorage?.getItem('lastWallet') as SupportedWallets) ?? undefined,
+	status: ConnectionState.Disconnected,
 };
 
 export const getStableCoinList = createAsyncThunk(
@@ -86,10 +86,9 @@ export const walletSlice = createSlice({
 	name: 'wallet',
 	initialState,
 	reducers: {
-		setSelectedWallet: (state, action) => {
-			state.selectedWallet = action.payload;
+		setLastWallet: (state, action) => {
+			state.lastWallet = action.payload;
 			localStorage?.setItem('lastWallet', action.payload);
-			SDKService.selectWallet(action?.payload);
 		},
 		setData: (state, action) => {
 			state.data = action.payload;
@@ -116,12 +115,15 @@ export const walletSlice = createSlice({
 		setAccountInfo: (state, action) => {
 			state.accountInfo = action.payload;
 		},
+		setStatus: (state, action) => {
+			state.status = action.payload;
+		},
 		clearData: (state) => {
 			state.data = initialState.data;
-			state.selectedWallet = undefined;
 			state.lastWallet = undefined;
 			state.accountInfo = initialState.accountInfo;
 			state.capabilities = initialState.capabilities;
+			state.status = ConnectionState.Disconnected;
 			localStorage?.removeItem(LAST_WALLET_LS);
 		},
 		clearSelectedStableCoin: (state) => {
@@ -146,7 +148,6 @@ export const walletSlice = createSlice({
 export const SELECTED_WALLET = (state: RootState) => state.wallet;
 export const STABLE_COIN_LIST = (state: RootState) => state.wallet.stableCoinList;
 export const AVAILABLE_WALLETS = (state: RootState) => state.wallet.foundWallets;
-export const SELECTED_WALLET_TYPE = (state: RootState) => state.wallet.selectedWallet;
 export const EXTERNAL_TOKEN_LIST = (state: RootState) => state.wallet.externalTokenList;
 export const SELECTED_WALLET_DATA = (state: RootState) => state.wallet.data;
 export const SELECTED_WALLET_COIN = (state: RootState) => state.wallet.selectedStableCoin;
@@ -155,6 +156,7 @@ export const SELECTED_WALLET_CAPABILITIES = (state: RootState) => state.wallet.c
 export const SELECTED_WALLET_ACCOUNT_INFO = (state: RootState) => state.wallet.accountInfo;
 export const HAS_WALLET_EXTENSION = (state: RootState) => state.wallet.hasWalletExtension;
 export const LAST_WALLET_SELECTED = (state: RootState) => state.wallet.lastWallet;
+export const SELECTED_WALLET_STATUS = (state: RootState) => state.wallet.status;
 export const SELECTED_WALLET_PAIRED_ACCOUNTID = (state: RootState) =>
 	state.wallet.data?.account?.id;
 export const SELECTED_WALLET_PAIRED_ACCOUNT = (state: RootState) => ({

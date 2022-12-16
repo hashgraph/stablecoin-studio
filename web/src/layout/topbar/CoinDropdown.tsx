@@ -93,8 +93,6 @@ const CoinDropdown = () => {
 				evmAddress: accountInfo.accountEvmAddress,
 			},
 		});
-
-		console.log('Capabilities', capabilities);
 		dispatch(walletActions.setCapabilities(capabilities));
 	};
 
