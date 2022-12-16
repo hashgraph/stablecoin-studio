@@ -11,7 +11,11 @@ import type { Detail } from '../../components/DetailsReview';
 import type { ModalsHandlerActionsProps } from '../../components/ModalsHandler';
 import SDKService from '../../services/SDKService';
 import { useSelector } from 'react-redux';
-import { SELECTED_WALLET_COIN, SELECTED_WALLET_CAPABILITIES } from '../../store/slices/walletSlice';
+import { 
+	SELECTED_WALLET_COIN,
+	SELECTED_WALLET_CAPABILITIES,
+	SELECTED_WALLET_PAIRED_ACCOUNTID
+} from '../../store/slices/walletSlice';
 import { SelectController } from '../../components/Form/SelectController';
 import { formatAmountWithDecimals } from '../../utils/inputHelper';
 import {
@@ -25,10 +29,14 @@ import {
 	RevokeRoleRequest,
 	Operation,
 	Access,
+	GetRolesRequest,
 } from 'hedera-stable-coin-sdk';
 import InputController from '../../components/Form/InputController';
 import { handleRequestValidation, validateDecimalsString } from '../../utils/validationsHelper';
 import { useRefreshCoinInfo } from '../../hooks/useRefreshCoinInfo';
+import type { IExternalToken } from '../../interfaces/IExternalToken.js';
+import type  { IAccountToken } from '../../interfaces/IAccountToken.js';
+import type { IRole } from '../../interfaces/IRole.js';
 
 const supplier = 'Cash in';
 
@@ -65,6 +73,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const capabilities = useSelector(SELECTED_WALLET_CAPABILITIES);
+	const accountId = useSelector(SELECTED_WALLET_PAIRED_ACCOUNTID);
 
 	const [limit, setLimit] = useState<string | null>();
 	const [modalErrorDescription, setModalErrorDescription] =
@@ -90,6 +99,8 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 		supplierLimitOption,
 	);
 	const checkOptionSelected: boolean = ['CHECK'].includes(supplierLimitOption);
+	const askRolesToSDK = watch(fields.autoCheckRoles);
+	const roles = watch(fields.roles);
 	const role = watch(fields.role);
 	const filteredCapabilities = roleOptions.filter((option) => {
 		if (
@@ -154,8 +165,6 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 		}
 		return true;
 	});
-	// console.log(filteredCapabilities);
-	// console.log(capabilities);
 	useEffect(() => {
 		switch (action.toString()) {
 			case 'giveRole':
@@ -233,6 +242,11 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 
 			let alreadyHasRole;
 			let isUnlimitedSupplierAllowance;
+			// vars to refresh externalTokens
+			let tokensAccount;
+			let myAccount;
+			let externalTokens;
+			let externalToken;
 
 			switch (action.toString()) {
 				case 'giveRole':
@@ -347,6 +361,27 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 						}
 					}
 					break;
+
+				case 'refreshRoles':
+					tokensAccount = JSON.parse(localStorage.tokensAccount);
+					myAccount = tokensAccount.find((acc: IAccountToken) => acc.id === accountId?.value);
+					externalTokens = myAccount.externalTokens;
+					externalToken = externalTokens.find(
+						(coin: IExternalToken) => coin.id === selectedStableCoin.tokenId?.toString(),
+					);
+
+					if (askRolesToSDK) {
+						externalToken.roles = await SDKService.getRoles(
+							new GetRolesRequest({
+								targetId: account,
+								tokenId: selectedStableCoin.tokenId.toString()
+							})
+						);
+					} else {
+						externalToken.roles = roles.map((role: IRole) => role.value);
+					}
+					localStorage.setItem('tokensAccount', JSON.stringify(tokensAccount));
+					break;					
 			}
 			onSuccess();
 		} catch (error: any) {
@@ -491,7 +526,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 			},
 		];
 		if (action === actions.refresh) {
-			details = [];
+			details = [];				
 		} else if (action !== actions.edit) {
 			const value = role?.label;
 			const roleAction: Detail = {
