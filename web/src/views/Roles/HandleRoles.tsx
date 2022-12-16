@@ -6,7 +6,7 @@ import RoleLayout from './RoleLayout';
 import ModalsHandler from '../../components/ModalsHandler';
 import DetailsReview from '../../components/DetailsReview';
 import SwitchController from '../../components/Form/SwitchController';
-import { roleOptions, cashinLimitOptions, fields, actions, roleExternalTokens } from './constants';
+import { roleOptions, cashinLimitOptions, fields, actions } from './constants';
 import type { Detail } from '../../components/DetailsReview';
 import type { ModalsHandlerActionsProps } from '../../components/ModalsHandler';
 import SDKService from '../../services/SDKService';
@@ -507,7 +507,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 						name={fields.roles}
 						label={'Roles'}
 						placeholder={t('externalTokenInfo:externalTokenInfo.rolesPlaceholder')}
-						options={roleExternalTokens}
+						options={roleOptions}
 						addonLeft={true}
 						variant='unstyled'
 						overrideStyles={styles}
