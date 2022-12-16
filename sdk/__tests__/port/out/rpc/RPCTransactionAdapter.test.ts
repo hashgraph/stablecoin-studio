@@ -24,8 +24,9 @@ import {
 	FactoryAddressTestnet,
 	TokenSupplyType,
 } from '../../../../src/port/in/StableCoin.js';
+import { CLIENT_ACCOUNT_ECDSA } from '../../../config.js';
+import Account from '../../../../src/domain/context/account/Account.js';
 
-const evmAddress = '0x320d33046b60dbc5a027cfb7e4124f75b0417240';
 const clientPrivateKey =
 	'1404d4a4a67fb21e7181d147bfdaa7c9b55ebeb7e1a9048bf18d5da6e169c09c';
 
@@ -89,10 +90,8 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 		);
 		const mirrorNodeAdapter = Injectable.resolve(MirrorNodeAdapter);
 		mirrorNodeAdapter.setEnvironment('testnet');
-	});
 
-	it('create coin and assign to SC', async () => {
-		const coin = new StableCoin({
+		const coinSC = new StableCoin({
 			name: 'TestCoinSC',
 			symbol: 'TCSC',
 			decimals: 6,
@@ -104,15 +103,16 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 			wipeKey: PublicKey.NULL,
 			pauseKey: PublicKey.NULL,
 			supplyKey: PublicKey.NULL,
-			autoRenewAccount: accountFromAEvmAddress.id,
+			autoRenewAccount: CLIENT_ACCOUNT_ECDSA.id,
 			supplyType: TokenSupplyType.INFINITE,
 		});
 		tr = await th.create(
-			coin,
+			coinSC,
 			new ContractId(FactoryAddressTestnet),
 			new ContractId(HederaERC20AddressTestnet),
 		);
-	}, 1500000);
+		console.log(tr);
+	});
 
 	it('create coin and assign to account', async () => {
 		const coin = new StableCoin({
@@ -122,13 +122,13 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 			initialSupply: BigDecimal.fromString('1.60', 6),
 			maxSupply: BigDecimal.fromString('1000', 6),
 			freezeDefault: false,
-			adminKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ECDSA'),
-			freezeKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ECDSA'),
-			kycKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ECDSA'),
-			wipeKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ECDSA'),
-			pauseKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ECDSA'),
-			supplyKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ECDSA'),
-			autoRenewAccount: accountFromAEvmAddress.id,
+			adminKey: Account.NULL.publicKey,
+			freezeKey: CLIENT_ACCOUNT_ECDSA.publicKey,
+			kycKey: CLIENT_ACCOUNT_ECDSA.publicKey,
+			wipeKey: CLIENT_ACCOUNT_ECDSA.publicKey,
+			pauseKey: CLIENT_ACCOUNT_ECDSA.publicKey,
+			supplyKey: CLIENT_ACCOUNT_ECDSA.publicKey,
+			autoRenewAccount: CLIENT_ACCOUNT_ECDSA.id,
 			supplyType: TokenSupplyType.FINITE,
 		});
 		tr = await th.create(
@@ -141,7 +141,7 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	it('Test hasRole', async () => {
 		tr = await th.hasRole(
 			stableCoinCapabilitiesSC,
-			HederaId.from('0.0.48471385'),
+			CLIENT_ACCOUNT_ECDSA.id,
 			StableCoinRole.CASHIN_ROLE,
 		);
 		expect(typeof tr.response === 'boolean').toBeTruthy();
@@ -150,7 +150,7 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	it('Test mint', async () => {
 		tr = await th.cashin(
 			stableCoinCapabilitiesSC,
-			TARGET_ID,
+			CLIENT_ACCOUNT_ECDSA.id,
 			BigDecimal.fromString(
 				'0.5',
 				stableCoinCapabilitiesSC.coin.decimals,
@@ -174,7 +174,7 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	it('Test mint HTS', async () => {
 		tr = await th.cashin(
 			stableCoinCapabilitiesHTS,
-			TARGET_ID,
+			CLIENT_ACCOUNT_ECDSA.id,
 			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
 		);
 	}, 1500000);
@@ -192,11 +192,14 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	// });
 
 	it('Test freeze', async () => {
-		tr = await th.freeze(stableCoinCapabilitiesSC, TARGET_ID);
+		tr = await th.freeze(stableCoinCapabilitiesSC, CLIENT_ACCOUNT_ECDSA.id);
 	}, 1500000);
 
 	it('Test unfreeze', async () => {
-		tr = await th.unfreeze(stableCoinCapabilitiesSC, TARGET_ID);
+		tr = await th.unfreeze(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ECDSA.id,
+		);
 	}, 1500000);
 
 	it('Test pause', async () => {
@@ -221,7 +224,7 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	it('Test revokeRole', async () => {
 		tr = await th.revokeRole(
 			stableCoinCapabilitiesSC,
-			TARGET_ID,
+			CLIENT_ACCOUNT_ECDSA.id,
 			StableCoinRole.WIPE_ROLE,
 		);
 	}, 1500000);
@@ -229,7 +232,7 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	it('Test grantRole', async () => {
 		tr = await th.grantRole(
 			stableCoinCapabilitiesSC,
-			TARGET_ID,
+			CLIENT_ACCOUNT_ECDSA.id,
 			StableCoinRole.WIPE_ROLE,
 		);
 	}, 1500000);
@@ -242,13 +245,16 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 
 		tr = await th.grantSupplierRole(
 			stableCoinCapabilitiesSC,
-			TARGET_ID,
+			CLIENT_ACCOUNT_ECDSA.id,
 			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
 		);
 	}, 1500000);
 
 	it('Test revokeSupplierRole', async () => {
-		tr = await th.revokeSupplierRole(stableCoinCapabilitiesSC, TARGET_ID);
+		tr = await th.revokeSupplierRole(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ECDSA.id,
+		);
 	}, 1500000);
 
 	it('Test grantUnlimitedSupplierRole', async () => {
@@ -261,7 +267,7 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	it('Test hasRole (2)', async () => {
 		tr = await th.hasRole(
 			stableCoinCapabilitiesSC,
-			TARGET_ID,
+			CLIENT_ACCOUNT_ECDSA.id,
 			StableCoinRole.CASHIN_ROLE,
 		);
 		expect(typeof tr.response === 'boolean').toBeTruthy();
@@ -277,7 +283,7 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	it('Test isUnlimitedSupplierAllowance', async () => {
 		tr = await th.isUnlimitedSupplierAllowance(
 			stableCoinCapabilitiesSC,
-			TARGET_ID,
+			CLIENT_ACCOUNT_ECDSA.id,
 		);
 	}, 1500000);
 
@@ -291,14 +297,14 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	it('Test resetSupplierAllowance', async () => {
 		tr = await th.resetSupplierAllowance(
 			stableCoinCapabilitiesSC,
-			TARGET_ID,
+			CLIENT_ACCOUNT_ECDSA.id,
 		);
 	}, 1500000);
 
 	it('Test increaseSupplierAllowance', async () => {
 		tr = await th.increaseSupplierAllowance(
 			stableCoinCapabilitiesSC,
-			TARGET_ID,
+			CLIENT_ACCOUNT_ECDSA.id,
 			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
 		);
 	}, 1500000);
@@ -306,13 +312,16 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	it('Test decreaseSupplierAllowance', async () => {
 		tr = await th.decreaseSupplierAllowance(
 			stableCoinCapabilitiesSC,
-			TARGET_ID,
+			CLIENT_ACCOUNT_ECDSA.id,
 			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
 		);
 	}, 1500000);
 
 	it('Test getRoles', async () => {
-		tr = await th.getRoles(stableCoinCapabilitiesSC, TARGET_ID);
+		tr = await th.getRoles(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ECDSA.id,
+		);
 	}, 1500000);
 
 	it('Test dissociateToken', async () => {
