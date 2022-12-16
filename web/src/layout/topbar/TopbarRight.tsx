@@ -17,7 +17,6 @@ const TopbarRight = () => {
 		await Network.disconnect()
 
 		dispatch(walletActions.clearData());
-		dispatch(walletActions.setSelectedStableCoin(undefined));
 		dispatch(walletActions.setStableCoinList([]));
 	};
 

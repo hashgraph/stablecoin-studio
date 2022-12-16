@@ -260,7 +260,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		);
 		return this.stableCoinService.getCapabilities(
 			new Account({
-				id: resp.account.account ?? request.account.accountId,
+				id: resp.account.id ?? request.account.accountId,
 				publicKey: resp.account.publicKey,
 			}),
 			HederaId.from(request.tokenId),

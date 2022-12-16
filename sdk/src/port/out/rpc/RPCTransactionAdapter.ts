@@ -45,6 +45,7 @@ import EventService from '../../../app/service/event/EventService.js';
 import { WalletEvents } from '../../../app/service/event/WalletEvent.js';
 import { SupportedWallets } from '../../../domain/context/network/Wallet.js';
 import { RPCTransactionResponseAdapter } from './RPCTransactionResponseAdapter.js';
+import LogService from '../../../app/service/LogService.js';
 
 // eslint-disable-next-line no-var
 declare var ethereum: MetaMaskInpageProvider;
@@ -64,6 +65,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		private readonly eventService: EventService,
 	) {
 		super();
+		this.registerMetamaskEvents();
 	}
 	public async create(
 		coin: StableCoinProps,
@@ -175,15 +177,17 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		this.provider = new ethers.providers.JsonRpcProvider(
 			`https://${this.networkService.environment.toString()}.hashio.io/api`,
 		);
-		this.eventService.emit(WalletEvents.walletInit, {
+		const eventData = {
 			initData: {
 				account: this.account,
 				pairing: '',
 				topic: '',
 			},
 			wallet: SupportedWallets.METAMASK,
-		});
+		};
+		this.eventService.emit(WalletEvents.walletInit, eventData);
 		!debug && this.connectMetamask();
+		LogService.logTrace('Metamask Initialized ', eventData);
 
 		return this.networkService.environment;
 	}
@@ -201,6 +205,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		}
 		!debug && this.connectMetamask();
 		Injectable.registerTransactionHandler(this);
+		LogService.logTrace('Metamask Registered as handler');
 		return Promise.resolve({ account });
 	}
 
@@ -681,6 +686,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		try {
 			const ethProvider = await detectEthereumProvider();
 			if (ethProvider) {
+				this.eventService.emit(WalletEvents.walletFound, {
+					wallet: SupportedWallets.METAMASK,
+					name: SupportedWallets.METAMASK,
+				});
 				if (ethProvider.isMetaMask) {
 					if (!ethereum.isConnected())
 						throw new WalletConnectError(
@@ -695,11 +704,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 							await this.mirrorNodeAdapter.getAccountInfo(
 								evmAddress,
 							);
-						if (!mirrorAccount.account) {
+						if (!mirrorAccount.id) {
 							throw new WalletConnectError('Invalid account!');
 						}
 						this.account = new Account({
-							id: mirrorAccount.account,
+							id: mirrorAccount.id,
 							evmAddress: mirrorAccount.accountEvmAddress,
 							publicKey: mirrorAccount.publicKey,
 						});
@@ -711,15 +720,6 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 							},
 							network: this.networkService.environment,
 							wallet: SupportedWallets.METAMASK,
-						});
-						ethereum.on('accountsChanged', (acct) => {
-							this.eventService.emit(
-								WalletEvents.walletAccountChanged,
-								{
-									account: this.account,
-									wallet: SupportedWallets.METAMASK,
-								},
-							);
 						});
 					}
 					this.signerOrProvider = this.provider;
@@ -739,6 +739,31 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			}
 			throw new RuntimeError((error as Error).message);
 		}
+	}
+
+	private registerMetamaskEvents(): void {
+		if (!ethereum) return;
+		ethereum.on('accountsChanged', async (acct) => {
+			const accounts = acct as string[];
+			if (
+				accounts.length > 0 &&
+				accounts[0] !== this.account.evmAddress
+			) {
+				const mirrorAccount =
+					await this.mirrorNodeAdapter.getAccountInfo(accounts[0]);
+				if (mirrorAccount.id) {
+					this.account = new Account({
+						id: mirrorAccount.id,
+						evmAddress: mirrorAccount.accountEvmAddress,
+						publicKey: mirrorAccount.publicKey,
+					});
+				}
+			}
+			this.eventService.emit(WalletEvents.walletAccountChanged, {
+				account: this.account,
+				wallet: SupportedWallets.METAMASK,
+			});
+		});
 	}
 
 	async performOperation(

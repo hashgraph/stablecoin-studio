@@ -68,14 +68,14 @@ const Router = () => {
 			console.log('Paring...', lastWallet, event.wallet, selectedWallet);
 			if (lastWallet && lastWallet === event.wallet) {
 				dispatch(walletActions.setSelectedWallet(event.wallet));
-				SDKService.selectWallet(event.wallet);
+				setStatus(ConnectionState.Paired);
 			}
 		}
-		setStatus(ConnectionState.Paired);
 	};
 
-	const walletConnectionStatusChanged = (newStatus: any) => {
-		console.log(newStatus);
+	const walletConnectionStatusChanged = (
+		newStatus: EventParameter<'walletConnectionStatusChanged'>,
+	) => {
 		setStatus(newStatus.status);
 	};
 

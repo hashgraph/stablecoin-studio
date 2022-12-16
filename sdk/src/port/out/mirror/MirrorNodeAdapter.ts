@@ -175,7 +175,7 @@ export class MirrorNodeAdapter {
 			);
 
 			const account: AccountViewModel = {
-				account: res.data.account.toString(),
+				id: res.data.account.toString(),
 				accountEvmAddress: res.data.evm_address,
 				publicKey: new PublicKey({
 					key: res.data.key.key,
