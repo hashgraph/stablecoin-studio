@@ -712,6 +712,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 							evmAddress: mirrorAccount.accountEvmAddress,
 							publicKey: mirrorAccount.publicKey,
 						});
+						console.log('sajdijasidoas')
 						this.eventService.emit(WalletEvents.walletPaired, {
 							data: {
 								account: this.account,

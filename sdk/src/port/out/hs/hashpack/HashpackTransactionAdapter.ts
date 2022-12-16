@@ -73,6 +73,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 			},
 		};
 		this.eventService.emit(WalletEvents.walletInit, eventData);
+		console.log(this.initData.savedPairings);
 		if (this.initData.savedPairings.length > 0) {
 			this.account = new Account({
 				id: this.initData.savedPairings[0].accountIds[0],
@@ -109,12 +110,27 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 		const savedPairing = this.filterAccountIdFromPairingData(
 			this.initData.savedPairings,
 		);
+		console.log('parings', this.initData);
 		if (!this.account || !savedPairing) {
 			LogService.logTrace('Asking for new pairing', {
 				account: this.account,
 				savedPairing,
 			});
 			this.hc.connectToLocalWallet();
+		} else if (
+			this.account &&
+			savedPairing &&
+			this.account.id.toString() === savedPairing
+		) {
+			this.eventService.emit(WalletEvents.walletPaired, {
+				wallet: SupportedWallets.HASHPACK,
+				data: {
+					account: this.account,
+					pairing: this.initData.pairingString,
+					topic: this.initData.topic,
+				},
+				network: this.networkService.environment,
+			});
 		}
 		return Promise.resolve({
 			name: SupportedWallets.HASHPACK,

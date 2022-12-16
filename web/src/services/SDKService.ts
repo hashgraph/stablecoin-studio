@@ -76,14 +76,16 @@ export class SDKService {
 		}
 	}
 
-	public static async init(events: Partial<WalletEvent>) {
+	public static async init(events: Partial<WalletEvent>, lastWallet?: SupportedWallets) {
 		try {
-			return await Network.init(
+			const init = await Network.init(
 				new InitializationRequest({
 					network: 'testnet',
 					events,
 				}),
 			);
+			if (lastWallet) await this.connectWallet(lastWallet);
+			return init;
 		} catch (error) {
 			console.error(error);
 		}

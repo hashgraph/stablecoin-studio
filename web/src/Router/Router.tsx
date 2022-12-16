@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Navigate, Route, Routes, Outlet } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Flex, Spinner } from '@chakra-ui/react';
@@ -21,11 +21,11 @@ import StableCoinCreation from '../views/StableCoinCreation/StableCoinCreation';
 import StableCoinNotSelected from '../views/ErrorPage/StableCoinNotSelected';
 import SDKService from '../services/SDKService';
 import StableCoinDetails from '../views/StableCoinDetails';
-import { hashpackActions } from '../store/slices/hashpackSlice';
 import {
 	AVAILABLE_WALLETS,
 	LAST_WALLET_SELECTED,
 	SELECTED_WALLET_COIN,
+	SELECTED_WALLET_STATUS,
 	walletActions,
 } from '../store/slices/walletSlice';
 import ImportedTokenCreation from '../views/ImportedToken/ImportedTokenCreation';
@@ -42,13 +42,13 @@ const OnboardingRoute = ({ allow }: { allow: boolean }) => {
 };
 
 const Router = () => {
-	const [status, setStatus] = useState<ConnectionState>();
 
 	const dispatch = useDispatch();
 
 	const availableWallets = useSelector(AVAILABLE_WALLETS);
 	const selectedWalletCoin = !!useSelector(SELECTED_WALLET_COIN);
 	const lastWallet = useSelector(LAST_WALLET_SELECTED);
+	const status = useSelector(SELECTED_WALLET_STATUS);
 
 	useEffect(() => {
 		instanceSDK();
@@ -56,7 +56,7 @@ const Router = () => {
 
 	useEffect(() => {
 		if (!status) return;
-		dispatch(hashpackActions.setStatus(status));
+		dispatch(walletActions.setStatus(status));
 	}, [status]);
 
 	const walletPaired = (event: EventParameter<'walletPaired'>) => {
@@ -65,8 +65,7 @@ const Router = () => {
 			dispatch(walletActions.setData(event.data));
 			console.log('Paring...', lastWallet, event.wallet);
 			if (lastWallet && lastWallet === event.wallet) {
-				dispatch(walletActions.setSelectedWallet(event.wallet));
-				setStatus(ConnectionState.Paired);
+				dispatch(walletActions.setStatus(ConnectionState.Paired));
 			}
 		}
 	};
@@ -74,7 +73,7 @@ const Router = () => {
 	const walletConnectionStatusChanged = (
 		newStatus: EventParameter<'walletConnectionStatusChanged'>,
 	) => {
-		setStatus(newStatus.status);
+		dispatch(walletActions.setStatus(newStatus.status));
 	};
 
 	const walletFound = (event: EventParameter<'walletFound'>) => {
@@ -84,9 +83,9 @@ const Router = () => {
 	};
 
 	const walletAccountChanged = (event: EventParameter<'walletAccountChanged'>) => {
-		if (event) {
+		if (event && event.wallet === lastWallet) {
 			dispatch(walletActions.setAccount(event.account));
-			dispatch(walletActions.setSelectedWallet(event.wallet));
+			dispatch(walletActions.setLastWallet(event.wallet));
 		}
 	};
 
@@ -101,12 +100,15 @@ const Router = () => {
 			level: process.env.REACT_APP_LOG_LEVEL ?? 'ERROR',
 			transport: new LoggerTransports.Console(),
 		};
-		await SDKService.init({
-			walletFound,
-			walletAccountChanged,
-			walletPaired,
-			walletConnectionStatusChanged,
-		});
+		await SDKService.init(
+			{
+				walletFound,
+				walletAccountChanged,
+				walletPaired,
+				walletConnectionStatusChanged,
+			},
+			lastWallet,
+		);
 	};
 
 	return (

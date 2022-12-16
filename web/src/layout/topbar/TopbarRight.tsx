@@ -1,7 +1,7 @@
 import { Box, Flex, HStack, Image, Text, VStack } from '@chakra-ui/react';
 import { useDispatch, useSelector } from 'react-redux';
 import Icon from '../../components/Icon';
-import { SELECTED_WALLET_PAIRED, SELECTED_WALLET_TYPE, walletActions } from '../../store/slices/walletSlice';
+import { LAST_WALLET_SELECTED, SELECTED_WALLET_PAIRED, walletActions } from '../../store/slices/walletSlice';
 import HEDERA_LOGO from '../../assets/png/hashpackLogo.png';
 import METAMASK_LOGO from '../../assets/svg/MetaMask_Fox.svg';
 import TooltipCopy from '../../components/TooltipCopy';
@@ -11,7 +11,7 @@ const TopbarRight = () => {
 	const dispatch = useDispatch();
 
 	const initData = useSelector(SELECTED_WALLET_PAIRED);
-	const selectedWallet = useSelector(SELECTED_WALLET_TYPE);
+	const selectedWallet = useSelector(LAST_WALLET_SELECTED);
 
 	const handleDisconnect = async () => {
 		await Network.disconnect()
