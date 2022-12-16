@@ -26,7 +26,6 @@ import {
 	AVAILABLE_WALLETS,
 	LAST_WALLET_SELECTED,
 	SELECTED_WALLET_COIN,
-	SELECTED_WALLET_TYPE,
 	walletActions,
 } from '../store/slices/walletSlice';
 import ImportedTokenCreation from '../views/ImportedToken/ImportedTokenCreation';
@@ -47,7 +46,6 @@ const Router = () => {
 
 	const dispatch = useDispatch();
 
-	const selectedWallet = useSelector(SELECTED_WALLET_TYPE);
 	const availableWallets = useSelector(AVAILABLE_WALLETS);
 	const selectedWalletCoin = !!useSelector(SELECTED_WALLET_COIN);
 	const lastWallet = useSelector(LAST_WALLET_SELECTED);
@@ -65,7 +63,7 @@ const Router = () => {
 		console.log(event);
 		if (event) {
 			dispatch(walletActions.setData(event.data));
-			console.log('Paring...', lastWallet, event.wallet, selectedWallet);
+			console.log('Paring...', lastWallet, event.wallet);
 			if (lastWallet && lastWallet === event.wallet) {
 				dispatch(walletActions.setSelectedWallet(event.wallet));
 				setStatus(ConnectionState.Paired);
@@ -118,9 +116,7 @@ const Router = () => {
 					{/* Public routes */}
 					<Route
 						element={
-							<OnboardingRoute
-								allow={Boolean(!selectedWallet || status !== ConnectionState.Paired)}
-							/>
+							<OnboardingRoute allow={Boolean(!lastWallet || status !== ConnectionState.Paired)} />
 						}
 					>
 						<Route path={RoutesMappingUrl.login} element={<Login />} />
@@ -128,7 +124,7 @@ const Router = () => {
 					{/* Private routes */}
 					<Route
 						element={
-							<PrivateRoute allow={Boolean(selectedWallet && status === ConnectionState.Paired)} />
+							<PrivateRoute allow={Boolean(lastWallet && status === ConnectionState.Paired)} />
 						}
 					>
 						{selectedWalletCoin && (

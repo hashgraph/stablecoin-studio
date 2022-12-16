@@ -36,6 +36,7 @@ export default class UtilitiesService extends Service {
   public async initSDK(): Promise<void> {
     const account = this.getCurrentAccount();
     SDK.log = configurationService.getLogConfiguration();
+    console.log(SDK.log)
     await Network.init(
       new InitializationRequest({
         network: this.getCurrentNetwork().name,

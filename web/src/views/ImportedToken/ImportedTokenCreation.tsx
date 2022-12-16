@@ -104,7 +104,7 @@ const ImportedTokenCreation = () => {
 			if (autoCheckRoles) {
 				checkRoles = await SDKService.getRoles(
 					new GetRolesRequest({
-						targetId: accountInfo && accountInfo.account ? accountInfo?.account : '',
+						targetId: accountInfo && accountInfo.id ? accountInfo?.id : '',
 						tokenId: details?.tokenId?.toString() ?? '',
 					}),
 				);
@@ -113,7 +113,7 @@ const ImportedTokenCreation = () => {
 			if (tokensAccount) {
 				const tokensAccountParsed = JSON.parse(tokensAccount);
 				const accountToken = tokensAccountParsed.find(
-					(account: IAccountToken) => account.id === accountInfo.account,
+					(account: IAccountToken) => account.id === accountInfo.id,
 				);
 				if (
 					accountToken &&
@@ -134,7 +134,7 @@ const ImportedTokenCreation = () => {
 								: [],
 					  })
 					: tokensAccountParsed.push({
-							id: accountInfo.account,
+							id: accountInfo.id,
 							externalTokens: [
 								{
 									id: stableCoinId,
@@ -153,7 +153,7 @@ const ImportedTokenCreation = () => {
 					'tokensAccount',
 					JSON.stringify([
 						{
-							id: accountInfo.account,
+							id: accountInfo.id,
 							externalTokens: [
 								{
 									id: stableCoinId,
@@ -169,7 +169,7 @@ const ImportedTokenCreation = () => {
 					]),
 				);
 			}
-			dispatch(getExternalTokenList(accountInfo.account!));
+			dispatch(getExternalTokenList(accountInfo.id!));
 			setSuccess(true);
 		} catch (error) {
 			console.log(error);

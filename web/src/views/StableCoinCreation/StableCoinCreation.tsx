@@ -42,7 +42,7 @@ const StableCoinCreation = () => {
 	const form = useForm<FieldValues>({
 		mode: 'onChange',
 		defaultValues: {
-			autorenewAccount: accountInfo.account,
+			autorenewAccount: accountInfo.id,
 			initialSupply: 0,
 		},
 	});
@@ -183,8 +183,8 @@ const StableCoinCreation = () => {
 			request.supplyKey = formatKey(supplyKey.label, 'supplyKey');
 			request.treasury =
 				formatKey(supplyKey.label, 'supplyKey')?.key !== Account.NullPublicKey.key &&
-				accountInfo.account
-					? accountInfo.account
+				accountInfo.id
+					? accountInfo.id
 					: undefined;
 		}
 		try {

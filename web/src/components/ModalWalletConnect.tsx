@@ -38,7 +38,7 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 
 	const handleConnectHashpackWallet = async () => {
 		dispatch(walletActions.setSelectedWallet(SupportedWallets.HASHPACK));
-		console.log(await SDKService.connectWallet(SupportedWallets.HASHPACK));
+		await SDKService.connectWallet(SupportedWallets.HASHPACK);
 	};
 
 	const handleConnectMetamaskWallet = async () => {
