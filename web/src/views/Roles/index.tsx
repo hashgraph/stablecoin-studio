@@ -14,7 +14,7 @@ import {
 import { useEffect, useState } from 'react';
 import type { IAccountToken } from '../../interfaces/IAccountToken.js';
 import type { IExternalToken } from '../../interfaces/IExternalToken.js';
-import { Access, Operation } from 'hedera-stable-coin-sdk';
+import { Operation } from 'hedera-stable-coin-sdk';
 
 const Roles = () => {
 	const capabilities = useSelector(SELECTED_WALLET_CAPABILITIES);
@@ -46,63 +46,40 @@ const Roles = () => {
 		}
 	}, [coinSelected]);
 
+	const operations = capabilities?.capabilities.map((x) => x.operation);
 	const filteredCapabilities = roleOptions.filter((option) => {
 		if (
-			!capabilities!.capabilities.includes({
-				operation: Operation.CASH_IN,
-				access: Access.CONTRACT,
-			}) &&
-			!capabilities!.capabilities.includes({ operation: Operation.CASH_IN, access: Access.HTS }) &&
+			!operations?.includes(Operation.CASH_IN) &&
 			option.label === 'Cash in'
 		) {
 			return false;
 		}
 		if (
-			!capabilities!.capabilities.includes({
-				operation: Operation.BURN,
-				access: Access.CONTRACT,
-			}) &&
-			!capabilities!.capabilities.includes({ operation: Operation.BURN, access: Access.HTS }) &&
+			!operations?.includes(Operation.BURN) &&
 			option.label === 'Burn'
 		) {
 			return false;
 		}
 		if (
-			!capabilities!.capabilities.includes({
-				operation: Operation.WIPE,
-				access: Access.CONTRACT,
-			}) &&
-			!capabilities!.capabilities.includes({ operation: Operation.WIPE, access: Access.HTS }) &&
+			!operations?.includes(Operation.WIPE) &&
 			option.label === 'Wipe'
 		) {
 			return false;
 		}
 		if (
-			!capabilities!.capabilities.includes({
-				operation: Operation.PAUSE,
-				access: Access.CONTRACT,
-			}) &&
-			!capabilities!.capabilities.includes({ operation: Operation.PAUSE, access: Access.HTS }) &&
+			!operations?.includes(Operation.PAUSE) &&
 			option.label === 'Pause'
 		) {
 			return false;
 		}
 		if (
-			!capabilities!.capabilities.includes({
-				operation: Operation.RESCUE,
-				access: Access.CONTRACT,
-			}) &&
-			!capabilities!.capabilities.includes({ operation: Operation.RESCUE, access: Access.HTS }) &&
+			!operations?.includes(Operation.RESCUE) &&
 			option.label === 'Rescue'
 		) {
 			return false;
 		}
 		if (
-			!capabilities!.capabilities.includes({
-				operation: Operation.FREEZE,
-				access: Access.CONTRACT,
-			}) &&
-			!capabilities!.capabilities.includes({ operation: Operation.FREEZE, access: Access.HTS }) &&
+			!operations?.includes(Operation.FREEZE) &&
 			option.label === 'Freeze'
 		) {
 			return false;
@@ -129,14 +106,7 @@ const Roles = () => {
 			route: NamedRoutes.EditRole,
 			title: t('edit'),
 			isDisabled:
-				!capabilities!.capabilities.includes({
-					operation: Operation.CASH_IN,
-					access: Access.CONTRACT,
-				}) ||
-				!capabilities!.capabilities.includes({
-					operation: Operation.CASH_IN,
-					access: Access.HTS,
-				}) ||
+				!operations?.includes(Operation.CASH_IN) ||
 				isExternal,
 		},
 		{
