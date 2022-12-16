@@ -19,13 +19,13 @@ export const roleOptions = [
 ];
 
 export const roleExternalTokens = [
-	{ value: 'CASHIN_ROLE', label: 'CASH IN' },
-	{ value: 'BURN_ROLE', label: 'BURN' },
-	{ value: 'WIPE_ROLE', label: 'WIPE' },
-	{ value: 'RESCUE_ROLE', label: 'RESCUE' },
-	{ value: 'PAUSE_ROLE', label: 'PAUSE' },
-	{ value: 'FREEZE_ROLE', label: 'FREEZE' },
-	{ value: 'DELETE_ROLE', label: 'DELETE' }
+	{ value: StableCoinRole.CASHIN_ROLE, label: 'CASH IN' },
+	{ value: StableCoinRole.BURN_ROLE, label: 'BURN' },
+	{ value: StableCoinRole.WIPE_ROLE, label: 'WIPE' },
+	{ value: StableCoinRole.RESCUE_ROLE, label: 'RESCUE' },
+	{ value: StableCoinRole.PAUSE_ROLE, label: 'PAUSE' },
+	{ value: StableCoinRole.FREEZE_ROLE, label: 'FREEZE' },
+	{ value: StableCoinRole.DELETE_ROLE, label: 'DELETE' }
 ];
 
 export const cashinLimitOptions = [
