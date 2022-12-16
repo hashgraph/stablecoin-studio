@@ -50,6 +50,7 @@ import { HashpackTransactionAdapter } from '../port/out/hs/hashpack/HashpackTran
 import { RevokeSupplierRoleCommandHandler } from '../app/usecase/command/stablecoin/roles/revokeSupplierRole/RevokeSupplierRoleCommandHandler.js';
 import { GrantSupplierRoleCommandHandler } from '../app/usecase/command/stablecoin/roles/grantSupplierRole/GrantSupplierRoleCommandHandler.js';
 import { GrantUnlimitedSupplierRoleCommandHandler } from '../app/usecase/command/stablecoin/roles/granUnlimitedSupplierRole/GrantUnlimitedSupplierRoleCommandHandler.js';
+import { SelectWalletCommandHandler } from '../app/usecase/command/network/chooseWallet/SelectWalletCommandHandler.js';
 
 export const TOKENS = {
 	COMMAND_HANDLER: Symbol('CommandHandler'),
@@ -178,6 +179,10 @@ const COMMAND_HANDLERS = [
 	{
 		token: TOKENS.COMMAND_HANDLER,
 		useClass: SetNetworkCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: SelectWalletCommandHandler,
 	},
 ];
 

@@ -18,6 +18,11 @@ export default class TransactionService extends Service {
 		return Injectable.resolveTransactionHandler();
 	}
 
+	setHandler(adp: TransactionAdapter): TransactionAdapter {
+		Injectable.registerTransactionHandler(adp);
+		return adp;
+	}
+
 	static getHandlerClass(type: SupportedWallets): TransactionAdapter {
 		switch (type) {
 			case SupportedWallets.HASHPACK:

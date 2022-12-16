@@ -60,7 +60,6 @@ const CoinDropdown = () => {
 	}, [capabilities]);
 
 	useEffect(() => {
-		console.log(accountId);
 		if (accountId) {
 			dispatch(getStableCoinList(accountId.toString()));
 			dispatch(getExternalTokenList(accountId.toString()));

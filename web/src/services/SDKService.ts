@@ -5,7 +5,8 @@ import {
 	Role,
 	CapabilitiesRequest,
 	ConnectRequest,
-	InitializationRequest
+	InitializationRequest,
+	SelectWalletRequest,
 } from 'hedera-stable-coin-sdk';
 import type {
 	WalletEvent,
@@ -35,8 +36,8 @@ import type {
 	ResetSupplierAllowanceRequest,
 	GetSupplierAllowanceRequest,
 	CheckSupplierLimitRequest,
-
-	RequestAccount} from 'hedera-stable-coin-sdk';
+	RequestAccount,
+} from 'hedera-stable-coin-sdk';
 
 export type StableCoinListRaw = Array<Record<'id' | 'symbol', string>>;
 
@@ -57,6 +58,19 @@ export class SDKService {
 				}),
 			);
 			return this.initData;
+		} catch (error) {
+			console.error(error);
+		}
+	}
+
+	public static async selectWallet(wallet: SupportedWallets) {
+		try {
+			return await Network.selectWallet(
+				new SelectWalletRequest({
+					network: 'testnet',
+					wallet,
+				}),
+			);
 		} catch (error) {
 			console.error(error);
 		}
