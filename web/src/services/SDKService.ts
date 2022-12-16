@@ -5,7 +5,7 @@ import {
 	Role,
 	CapabilitiesRequest,
 	ConnectRequest,
-	InitializationRequest,
+	InitializationRequest
 } from 'hedera-stable-coin-sdk';
 import type {
 	WalletEvent,
@@ -35,7 +35,8 @@ import type {
 	ResetSupplierAllowanceRequest,
 	GetSupplierAllowanceRequest,
 	CheckSupplierLimitRequest,
-} from 'hedera-stable-coin-sdk';
+
+	RequestAccount} from 'hedera-stable-coin-sdk';
 
 export type StableCoinListRaw = Array<Record<'id' | 'symbol', string>>;
 
@@ -143,20 +144,18 @@ export class SDKService {
 	}
 
 	public static async getCapabilities({
-		id,
+		account,
+		tokenId,
 	}: {
-		id: string;
+		account: RequestAccount;
+		tokenId: string;
 	}): Promise<StableCoinCapabilities | null> {
-		console.log(this.initData);
-		if (this.initData?.account) {
-			return await StableCoin.capabilities(
-				new CapabilitiesRequest({
-					account: { ...this.initData?.account, accountId: this.initData.account.id.toString() },
-					tokenId: id,
-				}),
-			);
-		}
-		return null;
+		return await StableCoin.capabilities(
+			new CapabilitiesRequest({
+				account,
+				tokenId,
+			}),
+		);
 	}
 
 	public static async increaseSupplierAllowance(req: IncreaseSupplierAllowanceRequest) {

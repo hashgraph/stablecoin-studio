@@ -86,9 +86,13 @@ const CoinDropdown = () => {
 	};
 
 	const getCapabilities = async () => {
-		if (!selectedStableCoin?.tokenId || !accountInfo.publicKey?.key) return;
+		if (!selectedStableCoin?.tokenId || !accountInfo.account) return;
 		const capabilities = await SDKService.getCapabilities({
-			id: selectedStableCoin.tokenId.toString(),
+			tokenId: selectedStableCoin.tokenId.toString(),
+			account: {
+				accountId: accountInfo.account,
+				evmAddress: accountInfo.accountEvmAddress,
+			},
 		});
 
 		console.log('Capabilities', capabilities);
