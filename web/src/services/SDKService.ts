@@ -6,7 +6,6 @@ import {
 	CapabilitiesRequest,
 	ConnectRequest,
 	InitializationRequest,
-	SelectWalletRequest,
 } from 'hedera-stable-coin-sdk';
 import type {
 	WalletEvent,
@@ -58,19 +57,6 @@ export class SDKService {
 				}),
 			);
 			return this.initData;
-		} catch (error) {
-			console.error(error);
-		}
-	}
-
-	public static async selectWallet(wallet: SupportedWallets) {
-		try {
-			return await Network.selectWallet(
-				new SelectWalletRequest({
-					network: 'testnet',
-					wallet,
-				}),
-			);
 		} catch (error) {
 			console.error(error);
 		}

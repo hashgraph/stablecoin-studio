@@ -91,7 +91,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 	}
 
 	private async setSigner(): Promise<void> {
-		this.signer = await this.hc.getSignerWithAccountKey(
+		this.hashConnectSigner = await this.hc.getSignerWithAccountKey(
 			this.hc.getProvider(
 				this.networkService.environment as
 					| 'testnet'
@@ -101,6 +101,8 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 				this.account.id.toString(),
 			),
 		);
+		this.signer = this.hashConnectSigner
+		await this.getAccountKey();
 		console.log(this.signer);
 	}
 
@@ -162,7 +164,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 	): Promise<TransactionResponse> {
 		if (!this.signer) throw new SigningError('Signer is empty');
 		try {
-			await this.getAccountKey(); // Ensure we have the public key
+			console.log(await this.getAccountKey()); // Ensure we have the public key)
 			let signedT = t;
 			if (!t.isFrozen()) {
 				signedT = await t.freezeWithSigner(this.signer);
@@ -174,7 +176,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 					topic: this.topic,
 					byteArray: trx.toBytes(),
 					metadata: {
-						accountToSign: this.signer.getAccountId().toString(),
+						accountToSign: this.account.id.toString(),
 						returnTransaction: false,
 						getRecord: true,
 					},
@@ -193,7 +195,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 	}
 
 	async getAccountKey(): Promise<HPublicKey> {
-		if (this.hashConnectSigner.getAccountKey) {
+		if (this.hashConnectSigner?.getAccountKey) {
 			return this.hashConnectSigner.getAccountKey();
 		}
 		this.hashConnectSigner = await this.hc.getSignerWithAccountKey(
