@@ -142,6 +142,9 @@ export default class OperationStableCoinService extends Service {
     const capabilitiesStableCoin: StableCoinCapabilities =
       await this.getCapabilities(currentAccount);
 
+    this.stableCoinDeleted = capabilitiesStableCoin.coin.deleted;
+    this.stableCoinPaused = capabilitiesStableCoin.coin.paused;
+
     switch (
       await utilsService.defaultMultipleAsk(
         language.getText('stablecoin.askDoSomething'),
