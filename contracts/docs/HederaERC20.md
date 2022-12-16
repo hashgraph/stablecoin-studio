@@ -517,7 +517,7 @@ function increaseSupplierAllowance(address supplier, uint256 amount) external no
 ### initialize
 
 ```solidity
-function initialize(address tokenAddress, address originalSender) external payable
+function initialize(IHederaTokenService.HederaToken token, uint64 initialTotalSupply, uint32 tokenDecimals, address originalSender) external payable returns (address)
 ```
 
 
@@ -528,8 +528,16 @@ function initialize(address tokenAddress, address originalSender) external payab
 
 | Name | Type | Description |
 |---|---|---|
-| tokenAddress | address | undefined |
+| token | IHederaTokenService.HederaToken | undefined |
+| initialTotalSupply | uint64 | undefined |
+| tokenDecimals | uint32 | undefined |
 | originalSender | address | undefined |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | address | undefined |
 
 ### isUnlimitedSupplierAllowance
 

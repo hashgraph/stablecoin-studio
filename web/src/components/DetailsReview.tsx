@@ -67,7 +67,7 @@ const DetailsReview = (props: DetailsReviewProps) => {
 
 							{typeof detail.value === 'string' || typeof detail.value === 'number' ? (
 								<HStack {...(detail.valueInBold ? textInBoldProps : commonTextProps)}>
-									<Text>{detail.value}</Text>
+									<Text>{detail.value.toString()}</Text>
 									{detail.copyButton && (
 										<TooltipCopy valueToCopy={detail.value.toString() ?? ''}>
 											<Icon name='Copy' />
@@ -75,7 +75,7 @@ const DetailsReview = (props: DetailsReviewProps) => {
 									)}
 								</HStack>
 							) : (
-								detail.value
+								detail.value.toString()
 							)}
 						</Flex>
 						{divider && details.length !== index + 1 && (

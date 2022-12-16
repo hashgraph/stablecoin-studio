@@ -2,18 +2,18 @@ import { language } from '../../../index.js';
 import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
 import {
-  StableCoinRole,
-  SDK,
   GrantRoleRequest,
   RevokeRoleRequest,
   HasRoleRequest,
-  CheckCashInRoleRequest,
-  CheckCashInLimitRequest,
-  ResetCashInLimitRequest,
-  IncreaseCashInLimitRequest,
-  DecreaseCashInLimitRequest,
   GetRolesRequest,
-  Roles
+  Role,
+  StableCoinRole,
+  StableCoinRoleLabel,
+  CheckSupplierLimitRequest,
+  IncreaseSupplierAllowanceRequest,
+  DecreaseSupplierAllowanceRequest,
+  ResetSupplierAllowanceRequest,
+  GetSupplierAllowanceRequest
 } from 'hedera-stable-coin-sdk';
 import colors from 'colors';
 
@@ -31,8 +31,7 @@ export default class RoleStableCoinsService extends Service {
   public async giveSupplierRoleStableCoin(
     req: GrantRoleRequest,
   ): Promise<void> {
-    const sdk: SDK = utilsService.getSDK();
-    await utilsService.showSpinner(sdk.grantRole(req), {
+    await utilsService.showSpinner(Role.grantRole(req), {
       text: language.getText('state.loading'),
       successText: language.getText('state.loadCompleted') + '\n',
     });
@@ -43,39 +42,38 @@ export default class RoleStableCoinsService extends Service {
   }
 
   public async checkCashInRoleStableCoin(
-    req: CheckCashInRoleRequest,
+    req: CheckSupplierLimitRequest,
   ): Promise<boolean> {
-    const sdk: SDK = utilsService.getSDK();
-
     let respDetail;
 
     if (req.supplierType === 'unlimited') {
+      await utilsService.showSpinner(Role.isUnlimited(req).then(
+          (response) => (respDetail = response)
+        ),
+        {
+          text: language.getText('state.loading'),
+          successText: language.getText('state.loadCompleted') + '\n',
+        }
+      );
+      return respDetail;
+    } else {
       await utilsService.showSpinner(
-        sdk
-          .isUnlimitedSupplierAllowance(req)
-          .then((response) => (respDetail = response[0])),
+        Role.isLimited(req).then(
+          (response) => (respDetail = response),
+        ),
         {
           text: language.getText('state.loading'),
           successText: language.getText('state.loadCompleted') + '\n',
         },
       );
       return respDetail;
-    } else {
-      await utilsService.showSpinner(
-        sdk
-          .isLimitedSupplierAllowance(req)
-          .then((response) => (respDetail = response[0])),
-        {},
-      );
-      return respDetail;
     }
   }
 
   public async increaseLimitSupplierRoleStableCoin(
-    req: IncreaseCashInLimitRequest,
+    req: IncreaseSupplierAllowanceRequest,
   ): Promise<void> {
-    const sdk: SDK = utilsService.getSDK();
-    await utilsService.showSpinner(sdk.increaseSupplierAllowance(req), {
+    await utilsService.showSpinner(Role.increaseAllowance(req), {
       text: language.getText('state.loading'),
       successText: language.getText('state.loadCompleted') + '\n',
     });
@@ -85,10 +83,9 @@ export default class RoleStableCoinsService extends Service {
   }
 
   public async decreaseLimitSupplierRoleStableCoin(
-    req: DecreaseCashInLimitRequest,
+    req: DecreaseSupplierAllowanceRequest,
   ): Promise<void> {
-    const sdk: SDK = utilsService.getSDK();
-    await utilsService.showSpinner(sdk.decreaseSupplierAllowance(req), {
+    await utilsService.showSpinner(Role.decreaseAllowance(req), {
       text: language.getText('state.loading'),
       successText: language.getText('state.loadCompleted') + '\n',
     });
@@ -98,11 +95,9 @@ export default class RoleStableCoinsService extends Service {
   }
 
   public async resetLimitSupplierRoleStableCoin(
-    req: ResetCashInLimitRequest,
+    req: ResetSupplierAllowanceRequest,
   ): Promise<void> {
-    const sdk: SDK = utilsService.getSDK();
-
-    await utilsService.showSpinner(sdk.resetSupplierAllowance(req), {
+    await utilsService.showSpinner(Role.resetAllowance(req), {
       text: language.getText('state.loading'),
       successText: language.getText('state.loadCompleted') + '\n',
     });
@@ -112,9 +107,7 @@ export default class RoleStableCoinsService extends Service {
   }
 
   public async grantRoleStableCoin(req: GrantRoleRequest): Promise<void> {
-    const sdk: SDK = utilsService.getSDK();
-
-    await utilsService.showSpinner(sdk.grantRole(req), {
+    await utilsService.showSpinner(Role.grantRole(req), {
       text: language.getText('state.loading'),
       successText: language.getText('state.loadCompleted') + '\n',
     });
@@ -124,9 +117,7 @@ export default class RoleStableCoinsService extends Service {
   }
 
   public async revokeRoleStableCoin(req: RevokeRoleRequest): Promise<void> {
-    const sdk: SDK = utilsService.getSDK();
-
-    await utilsService.showSpinner(sdk.revokeRole(req), {
+    await utilsService.showSpinner(Role.revokeRole(req), {
       text: language.getText('state.loading'),
       successText: language.getText('state.loadCompleted') + '\n',
     });
@@ -135,42 +126,40 @@ export default class RoleStableCoinsService extends Service {
     utilsService.breakLine();
   }
 
-  public async hasRoleStableCoin(req: HasRoleRequest): Promise<void> {
-    const sdk: SDK = utilsService.getSDK();
-
+  public async hasRole(req: HasRoleRequest): Promise<boolean> {
     let hasRole;
     await utilsService.showSpinner(
-      sdk.hasRole(req).then((response) => (hasRole = response[0])),
+      Role.hasRole(req).then((response) => (hasRole = response)),
       {
         text: language.getText('state.loading'),
         successText: language.getText('state.loadCompleted') + '\n',
       },
-    );
+    );    
+    return hasRole;
+  }  
+
+  public async hasRoleStableCoin(req: HasRoleRequest): Promise<void> {
+    const hasRole = await this.hasRole(req);
     let response = language.getText('roleManagement.accountNotHasRole');
     if (hasRole) {
       response = language.getText('roleManagement.accountHasRole');
     }
 
-    const indexOfS = Object.values(StableCoinRole).indexOf(
-      req.role as unknown as StableCoinRole,
-    );
-    const roleName = Roles[Object.keys(StableCoinRole)[indexOfS]];
     console.log(
       response
         .replace('${address}', req.targetId)
-        .replace('${role}', colors.yellow(roleName)) + '\n',
+        .replace('${role}', colors.yellow(StableCoinRoleLabel.get(req.role))) + '\n',
     );
 
     utilsService.breakLine();
   }
 
   public async getSupplierAllowance(
-    req: CheckCashInLimitRequest,
+    req: GetSupplierAllowanceRequest,
   ): Promise<void> {
-    const sdk: SDK = utilsService.getSDK();
     let amount;
     await utilsService.showSpinner(
-      sdk.supplierAllowance(req).then((response) => {
+      Role.getAllowance(req).then((response) => {
         amount = response;
       }),
       {
@@ -186,25 +175,22 @@ export default class RoleStableCoinsService extends Service {
     );
   }
 
-  public async getRoles(req: GetRolesRequest
-  ): Promise<string[]> {
-    const sdk: SDK = utilsService.getSDK();
+  public async getRoles(req: GetRolesRequest): Promise<string[]> {
     let roles;
     await utilsService.showSpinner(
-      sdk
-        .getRoles(req)
-        .then((response) => {
-          roles = response;
-        }),
+      Role.getRoles(req).then((response) => {
+        roles = response;
+      }),
       {
         text: language.getText('state.loading'),
         successText: language.getText('state.loadCompleted') + '\n',
       },
     );
-
     console.log(language.getText('operation.success'));
     roles.length > 0
-      ? console.log(colors.yellow(roles.join(' | ')))
+      ? roles.forEach((role: StableCoinRole) => { 
+        console.log(colors.yellow(StableCoinRoleLabel.get(role)))
+      })
       : console.log(colors.red(language.getText('roleManagement.noRoles')));
     utilsService.breakLine();
 

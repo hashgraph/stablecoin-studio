@@ -1,19 +1,19 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { HashConnectConnectionState } from '../../services/SDKService';
+import { ConnectionState } from 'hedera-stable-coin-sdk';
 import type { RootState } from '../store';
 
 interface InitialState {
 	isConnected: boolean;
 	isInitialized: boolean;
 	loading: boolean;
-	status: HashConnectConnectionState;
+	status: ConnectionState;
 }
 
 export const initialState: InitialState = {
 	isConnected: false,
 	isInitialized: false,
 	loading: false,
-	status: HashConnectConnectionState.Disconnected,
+	status: ConnectionState.Disconnected,
 };
 
 export const hashpackSlice = createSlice({

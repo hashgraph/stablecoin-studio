@@ -1,10 +1,12 @@
 import { BigNumber } from 'ethers';
+import MemoLength from './error/MemoLength.js';
 import CheckNums from '../../../core/checks/numbers/CheckNums.js';
 import CheckStrings from '../../../core/checks/strings/CheckStrings.js';
 import BaseError from '../../../core/error/BaseError.js';
 import { InvalidType } from '../../../port/in/request/error/InvalidType.js';
 import PublicKey from '../account/PublicKey.js';
 import BaseEntity from '../BaseEntity.js';
+import { StableCoinMemo } from './StableCoinMemo.js';
 import ContractId from '../contract/ContractId.js';
 import BigDecimal from '../shared/BigDecimal.js';
 import { HederaId } from '../shared/HederaId.js';
@@ -35,6 +37,7 @@ export interface StableCoinProps {
 	initialSupply?: BigDecimal;
 	totalSupply?: BigDecimal;
 	maxSupply?: BigDecimal;
+	memo?: string;
 	proxyAddress?: HederaId;
 	evmProxyAddress?: string;
 	freezeKey?: PublicKey | ContractId;
@@ -62,6 +65,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 	initialSupply?: BigDecimal;
 	totalSupply?: BigDecimal;
 	maxSupply?: BigDecimal;
+	memo?: string;
 	proxyAddress?: HederaId;
 	evmProxyAddress?: string;
 	freezeKey?: PublicKey | ContractId;
@@ -88,6 +92,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 			initialSupply,
 			totalSupply,
 			maxSupply,
+			memo,
 			freezeKey,
 			freezeDefault,
 			kycKey,
@@ -113,6 +118,9 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 		this.initialSupply = initialSupply ?? BigDecimal.ZERO;
 		this.totalSupply = totalSupply ?? BigDecimal.ZERO;
 		this.maxSupply = maxSupply ?? undefined;
+		this.memo = memo ? 
+				 memo
+				 : StableCoinMemo.empty().toJson();
 		this.freezeKey = freezeKey;
 		this.freezeDefault = freezeDefault ?? false;
 		this.kycKey = kycKey;
@@ -122,9 +130,11 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 		this.treasury = treasury;
 		this.tokenType = tokenType ?? TokenType.FUNGIBLE_COMMON;
 		this.supplyType =
-			(supplyType && !maxSupply) || !supplyType
-				? TokenSupplyType.INFINITE
-				: TokenSupplyType.FINITE;
+			(supplyType)
+				? supplyType
+				: (maxSupply && maxSupply.isGreaterThan(BigDecimal.ZERO)) 
+					? TokenSupplyType.FINITE
+					: TokenSupplyType.INFINITE;
 		this.tokenId = tokenId ?? HederaId.from('0.0.0');
 		this.autoRenewAccount = autoRenewAccount ?? HederaId.from('0.0.0');
 		this.autoRenewAccountPeriod = autoRenewAccountPeriod ?? 0;
@@ -227,6 +237,16 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 		list = [...list, ...StableCoin.checkSupplyType(maxSupply, supplyType)];
 
 		return list;
+	}
+
+	public static checkMemo(value: string): BaseError[] {
+		const maxMemoLength = ONE_HUNDRED;
+		const errorList: BaseError[] = [];
+
+		if (CheckStrings.isNotEmpty(value) && !CheckStrings.isLengthUnder(value, maxMemoLength))
+			errorList.push(new MemoLength(value, maxMemoLength));
+
+		return errorList;
 	}
 
 	private static checkSupplyType(

@@ -27,6 +27,8 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 	const accountId2 = '2220';
 	const tokenId2 = '3330';
 
+	// const accountId3 = '2200';
+
 	it('Test create contractExecuteTransaction', () => {
 		const t: ContractExecuteTransaction =
 			HTSTransactionBuilder.buildContractExecuteTransaction(

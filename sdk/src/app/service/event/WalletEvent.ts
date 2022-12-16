@@ -1,6 +1,7 @@
+import Account from '../../../domain/context/account/Account.js';
 import { Environment } from '../../../domain/context/network/Environment.js';
 import { SupportedWallets } from '../../../domain/context/network/Wallet.js';
-import { TransactionAdapterInitializationData } from '../../../port/out/TransactionAdapter.js';
+import { InitializationData } from '../../../port/out/TransactionAdapter.js';
 
 export enum WalletEvents {
 	walletInit = 'walletInit',
@@ -8,6 +9,7 @@ export enum WalletEvents {
 	walletPaired = 'walletPaired',
 	walletConnectionStatusChanged = 'walletConnectionStatusChanged',
 	walletAcknowledgeMessage = 'walletAcknowledgeMessage',
+	walletAccountChanged = 'walletAccountChanged',
 	walletDisconnect = 'walletDisconnect',
 }
 
@@ -23,31 +25,36 @@ export interface WalletBaseEvent {
 }
 
 export interface WalletInitEvent extends WalletBaseEvent {
-	initData: TransactionAdapterInitializationData;
+	initData: InitializationData;
 }
 
-export interface WalletFoundEvent {
+export interface WalletFoundEvent extends WalletBaseEvent {
 	name: string;
 }
-export interface WalletPairedEvent {
-	data: TransactionAdapterInitializationData;
+export interface WalletPairedEvent extends WalletBaseEvent {
+	data: InitializationData;
 	network: Environment;
 }
-export interface WalletConnectionStatusChangedEvent {
+export interface WalletConnectionStatusChangedEvent extends WalletBaseEvent {
 	status: ConnectionState;
 }
-export interface WalletAcknowledgeMessageEvent {
+
+export interface WalletAccountChanged extends WalletBaseEvent {
+	account: Account;
+}
+export interface WalletAcknowledgeMessageEvent extends WalletBaseEvent {
 	result: boolean;
 }
 
 type WalletEvent = {
 	walletInit: (data: WalletInitEvent) => void;
-	walletFound: () => void;
+	walletFound: (data: WalletFoundEvent) => void;
 	walletPaired: (data: WalletPairedEvent) => void;
 	walletConnectionStatusChanged: (
 		data: WalletConnectionStatusChangedEvent,
 	) => void;
 	walletAcknowledgeMessage: (data: WalletAcknowledgeMessageEvent) => void;
+	walletAccountChanged: (data: WalletAccountChanged) => void;
 	walletDisconnect: () => void;
 };
 

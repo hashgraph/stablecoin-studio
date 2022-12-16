@@ -10,8 +10,9 @@ export interface AccountProps {
 }
 
 export default class Account {
+	public static readonly NULL: Account = new Account({ id: '0.0.0' });
 	public id: HederaId;
-	public evmAddress: string;
+	public evmAddress?: string;
 	public privateKey?: PrivateKey;
 	public publicKey?: PublicKey;
 	constructor(props: AccountProps) {

@@ -11,20 +11,22 @@ import {
 	SELECTED_WALLET_PAIRED_ACCOUNTID,
 } from '../../store/slices/walletSlice';
 import type { DirectAccessProps } from '../../components/DirectAccess';
-import { Capabilities, Roles } from 'hedera-stable-coin-sdk';
 import type { IAccountToken } from '../../interfaces/IAccountToken';
 import type { IExternalToken } from '../../interfaces/IExternalToken';
 // import type { AppDispatch } from '../../store/store.js';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useRefreshCoinInfo } from '../../hooks/useRefreshCoinInfo';
-
+import type { StableCoinCapabilities} from 'hedera-stable-coin-sdk';
+import { Operation, StableCoinRole } from 'hedera-stable-coin-sdk';
 
 const Operations = () => {
 	const { t } = useTranslation('operations');
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const accountId = useSelector(SELECTED_WALLET_PAIRED_ACCOUNTID);
-	const capabilities: Capabilities[] | undefined = useSelector(SELECTED_WALLET_CAPABILITIES);
+	const capabilities: StableCoinCapabilities | undefined = useSelector(
+		SELECTED_WALLET_CAPABILITIES,
+	);
 
 	const [disabledFeatures, setDisabledFeatures] = useState({
 		cashIn: false,
@@ -33,10 +35,10 @@ const Operations = () => {
 		rescue: false,
 		wipe: false,
 		freeze: false,
-		pause:false,
-		delete:false,
+		pause: false,
+		delete: false,
 	});
-	
+
 	useRefreshCoinInfo();
 
 	useEffect(() => {
@@ -52,10 +54,12 @@ const Operations = () => {
 		if (tokensAccount) {
 			const tokensAccountParsed = JSON.parse(tokensAccount);
 			if (tokensAccountParsed) {
-				const myAccount = tokensAccountParsed.find((acc: IAccountToken) => acc.id === accountId);
+				const myAccount = tokensAccountParsed.find(
+					(acc: IAccountToken) => acc.id === accountId?.toString(),
+				);
 				if (myAccount) {
 					const externalToken = myAccount?.externalTokens.find(
-						(coin: IExternalToken) => coin.id === selectedStableCoin?.tokenId,
+						(coin: IExternalToken) => coin.id === selectedStableCoin?.tokenId?.toString(),
 					);
 					if (externalToken) {
 						isExternalToken = true;
@@ -64,40 +68,38 @@ const Operations = () => {
 				}
 			}
 		}
+		const operations = capabilities?.capabilities.map((x) => x.operation);
 		const areDisabled = {
 			cashIn: !isExternalToken
-				? !capabilities?.includes(Capabilities.CASH_IN) &&
-				  !capabilities?.includes(Capabilities.CASH_IN_HTS)
-				: !roles.includes(Roles.CASHIN_ROLE) && !capabilities?.includes(Capabilities.CASH_IN_HTS),
+				? !operations?.includes(Operation.CASH_IN)
+				: (!operations?.includes(Operation.CASH_IN) ||
+				  (operations?.includes(Operation.CASH_IN) && !roles.includes(StableCoinRole.CASHIN_ROLE))),
 			burn: !isExternalToken
-				? !capabilities?.includes(Capabilities.BURN) &&
-				  !capabilities?.includes(Capabilities.BURN_HTS)
-				: !roles.includes(Roles.BURN_ROLE) && !capabilities?.includes(Capabilities.BURN_HTS),
-			balance: !capabilities?.includes(Capabilities.BALANCE),
+				? !operations?.includes(Operation.BURN)
+				: (!operations?.includes(Operation.BURN) ||
+				(operations?.includes(Operation.BURN) && !roles.includes(StableCoinRole.BURN_ROLE))),
+			balance: false,
 			rescue: !isExternalToken
-				? !capabilities?.includes(Capabilities.RESCUE)
-				: !roles.includes(Roles.RESCUE_ROLE),
+				? !operations?.includes(Operation.RESCUE)
+				: (!operations?.includes(Operation.RESCUE) ||
+				(operations?.includes(Operation.RESCUE) && !roles.includes(StableCoinRole.RESCUE_ROLE))),
 			wipe: !isExternalToken
-				? !capabilities?.includes(Capabilities.WIPE) &&
-				  !capabilities?.includes(Capabilities.WIPE_HTS)
-				: !roles.includes(Roles.WIPE_ROLE) && !capabilities?.includes(Capabilities.WIPE_HTS),
+				? !operations?.includes(Operation.WIPE)
+				: (!operations?.includes(Operation.WIPE) ||
+				(operations?.includes(Operation.WIPE) && !roles.includes(StableCoinRole.WIPE_ROLE))),
 			freeze: !isExternalToken
-				? !capabilities?.includes(Capabilities.FREEZE) &&
-				  !capabilities?.includes(Capabilities.FREEZE_HTS)
-				: !roles.includes(Roles.FREEZE_ROLE) && !capabilities?.includes(Capabilities.FREEZE_HTS),
+				? !operations?.includes(Operation.FREEZE)
+				: (!operations?.includes(Operation.FREEZE) ||
+				(operations?.includes(Operation.FREEZE) && !roles.includes(StableCoinRole.FREEZE_ROLE))),
 			pause: !isExternalToken
-				? (!capabilities?.includes(Capabilities.PAUSE) &&
-						!capabilities?.includes(Capabilities.PAUSE_HTS))
-				: !roles.includes(Roles.PAUSE_ROLE) &&
-				  !capabilities?.includes(Capabilities.PAUSE_HTS) ,
+				? !operations?.includes(Operation.PAUSE)
+				: (!operations?.includes(Operation.PAUSE) ||
+				(operations?.includes(Operation.PAUSE) && !roles.includes(StableCoinRole.PAUSE_ROLE))),
 			delete: !isExternalToken
-				? !capabilities?.includes(Capabilities.DELETE) &&
-						!capabilities?.includes(Capabilities.DELETE_HTS)
-				: !roles.includes(Roles.DELETE_ROLE) && !capabilities?.includes(Capabilities.DELETE_HTS),
+				? !operations?.includes(Operation.DELETE)
+				: (!operations?.includes(Operation.DELETE) ||
+				(operations?.includes(Operation.DELETE) && !roles.includes(StableCoinRole.DELETE_ROLE))),
 		};
-		// console.log(capabilities);
-		// console.log(areDisabled);
-		
 		setDisabledFeatures(areDisabled);
 	};
 

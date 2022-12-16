@@ -8,13 +8,14 @@ import { HederaTransactionAdapter } from '../HederaTransactionAdapter.js';
 import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
 import { TransactionType } from '../../TransactionResponseEnums.js';
 import { HTSTransactionResponseAdapter } from './HTSTransactionResponseAdapter.js';
-import { Injectable } from '../../../../core/Injectable.js';
-import { TransactionAdapterInitializationData } from '../../TransactionAdapter.js';
+import Injectable from '../../../../core/Injectable.js';
+import { InitializationData } from '../../TransactionAdapter.js';
 import Account from '../../../../domain/context/account/Account.js';
 import { Environment } from '../../../../domain/context/network/Environment.js';
 import {
 	WalletInitEvent,
 	WalletEvents,
+	WalletPairedEvent,
 } from '../../../../app/service/event/WalletEvent.js';
 import { SupportedWallets } from '../../../in/request/ConnectRequest.js';
 import EventService from '../../../../app/service/event/EventService.js';
@@ -42,23 +43,37 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 		super(mirrorNodeAdapter);
 	}
 
-	register(account: Account): Promise<TransactionAdapterInitializationData> {
+	init(): Promise<string> {
+		this.eventService.emit(WalletEvents.walletInit, {
+			wallet: SupportedWallets.CLIENT,
+			initData: {},
+		});
+		return Promise.resolve(this.networkService.environment);
+	}
+
+	async register(account: Account): Promise<InitializationData> {
 		Injectable.registerTransactionHandler(this);
+
+		const accountMirror = await this.mirrorNodeAdapter.getAccountInfo(
+			account.id,
+		);
 		this.account = account;
+		this.account.publicKey = accountMirror.publicKey;
 		this.network = this.networkService.environment;
 		this._client = Client.forName(this.networkService.environment);
 		const id = this.account.id?.value ?? '';
 		const privateKey = account.privateKey?.toHashgraphKey() ?? '';
 		this._client.setOperator(id, privateKey);
-		const eventData: WalletInitEvent = {
+		const eventData: WalletPairedEvent = {
 			wallet: SupportedWallets.HASHPACK,
-			initData: {
+			data: {
 				account: this.account,
 				pairing: '',
 				topic: '',
 			},
+			network: this.networkService.environment,
 		};
-		this.eventService.emit(WalletEvents.walletInit, eventData);
+		this.eventService.emit(WalletEvents.walletPaired, eventData);
 		return Promise.resolve({
 			account: this.getAccount(),
 		});

@@ -2,19 +2,32 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import TransactionResponse from '../../domain/context/transaction/TransactionResponse.js';
 import StableCoinCapabilities from '../../domain/context/stablecoin/StableCoinCapabilities.js';
+import {StableCoin} from '../../domain/context/stablecoin/StableCoin.js';
+import ContractId from '../../domain/context/contract/ContractId.js';
 import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import { StableCoinRole } from '../../domain/context/stablecoin/StableCoinRole.js';
 import Account from '../../domain/context/account/Account.js';
 import { HederaId } from '../../domain/context/shared/HederaId.js';
+import { PrivateKeyType } from '../../domain/context/account/PrivateKey.js';
+import AccountViewModel from './mirror/response/AccountViewModel.js';
+import { PublicKey as HPublicKey } from '@hashgraph/sdk';
+import { MirrorNodeAdapter } from './mirror/MirrorNodeAdapter.js';
+import { Environment } from '../../domain/context/network/Environment.js';
 
-export interface TransactionAdapterInitializationData {
-	account: Account;
+export interface InitializationData {
+	account?: Account;
 	pairing?: string;
 	topic?: string;
 }
 
 interface ITransactionAdapter {
-	register(account: Account): Promise<TransactionAdapterInitializationData>;
+	create(
+		coin: StableCoin,
+		factory: ContractId,
+		hederaERC20: ContractId,
+	): Promise<TransactionResponse>;
+	init(): Promise<Environment>;
+	register(account?: Account): Promise<InitializationData>;
 	stop(): Promise<boolean>;
 	associateToken(
 		coin: StableCoinCapabilities | string,
@@ -60,6 +73,7 @@ interface ITransactionAdapter {
 		targetId: HederaId,
 	): Promise<TransactionResponse>;
 	getAccount(): Account;
+	getMirrorNodeAdapter(): MirrorNodeAdapter;
 }
 
 interface RoleTransactionAdapter {
@@ -130,10 +144,16 @@ interface RoleTransactionAdapter {
 export default abstract class TransactionAdapter
 	implements ITransactionAdapter, RoleTransactionAdapter
 {
+	init(): Promise<Environment> {
+		throw new Error('Method not implemented.');
+	}
+	create(coin: StableCoin, factory: ContractId, hederaERC20: ContractId): Promise<TransactionResponse<any, Error>> {
+		throw new Error('Method not implemented.');
+	}
 	getAccount(): Account {
 		throw new Error('Method not implemented.');
 	}
-	register(account: Account): Promise<TransactionAdapterInitializationData> {
+	register(account?: Account): Promise<InitializationData> {
 		throw new Error('Method not implemented.');
 	}
 	stop(): Promise<boolean> {
@@ -285,10 +305,50 @@ export default abstract class TransactionAdapter
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
+
 	getRoles(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
 	): Promise<TransactionResponse<string[], Error>> {
 		throw new Error('Method not implemented.');
 	}
+
+	getMirrorNodeAdapter(
+	): MirrorNodeAdapter {
+		throw new Error('Method not implemented.');
+	}
+
+	async accountToEvmAddress(accountId: HederaId): Promise<string> {
+		try {
+			const accountInfoViewModel: AccountViewModel =
+				await this.getMirrorNodeAdapter().getAccountInfo(accountId);
+			if (accountInfoViewModel.accountEvmAddress) {
+				return accountInfoViewModel.accountEvmAddress;
+			} else if (accountInfoViewModel.publicKey) {
+				return this.getAccountEvmAddressFromPrivateKeyType(
+					accountInfoViewModel.publicKey.type,
+					accountInfoViewModel.publicKey.key,
+					accountId,
+				);
+			} else {
+				return Promise.reject<string>('');
+			}
+		} catch (error) {
+			return Promise.reject<string>(error);
+		}
+	}
+
+	private async getAccountEvmAddressFromPrivateKeyType(
+		privateKeyType: string,
+		publicKey: string,
+		accountId: HederaId,
+	): Promise<string> {
+		switch (privateKeyType) {
+			case PrivateKeyType.ECDSA:
+				return HPublicKey.fromString(publicKey).toEthereumAddress();
+
+			default:
+				return "0x" + accountId.toHederaAddress().toSolidityAddress();
+		}
+	}	
 }

@@ -428,14 +428,14 @@ Creates a new stable coin.
 **Spec:**
 
 ```Typescript
-	sdk.createStableCoin = (request: CreateStableCoinRequest): Promise<StableCoinDetail>
+	sdk.createStableCoin = (request: CreateRequest): Promise<StableCoinDetail>
 ```
 
 **Example:**
 
 ```Typescript
 	const stableCoin: StableCoinDetail = await sdk.createStableCoin(
-		new CreateStableCoinRequest({
+		new CreateRequest({
 			account: new HashPackAccount("0.0.1"),
 			name: "Hedera Stable Coin",
 			symbol: "HSC",
@@ -561,14 +561,14 @@ Cash in tokens into a stable coin.
 **Spec:**
 
 ```Typescript
-	sdk.cashIn = (request: CashInStableCoinRequest): Promise<bool>
+	sdk.cashIn = (request: CashInRequest): Promise<bool>
 ```
 
 **Example:**
 
 ```Typescript
 	const res: bool = await sdk.cashIn(
-		new CashInStableCoinRequest({
+		new CashInRequest({
 			account: {
 				accountId:"0.0.123",
 				privateKey:{
@@ -648,14 +648,14 @@ Wipes tokens of a stable coin
 **Spec:**
 
 ```Typescript
-	sdk.wipe = (request: WipeStableCoinRequest): Promise<bool>
+	sdk.wipe = (request: WipeRequest): Promise<bool>
 ```
 
 **Example:**
 
 ```Typescript
 	const res: Uint8Array = await sdk.wipe(
-		new WipeStableCoinRequest({
+		new WipeRequest({
 			account: {
 				accountId:"0.0.123",
 				privateKey:{
@@ -678,14 +678,14 @@ Rescue tokens from a stable coin.
 **Spec:**
 
 ```Typescript
-	sdk.rescue = (request: RescueStableCoinRequest): Promise<Uint8Array>
+	sdk.rescue = (request: RescueRequest): Promise<Uint8Array>
 ```
 
 **Example:**
 
 ```Typescript
 	const res: Uint8Array = await sdk.rescue(
-		new RescueStableCoinRequest({
+		new RescueRequest({
 			account: {
 				accountId:"0.0.123",
 				privateKey:{

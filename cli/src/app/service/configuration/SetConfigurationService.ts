@@ -9,10 +9,13 @@ import fs from 'fs-extra';
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 import { IConsensusNodeConfig } from '../../../domain/configuration/interfaces/IConsensusNodeConfig.js';
 import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
-import { IFactoryConfig } from 'domain/configuration/interfaces/IFactoryConfig.js';
+import { IFactoryConfig } from '../../../domain/configuration/interfaces/IFactoryConfig.js';
+import { IHederaERC20Config } from '../../../domain/configuration/interfaces/IHederaERC20Config.js';
 import {
+  HederaERC20AddressTestnet,
+  HederaERC20AddressPreviewnet,
   FactoryAddressTestnet,
-  FactoryAddressPreviewnet
+  FactoryAddressPreviewnet,
 } from 'hedera-stable-coin-sdk';
 const colors = require('colors');
 
@@ -36,6 +39,7 @@ export default class SetConfigurationService extends Service {
     await this.configureDefaultNetwork(network);
     await this.configureAccounts();
     await this.configureFactories();
+    await this.configureHederaERC20s();
   }
 
   /**
@@ -204,17 +208,36 @@ export default class SetConfigurationService extends Service {
     const factories: IFactoryConfig[] = [];
     factories.push({
       id: FactoryAddressTestnet,
-      network: "testnet"
+      network: 'testnet',
     });
     factories.push({
       id: FactoryAddressPreviewnet,
-      network: "previewnet"
+      network: 'previewnet',
     });
 
     // Set a default factories
     const defaultCfgData = configurationService.getConfiguration();
+    defaultCfgData.factories = factories;
     configurationService.setConfiguration(defaultCfgData);
     return factories;
+  }
+
+  public async configureHederaERC20s(): Promise<IHederaERC20Config[]> {
+    const hederaERC20s: IHederaERC20Config[] = [];
+    hederaERC20s.push({
+      id: HederaERC20AddressTestnet,
+      network: 'testnet',
+    });
+    hederaERC20s.push({
+      id: HederaERC20AddressPreviewnet,
+      network: 'previewnet',
+    });
+
+    // Set a default hederaERC20s
+    const defaultCfgData = configurationService.getConfiguration();
+    defaultCfgData.hederaERC20s = hederaERC20s;
+    configurationService.setConfiguration(defaultCfgData);
+    return hederaERC20s;
   }
 
   public async manageAccountMenu(): Promise<void> {
@@ -234,7 +257,7 @@ export default class SetConfigurationService extends Service {
         await utilsService.cleanAndShowBanner();
 
         await wizardService.chooseAccount(false);
-        await utilsService.initSDK(utilsService.getCurrentNetwork().name);
+        await utilsService.initSDK();
         await utilsService.cleanAndShowBanner();
         await wizardService.mainMenu();
         break;
@@ -255,7 +278,7 @@ export default class SetConfigurationService extends Service {
         );
         if (operateWithNewAccount) {
           await wizardService.chooseLastAccount();
-          await utilsService.initSDK(utilsService.getCurrentNetwork().name);
+          await utilsService.initSDK();
           await utilsService.cleanAndShowBanner();
           await wizardService.mainMenu();
         }

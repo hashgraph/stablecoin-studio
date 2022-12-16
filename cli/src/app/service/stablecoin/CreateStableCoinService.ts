@@ -1,19 +1,19 @@
 import { configurationService, language } from './../../../index.js';
 import { utilsService } from '../../../index.js';
 import {
-  SDK,
-  AccountId,
-  PrivateKey,
-  PublicKey,
-  IStableCoinDetail,
-  CreateStableCoinRequest,
+  CreateRequest,
+  StableCoin,
+  StableCoinViewModel,
   TokenSupplyType,
+  RequestPrivateKey,
+  RequestPublicKey,
+  GetPublicKeyRequest,
+  RequestAccount,
+  Account,
 } from 'hedera-stable-coin-sdk';
 import { IManagedFeatures } from '../../../domain/configuration/interfaces/IManagedFeatures.js';
 import Service from '../Service.js';
 import SetConfigurationService from '../configuration/SetConfigurationService.js';
-import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
-
 
 /**
  * Create Stable Coin Service
@@ -29,15 +29,13 @@ export default class CreateStableCoinService extends Service {
    * @param isWizard
    */
   public async createStableCoin(
-    stableCoin: CreateStableCoinRequest,
+    stableCoin: CreateRequest,
     isWizard = false,
-  ): Promise<IStableCoinDetail> {
+  ): Promise<StableCoinViewModel> {
     if (isWizard) {
       stableCoin = await this.wizardCreateStableCoin();
     }
 
-    // Call to create stable coin sdk function
-    const sdk: SDK = utilsService.getSDK();
     const currentAccount = utilsService.getCurrentAccount();
 
     if (
@@ -58,8 +56,8 @@ export default class CreateStableCoinService extends Service {
     utilsService.showMessage('\n');
     await utilsService.showSpinner(
       new Promise((resolve, reject) => {
-        sdk
-          .createStableCoin(stableCoin)
+        StableCoin
+          .create(stableCoin)
           .then((coin) => {
             console.log(coin);
             createdToken = coin;
@@ -87,39 +85,21 @@ export default class CreateStableCoinService extends Service {
    * Specific function for wizard to create stable coin
    * @returns
    */
-  public async wizardCreateStableCoin(): Promise<CreateStableCoinRequest> {
+  public async wizardCreateStableCoin(): Promise<CreateRequest> {
     const currentAccount = utilsService.getCurrentAccount();
+    const currentFactory = utilsService.getCurrentFactory();
+    const currentHederaERC20 = utilsService.getCurrentHederaERC20();
 
     utilsService.displayCurrentUserInfo(currentAccount);
 
     // Call to create stable coin sdk function
-    let tokenToCreate = new CreateStableCoinRequest({
-      account: {
-        accountId: currentAccount.accountId,
-        privateKey: {
-          key: currentAccount.privateKey.key,
-          type: currentAccount.privateKey.type,
-        },
-      },
+    let tokenToCreate = new CreateRequest({
       name: '',
       symbol: '',
       decimals: 6,
+      stableCoinFactory: currentFactory.id,
+      hederaERC20: currentHederaERC20.id,
     });
-
-    // Factory
-    /*tokenToCreate.stableCoinFactory = await utilsService.defaultSingleAsk(
-      language.getText('stablecoin.askFactory'),
-      tokenToCreate.stableCoinFactory || '0.0.0',
-    );
-    await utilsService.handleValidation(
-      () => tokenToCreate.validate('stableCoinFactory'),
-      async () => {
-        tokenToCreate.stableCoinFactory = await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.askFactory'),
-          tokenToCreate.stableCoinFactory || '0.0.0',
-        );
-      },
-    );*/
 
     // Name
     tokenToCreate.name = await utilsService.defaultSingleAsk(
@@ -189,6 +169,8 @@ export default class CreateStableCoinService extends Service {
         ? TokenSupplyType.INFINITE
         : TokenSupplyType.FINITE;
 
+      tokenToCreate.maxSupply = totalSupply;
+
       if (!supplyType) {
         tokenToCreate.maxSupply = await this.askForTotalSupply();
         await utilsService.handleValidation(
@@ -197,7 +179,6 @@ export default class CreateStableCoinService extends Service {
             tokenToCreate.maxSupply = await this.askForTotalSupply();
           },
         );
-        tokenToCreate.maxSupply = totalSupply;
       }
 
       initialSupply = await this.askForInitialSupply(
@@ -224,20 +205,15 @@ export default class CreateStableCoinService extends Service {
       initialSupply:
         initialSupply === '' || !initialSupply ? undefined : initialSupply,
       supplyType: supplyType ? 'INFINITE' : 'FINITE',
-      maxSupply: totalSupply === '' || !totalSupply ? undefined : totalSupply,
+      maxSupply: tokenToCreate.maxSupply
     });
     if (managedBySC) {
-      const currentAccount: IAccountConfig = utilsService.getCurrentAccount();
-      tokenToCreate.adminKey = PublicKey.fromPrivateKey(
-        currentAccount.privateKey.key,
-        currentAccount.privateKey.type,
-      );
-      tokenToCreate.freezeKey = PublicKey.NULL;
+      tokenToCreate.adminKey = Account.NullPublicKey;
+      tokenToCreate.freezeKey = Account.NullPublicKey;
       //KYCKey,
-      tokenToCreate.wipeKey = PublicKey.NULL;
-      tokenToCreate.supplyKey = PublicKey.NULL;
-      tokenToCreate.pauseKey = PublicKey.NULL;
-      tokenToCreate.treasury = AccountId.NULL.id;
+      tokenToCreate.wipeKey = Account.NullPublicKey;
+      tokenToCreate.supplyKey = Account.NullPublicKey;
+      tokenToCreate.pauseKey = Account.NullPublicKey;
       if (
         !(await utilsService.defaultConfirmAsk(
           language.getText('stablecoin.askConfirmCreation'),
@@ -285,7 +261,7 @@ export default class CreateStableCoinService extends Service {
           : wipeKey.key !== 'null'
           ? wipeKey
           : 'The Smart Contract',
-      adminKey: 
+      adminKey:
         adminKey === undefined
           ? 'None'
           : adminKey.key !== 'null'
@@ -406,20 +382,27 @@ export default class CreateStableCoinService extends Service {
     return { adminKey, supplyKey, freezeKey, wipeKey, pauseKey };
   }
 
-  private async checkAnswer(answer: string): Promise<PublicKey> {
+  private async checkAnswer(answer: string): Promise<RequestPublicKey> {
     switch (answer) {
       case 'Current user key': {
         const currentAccount = utilsService.getCurrentAccount();
-        const privateKey: PrivateKey = new PrivateKey(
-          currentAccount.privateKey.key,
-          currentAccount.privateKey.type,
-        );
-        return privateKey.publicKey;
+        const privateKey: RequestPrivateKey = ({
+          key: currentAccount.privateKey.key,
+          type: currentAccount.privateKey.type
+      });
+        const reqAccount: RequestAccount = ({
+          accountId: currentAccount.accountId,
+          privateKey: privateKey
+        });
+        const req: GetPublicKeyRequest= new GetPublicKeyRequest({
+          account: reqAccount
+        })
+        return Account.getPublicKey(req)
       }
 
       case 'Other key': {
         const key = await utilsService.defaultPublicKeyAsk();
-        return new PublicKey({
+        return ({
           key: key,
           type: 'ED25519',
         });
@@ -430,16 +413,16 @@ export default class CreateStableCoinService extends Service {
 
       case 'The Smart Contract':
       default:
-        return PublicKey.NULL;
+        return Account.NullPublicKey;
     }
   }
 
-  private getTreasuryAccountFromSupplyKey(supplyKey: PublicKey): string {
-    if (supplyKey && !PublicKey.isNull(supplyKey)) {
+  private getTreasuryAccountFromSupplyKey(supplyKey: RequestPublicKey): string {
+    if (supplyKey && !Account.isPublicKeyNull(supplyKey)) {
       const currentAccount = utilsService.getCurrentAccount();
       return currentAccount.accountId;
     } else {
-      return AccountId.NULL.id;
+      return undefined;
     }
   }
 }

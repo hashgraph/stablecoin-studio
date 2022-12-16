@@ -24,10 +24,10 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 	});
 
 	it('Test get stable coins list', async () => {
-		const stableCoinList: StableCoinList[] = await mn.getStableCoinsList(
-			HEDERA_ID_ACCOUNT_ED25519,
+		const stableCoinList: StableCoinList = await mn.getStableCoinsList(
+			ed25519_accountId,
 		);
-		expect(stableCoinList.length).toBeGreaterThan(0);
+		expect(stableCoinList.coins.length).toBeGreaterThan(0);
 	});
 
 	it('Test get stable coin', async () => {
@@ -67,27 +67,25 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 
 	it('Test get ed25519 account info', async () => {
 		const accountInfo: AccountInfo = await mn.getAccountInfo(
-			HEDERA_ID_ACCOUNT_ED25519,
+			ed25519_accountId,
 		);
-		expect(accountInfo.account).toEqual(
-			HEDERA_ID_ACCOUNT_ED25519.toString(),
-		);
+		expect(accountInfo.id).toEqual(ed25519_accountId.toString());
 		expect(accountInfo.accountEvmAddress).toBeNull();
-		expect(accountInfo.publicKey).toEqual(CLIENT_ACCOUNT_ED25519.publicKey);
+		expect(accountInfo.publicKey).toEqual(ed25519_publicKey);
 		expect(accountInfo.alias).toBeNull();
 	});
 
 	it('Test get ecdsa account info', async () => {
 		const accountInfo: AccountInfo = await mn.getAccountInfo(
-			HEDERA_ID_ACCOUNT_ECDSA,
+			ecdsa_accountId,
 		);
-		expect(accountInfo.account).toEqual(HEDERA_ID_ACCOUNT_ECDSA.toString());
+		expect(accountInfo.id).toEqual(ecdsa_accountId.toString());
 		expect(accountInfo.accountEvmAddress).toEqual(
-			CLIENT_ACCOUNT_ECDSA.evmAddress,
+			'0xb58c62f798d132a865429ee3c8968fed20b38116',
 		);
-		expect(accountInfo.publicKey).toEqual(CLIENT_ACCOUNT_ECDSA.publicKey);
-		// expect(accountInfo.alias).toEqual(
-		// 	'HIQQFY4QQVVCIRNDY3UEMWEW6TZ7RXPJRRUHUTTW3LRPDEHSOSXRVUXR',
-		// );
+		expect(accountInfo.publicKey).toEqual(ecdsa_publicKey);
+		expect(accountInfo.alias).toEqual(
+			'HIQQFY4QQVVCIRNDY3UEMWEW6TZ7RXPJRRUHUTTW3LRPDEHSOSXRVUXR',
+		);
 	});
 });

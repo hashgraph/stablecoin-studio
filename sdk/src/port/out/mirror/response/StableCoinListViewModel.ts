@@ -1,6 +1,7 @@
-import { QueryResponse } from "../../../../core/query/QueryResponse.js";
+import { constructor } from '@hashgraph/sdk/lib/EntityIdHelper.js';
+import { QueryResponse } from '../../../../core/query/QueryResponse.js';
 
 export default interface StableCoinListViewModel extends QueryResponse {
-	symbol: string;
-	id: string;
+	coins: { symbol: string; id: string }[];
+
 }

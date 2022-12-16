@@ -7,18 +7,13 @@ import OperationLayout from '../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
 import { useSelector } from 'react-redux';
-import {
-	SELECTED_WALLET_ACCOUNT_INFO,
-	SELECTED_WALLET_COIN,
-	SELECTED_WALLET_PAIRED_ACCOUNT,
-	
-} from '../../../store/slices/walletSlice';
+import { SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
 import SDKService from '../../../services/SDKService';
 import { handleRequestValidation } from '../../../utils/validationsHelper';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
-import { CashOutStableCoinRequest } from 'hedera-stable-coin-sdk';
+import { BurnRequest } from 'hedera-stable-coin-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 
 const BurnOperation = () => {
@@ -29,23 +24,13 @@ const BurnOperation = () => {
 	} = useDisclosure();
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
-	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
-	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 
 	const [errorOperation, setErrorOperation] = useState();
 	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
 	const [request] = useState(
-		new CashOutStableCoinRequest({
-			account: {
-				accountId: account.accountId,
-			},
+		new BurnRequest({
 			amount: '0',
-			proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
-			tokenId: selectedStableCoin?.tokenId ?? '',
-			publicKey:{
-				key:accountInfo.publicKey?.key??'',
-				type:accountInfo.publicKey?.type ??'ED25519'
-			}
+			tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
 		}),
 	);
 	const navigate = useNavigate();
@@ -57,7 +42,6 @@ const BurnOperation = () => {
 
 	const { t } = useTranslation(['burn', 'global', 'operations']);
 
-
 	const handleCloseModal = () => {
 		RouterManager.goBack(navigate);
 	};
@@ -65,20 +49,18 @@ const BurnOperation = () => {
 	const handleBurn: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
 		// const { amount } = getValues();
 		try {
-			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId) {
+			if (!selectedStableCoin?.proxyAddress || !selectedStableCoin?.tokenId) {
 				onError();
 				return;
 			}
-			await SDKService.cashOut(request);
+			await SDKService.burn(request);
 			onSuccess();
 		} catch (error: any) {
-			setErrorTransactionUrl(error.transactionUrl)
+			setErrorTransactionUrl(error.transactionUrl);
 			setErrorOperation(error.toString());
 			onError();
 		}
 	};
-
-	
 
 	return (
 		<>

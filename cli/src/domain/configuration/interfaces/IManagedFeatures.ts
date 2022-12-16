@@ -1,10 +1,10 @@
-import { PublicKey } from 'hedera-stable-coin-sdk';
+import { RequestPublicKey } from 'hedera-stable-coin-sdk';
 
 export interface IManagedFeatures {
-  adminKey: PublicKey;
-  supplyKey: PublicKey;
+  adminKey: RequestPublicKey;
+  supplyKey: RequestPublicKey;
   //KYCKey: PublicKey;
-  freezeKey: PublicKey;
-  wipeKey: PublicKey;
-  pauseKey: PublicKey;
+  freezeKey: RequestPublicKey;
+  wipeKey: RequestPublicKey;
+  pauseKey: RequestPublicKey;
 }

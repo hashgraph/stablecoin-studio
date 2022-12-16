@@ -3,58 +3,58 @@ import figlet from 'figlet-promised';
 import Service from '../Service.js';
 import { configurationService, language } from '../../../index.js';
 import Table from 'cli-table3';
-import { StableCoinList } from '../../../domain/stablecoin/StableCoinList.js';
 import {
-  HederaNetwork,
-  HederaNetworkEnviroment,
-  NetworkMode,
-  SDK,
   ValidationResponse,
+  Network,
+  ConnectRequest,
+  SupportedWallets,
+  StableCoinListViewModel,
+  InitializationRequest,
+  SDK,
 } from 'hedera-stable-coin-sdk';
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
 import colors from 'colors';
 import MaskData from 'maskdata';
 import { clear } from 'console';
-import { IFactoryConfig } from 'domain/configuration/interfaces/IFactoryConfig.js';
+import { IFactoryConfig } from '../../../domain/configuration/interfaces/IFactoryConfig.js';
+import { IHederaERC20Config } from '../../../domain/configuration/interfaces/IHederaERC20Config.js';
 
 /**
  * Utilities Service
  */
 export default class UtilitiesService extends Service {
-  private sdk: SDK;
   private currentAccount: IAccountConfig;
   private currentNetwork: INetworkConfig;
   private currentFactory: IFactoryConfig;
-
+  private currentHederaERC20: IHederaERC20Config;
 
   constructor() {
     super('Utilities');
   }
 
-  public async initSDK(network: string): Promise<SDK> {
-    const networks = {
-      testnet: HederaNetworkEnviroment.TEST,
-      previewnet: HederaNetworkEnviroment.PREVIEW,
-      mainnet: HederaNetworkEnviroment.MAIN,
-      local: HederaNetworkEnviroment.LOCAL,
-    };
-    this.sdk = await new SDK({
-      network: new HederaNetwork(networks[network]),
-      mode: NetworkMode.EOA,
-      options: {
-        logOptions: configurationService.getLogConfiguration()
-      }
-    }).init();
-    return this.sdk;
-  }
-
-  public getSDK(): SDK {
-    if (!this.sdk) {
-      throw new Error('SDK not initialized');
-    } else {
-      return this.sdk;
-    }
+  public async initSDK(): Promise<void> {
+    const account = this.getCurrentAccount();
+    SDK.log = configurationService.getLogConfiguration();
+    console.log(SDK.log)
+    await Network.init(
+      new InitializationRequest({
+        network: this.getCurrentNetwork().name,
+      }),
+    );
+    await Network.connect(
+      new ConnectRequest({
+        account: {
+          accountId: account.accountId,
+          privateKey: {
+            key: account.privateKey.key,
+            type: account.privateKey.type,
+          },
+        },
+        network: this.getCurrentNetwork().name,
+        wallet: SupportedWallets.CLIENT,
+      }),
+    );
   }
 
   public setCurrentAccount(account: IAccountConfig): void {
@@ -85,11 +85,23 @@ export default class UtilitiesService extends Service {
     this.currentFactory = factory;
   }
 
+  public setCurrentHederaERC20(hederaERC20: IHederaERC20Config): void {
+    this.currentHederaERC20 = hederaERC20;
+  }
+
   public getCurrentFactory(): IFactoryConfig {
     if (!this.currentFactory) {
       throw new Error('Factory not initialized');
     } else {
       return this.currentFactory;
+    }
+  }
+
+  public getCurrentHederaERC20(): IHederaERC20Config {
+    if (!this.currentHederaERC20) {
+      throw new Error('HederaERC20 not initialized');
+    } else {
+      return this.currentHederaERC20;
     }
   }
 
@@ -312,8 +324,10 @@ export default class UtilitiesService extends Service {
     return publicKey;
   }
 
-  public async drawTableListStableCoin(data?: StableCoinList[]): Promise<void> {
-    if (data.length === 0) {
+  public async drawTableListStableCoin(
+    data?: StableCoinListViewModel,
+  ): Promise<void> {
+    if (data.coins.length === 0) {
       console.log('There are no stable coins available at this time.');
     } else {
       const table = new Table({
@@ -322,8 +336,8 @@ export default class UtilitiesService extends Service {
         colWidths: [15, 20],
       });
 
-      if (data) {
-        data.forEach((item) => table.push([item.id, item.symbol]));
+      if (data.coins) {
+        data.coins.forEach((item) => table.push([item.id, item.symbol]));
       } else {
         table.push(['-', '-']);
       }

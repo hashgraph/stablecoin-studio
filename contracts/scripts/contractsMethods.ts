@@ -2,9 +2,12 @@ const {AccountId, AccountBalanceQuery, TransferTransaction, HbarUnit, Hbar} = re
 
 import {HederaERC20__factory,
     HederaERC20Proxy__factory,
-    HederaERC20ProxyAdmin__factory} from '../typechain-types'
+    HederaERC20ProxyAdmin__factory,
+    StableCoinFactoryProxy__factory,
+    StableCoinFactoryProxyAdmin__factory
+} from '../typechain-types'
 
-import { contractCall} from "./utils";
+import { contractCall, toEvmAddress} from "./utils";
 import { Gas1, Gas2, Gas3, Gas4, Gas5, Gas6} from "./constants";
 
 
@@ -28,18 +31,18 @@ export async function transferHBAR(senderAccountId: string, receiver: string, am
 }
 
 // AccessControlUpgradeable ///////////////////////////////////////////////////
-export async function grantRole(ROLE: string, ContractId: any, proxyAddress: string, clientGrantingRole: any, accountToGrantRoleTo: string){
-    let params: any[] = [ROLE, AccountId.fromString(accountToGrantRoleTo!).toSolidityAddress()];  
+export async function grantRole(ROLE: string, ContractId: any, proxyAddress: string, clientGrantingRole: any, accountToGrantRoleTo: string, isE25519: boolean){
+    let params: any[] = [ROLE, await toEvmAddress(accountToGrantRoleTo!, isE25519)];  
     await contractCall(ContractId.fromString(proxyAddress!), 'grantRole', params, clientGrantingRole, Gas1, HederaERC20__factory.abi);
 }
 
-export async function revokeRole(ROLE: string, ContractId: any, proxyAddress: string, clientRevokingRole: any, accountToRevokeRoleFrom: string){
-    let params: any[] = [ROLE, AccountId.fromString(accountToRevokeRoleFrom!).toSolidityAddress()];  
+export async function revokeRole(ROLE: string, ContractId: any, proxyAddress: string, clientRevokingRole: any, accountToRevokeRoleFrom: string, isE25519: boolean){
+    let params: any[] = [ROLE, await toEvmAddress(accountToRevokeRoleFrom!, isE25519)];  
     await contractCall(ContractId.fromString(proxyAddress!), 'revokeRole', params, clientRevokingRole, Gas1, HederaERC20__factory.abi);  
 }
 
-export async function hasRole(ROLE: string, ContractId: any, proxyAddress: string, clientCheckingRole: any, accountToCheckRoleFrom: string): Promise<boolean>{
-    let params: any[] = [ROLE, AccountId.fromString(accountToCheckRoleFrom!).toSolidityAddress()];  
+export async function hasRole(ROLE: string, ContractId: any, proxyAddress: string, clientCheckingRole: any, accountToCheckRoleFrom: string, isE25519: boolean): Promise<boolean>{
+    let params: any[] = [ROLE, await toEvmAddress(accountToCheckRoleFrom!, isE25519)];  
     let result = await contractCall(ContractId.fromString(proxyAddress!), 'hasRole', params, clientCheckingRole, Gas2, HederaERC20__factory.abi);
     return result[0]; 
 }
@@ -50,18 +53,18 @@ export async function getTotalSupply(ContractId: any, proxyAddress: string, clie
     return BigNumber.from(result[0]); 
 }
 
-export async function associateToken(ContractId: any, proxyAddress: string, clientAssociatingToken: any, accountToAssociateTo: string) {
-    let params : any = [AccountId.fromString(accountToAssociateTo!).toSolidityAddress()];  
+export async function associateToken(ContractId: any, proxyAddress: string, clientAssociatingToken: any, accountToAssociateTo: string, isE25519: boolean) {
+    let params : any = [await toEvmAddress(accountToAssociateTo!, isE25519)];  
     await contractCall(ContractId.fromString(proxyAddress!), 'associateToken', params, clientAssociatingToken, Gas3, HederaERC20__factory.abi);
 }
 
-export async function dissociateToken(ContractId: any, proxyAddress: string, clientDissociatingToken: any, accountToDissociateFrom: string) {
-    let params : any = [AccountId.fromString(accountToDissociateFrom!).toSolidityAddress()];  
+export async function dissociateToken(ContractId: any, proxyAddress: string, clientDissociatingToken: any, accountToDissociateFrom: string, isE25519: boolean) {
+    let params : any = [await toEvmAddress(accountToDissociateFrom!, isE25519)];  
     await contractCall(ContractId.fromString(proxyAddress!), 'dissociateToken', params, clientDissociatingToken, Gas3, HederaERC20__factory.abi);
 }
 
-export async function getBalanceOf(ContractId: any, proxyAddress: string, client: any, accountToGetBalanceOf: string, parse = true): Promise<any>{
-    let params = parse ? [AccountId.fromString(accountToGetBalanceOf!).toSolidityAddress()] : [accountToGetBalanceOf];  
+export async function getBalanceOf(ContractId: any, proxyAddress: string, client: any, accountToGetBalanceOf: string, isE25519: boolean, parse = true): Promise<any>{
+    let params = parse ? [await toEvmAddress(accountToGetBalanceOf!, isE25519)] : [accountToGetBalanceOf];  
     const result = await contractCall(ContractId.fromString(proxyAddress!), 'balanceOf', params, client, Gas2, HederaERC20__factory.abi);  
     return BigNumber.from(result[0]);
 }
@@ -118,13 +121,13 @@ export async function upgrade(ContractId: any, proxyAdminAddress: string, client
     await contractCall(ContractId.fromString(proxyAdminAddress!), 'upgrade', params, client, Gas3, HederaERC20ProxyAdmin__factory.abi);
 }
 
-export async function changeProxyAdmin(ContractId: any, proxyAdminAddress: string, client: any, newAdminAccount: string, proxyAddress: string) {
-    let params : any = [proxyAddress, AccountId.fromString(newAdminAccount!).toSolidityAddress()];  
+export async function changeProxyAdmin(ContractId: any, proxyAdminAddress: string, client: any, newAdminAccount: string, proxyAddress: string, isE25519: boolean) {
+    let params : any = [proxyAddress, await toEvmAddress(newAdminAccount!, isE25519)];  
     await contractCall(ContractId.fromString(proxyAdminAddress!), 'changeProxyAdmin', params, client, Gas3, HederaERC20ProxyAdmin__factory.abi);
 }
 
-export async function transferOwnership(ContractId: any, proxyAdminAddress: string, client: any, newOwnerAccount: string) {
-    let params : any = [AccountId.fromString(newOwnerAccount!).toSolidityAddress()];  
+export async function transferOwnership(ContractId: any, proxyAdminAddress: string, client: any, newOwnerAccount: string, isE25519: boolean) {
+    let params : any = [await toEvmAddress(newOwnerAccount!, isE25519)];  
     await contractCall(ContractId.fromString(proxyAdminAddress!), 'transferOwnership', params, client, Gas3, HederaERC20ProxyAdmin__factory.abi);
 }
 
@@ -137,6 +140,58 @@ export async function getProxyImplementation(ContractId: any, proxyAdminAddress:
 export async function getProxyAdmin(ContractId: any, proxyAdminAddress: string, client: any, proxyAddress: string): Promise<string>{
     let params: any[] = [proxyAddress];  
     const result = await contractCall(ContractId.fromString(proxyAdminAddress!), 'getProxyAdmin', params, client, Gas2, HederaERC20ProxyAdmin__factory.abi);  
+    return result[0];
+}
+
+
+// StableCoinProxy ///////////////////////////////////////////////////
+export async function upgradeTo_SCF(ContractId: any, proxyAddress: string, client: any, newImplementationContract: string) {
+    let params : any = [newImplementationContract];  
+    await contractCall(ContractId.fromString(proxyAddress!), 'upgradeTo', params, client, Gas3, StableCoinFactoryProxy__factory.abi);
+}
+
+export async function changeAdmin_SCF(ContractId: any, proxyAddress: string, client: any, newAdminAccount: string) {
+    let params : any = [newAdminAccount];  
+    await contractCall(ContractId.fromString(proxyAddress!), 'changeAdmin', params, client, Gas3, StableCoinFactoryProxy__factory.abi);
+}
+
+export async function admin_SCF(ContractId: any, proxyAddress: string, client: any): Promise<string>{
+    let params: any[] = [];  
+    const result = await contractCall(ContractId.fromString(proxyAddress!), 'admin', params, client, Gas2, StableCoinFactoryProxy__factory.abi);  
+    return result[0];
+}
+
+// StableCoinProxyAdmin ///////////////////////////////////////////////////
+export async function owner_SCF(ContractId: any, proxyAdminAddress: string, client: any): Promise<string>{
+    let params: any[] = [];  
+    const result = await contractCall(ContractId.fromString(proxyAdminAddress!), 'owner', params, client, Gas2, StableCoinFactoryProxyAdmin__factory.abi);  
+    return result[0];
+}
+
+export async function upgrade_SCF(ContractId: any, proxyAdminAddress: string, client: any, newImplementationContract: string, proxyAddress: string) {
+    let params : any = [proxyAddress, newImplementationContract];  
+    await contractCall(ContractId.fromString(proxyAdminAddress!), 'upgrade', params, client, Gas3, StableCoinFactoryProxyAdmin__factory.abi);
+}
+
+export async function changeProxyAdmin_SCF(ContractId: any, proxyAdminAddress: string, client: any, newAdminAccount: string, proxyAddress: string, isE25519: boolean) {
+    let params : any = [proxyAddress, await toEvmAddress(newAdminAccount!, isE25519)];  
+    await contractCall(ContractId.fromString(proxyAdminAddress!), 'changeProxyAdmin', params, client, Gas3, StableCoinFactoryProxyAdmin__factory.abi);
+}
+
+export async function transferOwnership_SCF(ContractId: any, proxyAdminAddress: string, client: any, newOwnerAccount: string, isE25519: boolean) {
+    let params : any = [await toEvmAddress(newOwnerAccount!, isE25519)];  
+    await contractCall(ContractId.fromString(proxyAdminAddress!), 'transferOwnership', params, client, Gas3, StableCoinFactoryProxyAdmin__factory.abi);
+}
+
+export async function getProxyImplementation_SCF(ContractId: any, proxyAdminAddress: string, client: any, proxyAddress: string): Promise<string>{
+    let params: any[] = [proxyAddress];  
+    const result = await contractCall(ContractId.fromString(proxyAdminAddress!), 'getProxyImplementation', params, client, Gas2, StableCoinFactoryProxyAdmin__factory.abi);  
+    return result[0];
+}
+
+export async function getProxyAdmin_SCF(ContractId: any, proxyAdminAddress: string, client: any, proxyAddress: string): Promise<string>{
+    let params: any[] = [proxyAddress];  
+    const result = await contractCall(ContractId.fromString(proxyAdminAddress!), 'getProxyAdmin', params, client, Gas2, StableCoinFactoryProxyAdmin__factory.abi);  
     return result[0];
 }
 
@@ -162,15 +217,15 @@ export async function Burn(ContractId: any, proxyAddress: string, amountOfTokenT
 }
 
 // Minteable ///////////////////////////////////////////////////
-export async function Mint(ContractId: any, proxyAddress: string, amountOfTokenToMint: any, clientMintingToken: any, clientToAssignTokensTo: string){
-    let params: any[] = [AccountId.fromString(clientToAssignTokensTo!).toSolidityAddress(), amountOfTokenToMint.toString()];      
+export async function Mint(ContractId: any, proxyAddress: string, amountOfTokenToMint: any, clientMintingToken: any, clientToAssignTokensTo: string, isE25519: boolean){
+    let params: any[] = [await toEvmAddress(clientToAssignTokensTo!, isE25519), amountOfTokenToMint.toString()];      
     let result = await contractCall(ContractId.fromString(proxyAddress!), 'mint', params, clientMintingToken, Gas1, HederaERC20__factory.abi);
     if(result[0] != true) throw Error;
 }
 
 // Wipeable ///////////////////////////////////////////////////
-export async function Wipe(ContractId: any, proxyAddress: string, amountOfTokenToWipe: any, clientWipingToken: any, accountToWipeFrom: string){
-    let params = [AccountId.fromString(accountToWipeFrom!).toSolidityAddress(), amountOfTokenToWipe.toString()];      
+export async function Wipe(ContractId: any, proxyAddress: string, amountOfTokenToWipe: any, clientWipingToken: any, accountToWipeFrom: string, isE25519: boolean){
+    let params = [await toEvmAddress(accountToWipeFrom!, isE25519), amountOfTokenToWipe.toString()];      
     let result = await contractCall(ContractId.fromString(proxyAddress!), 'wipe', params, clientWipingToken, Gas1, HederaERC20__factory.abi);
     if(result[0] != true) throw Error;
 }
@@ -189,14 +244,14 @@ export async function unpause(ContractId: any, proxyAddress: string, clientPausi
 }
 
 // Freezable ///////////////////////////////////////////////////
-export async function freeze(ContractId: any, proxyAddress: string, clientFreezingToken: any, accountToFreeze: string){
-    let params: any[] = [AccountId.fromString(accountToFreeze!).toSolidityAddress()];  
+export async function freeze(ContractId: any, proxyAddress: string, clientFreezingToken: any, accountToFreeze: string, isE25519: boolean){
+    let params: any[] = [await toEvmAddress(accountToFreeze!, isE25519)];  
     let result = await contractCall(ContractId.fromString(proxyAddress!), 'freeze', params, clientFreezingToken, Gas1, HederaERC20__factory.abi);
     if(result[0] != true) throw Error;
 }
 
-export async function unfreeze(ContractId: any, proxyAddress: string, clientUnFreezingToken: any, accountToUnFreeze: string){
-    let params: any[] = [AccountId.fromString(accountToUnFreeze!).toSolidityAddress()];  
+export async function unfreeze(ContractId: any, proxyAddress: string, clientUnFreezingToken: any, accountToUnFreeze: string, isE25519: boolean){
+    let params: any[] = [await toEvmAddress(accountToUnFreeze!, isE25519)];  
     let result = await contractCall(ContractId.fromString(proxyAddress!), 'unfreeze', params, clientUnFreezingToken, Gas1, HederaERC20__factory.abi);
     if(result[0] != true) throw Error;
 }
@@ -216,8 +271,8 @@ export async function rescue(ContractId: any, proxyAddress: string, amountOfToke
 }
 
 // Roles ///////////////////////////////////////////////////
-export async function getRoles(ContractId: any, proxyAddress: string, client: any, accountToGetRolesFrom: string): Promise<any[]>{
-    let params = [AccountId.fromString(accountToGetRolesFrom!).toSolidityAddress()];  
+export async function getRoles(ContractId: any, proxyAddress: string, client: any, accountToGetRolesFrom: string, isE25519: boolean): Promise<any[]>{
+    let params = [await toEvmAddress(accountToGetRolesFrom!, isE25519)];  
     const result = await contractCall(ContractId.fromString(proxyAddress!), 'getRoles', params, client, Gas3, HederaERC20__factory.abi);  
     return result[0];
 }
@@ -229,44 +284,44 @@ export async function getRoleId(ContractId: any, proxyAddress: string, client: a
 }
 
 // SupplierAdmin ///////////////////////////////////////////////////
-export async function decreaseSupplierAllowance(ContractId: any, proxyAddress: string, amountToDecrease: any, clientDecreasingAllowance: any, accountToDecreaseFrom: string){
-    let params = [AccountId.fromString(accountToDecreaseFrom!).toSolidityAddress(), amountToDecrease.toString()];      
+export async function decreaseSupplierAllowance(ContractId: any, proxyAddress: string, amountToDecrease: any, clientDecreasingAllowance: any, accountToDecreaseFrom: string, isE25519: boolean){
+    let params = [await toEvmAddress(accountToDecreaseFrom!, isE25519), amountToDecrease.toString()];      
     await contractCall(ContractId.fromString(proxyAddress!), 'decreaseSupplierAllowance', params, clientDecreasingAllowance, Gas5, HederaERC20__factory.abi);
 }
 
-export async function grantSupplierRole(ContractId: any, proxyAddress: string, cashInLimit: any, clientGrantingRole: any, accountToGrantRoleTo: string){
-    const params : any = [AccountId.fromString(accountToGrantRoleTo!).toSolidityAddress(), cashInLimit.toString()];  
+export async function grantSupplierRole(ContractId: any, proxyAddress: string, cashInLimit: any, clientGrantingRole: any, accountToGrantRoleTo: string, isE25519: boolean){
+    const params : any = [await toEvmAddress(accountToGrantRoleTo!, isE25519), cashInLimit.toString()];  
     await contractCall(ContractId.fromString(proxyAddress!), 'grantSupplierRole', params, clientGrantingRole, Gas5, HederaERC20__factory.abi);
 }
 
-export async function grantUnlimitedSupplierRole(ContractId: any, proxyAddress: string, clientGrantingRole: any, accountToGrantRoleTo: string){
-    const params : any = [AccountId.fromString(accountToGrantRoleTo!).toSolidityAddress()];  
+export async function grantUnlimitedSupplierRole(ContractId: any, proxyAddress: string, clientGrantingRole: any, accountToGrantRoleTo: string, isE25519: boolean){
+    const params : any = [await toEvmAddress(accountToGrantRoleTo!, isE25519)];  
     await contractCall(ContractId.fromString(proxyAddress!), 'grantUnlimitedSupplierRole', params, clientGrantingRole, Gas5, HederaERC20__factory.abi);
 }
 
-export async function increaseSupplierAllowance(ContractId: any, proxyAddress: string, amountToIncrease: any, clientIncreasingAllowance: any, accountToIncreaseTo: string){
-    let params = [AccountId.fromString(accountToIncreaseTo!).toSolidityAddress(), amountToIncrease.toString()];      
+export async function increaseSupplierAllowance(ContractId: any, proxyAddress: string, amountToIncrease: any, clientIncreasingAllowance: any, accountToIncreaseTo: string, isE25519: boolean){
+    let params = [await toEvmAddress(accountToIncreaseTo!, isE25519), amountToIncrease.toString()];      
     await contractCall(ContractId.fromString(proxyAddress!), 'increaseSupplierAllowance', params, clientIncreasingAllowance, Gas5, HederaERC20__factory.abi);
 }
 
-export async function isUnlimitedSupplierAllowance(ContractId: any, proxyAddress: string, clientChecking: any, accountToCheckFrom: string) : Promise<boolean>{
-    let params = [AccountId.fromString(accountToCheckFrom!).toSolidityAddress()];  
+export async function isUnlimitedSupplierAllowance(ContractId: any, proxyAddress: string, clientChecking: any, accountToCheckFrom: string, isE25519: boolean) : Promise<boolean>{
+    let params = [await toEvmAddress(accountToCheckFrom!, isE25519)];  
     let result = await contractCall(ContractId.fromString(proxyAddress!), 'isUnlimitedSupplierAllowance', params, clientChecking, Gas2, HederaERC20__factory.abi);
     return result[0];
 }
 
-export async function resetSupplierAllowance(ContractId: any, proxyAddress: string, clientResetingAllowance: any, accountToResetFrom: string){
-    let params = [AccountId.fromString(accountToResetFrom!).toSolidityAddress()];      
+export async function resetSupplierAllowance(ContractId: any, proxyAddress: string, clientResetingAllowance: any, accountToResetFrom: string, isE25519: boolean){
+    let params = [await toEvmAddress(accountToResetFrom!, isE25519)];      
     await contractCall(ContractId.fromString(proxyAddress), 'resetSupplierAllowance', params, clientResetingAllowance, Gas5, HederaERC20__factory.abi);
 }
 
-export async function revokeSupplierRole(ContractId: any, proxyAddress: string, clientRevokingRole: any, accountToRevokeFrom: string){
-    let params = [AccountId.fromString(accountToRevokeFrom!).toSolidityAddress()];      
+export async function revokeSupplierRole(ContractId: any, proxyAddress: string, clientRevokingRole: any, accountToRevokeFrom: string, isE25519: boolean){
+    let params = [await toEvmAddress(accountToRevokeFrom!, isE25519)];      
     await contractCall(ContractId.fromString(proxyAddress), 'revokeSupplierRole', params, clientRevokingRole, Gas5, HederaERC20__factory.abi);
 }
 
-export async function supplierAllowance(ContractId: any, proxyAddress: string, clientCheckingAllowance: any, accountToCheckFrom: string) : Promise<any> { 
-    let params = [AccountId.fromString(accountToCheckFrom!).toSolidityAddress()];      
+export async function supplierAllowance(ContractId: any, proxyAddress: string, clientCheckingAllowance: any, accountToCheckFrom: string, isE25519: boolean) : Promise<any> { 
+    let params = [await toEvmAddress(accountToCheckFrom!, isE25519)];      
     const result = await contractCall(ContractId.fromString(proxyAddress), 'supplierAllowance', params, clientCheckingAllowance, Gas2, HederaERC20__factory.abi);
     return BigNumber.from(result[0]);
 }

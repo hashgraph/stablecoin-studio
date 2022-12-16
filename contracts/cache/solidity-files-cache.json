@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/contracts/HederaERC20.sol": {
-      "lastModificationDate": 1669280248856,
-      "contentHash": "1f8f789d645c32868131a3c5e9a463d5",
+      "lastModificationDate": 1670841693200,
+      "contentHash": "2851fad5ed9c6208f574aeca14e134e5",
       "sourceName": "contracts/HederaERC20.sol",
       "solcConfig": {
         "version": "0.8.10",
@@ -46,15 +46,15 @@
         "./extensions/TokenOwner.sol"
       ],
       "versionPragmas": [
-        "^0.8.10"
+        "0.8.10"
       ],
       "artifacts": [
         "HederaERC20"
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/contracts/Interfaces/IHederaERC20.sol": {
-      "lastModificationDate": 1669209691974,
-      "contentHash": "5e824496e6f0d3789691fcb1c6483c65",
+      "lastModificationDate": 1670841693200,
+      "contentHash": "32e587d54da816ecd180b947730aae6e",
       "sourceName": "contracts/Interfaces/IHederaERC20.sol",
       "solcConfig": {
         "version": "0.8.10",
@@ -85,15 +85,15 @@
         "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol"
       ],
       "versionPragmas": [
-        "^0.8.10"
+        "0.8.10"
       ],
       "artifacts": [
         "IHederaERC20"
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/contracts/extensions/CashIn.sol": {
-      "lastModificationDate": 1669286712924,
-      "contentHash": "600fa8a672ce6628dcb99aa15106a9fc",
+      "lastModificationDate": 1670841693200,
+      "contentHash": "041e5ee85db80deee530f2050a8e9943",
       "sourceName": "contracts/extensions/CashIn.sol",
       "solcConfig": {
         "version": "0.8.10",
@@ -126,15 +126,15 @@
         "../hts-precompile/IHederaTokenService.sol"
       ],
       "versionPragmas": [
-        "^0.8.10"
+        "0.8.10"
       ],
       "artifacts": [
         "CashIn"
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/contracts/extensions/Burnable.sol": {
-      "lastModificationDate": 1669286532756,
-      "contentHash": "d2ff692899902f56b9ce9f19e7d1c653",
+      "lastModificationDate": 1670841693200,
+      "contentHash": "7c31f9f506c56648a380072fb85d59c8",
       "sourceName": "contracts/extensions/Burnable.sol",
       "solcConfig": {
         "version": "0.8.10",
@@ -168,15 +168,15 @@
         "../hts-precompile/IHederaTokenService.sol"
       ],
       "versionPragmas": [
-        "^0.8.10"
+        "0.8.10"
       ],
       "artifacts": [
         "Burnable"
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/contracts/extensions/Wipeable.sol": {
-      "lastModificationDate": 1669286741197,
-      "contentHash": "fdc2ca8e78accedf8321e5631bd1670b",
+      "lastModificationDate": 1670841693200,
+      "contentHash": "35635ffbb61c21af971fe31d19237b4d",
       "sourceName": "contracts/extensions/Wipeable.sol",
       "solcConfig": {
         "version": "0.8.10",
@@ -210,15 +210,15 @@
         "../hts-precompile/IHederaTokenService.sol"
       ],
       "versionPragmas": [
-        "^0.8.10"
+        "0.8.10"
       ],
       "artifacts": [
         "Wipeable"
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/contracts/extensions/Pausable.sol": {
-      "lastModificationDate": 1669286732213,
-      "contentHash": "ab545ca47debeb2d2084f38e0da2d851",
+      "lastModificationDate": 1671095237185,
+      "contentHash": "50014eaea8a93e54794cc30a866116e4",
       "sourceName": "contracts/extensions/Pausable.sol",
       "solcConfig": {
         "version": "0.8.10",
@@ -252,15 +252,15 @@
         "../hts-precompile/IHederaTokenService.sol"
       ],
       "versionPragmas": [
-        "^0.8.10"
+        "0.8.10"
       ],
       "artifacts": [
         "Pausable"
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/contracts/extensions/Freezable.sol": {
-      "lastModificationDate": 1669286724956,
-      "contentHash": "f3ca886d7b11d802939c9833e77980ea",
+      "lastModificationDate": 1671095250841,
+      "contentHash": "42059953c5b5b8da0d39f3a672323c83",
       "sourceName": "contracts/extensions/Freezable.sol",
       "solcConfig": {
         "version": "0.8.10",
@@ -294,15 +294,15 @@
         "../hts-precompile/IHederaTokenService.sol"
       ],
       "versionPragmas": [
-        "^0.8.10"
+        "0.8.10"
       ],
       "artifacts": [
         "Freezable"
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/contracts/extensions/Rescatable.sol": {
-      "lastModificationDate": 1669286736441,
-      "contentHash": "7882c4e3e6182ecad6c2c6fbce08b1e7",
+      "lastModificationDate": 1670841693200,
+      "contentHash": "2fb0330bc2fa46346ac86c577f39bed9",
       "sourceName": "contracts/extensions/Rescatable.sol",
       "solcConfig": {
         "version": "0.8.10",
@@ -336,15 +336,15 @@
         "../hts-precompile/IHederaTokenService.sol"
       ],
       "versionPragmas": [
-        "^0.8.10"
+        "0.8.10"
       ],
       "artifacts": [
         "Rescatable"
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/contracts/extensions/Deletable.sol": {
-      "lastModificationDate": 1669286717440,
-      "contentHash": "34457593713cb4f4d6c36e7e258374b9",
+      "lastModificationDate": 1670841693200,
+      "contentHash": "692c696dac20657e9c3dd0ca709843e0",
       "sourceName": "contracts/extensions/Deletable.sol",
       "solcConfig": {
         "version": "0.8.10",
@@ -378,7 +378,7 @@
         "../hts-precompile/IHederaTokenService.sol"
       ],
       "versionPragmas": [
-        "^0.8.10"
+        "0.8.10"
       ],
       "artifacts": [
         "Deletable"
@@ -422,8 +422,8 @@
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/contracts/extensions/TokenOwner.sol": {
-      "lastModificationDate": 1669286466038,
-      "contentHash": "dc0fe5420eb75affeb4f5748878b9b36",
+      "lastModificationDate": 1670841693200,
+      "contentHash": "566fef042618dc09f5b72b8ba00ef38a",
       "sourceName": "contracts/extensions/TokenOwner.sol",
       "solcConfig": {
         "version": "0.8.10",
@@ -457,51 +457,10 @@
         "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol"
       ],
       "versionPragmas": [
-        "^0.8.10"
+        "0.8.10"
       ],
       "artifacts": [
         "TokenOwner"
-      ]
-    },
-    "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/node_modules/@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol": {
-      "lastModificationDate": 1666163740220,
-      "contentHash": "c7dc9c967eb71371d53462f02b280441",
-      "sourceName": "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol",
-      "solcConfig": {
-        "version": "0.8.10",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "devdoc",
-                "userdoc"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "../IERC20Upgradeable.sol",
-        "../extensions/draft-IERC20PermitUpgradeable.sol",
-        "../../../utils/AddressUpgradeable.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "SafeERC20Upgradeable"
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/node_modules/@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol": {
@@ -580,9 +539,50 @@
         "IERC20MetadataUpgradeable"
       ]
     },
+    "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/node_modules/@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol": {
+      "lastModificationDate": 1666163740220,
+      "contentHash": "c7dc9c967eb71371d53462f02b280441",
+      "sourceName": "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.10",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../IERC20Upgradeable.sol",
+        "../extensions/draft-IERC20PermitUpgradeable.sol",
+        "../../../utils/AddressUpgradeable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "SafeERC20Upgradeable"
+      ]
+    },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/contracts/extensions/Interfaces/ICashIn.sol": {
-      "lastModificationDate": 1669286249692,
-      "contentHash": "a8fa3b5fc770fedb8bf59ec9f31bf10d",
+      "lastModificationDate": 1670841693200,
+      "contentHash": "061a051ee621bba1d5b99ffb06ef4a06",
       "sourceName": "contracts/extensions/Interfaces/ICashIn.sol",
       "solcConfig": {
         "version": "0.8.10",
@@ -611,15 +611,15 @@
       },
       "imports": [],
       "versionPragmas": [
-        "^0.8.10"
+        "0.8.10"
       ],
       "artifacts": [
         "ICashIn"
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/contracts/extensions/SupplierAdmin.sol": {
-      "lastModificationDate": 1669209691978,
-      "contentHash": "10abebcb3a82de8d9cea8f6a6e42ed5a",
+      "lastModificationDate": 1670841693200,
+      "contentHash": "ef78c1121d2d36040cc6501b8af91dcf",
       "sourceName": "contracts/extensions/SupplierAdmin.sol",
       "solcConfig": {
         "version": "0.8.10",
@@ -652,15 +652,15 @@
         "./Roles.sol"
       ],
       "versionPragmas": [
-        "^0.8.10"
+        "0.8.10"
       ],
       "artifacts": [
         "SupplierAdmin"
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/contracts/extensions/Interfaces/ISupplierAdmin.sol": {
-      "lastModificationDate": 1669209691978,
-      "contentHash": "2806a633013a1860f2ff1706d3b4925e",
+      "lastModificationDate": 1670841693200,
+      "contentHash": "458f3820ee941139abe9465cb38ebad7",
       "sourceName": "contracts/extensions/Interfaces/ISupplierAdmin.sol",
       "solcConfig": {
         "version": "0.8.10",
@@ -689,15 +689,15 @@
       },
       "imports": [],
       "versionPragmas": [
-        "^0.8.10"
+        "0.8.10"
       ],
       "artifacts": [
         "ISupplierAdmin"
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/contracts/extensions/Roles.sol": {
-      "lastModificationDate": 1669277203359,
-      "contentHash": "ffa61871bf47d37d2c73918ed740e3ec",
+      "lastModificationDate": 1670841693200,
+      "contentHash": "88f6663d4d06ddc8d016f1c7660ff515",
       "sourceName": "contracts/extensions/Roles.sol",
       "solcConfig": {
         "version": "0.8.10",
@@ -729,15 +729,15 @@
         "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol"
       ],
       "versionPragmas": [
-        "^0.8.10"
+        "0.8.10"
       ],
       "artifacts": [
         "Roles"
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/contracts/extensions/Interfaces/ITokenOwner.sol": {
-      "lastModificationDate": 1669209691978,
-      "contentHash": "5e90bcc0a4318b456ab03ec1eacd066c",
+      "lastModificationDate": 1670841693200,
+      "contentHash": "ad3da5ae106da23f6ffd3d88e05aaab3",
       "sourceName": "contracts/extensions/Interfaces/ITokenOwner.sol",
       "solcConfig": {
         "version": "0.8.10",
@@ -766,7 +766,7 @@
       },
       "imports": [],
       "versionPragmas": [
-        "^0.8.10"
+        "0.8.10"
       ],
       "artifacts": [
         "ITokenOwner"
@@ -886,8 +886,8 @@
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/contracts/extensions/Interfaces/IRoles.sol": {
-      "lastModificationDate": 1669277203359,
-      "contentHash": "a5bebc62bbb0a09c8130cf5d3145e115",
+      "lastModificationDate": 1670841693200,
+      "contentHash": "60e826d71dc644331ca4165b4c483a87",
       "sourceName": "contracts/extensions/Interfaces/IRoles.sol",
       "solcConfig": {
         "version": "0.8.10",
@@ -916,7 +916,7 @@
       },
       "imports": [],
       "versionPragmas": [
-        "^0.8.10"
+        "0.8.10"
       ],
       "artifacts": [
         "IRoles"
@@ -1002,6 +1002,43 @@
         "IAccessControlUpgradeable"
       ]
     },
+    "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/node_modules/@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol": {
+      "lastModificationDate": 1666163740228,
+      "contentHash": "b9d00086379b2524eb287c850a1b2e54",
+      "sourceName": "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.10",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "StringsUpgradeable"
+      ]
+    },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/node_modules/@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol": {
       "lastModificationDate": 1666163739768,
       "contentHash": "6200b84950eb05b4a92a39fd1d6e0f9b",
@@ -1039,43 +1076,6 @@
       ],
       "artifacts": [
         "ContextUpgradeable"
-      ]
-    },
-    "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/node_modules/@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol": {
-      "lastModificationDate": 1666163740228,
-      "contentHash": "b9d00086379b2524eb287c850a1b2e54",
-      "sourceName": "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol",
-      "solcConfig": {
-        "version": "0.8.10",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata",
-                "devdoc",
-                "userdoc"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "StringsUpgradeable"
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/node_modules/@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol": {
@@ -1156,8 +1156,8 @@
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/contracts/extensions/Interfaces/IBurnable.sol": {
-      "lastModificationDate": 1669286226328,
-      "contentHash": "8aa293abdeeb5c34c7e351c7265c60c5",
+      "lastModificationDate": 1670841693200,
+      "contentHash": "2788b58a95b91ce2d37ad644b7271bda",
       "sourceName": "contracts/extensions/Interfaces/IBurnable.sol",
       "solcConfig": {
         "version": "0.8.10",
@@ -1186,15 +1186,15 @@
       },
       "imports": [],
       "versionPragmas": [
-        "^0.8.10"
+        "0.8.10"
       ],
       "artifacts": [
         "IBurnable"
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/contracts/extensions/Interfaces/IWipeable.sol": {
-      "lastModificationDate": 1669286552504,
-      "contentHash": "5b846672e97743c1473a92f44198fad8",
+      "lastModificationDate": 1670841693200,
+      "contentHash": "cd53c089f54494627deb3b9a146fe33e",
       "sourceName": "contracts/extensions/Interfaces/IWipeable.sol",
       "solcConfig": {
         "version": "0.8.10",
@@ -1223,15 +1223,15 @@
       },
       "imports": [],
       "versionPragmas": [
-        "^0.8.10"
+        "0.8.10"
       ],
       "artifacts": [
         "IWipeable"
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/contracts/extensions/Interfaces/IPausable.sol": {
-      "lastModificationDate": 1669286309818,
-      "contentHash": "a1afc1e23b5ca8ceadb56858fd136108",
+      "lastModificationDate": 1670841693200,
+      "contentHash": "0e1f8737c23e8e96867a505c93d35af0",
       "sourceName": "contracts/extensions/Interfaces/IPausable.sol",
       "solcConfig": {
         "version": "0.8.10",
@@ -1260,15 +1260,15 @@
       },
       "imports": [],
       "versionPragmas": [
-        "^0.8.10"
+        "0.8.10"
       ],
       "artifacts": [
         "IPausable"
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/contracts/extensions/Interfaces/IFreezable.sol": {
-      "lastModificationDate": 1669286276265,
-      "contentHash": "fa28d4ba0deb96fca271d21dd8c88637",
+      "lastModificationDate": 1670841693200,
+      "contentHash": "3855c2c9ff5c0821d93eddeb67442ba1",
       "sourceName": "contracts/extensions/Interfaces/IFreezable.sol",
       "solcConfig": {
         "version": "0.8.10",
@@ -1297,15 +1297,15 @@
       },
       "imports": [],
       "versionPragmas": [
-        "^0.8.10"
+        "0.8.10"
       ],
       "artifacts": [
         "IFreezable"
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/contracts/extensions/Interfaces/IRescatable.sol": {
-      "lastModificationDate": 1669286337607,
-      "contentHash": "f73b82ce0bb33c4e86ca89be59ec5917",
+      "lastModificationDate": 1670841693200,
+      "contentHash": "9d38fecb63398d6b7e78b78de1542079",
       "sourceName": "contracts/extensions/Interfaces/IRescatable.sol",
       "solcConfig": {
         "version": "0.8.10",
@@ -1334,15 +1334,15 @@
       },
       "imports": [],
       "versionPragmas": [
-        "^0.8.10"
+        "0.8.10"
       ],
       "artifacts": [
         "IRescatable"
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/contracts/extensions/Interfaces/IDeletable.sol": {
-      "lastModificationDate": 1669286265721,
-      "contentHash": "00091dd085947cefec3d249d69e54d00",
+      "lastModificationDate": 1670841693200,
+      "contentHash": "42c1e93baf45a74dc32127ba469d3032",
       "sourceName": "contracts/extensions/Interfaces/IDeletable.sol",
       "solcConfig": {
         "version": "0.8.10",
@@ -1371,7 +1371,7 @@
       },
       "imports": [],
       "versionPragmas": [
-        "^0.8.10"
+        "0.8.10"
       ],
       "artifacts": [
         "IDeletable"
@@ -1415,8 +1415,8 @@
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/contracts/StableCoinFactory.sol": {
-      "lastModificationDate": 1669277175948,
-      "contentHash": "48f56cc62c6ceb69ef592b2c0efbbe35",
+      "lastModificationDate": 1671095872259,
+      "contentHash": "ab4b716a432470a4d41ac6a9b8b271a5",
       "sourceName": "contracts/StableCoinFactory.sol",
       "solcConfig": {
         "version": "0.8.10",
@@ -1453,15 +1453,15 @@
         "@openzeppelin/contracts/utils/Strings.sol"
       ],
       "versionPragmas": [
-        "^0.8.10"
+        "0.8.10"
       ],
       "artifacts": [
         "StableCoinFactory"
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/contracts/HederaERC20Proxy.sol": {
-      "lastModificationDate": 1669209691974,
-      "contentHash": "f16fb46ed741b30444bb30ec14809970",
+      "lastModificationDate": 1670841693200,
+      "contentHash": "5d2678135568173e8a747e0a2ee0ae9a",
       "sourceName": "contracts/HederaERC20Proxy.sol",
       "solcConfig": {
         "version": "0.8.10",
@@ -1492,15 +1492,15 @@
         "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol"
       ],
       "versionPragmas": [
-        "^0.8.10"
+        "0.8.10"
       ],
       "artifacts": [
         "HederaERC20Proxy"
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/contracts/HederaERC20ProxyAdmin.sol": {
-      "lastModificationDate": 1669209691974,
-      "contentHash": "3febae3b915e08b9b6ab84ead7283015",
+      "lastModificationDate": 1670841693200,
+      "contentHash": "ba94169f9581197fd97222e006f63b7e",
       "sourceName": "contracts/HederaERC20ProxyAdmin.sol",
       "solcConfig": {
         "version": "0.8.10",
@@ -1531,15 +1531,15 @@
         "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol"
       ],
       "versionPragmas": [
-        "^0.8.10"
+        "0.8.10"
       ],
       "artifacts": [
         "HederaERC20ProxyAdmin"
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/contracts/Interfaces/IStableCoinFactory.sol": {
-      "lastModificationDate": 1669277203355,
-      "contentHash": "c3c2f8caf6b16a4e485e438c2b168686",
+      "lastModificationDate": 1670841693200,
+      "contentHash": "6a60612b3b0c404ee652f72b3809f433",
       "sourceName": "contracts/Interfaces/IStableCoinFactory.sol",
       "solcConfig": {
         "version": "0.8.10",
@@ -1568,7 +1568,7 @@
       },
       "imports": [],
       "versionPragmas": [
-        "^0.8.10"
+        "0.8.10"
       ],
       "artifacts": [
         "IStableCoinFactory"
@@ -1769,10 +1769,10 @@
         "ERC1967Upgrade"
       ]
     },
-    "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/node_modules/@openzeppelin/contracts/interfaces/draft-IERC1822.sol": {
-      "lastModificationDate": 1666163739876,
-      "contentHash": "2858d98e74e67987ec81b39605230b74",
-      "sourceName": "@openzeppelin/contracts/interfaces/draft-IERC1822.sol",
+    "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/node_modules/@openzeppelin/contracts/utils/StorageSlot.sol": {
+      "lastModificationDate": 1666163740236,
+      "contentHash": "f993f8f50186952a59ee5e3a30b68222",
+      "sourceName": "@openzeppelin/contracts/utils/StorageSlot.sol",
       "solcConfig": {
         "version": "0.8.10",
         "settings": {
@@ -1803,7 +1803,7 @@
         "^0.8.0"
       ],
       "artifacts": [
-        "IERC1822Proxiable"
+        "StorageSlot"
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/node_modules/@openzeppelin/contracts/utils/Address.sol": {
@@ -1880,10 +1880,10 @@
         "IBeacon"
       ]
     },
-    "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/node_modules/@openzeppelin/contracts/utils/StorageSlot.sol": {
-      "lastModificationDate": 1666163740236,
-      "contentHash": "f993f8f50186952a59ee5e3a30b68222",
-      "sourceName": "@openzeppelin/contracts/utils/StorageSlot.sol",
+    "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/node_modules/@openzeppelin/contracts/interfaces/draft-IERC1822.sol": {
+      "lastModificationDate": 1666163739876,
+      "contentHash": "2858d98e74e67987ec81b39605230b74",
+      "sourceName": "@openzeppelin/contracts/interfaces/draft-IERC1822.sol",
       "solcConfig": {
         "version": "0.8.10",
         "settings": {
@@ -1914,7 +1914,7 @@
         "^0.8.0"
       ],
       "artifacts": [
-        "StorageSlot"
+        "IERC1822Proxiable"
       ]
     },
     "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/node_modules/@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol": {
@@ -2033,10 +2033,10 @@
         "Context"
       ]
     },
-    "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/contracts/StableCoinFactoryWrapper.sol": {
-      "lastModificationDate": 1669209691974,
-      "contentHash": "c71c618207bf971d8360baf1d7f88515",
-      "sourceName": "contracts/StableCoinFactoryWrapper.sol",
+    "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/contracts/StableCoinFactoryProxy.sol": {
+      "lastModificationDate": 1670841693200,
+      "contentHash": "c16003a83077836a55bb35ceb4e2afee",
+      "sourceName": "contracts/StableCoinFactoryProxy.sol",
       "solcConfig": {
         "version": "0.8.10",
         "settings": {
@@ -2063,14 +2063,52 @@
         }
       },
       "imports": [
-        "./Interfaces/IStableCoinFactory.sol",
-        "@openzeppelin/contracts/access/Ownable.sol"
+        "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol"
       ],
       "versionPragmas": [
-        "^0.8.10"
+        "0.8.10"
       ],
       "artifacts": [
-        "StableCoinFactoryWrapper"
+        "StableCoinFactoryProxy"
+      ]
+    },
+    "/home/iobuilders/Git/hedera-accelerator-stablecoin-2/hedera-accelerator-stablecoin/contracts/contracts/StableCoinFactoryProxyAdmin.sol": {
+      "lastModificationDate": 1670841693200,
+      "contentHash": "2090f7689de88982979149e77be142d1",
+      "sourceName": "contracts/StableCoinFactoryProxyAdmin.sol",
+      "solcConfig": {
+        "version": "0.8.10",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol"
+      ],
+      "versionPragmas": [
+        "0.8.10"
+      ],
+      "artifacts": [
+        "StableCoinFactoryProxyAdmin"
       ]
     }
   }

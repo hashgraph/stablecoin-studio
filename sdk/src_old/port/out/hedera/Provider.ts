@@ -53,6 +53,8 @@ export interface IProvider {
 	deployStableCoin(
 		stableCoin: StableCoin,
 		account: Account,
+		stableCoinFactory: ContractId,
+		hederaERC20: ContractId
 	): Promise<StableCoin>;
 	getAvailabilityExtension(): boolean;
 	gethashConnectConectionState(): HashConnectConnectionState;

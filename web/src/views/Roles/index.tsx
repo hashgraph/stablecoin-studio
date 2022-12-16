@@ -11,10 +11,10 @@ import {
 	SELECTED_WALLET_PAIRED_ACCOUNTID,
 	SELECTED_WALLET_COIN,
 } from '../../store/slices/walletSlice';
-import { Capabilities } from 'hedera-stable-coin-sdk';
 import { useEffect, useState } from 'react';
 import type { IAccountToken } from '../../interfaces/IAccountToken.js';
 import type { IExternalToken } from '../../interfaces/IExternalToken.js';
+import { Access, Operation } from 'hedera-stable-coin-sdk';
 
 const Roles = () => {
 	const capabilities = useSelector(SELECTED_WALLET_CAPABILITIES);
@@ -28,11 +28,13 @@ const Roles = () => {
 		if (tokensAccount) {
 			const tokensAccountParsed = JSON.parse(tokensAccount);
 			if (tokensAccountParsed) {
-				const myAccount = tokensAccountParsed.find((acc: IAccountToken) => accountId === acc.id);
+				const myAccount = tokensAccountParsed.find(
+					(acc: IAccountToken) => accountId?.toString() === acc.id,
+				);
 				if (myAccount) {
 					if (
 						myAccount.externalTokens.find(
-							(coin: IExternalToken) => coin.id === coinSelected?.tokenId,
+							(coin: IExternalToken) => coin.id === coinSelected?.tokenId?.toString(),
 						)
 					) {
 						setIsExternal(true);
@@ -45,22 +47,64 @@ const Roles = () => {
 	}, [coinSelected]);
 
 	const filteredCapabilities = roleOptions.filter((option) => {
-		if (!capabilities!.includes(Capabilities.CASH_IN) && option.label === 'Cash in') {
+		if (
+			!capabilities!.capabilities.includes({
+				operation: Operation.CASH_IN,
+				access: Access.CONTRACT,
+			}) &&
+			!capabilities!.capabilities.includes({ operation: Operation.CASH_IN, access: Access.HTS }) &&
+			option.label === 'Cash in'
+		) {
 			return false;
 		}
-		if (!capabilities!.includes(Capabilities.BURN) && option.label === 'Burn') {
+		if (
+			!capabilities!.capabilities.includes({
+				operation: Operation.BURN,
+				access: Access.CONTRACT,
+			}) &&
+			!capabilities!.capabilities.includes({ operation: Operation.BURN, access: Access.HTS }) &&
+			option.label === 'Burn'
+		) {
 			return false;
 		}
-		if (!capabilities!.includes(Capabilities.WIPE) && option.label === 'Wipe') {
+		if (
+			!capabilities!.capabilities.includes({
+				operation: Operation.WIPE,
+				access: Access.CONTRACT,
+			}) &&
+			!capabilities!.capabilities.includes({ operation: Operation.WIPE, access: Access.HTS }) &&
+			option.label === 'Wipe'
+		) {
 			return false;
 		}
-		if (!capabilities!.includes(Capabilities.PAUSE) && option.label === 'Pause') {
+		if (
+			!capabilities!.capabilities.includes({
+				operation: Operation.PAUSE,
+				access: Access.CONTRACT,
+			}) &&
+			!capabilities!.capabilities.includes({ operation: Operation.PAUSE, access: Access.HTS }) &&
+			option.label === 'Pause'
+		) {
 			return false;
 		}
-		if (!capabilities!.includes(Capabilities.RESCUE) && option.label === 'Rescue') {
+		if (
+			!capabilities!.capabilities.includes({
+				operation: Operation.RESCUE,
+				access: Access.CONTRACT,
+			}) &&
+			!capabilities!.capabilities.includes({ operation: Operation.RESCUE, access: Access.HTS }) &&
+			option.label === 'Rescue'
+		) {
 			return false;
 		}
-		if (!capabilities!.includes(Capabilities.FREEZE) && option.label === 'Freeze') {
+		if (
+			!capabilities!.capabilities.includes({
+				operation: Operation.FREEZE,
+				access: Access.CONTRACT,
+			}) &&
+			!capabilities!.capabilities.includes({ operation: Operation.FREEZE, access: Access.HTS }) &&
+			option.label === 'Freeze'
+		) {
 			return false;
 		}
 		return true;
@@ -84,7 +128,16 @@ const Roles = () => {
 			icon: 'PencilSimple',
 			route: NamedRoutes.EditRole,
 			title: t('edit'),
-			isDisabled: !capabilities!.includes(Capabilities.CASH_IN) || isExternal,
+			isDisabled:
+				!capabilities!.capabilities.includes({
+					operation: Operation.CASH_IN,
+					access: Access.CONTRACT,
+				}) ||
+				!capabilities!.capabilities.includes({
+					operation: Operation.CASH_IN,
+					access: Access.HTS,
+				}) ||
+				isExternal,
 		},
 		{
 			icon: 'ArrowsClockwise',

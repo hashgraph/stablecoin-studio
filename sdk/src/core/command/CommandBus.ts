@@ -2,7 +2,7 @@
 import { injectable } from 'tsyringe';
 import { COMMAND_HANDLER_METADATA, COMMAND_METADATA } from '../Constants.js';
 import { CommandMetadata } from '../decorator/CommandMetadata.js';
-import { Injectable } from '../Injectable.js';
+import Injectable from '../Injectable.js';
 import { Type } from '../Type.js';
 import { Command } from './Command.js';
 import { ICommandHandler } from './CommandHandler.js';

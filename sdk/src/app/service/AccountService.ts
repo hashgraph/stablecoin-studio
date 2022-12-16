@@ -1,6 +1,6 @@
 import { singleton } from 'tsyringe';
 import { CommandBus } from '../../core/command/CommandBus.js';
-import { Injectable } from '../../core/Injectable.js';
+import Injectable from '../../core/Injectable.js';
 import { QueryBus } from '../../core/query/QueryBus.js';
 import Account from '../../domain/context/account/Account.js';
 import NetworkService from './NetworkService.js';
@@ -9,8 +9,6 @@ import TransactionService from './TransactionService.js';
 
 @singleton()
 export default class AccountService extends Service {
-	private account: Account;
-
 	constructor(
 		public readonly queryBus: QueryBus = Injectable.resolve(QueryBus),
 		public readonly commandBus: CommandBus = Injectable.resolve(CommandBus),
@@ -26,9 +24,5 @@ export default class AccountService extends Service {
 
 	getCurrentAccount(): Account {
 		return this.transactionService.getHandler().getAccount();
-	}
-
-	getAccountById(accountId: string): Account {
-		return new Account({ id: accountId });
 	}
 }

@@ -1,5 +1,4 @@
-import { Box, Flex, HStack, Text, Tooltip, VStack } from '@chakra-ui/react';
-import type { ContractId, PublicKey, StableCoinMemo } from 'hedera-stable-coin-sdk';
+import { Box, Flex, Text, Tooltip } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import BaseContainer from '../../components/BaseContainer';
@@ -17,31 +16,9 @@ const StableCoinDetails = () => {
 
 	useRefreshCoinInfo();
 
-	const getMemoInformation = (memo: StableCoinMemo | undefined) => {
-		return (
-			<VStack
-				fontSize='14px'
-				fontWeight={500}
-				lineHeight='17px'
-				color='brand.gray'
-				wordBreak='break-all'
-				alignItems='flex-end'
-			>
-				<HStack>
-					<Text>
-						{t('proxyContract')} : {memo?.proxyContract}
-					</Text>
-					<TooltipCopy valueToCopy={memo?.proxyContract ?? ''}>
-						<Icon name='Copy' />
-					</TooltipCopy>
-				</HStack>
-			</VStack>
-		);
-	};
-
-	const renderKeys = ({ key }: { key: ContractId | PublicKey | undefined }) => {
+	const renderKeys = ({ key }: { key: any }) => {
 		if (!key) return t('none');
-		if ('id' in key) return t('smartContract');
+		if ('value' in key) return t('smartContract');
 		if (key.key === 'same as user')
 			// TODO: check current public key
 			return t('currentUser');
@@ -108,13 +85,13 @@ const StableCoinDetails = () => {
 								{
 									label: t('maxSupply'),
 									value:
-										selectedStableCoin?.maxSupply && selectedStableCoin?.maxSupply !== 'INFINITE'
+										selectedStableCoin?.maxSupply && !selectedStableCoin?.maxSupply.isZero
 											? selectedStableCoin?.maxSupply
 											: 'INFINITE',
 								},
 								{
-									label: t('treasuryId'),
-									value: selectedStableCoin?.treasuryId,
+									label: t('treasury'),
+									value: selectedStableCoin?.treasury,
 									copyButton: true,
 								},
 								{
@@ -123,8 +100,8 @@ const StableCoinDetails = () => {
 									copyButton: true,
 								},
 								{
-									label: t('memo'),
-									value: getMemoInformation(selectedStableCoin?.memo),
+									label: t('proxyAddress'),
+									value: selectedStableCoin.proxyAddress,
 								},
 								{
 									label: t('paused'),

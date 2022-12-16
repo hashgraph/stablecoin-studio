@@ -9,3 +9,15 @@ export enum StableCoinRole {
 	DEFAULT_ADMIN_ROLE = '0x0000000000000000000000000000000000000000000000000000000000000000',
 	WITHOUT_ROLE = '0xe11b25922c3ff9f0f0a34f0b8929ac96a1f215b99dcb08c2891c220cf3a7e8cc',
 }
+
+export const StableCoinRoleLabel = new Map<StableCoinRole, string>([
+	[StableCoinRole.CASHIN_ROLE, 'Cash in'],
+	[StableCoinRole.BURN_ROLE, 'Burn'],
+	[StableCoinRole.WIPE_ROLE, 'Wipe'],
+	[StableCoinRole.RESCUE_ROLE, 'Rescue'],
+	[StableCoinRole.PAUSE_ROLE, 'Pause'],
+	[StableCoinRole.FREEZE_ROLE, 'Freeze'],
+	[StableCoinRole.DELETE_ROLE, 'Delete'],
+	[StableCoinRole.DEFAULT_ADMIN_ROLE, 'Default admin'],
+	[StableCoinRole.WITHOUT_ROLE, 'Without'],
+  ]);
