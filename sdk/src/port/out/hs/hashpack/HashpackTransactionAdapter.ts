@@ -83,9 +83,24 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 				network: this.networkService.environment,
 				wallet: SupportedWallets.HASHPACK,
 			});
+			this.setSigner();
 		}
 		LogService.logTrace('HashPack Initialized ', eventData);
 		return this.networkService.environment;
+	}
+
+	private async setSigner(): Promise<void> {
+		this.signer = await this.hc.getSignerWithAccountKey(
+			this.hc.getProvider(
+				this.networkService.environment as
+					| 'testnet'
+					| 'previewnet'
+					| 'mainnet',
+				this.initData.topic,
+				this.account.id.toString(),
+			),
+		);
+		console.log(this.signer);
 	}
 
 	async register(): Promise<InitializationData> {
@@ -205,6 +220,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 					this.account = new Account({
 						id: this.pairingData.accountIds[0],
 					});
+					this.setSigner();
 					this.eventService.emit(WalletEvents.walletPaired, {
 						wallet: SupportedWallets.HASHPACK,
 						data: {
