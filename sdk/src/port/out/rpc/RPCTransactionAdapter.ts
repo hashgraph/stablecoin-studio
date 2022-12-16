@@ -712,7 +712,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 							evmAddress: mirrorAccount.accountEvmAddress,
 							publicKey: mirrorAccount.publicKey,
 						});
-						console.log('sajdijasidoas')
+						console.log('sajdijasidoas');
 						this.eventService.emit(WalletEvents.walletPaired, {
 							data: {
 								account: this.account,
@@ -723,7 +723,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 							wallet: SupportedWallets.METAMASK,
 						});
 					}
-					this.signerOrProvider = this.provider;
+					this.signerOrProvider = new ethers.providers.Web3Provider(
+						// @ts-expect-error No TS compatibility
+						ethereum
+					).getSigner();
 					return this.account;
 				} else {
 					throw new WalletConnectError('Metamask was not found!');
