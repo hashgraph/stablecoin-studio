@@ -17,7 +17,7 @@ import type { IExternalToken } from '../../interfaces/IExternalToken';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useRefreshCoinInfo } from '../../hooks/useRefreshCoinInfo';
 import type { StableCoinCapabilities} from 'hedera-stable-coin-sdk';
-import { Access, Operation, StableCoinRole } from 'hedera-stable-coin-sdk';
+import { Operation, StableCoinRole } from 'hedera-stable-coin-sdk';
 
 const Operations = () => {
 	const { t } = useTranslation('operations');
@@ -68,73 +68,38 @@ const Operations = () => {
 				}
 			}
 		}
-		console.log(capabilities)
+		const operations = capabilities?.capabilities.map((x) => x.operation);
 		const areDisabled = {
 			cashIn: !isExternalToken
-				? !capabilities?.capabilities.includes({
-						operation: Operation.CASH_IN,
-						access: Access.CONTRACT,
-				  }) &&
-				  !capabilities?.capabilities.includes({ operation: Operation.CASH_IN, access: Access.HTS })
-				: !roles.includes(StableCoinRole.CASHIN_ROLE) &&
-				  !capabilities?.capabilities.includes({
-						operation: Operation.CASH_IN,
-						access: Access.HTS,
-				  }),
+				? !operations?.includes(Operation.CASH_IN)
+				: (!operations?.includes(Operation.CASH_IN) ||
+				  (operations?.includes(Operation.CASH_IN) && !roles.includes(StableCoinRole.CASHIN_ROLE))),
 			burn: !isExternalToken
-				? !capabilities?.capabilities.includes({
-						operation: Operation.BURN,
-						access: Access.CONTRACT,
-				  }) &&
-				  !capabilities?.capabilities.includes({ operation: Operation.BURN, access: Access.HTS })
-				: !roles.includes(StableCoinRole.BURN_ROLE) &&
-				  !capabilities?.capabilities.includes({ operation: Operation.BURN, access: Access.HTS }),
+				? !operations?.includes(Operation.BURN)
+				: (!operations?.includes(Operation.BURN) ||
+				(operations?.includes(Operation.BURN) && !roles.includes(StableCoinRole.BURN_ROLE))),
 			balance: false,
 			rescue: !isExternalToken
-				? !capabilities?.capabilities.includes({
-						operation: Operation.RESCUE,
-						access: Access.CONTRACT,
-				  })
-				: !roles.includes(StableCoinRole.RESCUE_ROLE),
+				? !operations?.includes(Operation.RESCUE)
+				: (!operations?.includes(Operation.RESCUE) ||
+				(operations?.includes(Operation.RESCUE) && !roles.includes(StableCoinRole.RESCUE_ROLE))),
 			wipe: !isExternalToken
-				? !capabilities?.capabilities.includes({
-						operation: Operation.WIPE,
-						access: Access.CONTRACT,
-				  }) &&
-				  !capabilities?.capabilities.includes({ operation: Operation.WIPE, access: Access.HTS })
-				: !roles.includes(StableCoinRole.WIPE_ROLE) &&
-				  !capabilities?.capabilities.includes({ operation: Operation.WIPE, access: Access.HTS }),
+				? !operations?.includes(Operation.WIPE)
+				: (!operations?.includes(Operation.WIPE) ||
+				(operations?.includes(Operation.WIPE) && !roles.includes(StableCoinRole.WIPE_ROLE))),
 			freeze: !isExternalToken
-				? !capabilities?.capabilities.includes({
-						operation: Operation.FREEZE,
-						access: Access.CONTRACT,
-				  }) &&
-				  !capabilities?.capabilities.includes({ operation: Operation.FREEZE, access: Access.HTS })
-				: !roles.includes(StableCoinRole.FREEZE_ROLE) &&
-				  !capabilities?.capabilities.includes({ operation: Operation.FREEZE, access: Access.HTS }),
+				? !operations?.includes(Operation.FREEZE)
+				: (!operations?.includes(Operation.FREEZE) ||
+				(operations?.includes(Operation.FREEZE) && !roles.includes(StableCoinRole.FREEZE_ROLE))),
 			pause: !isExternalToken
-				? !capabilities?.capabilities.includes({
-						operation: Operation.PAUSE,
-						access: Access.CONTRACT,
-				  }) &&
-				  !capabilities?.capabilities.includes({ operation: Operation.PAUSE, access: Access.HTS })
-				: !roles.includes(StableCoinRole.PAUSE_ROLE) &&
-				  !capabilities?.capabilities.includes({
-						operation: Operation.PAUSE,
-						access: Access.CONTRACT,
-				  }),
+				? !operations?.includes(Operation.PAUSE)
+				: (!operations?.includes(Operation.PAUSE) ||
+				(operations?.includes(Operation.PAUSE) && !roles.includes(StableCoinRole.PAUSE_ROLE))),
 			delete: !isExternalToken
-				? !capabilities?.capabilities.includes({
-						operation: Operation.DELETE,
-						access: Access.CONTRACT,
-				  }) &&
-				  !capabilities?.capabilities.includes({ operation: Operation.DELETE, access: Access.HTS })
-				: !roles.includes(StableCoinRole.DELETE_ROLE) &&
-				  !capabilities?.capabilities.includes({ operation: Operation.DELETE, access: Access.HTS }),
+				? !operations?.includes(Operation.DELETE)
+				: (!operations?.includes(Operation.DELETE) ||
+				(operations?.includes(Operation.DELETE) && !roles.includes(StableCoinRole.DELETE_ROLE))),
 		};
-		// console.log(capabilities);
-		// console.log(areDisabled);
-
 		setDisabledFeatures(areDisabled);
 	};
 
