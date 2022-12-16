@@ -81,6 +81,7 @@ export const getExternalTokenList = createAsyncThunk(
 	},
 );
 
+const LAST_WALLET_LS = 'lastWallet';
 export const walletSlice = createSlice({
 	name: 'wallet',
 	initialState,
@@ -88,6 +89,7 @@ export const walletSlice = createSlice({
 		setSelectedWallet: (state, action) => {
 			state.selectedWallet = action.payload;
 			localStorage?.setItem('lastWallet', action.payload);
+			SDKService.selectWallet(action?.payload);
 		},
 		setData: (state, action) => {
 			state.data = action.payload;
@@ -105,7 +107,7 @@ export const walletSlice = createSlice({
 			state.externalTokenList = action.payload;
 		},
 		setHasWalletExtension(state, action) {
-			state.foundWallets.push(action.payload);
+			if (!state.foundWallets.includes(action.payload)) state.foundWallets.push(action.payload);
 			state.hasWalletExtension = true;
 		},
 		setCapabilities: (state, action) => {
@@ -116,6 +118,11 @@ export const walletSlice = createSlice({
 		},
 		clearData: (state) => {
 			state.data = initialState.data;
+			state.selectedWallet = undefined;
+			state.lastWallet = undefined;
+			state.accountInfo = initialState.accountInfo;
+			state.capabilities = initialState.capabilities;
+			localStorage?.removeItem(LAST_WALLET_LS);
 		},
 		clearSelectedStableCoin: (state) => {
 			state.selectedStableCoin = initialState.selectedStableCoin;

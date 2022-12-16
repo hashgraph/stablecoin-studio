@@ -100,7 +100,7 @@ const CoinDropdown = () => {
 
 	const formatOptionsStableCoins = async () => {
 		let options = [];
-		if (stableCoinList) {
+		if (stableCoinList?.coins) {
 			options = stableCoinList.coins.map(({ id, symbol }) => ({
 				label: <Text whiteSpace={'normal'}>{`${id} - ${symbol}`}</Text>,
 				value: id,

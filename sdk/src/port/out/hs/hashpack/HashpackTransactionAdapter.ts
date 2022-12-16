@@ -84,17 +84,21 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 				wallet: SupportedWallets.HASHPACK,
 			});
 		}
-		console.log('HashPack Initialized ', eventData);
+		LogService.logTrace('HashPack Initialized ', eventData);
 		return this.networkService.environment;
 	}
 
 	async register(): Promise<InitializationData> {
 		Injectable.registerTransactionHandler(this);
-		console.log('register Hashconnect');
+		LogService.logTrace('HashPack Registered as handler');
 		const savedPairing = this.filterAccountIdFromPairingData(
 			this.initData.savedPairings,
 		);
-		if (!this.account && !savedPairing) {
+		if (!this.account || !savedPairing) {
+			LogService.logTrace('Asking for new pairing', {
+				account: this.account,
+				savedPairing,
+			});
 			this.hc.connectToLocalWallet();
 		}
 		return Promise.resolve({
