@@ -27,8 +27,7 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 			abi,
 		);
 		if (responseType === TransactionType.RECEIPT) {
-			const transactionReceipt: TransactionReceipt | undefined =
-				await this.getReceipt(transactionResponse);
+			await this.getReceipt(transactionResponse);
 			let transId;
 			if (transactionResponse instanceof HTransactionResponse) {
 				transId = transactionResponse.transactionId.toString();
@@ -39,7 +38,6 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 				transId,
 				responseType,
 				results,
-				transactionReceipt,
 			);
 		}
 
@@ -47,7 +45,7 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 			const transactionRecord:
 				| TransactionRecord
 				| Uint32Array
-				| undefined = await this.getRecord(transactionResponse);
+				| undefined = this.getRecord(transactionResponse);
 			let record: Uint8Array | Uint32Array | undefined;
 			if (nameFunction) {
 				if (transactionRecord instanceof TransactionRecord) {
@@ -63,7 +61,7 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 			}
 			LogService.logTrace(
 				`Creating RECORD response from TRX (${transactionResponse.id}) from record: `,
-				record,
+				record?.toString(),
 				' with decoded result:',
 				results,
 			);
@@ -71,7 +69,6 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 				transactionResponse.id,
 				responseType,
 				results,
-				undefined,
 			);
 		}
 
@@ -169,9 +166,11 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 	public static createTransactionResponse(
 		transactionId: string | undefined,
 		responseType: TransactionType,
-		responseParam: Uint8Array,
-		receipt?: TransactionReceipt,
+		response: Uint8Array,
 	): TransactionResponse {
-		return new TransactionResponse(transactionId ? transactionId : '');
+		return new TransactionResponse(
+			transactionId ? transactionId : '',
+			response,
+		);
 	}
 }
