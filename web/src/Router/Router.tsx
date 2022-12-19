@@ -79,14 +79,6 @@ const Router = () => {
 		}
 	};
 
-	const walletAccountChanged = (event: EventParameter<'walletAccountChanged'>) => {
-		if (event && event.wallet === lastWallet) {
-			dispatch(walletActions.setAccount(event.account));
-			dispatch(walletActions.setLastWallet(event.wallet));
-			console.log('New account', event.wallet, event.account);
-		}
-	};
-
 	const instanceSDK = async () => {
 		SDK.appMetadata = {
 			name: 'Hedera Stable Coin',
@@ -101,7 +93,6 @@ const Router = () => {
 		await SDKService.init(
 			{
 				walletFound,
-				walletAccountChanged,
 				walletPaired,
 				walletConnectionStatusChanged,
 			},

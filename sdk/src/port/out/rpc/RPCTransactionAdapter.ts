@@ -721,10 +721,14 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 							network: this.networkService.environment,
 							wallet: SupportedWallets.METAMASK,
 						});
+						LogService.logTrace(
+							'Metamask paired with previouys account:',
+							this.account,
+						);
 					}
 					this.signerOrProvider = new ethers.providers.Web3Provider(
 						// @ts-expect-error No TS compatibility
-						ethereum
+						ethereum,
 					).getSigner();
 					return this.account;
 				} else {
@@ -762,8 +766,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					});
 				}
 			}
-			this.eventService.emit(WalletEvents.walletAccountChanged, {
-				account: this.account,
+			this.eventService.emit(WalletEvents.walletPaired, {
+				data: {
+					account: this.account,
+				},
+				network: this.networkService.environment,
 				wallet: SupportedWallets.METAMASK,
 			});
 		});

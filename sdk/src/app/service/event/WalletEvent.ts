@@ -9,7 +9,6 @@ export enum WalletEvents {
 	walletPaired = 'walletPaired',
 	walletConnectionStatusChanged = 'walletConnectionStatusChanged',
 	walletAcknowledgeMessage = 'walletAcknowledgeMessage',
-	walletAccountChanged = 'walletAccountChanged',
 	walletDisconnect = 'walletDisconnect',
 }
 
@@ -39,9 +38,6 @@ export interface WalletConnectionStatusChangedEvent extends WalletBaseEvent {
 	status: ConnectionState;
 }
 
-export interface WalletAccountChanged extends WalletBaseEvent {
-	account: Account;
-}
 export interface WalletAcknowledgeMessageEvent extends WalletBaseEvent {
 	result: boolean;
 }
@@ -54,7 +50,6 @@ type WalletEvent = {
 		data: WalletConnectionStatusChangedEvent,
 	) => void;
 	walletAcknowledgeMessage: (data: WalletAcknowledgeMessageEvent) => void;
-	walletAccountChanged: (data: WalletAccountChanged) => void;
 	walletDisconnect: () => void;
 };
 

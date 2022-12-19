@@ -13,7 +13,7 @@ import type {
 	StableCoinViewModel,
 } from 'hedera-stable-coin-sdk';
 
-interface InitialStateProps {
+export interface InitialStateProps {
 	data?: InitializationData;
 	hasWalletExtension: boolean;
 	foundWallets: SupportedWallets[];
