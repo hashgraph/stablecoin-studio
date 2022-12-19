@@ -48,8 +48,13 @@ const UnfreezeOperation = () => {
 
 	useRefreshCoinInfo();
 
-	const handleUnfreeze: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
+	const handleUnfreeze: ModalsHandlerActionsProps['onConfirm'] = async ({
+		onSuccess,
+		onError,
+		onLoading,
+	}) => {
 		try {
+			onLoading();
 			if (!selectedStableCoin?.proxyAddress || !selectedStableCoin?.tokenId?.toString()) {
 				onError();
 				return;
