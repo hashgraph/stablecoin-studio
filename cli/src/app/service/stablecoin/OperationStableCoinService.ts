@@ -1330,22 +1330,14 @@ export default class OperationStableCoinService extends Service {
   private async grantSupplierRole(
     grantRoleRequest: GrantRoleRequest,
   ): Promise<void> {
-    let hasRole;
-    await utilsService.showSpinner(
-      this.roleStableCoinService
+    const hasRole:boolean = await this.roleStableCoinService
         .hasRole(
           new HasRoleRequest({
             targetId: grantRoleRequest.targetId,
             tokenId: grantRoleRequest.tokenId,
             role: grantRoleRequest.role,
-          }),
-        )
-        .then((response) => (hasRole = response)),
-      {
-        text: language.getText('state.loading'),
-        successText: language.getText('state.loadCompleted') + '\n',
-      },
-    );
+          }));
+
     if (hasRole) {
       console.log(language.getText('cashin.alreadyRole'));
     } else {

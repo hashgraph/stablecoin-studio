@@ -42,7 +42,6 @@ const OnboardingRoute = ({ allow }: { allow: boolean }) => {
 };
 
 const Router = () => {
-
 	const dispatch = useDispatch();
 
 	const availableWallets = useSelector(AVAILABLE_WALLETS);
@@ -60,11 +59,9 @@ const Router = () => {
 	}, [status]);
 
 	const walletPaired = (event: EventParameter<'walletPaired'>) => {
-		console.log(event);
 		if (event) {
-			dispatch(walletActions.setData(event.data));
-			console.log('Paring...', lastWallet, event.wallet);
 			if (lastWallet && lastWallet === event.wallet) {
+				dispatch(walletActions.setData(event.data));
 				dispatch(walletActions.setStatus(ConnectionState.Paired));
 			}
 		}
@@ -82,13 +79,6 @@ const Router = () => {
 		}
 	};
 
-	const walletAccountChanged = (event: EventParameter<'walletAccountChanged'>) => {
-		if (event && event.wallet === lastWallet) {
-			dispatch(walletActions.setAccount(event.account));
-			dispatch(walletActions.setLastWallet(event.wallet));
-		}
-	};
-
 	const instanceSDK = async () => {
 		SDK.appMetadata = {
 			name: 'Hedera Stable Coin',
@@ -98,12 +88,11 @@ const Router = () => {
 		};
 		SDK.log = {
 			level: process.env.REACT_APP_LOG_LEVEL ?? 'ERROR',
-			transport: new LoggerTransports.Console(),
+			transports: new LoggerTransports.Console(),
 		};
 		await SDKService.init(
 			{
 				walletFound,
-				walletAccountChanged,
 				walletPaired,
 				walletConnectionStatusChanged,
 			},

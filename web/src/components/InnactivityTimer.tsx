@@ -4,7 +4,7 @@ import type { ReactNode } from 'react';
 import { useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { HASHPACK_STATUS } from '../store/slices/hashpackSlice';
+import { SELECTED_WALLET_STATUS } from '../store/slices/walletSlice';
 
 interface a {
 	children: ReactNode;
@@ -15,7 +15,7 @@ const InnactivityTimer = ({ children }: a) => {
 
 	const events = ['load', 'mousemove', 'mousedown', 'click', 'scroll', 'keypress'];
 
-	const status = useSelector(HASHPACK_STATUS);
+	const status = useSelector(SELECTED_WALLET_STATUS);
 
 	let timer: ReturnType<typeof setTimeout>;
 
