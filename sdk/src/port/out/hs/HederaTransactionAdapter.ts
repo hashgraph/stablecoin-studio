@@ -32,6 +32,7 @@ import { HederaId } from '../../../domain/context/shared/HederaId.js';
 import { FactoryKey } from '../../../domain/context/factory/FactoryKey.js';
 import { FactoryStableCoin } from '../../../domain/context/factory/FactoryStableCoin.js';
 import { TOKEN_CREATION_COST_HBAR } from '../../../core/Constants.js';
+import LogService from '../../../app/service/LogService.js';
 
 export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	private web3 = new Web3();
@@ -667,6 +668,12 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		params: Params,
 	): Promise<TransactionResponse> {
 		let t: Transaction = new Transaction();
+		LogService.logTrace(
+			'HTS Operation: ',
+			operation,
+			' with params: ',
+			params
+		);
 		switch (operation) {
 			case Operation.CASH_IN:
 				t = HTSTransactionBuilder.buildTokenMintTransaction(
