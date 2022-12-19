@@ -248,7 +248,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		amount: BigDecimal,
 	): Promise<TransactionResponse> {
 		const params = new Params({
-			targetId: await this.accountToEvmAddress(targetId),
+			targetId: targetId.toString(),
 			amount: amount,
 		});
 		return this.performOperation(coin, Operation.CASH_IN, params);
@@ -671,7 +671,13 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		sourceId: Account,
 		targetId: HederaId,
 	): Promise<TransactionResponse> {
-		throw new Error('Method not implemented.');
+		const transfer = await this.precompiledCall('transferToken', [
+			coin.coin.tokenId?.toHederaAddress().toSolidityAddress(),
+			await this.accountToEvmAddress(sourceId.id),
+			await this.accountToEvmAddress(targetId),
+			amount,
+		]);
+		return RPCTransactionResponseAdapter.manageResponse(transfer);
 	}
 
 	async signAndSendTransaction(
@@ -935,14 +941,20 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse> {
 		switch (operation) {
 			case Operation.CASH_IN:
-				return RPCTransactionResponseAdapter.manageResponse(
-					await this.precompiledCall('mintToken', [
-						TokenId.fromString(
-							coin.coin.tokenId?.value ?? '',
-						).toSolidityAddress(),
-						params?.amount,
-						[],
-					]),
+				const coinId = TokenId.fromString(
+					coin.coin.tokenId?.value ?? '',
+				).toSolidityAddress();
+				await this.precompiledCall('mintToken', [
+					coinId,
+					params?.amount,
+					[],
+				]);
+
+				return await this.transfer(
+					coin,
+					params!.amount!,
+					this.account,
+					HederaId.from(params?.targetId),
 				);
 
 			case Operation.BURN:

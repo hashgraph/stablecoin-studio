@@ -680,6 +680,13 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					coin.coin.tokenId?.value!,
 					params!.amount!.toLong(),
 				);
+				await this.signAndSendTransaction(t, TransactionType.RECEIPT);
+				t = HTSTransactionBuilder.buildTransferTransaction(
+					coin.coin.tokenId?.value!,
+					params!.amount!.toLong(),
+					this.getAccount().id.toString(),
+					params!.targetId!.toString(),
+				);
 				break;
 
 			case Operation.BURN:
