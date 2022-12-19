@@ -24,21 +24,23 @@ export { transports as LoggerTransports };
 export { DailyRotateFile };
 export { DefaultLoggerFormat };
 
-const SDK: {
-	log: LogOptions;
-	appMetadata: AppMetadata;
-} = {
-	log: {
-		level: 'ERROR',
-		transport: new transports.Console(),
-	},
-	appMetadata: {
-		icon: '',
-		description: '',
-		name: '',
-		url: '',
-		debugMode: false,
-	},
-};
+class SDK {
+	private static _log: LogOptions;
+	public static get log(): LogOptions {
+		return SDK._log;
+	}
+	public static set log(value) {
+		SDK._log = value;
+		new LogService(value);
+	}
+
+	private static _appMetadata: AppMetadata;
+	public static get appMetadata(): AppMetadata {
+		return SDK._appMetadata;
+	}
+	public static set appMetadata(value: AppMetadata) {
+		SDK._appMetadata = value;
+	}
+}
 
 export { SDK };

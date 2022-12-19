@@ -33,7 +33,6 @@ import { SDK } from '../../../in/Common.js';
 export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 	private hc: HashConnect;
 	public account: Account;
-	public topic: string;
 	public provider: HashConnectProvider;
 	public signer: Signer;
 	public hashConnectSigner: HashConnectSigner;
@@ -101,7 +100,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 				this.account.id.toString(),
 			),
 		);
-		this.signer = this.hashConnectSigner
+		this.signer = this.hashConnectSigner;
 		await this.getAccountKey();
 		console.log(this.signer);
 	}
@@ -170,17 +169,19 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 				signedT = await t.freezeWithSigner(this.signer);
 			}
 			const trx = await this.signer.signTransaction(signedT);
-			const HashPackTransactionResponse = await this.hc.sendTransaction(
-				this.topic,
-				{
-					topic: this.topic,
-					byteArray: trx.toBytes(),
-					metadata: {
-						accountToSign: this.account.id.toString(),
-						returnTransaction: false,
-						getRecord: true,
-					},
+			const hashPackTrx = {
+				topic: this.initData.topic,
+				byteArray: trx.toBytes(),
+				metadata: {
+					accountToSign: this.account.id.toString(),
+					returnTransaction: false,
+					getRecord: true,
 				},
+			};
+			console.log(hashPackTrx)
+			const HashPackTransactionResponse = await this.hc.sendTransaction(
+				this.initData.topic,
+				hashPackTrx,
 			);
 
 			return HashpackTransactionResponseAdapter.manageResponse(
