@@ -23,7 +23,7 @@ const URI_BASE = `${
 }/api/v1/`;
 
 
-export const clientId = 2;
+export const clientId = 1;
 
 export async function contractCall(
     contractId: any,
@@ -40,7 +40,7 @@ export async function contractCall(
         abi
     )
 
-    let contractTx = await new ContractExecuteTransaction()
+    const contractTx = await new ContractExecuteTransaction()
         .setContractId(contractId)
         .setFunctionParameters(functionCallParameters)
         .setGas(gas)

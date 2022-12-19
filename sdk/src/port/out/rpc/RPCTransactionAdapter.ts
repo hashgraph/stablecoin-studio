@@ -145,30 +145,35 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				keys,
 			);
 
+			const factoryInstance = StableCoinFactory__factory.connect(
+				'0x' +
+					HContractId.fromString(factory.value).toSolidityAddress(),
+				this.signerOrProvider,
+			);
+			LogService.logTrace('Deploying factory: ', {
+				erc20: hederaERC20.value,
+				stableCoin: stableCoinToCreate,
+			});
+			const res = await factoryInstance.deployStableCoin(
+				stableCoinToCreate,
+				'0x' +
+					HContractId.fromString(
+						hederaERC20.value,
+					).toSolidityAddress(),
+				{
+					value: ethers.utils.parseEther(
+						TOKEN_CREATION_COST_HBAR.toString(),
+					),
+					gasLimit: 15000000,
+				},
+			);
 			return RPCTransactionResponseAdapter.manageResponse(
-				await StableCoinFactory__factory.connect(
-					'0x' +
-						HContractId.fromString(
-							factory.value,
-						).toSolidityAddress(),
-					this.signerOrProvider,
-				).deployStableCoin(
-					stableCoinToCreate,
-					'0x' +
-						HContractId.fromString(
-							hederaERC20.value,
-						).toSolidityAddress(),
-					{
-						value: ethers.utils.parseEther(
-							TOKEN_CREATION_COST_HBAR.toString(),
-						),
-						gasLimit: 15000000,
-					},
-				),
+				res,
+				'Deployed',
 			);
 		} catch (error) {
 			throw new Error(
-				`Unexpected error in HederaTransactionHandler create operation : ${error}`,
+				`Unexpected error in RPCTransactionAdapter create operation : ${error}`,
 			);
 		}
 	}
