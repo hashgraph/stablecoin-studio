@@ -88,7 +88,7 @@ const Router = () => {
 		};
 		SDK.log = {
 			level: process.env.REACT_APP_LOG_LEVEL ?? 'ERROR',
-			transport: new LoggerTransports.Console(),
+			transports: new LoggerTransports.Console(),
 		};
 		await SDKService.init(
 			{

@@ -62,16 +62,14 @@ export default class ConfigurationService extends Service {
     if (!this.configuration.logs) return undefined;
     return {
       level: this.configuration.logs.level ?? 'ERROR',
-      transport: [
-        new DailyRotateFile({
-          filename: `%DATE%.log`,
-          dirname: this.configuration.logs.path ?? './logs',
-          datePattern: 'YYYY_MM_DD',
-          maxSize: '500k',
-          maxFiles: '14d',
-          format: DefaultLoggerFormat,
-        }),
-      ],
+      transports: new DailyRotateFile({
+        filename: `%DATE%.log`,
+        dirname: this.configuration.logs.path ?? './logs',
+        datePattern: 'YYYY_MM_DD',
+        maxSize: '500k',
+        maxFiles: '14d',
+        format: DefaultLoggerFormat,
+      }),
     };
   }
 
@@ -151,7 +149,9 @@ export default class ConfigurationService extends Service {
       accounts: defaultConfigRaw['accounts'] as unknown as IAccountConfig[],
       logs: defaultConfigRaw['logs'] as unknown as ILogConfig,
       factories: defaultConfigRaw['factories'] as unknown as IFactoryConfig[],
-      hederaERC20s: defaultConfigRaw['hederaERC20s'] as unknown as IHederaERC20Config[]
+      hederaERC20s: defaultConfigRaw[
+        'hederaERC20s'
+      ] as unknown as IHederaERC20Config[],
     };
     this.setConfiguration(config);
     return config;
