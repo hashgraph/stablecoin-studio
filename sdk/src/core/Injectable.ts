@@ -294,7 +294,6 @@ export default class Injectable {
 		} else {
 			adapters.push(Injectable.resolve(HTSTransactionAdapter));
 		}
-		console.log(adapters)
 		return adapters;
 	}
 
