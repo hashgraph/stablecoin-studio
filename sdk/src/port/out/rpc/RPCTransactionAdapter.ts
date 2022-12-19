@@ -42,7 +42,10 @@ import { TOKEN_CREATION_COST_HBAR } from '../../../core/Constants.js';
 import { MetaMaskInpageProvider } from '@metamask/providers';
 import { WalletConnectError } from '../../../domain/context/network/error/WalletConnectError.js';
 import EventService from '../../../app/service/event/EventService.js';
-import { WalletEvents } from '../../../app/service/event/WalletEvent.js';
+import {
+	ConnectionState,
+	WalletEvents,
+} from '../../../app/service/event/WalletEvent.js';
 import { SupportedWallets } from '../../../domain/context/network/Wallet.js';
 import { RPCTransactionResponseAdapter } from './RPCTransactionResponseAdapter.js';
 import LogService from '../../../app/service/LogService.js';
@@ -215,6 +218,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	}
 
 	stop(): Promise<boolean> {
+		this.eventService.emit(WalletEvents.walletConnectionStatusChanged, {
+			status: ConnectionState.Disconnected,
+			wallet: SupportedWallets.METAMASK,
+		});
+		this.eventService.emit(WalletEvents.walletDisconnect);
 		return Promise.resolve(true);
 	}
 

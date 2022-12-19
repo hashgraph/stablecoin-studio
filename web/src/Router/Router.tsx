@@ -53,12 +53,8 @@ const Router = () => {
 		instanceSDK();
 	}, []);
 
-	useEffect(() => {
-		if (!status) return;
-		dispatch(walletActions.setStatus(status));
-	}, [status]);
-
 	const walletPaired = (event: EventParameter<'walletPaired'>) => {
+		const lastWallet = localStorage.getItem('lastWallet');
 		if (event) {
 			if (lastWallet && lastWallet === event.wallet) {
 				dispatch(walletActions.setData(event.data));

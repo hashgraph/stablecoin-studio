@@ -66,6 +66,7 @@ const StableCoinCreation = () => {
 
 	const [isValidForm, setIsValidForm] = useState<boolean>(false);
 	const [currentStep, setCurrentStep] = useState<number>(0);
+	const [loading, setLoading] = useState<boolean>(false);
 	const [success, setSuccess] = useState<boolean>();
 	const [error, setError] = useState<any>();
 	const { isOpen, onOpen, onClose } = useDisclosure();
@@ -182,13 +183,14 @@ const StableCoinCreation = () => {
 			request.pauseKey = formatKey(pauseKey.label, 'pauseKey');
 			request.supplyKey = formatKey(supplyKey.label, 'supplyKey');
 			request.treasury =
-				formatKey(supplyKey.label, 'supplyKey')?.key !== Account.NullPublicKey.key &&
-				accountInfo.id
+				formatKey(supplyKey.label, 'supplyKey')?.key !== Account.NullPublicKey.key && accountInfo.id
 					? accountInfo.id
 					: undefined;
 		}
 		try {
 			console.log(request);
+			onOpen();
+			setLoading(true);
 			await SDKService.createStableCoin(request);
 			setSuccess(true);
 		} catch (error: any) {
@@ -196,8 +198,6 @@ const StableCoinCreation = () => {
 			setError(error.transactionError.transactionUrl);
 			setSuccess(false);
 		}
-
-		onOpen();
 	};
 
 	const handleCancel = () => {
@@ -214,15 +214,21 @@ const StableCoinCreation = () => {
 		setCurrentStep,
 	};
 
+	const variant = loading ? 'loading' : success ? 'success' : 'error';
+
 	return (
 		<Stack h='full'>
 			<BaseContainer title={t('common.createNewStableCoin')}>
 				<Stepper {...stepperProps} />
 			</BaseContainer>
 			<ModalNotification
-				variant={success ? 'success' : 'error'}
-				title={t('notification.title', { result: success ? 'Success' : 'Error' })}
-				description={t(`notification.description${success ? 'Success' : 'Error'}`)}
+				variant={variant}
+				title={
+					loading ? 'Loading' : t('notification.title', { result: success ? 'Success' : 'Error' })
+				}
+				description={
+					loading ? undefined : t(`notification.description${success ? 'Success' : 'Error'}`)
+				}
 				isOpen={isOpen}
 				onClose={onClose}
 				onClick={() => {

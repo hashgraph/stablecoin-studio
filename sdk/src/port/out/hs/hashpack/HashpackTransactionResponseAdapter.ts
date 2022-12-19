@@ -24,7 +24,6 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 			transactionResponse,
 			responseType,
 			nameFunction,
-			abi,
 		);
 		if (responseType === TransactionType.RECEIPT) {
 			await this.getReceipt(transactionResponse);

@@ -7,6 +7,7 @@
     "burnOperation": "Burn",
     "dangerZoneOperation":"Danger Zone",
     "getBalanceOperation": "Get balance",
+    "modalLoadingTitle": "Loading",
     "modalSuccessTitle": "Operation successfully completed",
     "modalSuccessDesc": "You can follow the order in the list of operations.",
     "modalErrorTitle": "An error occurred",

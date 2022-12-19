@@ -110,7 +110,6 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 		);
 		this.signer = this.hashConnectSigner;
 		await this.getAccountKey();
-		console.log(this.signer);
 	}
 
 	async register(): Promise<InitializationData> {
@@ -119,7 +118,6 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 		const savedPairing = this.filterAccountIdFromPairingData(
 			this.initData.savedPairings,
 		);
-		console.log('parings', this.initData);
 		if (!this.account || !savedPairing) {
 			LogService.logTrace('Asking for new pairing', {
 				account: this.account,
@@ -268,11 +266,15 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 		this.hc.connectionStatusChangeEvent.on((state) => {
 			this.hashConnectConectionState = state;
 			LogService.logTrace('hashconnect state change event', state);
+			if (state === HashConnectConnectionState.Disconnected) {
+				this.eventService.emit(WalletEvents.walletDisconnect);
+			}
 			this.eventService.emit(WalletEvents.walletConnectionStatusChanged, {
 				wallet: SupportedWallets.HASHPACK,
 				status: this
 					.hashConnectConectionState as unknown as ConnectionState,
 			});
+
 			this.state = state;
 		});
 
