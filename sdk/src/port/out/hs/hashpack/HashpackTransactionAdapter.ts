@@ -72,7 +72,10 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 			},
 		};
 		this.eventService.emit(WalletEvents.walletInit, eventData);
-		console.log(this.initData.savedPairings);
+		LogService.logTrace(
+			'Checking for previously saved pairings: ',
+			this.initData.savedPairings,
+		);
 		if (this.initData.savedPairings.length > 0) {
 			this.account = new Account({
 				id: this.initData.savedPairings[0].accountIds[0],
@@ -84,6 +87,11 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 				wallet: SupportedWallets.HASHPACK,
 			});
 			this.setSigner();
+			LogService.logTrace(
+				'Previous paring found: ',
+				this.account,
+				eventData,
+			);
 		}
 		LogService.logTrace('HashPack Initialized ', eventData);
 		return this.networkService.environment;
@@ -163,7 +171,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 	): Promise<TransactionResponse> {
 		if (!this.signer) throw new SigningError('Signer is empty');
 		try {
-			console.log(await this.getAccountKey()); // Ensure we have the public key)
+			await this.getAccountKey(); // Ensure we have the public key)
 			let signedT = t;
 			if (!t.isFrozen()) {
 				signedT = await t.freezeWithSigner(this.signer);
@@ -178,7 +186,6 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 					getRecord: true,
 				},
 			};
-			console.log(hashPackTrx)
 			const HashPackTransactionResponse = await this.hc.sendTransaction(
 				this.initData.topic,
 				hashPackTrx,

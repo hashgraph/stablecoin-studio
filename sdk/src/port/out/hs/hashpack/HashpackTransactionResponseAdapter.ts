@@ -2,14 +2,14 @@
 import {
 	TransactionResponse as HTransactionResponse,
 	TransactionReceipt,
-	TransactionRecord
+	TransactionRecord,
 } from '@hashgraph/sdk';
 import { MessageTypes } from 'hashconnect';
 import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
 import { TransactionResponseError } from '../../error/TransactionResponseError.js';
 import { TransactionType } from '../../TransactionResponseEnums.js';
 import { TransactionResponseAdapter } from '../../TransactionResponseAdapter.js';
-
+import LogService from '../../../../app/service/LogService.js';
 
 export class HashpackTransactionResponseAdapter extends TransactionResponseAdapter {
 	public static async manageResponse(
@@ -19,6 +19,13 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 		abi?: object[],
 	): Promise<TransactionResponse> {
 		let results: Uint8Array = new Uint8Array();
+		LogService.logTrace(
+			'Managing HashPack Transaction response: ',
+			transactionResponse,
+			responseType,
+			nameFunction,
+			abi,
+		);
 		if (responseType === TransactionType.RECEIPT) {
 			const transactionReceipt: TransactionReceipt | undefined =
 				await this.getReceipt(transactionResponse);
@@ -40,9 +47,7 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 			const transactionRecord:
 				| TransactionRecord
 				| Uint32Array
-				| undefined = await this.getRecord(
-				transactionResponse
-			);
+				| undefined = await this.getRecord(transactionResponse);
 			let record: Uint8Array | Uint32Array | undefined;
 			if (nameFunction) {
 				if (transactionRecord instanceof TransactionRecord) {
@@ -56,12 +61,18 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 					});
 				results = this.decodeFunctionResult(nameFunction, record, abi);
 			}
-            return this.createTransactionResponse(
-                transactionResponse.id,
-                responseType,
-                results,
-                undefined,
-            );			
+			LogService.logTrace(
+				`Creating RECORD response from TRX (${transactionResponse.id}) from record: `,
+				record,
+				' with decoded result:',
+				results,
+			);
+			return this.createTransactionResponse(
+				transactionResponse.id,
+				responseType,
+				results,
+				undefined,
+			);
 		}
 
 		throw new TransactionResponseError({
@@ -161,8 +172,6 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 		responseParam: Uint8Array,
 		receipt?: TransactionReceipt,
 	): TransactionResponse {
-		return new TransactionResponse(
-			(transactionId) ? transactionId : ""
-		);
+		return new TransactionResponse(transactionId ? transactionId : '');
 	}
 }

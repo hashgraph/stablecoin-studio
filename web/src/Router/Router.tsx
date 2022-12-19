@@ -42,7 +42,6 @@ const OnboardingRoute = ({ allow }: { allow: boolean }) => {
 };
 
 const Router = () => {
-
 	const dispatch = useDispatch();
 
 	const availableWallets = useSelector(AVAILABLE_WALLETS);
@@ -60,11 +59,9 @@ const Router = () => {
 	}, [status]);
 
 	const walletPaired = (event: EventParameter<'walletPaired'>) => {
-		console.log(event);
 		if (event) {
-			dispatch(walletActions.setData(event.data));
-			console.log('Paring...', lastWallet, event.wallet);
 			if (lastWallet && lastWallet === event.wallet) {
+				dispatch(walletActions.setData(event.data));
 				dispatch(walletActions.setStatus(ConnectionState.Paired));
 			}
 		}
@@ -86,6 +83,7 @@ const Router = () => {
 		if (event && event.wallet === lastWallet) {
 			dispatch(walletActions.setAccount(event.account));
 			dispatch(walletActions.setLastWallet(event.wallet));
+			console.log('New account', event.wallet, event.account);
 		}
 	};
 
