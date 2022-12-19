@@ -244,7 +244,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 					this.pairingData = data.pairingData;
 					LogService.logInfo('Paired with wallet', data);
 					this.account = new Account({
-						id: this.pairingData.accountIds[0],
+						id: data.pairingData.accountIds[0],
 					});
 					this.setSigner();
 					this.eventService.emit(WalletEvents.walletPaired, {
