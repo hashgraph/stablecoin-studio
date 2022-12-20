@@ -1,17 +1,33 @@
 <div align="center">
 
-# Hedera Accelerator Stablecoin - Command Line Interface (CLI)
+# Hedera Stable Coin - Command Line Interface (CLI)
+
 [![CLI - Test](https://github.com/hashgraph/hedera-accelerator-stablecoin/actions/workflows/cli.test.yml/badge.svg)](https://github.com/hashgraph/hedera-accelerator-stablecoin/actions/workflows/cli.test.yml)
+
 </div>
 
-## Overview
+### Table of Contents
+- **[Overview](#Overview)**<br>
+- **[Build](#Build)**<br>
+  - [Pre-requirements](#Pre-requirements)<br>
+  - [Steps](#Steps)<br>
+- **[Run](#Run)**<br>
+  - [Config file](#Config-file)<br>
+  - [CLI flow](#CLI-flow)<br>
+- **[Test](#Test)**<br>
+  - [Jest](#Jest)<br>
+  - [Execute](#Execute)<br>
+- **[Support](#Support)**<br>
+- **[Contributing](#Contributing)**<br>
+- **[Code of Conduct](#Code-of-Conduct)**<br>
+- **[License](#License)**<br>
 
-Implementation of an Stable Coin Accelerator SDK for Command Line Interface (CLI).
+# Overview
+The Command Line Interface (CLI) uses the API exposed by the SDK to create, manage and operate Stable Coins. It is meant as a "demo tool" to showcase the project's functionalities.
 
-## Building
+# Build
 
-### Pre-requirements
-
+## Pre-requirements
 You must have installed
 
 - [Node.js](https://nodejs.org/) `>= v16.13` and `< v17`
@@ -23,42 +39,17 @@ You must have installed and built
 2. [SDK installation](https://github.com/hashgraph/hedera-accelerator-stablecoin/blob/main/sdk/README.md#installation)
 3. [Hashconnect installation](https://github.com/hashgraph/hedera-accelerator-stablecoin/blob/main/hashconnect/lib/README.md#installation)
 
-### Steps
-
+## Steps
 From the root of the CLI project workspace:
 
-1. Run `npm install`. This will create and populate `node_modules` and build the project and dependencies.
-2. Run `npm start`. This will display the CLI options.
+- Run `npm install`. This will create and populate `node_modules` and build the project and dependencies.
+- Run `npm start`. This will display the CLI options.
+- Run `npm run start:wizard`. To start the CLI in wizard mode creating a config file in the project folder.
 
-or
-
-1. Run `npm start:wizard`. To start the CLI in wizard mode creating a config file in the project folder.
-2. Run `npm start wizard`. To start the CLI in wizard mode when you will be able to configure the path of the config file.
-
-## Commands
-
-The CLI has the following commands availables:
-
-### Wizard
-
-Wizard may be run using the following command
-
-```
-npm start wizard [TASK OPTIONS]
-
-TASK OPTIONS:
-    -cp, --config      A path of config file.
-    -n, --network      Type of network that you want to use it. (mainnet | testnet | previewnet)
-    -lv, --log-level   Log level to use (TRACE, INFO, ERROR)
-    -lp, --log-path    Log path, default is ./logs
-```
-
-# Usage
-
+# Run
 To use the CLI correctly it is necessary to generate a configuration file in which the default network and the accounts with which you want to operate in the network will be indicated. These parameters can be modified later on, from the CLI.
 
 ## Config file
-
 The configuration file that is generated populates its fields with dynamic questions when the CLI is started for the first time.
 The file format is .yaml and the structure is as follows:
 
@@ -95,10 +86,29 @@ accounts:
 logs:
   path: './logs'
   level: 'ERROR'
+factories: [
+  {
+    id: '0.0.123456',
+    network: 'testnet'
+  },
+  {
+    id: '0.0.123456',
+    network: 'previewnet'
+  }
+]
+hederaERC20s: [
+  {
+    id: '0.0.123456',
+    network: 'testnet'
+  },
+  {
+    id: '0.0.123456',
+    network: 'previewnet'
+  }
+]
 ```
 
 ## CLI flow
-
 ![Alt text](docs/images/CLI-flow.png?raw=true 'CLI flow')
 
 When the CLI is started with the configuration file properly configured. The first action will be to select the account you want to operate with. By default, the list of configured accounts belonging to the default network indicated in the file is displayed.
@@ -107,8 +117,7 @@ If there are no accounts in the file for the default network, a warning message 
 
 When an account is selected, the main menu shown in the previous image is accessed. It will operate in the network to which the account belongs.
 
-#### Main Menu
-
+### Main Menu
 From the main menu users are able to use the following functions:
 
 1. Create a new Stable Coin
@@ -117,8 +126,7 @@ From the main menu users are able to use the following functions:
 4. List Stable Coins
 5. Configuration
 
-#### Operate with stable coin
-
+### Operate with stable coin
 The operations that can be performed with a stable coin are as follows:
 
 1. Cash in
@@ -127,15 +135,18 @@ The operations that can be performed with a stable coin are as follows:
 4. Burn
 5. Wipe
 6. Rescue
-7. Role management
+7. Freeze an account
+8. Unfreeze an account
+9. Role management
+10. Refresh roles
+11. Danger zone
 
-#### Role management
-
+### Role management
 Administrators of a stable coin are able to manage user roles from this menu, being able to give, revoke and edit roles.
 
 1. Grant role
 2. Revoke role
-3. Edit
+3. Edit role
 4. Has role
 
 The available roles are:
@@ -148,52 +159,55 @@ The available roles are:
 - FREEZE_ROLE
 - DELETE_ROLE
 
-#### Configuration menu
+### Configuration menu
+Operations related to the configuration file including the accounts that are used and the network in which we operate.
 
 1. Show configuration
 2. Edit config path
 3. Edit default network
 4. Manage accounts
 
-#### Manage accounts
+### Manage accounts
+Operations related only to the accounts we use to manage/operate the stable coins.
 
 1. Change account
 2. List account
 3. Add new account
 4. Delete account
 
-## Testing
+### Danger zone
+This section contains the stable coin operations that can be performed that are particularily "dangerous" either because they affect every single token owner (PAUSE) or because they can not be rolled-back (DELETE).
+For security reasons these operations are grouped in a "sub-menu" so that users do not run them by mistake.
 
-### Jest
+1. Pause stable coin
+2. Delete stable coin
 
+# Test
+
+## Jest
 The project uses [Jest](https://jestjs.io/es-ES/) for testing.
 
-### Run
-
+## Execute
 Tests may be run using the following command
 
 ```shell
 npm run test
 ```
 
-## Support
-
+# Support
 If you have a question on how to use the product, please see our
 [support guide](https://github.com/hashgraph/.github/blob/main/SUPPORT.md).
 
-## Contributing
-
+# Contributing
 Contributions are welcome. Please see the
 [contributing guide](https://github.com/hashgraph/.github/blob/main/CONTRIBUTING.md)
 to see how you can get involved.
 
-## Code of Conduct
-
+# Code of Conduct
 This project is governed by the
 [Contributor Covenant Code of Conduct](https://github.com/hashgraph/.github/blob/main/CODE_OF_CONDUCT.md). By
 participating, you are expected to uphold this code of conduct. Please report unacceptable behavior
 to [oss@hedera.com](mailto:oss@hedera.com).
 
-## License
-
+# License
 [Apache License 2.0](LICENSE)

@@ -52,16 +52,16 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 	const [rejected, setRejected] = useState<boolean>(false);
 
 	useEffect(() => {
-		setLoading(undefined);
+		isOpen && setLoading(undefined);
 	}, [isOpen]);
 
 	const handleWalletConnect = async (wallet: SupportedWallets) => {
+		if(loading) return;
 		setLoading(wallet);
 		dispatch(walletActions.setLastWallet(wallet));
 		try {
 			await SDKService.connectWallet(wallet);
 		} catch (error: any) {
-			console.error('catch');
 			if ('errorCode' in error && error.errorCode === '40009') {
 				setRejected(true);
 			} else {
@@ -119,7 +119,7 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 							<HStack spacing={14} pt={8} w='full' justifyContent={'center'} alignItems={'stretch'}>
 								<VStack
 									{...styles.providerStyle}
-									onClick={!loading ? handleConnectHashpackWallet : undefined}
+									onClick={handleConnectHashpackWallet}
 								>
 									<PairingSpinner wallet={SupportedWallets.HASHPACK}>
 										<Image src={HEDERA_LOGO} w={20} />
@@ -128,7 +128,7 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 								</VStack>
 								<VStack
 									{...styles.providerStyle}
-									onClick={!loading ? handleConnectMetamaskWallet : undefined}
+									onClick={handleConnectMetamaskWallet}
 								>
 									<PairingSpinner wallet={SupportedWallets.METAMASK}>
 										<Image src={METAMASK_LOGO} w={20} />

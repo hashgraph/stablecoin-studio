@@ -45,6 +45,7 @@ import { FreezeCommand } from '../../app/usecase/command/stablecoin/operations/f
 import { UnFreezeCommand } from '../../app/usecase/command/stablecoin/operations/unfreeze/UnFreezeCommand.js';
 import { GetAccountInfoQuery } from '../../app/usecase/query/account/info/GetAccountInfoQuery.js';
 import { KeyType } from '../../domain/context/account/KeyProps.js';
+import { handleValidation } from './Common.js';
 
 export const HederaERC20AddressTestnet = '0.0.49127272';
 export const HederaERC20AddressPreviewnet = '0.0.11111111';
@@ -85,10 +86,7 @@ class StableCoinInPort implements IStableCoinInPort {
 	) {}
 
 	async create(req: CreateRequest): Promise<StableCoinViewModel> {
-		const validation = req.validate();
-		if (validation.length > 0)
-			throw new Error('validation error : ' + JSON.stringify(validation));
-
+		handleValidation('CreateRequest', req);
 		const { stableCoinFactory, hederaERC20 } = req;
 		const coin: StableCoinProps = {
 			name: req.name,
@@ -159,9 +157,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		request: GetStableCoinDetailsRequest,
 	): Promise<StableCoinViewModel> {
 		const { id } = request;
-		const validation = request.validate();
-		// TODO return validation
-		if (validation.length > 0) throw new Error('Validation error');
+		handleValidation('GetStableCoinDetailsRequest', request);
 		const coin = (
 			await this.queryBus.execute(
 				new GetStableCoinQuery(HederaId.from(id)),
@@ -172,9 +168,7 @@ class StableCoinInPort implements IStableCoinInPort {
 
 	async cashIn(request: CashInRequest): Promise<boolean> {
 		const { tokenId, amount, targetId } = request;
-		const validation = request.validate();
-		// TODO return validation
-		if (validation.length > 0) return false;
+		handleValidation('CashInRequest', request);
 
 		return (
 			await this.commandBus.execute(
@@ -189,9 +183,7 @@ class StableCoinInPort implements IStableCoinInPort {
 
 	async burn(request: BurnRequest): Promise<boolean> {
 		const { tokenId, amount } = request;
-		const validation = request.validate();
-		// TODO return validation
-		if (validation.length > 0) return false;
+		handleValidation('BurnRequest', request);
 
 		return (
 			await this.commandBus.execute(
@@ -202,9 +194,7 @@ class StableCoinInPort implements IStableCoinInPort {
 
 	async rescue(request: RescueRequest): Promise<boolean> {
 		const { tokenId, amount } = request;
-		const validation = request.validate();
-		// TODO return validation
-		if (validation.length > 0) return false;
+		handleValidation('RescueRequest', request);
 
 		return (
 			await this.commandBus.execute(
@@ -215,9 +205,7 @@ class StableCoinInPort implements IStableCoinInPort {
 
 	async wipe(request: WipeRequest): Promise<boolean> {
 		const { tokenId, amount, targetId } = request;
-		const validation = request.validate();
-		// TODO return validation
-		if (validation.length > 0) return false;
+		handleValidation('WipeRequest', request);
 
 		return (
 			await this.commandBus.execute(
@@ -235,9 +223,7 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 
 	async getBalanceOf(request: GetAccountBalanceRequest): Promise<Balance> {
-		const validation = request.validate();
-		// TODO return validation
-		if (validation.length > 0) throw new Error('validation error');
+		handleValidation('GetAccountBalanceRequest', request);
 
 		const res = await this.commandBus.execute(
 			new BalanceOfCommand(
@@ -252,9 +238,7 @@ class StableCoinInPort implements IStableCoinInPort {
 	async capabilities(
 		request: CapabilitiesRequest,
 	): Promise<StableCoinCapabilities> {
-		const validation = request.validate();
-		// TODO return validation
-		if (validation.length > 0) throw new Error('validation error');
+		handleValidation('CapabilitiesRequest', request);
 
 		const resp = await this.queryBus.execute(
 			new GetAccountInfoQuery(HederaId.from(request.account.accountId)),
@@ -270,9 +254,7 @@ class StableCoinInPort implements IStableCoinInPort {
 
 	async pause(request: PauseRequest): Promise<boolean> {
 		const { tokenId } = request;
-		const validation = request.validate();
-		// TODO return validation
-		if (validation.length > 0) return false;
+		handleValidation('PauseRequest', request);
 
 		return (
 			await this.commandBus.execute(
@@ -283,9 +265,7 @@ class StableCoinInPort implements IStableCoinInPort {
 
 	async unPause(request: PauseRequest): Promise<boolean> {
 		const { tokenId } = request;
-		const validation = request.validate();
-		// TODO return validation
-		if (validation.length > 0) return false;
+		handleValidation('PauseRequest', request);
 
 		return (
 			await this.commandBus.execute(
@@ -296,9 +276,7 @@ class StableCoinInPort implements IStableCoinInPort {
 
 	async delete(request: DeleteRequest): Promise<boolean> {
 		const { tokenId } = request;
-		const validation = request.validate();
-		// TODO return validation
-		if (validation.length > 0) return false;
+		handleValidation('DeleteRequest', request);
 
 		return (
 			await this.commandBus.execute(
@@ -309,9 +287,7 @@ class StableCoinInPort implements IStableCoinInPort {
 
 	async freeze(request: FreezeAccountRequest): Promise<boolean> {
 		const { tokenId, targetId } = request;
-		const validation = request.validate();
-		// TODO return validation
-		if (validation.length > 0) return false;
+		handleValidation('FreezeAccountRequest', request);
 
 		return (
 			await this.commandBus.execute(
@@ -325,9 +301,7 @@ class StableCoinInPort implements IStableCoinInPort {
 
 	async unFreeze(request: FreezeAccountRequest): Promise<boolean> {
 		const { tokenId, targetId } = request;
-		const validation = request.validate();
-		// TODO return validation
-		if (validation.length > 0) return false;
+		handleValidation('FreezeAccountRequest', request);
 
 		return (
 			await this.commandBus.execute(

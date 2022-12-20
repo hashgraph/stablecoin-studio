@@ -35,7 +35,6 @@ const textInBoldProps: ChakraTextProps = {
 
 const DetailsReview = (props: DetailsReviewProps) => {
 	const { details, divider = true, title, titleProps, contentProps } = props;
-
 	return (
 		<Box textAlign='left'>
 			{title && (
@@ -74,8 +73,10 @@ const DetailsReview = (props: DetailsReviewProps) => {
 										</TooltipCopy>
 									)}
 								</HStack>
-							) : (
+							) : 'toString' in detail.value && 'value' in detail.value ? (
 								detail.value.toString()
+							) : (
+								detail.value
 							)}
 						</Flex>
 						{divider && details.length !== index + 1 && (

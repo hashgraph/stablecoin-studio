@@ -2,6 +2,10 @@ import { transports } from 'winston';
 import DailyRotateFile from 'winston-daily-rotate-file';
 import TransportStream from 'winston-transport';
 import LogService from '../../app/service/LogService.js';
+import { BaseRequest } from './request/BaseRequest.js';
+import { ValidationError } from './request/error/ValidationError.js';
+import { ValidationResponse } from './request/index.js';
+import ValidatedRequest from './request/validation/ValidatedRequest.js';
 
 // App Metadata
 export type AppMetadata = {
@@ -42,5 +46,13 @@ class SDK {
 		SDK._appMetadata = value;
 	}
 }
+
+export const handleValidation = <T extends BaseRequest>(
+	name: string,
+	req: ValidatedRequest<T>,
+): void => {
+	const validation = req.validate();
+	if (validation.length > 0) throw new ValidationError(name, validation);
+};
 
 export { SDK };

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import CheckNums from '../../../core/checks/numbers/CheckNums.js';
 import { OptionalField } from '../../../core/decorator/OptionalDecorator.js';
+import Injectable from '../../../core/Injectable.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import InvalidDecimalRange from '../../../domain/context/stablecoin/error/InvalidDecimalRange.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
@@ -173,7 +174,22 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 					this.supplyType,
 				);
 			},
-			autoRenewAccount: Validation.checkHederaIdFormat(),
+			autoRenewAccount: (val) => {
+				const err = Validation.checkHederaIdFormat()(val);
+				const handler = Injectable.resolveTransactionHandler();
+				const id = handler.getAccount().id.toString();
+				if (err.length > 0) {
+					return err;
+				} else {
+					if (val !== id) {
+						return [
+							new InvalidValue(
+								`The autorenew account (${val}) should be your current account (${id}).`,
+							),
+						];
+					}
+				}
+			},
 			adminKey: Validation.checkPublicKey(),
 			freezeKey: Validation.checkPublicKey(),
 			KYCKey: Validation.checkPublicKey(),

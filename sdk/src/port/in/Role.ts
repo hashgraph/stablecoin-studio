@@ -1,10 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import Injectable from '../../core/Injectable.js';
-import NetworkService from '../../app/service/NetworkService.js';
-import { QueryBus } from '../../core/query/QueryBus.js';
 import { CommandBus } from '../../core/command/CommandBus.js';
-import TransactionService from '../../app/service/TransactionService.js';
 import {
 	GetRolesRequest,
 	GrantRoleRequest,
@@ -34,6 +31,7 @@ import {
 import { GrantSupplierRoleCommand } from '../../app/usecase/command/stablecoin/roles/grantSupplierRole/GrantSupplierRoleCommand.js';
 import { GrantUnlimitedSupplierRoleCommand } from '../../app/usecase/command/stablecoin/roles/granUnlimitedSupplierRole/GrantUnlimitedSupplierRoleCommand.js';
 import { RevokeSupplierRoleCommand } from '../../app/usecase/command/stablecoin/roles/revokeSupplierRole/RevokeSupplierRoleCommand.js';
+import { handleValidation } from './Common.js';
 
 export { StableCoinRole, StableCoinRoleLabel };
 
@@ -64,9 +62,7 @@ class RoleInPort implements IRole {
 
 	async hasRole(request: HasRoleRequest): Promise<boolean> {
 		const { tokenId, targetId, role } = request;
-		const validation = request.validate();
-
-		if (validation.length > 0) throw new Error('validation error');
+		handleValidation('HasRoleRequest', request);
 		return (
 			await this.commandBus.execute(
 				new HasRoleCommand(
@@ -80,9 +76,7 @@ class RoleInPort implements IRole {
 
 	async grantRole(request: GrantRoleRequest): Promise<boolean> {
 		const { tokenId, targetId, role, supplierType, amount } = request;
-		const validation = request.validate();
-
-		if (validation.length > 0) throw new Error('validation error');
+		handleValidation('GrantRoleRequest', request);
 
 		if (role === StableCoinRole.CASHIN_ROLE) {
 			if (supplierType == 'limited') {
@@ -120,9 +114,7 @@ class RoleInPort implements IRole {
 
 	async revokeRole(request: RevokeRoleRequest): Promise<boolean> {
 		const { tokenId, targetId, role } = request;
-		const validation = request.validate();
-
-		if (validation.length > 0) throw new Error('validation error');
+		handleValidation('HasRoleRequest', request);
 
 		if (role === StableCoinRole.CASHIN_ROLE) {
 			return (
@@ -148,9 +140,7 @@ class RoleInPort implements IRole {
 
 	async getRoles(request: GetRolesRequest): Promise<string[]> {
 		const { tokenId, targetId } = request;
-		const validation = request.validate();
-
-		if (validation.length > 0) throw new Error('validation error');
+		handleValidation('GetRolesRequest', request);
 
 		return (
 			await this.commandBus.execute(
@@ -166,9 +156,7 @@ class RoleInPort implements IRole {
 		request: GetSupplierAllowanceRequest,
 	): Promise<BigDecimal> {
 		const { tokenId, targetId } = request;
-		const validation = request.validate();
-
-		if (validation.length > 0) throw new Error('validation error');
+		handleValidation('GetSupplierAllowanceRequest', request);
 
 		return (
 			await this.commandBus.execute(
@@ -184,9 +172,7 @@ class RoleInPort implements IRole {
 		request: ResetSupplierAllowanceRequest,
 	): Promise<boolean> {
 		const { tokenId, targetId } = request;
-		const validation = request.validate();
-
-		if (validation.length > 0) return false;
+		handleValidation('ResetSupplierAllowanceRequest', request);
 
 		return (
 			await this.commandBus.execute(
@@ -202,9 +188,7 @@ class RoleInPort implements IRole {
 		request: IncreaseSupplierAllowanceRequest,
 	): Promise<boolean> {
 		const { tokenId, amount, targetId } = request;
-		const validation = request.validate();
-
-		if (validation.length > 0) throw new Error('validation error');
+		handleValidation('IncreaseSupplierAllowanceRequest', request);
 
 		return (
 			await this.commandBus.execute(
@@ -221,9 +205,7 @@ class RoleInPort implements IRole {
 		request: DecreaseSupplierAllowanceRequest,
 	): Promise<boolean> {
 		const { tokenId, amount, targetId } = request;
-		const validation = request.validate();
-
-		if (validation.length > 0) throw new Error('validation error');
+		handleValidation('DecreaseSupplierAllowanceRequest', request);
 
 		return (
 			await this.commandBus.execute(
@@ -238,9 +220,7 @@ class RoleInPort implements IRole {
 
 	async isLimited(request: CheckSupplierLimitRequest): Promise<boolean> {
 		const { tokenId, targetId } = request;
-		const validation = request.validate();
-
-		if (validation.length > 0) throw new Error('validation error');
+		handleValidation('CheckSupplierLimitRequest', request);
 
 		return this.hasRole(
 			new HasRoleRequest({
@@ -253,6 +233,7 @@ class RoleInPort implements IRole {
 
 	async isUnlimited(request: CheckSupplierLimitRequest): Promise<boolean> {
 		const { tokenId, targetId } = request;
+		handleValidation('CheckSupplierLimitRequest', request);
 		return (
 			await this.commandBus.execute(
 				new IsUnlimitedCommand(

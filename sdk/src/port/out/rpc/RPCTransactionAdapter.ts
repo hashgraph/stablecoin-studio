@@ -212,9 +212,9 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			this.account = account;
 			this.account.publicKey = accountMirror.publicKey;
 		}
-		!debug && await this.connectMetamask();
 		Injectable.registerTransactionHandler(this);
-		LogService.logTrace('Metamask Registered as handler');
+		!debug && await this.connectMetamask();
+		LogService.logTrace('Metamask registered as handler');
 		return Promise.resolve({ account });
 	}
 
@@ -223,6 +223,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			status: ConnectionState.Disconnected,
 			wallet: SupportedWallets.METAMASK,
 		});
+		LogService.logTrace('Metamask stopped');
 		this.eventService.emit(WalletEvents.walletDisconnect, {
 			wallet: SupportedWallets.METAMASK,
 		});
@@ -317,7 +318,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		try {
 			if (!coin.coin.evmProxyAddress)
 				throw new Error(
-					`StableCoin ${coin.coin.name} does not have a proxy Address`,
+					`StableCoin ${coin.coin.name} does not have a proxy address`,
 				);
 
 			return RPCTransactionResponseAdapter.manageResponse(
@@ -340,7 +341,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		try {
 			if (!coin.coin.evmProxyAddress)
 				throw new Error(
-					`StableCoin ${coin.coin.name} does not have a proxy Address`,
+					`StableCoin ${coin.coin.name} does not have a proxy address`,
 				);
 
 			return RPCTransactionResponseAdapter.manageResponse(
@@ -363,7 +364,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		try {
 			if (!coin.coin.evmProxyAddress)
 				throw new Error(
-					`StableCoin ${coin.coin.name} does not have a proxy Address`,
+					`StableCoin ${coin.coin.name} does not have a proxy address`,
 				);
 
 			return RPCTransactionResponseAdapter.manageResponse(
@@ -388,7 +389,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		try {
 			if (!coin.coin.evmProxyAddress)
 				throw new Error(
-					`StableCoin ${coin.coin.name} does not have a proxy Address`,
+					`StableCoin ${coin.coin.name} does not have a proxy address`,
 				);
 
 			return RPCTransactionResponseAdapter.manageResponse(
@@ -412,7 +413,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		try {
 			if (!coin.coin.evmProxyAddress)
 				throw new Error(
-					`StableCoin ${coin.coin.name} does not have a proxy Address`,
+					`StableCoin ${coin.coin.name} does not have a proxy address`,
 				);
 
 			return RPCTransactionResponseAdapter.manageResponse(
@@ -435,7 +436,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		try {
 			if (!coin.coin.evmProxyAddress)
 				throw new Error(
-					`StableCoin ${coin.coin.name} does not have a proxy Address`,
+					`StableCoin ${coin.coin.name} does not have a proxy address`,
 				);
 
 			return new TransactionResponse(
@@ -457,7 +458,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		try {
 			if (!coin.coin.evmProxyAddress)
 				throw new Error(
-					`StableCoin ${coin.coin.name} does not have a proxy Address`,
+					`StableCoin ${coin.coin.name} does not have a proxy address`,
 				);
 			const res = await HederaERC20__factory.connect(
 				coin.coin.evmProxyAddress,
@@ -480,7 +481,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		try {
 			if (!coin.coin.evmProxyAddress)
 				throw new Error(
-					`StableCoin ${coin.coin.name} does not have a proxy Address`,
+					`StableCoin ${coin.coin.name} does not have a proxy address`,
 				);
 
 			return RPCTransactionResponseAdapter.manageResponse(
@@ -501,7 +502,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		try {
 			if (!coin.coin.evmProxyAddress)
 				throw new Error(
-					`StableCoin ${coin.coin.name} does not have a proxy Address`,
+					`StableCoin ${coin.coin.name} does not have a proxy address`,
 				);
 
 			return RPCTransactionResponseAdapter.manageResponse(
@@ -522,7 +523,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		try {
 			if (!coin.coin.evmProxyAddress)
 				throw new Error(
-					`StableCoin ${coin.coin.name} does not have a proxy Address`,
+					`StableCoin ${coin.coin.name} does not have a proxy address`,
 				);
 
 			return new TransactionResponse(
@@ -546,7 +547,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		try {
 			if (!coin.coin.evmProxyAddress)
 				throw new Error(
-					`StableCoin ${coin.coin.name} does not have a proxy Address`,
+					`StableCoin ${coin.coin.name} does not have a proxy address`,
 				);
 
 			const res = await HederaERC20__factory.connect(
@@ -570,7 +571,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		try {
 			if (!coin.coin.evmProxyAddress)
 				throw new Error(
-					`StableCoin ${coin.coin.name} does not have a proxy Address`,
+					`StableCoin ${coin.coin.name} does not have a proxy address`,
 				);
 
 			return RPCTransactionResponseAdapter.manageResponse(
@@ -592,7 +593,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		try {
 			if (!coin.coin.evmProxyAddress)
 				throw new Error(
-					`StableCoin ${coin.coin.name} does not have a proxy Address`,
+					`StableCoin ${coin.coin.name} does not have a proxy address`,
 				);
 
 			return RPCTransactionResponseAdapter.manageResponse(
@@ -617,7 +618,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		try {
 			if (!coin.coin.evmProxyAddress)
 				throw new Error(
-					`StableCoin ${coin.coin.name} does not have a proxy Address`,
+					`StableCoin ${coin.coin.name} does not have a proxy address`,
 				);
 
 			return RPCTransactionResponseAdapter.manageResponse(
@@ -641,7 +642,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		try {
 			if (!coin.coin.evmProxyAddress)
 				throw new Error(
-					`StableCoin ${coin.coin.name} does not have a proxy Address`,
+					`StableCoin ${coin.coin.name} does not have a proxy address`,
 				);
 
 			return new TransactionResponse(
@@ -767,8 +768,9 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				network: this.networkService.environment,
 				wallet: SupportedWallets.METAMASK,
 			});
-			LogService.logTrace('Metamask paired with account:', this.account);
+			LogService.logTrace('Paired Metamask Wallet Event:', this.account);
 		} else {
+			LogService.logTrace('Paired Metamask failed with no accounts');
 			this.eventService.emit(WalletEvents.walletDisconnect, {
 				wallet: SupportedWallets.METAMASK,
 			});
@@ -819,7 +821,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				case Decision.CONTRACT:
 					if (!coin.coin.evmProxyAddress)
 						throw new Error(
-							`StableCoin ${coin.coin.name} does not have a proxy Address`,
+							`StableCoin ${coin.coin.name} does not have a proxy address`,
 						);
 					return this.performSmartContractOperation(
 						coin,
@@ -830,7 +832,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				case Decision.HTS:
 					if (!coin.coin.evmProxyAddress)
 						throw new Error(
-							`StableCoin ${coin.coin.name} does not have a proxy Address`,
+							`StableCoin ${coin.coin.name} does not have a proxy address`,
 						);
 					if (!coin.coin.tokenId)
 						throw new Error(
