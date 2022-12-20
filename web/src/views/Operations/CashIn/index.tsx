@@ -50,8 +50,13 @@ const CashInOperation = () => {
 
 	useRefreshCoinInfo();
 
-	const handleCashIn: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
+	const handleCashIn: ModalsHandlerActionsProps['onConfirm'] = async ({
+		onSuccess,
+		onError,
+		onLoading,
+	}) => {
 		try {
+			onLoading();
 			if (!selectedStableCoin?.proxyAddress || !selectedStableCoin?.tokenId) {
 				onError();
 				return;

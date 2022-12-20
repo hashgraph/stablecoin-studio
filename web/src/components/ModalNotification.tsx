@@ -9,6 +9,7 @@ import {
 	ModalFooter,
 	ModalHeader,
 	ModalOverlay,
+	Spinner,
 	Text,
 } from '@chakra-ui/react';
 import type { ModalProps } from '@chakra-ui/react';
@@ -27,10 +28,10 @@ interface ModalNotificationProps extends Omit<ModalProps, 'children'> {
 	isOpen: boolean;
 	onClose: () => void;
 	title: string;
-	variant?: 'error' | 'success' | 'warning';
+	variant?: 'error' | 'success' | 'warning' | 'loading';
 	onClick?: () => void;
 	closeButton?: boolean;
-	errorTransactionUrl?:string,
+	errorTransactionUrl?: string;
 }
 
 const ModalNotification = (props: ModalNotificationProps) => {
@@ -47,9 +48,10 @@ const ModalNotification = (props: ModalNotificationProps) => {
 		...othersProps
 	} = props;
 	const { t } = useTranslation('global');
+	const isLoading = (variant && variant === 'loading') ?? false;
 
 	const getIcon = () => {
-		if(icon) return icon;
+		if (icon) return icon;
 		switch (variant) {
 			case SUCCESS:
 				return SUCCESS_ICON;
@@ -72,7 +74,7 @@ const ModalNotification = (props: ModalNotificationProps) => {
 			<ModalOverlay />
 			<ModalContent data-testid='modal-notification-content' pt='50' pb='50'>
 				{closeButton && <ModalCloseButton />}
-				{(icon || variant) && (
+				{(icon || variant) && !isLoading && (
 					<ModalHeader alignSelf='center' p='0'>
 						<Image
 							data-testid='modal-notification-icon'
@@ -81,6 +83,9 @@ const ModalNotification = (props: ModalNotificationProps) => {
 							height='54px'
 						/>
 					</ModalHeader>
+				)}
+				{isLoading && (
+					<Spinner w='54px' h='54px' justifyContent='center' alignSelf={'center'} color='#C6AEFA' thickness='4px'/>
 				)}
 				<ModalBody textAlign='center' pt='14px'>
 					<Text
@@ -105,20 +110,22 @@ const ModalNotification = (props: ModalNotificationProps) => {
 						</Text>
 					)}
 					{errorTransactionUrl && (
-						<Link href={errorTransactionUrl} isExternal textDecoration="underline">
+						<Link href={errorTransactionUrl} isExternal textDecoration='underline'>
 							{t('common.see-transaction')}
 						</Link>
 					)}
 				</ModalBody>
-				<ModalFooter alignSelf='center' pt='24px' pb='0'>
-					<Button
-						data-testid='modal-notification-button'
-						onClick={onClick || onClose}
-						variant='primary'
-					>
-						{t('common.accept')}
-					</Button>
-				</ModalFooter>
+				{!isLoading && (
+					<ModalFooter alignSelf='center' pt='24px' pb='0'>
+						<Button
+							data-testid='modal-notification-button'
+							onClick={onClick || onClose}
+							variant='primary'
+						>
+							{t('common.accept')}
+						</Button>
+					</ModalFooter>
+				)}
 			</ModalContent>
 		</Modal>
 	);

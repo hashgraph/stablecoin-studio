@@ -233,8 +233,10 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 		onSuccess,
 		onError,
 		onWarning,
+		onLoading
 	}) => {
 		try {
+			onLoading();
 			if (!selectedStableCoin?.proxyAddress || !selectedStableCoin?.tokenId || !account) {
 				onError();
 				return;

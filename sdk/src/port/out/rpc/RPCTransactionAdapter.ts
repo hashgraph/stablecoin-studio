@@ -42,7 +42,10 @@ import { TOKEN_CREATION_COST_HBAR } from '../../../core/Constants.js';
 import { MetaMaskInpageProvider } from '@metamask/providers';
 import { WalletConnectError } from '../../../domain/context/network/error/WalletConnectError.js';
 import EventService from '../../../app/service/event/EventService.js';
-import { WalletEvents } from '../../../app/service/event/WalletEvent.js';
+import {
+	ConnectionState,
+	WalletEvents,
+} from '../../../app/service/event/WalletEvent.js';
 import { SupportedWallets } from '../../../domain/context/network/Wallet.js';
 import { RPCTransactionResponseAdapter } from './RPCTransactionResponseAdapter.js';
 import LogService from '../../../app/service/LogService.js';
@@ -145,30 +148,35 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				keys,
 			);
 
+			const factoryInstance = StableCoinFactory__factory.connect(
+				'0x' +
+					HContractId.fromString(factory.value).toSolidityAddress(),
+				this.signerOrProvider,
+			);
+			LogService.logTrace('Deploying factory: ', {
+				erc20: hederaERC20.value,
+				stableCoin: stableCoinToCreate,
+			});
+			const res = await factoryInstance.deployStableCoin(
+				stableCoinToCreate,
+				'0x' +
+					HContractId.fromString(
+						hederaERC20.value,
+					).toSolidityAddress(),
+				{
+					value: ethers.utils.parseEther(
+						TOKEN_CREATION_COST_HBAR.toString(),
+					),
+					gasLimit: 15000000,
+				},
+			);
 			return RPCTransactionResponseAdapter.manageResponse(
-				await StableCoinFactory__factory.connect(
-					'0x' +
-						HContractId.fromString(
-							factory.value,
-						).toSolidityAddress(),
-					this.signerOrProvider,
-				).deployStableCoin(
-					stableCoinToCreate,
-					'0x' +
-						HContractId.fromString(
-							hederaERC20.value,
-						).toSolidityAddress(),
-					{
-						value: ethers.utils.parseEther(
-							TOKEN_CREATION_COST_HBAR.toString(),
-						),
-						gasLimit: 15000000,
-					},
-				),
+				res,
+				'Deployed',
 			);
 		} catch (error) {
 			throw new Error(
-				`Unexpected error in HederaTransactionHandler create operation : ${error}`,
+				`Unexpected error in RPCTransactionAdapter create operation : ${error}`,
 			);
 		}
 	}
@@ -210,6 +218,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	}
 
 	stop(): Promise<boolean> {
+		this.eventService.emit(WalletEvents.walletConnectionStatusChanged, {
+			status: ConnectionState.Disconnected,
+			wallet: SupportedWallets.METAMASK,
+		});
+		this.eventService.emit(WalletEvents.walletDisconnect);
 		return Promise.resolve(true);
 	}
 
@@ -235,7 +248,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		amount: BigDecimal,
 	): Promise<TransactionResponse> {
 		const params = new Params({
-			targetId: await this.accountToEvmAddress(targetId),
+			targetId: targetId.toString(),
 			amount: amount,
 		});
 		return this.performOperation(coin, Operation.CASH_IN, params);
@@ -658,7 +671,13 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		sourceId: Account,
 		targetId: HederaId,
 	): Promise<TransactionResponse> {
-		throw new Error('Method not implemented.');
+		const transfer = await this.precompiledCall('transferToken', [
+			coin.coin.tokenId?.toHederaAddress().toSolidityAddress(),
+			await this.accountToEvmAddress(sourceId.id),
+			await this.accountToEvmAddress(targetId),
+			amount,
+		]);
+		return RPCTransactionResponseAdapter.manageResponse(transfer);
 	}
 
 	async signAndSendTransaction(
@@ -922,14 +941,20 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse> {
 		switch (operation) {
 			case Operation.CASH_IN:
-				return RPCTransactionResponseAdapter.manageResponse(
-					await this.precompiledCall('mintToken', [
-						TokenId.fromString(
-							coin.coin.tokenId?.value ?? '',
-						).toSolidityAddress(),
-						params?.amount,
-						[],
-					]),
+				const coinId = TokenId.fromString(
+					coin.coin.tokenId?.value ?? '',
+				).toSolidityAddress();
+				await this.precompiledCall('mintToken', [
+					coinId,
+					params?.amount,
+					[],
+				]);
+
+				return await this.transfer(
+					coin,
+					params!.amount!,
+					this.account,
+					HederaId.from(params?.targetId),
 				);
 
 			case Operation.BURN:

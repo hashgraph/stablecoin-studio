@@ -50,9 +50,9 @@ const WipeOperation = () => {
 
 	useRefreshCoinInfo();
 
-	const handleWipe: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
-		// const { amount, destinationAccount } = getValues();
+	const handleWipe: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError, onLoading }) => {
 		try {
+			onLoading();
 			if (!selectedStableCoin?.proxyAddress || !selectedStableCoin?.tokenId) {
 				onError();
 				return;

@@ -117,8 +117,9 @@ const DangerZoneOperations = () => {
 		}
 	};
 
-	const handlePause: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
+	const handlePause: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError, onLoading }) => {
 		try {
+			onLoading();
 			if (!selectedStableCoin?.proxyAddress || !selectedStableCoin?.tokenId) {
 				onError();
 				return;
@@ -139,8 +140,9 @@ const DangerZoneOperations = () => {
 		}
 	};
 
-	const handleUnpause: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
+	const handleUnpause: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError, onLoading }) => {
 		try {
+			onLoading();
 			if (!selectedStableCoin?.proxyAddress || !selectedStableCoin?.tokenId) {
 				onError();
 				return;
@@ -160,8 +162,9 @@ const DangerZoneOperations = () => {
 		}
 	};
 
-	const handleDelete: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
+	const handleDelete: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError, onLoading }) => {
 		try {
+			onLoading();
 			if (!selectedStableCoin?.proxyAddress || !selectedStableCoin?.tokenId) {
 				onError();
 				return;

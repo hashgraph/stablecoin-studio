@@ -17,11 +17,11 @@ const StableCoinDetails = () => {
 	useRefreshCoinInfo();
 
 	const renderKeys = ({ key }: { key: any }) => {
-		if (!key) return t('none');
-		if ('value' in key) return t('smartContract');
+		if (!key) return t('none').toUpperCase();
+		if ('value' in key) return t('smartContract').toUpperCase();
 		if (key.key === 'same as user')
 			// TODO: check current public key
-			return t('currentUser');
+			return t('currentUser').toUpperCase();
 
 		return (
 			<Flex
@@ -76,11 +76,11 @@ const StableCoinDetails = () => {
 								},
 								{
 									label: t('initialSupply'),
-									value: selectedStableCoin?.initialSupply ?? 0,
+									value: selectedStableCoin?.initialSupply?.toString() ?? '0',
 								},
 								{
 									label: t('totalSupply'),
-									value: selectedStableCoin?.totalSupply ?? 0,
+									value: selectedStableCoin?.totalSupply?.toString() ?? '0',
 								},
 								{
 									label: t('maxSupply'),
@@ -105,7 +105,7 @@ const StableCoinDetails = () => {
 								},
 								{
 									label: t('paused'),
-									value: selectedStableCoin?.paused,
+									value: selectedStableCoin?.paused?.toString().toUpperCase(),
 								},
 								{
 									label: t('deleted'),

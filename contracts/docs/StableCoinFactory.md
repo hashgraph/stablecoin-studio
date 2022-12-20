@@ -38,4 +38,26 @@ function deployStableCoin(IStableCoinFactory.tokenStruct requestedToken, address
 
 
 
+## Events
+
+### Deployed
+
+```solidity
+event Deployed(address, address, address, address)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| _0  | address | undefined |
+| _1  | address | undefined |
+| _2  | address | undefined |
+| _3  | address | undefined |
+
+
 

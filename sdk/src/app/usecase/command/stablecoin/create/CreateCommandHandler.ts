@@ -25,7 +25,6 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 			factory,
 			hederaERC20,
 		);
-		// TODO Do some work here
 		return Promise.resolve(
 			new CreateCommandResponse(
 				ContractId.fromHederaContractId(

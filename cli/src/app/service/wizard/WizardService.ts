@@ -12,7 +12,7 @@ import ManageImportedTokenService from '../stablecoin/ManageImportedTokenService
 import ListStableCoinsService from '../stablecoin/ListStableCoinsService.js';
 import colors from 'colors';
 import { clear } from 'console';
-import { StableCoinViewModel } from 'hedera-stable-coin-sdk';
+import { Network, SetNetworkRequest, StableCoinViewModel } from 'hedera-stable-coin-sdk';
 
 /**
  * Wizard Service
@@ -189,6 +189,19 @@ export default class WizardService extends Service {
     );
 
     utilsService.setCurrentHederaERC20(currentHederaERC20);
+    await Network.setNetwork(
+      new SetNetworkRequest({
+        environment: currentNetwork.name,
+        consensusNodes:
+          currentNetwork.consensusNodes.length > 0
+            ? currentNetwork.name
+            : undefined,
+        mirrorNode:
+          currentNetwork.mirrorNodeUrl.length > 0
+            ? currentNetwork.mirrorNodeUrl
+            : undefined,
+      }),
+    );
 
     if (mainMenu) await this.mainMenu();
   }

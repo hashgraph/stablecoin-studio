@@ -25,6 +25,7 @@ import ConnectRequest from './ConnectRequest.js';
 import CapabilitiesRequest from './CapabilitiesRequest.js';
 import GetPublicKeyRequest from './GetPublicKeyRequest.js';
 import InitializationRequest from './InitializationRequest.js';
+import SetNetworkRequest from './SetNetworkRequest.js';
 
 export * from './BaseRequest.js';
 export {
@@ -54,5 +55,6 @@ export {
 	ConnectRequest,
 	CapabilitiesRequest,
 	GetPublicKeyRequest,
-	InitializationRequest
+	InitializationRequest,
+	SetNetworkRequest,
 };

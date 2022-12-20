@@ -46,9 +46,13 @@ const BurnOperation = () => {
 		RouterManager.goBack(navigate);
 	};
 
-	const handleBurn: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
-		// const { amount } = getValues();
+	const handleBurn: ModalsHandlerActionsProps['onConfirm'] = async ({
+		onSuccess,
+		onError,
+		onLoading,
+	}) => {
 		try {
+			onLoading();
 			if (!selectedStableCoin?.proxyAddress || !selectedStableCoin?.tokenId) {
 				onError();
 				return;

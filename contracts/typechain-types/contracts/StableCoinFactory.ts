@@ -13,7 +13,11 @@ import type {
   Signer,
   utils,
 } from "ethers";
-import type { FunctionFragment, Result } from "@ethersproject/abi";
+import type {
+  FunctionFragment,
+  Result,
+  EventFragment,
+} from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
 import type {
   TypedEventFilter,
@@ -91,8 +95,25 @@ export interface StableCoinFactoryInterface extends utils.Interface {
     data: BytesLike
   ): Result;
 
-  events: {};
+  events: {
+    "Deployed(address,address,address,address)": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "Deployed"): EventFragment;
 }
+
+export interface DeployedEventObject {
+  arg0: string;
+  arg1: string;
+  arg2: string;
+  arg3: string;
+}
+export type DeployedEvent = TypedEvent<
+  [string, string, string, string],
+  DeployedEventObject
+>;
+
+export type DeployedEventFilter = TypedEventFilter<DeployedEvent>;
 
 export interface StableCoinFactory extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -142,7 +163,20 @@ export interface StableCoinFactory extends BaseContract {
     ): Promise<[string, string, string, string]>;
   };
 
-  filters: {};
+  filters: {
+    "Deployed(address,address,address,address)"(
+      arg0?: null,
+      arg1?: null,
+      arg2?: null,
+      arg3?: null
+    ): DeployedEventFilter;
+    Deployed(
+      arg0?: null,
+      arg1?: null,
+      arg2?: null,
+      arg3?: null
+    ): DeployedEventFilter;
+  };
 
   estimateGas: {
     deployStableCoin(

@@ -1,8 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Transaction, Signer, PublicKey as HPublicKey } from '@hashgraph/sdk';
+import {
+	Transaction,
+	Signer,
+	PublicKey as HPublicKey,
+	TokenBurnTransaction,
+	TokenCreateTransaction,
+	TokenDeleteTransaction,
+	TokenFreezeTransaction,
+	TokenMintTransaction,
+	TokenPauseTransaction,
+	TokenUnfreezeTransaction,
+	TokenUnpauseTransaction,
+	TokenWipeTransaction,
+	TransferTransaction,
+} from '@hashgraph/sdk';
 import { singleton } from 'tsyringe';
 import { HederaTransactionAdapter } from '../HederaTransactionAdapter.js';
-import { HashConnect } from 'hashconnect';
+import { HashConnect, MessageTypes } from 'hashconnect';
 import { HashConnectProvider } from 'hashconnect/provider/provider';
 import { HashConnectSigner } from 'hashconnect/provider/signer';
 import { HashConnectTypes } from 'hashconnect';
@@ -28,6 +42,11 @@ import {
 import { SupportedWallets } from '../../../in/request/ConnectRequest.js';
 import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter.js';
 import { SDK } from '../../../in/Common.js';
+import AccountService from '../../../../app/service/AccountService.js';
+import { HederaId } from '../../../../domain/context/shared/HederaId.js';
+import { QueryBus } from '../../../../core/query/QueryBus.js';
+import { AccountIdNotValid } from '../../../../domain/context/account/error/AccountIdNotValid.js';
+import { GetAccountInfoQuery } from '../../../../app/usecase/query/account/info/GetAccountInfoQuery.js';
 
 @singleton()
 export class HashpackTransactionAdapter extends HederaTransactionAdapter {
@@ -49,6 +68,8 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 		public readonly networkService: NetworkService,
 		@lazyInject(MirrorNodeAdapter)
 		public readonly mirrorNodeAdapter: MirrorNodeAdapter,
+		@lazyInject(QueryBus)
+		public readonly queryBus: QueryBus,
 	) {
 		super(mirrorNodeAdapter);
 		this.hc = new HashConnect();
@@ -77,9 +98,9 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 			this.initData.savedPairings,
 		);
 		if (this.initData.savedPairings.length > 0) {
-			this.account = new Account({
-				id: this.initData.savedPairings[0].accountIds[0],
-			});
+			this.account = await this.getAccountInfo(
+				this.initData.savedPairings[0].accountIds[0],
+			);
 			eventData.initData.account = this.account;
 			this.eventService.emit(WalletEvents.walletPaired, {
 				data: eventData.initData,
@@ -110,7 +131,6 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 		);
 		this.signer = this.hashConnectSigner;
 		await this.getAccountKey();
-		console.log(this.signer);
 	}
 
 	async register(): Promise<InitializationData> {
@@ -119,7 +139,6 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 		const savedPairing = this.filterAccountIdFromPairingData(
 			this.initData.savedPairings,
 		);
-		console.log('parings', this.initData);
 		if (!this.account || !savedPairing) {
 			LogService.logTrace('Asking for new pairing', {
 				account: this.account,
@@ -171,6 +190,12 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 	): Promise<TransactionResponse> {
 		if (!this.signer) throw new SigningError('Signer is empty');
 		try {
+			LogService.logTrace(
+				'HashPack is singing and sending transaction:',
+				nameFunction,
+				t,
+			);
+			console.log('here');
 			await this.getAccountKey(); // Ensure we have the public key)
 			let signedT = t;
 			if (!t.isFrozen()) {
@@ -186,13 +211,32 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 					getRecord: true,
 				},
 			};
-			const HashPackTransactionResponse = await this.hc.sendTransaction(
-				this.initData.topic,
-				hashPackTrx,
-			);
+			let hashPackTransactionResponse;
+			if (
+				t instanceof TokenCreateTransaction ||
+				t instanceof TokenWipeTransaction ||
+				t instanceof TokenBurnTransaction ||
+				t instanceof TokenMintTransaction ||
+				t instanceof TokenPauseTransaction ||
+				t instanceof TokenUnpauseTransaction ||
+				t instanceof TokenDeleteTransaction ||
+				t instanceof TokenFreezeTransaction ||
+				t instanceof TokenUnfreezeTransaction ||
+				t instanceof TransferTransaction
+			) {
+				hashPackTransactionResponse = await t.executeWithSigner(
+					this.signer,
+				);
+			} else {
+				hashPackTransactionResponse = await this.hc.sendTransaction(
+					this.initData.topic,
+					hashPackTrx,
+				);
+			}
 
 			return HashpackTransactionResponseAdapter.manageResponse(
-				HashPackTransactionResponse,
+				this.signer,
+				hashPackTransactionResponse,
 				transactionType,
 				nameFunction,
 				abi,
@@ -223,6 +267,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 			'There are no accounts currently paired with HashPack!',
 		);
 	}
+
 	public setUpHashConnectEvents(): void {
 		//This is fired when a extension is found
 		this.hc.foundExtensionEvent.on((data) => {
@@ -243,9 +288,8 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 				if (data.pairingData) {
 					this.pairingData = data.pairingData;
 					LogService.logInfo('Paired with wallet', data);
-					this.account = new Account({
-						id: this.pairingData.accountIds[0],
-					});
+					const id = data.pairingData.accountIds[0];
+					this.account = await this.getAccountInfo(id);
 					this.setSigner();
 					this.eventService.emit(WalletEvents.walletPaired, {
 						wallet: SupportedWallets.HASHPACK,
@@ -268,11 +312,15 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 		this.hc.connectionStatusChangeEvent.on((state) => {
 			this.hashConnectConectionState = state;
 			LogService.logTrace('hashconnect state change event', state);
+			if (state === HashConnectConnectionState.Disconnected) {
+				this.eventService.emit(WalletEvents.walletDisconnect);
+			}
 			this.eventService.emit(WalletEvents.walletConnectionStatusChanged, {
 				wallet: SupportedWallets.HASHPACK,
 				status: this
 					.hashConnectConectionState as unknown as ConnectionState,
 			});
+
 			this.state = state;
 		});
 
@@ -297,5 +345,19 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 
 		this.pairingData = null;
 		this.eventService.emit(WalletEvents.walletDisconnect);
+	}
+
+	async getAccountInfo(id: string): Promise<Account> {
+		const account = (
+			await this.queryBus.execute(
+				new GetAccountInfoQuery(HederaId.from(id)),
+			)
+		).account;
+		if (!account.id) throw new AccountIdNotValid(id.toString());
+		return new Account({
+			id: account.id,
+			publicKey: account.publicKey,
+			evmAddress: account.accountEvmAddress,
+		});
 	}
 }
