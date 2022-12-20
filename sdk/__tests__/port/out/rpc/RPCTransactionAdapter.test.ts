@@ -116,7 +116,8 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 			new ContractId(FactoryAddressTestnet),
 			new ContractId(HederaERC20AddressTestnet),
 		);
-	});
+		console.log(tr)
+	},30_000);
 
 	// eslint-disable-next-line jest/no-disabled-tests
 	it.skip('create coin and assign to account', async () => {
