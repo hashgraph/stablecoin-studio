@@ -26,6 +26,8 @@ import {
 } from '../../../../src/port/in/StableCoin.js';
 import { CLIENT_ACCOUNT_ECDSA } from '../../../config.js';
 import Account from '../../../../src/domain/context/account/Account.js';
+import { Network } from '../../../../src/index.js';
+import NetworkService from '../../../../src/app/service/NetworkService.js';
 
 describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	const stableCoinCapabilitiesHTS = new StableCoinCapabilities(
@@ -77,11 +79,14 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 
 	let th: RPCTransactionAdapter;
 	let tr: TransactionResponse;
+	let ns: NetworkService;
 
 	beforeAll(async () => {
 		th = Injectable.resolve(RPCTransactionAdapter);
-		await th.register(CLIENT_ACCOUNT_ECDSA, true);
+		ns = Injectable.resolve(NetworkService);
+		ns.environment = 'testnet'
 		await th.init(true);
+		await th.register(CLIENT_ACCOUNT_ECDSA, true);
 		th.signerOrProvider = new Wallet(
 			CLIENT_ACCOUNT_ECDSA.privateKey?.key ?? '',
 			th.provider,
