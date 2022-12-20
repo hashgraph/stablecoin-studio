@@ -20,7 +20,7 @@
 - **[Support](#Support)**<br>
 - **[Contributing](#Contributing)**<br>
 - **[Code of Conduct](#Code-of-Conduct)**<br>
-  - [License](#License)<br>
+- **[License](#License)**<br>
 
 
 
@@ -158,5 +158,5 @@ This project is governed by the
 participating, you are expected to uphold this code of conduct. Please report unacceptable behavior
 to [oss@hedera.com](mailto:oss@hedera.com).
 
-## License
+# License
 [Apache License 2.0](LICENSE)
