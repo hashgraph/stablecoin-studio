@@ -84,7 +84,7 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	beforeAll(async () => {
 		th = Injectable.resolve(RPCTransactionAdapter);
 		ns = Injectable.resolve(NetworkService);
-		ns.environment = 'testnet'
+		ns.environment = 'testnet';
 		await th.init(true);
 		await th.register(CLIENT_ACCOUNT_ECDSA, true);
 		th.signerOrProvider = new Wallet(
@@ -116,8 +116,7 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 			new ContractId(FactoryAddressTestnet),
 			new ContractId(HederaERC20AddressTestnet),
 		);
-		console.log(tr)
-	},30_000);
+	}, 30_000);
 
 	// eslint-disable-next-line jest/no-disabled-tests
 	it.skip('create coin and assign to account', async () => {
