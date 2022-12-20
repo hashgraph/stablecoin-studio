@@ -32,6 +32,7 @@ export enum ErrorCode {
 	TransactionError = '40005',
 	DeplymentError = '40006',
 	ProviderError = '40007',
+	PairingRejected = '40008',
 }
 
 export enum ErrorCategory {

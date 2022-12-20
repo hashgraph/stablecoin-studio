@@ -56,8 +56,7 @@ export default class CreateStableCoinService extends Service {
     utilsService.showMessage('\n');
     await utilsService.showSpinner(
       new Promise((resolve, reject) => {
-        StableCoin
-          .create(stableCoin)
+        StableCoin.create(stableCoin)
           .then((coin) => {
             console.log(coin);
             createdToken = coin;
@@ -205,7 +204,7 @@ export default class CreateStableCoinService extends Service {
       initialSupply:
         initialSupply === '' || !initialSupply ? undefined : initialSupply,
       supplyType: supplyType ? 'INFINITE' : 'FINITE',
-      maxSupply: tokenToCreate.maxSupply
+      maxSupply: tokenToCreate.maxSupply,
     });
     if (managedBySC) {
       tokenToCreate.adminKey = Account.NullPublicKey;
@@ -386,26 +385,26 @@ export default class CreateStableCoinService extends Service {
     switch (answer) {
       case 'Current user key': {
         const currentAccount = utilsService.getCurrentAccount();
-        const privateKey: RequestPrivateKey = ({
+        const privateKey: RequestPrivateKey = {
           key: currentAccount.privateKey.key,
-          type: currentAccount.privateKey.type
-      });
-        const reqAccount: RequestAccount = ({
+          type: currentAccount.privateKey.type,
+        };
+        const reqAccount: RequestAccount = {
           accountId: currentAccount.accountId,
-          privateKey: privateKey
+          privateKey: privateKey,
+        };
+        const req: GetPublicKeyRequest = new GetPublicKeyRequest({
+          account: reqAccount,
         });
-        const req: GetPublicKeyRequest= new GetPublicKeyRequest({
-          account: reqAccount
-        })
-        return Account.getPublicKey(req)
+        return Account.getPublicKey(req);
       }
 
-      case 'Other key': {
-        const key = await utilsService.defaultPublicKeyAsk();
-        return ({
+      case 'Other public key': {
+        const { key, type } = await utilsService.defaultPublicKeyAsk();
+        return {
           key: key,
-          type: 'ED25519',
-        });
+          type: type,
+        };
       }
 
       case 'None':

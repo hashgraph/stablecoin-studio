@@ -14,6 +14,7 @@ import { StableCoinMemo } from '../../../domain/context/stablecoin/StableCoinMem
 import ContractId from '../../../domain/context/contract/ContractId.js';
 import { InvalidResponse } from './error/InvalidResponse.js';
 import { HederaId } from '../../../domain/context/shared/HederaId.js';
+import { KeyType } from '../../../domain/context/account/KeyProps.js';
 
 @singleton()
 export class MirrorNodeAdapter {
@@ -96,7 +97,7 @@ export class MirrorNodeAdapter {
 				if (val) {
 					return new PublicKey({
 						key: val.key,
-						type: val._type,
+						type: val._type as KeyType,
 					});
 				} else {
 					return undefined;
@@ -179,7 +180,7 @@ export class MirrorNodeAdapter {
 				accountEvmAddress: res.data.evm_address,
 				publicKey: new PublicKey({
 					key: res.data.key.key,
-					type: res.data.key._type,
+					type: res.data.key._type as KeyType,
 				}),
 				alias: res.data.alias,
 			};

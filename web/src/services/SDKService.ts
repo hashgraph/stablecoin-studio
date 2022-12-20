@@ -49,32 +49,24 @@ export class SDKService {
 	}
 
 	public static async connectWallet(wallet: SupportedWallets) {
-		try {
-			this.initData = await Network.connect(
-				new ConnectRequest({
-					network: 'testnet',
-					wallet,
-				}),
-			);
-			return this.initData;
-		} catch (error) {
-			console.error(error);
-		}
+		this.initData = await Network.connect(
+			new ConnectRequest({
+				network: 'testnet',
+				wallet,
+			}),
+		);
+		return this.initData;
 	}
 
 	public static async init(events: Partial<WalletEvent>, lastWallet?: SupportedWallets) {
-		try {
-			const init = await Network.init(
-				new InitializationRequest({
-					network: 'testnet',
-					events,
-				}),
-			);
-			if (lastWallet) await this.connectWallet(lastWallet);
-			return init;
-		} catch (error) {
-			console.error(error);
-		}
+		const init = await Network.init(
+			new InitializationRequest({
+				network: 'testnet',
+				events,
+			}),
+		);
+		if (lastWallet) await this.connectWallet(lastWallet);
+		return init;
 	}
 
 	public static getWalletData(): InitializationData | undefined {

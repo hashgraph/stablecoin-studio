@@ -8,7 +8,7 @@ import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import { StableCoinRole } from '../../domain/context/stablecoin/StableCoinRole.js';
 import Account from '../../domain/context/account/Account.js';
 import { HederaId } from '../../domain/context/shared/HederaId.js';
-import { PrivateKeyType } from '../../domain/context/account/PrivateKey.js';
+import { KeyType } from '../../domain/context/account/KeyProps.js';
 import AccountViewModel from './mirror/response/AccountViewModel.js';
 import { PublicKey as HPublicKey } from '@hashgraph/sdk';
 import { MirrorNodeAdapter } from './mirror/MirrorNodeAdapter.js';
@@ -344,7 +344,7 @@ export default abstract class TransactionAdapter
 		accountId: HederaId,
 	): Promise<string> {
 		switch (privateKeyType) {
-			case PrivateKeyType.ECDSA:
+			case KeyType.ECDSA:
 				return HPublicKey.fromString(publicKey).toEthereumAddress();
 
 			default:

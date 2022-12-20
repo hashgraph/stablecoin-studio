@@ -56,5 +56,10 @@
 		"goBack": "Go back",
 		"finish": "Finish",
 		"nextStep": "Next step"
+	},
+	"pairing": {
+		"error": "There was an error pairing with the wallet.",
+		"rejected": "The pairing request has been rejected.",
+		"loading": "Loading"
 	}
 }
