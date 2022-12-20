@@ -749,7 +749,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	}
 
 	private registerMetamaskEvents(): void {
-		if (!ethereum) return;
+		if (typeof window === 'undefined' || !ethereum) return;
 		ethereum.on('accountsChanged', async (acct) => {
 			const accounts = acct as string[];
 			if (

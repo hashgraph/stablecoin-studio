@@ -33,7 +33,7 @@ describe('🧪 SDK test', () => {
 	let stableCoinSC: StableCoinViewModel;
 	let stableCoinHTS: StableCoinViewModel;
 	beforeAll(async () => {
-		const connection = await Network.connect(
+		await Network.connect(
 			new ConnectRequest({
 				account: {
 					accountId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -43,9 +43,9 @@ describe('🧪 SDK test', () => {
 				wallet: SupportedWallets.CLIENT,
 			}),
 		);
-		const handler = Injectable.resolveTransactionHandler();
+		Injectable.resolveTransactionHandler();
 		const requestSC = new CreateRequest({
-			name: 'TEST_ACCELERATOR',
+			name: 'TEST_ACCELERATOR_SC',
 			symbol: 'TEST',
 			decimals: '6',
 			initialSupply: '1000',
@@ -63,7 +63,7 @@ describe('🧪 SDK test', () => {
 			hederaERC20: HederaERC20AddressTestnet,
 		});
 		const requestHTS = new CreateRequest({
-			name: 'TEST_ACCELERATOR',
+			name: 'TEST_ACCELERATOR_HTS',
 			symbol: 'TEST',
 			decimals: '6',
 			initialSupply: '1000',
