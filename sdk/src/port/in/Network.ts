@@ -33,10 +33,6 @@ interface INetworkInPort {
 
 class NetworkInPort implements INetworkInPort {
 	constructor(
-		private readonly networkService: NetworkService = Injectable.resolve<NetworkService>(
-			NetworkService,
-		),
-		private readonly queryBus: QueryBus = Injectable.resolve(QueryBus),
 		private readonly commandBus: CommandBus = Injectable.resolve(
 			CommandBus,
 		),
