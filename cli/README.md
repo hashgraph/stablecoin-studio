@@ -2,6 +2,8 @@
 
 # Hedera Stable Coin - Command Line Interface (CLI)
 
+[![CLI - Test](https://github.com/hashgraph/hedera-accelerator-stablecoin/actions/workflows/cli.test.yml/badge.svg)](https://github.com/hashgraph/hedera-accelerator-stablecoin/actions/workflows/cli.test.yml)
+
 </div>
 
 ### Table of Contents
