@@ -1,7 +1,6 @@
 import { ICommandHandler } from '../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../core/decorator/CommandHandlerDecorator.js';
 import Injectable from '../../../../../core/Injectable.js';
-import { WalletConnectError } from '../../../../../domain/context/network/error/WalletConnectError.js';
 import { MirrorNodeAdapter } from '../../../../../port/out/mirror/MirrorNodeAdapter.js';
 import LogService from '../../../../service/LogService.js';
 import TransactionService from '../../../../service/TransactionService.js';
@@ -22,9 +21,8 @@ export class ConnectCommandHandler implements ICommandHandler<ConnectCommand> {
 				new ConnectCommandResponse(registration, command.wallet),
 			);
 		} catch (error) {
-			const err = new WalletConnectError((error as Error).message);
-			LogService.logError(err);
-			throw err;
+			LogService.logError(error);
+			throw error;
 		}
 	}
 }

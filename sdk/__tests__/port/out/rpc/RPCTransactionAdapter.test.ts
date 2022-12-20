@@ -25,6 +25,7 @@ import {
 	FactoryAddressTestnet,
 	TokenSupplyType,
 } from '../../../../src/port/in/StableCoin.js';
+import { KeyType } from '../../../../src/domain/context/account/KeyProps.js';
 
 const evmAddress = '0x320d33046b60dbc5a027cfb7e4124f75b0417240';
 const clientPrivateKey =
@@ -126,27 +127,27 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 			freezeDefault: false,
 			adminKey: PublicKey.fromPrivateKey(
 				clientPrivateKey,
-				'ECDSA',
+				KeyType.ECDSA,
 			),
 			freezeKey: PublicKey.fromPrivateKey(
 				clientPrivateKey,
-				'ECDSA',
+				KeyType.ECDSA,
 			),
 			kycKey: PublicKey.fromPrivateKey(
 				clientPrivateKey,
-				'ECDSA',
+				KeyType.ECDSA,
 			),
 			wipeKey: PublicKey.fromPrivateKey(
 				clientPrivateKey,
-				'ECDSA',
+				KeyType.ECDSA,
 			),
 			pauseKey: PublicKey.fromPrivateKey(
 				clientPrivateKey,
-				'ECDSA',
+				KeyType.ECDSA,
 			),
 			supplyKey: PublicKey.fromPrivateKey(
 				clientPrivateKey,
-				'ECDSA',
+				KeyType.ECDSA,
 			),
 			autoRenewAccount: accountFromAEvmAddress.id,
 			supplyType: TokenSupplyType.FINITE,

@@ -30,7 +30,7 @@ import {
 } from '../store/slices/walletSlice';
 import ImportedTokenCreation from '../views/ImportedToken/ImportedTokenCreation';
 import DangerZoneOperations from '../views/Operations/DangerZone';
-import type { EventParameter } from 'hedera-stable-coin-sdk';
+import type { EventParameter, WalletEvent } from 'hedera-stable-coin-sdk';
 import { LoggerTransports, SDK, ConnectionState } from 'hedera-stable-coin-sdk';
 
 const PrivateRoute = ({ allow }: { allow: boolean }) => {
@@ -53,20 +53,37 @@ const Router = () => {
 		instanceSDK();
 	}, []);
 
-	const walletPaired = (event: EventParameter<'walletPaired'>) => {
+	const onLastWalletEvent = <T extends keyof WalletEvent>(
+		event: EventParameter<T>,
+		cll: CallableFunction,
+	) => {
 		const lastWallet = localStorage.getItem('lastWallet');
 		if (event) {
 			if (lastWallet && lastWallet === event.wallet) {
-				dispatch(walletActions.setData(event.data));
-				dispatch(walletActions.setStatus(ConnectionState.Paired));
+				cll(event);
 			}
 		}
 	};
 
+	const walletPaired = (event: EventParameter<'walletPaired'>) => {
+		onLastWalletEvent(event, () => {
+			dispatch(walletActions.setData(event.data));
+			dispatch(walletActions.setStatus(ConnectionState.Paired));
+		});
+	};
+
 	const walletConnectionStatusChanged = (
-		newStatus: EventParameter<'walletConnectionStatusChanged'>,
+		event: EventParameter<'walletConnectionStatusChanged'>,
 	) => {
-		dispatch(walletActions.setStatus(newStatus.status));
+		onLastWalletEvent(event, () => {
+			dispatch(walletActions.setStatus(event.status));
+		});
+	};
+
+	const walletDisconnect = (event: EventParameter<'walletDisconnect'>) => {
+		onLastWalletEvent(event, () => {
+			dispatch(walletActions.setStatus(ConnectionState.Disconnected));
+		});
 	};
 
 	const walletFound = (event: EventParameter<'walletFound'>) => {
@@ -91,6 +108,7 @@ const Router = () => {
 				walletFound,
 				walletPaired,
 				walletConnectionStatusChanged,
+				walletDisconnect,
 			},
 			lastWallet,
 		);

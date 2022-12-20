@@ -186,7 +186,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		this.provider = new ethers.providers.JsonRpcProvider(
 			`https://${this.networkService.environment.toString()}.hashio.io/api`,
 		);
-		!debug && this.connectMetamask(false);
+		!debug && await this.connectMetamask(false);
 		const eventData = {
 			initData: {
 				account: this.account,
@@ -212,7 +212,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			this.account = account;
 			this.account.publicKey = accountMirror.publicKey;
 		}
-		!debug && this.connectMetamask();
+		!debug && await this.connectMetamask();
 		Injectable.registerTransactionHandler(this);
 		LogService.logTrace('Metamask Registered as handler');
 		return Promise.resolve({ account });
