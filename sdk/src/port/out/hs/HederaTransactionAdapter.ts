@@ -6,6 +6,7 @@ import {
 	Transaction,
 	PublicKey as HPublicKey,
 	ContractId as HContractId,
+	AccountAllowanceApproveTransaction,
 } from '@hashgraph/sdk';
 import TransactionAdapter from '../TransactionAdapter';
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
@@ -192,11 +193,11 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	public async cashin(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
-		amount: BigDecimal,
+		amount: BigDecimal
 	): Promise<TransactionResponse> {
 		const params = new Params({
 			targetId: targetId,
-			amount: amount,
+			amount: amount
 		});
 		return this.performOperation(
 			coin,
@@ -680,13 +681,28 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					coin.coin.tokenId?.value!,
 					params!.amount!.toLong(),
 				);
-				await this.signAndSendTransaction(t, TransactionType.RECEIPT);
-				t = HTSTransactionBuilder.buildTransferTransaction(
-					coin.coin.tokenId?.value!,
-					params!.amount!.toLong(),
-					this.getAccount().id.toString(),
-					params!.targetId!.toString(),
-				);
+				const resp: TransactionResponse<any, Error> = await 
+					this.signAndSendTransaction(t, TransactionType.RECEIPT);
+
+				if (resp.error === undefined && coin.coin.treasury?.value !== params.targetId?.toString()) { 	
+					if (coin.coin.treasury?.value === coin.account.id.value) {		
+						t = HTSTransactionBuilder.buildTransferTransaction(
+							coin.coin.tokenId?.value!,
+							params!.amount!.toLong(),
+							coin.coin.treasury?.value,
+							params!.targetId!.toString(),
+						);
+					} else {
+						t = HTSTransactionBuilder.buildApprovedTransferTransaction(
+							coin.coin.tokenId?.value!,
+							params!.amount!.toLong(),
+							coin.coin.treasury?.value!,
+							params!.targetId!.toString(),
+						);
+					}	
+				} else {
+					return resp;
+				}
 				break;
 
 			case Operation.BURN:

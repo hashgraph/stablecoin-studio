@@ -249,7 +249,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	async cashin(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
-		amount: BigDecimal,
+		amount: BigDecimal
 	): Promise<TransactionResponse> {
 		const params = new Params({
 			targetId: targetId.toString(),
