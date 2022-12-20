@@ -31,7 +31,8 @@ export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
 			targetId,
 			BigDecimal.fromString(amount, capabilities.coin.decimals),
 		);
-		
-		return Promise.resolve(res.response);
+		return Promise.resolve(
+			new CashInCommandResponse(res.error === undefined),
+		);
 	}
 }

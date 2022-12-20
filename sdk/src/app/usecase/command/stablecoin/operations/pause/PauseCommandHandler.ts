@@ -26,6 +26,8 @@ export class PauseCommandHandler implements ICommandHandler<PauseCommand> {
 			tokenId,
 		);
 		const res = await handler.pause(capabilities);
-		return Promise.resolve(res.response);
+		return Promise.resolve(
+			new PauseCommandResponse(res.error === undefined),
+		);
 	}
 }

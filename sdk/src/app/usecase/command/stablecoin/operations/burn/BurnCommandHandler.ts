@@ -30,6 +30,8 @@ export class BurnCommandHandler implements ICommandHandler<BurnCommand> {
 			capabilities,
 			BigDecimal.fromString(amount, capabilities.coin.decimals),
 		);
-		return Promise.resolve(res.response);
+		return Promise.resolve(
+			new BurnCommandResponse(res.error === undefined),
+		);
 	}
 }

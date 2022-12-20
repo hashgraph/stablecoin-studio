@@ -30,6 +30,8 @@ export class RescueCommandHandler implements ICommandHandler<RescueCommand> {
 			capabilities,
 			BigDecimal.fromString(amount, capabilities.coin.decimals),
 		);
-		return Promise.resolve(res.response);
+		return Promise.resolve(
+			new RescueCommandResponse(res.error === undefined),
+		);
 	}
 }

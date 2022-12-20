@@ -31,6 +31,8 @@ export class WipeCommandHandler implements ICommandHandler<WipeCommand> {
 			targetId,
 			BigDecimal.fromString(amount, capabilities.coin.decimals),
 		);
-		return Promise.resolve(res.response);
+		return Promise.resolve(
+			new WipeCommandResponse(res.error === undefined),
+		);
 	}
 }
