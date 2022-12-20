@@ -81,7 +81,9 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 
 	stop(): Promise<boolean> {
 		this.client.close();
-		this.eventService.emit(WalletEvents.walletDisconnect);
+		this.eventService.emit(WalletEvents.walletDisconnect, {
+			wallet: SupportedWallets.CLIENT,
+		});
 		return Promise.resolve(true);
 	}
 

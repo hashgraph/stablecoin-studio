@@ -44,6 +44,7 @@ import { DeleteCommand } from '../../app/usecase/command/stablecoin/operations/d
 import { FreezeCommand } from '../../app/usecase/command/stablecoin/operations/freeze/FreezeCommand.js';
 import { UnFreezeCommand } from '../../app/usecase/command/stablecoin/operations/unfreeze/UnFreezeCommand.js';
 import { GetAccountInfoQuery } from '../../app/usecase/query/account/info/GetAccountInfoQuery.js';
+import { KeyType } from '../../domain/context/account/KeyProps.js';
 
 export const HederaERC20AddressTestnet = '0.0.49127272';
 export const HederaERC20AddressPreviewnet = '0.0.11111111';
@@ -85,10 +86,10 @@ class StableCoinInPort implements IStableCoinInPort {
 
 	async create(req: CreateRequest): Promise<StableCoinViewModel> {
 		const validation = req.validate();
-		if (validation.length > 0) throw new Error('validation error : ' + JSON.stringify(validation));
+		if (validation.length > 0)
+			throw new Error('validation error : ' + JSON.stringify(validation));
 
 		const { stableCoinFactory, hederaERC20 } = req;
-
 		const coin: StableCoinProps = {
 			name: req.name,
 			symbol: req.symbol,

@@ -1,4 +1,3 @@
-import Account from '../../../domain/context/account/Account.js';
 import { Environment } from '../../../domain/context/network/Environment.js';
 import { SupportedWallets } from '../../../domain/context/network/Wallet.js';
 import { InitializationData } from '../../../port/out/TransactionAdapter.js';
@@ -50,7 +49,7 @@ type WalletEvent = {
 		data: WalletConnectionStatusChangedEvent,
 	) => void;
 	walletAcknowledgeMessage: (data: WalletAcknowledgeMessageEvent) => void;
-	walletDisconnect: () => void;
+	walletDisconnect: (data: WalletBaseEvent) => void;
 };
 
 export default WalletEvent;

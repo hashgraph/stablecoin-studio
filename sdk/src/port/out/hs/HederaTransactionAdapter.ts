@@ -94,7 +94,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 							: HPublicKey.fromString(
 									providedKeyCasted.key,
 							  ).toBytesRaw();
-					key.isED25519 = providedKeyCasted.type == 'ED25519';
+					key.isED25519 = providedKeyCasted.type === 'ED25519';
 					keys.push(key);
 				}
 			});

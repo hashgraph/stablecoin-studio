@@ -1,4 +1,4 @@
-import KeyProps from './KeyProps.js';
+import KeyProps, { KeyType } from './KeyProps.js';
 import { PublicKey as HPublicKey } from '@hashgraph/sdk';
 import PrivateKey from './PrivateKey.js';
 import BaseError from '../../../core/error/BaseError.js';
@@ -6,7 +6,7 @@ import BaseError from '../../../core/error/BaseError.js';
 export default class PublicKey implements KeyProps {
 	public static readonly NULL: PublicKey = new PublicKey({
 		key: 'null',
-		type: 'null',
+		type: KeyType.NULL,
 	});
 
 	public readonly key: string;

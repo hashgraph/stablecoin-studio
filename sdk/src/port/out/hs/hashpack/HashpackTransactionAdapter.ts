@@ -313,7 +313,9 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 			this.hashConnectConectionState = state;
 			LogService.logTrace('hashconnect state change event', state);
 			if (state === HashConnectConnectionState.Disconnected) {
-				this.eventService.emit(WalletEvents.walletDisconnect);
+				this.eventService.emit(WalletEvents.walletDisconnect, {
+					wallet: SupportedWallets.HASHPACK,
+				});
 			}
 			this.eventService.emit(WalletEvents.walletConnectionStatusChanged, {
 				wallet: SupportedWallets.HASHPACK,
@@ -344,7 +346,9 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 		if (this.initData?.topic) this.hc.disconnect(this.initData.topic);
 
 		this.pairingData = null;
-		this.eventService.emit(WalletEvents.walletDisconnect);
+		this.eventService.emit(WalletEvents.walletDisconnect, {
+			wallet: SupportedWallets.HASHPACK,
+		});
 	}
 
 	async getAccountInfo(id: string): Promise<Account> {

@@ -20,7 +20,11 @@ import Injectable from '../../../../src/core/Injectable.js';
 import { MirrorNodeAdapter } from '../../../../src/port/out/mirror/MirrorNodeAdapter.js';
 import PublicKey from '../../../../src/domain/context/account/PublicKey.js';
 import ContractId from '../../../../src/domain/context/contract/ContractId.js';
-import {HederaERC20AddressTestnet, FactoryAddressTestnet, TokenSupplyType} from '../../../../src/port/in/StableCoin.js';
+import {
+	HederaERC20AddressTestnet,
+	FactoryAddressTestnet,
+	TokenSupplyType,
+} from '../../../../src/port/in/StableCoin.js';
 
 const evmAddress = '0x320d33046b60dbc5a027cfb7e4124f75b0417240';
 const clientPrivateKey =
@@ -91,8 +95,8 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 
 	it('create coin and assign to SC', async () => {
 		const coin = new StableCoin({
-			name: "TestCoinSC",
-			symbol: "TCSC",
+			name: 'TestCoinSC',
+			symbol: 'TCSC',
 			decimals: 6,
 			initialSupply: BigDecimal.fromString('1.60', 6),
 			freezeDefault: false,
@@ -102,40 +106,56 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 			wipeKey: PublicKey.NULL,
 			pauseKey: PublicKey.NULL,
 			supplyKey: PublicKey.NULL,
-			autoRenewAccount: accountFromAEvmAddress.id, 
-			supplyType: TokenSupplyType.INFINITE
+			autoRenewAccount: accountFromAEvmAddress.id,
+			supplyType: TokenSupplyType.INFINITE,
 		});
 		tr = await th.create(
 			coin,
 			new ContractId(FactoryAddressTestnet),
-			new ContractId(HederaERC20AddressTestnet)
+			new ContractId(HederaERC20AddressTestnet),
 		);
-		
 	}, 1500000);
 
 	it('create coin and assign to account', async () => {
 		const coin = new StableCoin({
-			name: "TestCoinAccount",
-			symbol: "TCA",
+			name: 'TestCoinAccount',
+			symbol: 'TCA',
 			decimals: 6,
 			initialSupply: BigDecimal.fromString('1.60', 6),
 			maxSupply: BigDecimal.fromString('1000', 6),
 			freezeDefault: false,
-			adminKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ECDSA'),
-			freezeKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ECDSA'),
-			kycKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ECDSA'),
-			wipeKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ECDSA'),
-			pauseKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ECDSA'),
-			supplyKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ECDSA'),
+			adminKey: PublicKey.fromPrivateKey(
+				clientPrivateKey,
+				'ECDSA',
+			),
+			freezeKey: PublicKey.fromPrivateKey(
+				clientPrivateKey,
+				'ECDSA',
+			),
+			kycKey: PublicKey.fromPrivateKey(
+				clientPrivateKey,
+				'ECDSA',
+			),
+			wipeKey: PublicKey.fromPrivateKey(
+				clientPrivateKey,
+				'ECDSA',
+			),
+			pauseKey: PublicKey.fromPrivateKey(
+				clientPrivateKey,
+				'ECDSA',
+			),
+			supplyKey: PublicKey.fromPrivateKey(
+				clientPrivateKey,
+				'ECDSA',
+			),
 			autoRenewAccount: accountFromAEvmAddress.id,
-			supplyType: TokenSupplyType.FINITE
+			supplyType: TokenSupplyType.FINITE,
 		});
 		tr = await th.create(
 			coin,
 			new ContractId(FactoryAddressTestnet),
-			new ContractId(HederaERC20AddressTestnet)
+			new ContractId(HederaERC20AddressTestnet),
 		);
-		
 	}, 1500000);
 
 	it('Test hasRole', async () => {

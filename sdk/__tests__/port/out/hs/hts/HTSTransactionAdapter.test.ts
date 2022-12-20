@@ -20,10 +20,14 @@ import { Network } from '../../../../../src/index.js';
 import ConnectRequest, {
 	SupportedWallets,
 } from '../../../../../src/port/in/request/ConnectRequest.js';
-import {HederaERC20AddressTestnet, FactoryAddressTestnet, TokenSupplyType} from '../../../../../src/port/in/StableCoin.js';
+import {
+	HederaERC20AddressTestnet,
+	FactoryAddressTestnet,
+	TokenSupplyType,
+} from '../../../../../src/port/in/StableCoin.js';
 import PublicKey from '../../../../../src/domain/context/account/PublicKey.js';
 import ContractId from '../../../../../src/domain/context/contract/ContractId.js';
-
+import { KeyType } from '../../../../../src/domain/context/account/KeyProps.js';
 
 describe('🧪 [ADAPTER] HTSTransactionAdapter with Ed25519 accounts', () => {
 	const clientAccountId = '0.0.47792863';
@@ -32,7 +36,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with Ed25519 accounts', () => {
 	const accountId = '0.0.47793222';
 	const account: Account = new Account({
 		id: clientAccountId,
-		privateKey: new PrivateKey({ key: clientPrivateKey, type: 'ED25519' }),
+		privateKey: new PrivateKey({ key: clientPrivateKey, type: KeyType.ED25519 }),
 	});
 
 	// token to operate through HTS
@@ -96,8 +100,8 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with Ed25519 accounts', () => {
 
 	it('create coin and assign to SC', async () => {
 		const coin = new StableCoin({
-			name: "TestCoinSC",
-			symbol: "TCSC",
+			name: 'TestCoinSC',
+			symbol: 'TCSC',
 			decimals: 6,
 			initialSupply: BigDecimal.fromString('1.60', 6),
 			freezeDefault: false,
@@ -107,41 +111,38 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with Ed25519 accounts', () => {
 			wipeKey: PublicKey.NULL,
 			pauseKey: PublicKey.NULL,
 			supplyKey: PublicKey.NULL,
-			autoRenewAccount: account.id, 
-			supplyType: TokenSupplyType.INFINITE
-
+			autoRenewAccount: account.id,
+			supplyType: TokenSupplyType.INFINITE,
 		});
 		tr = await th.create(
 			coin,
 			new ContractId(FactoryAddressTestnet),
-			new ContractId(HederaERC20AddressTestnet)
+			new ContractId(HederaERC20AddressTestnet),
 		);
-		
 	}, 50000);
 
 	it('create coin and assign to account', async () => {
 		const coin = new StableCoin({
-			name: "TestCoinAccount",
-			symbol: "TCA",
+			name: 'TestCoinAccount',
+			symbol: 'TCA',
 			decimals: 6,
 			initialSupply: BigDecimal.fromString('1.60', 6),
 			maxSupply: BigDecimal.fromString('1000', 6),
 			freezeDefault: false,
-			adminKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ED25519'),
-			freezeKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ED25519'),
-			kycKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ED25519'),
-			wipeKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ED25519'),
-			pauseKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ED25519'),
-			supplyKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ED25519'),
+			adminKey: PublicKey.fromPrivateKey(clientPrivateKey, KeyType.ED25519),
+			freezeKey: PublicKey.fromPrivateKey(clientPrivateKey, KeyType.ED25519),
+			kycKey: PublicKey.fromPrivateKey(clientPrivateKey, KeyType.ED25519),
+			wipeKey: PublicKey.fromPrivateKey(clientPrivateKey, KeyType.ED25519),
+			pauseKey: PublicKey.fromPrivateKey(clientPrivateKey, KeyType.ED25519),
+			supplyKey: PublicKey.fromPrivateKey(clientPrivateKey, KeyType.ED25519),
 			autoRenewAccount: account.id,
-			supplyType: TokenSupplyType.FINITE
+			supplyType: TokenSupplyType.FINITE,
 		});
 		tr = await th.create(
 			coin,
 			new ContractId(FactoryAddressTestnet),
-			new ContractId(HederaERC20AddressTestnet)
+			new ContractId(HederaERC20AddressTestnet),
 		);
-		
 	}, 50000);
 
 	it('Test cashin', async () => {
@@ -426,7 +427,10 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 	const accountId = '0.0.49069513';
 	const account: Account = new Account({
 		id: clientAccountId,
-		privateKey: new PrivateKey({ key: clientPrivateKey, type: 'ECDSA' }),
+		privateKey: new PrivateKey({
+			key: clientPrivateKey,
+			type: KeyType.ECDSA,
+		}),
 	});
 
 	// token to operate through HTS
@@ -490,27 +494,32 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 
 	it('create coin and assign to account', async () => {
 		const coin = new StableCoin({
-			name: "TestCoinAccount",
-			symbol: "TCA",
+			name: 'TestCoinAccount',
+			symbol: 'TCA',
 			decimals: 6,
 			initialSupply: BigDecimal.fromString('1.60', 6),
 			maxSupply: BigDecimal.fromString('1000', 6),
 			freezeDefault: false,
-			adminKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ECDSA'),
-			freezeKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ECDSA'),
-			kycKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ECDSA'),
-			wipeKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ECDSA'),
-			pauseKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ECDSA'),
-			supplyKey: PublicKey.fromPrivateKey(clientPrivateKey, 'ECDSA'),
+			adminKey: PublicKey.fromPrivateKey(clientPrivateKey, KeyType.ECDSA),
+			freezeKey: PublicKey.fromPrivateKey(
+				clientPrivateKey,
+				KeyType.ECDSA,
+			),
+			kycKey: PublicKey.fromPrivateKey(clientPrivateKey, KeyType.ECDSA),
+			wipeKey: PublicKey.fromPrivateKey(clientPrivateKey, KeyType.ECDSA),
+			pauseKey: PublicKey.fromPrivateKey(clientPrivateKey, KeyType.ECDSA),
+			supplyKey: PublicKey.fromPrivateKey(
+				clientPrivateKey,
+				KeyType.ECDSA,
+			),
 			autoRenewAccount: account.id,
-			supplyType: TokenSupplyType.FINITE
+			supplyType: TokenSupplyType.FINITE,
 		});
 		tr = await th.create(
 			coin,
 			new ContractId(FactoryAddressTestnet),
-			new ContractId(HederaERC20AddressTestnet)
+			new ContractId(HederaERC20AddressTestnet),
 		);
-		
 	}, 50000);
 
 	it('Test cashin', async () => {

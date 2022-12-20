@@ -77,6 +77,7 @@ export const english = {
       treasury: 'Introduce the treasury account',
       key: 'Introduce the key',
       publicKey: 'Introduce the public key',
+      keyType: 'Key type',
     },
     askTreasuryAccountAddress: 'What will be the treasury account id?',
     askOperateStableCoin:
@@ -227,7 +228,7 @@ export const english = {
     featureOptions: [
       'The Smart Contract',
       'Current user key',
-      'Other key',
+      'Other public key',
       'None',
     ],
     supplierRoleType: [
