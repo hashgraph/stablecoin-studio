@@ -13,7 +13,6 @@ import { InitializationData } from '../../TransactionAdapter.js';
 import Account from '../../../../domain/context/account/Account.js';
 import { Environment } from '../../../../domain/context/network/Environment.js';
 import {
-	WalletInitEvent,
 	WalletEvents,
 	WalletPairedEvent,
 } from '../../../../app/service/event/WalletEvent.js';
@@ -22,6 +21,7 @@ import EventService from '../../../../app/service/event/EventService.js';
 import { lazyInject } from '../../../../core/decorator/LazyInjectDecorator.js';
 import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter.js';
 import NetworkService from '../../../../app/service/NetworkService.js';
+import LogService from '../../../../app/service/LogService.js';
 
 @singleton()
 export class HTSTransactionAdapter extends HederaTransactionAdapter {
@@ -48,6 +48,7 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 			wallet: SupportedWallets.CLIENT,
 			initData: {},
 		});
+		LogService.logTrace('Client Initialized');
 		return Promise.resolve(this.networkService.environment);
 	}
 
@@ -74,6 +75,7 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 			network: this.networkService.environment,
 		};
 		this.eventService.emit(WalletEvents.walletPaired, eventData);
+		LogService.logTrace('Client registered as handler: ', eventData);
 		return Promise.resolve({
 			account: this.getAccount(),
 		});
@@ -81,6 +83,7 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 
 	stop(): Promise<boolean> {
 		this.client.close();
+		LogService.logTrace('Client stopped');
 		this.eventService.emit(WalletEvents.walletDisconnect, {
 			wallet: SupportedWallets.CLIENT,
 		});

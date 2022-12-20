@@ -179,6 +179,10 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 
 	async stop(): Promise<boolean> {
 		await this.hc.disconnect(this.initData.topic);
+		LogService.logTrace('HashPack stopped');
+		this.eventService.emit(WalletEvents.walletDisconnect, {
+			wallet: SupportedWallets.HASHPACK,
+		});
 		return Promise.resolve(true);
 	}
 
@@ -271,10 +275,9 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 	public setUpHashConnectEvents(): void {
 		//This is fired when a extension is found
 		this.hc.foundExtensionEvent.on((data) => {
-			LogService.logTrace('Found extension', data);
 			if (data) {
+				LogService.logTrace('Found HashPack Extension Event: ', data);
 				this.availableExtension = true;
-				LogService.logTrace('Emitted found');
 				this.eventService.emit(WalletEvents.walletFound, {
 					wallet: SupportedWallets.HASHPACK,
 					name: SupportedWallets.HASHPACK,
@@ -287,7 +290,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 			try {
 				if (data.pairingData) {
 					this.pairingData = data.pairingData;
-					LogService.logInfo('Paired with wallet', data);
+					LogService.logInfo('Paired HashPack Wallet Event: ', data);
 					const id = data.pairingData.accountIds[0];
 					this.account = await this.getAccountInfo(id);
 					this.setSigner();
@@ -311,7 +314,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 		//This is fired when HashConnect loses connection, pairs successfully, or is starting connection
 		this.hc.connectionStatusChangeEvent.on((state) => {
 			this.hashConnectConectionState = state;
-			LogService.logTrace('hashconnect state change event', state);
+			LogService.logTrace('HashPack Connection Status Event: ', state);
 			if (state === HashConnectConnectionState.Disconnected) {
 				this.eventService.emit(WalletEvents.walletDisconnect, {
 					wallet: SupportedWallets.HASHPACK,
