@@ -4,6 +4,24 @@
 [![CLI - Test](https://github.com/hashgraph/hedera-accelerator-stablecoin/actions/workflows/cli.test.yml/badge.svg)](https://github.com/hashgraph/hedera-accelerator-stablecoin/actions/workflows/cli.test.yml)
 </div>
 
+### Table of Contents
+- **[Overview](#Overview)**<br>
+- **[Building](#Building)**<br>
+  - [Pre-requirements](#Pre-requirements)<br>
+  - [Steps](#Steps)<br>
+- **[Commands](#Commands)**<br>
+  - [Wizard](#Wizard)<br>
+- **[Usage](#Usage)**<br>
+  - [Config file](#Config-file)<br>
+  - [CLI flow](#CLI-flow)<br>
+- **[Testing](#Testing)**<br>
+  - [Jest](#Jest)<br>
+  - [Run](#Run)<br>
+- **[Support](#Support)**<br>
+- **[Contributing](#Contributing)**<br>
+- **[Code of Conduct](#Code-of-Conduct)**<br>
+- **[License](#License)**<br>
+
 ## Overview
 
 Implementation of an Stable Coin Accelerator SDK for Command Line Interface (CLI).
@@ -53,11 +71,11 @@ TASK OPTIONS:
     -lp, --log-path    Log path, default is ./logs
 ```
 
-# Usage
+## Usage
 
 To use the CLI correctly it is necessary to generate a configuration file in which the default network and the accounts with which you want to operate in the network will be indicated. These parameters can be modified later on, from the CLI.
 
-## Config file
+### Config file
 
 The configuration file that is generated populates its fields with dynamic questions when the CLI is started for the first time.
 The file format is .yaml and the structure is as follows:
@@ -97,7 +115,7 @@ logs:
   level: 'ERROR'
 ```
 
-## CLI flow
+### CLI flow
 
 ![Alt text](docs/images/CLI-flow.png?raw=true 'CLI flow')
 
