@@ -45,10 +45,10 @@ import { FreezeCommand } from '../../app/usecase/command/stablecoin/operations/f
 import { UnFreezeCommand } from '../../app/usecase/command/stablecoin/operations/unfreeze/UnFreezeCommand.js';
 import { GetAccountInfoQuery } from '../../app/usecase/query/account/info/GetAccountInfoQuery.js';
 
-export const HederaERC20AddressTestnet = '0.0.49117779';
+export const HederaERC20AddressTestnet = '0.0.49127272';
 export const HederaERC20AddressPreviewnet = '0.0.11111111';
 
-export const FactoryAddressTestnet = '0.0.49117788';
+export const FactoryAddressTestnet = '0.0.49127286';
 export const FactoryAddressPreviewnet = '0.0.11111111';
 
 export { StableCoinViewModel, StableCoinListViewModel };
