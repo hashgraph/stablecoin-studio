@@ -126,6 +126,22 @@ From the main menu users are able to use the following functions:
 4. List Stable Coins
 5. Configuration
 
+### Create new Stable Coin
+In order to create a new stable coin you will have to fill-in all the required information. 
+Once the request is ready, the CLI will extract from the configuration file the factory and HederaERC20 contracts based on the network you are working on.
+The request as well as the factory and HederaERC20 contract's addresses will be submitted to the SDK that will use them to deploy the stable coin.
+
+> When the configuration file is first created, the factory and HederaERC20 contracts added to the "testnet" network are the default ones (contracts deployed and maintained by IoBuilders). However users are free to deploy and use their own contract, in order to do that, the configuration file must be updated with the new factory and/or HederaERC20 contract' addresses.
+
+
+
+### Manage imported tokens
+Stable coins that we have not created with our account but for which we have been assigned one or several roles must be imported in order to operate them.
+
+1. Add token
+2. Refresh token
+3. Remove token
+
 ### Operate with stable coin
 The operations that can be performed with a stable coin are as follows:
 
