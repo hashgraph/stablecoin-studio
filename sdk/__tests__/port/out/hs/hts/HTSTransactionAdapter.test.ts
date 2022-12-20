@@ -166,37 +166,9 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		);
 	}, 50000);
 
-	// TODO Check test
 	it('Test wipe HTS', async () => {
-		// tr = await th.cashin(
-		// 	stableCoinCapabilitiesHTS,
-		// 	CLIENT_ACCOUNT_ECDSA.id,
-		// 	BigDecimal.fromString('1', stableCoinCapabilitiesHTS.coin.decimals),
-		// );
-
-		// const accountInitialBalance = await getBalance(
-		// 	CLIENT_ACCOUNT_ECDSA.id,
-		// 	stableCoinCapabilitiesHTS,
-		// );
-		// tr = await th.wipe(
-		// 	stableCoinCapabilitiesHTS,
-		// 	CLIENT_ACCOUNT_ECDSA.id,
-		// 	BigDecimal.fromString('1', stableCoinCapabilitiesHTS.coin.decimals),
-		// );
-		// const accountFinalBalance = await getBalance(
-		// 	CLIENT_ACCOUNT_ECDSA.id,
-		// 	stableCoinCapabilitiesHTS,
-		// );
-		// expect(accountFinalBalance).toEqual(
-		// 	accountInitialBalance.subUnsafe(
-		// 		BigDecimal.fromString(
-		// 			'1',
-		// 			stableCoinCapabilitiesHTS.coin.decimals,
-		// 		),
-		// 	),
-		// );
-		expect(
-			await th.wipe(
+		await expect(
+			th.wipe(
 				stableCoinCapabilitiesHTS,
 				CLIENT_ACCOUNT_ECDSA.id,
 				BigDecimal.fromString(
@@ -204,7 +176,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 					stableCoinCapabilitiesHTS.coin.decimals,
 				),
 			),
-		).toThrow();
+		).rejects.toThrow();
 	}, 50000);
 
 	it('Test freeze', async () => {
@@ -475,7 +447,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 		);
 	};
 	beforeAll(async () => {
-		await initTest(CLIENT_ACCOUNT_ECDSA);
+		await initTest(CLIENT_ACCOUNT_ED25519);
 		th = Injectable.resolve(HTSTransactionAdapter);
 		stableCoinService = Injectable.resolve(StableCoinService);
 
@@ -595,45 +567,17 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 		);
 	}, 50000);
 
-	// TODO Check test
 	it('Test wipe HTS', async () => {
-		// tr = await th.cashin(
-		// 	stableCoinCapabilitiesHTS,
-		// 	CLIENT_ACCOUNT_ED25519.id,
-		// 	BigDecimal.fromString('1', stableCoinCapabilitiesHTS.coin.decimals),
-		// );
-
-		// const accountInitialBalance = await getBalance(
-		// 	CLIENT_ACCOUNT_ED25519.id,
-		// 	stableCoinCapabilitiesHTS,
-		// );
-		// tr = await th.wipe(
-		// 	stableCoinCapabilitiesHTS,
-		// 	CLIENT_ACCOUNT_ED25519.id,
-		// 	BigDecimal.fromString('1', stableCoinCapabilitiesHTS.coin.decimals),
-		// );
-		// const accountFinalBalance = await getBalance(
-		// 	CLIENT_ACCOUNT_ED25519.id,
-		// 	stableCoinCapabilitiesHTS,
-		// );
-		// expect(accountFinalBalance).toEqual(
-		// 	accountInitialBalance.subUnsafe(
-		// 		BigDecimal.fromString(
-		// 			'1',
-		// 			stableCoinCapabilitiesHTS.coin.decimals,
-		// 		),
-		// 	),
-		// );
-		expect(
-			await th.wipe(
+		await expect(
+			th.wipe(
 				stableCoinCapabilitiesHTS,
-				CLIENT_ACCOUNT_ED25519.id,
+				CLIENT_ACCOUNT_ECDSA.id,
 				BigDecimal.fromString(
 					'1',
 					stableCoinCapabilitiesHTS.coin.decimals,
 				),
 			),
-		).toThrow();
+		).rejects.toThrow();
 	}, 50000);
 
 	it('Test freeze', async () => {
