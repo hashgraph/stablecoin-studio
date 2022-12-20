@@ -5,7 +5,7 @@ import BaseContainer from '../../components/BaseContainer';
 import DetailsReview from '../../components/DetailsReview';
 import Icon from '../../components/Icon';
 import TooltipCopy from '../../components/TooltipCopy';
-import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
+import { SELECTED_WALLET_ACCOUNT_INFO, SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
 import { formatShortKey } from '../../utils/inputHelper';
 import { useRefreshCoinInfo } from '../../hooks/useRefreshCoinInfo';
 
@@ -13,16 +13,15 @@ const StableCoinDetails = () => {
 	const { t } = useTranslation('stableCoinDetails');
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
+	const account = useSelector(SELECTED_WALLET_ACCOUNT_INFO)
 
 	useRefreshCoinInfo();
 
 	const renderKeys = ({ key }: { key: any }) => {
 		if (!key) return t('none').toUpperCase();
 		if ('value' in key) return t('smartContract').toUpperCase();
-		if (key.key === 'same as user')
-			// TODO: check current public key
+		if (key.key === account.publicKey?.toString())
 			return t('currentUser').toUpperCase();
-
 		return (
 			<Flex
 				gap={2}
@@ -33,7 +32,7 @@ const StableCoinDetails = () => {
 				wordBreak='break-all'
 			>
 				<Tooltip label={key.key} bgColor='black' borderRadius='5px'>
-					<Text>{t('otherKey', { key: formatShortKey({ key: key.key }) })}</Text>
+					<Text>{formatShortKey({ key: key.key })}</Text>
 				</Tooltip>
 				<TooltipCopy valueToCopy={key.key}>
 					<Icon name='Copy' />
