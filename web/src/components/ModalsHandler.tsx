@@ -98,14 +98,26 @@ const ModalsHandler = (props: ModalsHandlerProps) => {
 				title={successNotificationTitle}
 				description={successNotificationDescription}
 				isOpen={isOpenModalSuccess}
-				onClose={handleOnCloseModalSuccess ?? onCloseModalSuccess}
+				onClose={
+					handleOnCloseModalSuccess ??
+					(() => {
+						onCloseModalSuccess();
+						onCloseModalLoading();
+					})
+				}
 			/>
 			<ModalNotification
 				variant='error'
 				title={errorNotificationTitle}
 				description={errorNotificationDescription}
 				isOpen={isOpenModalError}
-				onClose={handleOnCloseModalError ?? onCloseModalError}
+				onClose={
+					handleOnCloseModalError ??
+					(() => {
+						onCloseModalError();
+						onCloseModalLoading();
+					})
+				}
 				errorTransactionUrl={errorTransactionUrl}
 			/>
 			<ModalNotification
@@ -113,7 +125,13 @@ const ModalsHandler = (props: ModalsHandlerProps) => {
 				title={warningNotificationTitle ?? 'Warning'}
 				description={warningNotificationDescription}
 				isOpen={isOpenModalWarning}
-				onClose={handleOnCloseModalWarning ?? onCloseModalWarning}
+				onClose={
+					handleOnCloseModalWarning ??
+					(() => {
+						onCloseModalWarning();
+						onCloseModalLoading();
+					})
+				}
 			/>
 		</>
 	);
