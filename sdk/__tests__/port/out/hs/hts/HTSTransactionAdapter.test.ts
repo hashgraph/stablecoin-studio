@@ -40,9 +40,9 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		hederaId: HederaId,
 		stableCoinCapabilities: StableCoinCapabilities,
 	): Promise<BigDecimal> {
-		return BigDecimal.fromString(
-			(await th.balanceOf(stableCoinCapabilities, hederaId)).response,
-			stableCoinCapabilities.coin.decimals,
+		return (
+			(await th.balanceOf(stableCoinCapabilities, hederaId)).response ??
+			BigDecimal.ZERO
 		);
 	};
 	beforeAll(async () => {
@@ -352,7 +352,9 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			stableCoinCapabilitiesSC,
 			CLIENT_ACCOUNT_ECDSA.id,
 		);
-		expect(tr.response).toEqual('0');
+		expect(tr.response).toEqual(
+			BigDecimal.fromString('0', stableCoinCapabilitiesSC.coin.decimals),
+		);
 	});
 
 	it('Test increase supplier allowance contract function', async () => {
@@ -374,7 +376,9 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			stableCoinCapabilitiesSC,
 			CLIENT_ACCOUNT_ECDSA.id,
 		);
-		expect(tr.response).toEqual('11');
+		expect(tr.response).toEqual(
+			BigDecimal.fromString('11', stableCoinCapabilitiesSC.coin.decimals),
+		);
 		tr = await th.isUnlimitedSupplierAllowance(
 			stableCoinCapabilitiesSC,
 			CLIENT_ACCOUNT_ECDSA.id,
@@ -392,7 +396,9 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			stableCoinCapabilitiesSC,
 			CLIENT_ACCOUNT_ECDSA.id,
 		);
-		expect(tr.response).toEqual('10');
+		expect(tr.response).toEqual(
+			BigDecimal.fromString('10', stableCoinCapabilitiesSC.coin.decimals),
+		);
 		tr = await th.isUnlimitedSupplierAllowance(
 			stableCoinCapabilitiesSC,
 			CLIENT_ACCOUNT_ECDSA.id,
@@ -409,7 +415,9 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			stableCoinCapabilitiesSC,
 			CLIENT_ACCOUNT_ECDSA.id,
 		);
-		expect(tr.response).toEqual('0');
+		expect(tr.response).toEqual(
+			BigDecimal.fromString('0', stableCoinCapabilitiesSC.coin.decimals),
+		);
 	}, 20000);
 
 	it('Test grant unlimited supplier allowance contract function', async () => {
@@ -441,9 +449,9 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 		hederaId: HederaId,
 		stableCoinCapabilities: StableCoinCapabilities,
 	): Promise<BigDecimal> {
-		return BigDecimal.fromString(
-			(await th.balanceOf(stableCoinCapabilities, hederaId)).response,
-			stableCoinCapabilities.coin.decimals,
+		return (
+			(await th.balanceOf(stableCoinCapabilities, hederaId)).response ??
+			BigDecimal.ZERO
 		);
 	};
 	beforeAll(async () => {
@@ -756,7 +764,9 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 			stableCoinCapabilitiesSC,
 			CLIENT_ACCOUNT_ED25519.id,
 		);
-		expect(tr.response).toEqual('0');
+		expect(tr.response).toEqual(
+			BigDecimal.fromString('0', stableCoinCapabilitiesSC.coin.decimals),
+		);
 	});
 
 	it('Test increase supplier allowance contract function', async () => {
@@ -778,7 +788,9 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 			stableCoinCapabilitiesSC,
 			CLIENT_ACCOUNT_ED25519.id,
 		);
-		expect(tr.response).toEqual('11');
+		expect(tr.response).toEqual(
+			BigDecimal.fromString('11', stableCoinCapabilitiesSC.coin.decimals),
+		);
 		tr = await th.isUnlimitedSupplierAllowance(
 			stableCoinCapabilitiesSC,
 			CLIENT_ACCOUNT_ED25519.id,
@@ -796,7 +808,9 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 			stableCoinCapabilitiesSC,
 			CLIENT_ACCOUNT_ED25519.id,
 		);
-		expect(tr.response).toEqual('10');
+		expect(tr.response).toEqual(
+			BigDecimal.fromString('10', stableCoinCapabilitiesSC.coin.decimals),
+		);
 		tr = await th.isUnlimitedSupplierAllowance(
 			stableCoinCapabilitiesSC,
 			CLIENT_ACCOUNT_ED25519.id,
@@ -813,7 +827,9 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 			stableCoinCapabilitiesSC,
 			CLIENT_ACCOUNT_ED25519.id,
 		);
-		expect(tr.response).toEqual('0');
+		expect(tr.response).toEqual(
+			BigDecimal.fromString('0', stableCoinCapabilitiesSC.coin.decimals),
+		);
 	}, 20000);
 
 	it('Test grant unlimited supplier allowance contract function', async () => {
