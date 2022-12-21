@@ -155,7 +155,6 @@ const StableCoinCreation = () => {
 
 			return {
 				key: param ? values[param] : '',
-				type: 'ED25519',
 			};
 		}
 
@@ -192,8 +191,10 @@ const StableCoinCreation = () => {
 			onOpen();
 			setLoading(true);
 			await SDKService.createStableCoin(request);
+			setLoading(false);
 			setSuccess(true);
 		} catch (error: any) {
+			setLoading(false);
 			console.log(error);
 			setError(error.transactionError.transactionUrl);
 			setSuccess(false);

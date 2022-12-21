@@ -15,18 +15,17 @@ export default class PublicKey implements KeyProps {
 	constructor(params: Partial<KeyProps> | string) {
 		let key: string, type: string;
 		if (typeof params === 'string') {
-			key = params;
-			type = this.getTypeFromLength(params);
+			key = this.formatKey(params);
+			type = this.getTypeFromLength(key);
 		} else {
 			if (!params.key) {
 				throw new RuntimeError('Invalid public key');
 			}
-			key = params.key;
-			type = params.type ?? HPublicKey.fromString(params.key)._key._type;
+			key = this.formatKey(params.key);
+			type = params.type ?? HPublicKey.fromString(key)._key._type;
 		}
-		PublicKey.validate(this.formatKey(key));
-		this.key = this.formatKey(key);
-		console.log(key, type);
+		PublicKey.validate(key);
+		this.key = key;
 		this.type = type;
 	}
 
