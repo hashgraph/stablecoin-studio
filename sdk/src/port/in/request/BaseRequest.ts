@@ -1,5 +1,3 @@
-import { constructor } from "@hashgraph/sdk/lib/EntityIdHelper.js";
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface BaseRequest {
 	[n: string]: any;
@@ -13,12 +11,14 @@ export interface RequestAccount {
 
 interface RequestKey {
 	key: string;
-	type: string;
+	type?: string;
 }
 
 // Extend as empty interface for future changes
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface RequestPrivateKey extends RequestKey {}
+export interface RequestPrivateKey extends RequestKey {
+	type: string;
+}
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface RequestPublicKey extends RequestKey {}
 
