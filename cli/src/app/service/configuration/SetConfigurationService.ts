@@ -340,7 +340,7 @@ export default class SetConfigurationService extends Service {
   ): Promise<IAccountConfig> {
     let privateKey = await utilsService.defaultPasswordAsk(
       language.getText('configuration.askPrivateKey') +
-        ` '96|64|66 characters' (${accountId})`,
+        ` '96|64|66|68 characters' (${accountId})`,
     );
 
     const pkType = await utilsService.defaultMultipleAsk(

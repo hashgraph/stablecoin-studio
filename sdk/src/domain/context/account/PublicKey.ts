@@ -2,6 +2,7 @@ import KeyProps, { KeyType } from './KeyProps.js';
 import { PublicKey as HPublicKey } from '@hashgraph/sdk';
 import PrivateKey from './PrivateKey.js';
 import BaseError from '../../../core/error/BaseError.js';
+import { RuntimeError } from '../../../core/error/RuntimeError.js';
 
 export default class PublicKey implements KeyProps {
 	public static readonly NULL: PublicKey = new PublicKey({
@@ -11,11 +12,37 @@ export default class PublicKey implements KeyProps {
 
 	public readonly key: string;
 	public readonly type: string;
-	constructor(params: KeyProps) {
-		const { key, type } = params;
+	constructor(params: Partial<KeyProps> | string) {
+		let key: string, type: string;
+		if (typeof params === 'string') {
+			key = this.formatKey(params);
+			type = this.getTypeFromLength(key);
+		} else {
+			if (!params.key) {
+				throw new RuntimeError('Invalid public key');
+			}
+			key = this.formatKey(params.key);
+			type = params.type ?? HPublicKey.fromString(key)._key._type;
+		}
 		PublicKey.validate(key);
 		this.key = key;
 		this.type = type;
+	}
+
+	private getTypeFromLength(params: string): string {
+		switch (params.length) {
+			case 66 | 68:
+				return KeyType.ECDSA;
+			default:
+				return KeyType.ED25519;
+		}
+	}
+
+	private formatKey(key: string): string {
+		if (key.length > 0 && key.startsWith('0x')) {
+			return key.substring(2);
+		}
+		return key;
 	}
 
 	public static fromHederaKey(key: HPublicKey): PublicKey {

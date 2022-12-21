@@ -400,10 +400,9 @@ export default class CreateStableCoinService extends Service {
       }
 
       case 'Other public key': {
-        const { key, type } = await utilsService.defaultPublicKeyAsk();
+        const { key } = await utilsService.defaultPublicKeyAsk();
         return {
           key: key,
-          type: type,
         };
       }
 

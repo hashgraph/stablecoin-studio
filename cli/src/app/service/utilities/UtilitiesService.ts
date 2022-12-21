@@ -305,27 +305,22 @@ export default class UtilitiesService extends Service {
   /**
    * Function to configure the public key, fail if length doesn't 96 or 64 or 66
    */
-  public async defaultPublicKeyAsk(): Promise<{key: string, type: string}> {
+  public async defaultPublicKeyAsk(): Promise<{ key: string }> {
     let publicKey: string = await this.defaultSingleAsk(
-      language.getText('configuration.askPublicKey') + ` '96|64|66 characters'`,
+      language.getText('configuration.askPublicKey') + ` '96|64|66|68 characters'`,
       undefined,
     );
 
-    if (publicKey.length == 64) {
-      publicKey = `0x${publicKey}`;
+    if (publicKey.startsWith('0x')) {
+      publicKey = publicKey.substring(2);
     }
 
-    if (![64, 66, 96].includes(publicKey.length)) {
+    if (![64, 66, 68, 96].includes(publicKey.length)) {
       this.showError(language.getText('general.incorrectParam'));
       return await this.defaultPublicKeyAsk();
     }
 
-    const type = await this.defaultMultipleAsk(
-      language.getText('stablecoin.features.keyType'),
-      language.getArray('wizard.privateKeyType'),
-    );
-
-    return { key: publicKey, type: type };
+    return { key: publicKey};
   }
 
   public async drawTableListStableCoin(
