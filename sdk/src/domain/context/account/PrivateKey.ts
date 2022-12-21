@@ -1,13 +1,8 @@
-import KeyProps from './KeyProps.js';
+import KeyProps, { KeyType } from './KeyProps.js';
 import { PrivateKey as HPrivateKey } from '@hashgraph/sdk';
 import PublicKey from './PublicKey.js';
 import BaseError from '../../../core/error/BaseError.js';
 import { PrivateKeyNotValid } from './error/PrivateKeyNotValid.js';
-
-export enum PrivateKeyType {
-	ECDSA = 'ECDSA',
-	ED25519 = 'ED25519',
-}
 
 export default class PrivateKey implements KeyProps {
 	public readonly key: string;
@@ -36,13 +31,16 @@ export default class PrivateKey implements KeyProps {
 		});
 	}
 
-	public validateType(type?: string): string {
-		return type ?? '';
+	public validateType(type?: string): KeyType {
+		if(type && Object.keys(KeyType).includes(type)){
+			return Object.entries(KeyType).filter(([key,]) => key === type)[0][1];
+		}
+		return KeyType.NULL;
 	}
 
 	public toHashgraphKey(): HPrivateKey {
 		try {
-			return this.type === PrivateKeyType.ED25519
+			return this.type === KeyType.ED25519
 				? HPrivateKey.fromStringED25519(this.key)
 				: HPrivateKey.fromStringECDSA(this.key);
 		} catch (error) {

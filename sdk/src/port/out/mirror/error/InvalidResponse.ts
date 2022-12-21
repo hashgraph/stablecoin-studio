@@ -4,7 +4,7 @@ export class InvalidResponse extends BaseError {
 	constructor(val: unknown) {
 		super(
 			ErrorCode.InvalidResponse,
-			`An invalid repsonse was received from the server: ${val}`,
+			`An invalid response was received from the server: ${val}`,
 		);
 	}
 }

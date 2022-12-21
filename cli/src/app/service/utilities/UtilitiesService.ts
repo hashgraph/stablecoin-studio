@@ -3,13 +3,14 @@ import figlet from 'figlet-promised';
 import Service from '../Service.js';
 import { configurationService, language } from '../../../index.js';
 import Table from 'cli-table3';
-import { StableCoinList } from '../../../domain/stablecoin/StableCoinList.js';
 import {
-  HederaNetwork,
-  HederaNetworkEnviroment,
-  NetworkMode,
-  SDK,
   ValidationResponse,
+  Network,
+  ConnectRequest,
+  SupportedWallets,
+  StableCoinListViewModel,
+  InitializationRequest,
+  SDK,
 } from 'hedera-stable-coin-sdk';
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
@@ -23,40 +24,36 @@ import { IHederaERC20Config } from '../../../domain/configuration/interfaces/IHe
  * Utilities Service
  */
 export default class UtilitiesService extends Service {
-  private sdk: SDK;
   private currentAccount: IAccountConfig;
   private currentNetwork: INetworkConfig;
   private currentFactory: IFactoryConfig;
   private currentHederaERC20: IHederaERC20Config;
 
-
   constructor() {
     super('Utilities');
   }
 
-  public async initSDK(network: string): Promise<SDK> {
-    const networks = {
-      testnet: HederaNetworkEnviroment.TEST,
-      previewnet: HederaNetworkEnviroment.PREVIEW,
-      mainnet: HederaNetworkEnviroment.MAIN,
-      local: HederaNetworkEnviroment.LOCAL,
-    };
-    this.sdk = await new SDK({
-      network: new HederaNetwork(networks[network]),
-      mode: NetworkMode.EOA,
-      options: {
-        logOptions: configurationService.getLogConfiguration()
-      }
-    }).init();
-    return this.sdk;
-  }
-
-  public getSDK(): SDK {
-    if (!this.sdk) {
-      throw new Error('SDK not initialized');
-    } else {
-      return this.sdk;
-    }
+  public async initSDK(): Promise<void> {
+    const account = this.getCurrentAccount();
+    SDK.log = configurationService.getLogConfiguration();
+    await Network.init(
+      new InitializationRequest({
+        network: this.getCurrentNetwork().name,
+      }),
+    );
+    await Network.connect(
+      new ConnectRequest({
+        account: {
+          accountId: account.accountId,
+          privateKey: {
+            key: account.privateKey.key,
+            type: account.privateKey.type,
+          },
+        },
+        network: this.getCurrentNetwork().name,
+        wallet: SupportedWallets.CLIENT,
+      }),
+    );
   }
 
   public setCurrentAccount(account: IAccountConfig): void {
@@ -308,7 +305,7 @@ export default class UtilitiesService extends Service {
   /**
    * Function to configure the public key, fail if length doesn't 96 or 64 or 66
    */
-  public async defaultPublicKeyAsk(): Promise<string> {
+  public async defaultPublicKeyAsk(): Promise<{key: string, type: string}> {
     let publicKey: string = await this.defaultSingleAsk(
       language.getText('configuration.askPublicKey') + ` '96|64|66 characters'`,
       undefined,
@@ -320,14 +317,21 @@ export default class UtilitiesService extends Service {
 
     if (![64, 66, 96].includes(publicKey.length)) {
       this.showError(language.getText('general.incorrectParam'));
-      publicKey = await this.defaultPublicKeyAsk();
+      return await this.defaultPublicKeyAsk();
     }
 
-    return publicKey;
+    const type = await this.defaultMultipleAsk(
+      language.getText('stablecoin.features.keyType'),
+      language.getArray('wizard.privateKeyType'),
+    );
+
+    return { key: publicKey, type: type };
   }
 
-  public async drawTableListStableCoin(data?: StableCoinList[]): Promise<void> {
-    if (data.length === 0) {
+  public async drawTableListStableCoin(
+    data?: StableCoinListViewModel,
+  ): Promise<void> {
+    if (data.coins.length === 0) {
       console.log('There are no stable coins available at this time.');
     } else {
       const table = new Table({
@@ -336,8 +340,8 @@ export default class UtilitiesService extends Service {
         colWidths: [15, 20],
       });
 
-      if (data) {
-        data.forEach((item) => table.push([item.id, item.symbol]));
+      if (data.coins) {
+        data.coins.forEach((item) => table.push([item.id, item.symbol]));
       } else {
         table.push(['-', '-']);
       }

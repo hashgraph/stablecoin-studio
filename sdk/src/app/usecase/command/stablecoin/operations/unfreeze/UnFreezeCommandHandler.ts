@@ -28,6 +28,8 @@ export class UnFreezeCommandHandler
 			tokenId,
 		);
 		const res = await handler.unfreeze(capabilities, targetId);
-		return Promise.resolve(res.response);
+		return Promise.resolve(
+			new UnFreezeCommandResponse(res.error === undefined),
+		);
 	}
 }

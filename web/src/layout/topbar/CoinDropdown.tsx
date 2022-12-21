@@ -21,11 +21,7 @@ import {
 import { RouterManager } from '../../Router/RouterManager';
 import { matchPath, useLocation, useNavigate } from 'react-router-dom';
 import { NamedRoutes } from '../../Router/NamedRoutes';
-import {
-	GetStableCoinDetailsRequest,
-	HashPackAccount,
-	GetAccountInfoRequest,
-} from 'hedera-stable-coin-sdk';
+import { GetStableCoinDetailsRequest, GetAccountInfoRequest } from 'hedera-stable-coin-sdk';
 import type { IExternalToken } from '../../interfaces/IExternalToken';
 import type { GroupBase, SelectInstance } from 'chakra-react-select';
 import { validateAccount } from '../../utils/validationsHelper';
@@ -58,18 +54,17 @@ const CoinDropdown = () => {
 	}, [selectedStableCoin]);
 
 	useEffect(() => {
-		if (capabilities?.length !== 0 && isInStableCoinNotSelected) {
+		if (capabilities?.capabilities.length !== 0 && isInStableCoinNotSelected) {
 			RouterManager.to(navigate, NamedRoutes.Operations);
 		}
 	}, [capabilities]);
 
 	useEffect(() => {
 		if (accountId) {
-			const id = new HashPackAccount(accountId);
-			dispatch(getStableCoinList(id));
-			dispatch(getExternalTokenList(accountId));
+			dispatch(getStableCoinList(accountId.toString()));
+			dispatch(getExternalTokenList(accountId.toString()));
 
-			getAccountInfo(id);
+			getAccountInfo(accountId.toString());
 		}
 	}, [accountId]);
 
@@ -77,11 +72,11 @@ const CoinDropdown = () => {
 		formatOptionsStableCoins();
 	}, [stableCoinList, externalTokenList, selectedStableCoin]);
 
-	const getAccountInfo = async (hashpackAccount: HashPackAccount) => {
+	const getAccountInfo = async (id: string) => {
 		const accountInfo = await SDKService.getAccountInfo(
 			new GetAccountInfoRequest({
 				account: {
-					accountId: hashpackAccount.accountId.id,
+					accountId: id,
 				},
 			}),
 		);
@@ -90,19 +85,21 @@ const CoinDropdown = () => {
 	};
 
 	const getCapabilities = async () => {
-		if (!selectedStableCoin?.tokenId || !accountInfo.publicKey?.key) return;
-
+		if (!selectedStableCoin?.tokenId || !accountInfo.id) return;
 		const capabilities = await SDKService.getCapabilities({
-			id: selectedStableCoin.tokenId,
-			publicKey: accountInfo.publicKey.key,
+			tokenId: selectedStableCoin.tokenId.toString(),
+			account: {
+				accountId: accountInfo.id,
+				evmAddress: accountInfo.accountEvmAddress,
+			},
 		});
 		dispatch(walletActions.setCapabilities(capabilities));
 	};
 
 	const formatOptionsStableCoins = async () => {
 		let options = [];
-		if (stableCoinList) {
-			options = stableCoinList.map(({ id, symbol }) => ({
+		if (stableCoinList?.coins) {
+			options = stableCoinList.coins.map(({ id, symbol }) => ({
 				label: <Text whiteSpace={'normal'}>{`${id} - ${symbol}`}</Text>,
 				value: id,
 			}));
@@ -152,10 +149,9 @@ const CoinDropdown = () => {
 				name: stableCoinDetails?.name,
 				symbol: stableCoinDetails?.symbol,
 				decimals: stableCoinDetails?.decimals,
-				id: stableCoinDetails?.tokenId,
-				treasuryId: stableCoinDetails?.treasuryId,
+				treasury: stableCoinDetails?.treasury,
 				autoRenewAccount: stableCoinDetails?.autoRenewAccount,
-				memo: stableCoinDetails?.memo,
+				proxyAddress: stableCoinDetails?.proxyAddress,
 				paused: stableCoinDetails?.paused,
 				deleted: stableCoinDetails?.deleted,
 				adminKey:

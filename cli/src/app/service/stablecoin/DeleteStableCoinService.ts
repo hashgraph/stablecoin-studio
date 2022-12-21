@@ -1,7 +1,7 @@
 import { language } from '../../../index.js';
 import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
-import { SDK, DeleteStableCoinRequest } from 'hedera-stable-coin-sdk';
+import { DeleteRequest, StableCoin } from 'hedera-stable-coin-sdk';
 
 /**
  * Create Role Stable Coin Service
@@ -14,10 +14,8 @@ export default class DeleteStableCoinService extends Service {
   /**
    * give supplier role
    */
-  public async deleteStableCoin(req: DeleteStableCoinRequest): Promise<void> {
-    const sdk: SDK = utilsService.getSDK();
-
-    await utilsService.showSpinner(sdk.deleteStableCoin(req), {
+  public async deleteStableCoin(req: DeleteRequest): Promise<void> {
+    await utilsService.showSpinner(StableCoin.delete(req), {
       text: language.getText('state.loading'),
       successText: language.getText('state.deleteCompleted') + '\n',
     });

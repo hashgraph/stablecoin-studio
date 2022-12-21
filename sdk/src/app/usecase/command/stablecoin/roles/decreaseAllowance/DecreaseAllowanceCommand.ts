@@ -10,7 +10,7 @@ export class DecreaseAllowanceCommandResponse implements CommandResponse {
 
 export class DecreaseAllowanceCommand extends Command<DecreaseAllowanceCommandResponse> {
 	constructor(
-		public readonly amount: BigDecimal,
+		public readonly amount: string,
 		public readonly targetId: HederaId,
 		public readonly tokenId: HederaId,
 	) {

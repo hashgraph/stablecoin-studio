@@ -1,24 +1,25 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Injectable } from '../../core/Injectable.js';
-import NetworkService from '../../app/service/NetworkService.js';
+import Injectable from '../../core/Injectable.js';
 import { QueryBus } from '../../core/query/QueryBus.js';
-import { CommandBus } from '../../core/command/CommandBus.js';
-import TransactionService from '../../app/service/TransactionService.js';
 import {
-	GetAccountBalanceRequest,
 	GetAccountInfoRequest,
 	GetListStableCoinRequest,
 } from './request/index.js';
+import { GetListStableCoinQuery } from '../../app/usecase/query/stablecoin/list/GetListStableCoinQuery.js';
 import GetPublicKeyRequest from './request/GetPublicKeyRequest.js';
 import PublicKey from '../../domain/context/account/PublicKey.js';
-import { Balance } from '../../domain/context/stablecoin/Balance.js';
+import { default as HederaAccount } from '../../domain/context/account/Account.js';
 import StableCoinListViewModel from '../out/mirror/response/StableCoinListViewModel.js';
 import AccountViewModel from '../out/mirror/response/AccountViewModel.js';
-import { MirrorNodeAdapter } from '../out/mirror/MirrorNodeAdapter.js';
+import { HederaId } from '../../domain/context/shared/HederaId.js';
+import { GetAccountInfoQuery } from '../../app/usecase/query/account/info/GetAccountInfoQuery.js';
+import { InvalidResponse } from '../out/mirror/error/InvalidResponse.js';
+import { handleValidation } from './Common.js';
+
+export { AccountViewModel, StableCoinListViewModel };
 
 interface IAccountInPort {
 	getPublicKey(request: GetPublicKeyRequest): Promise<PublicKey>;
-	getBalanceOf(request: GetAccountBalanceRequest): Promise<Balance>;
 	listStableCoins(
 		request: GetListStableCoinRequest,
 	): Promise<StableCoinListViewModel>;
@@ -26,31 +27,58 @@ interface IAccountInPort {
 }
 
 class AccountInPort implements IAccountInPort {
+	public readonly NullHederaAccount: HederaAccount = HederaAccount.NULL;
+	public readonly NullPublicKey: PublicKey = PublicKey.NULL;
+
 	constructor(
-		private readonly networkService: NetworkService = Injectable.resolve(
-			NetworkService,
-		),
 		private readonly queryBus: QueryBus = Injectable.resolve(QueryBus),
-		private readonly commandBus: CommandBus = Injectable.resolve(
-			CommandBus,
-		),
-		private readonly mirrorClient: MirrorNodeAdapter = Injectable.resolve(
-			MirrorNodeAdapter,
-		),
 	) {}
-	getPublicKey(request: GetPublicKeyRequest): Promise<PublicKey> {
-		throw new Error('Method not implemented.');
+
+	async getPublicKey(request: GetPublicKeyRequest): Promise<PublicKey> {
+		handleValidation('GetPublicKeyRequest', request);
+		const res = await this.queryBus.execute(
+			new GetAccountInfoQuery(HederaId.from(request.account.accountId)),
+		);
+		if (!res.account.publicKey)
+			throw new InvalidResponse(
+				`No public key for account ${
+					res.account.id ??
+					res.account.alias ??
+					res.account.accountEvmAddress
+				}`,
+			);
+		return res.account.publicKey;
 	}
-	getBalanceOf(request: GetAccountBalanceRequest): Promise<Balance> {
-		throw new Error('Method not implemented.');
-	}
-	listStableCoins(
+
+	async listStableCoins(
 		request: GetListStableCoinRequest,
 	): Promise<StableCoinListViewModel> {
-		throw new Error('Method not implemented.');
+		handleValidation('GetListStableCoinRequest', request);
+		return (
+			await this.queryBus.execute(
+				new GetListStableCoinQuery(
+					HederaId.from(request.account.accountId),
+				),
+			)
+		).list;
 	}
-	getInfo(request: GetAccountInfoRequest): Promise<AccountViewModel> {
-		throw new Error('Method not implemented.');
+
+	async getInfo(request: GetAccountInfoRequest): Promise<AccountViewModel> {
+		handleValidation('GetAccountInfoRequest', request);
+		return (
+			await this.queryBus.execute(
+				new GetAccountInfoQuery(
+					HederaId.from(request.account.accountId),
+				),
+			)
+		).account;
+	}
+
+	isPublicKeyNull(val?: { key: string; type: string }): boolean {
+		if (!val) return false;
+		return (
+			val.key === PublicKey.NULL.key && val.type === PublicKey.NULL.type
+		);
 	}
 }
 

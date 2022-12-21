@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import CheckNums from '../../../core/checks/numbers/CheckNums.js';
 import { OptionalField } from '../../../core/decorator/OptionalDecorator.js';
+import Injectable from '../../../core/Injectable.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import InvalidDecimalRange from '../../../domain/context/stablecoin/error/InvalidDecimalRange.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
@@ -15,11 +16,7 @@ import { InvalidValue } from './error/InvalidValue.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
 
-export default class CreateRequest
-	extends ValidatedRequest<CreateRequest>
-	implements AccountBaseRequest
-{
-	account: RequestAccount;
+export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 	name: string;
 	symbol: string;
 	private _decimals: number;
@@ -29,6 +26,10 @@ export default class CreateRequest
 	public set decimals(value: number | string) {
 		this._decimals = typeof value === 'number' ? value : parseFloat(value);
 	}
+
+	stableCoinFactory: string;
+
+	hederaERC20: string;
 
 	@OptionalField()
 	initialSupply?: string | undefined;
@@ -67,7 +68,6 @@ export default class CreateRequest
 	supplyType?: TokenSupplyType;
 
 	constructor({
-		account,
 		name,
 		symbol,
 		decimals,
@@ -82,9 +82,10 @@ export default class CreateRequest
 		pauseKey,
 		supplyKey,
 		treasury,
-		supplyType
+		supplyType,
+		stableCoinFactory,
+		hederaERC20,
 	}: {
-		account: RequestAccount;
 		name: string;
 		symbol: string;
 		decimals: number | string;
@@ -100,9 +101,10 @@ export default class CreateRequest
 		supplyKey?: RequestPublicKey;
 		treasury?: string;
 		supplyType?: TokenSupplyType;
+		stableCoinFactory: string;
+		hederaERC20: string;
 	}) {
 		super({
-			account: Validation.checkAccount(),
 			name: (val) => {
 				return StableCoin.checkName(val);
 			},
@@ -174,13 +176,15 @@ export default class CreateRequest
 			},
 			autoRenewAccount: (val) => {
 				const err = Validation.checkHederaIdFormat()(val);
+				const handler = Injectable.resolveTransactionHandler();
+				const id = handler.getAccount().id.toString();
 				if (err.length > 0) {
 					return err;
 				} else {
-					if (val !== this.account.accountId) {
+					if (val !== id) {
 						return [
 							new InvalidValue(
-								`The autorenew account (${val}) should be your current account (${this.account.accountId}).`,
+								`The autorenew account (${val}) should be your current account (${id}).`,
 							),
 						];
 					}
@@ -193,8 +197,9 @@ export default class CreateRequest
 			pauseKey: Validation.checkPublicKey(),
 			supplyKey: Validation.checkPublicKey(),
 			treasury: Validation.checkHederaIdFormat(),
+			stableCoinFactory: Validation.checkContractId(),
+			hederaERC20: Validation.checkContractId(),
 		});
-		this.account = account;
 		this.name = name;
 		this.symbol = symbol;
 		this.decimals =
@@ -211,5 +216,7 @@ export default class CreateRequest
 		this.supplyKey = supplyKey;
 		this.treasury = treasury;
 		this.supplyType = supplyType;
+		this.stableCoinFactory = stableCoinFactory;
+		this.hederaERC20 = hederaERC20;
 	}
 }

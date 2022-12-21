@@ -1,4 +1,3 @@
-
 import { Heading, Text, Stack, useDisclosure } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -10,13 +9,9 @@ import OperationLayout from './../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
 import { useSelector } from 'react-redux';
-import {
-	SELECTED_WALLET_ACCOUNT_INFO,
-	SELECTED_WALLET_COIN,
-	SELECTED_WALLET_PAIRED_ACCOUNT,
-} from '../../../store/slices/walletSlice';
+import { SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
 import { useState } from 'react';
-import { CashInStableCoinRequest } from 'hedera-stable-coin-sdk';
+import { CashInRequest } from 'hedera-stable-coin-sdk';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
@@ -29,27 +24,17 @@ const CashInOperation = () => {
 	} = useDisclosure();
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
-	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
-	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
-	const { decimals = 0} = selectedStableCoin || {};
+	const { decimals = 0 } = selectedStableCoin || {};
 
 	const [errorOperation, setErrorOperation] = useState();
 	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
 	const navigate = useNavigate();
 
 	const [request] = useState(
-		new CashInStableCoinRequest({
-			account: {
-				accountId: account.accountId,
-			},
+		new CashInRequest({
 			amount: '0',
-			proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
 			targetId: '',
-			tokenId: selectedStableCoin?.tokenId ?? '',
-			publicKey:{
-				key:accountInfo.publicKey?.key??'',
-				type:accountInfo.publicKey?.type ??'ED25519'
-			}
+			tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
 		}),
 	);
 
@@ -65,18 +50,23 @@ const CashInOperation = () => {
 
 	useRefreshCoinInfo();
 
-	const handleCashIn: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
+	const handleCashIn: ModalsHandlerActionsProps['onConfirm'] = async ({
+		onSuccess,
+		onError,
+		onLoading,
+	}) => {
 		try {
-			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId) {
+			onLoading();
+			if (!selectedStableCoin?.proxyAddress || !selectedStableCoin?.tokenId) {
 				onError();
 				return;
 			}
 			await SDKService.cashIn(request);
 			onSuccess();
-		} catch (error: any) {				
+		} catch (error: any) {
 			setErrorTransactionUrl(error.transactionUrl);
 			setErrorOperation(error.toString());
-			
+
 			onError();
 		}
 	};

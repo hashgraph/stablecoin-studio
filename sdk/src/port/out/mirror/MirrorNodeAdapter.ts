@@ -10,9 +10,11 @@ import { StableCoinNotFound } from './error/StableCoinNotFound.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import { ContractId as HContractId } from '@hashgraph/sdk';
 import PublicKey from '../../../domain/context/account/PublicKey.js';
+import { StableCoinMemo } from '../../../domain/context/stablecoin/StableCoinMemo.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
 import { InvalidResponse } from './error/InvalidResponse.js';
 import { HederaId } from '../../../domain/context/shared/HederaId.js';
+import { KeyType } from '../../../domain/context/account/KeyProps.js';
 
 @singleton()
 export class MirrorNodeAdapter {
@@ -34,28 +36,30 @@ export class MirrorNodeAdapter {
 
 	public async getStableCoinsList(
 		accountId: HederaId,
-	): Promise<StableCoinListViewModel[]> {
+	): Promise<StableCoinListViewModel> {
 		try {
 			const url = `${
 				this.URI_BASE
 			}tokens?limit=100&account.id=${accountId.toString()}`;
 
 			LogService.logTrace(
-				'Getting stable coin list from mirror node ->',
+				'Getting stable coin list from mirror node -> ',
 				url,
 			);
 
-			const resObject: StableCoinListViewModel[] = [];
+			const resObject: StableCoinListViewModel = {
+				coins: [],
+			};
 			const res = await this.instance.get<ITokenList>(url);
 			res.data.tokens.map((item: IToken) => {
-				resObject.push({
+				resObject.coins.push({
 					id: item.token_id,
 					symbol: item.symbol,
 				});
 			});
 			return resObject;
 		} catch (error) {
-			return Promise.reject<StableCoinListViewModel[]>(
+			return Promise.reject<StableCoinListViewModel>(
 				new InvalidResponse(error),
 			);
 		}
@@ -66,7 +70,6 @@ export class MirrorNodeAdapter {
 	): Promise<StableCoinViewModel> {
 		try {
 			const url = `${this.URI_BASE}tokens/${tokenId.toString()}`;
-
 			LogService.logTrace(
 				'Getting stable coin from mirror node -> ',
 				url,
@@ -94,7 +97,7 @@ export class MirrorNodeAdapter {
 				if (val) {
 					return new PublicKey({
 						key: val.key,
-						type: val._type,
+						type: val._type as KeyType,
 					});
 				} else {
 					return undefined;
@@ -106,8 +109,9 @@ export class MirrorNodeAdapter {
 			}
 
 			const decimals = parseInt(response.data.decimals ?? '0');
-			const proxyAddress =
-				JSON.parse(response.data.memo ?? '').proxyContract ?? '0.0.0';
+			const proxyAddress = response.data.memo
+				? StableCoinMemo.fromJson(response.data.memo).proxyContract
+				: '0.0.0';
 			const stableCoinDetail: StableCoinViewModel = {
 				tokenId: HederaId.from(response.data.token_id),
 				name: response.data.name ?? '',
@@ -135,7 +139,7 @@ export class MirrorNodeAdapter {
 				evmProxyAddress:
 					HContractId.fromString(proxyAddress).toSolidityAddress(),
 				treasury: HederaId.from(response.data.treasury_account_id),
-				paused: Boolean(response.data.paused) ?? false,
+				paused: response.data.pause_status === 'PAUSED',
 				deleted: Boolean(response.data.deleted) ?? false,
 				freezeDefault: Boolean(response.data.freeze_default) ?? false,
 				autoRenewAccount: HederaId.from(
@@ -163,20 +167,20 @@ export class MirrorNodeAdapter {
 	}
 
 	public async getAccountInfo(
-		accountId: HederaId,
+		accountId: HederaId | string,
 	): Promise<AccountViewModel> {
 		try {
 			LogService.logTrace(this.URI_BASE + 'accounts/' + accountId);
 			const res = await axios.get<IAccount>(
-				this.URI_BASE + 'accounts/' + accountId,
+				this.URI_BASE + 'accounts/' + accountId.toString(),
 			);
 
 			const account: AccountViewModel = {
-				account: accountId.toString(),
+				id: res.data.account.toString(),
 				accountEvmAddress: res.data.evm_address,
 				publicKey: new PublicKey({
 					key: res.data.key.key,
-					type: res.data.key._type,
+					type: res.data.key._type as KeyType,
 				}),
 				alias: res.data.alias,
 			};
@@ -225,7 +229,7 @@ interface IHederaStableCoinDetail {
 	treasury_account_id?: string;
 	expiry_timestamp?: string;
 	memo?: string;
-	paused?: boolean;
+	pause_status?: string;
 	freeze_default?: boolean;
 	auto_renew_account: string;
 	auto_renew_period: number;
@@ -253,6 +257,7 @@ interface IAccount {
 	evm_address: string;
 	key: IKey;
 	alias: string;
+	account: string;
 }
 
 interface IKey {

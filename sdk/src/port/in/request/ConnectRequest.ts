@@ -1,3 +1,4 @@
+import { OptionalField } from '../../../core/decorator/OptionalDecorator.js';
 import { Environment } from '../../../domain/context/network/Environment.js';
 import { SupportedWallets } from '../../../domain/context/network/Wallet.js';
 import {
@@ -13,7 +14,8 @@ export default class ConnectRequest
 	extends ValidatedRequest<ConnectRequest>
 	implements BaseRequest
 {
-	account: RequestAccount;
+	@OptionalField()
+	account?: RequestAccount;
 	network: Environment;
 	wallet: SupportedWallets;
 
@@ -22,7 +24,7 @@ export default class ConnectRequest
 		network,
 		wallet,
 	}: {
-		account: RequestAccount;
+		account?: RequestAccount;
 		network: Environment;
 		wallet: SupportedWallets;
 	}) {

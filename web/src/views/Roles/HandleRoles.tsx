@@ -6,32 +6,37 @@ import RoleLayout from './RoleLayout';
 import ModalsHandler from '../../components/ModalsHandler';
 import DetailsReview from '../../components/DetailsReview';
 import SwitchController from '../../components/Form/SwitchController';
-import { roleOptions, cashinLimitOptions, fields, actions, roleExternalTokens } from './constants';
+import { roleOptions, cashinLimitOptions, fields, actions } from './constants';
 import type { Detail } from '../../components/DetailsReview';
 import type { ModalsHandlerActionsProps } from '../../components/ModalsHandler';
 import SDKService from '../../services/SDKService';
 import { useSelector } from 'react-redux';
-import {
+import { 
 	SELECTED_WALLET_COIN,
-	SELECTED_WALLET_PAIRED_ACCOUNT,
 	SELECTED_WALLET_CAPABILITIES,
+	SELECTED_WALLET_PAIRED_ACCOUNTID
 } from '../../store/slices/walletSlice';
 import { SelectController } from '../../components/Form/SelectController';
 import { formatAmountWithDecimals } from '../../utils/inputHelper';
 import {
-	Capabilities,
-	CheckCashInLimitRequest,
-	CheckCashInRoleRequest,
-	DecreaseCashInLimitRequest,
+	CheckSupplierLimitRequest,
+	GetSupplierAllowanceRequest,
+	DecreaseSupplierAllowanceRequest,
 	GrantRoleRequest,
 	HasRoleRequest,
-	IncreaseCashInLimitRequest,
-	ResetCashInLimitRequest,
+	IncreaseSupplierAllowanceRequest,
+	ResetSupplierAllowanceRequest,
 	RevokeRoleRequest,
+	Operation,
+	Access,
+	GetRolesRequest,
 } from 'hedera-stable-coin-sdk';
 import InputController from '../../components/Form/InputController';
 import { handleRequestValidation, validateDecimalsString } from '../../utils/validationsHelper';
 import { useRefreshCoinInfo } from '../../hooks/useRefreshCoinInfo';
+import type { IExternalToken } from '../../interfaces/IExternalToken.js';
+import type  { IAccountToken } from '../../interfaces/IAccountToken.js';
+import type { IRole } from '../../interfaces/IRole.js';
 
 const supplier = 'Cash in';
 
@@ -67,8 +72,8 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 	} = useForm({ mode: 'onChange' });
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
-	const selectedAccount = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
 	const capabilities = useSelector(SELECTED_WALLET_CAPABILITIES);
+	const accountId = useSelector(SELECTED_WALLET_PAIRED_ACCOUNTID);
 
 	const [limit, setLimit] = useState<string | null>();
 	const [modalErrorDescription, setModalErrorDescription] =
@@ -76,10 +81,10 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 	const [request, setRequest] = useState<
 		| GrantRoleRequest
 		| RevokeRoleRequest
-		| IncreaseCashInLimitRequest
-		| CheckCashInLimitRequest
-		| ResetCashInLimitRequest
-		| DecreaseCashInLimitRequest
+		| IncreaseSupplierAllowanceRequest
+		| GetSupplierAllowanceRequest
+		| ResetSupplierAllowanceRequest
+		| DecreaseSupplierAllowanceRequest
 	>();
 
 	register(fields.supplierQuantitySwitch, { value: true });
@@ -94,40 +99,78 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 		supplierLimitOption,
 	);
 	const checkOptionSelected: boolean = ['CHECK'].includes(supplierLimitOption);
+	const askRolesToSDK = watch(fields.autoCheckRoles);
+	const roles = watch(fields.roles);
 	const role = watch(fields.role);
 	const filteredCapabilities = roleOptions.filter((option) => {
-		if (!capabilities!.includes(Capabilities.CASH_IN) && option.label === 'Cash in') {
+		if (
+			!capabilities!.capabilities.includes({ operation: Operation.CASH_IN, access: Access.HTS }) &&
+			!capabilities!.capabilities.includes({
+				operation: Operation.CASH_IN,
+				access: Access.CONTRACT,
+			}) &&
+			option.label === 'Cash in'
+		) {
 			return false;
 		}
-		if (!capabilities!.includes(Capabilities.BURN) && option.label === 'Burn') {
+		if (
+			!capabilities!.capabilities.includes({ operation: Operation.BURN, access: Access.HTS }) &&
+			!capabilities!.capabilities.includes({
+				operation: Operation.BURN,
+				access: Access.CONTRACT,
+			}) &&
+			option.label === 'Burn'
+		) {
 			return false;
 		}
-		if (!capabilities!.includes(Capabilities.WIPE) && option.label === 'Wipe') {
+		if (
+			!capabilities!.capabilities.includes({ operation: Operation.WIPE, access: Access.HTS }) &&
+			!capabilities!.capabilities.includes({
+				operation: Operation.WIPE,
+				access: Access.CONTRACT,
+			}) &&
+			option.label === 'Wipe'
+		) {
 			return false;
 		}
-		if (!capabilities!.includes(Capabilities.PAUSE) && option.label === 'Pause') {
+		if (
+			!capabilities!.capabilities.includes({ operation: Operation.PAUSE, access: Access.HTS }) &&
+			!capabilities!.capabilities.includes({
+				operation: Operation.PAUSE,
+				access: Access.CONTRACT,
+			}) &&
+			option.label === 'Pause'
+		) {
 			return false;
 		}
-		if (!capabilities!.includes(Capabilities.RESCUE) && option.label === 'Rescue') {
+		if (
+			!capabilities!.capabilities.includes({ operation: Operation.RESCUE, access: Access.HTS }) &&
+			!capabilities!.capabilities.includes({
+				operation: Operation.RESCUE,
+				access: Access.CONTRACT,
+			}) &&
+			option.label === 'Rescue'
+		) {
 			return false;
 		}
-		if (!capabilities!.includes(Capabilities.FREEZE) && option.label === 'Freeze') {
+		if (
+			!capabilities!.capabilities.includes({ operation: Operation.FREEZE, access: Access.HTS }) &&
+			!capabilities!.capabilities.includes({
+				operation: Operation.FREEZE,
+				access: Access.CONTRACT,
+			}) &&
+			option.label === 'Freeze'
+		) {
 			return false;
 		}
 		return true;
 	});
-	// console.log(filteredCapabilities);
-	// console.log(capabilities);	
 	useEffect(() => {
 		switch (action.toString()) {
 			case 'giveRole':
 				setRequest(
 					new GrantRoleRequest({
-						proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
-						account: {
-							accountId: selectedAccount.accountId,
-						},
-						tokenId: selectedStableCoin?.tokenId ?? '',
+						tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
 						targetId: '',
 						amount: '0',
 						role: undefined,
@@ -137,27 +180,18 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 			case 'revokeRole':
 				setRequest(
 					new RevokeRoleRequest({
-						proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
-						account: {
-							accountId: selectedAccount.accountId,
-						},
-						tokenId: selectedStableCoin?.tokenId ?? '',
+						tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
 						targetId: '',
 						role: undefined,
 					}),
 				);
 				break;
 			case 'editRole':
-
 				switch (supplierLimitOption) {
 					case 'INCREASE':
 						setRequest(
-							new IncreaseCashInLimitRequest({
-								proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
-								account: {
-									accountId: selectedAccount.accountId,
-								},
-								tokenId: selectedStableCoin?.tokenId ?? '',
+							new IncreaseSupplierAllowanceRequest({
+								tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
 								targetId: '',
 								amount: '0',
 							}),
@@ -165,12 +199,8 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 						break;
 					case 'DECREASE':
 						setRequest(
-							new DecreaseCashInLimitRequest({
-								proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
-								account: {
-									accountId: selectedAccount.accountId,
-								},
-								tokenId: selectedStableCoin?.tokenId ?? '',
+							new DecreaseSupplierAllowanceRequest({
+								tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
 								targetId: '',
 								amount: '0',
 							}),
@@ -179,24 +209,17 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 
 					case 'RESET':
 						setRequest(
-							new ResetCashInLimitRequest({
-								proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
-								account: {
-									accountId: selectedAccount.accountId,
-								},
+							new ResetSupplierAllowanceRequest({
 								targetId: '',
+								tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
 							}),
 						);
 						break;
 					case 'CHECK':
 					default:
 						setRequest(
-							new CheckCashInLimitRequest({
-								proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
-								account: {
-									accountId: selectedAccount.accountId,
-								},
-								tokenId: selectedStableCoin?.tokenId ?? '',
+							new GetSupplierAllowanceRequest({
+								tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
 								targetId: '',
 							}),
 						);
@@ -206,31 +229,38 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 		}
 	}, [supplierLimitOption]);
 
-	const handleSubmit: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError, onWarning }) => {
+	const handleSubmit: ModalsHandlerActionsProps['onConfirm'] = async ({
+		onSuccess,
+		onError,
+		onWarning,
+		onLoading
+	}) => {
 		try {
-			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId || !account) {
+			onLoading();
+			if (!selectedStableCoin?.proxyAddress || !selectedStableCoin?.tokenId || !account) {
 				onError();
 				return;
 			}
 
 			let alreadyHasRole;
 			let isUnlimitedSupplierAllowance;
+			// vars to refresh externalTokens
+			let tokensAccount;
+			let myAccount;
+			let externalTokens;
+			let externalToken;
 
 			switch (action.toString()) {
 				case 'giveRole':
 					alreadyHasRole = await SDKService.hasRole(
 						new HasRoleRequest({
-							proxyContractId: selectedStableCoin.memo.proxyContract,
-							account: {
-								accountId: selectedAccount.accountId,
-							},
-							tokenId: selectedStableCoin.tokenId,
+							tokenId: selectedStableCoin.tokenId.toString(),
 							targetId: account,
 							role: role.value,
 						}),
 					);
 
-					if (alreadyHasRole && alreadyHasRole[0]) {
+					if (alreadyHasRole) {
 						setModalErrorDescription('hasAlreadyRoleError');
 						onWarning();
 						return;
@@ -239,11 +269,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 					amount
 						? await SDKService.grantRole(
 								new GrantRoleRequest({
-									proxyContractId: selectedStableCoin.memo.proxyContract,
-									account: {
-										accountId: selectedAccount.accountId,
-									},
-									tokenId: selectedStableCoin.tokenId,
+									tokenId: selectedStableCoin.tokenId.toString(),
 									targetId: account,
 									amount: amount.toString(),
 									role: role.value,
@@ -251,11 +277,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 						  )
 						: await SDKService.grantRole(
 								new GrantRoleRequest({
-									proxyContractId: selectedStableCoin.memo.proxyContract,
-									account: {
-										accountId: selectedAccount.accountId,
-									},
-									tokenId: selectedStableCoin.tokenId,
+									tokenId: selectedStableCoin.tokenId.toString(),
 									targetId: account,
 									role: role.value,
 								}),
@@ -265,17 +287,13 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 				case 'revokeRole':
 					alreadyHasRole = await SDKService.hasRole(
 						new HasRoleRequest({
-							proxyContractId: selectedStableCoin.memo.proxyContract,
-							account: {
-								accountId: selectedAccount.accountId,
-							},
-							tokenId: selectedStableCoin.tokenId,
+							tokenId: selectedStableCoin.tokenId.toString(),
 							targetId: account,
 							role: role.value,
 						}),
 					);
 
-					if (alreadyHasRole && !alreadyHasRole[0]) {
+					if (alreadyHasRole) {
 						setModalErrorDescription('hasNotRoleError');
 						onWarning();
 						return;
@@ -283,11 +301,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 
 					await SDKService.revokeRole(
 						new RevokeRoleRequest({
-							proxyContractId: selectedStableCoin.memo.proxyContract,
-							account: {
-								accountId: selectedAccount.accountId,
-							},
-							tokenId: selectedStableCoin.tokenId,
+							tokenId: selectedStableCoin.tokenId.toString(),
 							targetId: account,
 							role: role.value,
 						}),
@@ -296,16 +310,13 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 
 				case 'editRole':
 					isUnlimitedSupplierAllowance = await SDKService.isUnlimitedSupplierAllowance(
-						new CheckCashInRoleRequest({
-							proxyContractId: selectedStableCoin.memo.proxyContract,
-							account: {
-								accountId: selectedAccount.accountId,
-							},
+						new CheckSupplierLimitRequest({
 							targetId: account,
+							tokenId: selectedStableCoin.tokenId.toString(),
 						}),
 					);
 
-					if (isUnlimitedSupplierAllowance![0]) {
+					if (isUnlimitedSupplierAllowance) {
 						setModalErrorDescription('hasInfiniteAllowance');
 						onWarning();
 						return;
@@ -314,12 +325,8 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 					switch (supplierLimitOption) {
 						case 'INCREASE':
 							await SDKService.increaseSupplierAllowance(
-								new IncreaseCashInLimitRequest({
-									proxyContractId: selectedStableCoin.memo.proxyContract,
-									account: {
-										accountId: selectedAccount.accountId,
-									},
-									tokenId: selectedStableCoin.tokenId,
+								new IncreaseSupplierAllowanceRequest({
+									tokenId: selectedStableCoin.tokenId.toString(),
 									targetId: account,
 									amount: amount ? amount.toString() : '',
 								}),
@@ -328,12 +335,8 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 
 						case 'DECREASE':
 							await SDKService.decreaseSupplierAllowance(
-								new DecreaseCashInLimitRequest({
-									proxyContractId: selectedStableCoin.memo.proxyContract,
-									account: {
-										accountId: selectedAccount.accountId,
-									},
-									tokenId: selectedStableCoin.tokenId,
+								new DecreaseSupplierAllowanceRequest({
+									tokenId: selectedStableCoin.tokenId.toString(),
 									targetId: account,
 									amount: amount ? amount.toString() : '',
 								}),
@@ -342,31 +345,45 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 
 						case 'RESET':
 							await SDKService.resetSupplierAllowance(
-								new ResetCashInLimitRequest({
-									proxyContractId: selectedStableCoin.memo.proxyContract,
-									account: {
-										accountId: selectedAccount.accountId,
-									},
+								new ResetSupplierAllowanceRequest({
 									targetId: account,
+									tokenId: selectedStableCoin.tokenId.toString(),
 								}),
 							);
 							break;
 
 						case 'CHECK': {
 							const limit = await SDKService.checkSupplierAllowance(
-								new CheckCashInLimitRequest({
-									proxyContractId: selectedStableCoin.memo.proxyContract,
-									account: {
-										accountId: selectedAccount.accountId,
-									},
-									tokenId: selectedStableCoin.tokenId,
+								new GetSupplierAllowanceRequest({
+									tokenId: selectedStableCoin.tokenId.toString(),
 									targetId: account,
 								}),
 							);
-							setLimit(limit);
+							setLimit(limit.toString());
 						}
 					}
 					break;
+
+				case 'refreshRoles':
+					tokensAccount = JSON.parse(localStorage.tokensAccount);
+					myAccount = tokensAccount.find((acc: IAccountToken) => acc.id === accountId?.value);
+					externalTokens = myAccount.externalTokens;
+					externalToken = externalTokens.find(
+						(coin: IExternalToken) => coin.id === selectedStableCoin.tokenId?.toString(),
+					);
+
+					if (askRolesToSDK) {
+						externalToken.roles = await SDKService.getRoles(
+							new GetRolesRequest({
+								targetId: account,
+								tokenId: selectedStableCoin.tokenId.toString()
+							})
+						);
+					} else {
+						externalToken.roles = roles.map((role: IRole) => role.value);
+					}
+					localStorage.setItem('tokensAccount', JSON.stringify(tokensAccount));
+					break;					
 			}
 			onSuccess();
 		} catch (error: any) {
@@ -492,7 +509,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 						name={fields.roles}
 						label={'Roles'}
 						placeholder={t('externalTokenInfo:externalTokenInfo.rolesPlaceholder')}
-						options={roleExternalTokens}
+						options={roleOptions}
 						addonLeft={true}
 						variant='unstyled'
 						overrideStyles={styles}
@@ -511,7 +528,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 			},
 		];
 		if (action === actions.refresh) {
-			details = [];
+			details = [];				
 		} else if (action !== actions.edit) {
 			const value = role?.label;
 			const roleAction: Detail = {

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createLogger, LoggerOptions, transports, format } from 'winston';
+import safeStringify from 'fast-safe-stringify';
 import BaseError from '../../core/error/BaseError.js';
 
 const { Console } = transports;
@@ -26,7 +27,7 @@ export default class LogService {
 					.map((e) => {
 						switch (typeof e) {
 							case 'object':
-								return JSON.stringify(e);
+								return safeStringify(e);
 							default:
 								return e;
 						}

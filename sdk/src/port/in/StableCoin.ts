@@ -1,38 +1,81 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Injectable } from '../../core/Injectable.js';
+import Injectable from '../../core/Injectable.js';
 import CreateRequest from './request/CreateRequest.js';
 import CashInRequest from './request/CashInRequest.js';
 import GetStableCoinDetailsRequest from './request/GetStableCoinDetailsRequest.js';
-import CashOutRequest from './request/CashOutRequest.js';
+import BurnRequest from './request/BurnRequest.js';
 import RescueRequest from './request/RescueRequest.js';
 import WipeRequest from './request/WipeRequest.js';
-import StableCoinDetail from './response/StableCoinDetail.js';
+import AssociateTokenRequest from './request/AssociateTokenRequest.js';
 import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import { HederaId } from '../../domain/context/shared/HederaId.js';
-import NetworkService from '../../app/service/NetworkService.js';
+import ContractId from '../../domain/context/contract/ContractId.js';
+import { StableCoinProps } from '../../domain/context/stablecoin/StableCoin.js';
 import { QueryBus } from '../../core/query/QueryBus.js';
 import { CommandBus } from '../../core/command/CommandBus.js';
 import { CashInCommand } from '../../app/usecase/command/stablecoin/operations/cashin/CashInCommand.js';
 import StableCoinViewModel from '../out/mirror/response/StableCoinViewModel.js';
+import StableCoinListViewModel from '../out/mirror/response/StableCoinListViewModel.js';
 import StableCoinService from '../../app/service/StableCoinService.js';
 import { GetStableCoinQuery } from '../../app/usecase/query/stablecoin/get/GetStableCoinQuery.js';
-import AccountService from '../../app/service/AccountService.js';
+import { CreateCommand } from '../../app/usecase/command/stablecoin/create/CreateCommand.js';
+import PublicKey from '../../domain/context/account/PublicKey.js';
+import DeleteRequest from './request/DeleteRequest.js';
+import FreezeAccountRequest from './request/FreezeAccountRequest.js';
+import PauseRequest from './request/PauseRequest.js';
+import GetAccountBalanceRequest from './request/GetAccountBalanceRequest.js';
+import CapabilitiesRequest from './request/CapabilitiesRequest.js';
+import { Balance } from '../../domain/context/stablecoin/Balance.js';
+import StableCoinCapabilities from '../../domain/context/stablecoin/StableCoinCapabilities.js';
+import {
+	Capability,
+	Access,
+	Operation,
+} from '../../domain/context/stablecoin/Capability.js';
+import { TokenSupplyType } from '../../domain/context/stablecoin/TokenSupply.js';
 import Account from '../../domain/context/account/Account.js';
+import { BurnCommand } from '../../app/usecase/command/stablecoin/operations/burn/BurnCommand.js';
+import { BalanceOfCommand } from '../../app/usecase/command/stablecoin/operations/balanceof/BalanceOfCommand.js';
+import { RescueCommand } from '../../app/usecase/command/stablecoin/operations/rescue/RescueCommand.js';
+import { WipeCommand } from '../../app/usecase/command/stablecoin/operations/wipe/WipeCommand.js';
+import { PauseCommand } from '../../app/usecase/command/stablecoin/operations/pause/PauseCommand.js';
+import { UnPauseCommand } from '../../app/usecase/command/stablecoin/operations/unpause/UnPauseCommand.js';
+import { DeleteCommand } from '../../app/usecase/command/stablecoin/operations/delete/DeleteCommand.js';
+import { FreezeCommand } from '../../app/usecase/command/stablecoin/operations/freeze/FreezeCommand.js';
+import { UnFreezeCommand } from '../../app/usecase/command/stablecoin/operations/unfreeze/UnFreezeCommand.js';
+import { GetAccountInfoQuery } from '../../app/usecase/query/account/info/GetAccountInfoQuery.js';
+import { KeyType } from '../../domain/context/account/KeyProps.js';
+import { handleValidation } from './Common.js';
+
+export const HederaERC20AddressTestnet = '0.0.49127272';
+export const HederaERC20AddressPreviewnet = '0.0.11111111';
+
+export const FactoryAddressTestnet = '0.0.49127286';
+export const FactoryAddressPreviewnet = '0.0.11111111';
+
+export { StableCoinViewModel, StableCoinListViewModel };
+export { StableCoinCapabilities, Capability, Access, Operation, Balance };
+export { TokenSupplyType };
 
 interface IStableCoinInPort {
-	create(request: CreateRequest): Promise<StableCoinDetail>;
+	create(request: CreateRequest): Promise<StableCoinViewModel>;
 	getInfo(request: GetStableCoinDetailsRequest): Promise<StableCoinViewModel>;
 	cashIn(request: CashInRequest): Promise<boolean>;
-	cashOut(request: CashOutRequest): Promise<boolean>;
+	burn(request: BurnRequest): Promise<boolean>;
 	rescue(request: RescueRequest): Promise<boolean>;
 	wipe(request: WipeRequest): Promise<boolean>;
+	associate(request: AssociateTokenRequest): Promise<boolean>;
+	getBalanceOf(request: GetAccountBalanceRequest): Promise<Balance>;
+	capabilities(request: CapabilitiesRequest): Promise<StableCoinCapabilities>;
+	pause(request: PauseRequest): Promise<boolean>;
+	unPause(request: PauseRequest): Promise<boolean>;
+	delete(request: DeleteRequest): Promise<boolean>;
+	freeze(request: FreezeAccountRequest): Promise<boolean>;
+	unFreeze(request: FreezeAccountRequest): Promise<boolean>;
 }
 
 class StableCoinInPort implements IStableCoinInPort {
 	constructor(
-		private readonly networkService: NetworkService = Injectable.resolve<NetworkService>(
-			NetworkService,
-		),
 		private readonly queryBus: QueryBus = Injectable.resolve(QueryBus),
 		private readonly commandBus: CommandBus = Injectable.resolve(
 			CommandBus,
@@ -40,52 +83,236 @@ class StableCoinInPort implements IStableCoinInPort {
 		private readonly stableCoinService: StableCoinService = Injectable.resolve(
 			StableCoinService,
 		),
-		private readonly accountService: AccountService = Injectable.resolve(
-			AccountService,
-		),
 	) {}
 
-	create(request: CreateRequest): Promise<StableCoinDetail> {
-		throw new Error('Method not implemented.');
+	async create(req: CreateRequest): Promise<StableCoinViewModel> {
+		handleValidation('CreateRequest', req);
+		const { stableCoinFactory, hederaERC20 } = req;
+		const coin: StableCoinProps = {
+			name: req.name,
+			symbol: req.symbol,
+			decimals: req.decimals,
+			adminKey: req.adminKey
+				? new PublicKey({
+						key: req.adminKey.key,
+						type: req.adminKey.type,
+				  })
+				: undefined,
+			initialSupply: BigDecimal.fromString(
+				req.initialSupply ?? '0',
+				req.decimals,
+			),
+			maxSupply: BigDecimal.fromString(
+				req.maxSupply ?? '0',
+				req.decimals,
+			),
+			freezeKey: req.freezeKey
+				? new PublicKey({
+						key: req.freezeKey.key,
+						type: req.freezeKey.type,
+				  })
+				: undefined,
+			freezeDefault: req.freezeDefault,
+			wipeKey: req.wipeKey
+				? new PublicKey({
+						key: req.wipeKey.key,
+						type: req.wipeKey.type,
+				  })
+				: undefined,
+			pauseKey: req.pauseKey
+				? new PublicKey({
+						key: req.pauseKey.key,
+						type: req.pauseKey.type,
+				  })
+				: undefined,
+			supplyKey: req.supplyKey
+				? new PublicKey({
+						key: req.supplyKey.key,
+						type: req.supplyKey.type,
+				  })
+				: undefined,
+			treasury: new HederaId(req.treasury ?? '0.0.0'),
+			supplyType: req.supplyType,
+			autoRenewAccount: req.autoRenewAccount
+				? new HederaId(req.autoRenewAccount)
+				: undefined,
+		};
+
+		const createResponse = await this.commandBus.execute(
+			new CreateCommand(
+				coin,
+				new ContractId(stableCoinFactory),
+				new ContractId(hederaERC20),
+			),
+		);
+
+		return (
+			await this.queryBus.execute(
+				new GetStableCoinQuery(createResponse.tokenId),
+			)
+		).coin;
 	}
 
 	async getInfo(
 		request: GetStableCoinDetailsRequest,
 	): Promise<StableCoinViewModel> {
 		const { id } = request;
-		const validation = request.validate();
-		// TODO return validation
-		if (validation.length > 0) throw new Error('Validation error');
-		return (
+		handleValidation('GetStableCoinDetailsRequest', request);
+		const coin = (
 			await this.queryBus.execute(
 				new GetStableCoinQuery(HederaId.from(id)),
 			)
 		).coin;
+		return coin;
 	}
 
 	async cashIn(request: CashInRequest): Promise<boolean> {
 		const { tokenId, amount, targetId } = request;
-		const validation = request.validate();
-		// TODO return validation
-		if (validation.length > 0) return false;
+		handleValidation('CashInRequest', request);
 
-		return !!(await this.commandBus.execute(
-			new CashInCommand(
-				BigDecimal.fromString(amount),
-				HederaId.from(targetId),
-				HederaId.from(tokenId),
+		return (
+			await this.commandBus.execute(
+				new CashInCommand(
+					amount,
+					HederaId.from(targetId),
+					HederaId.from(tokenId),
+				),
+			)
+		).payload;
+	}
+
+	async burn(request: BurnRequest): Promise<boolean> {
+		const { tokenId, amount } = request;
+		handleValidation('BurnRequest', request);
+
+		return (
+			await this.commandBus.execute(
+				new BurnCommand(amount, HederaId.from(tokenId)),
+			)
+		).payload;
+	}
+
+	async rescue(request: RescueRequest): Promise<boolean> {
+		const { tokenId, amount } = request;
+		handleValidation('RescueRequest', request);
+
+		return (
+			await this.commandBus.execute(
+				new RescueCommand(amount, HederaId.from(tokenId)),
+			)
+		).payload;
+	}
+
+	async wipe(request: WipeRequest): Promise<boolean> {
+		const { tokenId, amount, targetId } = request;
+		handleValidation('WipeRequest', request);
+
+		return (
+			await this.commandBus.execute(
+				new WipeCommand(
+					amount,
+					HederaId.from(targetId),
+					HederaId.from(tokenId),
+				),
+			)
+		).payload;
+	}
+
+	async associate(request: AssociateTokenRequest): Promise<boolean> {
+		throw new Error('Method not implemented.');
+	}
+
+	async getBalanceOf(request: GetAccountBalanceRequest): Promise<Balance> {
+		handleValidation('GetAccountBalanceRequest', request);
+
+		const res = await this.commandBus.execute(
+			new BalanceOfCommand(
+				HederaId.from(request.targetId),
+				HederaId.from(request.tokenId),
 			),
-		));
+		);
+
+		return new Balance(res.payload);
 	}
 
-	cashOut(request: CashOutRequest): Promise<boolean> {
-		throw new Error('Method not implemented.');
+	async capabilities(
+		request: CapabilitiesRequest,
+	): Promise<StableCoinCapabilities> {
+		handleValidation('CapabilitiesRequest', request);
+
+		const resp = await this.queryBus.execute(
+			new GetAccountInfoQuery(HederaId.from(request.account.accountId)),
+		);
+		return this.stableCoinService.getCapabilities(
+			new Account({
+				id: resp.account.id ?? request.account.accountId,
+				publicKey: resp.account.publicKey,
+			}),
+			HederaId.from(request.tokenId),
+			request.tokenIsPaused,
+			request.tokenIsDeleted
+		);
 	}
-	rescue(request: RescueRequest): Promise<boolean> {
-		throw new Error('Method not implemented.');
+
+	async pause(request: PauseRequest): Promise<boolean> {
+		const { tokenId } = request;
+		handleValidation('PauseRequest', request);
+
+		return (
+			await this.commandBus.execute(
+				new PauseCommand(HederaId.from(tokenId)),
+			)
+		).payload;
 	}
-	wipe(request: WipeRequest): Promise<boolean> {
-		throw new Error('Method not implemented.');
+
+	async unPause(request: PauseRequest): Promise<boolean> {
+		const { tokenId } = request;
+		handleValidation('PauseRequest', request);
+
+		return (
+			await this.commandBus.execute(
+				new UnPauseCommand(HederaId.from(tokenId)),
+			)
+		).payload;
+	}
+
+	async delete(request: DeleteRequest): Promise<boolean> {
+		const { tokenId } = request;
+		handleValidation('DeleteRequest', request);
+
+		return (
+			await this.commandBus.execute(
+				new DeleteCommand(HederaId.from(tokenId)),
+			)
+		).payload;
+	}
+
+	async freeze(request: FreezeAccountRequest): Promise<boolean> {
+		const { tokenId, targetId } = request;
+		handleValidation('FreezeAccountRequest', request);
+
+		return (
+			await this.commandBus.execute(
+				new FreezeCommand(
+					HederaId.from(targetId),
+					HederaId.from(tokenId),
+				),
+			)
+		).payload;
+	}
+
+	async unFreeze(request: FreezeAccountRequest): Promise<boolean> {
+		const { tokenId, targetId } = request;
+		handleValidation('FreezeAccountRequest', request);
+
+		return (
+			await this.commandBus.execute(
+				new UnFreezeCommand(
+					HederaId.from(targetId),
+					HederaId.from(tokenId),
+				),
+			)
+		).payload;
 	}
 }
 

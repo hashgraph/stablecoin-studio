@@ -16,16 +16,24 @@ accounts:
       type: ED25519
     network: testnet
     alias: AlbertoED25519
-    externalTokens: []
+    importedTokens: []
   - accountId: 0.0.48587748
     privateKey:
       key: '0x3c8055953320b1001b93f6c99518ec0a1daf7210f1bb02dd11c64f3dec96fdb6'
       type: ECDSA
     network: testnet
     alias: AlbertoECDSA
-    externalTokens: []
+    importedTokens: []
+logs:
+  path: ./logs
+  level: ERROR
 factories:
-  - id: 0.0.49045465
+  - id: 0.0.49077033
+    network: testnet
+  - id: 0.0.11111111
+    network: previewnet
+hederaERC20s:
+  - id: 0.0.49077027
     network: testnet
   - id: 0.0.11111111
     network: previewnet

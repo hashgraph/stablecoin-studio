@@ -32,11 +32,11 @@ export class RevokeRoleCommandHandler
 			account,
 			tokenId,
 		);
-		const res = await handler.revokeRole(
-			capabilities,
-			targetId,
-			role,
+		const res = await handler.revokeRole(capabilities, targetId, role);
+
+		// return Promise.resolve({ payload: res.response ?? false });
+		return Promise.resolve(
+			new RevokeRoleCommandResponse(res.error === undefined),
 		);
-		return Promise.resolve({ payload: res.response ?? false });
 	}
 }

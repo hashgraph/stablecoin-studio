@@ -8,17 +8,14 @@ import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
 import { handleRequestValidation } from '../../../utils/validationsHelper';
 import { useSelector } from 'react-redux';
-import {
-	SELECTED_WALLET_COIN,
-	SELECTED_WALLET_PAIRED_ACCOUNT,
-} from '../../../store/slices/walletSlice';
+import { SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
 import SDKService from '../../../services/SDKService';
 import { useState } from 'react';
 import { formatAmount } from '../../../utils/inputHelper';
 
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
-import { RescueStableCoinRequest } from 'hedera-stable-coin-sdk';
+import { RescueRequest } from 'hedera-stable-coin-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 
 const RescueTokenOperation = () => {
@@ -29,19 +26,14 @@ const RescueTokenOperation = () => {
 	} = useDisclosure();
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
-	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
 
 	const [errorOperation, setErrorOperation] = useState();
 	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
 	const [request] = useState(
-		new RescueStableCoinRequest({
-			proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
-			account: {
-				accountId: account.accountId
-			},
-			tokenId: selectedStableCoin?.tokenId ?? '',
-			amount:  '0'
-		})
+		new RescueRequest({
+			tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
+			amount: '0',
+		}),
 	);
 
 	const navigate = useNavigate();
@@ -57,15 +49,17 @@ const RescueTokenOperation = () => {
 	const handleCloseModal = () => {
 		RouterManager.goBack(navigate);
 	};
-	
+
 	useRefreshCoinInfo();
-	
+
 	const handleRescueToken: ModalsHandlerActionsProps['onConfirm'] = async ({
 		onSuccess,
 		onError,
+		onLoading
 	}) => {
 		try {
-			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId) {
+			onLoading();
+			if (!selectedStableCoin?.proxyAddress || !selectedStableCoin?.tokenId) {
 				onError();
 				return;
 			}
@@ -99,7 +93,7 @@ const RescueTokenOperation = () => {
 											const res = handleRequestValidation(request.validate('amount'));
 											return res;
 										},
-									}
+									},
 								}}
 								isRequired
 								control={control}

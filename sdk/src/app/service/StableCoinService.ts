@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { singleton } from 'tsyringe';
-import { Injectable } from '../../core/Injectable.js';
+import Injectable from '../../core/Injectable.js';
 import AccountService from './AccountService.js';
 import Service from './Service.js';
 import { QueryBus } from '../../core/query/QueryBus.js';
@@ -43,6 +43,8 @@ export default class StableCoinService extends Service {
 	async getCapabilities(
 		account: Account,
 		target: HederaId | StableCoin,
+		tokenIsPaused?: boolean,
+		tokenIsDeleted?: boolean
 	): Promise<StableCoinCapabilities> {
 		try {
 			let _coin: StableCoin;
@@ -53,9 +55,8 @@ export default class StableCoinService extends Service {
 			} else {
 				_coin = await this.get(target);
 			}
-
-			const paused = _coin.paused;
-			const deleted = _coin.deleted;
+			const paused = tokenIsPaused !== undefined ? tokenIsPaused : _coin.paused;
+			const deleted = tokenIsDeleted != undefined ? tokenIsDeleted : _coin.deleted;
 			const operable = !deleted && !paused;
 
 			if (
@@ -81,8 +82,7 @@ export default class StableCoinService extends Service {
 
 			if (operable && _coin.supplyKey instanceof PublicKey) {
 				if (
-					_coin.supplyKey?.key.toString() ===
-					account.publicKey?.toString()
+					_coin.supplyKey?.key.toString() === account.publicKey?.key
 				) {
 					listCapabilities.push(
 						new Capability(Operation.CASH_IN, Access.HTS),
@@ -94,10 +94,7 @@ export default class StableCoinService extends Service {
 			}
 
 			if (operable && _coin.wipeKey instanceof PublicKey) {
-				if (
-					_coin.wipeKey?.key.toString() ===
-					account.publicKey?.toString()
-				) {
+				if (_coin.wipeKey?.key.toString() === account.publicKey?.key) {
 					listCapabilities.push(
 						new Capability(Operation.WIPE, Access.HTS),
 					);
@@ -110,12 +107,12 @@ export default class StableCoinService extends Service {
 			}
 
 			if (!deleted && _coin.pauseKey instanceof PublicKey) {
-				if (
-					_coin.pauseKey?.key.toString() ===
-					account.publicKey?.toString()
-				) {
+				if (_coin.pauseKey?.key.toString() === account.publicKey?.key) {
 					listCapabilities.push(
 						new Capability(Operation.PAUSE, Access.HTS),
+					);
+					listCapabilities.push(
+						new Capability(Operation.UNPAUSE, Access.HTS),
 					);
 				}
 			}
@@ -123,15 +120,20 @@ export default class StableCoinService extends Service {
 				listCapabilities.push(
 					new Capability(Operation.PAUSE, Access.CONTRACT),
 				);
+				listCapabilities.push(
+					new Capability(Operation.UNPAUSE, Access.CONTRACT),
+				);
 			}
 
 			if (operable && _coin.freezeKey instanceof PublicKey) {
 				if (
-					_coin.freezeKey?.key.toString() ===
-					account.publicKey?.toString()
+					_coin.freezeKey?.key.toString() === account.publicKey?.key
 				) {
 					listCapabilities.push(
 						new Capability(Operation.FREEZE, Access.HTS),
+					);
+					listCapabilities.push(
+						new Capability(Operation.UNFREEZE, Access.HTS),
 					);
 				}
 			}
@@ -139,13 +141,12 @@ export default class StableCoinService extends Service {
 				listCapabilities.push(
 					new Capability(Operation.FREEZE, Access.CONTRACT),
 				);
+				listCapabilities.push(
+					new Capability(Operation.UNFREEZE, Access.CONTRACT),
+				);
 			}
-
 			if (operable && _coin.adminKey instanceof PublicKey) {
-				if (
-					_coin.adminKey?.key.toString() ===
-					account.publicKey?.toString()
-				) {
+				if (_coin.adminKey?.key.toString() === account.publicKey?.key) {
 					listCapabilities.push(
 						new Capability(Operation.DELETE, Access.HTS),
 					);
@@ -157,16 +158,8 @@ export default class StableCoinService extends Service {
 				);
 			}
 
-			const roleManagement = listCapabilities.some((capability) =>
-				[
-					new Capability(Operation.PAUSE, Access.CONTRACT),
-					new Capability(Operation.WIPE, Access.CONTRACT),
-					new Capability(Operation.CASH_IN, Access.CONTRACT),
-					new Capability(Operation.BURN, Access.CONTRACT),
-					new Capability(Operation.RESCUE, Access.CONTRACT),
-					new Capability(Operation.FREEZE, Access.CONTRACT),
-					new Capability(Operation.DELETE, Access.CONTRACT),
-				].includes(capability),
+			const roleManagement = listCapabilities.some(
+				(capability) => capability.access === Access.CONTRACT,
 			);
 			if (roleManagement) {
 				listCapabilities.push(

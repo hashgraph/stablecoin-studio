@@ -11,11 +11,12 @@ import { configurationService, utilsService } from '../../../index.js';
 import SetConfigurationService from './SetConfigurationService.js';
 import MaskData from 'maskdata';
 import {
-  LoggerOptions,
   DailyRotateFile,
   DefaultLoggerFormat,
+  LogOptions,
 } from 'hedera-stable-coin-sdk';
 import { ILogConfig } from '../../../domain/configuration/interfaces/ILogConfig.js';
+import { IFactoryConfig } from '../../../domain/configuration/interfaces/IFactoryConfig.js';
 
 /**
  * Configuration Service
@@ -57,20 +58,18 @@ export default class ConfigurationService extends Service {
     return this.configuration;
   }
 
-  public getLogConfiguration(): LoggerOptions {
+  public getLogConfiguration(): LogOptions {
     if (!this.configuration.logs) return undefined;
     return {
       level: this.configuration.logs.level ?? 'ERROR',
-      transports: [
-        new DailyRotateFile({
-          filename: `%DATE%.log`,
-          dirname: this.configuration.logs.path ?? './logs',
-          datePattern: 'YYYY_MM_DD',
-          maxSize: '500k',
-          maxFiles: '14d',
-          format: DefaultLoggerFormat,
-        }),
-      ],
+      transports: new DailyRotateFile({
+        filename: `%DATE%.log`,
+        dirname: this.configuration.logs.path ?? './logs',
+        datePattern: 'YYYY_MM_DD',
+        maxSize: '500k',
+        maxFiles: '14d',
+        format: DefaultLoggerFormat,
+      }),
     };
   }
 
@@ -149,7 +148,10 @@ export default class ConfigurationService extends Service {
       networks: defaultConfigRaw['networks'] as unknown as INetworkConfig[],
       accounts: defaultConfigRaw['accounts'] as unknown as IAccountConfig[],
       logs: defaultConfigRaw['logs'] as unknown as ILogConfig,
-      hederaERC20s: defaultConfigRaw['hederaERC20s'] as unknown as IHederaERC20Config[]
+      factories: defaultConfigRaw['factories'] as unknown as IFactoryConfig[],
+      hederaERC20s: defaultConfigRaw[
+        'hederaERC20s'
+      ] as unknown as IHederaERC20Config[],
     };
     this.setConfiguration(config);
     return config;

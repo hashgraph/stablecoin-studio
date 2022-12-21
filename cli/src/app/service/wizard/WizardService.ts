@@ -12,7 +12,7 @@ import ManageImportedTokenService from '../stablecoin/ManageImportedTokenService
 import ListStableCoinsService from '../stablecoin/ListStableCoinsService.js';
 import colors from 'colors';
 import { clear } from 'console';
-import { IStableCoinDetail } from 'hedera-stable-coin-sdk';
+import { Network, SetNetworkRequest, StableCoinViewModel } from 'hedera-stable-coin-sdk';
 
 /**
  * Wizard Service
@@ -44,7 +44,7 @@ export default class WizardService extends Service {
       ) {
         case wizardMainOptions[0]:
           await utilsService.cleanAndShowBanner();
-          const stableCoin: IStableCoinDetail =
+          const stableCoin: StableCoinViewModel =
             await new CreateStableCoinService().createStableCoin(
               undefined,
               true,
@@ -55,8 +55,8 @@ export default class WizardService extends Service {
           );
           if (operate) {
             await new OperationStableCoinService(
-              stableCoin.tokenId,
-              stableCoin.memo,
+              stableCoin.tokenId.toString(),
+              stableCoin.proxyAddress.toString(),
               stableCoin.symbol,
             ).start();
           }
@@ -71,7 +71,8 @@ export default class WizardService extends Service {
           break;
         case wizardMainOptions[3]:
           await utilsService.cleanAndShowBanner();
-          await new ListStableCoinsService().listStableCoins();
+          const resp = await new ListStableCoinsService().listStableCoins();
+          utilsService.drawTableListStableCoin(resp);
           break;
         case wizardMainOptions[4]:
           await utilsService.cleanAndShowBanner();
@@ -180,14 +181,27 @@ export default class WizardService extends Service {
     const currentFactory = factories.find(
       (factory) => currentAccount.network === factory.network,
     );
-      
+
     utilsService.setCurrentFactory(currentFactory);
 
     const currentHederaERC20 = hederaERC20s.find(
       (hederaERC20) => currentAccount.network === hederaERC20.network,
     );
-      
+
     utilsService.setCurrentHederaERC20(currentHederaERC20);
+    await Network.setNetwork(
+      new SetNetworkRequest({
+        environment: currentNetwork.name,
+        consensusNodes:
+          currentNetwork.consensusNodes.length > 0
+            ? currentNetwork.name
+            : undefined,
+        mirrorNode:
+          currentNetwork.mirrorNodeUrl.length > 0
+            ? currentNetwork.mirrorNodeUrl
+            : undefined,
+      }),
+    );
 
     if (mainMenu) await this.mainMenu();
   }

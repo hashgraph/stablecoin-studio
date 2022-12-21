@@ -1,6 +1,7 @@
 import { ICommandHandler } from '../../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
+import BigDecimal from '../../../../../../domain/context/shared/BigDecimal.js';
 import AccountService from '../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
@@ -25,7 +26,12 @@ export class RescueCommandHandler implements ICommandHandler<RescueCommand> {
 			account,
 			tokenId,
 		);
-		const res = await handler.rescue(capabilities, amount);
-		return Promise.resolve(res.response);
+		const res = await handler.rescue(
+			capabilities,
+			BigDecimal.fromString(amount, capabilities.coin.decimals),
+		);
+		return Promise.resolve(
+			new RescueCommandResponse(res.error === undefined),
+		);
 	}
 }

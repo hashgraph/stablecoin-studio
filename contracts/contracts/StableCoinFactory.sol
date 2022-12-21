@@ -14,6 +14,11 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes{
 
     // Hedera HTS precompiled contract
     address constant precompileAddress = address(0x167);
+    string constant memo_1 = "{\"p\":\"";
+    string constant memo_2 = "\",\"a\":\"";
+    string constant memo_3 = "\"}";
+
+    event Deployed(address, address, address, address);
 
     function deployStableCoin(tokenStruct calldata requestedToken,
         address StableCoinContractAddress) external payable override returns (address, address, address, address){
@@ -33,7 +38,8 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes{
         // Create Token
         IHederaTokenService.HederaToken memory token = createToken(
             requestedToken,
-            address(StableCoinProxy)
+            address(StableCoinProxy),
+            address(StableCoinProxyAdmin)
         );
         
         // Initialize Proxy
@@ -48,16 +54,25 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes{
         // Associate token
         if(treasuryIsContract(requestedToken.treasuryAddress))HederaERC20(address(StableCoinProxy)).associateToken(msg.sender);
 
+        emit Deployed(address(StableCoinProxy), address(StableCoinProxyAdmin), StableCoinContractAddress, tokenAddress);
         return (address(StableCoinProxy), address(StableCoinProxyAdmin), StableCoinContractAddress, tokenAddress);
     }
 
     function createToken (
         tokenStruct memory requestedToken,
-        address StableCoinProxyAddress
+        address StableCoinProxyAddress,
+        address StableCoinProxyAdminAddress
     ) 
     internal pure returns (IHederaTokenService.HederaToken memory){
         // token Memo
-        string memory tokenMemo = Strings.toHexString(StableCoinProxyAddress);
+        string memory tokenMemo = string(
+            abi.encodePacked(
+                memo_1, 
+                Strings.toHexString(StableCoinProxyAddress), 
+                memo_2,
+                Strings.toHexString(StableCoinProxyAdminAddress), 
+                memo_3
+            ));
         
         // Token Expiry
         IHederaTokenService.Expiry memory tokenExpiry;

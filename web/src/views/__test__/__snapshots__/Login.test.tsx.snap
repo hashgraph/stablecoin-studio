@@ -19,7 +19,7 @@ exports[`<Login /> should render correctly 1`] = `
         class="chakra-text css-q6jngl"
         data-testid="modal-hashpack-title"
       >
-        Hashpack extension is not installed yet
+        Extensions are not installed yet
       </p>
       <p
         class="chakra-text css-zxkbt5"
@@ -27,21 +27,68 @@ exports[`<Login /> should render correctly 1`] = `
       >
         Click on the button bellow to download the extension.
       </p>
-      <a
-        class="chakra-link css-13jvj27"
-        data-testid="modal-hashpack-link"
-        href="https://www.hashpack.app/download"
-        rel="noopener"
-        target="_blank"
+      <div
+        class="chakra-stack css-1lm32qo"
       >
-        <button
-          class="chakra-button css-1178n6s"
-          data-testid="modal-hashpack-button"
-          type="button"
+        <a
+          class="chakra-link css-1an9p0o"
+          data-testid="modal-hashpack-link-hashpack"
+          href="https://www.hashpack.app/download"
+          rel="noopener"
+          target="_blank"
         >
-          Download Hashpack
-        </button>
-      </a>
+          <button
+            class="chakra-button css-pojqoc"
+            data-testid="modal-hashpack-button-hashpack"
+            type="button"
+          >
+            <span
+              class="chakra-button__icon css-1wh2kri"
+            >
+              <img
+                aria-hidden="true"
+                class="chakra-image css-1xkfsxs"
+                focusable="false"
+                src="hashpackLogo.png"
+              />
+            </span>
+            <p
+              class="chakra-text css-mgupmj"
+            >
+              Download Hashpack
+            </p>
+          </button>
+        </a>
+        <a
+          class="chakra-link css-1an9p0o"
+          data-testid="modal-hashpack-link-metamask"
+          href="https://metamask.io/download/"
+          rel="noopener"
+          target="_blank"
+        >
+          <button
+            class="chakra-button css-pojqoc"
+            data-testid="modal-hashpack-button-metamask"
+            type="button"
+          >
+            <span
+              class="chakra-button__icon css-1wh2kri"
+            >
+              <img
+                aria-hidden="true"
+                class="chakra-image css-1xkfsxs"
+                focusable="false"
+                src="MetaMask_Fox.svg"
+              />
+            </span>
+            <p
+              class="chakra-text css-mgupmj"
+            >
+              Download Metamask
+            </p>
+          </button>
+        </a>
+      </div>
     </div>
   </div>
   <span

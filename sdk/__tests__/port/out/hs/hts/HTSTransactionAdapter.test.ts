@@ -6,266 +6,307 @@ import TransactionResponse from '../../../../../src/domain/context/transaction/T
 import StableCoinCapabilities from '../../../../../src/domain/context/stablecoin/StableCoinCapabilities.js';
 import { StableCoin } from '../../../../../src/domain/context/stablecoin/StableCoin.js';
 import Account from '../../../../../src/domain/context/account/Account.js';
-import {
-	Access,
-	Capability,
-	Operation,
-} from '../../../../../src/domain/context/stablecoin/Capability.js';
 import BigDecimal from '../../../../../src/domain/context/shared/BigDecimal.js';
 import { HederaId } from '../../../../../src/domain/context/shared/HederaId.js';
 import { StableCoinRole } from '../../../../../src/domain/context/stablecoin/StableCoinRole.js';
-import PrivateKey from '../../../../../src/domain/context/account/PrivateKey.js';
-import { Injectable } from '../../../../../src/core/Injectable.js';
+import Injectable from '../../../../../src/core/Injectable.js';
 import { Network } from '../../../../../src/index.js';
 import ConnectRequest, {
 	SupportedWallets,
 } from '../../../../../src/port/in/request/ConnectRequest.js';
+import {
+	HederaERC20AddressTestnet,
+	FactoryAddressTestnet,
+	TokenSupplyType,
+} from '../../../../../src/port/in/StableCoin.js';
+import PublicKey from '../../../../../src/domain/context/account/PublicKey.js';
+import ContractId from '../../../../../src/domain/context/contract/ContractId.js';
+import { ContractId as HContractId } from '@hashgraph/sdk';
+import {
+	CLIENT_ACCOUNT_ECDSA,
+	CLIENT_ACCOUNT_ED25519,
+} from '../../../../config.js';
+import StableCoinService from '../../../../../src/app/service/StableCoinService.js';
 
-describe('🧪 [ADAPTER] HTSTransactionAdapter with Ed25519 accounts', () => {
-	const clientAccountId = '0.0.47792863';
-	const clientPrivateKey =
-		'302e020100300506032b65700422042078068d0d381ec19047ca0f6612a66b9a3c990fb1f8adc2fd2735b78423c2e10c';
-	const accountId = '0.0.47793222';
-	const account: Account = new Account({
-		id: clientAccountId,
-		privateKey: new PrivateKey({ key: clientPrivateKey, type: 'ED25519' }),
-	});
-
+describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 	// token to operate through HTS
-	const tokenId = '0.0.48987373';
-	const proxyContractId = '0.0.48987372';
-	const stableCoin = new StableCoin({
-		name: 'HEDERACOIN',
-		symbol: 'HDC',
-		decimals: 6,
-		tokenId: new HederaId(tokenId),
-		proxyAddress: new HederaId(proxyContractId),
-	});
-	const capabilities: Capability[] = [
-		new Capability(Operation.CASH_IN, Access.HTS),
-		new Capability(Operation.BURN, Access.HTS),
-		new Capability(Operation.WIPE, Access.HTS),
-		new Capability(Operation.FREEZE, Access.HTS),
-		new Capability(Operation.UNFREEZE, Access.HTS),
-		new Capability(Operation.PAUSE, Access.HTS),
-		new Capability(Operation.UNPAUSE, Access.HTS),
-	];
-	const stableCoinCapabilities = new StableCoinCapabilities(
-		stableCoin,
-		capabilities,
-		account,
-	);
-
-	// token to operate through contract
-	const tokenId2 = '0.0.49013686';
-	const proxyContractId2 = '0.0.49013685';
-	const stableCoin2 = new StableCoin({
-		name: 'HEDERACOIN',
-		symbol: 'HDC',
-		decimals: 4,
-		tokenId: new HederaId(tokenId2),
-		proxyAddress: new HederaId(proxyContractId2),
-	});
-	const capabilities2: Capability[] = [
-		new Capability(Operation.CASH_IN, Access.CONTRACT),
-		new Capability(Operation.BURN, Access.CONTRACT),
-		new Capability(Operation.WIPE, Access.CONTRACT),
-		new Capability(Operation.RESCUE, Access.CONTRACT),
-		new Capability(Operation.FREEZE, Access.CONTRACT),
-		new Capability(Operation.UNFREEZE, Access.CONTRACT),
-		new Capability(Operation.PAUSE, Access.CONTRACT),
-		new Capability(Operation.UNPAUSE, Access.CONTRACT),
-		new Capability(Operation.ROLE_MANAGEMENT, Access.CONTRACT),
-	];
-	const stableCoinCapabilities2 = new StableCoinCapabilities(
-		stableCoin2,
-		capabilities2,
-		account,
-	);
+	let stableCoinCapabilitiesHTS: StableCoinCapabilities;
+	let stableCoinCapabilitiesSC: StableCoinCapabilities;
+	let stableCoinService: StableCoinService;
 
 	let th: HTSTransactionAdapter;
 	let tr: TransactionResponse;
+	const getBalance = async function (
+		hederaId: HederaId,
+		stableCoinCapabilities: StableCoinCapabilities,
+	): Promise<BigDecimal> {
+		return BigDecimal.fromString(
+			(await th.balanceOf(stableCoinCapabilities, hederaId)).response,
+			stableCoinCapabilities.coin.decimals,
+		);
+	};
 	beforeAll(async () => {
-		await initTest(account);
+		await initTest(CLIENT_ACCOUNT_ECDSA);
 		th = Injectable.resolve(HTSTransactionAdapter);
-	});
+		stableCoinService = Injectable.resolve(StableCoinService);
 
-	it('Test cashin', async () => {
-		const accountInitialBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities, account.id)
-		).response;
+		const coinSC = new StableCoin({
+			name: 'TestCoinSC',
+			symbol: 'TCSC',
+			decimals: 6,
+			initialSupply: BigDecimal.fromString('5.60', 6),
+			freezeDefault: false,
+			adminKey: PublicKey.NULL,
+			freezeKey: PublicKey.NULL,
+			// kycKey: PublicKey.NULL,
+			wipeKey: PublicKey.NULL,
+			pauseKey: PublicKey.NULL,
+			supplyKey: PublicKey.NULL,
+			autoRenewAccount: CLIENT_ACCOUNT_ECDSA.id,
+			supplyType: TokenSupplyType.INFINITE,
+			treasury: HederaId.NULL,
+		});
+		tr = await th.create(
+			coinSC,
+			new ContractId(FactoryAddressTestnet),
+			new ContractId(HederaERC20AddressTestnet),
+		);
+		const tokenIdSC = ContractId.fromHederaContractId(
+			HContractId.fromSolidityAddress(tr.response[3]),
+		);
+		stableCoinCapabilitiesSC = await stableCoinService.getCapabilities(
+			CLIENT_ACCOUNT_ECDSA,
+			tokenIdSC,
+		);
+		const coinHTS = new StableCoin({
+			name: 'TestCoinAccount',
+			symbol: 'TCA',
+			decimals: 6,
+			initialSupply: BigDecimal.fromString('5.60', 6),
+			maxSupply: BigDecimal.fromString('1000', 6),
+			freezeDefault: false,
+			adminKey: CLIENT_ACCOUNT_ECDSA.publicKey,
+			freezeKey: CLIENT_ACCOUNT_ECDSA.publicKey,
+			// kycKey: CLIENT_ACCOUNT_ECDSA.publicKey,
+			wipeKey: CLIENT_ACCOUNT_ECDSA.publicKey,
+			pauseKey: CLIENT_ACCOUNT_ECDSA.publicKey,
+			supplyKey: CLIENT_ACCOUNT_ECDSA.publicKey,
+			autoRenewAccount: CLIENT_ACCOUNT_ECDSA.id,
+			supplyType: TokenSupplyType.FINITE,
+			treasury: CLIENT_ACCOUNT_ECDSA.id,
+		});
+		tr = await th.create(
+			coinHTS,
+			new ContractId(FactoryAddressTestnet),
+			new ContractId(HederaERC20AddressTestnet),
+		);
+		const tokenIdHTS = ContractId.fromHederaContractId(
+			HContractId.fromSolidityAddress(tr.response[3]),
+		);
+		stableCoinCapabilitiesHTS = await stableCoinService.getCapabilities(
+			CLIENT_ACCOUNT_ECDSA,
+			tokenIdHTS,
+		);
+	}, 1500000);
+
+	it('Test cashin HTS', async () => {
+		const accountInitialBalance = await getBalance(
+			CLIENT_ACCOUNT_ECDSA.id,
+			stableCoinCapabilitiesHTS,
+		);
 		tr = await th.cashin(
-			stableCoinCapabilities,
-			account.id,
-			BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals),
+			stableCoinCapabilitiesHTS,
+			CLIENT_ACCOUNT_ECDSA.id,
+			BigDecimal.fromString('1', stableCoinCapabilitiesHTS.coin.decimals),
 		);
 		tr = await th.transfer(
-			stableCoinCapabilities,
-			BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals),
-			account,
-			account.id,
+			stableCoinCapabilitiesHTS,
+			BigDecimal.fromString('1', stableCoinCapabilitiesHTS.coin.decimals),
+			CLIENT_ACCOUNT_ECDSA,
+			CLIENT_ACCOUNT_ECDSA.id,
+			true,
 		);
-		const accountFinalBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities, account.id)
-		).response;
-		expect(accountFinalBalance).toEqual(accountInitialBalance + 1);
-	}, 50000);
 
-	it('Test burn', async () => {
-		const accountInitialBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities, account.id)
-		).response;
+		const accountFinalBalance = await getBalance(
+			CLIENT_ACCOUNT_ECDSA.id,
+			stableCoinCapabilitiesHTS,
+		);
+		expect(accountFinalBalance).toEqual(
+			accountInitialBalance.addUnsafe(
+				BigDecimal.fromString(
+					'1',
+					stableCoinCapabilitiesHTS.coin.decimals,
+				),
+			),
+		);
+	}, 150000);
+
+	it('Test burn HTS', async () => {
+		const accountInitialBalance: BigDecimal = await getBalance(
+			stableCoinCapabilitiesHTS.coin.treasury ?? HederaId.NULL,
+			stableCoinCapabilitiesHTS,
+		);
 		tr = await th.burn(
-			stableCoinCapabilities,
-			BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals),
+			stableCoinCapabilitiesHTS,
+			BigDecimal.fromString('1', stableCoinCapabilitiesHTS.coin.decimals),
 		);
-		const accountFinalBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities, account.id)
-		).response;
-		expect(accountFinalBalance).toEqual(accountInitialBalance - 1);
+
+		const accountFinalBalance: BigDecimal = await getBalance(
+			stableCoinCapabilitiesHTS.coin.treasury ?? HederaId.NULL,
+			stableCoinCapabilitiesHTS,
+		);
+		// const expectFinal =;
+		expect(accountFinalBalance).toEqual(
+			accountInitialBalance.subUnsafe(
+				BigDecimal.fromString(
+					'1',
+					stableCoinCapabilitiesHTS.coin.decimals,
+				),
+			),
+		);
 	}, 50000);
 
-	it('Test wipe', async () => {
-		const accountFromAccountId = HederaId.from(accountId);
-		const accountInitialBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities, accountFromAccountId)
-		).response;
-		tr = await th.wipe(
-			stableCoinCapabilities,
-			accountFromAccountId,
-			BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals),
-		);
-		const accountFinalBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities, accountFromAccountId)
-		).response;
-		expect(accountFinalBalance).toEqual(accountInitialBalance - 1);
+	it('Test wipe HTS', async () => {
+		await expect(
+			th.wipe(
+				stableCoinCapabilitiesHTS,
+				CLIENT_ACCOUNT_ECDSA.id,
+				BigDecimal.fromString(
+					'1',
+					stableCoinCapabilitiesHTS.coin.decimals,
+				),
+			),
+		).rejects.toThrow();
 	}, 50000);
 
 	it('Test freeze', async () => {
-		tr = await th.freeze(stableCoinCapabilities, account.id);
+		tr = await th.freeze(
+			stableCoinCapabilitiesHTS,
+			CLIENT_ACCOUNT_ECDSA.id,
+		);
 	}, 20000);
 
 	it('Test unfreeze', async () => {
-		tr = await th.unfreeze(stableCoinCapabilities, account.id);
+		tr = await th.unfreeze(
+			stableCoinCapabilitiesHTS,
+			CLIENT_ACCOUNT_ECDSA.id,
+		);
 	}, 20000);
 
 	it('Test pause', async () => {
-		tr = await th.pause(stableCoinCapabilities);
+		tr = await th.pause(stableCoinCapabilitiesHTS);
 	}, 20000);
 
 	it('Test unpause', async () => {
-		tr = await th.unpause(stableCoinCapabilities);
+		tr = await th.unpause(stableCoinCapabilitiesHTS);
 	}, 20000);
 
 	it('Test cashIn contract function', async () => {
-		const accountInitialBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities2, account.id)
-		).response;
-		tr = await th.cashin(
-			stableCoinCapabilities2,
-			account.id,
-			BigDecimal.fromString('1', stableCoinCapabilities2.coin.decimals),
+		const accountInitialBalance: BigDecimal = await getBalance(
+			CLIENT_ACCOUNT_ECDSA.id,
+			stableCoinCapabilitiesSC,
 		);
-		const accountFinalBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities2, account.id)
-		).response;
-		expect(accountFinalBalance).toEqual(accountInitialBalance + 1);
+
+		tr = await th.cashin(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ECDSA.id,
+			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
+		);
+		const accountFinalBalance: BigDecimal = await getBalance(
+			CLIENT_ACCOUNT_ECDSA.id,
+			stableCoinCapabilitiesSC,
+		);
+		expect(accountFinalBalance).toEqual(
+			accountInitialBalance.addUnsafe(
+				BigDecimal.fromString(
+					'1',
+					stableCoinCapabilitiesHTS.coin.decimals,
+				),
+			),
+		);
 	}, 20000);
 
 	it('Test burn contract function', async () => {
-		const accountFromProxyContractId2 = HederaId.from(proxyContractId2);
-		const accountInitialBalance: number = +(
-			await th.balanceOf(
-				stableCoinCapabilities2,
-				accountFromProxyContractId2,
-			)
-		).response;
-		tr = await th.burn(
-			stableCoinCapabilities2,
-			BigDecimal.fromString('1', stableCoinCapabilities2.coin.decimals),
+		const accountInitialBalance: BigDecimal = await getBalance(
+			stableCoinCapabilitiesSC.coin.treasury ?? HederaId.NULL,
+			stableCoinCapabilitiesSC,
 		);
-		const accountFinalBalance: number = +(
-			await th.balanceOf(
-				stableCoinCapabilities2,
-				accountFromProxyContractId2,
-			)
-		).response;
-		expect(accountFinalBalance).toEqual(accountInitialBalance - 1);
+
+		tr = await th.burn(
+			stableCoinCapabilitiesSC,
+			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
+		);
+		const accountFinalBalance: BigDecimal = await getBalance(
+			stableCoinCapabilitiesSC.coin.treasury ?? HederaId.NULL,
+			stableCoinCapabilitiesSC,
+		);
+
+		expect(accountFinalBalance).toEqual(
+			accountInitialBalance.subUnsafe(
+				BigDecimal.fromString(
+					'1',
+					stableCoinCapabilitiesSC.coin.decimals,
+				),
+			),
+		);
 	}, 20000);
 
 	it('Test wipe contract function', async () => {
-		const accountInitialBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities2, account.id)
-		).response;
-		tr = await th.wipe(
-			stableCoinCapabilities2,
-			account.id,
-			BigDecimal.fromString('1', stableCoinCapabilities2.coin.decimals),
+		const accountInitialBalance: BigDecimal = await getBalance(
+			CLIENT_ACCOUNT_ECDSA.id,
+			stableCoinCapabilitiesSC,
 		);
-		const accountFinalBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities2, account.id)
-		).response;
-		expect(accountFinalBalance).toEqual(accountInitialBalance - 1);
+
+		tr = await th.wipe(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ECDSA.id,
+			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
+		);
+		const accountFinalBalance: BigDecimal = await getBalance(
+			CLIENT_ACCOUNT_ECDSA.id,
+			stableCoinCapabilitiesSC,
+		);
+		expect(accountFinalBalance).toEqual(
+			accountInitialBalance.subUnsafe(
+				BigDecimal.fromString(
+					'1',
+					stableCoinCapabilitiesSC.coin.decimals,
+				),
+			),
+		);
 	}, 20000);
 
 	it('Test rescue contract function', async () => {
 		tr = await th.rescue(
-			stableCoinCapabilities2,
-			BigDecimal.fromString('1', stableCoinCapabilities2.coin.decimals),
+			stableCoinCapabilitiesSC,
+			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
 		);
-	});
+	}, 20000);
 
 	it('Test freeze contract function', async () => {
-		const accountFromAccountId = HederaId.from(accountId);
-		tr = await th.freeze(stableCoinCapabilities2, accountFromAccountId);
+		tr = await th.freeze(stableCoinCapabilitiesSC, CLIENT_ACCOUNT_ECDSA.id);
 	});
 
 	it('Test unfreeze contract function', async () => {
-		const accountFromAccountId = HederaId.from(accountId);
-		tr = await th.unfreeze(stableCoinCapabilities2, accountFromAccountId);
+		tr = await th.unfreeze(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ECDSA.id,
+		);
 	});
 
 	it('Test pause contract function', async () => {
-		tr = await th.pause(stableCoinCapabilities2);
+		tr = await th.pause(stableCoinCapabilitiesSC);
 	});
 
 	it('Test unpause contract function', async () => {
-		tr = await th.unpause(stableCoinCapabilities2);
+		tr = await th.unpause(stableCoinCapabilitiesSC);
 	});
 
-	it('Test grant role contract function', async () => {
-		const accountFromAccountId = HederaId.from(accountId);
-
-		tr = await th.grantRole(
-			stableCoinCapabilities2,
-			accountFromAccountId,
-			StableCoinRole.BURN_ROLE,
-		);
-		tr = await th.hasRole(
-			stableCoinCapabilities2,
-			accountFromAccountId,
-			StableCoinRole.BURN_ROLE,
-		);
-		expect(tr.response).toEqual(true);
-	}, 10000);
-
-	it('Test revoke role contract function', async () => {
-		const accountFromAccountId = HederaId.from(accountId);
-		tr = await th.revokeRole(
-			stableCoinCapabilities2,
-			accountFromAccountId,
-			StableCoinRole.BURN_ROLE,
-		);
-		tr = await th.hasRole(
-			stableCoinCapabilities2,
-			accountFromAccountId,
-			StableCoinRole.BURN_ROLE,
-		);
-		expect(tr.response).toEqual(false);
-	}, 10000);
-
 	it('Test get roles contract function', async () => {
-		tr = await th.getRoles(stableCoinCapabilities2, account.id);
+		tr = await th.getRoles(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ECDSA.id,
+		);
 		expect(tr.response).toEqual([
 			StableCoinRole.DEFAULT_ADMIN_ROLE,
 			StableCoinRole.CASHIN_ROLE,
@@ -276,343 +317,400 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with Ed25519 accounts', () => {
 			StableCoinRole.FREEZE_ROLE,
 			StableCoinRole.DELETE_ROLE,
 		]);
-	});
+	}, 10000);
+
+	it('Test revoke role contract function', async () => {
+		tr = await th.revokeRole(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ECDSA.id,
+			StableCoinRole.BURN_ROLE,
+		);
+		tr = await th.hasRole(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ECDSA.id,
+			StableCoinRole.BURN_ROLE,
+		);
+		expect(tr.response).toEqual(false);
+	}, 10000);
+
+	it('Test grant role contract function', async () => {
+		tr = await th.grantRole(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ECDSA.id,
+			StableCoinRole.BURN_ROLE,
+		);
+		tr = await th.hasRole(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ECDSA.id,
+			StableCoinRole.BURN_ROLE,
+		);
+		expect(tr.response).toEqual(true);
+	}, 10000);
 
 	it('Test supplier allowance contract function', async () => {
-		const accountFromAccountId = HederaId.from(accountId);
 		tr = await th.supplierAllowance(
-			stableCoinCapabilities2,
-			accountFromAccountId,
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ECDSA.id,
 		);
 		expect(tr.response).toEqual('0');
 	});
 
 	it('Test increase supplier allowance contract function', async () => {
-		const accountFromAccountId = HederaId.from(accountId);
 		tr = await th.revokeSupplierRole(
-			stableCoinCapabilities2,
-			accountFromAccountId,
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ECDSA.id,
 		);
 		tr = await th.grantSupplierRole(
-			stableCoinCapabilities2,
-			accountFromAccountId,
-			BigDecimal.fromString('10', stableCoinCapabilities2.coin.decimals),
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ECDSA.id,
+			BigDecimal.fromString('10', stableCoinCapabilitiesSC.coin.decimals),
 		);
 		tr = await th.increaseSupplierAllowance(
-			stableCoinCapabilities2,
-			accountFromAccountId,
-			BigDecimal.fromString('1', stableCoinCapabilities2.coin.decimals),
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ECDSA.id,
+			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
 		);
 		tr = await th.supplierAllowance(
-			stableCoinCapabilities2,
-			accountFromAccountId,
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ECDSA.id,
 		);
 		expect(tr.response).toEqual('11');
 		tr = await th.isUnlimitedSupplierAllowance(
-			stableCoinCapabilities2,
-			accountFromAccountId,
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ECDSA.id,
 		);
 		expect(tr.response).toEqual(false);
 	}, 20000);
 
 	it('Test decrease supplier allowance contract function', async () => {
-		const accountFromAccountId = HederaId.from(accountId);
 		tr = await th.decreaseSupplierAllowance(
-			stableCoinCapabilities2,
-			accountFromAccountId,
-			BigDecimal.fromString('1', stableCoinCapabilities2.coin.decimals),
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ECDSA.id,
+			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
 		);
 		tr = await th.supplierAllowance(
-			stableCoinCapabilities2,
-			accountFromAccountId,
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ECDSA.id,
 		);
 		expect(tr.response).toEqual('10');
 		tr = await th.isUnlimitedSupplierAllowance(
-			stableCoinCapabilities2,
-			accountFromAccountId,
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ECDSA.id,
 		);
 		expect(tr.response).toEqual(false);
 	}, 20000);
 
 	it('Test reset supplier allowance contract function', async () => {
-		const accountFromAccountId = HederaId.from(accountId);
 		tr = await th.resetSupplierAllowance(
-			stableCoinCapabilities2,
-			accountFromAccountId,
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ECDSA.id,
 		);
 		tr = await th.supplierAllowance(
-			stableCoinCapabilities2,
-			accountFromAccountId,
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ECDSA.id,
 		);
 		expect(tr.response).toEqual('0');
 	}, 20000);
 
 	it('Test grant unlimited supplier allowance contract function', async () => {
-		const accountFromAccountId = HederaId.from(accountId);
 		tr = await th.revokeSupplierRole(
-			stableCoinCapabilities2,
-			accountFromAccountId,
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ECDSA.id,
 		);
 		tr = await th.grantUnlimitedSupplierRole(
-			stableCoinCapabilities2,
-			accountFromAccountId,
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ECDSA.id,
 		);
 		tr = await th.isUnlimitedSupplierAllowance(
-			stableCoinCapabilities2,
-			accountFromAccountId,
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ECDSA.id,
 		);
 		expect(tr.response).toEqual(true);
 	}, 20000);
 });
 
-describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
-	const clientAccountId = '0.0.49032538';
-	const clientPrivateKey =
-		'305d4d5de3c94df00069916ab28f7650d378be35c88698682025f500f321461c';
-	const accountId = '0.0.49069513';
-	const account: Account = new Account({
-		id: clientAccountId,
-		privateKey: new PrivateKey({ key: clientPrivateKey, type: 'ECDSA' }),
-	});
-
+describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 	// token to operate through HTS
-	const tokenId = '0.0.49069577';
-	const proxyContractId = '0.0.49069576';
-	const stableCoin = new StableCoin({
-		name: 'HEDERACOIN',
-		symbol: 'HDC',
-		decimals: 3,
-		tokenId: new HederaId(tokenId),
-		proxyAddress: new HederaId(proxyContractId),
-	});
-	const capabilities: Capability[] = [
-		new Capability(Operation.CASH_IN, Access.HTS),
-		new Capability(Operation.BURN, Access.HTS),
-		new Capability(Operation.WIPE, Access.HTS),
-		new Capability(Operation.FREEZE, Access.HTS),
-		new Capability(Operation.UNFREEZE, Access.HTS),
-		new Capability(Operation.PAUSE, Access.HTS),
-		new Capability(Operation.UNPAUSE, Access.HTS),
-	];
-	const stableCoinCapabilities = new StableCoinCapabilities(
-		stableCoin,
-		capabilities,
-		account,
-	);
-
-	// token to operate through contract
-	const tokenId2 = '0.0.49069570';
-	const proxyContractId2 = '0.0.49069568';
-	const stableCoin2 = new StableCoin({
-		name: 'HEDERACOIN',
-		symbol: 'HDC',
-		decimals: 3,
-		tokenId: new HederaId(tokenId2),
-		proxyAddress: new HederaId(proxyContractId2),
-	});
-	const capabilities2: Capability[] = [
-		new Capability(Operation.CASH_IN, Access.CONTRACT),
-		new Capability(Operation.BURN, Access.CONTRACT),
-		new Capability(Operation.WIPE, Access.CONTRACT),
-		new Capability(Operation.RESCUE, Access.CONTRACT),
-		new Capability(Operation.FREEZE, Access.CONTRACT),
-		new Capability(Operation.UNFREEZE, Access.CONTRACT),
-		new Capability(Operation.PAUSE, Access.CONTRACT),
-		new Capability(Operation.UNPAUSE, Access.CONTRACT),
-		new Capability(Operation.ROLE_MANAGEMENT, Access.CONTRACT),
-	];
-	const stableCoinCapabilities2 = new StableCoinCapabilities(
-		stableCoin2,
-		capabilities2,
-		account,
-	);
+	let stableCoinCapabilitiesHTS: StableCoinCapabilities;
+	let stableCoinCapabilitiesSC: StableCoinCapabilities;
+	let stableCoinService: StableCoinService;
 
 	let th: HTSTransactionAdapter;
 	let tr: TransactionResponse;
+	const getBalance = async function (
+		hederaId: HederaId,
+		stableCoinCapabilities: StableCoinCapabilities,
+	): Promise<BigDecimal> {
+		return BigDecimal.fromString(
+			(await th.balanceOf(stableCoinCapabilities, hederaId)).response,
+			stableCoinCapabilities.coin.decimals,
+		);
+	};
 	beforeAll(async () => {
-		await initTest(account);
+		await initTest(CLIENT_ACCOUNT_ED25519);
 		th = Injectable.resolve(HTSTransactionAdapter);
-	});
+		stableCoinService = Injectable.resolve(StableCoinService);
 
-	it('Test cashin', async () => {
-		const accountFromAccountId = HederaId.from(accountId);
-		const accountInitialBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities, accountFromAccountId)
-		).response;
+		const coinSC = new StableCoin({
+			name: 'TestCoinSC',
+			symbol: 'TCSC',
+			decimals: 6,
+			initialSupply: BigDecimal.fromString('5.60', 6),
+			freezeDefault: false,
+			adminKey: PublicKey.NULL,
+			freezeKey: PublicKey.NULL,
+			// kycKey: PublicKey.NULL,
+			wipeKey: PublicKey.NULL,
+			pauseKey: PublicKey.NULL,
+			supplyKey: PublicKey.NULL,
+			autoRenewAccount: CLIENT_ACCOUNT_ED25519.id,
+			supplyType: TokenSupplyType.INFINITE,
+			treasury: HederaId.NULL,
+		});
+		tr = await th.create(
+			coinSC,
+			new ContractId(FactoryAddressTestnet),
+			new ContractId(HederaERC20AddressTestnet),
+		);
+		const tokenIdSC = ContractId.fromHederaContractId(
+			HContractId.fromSolidityAddress(tr.response[3]),
+		);
+		stableCoinCapabilitiesSC = await stableCoinService.getCapabilities(
+			CLIENT_ACCOUNT_ED25519,
+			tokenIdSC,
+		);
+		const coinHTS = new StableCoin({
+			name: 'TestCoinAccount',
+			symbol: 'TCA',
+			decimals: 6,
+			initialSupply: BigDecimal.fromString('5.60', 6),
+			maxSupply: BigDecimal.fromString('1000', 6),
+			freezeDefault: false,
+			adminKey: CLIENT_ACCOUNT_ED25519.publicKey,
+			freezeKey: CLIENT_ACCOUNT_ED25519.publicKey,
+			// kycKey: CLIENT_ACCOUNT_ED25519.publicKey,
+			wipeKey: CLIENT_ACCOUNT_ED25519.publicKey,
+			pauseKey: CLIENT_ACCOUNT_ED25519.publicKey,
+			supplyKey: CLIENT_ACCOUNT_ED25519.publicKey,
+			autoRenewAccount: CLIENT_ACCOUNT_ED25519.id,
+			supplyType: TokenSupplyType.FINITE,
+			treasury: CLIENT_ACCOUNT_ED25519.id,
+		});
+		tr = await th.create(
+			coinHTS,
+			new ContractId(FactoryAddressTestnet),
+			new ContractId(HederaERC20AddressTestnet),
+		);
+		const tokenIdHTS = ContractId.fromHederaContractId(
+			HContractId.fromSolidityAddress(tr.response[3]),
+		);
+		stableCoinCapabilitiesHTS = await stableCoinService.getCapabilities(
+			CLIENT_ACCOUNT_ED25519,
+			tokenIdHTS,
+		);
+	}, 1500000);
+
+	it('Test cashin HTS', async () => {
+		const accountInitialBalance = await getBalance(
+			CLIENT_ACCOUNT_ED25519.id,
+			stableCoinCapabilitiesHTS,
+		);
 		tr = await th.cashin(
-			stableCoinCapabilities,
-			accountFromAccountId,
-			BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals),
+			stableCoinCapabilitiesHTS,
+			CLIENT_ACCOUNT_ED25519.id,
+			BigDecimal.fromString('1', stableCoinCapabilitiesHTS.coin.decimals),
 		);
 		tr = await th.transfer(
-			stableCoinCapabilities,
-			BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals),
-			account,
-			accountFromAccountId,
+			stableCoinCapabilitiesHTS,
+			BigDecimal.fromString('1', stableCoinCapabilitiesHTS.coin.decimals),
+			CLIENT_ACCOUNT_ED25519,
+			CLIENT_ACCOUNT_ED25519.id,
+			true,
 		);
-		const accountFinalBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities, accountFromAccountId)
-		).response;
-		expect(accountFinalBalance).toEqual(accountInitialBalance + 1);
-	}, 50000);
 
-	it('Test burn', async () => {
-		const accountInitialBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities, account.id)
-		).response;
+		const accountFinalBalance = await getBalance(
+			CLIENT_ACCOUNT_ED25519.id,
+			stableCoinCapabilitiesHTS,
+		);
+		expect(accountFinalBalance).toEqual(
+			accountInitialBalance.addUnsafe(
+				BigDecimal.fromString(
+					'1',
+					stableCoinCapabilitiesHTS.coin.decimals,
+				),
+			),
+		);
+	}, 150000);
+
+	it('Test burn HTS', async () => {
+		const accountInitialBalance: BigDecimal = await getBalance(
+			stableCoinCapabilitiesHTS.coin.treasury ?? HederaId.NULL,
+			stableCoinCapabilitiesHTS,
+		);
 		tr = await th.burn(
-			stableCoinCapabilities,
-			BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals),
+			stableCoinCapabilitiesHTS,
+			BigDecimal.fromString('1', stableCoinCapabilitiesHTS.coin.decimals),
 		);
-		const accountFinalBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities, account.id)
-		).response;
-		expect(accountFinalBalance).toEqual(accountInitialBalance - 1);
+
+		const accountFinalBalance: BigDecimal = await getBalance(
+			stableCoinCapabilitiesHTS.coin.treasury ?? HederaId.NULL,
+			stableCoinCapabilitiesHTS,
+		);
+		// const expectFinal =;
+		expect(accountFinalBalance).toEqual(
+			accountInitialBalance.subUnsafe(
+				BigDecimal.fromString(
+					'1',
+					stableCoinCapabilitiesHTS.coin.decimals,
+				),
+			),
+		);
 	}, 50000);
 
-	it('Test wipe', async () => {
-		const accountFromAccountId = HederaId.from(accountId);
-		const accountInitialBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities, accountFromAccountId)
-		).response;
-		tr = await th.wipe(
-			stableCoinCapabilities,
-			accountFromAccountId,
-			BigDecimal.fromString('1', stableCoinCapabilities.coin.decimals),
-		);
-		const accountFinalBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities, accountFromAccountId)
-		).response;
-		expect(accountFinalBalance).toEqual(accountInitialBalance - 1);
+	it('Test wipe HTS', async () => {
+		await expect(
+			th.wipe(
+				stableCoinCapabilitiesHTS,
+				CLIENT_ACCOUNT_ECDSA.id,
+				BigDecimal.fromString(
+					'1',
+					stableCoinCapabilitiesHTS.coin.decimals,
+				),
+			),
+		).rejects.toThrow();
 	}, 50000);
 
 	it('Test freeze', async () => {
-		tr = await th.freeze(stableCoinCapabilities, account.id);
+		tr = await th.freeze(
+			stableCoinCapabilitiesHTS,
+			CLIENT_ACCOUNT_ED25519.id,
+		);
 	}, 20000);
 
 	it('Test unfreeze', async () => {
-		tr = await th.unfreeze(stableCoinCapabilities, account.id);
+		tr = await th.unfreeze(
+			stableCoinCapabilitiesHTS,
+			CLIENT_ACCOUNT_ED25519.id,
+		);
 	}, 20000);
 
 	it('Test pause', async () => {
-		tr = await th.pause(stableCoinCapabilities);
+		tr = await th.pause(stableCoinCapabilitiesHTS);
 	}, 20000);
 
 	it('Test unpause', async () => {
-		tr = await th.unpause(stableCoinCapabilities);
+		tr = await th.unpause(stableCoinCapabilitiesHTS);
 	}, 20000);
 
 	it('Test cashIn contract function', async () => {
-		const accountInitialBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities2, account.id)
-		).response;
-		tr = await th.cashin(
-			stableCoinCapabilities2,
-			account.id,
-			BigDecimal.fromString('1', stableCoinCapabilities2.coin.decimals),
+		const accountInitialBalance: BigDecimal = await getBalance(
+			CLIENT_ACCOUNT_ED25519.id,
+			stableCoinCapabilitiesSC,
 		);
-		const accountFinalBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities2, account.id)
-		).response;
-		expect(accountFinalBalance).toEqual(accountInitialBalance + 1);
+
+		tr = await th.cashin(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
+			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
+		);
+		const accountFinalBalance: BigDecimal = await getBalance(
+			CLIENT_ACCOUNT_ED25519.id,
+			stableCoinCapabilitiesSC,
+		);
+		expect(accountFinalBalance).toEqual(
+			accountInitialBalance.addUnsafe(
+				BigDecimal.fromString(
+					'1',
+					stableCoinCapabilitiesHTS.coin.decimals,
+				),
+			),
+		);
 	}, 20000);
 
 	it('Test burn contract function', async () => {
-		const accountFromProxyContractId2: Account = new Account({
-			id: proxyContractId2,
-		});
-		const accountInitialBalance: number = +(
-			await th.balanceOf(
-				stableCoinCapabilities2,
-				accountFromProxyContractId2.id,
-			)
-		).response;
-		tr = await th.burn(
-			stableCoinCapabilities2,
-			BigDecimal.fromString('1', stableCoinCapabilities2.coin.decimals),
+		const accountInitialBalance: BigDecimal = await getBalance(
+			stableCoinCapabilitiesSC.coin.treasury ?? HederaId.NULL,
+			stableCoinCapabilitiesSC,
 		);
-		const accountFinalBalance: number = +(
-			await th.balanceOf(
-				stableCoinCapabilities2,
-				accountFromProxyContractId2.id,
-			)
-		).response;
-		expect(accountFinalBalance).toEqual(accountInitialBalance - 1);
-	}, 30000);
+
+		tr = await th.burn(
+			stableCoinCapabilitiesSC,
+			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
+		);
+		const accountFinalBalance: BigDecimal = await getBalance(
+			stableCoinCapabilitiesSC.coin.treasury ?? HederaId.NULL,
+			stableCoinCapabilitiesSC,
+		);
+
+		expect(accountFinalBalance).toEqual(
+			accountInitialBalance.subUnsafe(
+				BigDecimal.fromString(
+					'1',
+					stableCoinCapabilitiesSC.coin.decimals,
+				),
+			),
+		);
+	}, 20000);
 
 	it('Test wipe contract function', async () => {
-		const accountInitialBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities2, account.id)
-		).response;
-		tr = await th.wipe(
-			stableCoinCapabilities2,
-			account.id,
-			BigDecimal.fromString('1', stableCoinCapabilities2.coin.decimals),
+		const accountInitialBalance: BigDecimal = await getBalance(
+			CLIENT_ACCOUNT_ED25519.id,
+			stableCoinCapabilitiesSC,
 		);
-		const accountFinalBalance: number = +(
-			await th.balanceOf(stableCoinCapabilities2, account.id)
-		).response;
-		expect(accountFinalBalance).toEqual(accountInitialBalance - 1);
+
+		tr = await th.wipe(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
+			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
+		);
+		const accountFinalBalance: BigDecimal = await getBalance(
+			CLIENT_ACCOUNT_ED25519.id,
+			stableCoinCapabilitiesSC,
+		);
+		expect(accountFinalBalance).toEqual(
+			accountInitialBalance.subUnsafe(
+				BigDecimal.fromString(
+					'1',
+					stableCoinCapabilitiesSC.coin.decimals,
+				),
+			),
+		);
 	}, 20000);
 
 	it('Test rescue contract function', async () => {
 		tr = await th.rescue(
-			stableCoinCapabilities2,
-			BigDecimal.fromString('1', stableCoinCapabilities2.coin.decimals),
+			stableCoinCapabilitiesSC,
+			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
 		);
-	});
+	}, 20000);
 
 	it('Test freeze contract function', async () => {
-		const accountFromAccountId = HederaId.from(accountId);
-		tr = await th.freeze(stableCoinCapabilities2, accountFromAccountId);
+		tr = await th.freeze(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
+		);
 	});
 
 	it('Test unfreeze contract function', async () => {
-		const accountFromAccountId = HederaId.from(accountId);
-		tr = await th.unfreeze(stableCoinCapabilities2, accountFromAccountId);
+		tr = await th.unfreeze(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
+		);
 	});
 
 	it('Test pause contract function', async () => {
-		tr = await th.pause(stableCoinCapabilities2);
+		tr = await th.pause(stableCoinCapabilitiesSC);
 	});
 
 	it('Test unpause contract function', async () => {
-		tr = await th.unpause(stableCoinCapabilities2);
+		tr = await th.unpause(stableCoinCapabilitiesSC);
 	});
 
-	it('Test grant role contract function', async () => {
-		const accountFromAccountId = HederaId.from(accountId);
-
-		tr = await th.grantRole(
-			stableCoinCapabilities2,
-			accountFromAccountId,
-			StableCoinRole.BURN_ROLE,
-		);
-		tr = await th.hasRole(
-			stableCoinCapabilities2,
-			accountFromAccountId,
-			StableCoinRole.BURN_ROLE,
-		);
-		expect(tr.response).toEqual(true);
-	}, 10000);
-
-	it('Test revoke role contract function', async () => {
-		const accountFromAccountId = HederaId.from(accountId);
-		tr = await th.revokeRole(
-			stableCoinCapabilities2,
-			accountFromAccountId,
-			StableCoinRole.BURN_ROLE,
-		);
-		tr = await th.hasRole(
-			stableCoinCapabilities2,
-			accountFromAccountId,
-			StableCoinRole.BURN_ROLE,
-		);
-		expect(tr.response).toEqual(false);
-	}, 10000);
-
 	it('Test get roles contract function', async () => {
-		tr = await th.getRoles(stableCoinCapabilities2, account.id);
+		tr = await th.getRoles(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
+		);
 		expect(tr.response).toEqual([
 			StableCoinRole.DEFAULT_ADMIN_ROLE,
 			StableCoinRole.CASHIN_ROLE,
@@ -621,92 +719,115 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			StableCoinRole.RESCUE_ROLE,
 			StableCoinRole.PAUSE_ROLE,
 			StableCoinRole.FREEZE_ROLE,
-			StableCoinRole.WITHOUT_ROLE,
+			StableCoinRole.DELETE_ROLE,
 		]);
-	});
+	}, 10000);
+
+	it('Test revoke role contract function', async () => {
+		tr = await th.revokeRole(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
+			StableCoinRole.BURN_ROLE,
+		);
+		tr = await th.hasRole(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
+			StableCoinRole.BURN_ROLE,
+		);
+		expect(tr.response).toEqual(false);
+	}, 10000);
+
+	it('Test grant role contract function', async () => {
+		tr = await th.grantRole(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
+			StableCoinRole.BURN_ROLE,
+		);
+		tr = await th.hasRole(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
+			StableCoinRole.BURN_ROLE,
+		);
+		expect(tr.response).toEqual(true);
+	}, 10000);
 
 	it('Test supplier allowance contract function', async () => {
-		const accountFromAccountId = HederaId.from(accountId);
 		tr = await th.supplierAllowance(
-			stableCoinCapabilities2,
-			accountFromAccountId,
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
 		);
 		expect(tr.response).toEqual('0');
 	});
 
 	it('Test increase supplier allowance contract function', async () => {
-		const accountFromAccountId = HederaId.from(accountId);
 		tr = await th.revokeSupplierRole(
-			stableCoinCapabilities2,
-			accountFromAccountId,
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
 		);
 		tr = await th.grantSupplierRole(
-			stableCoinCapabilities2,
-			accountFromAccountId,
-			BigDecimal.fromString('10', stableCoinCapabilities2.coin.decimals),
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
+			BigDecimal.fromString('10', stableCoinCapabilitiesSC.coin.decimals),
 		);
 		tr = await th.increaseSupplierAllowance(
-			stableCoinCapabilities2,
-			accountFromAccountId,
-			BigDecimal.fromString('1', stableCoinCapabilities2.coin.decimals),
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
+			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
 		);
 		tr = await th.supplierAllowance(
-			stableCoinCapabilities2,
-			accountFromAccountId,
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
 		);
 		expect(tr.response).toEqual('11');
 		tr = await th.isUnlimitedSupplierAllowance(
-			stableCoinCapabilities2,
-			accountFromAccountId,
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
 		);
 		expect(tr.response).toEqual(false);
 	}, 20000);
 
 	it('Test decrease supplier allowance contract function', async () => {
-		const accountFromAccountId = HederaId.from(accountId);
 		tr = await th.decreaseSupplierAllowance(
-			stableCoinCapabilities2,
-			accountFromAccountId,
-			BigDecimal.fromString('1', stableCoinCapabilities2.coin.decimals),
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
+			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
 		);
 		tr = await th.supplierAllowance(
-			stableCoinCapabilities2,
-			accountFromAccountId,
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
 		);
 		expect(tr.response).toEqual('10');
 		tr = await th.isUnlimitedSupplierAllowance(
-			stableCoinCapabilities2,
-			accountFromAccountId,
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
 		);
 		expect(tr.response).toEqual(false);
 	}, 20000);
 
 	it('Test reset supplier allowance contract function', async () => {
-		const accountFromAccountId = HederaId.from(accountId);
 		tr = await th.resetSupplierAllowance(
-			stableCoinCapabilities2,
-			accountFromAccountId,
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
 		);
 		tr = await th.supplierAllowance(
-			stableCoinCapabilities2,
-			accountFromAccountId,
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
 		);
 		expect(tr.response).toEqual('0');
 	}, 20000);
 
 	it('Test grant unlimited supplier allowance contract function', async () => {
-		const accountFromAccountId = HederaId.from(accountId);
 		tr = await th.revokeSupplierRole(
-			stableCoinCapabilities2,
-			accountFromAccountId,
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
 		);
 		tr = await th.grantUnlimitedSupplierRole(
-			stableCoinCapabilities2,
-			accountFromAccountId,
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
 		);
 		tr = await th.isUnlimitedSupplierAllowance(
-			stableCoinCapabilities2,
-			accountFromAccountId,
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
 		);
 		expect(tr.response).toEqual(true);
 	}, 20000);

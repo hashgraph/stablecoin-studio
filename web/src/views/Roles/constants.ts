@@ -18,16 +18,6 @@ export const roleOptions = [
 	{ value: StableCoinRole.DELETE_ROLE, label: 'Delete' }
 ];
 
-export const roleExternalTokens = [
-	{ value: 'CASHIN_ROLE', label: 'CASH IN' },
-	{ value: 'BURN_ROLE', label: 'BURN' },
-	{ value: 'WIPE_ROLE', label: 'WIPE' },
-	{ value: 'RESCUE_ROLE', label: 'RESCUE' },
-	{ value: 'PAUSE_ROLE', label: 'PAUSE' },
-	{ value: 'FREEZE_ROLE', label: 'FREEZE' },
-	{ value: 'DELETE_ROLE', label: 'DELETE' }
-];
-
 export const cashinLimitOptions = [
 	{ value: 'INCREASE', label: 'Increase cash in limit' },
 	{ value: 'DECREASE', label: 'Decrease cash in limit' },

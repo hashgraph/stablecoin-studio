@@ -20,7 +20,7 @@
 - **[Support](#Support)**<br>
 - **[Contributing](#Contributing)**<br>
 - **[Code of Conduct](#Code-of-Conduct)**<br>
-  - [License](#License)<br>
+- **[License](#License)**<br>
 
 
 
@@ -37,6 +37,7 @@ Each stable coin maps to an *underlying* Hedera Token and adds the following fun
   Hedera Tokens's operations (Wipe, Pause, ...) can only be performed by the accounts to which they are assigned (WipeKey, PauseKey, ...). 
 
   Stable Coins allow for multiple accounts to share the same operation rights, we can wipe/pause/... tokens using any of the accounts with the wipe/pause/... role respectively.
+
 - **Supply Role split into Cash-in and Burn roles**
 
   The Hedera Token's supply account has the right to change the supply of the token, it can be used to mint and burn tokens.
@@ -49,35 +50,35 @@ Each stable coin maps to an *underlying* Hedera Token and adds the following fun
 
   Stable Coins implement a "cash-in" operation that allows cash-in role owners to mint and assign tokens to any account in a single transaction.
   The cash-in role comes in two flavours: 
-  - *unlimited*: Accounts with the unlimited cash-in role can mint as many tokens as they wish (as long as the total supply does not exceed the max supply)
+  - *unlimited*: Accounts with the unlimited cash-in role can mint as many tokens as they wish (as long as the total supply does not exceed the max supply).
   - *limited*: Accounts with the limited cash-in role can only mint a limited number of tokens. The maximum cash-in amount is defined for each account individually and can be increased/deacreased at any time by the admin account. 
 
 
 - **Rescue role**
 
-  The treasury account for a Stable Coin's underlying token is the main Stable Coin Smart contract itself. Any token assigned to the treasury account can be managed by accounts having the *rescue* role. 
+  When the treasury account for a Stable Coin's underlying token is the main Stable Coin Smart contract itself, any token assigned to the treasury account can be managed by accounts having the *rescue* role. 
   It is important to note that the initial supply of tokens (minted when the Hedera token was created) is always assigned to the treasury account, which means that rescue role accounts will be required to transfer those tokens to other accounts.
 
-> The account deploying the Stable Coin will also be the administrator of the underlying token, which means that at any point, that account could completely bypass the Stable Coin and interact with the underlying token directly in order to change the keys associated to the roles. This could completely decoupled the Stable Coin from the underlying token making the above mentioned functionalities useless.
+> The account deploying the Stable Coin can be set as the administrator of the underlying token (instead of the smart contract itself), in which case, that account could completely bypass the Stable Coin and interact with the underlying token directly in order to change the keys associated to the roles. This could completely decoupled the Stable Coin from the underlying token making the above mentioned functionalities useless.
 
 ## Creating Stable Coins
 Every time a stable coin is created, a new Hedera Token is created (the underlying token) and the following smart contracts are deployed:
-- The Stable Coin logic smart contract: with all the functonality described above.
-- the Stable Coin proxy smart contract: pointing to the stable coin logic smart contract. Proxies are used to make stable coins upgradable.
+- The Stable Coin proxy smart contract: pointing to the HederaERC20 logic smart contract that was passed as an input argument(*). Proxies are used to make stable coins upgradable.
 - the Stable Coin proxy admin smart contract: this contract will act as an intermediary to upgrade the Stable Coin proxy implementation. For more information on this check the contract module's README.
+
+(*)By default the HederaERC20 smart contract that will be used will be the one deployed by IoBuilders, but users can use any other contract they want, for more information on this check the contract module's README.
 
 Users interact with the Stable Coin proxy smart contract because its address will never change. Stable Coin logic smart contract addresses change if a new version is deployed. 
 
-> It is important to note that when creating a new stable coin, the user will have the possibility to specify the underlying token's keys (those that will have the wipe, supply, ... roles attached). By default those keys will be assigned to the *Stable Coin proxy smart contract* because by doing that the user will be able to enjoy the whole functionality implemented in this project through the Stable Coin logic smart contract methods. **NEVERTHELESS**, the user is free to assign any key to any account (not only during the creation process but also later, since the user's account remains the underlying key admin). If the user assigns a key to a different account, the Stable Coin Proxy will not be able to fully manage the underlying token, limiting the functionality it exposes to the user... It is also worth noting that just like the user will have to possibility to assign any key to any account other than the Stable Coin smart contract proxy, he/she will be able to assign it back too.
+> It is important to note that when creating a new stable coin, the user will have the possibility to specify the underlying token's keys (those that will have the wipe, supply, ... roles attached). By default those keys will be assigned to the *Stable Coin proxy smart contract* because by doing that the user will be able to enjoy the whole functionality implemented in this project through the Stable Coin logic smart contract methods. **NEVERTHELESS**, the user is free to assign any key to any account (not only during the creation process but also later, IF the user's account was set as the underlying key admin). If the user assigns a key to a different account, the Stable Coin Proxy will not be able to fully manage the underlying token, limiting the functionality it exposes to the user... It is also worth noting that just like the user will have to possibility to assign any key to any account other than the Stable Coin smart contract proxy, he/she will be able to assign it back too.
 
 ## Managing Stable Coins
-Every time a stable coin is deployed, the deploying account will be defined as the Stable Coin administrator (and the underlying token adminsitrator too). That account will have the possibility to assign and remove any role to any account, increase and decrease cash-in limits etc...
+Every time a stable coin is deployed, the deploying account will be defined as the Stable Coin administrator and will be granted all roles (wipe, rescue, ...). That account will have the possibility to assign and remove any role to any account, increase and decrease cash-in limits etc...
 
 ## Operating Stable Coins
 Any account having any role assigned for a stable coin can operate it accordingly, for instance, if an account has the burn role assigned, it will be allowed to burn tokens. Accounts do not need to associate to the underlying token in order to operate it, they only need to be granted roles, on the other hand if they want to own tokens, they will have to associate the token as for any other Hedera token.
 
 ## Stable Coins categories
-
 From an accounts's perspective, there are two kinds of stable coins:
  - *Internal Stable Coins*
 
@@ -157,5 +158,5 @@ This project is governed by the
 participating, you are expected to uphold this code of conduct. Please report unacceptable behavior
 to [oss@hedera.com](mailto:oss@hedera.com).
 
-## License
+# License
 [Apache License 2.0](LICENSE)

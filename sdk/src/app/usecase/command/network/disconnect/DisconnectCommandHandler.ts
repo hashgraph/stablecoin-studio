@@ -1,7 +1,7 @@
 
 import { ICommandHandler } from '../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../core/decorator/CommandHandlerDecorator.js';
-import { Injectable } from '../../../../../core/Injectable.js';
+import Injectable from '../../../../../core/Injectable.js';
 import {
 	DisconnectCommand,
 	DisconnectCommandResponse,

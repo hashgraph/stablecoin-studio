@@ -11,7 +11,6 @@ import { Provider } from 'react-redux';
 import type { MockStoreEnhanced } from 'redux-mock-store';
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import { initialState as hashpackInitialState } from '../store/slices/hashpackSlice';
 import { initialState as walletInitialState } from '../store/slices/walletSlice';
 import { mockedSelectedStableCoin, mockedStableCoinsList, mockedWalletData } from '../mocks/sdk';
 
@@ -32,7 +31,6 @@ const AllProviders = ({ children }: { children?: React.ReactNode }) => (
 const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);
 const defaultStore = mockStore({
-	hashpack: hashpackInitialState,
 	wallet: walletInitial,
 });
 

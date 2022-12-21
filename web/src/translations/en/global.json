@@ -16,13 +16,14 @@
 		"description": "Please, reconnect your wallet."
 	},
 	"hashpack-no-installed": {
-		"title": "Hashpack extension is not installed yet",
+		"title": "Extensions are not installed yet",
 		"description": "Click on the button bellow to download the extension.",
-		"button": "Download Hashpack"
+		"button": "Download Hashpack",
+		"metamaskButton": "Download Metamask"
 	},
 	"hashpack-no-connected": {
 		"title": "Your wallet is not connected yet",
-		"description": "Click On the button bellow to connect to your wallet",
+		"description": "Click on the button bellow to connect to your wallet",
 		"button": "Connect your wallet"
 	},
 	"topbar": {
@@ -55,5 +56,10 @@
 		"goBack": "Go back",
 		"finish": "Finish",
 		"nextStep": "Next step"
+	},
+	"pairing": {
+		"error": "There was an error pairing with the wallet.",
+		"rejected": "The pairing request has been rejected.",
+		"loading": "Loading"
 	}
 }
