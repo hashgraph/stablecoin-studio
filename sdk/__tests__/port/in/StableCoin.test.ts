@@ -3,6 +3,7 @@ import { WalletEvents } from '../../../src/app/service/event/WalletEvent.js';
 import Injectable from '../../../src/core/Injectable.js';
 import {
 	Account,
+	Balance,
 	FactoryAddressTestnet,
 	HederaERC20AddressTestnet,
 	Network,
@@ -113,6 +114,7 @@ describe('🧪 SDK test', () => {
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
 			}),
 		);
+		expect(result instanceof Balance).toBe(true);
 		expect(result.value).not.toBeNull();
 	}, 60_000);
 

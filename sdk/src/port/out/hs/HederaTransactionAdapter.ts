@@ -193,11 +193,11 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	public async cashin(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
-		amount: BigDecimal
+		amount: BigDecimal,
 	): Promise<TransactionResponse> {
 		const params = new Params({
 			targetId: targetId,
-			amount: amount
+			amount: amount,
 		});
 		return this.performOperation(
 			coin,
@@ -245,7 +245,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	public async balanceOf(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
-	): Promise<TransactionResponse> {
+	): Promise<TransactionResponse<BigDecimal, Error>> {
 		const params = new Params({
 			targetId: targetId,
 		});
@@ -261,7 +261,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		transactionResponse.response = BigDecimal.fromStringFixed(
 			transactionResponse.response[0].toString(),
 			coin.coin.decimals,
-		).toString();
+		);
 		return transactionResponse;
 	}
 
@@ -449,7 +449,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
 		role: StableCoinRole,
-	): Promise<TransactionResponse> {
+	): Promise<TransactionResponse<boolean, Error>> {
 		const params = new Params({
 			role: role,
 			targetId: targetId,
@@ -469,7 +469,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	public async getRoles(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
-	): Promise<TransactionResponse> {
+	): Promise<TransactionResponse<string[], Error>> {
 		const params = new Params({
 			targetId: targetId,
 		});
@@ -480,8 +480,8 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			params,
 			TransactionType.RECORD,
 		);
-		transactionResponse.response = transactionResponse.response[0].filter((value: string) =>
-			value !== StableCoinRole.WITHOUT_ROLE
+		transactionResponse.response = transactionResponse.response[0].filter(
+			(value: string) => value !== StableCoinRole.WITHOUT_ROLE,
 		);
 		return transactionResponse;
 	}
@@ -489,7 +489,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	public async supplierAllowance(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
-	): Promise<TransactionResponse> {
+	): Promise<TransactionResponse<BigDecimal, Error>> {
 		const params = new Params({
 			targetId: targetId,
 		});
@@ -504,7 +504,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		transactionResponse.response = BigDecimal.fromStringFixed(
 			transactionResponse.response[0].toString(),
 			coin.coin.decimals,
-		).toString();
+		);
 		return transactionResponse;
 	}
 
@@ -673,7 +673,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			'HTS Operation: ',
 			operation,
 			' with params: ',
-			params
+			params,
 		);
 		switch (operation) {
 			case Operation.CASH_IN:
@@ -681,11 +681,17 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					coin.coin.tokenId?.value!,
 					params!.amount!.toLong(),
 				);
-				const resp: TransactionResponse<any, Error> = await 
-					this.signAndSendTransaction(t, TransactionType.RECEIPT);
+				const resp: TransactionResponse<any, Error> =
+					await this.signAndSendTransaction(
+						t,
+						TransactionType.RECEIPT,
+					);
 
-				if (resp.error === undefined && coin.coin.treasury?.value !== params.targetId?.toString()) { 	
-					if (coin.coin.treasury?.value === coin.account.id.value) {		
+				if (
+					resp.error === undefined &&
+					coin.coin.treasury?.value !== params.targetId?.toString()
+				) {
+					if (coin.coin.treasury?.value === coin.account.id.value) {
 						t = HTSTransactionBuilder.buildTransferTransaction(
 							coin.coin.tokenId?.value!,
 							params!.amount!.toLong(),
@@ -693,13 +699,14 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 							params!.targetId!.toString(),
 						);
 					} else {
-						t = HTSTransactionBuilder.buildApprovedTransferTransaction(
-							coin.coin.tokenId?.value!,
-							params!.amount!.toLong(),
-							coin.coin.treasury?.value!,
-							params!.targetId!.toString(),
-						);
-					}	
+						t =
+							HTSTransactionBuilder.buildApprovedTransferTransaction(
+								coin.coin.tokenId?.value!,
+								params!.amount!.toLong(),
+								coin.coin.treasury?.value!,
+								params!.targetId!.toString(),
+							);
+					}
 				} else {
 					return resp;
 				}

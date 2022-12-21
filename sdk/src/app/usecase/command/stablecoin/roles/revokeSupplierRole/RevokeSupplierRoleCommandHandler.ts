@@ -32,10 +32,10 @@ export class RevokeSupplierRoleCommandHandler
 			account,
 			tokenId,
 		);
-		const res = await handler.revokeSupplierRole(
-			capabilities,
-			targetId
+		const res = await handler.revokeSupplierRole(capabilities, targetId);
+		// return Promise.resolve({ payload: res.response ?? false });
+		return Promise.resolve(
+			new RevokeSupplierRoleCommandResponse(res.error === undefined),
 		);
-		return Promise.resolve({ payload: res.response ?? false });
 	}
 }

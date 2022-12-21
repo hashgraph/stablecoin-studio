@@ -32,6 +32,7 @@ import { GrantSupplierRoleCommand } from '../../app/usecase/command/stablecoin/r
 import { GrantUnlimitedSupplierRoleCommand } from '../../app/usecase/command/stablecoin/roles/granUnlimitedSupplierRole/GrantUnlimitedSupplierRoleCommand.js';
 import { RevokeSupplierRoleCommand } from '../../app/usecase/command/stablecoin/roles/revokeSupplierRole/RevokeSupplierRoleCommand.js';
 import { handleValidation } from './Common.js';
+import { Balance } from '../../domain/context/stablecoin/Balance.js';
 
 export { StableCoinRole, StableCoinRoleLabel };
 
@@ -41,7 +42,7 @@ interface IRole {
 	revokeRole(request: RevokeRoleRequest): Promise<boolean>;
 	getRoles(request: GetRolesRequest): Promise<string[]>;
 	//Supplier
-	getAllowance(request: GetSupplierAllowanceRequest): Promise<BigDecimal>;
+	getAllowance(request: GetSupplierAllowanceRequest): Promise<Balance>;
 	resetAllowance(request: ResetSupplierAllowanceRequest): Promise<boolean>;
 	increaseAllowance(
 		request: IncreaseSupplierAllowanceRequest,
@@ -152,20 +153,18 @@ class RoleInPort implements IRole {
 		).payload;
 	}
 
-	async getAllowance(
-		request: GetSupplierAllowanceRequest,
-	): Promise<BigDecimal> {
+	async getAllowance(request: GetSupplierAllowanceRequest): Promise<Balance> {
 		const { tokenId, targetId } = request;
 		handleValidation('GetSupplierAllowanceRequest', request);
 
-		return (
-			await this.commandBus.execute(
-				new GetAllowanceCommand(
-					HederaId.from(targetId),
-					HederaId.from(tokenId),
-				),
-			)
-		).payload;
+		const res = await this.commandBus.execute(
+			new GetAllowanceCommand(
+				HederaId.from(targetId),
+				HederaId.from(tokenId),
+			),
+		);
+
+		return new Balance(res.payload);
 	}
 
 	async resetAllowance(

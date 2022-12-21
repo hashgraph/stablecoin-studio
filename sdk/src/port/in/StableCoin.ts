@@ -232,7 +232,7 @@ class StableCoinInPort implements IStableCoinInPort {
 			),
 		);
 
-		return { value: res.payload };
+		return new Balance(res.payload);
 	}
 
 	async capabilities(

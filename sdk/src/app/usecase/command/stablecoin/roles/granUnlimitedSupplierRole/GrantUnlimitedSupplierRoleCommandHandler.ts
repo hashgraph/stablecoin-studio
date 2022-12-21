@@ -32,7 +32,15 @@ export class GrantUnlimitedSupplierRoleCommandHandler
 			account,
 			tokenId,
 		);
-		const res = await handler.grantUnlimitedSupplierRole(capabilities, targetId);
-		return Promise.resolve({ payload: res.response });
+		const res = await handler.grantUnlimitedSupplierRole(
+			capabilities,
+			targetId,
+		);
+		// return Promise.resolve({ payload: res.response });
+		return Promise.resolve(
+			new GrantUnlimitedSupplierRoleCommandResponse(
+				res.error === undefined,
+			),
+		);
 	}
 }

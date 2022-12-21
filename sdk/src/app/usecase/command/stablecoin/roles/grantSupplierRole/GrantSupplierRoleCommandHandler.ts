@@ -34,10 +34,13 @@ export class GrantSupplierRoleCommandHandler
 			tokenId,
 		);
 		const res = await handler.grantSupplierRole(
-			capabilities, 
-			targetId, 
-			BigDecimal.fromString(amount, capabilities.coin.decimals)
+			capabilities,
+			targetId,
+			BigDecimal.fromString(amount, capabilities.coin.decimals),
 		);
-		return Promise.resolve({ payload: res.response });
+		// return Promise.resolve({ payload: res.response });
+		return Promise.resolve(
+			new GrantSupplierRoleCommandResponse(res.error === undefined),
+		);
 	}
 }
