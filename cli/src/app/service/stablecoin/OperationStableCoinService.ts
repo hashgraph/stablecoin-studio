@@ -518,10 +518,14 @@ export default class OperationStableCoinService extends Service {
 
   private async getCapabilities(
     currentAccount: RequestAccount,
+    tokenIsPaused?: boolean,
+    tokenIsDeleted?: boolean
   ): Promise<StableCoinCapabilities> {
     return await this.capabilitiesStableCoinService.getCapabilitiesStableCoins(
       this.stableCoinId,
       currentAccount,
+      tokenIsPaused,
+      tokenIsDeleted
     );
   }
 
@@ -1414,7 +1418,7 @@ export default class OperationStableCoinService extends Service {
       privateKey: privateKey,
     };
 
-    const stableCoinCapabilities = await this.getCapabilities(currentAccount);
+    const stableCoinCapabilities = await this.getCapabilities(currentAccount, this.stableCoinPaused, this.stableCoinDeleted);
     const capabilities: Operation[] = stableCoinCapabilities.capabilities.map(
       (a) => a.operation,
     );

@@ -185,13 +185,12 @@ contract HederaERC20 is
     }
 
     /**
-     * @dev Function not already implemented
+     * @dev Transfers an amount of tokens to an account
+     *
+     * @param to The address the tokens are transferred to
      */
-    function transfer(
-        address, /* to */
-        uint256 /* amount */
-    ) external pure returns (bool) {
-        require(false, 'function not already implemented');
+    function transfer(address to, uint256 amount) external returns (bool) {
+        _transfer(_msgSender(), to, amount);
         return true;
     }
 
@@ -230,14 +229,21 @@ contract HederaERC20 is
     }
 
     /**
-     * @dev Function not already implemented
+     * @dev Transfers an amount of tokens from and account to another account
+     *
+     * @param from The address the tokens are transferred from
+     * @param to The address the tokens are transferred to
+     * @param amount The amount to transfer
      */
     function transferFrom(
-        address, /* from */
-        address, /* to */
-        uint256 /* amount */
-    ) external pure returns (bool) {
-        require(false, 'function not already implemented');
-        return true;
+        address from,
+        address to,
+        uint256 amount
+    ) external returns (bool) {
+        int256 responseCode = IHederaTokenService(precompileAddress)
+            .transferFrom(_getTokenAddress(), from, to, amount);
+        bool response = _checkResponse(responseCode);
+        emit TokenTransfer(_getTokenAddress(), from, to, amount);
+        return response;
     }
 }
