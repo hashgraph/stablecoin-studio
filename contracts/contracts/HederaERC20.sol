@@ -197,15 +197,16 @@ contract HederaERC20 is
     /**
      * @dev Function not already implemented
      */
-    function allowance(address owner, address spender)
-        public
-        payable
-        returns (uint256)
-    {
-        (int64 responseCode, uint256 amount) = IHederaTokenService(
-            precompileAddress
-        ).allowance(_getTokenAddress(), owner, spender);
-        return amount;
+    function allowance(
+        address, /*owner*/
+        address /*spender*/
+    ) external pure returns (uint256) {
+        require(false, 'function not already implemented');
+        return 0;
+        // (int64 responseCode, uint256 amount) = IHederaTokenService(
+        //     precompileAddress
+        // ).allowance(_getTokenAddress(), owner, spender);
+        // return amount;
     }
 
     /**
