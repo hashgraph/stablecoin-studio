@@ -43,6 +43,8 @@ export default class StableCoinService extends Service {
 	async getCapabilities(
 		account: Account,
 		target: HederaId | StableCoin,
+		tokenIsPaused?: boolean,
+		tokenIsDeleted?: boolean
 	): Promise<StableCoinCapabilities> {
 		try {
 			let _coin: StableCoin;
@@ -54,8 +56,8 @@ export default class StableCoinService extends Service {
 				_coin = await this.get(target);
 			}
 
-			const paused = _coin.paused;
-			const deleted = _coin.deleted;
+			const paused = tokenIsPaused || _coin.paused;
+			const deleted = tokenIsDeleted || _coin.deleted;
 			const operable = !deleted && !paused;
 
 			if (

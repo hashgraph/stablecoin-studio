@@ -249,6 +249,8 @@ class StableCoinInPort implements IStableCoinInPort {
 				publicKey: resp.account.publicKey,
 			}),
 			HederaId.from(request.tokenId),
+			request.tokenIsPaused,
+			request.tokenIsDeleted
 		);
 	}
 

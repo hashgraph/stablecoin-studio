@@ -8,19 +8,27 @@ export default class CapabilitiesRequest
 {
 	account: RequestAccount;
 	tokenId: string;
+	tokenIsPaused?: boolean;
+	tokenIsDeleted?: boolean;
 
 	constructor({
 		account,
 		tokenId,
+		tokenIsPaused,
+		tokenIsDeleted
 	}: {
 		account: RequestAccount;
 		tokenId: string;
+		tokenIsPaused: boolean;
+		tokenIsDeleted: boolean;
 	}) {
 		super({
 			account: Validation.checkAccount(),
-			tokenId: Validation.checkHederaIdFormat(),
+			tokenId: Validation.checkHederaIdFormat()
 		});
 		this.account = account;
 		this.tokenId = tokenId;
+		this.tokenIsPaused = tokenIsPaused;
+		this.tokenIsDeleted = tokenIsDeleted;
 	}
 }
