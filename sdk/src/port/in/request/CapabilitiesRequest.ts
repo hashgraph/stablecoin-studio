@@ -1,3 +1,4 @@
+import { OptionalField } from '../../../core/decorator/OptionalDecorator.js';
 import { AccountBaseRequest, RequestAccount } from './BaseRequest.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
@@ -8,7 +9,9 @@ export default class CapabilitiesRequest
 {
 	account: RequestAccount;
 	tokenId: string;
+	@OptionalField()
 	tokenIsPaused?: boolean;
+	@OptionalField()
 	tokenIsDeleted?: boolean;
 
 	constructor({
@@ -19,8 +22,8 @@ export default class CapabilitiesRequest
 	}: {
 		account: RequestAccount;
 		tokenId: string;
-		tokenIsPaused: boolean;
-		tokenIsDeleted: boolean;
+		tokenIsPaused?: boolean;
+		tokenIsDeleted?: boolean;
 	}) {
 		super({
 			account: Validation.checkAccount(),

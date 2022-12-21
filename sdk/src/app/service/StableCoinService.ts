@@ -55,9 +55,8 @@ export default class StableCoinService extends Service {
 			} else {
 				_coin = await this.get(target);
 			}
-
-			const paused = tokenIsPaused || _coin.paused;
-			const deleted = tokenIsDeleted || _coin.deleted;
+			const paused = tokenIsPaused !== undefined ? tokenIsPaused : _coin.paused;
+			const deleted = tokenIsDeleted != undefined ? tokenIsDeleted : _coin.deleted;
 			const operable = !deleted && !paused;
 
 			if (
@@ -146,7 +145,6 @@ export default class StableCoinService extends Service {
 					new Capability(Operation.UNFREEZE, Access.CONTRACT),
 				);
 			}
-
 			if (operable && _coin.adminKey instanceof PublicKey) {
 				if (_coin.adminKey?.key.toString() === account.publicKey?.key) {
 					listCapabilities.push(
