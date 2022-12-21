@@ -197,6 +197,7 @@ const StableCoinCreation = () => {
 			console.log(error);
 			setError(error.transactionError.transactionUrl);
 			setSuccess(false);
+			setLoading(false);
 		}
 	};
 
@@ -236,6 +237,8 @@ const StableCoinCreation = () => {
 					RouterManager.to(navigate, NamedRoutes.StableCoinNotSelected);
 				}}
 				errorTransactionUrl={error}
+				closeButton={false}
+				closeOnOverlayClick={false}
 			/>
 		</Stack>
 	);
