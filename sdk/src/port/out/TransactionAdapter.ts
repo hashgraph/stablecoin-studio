@@ -169,7 +169,7 @@ export default abstract class TransactionAdapter
 	cashin(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
-		amount: BigDecimal,
+		amount: BigDecimal
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}

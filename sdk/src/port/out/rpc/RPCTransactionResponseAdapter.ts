@@ -1,6 +1,7 @@
 import { ethers } from 'ethers';
 import LogService from '../../../app/service/LogService.js';
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
+import { TransactionResponseError } from '../error/TransactionResponseError.js';
 import { TransactionResponseAdapter } from '../TransactionResponseAdapter.js';
 
 const ERROR_STATUS = 0;
@@ -18,7 +19,12 @@ export class RPCTransactionResponseAdapter extends TransactionResponseAdapter {
 				new TransactionResponse(
 					receipt.transactionHash,
 					undefined,
-					new Error('Some error'),
+					new TransactionResponseError({
+						message: eventName ?? 'Error in response',
+						name: eventName,
+						status: 'error',
+						transactionId: receipt.transactionHash,
+					}),
 				),
 			);
 		}

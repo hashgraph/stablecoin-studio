@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Navigate, Route, Routes, Outlet } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Flex, Spinner } from '@chakra-ui/react';
+import { Flex, Spinner, Text } from '@chakra-ui/react';
 import Layout from '../layout/Layout';
 import { RoutesMappingUrl } from './RoutesMappingUrl';
 import CashInOperation from '../views/Operations/CashIn';
@@ -181,8 +181,26 @@ const Router = () => {
 					alignSelf='center'
 					alignContent={'center'}
 					flex={1}
+					flexDir='column'
+					gap={10}
 				>
-					<Spinner w='150px' h='150px' justifyContent='center' alignSelf={'center'} />
+					<Spinner
+						color='brand.gray'
+						thickness='3px'
+						w='50px'
+						h='50px'
+						justifyContent='center'
+						alignSelf={'center'}
+					/>
+					<Text
+						fontSize='16px'
+						fontWeight={500}
+						textAlign='center'
+						lineHeight='16px'
+						color='brand.gray'
+					>
+						Searching for supported wallets
+					</Text>
 				</Flex>
 			)}
 		</main>

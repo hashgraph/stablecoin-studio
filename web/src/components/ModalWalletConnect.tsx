@@ -14,14 +14,14 @@ import {
 	VStack,
 } from '@chakra-ui/react';
 import { SupportedWallets } from 'hedera-stable-coin-sdk';
-import type { FC, ReactNode} from 'react';
-import { useEffect , useState } from 'react';
+import type { FC, ReactNode } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import HEDERA_LOGO from '../assets/png/hashpackLogo.png';
 import METAMASK_LOGO from '../assets/svg/MetaMask_Fox.svg';
 import SDKService from '../services/SDKService';
-import { walletActions } from '../store/slices/walletSlice';
+import { AVAILABLE_WALLETS, walletActions } from '../store/slices/walletSlice';
 import WARNING_ICON from '../assets/svg/warning.svg';
 import ERROR_ICON from '../assets/svg/error.svg';
 
@@ -50,13 +50,14 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [error, setError] = useState<any>();
 	const [rejected, setRejected] = useState<boolean>(false);
+	const availableWallets = useSelector(AVAILABLE_WALLETS);
 
 	useEffect(() => {
 		isOpen && setLoading(undefined);
 	}, [isOpen]);
 
 	const handleWalletConnect = async (wallet: SupportedWallets) => {
-		if(loading) return;
+		if (loading) return;
 		setLoading(wallet);
 		dispatch(walletActions.setLastWallet(wallet));
 		try {
@@ -78,7 +79,7 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 		handleWalletConnect(SupportedWallets.METAMASK);
 	};
 
-	const PairingSpinner: FC<{ wallet?: SupportedWallets; children?: ReactNode }> = ({
+	const PairingSpinner: FC<{ wallet: SupportedWallets; children?: ReactNode }> = ({
 		wallet,
 		children,
 	}) => {
@@ -115,28 +116,45 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 				<ModalContent data-testid='modal-action-content' p='50' w='500px'>
 					<ModalCloseButton />
 					{!error && !rejected && (
-						<ModalFooter p='0' justifyContent='center'>
-							<HStack spacing={14} pt={8} w='full' justifyContent={'center'} alignItems={'stretch'}>
-								<VStack
-									{...styles.providerStyle}
-									onClick={handleConnectHashpackWallet}
+						<>
+							<ModalHeader p='0' justifyContent='center'>
+								<Text
+									fontSize='20px'
+									fontWeight={700}
+									textAlign='center'
+									lineHeight='16px'
+									color='brand.black'
 								>
-									<PairingSpinner wallet={SupportedWallets.HASHPACK}>
-										<Image src={HEDERA_LOGO} w={20} />
-										<Text>Hashpack</Text>
-									</PairingSpinner>
-								</VStack>
-								<VStack
-									{...styles.providerStyle}
-									onClick={handleConnectMetamaskWallet}
+									Select a wallet
+								</Text>
+							</ModalHeader>
+							<ModalFooter p='0' justifyContent='center'>
+								<HStack
+									spacing={14}
+									pt={8}
+									w='full'
+									justifyContent={'center'}
+									alignItems={'stretch'}
 								>
-									<PairingSpinner wallet={SupportedWallets.METAMASK}>
-										<Image src={METAMASK_LOGO} w={20} />
-										<Text>Metamask</Text>
-									</PairingSpinner>
-								</VStack>
-							</HStack>
-						</ModalFooter>
+									{availableWallets.includes(SupportedWallets.HASHPACK) && (
+										<VStack {...styles.providerStyle} onClick={handleConnectHashpackWallet}>
+											<PairingSpinner wallet={SupportedWallets.HASHPACK}>
+												<Image src={HEDERA_LOGO} w={20} />
+												<Text>Hashpack</Text>
+											</PairingSpinner>
+										</VStack>
+									)}
+									{availableWallets.includes(SupportedWallets.METAMASK) && (
+										<VStack {...styles.providerStyle} onClick={handleConnectMetamaskWallet}>
+											<PairingSpinner wallet={SupportedWallets.METAMASK}>
+												<Image src={METAMASK_LOGO} w={20} />
+												<Text>Metamask</Text>
+											</PairingSpinner>
+										</VStack>
+									)}
+								</HStack>
+							</ModalFooter>
+						</>
 					)}
 					{(error || rejected) && (
 						<>

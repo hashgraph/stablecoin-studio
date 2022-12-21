@@ -29,7 +29,7 @@ export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
 		const res = await handler.cashin(
 			capabilities,
 			targetId,
-			BigDecimal.fromString(amount, capabilities.coin.decimals),
+			BigDecimal.fromString(amount, capabilities.coin.decimals)
 		);
 		return Promise.resolve(
 			new CashInCommandResponse(res.error === undefined),

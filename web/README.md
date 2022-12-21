@@ -15,6 +15,10 @@
   - [Start the app](#Start-the-app)<br>
   - [Select a wallet](#Select-a-wallet)<br>
   - [Switch wallets](#Switch-wallets)<br>
+  - [Create stable coins](#Create-stable-coins)<br>
+  - [Import stable coins](#Import-stable-coins)<br>
+  - [Operate stable coins](#Operate-stable-coins)<br>
+  - [Manage roles](#Manage-roles)<br>
 - **[Test](#Test)**<br>
   - [Jest](#Jest)<br>
   - [Execute](#Execute)<br>
@@ -57,10 +61,37 @@ npm run start
 ```
 
 ## Select a wallet
+![Alt text](docs/images/init.png?raw=true 'selecting a wallet')
+
 The front end will automatically detect how many compatible wallets are available and ask you to select one of them to operate with.
 
 ## Switch wallets
+![Alt text](docs/images/disconnect.png?raw=true 'disconnect')
+
 If you want to switch to another compatible wallet, you can do it at any time by clicking on the disconnect button (top right corner) then connecting again.
+
+## Create stable coins
+![Alt text](docs/images/create.png?raw=true 'create stable coin')
+
+In order to create a new stable coin using the WEB, you must click on the "Create Coin" button at the top of the page then fill-in all the required information.
+Once the stable coin is created it will be added to the drop-down list of coins you have access to (with the account you used to create the stable coin).
+
+## Import stable coins
+![Alt text](docs/images/import.png?raw=true 'import stable coin')
+
+In order to import a stable coin using the WEB, you must click on the "Add coin" button at the top of the page (next to the create coin button) then fill-in all the required information. You can import any stable coin you want and it will be added to the drop-down list of coins you have access to.
+
+> You will only be allowed to operate the imported stable coins based on the roles that your account has been granted. If you import a stable coin that your account does not have any role over, you will not be able to do anything with it.
+
+## Operate stable coins
+![Alt text](docs/images/Operations.png?raw=true 'Operations')
+
+The operations linked to the capabilities (roles) assigned to your account for the selected stable coin will be available.
+
+## Manage Roles
+![Alt text](docs/images/RoleMgmgt.png?raw=true 'Roles management')
+
+If your account has the stable coin admin role, you will also be allowed to manage the stable coin's roles.
 
 # Test
 
