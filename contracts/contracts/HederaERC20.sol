@@ -1,44 +1,54 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.10;
 
-import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
-import "./Interfaces/IHederaERC20.sol";
-import "./extensions/CashIn.sol";
-import "./extensions/Burnable.sol";
-import "./extensions/Wipeable.sol";
-import "./extensions/Pausable.sol";
-import "./extensions/Freezable.sol";
-import "./extensions/Rescatable.sol";
-import "./extensions/Deletable.sol";
-import "./hts-precompile/IHederaTokenService.sol";
-import "./extensions/TokenOwner.sol";
+import '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol';
+import './Interfaces/IHederaERC20.sol';
+import './extensions/CashIn.sol';
+import './extensions/Burnable.sol';
+import './extensions/Wipeable.sol';
+import './extensions/Pausable.sol';
+import './extensions/Freezable.sol';
+import './extensions/Rescatable.sol';
+import './extensions/Deletable.sol';
+import './hts-precompile/IHederaTokenService.sol';
+import './extensions/TokenOwner.sol';
 
-contract HederaERC20 is IHederaERC20, IERC20Upgradeable, 
-                        CashIn, Burnable, Wipeable, Pausable, Freezable, Deletable, Rescatable {
+contract HederaERC20 is
+    IHederaERC20,
+    IERC20Upgradeable,
+    CashIn,
+    Burnable,
+    Wipeable,
+    Pausable,
+    Freezable,
+    Deletable,
+    Rescatable
+{
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
-    function initialize (IHederaTokenService.HederaToken calldata token, 
+    function initialize(
+        IHederaTokenService.HederaToken calldata token,
         uint64 initialTotalSupply,
         uint32 tokenDecimals,
-        address originalSender) 
-        external 
-        payable 
-        initializer 
-        returns (address)
-    {
+        address originalSender
+    ) external payable initializer returns (address) {
+        (int64 responseCode, address tokenAddress) = IHederaTokenService(
+            precompileAddress
+        ).createFungibleToken{value: msg.value}(
+            token,
+            initialTotalSupply,
+            tokenDecimals
+        );
 
-        (int64 responseCode, address tokenAddress) = 
-            IHederaTokenService(precompileAddress).createFungibleToken{value: msg.value}
-                (token, 
-                initialTotalSupply, 
-                tokenDecimals);
-
-        require(responseCode == HederaResponseCodes.SUCCESS, "Token Creation failed");
+        require(
+            responseCode == HederaResponseCodes.SUCCESS,
+            'Token Creation failed'
+        );
 
         tokenOwner_init(tokenAddress);
-        roles_init();       
+        roles_init();
         _setupRole(_getRoleId(roleName.ADMIN), msg.sender); // Assign Admin role to calling contract/user in order to be able to set all the other roles
         grantUnlimitedSupplierRole(originalSender);
         _grantRole(_getRoleId(roleName.BURN), originalSender);
@@ -54,53 +64,41 @@ contract HederaERC20 is IHederaERC20, IERC20Upgradeable,
 
     /**
      * @dev Returns the name of the token
-     * 
+     *
      * @return string The the name of the token
      */
-    function name() 
-        external 
-        view 
-        returns(string memory) 
-    {
-        return IERC20MetadataUpgradeable(_getTokenAddress()).name();        
+    function name() external view returns (string memory) {
+        return IERC20MetadataUpgradeable(_getTokenAddress()).name();
     }
 
     /**
      * @dev Returns the symbol of the token
-     * 
+     *
      * @return string The the symbol of the token
      */
-    function symbol() 
-        external 
-        view 
-        returns(string memory) 
-    {
+    function symbol() external view returns (string memory) {
         return IERC20MetadataUpgradeable(_getTokenAddress()).symbol();
     }
 
     /**
      * @dev Returns the number of decimals of the token
-     * 
+     *
      * @return uint8 The number of decimals of the token
      */
-    function decimals() 
-        public 
-        view 
-        returns (uint8) 
-    {
+    function decimals() public view returns (uint8) {
         return IERC20MetadataUpgradeable(_getTokenAddress()).decimals();
     }
 
     /**
      * @dev Returns the total number of tokens that exits
-     * 
+     *
      * @return uint256 The total number of tokens that exists
      */
-    function totalSupply() 
-        external 
-        view 
-        override(IHederaERC20, IERC20Upgradeable) 
-        returns (uint256) 
+    function totalSupply()
+        external
+        view
+        override(IHederaERC20, IERC20Upgradeable)
+        returns (uint256)
     {
         return IERC20Upgradeable(_getTokenAddress()).totalSupply();
     }
@@ -112,11 +110,11 @@ contract HederaERC20 is IHederaERC20, IERC20Upgradeable,
      *
      * @return uint256 The number number tokens that an account has
      */
-    function balanceOf(address account) 
-        public 
-        view 
-        override(IHederaERC20, IERC20Upgradeable) 
-        returns (uint256) 
+    function balanceOf(address account)
+        public
+        view
+        override(IHederaERC20, IERC20Upgradeable)
+        returns (uint256)
     {
         return _balanceOf(account);
     }
@@ -129,11 +127,11 @@ contract HederaERC20 is IHederaERC20, IERC20Upgradeable,
      * @return uint256 The number number tokens that an account has
      */
 
-    function _balanceOf(address account) 
-        internal 
-        view 
-        override(TokenOwner) 
-        returns (uint256) 
+    function _balanceOf(address account)
+        internal
+        view
+        override(TokenOwner)
+        returns (uint256)
     {
         return IERC20Upgradeable(_getTokenAddress()).balanceOf(account);
     }
@@ -144,13 +142,12 @@ contract HederaERC20 is IHederaERC20, IERC20Upgradeable,
      * @param adr The address of the account to associate
      *
      */
-    function associateToken(address adr) 
-        public 
-    {         
-        int256 responseCode = IHederaTokenService(precompileAddress).associateToken(adr, _getTokenAddress());
-        _checkResponse(responseCode);   
+    function associateToken(address adr) public {
+        int256 responseCode = IHederaTokenService(precompileAddress)
+            .associateToken(adr, _getTokenAddress());
+        _checkResponse(responseCode);
 
-        emit TokenAssociated (_getTokenAddress(), adr);
+        emit TokenAssociated(_getTokenAddress(), adr);
     }
 
     /**
@@ -159,13 +156,12 @@ contract HederaERC20 is IHederaERC20, IERC20Upgradeable,
      * @param adr The address of the account to dissociate
      *
      */
-    function dissociateToken(address adr) 
-        public 
-    {         
-        int256 responseCode = IHederaTokenService(precompileAddress).dissociateToken(adr, _getTokenAddress());
-        _checkResponse(responseCode);     
+    function dissociateToken(address adr) public {
+        int256 responseCode = IHederaTokenService(precompileAddress)
+            .dissociateToken(adr, _getTokenAddress());
+        _checkResponse(responseCode);
 
-        emit TokenDissociated (_getTokenAddress(), adr);
+        emit TokenDissociated(_getTokenAddress(), adr);
     }
 
     /**
@@ -174,63 +170,74 @@ contract HederaERC20 is IHederaERC20, IERC20Upgradeable,
      * @param from The address the tokens are transferred from
      * @param to The address the tokens are transferred to
      */
-    function _transfer(address from, address to, uint256 amount) 
-        internal 
-        override(TokenOwner)
-    {
-        require(_balanceOf(from) >= amount, "Insufficient token balance");
+    function _transfer(
+        address from,
+        address to,
+        uint256 amount
+    ) internal override(TokenOwner) {
+        require(_balanceOf(from) >= amount, 'Insufficient token balance');
 
-        int256 responseCode = IHederaTokenService(precompileAddress).transferToken(_getTokenAddress(), from, to, int64(int256(amount)));
-        _checkResponse(responseCode); 
-    
+        int256 responseCode = IHederaTokenService(precompileAddress)
+            .transferToken(_getTokenAddress(), from, to, int64(int256(amount)));
+        _checkResponse(responseCode);
+
         emit TokenTransfer(_getTokenAddress(), from, to, amount);
     }
 
     /**
-    * @dev Function not already implemented
-    */
-    function transfer(address /* to */, uint256 /* amount */) 
-        external 
-        pure
-        returns (bool)
-    {
-        require(false, "function not already implemented");
+     * @dev Function not already implemented
+     */
+    function transfer(
+        address, /* to */
+        uint256 /* amount */
+    ) external pure returns (bool) {
+        require(false, 'function not already implemented');
         return true;
     }
 
     /**
-    * @dev Function not already implemented
-    */
-    function allowance(address /* owner */, address /* spender */) 
-        external 
-        pure 
+     * @dev Function not already implemented
+     */
+    function allowance(address owner, address spender)
+        external
+        pure
         returns (uint256)
     {
-        require(false, "function not already implemented");
-        return 0;
+        return
+            IHederaTokenService(precompileAddress).allowance(
+                _getTokenAddress(),
+                owner,
+                spender
+            );
     }
 
     /**
-    * @dev Function not already implemented
-    */
-    function approve(address /* spender */, uint256 /* amount */) 
-        external 
+     * @dev Function not already implemented
+     */
+    function approve(address spender, uint256 amount)
+        external
         pure
         returns (bool)
     {
-        require(false, "function not already implemented");
-        return true;
+        int256 responseCode = IHederaTokenService(precompileAddress).approve(
+            _getTokenAddress(),
+            spender,
+            int64(int256(amount))
+        );
+        bool success = _checkResponse(responseCode);
+
+        return success;
     }
 
     /**
-    * @dev Function not already implemented
-    */
-    function transferFrom(address /* from */,  address /* to */, uint256 /* amount */) 
-        external 
-        pure
-        returns (bool)
-    {
-        require(false, "function not already implemented");
+     * @dev Function not already implemented
+     */
+    function transferFrom(
+        address, /* from */
+        address, /* to */
+        uint256 /* amount */
+    ) external pure returns (bool) {
+        require(false, 'function not already implemented');
         return true;
-    }    
+    }
 }
