@@ -54,9 +54,9 @@ export default class RequestMapper {
 		} else return undefined;
 	}
 
-	public static getPublicKey(key?: RequestPublicKey): PublicKey | undefined {
-		if (key) {
-			return new PublicKey(key);
+	public static getPublicKey(req?: RequestPublicKey): PublicKey | undefined {
+		if (req) {
+			return new PublicKey(req);
 		} else return undefined;
 	}
 
