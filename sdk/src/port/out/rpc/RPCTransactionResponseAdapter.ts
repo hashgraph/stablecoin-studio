@@ -8,7 +8,7 @@ const ERROR_STATUS = 0;
 export class RPCTransactionResponseAdapter extends TransactionResponseAdapter {
 	public static async manageResponse(
 		response: ethers.ContractTransaction,
-		eventName?: string
+		eventName?: string,
 	): Promise<TransactionResponse> {
 		LogService.logTrace('Constructing response from:', response);
 		const receipt = await response.wait();
@@ -22,7 +22,7 @@ export class RPCTransactionResponseAdapter extends TransactionResponseAdapter {
 				),
 			);
 		}
-		if (receipt.events && eventName){
+		if (receipt.events && eventName) {
 			const returnEvent = receipt.events.filter(
 				(e) => e.event && e.event === eventName,
 			);
@@ -33,11 +33,8 @@ export class RPCTransactionResponseAdapter extends TransactionResponseAdapter {
 				);
 			}
 		}
-			return Promise.resolve(
-				new TransactionResponse(
-					receipt.transactionHash,
-					receipt.status,
-				),
-			);
+		return Promise.resolve(
+			new TransactionResponse(receipt.transactionHash, receipt.status),
+		);
 	}
 }

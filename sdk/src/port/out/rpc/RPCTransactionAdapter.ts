@@ -186,7 +186,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		this.provider = new ethers.providers.JsonRpcProvider(
 			`https://${this.networkService.environment.toString()}.hashio.io/api`,
 		);
-		!debug && await this.connectMetamask(false);
+		!debug && (await this.connectMetamask(false));
 		const eventData = {
 			initData: {
 				account: this.account,
@@ -213,7 +213,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			this.account.publicKey = accountMirror.publicKey;
 		}
 		Injectable.registerTransactionHandler(this);
-		!debug && await this.connectMetamask();
+		!debug && (await this.connectMetamask());
 		LogService.logTrace('Metamask registered as handler');
 		return Promise.resolve({ account });
 	}
@@ -872,11 +872,14 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		const evmProxy = coin.coin.evmProxyAddress ?? '';
 		switch (operation) {
 			case Operation.CASH_IN:
+				const targetEvm = await this.accountToEvmAddress(
+					HederaId.from(params!.targetId!),
+				);
 				return RPCTransactionResponseAdapter.manageResponse(
 					await HederaERC20__factory.connect(
 						evmProxy,
 						this.signerOrProvider,
-					).mint(params!.targetId!, params!.amount!.toBigNumber()),
+					).mint(targetEvm, params!.amount!.toBigNumber()),
 				);
 
 			case Operation.BURN:
