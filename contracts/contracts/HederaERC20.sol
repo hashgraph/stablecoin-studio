@@ -198,30 +198,24 @@ contract HederaERC20 is
      * @dev Function not already implemented
      */
     function allowance(address owner, address spender)
-        external
-        pure
+        public
+        payable
         returns (uint256)
     {
-        return
-            IHederaTokenService(precompileAddress).allowance(
-                _getTokenAddress(),
-                owner,
-                spender
-            );
+        (int64 responseCode, uint256 amount) = IHederaTokenService(
+            precompileAddress
+        ).allowance(_getTokenAddress(), owner, spender);
+        return amount;
     }
 
     /**
      * @dev Function not already implemented
      */
-    function approve(address spender, uint256 amount)
-        external
-        pure
-        returns (bool)
-    {
-        int256 responseCode = IHederaTokenService(precompileAddress).approve(
+    function approve(address spender, uint256 amount) external returns (bool) {
+        int64 responseCode = IHederaTokenService(precompileAddress).approve(
             _getTokenAddress(),
             spender,
-            int64(int256(amount))
+            amount
         );
         bool success = _checkResponse(responseCode);
 
