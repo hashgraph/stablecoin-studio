@@ -38,6 +38,9 @@ export class IncreaseAllowanceCommandHandler
 			targetId,
 			BigDecimal.fromString(amount, capabilities.coin.decimals),
 		);
-		return Promise.resolve({ payload: res.response });
+		// return Promise.resolve({ payload: res.response });
+		return Promise.resolve(
+			new IncreaseAllowanceCommandResponse(res.error === undefined),
+		);
 	}
 }

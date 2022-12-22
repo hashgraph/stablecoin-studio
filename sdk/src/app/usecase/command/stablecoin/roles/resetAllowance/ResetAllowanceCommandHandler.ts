@@ -36,6 +36,9 @@ export class ResetAllowanceCommandHandler
 			capabilities,
 			targetId,
 		);
-		return Promise.resolve({ payload: res.response ?? false });
+		// return Promise.resolve({ payload: res.response ?? false });
+		return Promise.resolve(
+			new ResetAllowanceCommandResponse(res.error === undefined),
+		);
 	}
 }

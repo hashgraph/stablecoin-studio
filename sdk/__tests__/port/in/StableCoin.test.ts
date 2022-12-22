@@ -30,9 +30,13 @@ import ConnectRequest, {
 import GetStableCoinDetailsRequest from '../../../src/port/in/request/GetStableCoinDetailsRequest.js';
 import { CLIENT_ACCOUNT_ECDSA, CLIENT_ACCOUNT_ED25519 } from '../../config.js';
 
-describe('🧪 SDK test', () => {
+describe('🧪 Stablecoin test', () => {
 	let stableCoinSC: StableCoinViewModel;
 	let stableCoinHTS: StableCoinViewModel;
+	const delay = async (seconds = 2): Promise<void> => {
+		seconds = seconds * 1000;
+		await new Promise((r) => setTimeout(r, seconds));
+	};
 	beforeAll(async () => {
 		await Network.connect(
 			new ConnectRequest({
@@ -244,7 +248,7 @@ describe('🧪 SDK test', () => {
 		eventService.on(WalletEvents.walletInit, (data) => {
 			console.log(`Wallet: ${data.wallet} initialized`);
 		});
-		await new Promise((r) => setTimeout(r, 2000));
+		await delay();
 		const result = await StableCoin.freeze(
 			new FreezeAccountRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -264,7 +268,7 @@ describe('🧪 SDK test', () => {
 		eventService.on(WalletEvents.walletInit, (data) => {
 			console.log(`Wallet: ${data.wallet} initialized`);
 		});
-		await new Promise((r) => setTimeout(r, 2000));
+		await delay();
 		const result = await StableCoin.unFreeze(
 			new FreezeAccountRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -455,7 +459,7 @@ describe('🧪 SDK test', () => {
 		eventService.on(WalletEvents.walletInit, (data) => {
 			console.log(`Wallet: ${data.wallet} initialized`);
 		});
-		await new Promise((r) => setTimeout(r, 2000));
+		await delay();
 		const result = await StableCoin.freeze(
 			new FreezeAccountRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -474,7 +478,7 @@ describe('🧪 SDK test', () => {
 		eventService.on(WalletEvents.walletInit, (data) => {
 			console.log(`Wallet: ${data.wallet} initialized`);
 		});
-		await new Promise((r) => setTimeout(r, 2000));
+		await delay();
 		const result = await StableCoin.unFreeze(
 			new FreezeAccountRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -547,7 +551,7 @@ describe('🧪 SDK test', () => {
 		console.log(`Token HTS: ${stableCoinHTS?.tokenId?.toString()}`);
 		console.log(`Token SC: ${stableCoinSC?.tokenId?.toString()}`);
 
-		await new Promise((r) => setTimeout(r, 2000));
+		await delay();
 		const resultHTS = await StableCoin.delete(
 			new DeleteRequest({
 				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49106247',
