@@ -42,7 +42,6 @@ import {
 import { SupportedWallets } from '../../../in/request/ConnectRequest.js';
 import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter.js';
 import { SDK } from '../../../in/Common.js';
-import AccountService from '../../../../app/service/AccountService.js';
 import { HederaId } from '../../../../domain/context/shared/HederaId.js';
 import { QueryBus } from '../../../../core/query/QueryBus.js';
 import { AccountIdNotValid } from '../../../../domain/context/account/error/AccountIdNotValid.js';
