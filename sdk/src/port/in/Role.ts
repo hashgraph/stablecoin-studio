@@ -220,14 +220,24 @@ class RoleInPort implements IRole {
 	async isLimited(request: CheckSupplierLimitRequest): Promise<boolean> {
 		const { tokenId, targetId } = request;
 		handleValidation('CheckSupplierLimitRequest', request);
-
-		return this.hasRole(
-			new HasRoleRequest({
-				targetId: targetId,
-				tokenId: tokenId,
-				role: StableCoinRole.CASHIN_ROLE,
-			}),
-		);
+		const hasRole = (
+			await this.commandBus.execute(
+				new HasRoleCommand(
+					StableCoinRole.CASHIN_ROLE,
+					HederaId.from(targetId),
+					HederaId.from(tokenId),
+				),
+			)
+		).payload;
+		const unlimited = (
+			await this.commandBus.execute(
+				new IsUnlimitedCommand(
+					HederaId.from(targetId),
+					HederaId.from(tokenId),
+				),
+			)
+		).payload;
+		return hasRole && !unlimited;
 	}
 
 	async isUnlimited(request: CheckSupplierLimitRequest): Promise<boolean> {

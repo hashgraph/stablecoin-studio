@@ -30,7 +30,7 @@ import ConnectRequest, {
 import GetStableCoinDetailsRequest from '../../../src/port/in/request/GetStableCoinDetailsRequest.js';
 import { CLIENT_ACCOUNT_ECDSA, CLIENT_ACCOUNT_ED25519 } from '../../config.js';
 
-describe('🧪 SDK test', () => {
+describe('🧪 Stablecoin test', () => {
 	let stableCoinSC: StableCoinViewModel;
 	let stableCoinHTS: StableCoinViewModel;
 	beforeAll(async () => {
