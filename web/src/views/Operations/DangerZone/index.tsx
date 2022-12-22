@@ -84,36 +84,43 @@ const DangerZoneOperations = () => {
 				}
 			}
 		}
-		const canPause =
-			!hasCapability(Operation.PAUSE, Access.CONTRACT) ||
-			!hasCapability(Operation.PAUSE, Access.HTS);
+
+		const operations = capabilities?.capabilities.map((x) => x.operation);
+		const canPause = operations?.includes(Operation.PAUSE);
 		const areDisabled: {
 			pause: boolean;
 			unpause: boolean;
 			delete: boolean;
 		} = {
 			pause: !isExternalToken
-				? (canPause && selectedStableCoin?.paused) ?? false
-				: ((!roles.includes(StableCoinRole.PAUSE_ROLE) ||
-						!hasCapability(Operation.PAUSE, Access.HTS)) &&
-						selectedStableCoin?.paused) ??
-				  false,
+				? (!canPause || (canPause && selectedStableCoin?.paused)) ?? false
+				: (!operations?.includes(Operation.PAUSE) ||
+				  (operations?.includes(Operation.PAUSE) && (getAccessByOperation(Operation.PAUSE) !== Access.HTS) && 
+				   !roles.includes(StableCoinRole.PAUSE_ROLE)) &&
+				   selectedStableCoin?.paused) ?? 
+				   false,
 			unpause: !isExternalToken
-				? canPause && !selectedStableCoin?.paused
-				: (!roles.includes(StableCoinRole.PAUSE_ROLE) ||
-						!hasCapability(Operation.PAUSE, Access.HTS)) &&
-				  !selectedStableCoin?.paused,
+				? (!canPause || (canPause && !selectedStableCoin?.paused)) ?? false
+				: (!operations?.includes(Operation.PAUSE) ||
+				  (operations?.includes(Operation.PAUSE) && (getAccessByOperation(Operation.PAUSE) !== Access.HTS) && 
+				   !roles.includes(StableCoinRole.PAUSE_ROLE)) &&
+				   !selectedStableCoin?.paused) ??
+				   false,
 			delete: !isExternalToken
-				? canPause && (selectedStableCoin?.paused || !!selectedStableCoin?.deleted)
-				: !roles.includes(StableCoinRole.DELETE_ROLE) &&
-				  !hasCapability(Operation.DELETE, Access.HTS) &&
-				  (!selectedStableCoin?.paused || !selectedStableCoin?.deleted),
+				? (!canPause || (selectedStableCoin?.paused || selectedStableCoin?.deleted)) ?? false
+				: (!operations?.includes(Operation.DELETE) ||
+				  (operations?.includes(Operation.DELETE) && (getAccessByOperation(Operation.DELETE) !== Access.HTS) && 
+				   !roles.includes(StableCoinRole.DELETE_ROLE)) &&
+				  (!selectedStableCoin?.paused || !selectedStableCoin?.deleted)) ?? 
+				false
 		};
 
 		setDisabledFeatures(areDisabled);
 
-		function hasCapability(op: Operation, ac: Access) {
-			return capabilities?.capabilities.includes({ operation: op, access: ac });
+		function getAccessByOperation(operation: Operation): Access | undefined {
+			return capabilities?.capabilities.filter((capability) => {
+				return (capability.operation === operation);
+			})[0].access ?? undefined;
 		}
 	};
 
