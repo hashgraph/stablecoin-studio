@@ -60,7 +60,6 @@ export default class ManageImportedTokenService extends Service {
         await new DetailsStableCoinsService()
           .getDetailsStableCoins(getRolesRequestForAdding.tokenId, false)
           .then((response: StableCoinViewModel) => {
-            console.log('Mirror:', response);
             symbol = response.symbol;
             getRolesRequestForAdding.tokenId = response.tokenId.toString();
           });
