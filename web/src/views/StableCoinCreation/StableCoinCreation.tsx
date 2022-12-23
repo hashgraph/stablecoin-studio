@@ -198,6 +198,7 @@ const StableCoinCreation = () => {
 			console.log(error);
 			setError(error.transactionError.transactionUrl);
 			setSuccess(false);
+			setLoading(false);
 		}
 	};
 

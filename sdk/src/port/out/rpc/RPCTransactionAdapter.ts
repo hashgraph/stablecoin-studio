@@ -439,12 +439,14 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					`StableCoin ${coin.coin.name} does not have a proxy address`,
 				);
 
+			const res = await HederaERC20__factory.connect(
+				coin.coin.evmProxyAddress,
+				this.signerOrProvider,
+			).hasRole(role, this.accountToEvmAddress(targetId));			
+			
 			return new TransactionResponse(
 				undefined,
-				await HederaERC20__factory.connect(
-					coin.coin.evmProxyAddress,
-					this.signerOrProvider,
-				).hasRole(role, this.accountToEvmAddress(targetId)),
+				res.valueOf(),
 			);
 		} catch (error) {
 			throw new Error('Error');
@@ -678,6 +680,21 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		const transfer = await this.precompiledCall('transferToken', [
 			coin.coin.tokenId?.toHederaAddress().toSolidityAddress(),
 			await this.accountToEvmAddress(sourceId.id),
+			await this.accountToEvmAddress(targetId),
+			amount,
+		]);
+		return RPCTransactionResponseAdapter.manageResponse(transfer);
+	}
+
+	async transferFrom(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+		sourceId: HederaId,
+		targetId: HederaId,
+	): Promise<TransactionResponse> {
+		const transfer = await this.precompiledCall('transferFrom', [
+			coin.coin.tokenId?.toHederaAddress().toSolidityAddress(),
+			await this.accountToEvmAddress(sourceId),
 			await this.accountToEvmAddress(targetId),
 			amount,
 		]);
@@ -963,18 +980,36 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				const coinId = TokenId.fromString(
 					coin.coin.tokenId?.value ?? '',
 				).toSolidityAddress();
-				await this.precompiledCall('mintToken', [
-					coinId,
-					params?.amount,
-					[],
-				]);
 
-				return await this.transfer(
-					coin,
-					params!.amount!,
-					this.account,
-					HederaId.from(params?.targetId),
-				);
+				const resp: TransactionResponse<any, Error> = 
+					await RPCTransactionResponseAdapter.manageResponse(
+							await this.precompiledCall('mintToken', [
+							coinId,
+							params?.amount,
+							[],
+						])
+					);
+
+				if (resp.error === undefined &&
+					coin.coin.treasury?.value !== params!.targetId?.toString()) {
+					if (coin.coin.treasury?.value === coin.account.id.value) {
+						return await this.transfer(
+							coin,
+							params!.amount!,
+							this.account,
+							HederaId.from(params?.targetId),
+						);
+					} else {
+						return await this.transferFrom(
+							coin,
+							params!.amount!,
+							coin.coin.treasury!,
+							HederaId.from(params?.targetId),
+						);							
+					}	
+				} else {
+					return resp;
+				}
 
 			case Operation.BURN:
 				return RPCTransactionResponseAdapter.manageResponse(

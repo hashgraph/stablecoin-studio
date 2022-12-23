@@ -54,12 +54,12 @@
 		"build:watch": "concurrently --kill-others --names \"ESM,CJS\" \"npx tsc -w -p tsconfig.json\" \"npx tsc -w -p tsconfig-cjs.json\"",
 		"build:release": "npm run clean && tsc -p tsconfig.release.json",
 		"lint": "eslint . --ext .ts --ext .mts",
-		"test": "npm run test:jest",
+		"test": "npx jest --coverage --forceExit",
 		"prettier": "prettier --config .prettierrc --write .",
 		"format:imports": "npx format-imports ./src",
 		"test:watch": "concurrently --kill-others \"npm run build:watch\" \"npm run test:jest:watch\"",
 		"test:jest:watch": "NODE_OPTIONS=--experimental-vm-modules npx jest --watch",
-		"test:jest": "NODE_OPTIONS=--experimental-vm-modules npx jest --ci --json --coverage --forceExit --testLocationInResults --outputFile=report.json"
+		"test:ci": "NODE_OPTIONS=--experimental-vm-modules npx jest --ci --json --coverage --forceExit --testLocationInResults --outputFile=report.json"
 	},
 	"license": "Apache-2.0",
 	"dependencies": {

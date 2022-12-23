@@ -61,7 +61,7 @@ const WipeOperation = () => {
 			onSuccess();
 		} catch (error: any) {
 			setErrorTransactionUrl(error.transactionUrl);
-			setErrorOperation(error);
+			setErrorOperation(error.toString());
 			onError();
 		}
 	};
