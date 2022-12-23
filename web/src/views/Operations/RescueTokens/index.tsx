@@ -38,8 +38,6 @@ const RescueTokenOperation = () => {
 
 	const navigate = useNavigate();
 
-	// const { decimals = 0 } = selectedStableCoin || {};
-
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
 	});
@@ -52,17 +50,14 @@ const RescueTokenOperation = () => {
 
 	useRefreshCoinInfo();
 
-	const handleRescueToken: ModalsHandlerActionsProps['onConfirm'] = async ({
-		onSuccess,
-		onError,
-		onLoading
-	}) => {
+	const handleRescueToken: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError, onLoading }) => {
 		try {
 			onLoading();
 			if (!selectedStableCoin?.proxyAddress || !selectedStableCoin?.tokenId) {
 				onError();
 				return;
 			}
+
 			await SDKService.rescue(request);
 			onSuccess();
 		} catch (error: any) {
@@ -122,10 +117,6 @@ const RescueTokenOperation = () => {
 					<DetailsReview
 						title={t('rescueTokens:modalAction.subtitle')}
 						details={[
-							{
-								label: t('rescueTokens:modalAction.originAccount'),
-								value: getValues().originAccount,
-							},
 							{
 								label: t('rescueTokens:modalAction.amount'),
 								value: getValues().amount,
