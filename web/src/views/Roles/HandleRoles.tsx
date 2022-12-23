@@ -29,6 +29,7 @@ import {
 	RevokeRoleRequest,
 	Operation,
 	GetRolesRequest,
+	Access,
 } from 'hedera-stable-coin-sdk';
 import InputController from '../../components/Form/InputController';
 import { handleRequestValidation, validateDecimalsString } from '../../utils/validationsHelper';
@@ -105,43 +106,50 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 	const operations = capabilities?.capabilities.map((x) => x.operation);
 	const filteredCapabilities = roleOptions.filter((option) => {
 		if (
-			!operations?.includes(Operation.CASH_IN) &&
+			!(operations?.includes(Operation.CASH_IN) && 
+			getAccessByOperation(Operation.CASH_IN) === Access.CONTRACT) &&  
 			option.label === 'Cash in'
 		) {
 			return false;
 		}
 		if (
-			!operations?.includes(Operation.BURN) &&
+			!(operations?.includes(Operation.BURN) && 
+			getAccessByOperation(Operation.BURN) === Access.CONTRACT) && 
 			option.label === 'Burn'
 		) {
 			return false;
 		}
 		if (
-			!operations?.includes(Operation.WIPE) &&
+			!(operations?.includes(Operation.WIPE) && 
+			getAccessByOperation(Operation.WIPE) === Access.CONTRACT) && 
 			option.label === 'Wipe'
 		) {
 			return false;
 		}
 		if (
-			!operations?.includes(Operation.PAUSE) &&
+			!(operations?.includes(Operation.PAUSE) && 
+			getAccessByOperation(Operation.PAUSE) === Access.CONTRACT) && 
 			option.label === 'Pause'
 		) {
 			return false;
 		}
 		if (
-			!operations?.includes(Operation.RESCUE) &&
+			!(operations?.includes(Operation.RESCUE) && 
+			getAccessByOperation(Operation.RESCUE) === Access.CONTRACT) && 
 			option.label === 'Rescue'
 		) {
 			return false;
 		}
 		if (
-			!operations?.includes(Operation.FREEZE) &&
+			!(operations?.includes(Operation.FREEZE) && 
+			getAccessByOperation(Operation.FREEZE) === Access.CONTRACT) && 
 			option.label === 'Freeze'
 		) {
 			return false;
 		}
 		if (
-			!operations?.includes(Operation.DELETE) &&
+			!(operations?.includes(Operation.DELETE) && 
+			getAccessByOperation(Operation.DELETE) === Access.CONTRACT) && 
 			option.label === 'Delete'
 		) {
 			return false;
@@ -375,6 +383,12 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 			onError();
 		}
 	};
+
+	function getAccessByOperation(operation: Operation): Access | undefined {
+		return capabilities?.capabilities.filter((capability) => {
+			return (capability.operation === operation);
+		})[0].access ?? undefined;
+	}
 
 	const renderSupplierQuantity = () => {
 		const { decimals = 0 } = selectedStableCoin || {};
