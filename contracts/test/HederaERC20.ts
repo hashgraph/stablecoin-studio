@@ -47,6 +47,7 @@ import {
     allowance,
     transferFrom,
     Burn,
+    transfer,
 } from '../scripts/contractsMethods'
 
 import { clientId, toEvmAddress } from '../scripts/utils'
@@ -457,7 +458,23 @@ describe('HederaERC20 Tests', function() {
             nonOperatorIsE25519,
             operatorClient
         )
-        // Reset accounts
+
+        const transferRes = await transfer(
+            ContractId,
+            proxyAddress,
+            nonOperatorAccount,
+            nonOperatorIsE25519,
+            BigNumber.from('3'),
+            operatorClient
+        )
+        const balanceResp2 = await getBalanceOf(
+            ContractId,
+            proxyAddress,
+            nonOperatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
+        Reset accounts
         await Burn(ContractId, proxyAddress, BigNumber.from(7), operatorClient)
 
         await Wipe(
@@ -481,10 +498,11 @@ describe('HederaERC20 Tests', function() {
         expect(transferFromRes).to.equals(true)
         expect(balanceResp).to.equals(3)
         expect(allowancePost).to.equals('7')
+        expect(balanceResp2).to.equals(6)
     })
 })
 
-describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
+describe.skip('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
     before(async function() {
         // Generate Client 1 and Client 2
 
