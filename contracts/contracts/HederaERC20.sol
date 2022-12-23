@@ -197,29 +197,29 @@ contract HederaERC20 is
     /**
      * @dev Function not already implemented
      */
-    function allowance(
-        address, /*owner*/
-        address /*spender*/
-    ) external pure returns (uint256) {
-        require(false, 'function not already implemented');
-        return 0;
-        // (int64 responseCode, uint256 amount) = IHederaTokenService(
-        //     precompileAddress
-        // ).allowance(_getTokenAddress(), owner, spender);
-        // return amount;
+    function allowance(address owner, address spender)
+        external
+        returns (uint256)
+    {
+        return IERC20Upgradeable(_getTokenAddress()).allowance(owner, spender);
     }
 
     /**
      * @dev Function not already implemented
      */
     function approve(address spender, uint256 amount) external returns (bool) {
-        int64 responseCode = IHederaTokenService(precompileAddress).approve(
-            _getTokenAddress(),
-            spender,
-            amount
+        (bool success, bytes memory result) = precompileAddress.delegatecall(
+            abi.encodeWithSelector(
+                IHederaTokenService.approve.selector,
+                _getTokenAddress(),
+                spender,
+                amount
+            )
         );
-        bool success = _checkResponse(responseCode);
-
+        int64 responseCode = success
+            ? abi.decode(result, (int32))
+            : HederaResponseCodes.UNKNOWN;
+        success = _checkResponse(responseCode);
         return success;
     }
 
@@ -235,10 +235,21 @@ contract HederaERC20 is
         address to,
         uint256 amount
     ) external returns (bool) {
-        int256 responseCode = IHederaTokenService(precompileAddress)
-            .transferFrom(_getTokenAddress(), from, to, amount);
-        bool response = _checkResponse(responseCode);
+        (bool success, bytes memory result) = precompileAddress.delegatecall(
+            abi.encodeWithSelector(
+                IHederaTokenService.transferFrom.selector,
+                _getTokenAddress(),
+                from,
+                to,
+                amount
+            )
+        );
+        int64 responseCode = success
+            ? abi.decode(result, (int32))
+            : HederaResponseCodes.UNKNOWN;
+        success = _checkResponse(responseCode);
         emit TokenTransfer(_getTokenAddress(), from, to, amount);
-        return response;
+
+        return success;
     }
 }

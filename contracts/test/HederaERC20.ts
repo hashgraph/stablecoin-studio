@@ -45,6 +45,8 @@ import {
     getProxyImplementation,
     approve,
     allowance,
+    transferFrom,
+    Burn,
 } from '../scripts/contractsMethods'
 
 import { clientId, toEvmAddress } from '../scripts/utils'
@@ -396,14 +398,29 @@ describe('HederaERC20 Tests', function() {
     })
 
     it('Check transfer from', async () => {
-        const AMOUNT = '10'
+        const AMOUNT = BigNumber.from(10)
+        await associateToken(
+            ContractId,
+            proxyAddress,
+            nonOperatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
         const approveRes = await approve(
             ContractId,
             proxyAddress,
             nonOperatorAccount,
             nonOperatorIsE25519,
-            BigNumber.from(AMOUNT),
+            AMOUNT,
             operatorClient
+        )
+        await Mint(
+            ContractId,
+            proxyAddress,
+            AMOUNT,
+            operatorClient,
+            operatorAccount,
+            operatorIsE25519
         )
         const allowanceRes = await allowance(
             ContractId,
@@ -414,10 +431,56 @@ describe('HederaERC20 Tests', function() {
             nonOperatorIsE25519,
             operatorClient
         )
+        const transferFromRes = await transferFrom(
+            ContractId,
+            proxyAddress,
+            operatorAccount,
+            operatorIsE25519,
+            nonOperatorAccount,
+            nonOperatorIsE25519,
+            BigNumber.from('3'),
+            nonOperatorClient
+        )
+        const balanceResp = await getBalanceOf(
+            ContractId,
+            proxyAddress,
+            nonOperatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
+        const allowancePost = await allowance(
+            ContractId,
+            proxyAddress,
+            operatorAccount,
+            operatorIsE25519,
+            nonOperatorAccount,
+            nonOperatorIsE25519,
+            operatorClient
+        )
+        // Reset accounts
+        await Burn(ContractId, proxyAddress, BigNumber.from(7), operatorClient)
 
-        console.log(approveRes)
-        console.log(allowanceRes)
+        await Wipe(
+            ContractId,
+            proxyAddress,
+            BigNumber.from(3),
+            operatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
+        await dissociateToken(
+            ContractId,
+            proxyAddress,
+            nonOperatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
+
+        expect(approveRes).to.equals(true)
         expect(allowanceRes).to.equals(AMOUNT)
+        expect(transferFromRes).to.equals(true)
+        expect(balanceResp).to.equals(3)
+        expect(allowancePost).to.equals('7')
     })
 })
 
