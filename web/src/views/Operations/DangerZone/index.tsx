@@ -96,22 +96,23 @@ const DangerZoneOperations = () => {
 				? (!canPause || (canPause && selectedStableCoin?.paused)) ?? false
 				: (!operations?.includes(Operation.PAUSE) ||
 				  (operations?.includes(Operation.PAUSE) && (getAccessByOperation(Operation.PAUSE) !== Access.HTS) && 
-				   !roles.includes(StableCoinRole.PAUSE_ROLE)) &&
+				   !roles.includes(StableCoinRole.PAUSE_ROLE)) ||
 				   selectedStableCoin?.paused) ?? 
 				   false,
 			unpause: !isExternalToken
 				? (!canPause || (canPause && !selectedStableCoin?.paused)) ?? false
 				: (!operations?.includes(Operation.PAUSE) ||
 				  (operations?.includes(Operation.PAUSE) && (getAccessByOperation(Operation.PAUSE) !== Access.HTS) && 
-				   !roles.includes(StableCoinRole.PAUSE_ROLE)) &&
+				   !roles.includes(StableCoinRole.PAUSE_ROLE)) ||
 				   !selectedStableCoin?.paused) ??
 				   false,
 			delete: !isExternalToken
 				? (!canPause || (selectedStableCoin?.paused || selectedStableCoin?.deleted)) ?? false
 				: (!operations?.includes(Operation.DELETE) ||
 				  (operations?.includes(Operation.DELETE) && (getAccessByOperation(Operation.DELETE) !== Access.HTS) && 
-				   !roles.includes(StableCoinRole.DELETE_ROLE)) &&
-				  (!selectedStableCoin?.paused || !selectedStableCoin?.deleted)) ?? 
+				   !roles.includes(StableCoinRole.DELETE_ROLE)) ||
+				   selectedStableCoin?.paused || 
+				   selectedStableCoin?.deleted) ?? 
 				false
 		};
 

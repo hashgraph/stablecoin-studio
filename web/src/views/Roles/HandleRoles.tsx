@@ -277,7 +277,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 						}),
 					);
 
-					if (alreadyHasRole) {
+					if (!alreadyHasRole) {
 						setModalErrorDescription('hasNotRoleError');
 						onWarning();
 						return;

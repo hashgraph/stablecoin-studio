@@ -439,12 +439,14 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					`StableCoin ${coin.coin.name} does not have a proxy address`,
 				);
 
+			const res = await HederaERC20__factory.connect(
+				coin.coin.evmProxyAddress,
+				this.signerOrProvider,
+			).hasRole(role, this.accountToEvmAddress(targetId));			
+			
 			return new TransactionResponse(
 				undefined,
-				await HederaERC20__factory.connect(
-					coin.coin.evmProxyAddress,
-					this.signerOrProvider,
-				).hasRole(role, this.accountToEvmAddress(targetId)),
+				res.valueOf(),
 			);
 		} catch (error) {
 			throw new Error('Error');
