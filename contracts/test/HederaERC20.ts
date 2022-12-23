@@ -474,7 +474,7 @@ describe('HederaERC20 Tests', function() {
             nonOperatorAccount,
             nonOperatorIsE25519
         )
-        Reset accounts
+        // Reset accounts
         await Burn(ContractId, proxyAddress, BigNumber.from(7), operatorClient)
 
         await Wipe(
