@@ -217,7 +217,9 @@ const CoinDropdown = () => {
 				styles={styles}
 				name='coin-dropdown'
 				options={options}
-				placeholder={t('topbar.coinDropdown.placeholder')}
+				placeholder={selectedStableCoin? 
+					selectedStableCoin.tokenId + " - " + selectedStableCoin.symbol 
+					: t('topbar.coinDropdown.placeholder')}
 				iconStyles={{ color: 'brand.primary200' }}
 				onChangeAux={handleSelectCoin}
 				noOptionsMessage={handleNoOptionsMessage}
