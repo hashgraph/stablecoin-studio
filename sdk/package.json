@@ -64,7 +64,7 @@
 	"license": "Apache-2.0",
 	"dependencies": {
 		"@hashgraph/hethers": "^1.2.2",
-		"@hashgraph/sdk": "^2.18.5",
+		"@hashgraph/sdk": "2.18.5",
 		"fast-safe-stringify": "^2.1.1",
 		"@metamask/detect-provider": "^2.0.0",
 		"@metamask/providers": "^10.2.1",

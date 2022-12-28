@@ -64,9 +64,10 @@ const CashInOperation = () => {
 			await SDKService.cashIn(request);
 			onSuccess();
 		} catch (error: any) {
-			setErrorTransactionUrl(error.transactionUrl);
-			setErrorOperation(error.toString());
-
+			if(error !== undefined){
+				if(error.transactionUrl !== undefined)setErrorTransactionUrl(error.transactionUrl);
+				setErrorOperation(error.toString());
+			}
 			onError();
 		}
 	};

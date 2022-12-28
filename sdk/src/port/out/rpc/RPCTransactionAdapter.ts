@@ -50,6 +50,7 @@ import { SupportedWallets } from '../../../domain/context/network/Wallet.js';
 import { RPCTransactionResponseAdapter } from './RPCTransactionResponseAdapter.js';
 import LogService from '../../../app/service/LogService.js';
 import { WalletConnectRejectedError } from '../../../domain/context/network/error/WalletConnectRejectedError.js';
+import { TransactionResponseError } from '../error/TransactionResponseError.js';
 
 // eslint-disable-next-line no-var
 declare var ethereum: MetaMaskInpageProvider;
@@ -875,8 +876,12 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			}
 		} catch (error) {
 			// should throw RPCHandlerError
-			throw new Error(
-				`Unexpected error in RPCTransactionHandler ${operation} operation : ${error}`,
+			throw new TransactionResponse(
+				undefined,
+				undefined,
+				new TransactionResponseError({
+						message: `Unexpected error in RPCTransactionHandler ${operation} operation : ${error}`,
+				})
 			);
 		}
 	}
