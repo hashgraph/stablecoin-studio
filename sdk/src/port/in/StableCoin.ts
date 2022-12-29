@@ -250,7 +250,7 @@ class StableCoinInPort implements IStableCoinInPort {
 			}),
 			HederaId.from(request.tokenId),
 			request.tokenIsPaused,
-			request.tokenIsDeleted
+			request.tokenIsDeleted,
 		);
 	}
 

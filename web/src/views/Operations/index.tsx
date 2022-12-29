@@ -17,14 +17,13 @@ import type { IExternalToken } from '../../interfaces/IExternalToken';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useRefreshCoinInfo } from '../../hooks/useRefreshCoinInfo';
 import { Access, Operation, StableCoinRole } from 'hedera-stable-coin-sdk';
-import type { StableCoinCapabilities } from 'hedera-stable-coin-sdk';
 
 const Operations = () => {
 	const { t } = useTranslation('operations');
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const accountId = useSelector(SELECTED_WALLET_PAIRED_ACCOUNTID);
-	const capabilities: StableCoinCapabilities | undefined = useSelector(
+	const capabilities = useSelector(
 		SELECTED_WALLET_CAPABILITIES,
 	);
 
@@ -45,7 +44,7 @@ const Operations = () => {
 		if (selectedStableCoin) {
 			getAvailableFeatures();
 		}
-	}, [selectedStableCoin]);
+	}, [selectedStableCoin, capabilities]);
 
 	const getAvailableFeatures = () => {
 		let isExternalToken = false;
