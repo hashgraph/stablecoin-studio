@@ -3,11 +3,12 @@ import { useTranslation } from 'react-i18next';
 import BaseContainer from '../../../components/BaseContainer';
 import GridDirectAction from '../../../components/GridDirectAction';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
 	SELECTED_WALLET_CAPABILITIES,
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNTID,
+	walletActions,
 } from '../../../store/slices/walletSlice';
 import type { DirectActionProps } from '../../../components/DirectAction';
 import type { StableCoinCapabilities } from 'hedera-stable-coin-sdk';
@@ -30,6 +31,7 @@ const DangerZoneOperations = () => {
 	const { t } = useTranslation('operations');
 
 	const navigate = useNavigate();
+	const dispatch = useDispatch();
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const accountId = useSelector(SELECTED_WALLET_PAIRED_ACCOUNTID);
@@ -134,12 +136,7 @@ const DangerZoneOperations = () => {
 			}
 
 			await SDKService.pause(requestPause);
-			setDisabledFeatures({
-				...disabledFeatures,
-				pause: !disabledFeatures.pause,
-				unpause: !disabledFeatures.unpause,
-				delete: true,
-			});
+			dispatch(walletActions.setPausedToken(true));
 			onSuccess();
 		} catch (error: any) {
 			setErrorTransactionUrl(error.transactionUrl);
@@ -157,11 +154,7 @@ const DangerZoneOperations = () => {
 			}
 
 			await SDKService.unpause(requestPause);
-			setDisabledFeatures({
-				...disabledFeatures,
-				pause: !disabledFeatures.pause,
-				unpause: !disabledFeatures.unpause,
-			});
+			dispatch(walletActions.setPausedToken(false));
 			onSuccess();
 		} catch (error: any) {
 			setErrorTransactionUrl(error.transactionUrl);
@@ -179,13 +172,8 @@ const DangerZoneOperations = () => {
 			}
 
 			await SDKService.delete(requestDelete);
-			setDisabledFeatures({
-				...disabledFeatures,
-				pause: true,
-				unpause: true,
-				delete: true,
-			});
 			onSuccess();
+			dispatch(walletActions.setDeletedToken(true));
 			RouterManager.to(navigate, NamedRoutes.Operations);
 		} catch (error: any) {
 			setErrorTransactionUrl(error.transactionUrl);

@@ -140,14 +140,20 @@ export class SDKService {
 	public static async getCapabilities({
 		account,
 		tokenId,
+		tokenIsPaused = false,
+		tokenIsDeleted = false,
 	}: {
 		account: RequestAccount;
 		tokenId: string;
+		tokenIsPaused?: boolean;
+		tokenIsDeleted?: boolean;
 	}): Promise<StableCoinCapabilities | null> {
 		return await StableCoin.capabilities(
 			new CapabilitiesRequest({
 				account,
 				tokenId,
+				tokenIsPaused,
+				tokenIsDeleted,
 			}),
 		);
 	}

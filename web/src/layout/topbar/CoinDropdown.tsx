@@ -17,6 +17,8 @@ import {
 	SELECTED_WALLET_PAIRED_ACCOUNTID,
 	STABLE_COIN_LIST,
 	walletActions,
+	SELECTED_TOKEN_DELETED,
+	SELECTED_TOKEN_PAUSED,
 } from '../../store/slices/walletSlice';
 import { RouterManager } from '../../Router/RouterManager';
 import { matchPath, useLocation, useNavigate } from 'react-router-dom';
@@ -39,6 +41,8 @@ const CoinDropdown = () => {
 	const accountId = useSelector(SELECTED_WALLET_PAIRED_ACCOUNTID);
 	const capabilities = useSelector(SELECTED_WALLET_CAPABILITIES);
 	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
+	const tokenIsPaused = useSelector(SELECTED_TOKEN_PAUSED);
+	const tokenIsDeleted =useSelector(SELECTED_TOKEN_DELETED);
 
 	const [options, setOptions] = useState<Option[]>([]);
 
@@ -92,6 +96,8 @@ const CoinDropdown = () => {
 				accountId: accountInfo.id,
 				evmAddress: accountInfo.accountEvmAddress,
 			},
+			tokenIsDeleted,
+			tokenIsPaused
 		});
 		dispatch(walletActions.setCapabilities(capabilities));
 	};
@@ -139,6 +145,8 @@ const CoinDropdown = () => {
 				id: selectedCoin,
 			}),
 		);
+		dispatch(walletActions.setDeletedToken(false));
+		dispatch(walletActions.setPausedToken(false));
 
 		dispatch(
 			walletActions.setSelectedStableCoin({
