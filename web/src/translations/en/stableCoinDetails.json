@@ -18,6 +18,7 @@
 	"freezeKey": "Freeze key",
 	"wipeKey": "Wipe key",
 	"supplyKey": "Supply key",
+	"pauseKey": "Pause key",
 	"none": "None",
 	"smartContract": "Smart contract",
 	"currentUser": "Current user",
