@@ -140,6 +140,12 @@ const StableCoinDetails = () => {
 										key: selectedStableCoin?.supplyKey as any,
 									}),
 								},
+								{
+									label: t('pauseKey'),
+									value: renderKeys({
+										key: selectedStableCoin?.pauseKey as any,
+									}),
+								},
 							]}
 						/>
 					</Box>

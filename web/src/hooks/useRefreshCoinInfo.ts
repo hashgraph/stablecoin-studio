@@ -39,6 +39,7 @@ export const useRefreshCoinInfo = async (): Promise<void> => {
 				freezeKey: resp?.freezeKey?.toString() && JSON.parse(JSON.stringify(resp.freezeKey)),
 				wipeKey: resp?.wipeKey?.toString() && JSON.parse(JSON.stringify(resp.wipeKey)),
 				supplyKey: resp?.supplyKey?.toString() && JSON.parse(JSON.stringify(resp.supplyKey)),
+				pauseKey: resp?.pauseKey?.toString() && JSON.parse(JSON.stringify(resp.pauseKey)),
 			}),
 		);
 	};
