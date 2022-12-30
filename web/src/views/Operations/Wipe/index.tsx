@@ -10,7 +10,7 @@ import ModalsHandler from '../../../components/ModalsHandler';
 import SDKService from '../../../services/SDKService';
 import { SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
 
-import { handleRequestValidation } from '../../../utils/validationsHelper';
+import { handleRequestValidation, validateDecimalsString } from '../../../utils/validationsHelper';
 import OperationLayout from './../OperationLayout';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
@@ -25,6 +25,7 @@ const WipeOperation = () => {
 	} = useDisclosure();
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
+	const { decimals = 0 } = selectedStableCoin || {};
 
 	const [errorOperation, setErrorOperation] = useState();
 	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
@@ -82,6 +83,12 @@ const WipeOperation = () => {
 								rules={{
 									required: t(`global:validations.required`),
 									validate: {
+										validDecimals: (value: string) => {
+											return (
+												validateDecimalsString(value, decimals) ||
+												t('global:validations.decimalsValidation')
+											);
+										},
 										validation: (value: string) => {
 											// return request.validate('amount') || t('wipe:decimalsValidation');
 											request.amount = value;

@@ -6,7 +6,7 @@ import InputController from '../../../components/Form/InputController';
 import OperationLayout from '../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
-import { handleRequestValidation } from '../../../utils/validationsHelper';
+import { handleRequestValidation, validateDecimalsString } from '../../../utils/validationsHelper';
 import { useSelector } from 'react-redux';
 import { SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
 import SDKService from '../../../services/SDKService';
@@ -26,6 +26,7 @@ const RescueTokenOperation = () => {
 	} = useDisclosure();
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
+	const { decimals = 0 } = selectedStableCoin || {};
 
 	const [errorOperation, setErrorOperation] = useState();
 	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
@@ -83,6 +84,12 @@ const RescueTokenOperation = () => {
 								rules={{
 									required: t(`global:validations.required`),
 									validate: {
+										validDecimals: (value: string) => {
+											return (
+												validateDecimalsString(value, decimals) ||
+												t('global:validations.decimalsValidation')
+											);
+										},
 										validation: (value: string) => {
 											request.amount = value;
 											const res = handleRequestValidation(request.validate('amount'));
