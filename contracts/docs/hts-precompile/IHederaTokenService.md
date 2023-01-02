@@ -13,7 +13,7 @@
 ### allowance
 
 ```solidity
-function allowance(address token, address owner, address spender) external nonpayable returns (int64 responseCode, uint256 allowance)
+function allowance(address token, address owner, address spender) external view returns (int64 responseCode, uint256 allowance)
 ```
 
 Returns the amount which spender is still allowed to withdraw from owner. Only Applicable to Fungible Tokens
