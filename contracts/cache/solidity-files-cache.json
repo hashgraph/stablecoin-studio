@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/sergio/Dev/hedera-accelerator-stablecoin/contracts/contracts/HederaERC20.sol": {
-      "lastModificationDate": 1671699158423,
-      "contentHash": "a0294f3d6a91dbc3cd009480ee291a11",
+      "lastModificationDate": 1672674441102,
+      "contentHash": "978eebd11de6fb59d3c9b73e6d9a5761",
       "sourceName": "contracts/HederaERC20.sol",
       "solcConfig": {
         "version": "0.8.10",
