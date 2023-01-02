@@ -88,7 +88,28 @@ The Wallets currently supported by the project are [Hashpack](https://www.hashpa
 ### Create stable coins
 ![Alt text](docs/images/create.png?raw=true 'create stable coin')
 
-In order to create a new stable coin using the WEB, you must click on the "Create Coin" button at the top of the page then fill-in all the required information.
+In order to create a new stable coin using the WEB, you must click on the "Create Coin" button at the top of the page then fill-in all the required information :
+
+**Basic details**
+Basic information about the Stable coin.
+
+![image](https://user-images.githubusercontent.com/114951681/210237528-85f9a88b-6593-4e2a-92b6-f869d4f4d52a.png)
+
+**Optional details**
+Stable coin supply and accuracy definition (inital supply, max supply, decimals)
+
+![image](https://user-images.githubusercontent.com/114951681/210237700-226bcc17-7986-426c-adab-a72de0e82d2e.png)
+
+**Manage permissions**
+Underlying token's keys definition (stable coin smart contract or another account)
+
+![image](https://user-images.githubusercontent.com/114951681/210237760-ee1f83fc-3ddf-48be-8661-8a4ab4aa83df.png)
+
+**Review**
+Final validation before creating the stable coin.
+
+![image](https://user-images.githubusercontent.com/114951681/210238265-5047651b-6c5b-431c-a5d3-0b26fdb18df3.png)
+
 Once the stable coin is created it will be added to the drop-down list of coins you have access to (with the account you used to create the stable coin).
 
 ### Import stable coins
