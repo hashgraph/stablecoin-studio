@@ -42,8 +42,7 @@ const OperationLayout = ({ LeftContent, onConfirm, confirmBtnProps }: OperationL
 		},
 		{
 			label: t('operations:details.supplyType'),
-			// @ts-ignore Property 'supplyType' does not exist on type 'IStableCoinDetail'.
-			value: selectedStableCoin?.maxSupply === '0.00'
+			value: selectedStableCoin?.maxSupply?.isZero()
 				? t('operations:details.infinite')
 				: t('operations:details.finite'),
 		},
@@ -60,8 +59,7 @@ const OperationLayout = ({ LeftContent, onConfirm, confirmBtnProps }: OperationL
 		},
 		{
 			label: t('operations:details.supplyType'),
-			// @ts-ignore Property 'supplyType' does not exist on type 'IStableCoinDetail'.
-			value: selectedStableCoin?.maxSupply === '0.00'
+			value: selectedStableCoin?.maxSupply?.isZero()
 				? t('operations:details.infinite')
 				: t('operations:details.finite'),
 		},

@@ -145,8 +145,8 @@ const CoinDropdown = () => {
 				id: selectedCoin,
 			}),
 		);
-		dispatch(walletActions.setDeletedToken(false));
-		dispatch(walletActions.setPausedToken(false));
+		dispatch(walletActions.setDeletedToken(undefined));
+		dispatch(walletActions.setPausedToken(undefined));
 
 		dispatch(
 			walletActions.setSelectedStableCoin({

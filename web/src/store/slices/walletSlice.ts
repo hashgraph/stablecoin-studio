@@ -26,8 +26,8 @@ export interface InitialStateProps {
 	capabilities?: StableCoinCapabilities | undefined;
 	lastWallet?: SupportedWallets;
 	status: ConnectionState;
-	deletedToken: boolean;
-	pausedToken: boolean;
+	deletedToken?: boolean;
+	pausedToken?: boolean;
 }
 
 export const initialState: InitialStateProps = {
@@ -42,8 +42,8 @@ export const initialState: InitialStateProps = {
 	capabilities: undefined,
 	lastWallet: (localStorage?.getItem('lastWallet') as SupportedWallets) ?? undefined,
 	status: ConnectionState.Disconnected,
-	deletedToken: false,
-	pausedToken: false,
+	deletedToken: undefined,
+	pausedToken: undefined,
 };
 
 export const getStableCoinList = createAsyncThunk(

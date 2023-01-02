@@ -13,7 +13,7 @@ const StableCoinDetails = () => {
 	const { t } = useTranslation('stableCoinDetails');
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
-	const account = useSelector(SELECTED_WALLET_ACCOUNT_INFO)
+	const account = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 
 	useRefreshCoinInfo();
 
