@@ -542,7 +542,7 @@ interface IHederaTokenService {
         address token,
         address owner,
         address spender
-    ) external returns (int64 responseCode, uint256 allowance);
+    ) external view returns (int64 responseCode, uint256 allowance);
 
     /// Allow or reaffirm the approved address to transfer an NFT the approved address does not own.
     /// Only Applicable to NFT Tokens

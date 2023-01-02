@@ -250,7 +250,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	async cashin(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
-		amount: BigDecimal
+		amount: BigDecimal,
 	): Promise<TransactionResponse> {
 		const params = new Params({
 			targetId: targetId.toString(),
@@ -796,37 +796,45 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	}
 
 	private registerMetamaskEvents(): void {
-		if (typeof window === 'undefined' || !ethereum) return;
-		ethereum.on('accountsChanged', async (acct) => {
-			const accounts = acct as string[];
-			if (
-				accounts.length > 0 &&
-				this.account &&
-				accounts[0] !== this.account.evmAddress
-			) {
-				const mirrorAccount =
-					await this.mirrorNodeAdapter.getAccountInfo(accounts[0]);
-				if (mirrorAccount.id) {
-					this.account = new Account({
-						id: mirrorAccount.id,
-						evmAddress: mirrorAccount.accountEvmAddress,
-						publicKey: mirrorAccount.publicKey,
+		try {
+			if (typeof window === 'undefined' || !(window as any)?.ethereum) return;
+			ethereum.on('accountsChanged', async (acct) => {
+				const accounts = acct as string[];
+				if (
+					accounts.length > 0 &&
+					this.account &&
+					accounts[0] !== this.account.evmAddress
+				) {
+					const mirrorAccount =
+						await this.mirrorNodeAdapter.getAccountInfo(
+							accounts[0],
+						);
+					if (mirrorAccount.id) {
+						this.account = new Account({
+							id: mirrorAccount.id,
+							evmAddress: mirrorAccount.accountEvmAddress,
+							publicKey: mirrorAccount.publicKey,
+						});
+					}
+					this.eventService.emit(WalletEvents.walletPaired, {
+						data: {
+							account: this.account,
+						},
+						network: this.networkService.environment,
+						wallet: SupportedWallets.METAMASK,
+					});
+				} else {
+					LogService.logTrace(
+						'Metamask disconnected from the wallet',
+					);
+					this.eventService.emit(WalletEvents.walletDisconnect, {
+						wallet: SupportedWallets.METAMASK,
 					});
 				}
-				this.eventService.emit(WalletEvents.walletPaired, {
-					data: {
-						account: this.account,
-					},
-					network: this.networkService.environment,
-					wallet: SupportedWallets.METAMASK,
-				});
-			} else {
-				LogService.logTrace('Metamask disconnected from the wallet');
-				this.eventService.emit(WalletEvents.walletDisconnect, {
-					wallet: SupportedWallets.METAMASK,
-				});
-			}
-		});
+			});
+		} catch (error) {
+			throw new WalletConnectError('Ethereum is not defined');
+		}
 	}
 
 	async performOperation(

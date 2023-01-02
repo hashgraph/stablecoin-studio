@@ -197,11 +197,16 @@ contract HederaERC20 is
     /**
      * @dev Function not already implemented
      */
-    function allowance(address owner, address spender)
-        external
-        returns (uint256)
-    {
-        return IERC20Upgradeable(_getTokenAddress()).allowance(owner, spender);
+    function allowance(
+        address owner,
+        address spender
+    ) external view returns (uint256) {
+        // require(false, 'function not already implemented');
+        // return 0;
+        (, uint256 amount) = IHederaTokenService(
+            precompileAddress
+        ).allowance(_getTokenAddress(), owner, spender);
+        return amount;
     }
 
     /**
