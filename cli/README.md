@@ -43,7 +43,7 @@ You must have installed
 - [Node.js](https://nodejs.org/) `>= v16.13` and `< v17`
 - [npm](https://www.npmjs.com/)
 
-You must have installed and built
+Then you must install and build the following projects : 
 
 1. [Contracts installation](https://github.com/hashgraph/hedera-accelerator-stablecoin/blob/main/contracts/README.md#installation)
 2. [SDK installation](https://github.com/hashgraph/hedera-accelerator-stablecoin/blob/main/sdk/README.md#installation)
