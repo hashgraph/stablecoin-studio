@@ -20,7 +20,7 @@
 -   **[Deploy](#Deploy)**<br>
     -   [Deploy Factory](#Deploy-Factory)<br>
     -   [Create Stable Coins](#Create-Stable-Coins)<br>
--   **[Upgrade](#Test)**<br>
+-   **[Upgrade](#Upgrade)**<br>
     -   [Upgrade Factory](#Upgrade-Factory)<br>
     -   [Ugrade Stable Coins](#Ugrade-Stable-Coins)<br>
 -   **[Generate Documentation](#Generate-Documentation)**<br>
