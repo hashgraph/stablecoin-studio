@@ -6,6 +6,30 @@
 
 </div>
 
+### Table of contents
+
+- [Overview](#overview)
+- [Build](#build)
+  - [Pre-requirements](#pre-requirements)
+  - [Steps](#steps)
+- [Quickstart](#quickstart)
+  - [First run](#first-run)
+- [Usage](#usage)
+  - [Config file](#config-file)
+  - [CLI flow](#cli-flow)
+    - [Main menu](#main-menu)
+      - [Create a new Stable Coin](#create-a-new-stable-coin)
+      - [Manage imported tokens](#manage-imported-tokens)
+      - [Operate with stable coin](#operate-with-stable-coin)
+      - [List Stable Coins](#list-stable-coins)
+      - [Configuration](#configuration)
+  - [Testing](#testing)
+    - [Jest](#jest)
+    - [Run](#run)
+- [Contributing](#contributing)
+- [Code of Conduct](#code-of-conduct)
+- [License](#license)
+
 ## Overview
 
 Implementation of an Stable Coin Accelerator SDK for Command Line Interface (CLI).
@@ -214,11 +238,6 @@ Tests may be run using the following command
 ```shell
 npm run test
 ```
-
-# Support
-
-If you have a question on how to use the product, please see our
-[support guide](https://github.com/hashgraph/.github/blob/main/SUPPORT.md).
 
 # Contributing
 
