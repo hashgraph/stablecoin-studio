@@ -55,6 +55,10 @@ Finally, in order to build the project, go to the root of the WEB project worksp
 
 ## ENV vars
 
+The ENV file contains the following parameters:
+
+- **REACT_APP_LOG_LEVEL**: defines the log level the application is going to apply to filter the logs been displayed in the browser's console. The default value is "TRACE".
+
 ## Starting the UI
 
 ```shell
