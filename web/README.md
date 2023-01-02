@@ -71,7 +71,7 @@ If you want to switch to another compatible wallet, you can do it at any time by
 
 ## Supported Wallets
 
-The Wallets currently supported by the project are [Hashpack](https://www.hashpack.app/) and [Metamask](https://www.hashpack.app/)
+The Wallets currently supported by the project are [Hashpack](https://www.hashpack.app/) and [Metamask](https://metamask.io/)
 
 > In order to use the WEB correctly it is necessary to have at least one of those two wallets already installed in your browser. You can nevertheless have both and switch from one to the other.
 
