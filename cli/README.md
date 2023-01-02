@@ -61,7 +61,7 @@ From the root of the CLI project workspace:
 
 ## Starting the CLI
 
-First time you execute the `npm accelerator wizard` command in your terminal, if you haven't added your default configuration path the interface will ask you wether you want create a new configuration file in the default path. When the configuration file is created you must configure the default network and at least, one default account. This account could be created through [HashPack](https://www.hashpack.app/download) or [Hedera Developer Portal](https://portal.hedera.com/register).
+The first time you execute the `npm accelerator wizard` command in your terminal, if you haven't added your default configuration path the interface will ask you wether you want create a new configuration file in the default path. When the configuration file is created you must configure the default network and add a default account. In order to create the default account you can use [HashPack](https://www.hashpack.app/download) or the [Hedera Developer Portal](https://portal.hedera.com/register).
 
 https://user-images.githubusercontent.com/102601367/205074337-a1f09813-9434-42e9-972b-1c40655bb1d1.mov
 
@@ -69,7 +69,7 @@ _Note that for testing purpose you should create a **Testnet** account instead o
 
 # Usage
 
-To use the CLI correctly it is necessary to generate a configuration file in which the default network and the accounts with which you want to operate in the network will be indicated. These parameters can be modified later on, from the CLI.
+To use the CLI correctly it is necessary to generate a configuration file in which the default network and the accounts with which you want to operate in the network will be included. These parameters can be modified later on, from the CLI.
 
 ## Creating a config file
 
@@ -135,32 +135,34 @@ hederaERC20s: [
 
 ![Alt text](docs/images/CLI-flow.png?raw=true 'CLI flow')
 
-When the CLI is started with the configuration file properly configured. The first action will be to select the account you want to operate with. By default, the list of configured accounts belonging to the default network indicated in the file is displayed.
+When the CLI is started with the configuration file properly configured. The first action will be to select the account you want to operate with. By default, the list of configured accounts belonging to the default network indicated in the configuration file is displayed.
 
 If there are no accounts in the file for the default network, a warning message will be displayed and a list of all the accounts in the file will be shown.
 
-When an account is selected, the main menu (shown in the previous image) is accessed. It will operate in the network to which the account belongs.
+When an account is selected, the main menu (shown in the previous image) is displayed. The network the account belongs to will be set.
 
 ### Main menu
 
-When your configuration file is set up and at lest one account is added and selected, you are able to see the differents options that are availables.
+When your configuration file is set up and at least one account is added and selected, you are able to see the differents options that are available.
 
 #### Create a new Stable Coin
 
-With this option you are able to create a new stable coin adding the mandatory details like Name, Symbol and Autorenew account. Autorenew account in that case should be the same like the user current account.
+With this option you are able to create a new stable coin adding the mandatory details like Name, Symbol and Autorenew account. 
 
-After the minimum details has been added, you have been asked if you want to add optional details like the number of decimals places a token is divisibly by, initial supply or max supply. If you say no, you will be set the default values.
+> The autorenew account must be the user's current account otherwise the stable coin creation will not work, this is due to the fact that the autorenew account must sign the underlying token's creation transaction and currently we do not support multi-signatures transactions.
 
-Another question is prompt asking if you would like that smart contracts will be used for role management. This feature is only available when the smart contract keys are set for some of the following token options: supply, wipe, freeze, pause, delete. If you let the smart contract to execute this operation, you are able to grant and revoke this features to other accounts. By default, the user that creates the stable coin are granted with all the roles only if the smartContract is the owner for all the operations.
+After the minimum details have been added, you will be asked if you want to add optional details like the number of decimals, the initial supply or the max supply. If you reply "no", the default values will be set.
 
-Wether you asnwer "No" to the last questions, you will be prompted with an individual answer for all keys: admin key, supply key, wipe key, freeze key. For each one you can select the SmartContract, the current user key, other publick key o None. When you select the "user current key" or another "public key", the users that their keys matches with the specific feature, could perform the actions through HTS instead of SmartContract.
+Another question is prompt asking if you would like the smart contract to be set as the owner of all the underlying token keys (admin, wipe, ...), you could however set any account you wish as the owner of any token key.
+If you set the smart contract as a key owner, you will be able to grant and revoke this capacity to any other account, since it is the smart contract that will be ultimately controlling the underlying token. 
+The user that creates the stable coin is granted all the roles if the smart contract is the owner of all the underlying token's keys.
 
-When you have added an existing stable coin, you will able to operate with the roles that the admin granted to you. If after you added the stable coin the admin granted to you another one, you can update the roles that you have.
+When you add an existing stable coin, you will able to operate with the roles that the stable coin's admin granted you. If after adding a stable coin you are granted other roles, you will have the possibility to refresh the stable coin's roles that you have.
 
-Once the request is ready, the CLI will extract from the configuration file the factory and HederaERC20 contracts based on the network you are working on.
-The request as well as the factory and HederaERC20 contract's addresses will be submitted to the SDK that will use them to deploy the stable coin.
+Once the request is ready, the CLI will extract from the configuration file the factory and HederaERC20 contracts addresses for the network you are working on.
+The request will then be submitted to the SDK and the stable coin will be created.
 
-> When the configuration file is first created, the factory and HederaERC20 contracts added to the "testnet" network are the default ones (contracts deployed and maintained by IoBuilders). However users are free to deploy and use their own contract, in order to do that, the configuration file must be updated with the new factory and/or HederaERC20 contract' addresses.
+> When the configuration file is first created, the factory and HederaERC20 contracts added to the "testnet" network are the default ones (contracts deployed and maintained by IoBuilders). However users are free to deploy and use their own contracts, in order to do that, the configuration file must be updated with the new factory and/or HederaERC20 contract' addresses.
 
 https://user-images.githubusercontent.com/102601367/205074369-b3a72bb2-61f9-421a-9738-abb1ca65375e.mov
 
@@ -174,9 +176,9 @@ Stable coins that we have not created with our account but for which we have bee
 
 #### Operate with stable coin
 
-Once a stable coin is created or added, you can operate with it.
+Once a stable coin is created or added, you can operate it.
 
-The following list has all the possible operations which the user will can perform wether they has the role to do it.
+The following list contains all the possible operations an user can perform if he/she has the appropriate role.
 
 - **Cash in**: Min tokens and transfer to an account
 
@@ -192,16 +194,16 @@ https://user-images.githubusercontent.com/102601367/205074150-4f35c38d-998b-423a
 
 https://user-images.githubusercontent.com/102601367/205074204-d7f0def7-ffbd-416a-8263-608a49c41708.mov
 
-- **Rescue**: Transfer tokens from the treasury account to the rescue account. This option is only available through the smart contract
+- **Rescue**: Transfer tokens from the treasury account to a rescue account. This option is only available through the smart contract
 
 https://user-images.githubusercontent.com/102601367/205074235-32145a1b-4ce0-4913-bd18-1252ecff52d6.mov
 
-- **Freeze**: Freeze an account. This option freeze transfers of the specified token for the account.
-- **Unfreeze**: Unfreeze an account. This option unfreeze transfers of the specified token for the account.
+- **Freeze**: Freeze an account. If an account is frozen, it will not be able to transfer any tokens.
+- **Unfreeze**: Unfreeze an account. If an account is unfrozen it will be able to transfer tokens again.
 
 https://user-images.githubusercontent.com/102601367/205074293-73156a99-fc65-41ba-9a45-0be08ca5837e.mov
 
-- **Role management**: Administrators of a stable coin are able to manage user roles from this menu, being able to give, revoke and edit roles.
+- **Role management**: Administrators of a stable coin can manage user roles from this menu, the will have the posibility to give, revoke and edit roles.
 
   - The available roles are:
     - CASHIN_ROLE
@@ -212,16 +214,18 @@ https://user-images.githubusercontent.com/102601367/205074293-73156a99-fc65-41ba
     - FREEZE_ROLE
     - DELETE_ROLE
 
-- **Danger Zone**: This section contains the stable coin operations that can be performed that are particularily "dangerous" either because they affect every single token owner (PAUSE) or because they can not be rolled-back (DELETE).
-  For security reasons these operations are grouped in a "sub-menu" so that users do not run them by mistake. - **Un/Pause**: Pause and unpause prevents the token from being involved in any kind of operations. - **Delete**: Marks a token as deleted. This actions cannot be undone.
+- **Danger Zone**: This section contains the stable coin operations deemed as particularily "dangerous" either because they affect every single token owner (PAUSE) or because they can not be rolled-back (DELETE).
+  For security reasons these operations are grouped in a "sub-menu" so that users do not run them by mistake. 
+    - **Un/Pause**: Pause and unpause prevents the token from being involved in any kind of operations. 
+    - **Delete**: Marks a token as deleted. This actions cannot be undone.
 
 #### List Stable Coins
 
-This operation display all the stable coins that the user has been created or added.
+This option displays all the stable coins the user has created or added.
 
 #### Configuration
 
-This last option allows the users to display the current configuration file, modify the configuration path, change the default network and manage the accounts allowing it change the current account, add new ones or remove some of them from the configuration.
+This last option allows the user to display the current configuration file, modify the configuration path, change the default network and manage the accounts (change the current account, add new ones or remove them from the configuration file).
 
 # Testing
 
