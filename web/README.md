@@ -10,14 +10,7 @@
 - **[Overview](#Overview)**<br>
 - **[Installation](#Installation)**<br>
 - **[Build](#Build)**<br>
-- **[Run](#Run)**<br>
-  - [Select a wallet](#Select-a-wallet)<br>
-  - [Switch wallets](#Switch-wallets)<br>
-  - [Create stable coins](#Create-stable-coins)<br>
-  - [Import stable coins](#Import-stable-coins)<br>
-  - [Operate stable coins](#Operate-stable-coins)<br>
-  - [Manage roles](#Manage-roles)<br>
- - **[Quick Start](#Quick-Start)**<br>
+- **[Quick Start](#Quick-Start)**<br>
   - [ENV vars](#ENV-vars)<br>
   - [Starting the UI](#Starting-the-UI)<br>
   - [Pairing a wallet](#Pairing-a-wallet)<br>
