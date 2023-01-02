@@ -57,7 +57,7 @@ Finally, in order to build the project, go to the root of the WEB project worksp
 npm run start
 ```
 
-## Paring a wallet
+## Pairing a wallet
 
 ![Alt text](docs/images/init.png?raw=true 'selecting a wallet')
 
