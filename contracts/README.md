@@ -23,9 +23,8 @@
 -   **[Upgrade](#Test)**<br>
     -   [Upgrade Factory](#Upgrade-Factory)<br>
     -   [Ugrade Stable Coins](#Ugrade-Stable-Coins)<br>
--   **[Documentation](#Documentation)**<br>
+-   **[Generate Documentation](#Generate-Documentation)**<br>
 -   **[Other Scripts](#Other-Scripts)**<br>
--   **[Support](#Support)**<br>
 -   **[Contributing](#Contributing)**<br>
 -   **[Code of Conduct](#Code-of-Conduct)**<br>
 -   **[License](#License)**<br>
@@ -265,7 +264,7 @@ The Factory's and the Stable Coins's logic can be upgraded at any time using the
 -   Deploy the new Stable Coin Logic contract (*HederaERC20*)
 -   Invoke the `upgradeAndCall` method of the Stable Coin Proxy Admin passing the previously deployed Stable Coin Logic contract's address and any data required to initialize it. If you do not need to pass any initialization data, you can simply invoke the `upgrade` method passing the previously deployed Stable coin Logic contract's address. **=> USE THE STABLE COIN PROXY ADMIN'S ADMIN ACCOUNT TO PERFORM THIS TASK. BY DEFAULT THAT ACCOUNT WILL BE THE ONE ORIGINALLY USED TO CREATE THE STBALE COIN.**
 
-# Documentation
+# Generate Documentation
 
 Documentation files of all contracts, in markdown format, can be generated using the following command:
 
@@ -302,10 +301,6 @@ Launches slither security report.
 ```shell
 npm run security
 ```
-
-# Support
-If you have a question on how to use the product, please see our
-[support guide](https://github.com/hashgraph/.github/blob/main/SUPPORT.md).
 
 # Contributing
 Contributions are welcome. Please see the
