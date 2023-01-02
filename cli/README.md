@@ -23,8 +23,6 @@
 
 ## Overview
 
-Implementation of an Stable Coin Accelerator SDK for Command Line Interface (CLI).
-
 The Command Line Interface (CLI) uses the API exposed by the SDK to create, manage and operate Stable Coins. It is meant as a "demo tool" to showcase the project's functionalities.
 
 ## Installation
