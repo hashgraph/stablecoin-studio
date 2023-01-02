@@ -7,6 +7,9 @@
 </div>
 
 ### Table of Contents
+- **[Abstract](#Abstract)**<br>
+- **[Context](#Context)**<br>
+- **[Objective](#Objective)**<br>
 - **[Overview](#Overview)**<br>
   - [Stable Coin definition](#Stable-Coin-definition)<br>
   - [Creating Stable Coins](#Creating-Stable-Coins)<br>
@@ -17,13 +20,19 @@
 - **[Technologies](#Technologies)**<br>
 - **[Installation](#Installation)**<br>
 - **[Build](#Build)**<br>
+- **[Development Manifesto](#Development-Manifesto)**<br>
 - **[Support](#Support)**<br>
 - **[Contributing](#Contributing)**<br>
 - **[Code of Conduct](#Code-of-Conduct)**<br>
 - **[License](#License)**<br>
 
+# Abstract
+The Hedera stable coin SDK is a comprehensive set of tools and resources designed to enable developers to build applications and services that make use of the stable coin. The SDK includes smart contracts, documentation, and sample code to help developers understand how to use the SDK and other functionality provided by the platform. With the Hedera stable coin SDK, developers can easily integrate the stable coin into their own applications or create new applications or services that make use of the stable coin's unique features. Whether you're a seasoned cryptocurrency developer or new to the space, the Hedera stable coin SDK has everything you need to start building with stable coins today.
 
+# Context
 
+# Objective
+A stable coin is a type of cryptocurrency that is designed to maintain a stable value relative to a specific asset or basket of assets. Currently there is no out-of-the-box solution to create and manage stable coins on Hedera Hashgraph. This project aims to provide developers with the tools they need to build applications that make use of the stable coin, such as wallets, as well as documentation and sample code to help developers understand how to use the SDK and other functionality provided by the stable coin platform. With all of this, we want to enable developers to integrate the stable coin into their own applications or systems, allowing them to accept or make payments using the stable coin.
 
 # Overview
 This solution consists of a set of tools, including Smart Contracts, SDK, CLI and UI to facilitate the deployment and management of Stable Coins in Hedera Hashgraph.
@@ -111,6 +120,7 @@ Learn more about them in their README:
 # Technologies
 - **Smart contracts**: Solidity version 0.8.10.
 - **SDK, CLI and UI**: Typescript 4.7 or higher is highly reccomended to work with the repositories.
+- **SDK**: Node 16.13 or higher
 - **UI**: React.js 2.2.6 or higher.
 
 
@@ -142,6 +152,21 @@ Or within any of the modules:
   $ cd [module] // sdk, web, contracts, etc
   $ npm run build
 ````
+
+# Development Manifesto
+The development of the project follows enterprise-grade practices for software development. Using DDD, hexagonal architecture, and the CQS pattern, all  within an agile methodology.
+
+## Domain Driven Design
+By using DDD (Domain-Driven Design), we aim to create a shared language among all members of the project team, which allows us to focus our development efforts on thoroughly understanding the processes and rules of the domain. This helps to bring benefits such as increased efficiency and improved communication.
+
+## Hexagonal Architecture
+We employ this architectural pattern to differentiate between the internal and external parts of our software. By encapsulating logic in different layers of the application, we are able to separate concerns and promote a higher level of isolation, testability, and control over business-specific code. This structure allows each layer of the application to have clear responsibilities and requirements, which helps to improve the overall quality and maintainability of the software.
+
+## CQS and Command Handlers
+We use a separation of queries/commands, query handlers/command handlers to divide state changes from state reads, with the goal of decoupling functional workflows and separating viewmodels from the domain. By using command handlers and an internal command bus, we are able to completely decouple the use cases within the system, improving flexibility and maintainability. This has been achieved by developing a fully typed TS Command / Query Handler module.
+
+## Code Standards
+The SDK has over 70% code coverage in unit and integration tests. The Smart Contracts have a 100% code coverage.
 
 # Support
 If you have a question on how to use the product, please see our
