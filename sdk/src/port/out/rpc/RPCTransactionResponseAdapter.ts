@@ -32,19 +32,15 @@ export class RPCTransactionResponseAdapter extends TransactionResponseAdapter {
 		}
 		catch(error){
 			LogService.logError('Uncaught Exception:', JSON.stringify(error));
-			return Promise.reject(
-				new TransactionResponse(
-					(error as any).transactionHash,
-					undefined,
-					new TransactionResponseError({
-						message: eventName ?? 'Error in response',
+				throw new TransactionResponseError({
+						message: '',
 						name: eventName,
 						status: 'error',
-						transactionId: (error as any).transactionHash,
+						transactionId: (error as any)?.transactionHash,
 						RPC_relay: true,
-					}),
-				),
-			);
+					});
+				
+			
 		}
 		
 	}

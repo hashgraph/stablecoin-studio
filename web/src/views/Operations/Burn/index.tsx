@@ -61,6 +61,7 @@ const BurnOperation = () => {
 			await SDKService.burn(request);
 			onSuccess();
 		} catch (error: any) {
+			console.log(JSON.stringify(error))
 			setErrorTransactionUrl(error.transactionUrl);
 			setErrorOperation(error.toString());
 			onError();
