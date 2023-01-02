@@ -54,14 +54,14 @@ The remaining smart contracts have been implemented by IOBuilders for this proje
    - `Supplieradmin.sol`: abstract contract implementing all the cashin role assignment and management (assigning/removing the role as well as setting, increasing and decreasing the cash-in limit).
    - `TokenOwner.sol`: abstract contract that stores the addresses of the *HTS precompiled smart contract* and the *underlying token* related to the stable coin. All the smart contracts mentioned above, inherit from this abstract contract.
    - `Wipeable.sol`: abstract contract implementing the *wipe* operation (burn token from any account, decreases the total supply).
- - `HederaERC20.sol`: Main Stable coin contract. Contains all the stable coin related logic. Inherits all the contracts defined in the "extension" folder as well as the Role.sol contract. **IMPORTANT** : IoBuilders will deploy a HederaERC20 contract that anybody can use. Users are also free to deploy and use their own HederaERC20 contract. Whatever HederaERC20 contract users choose to use, they will need to pass the contract's address as an input argument when calling the factory.
+ - `HederaERC20.sol`: Main Stable coin contract. Contains all the stable coin related logic. Inherits all the contracts defined in the "extension" folder as well as the Role.sol contract. **IMPORTANT** : IoBuilders will deploy a HederaERC20 contract in Testnet that anybody can use. Users are also free to deploy and use their own HederaERC20 contract. Whatever HederaERC20 contract users choose to use, they will need to pass the contract's address as an input argument when calling the factory.
  - `HederaERC20Proxy.sol`: Extends the OpenZeppelin transaparent proxy implemention. This proxy will delegate business method calls to a *HederaERC20* smart contract and will implement the upgradable logic.
  - `HederaERC20ProxyAdmin.sol`: Extends the OpenZeppelin proxy admin implementation. This proxy will be the admin of the HederaERC20Proxy, that way, users will be able to invoke the HederaERC20 functionality through the HederaERC20Proxy and upgrade the HederaERC20Proxy implementation through the HederaERC20ProxyAdmin.
- - `StableCoinFactory.sol`: Implements the flow to create a new stable coin. Every time a new stable coin is created, several smart contracts must be deployed and initialized and an underlying token must be created through the `HTS precompiled smart contract`. This multi-transaction process is encapsulated in this contract so that users can create new stable coins in a single transaction. **IMPORTANT** : IoBuilders will deploy and maintain a Factory contract that anybody can use. Users are also free to deploy and use their own Factory contract.
+ - `StableCoinFactory.sol`: Implements the flow to create a new stable coin. Every time a new stable coin is created, several smart contracts must be deployed and initialized and an underlying token must be created through the `HTS precompiled smart contract`. This multi-transaction process is encapsulated in this contract so that users can create new stable coins in a single transaction. **IMPORTANT** : IoBuilders will deploy and maintain a Factory contract in Tesnet that anybody can use. Users are also free to deploy and use their own Factory contract.
  - `StableCoinFactoryProxy.sol`: Extends the OpenZeppelin transaparent proxy implemention. This proxy will delegate business method calls to a *StableCoinFactory* smart contract and will implement the upgradable logic.
  - `StableCoinFactoryProxyAdmin.sol`: Extends the OpenZeppelin proxy admin implementation. This proxy will be the admin of the StableCoinFactoryProxy, that way, users will be able to invoke the StableCoinFactory functionality through the StableCoinFactoryProxy and upgrade the StableCoinFactoryProxy implementation through the StableCoinFactoryProxyAdmin.
 
- > Every stable coin is made of an **HederaERC20ProxyAdmin** contract, an **HederaERC20Proxy** contract , an **HederaERC20** contract and an **underlying token** managed through the *HTS precompiled smart contract*.
+ > Every stable coin is made of an **HederaERC20ProxyAdmin** contract, an **HederaERC20Proxy** contract and an **underlying token** managed through the *HTS precompiled smart contract*. The **HederaERC20** contract is meant to be "shared" by multiple users (by using proxies).
 
 # Architecture
 
@@ -187,8 +187,10 @@ scripts -> utils.ts -> const clientId
 
 ### Predeployed Factory & HederaERC20 contracts
 Tests use a factory and an HederaERC20 contract to create the stable coins.
-- If you want to deploy a new Factory every time : scripts -> deploy.ts -> hederaERC20Address = "" / factoryProxyAddress = "" / factoryProxyAdminAddress = "" / factoryAddress = "" 
+- If you want to deploy a new Factory and HederaERC20 every time : scripts -> deploy.ts -> hederaERC20Address = "" / factoryProxyAddress = "" / factoryProxyAdminAddress = "" / factoryAddress = "" 
 - If you want to re-use a Factory and HederaERC20 : Set the Hedera contracts Id in scripts -> deploy.ts -> hederaERC20Address /factoryProxyAddress / factoryProxyAdminAddress / factoryAddress
+
+> If you set the factory contracts addresses as described above, the tests included in the "StableCoinFactory.ts" file might not work because they will try to upgrade the factory implementation and the accounts used for that (those defined in the "hardhat.config.ts") might not have the right to do it.
 
 
 ## Run
@@ -226,17 +228,17 @@ The stable coin solution is made of two major components.
 
 In order to create stable coins, a Factory and a HederaERC20 contracts must be deployed first. Once deployed, creating stable coins will be as simple as invoking the "deployStableCoin" method of the Factory passing the token basic information and the HederaERC20 contract address as input arguments.
 
-> IoBuilders will provide a common Factory and HederaERC20 contracts for everbody to use. The addresses of the Factory Proxy and the HederaERC20 contracts are hardcoded in the SDK module.
+> IoBuilders will provide a common Factory and HederaERC20 contracts for everbody to use in the Testnet network. The addresses of the Factory Proxy and the HederaERC20 contracts are hardcoded in the SDK module.
 
 ## Deploy Factory
-If you want to deploy your own Factory contract do the following steps:
+If you want to deploy your own Factory contracts do the following steps:
    1. Deploy the Factory **Logic** smart contract (*StableCoinFactory.sol*).
    2. Deploy the Factory **Proxy Admin** smart contract (*StableCoinFactoryProxyAdmin.sol*).
    3. Deploy the Factory **Proxy** smart contract (*StableCoinFactoryProxy.sol*) setting the Factory logic as the implementation and the Factory proxy admin as the admin.
 
 
 ## Create Stable Coins
-Once the Factory has been deployed (or if you are using the common Factory), creating stable coins is very simple, just invoke one single method of the Factory's Logic : `deployStableCoin(...)`
+Once the Factory has been deployed (or if you are using the common Factory), creating stable coins is very simple, just invoke one single method of the Factory's Logic (through the Factory's Proxy): `deployStableCoin(...)`
 > it can be easily done from the CLI and/or UI of the project, for more information on that check their respective README.md
 
 These are the steps the creation method will perform when creating a new stable coin:
@@ -259,7 +261,7 @@ The Factory's and the Stable Coins's logic can be upgraded at any time using the
 
 ## Ugrade Stable Coins
 
-> These steps must be performed individually for every single stable coin you wish to update, it is not possible to update all stable coins at once since the are completely independent from each other
+> These steps must be performed individually for every single stable coin you wish to upgrade, it is not possible to upgrade all stable coins at once since the are completely independent from each other
 
 -   Deploy the new Stable Coin Logic contract (*HederaERC20*)
 -   Invoke the `upgradeAndCall` method of the Stable Coin Proxy Admin passing the previously deployed Stable Coin Logic contract's address and any data required to initialize it. If you do not need to pass any initialization data, you can simply invoke the `upgrade` method passing the previously deployed Stable coin Logic contract's address. **=> USE THE STABLE COIN PROXY ADMIN'S ADMIN ACCOUNT TO PERFORM THIS TASK. BY DEFAULT THAT ACCOUNT WILL BE THE ONE ORIGINALLY USED TO CREATE THE STBALE COIN.**
