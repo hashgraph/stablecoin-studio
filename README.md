@@ -30,6 +30,13 @@
 The Hedera stable coin SDK is a comprehensive set of tools and resources designed to enable developers to build applications and services that make use of the stable coin. The SDK includes smart contracts, documentation, and sample code to help developers understand how to use the SDK and other functionality provided by the platform. With the Hedera stable coin SDK, developers can easily integrate the stable coin into their own applications or create new applications or services that make use of the stable coin's unique features. Whether you're a seasoned cryptocurrency developer or new to the space, the Hedera stable coin SDK has everything you need to start building with stable coins today.
 
 # Context
+As people are looking to adopt cryptocurrencies, they sometimes have their reservations about potential price volatility. This is especially true when it comes to paying for goods and services.
+
+That is where stablecoins come in. Unlike other cryptocurrencies, stablecoins are usually pegged to another currency. This means that the value of a stablecoin will follow the value of that currency. Take for instance some of the most popular stablecoins like Tether (USDT), USD Coin (USDC), Binance USD (BUSD) and the Gemini Dollar (GUSD), which are all pegged to the US Dollar.
+
+There are also some crypto backed stablecoins such as DAI by MakerDAO, or commodity backed stablecoins such as Paxos Gold (PAXG) by Paxos.
+
+Stablecoins have transformed the way crypto markets work by allowing traders to exchange their volatile crypto assets for a stable asset that can quickly be transferred to any other platform. If they can change the way people trade, they can also become a real breakthrough in e-commerce.
 
 # Objective
 A stable coin is a type of cryptocurrency that is designed to maintain a stable value relative to a specific asset or basket of assets. Currently there is no out-of-the-box solution to create and manage stable coins on Hedera Hashgraph. This project aims to provide developers with the tools they need to build applications that make use of the stable coin, such as wallets, as well as documentation and sample code to help developers understand how to use the SDK and other functionality provided by the stable coin platform. With all of this, we want to enable developers to integrate the stable coin into their own applications or systems, allowing them to accept or make payments using the stable coin.
