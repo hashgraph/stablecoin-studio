@@ -9,23 +9,14 @@
 ### Table of contents
 
 - [Overview](#overview)
+- [Installation](#installation)
 - [Build](#build)
-  - [Pre-requirements](#pre-requirements)
-  - [Steps](#steps)
 - [Quickstart](#quickstart)
-  - [First run](#first-run)
+  - [Starting the CLI](#starting-the-cli)
 - [Usage](#usage)
-  - [Config file](#config-file)
+  - [Creating a config file](#creating-a-config-file)
   - [CLI flow](#cli-flow)
-    - [Main menu](#main-menu)
-      - [Create a new Stable Coin](#create-a-new-stable-coin)
-      - [Manage imported tokens](#manage-imported-tokens)
-      - [Operate with stable coin](#operate-with-stable-coin)
-      - [List Stable Coins](#list-stable-coins)
-      - [Configuration](#configuration)
-  - [Testing](#testing)
-    - [Jest](#jest)
-    - [Run](#run)
+- [Testing](#testing)
 - [Contributing](#contributing)
 - [Code of Conduct](#code-of-conduct)
 - [License](#license)
@@ -35,6 +26,15 @@
 Implementation of an Stable Coin Accelerator SDK for Command Line Interface (CLI).
 
 The Command Line Interface (CLI) uses the API exposed by the SDK to create, manage and operate Stable Coins. It is meant as a "demo tool" to showcase the project's functionalities.
+
+## Installation
+
+The command below can be used to install the official release from the NPM repository. This version may not reflect the most recent changes to the main branch of this repository.
+
+```bash
+TO CHECK!!!
+npm install @hashgraph/hedera-stable-coin-cli
+```
 
 # Build
 
@@ -61,7 +61,7 @@ From the root of the CLI project workspace:
 
 # Quickstart
 
-## First run
+## Starting the CLI
 
 First time you execute the `npm accelerator wizard` command in your terminal, if you haven't added your default configuration path the interface will ask you wether you want create a new configuration file in the default path. When the configuration file is created you must configure the default network and at least, one default account. This account could be created through [HashPack](https://www.hashpack.app/download) or [Hedera Developer Portal](https://portal.hedera.com/register).
 
@@ -73,7 +73,7 @@ _Note that for testing purpose you should create a **Testnet** account instead o
 
 To use the CLI correctly it is necessary to generate a configuration file in which the default network and the accounts with which you want to operate in the network will be indicated. These parameters can be modified later on, from the CLI.
 
-## Config file
+## Creating a config file
 
 The configuration file that is generated populates its fields with dynamic questions when the CLI is started for the first time.
 The file format is .yaml and the structure is as follows:
@@ -225,13 +225,13 @@ This operation display all the stable coins that the user has been created or ad
 
 This last option allows the users to display the current configuration file, modify the configuration path, change the default network and manage the accounts allowing it change the current account, add new ones or remove some of them from the configuration.
 
-## Testing
+# Testing
 
-### Jest
+## Jest
 
 The project uses [Jest](https://jestjs.io/es-ES/) for testing.
 
-### Run
+## Run
 
 Tests may be run using the following command
 
