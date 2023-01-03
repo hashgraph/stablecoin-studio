@@ -570,6 +570,60 @@ Delete a stable coin. **Important** this operation is not reversible.
 
 ## Network
 
+### Connect
+**Spec:**
+	
+	
+```Typescript
+	Network.connect(req: ConnectRequest): Promise<InitializationData>;
+```
+
+**Example:**
+
+```Typescript
+	await Network.connect(
+		new ConnectRequest({
+        		network: 'testnet',
+        		wallet: SupportedWallets.HASHPACK,
+      		}),
+	);
+```
+
+### Disconnect
+**Spec:**
+	
+	
+```Typescript
+	Network.disconnect(): Promise<boolean>;
+```
+
+**Example:**
+
+```Typescript
+	await Network.disconnect();
+```
+
+### SetNetwork
+**Spec:**
+	
+	
+```Typescript
+	Network.setNetwork(req: SetNetworkRequest): Promise<NetworkResponse>;
+```
+
+**Example:**
+
+```Typescript
+	await Network.setNetwork(
+		new SetNetworkRequest({
+			enviroment: 'testnet';
+			mirrorNode: 'https://testnet.mirrornode.hedera.com/'
+			consensusNodes: []
+		})
+	);
+```
+	
+	
 ## Event
 
 ### Register
