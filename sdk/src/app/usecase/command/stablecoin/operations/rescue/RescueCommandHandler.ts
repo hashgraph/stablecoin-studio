@@ -44,9 +44,11 @@ export class RescueCommandHandler implements ICommandHandler<RescueCommand> {
 		const { amount, tokenId } = command;
 		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
-		const tokenAssociated = await this.stableCoinService.queryBus.execute(
-			new GetAccountTokenAssociatedQuery(account.id, tokenId),
-		);
+		const tokenAssociated = (
+			await this.stableCoinService.queryBus.execute(
+				new GetAccountTokenAssociatedQuery(account.id, tokenId),
+			)
+		).isAssociated;
 
 		if (!tokenAssociated) {
 			throw new StableCoinNotAssociated(

@@ -46,9 +46,7 @@ export class GetAccountTokenAssociatedQueryHandler
 		);
 
 		return Promise.resolve(
-			new GetAccountTokenAssociatedQueryResponse(
-				res.token_id !== undefined,
-			),
+			new GetAccountTokenAssociatedQueryResponse(res.tokens.length > 0),
 		);
 	}
 }

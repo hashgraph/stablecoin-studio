@@ -35,7 +35,7 @@ import ContractId from '../../../domain/context/contract/ContractId.js';
 import { InvalidResponse } from './error/InvalidResponse.js';
 import { HederaId } from '../../../domain/context/shared/HederaId.js';
 import { KeyType } from '../../../domain/context/account/KeyProps.js';
-import AccountTokenRelationViewModel from './response/AccountTokenRelationViewModel.js';
+import AccountTokenListRelationViewModel from './response/AccountTokenListRelationViewModel.js';
 import { StableCoinNotAssociated } from '../../../domain/context/stablecoin/error/StableCoinNotAssociated.js';
 
 @singleton()
@@ -216,35 +216,35 @@ export class MirrorNodeAdapter {
 	public async getAccountTokens(
 		targetId: HederaId,
 		tokenId: HederaId,
-	): Promise<AccountTokenRelationViewModel> {
+	): Promise<AccountTokenListRelationViewModel> {
 		try {
 			const url = `${
 				this.URI_BASE
 			}accounts/${targetId.toString()}/tokens?token.id=${tokenId.toString()}`;
-
 			LogService.logTrace(url);
+			const res = await axios.get<AccountTokenRelationList>(url);
 
-			const res = await axios.get<AccountTokenRelation>(url);
-
-			if (res.data.tokens.length === 0) {
-				throw new StableCoinNotAssociated(
-					targetId.toString(),
-					tokenId.toString(),
-				);
+			const resObject: AccountTokenListRelationViewModel = {
+				tokens: [],
+			};
+			if (res.data.tokens) {
+				res.data.tokens.map((item: AccountTokenRelation) => {
+					resObject.tokens.push({
+						automatic_association: item.automatic_association,
+						balance: item.balance,
+						created_timestamp: item.created_timestamp,
+						freeze_status: item.freeze_status,
+						kyc_status: item.kyc_status,
+						token_id: HederaId.from(item.token_id),
+					});
+				});
 			}
 
-			const accountRelation: AccountTokenRelationViewModel = {
-				automatic_association: res.data.tokens[0].automatic_association,
-				balance: res.data.tokens[0].balance,
-				created_timestamp: res.data.tokens[0].created_timestamp,
-				freeze_status: res.data.tokens[0].freeze_status,
-				kyc_status: res.data.tokens[0].kyc_status,
-				token_id: HederaId.from(res.data.tokens[0].token_id),
-			};
-
-			return accountRelation;
+			return resObject;
 		} catch (error) {
-			return Promise.reject<AccountTokenRelationViewModel>(error);
+			return Promise.reject<AccountTokenListRelationViewModel>(
+				new InvalidResponse(error),
+			);
 		}
 	}
 
@@ -273,15 +273,16 @@ interface IToken {
 interface ITokenList {
 	tokens: IToken[];
 }
+interface AccountTokenRelationList {
+	tokens?: AccountTokenRelation[];
+}
 interface AccountTokenRelation {
-	tokens: {
-		automatic_association: boolean;
-		balance: number;
-		created_timestamp: string;
-		freeze_status: string;
-		kyc_status: string;
-		token_id: string;
-	}[];
+	automatic_association: boolean;
+	balance: number;
+	created_timestamp: string;
+	freeze_status: string;
+	kyc_status: string;
+	token_id: string;
 }
 interface IHederaStableCoinDetail {
 	token_id?: string;

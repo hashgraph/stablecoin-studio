@@ -44,9 +44,11 @@ export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
 		const { amount, targetId, tokenId } = command;
 		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
-		const tokenAssociated = await this.stableCoinService.queryBus.execute(
-			new GetAccountTokenAssociatedQuery(targetId, tokenId),
-		);
+		const tokenAssociated = (
+			await this.stableCoinService.queryBus.execute(
+				new GetAccountTokenAssociatedQuery(targetId, tokenId),
+			)
+		).isAssociated;
 
 		if (!tokenAssociated) {
 			throw new StableCoinNotAssociated(
