@@ -19,12 +19,8 @@
 		- [**For projects (WIP - when published)**](#for-projects-wip---when-published)
 		- [**For development**](#for-development)
 - [Build](#Build)
-- [Examples](#examples)
-	- [Example (JS)](#example-js)
-	- [Example (TS)](#example-ts)
-	- [Before using](#before-using)
 - [Quick Start](#quickstart)
-	- [Initialization](#inizialitation)
+	- [Initialization](#initialization)
 	- [Connect](#connect)
 	- [Wallet Events](#wallet-events)
 	- [Getting Account Information](#account-information)
@@ -140,115 +136,18 @@ To use this project in development mode you must follow the steps indicated in t
 7. Run `npm run build` to build the SDK.
 8. Import and use the SDK. Or use one of the example projects under `/examples`
 
-## Before using
 
-The SDK supports both client-side and server-side implementations, keeping in mind that only one `NetworkMode` is currently available for each environment.
-
-On client-side applications, such as React, use `NetworkMode.HASHPACK`.
-On server-side applications, such as Node applications, use `NetworkMode.EOA` and supply the credentials.
-
-# Example (JS) (Update Examples)
-
-```JavaScript
-// ES5
-const { SDK, NetworkMode, HederaNetwork, HederaNetworkEnviroment, EOAccount } = require('hedera-stable-coin-sdk');
-
-// ES6
-import { SDK, NetworkMode, HederaNetwork, HederaNetworkEnviroment, EOAccount } from 'hedera-stable-coin-sdk';
-
-const main = async () => {
-	// Create instance
-	const sdk = new SDK({
-		network: new HederaNetwork(HederaNetworkEnviroment.TEST),
-		mode: NetworkMode.HASHPACK,
-		options: {
-			appMetadata: {
-				icon: 'localhost:3000/favicon.ico',
-				name: 'test-app',
-				description: 'description example for test app',
-				url: 'localhost',
-			},
-			logOptions: {
-				level: 'INFO',
-			}
-	});
-	// Init event listener
-	const onInit = () => {
-		console.log('SDK is initialized');
-	};
-	// Init the SDK
-	await sdk.init({ onInit });
-	// Subscribe to events
-	sdk.onWalletExtensionFound(() => {
-		console.log('Hashpack wallet extension found');
-	});
-};
-
-try {
-	main();
-} catch (error) {
-	console.error(error);
-}
-
-```
-
-### Example (TS)
-
-```TypeScript
-import {
-	SDK,
-	NetworkMode,
-	HederaNetwork,
-	HederaNetworkEnviroment,
-	EOAccount,
-	AccountId,
-	PrivateKey,
-} from 'hedera-stable-coin-sdk';
-
-const main = async (): Promise<void> => {
-	// Create instance
-	const sdk: SDK = new SDK({
-		network: new HederaNetwork(HederaNetworkEnviroment.TEST),
-		mode: NetworkMode.HASHPACK,
-		options: {
-			appMetadata: {
-				icon: 'localhost:3000/favicon.ico',
-				name: 'test-app',
-				description: 'description example for test app',
-				url: 'localhost',
-			},
-			logOptions: {
-				level: 'INFO',
-			}
-	});
-	// Init event listener
-	const onInit = (): void => {
-		console.log('SDK is initialized');
-	};
-	// Init the SDK
-	await sdk.init({ onInit });
-	// Subscribe to events
-	sdk.onWalletExtensionFound((): void => {
-		console.log('Hashpack wallet extension found');
-	});
-};
-
-try {
-	main();
-} catch (error) {
-	console.error(error);
-}
-
-
-```
 
 # Quick Start
 ## Initialization
+
+The first thing to be able to use the sdk is the initialization of the same one for it we must indicate the environment of hedera in which we want to work.
+
 ```Typescript
 SDK.log = configurationService.getLogConfiguration();
   await Network.init(
     new InitializationRequest({
-    network: this.getCurrentNetwork().name,
+    network: {Enviroment},
     }),
  );
 ```    
