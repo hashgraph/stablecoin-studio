@@ -243,6 +243,33 @@ try {
 ```
 
 # Quick Start
+## Initialization
+```Typescript
+SDK.log = configurationService.getLogConfiguration();
+  await Network.init(
+    new InitializationRequest({
+    network: this.getCurrentNetwork().name,
+    }),
+ );
+```    
+## Connect
+```Typescript
+await Network.connect(
+      new ConnectRequest({
+        account: {
+          accountId: account.accountId,
+          privateKey: {
+            key: account.privateKey.key,
+            type: account.privateKey.type,
+          },
+        },
+        network: this.getCurrentNetwork().name,
+        wallet: SupportedWallets.CLIENT,
+      }),
+    );
+  }
+```
+## Wallet Events
 
 
 # Basic Types
