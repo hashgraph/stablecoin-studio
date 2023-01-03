@@ -579,6 +579,24 @@ Delete a stable coin. **Important** this operation is not reversible.
 ## Role
 
 ## Common
+The SDK class is exported. This static class allows to set the log level and application metadata at any point in your code, simply import it and change the values:
+
+We use [winston](https://github.com/winstonjs/winston) under the hood for logging, so all transports are exported from the sdk for you to use. Refer to the [documentation](https://github.com/winstonjs/winston/blob/master/docs/transports.md) for more informaiton on what transports are available.
+
+```Typescript
+	import { LoggerTransports, SDK } from 'hedera-stable-coin-sdk';
+	
+	SDK.appMetadata = {
+		name: 'Hedera Stable Coin',
+		description: 'Example application',
+		icon: 'https://example.png',
+		url: '',
+	};
+	SDK.log = {
+		level: 'ERROR', // or 'TRACE' | 'INFO'
+		transports: new LoggerTransports.Console(),
+	};
+```
 
 # Testing
 
