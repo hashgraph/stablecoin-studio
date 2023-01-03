@@ -80,7 +80,7 @@ Each stable coin maps to an *underlying* Hedera Token and adds the following fun
 ## Creating Stable Coins
 Every time a stable coin is created, a new Hedera Token is created (the underlying token) and the following smart contracts are deployed:
 - The Stable Coin proxy smart contract: pointing to the HederaERC20 logic smart contract that was passed as an input argument(*). Proxies are used to make stable coins upgradable.
-- the Stable Coin proxy admin smart contract: this contract will act as an intermediary to upgrade the Stable Coin proxy implementation. For more information on this check the contract module's README.
+- The Stable Coin proxy admin smart contract: this contract will act as an intermediary to upgrade the Stable Coin proxy implementation. For more information on this check the contract module's README.
 
 (*)By default the HederaERC20 smart contract that will be used will be the one deployed by IoBuilders, but users can use any other contract they want, for more information on this check the contract module's README.
 
