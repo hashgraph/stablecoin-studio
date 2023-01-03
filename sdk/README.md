@@ -18,6 +18,7 @@
 		- [Steps](#steps)
 			- [**For projects (WIP - when published)**](#for-projects-wip---when-published)
 			- [**For development**](#for-development)
+- [Build](#Build)
 - [Examples](#examples)
 	- [Example (JS)](#example-js)
 	- [Example (TS)](#example-ts)
@@ -121,6 +122,10 @@ You must have installed
 
 #### **For development**
 
+To use this project in development mode you must follow the steps indicated in the following section
+
+# Build
+
 1. Clone the repo and open a terminal in the root folder
 2. Run `node install.js`. To install all the dependencies and links.
 3. `cd` into `./contracts`
@@ -130,7 +135,8 @@ You must have installed
 7. Run `npm run build` to build the SDK.
 8. Import and use the SDK. Or use one of the example projects under `/examples`
 
-### Example (JS)
+
+# Example (JS)
 
 ```JavaScript
 // ES5
