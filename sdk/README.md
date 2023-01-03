@@ -703,12 +703,12 @@ Check out [Router.tsx](https://github.com/hashgraph/hedera-accelerator-stablecoi
 	);
 ```
 
-### HasRole
+### GrantRole
 **Spec:**
 	
 	
 ```Typescript
-	Role.hasRole(request: HasRoleRequest): Promise<boolean>;
+	Role.grantRole(request: HasRoleRequest): Promise<boolean>;
 ```
 
 **Example:**
