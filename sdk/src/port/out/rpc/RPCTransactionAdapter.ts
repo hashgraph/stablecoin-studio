@@ -904,12 +904,12 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			}
 		} catch (error) {
 			// should throw RPCHandlerError
-			throw new TransactionResponse(
-				undefined,
-				undefined,
-				new TransactionResponseError({
-						message: `Unexpected error in RPCTransactionHandler ${operation} operation : ${error}`,
-				})
+				throw new TransactionResponseError({
+					message:`Unexpected error in HederaTransactionHandler ${operation} operation : ${error}`,
+					transactionId:  (error as any).error.transactionHash,
+					RPC_relay: true
+
+				}
 			);
 		}
 	}

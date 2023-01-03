@@ -1,0 +1,22 @@
+defaultNetwork: testnet
+networks:
+  - name: mainnet
+    consensusNodes: []
+    mirrorNodeUrl: https://mainnet.mirrornode.hedera.com/
+  - name: previewnet
+    consensusNodes: []
+    mirrorNodeUrl: https://previewnet.mirrornode.hedera.com/
+  - name: testnet
+    consensusNodes: []
+    mirrorNodeUrl: https://testnet.mirrornode.hedera.com
+accounts:
+  - accountId: ''
+    privateKey:
+      key: ''
+      type: ''
+    network: ''
+    alias: ''
+    importedTokens: []
+logs:
+  path: ./logs
+  level: ERROR

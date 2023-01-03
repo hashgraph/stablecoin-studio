@@ -22,7 +22,6 @@ import { ICommandHandler } from '../../../../../../core/command/CommandHandler.j
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
 import BigDecimal from '../../../../../../domain/context/shared/BigDecimal.js';
-import TransactionResponse from '../../../../../../domain/context/transaction/TransactionResponse.js';
 import AccountService from '../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
@@ -47,21 +46,13 @@ export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
 			account,
 			tokenId,
 		);
-
-		try{
-			const res = await handler.cashin(
-				capabilities,
-				targetId,
-				BigDecimal.fromString(amount, capabilities.coin.decimals)
-			);
-	
-			return Promise.resolve(
-				new CashInCommandResponse(res.error === undefined),
-			);
-		}
-		catch(error){
-			throw (error as TransactionResponse).error;
-		}
-		
+		const res = await handler.cashin(
+			capabilities,
+			targetId,
+			BigDecimal.fromString(amount, capabilities.coin.decimals)
+		);
+		return Promise.resolve(
+			new CashInCommandResponse(res.error === undefined),
+		);
 	}
 }
