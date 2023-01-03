@@ -143,15 +143,28 @@ To use this project in development mode you must follow the steps indicated in t
 
 The first thing to be able to use the sdk is the initialization of the same one for it we must indicate the environment of hedera in which we want to work.
 
+Example
 ```Typescript
 SDK.log = configurationService.getLogConfiguration();
   await Network.init(
     new InitializationRequest({
-    network: {Enviroment},
+    network: 'Testnet',
     }),
  );
-```    
+```  
+
 ## Connect
+The next step would be to connect to the network. Currently 3 types of connections are offered: EOA, Metamask and Haspack. These 3 connection types are in the SupportedWallets enum.
+
+```Typescript
+export enum SupportedWallets {
+	METAMASK = 'Metamask',
+	HASHPACK = 'HashPack',
+	CLIENT = 'Client',
+}
+```
+
+Example
 ```Typescript
 await Network.connect(
       new ConnectRequest({
