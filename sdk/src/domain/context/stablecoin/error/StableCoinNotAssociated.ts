@@ -4,7 +4,7 @@ export class StableCoinNotAssociated extends BaseError {
 	constructor(targetId: unknown, tokenId: unknown) {
 		super(
 			ErrorCode.AccountNotAssociatedToToken,
-			`Account ${targetId} not associated to token ${tokenId}`,
+			`The account ${targetId} has not associated the token ${tokenId}`,
 		);
 	}
 }
