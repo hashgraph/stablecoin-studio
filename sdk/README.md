@@ -18,6 +18,7 @@
 		- [Steps](#steps)
 			- [**For projects (WIP - when published)**](#for-projects-wip---when-published)
 			- [**For development**](#for-development)
+- [Examples](#examples)
 		- [Example (JS)](#example-js)
 		- [Example (TS)](#example-ts)
 	- [Before using](#before-using)
