@@ -283,6 +283,293 @@ Mint tokens in a specific stable coin. The operating account must have the suppl
 	);
 ```
 
+
+
+### Burn
+Burn tokens in a specific stable coin.
+
+**Spec:**
+
+```Typescript
+	StableCoin.burn = (request: BurnRequest): Promise<boolean>
+```
+
+**Example:**
+
+```Typescript
+	const result: boolean = await StableCoin.burn(
+		new BurnRequest({
+			tokenId: "0.0.1",
+			amount: "1234",
+		})
+	);
+```
+
+
+
+### Rescue
+Rescue tokens in a specific stable coin.
+
+**Spec:**
+
+```Typescript
+	StableCoin.rescue = (request: RescueRequest): Promise<boolean>
+```
+
+**Example:**
+
+```Typescript
+	const result: boolean = await StableCoin.rescue(
+		new RescueRequest({
+			tokenId: "0.0.1",
+			amount: "1234",
+		})
+	);
+```
+
+
+
+### Wipe
+Mint tokens in a specific stable coin. The operating account must have the supplier role.
+
+**Spec:**
+
+```Typescript
+	StableCoin.wipe = (request: WipeRequest): Promise<boolean>
+```
+
+**Example:**
+
+```Typescript
+	const result: boolean = await StableCoin.wipe(
+		new WipeRequest({
+			tokenId: "0.0.1",
+			targetId: "0.0.2",
+			amount: "1234",
+		})
+	);
+```
+
+
+
+### Get balance of
+Get balance of tokens for an account of a specific stable coin.
+
+**Spec:**
+
+```Typescript
+	StableCoin.getBalanceOf = (request: GetAccountBalanceRequest): Promise<Balance>
+	
+	type Balance = {
+		value: BigDecimal
+	}
+```
+
+**Example:**
+
+```Typescript
+	const result: Balance = await StableCoin.getBalanceOf(
+		new GetAccountBalanceRequest({
+			tokenId: "0.0.1",
+			targetId: "0.0.2",
+		})
+	);
+	result.toString() // "1234"
+	result.decimals // 2
+```
+
+### Capabilities
+Get capabiltities for an account on a stable coin. Capabilties have a reference of all the details of the stable coin quering to, the list of capabiltities and the account the capabilities belong to. Each capabiltiy determines the type of operation that can be performed (cash in, burn, etc) and on wether it should be done onto the smart contract for the stable coin (proxyAddress in the `coin: StableCoin` attirbute) or through the Hedera Token Service. 
+
+See the spec below for all the atributes you can get from the request.
+
+**Spec:**
+
+```Typescript
+	StableCoin.capabiltities = (request: CapabilitiesRequest): Promise<StableCoinCapabilities>
+	
+	class StableCoinCapabilities {
+		constructor(
+			public readonly coin: StableCoin,
+			public readonly capabilities: Capability[],
+			public readonly account: Account,
+		) {}
+	}
+	
+	enum Operation {
+		CASH_IN = 'Cash_in',
+		BURN = 'Burn',
+		WIPE = 'Wipe',
+		FREEZE = 'Freeze',
+		UNFREEZE = 'Unfreeze',
+		PAUSE = 'Pause',
+		UNPAUSE = 'Unpause',
+		DELETE = 'Delete',
+		RESCUE = 'Rescue',
+		ROLE_MANAGEMENT = 'Role_Management',
+	}
+
+	enum Access {
+		HTS,
+		CONTRACT,
+	}
+	
+	class Capability {
+		constructor(
+			public readonly operation: Operation,
+			public readonly access: Access,
+		) {}
+	}
+	
+	class Account {
+		constructor(
+			public id: HederaId;
+			public evmAddress?: string;
+			public privateKey?: PrivateKey;
+			public publicKey?: PublicKey;
+		) {}
+	}
+	
+	class StableCoin {
+		constructor(
+			public name: string;
+			public symbol: string;
+			public decimals: number;
+			public adminKey?: PublicKey | ContractId;
+			public initialSupply?: BigDecimal;
+			public totalSupply?: BigDecimal;
+			public maxSupply?: BigDecimal;
+			public memo?: string;
+			public proxyAddress?: HederaId;
+			public evmProxyAddress?: string;
+			public freezeKey?: PublicKey | ContractId;
+			public freezeDefault?: boolean;
+			public kycKey?: PublicKey | ContractId;
+			public wipeKey?: PublicKey | ContractId;
+			public pauseKey?: PublicKey | ContractId;
+			public paused?: boolean;
+			public supplyKey?: PublicKey | ContractId;
+			public treasury?: HederaId;
+			public tokenType?: TokenType;
+			public supplyType?: TokenSupplyType;
+			public tokenId?: HederaId;
+			public autoRenewAccount?: HederaId;
+			public autoRenewAccountPeriod?: number;
+			public deleted?: boolean;
+		) {}
+	}
+```
+
+**Example:**
+
+```Typescript
+	const result: StableCoinCapabilities = await StableCoin.capabiltities(
+		new GetAccountBalanceRequest({
+			account: {
+			  accountId: "0.0.1",
+			},
+			tokenId: "0.0.2",
+		})
+	);
+```
+
+### Pause
+Pause a stable coin. None of the operations can take while the stable coin is in the paused state.
+
+**Spec:**
+
+```Typescript
+	StableCoin.pause = (request: PauseRequest): Promise<boolean>
+```
+
+**Example:**
+
+```Typescript
+	const result: boolean = await StableCoin.pause(
+		new PauseRequest({
+			tokenId: "0.0.1",
+		})
+	);
+```
+
+### Unpause
+Unpause a stable coin. If the stable coin is not paused it will throw an exception.
+
+**Spec:**
+
+```Typescript
+	StableCoin.unPause = (request: PauseRequest): Promise<boolean>
+```
+
+**Example:**
+
+```Typescript
+	await StableCoin.unPause(
+		new PauseRequest({
+			tokenId: "0.0.1",
+		})
+	);
+```
+
+### Freeze
+Freeze an account for a stable coin.
+
+**Spec:**
+
+```Typescript
+	StableCoin.freeze = (request: FreezeRequest): Promise<boolean>
+```
+
+**Example:**
+
+```Typescript
+	const result: boolean = await StableCoin.freeze(
+		new FreezeRequest({
+			tokenId: "0.0.1",
+			targetId: "0.0.2"
+		})
+	);
+```
+
+### Unfreeze
+Unfreeze an account for a stable coin.
+
+**Spec:**
+
+```Typescript
+	StableCoin.unFreeze = (request: FreezeRequest): Promise<boolean>
+```
+
+**Example:**
+
+```Typescript
+	await StableCoin.unFreeze(
+		new FreezeRequest({
+			tokenId: "0.0.1",
+			targetId: "0.0.2"
+		})
+	);
+```
+
+### Delete
+Delete a stable coin. **Important** this operation is not reversible.
+
+**Spec:**
+
+```Typescript
+	StableCoin.delete = (request: DeleteRequest): Promise<boolean>
+```
+
+**Example:**
+
+```Typescript
+	await StableCoin.delete(
+		new DeleteRequest({
+			tokenId: "0.0.1",
+		})
+	);
+```
+
 ## Network
 
 ## Event
