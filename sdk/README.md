@@ -577,7 +577,7 @@ Register for wallet events. All event listeners are optional, just make sure to 
 
 Multiple wallets can emit events, so make sure to filter them by the `wallet` attribute available in all of them indicating which wallet is emitting the event. All wallets supported emit the same events.
 
-All events use the standard node event emitting system and listeners are fully TS typed.
+All events use the [standard node event emitting system](https://nodejs.dev/es/learn/the-nodejs-event-emitter/) and listeners are fully TS typed.
 
 **Spec:**
 
@@ -623,14 +623,7 @@ All events use the standard node event emitting system and listeners are fully T
 
 **Example:**
 
-```Typescript
-	Event.register(
-		{
-			walletFound: (data: WalletFoundEvent) => { console.log(`Wallet ${data.name} was found!`) },
-		}
-	);
-
-```
+Check out [Router.tsx](https://github.com/hashgraph/hedera-accelerator-stablecoin/blob/main/web/src/Router/Router.tsx) from the web repository for a comprehensive example in React of how to subscribe to events.
 
 ## Account
 
