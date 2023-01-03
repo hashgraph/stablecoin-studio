@@ -24,7 +24,6 @@ import TransportStream from 'winston-transport';
 import LogService from '../../app/service/LogService.js';
 import { BaseRequest } from './request/BaseRequest.js';
 import { ValidationError } from './request/error/ValidationError.js';
-import { ValidationResponse } from './request/index.js';
 import ValidatedRequest from './request/validation/ValidatedRequest.js';
 
 // App Metadata

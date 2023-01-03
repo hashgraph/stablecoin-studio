@@ -9,9 +9,6 @@
 </div>
 
 # Table of contents
-
-- [Hedera Stable Coin SDK](#hedera-stable-coin-sdk)
-- [Table of contents](#table-of-contents)
 - [Overview](#overview)
 - [Installing](#installing)
 	- [Pre-requirements](#pre-requirements)
@@ -82,11 +79,11 @@ This project based on hybrid tokens, that is, it uses Smart Contracts that commu
 
 Provides functionalities for use in server mode, as well as for web integration (currently supporting Hashpack and Metamask).
 
-For more information about the deployed contracts you can consult them in this project - Link contracts
+For more information about the deployed contracts you can consult them in this project - [Contracts link](../contracts)
 
-If you want to see a web implementation you can see it in this project - Link Web
+If you want to see  server implementation you can see it in this project - [Standalone](../cli)
 
-If you want to see a web implementation you can see it in this project - Link Cli
+If you want to see  web implementation you can see it in this project - [Web](../web)
 
 # Installing
 
@@ -681,8 +678,264 @@ Check out [Router.tsx](https://github.com/hashgraph/hedera-accelerator-stablecoi
 
 ## Account
 
+### GetPublicKey
+**Spec:**
+	
+	
+```Typescript
+	Account.getPublicKey(request: GetPublicKeyRequest): Promise<PublicKey>;
+```
+
+**Example:**
+
+```Typescript
+	await Account.getPublicKey(
+		new GetPublicKeyRequest({
+			account: '0.0.49172343';
+		})
+	);
+```
+	
+### ListStableCoins
+**Spec:**
+	
+	
+```Typescript
+	Account.listStableCoins(request: GetListStableCoinRequest,): Promise<StableCoinListViewModel>;
+```
+
+**Example:**
+
+```Typescript
+	await Account.listStableCoins(
+		new GetPublicKeyRequest({
+			account: '0.0.49172343';
+		})
+	);
+```
+
+### GetInfo
+**Spec:**
+	
+	
+```Typescript
+	Account.getInfo(request: GetAccountInfoRequest): Promise<AccountViewModel>;
+```
+
+**Example:**
+
+```Typescript
+	await Account.getInfo(
+		new GetAccountInfoRequest({
+			account: '0.0.49172343';
+		})
+	);
+```
+
+
 ## Role
 
+### HasRole
+**Spec:**
+	
+	
+```Typescript
+	Role.hasRole(request: HasRoleRequest): Promise<boolean>;
+```
+
+**Example:**
+
+```Typescript
+	await Role.hasRole(
+		new HasRoleRequest({
+			tokenId: "0.0.1",
+			targetId: "0.046172343",
+			role: StableCoinRole.CASHIN_ROLE,
+		})
+	);
+```
+
+### GrantRole
+**Spec:**
+	
+	
+```Typescript
+	Role.grantRole(request: HasRoleRequest): Promise<boolean>;
+```
+
+**Example:**
+
+```Typescript
+	await Role.grantRole(
+		new GrantRoleRequest({
+			targetId: '0.046172343'
+			tokenId: '0.0.49135648',
+			role: StableCoinRole.CASHIN_ROLE,
+		})
+	);
+```
+
+### RevokeRole
+**Spec:**
+	
+	
+```Typescript
+	Role.revokeRole(request: RevokeRoleRequest): Promise<boolean>;
+```
+
+**Example:**
+
+```Typescript
+	await Role.revokeRole(
+		new RevokeRoleRequest({
+			targetId: '0.046172343'
+			tokenId: '0.0.49135648',
+			role: StableCoinRole.CASHIN_ROLE,
+		})
+	);
+```
+
+### GetRoles
+**Spec:**
+	
+	
+```Typescript
+	Role.getRoles(request: GetRolesRequest): Promise<string[]>;
+```
+
+**Example:**
+
+```Typescript
+	await Role.getRoles(
+		new GetRolesRequest({
+			targetId: '0.046172343'
+			tokenId: '0.0.49135648'
+		})
+	);
+```
+
+### GetAllowance
+**Spec:**
+	
+	
+```Typescript
+	Role.getAllowance(request: GetSupplierAllowanceRequest): Promise<Balance>;
+```
+
+**Example:**
+
+```Typescript
+	await Role.getAllowance(
+		new GetSupplierAllowanceRequest({
+			targetId: '0.046172343'
+			tokenId: '0.0.49135648',
+			
+		})
+	);
+```
+
+### ResetAllowance
+**Spec:**
+	
+	
+```Typescript
+	Role.resetAllowance(request: ResetSupplierAllowanceRequest): Promise<boolean>;
+```
+
+**Example:**
+
+```Typescript
+	await Role.resetAllowance(
+		new ResetSupplierAllowanceRequest({
+			targetId: '0.046172343'
+			tokenId: '0.0.49135648',
+			
+		})
+	);
+```
+
+### IncreaseAllowance
+**Spec:**
+	
+	
+```Typescript
+	Role.increaseAllowance(request: IncreaseSupplierAllowanceRequest): Promise<boolean>;
+```
+
+**Example:**
+
+```Typescript
+	await Role.increaseAllowance(
+		new IncreaseSupplierAllowanceRequest({
+			targetId: '0.046172343'
+			tokenId: '0.0.49135648',
+			amount: 1000
+		})
+	);
+```
+ 
+### DecreaseAllowance
+**Spec:**
+	
+	
+```Typescript
+	Role.decreaseAllowance(request: DecreaseSupplierAllowanceRequest): Promise<boolean>;
+```
+
+**Example:**
+
+```Typescript
+	await Role.decreaseAllowance(
+		new DecreaseSupplierAllowanceRequest({
+			targetId: '0.046172343'
+			tokenId: '0.0.49135648',
+			amount: 1000
+		})
+	);
+```
+
+### IsLimited
+**Spec:**
+	
+	
+```Typescript
+	Role.isLimited(request: CheckSupplierLimitRequest): Promise<boolean>;
+```
+
+**Example:**
+
+```Typescript
+	await Role.isLimited(
+		new CheckSupplierLimitRequest({
+			targetId: '0.046172343'
+			tokenId: '0.0.49135648',
+			supplierType: 'limited'
+		})
+	);
+```
+### IsUnlimited
+**Spec:**
+	
+	
+```Typescript
+	Role.isUnlimited(request: CheckSupplierLimitRequest): Promise<boolean>;
+```
+
+**Example:**
+
+```Typescript
+	await Role.isUnlimited(
+		new CheckSupplierLimitRequest({
+			targetId: '0.046172343'
+			tokenId: '0.0.49135648',
+			supplierType: 'unlimited'
+		})
+	);
+```    
+    
+    
+   
+}
 ## Common
 The SDK class is exported. This static class allows to set the log level and application metadata at any point in your code, just import it and change the values.
 
