@@ -23,6 +23,7 @@
 	- [Example (JS)](#example-js)
 	- [Example (TS)](#example-ts)
 	- [Before using](#before-using)
+- [Quick Start](#quickstart)
 - [Basic Types](#basic-types)
 	- [AccountId](#accountid)
 		- [Fields](#fields)
