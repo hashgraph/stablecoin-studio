@@ -165,7 +165,7 @@ await Network.connect(
             type: account.privateKey.type,
           },
         },
-        network: this.getCurrentNetwork().name,
+        network: 'testnet',
         wallet: SupportedWallets.CLIENT,
       }),
     );
@@ -176,7 +176,7 @@ Haspack Example
 ```Typescript
 await Network.connect(
       new ConnectRequest({
-        network: this.getCurrentNetwork().name,
+        network: 'testnet',
         wallet: SupportedWallets.HASHPACK,
       }),
     );
@@ -188,7 +188,7 @@ Metamask Example
 ```Typescript
 await Network.connect(
       new ConnectRequest({
-        network: this.getCurrentNetwork().name,
+       network: 'testnet',
         wallet: SupportedWallets.METAMASK,
       }),
     );
