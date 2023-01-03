@@ -154,7 +154,7 @@ SDK.log = configurationService.getLogConfiguration();
 ```  
 
 ## Connect
-The next step would be to connect to the network. Currently 3 types of connections are offered: EOA, Metamask and Haspack. These 3 connection types are in the SupportedWallets enum.
+The next step would be to connect to the network. Currently 3 types of connections are offered: Client, Metamask and Haspack. These 3 connection types are in the SupportedWallets enum.
 
 ```Typescript
 export enum SupportedWallets {
@@ -165,6 +165,7 @@ export enum SupportedWallets {
 ```
 
 Example
+
 ```Typescript
 await Network.connect(
       new ConnectRequest({
@@ -182,8 +183,18 @@ await Network.connect(
   }
 ```
 ## Wallet Events
+For web wallets, different events are launched to manage them. 
 
-
+```Typescript
+export enum WalletEvents {
+	walletInit = 'walletInit',
+	walletFound = 'walletFound',
+	walletPaired = 'walletPaired',
+	walletConnectionStatusChanged = 'walletConnectionStatusChanged',
+	walletAcknowledgeMessage = 'walletAcknowledgeMessage',
+	walletDisconnect = 'walletDisconnect',
+}
+```
 # Basic Types
 
 ## AccountId
