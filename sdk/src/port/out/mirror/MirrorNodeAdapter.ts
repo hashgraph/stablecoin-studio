@@ -24,6 +24,7 @@ import { singleton } from 'tsyringe';
 import StableCoinViewModel from '../../out/mirror/response/StableCoinViewModel.js';
 import AccountViewModel from '../../out/mirror/response/AccountViewModel.js';
 import StableCoinListViewModel from '../../out/mirror/response/StableCoinListViewModel.js';
+import TransactionResultViewModel from '../../out/mirror/response/TransactionResultViewModel.js';
 import { Environment } from '../../../domain/context/network/Environment.js';
 import LogService from '../../../app/service/LogService.js';
 import { StableCoinNotFound } from './error/StableCoinNotFound.js';
@@ -211,6 +212,26 @@ export class MirrorNodeAdapter {
 		}
 	}
 
+	public async getTransactionResult(
+		transactionId: string,
+	): Promise<TransactionResultViewModel> {
+		try {
+			const url = this.URI_BASE + 'contracts/results/' + transactionId
+			LogService.logTrace(url);
+			const res = await axios.get<ITransactionResult>(
+				url,
+			);
+
+			const result: TransactionResultViewModel = {
+				result: res.data.call_result.toString(),
+			};
+
+			return result;
+		} catch (error) {
+			return Promise.reject<TransactionResultViewModel>(new InvalidResponse(error));
+		}
+	}
+
 	private getMirrorNodeURL(environment: Environment): string {
 		switch (environment) {
 			case 'mainnet':
@@ -278,6 +299,10 @@ interface IAccount {
 	key: IKey;
 	alias: string;
 	account: string;
+}
+
+interface ITransactionResult {
+	call_result: string;
 }
 
 interface IKey {
