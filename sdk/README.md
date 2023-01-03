@@ -9,9 +9,6 @@
 </div>
 
 # Table of contents
-
-- [Hedera Stable Coin SDK](#hedera-stable-coin-sdk)
-- [Table of contents](#table-of-contents)
 - [Overview](#overview)
 - [Installing](#installing)
 	- [Pre-requirements](#pre-requirements)
