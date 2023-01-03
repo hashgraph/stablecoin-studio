@@ -572,6 +572,66 @@ Delete a stable coin. **Important** this operation is not reversible.
 
 ## Event
 
+### Register
+Register for wallet events. All event listeners are optional, just make sure to call it before trying to pair with any wallet, since pairing events can occur right when the page loads and the extension is found, if the wallet was paired previously.
+
+Multiple wallets can emit events, so make sure to filter them by the `wallet` attribute available in all of them indicating which wallet is emitting the event. All wallets supported emit the same events.
+
+All events use the standard node event emitting system and listeners are fully TS typed.
+
+**Spec:**
+
+```Typescript
+	Event.register = (events: Partial<WalletEvent>): void;
+	
+	type WalletEvent = {
+		walletInit: (data: WalletInitEvent) => void;
+		walletFound: (data: WalletFoundEvent) => void;
+		walletPaired: (data: WalletPairedEvent) => void;
+		walletConnectionStatusChanged: (
+			data: WalletConnectionStatusChangedEvent,
+		) => void;
+		walletAcknowledgeMessage: (data: WalletAcknowledgeMessageEvent) => void;
+		walletDisconnect: (data: WalletBaseEvent) => void;
+	};
+	
+	interface WalletBaseEvent {
+		wallet: SupportedWallets;
+	}
+
+	interface WalletInitEvent extends WalletBaseEvent {
+		initData: InitializationData;
+	}
+
+	interface WalletFoundEvent extends WalletBaseEvent {
+		name: string;
+	}
+	
+	interface WalletPairedEvent extends WalletBaseEvent {
+		data: InitializationData;
+		network: Environment;
+	}
+	
+	interface WalletConnectionStatusChangedEvent extends WalletBaseEvent {
+		status: ConnectionState;
+	}
+
+	interface WalletAcknowledgeMessageEvent extends WalletBaseEvent {
+		result: boolean;
+	}
+```
+
+**Example:**
+
+```Typescript
+	Event.register(
+		{
+			walletFound: (data: WalletFoundEvent) => { console.log(`Wallet ${data.name} was found!`) },
+		}
+	);
+
+```
+
 ## Account
 
 ## Role
