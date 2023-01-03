@@ -3,6 +3,16 @@
     "version": "1.0.0",
     "description": "",
     "main": "index.js",
+    "exports": {
+        ".": {
+            "import": "./build/typechain-types/index.js",
+            "require": "./build/typechain-types/index.js"
+        },
+        "./typechain-types/index.js": {
+            "import": "./build/typechain-types/index.js",
+            "require": "./build/typechain-types/index.js"
+        }
+    },
     "scripts": {
         "compile": "npx hardhat compile",
         "compile:force": "npx hardhat compile --force && npm run build",
