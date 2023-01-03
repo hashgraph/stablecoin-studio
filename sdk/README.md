@@ -683,6 +683,207 @@ Check out [Router.tsx](https://github.com/hashgraph/hedera-accelerator-stablecoi
 
 ## Role
 
+### HasRole
+**Spec:**
+	
+	
+```Typescript
+	Role.hasRole(request: HasRoleRequest): Promise<boolean>;
+```
+
+**Example:**
+
+```Typescript
+	await Role.hasRole(
+		new HasRoleRequest({
+			tokenId: "0.0.1",
+			targetId: "0.046172343",
+			role: StableCoinRole.CASHIN_ROLE,
+		})
+	);
+```
+
+### HasRole
+**Spec:**
+	
+	
+```Typescript
+	Role.hasRole(request: HasRoleRequest): Promise<boolean>;
+```
+
+**Example:**
+
+```Typescript
+	await Role.grantRole(
+		new GrantRoleRequest({
+			targetId: '0.046172343'
+			tokenId: '0.0.49135648',
+			role: StableCoinRole.CASHIN_ROLE,
+		})
+	);
+```
+
+### RevokeRole
+**Spec:**
+	
+	
+```Typescript
+	Role.revokeRole(request: RevokeRoleRequest): Promise<boolean>;
+```
+
+**Example:**
+
+```Typescript
+	await Role.revokeRole(
+		new RevokeRoleRequest({
+			targetId: '0.046172343'
+			tokenId: '0.0.49135648',
+			role: StableCoinRole.CASHIN_ROLE,
+		})
+	);
+```
+
+### GetRoles
+**Spec:**
+	
+	
+```Typescript
+	Role.getRoles(request: GetRolesRequest): Promise<string[]>;
+```
+
+**Example:**
+
+```Typescript
+	await Role.getRoles(
+		new GetRolesRequest({
+			targetId: '0.046172343'
+			tokenId: '0.0.49135648'
+		})
+	);
+```
+
+### GetAllowance
+**Spec:**
+	
+	
+```Typescript
+	Role.getAllowance(request: GetSupplierAllowanceRequest): Promise<Balance>;
+```
+
+**Example:**
+
+```Typescript
+	await Role.getAllowance(
+		new GetSupplierAllowanceRequest({
+			targetId: '0.046172343'
+			tokenId: '0.0.49135648',
+			
+		})
+	);
+```
+
+### ResetAllowance
+**Spec:**
+	
+	
+```Typescript
+	Role.resetAllowance(request: ResetSupplierAllowanceRequest): Promise<boolean>;
+```
+
+**Example:**
+
+```Typescript
+	await Role.resetAllowance(
+		new ResetSupplierAllowanceRequest({
+			targetId: '0.046172343'
+			tokenId: '0.0.49135648',
+			
+		})
+	);
+```
+
+### IncreaseAllowance
+**Spec:**
+	
+	
+```Typescript
+	Role.increaseAllowance(request: IncreaseSupplierAllowanceRequest): Promise<boolean>;
+```
+
+**Example:**
+
+```Typescript
+	await Role.increaseAllowance(
+		new IncreaseSupplierAllowanceRequest({
+			targetId: '0.046172343'
+			tokenId: '0.0.49135648',
+			amount: 1000
+		})
+	);
+```
+ 
+### DecreaseAllowance
+**Spec:**
+	
+	
+```Typescript
+	Role.decreaseAllowance(request: DecreaseSupplierAllowanceRequest): Promise<boolean>;
+```
+
+**Example:**
+
+```Typescript
+	await Role.decreaseAllowance(
+		new DecreaseSupplierAllowanceRequest({
+			targetId: '0.046172343'
+			tokenId: '0.0.49135648',
+			amount: 1000
+		})
+	);
+```
+
+### IsLimited
+**Spec:**
+	
+	
+```Typescript
+	Role.isLimited(request: CheckSupplierLimitRequest): Promise<boolean>;
+```
+
+**Example:**
+
+```Typescript
+	await Role.isLimited(
+		new CheckSupplierLimitRequest({
+			targetId: '0.046172343'
+			tokenId: '0.0.49135648',
+			supplierType: 'limited'
+		})
+	);
+```
+### IsUnlimited
+**Spec:**
+	
+	
+```Typescript
+	Role.isUnlimited(request: CheckSupplierLimitRequest): Promise<boolean>;
+```
+
+**Example:**
+
+```Typescript
+	await Role.isUnlimited(
+		new CheckSupplierLimitRequest({
+			targetId: '0.046172343'
+			tokenId: '0.0.49135648',
+			supplierType: 'unlimited'
+		})
+	);
+```    
+    
+    
+   
+}
 ## Common
 The SDK class is exported. This static class allows to set the log level and application metadata at any point in your code, just import it and change the values.
 
