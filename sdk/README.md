@@ -22,7 +22,7 @@
 	- [Wallet Events](#wallet-events)
 	- [Getting Account Information](#account-information)
 - [Usage](#usage)
-		- [**Important**](#important)
+	- [**Important**](#important)
 	- [StableCoin](#stablecoin)
 		- [Create Stable Coin](#create-stable-coin)
 		- [Get Info](#get-info)
@@ -75,15 +75,13 @@
 
 This project provides an sdk to manage hedera tokens throughout their lifecycle.
 
-This project based on hybrid tokens, that is, it uses Smart Contracts that communicate with hedera to interact with them.
-
-Provides functionalities for use in server mode, as well as for web integration (currently supporting Hashpack and Metamask).
+This project based on hybrid tokens, that is, it uses Smart Contracts that communicate with hedera to interact with them. It provides functionalities for use in server mode, as well as for web integration (currently supporting Hashpack and Metamask).
 
 For more information about the deployed contracts you can consult them in this project - [Contracts link](../contracts)
 
-If you want to see  server implementation you can see it in this project - [Standalone](../cli)
+If you want to see server side implementation you can see it in this project - [Standalone](../cli)
 
-If you want to see  web implementation you can see it in this project - [Web](../web)
+If you want to see an example of a React web app you can see it in this project - [Web](../web)
 
 # Installing
 
@@ -91,7 +89,7 @@ If you want to see  web implementation you can see it in this project - [Web](..
 
 You must have installed
 
-- [node (version >16.13)](https://nodejs.org/en/about/)
+- [node (version >16.17)](https://nodejs.org/en/about/)
 - [npm](https://www.npmjs.com/)
 
 ### Steps
@@ -121,14 +119,14 @@ To use this project in development mode you must follow the steps indicated in t
 # Quick Start
 ## Initialization
 
-The first thing to be able to use the sdk is the initialization of the same one for it we must indicate the environment of hedera in which we want to work.
+Before using the SDK we need to execute the `Network.init` function and specifiy the network:
 
 Example
 ```Typescript
 SDK.log = configurationService.getLogConfiguration();
   await Network.init(
     new InitializationRequest({
-    network: 'Testnet',
+    	network: 'Testnet',
     }),
  );
 ```  
@@ -143,10 +141,9 @@ export enum SupportedWallets {
 	CLIENT = 'Client',
 }
 ```
-In addition to this we have to specify the username and password for the client or the Wallet that will manage it. 
+In addition to this we have to specify the account id and private key for the Client, while HashPack and Metamask do not require an account in the request. 
 
 Below are examples of each of them.
-
 
 Client Example
 
@@ -166,7 +163,7 @@ await Network.connect(
     );
   }
 ```
-Haspack Example
+Hashpack Example
 
 ```Typescript
 await Network.connect(
@@ -183,14 +180,14 @@ Metamask Example
 ```Typescript
 await Network.connect(
       new ConnectRequest({
-       network: 'testnet',
+       	network: 'testnet',
         wallet: SupportedWallets.METAMASK,
       }),
     );
   }
 ```
 ## Wallet Events
-Wallets fire events are launched to manage them. 
+Wallets fire events the following events, see [Event.register](#Register) for more info. 
 
 ```Typescript
 export enum WalletEvents {
@@ -202,15 +199,7 @@ export enum WalletEvents {
 	walletDisconnect = 'walletDisconnect',
 }
 ```
-We can manage in this form
 
-```Typescript
-	const walletPaired = (event: EventParameter<'walletPaired'>) => {
-		onLastWalletEvent(event, () => {
-			//... do Work
-		});
-	};	
-```
 # Usage
 
 ## StableCoin
