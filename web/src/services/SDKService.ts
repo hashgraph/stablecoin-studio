@@ -140,8 +140,8 @@ export class SDKService {
 	public static async getCapabilities({
 		account,
 		tokenId,
-		tokenIsPaused = false,
-		tokenIsDeleted = false,
+		tokenIsPaused = undefined,
+		tokenIsDeleted = undefined,
 	}: {
 		account: RequestAccount;
 		tokenId: string;
