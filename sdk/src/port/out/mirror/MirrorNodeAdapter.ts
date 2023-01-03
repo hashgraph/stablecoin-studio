@@ -35,6 +35,8 @@ import ContractId from '../../../domain/context/contract/ContractId.js';
 import { InvalidResponse } from './error/InvalidResponse.js';
 import { HederaId } from '../../../domain/context/shared/HederaId.js';
 import { KeyType } from '../../../domain/context/account/KeyProps.js';
+import AccountTokenRelationViewModel from './response/AccountTokenRelationViewModel.js';
+import { StableCoinNotAssociated } from '../../../domain/context/stablecoin/error/StableCoinNotAssociated.js';
 
 @singleton()
 export class MirrorNodeAdapter {
@@ -211,6 +213,41 @@ export class MirrorNodeAdapter {
 		}
 	}
 
+	public async getAccountTokens(
+		targetId: HederaId,
+		tokenId: HederaId,
+	): Promise<AccountTokenRelationViewModel> {
+		try {
+			const url = `${
+				this.URI_BASE
+			}accounts/${targetId.toString()}/tokens?token.id=${tokenId.toString()}`;
+
+			LogService.logTrace(url);
+
+			const res = await axios.get<AccountTokenRelation>(url);
+
+			if (res.data.tokens.length === 0) {
+				throw new StableCoinNotAssociated(
+					targetId.toString(),
+					tokenId.toString(),
+				);
+			}
+
+			const accountRelation: AccountTokenRelationViewModel = {
+				automatic_association: res.data.tokens[0].automatic_association,
+				balance: res.data.tokens[0].balance,
+				created_timestamp: res.data.tokens[0].created_timestamp,
+				freeze_status: res.data.tokens[0].freeze_status,
+				kyc_status: res.data.tokens[0].kyc_status,
+				token_id: HederaId.from(res.data.tokens[0].token_id),
+			};
+
+			return accountRelation;
+		} catch (error) {
+			return Promise.reject<AccountTokenRelationViewModel>(error);
+		}
+	}
+
 	private getMirrorNodeURL(environment: Environment): string {
 		switch (environment) {
 			case 'mainnet':
@@ -236,7 +273,16 @@ interface IToken {
 interface ITokenList {
 	tokens: IToken[];
 }
-
+interface AccountTokenRelation {
+	tokens: {
+		automatic_association: boolean;
+		balance: number;
+		created_timestamp: string;
+		freeze_status: string;
+		kyc_status: string;
+		token_id: string;
+	}[];
+}
 interface IHederaStableCoinDetail {
 	token_id?: string;
 	name?: string;

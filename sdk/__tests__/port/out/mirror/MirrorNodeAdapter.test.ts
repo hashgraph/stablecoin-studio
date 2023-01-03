@@ -30,6 +30,7 @@ import {
 	CLIENT_ACCOUNT_ED25519,
 	ENVIRONMENT,
 } from '../../../config.js';
+import AccountTokenRelationViewModel from '../../../../src/port/out/mirror/response/AccountTokenRelationViewModel.js';
 
 describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 	const tokenId = HederaId.from('0.0.49117058');
@@ -109,4 +110,17 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 			CLIENT_ACCOUNT_ECDSA.publicKey?.key,
 		);
 	});
+
+	it('Test get account relationship token', async () => {
+		// StableCoin.create();
+		const tokenId = HederaId.from('0.0.49171802');
+		const accountTokenRelation: AccountTokenRelationViewModel =
+			await mn.getAccountTokens(HEDERA_ID_ACCOUNT_ED25519, tokenId);
+		expect(accountTokenRelation.token_id).toStrictEqual(tokenId);
+		expect(accountTokenRelation.created_timestamp).not.toBeNull();
+		expect(accountTokenRelation.balance).not.toBeNull();
+		expect(accountTokenRelation.automatic_association).not.toBeNull();
+		expect(accountTokenRelation.freeze_status).not.toBeNull();
+		expect(accountTokenRelation.kyc_status).not.toBeNull();
+	}, 150000000);
 });

@@ -22,9 +22,11 @@ import { ICommandHandler } from '../../../../../../core/command/CommandHandler.j
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
 import BigDecimal from '../../../../../../domain/context/shared/BigDecimal.js';
+import { StableCoinNotAssociated } from '../../../../../../domain/context/stablecoin/error/StableCoinNotAssociated.js';
 import AccountService from '../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
+import { GetAccountTokenAssociatedQuery } from '../../../../query/account/tokenAssociated/GetAccountTokenAssociatedQuery.js';
 import { CashInCommand, CashInCommandResponse } from './CashInCommand.js';
 
 @CommandHandler(CashInCommand)
@@ -42,6 +44,17 @@ export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
 		const { amount, targetId, tokenId } = command;
 		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
+		const tokenAssociated = await this.stableCoinService.queryBus.execute(
+			new GetAccountTokenAssociatedQuery(targetId, tokenId),
+		);
+
+		if (!tokenAssociated) {
+			throw new StableCoinNotAssociated(
+				targetId.toString(),
+				tokenId.toString(),
+			);
+		}
+
 		const capabilities = await this.stableCoinService.getCapabilities(
 			account,
 			tokenId,
@@ -49,7 +62,7 @@ export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
 		const res = await handler.cashin(
 			capabilities,
 			targetId,
-			BigDecimal.fromString(amount, capabilities.coin.decimals)
+			BigDecimal.fromString(amount, capabilities.coin.decimals),
 		);
 		return Promise.resolve(
 			new CashInCommandResponse(res.error === undefined),
