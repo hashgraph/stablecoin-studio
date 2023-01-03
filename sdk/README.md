@@ -91,7 +91,7 @@ If you want to see  web implementation you can see it in this project - [Web](..
 
 You must have installed
 
-- [node (version >16.13)](https://nodejs.org/en/about/)
+- [node (version >16.17)](https://nodejs.org/en/about/)
 - [npm](https://www.npmjs.com/)
 
 ### Steps
