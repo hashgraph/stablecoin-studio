@@ -681,6 +681,61 @@ Check out [Router.tsx](https://github.com/hashgraph/hedera-accelerator-stablecoi
 
 ## Account
 
+### GetPublicKey
+**Spec:**
+	
+	
+```Typescript
+	Account.getPublicKey(request: GetPublicKeyRequest): Promise<PublicKey>;
+```
+
+**Example:**
+
+```Typescript
+	await Account.getPublicKey(
+		new GetPublicKeyRequest({
+			account: '0.0.49172343';
+		})
+	);
+```
+	
+### ListStableCoins
+**Spec:**
+	
+	
+```Typescript
+	Account.listStableCoins(request: GetListStableCoinRequest,): Promise<StableCoinListViewModel>;
+```
+
+**Example:**
+
+```Typescript
+	await Account.listStableCoins(
+		new GetPublicKeyRequest({
+			account: '0.0.49172343';
+		})
+	);
+```
+
+### GetInfo
+**Spec:**
+	
+	
+```Typescript
+	Account.getInfo(request: GetAccountInfoRequest): Promise<AccountViewModel>;
+```
+
+**Example:**
+
+```Typescript
+	await Account.getInfo(
+		new GetAccountInfoRequest({
+			account: '0.0.49172343';
+		})
+	);
+```
+
+
 ## Role
 
 ### HasRole
