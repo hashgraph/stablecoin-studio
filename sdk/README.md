@@ -195,7 +195,7 @@ await Network.connect(
   }
 ```
 ## Wallet Events
-For web wallets, different events are launched to manage them. 
+Wallets fire events are launched to manage them. 
 
 ```Typescript
 export enum WalletEvents {
@@ -207,7 +207,15 @@ export enum WalletEvents {
 	walletDisconnect = 'walletDisconnect',
 }
 ```
+We can manage in this form
 
+```Typescript
+	const walletPaired = (event: EventParameter<'walletPaired'>) => {
+		onLastWalletEvent(event, () => {
+			//... do Work
+		});
+	};	
+```
 # Usage
 
 ## StableCoin
