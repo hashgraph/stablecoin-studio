@@ -122,7 +122,7 @@ You must have installed
 
 #### **For development**
 
-To use this project in development mode you must follow the steps indicated in the following section
+To use this project in development mode you must follow the steps indicated in the following section [Build](#Build).
 
 # Build
 
