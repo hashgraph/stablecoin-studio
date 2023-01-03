@@ -79,7 +79,21 @@ If you want to switch to another compatible wallet, you can do it at any time by
 
 ## Supported Wallets
 
-The Wallets currently supported by the project are [Hashpack](https://www.hashpack.app/) and [Metamask](https://metamask.io/)
+The Wallets currently supported by the project are [Hashpack](https://www.hashpack.app/)(for [ED25519](https://docs.hedera.com/hedera/docs/sdks/keys/generate-a-new-key-pair#ed25519) accounts) and [Metamask](https://metamask.io/)(for [ECDSA](https://docs.hedera.com/hedera/docs/sdks/keys/generate-a-new-key-pair#ecdsa-secp256k1_) accounts)
+
+### Metamask configuration
+
+In order to use metamask you must first configure it to interact with an Hedera [JSON-RPC relay node](https://docs.hedera.com/hedera/core-concepts/smart-contracts/json-rpc-relay) because Hedera consensus nodes are not JSON-RPC compatible.
+
+Add a new network with the following information : 
+- **Network Name**: HederaTestNet _(or any other name you wish)_
+- **RPC URL**: https://testnet.hashio.io/api _(or the url of any other Hedera JSON-RPC relay node)_
+- **Chain ID**: 296
+- **Currency symbol**: HBAR
+- **Block explorer URL**: https://hashscan.io/testnet/ _(or any other hedera compatible block explorer you want)_
+
+![image](https://user-images.githubusercontent.com/114951681/210327135-a88604ab-2d9c-4341-87fd-e84c4115364f.png)
+
 
 > In order to use the WEB correctly it is necessary to have at least one of those two wallets already installed in your browser. You can nevertheless have both and switch from one to the other.
 
