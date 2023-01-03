@@ -36,7 +36,7 @@ import {
 } from '@hashgraph/sdk';
 import { singleton } from 'tsyringe';
 import { HederaTransactionAdapter } from '../HederaTransactionAdapter.js';
-import { HashConnect, MessageTypes } from 'hashconnect';
+import { HashConnect } from 'hashconnect';
 import { HashConnectProvider } from 'hashconnect/provider/provider';
 import { HashConnectSigner } from 'hashconnect/provider/signer';
 import { HashConnectTypes } from 'hashconnect';

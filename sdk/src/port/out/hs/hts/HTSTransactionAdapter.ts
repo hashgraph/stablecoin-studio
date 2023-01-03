@@ -42,6 +42,7 @@ import { lazyInject } from '../../../../core/decorator/LazyInjectDecorator.js';
 import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter.js';
 import NetworkService from '../../../../app/service/NetworkService.js';
 import LogService from '../../../../app/service/LogService.js';
+import { WalletConnectError } from '../../../../domain/context/network/error/WalletConnectError.js';
 
 @singleton()
 export class HTSTransactionAdapter extends HederaTransactionAdapter {
@@ -83,7 +84,11 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 		this.network = this.networkService.environment;
 		this._client = Client.forName(this.networkService.environment);
 		const id = this.account.id?.value ?? '';
-		const privateKey = account.privateKey?.toHashgraphKey() ?? '';
+		if (!account.privateKey)
+			throw new WalletConnectError(
+				'A private key is needed for the account',
+			);
+		const privateKey = account.privateKey.toHashgraphKey();
 		this._client.setOperator(id, privateKey);
 		const eventData: WalletPairedEvent = {
 			wallet: SupportedWallets.HASHPACK,
