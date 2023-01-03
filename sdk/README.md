@@ -82,11 +82,11 @@ This project based on hybrid tokens, that is, it uses Smart Contracts that commu
 
 Provides functionalities for use in server mode, as well as for web integration (currently supporting Hashpack and Metamask).
 
-For more information about the deployed contracts you can consult them in this project - [a Contracts link](../cli)
+For more information about the deployed contracts you can consult them in this project - [Contracts link](../contracts)
 
-If you want to see a web implementation you can see it in this project - Link Web
+If you want to see  server implementation you can see it in this project - [Contracts link](../cli)
 
-If you want to see a web implementation you can see it in this project - Link Cli
+If you want to see  web implementation you can see it in this project - [Contracts link](../web)
 
 # Installing
 
