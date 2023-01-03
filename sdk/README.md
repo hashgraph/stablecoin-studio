@@ -24,6 +24,10 @@
 	- [Example (TS)](#example-ts)
 	- [Before using](#before-using)
 - [Quick Start](#quickstart)
+	- [Initialization](#inizialitation)
+	- [Connect](#connect)
+	- [Wallet Events](#wallet-events)
+	- [Getting Account Information](#account-information)
 - [Basic Types](#basic-types)
 	- [AccountId](#accountid)
 		- [Fields](#fields)
@@ -143,7 +147,7 @@ The SDK supports both client-side and server-side implementations, keeping in mi
 On client-side applications, such as React, use `NetworkMode.HASHPACK`.
 On server-side applications, such as Node applications, use `NetworkMode.EOA` and supply the credentials.
 
-# Example (JS)
+# Example (JS) (Update Examples)
 
 ```JavaScript
 // ES5
@@ -237,6 +241,8 @@ try {
 
 
 ```
+
+# Quick Start
 
 
 # Basic Types
