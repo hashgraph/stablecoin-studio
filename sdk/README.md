@@ -84,9 +84,9 @@ Provides functionalities for use in server mode, as well as for web integration 
 
 For more information about the deployed contracts you can consult them in this project - [Contracts link](../contracts)
 
-If you want to see  server implementation you can see it in this project - [Contracts link](../cli)
+If you want to see  server implementation you can see it in this project - [Standalone](../cli)
 
-If you want to see  web implementation you can see it in this project - [Contracts link](../web)
+If you want to see  web implementation you can see it in this project - [Web](../web)
 
 # Installing
 
