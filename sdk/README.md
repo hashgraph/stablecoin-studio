@@ -163,8 +163,12 @@ export enum SupportedWallets {
 	CLIENT = 'Client',
 }
 ```
+In addition to this we have to specify the username and password for the client or the Wallet that will manage it. 
 
-Example
+Below are examples of each of them.
+
+
+Client Example
 
 ```Typescript
 await Network.connect(
@@ -178,6 +182,29 @@ await Network.connect(
         },
         network: this.getCurrentNetwork().name,
         wallet: SupportedWallets.CLIENT,
+      }),
+    );
+  }
+```
+Haspack Example
+
+```Typescript
+await Network.connect(
+      new ConnectRequest({
+        network: this.getCurrentNetwork().name,
+        wallet: SupportedWallets.HASHPACK,
+      }),
+    );
+  }
+```
+
+Metamask Example
+
+```Typescript
+await Network.connect(
+      new ConnectRequest({
+        network: this.getCurrentNetwork().name,
+        wallet: SupportedWallets.METAMASK,
       }),
     );
   }
