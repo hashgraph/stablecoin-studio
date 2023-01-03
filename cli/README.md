@@ -31,7 +31,14 @@ The command below can be used to install the official release from the NPM repos
 
 ```bash
 TO CHECK!!!
-npm install @hashgraph/hedera-stable-coin-cli
+npm install -g @hashgraph/hedera-stable-coin-cli
+```
+
+Once installed globally you can use the `accelerator wizard` command to run the CLI.
+
+```bash
+TO CHECK!!!
+accelerator start
 ```
 
 # Build
@@ -43,7 +50,7 @@ You must have installed
 - [Node.js](https://nodejs.org/) `>= v16.13` and `< v17`
 - [npm](https://www.npmjs.com/)
 
-Then you must install and build the following projects : 
+Then you must install and build the following projects :
 
 1. [Contracts installation](https://github.com/hashgraph/hedera-accelerator-stablecoin/blob/main/contracts/README.md#installation)
 2. [SDK installation](https://github.com/hashgraph/hedera-accelerator-stablecoin/blob/main/sdk/README.md#installation)
@@ -61,7 +68,7 @@ From the root of the CLI project workspace:
 
 ## Starting the CLI
 
-The first time you execute the `npm accelerator wizard` command in your terminal, if you haven't added your default configuration path the interface will ask you wether you want create a new configuration file in the default path. When the configuration file is created you must configure the default network and add a default account. In order to create the default account you can use [HashPack](https://www.hashpack.app/download) or the [Hedera Developer Portal](https://portal.hedera.com/register).
+The first time you execute the `accelerator wizard` command in your terminal, if you haven't added your default configuration path the interface will ask you wether you want create a new configuration file in the default path. When the configuration file is created you must configure the default network and add a default account. In order to create the default account you can use [HashPack](https://www.hashpack.app/download) or the [Hedera Developer Portal](https://portal.hedera.com/register).
 
 https://user-images.githubusercontent.com/102601367/205074337-a1f09813-9434-42e9-972b-1c40655bb1d1.mov
 
@@ -147,14 +154,14 @@ When your configuration file is set up and at least one account is added and sel
 
 #### Create a new Stable Coin
 
-With this option you are able to create a new stable coin adding the mandatory details like Name, Symbol and Autorenew account. 
+With this option you are able to create a new stable coin adding the mandatory details like Name, Symbol and Autorenew account.
 
 > The autorenew account must be the user's current account otherwise the stable coin creation will not work, this is due to the fact that the autorenew account must sign the underlying token's creation transaction and currently we do not support multi-signatures transactions.
 
 After the minimum details have been added, you will be asked if you want to add optional details like the number of decimals, the initial supply or the max supply. If you reply "no", the default values will be set.
 
 Another question is prompt asking if you would like the smart contract to be set as the owner of all the underlying token keys (admin, wipe, ...), you could however set any account you wish as the owner of any token key.
-If you set the smart contract as a key owner, you will be able to grant and revoke this capacity to any other account, since it is the smart contract that will be ultimately controlling the underlying token. 
+If you set the smart contract as a key owner, you will be able to grant and revoke this capacity to any other account, since it is the smart contract that will be ultimately controlling the underlying token.
 The user that creates the stable coin is granted all the roles if the smart contract is the owner of all the underlying token's keys.
 
 When you add an existing stable coin, you will able to operate with the roles that the stable coin's admin granted you. If after adding a stable coin you are granted other roles, you will have the possibility to refresh the stable coin's roles that you have.
@@ -215,9 +222,9 @@ https://user-images.githubusercontent.com/102601367/205074293-73156a99-fc65-41ba
     - DELETE_ROLE
 
 - **Danger Zone**: This section contains the stable coin operations deemed as particularily "dangerous" either because they affect every single token owner (PAUSE) or because they can not be rolled-back (DELETE).
-  For security reasons these operations are grouped in a "sub-menu" so that users do not run them by mistake. 
-    - **Un/Pause**: Pause and unpause prevents the token from being involved in any kind of operations. 
-    - **Delete**: Marks a token as deleted. This actions cannot be undone.
+  For security reasons these operations are grouped in a "sub-menu" so that users do not run them by mistake.
+  - **Un/Pause**: Pause and unpause prevents the token from being involved in any kind of operations.
+  - **Delete**: Marks a token as deleted. This actions cannot be undone.
 
 #### List Stable Coins
 
