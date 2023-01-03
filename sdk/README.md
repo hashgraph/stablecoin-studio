@@ -213,18 +213,18 @@ export enum WalletEvents {
 ## StableCoin
 
 ### Create Stable Coin
-Creates a new stable coin.
+Creates a new stable coin. You must use Network.connect first with a SupportedWallet.
 
 **Spec:**
 
 ```Typescript
-	sdk.createStableCoin = (request: CreateRequest): Promise<StableCoinDetail>
+	StableCoin.create = (request: CreateRequest): Promise<StableCoinViewModel>
 ```
 
 **Example:**
 
 ```Typescript
-	const stableCoin: StableCoinDetail = await sdk.createStableCoin(
+	const stableCoin: StableCoinViewModel = await StableCoin.create(
 		new CreateRequest({
 			account: new HashPackAccount("0.0.1"),
 			name: "Hedera Stable Coin",
@@ -234,7 +234,46 @@ Creates a new stable coin.
 	);
 ```
 
-### Create Stable Coin
+### Get Info
+Gets the information of an existing stable coin
+
+**Spec:**
+
+```Typescript
+	StableCoin.getInfo = (request: GetStableCoinDetailsRequest): Promise<StableCoinViewModel>
+```
+
+**Example:**
+
+```Typescript
+	const stableCoin: StableCoinViewModel = await StableCoin.getInfo(
+		new GetStableCoinDetailsRequest({
+			id: "0.0.1",
+		})
+	);
+```
+
+
+### Cash In
+Mint tokens in a specific stable coin. The operating account must have the supplier role.
+
+**Spec:**
+
+```Typescript
+	StableCoin.cashIn = (request: CashInRequest): Promise<boolean>
+```
+
+**Example:**
+
+```Typescript
+	const result: boolean = await StableCoin.cashIn(
+		new CashInRequest({
+			tokenId: "0.0.1",
+			targetId: "0.0.2",
+			amount: "1234",
+		})
+	);
+```
 
 ## Network
 
