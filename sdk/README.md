@@ -21,7 +21,7 @@
 - [Build](#Build)
 - [Quick Start](#quickstart)
 	- [Initialization](#initialization)
-	- [Connect](#connect)
+	- [Connect sdk](#connect-sdk)
 	- [Wallet Events](#wallet-events)
 	- [Getting Account Information](#account-information)
 - [Usage](#usage)
@@ -138,7 +138,7 @@ SDK.log = configurationService.getLogConfiguration();
  );
 ```  
 
-## Connect
+## Connect sdk
 The next step would be to connect to the network. Currently 3 types of connections are offered: Client, Metamask and Haspack. These 3 connection types are in the SupportedWallets enum.
 
 ```Typescript
