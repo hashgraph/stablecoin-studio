@@ -1060,65 +1060,65 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			case Operation.WIPE:
 				return this.checkTransactionResponse(
 					await RPCTransactionResponseAdapter.manageResponse(
-					await this.precompiledCall('wipeTokenAccount', [
-						TokenId.fromString(
-							coin.coin.tokenId?.value ?? '',
-						).toSolidityAddress(),
-						params?.targetId,
-						params?.amount,
-					]),
+						await this.precompiledCall('wipeTokenAccount', [
+							TokenId.fromString(
+								coin.coin.tokenId?.value ?? '',
+							).toSolidityAddress(),
+							params?.targetId,
+							params?.amount,
+						]),
 				));
 
 			case Operation.FREEZE:
 				return this.checkTransactionResponse(
 					await RPCTransactionResponseAdapter.manageResponse(
-					await this.precompiledCall('freezeToken', [
-						TokenId.fromString(
-							coin.coin.tokenId?.value ?? '',
-						).toSolidityAddress(),
-						params?.targetId,
-					]),
+						await this.precompiledCall('freezeToken', [
+							TokenId.fromString(
+								coin.coin.tokenId?.value ?? '',
+							).toSolidityAddress(),
+							params?.targetId,
+						]),
 				));
 
 			case Operation.UNFREEZE:
 				return this.checkTransactionResponse(
 					await RPCTransactionResponseAdapter.manageResponse(
-					await this.precompiledCall('unfreezeToken', [
-						TokenId.fromString(
-							coin.coin.tokenId?.value ?? '',
-						).toSolidityAddress(),
-						params?.targetId,
-					]),
+						await this.precompiledCall('unfreezeToken', [
+							TokenId.fromString(
+								coin.coin.tokenId?.value ?? '',
+							).toSolidityAddress(),
+							params?.targetId,
+						]),
 				));
 
 			case Operation.PAUSE:
 				return this.checkTransactionResponse(
 					await RPCTransactionResponseAdapter.manageResponse(
-					await this.precompiledCall('pauseToken', [
-						TokenId.fromString(
-							coin.coin.tokenId?.value ?? '',
-						).toSolidityAddress(),
-					]),
+						await this.precompiledCall('pauseToken', [
+							TokenId.fromString(
+								coin.coin.tokenId?.value ?? '',
+							).toSolidityAddress(),
+						]),
 				));
 
 			case Operation.UNPAUSE:
 				return this.checkTransactionResponse(
 					await RPCTransactionResponseAdapter.manageResponse(
-					await this.precompiledCall('unpauseToken', [
-						TokenId.fromString(
-							coin.coin.tokenId?.value ?? '',
-						).toSolidityAddress(),
-					]),
+						await this.precompiledCall('unpauseToken', [
+							TokenId.fromString(
+								coin.coin.tokenId?.value ?? '',
+							).toSolidityAddress(),
+						]),
 				));
 
 			case Operation.DELETE:
 				return this.checkTransactionResponse(
 					await RPCTransactionResponseAdapter.manageResponse(
-					await this.precompiledCall('deleteToken', [
-						TokenId.fromString(
-							coin.coin.tokenId?.value ?? '',
-						).toSolidityAddress(),
-					]),
+						await this.precompiledCall('deleteToken', [
+							TokenId.fromString(
+								coin.coin.tokenId?.value ?? '',
+							).toSolidityAddress(),
+						]),
 				));
 
 			default:
