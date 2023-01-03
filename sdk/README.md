@@ -91,7 +91,17 @@
 
 # Overview
 
-Hedera supports the creation of tokens and stable coins. This SDK aims to help in deploying, managing and operating with stable coins in the Hedera network.
+This project provides an sdk to manage hedera tokens throughout their lifecycle.
+
+It is based on hybrid tokens, that is, it uses Smart Contracts that communicate with hedera to interact with them.
+
+It provides functionalities for use in server mode, as well as for web integration (currently supporting Hashpack and Metamask).
+
+For more information about the deployed contracts you can consult them in this project - Link contracts
+
+If you want to see a web implementation you can see it in this project - Link Web
+
+Translated with www.DeepL.com/Translator (free version)
 
 # Installing
 
