@@ -135,6 +135,12 @@ To use this project in development mode you must follow the steps indicated in t
 7. Run `npm run build` to build the SDK.
 8. Import and use the SDK. Or use one of the example projects under `/examples`
 
+## Before using
+
+The SDK supports both client-side and server-side implementations, keeping in mind that only one `NetworkMode` is currently available for each environment.
+
+On client-side applications, such as React, use `NetworkMode.HASHPACK`.
+On server-side applications, such as Node applications, use `NetworkMode.EOA` and supply the credentials.
 
 # Example (JS)
 
@@ -231,12 +237,6 @@ try {
 
 ```
 
-## Before using
-
-The SDK supports both client-side and server-side implementations, keeping in mind that only one `NetworkMode` is currently available for each environment.
-
-On client-side applications, such as React, use `NetworkMode.HASHPACK`.
-On server-side applications, such as Node applications, use `NetworkMode.EOA` and supply the credentials.
 
 # Basic Types
 
