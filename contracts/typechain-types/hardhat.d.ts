@@ -25,10 +25,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Initializable__factory>;
     getContractFactory(
-      name: "IERC20PermitUpgradeable",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IERC20PermitUpgradeable__factory>;
-    getContractFactory(
       name: "IERC20MetadataUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20MetadataUpgradeable__factory>;
@@ -177,9 +173,17 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IHederaTokenService__factory>;
     getContractFactory(
+      name: "IERC20UpgradeableCustom",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC20UpgradeableCustom__factory>;
+    getContractFactory(
       name: "IHederaERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IHederaERC20__factory>;
+    getContractFactory(
+      name: "IHederaERC20Upgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IHederaERC20Upgradeable__factory>;
     getContractFactory(
       name: "IStableCoinFactory",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -212,11 +216,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Initializable>;
-    getContractAt(
-      name: "IERC20PermitUpgradeable",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IERC20PermitUpgradeable>;
     getContractAt(
       name: "IERC20MetadataUpgradeable",
       address: string,
@@ -403,10 +402,20 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IHederaTokenService>;
     getContractAt(
+      name: "IERC20UpgradeableCustom",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC20UpgradeableCustom>;
+    getContractAt(
       name: "IHederaERC20",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IHederaERC20>;
+    getContractAt(
+      name: "IHederaERC20Upgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IHederaERC20Upgradeable>;
     getContractAt(
       name: "IStableCoinFactory",
       address: string,

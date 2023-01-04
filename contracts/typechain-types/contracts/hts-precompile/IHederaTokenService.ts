@@ -867,10 +867,8 @@ export interface IHederaTokenService extends BaseContract {
       token: PromiseOrValue<string>,
       owner: PromiseOrValue<string>,
       spender: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { responseCode: BigNumber; allowance: BigNumber }
-    >;
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     approve(
       token: PromiseOrValue<string>,
@@ -1165,10 +1163,8 @@ export interface IHederaTokenService extends BaseContract {
     token: PromiseOrValue<string>,
     owner: PromiseOrValue<string>,
     spender: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber] & { responseCode: BigNumber; allowance: BigNumber }
-  >;
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   approve(
     token: PromiseOrValue<string>,
@@ -1842,7 +1838,7 @@ export interface IHederaTokenService extends BaseContract {
       token: PromiseOrValue<string>,
       owner: PromiseOrValue<string>,
       spender: PromiseOrValue<string>,
-      overrides?: CallOverrides
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     approve(
@@ -2139,7 +2135,7 @@ export interface IHederaTokenService extends BaseContract {
       token: PromiseOrValue<string>,
       owner: PromiseOrValue<string>,
       spender: PromiseOrValue<string>,
-      overrides?: CallOverrides
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     approve(

@@ -40,7 +40,7 @@ function decimals() external view returns (uint8)
 
 
 
-*Returns the number of decimals of the token *
+*Returns the number of decimals of the token*
 
 
 #### Returns
@@ -57,7 +57,7 @@ function name() external view returns (string)
 
 
 
-*Returns the name of the token *
+*Returns the name of the token*
 
 
 #### Returns
@@ -91,7 +91,7 @@ function totalSupply() external view returns (uint256)
 
 
 
-*Returns the total number of tokens that exits *
+*Returns the total number of tokens that exits*
 
 
 #### Returns

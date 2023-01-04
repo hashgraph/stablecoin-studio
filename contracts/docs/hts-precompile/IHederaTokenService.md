@@ -13,7 +13,7 @@
 ### allowance
 
 ```solidity
-function allowance(address token, address owner, address spender) external view returns (int64 responseCode, uint256 allowance)
+function allowance(address token, address owner, address spender) external nonpayable returns (int64 responseCode, uint256 allowance)
 ```
 
 Returns the amount which spender is still allowed to withdraw from owner. Only Applicable to Fungible Tokens
@@ -600,8 +600,8 @@ Query to return the token type for a given address
 
 | Name | Type | Description |
 |---|---|---|
-| responseCode | int64 | The response code for the status of the request. SUCCESS is 22.     |
-| tokenType | int32 | the token type. 0 is FUNGIBLE_COMMON, 1 is NON_FUNGIBLE_UNIQUE, -1 is UNRECOGNIZED    |
+| responseCode | int64 | The response code for the status of the request. SUCCESS is 22. |
+| tokenType | int32 | the token type. 0 is FUNGIBLE_COMMON, 1 is NON_FUNGIBLE_UNIQUE, -1 is UNRECOGNIZED |
 
 ### grantTokenKyc
 
@@ -719,8 +719,8 @@ Query if valid token found for the given address
 
 | Name | Type | Description |
 |---|---|---|
-| responseCode | int64 | The response code for the status of the request. SUCCESS is 22.     |
-| isToken | bool | True if valid token found for the given address      |
+| responseCode | int64 | The response code for the status of the request. SUCCESS is 22. |
+| isToken | bool | True if valid token found for the given address |
 
 ### mintToken
 
