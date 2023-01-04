@@ -214,7 +214,6 @@ export class MirrorNodeAdapter {
 		}
 	}
 
-
 	public async getAccountTokens(
 		targetId: HederaId,
 		tokenId: HederaId,
@@ -247,18 +246,21 @@ export class MirrorNodeAdapter {
 			return Promise.reject<AccountTokenListRelationViewModel>(
 				new InvalidResponse(error),
 			);
-      
+		}
+	}
+
 	public async getTransactionResult(
 		transactionId: string,
 	): Promise<TransactionResultViewModel> {
 		try {
-			const url = this.URI_BASE + 'contracts/results/' + transactionId
+			const url = this.URI_BASE + 'contracts/results/' + transactionId;
 			LogService.logTrace(url);
-			const res = await axios.get<ITransactionResult>(
-				url,
-			);
+			const res = await axios.get<ITransactionResult>(url);
 
-			if(!res.data.call_result) throw new Error("Response does not contain a transaction result");
+			if (!res.data.call_result)
+				throw new Error(
+					'Response does not contain a transaction result',
+				);
 
 			const result: TransactionResultViewModel = {
 				result: res.data.call_result.toString(),
@@ -266,7 +268,9 @@ export class MirrorNodeAdapter {
 
 			return result;
 		} catch (error) {
-			return Promise.reject<TransactionResultViewModel>(new InvalidResponse(error));
+			return Promise.reject<TransactionResultViewModel>(
+				new InvalidResponse(error),
+			);
 		}
 	}
 
