@@ -376,9 +376,7 @@ export default class CreateStableCoinService extends Service {
 
   private async checkAnswer(answer: string): Promise<RequestPublicKey> {
     switch (answer) {
-      case 
-        language.getText('wizard.adminFeatureOptions.CurrentUser') ||
-        language.getText('wizard.featureOptions.CurrentUser'): {
+      case language.getText('wizard.featureOptions.CurrentUser'): {
         const currentAccount = utilsService.getCurrentAccount();
         const privateKey: RequestPrivateKey = {
           key: currentAccount.privateKey.key,
@@ -401,12 +399,10 @@ export default class CreateStableCoinService extends Service {
         };
       }
 
-      case language.getText('wizard.adminFeatureOptions.None') ||
-      language.getText('wizard.featureOptions.None'):
+      case language.getText('wizard.featureOptions.None'):
         return undefined;
 
-      case language.getText('wizard.adminFeatureOptions.SmartContract') ||
-      language.getText('wizard.featureOptions.SmartContract'):
+      case language.getText('wizard.featureOptions.SmartContract'):
         return Account.NullPublicKey;
 
         default:

@@ -17,8 +17,14 @@ const goBack = {
 
 const returnToMainMenu = {
   ...separator_1,
-  Return: 'Return to main menu',
+  Return: 'Return to the main menu',
   ...separator_2,
+};
+
+const basicFeatureOptions = {
+  SmartContract: 'The Smart Contract',
+  CurrentUser: 'Current user key',
+  None: 'None',
 };
 
 export const english = {
@@ -43,21 +49,21 @@ export const english = {
     askNetwork: 'Select the default network',
     askNotDefaultNetwork:
       'Your option is not one of the default networks, do you want to create a new network? (y/n)',
-    askAccountId: 'Introduce the account id',
+    askAccountId: 'Enter the account id',
     askNetworkAccount: 'Which network does this account belong to?',
     askPrivateKeyType: 'Which type of private key will the account use?',
-    askAlias: 'Introduce an alias for this account',
+    askAlias: 'Enter an alias for this account',
     aliasAlreadyInUse:
       'Alias ${alias} already in use. Please use another alias.',
-    askMoreAccounts: 'Do you want to introduce more accounts? (y/n)',
-    askPrivateKey: 'Introduce the private key',
-    askPublicKey: 'Introduce the public key',
-    askConsensusUrl: 'Introduce the url',
+    askMoreAccounts: 'Do you want to enter more accounts? (y/n)',
+    askPrivateKey: 'Enter the private key',
+    askPublicKey: 'Enter the public key',
+    askConsensusUrl: 'Enter the url',
     askMoreConsensusNodes:
-      'Do you want to introduce more consensus nodes? (y/n)',
-    askMirrorNode: 'Introduce the mirror url',
-    askChain: 'Introduce the chain id',
-    askNode: 'Introduce the node id',
+      'Do you want to enter more consensus nodes? (y/n)',
+    askMirrorNode: 'Enter the mirror url',
+    askChain: 'Enter the chain id',
+    askNode: 'Enter the node id',
     askOperateWithNewAccount:
       'Would you like to operate with the account you have just created?',
   },
@@ -65,45 +71,45 @@ export const english = {
     askConfirmCreation:
       'Are you sure you want to create the stable coin with these parameters?',
     description: 'Creating Stable Coin',
-    askName: 'Introduce name',
-    askSymbol: 'Introduce symbol?',
-    askAutoRenewAccountId: 'Introduce autorenew account',
+    askName: 'Enter the name',
+    askSymbol: 'Enter the symbol',
+    askAutoRenewAccountId: 'Enter the autorenew account',
     askDecimals:
-      'Introduce the number of decimal places a token is divisible by',
+      'Enter the number of decimal places a token is divisible by',
     askToken:
       'What is the token id of the stable coin you want to operate with?',
     askDoSomething: 'What do you want to do?',
     askOptionalProps:
       'Do you want to configure the initial supply, max supply or decimals?',
-    askInitialSupply: 'Introduce initial supply',
-    askSupplyType: 'Do you want that the token supply will be infinite?',
-    askTotalSupply: 'Introduce max supply',
-    askExpirationTime: 'Introduce token expiration time',
-    askMemo: 'Introduce token memo',
+    askInitialSupply: 'Enter the initial supply',
+    askSupplyType: 'Do you want the token max supply to be infinite?',
+    askTotalSupply: 'Enter the max supply',
+    askExpirationTime: 'Enter the token expiration time',
+    askMemo: 'Enter the token memo',
     askFreezeAccount:
-      'Should the Hedera account relative to this token will be frozen by default?',
+      'Should the Hedera account be frozen for this token?',
     askFeaturesManagedBy:
-      'Should the smart contracts be used for all role management?',
+      'Should the smart contract be used for all roles management?',
     features: {
-      admin: 'Introduce the admin key',
-      supply: 'Introduce the supply key',
+      admin: 'Enter the admin key',
+      supply: 'Enter the supply key',
       keyError:
-        'The introduced key has the wrong format. Please, introduce it again.',
-      KYC: 'Introduce the KYC key',
-      freeze: 'Introduce the freeze key',
-      wipe: 'Introduce the wipe key',
-      pause: 'Introduce the pause key',
-      feeSchedule: 'Introduce the fee schedule key',
-      treasury: 'Introduce the treasury account',
-      key: 'Introduce the key',
-      publicKey: 'Introduce the public key',
+        'The provided key has a wrong format. Please, enter it again.',
+      KYC: 'Enter the KYC key',
+      freeze: 'Enter the freeze key',
+      wipe: 'Enter the wipe key',
+      pause: 'Enter the pause key',
+      feeSchedule: 'Enter the fee schedule key',
+      treasury: 'Enter the treasury account',
+      key: 'Enter the key',
+      publicKey: 'Enter the public key',
       keyType: 'Key type',
     },
-    askTreasuryAccountAddress: 'What will be the treasury account id?',
+    askTreasuryAccountAddress: 'Enter the treasury account id?',
     askOperateStableCoin:
       'Do you want to operate with the stable coin you just created?',
     created:
-      'Stable Coin ${name} (${symbol}) with ${decimals} decimals have been created!',
+      'Stable Coin ${name} (${symbol}) with ${decimals} decimals has been created!',
     askCashInAmount: 'How many tokens do you want to cash in?',
     askBurnAmount: 'How many tokens do you want to burn?',
     askWipeAmount: 'How many tokens do you want to wipe?',
@@ -111,10 +117,10 @@ export const english = {
     askTargetAccount: 'What is the target account?',
     askAccountToBalance:
       'Which account would you like to obtain the balance from?',
-    askCashInRoleType: 'What type of permission do you want to give?',
+    askCashInRoleType: 'What type of permission do you want to grant?',
     askCashInRoleRevokeType: 'What type of permission do you want to revoke?',
     askEditCashInRole: 'What action do you want to perform?',
-    accountTarget: 'Introduce the target account id',
+    accountTarget: 'Enter the target account id',
     supplierRoleLimit: 'What will the limit be?',
     amountIncrease: 'Amount to increase',
     amountDecrease: 'Amount to decrease',
@@ -142,17 +148,17 @@ export const english = {
         'Create a new Stable Coin and associate the new token to the admin.',
       infoDescription:
         'Get the name, symbol, totalSupply, decimals and address of a Stable Coin Token.',
-      balanceDescription: 'Get account balance about a Stable Coin Token.',
+      balanceDescription: 'Get account balance for a Stable Coin Token.',
       mintDescription: 'Mint stable coins',
       options: {
-        privateKey: 'Private key for your account',
-        accountId: 'Id of the user',
-        name: 'Name of the stable coin',
-        symbol: 'Symbol of the stable coin',
+        privateKey: 'Account\'s private key',
+        accountId: 'User\'s id',
+        name: 'Stable coin\'s name',
+        symbol: 'Stable coin\'s symbol',
         autorenewAccountId:
-          'Account that will paid the fee in case of renew expiration time',
-        decimals: 'Decimals of the stable coin',
-        address: 'Address of stable coin',
+          'Account that will pay the renew expiration time fee',
+        decimals: 'Stable coin\'s decimals',
+        address: 'Stable coin\'s address',
         amount: 'Amount of stable coins for this action',
       },
     },
@@ -238,15 +244,11 @@ export const english = {
       ...goBack,
     },
     adminFeatureOptions: {
-      SmartContract: 'The Smart Contract',
-      CurrentUser: 'Current user key',
-      None: 'None',
+      ...basicFeatureOptions
     },
     featureOptions: {
-      SmartContract: 'The Smart Contract',
-      CurrentUser: 'Current user key',
-      OtherKey: 'Other public key',
-      None: 'None',
+      ...basicFeatureOptions,
+      OtherKey: 'Other public key'
     },
     supplierRoleType: {
       Unlimited: 'Unlimited',
@@ -328,7 +330,7 @@ export const english = {
   roleManagement: {
     askRole: 'Select a role',
     accountHasRoleCashInUnlimited:
-      'The account ${address} has the cash in role of type unlimited',
+      'The account ${address} has the unlimited cash in role',
     accountHasRole: 'The account ${address} has the ${role} role',
     accountNotHasRole: 'The account ${address} does not have the ${role} role',
     grantRole: 'Grant ${role} role to account: ${address}',
