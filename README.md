@@ -127,7 +127,7 @@ Learn more about them in their README:
 # Technologies
 - **Smart contracts**: Solidity version 0.8.10.
 - **SDK, CLI and UI**: Typescript 4.7 or higher is highly reccomended to work with the repositories.
-- **SDK**: Node 16.13 or higher
+- **SDK**: Node > 16.13 and  < 17
 - **UI**: React.js 2.2.6 or higher.
 
 
