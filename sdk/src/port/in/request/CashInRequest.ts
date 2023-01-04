@@ -18,8 +18,7 @@
  *
  */
 
-import { OptionalField } from '../../../core/decorator/OptionalDecorator.js';
-import { BaseRequest, RequestPublicKey } from './BaseRequest.js';
+import { BaseRequest } from './BaseRequest.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
 

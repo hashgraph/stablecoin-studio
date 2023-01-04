@@ -18,8 +18,6 @@
  *
  */
 
-import EventService from '../../../src/app/service/event/EventService.js';
-import { WalletEvents } from '../../../src/app/service/event/WalletEvent.js';
 import Injectable from '../../../src/core/Injectable.js';
 import {
 	Account,
@@ -361,6 +359,7 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
+		expect(grantRes).toBe(true);
 		expect(allowanceBefore.value).toStrictEqual(
 			BigDecimal.fromString('10', stableCoinSC?.decimals ?? 6),
 		);
@@ -401,6 +400,7 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
+		expect(grantRes).toBe(true);
 		expect(allowanceBefore.value).toStrictEqual(
 			BigDecimal.fromString('10', stableCoinSC?.decimals ?? 6),
 		);
@@ -448,6 +448,8 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
+		expect(revokeRes).toBe(true);
+		expect(grantRes).toBe(true);
 		expect(allowanceBefore.value).toStrictEqual(
 			BigDecimal.fromString('10', stableCoinSC?.decimals ?? 6),
 		);
@@ -487,6 +489,8 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
+		expect(revokeRes).toBe(true);
+		expect(grantRes).toBe(true);
 		expect(isLimited).toBe(true);
 		expect(isUnlimited).toBe(false);
 	}, 60_000);
@@ -527,6 +531,8 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
+		expect(revokeRes).toBe(true);
+		expect(grantRes).toBe(true);
 		expect(isLimited).toBe(false);
 		expect(isUnlimited).toBe(true);
 	}, 60_000);

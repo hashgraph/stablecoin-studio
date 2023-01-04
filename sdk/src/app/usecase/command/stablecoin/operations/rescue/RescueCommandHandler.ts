@@ -24,7 +24,7 @@ import { ICommandHandler } from '../../../../../../core/command/CommandHandler.j
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
 import BigDecimal from '../../../../../../domain/context/shared/BigDecimal.js';
-import { StableCoinNotAssociated } from '../../../../../../domain/context/stablecoin/error/StableCoinNotAssociated.js';
+import { StableCoinNotAssociated } from '../../error/StableCoinNotAssociated.js';
 import AccountService from '../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
