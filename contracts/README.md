@@ -228,7 +228,7 @@ The stable coin solution is made of two major components.
 
 In order to create stable coins, a Factory and a HederaERC20 contracts must be deployed first. Once deployed, creating stable coins will be as simple as invoking the "deployStableCoin" method of the Factory passing the token basic information and the HederaERC20 contract address as input arguments.
 
-> IoBuilders will provide a common Factory and HederaERC20 contracts for everbody to use in the Testnet network. The addresses of the Factory Proxy and the HederaERC20 contracts are hardcoded in the SDK module.
+> The accelerator will provide a common Factory and HederaERC20 contracts for everbody to use in the Testnet network. The addresses of the Factory Proxy and the HederaERC20 contracts are hardcoded in the SDK module.
 
 ## Deploy Factory
 If you want to deploy your own Factory contracts do the following steps:
