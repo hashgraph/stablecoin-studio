@@ -273,6 +273,9 @@ export const english = {
     noImportedTokensDelete: colors.red(
       "You don't have any imported token to delete. Please add one first",
     ),
+    importedTokenAlreadyAdded: colors.red(
+      "The token is already imported, delete it first.",
+    ),
   },
   state: {
     searching: 'Searching...',

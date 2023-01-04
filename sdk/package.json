@@ -5,7 +5,7 @@
 	"main": "./build/cjs/src/index.js",
 	"module": "./build/esm/src/index.js",
 	"engines": {
-		"node": ">= 16.13"
+		"node": ">= 16.17"
 	},
 	"files": [
 		"./build"
