@@ -222,7 +222,7 @@ export class MirrorNodeAdapter {
 				url,
 			);
 
-			if(!res.data.call_result) throw new Error("mirror node response does not contain a transaction result");
+			if(!res.data.call_result) throw new Error("Response does not contain a transaction result");
 
 			const result: TransactionResultViewModel = {
 				result: res.data.call_result.toString(),
