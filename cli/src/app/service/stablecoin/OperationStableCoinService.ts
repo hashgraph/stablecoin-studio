@@ -99,7 +99,7 @@ export default class OperationStableCoinService extends Service {
             : this.stableCoinId;
         this.stableCoinId = this.stableCoinId.split(' - ')[0];
 
-        if (this.stableCoinId === language.getText('wizard.goBack')) {
+        if (this.stableCoinId === language.getText('wizard.backOption.goBack')) {
           await utilsService.cleanAndShowBanner();
           await wizardService.mainMenu();
         } else {
@@ -591,7 +591,7 @@ export default class OperationStableCoinService extends Service {
         await this.validateNotRequestedData(grantRoleRequest, ['tokenId']);
 
         grantRoleRequest.role = await this.getRole(stableCoinCapabilities);
-        if (grantRoleRequest.role !== language.getText('wizard.goBack')) {
+        if (grantRoleRequest.role !== language.getText('wizard.backOption.goBack')) {
           await utilsService.handleValidation(
             () => grantRoleRequest.validate('role'),
             async () => {
@@ -652,7 +652,7 @@ export default class OperationStableCoinService extends Service {
         await this.validateNotRequestedData(revokeRoleRequest, ['tokenId']);
 
         revokeRoleRequest.role = await this.getRole(stableCoinCapabilities);
-        if (revokeRoleRequest.role !== language.getText('wizard.goBack')) {
+        if (revokeRoleRequest.role !== language.getText('wizard.backOption.goBack')) {
           await utilsService.handleValidation(
             () => revokeRoleRequest.validate('role'),
             async () => {
@@ -1069,7 +1069,7 @@ export default class OperationStableCoinService extends Service {
         await this.validateNotRequestedData(hasRoleRequest, ['tokenId']);
 
         hasRoleRequest.role = await this.getRole(stableCoinCapabilities);
-        if (hasRoleRequest.role !== language.getText('wizard.goBack')) {
+        if (hasRoleRequest.role !== language.getText('wizard.backOption.goBack')) {
           await utilsService.handleValidation(
             () => hasRoleRequest.validate('role'),
             async () => {
@@ -1314,7 +1314,7 @@ export default class OperationStableCoinService extends Service {
       rolesNames,
       true,
     );
-    if (roleSelected !== language.getText('wizard.goBack')) {
+    if (roleSelected !== language.getText('wizard.backOption.goBack')) {
       const roleValue = rolesAvailable.filter(
         ({ role }) => role.name == roleSelected,
       )[0].role.value;

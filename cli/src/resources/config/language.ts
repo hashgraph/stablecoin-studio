@@ -1,6 +1,26 @@
 import colors from 'colors';
 import * as inquirer from 'inquirer';
 
+const separator_1 = {
+  Separator_1: new inquirer.Separator(),
+}
+
+const separator_2 = {
+  Separator_2: new inquirer.Separator(' '),
+}
+
+const goBack = {
+  ...separator_1,
+  goBack: 'Go back',
+  ...separator_2,
+};
+
+const returnToMainMenu = {
+  ...separator_1,
+  Return: 'Return to main menu',
+  ...separator_2,
+};
+
 export const english = {
   general: {
     title: 'Hedera Stable Coin',
@@ -164,9 +184,7 @@ export const english = {
     freezeAccount: 'Which account do you want to freeze?',
     unfreezeAccount: 'Which account do you want to unfreeze?',
     returnOption: {
-      Separator_1: new inquirer.Separator(),
-      Return: 'Return to main menu',
-      Separator_2: new inquirer.Separator(' '),
+      ...returnToMainMenu,
     },
     stableCoinOptions: {
       CashIn: 'Cash in',
@@ -180,10 +198,7 @@ export const english = {
       RoleMgmt: 'Role management',
       RoleRefresh: 'Refresh roles',
       DangerZone: colors.red('Danger zone'),
-      //...returnOption,
-      Separator_1: new inquirer.Separator(),
-      Return: 'Return to main menu',
-      Separator_2: new inquirer.Separator(' '),
+      ...returnToMainMenu,
     },
     mainOptions: {
       Create: 'Create a new Stable Coin',
@@ -191,44 +206,36 @@ export const english = {
       Operate: 'Operate with an existing Stable Coin',
       List: 'List Stable Coins',
       Configuration: 'Configuration',
-      Separator_1: new inquirer.Separator(),
+      ...separator_1,
       Exit: 'Exit',
-      Separator_2: new inquirer.Separator(' '),
+      ...separator_2,
     },
     changeOptions: {
       Show: 'Show configuration',
       EditPath: 'Edit config path',
       EditNetwork: 'Edit default network',
       Manage: 'Manage accounts',
-      Separator_1: new inquirer.Separator(),
-      Return: 'Return to main menu',
-      Separator_2: new inquirer.Separator(' '),
+      ...returnToMainMenu,
     },
     manageAccountOptions: {
       Change: 'Change account',
       List: 'List accounts',
       Add: 'Add new account',
       Delete: 'Delete account',
-      Separator_1: new inquirer.Separator(),
-      Return: 'Go back',
-      Separator_2: new inquirer.Separator(' '),
+      ...goBack,
     },
     manageImportedTokens: {
       Add: 'Add token',
       Refresh: 'Refresh token',
       Remove: 'Remove token',
-      Separator_1: new inquirer.Separator(),
-      Return: 'Go back',
-      Separator_2: new inquirer.Separator(' '),
+      ...goBack,
     },
     roleManagementOptions: {
       Grant: 'Grant role',
       Revoke: 'Revoke role',
       Edit: 'Edit role',
       HasRole: 'Has role',
-      Separator_1: new inquirer.Separator(),
-      Return: 'Go back',
-      Separator_2: new inquirer.Separator(' '),
+      ...goBack,
     },
     adminFeatureOptions: {
       SmartContract: 'The Smart Contract',
@@ -244,24 +251,17 @@ export const english = {
     supplierRoleType: {
       Unlimited: 'Unlimited',
       Limited: 'Limited',
-      Separator_1: new inquirer.Separator(),
-      Return: 'Back',
-      Separator_2: new inquirer.Separator(' '),
+      ...goBack,
     },
     editSupplierRoleOptions: {
       Increase: 'Increase limit',
       Decrease: 'Decrease limit',
       Reset: 'Reset limit',
-      Separator_1: new inquirer.Separator(),
-      Return: 'Back',
-      Separator_2: new inquirer.Separator(' '),
+      ...goBack,
     },
     backOption: {
-      Separator_1: new inquirer.Separator(),
-      Back: 'Go back',
-      Separator_2: new inquirer.Separator(' '),
+      ...goBack,
     },
-    goBack: 'Go back',
     privateKeyType: {
       ED25519: 'ED25519', 
       ECDSA: 'ECDSA'
@@ -340,9 +340,7 @@ export const english = {
       Decrease: 'Decrease cash in limit',
       Reset: 'Reset cash in limit',
       Check: 'Check cash in limit',
-      Separator_1: new inquirer.Separator(),
-      Return: 'Go back',
-      Separator_2: new inquirer.Separator(' '),
+      ...goBack,
     },
     noRoles: 'You do not have any roles.',
   },
@@ -354,9 +352,7 @@ export const english = {
       Pause: 'Pause stable coin',
       UnPause: 'Unpause stable coin',
       Delete: 'Delete stable coin',
-      Separator_1: new inquirer.Separator(),
-      Return: 'Go back',
-      Separator_2: new inquirer.Separator(' '),
+      ...goBack,
     },
   },
 };
