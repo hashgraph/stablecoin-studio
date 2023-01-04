@@ -24,6 +24,7 @@ import { singleton } from 'tsyringe';
 import StableCoinViewModel from '../../out/mirror/response/StableCoinViewModel.js';
 import AccountViewModel from '../../out/mirror/response/AccountViewModel.js';
 import StableCoinListViewModel from '../../out/mirror/response/StableCoinListViewModel.js';
+import TransactionResultViewModel from '../../out/mirror/response/TransactionResultViewModel.js';
 import { Environment } from '../../../domain/context/network/Environment.js';
 import LogService from '../../../app/service/LogService.js';
 import { StableCoinNotFound } from './error/StableCoinNotFound.js';
@@ -35,6 +36,8 @@ import ContractId from '../../../domain/context/contract/ContractId.js';
 import { InvalidResponse } from './error/InvalidResponse.js';
 import { HederaId } from '../../../domain/context/shared/HederaId.js';
 import { KeyType } from '../../../domain/context/account/KeyProps.js';
+import AccountTokenListRelationViewModel from './response/AccountTokenListRelationViewModel.js';
+import { StableCoinNotAssociated } from '../../../domain/context/stablecoin/error/StableCoinNotAssociated.js';
 
 @singleton()
 export class MirrorNodeAdapter {
@@ -211,6 +214,66 @@ export class MirrorNodeAdapter {
 		}
 	}
 
+	public async getAccountTokens(
+		targetId: HederaId,
+		tokenId: HederaId,
+	): Promise<AccountTokenListRelationViewModel> {
+		try {
+			const url = `${
+				this.URI_BASE
+			}accounts/${targetId.toString()}/tokens?token.id=${tokenId.toString()}`;
+			LogService.logTrace(url);
+			const res = await axios.get<AccountTokenRelationList>(url);
+
+			const resObject: AccountTokenListRelationViewModel = {
+				tokens: [],
+			};
+			if (res.data.tokens) {
+				res.data.tokens.map((item: AccountTokenRelation) => {
+					resObject.tokens.push({
+						automatic_association: item.automatic_association,
+						balance: item.balance,
+						created_timestamp: item.created_timestamp,
+						freeze_status: item.freeze_status,
+						kyc_status: item.kyc_status,
+						token_id: HederaId.from(item.token_id),
+					});
+				});
+			}
+
+			return resObject;
+		} catch (error) {
+			return Promise.reject<AccountTokenListRelationViewModel>(
+				new InvalidResponse(error),
+			);
+		}
+	}
+
+	public async getTransactionResult(
+		transactionId: string,
+	): Promise<TransactionResultViewModel> {
+		try {
+			const url = this.URI_BASE + 'contracts/results/' + transactionId;
+			LogService.logTrace(url);
+			const res = await axios.get<ITransactionResult>(url);
+
+			if (!res.data.call_result)
+				throw new Error(
+					'Response does not contain a transaction result',
+				);
+
+			const result: TransactionResultViewModel = {
+				result: res.data.call_result.toString(),
+			};
+
+			return result;
+		} catch (error) {
+			return Promise.reject<TransactionResultViewModel>(
+				new InvalidResponse(error),
+			);
+		}
+	}
+
 	private getMirrorNodeURL(environment: Environment): string {
 		switch (environment) {
 			case 'mainnet':
@@ -236,7 +299,17 @@ interface IToken {
 interface ITokenList {
 	tokens: IToken[];
 }
-
+interface AccountTokenRelationList {
+	tokens?: AccountTokenRelation[];
+}
+interface AccountTokenRelation {
+	automatic_association: boolean;
+	balance: number;
+	created_timestamp: string;
+	freeze_status: string;
+	kyc_status: string;
+	token_id: string;
+}
 interface IHederaStableCoinDetail {
 	token_id?: string;
 	name?: string;
@@ -278,6 +351,10 @@ interface IAccount {
 	key: IKey;
 	alias: string;
 	account: string;
+}
+
+interface ITransactionResult {
+	call_result?: string;
 }
 
 interface IKey {

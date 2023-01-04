@@ -52,7 +52,7 @@ You must have installed
 
 Then you must install and build the following projects :
 
-1. [Contracts installation](https://github.com/hashgraph/hedera-accelerator-stablecoin/blob/main/contracts/README.md#installation)
+1. [Contract installation](https://github.com/hashgraph/hedera-accelerator-stablecoin/blob/main/contracts/README.md#installation)
 2. [SDK installation](https://github.com/hashgraph/hedera-accelerator-stablecoin/blob/main/sdk/README.md#installation)
 3. [Hashconnect installation](https://github.com/hashgraph/hedera-accelerator-stablecoin/blob/main/hashconnect/lib/README.md#installation)
 
@@ -181,7 +181,7 @@ Stable coins that we have not created with our account but for which we have bee
 2. Refresh token
 3. Remove token
 
-#### Operate with stable coin
+#### Operate with Stable Coin
 
 Once a stable coin is created or added, you can operate it.
 

@@ -46,6 +46,7 @@ import CapabilitiesRequest from './CapabilitiesRequest.js';
 import GetPublicKeyRequest from './GetPublicKeyRequest.js';
 import InitializationRequest from './InitializationRequest.js';
 import SetNetworkRequest from './SetNetworkRequest.js';
+import IsAccountAssociatedTokenRequest from './IsAccountAssociatedTokenRequest.js';
 
 export * from './BaseRequest.js';
 export {
@@ -77,4 +78,5 @@ export {
 	GetPublicKeyRequest,
 	InitializationRequest,
 	SetNetworkRequest,
+	IsAccountAssociatedTokenRequest,
 };

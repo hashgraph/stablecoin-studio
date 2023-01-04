@@ -18,13 +18,18 @@
  *
  */
 
+import CheckNums from '../../../../../../core/checks/numbers/CheckNums.js';
 import { ICommandHandler } from '../../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
 import BigDecimal from '../../../../../../domain/context/shared/BigDecimal.js';
+import { StableCoinNotAssociated } from '../../../../../../domain/context/stablecoin/error/StableCoinNotAssociated.js';
 import AccountService from '../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
+import { GetAccountTokenAssociatedQuery } from '../../../../query/account/tokenAssociated/GetAccountTokenAssociatedQuery.js';
+import { DecimalsOverRange } from '../../error/DecimalsOverRange.js';
+import { OperationNotAllowed } from '../../error/OperationNotAllowed.js';
 import { CashInCommand, CashInCommandResponse } from './CashInCommand.js';
 
 @CommandHandler(CashInCommand)
@@ -42,15 +47,44 @@ export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
 		const { amount, targetId, tokenId } = command;
 		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
+		const tokenAssociated = (
+			await this.stableCoinService.queryBus.execute(
+				new GetAccountTokenAssociatedQuery(targetId, tokenId),
+			)
+		).isAssociated;
+
+		if (!tokenAssociated) {
+			throw new StableCoinNotAssociated(
+				targetId.toString(),
+				tokenId.toString(),
+			);
+		}
+
 		const capabilities = await this.stableCoinService.getCapabilities(
 			account,
 			tokenId,
 		);
-		const res = await handler.cashin(
-			capabilities,
-			targetId,
-			BigDecimal.fromString(amount, capabilities.coin.decimals)
-		);
+		const coin = capabilities.coin;
+
+		if (CheckNums.hasMoreDecimals(amount, coin.decimals)) {
+			throw new DecimalsOverRange(coin.decimals);
+		}
+
+		const amountBd = BigDecimal.fromString(amount, coin.decimals);
+		if (!coin.maxSupply || !coin.totalSupply)
+			throw new OperationNotAllowed(`The stable coin is not valid`);
+
+		if (
+			coin.maxSupply &&
+			coin.maxSupply.isGreaterThan(BigDecimal.ZERO) &&
+			amountBd.isGreaterThan(coin.maxSupply.subUnsafe(coin.totalSupply))
+		) {
+			throw new OperationNotAllowed(
+				`The amount is over the max supply (${amount})`,
+			);
+		}
+
+		const res = await handler.cashin(capabilities, targetId, amountBd);
 		return Promise.resolve(
 			new CashInCommandResponse(res.error === undefined),
 		);

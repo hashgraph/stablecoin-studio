@@ -57,6 +57,21 @@ export default class ManageImportedTokenService extends Service {
 
         //call to roles
         const importedTokens = currentAccount.importedTokens;
+        while (
+          importedTokens.length > 0 &&
+          importedTokens
+            .map((x) => x.id)
+            .includes(getRolesRequestForAdding.tokenId)
+        ) {
+          console.log(
+            language.getText('manageImportedToken.importedTokenAlreadyAdded'),
+          );
+          tokenId = await utilsService.defaultSingleAsk(
+            language.getText('manageImportedToken.tokenId'),
+            '0.0.1234567',
+          );
+          getRolesRequestForAdding.tokenId = tokenId;
+        }
         await new DetailsStableCoinsService()
           .getDetailsStableCoins(getRolesRequestForAdding.tokenId, false)
           .then((response: StableCoinViewModel) => {

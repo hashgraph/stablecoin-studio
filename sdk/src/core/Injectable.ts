@@ -70,6 +70,7 @@ import { HashpackTransactionAdapter } from '../port/out/hs/hashpack/HashpackTran
 import { RevokeSupplierRoleCommandHandler } from '../app/usecase/command/stablecoin/roles/revokeSupplierRole/RevokeSupplierRoleCommandHandler.js';
 import { GrantSupplierRoleCommandHandler } from '../app/usecase/command/stablecoin/roles/grantSupplierRole/GrantSupplierRoleCommandHandler.js';
 import { GrantUnlimitedSupplierRoleCommandHandler } from '../app/usecase/command/stablecoin/roles/granUnlimitedSupplierRole/GrantUnlimitedSupplierRoleCommandHandler.js';
+import { GetAccountTokenAssociatedQueryHandler } from '../app/usecase/query/account/tokenAssociated/GetAccountTokenAssociatedQueryHandler.js';
 
 export const TOKENS = {
 	COMMAND_HANDLER: Symbol('CommandHandler'),
@@ -217,6 +218,10 @@ const QUERY_HANDLERS = [
 	{
 		token: TOKENS.QUERY_HANDLER,
 		useClass: GetAccountInfoQueryHandler,
+	},
+	{
+		token: TOKENS.QUERY_HANDLER,
+		useClass: GetAccountTokenAssociatedQueryHandler,
 	},
 ];
 
