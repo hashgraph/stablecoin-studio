@@ -222,6 +222,8 @@ export class MirrorNodeAdapter {
 				url,
 			);
 
+			if(!res.data.call_result) throw new Error("mirror node response does not contain a transaction result");
+
 			const result: TransactionResultViewModel = {
 				result: res.data.call_result.toString(),
 			};
@@ -302,7 +304,7 @@ interface IAccount {
 }
 
 interface ITransactionResult {
-	call_result: string;
+	call_result?: string;
 }
 
 interface IKey {
