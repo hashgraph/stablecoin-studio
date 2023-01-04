@@ -18,6 +18,7 @@
  *
  */
 
+import CheckNums from '../../../../../../core/checks/numbers/CheckNums.js';
 import { ICommandHandler } from '../../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
@@ -27,6 +28,7 @@ import AccountService from '../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
 import { GetAccountTokenAssociatedQuery } from '../../../../query/account/tokenAssociated/GetAccountTokenAssociatedQuery.js';
+import { DecimalsOverRange } from '../../error/DecimalsOverRange.js';
 import { RescueCommand, RescueCommandResponse } from './RescueCommand.js';
 
 @CommandHandler(RescueCommand)
@@ -61,10 +63,13 @@ export class RescueCommandHandler implements ICommandHandler<RescueCommand> {
 			account,
 			tokenId,
 		);
-		const res = await handler.rescue(
-			capabilities,
-			BigDecimal.fromString(amount, capabilities.coin.decimals),
-		);
+		const coin = capabilities.coin;
+		const amountBd = BigDecimal.fromString(amount, coin.decimals);
+
+		if (CheckNums.hasMoreDecimals(amount, coin.decimals)) {
+			throw new DecimalsOverRange(coin.decimals);
+		}
+		const res = await handler.rescue(capabilities, amountBd);
 		return Promise.resolve(
 			new RescueCommandResponse(res.error === undefined),
 		);
