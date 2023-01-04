@@ -37,8 +37,7 @@ npm install -g @hashgraph/hedera-stable-coin-cli
 Once installed globally you can use the `accelerator wizard` command to run the CLI.
 
 ```bash
-TO CHECK!!!
-accelerator start
+accelerator wizard
 ```
 
 # Build
