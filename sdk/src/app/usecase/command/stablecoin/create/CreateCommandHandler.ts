@@ -26,6 +26,7 @@ import ContractId from '../../../../../domain/context/contract/ContractId.js';
 import { StableCoin } from '../../../../../domain/context/stablecoin/StableCoin.js';
 import AccountService from '../../../../service/AccountService.js';
 import TransactionService from '../../../../service/TransactionService.js';
+import { OperationNotAllowed } from '../error/OperationNotAllowed.js';
 import { CreateCommand, CreateCommandResponse } from './CreateCommand.js';
 
 @CommandHandler(CreateCommand)
@@ -40,6 +41,15 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 	async execute(command: CreateCommand): Promise<CreateCommandResponse> {
 		const { coin, factory, hederaERC20 } = command;
 		const handler = this.transactionService.getHandler();
+		if (
+			coin.maxSupply &&
+			coin.initialSupply &&
+			coin.initialSupply.isGreaterThan(coin.maxSupply)
+		) {
+			throw new OperationNotAllowed(
+				'Initial supply cannot be more than the max supply',
+			);
+		}
 		const res = await handler.create(
 			new StableCoin(coin),
 			factory,
