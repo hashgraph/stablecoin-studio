@@ -242,7 +242,7 @@ export default class SetConfigurationService extends Service {
 
   public async manageAccountMenu(): Promise<void> {
     const currentAccount = utilsService.getCurrentAccount();
-    const manageOptions = language.getArray('wizard.manageAccountOptions');
+    const manageOptions = language.getArrayFromObject('wizard.manageAccountOptions');
     const defaultCfgData = configurationService.getConfiguration();
     const accounts = defaultCfgData.accounts;
     const accountAction = await utilsService.defaultMultipleAsk(
@@ -253,7 +253,7 @@ export default class SetConfigurationService extends Service {
       `${currentAccount.accountId} - ${currentAccount.alias}`,
     );
     switch (accountAction) {
-      case manageOptions[0]:
+      case language.getText('wizard.manageAccountOptions.Change'):
         await utilsService.cleanAndShowBanner();
 
         await wizardService.chooseAccount(false);
@@ -261,14 +261,14 @@ export default class SetConfigurationService extends Service {
         await utilsService.cleanAndShowBanner();
         await wizardService.mainMenu();
         break;
-      case manageOptions[1]:
+      case language.getText('wizard.manageAccountOptions.List'):
         await utilsService.cleanAndShowBanner();
 
         console.dir(utilsService.maskPrivateAccounts(accounts), {
           depth: null,
         });
         break;
-      case manageOptions[2]:
+      case language.getText('wizard.manageAccountOptions.Add'):
         await utilsService.cleanAndShowBanner();
 
         await this.configureAccounts();
@@ -283,7 +283,7 @@ export default class SetConfigurationService extends Service {
           await wizardService.mainMenu();
         }
         break;
-      case manageOptions[3]:
+      case language.getText('wizard.manageAccountOptions.Delete'):
         await utilsService.cleanAndShowBanner();
 
         const options = accounts
@@ -323,7 +323,6 @@ export default class SetConfigurationService extends Service {
         );
         configurationService.setConfiguration(defaultCfgData);
         break;
-      case manageOptions[manageOptions.length - 1]:
       default:
         await utilsService.cleanAndShowBanner();
 
@@ -345,7 +344,7 @@ export default class SetConfigurationService extends Service {
 
     const pkType = await utilsService.defaultMultipleAsk(
       language.getText('configuration.askPrivateKeyType'),
-      language.getArray('wizard.privateKeyType'),
+      language.getArrayFromObject('wizard.privateKeyType'),
     );
 
     const network = configurationService.getConfiguration().defaultNetwork;

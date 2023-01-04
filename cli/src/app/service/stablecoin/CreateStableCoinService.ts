@@ -15,20 +15,6 @@ import { IManagedFeatures } from '../../../domain/configuration/interfaces/IMana
 import Service from '../Service.js';
 import SetConfigurationService from '../configuration/SetConfigurationService.js';
 
-enum featureOptionsId {
-  SmartContract = 0,
-  CurrentUser = 1,
-  OtherKey = 2,
-  None = 3,
-};
-
-enum adminFeatureOptionsId {
-  SmartContract = 0,
-  CurrentUser = 1,
-  None = 2,
-};
-
-
 /**
  * Create Stable Coin Service
  */
@@ -263,36 +249,36 @@ export default class CreateStableCoinService extends Service {
       maxSupply: totalSupply ? BigInt(totalSupply) : totalSupply,
       freezeKey:
         freezeKey === undefined
-          ? language.getArray('wizard.featureOptions')[featureOptionsId.None]
+          ? language.getText('wizard.featureOptions.None')
           : freezeKey.key !== 'null'
           ? freezeKey
-          : language.getArray('wizard.featureOptions')[featureOptionsId.SmartContract],
+          : language.getText('wizard.featureOptions.SmartContract'),
       //KYCKey,
       wipeKey:
         wipeKey === undefined
-          ? language.getArray('wizard.featureOptions')[featureOptionsId.None]
+          ? language.getText('wizard.featureOptions.None')
           : wipeKey.key !== 'null'
           ? wipeKey
-          : language.getArray('wizard.featureOptions')[featureOptionsId.SmartContract],
+          : language.getText('wizard.featureOptions.SmartContract'),
       adminKey:
         adminKey === undefined
-          ? language.getArray('wizard.adminFeatureOptions')[adminFeatureOptionsId.None]
+          ? language.getText('wizard.adminFeatureOptions.None')
           : adminKey.key !== 'null'
           ? adminKey
-          : language.getArray('wizard.adminFeatureOptions')[adminFeatureOptionsId.SmartContract],
+          : language.getText('wizard.adminFeatureOptions.SmartContract'),
       supplyKey:
         supplyKey === undefined
-          ? language.getArray('wizard.featureOptions')[featureOptionsId.None]
+          ? language.getText('wizard.featureOptions.None')
           : supplyKey.key !== 'null'
           ? supplyKey
-          : language.getArray('wizard.featureOptions')[featureOptionsId.SmartContract],
+          : language.getText('wizard.featureOptions.SmartContract'),
       pauseKey:
         pauseKey === undefined
-          ? language.getArray('wizard.featureOptions')[featureOptionsId.None]
+          ? language.getText('wizard.featureOptions.None')
           : pauseKey.key !== 'null'
           ? pauseKey
-          : language.getArray('wizard.featureOptions')[featureOptionsId.SmartContract],
-      treasury: treasury !== '0.0.0' ? treasury : language.getArray('wizard.featureOptions')[featureOptionsId.SmartContract],
+          : language.getText('wizard.featureOptions.SmartContract'),
+      treasury: treasury !== '0.0.0' ? treasury : language.getText('wizard.featureOptions.SmartContract'),
     });
     if (
       !(await utilsService.defaultConfirmAsk(
@@ -353,35 +339,35 @@ export default class CreateStableCoinService extends Service {
     const adminKey = await this.checkAnswer(
       await utilsService.defaultMultipleAsk(
         language.getText('stablecoin.features.admin'),
-        language.getArray('wizard.adminFeatureOptions'),
+        language.getArrayFromObject('wizard.adminFeatureOptions'),
       ),
     );
 
     const freezeKey = await this.checkAnswer(
       await utilsService.defaultMultipleAsk(
         language.getText('stablecoin.features.freeze'),
-        language.getArray('wizard.featureOptions'),
+        language.getArrayFromObject('wizard.featureOptions'),
       ),
     );
 
     const wipeKey = await this.checkAnswer(
       await utilsService.defaultMultipleAsk(
         language.getText('stablecoin.features.wipe'),
-        language.getArray('wizard.featureOptions'),
+        language.getArrayFromObject('wizard.featureOptions'),
       ),
     );
 
     const pauseKey = await this.checkAnswer(
       await utilsService.defaultMultipleAsk(
         language.getText('stablecoin.features.pause'),
-        language.getArray('wizard.featureOptions'),
+        language.getArrayFromObject('wizard.featureOptions'),
       ),
     );
 
     const supplyKey = await this.checkAnswer(
       await utilsService.defaultMultipleAsk(
         language.getText('stablecoin.features.supply'),
-        language.getArray('wizard.featureOptions'),
+        language.getArrayFromObject('wizard.featureOptions'),
       ),
     );
 
@@ -391,8 +377,8 @@ export default class CreateStableCoinService extends Service {
   private async checkAnswer(answer: string): Promise<RequestPublicKey> {
     switch (answer) {
       case 
-        language.getArray('wizard.adminFeatureOptions')[adminFeatureOptionsId.CurrentUser] ||
-        language.getArray('wizard.featureOptions')[featureOptionsId.CurrentUser]: {
+        language.getText('wizard.adminFeatureOptions.CurrentUser') ||
+        language.getText('wizard.featureOptions.CurrentUser'): {
         const currentAccount = utilsService.getCurrentAccount();
         const privateKey: RequestPrivateKey = {
           key: currentAccount.privateKey.key,
@@ -408,19 +394,19 @@ export default class CreateStableCoinService extends Service {
         return Account.getPublicKey(req);
       }
 
-      case language.getArray('wizard.featureOptions')[featureOptionsId.OtherKey]: {
+      case language.getText('wizard.featureOptions.OtherKey'): {
         const { key } = await utilsService.defaultPublicKeyAsk();
         return {
           key: key,
         };
       }
 
-      case language.getArray('wizard.adminFeatureOptions')[adminFeatureOptionsId.None] ||
-      language.getArray('wizard.featureOptions')[featureOptionsId.None]:
+      case language.getText('wizard.adminFeatureOptions.None') ||
+      language.getText('wizard.featureOptions.None'):
         return undefined;
 
-      case language.getArray('wizard.adminFeatureOptions')[adminFeatureOptionsId.SmartContract] ||
-      language.getArray('wizard.featureOptions')[featureOptionsId.SmartContract]:
+      case language.getText('wizard.adminFeatureOptions.SmartContract') ||
+      language.getText('wizard.featureOptions.SmartContract'):
         return Account.NullPublicKey;
 
         default:

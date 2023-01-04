@@ -45,38 +45,6 @@ import FreezeStableCoinService from './FreezeStableCoinService.js';
 import ListStableCoinsService from './ListStableCoinsService.js';
 import CapabilitiesStableCoinService from './CapabilitiesStableCoinService.js';
 
-enum stableCoinOptionsId {
-  CashIn = 0,
-  Details = 1,
-  Balance = 2,
-  Burn = 3,
-  Wipe = 4,
-  Rescue = 5,
-  Freeze = 6,
-  UnFreeze = 7,
-  RoleMgmt = 8,
-  RoleRefresh = 9,
-  DangerZone = 10,
-};
-
-enum roleMgmtOptionsId {
-  Grant = 0,
-  Revoke = 1,
-  Edit = 2,
-  HasRole = 3,
-};
-
-enum dangerZoneOptionsId {
-  Pause = 0,
-  UnPause = 1,
-  Delete = 2,
-}
-
-enum supplierRoleTypeOptionsId {
-  unlimited = 0,
-  limited = 1,
-}
-
 /**
  * Operation Stable Coin Service
  */
@@ -167,7 +135,7 @@ export default class OperationStableCoinService extends Service {
       privateKey: privateKey,
     };
 
-    const wizardOperationsStableCoinOptions = language.getArray(
+    const wizardOperationsStableCoinOptions = language.getArrayFromObject(
       'wizard.stableCoinOptions',
     );
 
@@ -193,7 +161,7 @@ export default class OperationStableCoinService extends Service {
         this.stableCoinDeleted,
       )
     ) {
-      case wizardOperationsStableCoinOptions[stableCoinOptionsId.CashIn]:
+      case language.getText('wizard.stableCoinOptions.CashIn'):
         await utilsService.cleanAndShowBanner();
 
         utilsService.displayCurrentUserInfo(
@@ -247,7 +215,7 @@ export default class OperationStableCoinService extends Service {
         }
 
         break;
-      case wizardOperationsStableCoinOptions[stableCoinOptionsId.Details]:
+      case language.getText('wizard.stableCoinOptions.Details'):
         await utilsService.cleanAndShowBanner();
 
         // Call to details
@@ -255,7 +223,7 @@ export default class OperationStableCoinService extends Service {
           this.stableCoinId,
         );
         break;
-      case wizardOperationsStableCoinOptions[stableCoinOptionsId.Balance]:
+      case language.getText('wizard.stableCoinOptions.Balance'):
         await utilsService.cleanAndShowBanner();
 
         utilsService.displayCurrentUserInfo(
@@ -295,7 +263,7 @@ export default class OperationStableCoinService extends Service {
           );
         }
         break;
-      case wizardOperationsStableCoinOptions[stableCoinOptionsId.Burn]:
+      case language.getText('wizard.stableCoinOptions.Burn'):
         await utilsService.cleanAndShowBanner();
 
         utilsService.displayCurrentUserInfo(
@@ -334,7 +302,7 @@ export default class OperationStableCoinService extends Service {
         }
 
         break;
-      case wizardOperationsStableCoinOptions[stableCoinOptionsId.Wipe]:
+      case language.getText('wizard.stableCoinOptions.Wipe'):
         await utilsService.cleanAndShowBanner();
 
         utilsService.displayCurrentUserInfo(
@@ -388,7 +356,7 @@ export default class OperationStableCoinService extends Service {
         }
 
         break;
-      case wizardOperationsStableCoinOptions[stableCoinOptionsId.Rescue]:
+      case language.getText('wizard.stableCoinOptions.Rescue'):
         await utilsService.cleanAndShowBanner();
 
         utilsService.displayCurrentUserInfo(
@@ -427,7 +395,7 @@ export default class OperationStableCoinService extends Service {
           );
         }
         break;
-      case wizardOperationsStableCoinOptions[stableCoinOptionsId.Freeze]:
+      case language.getText('wizard.stableCoinOptions.Freeze'):
         await utilsService.cleanAndShowBanner();
         utilsService.displayCurrentUserInfo(
           configAccount,
@@ -464,7 +432,7 @@ export default class OperationStableCoinService extends Service {
         }
 
         break;
-      case wizardOperationsStableCoinOptions[stableCoinOptionsId.UnFreeze]:
+      case language.getText('wizard.stableCoinOptions.UnFreeze'):
         await utilsService.cleanAndShowBanner();
         utilsService.displayCurrentUserInfo(
           configAccount,
@@ -501,13 +469,13 @@ export default class OperationStableCoinService extends Service {
           );
         }
         break;
-      case wizardOperationsStableCoinOptions[stableCoinOptionsId.RoleMgmt]:
+      case language.getText('wizard.stableCoinOptions.RoleMgmt'):
         await utilsService.cleanAndShowBanner();
 
         // Call to Supplier Role
         await this.roleManagementFlow();
         break;
-      case wizardOperationsStableCoinOptions[stableCoinOptionsId.RoleRefresh]:
+      case language.getText('wizard.stableCoinOptions.RoleRefresh'):
         await utilsService.cleanAndShowBanner();
 
         const getRolesRequest = new GetRolesRequest({
@@ -534,7 +502,7 @@ export default class OperationStableCoinService extends Service {
         new ManageImportedTokenService().updateAccount(importedTokensRefreshed);
         configAccount.importedTokens = importedTokensRefreshed;
         break;
-      case wizardOperationsStableCoinOptions[stableCoinOptionsId.DangerZone]:
+      case language.getText('wizard.stableCoinOptions.DangerZone'):
         await utilsService.cleanAndShowBanner();
         await this.dangerZone();
         break;
@@ -581,15 +549,10 @@ export default class OperationStableCoinService extends Service {
       (a) => a.operation,
     );
 
-    const supplierRoleTypeOptions = language
-    .getArray('wizard.supplierRoleType');
-
-    const roleManagementOptions = language
-      .getArray('wizard.roleManagementOptions');
-
-    const roleManagementOptionsFiltered = roleManagementOptions
+    const roleManagementOptionsFiltered = language
+      .getArrayFromObject('wizard.roleManagementOptions')
       .filter((option) => {
-        if (option == roleManagementOptions[roleMgmtOptionsId.Edit]) {
+        if (option == language.getText('wizard.roleManagementOptions.Edit')) {
           return capabilities.includes(Operation.CASH_IN);
         }
 
@@ -609,7 +572,7 @@ export default class OperationStableCoinService extends Service {
         this.stableCoinDeleted,
       )
     ) {
-      case roleManagementOptions[roleMgmtOptionsId.Grant]:
+      case language.getText('wizard.roleManagementOptions.Grant'):
         await utilsService.cleanAndShowBanner();
 
         utilsService.displayCurrentUserInfo(
@@ -670,7 +633,7 @@ export default class OperationStableCoinService extends Service {
           }
         }
         break;
-      case roleManagementOptions[roleMgmtOptionsId.Revoke]:
+      case language.getText('wizard.roleManagementOptions.Revoke'):
         await utilsService.cleanAndShowBanner();
 
         utilsService.displayCurrentUserInfo(
@@ -728,11 +691,11 @@ export default class OperationStableCoinService extends Service {
           }
         }
         break;
-      case roleManagementOptions[roleMgmtOptionsId.Edit]:
+      case language.getText('wizard.roleManagementOptions.Edit'):
         await utilsService.cleanAndShowBanner();
 
         //Call to edit role
-        const editOptions = language.getArray('roleManagement.editAction');
+        const editOptions = language.getArrayFromObject('roleManagement.editAction');
         switch (
           await utilsService.defaultMultipleAsk(
             language.getText('roleManagement.askRole'),
@@ -790,7 +753,7 @@ export default class OperationStableCoinService extends Service {
                   new CheckSupplierLimitRequest({
                     targetId: increaseCashInLimitRequest.targetId,
                     tokenId: increaseCashInLimitRequest.tokenId,
-                    supplierType: supplierRoleTypeOptions[supplierRoleTypeOptionsId.unlimited],
+                    supplierType: language.getText('wizard.supplierRoleType.Unlimited'),
                   }),
                 )
               ) {
@@ -803,7 +766,7 @@ export default class OperationStableCoinService extends Service {
                   new CheckSupplierLimitRequest({
                     targetId: increaseCashInLimitRequest.targetId,
                     tokenId: increaseCashInLimitRequest.tokenId,
-                    supplierType: supplierRoleTypeOptions[supplierRoleTypeOptionsId.limited],
+                    supplierType: language.getText('wizard.supplierRoleType.Limited'),
                   }),
                 ))
               ) {
@@ -890,7 +853,7 @@ export default class OperationStableCoinService extends Service {
                   new CheckSupplierLimitRequest({
                     targetId: decreaseCashInLimitRequest.targetId,
                     tokenId: decreaseCashInLimitRequest.tokenId,
-                    supplierType: supplierRoleTypeOptions[supplierRoleTypeOptionsId.unlimited],
+                    supplierType: language.getText('wizard.supplierRoleType.Unlimited'),
                   }),
                 )
               ) {
@@ -903,7 +866,7 @@ export default class OperationStableCoinService extends Service {
                   new CheckSupplierLimitRequest({
                     targetId: decreaseCashInLimitRequest.targetId,
                     tokenId: decreaseCashInLimitRequest.tokenId,
-                    supplierType: supplierRoleTypeOptions[supplierRoleTypeOptionsId.limited],
+                    supplierType: language.getText('wizard.supplierRoleType.Limited'),
                   }),
                 ))
               ) {
@@ -981,7 +944,7 @@ export default class OperationStableCoinService extends Service {
                   new CheckSupplierLimitRequest({
                     targetId: resetCashInLimitRequest.targetId,
                     tokenId: resetCashInLimitRequest.tokenId,
-                    supplierType: supplierRoleTypeOptions[supplierRoleTypeOptionsId.unlimited],
+                    supplierType: language.getText('wizard.supplierRoleType.Unlimited'),
                   }),
                 )
               ) {
@@ -995,7 +958,7 @@ export default class OperationStableCoinService extends Service {
                   new CheckSupplierLimitRequest({
                     targetId: resetCashInLimitRequest.targetId,
                     tokenId: resetCashInLimitRequest.tokenId,
-                    supplierType: supplierRoleTypeOptions[supplierRoleTypeOptionsId.limited],
+                    supplierType: language.getText('wizard.supplierRoleType.Limited'),
                   }),
                 )
               ) {
@@ -1052,7 +1015,7 @@ export default class OperationStableCoinService extends Service {
                   new CheckSupplierLimitRequest({
                     targetId: checkCashInLimitRequest.targetId,
                     tokenId: checkCashInLimitRequest.tokenId,
-                    supplierType: supplierRoleTypeOptions[supplierRoleTypeOptionsId.unlimited],
+                    supplierType: language.getText('wizard.supplierRoleType.Unlimited'),
                   }),
                 )
               ) {
@@ -1088,7 +1051,7 @@ export default class OperationStableCoinService extends Service {
             await this.roleManagementFlow();
         }
         break;
-      case roleManagementOptions[roleMgmtOptionsId.HasRole]:
+      case language.getText('wizard.roleManagementOptions.HasRole'):
         await utilsService.cleanAndShowBanner();
 
         utilsService.displayCurrentUserInfo(
@@ -1178,22 +1141,22 @@ export default class OperationStableCoinService extends Service {
 
     capabilitiesFilter = options.filter((option) => {
       if (
-        (option === options[stableCoinOptionsId.CashIn] && capabilities.includes(Operation.CASH_IN)) ||
-        (option === options[stableCoinOptionsId.Burn] && capabilities.includes(Operation.BURN)) ||
-        (option === options[stableCoinOptionsId.Wipe] && capabilities.includes(Operation.WIPE)) ||
-        (option === options[stableCoinOptionsId.Rescue] && capabilities.includes(Operation.RESCUE)) ||
-        (option === options[stableCoinOptionsId.Freeze] &&
+        (option === language.getText('wizard.stableCoinOptions.CashIn') && capabilities.includes(Operation.CASH_IN)) ||
+        (option === language.getText('wizard.stableCoinOptions.Burn') && capabilities.includes(Operation.BURN)) ||
+        (option === language.getText('wizard.stableCoinOptions.Wipe') && capabilities.includes(Operation.WIPE)) ||
+        (option === language.getText('wizard.stableCoinOptions.Rescue') && capabilities.includes(Operation.RESCUE)) ||
+        (option === language.getText('wizard.stableCoinOptions.Freeze') &&
           capabilities.includes(Operation.FREEZE)) ||
-        (option === options[stableCoinOptionsId.UnFreeze] &&
+        (option === language.getText('wizard.stableCoinOptions.UnFreeze') &&
           capabilities.includes(Operation.UNFREEZE)) ||
-        (option === options[stableCoinOptionsId.DangerZone] &&
+        (option === language.getText('wizard.stableCoinOptions.DangerZone') &&
           (capabilities.includes(Operation.PAUSE) ||
             capabilities.includes(Operation.DELETE))) ||
-        (option === options[stableCoinOptionsId.RoleMgmt] &&
+        (option === language.getText('wizard.stableCoinOptions.RoleMgmt') &&
           capabilities.includes(Operation.ROLE_MANAGEMENT)) ||
-        (option === options[stableCoinOptionsId.RoleRefresh] && !this.stableCoinDeleted) ||
-        (option === options[stableCoinOptionsId.Details] && !this.stableCoinDeleted) ||
-        (option === options[stableCoinOptionsId.Balance] && !this.stableCoinDeleted)
+        (option === language.getText('wizard.stableCoinOptions.RoleRefresh') && !this.stableCoinDeleted) ||
+        (option === language.getText('wizard.stableCoinOptions.Details') && !this.stableCoinDeleted) ||
+        (option === language.getText('wizard.stableCoinOptions.Balance') && !this.stableCoinDeleted)
       ) {
         return true;
       }
@@ -1203,65 +1166,65 @@ export default class OperationStableCoinService extends Service {
     result = roles
       ? capabilitiesFilter.filter((option) => {
           if (
-            (option === options[stableCoinOptionsId.CashIn] &&
+            (option === language.getText('wizard.stableCoinOptions.CashIn') &&
               roles.includes(StableCoinRole.CASHIN_ROLE)) ||
-            (option === options[stableCoinOptionsId.CashIn] &&
+            (option === language.getText('wizard.stableCoinOptions.CashIn') &&
               this.isOperationAccess(
                 stableCoinCapabilities,
                 Operation.CASH_IN,
                 Access.HTS,
               )) ||
-            (option === options[stableCoinOptionsId.Burn] && roles.includes(StableCoinRole.BURN_ROLE)) ||
-            (option === options[stableCoinOptionsId.Burn] &&
+            (option === language.getText('wizard.stableCoinOptions.Burn') && roles.includes(StableCoinRole.BURN_ROLE)) ||
+            (option === language.getText('wizard.stableCoinOptions.Burn') &&
               this.isOperationAccess(
                 stableCoinCapabilities,
                 Operation.BURN,
                 Access.HTS,
               )) ||
-            (option === options[stableCoinOptionsId.Wipe] && roles.includes(StableCoinRole.WIPE_ROLE)) ||
-            (option === options[stableCoinOptionsId.Wipe] &&
+            (option === language.getText('wizard.stableCoinOptions.Wipe') && roles.includes(StableCoinRole.WIPE_ROLE)) ||
+            (option === language.getText('wizard.stableCoinOptions.Wipe') &&
               this.isOperationAccess(
                 stableCoinCapabilities,
                 Operation.WIPE,
                 Access.HTS,
               )) ||
-            (option === options[stableCoinOptionsId.Freeze] &&
+            (option === language.getText('wizard.stableCoinOptions.Freeze') &&
               roles.includes(StableCoinRole.FREEZE_ROLE)) ||
-            (option === options[stableCoinOptionsId.Freeze] &&
+            (option === language.getText('wizard.stableCoinOptions.Freeze') &&
               this.isOperationAccess(
                 stableCoinCapabilities,
                 Operation.FREEZE,
                 Access.HTS,
               )) ||
-            (option === options[stableCoinOptionsId.UnFreeze] &&
+            (option === language.getText('wizard.stableCoinOptions.UnFreeze') &&
               roles.includes(StableCoinRole.FREEZE_ROLE)) ||
-            (option === options[stableCoinOptionsId.UnFreeze] &&
+            (option === language.getText('wizard.stableCoinOptions.UnFreeze') &&
               this.isOperationAccess(
                 stableCoinCapabilities,
                 Operation.UNFREEZE,
                 Access.HTS,
               )) ||
-            (option === options[stableCoinOptionsId.DangerZone] &&
+            (option === language.getText('wizard.stableCoinOptions.DangerZone') &&
               roles.includes(StableCoinRole.PAUSE_ROLE)) ||
-            (option === options[stableCoinOptionsId.DangerZone] &&
+            (option === language.getText('wizard.stableCoinOptions.DangerZone') &&
               this.isOperationAccess(
                 stableCoinCapabilities,
                 Operation.PAUSE,
                 Access.HTS,
               )) ||
-            (option === options[stableCoinOptionsId.DangerZone] &&
+            (option === language.getText('wizard.stableCoinOptions.DangerZone') &&
               roles.includes(StableCoinRole.DELETE_ROLE)) ||
-            (option === options[stableCoinOptionsId.DangerZone] &&
+            (option === language.getText('wizard.stableCoinOptions.DangerZone') &&
               this.isOperationAccess(
                 stableCoinCapabilities,
                 Operation.DELETE,
                 Access.HTS,
               )) ||
-            (option === options[stableCoinOptionsId.Rescue] &&
+            (option === language.getText('wizard.stableCoinOptions.Rescue') &&
               roles.includes(StableCoinRole.RESCUE_ROLE)) ||
-            option === options[stableCoinOptionsId.RoleRefresh] ||
-            option === options[stableCoinOptionsId.Details] ||
-            option === options[stableCoinOptionsId.Balance]
+            option === language.getText('wizard.stableCoinOptions.RoleRefresh') ||
+            option === language.getText('wizard.stableCoinOptions.Details') ||
+            option === language.getText('wizard.stableCoinOptions.Balance')
           ) {
             return true;
           }
@@ -1269,7 +1232,7 @@ export default class OperationStableCoinService extends Service {
         })
       : capabilitiesFilter;
 
-    return result.concat(language.getArray('wizard.returnOption'));
+    return result.concat(language.getArrayFromObject('wizard.returnOption'));
   }
 
   private isOperationAccess(
@@ -1371,9 +1334,6 @@ export default class OperationStableCoinService extends Service {
   private async grantSupplierRole(
     grantRoleRequest: GrantRoleRequest,
   ): Promise<void> {
-  
-    const supplierRoleTypeOptions = language
-    .getArray('wizard.supplierRoleType');
     
     const hasRole:boolean = await this.roleStableCoinService
         .hasRole(
@@ -1387,7 +1347,7 @@ export default class OperationStableCoinService extends Service {
       console.log(language.getText('cashin.alreadyRole'));
     } else {
       let limit = '';
-      const supplierRoleType = language.getArray('wizard.supplierRoleType');
+      const supplierRoleType = language.getArrayFromObject('wizard.supplierRoleType');
       grantRoleRequest.supplierType = await utilsService.defaultMultipleAsk(
         language.getText('stablecoin.askCashInRoleType'),
         supplierRoleType,
@@ -1411,7 +1371,7 @@ export default class OperationStableCoinService extends Service {
       if (grantRoleRequest.supplierType === supplierRoleType[0]) {
         //Give unlimited
         //Call to SDK
-        grantRoleRequest.supplierType = supplierRoleTypeOptions[supplierRoleTypeOptionsId.unlimited];
+        grantRoleRequest.supplierType = language.getText('wizard.supplierRoleType.Unlimited');
         await this.roleStableCoinService.giveSupplierRoleStableCoin(
           grantRoleRequest,
         );
@@ -1434,7 +1394,7 @@ export default class OperationStableCoinService extends Service {
 
         //Give limited
         //Call to SDK
-        grantRoleRequest.supplierType = supplierRoleTypeOptions[supplierRoleTypeOptionsId.limited];
+        grantRoleRequest.supplierType = language.getText('wizard.supplierRoleType.Limited');
         await this.roleStableCoinService.giveSupplierRoleStableCoin(
           grantRoleRequest,
         );
@@ -1465,16 +1425,15 @@ export default class OperationStableCoinService extends Service {
     );
 
     const rolesAccount = this.getRolesAccount();
-    const dangerZoneOptions = language
-      .getArray('dangerZone.options');
 
-    const dangerZoneOptionsFiltered = dangerZoneOptions
+    const dangerZoneOptionsFiltered = language
+      .getArrayFromObject('dangerZone.options')
       .filter((option) => {
         switch (option) {
-          case dangerZoneOptions[dangerZoneOptionsId.Pause]:
-          case dangerZoneOptions[dangerZoneOptionsId.UnPause]:
+          case language.getText('dangerZone.options.Pause'):
+          case language.getText('dangerZone.options.UnPause'):
             let showPauser: boolean =
-              option == dangerZoneOptions[dangerZoneOptionsId.Pause]
+              option == language.getText('dangerZone.options.Pause')
                 ? !this.stableCoinPaused
                 : this.stableCoinPaused;
             if (showPauser && rolesAccount) {
@@ -1488,7 +1447,7 @@ export default class OperationStableCoinService extends Service {
             }
             return showPauser;
             break;
-          case dangerZoneOptions[dangerZoneOptionsId.Delete]:
+          case language.getText('dangerZone.options.Delete'):
             let showDelete: boolean = capabilities.includes(Operation.DELETE);
             if (showDelete && rolesAccount) {
               showDelete = rolesAccount.includes(StableCoinRole.DELETE_ROLE);
@@ -1513,7 +1472,7 @@ export default class OperationStableCoinService extends Service {
         this.stableCoinDeleted,
       )
     ) {
-      case dangerZoneOptions[dangerZoneOptionsId.Pause]:
+      case language.getText('dangerZone.options.Pause'):
         const confirmPause = await utilsService.defaultConfirmAsk(
           language.getText('dangerZone.confirmPause'),
           true,
@@ -1534,7 +1493,7 @@ export default class OperationStableCoinService extends Service {
         }
 
         break;
-      case dangerZoneOptions[dangerZoneOptionsId.UnPause]:
+      case language.getText('dangerZone.options.UnPause'):
         const confirmUnpause = await utilsService.defaultConfirmAsk(
           language.getText('dangerZone.confirmUnpause'),
           true,
@@ -1555,7 +1514,7 @@ export default class OperationStableCoinService extends Service {
         }
 
         break;
-      case dangerZoneOptions[dangerZoneOptionsId.Delete]:
+      case language.getText('dangerZone.options.Delete'):
         const confirmDelete = await utilsService.defaultConfirmAsk(
           language.getText('dangerZone.confirmDelete'),
           true,
