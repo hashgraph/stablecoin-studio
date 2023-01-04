@@ -340,8 +340,8 @@ export const english = {
   },
   dangerZone: {
     confirmDelete: 'Are you sure want to delete the stable coin?',
-    confirmPause: 'Are you sure want to pause the stable coin?',
-    confirmUnpause: 'Are you sure want to unpause the stable coin?',
+    confirmPause: 'Are you sure you want to pause the stable coin?',
+    confirmUnpause: 'Are you sure you want to unpause the stable coin?',
     options: [
       'Pause stable coin',
       'Unpause stable coin',
