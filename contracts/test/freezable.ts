@@ -1,12 +1,6 @@
 import '@hashgraph/hardhat-hethers'
 import '@hashgraph/sdk'
 import { BigNumber } from 'ethers'
-
-const chai = require('chai')
-const chaiAsPromised = require('chai-as-promised')
-chai.use(chaiAsPromised)
-const expect = chai.expect
-
 import {
     deployContractsWithSDK,
     initializeClients,
@@ -17,8 +11,6 @@ import {
     getOperatorPublicKey,
     getNonOperatorClient,
     getNonOperatorAccount,
-    getNonOperatorPrivateKey,
-    getNonOperatorPublicKey,
     getNonOperatorE25519,
 } from '../scripts/deploy'
 import {
@@ -31,33 +23,23 @@ import {
     getBalanceOf,
 } from '../scripts/contractsMethods'
 import { FREEZE_ROLE } from '../scripts/constants'
-
 import { clientId } from '../scripts/utils'
+import { Client, ContractId } from '@hashgraph/sdk'
 
-let proxyAddress: any
+const chai = require('chai')
+const chaiAsPromised = require('chai-as-promised')
+chai.use(chaiAsPromised)
+const expect = chai.expect
 
-let operatorClient: any
-let nonOperatorClient: any
+let proxyAddress: ContractId
+let operatorClient: Client
+let nonOperatorClient: Client
 let operatorAccount: string
 let nonOperatorAccount: string
 let operatorPriKey: string
-let nonOperatorPriKey: string
 let operatorPubKey: string
-let nonOperatorPubKey: string
 let operatorIsE25519: boolean
 let nonOperatorIsE25519: boolean
-
-let client1: any
-let client1account: string
-let client1privatekey: string
-let client1publickey: string
-let client1isED25519Type: boolean
-
-let client2: any
-let client2account: string
-let client2privatekey: string
-let client2publickey: string
-let client2isED25519Type: boolean
 
 const TokenName = 'MIDAS'
 const TokenSymbol = 'MD'
