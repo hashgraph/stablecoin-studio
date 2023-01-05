@@ -24,7 +24,6 @@
   },
   "optionalDetails": {
     "decimals": "Decimals",
-    "expirationDate": "Expiration date",
     "finite": "Finite",
     "initialSupply": "Initial supply",
     "infinite": "Infinite",

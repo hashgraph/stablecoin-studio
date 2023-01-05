@@ -35,7 +35,7 @@
 			"invalidStableCoinId": "Enter a valid token id"
 		},
 		"createSC": "Create coin",
-		"addSC": "Add coin"
+		"addSC": "Add token"
 	},
 	"sidebar": {
 		"operations": "Operations",

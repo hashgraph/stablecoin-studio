@@ -3,9 +3,9 @@
       "nextStep" : "Next step",
       "goBack" : "Go back",
       "createStableCoin": "Create stable coin",
-      "createNewStableCoin": "Import token",
+      "createNewStableCoin": "Add token",
       "cancel": "Cancel",
-      "addExternalToken": "Import token"
+      "addExternalToken": "Add token"
     },
     "tabs": {
       "externalTokenInfo": "Token info"
@@ -19,7 +19,6 @@
     },
     "optionalDetails": {
       "decimals": "Decimals",
-      "expirationDate": "Expiration date",
       "finite": "Finite",
       "initialSupply": "Initial supply",
       "infinite": "Infinite",
