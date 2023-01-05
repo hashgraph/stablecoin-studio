@@ -47,6 +47,7 @@ const Roles = () => {
 	}, [coinSelected]);
 
 	const operations = capabilities?.capabilities.map((x) => x.operation);
+
 	const filteredCapabilities = roleOptions.filter((option) => {
 		if (
 			!operations?.includes(Operation.CASH_IN) &&
@@ -84,6 +85,14 @@ const Roles = () => {
 		) {
 			return false;
 		}
+		if (
+			!operations?.includes(Operation.ROLE_ADMIN_MANAGEMENT) &&
+			option.label === 'Admin Role'
+		) {
+			return false;
+		}
+		
+		
 		return true;
 	});
 

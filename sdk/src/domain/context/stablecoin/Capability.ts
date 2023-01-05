@@ -29,6 +29,7 @@ export enum Operation {
 	DELETE = 'Delete',
 	RESCUE = 'Rescue',
 	ROLE_MANAGEMENT = 'Role_Management',
+	ROLE_ADMIN_MANAGEMENT = 'Admin Role'
 }
 
 export enum Access {
