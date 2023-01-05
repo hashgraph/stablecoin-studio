@@ -17,8 +17,6 @@ import {
     getOperatorPublicKey,
     getNonOperatorClient,
     getNonOperatorAccount,
-    getNonOperatorPrivateKey,
-    getNonOperatorPublicKey,
     getNonOperatorE25519,
     deployFactory,
     toHashgraphKey,
@@ -36,35 +34,23 @@ import {
 } from '../scripts/contractsMethods'
 
 import { clientId, toEvmAddress, getClient } from '../scripts/utils'
+import { Client, ContractId } from '@hashgraph/sdk'
 
-let clientSdk: any
+let clientSdk: Client
 
-let proxyAddress: any
-let proxyAdminAddress: any
-let factoryAddress: any
+let proxyAddress: ContractId
+let proxyAdminAddress: ContractId
+let factoryAddress: ContractId
 
-let operatorClient: any
-let nonOperatorClient: any
+let operatorClient: Client
+let nonOperatorClient: Client
 let operatorAccount: string
 let nonOperatorAccount: string
 let operatorPriKey: string
-let nonOperatorPriKey: string
 let operatorPubKey: string
-let nonOperatorPubKey: string
 let operatorIsE25519: boolean
 let nonOperatorIsE25519: boolean
 
-let client1: any
-let client1account: string
-let client1privatekey: string
-let client1publickey: string
-let client1isED25519Type: boolean
-
-let client2: any
-let client2account: string
-let client2privatekey: string
-let client2publickey: string
-let client2isED25519Type: boolean
 
 const TokenName = 'MIDAS'
 const TokenSymbol = 'MD'
@@ -74,7 +60,7 @@ const INIT_SUPPLY = BigNumber.from(10).mul(TokenFactor)
 const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor)
 const TokenMemo = 'Hedera Accelerator Stable Coin'
 
-describe.skip('StableCoinFactory Tests', function() {
+describe('StableCoinFactory Tests', function() {
     before(async function() {
         // Generate Client 1 and Client 2
         const [
@@ -159,7 +145,7 @@ describe.skip('StableCoinFactory Tests', function() {
     })
 })
 
-describe.skip('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', function() {
+describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', function() {
     before(async function() {
         // Generate Client 1 and Client 2
         const [
@@ -307,7 +293,7 @@ describe.skip('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', fu
                 proxyAdminAddress,
                 nonOperatorClient,
                 nonOperatorAccount,
-                proxyAddress.toSolidityAddress(),
+                proxyAddress,
                 nonOperatorIsE25519
             )
         ).to.eventually.be.rejectedWith(Error)
@@ -352,7 +338,7 @@ describe.skip('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', fu
             proxyAdminAddress,
             operatorClient,
             operatorAccount,
-            proxyAddress.toSolidityAddress(),
+            proxyAddress,
             operatorIsE25519
         )
 
