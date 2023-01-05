@@ -15,7 +15,7 @@ import {
 
 import Web3 from 'web3'
 import axios from 'axios'
-import { BytesLike } from 'ethers'
+
 const hre = require('hardhat')
 
 const web3 = new Web3()
@@ -30,8 +30,8 @@ export async function contractCall(
     parameters: any[],
     clientOperator: Client,
     gas: number,
-    abi:any,
-    value:  number | string | Long |  Hbar = 0
+    abi: any,
+    value: number | string | Long | Hbar = 0
 ) {
     const functionCallParameters = encodeFunctionCall(
         functionName,
@@ -47,15 +47,14 @@ export async function contractCall(
         .execute(clientOperator)
 
     const record = await contractTx.getRecord(clientOperator)
-    let  results; 
-    if (record.contractFunctionResult){
-         results = decodeFunctionResult(
+    let results
+    if (record.contractFunctionResult) {
+        results = decodeFunctionResult(
             abi,
             functionName,
             record.contractFunctionResult?.bytes
         )
     }
-    
 
     return results
 }
@@ -71,7 +70,11 @@ function encodeFunctionCall(functionName: string, parameters: any[], abi: any) {
     return Buffer.from(encodedParametersHex, 'hex')
 }
 
-function decodeFunctionResult(abi: any, functionName: string, resultAsBytes: Uint8Array) {
+function decodeFunctionResult(
+    abi: any,
+    functionName: string,
+    resultAsBytes: Uint8Array
+) {
     const functionAbi = abi.find(
         (func: { name: any }) => func.name === functionName
     )
@@ -87,7 +90,7 @@ function decodeFunctionResult(abi: any, functionName: string, resultAsBytes: Uin
     return jsonParsedArray
 }
 
-export function getClient():Client {
+export function getClient(): Client {
     switch (hre.network.name) {
         case 'previewnet':
             return Client.forPreviewnet()
@@ -115,7 +118,7 @@ export async function createToken(
     privateKey: string,
     publicKey: string,
     clientSdk: Client
-):Promise<TokenId|null> {
+): Promise<TokenId | null> {
     const transaction = new TokenCreateTransaction()
         .setMaxTransactionFee(new Hbar(25))
         .setTokenName(name)
@@ -155,7 +158,7 @@ export async function deployContractSDK(
     clientOperator: Client,
     constructorParameters?: any,
     adminKey?: PrivateKey
-):Promise<ContractId> {
+): Promise<ContractId> {
     const Key = adminKey ? adminKey : PrivateKey.fromStringED25519(privateKey)
 
     const transaction = new ContractCreateFlow()
