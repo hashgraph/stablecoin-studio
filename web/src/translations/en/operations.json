@@ -36,28 +36,28 @@
     "pause":{
         "title": "Pause",
         "modalSuccessTitle": "Operation successfully completed",
-        "modalSuccessDesc": "Pause successfully",
+        "modalSuccessDesc": "Pause successful",
         "modalAction": {
             "accept": "Pause",
-            "subtitle": "Are you sure to continue with pause operation?"
+            "subtitle": "Are you sure you want to continue with the pause operation?"
         }
     },
     "unpause":{
         "title": "Unpause",
         "modalSuccessTitle": "Operation successfully completed",
-        "modalSuccessDesc": "Unpause successfully",
+        "modalSuccessDesc": "Unpause successful",
         "modalAction": {
             "accept": "Unpause",
-            "subtitle": "Are you sure to continue with unpause operation?"
+            "subtitle": "Are you sure you want to continue with the unpause operation?"
         }
     },
     "delete":{
         "title": "Delete",
         "modalSuccessTitle": "Operation successfully completed",
-        "modalSuccessDesc": "Delete successfully",
+        "modalSuccessDesc": "Delete successful",
         "modalAction": {
             "accept": "Delete",
-            "subtitle": "Are you sure to continue with delete operation?"
+            "subtitle": "Are you sure you want to continue with the delete operation?"
         }
     }
 }

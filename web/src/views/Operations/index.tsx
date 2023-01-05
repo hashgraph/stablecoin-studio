@@ -112,6 +112,7 @@ const Operations = () => {
 				: (!operations?.includes(Operation.DELETE) ||
 				(operations?.includes(Operation.DELETE) && ((getAccessByOperation(Operation.DELETE) !== Access.HTS) && 
 				!roles.includes(StableCoinRole.DELETE_ROLE)))),
+								
 		};
 		setDisabledFeatures(areDisabled);
 	};

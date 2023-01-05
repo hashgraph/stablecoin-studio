@@ -26,7 +26,6 @@ import {
 	Transaction,
 	PublicKey as HPublicKey,
 	ContractId as HContractId,
-	AccountAllowanceApproveTransaction,
 } from '@hashgraph/sdk';
 import TransactionAdapter from '../TransactionAdapter';
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
@@ -646,12 +645,11 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					);
 			}
 		} catch (error) {
-			console.log('Error ' + JSON.stringify(error) )
-				throw new TransactionResponseError({
-					message:`Unexpected error in HederaTransactionHandler ${operationName} operation : ${error}`,
-					transactionId:  (error as any).error?.transactionId
-				}
-			);
+			console.log('Error ' + JSON.stringify(error));
+			throw new TransactionResponseError({
+				message: `Unexpected error in HederaTransactionHandler ${operationName} operation : ${error}`,
+				transactionId: (error as any).error?.transactionId,
+			});
 		}
 	}
 

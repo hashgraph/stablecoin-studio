@@ -1,7 +1,7 @@
 {
     "title": "Cash in operation",
     "operationTitle": "Operation details",
-    "amountLabel": "Introduce amount",
+    "amountLabel": "Enter the amount",
     "amountPlaceholder": "0",
     "destinationAccountLabel": "Destination account",
     "destinationAccountPlaceholder": "0.0.0",

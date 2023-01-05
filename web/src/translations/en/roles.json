@@ -26,9 +26,9 @@
         "selectLabel": "Select role to grant",
         "selectPlaceholder": "Select role to grant",
         "supplierQuantityInputPlaceholder": "0",
-        "supplierQuantityQuestion": "Introduce the limit",
+        "supplierQuantityQuestion": "Enter the limit",
         "switchLabel": "Infinity?",
-        "amountLabel": "Introduce amount?",
+        "amountLabel": "Enter the amount",
         "amountPlaceholder": "0",
         "checkCashinLimitSuccessDesc": "",
         "hasNotRoleError": "This account has not the requested role"
@@ -53,7 +53,7 @@
         "supplierQuantityInputPlaceholder": "",
         "supplierQuantityQuestion": "",
         "switchLabel": "",
-        "amountLabel": "Introduce amount",
+        "amountLabel": "Enter the amount",
         "amountPlaceholder": "0",
         "checkCashinLimitSuccessDesc": ""
     },
@@ -74,9 +74,9 @@
         "selectLabel": "Cash in limit option",
         "selectPlaceholder": "Select cash in limit option",
         "supplierQuantityInputPlaceholder": "0",
-        "supplierQuantityQuestion": "Introduce amount",
+        "supplierQuantityQuestion": "Enter the amount",
         "switchLabel": "Infinity?",
-        "amountLabel": "Introduce amount",
+        "amountLabel": "Enter the amount",
         "amountPlaceholder": "0",
         "checkCashinLimitSuccessDesc": "The account {{ account }} has a cash in limit of {{ limit }}.",
         "hasNotRoleError": "This account has not the requested role",
@@ -99,13 +99,13 @@
         "selectLabel": "Cash in limit option",
         "selectPlaceholder": "Select cash in limit option",
         "supplierQuantityInputPlaceholder": "0",
-        "supplierQuantityQuestion": "Introduce amount",
+        "supplierQuantityQuestion": "Enter the amount",
         "switchLabel": "Infinity?",
         "amountLabel": "Introduce amount",
         "amountPlaceholder": "0",
         "checkCashinLimitSuccessDesc": "The account {{ account }} has a cash in limit of {{ limit }}.",
         "hasNotRoleError": "This account has not the requested role",
-        "hasInfiniteAllowance": "This account has infinite allowance",
+        "hasInfiniteAllowance": "This account has an infinite allowance",
         "newRoles": "The new token roles will be:"
     }
 }

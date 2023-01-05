@@ -1,9 +1,9 @@
 {
     "title": "Freeze operation",
     "operationTitle": "Operation details",
-    "accountLabel": "Introduce account",
+    "accountLabel": "Enter the account",
     "accountPlaceholder": "0.0.0",
-    "modalSuccess": "The account {{ account }} is freezed.",
+    "modalSuccess": "The account {{ account }} is frozen.",
     "modalAction": {
         "subtitle": "Operation details review",
         "account": "Account",

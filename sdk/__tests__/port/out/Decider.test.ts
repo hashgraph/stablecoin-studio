@@ -18,7 +18,6 @@
  *
  */
 
-import Account from '../../../src/domain/context/account/Account.js';
 import {
 	Capability,
 	Operation,

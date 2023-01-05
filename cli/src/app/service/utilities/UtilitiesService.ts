@@ -240,7 +240,7 @@ export default class UtilitiesService extends Service {
       type: 'rawlist',
       message: question,
       choices: goBack
-        ? choices.concat(language.getArray('wizard.backOption'))
+        ? choices.concat(language.getArrayFromObject('wizard.backOption'))
         : choices,
     });
     return variable.response;

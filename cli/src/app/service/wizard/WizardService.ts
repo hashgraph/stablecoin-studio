@@ -30,7 +30,7 @@ export default class WizardService extends Service {
   public async mainMenu(): Promise<void> {
     try {
       const wizardMainOptions: Array<string> =
-        language.getArray('wizard.mainOptions');
+        language.getArrayFromObject('wizard.mainOptions');
       const currentAccount = utilsService.getCurrentAccount();
 
       switch (
@@ -42,7 +42,7 @@ export default class WizardService extends Service {
           `${currentAccount.accountId} - ${currentAccount.alias}`,
         )
       ) {
-        case wizardMainOptions[0]:
+        case language.getText('wizard.mainOptions.Create'):
           await utilsService.cleanAndShowBanner();
           const stableCoin: StableCoinViewModel =
             await new CreateStableCoinService().createStableCoin(
@@ -61,25 +61,24 @@ export default class WizardService extends Service {
             ).start();
           }
           break;
-        case wizardMainOptions[1]:
+        case language.getText('wizard.mainOptions.Manage'):
           await utilsService.cleanAndShowBanner();
           await new ManageImportedTokenService().start();
           break;
-        case wizardMainOptions[2]:
+        case language.getText('wizard.mainOptions.Operate'):
           await utilsService.cleanAndShowBanner();
           await new OperationStableCoinService().start();
           break;
-        case wizardMainOptions[3]:
+        case language.getText('wizard.mainOptions.List'):
           await utilsService.cleanAndShowBanner();
           const resp = await new ListStableCoinsService().listStableCoins();
           utilsService.drawTableListStableCoin(resp);
           break;
-        case wizardMainOptions[4]:
+        case language.getText('wizard.mainOptions.Configuration'):
           await utilsService.cleanAndShowBanner();
           this.setConfigurationService = new SetConfigurationService();
           await this.configurationMenu();
           break;
-        case wizardMainOptions[wizardMainOptions.length - 1]:
         default:
           clear();
           process.exit();
@@ -98,7 +97,7 @@ export default class WizardService extends Service {
    * Show configuration menu
    */
   public async configurationMenu(): Promise<void> {
-    const wizardChangeConfigOptions: Array<string> = language.getArray(
+    const wizardChangeConfigOptions: Array<string> = language.getArrayFromObject(
       'wizard.changeOptions',
     );
 
@@ -108,30 +107,29 @@ export default class WizardService extends Service {
         wizardChangeConfigOptions,
       )
     ) {
-      case wizardChangeConfigOptions[0]:
+      case language.getText('wizard.changeOptions.Show'):
         await utilsService.cleanAndShowBanner();
 
         await configurationService.showFullConfiguration();
         break;
-      case wizardChangeConfigOptions[1]:
+      case language.getText('wizard.changeOptions.EditPath'):
         await utilsService.cleanAndShowBanner();
 
         await this.setConfigurationService.configurePath();
         utilsService.showMessage(language.getText('wizard.pathChanged'));
         break;
-      case wizardChangeConfigOptions[2]:
+      case language.getText('wizard.changeOptions.EditNetwork'):
         await utilsService.cleanAndShowBanner();
 
         await this.setConfigurationService.configureDefaultNetwork();
         utilsService.showMessage(language.getText('wizard.networkChanged'));
         break;
-      case wizardChangeConfigOptions[3]:
+      case language.getText('wizard.changeOptions.Manage'):
         await utilsService.cleanAndShowBanner();
 
         await this.setConfigurationService.manageAccountMenu();
         //utilsService.showMessage(language.getText('wizard.accountsChanged'));
         break;
-      case wizardChangeConfigOptions[wizardChangeConfigOptions.length - 1]:
       default:
         await utilsService.cleanAndShowBanner();
         await this.mainMenu();
