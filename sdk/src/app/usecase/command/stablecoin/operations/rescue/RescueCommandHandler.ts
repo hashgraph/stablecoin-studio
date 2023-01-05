@@ -18,13 +18,20 @@
  *
  */
 
+import CheckNums from '../../../../../../core/checks/numbers/CheckNums.js';
+import { CommandBus } from '../../../../../../core/command/CommandBus.js';
 import { ICommandHandler } from '../../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
 import BigDecimal from '../../../../../../domain/context/shared/BigDecimal.js';
+import { StableCoinNotAssociated } from '../../error/StableCoinNotAssociated.js';
 import AccountService from '../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
+import { GetAccountTokenAssociatedQuery } from '../../../../query/account/tokenAssociated/GetAccountTokenAssociatedQuery.js';
+import { DecimalsOverRange } from '../../error/DecimalsOverRange.js';
+import { OperationNotAllowed } from '../../error/OperationNotAllowed.js';
+import { BalanceOfCommand } from '../balanceof/BalanceOfCommand.js';
 import { RescueCommand, RescueCommandResponse } from './RescueCommand.js';
 
 @CommandHandler(RescueCommand)
@@ -32,6 +39,8 @@ export class RescueCommandHandler implements ICommandHandler<RescueCommand> {
 	constructor(
 		@lazyInject(StableCoinService)
 		public readonly stableCoinService: StableCoinService,
+		@lazyInject(CommandBus)
+		public readonly commandBus: CommandBus,
 		@lazyInject(AccountService)
 		public readonly accountService: AccountService,
 		@lazyInject(TransactionService)
@@ -42,14 +51,44 @@ export class RescueCommandHandler implements ICommandHandler<RescueCommand> {
 		const { amount, tokenId } = command;
 		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
+		const tokenAssociated = (
+			await this.stableCoinService.queryBus.execute(
+				new GetAccountTokenAssociatedQuery(account.id, tokenId),
+			)
+		).isAssociated;
+
+		if (!tokenAssociated) {
+			throw new StableCoinNotAssociated(
+				account.id.toString(),
+				tokenId.toString(),
+			);
+		}
+
 		const capabilities = await this.stableCoinService.getCapabilities(
 			account,
 			tokenId,
 		);
-		const res = await handler.rescue(
-			capabilities,
-			BigDecimal.fromString(amount, capabilities.coin.decimals),
-		);
+		const coin = capabilities.coin;
+		const amountBd = BigDecimal.fromString(amount, coin.decimals);
+
+		if (CheckNums.hasMoreDecimals(amount, coin.decimals)) {
+			throw new DecimalsOverRange(coin.decimals);
+		}
+		if (!coin.treasury || !coin.tokenId)
+			throw new OperationNotAllowed(`The stable coin is not valid`);
+
+		const treasuryBalance = (
+			await this.commandBus.execute(
+				new BalanceOfCommand(coin.treasury, coin.tokenId),
+			)
+		).payload;
+
+		if (amountBd.isGreaterThan(treasuryBalance)) {
+			throw new OperationNotAllowed(
+				'The treasury account balance is bigger than the amount',
+			);
+		}
+		const res = await handler.rescue(capabilities, amountBd);
 		return Promise.resolve(
 			new RescueCommandResponse(res.error === undefined),
 		);

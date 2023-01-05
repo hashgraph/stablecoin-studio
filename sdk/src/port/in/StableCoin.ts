@@ -45,6 +45,7 @@ import FreezeAccountRequest from './request/FreezeAccountRequest.js';
 import PauseRequest from './request/PauseRequest.js';
 import GetAccountBalanceRequest from './request/GetAccountBalanceRequest.js';
 import CapabilitiesRequest from './request/CapabilitiesRequest.js';
+import IsAccountAssociatedTokenRequest from './request/IsAccountAssociatedTokenRequest.js';
 import { Balance } from '../../domain/context/stablecoin/Balance.js';
 import StableCoinCapabilities from '../../domain/context/stablecoin/StableCoinCapabilities.js';
 import {
@@ -64,8 +65,8 @@ import { DeleteCommand } from '../../app/usecase/command/stablecoin/operations/d
 import { FreezeCommand } from '../../app/usecase/command/stablecoin/operations/freeze/FreezeCommand.js';
 import { UnFreezeCommand } from '../../app/usecase/command/stablecoin/operations/unfreeze/UnFreezeCommand.js';
 import { GetAccountInfoQuery } from '../../app/usecase/query/account/info/GetAccountInfoQuery.js';
-import { KeyType } from '../../domain/context/account/KeyProps.js';
 import { handleValidation } from './Common.js';
+import { GetAccountTokenAssociatedQuery } from '../../app/usecase/query/account/tokenAssociated/GetAccountTokenAssociatedQuery.js';
 
 export const HederaERC20AddressTestnet = '0.0.49127272';
 export const HederaERC20AddressPreviewnet = '0.0.11111111';
@@ -92,6 +93,9 @@ interface IStableCoinInPort {
 	delete(request: DeleteRequest): Promise<boolean>;
 	freeze(request: FreezeAccountRequest): Promise<boolean>;
 	unFreeze(request: FreezeAccountRequest): Promise<boolean>;
+	isAccountAssociated(
+		request: IsAccountAssociatedTokenRequest,
+	): Promise<boolean>;
 }
 
 class StableCoinInPort implements IStableCoinInPort {
@@ -122,10 +126,9 @@ class StableCoinInPort implements IStableCoinInPort {
 				req.initialSupply ?? '0',
 				req.decimals,
 			),
-			maxSupply: BigDecimal.fromString(
-				req.maxSupply ?? '0',
-				req.decimals,
-			),
+			maxSupply: req.maxSupply
+				? BigDecimal.fromString(req.maxSupply, req.decimals)
+				: undefined,
 			freezeKey: req.freezeKey
 				? new PublicKey({
 						key: req.freezeKey.key,
@@ -333,6 +336,21 @@ class StableCoinInPort implements IStableCoinInPort {
 				),
 			)
 		).payload;
+	}
+
+	async isAccountAssociated(
+		request: IsAccountAssociatedTokenRequest,
+	): Promise<boolean> {
+		handleValidation('IsAccountAssociatedTokenRequest', request);
+
+		return (
+			await this.queryBus.execute(
+				new GetAccountTokenAssociatedQuery(
+					HederaId.from(request.targetId),
+					HederaId.from(request.tokenId),
+				),
+			)
+		).isAssociated;
 	}
 }
 

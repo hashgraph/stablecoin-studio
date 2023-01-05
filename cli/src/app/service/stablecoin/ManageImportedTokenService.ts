@@ -17,7 +17,7 @@ export default class ManageImportedTokenService extends Service {
 
   public async start(): Promise<void> {
     await utilsService.cleanAndShowBanner();
-    const manageOptions: Array<string> = language.getArray(
+    const manageOptions: Array<string> = language.getArrayFromObject(
       'wizard.manageImportedTokens',
     );
     const currentAccount = utilsService.getCurrentAccount();
@@ -31,7 +31,7 @@ export default class ManageImportedTokenService extends Service {
         `${currentAccount.accountId} - ${currentAccount.alias}`,
       )
     ) {
-      case manageOptions[0]:
+      case language.getText('wizard.manageImportedTokens.Add'):
         await utilsService.cleanAndShowBanner();
 
         let tokenId = '';
@@ -57,6 +57,21 @@ export default class ManageImportedTokenService extends Service {
 
         //call to roles
         const importedTokens = currentAccount.importedTokens;
+        while (
+          importedTokens.length > 0 &&
+          importedTokens
+            .map((x) => x.id)
+            .includes(getRolesRequestForAdding.tokenId)
+        ) {
+          console.log(
+            language.getText('manageImportedToken.importedTokenAlreadyAdded'),
+          );
+          tokenId = await utilsService.defaultSingleAsk(
+            language.getText('manageImportedToken.tokenId'),
+            '0.0.1234567',
+          );
+          getRolesRequestForAdding.tokenId = tokenId;
+        }
         await new DetailsStableCoinsService()
           .getDetailsStableCoins(getRolesRequestForAdding.tokenId, false)
           .then((response: StableCoinViewModel) => {
@@ -74,7 +89,7 @@ export default class ManageImportedTokenService extends Service {
         this.updateAccount(importedTokens);
         currentAccount.importedTokens = importedTokens;
         break;
-      case manageOptions[1]:
+      case language.getText('wizard.manageImportedTokens.Refresh'):
         await utilsService.cleanAndShowBanner();
         if (currentAccount.importedTokens.length === 0) {
           console.log(
@@ -119,7 +134,7 @@ export default class ManageImportedTokenService extends Service {
         this.updateAccount(importedTokensRefreshed);
         currentAccount.importedTokens = importedTokensRefreshed;
         break;
-      case manageOptions[2]:
+      case language.getText('wizard.manageImportedTokens.Remove'):
         await utilsService.cleanAndShowBanner();
         if (currentAccount.importedTokens.length === 0) {
           console.log(
@@ -144,7 +159,6 @@ export default class ManageImportedTokenService extends Service {
         this.updateAccount(newImportedTokens);
         currentAccount.importedTokens = newImportedTokens;
         break;
-      case manageOptions[manageOptions.length - 1]:
       default:
         await utilsService.cleanAndShowBanner();
         await wizardService.mainMenu();

@@ -9,9 +9,6 @@
 </div>
 
 # Table of contents
-
-- [Hedera Stable Coin SDK](#hedera-stable-coin-sdk)
-- [Table of contents](#table-of-contents)
 - [Overview](#overview)
 - [Installing](#installing)
 	- [Pre-requirements](#pre-requirements)
@@ -21,65 +18,48 @@
 - [Build](#Build)
 - [Quick Start](#quickstart)
 	- [Initialization](#initialization)
-	- [Connect](#connect)
+	- [Connect sdk](#connect-sdk)
 	- [Wallet Events](#wallet-events)
 	- [Getting Account Information](#account-information)
-- [Basic Types](#basic-types)
-	- [AccountId](#accountid)
-		- [Fields](#fields)
-		- [Example](#example)
-	- [Account](#account)
-		- [Fields](#fields-1)
-	- [EOAccount](#eoaccount)
-		- [Fields](#fields-2)
-		- [Example](#example-1)
-	- [HashPackAccount](#hashpackaccount)
-		- [Fields](#fields-3)
-		- [Example](#example-2)
-	- [PrivateKey](#privatekey)
-		- [Fields](#fields-4)
-		- [Example](#example-3)
-	- [PrivateKeyType [WIP]](#privatekeytype-wip)
-		- [Example](#example-4)
-	- [PublicKey](#publickey)
-		- [Fields](#fields-5)
-		- [Example](#example-5)
-	- [ContractId](#contractid)
-		- [Fields](#fields-6)
-		- [Example](#example-6)
 - [Usage](#usage)
-		- [**Important**](#important)
-	- [Create Stable Coin](#create-stable-coin)
-	- [Get capabilities stable coin](#get-capabilities-stable-coin)
-	- [Get stable coin list](#get-stable-coin-list)
-	- [Get Stable Coin](#get-stable-coin)
-	- [Get Balance Of](#get-balance-of)
-	- [Cash in](#cash-in)
-	- [Cash out](#cash-out)
-	- [Associate token](#associate-token)
-	- [Wipe tokens](#wipe-tokens)
-	- [Rescue tokens](#rescue-tokens)
-	- [Supplier allowance](#supplier-allowance)
-	- [Reset supplier allowance](#reset-supplier-allowance)
-	- [Increase supplier allowance](#increase-supplier-allowance)
-	- [Decrease supplier allowance](#decrease-supplier-allowance)
-	- [Is supplier allowance limited](#is-supplier-allowance-limited)
-	- [Is supplier allowance unlimited](#is-supplier-allowance-unlimited)
-	- [Grant Role](#grant-role)
-	- [Revoke Role](#revoke-role)
-	- [Has role](#has-role)
-	- [Get account info](#get-account-info)
-	- [Get roles](#get-roles)
-	- [Check string is valid address](#check-string-is-valid-address)
-	- [Public key from private key](#public-key-from-private-key)
-	- [Hashpack](#hashpack)
-		- [Utilities](#utilities)
-			- [Get Availability Extension](#get-availability-extension)
-			- [Get HashConnect Conection Status](#get-hashconnect-conection-status)
-			- [Get Init Data](#get-init-data)
-			- [Disconect Haspack](#disconect-haspack)
-			- [Connect Wallet](#connect-wallet)
-		- [Events](#events)
+	- [**Important**](#important)
+	- [StableCoin](#stablecoin)
+		- [Create Stable Coin](#create-stable-coin)
+		- [Get Info](#get-info)
+		- [Cash In](#cash-in)
+		- [Burn](#burn)
+		- [Rescue](#rescue)
+		- [Wipe](#wipe)
+		- [Associate](#associate)
+		- [Get Balance Of](#get-balance-of)
+		- [Capabilities](#capabilities)
+		- [Pause](#pause)
+		- [Unpause](#unpause)
+		- [Delete](#delete)
+		- [Freeze](#freeze)
+		- [Unfreeze](#unfreeze)
+	- [Network](#network)
+		- [Connect](#connect)
+		- [Disconnect](#disconnect)
+		- [Set Network](#set-network)
+	- [Event](#event)
+		- [Register](#register)
+	- [Account](#account)
+		- [Get Public Key](#get-public-key)
+		- [List Stable Coins](#list-stable-coins)
+		- [Get Account Info](#get-account-info)
+	- [Role](#role)
+		- [Has Role](#has-role)	
+		- [Grant Role](#grant-role)
+		- [Revoke Role](#revoke-role)
+		- [Get Roles](#get-roles)
+		- [Get Allowance](#get-allowance)
+		- [Reset Allowance](#reset-allowance)
+		- [Increase Allowance](#increase-allowance)
+		- [Decrease Allowance](#decrease-allowance)		
+		- [Is Allowance Limited](#is-allowance-limited)
+		- [Is Allowance Unlimited](#is-allowance-unlimited)
+	- [Common](#Common)
 - [Testing](#testing)
 		- [Jest](#jest)
 - [Typescript](#typescript)
@@ -95,15 +75,13 @@
 
 This project provides an sdk to manage hedera tokens throughout their lifecycle.
 
-This project based on hybrid tokens, that is, it uses Smart Contracts that communicate with hedera to interact with them.
+This project based on hybrid tokens, that is, it uses Smart Contracts that communicate with hedera to interact with them. It provides functionalities for use in server mode, as well as for web integration (currently supporting Hashpack and Metamask).
 
-Provides functionalities for use in server mode, as well as for web integration (currently supporting Hashpack and Metamask).
+For more information about the deployed contracts you can consult them in this project - [Contracts link](../contracts)
 
-For more information about the deployed contracts you can consult them in this project - Link contracts
+If you want to see server side implementation you can see it in this project - [Standalone](../cli)
 
-If you want to see a web implementation you can see it in this project - Link Web
-
-If you want to see a web implementation you can see it in this project - Link Cli
+If you want to see an example of a React web app you can see it in this project - [Web](../web)
 
 # Installing
 
@@ -111,7 +89,7 @@ If you want to see a web implementation you can see it in this project - Link Cl
 
 You must have installed
 
-- [node (version >16.13)](https://nodejs.org/en/about/)
+- [node (version >16.17)](https://nodejs.org/en/about/)
 - [npm](https://www.npmjs.com/)
 
 ### Steps
@@ -141,19 +119,19 @@ To use this project in development mode you must follow the steps indicated in t
 # Quick Start
 ## Initialization
 
-The first thing to be able to use the sdk is the initialization of the same one for it we must indicate the environment of hedera in which we want to work.
+Before using the SDK we need to execute the `Network.init` function and specifiy the network:
 
 Example
 ```Typescript
 SDK.log = configurationService.getLogConfiguration();
   await Network.init(
     new InitializationRequest({
-    network: 'Testnet',
+    	network: 'Testnet',
     }),
  );
 ```  
 
-## Connect
+## Connect sdk
 The next step would be to connect to the network. Currently 3 types of connections are offered: Client, Metamask and Haspack. These 3 connection types are in the SupportedWallets enum.
 
 ```Typescript
@@ -163,10 +141,9 @@ export enum SupportedWallets {
 	CLIENT = 'Client',
 }
 ```
-In addition to this we have to specify the username and password for the client or the Wallet that will manage it. 
+In addition to this we have to specify the account id and private key for the Client, while HashPack and Metamask do not require an account in the request. 
 
 Below are examples of each of them.
-
 
 Client Example
 
@@ -180,18 +157,18 @@ await Network.connect(
             type: account.privateKey.type,
           },
         },
-        network: this.getCurrentNetwork().name,
+        network: 'testnet',
         wallet: SupportedWallets.CLIENT,
       }),
     );
   }
 ```
-Haspack Example
+Hashpack Example
 
 ```Typescript
 await Network.connect(
       new ConnectRequest({
-        network: this.getCurrentNetwork().name,
+        network: 'testnet',
         wallet: SupportedWallets.HASHPACK,
       }),
     );
@@ -203,14 +180,14 @@ Metamask Example
 ```Typescript
 await Network.connect(
       new ConnectRequest({
-        network: this.getCurrentNetwork().name,
+       	network: 'testnet',
         wallet: SupportedWallets.METAMASK,
       }),
     );
   }
 ```
 ## Wallet Events
-For web wallets, different events are launched to manage them. 
+Wallets fire events the following events, see [Event.register](#Register) for more info. 
 
 ```Typescript
 export enum WalletEvents {
@@ -222,220 +199,24 @@ export enum WalletEvents {
 	walletDisconnect = 'walletDisconnect',
 }
 ```
-# Basic Types
-
-## AccountId
-
-An account id on Hedera.
-
-### Fields
-
-- `id`: [string] The account id
-
-### Example
-
-`````Typescript
-	const haccount = new HashPackAccount('0.0.1')
-`````
-## Account
-Represents a base account, cannot be used directly. Instead, use EOAccount or HashPackAccount
-
-### Fields
- - `accountId`: [AccountId] The account id
- - `privateKey?`: [PrivateKey](Optional) PrivateKey instance
-
-## EOAccount
-Represent an **e**xtenrally **o**wned **a**ccount, a private key must be provided
-
-### Fields
- - `accountId`: [AccountId] The account id
- - `privateKey`: [string] PrivateKey instance
-
-### Example
-````Typescript
-	const eoa = new EOAccount('0.0.1', new PrivateKey('1234'))
-`````
-
-## HashPackAccount
-
-Represents a HashPackAccount.
-
-### Fields
-
-- `accountId`: [AccountId] The account id
-
-### Example
-
-```Typescript
-	const haccount = new HashPackAccount('0.0.1')
-```
-
-## PrivateKey
-
-A private key, which has the key string and the type of key (ECDSA or ED25519 [default]).
-
-### Fields
-
-- `key`: [string] The private key
-- `type`: [PrivateKeyType] The private key type (ECDSA or ED25519 [default])
-  - default: ED25519
-
-### Example
-
-```Typescript
-	const pk = new PrivateKey('1234')
-	const pkECDSA = new PrivateKey('1234' , PrivateKeyType.ECDSA)
-```
-
-## PrivateKeyType
-
-A private key type (ECDSA or ED25519 [default]).
-
-### Example
-
-```Typescript
-
-enum PrivateKeyType {
-	ECDSA = 'ECDSA',
-	ED25519 = 'ED25519',
-}
-
-```
-
-## PublicKey
-
-A public key on Hedera.
-
-### Fields
-
-- `key`: The public key
-
-### Example
-
-```Typescript
-	const pk = new PublicKey('1234')
-```
-
-## ContractId
-
-Represents a contract id on Hedera.
-
-### Fields
-
-- `id`: The contract id
-
-### Example
-
-```Typescript
-	const contractId = new ContractId('0.0.1')
-```
 
 # Usage
 
-To use the SDK, simply instantiate with the `new` keyword:
+## StableCoin
 
-```Javascript
-	const sdk = new SDK(options);
-```
-
-Where `options` can be:
-
-```Javascript
-	interface Configuration {
-		network: HederaNetwork;
-		mode: NetworkMode;
-		options?: ConfigurationOptions;
-	}
-
-	enum HederaNetworkEnviroment {
-		MAIN = 'mainnet',
-		PREVIEW = 'previewnet',
-		TEST = 'testnet',
-		LOCAL = 'local',
-	}
-
-	interface ConfigurationOptions {
-		appMetadata?: AppMetadata;
-		account?: EOAccount;
-	}
-
-	enum NetworkMode {
-		'EOA' = 'EOA',
-		'HASHPACK' = 'HASHPACK',
-	}
-```
-
-So for example:
-
-```JavaScript
-// EOA Account
-	const sdk = new SDK({
-		mode: NetworkMode.EOA,
-		network: new HederaNetwork(HederaNetworkEnviroment.TEST),
-		options: {
-			account: new EOAccount({
-				accountId: '0.0.1',
-				privateKey: '1234',
-			}),
-			logOptions: {
-				level: 'INFO',
-				path: './logs'
-			}
-		},
-	});
-
-// Hashpack
-	const sdk = new SDK({
-		network: new HederaNetwork(HederaNetworkEnviroment.TEST),
-		mode: NetworkMode.HASHPACK,
-		options: {
-			appMetadata: {
-				icon: 'localhost:3000/favicon.ico',
-				name: 'test-app',
-				description: 'description example for test app',
-				url: 'localhost',
-			},
-		});
-```
-
-### **Important**
-
-- When using **EOA** network mode, an `EOAccount` must be specified.
-- When using **HASHPACK** network mode, `AppMetadata` must be specified.
-
-The SDK has an `async` function to initialize the SDK, to which you optionally can pass a callback to the initialization event:
-
-```Typescript
-	// data
-	interface InitilizationData {
-		topic: string;
-		pairingString: string;
-		encryptionKey: string;
-		savedPairings: SavedPairingData[];
-	}
-
-
-	new SDK().init({
-		onInit: (data) => { // data only populated with Hashpack
-			console.log("SDK initialized");
-		}
-	})
-```
-
-## Create Stable Coin
-
-Creates a new stable coin.
+### Create Stable Coin
+Creates a new stable coin. You must use Network.connect first with a SupportedWallet.
 
 **Spec:**
 
 ```Typescript
-	sdk.createStableCoin = (request: CreateRequest): Promise<StableCoinDetail>
+	StableCoin.create = (request: CreateRequest): Promise<StableCoinViewModel>
 ```
 
 **Example:**
 
 ```Typescript
-	const stableCoin: StableCoinDetail = await sdk.createStableCoin(
+	const stableCoin: StableCoinViewModel = await StableCoin.create(
 		new CreateRequest({
 			account: new HashPackAccount("0.0.1"),
 			name: "Hedera Stable Coin",
@@ -445,788 +226,726 @@ Creates a new stable coin.
 	);
 ```
 
-## Get capabilities stable coin
-
-Get a list of the stable coin capabilities
+### Get Info
+Gets the information of an existing stable coin
 
 **Spec:**
 
 ```Typescript
-	enum Capabilities {
-		CASH_IN = 'Cash in',
-		CASH_IN_HTS = 'Cash in hts',
-		DETAILS = 'Details',
-		BALANCE = 'Balance',
-		BURN = 'Burn',
-		BURN_HTS = 'Burn hts',
-		WIPE = 'Wipe',
-		WIPE_HTS = 'Wipe hts',
-		RESCUE = 'Rescue',
-		ROLE_MANAGEMENT = 'Role management',
-		PAUSE = 'Pause',
-	}
-
-	sdk.getCapabilitiesStableCoin() = (id: string, publicKey: string) : Capabilities[]
+	StableCoin.getInfo = (request: GetStableCoinDetailsRequest): Promise<StableCoinViewModel>
 ```
 
 **Example:**
 
 ```Typescript
-	const stableCoins: StableCoinList[] = await sdk.getCapabilitiesStableCoin(
-		'0.0.1',
-		'0x1234'
-	)
-```
-
-## Get stable coin list
-
-Gets a list of the stable coins (id and symbol) managed by an account.
-
-**Spec:**
-
-```Typescript
-
-	interface StableCoinList {
-		symbol: string;
-		id: string;
-	}
-
-	sdk.getListStableCoin = (request: GetListStableCoinRequest): Promise<StableCoinList[]>
-```
-
-**Example:**
-
-```Typescript
-	const stableCoins: StableCoinList[] = await sdk.getListStableCoin(
-		new GetListStableCoinRequest({
-			account:{
-				accountId:'0.0.123'
-			},
-		})
-	)
-```
-
-## Get Stable Coin
-
-Gets the details of a stable coin.
-
-**Spec:**
-
-```Typescript
-	sdk.getStableCoinDetails = (request: GetStableCoinDetailsRequest): Promise<StableCoinDetail>
-```
-
-**Example:**
-
-```Typescript
-	const stableCoin: StableCoinDetail = await sdk.getStableCoinDetails(
+	const stableCoin: StableCoinViewModel = await StableCoin.getInfo(
 		new GetStableCoinDetailsRequest({
-			id: "0.0.21345",
-		})
-	)
-```
-
-## Get Balance Of
-
-Gets the balance of tokens of an account.
-
-**Spec:**
-
-```Typescript
-	sdk.getBalanceOf = (request: GetAccountBalanceRequest): Promise<string>
-```
-
-**Example:**
-
-```Typescript
-	const balance: string | null = await sdk.getBalanceOf(
-		new GetAccountBalanceRequest({
-			proxyContractId: "0.0.1",
-			account: {
-				accountId:"0.0.123",
-				privateKey:{
-					key:"",
-					type:""
-				},
-			},
-			targetId: "0.0.2",
-			tokenId: "0.0.3"
-		})
-	)
-```
-
-## Cash in
-
-Cash in tokens into a stable coin.
-
-**Spec:**
-
-```Typescript
-	sdk.cashIn = (request: CashInRequest): Promise<bool>
-```
-
-**Example:**
-
-```Typescript
-	const res: bool = await sdk.cashIn(
-		new CashInRequest({
-			account: {
-				accountId:"0.0.123",
-				privateKey:{
-					key:"",
-					type:""
-				},
-			},
-			amount: "10",
-			proxyContractId: "0.0.1",
-			targetId: "0.0.2",
-			tokenId: "0.0.3",
-		})
-	)
-```
-
-## Cash out
-
-Cash out tokens of a stable coin.
-
-**Spec:**
-
-```Typescript
-	sdk.cashOut = (request: CashOutStableCoinRequest): Promise<bool>
-```
-
-**Example:**
-
-```Typescript
-	const res: bool = await sdk.cashOut(
-		new CashOutStableCoinRequest({
-			account: {
-				accountId:"0.0.123",
-				privateKey:{
-					key:"",
-					type:""
-				},
-			},
-			amount: "10",
-			proxyContractId: "0.0.1",
-			targetId: "0.0.2",
-			tokenId: "0.0.3",
-		})
-	)
-```
-
-## Associate token
-
-Associate a stable coin to an account.
-
-**Spec:**
-
-```Typescript
-	sdk.associateToken = (request: AssociateTokenRequest): Promise<Uint8Array>
-```
-
-**Example:**
-
-```Typescript
-	const res: Uint8Array = await sdk.associateToken(
-		new AssociateTokenRequest({
-			account: {
-				accountId:"0.0.123",
-				privateKey:{
-					key:"",
-					type:""
-				},
-			},
-			proxyContractId: "0.0.1",
-		})
-	)
-```
-
-## Wipe tokens
-
-Wipes tokens of a stable coin
-
-**Spec:**
-
-```Typescript
-	sdk.wipe = (request: WipeRequest): Promise<bool>
-```
-
-**Example:**
-
-```Typescript
-	const res: Uint8Array = await sdk.wipe(
-		new WipeRequest({
-			account: {
-				accountId:"0.0.123",
-				privateKey:{
-					key:"",
-					type:""
-				},
-			},
-			amount: "10.42",
-			proxyContractId:"0.0.1",
-			targetId: "0.0.3",
-			tokenId: "0.0.4",
-		})
-	)
-```
-
-## Rescue tokens
-
-Rescue tokens from a stable coin.
-
-**Spec:**
-
-```Typescript
-	sdk.rescue = (request: RescueRequest): Promise<Uint8Array>
-```
-
-**Example:**
-
-```Typescript
-	const res: Uint8Array = await sdk.rescue(
-		new RescueRequest({
-			account: {
-				accountId:"0.0.123",
-				privateKey:{
-					key:"",
-					type:""
-				},
-			},
-			proxyContractId: "0.0.1",
-			tokenId: "0.0.4",
-			amount: "10.42",
-		})
-	)
-```
-
-## Supplier allowance
-
-Get the supplier allowance amount for an account.
-
-**Spec:**
-
-```Typescript
-	sdk.supplierAllowance = (request: CheckCashInLimitRequest): Promise<string>
-```
-
-**Example:**
-
-```Typescript
-	const res: string = await sdk.supplierAllowance(
-		new CheckCashInLimitRequest({
-			account: {
-				accountId:"0.0.123",
-				privateKey:{
-					key:"",
-					type:""
-				},
-			},
-			targetId: "0.0.3",
-			proxyContractId: "0.0.1",
-			tokenId: "0.0.2"
-		})
-	)
-```
-
-## Reset supplier allowance
-
-Resets the allowance of a supplier.
-
-**Spec:**
-
-```Typescript
-	sdk.resetSupplierAllowance = (request: ResetCashInLimitRequest): Promise<Uint8Array>
-```
-
-**Example:**
-
-```Typescript
-	const res: Uint8Array = await sdk.resetSupplierAllowance(
-		new ResetCashInLimitRequest({
-			account: {
-				accountId:"0.0.123",
-				privateKey:{
-					key:"",
-					type:""
-				},
-			},
-			targetId: "0.0.3",
-			proxyContractId: "0.0.1",
-		})
-	)
-```
-
-## Increase supplier allowance
-
-Increases the allowance of a supplier.
-
-**Spec:**
-
-```Typescript
-	sdk.increaseSupplierAllowance = (request: IncreaseCashInLimitRequest): Promise<Uint8Array>
-```
-
-**Example:**
-
-```Typescript
-	const res: Uint8Array = await sdk.increaseSupplierAllowance(
-		new IncreaseCashInLimitRequest({
-			account: {
-				accountId:"0.0.123",
-				privateKey:{
-					key:"",
-					type:""
-				},
-			},
-			targetId:"0.0.3",
-			proxyContractId:"0.0.1",
-			tokenId: "0.0.2"
-			amount: "10.42",
-		})
-	)
-```
-
-## Decrease supplier allowance
-
-Decreases the allowance of a supplier.
-
-**Spec:**
-
-```Typescript
-	sdk.decreaseSupplierAllowance = (request: DecreaseCashInLimitRequest): Promise<Uint8Array>
-```
-
-**Example:**
-
-```Typescript
-	const res: Uint8Array = await sdk.decreaseSupplierAllowance(
-		new DecreaseCashInLimitRequest({
-			account: {
-				accountId:"0.0.123",
-				privateKey:{
-					key:"",
-					type:""
-				},
-			},
-			targetId:"0.0.3",
-			proxyContractId:"0.0.1",
-			tokenId: "0.0.2"
-			amount: "10.42",
-		})
-	)
-```
-
-## Is supplier allowance limited
-
-Checks if the supplier account passed has it's allowance limited.
-
-**Spec:**
-
-```Typescript
-	sdk.isLimitedSupplierAllowance = (request: CheckCashInRoleRequest): Promise<Uint8Array>
-```
-
-**Example:**
-
-```Typescript
-	const res: Uint8Array = await sdk.isLimitedSupplierAllowance(
-		new CheckCashInRoleRequest({
-			account: {
-				accountId:"0.0.123",
-				privateKey:{
-					key:"",
-					type:""
-				},
-			},
-			targetId: "0.0.3",
-			proxyContractId: "0.0.1",
-		})
-	)
-```
-
-## Is supplier allowance unlimited
-
-Checks if the supplier account passed has it's allowance unlimited.
-
-**Spec:**
-
-```Typescript
-	sdk.isUnlimitedSupplierAllowance = (request: CheckCashInRoleRequest): Promise<Uint8Array>
-```
-
-**Example:**
-
-```Typescript
-	const res: Uint8Array = await sdk.isUnlimitedSupplierAllowance(
-		new CheckCashInRoleRequest({
-			account: {
-				accountId:"0.0.123",
-				privateKey:{
-					key:"",
-					type:""
-				},
-			},
-			targetId: "0.0.3",
-			proxyContractId: "0.0.1",
-		})
-	)
-```
-
-## Grant Role
-
-Grants an account a role in a stable coin.
-
-**Spec:**
-
-```Typescript
-	enum StableCoinRole {
-		CASHIN_ROLE,
-		BURN_ROLE,
-		WIPE_ROLE,
-		RESCUE_ROLE,
-		PAUSE_ROLE,
-		FREEZE_ROLE
-	}
-
-	sdk.grantRole = (request: GrantRoleRequest): Promise<Uint8Array>
-```
-
-**Example:**
-
-```Typescript
-	const res: Uint8Array = await sdk.grantRole(
-		new GrantRoleRequest({
-			account: {
-				accountId:"0.0.123",
-				privateKey:{
-					key:"",
-					type:""
-				},
-			},
-			targetId: "0.0.3",
-			proxyContractId: "0.0.1",
-			tokenId: "0.0.2"
-			role: StableCoinRole.CASHIN_ROLE,
-			amount: "10.42"
-		})
-	)
-
-	const res: Uint8Array = await sdk.grantRole(
-		new GrantRoleRequest({
-			account: {
-				accountId:"0.0.123",
-				privateKey:{
-					key:"",
-					type:""
-				},
-			},
-			targetId: "0.0.3",
-			proxyContractId: "0.0.1",
-			tokenId: "0.0.2"
-			role: StableCoinRole.WIPE_ROLE
-		})
-	)
-```
-
-## Revoke Role
-
-Revokes an account's role in a stable coin.
-
-**Spec:**
-
-```Typescript
-	enum StableCoinRole {
-		CASHIN_ROLE,
-		BURN_ROLE,
-		WIPE_ROLE,
-		RESCUE_ROLE,
-		PAUSE_ROLE,
-		FREEZE_ROLE
-	}
-
-	sdk.revokeRole = (request: RevokeRoleRequest): Promise<Uint8Array>
-```
-
-**Example:**
-
-```Typescript
-	const res: Uint8Array = await sdk.revokeRole(
-		new RevokeRoleRequest({
-			account: {
-				accountId:"0.0.123",
-				privateKey:{
-					key:"",
-					type:""
-				},
-			},
-			targetId: "0.0.3",
-			proxyContractId: "0.0.1",
-			tokenId: "0.0.2"
-			role: StableCoinRole.CASHIN_ROLE,
-		})
-	)
-```
-
-## Has role
-
-Checks if an account has a certain role on the stable coin.
-
-**Spec:**
-
-```Typescript
-	enum StableCoinRole {
-		CASHIN_ROLE,
-		BURN_ROLE,
-		WIPE_ROLE,
-		RESCUE_ROLE,
-		PAUSE_ROLE,
-		FREEZE_ROLE
-	}
-
-	sdk.hasRole = (request: HasRoleRequest): Promise<Uint8Array>
-```
-
-**Example:**
-
-```Typescript
-	const res: Uint8Array = await sdk.hasRole(
-		new HasRoleRequest({
-			account: {
-					accountId:"0.0.123",
-					privateKey:{
-						key:"",
-						type:""
-					},
-				},
-			targetId: "0.0.3",
-			proxyContractId: "0.0.1",
-			tokenId: "0.0.2"
-			role: StableCoinRole.WIPE_ROLE,
-		})
-	)
-```
-
-## Get account info
-
-Get the account info
-
-**Spec:**
-
-```Typescript
-	interface IAccountWithKeyRequestModel {
-		account: Account;
-	}
-
-	interface AccountInfo {
-		account?:string,
-		accountEvmAddress?:string,
-		publicKey?:PublicKey,
-	}
-
-	sdk.getAccountInfo = (request: IAccountWithKeyRequestModel): Promise<AccountInfo>
-```
-
-**Example:**
-
-```Typescript
-	const res: AccountInfo = await sdk.getAccountInfo(
-		{
-			account:{
-				accountId:"0.0.1234"
-			}
-		}
-	)
-```
-
-## Get roles
-
-Get the role of an account passed
-
-**Spec:**
-
-```Typescript
-	sdk.getRoles = (request: GetRolesRequest): Promise<string[]>
-```
-
-**Example:**
-
-```Typescript
-	const res: string[] = await sdk.getRoles(
-		new GetRolesRequest({
-			account:{
-				accountId:"0.0.1234"
-			},
-			targetId:"0.0.2",
-			proxyContractId:"0.0.1",
-			tokenId: "0.0.3"
+			id: "0.0.1",
 		})
 	);
 ```
 
-## Check string is valid address
 
-Checks if a string is a valid Hedera address.
+### Cash In
+Mint tokens in a specific stable coin. The operating account must have the supplier role.
 
 **Spec:**
 
 ```Typescript
-	sdk.checkIsAddress = (str?: string): boolean;
+	StableCoin.cashIn = (request: CashInRequest): Promise<boolean>
 ```
 
 **Example:**
 
 ```Typescript
-	const isAddress: boolean = sdk.checkIsAddress("0.0.1"); // true
-	const isNotAddress: boolean = sdk.checkIsAddress("1234"); // false
+	const result: boolean = await StableCoin.cashIn(
+		new CashInRequest({
+			tokenId: "0.0.1",
+			targetId: "0.0.2",
+			amount: "1234",
+		})
+	);
 ```
 
-## Public key from private key
 
-Gets the public key of a private key.
+
+### Burn
+Burn tokens in a specific stable coin.
 
 **Spec:**
 
 ```Typescript
-	sdk.getPublicKey = (str?: string): string;
+	StableCoin.burn = (request: BurnRequest): Promise<boolean>
 ```
 
 **Example:**
 
 ```Typescript
-	const publicKey: string = sdk.getPublicKey("1234");
+	const result: boolean = await StableCoin.burn(
+		new BurnRequest({
+			tokenId: "0.0.1",
+			amount: "1234",
+		})
+	);
 ```
 
-## Hashpack
 
-### Utilities
 
-#### Get Availability Extension
+### Rescue
+Rescue tokens in a specific stable coin.
 
-Check if the Hashpack extension is available
+**Spec:**
 
 ```Typescript
-	const isAvailable: bool = sdk.getAvailabilityExtension();
+	StableCoin.rescue = (request: RescueRequest): Promise<boolean>
 ```
 
-#### Get HashConnect Conection Status
-
-Get the HashConncet conection
+**Example:**
 
 ```Typescript
-	enum HashConnectConnectionState {
-		Connecting = "Connecting",
-		Connected = "Connected",
-		Disconnected = "Disconnected",
-		Paired = "Paired"
+	const result: boolean = await StableCoin.rescue(
+		new RescueRequest({
+			tokenId: "0.0.1",
+			amount: "1234",
+		})
+	);
+```
+
+
+
+### Wipe
+Mint tokens in a specific stable coin. The operating account must have the supplier role.
+
+**Spec:**
+
+```Typescript
+	StableCoin.wipe = (request: WipeRequest): Promise<boolean>
+```
+
+**Example:**
+
+```Typescript
+	const result: boolean = await StableCoin.wipe(
+		new WipeRequest({
+			tokenId: "0.0.1",
+			targetId: "0.0.2",
+			amount: "1234",
+		})
+	);
+```
+
+
+
+### Get balance of
+Get balance of tokens for an account of a specific stable coin.
+
+**Spec:**
+
+```Typescript
+	StableCoin.getBalanceOf = (request: GetAccountBalanceRequest): Promise<Balance>
+	
+	type Balance = {
+		value: BigDecimal
+	}
+```
+
+**Example:**
+
+```Typescript
+	const result: Balance = await StableCoin.getBalanceOf(
+		new GetAccountBalanceRequest({
+			tokenId: "0.0.1",
+			targetId: "0.0.2",
+		})
+	);
+	result.toString() // "1234"
+	result.decimals // 2
+```
+
+### Capabilities
+Get capabiltities for an account on a stable coin. Capabilties have a reference of all the details of the stable coin quering to, the list of capabiltities and the account the capabilities belong to. Each capabiltiy determines the type of operation that can be performed (cash in, burn, etc) and on wether it should be done onto the smart contract for the stable coin (proxyAddress in the `coin: StableCoin` attirbute) or through the Hedera Token Service. 
+
+See the spec below for all the atributes you can get from the request.
+
+**Spec:**
+
+```Typescript
+	StableCoin.capabiltities = (request: CapabilitiesRequest): Promise<StableCoinCapabilities>
+	
+	class StableCoinCapabilities {
+		constructor(
+			public readonly coin: StableCoin,
+			public readonly capabilities: Capability[],
+			public readonly account: Account,
+		) {}
+	}
+	
+	enum Operation {
+		CASH_IN = 'Cash_in',
+		BURN = 'Burn',
+		WIPE = 'Wipe',
+		FREEZE = 'Freeze',
+		UNFREEZE = 'Unfreeze',
+		PAUSE = 'Pause',
+		UNPAUSE = 'Unpause',
+		DELETE = 'Delete',
+		RESCUE = 'Rescue',
+		ROLE_MANAGEMENT = 'Role_Management',
 	}
 
-	const status: HashConnectConnectionState = sdk.gethashConnectConectionStatus();
+	enum Access {
+		HTS,
+		CONTRACT,
+	}
+	
+	class Capability {
+		constructor(
+			public readonly operation: Operation,
+			public readonly access: Access,
+		) {}
+	}
+	
+	class Account {
+		constructor(
+			public id: HederaId;
+			public evmAddress?: string;
+			public privateKey?: PrivateKey;
+			public publicKey?: PublicKey;
+		) {}
+	}
+	
+	class StableCoin {
+		constructor(
+			public name: string;
+			public symbol: string;
+			public decimals: number;
+			public adminKey?: PublicKey | ContractId;
+			public initialSupply?: BigDecimal;
+			public totalSupply?: BigDecimal;
+			public maxSupply?: BigDecimal;
+			public memo?: string;
+			public proxyAddress?: HederaId;
+			public evmProxyAddress?: string;
+			public freezeKey?: PublicKey | ContractId;
+			public freezeDefault?: boolean;
+			public kycKey?: PublicKey | ContractId;
+			public wipeKey?: PublicKey | ContractId;
+			public pauseKey?: PublicKey | ContractId;
+			public paused?: boolean;
+			public supplyKey?: PublicKey | ContractId;
+			public treasury?: HederaId;
+			public tokenType?: TokenType;
+			public supplyType?: TokenSupplyType;
+			public tokenId?: HederaId;
+			public autoRenewAccount?: HederaId;
+			public autoRenewAccountPeriod?: number;
+			public deleted?: boolean;
+		) {}
+	}
 ```
 
-#### Get Init Data
+**Example:**
 
 ```Typescript
-	const status: InitializationData = sdk.getInitData();
+	const result: StableCoinCapabilities = await StableCoin.capabiltities(
+		new GetAccountBalanceRequest({
+			account: {
+			  accountId: "0.0.1",
+			},
+			tokenId: "0.0.2",
+		})
+	);
 ```
 
-#### Disconect Haspack
+### Pause
+Pause a stable coin. None of the operations can take while the stable coin is in the paused state.
 
-Disconect Hashpack
+**Spec:**
 
 ```Typescript
-	sdk.disconectHaspack();
+	StableCoin.pause = (request: PauseRequest): Promise<boolean>
 ```
 
-#### Connect Wallet
+**Example:**
 
 ```Typescript
-	const provider: IProvider = sdk.connectWallet();
+	const result: boolean = await StableCoin.pause(
+		new PauseRequest({
+			tokenId: "0.0.1",
+		})
+	);
 ```
 
-### Events
+### Unpause
+Unpause a stable coin. If the stable coin is not paused it will throw an exception.
 
-You can setup callbacks to events from the Hashpack provider:
+**Spec:**
 
-```typescript
-
-	public onInit(listener: (data: InitializationData) => void): void
-
-	public onWalletExtensionFound(listener: () => void): void
-
-	public onWalletConnectionChanged(
-		listener: (state: HashConnectConnectionState) => void,
-	): void
-
-	public onWalletPaired(
-		listener: (data: HashConnectTypes.SavedPairingData) => void,
-	): void
-
-	public onWalletAcknowledgeMessageEvent(
-		listener: (state: AcknowledgeMessage) => void,
-	): void
-
+```Typescript
+	StableCoin.unPause = (request: PauseRequest): Promise<boolean>
 ```
 
-For example:
+**Example:**
 
-```typescript
-const sdk: SDK = await(new SDK().init());
-sdk.onWalletPaired((data: HashConnectTypes.SavedPairingData) => {
-  console.log('New wallet is paired on network ' + data.network);
-});
+```Typescript
+	await StableCoin.unPause(
+		new PauseRequest({
+			tokenId: "0.0.1",
+		})
+	);
 ```
 
-The following events are supported:
+### Freeze
+Freeze an account for a stable coin.
 
-- **OnInit:** Is emitted when the SDK has finished initialization.
+**Spec:**
 
-```typescript
-interface InitilizationData {
-  topic: string;
-  pairingString: string;
-  encryptionKey: string;
-  savedPairings: SavedPairingData[];
+```Typescript
+	StableCoin.freeze = (request: FreezeRequest): Promise<boolean>
+```
+
+**Example:**
+
+```Typescript
+	const result: boolean = await StableCoin.freeze(
+		new FreezeRequest({
+			tokenId: "0.0.1",
+			targetId: "0.0.2"
+		})
+	);
+```
+
+### Unfreeze
+Unfreeze an account for a stable coin.
+
+**Spec:**
+
+```Typescript
+	StableCoin.unFreeze = (request: FreezeRequest): Promise<boolean>
+```
+
+**Example:**
+
+```Typescript
+	await StableCoin.unFreeze(
+		new FreezeRequest({
+			tokenId: "0.0.1",
+			targetId: "0.0.2"
+		})
+	);
+```
+
+### Delete
+Delete a stable coin. **Important** this operation is not reversible.
+
+**Spec:**
+
+```Typescript
+	StableCoin.delete = (request: DeleteRequest): Promise<boolean>
+```
+
+**Example:**
+
+```Typescript
+	await StableCoin.delete(
+		new DeleteRequest({
+			tokenId: "0.0.1",
+		})
+	);
+```
+
+## Network
+
+### Connect
+**Spec:**
+	
+	
+```Typescript
+	Network.connect(req: ConnectRequest): Promise<InitializationData>;
+```
+
+**Example:**
+
+```Typescript
+	await Network.connect(
+		new ConnectRequest({
+        		network: 'testnet',
+        		wallet: SupportedWallets.HASHPACK,
+      		}),
+	);
+```
+
+### Disconnect
+**Spec:**
+	
+	
+```Typescript
+	Network.disconnect(): Promise<boolean>;
+```
+
+**Example:**
+
+```Typescript
+	await Network.disconnect();
+```
+
+### SetNetwork
+**Spec:**
+	
+	
+```Typescript
+	Network.setNetwork(req: SetNetworkRequest): Promise<NetworkResponse>;
+```
+
+**Example:**
+
+```Typescript
+	await Network.setNetwork(
+		new SetNetworkRequest({
+			enviroment: 'testnet';
+			mirrorNode: 'https://testnet.mirrornode.hedera.com/'
+			consensusNodes: []
+		})
+	);
+```
+	
+	
+## Event
+
+### Register
+Register for wallet events. All event listeners are optional, just make sure to call it before trying to pair with any wallet, since pairing events can occur right when the page loads and the extension is found, if the wallet was paired previously.
+
+Multiple wallets can emit events, so make sure to filter them by the `wallet` attribute available in all of them indicating which wallet is emitting the event. All wallets supported emit the same events.
+
+All events use the [standard node event emitting system](https://nodejs.dev/es/learn/the-nodejs-event-emitter/) and listeners are fully TS typed.
+
+**Spec:**
+
+```Typescript
+	Event.register = (events: Partial<WalletEvent>): void;
+	
+	type WalletEvent = {
+		walletInit: (data: WalletInitEvent) => void;
+		walletFound: (data: WalletFoundEvent) => void;
+		walletPaired: (data: WalletPairedEvent) => void;
+		walletConnectionStatusChanged: (
+			data: WalletConnectionStatusChangedEvent,
+		) => void;
+		walletAcknowledgeMessage: (data: WalletAcknowledgeMessageEvent) => void;
+		walletDisconnect: (data: WalletBaseEvent) => void;
+	};
+	
+	interface WalletBaseEvent {
+		wallet: SupportedWallets;
+	}
+
+	interface WalletInitEvent extends WalletBaseEvent {
+		initData: InitializationData;
+	}
+
+	interface WalletFoundEvent extends WalletBaseEvent {
+		name: string;
+	}
+	
+	interface WalletPairedEvent extends WalletBaseEvent {
+		data: InitializationData;
+		network: Environment;
+	}
+	
+	interface WalletConnectionStatusChangedEvent extends WalletBaseEvent {
+		status: ConnectionState;
+	}
+
+	interface WalletAcknowledgeMessageEvent extends WalletBaseEvent {
+		result: boolean;
+	}
+```
+
+**Example:**
+
+Check out [Router.tsx](https://github.com/hashgraph/hedera-accelerator-stablecoin/blob/main/web/src/Router/Router.tsx) from the web repository for a comprehensive example in React of how to subscribe to events.
+
+## Account
+
+### GetPublicKey
+**Spec:**
+	
+	
+```Typescript
+	Account.getPublicKey(request: GetPublicKeyRequest): Promise<PublicKey>;
+```
+
+**Example:**
+
+```Typescript
+	await Account.getPublicKey(
+		new GetPublicKeyRequest({
+			account: '0.0.49172343';
+		})
+	);
+```
+	
+### ListStableCoins
+**Spec:**
+	
+	
+```Typescript
+	Account.listStableCoins(request: GetListStableCoinRequest,): Promise<StableCoinListViewModel>;
+```
+
+**Example:**
+
+```Typescript
+	await Account.listStableCoins(
+		new GetPublicKeyRequest({
+			account: '0.0.49172343';
+		})
+	);
+```
+
+### GetInfo
+**Spec:**
+	
+	
+```Typescript
+	Account.getInfo(request: GetAccountInfoRequest): Promise<AccountViewModel>;
+```
+
+**Example:**
+
+```Typescript
+	await Account.getInfo(
+		new GetAccountInfoRequest({
+			account: '0.0.49172343';
+		})
+	);
+```
+
+
+## Role
+
+### HasRole
+**Spec:**
+	
+	
+```Typescript
+	Role.hasRole(request: HasRoleRequest): Promise<boolean>;
+```
+
+**Example:**
+
+```Typescript
+	await Role.hasRole(
+		new HasRoleRequest({
+			tokenId: "0.0.1",
+			targetId: "0.046172343",
+			role: StableCoinRole.CASHIN_ROLE,
+		})
+	);
+```
+
+### GrantRole
+**Spec:**
+	
+	
+```Typescript
+	Role.grantRole(request: HasRoleRequest): Promise<boolean>;
+```
+
+**Example:**
+
+```Typescript
+	await Role.grantRole(
+		new GrantRoleRequest({
+			targetId: '0.046172343'
+			tokenId: '0.0.49135648',
+			role: StableCoinRole.CASHIN_ROLE,
+		})
+	);
+```
+
+### RevokeRole
+**Spec:**
+	
+	
+```Typescript
+	Role.revokeRole(request: RevokeRoleRequest): Promise<boolean>;
+```
+
+**Example:**
+
+```Typescript
+	await Role.revokeRole(
+		new RevokeRoleRequest({
+			targetId: '0.046172343'
+			tokenId: '0.0.49135648',
+			role: StableCoinRole.CASHIN_ROLE,
+		})
+	);
+```
+
+### GetRoles
+**Spec:**
+	
+	
+```Typescript
+	Role.getRoles(request: GetRolesRequest): Promise<string[]>;
+```
+
+**Example:**
+
+```Typescript
+	await Role.getRoles(
+		new GetRolesRequest({
+			targetId: '0.046172343'
+			tokenId: '0.0.49135648'
+		})
+	);
+```
+
+### GetAllowance
+**Spec:**
+	
+	
+```Typescript
+	Role.getAllowance(request: GetSupplierAllowanceRequest): Promise<Balance>;
+```
+
+**Example:**
+
+```Typescript
+	await Role.getAllowance(
+		new GetSupplierAllowanceRequest({
+			targetId: '0.046172343'
+			tokenId: '0.0.49135648',
+			
+		})
+	);
+```
+
+### ResetAllowance
+**Spec:**
+	
+	
+```Typescript
+	Role.resetAllowance(request: ResetSupplierAllowanceRequest): Promise<boolean>;
+```
+
+**Example:**
+
+```Typescript
+	await Role.resetAllowance(
+		new ResetSupplierAllowanceRequest({
+			targetId: '0.046172343'
+			tokenId: '0.0.49135648',
+			
+		})
+	);
+```
+
+### IncreaseAllowance
+**Spec:**
+	
+	
+```Typescript
+	Role.increaseAllowance(request: IncreaseSupplierAllowanceRequest): Promise<boolean>;
+```
+
+**Example:**
+
+```Typescript
+	await Role.increaseAllowance(
+		new IncreaseSupplierAllowanceRequest({
+			targetId: '0.046172343'
+			tokenId: '0.0.49135648',
+			amount: 1000
+		})
+	);
+```
+ 
+### DecreaseAllowance
+**Spec:**
+	
+	
+```Typescript
+	Role.decreaseAllowance(request: DecreaseSupplierAllowanceRequest): Promise<boolean>;
+```
+
+**Example:**
+
+```Typescript
+	await Role.decreaseAllowance(
+		new DecreaseSupplierAllowanceRequest({
+			targetId: '0.046172343'
+			tokenId: '0.0.49135648',
+			amount: 1000
+		})
+	);
+```
+
+### IsLimited
+**Spec:**
+	
+	
+```Typescript
+	Role.isLimited(request: CheckSupplierLimitRequest): Promise<boolean>;
+```
+
+**Example:**
+
+```Typescript
+	await Role.isLimited(
+		new CheckSupplierLimitRequest({
+			targetId: '0.046172343'
+			tokenId: '0.0.49135648',
+			supplierType: 'limited'
+		})
+	);
+```
+### IsUnlimited
+**Spec:**
+	
+	
+```Typescript
+	Role.isUnlimited(request: CheckSupplierLimitRequest): Promise<boolean>;
+```
+
+**Example:**
+
+```Typescript
+	await Role.isUnlimited(
+		new CheckSupplierLimitRequest({
+			targetId: '0.046172343'
+			tokenId: '0.0.49135648',
+			supplierType: 'unlimited'
+		})
+	);
+```    
+    
+    
+   
 }
-```
+## Common
+The SDK class is exported. This static class allows to set the log level and application metadata at any point in your code, just import it and change the values.
 
-- **OnWalletExtensionFound:** Is emitted when the Hashpack extension is found.
-- **OnWalletConnectionChanged:** Is emitted when the connection changes. The new state is passed.
+We use [winston](https://github.com/winstonjs/winston) under the hood for logging, so all transports are exported from the sdk under `LoggerTransports` for you to use. Refer to the [documentation](https://github.com/winstonjs/winston/blob/master/docs/transports.md) for more information on what transports are available.
 
-```typescript
-enum HashConnectConnectionState {
-  Connecting = 'Connecting',
-  Connected = 'Connected',
-  Disconnected = 'Disconnected',
-  Paired = 'Paired',
-}
-```
-
-- **OnWalletPaired:** Is emitted when a wallet is paired in the extension.
-
-```typescript
-interface SavedPairingData {
-  metadata: HashConnectTypes.AppMetadata | HashConnectTypes.WalletMetadata;
-  topic: string;
-  encryptionKey?: string;
-  network: string;
-  origin?: string;
-  accountIds: string[];
-  lastUsed: number;
-}
-```
-
-- **OnWalletAcknowledgeMessageEvent**: Is emitted when an interaction is acknoledged in the extension.
-
-```typescript
-interface Acknowledge {
-  topic: string;
-  id?: string;
-  origin?: string;
-  result: boolean;
-  msg_id: string;
-}
+```Typescript
+	import { LoggerTransports, SDK } from 'hedera-stable-coin-sdk';
+	
+	const { Console } = LoggerTransports;
+	
+	SDK.appMetadata = {
+		name: 'Hedera Stable Coin',
+		description: 'Example application',
+		icon: 'https://example.png',
+		url: '',
+	};
+	
+	SDK.log = {
+		level: 'ERROR', // or 'TRACE' | 'INFO'
+		transports: new Console(),
+	};
 ```
 
 # Testing

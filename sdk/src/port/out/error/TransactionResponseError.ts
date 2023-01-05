@@ -22,7 +22,7 @@ import BaseError, { ErrorCode } from "../../../core/error/BaseError.js";
 
 const REGEX_TRANSACTION =
 	/^(0|(?:[1-9]\d*))\.(0|(?:[1-9]\d*))\.(0|(?:[1-9]\d*))(?:-([a-z]{5}))?@([1-9]\d*)\.([1-9]\d*)$/;
-const HASHSCAN_URL = 'https://hashscan.io/testnet/transaction/';
+const HASHSCAN_URL = 'https://hashscan.io/testnet/transactionsById/';
 const HASHSCAN_URL_RPC_RELAY = 'https://hashscan.io/testnet/tx/';
 
 type TransactionResponseErrorPayload = {
@@ -35,7 +35,7 @@ type TransactionResponseErrorPayload = {
 
 export class TransactionResponseError extends BaseError {
 	error: TransactionResponseErrorPayload;
-	transactionUrl: string;
+	transactionUrl: string|null;
 	constructor(val: TransactionResponseErrorPayload) {
 		super(ErrorCode.TransactionError, `Transaction failed: ${val.message}`);
 		this.error = val;

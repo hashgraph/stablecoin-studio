@@ -18,8 +18,19 @@
  *
  */
 
-import { QueryResponse } from '../../../../core/query/QueryResponse.js';
+import ValidatedRequest from './validation/ValidatedRequest.js';
+import Validation from './validation/Validation.js';
 
-export default interface StableCoinListViewModel extends QueryResponse {
-	coins: { symbol: string; id: string }[];
+export default class IsAccountAssociatedTokenRequest extends ValidatedRequest<IsAccountAssociatedTokenRequest> {
+	targetId: string;
+	tokenId: string;
+
+	constructor({ targetId, tokenId }: { targetId: string; tokenId: string }) {
+		super({
+			targetId: Validation.checkHederaIdFormat(),
+			tokenId: Validation.checkHederaIdFormat(),
+		});
+		this.tokenId = tokenId;
+		this.targetId = targetId;
+	}
 }

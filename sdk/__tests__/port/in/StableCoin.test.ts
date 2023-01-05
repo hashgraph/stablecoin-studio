@@ -43,6 +43,7 @@ import {
 	FreezeAccountRequest,
 	CreateRequest,
 	RescueRequest,
+	IsAccountAssociatedTokenRequest,
 } from '../../../src/port/in/request/index.js';
 import ConnectRequest, {
 	SupportedWallets,
@@ -560,6 +561,25 @@ describe('🧪 Stablecoin test', () => {
 		expect(result).not.toBeNull();
 		expect(result).toBe(true);
 	}, 60_000);
+
+	it('Get isAccountTokenAssociated', async () => {
+		const handler = Injectable.resolveTransactionHandler();
+		expect(handler).not.toBeNull();
+		const eventService = Injectable.resolve(EventService);
+		expect(eventService).not.toBeNull();
+		eventService.on(WalletEvents.walletInit, (data) => {
+			console.log(`Wallet: ${data.wallet} initialized`);
+		});
+		const result = await StableCoin.isAccountAssociated(
+			new IsAccountAssociatedTokenRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49206466',
+			}),
+		);
+		expect(result).not.toBeNull();
+		expect(result).toBe(true);
+	}, 60_000);
+
 	afterAll(async () => {
 		const handler = Injectable.resolveTransactionHandler();
 		expect(handler).not.toBeNull();

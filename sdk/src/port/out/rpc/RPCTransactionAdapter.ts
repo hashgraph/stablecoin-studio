@@ -904,12 +904,12 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			}
 		} catch (error) {
 			// should throw RPCHandlerError
-			throw new TransactionResponse(
-				undefined,
-				undefined,
-				new TransactionResponseError({
-						message: `Unexpected error in RPCTransactionHandler ${operation} operation : ${error}`,
-				})
+				throw new TransactionResponseError({
+					message:`Unexpected error in HederaTransactionHandler ${operation} operation : ${error}`,
+					transactionId:  (error as any).error.transactionHash,
+					RPC_relay: true
+
+				}
 			);
 		}
 	}
@@ -1015,13 +1015,14 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				).toSolidityAddress();
 
 				const resp: TransactionResponse<any, Error> = 
-					await RPCTransactionResponseAdapter.manageResponse(
-							await this.precompiledCall('mintToken', [
-							coinId,
-							params?.amount,
-							[],
-						])
-					);
+					await this.checkTransactionResponse(
+						await RPCTransactionResponseAdapter.manageResponse(
+								await this.precompiledCall('mintToken', [
+								coinId,
+								params?.amount,
+								[],
+							])
+						));
 
 				if (resp.error === undefined &&
 					coin.coin.treasury?.value !== params!.targetId?.toString()) {
@@ -1045,77 +1046,116 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				}
 
 			case Operation.BURN:
-				return RPCTransactionResponseAdapter.manageResponse(
-					await this.precompiledCall('burnToken', [
-						TokenId.fromString(
-							coin.coin.tokenId?.value ?? '',
-						).toSolidityAddress(),
-						params?.amount,
-						[],
-					]),
-				);
+				return this.checkTransactionResponse(
+					await RPCTransactionResponseAdapter.manageResponse(
+						await this.precompiledCall('burnToken', [
+							TokenId.fromString(
+								coin.coin.tokenId?.value ?? '',
+							).toSolidityAddress(),
+							params?.amount,
+							[],
+						]),
+				));
 
 			case Operation.WIPE:
-				return RPCTransactionResponseAdapter.manageResponse(
-					await this.precompiledCall('wipeTokenAccount', [
-						TokenId.fromString(
-							coin.coin.tokenId?.value ?? '',
-						).toSolidityAddress(),
-						params?.targetId,
-						params?.amount,
-					]),
-				);
+				return this.checkTransactionResponse(
+					await RPCTransactionResponseAdapter.manageResponse(
+						await this.precompiledCall('wipeTokenAccount', [
+							TokenId.fromString(
+								coin.coin.tokenId?.value ?? '',
+							).toSolidityAddress(),
+							params?.targetId,
+							params?.amount,
+						]),
+				));
 
 			case Operation.FREEZE:
-				return RPCTransactionResponseAdapter.manageResponse(
-					await this.precompiledCall('freezeToken', [
-						TokenId.fromString(
-							coin.coin.tokenId?.value ?? '',
-						).toSolidityAddress(),
-						params?.targetId,
-					]),
-				);
+				return this.checkTransactionResponse(
+					await RPCTransactionResponseAdapter.manageResponse(
+						await this.precompiledCall('freezeToken', [
+							TokenId.fromString(
+								coin.coin.tokenId?.value ?? '',
+							).toSolidityAddress(),
+							params?.targetId,
+						]),
+				));
 
 			case Operation.UNFREEZE:
-				return RPCTransactionResponseAdapter.manageResponse(
-					await this.precompiledCall('unfreezeToken', [
-						TokenId.fromString(
-							coin.coin.tokenId?.value ?? '',
-						).toSolidityAddress(),
-						params?.targetId,
-					]),
-				);
+				return this.checkTransactionResponse(
+					await RPCTransactionResponseAdapter.manageResponse(
+						await this.precompiledCall('unfreezeToken', [
+							TokenId.fromString(
+								coin.coin.tokenId?.value ?? '',
+							).toSolidityAddress(),
+							params?.targetId,
+						]),
+				));
 
 			case Operation.PAUSE:
-				return RPCTransactionResponseAdapter.manageResponse(
-					await this.precompiledCall('pauseToken', [
-						TokenId.fromString(
-							coin.coin.tokenId?.value ?? '',
-						).toSolidityAddress(),
-					]),
-				);
+				return this.checkTransactionResponse(
+					await RPCTransactionResponseAdapter.manageResponse(
+						await this.precompiledCall('pauseToken', [
+							TokenId.fromString(
+								coin.coin.tokenId?.value ?? '',
+							).toSolidityAddress(),
+						]),
+				));
 
 			case Operation.UNPAUSE:
-				return RPCTransactionResponseAdapter.manageResponse(
-					await this.precompiledCall('unpauseToken', [
-						TokenId.fromString(
-							coin.coin.tokenId?.value ?? '',
-						).toSolidityAddress(),
-					]),
-				);
+				return this.checkTransactionResponse(
+					await RPCTransactionResponseAdapter.manageResponse(
+						await this.precompiledCall('unpauseToken', [
+							TokenId.fromString(
+								coin.coin.tokenId?.value ?? '',
+							).toSolidityAddress(),
+						]),
+				));
 
 			case Operation.DELETE:
-				return RPCTransactionResponseAdapter.manageResponse(
-					await this.precompiledCall('deleteToken', [
-						TokenId.fromString(
-							coin.coin.tokenId?.value ?? '',
-						).toSolidityAddress(),
-					]),
-				);
+				return this.checkTransactionResponse(
+					await RPCTransactionResponseAdapter.manageResponse(
+						await this.precompiledCall('deleteToken', [
+							TokenId.fromString(
+								coin.coin.tokenId?.value ?? '',
+							).toSolidityAddress(),
+						]),
+				));
 
 			default:
 				throw new Error(`Operation not implemented through HTS`);
 		}
+	}
+
+	private async checkTransactionResponse(
+		transaction: TransactionResponse): Promise<TransactionResponse>
+	{
+		const responseCodeLength = 66;
+		const responseCodeSuccess = "0x0000000000000000000000000000000000000000000000000000000000000016"; // response code 22 SUCCESS
+
+		if(!transaction.id) return transaction;
+		
+		const txResponse = await this.mirrorNodeAdapter.getTransactionResult(
+			transaction.id,
+		);
+
+		if(!txResponse.result || txResponse.result.length < responseCodeLength){
+			return transaction;
+		}
+
+		const responseCode = txResponse.result.substring(0, responseCodeLength);
+
+		LogService.logTrace('Transaction Response Code : ' + responseCode);
+
+		if(responseCodeSuccess === responseCode) return transaction;
+
+		throw new TransactionResponseError(
+			{
+				message: "Transaction failed with error code : " + responseCode,
+				transactionId: transaction.id,
+				RPC_relay: true
+			}
+		);
+
 	}
 }
 

@@ -18,8 +18,19 @@
  *
  */
 
-import { QueryResponse } from '../../../../core/query/QueryResponse.js';
+import { Query } from '../../../../../core/query/Query.js';
+import { QueryResponse } from '../../../../../core/query/QueryResponse.js';
+import { HederaId } from '../../../../../domain/context/shared/HederaId.js';
 
-export default interface StableCoinListViewModel extends QueryResponse {
-	coins: { symbol: string; id: string }[];
+export class GetAccountTokenAssociatedQueryResponse implements QueryResponse {
+	constructor(public readonly isAssociated: boolean) {}
+}
+
+export class GetAccountTokenAssociatedQuery extends Query<GetAccountTokenAssociatedQueryResponse> {
+	constructor(
+		public readonly targetId: HederaId,
+		public readonly tokenId: HederaId,
+	) {
+		super();
+	}
 }

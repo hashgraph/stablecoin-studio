@@ -1,7 +1,7 @@
 {
     "title": "Burn tokens operation",
     "operationTitle": "Operation details",
-    "amountLabel": "Introduce amount",
+    "amountLabel": "Enter the amount",
     "amountPlaceholder": "0",
     "originAccountPlaceholder": "0.0.0",
     "modalSuccessDesc": "{{amount}} tokens have been burned.",

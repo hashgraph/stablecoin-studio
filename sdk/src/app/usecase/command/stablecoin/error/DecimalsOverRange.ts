@@ -18,8 +18,13 @@
  *
  */
 
-import { QueryResponse } from '../../../../core/query/QueryResponse.js';
+import BaseError, { ErrorCode } from '../../../../../core/error/BaseError.js';
 
-export default interface StableCoinListViewModel extends QueryResponse {
-	coins: { symbol: string; id: string }[];
+export class DecimalsOverRange extends BaseError {
+	constructor(val: number) {
+		super(
+			ErrorCode.InvalidRange,
+			`The amount has more decimals than the limit (${val})`,
+		);
+	}
 }

@@ -3,9 +3,9 @@
       "nextStep" : "Next step",
       "goBack" : "Go back",
       "createStableCoin": "Create stable coin",
-      "createNewStableCoin": "Import token",
+      "createNewStableCoin": "Add token",
       "cancel": "Cancel",
-      "addExternalToken": "Import token"
+      "addExternalToken": "Add token"
     },
     "tabs": {
       "externalTokenInfo": "Token info"
@@ -19,11 +19,10 @@
     },
     "optionalDetails": {
       "decimals": "Decimals",
-      "expirationDate": "Expiration date",
       "finite": "Finite",
       "initialSupply": "Initial supply",
       "infinite": "Infinite",
-      "placeholder": "Introduce {{placeholder}}",
+      "placeholder": "Enter the {{placeholder}}",
       "maxSupply": "Max supply",
       "title": "Stable coin optional details",
       "typeSupply": "Type supply",
@@ -34,10 +33,10 @@
       "description": "Allow all the following features to be managed through smart contracts",
       "pause": "Pause",
       "freeze": "Freeze",
-      "introduce": "Introduce {{name}}",
+      "introduce": "Enter the {{name}}",
       "none": "None",
       "otherKey": "Other key",
-      "placeholder": "Introduce {{placeholder}}",
+      "placeholder": "Enter the {{placeholder}}",
       "rescue": "Rescue",
       "admin": "Admin",
       "supply": "Supply",

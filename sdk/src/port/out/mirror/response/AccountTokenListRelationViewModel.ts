@@ -19,7 +19,16 @@
  */
 
 import { QueryResponse } from '../../../../core/query/QueryResponse.js';
+import { HederaId } from '../../../../domain/context/shared/HederaId.js';
 
-export default interface StableCoinListViewModel extends QueryResponse {
-	coins: { symbol: string; id: string }[];
+export default interface AccountTokenListRelationViewModel
+	extends QueryResponse {
+	tokens: {
+		automatic_association: boolean;
+		balance: number; //Not correct, we need the decimals to change by BigDecimal
+		created_timestamp: string;
+		freeze_status: string;
+		kyc_status: string;
+		token_id: HederaId;
+	}[];
 }

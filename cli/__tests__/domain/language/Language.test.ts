@@ -24,8 +24,14 @@ describe(`Testing ${Language.name}.ts class`, () => {
     expect(allTexts).not.toBeNull();
   });
 
-  it('Should return not null when request some array', () => {
+  /*it('Should return not null when request some array', () => {
     const allTexts = language.getArray('wizard.options');
+
+    expect(allTexts).not.toBeNull();
+  });*/
+
+  it('Should return not null when request some array', () => {
+    const allTexts = language.getArrayFromObject('wizard.mainOptions');
 
     expect(allTexts).not.toBeNull();
   });

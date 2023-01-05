@@ -73,7 +73,7 @@ const ModalNotification = (props: ModalNotificationProps) => {
 		>
 			<ModalOverlay />
 			<ModalContent data-testid='modal-notification-content' pt='50' pb='50'>
-				{closeButton && <ModalCloseButton />}
+				{closeButton && !isLoading && <ModalCloseButton />}
 				{(icon || variant) && !isLoading && (
 					<ModalHeader alignSelf='center' p='0'>
 						<Image

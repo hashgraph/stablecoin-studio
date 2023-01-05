@@ -203,7 +203,7 @@ export default class CreateStableCoinService extends Service {
       decimals: tokenToCreate.decimals,
       initialSupply:
         initialSupply === '' || !initialSupply ? undefined : initialSupply,
-      supplyType: supplyType ? 'INFINITE' : 'FINITE',
+      supplyType: supplyType ? TokenSupplyType.INFINITE : TokenSupplyType.FINITE,
       maxSupply: tokenToCreate.maxSupply,
     });
     if (managedBySC) {
@@ -245,40 +245,40 @@ export default class CreateStableCoinService extends Service {
       autoRenewAccount: tokenToCreate.autoRenewAccount,
       decimals: tokenToCreate.decimals,
       initialSupply: initialSupply === '' ? undefined : initialSupply,
-      supplyType: supplyType ? 'INFINITE' : 'FINITE',
+      supplyType: supplyType ? TokenSupplyType.INFINITE : TokenSupplyType.FINITE,
       maxSupply: totalSupply ? BigInt(totalSupply) : totalSupply,
       freezeKey:
         freezeKey === undefined
-          ? 'None'
+          ? language.getText('wizard.featureOptions.None')
           : freezeKey.key !== 'null'
           ? freezeKey
-          : 'The Smart Contract',
+          : language.getText('wizard.featureOptions.SmartContract'),
       //KYCKey,
       wipeKey:
         wipeKey === undefined
-          ? 'None'
+          ? language.getText('wizard.featureOptions.None')
           : wipeKey.key !== 'null'
           ? wipeKey
-          : 'The Smart Contract',
+          : language.getText('wizard.featureOptions.SmartContract'),
       adminKey:
         adminKey === undefined
-          ? 'None'
+          ? language.getText('wizard.adminFeatureOptions.None')
           : adminKey.key !== 'null'
           ? adminKey
-          : 'The Smart Contract',
+          : language.getText('wizard.adminFeatureOptions.SmartContract'),
       supplyKey:
         supplyKey === undefined
-          ? 'None'
+          ? language.getText('wizard.featureOptions.None')
           : supplyKey.key !== 'null'
           ? supplyKey
-          : 'The Smart Contract',
+          : language.getText('wizard.featureOptions.SmartContract'),
       pauseKey:
         pauseKey === undefined
-          ? 'None'
+          ? language.getText('wizard.featureOptions.None')
           : pauseKey.key !== 'null'
           ? pauseKey
-          : 'The Smart Contract',
-      treasury: treasury !== '0.0.0' ? treasury : 'The Smart Contract',
+          : language.getText('wizard.featureOptions.SmartContract'),
+      treasury: treasury !== '0.0.0' ? treasury : language.getText('wizard.featureOptions.SmartContract'),
     });
     if (
       !(await utilsService.defaultConfirmAsk(
@@ -339,42 +339,35 @@ export default class CreateStableCoinService extends Service {
     const adminKey = await this.checkAnswer(
       await utilsService.defaultMultipleAsk(
         language.getText('stablecoin.features.admin'),
-        language.getArray('wizard.adminFeatureOptions'),
+        language.getArrayFromObject('wizard.adminFeatureOptions'),
       ),
     );
-
-    /*const KYCKey = await this.checkAnswer(
-      await utilsService.defaultMultipleAsk(
-        language.getText('stablecoin.features.KYC'),
-        language.getArray('wizard.featureOptions'),
-      ),
-    );*/
 
     const freezeKey = await this.checkAnswer(
       await utilsService.defaultMultipleAsk(
         language.getText('stablecoin.features.freeze'),
-        language.getArray('wizard.featureOptions'),
+        language.getArrayFromObject('wizard.featureOptions'),
       ),
     );
 
     const wipeKey = await this.checkAnswer(
       await utilsService.defaultMultipleAsk(
         language.getText('stablecoin.features.wipe'),
-        language.getArray('wizard.featureOptions'),
+        language.getArrayFromObject('wizard.featureOptions'),
       ),
     );
 
     const pauseKey = await this.checkAnswer(
       await utilsService.defaultMultipleAsk(
         language.getText('stablecoin.features.pause'),
-        language.getArray('wizard.featureOptions'),
+        language.getArrayFromObject('wizard.featureOptions'),
       ),
     );
 
     const supplyKey = await this.checkAnswer(
       await utilsService.defaultMultipleAsk(
         language.getText('stablecoin.features.supply'),
-        language.getArray('wizard.featureOptions'),
+        language.getArrayFromObject('wizard.featureOptions'),
       ),
     );
 
@@ -383,7 +376,7 @@ export default class CreateStableCoinService extends Service {
 
   private async checkAnswer(answer: string): Promise<RequestPublicKey> {
     switch (answer) {
-      case 'Current user key': {
+      case language.getText('wizard.featureOptions.CurrentUser'): {
         const currentAccount = utilsService.getCurrentAccount();
         const privateKey: RequestPrivateKey = {
           key: currentAccount.privateKey.key,
@@ -399,19 +392,21 @@ export default class CreateStableCoinService extends Service {
         return Account.getPublicKey(req);
       }
 
-      case 'Other public key': {
+      case language.getText('wizard.featureOptions.OtherKey'): {
         const { key } = await utilsService.defaultPublicKeyAsk();
         return {
           key: key,
         };
       }
 
-      case 'None':
+      case language.getText('wizard.featureOptions.None'):
         return undefined;
 
-      case 'The Smart Contract':
-      default:
+      case language.getText('wizard.featureOptions.SmartContract'):
         return Account.NullPublicKey;
+
+        default:
+          throw new Error('Selected option not recognized : ' + answer)
     }
   }
 

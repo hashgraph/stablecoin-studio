@@ -26,7 +26,6 @@ import {
 	Transaction,
 	PublicKey as HPublicKey,
 	ContractId as HContractId,
-	AccountAllowanceApproveTransaction,
 } from '@hashgraph/sdk';
 import TransactionAdapter from '../TransactionAdapter';
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
@@ -54,6 +53,7 @@ import { FactoryKey } from '../../../domain/context/factory/FactoryKey.js';
 import { FactoryStableCoin } from '../../../domain/context/factory/FactoryStableCoin.js';
 import { TOKEN_CREATION_COST_HBAR } from '../../../core/Constants.js';
 import LogService from '../../../app/service/LogService.js';
+import { TransactionResponseError } from '../error/TransactionResponseError.js';
 
 export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	private web3 = new Web3();
@@ -645,9 +645,11 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					);
 			}
 		} catch (error) {
-			throw new Error(
-				`Unexpected error in HederaTransactionHandler ${operationName} operation : ${error}`,
-			);
+			console.log('Error ' + JSON.stringify(error));
+			throw new TransactionResponseError({
+				message: `Unexpected error in HederaTransactionHandler ${operationName} operation : ${error}`,
+				transactionId: (error as any).error?.transactionId,
+			});
 		}
 	}
 

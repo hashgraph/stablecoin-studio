@@ -18,6 +18,7 @@
  *
  */
 
+import CheckNums from '../../../../../../core/checks/numbers/CheckNums.js';
 import { ICommandHandler } from '../../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
@@ -25,6 +26,7 @@ import BigDecimal from '../../../../../../domain/context/shared/BigDecimal.js';
 import AccountService from '../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
+import { DecimalsOverRange } from '../../error/DecimalsOverRange.js';
 import {
 	DecreaseAllowanceCommand,
 	DecreaseAllowanceCommandResponse,
@@ -53,6 +55,10 @@ export class DecreaseAllowanceCommandHandler
 			account,
 			tokenId,
 		);
+		const coin = capabilities.coin;
+		if (CheckNums.hasMoreDecimals(amount, coin.decimals)) {
+			throw new DecimalsOverRange(coin.decimals);
+		}
 		const res = await handler.decreaseSupplierAllowance(
 			capabilities,
 			targetId,

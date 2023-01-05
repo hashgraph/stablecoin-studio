@@ -18,8 +18,10 @@
  *
  */
 
-import { QueryResponse } from '../../../../core/query/QueryResponse.js';
+import BaseError, { ErrorCode } from '../../../../../core/error/BaseError.js';
 
-export default interface StableCoinListViewModel extends QueryResponse {
-	coins: { symbol: string; id: string }[];
+export class OperationNotAllowed extends BaseError {
+	constructor(val: string) {
+		super(ErrorCode.OperationNotAllowed, val);
+	}
 }
