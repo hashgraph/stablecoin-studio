@@ -86,8 +86,6 @@ export type { HederaERC20ProxyAdmin } from "./contracts/HederaERC20ProxyAdmin";
 export { HederaERC20ProxyAdmin__factory } from "./factories/contracts/HederaERC20ProxyAdmin__factory";
 export type { IHederaTokenService } from "./contracts/hts-precompile/IHederaTokenService";
 export { IHederaTokenService__factory } from "./factories/contracts/hts-precompile/IHederaTokenService__factory";
-export type { IERC20UpgradeableCustom } from "./contracts/Interfaces/IERC20UpgradeableCustom";
-export { IERC20UpgradeableCustom__factory } from "./factories/contracts/Interfaces/IERC20UpgradeableCustom__factory";
 export type { IHederaERC20 } from "./contracts/Interfaces/IHederaERC20";
 export { IHederaERC20__factory } from "./factories/contracts/Interfaces/IHederaERC20__factory";
 export type { IHederaERC20Upgradeable } from "./contracts/Interfaces/IHederaERC20Upgradeable";

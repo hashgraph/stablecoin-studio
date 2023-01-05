@@ -68,7 +68,7 @@ import { GetAccountInfoQuery } from '../../app/usecase/query/account/info/GetAcc
 import { handleValidation } from './Common.js';
 import { GetAccountTokenAssociatedQuery } from '../../app/usecase/query/account/tokenAssociated/GetAccountTokenAssociatedQuery.js';
 
-export const HederaERC20AddressTestnet = '0.0.49127272';
+export const HederaERC20AddressTestnet = '0.0.49217489';
 export const HederaERC20AddressPreviewnet = '0.0.11111111';
 
 export const FactoryAddressTestnet = '0.0.49127286';
