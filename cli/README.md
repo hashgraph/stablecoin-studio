@@ -168,7 +168,7 @@ When you add an existing stable coin, you will able to operate with the roles th
 Once the request is ready, the CLI will extract from the configuration file the factory and HederaERC20 contracts addresses for the network you are working on.
 The request will then be submitted to the SDK and the stable coin will be created.
 
-> When the configuration file is first created, the factory and HederaERC20 contracts added to the "testnet" network are the default ones (contracts deployed and maintained by IoBuilders). However users are free to deploy and use their own contracts, in order to do that, the configuration file must be updated with the new factory and/or HederaERC20 contract' addresses.
+> When the configuration file is first created, the factory and HederaERC20 contracts added to the "testnet" network are the default ones (pre-deployed contracts). However users are free to deploy and use their own contracts, in order to do that, the configuration file must be updated with the new factory and/or HederaERC20 contract' addresses.
 
 https://user-images.githubusercontent.com/102601367/205074369-b3a72bb2-61f9-421a-9738-abb1ca65375e.mov
 
