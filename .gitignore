@@ -39,5 +39,5 @@ build
 **/artifacts/*/
 *hedera-sc-sdk.code-workspace
 *hsca-config.yaml
-*hardhat.config.ts
+hardhat.config.ts
 sdk/__tests__/config.ts
