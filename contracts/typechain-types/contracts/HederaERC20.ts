@@ -829,8 +829,8 @@ export interface HederaERC20 extends BaseContract {
     allowance(
       owner: PromiseOrValue<string>,
       spender: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     approve(
       spender: PromiseOrValue<string>,
@@ -1035,8 +1035,8 @@ export interface HederaERC20 extends BaseContract {
   allowance(
     owner: PromiseOrValue<string>,
     spender: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   approve(
     spender: PromiseOrValue<string>,
@@ -1642,7 +1642,7 @@ export interface HederaERC20 extends BaseContract {
     allowance(
       owner: PromiseOrValue<string>,
       spender: PromiseOrValue<string>,
-      overrides?: CallOverrides
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     approve(
@@ -1851,7 +1851,7 @@ export interface HederaERC20 extends BaseContract {
     allowance(
       owner: PromiseOrValue<string>,
       spender: PromiseOrValue<string>,
-      overrides?: CallOverrides
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     approve(

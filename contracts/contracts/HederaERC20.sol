@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.10;
 
-import '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
-import '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol';
+import './Interfaces/IHederaERC20Upgradeable.sol';
+// import '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol';
 import './Interfaces/IHederaERC20.sol';
 import './extensions/CashIn.sol';
@@ -17,7 +17,7 @@ import './extensions/TokenOwner.sol';
 
 contract HederaERC20 is
     IHederaERC20,
-    IERC20Upgradeable,
+    IHederaERC20Upgradeable,
     CashIn,
     Burnable,
     Wipeable,
@@ -26,7 +26,7 @@ contract HederaERC20 is
     Deletable,
     Rescatable
 {
-    using SafeERC20Upgradeable for IERC20Upgradeable;
+    // using SafeERC20Upgradeable for IHederaERC20Upgradeable;
 
     function initialize(
         IHederaTokenService.HederaToken calldata token,
@@ -97,10 +97,10 @@ contract HederaERC20 is
     function totalSupply()
         external
         view
-        override(IHederaERC20, IERC20Upgradeable)
+        override(IHederaERC20, IHederaERC20Upgradeable)
         returns (uint256)
     {
-        return IERC20Upgradeable(_getTokenAddress()).totalSupply();
+        return IHederaERC20Upgradeable(_getTokenAddress()).totalSupply();
     }
 
     /**
@@ -113,7 +113,7 @@ contract HederaERC20 is
     function balanceOf(address account)
         public
         view
-        override(IHederaERC20, IERC20Upgradeable)
+        override(IHederaERC20, IHederaERC20Upgradeable)
         returns (uint256)
     {
         return _balanceOf(account);
@@ -133,7 +133,7 @@ contract HederaERC20 is
         override(TokenOwner)
         returns (uint256)
     {
-        return IERC20Upgradeable(_getTokenAddress()).balanceOf(account);
+        return IHederaERC20Upgradeable(_getTokenAddress()).balanceOf(account);
     }
 
     /**
@@ -197,15 +197,17 @@ contract HederaERC20 is
     /**
      * @dev Function not already implemented
      */
-    function allowance(
-        address owner,
-        address spender
-    ) external view returns (uint256) {
+    function allowance(address owner, address spender)
+        external
+        returns (uint256)
+    {
         // require(false, 'function not already implemented');
         // return 0;
-        (, uint256 amount) = IHederaTokenService(
-            precompileAddress
-        ).allowance(_getTokenAddress(), owner, spender);
+        (, uint256 amount) = IHederaTokenService(precompileAddress).allowance(
+            _getTokenAddress(),
+            owner,
+            spender
+        );
         return amount;
     }
 

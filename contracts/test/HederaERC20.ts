@@ -335,7 +335,7 @@ describe('HederaERC20 Tests', function() {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Check transfer from', async () => {
+    it('Check transfer and transferFrom', async () => {
         const AMOUNT = BigNumber.from(10)
         await associateToken(
             proxyAddress,
@@ -407,7 +407,7 @@ describe('HederaERC20 Tests', function() {
 
         await Wipe(
             proxyAddress,
-            BigNumber.from(3),
+            BigNumber.from(6),
             operatorClient,
             nonOperatorAccount,
             nonOperatorIsE25519
