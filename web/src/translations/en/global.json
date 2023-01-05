@@ -13,11 +13,11 @@
 	},
 	"innactivity": {
 		"title": "Your session has expired!",
-		"description": "Please, reconnect your wallet."
+		"description": "Please, reconnect your wallet"
 	},
 	"hashpack-no-installed": {
 		"title": "Extensions are not installed yet",
-		"description": "Click on the button bellow to download the extension.",
+		"description": "Click on the button bellow to download the extension",
 		"button": "Download Hashpack",
 		"metamaskButton": "Download Metamask"
 	},
@@ -32,7 +32,7 @@
 		"coinDropdown": {
 			"placeholder": "Choose stable coin",
 			"noStableCoin": "No stable coins found with that id, would you like to import it?",
-			"invalidStableCoinId": "Input a valid token id"
+			"invalidStableCoinId": "Enter a valid token id"
 		},
 		"createSC": "Create coin",
 		"addSC": "Add coin"
@@ -47,7 +47,7 @@
 		"invalidAccount": "Incorrect account",
 		"invalidAmount": "Invalid amount",
 		"invalidCoinId": "Invalid stable coin id",
-		"decimalsValidation": "The amount has an invalid number of decimales"
+		"decimalsValidation": "The amount has an invalid number of decimals"
 	},
 	"operations": {
 		"title": "Operations"
@@ -58,7 +58,7 @@
 		"nextStep": "Next step"
 	},
 	"pairing": {
-		"error": "There was an error pairing with the wallet.",
+		"error": "There was an error pairing the wallet.",
 		"rejected": "The pairing request has been rejected.",
 		"loading": "Loading"
 	}

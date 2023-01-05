@@ -126,10 +126,9 @@ class StableCoinInPort implements IStableCoinInPort {
 				req.initialSupply ?? '0',
 				req.decimals,
 			),
-			maxSupply: BigDecimal.fromString(
-				req.maxSupply ?? '0',
-				req.decimals,
-			),
+			maxSupply: req.maxSupply
+				? BigDecimal.fromString(req.maxSupply, req.decimals)
+				: undefined,
 			freezeKey: req.freezeKey
 				? new PublicKey({
 						key: req.freezeKey.key,
