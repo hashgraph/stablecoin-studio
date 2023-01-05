@@ -1,10 +1,11 @@
-const {
+import {
     AccountId,
     AccountBalanceQuery,
     TransferTransaction,
-    HbarUnit,
     Hbar,
-} = require('@hashgraph/sdk')
+    Client,
+    ContractId,
+} from '@hashgraph/sdk'
 
 import {
     HederaERC20__factory,
@@ -15,16 +16,16 @@ import {
 } from '../typechain-types'
 
 import { contractCall, toEvmAddress } from './utils'
-import { Gas1, Gas2, Gas3, Gas4, Gas5, Gas6 } from './constants'
+import { Gas1, Gas2, Gas3, Gas4, Gas5 } from './constants'
 
 import { BigNumber } from 'ethers'
 
 export async function getHBARBalanceOf(
     Id: string,
-    client: any,
+    client: Client,
     isAccount = true,
     isSolidityAddress = false
-): Promise<any> {
+) {
     const IdToQuery = isSolidityAddress
         ? AccountId.fromSolidityAddress(Id!).toString()
         : Id!
@@ -40,7 +41,7 @@ export async function transferHBAR(
     senderAccountId: string,
     receiver: string,
     amount: any,
-    client: any,
+    client: Client,
     isReceiverSolidityAddress = false
 ) {
     const receivedAccountId = isReceiverSolidityAddress
@@ -62,9 +63,8 @@ export async function transferHBAR(
 // AccessControlUpgradeable ///////////////////////////////////////////////////
 export async function grantRole(
     ROLE: string,
-    ContractId: any,
     proxyAddress: string,
-    clientGrantingRole: any,
+    clientGrantingRole: Client,
     accountToGrantRoleTo: string,
     isE25519: boolean
 ) {
@@ -84,9 +84,8 @@ export async function grantRole(
 
 export async function revokeRole(
     ROLE: string,
-    ContractId: any,
     proxyAddress: string,
-    clientRevokingRole: any,
+    clientRevokingRole: Client,
     accountToRevokeRoleFrom: string,
     isE25519: boolean
 ) {
@@ -106,9 +105,8 @@ export async function revokeRole(
 
 export async function hasRole(
     ROLE: string,
-    ContractId: any,
     proxyAddress: string,
-    clientCheckingRole: any,
+    clientCheckingRole: Client,
     accountToCheckRoleFrom: string,
     isE25519: boolean
 ): Promise<boolean> {
@@ -128,11 +126,7 @@ export async function hasRole(
 }
 
 // HederaERC20 ///////////////////////////////////////////////////
-export async function getTotalSupply(
-    ContractId: any,
-    proxyAddress: string,
-    client: any
-): Promise<any> {
+export async function getTotalSupply(proxyAddress: string, client: Client) {
     const result = await contractCall(
         ContractId.fromString(proxyAddress!),
         'totalSupply',
@@ -145,9 +139,8 @@ export async function getTotalSupply(
 }
 
 export async function associateToken(
-    ContractId: any,
     proxyAddress: string,
-    clientAssociatingToken: any,
+    clientAssociatingToken: Client,
     accountToAssociateTo: string,
     isE25519: boolean
 ) {
@@ -163,9 +156,8 @@ export async function associateToken(
 }
 
 export async function dissociateToken(
-    ContractId: any,
     proxyAddress: string,
-    clientDissociatingToken: any,
+    clientDissociatingToken: Client,
     accountToDissociateFrom: string,
     isE25519: boolean
 ) {
@@ -181,9 +173,8 @@ export async function dissociateToken(
 }
 
 export async function getBalanceOf(
-    ContractId: any,
     proxyAddress: string,
-    client: any,
+    client: Client,
     accountToGetBalanceOf: string,
     isE25519: boolean,
     parse = true
@@ -202,11 +193,7 @@ export async function getBalanceOf(
     return BigNumber.from(result[0])
 }
 
-export async function name(
-    ContractId: any,
-    proxyAddress: string,
-    client: any
-): Promise<string> {
+export async function name(proxyAddress: string, client: any): Promise<string> {
     const params: any[] = []
     const result = await contractCall(
         ContractId.fromString(proxyAddress!),
@@ -220,9 +207,8 @@ export async function name(
 }
 
 export async function symbol(
-    ContractId: any,
     proxyAddress: string,
-    client: any
+    client: Client
 ): Promise<string> {
     const params: any[] = []
     const result = await contractCall(
@@ -237,9 +223,8 @@ export async function symbol(
 }
 
 export async function decimals(
-    ContractId: any,
     proxyAddress: string,
-    client: any
+    client: Client
 ): Promise<number> {
     const params: any[] = []
     const result = await contractCall(
@@ -254,9 +239,8 @@ export async function decimals(
 }
 
 export async function initialize(
-    ContractId: any,
     proxyAddress: string,
-    client: any,
+    client: Client,
     newTokenAddress: string
 ) {
     const params = [newTokenAddress]
@@ -272,9 +256,8 @@ export async function initialize(
 
 // HederaERC20Proxy ///////////////////////////////////////////////////
 export async function upgradeTo(
-    ContractId: any,
     proxyAddress: string,
-    client: any,
+    client: Client,
     newImplementationContract: string
 ) {
     const params: any = [newImplementationContract]
@@ -289,9 +272,8 @@ export async function upgradeTo(
 }
 
 export async function changeAdmin(
-    ContractId: any,
     proxyAddress: string,
-    client: any,
+    client: Client,
     newAdminAccount: string
 ) {
     const params: any = [newAdminAccount]
@@ -306,9 +288,8 @@ export async function changeAdmin(
 }
 
 export async function admin(
-    ContractId: any,
     proxyAddress: string,
-    client: any
+    client: Client
 ): Promise<string> {
     const params: any[] = []
     const result = await contractCall(
@@ -324,9 +305,8 @@ export async function admin(
 
 // HederaERC20ProxyAdmin ///////////////////////////////////////////////////
 export async function owner(
-    ContractId: any,
     proxyAdminAddress: string,
-    client: any
+    client: Client
 ): Promise<string> {
     const params: any[] = []
     const result = await contractCall(
@@ -341,9 +321,8 @@ export async function owner(
 }
 
 export async function upgrade(
-    ContractId: any,
     proxyAdminAddress: string,
-    client: any,
+    client: Client,
     newImplementationContract: string,
     proxyAddress: string
 ) {
@@ -359,9 +338,8 @@ export async function upgrade(
 }
 
 export async function changeProxyAdmin(
-    ContractId: any,
     proxyAdminAddress: string,
-    client: any,
+    client: Client,
     newAdminAccount: string,
     proxyAddress: string,
     isE25519: boolean
@@ -381,9 +359,8 @@ export async function changeProxyAdmin(
 }
 
 export async function transferOwnership(
-    ContractId: any,
     proxyAdminAddress: string,
-    client: any,
+    client: Client,
     newOwnerAccount: string,
     isE25519: boolean
 ) {
@@ -399,9 +376,8 @@ export async function transferOwnership(
 }
 
 export async function getProxyImplementation(
-    ContractId: any,
     proxyAdminAddress: string,
-    client: any,
+    client: Client,
     proxyAddress: string
 ): Promise<string> {
     const params: any[] = [proxyAddress]
@@ -417,9 +393,8 @@ export async function getProxyImplementation(
 }
 
 export async function getProxyAdmin(
-    ContractId: any,
     proxyAdminAddress: string,
-    client: any,
+    client: Client,
     proxyAddress: string
 ): Promise<string> {
     const params: any[] = [proxyAddress]
@@ -436,9 +411,8 @@ export async function getProxyAdmin(
 
 // StableCoinProxy ///////////////////////////////////////////////////
 export async function upgradeTo_SCF(
-    ContractId: any,
     proxyAddress: string,
-    client: any,
+    client: Client,
     newImplementationContract: string
 ) {
     const params: any = [newImplementationContract]
@@ -453,9 +427,8 @@ export async function upgradeTo_SCF(
 }
 
 export async function changeAdmin_SCF(
-    ContractId: any,
     proxyAddress: string,
-    client: any,
+    client: Client,
     newAdminAccount: string
 ) {
     const params: any = [newAdminAccount]
@@ -470,9 +443,8 @@ export async function changeAdmin_SCF(
 }
 
 export async function admin_SCF(
-    ContractId: any,
     proxyAddress: string,
-    client: any
+    client: Client
 ): Promise<string> {
     const params: any[] = []
     const result = await contractCall(
@@ -488,9 +460,8 @@ export async function admin_SCF(
 
 // StableCoinProxyAdmin ///////////////////////////////////////////////////
 export async function owner_SCF(
-    ContractId: any,
     proxyAdminAddress: string,
-    client: any
+    client: Client
 ): Promise<string> {
     const params: any[] = []
     const result = await contractCall(
@@ -505,9 +476,8 @@ export async function owner_SCF(
 }
 
 export async function upgrade_SCF(
-    ContractId: any,
     proxyAdminAddress: string,
-    client: any,
+    client: Client,
     newImplementationContract: string,
     proxyAddress: string
 ) {
@@ -523,9 +493,8 @@ export async function upgrade_SCF(
 }
 
 export async function changeProxyAdmin_SCF(
-    ContractId: any,
     proxyAdminAddress: string,
-    client: any,
+    client: Client,
     newAdminAccount: string,
     proxyAddress: string,
     isE25519: boolean
@@ -545,9 +514,8 @@ export async function changeProxyAdmin_SCF(
 }
 
 export async function transferOwnership_SCF(
-    ContractId: any,
     proxyAdminAddress: string,
-    client: any,
+    client: Client,
     newOwnerAccount: string,
     isE25519: boolean
 ) {
@@ -563,9 +531,8 @@ export async function transferOwnership_SCF(
 }
 
 export async function getProxyImplementation_SCF(
-    ContractId: any,
     proxyAdminAddress: string,
-    client: any,
+    client: Client,
     proxyAddress: string
 ): Promise<string> {
     const params: any[] = [proxyAddress]
@@ -581,9 +548,8 @@ export async function getProxyImplementation_SCF(
 }
 
 export async function getProxyAdmin_SCF(
-    ContractId: any,
     proxyAdminAddress: string,
-    client: any,
+    client: Client,
     proxyAddress: string
 ): Promise<string> {
     const params: any[] = [proxyAddress]
@@ -605,13 +571,12 @@ export async function getProxyAdmin_SCF(
     - transferFrom(address,address,uint256) (external)
 */
 export async function allowance(
-    ContractId: any,
     proxyAddress: string,
     addressOwner: string,
     ownerIsE25519: boolean,
     addressSpender: string,
     spenderIsE25519: boolean,
-    client: any
+    client: Client
 ): Promise<any> {
     const params: any[] = [
         await toEvmAddress(addressOwner, ownerIsE25519),
@@ -629,12 +594,11 @@ export async function allowance(
 }
 
 export async function approve(
-    ContractId: any,
     proxyAddress: string,
     addressSpender: string,
     spenderIsE25519: boolean,
     amount: BigNumber,
-    client: any
+    client: Client
 ): Promise<any> {
     const params: any[] = [
         await toEvmAddress(addressSpender, spenderIsE25519),
@@ -652,12 +616,11 @@ export async function approve(
 }
 
 export async function transfer(
-    ContractId: any,
     proxyAddress: string,
     addressSpender: string,
     spenderIsE25519: boolean,
     amount: BigNumber,
-    client: any
+    client: Client
 ): Promise<any> {
     const params: any[] = [
         await toEvmAddress(addressSpender, spenderIsE25519),
@@ -675,14 +638,13 @@ export async function transfer(
 }
 
 export async function transferFrom(
-    ContractId: any,
     proxyAddress: string,
     addressOwner: string,
     ownerIsE25519: boolean,
     addressSpender: string,
     spenderIsE25519: boolean,
     amount: BigNumber,
-    client: any
+    client: Client
 ): Promise<any> {
     const params: any[] = [
         await toEvmAddress(addressOwner, ownerIsE25519),
@@ -702,9 +664,8 @@ export async function transferFrom(
 
 // TokenOwner ///////////////////////////////////////////////////
 export async function getTokenAddress(
-    ContractId: any,
     proxyAddress: string,
-    client: any
+    client: Client
 ): Promise<string> {
     const params: any[] = []
     const response = await contractCall(
@@ -720,10 +681,9 @@ export async function getTokenAddress(
 
 // Burnable ///////////////////////////////////////////////////
 export async function Burn(
-    ContractId: any,
     proxyAddress: string,
     amountOfTokenToBurn: any,
-    clientBurningToken: any
+    clientBurningToken: Client
 ) {
     const params = [amountOfTokenToBurn.toString()]
     const result = await contractCall(
@@ -739,10 +699,9 @@ export async function Burn(
 
 // Minteable ///////////////////////////////////////////////////
 export async function Mint(
-    ContractId: any,
     proxyAddress: string,
     amountOfTokenToMint: any,
-    clientMintingToken: any,
+    clientMintingToken: Client,
     clientToAssignTokensTo: string,
     isE25519: boolean
 ) {
@@ -763,10 +722,9 @@ export async function Mint(
 
 // Wipeable ///////////////////////////////////////////////////
 export async function Wipe(
-    ContractId: any,
     proxyAddress: string,
     amountOfTokenToWipe: any,
-    clientWipingToken: any,
+    clientWipingToken: Client,
     accountToWipeFrom: string,
     isE25519: boolean
 ) {
@@ -786,11 +744,7 @@ export async function Wipe(
 }
 
 // Pausable ///////////////////////////////////////////////////
-export async function pause(
-    ContractId: any,
-    proxyAddress: string,
-    clientPausingToken: any
-) {
+export async function pause(proxyAddress: string, clientPausingToken: Client) {
     const params: any[] = []
     const result = await contractCall(
         ContractId.fromString(proxyAddress!),
@@ -804,9 +758,8 @@ export async function pause(
 }
 
 export async function unpause(
-    ContractId: any,
     proxyAddress: string,
-    clientPausingToken: any
+    clientPausingToken: Client
 ) {
     const params: any[] = []
     const result = await contractCall(
@@ -822,9 +775,8 @@ export async function unpause(
 
 // Freezable ///////////////////////////////////////////////////
 export async function freeze(
-    ContractId: any,
     proxyAddress: string,
-    clientFreezingToken: any,
+    clientFreezingToken: Client,
     accountToFreeze: string,
     isE25519: boolean
 ) {
@@ -841,9 +793,8 @@ export async function freeze(
 }
 
 export async function unfreeze(
-    ContractId: any,
     proxyAddress: string,
-    clientUnFreezingToken: any,
+    clientUnFreezingToken: Client,
     accountToUnFreeze: string,
     isE25519: boolean
 ) {
@@ -861,9 +812,8 @@ export async function unfreeze(
 
 // Deletable ///////////////////////////////////////////////////
 export async function deleteToken(
-    ContractId: any,
     proxyAddress: string,
-    clientDeletingToken: any
+    clientDeletingToken: Client
 ) {
     const params: any[] = []
     const result = await contractCall(
@@ -879,10 +829,9 @@ export async function deleteToken(
 
 // Rescueable ///////////////////////////////////////////////////
 export async function rescue(
-    ContractId: any,
     proxyAddress: string,
     amountOfTokenToRescue: any,
-    clientRescueingToken: any
+    clientRescueingToken: Client
 ) {
     const params = [amountOfTokenToRescue.toString()]
     const result = await contractCall(
@@ -898,9 +847,8 @@ export async function rescue(
 
 // Roles ///////////////////////////////////////////////////
 export async function getRoles(
-    ContractId: any,
     proxyAddress: string,
-    client: any,
+    client: Client,
     accountToGetRolesFrom: string,
     isE25519: boolean
 ): Promise<any[]> {
@@ -917,9 +865,8 @@ export async function getRoles(
 }
 
 export async function getRoleId(
-    ContractId: any,
     proxyAddress: string,
-    client: any,
+    client: Client,
     roleName: number
 ): Promise<string> {
     const params = [roleName]
@@ -936,10 +883,9 @@ export async function getRoleId(
 
 // SupplierAdmin ///////////////////////////////////////////////////
 export async function decreaseSupplierAllowance(
-    ContractId: any,
     proxyAddress: string,
     amountToDecrease: any,
-    clientDecreasingAllowance: any,
+    clientDecreasingAllowance: Client,
     accountToDecreaseFrom: string,
     isE25519: boolean
 ) {
@@ -958,10 +904,9 @@ export async function decreaseSupplierAllowance(
 }
 
 export async function grantSupplierRole(
-    ContractId: any,
     proxyAddress: string,
     cashInLimit: any,
-    clientGrantingRole: any,
+    clientGrantingRole: Client,
     accountToGrantRoleTo: string,
     isE25519: boolean
 ) {
@@ -980,9 +925,8 @@ export async function grantSupplierRole(
 }
 
 export async function grantUnlimitedSupplierRole(
-    ContractId: any,
     proxyAddress: string,
-    clientGrantingRole: any,
+    clientGrantingRole: Client,
     accountToGrantRoleTo: string,
     isE25519: boolean
 ) {
@@ -998,10 +942,9 @@ export async function grantUnlimitedSupplierRole(
 }
 
 export async function increaseSupplierAllowance(
-    ContractId: any,
     proxyAddress: string,
     amountToIncrease: any,
-    clientIncreasingAllowance: any,
+    clientIncreasingAllowance: Client,
     accountToIncreaseTo: string,
     isE25519: boolean
 ) {
@@ -1020,9 +963,8 @@ export async function increaseSupplierAllowance(
 }
 
 export async function isUnlimitedSupplierAllowance(
-    ContractId: any,
     proxyAddress: string,
-    clientChecking: any,
+    clientChecking: Client,
     accountToCheckFrom: string,
     isE25519: boolean
 ): Promise<boolean> {
@@ -1039,9 +981,8 @@ export async function isUnlimitedSupplierAllowance(
 }
 
 export async function resetSupplierAllowance(
-    ContractId: any,
     proxyAddress: string,
-    clientResetingAllowance: any,
+    clientResetingAllowance: Client,
     accountToResetFrom: string,
     isE25519: boolean
 ) {
@@ -1057,9 +998,8 @@ export async function resetSupplierAllowance(
 }
 
 export async function revokeSupplierRole(
-    ContractId: any,
     proxyAddress: string,
-    clientRevokingRole: any,
+    clientRevokingRole: Client,
     accountToRevokeFrom: string,
     isE25519: boolean
 ) {
@@ -1075,9 +1015,8 @@ export async function revokeSupplierRole(
 }
 
 export async function supplierAllowance(
-    ContractId: any,
     proxyAddress: string,
-    clientCheckingAllowance: any,
+    clientCheckingAllowance: Client,
     accountToCheckFrom: string,
     isE25519: boolean
 ): Promise<any> {

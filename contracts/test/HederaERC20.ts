@@ -1,4 +1,3 @@
-const { ContractId, AccountId } = require('@hashgraph/sdk')
 import '@hashgraph/hardhat-hethers'
 import '@hashgraph/sdk'
 import { BigNumber } from 'ethers'
@@ -155,23 +154,13 @@ describe('HederaERC20 Tests', function() {
 
     it('input parmeters check', async function() {
         // We retreive the Token basic params
-        const retrievedTokenName = await name(
-            ContractId,
-            proxyAddress,
-            operatorClient
-        )
-        const retrievedTokenSymbol = await symbol(
-            ContractId,
-            proxyAddress,
-            operatorClient
-        )
+        const retrievedTokenName = await name(proxyAddress, operatorClient)
+        const retrievedTokenSymbol = await symbol(proxyAddress, operatorClient)
         const retrievedTokenDecimals = await decimals(
-            ContractId,
             proxyAddress,
             operatorClient
         )
         const retrievedTokenTotalSupply = await getTotalSupply(
-            ContractId,
             proxyAddress,
             operatorClient
         )
@@ -190,7 +179,6 @@ describe('HederaERC20 Tests', function() {
 
         // associate a token to an account : success
         await associateToken(
-            ContractId,
             proxyAddress,
             nonOperatorClient,
             nonOperatorAccount,
@@ -199,7 +187,6 @@ describe('HederaERC20 Tests', function() {
 
         // We mint tokens to that account and check supply and balance: success
         await Mint(
-            ContractId,
             proxyAddress,
             amount,
             operatorClient,
@@ -210,7 +197,6 @@ describe('HederaERC20 Tests', function() {
         // dissociate the token from the account when balance is not 0 : fail
         await expect(
             dissociateToken(
-                ContractId,
                 proxyAddress,
                 nonOperatorClient,
                 nonOperatorAccount,
@@ -220,14 +206,12 @@ describe('HederaERC20 Tests', function() {
 
         // We wipe amount in account to be able to dissociate
         const Balance = await getBalanceOf(
-            ContractId,
             proxyAddress,
             operatorClient,
             nonOperatorAccount,
             nonOperatorIsE25519
         )
         await Wipe(
-            ContractId,
             proxyAddress,
             Balance,
             operatorClient,
@@ -237,7 +221,6 @@ describe('HederaERC20 Tests', function() {
 
         // dissociate the token from the account : success
         await dissociateToken(
-            ContractId,
             proxyAddress,
             nonOperatorClient,
             nonOperatorAccount,
@@ -247,7 +230,6 @@ describe('HederaERC20 Tests', function() {
         // associate a token to an account using another account : fail
         await expect(
             associateToken(
-                ContractId,
                 proxyAddress,
                 operatorClient,
                 nonOperatorAccount,
@@ -257,7 +239,6 @@ describe('HederaERC20 Tests', function() {
 
         // associate a token to an account again : success
         await associateToken(
-            ContractId,
             proxyAddress,
             nonOperatorClient,
             nonOperatorAccount,
@@ -267,7 +248,6 @@ describe('HederaERC20 Tests', function() {
         // dissociate the token from the account using another account : fail
         await expect(
             dissociateToken(
-                ContractId,
                 proxyAddress,
                 operatorClient,
                 nonOperatorAccount,
@@ -277,7 +257,6 @@ describe('HederaERC20 Tests', function() {
 
         // reset
         await dissociateToken(
-            ContractId,
             proxyAddress,
             nonOperatorClient,
             nonOperatorAccount,
@@ -289,20 +268,14 @@ describe('HederaERC20 Tests', function() {
         const amountToMint = BigNumber.from(1)
 
         // First we associate a token to an account
-        const initialSupply = await getTotalSupply(
-            ContractId,
-            proxyAddress,
-            operatorClient
-        )
+        const initialSupply = await getTotalSupply(proxyAddress, operatorClient)
         const initialBalance = await getBalanceOf(
-            ContractId,
             proxyAddress,
             operatorClient,
             nonOperatorAccount,
             nonOperatorIsE25519
         )
         await associateToken(
-            ContractId,
             proxyAddress,
             nonOperatorClient,
             nonOperatorAccount,
@@ -311,20 +284,14 @@ describe('HederaERC20 Tests', function() {
 
         // We mint tokens to that account and check supply and balance: success
         await Mint(
-            ContractId,
             proxyAddress,
             amountToMint,
             operatorClient,
             nonOperatorAccount,
             nonOperatorIsE25519
         )
-        let newSupply = await getTotalSupply(
-            ContractId,
-            proxyAddress,
-            operatorClient
-        )
+        let newSupply = await getTotalSupply(proxyAddress, operatorClient)
         let newBalance = await getBalanceOf(
-            ContractId,
             proxyAddress,
             operatorClient,
             nonOperatorAccount,
@@ -339,7 +306,6 @@ describe('HederaERC20 Tests', function() {
 
         // We wipe amount in account to be able to dissociate
         await Wipe(
-            ContractId,
             proxyAddress,
             newBalance,
             operatorClient,
@@ -349,7 +315,6 @@ describe('HederaERC20 Tests', function() {
 
         // We dissociate the token from the account
         await dissociateToken(
-            ContractId,
             proxyAddress,
             nonOperatorClient,
             nonOperatorAccount,
@@ -359,7 +324,6 @@ describe('HederaERC20 Tests', function() {
         // We mint tokens to that account : fail
         await expect(
             Mint(
-                ContractId,
                 proxyAddress,
                 amountToMint,
                 operatorClient,
@@ -368,13 +332,8 @@ describe('HederaERC20 Tests', function() {
             )
         ).to.eventually.be.rejectedWith(Error)
 
-        newSupply = await getTotalSupply(
-            ContractId,
-            proxyAddress,
-            operatorClient
-        )
+        newSupply = await getTotalSupply(proxyAddress, operatorClient)
         newBalance = await getBalanceOf(
-            ContractId,
             proxyAddress,
             operatorClient,
             nonOperatorAccount,
@@ -386,29 +345,23 @@ describe('HederaERC20 Tests', function() {
 
     it('Check initialize can only be run once', async function() {
         // Retrieve current Token address
-        const TokenAddress = await getTokenAddress(
-            ContractId,
-            proxyAddress,
-            operatorClient
-        )
+        const TokenAddress = await getTokenAddress(proxyAddress, operatorClient)
 
         // Initiliaze : fail
         await expect(
-            initialize(ContractId, proxyAddress, operatorClient, TokenAddress)
+            initialize(proxyAddress, operatorClient, TokenAddress)
         ).to.eventually.be.rejectedWith(Error)
     })
 
     it('Check transfer from', async () => {
         const AMOUNT = BigNumber.from(10)
         await associateToken(
-            ContractId,
             proxyAddress,
             nonOperatorClient,
             nonOperatorAccount,
             nonOperatorIsE25519
         )
         const approveRes = await approve(
-            ContractId,
             proxyAddress,
             nonOperatorAccount,
             nonOperatorIsE25519,
@@ -416,7 +369,6 @@ describe('HederaERC20 Tests', function() {
             operatorClient
         )
         await Mint(
-            ContractId,
             proxyAddress,
             AMOUNT,
             operatorClient,
@@ -424,7 +376,6 @@ describe('HederaERC20 Tests', function() {
             operatorIsE25519
         )
         const allowanceRes = await allowance(
-            ContractId,
             proxyAddress,
             operatorAccount,
             operatorIsE25519,
@@ -433,7 +384,6 @@ describe('HederaERC20 Tests', function() {
             operatorClient
         )
         const transferFromRes = await transferFrom(
-            ContractId,
             proxyAddress,
             operatorAccount,
             operatorIsE25519,
@@ -443,14 +393,12 @@ describe('HederaERC20 Tests', function() {
             nonOperatorClient
         )
         const balanceResp = await getBalanceOf(
-            ContractId,
             proxyAddress,
             nonOperatorClient,
             nonOperatorAccount,
             nonOperatorIsE25519
         )
         const allowancePost = await allowance(
-            ContractId,
             proxyAddress,
             operatorAccount,
             operatorIsE25519,
@@ -460,7 +408,6 @@ describe('HederaERC20 Tests', function() {
         )
 
         const transferRes = await transfer(
-            ContractId,
             proxyAddress,
             nonOperatorAccount,
             nonOperatorIsE25519,
@@ -468,17 +415,15 @@ describe('HederaERC20 Tests', function() {
             operatorClient
         )
         const balanceResp2 = await getBalanceOf(
-            ContractId,
             proxyAddress,
             nonOperatorClient,
             nonOperatorAccount,
             nonOperatorIsE25519
         )
         // Reset accounts
-        await Burn(ContractId, proxyAddress, BigNumber.from(7), operatorClient)
+        await Burn(proxyAddress, BigNumber.from(7), operatorClient)
 
         await Wipe(
-            ContractId,
             proxyAddress,
             BigNumber.from(3),
             operatorClient,
@@ -486,7 +431,6 @@ describe('HederaERC20 Tests', function() {
             nonOperatorIsE25519
         )
         await dissociateToken(
-            ContractId,
             proxyAddress,
             nonOperatorClient,
             nonOperatorAccount,
@@ -574,13 +518,11 @@ describe.skip('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
     it('Retrieve admin and implementation addresses for the Proxy', async function() {
         // We retreive the HederaERC20Proxy admin and implementation
         const implementation = await getProxyImplementation(
-            ContractId,
             proxyAdminAddress,
             operatorClient,
             proxyAddress.toSolidityAddress()
         )
         const admin = await getProxyAdmin(
-            ContractId,
             proxyAdminAddress,
             operatorClient,
             proxyAddress.toSolidityAddress()
@@ -597,11 +539,7 @@ describe.skip('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
 
     it('Retrieve proxy admin owner', async function() {
         // We retreive the HederaERC20Proxy admin and implementation
-        const ownerAccount = await owner(
-            ContractId,
-            proxyAdminAddress,
-            operatorClient
-        )
+        const ownerAccount = await owner(proxyAdminAddress, operatorClient)
 
         // We check their values : success
         expect(ownerAccount.toUpperCase()).to.equals(
@@ -631,7 +569,6 @@ describe.skip('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
         // Non Admin upgrades implementation : fail
         await expect(
             upgradeTo(
-                ContractId,
                 proxyAddress,
                 operatorClient,
                 newImplementationContract.toSolidityAddress()
@@ -643,7 +580,6 @@ describe.skip('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
         // Non Admin changes admin : fail
         await expect(
             changeAdmin(
-                ContractId,
                 proxyAddress,
                 operatorClient,
                 await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)
@@ -671,7 +607,6 @@ describe.skip('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
         // Upgrading the proxy implementation using the Proxy Admin with an account that is not the owner : fails
         await expect(
             upgrade(
-                ContractId,
                 proxyAdminAddress,
                 nonOperatorClient,
                 newImplementationContract.toSolidityAddress(),
@@ -684,7 +619,6 @@ describe.skip('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
         // Non Owner changes admin : fail
         await expect(
             changeProxyAdmin(
-                ContractId,
                 proxyAdminAddress,
                 nonOperatorClient,
                 nonOperatorAccount,
@@ -713,7 +647,6 @@ describe.skip('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
 
         // Upgrading the proxy implementation using the Proxy Admin with an account that is the owner : success
         await upgrade(
-            ContractId,
             proxyAdminAddress,
             operatorClient,
             newImplementationContract.toSolidityAddress(),
@@ -722,7 +655,6 @@ describe.skip('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
 
         // Check new implementation address
         const implementation = await getProxyImplementation(
-            ContractId,
             proxyAdminAddress,
             operatorClient,
             proxyAddress.toSolidityAddress()
@@ -733,7 +665,6 @@ describe.skip('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
 
         // reset
         await upgrade(
-            ContractId,
             proxyAdminAddress,
             operatorClient,
             stableCoinAddress.toSolidityAddress(),
@@ -744,7 +675,6 @@ describe.skip('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
     it('Change Proxy admin with the proxy admin and the owner account', async function() {
         // Owner changes admin : success
         await changeProxyAdmin(
-            ContractId,
             proxyAdminAddress,
             operatorClient,
             operatorAccount,
@@ -755,7 +685,6 @@ describe.skip('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
         // Now we cannot get the admin using the Proxy admin contract.
         await expect(
             getProxyAdmin(
-                ContractId,
                 proxyAdminAddress,
                 operatorClient,
                 proxyAddress.toSolidityAddress()
@@ -763,7 +692,7 @@ describe.skip('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
         ).to.eventually.be.rejectedWith(Error)
 
         // Check that proxy admin has been changed
-        const _admin = await admin(ContractId, proxyAddress, operatorClient)
+        const _admin = await admin(proxyAddress, operatorClient)
         expect(_admin.toUpperCase()).to.equals(
             (
                 await toEvmAddress(operatorAccount, operatorIsE25519)
@@ -772,13 +701,11 @@ describe.skip('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
 
         // reset
         await changeAdmin(
-            ContractId,
             proxyAddress,
             operatorClient,
             await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)
         )
         await changeAdmin(
-            ContractId,
             proxyAddress,
             nonOperatorClient,
             proxyAdminAddress.toSolidityAddress()
@@ -789,7 +716,6 @@ describe.skip('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
         // Non Owner transfers owner : fail
         await expect(
             transferOwnership(
-                ContractId,
                 proxyAdminAddress,
                 nonOperatorClient,
                 nonOperatorAccount,
@@ -801,7 +727,6 @@ describe.skip('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
     it('Transfers Proxy admin owner with the owner account', async function() {
         // Owner transfers owner : success
         await transferOwnership(
-            ContractId,
             proxyAdminAddress,
             operatorClient,
             nonOperatorAccount,
@@ -809,11 +734,7 @@ describe.skip('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
         )
 
         // Check
-        const ownerAccount = await owner(
-            ContractId,
-            proxyAdminAddress,
-            operatorClient
-        )
+        const ownerAccount = await owner(proxyAdminAddress, operatorClient)
         expect(ownerAccount.toUpperCase()).to.equals(
             (
                 await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)
@@ -822,7 +743,6 @@ describe.skip('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
 
         // reset
         await transferOwnership(
-            ContractId,
             proxyAdminAddress,
             nonOperatorClient,
             operatorAccount,

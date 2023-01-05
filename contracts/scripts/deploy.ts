@@ -199,7 +199,7 @@ export async function deployFactory(clientOperator: any, privateKey: string) {
     // Deploying Factory Proxy
     console.log(`Deploying Contract Factory Proxy. please wait...`)
 
-    let params = new ContractFunctionParameters()
+    const params = new ContractFunctionParameters()
         .addAddress(factory.toSolidityAddress())
         .addAddress(factoryProxyAdmin.toSolidityAddress())
         .addBytes(new Uint8Array([]))
@@ -232,7 +232,7 @@ export async function deployContractsWithSDK(
     freeze = false,
     allToContract = true
 ) {
-    let AccountEvmAddress = await toEvmAddress(account, isED25519Type)
+    const AccountEvmAddress = await toEvmAddress(account, isED25519Type)
 
     console.log(
         `Creating token  (${name},${symbol},${decimals},${initialSupply},${maxSupply},${memo},${freeze})`
@@ -259,7 +259,7 @@ export async function deployContractsWithSDK(
 
     // Deploying a Factory or using an already deployed one
     if (!factoryAddress) {
-        let result = await deployFactory(clientSdk, privateKey)
+        const result = await deployFactory(clientSdk, privateKey)
         f_proxyAddress = result[0]
         f_proxyAdminAddress = result[1]
         f_address = result[2]
@@ -271,7 +271,7 @@ export async function deployContractsWithSDK(
 
     console.log(`Invoking Factory Proxy at ${f_proxyAddress}... please wait.`)
 
-    let tokenObject = {
+    const tokenObject = {
         tokenName: name,
         tokenSymbol: symbol,
         freeze: freeze,
@@ -291,11 +291,14 @@ export async function deployContractsWithSDK(
 
     console.log(`Token Object: ${JSON.stringify(tokenObject)}`)
 
-    let parametersContractCall = [tokenObject, hederaERC20.toSolidityAddress()]
+    const parametersContractCall = [
+        tokenObject,
+        hederaERC20.toSolidityAddress(),
+    ]
 
     console.log(`deploying stableCoin... please wait.`)
 
-    let proxyContract = await contractCall(
+    const proxyContract = await contractCall(
         f_proxyAddress,
         'deployStableCoin',
         parametersContractCall,
@@ -346,7 +349,7 @@ export async function deployContractsWithSDK(
 }
 
 function tokenKeystoContract() {
-    let keys = [
+    const keys = [
         {
             keyType: 1, // admin
             PublicKey: '0x', // PublicKey.fromString(publicKey).toBytes(),
@@ -378,8 +381,8 @@ function tokenKeystoContract() {
 }
 
 function tokenKeystoKey(publicKey: string, isED25519: boolean) {
-    let PK = PublicKey.fromString(publicKey).toBytesRaw()
-    let keys = [
+    const PK = PublicKey.fromString(publicKey).toBytesRaw()
+    const keys = [
         {
             keyType: 1, // admin
             PublicKey: PK,

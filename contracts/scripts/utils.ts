@@ -1,29 +1,26 @@
-const {
+import {
+    Client,
     TokenCreateTransaction,
     DelegateContractId,
     Hbar,
-    Client,
     AccountId,
     PrivateKey,
     PublicKey,
     ContractCreateFlow,
     TokenSupplyType,
     ContractExecuteTransaction,
-} = require('@hashgraph/sdk')
+} from '@hashgraph/sdk'
 
 import Web3 from 'web3'
-import axios from 'axios';
+import axios from 'axios'
 
 const hre = require('hardhat')
 
 const web3 = new Web3()
 
-const URI_BASE = `${
-    getHederaNetworkMirrorNodeURL()
-}/api/v1/`;
+const URI_BASE = `${getHederaNetworkMirrorNodeURL()}/api/v1/`
 
-
-export const clientId = 1;
+export const clientId = 1
 
 export async function contractCall(
     contractId: any,
@@ -105,8 +102,8 @@ export async function createToken(
     name: string,
     symbol: string,
     decimals = 6,
-    initialSupply: string,
-    maxSupply: string | null,
+    initialSupply: number,
+    maxSupply: number | null,
     memo: string,
     freeze = false,
     accountId: string,
@@ -154,7 +151,7 @@ export async function deployContractSDK(
     constructorParameters?: any,
     adminKey?: any
 ) {
-    const Key = (adminKey)? adminKey: PrivateKey.fromStringED25519(privateKey);
+    const Key = adminKey ? adminKey : PrivateKey.fromStringED25519(privateKey)
 
     const transaction = new ContractCreateFlow()
         .setBytecode(factory.bytecode)
@@ -172,6 +169,9 @@ export async function deployContractSDK(
     const receipt = await txResponse.getReceipt(clientOperator)
 
     const contractId = receipt.contractId
+    if (!contractId) {
+        throw Error('Error deploying contractSDK')
+    }
     console.log(
         ` ${
             factory.name
@@ -180,41 +180,41 @@ export async function deployContractSDK(
     return contractId
 }
 
-export async function toEvmAddress(accountId: string, isE25519: boolean): Promise<string>{
+export async function toEvmAddress(
+    accountId: string,
+    isE25519: boolean
+): Promise<string> {
     try {
+        if (isE25519)
+            return '0x' + AccountId.fromString(accountId).toSolidityAddress()
 
-        if (isE25519) return "0x" + AccountId.fromString(accountId).toSolidityAddress() ;
-
-        const url = URI_BASE + 'accounts/' + accountId;
-        const res = await axios.get<IAccount>(
-            url,
-        );
-        return res.data.evm_address;
-
+        const url = URI_BASE + 'accounts/' + accountId
+        const res = await axios.get<IAccount>(url)
+        return res.data.evm_address
     } catch (error) {
-        throw new Error("Error retrieving the Evm Address : " + error);
+        throw new Error('Error retrieving the Evm Address : ' + error)
     }
 }
 
 interface IAccount {
-	evm_address: string;
-	key: IKey;
+    evm_address: string
+    key: IKey
 }
 
 interface IKey {
-	_type: string;
-	key: string;
+    _type: string
+    key: string
 }
 
 function getHederaNetworkMirrorNodeURL(): string {
-	switch (hre.network.name) {
-		case "mainnet":
-			return 'https://mainnet.mirrornode.hedera.com';
-		case "previewnet":
-			return 'https://previewnet.mirrornode.hedera.com';
-		case "testnet":
-			return 'https://testnet.mirrornode.hedera.com';
-		default:
-			return 'http://127.0.0.1:5551';
-	}
+    switch (hre.network.name) {
+        case 'mainnet':
+            return 'https://mainnet.mirrornode.hedera.com'
+        case 'previewnet':
+            return 'https://previewnet.mirrornode.hedera.com'
+        case 'testnet':
+            return 'https://testnet.mirrornode.hedera.com'
+        default:
+            return 'http://127.0.0.1:5551'
+    }
 }
