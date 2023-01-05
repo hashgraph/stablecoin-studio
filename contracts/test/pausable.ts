@@ -1,12 +1,6 @@
 import '@hashgraph/hardhat-hethers'
 import '@hashgraph/sdk'
 import { BigNumber } from 'ethers'
-
-const chai = require('chai')
-const chaiAsPromised = require('chai-as-promised')
-chai.use(chaiAsPromised)
-const expect = chai.expect
-
 import {
     deployContractsWithSDK,
     initializeClients,
@@ -17,8 +11,6 @@ import {
     getOperatorPublicKey,
     getNonOperatorClient,
     getNonOperatorAccount,
-    getNonOperatorPrivateKey,
-    getNonOperatorPublicKey,
     getNonOperatorE25519,
 } from '../scripts/deploy'
 import {
@@ -30,33 +22,24 @@ import {
     associateToken,
 } from '../scripts/contractsMethods'
 import { PAUSE_ROLE } from '../scripts/constants'
-
 import { clientId } from '../scripts/utils'
+import { Client, ContractId } from '@hashgraph/sdk'
 
-let proxyAddress: any
+const chai = require('chai')
+const chaiAsPromised = require('chai-as-promised')
+chai.use(chaiAsPromised)
+const expect = chai.expect
 
-let operatorClient: any
-let nonOperatorClient: any
+let proxyAddress: ContractId
+
+let operatorClient: Client
+let nonOperatorClient: Client
 let operatorAccount: string
 let nonOperatorAccount: string
 let operatorPriKey: string
-let nonOperatorPriKey: string
 let operatorPubKey: string
-let nonOperatorPubKey: string
 let operatorIsE25519: boolean
 let nonOperatorIsE25519: boolean
-
-let client1: any
-let client1account: string
-let client1privatekey: string
-let client1publickey: string
-let client1isED25519Type: boolean
-
-let client2: any
-let client2account: string
-let client2privatekey: string
-let client2publickey: string
-let client2isED25519Type: boolean
 
 const TokenName = 'MIDAS'
 const TokenSymbol = 'MD'
@@ -242,11 +225,11 @@ describe('Pause Tests', function() {
         )
 
         await expect(
-            pause(proxyAddress, client2)
+            pause(proxyAddress, nonOperatorClient)
         ).not.to.eventually.be.rejectedWith(Error)
 
         //Reset status
-        await unpause(proxyAddress, client2)
+        await unpause(proxyAddress, nonOperatorClient)
         await revokeRole(
             PAUSE_ROLE,
             proxyAddress,
@@ -266,7 +249,7 @@ describe('Pause Tests', function() {
         )
 
         await expect(
-            unpause(proxyAddress, client2)
+            unpause(proxyAddress, nonOperatorClient)
         ).not.to.eventually.be.rejectedWith(Error)
 
         //Reset status
@@ -288,7 +271,7 @@ describe('Pause Tests', function() {
             nonOperatorIsE25519
         )
 
-        await pause(proxyAddress, client2)
+        await pause(proxyAddress, nonOperatorClient)
         await expect(
             associateToken(
                 proxyAddress,
@@ -299,7 +282,7 @@ describe('Pause Tests', function() {
         ).to.eventually.be.rejectedWith(Error)
 
         //Reset status
-        await unpause(proxyAddress, client2)
+        await unpause(proxyAddress, nonOperatorClient)
         await revokeRole(
             PAUSE_ROLE,
             proxyAddress,
@@ -318,8 +301,8 @@ describe('Pause Tests', function() {
             nonOperatorIsE25519
         )
 
-        await pause(proxyAddress, client2)
-        await unpause(proxyAddress, client2)
+        await pause(proxyAddress, nonOperatorClient)
+        await unpause(proxyAddress, nonOperatorClient)
         await expect(
             associateToken(
                 proxyAddress,
