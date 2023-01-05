@@ -1,7 +1,7 @@
 {
     "title": "Get balance operation",
     "operationTitle": "Operation details",
-    "accountLabel": "Introduce account",
+    "accountLabel": "Enter the account",
     "accountPlaceholder": "0.0.0",
     "modalSuccessBalance": "The account {{ account }} balance is {{ balance }}.",
     "modalAction": {

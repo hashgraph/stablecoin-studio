@@ -1,11 +1,11 @@
 {
     "title": "Wipe operation",
     "operationTitle": "Operation details",
-    "amountLabel": "Introduce amount",
+    "amountLabel": "Enter the amount",
     "amountPlaceholder": "0",
     "fromAccountLabel": "Target account",
-    "decimalsValidation": "The amount has an invalid number of decimales",
-    "fromAccountPlaceholder": "Introduce account",
+    "decimalsValidation": "The amount has an invalid number of decimals",
+    "fromAccountPlaceholder": "Enter the account",
     "modalAction": {
         "subtitle": "Operation details review",
         "fromAccount": "Account",
