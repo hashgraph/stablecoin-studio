@@ -1,12 +1,4 @@
-import '@hashgraph/hardhat-hethers'
-import '@hashgraph/sdk'
 import { BigNumber } from 'ethers'
-
-const chai = require('chai')
-const chaiAsPromised = require('chai-as-promised')
-chai.use(chaiAsPromised)
-const expect = chai.expect
-
 import {
     deployContractsWithSDK,
     initializeClients,
@@ -17,8 +9,6 @@ import {
     getOperatorPublicKey,
     getNonOperatorClient,
     getNonOperatorAccount,
-    getNonOperatorPrivateKey,
-    getNonOperatorPublicKey,
     getNonOperatorE25519,
 } from '../scripts/deploy'
 import {
@@ -50,33 +40,25 @@ import {
 } from '../scripts/contractsMethods'
 
 import { clientId, toEvmAddress } from '../scripts/utils'
+import { Client, ContractId } from '@hashgraph/sdk'
 
-let proxyAddress: any
-let proxyAdminAddress: any
-let stableCoinAddress: any
+const chai = require('chai')
+const chaiAsPromised = require('chai-as-promised')
+chai.use(chaiAsPromised)
+const expect = chai.expect
 
-let operatorClient: any
-let nonOperatorClient: any
+let proxyAddress: ContractId
+let proxyAdminAddress: ContractId
+let stableCoinAddress: ContractId
+
+let operatorClient: Client
+let nonOperatorClient: Client
 let operatorAccount: string
 let nonOperatorAccount: string
 let operatorPriKey: string
-let nonOperatorPriKey: string
 let operatorPubKey: string
-let nonOperatorPubKey: string
 let operatorIsE25519: boolean
 let nonOperatorIsE25519: boolean
-
-let client1: any
-let client1account: string
-let client1privatekey: string
-let client1publickey: string
-let client1isED25519Type: boolean
-
-let client2: any
-let client2account: string
-let client2privatekey: string
-let client2publickey: string
-let client2isED25519Type: boolean
 
 const TokenName = 'MIDAS'
 const TokenSymbol = 'MD'
@@ -437,6 +419,7 @@ describe('HederaERC20 Tests', function() {
             nonOperatorIsE25519
         )
 
+        expect(transferRes).to.equals(true)
         expect(approveRes).to.equals(true)
         expect(allowanceRes).to.equals(AMOUNT)
         expect(transferFromRes).to.equals(true)
@@ -446,7 +429,7 @@ describe('HederaERC20 Tests', function() {
     })
 })
 
-describe.skip('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
+describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
     before(async function() {
         // Generate Client 1 and Client 2
 
@@ -622,7 +605,7 @@ describe.skip('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
                 proxyAdminAddress,
                 nonOperatorClient,
                 nonOperatorAccount,
-                proxyAddress.toSolidityAddress(),
+                proxyAddress,
                 nonOperatorIsE25519
             )
         ).to.eventually.be.rejectedWith(Error)
@@ -678,7 +661,7 @@ describe.skip('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
             proxyAdminAddress,
             operatorClient,
             operatorAccount,
-            proxyAddress.toSolidityAddress(),
+            proxyAddress,
             operatorIsE25519
         )
 
