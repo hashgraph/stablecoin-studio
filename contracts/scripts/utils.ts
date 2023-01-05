@@ -9,11 +9,13 @@ import {
     ContractCreateFlow,
     TokenSupplyType,
     ContractExecuteTransaction,
+    TokenId,
+    ContractId,
 } from '@hashgraph/sdk'
 
 import Web3 from 'web3'
 import axios from 'axios'
-
+import { BytesLike } from 'ethers'
 const hre = require('hardhat')
 
 const web3 = new Web3()
@@ -23,13 +25,13 @@ const URI_BASE = `${getHederaNetworkMirrorNodeURL()}/api/v1/`
 export const clientId = 1
 
 export async function contractCall(
-    contractId: any,
+    contractId: ContractId,
     functionName: string,
     parameters: any[],
-    clientOperator: any,
-    gas: any,
-    abi: any,
-    value: any = null
+    clientOperator: Client,
+    gas: number,
+    abi:any,
+    value:  number | string | Long |  Hbar = 0
 ) {
     const functionCallParameters = encodeFunctionCall(
         functionName,
@@ -45,19 +47,22 @@ export async function contractCall(
         .execute(clientOperator)
 
     const record = await contractTx.getRecord(clientOperator)
-
-    const results = decodeFunctionResult(
-        abi,
-        functionName,
-        record.contractFunctionResult?.bytes
-    )
+    let  results; 
+    if (record.contractFunctionResult){
+         results = decodeFunctionResult(
+            abi,
+            functionName,
+            record.contractFunctionResult?.bytes
+        )
+    }
+    
 
     return results
 }
 
-function encodeFunctionCall(functionName: any, parameters: any[], abi: any) {
+function encodeFunctionCall(functionName: string, parameters: any[], abi: any) {
     const functionAbi = abi.find(
-        (func: { name: any; type: string }) =>
+        (func: { name: string; type: string }) =>
             func.name === functionName && func.type === 'function'
     )
     const encodedParametersHex = web3.eth.abi
@@ -66,7 +71,7 @@ function encodeFunctionCall(functionName: any, parameters: any[], abi: any) {
     return Buffer.from(encodedParametersHex, 'hex')
 }
 
-function decodeFunctionResult(abi: any, functionName: any, resultAsBytes: any) {
+function decodeFunctionResult(abi: any, functionName: string, resultAsBytes: Uint8Array) {
     const functionAbi = abi.find(
         (func: { name: any }) => func.name === functionName
     )
@@ -82,7 +87,7 @@ function decodeFunctionResult(abi: any, functionName: any, resultAsBytes: any) {
     return jsonParsedArray
 }
 
-export function getClient() {
+export function getClient():Client {
     switch (hre.network.name) {
         case 'previewnet':
             return Client.forPreviewnet()
@@ -98,7 +103,7 @@ export function getClient() {
 }
 
 export async function createToken(
-    contractId: any,
+    contractId: string,
     name: string,
     symbol: string,
     decimals = 6,
@@ -109,8 +114,8 @@ export async function createToken(
     accountId: string,
     privateKey: string,
     publicKey: string,
-    clientSdk: any
-) {
+    clientSdk: Client
+):Promise<TokenId|null> {
     const transaction = new TokenCreateTransaction()
         .setMaxTransactionFee(new Hbar(25))
         .setTokenName(name)
@@ -146,11 +151,11 @@ export async function createToken(
 
 export async function deployContractSDK(
     factory: any,
-    privateKey: any,
-    clientOperator: any,
+    privateKey: string,
+    clientOperator: Client,
     constructorParameters?: any,
-    adminKey?: any
-) {
+    adminKey?: PrivateKey
+):Promise<ContractId> {
     const Key = adminKey ? adminKey : PrivateKey.fromStringED25519(privateKey)
 
     const transaction = new ContractCreateFlow()
