@@ -37,7 +37,6 @@ import { InvalidResponse } from './error/InvalidResponse.js';
 import { HederaId } from '../../../domain/context/shared/HederaId.js';
 import { KeyType } from '../../../domain/context/account/KeyProps.js';
 import AccountTokenListRelationViewModel from './response/AccountTokenListRelationViewModel.js';
-import { StableCoinNotAssociated } from '../../../domain/context/stablecoin/error/StableCoinNotAssociated.js';
 
 @singleton()
 export class MirrorNodeAdapter {
