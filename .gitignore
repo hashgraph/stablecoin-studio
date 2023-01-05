@@ -36,8 +36,8 @@ build
 .history
 
 # Compile contract
-artifacts/
-sdk/hedera-sc-sdk.code-workspace
-cli/hsca-config.yaml
-contracts/hardhat.config.ts
+**/artifacts/*/
+*hedera-sc-sdk.code-workspace
+*hsca-config.yaml
+*hardhat.config.ts
 sdk/__tests__/config.ts
