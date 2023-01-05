@@ -502,7 +502,7 @@ export async function changeProxyAdmin_SCF(
     isE25519: boolean
 ) {
     const params = [
-        proxyAddress,
+        proxyAddress.toSolidityAddress(),
         await toEvmAddress(newAdminAccount!, isE25519),
     ]
     await contractCall(
