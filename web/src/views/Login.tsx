@@ -57,6 +57,9 @@ const Login = () => {
 		<Flex
 			data-testid='login_container'
 			alignItems='center'
+			position='absolute'
+			w='100%'
+			zIndex={1000}
 			justifyContent='center'
 			flexDirection='column'
 			bgColor='background'
