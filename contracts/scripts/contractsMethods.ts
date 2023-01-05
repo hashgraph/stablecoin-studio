@@ -40,7 +40,7 @@ export async function getHBARBalanceOf(
 export async function transferHBAR(
     senderAccountId: string,
     receiver: string,
-    amount: any,
+    amount: BigNumber,
     client: Client,
     isReceiverSolidityAddress = false
 ) {
@@ -68,10 +68,7 @@ export async function grantRole(
     accountToGrantRoleTo: string,
     isE25519: boolean
 ) {
-    const params: any[] = [
-        ROLE,
-        await toEvmAddress(accountToGrantRoleTo!, isE25519),
-    ]
+    const params = [ROLE, await toEvmAddress(accountToGrantRoleTo!, isE25519)]
     await contractCall(
         ContractId.fromString(proxyAddress!),
         'grantRole',
@@ -89,7 +86,7 @@ export async function revokeRole(
     accountToRevokeRoleFrom: string,
     isE25519: boolean
 ) {
-    const params: any[] = [
+    const params: string[] = [
         ROLE,
         await toEvmAddress(accountToRevokeRoleFrom!, isE25519),
     ]
@@ -110,7 +107,7 @@ export async function hasRole(
     accountToCheckRoleFrom: string,
     isE25519: boolean
 ): Promise<boolean> {
-    const params: any[] = [
+    const params: string[] = [
         ROLE,
         await toEvmAddress(accountToCheckRoleFrom!, isE25519),
     ]
@@ -144,7 +141,9 @@ export async function associateToken(
     accountToAssociateTo: string,
     isE25519: boolean
 ) {
-    const params: any = [await toEvmAddress(accountToAssociateTo!, isE25519)]
+    const params: string[] = [
+        await toEvmAddress(accountToAssociateTo!, isE25519),
+    ]
     await contractCall(
         ContractId.fromString(proxyAddress!),
         'associateToken',
@@ -161,7 +160,7 @@ export async function dissociateToken(
     accountToDissociateFrom: string,
     isE25519: boolean
 ) {
-    const params: any = [await toEvmAddress(accountToDissociateFrom!, isE25519)]
+    const params = [await toEvmAddress(accountToDissociateFrom!, isE25519)]
     await contractCall(
         ContractId.fromString(proxyAddress!),
         'dissociateToken',
@@ -178,7 +177,7 @@ export async function getBalanceOf(
     accountToGetBalanceOf: string,
     isE25519: boolean,
     parse = true
-): Promise<any> {
+) {
     const params = parse
         ? [await toEvmAddress(accountToGetBalanceOf!, isE25519)]
         : [accountToGetBalanceOf]
@@ -193,8 +192,11 @@ export async function getBalanceOf(
     return BigNumber.from(result[0])
 }
 
-export async function name(proxyAddress: string, client: any): Promise<string> {
-    const params: any[] = []
+export async function name(
+    proxyAddress: string,
+    client: Client
+): Promise<string> {
+    const params: string[] = []
     const result = await contractCall(
         ContractId.fromString(proxyAddress!),
         'name',
@@ -210,7 +212,7 @@ export async function symbol(
     proxyAddress: string,
     client: Client
 ): Promise<string> {
-    const params: any[] = []
+    const params: string[] = []
     const result = await contractCall(
         ContractId.fromString(proxyAddress!),
         'symbol',
@@ -226,7 +228,7 @@ export async function decimals(
     proxyAddress: string,
     client: Client
 ): Promise<number> {
-    const params: any[] = []
+    const params: string[] = []
     const result = await contractCall(
         ContractId.fromString(proxyAddress!),
         'decimals',
@@ -260,7 +262,7 @@ export async function upgradeTo(
     client: Client,
     newImplementationContract: string
 ) {
-    const params: any = [newImplementationContract]
+    const params = [newImplementationContract]
     await contractCall(
         ContractId.fromString(proxyAddress!),
         'upgradeTo',
@@ -276,7 +278,7 @@ export async function changeAdmin(
     client: Client,
     newAdminAccount: string
 ) {
-    const params: any = [newAdminAccount]
+    const params = [newAdminAccount]
     await contractCall(
         ContractId.fromString(proxyAddress!),
         'changeAdmin',
@@ -291,7 +293,7 @@ export async function admin(
     proxyAddress: string,
     client: Client
 ): Promise<string> {
-    const params: any[] = []
+    const params: string[] = []
     const result = await contractCall(
         ContractId.fromString(proxyAddress!),
         'admin',
@@ -308,7 +310,7 @@ export async function owner(
     proxyAdminAddress: string,
     client: Client
 ): Promise<string> {
-    const params: any[] = []
+    const params: string[] = []
     const result = await contractCall(
         ContractId.fromString(proxyAdminAddress!),
         'owner',
@@ -326,7 +328,7 @@ export async function upgrade(
     newImplementationContract: string,
     proxyAddress: string
 ) {
-    const params: any = [proxyAddress, newImplementationContract]
+    const params = [proxyAddress, newImplementationContract]
     await contractCall(
         ContractId.fromString(proxyAdminAddress!),
         'upgrade',
@@ -344,7 +346,7 @@ export async function changeProxyAdmin(
     proxyAddress: string,
     isE25519: boolean
 ) {
-    const params: any = [
+    const params = [
         proxyAddress,
         await toEvmAddress(newAdminAccount!, isE25519),
     ]
@@ -364,7 +366,7 @@ export async function transferOwnership(
     newOwnerAccount: string,
     isE25519: boolean
 ) {
-    const params: any = [await toEvmAddress(newOwnerAccount!, isE25519)]
+    const params = [await toEvmAddress(newOwnerAccount!, isE25519)]
     await contractCall(
         ContractId.fromString(proxyAdminAddress!),
         'transferOwnership',
@@ -380,7 +382,7 @@ export async function getProxyImplementation(
     client: Client,
     proxyAddress: string
 ): Promise<string> {
-    const params: any[] = [proxyAddress]
+    const params = [proxyAddress]
     const result = await contractCall(
         ContractId.fromString(proxyAdminAddress!),
         'getProxyImplementation',
@@ -397,7 +399,7 @@ export async function getProxyAdmin(
     client: Client,
     proxyAddress: string
 ): Promise<string> {
-    const params: any[] = [proxyAddress]
+    const params = [proxyAddress]
     const result = await contractCall(
         ContractId.fromString(proxyAdminAddress!),
         'getProxyAdmin',
@@ -415,7 +417,7 @@ export async function upgradeTo_SCF(
     client: Client,
     newImplementationContract: string
 ) {
-    const params: any = [newImplementationContract]
+    const params = [newImplementationContract]
     await contractCall(
         ContractId.fromString(proxyAddress!),
         'upgradeTo',
@@ -431,7 +433,7 @@ export async function changeAdmin_SCF(
     client: Client,
     newAdminAccount: string
 ) {
-    const params: any = [newAdminAccount]
+    const params = [newAdminAccount]
     await contractCall(
         ContractId.fromString(proxyAddress!),
         'changeAdmin',
@@ -446,7 +448,7 @@ export async function admin_SCF(
     proxyAddress: string,
     client: Client
 ): Promise<string> {
-    const params: any[] = []
+    const params: string[] = []
     const result = await contractCall(
         ContractId.fromString(proxyAddress!),
         'admin',
@@ -463,7 +465,7 @@ export async function owner_SCF(
     proxyAdminAddress: string,
     client: Client
 ): Promise<string> {
-    const params: any[] = []
+    const params: string[] = []
     const result = await contractCall(
         ContractId.fromString(proxyAdminAddress!),
         'owner',
@@ -481,7 +483,7 @@ export async function upgrade_SCF(
     newImplementationContract: string,
     proxyAddress: string
 ) {
-    const params: any = [proxyAddress, newImplementationContract]
+    const params = [proxyAddress, newImplementationContract]
     await contractCall(
         ContractId.fromString(proxyAdminAddress!),
         'upgrade',
@@ -499,7 +501,7 @@ export async function changeProxyAdmin_SCF(
     proxyAddress: string,
     isE25519: boolean
 ) {
-    const params: any = [
+    const params = [
         proxyAddress,
         await toEvmAddress(newAdminAccount!, isE25519),
     ]
@@ -519,7 +521,7 @@ export async function transferOwnership_SCF(
     newOwnerAccount: string,
     isE25519: boolean
 ) {
-    const params: any = [await toEvmAddress(newOwnerAccount!, isE25519)]
+    const params = [await toEvmAddress(newOwnerAccount!, isE25519)]
     await contractCall(
         ContractId.fromString(proxyAdminAddress!),
         'transferOwnership',
@@ -535,7 +537,7 @@ export async function getProxyImplementation_SCF(
     client: Client,
     proxyAddress: string
 ): Promise<string> {
-    const params: any[] = [proxyAddress]
+    const params = [proxyAddress]
     const result = await contractCall(
         ContractId.fromString(proxyAdminAddress!),
         'getProxyImplementation',
@@ -552,7 +554,7 @@ export async function getProxyAdmin_SCF(
     client: Client,
     proxyAddress: string
 ): Promise<string> {
-    const params: any[] = [proxyAddress]
+    const params = [proxyAddress]
     const result = await contractCall(
         ContractId.fromString(proxyAdminAddress!),
         'getProxyAdmin',
@@ -577,8 +579,9 @@ export async function allowance(
     addressSpender: string,
     spenderIsE25519: boolean,
     client: Client
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> {
-    const params: any[] = [
+    const params = [
         await toEvmAddress(addressOwner, ownerIsE25519),
         await toEvmAddress(addressSpender, spenderIsE25519),
     ]
@@ -599,8 +602,9 @@ export async function approve(
     spenderIsE25519: boolean,
     amount: BigNumber,
     client: Client
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> {
-    const params: any[] = [
+    const params = [
         await toEvmAddress(addressSpender, spenderIsE25519),
         amount.toString(),
     ]
@@ -621,8 +625,9 @@ export async function transfer(
     spenderIsE25519: boolean,
     amount: BigNumber,
     client: Client
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> {
-    const params: any[] = [
+    const params: string[] = [
         await toEvmAddress(addressSpender, spenderIsE25519),
         amount.toString(),
     ]
@@ -645,8 +650,9 @@ export async function transferFrom(
     spenderIsE25519: boolean,
     amount: BigNumber,
     client: Client
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> {
-    const params: any[] = [
+    const params: string[] = [
         await toEvmAddress(addressOwner, ownerIsE25519),
         await toEvmAddress(addressSpender, spenderIsE25519),
         amount.toString(),
@@ -667,7 +673,7 @@ export async function getTokenAddress(
     proxyAddress: string,
     client: Client
 ): Promise<string> {
-    const params: any[] = []
+    const params: string[] = []
     const response = await contractCall(
         ContractId.fromString(proxyAddress!),
         'getTokenAddress',
@@ -682,7 +688,7 @@ export async function getTokenAddress(
 // Burnable ///////////////////////////////////////////////////
 export async function Burn(
     proxyAddress: string,
-    amountOfTokenToBurn: any,
+    amountOfTokenToBurn: BigNumber,
     clientBurningToken: Client
 ) {
     const params = [amountOfTokenToBurn.toString()]
@@ -700,12 +706,12 @@ export async function Burn(
 // Minteable ///////////////////////////////////////////////////
 export async function Mint(
     proxyAddress: string,
-    amountOfTokenToMint: any,
+    amountOfTokenToMint: BigNumber,
     clientMintingToken: Client,
     clientToAssignTokensTo: string,
     isE25519: boolean
 ) {
-    const params: any[] = [
+    const params: string[] = [
         await toEvmAddress(clientToAssignTokensTo!, isE25519),
         amountOfTokenToMint.toString(),
     ]
@@ -723,7 +729,7 @@ export async function Mint(
 // Wipeable ///////////////////////////////////////////////////
 export async function Wipe(
     proxyAddress: string,
-    amountOfTokenToWipe: any,
+    amountOfTokenToWipe: BigNumber,
     clientWipingToken: Client,
     accountToWipeFrom: string,
     isE25519: boolean
@@ -745,7 +751,7 @@ export async function Wipe(
 
 // Pausable ///////////////////////////////////////////////////
 export async function pause(proxyAddress: string, clientPausingToken: Client) {
-    const params: any[] = []
+    const params: string[] = []
     const result = await contractCall(
         ContractId.fromString(proxyAddress!),
         'pause',
@@ -761,7 +767,7 @@ export async function unpause(
     proxyAddress: string,
     clientPausingToken: Client
 ) {
-    const params: any[] = []
+    const params: string[] = []
     const result = await contractCall(
         ContractId.fromString(proxyAddress!),
         'unpause',
@@ -780,7 +786,7 @@ export async function freeze(
     accountToFreeze: string,
     isE25519: boolean
 ) {
-    const params: any[] = [await toEvmAddress(accountToFreeze!, isE25519)]
+    const params: string[] = [await toEvmAddress(accountToFreeze!, isE25519)]
     const result = await contractCall(
         ContractId.fromString(proxyAddress!),
         'freeze',
@@ -798,7 +804,7 @@ export async function unfreeze(
     accountToUnFreeze: string,
     isE25519: boolean
 ) {
-    const params: any[] = [await toEvmAddress(accountToUnFreeze!, isE25519)]
+    const params: string[] = [await toEvmAddress(accountToUnFreeze!, isE25519)]
     const result = await contractCall(
         ContractId.fromString(proxyAddress!),
         'unfreeze',
@@ -815,7 +821,7 @@ export async function deleteToken(
     proxyAddress: string,
     clientDeletingToken: Client
 ) {
-    const params: any[] = []
+    const params: string[] = []
     const result = await contractCall(
         ContractId.fromString(proxyAddress!),
         'deleteToken',
@@ -830,7 +836,7 @@ export async function deleteToken(
 // Rescueable ///////////////////////////////////////////////////
 export async function rescue(
     proxyAddress: string,
-    amountOfTokenToRescue: any,
+    amountOfTokenToRescue: BigNumber,
     clientRescueingToken: Client
 ) {
     const params = [amountOfTokenToRescue.toString()]
@@ -851,6 +857,7 @@ export async function getRoles(
     client: Client,
     accountToGetRolesFrom: string,
     isE25519: boolean
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any[]> {
     const params = [await toEvmAddress(accountToGetRolesFrom!, isE25519)]
     const result = await contractCall(
@@ -884,7 +891,7 @@ export async function getRoleId(
 // SupplierAdmin ///////////////////////////////////////////////////
 export async function decreaseSupplierAllowance(
     proxyAddress: string,
-    amountToDecrease: any,
+    amountToDecrease: BigNumber,
     clientDecreasingAllowance: Client,
     accountToDecreaseFrom: string,
     isE25519: boolean
@@ -905,12 +912,12 @@ export async function decreaseSupplierAllowance(
 
 export async function grantSupplierRole(
     proxyAddress: string,
-    cashInLimit: any,
+    cashInLimit: BigNumber,
     clientGrantingRole: Client,
     accountToGrantRoleTo: string,
     isE25519: boolean
 ) {
-    const params: any = [
+    const params: string[] = [
         await toEvmAddress(accountToGrantRoleTo!, isE25519),
         cashInLimit.toString(),
     ]
@@ -930,7 +937,7 @@ export async function grantUnlimitedSupplierRole(
     accountToGrantRoleTo: string,
     isE25519: boolean
 ) {
-    const params: any = [await toEvmAddress(accountToGrantRoleTo!, isE25519)]
+    const params = [await toEvmAddress(accountToGrantRoleTo!, isE25519)]
     await contractCall(
         ContractId.fromString(proxyAddress!),
         'grantUnlimitedSupplierRole',
@@ -943,7 +950,7 @@ export async function grantUnlimitedSupplierRole(
 
 export async function increaseSupplierAllowance(
     proxyAddress: string,
-    amountToIncrease: any,
+    amountToIncrease: BigNumber,
     clientIncreasingAllowance: Client,
     accountToIncreaseTo: string,
     isE25519: boolean
@@ -1019,7 +1026,7 @@ export async function supplierAllowance(
     clientCheckingAllowance: Client,
     accountToCheckFrom: string,
     isE25519: boolean
-): Promise<any> {
+) {
     const params = [await toEvmAddress(accountToCheckFrom!, isE25519)]
     const result = await contractCall(
         ContractId.fromString(proxyAddress),

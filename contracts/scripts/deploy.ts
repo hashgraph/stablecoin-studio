@@ -21,6 +21,8 @@ import {
     toEvmAddress,
 } from './utils'
 
+const hre = require('hardhat')
+
 const hederaERC20Address = '' //"0.0.49127272";
 
 const factoryProxyAddress = '' //"0.0.49127286";
@@ -28,7 +30,6 @@ const factoryProxyAdminAddress = '' //"0.0.49127281";
 const factoryAddress = '' //"0.0.49127276";
 
 const address_0 = '0x0000000000000000000000000000000000000000'
-const hre = require('hardhat')
 const hreConfig = hre.network.config
 
 export function initializeClients(): [
