@@ -9,10 +9,13 @@ import fs from 'fs-extra';
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 import { IConsensusNodeConfig } from '../../../domain/configuration/interfaces/IConsensusNodeConfig.js';
 import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
-import { IFactoryConfig } from 'domain/configuration/interfaces/IFactoryConfig.js';
+import { IFactoryConfig } from '../../../domain/configuration/interfaces/IFactoryConfig.js';
+import { IHederaERC20Config } from '../../../domain/configuration/interfaces/IHederaERC20Config.js';
 import {
+  HederaERC20AddressTestnet,
+  HederaERC20AddressPreviewnet,
   FactoryAddressTestnet,
-  FactoryAddressPreviewnet
+  FactoryAddressPreviewnet,
 } from 'hedera-stable-coin-sdk';
 const colors = require('colors');
 
@@ -36,6 +39,7 @@ export default class SetConfigurationService extends Service {
     await this.configureDefaultNetwork(network);
     await this.configureAccounts();
     await this.configureFactories();
+    await this.configureHederaERC20s();
   }
 
   /**
@@ -204,22 +208,41 @@ export default class SetConfigurationService extends Service {
     const factories: IFactoryConfig[] = [];
     factories.push({
       id: FactoryAddressTestnet,
-      network: "testnet"
+      network: 'testnet',
     });
     factories.push({
       id: FactoryAddressPreviewnet,
-      network: "previewnet"
+      network: 'previewnet',
     });
 
     // Set a default factories
     const defaultCfgData = configurationService.getConfiguration();
+    defaultCfgData.factories = factories;
     configurationService.setConfiguration(defaultCfgData);
     return factories;
   }
 
+  public async configureHederaERC20s(): Promise<IHederaERC20Config[]> {
+    const hederaERC20s: IHederaERC20Config[] = [];
+    hederaERC20s.push({
+      id: HederaERC20AddressTestnet,
+      network: 'testnet',
+    });
+    hederaERC20s.push({
+      id: HederaERC20AddressPreviewnet,
+      network: 'previewnet',
+    });
+
+    // Set a default hederaERC20s
+    const defaultCfgData = configurationService.getConfiguration();
+    defaultCfgData.hederaERC20s = hederaERC20s;
+    configurationService.setConfiguration(defaultCfgData);
+    return hederaERC20s;
+  }
+
   public async manageAccountMenu(): Promise<void> {
     const currentAccount = utilsService.getCurrentAccount();
-    const manageOptions = language.getArray('wizard.manageAccountOptions');
+    const manageOptions = language.getArrayFromObject('wizard.manageAccountOptions');
     const defaultCfgData = configurationService.getConfiguration();
     const accounts = defaultCfgData.accounts;
     const accountAction = await utilsService.defaultMultipleAsk(
@@ -230,22 +253,22 @@ export default class SetConfigurationService extends Service {
       `${currentAccount.accountId} - ${currentAccount.alias}`,
     );
     switch (accountAction) {
-      case manageOptions[0]:
+      case language.getText('wizard.manageAccountOptions.Change'):
         await utilsService.cleanAndShowBanner();
 
         await wizardService.chooseAccount(false);
-        await utilsService.initSDK(utilsService.getCurrentNetwork().name);
+        await utilsService.initSDK();
         await utilsService.cleanAndShowBanner();
         await wizardService.mainMenu();
         break;
-      case manageOptions[1]:
+      case language.getText('wizard.manageAccountOptions.List'):
         await utilsService.cleanAndShowBanner();
 
         console.dir(utilsService.maskPrivateAccounts(accounts), {
           depth: null,
         });
         break;
-      case manageOptions[2]:
+      case language.getText('wizard.manageAccountOptions.Add'):
         await utilsService.cleanAndShowBanner();
 
         await this.configureAccounts();
@@ -255,12 +278,12 @@ export default class SetConfigurationService extends Service {
         );
         if (operateWithNewAccount) {
           await wizardService.chooseLastAccount();
-          await utilsService.initSDK(utilsService.getCurrentNetwork().name);
+          await utilsService.initSDK();
           await utilsService.cleanAndShowBanner();
           await wizardService.mainMenu();
         }
         break;
-      case manageOptions[3]:
+      case language.getText('wizard.manageAccountOptions.Delete'):
         await utilsService.cleanAndShowBanner();
 
         const options = accounts
@@ -289,7 +312,7 @@ export default class SetConfigurationService extends Service {
           options,
           true,
         );
-        if (account === language.getText('wizard.goBack')) {
+        if (account === language.getText('wizard.backOption.goBack')) {
           await this.manageAccountMenu();
         }
         account = optionsWithoutColors[options.indexOf(account)];
@@ -300,7 +323,6 @@ export default class SetConfigurationService extends Service {
         );
         configurationService.setConfiguration(defaultCfgData);
         break;
-      case manageOptions[manageOptions.length - 1]:
       default:
         await utilsService.cleanAndShowBanner();
 
@@ -317,12 +339,12 @@ export default class SetConfigurationService extends Service {
   ): Promise<IAccountConfig> {
     let privateKey = await utilsService.defaultPasswordAsk(
       language.getText('configuration.askPrivateKey') +
-        ` '96|64|66 characters' (${accountId})`,
+        ` '96|64|66|68 characters' (${accountId})`,
     );
 
     const pkType = await utilsService.defaultMultipleAsk(
       language.getText('configuration.askPrivateKeyType'),
-      language.getArray('wizard.privateKeyType'),
+      language.getArrayFromObject('wizard.privateKeyType'),
     );
 
     const network = configurationService.getConfiguration().defaultNetwork;

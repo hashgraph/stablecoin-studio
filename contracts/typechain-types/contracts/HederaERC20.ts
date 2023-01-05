@@ -28,6 +28,86 @@ import type {
   PromiseOrValue,
 } from "../common";
 
+export declare namespace IHederaTokenService {
+  export type KeyValueStruct = {
+    inheritAccountKey: PromiseOrValue<boolean>;
+    contractId: PromiseOrValue<string>;
+    ed25519: PromiseOrValue<BytesLike>;
+    ECDSA_secp256k1: PromiseOrValue<BytesLike>;
+    delegatableContractId: PromiseOrValue<string>;
+  };
+
+  export type KeyValueStructOutput = [
+    boolean,
+    string,
+    string,
+    string,
+    string
+  ] & {
+    inheritAccountKey: boolean;
+    contractId: string;
+    ed25519: string;
+    ECDSA_secp256k1: string;
+    delegatableContractId: string;
+  };
+
+  export type TokenKeyStruct = {
+    keyType: PromiseOrValue<BigNumberish>;
+    key: IHederaTokenService.KeyValueStruct;
+  };
+
+  export type TokenKeyStructOutput = [
+    BigNumber,
+    IHederaTokenService.KeyValueStructOutput
+  ] & { keyType: BigNumber; key: IHederaTokenService.KeyValueStructOutput };
+
+  export type ExpiryStruct = {
+    second: PromiseOrValue<BigNumberish>;
+    autoRenewAccount: PromiseOrValue<string>;
+    autoRenewPeriod: PromiseOrValue<BigNumberish>;
+  };
+
+  export type ExpiryStructOutput = [number, string, number] & {
+    second: number;
+    autoRenewAccount: string;
+    autoRenewPeriod: number;
+  };
+
+  export type HederaTokenStruct = {
+    name: PromiseOrValue<string>;
+    symbol: PromiseOrValue<string>;
+    treasury: PromiseOrValue<string>;
+    memo: PromiseOrValue<string>;
+    tokenSupplyType: PromiseOrValue<boolean>;
+    maxSupply: PromiseOrValue<BigNumberish>;
+    freezeDefault: PromiseOrValue<boolean>;
+    tokenKeys: IHederaTokenService.TokenKeyStruct[];
+    expiry: IHederaTokenService.ExpiryStruct;
+  };
+
+  export type HederaTokenStructOutput = [
+    string,
+    string,
+    string,
+    string,
+    boolean,
+    BigNumber,
+    boolean,
+    IHederaTokenService.TokenKeyStructOutput[],
+    IHederaTokenService.ExpiryStructOutput
+  ] & {
+    name: string;
+    symbol: string;
+    treasury: string;
+    memo: string;
+    tokenSupplyType: boolean;
+    maxSupply: BigNumber;
+    freezeDefault: boolean;
+    tokenKeys: IHederaTokenService.TokenKeyStructOutput[];
+    expiry: IHederaTokenService.ExpiryStructOutput;
+  };
+}
+
 export interface HederaERC20Interface extends utils.Interface {
   functions: {
     "BURN_ROLE()": FunctionFragment;
@@ -57,7 +137,7 @@ export interface HederaERC20Interface extends utils.Interface {
     "grantUnlimitedSupplierRole(address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
     "increaseSupplierAllowance(address,uint256)": FunctionFragment;
-    "initialize(address,address)": FunctionFragment;
+    "initialize((string,string,address,string,bool,int64,bool,(uint256,(bool,address,bytes,bytes,address))[],(uint32,address,uint32)),uint64,uint32,address)": FunctionFragment;
     "isUnlimitedSupplierAllowance(address)": FunctionFragment;
     "mint(address,uint256)": FunctionFragment;
     "name()": FunctionFragment;
@@ -229,7 +309,12 @@ export interface HederaERC20Interface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "initialize",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+    values: [
+      IHederaTokenService.HederaTokenStruct,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "isUnlimitedSupplierAllowance",
@@ -742,16 +827,16 @@ export interface HederaERC20 extends BaseContract {
     WIPE_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     allowance(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<string>,
+      owner: PromiseOrValue<string>,
+      spender: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     approve(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+      spender: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     associateToken(
       adr: PromiseOrValue<string>,
@@ -837,7 +922,9 @@ export interface HederaERC20 extends BaseContract {
     ): Promise<ContractTransaction>;
 
     initialize(
-      tokenAddress: PromiseOrValue<string>,
+      token: IHederaTokenService.HederaTokenStruct,
+      initialTotalSupply: PromiseOrValue<BigNumberish>,
+      tokenDecimals: PromiseOrValue<BigNumberish>,
       originalSender: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -901,17 +988,17 @@ export interface HederaERC20 extends BaseContract {
     totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     transfer(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     transferFrom(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<string>,
-      arg2: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     unfreeze(
       account: PromiseOrValue<string>,
@@ -946,16 +1033,16 @@ export interface HederaERC20 extends BaseContract {
   WIPE_ROLE(overrides?: CallOverrides): Promise<string>;
 
   allowance(
-    arg0: PromiseOrValue<string>,
-    arg1: PromiseOrValue<string>,
+    owner: PromiseOrValue<string>,
+    spender: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   approve(
-    arg0: PromiseOrValue<string>,
-    arg1: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
+    spender: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   associateToken(
     adr: PromiseOrValue<string>,
@@ -1041,7 +1128,9 @@ export interface HederaERC20 extends BaseContract {
   ): Promise<ContractTransaction>;
 
   initialize(
-    tokenAddress: PromiseOrValue<string>,
+    token: IHederaTokenService.HederaTokenStruct,
+    initialTotalSupply: PromiseOrValue<BigNumberish>,
+    tokenDecimals: PromiseOrValue<BigNumberish>,
     originalSender: PromiseOrValue<string>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -1105,17 +1194,17 @@ export interface HederaERC20 extends BaseContract {
   totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
   transfer(
-    arg0: PromiseOrValue<string>,
-    arg1: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
+    to: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   transferFrom(
-    arg0: PromiseOrValue<string>,
-    arg1: PromiseOrValue<string>,
-    arg2: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
+    from: PromiseOrValue<string>,
+    to: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   unfreeze(
     account: PromiseOrValue<string>,
@@ -1150,14 +1239,14 @@ export interface HederaERC20 extends BaseContract {
     WIPE_ROLE(overrides?: CallOverrides): Promise<string>;
 
     allowance(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<string>,
+      owner: PromiseOrValue<string>,
+      spender: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     approve(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<BigNumberish>,
+      spender: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -1243,10 +1332,12 @@ export interface HederaERC20 extends BaseContract {
     ): Promise<void>;
 
     initialize(
-      tokenAddress: PromiseOrValue<string>,
+      token: IHederaTokenService.HederaTokenStruct,
+      initialTotalSupply: PromiseOrValue<BigNumberish>,
+      tokenDecimals: PromiseOrValue<BigNumberish>,
       originalSender: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<string>;
 
     isUnlimitedSupplierAllowance(
       supplier: PromiseOrValue<string>,
@@ -1305,15 +1396,15 @@ export interface HederaERC20 extends BaseContract {
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
     transfer(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<BigNumberish>,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     transferFrom(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<string>,
-      arg2: PromiseOrValue<BigNumberish>,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -1549,15 +1640,15 @@ export interface HederaERC20 extends BaseContract {
     WIPE_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     allowance(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<string>,
+      owner: PromiseOrValue<string>,
+      spender: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     approve(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
+      spender: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     associateToken(
@@ -1644,7 +1735,9 @@ export interface HederaERC20 extends BaseContract {
     ): Promise<BigNumber>;
 
     initialize(
-      tokenAddress: PromiseOrValue<string>,
+      token: IHederaTokenService.HederaTokenStruct,
+      initialTotalSupply: PromiseOrValue<BigNumberish>,
+      tokenDecimals: PromiseOrValue<BigNumberish>,
       originalSender: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -1708,16 +1801,16 @@ export interface HederaERC20 extends BaseContract {
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
     transfer(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     transferFrom(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<string>,
-      arg2: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     unfreeze(
@@ -1756,15 +1849,15 @@ export interface HederaERC20 extends BaseContract {
     WIPE_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     allowance(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<string>,
+      owner: PromiseOrValue<string>,
+      spender: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     approve(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
+      spender: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     associateToken(
@@ -1851,7 +1944,9 @@ export interface HederaERC20 extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     initialize(
-      tokenAddress: PromiseOrValue<string>,
+      token: IHederaTokenService.HederaTokenStruct,
+      initialTotalSupply: PromiseOrValue<BigNumberish>,
+      tokenDecimals: PromiseOrValue<BigNumberish>,
       originalSender: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -1915,16 +2010,16 @@ export interface HederaERC20 extends BaseContract {
     totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     transfer(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     transferFrom(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<string>,
-      arg2: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     unfreeze(

@@ -3,19 +3,21 @@ import { useTranslation } from 'react-i18next';
 import BaseContainer from '../../../components/BaseContainer';
 import GridDirectAction from '../../../components/GridDirectAction';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
 	SELECTED_WALLET_CAPABILITIES,
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNTID,
-	SELECTED_WALLET_ACCOUNT_INFO
+	walletActions,
 } from '../../../store/slices/walletSlice';
 import type { DirectActionProps } from '../../../components/DirectAction';
+import type { StableCoinCapabilities } from 'hedera-stable-coin-sdk';
 import {
-	Capabilities,
-	Roles,
-	PauseStableCoinRequest,
-	DeleteStableCoinRequest,
+	PauseRequest,
+	DeleteRequest,
+	Operation,
+	Access,
+	StableCoinRole,
 } from 'hedera-stable-coin-sdk';
 import type { IAccountToken } from '../../../interfaces/IAccountToken';
 import type { IExternalToken } from '../../../interfaces/IExternalToken';
@@ -24,16 +26,19 @@ import SDKService from '../../../services/SDKService';
 import { useNavigate } from 'react-router-dom';
 import { NamedRoutes } from '../../../Router/NamedRoutes';
 import { RouterManager } from '../../../Router/RouterManager';
+
 const DangerZoneOperations = () => {
 	const { t } = useTranslation('operations');
 
 	const navigate = useNavigate();
+	const dispatch = useDispatch();
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const accountId = useSelector(SELECTED_WALLET_PAIRED_ACCOUNTID);
-	const capabilities: Capabilities[] | undefined = useSelector(SELECTED_WALLET_CAPABILITIES);
-	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
-	
+	const capabilities: StableCoinCapabilities | undefined = useSelector(
+		SELECTED_WALLET_CAPABILITIES,
+	);
+
 	const [disabledFeatures, setDisabledFeatures] = useState({
 		pause: false,
 		delete: false,
@@ -45,29 +50,13 @@ const DangerZoneOperations = () => {
 	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
 
 	const [requestPause] = useState(
-		new PauseStableCoinRequest({
-			account: {
-				accountId
-			},
-			proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
-			tokenId: selectedStableCoin?.tokenId ?? '',
-			publicKey:{
-				key:accountInfo.publicKey?.key??'',
-				type:accountInfo.publicKey?.type ??'ED25519'
-			}
+		new PauseRequest({
+			tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
 		}),
 	);
 	const [requestDelete] = useState(
-		new DeleteStableCoinRequest({
-			account: {
-				accountId,
-			},
-			proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
-			tokenId: selectedStableCoin?.tokenId ?? '',
-			publicKey:{
-				key:accountInfo.publicKey?.key??'',
-				type:accountInfo.publicKey?.type ??'ED25519'
-			}
+		new DeleteRequest({
+			tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
 		}),
 	);
 	useEffect(() => {
@@ -83,10 +72,12 @@ const DangerZoneOperations = () => {
 		if (tokensAccount) {
 			const tokensAccountParsed = JSON.parse(tokensAccount);
 			if (tokensAccountParsed) {
-				const myAccount = tokensAccountParsed.find((acc: IAccountToken) => acc.id === accountId);
+				const myAccount = tokensAccountParsed.find(
+					(acc: IAccountToken) => acc.id === accountId?.toString(),
+				);
 				if (myAccount) {
 					const externalToken = myAccount?.externalTokens.find(
-						(coin: IExternalToken) => coin.id === selectedStableCoin?.tokenId,
+						(coin: IExternalToken) => coin.id === selectedStableCoin?.tokenId?.toString(),
 					);
 					if (externalToken) {
 						isExternalToken = true;
@@ -95,46 +86,57 @@ const DangerZoneOperations = () => {
 				}
 			}
 		}
-		const areDisabled = {
+
+		const operations = capabilities?.capabilities.map((x) => x.operation);
+		const canPause = operations?.includes(Operation.PAUSE);
+		const areDisabled: {
+			pause: boolean;
+			unpause: boolean;
+			delete: boolean;
+		} = {
 			pause: !isExternalToken
-				? (!capabilities?.includes(Capabilities.PAUSE) ||
-						!capabilities?.includes(Capabilities.PAUSE_HTS)) &&
-				  selectedStableCoin?.paused === 'PAUSED'
-				: (!roles.includes(Roles.PAUSE_ROLE) ||
-				  !capabilities?.includes(Capabilities.PAUSE_HTS)) &&
-				  selectedStableCoin?.paused === 'PAUSED',
+				? (!canPause || (canPause && selectedStableCoin?.paused)) ?? false
+				: (!operations?.includes(Operation.PAUSE) ||
+				  (operations?.includes(Operation.PAUSE) && (getAccessByOperation(Operation.PAUSE) !== Access.HTS) && 
+				   !roles.includes(StableCoinRole.PAUSE_ROLE)) ||
+				   selectedStableCoin?.paused) ?? 
+				   false,
 			unpause: !isExternalToken
-				? (!capabilities?.includes(Capabilities.PAUSE) ||
-						!capabilities?.includes(Capabilities.PAUSE_HTS)) &&
-				  selectedStableCoin?.paused === 'UNPAUSED'
-				: (!roles.includes(Roles.PAUSE_ROLE) ||
-				  !capabilities?.includes(Capabilities.PAUSE_HTS)) &&
-				  selectedStableCoin?.paused === 'UNPAUSED',
+				? (!canPause || (canPause && !selectedStableCoin?.paused)) ?? false
+				: (!operations?.includes(Operation.PAUSE) ||
+				  (operations?.includes(Operation.PAUSE) && (getAccessByOperation(Operation.PAUSE) !== Access.HTS) && 
+				   !roles.includes(StableCoinRole.PAUSE_ROLE)) ||
+				   !selectedStableCoin?.paused) ??
+				   false,
 			delete: !isExternalToken
-				? (!capabilities?.includes(Capabilities.DELETE) ||
-					!capabilities?.includes(Capabilities.DELETE_HTS)) &&
-			      (selectedStableCoin?.paused === 'PAUSED' || !!selectedStableCoin?.deleted )
-				: !roles.includes(Roles.DELETE_ROLE) && !capabilities?.includes(Capabilities.DELETE_HTS) && 
-					(selectedStableCoin?.paused === 'UNPAUSED' ||	!selectedStableCoin?.deleted),
+				? (!canPause || (selectedStableCoin?.paused || selectedStableCoin?.deleted)) ?? false
+				: (!operations?.includes(Operation.DELETE) ||
+				  (operations?.includes(Operation.DELETE) && (getAccessByOperation(Operation.DELETE) !== Access.HTS) && 
+				   !roles.includes(StableCoinRole.DELETE_ROLE)) ||
+				   selectedStableCoin?.paused || 
+				   selectedStableCoin?.deleted) ?? 
+				false
 		};
-		
+
 		setDisabledFeatures(areDisabled);
+
+		function getAccessByOperation(operation: Operation): Access | undefined {
+			return capabilities?.capabilities.filter((capability) => {
+				return (capability.operation === operation);
+			})[0].access ?? undefined;
+		}
 	};
 
-	const handlePause: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
+	const handlePause: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError, onLoading }) => {
 		try {
-			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId) {
+			onLoading();
+			if (!selectedStableCoin?.proxyAddress || !selectedStableCoin?.tokenId) {
 				onError();
 				return;
 			}
 
 			await SDKService.pause(requestPause);
-			setDisabledFeatures({
-				...disabledFeatures,
-				pause: !disabledFeatures.pause,
-				unpause: !disabledFeatures.unpause,
-				delete: true,
-			});
+			dispatch(walletActions.setPausedToken(true));
 			onSuccess();
 		} catch (error: any) {
 			setErrorTransactionUrl(error.transactionUrl);
@@ -143,19 +145,16 @@ const DangerZoneOperations = () => {
 		}
 	};
 
-	const handleUnpause: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
+	const handleUnpause: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError, onLoading }) => {
 		try {
-			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId) {
+			onLoading();
+			if (!selectedStableCoin?.proxyAddress || !selectedStableCoin?.tokenId) {
 				onError();
 				return;
 			}
 
 			await SDKService.unpause(requestPause);
-			setDisabledFeatures({
-				...disabledFeatures,
-				pause: !disabledFeatures.pause,
-				unpause: !disabledFeatures.unpause,
-			});
+			dispatch(walletActions.setPausedToken(false));
 			onSuccess();
 		} catch (error: any) {
 			setErrorTransactionUrl(error.transactionUrl);
@@ -164,21 +163,17 @@ const DangerZoneOperations = () => {
 		}
 	};
 
-	const handleDelete: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
+	const handleDelete: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError, onLoading }) => {
 		try {
-			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId) {
+			onLoading();
+			if (!selectedStableCoin?.proxyAddress || !selectedStableCoin?.tokenId) {
 				onError();
 				return;
 			}
 
 			await SDKService.delete(requestDelete);
-			setDisabledFeatures({
-				...disabledFeatures,
-				pause: true,
-				unpause: true,
-				delete:true
-			});
 			onSuccess();
+			dispatch(walletActions.setDeletedToken(true));
 			RouterManager.to(navigate, NamedRoutes.Operations);
 		} catch (error: any) {
 			setErrorTransactionUrl(error.transactionUrl);

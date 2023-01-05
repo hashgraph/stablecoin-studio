@@ -149,7 +149,7 @@ function WIPE_ROLE() external view returns (bytes32)
 ### allowance
 
 ```solidity
-function allowance(address, address) external pure returns (uint256)
+function allowance(address owner, address spender) external view returns (uint256)
 ```
 
 
@@ -160,8 +160,8 @@ function allowance(address, address) external pure returns (uint256)
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | address | undefined |
-| _1 | address | undefined |
+| owner | address | undefined |
+| spender | address | undefined |
 
 #### Returns
 
@@ -172,7 +172,7 @@ function allowance(address, address) external pure returns (uint256)
 ### approve
 
 ```solidity
-function approve(address, uint256) external pure returns (bool)
+function approve(address spender, uint256 amount) external nonpayable returns (bool)
 ```
 
 
@@ -183,8 +183,8 @@ function approve(address, uint256) external pure returns (bool)
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | address | undefined |
-| _1 | uint256 | undefined |
+| spender | address | undefined |
+| amount | uint256 | undefined |
 
 #### Returns
 
@@ -260,7 +260,7 @@ function decimals() external view returns (uint8)
 
 
 
-*Returns the number of decimals of the token *
+*Returns the number of decimals of the token*
 
 
 #### Returns
@@ -517,7 +517,7 @@ function increaseSupplierAllowance(address supplier, uint256 amount) external no
 ### initialize
 
 ```solidity
-function initialize(address tokenAddress, address originalSender) external payable
+function initialize(IHederaTokenService.HederaToken token, uint64 initialTotalSupply, uint32 tokenDecimals, address originalSender) external payable returns (address)
 ```
 
 
@@ -528,8 +528,16 @@ function initialize(address tokenAddress, address originalSender) external payab
 
 | Name | Type | Description |
 |---|---|---|
-| tokenAddress | address | undefined |
+| token | IHederaTokenService.HederaToken | undefined |
+| initialTotalSupply | uint64 | undefined |
+| tokenDecimals | uint32 | undefined |
 | originalSender | address | undefined |
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | address | undefined |
 
 ### isUnlimitedSupplierAllowance
 
@@ -584,7 +592,7 @@ function name() external view returns (string)
 
 
 
-*Returns the name of the token *
+*Returns the name of the token*
 
 
 #### Returns
@@ -750,7 +758,7 @@ function symbol() external view returns (string)
 
 
 
-*Returns the symbol of the token *
+*Returns the symbol of the token*
 
 
 #### Returns
@@ -767,7 +775,7 @@ function totalSupply() external view returns (uint256)
 
 
 
-*Returns the total number of tokens that exits *
+*Returns the total number of tokens that exits*
 
 
 #### Returns
@@ -779,19 +787,19 @@ function totalSupply() external view returns (uint256)
 ### transfer
 
 ```solidity
-function transfer(address, uint256) external pure returns (bool)
+function transfer(address to, uint256 amount) external nonpayable returns (bool)
 ```
 
 
 
-*Function not already implemented*
+*Transfers an amount of tokens to an account*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | address | undefined |
-| _1 | uint256 | undefined |
+| to | address | The address the tokens are transferred to |
+| amount | uint256 | undefined |
 
 #### Returns
 
@@ -802,20 +810,20 @@ function transfer(address, uint256) external pure returns (bool)
 ### transferFrom
 
 ```solidity
-function transferFrom(address, address, uint256) external pure returns (bool)
+function transferFrom(address from, address to, uint256 amount) external nonpayable returns (bool)
 ```
 
 
 
-*Function not already implemented*
+*Transfers an amount of tokens from and account to another account*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | address | undefined |
-| _1 | address | undefined |
-| _2 | uint256 | undefined |
+| from | address | The address the tokens are transferred from |
+| to | address | The address the tokens are transferred to |
+| amount | uint256 | The amount to transfer |
 
 #### Returns
 

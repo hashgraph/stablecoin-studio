@@ -1,25 +1,68 @@
-import { ValueObject } from '../../../core/types.js';
-import { PublicKeyNotValid } from './error/PublicKeyNotValid.js';
-import { PublicKey as HPublicKey } from '@hashgraph/sdk';
-import CheckStrings from '../../../core/checks/strings/CheckStrings.js';
-import { RequestPublicKey } from '../../../port/in/sdk/request/BaseRequest.js';
-import BaseError from '../../../core/error/BaseError.js';
-import PrivateKey from './PrivateKey.js';
+/*
+ *
+ * Hedera Stable Coin SDK
+ *
+ * Copyright (C) 2023 Hedera Hashgraph, LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
 
-export default class PublicKey extends ValueObject {
+import KeyProps, { KeyType } from './KeyProps.js';
+import { PublicKey as HPublicKey } from '@hashgraph/sdk';
+import PrivateKey from './PrivateKey.js';
+import BaseError from '../../../core/error/BaseError.js';
+import { RuntimeError } from '../../../core/error/RuntimeError.js';
+
+export default class PublicKey implements KeyProps {
 	public static readonly NULL: PublicKey = new PublicKey({
 		key: 'null',
-		type: 'null',
+		type: KeyType.NULL,
 	});
 
 	public readonly key: string;
 	public readonly type: string;
-	constructor(params: { key: string; type: string }) {
-		const { key, type } = params;
-		super();
+	constructor(params: Partial<KeyProps> | string) {
+		let key: string, type: string;
+		if (typeof params === 'string') {
+			key = this.formatKey(params);
+			type = this.getTypeFromLength(key);
+		} else {
+			if (!params.key) {
+				throw new RuntimeError('Invalid public key');
+			}
+			key = this.formatKey(params.key);
+			type = params.type ?? HPublicKey.fromString(key)._key._type;
+		}
 		PublicKey.validate(key);
 		this.key = key;
 		this.type = type;
+	}
+
+	private getTypeFromLength(params: string): string {
+		switch (params.length) {
+			case 66 | 68:
+				return KeyType.ECDSA;
+			default:
+				return KeyType.ED25519;
+		}
+	}
+
+	private formatKey(key: string): string {
+		if (key.length > 0 && key.startsWith('0x')) {
+			return key.substring(2);
+		}
+		return key;
 	}
 
 	public static fromHederaKey(key: HPublicKey): PublicKey {
@@ -30,7 +73,7 @@ export default class PublicKey extends ValueObject {
 	}
 
 	public static fromPrivateKey(key: string, type: string): PublicKey {
-		return new PrivateKey(key, type).publicKey;
+		return new PrivateKey({ key, type }).publicKey;
 	}
 
 	public static isNull(val?: { key: string; type: string }): boolean {
@@ -51,27 +94,9 @@ export default class PublicKey extends ValueObject {
 		});
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public static validate(val?: string | object): BaseError[] {
 		const err: BaseError[] = [];
-		if (typeof val === 'string') {
-			if (!CheckStrings.isNotEmpty(val))
-				err.push(new PublicKeyNotValid(val ?? 'undefined'));
-			if (!CheckStrings.isLengthBetween(val, 64, 66)) {
-				err.push(new PublicKeyNotValid(val));
-			}
-		} else if (typeof val === 'object') {
-			const keys = Object.keys(val);
-			if (!(keys.includes('key') && keys.includes('type'))) {
-				err.push(new PublicKeyNotValid(JSON.stringify(val)));
-			} else {
-				const pk = val as RequestPublicKey;
-				if (!CheckStrings.isNotEmpty(pk.key)) {
-					err.push(new PublicKeyNotValid(JSON.stringify(val)));
-				} else if (!CheckStrings.isLengthBetween(pk.key, 64, 66)) {
-					err.push(new PublicKeyNotValid(pk.key, pk.type));
-				}
-			}
-		}
 		return err;
 	}
 }

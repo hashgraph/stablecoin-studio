@@ -10,7 +10,7 @@ interface ReviewProps {
 
 const Review = (props: ReviewProps) => {
 	const { form } = props;
-	const { t, i18n } = useTranslation(['global', 'stableCoinCreation']);
+	const { t } = useTranslation(['global', 'stableCoinCreation']);
 
 	const { getValues } = form;
 	const {
@@ -21,7 +21,6 @@ const Review = (props: ReviewProps) => {
 		supplyType,
 		maxSupply,
 		decimals,
-		expirationDate,
 		managementPermissions,
 		adminKey,
 		supplyKey,
@@ -29,14 +28,6 @@ const Review = (props: ReviewProps) => {
 		freezeKey,
 		pauseKey,
 	} = getValues();
-
-	const formatDate = (date = '') => {
-		return new Date(date).toLocaleDateString(i18n.language, {
-			year: 'numeric',
-			month: '2-digit',
-			day: '2-digit',
-		});
-	};
 
 	const getKey = (keySelected: { value: number; label: string }, nameOtherKey: string) => {
 		const { value, label } = keySelected;
@@ -99,11 +90,7 @@ const Review = (props: ReviewProps) => {
 							{
 								label: t('stableCoinCreation:optionalDetails.decimals'),
 								value: decimals || '',
-							},
-							{
-								label: t('stableCoinCreation:optionalDetails.expirationDate'),
-								value: expirationDate ? formatDate(expirationDate) : '',
-							},
+							}
 						]}
 					/>
 					<DetailsReview

@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Navigate, Route, Routes, Outlet } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Flex, Spinner } from '@chakra-ui/react';
+import { Flex, Spinner, Text } from '@chakra-ui/react';
 import Layout from '../layout/Layout';
 import { RoutesMappingUrl } from './RoutesMappingUrl';
 import CashInOperation from '../views/Operations/CashIn';
@@ -19,127 +19,119 @@ import Operations from '../views/Operations';
 import Roles from '../views/Roles';
 import StableCoinCreation from '../views/StableCoinCreation/StableCoinCreation';
 import StableCoinNotSelected from '../views/ErrorPage/StableCoinNotSelected';
-import SDKService, { HashConnectConnectionState } from '../services/SDKService';
+import SDKService from '../services/SDKService';
 import StableCoinDetails from '../views/StableCoinDetails';
-import { hashpackActions, IS_INITIALIZED } from '../store/slices/hashpackSlice';
 import {
-	HAS_WALLET_EXTENSION,
+	AVAILABLE_WALLETS,
+	LAST_WALLET_SELECTED,
 	SELECTED_WALLET_COIN,
-	SELECTED_WALLET_PAIRED,
+	SELECTED_WALLET_STATUS,
 	walletActions,
 } from '../store/slices/walletSlice';
-import type { SavedPairingData } from 'hedera-stable-coin-sdk';
 import ImportedTokenCreation from '../views/ImportedToken/ImportedTokenCreation';
 import DangerZoneOperations from '../views/Operations/DangerZone';
+import type { EventParameter, WalletEvent } from 'hedera-stable-coin-sdk';
+import { LoggerTransports, SDK, ConnectionState } from 'hedera-stable-coin-sdk';
 
-const PrivateRoute = ({ status }: { status?: HashConnectConnectionState }) => {
-	return (
-		<Layout>
-			{status === HashConnectConnectionState.Paired ? (
-				<Outlet />
-			) : (
-				<Navigate to={RoutesMappingUrl.login} replace />
-			)}
-		</Layout>
-	);
+const PrivateRoute = ({ allow }: { allow: boolean }) => {
+	return <Layout>{allow ? <Outlet /> : <Navigate to={RoutesMappingUrl.login} replace />}</Layout>;
 };
 
-const OnboardingRoute = ({ status }: { status?: HashConnectConnectionState }) => {
-	return status !== HashConnectConnectionState.Paired ? (
-		<Outlet />
-	) : (
-		<Navigate to={RoutesMappingUrl.stableCoinNotSelected} replace />
-	);
+const OnboardingRoute = ({ allow }: { allow: boolean }) => {
+	return allow ? <Outlet /> : <Navigate to={RoutesMappingUrl.stableCoinNotSelected} replace />;
 };
 
 const Router = () => {
-	const [status, setStatus] = useState<HashConnectConnectionState>();
-
 	const dispatch = useDispatch();
 
-	const haspackInitialized = useSelector(IS_INITIALIZED);
-	const hasWalletExtension = useSelector(HAS_WALLET_EXTENSION);
+	const availableWallets = useSelector(AVAILABLE_WALLETS);
 	const selectedWalletCoin = !!useSelector(SELECTED_WALLET_COIN);
-	const selectedWalletPairedAccount = useSelector(SELECTED_WALLET_PAIRED);
+	const lastWallet = useSelector(LAST_WALLET_SELECTED);
+	const status = useSelector(SELECTED_WALLET_STATUS);
 
 	useEffect(() => {
 		instanceSDK();
 	}, []);
 
-	useEffect(() => {
-		if (haspackInitialized || hasWalletExtension) {
-			getStatus();
-		}
-	}, [haspackInitialized, hasWalletExtension]);
-
-	useEffect(() => {
-		if (!status) return;
-
-		dispatch(hashpackActions.setStatus(status));
-
-		if (status === HashConnectConnectionState.Paired) {
-			getWalletData();
-		}
-	}, [status]);
-
-	const getWalletData = async () => {
-		const walletData = await SDKService.getWalletData();
-		let result = { ...walletData };
-
-		if (selectedWalletPairedAccount) {
-			result = {
-				...result,
-				savedPairings: [selectedWalletPairedAccount as any as SavedPairingData],
-			};
-		}
-		dispatch(walletActions.setData(result));
-	};
-
-	const onInit = () => dispatch(hashpackActions.setInitialized());
-
-	const onWalletExtensionFound = () => dispatch(walletActions.setHasWalletExtension());
-
-	const onWalletPaired = (savedPairings: any) => {
-		if (savedPairings) {
-			dispatch(walletActions.setSavedPairings([savedPairings]));
-		}
-
-		setStatus(HashConnectConnectionState.Paired);
-	};
-
-	const onWalletConnectionChanged = (newStatus: any) => {
-		if (newStatus === HashConnectConnectionState.Disconnected) {
-			setStatus(HashConnectConnectionState.Disconnected);
+	const onLastWalletEvent = <T extends keyof WalletEvent>(
+		event: EventParameter<T>,
+		cll: CallableFunction,
+	) => {
+		const lastWallet = localStorage.getItem('lastWallet');
+		if (event) {
+			if (lastWallet && lastWallet === event.wallet) {
+				cll(event);
+			}
 		}
 	};
 
-	const instanceSDK = async () =>
-		await SDKService.getInstance({
-			onInit,
-			onWalletExtensionFound,
-			onWalletPaired,
-			onWalletConnectionChanged,
+	const walletPaired = (event: EventParameter<'walletPaired'>) => {
+		onLastWalletEvent(event, () => {
+			dispatch(walletActions.setData(event.data));
+			dispatch(walletActions.setStatus(ConnectionState.Paired));
 		});
+	};
 
-	const getStatus = async () => {
-		try {
-			const status = await SDKService.getStatus();
-			setStatus(status);
-		} catch {
-			setStatus(HashConnectConnectionState.Disconnected);
+	const walletConnectionStatusChanged = (
+		event: EventParameter<'walletConnectionStatusChanged'>,
+	) => {
+		onLastWalletEvent(event, () => {
+			dispatch(walletActions.setStatus(event.status));
+		});
+	};
+
+	const walletDisconnect = (event: EventParameter<'walletDisconnect'>) => {
+		onLastWalletEvent(event, () => {
+			dispatch(walletActions.setStatus(ConnectionState.Disconnected));
+		});
+	};
+
+	const walletFound = (event: EventParameter<'walletFound'>) => {
+		if (event) {
+			dispatch(walletActions.setHasWalletExtension(event.name));
 		}
+	};
+
+	const instanceSDK = async () => {
+		SDK.appMetadata = {
+			name: 'Hedera Stable Coin',
+			description: 'An hedera dApp',
+			icon: 'https://dashboard-assets.dappradar.com/document/15402/hashpack-dapp-defi-hedera-logo-166x166_696a701b42fd20aaa41f2591ef2339c7.png',
+			url: '',
+		};
+		SDK.log = {
+			level: process.env.REACT_APP_LOG_LEVEL ?? 'ERROR',
+			transports: new LoggerTransports.Console(),
+		};
+		await SDKService.init(
+			{
+				walletFound,
+				walletPaired,
+				walletConnectionStatusChanged,
+				walletDisconnect,
+			},
+			lastWallet,
+		);
 	};
 
 	return (
 		<main>
-			{haspackInitialized ? (
+			{availableWallets.length > 0 ? (
 				<Routes>
 					{/* Public routes */}
-					<Route element={<OnboardingRoute status={status} />}>
+					<Route
+						element={
+							<OnboardingRoute allow={Boolean(!lastWallet || status !== ConnectionState.Paired)} />
+						}
+					>
 						<Route path={RoutesMappingUrl.login} element={<Login />} />
 					</Route>
 					{/* Private routes */}
-					<Route element={<PrivateRoute status={status} />}>
+					<Route
+						element={
+							<PrivateRoute allow={Boolean(lastWallet && status === ConnectionState.Paired)} />
+						}
+					>
 						{selectedWalletCoin && (
 							<>
 								<Route path={RoutesMappingUrl.balance} element={<GetBalanceOperation />} />
@@ -189,8 +181,26 @@ const Router = () => {
 					alignSelf='center'
 					alignContent={'center'}
 					flex={1}
+					flexDir='column'
+					gap={10}
 				>
-					<Spinner w='150px' h='150px' justifyContent='center' alignSelf={'center'} />
+					<Spinner
+						color='brand.gray'
+						thickness='3px'
+						w='50px'
+						h='50px'
+						justifyContent='center'
+						alignSelf={'center'}
+					/>
+					<Text
+						fontSize='16px'
+						fontWeight={500}
+						textAlign='center'
+						lineHeight='16px'
+						color='brand.gray'
+					>
+						Searching for supported wallets
+					</Text>
 				</Flex>
 			)}
 		</main>

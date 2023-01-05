@@ -30,4 +30,16 @@ accounts:
 logs:
   path: './logs'
   level: 'ERROR'
+factories: [
+  {
+    id: '',
+    network: ''
+  }
+]
+hederaERC20s: [
+  {
+    id: '',
+    network: ''
+  }
+]
   

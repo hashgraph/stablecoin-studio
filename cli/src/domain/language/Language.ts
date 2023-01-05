@@ -6,7 +6,7 @@ import BaseEntity from '../BaseEntity.js';
  * Language
  */
 export default class Language extends BaseEntity {
-  private lang: unknown;
+  private lang: any;
 
   constructor() {
     super();
@@ -29,7 +29,27 @@ export default class Language extends BaseEntity {
     return String.raw({ raw: parts }, ...parameters);
   }
 
-  public getArray(attribute: string): Array<string> {
+  /*public getArray(attribute: string): Array<string> {
     return lodash.get(this.lang, attribute);
+  }*/
+
+  public getArrayFromObject(attribute: string): Array<string> {
+    const values = [];
+
+    let obj = this.lang;
+
+    if(!obj || attribute === '') return values;
+
+    attribute.split(".").forEach(item => {
+      obj = obj[item];
+    });
+
+    const objKeys = Object.keys(obj);
+
+    objKeys.forEach(key => {
+      values.push(lodash.get(this.lang, attribute + "." + key));
+    });
+
+    return values;
   }
 }

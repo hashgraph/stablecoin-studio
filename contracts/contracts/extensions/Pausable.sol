@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.10;
+pragma solidity 0.8.10;
 
 import "./TokenOwner.sol";
 import "./Roles.sol";
@@ -14,7 +14,7 @@ abstract contract Pausable is IPausable, TokenOwner, Roles {
      */
     function pause() 
         external       
-        onlyRole(PAUSE_ROLE)  
+        onlyRole(_getRoleId(roleName.PAUSE))  
         returns (bool)
     {         
         int256 responseCode = IHederaTokenService(precompileAddress).pauseToken(_getTokenAddress());
@@ -31,7 +31,7 @@ abstract contract Pausable is IPausable, TokenOwner, Roles {
      */
     function unpause()
         external       
-        onlyRole(PAUSE_ROLE)  
+        onlyRole(_getRoleId(roleName.PAUSE))  
         returns (bool)
     {         
         int256 responseCode = IHederaTokenService(precompileAddress).unpauseToken(_getTokenAddress());

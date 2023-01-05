@@ -13,7 +13,11 @@ import type {
   Signer,
   utils,
 } from "ethers";
-import type { FunctionFragment, Result } from "@ethersproject/abi";
+import type {
+  FunctionFragment,
+  Result,
+  EventFragment,
+} from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
 import type {
   TypedEventFilter,
@@ -27,11 +31,13 @@ export declare namespace IStableCoinFactory {
   export type KeysStructStruct = {
     keyType: PromiseOrValue<BigNumberish>;
     PublicKey: PromiseOrValue<BytesLike>;
+    isED25519: PromiseOrValue<boolean>;
   };
 
-  export type KeysStructStructOutput = [BigNumber, string] & {
+  export type KeysStructStructOutput = [BigNumber, string, boolean] & {
     keyType: BigNumber;
     PublicKey: string;
+    isED25519: boolean;
   };
 
   export type TokenStructStruct = {
@@ -74,14 +80,14 @@ export declare namespace IStableCoinFactory {
 
 export interface StableCoinFactoryInterface extends utils.Interface {
   functions: {
-    "deployStableCoin((string,string,bool,bool,int64,uint64,uint32,address,address,(uint256,bytes)[]))": FunctionFragment;
+    "deployStableCoin((string,string,bool,bool,int64,uint64,uint32,address,address,(uint256,bytes,bool)[]),address)": FunctionFragment;
   };
 
   getFunction(nameOrSignatureOrTopic: "deployStableCoin"): FunctionFragment;
 
   encodeFunctionData(
     functionFragment: "deployStableCoin",
-    values: [IStableCoinFactory.TokenStructStruct]
+    values: [IStableCoinFactory.TokenStructStruct, PromiseOrValue<string>]
   ): string;
 
   decodeFunctionResult(
@@ -89,8 +95,25 @@ export interface StableCoinFactoryInterface extends utils.Interface {
     data: BytesLike
   ): Result;
 
-  events: {};
+  events: {
+    "Deployed(address,address,address,address)": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "Deployed"): EventFragment;
 }
+
+export interface DeployedEventObject {
+  arg0: string;
+  arg1: string;
+  arg2: string;
+  arg3: string;
+}
+export type DeployedEvent = TypedEvent<
+  [string, string, string, string],
+  DeployedEventObject
+>;
+
+export type DeployedEventFilter = TypedEventFilter<DeployedEvent>;
 
 export interface StableCoinFactory extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -121,27 +144,44 @@ export interface StableCoinFactory extends BaseContract {
   functions: {
     deployStableCoin(
       requestedToken: IStableCoinFactory.TokenStructStruct,
+      StableCoinContractAddress: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
   deployStableCoin(
     requestedToken: IStableCoinFactory.TokenStructStruct,
+    StableCoinContractAddress: PromiseOrValue<string>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     deployStableCoin(
       requestedToken: IStableCoinFactory.TokenStructStruct,
+      StableCoinContractAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[string, string, string, string]>;
   };
 
-  filters: {};
+  filters: {
+    "Deployed(address,address,address,address)"(
+      arg0?: null,
+      arg1?: null,
+      arg2?: null,
+      arg3?: null
+    ): DeployedEventFilter;
+    Deployed(
+      arg0?: null,
+      arg1?: null,
+      arg2?: null,
+      arg3?: null
+    ): DeployedEventFilter;
+  };
 
   estimateGas: {
     deployStableCoin(
       requestedToken: IStableCoinFactory.TokenStructStruct,
+      StableCoinContractAddress: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
@@ -149,6 +189,7 @@ export interface StableCoinFactory extends BaseContract {
   populateTransaction: {
     deployStableCoin(
       requestedToken: IStableCoinFactory.TokenStructStruct,
+      StableCoinContractAddress: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };

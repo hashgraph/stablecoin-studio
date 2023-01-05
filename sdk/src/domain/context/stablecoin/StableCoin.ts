@@ -1,26 +1,47 @@
-import BaseEntity from '../../BaseEntity.js';
-import AccountId from '../account/AccountId.js';
-import PublicKey from '../account/PublicKey.js';
-import ContractId from '../contract/ContractId.js';
-import InvalidAmount from './error/InvalidAmount.js';
-import NameLength from './error/NameLength.js';
-import NameEmpty from './error/NameEmpty.js';
-import SymbolLength from './error/SymbolLength.js';
-import SymbolEmpty from './error/SymbolEmpty.js';
-import BigDecimal from './BigDecimal.js';
-import { StableCoinMemo } from './StableCoinMemo.js';
-import { TokenSupplyType } from './TokenSupply.js';
-import { TokenType } from './TokenType.js';
-import InvalidDecimalRange from './error/InvalidDecimalRange.js';
-import BaseError from '../../../core/error/BaseError.js';
+/*
+ *
+ * Hedera Stable Coin SDK
+ *
+ * Copyright (C) 2023 Hedera Hashgraph, LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+import { BigNumber } from 'ethers';
+import MemoLength from './error/MemoLength.js';
 import CheckNums from '../../../core/checks/numbers/CheckNums.js';
 import CheckStrings from '../../../core/checks/strings/CheckStrings.js';
+import BaseError from '../../../core/error/BaseError.js';
+import { InvalidType } from '../../../port/in/request/error/InvalidType.js';
+import PublicKey from '../account/PublicKey.js';
+import BaseEntity from '../BaseEntity.js';
+import { StableCoinMemo } from './StableCoinMemo.js';
+import ContractId from '../contract/ContractId.js';
+import BigDecimal from '../shared/BigDecimal.js';
+import { HederaId } from '../shared/HederaId.js';
 import { InitSupplyInvalid } from './error/InitSupplyInvalid.js';
 import { InitSupplyLargerThanMaxSupply } from './error/InitSupplyLargerThanMaxSupply.js';
+import InvalidAmount from './error/InvalidAmount.js';
+import InvalidDecimalRange from './error/InvalidDecimalRange.js';
 import InvalidMaxSupplySupplyType from './error/InvalidMaxSupplySupplyType.js';
-import { BigNumber } from '@hashgraph/hethers';
 import { MaxSupplyOverLimit } from './error/MaxSupplyOverLimit.js';
-import { InvalidType } from '../../../port/in/sdk/request/error/InvalidType.js';
+import NameEmpty from './error/NameEmpty.js';
+import NameLength from './error/NameLength.js';
+import SymbolEmpty from './error/SymbolEmpty.js';
+import SymbolLength from './error/SymbolLength.js';
+import { TokenSupplyType } from './TokenSupply.js';
+import { TokenType } from './TokenType.js';
 
 const MAX_SUPPLY = 9_223_372_036_854_775_807n;
 const TEN = 10;
@@ -28,276 +49,61 @@ const ONE_HUNDRED = 100;
 const EIGHTEEN = 18;
 const ZERO = 0;
 
-export class StableCoin extends BaseEntity {
+export interface StableCoinProps {
+	name: string;
+	symbol: string;
+	decimals: number;
+	adminKey?: PublicKey | ContractId;
+	initialSupply?: BigDecimal;
+	totalSupply?: BigDecimal;
+	maxSupply?: BigDecimal;
+	memo?: string;
+	proxyAddress?: HederaId;
+	evmProxyAddress?: string;
+	freezeKey?: PublicKey | ContractId;
+	freezeDefault?: boolean;
+	kycKey?: PublicKey | ContractId;
+	wipeKey?: PublicKey | ContractId;
+	pauseKey?: PublicKey | ContractId;
+	paused?: boolean;
+	supplyKey?: PublicKey | ContractId;
+	treasury?: HederaId;
+	tokenType?: TokenType;
+	supplyType?: TokenSupplyType;
+	tokenId?: HederaId;
+	autoRenewAccount?: HederaId;
+	autoRenewAccountPeriod?: number;
+	deleted?: boolean;
+}
+
+export class StableCoin extends BaseEntity implements StableCoinProps {
 	public static MAX_SUPPLY: bigint = MAX_SUPPLY;
+	name: string;
+	symbol: string;
+	decimals: number;
+	adminKey?: PublicKey | ContractId;
+	initialSupply?: BigDecimal;
+	totalSupply?: BigDecimal;
+	maxSupply?: BigDecimal;
+	memo?: string;
+	proxyAddress?: HederaId;
+	evmProxyAddress?: string;
+	freezeKey?: PublicKey | ContractId;
+	freezeDefault?: boolean;
+	kycKey?: PublicKey | ContractId;
+	wipeKey?: PublicKey | ContractId;
+	pauseKey?: PublicKey | ContractId;
+	paused?: boolean;
+	supplyKey?: PublicKey | ContractId;
+	treasury?: HederaId;
+	tokenType?: TokenType;
+	supplyType?: TokenSupplyType;
+	tokenId?: HederaId;
+	autoRenewAccount?: HederaId;
+	autoRenewAccountPeriod?: number;
+	deleted?: boolean;
 
-	/**
-	 * Admin PublicKey for the token
-	 */
-	private _adminKey: ContractId | PublicKey | undefined;
-	public get adminKey(): ContractId | PublicKey | undefined {
-		return this._adminKey;
-	}
-	public set adminKey(value: ContractId | PublicKey | undefined) {
-		this._adminKey = value;
-	}
-
-	/**
-	 * Name of the token
-	 */
-	private _name: string;
-	public get name(): string {
-		return this._name;
-	}
-	public set name(value: string) {
-		this._name = value;
-	}
-
-	/**
-	 * Symbol of the token
-	 */
-	private _symbol: string;
-	public get symbol(): string {
-		return this._symbol;
-	}
-	public set symbol(value: string) {
-		this._symbol = value;
-	}
-
-	/**
-	 * Decimals the token will have, must be at least 0 and less than 18
-	 */
-	private _decimals: number;
-	public get decimals(): number {
-		return this._decimals;
-	}
-	public set decimals(value: number) {
-		this._decimals = value;
-	}
-
-	/**
-	 * Id
-	 */
-	private _id: string;
-	public get id(): string {
-		return this._id;
-	}
-	public set id(value: string) {
-		this._id = value;
-	}
-
-	/**
-	 * Initial Supply
-	 */
-	private _initialSupply: BigDecimal;
-	public get initialSupply(): BigDecimal {
-		return this._initialSupply;
-	}
-	public set initialSupply(value: BigDecimal) {
-		this._initialSupply = value;
-	}
-
-	/**
-	 * Maximum Supply
-	 */
-	private _maxSupply: BigDecimal | undefined;
-	public get maxSupply(): BigDecimal | undefined {
-		return this._maxSupply;
-	}
-	public set maxSupply(value: BigDecimal | undefined) {
-		this._maxSupply = value;
-	}
-
-	/**
-	 * Total Supply
-	 */
-	private _totalSupply: BigDecimal;
-	public get totalSupply(): BigDecimal {
-		return this._totalSupply;
-	}
-	public set totalSupply(value: BigDecimal) {
-		this._totalSupply = value;
-	}
-
-	/**
-	 * Memo field
-	 */
-	private _memo: StableCoinMemo;
-	public get memo(): StableCoinMemo {
-		return this._memo;
-	}
-	public set memo(value: StableCoinMemo) {
-		this._memo = value;
-	}
-
-	/**
-	 * Freeze key
-	 */
-	private _freezeKey: ContractId | PublicKey | undefined;
-	public get freezeKey(): ContractId | PublicKey | undefined {
-		return this._freezeKey;
-	}
-	public set freezeKey(value: ContractId | PublicKey | undefined) {
-		this._freezeKey = value;
-	}
-
-	/**
-	 * Freeze account by default
-	 */
-	private _freezeDefault: boolean;
-	public get freezeDefault(): boolean {
-		return this._freezeDefault;
-	}
-	public set freezeDefault(value: boolean) {
-		this._freezeDefault = value;
-	}
-
-	/**
-	 * KYC key
-	 */
-	private _kycKey: ContractId | PublicKey | undefined;
-	public get kycKey(): ContractId | PublicKey | undefined {
-		return this._kycKey;
-	}
-	public set kycKey(value: ContractId | PublicKey | undefined) {
-		this._kycKey = value;
-	}
-
-	/**
-	 * Wipe key
-	 */
-	private _wipeKey: ContractId | PublicKey | undefined;
-	public get wipeKey(): ContractId | PublicKey | undefined {
-		return this._wipeKey;
-	}
-	public set wipeKey(value: ContractId | PublicKey | undefined) {
-		this._wipeKey = value;
-	}
-
-	/**
-	 * Pause key
-	 */
-	private _pauseKey: ContractId | PublicKey | undefined;
-	public get pauseKey(): ContractId | PublicKey | undefined {
-		return this._pauseKey;
-	}
-	public set pauseKey(value: ContractId | PublicKey | undefined) {
-		this._pauseKey = value;
-	}
-
-	/**
-	 * Supply key
-	 */
-	private _supplyKey: ContractId | PublicKey | undefined;
-	public get supplyKey(): ContractId | PublicKey | undefined {
-		return this._supplyKey;
-	}
-	public set supplyKey(value: ContractId | PublicKey | undefined) {
-		this._supplyKey = value;
-	}
-
-	/**
-	 * Treasury account
-	 */
-	private _treasury: AccountId;
-	public get treasury(): AccountId {
-		return this._treasury;
-	}
-	public set treasury(value: AccountId) {
-		this._treasury = value;
-	}
-
-	/**
-	 * Token type
-	 */
-	private _tokenType: TokenType;
-	public get tokenType(): TokenType {
-		return this._tokenType;
-	}
-	public set tokenType(value: TokenType) {
-		this._tokenType = value;
-	}
-
-	/**
-	 * Token supply type
-	 */
-	private _supplyType: TokenSupplyType;
-	public get supplyType(): TokenSupplyType {
-		return this._supplyType;
-	}
-	public set supplyType(value: TokenSupplyType) {
-		this._supplyType = value;
-	}
-
-	/**
-	 * Token auto-renew account
-	 */
-	private _autoRenewAccount: AccountId;
-	public get autoRenewAccount(): AccountId {
-		return this._autoRenewAccount;
-	}
-	public set autoRenewAccount(value: AccountId) {
-		this._autoRenewAccount = value;
-	}
-
-	/**
-	 * Expiration Time
-	 */
-	private _autoRenewAccountPeriod: number;
-	public get autoRenewAccountPeriod(): number {
-		return this._autoRenewAccountPeriod;
-	}
-	public set autoRenewAccountPeriod(value: number) {
-		this._autoRenewAccountPeriod = value;
-	}
-
-	/**
-	 * pause Status
-	 */
-	private _paused: string;
-	public get paused(): string {
-		return this._paused;
-	}
-	public set paused(value: string) {
-		this._paused = value;
-	}
-
-	/**
-	 * deleted Status
-	 */
-	private _deleted: boolean;
-	public get deleted(): boolean {
-		return this._deleted;
-	}
-	public set deleted(value: boolean) {
-		this._deleted = value;
-	}
-
-	constructor(params: {
-		name: string;
-		symbol: string;
-		decimals: number;
-		adminKey?: PublicKey | ContractId;
-		initialSupply?: BigDecimal;
-		totalSupply?: BigDecimal;
-		maxSupply?: BigDecimal;
-		memo?: string;
-		freezeKey?: PublicKey | ContractId;
-		freezeDefault?: boolean;
-		kycKey?: PublicKey | ContractId;
-		wipeKey?: PublicKey | ContractId;
-		pauseKey?: PublicKey | ContractId;
-		paused?: string;
-		supplyKey?: PublicKey | ContractId;
-		treasury?: AccountId;
-		tokenType?: TokenType;
-		supplyType?: TokenSupplyType;
-		id?: string;
-		autoRenewAccount?: AccountId;
-		autoRenewAccountPeriod?: number;
-		deleted?: boolean;
-	}) {
-		super();
+	constructor(params: StableCoinProps) {
 		const {
 			adminKey,
 			name,
@@ -316,13 +122,15 @@ export class StableCoin extends BaseEntity {
 			treasury,
 			tokenType,
 			supplyType,
-			id,
+			tokenId,
 			autoRenewAccount,
 			autoRenewAccountPeriod,
 			deleted,
 			paused,
+			evmProxyAddress,
+			proxyAddress,
 		} = params;
-
+		super();
 		this.adminKey = adminKey;
 		this.name = name;
 		this.symbol = symbol;
@@ -330,26 +138,30 @@ export class StableCoin extends BaseEntity {
 		this.initialSupply = initialSupply ?? BigDecimal.ZERO;
 		this.totalSupply = totalSupply ?? BigDecimal.ZERO;
 		this.maxSupply = maxSupply ?? undefined;
-		this.memo = memo
-			? StableCoinMemo.fromJson(memo)
-			: StableCoinMemo.empty();
+		this.memo = memo ? 
+				 memo
+				 : StableCoinMemo.empty().toJson();
 		this.freezeKey = freezeKey;
 		this.freezeDefault = freezeDefault ?? false;
 		this.kycKey = kycKey;
 		this.wipeKey = wipeKey;
 		this.pauseKey = pauseKey;
 		this.supplyKey = supplyKey;
-		this.treasury = treasury ?? new AccountId('0.0.0');
+		this.treasury = treasury;
 		this.tokenType = tokenType ?? TokenType.FUNGIBLE_COMMON;
 		this.supplyType =
-			(supplyType && !maxSupply) || !supplyType
-				? TokenSupplyType.INFINITE
-				: TokenSupplyType.FINITE;
-		this.id = id ?? '0.0.0';
-		this.autoRenewAccount = autoRenewAccount ?? new AccountId('0.0.0');
+			(supplyType)
+				? supplyType
+				: (maxSupply && maxSupply.isGreaterThan(BigDecimal.ZERO)) 
+					? TokenSupplyType.FINITE
+					: TokenSupplyType.INFINITE;
+		this.tokenId = tokenId ?? HederaId.from('0.0.0');
+		this.autoRenewAccount = autoRenewAccount ?? HederaId.from('0.0.0');
 		this.autoRenewAccountPeriod = autoRenewAccountPeriod ?? 0;
-		this.paused = paused ?? '';
+		this.paused = paused ?? false;
 		this.deleted = deleted ?? false;
+		this.evmProxyAddress = evmProxyAddress;
+		this.proxyAddress = proxyAddress;
 	}
 
 	public static checkName(value: string): BaseError[] {
@@ -445,6 +257,16 @@ export class StableCoin extends BaseEntity {
 		list = [...list, ...StableCoin.checkSupplyType(maxSupply, supplyType)];
 
 		return list;
+	}
+
+	public static checkMemo(value: string): BaseError[] {
+		const maxMemoLength = ONE_HUNDRED;
+		const errorList: BaseError[] = [];
+
+		if (CheckStrings.isNotEmpty(value) && !CheckStrings.isLengthUnder(value, maxMemoLength))
+			errorList.push(new MemoLength(value, maxMemoLength));
+
+		return errorList;
 	}
 
 	private static checkSupplyType(

@@ -10,14 +10,11 @@ import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
 import { handleRequestValidation } from '../../../utils/validationsHelper';
 import SDKService from '../../../services/SDKService';
-import {
-	SELECTED_WALLET_COIN,
-	SELECTED_WALLET_PAIRED_ACCOUNT,
-} from '../../../store/slices/walletSlice';
+import { SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
 import { formatAmountWithDecimals } from '../../../utils/inputHelper';
-import { GetAccountBalanceRequest} from 'hedera-stable-coin-sdk';
+import { GetAccountBalanceRequest } from 'hedera-stable-coin-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 
 const GetBalanceOperation = () => {
@@ -28,20 +25,15 @@ const GetBalanceOperation = () => {
 	} = useDisclosure();
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
-	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
 
 	const [balance, setBalance] = useState<string | null>();
 	const [errorOperation, setErrorOperation] = useState();
 	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
 	const [request] = useState(
 		new GetAccountBalanceRequest({
-			proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
-			account: {
-				accountId: account.accountId
-			},
-			tokenId: selectedStableCoin?.tokenId ?? '',
-			targetId: ''
-		})
+			tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
+			targetId: '',
+		}),
 	);
 
 	const navigate = useNavigate();
@@ -60,18 +52,20 @@ const GetBalanceOperation = () => {
 	const handleGetBalance: ModalsHandlerActionsProps['onConfirm'] = async ({
 		onSuccess,
 		onError,
+		onLoading
 	}) => {
 		try {
-			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId) {
+			onLoading();
+			if (!selectedStableCoin?.proxyAddress || !selectedStableCoin?.tokenId) {
 				onError();
 				return;
 			}
 
 			const balance = await SDKService.getBalance(request);
-			setBalance(balance);
+			setBalance(balance.value.toString());
 			onSuccess();
 		} catch (error: any) {
-			setErrorTransactionUrl(error.transactionUrl)
+			setErrorTransactionUrl(error.transactionUrl);
 			setErrorOperation(error.toString());
 			onError();
 		}
@@ -94,11 +88,11 @@ const GetBalanceOperation = () => {
 									required: t('global:validations.required'),
 									validate: {
 										validation: (value: string) => {
-											request.targetId =  value;
+											request.targetId = value;
 											const res = handleRequestValidation(request.validate('targetId'));
 											return res;
 										},
-									}
+									},
 								}}
 								isRequired
 								control={control}

@@ -1,20 +1,36 @@
-import { ValueObject } from '../../../core/types.js';
-import { PrivateKeyNotValid } from './error/PrivateKeyNotValid.js';
-import PublicKey from './PublicKey.js';
-import { PrivateKey as HPrivateKey } from '@hashgraph/sdk';
-import { PrivateKeyTypeNotValid } from './error/PrivateKeyTypeNotValid.js';
-import { PrivateKeyType } from '../../../core/enum.js';
-import BaseError from '../../../core/error/BaseError.js';
-import CheckStrings from '../../../core/checks/strings/CheckStrings.js';
-import { RequestPrivateKey } from '../../../port/in/sdk/request/BaseRequest.js';
+/*
+ *
+ * Hedera Stable Coin SDK
+ *
+ * Copyright (C) 2023 Hedera Hashgraph, LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
 
-export default class PrivateKey extends ValueObject {
+import KeyProps, { KeyType } from './KeyProps.js';
+import { PrivateKey as HPrivateKey } from '@hashgraph/sdk';
+import PublicKey from './PublicKey.js';
+import BaseError from '../../../core/error/BaseError.js';
+import { PrivateKeyNotValid } from './error/PrivateKeyNotValid.js';
+
+export default class PrivateKey implements KeyProps {
 	public readonly key: string;
 	public readonly type: string;
 	public readonly publicKey: PublicKey;
 
-	constructor(key: string, type: string) {
-		super();
+	constructor(props: KeyProps) {
+		const { key, type } = props;
 		this.type = this.validateType(type);
 		this.key = key;
 		this.publicKey = PublicKey.fromHederaKey(
@@ -22,24 +38,9 @@ export default class PrivateKey extends ValueObject {
 		);
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public static validate(val?: string | object): BaseError[] {
 		const err: BaseError[] = [];
-		if (typeof val === 'string') {
-			if (!CheckStrings.isNotEmpty(val))
-				err.push(new PrivateKeyNotValid(val ?? 'undefined'));
-		} else if (typeof val === 'object') {
-			const keys = Object.keys(val);
-			if (!(keys.includes('key') && keys.includes('type'))) {
-				err.push(new PrivateKeyNotValid(JSON.stringify(val)));
-			} else {
-				const pk = val as RequestPrivateKey;
-				if (!CheckStrings.isNotEmpty(pk.key)) {
-					err.push(new PrivateKeyNotValid(JSON.stringify(val)));
-				} else if (!CheckStrings.isLengthBetween(pk.key, 64, 66)) {
-					err.push(new PrivateKeyNotValid(pk.key));
-				}
-			}
-		}
 		return err;
 	}
 
@@ -50,17 +51,16 @@ export default class PrivateKey extends ValueObject {
 		});
 	}
 
-	public validateType(type?: string): string {
-		if (!type) throw new PrivateKeyTypeNotValid(type ?? 'undefined');
-		if (type !== PrivateKeyType.ED25519 && type !== PrivateKeyType.ECDSA) {
-			throw new PrivateKeyNotValid(type);
+	public validateType(type?: string): KeyType {
+		if(type && Object.keys(KeyType).includes(type)){
+			return Object.entries(KeyType).filter(([key,]) => key === type)[0][1];
 		}
-		return type;
+		return KeyType.NULL;
 	}
 
 	public toHashgraphKey(): HPrivateKey {
 		try {
-			return this.type === PrivateKeyType.ED25519
+			return this.type === KeyType.ED25519
 				? HPrivateKey.fromStringED25519(this.key)
 				: HPrivateKey.fromStringECDSA(this.key);
 		} catch (error) {

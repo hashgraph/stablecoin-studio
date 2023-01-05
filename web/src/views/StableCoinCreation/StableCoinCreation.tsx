@@ -22,11 +22,12 @@ import {
 import SDKService from '../../services/SDKService';
 import ModalNotification from '../../components/ModalNotification';
 import {
-	AccountId,
-	CreateStableCoinRequest,
-	HashPackAccount,
-	PublicKey,
+	FactoryAddressTestnet,
+	HederaERC20AddressTestnet,
+	Account,
+	CreateRequest,
 } from 'hedera-stable-coin-sdk';
+import type { RequestPublicKey } from 'hedera-stable-coin-sdk';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch } from '../../store/store';
 
@@ -41,7 +42,7 @@ const StableCoinCreation = () => {
 	const form = useForm<FieldValues>({
 		mode: 'onChange',
 		defaultValues: {
-			autorenewAccount: accountInfo.account,
+			autorenewAccount: accountInfo.id,
 			initialSupply: 0,
 		},
 	});
@@ -54,18 +55,18 @@ const StableCoinCreation = () => {
 	} = form;
 
 	const [request] = useState(
-		new CreateStableCoinRequest({
-			account: {
-				accountId: account.accountId,
-			},
+		new CreateRequest({
 			name: '',
 			symbol: '',
 			decimals: 6,
+			hederaERC20: HederaERC20AddressTestnet,
+			stableCoinFactory: FactoryAddressTestnet,
 		}),
 	);
 
 	const [isValidForm, setIsValidForm] = useState<boolean>(false);
 	const [currentStep, setCurrentStep] = useState<number>(0);
+	const [loading, setLoading] = useState<boolean>(false);
 	const [success, setSuccess] = useState<boolean>();
 	const [error, setError] = useState<any>();
 	const { isOpen, onOpen, onClose } = useDisclosure();
@@ -142,7 +143,7 @@ const StableCoinCreation = () => {
 		);
 	};
 
-	const formatKey = (keySelection: string, keyName: string): PublicKey | undefined => {
+	const formatKey = (keySelection: string, keyName: string): RequestPublicKey | undefined => {
 		const values = getValues();
 
 		if (keySelection === 'Current user key') {
@@ -152,15 +153,14 @@ const StableCoinCreation = () => {
 		if (keySelection === 'Other key') {
 			const param = Object.keys(values).find((key) => key.includes(keyName + 'Other'));
 
-			return new PublicKey({
+			return {
 				key: param ? values[param] : '',
-				type: 'ED25519',
-			});
+			};
 		}
 
 		if (keySelection === 'None') return undefined;
 
-		return PublicKey.NULL;
+		return Account.NullPublicKey;
 	};
 
 	const handleFinish = async () => {
@@ -169,13 +169,12 @@ const StableCoinCreation = () => {
 
 		request.autoRenewAccount = autorenewAccount;
 		if (managementPermissions) {
-			request.adminKey = accountInfo.publicKey;
-			request.freezeKey = PublicKey.NULL;
-			request.KYCKey = PublicKey.NULL;
-			request.wipeKey = PublicKey.NULL;
-			request.pauseKey = PublicKey.NULL;
-			request.supplyKey = PublicKey.NULL;
-			request.treasury = AccountId.NULL.id;
+			request.adminKey = Account.NullPublicKey; // accountInfo.publicKey;
+			request.freezeKey = Account.NullPublicKey;
+			request.wipeKey = Account.NullPublicKey;
+			request.pauseKey = Account.NullPublicKey;
+			request.supplyKey = Account.NullPublicKey;
+			request.treasury = undefined;
 		} else {
 			request.adminKey = accountInfo.publicKey;
 			request.freezeKey = formatKey(freezeKey.label, 'freezeKey');
@@ -183,19 +182,24 @@ const StableCoinCreation = () => {
 			request.pauseKey = formatKey(pauseKey.label, 'pauseKey');
 			request.supplyKey = formatKey(supplyKey.label, 'supplyKey');
 			request.treasury =
-				!PublicKey.isNull(formatKey(supplyKey.label, 'supplyKey')) && accountInfo.account
-					? accountInfo.account
-					: AccountId.NULL.id;
+				formatKey(supplyKey.label, 'supplyKey')?.key !== Account.NullPublicKey.key && accountInfo.id
+					? accountInfo.id
+					: undefined;
 		}
 		try {
+			console.log(request);
+			onOpen();
+			setLoading(true);
 			await SDKService.createStableCoin(request);
+			setLoading(false);
 			setSuccess(true);
-		} catch (error:any) {
-			setError(error.transactionError.transactionUrl)
+		} catch (error: any) {
+			setLoading(false);
+			console.log(error);
+			setError(error.transactionError.transactionUrl);
 			setSuccess(false);
+			setLoading(false);
 		}
-
-		onOpen();
 	};
 
 	const handleCancel = () => {
@@ -212,24 +216,30 @@ const StableCoinCreation = () => {
 		setCurrentStep,
 	};
 
+	const variant = loading ? 'loading' : success ? 'success' : 'error';
+
 	return (
 		<Stack h='full'>
 			<BaseContainer title={t('common.createNewStableCoin')}>
 				<Stepper {...stepperProps} />
 			</BaseContainer>
 			<ModalNotification
-				variant={success ? 'success' : 'error'}
-				title={t('notification.title', { result: success ? 'Success' : 'Error' })}
-				description={t(`notification.description${success ? 'Success' : 'Error'}`)}
+				variant={variant}
+				title={
+					loading ? 'Loading' : t('notification.title', { result: success ? 'Success' : 'Error' })
+				}
+				description={
+					loading ? undefined : t(`notification.description${success ? 'Success' : 'Error'}`)
+				}
 				isOpen={isOpen}
 				onClose={onClose}
 				onClick={() => {
-					dispatch(getStableCoinList(new HashPackAccount(account.accountId)));
+					dispatch(getStableCoinList(account.accountId?.toString() ?? ''));
 					RouterManager.to(navigate, NamedRoutes.StableCoinNotSelected);
 				}}
-				closeOnOverlayClick={false}
-				closeButton={false}
 				errorTransactionUrl={error}
+				closeButton={false}
+				closeOnOverlayClick={false}
 			/>
 		</Stack>
 	);

@@ -1,12 +1,11 @@
-import { Box, Flex, HStack, Text, Tooltip, VStack } from '@chakra-ui/react';
-import type { ContractId, PublicKey, StableCoinMemo } from 'hedera-stable-coin-sdk';
+import { Box, Flex, Text, Tooltip } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import BaseContainer from '../../components/BaseContainer';
 import DetailsReview from '../../components/DetailsReview';
 import Icon from '../../components/Icon';
 import TooltipCopy from '../../components/TooltipCopy';
-import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
+import { SELECTED_WALLET_ACCOUNT_INFO, SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
 import { formatShortKey } from '../../utils/inputHelper';
 import { useRefreshCoinInfo } from '../../hooks/useRefreshCoinInfo';
 
@@ -14,38 +13,15 @@ const StableCoinDetails = () => {
 	const { t } = useTranslation('stableCoinDetails');
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
+	const account = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 
 	useRefreshCoinInfo();
 
-	const getMemoInformation = (memo: StableCoinMemo | undefined) => {
-		return (
-			<VStack
-				fontSize='14px'
-				fontWeight={500}
-				lineHeight='17px'
-				color='brand.gray'
-				wordBreak='break-all'
-				alignItems='flex-end'
-			>
-				<HStack>
-					<Text>
-						{t('proxyContract')} : {memo?.proxyContract}
-					</Text>
-					<TooltipCopy valueToCopy={memo?.proxyContract ?? ''}>
-						<Icon name='Copy' />
-					</TooltipCopy>
-				</HStack>
-			</VStack>
-		);
-	};
-
-	const renderKeys = ({ key }: { key: ContractId | PublicKey | undefined }) => {
-		if (!key) return t('none');
-		if ('id' in key) return t('smartContract');
-		if (key.key === 'same as user')
-			// TODO: check current public key
-			return t('currentUser');
-
+	const renderKeys = ({ key }: { key: any }) => {
+		if (!key) return t('none').toUpperCase();
+		if ('value' in key) return t('smartContract').toUpperCase();
+		if (key.key === account.publicKey?.toString())
+			return t('currentUser').toUpperCase();
 		return (
 			<Flex
 				gap={2}
@@ -56,7 +32,7 @@ const StableCoinDetails = () => {
 				wordBreak='break-all'
 			>
 				<Tooltip label={key.key} bgColor='black' borderRadius='5px'>
-					<Text>{t('otherKey', { key: formatShortKey({ key: key.key }) })}</Text>
+					<Text>{formatShortKey({ key: key.key })}</Text>
 				</Tooltip>
 				<TooltipCopy valueToCopy={key.key}>
 					<Icon name='Copy' />
@@ -99,22 +75,22 @@ const StableCoinDetails = () => {
 								},
 								{
 									label: t('initialSupply'),
-									value: selectedStableCoin?.initialSupply ?? 0,
+									value: selectedStableCoin?.initialSupply?.toString() ?? '0',
 								},
 								{
 									label: t('totalSupply'),
-									value: selectedStableCoin?.totalSupply ?? 0,
+									value: selectedStableCoin?.totalSupply?.toString() ?? '0',
 								},
 								{
 									label: t('maxSupply'),
 									value:
-										selectedStableCoin?.maxSupply && selectedStableCoin?.maxSupply !== 'INFINITE'
+										selectedStableCoin?.maxSupply && !selectedStableCoin?.maxSupply.isZero
 											? selectedStableCoin?.maxSupply
 											: 'INFINITE',
 								},
 								{
-									label: t('treasuryId'),
-									value: selectedStableCoin?.treasuryId,
+									label: t('treasury'),
+									value: selectedStableCoin?.treasury,
 									copyButton: true,
 								},
 								{
@@ -123,12 +99,12 @@ const StableCoinDetails = () => {
 									copyButton: true,
 								},
 								{
-									label: t('memo'),
-									value: getMemoInformation(selectedStableCoin?.memo),
+									label: t('proxyAddress'),
+									value: selectedStableCoin.proxyAddress,
 								},
 								{
 									label: t('paused'),
-									value: selectedStableCoin?.paused,
+									value: selectedStableCoin?.paused?.toString().toUpperCase(),
 								},
 								{
 									label: t('deleted'),
@@ -162,6 +138,12 @@ const StableCoinDetails = () => {
 									label: t('supplyKey'),
 									value: renderKeys({
 										key: selectedStableCoin?.supplyKey as any,
+									}),
+								},
+								{
+									label: t('pauseKey'),
+									value: renderKeys({
+										key: selectedStableCoin?.pauseKey as any,
 									}),
 								},
 							]}

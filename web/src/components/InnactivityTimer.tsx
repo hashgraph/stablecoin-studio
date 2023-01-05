@@ -1,10 +1,10 @@
 import { Alert, AlertDescription, AlertIcon, AlertTitle, CloseButton } from '@chakra-ui/react';
+import { ConnectionState, Network } from 'hedera-stable-coin-sdk';
 import type { ReactNode } from 'react';
 import { useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import SDKService, { HashConnectConnectionState } from '../services/SDKService';
-import { HASHPACK_STATUS } from '../store/slices/hashpackSlice';
+import { SELECTED_WALLET_STATUS } from '../store/slices/walletSlice';
 
 interface a {
 	children: ReactNode;
@@ -15,7 +15,7 @@ const InnactivityTimer = ({ children }: a) => {
 
 	const events = ['load', 'mousemove', 'mousedown', 'click', 'scroll', 'keypress'];
 
-	const status = useSelector(HASHPACK_STATUS);
+	const status = useSelector(SELECTED_WALLET_STATUS);
 
 	let timer: ReturnType<typeof setTimeout>;
 
@@ -33,13 +33,13 @@ const InnactivityTimer = ({ children }: a) => {
 
 	useEffect(() => {
 		abortRef.current = false;
-		if (status === HashConnectConnectionState.Paired) {
+		if (status === ConnectionState.Paired) {
 			Object.values(events).forEach((item) => {
 				window.addEventListener(item, eventListeners);
 			});
 		}
 
-		if (status === HashConnectConnectionState.Disconnected) {
+		if (status === ConnectionState.Disconnected) {
 			abortRef.current = true;
 		}
 
@@ -67,9 +67,9 @@ const InnactivityTimer = ({ children }: a) => {
 		}, 900000); // 15 minutes - 900000 ms
 	};
 
-	const handleLogout = () => {
+	const handleLogout = async () => {
 		if (!abortRef.current) {
-			SDKService.getInstance().then((instance) => instance?.disconectHaspack());
+			await Network.disconnect();
 
 			setShowAlert(true);
 		}

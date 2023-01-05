@@ -1,0 +1,39 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+package-lock.json
+
+# Dependencies
+node_modules/
+
+# Coverage
+coverage
+
+# Transpiled files
+build
+
+# VS Code
+.vscode
+!.vscode/tasks.js
+
+# JetBrains IDEs
+.idea/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Misc
+.DS_Store
+
+# Old files
+.old
+
+# history
+.history
+
+# Compile contract
+hardhat.config.ts

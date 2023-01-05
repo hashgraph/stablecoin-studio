@@ -37,6 +37,8 @@ const DirectAccess = ({
 			onClick={handleNavigate}
 			disabled={isDisabled}
 			{...props}
+			h='150px'
+			justifyContent='start'
 		>
 			<Flex
 				h='48px'

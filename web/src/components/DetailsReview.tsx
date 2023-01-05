@@ -35,7 +35,6 @@ const textInBoldProps: ChakraTextProps = {
 
 const DetailsReview = (props: DetailsReviewProps) => {
 	const { details, divider = true, title, titleProps, contentProps } = props;
-
 	return (
 		<Box textAlign='left'>
 			{title && (
@@ -67,13 +66,15 @@ const DetailsReview = (props: DetailsReviewProps) => {
 
 							{typeof detail.value === 'string' || typeof detail.value === 'number' ? (
 								<HStack {...(detail.valueInBold ? textInBoldProps : commonTextProps)}>
-									<Text>{detail.value}</Text>
+									<Text>{detail.value.toString()}</Text>
 									{detail.copyButton && (
 										<TooltipCopy valueToCopy={detail.value.toString() ?? ''}>
 											<Icon name='Copy' />
 										</TooltipCopy>
 									)}
 								</HStack>
+							) : 'toString' in detail.value && 'value' in detail.value ? (
+								detail.value.toString()
 							) : (
 								detail.value
 							)}

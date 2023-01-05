@@ -1,15 +1,14 @@
 import Service from '../Service.js';
 import { IImportedToken } from '../../../domain/configuration/interfaces/IImportedToken';
 import { wizardService } from '../../../index';
-import DetailsStableCoinsService from './DetailsStableCoinService.js';
-import { IStableCoinDetail } from 'hedera-stable-coin-sdk';
 import {
   language,
   utilsService,
   configurationService,
 } from '../../../index.js';
-import { GetRolesRequest } from 'hedera-stable-coin-sdk';
+import { GetRolesRequest, StableCoinViewModel } from 'hedera-stable-coin-sdk';
 import RoleStableCoinsService from './RoleStableCoinService';
+import DetailsStableCoinsService from './DetailsStableCoinService.js';
 
 export default class ManageImportedTokenService extends Service {
   constructor() {
@@ -18,7 +17,7 @@ export default class ManageImportedTokenService extends Service {
 
   public async start(): Promise<void> {
     await utilsService.cleanAndShowBanner();
-    const manageOptions: Array<string> = language.getArray(
+    const manageOptions: Array<string> = language.getArrayFromObject(
       'wizard.manageImportedTokens',
     );
     const currentAccount = utilsService.getCurrentAccount();
@@ -32,19 +31,11 @@ export default class ManageImportedTokenService extends Service {
         `${currentAccount.accountId} - ${currentAccount.alias}`,
       )
     ) {
-      case manageOptions[0]:
+      case language.getText('wizard.manageImportedTokens.Add'):
         await utilsService.cleanAndShowBanner();
 
         let tokenId = '';
         const getRolesRequestForAdding: GetRolesRequest = new GetRolesRequest({
-          proxyContractId: '',
-          account: {
-            accountId: currentAccount.accountId,
-            privateKey: {
-              key: currentAccount.privateKey.key,
-              type: currentAccount.privateKey.type,
-            },
-          },
           targetId: currentAccount.accountId,
           tokenId: '',
         });
@@ -66,13 +57,26 @@ export default class ManageImportedTokenService extends Service {
 
         //call to roles
         const importedTokens = currentAccount.importedTokens;
+        while (
+          importedTokens.length > 0 &&
+          importedTokens
+            .map((x) => x.id)
+            .includes(getRolesRequestForAdding.tokenId)
+        ) {
+          console.log(
+            language.getText('manageImportedToken.importedTokenAlreadyAdded'),
+          );
+          tokenId = await utilsService.defaultSingleAsk(
+            language.getText('manageImportedToken.tokenId'),
+            '0.0.1234567',
+          );
+          getRolesRequestForAdding.tokenId = tokenId;
+        }
         await new DetailsStableCoinsService()
           .getDetailsStableCoins(getRolesRequestForAdding.tokenId, false)
-          .then((response: IStableCoinDetail) => {
-            console.log('Mirror:', response);
+          .then((response: StableCoinViewModel) => {
             symbol = response.symbol;
-            getRolesRequestForAdding.proxyContractId =
-              response.memo.proxyContract;
+            getRolesRequestForAdding.tokenId = response.tokenId.toString();
           });
         const roles = await new RoleStableCoinsService().getRoles(
           getRolesRequestForAdding,
@@ -85,7 +89,7 @@ export default class ManageImportedTokenService extends Service {
         this.updateAccount(importedTokens);
         currentAccount.importedTokens = importedTokens;
         break;
-      case manageOptions[1]:
+      case language.getText('wizard.manageImportedTokens.Refresh'):
         await utilsService.cleanAndShowBanner();
         if (currentAccount.importedTokens.length === 0) {
           console.log(
@@ -107,24 +111,8 @@ export default class ManageImportedTokenService extends Service {
 
         const getRolesRequestForRefreshing: GetRolesRequest =
           new GetRolesRequest({
-            proxyContractId: '',
-            account: {
-              accountId: currentAccount.accountId,
-              privateKey: {
-                key: currentAccount.privateKey.key,
-                type: currentAccount.privateKey.type,
-              },
-            },
             targetId: currentAccount.accountId,
-            tokenId: tokenToRefresh,
-          });
-
-        await new DetailsStableCoinsService()
-          .getDetailsStableCoins(tokenToRefresh.split(' - ')[0], false)
-          .then((response: IStableCoinDetail) => {
-            symbol = response.symbol;
-            getRolesRequestForRefreshing.proxyContractId =
-              response.memo.proxyContract;
+            tokenId: tokenToRefresh.split(' - ')[0],
           });
 
         const rolesToRefresh = await new RoleStableCoinsService().getRoles(
@@ -146,7 +134,7 @@ export default class ManageImportedTokenService extends Service {
         this.updateAccount(importedTokensRefreshed);
         currentAccount.importedTokens = importedTokensRefreshed;
         break;
-      case manageOptions[2]:
+      case language.getText('wizard.manageImportedTokens.Remove'):
         await utilsService.cleanAndShowBanner();
         if (currentAccount.importedTokens.length === 0) {
           console.log(
@@ -171,7 +159,6 @@ export default class ManageImportedTokenService extends Service {
         this.updateAccount(newImportedTokens);
         currentAccount.importedTokens = newImportedTokens;
         break;
-      case manageOptions[manageOptions.length - 1]:
       default:
         await utilsService.cleanAndShowBanner();
         await wizardService.mainMenu();
@@ -217,6 +204,11 @@ export default class ManageImportedTokenService extends Service {
       }
       return true;
     });
-    return filterTokens;
+
+    return filterTokens.concat(
+      currentAccount.importedTokens.map(
+        (token) => `${token.id} - ${token.symbol}`,
+      ),
+    );
   }
 }

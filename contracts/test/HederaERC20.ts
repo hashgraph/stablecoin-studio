@@ -1,331 +1,832 @@
+const { ContractId, AccountId } = require('@hashgraph/sdk')
+import '@hashgraph/hardhat-hethers'
+import '@hashgraph/sdk'
+import { BigNumber } from 'ethers'
 
-const { ContractId, AccountId }  = require("@hashgraph/sdk");
-import "@hashgraph/hardhat-hethers";
-import "@hashgraph/sdk";
-import {BigNumber} from "ethers";
+const chai = require('chai')
+const chaiAsPromised = require('chai-as-promised')
+chai.use(chaiAsPromised)
+const expect = chai.expect
 
-var chai = require("chai");
-var chaiAsPromised = require("chai-as-promised");
-chai.use(chaiAsPromised);
-var expect = chai.expect;
+import {
+    deployContractsWithSDK,
+    initializeClients,
+    getOperatorClient,
+    getOperatorAccount,
+    getOperatorPrivateKey,
+    getOperatorE25519,
+    getOperatorPublicKey,
+    getNonOperatorClient,
+    getNonOperatorAccount,
+    getNonOperatorPrivateKey,
+    getNonOperatorPublicKey,
+    getNonOperatorE25519,
+} from '../scripts/deploy'
+import {
+    name,
+    symbol,
+    decimals,
+    initialize,
+    associateToken,
+    dissociateToken,
+    Mint,
+    Wipe,
+    getTotalSupply,
+    getBalanceOf,
+    getTokenAddress,
+    upgradeTo,
+    admin,
+    changeAdmin,
+    owner,
+    upgrade,
+    changeProxyAdmin,
+    transferOwnership,
+    getProxyAdmin,
+    getProxyImplementation,
+    approve,
+    allowance,
+    transferFrom,
+    Burn,
+    transfer,
+} from '../scripts/contractsMethods'
 
-import { deployContractsWithSDK, initializeClients } from "../scripts/deploy";
-import {name, 
-  symbol, 
-  decimals, 
-  initialize, 
-  associateToken, 
-  dissociateToken, 
-  Mint, 
-  Wipe,
-  getTotalSupply, 
-  getBalanceOf,
-  getTokenAddress,
-  upgradeTo,
-  admin,
-  changeAdmin,
-  owner,
-  upgrade,
-  changeProxyAdmin,
-  transferOwnership,
-  getProxyAdmin,
-  getProxyImplementation
-} from "../scripts/contractsMethods";
+import { clientId, toEvmAddress } from '../scripts/utils'
 
-let proxyAddress:any;
-let proxyAdminAddress:any;
-let stableCoinAddress:any;
+let proxyAddress: any
+let proxyAdminAddress: any
+let stableCoinAddress: any
 
-let client:any ;
-let OPERATOR_ID: string;
-let OPERATOR_KEY: string;
-let OPERATOR_PUBLIC: string;
+let operatorClient: any
+let nonOperatorClient: any
+let operatorAccount: string
+let nonOperatorAccount: string
+let operatorPriKey: string
+let nonOperatorPriKey: string
+let operatorPubKey: string
+let nonOperatorPubKey: string
+let operatorIsE25519: boolean
+let nonOperatorIsE25519: boolean
 
-let client2:any;
-let client2account: string;
-let client2privatekey: string;
-let client2publickey: string;
+let client1: any
+let client1account: string
+let client1privatekey: string
+let client1publickey: string
+let client1isED25519Type: boolean
 
-const TokenName = "MIDAS";
-const TokenSymbol = "MD";
-const TokenDecimals = 3;
-const TokenFactor = BigNumber.from(10).pow(TokenDecimals);
-const INIT_SUPPLY = BigNumber.from(10).mul(TokenFactor);
-const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor);
-const TokenMemo = "Hedera Accelerator Stable Coin"
+let client2: any
+let client2account: string
+let client2privatekey: string
+let client2publickey: string
+let client2isED25519Type: boolean
 
-describe("HederaERC20 Tests", function() {
-  before(async function  () {         
-    // Generate Client (token admin) and Client 2
-    [client,
-      OPERATOR_ID, 
-      OPERATOR_KEY,
-      OPERATOR_PUBLIC,
-      client2,
-      client2account,
-      client2privatekey,
-      client2publickey] = initializeClients();
-  
-      // Deploy Token using Client
-      let result = await deployContractsWithSDK(
-        TokenName, 
-        TokenSymbol, 
-        TokenDecimals, 
-        INIT_SUPPLY.toString(), 
-        MAX_SUPPLY.toString(), 
-        TokenMemo, 
-        OPERATOR_ID, 
-        OPERATOR_KEY, 
-        OPERATOR_PUBLIC); 
-        
-      proxyAddress = result[0];
-    });   
-  
-  it("input parmeters check", async function() {
-    // We retreive the Token basic params
-    const retrievedTokenName = await name(ContractId, proxyAddress, client);
-    const retrievedTokenSymbol = await symbol(ContractId, proxyAddress, client);
-    const retrievedTokenDecimals = await decimals(ContractId, proxyAddress, client);
-    const retrievedTokenTotalSupply = await getTotalSupply(ContractId, proxyAddress, client);
+const TokenName = 'MIDAS'
+const TokenSymbol = 'MD'
+const TokenDecimals = 3
+const TokenFactor = BigNumber.from(10).pow(TokenDecimals)
+const INIT_SUPPLY = BigNumber.from(10).mul(TokenFactor)
+const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor)
+const TokenMemo = 'Hedera Accelerator Stable Coin'
 
-    // We check their values : success
-    expect(retrievedTokenName).to.equals(TokenName);
-    expect(retrievedTokenSymbol).to.equals(TokenSymbol);
-    expect(retrievedTokenDecimals).to.equals(TokenDecimals);  
-    expect(retrievedTokenTotalSupply.toString()).to.equals(INIT_SUPPLY.toString());   
- 
-  });
+describe('HederaERC20 Tests', function() {
+    before(async function() {
+        // Generate Client 1 and Client 2
+        const [
+            client1,
+            client1account,
+            client1privatekey,
+            client1publickey,
+            client1isED25519Type,
+            client2,
+            client2account,
+            client2privatekey,
+            client2publickey,
+            client2isED25519Type,
+        ] = initializeClients()
 
-  it("Only Account can associate and dissociate itself when balance is 0", async function() {
-    const amount = BigNumber.from(1);
+        operatorClient = getOperatorClient(client1, client2, clientId)
+        nonOperatorClient = getNonOperatorClient(client1, client2, clientId)
+        operatorAccount = getOperatorAccount(
+            client1account,
+            client2account,
+            clientId
+        )
+        nonOperatorAccount = getNonOperatorAccount(
+            client1account,
+            client2account,
+            clientId
+        )
+        operatorPriKey = getOperatorPrivateKey(
+            client1privatekey,
+            client2privatekey,
+            clientId
+        )
+        operatorPubKey = getOperatorPublicKey(
+            client1publickey,
+            client2publickey,
+            clientId
+        )
+        operatorIsE25519 = getOperatorE25519(
+            client1isED25519Type,
+            client2isED25519Type,
+            clientId
+        )
+        nonOperatorIsE25519 = getNonOperatorE25519(
+            client1isED25519Type,
+            client2isED25519Type,
+            clientId
+        )
 
-    // associate a token to an account : success
-    await associateToken(ContractId, proxyAddress, client2, client2account);
+        // Deploy Token using Client
+        const result = await deployContractsWithSDK(
+            TokenName,
+            TokenSymbol,
+            TokenDecimals,
+            INIT_SUPPLY.toString(),
+            MAX_SUPPLY.toString(),
+            TokenMemo,
+            operatorAccount,
+            operatorPriKey,
+            operatorPubKey,
+            operatorIsE25519
+        )
 
-    // We mint tokens to that account and check supply and balance: success
-    await Mint(ContractId, proxyAddress, amount, client, client2account);
+        proxyAddress = result[0]
+    })
 
-    // dissociate the token from the account when balance is not 0 : fail
-    await expect(dissociateToken(ContractId, proxyAddress, client2, client2account)).to.eventually.be.rejectedWith(Error);
+    it('input parmeters check', async function() {
+        // We retreive the Token basic params
+        const retrievedTokenName = await name(
+            ContractId,
+            proxyAddress,
+            operatorClient
+        )
+        const retrievedTokenSymbol = await symbol(
+            ContractId,
+            proxyAddress,
+            operatorClient
+        )
+        const retrievedTokenDecimals = await decimals(
+            ContractId,
+            proxyAddress,
+            operatorClient
+        )
+        const retrievedTokenTotalSupply = await getTotalSupply(
+            ContractId,
+            proxyAddress,
+            operatorClient
+        )
 
-    // We wipe amount in account to be able to dissociate
-    const Balance = await getBalanceOf(ContractId, proxyAddress, client, client2account);
-    await Wipe(ContractId, proxyAddress, Balance, client, client2account);
+        // We check their values : success
+        expect(retrievedTokenName).to.equals(TokenName)
+        expect(retrievedTokenSymbol).to.equals(TokenSymbol)
+        expect(retrievedTokenDecimals).to.equals(TokenDecimals)
+        expect(retrievedTokenTotalSupply.toString()).to.equals(
+            INIT_SUPPLY.toString()
+        )
+    })
 
-    // dissociate the token from the account : success
-    await dissociateToken(ContractId, proxyAddress, client2, client2account);
+    it('Only Account can associate and dissociate itself when balance is 0', async function() {
+        const amount = BigNumber.from(1)
 
-    // associate a token to an account using another account : fail
-    await expect(associateToken(ContractId, proxyAddress, client, client2account)).to.eventually.be.rejectedWith(Error);
+        // associate a token to an account : success
+        await associateToken(
+            ContractId,
+            proxyAddress,
+            nonOperatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
 
-    // associate a token to an account again : success
-    await associateToken(ContractId, proxyAddress, client2, client2account);
+        // We mint tokens to that account and check supply and balance: success
+        await Mint(
+            ContractId,
+            proxyAddress,
+            amount,
+            operatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
 
-    // dissociate the token from the account using another account : fail
-    await expect(dissociateToken(ContractId, proxyAddress, client, client2account)).to.eventually.be.rejectedWith(Error);
+        // dissociate the token from the account when balance is not 0 : fail
+        await expect(
+            dissociateToken(
+                ContractId,
+                proxyAddress,
+                nonOperatorClient,
+                nonOperatorAccount,
+                nonOperatorIsE25519
+            )
+        ).to.eventually.be.rejectedWith(Error)
 
-    // reset
-    await dissociateToken(ContractId, proxyAddress, client2, client2account);
-  });
+        // We wipe amount in account to be able to dissociate
+        const Balance = await getBalanceOf(
+            ContractId,
+            proxyAddress,
+            operatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
+        await Wipe(
+            ContractId,
+            proxyAddress,
+            Balance,
+            operatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
 
-  it("Associate and Dissociate Token", async function() {
-    const amountToMint = BigNumber.from(1);
+        // dissociate the token from the account : success
+        await dissociateToken(
+            ContractId,
+            proxyAddress,
+            nonOperatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
 
-    // First we associate a token to an account
-    const initialSupply =  await getTotalSupply(ContractId, proxyAddress, client);
-    const initialBalance = await getBalanceOf(ContractId, proxyAddress, client, client2account);
-    await associateToken(ContractId, proxyAddress, client2, client2account);
+        // associate a token to an account using another account : fail
+        await expect(
+            associateToken(
+                ContractId,
+                proxyAddress,
+                operatorClient,
+                nonOperatorAccount,
+                nonOperatorIsE25519
+            )
+        ).to.eventually.be.rejectedWith(Error)
 
-    // We mint tokens to that account and check supply and balance: success
-    await Mint(ContractId, proxyAddress, amountToMint, client, client2account);
-    let newSupply =  await getTotalSupply(ContractId, proxyAddress, client);
-    let newBalance = await getBalanceOf(ContractId, proxyAddress, client, client2account);
+        // associate a token to an account again : success
+        await associateToken(
+            ContractId,
+            proxyAddress,
+            nonOperatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
 
-    let expectedNewSupply = initialSupply.add(amountToMint);
-    let expectedNewBalance = initialBalance.add(amountToMint);
+        // dissociate the token from the account using another account : fail
+        await expect(
+            dissociateToken(
+                ContractId,
+                proxyAddress,
+                operatorClient,
+                nonOperatorAccount,
+                nonOperatorIsE25519
+            )
+        ).to.eventually.be.rejectedWith(Error)
 
-    expect(expectedNewSupply.toString()).to.equals(newSupply.toString());  
-    expect(expectedNewBalance.toString()).to.equals(newBalance.toString());  
+        // reset
+        await dissociateToken(
+            ContractId,
+            proxyAddress,
+            nonOperatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
+    })
 
-    // We wipe amount in account to be able to dissociate
-    await Wipe(ContractId, proxyAddress, newBalance, client, client2account);
+    it('Associate and Dissociate Token', async function() {
+        const amountToMint = BigNumber.from(1)
 
-    // We dissociate the token from the account
-    await dissociateToken(ContractId, proxyAddress, client2, client2account);
+        // First we associate a token to an account
+        const initialSupply = await getTotalSupply(
+            ContractId,
+            proxyAddress,
+            operatorClient
+        )
+        const initialBalance = await getBalanceOf(
+            ContractId,
+            proxyAddress,
+            operatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
+        await associateToken(
+            ContractId,
+            proxyAddress,
+            nonOperatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
 
-    // We mint tokens to that account : fail
-    await expect(Mint(ContractId, proxyAddress, amountToMint, client,client2account)).to.eventually.be.rejectedWith(Error);
+        // We mint tokens to that account and check supply and balance: success
+        await Mint(
+            ContractId,
+            proxyAddress,
+            amountToMint,
+            operatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
+        let newSupply = await getTotalSupply(
+            ContractId,
+            proxyAddress,
+            operatorClient
+        )
+        let newBalance = await getBalanceOf(
+            ContractId,
+            proxyAddress,
+            operatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
 
-    newSupply =  await getTotalSupply(ContractId, proxyAddress, client);
-    newBalance = await getBalanceOf(ContractId, proxyAddress, client, client2account);
-    expect(initialSupply.toString()).to.equals(newSupply.toString());  
-    expect("0").to.equals(newBalance.toString());  
+        const expectedNewSupply = initialSupply.add(amountToMint)
+        const expectedNewBalance = initialBalance.add(amountToMint)
 
-  });
+        expect(expectedNewSupply.toString()).to.equals(newSupply.toString())
+        expect(expectedNewBalance.toString()).to.equals(newBalance.toString())
 
-  it("Check initialize can only be run once", async function(){
-    // Retrieve current Token address
-    const TokenAddress = await getTokenAddress(ContractId, proxyAddress, client);
+        // We wipe amount in account to be able to dissociate
+        await Wipe(
+            ContractId,
+            proxyAddress,
+            newBalance,
+            operatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
 
-    // Initiliaze : fail
-    await expect(initialize(ContractId, proxyAddress, client, TokenAddress)).to.eventually.be.rejectedWith(Error);
-  });
+        // We dissociate the token from the account
+        await dissociateToken(
+            ContractId,
+            proxyAddress,
+            nonOperatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
 
-});
+        // We mint tokens to that account : fail
+        await expect(
+            Mint(
+                ContractId,
+                proxyAddress,
+                amountToMint,
+                operatorClient,
+                nonOperatorAccount,
+                nonOperatorIsE25519
+            )
+        ).to.eventually.be.rejectedWith(Error)
 
-describe("HederaERC20Proxy and HederaERC20ProxyAdmin Tests", function() {
-  before(async function  () {         
-    // Generate Client (token admin) and Client 2
-    [client,
-      OPERATOR_ID, 
-      OPERATOR_KEY,
-      OPERATOR_PUBLIC,
-      client2,
-      client2account,
-      client2privatekey,
-      client2publickey] = initializeClients();
-  
-      // Deploy Token using Client
-      let result = await deployContractsWithSDK(
-        TokenName, 
-        TokenSymbol, 
-        TokenDecimals, 
-        INIT_SUPPLY.toString(), 
-        MAX_SUPPLY.toString(), 
-        TokenMemo, 
-        OPERATOR_ID, 
-        OPERATOR_KEY, 
-        OPERATOR_PUBLIC);   
-        
-      proxyAddress = result[0];
-      proxyAdminAddress = result[1];
-      stableCoinAddress = result[2];
-    });   
+        newSupply = await getTotalSupply(
+            ContractId,
+            proxyAddress,
+            operatorClient
+        )
+        newBalance = await getBalanceOf(
+            ContractId,
+            proxyAddress,
+            operatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
+        expect(initialSupply.toString()).to.equals(newSupply.toString())
+        expect('0').to.equals(newBalance.toString())
+    })
 
-  it("Retrieve admin and implementation addresses for the Proxy", async function() {
-     // We retreive the HederaERC20Proxy admin and implementation
-     const implementation = await getProxyImplementation(ContractId, proxyAdminAddress, client, proxyAddress.toSolidityAddress());
-     const admin = await getProxyAdmin(ContractId, proxyAdminAddress, client, proxyAddress.toSolidityAddress());
+    it('Check initialize can only be run once', async function() {
+        // Retrieve current Token address
+        const TokenAddress = await getTokenAddress(
+            ContractId,
+            proxyAddress,
+            operatorClient
+        )
 
-     // We check their values : success
-     expect(implementation.toUpperCase()).to.equals("0X" + stableCoinAddress.toSolidityAddress().toUpperCase());
-     expect(admin.toUpperCase()).to.equals("0X" + proxyAdminAddress.toSolidityAddress().toUpperCase());
-  });
+        // Initiliaze : fail
+        await expect(
+            initialize(ContractId, proxyAddress, operatorClient, TokenAddress)
+        ).to.eventually.be.rejectedWith(Error)
+    })
 
-  it("Retrieve proxy admin owner", async function() {
-    // We retreive the HederaERC20Proxy admin and implementation
-    const ownerAccount = await owner(ContractId, proxyAdminAddress, client);
+    it('Check transfer from', async () => {
+        const AMOUNT = BigNumber.from(10)
+        await associateToken(
+            ContractId,
+            proxyAddress,
+            nonOperatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
+        const approveRes = await approve(
+            ContractId,
+            proxyAddress,
+            nonOperatorAccount,
+            nonOperatorIsE25519,
+            AMOUNT,
+            operatorClient
+        )
+        await Mint(
+            ContractId,
+            proxyAddress,
+            AMOUNT,
+            operatorClient,
+            operatorAccount,
+            operatorIsE25519
+        )
+        const allowanceRes = await allowance(
+            ContractId,
+            proxyAddress,
+            operatorAccount,
+            operatorIsE25519,
+            nonOperatorAccount,
+            nonOperatorIsE25519,
+            operatorClient
+        )
+        const transferFromRes = await transferFrom(
+            ContractId,
+            proxyAddress,
+            operatorAccount,
+            operatorIsE25519,
+            nonOperatorAccount,
+            nonOperatorIsE25519,
+            BigNumber.from('3'),
+            nonOperatorClient
+        )
+        const balanceResp = await getBalanceOf(
+            ContractId,
+            proxyAddress,
+            nonOperatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
+        const allowancePost = await allowance(
+            ContractId,
+            proxyAddress,
+            operatorAccount,
+            operatorIsE25519,
+            nonOperatorAccount,
+            nonOperatorIsE25519,
+            operatorClient
+        )
 
-    // We check their values : success
-    expect(ownerAccount.toUpperCase()).to.equals("0X" + AccountId.fromString(OPERATOR_ID).toSolidityAddress().toUpperCase());
- });
-  
-  it("Upgrade Proxy implementation without the proxy admin", async function() {
-    // Deploy a new contract
-    let result = await deployContractsWithSDK(
-      TokenName, 
-      TokenSymbol, 
-      TokenDecimals, 
-      INIT_SUPPLY.toString(), 
-      MAX_SUPPLY.toString(), 
-      TokenMemo, 
-      OPERATOR_ID, 
-      OPERATOR_KEY, 
-      OPERATOR_PUBLIC); 
+        const transferRes = await transfer(
+            ContractId,
+            proxyAddress,
+            nonOperatorAccount,
+            nonOperatorIsE25519,
+            BigNumber.from('3'),
+            operatorClient
+        )
+        const balanceResp2 = await getBalanceOf(
+            ContractId,
+            proxyAddress,
+            nonOperatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
+        // Reset accounts
+        await Burn(ContractId, proxyAddress, BigNumber.from(7), operatorClient)
 
-    const newImplementationContract = result[2];
+        await Wipe(
+            ContractId,
+            proxyAddress,
+            BigNumber.from(3),
+            operatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
+        await dissociateToken(
+            ContractId,
+            proxyAddress,
+            nonOperatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
 
-    // Non Admin upgrades implementation : fail       
-    await expect(upgradeTo(ContractId, proxyAddress, client, newImplementationContract.toSolidityAddress())).to.eventually.be.rejectedWith(Error);
-  });
+        expect(approveRes).to.equals(true)
+        expect(allowanceRes).to.equals(AMOUNT)
+        expect(transferFromRes).to.equals(true)
+        expect(balanceResp).to.equals(3)
+        expect(allowancePost).to.equals('7')
+        expect(balanceResp2).to.equals(6)
+    })
+})
 
-  it("Change Proxy admin without the proxy admin", async function() {
-    // Non Admin changes admin : fail       
-    await expect(changeAdmin(ContractId, proxyAddress, client, AccountId.fromString(client2account).toSolidityAddress())).to.eventually.be.rejectedWith(Error);
-  });
+describe.skip('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
+    before(async function() {
+        // Generate Client 1 and Client 2
 
-  it("Upgrade Proxy implementation with the proxy admin but without the owner account", async function() {
-    // Deploy a new contract
-    let result = await deployContractsWithSDK(
-      TokenName, 
-      TokenSymbol, 
-      TokenDecimals, 
-      INIT_SUPPLY.toString(), 
-      MAX_SUPPLY.toString(), 
-      TokenMemo, 
-      OPERATOR_ID, 
-      OPERATOR_KEY, 
-      OPERATOR_PUBLIC); 
+        const [
+            client1,
+            client1account,
+            client1privatekey,
+            client1publickey,
+            client1isED25519Type,
+            client2,
+            client2account,
+            client2privatekey,
+            client2publickey,
+            client2isED25519Type,
+        ] = initializeClients()
 
-    const newImplementationContract = result[2];
+        operatorClient = getOperatorClient(client1, client2, clientId)
+        nonOperatorClient = getNonOperatorClient(client1, client2, clientId)
+        operatorAccount = getOperatorAccount(
+            client1account,
+            client2account,
+            clientId
+        )
+        nonOperatorAccount = getNonOperatorAccount(
+            client1account,
+            client2account,
+            clientId
+        )
+        operatorPriKey = getOperatorPrivateKey(
+            client1privatekey,
+            client2privatekey,
+            clientId
+        )
+        operatorPubKey = getOperatorPublicKey(
+            client1publickey,
+            client2publickey,
+            clientId
+        )
+        operatorIsE25519 = getOperatorE25519(
+            client1isED25519Type,
+            client2isED25519Type,
+            clientId
+        )
+        nonOperatorIsE25519 = getNonOperatorE25519(
+            client1isED25519Type,
+            client2isED25519Type,
+            clientId
+        )
 
-    // Upgrading the proxy implementation using the Proxy Admin with an account that is not the owner : fails
-    await expect(upgrade(ContractId, proxyAdminAddress, client2, newImplementationContract.toSolidityAddress(), proxyAddress.toSolidityAddress())).to.eventually.be.rejectedWith(Error);
-  });
+        // Deploy Token using Client
+        const result = await deployContractsWithSDK(
+            TokenName,
+            TokenSymbol,
+            TokenDecimals,
+            INIT_SUPPLY.toString(),
+            MAX_SUPPLY.toString(),
+            TokenMemo,
+            operatorAccount,
+            operatorPriKey,
+            operatorPubKey,
+            operatorIsE25519
+        )
 
-  it("Change Proxy admin with the proxy admin but without the owner account", async function() {
-    // Non Owner changes admin : fail       
-    await expect(changeProxyAdmin(ContractId, proxyAdminAddress, client2, client2account, proxyAddress.toSolidityAddress())).to.eventually.be.rejectedWith(Error);
-  });
+        proxyAddress = result[0]
+        proxyAdminAddress = result[1]
+        stableCoinAddress = result[2]
+    })
 
-  it("Upgrade Proxy implementation with the proxy admin and the owner account", async function() {
-    // Deploy a new contract
-    let result = await deployContractsWithSDK(
-      TokenName, 
-      TokenSymbol, 
-      TokenDecimals, 
-      INIT_SUPPLY.toString(), 
-      MAX_SUPPLY.toString(), 
-      TokenMemo, 
-      OPERATOR_ID, 
-      OPERATOR_KEY, 
-      OPERATOR_PUBLIC); 
+    it('Retrieve admin and implementation addresses for the Proxy', async function() {
+        // We retreive the HederaERC20Proxy admin and implementation
+        const implementation = await getProxyImplementation(
+            ContractId,
+            proxyAdminAddress,
+            operatorClient,
+            proxyAddress.toSolidityAddress()
+        )
+        const admin = await getProxyAdmin(
+            ContractId,
+            proxyAdminAddress,
+            operatorClient,
+            proxyAddress.toSolidityAddress()
+        )
 
-    const newImplementationContract = result[2];
+        // We check their values : success
+        expect(implementation.toUpperCase()).to.equals(
+            '0X' + stableCoinAddress.toSolidityAddress().toUpperCase()
+        )
+        expect(admin.toUpperCase()).to.equals(
+            '0X' + proxyAdminAddress.toSolidityAddress().toUpperCase()
+        )
+    })
 
-    // Upgrading the proxy implementation using the Proxy Admin with an account that is the owner : success
-    await upgrade(ContractId, proxyAdminAddress, client, newImplementationContract.toSolidityAddress(), proxyAddress.toSolidityAddress())
+    it('Retrieve proxy admin owner', async function() {
+        // We retreive the HederaERC20Proxy admin and implementation
+        const ownerAccount = await owner(
+            ContractId,
+            proxyAdminAddress,
+            operatorClient
+        )
 
-    // Check new implementation address
-    const implementation = await getProxyImplementation(ContractId, proxyAdminAddress, client, proxyAddress.toSolidityAddress());
-    expect(implementation.toUpperCase()).to.equals("0X" + newImplementationContract.toSolidityAddress().toUpperCase());
+        // We check their values : success
+        expect(ownerAccount.toUpperCase()).to.equals(
+            (
+                await toEvmAddress(operatorAccount, operatorIsE25519)
+            ).toUpperCase()
+        )
+    })
 
-    // reset
-    await upgrade(ContractId, proxyAdminAddress, client, stableCoinAddress.toSolidityAddress(), proxyAddress.toSolidityAddress())
-  });
+    it('Upgrade Proxy implementation without the proxy admin', async function() {
+        // Deploy a new contract
+        const result = await deployContractsWithSDK(
+            TokenName,
+            TokenSymbol,
+            TokenDecimals,
+            INIT_SUPPLY.toString(),
+            MAX_SUPPLY.toString(),
+            TokenMemo,
+            operatorAccount,
+            operatorPriKey,
+            operatorPubKey,
+            operatorIsE25519
+        )
 
-  it("Change Proxy admin with the proxy admin and the owner account", async function() {
-    // Owner changes admin : success     
-    await changeProxyAdmin(ContractId, proxyAdminAddress, client, OPERATOR_ID, proxyAddress.toSolidityAddress());
+        const newImplementationContract = result[2]
 
-    // Now we cannot get the admin using the Proxy admin contract.
-    await expect(getProxyAdmin(ContractId, proxyAdminAddress, client, proxyAddress.toSolidityAddress())).to.eventually.be.rejectedWith(Error);
+        // Non Admin upgrades implementation : fail
+        await expect(
+            upgradeTo(
+                ContractId,
+                proxyAddress,
+                operatorClient,
+                newImplementationContract.toSolidityAddress()
+            )
+        ).to.eventually.be.rejectedWith(Error)
+    })
 
-    // Check that proxy admin has been changed
-    const _admin = await admin(ContractId, proxyAddress, client);
-    expect(_admin.toUpperCase()).to.equals("0X" + AccountId.fromString(OPERATOR_ID).toSolidityAddress().toUpperCase());
+    it('Change Proxy admin without the proxy admin', async function() {
+        // Non Admin changes admin : fail
+        await expect(
+            changeAdmin(
+                ContractId,
+                proxyAddress,
+                operatorClient,
+                await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)
+            )
+        ).to.eventually.be.rejectedWith(Error)
+    })
 
-    // reset
-    await changeAdmin(ContractId, proxyAddress, client, AccountId.fromString(client2account).toSolidityAddress());
-    await changeAdmin(ContractId, proxyAddress, client2, proxyAdminAddress.toSolidityAddress());
-  });
+    it('Upgrade Proxy implementation with the proxy admin but without the owner account', async function() {
+        // Deploy a new contract
+        const result = await deployContractsWithSDK(
+            TokenName,
+            TokenSymbol,
+            TokenDecimals,
+            INIT_SUPPLY.toString(),
+            MAX_SUPPLY.toString(),
+            TokenMemo,
+            operatorAccount,
+            operatorPriKey,
+            operatorPubKey,
+            operatorIsE25519
+        )
 
-  it("Transfers Proxy admin owner without the owner account", async function() {
-   // Non Owner transfers owner : fail       
-   await expect(transferOwnership(ContractId, proxyAdminAddress, client2, client2account)).to.eventually.be.rejectedWith(Error);
-  });
+        const newImplementationContract = result[2]
 
-  it("Transfers Proxy admin owner with the owner account", async function() {
-   // Owner transfers owner : success       
-   await transferOwnership(ContractId, proxyAdminAddress, client, client2account);
+        // Upgrading the proxy implementation using the Proxy Admin with an account that is not the owner : fails
+        await expect(
+            upgrade(
+                ContractId,
+                proxyAdminAddress,
+                nonOperatorClient,
+                newImplementationContract.toSolidityAddress(),
+                proxyAddress.toSolidityAddress()
+            )
+        ).to.eventually.be.rejectedWith(Error)
+    })
 
-   // Check
-   const ownerAccount = await owner(ContractId, proxyAdminAddress, client);
-   expect(ownerAccount.toUpperCase()).to.equals("0X" + AccountId.fromString(client2account).toSolidityAddress().toUpperCase());
+    it('Change Proxy admin with the proxy admin but without the owner account', async function() {
+        // Non Owner changes admin : fail
+        await expect(
+            changeProxyAdmin(
+                ContractId,
+                proxyAdminAddress,
+                nonOperatorClient,
+                nonOperatorAccount,
+                proxyAddress.toSolidityAddress(),
+                nonOperatorIsE25519
+            )
+        ).to.eventually.be.rejectedWith(Error)
+    })
 
-   // reset      
-   await transferOwnership(ContractId, proxyAdminAddress, client2, OPERATOR_ID);
-  });
+    it('Upgrade Proxy implementation with the proxy admin and the owner account', async function() {
+        // Deploy a new contract
+        const result = await deployContractsWithSDK(
+            TokenName,
+            TokenSymbol,
+            TokenDecimals,
+            INIT_SUPPLY.toString(),
+            MAX_SUPPLY.toString(),
+            TokenMemo,
+            operatorAccount,
+            operatorPriKey,
+            operatorPubKey,
+            operatorIsE25519
+        )
 
+        const newImplementationContract = result[2]
 
-});
+        // Upgrading the proxy implementation using the Proxy Admin with an account that is the owner : success
+        await upgrade(
+            ContractId,
+            proxyAdminAddress,
+            operatorClient,
+            newImplementationContract.toSolidityAddress(),
+            proxyAddress.toSolidityAddress()
+        )
+
+        // Check new implementation address
+        const implementation = await getProxyImplementation(
+            ContractId,
+            proxyAdminAddress,
+            operatorClient,
+            proxyAddress.toSolidityAddress()
+        )
+        expect(implementation.toUpperCase()).to.equals(
+            '0X' + newImplementationContract.toSolidityAddress().toUpperCase()
+        )
+
+        // reset
+        await upgrade(
+            ContractId,
+            proxyAdminAddress,
+            operatorClient,
+            stableCoinAddress.toSolidityAddress(),
+            proxyAddress.toSolidityAddress()
+        )
+    })
+
+    it('Change Proxy admin with the proxy admin and the owner account', async function() {
+        // Owner changes admin : success
+        await changeProxyAdmin(
+            ContractId,
+            proxyAdminAddress,
+            operatorClient,
+            operatorAccount,
+            proxyAddress.toSolidityAddress(),
+            operatorIsE25519
+        )
+
+        // Now we cannot get the admin using the Proxy admin contract.
+        await expect(
+            getProxyAdmin(
+                ContractId,
+                proxyAdminAddress,
+                operatorClient,
+                proxyAddress.toSolidityAddress()
+            )
+        ).to.eventually.be.rejectedWith(Error)
+
+        // Check that proxy admin has been changed
+        const _admin = await admin(ContractId, proxyAddress, operatorClient)
+        expect(_admin.toUpperCase()).to.equals(
+            (
+                await toEvmAddress(operatorAccount, operatorIsE25519)
+            ).toUpperCase()
+        )
+
+        // reset
+        await changeAdmin(
+            ContractId,
+            proxyAddress,
+            operatorClient,
+            await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)
+        )
+        await changeAdmin(
+            ContractId,
+            proxyAddress,
+            nonOperatorClient,
+            proxyAdminAddress.toSolidityAddress()
+        )
+    })
+
+    it('Transfers Proxy admin owner without the owner account', async function() {
+        // Non Owner transfers owner : fail
+        await expect(
+            transferOwnership(
+                ContractId,
+                proxyAdminAddress,
+                nonOperatorClient,
+                nonOperatorAccount,
+                nonOperatorIsE25519
+            )
+        ).to.eventually.be.rejectedWith(Error)
+    })
+
+    it('Transfers Proxy admin owner with the owner account', async function() {
+        // Owner transfers owner : success
+        await transferOwnership(
+            ContractId,
+            proxyAdminAddress,
+            operatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
+
+        // Check
+        const ownerAccount = await owner(
+            ContractId,
+            proxyAdminAddress,
+            operatorClient
+        )
+        expect(ownerAccount.toUpperCase()).to.equals(
+            (
+                await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)
+            ).toUpperCase()
+        )
+
+        // reset
+        await transferOwnership(
+            ContractId,
+            proxyAdminAddress,
+            nonOperatorClient,
+            operatorAccount,
+            operatorIsE25519
+        )
+    })
+})

@@ -11,10 +11,10 @@ import {
 	SELECTED_WALLET_PAIRED_ACCOUNTID,
 	SELECTED_WALLET_COIN,
 } from '../../store/slices/walletSlice';
-import { Capabilities } from 'hedera-stable-coin-sdk';
 import { useEffect, useState } from 'react';
 import type { IAccountToken } from '../../interfaces/IAccountToken.js';
 import type { IExternalToken } from '../../interfaces/IExternalToken.js';
+import { Operation } from 'hedera-stable-coin-sdk';
 
 const Roles = () => {
 	const capabilities = useSelector(SELECTED_WALLET_CAPABILITIES);
@@ -28,11 +28,13 @@ const Roles = () => {
 		if (tokensAccount) {
 			const tokensAccountParsed = JSON.parse(tokensAccount);
 			if (tokensAccountParsed) {
-				const myAccount = tokensAccountParsed.find((acc: IAccountToken) => accountId === acc.id);
+				const myAccount = tokensAccountParsed.find(
+					(acc: IAccountToken) => accountId?.toString() === acc.id,
+				);
 				if (myAccount) {
 					if (
 						myAccount.externalTokens.find(
-							(coin: IExternalToken) => coin.id === coinSelected?.tokenId,
+							(coin: IExternalToken) => coin.id === coinSelected?.tokenId?.toString(),
 						)
 					) {
 						setIsExternal(true);
@@ -44,23 +46,42 @@ const Roles = () => {
 		}
 	}, [coinSelected]);
 
+	const operations = capabilities?.capabilities.map((x) => x.operation);
 	const filteredCapabilities = roleOptions.filter((option) => {
-		if (!capabilities!.includes(Capabilities.CASH_IN) && option.label === 'Cash in') {
+		if (
+			!operations?.includes(Operation.CASH_IN) &&
+			option.label === 'Cash in'
+		) {
 			return false;
 		}
-		if (!capabilities!.includes(Capabilities.BURN) && option.label === 'Burn') {
+		if (
+			!operations?.includes(Operation.BURN) &&
+			option.label === 'Burn'
+		) {
 			return false;
 		}
-		if (!capabilities!.includes(Capabilities.WIPE) && option.label === 'Wipe') {
+		if (
+			!operations?.includes(Operation.WIPE) &&
+			option.label === 'Wipe'
+		) {
 			return false;
 		}
-		if (!capabilities!.includes(Capabilities.PAUSE) && option.label === 'Pause') {
+		if (
+			!operations?.includes(Operation.PAUSE) &&
+			option.label === 'Pause'
+		) {
 			return false;
 		}
-		if (!capabilities!.includes(Capabilities.RESCUE) && option.label === 'Rescue') {
+		if (
+			!operations?.includes(Operation.RESCUE) &&
+			option.label === 'Rescue'
+		) {
 			return false;
 		}
-		if (!capabilities!.includes(Capabilities.FREEZE) && option.label === 'Freeze') {
+		if (
+			!operations?.includes(Operation.FREEZE) &&
+			option.label === 'Freeze'
+		) {
 			return false;
 		}
 		return true;
@@ -84,7 +105,9 @@ const Roles = () => {
 			icon: 'PencilSimple',
 			route: NamedRoutes.EditRole,
 			title: t('edit'),
-			isDisabled: !capabilities!.includes(Capabilities.CASH_IN) || isExternal,
+			isDisabled:
+				!operations?.includes(Operation.CASH_IN) ||
+				isExternal,
 		},
 		{
 			icon: 'ArrowsClockwise',

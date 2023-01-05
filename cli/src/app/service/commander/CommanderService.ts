@@ -4,7 +4,7 @@ import Service from '../Service.js';
 import pkg from '../../../../package.json';
 import { utilsService, wizardService } from '../../../index.js';
 // import CreateStableCoinService from '../stablecoin/CreateStableCoinService.js';
-// import { CreateStableCoinRequest } from 'hedera-stable-coin-sdk';
+// import { CreateRequest } from 'hedera-stable-coin-sdk';
 
 /**
  * Commander Service
@@ -72,8 +72,7 @@ export default class CommanderService extends Service {
           configurationService.getConfiguration().defaultNetwork,
         );
         // Initialize SDK
-        
-        await utilsService.initSDK(utilsService.getCurrentNetwork().name);
+        await utilsService.initSDK();
         await utilsService.cleanAndShowBanner();
         await wizardService.mainMenu();
       });
@@ -119,7 +118,7 @@ export default class CommanderService extends Service {
         // const createStableCoinService: CreateStableCoinService =
         //   new CreateStableCoinService();
         // await createStableCoinService.createStableCoin(
-        //   new CreateStableCoinRequest({
+        //   new CreateRequest({
         //     account: options.
         //     name: options.name,
         //     symbol: options.symbol,

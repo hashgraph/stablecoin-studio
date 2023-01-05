@@ -10,12 +10,7 @@ import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
 import { handleRequestValidation } from '../../../utils/validationsHelper';
 import SDKService from '../../../services/SDKService';
-import {
-	SELECTED_WALLET_COIN,
-	SELECTED_WALLET_PAIRED_ACCOUNT,
-	SELECTED_WALLET_ACCOUNT_INFO,
-	walletActions,
-} from '../../../store/slices/walletSlice';
+import { SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
 import { FreezeAccountRequest } from 'hedera-stable-coin-sdk';
@@ -29,22 +24,12 @@ const FreezeOperation = () => {
 	} = useDisclosure();
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
-	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
-	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 
 	const [errorOperation, setErrorOperation] = useState();
 	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
 	const [request] = useState(
 		new FreezeAccountRequest({
-			proxyContractId: selectedStableCoin?.memo?.proxyContract ?? '',
-			account: {
-				accountId: account.accountId,
-			},
-			tokenId: selectedStableCoin?.tokenId ?? '',
-			publicKey:{
-				key:accountInfo.publicKey?.key??'',
-				type:accountInfo.publicKey?.type ??'ED25519'
-			},			
+			tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
 			targetId: '',
 		}),
 	);
@@ -61,15 +46,14 @@ const FreezeOperation = () => {
 	};
 	useRefreshCoinInfo();
 
-
-
-	const handleFreeze: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError }) => {
+	const handleFreeze: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError, onLoading}) => {
 		try {
-			if (!selectedStableCoin?.memo?.proxyContract || !selectedStableCoin?.tokenId) {
+			onLoading();
+			if (!selectedStableCoin?.proxyAddress || !selectedStableCoin?.tokenId?.toString()) {
 				onError();
 				return;
 			}
-			await SDKService.freeze(request);		
+			await SDKService.freeze(request);
 			onSuccess();
 		} catch (error: any) {
 			setErrorTransactionUrl(error.transactionUrl);
@@ -136,9 +120,8 @@ const FreezeOperation = () => {
 					/>
 				}
 				successNotificationTitle={t('operations:modalSuccessTitle')}
-				successNotificationDescription={t('freeze:modalSuccess',{
+				successNotificationDescription={t('freeze:modalSuccess', {
 					account: getValues().targetAccount,
-				
 				})}
 				handleOnCloseModalError={handleCloseModal}
 				handleOnCloseModalSuccess={handleCloseModal}

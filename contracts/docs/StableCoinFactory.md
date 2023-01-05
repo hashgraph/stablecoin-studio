@@ -13,7 +13,7 @@
 ### deployStableCoin
 
 ```solidity
-function deployStableCoin(IStableCoinFactory.tokenStruct requestedToken) external payable returns (address, address, address, address)
+function deployStableCoin(IStableCoinFactory.tokenStruct requestedToken, address StableCoinContractAddress) external payable returns (address, address, address, address)
 ```
 
 
@@ -25,6 +25,7 @@ function deployStableCoin(IStableCoinFactory.tokenStruct requestedToken) externa
 | Name | Type | Description |
 |---|---|---|
 | requestedToken | IStableCoinFactory.tokenStruct | undefined |
+| StableCoinContractAddress | address | undefined |
 
 #### Returns
 
@@ -35,6 +36,28 @@ function deployStableCoin(IStableCoinFactory.tokenStruct requestedToken) externa
 | _2 | address | undefined |
 | _3 | address | undefined |
 
+
+
+## Events
+
+### Deployed
+
+```solidity
+event Deployed(address, address, address, address)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| _0  | address | undefined |
+| _1  | address | undefined |
+| _2  | address | undefined |
+| _3  | address | undefined |
 
 
 
