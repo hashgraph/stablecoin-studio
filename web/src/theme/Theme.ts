@@ -17,7 +17,7 @@ const theme = extendTheme({
 	colors: {
 		background: 'rgb(51, 51, 51, .5)',
 		brand: {
-			primary: '#7A6BAE',
+			primary: '#662D8F',
 			secondary: '#464646',
 			black: '#323232',
 			gray: '#666666',
@@ -26,7 +26,7 @@ const theme = extendTheme({
 			gray4: '#FFFAF4',
 			gray5: '#edf2f7',
 			gray100: '#F7FAFC',
-			gray200: '#E2E8F0',
+			gray200: '#662d8f0f',
 			gray300: '#CBD5E0',
 			gray600: '#4A5568',
 			white: '#FFFFFF',
@@ -36,6 +36,7 @@ const theme = extendTheme({
 			lightGray: '#E1E1E1',
 			lightPrimary: '#ECE8FF',
 			primary200: '#5C47D9',
+			hover: '#8750AF'
 		},
 		light: {
 			primary: '#ECEBF1',

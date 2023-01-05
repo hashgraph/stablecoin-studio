@@ -66,7 +66,7 @@ const CashInOperation = () => {
 		} catch (error: any) {
 			console.log(JSON.stringify(error))
 			setErrorTransactionUrl(error.transactionUrl);
-			setErrorOperation(error.toString());
+			setErrorOperation(error.message);
 			onError();
 		}
 	};
