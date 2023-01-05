@@ -14,6 +14,7 @@
         }
     },
     "scripts": {
+        "postinstall": "npm run compile:force",
         "compile": "npx hardhat compile",
         "compile:force": "npx hardhat compile --force && npm run build",
         "test": "npx hardhat test",
