@@ -31,6 +31,7 @@ import {
   PauseRequest,
   DeleteRequest,
   GetSupplierAllowanceRequest,
+  
 } from 'hedera-stable-coin-sdk';
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 import CashInStableCoinsService from './CashInStableCoinService.js';
@@ -1302,7 +1303,15 @@ export default class OperationStableCoinService extends Service {
           value: StableCoinRole.DELETE_ROLE,
         },
       },
+      {
+        role: {
+          availability: capabilities.includes(Operation.ROLE_ADMIN_MANAGEMENT),
+          name: 'Admin Role',
+          value: StableCoinRole.DEFAULT_ADMIN_ROLE,
+        },
+      },
     ];
+
 
     const rolesAvailable = rolesAvailability.filter(
       ({ role }) => role.availability,
