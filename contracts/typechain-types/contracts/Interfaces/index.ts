@@ -2,4 +2,5 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { IHederaERC20 } from "./IHederaERC20";
+export type { IHederaERC20Upgradeable } from "./IHederaERC20Upgradeable";
 export type { IStableCoinFactory } from "./IStableCoinFactory";

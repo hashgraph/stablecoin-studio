@@ -149,7 +149,7 @@ function WIPE_ROLE() external view returns (bytes32)
 ### allowance
 
 ```solidity
-function allowance(address owner, address spender) external view returns (uint256)
+function allowance(address owner, address spender) external nonpayable returns (uint256)
 ```
 
 

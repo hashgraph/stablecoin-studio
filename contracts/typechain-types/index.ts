@@ -12,8 +12,6 @@ export type { IAccessControlUpgradeable } from "./@openzeppelin/contracts-upgrad
 export { IAccessControlUpgradeable__factory } from "./factories/@openzeppelin/contracts-upgradeable/access/IAccessControlUpgradeable__factory";
 export type { Initializable } from "./@openzeppelin/contracts-upgradeable/proxy/utils/Initializable";
 export { Initializable__factory } from "./factories/@openzeppelin/contracts-upgradeable/proxy/utils/Initializable__factory";
-export type { IERC20PermitUpgradeable } from "./@openzeppelin/contracts-upgradeable/token/ERC20/extensions/draft-IERC20PermitUpgradeable.sol/IERC20PermitUpgradeable";
-export { IERC20PermitUpgradeable__factory } from "./factories/@openzeppelin/contracts-upgradeable/token/ERC20/extensions/draft-IERC20PermitUpgradeable.sol/IERC20PermitUpgradeable__factory";
 export type { IERC20MetadataUpgradeable } from "./@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable";
 export { IERC20MetadataUpgradeable__factory } from "./factories/@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable__factory";
 export type { IERC20Upgradeable } from "./@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable";
@@ -90,6 +88,8 @@ export type { IHederaTokenService } from "./contracts/hts-precompile/IHederaToke
 export { IHederaTokenService__factory } from "./factories/contracts/hts-precompile/IHederaTokenService__factory";
 export type { IHederaERC20 } from "./contracts/Interfaces/IHederaERC20";
 export { IHederaERC20__factory } from "./factories/contracts/Interfaces/IHederaERC20__factory";
+export type { IHederaERC20Upgradeable } from "./contracts/Interfaces/IHederaERC20Upgradeable";
+export { IHederaERC20Upgradeable__factory } from "./factories/contracts/Interfaces/IHederaERC20Upgradeable__factory";
 export type { IStableCoinFactory } from "./contracts/Interfaces/IStableCoinFactory";
 export { IStableCoinFactory__factory } from "./factories/contracts/Interfaces/IStableCoinFactory__factory";
 export type { StableCoinFactory } from "./contracts/StableCoinFactory";

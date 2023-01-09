@@ -398,7 +398,7 @@ describe('HederaERC20 Tests', function() {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Check transfer from', async () => {
+    it('Check transfer and transferFrom', async () => {
         const AMOUNT = BigNumber.from(10)
         await associateToken(
             ContractId,
@@ -475,12 +475,12 @@ describe('HederaERC20 Tests', function() {
             nonOperatorIsE25519
         )
         // Reset accounts
-        await Burn(ContractId, proxyAddress, BigNumber.from(7), operatorClient)
+        await Burn(ContractId, proxyAddress, BigNumber.from(4), operatorClient)
 
         await Wipe(
             ContractId,
             proxyAddress,
-            BigNumber.from(3),
+            BigNumber.from(6),
             operatorClient,
             nonOperatorAccount,
             nonOperatorIsE25519
@@ -502,7 +502,7 @@ describe('HederaERC20 Tests', function() {
     })
 })
 
-describe.skip('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
+describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
     before(async function() {
         // Generate Client 1 and Client 2
 
