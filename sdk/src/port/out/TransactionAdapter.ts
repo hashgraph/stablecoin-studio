@@ -22,7 +22,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import TransactionResponse from '../../domain/context/transaction/TransactionResponse.js';
 import StableCoinCapabilities from '../../domain/context/stablecoin/StableCoinCapabilities.js';
-import {StableCoin} from '../../domain/context/stablecoin/StableCoin.js';
+import { StableCoin } from '../../domain/context/stablecoin/StableCoin.js';
 import ContractId from '../../domain/context/contract/ContractId.js';
 import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import { StableCoinRole } from '../../domain/context/stablecoin/StableCoinRole.js';
@@ -167,7 +167,11 @@ export default abstract class TransactionAdapter
 	init(): Promise<Environment> {
 		throw new Error('Method not implemented.');
 	}
-	create(coin: StableCoin, factory: ContractId, hederaERC20: ContractId): Promise<TransactionResponse<any, Error>> {
+	create(
+		coin: StableCoin,
+		factory: ContractId,
+		hederaERC20: ContractId,
+	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
 	getAccount(): Account {
@@ -189,7 +193,7 @@ export default abstract class TransactionAdapter
 	cashin(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
-		amount: BigDecimal
+		amount: BigDecimal,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
@@ -333,28 +337,23 @@ export default abstract class TransactionAdapter
 		throw new Error('Method not implemented.');
 	}
 
-	getMirrorNodeAdapter(
-	): MirrorNodeAdapter {
+	getMirrorNodeAdapter(): MirrorNodeAdapter {
 		throw new Error('Method not implemented.');
 	}
 
 	async accountToEvmAddress(accountId: HederaId): Promise<string> {
-		try {
-			const accountInfoViewModel: AccountViewModel =
-				await this.getMirrorNodeAdapter().getAccountInfo(accountId);
-			if (accountInfoViewModel.accountEvmAddress) {
-				return accountInfoViewModel.accountEvmAddress;
-			} else if (accountInfoViewModel.publicKey) {
-				return this.getAccountEvmAddressFromPrivateKeyType(
-					accountInfoViewModel.publicKey.type,
-					accountInfoViewModel.publicKey.key,
-					accountId,
-				);
-			} else {
-				return Promise.reject<string>('');
-			}
-		} catch (error) {
-			return Promise.reject<string>(error);
+		const accountInfoViewModel: AccountViewModel =
+			await this.getMirrorNodeAdapter().getAccountInfo(accountId);
+		if (accountInfoViewModel.accountEvmAddress) {
+			return accountInfoViewModel.accountEvmAddress;
+		} else if (accountInfoViewModel.publicKey) {
+			return this.getAccountEvmAddressFromPrivateKeyType(
+				accountInfoViewModel.publicKey.type,
+				accountInfoViewModel.publicKey.key,
+				accountId,
+			);
+		} else {
+			return Promise.reject<string>('');
 		}
 	}
 
@@ -368,7 +367,7 @@ export default abstract class TransactionAdapter
 				return HPublicKey.fromString(publicKey).toEthereumAddress();
 
 			default:
-				return "0x" + accountId.toHederaAddress().toSolidityAddress();
+				return '0x' + accountId.toHederaAddress().toSolidityAddress();
 		}
-	}	
+	}
 }
