@@ -1,10 +1,11 @@
 import { Alert, AlertDescription, AlertIcon, AlertTitle, CloseButton } from '@chakra-ui/react';
-import { ConnectionState, Network } from 'hedera-stable-coin-sdk';
+import { ConnectionState } from 'hedera-stable-coin-sdk';
 import type { ReactNode } from 'react';
 import { useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { SELECTED_WALLET_STATUS } from '../store/slices/walletSlice';
+import SDKService from '../services/SDKService';
+import { LAST_WALLET_SELECTED, SELECTED_WALLET_STATUS } from '../store/slices/walletSlice';
 
 interface a {
 	children: ReactNode;
@@ -16,6 +17,7 @@ const InnactivityTimer = ({ children }: a) => {
 	const events = ['load', 'mousemove', 'mousedown', 'click', 'scroll', 'keypress'];
 
 	const status = useSelector(SELECTED_WALLET_STATUS);
+	const lastWallet = useSelector(LAST_WALLET_SELECTED);
 
 	let timer: ReturnType<typeof setTimeout>;
 
@@ -48,7 +50,7 @@ const InnactivityTimer = ({ children }: a) => {
 				window.removeEventListener(item, eventListeners);
 			});
 		};
-	}, [status]);
+	}, [status, lastWallet]);
 
 	const eventListeners = () => {
 		resetTimer();
@@ -69,7 +71,7 @@ const InnactivityTimer = ({ children }: a) => {
 
 	const handleLogout = async () => {
 		if (!abortRef.current) {
-			await Network.disconnect();
+			await SDKService.disconnectWallet();
 
 			setShowAlert(true);
 		}
