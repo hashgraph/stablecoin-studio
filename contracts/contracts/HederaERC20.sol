@@ -2,7 +2,6 @@
 pragma solidity 0.8.10;
 
 import './Interfaces/IHederaERC20Upgradeable.sol';
-// import '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol';
 import './Interfaces/IHederaERC20.sol';
 import './extensions/CashIn.sol';
@@ -201,8 +200,6 @@ contract HederaERC20 is
         external
         returns (uint256)
     {
-        // require(false, 'function not already implemented');
-        // return 0;
         (, uint256 amount) = IHederaTokenService(precompileAddress).allowance(
             _getTokenAddress(),
             owner,
