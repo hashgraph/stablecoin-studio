@@ -1,11 +1,17 @@
 import { Box, Flex, HStack, Image, Text, VStack } from '@chakra-ui/react';
 import { useDispatch, useSelector } from 'react-redux';
 import Icon from '../../components/Icon';
-import { LAST_WALLET_SELECTED, SELECTED_WALLET_PAIRED, walletActions } from '../../store/slices/walletSlice';
+import {
+	LAST_WALLET_SELECTED,
+	SELECTED_WALLET_PAIRED,
+	walletActions,
+} from '../../store/slices/walletSlice';
 import HEDERA_LOGO from '../../assets/png/hashpackLogo.png';
 import METAMASK_LOGO from '../../assets/svg/MetaMask_Fox.svg';
 import TooltipCopy from '../../components/TooltipCopy';
 import { Network, SupportedWallets } from 'hedera-stable-coin-sdk';
+import { Question } from 'phosphor-react';
+import { type ReactElement } from 'react';
 
 const TopbarRight = () => {
 	const dispatch = useDispatch();
@@ -14,16 +20,21 @@ const TopbarRight = () => {
 	const selectedWallet = useSelector(LAST_WALLET_SELECTED);
 
 	const handleDisconnect = async () => {
-		await Network.disconnect()
+		await Network.disconnect();
 
 		dispatch(walletActions.clearData());
 		dispatch(walletActions.setStableCoinList([]));
 	};
 
-	const getIcon = (): string => {
-		if (selectedWallet === SupportedWallets.HASHPACK) return HEDERA_LOGO;
+	const getIcon = (): ReactElement => {
+		const img = (src: string) => (
+			<Image src={src} alt={selectedWallet} w='25px' h='25px' alignSelf='center' />
+		);
 
-		return METAMASK_LOGO;
+		if (selectedWallet === SupportedWallets.HASHPACK) return img(HEDERA_LOGO);
+		if (selectedWallet === SupportedWallets.METAMASK) return img(METAMASK_LOGO);
+
+		return <Question size={22} color='#fdfdfc' weight='light' />;
 	};
 
 	return (
@@ -48,7 +59,7 @@ const TopbarRight = () => {
 						{'testnet'}
 					</Text>
 				</VStack>
-				<Image src={getIcon()} alt={selectedWallet} w='25px' h='25px' alignSelf='center' />
+				{getIcon()}
 			</HStack>
 			<Box borderLeft='2px solid' borderLeftColor='light.primary' w='1px' />
 			<Flex

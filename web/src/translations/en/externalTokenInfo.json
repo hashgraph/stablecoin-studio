@@ -13,7 +13,7 @@
     "externalTokenInfo": {
       "stableCoinId": "Stable coin id",
       "stableCoinIdPlaceholder": "0.0.0",
-      "title": "Imported token",
+      "title": "Add token",
       "autoCheckRoles": "Do you want to get the roles automatically? This operation will incur a cost",
       "rolesPlaceholder": "Select the roles"
     },

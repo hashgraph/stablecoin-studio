@@ -60,6 +60,7 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 		if (loading) return;
 		setLoading(wallet);
 		dispatch(walletActions.setLastWallet(wallet));
+		dispatch(walletActions.setSelectedStableCoin(undefined));
 		try {
 			await SDKService.connectWallet(wallet);
 		} catch (error: any) {

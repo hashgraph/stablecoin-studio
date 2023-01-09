@@ -97,37 +97,46 @@ const DangerZoneOperations = () => {
 			pause: !isExternalToken
 				? (!canPause || (canPause && selectedStableCoin?.paused)) ?? false
 				: (!operations?.includes(Operation.PAUSE) ||
-				  (operations?.includes(Operation.PAUSE) && (getAccessByOperation(Operation.PAUSE) !== Access.HTS) && 
-				   !roles.includes(StableCoinRole.PAUSE_ROLE)) ||
-				   selectedStableCoin?.paused) ?? 
-				   false,
+						(operations?.includes(Operation.PAUSE) &&
+							getAccessByOperation(Operation.PAUSE) !== Access.HTS &&
+							!roles.includes(StableCoinRole.PAUSE_ROLE)) ||
+						selectedStableCoin?.paused) ??
+				  false,
 			unpause: !isExternalToken
 				? (!canPause || (canPause && !selectedStableCoin?.paused)) ?? false
 				: (!operations?.includes(Operation.PAUSE) ||
-				  (operations?.includes(Operation.PAUSE) && (getAccessByOperation(Operation.PAUSE) !== Access.HTS) && 
-				   !roles.includes(StableCoinRole.PAUSE_ROLE)) ||
-				   !selectedStableCoin?.paused) ??
-				   false,
+						(operations?.includes(Operation.PAUSE) &&
+							getAccessByOperation(Operation.PAUSE) !== Access.HTS &&
+							!roles.includes(StableCoinRole.PAUSE_ROLE)) ||
+						!selectedStableCoin?.paused) ??
+				  false,
 			delete: !isExternalToken
-				? (!canPause || (selectedStableCoin?.paused || selectedStableCoin?.deleted)) ?? false
+				? (!canPause || selectedStableCoin?.paused || selectedStableCoin?.deleted) ?? false
 				: (!operations?.includes(Operation.DELETE) ||
-				  (operations?.includes(Operation.DELETE) && (getAccessByOperation(Operation.DELETE) !== Access.HTS) && 
-				   !roles.includes(StableCoinRole.DELETE_ROLE)) ||
-				   selectedStableCoin?.paused || 
-				   selectedStableCoin?.deleted) ?? 
-				false
+						(operations?.includes(Operation.DELETE) &&
+							getAccessByOperation(Operation.DELETE) !== Access.HTS &&
+							!roles.includes(StableCoinRole.DELETE_ROLE)) ||
+						selectedStableCoin?.paused ||
+						selectedStableCoin?.deleted) ??
+				  false,
 		};
 
 		setDisabledFeatures(areDisabled);
 
 		function getAccessByOperation(operation: Operation): Access | undefined {
-			return capabilities?.capabilities.filter((capability) => {
-				return (capability.operation === operation);
-			})[0].access ?? undefined;
+			return (
+				capabilities?.capabilities.filter((capability) => {
+					return capability.operation === operation;
+				})[0].access ?? undefined
+			);
 		}
 	};
 
-	const handlePause: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError, onLoading }) => {
+	const handlePause: ModalsHandlerActionsProps['onConfirm'] = async ({
+		onSuccess,
+		onError,
+		onLoading,
+	}) => {
 		try {
 			onLoading();
 			if (!selectedStableCoin?.proxyAddress || !selectedStableCoin?.tokenId) {
@@ -140,12 +149,16 @@ const DangerZoneOperations = () => {
 			onSuccess();
 		} catch (error: any) {
 			setErrorTransactionUrl(error.transactionUrl);
-			setErrorPauseOperation(error.toString());
+			setErrorPauseOperation(error.message);
 			onError();
 		}
 	};
 
-	const handleUnpause: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError, onLoading }) => {
+	const handleUnpause: ModalsHandlerActionsProps['onConfirm'] = async ({
+		onSuccess,
+		onError,
+		onLoading,
+	}) => {
 		try {
 			onLoading();
 			if (!selectedStableCoin?.proxyAddress || !selectedStableCoin?.tokenId) {
@@ -158,12 +171,16 @@ const DangerZoneOperations = () => {
 			onSuccess();
 		} catch (error: any) {
 			setErrorTransactionUrl(error.transactionUrl);
-			setErrorUnpauseOperation(error.toString());
+			setErrorUnpauseOperation(error.message);
 			onError();
 		}
 	};
 
-	const handleDelete: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError, onLoading }) => {
+	const handleDelete: ModalsHandlerActionsProps['onConfirm'] = async ({
+		onSuccess,
+		onError,
+		onLoading,
+	}) => {
 		try {
 			onLoading();
 			if (!selectedStableCoin?.proxyAddress || !selectedStableCoin?.tokenId) {
@@ -177,7 +194,7 @@ const DangerZoneOperations = () => {
 			RouterManager.to(navigate, NamedRoutes.Operations);
 		} catch (error: any) {
 			setErrorTransactionUrl(error.transactionUrl);
-			setErrorDeleteOperation(error.toString());
+			setErrorDeleteOperation(error.message);
 			onError();
 		}
 	};

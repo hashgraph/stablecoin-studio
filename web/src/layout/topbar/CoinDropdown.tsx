@@ -54,6 +54,8 @@ const CoinDropdown = () => {
 	useEffect(() => {
 		if (selectedStableCoin) {
 			getCapabilities();
+		}else{
+			searcheableRef.current?.clearValue();
 		}
 	}, [selectedStableCoin]);
 
@@ -139,6 +141,7 @@ const CoinDropdown = () => {
 	};
 
 	const handleSelectCoin = async (event: any) => {
+		if(!event?.value) return;
 		const selectedCoin = event.value;
 		const stableCoinDetails = await SDKService.getStableCoinDetails(
 			new GetStableCoinDetailsRequest({
