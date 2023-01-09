@@ -1,7 +1,3 @@
-
-
-
-
 defaultNetwork: testnet
 networks:
   - name: mainnet
@@ -14,13 +10,27 @@ networks:
     consensusNodes: []
     mirrorNodeUrl: https://testnet.mirrornode.hedera.com
 accounts:
-  - accountId: ''
+  - accountId: 0.0.48934511
+    network: testnet
+    alias: a
     privateKey:
-      key: ''
-      type: ''
-    network: ''
-    alias: ''
-    importedTokens: []
+      key: '0x919fa466b00ce842aae14fdd03fa54c3f105a64c01af62aca1a3fa4336c9262a'
+      type: ED25519
+    importedTokens:
+      - id: 0.0.49244984
+        symbol: ADR
+        roles:
+          - '0x0000000000000000000000000000000000000000000000000000000000000000'
 logs:
   path: ./logs
   level: ERROR
+factories:
+  - id: 0.0.49127286
+    network: testnet
+  - id: 0.0.11111111
+    network: previewnet
+hederaERC20s:
+  - id: 0.0.49217489
+    network: testnet
+  - id: 0.0.11111111
+    network: previewnet
