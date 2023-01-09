@@ -154,6 +154,15 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 		) {
 			return false;
 		}		
+		
+		if (
+			!(operations?.includes(Operation.ROLE_ADMIN_MANAGEMENT) && 
+			getAccessByOperation(Operation.ROLE_ADMIN_MANAGEMENT) === Access.CONTRACT) && 
+			option.label === 'Admin Role'
+		) {
+			return false;
+		}		
+
 		return true;
 	});
 

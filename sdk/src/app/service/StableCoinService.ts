@@ -36,6 +36,7 @@ import { StableCoin } from '../../domain/context/stablecoin/StableCoin.js';
 import PublicKey from '../../domain/context/account/PublicKey.js';
 import { GetStableCoinQuery } from '../usecase/query/stablecoin/get/GetStableCoinQuery.js';
 import { StableCoinNotFound } from '../../port/out/mirror/error/StableCoinNotFound.js';
+import { Console } from 'console';
 
 @singleton()
 export default class StableCoinService extends Service {
@@ -186,6 +187,16 @@ export default class StableCoinService extends Service {
 					new Capability(Operation.ROLE_MANAGEMENT, Access.CONTRACT),
 				);
 			}
+
+			if (_coin.autoRenewAccount?.toString() === account.id.toString() && _coin.memo !== '') {
+				listCapabilities.push(
+					new Capability(Operation.ROLE_ADMIN_MANAGEMENT, Access.CONTRACT),
+				);
+
+			}
+			
+	
+
 			return new StableCoinCapabilities(_coin, listCapabilities, account);
 		} catch (error) {
 			return Promise.reject(error);
