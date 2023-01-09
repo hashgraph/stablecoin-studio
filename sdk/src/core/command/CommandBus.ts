@@ -49,18 +49,13 @@ export class CommandBus<T extends CommandResponse = CommandResponse>
 	}
 
 	execute<X extends T>(command: Command<X>): Promise<X> {
-		try {
-			const commandId = this.getCommandId(command);
-			const handler = this.handlers.get(commandId);
-			if (!handler) {
-				throw new CommandHandlerNotFoundException(commandId);
-			}
-			// Has to be casted to return type as it its inferred based off the parameter
-			return handler.execute(command) as Promise<X>;
-		} catch (err) {
-			console.error(err);
-			throw err;
+		const commandId = this.getCommandId(command);
+		const handler = this.handlers.get(commandId);
+		if (!handler) {
+			throw new CommandHandlerNotFoundException(commandId);
 		}
+		// Has to be casted to return type as it its inferred based off the parameter
+		return handler.execute(command) as Promise<X>;
 	}
 
 	bind<X extends T>(handler: ICommandHandler<Command<X>>, id: string): void {

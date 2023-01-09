@@ -299,15 +299,10 @@ export default class Injectable {
 	}
 
 	static resolveTransactionHandler(): TransactionAdapter {
-		try {
-			if (!this.currentTransactionHandler) {
-				throw new RuntimeError('No Transaction Handler registered!');
-			} else {
-				return this.currentTransactionHandler;
-			}
-		} catch (error) {
-			console.error(error);
+		if (!this.currentTransactionHandler) {
 			throw new RuntimeError('No Transaction Handler registered!');
+		} else {
+			return this.currentTransactionHandler;
 		}
 	}
 
