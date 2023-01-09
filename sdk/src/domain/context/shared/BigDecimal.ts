@@ -253,7 +253,6 @@ export default class BigDecimal implements FixedNumber {
 			BigDecimal.fromString(value);
 			return true;
 		} catch (err) {
-			console.error(err);
 			return false;
 		}
 	}

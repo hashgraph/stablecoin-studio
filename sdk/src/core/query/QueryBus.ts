@@ -49,17 +49,12 @@ export class QueryBus<T extends QueryResponse = QueryResponse>
 	}
 
 	execute<X extends T>(query: Query<X>): Promise<X> {
-		try {
-			const queryId = this.getQueryId(query);
-			const handler = this.handlers.get(queryId);
-			if (!handler) {
-				throw new QueryHandlerNotFoundException(queryId);
-			}
-			return handler.execute(query) as Promise<X>;
-		} catch (err) {
-			console.error(err);
-			throw err;
+		const queryId = this.getQueryId(query);
+		const handler = this.handlers.get(queryId);
+		if (!handler) {
+			throw new QueryHandlerNotFoundException(queryId);
 		}
+		return handler.execute(query) as Promise<X>;
 	}
 
 	bind<X extends T>(handler: IQueryHandler<Query<X>>, id: string): void {

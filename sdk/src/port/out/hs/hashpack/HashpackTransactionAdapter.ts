@@ -265,9 +265,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 				abi,
 			);
 		} catch (error) {
-
 			throw new SigningError(error);
-			
 		}
 	}
 

@@ -71,6 +71,7 @@ import { RPCTransactionResponseAdapter } from './RPCTransactionResponseAdapter.j
 import LogService from '../../../app/service/LogService.js';
 import { WalletConnectRejectedError } from '../../../domain/context/network/error/WalletConnectRejectedError.js';
 import { TransactionResponseError } from '../error/TransactionResponseError.js';
+import { SigningError } from '../hs/error/SigningError.js';
 
 // eslint-disable-next-line no-var
 declare var ethereum: MetaMaskInpageProvider;
@@ -197,7 +198,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				'Deployed',
 			);
 		} catch (error) {
-			throw new Error(
+			throw new SigningError(
 				`Unexpected error in RPCTransactionAdapter create operation : ${error}`,
 			);
 		}
@@ -338,9 +339,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse> {
 		try {
 			if (!coin.coin.evmProxyAddress)
-				throw new Error(
-					`StableCoin ${coin.coin.name} does not have a proxy address`,
-				);
+				throw new TransactionResponseError({
+					RPC_relay: true,
+					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
+				});
 
 			return RPCTransactionResponseAdapter.manageResponse(
 				await HederaERC20__factory.connect(
@@ -349,8 +351,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				).grantRole(role, this.accountToEvmAddress(targetId)),
 			);
 		} catch (error) {
-			// should throw RPCHandlerError
-			throw new Error('Error');
+			throw new TransactionResponseError({
+				RPC_relay: true,
+				message: `Unexpected error in HederaTransactionHandler grantRole operation : ${error}`,
+				transactionId: (error as any).error?.transactionId,
+			});
 		}
 	}
 
@@ -361,9 +366,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse> {
 		try {
 			if (!coin.coin.evmProxyAddress)
-				throw new Error(
-					`StableCoin ${coin.coin.name} does not have a proxy address`,
-				);
+				throw new TransactionResponseError({
+					RPC_relay: true,
+					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
+				});
 
 			return RPCTransactionResponseAdapter.manageResponse(
 				await HederaERC20__factory.connect(
@@ -372,8 +378,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				).revokeRole(role, this.accountToEvmAddress(targetId)),
 			);
 		} catch (error) {
-			// should throw RPCHandlerError
-			throw new Error('Error');
+			throw new TransactionResponseError({
+				RPC_relay: true,
+				message: `Unexpected error in HederaTransactionHandler revokeRole operation : ${error}`,
+				transactionId: (error as any).error?.transactionId,
+			});
 		}
 	}
 
@@ -384,9 +393,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse> {
 		try {
 			if (!coin.coin.evmProxyAddress)
-				throw new Error(
-					`StableCoin ${coin.coin.name} does not have a proxy address`,
-				);
+				throw new TransactionResponseError({
+					RPC_relay: true,
+					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
+				});
 
 			return RPCTransactionResponseAdapter.manageResponse(
 				await HederaERC20__factory.connect(
@@ -398,8 +408,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				),
 			);
 		} catch (error) {
-			// should throw RPCHandlerError
-			throw new Error('Error');
+			throw new TransactionResponseError({
+				RPC_relay: true,
+				message: `Unexpected error in HederaTransactionHandler grantSupplierRole operation : ${error}`,
+				transactionId: (error as any).error?.transactionId,
+			});
 		}
 	}
 
@@ -409,9 +422,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse> {
 		try {
 			if (!coin.coin.evmProxyAddress)
-				throw new Error(
-					`StableCoin ${coin.coin.name} does not have a proxy address`,
-				);
+				throw new TransactionResponseError({
+					RPC_relay: true,
+					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
+				});
 
 			return RPCTransactionResponseAdapter.manageResponse(
 				await HederaERC20__factory.connect(
@@ -422,8 +436,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				),
 			);
 		} catch (error) {
-			// should throw RPCHandlerError
-			throw new Error('Error');
+			throw new TransactionResponseError({
+				RPC_relay: true,
+				message: `Unexpected error in HederaTransactionHandler grantUnlimitedSupplierRole operation : ${error}`,
+				transactionId: (error as any).error?.transactionId,
+			});
 		}
 	}
 
@@ -433,9 +450,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse> {
 		try {
 			if (!coin.coin.evmProxyAddress)
-				throw new Error(
-					`StableCoin ${coin.coin.name} does not have a proxy address`,
-				);
+				throw new TransactionResponseError({
+					RPC_relay: true,
+					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
+				});
 
 			return RPCTransactionResponseAdapter.manageResponse(
 				await HederaERC20__factory.connect(
@@ -444,8 +462,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				).revokeSupplierRole(this.accountToEvmAddress(targetId)),
 			);
 		} catch (error) {
-			// should throw RPCHandlerError
-			throw new Error('Error');
+			throw new TransactionResponseError({
+				RPC_relay: true,
+				message: `Unexpected error in HederaTransactionHandler revokeSupplierRole operation : ${error}`,
+				transactionId: (error as any).error?.transactionId,
+			});
 		}
 	}
 
@@ -456,21 +477,23 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse<boolean, Error>> {
 		try {
 			if (!coin.coin.evmProxyAddress)
-				throw new Error(
-					`StableCoin ${coin.coin.name} does not have a proxy address`,
-				);
+				throw new TransactionResponseError({
+					RPC_relay: true,
+					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
+				});
 
 			const res = await HederaERC20__factory.connect(
 				coin.coin.evmProxyAddress,
 				this.signerOrProvider,
-			).hasRole(role, this.accountToEvmAddress(targetId));			
-			
-			return new TransactionResponse(
-				undefined,
-				res.valueOf(),
-			);
+			).hasRole(role, this.accountToEvmAddress(targetId));
+
+			return new TransactionResponse(undefined, res.valueOf());
 		} catch (error) {
-			throw new Error('Error');
+			throw new TransactionResponseError({
+				RPC_relay: true,
+				message: `Unexpected error in HederaTransactionHandler hasRole operation : ${error}`,
+				transactionId: (error as any).error?.transactionId,
+			});
 		}
 	}
 
@@ -480,9 +503,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse<BigDecimal, Error>> {
 		try {
 			if (!coin.coin.evmProxyAddress)
-				throw new Error(
-					`StableCoin ${coin.coin.name} does not have a proxy address`,
-				);
+				throw new TransactionResponseError({
+					RPC_relay: true,
+					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
+				});
 			const res = await HederaERC20__factory.connect(
 				coin.coin.evmProxyAddress,
 				this.signerOrProvider,
@@ -493,7 +517,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				BigDecimal.fromStringFixed(res.toString(), coin.coin.decimals),
 			);
 		} catch (error) {
-			throw new Error('Error');
+			throw new TransactionResponseError({
+				RPC_relay: true,
+				message: `Unexpected error in HederaTransactionHandler balanceOf operation : ${error}`,
+				transactionId: (error as any).error?.transactionId,
+			});
 		}
 	}
 
@@ -503,9 +531,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse> {
 		try {
 			if (!coin.coin.evmProxyAddress)
-				throw new Error(
-					`StableCoin ${coin.coin.name} does not have a proxy address`,
-				);
+				throw new TransactionResponseError({
+					RPC_relay: true,
+					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
+				});
 
 			return RPCTransactionResponseAdapter.manageResponse(
 				await HederaERC20__factory.connect(
@@ -514,7 +543,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				).associateToken(this.accountToEvmAddress(targetId)),
 			);
 		} catch (error) {
-			throw new Error('Error');
+			throw new TransactionResponseError({
+				RPC_relay: true,
+				message: `Unexpected error in HederaTransactionHandler associateToken operation : ${error}`,
+				transactionId: (error as any).error?.transactionId,
+			});
 		}
 	}
 
@@ -524,9 +557,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse> {
 		try {
 			if (!coin.coin.evmProxyAddress)
-				throw new Error(
-					`StableCoin ${coin.coin.name} does not have a proxy address`,
-				);
+				throw new TransactionResponseError({
+					RPC_relay: true,
+					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
+				});
 
 			return RPCTransactionResponseAdapter.manageResponse(
 				await HederaERC20__factory.connect(
@@ -535,7 +569,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				).dissociateToken(this.accountToEvmAddress(targetId)),
 			);
 		} catch (error) {
-			throw new Error('Error');
+			throw new TransactionResponseError({
+				RPC_relay: true,
+				message: `Unexpected error in HederaTransactionHandler dissociateToken operation : ${error}`,
+				transactionId: (error as any).error?.transactionId,
+			});
 		}
 	}
 
@@ -545,9 +583,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse> {
 		try {
 			if (!coin.coin.evmProxyAddress)
-				throw new Error(
-					`StableCoin ${coin.coin.name} does not have a proxy address`,
-				);
+				throw new TransactionResponseError({
+					RPC_relay: true,
+					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
+				});
 
 			return new TransactionResponse(
 				undefined,
@@ -559,7 +598,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				),
 			);
 		} catch (error) {
-			throw new Error('Error');
+			throw new TransactionResponseError({
+				RPC_relay: true,
+				message: `Unexpected error in HederaTransactionHandler isUnlimitedSupplierAllowance operation : ${error}`,
+				transactionId: (error as any).error?.transactionId,
+			});
 		}
 	}
 
@@ -569,9 +612,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse<BigDecimal, Error>> {
 		try {
 			if (!coin.coin.evmProxyAddress)
-				throw new Error(
-					`StableCoin ${coin.coin.name} does not have a proxy address`,
-				);
+				throw new TransactionResponseError({
+					RPC_relay: true,
+					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
+				});
 
 			const res = await HederaERC20__factory.connect(
 				coin.coin.evmProxyAddress,
@@ -583,7 +627,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				BigDecimal.fromStringFixed(res.toString(), coin.coin.decimals),
 			);
 		} catch (error) {
-			throw new Error('Error');
+			throw new TransactionResponseError({
+				RPC_relay: true,
+				message: `Unexpected error in HederaTransactionHandler supplierAllowance operation : ${error}`,
+				transactionId: (error as any).error?.transactionId,
+			});
 		}
 	}
 
@@ -593,9 +641,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse> {
 		try {
 			if (!coin.coin.evmProxyAddress)
-				throw new Error(
-					`StableCoin ${coin.coin.name} does not have a proxy address`,
-				);
+				throw new TransactionResponseError({
+					RPC_relay: true,
+					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
+				});
 
 			return RPCTransactionResponseAdapter.manageResponse(
 				await HederaERC20__factory.connect(
@@ -604,7 +653,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				).resetSupplierAllowance(this.accountToEvmAddress(targetId)),
 			);
 		} catch (error) {
-			throw new Error('Error');
+			throw new TransactionResponseError({
+				RPC_relay: true,
+				message: `Unexpected error in HederaTransactionHandler resetSupplierAllowance operation : ${error}`,
+				transactionId: (error as any).error?.transactionId,
+			});
 		}
 	}
 
@@ -615,9 +668,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse> {
 		try {
 			if (!coin.coin.evmProxyAddress)
-				throw new Error(
-					`StableCoin ${coin.coin.name} does not have a proxy address`,
-				);
+				throw new TransactionResponseError({
+					RPC_relay: true,
+					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
+				});
 
 			return RPCTransactionResponseAdapter.manageResponse(
 				await HederaERC20__factory.connect(
@@ -629,7 +683,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				),
 			);
 		} catch (error) {
-			throw new Error('Error');
+			throw new TransactionResponseError({
+				RPC_relay: true,
+				message: `Unexpected error in HederaTransactionHandler increaseSupplierAllowance operation : ${error}`,
+				transactionId: (error as any).error?.transactionId,
+			});
 		}
 	}
 
@@ -640,9 +698,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse> {
 		try {
 			if (!coin.coin.evmProxyAddress)
-				throw new Error(
-					`StableCoin ${coin.coin.name} does not have a proxy address`,
-				);
+				throw new TransactionResponseError({
+					RPC_relay: true,
+					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
+				});
 
 			return RPCTransactionResponseAdapter.manageResponse(
 				await HederaERC20__factory.connect(
@@ -654,7 +713,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				),
 			);
 		} catch (error) {
-			throw new Error('Error');
+			throw new TransactionResponseError({
+				RPC_relay: true,
+				message: `Unexpected error in HederaTransactionHandler decreaseSupplierAllowance operation : ${error}`,
+				transactionId: (error as any).error?.transactionId,
+			});
 		}
 	}
 
@@ -664,9 +727,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse<string[], Error>> {
 		try {
 			if (!coin.coin.evmProxyAddress)
-				throw new Error(
-					`StableCoin ${coin.coin.name} does not have a proxy address`,
-				);
+				throw new TransactionResponseError({
+					RPC_relay: true,
+					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
+				});
 
 			return new TransactionResponse(
 				undefined,
@@ -676,7 +740,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				).getRoles(this.accountToEvmAddress(targetId)),
 			);
 		} catch (error) {
-			throw new Error('Error');
+			throw new TransactionResponseError({
+				RPC_relay: true,
+				message: `Unexpected error in HederaTransactionHandler getRoles operation : ${error}`,
+				transactionId: (error as any).error?.transactionId,
+			});
 		}
 	}
 
@@ -725,7 +793,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	async signAndSendTransaction(
 		t: RPCTransactionAdapter,
 	): Promise<TransactionResponse> {
-		throw new Error('Method not implemented.');
+		throw new RuntimeError('Method not implemented.');
 	}
 
 	getAccount(): Account {
@@ -817,7 +885,8 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 
 	private registerMetamaskEvents(): void {
 		try {
-			if (typeof window === 'undefined' || !(window as any)?.ethereum) return;
+			if (typeof window === 'undefined' || !(window as any)?.ethereum)
+				return;
 			ethereum.on('accountsChanged', async (acct) => {
 				const accounts = acct as string[];
 				if (
@@ -903,14 +972,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					);
 			}
 		} catch (error) {
-			// should throw RPCHandlerError
-				throw new TransactionResponseError({
-					message:`Unexpected error in HederaTransactionHandler ${operation} operation : ${error}`,
-					transactionId:  (error as any).error.transactionHash,
-					RPC_relay: true
-
-				}
-			);
+			throw new TransactionResponseError({
+				RPC_relay: true,
+				message: `Unexpected error in HederaTransactionHandler ${operation} operation : ${error}`,
+				transactionId: (error as any).error.transactionHash,
+			});
 		}
 	}
 
@@ -1014,18 +1080,21 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					coin.coin.tokenId?.value ?? '',
 				).toSolidityAddress();
 
-				const resp: TransactionResponse<any, Error> = 
+				const resp: TransactionResponse<any, Error> =
 					await this.checkTransactionResponse(
 						await RPCTransactionResponseAdapter.manageResponse(
-								await this.precompiledCall('mintToken', [
+							await this.precompiledCall('mintToken', [
 								coinId,
 								params?.amount,
 								[],
-							])
-						));
+							]),
+						),
+					);
 
-				if (resp.error === undefined &&
-					coin.coin.treasury?.value !== params!.targetId?.toString()) {
+				if (
+					resp.error === undefined &&
+					coin.coin.treasury?.value !== params!.targetId?.toString()
+				) {
 					if (coin.coin.treasury?.value === coin.account.id.value) {
 						return await this.transfer(
 							coin,
@@ -1039,8 +1108,8 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 							params!.amount!,
 							coin.coin.treasury!,
 							HederaId.from(params?.targetId),
-						);							
-					}	
+						);
+					}
 				} else {
 					return resp;
 				}
@@ -1055,7 +1124,8 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 							params?.amount,
 							[],
 						]),
-				));
+					),
+				);
 
 			case Operation.WIPE:
 				return this.checkTransactionResponse(
@@ -1067,7 +1137,8 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 							params?.targetId,
 							params?.amount,
 						]),
-				));
+					),
+				);
 
 			case Operation.FREEZE:
 				return this.checkTransactionResponse(
@@ -1078,7 +1149,8 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 							).toSolidityAddress(),
 							params?.targetId,
 						]),
-				));
+					),
+				);
 
 			case Operation.UNFREEZE:
 				return this.checkTransactionResponse(
@@ -1089,7 +1161,8 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 							).toSolidityAddress(),
 							params?.targetId,
 						]),
-				));
+					),
+				);
 
 			case Operation.PAUSE:
 				return this.checkTransactionResponse(
@@ -1099,7 +1172,8 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 								coin.coin.tokenId?.value ?? '',
 							).toSolidityAddress(),
 						]),
-				));
+					),
+				);
 
 			case Operation.UNPAUSE:
 				return this.checkTransactionResponse(
@@ -1109,7 +1183,8 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 								coin.coin.tokenId?.value ?? '',
 							).toSolidityAddress(),
 						]),
-				));
+					),
+				);
 
 			case Operation.DELETE:
 				return this.checkTransactionResponse(
@@ -1119,7 +1194,8 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 								coin.coin.tokenId?.value ?? '',
 							).toSolidityAddress(),
 						]),
-				));
+					),
+				);
 
 			default:
 				throw new Error(`Operation not implemented through HTS`);
@@ -1127,18 +1203,22 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	}
 
 	private async checkTransactionResponse(
-		transaction: TransactionResponse): Promise<TransactionResponse>
-	{
+		transaction: TransactionResponse,
+	): Promise<TransactionResponse> {
 		const responseCodeLength = 66;
-		const responseCodeSuccess = "0x0000000000000000000000000000000000000000000000000000000000000016"; // response code 22 SUCCESS
+		const responseCodeSuccess =
+			'0x0000000000000000000000000000000000000000000000000000000000000016'; // response code 22 SUCCESS
 
-		if(!transaction.id) return transaction;
-		
+		if (!transaction.id) return transaction;
+
 		const txResponse = await this.mirrorNodeAdapter.getTransactionResult(
 			transaction.id,
 		);
 
-		if(!txResponse.result || txResponse.result.length < responseCodeLength){
+		if (
+			!txResponse.result ||
+			txResponse.result.length < responseCodeLength
+		) {
 			return transaction;
 		}
 
@@ -1146,16 +1226,13 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 
 		LogService.logTrace('Transaction Response Code : ' + responseCode);
 
-		if(responseCodeSuccess === responseCode) return transaction;
+		if (responseCodeSuccess === responseCode) return transaction;
 
-		throw new TransactionResponseError(
-			{
-				message: "Transaction failed with error code : " + responseCode,
-				transactionId: transaction.id,
-				RPC_relay: true
-			}
-		);
-
+		throw new TransactionResponseError({
+			message: 'Transaction failed with error code : ' + responseCode,
+			transactionId: transaction.id,
+			RPC_relay: true,
+		});
 	}
 }
 
