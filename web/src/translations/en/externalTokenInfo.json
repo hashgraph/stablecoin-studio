@@ -53,8 +53,8 @@
       "title": "Stable coin review"
     },
     "notification": {
-      "title": "{{ result }} creating the stable coin",
-      "descriptionSuccess": "The stable coin was created",
+      "title": "{{ result }} adding the stable coin",
+      "descriptionSuccess": "",
       "descriptionError": "Sorry, there was an error creating the stable coin"
     }
   }

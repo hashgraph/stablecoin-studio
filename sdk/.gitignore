@@ -30,4 +30,4 @@ build
 
 package-lock.json
 report.json
-__tests__/config.ts
+.env
