@@ -39,3 +39,4 @@ build
 **/artifacts/
 sdk/hedera-sc-sdk.code-workspace
 cli/hsca-config.yaml
+sdk/.env
