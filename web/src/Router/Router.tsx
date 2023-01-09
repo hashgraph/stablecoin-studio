@@ -33,12 +33,15 @@ import DangerZoneOperations from '../views/Operations/DangerZone';
 import type { EventParameter, WalletEvent } from 'hedera-stable-coin-sdk';
 import { LoggerTransports, SDK, ConnectionState } from 'hedera-stable-coin-sdk';
 
-const PrivateRoute = ({ allow }: { allow: boolean }) => {
-	return <Layout>{allow ? <Outlet /> : <Navigate to={RoutesMappingUrl.login} replace />}</Layout>;
-};
-
-const OnboardingRoute = ({ allow }: { allow: boolean }) => {
-	return allow ? <Outlet /> : <Navigate to={RoutesMappingUrl.stableCoinNotSelected} replace />;
+const LoginOverlayRoute = ({ show }: { show: boolean }) => {
+	return (
+		<>
+			{show && <Login />}
+			<Layout>
+				<Outlet />
+			</Layout>
+		</>
+	);
 };
 
 const Router = () => {
@@ -118,18 +121,10 @@ const Router = () => {
 		<main>
 			{availableWallets.length > 0 ? (
 				<Routes>
-					{/* Public routes */}
-					<Route
-						element={
-							<OnboardingRoute allow={Boolean(!lastWallet || status !== ConnectionState.Paired)} />
-						}
-					>
-						<Route path={RoutesMappingUrl.login} element={<Login />} />
-					</Route>
 					{/* Private routes */}
 					<Route
 						element={
-							<PrivateRoute allow={Boolean(lastWallet && status === ConnectionState.Paired)} />
+							<LoginOverlayRoute show={Boolean(!lastWallet || status !== ConnectionState.Paired)} />
 						}
 					>
 						{selectedWalletCoin && (
