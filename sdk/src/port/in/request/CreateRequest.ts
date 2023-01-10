@@ -36,6 +36,8 @@ import { InvalidValue } from './error/InvalidValue.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
 
+export const PoRAmountDecimals = 2;
+
 export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 	name: string;
 	symbol: string;
@@ -50,6 +52,12 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 	stableCoinFactory: string;
 
 	hederaERC20: string;
+
+	@OptionalField()
+	PoR?: string;
+
+	@OptionalField()
+	PoRInitialAmount?: string | undefined;
 
 	@OptionalField()
 	initialSupply?: string | undefined;
@@ -105,6 +113,8 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		supplyType,
 		stableCoinFactory,
 		hederaERC20,
+		PoR,
+		PoRInitialAmount
 	}: {
 		name: string;
 		symbol: string;
@@ -123,6 +133,8 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		supplyType?: TokenSupplyType;
 		stableCoinFactory: string;
 		hederaERC20: string;
+		PoR?: string;
+		PoRInitialAmount?: string;
 	}) {
 		super({
 			name: (val) => {
@@ -219,6 +231,42 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 			treasury: Validation.checkHederaIdFormat(),
 			stableCoinFactory: Validation.checkContractId(),
 			hederaERC20: Validation.checkContractId(),
+			PoR: Validation.checkContractId(),
+			PoRInitialAmount: (val) => {
+				if (val === undefined || val === '') {
+					return;
+				}
+				if (!BigDecimal.isBigDecimal(val)) {
+					return [new InvalidType(val, 'BigDecimal')];
+				}
+				if (CheckNums.hasMoreDecimals(val, PoRAmountDecimals)) {
+					return [new InvalidDecimalRange(val, PoRAmountDecimals)];
+				}
+
+				const PoRInitialAmount = BigDecimal.fromString(
+					val,
+					PoRAmountDecimals,
+				);
+
+				const bInitialSupply =
+					this.initialSupply &&
+					BigDecimal.isBigDecimal(this.initialSupply) &&
+					!CheckNums.hasMoreDecimals(
+						this.initialSupply,
+						this.decimals,
+					)
+						? BigDecimal.fromString(
+								this.initialSupply,
+								this.decimals,
+						  )
+						: undefined;
+
+				return StableCoin.checkPoRInitialAmount(
+					PoRInitialAmount,
+					PoRAmountDecimals,
+					bInitialSupply,
+				);
+			},
 		});
 		this.name = name;
 		this.symbol = symbol;
@@ -238,5 +286,8 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		this.supplyType = supplyType;
 		this.stableCoinFactory = stableCoinFactory;
 		this.hederaERC20 = hederaERC20;
+		this.PoR = PoR;
+		this.PoRInitialAmount = PoRInitialAmount;
+
 	}
 }

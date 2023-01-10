@@ -20,7 +20,7 @@
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Injectable from '../../core/Injectable.js';
-import CreateRequest from './request/CreateRequest.js';
+import CreateRequest, {PoRAmountDecimals} from './request/CreateRequest.js';
 import CashInRequest from './request/CashInRequest.js';
 import GetStableCoinDetailsRequest from './request/GetStableCoinDetailsRequest.js';
 import BurnRequest from './request/BurnRequest.js';
@@ -111,7 +111,13 @@ class StableCoinInPort implements IStableCoinInPort {
 
 	async create(req: CreateRequest): Promise<StableCoinViewModel> {
 		handleValidation('CreateRequest', req);
-		const { stableCoinFactory, hederaERC20 } = req;
+		const { 
+			stableCoinFactory, 
+			hederaERC20, 
+			PoR, 
+			PoRInitialAmount 
+		} = req;
+
 		const coin: StableCoinProps = {
 			name: req.name,
 			symbol: req.symbol,
@@ -166,6 +172,8 @@ class StableCoinInPort implements IStableCoinInPort {
 				coin,
 				new ContractId(stableCoinFactory),
 				new ContractId(hederaERC20),
+				(PoR) ? new ContractId(PoR) : undefined,
+				(PoRInitialAmount) ? BigDecimal.fromString(PoRInitialAmount, PoRAmountDecimals) : undefined,
 			),
 		);
 
