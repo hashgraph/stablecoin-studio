@@ -38,12 +38,16 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
         if (less) {
             return currentReserve >= amount;
         } else {
-            return currentReserve >= (totalSupply() + amount);
+            return
+                currentReserve >=
+                (TokenOwner(_getTokenAddress()).totalSupply() + amount);
         }
     }
 
     function getReserve() internal view returns (uint256) {
-        return AggregatorV3Interface(_dataFeed).latestRound();
+        (, int256 answer, , , ) = AggregatorV3Interface(_dataFeed)
+            .latestRoundData();
+        return uint256(answer);
     }
 
     function updateDataFeed(address newAddress)

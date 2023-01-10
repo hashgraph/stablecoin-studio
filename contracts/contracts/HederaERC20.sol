@@ -95,9 +95,9 @@ contract HederaERC20 is
      * @return uint256 The total number of tokens that exists
      */
     function totalSupply()
-        public
+        external
         view
-        override(IHederaERC20, IHederaERC20Upgradeable)
+        override(IHederaERC20, IHederaERC20Upgradeable, TokenOwner)
         returns (uint256)
     {
         return TokenOwner(_getTokenAddress()).totalSupply();
