@@ -97,6 +97,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		coin: StableCoinProps,
 		factory: ContractId,
 		hederaERC20: ContractId,
+		createPoR: boolean,
 		PoR?: ContractId,
 		PoRInitialAmount? : BigDecimal
 	): Promise<TransactionResponse<any, Error>> {
@@ -176,9 +177,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 							: HContractId.fromString(
 								PoR.value,
 							).toSolidityAddress(),
-					PoRInitialAmount 
+				PoRInitialAmount 
 						? PoRInitialAmount.toFixedNumber()
 						: BigDecimal.ZERO.toFixedNumber(),
+				createPoR,
 				keys,
 			);
 

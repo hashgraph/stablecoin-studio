@@ -45,6 +45,7 @@ interface ITransactionAdapter {
 		coin: StableCoin,
 		factory: ContractId,
 		hederaERC20: ContractId,
+		createPoR: boolean,
 		PoR?: ContractId,
 		PoRInitialAmount? : BigDecimal
 	): Promise<TransactionResponse>;
@@ -173,6 +174,7 @@ export default abstract class TransactionAdapter
 		coin: StableCoin,
 		factory: ContractId,
 		hederaERC20: ContractId,
+		createPoR: boolean,
 		PoR?: ContractId,
 		PoRInitialAmount? : BigDecimal
 	): Promise<TransactionResponse<any, Error>> {

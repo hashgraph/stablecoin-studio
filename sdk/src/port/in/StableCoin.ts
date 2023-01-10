@@ -115,7 +115,8 @@ class StableCoinInPort implements IStableCoinInPort {
 			stableCoinFactory, 
 			hederaERC20, 
 			PoR, 
-			PoRInitialAmount 
+			PoRInitialAmount,
+			createPoR, 
 		} = req;
 
 		const coin: StableCoinProps = {
@@ -172,6 +173,7 @@ class StableCoinInPort implements IStableCoinInPort {
 				coin,
 				new ContractId(stableCoinFactory),
 				new ContractId(hederaERC20),
+				createPoR,
 				(PoR) ? new ContractId(PoR) : undefined,
 				(PoRInitialAmount) ? BigDecimal.fromString(PoRInitialAmount, PoRAmountDecimals) : undefined,
 			),

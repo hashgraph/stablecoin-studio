@@ -71,10 +71,15 @@ export class FactoryStableCoin {
 	 */
 	 public reserveAddress: string;
 
-	 /**
+	/**
 	 * Reserve initial amount
 	 */
 	public reserveInitialAmount: string;
+
+	/**
+	 * Create Reserver contract or not
+	 */
+	public createReserve: boolean;
 
 	/**
 	 * Token Keys
@@ -93,6 +98,7 @@ export class FactoryStableCoin {
 		treasuryAddress: string,
 		reserveAddress: string,
 		reserveInitialAmount: string,
+		createReserve: boolean,
 		keys: FactoryKey[],
 	) {
 		this.tokenName = tokenName;
@@ -106,6 +112,7 @@ export class FactoryStableCoin {
 		this.treasuryAddress = treasuryAddress;
 		this.reserveAddress = reserveAddress;
 		this.reserveInitialAmount = reserveInitialAmount;
+		this.createReserve = createReserve;
 		this.keys = keys;
 	}
 }

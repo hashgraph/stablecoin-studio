@@ -66,6 +66,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		coin: StableCoinProps,
 		factory: ContractId,
 		hederaERC20: ContractId,
+		createPoR: boolean,
 		PoR?: ContractId,
 		PoRInitialAmount? : BigDecimal
 	): Promise<TransactionResponse<any, Error>> {
@@ -148,6 +149,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				PoRInitialAmount 
 					? PoRInitialAmount.toFixedNumber()
 					: BigDecimal.ZERO.toFixedNumber(),
+				createPoR,
 				keys,
 			);
 

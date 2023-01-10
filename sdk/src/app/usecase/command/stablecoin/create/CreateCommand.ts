@@ -13,6 +13,7 @@ export class CreateCommand extends Command<CreateCommandResponse> {
 		public readonly coin: StableCoinProps,
 		public readonly factory: ContractId,
 		public readonly hederaERC20: ContractId,
+		public readonly createPoR: boolean,
 		public readonly PoR?: ContractId,
 		public readonly PoRInitialAmount?: BigDecimal,
 	) {
