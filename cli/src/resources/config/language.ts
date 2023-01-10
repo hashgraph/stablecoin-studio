@@ -3,11 +3,11 @@ import * as inquirer from 'inquirer';
 
 const separator_1 = {
   Separator_1: new inquirer.Separator(),
-}
+};
 
 const separator_2 = {
   Separator_2: new inquirer.Separator(' '),
-}
+};
 
 const goBack = {
   ...separator_1,
@@ -59,8 +59,7 @@ export const english = {
     askPrivateKey: 'Enter the private key',
     askPublicKey: 'Enter the public key',
     askConsensusUrl: 'Enter the url',
-    askMoreConsensusNodes:
-      'Do you want to enter more consensus nodes? (y/n)',
+    askMoreConsensusNodes: 'Do you want to enter more consensus nodes? (y/n)',
     askMirrorNode: 'Enter the mirror url',
     askChain: 'Enter the chain id',
     askNode: 'Enter the node id',
@@ -74,8 +73,7 @@ export const english = {
     askName: 'Enter the name',
     askSymbol: 'Enter the symbol',
     askAutoRenewAccountId: 'Enter the autorenew account',
-    askDecimals:
-      'Enter the number of decimal places a token is divisible by',
+    askDecimals: 'Enter the number of decimal places a token is divisible by',
     askToken:
       'What is the token id of the stable coin you want to operate with?',
     askDoSomething: 'What do you want to do?',
@@ -86,15 +84,13 @@ export const english = {
     askTotalSupply: 'Enter the max supply',
     askExpirationTime: 'Enter the token expiration time',
     askMemo: 'Enter the token memo',
-    askFreezeAccount:
-      'Should the Hedera account be frozen for this token?',
+    askFreezeAccount: 'Should the Hedera account be frozen for this token?',
     askFeaturesManagedBy:
       'Should the smart contract be used for all roles management?',
     features: {
       admin: 'Enter the admin key',
       supply: 'Enter the supply key',
-      keyError:
-        'The provided key has a wrong format. Please, enter it again.',
+      keyError: 'The provided key has a wrong format. Please, enter it again.',
       KYC: 'Enter the KYC key',
       freeze: 'Enter the freeze key',
       wipe: 'Enter the wipe key',
@@ -151,14 +147,14 @@ export const english = {
       balanceDescription: 'Get account balance for a Stable Coin Token.',
       mintDescription: 'Mint stable coins',
       options: {
-        privateKey: 'Account\'s private key',
-        accountId: 'User\'s id',
-        name: 'Stable coin\'s name',
-        symbol: 'Stable coin\'s symbol',
+        privateKey: "Account's private key",
+        accountId: "User's id",
+        name: "Stable coin's name",
+        symbol: "Stable coin's symbol",
         autorenewAccountId:
           'Account that will pay the renew expiration time fee',
-        decimals: 'Stable coin\'s decimals',
-        address: 'Stable coin\'s address',
+        decimals: "Stable coin's decimals",
+        address: "Stable coin's address",
         amount: 'Amount of stable coins for this action',
       },
     },
@@ -244,11 +240,11 @@ export const english = {
       ...goBack,
     },
     adminFeatureOptions: {
-      ...basicFeatureOptions
+      ...basicFeatureOptions,
     },
     featureOptions: {
       ...basicFeatureOptions,
-      OtherKey: 'Other public key'
+      OtherKey: 'Other public key',
     },
     supplierRoleType: {
       Unlimited: 'Unlimited',
@@ -265,8 +261,8 @@ export const english = {
       ...goBack,
     },
     privateKeyType: {
-      ED25519: 'ED25519', 
-      ECDSA: 'ECDSA'
+      ED25519: 'ED25519',
+      ECDSA: 'ECDSA',
     },
   },
   manageImportedToken: {
@@ -283,9 +279,7 @@ export const english = {
     noImportedTokensDelete: colors.red(
       "You don't have any imported token to delete. Please add one first",
     ),
-    importedTokenAlreadyAdded: colors.red(
-      "The token is already imported, delete it first.",
-    ),
+    importedTokenAlreadyAdded: colors.red('The token is already imported.'),
   },
   state: {
     searching: 'Searching...',
