@@ -162,7 +162,6 @@ describe('HederaERC20 Tests', function() {
 
     it('Only Account can associate and dissociate itself when balance is 0', async function() {
         const amount = BigNumber.from(1)
-        console.log(await getReserve(proxyAddress, nonOperatorClient))
         // associate a token to an account : success
         await associateToken(
             proxyAddress,
