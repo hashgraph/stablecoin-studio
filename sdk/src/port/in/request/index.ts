@@ -47,6 +47,8 @@ import GetPublicKeyRequest from './GetPublicKeyRequest.js';
 import InitializationRequest from './InitializationRequest.js';
 import SetNetworkRequest from './SetNetworkRequest.js';
 import IsAccountAssociatedTokenRequest from './IsAccountAssociatedTokenRequest.js';
+import ChangePoRRequest from './ChangePoRRequest.js';
+import ChangePoRAmountRequest from './ChangePoRAmountRequest.js';
 
 export * from './BaseRequest.js';
 export {
@@ -79,4 +81,6 @@ export {
 	InitializationRequest,
 	SetNetworkRequest,
 	IsAccountAssociatedTokenRequest,
+	ChangePoRRequest,
+	ChangePoRAmountRequest
 };

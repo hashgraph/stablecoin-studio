@@ -67,6 +67,8 @@ import { UnFreezeCommand } from '../../app/usecase/command/stablecoin/operations
 import { GetAccountInfoQuery } from '../../app/usecase/query/account/info/GetAccountInfoQuery.js';
 import { handleValidation } from './Common.js';
 import { GetAccountTokenAssociatedQuery } from '../../app/usecase/query/account/tokenAssociated/GetAccountTokenAssociatedQuery.js';
+import ChangePoRRequest from './request/ChangePoRRequest.js';
+import ChangePoRAmountRequest from './request/ChangePoRAmountRequest.js';
 
 export const HederaERC20AddressTestnet = '0.0.49217489';
 export const HederaERC20AddressPreviewnet = '0.0.11111111';
@@ -358,6 +360,34 @@ class StableCoinInPort implements IStableCoinInPort {
 				new GetAccountTokenAssociatedQuery(
 					HederaId.from(request.targetId),
 					HederaId.from(request.tokenId),
+				),
+			)
+		).isAssociated;
+	}
+
+	async changePoR(
+		request: ChangePoRRequest,
+	): Promise<boolean> {
+		handleValidation('ChangePoRRequest', request);
+
+		return (
+			await this.queryBus.execute(
+				new GetAccountTokenAssociatedQuery(
+					HederaId.from(request.tokenId)
+				),
+			)
+		).isAssociated;
+	}
+
+	async changePoRAmount(
+		request: ChangePoRAmountRequest,
+	): Promise<boolean> {
+		handleValidation('ChangePoRAmountRequest', request);
+
+		return (
+			await this.queryBus.execute(
+				new GetAccountTokenAssociatedQuery(
+					HederaId.from(request.tokenId)
 				),
 			)
 		).isAssociated;
