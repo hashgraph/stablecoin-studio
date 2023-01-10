@@ -69,6 +69,8 @@ import { handleValidation } from './Common.js';
 import { GetAccountTokenAssociatedQuery } from '../../app/usecase/query/account/tokenAssociated/GetAccountTokenAssociatedQuery.js';
 import ChangePoRRequest from './request/ChangePoRRequest.js';
 import ChangePoRAmountRequest from './request/ChangePoRAmountRequest.js';
+import { ChangePoRCommand } from '../../app/usecase/command/stablecoin/operations/changePoR/ChangePoRCommand.js';
+import { ChangePoRAmountCommand } from '../../app/usecase/command/stablecoin/operations/changePoRAmount/ChangePoRAmountCommand.js';
 
 export const HederaERC20AddressTestnet = '0.0.49217489';
 export const HederaERC20AddressPreviewnet = '0.0.11111111';
@@ -371,12 +373,13 @@ class StableCoinInPort implements IStableCoinInPort {
 		handleValidation('ChangePoRRequest', request);
 
 		return (
-			await this.queryBus.execute(
-				new GetAccountTokenAssociatedQuery(
-					HederaId.from(request.tokenId)
+			await this.commandBus.execute(
+				new ChangePoRCommand(
+					HederaId.from(request.tokenId),
+					new ContractId(request.PoR)
 				),
 			)
-		).isAssociated;
+		).payload;
 	}
 
 	async changePoRAmount(
@@ -385,12 +388,13 @@ class StableCoinInPort implements IStableCoinInPort {
 		handleValidation('ChangePoRAmountRequest', request);
 
 		return (
-			await this.queryBus.execute(
-				new GetAccountTokenAssociatedQuery(
-					HederaId.from(request.tokenId)
+			await this.commandBus.execute(
+				new ChangePoRAmountCommand(
+					HederaId.from(request.tokenId),
+					BigDecimal.fromString(request.PoRAmount, PoRAmountDecimals)
 				),
 			)
-		).isAssociated;
+		).payload;
 	}
 }
 

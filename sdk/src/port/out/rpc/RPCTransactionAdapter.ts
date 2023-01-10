@@ -345,6 +345,62 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		return this.performOperation(coin, Operation.DELETE);
 	}
 
+	public async changePoR(
+		coin: StableCoinCapabilities,
+		PoR: ContractId
+	): Promise<TransactionResponse> {
+		try {
+			if (!coin.coin.evmProxyAddress)
+				throw new TransactionResponseError({
+					RPC_relay: true,
+					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
+				});
+
+			return RPCTransactionResponseAdapter.manageResponse(
+				await HederaERC20__factory.connect(
+					coin.coin.evmProxyAddress,
+					this.signerOrProvider,
+				).updateReserve(
+					this.accountToEvmAddress(PoR),
+				),
+			);
+		} catch (error) {
+			throw new TransactionResponseError({
+				RPC_relay: true,
+				message: `Unexpected error in HederaTransactionHandler changePoR operation : ${error}`,
+				transactionId: (error as any).error?.transactionId,
+			});
+		}
+	}
+
+	public async changePoRAmount(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal
+	): Promise<TransactionResponse> {
+		try {
+			if (!coin.coin.evmProxyAddress)
+				throw new TransactionResponseError({
+					RPC_relay: true,
+					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
+				});
+
+			return RPCTransactionResponseAdapter.manageResponse(
+				await HederaERC20__factory.connect(
+					coin.coin.evmProxyAddress,
+					this.signerOrProvider,
+				).updateReserveAmount(
+					amount.toBigNumber(),
+				),
+			);
+		} catch (error) {
+			throw new TransactionResponseError({
+				RPC_relay: true,
+				message: `Unexpected error in HederaTransactionHandler changePorAmount operation : ${error}`,
+				transactionId: (error as any).error?.transactionId,
+			});
+		}
+	}		
+
 	async grantRole(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
@@ -1253,18 +1309,22 @@ class Params {
 	role?: string;
 	targetId?: string;
 	amount?: BigDecimal;
+	PoR?: ContractId;
 
 	constructor({
 		role,
 		targetId,
 		amount,
+		PoR,
 	}: {
 		role?: string;
 		targetId?: string;
 		amount?: BigDecimal;
+		PoR?: ContractId;
 	}) {
 		this.role = role;
 		this.targetId = targetId;
 		this.amount = amount;
+		this.PoR = PoR;
 	}
 }

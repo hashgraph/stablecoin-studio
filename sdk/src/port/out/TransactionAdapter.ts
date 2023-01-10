@@ -96,6 +96,14 @@ interface ITransactionAdapter {
 		targetId: HederaId,
 	): Promise<TransactionResponse>;
 	getAccount(): Account;
+	changePoR(
+		coin: StableCoinCapabilities,
+		PoR: ContractId
+	): Promise<TransactionResponse>;
+	changePoRAmount(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal
+	): Promise<TransactionResponse>;	
 	getMirrorNodeAdapter(): MirrorNodeAdapter;
 }
 
@@ -251,6 +259,18 @@ export default abstract class TransactionAdapter
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
+	changePoR(
+		coin: StableCoinCapabilities,
+		PoR: ContractId
+	): Promise<TransactionResponse<any, Error>> {
+		throw new Error('Method not implemented.');
+	}
+	changePoRAmount(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal
+	): Promise<TransactionResponse<any, Error>> {
+		throw new Error('Method not implemented.');
+	}	
 	grantRole(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,

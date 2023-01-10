@@ -44,6 +44,7 @@ import SymbolEmpty from './error/SymbolEmpty.js';
 import SymbolLength from './error/SymbolLength.js';
 import { TokenSupplyType } from './TokenSupply.js';
 import { TokenType } from './TokenType.js';
+import { PoRLessThanTotalSupply } from './error/PoRLessThanTotalSupply.js';
 
 const MAX_SUPPLY = 9_223_372_036_854_775_807n;
 const TEN = 10;
@@ -293,6 +294,36 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 
 		return list;
 	}
+
+	public static checkPoRTotalAmount(
+		PoRAmount: BigDecimal,
+		decimals: number,
+		totalSupply?: BigDecimal,
+	): BaseError[] {
+		const list: BaseError[] = [];
+
+		const min = totalSupply ?? BigDecimal.ZERO;
+		const max = BigDecimal.fromValue(BigNumber.from(MAX_SUPPLY), decimals);
+
+		if (CheckNums.isLessThan(PoRAmount, min)) {
+			if (min.isZero()) {
+				list.push(
+					new InvalidAmount(PoRAmount.toString(), min.toString()),
+				);
+			} else {
+				list.push(
+					new PoRLessThanTotalSupply(PoRAmount.toString(), min.toString()),
+				);
+			}
+		}
+		if (CheckNums.isGreaterThan(PoRAmount, max)) {
+			list.push(
+				new PoROverLimit(PoRAmount.toString(), max.toString()),
+			);			
+		}
+
+		return list;
+	}	
 
 	public static checkMemo(value: string): BaseError[] {
 		const maxMemoLength = ONE_HUNDRED;
