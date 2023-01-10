@@ -1,13 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.10;
 
-import "./Interfaces/ICashIn.sol";
-import "./SupplierAdmin.sol";
-import "./Reserve.sol";
-import "../hts-precompile/IHederaTokenService.sol";
+import './Interfaces/ICashIn.sol';
+import './SupplierAdmin.sol';
+import './Reserve.sol';
+import '../hts-precompile/IHederaTokenService.sol';
 
 abstract contract CashIn is ICashIn, SupplierAdmin, Reserve {
-        
     /**
      * @dev Creates an `amount` of tokens and transfers them to an `account`, increasing
      * the total supply
@@ -15,14 +14,16 @@ abstract contract CashIn is ICashIn, SupplierAdmin, Reserve {
      * @param account The address that receives minted tokens
      * @param amount The number of tokens to be minted
      */
-    function mint(address account, uint256 amount) 
-        external       
-        onlyRole(_getRoleId(roleName.CASHIN))  
+    function mint(address account, uint256 amount)
+        external
+        onlyRole(_getRoleId(roleName.CASHIN))
         checkReserveIncrease(amount)
         returns (bool)
-    {         
-        if(!_unlimitedSupplierAllowances[msg.sender]) _decreaseSupplierAllowance(msg.sender, amount);
-        (int256 responseCode, , ) = IHederaTokenService(precompileAddress).mintToken(_getTokenAddress(), uint64(amount), new bytes[](0));
+    {
+        if (!_unlimitedSupplierAllowances[msg.sender])
+            _decreaseSupplierAllowance(msg.sender, amount);
+        (int256 responseCode, , ) = IHederaTokenService(precompileAddress)
+            .mintToken(_getTokenAddress(), uint64(amount), new bytes[](0));
         bool success = _checkResponse(responseCode);
 
         _transfer(address(this), account, amount);

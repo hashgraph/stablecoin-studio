@@ -11,6 +11,7 @@ import './extensions/Pausable.sol';
 import './extensions/Freezable.sol';
 import './extensions/Rescatable.sol';
 import './extensions/Deletable.sol';
+import './extensions/Reserve.sol';
 import './hts-precompile/IHederaTokenService.sol';
 import './extensions/TokenOwner.sol';
 
@@ -94,12 +95,12 @@ contract HederaERC20 is
      * @return uint256 The total number of tokens that exists
      */
     function totalSupply()
-        external
+        public
         view
         override(IHederaERC20, IHederaERC20Upgradeable)
         returns (uint256)
     {
-        return IHederaERC20Upgradeable(_getTokenAddress()).totalSupply();
+        return TokenOwner(_getTokenAddress()).totalSupply();
     }
 
     /**

@@ -2,10 +2,13 @@
 pragma solidity 0.8.10;
 
 import './Interfaces/IReserve.sol';
+import '@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol';
+import './Roles.sol';
+import './TokenOwner.sol';
 
-abstract contract Reserve is IReserve {
+abstract contract Reserve is IReserve, TokenOwner, Roles {
     // The address of the internal reserve
-    address internal _reserve;
+    address internal _dataFeed;
 
     /**
      * @dev
@@ -26,23 +29,29 @@ abstract contract Reserve is IReserve {
         _;
     }
 
-    function _checkReserve(uint256 amount, bool less) internal view returns (bool) {
+    function _checkReserve(uint256 amount, bool less)
+        internal
+        view
+        returns (bool)
+    {
         uint256 currentReserve = getReserve();
         if (less) {
             return currentReserve >= amount;
         } else {
-            uint256 totalSupply = 0; // TODO
-            return currentReserve >= (totalSupply + amount);
+            return currentReserve >= (totalSupply() + amount);
         }
     }
 
     function getReserve() internal view returns (uint256) {
-        return 0;
+        return AggregatorV3Interface(_dataFeed).latestRound();
     }
 
-    function updateReserve(address newAddress) external {
-        address previous = _reserve;
-        _reserve = newAddress;
+    function updateDataFeed(address newAddress)
+        external
+        onlyRole(_getRoleId(roleName.ADMIN))
+    {
+        address previous = _dataFeed;
+        _dataFeed = newAddress;
         emit ReserveAddressChanged(previous, newAddress);
     }
 }
