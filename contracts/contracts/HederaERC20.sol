@@ -48,7 +48,7 @@ contract HederaERC20 is
             'Token Creation failed'
         );
 
-        _reserve_init(reserveAddress); // Initialize reserve
+        reserve_init(reserveAddress); // Initialize reserve
         tokenOwner_init(tokenAddress);
         roles_init();
         _setupRole(_getRoleId(roleName.ADMIN), msg.sender); // Assign Admin role to calling contract/user in order to be able to set all the other roles
