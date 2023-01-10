@@ -1225,7 +1225,9 @@ export default class OperationStableCoinService extends Service {
               roles.includes(StableCoinRole.RESCUE_ROLE)) ||
             option === language.getText('wizard.stableCoinOptions.RoleRefresh') ||
             option === language.getText('wizard.stableCoinOptions.Details') ||
-            option === language.getText('wizard.stableCoinOptions.Balance')
+            option === language.getText('wizard.stableCoinOptions.Balance') ||
+            (option === language.getText('wizard.stableCoinOptions.RoleMgmt') &&
+             roles.includes(StableCoinRole.DEFAULT_ADMIN_ROLE)) 
           ) {
             return true;
           }
