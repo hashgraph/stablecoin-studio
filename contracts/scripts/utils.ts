@@ -1,38 +1,37 @@
-const {
+import {
+    Client,
     TokenCreateTransaction,
     DelegateContractId,
     Hbar,
-    Client,
     AccountId,
     PrivateKey,
     PublicKey,
     ContractCreateFlow,
     TokenSupplyType,
     ContractExecuteTransaction,
-} = require('@hashgraph/sdk')
+    TokenId,
+    ContractId,
+} from '@hashgraph/sdk'
 
 import Web3 from 'web3'
-import axios from 'axios';
+import axios from 'axios'
 
 const hre = require('hardhat')
 
 const web3 = new Web3()
 
-const URI_BASE = `${
-    getHederaNetworkMirrorNodeURL()
-}/api/v1/`;
+const URI_BASE = `${getHederaNetworkMirrorNodeURL()}/api/v1/`
 
-
-export const clientId = 1;
+export const clientId = 1
 
 export async function contractCall(
-    contractId: any,
+    contractId: ContractId,
     functionName: string,
     parameters: any[],
-    clientOperator: any,
-    gas: any,
+    clientOperator: Client,
+    gas: number,
     abi: any,
-    value: any = null
+    value: number | string | Long | Hbar = 0
 ) {
     const functionCallParameters = encodeFunctionCall(
         functionName,
@@ -48,19 +47,21 @@ export async function contractCall(
         .execute(clientOperator)
 
     const record = await contractTx.getRecord(clientOperator)
-
-    const results = decodeFunctionResult(
-        abi,
-        functionName,
-        record.contractFunctionResult?.bytes
-    )
+    let results
+    if (record.contractFunctionResult) {
+        results = decodeFunctionResult(
+            abi,
+            functionName,
+            record.contractFunctionResult?.bytes
+        )
+    }
 
     return results
 }
 
-function encodeFunctionCall(functionName: any, parameters: any[], abi: any) {
+function encodeFunctionCall(functionName: string, parameters: any[], abi: any) {
     const functionAbi = abi.find(
-        (func: { name: any; type: string }) =>
+        (func: { name: string; type: string }) =>
             func.name === functionName && func.type === 'function'
     )
     const encodedParametersHex = web3.eth.abi
@@ -69,7 +70,11 @@ function encodeFunctionCall(functionName: any, parameters: any[], abi: any) {
     return Buffer.from(encodedParametersHex, 'hex')
 }
 
-function decodeFunctionResult(abi: any, functionName: any, resultAsBytes: any) {
+function decodeFunctionResult(
+    abi: any,
+    functionName: string,
+    resultAsBytes: Uint8Array
+) {
     const functionAbi = abi.find(
         (func: { name: any }) => func.name === functionName
     )
@@ -85,7 +90,7 @@ function decodeFunctionResult(abi: any, functionName: any, resultAsBytes: any) {
     return jsonParsedArray
 }
 
-export function getClient() {
+export function getClient(): Client {
     switch (hre.network.name) {
         case 'previewnet':
             return Client.forPreviewnet()
@@ -101,19 +106,19 @@ export function getClient() {
 }
 
 export async function createToken(
-    contractId: any,
+    contractId: string,
     name: string,
     symbol: string,
     decimals = 6,
-    initialSupply: string,
-    maxSupply: string | null,
+    initialSupply: number,
+    maxSupply: number | null,
     memo: string,
     freeze = false,
     accountId: string,
     privateKey: string,
     publicKey: string,
-    clientSdk: any
-) {
+    clientSdk: Client
+): Promise<TokenId | null> {
     const transaction = new TokenCreateTransaction()
         .setMaxTransactionFee(new Hbar(25))
         .setTokenName(name)
@@ -149,12 +154,12 @@ export async function createToken(
 
 export async function deployContractSDK(
     factory: any,
-    privateKey: any,
-    clientOperator: any,
+    privateKey: string,
+    clientOperator: Client,
     constructorParameters?: any,
-    adminKey?: any
-) {
-    const Key = (adminKey)? adminKey: PrivateKey.fromStringED25519(privateKey);
+    adminKey?: PrivateKey
+): Promise<ContractId> {
+    const Key = adminKey ? adminKey : PrivateKey.fromStringED25519(privateKey)
 
     const transaction = new ContractCreateFlow()
         .setBytecode(factory.bytecode)
@@ -172,6 +177,9 @@ export async function deployContractSDK(
     const receipt = await txResponse.getReceipt(clientOperator)
 
     const contractId = receipt.contractId
+    if (!contractId) {
+        throw Error('Error deploying contractSDK')
+    }
     console.log(
         ` ${
             factory.name
@@ -180,41 +188,41 @@ export async function deployContractSDK(
     return contractId
 }
 
-export async function toEvmAddress(accountId: string, isE25519: boolean): Promise<string>{
+export async function toEvmAddress(
+    accountId: string,
+    isE25519: boolean
+): Promise<string> {
     try {
+        if (isE25519)
+            return '0x' + AccountId.fromString(accountId).toSolidityAddress()
 
-        if (isE25519) return "0x" + AccountId.fromString(accountId).toSolidityAddress() ;
-
-        const url = URI_BASE + 'accounts/' + accountId;
-        const res = await axios.get<IAccount>(
-            url,
-        );
-        return res.data.evm_address;
-
+        const url = URI_BASE + 'accounts/' + accountId
+        const res = await axios.get<IAccount>(url)
+        return res.data.evm_address
     } catch (error) {
-        throw new Error("Error retrieving the Evm Address : " + error);
+        throw new Error('Error retrieving the Evm Address : ' + error)
     }
 }
 
 interface IAccount {
-	evm_address: string;
-	key: IKey;
+    evm_address: string
+    key: IKey
 }
 
 interface IKey {
-	_type: string;
-	key: string;
+    _type: string
+    key: string
 }
 
 function getHederaNetworkMirrorNodeURL(): string {
-	switch (hre.network.name) {
-		case "mainnet":
-			return 'https://mainnet.mirrornode.hedera.com';
-		case "previewnet":
-			return 'https://previewnet.mirrornode.hedera.com';
-		case "testnet":
-			return 'https://testnet.mirrornode.hedera.com';
-		default:
-			return 'http://127.0.0.1:5551';
-	}
+    switch (hre.network.name) {
+        case 'mainnet':
+            return 'https://mainnet.mirrornode.hedera.com'
+        case 'previewnet':
+            return 'https://previewnet.mirrornode.hedera.com'
+        case 'testnet':
+            return 'https://testnet.mirrornode.hedera.com'
+        default:
+            return 'http://127.0.0.1:5551'
+    }
 }

@@ -14,7 +14,7 @@ import {
 import { useEffect, useState } from 'react';
 import type { IAccountToken } from '../../interfaces/IAccountToken.js';
 import type { IExternalToken } from '../../interfaces/IExternalToken.js';
-import { Operation } from 'hedera-stable-coin-sdk';
+import { Operation, StableCoinRole } from 'hedera-stable-coin-sdk';
 
 const Roles = () => {
 	const capabilities = useSelector(SELECTED_WALLET_CAPABILITIES);
@@ -97,18 +97,22 @@ const Roles = () => {
 	});
 
 	const { t } = useTranslation('roles');
+	console.log(localStorage.tokensAccount[0].externaTokens);
+	console.log(accountId);
+	console.log(coinSelected);
 	const directAccesses = [
 		{
 			icon: 'PlusCircle',
 			route: NamedRoutes.GiveRole,
 			title: t('give'),
-			isDisabled: filteredCapabilities.length === 0 || isExternal,
+			isDisabled: filteredCapabilities.length === 0 
+			 || isExternal && !JSON.parse(localStorage.tokensAccount).find((t:any) =>t.id === accountId?.toString()).externalTokens.find((t:any)=>t.id ===coinSelected?.tokenId).roles?.includes(StableCoinRole.DEFAULT_ADMIN_ROLE),
 		},
 		{
 			icon: 'MinusCircle',
 			route: NamedRoutes.RevokeRole,
 			title: t('revoke'),
-			isDisabled: filteredCapabilities.length === 0 || isExternal,
+			isDisabled: filteredCapabilities.length === 0 || isExternal && !JSON.parse(localStorage.tokensAccount).find((t:any) =>t.id === accountId?.toString()).externalTokens.find((t:any)=>t.id ===coinSelected?.tokenId).roles?.includes(StableCoinRole.DEFAULT_ADMIN_ROLE),
 		},
 		{
 			icon: 'PencilSimple',
@@ -116,7 +120,7 @@ const Roles = () => {
 			title: t('edit'),
 			isDisabled:
 				!operations?.includes(Operation.CASH_IN) ||
-				isExternal,
+				isExternal && !JSON.parse(localStorage.tokensAccount).find((t:any) =>t.id === accountId?.toString()).externalTokens.find((t:any)=>t.id ===coinSelected?.tokenId).roles?.includes(StableCoinRole.DEFAULT_ADMIN_ROLE),
 		},
 		{
 			icon: 'ArrowsClockwise',
