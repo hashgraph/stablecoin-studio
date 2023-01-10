@@ -32,7 +32,8 @@ contract HederaERC20 is
         IHederaTokenService.HederaToken calldata token,
         uint64 initialTotalSupply,
         uint32 tokenDecimals,
-        address originalSender
+        address originalSender,
+        address reserveAddress
     ) external payable initializer returns (address) {
         (int64 responseCode, address tokenAddress) = IHederaTokenService(
             precompileAddress
@@ -58,6 +59,7 @@ contract HederaERC20 is
         _grantRole(_getRoleId(roleName.FREEZE), originalSender);
         _grantRole(_getRoleId(roleName.DELETE), originalSender);
         _setupRole(_getRoleId(roleName.ADMIN), originalSender); // Assign Admin role to the provided address
+        _initReserve(reserveAddress); // Initialize reserve
 
         return tokenAddress;
     }
