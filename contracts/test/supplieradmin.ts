@@ -1,8 +1,3 @@
-const chai = require('chai')
-const chaiAsPromised = require('chai-as-promised')
-chai.use(chaiAsPromised)
-const expect = chai.expect
-
 import '@hashgraph/hardhat-hethers'
 import { BigNumber } from 'ethers'
 
@@ -32,11 +27,17 @@ import {
     getBalanceOf,
     Mint,
     hasRole,
+    getReserve,
 } from '../scripts/contractsMethods'
 import { CASHIN_ROLE } from '../scripts/constants'
 
 import { clientId } from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
+
+const chai = require('chai')
+const chaiAsPromised = require('chai-as-promised')
+chai.use(chaiAsPromised)
+const expect = chai.expect
 
 let proxyAddress: ContractId
 
@@ -119,7 +120,7 @@ describe('Only Admin can grant, revoke, increase, decrease and reset cashin role
             publicKey: operatorPubKey,
             isED25519Type: operatorIsE25519,
             initialAmountDataFeed: INIT_SUPPLY.add(
-                BigNumber.from('100000')
+                BigNumber.from('150').mul(TokenFactor)
             ).toString(),
         })
 
@@ -500,7 +501,7 @@ describe('Grant unlimited supplier role and test its cashin right, maxsupply lim
             publicKey: operatorPubKey,
             isED25519Type: operatorIsE25519,
             initialAmountDataFeed: INIT_SUPPLY.add(
-                BigNumber.from('100000')
+                BigNumber.from('1500').mul(TokenFactor)
             ).toString(),
         })
 
@@ -684,7 +685,7 @@ describe('Grant limited supplier role and test its cashin right and cashin/maxsu
             publicKey: operatorPubKey,
             isED25519Type: operatorIsE25519,
             initialAmountDataFeed: INIT_SUPPLY.add(
-                BigNumber.from('100000')
+                BigNumber.from('250').mul(TokenFactor)
             ).toString(),
         })
 
