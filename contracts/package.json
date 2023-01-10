@@ -92,6 +92,7 @@
         "typescript": "latest"
     },
     "dependencies": {
+        "@chainlink/contracts": "^0.5.1",
         "chai-as-promised": "^7.1.1",
         "ethers": "^5.7.2",
         "solhint": "^3.3.7",
