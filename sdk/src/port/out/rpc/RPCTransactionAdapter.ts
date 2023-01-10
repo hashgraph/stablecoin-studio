@@ -72,6 +72,7 @@ import LogService from '../../../app/service/LogService.js';
 import { WalletConnectRejectedError } from '../../../domain/context/network/error/WalletConnectRejectedError.js';
 import { TransactionResponseError } from '../error/TransactionResponseError.js';
 import { SigningError } from '../hs/error/SigningError.js';
+import { PoRAmountDecimals } from '../../in/request/CreateRequest.js';
 
 // eslint-disable-next-line no-var
 declare var ethereum: MetaMaskInpageProvider;
@@ -345,7 +346,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		return this.performOperation(coin, Operation.DELETE);
 	}
 
-	public async getPoR(
+	/*public async getPoR(
 		coin: StableCoinCapabilities
 	): Promise<TransactionResponse> {
 		try {
@@ -358,11 +359,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			const res = await HederaERC20__factory.connect(
 					coin.coin.evmProxyAddress,
 					this.signerOrProvider,
-				).getReserve();
+				).getDataFeed();
 
 			return new TransactionResponse(
 					undefined,
-					BigDecimal.fromStringFixed(res.toString(), coin.coin.decimals),
+					res.toString()
 				);				
 		} catch (error) {
 			throw new TransactionResponseError({
@@ -371,8 +372,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				transactionId: (error as any).error?.transactionId,
 			});
 		}
-	}
-
+	}*/
 
 	public async updatePoR(
 		coin: StableCoinCapabilities,
@@ -402,7 +402,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
-	/*public async getPoRAmount(
+	public async getPoRAmount(
 		coin: StableCoinCapabilities
 	): Promise<TransactionResponse> {
 		try {
@@ -412,12 +412,15 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
 				});
 
-			return RPCTransactionResponseAdapter.manageResponse(
-				await HederaERC20__factory.connect(
+			const res = await HederaERC20__factory.connect(
 					coin.coin.evmProxyAddress,
 					this.signerOrProvider,
-				).getReserve(),
-			);
+				).getReserve();
+
+			return new TransactionResponse(
+					undefined,
+					BigDecimal.fromStringFixed(res.toString(), PoRAmountDecimals),
+				);						
 		} catch (error) {
 			throw new TransactionResponseError({
 				RPC_relay: true,
@@ -427,7 +430,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
-	public async updatePoRAmount(
+	/*public async updatePoRAmount(
 		PoR: ContractId,
 		amount: BigDecimal
 	): Promise<TransactionResponse> {

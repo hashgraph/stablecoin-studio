@@ -55,6 +55,7 @@ import { TOKEN_CREATION_COST_HBAR } from '../../../core/Constants.js';
 import LogService from '../../../app/service/LogService.js';
 import { TransactionResponseError } from '../error/TransactionResponseError.js';
 import { Contract } from 'ethers';
+import { PoRAmountDecimals } from '../../in/request/CreateRequest.js';
 
 export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	private web3 = new Web3();
@@ -396,12 +397,15 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	public async getPoR(
 		coin: StableCoinCapabilities
 	): Promise<TransactionResponse> {
-		return this.performOperation(
+		const transactionResponse = await this.performSmartContractOperation(
 			coin,
-			Operation.PoR_MANAGEMENT,
 			'getDataFeed',
-			60000
+			60000,
+			undefined,
+			TransactionType.RECORD,
 		);
+
+		return transactionResponse.response[0].toString();
 	}
 
 	public async updatePoR(
@@ -423,12 +427,19 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	public async getPoRAmount(
 		coin: StableCoinCapabilities
 	): Promise<TransactionResponse> {
-		return this.performOperation(
+		const transactionResponse = await this.performSmartContractOperation(
 			coin,
-			Operation.PoR_MANAGEMENT,
 			'getReserve',
-			60000
+			60000,
+			undefined,
+			TransactionType.RECORD,
 		);
+
+		transactionResponse.response = BigDecimal.fromStringFixed(
+			transactionResponse.response[0].toString(),
+			PoRAmountDecimals,
+		);
+		return transactionResponse;		
 	}
 
 	/*public async updatePoRAmount(
