@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
-    "target": "es2020",
+    "target": "ES2020",
     "module": "NodeNext",
+    "moduleResolution": "node",
     "declaration": true,
     "rootDir": ".",
     "outDir": "./build",
@@ -13,5 +14,5 @@
     "baseUrl": "./build",
     "strictPropertyInitialization": false
   },
-  "exclude": ["node_modules/*"],
+  "exclude": ["build/**/*", "node_modules"],
 }
