@@ -66,6 +66,8 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		coin: StableCoinProps,
 		factory: ContractId,
 		hederaERC20: ContractId,
+		PoR?: ContractId,
+		PoRInitialAmount? : BigDecimal
 	): Promise<TransactionResponse<any, Error>> {
 		try {
 			const keys: FactoryKey[] = [];
@@ -137,6 +139,15 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				coin.treasury.toString() == '0.0.0'
 					? '0x0000000000000000000000000000000000000000'
 					: await this.accountToEvmAddress(coin.treasury),
+				PoR == undefined ||
+				PoR.toString() == '0.0.0'
+						? '0x0000000000000000000000000000000000000000'
+						: HContractId.fromString(
+							PoR.value,
+						).toSolidityAddress(),
+				PoRInitialAmount 
+					? PoRInitialAmount.toFixedNumber()
+					: BigDecimal.ZERO.toFixedNumber(),
 				keys,
 			);
 

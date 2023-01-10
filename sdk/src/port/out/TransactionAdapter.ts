@@ -45,6 +45,8 @@ interface ITransactionAdapter {
 		coin: StableCoin,
 		factory: ContractId,
 		hederaERC20: ContractId,
+		PoR?: ContractId,
+		PoRInitialAmount? : BigDecimal
 	): Promise<TransactionResponse>;
 	init(): Promise<Environment>;
 	register(account?: Account): Promise<InitializationData>;
@@ -171,6 +173,8 @@ export default abstract class TransactionAdapter
 		coin: StableCoin,
 		factory: ContractId,
 		hederaERC20: ContractId,
+		PoR?: ContractId,
+		PoRInitialAmount? : BigDecimal
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}

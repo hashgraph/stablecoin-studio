@@ -32,10 +32,12 @@ import BigDecimal from '../shared/BigDecimal.js';
 import { HederaId } from '../shared/HederaId.js';
 import { InitSupplyInvalid } from './error/InitSupplyInvalid.js';
 import { InitSupplyLargerThanMaxSupply } from './error/InitSupplyLargerThanMaxSupply.js';
+import { InitSupplyLargerThanPoR } from './error/InitSupplyLargerThanPoR.js';
 import InvalidAmount from './error/InvalidAmount.js';
 import InvalidDecimalRange from './error/InvalidDecimalRange.js';
 import InvalidMaxSupplySupplyType from './error/InvalidMaxSupplySupplyType.js';
 import { MaxSupplyOverLimit } from './error/MaxSupplyOverLimit.js';
+import { PoROverLimit } from './error/PoROverLimit.js';
 import NameEmpty from './error/NameEmpty.js';
 import NameLength from './error/NameLength.js';
 import SymbolEmpty from './error/SymbolEmpty.js';
@@ -255,6 +257,39 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 		}
 
 		list = [...list, ...StableCoin.checkSupplyType(maxSupply, supplyType)];
+
+		return list;
+	}
+
+	public static checkPoRInitialAmount(
+		PoRInitialAmount: BigDecimal,
+		decimals: number,
+		initialSupply?: BigDecimal,
+	): BaseError[] {
+		const list: BaseError[] = [];
+
+		const min = initialSupply ?? BigDecimal.ZERO;
+		const max = BigDecimal.fromValue(BigNumber.from(MAX_SUPPLY), decimals);
+
+		if (CheckNums.isLessThan(PoRInitialAmount, min)) {
+			if (min.isZero()) {
+				list.push(
+					new InvalidAmount(PoRInitialAmount.toString(), min.toString()),
+				);
+			} else {
+				list.push(
+					new InitSupplyLargerThanPoR(
+						min.toString(),
+						PoRInitialAmount.toString(),
+					),
+				);
+			}
+		}
+		if (CheckNums.isGreaterThan(PoRInitialAmount, max)) {
+			list.push(
+				new PoROverLimit(PoRInitialAmount.toString(), max.toString()),
+			);
+		}
 
 		return list;
 	}
