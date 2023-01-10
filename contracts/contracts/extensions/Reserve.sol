@@ -39,7 +39,7 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
         returns (bool)
     {
         if (_dataFeed == address(0)) return true;
-        uint256 currentReserve = getReserve();
+        uint256 currentReserve = _getReserve();
         if (less) {
             return currentReserve >= amount;
         } else {
@@ -49,7 +49,11 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
         }
     }
 
-    function getReserve() public view returns (uint256) {
+    function getReserve() external view returns (uint256) {
+        return _getReserve();
+    }
+
+    function _getReserve() internal view returns (uint256) {
         if (_dataFeed != address(0)) {
             (, int256 answer, , , ) = AggregatorV3Interface(_dataFeed)
                 .latestRoundData();
