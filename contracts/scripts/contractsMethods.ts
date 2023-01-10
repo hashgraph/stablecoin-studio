@@ -1041,3 +1041,19 @@ export async function supplierAllowance(
     )
     return BigNumber.from(result[0])
 }
+
+export async function getReserve(
+    proxyAddress: ContractId,
+    clientCheckingAllowance: Client
+) {
+    const params: string[] = []
+    const result = await contractCall(
+        proxyAddress,
+        'getReserve',
+        params,
+        clientCheckingAllowance,
+        Gas2,
+        HederaERC20__factory.abi
+    )
+    return BigNumber.from(result[0])
+}

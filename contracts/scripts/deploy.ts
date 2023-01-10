@@ -6,6 +6,7 @@ import {
     ContractFunctionParameters,
     Client,
 } from '@hashgraph/sdk'
+import { BigNumber } from 'ethers'
 
 import {
     StableCoinFactory__factory,
@@ -28,7 +29,7 @@ const factoryProxyAddress = '' //"0.0.49127286";
 const factoryProxyAdminAddress = '' //"0.0.49127281";
 const factoryAddress = '' //"0.0.49127276";
 
-const address_0 = '0x0000000000000000000000000000000000000000'
+const ADDRESS_0 = '0x0000000000000000000000000000000000000000'
 const hreConfig = hre.network.config
 
 export function initializeClients(): [
@@ -230,21 +231,38 @@ export async function deployFactory(
 
     return [factoryProxy, factoryProxyAdmin, factory]
 }
-
-export async function deployContractsWithSDK(
-    name: string,
-    symbol: string,
+export type DeployParameters = {
+    name: string
+    symbol: string
+    decimals: number
+    initialSupply: string
+    maxSupply: string | null
+    memo: string
+    account: string
+    privateKey: string
+    publicKey: string
+    isED25519Type: boolean
+    freeze?: boolean
+    allToContract?: boolean
+    reserveAddress?: string
+    initialAmountDataFeed?: string
+}
+export async function deployContractsWithSDK({
+    name,
+    symbol,
     decimals = 6,
-    initialSupply: string,
-    maxSupply: string | null,
-    memo: string,
-    account: string,
-    privateKey: string,
-    publicKey: string,
-    isED25519Type: boolean,
+    initialSupply,
+    maxSupply,
+    memo,
+    account,
+    privateKey,
+    publicKey,
+    isED25519Type,
     freeze = false,
-    allToContract = true
-): Promise<ContractId[]> {
+    allToContract = true,
+    reserveAddress = ADDRESS_0,
+    initialAmountDataFeed = initialSupply,
+}: DeployParameters): Promise<ContractId[]> {
     const AccountEvmAddress = await toEvmAddress(account, isED25519Type)
 
     console.log(
@@ -284,6 +302,8 @@ export async function deployContractsWithSDK(
 
     console.log(`Invoking Factory Proxy at ${f_proxyAddress}... please wait.`)
 
+    const createDataFeed = reserveAddress === ADDRESS_0
+
     const tokenObject = {
         tokenName: name,
         tokenSymbol: symbol,
@@ -296,7 +316,10 @@ export async function deployContractsWithSDK(
         tokenInitialSupply: initialSupply,
         tokenDecimals: decimals,
         autoRenewAccountAddress: AccountEvmAddress,
-        treasuryAddress: address_0,
+        treasuryAddress: ADDRESS_0,
+        reserveAddress,
+        reserveInitialAmount: initialAmountDataFeed,
+        createReserve: createDataFeed,
         keys: allToContract
             ? tokenKeystoContract()
             : tokenKeystoKey(publicKey, isED25519Type),

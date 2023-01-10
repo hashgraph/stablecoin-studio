@@ -33,10 +33,11 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
         _dataFeed = dataFeed;
     }
 
-    function _checkReserve(
-        uint256 amount,
-        bool less
-    ) internal view returns (bool) {
+    function _checkReserve(uint256 amount, bool less)
+        internal
+        view
+        returns (bool)
+    {
         if (_dataFeed == address(0)) return true;
         uint256 currentReserve = getReserve();
         if (less) {
@@ -48,7 +49,7 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
         }
     }
 
-    function getReserve() internal view returns (uint256) {
+    function getReserve() public view returns (uint256) {
         if (_dataFeed != address(0)) {
             (, int256 answer, , , ) = AggregatorV3Interface(_dataFeed)
                 .latestRoundData();
@@ -57,9 +58,10 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
         return 0;
     }
 
-    function updateDataFeed(
-        address newAddress
-    ) external onlyRole(_getRoleId(roleName.ADMIN)) {
+    function updateDataFeed(address newAddress)
+        external
+        onlyRole(_getRoleId(roleName.ADMIN))
+    {
         address previous = _dataFeed;
         _dataFeed = newAddress;
         emit ReserveAddressChanged(previous, newAddress);
