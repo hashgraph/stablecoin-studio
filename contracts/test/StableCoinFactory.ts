@@ -130,20 +130,22 @@ describe('StableCoinFactory Tests', function() {
 
     it('Create StableCoin setting all token keys to the Account', async function() {
         // Deploy Token using Client
-        await deployContractsWithSDK(
-            TokenName,
-            TokenSymbol,
-            TokenDecimals,
-            INIT_SUPPLY.toString(),
-            MAX_SUPPLY.toString(),
-            TokenMemo,
-            operatorAccount,
-            operatorPriKey,
-            operatorPubKey,
-            operatorIsE25519,
-            false,
-            false
-        )
+        await deployContractsWithSDK({
+            name: TokenName,
+            symbol: TokenSymbol,
+            decimals: TokenDecimals,
+            initialSupply: INIT_SUPPLY.toString(),
+            maxSupply: MAX_SUPPLY.toString(),
+            memo: TokenMemo,
+            account: operatorAccount,
+            privateKey: operatorPriKey,
+            publicKey: operatorPubKey,
+            isED25519Type: operatorIsE25519,
+            allToContract: false,
+            initialAmountDataFeed: INIT_SUPPLY.add(
+                BigNumber.from('150').mul(TokenFactor)
+            ).toString(),
+        })
     })
 })
 
