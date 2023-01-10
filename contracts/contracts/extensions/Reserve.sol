@@ -29,7 +29,7 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
         _;
     }
 
-    function reserve_init(address dataFeed) internal {
+    function _reserve_init(address dataFeed) internal {
         _dataFeed = dataFeed;
     }
 

@@ -7,11 +7,18 @@ interface IHederaReserve is AggregatorV3Interface {
 
     event ReserveInitialized(uint256 initialReserve);
 
+
+    /**
+     *  @dev Initializes the reserve with the initial amount
+     *
+     *  @param initialReserve The initial amount to be on the reserve
+     */
+    function initialize(uint256 initialReserve) external;
+
     /**
      *  @dev Sets a new reserve amount
      *
      *  @param newValue The new value of the reserve
      */
     function set(uint256 newValue) external;
-
 }
