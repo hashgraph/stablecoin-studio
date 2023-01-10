@@ -1,8 +1,8 @@
 import { Box, Heading } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import BaseContainer from '../../interfaces/components/BaseContainer';
+import BaseContainer from '../../components/BaseContainer';
 import { NamedRoutes } from '../../Router/NamedRoutes';
-import GridDirectAccess from '../../interfaces/components/GridDirectAccess';
+import GridDirectAccess from '../../components/GridDirectAccess';
 import { useSelector } from 'react-redux';
 import { roleOptions } from './constants';
 
