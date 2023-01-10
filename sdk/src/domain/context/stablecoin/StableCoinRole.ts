@@ -38,6 +38,6 @@ export const StableCoinRoleLabel = new Map<StableCoinRole, string>([
 	[StableCoinRole.PAUSE_ROLE, 'Pause'],
 	[StableCoinRole.FREEZE_ROLE, 'Freeze'],
 	[StableCoinRole.DELETE_ROLE, 'Delete'],
-	[StableCoinRole.DEFAULT_ADMIN_ROLE, 'Default admin'],
+	[StableCoinRole.DEFAULT_ADMIN_ROLE, 'Admin'],
 	[StableCoinRole.WITHOUT_ROLE, 'Without'],
   ]);
