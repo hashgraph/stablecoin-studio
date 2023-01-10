@@ -18,8 +18,9 @@ interface IStableCoinFactory {
         uint32 tokenDecimals;
         address autoRenewAccountAddress;
         address treasuryAddress;
-        // address reserveAddress;
-        // uint256 reserveInitialAmount;
+        address reserveAddress;
+        uint256 reserveInitialAmount;
+        bool createReserve;
         KeysStruct[] keys;
     }
 
