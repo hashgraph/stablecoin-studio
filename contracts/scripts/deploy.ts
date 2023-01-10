@@ -6,7 +6,6 @@ import {
     ContractFunctionParameters,
     Client,
 } from '@hashgraph/sdk'
-import { BigNumber } from 'ethers'
 
 import {
     StableCoinFactory__factory,

@@ -16,10 +16,4 @@ interface IReserve {
      * @param newAddress The new reserve address
      */
     function updateDataFeed(address newAddress) external;
-
-    /**
-     * @dev Get the current amount of reserve
-     *
-     */
-    function getReserve() public view returns (uint256);
 }
