@@ -409,7 +409,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		);
 	}
 
-	public async changePoRAmount(
+	/*public async changePoRAmount(
 		coin: StableCoinCapabilities,
 		amount: BigDecimal
 	): Promise<TransactionResponse> {
@@ -423,7 +423,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			400000,
 			params
 		);
-	}	
+	}*/	
 
 	public async grantRole(
 		coin: StableCoinCapabilities,

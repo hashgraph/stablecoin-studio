@@ -373,7 +373,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
-	public async changePoRAmount(
+	/*public async changePoRAmount(
 		coin: StableCoinCapabilities,
 		amount: BigDecimal
 	): Promise<TransactionResponse> {
@@ -399,7 +399,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				transactionId: (error as any).error?.transactionId,
 			});
 		}
-	}		
+	}*/		
 
 	async grantRole(
 		coin: StableCoinCapabilities,
