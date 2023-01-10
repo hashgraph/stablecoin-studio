@@ -403,7 +403,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		return this.performOperation(
 			coin,
 			Operation.PoR_MANAGEMENT,
-			'updateReserve',
+			'updateDataFeed',
 			400000,
 			params
 		);

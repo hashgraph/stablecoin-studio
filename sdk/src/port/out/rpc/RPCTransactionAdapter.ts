@@ -360,7 +360,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				await HederaERC20__factory.connect(
 					coin.coin.evmProxyAddress,
 					this.signerOrProvider,
-				).updateReserve(
+				).updateDataFeed(
 					this.accountToEvmAddress(PoR),
 				),
 			);
