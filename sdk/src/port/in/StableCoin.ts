@@ -67,10 +67,14 @@ import { UnFreezeCommand } from '../../app/usecase/command/stablecoin/operations
 import { GetAccountInfoQuery } from '../../app/usecase/query/account/info/GetAccountInfoQuery.js';
 import { handleValidation } from './Common.js';
 import { GetAccountTokenAssociatedQuery } from '../../app/usecase/query/account/tokenAssociated/GetAccountTokenAssociatedQuery.js';
-import ChangePoRRequest from './request/ChangePoRRequest.js';
-import ChangePoRAmountRequest from './request/ChangePoRAmountRequest.js';
-import { ChangePoRCommand } from '../../app/usecase/command/stablecoin/operations/changePoR/ChangePoRCommand.js';
-import { ChangePoRAmountCommand } from '../../app/usecase/command/stablecoin/operations/changePoRAmount/ChangePoRAmountCommand.js';
+import UpdatePoRRequest from './request/UpdatePoRRequest.js';
+import UpdatePoRAmountRequest from './request/UpdatePoRAmountRequest.js';
+import { UpdatePoRCommand } from '../../app/usecase/command/stablecoin/operations/updatePoR/UpdatePoRCommand.js';
+import { UpdatePoRAmountCommand } from '../../app/usecase/command/stablecoin/operations/updatePoRAmount/UpdatePoRAmountCommand.js';
+import GetPoRRequest from './request/GetPoRRequest.js';
+import GetPoRAmountRequest from './request/GetPoRAmountRequest.js';
+import { GetPoRCommand } from '../../app/usecase/command/stablecoin/operations/getPoR/GetPoRCommand.js';
+import { GetPoRAmountCommand } from '../../app/usecase/command/stablecoin/operations/getPoRAmount/GetPoRAmountCommand.js';
 
 export const HederaERC20AddressTestnet = '0.0.49217489';
 export const HederaERC20AddressPreviewnet = '0.0.11111111';
@@ -367,14 +371,28 @@ class StableCoinInPort implements IStableCoinInPort {
 		).isAssociated;
 	}
 
-	async changePoR(
-		request: ChangePoRRequest,
+	async getPoR(
+		request: GetPoRRequest,
+	): Promise<string> {
+		handleValidation('GetPoRRequest', request);
+
+		return (
+			await this.commandBus.execute(
+				new GetPoRCommand(
+					HederaId.from(request.tokenId)
+				),
+			)
+		).payload;
+	}
+
+	async updatePoR(
+		request: UpdatePoRRequest,
 	): Promise<boolean> {
 		handleValidation('ChangePoRRequest', request);
 
 		return (
 			await this.commandBus.execute(
-				new ChangePoRCommand(
+				new UpdatePoRCommand(
 					HederaId.from(request.tokenId),
 					new ContractId(request.PoR)
 				),
@@ -382,15 +400,29 @@ class StableCoinInPort implements IStableCoinInPort {
 		).payload;
 	}
 
-	async changePoRAmount(
-		request: ChangePoRAmountRequest,
+	async getPoRAmount(
+		request: GetPoRAmountRequest,
+	): Promise<Balance> {
+		handleValidation('GetPoRAmountRequest', request);
+
+		const res = await this.commandBus.execute(
+			new GetPoRAmountCommand(
+				HederaId.from(request.tokenId)
+			)
+		);
+
+		return new Balance(res.payload);
+	}
+
+	async updatePoRAmount(
+		request: UpdatePoRAmountRequest,
 	): Promise<boolean> {
-		handleValidation('ChangePoRAmountRequest', request);
+		handleValidation('UpdatePoRAmountRequest', request);
 
 		return (
 			await this.commandBus.execute(
-				new ChangePoRAmountCommand(
-					HederaId.from(request.tokenId),
+				new UpdatePoRAmountCommand(
+					new ContractId(request.PoR),
 					BigDecimal.fromString(request.PoRAmount, PoRAmountDecimals)
 				),
 			)

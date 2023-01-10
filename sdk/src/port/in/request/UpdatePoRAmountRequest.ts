@@ -27,22 +27,19 @@ import { InvalidType } from './error/InvalidType.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
 
-export default class ChangePoRAmountRequest extends ValidatedRequest<ChangePoRAmountRequest> {
-	tokenId: string;
+export default class UpdatePoRAmountRequest extends ValidatedRequest<UpdatePoRAmountRequest> {
+	PoR: string;
 	PoRAmount: string;
-	totalSupply: BigDecimal;
 
 	constructor({ 
-		tokenId,
+		PoR,
 		PoRAmount,
-		totalSupply
 	}: { 
-		tokenId: string;
+		PoR: string;
 		PoRAmount: string;
-		totalSupply: BigDecimal;
 	}) {
 		super({
-			tokenId: Validation.checkHederaIdFormat(),
+			PoR: Validation.checkContractId(),
 			PoRAmount: (val) => {
 				if (!BigDecimal.isBigDecimal(val)) {
 					return [new InvalidType(val, 'BigDecimal')];
@@ -56,16 +53,13 @@ export default class ChangePoRAmountRequest extends ValidatedRequest<ChangePoRAm
 					PoRAmountDecimals,
 				);
 			
-				return StableCoin.checkPoRTotalAmount(
+				return StableCoin.checkPoRAmount(
 					PoRAmount,
-					PoRAmountDecimals,
-					totalSupply,
+					PoRAmountDecimals
 				);
 			},
-			totalSupply: Validation.checkNumber()
 		});
-		this.tokenId = tokenId;
+		this.PoR = PoR;
 		this.PoRAmount = PoRAmount;
-		this.totalSupply = totalSupply;
 	}
 }

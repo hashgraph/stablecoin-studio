@@ -393,7 +393,18 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		);
 	}
 
-	public async changePoR(
+	public async getPoR(
+		coin: StableCoinCapabilities
+	): Promise<TransactionResponse> {
+		return this.performOperation(
+			coin,
+			Operation.PoR_MANAGEMENT,
+			'getDataFeed',
+			60000
+		);
+	}
+
+	public async updatePoR(
 		coin: StableCoinCapabilities,
 		PoR: ContractId
 	): Promise<TransactionResponse> {
@@ -409,8 +420,19 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		);
 	}
 
-	/*public async changePoRAmount(
-		coin: StableCoinCapabilities,
+	public async getPoRAmount(
+		coin: StableCoinCapabilities
+	): Promise<TransactionResponse> {
+		return this.performOperation(
+			coin,
+			Operation.PoR_MANAGEMENT,
+			'getReserve',
+			60000
+		);
+	}
+
+	/*public async updatePoRAmount(
+		PoR: ContractId,
 		amount: BigDecimal
 	): Promise<TransactionResponse> {
 		const params = new Params({

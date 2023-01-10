@@ -345,7 +345,33 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		return this.performOperation(coin, Operation.DELETE);
 	}
 
-	public async changePoR(
+	public async getPoR(
+		coin: StableCoinCapabilities
+	): Promise<TransactionResponse> {
+		try {
+			if (!coin.coin.evmProxyAddress)
+				throw new TransactionResponseError({
+					RPC_relay: true,
+					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
+				});
+
+			return RPCTransactionResponseAdapter.manageResponse(
+				await HederaERC20__factory.connect(
+					coin.coin.evmProxyAddress,
+					this.signerOrProvider,
+				).getReserve(),
+			);
+		} catch (error) {
+			throw new TransactionResponseError({
+				RPC_relay: true,
+				message: `Unexpected error in HederaTransactionHandler changePoR operation : ${error}`,
+				transactionId: (error as any).error?.transactionId,
+			});
+		}
+	}
+
+
+	public async updatePoR(
 		coin: StableCoinCapabilities,
 		PoR: ContractId
 	): Promise<TransactionResponse> {
@@ -373,8 +399,33 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
-	/*public async changePoRAmount(
-		coin: StableCoinCapabilities,
+	/*public async getPoRAmount(
+		coin: StableCoinCapabilities
+	): Promise<TransactionResponse> {
+		try {
+			if (!coin.coin.evmProxyAddress)
+				throw new TransactionResponseError({
+					RPC_relay: true,
+					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
+				});
+
+			return RPCTransactionResponseAdapter.manageResponse(
+				await HederaERC20__factory.connect(
+					coin.coin.evmProxyAddress,
+					this.signerOrProvider,
+				).getReserve(),
+			);
+		} catch (error) {
+			throw new TransactionResponseError({
+				RPC_relay: true,
+				message: `Unexpected error in HederaTransactionHandler changePoR operation : ${error}`,
+				transactionId: (error as any).error?.transactionId,
+			});
+		}
+	}
+
+	public async updatePoRAmount(
+		PoR: ContractId,
 		amount: BigDecimal
 	): Promise<TransactionResponse> {
 		try {

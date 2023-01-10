@@ -21,7 +21,7 @@
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
 
-export default class ChangePoRRequest extends ValidatedRequest<ChangePoRRequest> {
+export default class UpdatePoRRequest extends ValidatedRequest<UpdatePoRRequest> {
 	tokenId: string;
 	PoR: string;
 

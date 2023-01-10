@@ -295,26 +295,19 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 		return list;
 	}
 
-	public static checkPoRTotalAmount(
+	public static checkPoRAmount(
 		PoRAmount: BigDecimal,
-		decimals: number,
-		totalSupply?: BigDecimal,
+		decimals: number
 	): BaseError[] {
 		const list: BaseError[] = [];
 
-		const min = totalSupply ?? BigDecimal.ZERO;
+		const min = BigDecimal.ZERO;
 		const max = BigDecimal.fromValue(BigNumber.from(MAX_SUPPLY), decimals);
 
 		if (CheckNums.isLessThan(PoRAmount, min)) {
-			if (min.isZero()) {
-				list.push(
-					new InvalidAmount(PoRAmount.toString(), min.toString()),
-				);
-			} else {
-				list.push(
-					new PoRLessThanTotalSupply(PoRAmount.toString(), min.toString()),
-				);
-			}
+			list.push(
+				new InvalidAmount(PoRAmount.toString(), min.toString()),
+			);
 		}
 		if (CheckNums.isGreaterThan(PoRAmount, max)) {
 			list.push(
