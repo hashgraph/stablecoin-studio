@@ -100,7 +100,7 @@ contract HederaERC20 is
         override(IHederaERC20, IHederaERC20Upgradeable, TokenOwner)
         returns (uint256)
     {
-        return TokenOwner(_getTokenAddress()).totalSupply();
+        return IHederaERC20Upgradeable(_getTokenAddress()).totalSupply();
     }
 
     /**
