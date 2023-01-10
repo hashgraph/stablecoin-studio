@@ -117,6 +117,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IRescatable__factory>;
     getContractFactory(
+      name: "IReserve",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IReserve__factory>;
+    getContractFactory(
       name: "IRoles",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IRoles__factory>;
@@ -140,6 +144,10 @@ declare module "hardhat/types/runtime" {
       name: "Rescatable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Rescatable__factory>;
+    getContractFactory(
+      name: "Reserve",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Reserve__factory>;
     getContractFactory(
       name: "Roles",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -172,10 +180,6 @@ declare module "hardhat/types/runtime" {
       name: "IHederaTokenService",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IHederaTokenService__factory>;
-    getContractFactory(
-      name: "IERC20UpgradeableCustom",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IERC20UpgradeableCustom__factory>;
     getContractFactory(
       name: "IHederaERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -332,6 +336,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IRescatable>;
     getContractAt(
+      name: "IReserve",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IReserve>;
+    getContractAt(
       name: "IRoles",
       address: string,
       signer?: ethers.Signer
@@ -361,6 +370,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Rescatable>;
+    getContractAt(
+      name: "Reserve",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Reserve>;
     getContractAt(
       name: "Roles",
       address: string,
@@ -401,11 +415,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IHederaTokenService>;
-    getContractAt(
-      name: "IERC20UpgradeableCustom",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IERC20UpgradeableCustom>;
     getContractAt(
       name: "IHederaERC20",
       address: string,

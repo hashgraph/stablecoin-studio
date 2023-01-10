@@ -7,6 +7,7 @@ export { IDeletable__factory } from "./IDeletable__factory";
 export { IFreezable__factory } from "./IFreezable__factory";
 export { IPausable__factory } from "./IPausable__factory";
 export { IRescatable__factory } from "./IRescatable__factory";
+export { IReserve__factory } from "./IReserve__factory";
 export { IRoles__factory } from "./IRoles__factory";
 export { ISupplierAdmin__factory } from "./ISupplierAdmin__factory";
 export { ITokenOwner__factory } from "./ITokenOwner__factory";

@@ -9,6 +9,7 @@ export type { Deletable } from "./Deletable";
 export type { Freezable } from "./Freezable";
 export type { Pausable } from "./Pausable";
 export type { Rescatable } from "./Rescatable";
+export type { Reserve } from "./Reserve";
 export type { Roles } from "./Roles";
 export type { SupplierAdmin } from "./SupplierAdmin";
 export type { TokenOwner } from "./TokenOwner";

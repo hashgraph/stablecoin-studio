@@ -7,6 +7,7 @@ export type { IDeletable } from "./IDeletable";
 export type { IFreezable } from "./IFreezable";
 export type { IPausable } from "./IPausable";
 export type { IRescatable } from "./IRescatable";
+export type { IReserve } from "./IReserve";
 export type { IRoles } from "./IRoles";
 export type { ISupplierAdmin } from "./ISupplierAdmin";
 export type { ITokenOwner } from "./ITokenOwner";

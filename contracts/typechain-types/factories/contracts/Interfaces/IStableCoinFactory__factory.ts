@@ -60,6 +60,16 @@ const _abi = [
             type: "address",
           },
           {
+            internalType: "address",
+            name: "reserveAddress",
+            type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "reserveInitialAmount",
+            type: "uint256",
+          },
+          {
             components: [
               {
                 internalType: "uint256",

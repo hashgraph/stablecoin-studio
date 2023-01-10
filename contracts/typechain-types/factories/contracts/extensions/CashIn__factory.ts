@@ -27,6 +27,25 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
+        indexed: false,
+        internalType: "address",
+        name: "previousAddress",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "newAddress",
+        type: "address",
+      },
+    ],
+    name: "ReserveAddressChanged",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
         indexed: true,
         internalType: "bytes32",
         name: "role",
@@ -658,6 +677,19 @@ const _abi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "newAddress",
+        type: "address",
+      },
+    ],
+    name: "updateReserve",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
 ];

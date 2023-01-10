@@ -55,6 +55,7 @@ export interface CashInInterface extends utils.Interface {
     "revokeSupplierRole(address)": FunctionFragment;
     "supplierAllowance(address)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
+    "updateReserve(address)": FunctionFragment;
   };
 
   getFunction(
@@ -85,6 +86,7 @@ export interface CashInInterface extends utils.Interface {
       | "revokeSupplierRole"
       | "supplierAllowance"
       | "supportsInterface"
+      | "updateReserve"
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "BURN_ROLE", values?: undefined): string;
@@ -185,6 +187,10 @@ export interface CashInInterface extends utils.Interface {
     functionFragment: "supportsInterface",
     values: [PromiseOrValue<BytesLike>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "updateReserve",
+    values: [PromiseOrValue<string>]
+  ): string;
 
   decodeFunctionResult(functionFragment: "BURN_ROLE", data: BytesLike): Result;
   decodeFunctionResult(
@@ -263,9 +269,14 @@ export interface CashInInterface extends utils.Interface {
     functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateReserve",
+    data: BytesLike
+  ): Result;
 
   events: {
     "Initialized(uint8)": EventFragment;
+    "ReserveAddressChanged(address,address)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
@@ -276,6 +287,7 @@ export interface CashInInterface extends utils.Interface {
   };
 
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ReserveAddressChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
@@ -291,6 +303,18 @@ export interface InitializedEventObject {
 export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
 export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
+
+export interface ReserveAddressChangedEventObject {
+  previousAddress: string;
+  newAddress: string;
+}
+export type ReserveAddressChangedEvent = TypedEvent<
+  [string, string],
+  ReserveAddressChangedEventObject
+>;
+
+export type ReserveAddressChangedEventFilter =
+  TypedEventFilter<ReserveAddressChangedEvent>;
 
 export interface RoleAdminChangedEventObject {
   role: string;
@@ -523,6 +547,11 @@ export interface CashIn extends BaseContract {
       interfaceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
+
+    updateReserve(
+      newAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
   };
 
   BURN_ROLE(overrides?: CallOverrides): Promise<string>;
@@ -636,6 +665,11 @@ export interface CashIn extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  updateReserve(
+    newAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
     BURN_ROLE(overrides?: CallOverrides): Promise<string>;
 
@@ -747,11 +781,25 @@ export interface CashIn extends BaseContract {
       interfaceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    updateReserve(
+      newAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
+
+    "ReserveAddressChanged(address,address)"(
+      previousAddress?: null,
+      newAddress?: null
+    ): ReserveAddressChangedEventFilter;
+    ReserveAddressChanged(
+      previousAddress?: null,
+      newAddress?: null
+    ): ReserveAddressChangedEventFilter;
 
     "RoleAdminChanged(bytes32,bytes32,bytes32)"(
       role?: PromiseOrValue<BytesLike> | null,
@@ -954,6 +1002,11 @@ export interface CashIn extends BaseContract {
       interfaceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    updateReserve(
+      newAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -1068,6 +1121,11 @@ export interface CashIn extends BaseContract {
     supportsInterface(
       interfaceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    updateReserve(
+      newAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

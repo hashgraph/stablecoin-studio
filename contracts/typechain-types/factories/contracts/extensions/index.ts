@@ -8,6 +8,7 @@ export { Deletable__factory } from "./Deletable__factory";
 export { Freezable__factory } from "./Freezable__factory";
 export { Pausable__factory } from "./Pausable__factory";
 export { Rescatable__factory } from "./Rescatable__factory";
+export { Reserve__factory } from "./Reserve__factory";
 export { Roles__factory } from "./Roles__factory";
 export { SupplierAdmin__factory } from "./SupplierAdmin__factory";
 export { TokenOwner__factory } from "./TokenOwner__factory";

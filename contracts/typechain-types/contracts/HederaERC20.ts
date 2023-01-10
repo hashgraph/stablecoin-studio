@@ -155,6 +155,7 @@ export interface HederaERC20Interface extends utils.Interface {
     "transferFrom(address,address,uint256)": FunctionFragment;
     "unfreeze(address)": FunctionFragment;
     "unpause()": FunctionFragment;
+    "updateReserve(address)": FunctionFragment;
     "wipe(address,uint32)": FunctionFragment;
   };
 
@@ -205,6 +206,7 @@ export interface HederaERC20Interface extends utils.Interface {
       | "transferFrom"
       | "unfreeze"
       | "unpause"
+      | "updateReserve"
       | "wipe"
   ): FunctionFragment;
 
@@ -377,6 +379,10 @@ export interface HederaERC20Interface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "updateReserve",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "wipe",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
@@ -492,11 +498,16 @@ export interface HederaERC20Interface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "unfreeze", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "updateReserve",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "wipe", data: BytesLike): Result;
 
   events: {
     "Approval(address,address,uint256)": EventFragment;
     "Initialized(uint8)": EventFragment;
+    "ReserveAddressChanged(address,address)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
@@ -520,6 +531,7 @@ export interface HederaERC20Interface extends utils.Interface {
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ReserveAddressChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
@@ -559,6 +571,18 @@ export interface InitializedEventObject {
 export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
 export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
+
+export interface ReserveAddressChangedEventObject {
+  previousAddress: string;
+  newAddress: string;
+}
+export type ReserveAddressChangedEvent = TypedEvent<
+  [string, string],
+  ReserveAddressChangedEventObject
+>;
+
+export type ReserveAddressChangedEventFilter =
+  TypedEventFilter<ReserveAddressChangedEvent>;
 
 export interface RoleAdminChangedEventObject {
   role: string;
@@ -1009,6 +1033,11 @@ export interface HederaERC20 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    updateReserve(
+      newAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     wipe(
       account: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
@@ -1215,6 +1244,11 @@ export interface HederaERC20 extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  updateReserve(
+    newAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   wipe(
     account: PromiseOrValue<string>,
     amount: PromiseOrValue<BigNumberish>,
@@ -1415,6 +1449,11 @@ export interface HederaERC20 extends BaseContract {
 
     unpause(overrides?: CallOverrides): Promise<boolean>;
 
+    updateReserve(
+      newAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     wipe(
       account: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
@@ -1436,6 +1475,15 @@ export interface HederaERC20 extends BaseContract {
 
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
+
+    "ReserveAddressChanged(address,address)"(
+      previousAddress?: null,
+      newAddress?: null
+    ): ReserveAddressChangedEventFilter;
+    ReserveAddressChanged(
+      previousAddress?: null,
+      newAddress?: null
+    ): ReserveAddressChangedEventFilter;
 
     "RoleAdminChanged(bytes32,bytes32,bytes32)"(
       role?: PromiseOrValue<BytesLike> | null,
@@ -1822,6 +1870,11 @@ export interface HederaERC20 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    updateReserve(
+      newAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     wipe(
       account: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
@@ -2028,6 +2081,11 @@ export interface HederaERC20 extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     unpause(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    updateReserve(
+      newAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

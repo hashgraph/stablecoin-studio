@@ -3,9 +3,10 @@ pragma solidity 0.8.10;
 
 import "./Interfaces/ICashIn.sol";
 import "./SupplierAdmin.sol";
+import "./Reserve.sol";
 import "../hts-precompile/IHederaTokenService.sol";
 
-abstract contract CashIn is ICashIn, SupplierAdmin {
+abstract contract CashIn is ICashIn, SupplierAdmin, Reserve {
         
     /**
      * @dev Creates an `amount` of tokens and transfers them to an `account`, increasing
@@ -17,6 +18,7 @@ abstract contract CashIn is ICashIn, SupplierAdmin {
     function mint(address account, uint256 amount) 
         external       
         onlyRole(_getRoleId(roleName.CASHIN))  
+        checkReserveIncrease(amount)
         returns (bool)
     {         
         if(!_unlimitedSupplierAllowances[msg.sender]) _decreaseSupplierAllowance(msg.sender, amount);
