@@ -19,22 +19,12 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
     string constant memo_2 = '","a":"';
     string constant memo_3 = '"}';
 
-    event Deployed(address, address, address, address);
+    event Deployed(address, address, address, address, address, address);
 
     function deployStableCoin(
         tokenStruct calldata requestedToken,
         address StableCoinContractAddress
-    )
-        external
-        payable
-        override
-        returns (
-            address,
-            address,
-            address,
-            address
-        )
-    {
+    ) external payable override returns (DeployedStableCoin memory) {
         // Deploy Proxy Admin
         HederaERC20ProxyAdmin StableCoinProxyAdmin = new HederaERC20ProxyAdmin();
 
@@ -48,11 +38,11 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
             ''
         );
 
-        address reserveAddress;
+        address reserveAddress = requestedToken.reserveAddress;
         // Create reserve
+        HederaReserveProxy reserveProxy;
+        HederaReserveProxyAdmin reserveProxyAdmin;
         if (requestedToken.createReserve) {
-            HederaReserveProxy reserveProxy;
-            HederaReserveProxyAdmin reserveProxyAdmin;
             reserveProxyAdmin = new HederaReserveProxyAdmin();
             reserveProxyAdmin.transferOwnership(msg.sender);
             reserveProxy = new HederaReserveProxy(
@@ -61,11 +51,10 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
                 ''
             );
             HederaReserve(address(reserveProxy)).initialize(
-                requestedToken.reserveInitialAmount
+                requestedToken.reserveInitialAmount,
+                msg.sender
             );
             reserveAddress = address(reserveProxy);
-        } else if (requestedToken.reserveAddress != address(0)) {
-            reserveAddress = requestedToken.reserveAddress;
         }
 
         // Create Token
@@ -94,14 +83,20 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
             address(StableCoinProxy),
             address(StableCoinProxyAdmin),
             StableCoinContractAddress,
-            tokenAddress
+            tokenAddress,
+            address(reserveProxy),
+            address(reserveProxyAdmin)
         );
-        return (
-            address(StableCoinProxy),
-            address(StableCoinProxyAdmin),
-            StableCoinContractAddress,
-            tokenAddress
-        );
+        DeployedStableCoin memory deployedStableCoin;
+
+        deployedStableCoin.stableCoinProxy = address(StableCoinProxy);
+        deployedStableCoin.stableCoinProxyAdmin = address(StableCoinProxyAdmin);
+        deployedStableCoin
+            .stableCoinContractAddress = StableCoinContractAddress;
+        deployedStableCoin.tokenAddress = tokenAddress;
+        deployedStableCoin.reserveProxy = address(reserveProxy);
+        deployedStableCoin.reserveProxyAdmin = address(reserveProxyAdmin);
+        return deployedStableCoin;
     }
 
     function createToken(

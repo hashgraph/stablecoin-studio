@@ -17,7 +17,6 @@ import './extensions/TokenOwner.sol';
 
 contract HederaERC20 is
     IHederaERC20,
-    IHederaERC20Upgradeable,
     CashIn,
     Burnable,
     Wipeable,
@@ -96,13 +95,8 @@ contract HederaERC20 is
      *
      * @return uint256 The total number of tokens that exists
      */
-    function totalSupply()
-        external
-        view
-        override(IHederaERC20, IHederaERC20Upgradeable, TokenOwner)
-        returns (uint256)
-    {
-        return IHederaERC20Upgradeable(_getTokenAddress()).totalSupply();
+    function totalSupply() external view returns (uint256) {
+        return _totalSupply();
     }
 
     /**
@@ -115,7 +109,7 @@ contract HederaERC20 is
     function balanceOf(address account)
         public
         view
-        override(IHederaERC20, IHederaERC20Upgradeable)
+        override(IHederaERC20)
         returns (uint256)
     {
         return _balanceOf(account);

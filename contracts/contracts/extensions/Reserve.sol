@@ -29,49 +29,46 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
         _;
     }
 
-    function reserve_init(address dataFeed) internal {
+    function reserve_init(address dataFeed) internal onlyInitializing {
         _dataFeed = dataFeed;
     }
 
-    function _checkReserve(uint256 amount, bool less)
-        internal
-        view
-        returns (bool)
-    {
+    function _checkReserve(
+        uint256 amount,
+        bool less
+    ) internal view returns (bool) {
         if (_dataFeed == address(0)) return true;
-        uint256 currentReserve = _getReserve();
+        int256 currentReserve = _getReserve();
+        assert(currentReserve >= 0);
         if (less) {
-            return currentReserve >= amount;
+            return uint(currentReserve) >= amount;
         } else {
-            return
-                currentReserve >=
-                (TokenOwner(_getTokenAddress()).totalSupply() + amount);
+            return uint(currentReserve) >= _totalSupply() + amount;
         }
     }
 
-    function getReserve() external view returns (uint256) {
+    function getReserve() external view returns (int256) {
         return _getReserve();
     }
 
-    function _getReserve() internal view returns (uint256) {
+    function _getReserve() internal view returns (int256) {
         if (_dataFeed != address(0)) {
             (, int256 answer, , , ) = AggregatorV3Interface(_dataFeed)
                 .latestRoundData();
-            return uint256(answer);
+            return answer;
         }
         return 0;
     }
 
-    function updateDataFeed(address newAddress)
-        external
-        onlyRole(_getRoleId(roleName.ADMIN))
-    {
+    function updateDataFeed(
+        address newAddress
+    ) external onlyRole(_getRoleId(roleName.ADMIN)) {
         address previous = _dataFeed;
         _dataFeed = newAddress;
         emit ReserveAddressChanged(previous, newAddress);
     }
 
-    function dataFeed() external view returns (address) {
+    function getDataFeed() external view returns (address) {
         return _dataFeed;
     }
 }

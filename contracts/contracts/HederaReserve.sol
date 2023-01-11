@@ -7,15 +7,28 @@ import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 contract HederaReserve is IHederaReserve, Initializable {
     uint8 private constant _decimals = 2;
     uint80 private constant _cRoundId = 0;
-    uint256 private _reserveAddress;
+    int256 private _reserve;
+    address private _admin;
+
+    modifier isAdmin() {
+        require(
+            _admin == msg.sender,
+            'Only administrator can change the reserve'
+        );
+        _;
+    }
 
     /**
      *  @dev Initializes the reserve with the initial amount
      *
      *  @param initialReserve The initial amount to be on the reserve
      */
-    function initialize(uint256 initialReserve) external onlyInitializing {
-        _reserveAddress = initialReserve;
+    function initialize(
+        int256 initialReserve,
+        address admin
+    ) external onlyInitializing {
+        _reserve = initialReserve;
+        _admin = admin;
         emit ReserveInitialized(initialReserve);
     }
 
@@ -24,8 +37,17 @@ contract HederaReserve is IHederaReserve, Initializable {
      *
      *  @param newValue The new value of the reserve
      */
-    function set(uint256 newValue) external {
-        _reserveAddress = newValue;
+    function set(int256 newValue) external isAdmin {
+        _reserve = newValue;
+    }
+
+    /**
+     *  @dev Sets a new admin address
+     *
+     *  @param admin The new admin
+     */
+    function setAdmin(address admin) external isAdmin {
+        _admin = admin;
     }
 
     /**
@@ -58,19 +80,18 @@ contract HederaReserve is IHederaReserve, Initializable {
     /**
      *  @dev Gets a value from a specific round
      *
-     *  @param _roundId The round to get the value from
      */
     function getRoundData(
-        uint80 _roundId
+        uint80 /* _roundId */
     )
         external
         pure
         returns (
-            uint80 roundId,
-            int256 answer,
-            uint256 startedAt,
-            uint256 updatedAt,
-            uint80 answeredInRound
+            uint80 /* roundId */,
+            int256 /* answer */ ,
+            uint256 /* startedAt */,
+            uint256 /* updatedAt */ , 
+            uint80 /* answeredInRound */
         )
     {
         revert('Not implemented');
@@ -92,7 +113,7 @@ contract HederaReserve is IHederaReserve, Initializable {
     {
         return (
             _cRoundId,
-            int(_reserveAddress),
+            _reserve,
             block.timestamp,
             block.timestamp,
             _cRoundId
