@@ -42,7 +42,10 @@ import {
 
 import { clientId, toEvmAddress } from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
-import { HederaERC20ProxyAdmin__factory } from '../typechain-types'
+import {
+    HederaERC20ProxyAdmin__factory,
+    HederaERC20Proxy__factory,
+} from '../typechain-types'
 
 const chai = require('chai')
 const chaiAsPromised = require('chai-as-promised')
@@ -708,7 +711,7 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
 
         // Check that proxy admin has been changed
         const _admin = await admin(
-            abiERC20ProxyAdmin,
+            HederaERC20Proxy__factory.abi,
             proxyAddress,
             operatorClient
         )
@@ -720,13 +723,13 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
 
         // reset
         await changeAdmin(
-            abiERC20ProxyAdmin,
+            HederaERC20Proxy__factory.abi,
             proxyAddress,
             operatorClient,
             await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)
         )
         await changeAdmin(
-            abiERC20ProxyAdmin,
+            HederaERC20Proxy__factory.abi,
             proxyAddress,
             nonOperatorClient,
             proxyAdminAddress.toSolidityAddress()

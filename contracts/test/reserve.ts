@@ -112,6 +112,13 @@ describe('Reserve Tests', function() {
         )
     })
 
+    it('Get datafeed', async () => {
+        const datafeed = await getDataFeed(proxyAddress, operatorClient)
+        expect(datafeed).not.to.equals(
+            '0x' + hederaReserveProxy.toSolidityAddress()
+        )
+    })
+
     it('Update datafeed', async () => {
         const beforeDataFeed = await getDataFeed(proxyAddress, operatorClient)
         const beforeReserve = await getReserve(proxyAddress, operatorClient)

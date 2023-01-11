@@ -479,12 +479,11 @@ export async function deployHederaReserve(
         privateKeyOperatorEd25519,
         clientOperator
     )
-    const AccountEvmAddress = await toEvmAddress(account, isED25519)
+
     const hederaReserve = await deployContractSDK(
         HederaReserve__factory,
         privateKeyOperatorEd25519,
-        clientOperator,
-        [AccountEvmAddress]
+        clientOperator
     )
 
     const params = new ContractFunctionParameters()
@@ -499,10 +498,12 @@ export async function deployHederaReserve(
         params
     )
 
+    const AccountEvmAddress = await toEvmAddress(account, isED25519)
+
     contractCall(
         hederaReserveProxy,
         'initialize',
-        [initialAmountDataFeed.toString()],
+        [initialAmountDataFeed.toString(), AccountEvmAddress],
         clientOperator,
         130000,
         HederaReserve__factory.abi

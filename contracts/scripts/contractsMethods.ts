@@ -256,27 +256,41 @@ export async function initialize(
 
 // HederaERC20Proxy ///////////////////////////////////////////////////
 export async function upgradeTo(
-    abi: any,
+    proxyAbi: any,
     proxyAddress: ContractId,
     client: Client,
     newImplementationContract: string
 ) {
     const params = [newImplementationContract]
-    await contractCall(proxyAddress, 'upgradeTo', params, client, Gas3, abi)
+    await contractCall(
+        proxyAddress,
+        'upgradeTo',
+        params,
+        client,
+        Gas3,
+        proxyAbi
+    )
 }
 
 export async function changeAdmin(
-    abi: any,
+    proxyAbi: any,
     proxyAddress: ContractId,
     client: Client,
     newAdminAccount: string
 ) {
     const params = [newAdminAccount]
-    await contractCall(proxyAddress, 'changeAdmin', params, client, Gas3, abi)
+    await contractCall(
+        proxyAddress,
+        'changeAdmin',
+        params,
+        client,
+        Gas3,
+        proxyAbi
+    )
 }
 
 export async function admin(
-    abi: any,
+    proxyAbi: any,
     proxyAddress: ContractId,
     client: Client
 ): Promise<string> {
@@ -287,14 +301,14 @@ export async function admin(
         params,
         client,
         Gas2,
-        abi
+        proxyAbi
     )
     return result[0]
 }
 
 // HederaERC20ProxyAdmin ///////////////////////////////////////////////////
 export async function owner(
-    abi: any,
+    proxyAdminAbi: any,
     proxyAdminAddress: ContractId,
     client: Client
 ): Promise<string> {
@@ -305,24 +319,31 @@ export async function owner(
         params,
         client,
         Gas2,
-        abi
+        proxyAdminAbi
     )
     return result[0]
 }
 
 export async function upgrade(
-    abi: any,
+    proxyAdminAbi: any,
     proxyAdminAddress: ContractId,
     client: Client,
     newImplementationContract: string,
     proxyAddress: string
 ) {
     const params = [proxyAddress, newImplementationContract]
-    await contractCall(proxyAdminAddress, 'upgrade', params, client, Gas3, abi)
+    await contractCall(
+        proxyAdminAddress,
+        'upgrade',
+        params,
+        client,
+        Gas3,
+        proxyAdminAbi
+    )
 }
 
 export async function changeProxyAdmin(
-    abi: any,
+    proxyAdminAbi: any,
     proxyAdminAddress: ContractId,
     client: Client,
     newAdminAccount: string,
@@ -339,12 +360,12 @@ export async function changeProxyAdmin(
         params,
         client,
         Gas3,
-        abi
+        proxyAdminAbi
     )
 }
 
 export async function transferOwnership(
-    abi: any,
+    proxyAdminAbi: any,
     proxyAdminAddress: ContractId,
     client: Client,
     newOwnerAccount: string,
@@ -357,12 +378,12 @@ export async function transferOwnership(
         params,
         client,
         Gas3,
-        abi
+        proxyAdminAbi
     )
 }
 
 export async function getProxyImplementation(
-    abi: any,
+    proxyAdminAbi: any,
     proxyAdminAddress: ContractId,
     client: Client,
     proxyAddress: string
@@ -374,13 +395,13 @@ export async function getProxyImplementation(
         params,
         client,
         Gas2,
-        abi
+        proxyAdminAbi
     )
     return result[0]
 }
 
 export async function getProxyAdmin(
-    abi: any,
+    proxyAdminAbi: any,
     proxyAdminAddress: ContractId,
     client: Client,
     proxyAddress: string
@@ -392,7 +413,7 @@ export async function getProxyAdmin(
         params,
         client,
         Gas2,
-        abi
+        proxyAdminAbi
     )
     return result[0]
 }
