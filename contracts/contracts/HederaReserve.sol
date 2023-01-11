@@ -23,10 +23,10 @@ contract HederaReserve is IHederaReserve, Initializable {
      *
      *  @param initialReserve The initial amount to be on the reserve
      */
-    function initialize(
-        int256 initialReserve,
-        address admin
-    ) external onlyInitializing {
+    function initialize(int256 initialReserve, address admin)
+        external
+        initializer
+    {
         _reserve = initialReserve;
         _admin = admin;
         emit ReserveInitialized(initialReserve);
@@ -82,9 +82,7 @@ contract HederaReserve is IHederaReserve, Initializable {
      *
      *  @param _roundId The round to get the value from
      */
-    function getRoundData(
-        uint80 _roundId
-    )
+    function getRoundData(uint80 _roundId)
         external
         pure
         returns (

@@ -45,8 +45,9 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
         if (requestedToken.createReserve) {
             reserveProxyAdmin = new HederaReserveProxyAdmin();
             reserveProxyAdmin.transferOwnership(msg.sender);
+            HederaReserve reserveAddress1 = new HederaReserve();
             reserveProxy = new HederaReserveProxy(
-                address(new HederaReserve()),
+                address(reserveAddress1),
                 address(reserveProxyAdmin),
                 ''
             );
@@ -96,6 +97,7 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
         deployedStableCoin.tokenAddress = tokenAddress;
         deployedStableCoin.reserveProxy = address(reserveProxy);
         deployedStableCoin.reserveProxyAdmin = address(reserveProxyAdmin);
+
         return deployedStableCoin;
     }
 

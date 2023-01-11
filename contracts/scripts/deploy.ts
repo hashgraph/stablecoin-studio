@@ -335,7 +335,7 @@ export async function deployContractsWithSDK({
         hederaERC20.toSolidityAddress(),
     ]
 
-    console.log(`deploying stableCoin... please wait.`)
+    console.log(`Deploying stableCoin... please wait.`)
 
     const proxyContract = await contractCall(
         f_proxyAddress,
@@ -376,7 +376,17 @@ export async function deployContractsWithSDK({
     console.log(
         `Factory Implementation: ${f_address.toSolidityAddress()}, ${f_address}`
     )
+    console.log(
+        `HederaReserveProxy created: ${
+            proxyContract[4]
+        }, ${ContractId.fromSolidityAddress(proxyContract[4]).toString()}`
+    )
 
+    console.log(
+        `HederaReserveProxyAdmin created: ${
+            proxyContract[5]
+        }, ${ContractId.fromSolidityAddress(proxyContract[5]).toString()}`
+    )
     return [
         ContractId.fromSolidityAddress(proxyContract[0]),
         ContractId.fromSolidityAddress(proxyContract[1]),
@@ -384,6 +394,8 @@ export async function deployContractsWithSDK({
         f_proxyAddress,
         f_proxyAdminAddress,
         f_address,
+        ContractId.fromSolidityAddress(proxyContract[4]),
+        ContractId.fromSolidityAddress(proxyContract[5]),
     ]
 }
 
@@ -454,6 +466,8 @@ function tokenKeystoKey(publicKey: string, isED25519: boolean) {
 
 export async function deployHederaReserve(
     initialAmountDataFeed: BigNumber,
+    account: string,
+    isED25519: boolean,
     clientOperator: Client,
     privateKeyOperatorEd25519: string
 ): Promise<ContractId[]> {
@@ -463,11 +477,12 @@ export async function deployHederaReserve(
         privateKeyOperatorEd25519,
         clientOperator
     )
-
+    const AccountEvmAddress = await toEvmAddress(account, isED25519)
     const hederaReserve = await deployContractSDK(
         HederaReserve__factory,
         privateKeyOperatorEd25519,
-        clientOperator
+        clientOperator,
+        [AccountEvmAddress]
     )
 
     const params = new ContractFunctionParameters()
