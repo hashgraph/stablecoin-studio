@@ -13,6 +13,7 @@ import {
     HederaERC20ProxyAdmin__factory,
     StableCoinFactoryProxy__factory,
     StableCoinFactoryProxyAdmin__factory,
+    HederaReserveProxyAdmin__factory,
 } from '../typechain-types'
 
 import { contractCall, toEvmAddress } from './utils'
@@ -1056,4 +1057,35 @@ export async function getReserve(
         HederaERC20__factory.abi
     )
     return BigNumber.from(result[0])
+}
+export async function getDataFeed(
+    proxyAddress: ContractId,
+    operatorClient: Client
+): Promise<string> {
+    const params: string[] = []
+    const result = await contractCall(
+        proxyAddress,
+        'dataFeed',
+        params,
+        operatorClient,
+        Gas2,
+        HederaERC20__factory.abi
+    )
+    return result[0]
+}
+
+export async function updateDataFeed(
+    dataFeed: ContractId,
+    proxyAddress: ContractId,
+    operatorClient: Client
+) {
+    const params: string[] = [dataFeed.toSolidityAddress()]
+    await contractCall(
+        proxyAddress,
+        'updateDataFeed',
+        params,
+        operatorClient,
+        Gas2,
+        HederaERC20__factory.abi
+    )
 }

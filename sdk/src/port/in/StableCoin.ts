@@ -68,13 +68,9 @@ import { GetAccountInfoQuery } from '../../app/usecase/query/account/info/GetAcc
 import { handleValidation } from './Common.js';
 import { GetAccountTokenAssociatedQuery } from '../../app/usecase/query/account/tokenAssociated/GetAccountTokenAssociatedQuery.js';
 import UpdatePoRRequest from './request/UpdatePoRRequest.js';
-import UpdatePoRAmountRequest from './request/UpdatePoRAmountRequest.js';
 import { UpdatePoRCommand } from '../../app/usecase/command/stablecoin/operations/updatePoR/UpdatePoRCommand.js';
-import { UpdatePoRAmountCommand } from '../../app/usecase/command/stablecoin/operations/updatePoRAmount/UpdatePoRAmountCommand.js';
 import GetPoRRequest from './request/GetPoRRequest.js';
-import GetPoRAmountRequest from './request/GetPoRAmountRequest.js';
 import { GetPoRCommand } from '../../app/usecase/command/stablecoin/operations/getPoR/GetPoRCommand.js';
-import { GetPoRAmountCommand } from '../../app/usecase/command/stablecoin/operations/getPoRAmount/GetPoRAmountCommand.js';
 
 export const HederaERC20AddressTestnet = '0.0.49217489';
 export const HederaERC20AddressPreviewnet = '0.0.11111111';
@@ -104,6 +100,8 @@ interface IStableCoinInPort {
 	isAccountAssociated(
 		request: IsAccountAssociatedTokenRequest,
 	): Promise<boolean>;
+	getPoR(request: GetPoRRequest): Promise<string>;
+	updatePoR(request: UpdatePoRRequest): Promise<boolean>;
 }
 
 class StableCoinInPort implements IStableCoinInPort {
@@ -388,42 +386,13 @@ class StableCoinInPort implements IStableCoinInPort {
 	async updatePoR(
 		request: UpdatePoRRequest,
 	): Promise<boolean> {
-		handleValidation('ChangePoRRequest', request);
+		handleValidation('UpdatePoRRequest', request);
 
 		return (
 			await this.commandBus.execute(
 				new UpdatePoRCommand(
 					HederaId.from(request.tokenId),
 					new ContractId(request.PoR)
-				),
-			)
-		).payload;
-	}
-
-	async getPoRAmount(
-		request: GetPoRAmountRequest,
-	): Promise<Balance> {
-		handleValidation('GetPoRAmountRequest', request);
-
-		const res = await this.commandBus.execute(
-			new GetPoRAmountCommand(
-				HederaId.from(request.tokenId)
-			)
-		);
-
-		return new Balance(res.payload);
-	}
-
-	async updatePoRAmount(
-		request: UpdatePoRAmountRequest,
-	): Promise<boolean> {
-		handleValidation('UpdatePoRAmountRequest', request);
-
-		return (
-			await this.commandBus.execute(
-				new UpdatePoRAmountCommand(
-					new ContractId(request.PoR),
-					BigDecimal.fromString(request.PoRAmount, PoRAmountDecimals)
 				),
 			)
 		).payload;

@@ -6,12 +6,16 @@ import {
     ContractFunctionParameters,
     Client,
 } from '@hashgraph/sdk'
+import { BigNumber } from 'ethers'
 
 import {
     StableCoinFactory__factory,
     StableCoinFactoryProxyAdmin__factory,
     StableCoinFactoryProxy__factory,
     HederaERC20__factory,
+    HederaReserveProxyAdmin__factory,
+    HederaReserve__factory,
+    HederaReserveProxy__factory,
 } from '../typechain-types'
 
 import {
@@ -446,4 +450,46 @@ function tokenKeystoKey(publicKey: string, isED25519: boolean) {
     ]
 
     return keys
+}
+
+export async function deployHederaReserve(
+    initialAmountDataFeed: BigNumber,
+    clientOperator: Client,
+    privateKeyOperatorEd25519: string
+): Promise<ContractId[]> {
+    console.log(`Deploying HederaReserve logic. please wait...`)
+    const hederaReserveProxyAdmin = await deployContractSDK(
+        HederaReserveProxyAdmin__factory,
+        privateKeyOperatorEd25519,
+        clientOperator
+    )
+
+    const hederaReserve = await deployContractSDK(
+        HederaReserve__factory,
+        privateKeyOperatorEd25519,
+        clientOperator
+    )
+
+    const params = new ContractFunctionParameters()
+        .addAddress(hederaReserve.toSolidityAddress())
+        .addAddress(hederaReserveProxyAdmin.toSolidityAddress())
+        .addBytes(new Uint8Array([]))
+
+    const hederaReserveProxy = await deployContractSDK(
+        HederaReserveProxy__factory,
+        privateKeyOperatorEd25519,
+        clientOperator,
+        params
+    )
+
+    contractCall(
+        hederaReserveProxy,
+        'initialize',
+        [initialAmountDataFeed.toString()],
+        clientOperator,
+        130000,
+        HederaReserve__factory.abi
+    )
+
+    return [hederaReserveProxy, hederaReserveProxyAdmin, hederaReserve]
 }

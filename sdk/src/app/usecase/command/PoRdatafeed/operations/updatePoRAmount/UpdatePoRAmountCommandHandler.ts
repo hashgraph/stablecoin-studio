@@ -21,18 +21,12 @@
 import { ICommandHandler } from '../../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
-import AccountService from '../../../../../service/AccountService.js';
-import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
 import { UpdatePoRAmountCommand, UpdatePoRAmountCommandResponse } from './UpdatePoRAmountCommand.js';
 
 @CommandHandler(UpdatePoRAmountCommand)
 export class UpdatePoRAmountCommandHandler implements ICommandHandler<UpdatePoRAmountCommand> {
 	constructor(
-		@lazyInject(StableCoinService)
-		public readonly stableCoinService: StableCoinService,
-		@lazyInject(AccountService)
-		public readonly accountService: AccountService,
 		@lazyInject(TransactionService)
 		public readonly transactionService: TransactionService,
 	) {}

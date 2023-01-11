@@ -193,7 +193,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			});
 
 			return this.performSmartContractOperation(
-				coin,
+				coin.coin.proxyAddress!.value,
 				'associateToken',
 				1300000,
 				params,
@@ -218,7 +218,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		});
 
 		return this.performSmartContractOperation(
-			coin,
+			coin.coin.proxyAddress!.value,
 			'dissociateToken',
 			1300000,
 			params,
@@ -286,7 +286,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		});
 
 		const transactionResponse = await this.performSmartContractOperation(
-			coin,
+			coin.coin.proxyAddress!.value,
 			'balanceOf',
 			40000,
 			params,
@@ -398,8 +398,8 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		coin: StableCoinCapabilities
 	): Promise<TransactionResponse> {
 		const transactionResponse = await this.performSmartContractOperation(
-			coin,
-			'getDataFeed',
+			coin.coin.proxyAddress!.value,
+			'dataFeed',
 			60000,
 			undefined,
 			TransactionType.RECORD,
@@ -428,7 +428,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		coin: StableCoinCapabilities
 	): Promise<TransactionResponse> {
 		const transactionResponse = await this.performSmartContractOperation(
-			coin,
+			coin.coin.proxyAddress!.value,
 			'getReserve',
 			60000,
 			undefined,
@@ -442,21 +442,20 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		return transactionResponse;		
 	}
 
-	/*public async updatePoRAmount(
+	public async updatePoRAmount(
 		PoR: ContractId,
 		amount: BigDecimal
 	): Promise<TransactionResponse> {
 		const params = new Params({
 			amount: amount,
 		});
-		return this.performOperation(
-			coin,
-			Operation.PoR_MANAGEMENT,
-			'updateReserveAmount',
+		return this.performSmartContractOperation(
+			PoR.toHederaAddress().toSolidityAddress(),
+			'set',
 			400000,
-			params
+			params,
 		);
-	}*/	
+	}	
 
 	public async grantRole(
 		coin: StableCoinCapabilities,
@@ -573,7 +572,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			targetId: targetId,
 		});
 		const transactionResponse = await this.performSmartContractOperation(
-			coin,
+			coin.coin.proxyAddress!.value,
 			'getRoles',
 			80000,
 			params,
@@ -684,7 +683,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		operationName: string,
 		gas: number,
 		params?: Params,
-		transactionType: TransactionType = TransactionType.RECEIPT,
+		transactionType: TransactionType = TransactionType.RECEIPT
 	): Promise<TransactionResponse> {
 		try {
 			switch (CapabilityDecider.decide(coin, operation)) {
@@ -694,7 +693,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 							`StableCoin ${coin.coin.name} does not have a proxy Address`,
 						);
 					return await this.performSmartContractOperation(
-						coin,
+						coin.coin.proxyAddress!.value,
 						operationName,
 						gas,
 						params,
@@ -732,7 +731,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	}
 
 	private async performSmartContractOperation(
-		coin: StableCoinCapabilities,
+		contractAddress: string,
 		operationName: string,
 		gas: number,
 		params?: Params,
@@ -754,7 +753,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		}
 
 		return await this.contractCall(
-			coin.coin.proxyAddress!.value,
+			contractAddress,
 			operationName,
 			filteredContractParams,
 			gas,
