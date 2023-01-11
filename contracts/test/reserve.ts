@@ -43,6 +43,7 @@ const TokenFactor = BigNumber.from(10).pow(TokenDecimals)
 const INIT_SUPPLY = BigNumber.from(100).mul(TokenFactor)
 const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor)
 const TokenMemo = 'Hedera Accelerator Stable Coin'
+let hederaReserveProxy: ContractId
 
 describe('Reserve Tests', function() {
     before(async function() {
@@ -95,13 +96,13 @@ describe('Reserve Tests', function() {
             privateKey: operatorPriKey,
             publicKey: operatorPubKey,
             isED25519Type: operatorIsE25519,
-
             initialAmountDataFeed: INIT_SUPPLY.add(
                 BigNumber.from('10').mul(TokenFactor)
             ).toString(),
         })
 
         proxyAddress = result[0]
+        hederaReserveProxy = result[7]
     })
 
     it('Get reserve', async () => {
@@ -119,6 +120,8 @@ describe('Reserve Tests', function() {
         )
         const [newDataFeed, ...others] = await deployHederaReserve(
             newReserve,
+            operatorAccount,
+            operatorIsE25519,
             operatorClient,
             operatorPriKey
         )
@@ -130,5 +133,4 @@ describe('Reserve Tests', function() {
         expect(beforeReserve).not.to.equals(afterReserve)
         expect(afterReserve).to.equals(newReserve)
     })
-    // it('Get datafeed', async()=> {})
 })
