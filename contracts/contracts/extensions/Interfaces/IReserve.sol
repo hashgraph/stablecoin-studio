@@ -21,7 +21,7 @@ interface IReserve {
      * @dev Get the current amount of reserve
      *
      */
-    function getReserve() external view returns (uint256);
+    function getReserve() external view returns (int256);
 
     /**
      * @dev Get the current amount of reserve

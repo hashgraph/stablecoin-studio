@@ -8,14 +8,27 @@ contract HederaReserve is IHederaReserve, Initializable {
     uint8 private constant _decimals = 2;
     uint80 private constant _cRoundId = 0;
     int256 private _reserve;
+    address private _admin;
+
+    modifier isAdmin() {
+        require(
+            _admin == msg.sender,
+            'Only administrator can change the reserve'
+        );
+        _;
+    }
 
     /**
      *  @dev Initializes the reserve with the initial amount
      *
      *  @param initialReserve The initial amount to be on the reserve
      */
-    function initialize(int256 initialReserve) external onlyInitializing {
+    function initialize(
+        int256 initialReserve,
+        address admin
+    ) external onlyInitializing {
         _reserve = initialReserve;
+        _admin = admin;
         emit ReserveInitialized(initialReserve);
     }
 
@@ -24,8 +37,17 @@ contract HederaReserve is IHederaReserve, Initializable {
      *
      *  @param newValue The new value of the reserve
      */
-    function set(int256 newValue) external {
+    function set(int256 newValue) external isAdmin {
         _reserve = newValue;
+    }
+
+    /**
+     *  @dev Sets a new admin address
+     *
+     *  @param admin The new admin
+     */
+    function setAdmin(address admin) external isAdmin {
+        _admin = admin;
     }
 
     /**
