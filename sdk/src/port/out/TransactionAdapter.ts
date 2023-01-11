@@ -107,6 +107,7 @@ interface ITransactionAdapter {
 		coin: StableCoinCapabilities
 	): Promise<TransactionResponse>;	
 	updatePoRAmount(
+		coin: StableCoinCapabilities,
 		PoR: ContractId,
 		amount: BigDecimal
 	): Promise<TransactionResponse>;	
@@ -282,6 +283,7 @@ export default abstract class TransactionAdapter
 		throw new Error('Method not implemented.');
 	}	
 	updatePoRAmount(
+		coin: StableCoinCapabilities,
 		PoR: ContractId,
 		amount: BigDecimal
 	): Promise<TransactionResponse<any, Error>> {

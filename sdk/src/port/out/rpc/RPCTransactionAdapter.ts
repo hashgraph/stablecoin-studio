@@ -29,6 +29,7 @@ import {
 } from '@hashgraph/sdk';
 import {
 	HederaERC20__factory,
+	HederaReserve__factory,
 	StableCoinFactory__factory,
 	IHederaTokenService__factory,
 } from 'hedera-stable-coin-contracts/typechain-types/index.js';
@@ -346,7 +347,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		return this.performOperation(coin, Operation.DELETE);
 	}
 
-	/*public async getPoR(
+	public async getPoR(
 		coin: StableCoinCapabilities
 	): Promise<TransactionResponse> {
 		try {
@@ -359,7 +360,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			const res = await HederaERC20__factory.connect(
 					coin.coin.evmProxyAddress,
 					this.signerOrProvider,
-				).getDataFeed();
+				).dataFeed();
 
 			return new TransactionResponse(
 					undefined,
@@ -372,7 +373,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				transactionId: (error as any).error?.transactionId,
 			});
 		}
-	}*/
+	}
 
 	public async updatePoR(
 		coin: StableCoinCapabilities,
@@ -430,7 +431,8 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
-	/*public async updatePoRAmount(
+	public async updatePoRAmount(
+		coin: StableCoinCapabilities,
 		PoR: ContractId,
 		amount: BigDecimal
 	): Promise<TransactionResponse> {
@@ -442,10 +444,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				});
 
 			return RPCTransactionResponseAdapter.manageResponse(
-				await HederaERC20__factory.connect(
-					coin.coin.evmProxyAddress,
+				await HederaReserve__factory.connect(
+					PoR.toHederaAddress().toSolidityAddress(),
 					this.signerOrProvider,
-				).updateReserveAmount(
+				).set(
 					amount.toBigNumber(),
 				),
 			);
@@ -456,7 +458,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				transactionId: (error as any).error?.transactionId,
 			});
 		}
-	}*/		
+	}		
 
 	async grantRole(
 		coin: StableCoinCapabilities,

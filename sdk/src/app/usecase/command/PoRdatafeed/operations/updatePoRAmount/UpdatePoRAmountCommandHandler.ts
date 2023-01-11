@@ -38,10 +38,16 @@ export class UpdatePoRAmountCommandHandler implements ICommandHandler<UpdatePoRA
 	) {}
 
 	async execute(command: UpdatePoRAmountCommand): Promise<UpdatePoRAmountCommandResponse> {
-		const { PoR, PoRAmount } = command;
+		const { tokenId, PoR, PoRAmount } = command;
 		const handler = this.transactionService.getHandler();
+		const account = this.accountService.getCurrentAccount();
 
-		const res = await handler.updatePoRAmount(PoR, PoRAmount);
+		const capabilities = await this.stableCoinService.getCapabilities(
+			account,
+			tokenId,
+		);
+
+		const res = await handler.updatePoRAmount(capabilities, PoR, PoRAmount);
 		return Promise.resolve(
 			new UpdatePoRAmountCommandResponse(res.error === undefined),
 		);

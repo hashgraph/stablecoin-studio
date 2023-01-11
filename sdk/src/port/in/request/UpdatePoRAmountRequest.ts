@@ -28,17 +28,21 @@ import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
 
 export default class UpdatePoRAmountRequest extends ValidatedRequest<UpdatePoRAmountRequest> {
+	tokenId: string;
 	PoR: string;
 	PoRAmount: string;
 
 	constructor({ 
+		tokenId,
 		PoR,
 		PoRAmount,
 	}: { 
+		tokenId: string;
 		PoR: string;
 		PoRAmount: string;
 	}) {
 		super({
+			tokenId: Validation.checkHederaIdFormat(),
 			PoR: Validation.checkContractId(),
 			PoRAmount: (val) => {
 				if (!BigDecimal.isBigDecimal(val)) {
@@ -59,6 +63,7 @@ export default class UpdatePoRAmountRequest extends ValidatedRequest<UpdatePoRAm
 				);
 			},
 		});
+		this.tokenId = tokenId;
 		this.PoR = PoR;
 		this.PoRAmount = PoRAmount;
 	}
