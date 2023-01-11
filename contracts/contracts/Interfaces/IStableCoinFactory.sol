@@ -34,6 +34,8 @@ interface IStableCoinFactory {
             address,
             address,
             address,
+            address,
+            address,
             address
         );
 }

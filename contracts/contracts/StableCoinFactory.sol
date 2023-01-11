@@ -19,7 +19,7 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
     string constant memo_2 = '","a":"';
     string constant memo_3 = '"}';
 
-    event Deployed(address, address, address, address);
+    event Deployed(address, address, address, address, address, address);
 
     function deployStableCoin(
         tokenStruct calldata requestedToken,
@@ -29,6 +29,8 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
         payable
         override
         returns (
+            address,
+            address,
             address,
             address,
             address,
@@ -50,9 +52,9 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
 
         address reserveAddress = requestedToken.reserveAddress;
         // Create reserve
+        HederaReserveProxy reserveProxy;
+        HederaReserveProxyAdmin reserveProxyAdmin;
         if (requestedToken.createReserve) {
-            HederaReserveProxy reserveProxy;
-            HederaReserveProxyAdmin reserveProxyAdmin;
             reserveProxyAdmin = new HederaReserveProxyAdmin();
             reserveProxyAdmin.transferOwnership(msg.sender);
             reserveProxy = new HederaReserveProxy(
@@ -93,13 +95,17 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
             address(StableCoinProxy),
             address(StableCoinProxyAdmin),
             StableCoinContractAddress,
-            tokenAddress
+            tokenAddress,
+            address(reserveProxy),
+            address(reserveProxyAdmin)
         );
         return (
             address(StableCoinProxy),
             address(StableCoinProxyAdmin),
             StableCoinContractAddress,
-            tokenAddress
+            tokenAddress,
+            address(reserveProxy),
+            address(reserveProxyAdmin)
         );
     }
 
