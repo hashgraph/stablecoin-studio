@@ -1,6 +1,6 @@
 import { Heading, HStack, Stack, Text, VStack } from '@chakra-ui/react';
 import type { CreateRequest } from 'hedera-stable-coin-sdk';
-import { useEffect, useRef } from 'react';
+
 
 import type { Control, FieldValues, UseFormReturn} from 'react-hook-form';
 import { useWatch  } from 'react-hook-form';
@@ -17,7 +17,7 @@ interface ProofOfResearchProps {
 }
 
 const ProofOfResearch = (props: ProofOfResearchProps) => {
-	const { control, form } = props;
+	const { control } = props;
 	const { t } = useTranslation(['global', 'stableCoinCreation']);
 
 	const isProofOfResearch = useWatch({
@@ -26,13 +26,13 @@ const ProofOfResearch = (props: ProofOfResearchProps) => {
 		
 	});
 	
-	useEffect(() => {
+	/* useEffect(() => {
 		if (!isProofOfResearch) {
 			form.resetField('PoRInitialAmount', { defaultValue: "" });
 			form.resetField('PoR', { defaultValue: "" });
 		}
 	}, [isProofOfResearch]);
-	
+	*/
 	
 
 	const haveDataFeed = useWatch({
@@ -40,7 +40,7 @@ const ProofOfResearch = (props: ProofOfResearchProps) => {
 		control,
 		name: 'hasDataFeed',
 	});
-
+/*
 	useEffect(() => {
 		if (!haveDataFeed) {
 			form.resetField('PoR', { defaultValue: "" });
@@ -48,7 +48,7 @@ const ProofOfResearch = (props: ProofOfResearchProps) => {
 			form.resetField('PoRInitialAmount', { defaultValue: "" });
 		}
 	}, [haveDataFeed]);
-	
+*/	
 	
 	return (
 		<VStack h='full' justify={'space-between'} pt='80px'>

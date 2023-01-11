@@ -28,7 +28,6 @@ const Review = (props: ReviewProps) => {
 		freezeKey,
 		pauseKey,
 		PoR,
-		createPoR,
 		PoRInitialAmount
 
 	} = getValues();
@@ -148,7 +147,7 @@ const Review = (props: ReviewProps) => {
 						]}
 					/>
 
-					{ (PoR !== undefined || createPoR === true)  ?  (
+					{ (PoR !== undefined && PoRInitialAmount !== undefined )  ?  (
 						<DetailsReview
 						title={t('stableCoinCreation:proofOfResearch.title')}
 						titleProps={{ fontWeight: 700, color: 'brand.secondary' }}

@@ -171,13 +171,22 @@ const StableCoinCreation = () => {
 	};
 
 	const handleFinish = async () => {
-		const { autorenewAccount, managementPermissions, freezeKey, wipeKey, pauseKey, supplyKey } =
+		const { autorenewAccount, managementPermissions, freezeKey, wipeKey, pauseKey, supplyKey ,PoRInitialAmount,PoR} =
 			getValues();
 
 		request.autoRenewAccount = autorenewAccount;
-		if (request.PoRInitialAmount !== undefined){
+
+		if (!PoRInitialAmount){
+			request.createPoR = false;
+			request.PoR = PoR;
+
+		}else{
 			request.createPoR = true;
+			request.PoRInitialAmount = PoRInitialAmount;
+			request.PoR = undefined;
+
 		}
+
 		if (managementPermissions) {
 			request.adminKey = Account.NullPublicKey; // accountInfo.publicKey;
 			request.freezeKey = Account.NullPublicKey;
