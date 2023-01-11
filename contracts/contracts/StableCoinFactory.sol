@@ -66,8 +66,6 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
             reserveAddress = address(reserveProxy);
         } else if (requestedToken.reserveAddress != address(0)) {
             reserveAddress = requestedToken.reserveAddress;
-        } else {
-            revert('Invalid reserve address');
         }
 
         // Create Token
