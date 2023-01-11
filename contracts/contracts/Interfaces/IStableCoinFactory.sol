@@ -24,18 +24,17 @@ interface IStableCoinFactory {
         KeysStruct[] keys;
     }
 
+    struct DeployedStableCoin {
+        address stableCoinProxy;
+        address stableCoinProxyAdmin;
+        address stableCoinContractAddress;
+        address tokenAddress;
+        address reserveProxy;
+        address reserveProxyAdmin;
+    }
+
     function deployStableCoin(
         tokenStruct calldata requestedToken,
         address StableCoinContractAddress
-    )
-        external
-        payable
-        returns (
-            address,
-            address,
-            address,
-            address,
-            address,
-            address
-        );
+    ) external payable returns (DeployedStableCoin memory);
 }
