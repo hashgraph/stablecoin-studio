@@ -10,28 +10,28 @@ import SwitchController from '../../components/Form/SwitchController';
 // import { handleRequestValidation } from '../../utils/validationsHelper.js';
 
 
-interface ProofOfResearchProps {
+interface ProofOfReserveProps {
 	form : UseFormReturn;
 	control: Control<FieldValues>;
 	request: CreateRequest;
 }
 
-const ProofOfResearch = (props: ProofOfResearchProps) => {
+const ProofOfReserve = (props: ProofOfReserveProps) => {
 	const { control } = props;
 	const { t } = useTranslation(['global', 'stableCoinCreation']);
 
-	const isProofOfResearch = useWatch({
+	const isProofOfReserve = useWatch({
 		control,
-		name: 'proofOfResearch',
+		name: 'proofOfReserve',
 		
 	});
 	
 	/* useEffect(() => {
-		if (!isProofOfResearch) {
+		if (!isproofOfReserve) {
 			form.resetField('PoRInitialAmount', { defaultValue: "" });
 			form.resetField('PoR', { defaultValue: "" });
 		}
-	}, [isProofOfResearch]);
+	}, [isproofOfReserve]);
 	*/
 	
 
@@ -61,23 +61,23 @@ const ProofOfResearch = (props: ProofOfResearchProps) => {
 					lineHeight='15.2px'
 					textAlign={'left'}
 				>
-					{t('stableCoinCreation:proofOfResearch.title')}
+					{t('stableCoinCreation:proofOfReserve.title')}
 				</Heading>
 			
 				<HStack>
 					<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>
-						{t('stableCoinCreation:proofOfResearch.description')}
+						{t('stableCoinCreation:proofOfReserve.description')}
 					</Text>
 					<SwitchController
 						control={control}
-						name={'proofOfResearch'}
+						name={'proofOfReserve'}
 						defaultValue={false}
 					/>
 				</HStack>
 
-				{isProofOfResearch === true ? (<HStack >
+				{isProofOfReserve === true ? (<HStack >
 						<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>
-							{t('stableCoinCreation:proofOfResearch.haveDataFeed')}
+							{t('stableCoinCreation:proofOfReserve.haveDataFeed')}
 						</Text>
 						<SwitchController
 							control={control}
@@ -88,7 +88,7 @@ const ProofOfResearch = (props: ProofOfResearchProps) => {
 				)}
 
 
-				{(haveDataFeed === true && isProofOfResearch === true)  ?  (
+				{(haveDataFeed === true && isProofOfReserve === true)  ?  (
 				<HStack >
 						<InputController
 						rules={{
@@ -104,8 +104,8 @@ const ProofOfResearch = (props: ProofOfResearchProps) => {
 						
 						control={control}
 						name={'PoR'}
-						label={t('stableCoinCreation:proofOfResearch.dataFeed')}
-						placeholder={t('stableCoinCreation:proofOfResearch.dataFeedPlaceholder')}
+						label={t('stableCoinCreation:proofOfReserve.dataFeed')}
+						placeholder={t('stableCoinCreation:proofOfReserve.dataFeedPlaceholder')}
 						/>
 					</HStack>
 			
@@ -113,7 +113,7 @@ const ProofOfResearch = (props: ProofOfResearchProps) => {
 					
 				):(<></>) }
 
-				{ (haveDataFeed === false && isProofOfResearch === true)  ?  (
+				{ (haveDataFeed === false && isProofOfReserve === true)  ?  (
 				
 				<HStack >
 					<InputController
@@ -130,8 +130,8 @@ const ProofOfResearch = (props: ProofOfResearchProps) => {
 						
 						control={control}
 						name={'PoRInitialAmount'}
-						label={t('stableCoinCreation:proofOfResearch.initialSupply')}
-						placeholder={t('stableCoinCreation:proofOfResearch.initialSupply')}
+						label={t('stableCoinCreation:proofOfReserve.initialSupply')}
+						placeholder={t('stableCoinCreation:proofOfReserve.initialSupply')}
 						/>
 
 				</HStack>
@@ -143,4 +143,4 @@ const ProofOfResearch = (props: ProofOfResearchProps) => {
 	);
 };
 
-export default ProofOfResearch;
+export default ProofOfReserve;

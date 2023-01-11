@@ -30,7 +30,7 @@ import {
 import type { RequestPublicKey } from 'hedera-stable-coin-sdk';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch } from '../../store/store';
-import ProofOfResearch from './ProofOfResearch';
+import ProofOfReserve from './ProofOfReserve';
 
 const StableCoinCreation = () => {
 	const navigate = useNavigate();
@@ -97,8 +97,8 @@ const StableCoinCreation = () => {
 		},
 		{
 			number: '04',
-			title: t('tabs.proofOfResearch'),
-			children: <ProofOfResearch control={control} request={request}  form={form}/>,
+			title: t('tabs.proofOfReserve'),
+			children: <ProofOfReserve control={control} request={request}  form={form}/>,
 		},
 		{
 			number: '05',

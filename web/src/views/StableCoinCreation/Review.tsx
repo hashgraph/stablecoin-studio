@@ -149,36 +149,36 @@ const Review = (props: ReviewProps) => {
 
 					{ (PoR !== undefined && PoRInitialAmount !== undefined )  ?  (
 						<DetailsReview
-						title={t('stableCoinCreation:proofOfResearch.title')}
+						title={t('stableCoinCreation:proofOfReserve.title')}
 						titleProps={{ fontWeight: 700, color: 'brand.secondary' }}
 						details={[
 							{
-								label: t('stableCoinCreation:proofOfResearch.hasPor'),
-								value: t('stableCoinCreation:proofOfResearch.notHasPor'),
+								label: t('stableCoinCreation:proofOfReserve.hasPor'),
+								value: t('stableCoinCreation:proofOfReserve.notHasPor'),
 							},
 							
 						]}
 					/>
 					):(
 						<DetailsReview
-						title={t('stableCoinCreation:proofOfResearch.title')}
+						title={t('stableCoinCreation:proofOfReserve.title')}
 						titleProps={{ fontWeight: 700, color: 'brand.secondary' }}
 						details={[
 							{
-								label: t('stableCoinCreation:proofOfResearch.hasPor'),
-								value: t('stableCoinCreation:proofOfResearch.hasPor')
+								label: t('stableCoinCreation:proofOfReserve.hasPor'),
+								value: t('stableCoinCreation:proofOfReserve.hasPor')
 							},
 							{
-								label: t('stableCoinCreation:proofOfResearch.addressPor'),
+								label: t('stableCoinCreation:proofOfReserve.addressPor'),
 								value:
 									PoR !== undefined ?PoR
-										: t('stableCoinCreation:proofOfResearch.createDataFeed'),
+										: t('stableCoinCreation:proofOfReserve.createDataFeed'),
 							},
 							{
-								label: t('stableCoinCreation:proofOfResearch.initialSupplyPor'),
+								label: t('stableCoinCreation:proofOfReserve.initialSupplyPor'),
 								value:
 									PoRInitialAmount !== undefined ?PoRInitialAmount
-										: t('stableCoinCreation:proofOfResearch.initialSupplyPorExternal'),
+										: t('stableCoinCreation:proofOfReserve.initialSupplyPorExternal'),
 							},
 						]}
 					/>
