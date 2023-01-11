@@ -10,7 +10,6 @@ export class UpdatePoRAmountCommandResponse implements CommandResponse {
 
 export class UpdatePoRAmountCommand extends Command<UpdatePoRAmountCommandResponse> {
 	constructor(
-		public readonly tokenId: HederaId,
 		public readonly PoR: ContractId,
         public readonly PoRAmount: BigDecimal
 	) {

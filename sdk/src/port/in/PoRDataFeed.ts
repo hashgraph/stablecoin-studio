@@ -66,7 +66,6 @@ class PoRDataFeedInPort implements IPoRDataFeedInPort {
 		return (
 			await this.commandBus.execute(
 				new UpdatePoRAmountCommand(
-					HederaId.from(request.tokenId),
 					new ContractId(request.PoR),
 					BigDecimal.fromString(request.PoRAmount, PoRAmountDecimals)
 				),

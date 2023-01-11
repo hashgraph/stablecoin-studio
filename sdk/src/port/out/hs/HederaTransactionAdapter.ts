@@ -443,21 +443,17 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	}
 
 	public async updatePoRAmount(
-		coin: StableCoinCapabilities,
 		PoR: ContractId,
 		amount: BigDecimal
 	): Promise<TransactionResponse> {
 		const params = new Params({
 			amount: amount,
 		});
-		return this.performOperation(
-			coin,
-			Operation.PoR_MANAGEMENT,
+		return this.performSmartContractOperation(
+			PoR.toHederaAddress().toSolidityAddress(),
 			'set',
 			400000,
 			params,
-			TransactionType.RECEIPT,
-			PoR.toHederaAddress().toSolidityAddress()
 		);
 	}	
 
@@ -687,8 +683,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		operationName: string,
 		gas: number,
 		params?: Params,
-		transactionType: TransactionType = TransactionType.RECEIPT,
-		contractAddress?: string,
+		transactionType: TransactionType = TransactionType.RECEIPT
 	): Promise<TransactionResponse> {
 		try {
 			switch (CapabilityDecider.decide(coin, operation)) {
@@ -698,7 +693,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 							`StableCoin ${coin.coin.name} does not have a proxy Address`,
 						);
 					return await this.performSmartContractOperation(
-						contractAddress ? contractAddress : coin.coin.proxyAddress!.value,
+						coin.coin.proxyAddress!.value,
 						operationName,
 						gas,
 						params,

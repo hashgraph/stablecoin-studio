@@ -432,17 +432,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	}
 
 	public async updatePoRAmount(
-		coin: StableCoinCapabilities,
 		PoR: ContractId,
 		amount: BigDecimal
 	): Promise<TransactionResponse> {
 		try {
-			if (!coin.coin.evmProxyAddress)
-				throw new TransactionResponseError({
-					RPC_relay: true,
-					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
-				});
-
 			return RPCTransactionResponseAdapter.manageResponse(
 				await HederaReserve__factory.connect(
 					PoR.toHederaAddress().toSolidityAddress(),
