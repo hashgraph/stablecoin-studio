@@ -22,8 +22,6 @@ import Account from '../src/domain/context/account/Account.js';
 import PrivateKey from '../src/domain/context/account/PrivateKey.js';
 import PublicKey from '../src/domain/context/account/PublicKey.js';
 import { HederaId } from '../src/domain/context/shared/HederaId.js';
-import * as dotenv from 'dotenv'
-dotenv.config()
 
 export const ENVIRONMENT = 'testnet';
 

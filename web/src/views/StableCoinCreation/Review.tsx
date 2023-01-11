@@ -27,6 +27,9 @@ const Review = (props: ReviewProps) => {
 		wipeKey,
 		freezeKey,
 		pauseKey,
+		PoR,
+		PoRInitialAmount
+
 	} = getValues();
 
 	const getKey = (keySelected: { value: number; label: string }, nameOtherKey: string) => {
@@ -39,6 +42,7 @@ const Review = (props: ReviewProps) => {
 		return label;
 	};
 
+	console.log("POR ->" + PoR );
 	return (
 		<VStack h='full' justify={'space-between'} pt='80px'>
 			<Stack minW={400}>
@@ -142,6 +146,47 @@ const Review = (props: ReviewProps) => {
 							},
 						]}
 					/>
+
+					{ (PoR !== undefined && PoRInitialAmount !== undefined )  ?  (
+						<DetailsReview
+						title={t('stableCoinCreation:proofOfReserve.title')}
+						titleProps={{ fontWeight: 700, color: 'brand.secondary' }}
+						details={[
+							{
+								label: t('stableCoinCreation:proofOfReserve.hasPor'),
+								value: t('stableCoinCreation:proofOfReserve.notHasPor'),
+							},
+							
+						]}
+					/>
+					):(
+						<DetailsReview
+						title={t('stableCoinCreation:proofOfReserve.title')}
+						titleProps={{ fontWeight: 700, color: 'brand.secondary' }}
+						details={[
+							{
+								label: t('stableCoinCreation:proofOfReserve.hasPor'),
+								value: t('stableCoinCreation:proofOfReserve.hasPor')
+							},
+							{
+								label: t('stableCoinCreation:proofOfReserve.addressPor'),
+								value:
+									PoR !== undefined ?PoR
+										: t('stableCoinCreation:proofOfReserve.createDataFeed'),
+							},
+							{
+								label: t('stableCoinCreation:proofOfReserve.initialSupplyPor'),
+								value:
+									PoRInitialAmount !== undefined ?PoRInitialAmount
+										: t('stableCoinCreation:proofOfReserve.initialSupplyPorExternal'),
+							},
+						]}
+					/>
+
+					)
+					}
+				
+					
 				</Stack>
 			</Stack>
 		</VStack>

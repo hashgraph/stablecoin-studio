@@ -30,6 +30,7 @@ import {
 import type { RequestPublicKey } from 'hedera-stable-coin-sdk';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch } from '../../store/store';
+import ProofOfReserve from './ProofOfReserve';
 
 const StableCoinCreation = () => {
 	const navigate = useNavigate();
@@ -96,6 +97,11 @@ const StableCoinCreation = () => {
 		},
 		{
 			number: '04',
+			title: t('tabs.proofOfReserve'),
+			children: <ProofOfReserve control={control} request={request}  form={form}/>,
+		},
+		{
+			number: '05',
 			title: t('tabs.review'),
 			children: <Review form={form} />,
 		},
@@ -165,10 +171,22 @@ const StableCoinCreation = () => {
 	};
 
 	const handleFinish = async () => {
-		const { autorenewAccount, managementPermissions, freezeKey, wipeKey, pauseKey, supplyKey } =
+		const { autorenewAccount, managementPermissions, freezeKey, wipeKey, pauseKey, supplyKey ,PoRInitialAmount,PoR} =
 			getValues();
 
 		request.autoRenewAccount = autorenewAccount;
+
+		if (!PoRInitialAmount){
+			request.createPoR = false;
+			request.PoR = PoR;
+
+		}else{
+			request.createPoR = true;
+			request.PoRInitialAmount = PoRInitialAmount;
+			request.PoR = undefined;
+
+		}
+
 		if (managementPermissions) {
 			request.adminKey = Account.NullPublicKey; // accountInfo.publicKey;
 			request.freezeKey = Account.NullPublicKey;
@@ -186,7 +204,9 @@ const StableCoinCreation = () => {
 				formatKey(supplyKey.label, 'supplyKey')?.key !== Account.NullPublicKey.key && accountInfo.id
 					? accountInfo.id
 					: undefined;
+			
 		}
+		// alert(request.dataFeedAddress)
 		try {
 			console.log(request);
 			onOpen();

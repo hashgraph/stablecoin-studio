@@ -80,17 +80,18 @@ contract HederaReserve is IHederaReserve, Initializable {
     /**
      *  @dev Gets a value from a specific round
      *
-     *  @param _roundId The round to get the value from
      */
-    function getRoundData(uint80 _roundId)
+    function getRoundData(
+        uint80 /* _roundId */
+    )
         external
         pure
         returns (
-            uint80 roundId,
-            int256 answer,
-            uint256 startedAt,
-            uint256 updatedAt,
-            uint80 answeredInRound
+            uint80, /* roundId */
+            int256, /* answer */
+            uint256, /* startedAt */
+            uint256, /* updatedAt */
+            uint80 /* answeredInRound */
         )
     {
         revert('Not implemented');

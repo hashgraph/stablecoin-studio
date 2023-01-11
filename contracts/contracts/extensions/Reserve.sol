@@ -68,7 +68,7 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
         emit ReserveAddressChanged(previous, newAddress);
     }
 
-    function dataFeed() external view returns (address) {
+    function getDataFeed() external view returns (address) {
         return _dataFeed;
     }
 }
