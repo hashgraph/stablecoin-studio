@@ -2,18 +2,19 @@
 pragma solidity 0.8.10;
 
 import './Interfaces/IHederaReserve.sol';
+import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 
-contract HederaReserve is IHederaReserve {
-    uint8 private _decimals = 2;
-    uint256 private _reserve;
-    uint80 private _cRoundId = 0;
+contract HederaReserve is IHederaReserve, Initializable {
+    uint8 private constant _decimals = 2;
+    uint80 private constant _cRoundId = 0;
+    int256 private _reserve;
 
     /**
      *  @dev Initializes the reserve with the initial amount
      *
      *  @param initialReserve The initial amount to be on the reserve
      */
-    function initialize(uint256 initialReserve) external {
+    function initialize(int256 initialReserve) external onlyInitializing {
         _reserve = initialReserve;
         emit ReserveInitialized(initialReserve);
     }
@@ -23,7 +24,7 @@ contract HederaReserve is IHederaReserve {
      *
      *  @param newValue The new value of the reserve
      */
-    function set(uint256 newValue) external {
+    function set(int256 newValue) external {
         _reserve = newValue;
     }
 
@@ -32,7 +33,7 @@ contract HederaReserve is IHederaReserve {
      *
      *  @return The decimals
      */
-    function decimals() external view returns (uint8) {
+    function decimals() external pure returns (uint8) {
         return _decimals;
     }
 
@@ -63,7 +64,7 @@ contract HederaReserve is IHederaReserve {
         uint80 _roundId
     )
         external
-        view
+        pure
         returns (
             uint80 roundId,
             int256 answer,
@@ -72,13 +73,7 @@ contract HederaReserve is IHederaReserve {
             uint80 answeredInRound
         )
     {
-        return (
-            _roundId,
-            int(_reserve),
-            block.timestamp,
-            block.timestamp,
-            _roundId
-        );
+        revert('Not implemented');
     }
 
     /**
@@ -97,7 +92,7 @@ contract HederaReserve is IHederaReserve {
     {
         return (
             _cRoundId,
-            int(_reserve),
+            _reserve,
             block.timestamp,
             block.timestamp,
             _cRoundId

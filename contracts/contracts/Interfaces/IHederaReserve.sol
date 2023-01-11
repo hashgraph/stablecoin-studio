@@ -5,7 +5,7 @@ import '@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol';
 
 interface IHederaReserve is AggregatorV3Interface {
 
-    event ReserveInitialized(uint256 initialReserve);
+    event ReserveInitialized(int256 initialReserve);
 
 
     /**
@@ -13,12 +13,12 @@ interface IHederaReserve is AggregatorV3Interface {
      *
      *  @param initialReserve The initial amount to be on the reserve
      */
-    function initialize(uint256 initialReserve) external;
+    function initialize(int256 initialReserve) external;
 
     /**
      *  @dev Sets a new reserve amount
      *
      *  @param newValue The new value of the reserve
      */
-    function set(uint256 newValue) external;
+    function set(int256 newValue) external;
 }
