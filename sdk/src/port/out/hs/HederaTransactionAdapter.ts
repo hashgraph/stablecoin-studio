@@ -399,7 +399,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse> {
 		const transactionResponse = await this.performSmartContractOperation(
 			coin.coin.proxyAddress!.value,
-			'dataFeed',
+			'getDataFeed',
 			60000,
 			undefined,
 			TransactionType.RECORD,
