@@ -46,7 +46,17 @@ export const Button: ComponentSingleStyleConfig = {
 			bgColor: 'brand.white',
 			color: 'brand.primary',
 			w: '182px',
+			_disabled: {
+				_hover: {
+					bgColor: 'brand.white',
+					color: 'brand.primary',
+				},
+			},
 			_hover: {
+				_disabled: {
+					bgColor: 'brand.white',
+					color: 'brand.primary',
+				},
 				bgColor: 'brand.gray200',
 				color: 'brand.primary',
 			},
