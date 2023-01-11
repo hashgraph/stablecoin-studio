@@ -29,7 +29,7 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
         _;
     }
 
-    function reserve_init(address dataFeed) internal {
+    function reserve_init(address dataFeed) internal onlyInitializing {
         _dataFeed = dataFeed;
     }
 
@@ -43,9 +43,7 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
         if (less) {
             return currentReserve >= amount;
         } else {
-            return
-                currentReserve >=
-                (TokenOwner(_getTokenAddress()).totalSupply() + amount);
+            return currentReserve >= _totalSupply() + amount;
         }
     }
 

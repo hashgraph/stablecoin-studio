@@ -22,4 +22,10 @@ interface IReserve {
      *
      */
     function getReserve() external view returns (uint256);
+
+    /**
+     * @dev Get the current amount of reserve
+     *
+     */
+    function dataFeed() external view returns (address);
 }
