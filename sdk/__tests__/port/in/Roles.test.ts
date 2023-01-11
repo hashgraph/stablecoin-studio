@@ -84,7 +84,7 @@ describe('🧪 Role test', () => {
 			createPoR: true,
 			PoRInitialAmount: "10.55"
 		});
-		stableCoinSC = await StableCoin.create(requestSC);
+		stableCoinSC = (await StableCoin.create(requestSC))[0];
 		// console.log(stableCoinSC.tokenId);
 	}, 60_000);
 

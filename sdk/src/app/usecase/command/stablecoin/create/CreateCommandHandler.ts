@@ -74,7 +74,13 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 		return Promise.resolve(
 			new CreateCommandResponse(
 				ContractId.fromHederaContractId(
-					HContractId.fromSolidityAddress(res.response[3]),
+					HContractId.fromSolidityAddress(res.response[0][3]),
+				),
+				ContractId.fromHederaContractId(
+					HContractId.fromSolidityAddress(res.response[0][4]),
+				),
+				ContractId.fromHederaContractId(
+					HContractId.fromSolidityAddress(res.response[0][5]),
 				),
 			),
 		);

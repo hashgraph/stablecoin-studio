@@ -5,7 +5,16 @@ import { StableCoin, StableCoinProps } from '../../../../../domain/context/stabl
 import BigDecimal from '../../../../../domain/context/shared/BigDecimal.js';
 
 export class CreateCommandResponse implements CommandResponse {
-	constructor(public readonly tokenId: ContractId) {}
+	public readonly tokenId: ContractId;
+	public readonly PoRProxy: ContractId;
+	public readonly PoRProxyAdmin: ContractId;
+
+	constructor(tokenId: ContractId, PoRProxy: ContractId, PoRProxyAdmin: ContractId) 
+	{
+		this.tokenId = tokenId;
+		this.PoRProxy = PoRProxy;
+		this.PoRProxyAdmin = PoRProxyAdmin;
+	}
 }
 
 export class CreateCommand extends Command<CreateCommandResponse> {
