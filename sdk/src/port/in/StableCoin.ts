@@ -83,7 +83,7 @@ export { StableCoinCapabilities, Capability, Access, Operation, Balance };
 export { TokenSupplyType };
 
 interface IStableCoinInPort {
-	create(request: CreateRequest): Promise<StableCoinViewModel>;
+	create(request: CreateRequest): Promise<[StableCoinViewModel, ContractId, ContractId]>;
 	getInfo(request: GetStableCoinDetailsRequest): Promise<StableCoinViewModel>;
 	cashIn(request: CashInRequest): Promise<boolean>;
 	burn(request: BurnRequest): Promise<boolean>;
@@ -115,7 +115,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		),
 	) {}
 
-	async create(req: CreateRequest): Promise<StableCoinViewModel> {
+	async create(req: CreateRequest): Promise<[StableCoinViewModel, ContractId, ContractId]> {
 		handleValidation('CreateRequest', req);
 		const { 
 			stableCoinFactory, 
@@ -185,11 +185,13 @@ class StableCoinInPort implements IStableCoinInPort {
 			),
 		);
 
-		return (
+		return [(
 			await this.queryBus.execute(
 				new GetStableCoinQuery(createResponse.tokenId),
 			)
-		).coin;
+		).coin,
+		createResponse.PoRProxy,
+		createResponse.PoRProxyAdmin];
 	}
 
 	async getInfo(

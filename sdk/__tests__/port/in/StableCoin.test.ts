@@ -110,8 +110,8 @@ describe('🧪 Stablecoin test', () => {
 			PoR: "0.0.11111111"
 		});
 
-		stableCoinSC = await StableCoin.create(requestSC);
-		stableCoinHTS = await StableCoin.create(requestHTS);
+		stableCoinSC = (await StableCoin.create(requestSC))[0];
+		stableCoinHTS = (await StableCoin.create(requestHTS))[0];
 	}, 60_000);
 
 	it('Gets a coin', async () => {
