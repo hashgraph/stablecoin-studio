@@ -98,7 +98,7 @@ const StableCoinCreation = () => {
 		{
 			number: '04',
 			title: t('tabs.proofOfResearch'),
-			children: <ProofOfResearch control={control} request={request} />,
+			children: <ProofOfResearch control={control} request={request}  form={form}/>,
 		},
 		{
 			number: '05',
@@ -171,11 +171,13 @@ const StableCoinCreation = () => {
 	};
 
 	const handleFinish = async () => {
-		const { autorenewAccount, managementPermissions, freezeKey, wipeKey, pauseKey, supplyKey ,dataFeedAddress} =
+		const { autorenewAccount, managementPermissions, freezeKey, wipeKey, pauseKey, supplyKey } =
 			getValues();
 
 		request.autoRenewAccount = autorenewAccount;
-		request.dataFeedAddress = dataFeedAddress;
+		if (request.PoRInitialAmount !== undefined){
+			request.createPoR = true;
+		}
 		if (managementPermissions) {
 			request.adminKey = Account.NullPublicKey; // accountInfo.publicKey;
 			request.freezeKey = Account.NullPublicKey;

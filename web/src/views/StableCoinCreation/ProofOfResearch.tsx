@@ -1,36 +1,54 @@
 import { Heading, HStack, Stack, Text, VStack } from '@chakra-ui/react';
 import type { CreateRequest } from 'hedera-stable-coin-sdk';
+import { useEffect, useRef } from 'react';
 
-import { Control, FieldValues, useWatch,  } from 'react-hook-form';
+import type { Control, FieldValues, UseFormReturn} from 'react-hook-form';
+import { useWatch  } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import InputController from '../../components/Form/InputController';
 import SwitchController from '../../components/Form/SwitchController';
 // import { handleRequestValidation } from '../../utils/validationsHelper.js';
 
 
-
 interface ProofOfResearchProps {
+	form : UseFormReturn;
 	control: Control<FieldValues>;
 	request: CreateRequest;
 }
 
 const ProofOfResearch = (props: ProofOfResearchProps) => {
-	const { control } = props;
+	const { control, form } = props;
 	const { t } = useTranslation(['global', 'stableCoinCreation']);
 
-	console.log(props.request.dataFeedAddress);
-	
 	const isProofOfResearch = useWatch({
-	
 		control,
 		name: 'proofOfResearch',
+		
 	});
 	
-	const isHaveDataFeed = useWatch({
+	useEffect(() => {
+		if (!isProofOfResearch) {
+			form.resetField('PoRInitialAmount', { defaultValue: "" });
+			form.resetField('PoR', { defaultValue: "" });
+		}
+	}, [isProofOfResearch]);
+	
+	
+
+	const haveDataFeed = useWatch({
 	
 		control,
 		name: 'hasDataFeed',
 	});
+
+	useEffect(() => {
+		if (!haveDataFeed) {
+			form.resetField('PoR', { defaultValue: "" });
+		}else{
+			form.resetField('PoRInitialAmount', { defaultValue: "" });
+		}
+	}, [haveDataFeed]);
+	
 	
 	return (
 		<VStack h='full' justify={'space-between'} pt='80px'>
@@ -45,8 +63,8 @@ const ProofOfResearch = (props: ProofOfResearchProps) => {
 				>
 					{t('stableCoinCreation:proofOfResearch.title')}
 				</Heading>
-				<Stack as='form' spacing={6}>
-				<HStack mb={4}>
+			
+				<HStack>
 					<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>
 						{t('stableCoinCreation:proofOfResearch.description')}
 					</Text>
@@ -57,8 +75,7 @@ const ProofOfResearch = (props: ProofOfResearchProps) => {
 					/>
 				</HStack>
 
-				{isProofOfResearch === false ? (<></>) : (
-					<HStack mb={4}>
+				{isProofOfResearch === true ? (<HStack >
 						<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>
 							{t('stableCoinCreation:proofOfResearch.haveDataFeed')}
 						</Text>
@@ -67,15 +84,15 @@ const ProofOfResearch = (props: ProofOfResearchProps) => {
 							name={'hasDataFeed'}
 							defaultValue={false}
 						/>
-					</HStack>
+					</HStack>) : (<></>		
 				)}
 
 
-				{(isHaveDataFeed === true) && (isHaveDataFeed === true)  ?  (
-					<HStack mb={4}>
+				{(haveDataFeed === true && isProofOfResearch === true)  ?  (
+				<HStack >
 						<InputController
 						rules={{
-							required: t(`global:validations.required`),
+							// required: t(`global:validations.required`),
 							/* validate: {
 								validation: (value: string) => {
 									request.symbol = value;
@@ -84,19 +101,43 @@ const ProofOfResearch = (props: ProofOfResearchProps) => {
 								},
 							}, */
 						}}
-						isRequired
+						
 						control={control}
-						name={'dataFeedAddress'}
+						name={'PoR'}
 						label={t('stableCoinCreation:proofOfResearch.dataFeed')}
 						placeholder={t('stableCoinCreation:proofOfResearch.dataFeedPlaceholder')}
 						/>
 					</HStack>
-				):(<></>) }
-
+			
 
 					
+				):(<></>) }
 
-				</Stack>
+				{ (haveDataFeed === false && isProofOfResearch === true)  ?  (
+				
+				<HStack >
+					<InputController
+						rules={{
+							// required: t(`global:validations.required`),
+							/* validate: {
+								validation: (value: string) => {
+									request.symbol = value;
+									const res = handleRequestValidation(request.validate('symbol'));
+									return res;
+								},
+							}, */
+						}}
+						
+						control={control}
+						name={'PoRInitialAmount'}
+						label={t('stableCoinCreation:proofOfResearch.initialSupply')}
+						placeholder={t('stableCoinCreation:proofOfResearch.initialSupply')}
+						/>
+
+				</HStack>
+									
+				):(<></>) }				
+								
 			</Stack>
 		</VStack>
 	);
