@@ -30,6 +30,7 @@ import {
 import type { RequestPublicKey } from 'hedera-stable-coin-sdk';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch } from '../../store/store';
+import ProofOfResearch from './ProofOfResearch';
 
 const StableCoinCreation = () => {
 	const navigate = useNavigate();
@@ -95,6 +96,11 @@ const StableCoinCreation = () => {
 		},
 		{
 			number: '04',
+			title: t('tabs.proofOfResearch'),
+			children: <ProofOfResearch control={control} request={request} />,
+		},
+		{
+			number: '05',
 			title: t('tabs.review'),
 			children: <Review form={form} />,
 		},
@@ -164,10 +170,11 @@ const StableCoinCreation = () => {
 	};
 
 	const handleFinish = async () => {
-		const { autorenewAccount, managementPermissions, freezeKey, wipeKey, pauseKey, supplyKey } =
+		const { autorenewAccount, managementPermissions, freezeKey, wipeKey, pauseKey, supplyKey ,dataFeedAddress} =
 			getValues();
 
 		request.autoRenewAccount = autorenewAccount;
+		request.dataFeedAddress = dataFeedAddress;
 		if (managementPermissions) {
 			request.adminKey = Account.NullPublicKey; // accountInfo.publicKey;
 			request.freezeKey = Account.NullPublicKey;
@@ -185,7 +192,9 @@ const StableCoinCreation = () => {
 				formatKey(supplyKey.label, 'supplyKey')?.key !== Account.NullPublicKey.key && accountInfo.id
 					? accountInfo.id
 					: undefined;
+			
 		}
+		// alert(request.dataFeedAddress)
 		try {
 			console.log(request);
 			onOpen();
