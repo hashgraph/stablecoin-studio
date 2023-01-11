@@ -346,7 +346,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		return this.performOperation(coin, Operation.DELETE);
 	}
 
-	/*public async getPoR(
+	public async getPoR(
 		coin: StableCoinCapabilities
 	): Promise<TransactionResponse> {
 		try {
@@ -359,7 +359,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			const res = await HederaERC20__factory.connect(
 					coin.coin.evmProxyAddress,
 					this.signerOrProvider,
-				).getDataFeed();
+				).dataFeed();
 
 			return new TransactionResponse(
 					undefined,
@@ -372,7 +372,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				transactionId: (error as any).error?.transactionId,
 			});
 		}
-	}*/
+	}
 
 	public async updatePoR(
 		coin: StableCoinCapabilities,
