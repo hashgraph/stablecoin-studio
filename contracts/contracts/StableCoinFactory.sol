@@ -45,9 +45,8 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
         if (requestedToken.createReserve) {
             reserveProxyAdmin = new HederaReserveProxyAdmin();
             reserveProxyAdmin.transferOwnership(msg.sender);
-            HederaReserve reserveAddress1 = new HederaReserve();
             reserveProxy = new HederaReserveProxy(
-                address(reserveAddress1),
+                address(new HederaReserve()),
                 address(reserveProxyAdmin),
                 ''
             );

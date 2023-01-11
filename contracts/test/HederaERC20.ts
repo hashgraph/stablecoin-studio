@@ -42,6 +42,7 @@ import {
 
 import { clientId, toEvmAddress } from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
+import { HederaERC20ProxyAdmin__factory } from '../typechain-types'
 
 const chai = require('chai')
 const chaiAsPromised = require('chai-as-promised')
@@ -68,6 +69,7 @@ const TokenFactor = BigNumber.from(10).pow(TokenDecimals)
 const INIT_SUPPLY = BigNumber.from(10).mul(TokenFactor)
 const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor)
 const TokenMemo = 'Hedera Accelerator Stable Coin'
+const abiERC20ProxyAdmin = HederaERC20ProxyAdmin__factory.abi
 
 describe('HederaERC20 Tests', function() {
     before(async function() {
@@ -507,11 +509,13 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
     it('Retrieve admin and implementation addresses for the Proxy', async function() {
         // We retreive the HederaERC20Proxy admin and implementation
         const implementation = await getProxyImplementation(
+            abiERC20ProxyAdmin,
             proxyAdminAddress,
             operatorClient,
             proxyAddress.toSolidityAddress()
         )
         const admin = await getProxyAdmin(
+            abiERC20ProxyAdmin,
             proxyAdminAddress,
             operatorClient,
             proxyAddress.toSolidityAddress()
@@ -528,7 +532,11 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
 
     it('Retrieve proxy admin owner', async function() {
         // We retreive the HederaERC20Proxy admin and implementation
-        const ownerAccount = await owner(proxyAdminAddress, operatorClient)
+        const ownerAccount = await owner(
+            abiERC20ProxyAdmin,
+            proxyAdminAddress,
+            operatorClient
+        )
 
         // We check their values : success
         expect(ownerAccount.toUpperCase()).to.equals(
@@ -561,6 +569,7 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
         // Non Admin upgrades implementation : fail
         await expect(
             upgradeTo(
+                abiERC20ProxyAdmin,
                 proxyAddress,
                 operatorClient,
                 newImplementationContract.toSolidityAddress()
@@ -572,6 +581,7 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
         // Non Admin changes admin : fail
         await expect(
             changeAdmin(
+                abiERC20ProxyAdmin,
                 proxyAddress,
                 operatorClient,
                 await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)
@@ -602,6 +612,7 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
         // Upgrading the proxy implementation using the Proxy Admin with an account that is not the owner : fails
         await expect(
             upgrade(
+                abiERC20ProxyAdmin,
                 proxyAdminAddress,
                 nonOperatorClient,
                 newImplementationContract.toSolidityAddress(),
@@ -614,6 +625,7 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
         // Non Owner changes admin : fail
         await expect(
             changeProxyAdmin(
+                abiERC20ProxyAdmin,
                 proxyAdminAddress,
                 nonOperatorClient,
                 nonOperatorAccount,
@@ -645,6 +657,7 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
 
         // Upgrading the proxy implementation using the Proxy Admin with an account that is the owner : success
         await upgrade(
+            abiERC20ProxyAdmin,
             proxyAdminAddress,
             operatorClient,
             newImplementationContract.toSolidityAddress(),
@@ -653,6 +666,7 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
 
         // Check new implementation address
         const implementation = await getProxyImplementation(
+            abiERC20ProxyAdmin,
             proxyAdminAddress,
             operatorClient,
             proxyAddress.toSolidityAddress()
@@ -663,6 +677,7 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
 
         // reset
         await upgrade(
+            abiERC20ProxyAdmin,
             proxyAdminAddress,
             operatorClient,
             stableCoinAddress.toSolidityAddress(),
@@ -673,6 +688,7 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
     it('Change Proxy admin with the proxy admin and the owner account', async function() {
         // Owner changes admin : success
         await changeProxyAdmin(
+            abiERC20ProxyAdmin,
             proxyAdminAddress,
             operatorClient,
             operatorAccount,
@@ -683,6 +699,7 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
         // Now we cannot get the admin using the Proxy admin contract.
         await expect(
             getProxyAdmin(
+                abiERC20ProxyAdmin,
                 proxyAdminAddress,
                 operatorClient,
                 proxyAddress.toSolidityAddress()
@@ -690,7 +707,11 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
         ).to.eventually.be.rejectedWith(Error)
 
         // Check that proxy admin has been changed
-        const _admin = await admin(proxyAddress, operatorClient)
+        const _admin = await admin(
+            abiERC20ProxyAdmin,
+            proxyAddress,
+            operatorClient
+        )
         expect(_admin.toUpperCase()).to.equals(
             (
                 await toEvmAddress(operatorAccount, operatorIsE25519)
@@ -699,11 +720,13 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
 
         // reset
         await changeAdmin(
+            abiERC20ProxyAdmin,
             proxyAddress,
             operatorClient,
             await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)
         )
         await changeAdmin(
+            abiERC20ProxyAdmin,
             proxyAddress,
             nonOperatorClient,
             proxyAdminAddress.toSolidityAddress()
@@ -714,6 +737,7 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
         // Non Owner transfers owner : fail
         await expect(
             transferOwnership(
+                abiERC20ProxyAdmin,
                 proxyAdminAddress,
                 nonOperatorClient,
                 nonOperatorAccount,
@@ -725,6 +749,7 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
     it('Transfers Proxy admin owner with the owner account', async function() {
         // Owner transfers owner : success
         await transferOwnership(
+            abiERC20ProxyAdmin,
             proxyAdminAddress,
             operatorClient,
             nonOperatorAccount,
@@ -732,7 +757,11 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
         )
 
         // Check
-        const ownerAccount = await owner(proxyAdminAddress, operatorClient)
+        const ownerAccount = await owner(
+            abiERC20ProxyAdmin,
+            proxyAdminAddress,
+            operatorClient
+        )
         expect(ownerAccount.toUpperCase()).to.equals(
             (
                 await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)
@@ -741,6 +770,7 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
 
         // reset
         await transferOwnership(
+            abiERC20ProxyAdmin,
             proxyAdminAddress,
             nonOperatorClient,
             operatorAccount,

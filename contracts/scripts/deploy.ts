@@ -337,15 +337,17 @@ export async function deployContractsWithSDK({
 
     console.log(`Deploying stableCoin... please wait.`)
 
-    const proxyContract = await contractCall(
-        f_proxyAddress,
-        'deployStableCoin',
-        parametersContractCall,
-        clientSdk,
-        15000000,
-        StableCoinFactory__factory.abi,
-        35
-    )
+    const proxyContract: string[] = (
+        await contractCall(
+            f_proxyAddress,
+            'deployStableCoin',
+            parametersContractCall,
+            clientSdk,
+            15000000,
+            StableCoinFactory__factory.abi,
+            35
+        )
+    )[0]
 
     console.log(
         `Proxy created: ${proxyContract[0]} , ${ContractId.fromSolidityAddress(

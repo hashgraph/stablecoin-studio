@@ -9,11 +9,8 @@ import {
 
 import {
     HederaERC20__factory,
-    HederaERC20Proxy__factory,
-    HederaERC20ProxyAdmin__factory,
     StableCoinFactoryProxy__factory,
     StableCoinFactoryProxyAdmin__factory,
-    HederaReserveProxyAdmin__factory,
 } from '../typechain-types'
 
 import { contractCall, toEvmAddress } from './utils'
@@ -259,38 +256,27 @@ export async function initialize(
 
 // HederaERC20Proxy ///////////////////////////////////////////////////
 export async function upgradeTo(
+    abi: any,
     proxyAddress: ContractId,
     client: Client,
     newImplementationContract: string
 ) {
     const params = [newImplementationContract]
-    await contractCall(
-        proxyAddress,
-        'upgradeTo',
-        params,
-        client,
-        Gas3,
-        HederaERC20Proxy__factory.abi
-    )
+    await contractCall(proxyAddress, 'upgradeTo', params, client, Gas3, abi)
 }
 
 export async function changeAdmin(
+    abi: any,
     proxyAddress: ContractId,
     client: Client,
     newAdminAccount: string
 ) {
     const params = [newAdminAccount]
-    await contractCall(
-        proxyAddress,
-        'changeAdmin',
-        params,
-        client,
-        Gas3,
-        HederaERC20Proxy__factory.abi
-    )
+    await contractCall(proxyAddress, 'changeAdmin', params, client, Gas3, abi)
 }
 
 export async function admin(
+    abi: any,
     proxyAddress: ContractId,
     client: Client
 ): Promise<string> {
@@ -301,13 +287,14 @@ export async function admin(
         params,
         client,
         Gas2,
-        HederaERC20Proxy__factory.abi
+        abi
     )
     return result[0]
 }
 
 // HederaERC20ProxyAdmin ///////////////////////////////////////////////////
 export async function owner(
+    abi: any,
     proxyAdminAddress: ContractId,
     client: Client
 ): Promise<string> {
@@ -318,29 +305,24 @@ export async function owner(
         params,
         client,
         Gas2,
-        HederaERC20ProxyAdmin__factory.abi
+        abi
     )
     return result[0]
 }
 
 export async function upgrade(
+    abi: any,
     proxyAdminAddress: ContractId,
     client: Client,
     newImplementationContract: string,
     proxyAddress: string
 ) {
     const params = [proxyAddress, newImplementationContract]
-    await contractCall(
-        proxyAdminAddress,
-        'upgrade',
-        params,
-        client,
-        Gas3,
-        HederaERC20ProxyAdmin__factory.abi
-    )
+    await contractCall(proxyAdminAddress, 'upgrade', params, client, Gas3, abi)
 }
 
 export async function changeProxyAdmin(
+    abi: any,
     proxyAdminAddress: ContractId,
     client: Client,
     newAdminAccount: string,
@@ -357,11 +339,12 @@ export async function changeProxyAdmin(
         params,
         client,
         Gas3,
-        HederaERC20ProxyAdmin__factory.abi
+        abi
     )
 }
 
 export async function transferOwnership(
+    abi: any,
     proxyAdminAddress: ContractId,
     client: Client,
     newOwnerAccount: string,
@@ -374,11 +357,12 @@ export async function transferOwnership(
         params,
         client,
         Gas3,
-        HederaERC20ProxyAdmin__factory.abi
+        abi
     )
 }
 
 export async function getProxyImplementation(
+    abi: any,
     proxyAdminAddress: ContractId,
     client: Client,
     proxyAddress: string
@@ -390,12 +374,13 @@ export async function getProxyImplementation(
         params,
         client,
         Gas2,
-        HederaERC20ProxyAdmin__factory.abi
+        abi
     )
     return result[0]
 }
 
 export async function getProxyAdmin(
+    abi: any,
     proxyAdminAddress: ContractId,
     client: Client,
     proxyAddress: string
@@ -407,7 +392,7 @@ export async function getProxyAdmin(
         params,
         client,
         Gas2,
-        HederaERC20ProxyAdmin__factory.abi
+        abi
     )
     return result[0]
 }
@@ -1065,7 +1050,7 @@ export async function getDataFeed(
     const params: string[] = []
     const result = await contractCall(
         proxyAddress,
-        'dataFeed',
+        'getDataFeed',
         params,
         operatorClient,
         Gas2,
