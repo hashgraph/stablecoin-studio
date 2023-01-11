@@ -29,15 +29,17 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
         _;
     }
 
-    function _initReserve(address dataFeed) internal {
+    function reserve_init(address dataFeed) internal {
         _dataFeed = dataFeed;
     }
 
-    function _checkReserve(
-        uint256 amount,
-        bool less
-    ) internal view returns (bool) {
-        uint256 currentReserve = getReserve();
+    function _checkReserve(uint256 amount, bool less)
+        internal
+        view
+        returns (bool)
+    {
+        if (_dataFeed == address(0)) return true;
+        uint256 currentReserve = _getReserve();
         if (less) {
             return currentReserve >= amount;
         } else {
@@ -47,19 +49,23 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
         }
     }
 
-    function getReserve() internal view returns (uint256) {
+    function getReserve() external view returns (uint256) {
+        return _getReserve();
+    }
+
+    function _getReserve() internal view returns (uint256) {
         if (_dataFeed != address(0)) {
             (, int256 answer, , , ) = AggregatorV3Interface(_dataFeed)
                 .latestRoundData();
             return uint256(answer);
-        } else {
-            return 999999999999999999999; // TODO
         }
+        return 0;
     }
 
-    function updateDataFeed(
-        address newAddress
-    ) external onlyRole(_getRoleId(roleName.ADMIN)) {
+    function updateDataFeed(address newAddress)
+        external
+        onlyRole(_getRoleId(roleName.ADMIN))
+    {
         address previous = _dataFeed;
         _dataFeed = newAddress;
         emit ReserveAddressChanged(previous, newAddress);

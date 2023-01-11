@@ -11,7 +11,7 @@ contract HederaReserve is IHederaReserve {
     /**
      *  @dev Initializes the reserve with the initial amount
      *
-     * @param initialReserve The initial amount to be on the reserve
+     *  @param initialReserve The initial amount to be on the reserve
      */
     function initialize(uint256 initialReserve) external {
         _reserve = initialReserve;
@@ -41,7 +41,7 @@ contract HederaReserve is IHederaReserve {
      *
      *  @return The description
      */
-    function description() external view returns (string memory) {
+    function description() external pure returns (string memory) {
         return 'Example Hedera Reserve for ChainLink';
     }
 
@@ -50,7 +50,7 @@ contract HederaReserve is IHederaReserve {
      *
      *  @return The current version
      */
-    function version() external view returns (uint256) {
+    function version() external pure returns (uint256) {
         return 1;
     }
 

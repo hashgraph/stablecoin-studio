@@ -18,29 +18,25 @@
  *
  */
 
-export enum Operation {
-	CASH_IN = 'Cash_in',
-	BURN = 'Burn',
-	WIPE = 'Wipe',
-	FREEZE = 'Freeze',
-	UNFREEZE = 'Unfreeze',
-	PAUSE = 'Pause',
-	UNPAUSE = 'Unpause',
-	DELETE = 'Delete',
-	RESCUE = 'Rescue',
-	ROLE_MANAGEMENT = 'Role_Management',
-	ROLE_ADMIN_MANAGEMENT = 'Admin Role',
-	PoR_MANAGEMENT = 'Admin Role',
-}
+import ValidatedRequest from './validation/ValidatedRequest.js';
+import Validation from './validation/Validation.js';
 
-export enum Access {
-	HTS,
-	CONTRACT,
-}
+export default class UpdatePoRRequest extends ValidatedRequest<UpdatePoRRequest> {
+	tokenId: string;
+	PoR: string;
 
-export class Capability {
-	constructor(
-		public readonly operation: Operation,
-		public readonly access: Access,
-	) {}
+	constructor({ 
+		tokenId,
+		PoR 
+	}: { 
+		tokenId: string;
+		PoR: string;
+	}) {
+		super({
+			tokenId: Validation.checkHederaIdFormat(),
+			PoR: Validation.checkContractId()
+		});
+		this.tokenId = tokenId;
+		this.PoR = PoR;
+	}
 }

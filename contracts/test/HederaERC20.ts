@@ -37,6 +37,7 @@ import {
     transferFrom,
     Burn,
     transfer,
+    getReserve,
 } from '../scripts/contractsMethods'
 
 import { clientId, toEvmAddress } from '../scripts/utils'
@@ -118,18 +119,21 @@ describe('HederaERC20 Tests', function() {
         )
 
         // Deploy Token using Client
-        const result = await deployContractsWithSDK(
-            TokenName,
-            TokenSymbol,
-            TokenDecimals,
-            INIT_SUPPLY.toString(),
-            MAX_SUPPLY.toString(),
-            TokenMemo,
-            operatorAccount,
-            operatorPriKey,
-            operatorPubKey,
-            operatorIsE25519
-        )
+        const result = await deployContractsWithSDK({
+            name: TokenName,
+            symbol: TokenSymbol,
+            decimals: TokenDecimals,
+            initialSupply: INIT_SUPPLY.toString(),
+            maxSupply: MAX_SUPPLY.toString(),
+            memo: TokenMemo,
+            account: operatorAccount,
+            privateKey: operatorPriKey,
+            publicKey: operatorPubKey,
+            isED25519Type: operatorIsE25519,
+            initialAmountDataFeed: INIT_SUPPLY.add(
+                BigNumber.from('100000')
+            ).toString(),
+        })
 
         proxyAddress = result[0]
     })
@@ -158,7 +162,6 @@ describe('HederaERC20 Tests', function() {
 
     it('Only Account can associate and dissociate itself when balance is 0', async function() {
         const amount = BigNumber.from(1)
-
         // associate a token to an account : success
         await associateToken(
             proxyAddress,
@@ -480,18 +483,21 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
         )
 
         // Deploy Token using Client
-        const result = await deployContractsWithSDK(
-            TokenName,
-            TokenSymbol,
-            TokenDecimals,
-            INIT_SUPPLY.toString(),
-            MAX_SUPPLY.toString(),
-            TokenMemo,
-            operatorAccount,
-            operatorPriKey,
-            operatorPubKey,
-            operatorIsE25519
-        )
+        const result = await deployContractsWithSDK({
+            name: TokenName,
+            symbol: TokenSymbol,
+            decimals: TokenDecimals,
+            initialSupply: INIT_SUPPLY.toString(),
+            maxSupply: MAX_SUPPLY.toString(),
+            memo: TokenMemo,
+            account: operatorAccount,
+            privateKey: operatorPriKey,
+            publicKey: operatorPubKey,
+            isED25519Type: operatorIsE25519,
+            initialAmountDataFeed: INIT_SUPPLY.add(
+                BigNumber.from('100000')
+            ).toString(),
+        })
 
         proxyAddress = result[0]
         proxyAdminAddress = result[1]
@@ -534,18 +540,21 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
 
     it('Upgrade Proxy implementation without the proxy admin', async function() {
         // Deploy a new contract
-        const result = await deployContractsWithSDK(
-            TokenName,
-            TokenSymbol,
-            TokenDecimals,
-            INIT_SUPPLY.toString(),
-            MAX_SUPPLY.toString(),
-            TokenMemo,
-            operatorAccount,
-            operatorPriKey,
-            operatorPubKey,
-            operatorIsE25519
-        )
+        const result = await deployContractsWithSDK({
+            name: TokenName,
+            symbol: TokenSymbol,
+            decimals: TokenDecimals,
+            initialSupply: INIT_SUPPLY.toString(),
+            maxSupply: MAX_SUPPLY.toString(),
+            memo: TokenMemo,
+            account: operatorAccount,
+            privateKey: operatorPriKey,
+            publicKey: operatorPubKey,
+            isED25519Type: operatorIsE25519,
+            initialAmountDataFeed: INIT_SUPPLY.add(
+                BigNumber.from('100000')
+            ).toString(),
+        })
 
         const newImplementationContract = result[2]
 
@@ -572,18 +581,21 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
 
     it('Upgrade Proxy implementation with the proxy admin but without the owner account', async function() {
         // Deploy a new contract
-        const result = await deployContractsWithSDK(
-            TokenName,
-            TokenSymbol,
-            TokenDecimals,
-            INIT_SUPPLY.toString(),
-            MAX_SUPPLY.toString(),
-            TokenMemo,
-            operatorAccount,
-            operatorPriKey,
-            operatorPubKey,
-            operatorIsE25519
-        )
+        const result = await deployContractsWithSDK({
+            name: TokenName,
+            symbol: TokenSymbol,
+            decimals: TokenDecimals,
+            initialSupply: INIT_SUPPLY.toString(),
+            maxSupply: MAX_SUPPLY.toString(),
+            memo: TokenMemo,
+            account: operatorAccount,
+            privateKey: operatorPriKey,
+            publicKey: operatorPubKey,
+            isED25519Type: operatorIsE25519,
+            initialAmountDataFeed: INIT_SUPPLY.add(
+                BigNumber.from('100000')
+            ).toString(),
+        })
 
         const newImplementationContract = result[2]
 
@@ -613,18 +625,21 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
 
     it('Upgrade Proxy implementation with the proxy admin and the owner account', async function() {
         // Deploy a new contract
-        const result = await deployContractsWithSDK(
-            TokenName,
-            TokenSymbol,
-            TokenDecimals,
-            INIT_SUPPLY.toString(),
-            MAX_SUPPLY.toString(),
-            TokenMemo,
-            operatorAccount,
-            operatorPriKey,
-            operatorPubKey,
-            operatorIsE25519
-        )
+        const result = await deployContractsWithSDK({
+            name: TokenName,
+            symbol: TokenSymbol,
+            decimals: TokenDecimals,
+            initialSupply: INIT_SUPPLY.toString(),
+            maxSupply: MAX_SUPPLY.toString(),
+            memo: TokenMemo,
+            account: operatorAccount,
+            privateKey: operatorPriKey,
+            publicKey: operatorPubKey,
+            isED25519Type: operatorIsE25519,
+            initialAmountDataFeed: INIT_SUPPLY.add(
+                BigNumber.from('100000')
+            ).toString(),
+        })
 
         const newImplementationContract = result[2]
 

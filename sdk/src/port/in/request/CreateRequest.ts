@@ -53,6 +53,8 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 
 	hederaERC20: string;
 
+	createPoR: boolean;
+
 	@OptionalField()
 	PoR?: string;
 
@@ -114,7 +116,8 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		stableCoinFactory,
 		hederaERC20,
 		PoR,
-		PoRInitialAmount
+		PoRInitialAmount,
+		createPoR
 	}: {
 		name: string;
 		symbol: string;
@@ -135,6 +138,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		hederaERC20: string;
 		PoR?: string;
 		PoRInitialAmount?: string;
+		createPoR: boolean;
 	}) {
 		super({
 			name: (val) => {
@@ -233,7 +237,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 			hederaERC20: Validation.checkContractId(),
 			PoR: Validation.checkContractId(),
 			PoRInitialAmount: (val) => {
-				if (val === undefined || val === '') {
+				if (val === undefined || val === '' || this.createPoR == false) {
 					return;
 				}
 				if (!BigDecimal.isBigDecimal(val)) {
@@ -288,6 +292,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		this.hederaERC20 = hederaERC20;
 		this.PoR = PoR;
 		this.PoRInitialAmount = PoRInitialAmount;
+		this.createPoR = createPoR;
 
 	}
 }

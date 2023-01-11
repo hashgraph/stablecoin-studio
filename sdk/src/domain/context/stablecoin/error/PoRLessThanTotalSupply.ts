@@ -18,29 +18,11 @@
  *
  */
 
-export enum Operation {
-	CASH_IN = 'Cash_in',
-	BURN = 'Burn',
-	WIPE = 'Wipe',
-	FREEZE = 'Freeze',
-	UNFREEZE = 'Unfreeze',
-	PAUSE = 'Pause',
-	UNPAUSE = 'Unpause',
-	DELETE = 'Delete',
-	RESCUE = 'Rescue',
-	ROLE_MANAGEMENT = 'Role_Management',
-	ROLE_ADMIN_MANAGEMENT = 'Admin Role',
-	PoR_MANAGEMENT = 'Admin Role',
-}
+import BaseError, { ErrorCode } from "../../../../core/error/BaseError.js";
 
-export enum Access {
-	HTS,
-	CONTRACT,
-}
 
-export class Capability {
-	constructor(
-		public readonly operation: Operation,
-		public readonly access: Access,
-	) {}
+export class PoRLessThanTotalSupply extends BaseError {
+    constructor(PoRAmount: string, totalSupply: string) {
+        super(ErrorCode.InvalidRange, `PoR amount ${PoRAmount} is less than total supply ${totalSupply}`);        
+    }
 }

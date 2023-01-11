@@ -62,6 +62,7 @@ const StableCoinCreation = () => {
 			decimals: 6,
 			hederaERC20: HederaERC20AddressTestnet,
 			stableCoinFactory: FactoryAddressTestnet,
+			createPoR: false,
 		}),
 	);
 

@@ -40,7 +40,7 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 	) {}
 
 	async execute(command: CreateCommand): Promise<CreateCommandResponse> {
-		const { coin, factory, hederaERC20, PoR, PoRInitialAmount } = command;
+		const { coin, factory, hederaERC20, PoR, PoRInitialAmount, createPoR } = command;
 		const handler = this.transactionService.getHandler();
 		if (
 			coin.maxSupply &&
@@ -53,6 +53,7 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 		}
 
 		if (
+			createPoR &&
 			PoRInitialAmount &&
 			coin.initialSupply &&
 			coin.initialSupply.isGreaterThan(PoRInitialAmount)
@@ -66,6 +67,7 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 			new StableCoin(coin),
 			factory,
 			hederaERC20,
+			createPoR,
 			PoR,
 			PoRInitialAmount
 		);

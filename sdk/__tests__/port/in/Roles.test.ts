@@ -81,6 +81,8 @@ describe('🧪 Role test', () => {
 			supplyType: TokenSupplyType.INFINITE,
 			stableCoinFactory: FactoryAddressTestnet,
 			hederaERC20: HederaERC20AddressTestnet,
+			createPoR: true,
+			PoRInitialAmount: "10.55"
 		});
 		stableCoinSC = await StableCoin.create(requestSC);
 		// console.log(stableCoinSC.tokenId);

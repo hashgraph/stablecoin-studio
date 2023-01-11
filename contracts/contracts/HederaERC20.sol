@@ -48,6 +48,7 @@ contract HederaERC20 is
             'Token Creation failed'
         );
 
+        reserve_init(reserveAddress); // Initialize reserve
         tokenOwner_init(tokenAddress);
         roles_init();
         _setupRole(_getRoleId(roleName.ADMIN), msg.sender); // Assign Admin role to calling contract/user in order to be able to set all the other roles
@@ -59,7 +60,6 @@ contract HederaERC20 is
         _grantRole(_getRoleId(roleName.FREEZE), originalSender);
         _grantRole(_getRoleId(roleName.DELETE), originalSender);
         _setupRole(_getRoleId(roleName.ADMIN), originalSender); // Assign Admin role to the provided address
-        _initReserve(reserveAddress); // Initialize reserve
 
         return tokenAddress;
     }
@@ -102,7 +102,7 @@ contract HederaERC20 is
         override(IHederaERC20, IHederaERC20Upgradeable, TokenOwner)
         returns (uint256)
     {
-        return TokenOwner(_getTokenAddress()).totalSupply();
+        return IHederaERC20Upgradeable(_getTokenAddress()).totalSupply();
     }
 
     /**

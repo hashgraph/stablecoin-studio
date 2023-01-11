@@ -45,6 +45,7 @@ interface ITransactionAdapter {
 		coin: StableCoin,
 		factory: ContractId,
 		hederaERC20: ContractId,
+		createPoR: boolean,
 		PoR?: ContractId,
 		PoRInitialAmount? : BigDecimal
 	): Promise<TransactionResponse>;
@@ -95,6 +96,20 @@ interface ITransactionAdapter {
 		targetId: HederaId,
 	): Promise<TransactionResponse>;
 	getAccount(): Account;
+	getPoR(
+		coin: StableCoinCapabilities
+	): Promise<TransactionResponse>;
+	updatePoR(
+		coin: StableCoinCapabilities,
+		PoR: ContractId
+	): Promise<TransactionResponse>;
+	getPoRAmount(
+		coin: StableCoinCapabilities
+	): Promise<TransactionResponse>;	
+	updatePoRAmount(
+		PoR: ContractId,
+		amount: BigDecimal
+	): Promise<TransactionResponse>;	
 	getMirrorNodeAdapter(): MirrorNodeAdapter;
 }
 
@@ -173,6 +188,7 @@ export default abstract class TransactionAdapter
 		coin: StableCoin,
 		factory: ContractId,
 		hederaERC20: ContractId,
+		createPoR: boolean,
 		PoR?: ContractId,
 		PoRInitialAmount? : BigDecimal
 	): Promise<TransactionResponse<any, Error>> {
@@ -249,6 +265,28 @@ export default abstract class TransactionAdapter
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
+	getPoR(
+		coin: StableCoinCapabilities
+	): Promise<TransactionResponse<any, Error>> {
+		throw new Error('Method not implemented.');
+	}
+	updatePoR(
+		coin: StableCoinCapabilities,
+		PoR: ContractId
+	): Promise<TransactionResponse<any, Error>> {
+		throw new Error('Method not implemented.');
+	}
+	getPoRAmount(
+		coin: StableCoinCapabilities
+	): Promise<TransactionResponse<any, Error>> {
+		throw new Error('Method not implemented.');
+	}	
+	updatePoRAmount(
+		PoR: ContractId,
+		amount: BigDecimal
+	): Promise<TransactionResponse<any, Error>> {
+		throw new Error('Method not implemented.');
+	}	
 	grantRole(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,

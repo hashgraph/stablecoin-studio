@@ -55,9 +55,7 @@ abstract contract TokenOwner is
      *
      * @return uint256 The total number of tokens that exists
      */
-    function totalSupply() external view virtual returns (uint256) {
-        return IHederaERC20Upgradeable(_getTokenAddress()).totalSupply();
-    }
+    function totalSupply() external view virtual returns (uint256);
 
     /**
      * @dev Returns the number tokens that an account has

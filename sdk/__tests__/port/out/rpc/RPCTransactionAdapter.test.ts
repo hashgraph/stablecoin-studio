@@ -65,6 +65,7 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 			stablecoin,
 			new ContractId(FactoryAddressTestnet),
 			new ContractId(HederaERC20AddressTestnet),
+			false,
 		);
 		const tokenIdSC = ContractId.fromHederaContractId(
 			HContractId.fromSolidityAddress(tr.response[3]),
@@ -156,6 +157,7 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 			coin,
 			new ContractId(FactoryAddressTestnet),
 			new ContractId(HederaERC20AddressTestnet),
+			true
 		);
 	}, 1500000);
 

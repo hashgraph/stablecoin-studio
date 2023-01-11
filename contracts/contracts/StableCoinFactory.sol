@@ -24,7 +24,17 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
     function deployStableCoin(
         tokenStruct calldata requestedToken,
         address StableCoinContractAddress
-    ) external payable override returns (address, address, address, address) {
+    )
+        external
+        payable
+        override
+        returns (
+            address,
+            address,
+            address,
+            address
+        )
+    {
         // Deploy Proxy Admin
         HederaERC20ProxyAdmin StableCoinProxyAdmin = new HederaERC20ProxyAdmin();
 
@@ -49,6 +59,9 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
                 address(new HederaReserve()),
                 address(reserveProxyAdmin),
                 ''
+            );
+            HederaReserve(address(reserveProxy)).initialize(
+                requestedToken.reserveInitialAmount
             );
             reserveAddress = address(reserveProxy);
         } else if (requestedToken.reserveAddress != address(0)) {
@@ -119,7 +132,7 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
             memory keys = new IHederaTokenService.TokenKey[](
                 requestedToken.keys.length
             );
-        for (uint i = 0; i < requestedToken.keys.length; i++) {
+        for (uint256 i = 0; i < requestedToken.keys.length; i++) {
             keys[i] = IHederaTokenService.TokenKey({
                 keyType: requestedToken.keys[i].keyType,
                 key: generateKey(
@@ -161,9 +174,11 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
         return Key;
     }
 
-    function treasuryIsContract(
-        address treasuryAddress
-    ) internal pure returns (bool) {
+    function treasuryIsContract(address treasuryAddress)
+        internal
+        pure
+        returns (bool)
+    {
         return treasuryAddress == address(0);
     }
 }

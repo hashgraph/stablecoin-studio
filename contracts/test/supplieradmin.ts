@@ -1,8 +1,3 @@
-const chai = require('chai')
-const chaiAsPromised = require('chai-as-promised')
-chai.use(chaiAsPromised)
-const expect = chai.expect
-
 import '@hashgraph/hardhat-hethers'
 import { BigNumber } from 'ethers'
 
@@ -32,11 +27,17 @@ import {
     getBalanceOf,
     Mint,
     hasRole,
+    getReserve,
 } from '../scripts/contractsMethods'
 import { CASHIN_ROLE } from '../scripts/constants'
 
 import { clientId } from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
+
+const chai = require('chai')
+const chaiAsPromised = require('chai-as-promised')
+chai.use(chaiAsPromised)
+const expect = chai.expect
 
 let proxyAddress: ContractId
 
@@ -107,18 +108,21 @@ describe('Only Admin can grant, revoke, increase, decrease and reset cashin role
         )
 
         // Deploy Token using Client
-        const result = await deployContractsWithSDK(
-            TokenName,
-            TokenSymbol,
-            TokenDecimals,
-            INIT_SUPPLY.toString(),
-            MAX_SUPPLY.toString(),
-            TokenMemo,
-            operatorAccount,
-            operatorPriKey,
-            operatorPubKey,
-            operatorIsE25519
-        )
+        const result = await deployContractsWithSDK({
+            name: TokenName,
+            symbol: TokenSymbol,
+            decimals: TokenDecimals,
+            initialSupply: INIT_SUPPLY.toString(),
+            maxSupply: MAX_SUPPLY.toString(),
+            memo: TokenMemo,
+            account: operatorAccount,
+            privateKey: operatorPriKey,
+            publicKey: operatorPubKey,
+            isED25519Type: operatorIsE25519,
+            initialAmountDataFeed: INIT_SUPPLY.add(
+                BigNumber.from('150').mul(TokenFactor)
+            ).toString(),
+        })
 
         proxyAddress = result[0]
     })
@@ -485,18 +489,21 @@ describe('Grant unlimited supplier role and test its cashin right, maxsupply lim
         )
 
         // Deploy Token using Client
-        const result = await deployContractsWithSDK(
-            TokenName,
-            TokenSymbol,
-            TokenDecimals,
-            INIT_SUPPLY.toString(),
-            MAX_SUPPLY.toString(),
-            TokenMemo,
-            operatorAccount,
-            operatorPriKey,
-            operatorPubKey,
-            operatorIsE25519
-        )
+        const result = await deployContractsWithSDK({
+            name: TokenName,
+            symbol: TokenSymbol,
+            decimals: TokenDecimals,
+            initialSupply: INIT_SUPPLY.toString(),
+            maxSupply: MAX_SUPPLY.toString(),
+            memo: TokenMemo,
+            account: operatorAccount,
+            privateKey: operatorPriKey,
+            publicKey: operatorPubKey,
+            isED25519Type: operatorIsE25519,
+            initialAmountDataFeed: INIT_SUPPLY.add(
+                BigNumber.from('1500').mul(TokenFactor)
+            ).toString(),
+        })
 
         proxyAddress = result[0]
 
@@ -666,18 +673,21 @@ describe('Grant limited supplier role and test its cashin right and cashin/maxsu
         )
 
         // Deploy Token using Client
-        const result = await deployContractsWithSDK(
-            TokenName,
-            TokenSymbol,
-            TokenDecimals,
-            INIT_SUPPLY.toString(),
-            MAX_SUPPLY.toString(),
-            TokenMemo,
-            operatorAccount,
-            operatorPriKey,
-            operatorPubKey,
-            operatorIsE25519
-        )
+        const result = await deployContractsWithSDK({
+            name: TokenName,
+            symbol: TokenSymbol,
+            decimals: TokenDecimals,
+            initialSupply: INIT_SUPPLY.toString(),
+            maxSupply: MAX_SUPPLY.toString(),
+            memo: TokenMemo,
+            account: operatorAccount,
+            privateKey: operatorPriKey,
+            publicKey: operatorPubKey,
+            isED25519Type: operatorIsE25519,
+            initialAmountDataFeed: INIT_SUPPLY.add(
+                BigNumber.from('250').mul(TokenFactor)
+            ).toString(),
+        })
 
         proxyAddress = result[0]
 

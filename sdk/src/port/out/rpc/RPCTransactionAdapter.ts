@@ -72,6 +72,7 @@ import LogService from '../../../app/service/LogService.js';
 import { WalletConnectRejectedError } from '../../../domain/context/network/error/WalletConnectRejectedError.js';
 import { TransactionResponseError } from '../error/TransactionResponseError.js';
 import { SigningError } from '../hs/error/SigningError.js';
+import { PoRAmountDecimals } from '../../in/request/CreateRequest.js';
 
 // eslint-disable-next-line no-var
 declare var ethereum: MetaMaskInpageProvider;
@@ -97,6 +98,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		coin: StableCoinProps,
 		factory: ContractId,
 		hederaERC20: ContractId,
+		createPoR: boolean,
 		PoR?: ContractId,
 		PoRInitialAmount? : BigDecimal
 	): Promise<TransactionResponse<any, Error>> {
@@ -176,9 +178,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 							: HContractId.fromString(
 								PoR.value,
 							).toSolidityAddress(),
-					PoRInitialAmount 
+				PoRInitialAmount 
 						? PoRInitialAmount.toFixedNumber()
 						: BigDecimal.ZERO.toFixedNumber(),
+				createPoR,
 				keys,
 			);
 
@@ -342,6 +345,118 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	async delete(coin: StableCoinCapabilities): Promise<TransactionResponse> {
 		return this.performOperation(coin, Operation.DELETE);
 	}
+
+	/*public async getPoR(
+		coin: StableCoinCapabilities
+	): Promise<TransactionResponse> {
+		try {
+			if (!coin.coin.evmProxyAddress)
+				throw new TransactionResponseError({
+					RPC_relay: true,
+					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
+				});
+
+			const res = await HederaERC20__factory.connect(
+					coin.coin.evmProxyAddress,
+					this.signerOrProvider,
+				).getDataFeed();
+
+			return new TransactionResponse(
+					undefined,
+					res.toString()
+				);				
+		} catch (error) {
+			throw new TransactionResponseError({
+				RPC_relay: true,
+				message: `Unexpected error in HederaTransactionHandler changePoR operation : ${error}`,
+				transactionId: (error as any).error?.transactionId,
+			});
+		}
+	}*/
+
+	public async updatePoR(
+		coin: StableCoinCapabilities,
+		PoR: ContractId
+	): Promise<TransactionResponse> {
+		try {
+			if (!coin.coin.evmProxyAddress)
+				throw new TransactionResponseError({
+					RPC_relay: true,
+					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
+				});
+
+			return RPCTransactionResponseAdapter.manageResponse(
+				await HederaERC20__factory.connect(
+					coin.coin.evmProxyAddress,
+					this.signerOrProvider,
+				).updateDataFeed(
+					this.accountToEvmAddress(PoR),
+				),
+			);
+		} catch (error) {
+			throw new TransactionResponseError({
+				RPC_relay: true,
+				message: `Unexpected error in HederaTransactionHandler changePoR operation : ${error}`,
+				transactionId: (error as any).error?.transactionId,
+			});
+		}
+	}
+
+	public async getPoRAmount(
+		coin: StableCoinCapabilities
+	): Promise<TransactionResponse> {
+		try {
+			if (!coin.coin.evmProxyAddress)
+				throw new TransactionResponseError({
+					RPC_relay: true,
+					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
+				});
+
+			const res = await HederaERC20__factory.connect(
+					coin.coin.evmProxyAddress,
+					this.signerOrProvider,
+				).getReserve();
+
+			return new TransactionResponse(
+					undefined,
+					BigDecimal.fromStringFixed(res.toString(), PoRAmountDecimals),
+				);						
+		} catch (error) {
+			throw new TransactionResponseError({
+				RPC_relay: true,
+				message: `Unexpected error in HederaTransactionHandler changePoR operation : ${error}`,
+				transactionId: (error as any).error?.transactionId,
+			});
+		}
+	}
+
+	/*public async updatePoRAmount(
+		PoR: ContractId,
+		amount: BigDecimal
+	): Promise<TransactionResponse> {
+		try {
+			if (!coin.coin.evmProxyAddress)
+				throw new TransactionResponseError({
+					RPC_relay: true,
+					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
+				});
+
+			return RPCTransactionResponseAdapter.manageResponse(
+				await HederaERC20__factory.connect(
+					coin.coin.evmProxyAddress,
+					this.signerOrProvider,
+				).updateReserveAmount(
+					amount.toBigNumber(),
+				),
+			);
+		} catch (error) {
+			throw new TransactionResponseError({
+				RPC_relay: true,
+				message: `Unexpected error in HederaTransactionHandler changePorAmount operation : ${error}`,
+				transactionId: (error as any).error?.transactionId,
+			});
+		}
+	}*/		
 
 	async grantRole(
 		coin: StableCoinCapabilities,
@@ -1251,18 +1366,22 @@ class Params {
 	role?: string;
 	targetId?: string;
 	amount?: BigDecimal;
+	PoR?: ContractId;
 
 	constructor({
 		role,
 		targetId,
 		amount,
+		PoR,
 	}: {
 		role?: string;
 		targetId?: string;
 		amount?: BigDecimal;
+		PoR?: ContractId;
 	}) {
 		this.role = role;
 		this.targetId = targetId;
 		this.amount = amount;
+		this.PoR = PoR;
 	}
 }

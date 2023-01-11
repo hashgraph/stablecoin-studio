@@ -54,6 +54,8 @@ import { FactoryStableCoin } from '../../../domain/context/factory/FactoryStable
 import { TOKEN_CREATION_COST_HBAR } from '../../../core/Constants.js';
 import LogService from '../../../app/service/LogService.js';
 import { TransactionResponseError } from '../error/TransactionResponseError.js';
+import { Contract } from 'ethers';
+import { PoRAmountDecimals } from '../../in/request/CreateRequest.js';
 
 export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	private web3 = new Web3();
@@ -66,6 +68,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		coin: StableCoinProps,
 		factory: ContractId,
 		hederaERC20: ContractId,
+		createPoR: boolean,
 		PoR?: ContractId,
 		PoRInitialAmount? : BigDecimal
 	): Promise<TransactionResponse<any, Error>> {
@@ -148,6 +151,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				PoRInitialAmount 
 					? PoRInitialAmount.toFixedNumber()
 					: BigDecimal.ZERO.toFixedNumber(),
+				createPoR,
 				keys,
 			);
 
@@ -389,6 +393,70 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			400000,
 		);
 	}
+
+	public async getPoR(
+		coin: StableCoinCapabilities
+	): Promise<TransactionResponse> {
+		const transactionResponse = await this.performSmartContractOperation(
+			coin,
+			'getDataFeed',
+			60000,
+			undefined,
+			TransactionType.RECORD,
+		);
+
+		return transactionResponse.response[0].toString();
+	}
+
+	public async updatePoR(
+		coin: StableCoinCapabilities,
+		PoR: ContractId
+	): Promise<TransactionResponse> {
+		const params = new Params({
+			PoR: PoR,
+		});
+		return this.performOperation(
+			coin,
+			Operation.PoR_MANAGEMENT,
+			'updateDataFeed',
+			400000,
+			params
+		);
+	}
+
+	public async getPoRAmount(
+		coin: StableCoinCapabilities
+	): Promise<TransactionResponse> {
+		const transactionResponse = await this.performSmartContractOperation(
+			coin,
+			'getReserve',
+			60000,
+			undefined,
+			TransactionType.RECORD,
+		);
+
+		transactionResponse.response = BigDecimal.fromStringFixed(
+			transactionResponse.response[0].toString(),
+			PoRAmountDecimals,
+		);
+		return transactionResponse;		
+	}
+
+	/*public async updatePoRAmount(
+		PoR: ContractId,
+		amount: BigDecimal
+	): Promise<TransactionResponse> {
+		const params = new Params({
+			amount: amount,
+		});
+		return this.performOperation(
+			coin,
+			Operation.PoR_MANAGEMENT,
+			'updateReserveAmount',
+			400000,
+			params
+		);
+	}*/	
 
 	public async grantRole(
 		coin: StableCoinCapabilities,
@@ -861,19 +929,23 @@ class Params {
 	role?: string;
 	targetId?: HederaId;
 	amount?: BigDecimal;
+	PoR?: ContractId;
 
 	constructor({
 		role,
 		targetId,
 		amount,
+		PoR,
 	}: {
 		role?: string;
 		targetId?: HederaId;
 		amount?: BigDecimal;
+		PoR?: ContractId;
 	}) {
 		this.role = role;
 		this.targetId = targetId;
 		this.amount = amount;
+		this.PoR = PoR;
 	}
 }
 

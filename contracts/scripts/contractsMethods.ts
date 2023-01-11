@@ -68,7 +68,7 @@ export async function grantRole(
     accountToGrantRoleTo: string,
     isE25519: boolean
 ) {
-    const params = [ROLE, await toEvmAddress(accountToGrantRoleTo!, isE25519)]
+    const params = [ROLE, await toEvmAddress(accountToGrantRoleTo, isE25519)]
     await contractCall(
         proxyAddress,
         'grantRole',
@@ -88,7 +88,7 @@ export async function revokeRole(
 ) {
     const params: string[] = [
         ROLE,
-        await toEvmAddress(accountToRevokeRoleFrom!, isE25519),
+        await toEvmAddress(accountToRevokeRoleFrom, isE25519),
     ]
     await contractCall(
         proxyAddress,
@@ -109,7 +109,7 @@ export async function hasRole(
 ): Promise<boolean> {
     const params: string[] = [
         ROLE,
-        await toEvmAddress(accountToCheckRoleFrom!, isE25519),
+        await toEvmAddress(accountToCheckRoleFrom, isE25519),
     ]
     const result = await contractCall(
         proxyAddress,
@@ -142,7 +142,7 @@ export async function associateToken(
     isE25519: boolean
 ) {
     const params: string[] = [
-        await toEvmAddress(accountToAssociateTo!, isE25519),
+        await toEvmAddress(accountToAssociateTo, isE25519),
     ]
     await contractCall(
         proxyAddress,
@@ -160,7 +160,7 @@ export async function dissociateToken(
     accountToDissociateFrom: string,
     isE25519: boolean
 ) {
-    const params = [await toEvmAddress(accountToDissociateFrom!, isE25519)]
+    const params = [await toEvmAddress(accountToDissociateFrom, isE25519)]
     await contractCall(
         proxyAddress,
         'dissociateToken',
@@ -179,7 +179,7 @@ export async function getBalanceOf(
     parse = true
 ) {
     const params = parse
-        ? [await toEvmAddress(accountToGetBalanceOf!, isE25519)]
+        ? [await toEvmAddress(accountToGetBalanceOf, isE25519)]
         : [accountToGetBalanceOf]
     const result = await contractCall(
         proxyAddress,
@@ -348,7 +348,7 @@ export async function changeProxyAdmin(
 ) {
     const params = [
         proxyAddress.toSolidityAddress(),
-        await toEvmAddress(newAdminAccount!, isE25519),
+        await toEvmAddress(newAdminAccount, isE25519),
     ]
     await contractCall(
         proxyAdminAddress,
@@ -366,7 +366,7 @@ export async function transferOwnership(
     newOwnerAccount: string,
     isE25519: boolean
 ) {
-    const params = [await toEvmAddress(newOwnerAccount!, isE25519)]
+    const params = [await toEvmAddress(newOwnerAccount, isE25519)]
     await contractCall(
         proxyAdminAddress,
         'transferOwnership',
@@ -503,7 +503,7 @@ export async function changeProxyAdmin_SCF(
 ) {
     const params = [
         proxyAddress.toSolidityAddress(),
-        await toEvmAddress(newAdminAccount!, isE25519),
+        await toEvmAddress(newAdminAccount, isE25519),
     ]
     await contractCall(
         proxyAdminAddress,
@@ -521,7 +521,7 @@ export async function transferOwnership_SCF(
     newOwnerAccount: string,
     isE25519: boolean
 ) {
-    const params = [await toEvmAddress(newOwnerAccount!, isE25519)]
+    const params = [await toEvmAddress(newOwnerAccount, isE25519)]
     await contractCall(
         proxyAdminAddress,
         'transferOwnership',
@@ -712,7 +712,7 @@ export async function Mint(
     isE25519: boolean
 ) {
     const params: string[] = [
-        await toEvmAddress(clientToAssignTokensTo!, isE25519),
+        await toEvmAddress(clientToAssignTokensTo, isE25519),
         amountOfTokenToMint.toString(),
     ]
     const result = await contractCall(
@@ -735,7 +735,7 @@ export async function Wipe(
     isE25519: boolean
 ) {
     const params = [
-        await toEvmAddress(accountToWipeFrom!, isE25519),
+        await toEvmAddress(accountToWipeFrom, isE25519),
         amountOfTokenToWipe.toString(),
     ]
     const result = await contractCall(
@@ -789,7 +789,7 @@ export async function freeze(
     accountToFreeze: string,
     isE25519: boolean
 ) {
-    const params: string[] = [await toEvmAddress(accountToFreeze!, isE25519)]
+    const params: string[] = [await toEvmAddress(accountToFreeze, isE25519)]
     const result = await contractCall(
         proxyAddress,
         'freeze',
@@ -807,7 +807,7 @@ export async function unfreeze(
     accountToUnFreeze: string,
     isE25519: boolean
 ) {
-    const params: string[] = [await toEvmAddress(accountToUnFreeze!, isE25519)]
+    const params: string[] = [await toEvmAddress(accountToUnFreeze, isE25519)]
     const result = await contractCall(
         proxyAddress,
         'unfreeze',
@@ -862,7 +862,7 @@ export async function getRoles(
     isE25519: boolean
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any[]> {
-    const params = [await toEvmAddress(accountToGetRolesFrom!, isE25519)]
+    const params = [await toEvmAddress(accountToGetRolesFrom, isE25519)]
     const result = await contractCall(
         proxyAddress,
         'getRoles',
@@ -900,7 +900,7 @@ export async function decreaseSupplierAllowance(
     isE25519: boolean
 ) {
     const params = [
-        await toEvmAddress(accountToDecreaseFrom!, isE25519),
+        await toEvmAddress(accountToDecreaseFrom, isE25519),
         amountToDecrease.toString(),
     ]
     await contractCall(
@@ -921,7 +921,7 @@ export async function grantSupplierRole(
     isE25519: boolean
 ) {
     const params: string[] = [
-        await toEvmAddress(accountToGrantRoleTo!, isE25519),
+        await toEvmAddress(accountToGrantRoleTo, isE25519),
         cashInLimit.toString(),
     ]
     await contractCall(
@@ -940,7 +940,7 @@ export async function grantUnlimitedSupplierRole(
     accountToGrantRoleTo: string,
     isE25519: boolean
 ) {
-    const params = [await toEvmAddress(accountToGrantRoleTo!, isE25519)]
+    const params = [await toEvmAddress(accountToGrantRoleTo, isE25519)]
     await contractCall(
         proxyAddress,
         'grantUnlimitedSupplierRole',
@@ -959,7 +959,7 @@ export async function increaseSupplierAllowance(
     isE25519: boolean
 ) {
     const params = [
-        await toEvmAddress(accountToIncreaseTo!, isE25519),
+        await toEvmAddress(accountToIncreaseTo, isE25519),
         amountToIncrease.toString(),
     ]
     await contractCall(
@@ -978,7 +978,7 @@ export async function isUnlimitedSupplierAllowance(
     accountToCheckFrom: string,
     isE25519: boolean
 ): Promise<boolean> {
-    const params = [await toEvmAddress(accountToCheckFrom!, isE25519)]
+    const params = [await toEvmAddress(accountToCheckFrom, isE25519)]
     const result = await contractCall(
         proxyAddress,
         'isUnlimitedSupplierAllowance',
@@ -996,7 +996,7 @@ export async function resetSupplierAllowance(
     accountToResetFrom: string,
     isE25519: boolean
 ) {
-    const params = [await toEvmAddress(accountToResetFrom!, isE25519)]
+    const params = [await toEvmAddress(accountToResetFrom, isE25519)]
     await contractCall(
         proxyAddress,
         'resetSupplierAllowance',
@@ -1013,7 +1013,7 @@ export async function revokeSupplierRole(
     accountToRevokeFrom: string,
     isE25519: boolean
 ) {
-    const params = [await toEvmAddress(accountToRevokeFrom!, isE25519)]
+    const params = [await toEvmAddress(accountToRevokeFrom, isE25519)]
     await contractCall(
         proxyAddress,
         'revokeSupplierRole',
@@ -1030,12 +1030,28 @@ export async function supplierAllowance(
     accountToCheckFrom: string,
     isE25519: boolean
 ) {
-    const params = [await toEvmAddress(accountToCheckFrom!, isE25519)]
+    const params = [await toEvmAddress(accountToCheckFrom, isE25519)]
     const result = await contractCall(
         proxyAddress,
         'supplierAllowance',
         params,
         clientCheckingAllowance,
+        Gas2,
+        HederaERC20__factory.abi
+    )
+    return BigNumber.from(result[0])
+}
+
+export async function getReserve(
+    proxyAddress: ContractId,
+    operatorClient: Client
+) {
+    const params: string[] = []
+    const result = await contractCall(
+        proxyAddress,
+        'getReserve',
+        params,
+        operatorClient,
         Gas2,
         HederaERC20__factory.abi
     )
