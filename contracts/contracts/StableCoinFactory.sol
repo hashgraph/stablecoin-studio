@@ -48,7 +48,7 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
             ''
         );
 
-        address reserveAddress;
+        address reserveAddress = requestedToken.reserveAddress;
         // Create reserve
         if (requestedToken.createReserve) {
             HederaReserveProxy reserveProxy;
@@ -65,8 +65,6 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
                 msg.sender
             );
             reserveAddress = address(reserveProxy);
-        } else if (requestedToken.reserveAddress != address(0)) {
-            reserveAddress = requestedToken.reserveAddress;
         }
 
         // Create Token
