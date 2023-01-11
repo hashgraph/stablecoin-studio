@@ -7,15 +7,15 @@ import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 contract HederaReserve is IHederaReserve, Initializable {
     uint8 private constant _decimals = 2;
     uint80 private constant _cRoundId = 0;
-    uint256 private _reserveAddress;
+    int256 private _reserve;
 
     /**
      *  @dev Initializes the reserve with the initial amount
      *
      *  @param initialReserve The initial amount to be on the reserve
      */
-    function initialize(uint256 initialReserve) external onlyInitializing {
-        _reserveAddress = initialReserve;
+    function initialize(int256 initialReserve) external onlyInitializing {
+        _reserve = initialReserve;
         emit ReserveInitialized(initialReserve);
     }
 
@@ -24,8 +24,8 @@ contract HederaReserve is IHederaReserve, Initializable {
      *
      *  @param newValue The new value of the reserve
      */
-    function set(uint256 newValue) external {
-        _reserveAddress = newValue;
+    function set(int256 newValue) external {
+        _reserve = newValue;
     }
 
     /**
@@ -92,7 +92,7 @@ contract HederaReserve is IHederaReserve, Initializable {
     {
         return (
             _cRoundId,
-            int(_reserveAddress),
+            _reserve,
             block.timestamp,
             block.timestamp,
             _cRoundId
