@@ -388,7 +388,7 @@ class StableCoinInPort implements IStableCoinInPort {
 	async updatePoR(
 		request: UpdatePoRRequest,
 	): Promise<boolean> {
-		handleValidation('ChangePoRRequest', request);
+		handleValidation('UpdatePoRRequest', request);
 
 		return (
 			await this.commandBus.execute(

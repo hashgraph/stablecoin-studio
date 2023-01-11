@@ -368,7 +368,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		} catch (error) {
 			throw new TransactionResponseError({
 				RPC_relay: true,
-				message: `Unexpected error in HederaTransactionHandler changePoR operation : ${error}`,
+				message: `Unexpected error in HederaTransactionHandler updatePoR operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
 			});
 		}
@@ -396,7 +396,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		} catch (error) {
 			throw new TransactionResponseError({
 				RPC_relay: true,
-				message: `Unexpected error in HederaTransactionHandler changePoR operation : ${error}`,
+				message: `Unexpected error in HederaTransactionHandler updatePoR operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
 			});
 		}
@@ -424,7 +424,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		} catch (error) {
 			throw new TransactionResponseError({
 				RPC_relay: true,
-				message: `Unexpected error in HederaTransactionHandler changePoR operation : ${error}`,
+				message: `Unexpected error in HederaTransactionHandler updatePoR operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
 			});
 		}
@@ -452,7 +452,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		} catch (error) {
 			throw new TransactionResponseError({
 				RPC_relay: true,
-				message: `Unexpected error in HederaTransactionHandler changePorAmount operation : ${error}`,
+				message: `Unexpected error in HederaTransactionHandler updatePorAmount operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
 			});
 		}
