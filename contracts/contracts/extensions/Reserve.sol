@@ -46,13 +46,13 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
         uint8 tokenDecimals = _decimals();
         if (tokenDecimals > reserveDecimals) {
             require(
-                amount % (10 ** reserveDecimals) == 0,
+                amount % (10 ** (tokenDecimals - reserveDecimals)) == 0,
                 'Format number incorrect'
             );
             currentReserve =
                 currentReserve *
                 (10 ** (tokenDecimals - reserveDecimals));
-        } else {
+        } else if (tokenDecimals < reserveDecimals) {
             amount = amount * (10 ** (reserveDecimals - tokenDecimals));
         }
 
