@@ -62,7 +62,7 @@ const StableCoinCreation = () => {
 			decimals: 6,
 			hederaERC20: HederaERC20AddressTestnet,
 			stableCoinFactory: FactoryAddressTestnet,
-			createPoR: false,
+			createReserve: false,
 		}),
 	);
 
@@ -177,13 +177,13 @@ const StableCoinCreation = () => {
 		request.autoRenewAccount = autorenewAccount;
 
 		if (!PoRInitialAmount){
-			request.createPoR = false;
-			request.PoR = PoR;
+			request.createReserve = false;
+			request.reserveAddress = PoR;
 
 		}else{
-			request.createPoR = true;
-			request.PoRInitialAmount = PoRInitialAmount;
-			request.PoR = undefined;
+			request.createReserve = true;
+			request.reserveInitialAmount = PoRInitialAmount;
+			request.reserveAddress = undefined;
 
 		}
 

@@ -5,7 +5,7 @@ import {
 	Role,
 	CapabilitiesRequest,
 	ConnectRequest,
-	InitializationRequest,
+	InitializationRequest
 } from 'hedera-stable-coin-sdk';
 import type {
 	WalletEvent,
@@ -36,7 +36,8 @@ import type {
 	GetSupplierAllowanceRequest,
 	CheckSupplierLimitRequest,
 	RequestAccount,
-} from 'hedera-stable-coin-sdk';
+
+	ReserveViewModel} from 'hedera-stable-coin-sdk';
 
 export type StableCoinListRaw = Array<Record<'id' | 'symbol', string>>;
 
@@ -101,10 +102,8 @@ export class SDKService {
 
 	public static async createStableCoin(
 		CreateRequest: CreateRequest,
-	): Promise<StableCoinViewModel | null> {
-		// return await StableCoin.create(CreateRequest);
-		console.log(CreateRequest);
-		return null;
+	): Promise<{coin: StableCoinViewModel; reserve: ReserveViewModel;}| null> {
+		 return await StableCoin.create(CreateRequest);
 	}
 
 	public static async getBalance(req: GetAccountBalanceRequest) {
