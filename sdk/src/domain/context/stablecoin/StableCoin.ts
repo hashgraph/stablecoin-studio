@@ -44,7 +44,6 @@ import SymbolEmpty from './error/SymbolEmpty.js';
 import SymbolLength from './error/SymbolLength.js';
 import { TokenSupplyType } from './TokenSupply.js';
 import { TokenType } from './TokenType.js';
-import { PoRLessThanTotalSupply } from './error/PoRLessThanTotalSupply.js';
 
 const MAX_SUPPLY = 9_223_372_036_854_775_807n;
 const TEN = 10;

@@ -24,8 +24,6 @@ import TransactionResponse from '../../../domain/context/transaction/Transaction
 import { TransactionResponseError } from '../error/TransactionResponseError.js';
 import { TransactionResponseAdapter } from '../TransactionResponseAdapter.js';
 
-const ERROR_STATUS = 0;
-
 export class RPCTransactionResponseAdapter extends TransactionResponseAdapter {
 	public static async manageResponse(
 		response: ethers.ContractTransaction,

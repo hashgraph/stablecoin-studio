@@ -54,7 +54,6 @@ import { FactoryStableCoin } from '../../../domain/context/factory/FactoryStable
 import { TOKEN_CREATION_COST_HBAR } from '../../../core/Constants.js';
 import LogService from '../../../app/service/LogService.js';
 import { TransactionResponseError } from '../error/TransactionResponseError.js';
-import { Contract } from 'ethers';
 
 const RESERVE_AMOUNT_DECIMALS = 2;
 
@@ -943,22 +942,5 @@ class Params {
 		this.targetId = targetId;
 		this.amount = amount;
 		this.PoR = PoR;
-	}
-}
-
-class RoleParams extends Params {
-	role?: string;
-
-	constructor({
-		targetId,
-		amount,
-		role,
-	}: {
-		targetId?: HederaId;
-		amount?: BigDecimal;
-		role?: string;
-	}) {
-		super({ targetId, amount });
-		this.role = role;
 	}
 }
