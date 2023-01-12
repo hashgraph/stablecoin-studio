@@ -27,7 +27,7 @@ import TransactionService from '../../../../../service/TransactionService.js';
 import { UpdateReserveAddressCommand, UpdateReserveAddressCommandResponse } from './UpdateReserveAddressCommand.js';
 
 @CommandHandler(UpdateReserveAddressCommand)
-export class UpdatePoRCommandHandler implements ICommandHandler<UpdateReserveAddressCommand> {
+export class UpdateReserveAddressCommandHandler implements ICommandHandler<UpdateReserveAddressCommand> {
 	constructor(
 		@lazyInject(StableCoinService)
 		public readonly stableCoinService: StableCoinService,

@@ -48,13 +48,13 @@ export default class UpdateReserveAmountRequest extends ValidatedRequest<UpdateR
 					return [new InvalidDecimalRange(val, reserveAmountDecimals)];
 				}
 
-				const PoRAmount = BigDecimal.fromString(
+				const reserveAmount = BigDecimal.fromString(
 					val,
 					reserveAmountDecimals,
 				);
 			
 				return StableCoin.checkReserveAmount(
-					PoRAmount,
+					reserveAmount,
 					reserveAmountDecimals
 				);
 			},

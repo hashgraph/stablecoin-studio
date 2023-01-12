@@ -193,7 +193,7 @@ export default class StableCoinService extends Service {
 					new Capability(Operation.ROLE_ADMIN_MANAGEMENT, Access.CONTRACT),
 				);
 				listCapabilities.push(
-					new Capability(Operation.PoR_MANAGEMENT, Access.CONTRACT),
+					new Capability(Operation.RESERVE_MANAGEMENT, Access.CONTRACT),
 				);
 			}
 			

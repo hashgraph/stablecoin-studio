@@ -458,35 +458,35 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		expect(tr.response).toEqual(true);
 	}, 20000);
 
-	it('Test get feed address returns null when stable coin has no PoR', async () => {
+	it('Test get feed address returns null when stable coin has no reserve', async () => {
 		tr = await th.getReserveAddress(
 			stableCoinCapabilitiesSC
 		);
 		expect(tr.response).toBeNull
 	}, 20000);
 
-	it('Test get feed address returns a value when stable coin has PoR', async () => {
+	it('Test get reserve address returns a value when stable coin has reserve', async () => {
 		tr = await th.getReserveAddress(
 			stableCoinCapabilitiesHTS
 		);
 		expect(tr.response).not.toBeNull
 	}, 20000);
 
-	it('Test get PoR amount returns null when stable coin has no PoR', async () => {
+	it('Test get reserve amount returns null when stable coin has no reserve', async () => {
 		tr = await th.getReserveAmount(
 			stableCoinCapabilitiesSC
 		);
 		expect(tr.response).toBeNull
 	}, 20000);
 
-	it('Test get PoR amount returns a value when stable coin has PoR', async () => {
+	it('Test get reserve amount returns a value when stable coin has reserve', async () => {
 		tr = await th.getReserveAmount(
 			stableCoinCapabilitiesHTS
 		);
 		expect(tr.response).not.toBeNull
 	}, 20000);
 	
-	it('Test update PoR amount when stable coin has PoR', async () => {
+	it('Test update reserve amount when stable coin has reserve', async () => {
 		tr = await th.getReserveAddress(
 			stableCoinCapabilitiesHTS
 		);
@@ -501,7 +501,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		expect(tr.response).toEqual(BigDecimal.fromStringFixed('1000', 2))
 	}, 20000);
 
-	it('Test update feed address when stable coin has PoR', async () => {
+	it('Test update reserve address when stable coin has reserve', async () => {
 		tr = await th.updateReserveAddress(
 			stableCoinCapabilitiesHTS,
 			new ContractId('0.0.11111111')
@@ -929,35 +929,35 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 		expect(tr.response).toEqual(true);
 	}, 20000);
 
-	it('Test get feed address returns null when stable coin has no PoR', async () => {
+	it('Test get reserve address returns null when stable coin has no reserve', async () => {
 		tr = await th.getReserveAddress(
 			stableCoinCapabilitiesSC
 		);
 		expect(tr.response).toBeNull
 	}, 20000);
 
-	it('Test get feed address returns a value when stable coin has PoR', async () => {
+	it('Test get reserve address returns a value when stable coin has reserve', async () => {
 		tr = await th.getReserveAddress(
 			stableCoinCapabilitiesHTS
 		);
 		expect(tr.response).not.toBeNull
 	}, 20000);
 
-	it('Test get PoR amount returns null when stable coin has no PoR', async () => {
+	it('Test get reserve amount returns null when stable coin has no reserve', async () => {
 		tr = await th.getReserveAmount(
 			stableCoinCapabilitiesSC
 		);
 		expect(tr.response).toBeNull
 	}, 20000);
 
-	it('Test get PoR amount returns a value when stable coin has PoR', async () => {
+	it('Test get reserve amount returns a value when stable coin has reserve', async () => {
 		tr = await th.getReserveAmount(
 			stableCoinCapabilitiesHTS
 		);
 		expect(tr.response).not.toBeNull
 	}, 20000);
 	
-	it('Test update PoR amount when stable coin has PoR', async () => {
+	it('Test update reserve amount when stable coin has reserve', async () => {
 		tr = await th.getReserveAddress(
 			stableCoinCapabilitiesHTS
 		);
@@ -972,7 +972,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 		expect(tr.response).toEqual(BigDecimal.fromStringFixed('1000', 2))
 	}, 20000);
 
-	it('Test update feed address when stable coin has PoR', async () => {
+	it('Test update reserve address when stable coin has reserve', async () => {
 		tr = await th.updateReserveAddress(
 			stableCoinCapabilitiesHTS,
 			new ContractId('0.0.11111111')

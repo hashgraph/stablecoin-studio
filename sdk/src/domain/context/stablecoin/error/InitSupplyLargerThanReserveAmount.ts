@@ -21,8 +21,8 @@
 import BaseError, { ErrorCode } from "../../../../core/error/BaseError.js";
 
 
-export class InitSupplyLargerThanPoR extends BaseError {
-    constructor(initSupply: string, PoRInitialAmount: string) {
-        super(ErrorCode.InvalidRange, `Initial supply ${initSupply} is bigger than PoR initial amount ${PoRInitialAmount}`);        
+export class InitSupplyLargerThanReserveAmount extends BaseError {
+    constructor(initSupply: string, reserveInitialAmount: string) {
+        super(ErrorCode.InvalidRange, `Initial supply ${initSupply} is bigger than PoR initial amount ${reserveInitialAmount}`);        
     }
 }

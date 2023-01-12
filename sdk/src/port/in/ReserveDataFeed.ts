@@ -25,9 +25,7 @@ import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import ContractId from '../../domain/context/contract/ContractId.js';
 import { CommandBus } from '../../core/command/CommandBus.js';
 import { handleValidation } from './Common.js';
-import UpdatePoRAmountRequest from './request/UpdateReserveAmountRequest.js';
 import { UpdateReserveAmountCommand } from '../../app/usecase/command/reserve/operations/updateReserveAmount/UpdateReserveAmountCommand.js';
-import GetPoRAmountRequest from './request/GetReserveAmountRequest.js';
 import { Balance } from '../../domain/context/stablecoin/Balance.js';
 import { HederaId } from '../../domain/context/shared/HederaId.js';
 import UpdateReserveAmountRequest from './request/UpdateReserveAmountRequest.js';
@@ -35,8 +33,8 @@ import GetReserveAmountRequest from './request/GetReserveAmountRequest.js';
 import { GetReserveAmountCommand } from '../../app/usecase/command/reserve/operations/getReserveAmount/GetReserveAmountCommand.js';
 
 interface IReserveDataFeedInPort {
-	getReserveAmount(request: GetPoRAmountRequest): Promise<Balance>;
-	updateReserveAmount(request: UpdatePoRAmountRequest): Promise<boolean>
+	getReserveAmount(request: GetReserveAmountRequest): Promise<Balance>;
+	updateReserveAmount(request: UpdateReserveAmountRequest): Promise<boolean>
 }
 
 class ReserveDataFeedInPort implements IReserveDataFeedInPort {

@@ -24,7 +24,7 @@ export class ReserveAmountOverLimit extends BaseError {
 	constructor(ReserveInitialAmount: string, limit: string) {
 		super(
 			ErrorCode.InvalidAmount,
-			`PoR initial amount ${ReserveInitialAmount} is over maximum limit ${limit}.`,
+			`Reserve initial amount ${ReserveInitialAmount} is over maximum limit ${limit}.`,
 		);
 	}
 }

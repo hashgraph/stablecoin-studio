@@ -414,7 +414,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		});
 		return this.performOperation(
 			coin,
-			Operation.PoR_MANAGEMENT,
+			Operation.RESERVE_MANAGEMENT,
 			'updateReserveAddress',
 			400000,
 			params,

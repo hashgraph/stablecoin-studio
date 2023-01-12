@@ -27,7 +27,7 @@ import TransactionService from '../../../../../service/TransactionService.js';
 import { GetReserveAmountCommand, GetReserveAmountCommandResponse } from './GetReserveAmountCommand.js';
 
 @CommandHandler(GetReserveAmountCommand)
-export class GetPoRCommandHandler implements ICommandHandler<GetReserveAmountCommand> {
+export class GetReserveAmountCommandHandler implements ICommandHandler<GetReserveAmountCommand> {
 	constructor(
 		@lazyInject(StableCoinService)
 		public readonly stableCoinService: StableCoinService,

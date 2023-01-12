@@ -30,7 +30,7 @@ export enum Operation {
 	RESCUE = 'Rescue',
 	ROLE_MANAGEMENT = 'Role_Management',
 	ROLE_ADMIN_MANAGEMENT = 'Admin Role',
-	PoR_MANAGEMENT = 'Admin Role',
+	RESERVE_MANAGEMENT = 'Admin Role',
 }
 
 export enum Access {

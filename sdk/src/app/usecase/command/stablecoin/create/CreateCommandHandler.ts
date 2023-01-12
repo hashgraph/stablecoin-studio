@@ -58,7 +58,7 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 			coin.initialSupply.isGreaterThan(reserveInitialAmount)
 		) {
 			throw new OperationNotAllowed(
-				'Initial supply cannot be more than the PoR initial amount',
+				'Initial supply cannot be more than the reserve initial amount',
 			);
 		}
 

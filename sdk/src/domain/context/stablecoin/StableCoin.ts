@@ -32,7 +32,7 @@ import BigDecimal from '../shared/BigDecimal.js';
 import { HederaId } from '../shared/HederaId.js';
 import { InitSupplyInvalid } from './error/InitSupplyInvalid.js';
 import { InitSupplyLargerThanMaxSupply } from './error/InitSupplyLargerThanMaxSupply.js';
-import { InitSupplyLargerThanPoR } from './error/InitSupplyLargerThanPoR.js';
+import { InitSupplyLargerThanReserveAmount } from './error/InitSupplyLargerThanReserveAmount.js';
 import InvalidAmount from './error/InvalidAmount.js';
 import InvalidDecimalRange from './error/InvalidDecimalRange.js';
 import InvalidMaxSupplySupplyType from './error/InvalidMaxSupplySupplyType.js';
@@ -278,7 +278,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 				);
 			} else {
 				list.push(
-					new InitSupplyLargerThanPoR(
+					new InitSupplyLargerThanReserveAmount(
 						min.toString(),
 						reserveInitialAmount.toString(),
 					),
