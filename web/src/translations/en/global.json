@@ -40,7 +40,8 @@
 	"sidebar": {
 		"operations": "Operations",
 		"role": "Role management",
-		"details": "Stable coin details"
+		"details": "Stable coin details",
+		"proofOfReserve": "Proof of Reserve"
 	},
 	"validations": {
 		"required": "This field is required",

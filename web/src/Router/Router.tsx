@@ -32,6 +32,7 @@ import ImportedTokenCreation from '../views/ImportedToken/ImportedTokenCreation'
 import DangerZoneOperations from '../views/Operations/DangerZone';
 import type { EventParameter, WalletEvent } from 'hedera-stable-coin-sdk';
 import { LoggerTransports, SDK, ConnectionState } from 'hedera-stable-coin-sdk';
+import StableCoinProof from '../views/StableCoinProof';
 
 const LoginOverlayRoute = ({ show }: { show: boolean }) => {
 	return (
@@ -157,6 +158,9 @@ const Router = () => {
 								/>
 								<Route path={RoutesMappingUrl.roles} element={<Roles />} />
 								<Route path={RoutesMappingUrl.stableCoinDetails} element={<StableCoinDetails />} />
+								<Route path={RoutesMappingUrl.proofOfReserve} element={<StableCoinProof/>} />
+								
+								
 							</>
 						)}
 						<Route path={RoutesMappingUrl.stableCoinCreation} element={<StableCoinCreation />} />
@@ -166,6 +170,7 @@ const Router = () => {
 							element={<StableCoinNotSelected />}
 						/>
 						<Route path='*' element={<Navigate to={RoutesMappingUrl.stableCoinNotSelected} />} />
+						
 					</Route>
 				</Routes>
 			) : (

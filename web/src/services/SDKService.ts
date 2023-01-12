@@ -102,7 +102,9 @@ export class SDKService {
 	public static async createStableCoin(
 		CreateRequest: CreateRequest,
 	): Promise<StableCoinViewModel | null> {
-		return await StableCoin.create(CreateRequest);
+		// return await StableCoin.create(CreateRequest);
+		console.log(CreateRequest);
+		return null;
 	}
 
 	public static async getBalance(req: GetAccountBalanceRequest) {

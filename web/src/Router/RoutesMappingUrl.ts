@@ -24,4 +24,5 @@ export const RoutesMappingUrl: Record<NamedRoutes, string> = {
 	[NamedRoutes.DangerZone]: '/operations/danger-zone',
 	[NamedRoutes.Freeze]: '/operations/freeze',
 	[NamedRoutes.Unfreeze]: '/operations/unfreeze',
+	[NamedRoutes.ProofOfReserve]: '/proofOfReserve',
 };

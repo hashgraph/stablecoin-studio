@@ -35,6 +35,12 @@ const Sidebar = () => {
 			title: t('sidebar.details'),
 			route: NamedRoutes.StableCoinDetails,
 		},
+		{
+			icon: 'Gear',
+			title: t('sidebar.proofOfReserve'),
+			route: NamedRoutes.ProofOfReserve,
+		},
+
 	];
 	
 	return (
