@@ -20,7 +20,7 @@
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Injectable from '../../core/Injectable.js';
-import CreateRequest, { reserveAmountDecimals } from './request/CreateRequest.js';
+import CreateRequest from './request/CreateRequest.js';
 import CashInRequest from './request/CashInRequest.js';
 import GetStableCoinDetailsRequest from './request/GetStableCoinDetailsRequest.js';
 import BurnRequest from './request/BurnRequest.js';
@@ -71,6 +71,7 @@ import UpdateReserveAddressRequest from './request/UpdateReserveAddressRequest.j
 import GetReserveAddressRequest from './request/GetReserveAddressRequest.js';
 import { GetReserveAddressCommand } from '../../app/usecase/command/stablecoin/operations/getReserveAddress/GetReserveAddressCommand.js';
 import { UpdateReserveAddressCommand } from '../../app/usecase/command/stablecoin/operations/updateReserveAddress/UpdateReserveAddressCommand.js';
+import { RESERVE_DECIMALS } from '../../domain/context/reserve/Reserve.js';
 
 export const HederaERC20AddressTestnet = '0.0.49274511';
 export const HederaERC20AddressPreviewnet = '0.0.11111111';
@@ -197,7 +198,7 @@ class StableCoinInPort implements IStableCoinInPort {
 				createReserve,
 				reserveAddress ? new ContractId(reserveAddress) : undefined,
 				reserveInitialAmount
-					? BigDecimal.fromString(reserveInitialAmount, reserveAmountDecimals)
+					? BigDecimal.fromString(reserveInitialAmount, RESERVE_DECIMALS)
 					: undefined,
 			),
 		);

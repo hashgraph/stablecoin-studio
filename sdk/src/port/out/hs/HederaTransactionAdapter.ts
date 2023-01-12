@@ -54,8 +54,7 @@ import { FactoryStableCoin } from '../../../domain/context/factory/FactoryStable
 import { TOKEN_CREATION_COST_HBAR } from '../../../core/Constants.js';
 import LogService from '../../../app/service/LogService.js';
 import { TransactionResponseError } from '../error/TransactionResponseError.js';
-
-const RESERVE_AMOUNT_DECIMALS = 2;
+import { RESERVE_DECIMALS } from '../../../domain/context/reserve/Reserve.js';
 
 export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	private web3 = new Web3();
@@ -434,7 +433,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 
 		transactionResponse.response = BigDecimal.fromStringFixed(
 			transactionResponse.response[0].toString(),
-			RESERVE_AMOUNT_DECIMALS,
+			RESERVE_DECIMALS,
 		);
 		return transactionResponse;
 	}

@@ -20,7 +20,6 @@
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Injectable from '../../core/Injectable.js';
-import { reserveAmountDecimals } from './request/CreateRequest.js';
 import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import ContractId from '../../domain/context/contract/ContractId.js';
 import { CommandBus } from '../../core/command/CommandBus.js';
@@ -31,6 +30,7 @@ import { HederaId } from '../../domain/context/shared/HederaId.js';
 import UpdateReserveAmountRequest from './request/UpdateReserveAmountRequest.js';
 import GetReserveAmountRequest from './request/GetReserveAmountRequest.js';
 import { GetReserveAmountCommand } from '../../app/usecase/command/reserve/operations/getReserveAmount/GetReserveAmountCommand.js';
+import { RESERVE_DECIMALS } from '../../domain/context/reserve/Reserve.js';
 
 interface IReserveDataFeedInPort {
 	getReserveAmount(request: GetReserveAmountRequest): Promise<Balance>;
@@ -67,7 +67,7 @@ class ReserveDataFeedInPort implements IReserveDataFeedInPort {
 			await this.commandBus.execute(
 				new UpdateReserveAmountCommand(
 					new ContractId(request.reserveAddress),
-					BigDecimal.fromString(request.reserveAmount, reserveAmountDecimals)
+					BigDecimal.fromString(request.reserveAmount, RESERVE_DECIMALS)
 				),
 			)
 		).payload;

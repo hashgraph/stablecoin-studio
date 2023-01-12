@@ -22,6 +22,7 @@
 import CheckNums from '../../../core/checks/numbers/CheckNums.js';
 import { OptionalField } from '../../../core/decorator/OptionalDecorator.js';
 import Injectable from '../../../core/Injectable.js';
+import { RESERVE_DECIMALS } from '../../../domain/context/reserve/Reserve.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import InvalidDecimalRange from '../../../domain/context/stablecoin/error/InvalidDecimalRange.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
@@ -33,8 +34,6 @@ import { InvalidType } from './error/InvalidType.js';
 import { InvalidValue } from './error/InvalidValue.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
-
-export const reserveAmountDecimals = 2;
 
 export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 	name: string;
@@ -241,13 +240,13 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 				if (!BigDecimal.isBigDecimal(val)) {
 					return [new InvalidType(val, 'BigDecimal')];
 				}
-				if (CheckNums.hasMoreDecimals(val, reserveAmountDecimals)) {
-					return [new InvalidDecimalRange(val, reserveAmountDecimals)];
+				if (CheckNums.hasMoreDecimals(val, RESERVE_DECIMALS)) {
+					return [new InvalidDecimalRange(val, RESERVE_DECIMALS)];
 				}
 
 				const reserveInitialAmount = BigDecimal.fromString(
 					val,
-					reserveAmountDecimals,
+					RESERVE_DECIMALS,
 				);
 
 				const bInitialSupply =
@@ -265,7 +264,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 
 				return StableCoin.checkReserveInitialAmount(
 					reserveInitialAmount,
-					reserveAmountDecimals,
+					RESERVE_DECIMALS,
 					bInitialSupply,
 				);
 			},

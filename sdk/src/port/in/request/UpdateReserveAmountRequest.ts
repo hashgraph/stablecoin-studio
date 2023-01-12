@@ -22,10 +22,10 @@ import CheckNums from '../../../core/checks/numbers/CheckNums.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import InvalidDecimalRange from '../../../domain/context/stablecoin/error/InvalidDecimalRange.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
-import { reserveAmountDecimals } from './CreateRequest.js';
 import { InvalidType } from './error/InvalidType.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
+import { RESERVE_DECIMALS } from '../../../domain/context/reserve/Reserve.js';
 
 export default class UpdateReserveAmountRequest extends ValidatedRequest<UpdateReserveAmountRequest> {
 	reserveAddress: string;
@@ -44,18 +44,18 @@ export default class UpdateReserveAmountRequest extends ValidatedRequest<UpdateR
 				if (!BigDecimal.isBigDecimal(val)) {
 					return [new InvalidType(val, 'BigDecimal')];
 				}
-				if (CheckNums.hasMoreDecimals(val, reserveAmountDecimals)) {
-					return [new InvalidDecimalRange(val, reserveAmountDecimals)];
+				if (CheckNums.hasMoreDecimals(val, RESERVE_DECIMALS)) {
+					return [new InvalidDecimalRange(val, RESERVE_DECIMALS)];
 				}
 
 				const reserveAmount = BigDecimal.fromString(
 					val,
-					reserveAmountDecimals,
+					RESERVE_DECIMALS,
 				);
 			
 				return StableCoin.checkReserveAmount(
 					reserveAmount,
-					reserveAmountDecimals
+					RESERVE_DECIMALS
 				);
 			},
 		});
