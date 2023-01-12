@@ -8,14 +8,14 @@ import './TokenOwner.sol';
 
 abstract contract Reserve is IReserve, TokenOwner, Roles {
     // The address of the internal reserve
-    address internal _dataFeed;
+    address internal _reserveAddress;
 
     /**
      * @dev
      */
     modifier checkReserveIncrease(uint256 amount) {
         require(
-            _checkReserve(amount, false),
+            _checkReserveAmount(amount, false),
             'Amount is bigger than current reserve'
         );
         _;
@@ -23,22 +23,22 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
 
     modifier checkReserveDecrease(uint256 amount) {
         require(
-            _checkReserve(amount, true),
+            _checkReserveAmount(amount, true),
             'Amount is bigger than current reserve'
         );
         _;
     }
 
     function reserve_init(address dataFeed) internal onlyInitializing {
-        _dataFeed = dataFeed;
+        _reserveAddress = dataFeed;
     }
 
-    function _checkReserve(
+    function _checkReserveAmount(
         uint256 amount,
         bool less
     ) internal view returns (bool) {
-        if (_dataFeed == address(0)) return true;
-        int256 currentReserve = _getReserve();
+        if (_reserveAddress == address(0)) return true;
+        int256 currentReserve = _getReserveAmount();
         assert(currentReserve >= 0);
         if (less) {
             return uint(currentReserve) >= amount;
@@ -47,28 +47,28 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
         }
     }
 
-    function getReserve() external view returns (int256) {
-        return _getReserve();
+    function getReserveAmount() external view returns (int256) {
+        return _getReserveAmount();
     }
 
-    function _getReserve() internal view returns (int256) {
-        if (_dataFeed != address(0)) {
-            (, int256 answer, , , ) = AggregatorV3Interface(_dataFeed)
+    function _getReserveAmount() internal view returns (int256) {
+        if (_reserveAddress != address(0)) {
+            (, int256 answer, , , ) = AggregatorV3Interface(_reserveAddress)
                 .latestRoundData();
             return answer;
         }
         return 0;
     }
 
-    function updateDataFeed(
+    function updateReserveAddress(
         address newAddress
     ) external onlyRole(_getRoleId(roleName.ADMIN)) {
-        address previous = _dataFeed;
-        _dataFeed = newAddress;
+        address previous = _reserveAddress;
+        _reserveAddress = newAddress;
         emit ReserveAddressChanged(previous, newAddress);
     }
 
-    function getDataFeed() external view returns (address) {
-        return _dataFeed;
+    function getReserveAddress() external view returns (address) {
+        return _reserveAddress;
     }
 }
