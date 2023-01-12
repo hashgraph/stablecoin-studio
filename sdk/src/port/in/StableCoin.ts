@@ -67,9 +67,9 @@ import { UnFreezeCommand } from '../../app/usecase/command/stablecoin/operations
 import { GetAccountInfoQuery } from '../../app/usecase/query/account/info/GetAccountInfoQuery.js';
 import { handleValidation } from './Common.js';
 import { GetAccountTokenAssociatedQuery } from '../../app/usecase/query/account/tokenAssociated/GetAccountTokenAssociatedQuery.js';
-import UpdatePoRRequest from './request/UpdatePoRRequest.js';
+import UpdatePoRRequest from './request/UpdateReserveRequest.js';
 import { UpdatePoRCommand } from '../../app/usecase/command/stablecoin/operations/updatePoR/UpdatePoRCommand.js';
-import GetPoRRequest from './request/GetPoRRequest.js';
+import GetPoRRequest from './request/GetReserveAddressRequest.js';
 import { GetPoRCommand } from '../../app/usecase/command/stablecoin/operations/getPoR/GetPoRCommand.js';
 
 export const HederaERC20AddressTestnet = '0.0.49274511';

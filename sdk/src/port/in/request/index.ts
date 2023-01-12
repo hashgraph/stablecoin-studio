@@ -47,10 +47,10 @@ import GetPublicKeyRequest from './GetPublicKeyRequest.js';
 import InitializationRequest from './InitializationRequest.js';
 import SetNetworkRequest from './SetNetworkRequest.js';
 import IsAccountAssociatedTokenRequest from './IsAccountAssociatedTokenRequest.js';
-import GetPoRRequest from './GetPoRRequest.js';
-import UpdatePoRRequest from './UpdatePoRRequest.js';
-import GetPoRAmountRequest from './GetPoRAmountRequest.js';
-import UpdatePoRAmountRequest from './UpdatePoRAmountRequest.js';
+import GetPoRRequest from './GetReserveAddressRequest.js';
+import UpdatePoRRequest from './UpdateReserveRequest.js';
+import GetPoRAmountRequest from './GetReserveAmountRequest.js';
+import UpdatePoRAmountRequest from './UpdateReserveAmountRequest.js';
 
 export * from './BaseRequest.js';
 export {

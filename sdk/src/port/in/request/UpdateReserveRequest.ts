@@ -23,20 +23,20 @@ import Validation from './validation/Validation.js';
 
 export default class UpdatePoRRequest extends ValidatedRequest<UpdatePoRRequest> {
 	tokenId: string;
-	PoR: string;
+	reserveAddress: string;
 
 	constructor({ 
 		tokenId,
-		PoR 
+		reserveAddress 
 	}: { 
 		tokenId: string;
-		PoR: string;
+		reserveAddress: string;
 	}) {
 		super({
 			tokenId: Validation.checkHederaIdFormat(),
-			PoR: Validation.checkContractId()
+			reserveAddress: Validation.checkContractId()
 		});
 		this.tokenId = tokenId;
-		this.PoR = PoR;
+		this.reserveAddress = reserveAddress;
 	}
 }

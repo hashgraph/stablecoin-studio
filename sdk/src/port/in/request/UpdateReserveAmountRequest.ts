@@ -27,9 +27,9 @@ import { InvalidType } from './error/InvalidType.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
 
-export default class UpdatePoRAmountRequest extends ValidatedRequest<UpdatePoRAmountRequest> {
-	PoR: string;
-	PoRAmount: string;
+export default class UpdateReserveAmountRequest extends ValidatedRequest<UpdateReserveAmountRequest> {
+	reserveAddress: string;
+	reserveAmount: string;
 
 	constructor({ 
 		PoR,

@@ -21,8 +21,8 @@
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
 
-export default class GetPoRRequest
-	extends ValidatedRequest<GetPoRRequest>
+export default class GetReserveAmountRequest
+	extends ValidatedRequest<GetReserveAmountRequest>
 {
 	tokenId: string;
 
