@@ -26,12 +26,13 @@ import ContractId from '../../domain/context/contract/ContractId.js';
 import { CommandBus } from '../../core/command/CommandBus.js';
 import { handleValidation } from './Common.js';
 import UpdatePoRAmountRequest from './request/UpdateReserveAmountRequest.js';
-import { UpdatePoRAmountCommand } from '../../app/usecase/command/PoRdatafeed/operations/updatePoRAmount/UpdatePoRAmountCommand.js';
+import { UpdateReserveAmountCommand } from '../../app/usecase/command/reserve/operations/updateReserveAmount/UpdateReserveAmountCommand.js';
 import GetPoRAmountRequest from './request/GetReserveAmountRequest.js';
-import { GetPoRAmountCommand } from '../../app/usecase/command/PoRdatafeed/operations/getPoRAmount/GetPoRAmountCommand.js';
 import { Balance } from '../../domain/context/stablecoin/Balance.js';
 import { HederaId } from '../../domain/context/shared/HederaId.js';
 import UpdateReserveAmountRequest from './request/UpdateReserveAmountRequest.js';
+import GetReserveAmountRequest from './request/GetReserveAmountRequest.js';
+import { GetReserveAmountCommand } from '../../app/usecase/command/reserve/operations/getReserveAmount/GetReserveAmountCommand.js';
 
 interface IReserveDataFeedInPort {
 	getReserveAmount(request: GetPoRAmountRequest): Promise<Balance>;
@@ -46,12 +47,12 @@ class ReserveDataFeedInPort implements IReserveDataFeedInPort {
 	) {}
 
 	async getReserveAmount(
-		request: GetPoRAmountRequest,
+		request: GetReserveAmountRequest,
 	): Promise<Balance> {
-		handleValidation('GetPoRAmountRequest', request);
+		handleValidation('GetReserveAmountRequest', request);
 
 		const res = await this.commandBus.execute(
-			new GetPoRAmountCommand(
+			new GetReserveAmountCommand(
 				HederaId.from(request.tokenId)
 			)
 		);
@@ -66,7 +67,7 @@ class ReserveDataFeedInPort implements IReserveDataFeedInPort {
 
 		return (
 			await this.commandBus.execute(
-				new UpdatePoRAmountCommand(
+				new UpdateReserveAmountCommand(
 					new ContractId(request.reserveAddress),
 					BigDecimal.fromString(request.reserveAmount, reserveAmountDecimals)
 				),

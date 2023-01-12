@@ -459,54 +459,54 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 	}, 20000);
 
 	it('Test get feed address returns null when stable coin has no PoR', async () => {
-		tr = await th.getPoR(
+		tr = await th.getReserveAddress(
 			stableCoinCapabilitiesSC
 		);
 		expect(tr.response).toBeNull
 	}, 20000);
 
 	it('Test get feed address returns a value when stable coin has PoR', async () => {
-		tr = await th.getPoR(
+		tr = await th.getReserveAddress(
 			stableCoinCapabilitiesHTS
 		);
 		expect(tr.response).not.toBeNull
 	}, 20000);
 
 	it('Test get PoR amount returns null when stable coin has no PoR', async () => {
-		tr = await th.getPoRAmount(
+		tr = await th.getReserveAmount(
 			stableCoinCapabilitiesSC
 		);
 		expect(tr.response).toBeNull
 	}, 20000);
 
 	it('Test get PoR amount returns a value when stable coin has PoR', async () => {
-		tr = await th.getPoRAmount(
+		tr = await th.getReserveAmount(
 			stableCoinCapabilitiesHTS
 		);
 		expect(tr.response).not.toBeNull
 	}, 20000);
 	
 	it('Test update PoR amount when stable coin has PoR', async () => {
-		tr = await th.getPoR(
+		tr = await th.getReserveAddress(
 			stableCoinCapabilitiesHTS
 		);
 
-		tr = await th.updatePoRAmount(
+		tr = await th.updateReserveAmount(
 			new ContractId(tr.response),
 			BigDecimal.fromStringFixed('1000', 2)
 		);
-		tr = await th.getPoRAmount(
+		tr = await th.getReserveAmount(
 			stableCoinCapabilitiesHTS
 		);
 		expect(tr.response).toEqual(BigDecimal.fromStringFixed('1000', 2))
 	}, 20000);
 
 	it('Test update feed address when stable coin has PoR', async () => {
-		tr = await th.updatePoR(
+		tr = await th.updateReserveAddress(
 			stableCoinCapabilitiesHTS,
 			new ContractId('0.0.11111111')
 		);
-		tr = await th.getPoR(
+		tr = await th.getReserveAddress(
 			stableCoinCapabilitiesHTS
 		);
 		expect(tr.response).toEqual('0.0.11111111')
@@ -930,54 +930,54 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 	}, 20000);
 
 	it('Test get feed address returns null when stable coin has no PoR', async () => {
-		tr = await th.getPoR(
+		tr = await th.getReserveAddress(
 			stableCoinCapabilitiesSC
 		);
 		expect(tr.response).toBeNull
 	}, 20000);
 
 	it('Test get feed address returns a value when stable coin has PoR', async () => {
-		tr = await th.getPoR(
+		tr = await th.getReserveAddress(
 			stableCoinCapabilitiesHTS
 		);
 		expect(tr.response).not.toBeNull
 	}, 20000);
 
 	it('Test get PoR amount returns null when stable coin has no PoR', async () => {
-		tr = await th.getPoRAmount(
+		tr = await th.getReserveAmount(
 			stableCoinCapabilitiesSC
 		);
 		expect(tr.response).toBeNull
 	}, 20000);
 
 	it('Test get PoR amount returns a value when stable coin has PoR', async () => {
-		tr = await th.getPoRAmount(
+		tr = await th.getReserveAmount(
 			stableCoinCapabilitiesHTS
 		);
 		expect(tr.response).not.toBeNull
 	}, 20000);
 	
 	it('Test update PoR amount when stable coin has PoR', async () => {
-		tr = await th.getPoR(
+		tr = await th.getReserveAddress(
 			stableCoinCapabilitiesHTS
 		);
 
-		tr = await th.updatePoRAmount(
+		tr = await th.updateReserveAmount(
 			new ContractId(tr.response),
 			BigDecimal.fromStringFixed('1000', 2)
 		);
-		tr = await th.getPoRAmount(
+		tr = await th.getReserveAmount(
 			stableCoinCapabilitiesHTS
 		);
 		expect(tr.response).toEqual(BigDecimal.fromStringFixed('1000', 2))
 	}, 20000);
 
 	it('Test update feed address when stable coin has PoR', async () => {
-		tr = await th.updatePoR(
+		tr = await th.updateReserveAddress(
 			stableCoinCapabilitiesHTS,
 			new ContractId('0.0.11111111')
 		);
-		tr = await th.getPoR(
+		tr = await th.getReserveAddress(
 			stableCoinCapabilitiesHTS
 		);
 		expect(tr.response).toEqual('0.0.11111111')

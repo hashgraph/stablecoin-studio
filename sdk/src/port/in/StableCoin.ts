@@ -68,9 +68,9 @@ import { GetAccountInfoQuery } from '../../app/usecase/query/account/info/GetAcc
 import { handleValidation } from './Common.js';
 import { GetAccountTokenAssociatedQuery } from '../../app/usecase/query/account/tokenAssociated/GetAccountTokenAssociatedQuery.js';
 import UpdateReserveAddressRequest from './request/UpdateReserveAddressRequest.js';
-import { UpdatePoRCommand } from '../../app/usecase/command/stablecoin/operations/updatePoR/UpdatePoRCommand.js';
-import { GetPoRCommand } from '../../app/usecase/command/stablecoin/operations/getPoR/GetPoRCommand.js';
 import GetReserveAddressRequest from './request/GetReserveAddressRequest.js';
+import { GetReserveAddressCommand } from '../../app/usecase/command/stablecoin/operations/getReserveAddress/GetReserveAddressCommand.js';
+import { UpdateReserveAddressCommand } from '../../app/usecase/command/stablecoin/operations/updateReserveAddress/UpdateReserveAddressCommand.js';
 
 export const HederaERC20AddressTestnet = '0.0.49274511';
 export const HederaERC20AddressPreviewnet = '0.0.11111111';
@@ -197,8 +197,8 @@ class StableCoinInPort implements IStableCoinInPort {
 					new GetStableCoinQuery(createResponse.tokenId),
 				)
 			).coin,
-			createResponse.PoRProxy,
-			createResponse.PoRProxyAdmin,
+			createResponse.reserveProxy,
+			createResponse.reserveProxyAdmin,
 		];
 	}
 
@@ -384,7 +384,7 @@ class StableCoinInPort implements IStableCoinInPort {
 
 		return (
 			await this.commandBus.execute(
-				new GetPoRCommand(HederaId.from(request.tokenId)),
+				new GetReserveAddressCommand(HederaId.from(request.tokenId)),
 			)
 		).payload;
 	}
@@ -394,7 +394,7 @@ class StableCoinInPort implements IStableCoinInPort {
 
 		return (
 			await this.commandBus.execute(
-				new UpdatePoRCommand(
+				new UpdateReserveAddressCommand(
 					HederaId.from(request.tokenId),
 					new ContractId(request.reserveAddress),
 				),
