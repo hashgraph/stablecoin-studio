@@ -73,7 +73,7 @@ import LogService from '../../../app/service/LogService.js';
 import { WalletConnectRejectedError } from '../../../domain/context/network/error/WalletConnectRejectedError.js';
 import { TransactionResponseError } from '../error/TransactionResponseError.js';
 import { SigningError } from '../hs/error/SigningError.js';
-import { PoRAmountDecimals } from '../../in/request/CreateRequest.js';
+import { reserveAmountDecimals } from '../../in/request/CreateRequest.js';
 
 // eslint-disable-next-line no-var
 declare var ethereum: MetaMaskInpageProvider;
@@ -420,7 +420,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 
 			return new TransactionResponse(
 					undefined,
-					BigDecimal.fromStringFixed(res.toString(), PoRAmountDecimals),
+					BigDecimal.fromStringFixed(res.toString(), reserveAmountDecimals),
 				);						
 		} catch (error) {
 			throw new TransactionResponseError({

@@ -47,10 +47,10 @@ import GetPublicKeyRequest from './GetPublicKeyRequest.js';
 import InitializationRequest from './InitializationRequest.js';
 import SetNetworkRequest from './SetNetworkRequest.js';
 import IsAccountAssociatedTokenRequest from './IsAccountAssociatedTokenRequest.js';
-import GetPoRRequest from './GetReserveAddressRequest.js';
-import UpdatePoRRequest from './UpdateReserveRequest.js';
-import GetPoRAmountRequest from './GetReserveAmountRequest.js';
-import UpdatePoRAmountRequest from './UpdateReserveAmountRequest.js';
+import GetReserveAddressRequest from './GetReserveAddressRequest.js';
+import UpdateReserveAddressRequest from './UpdateReserveAddressRequest.js';
+import GetReserveAmountRequest from './GetReserveAmountRequest.js';
+import UpdateReserveAmountRequest from './UpdateReserveAmountRequest.js';
 
 export * from './BaseRequest.js';
 export {
@@ -83,8 +83,8 @@ export {
 	InitializationRequest,
 	SetNetworkRequest,
 	IsAccountAssociatedTokenRequest,
-	GetPoRRequest,
-	UpdatePoRRequest,
-	GetPoRAmountRequest,
-	UpdatePoRAmountRequest
+	GetReserveAddressRequest,
+	UpdateReserveAddressRequest,
+	GetReserveAmountRequest,
+	UpdateReserveAmountRequest
 };

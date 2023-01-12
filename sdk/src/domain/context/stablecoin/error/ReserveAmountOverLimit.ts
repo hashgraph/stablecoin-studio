@@ -20,11 +20,11 @@
 
 import BaseError, { ErrorCode } from '../../../../core/error/BaseError.js';
 
-export class PoROverLimit extends BaseError {
-	constructor(PoRInitialAmount: string, limit: string) {
+export class ReserveAmountOverLimit extends BaseError {
+	constructor(ReserveInitialAmount: string, limit: string) {
 		super(
 			ErrorCode.InvalidAmount,
-			`PoR initial amount ${PoRInitialAmount} is over maximum limit ${limit}.`,
+			`PoR initial amount ${ReserveInitialAmount} is over maximum limit ${limit}.`,
 		);
 	}
 }

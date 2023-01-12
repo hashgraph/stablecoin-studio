@@ -22,7 +22,7 @@ import CheckNums from '../../../core/checks/numbers/CheckNums.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import InvalidDecimalRange from '../../../domain/context/stablecoin/error/InvalidDecimalRange.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
-import { PoRAmountDecimals } from './CreateRequest.js';
+import { reserveAmountDecimals } from './CreateRequest.js';
 import { InvalidType } from './error/InvalidType.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
@@ -32,34 +32,34 @@ export default class UpdateReserveAmountRequest extends ValidatedRequest<UpdateR
 	reserveAmount: string;
 
 	constructor({ 
-		PoR,
-		PoRAmount,
+		reserveAddress,
+		reserveAmount,
 	}: { 
-		PoR: string;
-		PoRAmount: string;
+		reserveAddress: string;
+		reserveAmount: string;
 	}) {
 		super({
-			PoR: Validation.checkContractId(),
-			PoRAmount: (val) => {
+			reserveAddress: Validation.checkContractId(),
+			reserveAmount: (val) => {
 				if (!BigDecimal.isBigDecimal(val)) {
 					return [new InvalidType(val, 'BigDecimal')];
 				}
-				if (CheckNums.hasMoreDecimals(val, PoRAmountDecimals)) {
-					return [new InvalidDecimalRange(val, PoRAmountDecimals)];
+				if (CheckNums.hasMoreDecimals(val, reserveAmountDecimals)) {
+					return [new InvalidDecimalRange(val, reserveAmountDecimals)];
 				}
 
 				const PoRAmount = BigDecimal.fromString(
 					val,
-					PoRAmountDecimals,
+					reserveAmountDecimals,
 				);
 			
-				return StableCoin.checkPoRAmount(
+				return StableCoin.checkReserveAmount(
 					PoRAmount,
-					PoRAmountDecimals
+					reserveAmountDecimals
 				);
 			},
 		});
-		this.PoR = PoR;
-		this.PoRAmount = PoRAmount;
+		this.reserveAddress = reserveAddress;
+		this.reserveAmount = reserveAmount;
 	}
 }

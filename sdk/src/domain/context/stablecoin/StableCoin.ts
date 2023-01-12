@@ -37,7 +37,7 @@ import InvalidAmount from './error/InvalidAmount.js';
 import InvalidDecimalRange from './error/InvalidDecimalRange.js';
 import InvalidMaxSupplySupplyType from './error/InvalidMaxSupplySupplyType.js';
 import { MaxSupplyOverLimit } from './error/MaxSupplyOverLimit.js';
-import { PoROverLimit } from './error/PoROverLimit.js';
+import { ReserveAmountOverLimit } from './error/ReserveAmountOverLimit.js';
 import NameEmpty from './error/NameEmpty.js';
 import NameLength from './error/NameLength.js';
 import SymbolEmpty from './error/SymbolEmpty.js';
@@ -287,15 +287,15 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 		}
 		if (CheckNums.isGreaterThan(PoRInitialAmount, max)) {
 			list.push(
-				new PoROverLimit(PoRInitialAmount.toString(), max.toString()),
+				new ReserveAmountOverLimit(PoRInitialAmount.toString(), max.toString()),
 			);
 		}
 
 		return list;
 	}
 
-	public static checkPoRAmount(
-		PoRAmount: BigDecimal,
+	public static checkReserveAmount(
+		reserveAmount: BigDecimal,
 		decimals: number
 	): BaseError[] {
 		const list: BaseError[] = [];
@@ -303,14 +303,14 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 		const min = BigDecimal.ZERO;
 		const max = BigDecimal.fromValue(BigNumber.from(MAX_SUPPLY), decimals);
 
-		if (CheckNums.isLessThan(PoRAmount, min)) {
+		if (CheckNums.isLessThan(reserveAmount, min)) {
 			list.push(
-				new InvalidAmount(PoRAmount.toString(), min.toString()),
+				new InvalidAmount(reserveAmount.toString(), min.toString()),
 			);
 		}
-		if (CheckNums.isGreaterThan(PoRAmount, max)) {
+		if (CheckNums.isGreaterThan(reserveAmount, max)) {
 			list.push(
-				new PoROverLimit(PoRAmount.toString(), max.toString()),
+				new ReserveAmountOverLimit(reserveAmount.toString(), max.toString()),
 			);			
 		}
 

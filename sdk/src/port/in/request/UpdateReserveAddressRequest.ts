@@ -21,7 +21,7 @@
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
 
-export default class UpdatePoRRequest extends ValidatedRequest<UpdatePoRRequest> {
+export default class UpdateReserveAddressRequest extends ValidatedRequest<UpdateReserveAddressRequest> {
 	tokenId: string;
 	reserveAddress: string;
 

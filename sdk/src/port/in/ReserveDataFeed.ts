@@ -20,7 +20,7 @@
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Injectable from '../../core/Injectable.js';
-import { PoRAmountDecimals } from './request/CreateRequest.js';
+import { reserveAmountDecimals } from './request/CreateRequest.js';
 import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import ContractId from '../../domain/context/contract/ContractId.js';
 import { CommandBus } from '../../core/command/CommandBus.js';
@@ -31,20 +31,21 @@ import GetPoRAmountRequest from './request/GetReserveAmountRequest.js';
 import { GetPoRAmountCommand } from '../../app/usecase/command/PoRdatafeed/operations/getPoRAmount/GetPoRAmountCommand.js';
 import { Balance } from '../../domain/context/stablecoin/Balance.js';
 import { HederaId } from '../../domain/context/shared/HederaId.js';
+import UpdateReserveAmountRequest from './request/UpdateReserveAmountRequest.js';
 
-interface IPoRDataFeedInPort {
-	getPoRAmount(request: GetPoRAmountRequest): Promise<Balance>;
-	updatePoRAmount(request: UpdatePoRAmountRequest): Promise<boolean>
+interface IReserveDataFeedInPort {
+	getReserveAmount(request: GetPoRAmountRequest): Promise<Balance>;
+	updateReserveAmount(request: UpdatePoRAmountRequest): Promise<boolean>
 }
 
-class PoRDataFeedInPort implements IPoRDataFeedInPort {
+class ReserveDataFeedInPort implements IReserveDataFeedInPort {
 	constructor(
 		private readonly commandBus: CommandBus = Injectable.resolve(
 			CommandBus,
 		)
 	) {}
 
-	async getPoRAmount(
+	async getReserveAmount(
 		request: GetPoRAmountRequest,
 	): Promise<Balance> {
 		handleValidation('GetPoRAmountRequest', request);
@@ -58,21 +59,21 @@ class PoRDataFeedInPort implements IPoRDataFeedInPort {
 		return new Balance(res.payload);
 	}
 
-	async updatePoRAmount(
-		request: UpdatePoRAmountRequest,
+	async updateReserveAmount(
+		request: UpdateReserveAmountRequest,
 	): Promise<boolean> {
-		handleValidation('UpdatePoRAmountRequest', request);
+		handleValidation('UpdateReserveAmountRequest', request);
 
 		return (
 			await this.commandBus.execute(
 				new UpdatePoRAmountCommand(
-					new ContractId(request.PoR),
-					BigDecimal.fromString(request.PoRAmount, PoRAmountDecimals)
+					new ContractId(request.reserveAddress),
+					BigDecimal.fromString(request.reserveAmount, reserveAmountDecimals)
 				),
 			)
 		).payload;
 	}
 }
 
-const PoRDataFeed = new PoRDataFeedInPort();
-export default PoRDataFeed;
+const ReserveDataFeed = new ReserveDataFeedInPort();
+export default ReserveDataFeed;
