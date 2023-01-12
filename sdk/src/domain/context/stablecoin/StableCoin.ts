@@ -261,8 +261,8 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 		return list;
 	}
 
-	public static checkPoRInitialAmount(
-		PoRInitialAmount: BigDecimal,
+	public static checkReserveInitialAmount(
+		reserveInitialAmount: BigDecimal,
 		decimals: number,
 		initialSupply?: BigDecimal,
 	): BaseError[] {
@@ -271,23 +271,23 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 		const min = initialSupply ?? BigDecimal.ZERO;
 		const max = BigDecimal.fromValue(BigNumber.from(MAX_SUPPLY), decimals);
 
-		if (CheckNums.isLessThan(PoRInitialAmount, min)) {
+		if (CheckNums.isLessThan(reserveInitialAmount, min)) {
 			if (min.isZero()) {
 				list.push(
-					new InvalidAmount(PoRInitialAmount.toString(), min.toString()),
+					new InvalidAmount(reserveInitialAmount.toString(), min.toString()),
 				);
 			} else {
 				list.push(
 					new InitSupplyLargerThanPoR(
 						min.toString(),
-						PoRInitialAmount.toString(),
+						reserveInitialAmount.toString(),
 					),
 				);
 			}
 		}
-		if (CheckNums.isGreaterThan(PoRInitialAmount, max)) {
+		if (CheckNums.isGreaterThan(reserveInitialAmount, max)) {
 			list.push(
-				new ReserveAmountOverLimit(PoRInitialAmount.toString(), max.toString()),
+				new ReserveAmountOverLimit(reserveInitialAmount.toString(), max.toString()),
 			);
 		}
 

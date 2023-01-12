@@ -99,9 +99,9 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		coin: StableCoinProps,
 		factory: ContractId,
 		hederaERC20: ContractId,
-		createPoR: boolean,
-		PoR?: ContractId,
-		PoRInitialAmount? : BigDecimal
+		createReserve: boolean,
+		reserveAddress?: ContractId,
+		reserveInitialAmount? : BigDecimal
 	): Promise<TransactionResponse<any, Error>> {
 		try {
 			const keys: FactoryKey[] = [];
@@ -173,16 +173,16 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				coin.treasury.toString() == '0.0.0'
 					? '0x0000000000000000000000000000000000000000'
 					: await this.accountToEvmAddress(coin.treasury),
-				PoR == undefined ||
-				PoR.toString() == '0.0.0'
+				reserveAddress == undefined ||
+				reserveAddress.toString() == '0.0.0'
 							? '0x0000000000000000000000000000000000000000'
 							: HContractId.fromString(
-								PoR.value,
+								reserveAddress.value,
 							).toSolidityAddress(),
-				PoRInitialAmount 
-						? PoRInitialAmount.toFixedNumber()
+				reserveInitialAmount 
+						? reserveInitialAmount.toFixedNumber()
 						: BigDecimal.ZERO.toFixedNumber(),
-				createPoR,
+				createReserve,
 				keys,
 			);
 
@@ -347,7 +347,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		return this.performOperation(coin, Operation.DELETE);
 	}
 
-	public async getPoR(
+	public async getReserveAddress(
 		coin: StableCoinCapabilities
 	): Promise<TransactionResponse> {
 		try {
@@ -360,7 +360,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			const res = await HederaERC20__factory.connect(
 					coin.coin.evmProxyAddress,
 					this.signerOrProvider,
-				).getDataFeed();
+				).getReserveAddress();
 
 			return new TransactionResponse(
 					undefined,
@@ -375,9 +375,9 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
-	public async updatePoR(
+	public async updateReserveAddress(
 		coin: StableCoinCapabilities,
-		PoR: ContractId
+		reserveAddress: ContractId
 	): Promise<TransactionResponse> {
 		try {
 			if (!coin.coin.evmProxyAddress)
@@ -390,8 +390,8 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				await HederaERC20__factory.connect(
 					coin.coin.evmProxyAddress,
 					this.signerOrProvider,
-				).updateDataFeed(
-					this.accountToEvmAddress(PoR),
+				).updateReserveAddress(
+					this.accountToEvmAddress(reserveAddress),
 				),
 			);
 		} catch (error) {
@@ -403,7 +403,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
-	public async getPoRAmount(
+	public async getReserveAmount(
 		coin: StableCoinCapabilities
 	): Promise<TransactionResponse> {
 		try {
@@ -416,7 +416,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			const res = await HederaERC20__factory.connect(
 					coin.coin.evmProxyAddress,
 					this.signerOrProvider,
-				).getReserve();
+				).getReserveAmount();
 
 			return new TransactionResponse(
 					undefined,
@@ -431,16 +431,16 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
-	public async updatePoRAmount(
-		PoR: ContractId,
+	public async updateReserveAmount(
+		reserveAddress: ContractId,
 		amount: BigDecimal
 	): Promise<TransactionResponse> {
 		try {
 			return RPCTransactionResponseAdapter.manageResponse(
 				await HederaReserve__factory.connect(
-					PoR.toHederaAddress().toSolidityAddress(),
+					reserveAddress.toHederaAddress().toSolidityAddress(),
 					this.signerOrProvider,
-				).set(
+				).setAmount(
 					amount.toBigNumber(),
 				),
 			);
@@ -1361,22 +1361,18 @@ class Params {
 	role?: string;
 	targetId?: string;
 	amount?: BigDecimal;
-	PoR?: ContractId;
 
 	constructor({
 		role,
 		targetId,
 		amount,
-		PoR,
 	}: {
 		role?: string;
 		targetId?: string;
 		amount?: BigDecimal;
-		PoR?: ContractId;
 	}) {
 		this.role = role;
 		this.targetId = targetId;
 		this.amount = amount;
-		this.PoR = PoR;
 	}
 }

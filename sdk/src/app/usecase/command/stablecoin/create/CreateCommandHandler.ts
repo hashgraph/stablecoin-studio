@@ -39,7 +39,7 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 	) {}
 
 	async execute(command: CreateCommand): Promise<CreateCommandResponse> {
-		const { coin, factory, hederaERC20, PoR, PoRInitialAmount, createPoR } = command;
+		const { coin, factory, hederaERC20, reserveAddress, reserveInitialAmount, createReserve } = command;
 		const handler = this.transactionService.getHandler();
 		if (
 			coin.maxSupply &&
@@ -52,10 +52,10 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 		}
 
 		if (
-			createPoR &&
-			PoRInitialAmount &&
+			createReserve &&
+			reserveInitialAmount &&
 			coin.initialSupply &&
-			coin.initialSupply.isGreaterThan(PoRInitialAmount)
+			coin.initialSupply.isGreaterThan(reserveInitialAmount)
 		) {
 			throw new OperationNotAllowed(
 				'Initial supply cannot be more than the PoR initial amount',
@@ -66,9 +66,9 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 			new StableCoin(coin),
 			factory,
 			hederaERC20,
-			createPoR,
-			PoR,
-			PoRInitialAmount
+			createReserve,
+			reserveAddress,
+			reserveInitialAmount
 		);
 		return Promise.resolve(
 			new CreateCommandResponse(

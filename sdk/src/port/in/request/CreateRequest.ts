@@ -263,7 +263,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 						  )
 						: undefined;
 
-				return StableCoin.checkPoRInitialAmount(
+				return StableCoin.checkReserveInitialAmount(
 					reserveInitialAmount,
 					reserveAmountDecimals,
 					bInitialSupply,
