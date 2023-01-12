@@ -87,7 +87,7 @@ contract HederaERC20 is
      * @return uint8 The number of decimals of the token
      */
     function decimals() public view returns (uint8) {
-        return IERC20MetadataUpgradeable(_getTokenAddress()).decimals();
+        return _decimals();
     }
 
     /**
@@ -106,12 +106,9 @@ contract HederaERC20 is
      *
      * @return uint256 The number number tokens that an account has
      */
-    function balanceOf(address account)
-        public
-        view
-        override(IHederaERC20)
-        returns (uint256)
-    {
+    function balanceOf(
+        address account
+    ) public view override(IHederaERC20) returns (uint256) {
         return _balanceOf(account);
     }
 
@@ -123,12 +120,9 @@ contract HederaERC20 is
      * @return uint256 The number number tokens that an account has
      */
 
-    function _balanceOf(address account)
-        internal
-        view
-        override(TokenOwner)
-        returns (uint256)
-    {
+    function _balanceOf(
+        address account
+    ) internal view override(TokenOwner) returns (uint256) {
         return IHederaERC20Upgradeable(_getTokenAddress()).balanceOf(account);
     }
 
@@ -193,10 +187,10 @@ contract HederaERC20 is
     /**
      * @dev Function not already implemented
      */
-    function allowance(address owner, address spender)
-        external
-        returns (uint256)
-    {
+    function allowance(
+        address owner,
+        address spender
+    ) external returns (uint256) {
         (, uint256 amount) = IHederaTokenService(precompileAddress).allowance(
             _getTokenAddress(),
             owner,

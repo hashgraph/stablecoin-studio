@@ -38,12 +38,27 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
         bool less
     ) internal view returns (bool) {
         if (_reserveAddress == address(0)) return true;
-        int256 currentReserve = _getReserveAmount();
-        assert(currentReserve >= 0);
-        if (less) {
-            return uint(currentReserve) >= amount;
+        int256 reserveAmount = _getReserveAmount();
+        assert(reserveAmount >= 0);
+        uint256 currentReserve = uint(reserveAmount);
+        uint8 reserveDecimals = AggregatorV3Interface(_reserveAddress)
+            .decimals();
+        uint8 tokenDecimals = _decimals();
+        uint256 resultAmount = amount;
+        if (tokenDecimals > reserveDecimals) {
+            currentReserve =
+                currentReserve *
+                (10 ** (tokenDecimals - reserveDecimals));
         } else {
-            return uint(currentReserve) >= _totalSupply() + amount;
+            resultAmount =
+                resultAmount *
+                (10 ** (reserveDecimals - tokenDecimals));
+        }
+
+        if (less) {
+            return currentReserve >= resultAmount;
+        } else {
+            return currentReserve >= _totalSupply() + resultAmount;
         }
     }
 
