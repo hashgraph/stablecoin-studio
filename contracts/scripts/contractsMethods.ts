@@ -11,6 +11,7 @@ import {
     HederaERC20__factory,
     StableCoinFactoryProxy__factory,
     StableCoinFactoryProxyAdmin__factory,
+    HederaReserve__factory,
 } from '../typechain-types'
 
 import { contractCall, toEvmAddress } from './utils'
@@ -1049,14 +1050,15 @@ export async function supplierAllowance(
     return BigNumber.from(result[0])
 }
 
-export async function getReserve(
+// Reserve ///////////////////////////////////////////////////
+export async function getReserveAmount(
     proxyAddress: ContractId,
     operatorClient: Client
 ) {
     const params: string[] = []
     const result = await contractCall(
         proxyAddress,
-        'getReserve',
+        'getReserveAmount',
         params,
         operatorClient,
         Gas2,
@@ -1064,14 +1066,14 @@ export async function getReserve(
     )
     return BigNumber.from(result[0])
 }
-export async function getDataFeed(
+export async function getReserveAddress(
     proxyAddress: ContractId,
     operatorClient: Client
 ): Promise<string> {
     const params: string[] = []
     const result = await contractCall(
         proxyAddress,
-        'getDataFeed',
+        'getReserveAddress',
         params,
         operatorClient,
         Gas2,
@@ -1088,10 +1090,118 @@ export async function updateDataFeed(
     const params: string[] = [dataFeed.toSolidityAddress()]
     await contractCall(
         proxyAddress,
-        'updateDataFeed',
+        'updateReserveAddress',
         params,
         operatorClient,
         Gas2,
         HederaERC20__factory.abi
     )
+}
+
+// HederaReserve ///////////////////////////////////////////////////
+export async function initializeHederaReserve(
+    initailAmount: BigNumber,
+    hederaReserveProxy: ContractId,
+    operatorClient: Client
+) {
+    const params: string[] = [initailAmount.toString()]
+    await contractCall(
+        hederaReserveProxy,
+        'initialize',
+        params,
+        operatorClient,
+        Gas2,
+        HederaReserve__factory.abi
+    )
+}
+export async function setAmountHederaReserve(
+    initailAmount: BigNumber,
+    hederaReserveProxy: ContractId,
+    operatorClient: Client
+) {
+    const params: string[] = [initailAmount.toString()]
+    await contractCall(
+        hederaReserveProxy,
+        'setAmount',
+        params,
+        operatorClient,
+        Gas2,
+        HederaReserve__factory.abi
+    )
+}
+export async function setAdminHederaReserve(
+    newAdminAddress: string,
+    hederaReserveProxy: ContractId,
+    operatorClient: Client
+) {
+    const params: string[] = [newAdminAddress]
+    await contractCall(
+        hederaReserveProxy,
+        'setAdmin',
+        params,
+        operatorClient,
+        Gas2,
+        HederaReserve__factory.abi
+    )
+}
+export async function decimalsHederaReserve(
+    hederaReserveProxy: ContractId,
+    operatorClient: Client
+): Promise<BigNumber> {
+    const params: string[] = []
+    const result = await contractCall(
+        hederaReserveProxy,
+        'decimals',
+        params,
+        operatorClient,
+        Gas2,
+        HederaReserve__factory.abi
+    )
+    return result[0]
+}
+export async function descriptionHederaReserve(
+    hederaReserveProxy: ContractId,
+    operatorClient: Client
+): Promise<string> {
+    const params: string[] = []
+    const result = await contractCall(
+        hederaReserveProxy,
+        'description',
+        params,
+        operatorClient,
+        Gas2,
+        HederaReserve__factory.abi
+    )
+    return result[0]
+}
+export async function versionHederaReserve(
+    hederaReserveProxy: ContractId,
+    operatorClient: Client
+): Promise<BigNumber> {
+    const params: string[] = []
+    const result = await contractCall(
+        hederaReserveProxy,
+        'version',
+        params,
+        operatorClient,
+        Gas2,
+        HederaReserve__factory.abi
+    )
+    return result[0]
+}
+export async function latestRoundDataDataHederaReserve(
+    hederaReserveProxy: ContractId,
+    operatorClient: Client
+): Promise<string> {
+    const params: string[] = []
+    const result = await contractCall(
+        hederaReserveProxy,
+        'latestRoundData',
+        params,
+        operatorClient,
+        Gas2,
+        HederaReserve__factory.abi
+    )
+
+    return result['answer']
 }

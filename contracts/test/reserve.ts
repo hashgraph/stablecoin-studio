@@ -13,9 +13,9 @@ import {
     deployHederaReserve,
 } from '../scripts/deploy'
 import {
-    getReserve,
-    getDataFeed,
+    getReserveAddress,
     updateDataFeed,
+    getReserveAmount,
 } from '../scripts/contractsMethods'
 
 import { clientId } from '../scripts/utils'
@@ -43,6 +43,7 @@ const TokenFactor = BigNumber.from(10).pow(TokenDecimals)
 const INIT_SUPPLY = BigNumber.from(100).mul(TokenFactor)
 const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor)
 const TokenMemo = 'Hedera Accelerator Stable Coin'
+const INIT_RESERVE = BigNumber.from('1500')
 let hederaReserveProxy: ContractId
 
 describe('Reserve Tests', function() {
@@ -96,32 +97,34 @@ describe('Reserve Tests', function() {
             privateKey: operatorPriKey,
             publicKey: operatorPubKey,
             isED25519Type: operatorIsE25519,
-            initialAmountDataFeed: INIT_SUPPLY.add(
-                BigNumber.from('10').mul(TokenFactor)
-            ).toString(),
+            initialAmountDataFeed: INIT_RESERVE.toString(),
         })
 
         proxyAddress = result[0]
         hederaReserveProxy = result[7]
     })
 
-    it('Get reserve', async () => {
-        const reserve = await getReserve(proxyAddress, operatorClient)
-        expect(reserve).to.equals(
-            INIT_SUPPLY.add(BigNumber.from('10').mul(TokenFactor))
-        )
+    it('Get getReserveAmount', async () => {
+        const reserve = await getReserveAmount(proxyAddress, operatorClient)
+        expect(reserve).to.equals(INIT_RESERVE.toString())
     })
 
     it('Get datafeed', async () => {
-        const datafeed = await getDataFeed(proxyAddress, operatorClient)
-        expect(datafeed).not.to.equals(
-            '0x' + hederaReserveProxy.toSolidityAddress()
+        const datafeed = await getReserveAddress(proxyAddress, operatorClient)
+        expect(datafeed.toUpperCase()).not.to.equals(
+            '0x' + hederaReserveProxy.toSolidityAddress().toUpperCase()
         )
     })
 
     it('Update datafeed', async () => {
-        const beforeDataFeed = await getDataFeed(proxyAddress, operatorClient)
-        const beforeReserve = await getReserve(proxyAddress, operatorClient)
+        const beforeDataFeed = await getReserveAddress(
+            proxyAddress,
+            operatorClient
+        )
+        const beforeReserve = await getReserveAmount(
+            proxyAddress,
+            operatorClient
+        )
         const newReserve = beforeReserve.add(
             BigNumber.from('100').mul(TokenFactor)
         )
@@ -133,8 +136,14 @@ describe('Reserve Tests', function() {
             operatorPriKey
         )
         await updateDataFeed(newDataFeed, proxyAddress, operatorClient)
-        const afterDataFeed = await getDataFeed(proxyAddress, operatorClient)
-        const afterReserve = await getReserve(proxyAddress, operatorClient)
+        const afterDataFeed = await getReserveAddress(
+            proxyAddress,
+            operatorClient
+        )
+        const afterReserve = await getReserveAmount(
+            proxyAddress,
+            operatorClient
+        )
 
         expect(beforeDataFeed).not.to.equals(afterDataFeed)
         expect(beforeReserve).not.to.equals(afterReserve)
