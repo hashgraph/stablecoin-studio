@@ -55,7 +55,8 @@ import { TOKEN_CREATION_COST_HBAR } from '../../../core/Constants.js';
 import LogService from '../../../app/service/LogService.js';
 import { TransactionResponseError } from '../error/TransactionResponseError.js';
 import { Contract } from 'ethers';
-import { PoRAmountDecimals } from '../../in/request/CreateRequest.js';
+
+const RESERVE_AMOUNT_DECIMALS = 2;
 
 export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	private web3 = new Web3();
@@ -70,7 +71,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		hederaERC20: ContractId,
 		createPoR: boolean,
 		PoR?: ContractId,
-		PoRInitialAmount? : BigDecimal
+		PoRInitialAmount?: BigDecimal,
 	): Promise<TransactionResponse<any, Error>> {
 		try {
 			const keys: FactoryKey[] = [];
@@ -142,13 +143,10 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				coin.treasury.toString() == '0.0.0'
 					? '0x0000000000000000000000000000000000000000'
 					: await this.accountToEvmAddress(coin.treasury),
-				PoR == undefined ||
-				PoR.toString() == '0.0.0'
-						? '0x0000000000000000000000000000000000000000'
-						: HContractId.fromString(
-							PoR.value,
-						).toSolidityAddress(),
-				PoRInitialAmount 
+				PoR == undefined || PoR.toString() == '0.0.0'
+					? '0x0000000000000000000000000000000000000000'
+					: HContractId.fromString(PoR.value).toSolidityAddress(),
+				PoRInitialAmount
 					? PoRInitialAmount.toFixedNumber()
 					: BigDecimal.ZERO.toFixedNumber(),
 				createPoR,
@@ -395,7 +393,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	}
 
 	public async getPoR(
-		coin: StableCoinCapabilities
+		coin: StableCoinCapabilities,
 	): Promise<TransactionResponse> {
 		const transactionResponse = await this.performSmartContractOperation(
 			coin.coin.proxyAddress!.value,
@@ -410,7 +408,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 
 	public async updatePoR(
 		coin: StableCoinCapabilities,
-		PoR: ContractId
+		PoR: ContractId,
 	): Promise<TransactionResponse> {
 		const params = new Params({
 			PoR: PoR,
@@ -420,12 +418,12 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			Operation.PoR_MANAGEMENT,
 			'updateDataFeed',
 			400000,
-			params
+			params,
 		);
 	}
 
 	public async getPoRAmount(
-		coin: StableCoinCapabilities
+		coin: StableCoinCapabilities,
 	): Promise<TransactionResponse> {
 		const transactionResponse = await this.performSmartContractOperation(
 			coin.coin.proxyAddress!.value,
@@ -437,14 +435,14 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 
 		transactionResponse.response = BigDecimal.fromStringFixed(
 			transactionResponse.response[0].toString(),
-			PoRAmountDecimals,
+			RESERVE_AMOUNT_DECIMALS,
 		);
-		return transactionResponse;		
+		return transactionResponse;
 	}
 
 	public async updatePoRAmount(
 		PoR: ContractId,
-		amount: BigDecimal
+		amount: BigDecimal,
 	): Promise<TransactionResponse> {
 		const params = new Params({
 			amount: amount,
@@ -455,7 +453,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			400000,
 			params,
 		);
-	}	
+	}
 
 	public async grantRole(
 		coin: StableCoinCapabilities,
@@ -683,7 +681,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		operationName: string,
 		gas: number,
 		params?: Params,
-		transactionType: TransactionType = TransactionType.RECEIPT
+		transactionType: TransactionType = TransactionType.RECEIPT,
 	): Promise<TransactionResponse> {
 		try {
 			switch (CapabilityDecider.decide(coin, operation)) {
