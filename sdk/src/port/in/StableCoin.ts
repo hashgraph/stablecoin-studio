@@ -73,10 +73,10 @@ import { GetReserveAddressCommand } from '../../app/usecase/command/stablecoin/o
 import { UpdateReserveAddressCommand } from '../../app/usecase/command/stablecoin/operations/updateReserveAddress/UpdateReserveAddressCommand.js';
 import { RESERVE_DECIMALS } from '../../domain/context/reserve/Reserve.js';
 
-export const HederaERC20AddressTestnet = '0.0.49274511';
+export const HederaERC20AddressTestnet = '0.0.49281768';
 export const HederaERC20AddressPreviewnet = '0.0.11111111';
 
-export const FactoryAddressTestnet = '0.0.49274517';
+export const FactoryAddressTestnet = '0.0.49281783';
 export const FactoryAddressPreviewnet = '0.0.11111111';
 
 export { StableCoinViewModel, StableCoinListViewModel };
@@ -84,14 +84,12 @@ export { StableCoinCapabilities, Capability, Access, Operation, Balance };
 export { TokenSupplyType };
 
 interface ReserveViewModel {
-	proxyAddress: ContractId,
-	proxyAdminAddress?: ContractId
+	proxyAddress: ContractId;
+	proxyAdminAddress?: ContractId;
 }
 
 interface IStableCoinInPort {
-	create(
-		request: CreateRequest,
-	): Promise<{
+	create(request: CreateRequest): Promise<{
 		coin: StableCoinViewModel;
 		reserve: ReserveViewModel;
 	}>;
@@ -112,7 +110,9 @@ interface IStableCoinInPort {
 		request: IsAccountAssociatedTokenRequest,
 	): Promise<boolean>;
 	getReserveAddress(request: GetReserveAddressRequest): Promise<string>;
-	updateReserveAddress(request: UpdateReserveAddressRequest): Promise<boolean>;
+	updateReserveAddress(
+		request: UpdateReserveAddressRequest,
+	): Promise<boolean>;
 }
 
 class StableCoinInPort implements IStableCoinInPort {
@@ -126,9 +126,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		),
 	) {}
 
-	async create(
-		req: CreateRequest,
-	): Promise<{
+	async create(req: CreateRequest): Promise<{
 		coin: StableCoinViewModel;
 		reserve: ReserveViewModel;
 	}> {
@@ -198,12 +196,15 @@ class StableCoinInPort implements IStableCoinInPort {
 				createReserve,
 				reserveAddress ? new ContractId(reserveAddress) : undefined,
 				reserveInitialAmount
-					? BigDecimal.fromString(reserveInitialAmount, RESERVE_DECIMALS)
+					? BigDecimal.fromString(
+							reserveInitialAmount,
+							RESERVE_DECIMALS,
+					  )
 					: undefined,
 			),
 		);
 
-		return({
+		return {
 			coin: (
 				await this.queryBus.execute(
 					new GetStableCoinQuery(createResponse.tokenId),
@@ -211,9 +212,9 @@ class StableCoinInPort implements IStableCoinInPort {
 			).coin,
 			reserve: {
 				proxyAddress: createResponse.reserveProxy,
-				proxyAdminAddress: createResponse.reserveProxyAdmin
-			}
-		});
+				proxyAdminAddress: createResponse.reserveProxyAdmin,
+			},
+		};
 	}
 
 	async getInfo(
@@ -393,7 +394,9 @@ class StableCoinInPort implements IStableCoinInPort {
 		).isAssociated;
 	}
 
-	async getReserveAddress(request: GetReserveAddressRequest): Promise<string> {
+	async getReserveAddress(
+		request: GetReserveAddressRequest,
+	): Promise<string> {
 		handleValidation('GetReserveAddressRequest', request);
 
 		return (
@@ -403,7 +406,9 @@ class StableCoinInPort implements IStableCoinInPort {
 		).payload;
 	}
 
-	async updateReserveAddress(request: UpdateReserveAddressRequest): Promise<boolean> {
+	async updateReserveAddress(
+		request: UpdateReserveAddressRequest,
+	): Promise<boolean> {
 		handleValidation('UpdateReserveAddressRequest', request);
 
 		return (
