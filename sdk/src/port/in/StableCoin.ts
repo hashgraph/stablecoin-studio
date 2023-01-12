@@ -72,6 +72,7 @@ import GetReserveAddressRequest from './request/GetReserveAddressRequest.js';
 import { GetReserveAddressCommand } from '../../app/usecase/command/stablecoin/operations/getReserveAddress/GetReserveAddressCommand.js';
 import { UpdateReserveAddressCommand } from '../../app/usecase/command/stablecoin/operations/updateReserveAddress/UpdateReserveAddressCommand.js';
 import { RESERVE_DECIMALS } from '../../domain/context/reserve/Reserve.js';
+import ReserveViewModel from '../out/mirror/response/ReserveViewModel.js';
 
 export const HederaERC20AddressTestnet = '0.0.49281768';
 export const HederaERC20AddressPreviewnet = '0.0.11111111';
@@ -79,14 +80,9 @@ export const HederaERC20AddressPreviewnet = '0.0.11111111';
 export const FactoryAddressTestnet = '0.0.49281783';
 export const FactoryAddressPreviewnet = '0.0.11111111';
 
-export { StableCoinViewModel, StableCoinListViewModel };
+export { StableCoinViewModel, StableCoinListViewModel, ReserveViewModel };
 export { StableCoinCapabilities, Capability, Access, Operation, Balance };
 export { TokenSupplyType };
-
-interface ReserveViewModel {
-	proxyAddress: ContractId;
-	proxyAdminAddress?: ContractId;
-}
 
 interface IStableCoinInPort {
 	create(request: CreateRequest): Promise<{
