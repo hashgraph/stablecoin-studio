@@ -32,7 +32,7 @@ const factoryProxyAddress = ''
 const factoryProxyAdminAddress = ''
 const factoryAddress = ''
 
-const ADDRESS_0 = '0x0000000000000000000000000000000000000000'
+export const ADDRESS_0 = '0x0000000000000000000000000000000000000000'
 const hreConfig = hre.network.config
 
 export function initializeClients(): [
@@ -249,6 +249,7 @@ export type DeployParameters = {
     allToContract?: boolean
     reserveAddress?: string
     initialAmountDataFeed?: string
+    createReserve?: boolean
 }
 export async function deployContractsWithSDK({
     name,
@@ -265,6 +266,7 @@ export async function deployContractsWithSDK({
     allToContract = true,
     reserveAddress = ADDRESS_0,
     initialAmountDataFeed = initialSupply,
+    createReserve = true
 }: DeployParameters): Promise<ContractId[]> {
     const AccountEvmAddress = await toEvmAddress(account, isED25519Type)
 
@@ -305,8 +307,6 @@ export async function deployContractsWithSDK({
 
     console.log(`Invoking Factory Proxy at ${f_proxyAddress}... please wait.`)
 
-    const createDataFeed = reserveAddress === ADDRESS_0
-
     const tokenObject = {
         tokenName: name,
         tokenSymbol: symbol,
@@ -322,7 +322,7 @@ export async function deployContractsWithSDK({
         treasuryAddress: ADDRESS_0,
         reserveAddress,
         reserveInitialAmount: initialAmountDataFeed,
-        createReserve: createDataFeed,
+        createReserve,
         keys: allToContract
             ? tokenKeystoContract()
             : tokenKeystoKey(publicKey, isED25519Type),
