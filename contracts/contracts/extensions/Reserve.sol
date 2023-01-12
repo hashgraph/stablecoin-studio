@@ -44,21 +44,22 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
         uint8 reserveDecimals = AggregatorV3Interface(_reserveAddress)
             .decimals();
         uint8 tokenDecimals = _decimals();
-        uint256 resultAmount = amount;
         if (tokenDecimals > reserveDecimals) {
+            require(
+                amount % (10 ** reserveDecimals) == 0,
+                'Format number incorrect'
+            );
             currentReserve =
                 currentReserve *
                 (10 ** (tokenDecimals - reserveDecimals));
         } else {
-            resultAmount =
-                resultAmount *
-                (10 ** (reserveDecimals - tokenDecimals));
+            amount = amount * (10 ** (reserveDecimals - tokenDecimals));
         }
 
         if (less) {
-            return currentReserve >= resultAmount;
+            return currentReserve >= amount;
         } else {
-            return currentReserve >= _totalSupply() + resultAmount;
+            return currentReserve >= _totalSupply() + amount;
         }
     }
 
