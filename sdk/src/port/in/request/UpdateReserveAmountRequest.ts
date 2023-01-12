@@ -22,44 +22,44 @@ import CheckNums from '../../../core/checks/numbers/CheckNums.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import InvalidDecimalRange from '../../../domain/context/stablecoin/error/InvalidDecimalRange.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
-import { PoRAmountDecimals } from './CreateRequest.js';
 import { InvalidType } from './error/InvalidType.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
+import { RESERVE_DECIMALS } from '../../../domain/context/reserve/Reserve.js';
 
-export default class UpdatePoRAmountRequest extends ValidatedRequest<UpdatePoRAmountRequest> {
-	PoR: string;
-	PoRAmount: string;
+export default class UpdateReserveAmountRequest extends ValidatedRequest<UpdateReserveAmountRequest> {
+	reserveAddress: string;
+	reserveAmount: string;
 
 	constructor({ 
-		PoR,
-		PoRAmount,
+		reserveAddress,
+		reserveAmount,
 	}: { 
-		PoR: string;
-		PoRAmount: string;
+		reserveAddress: string;
+		reserveAmount: string;
 	}) {
 		super({
-			PoR: Validation.checkContractId(),
-			PoRAmount: (val) => {
+			reserveAddress: Validation.checkContractId(),
+			reserveAmount: (val) => {
 				if (!BigDecimal.isBigDecimal(val)) {
 					return [new InvalidType(val, 'BigDecimal')];
 				}
-				if (CheckNums.hasMoreDecimals(val, PoRAmountDecimals)) {
-					return [new InvalidDecimalRange(val, PoRAmountDecimals)];
+				if (CheckNums.hasMoreDecimals(val, RESERVE_DECIMALS)) {
+					return [new InvalidDecimalRange(val, RESERVE_DECIMALS)];
 				}
 
-				const PoRAmount = BigDecimal.fromString(
+				const reserveAmount = BigDecimal.fromString(
 					val,
-					PoRAmountDecimals,
+					RESERVE_DECIMALS,
 				);
 			
-				return StableCoin.checkPoRAmount(
-					PoRAmount,
-					PoRAmountDecimals
+				return StableCoin.checkReserveAmount(
+					reserveAmount,
+					RESERVE_DECIMALS
 				);
 			},
 		});
-		this.PoR = PoR;
-		this.PoRAmount = PoRAmount;
+		this.reserveAddress = reserveAddress;
+		this.reserveAmount = reserveAmount;
 	}
 }

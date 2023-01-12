@@ -18,22 +18,13 @@
  *
  */
 
-import ValidatedRequest from './validation/ValidatedRequest.js';
-import Validation from './validation/Validation.js';
+import BaseError, { ErrorCode } from '../../../../core/error/BaseError.js';
 
-export default class GetPoRRequest
-	extends ValidatedRequest<GetPoRRequest>
-{
-	tokenId: string;
-
-	constructor({
-		tokenId,
-	}: {
-		tokenId: string;
-	}) {
-		super({
-			tokenId: Validation.checkHederaIdFormat()
-		});
-		this.tokenId = tokenId;
+export class ReserveAmountOverLimit extends BaseError {
+	constructor(ReserveInitialAmount: string, limit: string) {
+		super(
+			ErrorCode.InvalidAmount,
+			`Reserve initial amount ${ReserveInitialAmount} is over maximum limit ${limit}.`,
+		);
 	}
 }

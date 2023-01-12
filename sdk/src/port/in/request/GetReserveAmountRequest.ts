@@ -18,29 +18,22 @@
  *
  */
 
-export enum Operation {
-	CASH_IN = 'Cash_in',
-	BURN = 'Burn',
-	WIPE = 'Wipe',
-	FREEZE = 'Freeze',
-	UNFREEZE = 'Unfreeze',
-	PAUSE = 'Pause',
-	UNPAUSE = 'Unpause',
-	DELETE = 'Delete',
-	RESCUE = 'Rescue',
-	ROLE_MANAGEMENT = 'Role_Management',
-	ROLE_ADMIN_MANAGEMENT = 'Admin Role',
-	RESERVE_MANAGEMENT = 'Admin Role',
-}
+import ValidatedRequest from './validation/ValidatedRequest.js';
+import Validation from './validation/Validation.js';
 
-export enum Access {
-	HTS,
-	CONTRACT,
-}
+export default class GetReserveAmountRequest
+	extends ValidatedRequest<GetReserveAmountRequest>
+{
+	tokenId: string;
 
-export class Capability {
-	constructor(
-		public readonly operation: Operation,
-		public readonly access: Access,
-	) {}
+	constructor({
+		tokenId,
+	}: {
+		tokenId: string;
+	}) {
+		super({
+			tokenId: Validation.checkHederaIdFormat()
+		});
+		this.tokenId = tokenId;
+	}
 }

@@ -20,7 +20,7 @@
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Injectable from '../../core/Injectable.js';
-import CreateRequest, { PoRAmountDecimals } from './request/CreateRequest.js';
+import CreateRequest from './request/CreateRequest.js';
 import CashInRequest from './request/CashInRequest.js';
 import GetStableCoinDetailsRequest from './request/GetStableCoinDetailsRequest.js';
 import BurnRequest from './request/BurnRequest.js';
@@ -67,10 +67,11 @@ import { UnFreezeCommand } from '../../app/usecase/command/stablecoin/operations
 import { GetAccountInfoQuery } from '../../app/usecase/query/account/info/GetAccountInfoQuery.js';
 import { handleValidation } from './Common.js';
 import { GetAccountTokenAssociatedQuery } from '../../app/usecase/query/account/tokenAssociated/GetAccountTokenAssociatedQuery.js';
-import UpdatePoRRequest from './request/UpdatePoRRequest.js';
-import { UpdatePoRCommand } from '../../app/usecase/command/stablecoin/operations/updatePoR/UpdatePoRCommand.js';
-import GetPoRRequest from './request/GetPoRRequest.js';
-import { GetPoRCommand } from '../../app/usecase/command/stablecoin/operations/getPoR/GetPoRCommand.js';
+import UpdateReserveAddressRequest from './request/UpdateReserveAddressRequest.js';
+import GetReserveAddressRequest from './request/GetReserveAddressRequest.js';
+import { GetReserveAddressCommand } from '../../app/usecase/command/stablecoin/operations/getReserveAddress/GetReserveAddressCommand.js';
+import { UpdateReserveAddressCommand } from '../../app/usecase/command/stablecoin/operations/updateReserveAddress/UpdateReserveAddressCommand.js';
+import { RESERVE_DECIMALS } from '../../domain/context/reserve/Reserve.js';
 
 export const HederaERC20AddressTestnet = '0.0.49274511';
 export const HederaERC20AddressPreviewnet = '0.0.11111111';
@@ -82,10 +83,18 @@ export { StableCoinViewModel, StableCoinListViewModel };
 export { StableCoinCapabilities, Capability, Access, Operation, Balance };
 export { TokenSupplyType };
 
+interface ReserveViewModel {
+	proxyAddress: ContractId,
+	proxyAdminAddress?: ContractId
+}
+
 interface IStableCoinInPort {
 	create(
 		request: CreateRequest,
-	): Promise<[StableCoinViewModel, ContractId, ContractId]>;
+	): Promise<{
+		coin: StableCoinViewModel;
+		reserve: ReserveViewModel;
+	}>;
 	getInfo(request: GetStableCoinDetailsRequest): Promise<StableCoinViewModel>;
 	cashIn(request: CashInRequest): Promise<boolean>;
 	burn(request: BurnRequest): Promise<boolean>;
@@ -102,8 +111,8 @@ interface IStableCoinInPort {
 	isAccountAssociated(
 		request: IsAccountAssociatedTokenRequest,
 	): Promise<boolean>;
-	getPoR(request: GetPoRRequest): Promise<string>;
-	updatePoR(request: UpdatePoRRequest): Promise<boolean>;
+	getReserveAddress(request: GetReserveAddressRequest): Promise<string>;
+	updateReserveAddress(request: UpdateReserveAddressRequest): Promise<boolean>;
 }
 
 class StableCoinInPort implements IStableCoinInPort {
@@ -119,14 +128,17 @@ class StableCoinInPort implements IStableCoinInPort {
 
 	async create(
 		req: CreateRequest,
-	): Promise<[StableCoinViewModel, ContractId, ContractId]> {
+	): Promise<{
+		coin: StableCoinViewModel;
+		reserve: ReserveViewModel;
+	}> {
 		handleValidation('CreateRequest', req);
 		const {
 			stableCoinFactory,
 			hederaERC20,
-			PoR,
-			PoRInitialAmount,
-			createPoR,
+			reserveAddress,
+			reserveInitialAmount,
+			createReserve,
 		} = req;
 
 		const coin: StableCoinProps = {
@@ -183,23 +195,25 @@ class StableCoinInPort implements IStableCoinInPort {
 				coin,
 				new ContractId(stableCoinFactory),
 				new ContractId(hederaERC20),
-				createPoR,
-				PoR ? new ContractId(PoR) : undefined,
-				PoRInitialAmount
-					? BigDecimal.fromString(PoRInitialAmount, PoRAmountDecimals)
+				createReserve,
+				reserveAddress ? new ContractId(reserveAddress) : undefined,
+				reserveInitialAmount
+					? BigDecimal.fromString(reserveInitialAmount, RESERVE_DECIMALS)
 					: undefined,
 			),
 		);
 
-		return [
-			(
+		return({
+			coin: (
 				await this.queryBus.execute(
 					new GetStableCoinQuery(createResponse.tokenId),
 				)
 			).coin,
-			createResponse.PoRProxy,
-			createResponse.PoRProxyAdmin,
-		];
+			reserve: {
+				proxyAddress: createResponse.reserveProxy,
+				proxyAdminAddress: createResponse.reserveProxyAdmin
+			}
+		});
 	}
 
 	async getInfo(
@@ -379,24 +393,24 @@ class StableCoinInPort implements IStableCoinInPort {
 		).isAssociated;
 	}
 
-	async getPoR(request: GetPoRRequest): Promise<string> {
-		handleValidation('GetPoRRequest', request);
+	async getReserveAddress(request: GetReserveAddressRequest): Promise<string> {
+		handleValidation('GetReserveAddressRequest', request);
 
 		return (
 			await this.commandBus.execute(
-				new GetPoRCommand(HederaId.from(request.tokenId)),
+				new GetReserveAddressCommand(HederaId.from(request.tokenId)),
 			)
 		).payload;
 	}
 
-	async updatePoR(request: UpdatePoRRequest): Promise<boolean> {
-		handleValidation('UpdatePoRRequest', request);
+	async updateReserveAddress(request: UpdateReserveAddressRequest): Promise<boolean> {
+		handleValidation('UpdateReserveAddressRequest', request);
 
 		return (
 			await this.commandBus.execute(
-				new UpdatePoRCommand(
+				new UpdateReserveAddressCommand(
 					HederaId.from(request.tokenId),
-					new ContractId(request.PoR),
+					new ContractId(request.reserveAddress),
 				),
 			)
 		).payload;

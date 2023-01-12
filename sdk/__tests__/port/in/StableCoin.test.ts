@@ -87,7 +87,7 @@ describe('🧪 Stablecoin test', () => {
 			supplyType: TokenSupplyType.INFINITE,
 			stableCoinFactory: FactoryAddressTestnet,
 			hederaERC20: HederaERC20AddressTestnet,
-			createPoR: false
+			createReserve: false
 		});
 		const requestHTS = new CreateRequest({
 			name: 'TEST_ACCELERATOR_HTS',
@@ -106,12 +106,12 @@ describe('🧪 Stablecoin test', () => {
 			supplyType: TokenSupplyType.INFINITE,
 			stableCoinFactory: FactoryAddressTestnet,
 			hederaERC20: HederaERC20AddressTestnet,
-			createPoR: false,
-			PoR: "0.0.11111111"
+			createReserve: false,
+			reserveAddress: "0.0.11111111"
 		});
 
-		stableCoinSC = (await StableCoin.create(requestSC))[0];
-		stableCoinHTS = (await StableCoin.create(requestHTS))[0];
+		stableCoinSC = (await StableCoin.create(requestSC)).coin;
+		stableCoinHTS = (await StableCoin.create(requestHTS)).coin;
 	}, 60_000);
 
 	it('Gets a coin', async () => {

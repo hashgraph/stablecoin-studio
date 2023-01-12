@@ -20,37 +20,37 @@
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Injectable from '../../core/Injectable.js';
-import { PoRAmountDecimals } from './request/CreateRequest.js';
 import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import ContractId from '../../domain/context/contract/ContractId.js';
 import { CommandBus } from '../../core/command/CommandBus.js';
 import { handleValidation } from './Common.js';
-import UpdatePoRAmountRequest from './request/UpdatePoRAmountRequest.js';
-import { UpdatePoRAmountCommand } from '../../app/usecase/command/PoRdatafeed/operations/updatePoRAmount/UpdatePoRAmountCommand.js';
-import GetPoRAmountRequest from './request/GetPoRAmountRequest.js';
-import { GetPoRAmountCommand } from '../../app/usecase/command/PoRdatafeed/operations/getPoRAmount/GetPoRAmountCommand.js';
+import { UpdateReserveAmountCommand } from '../../app/usecase/command/reserve/operations/updateReserveAmount/UpdateReserveAmountCommand.js';
 import { Balance } from '../../domain/context/stablecoin/Balance.js';
 import { HederaId } from '../../domain/context/shared/HederaId.js';
+import UpdateReserveAmountRequest from './request/UpdateReserveAmountRequest.js';
+import GetReserveAmountRequest from './request/GetReserveAmountRequest.js';
+import { GetReserveAmountCommand } from '../../app/usecase/command/reserve/operations/getReserveAmount/GetReserveAmountCommand.js';
+import { RESERVE_DECIMALS } from '../../domain/context/reserve/Reserve.js';
 
-interface IPoRDataFeedInPort {
-	getPoRAmount(request: GetPoRAmountRequest): Promise<Balance>;
-	updatePoRAmount(request: UpdatePoRAmountRequest): Promise<boolean>
+interface IReserveDataFeedInPort {
+	getReserveAmount(request: GetReserveAmountRequest): Promise<Balance>;
+	updateReserveAmount(request: UpdateReserveAmountRequest): Promise<boolean>
 }
 
-class PoRDataFeedInPort implements IPoRDataFeedInPort {
+class ReserveDataFeedInPort implements IReserveDataFeedInPort {
 	constructor(
 		private readonly commandBus: CommandBus = Injectable.resolve(
 			CommandBus,
 		)
 	) {}
 
-	async getPoRAmount(
-		request: GetPoRAmountRequest,
+	async getReserveAmount(
+		request: GetReserveAmountRequest,
 	): Promise<Balance> {
-		handleValidation('GetPoRAmountRequest', request);
+		handleValidation('GetReserveAmountRequest', request);
 
 		const res = await this.commandBus.execute(
-			new GetPoRAmountCommand(
+			new GetReserveAmountCommand(
 				HederaId.from(request.tokenId)
 			)
 		);
@@ -58,21 +58,21 @@ class PoRDataFeedInPort implements IPoRDataFeedInPort {
 		return new Balance(res.payload);
 	}
 
-	async updatePoRAmount(
-		request: UpdatePoRAmountRequest,
+	async updateReserveAmount(
+		request: UpdateReserveAmountRequest,
 	): Promise<boolean> {
-		handleValidation('UpdatePoRAmountRequest', request);
+		handleValidation('UpdateReserveAmountRequest', request);
 
 		return (
 			await this.commandBus.execute(
-				new UpdatePoRAmountCommand(
-					new ContractId(request.PoR),
-					BigDecimal.fromString(request.PoRAmount, PoRAmountDecimals)
+				new UpdateReserveAmountCommand(
+					new ContractId(request.reserveAddress),
+					BigDecimal.fromString(request.reserveAmount, RESERVE_DECIMALS)
 				),
 			)
 		).payload;
 	}
 }
 
-const PoRDataFeed = new PoRDataFeedInPort();
-export default PoRDataFeed;
+const ReserveDataFeed = new ReserveDataFeedInPort();
+export default ReserveDataFeed;

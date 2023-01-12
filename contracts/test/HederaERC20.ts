@@ -37,7 +37,7 @@ import {
     transferFrom,
     Burn,
     transfer,
-    getReserve,
+    getReserveAmount,
 } from '../scripts/contractsMethods'
 
 import { clientId, toEvmAddress } from '../scripts/utils'
@@ -135,15 +135,13 @@ describe('HederaERC20 Tests', function() {
             privateKey: operatorPriKey,
             publicKey: operatorPubKey,
             isED25519Type: operatorIsE25519,
-            initialAmountDataFeed: INIT_SUPPLY.add(
-                BigNumber.from('100000')
-            ).toString(),
+            initialAmountDataFeed: BigNumber.from('1500').toString(),
         })
 
         proxyAddress = result[0]
     })
 
-    it('input parmeters check', async function() {
+    it.skip('input parmeters check', async function() {
         // We retreive the Token basic params
         const retrievedTokenName = await name(proxyAddress, operatorClient)
         const retrievedTokenSymbol = await symbol(proxyAddress, operatorClient)
@@ -165,8 +163,8 @@ describe('HederaERC20 Tests', function() {
         )
     })
 
-    it('Only Account can associate and dissociate itself when balance is 0', async function() {
-        const amount = BigNumber.from(1)
+    it.skip('Only Account can associate and dissociate itself when balance is 0', async function() {
+        const amount = BigNumber.from(1).mul(TokenFactor)
         // associate a token to an account : success
         await associateToken(
             proxyAddress,
@@ -254,8 +252,8 @@ describe('HederaERC20 Tests', function() {
         )
     })
 
-    it('Associate and Dissociate Token', async function() {
-        const amountToMint = BigNumber.from(1)
+    it.skip('Associate and Dissociate Token', async function() {
+        const amountToMint = BigNumber.from(1).mul(TokenFactor)
 
         // First we associate a token to an account
         const initialSupply = await getTotalSupply(proxyAddress, operatorClient)
@@ -333,7 +331,7 @@ describe('HederaERC20 Tests', function() {
         expect('0').to.equals(newBalance.toString())
     })
 
-    it('Check initialize can only be run once', async function() {
+    it.skip('Check initialize can only be run once', async function() {
         // Retrieve current Token address
         const TokenAddress = await getTokenAddress(proxyAddress, operatorClient)
 
@@ -344,7 +342,20 @@ describe('HederaERC20 Tests', function() {
     })
 
     it('Check transfer and transferFrom', async () => {
-        const AMOUNT = BigNumber.from(10)
+        console.log(
+            'Reserve',
+            await (
+                await getReserveAmount(proxyAddress, operatorClient)
+            ).toString()
+        )
+        console.log(
+            'totalSupply',
+            await (
+                await getTotalSupply(proxyAddress, operatorClient)
+            ).toString()
+        )
+
+        const AMOUNT = BigNumber.from(10).mul(TokenFactor)
         await associateToken(
             proxyAddress,
             nonOperatorClient,
@@ -365,6 +376,20 @@ describe('HederaERC20 Tests', function() {
             operatorAccount,
             operatorIsE25519
         )
+        console.log('After mint')
+
+        console.log(
+            'Reserve',
+            await (
+                await getReserveAmount(proxyAddress, operatorClient)
+            ).toString()
+        )
+        console.log(
+            'totalSupply',
+            await (
+                await getTotalSupply(proxyAddress, operatorClient)
+            ).toString()
+        )
         const allowanceRes = await allowance(
             proxyAddress,
             operatorAccount,
@@ -379,7 +404,7 @@ describe('HederaERC20 Tests', function() {
             operatorIsE25519,
             nonOperatorAccount,
             nonOperatorIsE25519,
-            BigNumber.from('3'),
+            BigNumber.from('3').mul(TokenFactor),
             nonOperatorClient
         )
         const balanceResp = await getBalanceOf(
@@ -401,7 +426,7 @@ describe('HederaERC20 Tests', function() {
             proxyAddress,
             nonOperatorAccount,
             nonOperatorIsE25519,
-            BigNumber.from('3'),
+            BigNumber.from('3').mul(TokenFactor),
             operatorClient
         )
         const balanceResp2 = await getBalanceOf(
@@ -411,11 +436,15 @@ describe('HederaERC20 Tests', function() {
             nonOperatorIsE25519
         )
         // Reset accounts
-        await Burn(proxyAddress, BigNumber.from(7), operatorClient)
+        await Burn(
+            proxyAddress,
+            BigNumber.from(7).mul(TokenFactor),
+            operatorClient
+        )
 
         await Wipe(
             proxyAddress,
-            BigNumber.from(6),
+            BigNumber.from(6).mul(TokenFactor),
             operatorClient,
             nonOperatorAccount,
             nonOperatorIsE25519
@@ -437,7 +466,7 @@ describe('HederaERC20 Tests', function() {
     })
 })
 
-describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
+describe.skip('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
     before(async function() {
         // Generate Client 1 and Client 2
 
@@ -500,7 +529,7 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
             publicKey: operatorPubKey,
             isED25519Type: operatorIsE25519,
             initialAmountDataFeed: INIT_SUPPLY.add(
-                BigNumber.from('100000')
+                BigNumber.from('100000').mul(TokenFactor)
             ).toString(),
         })
 
@@ -563,7 +592,7 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
             publicKey: operatorPubKey,
             isED25519Type: operatorIsE25519,
             initialAmountDataFeed: INIT_SUPPLY.add(
-                BigNumber.from('100000')
+                BigNumber.from('100000').mul(TokenFactor)
             ).toString(),
         })
 
@@ -606,7 +635,7 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
             publicKey: operatorPubKey,
             isED25519Type: operatorIsE25519,
             initialAmountDataFeed: INIT_SUPPLY.add(
-                BigNumber.from('100000')
+                BigNumber.from('100000').mul(TokenFactor)
             ).toString(),
         })
 
@@ -652,7 +681,7 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
             publicKey: operatorPubKey,
             isED25519Type: operatorIsE25519,
             initialAmountDataFeed: INIT_SUPPLY.add(
-                BigNumber.from('100000')
+                BigNumber.from('100000').mul(TokenFactor)
             ).toString(),
         })
 

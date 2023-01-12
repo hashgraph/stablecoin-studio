@@ -18,29 +18,20 @@
  *
  */
 
-export enum Operation {
-	CASH_IN = 'Cash_in',
-	BURN = 'Burn',
-	WIPE = 'Wipe',
-	FREEZE = 'Freeze',
-	UNFREEZE = 'Unfreeze',
-	PAUSE = 'Pause',
-	UNPAUSE = 'Unpause',
-	DELETE = 'Delete',
-	RESCUE = 'Rescue',
-	ROLE_MANAGEMENT = 'Role_Management',
-	ROLE_ADMIN_MANAGEMENT = 'Admin Role',
-	RESERVE_MANAGEMENT = 'Admin Role',
+import { Command } from '../../../../../../core/command/Command.js';
+import { CommandResponse } from '../../../../../../core/command/CommandResponse.js';
+import ContractId from '../../../../../../domain/context/contract/ContractId.js';
+import { HederaId } from '../../../../../../domain/context/shared/HederaId.js';
+
+export class UpdateReserveAddressCommandResponse implements CommandResponse {
+	constructor(public readonly payload: boolean) {}
 }
 
-export enum Access {
-	HTS,
-	CONTRACT,
-}
-
-export class Capability {
+export class UpdateReserveAddressCommand extends Command<UpdateReserveAddressCommandResponse> {
 	constructor(
-		public readonly operation: Operation,
-		public readonly access: Access,
-	) {}
+		public readonly tokenId: HederaId,
+        public readonly reserveAddress: ContractId
+	) {
+		super();
+	}
 }

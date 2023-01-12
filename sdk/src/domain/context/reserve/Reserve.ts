@@ -18,29 +18,10 @@
  *
  */
 
-export enum Operation {
-	CASH_IN = 'Cash_in',
-	BURN = 'Burn',
-	WIPE = 'Wipe',
-	FREEZE = 'Freeze',
-	UNFREEZE = 'Unfreeze',
-	PAUSE = 'Pause',
-	UNPAUSE = 'Unpause',
-	DELETE = 'Delete',
-	RESCUE = 'Rescue',
-	ROLE_MANAGEMENT = 'Role_Management',
-	ROLE_ADMIN_MANAGEMENT = 'Admin Role',
-	RESERVE_MANAGEMENT = 'Admin Role',
-}
+import BaseEntity from "../BaseEntity.js";
 
-export enum Access {
-	HTS,
-	CONTRACT,
-}
+export const RESERVE_DECIMALS = 2;
 
-export class Capability {
-	constructor(
-		public readonly operation: Operation,
-		public readonly access: Access,
-	) {}
+export class Reserve extends BaseEntity {
+	public static RESERVE_DECIMALS: number = RESERVE_DECIMALS;
 }

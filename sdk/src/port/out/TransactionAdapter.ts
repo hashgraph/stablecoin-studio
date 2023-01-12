@@ -45,9 +45,9 @@ interface ITransactionAdapter {
 		coin: StableCoin,
 		factory: ContractId,
 		hederaERC20: ContractId,
-		createPoR: boolean,
-		PoR?: ContractId,
-		PoRInitialAmount? : BigDecimal
+		createReserve: boolean,
+		reserveAddress?: ContractId,
+		reserveInitialAmount? : BigDecimal
 	): Promise<TransactionResponse>;
 	init(): Promise<Environment>;
 	register(account?: Account): Promise<InitializationData>;
@@ -96,18 +96,18 @@ interface ITransactionAdapter {
 		targetId: HederaId,
 	): Promise<TransactionResponse>;
 	getAccount(): Account;
-	getPoR(
+	getReserveAddress(
 		coin: StableCoinCapabilities
 	): Promise<TransactionResponse>;
-	updatePoR(
+	updateReserveAddress(
 		coin: StableCoinCapabilities,
-		PoR: ContractId
+		reserveAddress: ContractId
 	): Promise<TransactionResponse>;
-	getPoRAmount(
+	getReserveAmount(
 		coin: StableCoinCapabilities
 	): Promise<TransactionResponse>;	
-	updatePoRAmount(
-		PoR: ContractId,
+	updateReserveAmount(
+		reserveAddress: ContractId,
 		amount: BigDecimal
 	): Promise<TransactionResponse>;	
 	getMirrorNodeAdapter(): MirrorNodeAdapter;
@@ -188,9 +188,9 @@ export default abstract class TransactionAdapter
 		coin: StableCoin,
 		factory: ContractId,
 		hederaERC20: ContractId,
-		createPoR: boolean,
-		PoR?: ContractId,
-		PoRInitialAmount? : BigDecimal
+		createReserve: boolean,
+		reserveAddress?: ContractId,
+		reserveInitialAmount? : BigDecimal
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
@@ -265,24 +265,24 @@ export default abstract class TransactionAdapter
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
-	getPoR(
+	getReserveAddress(
 		coin: StableCoinCapabilities
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
-	updatePoR(
+	updateReserveAddress(
 		coin: StableCoinCapabilities,
-		PoR: ContractId
+		reserveAddress: ContractId
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
-	getPoRAmount(
+	getReserveAmount(
 		coin: StableCoinCapabilities
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}	
-	updatePoRAmount(
-		PoR: ContractId,
+	updateReserveAmount(
+		reserveAddress: ContractId,
 		amount: BigDecimal
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');

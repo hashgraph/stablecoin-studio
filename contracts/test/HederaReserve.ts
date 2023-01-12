@@ -1,6 +1,5 @@
 import { BigNumber } from 'ethers'
 import {
-    deployContractsWithSDK,
     initializeClients,
     getOperatorClient,
     getOperatorAccount,
@@ -22,6 +21,13 @@ import {
     transferOwnership,
     getProxyAdmin,
     getProxyImplementation,
+    initializeHederaReserve,
+    setAdminHederaReserve,
+    setAmountHederaReserve,
+    latestRoundDataDataHederaReserve,
+    decimalsHederaReserve,
+    descriptionHederaReserve,
+    versionHederaReserve,
 } from '../scripts/contractsMethods'
 
 import { clientId, toEvmAddress } from '../scripts/utils'
@@ -29,7 +35,6 @@ import { Client, ContractId } from '@hashgraph/sdk'
 import {
     HederaReserveProxyAdmin__factory,
     HederaReserveProxy__factory,
-    HederaReserve__factory,
 } from '../typechain-types'
 
 const chai = require('chai')
@@ -54,6 +59,188 @@ const TokenFactor = BigNumber.from(10).pow(3)
 const reserve = BigNumber.from('100').mul(TokenFactor)
 
 const proxyAdminAbi = HederaReserveProxyAdmin__factory.abi
+
+describe('HederaReserve Tests', function() {
+    before(async function() {
+        // Generate Client 1 and Client 2
+
+        const [
+            client1,
+            client1account,
+            client1privatekey,
+            client1publickey,
+            client1isED25519Type,
+            client2,
+            client2account,
+            client2privatekey,
+            client2publickey,
+            client2isED25519Type,
+        ] = initializeClients()
+
+        operatorClient = getOperatorClient(client1, client2, clientId)
+        nonOperatorClient = getNonOperatorClient(client1, client2, clientId)
+        operatorAccount = getOperatorAccount(
+            client1account,
+            client2account,
+            clientId
+        )
+        nonOperatorAccount = getNonOperatorAccount(
+            client1account,
+            client2account,
+            clientId
+        )
+        operatorPriKey = getOperatorPrivateKey(
+            client1privatekey,
+            client2privatekey,
+            clientId
+        )
+        operatorPubKey = getOperatorPublicKey(
+            client1publickey,
+            client2publickey,
+            clientId
+        )
+        operatorIsE25519 = getOperatorE25519(
+            client1isED25519Type,
+            client2isED25519Type,
+            clientId
+        )
+        nonOperatorIsE25519 = getNonOperatorE25519(
+            client1isED25519Type,
+            client2isED25519Type,
+            clientId
+        )
+
+        const result = await deployHederaReserve(
+            reserve,
+            operatorAccount,
+            operatorIsE25519,
+            operatorClient,
+            operatorPriKey
+        )
+        proxyAddress = result[0]
+        proxyAdminAddress = result[1]
+        hederaReserveAddress = result[2]
+    })
+
+    it('Initialize throw error the contract has been initialized before', async function() {
+        expect(
+            initializeHederaReserve(
+                BigNumber.from(1000),
+                proxyAddress,
+                operatorClient
+            )
+        ).to.eventually.be.rejectedWith(Error)
+    })
+
+    it('Update admin address', async function() {
+        const ONE = BigNumber.from(1)
+
+        await setAdminHederaReserve(
+            await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519),
+            proxyAddress,
+            operatorClient
+        )
+        await setAmountHederaReserve(ONE, proxyAddress, nonOperatorClient)
+
+        const amount = await latestRoundDataDataHederaReserve(
+            proxyAddress,
+            nonOperatorClient
+        )
+        expect(amount).to.equals(ONE.toString())
+
+        //RESET
+        await setAdminHederaReserve(
+            await toEvmAddress(operatorAccount, operatorIsE25519),
+            proxyAddress,
+            nonOperatorClient
+        )
+        await setAmountHederaReserve(reserve, proxyAddress, operatorClient)
+        const amountReset = await latestRoundDataDataHederaReserve(
+            proxyAddress,
+            operatorClient
+        )
+        expect(amountReset).to.equals(reserve.toString())
+    })
+
+    it('Update admin address throw error client no isAdmin', async function() {
+        expect(
+            setAdminHederaReserve(
+                await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519),
+                proxyAddress,
+                nonOperatorClient
+            )
+        ).to.eventually.be.rejectedWith(Error)
+    })
+
+    it('Update reserve throw error client no isAdmin', async function() {
+        expect(
+            setAmountHederaReserve(
+                BigNumber.from(1),
+                proxyAddress,
+                nonOperatorClient
+            )
+        ).to.eventually.be.rejectedWith(Error)
+    })
+
+    it('Update reserve', async function() {
+        const beforeUpdateAmount = await latestRoundDataDataHederaReserve(
+            proxyAddress,
+            operatorClient
+        )
+        await setAmountHederaReserve(
+            BigNumber.from(1),
+            proxyAddress,
+            operatorClient
+        )
+        const afterUpdateAmount = await latestRoundDataDataHederaReserve(
+            proxyAddress,
+            operatorClient
+        )
+        expect(beforeUpdateAmount).not.to.equals(afterUpdateAmount)
+        expect(afterUpdateAmount).to.equals(BigNumber.from(1).toString())
+
+        //RESET
+        await setAmountHederaReserve(reserve, proxyAddress, operatorClient)
+        const amountReset = await latestRoundDataDataHederaReserve(
+            proxyAddress,
+            operatorClient
+        )
+        expect(amountReset).to.equals(reserve.toString())
+    })
+
+    it('Get decimals', async function() {
+        const decimals = await decimalsHederaReserve(
+            proxyAddress,
+            operatorClient
+        )
+        expect(decimals).to.equals('2')
+    })
+
+    it('Get description', async function() {
+        const decimals = await descriptionHederaReserve(
+            proxyAddress,
+            operatorClient
+        )
+        expect(decimals).to.equals('Example Hedera Reserve for ChainLink')
+    })
+
+    it('Get version', async function() {
+        const decimals = await versionHederaReserve(
+            proxyAddress,
+            operatorClient
+        )
+        expect(decimals).to.equals('1')
+    })
+
+    it('Get latestRoundData', async function() {
+        const amountReset = await latestRoundDataDataHederaReserve(
+            proxyAddress,
+            operatorClient
+        )
+        expect(amountReset).to.equals(reserve.toString())
+    })
+})
+
 describe('HederaReserveProxy and HederaReserveProxyAdmin Tests', function() {
     before(async function() {
         // Generate Client 1 and Client 2

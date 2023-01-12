@@ -21,22 +21,19 @@
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
 
-export default class UpdatePoRRequest extends ValidatedRequest<UpdatePoRRequest> {
+export default class GetReserveAddressRequest
+	extends ValidatedRequest<GetReserveAddressRequest>
+{
 	tokenId: string;
-	PoR: string;
 
-	constructor({ 
+	constructor({
 		tokenId,
-		PoR 
-	}: { 
+	}: {
 		tokenId: string;
-		PoR: string;
 	}) {
 		super({
-			tokenId: Validation.checkHederaIdFormat(),
-			PoR: Validation.checkContractId()
+			tokenId: Validation.checkHederaIdFormat()
 		});
 		this.tokenId = tokenId;
-		this.PoR = PoR;
 	}
 }

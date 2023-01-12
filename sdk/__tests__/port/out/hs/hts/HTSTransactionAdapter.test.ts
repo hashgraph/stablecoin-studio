@@ -457,6 +457,60 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		);
 		expect(tr.response).toEqual(true);
 	}, 20000);
+
+	it('Test get feed address returns null when stable coin has no reserve', async () => {
+		tr = await th.getReserveAddress(
+			stableCoinCapabilitiesSC
+		);
+		expect(tr.response).toBeNull
+	}, 20000);
+
+	it('Test get reserve address returns a value when stable coin has reserve', async () => {
+		tr = await th.getReserveAddress(
+			stableCoinCapabilitiesHTS
+		);
+		expect(tr.response).not.toBeNull
+	}, 20000);
+
+	it('Test get reserve amount returns null when stable coin has no reserve', async () => {
+		tr = await th.getReserveAmount(
+			stableCoinCapabilitiesSC
+		);
+		expect(tr.response).toBeNull
+	}, 20000);
+
+	it('Test get reserve amount returns a value when stable coin has reserve', async () => {
+		tr = await th.getReserveAmount(
+			stableCoinCapabilitiesHTS
+		);
+		expect(tr.response).not.toBeNull
+	}, 20000);
+	
+	it('Test update reserve amount when stable coin has reserve', async () => {
+		tr = await th.getReserveAddress(
+			stableCoinCapabilitiesHTS
+		);
+
+		tr = await th.updateReserveAmount(
+			new ContractId(tr.response),
+			BigDecimal.fromStringFixed('1000', 2)
+		);
+		tr = await th.getReserveAmount(
+			stableCoinCapabilitiesHTS
+		);
+		expect(tr.response).toEqual(BigDecimal.fromStringFixed('1000', 2))
+	}, 20000);
+
+	it('Test update reserve address when stable coin has reserve', async () => {
+		tr = await th.updateReserveAddress(
+			stableCoinCapabilitiesHTS,
+			new ContractId('0.0.11111111')
+		);
+		tr = await th.getReserveAddress(
+			stableCoinCapabilitiesHTS
+		);
+		expect(tr.response).toEqual('0.0.11111111')
+	}, 20000);
 });
 
 describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
@@ -874,6 +928,60 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 		);
 		expect(tr.response).toEqual(true);
 	}, 20000);
+
+	it('Test get reserve address returns null when stable coin has no reserve', async () => {
+		tr = await th.getReserveAddress(
+			stableCoinCapabilitiesSC
+		);
+		expect(tr.response).toBeNull
+	}, 20000);
+
+	it('Test get reserve address returns a value when stable coin has reserve', async () => {
+		tr = await th.getReserveAddress(
+			stableCoinCapabilitiesHTS
+		);
+		expect(tr.response).not.toBeNull
+	}, 20000);
+
+	it('Test get reserve amount returns null when stable coin has no reserve', async () => {
+		tr = await th.getReserveAmount(
+			stableCoinCapabilitiesSC
+		);
+		expect(tr.response).toBeNull
+	}, 20000);
+
+	it('Test get reserve amount returns a value when stable coin has reserve', async () => {
+		tr = await th.getReserveAmount(
+			stableCoinCapabilitiesHTS
+		);
+		expect(tr.response).not.toBeNull
+	}, 20000);
+	
+	it('Test update reserve amount when stable coin has reserve', async () => {
+		tr = await th.getReserveAddress(
+			stableCoinCapabilitiesHTS
+		);
+
+		tr = await th.updateReserveAmount(
+			new ContractId(tr.response),
+			BigDecimal.fromStringFixed('1000', 2)
+		);
+		tr = await th.getReserveAmount(
+			stableCoinCapabilitiesHTS
+		);
+		expect(tr.response).toEqual(BigDecimal.fromStringFixed('1000', 2))
+	}, 20000);
+
+	it('Test update reserve address when stable coin has reserve', async () => {
+		tr = await th.updateReserveAddress(
+			stableCoinCapabilitiesHTS,
+			new ContractId('0.0.11111111')
+		);
+		tr = await th.getReserveAddress(
+			stableCoinCapabilitiesHTS
+		);
+		expect(tr.response).toEqual('0.0.11111111')
+	}, 20000);	
 });
 
 async function initTest(account: Account): Promise<void> {

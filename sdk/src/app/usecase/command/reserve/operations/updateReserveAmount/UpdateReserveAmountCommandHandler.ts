@@ -21,35 +21,23 @@
 import { ICommandHandler } from '../../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
-import AccountService from '../../../../../service/AccountService.js';
-import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
-import { UpdatePoRCommand, UpdatePoRCommandResponse } from './UpdatePoRCommand.js';
+import { UpdateReserveAmountCommand, UpdateReserveAmountCommandResponse } from './UpdateReserveAmountCommand.js';
 
-@CommandHandler(UpdatePoRCommand)
-export class UpdatePoRCommandHandler implements ICommandHandler<UpdatePoRCommand> {
+@CommandHandler(UpdateReserveAmountCommand)
+export class UpdateReserveAmountCommandHandler implements ICommandHandler<UpdateReserveAmountCommand> {
 	constructor(
-		@lazyInject(StableCoinService)
-		public readonly stableCoinService: StableCoinService,
-		@lazyInject(AccountService)
-		public readonly accountService: AccountService,
 		@lazyInject(TransactionService)
 		public readonly transactionService: TransactionService,
 	) {}
 
-	async execute(command: UpdatePoRCommand): Promise<UpdatePoRCommandResponse> {
-		const { tokenId, PoR } = command;
+	async execute(command: UpdateReserveAmountCommand): Promise<UpdateReserveAmountCommandResponse> {
+		const { reserveAddress, reserveAmount } = command;
 		const handler = this.transactionService.getHandler();
-		const account = this.accountService.getCurrentAccount();
 
-		const capabilities = await this.stableCoinService.getCapabilities(
-			account,
-			tokenId,
-		);
-
-		const res = await handler.updatePoR(capabilities, PoR);
+		const res = await handler.updateReserveAmount(reserveAddress, reserveAmount);
 		return Promise.resolve(
-			new UpdatePoRCommandResponse(res.error === undefined),
+			new UpdateReserveAmountCommandResponse(res.error === undefined),
 		);
 	}
 }

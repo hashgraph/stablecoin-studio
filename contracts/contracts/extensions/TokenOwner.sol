@@ -61,6 +61,15 @@ abstract contract TokenOwner is
     }
 
     /**
+     * @dev Returns the number of decimals of the token
+     *
+     * @return uint8 The number of decimals of the token
+     */
+    function _decimals() internal view returns (uint8) {
+        return IERC20MetadataUpgradeable(_tokenAddress).decimals();
+    }
+
+    /**
      * @dev Returns the number tokens that an account has
      *
      * @param account The address of the account to be consulted
@@ -68,11 +77,9 @@ abstract contract TokenOwner is
      * @return uint256 The number number tokens that an account has
      */
 
-    function _balanceOf(address account)
-        internal
-        view
-        virtual
-        returns (uint256);
+    function _balanceOf(
+        address account
+    ) internal view virtual returns (uint256);
 
     /**
      * @dev Transfers an amount of tokens from and account to another account

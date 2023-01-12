@@ -24,10 +24,10 @@ import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator
 import AccountService from '../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
-import { GetPoRAmountCommand, GetPoRAmountCommandResponse } from './GetPoRAmountCommand.js';
+import { UpdateReserveAddressCommand, UpdateReserveAddressCommandResponse } from './UpdateReserveAddressCommand.js';
 
-@CommandHandler(GetPoRAmountCommand)
-export class GetPoRCommandHandler implements ICommandHandler<GetPoRAmountCommand> {
+@CommandHandler(UpdateReserveAddressCommand)
+export class UpdateReserveAddressCommandHandler implements ICommandHandler<UpdateReserveAddressCommand> {
 	constructor(
 		@lazyInject(StableCoinService)
 		public readonly stableCoinService: StableCoinService,
@@ -37,8 +37,8 @@ export class GetPoRCommandHandler implements ICommandHandler<GetPoRAmountCommand
 		public readonly transactionService: TransactionService,
 	) {}
 
-	async execute(command: GetPoRAmountCommand): Promise<GetPoRAmountCommandResponse> {
-		const { tokenId } = command;
+	async execute(command: UpdateReserveAddressCommand): Promise<UpdateReserveAddressCommandResponse> {
+		const { tokenId, reserveAddress } = command;
 		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
 
@@ -47,9 +47,9 @@ export class GetPoRCommandHandler implements ICommandHandler<GetPoRAmountCommand
 			tokenId,
 		);
 
-		const res = await handler.getPoRAmount(capabilities);
+		const res = await handler.updateReserveAddress(capabilities, reserveAddress);
 		return Promise.resolve(
-			new GetPoRAmountCommandResponse(res.response),
+			new UpdateReserveAddressCommandResponse(res.error === undefined),
 		);
 	}
 }

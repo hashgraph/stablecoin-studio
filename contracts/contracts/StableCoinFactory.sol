@@ -45,11 +45,29 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
         if (requestedToken.createReserve) {
             reserveProxyAdmin = new HederaReserveProxyAdmin();
             reserveProxyAdmin.transferOwnership(msg.sender);
+            HederaReserve reserveContract = new HederaReserve();
             reserveProxy = new HederaReserveProxy(
-                address(new HederaReserve()),
+                address(reserveContract),
                 address(reserveProxyAdmin),
                 ''
             );
+
+            //Validate initial reserve amount
+            uint8 reserveDecimals = reserveContract.decimals();
+            assert(requestedToken.reserveInitialAmount >= 0);
+            uint256 initialReserve = uint(requestedToken.reserveInitialAmount);
+            uint256 initialSupply = requestedToken.tokenInitialSupply;
+            if (requestedToken.tokenDecimals > reserveDecimals) {
+                initialReserve =
+                    initialReserve *
+                    (10 ** (requestedToken.tokenDecimals - reserveDecimals));
+            } else {
+                initialSupply =
+                    initialSupply *
+                    (10 ** (reserveDecimals - requestedToken.tokenDecimals));
+            }
+            assert(initialSupply <= initialReserve);
+
             HederaReserve(address(reserveProxy)).initialize(
                 requestedToken.reserveInitialAmount,
                 msg.sender
@@ -168,11 +186,9 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
         return Key;
     }
 
-    function treasuryIsContract(address treasuryAddress)
-        internal
-        pure
-        returns (bool)
-    {
+    function treasuryIsContract(
+        address treasuryAddress
+    ) internal pure returns (bool) {
         return treasuryAddress == address(0);
     }
 }

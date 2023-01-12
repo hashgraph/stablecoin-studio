@@ -12,7 +12,7 @@ interface IHederaReserve is AggregatorV3Interface {
      *
      *  @param newValue The new value of the reserve
      */
-    function set(int256 newValue) external;
+    function setAmount(int256 newValue) external;
 
     /**
      *  @dev Sets a new admin address
