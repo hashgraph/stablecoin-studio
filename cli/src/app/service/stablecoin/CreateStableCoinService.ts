@@ -57,10 +57,10 @@ export default class CreateStableCoinService extends Service {
     await utilsService.showSpinner(
       new Promise((resolve, reject) => {
         StableCoin.create(stableCoin)
-          .then((coin) => {
-            console.log(coin);
-            createdToken = coin;
-            resolve(coin);
+          .then((response) => {
+            console.log(response);
+            createdToken = response.coin;
+            resolve(response);
           })
           .catch((err) => {
             reject(err);
