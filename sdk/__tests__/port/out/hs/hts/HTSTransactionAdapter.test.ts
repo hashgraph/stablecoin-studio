@@ -93,7 +93,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			false,
 		);
 		const tokenIdSC = ContractId.fromHederaContractId(
-			HContractId.fromSolidityAddress(tr.response[3]),
+			HContractId.fromSolidityAddress(tr.response[0][3]),
 		);
 		stableCoinCapabilitiesSC = await stableCoinService.getCapabilities(
 			CLIENT_ACCOUNT_ECDSA,
@@ -123,7 +123,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			true
 		);
 		const tokenIdHTS = ContractId.fromHederaContractId(
-			HContractId.fromSolidityAddress(tr.response[3]),
+			HContractId.fromSolidityAddress(tr.response[0][3]),
 		);
 		stableCoinCapabilitiesHTS = await stableCoinService.getCapabilities(
 			CLIENT_ACCOUNT_ECDSA,
@@ -559,7 +559,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 			new ContractId('0.0.11111111')
 		);
 		const tokenIdSC = ContractId.fromHederaContractId(
-			HContractId.fromSolidityAddress(tr.response[3]),
+			HContractId.fromSolidityAddress(tr.response[0][3]),
 		);
 		stableCoinCapabilitiesSC = await stableCoinService.getCapabilities(
 			CLIENT_ACCOUNT_ED25519,
@@ -591,7 +591,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 			BigDecimal.fromString('2.35', 2)
 		);
 		const tokenIdHTS = ContractId.fromHederaContractId(
-			HContractId.fromSolidityAddress(tr.response[3]),
+			HContractId.fromSolidityAddress(tr.response[0][3]),
 		);
 		stableCoinCapabilitiesHTS = await stableCoinService.getCapabilities(
 			CLIENT_ACCOUNT_ED25519,
