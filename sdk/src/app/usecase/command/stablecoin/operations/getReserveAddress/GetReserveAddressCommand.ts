@@ -18,11 +18,18 @@
  *
  */
 
-import BaseError, { ErrorCode } from "../../../../core/error/BaseError.js";
+import { Command } from '../../../../../../core/command/Command.js';
+import { CommandResponse } from '../../../../../../core/command/CommandResponse.js';
+import { HederaId } from '../../../../../../domain/context/shared/HederaId.js';
 
+export class GetReserveAddressCommandResponse implements CommandResponse {
+	constructor(public readonly payload: string) {}
+}
 
-export class PoRLessThanTotalSupply extends BaseError {
-    constructor(PoRAmount: string, totalSupply: string) {
-        super(ErrorCode.InvalidRange, `PoR amount ${PoRAmount} is less than total supply ${totalSupply}`);        
-    }
+export class GetReserveAddressCommand extends Command<GetReserveAddressCommandResponse> {
+	constructor(
+		public readonly tokenId: HederaId
+	) {
+		super();
+	}
 }

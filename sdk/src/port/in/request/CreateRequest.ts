@@ -27,16 +27,14 @@ import InvalidDecimalRange from '../../../domain/context/stablecoin/error/Invali
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.js';
 import {
-	AccountBaseRequest,
-	RequestAccount,
-	RequestPublicKey,
+	RequestPublicKey
 } from './BaseRequest.js';
 import { InvalidType } from './error/InvalidType.js';
 import { InvalidValue } from './error/InvalidValue.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
 
-export const PoRAmountDecimals = 2;
+export const reserveAmountDecimals = 2;
 
 export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 	name: string;
@@ -53,13 +51,13 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 
 	hederaERC20: string;
 
-	createPoR: boolean;
+	createReserve: boolean;
 
 	@OptionalField()
-	PoR?: string;
+	reserveAddress?: string;
 
 	@OptionalField()
-	PoRInitialAmount?: string | undefined;
+	reserveInitialAmount?: string | undefined;
 
 	@OptionalField()
 	initialSupply?: string | undefined;
@@ -115,9 +113,9 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		supplyType,
 		stableCoinFactory,
 		hederaERC20,
-		PoR,
-		PoRInitialAmount,
-		createPoR
+		reserveAddress,
+		reserveInitialAmount,
+		createReserve
 	}: {
 		name: string;
 		symbol: string;
@@ -136,9 +134,9 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		supplyType?: TokenSupplyType;
 		stableCoinFactory: string;
 		hederaERC20: string;
-		PoR?: string;
-		PoRInitialAmount?: string;
-		createPoR: boolean;
+		reserveAddress?: string;
+		reserveInitialAmount?: string;
+		createReserve: boolean;
 	}) {
 		super({
 			name: (val) => {
@@ -235,21 +233,21 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 			treasury: Validation.checkHederaIdFormat(),
 			stableCoinFactory: Validation.checkContractId(),
 			hederaERC20: Validation.checkContractId(),
-			PoR: Validation.checkContractId(),
-			PoRInitialAmount: (val) => {
-				if (val === undefined || val === '' || this.createPoR == false) {
+			reserveAddress: Validation.checkContractId(),
+			reserveInitialAmount: (val) => {
+				if (val === undefined || val === '' || this.createReserve == false) {
 					return;
 				}
 				if (!BigDecimal.isBigDecimal(val)) {
 					return [new InvalidType(val, 'BigDecimal')];
 				}
-				if (CheckNums.hasMoreDecimals(val, PoRAmountDecimals)) {
-					return [new InvalidDecimalRange(val, PoRAmountDecimals)];
+				if (CheckNums.hasMoreDecimals(val, reserveAmountDecimals)) {
+					return [new InvalidDecimalRange(val, reserveAmountDecimals)];
 				}
 
-				const PoRInitialAmount = BigDecimal.fromString(
+				const reserveInitialAmount = BigDecimal.fromString(
 					val,
-					PoRAmountDecimals,
+					reserveAmountDecimals,
 				);
 
 				const bInitialSupply =
@@ -265,9 +263,9 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 						  )
 						: undefined;
 
-				return StableCoin.checkPoRInitialAmount(
-					PoRInitialAmount,
-					PoRAmountDecimals,
+				return StableCoin.checkReserveInitialAmount(
+					reserveInitialAmount,
+					reserveAmountDecimals,
 					bInitialSupply,
 				);
 			},
@@ -290,9 +288,9 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		this.supplyType = supplyType;
 		this.stableCoinFactory = stableCoinFactory;
 		this.hederaERC20 = hederaERC20;
-		this.PoR = PoR;
-		this.PoRInitialAmount = PoRInitialAmount;
-		this.createPoR = createPoR;
+		this.reserveAddress = reserveAddress;
+		this.reserveInitialAmount = reserveInitialAmount;
+		this.createReserve = createReserve;
 
 	}
 }
