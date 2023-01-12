@@ -110,8 +110,8 @@ describe('🧪 Stablecoin test', () => {
 			reserveAddress: "0.0.11111111"
 		});
 
-		stableCoinSC = (await StableCoin.create(requestSC))[0];
-		stableCoinHTS = (await StableCoin.create(requestHTS))[0];
+		stableCoinSC = (await StableCoin.create(requestSC)).coin;
+		stableCoinHTS = (await StableCoin.create(requestHTS)).coin;
 	}, 60_000);
 
 	it('Gets a coin', async () => {

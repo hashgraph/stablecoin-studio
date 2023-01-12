@@ -209,8 +209,8 @@ class StableCoinInPort implements IStableCoinInPort {
 				)
 			).coin,
 			reserve: {
-				proxyAddress: createResponse.PoRProxy,
-				proxyAdminAddress: createResponse.PoRProxyAdmin
+				proxyAddress: createResponse.reserveProxy,
+				proxyAdminAddress: createResponse.reserveProxyAdmin
 			}
 		});
 	}

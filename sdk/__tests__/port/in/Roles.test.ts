@@ -84,7 +84,7 @@ describe('🧪 Role test', () => {
 			createReserve: true,
 			reserveInitialAmount: "10.55"
 		});
-		stableCoinSC = (await StableCoin.create(requestSC))[0];
+		stableCoinSC = (await StableCoin.create(requestSC)).coin;
 		// console.log(stableCoinSC.tokenId);
 	}, 60_000);
 
