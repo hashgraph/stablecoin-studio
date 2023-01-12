@@ -27,7 +27,6 @@ import {
     getBalanceOf,
     Mint,
     hasRole,
-    getReserve,
 } from '../scripts/contractsMethods'
 import { CASHIN_ROLE } from '../scripts/constants'
 

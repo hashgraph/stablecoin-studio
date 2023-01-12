@@ -141,7 +141,7 @@ describe('HederaERC20 Tests', function() {
         proxyAddress = result[0]
     })
 
-    it.skip('input parmeters check', async function() {
+    it('input parmeters check', async function() {
         // We retreive the Token basic params
         const retrievedTokenName = await name(proxyAddress, operatorClient)
         const retrievedTokenSymbol = await symbol(proxyAddress, operatorClient)
@@ -163,7 +163,7 @@ describe('HederaERC20 Tests', function() {
         )
     })
 
-    it.skip('Only Account can associate and dissociate itself when balance is 0', async function() {
+    it('Only Account can associate and dissociate itself when balance is 0', async function() {
         const amount = BigNumber.from(1).mul(TokenFactor)
         // associate a token to an account : success
         await associateToken(
@@ -252,7 +252,7 @@ describe('HederaERC20 Tests', function() {
         )
     })
 
-    it.skip('Associate and Dissociate Token', async function() {
+    it('Associate and Dissociate Token', async function() {
         const amountToMint = BigNumber.from(1).mul(TokenFactor)
 
         // First we associate a token to an account
@@ -331,7 +331,7 @@ describe('HederaERC20 Tests', function() {
         expect('0').to.equals(newBalance.toString())
     })
 
-    it.skip('Check initialize can only be run once', async function() {
+    it('Check initialize can only be run once', async function() {
         // Retrieve current Token address
         const TokenAddress = await getTokenAddress(proxyAddress, operatorClient)
 
@@ -466,7 +466,7 @@ describe('HederaERC20 Tests', function() {
     })
 })
 
-describe.skip('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
+describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
     before(async function() {
         // Generate Client 1 and Client 2
 

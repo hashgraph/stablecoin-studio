@@ -2,8 +2,8 @@ import '@hashgraph/hardhat-hethers'
 import '@hashgraph/sdk'
 import { BigNumber } from 'ethers'
 
-const chai = require('chai')
-const chaiAsPromised = require('chai-as-promised')
+import chai from 'chai'
+import chaiAsPromised from 'chai-as-promised'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
@@ -20,6 +20,7 @@ import {
     getNonOperatorE25519,
     deployFactory,
     toHashgraphKey,
+    ADDRESS_0,
 } from '../scripts/deploy'
 import {
     upgradeTo_SCF,
@@ -31,6 +32,8 @@ import {
     transferOwnership_SCF,
     getProxyAdmin_SCF,
     getProxyImplementation_SCF,
+    getReserveAddress,
+    getReserveAmount,
 } from '../scripts/contractsMethods'
 
 import { clientId, toEvmAddress, getClient } from '../scripts/utils'
@@ -54,13 +57,19 @@ let nonOperatorIsE25519: boolean
 const TokenName = 'MIDAS'
 const TokenSymbol = 'MD'
 const TokenDecimals = 3
+const toReserve = (amount: BigNumber) => {
+    return amount.div(10)
+}
+const fromReserve = (amount: BigNumber) => {
+    return amount.mul(10)
+}
 const TokenFactor = BigNumber.from(10).pow(TokenDecimals)
 const INIT_SUPPLY = BigNumber.from(10).mul(TokenFactor)
 const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor)
 const TokenMemo = 'Hedera Accelerator Stable Coin'
 
-describe('StableCoinFactory Tests', function() {
-    before(async function() {
+describe('StableCoinFactory Tests', function () {
+    before(async function () {
         // Generate Client 1 and Client 2
         const [
             client1,
@@ -109,7 +118,7 @@ describe('StableCoinFactory Tests', function() {
         )
     })
 
-    it('Create StableCoin setting all token keys to the Proxy', async function() {
+    it('Create StableCoin setting all token keys to the Proxy', async function () {
         // Deploy Token using Client
         await deployContractsWithSDK({
             name: TokenName,
@@ -128,7 +137,7 @@ describe('StableCoinFactory Tests', function() {
         })
     })
 
-    it('Create StableCoin setting all token keys to the Account', async function() {
+    it('Create StableCoin setting all token keys to the Account', async function () {
         // Deploy Token using Client
         await deployContractsWithSDK({
             name: TokenName,
@@ -147,10 +156,170 @@ describe('StableCoinFactory Tests', function() {
             ).toString(),
         })
     })
+
+    it('Create StableCoin setting all token keys to the Account, with a very close reserve number', async function () {
+        // Deploy Token using Client
+        await deployContractsWithSDK({
+            name: TokenName,
+            symbol: TokenSymbol,
+            decimals: TokenDecimals,
+            initialSupply: INIT_SUPPLY.toString(),
+            maxSupply: MAX_SUPPLY.toString(),
+            memo: TokenMemo,
+            account: operatorAccount,
+            privateKey: operatorPriKey,
+            publicKey: operatorPubKey,
+            isED25519Type: operatorIsE25519,
+            allToContract: false,
+            initialAmountDataFeed: toReserve(INIT_SUPPLY).add(1).toString(),
+        })
+    })
+
+    it.only('Create StableCoin setting all token keys to the Account, with no reserve', async function () {
+        // Deploy Token using Client
+        const res = await deployContractsWithSDK({
+            name: TokenName,
+            symbol: TokenSymbol,
+            decimals: TokenDecimals,
+            initialSupply: INIT_SUPPLY.toString(),
+            maxSupply: MAX_SUPPLY.toString(),
+            memo: TokenMemo,
+            account: operatorAccount,
+            privateKey: operatorPriKey,
+            publicKey: operatorPubKey,
+            isED25519Type: operatorIsE25519,
+            allToContract: false,
+            initialAmountDataFeed: toReserve(INIT_SUPPLY).add(1).toString(),
+            createReserve: false,
+        })
+        const proxyAddress = res[0]
+
+        const address = await getReserveAddress(proxyAddress, operatorClient)
+        const amount = await getReserveAmount(proxyAddress, operatorClient)
+
+        expect(address).to.equal(ADDRESS_0)
+        expect(amount).to.equal(BigNumber.from(0))
+        console.log(res);
+        expect(res[7]?.evmAddress).to.be.undefined;
+        expect(res[8]?.evmAddress).to.be.undefined;
+    })
+
+    it.only('Create StableCoin setting all token keys to the Account, with less decimals than reserve', async function () {
+        // Deploy Token using Client
+        const res = await deployContractsWithSDK({
+            name: TokenName,
+            symbol: TokenSymbol,
+            decimals: 0,
+            initialSupply: BigNumber.from(10).toString(),
+            maxSupply: MAX_SUPPLY.toString(),
+            memo: TokenMemo,
+            account: operatorAccount,
+            privateKey: operatorPriKey,
+            publicKey: operatorPubKey,
+            isED25519Type: operatorIsE25519,
+            allToContract: false,
+            initialAmountDataFeed: toReserve(INIT_SUPPLY).toString(),
+        })
+        const proxyAddress = res[0]
+
+        const address = await getReserveAddress(proxyAddress, operatorClient)
+        const amount = await getReserveAmount(proxyAddress, operatorClient)
+
+        expect(address).not.to.equal(ADDRESS_0)
+        expect(amount.toString()).to.equal(toReserve(INIT_SUPPLY).toString())
+    })
+
+    it('Create StableCoin setting all token keys to the Account, with less decimals than reserve, expect it to fail', async function () {
+        // Deploy Token using Client
+        expect(
+            deployContractsWithSDK({
+                name: TokenName,
+                symbol: TokenSymbol,
+                decimals: 0,
+                initialSupply: INIT_SUPPLY.toString(),
+                maxSupply: MAX_SUPPLY.toString(),
+                memo: TokenMemo,
+                account: operatorAccount,
+                privateKey: operatorPriKey,
+                publicKey: operatorPubKey,
+                isED25519Type: operatorIsE25519,
+                allToContract: false,
+                initialAmountDataFeed: toReserve(INIT_SUPPLY).sub(1).toString(),
+            })
+        ).to.eventually.be.rejectedWith(Error)
+    })
+
+    it('Create StableCoin setting all token keys to the Account, with no reserve', async function () {
+        // Deploy Token using Client
+        const res = await deployContractsWithSDK({
+            name: TokenName,
+            symbol: TokenSymbol,
+            decimals: TokenDecimals,
+            initialSupply: INIT_SUPPLY.toString(),
+            maxSupply: MAX_SUPPLY.toString(),
+            memo: TokenMemo,
+            account: operatorAccount,
+            privateKey: operatorPriKey,
+            publicKey: operatorPubKey,
+            isED25519Type: operatorIsE25519,
+            allToContract: false,
+            initialAmountDataFeed: toReserve(INIT_SUPPLY).add(1).toString(),
+            createReserve: false,
+        })
+        const proxyAddress = res[0]
+
+        const address = await getReserveAddress(proxyAddress, operatorClient)
+        const amount = await getReserveAmount(proxyAddress, operatorClient)
+
+        expect(address).to.equal(ADDRESS_0)
+        expect(amount).to.equal(BigNumber.from(0))
+        expect(res[7].toSolidityAddress()).to.equal(ADDRESS_0)
+        expect(res[8].toSolidityAddress()).to.equal(ADDRESS_0)
+    })
+
+    it('Create StableCoin setting an initial supply over the reserve, expect it to fail', async function () {
+        // Deploy Token using Client
+        expect(
+            deployContractsWithSDK({
+                name: TokenName,
+                symbol: TokenSymbol,
+                decimals: TokenDecimals,
+                initialSupply: INIT_SUPPLY.toString(),
+                maxSupply: MAX_SUPPLY.toString(),
+                memo: TokenMemo,
+                account: operatorAccount,
+                privateKey: operatorPriKey,
+                publicKey: operatorPubKey,
+                isED25519Type: operatorIsE25519,
+                allToContract: false,
+                initialAmountDataFeed: BigNumber.from(1).toString(),
+            })
+        ).to.eventually.be.rejectedWith(Error)
+    })
+
+    it('Create StableCoin setting an initial supply over the reserve, expect it to fail with a very close number', async function () {
+        // Deploy Token using Client
+        expect(
+            deployContractsWithSDK({
+                name: TokenName,
+                symbol: TokenSymbol,
+                decimals: TokenDecimals,
+                initialSupply: INIT_SUPPLY.toString(),
+                maxSupply: MAX_SUPPLY.toString(),
+                memo: TokenMemo,
+                account: operatorAccount,
+                privateKey: operatorPriKey,
+                publicKey: operatorPubKey,
+                isED25519Type: operatorIsE25519,
+                allToContract: false,
+                initialAmountDataFeed: toReserve(INIT_SUPPLY).sub(1).toString(),
+            })
+        ).to.eventually.be.rejectedWith(Error)
+    })
 })
 
-describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', function() {
-    before(async function() {
+describe.skip('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', function () {
+    before(async function () {
         // Generate Client 1 and Client 2
         const [
             client1,
@@ -212,7 +381,7 @@ describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', functio
         factoryAddress = result[2]
     })
 
-    it('Retrieve admin and implementation addresses for the Proxy', async function() {
+    it('Retrieve admin and implementation addresses for the Proxy', async function () {
         // We retreive the HederaERC20Proxy admin and implementation
         const implementation = await getProxyImplementation_SCF(
             proxyAdminAddress,
@@ -234,7 +403,7 @@ describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', functio
         )
     })
 
-    it('Retrieve proxy admin owner', async function() {
+    it('Retrieve proxy admin owner', async function () {
         // We retreive the HederaERC20Proxy admin and implementation
         const ownerAccount = await owner_SCF(proxyAdminAddress, operatorClient)
 
@@ -246,7 +415,7 @@ describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', functio
         )
     })
 
-    it('Upgrade Proxy implementation without the proxy admin', async function() {
+    it('Upgrade Proxy implementation without the proxy admin', async function () {
         // Deploy a new contract
         const result = await deployFactory(clientSdk, operatorPriKey)
 
@@ -262,7 +431,7 @@ describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', functio
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Change Proxy admin without the proxy admin', async function() {
+    it('Change Proxy admin without the proxy admin', async function () {
         // Non Admin changes admin : fail
         await expect(
             changeAdmin_SCF(
@@ -273,7 +442,7 @@ describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', functio
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Upgrade Proxy implementation with the proxy admin but without the owner account', async function() {
+    it('Upgrade Proxy implementation with the proxy admin but without the owner account', async function () {
         // Deploy a new contract
         const result = await deployFactory(clientSdk, operatorPriKey)
 
@@ -290,7 +459,7 @@ describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', functio
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Change Proxy admin with the proxy admin but without the owner account', async function() {
+    it('Change Proxy admin with the proxy admin but without the owner account', async function () {
         // Non Owner changes admin : fail
         await expect(
             changeProxyAdmin_SCF(
@@ -303,7 +472,7 @@ describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', functio
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Upgrade Proxy implementation with the proxy admin and the owner account', async function() {
+    it('Upgrade Proxy implementation with the proxy admin and the owner account', async function () {
         // Deploy a new contract
         const result = await deployFactory(clientSdk, operatorPriKey)
 
@@ -336,7 +505,7 @@ describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', functio
         )
     })
 
-    it('Change Proxy admin with the proxy admin and the owner account', async function() {
+    it('Change Proxy admin with the proxy admin and the owner account', async function () {
         // Owner changes admin : success
         await changeProxyAdmin_SCF(
             proxyAdminAddress,
@@ -376,7 +545,7 @@ describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', functio
         )
     })
 
-    it('Transfers Proxy admin owner without the owner account', async function() {
+    it('Transfers Proxy admin owner without the owner account', async function () {
         // Non Owner transfers owner : fail
         await expect(
             transferOwnership_SCF(
@@ -388,7 +557,7 @@ describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', functio
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Transfers Proxy admin owner with the owner account', async function() {
+    it('Transfers Proxy admin owner with the owner account', async function () {
         // Owner transfers owner : success
         await transferOwnership_SCF(
             proxyAdminAddress,

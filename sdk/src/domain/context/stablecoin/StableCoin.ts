@@ -271,23 +271,12 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 		const min = initialSupply ?? BigDecimal.ZERO;
 		const max = BigDecimal.fromValue(BigNumber.from(MAX_SUPPLY), decimals);
 
-		if (CheckNums.isLessThan(reserveInitialAmount, min)) {
-			if (min.isZero()) {
-				list.push(
-					new InvalidAmount(reserveInitialAmount.toString(), min.toString()),
-				);
-			} else {
-				list.push(
-					new InitSupplyLargerThanReserveAmount(
-						min.toString(),
-						reserveInitialAmount.toString(),
-					),
-				);
-			}
-		}
-		if (CheckNums.isGreaterThan(reserveInitialAmount, max)) {
+		if (!CheckNums.isWithinRange(reserveInitialAmount, min, max)) {
 			list.push(
-				new ReserveAmountOverLimit(reserveInitialAmount.toString(), max.toString()),
+				new InitSupplyLargerThanReserveAmount(
+					min.toString(),
+					reserveInitialAmount.toString(),
+				),
 			);
 		}
 

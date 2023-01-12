@@ -244,9 +244,11 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 					return [new InvalidDecimalRange(val, RESERVE_DECIMALS)];
 				}
 
+				const commonDecimals = (RESERVE_DECIMALS > this.decimals)? RESERVE_DECIMALS : this.decimals;
+
 				const reserveInitialAmount = BigDecimal.fromString(
 					val,
-					RESERVE_DECIMALS,
+					commonDecimals,
 				);
 
 				const bInitialSupply =
@@ -258,13 +260,13 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 					)
 						? BigDecimal.fromString(
 								this.initialSupply,
-								this.decimals,
+								commonDecimals,
 						  )
 						: undefined;
 
 				return StableCoin.checkReserveInitialAmount(
 					reserveInitialAmount,
-					RESERVE_DECIMALS,
+					commonDecimals,
 					bInitialSupply,
 				);
 			},

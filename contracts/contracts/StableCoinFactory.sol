@@ -25,6 +25,34 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
         tokenStruct calldata requestedToken,
         address StableCoinContractAddress
     ) external payable override returns (DeployedStableCoin memory) {
+        address reserveAddress = requestedToken.reserveAddress;
+        // Create reserve
+        HederaReserveProxy reserveProxy;
+        HederaReserveProxyAdmin reserveProxyAdmin;
+        if (requestedToken.createReserve) {
+            HederaReserve reserveContract = new HederaReserve();
+            validationReserveInitialAmount(
+                reserveContract.decimals(),
+                uint(requestedToken.reserveInitialAmount),
+                requestedToken.tokenDecimals,
+                requestedToken.tokenInitialSupply
+            );
+
+            reserveProxyAdmin = new HederaReserveProxyAdmin();
+            reserveProxyAdmin.transferOwnership(msg.sender);
+            reserveProxy = new HederaReserveProxy(
+                address(reserveContract),
+                address(reserveProxyAdmin),
+                ''
+            );
+
+            HederaReserve(address(reserveProxy)).initialize(
+                requestedToken.reserveInitialAmount,
+                msg.sender
+            );
+            reserveAddress = address(reserveProxy);
+        }
+
         // Deploy Proxy Admin
         HederaERC20ProxyAdmin StableCoinProxyAdmin = new HederaERC20ProxyAdmin();
 
@@ -37,43 +65,6 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
             address(StableCoinProxyAdmin),
             ''
         );
-
-        address reserveAddress = requestedToken.reserveAddress;
-        // Create reserve
-        HederaReserveProxy reserveProxy;
-        HederaReserveProxyAdmin reserveProxyAdmin;
-        if (requestedToken.createReserve) {
-            reserveProxyAdmin = new HederaReserveProxyAdmin();
-            reserveProxyAdmin.transferOwnership(msg.sender);
-            HederaReserve reserveContract = new HederaReserve();
-            reserveProxy = new HederaReserveProxy(
-                address(reserveContract),
-                address(reserveProxyAdmin),
-                ''
-            );
-
-            //Validate initial reserve amount
-            uint8 reserveDecimals = reserveContract.decimals();
-            assert(requestedToken.reserveInitialAmount >= 0);
-            uint256 initialReserve = uint(requestedToken.reserveInitialAmount);
-            uint256 initialSupply = requestedToken.tokenInitialSupply;
-            if (requestedToken.tokenDecimals > reserveDecimals) {
-                initialReserve =
-                    initialReserve *
-                    (10 ** (requestedToken.tokenDecimals - reserveDecimals));
-            } else {
-                initialSupply =
-                    initialSupply *
-                    (10 ** (reserveDecimals - requestedToken.tokenDecimals));
-            }
-            assert(initialSupply <= initialReserve);
-
-            HederaReserve(address(reserveProxy)).initialize(
-                requestedToken.reserveInitialAmount,
-                msg.sender
-            );
-            reserveAddress = address(reserveProxy);
-        }
 
         // Create Token
         IHederaTokenService.HederaToken memory token = createToken(
@@ -90,7 +81,7 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
             requestedToken.tokenInitialSupply,
             requestedToken.tokenDecimals,
             msg.sender,
-            address(reserveAddress)
+            reserveAddress
         );
 
         // Associate token
@@ -190,5 +181,32 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
         address treasuryAddress
     ) internal pure returns (bool) {
         return treasuryAddress == address(0);
+    }
+
+    function validationReserveInitialAmount(
+        uint8 reserveDecimals,
+        uint256 reserveInitialAmount,
+        uint32 tokenDecimals,
+        uint256 tokenInitialSupply
+    ) internal pure {
+        //Validate initial reserve amount
+        require(
+            reserveInitialAmount >= 0,
+            'Reserve initial amount must be positive'
+        );
+        uint256 initialReserve = uint(reserveInitialAmount);
+        if (tokenDecimals > reserveDecimals) {
+            initialReserve =
+                initialReserve *
+                (10 ** (tokenDecimals - reserveDecimals));
+        } else {
+            tokenInitialSupply =
+                tokenInitialSupply *
+                (10 ** (reserveDecimals - tokenDecimals));
+        }
+        require(
+            tokenInitialSupply <= initialReserve,
+            'Initial supply is lower than initial reserve'
+        );
     }
 }
