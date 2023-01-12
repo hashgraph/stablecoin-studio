@@ -72,10 +72,10 @@ import { UpdatePoRCommand } from '../../app/usecase/command/stablecoin/operation
 import GetPoRRequest from './request/GetPoRRequest.js';
 import { GetPoRCommand } from '../../app/usecase/command/stablecoin/operations/getPoR/GetPoRCommand.js';
 
-export const HederaERC20AddressTestnet = '0.0.49272387';
+export const HederaERC20AddressTestnet = '0.0.49274511';
 export const HederaERC20AddressPreviewnet = '0.0.11111111';
 
-export const FactoryAddressTestnet = '0.0.49272392';
+export const FactoryAddressTestnet = '0.0.49274517';
 export const FactoryAddressPreviewnet = '0.0.11111111';
 
 export { StableCoinViewModel, StableCoinListViewModel };
