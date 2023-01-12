@@ -396,7 +396,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse> {
 		const transactionResponse = await this.performSmartContractOperation(
 			coin.coin.proxyAddress!.value,
-			'getDataFeed',
+			'getReserveAddress',
 			60000,
 			undefined,
 			TransactionType.RECORD,
@@ -415,7 +415,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		return this.performOperation(
 			coin,
 			Operation.PoR_MANAGEMENT,
-			'updateDataFeed',
+			'updateReserveAddress',
 			400000,
 			params,
 		);
@@ -426,7 +426,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse> {
 		const transactionResponse = await this.performSmartContractOperation(
 			coin.coin.proxyAddress!.value,
-			'getReserve',
+			'getReserveAmount',
 			60000,
 			undefined,
 			TransactionType.RECORD,
@@ -448,7 +448,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		});
 		return this.performSmartContractOperation(
 			reserveAddress.toHederaAddress().toSolidityAddress(),
-			'set',
+			'setAmount',
 			400000,
 			params,
 		);
