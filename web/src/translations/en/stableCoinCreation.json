@@ -1,6 +1,6 @@
 {
   "common": {
-    "nextStep" : "Next step",
+    "" : "Next step",
     "goBack" : "Go back",
     "createStableCoin": "Create stable coin",
     "createNewStableCoin": "Create new stable coin",

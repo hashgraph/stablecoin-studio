@@ -1,0 +1,10 @@
+{
+    "title": "Manage Proof of Reserve",
+    "operationTitle": "Manage Proof of Reserve",
+    "subtitle":"Manage Proof of Reserve",
+    "reserveAmount": "Amount to set in Smart Contract",
+    "reserveAmountToolTip": "Introduce Amount",
+    "currentReserveAmount": "Smart Contract current Amount",
+    "reserveAddress": "Smart Contract Adress",
+    "sendAmount": "Send Amount" 
+}

@@ -17,6 +17,7 @@ import WIPE_EN from './translations/en/wipe.json';
 import EXTERNAL_TOKEN_INFO_EN from './translations/en/externalTokenInfo.json';
 import FREEZE_EN from './translations/en/freeze.json';
 import UNFREEZE_EN from './translations/en/unfreeze.json';
+import PROOF_OF_RESERVE_EN from './translations/en/proofOfReserve.json';
 
 const options = {
 	order: ['localStorage', 'navigator'],
@@ -46,6 +47,7 @@ i18n
 				externalTokenInfo: EXTERNAL_TOKEN_INFO_EN,
 				freeze: FREEZE_EN,
 				unfreeze: UNFREEZE_EN,
+				proofOfReserve: PROOF_OF_RESERVE_EN ,
 			},
 			es: {
 				global: GLOBAL_ES,

@@ -103,7 +103,7 @@ const ProofOfReserve = (props: ProofOfReserveProps) => {
 						}}
 						
 						control={control}
-						name={'PoR'}
+						name={'reserveAddress'}
 						label={t('stableCoinCreation:proofOfReserve.dataFeed')}
 						placeholder={t('stableCoinCreation:proofOfReserve.dataFeedPlaceholder')}
 						/>
@@ -129,7 +129,7 @@ const ProofOfReserve = (props: ProofOfReserveProps) => {
 						}}
 						
 						control={control}
-						name={'PoRInitialAmount'}
+						name={'reserveInitialAmount'}
 						label={t('stableCoinCreation:proofOfReserve.initialSupply')}
 						placeholder={t('stableCoinCreation:proofOfReserve.initialSupply')}
 						/>

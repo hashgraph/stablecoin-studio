@@ -171,18 +171,18 @@ const StableCoinCreation = () => {
 	};
 
 	const handleFinish = async () => {
-		const { autorenewAccount, managementPermissions, freezeKey, wipeKey, pauseKey, supplyKey ,PoRInitialAmount,PoR} =
+		const { autorenewAccount, managementPermissions, freezeKey, wipeKey, pauseKey, supplyKey ,reserveInitialAmount,reserveAddress} =
 			getValues();
 
 		request.autoRenewAccount = autorenewAccount;
 
-		if (!PoRInitialAmount){
+		if (!reserveInitialAmount){
 			request.createReserve = false;
-			request.reserveAddress = PoR;
+			request.reserveAddress = reserveAddress;
 
 		}else{
 			request.createReserve = true;
-			request.reserveInitialAmount = PoRInitialAmount;
+			request.reserveInitialAmount = reserveInitialAmount;
 			request.reserveAddress = undefined;
 
 		}

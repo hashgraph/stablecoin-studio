@@ -1,21 +1,21 @@
 import { Box, Heading } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import BaseContainer from '../../components/BaseContainer';
-import { NamedRoutes } from '../../Router/NamedRoutes';
-import GridDirectAccess from '../../components/GridDirectAccess';
+import BaseContainer from '../components/BaseContainer';
+import { NamedRoutes } from './NamedRoutes';
+import GridDirectAccess from '../components/GridDirectAccess';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
 	SELECTED_WALLET_CAPABILITIES,
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNTID,
-} from '../../store/slices/walletSlice';
-import type { DirectAccessProps } from '../../components/DirectAccess';
-import type { IAccountToken } from '../../interfaces/IAccountToken';
-import type { IExternalToken } from '../../interfaces/IExternalToken';
+} from '../store/slices/walletSlice';
+import type { DirectAccessProps } from '../components/DirectAccess';
+import type { IAccountToken } from '../interfaces/IAccountToken';
+import type { IExternalToken } from '../interfaces/IExternalToken';
 // import type { AppDispatch } from '../../store/store.js';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { useRefreshCoinInfo } from '../../hooks/useRefreshCoinInfo';
+import { useRefreshCoinInfo } from '../hooks/useRefreshCoinInfo';
 import { Access, Operation, StableCoinRole } from 'hedera-stable-coin-sdk';
 
 const Operations = () => {

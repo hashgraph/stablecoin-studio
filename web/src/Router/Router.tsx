@@ -15,7 +15,7 @@ import Dashboard from '../views/Dashboard';
 import HandleRoles from '../views/Roles/HandleRoles';
 import { actions } from '../views/Roles/constants';
 import Login from '../views/Login';
-import Operations from '../views/Operations';
+import Operations from '.';
 import Roles from '../views/Roles';
 import StableCoinCreation from '../views/StableCoinCreation/StableCoinCreation';
 import StableCoinNotSelected from '../views/ErrorPage/StableCoinNotSelected';
@@ -158,7 +158,7 @@ const Router = () => {
 								/>
 								<Route path={RoutesMappingUrl.roles} element={<Roles />} />
 								<Route path={RoutesMappingUrl.stableCoinDetails} element={<StableCoinDetails />} />
-								<Route path={RoutesMappingUrl.proofOfReserve} element={<StableCoinProof/>} />
+								<Route path={RoutesMappingUrl.proofOfReserve} element={<StableCoinProof />} />
 								
 								
 							</>

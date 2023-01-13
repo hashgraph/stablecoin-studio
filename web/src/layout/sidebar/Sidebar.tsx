@@ -36,7 +36,7 @@ const Sidebar = () => {
 			route: NamedRoutes.StableCoinDetails,
 		},
 		{
-			icon: 'Gear',
+			icon: 'File',
 			title: t('sidebar.proofOfReserve'),
 			route: NamedRoutes.ProofOfReserve,
 		},

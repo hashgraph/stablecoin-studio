@@ -195,6 +195,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				erc20: hederaERC20.value,
 				stableCoin: stableCoinToCreate,
 			});
+			console.log("ANTES CREAR -> ")
 			const res = await factoryInstance.deployStableCoin(
 				stableCoinToCreate,
 				'0x' +
@@ -208,6 +209,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					gasLimit: 15000000,
 				},
 			);
+			console.log("ADRI ERROR -> " + JSON.stringify(res))
 			return RPCTransactionResponseAdapter.manageResponse(
 				res,
 				'Deployed',
