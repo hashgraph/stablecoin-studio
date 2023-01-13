@@ -1,12 +1,6 @@
 import '@hashgraph/hardhat-hethers'
 import '@hashgraph/sdk'
 import { BigNumber } from 'ethers'
-
-const chai = require('chai')
-const chaiAsPromised = require('chai-as-promised')
-chai.use(chaiAsPromised)
-const expect = chai.expect
-
 import {
     deployContractsWithSDK,
     initializeClients,
@@ -28,9 +22,13 @@ import {
     associateToken,
 } from '../scripts/contractsMethods'
 import { RESCUE_ROLE } from '../scripts/constants'
-
 import { clientId } from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
+import chai from 'chai'
+import chaiAsPromised from 'chai-as-promised'
+
+chai.use(chaiAsPromised)
+const expect = chai.expect
 
 let proxyAddress: ContractId
 

@@ -13,7 +13,6 @@ import {
     getNonOperatorE25519,
 } from '../scripts/deploy'
 import { clientId } from '../scripts/utils'
-
 import {
     grantRole,
     revokeRole,
@@ -23,9 +22,9 @@ import {
 } from '../scripts/contractsMethods'
 import { BURN_ROLE } from '../scripts/constants'
 import { Client, ContractId } from '@hashgraph/sdk'
+import chai from 'chai'
+import chaiAsPromised from 'chai-as-promised'
 
-const chai = require('chai')
-const chaiAsPromised = require('chai-as-promised')
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
