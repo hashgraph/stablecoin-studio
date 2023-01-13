@@ -23,8 +23,9 @@ import Network from './Network.js';
 import Role from './Role.js';
 import StableCoin from './StableCoin.js';
 import Event from './Event.js';
+import ReserveDataFeed from './ReserveDataFeed.js';
 
-export { StableCoin, Account, Network, Role, Event };
+export { StableCoin, Account, Network, Role, Event, ReserveDataFeed };
 
 export * from './request';
 
