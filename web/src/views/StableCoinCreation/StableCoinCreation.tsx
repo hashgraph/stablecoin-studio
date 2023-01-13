@@ -208,7 +208,6 @@ const StableCoinCreation = () => {
 		}
 		// alert(request.dataFeedAddress)
 		try {
-			console.log(request);
 			onOpen();
 			setLoading(true);
 			await SDKService.createStableCoin(request);

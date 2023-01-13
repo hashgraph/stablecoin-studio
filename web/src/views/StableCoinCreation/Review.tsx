@@ -42,7 +42,6 @@ const Review = (props: ReviewProps) => {
 		return label;
 	};
 
-	console.log("POR ->" + PoR );
 	return (
 		<VStack h='full' justify={'space-between'} pt='80px'>
 			<Stack minW={400}>

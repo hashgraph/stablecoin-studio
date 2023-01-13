@@ -195,7 +195,6 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				erc20: hederaERC20.value,
 				stableCoin: stableCoinToCreate,
 			});
-			console.log("ANTES CREAR -> ")
 			const res = await factoryInstance.deployStableCoin(
 				stableCoinToCreate,
 				'0x' +
@@ -209,11 +208,13 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					gasLimit: 15000000,
 				},
 			);
-			console.log("ADRI ERROR -> " + JSON.stringify(res))
-			return RPCTransactionResponseAdapter.manageResponse(
+			// Put it into an array since structs change the response from the event and its not a simple array
+			const txRes = await RPCTransactionResponseAdapter.manageResponse(
 				res,
 				'Deployed',
 			);
+			txRes.response = [txRes.response]
+			return txRes;
 		} catch (error) {
 			throw new SigningError(
 				`Unexpected error in RPCTransactionAdapter create operation : ${error}`,
