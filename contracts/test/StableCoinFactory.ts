@@ -15,6 +15,7 @@ import {
     deployFactory,
     toHashgraphKey,
     ADDRESS_0,
+    deployHederaReserve,
 } from '../scripts/deploy'
 import {
     upgradeTo_SCF,
@@ -292,6 +293,40 @@ describe('StableCoinFactory Tests', function() {
                 initialAmountDataFeed: toReserve(INIT_SUPPLY)
                     .sub(1)
                     .toString(),
+            })
+        ).to.eventually.be.rejectedWith(Error)
+    })
+
+    it('Create StableCoin setting an initial supply over the reserve, when the reserve is provided and not deployed, expect it to fail', async function() {
+        // first deploy Hedera Reserve 
+        const reserveAmount = BigNumber.from(1);
+        const result = await deployHederaReserve(
+            reserveAmount,
+            operatorAccount,
+            operatorIsE25519,
+            operatorClient,
+            operatorPriKey
+        )
+        const DataFeedAddress = result[0];
+        
+        // Deploy Token using Client
+        const initSupplyAmount = reserveAmount.add(1);
+        const maxSupplyAmount = initSupplyAmount.add(1);
+        expect(
+            deployContractsWithSDK({
+                name: TokenName,
+                symbol: TokenSymbol,
+                decimals: TokenDecimals,
+                initialSupply: initSupplyAmount.toString(),
+                maxSupply: maxSupplyAmount.toString(),
+                memo: TokenMemo,
+                account: operatorAccount,
+                privateKey: operatorPriKey,
+                publicKey: operatorPubKey,
+                isED25519Type: operatorIsE25519,
+                allToContract: false,
+                reserveAddress: String(DataFeedAddress),
+                createReserve: false,
             })
         ).to.eventually.be.rejectedWith(Error)
     })

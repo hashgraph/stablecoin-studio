@@ -209,12 +209,18 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				},
 			);
 			// Put it into an array since structs change the response from the event and its not a simple array
-			const txRes = await RPCTransactionResponseAdapter.manageResponse(
+			/*const txRes = await RPCTransactionResponseAdapter.manageResponse(
 				res,
 				'Deployed',
 			);
 			txRes.response = [txRes.response]
-			return txRes;
+			return txRes;*/
+			
+			return RPCTransactionResponseAdapter.manageResponse(
+				res,
+				'Deployed',
+			);
+
 		} catch (error) {
 			throw new SigningError(
 				`Unexpected error in RPCTransactionAdapter create operation : ${error}`,
