@@ -34,3 +34,4 @@ export * from './Account.js';
 export * from './Role.js';
 export * from './Event.js';
 export * from './Common.js';
+export * from './ReserveDataFeed.js';
