@@ -1,6 +1,5 @@
 import '@hashgraph/hardhat-hethers'
 import { BigNumber } from 'ethers'
-
 import {
     deployContractsWithSDK,
     initializeClients,
@@ -29,12 +28,11 @@ import {
     hasRole,
 } from '../scripts/contractsMethods'
 import { CASHIN_ROLE } from '../scripts/constants'
-
 import { clientId } from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
+import chai from 'chai'
+import chaiAsPromised from 'chai-as-promised'
 
-const chai = require('chai')
-const chaiAsPromised = require('chai-as-promised')
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
@@ -611,7 +609,7 @@ describe('Grant unlimited supplier role and test its cashin right, maxsupply lim
         await expect(
             Mint(
                 proxyAddress,
-                BigNumber.from(1),
+                BigNumber.from(1).mul(TokenFactor),
                 nonOperatorClient,
                 nonOperatorAccount,
                 nonOperatorIsE25519
@@ -866,7 +864,7 @@ describe('Grant limited supplier role and test its cashin right and cashin/maxsu
         await expect(
             Mint(
                 proxyAddress,
-                BigNumber.from(1),
+                BigNumber.from(1).mul(TokenFactor),
                 nonOperatorClient,
                 nonOperatorAccount,
                 nonOperatorIsE25519

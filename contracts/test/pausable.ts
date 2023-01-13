@@ -24,9 +24,9 @@ import {
 import { PAUSE_ROLE } from '../scripts/constants'
 import { clientId } from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
+import chai from 'chai'
+import chaiAsPromised from 'chai-as-promised'
 
-const chai = require('chai')
-const chaiAsPromised = require('chai-as-promised')
 chai.use(chaiAsPromised)
 const expect = chai.expect
 

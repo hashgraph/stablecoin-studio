@@ -29,16 +29,15 @@ import {
     descriptionHederaReserve,
     versionHederaReserve,
 } from '../scripts/contractsMethods'
-
 import { clientId, toEvmAddress } from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
 import {
     HederaReserveProxyAdmin__factory,
     HederaReserveProxy__factory,
 } from '../typechain-types'
+import chai from 'chai'
+import chaiAsPromised from 'chai-as-promised'
 
-const chai = require('chai')
-const chaiAsPromised = require('chai-as-promised')
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
@@ -122,7 +121,7 @@ describe('HederaReserve Tests', function() {
         hederaReserveAddress = result[2]
     })
 
-    it('Initialize throw error the contract has been initialized before', async function() {
+    it('Check initialize can only be run once', async function() {
         expect(
             initializeHederaReserve(
                 BigNumber.from(1000),

@@ -23,9 +23,9 @@ import {
 import { DELETE_ROLE } from '../scripts/constants'
 import { clientId } from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
+import chai from 'chai'
+import chaiAsPromised from 'chai-as-promised'
 
-const chai = require('chai')
-const chaiAsPromised = require('chai-as-promised')
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
@@ -109,9 +109,7 @@ describe('Delete Tests', function() {
             privateKey: operatorPriKey,
             publicKey: operatorPubKey,
             isED25519Type: operatorIsE25519,
-            initialAmountDataFeed: INIT_SUPPLY.add(
-                BigNumber.from('100000')
-            ).toString(),
+            initialAmountDataFeed: INIT_SUPPLY.toString(),
         })
 
         proxyAddress = result[0]
@@ -210,7 +208,7 @@ describe('Delete Tests', function() {
     })
 
     it('An account with delete role can delete a token', async function() {
-        const ONE = BigNumber.from(1)
+        const ONE = BigNumber.from(1).mul(TokenFactor)
         // We first grant delete role to account
         await grantRole(
             DELETE_ROLE,

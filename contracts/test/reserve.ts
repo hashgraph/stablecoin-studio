@@ -1,7 +1,6 @@
 import '@hashgraph/hardhat-hethers'
 import '@hashgraph/sdk'
 import { BigNumber } from 'ethers'
-
 import {
     deployContractsWithSDK,
     initializeClients,
@@ -17,12 +16,11 @@ import {
     updateDataFeed,
     getReserveAmount,
 } from '../scripts/contractsMethods'
-
 import { clientId } from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
+import chai from 'chai'
+import chaiAsPromised from 'chai-as-promised'
 
-const chai = require('chai')
-const chaiAsPromised = require('chai-as-promised')
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
@@ -39,11 +37,13 @@ let operatorIsE25519: boolean
 const TokenName = 'MIDAS'
 const TokenSymbol = 'MD'
 const TokenDecimals = 3
+const ReserveDecimal = 2
+const INIT_AMOUNT = 100
 const TokenFactor = BigNumber.from(10).pow(TokenDecimals)
-const INIT_SUPPLY = BigNumber.from(100).mul(TokenFactor)
+const INIT_SUPPLY = BigNumber.from(INIT_AMOUNT).mul(TokenFactor)
 const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor)
 const TokenMemo = 'Hedera Accelerator Stable Coin'
-const INIT_RESERVE = BigNumber.from('1500')
+const INIT_RESERVE = BigNumber.from(INIT_AMOUNT).pow(ReserveDecimal)
 let hederaReserveProxy: ContractId
 
 describe('Reserve Tests', function() {

@@ -587,8 +587,7 @@ export async function allowance(
     addressSpender: string,
     spenderIsE25519: boolean,
     client: Client
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-): Promise<any> {
+): Promise<BigNumber> {
     const params = [
         await toEvmAddress(addressOwner, ownerIsE25519),
         await toEvmAddress(addressSpender, spenderIsE25519),
@@ -601,7 +600,7 @@ export async function allowance(
         Gas1,
         HederaERC20__factory.abi
     )
-    return response[0]
+    return BigNumber.from(response[0])
 }
 
 export async function approve(
@@ -610,8 +609,7 @@ export async function approve(
     spenderIsE25519: boolean,
     amount: BigNumber,
     client: Client
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-): Promise<any> {
+): Promise<boolean> {
     const params = [
         await toEvmAddress(addressSpender, spenderIsE25519),
         amount.toString(),
@@ -633,8 +631,7 @@ export async function transfer(
     spenderIsE25519: boolean,
     amount: BigNumber,
     client: Client
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-): Promise<any> {
+): Promise<boolean> {
     const params: string[] = [
         await toEvmAddress(addressSpender, spenderIsE25519),
         amount.toString(),
@@ -658,8 +655,7 @@ export async function transferFrom(
     spenderIsE25519: boolean,
     amount: BigNumber,
     client: Client
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-): Promise<any> {
+): Promise<boolean> {
     const params: string[] = [
         await toEvmAddress(addressOwner, ownerIsE25519),
         await toEvmAddress(addressSpender, spenderIsE25519),
@@ -868,8 +864,7 @@ export async function getRoles(
     client: Client,
     accountToGetRolesFrom: string,
     isE25519: boolean
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-): Promise<any[]> {
+): Promise<string[]> {
     const params = [await toEvmAddress(accountToGetRolesFrom, isE25519)]
     const result = await contractCall(
         proxyAddress,
@@ -1115,11 +1110,11 @@ export async function initializeHederaReserve(
     )
 }
 export async function setAmountHederaReserve(
-    initailAmount: BigNumber,
+    amountReserve: BigNumber,
     hederaReserveProxy: ContractId,
     operatorClient: Client
 ) {
-    const params: string[] = [initailAmount.toString()]
+    const params: string[] = [amountReserve.toString()]
     await contractCall(
         hederaReserveProxy,
         'setAmount',

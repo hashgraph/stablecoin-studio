@@ -1,12 +1,5 @@
 import '@hashgraph/hardhat-hethers'
-require('@hashgraph/sdk')
-import { BigNumber, Contract } from 'ethers'
-
-const chai = require('chai')
-const chaiAsPromised = require('chai-as-promised')
-chai.use(chaiAsPromised)
-const expect = chai.expect
-
+import { BigNumber } from 'ethers'
 import {
     deployContractsWithSDK,
     initializeClients,
@@ -17,8 +10,6 @@ import {
     getOperatorPublicKey,
     getNonOperatorClient,
     getNonOperatorAccount,
-    getNonOperatorPrivateKey,
-    getNonOperatorPublicKey,
     getNonOperatorE25519,
 } from '../scripts/deploy'
 import {
@@ -34,6 +25,10 @@ import { WIPE_ROLE } from '../scripts/constants'
 
 import { clientId } from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
+import chai from 'chai'
+import chaiAsPromised from 'chai-as-promised'
+chai.use(chaiAsPromised)
+const expect = chai.expect
 
 let proxyAddress: ContractId
 

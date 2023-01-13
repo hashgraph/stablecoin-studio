@@ -37,24 +37,23 @@ import {
     transferFrom,
     Burn,
     transfer,
-    getReserveAmount,
 } from '../scripts/contractsMethods'
-
 import { clientId, toEvmAddress } from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
 import {
     HederaERC20ProxyAdmin__factory,
     HederaERC20Proxy__factory,
 } from '../typechain-types'
+import chai from 'chai'
+import chaiAsPromised from 'chai-as-promised'
 
-const chai = require('chai')
-const chaiAsPromised = require('chai-as-promised')
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
 let proxyAddress: ContractId
 let proxyAdminAddress: ContractId
 let stableCoinAddress: ContractId
+let reserveProxy: ContractId
 
 let operatorClient: Client
 let nonOperatorClient: Client
@@ -135,10 +134,11 @@ describe('HederaERC20 Tests', function() {
             privateKey: operatorPriKey,
             publicKey: operatorPubKey,
             isED25519Type: operatorIsE25519,
-            initialAmountDataFeed: BigNumber.from('1500').toString(),
+            initialAmountDataFeed: BigNumber.from('2000').toString(),
         })
 
         proxyAddress = result[0]
+        reserveProxy = result[6]
     })
 
     it('input parmeters check', async function() {
@@ -342,19 +342,6 @@ describe('HederaERC20 Tests', function() {
     })
 
     it('Check transfer and transferFrom', async () => {
-        console.log(
-            'Reserve',
-            await (
-                await getReserveAmount(proxyAddress, operatorClient)
-            ).toString()
-        )
-        console.log(
-            'totalSupply',
-            await (
-                await getTotalSupply(proxyAddress, operatorClient)
-            ).toString()
-        )
-
         const AMOUNT = BigNumber.from(10).mul(TokenFactor)
         await associateToken(
             proxyAddress,
@@ -376,20 +363,7 @@ describe('HederaERC20 Tests', function() {
             operatorAccount,
             operatorIsE25519
         )
-        console.log('After mint')
 
-        console.log(
-            'Reserve',
-            await (
-                await getReserveAmount(proxyAddress, operatorClient)
-            ).toString()
-        )
-        console.log(
-            'totalSupply',
-            await (
-                await getTotalSupply(proxyAddress, operatorClient)
-            ).toString()
-        )
         const allowanceRes = await allowance(
             proxyAddress,
             operatorAccount,
@@ -460,9 +434,47 @@ describe('HederaERC20 Tests', function() {
         expect(approveRes).to.equals(true)
         expect(allowanceRes).to.equals(AMOUNT)
         expect(transferFromRes).to.equals(true)
-        expect(balanceResp).to.equals(3)
-        expect(allowancePost).to.equals('7')
-        expect(balanceResp2).to.equals(6)
+        expect(balanceResp).to.equals(BigNumber.from('3').mul(TokenFactor))
+        expect(allowancePost).to.equals(BigNumber.from('7').mul(TokenFactor))
+        expect(balanceResp2).to.equals(BigNumber.from('6').mul(TokenFactor))
+    })
+
+    it('Mint token throw error format number incorrrect', async () => {
+        const initialTotalSupply = await getTotalSupply(
+            proxyAddress,
+            operatorClient
+        )
+
+        await expect(
+            Mint(
+                proxyAddress,
+                BigNumber.from(1),
+                operatorClient,
+                operatorAccount,
+                operatorIsE25519
+            )
+        ).to.eventually.be.rejectedWith(Error)
+
+        const afterErrorTotalSupply = await getTotalSupply(
+            proxyAddress,
+            operatorClient
+        )
+
+        expect(initialTotalSupply).to.equal(afterErrorTotalSupply)
+
+        await Mint(
+            proxyAddress,
+            BigNumber.from(1).mul(TokenFactor),
+            operatorClient,
+            operatorAccount,
+            operatorIsE25519
+        )
+
+        const totalSupply = await getTotalSupply(proxyAddress, operatorClient)
+
+        expect(totalSupply).to.equal(
+            initialTotalSupply.add(BigNumber.from(1).mul(TokenFactor))
+        )
     })
 })
 
@@ -528,9 +540,7 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
             privateKey: operatorPriKey,
             publicKey: operatorPubKey,
             isED25519Type: operatorIsE25519,
-            initialAmountDataFeed: INIT_SUPPLY.add(
-                BigNumber.from('100000').mul(TokenFactor)
-            ).toString(),
+            initialAmountDataFeed: INIT_SUPPLY.toString(),
         })
 
         proxyAddress = result[0]
@@ -591,9 +601,7 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
             privateKey: operatorPriKey,
             publicKey: operatorPubKey,
             isED25519Type: operatorIsE25519,
-            initialAmountDataFeed: INIT_SUPPLY.add(
-                BigNumber.from('100000').mul(TokenFactor)
-            ).toString(),
+            initialAmountDataFeed: INIT_SUPPLY.toString(),
         })
 
         const newImplementationContract = result[2]
@@ -634,9 +642,7 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
             privateKey: operatorPriKey,
             publicKey: operatorPubKey,
             isED25519Type: operatorIsE25519,
-            initialAmountDataFeed: INIT_SUPPLY.add(
-                BigNumber.from('100000').mul(TokenFactor)
-            ).toString(),
+            initialAmountDataFeed: INIT_SUPPLY.toString(),
         })
 
         const newImplementationContract = result[2]
@@ -680,9 +686,7 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
             privateKey: operatorPriKey,
             publicKey: operatorPubKey,
             isED25519Type: operatorIsE25519,
-            initialAmountDataFeed: INIT_SUPPLY.add(
-                BigNumber.from('100000').mul(TokenFactor)
-            ).toString(),
+            initialAmountDataFeed: INIT_SUPPLY.toString(),
         })
 
         const newImplementationContract = result[2]
