@@ -19,21 +19,23 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
     string constant memo_2 = '","a":"';
     string constant memo_3 = '"}';
 
-    event Deployed(address, address, address, address, address, address);
+    event Deployed(DeployedStableCoin);
 
     function deployStableCoin(
         tokenStruct calldata requestedToken,
         address StableCoinContractAddress
     ) external payable override returns (DeployedStableCoin memory) {
+
+        // Reserve
         address reserveAddress = requestedToken.reserveAddress;
-        // Create reserve
         HederaReserveProxy reserveProxy;
         HederaReserveProxyAdmin reserveProxyAdmin;
+
         if (requestedToken.createReserve) {
             HederaReserve reserveContract = new HederaReserve();
             validationReserveInitialAmount(
                 reserveContract.decimals(),
-                uint(requestedToken.reserveInitialAmount),
+                requestedToken.reserveInitialAmount,
                 requestedToken.tokenDecimals,
                 requestedToken.tokenInitialSupply
             );
@@ -51,6 +53,17 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
                 msg.sender
             );
             reserveAddress = address(reserveProxy);
+        }
+        else if(reserveAddress != address(0)){
+            (, int256 reserveInitialAmount, , , ) = HederaReserve(reserveAddress)
+                .latestRoundData();
+
+            validationReserveInitialAmount(
+                HederaReserve(reserveAddress).decimals(),
+                reserveInitialAmount,
+                requestedToken.tokenDecimals,
+                requestedToken.tokenInitialSupply
+            );
         }
 
         // Deploy Proxy Admin
@@ -88,14 +101,6 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
         if (treasuryIsContract(requestedToken.treasuryAddress))
             HederaERC20(address(StableCoinProxy)).associateToken(msg.sender);
 
-        emit Deployed(
-            address(StableCoinProxy),
-            address(StableCoinProxyAdmin),
-            StableCoinContractAddress,
-            tokenAddress,
-            address(reserveProxy),
-            address(reserveProxyAdmin)
-        );
         DeployedStableCoin memory deployedStableCoin;
 
         deployedStableCoin.stableCoinProxy = address(StableCoinProxy);
@@ -105,6 +110,8 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
         deployedStableCoin.tokenAddress = tokenAddress;
         deployedStableCoin.reserveProxy = address(reserveProxy);
         deployedStableCoin.reserveProxyAdmin = address(reserveProxyAdmin);
+
+        emit Deployed(deployedStableCoin);
 
         return deployedStableCoin;
     }
@@ -185,7 +192,7 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
 
     function validationReserveInitialAmount(
         uint8 reserveDecimals,
-        uint256 reserveInitialAmount,
+        int256 reserveInitialAmount,
         uint32 tokenDecimals,
         uint256 tokenInitialSupply
     ) internal pure {
