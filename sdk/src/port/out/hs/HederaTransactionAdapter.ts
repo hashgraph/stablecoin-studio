@@ -40,6 +40,7 @@ import PublicKey from '../../../domain/context/account/PublicKey.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
 import {
 	HederaERC20__factory,
+	HederaReserve__factory,
 	StableCoinFactory__factory,
 } from 'hedera-stable-coin-contracts/typechain-types/index.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
@@ -150,7 +151,6 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				createReserve,
 				keys,
 			);
-
 			const params = [
 				stableCoinToCreate,
 				'0x' +
@@ -401,7 +401,8 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			TransactionType.RECORD,
 		);
 
-		return transactionResponse.response[0].toString();
+		transactionResponse.response = transactionResponse.response[0].toString();
+		return transactionResponse;
 	}
 
 	public async updateReserveAddress(
@@ -445,11 +446,14 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		const params = new Params({
 			amount: amount,
 		});
+
 		return this.performSmartContractOperation(
-			reserveAddress.toHederaAddress().toSolidityAddress(),
+			reserveAddress.toHederaAddress().toString(),
 			'setAmount',
 			400000,
 			params,
+			TransactionType.RECEIPT,
+			HederaReserve__factory.abi
 		);
 	}
 
@@ -680,10 +684,11 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		gas: number,
 		params?: Params,
 		transactionType: TransactionType = TransactionType.RECEIPT,
+		contractAbi: any[] = HederaERC20__factory.abi
 	): Promise<TransactionResponse> {
 		try {
 			switch (CapabilityDecider.decide(coin, operation)) {
-				case Decision.CONTRACT:
+				case Decision.CONTRACT:					
 					if (!coin.coin.proxyAddress)
 						throw new Error(
 							`StableCoin ${coin.coin.name} does not have a proxy Address`,
@@ -694,6 +699,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 						gas,
 						params,
 						transactionType,
+						contractAbi
 					);
 
 				case Decision.HTS:
@@ -732,6 +738,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		gas: number,
 		params?: Params,
 		transactionType: TransactionType = TransactionType.RECEIPT,
+		contractAbi: any[] = HederaERC20__factory.abi
 	): Promise<TransactionResponse> {
 		const filteredContractParams: any[] =
 			params === undefined || params === null
@@ -739,22 +746,26 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				: Object.values(params!).filter((element) => {
 						return element !== undefined;
 				  });
-
 		for (let i = 0; i < filteredContractParams.length; i++) {
 			if (filteredContractParams[i] instanceof HederaId) {
 				filteredContractParams[i] = await this.accountToEvmAddress(
 					filteredContractParams[i],
 				);
 			}
-		}
 
+			if (filteredContractParams[i] instanceof ContractId) {
+				filteredContractParams[i] = await this.contractToEvmAddress(
+					filteredContractParams[i],
+				);
+			}
+		}
 		return await this.contractCall(
 			contractAddress,
 			operationName,
 			filteredContractParams,
 			gas,
 			transactionType,
-			HederaERC20__factory.abi,
+			contractAbi,
 		);
 	}
 
