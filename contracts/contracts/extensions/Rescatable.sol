@@ -22,10 +22,11 @@ abstract contract Rescatable is IRescatable, TokenOwner, Roles {
     {
         require(_balanceOf(address(this)) >= amount, "Amount must not exceed the token balance");
         
-        int256 responseCode = IHederaTokenService(precompileAddress).transferToken(_getTokenAddress(), address(this), msg.sender, int64(int256(amount)));
-        bool success = _checkResponse(responseCode);
-
         emit TokenRescued (msg.sender, _getTokenAddress(), amount);
+
+        int256 responseCode = IHederaTokenService(precompileAddress).transferToken(_getTokenAddress(), address(this), msg.sender, int64(int256(amount)));
+
+        bool success = _checkResponse(responseCode);
 
         return success;
     }

@@ -21,10 +21,11 @@ abstract contract Burnable is IBurnable, TokenOwner, Roles {
     {         
         require(_balanceOf(address(this)) >= amount, "Amount is greater than treasury account balance");
 
-        (int256 responseCode, ) = IHederaTokenService(precompileAddress).burnToken(_getTokenAddress(), uint64(amount),  new int64[](0));
-        bool success = _checkResponse(responseCode);
-
         emit TokensBurned (msg.sender, _getTokenAddress(), amount);
+
+        (int256 responseCode, ) = IHederaTokenService(precompileAddress).burnToken(_getTokenAddress(), uint64(amount),  new int64[](0));
+        
+        bool success = _checkResponse(responseCode);
 
         return success;
     }

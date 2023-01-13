@@ -27,6 +27,11 @@ contract HederaERC20 is
 {
     // using SafeERC20Upgradeable for IHederaERC20Upgradeable;
 
+    // Constructor required to avoid Initializer attack on logic contract
+    constructor(){
+        _disableInitializers();
+    }
+
     function initialize(
         IHederaTokenService.HederaToken calldata token,
         uint64 initialTotalSupply,
@@ -34,6 +39,18 @@ contract HederaERC20 is
         address originalSender,
         address reserveAddress
     ) external payable initializer returns (address) {
+        reserve_init(reserveAddress); // Initialize reserve
+        roles_init();
+        _setupRole(_getRoleId(roleName.ADMIN), msg.sender); // Assign Admin role to calling contract/user in order to be able to set all the other roles
+        grantUnlimitedSupplierRole(originalSender);
+        _grantRole(_getRoleId(roleName.BURN), originalSender);
+        _grantRole(_getRoleId(roleName.RESCUE), originalSender);
+        _grantRole(_getRoleId(roleName.WIPE), originalSender);
+        _grantRole(_getRoleId(roleName.PAUSE), originalSender);
+        _grantRole(_getRoleId(roleName.FREEZE), originalSender);
+        _grantRole(_getRoleId(roleName.DELETE), originalSender);
+        _setupRole(_getRoleId(roleName.ADMIN), originalSender); // Assign Admin role to the provided address
+
         (int64 responseCode, address tokenAddress) = IHederaTokenService(
             precompileAddress
         ).createFungibleToken{value: msg.value}(
@@ -47,18 +64,7 @@ contract HederaERC20 is
             'Token Creation failed'
         );
 
-        reserve_init(reserveAddress); // Initialize reserve
         tokenOwner_init(tokenAddress);
-        roles_init();
-        _setupRole(_getRoleId(roleName.ADMIN), msg.sender); // Assign Admin role to calling contract/user in order to be able to set all the other roles
-        grantUnlimitedSupplierRole(originalSender);
-        _grantRole(_getRoleId(roleName.BURN), originalSender);
-        _grantRole(_getRoleId(roleName.RESCUE), originalSender);
-        _grantRole(_getRoleId(roleName.WIPE), originalSender);
-        _grantRole(_getRoleId(roleName.PAUSE), originalSender);
-        _grantRole(_getRoleId(roleName.FREEZE), originalSender);
-        _grantRole(_getRoleId(roleName.DELETE), originalSender);
-        _setupRole(_getRoleId(roleName.ADMIN), originalSender); // Assign Admin role to the provided address
 
         return tokenAddress;
     }
@@ -133,11 +139,13 @@ contract HederaERC20 is
      *
      */
     function associateToken(address adr) public {
-        int256 responseCode = IHederaTokenService(precompileAddress)
-            .associateToken(adr, _getTokenAddress());
-        _checkResponse(responseCode);
 
         emit TokenAssociated(_getTokenAddress(), adr);
+
+        int256 responseCode = IHederaTokenService(precompileAddress)
+            .associateToken(adr, _getTokenAddress());
+        
+        _checkResponse(responseCode);
     }
 
     /**
@@ -147,11 +155,13 @@ contract HederaERC20 is
      *
      */
     function dissociateToken(address adr) public {
-        int256 responseCode = IHederaTokenService(precompileAddress)
-            .dissociateToken(adr, _getTokenAddress());
-        _checkResponse(responseCode);
 
         emit TokenDissociated(_getTokenAddress(), adr);
+
+        int256 responseCode = IHederaTokenService(precompileAddress)
+            .dissociateToken(adr, _getTokenAddress());
+        
+        _checkResponse(responseCode);
     }
 
     /**
@@ -167,11 +177,12 @@ contract HederaERC20 is
     ) internal override(TokenOwner) {
         require(_balanceOf(from) >= amount, 'Insufficient token balance');
 
+        emit TokenTransfer(_getTokenAddress(), from, to, amount);
+
         int256 responseCode = IHederaTokenService(precompileAddress)
             .transferToken(_getTokenAddress(), from, to, int64(int256(amount)));
-        _checkResponse(responseCode);
 
-        emit TokenTransfer(_getTokenAddress(), from, to, amount);
+        _checkResponse(responseCode);
     }
 
     /**
@@ -230,6 +241,9 @@ contract HederaERC20 is
         address to,
         uint256 amount
     ) external returns (bool) {
+
+        emit TokenTransfer(_getTokenAddress(), from, to, amount);
+
         (bool success, bytes memory result) = precompileAddress.delegatecall(
             abi.encodeWithSelector(
                 IHederaTokenService.transferFrom.selector,
@@ -243,7 +257,6 @@ contract HederaERC20 is
             ? abi.decode(result, (int32))
             : HederaResponseCodes.UNKNOWN;
         success = _checkResponse(responseCode);
-        emit TokenTransfer(_getTokenAddress(), from, to, amount);
 
         return success;
     }

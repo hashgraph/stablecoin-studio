@@ -7,6 +7,12 @@ interface IHederaReserve is AggregatorV3Interface {
 
     event ReserveInitialized(int256 initialReserve);
 
+    event adminChanged(address previousAdmin, address newAdmin);
+
+    event amountChanged(int256 previousAmount, int256 newAmount);
+
+
+
     /**
      *  @dev Sets a new reserve amount
      *

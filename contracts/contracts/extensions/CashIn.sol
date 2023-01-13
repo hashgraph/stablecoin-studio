@@ -20,15 +20,16 @@ abstract contract CashIn is ICashIn, SupplierAdmin, Reserve {
         checkReserveIncrease(amount)
         returns (bool)
     {
-        if (!_unlimitedSupplierAllowances[msg.sender])
-            _decreaseSupplierAllowance(msg.sender, amount);
+        if (!_unlimitedSupplierAllowances[msg.sender])_decreaseSupplierAllowance(msg.sender, amount);
+        
+        emit TokensMinted(msg.sender, _getTokenAddress(), amount, account);
+
         (int256 responseCode, , ) = IHederaTokenService(precompileAddress)
             .mintToken(_getTokenAddress(), uint64(amount), new bytes[](0));
+
         bool success = _checkResponse(responseCode);
 
         _transfer(address(this), account, amount);
-
-        emit TokensMinted(msg.sender, _getTokenAddress(), amount, account);
 
         return success;
     }

@@ -19,8 +19,6 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
     string constant memo_2 = '","a":"';
     string constant memo_3 = '"}';
 
-    event Deployed(DeployedStableCoin);
-
     function deployStableCoin(
         tokenStruct calldata requestedToken,
         address StableCoinContractAddress
@@ -28,8 +26,8 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
 
         // Reserve
         address reserveAddress = requestedToken.reserveAddress;
-        HederaReserveProxy reserveProxy;
-        HederaReserveProxyAdmin reserveProxyAdmin;
+        address reserveProxy = address(0);
+        address reserveProxyAdmin = address(0);
 
         if (requestedToken.createReserve) {
             HederaReserve reserveContract = new HederaReserve();
@@ -40,19 +38,19 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
                 requestedToken.tokenInitialSupply
             );
 
-            reserveProxyAdmin = new HederaReserveProxyAdmin();
-            reserveProxyAdmin.transferOwnership(msg.sender);
-            reserveProxy = new HederaReserveProxy(
+            reserveProxyAdmin = address(new HederaReserveProxyAdmin());
+            HederaReserveProxyAdmin(reserveProxyAdmin).transferOwnership(msg.sender);
+            reserveProxy = address(new HederaReserveProxy(
                 address(reserveContract),
                 address(reserveProxyAdmin),
                 ''
-            );
+            ));
 
-            HederaReserve(address(reserveProxy)).initialize(
+            HederaReserve(reserveProxy).initialize(
                 requestedToken.reserveInitialAmount,
                 msg.sender
             );
-            reserveAddress = address(reserveProxy);
+            reserveAddress = reserveProxy;
         }
         else if(reserveAddress != address(0)){
             (, int256 reserveInitialAmount, , , ) = HederaReserve(reserveAddress)
@@ -109,7 +107,7 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
             .stableCoinContractAddress = StableCoinContractAddress;
         deployedStableCoin.tokenAddress = tokenAddress;
         deployedStableCoin.reserveProxy = reserveAddress;
-        deployedStableCoin.reserveProxyAdmin = address(reserveProxyAdmin);
+        deployedStableCoin.reserveProxyAdmin = reserveProxyAdmin;
 
         emit Deployed(deployedStableCoin);
 

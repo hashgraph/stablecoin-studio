@@ -34,11 +34,12 @@ abstract contract Pausable is IPausable, TokenOwner, Roles {
         onlyRole(_getRoleId(roleName.PAUSE))  
         returns (bool)
     {         
-        int256 responseCode = IHederaTokenService(precompileAddress).unpauseToken(_getTokenAddress());
-        bool success = _checkResponse(responseCode);
-        
         emit TokenUnpaused(_getTokenAddress()); 
 
+        int256 responseCode = IHederaTokenService(precompileAddress).unpauseToken(_getTokenAddress());
+
+        bool success = _checkResponse(responseCode);
+        
         return success;
     }
 }

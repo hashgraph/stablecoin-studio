@@ -17,11 +17,12 @@ abstract contract Deletable is IDeletable, TokenOwner, Roles {
         onlyRole(_getRoleId(roleName.DELETE))  
         returns (bool)
     {         
-        int256 responseCode = IHederaTokenService(precompileAddress).deleteToken(_getTokenAddress());
-        bool success = _checkResponse(responseCode);
-        
         emit TokenDeleted(_getTokenAddress()); 
 
+        int256 responseCode = IHederaTokenService(precompileAddress).deleteToken(_getTokenAddress());
+
+        bool success = _checkResponse(responseCode);
+        
         return success;
     }
 }
