@@ -71,6 +71,11 @@ import { RevokeSupplierRoleCommandHandler } from '../app/usecase/command/stablec
 import { GrantSupplierRoleCommandHandler } from '../app/usecase/command/stablecoin/roles/grantSupplierRole/GrantSupplierRoleCommandHandler.js';
 import { GrantUnlimitedSupplierRoleCommandHandler } from '../app/usecase/command/stablecoin/roles/granUnlimitedSupplierRole/GrantUnlimitedSupplierRoleCommandHandler.js';
 import { GetAccountTokenAssociatedQueryHandler } from '../app/usecase/query/account/tokenAssociated/GetAccountTokenAssociatedQueryHandler.js';
+import { GetReserveAddressCommandHandler } from '../app/usecase/command/stablecoin/operations/getReserveAddress/GetReserveAddressCommandHandler.js';
+import { GetReserveAmountCommandHandler } from '../app/usecase/command/reserve/operations/getReserveAmount/GetReserveAmountCommandHandler.js';
+import { UpdateReserveAddressCommandHandler } from '../app/usecase/command/stablecoin/operations/updateReserveAddress/UpdateReserveAddressCommandHandler.js';
+import { UpdateReserveAmountCommandHandler } from '../app/usecase/command/reserve/operations/updateReserveAmount/UpdateReserveAmountCommandHandler.js';
+
 
 export const TOKENS = {
 	COMMAND_HANDLER: Symbol('CommandHandler'),
@@ -199,6 +204,22 @@ const COMMAND_HANDLERS = [
 	{
 		token: TOKENS.COMMAND_HANDLER,
 		useClass: SetNetworkCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: GetReserveAddressCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: GetReserveAmountCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: UpdateReserveAddressCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: UpdateReserveAmountCommandHandler,
 	},
 ];
 

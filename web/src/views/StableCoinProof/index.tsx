@@ -69,12 +69,14 @@ const UpdateReserveAddress = async () => {
 }
 
 const updateReserveAmount = async () => {
-	const { reserveAmount} =
+	const { updateReserveAmount,reserveAddress} =
 	getValues();
-	
-	const request = new UpdateReserveAmountRequest({ reserveAddress:reserveAddress??'',
-        reserveAmount});	
-	ReserveDataFeed.updateReserveAmount(request);
+	alert(reserveAddress);
+	alert(updateReserveAmount);
+	const request = new UpdateReserveAmountRequest({ reserveAddress,
+        reserveAmount:updateReserveAmount});	
+	let status = await ReserveDataFeed.updateReserveAmount(request);
+	alert(status)
 	
 
 	/* Añadir a las llamadas
@@ -111,7 +113,7 @@ return (
 							name={'updateReserveAmount'}
 							label={t('reserveAmount')}
 							placeholder={t('reserveAmountToolTip')}
-							isReadOnly={true}	
+							isReadOnly={false}	
 						/>
 						</GridItem>
 						<GridItem  >

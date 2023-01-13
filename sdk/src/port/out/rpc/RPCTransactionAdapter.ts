@@ -400,7 +400,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					coin.coin.evmProxyAddress,
 					this.signerOrProvider,
 				).updateReserveAddress(
-					this.accountToEvmAddress(reserveAddress),
+					reserveAddress.toHederaAddress().toSolidityAddress(),
 				),
 			);
 		} catch (error) {
