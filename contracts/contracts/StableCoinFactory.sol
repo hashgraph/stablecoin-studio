@@ -108,7 +108,7 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
         deployedStableCoin
             .stableCoinContractAddress = StableCoinContractAddress;
         deployedStableCoin.tokenAddress = tokenAddress;
-        deployedStableCoin.reserveProxy = address(reserveProxy);
+        deployedStableCoin.reserveProxy = reserveAddress;
         deployedStableCoin.reserveProxyAdmin = address(reserveProxyAdmin);
 
         emit Deployed(deployedStableCoin);
