@@ -22,7 +22,7 @@ abstract contract CashIn is ICashIn, SupplierAdmin, Reserve {
         override(ICashIn)
         returns (bool)
     {
-        if (!_unlimitedSupplierAllowances[msg.sender])_decreaseSupplierAllowance(msg.sender, amount);
+        if (!unlimitedSupplierAllowances[msg.sender])_decreaseSupplierAllowance(msg.sender, amount);
         
         emit TokensMinted(msg.sender, _getTokenAddress(), amount, account);
 
