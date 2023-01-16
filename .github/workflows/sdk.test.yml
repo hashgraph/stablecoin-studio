@@ -17,24 +17,22 @@ jobs:
           node-version: 16.x
       - name: Checkout repository
         uses: actions/checkout@v3
-      - name: Install dependencies Contracts
-        run: npm install
-        working-directory: contracts
       - name: Install dependencies Hashconnect
         run: npm install
         working-directory: hashconnect/lib
-      - name: Install dependencies SDK
-        run: npm install
-      - name: Build Contracts
-        run: npm run build
-        working-directory: contracts
       - name: Build Hashconnect
         run: npm run build
         working-directory: hashconnect/lib
-      - name: Build SDK
-        run: npm run build
+      - name: Install dependencies Contracts
+        run: npm install
+        working-directory: contracts
+      - name: Install dependencies SDK
+        run: npm install
+        working-directory: sdk
       - name: Test
-        uses: ArtiomTr/jest-coverage-report-action@v2.0.9
-        with:
-          working-directory: sdk
-          test-script: npm run test:ci
+        # uses: ArtiomTr/jest-coverage-report-action@v2.0.9
+        # with:
+        #   working-directory: sdk
+        #   test-script: npm run test:ci
+        run: npm run test
+        working-directory: sdk
