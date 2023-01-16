@@ -80,7 +80,9 @@
 		"uuid": "^9.0.0",
 		"web3": "^1.8.0",
 		"winston": "^3.8.2",
-		"winston-daily-rotate-file": "^4.7.1"
+		"winston-daily-rotate-file": "^4.7.1",
+		"chai": "^4.3.6",
+		"chai-as-promised": "^7.1.1"
 	},
 	"volta": {
 		"node": "16.13.0"
