@@ -1,17 +1,19 @@
 {
-    "title": "Proof of Reserve",
-    "operationTitle": "Proof of Reserve",
-    "subtitle":"Manage Proof of Reserve",
-    "reserveAmount": "Amount to set in Smart Contract",
-    "reserveAmountToolTip": "Introduce Amount",
-    "currentReserveAmount": "Smart Contract current Amount",
-    "reserveAddress": "Smart Contract Adress",
-    "sendAmount": "Send Amount" ,
-    "notification": {
-        "title": "{{ result }} updating proof of reserve",
-        "descriptionSuccess": "Proof of Reserve was updated",
-        "descriptionError": "Sorry, there was an error updating proof of reserve"
-      }
-    
-         
+	"title": "Proof of Reserve",
+	"operationTitle": "Proof of Reserve",
+	"subtitle": "Manage Proof of Reserve",
+	"reserveAmount": "Amount to set in Smart Contract",
+	"reserveAmountToolTip": "Introduce Amount",
+	"currentReserveAmount": "Smart Contract current Amount",
+	"reserveAddress": "Smart Contract Adress",
+	"sendAmount": "Send Amount",
+	"notification": {
+		"title": "{{ result }} updating proof of reserve",
+		"descriptionSuccess": "Proof of Reserve was updated",
+		"descriptionError": "Sorry, there was an error updating proof of reserve"
+	},
+	"noProofOfReserve": {
+		"title": "Missing Proof of Reserve",
+		"description": "The stable coin you have chosen does not have a proof of reserve, please, select a different stable coin."
+	}
 }

@@ -1,13 +1,5 @@
 import { RepeatIcon } from '@chakra-ui/icons';
-import {
-	Box,
-	Grid,
-	GridItem,
-	VStack,
-	Stack,
-	Button,
-	useDisclosure,
-} from '@chakra-ui/react';
+import { Box, Grid, GridItem, VStack, Stack, Button, useDisclosure } from '@chakra-ui/react';
 
 import {
 	GetReserveAddressRequest,
@@ -29,7 +21,8 @@ import InputController from '../../components/Form/InputController';
 import ModalNotification from '../../components/ModalNotification';
 
 import { useRefreshCoinInfo } from '../../hooks/useRefreshCoinInfo';
-import { SELECTED_WALLET_ACCOUNT_INFO, SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
+import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
+import NoProofOfReserve from './components/NoProofOfReserve';
 
 const StableCoinProof = () => {
 	const [loading, setLoading] = useState<boolean>(false);
@@ -41,9 +34,9 @@ const StableCoinProof = () => {
 	const { t } = useTranslation('proofOfReserve');
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
-	const account = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
-	const [reserveAddress, setReserveAddress] = useState<string | undefined>(undefined);
-	const [reserveAmount, setReserveAmount] = useState<string | undefined>(undefined);
+	const [fetchedReserveAddress, setFetchedReserveAddress] = useState<string | undefined>(undefined);
+	const [fetchedReserveAmount, setFetchedReserveAmount] = useState<string | undefined>(undefined);
+	const [hasReserve, sethasReserve] = useState<boolean>(false);
 
 	useRefreshCoinInfo();
 
@@ -55,33 +48,35 @@ const StableCoinProof = () => {
 
 	// Update address and amount state when stable coin changes
 	useEffect(() => {
-		updateReserveAddressState(selectedStableCoin);
-		updateReserveAmountState(selectedStableCoin);
+		updateProofOfReserveState();
 	}, [selectedStableCoin?.tokenId]);
 
 	// Update address field when loaded
 	useEffect(() => {
-		if (reserveAddress) {
-			setValue('reserveAddress', reserveAddress);
+		if (fetchedReserveAddress) {
+			setValue('reserveAddress', fetchedReserveAddress);
 		}
-	}, [reserveAddress]);
+		if (fetchedReserveAmount) {
+			setValue('currentReserveAmount', fetchedReserveAmount);
+		}
+	}, [fetchedReserveAddress, fetchedReserveAmount]);
 
-	const updateReserveAddressState = async (selectedStableCoin: any) => {
+	const updateProofOfReserveState = async () => {
 		let request: GetReserveAddressRequest;
 		if (selectedStableCoin?.tokenId) {
 			request = new GetReserveAddressRequest({ tokenId: selectedStableCoin.tokenId.toString() });
-			setReserveAddress(await StableCoin.getReserveAddress(request));
-		}
-	}
-
-	const updateReserveAmountState = async (selectedStableCoin: any) => {
-		let request: GetReserveAmountRequest;
-		if (selectedStableCoin?.tokenId) {
-			request = new GetReserveAmountRequest({ tokenId: selectedStableCoin.tokenId });
+			const result = await StableCoin.getReserveAddress(request);
+			if (result === '0.0.0' || !result) {
+				sethasReserve(false);
+			} else {
+				sethasReserve(true);
+			}
+			setFetchedReserveAddress(result);
+			request = new GetReserveAmountRequest({ tokenId: selectedStableCoin.tokenId.toString() });
 			const amount = await ReserveDataFeed.getReserveAmount(request);
-			setReserveAmount(amount.value.toString());
+			setFetchedReserveAmount(amount.value.toString());
 		}
-	}
+	};
 
 	const handleUpdateReserveAddress = async () => {
 		const { reserveAddress } = getValues();
@@ -96,9 +91,9 @@ const StableCoinProof = () => {
 				setLoading(true);
 				const result = await StableCoin.updateReserveAddress(request);
 				if (result) {
-					await updateReserveAddressState(selectedStableCoin);
+					await updateProofOfReserveState();
 				}
-				setError("");
+				setError('');
 				setLoading(false);
 				setSuccess(true);
 			} catch (error: any) {
@@ -124,9 +119,9 @@ const StableCoinProof = () => {
 			setLoading(true);
 			const result = await ReserveDataFeed.updateReserveAmount(request);
 			if (result) {
-				await updateReserveAmountState(selectedStableCoin);
+				await updateProofOfReserveState();
 			}
-			setError("");
+			setError('');
 			setLoading(false);
 			setSuccess(true);
 		} catch (error: any) {
@@ -140,17 +135,21 @@ const StableCoinProof = () => {
 
 	return (
 		<BaseContainer title={t('title')}>
-			{(selectedStableCoin && reserveAddress) && (
+			{selectedStableCoin && hasReserve && (
 				<Box p={{ base: 4, md: '128px' }}>
 					<VStack h='full' justify={'space-between'} pt='80px'>
 						<Stack h='full'>
 							<ModalNotification
 								variant={variant}
 								title={
-									loading ? 'Loading' : t('notification.title', { result: success ? 'Success' : 'Error' })
+									loading
+										? 'Loading'
+										: t('notification.title', { result: success ? 'Success' : 'Error' })
 								}
 								description={
-									loading ? undefined : t(`notification.description${success ? 'Success' : 'Error'}`)
+									loading
+										? undefined
+										: t(`notification.description${success ? 'Success' : 'Error'}`)
 								}
 								isOpen={isOpen}
 								onClose={onClose}
@@ -197,7 +196,6 @@ const StableCoinProof = () => {
 											control={control}
 											name={'currentReserveAmount'}
 											label={t('currentReserveAmount')}
-											value={reserveAmount}
 											isReadOnly={true}
 											disabled={true}
 										/>
@@ -216,6 +214,7 @@ const StableCoinProof = () => {
 					</VStack>
 				</Box>
 			)}
+			{selectedStableCoin && !hasReserve && <NoProofOfReserve />}
 		</BaseContainer>
 	);
 };

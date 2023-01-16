@@ -750,7 +750,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			const res = await HederaERC20__factory.connect(
 				coin.coin.evmProxyAddress,
 				this.signerOrProvider,
-			).supplierAllowance(this.accountToEvmAddress(targetId));
+			).getSupplierAllowance(this.accountToEvmAddress(targetId));
 
 			return new TransactionResponse(
 				undefined,
