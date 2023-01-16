@@ -177,7 +177,7 @@ const StableCoinProof = () => {
 										isReadOnly={false}
 										rightElement={
 											<Button
-												data-testid={`stepper-step-panel-button-secondary`}
+												data-testid={`update-reserve-address-button`}
 												variant='secondary'
 												onClick={handleUpdateReserveAddress}
 												width='1em'
@@ -201,7 +201,7 @@ const StableCoinProof = () => {
 										/>
 
 										<Button
-											data-testid={`stepper-step-panel-button-secondary`}
+											data-testid={`update-reserve-amount-button`}
 											variant='secondary'
 											onClick={handleUpdateReserveAmount}
 										>
