@@ -54,6 +54,7 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
     */
     function supplierAllowance(address supplier) 
         external 
+        override(ISupplierAdmin)
         view 
         returns (uint256) 
     {
@@ -69,6 +70,7 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
     */
     function isUnlimitedSupplierAllowance(address supplier) 
         external 
+        override(ISupplierAdmin)
         view 
         returns (bool) 
     {
@@ -88,6 +90,8 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
         external 
         virtual 
         onlyRole(_getRoleId(roleName.ADMIN)) 
+        CheckAddressIsNotNull(supplier)
+        override(ISupplierAdmin)
     {
         require(!_unlimitedSupplierAllowances[supplier], "Account already has unlimited supplier allowance");
         _supplierAllowances[supplier] = amount;
@@ -103,9 +107,24 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
     * @param supplier The address of the supplier
     */
     function grantUnlimitedSupplierRole(address supplier)
-        public 
+        external 
         virtual 
+        override(ISupplierAdmin)
+    {
+        _grantUnlimitedSupplierRole(supplier);
+    }
+
+    /** 
+    * @dev Gives `SUPPLIER ROLE' permissions to perform supplier's allowance, sets unlimited 
+    * supplier's allowance permission, and sets the `amount` the supplier can mint to 0.
+    * Only the 'ADMIN SUPPLIER ROLE` can execute.
+    *
+    * @param supplier The address of the supplier
+    */
+    function _grantUnlimitedSupplierRole(address supplier)
+        internal  
         onlyRole(_getRoleId(roleName.ADMIN)) 
+        CheckAddressIsNotNull(supplier)
     {
         _unlimitedSupplierAllowances[supplier] = true;
         _supplierAllowances[supplier] = 0;
@@ -122,7 +141,9 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
     function revokeSupplierRole(address supplier)
         external 
         virtual 
-        onlyRole(_getRoleId(roleName.ADMIN)) 
+        onlyRole(_getRoleId(roleName.ADMIN))
+        CheckAddressIsNotNull(supplier)
+        override(ISupplierAdmin) 
     {
         _supplierAllowances[supplier] = 0;
         _unlimitedSupplierAllowances[supplier] = false;
@@ -139,7 +160,9 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
     function resetSupplierAllowance(address supplier) 
         external 
         virtual 
-        onlyRole(_getRoleId(roleName.ADMIN)) 
+        onlyRole(_getRoleId(roleName.ADMIN))
+        CheckAddressIsNotNull(supplier)
+        override(ISupplierAdmin)
     {    
         uint256 oldAllowance = _supplierAllowances[supplier];
         uint256 newAllowance = 0;
@@ -160,7 +183,9 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
     function increaseSupplierAllowance(address supplier, uint256 amount) 
         external 
         virtual 
-        onlyRole(_getRoleId(roleName.ADMIN)) 
+        onlyRole(_getRoleId(roleName.ADMIN))
+        CheckAddressIsNotNull(supplier) 
+        override(ISupplierAdmin)
     {
         require(amount > 0, "Amount must be greater than zero");
         
@@ -183,7 +208,8 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
     function decreaseSupplierAllowance(address supplier, uint256 amount) 
         external 
         virtual 
-        onlyRole(_getRoleId(roleName.ADMIN)) 
+        onlyRole(_getRoleId(roleName.ADMIN))
+        override(ISupplierAdmin)
     {    
         _decreaseSupplierAllowance(supplier, amount);
     }    
@@ -198,6 +224,7 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
     function _decreaseSupplierAllowance(address supplier, uint256 amount) 
         internal
         virtual
+        CheckAddressIsNotNull(supplier)
     {
         require(amount > 0, "Amount must be greater than zero");
 

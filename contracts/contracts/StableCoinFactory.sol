@@ -14,15 +14,18 @@ import '@openzeppelin/contracts/utils/Strings.sol';
 
 contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
     // Hedera HTS precompiled contract
-    address constant precompileAddress = address(0x167);
-    string constant memo_1 = '{"p":"';
-    string constant memo_2 = '","a":"';
-    string constant memo_3 = '"}';
+    address private constant precompileAddress = address(0x167);
+    string private constant memo_1 = '{"p":"';
+    string private constant memo_2 = '","a":"';
+    string private constant memo_3 = '"}';
 
     function deployStableCoin(
         tokenStruct calldata requestedToken,
         address StableCoinContractAddress
-    ) external payable override returns (DeployedStableCoin memory) {
+    ) external 
+    payable override(IStableCoinFactory) returns (DeployedStableCoin memory) {
+        // Check that the provided Stable Coin implementacion address is not 0
+        require(StableCoinContractAddress != address(0), "Provided Stable Coin Contract Address is 0");
 
         // Reserve
         address reserveAddress = requestedToken.reserveAddress;
@@ -118,7 +121,7 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
         tokenStruct memory requestedToken,
         address StableCoinProxyAddress,
         address StableCoinProxyAdminAddress
-    ) internal pure returns (IHederaTokenService.HederaToken memory) {
+    ) private pure returns (IHederaTokenService.HederaToken memory) {
         // token Memo
         string memory tokenMemo = string(
             abi.encodePacked(
@@ -171,7 +174,7 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
         bytes memory PublicKey,
         address StableCoinProxyAddress,
         bool isED25519
-    ) internal pure returns (IHederaTokenService.KeyValue memory) {
+    ) private pure returns (IHederaTokenService.KeyValue memory) {
         // If the Public Key is empty we assume the user has chosen the proxy
         IHederaTokenService.KeyValue memory Key;
         if (PublicKey.length == 0)
@@ -184,7 +187,7 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
 
     function treasuryIsContract(
         address treasuryAddress
-    ) internal pure returns (bool) {
+    ) private pure returns (bool) {
         return treasuryAddress == address(0);
     }
 
@@ -193,7 +196,7 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
         int256 reserveInitialAmount,
         uint32 tokenDecimals,
         uint256 tokenInitialSupply
-    ) internal pure {
+    ) private pure {
         //Validate initial reserve amount
         require(
             reserveInitialAmount >= 0,

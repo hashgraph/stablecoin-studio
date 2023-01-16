@@ -15,6 +15,7 @@ abstract contract Pausable is IPausable, TokenOwner, Roles {
     function pause() 
         external       
         onlyRole(_getRoleId(roleName.PAUSE))  
+        override(IPausable)
         returns (bool)
     {         
         int256 responseCode = IHederaTokenService(precompileAddress).pauseToken(_getTokenAddress());
@@ -32,6 +33,7 @@ abstract contract Pausable is IPausable, TokenOwner, Roles {
     function unpause()
         external       
         onlyRole(_getRoleId(roleName.PAUSE))  
+        override(IPausable)
         returns (bool)
     {         
         emit TokenUnpaused(_getTokenAddress()); 

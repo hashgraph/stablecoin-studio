@@ -16,6 +16,8 @@ abstract contract Freezable is IFreezable, TokenOwner, Roles {
      function freeze(address account) 
         external       
         onlyRole(_getRoleId(roleName.FREEZE))  
+        CheckAddressIsNotNull(account)
+        override(IFreezable)
         returns (bool)
     {         
         emit TransfersFrozen(_getTokenAddress(), account); 
@@ -35,6 +37,8 @@ abstract contract Freezable is IFreezable, TokenOwner, Roles {
     function unfreeze(address account)
         external       
         onlyRole(_getRoleId(roleName.FREEZE))  
+        CheckAddressIsNotNull(account)
+        override(IFreezable)
         returns (bool)
     {         
         emit TransfersUnfrozen(_getTokenAddress(), account);  

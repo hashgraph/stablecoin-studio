@@ -21,7 +21,9 @@ abstract contract Wipeable is IWipeable, TokenOwner, Roles {
     */
     function wipe(address account, uint32 amount) 
         external       
-        onlyRole(_getRoleId(roleName.WIPE))  
+        onlyRole(_getRoleId(roleName.WIPE))
+        CheckAddressIsNotNull(account)
+        override(IWipeable)
         returns (bool)
     {      
         require(_balanceOf(account) >= amount, "Insufficient token balance for wiped"); 
