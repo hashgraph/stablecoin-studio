@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.10;
+pragma solidity 0.8.16;
 
 import "./TokenOwner.sol";
 import "./Roles.sol";
@@ -17,7 +17,7 @@ abstract contract Rescatable is IRescatable, TokenOwner, Roles {
     */
     function rescue(uint256 amount)
         external
-        onlyRole(_getRoleId(roleName.RESCUE)) 
+        onlyRole(_getRoleId(RoleName.RESCUE)) 
         override(IRescatable)
         returns (bool)
     {
@@ -25,7 +25,7 @@ abstract contract Rescatable is IRescatable, TokenOwner, Roles {
         
         emit TokenRescued (msg.sender, _getTokenAddress(), amount);
 
-        int256 responseCode = IHederaTokenService(precompileAddress).transferToken(_getTokenAddress(), address(this), msg.sender, int64(int256(amount)));
+        int256 responseCode = IHederaTokenService(PRECOMPILED_ADDRESS).transferToken(_getTokenAddress(), address(this), msg.sender, int64(int256(amount)));
 
         bool success = _checkResponse(responseCode);
 

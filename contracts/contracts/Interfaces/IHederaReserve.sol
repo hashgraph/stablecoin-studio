@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.10;
+pragma solidity 0.8.16;
 
 import '@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol';
 
@@ -7,9 +7,9 @@ interface IHederaReserve is AggregatorV3Interface {
 
     event ReserveInitialized(int256 initialReserve);
 
-    event adminChanged(address previousAdmin, address newAdmin);
+    event AdminChanged(address previousAdmin, address newAdmin);
 
-    event amountChanged(int256 previousAmount, int256 newAmount);
+    event AmountChanged(int256 previousAmount, int256 newAmount);
 
 
 

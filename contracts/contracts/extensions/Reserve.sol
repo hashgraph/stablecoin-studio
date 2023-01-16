@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.10;
+pragma solidity 0.8.16;
 
 import './Interfaces/IReserve.sol';
 import '@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol';
@@ -79,7 +79,7 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
     function updateReserveAddress(
         address newAddress
     ) external override(IReserve)
-    onlyRole(_getRoleId(roleName.ADMIN)) {
+    onlyRole(_getRoleId(RoleName.ADMIN)) {
         address previous = _reserveAddress;
         _reserveAddress = newAddress;
         emit ReserveAddressChanged(previous, newAddress);

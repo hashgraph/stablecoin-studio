@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.10;
+pragma solidity 0.8.16;
 
 import './hts-precompile/IHederaTokenService.sol';
 import './hts-precompile/HederaResponseCodes.sol';
@@ -14,18 +14,18 @@ import '@openzeppelin/contracts/utils/Strings.sol';
 
 contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
     // Hedera HTS precompiled contract
-    address private constant precompileAddress = address(0x167);
-    string private constant memo_1 = '{"p":"';
-    string private constant memo_2 = '","a":"';
-    string private constant memo_3 = '"}';
+    address private constant PRECOMPILED_ADDRESS = address(0x167);
+    string private constant MEMO_1 = '{"p":"';
+    string private constant MEMO_2 = '","a":"';
+    string private constant MEMO_3 = '"}';
 
     function deployStableCoin(
-        tokenStruct calldata requestedToken,
-        address StableCoinContractAddress
+        TokenStruct calldata requestedToken,
+        address stableCoinContractAddress
     ) external 
     payable override(IStableCoinFactory) returns (DeployedStableCoin memory) {
         // Check that the provided Stable Coin implementacion address is not 0
-        require(StableCoinContractAddress != address(0), "Provided Stable Coin Contract Address is 0");
+        require(stableCoinContractAddress != address(0), "Provided Stable Coin Contract Address is 0");
 
         // Reserve
         address reserveAddress = requestedToken.reserveAddress;
@@ -68,15 +68,15 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
         }
 
         // Deploy Proxy Admin
-        HederaERC20ProxyAdmin StableCoinProxyAdmin = new HederaERC20ProxyAdmin();
+        HederaERC20ProxyAdmin stableCoinProxyAdmin = new HederaERC20ProxyAdmin();
 
         // Transfer Proxy Admin ownership
-        StableCoinProxyAdmin.transferOwnership(msg.sender);
+        stableCoinProxyAdmin.transferOwnership(msg.sender);
 
         // Deploy Proxy
         HederaERC20Proxy StableCoinProxy = new HederaERC20Proxy(
-            StableCoinContractAddress,
-            address(StableCoinProxyAdmin),
+            stableCoinContractAddress,
+            address(stableCoinProxyAdmin),
             ''
         );
 
@@ -84,7 +84,7 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
         IHederaTokenService.HederaToken memory token = createToken(
             requestedToken,
             address(StableCoinProxy),
-            address(StableCoinProxyAdmin)
+            address(stableCoinProxyAdmin)
         );
 
         // Initialize Proxy
@@ -105,9 +105,9 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
         DeployedStableCoin memory deployedStableCoin;
 
         deployedStableCoin.stableCoinProxy = address(StableCoinProxy);
-        deployedStableCoin.stableCoinProxyAdmin = address(StableCoinProxyAdmin);
+        deployedStableCoin.stableCoinProxyAdmin = address(stableCoinProxyAdmin);
         deployedStableCoin
-            .stableCoinContractAddress = StableCoinContractAddress;
+            .stableCoinContractAddress = stableCoinContractAddress;
         deployedStableCoin.tokenAddress = tokenAddress;
         deployedStableCoin.reserveProxy = reserveAddress;
         deployedStableCoin.reserveProxyAdmin = reserveProxyAdmin;
@@ -118,18 +118,18 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
     }
 
     function createToken(
-        tokenStruct memory requestedToken,
-        address StableCoinProxyAddress,
-        address StableCoinProxyAdminAddress
+        TokenStruct memory requestedToken,
+        address stableCoinProxyAddress,
+        address stableCoinProxyAdminAddress
     ) private pure returns (IHederaTokenService.HederaToken memory) {
         // token Memo
         string memory tokenMemo = string(
             abi.encodePacked(
-                memo_1,
-                Strings.toHexString(StableCoinProxyAddress),
-                memo_2,
-                Strings.toHexString(StableCoinProxyAdminAddress),
-                memo_3
+                MEMO_1,
+                Strings.toHexString(stableCoinProxyAddress),
+                MEMO_2,
+                Strings.toHexString(stableCoinProxyAdminAddress),
+                MEMO_3
             )
         );
 
@@ -148,7 +148,7 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
                 keyType: requestedToken.keys[i].keyType,
                 key: generateKey(
                     requestedToken.keys[i].PublicKey,
-                    StableCoinProxyAddress,
+                    stableCoinProxyAddress,
                     requestedToken.keys[i].isED25519
                 )
             });
@@ -158,7 +158,7 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
         token.name = requestedToken.tokenName;
         token.symbol = requestedToken.tokenSymbol;
         token.treasury = treasuryIsContract(requestedToken.treasuryAddress)
-            ? StableCoinProxyAddress
+            ? stableCoinProxyAddress
             : requestedToken.treasuryAddress;
         token.memo = tokenMemo;
         token.tokenSupplyType = requestedToken.supplyType;
@@ -171,16 +171,16 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
     }
 
     function generateKey(
-        bytes memory PublicKey,
-        address StableCoinProxyAddress,
+        bytes memory publicKey,
+        address stableCoinProxyAddress,
         bool isED25519
     ) private pure returns (IHederaTokenService.KeyValue memory) {
         // If the Public Key is empty we assume the user has chosen the proxy
         IHederaTokenService.KeyValue memory Key;
-        if (PublicKey.length == 0)
-            Key.delegatableContractId = StableCoinProxyAddress;
-        else if (isED25519) Key.ed25519 = PublicKey;
-        else Key.ECDSA_secp256k1 = PublicKey;
+        if (publicKey.length == 0)
+            Key.delegatableContractId = stableCoinProxyAddress;
+        else if (isED25519) Key.ed25519 = publicKey;
+        else Key.ECDSA_secp256k1 = publicKey;
 
         return Key;
     }

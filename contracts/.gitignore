@@ -52,3 +52,6 @@ artifacts
 ./docs/
 ./cache/*
 ./typechain-types/
+
+#Slither
+Slither

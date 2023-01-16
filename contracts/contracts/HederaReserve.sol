@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.10;
+pragma solidity 0.8.16;
 
 import './Interfaces/IHederaReserve.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
@@ -18,6 +18,18 @@ contract HederaReserve is IHederaReserve, Initializable {
         _;
     }
 
+    // modifier to check that an address is not 0
+    modifier checkAddressIsNotNull(address addr)
+    {
+        _checkAddressIsNotNull(addr);
+        _;
+    }
+
+    function _checkAddressIsNotNull(address addr) internal pure
+    {
+        require(addr != address(0), "Provided address is 0");
+    }
+
     /**
      *  @dev Initializes the reserve with the initial amount
      *
@@ -25,6 +37,7 @@ contract HederaReserve is IHederaReserve, Initializable {
      */
     function initialize(int256 initialReserve, address admin)
         external
+        checkAddressIsNotNull(admin)
         initializer
     {
         _reserveAmount = initialReserve;
@@ -38,7 +51,7 @@ contract HederaReserve is IHederaReserve, Initializable {
      *  @param newValue The new value of the reserve
      */
     function setAmount(int256 newValue) external isAdmin {
-        emit amountChanged(_reserveAmount, newValue);
+        emit AmountChanged(_reserveAmount, newValue);
         _reserveAmount = newValue;
     }
 
@@ -47,8 +60,8 @@ contract HederaReserve is IHederaReserve, Initializable {
      *
      *  @param admin The new admin
      */
-    function setAdmin(address admin) external isAdmin {
-        emit adminChanged(_admin, admin);
+    function setAdmin(address admin) external checkAddressIsNotNull(admin) isAdmin {
+        emit AdminChanged(_admin, admin);
         _admin = admin;
     }
 

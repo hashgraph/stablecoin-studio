@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.10;
+pragma solidity 0.8.16;
 
 import './Interfaces/ICashIn.sol';
 import './SupplierAdmin.sol';
@@ -16,17 +16,17 @@ abstract contract CashIn is ICashIn, SupplierAdmin, Reserve {
      */
     function mint(address account, uint256 amount)
         external
-        onlyRole(_getRoleId(roleName.CASHIN))
+        onlyRole(_getRoleId(RoleName.CASHIN))
         checkReserveIncrease(amount)
-        CheckAddressIsNotNull(account)
+        checkAddressIsNotNull(account)
         override(ICashIn)
         returns (bool)
     {
-        if (!_unlimitedSupplierAllowances[msg.sender])_decreaseSupplierAllowance(msg.sender, amount);
+        if (!unlimitedSupplierAllowances[msg.sender])_decreaseSupplierAllowance(msg.sender, amount);
         
         emit TokensMinted(msg.sender, _getTokenAddress(), amount, account);
 
-        (int256 responseCode, , ) = IHederaTokenService(precompileAddress)
+        (int256 responseCode, , ) = IHederaTokenService(PRECOMPILED_ADDRESS)
             .mintToken(_getTokenAddress(), uint64(amount), new bytes[](0));
 
         bool success = _checkResponse(responseCode);

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.10;
+pragma solidity 0.8.16;
 
 interface IStableCoinFactory {
     event Deployed(DeployedStableCoin);
@@ -10,7 +10,7 @@ interface IStableCoinFactory {
         bool isED25519; // If the PublicKey is an EOA (not empty) indicates whether it is an ED25519 or ECDSA key
     }
 
-    struct tokenStruct {
+    struct TokenStruct {
         string tokenName;
         string tokenSymbol;
         bool freeze;
@@ -36,7 +36,7 @@ interface IStableCoinFactory {
     }
 
     function deployStableCoin(
-        tokenStruct calldata requestedToken,
-        address StableCoinContractAddress
+        TokenStruct calldata requestedToken,
+        address stableCoinContractAddress
     ) external payable returns (DeployedStableCoin memory);
 }
