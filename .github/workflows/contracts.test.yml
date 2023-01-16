@@ -1,0 +1,40 @@
+name: Contracts - Test
+on: 
+  workflow_dispatch:
+  push:
+    branches: [main]
+defaults:
+  run:
+    working-directory: contracts
+jobs:
+  test-node:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Use Node.js TLS 16.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.x
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Install dependencies Contracts
+        env:
+          HEDERA_OPERATOR_ACCOUNT: ${{ secrets.HEDERA_OPERATOR_ACCOUNT }}
+        run: npm install
+        working-directory: contracts
+      - name: Test
+        # uses: ArtiomTr/jest-coverage-report-action@v2.0.9
+        # with:
+        #   working-directory: sdk
+        #   test-script: npm run test:ci
+        working-directory: contracts
+        env:
+          HEDERA_OPERATOR_ACCOUNT: ${{ secrets.HEDERA_OPERATOR_ACCOUNT }}
+          HEDERA_OPERATOR_PUBLICKEY: ${{ secrets.HEDERA_OPERATOR_PUBLICKEY }}
+          HEDERA_OPERATOR_PRIVATEKEY: ${{ secrets.HEDERA_OPERATOR_PRIVATEKEY }}
+          HEDERA_OPERATOR_ED25519: ${{ secrets.HEDERA_OPERATOR_ED25519 }}
+          HEDERA_NON_OPERATOR_ACCOUNT: ${{ secrets.HEDERA_NON_OPERATOR_ACCOUNT }}
+          HEDERA_NON_OPERATOR_PUBLICKEY: ${{ secrets.HEDERA_NON_OPERATOR_PUBLICKEY }}
+          HEDERA_NON_OPERATOR_PRIVATEKEY: ${{ secrets.HEDERA_NON_OPERATOR_PRIVATEKEY }}
+          HEDERA_NON_OPERATOR_ED25519: ${{ secrets.HEDERA_NON_OPERATOR_ED25519 }}
+        run: npm run test
