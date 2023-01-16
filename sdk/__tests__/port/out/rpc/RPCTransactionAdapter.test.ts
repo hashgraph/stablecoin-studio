@@ -43,6 +43,7 @@ import Account from '../../../../src/domain/context/account/Account.js';
 import NetworkService from '../../../../src/app/service/NetworkService.js';
 import { ContractId as HContractId } from '@hashgraph/sdk';
 import StableCoinService from '../../../../src/app/service/StableCoinService.js';
+import { RESERVE_DECIMALS } from '../../../../src/domain/context/reserve/Reserve.js';
 
 describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	let stableCoinCapabilitiesHTS: StableCoinCapabilities;
@@ -65,10 +66,12 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 			stablecoin,
 			new ContractId(FactoryAddressTestnet),
 			new ContractId(HederaERC20AddressTestnet),
-			false,
+			true,
+			undefined,
+			BigDecimal.fromString('100000000', RESERVE_DECIMALS)
 		);
 		const tokenIdSC = ContractId.fromHederaContractId(
-			HContractId.fromSolidityAddress(tr.response[3]),
+			HContractId.fromSolidityAddress(tr.response[0][3]),
 		);
 		return await stableCoinService.getCapabilities(account, tokenIdSC);
 	};
@@ -126,11 +129,6 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 			coinHTS,
 			CLIENT_ACCOUNT_ECDSA,
 		);
-		console.log(
-			`HTS: ${stableCoinCapabilitiesHTS.coin.tokenId?.toString()}`,
-		);
-		console.log(`SC: ${stableCoinCapabilitiesSC.coin.tokenId?.toString()}`);
-
 		expect(stableCoinCapabilitiesSC).not.toBeNull();
 		expect(stableCoinCapabilitiesHTS).not.toBeNull();
 	}, 1500000);
@@ -426,6 +424,47 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 			stableCoinCapabilitiesSC,
 			CLIENT_ACCOUNT_ECDSA.id,
 		);
+	}, 1500000);
+
+	it('Test get reserve address returns a value when stable coin has reserve', async () => {
+		tr = await th.getReserveAddress(
+			stableCoinCapabilitiesHTS
+		);
+		expect(tr.response).not.toBeNull;
+	}, 1500000);
+
+	it('Test get reserve amount returns a value when stable coin has reserve', async () => {
+		tr = await th.getReserveAmount(
+			stableCoinCapabilitiesHTS
+		);
+		expect(tr.response).toEqual(BigDecimal.fromStringFixed('10000000000', RESERVE_DECIMALS))
+	}, 1500000);
+	
+	it('Test update reserve amount when stable coin has reserve', async () => {
+		tr = await th.getReserveAddress(
+			stableCoinCapabilitiesHTS
+		);
+		const reserveContractId: HContractId = HContractId.fromSolidityAddress(tr.response);
+		tr = await th.updateReserveAmount(
+			new ContractId(reserveContractId.toString()),
+			BigDecimal.fromStringFixed('1000', RESERVE_DECIMALS)
+		);
+		tr = await th.getReserveAmount(
+			stableCoinCapabilitiesHTS
+		);
+		expect(tr.response).toEqual(BigDecimal.fromStringFixed('1000', RESERVE_DECIMALS))
+	}, 1500000);	
+
+	it('Test update reserve address when stable coin has reserve', async () => {
+		tr = await th.updateReserveAddress(
+			stableCoinCapabilitiesHTS,
+			new ContractId('0.0.49281768')
+		);
+		tr = await th.getReserveAddress(
+			stableCoinCapabilitiesHTS
+		);
+		expect(tr.response.toString().toUpperCase()).
+			toEqual(`0X${HContractId.fromString('0.0.49281768').toSolidityAddress().toUpperCase()}`)
 	}, 1500000);
 
 	afterEach(async () => {

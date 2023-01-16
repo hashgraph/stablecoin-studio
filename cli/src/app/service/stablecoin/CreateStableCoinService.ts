@@ -198,11 +198,11 @@ export default class CreateStableCoinService extends Service {
 
     // Proof of Reserve
     const reserve = await this.askForReserve();
-    let newReserve = false;
+    let existingReserve = false;
 
     if(reserve){
-      newReserve = await this.askForNewReserve();
-      if(newReserve){
+      existingReserve = await this.askForExistingReserve();
+      if(!existingReserve){
         tokenToCreate.createReserve = true;
         tokenToCreate.reserveInitialAmount = await this.askForReserveInitialAmount();
         await utilsService.handleValidation(
@@ -242,7 +242,7 @@ export default class CreateStableCoinService extends Service {
       reserve: (reserve == false) 
         ? '-' 
         : (
-          (newReserve == false) 
+          (existingReserve) 
           ? tokenToCreate.reserveAddress
           : "Proof of Reserve Feed initial amount : " + tokenToCreate.reserveInitialAmount
         ),
@@ -323,7 +323,7 @@ export default class CreateStableCoinService extends Service {
       reserve: (reserve == false) 
         ? '-' 
         : (
-          (newReserve == false) 
+          (existingReserve) 
           ? tokenToCreate.reserveAddress
           : "Proof of Reserve Feed initial amount : " + tokenToCreate.reserveInitialAmount
         ),
@@ -362,9 +362,9 @@ export default class CreateStableCoinService extends Service {
     );
   }
 
-  private async askForNewReserve(): Promise<boolean> {
+  private async askForExistingReserve(): Promise<boolean> {
     return await utilsService.defaultConfirmAsk(
-      language.getText('stablecoin.askNewReserve'),
+      language.getText('stablecoin.askExistingReserve'),
       true,
     );
   }

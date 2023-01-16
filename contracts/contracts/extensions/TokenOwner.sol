@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.10;
+pragma solidity 0.8.16;
 
 import './Interfaces/ITokenOwner.sol';
 import '../hts-precompile/HederaResponseCodes.sol';
@@ -14,9 +14,21 @@ abstract contract TokenOwner is
     Initializable
 {
     // Hedera HTS precompiled contract
-    address constant precompileAddress = address(0x167);
+    address internal constant precompileAddress = address(0x167);
     // HTS Token this contract owns
-    address internal _tokenAddress;
+    address private _tokenAddress;
+
+    // modifier to check that an address is not 0
+    modifier checkAddressIsNotNull(address addr)
+    {
+        _checkAddressIsNotNull(addr);
+        _;
+    }
+
+    function _checkAddressIsNotNull(address addr) internal pure
+    {
+        require(addr != address(0), "Provided address is 0");
+    }
 
     // Initiliazes the token address
     function tokenOwner_init(address tokenAddress) internal onlyInitializing {
@@ -28,7 +40,7 @@ abstract contract TokenOwner is
      *
      * @return address of The token address
      */
-    function getTokenAddress() external view returns (address) {
+    function getTokenAddress() external override(ITokenOwner) view returns (address) {
         return _getTokenAddress();
     }
 

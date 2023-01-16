@@ -30,7 +30,8 @@ import Account from '../../domain/context/account/Account.js';
 import { HederaId } from '../../domain/context/shared/HederaId.js';
 import { KeyType } from '../../domain/context/account/KeyProps.js';
 import AccountViewModel from './mirror/response/AccountViewModel.js';
-import { PublicKey as HPublicKey } from '@hashgraph/sdk';
+import { PublicKey as HPublicKey,
+		 ContractId as HContractId } from '@hashgraph/sdk';
 import { MirrorNodeAdapter } from './mirror/MirrorNodeAdapter.js';
 import { Environment } from '../../domain/context/network/Environment.js';
 
@@ -411,5 +412,9 @@ export default abstract class TransactionAdapter
 			default:
 				return '0x' + accountId.toHederaAddress().toSolidityAddress();
 		}
+	}
+
+	async contractToEvmAddress(contractId: ContractId): Promise<string> {
+		return HContractId.fromString(contractId.toString()).toSolidityAddress();
 	}
 }

@@ -30,6 +30,8 @@
         "test:wipeable": "npx hardhat test test/wipeable.ts",
         "test:HederaERC20": "npx hardhat test test/HederaERC20.ts",
         "test:StableCoinFactory": "npx hardhat test test/StableCoinFactory.ts",
+        "test:reserve": "npx hardhat test test/reserve.ts",
+        "test:HederaReserve": "npx hardhat test test/HederaReserve.ts",
         "test:testnet:roles": "npx hardhat test --network testnet test/roles.ts",
         "test:testnet:deployFactory": "npx hardhat test --network testnet test/deployFactory.ts",
         "test:testnet:burnable": "npx hardhat test --network testnet test/burnable.ts",

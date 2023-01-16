@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.10;
+pragma solidity 0.8.16;
 
 import './hts-precompile/IHederaTokenService.sol';
 import './hts-precompile/HederaResponseCodes.sol';
@@ -14,43 +14,57 @@ import '@openzeppelin/contracts/utils/Strings.sol';
 
 contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
     // Hedera HTS precompiled contract
-    address constant precompileAddress = address(0x167);
-    string constant memo_1 = '{"p":"';
-    string constant memo_2 = '","a":"';
-    string constant memo_3 = '"}';
-
-    event Deployed(address, address, address, address, address, address);
+    address private constant precompileAddress = address(0x167);
+    string private constant memo_1 = '{"p":"';
+    string private constant memo_2 = '","a":"';
+    string private constant memo_3 = '"}';
 
     function deployStableCoin(
         tokenStruct calldata requestedToken,
         address StableCoinContractAddress
-    ) external payable override returns (DeployedStableCoin memory) {
+    ) external 
+    payable override(IStableCoinFactory) returns (DeployedStableCoin memory) {
+        // Check that the provided Stable Coin implementacion address is not 0
+        require(StableCoinContractAddress != address(0), "Provided Stable Coin Contract Address is 0");
+
+        // Reserve
         address reserveAddress = requestedToken.reserveAddress;
-        // Create reserve
-        HederaReserveProxy reserveProxy;
-        HederaReserveProxyAdmin reserveProxyAdmin;
+        address reserveProxy = address(0);
+        address reserveProxyAdmin = address(0);
+
         if (requestedToken.createReserve) {
             HederaReserve reserveContract = new HederaReserve();
             validationReserveInitialAmount(
                 reserveContract.decimals(),
-                uint(requestedToken.reserveInitialAmount),
+                requestedToken.reserveInitialAmount,
                 requestedToken.tokenDecimals,
                 requestedToken.tokenInitialSupply
             );
 
-            reserveProxyAdmin = new HederaReserveProxyAdmin();
-            reserveProxyAdmin.transferOwnership(msg.sender);
-            reserveProxy = new HederaReserveProxy(
+            reserveProxyAdmin = address(new HederaReserveProxyAdmin());
+            HederaReserveProxyAdmin(reserveProxyAdmin).transferOwnership(msg.sender);
+            reserveProxy = address(new HederaReserveProxy(
                 address(reserveContract),
                 address(reserveProxyAdmin),
                 ''
-            );
+            ));
 
-            HederaReserve(address(reserveProxy)).initialize(
+            HederaReserve(reserveProxy).initialize(
                 requestedToken.reserveInitialAmount,
                 msg.sender
             );
-            reserveAddress = address(reserveProxy);
+            reserveAddress = reserveProxy;
+        }
+        else if(reserveAddress != address(0)){
+            (, int256 reserveInitialAmount, , , ) = HederaReserve(reserveAddress)
+                .latestRoundData();
+
+            validationReserveInitialAmount(
+                HederaReserve(reserveAddress).decimals(),
+                reserveInitialAmount,
+                requestedToken.tokenDecimals,
+                requestedToken.tokenInitialSupply
+            );
         }
 
         // Deploy Proxy Admin
@@ -88,14 +102,6 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
         if (treasuryIsContract(requestedToken.treasuryAddress))
             HederaERC20(address(StableCoinProxy)).associateToken(msg.sender);
 
-        emit Deployed(
-            address(StableCoinProxy),
-            address(StableCoinProxyAdmin),
-            StableCoinContractAddress,
-            tokenAddress,
-            address(reserveProxy),
-            address(reserveProxyAdmin)
-        );
         DeployedStableCoin memory deployedStableCoin;
 
         deployedStableCoin.stableCoinProxy = address(StableCoinProxy);
@@ -103,8 +109,10 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
         deployedStableCoin
             .stableCoinContractAddress = StableCoinContractAddress;
         deployedStableCoin.tokenAddress = tokenAddress;
-        deployedStableCoin.reserveProxy = address(reserveProxy);
-        deployedStableCoin.reserveProxyAdmin = address(reserveProxyAdmin);
+        deployedStableCoin.reserveProxy = reserveAddress;
+        deployedStableCoin.reserveProxyAdmin = reserveProxyAdmin;
+
+        emit Deployed(deployedStableCoin);
 
         return deployedStableCoin;
     }
@@ -113,7 +121,7 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
         tokenStruct memory requestedToken,
         address StableCoinProxyAddress,
         address StableCoinProxyAdminAddress
-    ) internal pure returns (IHederaTokenService.HederaToken memory) {
+    ) private pure returns (IHederaTokenService.HederaToken memory) {
         // token Memo
         string memory tokenMemo = string(
             abi.encodePacked(
@@ -166,7 +174,7 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
         bytes memory PublicKey,
         address StableCoinProxyAddress,
         bool isED25519
-    ) internal pure returns (IHederaTokenService.KeyValue memory) {
+    ) private pure returns (IHederaTokenService.KeyValue memory) {
         // If the Public Key is empty we assume the user has chosen the proxy
         IHederaTokenService.KeyValue memory Key;
         if (PublicKey.length == 0)
@@ -179,16 +187,16 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
 
     function treasuryIsContract(
         address treasuryAddress
-    ) internal pure returns (bool) {
+    ) private pure returns (bool) {
         return treasuryAddress == address(0);
     }
 
     function validationReserveInitialAmount(
         uint8 reserveDecimals,
-        uint256 reserveInitialAmount,
+        int256 reserveInitialAmount,
         uint32 tokenDecimals,
         uint256 tokenInitialSupply
-    ) internal pure {
+    ) private pure {
         //Validate initial reserve amount
         require(
             reserveInitialAmount >= 0,

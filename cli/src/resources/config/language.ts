@@ -81,8 +81,8 @@ export const english = {
       'Do you want to configure the initial supply, max supply or decimals?',
     askReserve:
       'Do you want to link the stable coin to a Proof of Reserve?',
-    askNewReserve:
-      'Do you want to deploy a new Proof of Reserve Feed?',
+    askExistingReserve:
+      'Do you want to link it to an already existing Proof of Reserve?',
 
     askReserveAddress: 'Enter the Proof of Reserve Feed you wish to link your stable coin to',
     askReserveInitialAmount: 'Enter the Proof of Reserve Feed initial amount',

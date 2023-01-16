@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.10;
+pragma solidity 0.8.16;
 
 import './Interfaces/IHederaReserve.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
@@ -38,6 +38,7 @@ contract HederaReserve is IHederaReserve, Initializable {
      *  @param newValue The new value of the reserve
      */
     function setAmount(int256 newValue) external isAdmin {
+        emit amountChanged(_reserveAmount, newValue);
         _reserveAmount = newValue;
     }
 
@@ -47,6 +48,7 @@ contract HederaReserve is IHederaReserve, Initializable {
      *  @param admin The new admin
      */
     function setAdmin(address admin) external isAdmin {
+        emit adminChanged(_admin, admin);
         _admin = admin;
     }
 

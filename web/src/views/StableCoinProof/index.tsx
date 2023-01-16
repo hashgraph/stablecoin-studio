@@ -1,6 +1,12 @@
 import { RepeatIcon } from '@chakra-ui/icons';
-import { Box, Grid, GridItem, Heading, VStack ,Stack, Button, Icon, HStack} from '@chakra-ui/react';
-import { StableCoin, UpdateReserveAddressRequest, UpdateReserveAmountRequest } from 'hedera-stable-coin-sdk';
+import { Box, Grid, GridItem, Heading, VStack ,Stack, Button} from '@chakra-ui/react';
+
+import { GetReserveAddressRequest, StableCoin, UpdateReserveAddressRequest, UpdateReserveAmountRequest,ReserveDataFeed,GetReserveAmountRequest} from 'hedera-stable-coin-sdk';
+
+
+
+
+import { useEffect, useState } from 'react';
 
 import type { FieldValues} from 'react-hook-form';
 import { useForm} from 'react-hook-form';
@@ -12,54 +18,63 @@ import InputController from '../../components/Form/InputController';
 import { useRefreshCoinInfo } from '../../hooks/useRefreshCoinInfo';
 import { SELECTED_WALLET_ACCOUNT_INFO, SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
 
-const StableCoinProof = () => {
+const StableCoinProof =  () => {
+
 
 
 const { t } = useTranslation('proofOfReserve');
 
 const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 const account = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
+const [reserveAddress,setReserveAddress] = useState <string|undefined>(undefined)
+const [reserveAmount,setReserveAmount] = useState <string|undefined>(undefined)
 
 useRefreshCoinInfo();
 
 const form = useForm<FieldValues>({
 	mode: 'onChange',
+	
 });
-
-
-// No estan los modulos exportados
-/*
-const request = new GetReserveAddressRequest(selectedStableCoin.id)
-const reserveAddress = await StableCoin.getReserveAddress(request);
-*/
 
 const {
 	control,
 	getValues,
+	setValue
 } = form;
+
+useEffect( () => {
+	updateReserveAddressState(selectedStableCoin, setReserveAddress);
+	updateReserveAmountState(selectedStableCoin, setReserveAmount);
+}, [selectedStableCoin?.deleted, selectedStableCoin?.paused, selectedStableCoin?.tokenId]);
+
+useEffect( () => {
+	if (reserveAddress){
+		setValue('reserveAddress',reserveAddress)
+	}
+}, [reserveAddress]);
 
 const UpdateReserveAddress = async () => {
 	const { reserveAddress} =
 	getValues();
-	if (selectedStableCoin){
-		
-		/*
-		const request = new UpdateReserveAddressRequest({tokenId:selectedStableCoin.tokenId,reserveAddress:reserveAddress})
-		StableCoin.updateReserveAddress(request);
-		*/
+	if (selectedStableCoin?.tokenId){
+
+		const request = new UpdateReserveAddressRequest({tokenId:selectedStableCoin.tokenId.toString(),reserveAddress})
+		const status = await StableCoin.updateReserveAddress(request);
+		alert(status);
 	}
 	
-	alert("Hola");
+	
 }
 
 const updateReserveAmount = async () => {
-	const { reserveAmount} =
-	getValues();
+	const { updateReserveAmount,reserveAddress} = getValues();
 	
-	/* Habilittar con la exportacion de modulos
-	const request = new UpdateReserveAmountRequest(reserveAddress,reserveAmount);	
-	ReserveDataFeedInPort.updateReserveAmount(request);
-	*/
+	const request = new UpdateReserveAmountRequest({ reserveAddress,
+        reserveAmount:updateReserveAmount});	
+	const status = await ReserveDataFeed.updateReserveAmount(request);
+	
+	alert(status)
+	
 
 	/* Añadir a las llamadas
 	try {
@@ -82,6 +97,10 @@ const updateReserveAmount = async () => {
 
 return (
 		<BaseContainer title={t('title')}>
+			
+
+			
+				{selectedStableCoin && (
 			<Box p={{ base: 4, md: '128px' }}>
 				<Heading fontSize='20px' fontWeight='600' mb={14} data-testid='subtitle'>
 					{t('subtitle')}
@@ -95,30 +114,30 @@ return (
 							name={'updateReserveAmount'}
 							label={t('reserveAmount')}
 							placeholder={t('reserveAmountToolTip')}
-							value=''
-							isReadOnly={true}	
+							isReadOnly={false}	
 						/>
 						</GridItem>
 						<GridItem  >
-							<HStack>
+							
 						<InputController
 							control={control}
 							name={'reserveAddress'}
 							label={t('reserveAddress')}
-							value={"0x00000000000"}
+							right='1em'
 							isReadOnly={false}	
 							rightElement={<Button
 								data-testid={`stepper-step-panel-button-secondary`}
 								variant='secondary'
 								onClick={UpdateReserveAddress}
-								rightIcon={<RepeatIcon />}
 								width='2em'
+								placeContent={"center"}
 							>
 							
+							<RepeatIcon />
 							</Button>}
 						/>
 						
-										</HStack>
+							
 						</GridItem>
 
 						<GridItem w='100%' >
@@ -129,29 +148,48 @@ return (
 							control={control}
 							name={'currentReserveAmount'}
 							label={t('currentReserveAmount')}
-							value=''
-							isReadOnly={false}
+							value={reserveAmount}
+							isReadOnly={true}
+							disabled={true}
 						/>
-						</Stack>
-						<Stack>
+						
+						
 						<Button
-											data-testid={`stepper-step-panel-button-secondary`}
-											variant='secondary'											
-											onClick={updateReserveAmount}
+							data-testid={`stepper-step-panel-button-secondary`}
+							variant='secondary'											
+							onClick={updateReserveAmount}
 											
-										>
-											{t('sendAmount')}
-										</Button>
-										</Stack>
+							>
+							{t('sendAmount')}
+							</Button>
+							</Stack>
 						
 						</GridItem>
 	
 				</Grid>
 				</Stack>
 			</VStack>
-			</Box>
+			</Box>)}
 		</BaseContainer>
 	);
 };
 
 export default StableCoinProof;
+
+async function updateReserveAddressState(selectedStableCoin: any, setReserveAddress:any) {
+	let request: GetReserveAddressRequest;
+	if (selectedStableCoin?.tokenId) {
+		request = new GetReserveAddressRequest({ tokenId: selectedStableCoin.tokenId.toString() });
+		setReserveAddress(await StableCoin.getReserveAddress(request));
+	}
+}
+
+
+async function updateReserveAmountState(selectedStableCoin: any, setReserveAmount:any) {
+	let request: GetReserveAmountRequest;
+	if (selectedStableCoin?.tokenId) {
+		request = new GetReserveAmountRequest({ tokenId:selectedStableCoin.tokenId });
+	    const amount = (await ReserveDataFeed.getReserveAmount(request))
+		setReserveAmount(amount.value.toString());
+	}
+}
