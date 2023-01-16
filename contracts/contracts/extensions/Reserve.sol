@@ -63,7 +63,7 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
         }
     }
 
-    function getReserveAmount() external view returns (int256) {
+    function getReserveAmount() external override(IReserve) view returns (int256) {
         return _getReserveAmount();
     }
 
@@ -78,13 +78,14 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
 
     function updateReserveAddress(
         address newAddress
-    ) external onlyRole(_getRoleId(roleName.ADMIN)) {
+    ) external override(IReserve)
+    onlyRole(_getRoleId(roleName.ADMIN)) {
         address previous = _reserveAddress;
         _reserveAddress = newAddress;
         emit ReserveAddressChanged(previous, newAddress);
     }
 
-    function getReserveAddress() external view returns (address) {
+    function getReserveAddress() external override(IReserve) view returns (address) {
         return _reserveAddress;
     }
 }

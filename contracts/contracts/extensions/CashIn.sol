@@ -18,6 +18,8 @@ abstract contract CashIn is ICashIn, SupplierAdmin, Reserve {
         external
         onlyRole(_getRoleId(roleName.CASHIN))
         checkReserveIncrease(amount)
+        CheckAddressIsNotNull(account)
+        override(ICashIn)
         returns (bool)
     {
         if (!_unlimitedSupplierAllowances[msg.sender])_decreaseSupplierAllowance(msg.sender, amount);

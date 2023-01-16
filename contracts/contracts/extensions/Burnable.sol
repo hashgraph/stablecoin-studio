@@ -17,6 +17,7 @@ abstract contract Burnable is IBurnable, TokenOwner, Roles {
     function burn(uint256 amount) 
         external 
         onlyRole(_getRoleId(roleName.BURN))  
+        override(IBurnable)
         returns (bool)      
     {         
         require(_balanceOf(address(this)) >= amount, "Amount is greater than treasury account balance");

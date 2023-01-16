@@ -18,6 +18,7 @@ abstract contract Rescatable is IRescatable, TokenOwner, Roles {
     function rescue(uint256 amount)
         external
         onlyRole(_getRoleId(roleName.RESCUE)) 
+        override(IRescatable)
         returns (bool)
     {
         require(_balanceOf(address(this)) >= amount, "Amount must not exceed the token balance");
