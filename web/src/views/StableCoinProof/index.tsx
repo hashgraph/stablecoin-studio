@@ -5,6 +5,7 @@ import { GetReserveAddressRequest, StableCoin, UpdateReserveAddressRequest, Upda
 
 
 
+
 import { useEffect, useState } from 'react';
 
 import type { FieldValues} from 'react-hook-form';
@@ -44,7 +45,7 @@ const {
 useEffect( () => {
 	updateReserveAddressState(selectedStableCoin, setReserveAddress);
 	updateReserveAmountState(selectedStableCoin, setReserveAmount);
-}, [selectedStableCoin?.tokenId]);
+}, [selectedStableCoin?.deleted, selectedStableCoin?.paused, selectedStableCoin?.tokenId]);
 
 useEffect( () => {
 	if (reserveAddress){
@@ -56,26 +57,22 @@ const UpdateReserveAddress = async () => {
 	const { reserveAddress} =
 	getValues();
 	if (selectedStableCoin?.tokenId){
-		alert(reserveAddress)
+
 		const request = new UpdateReserveAddressRequest({tokenId:selectedStableCoin.tokenId.toString(),reserveAddress})
-		
 		const status = await StableCoin.updateReserveAddress(request);
 		alert(status);
-
-
 	}
 	
 	
 }
 
 const updateReserveAmount = async () => {
-	const { updateReserveAmount,reserveAddress} =
-	getValues();
-	alert(reserveAddress);
-	alert(updateReserveAmount);
+	const { updateReserveAmount,reserveAddress} = getValues();
+	
 	const request = new UpdateReserveAmountRequest({ reserveAddress,
         reserveAmount:updateReserveAmount});	
-	let status = await ReserveDataFeed.updateReserveAmount(request);
+	const status = await ReserveDataFeed.updateReserveAmount(request);
+	
 	alert(status)
 	
 
@@ -100,6 +97,10 @@ const updateReserveAmount = async () => {
 
 return (
 		<BaseContainer title={t('title')}>
+			
+
+			
+				{selectedStableCoin && (
 			<Box p={{ base: 4, md: '128px' }}>
 				<Heading fontSize='20px' fontWeight='600' mb={14} data-testid='subtitle'>
 					{t('subtitle')}
@@ -122,7 +123,7 @@ return (
 							control={control}
 							name={'reserveAddress'}
 							label={t('reserveAddress')}
-							
+							right='1em'
 							isReadOnly={false}	
 							rightElement={<Button
 								data-testid={`stepper-step-panel-button-secondary`}
@@ -131,6 +132,7 @@ return (
 								width='2em'
 								placeContent={"center"}
 							>
+							
 							<RepeatIcon />
 							</Button>}
 						/>
@@ -167,7 +169,7 @@ return (
 				</Grid>
 				</Stack>
 			</VStack>
-			</Box>
+			</Box>)}
 		</BaseContainer>
 	);
 };
@@ -188,8 +190,6 @@ async function updateReserveAmountState(selectedStableCoin: any, setReserveAmoun
 	if (selectedStableCoin?.tokenId) {
 		request = new GetReserveAmountRequest({ tokenId:selectedStableCoin.tokenId });
 	    const amount = (await ReserveDataFeed.getReserveAmount(request))
-		console.log(amount)
-		console.log(amount.value.toString())
 		setReserveAmount(amount.value.toString());
 	}
 }

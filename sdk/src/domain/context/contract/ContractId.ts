@@ -11,9 +11,15 @@ export default class ContractId extends HederaId {
 	public readonly value: string;
 
 	constructor(value: string) {
-		super(value);
+		let contract:string = value;
+		if (value.length == 42 && value.startsWith("0x")){
+			contract= ContractId.fromHederaEthereumAddress(value).toString();
+
+		}
+		super(contract);
 	}
 
+	
 	public static fromProtoBufKey(
 		key: string,
 		options: { strict: boolean } = { strict: false },
@@ -38,6 +44,9 @@ export default class ContractId extends HederaId {
 	public static fromHederaContractId(con: HContractId | DelegateContractId) {
 		return new ContractId(String(con));
 	}
+	public static fromHederaEthereumAddress(evmAddress:string) {
+		return new ContractId(HContractId.fromSolidityAddress( evmAddress).toString());
+	}
 
 	public static validate(id: string): BaseError[] {
 		const err: BaseError[] = [];
@@ -45,7 +54,13 @@ export default class ContractId extends HederaId {
 			err.push(new InvalidContractId(id));
 		} else {
 			try {
-				HContractId.fromString(id);
+				console.log("ADRI validacion id")
+				if (id.length == 42 && id.startsWith("0x")){
+					HContractId.fromSolidityAddress(id);		
+				}else{
+					HContractId.fromString(id);
+				}
+				
 			} catch (error) {
 				err.push(new InvalidContractId(id));
 			}
