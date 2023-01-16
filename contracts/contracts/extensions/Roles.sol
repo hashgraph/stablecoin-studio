@@ -68,7 +68,7 @@ abstract contract Roles is IRoles, AccessControlUpgradeable {
     */
     bytes32[] private roles;
 
-    function roles_init() 
+    function __roles_init() 
         internal
         onlyInitializing
     {

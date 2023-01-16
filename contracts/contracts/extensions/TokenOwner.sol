@@ -31,7 +31,7 @@ abstract contract TokenOwner is
     }
 
     // Initiliazes the token address
-    function tokenOwner_init(address initTokenAddress) internal onlyInitializing {
+    function __tokenOwner_init(address initTokenAddress) internal onlyInitializing {
         tokenAddress = initTokenAddress;
     }
 
