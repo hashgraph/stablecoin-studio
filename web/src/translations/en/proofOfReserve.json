@@ -1,10 +1,17 @@
 {
-    "title": "Manage Proof of Reserve",
-    "operationTitle": "Manage Proof of Reserve",
+    "title": "Proof of Reserve",
+    "operationTitle": "Proof of Reserve",
     "subtitle":"Manage Proof of Reserve",
     "reserveAmount": "Amount to set in Smart Contract",
     "reserveAmountToolTip": "Introduce Amount",
     "currentReserveAmount": "Smart Contract current Amount",
     "reserveAddress": "Smart Contract Adress",
-    "sendAmount": "Send Amount" 
+    "sendAmount": "Send Amount" ,
+    "notification": {
+        "title": "{{ result }} updating proof of reserve",
+        "descriptionSuccess": "Proof of Reserve was updated",
+        "descriptionError": "Sorry, there was an error updating proof of reserve"
+      }
+    
+         
 }
