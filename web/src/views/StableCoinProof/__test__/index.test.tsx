@@ -1,6 +1,6 @@
 
 import { render } from '../../../test/index';
-import translations from '../../../translations/en/StableCoinProof.json';
+import translations from '../../../translations/en/proofOfReserve.json';
 import configureMockStore from 'redux-mock-store';
 import StableCoinProof from '../';
 
@@ -22,7 +22,7 @@ describe(`<${StableCoinProof.name} />`, () => {
 		expect(header).toHaveTextContent(translations.title);
 	});
 
-	test('should has subtitle', () => {
+	test('should have buttons', () => {
 		const selectedStableCoin = {
 			initialSupply: 0,
 			tokenId: '0.0.48162226',
@@ -57,8 +57,10 @@ describe(`<${StableCoinProof.name} />`, () => {
 		});
 
 		const component = render(<StableCoinProof />, store);
-		const subtitle = component.getByTestId('details-review-title');
+		const buttonAddress = component.getByTestId('update-reserve-address-button');
+		const buttonAmount = component.getByTestId('update-reserve-address-button');
 
-		expect(subtitle).toHaveTextContent(translations.subtitle);
+		expect(buttonAddress).toBeInTheDocument();
+		expect(buttonAmount).toBeInTheDocument();
 	});
 });
