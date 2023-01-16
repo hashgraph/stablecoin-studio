@@ -21,7 +21,7 @@ abstract contract Wipeable is IWipeable, TokenOwner, Roles {
     */
     function wipe(address account, uint32 amount) 
         external       
-        onlyRole(_getRoleId(roleName.WIPE))
+        onlyRole(_getRoleId(RoleName.WIPE))
         checkAddressIsNotNull(account)
         override(IWipeable)
         returns (bool)
@@ -30,7 +30,7 @@ abstract contract Wipeable is IWipeable, TokenOwner, Roles {
 
         emit TokensWiped (msg.sender, _getTokenAddress(), account, amount);
 
-        int256 responseCode = IHederaTokenService(precompileAddress).wipeTokenAccount(_getTokenAddress(), account,  amount);
+        int256 responseCode = IHederaTokenService(PRECOMPILED_ADDRESS).wipeTokenAccount(_getTokenAddress(), account,  amount);
 
         bool success = _checkResponse(responseCode);
 

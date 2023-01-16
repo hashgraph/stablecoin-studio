@@ -14,13 +14,13 @@ import '@openzeppelin/contracts/utils/Strings.sol';
 
 contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
     // Hedera HTS precompiled contract
-    address private constant precompileAddress = address(0x167);
-    string private constant memo_1 = '{"p":"';
-    string private constant memo_2 = '","a":"';
-    string private constant memo_3 = '"}';
+    address private constant PRECOMPILED_ADDRESS = address(0x167);
+    string private constant MEMO_1 = '{"p":"';
+    string private constant MEMO_2 = '","a":"';
+    string private constant MEMO_3 = '"}';
 
     function deployStableCoin(
-        tokenStruct calldata requestedToken,
+        TokenStruct calldata requestedToken,
         address StableCoinContractAddress
     ) external 
     payable override(IStableCoinFactory) returns (DeployedStableCoin memory) {
@@ -118,18 +118,18 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
     }
 
     function createToken(
-        tokenStruct memory requestedToken,
+        TokenStruct memory requestedToken,
         address StableCoinProxyAddress,
         address StableCoinProxyAdminAddress
     ) private pure returns (IHederaTokenService.HederaToken memory) {
         // token Memo
         string memory tokenMemo = string(
             abi.encodePacked(
-                memo_1,
+                MEMO_1,
                 Strings.toHexString(StableCoinProxyAddress),
-                memo_2,
+                MEMO_2,
                 Strings.toHexString(StableCoinProxyAdminAddress),
-                memo_3
+                MEMO_3
             )
         );
 

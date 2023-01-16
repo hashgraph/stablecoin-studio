@@ -14,7 +14,7 @@ abstract contract TokenOwner is
     Initializable
 {
     // Hedera HTS precompiled contract
-    address internal constant precompileAddress = address(0x167);
+    address internal constant PRECOMPILED_ADDRESS = address(0x167);
     // HTS Token this contract owns
     address private _tokenAddress;
 

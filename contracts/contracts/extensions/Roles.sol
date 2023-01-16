@@ -103,7 +103,13 @@ abstract contract Roles is IRoles, AccessControlUpgradeable {
         return (roles);
     }
 
-    function getRoleId(roleName role) 
+    /**
+     * @dev Returns a role bytes32 representation
+     *
+     * @param role The role we want to retrieve the bytes32 for
+     * @return bytes32 The bytes32 of the role
+     */
+    function getRoleId(RoleName role) 
         external 
         override(IRoles)
         view 
@@ -112,7 +118,7 @@ abstract contract Roles is IRoles, AccessControlUpgradeable {
         return _getRoleId(role);
     }
 
-    function _getRoleId(roleName role) 
+    function _getRoleId(RoleName role) 
         internal 
         view 
     returns(bytes32)
