@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.10;
+pragma solidity 0.8.16;
 
 import "./TokenOwner.sol";
 import "./Roles.sol";
@@ -16,7 +16,7 @@ abstract contract Freezable is IFreezable, TokenOwner, Roles {
      function freeze(address account) 
         external       
         onlyRole(_getRoleId(roleName.FREEZE))  
-        CheckAddressIsNotNull(account)
+        checkAddressIsNotNull(account)
         override(IFreezable)
         returns (bool)
     {         
@@ -37,7 +37,7 @@ abstract contract Freezable is IFreezable, TokenOwner, Roles {
     function unfreeze(address account)
         external       
         onlyRole(_getRoleId(roleName.FREEZE))  
-        CheckAddressIsNotNull(account)
+        checkAddressIsNotNull(account)
         override(IFreezable)
         returns (bool)
     {         

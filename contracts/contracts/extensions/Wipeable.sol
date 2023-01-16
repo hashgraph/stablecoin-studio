@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.10;
+pragma solidity 0.8.16;
 
 import "./TokenOwner.sol";
 import "./Roles.sol";
@@ -22,7 +22,7 @@ abstract contract Wipeable is IWipeable, TokenOwner, Roles {
     function wipe(address account, uint32 amount) 
         external       
         onlyRole(_getRoleId(roleName.WIPE))
-        CheckAddressIsNotNull(account)
+        checkAddressIsNotNull(account)
         override(IWipeable)
         returns (bool)
     {      

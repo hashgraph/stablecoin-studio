@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.10;
+pragma solidity 0.8.16;
 
 import './Interfaces/IHederaERC20Upgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol';
@@ -49,7 +49,7 @@ contract HederaERC20 is
         address originalSender,
         address reserveAddress
     )
-           CheckAddressIsNotNull(originalSender)
+           checkAddressIsNotNull(originalSender)
         external payable initializer returns (address) 
     {
         reserve_init(reserveAddress); // Initialize reserve
@@ -152,7 +152,7 @@ contract HederaERC20 is
      *
      */
     function associateToken(address addr) 
-        CheckAddressIsNotNull(addr)
+        checkAddressIsNotNull(addr)
     external override(IHederaERC20)
     {
 
@@ -171,7 +171,7 @@ contract HederaERC20 is
      *
      */
     function dissociateToken(address addr) 
-            CheckAddressIsNotNull(addr)
+            checkAddressIsNotNull(addr)
     external override(IHederaERC20)
     {
 
@@ -194,8 +194,8 @@ contract HederaERC20 is
         address to,
         uint256 amount
     )   
-        CheckAddressIsNotNull(from)
-        CheckAddressIsNotNull(to)
+        checkAddressIsNotNull(from)
+        checkAddressIsNotNull(to)
     internal override(TokenOwner) {
         require(_balanceOf(from) >= amount, 'Insufficient token balance');
 
@@ -224,8 +224,8 @@ contract HederaERC20 is
         address owner,
         address spender
     ) 
-        CheckAddressIsNotNull(owner)
-        CheckAddressIsNotNull(spender)
+        checkAddressIsNotNull(owner)
+        checkAddressIsNotNull(spender)
     external override(IHederaERC20) returns (uint256) 
     {
         (, uint256 amount) = IHederaTokenService(precompileAddress).allowance(
@@ -240,7 +240,7 @@ contract HederaERC20 is
      * @dev Function not already implemented
      */
     function approve(address spender, uint256 amount) 
-        CheckAddressIsNotNull(spender)
+        checkAddressIsNotNull(spender)
     external override(IHederaERC20) returns (bool) {
         (bool success, bytes memory result) = precompileAddress.delegatecall(
             abi.encodeWithSelector(
@@ -269,8 +269,8 @@ contract HederaERC20 is
         address to,
         uint256 amount
     ) 
-        CheckAddressIsNotNull(from)
-        CheckAddressIsNotNull(to)
+        checkAddressIsNotNull(from)
+        checkAddressIsNotNull(to)
     external override(IHederaERC20) returns (bool) 
     {
 

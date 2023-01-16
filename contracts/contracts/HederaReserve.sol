@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.10;
+pragma solidity 0.8.16;
 
 import './Interfaces/IHederaReserve.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';

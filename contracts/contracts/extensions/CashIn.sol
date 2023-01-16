@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.10;
+pragma solidity 0.8.16;
 
 import './Interfaces/ICashIn.sol';
 import './SupplierAdmin.sol';
@@ -18,7 +18,7 @@ abstract contract CashIn is ICashIn, SupplierAdmin, Reserve {
         external
         onlyRole(_getRoleId(roleName.CASHIN))
         checkReserveIncrease(amount)
-        CheckAddressIsNotNull(account)
+        checkAddressIsNotNull(account)
         override(ICashIn)
         returns (bool)
     {

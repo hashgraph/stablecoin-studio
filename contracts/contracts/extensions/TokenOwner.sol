@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.10;
+pragma solidity 0.8.16;
 
 import './Interfaces/ITokenOwner.sol';
 import '../hts-precompile/HederaResponseCodes.sol';
@@ -19,13 +19,13 @@ abstract contract TokenOwner is
     address private _tokenAddress;
 
     // modifier to check that an address is not 0
-    modifier CheckAddressIsNotNull(address addr)
+    modifier checkAddressIsNotNull(address addr)
     {
-        _CheckAddressIsNotNull(addr);
+        _checkAddressIsNotNull(addr);
         _;
     }
 
-    function _CheckAddressIsNotNull(address addr) internal pure
+    function _checkAddressIsNotNull(address addr) internal pure
     {
         require(addr != address(0), "Provided address is 0");
     }
