@@ -82,7 +82,7 @@ describe('🧪 Role test', () => {
 			stableCoinFactory: FactoryAddressTestnet,
 			hederaERC20: HederaERC20AddressTestnet,
 			createReserve: true,
-			reserveInitialAmount: "10.55"
+			reserveInitialAmount: '1000',
 		});
 		stableCoinSC = (await StableCoin.create(requestSC)).coin;
 		// console.log(stableCoinSC.tokenId);

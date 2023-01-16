@@ -54,7 +54,6 @@ export default class ContractId extends HederaId {
 			err.push(new InvalidContractId(id));
 		} else {
 			try {
-				console.log("ADRI validacion id")
 				if (id.length == 42 && id.startsWith("0x")){
 					HContractId.fromSolidityAddress(id);		
 				}else{

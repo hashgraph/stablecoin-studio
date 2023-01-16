@@ -18,9 +18,6 @@
  *
  */
 
-/* eslint-disable jest/valid-expect */
-/* eslint-disable jest/expect-expect */
-/* eslint-disable jest/no-standalone-expect */
 import { HTSTransactionAdapter } from '../../../../../src/port/out/hs/hts/HTSTransactionAdapter.js';
 import TransactionResponse from '../../../../../src/domain/context/transaction/TransactionResponse.js';
 import StableCoinCapabilities from '../../../../../src/domain/context/stablecoin/StableCoinCapabilities.js';

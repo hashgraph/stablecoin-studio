@@ -107,7 +107,7 @@ describe('🧪 Stablecoin test', () => {
 			stableCoinFactory: FactoryAddressTestnet,
 			hederaERC20: HederaERC20AddressTestnet,
 			createReserve: false,
-			reserveAddress: "0.0.11111111"
+			// reserveAddress: '0.0.11111111'
 		});
 
 		stableCoinSC = (await StableCoin.create(requestSC)).coin;
