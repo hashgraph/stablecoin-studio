@@ -18,8 +18,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Install dependencies Contracts
-        env:
-          HEDERA_OPERATOR_ACCOUNT: ${{ secrets.HEDERA_OPERATOR_ACCOUNT }}
         run: npm install
         working-directory: contracts
       - name: Test
