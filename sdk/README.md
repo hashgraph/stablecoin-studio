@@ -61,6 +61,9 @@
 		- [Decrease Allowance](#decrease-allowance)		
 		- [Is Allowance Limited](#is-allowance-limited)
 		- [Is Allowance Unlimited](#is-allowance-unlimited)
+          - [Reserve Data Feed](#reserve-data-feed)
+		- [Get Reserve Amount](#get-reserve-amount)	 		
+		- [Update Reserve Amount](#update-reserve-amount)	 		
 	- [Common](#Common)
 - [Testing](#testing)
 		- [Jest](#jest)
@@ -971,6 +974,46 @@ Check out [Router.tsx](https://github.com/hashgraph/hedera-accelerator-stablecoi
     
    
 }
+## Reserve Data Feed
+
+### Get Reserve Amount
+Get reserve Amount
+
+**Spec:**
+
+```Typescript
+	ReserveDataFeed.updateReserveAmount = (request: UpdateReserveAmountRequest): Promise<boolean>
+```
+
+**Example:**
+
+```Typescript
+	const balance:boolean = await ReserveDataFeed.updateReserveAmount(
+		new UpdateReserveAmountRequest({
+			reserveAddress: "0.1.1",
+			reserveAmount: 1
+		})
+	);
+```
+
+### Update Reserve Amount
+Update reserve Amount
+
+**Spec:**
+
+```Typescript
+	ReserveDataFeed.getReserveAmount = (request: GetReserveAmountRequest): Promise<Balance>;
+```
+
+**Example:**
+
+```Typescript
+	const balance:Balance = await ReserveDataFeed.getReserveAmount(
+		new GetReserveAmountRequest({
+			tokenId: "0.1.1"
+		})
+	);
+```
 ## Common
 The SDK class is exported. This static class allows to set the log level and application metadata at any point in your code, just import it and change the values.
 
