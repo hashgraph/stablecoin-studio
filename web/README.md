@@ -109,25 +109,31 @@ In order to create a new stable coin using the WEB, you must click on the "Creat
 
 Basic information about the Stable coin.
 
-![image](https://user-images.githubusercontent.com/114951681/210237528-85f9a88b-6593-4e2a-92b6-f869d4f4d52a.png)
+![image](https://user-images.githubusercontent.com/110089113/212881844-776a06b8-ba65-4722-992b-ef1b7529e4e6.png)
 
 **Optional details**
 
 Stable coin supply and accuracy definition (inital supply, max supply, decimals)
 
-![image](https://user-images.githubusercontent.com/114951681/210237700-226bcc17-7986-426c-adab-a72de0e82d2e.png)
+![image](https://user-images.githubusercontent.com/110089113/212881920-45aed35b-4c82-4b01-bbb3-a6699a2dfa8b.png)
 
 **Manage permissions**
 
 Underlying token's keys definition (stable coin smart contract or another account)
 
-![image](https://user-images.githubusercontent.com/114951681/210237760-ee1f83fc-3ddf-48be-8661-8a4ab4aa83df.png)
+![image](https://user-images.githubusercontent.com/110089113/212882025-89045f22-7ffd-4e46-a419-7bc7efda54a3.png)
+
+**Proof Of Reserve**
+
+Select if the token will have a proof of reservation, if yes, if you have a contract for it or if you want a new one to be generated.
+
+![image](https://user-images.githubusercontent.com/110089113/212882109-7975a305-7bfa-450e-973a-625b5d528e5e.png)
 
 **Review**
 
 Final validation before creating the stable coin.
 
-![image](https://user-images.githubusercontent.com/114951681/210238265-5047651b-6c5b-431c-a5d3-0b26fdb18df3.png)
+![image](https://user-images.githubusercontent.com/110089113/212882395-b7cd1366-9c67-4db3-8532-557d4f0ff3a2.png)
 
 You will then have to validate the transaction using the wallet you paired to.
 
