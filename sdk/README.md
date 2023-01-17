@@ -361,6 +361,50 @@ Get balance of tokens for an account of a specific stable coin.
 	result.toString() // "1234"
 	result.decimals // 2
 ```
+### Get Reserve Address
+Get contract reserve address .
+
+**Spec:**
+
+```Typescript
+	StableCoin.getReserveAddress(request: GetReserveAddressRequest): Promise<string>;
+
+```
+
+**Example:**
+
+```Typescript
+	const result: string = await StableCoin.StableCoin(
+		new GetReserveAddressRequest({
+			tokenId: "0.0.1",
+		})
+	);
+	result // "0.1.255445"
+	
+```
+
+### Update Reserve Address
+Update contract reserve address .
+
+**Spec:**
+
+```Typescript
+	StableCoin.updateReserveAddress = (request: UpdateReserveAddressRequest,): Promise<boolean>;
+
+```
+
+**Example:**
+
+```Typescript
+	const result: string = await StableCoin.updateReserveAddress(
+		new GetReserveAddressRequest({
+			tokenId: "0.0.1",
+			reserveAddress: "0.0.54445787"
+		})
+	);
+	result // "true"
+	
+```
 
 ### Capabilities
 Get capabiltities for an account on a stable coin. Capabilties have a reference of all the details of the stable coin quering to, the list of capabiltities and the account the capabilities belong to. Each capabiltiy determines the type of operation that can be performed (cash in, burn, etc) and on wether it should be done onto the smart contract for the stable coin (proxyAddress in the `coin: StableCoin` attirbute) or through the Hedera Token Service. 
