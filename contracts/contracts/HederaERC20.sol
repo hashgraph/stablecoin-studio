@@ -64,7 +64,7 @@ contract HederaERC20 is
         _grantRole(_getRoleId(RoleName.DELETE), originalSender);
         _setupRole(_getRoleId(RoleName.ADMIN), originalSender); // Assign Admin role to the provided address
 
-        (int64 responseCode, address tokenAddress) = IHederaTokenService(
+        (int64 responseCode, address createdTokenAddress) = IHederaTokenService(
             PRECOMPILED_ADDRESS
         ).createFungibleToken{value: msg.value}(
             token,
@@ -77,9 +77,9 @@ contract HederaERC20 is
             'Token Creation failed'
         );
 
-        __tokenOwner_init(tokenAddress);
+        __tokenOwner_init(createdTokenAddress);
 
-        return tokenAddress;
+        return createdTokenAddress;
     }
 
     /**
