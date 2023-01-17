@@ -90,7 +90,7 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
         external 
         virtual 
         onlyRole(_getRoleId(RoleName.ADMIN)) 
-        checkAddressIsNotNull(supplier)
+        checkAddressIsNotZero(supplier)
         override(ISupplierAdmin)
     {
         require(!unlimitedSupplierAllowances[supplier], "Account already has unlimited supplier allowance");
@@ -124,7 +124,7 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
     function _grantUnlimitedSupplierRole(address supplier)
         internal  
         onlyRole(_getRoleId(RoleName.ADMIN)) 
-        checkAddressIsNotNull(supplier)
+        checkAddressIsNotZero(supplier)
     {
         unlimitedSupplierAllowances[supplier] = true;
         supplierAllowances[supplier] = 0;
@@ -142,7 +142,7 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
         external 
         virtual 
         onlyRole(_getRoleId(RoleName.ADMIN))
-        checkAddressIsNotNull(supplier)
+        checkAddressIsNotZero(supplier)
         override(ISupplierAdmin) 
     {
         supplierAllowances[supplier] = 0;
@@ -161,7 +161,7 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
         external 
         virtual 
         onlyRole(_getRoleId(RoleName.ADMIN))
-        checkAddressIsNotNull(supplier)
+        checkAddressIsNotZero(supplier)
         override(ISupplierAdmin)
     {    
         uint256 oldAllowance = supplierAllowances[supplier];
@@ -184,7 +184,7 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
         external 
         virtual 
         onlyRole(_getRoleId(RoleName.ADMIN))
-        checkAddressIsNotNull(supplier) 
+        checkAddressIsNotZero(supplier) 
         override(ISupplierAdmin)
     {
         require(amount > 0, "Amount must be greater than zero");
@@ -224,7 +224,7 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
     function _decreaseSupplierAllowance(address supplier, uint256 amount) 
         internal
         virtual
-        checkAddressIsNotNull(supplier)
+        checkAddressIsNotZero(supplier)
     {
         require(amount > 0, "Amount must be greater than zero");
 

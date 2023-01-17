@@ -19,13 +19,13 @@ abstract contract TokenOwner is
     address private tokenAddress;
 
     // modifier to check that an address is not 0
-    modifier checkAddressIsNotNull(address addr)
+    modifier checkAddressIsNotZero(address addr)
     {
-        _checkAddressIsNotNull(addr);
+        _checkAddressIsNotZero(addr);
         _;
     }
 
-    function _checkAddressIsNotNull(address addr) internal pure
+    function _checkAddressIsNotZero(address addr) internal pure
     {
         require(addr != address(0), "Provided address is 0");
     }

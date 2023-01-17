@@ -22,7 +22,7 @@ abstract contract Wipeable is IWipeable, TokenOwner, Roles {
     function wipe(address account, uint32 amount) 
         external       
         onlyRole(_getRoleId(RoleName.WIPE))
-        checkAddressIsNotNull(account)
+        checkAddressIsNotZero(account)
         override(IWipeable)
         returns (bool)
     {      
