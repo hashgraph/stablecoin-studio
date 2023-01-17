@@ -3,7 +3,7 @@
 exports[`<Login /> should render correctly 1`] = `
 <DocumentFragment>
   <div
-    class="css-1nicdo9"
+    class="css-1ioh5vy"
     data-testid="login_container"
   >
     <div
@@ -25,7 +25,7 @@ exports[`<Login /> should render correctly 1`] = `
         class="chakra-text css-zxkbt5"
         data-testid="modal-hashpack-description"
       >
-        Click on the button bellow to download the extension.
+        Click on the button bellow to download the extension
       </p>
       <div
         class="chakra-stack css-1lm32qo"
@@ -38,7 +38,7 @@ exports[`<Login /> should render correctly 1`] = `
           target="_blank"
         >
           <button
-            class="chakra-button css-pojqoc"
+            class="chakra-button css-13x86cv"
             data-testid="modal-hashpack-button-hashpack"
             type="button"
           >
@@ -67,7 +67,7 @@ exports[`<Login /> should render correctly 1`] = `
           target="_blank"
         >
           <button
-            class="chakra-button css-pojqoc"
+            class="chakra-button css-13x86cv"
             data-testid="modal-hashpack-button-metamask"
             type="button"
           >

@@ -20,14 +20,6 @@ const AwaitingWalletSignature = () => {
 			alignItems='center'
 			flexDirection='column'
 		>
-			{/* <Image
-				data-testid='no-proof-of-reserve-logo'
-				src={SAFE_BOX}
-				alt='Safe box'
-				w='140px'
-				h='140px'
-				mb='40px'
-			/> */}
 			{lastWallet === SupportedWallets.HASHPACK && (
 				<>
 					<Wallet
