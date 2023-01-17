@@ -117,7 +117,7 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 			wipeKey: CLIENT_ACCOUNT_ECDSA.publicKey,
 			pauseKey: CLIENT_ACCOUNT_ECDSA.publicKey,
 			supplyKey: CLIENT_ACCOUNT_ECDSA.publicKey,
-			treasury: CLIENT_ACCOUNT_ECDSA.id,
+			//treasury: CLIENT_ACCOUNT_ECDSA.id,
 			supplyType: TokenSupplyType.INFINITE,
 		});
 
