@@ -1027,7 +1027,7 @@ export async function revokeSupplierRole(
     )
 }
 
-export async function supplierAllowance(
+export async function getSupplierAllowance(
     proxyAddress: ContractId,
     clientCheckingAllowance: Client,
     accountToCheckFrom: string,
@@ -1036,7 +1036,7 @@ export async function supplierAllowance(
     const params = [await toEvmAddress(accountToCheckFrom, isE25519)]
     const result = await contractCall(
         proxyAddress,
-        'supplierAllowance',
+        'getSupplierAllowance',
         params,
         clientCheckingAllowance,
         Gas2,

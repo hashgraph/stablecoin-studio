@@ -52,8 +52,8 @@ contract HederaERC20 is
            checkAddressIsNotNull(originalSender)
         external payable initializer returns (address) 
     {
-        reserve_init(reserveAddress); // Initialize reserve
-        roles_init();
+        __reserve_init(reserveAddress); // Initialize reserve
+        __roles_init();
         _setupRole(_getRoleId(RoleName.ADMIN), msg.sender); // Assign Admin role to calling contract/user in order to be able to set all the other roles
         _grantUnlimitedSupplierRole(originalSender);
         _grantRole(_getRoleId(RoleName.BURN), originalSender);
@@ -77,7 +77,7 @@ contract HederaERC20 is
             'Token Creation failed'
         );
 
-        tokenOwner_init(tokenAddress);
+        __tokenOwner_init(tokenAddress);
 
         return tokenAddress;
     }

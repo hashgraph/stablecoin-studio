@@ -594,7 +594,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		const transactionResponse = await this.performOperation(
 			coin,
 			Operation.ROLE_MANAGEMENT,
-			'supplierAllowance',
+			'getSupplierAllowance',
 			60000,
 			params,
 			TransactionType.RECORD,
