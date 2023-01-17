@@ -41,7 +41,7 @@ exports[`<HandleRoles /> should render correctly on all actions: edit 1`] = `
                   role="group"
                 >
                   <label
-                    class="chakra-form__label css-1hfoxt1"
+                    class="chakra-form__label css-1y854pg"
                     for="field-:r1:"
                     id="field-:r1:-label"
                   >
@@ -66,7 +66,7 @@ exports[`<HandleRoles /> should render correctly on all actions: edit 1`] = `
                   >
                     <input
                       autocomplete="off"
-                      class="chakra-input css-l1kxkf"
+                      class="chakra-input css-16lr1fk"
                       data-testid="account"
                       id="field-:r1:"
                       name="account"
@@ -85,7 +85,7 @@ exports[`<HandleRoles /> should render correctly on all actions: edit 1`] = `
                   role="group"
                 >
                   <label
-                    class="chakra-form__label css-1hfoxt1"
+                    class="chakra-form__label css-1y854pg"
                     for="field-:r2:"
                     id="field-:r2:-label"
                   >
@@ -122,7 +122,7 @@ exports[`<HandleRoles /> should render correctly on all actions: edit 1`] = `
                       class="css-1f43avz-a11yText-A11yText"
                     />
                     <div
-                      class=" css-17n5zh"
+                      class=" css-1ugyojt"
                     >
                       <div
                         class="css-3y2vuh"
@@ -409,14 +409,14 @@ exports[`<HandleRoles /> should render correctly on all actions: edit 1`] = `
             class="chakra-stack css-1amf41o"
           >
             <button
-              class="chakra-button css-1urzhdw"
+              class="chakra-button css-skboyg"
               data-testid="cancel-btn"
               type="button"
             >
               Go back
             </button>
             <button
-              class="chakra-button css-qvkb6r"
+              class="chakra-button css-6z8iia"
               data-testid="confirm-btn"
               disabled=""
               type="button"
@@ -476,7 +476,7 @@ exports[`<HandleRoles /> should render correctly on all actions: give 1`] = `
                   role="group"
                 >
                   <label
-                    class="chakra-form__label css-1hfoxt1"
+                    class="chakra-form__label css-1y854pg"
                     for="field-:rd:"
                     id="field-:rd:-label"
                   >
@@ -501,7 +501,7 @@ exports[`<HandleRoles /> should render correctly on all actions: give 1`] = `
                   >
                     <input
                       autocomplete="off"
-                      class="chakra-input css-l1kxkf"
+                      class="chakra-input css-16lr1fk"
                       data-testid="account"
                       id="field-:rd:"
                       name="account"
@@ -520,7 +520,7 @@ exports[`<HandleRoles /> should render correctly on all actions: give 1`] = `
                   role="group"
                 >
                   <label
-                    class="chakra-form__label css-1hfoxt1"
+                    class="chakra-form__label css-1y854pg"
                     for="field-:re:"
                     id="field-:re:-label"
                   >
@@ -557,7 +557,7 @@ exports[`<HandleRoles /> should render correctly on all actions: give 1`] = `
                       class="css-1f43avz-a11yText-A11yText"
                     />
                     <div
-                      class=" css-17n5zh"
+                      class=" css-1ugyojt"
                     >
                       <div
                         class="css-3y2vuh"
@@ -844,14 +844,14 @@ exports[`<HandleRoles /> should render correctly on all actions: give 1`] = `
             class="chakra-stack css-1amf41o"
           >
             <button
-              class="chakra-button css-1urzhdw"
+              class="chakra-button css-skboyg"
               data-testid="cancel-btn"
               type="button"
             >
               Go back
             </button>
             <button
-              class="chakra-button css-qvkb6r"
+              class="chakra-button css-6z8iia"
               data-testid="confirm-btn"
               disabled=""
               type="button"
@@ -911,7 +911,7 @@ exports[`<HandleRoles /> should render correctly on all actions: refresh 1`] = `
                   role="group"
                 >
                   <label
-                    class="chakra-form__label css-1hfoxt1"
+                    class="chakra-form__label css-1y854pg"
                     for="field-:r15:"
                     id="field-:r15:-label"
                   >
@@ -936,7 +936,7 @@ exports[`<HandleRoles /> should render correctly on all actions: refresh 1`] = `
                   >
                     <input
                       autocomplete="off"
-                      class="chakra-input css-l1kxkf"
+                      class="chakra-input css-16lr1fk"
                       data-testid="account"
                       id="field-:r15:"
                       name="account"
@@ -955,7 +955,7 @@ exports[`<HandleRoles /> should render correctly on all actions: refresh 1`] = `
                   role="group"
                 >
                   <label
-                    class="chakra-form__label css-1hfoxt1"
+                    class="chakra-form__label css-1y854pg"
                     for="field-:r16:"
                     id="field-:r16:-label"
                   >
@@ -992,7 +992,7 @@ exports[`<HandleRoles /> should render correctly on all actions: refresh 1`] = `
                       class="css-1f43avz-a11yText-A11yText"
                     />
                     <div
-                      class=" css-17n5zh"
+                      class=" css-1ugyojt"
                     >
                       <div
                         class="css-3y2vuh"
@@ -1279,14 +1279,14 @@ exports[`<HandleRoles /> should render correctly on all actions: refresh 1`] = `
             class="chakra-stack css-1amf41o"
           >
             <button
-              class="chakra-button css-1urzhdw"
+              class="chakra-button css-skboyg"
               data-testid="cancel-btn"
               type="button"
             >
               Go back
             </button>
             <button
-              class="chakra-button css-qvkb6r"
+              class="chakra-button css-6z8iia"
               data-testid="confirm-btn"
               disabled=""
               type="button"
@@ -1346,7 +1346,7 @@ exports[`<HandleRoles /> should render correctly on all actions: revoke 1`] = `
                   role="group"
                 >
                   <label
-                    class="chakra-form__label css-1hfoxt1"
+                    class="chakra-form__label css-1y854pg"
                     for="field-:rp:"
                     id="field-:rp:-label"
                   >
@@ -1371,7 +1371,7 @@ exports[`<HandleRoles /> should render correctly on all actions: revoke 1`] = `
                   >
                     <input
                       autocomplete="off"
-                      class="chakra-input css-l1kxkf"
+                      class="chakra-input css-16lr1fk"
                       data-testid="account"
                       id="field-:rp:"
                       name="account"
@@ -1390,7 +1390,7 @@ exports[`<HandleRoles /> should render correctly on all actions: revoke 1`] = `
                   role="group"
                 >
                   <label
-                    class="chakra-form__label css-1hfoxt1"
+                    class="chakra-form__label css-1y854pg"
                     for="field-:rq:"
                     id="field-:rq:-label"
                   >
@@ -1427,7 +1427,7 @@ exports[`<HandleRoles /> should render correctly on all actions: revoke 1`] = `
                       class="css-1f43avz-a11yText-A11yText"
                     />
                     <div
-                      class=" css-17n5zh"
+                      class=" css-1ugyojt"
                     >
                       <div
                         class="css-3y2vuh"
@@ -1714,14 +1714,14 @@ exports[`<HandleRoles /> should render correctly on all actions: revoke 1`] = `
             class="chakra-stack css-1amf41o"
           >
             <button
-              class="chakra-button css-1urzhdw"
+              class="chakra-button css-skboyg"
               data-testid="cancel-btn"
               type="button"
             >
               Go back
             </button>
             <button
-              class="chakra-button css-qvkb6r"
+              class="chakra-button css-6z8iia"
               data-testid="confirm-btn"
               disabled=""
               type="button"

@@ -54,7 +54,7 @@ exports[`<Layout /> should render correctly 1`] = `
                     class="css-1f43avz-a11yText-A11yText"
                   />
                   <div
-                    class=" css-17n5zh"
+                    class=" css-1ugyojt"
                   >
                     <div
                       class="css-3y2vuh"
@@ -135,7 +135,7 @@ exports[`<Layout /> should render correctly 1`] = `
               class="css-0"
             >
               <button
-                class="chakra-button css-8bto8d"
+                class="chakra-button css-er0jx8"
                 type="button"
               >
                 <svg
@@ -181,7 +181,7 @@ exports[`<Layout /> should render correctly 1`] = `
               class="css-0"
             >
               <button
-                class="chakra-button css-8bto8d"
+                class="chakra-button css-er0jx8"
                 type="button"
               >
                 <svg
@@ -350,7 +350,7 @@ exports[`<Layout /> should render correctly 1`] = `
           class="css-17lnxuq"
         >
           <button
-            class="chakra-button css-16b3c4e"
+            class="chakra-button css-1rqsley"
             data-testid="sidebar-option-Coin"
             type="button"
           >
@@ -429,7 +429,7 @@ exports[`<Layout /> should render correctly 1`] = `
             </p>
           </button>
           <button
-            class="chakra-button css-16b3c4e"
+            class="chakra-button css-1rqsley"
             data-testid="sidebar-option-Users"
             type="button"
           >
@@ -489,7 +489,7 @@ exports[`<Layout /> should render correctly 1`] = `
             </p>
           </button>
           <button
-            class="chakra-button css-16b3c4e"
+            class="chakra-button css-1rqsley"
             data-testid="sidebar-option-Gear"
             type="button"
           >
@@ -534,7 +534,7 @@ exports[`<Layout /> should render correctly 1`] = `
             </p>
           </button>
           <button
-            class="chakra-button css-16b3c4e"
+            class="chakra-button css-1rqsley"
             data-testid="sidebar-option-File"
             type="button"
           >

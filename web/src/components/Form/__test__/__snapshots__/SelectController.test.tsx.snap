@@ -11,7 +11,7 @@ exports[`<undefined /> doesn't show error with showError=false: NotShowingError 
       role="group"
     >
       <label
-        class="chakra-form__label css-1hfoxt1"
+        class="chakra-form__label css-1y854pg"
         data-invalid=""
         for="field-:r6:"
         id="field-:r6:-label"
@@ -41,7 +41,7 @@ exports[`<undefined /> doesn't show error with showError=false: NotShowingError 
           class="css-1f43avz-a11yText-A11yText"
         />
         <div
-          class=" css-ot5r48"
+          class=" css-x160gt"
           data-invalid="true"
         >
           <div
@@ -132,7 +132,7 @@ exports[`<undefined /> shows error with showErrors=true: ShowingError 1`] = `
       role="group"
     >
       <label
-        class="chakra-form__label css-1hfoxt1"
+        class="chakra-form__label css-1y854pg"
         data-invalid=""
         for="field-:r5:"
         id="field-:r5:-label"
@@ -162,7 +162,7 @@ exports[`<undefined /> shows error with showErrors=true: ShowingError 1`] = `
           class="css-1f43avz-a11yText-A11yText"
         />
         <div
-          class=" css-ot5r48"
+          class=" css-x160gt"
           data-invalid="true"
         >
           <div
@@ -259,7 +259,7 @@ exports[`<undefined /> shows placeholder with default value: DefaultPlaceholder 
       role="group"
     >
       <label
-        class="chakra-form__label css-1hfoxt1"
+        class="chakra-form__label css-1y854pg"
         for="field-:r3:"
         id="field-:r3:-label"
       >
@@ -288,7 +288,7 @@ exports[`<undefined /> shows placeholder with default value: DefaultPlaceholder 
           class="css-1f43avz-a11yText-A11yText"
         />
         <div
-          class=" css-ot5r48"
+          class=" css-x160gt"
         >
           <div
             class="css-3y2vuh"
@@ -377,7 +377,7 @@ exports[`<undefined /> shows placeholder with the provided value: CustomPlacehol
       role="group"
     >
       <label
-        class="chakra-form__label css-1hfoxt1"
+        class="chakra-form__label css-1y854pg"
         for="field-:r4:"
         id="field-:r4:-label"
       >
@@ -406,7 +406,7 @@ exports[`<undefined /> shows placeholder with the provided value: CustomPlacehol
           class="css-1f43avz-a11yText-A11yText"
         />
         <div
-          class=" css-ot5r48"
+          class=" css-x160gt"
         >
           <div
             class="css-3y2vuh"

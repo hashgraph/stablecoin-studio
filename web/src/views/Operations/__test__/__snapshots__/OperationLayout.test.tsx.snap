@@ -240,14 +240,14 @@ exports[`<OperationLayout /> should render correctly 1`] = `
             class="chakra-stack css-1amf41o"
           >
             <button
-              class="chakra-button css-1urzhdw"
+              class="chakra-button css-skboyg"
               data-testid="cancel-btn"
               type="button"
             >
               Go back
             </button>
             <button
-              class="chakra-button css-qvkb6r"
+              class="chakra-button css-6z8iia"
               data-testid="confirm-btn"
               type="button"
             >

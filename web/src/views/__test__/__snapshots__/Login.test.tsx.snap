@@ -38,7 +38,7 @@ exports[`<Login /> should render correctly 1`] = `
           target="_blank"
         >
           <button
-            class="chakra-button css-1yq4ghy"
+            class="chakra-button css-13x86cv"
             data-testid="modal-hashpack-button-hashpack"
             type="button"
           >
@@ -67,7 +67,7 @@ exports[`<Login /> should render correctly 1`] = `
           target="_blank"
         >
           <button
-            class="chakra-button css-1yq4ghy"
+            class="chakra-button css-13x86cv"
             data-testid="modal-hashpack-button-metamask"
             type="button"
           >

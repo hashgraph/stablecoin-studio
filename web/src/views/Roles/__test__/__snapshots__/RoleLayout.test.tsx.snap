@@ -41,7 +41,7 @@ exports[`<RoleLayout /> should render correctly 1`] = `
                   role="group"
                 >
                   <label
-                    class="chakra-form__label css-1hfoxt1"
+                    class="chakra-form__label css-1y854pg"
                     for="field-:r0:"
                     id="field-:r0:-label"
                   >
@@ -66,7 +66,7 @@ exports[`<RoleLayout /> should render correctly 1`] = `
                   >
                     <input
                       autocomplete="off"
-                      class="chakra-input css-l1kxkf"
+                      class="chakra-input css-16lr1fk"
                       data-testid="account"
                       id="field-:r0:"
                       name="account"
@@ -85,7 +85,7 @@ exports[`<RoleLayout /> should render correctly 1`] = `
                   role="group"
                 >
                   <label
-                    class="chakra-form__label css-1hfoxt1"
+                    class="chakra-form__label css-1y854pg"
                     for="field-:r1:"
                     id="field-:r1:-label"
                   >
@@ -122,7 +122,7 @@ exports[`<RoleLayout /> should render correctly 1`] = `
                       class="css-1f43avz-a11yText-A11yText"
                     />
                     <div
-                      class=" css-17n5zh"
+                      class=" css-1ugyojt"
                     >
                       <div
                         class="css-3y2vuh"
@@ -409,14 +409,14 @@ exports[`<RoleLayout /> should render correctly 1`] = `
             class="chakra-stack css-1amf41o"
           >
             <button
-              class="chakra-button css-1urzhdw"
+              class="chakra-button css-skboyg"
               data-testid="cancel-btn"
               type="button"
             >
               Go back
             </button>
             <button
-              class="chakra-button css-qvkb6r"
+              class="chakra-button css-6z8iia"
               data-testid="confirm-btn"
               type="button"
             >
