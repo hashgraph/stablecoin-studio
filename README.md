@@ -15,7 +15,8 @@
   - [Creating Stable Coins](#Creating-Stable-Coins)<br>
   - [Managing Stable Coins](#Managing-Stable-Coins)<br>
   - [Operating Stable Coins](#Operating-Stable-Coins)<br>
-  - [Stable Coins categories](#Stable-Coins-categories)<br>
+  - [Stable Coin categories](#Stable-Coins-categories)<br>
+  - [Proof of Reserve](#Proof-of-reserve)<br>
 - **[Architecture](#Architecture)**<br>
 - **[Technologies](#Technologies)**<br>
 - **[Installation](#Installation)**<br>
@@ -103,6 +104,22 @@ From an accounts's perspective, there are two kinds of stable coins:
  - *Imported Stable Coins*
 
 Every stable coin for which the account has at least one role but was created using a different account.
+
+## Proof of reserve
+Under the current implementation, all stable coins may choose to implement a proof of reserve data feed at creation (it cannot be added after creation). A proof of reserve is, in very simple terms, an external feed that provides the backing of the tokens in real world, this may be FIAT or other assets. 
+
+### Setting up a proof of reserve
+During setup, it is possible to link an existing data feed, by providing the smart contract's address, or create a new one based on our implementation. If a reserve was created during the stable coin deployment, it will also be possible to edit the amount of the reserve.
+
+> The initial supply of the stable coin cannot be higher than the reserve initial / current amount.
+
+Therefore two options exist
+- **No data feed is provided:** This will deploy and initialize a reserve based on our example imentation. This reserve is meant to be used for demo purposes and allows the admin to change the reserve amount to showcase the integration between the two.
+- **An existing data feed is provided**: This data feed will be used to check the reserve before minting any new tokens.
+
+In either case, the reserve address can be edited after creation. However, changing the amount in the reserve can only be performed with the example reserve.
+
+For more information about the SDK and the methods to perform this opertions, visit to the [docs](https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/sdk#get-reserve-address).
 
 # Architecture
 The project is divided in 4 node modules:
