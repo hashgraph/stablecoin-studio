@@ -99,7 +99,7 @@ const StableCoinProof = () => {
 				dispatch(walletActions.setReserveAddress(result));
 				request = new GetReserveAmountRequest({ tokenId: selectedStableCoin.tokenId.toString() });
 				const amount = await SDKService.getReserveAmount(request);
-				dispatch(walletActions.setReserveAmount(amount.value.toString()));
+				dispatch(walletActions.setReserveAmount(amount?.value?.toString()));
 			}
 		} catch (error) {
 			console.error(error);
