@@ -163,6 +163,12 @@ The operations linked to the capabilities (roles) assigned to your account for t
 
 If your account has the stable coin admin role, you will also be allowed to manage the stable coin's roles.
 
+### Proof Of Reserve
+
+![image](https://user-images.githubusercontent.com/110089113/212882788-57de3200-5a38-4525-b9e6-dca9048296b1.png)
+
+If your token has proof of reservation, you can manage it from here. You can modify both the contract address and the initial supply of the contract.
+
 # Testing
 
 The project uses [Jest](https://jestjs.io/es-ES/) for testing.
