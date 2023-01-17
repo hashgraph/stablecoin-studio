@@ -5,7 +5,8 @@ import {
 	Role,
 	CapabilitiesRequest,
 	ConnectRequest,
-	InitializationRequest
+	InitializationRequest,
+	ReserveDataFeed
 } from 'hedera-stable-coin-sdk';
 import type {
 	WalletEvent,
@@ -37,7 +38,12 @@ import type {
 	CheckSupplierLimitRequest,
 	RequestAccount,
 
-	ReserveViewModel} from 'hedera-stable-coin-sdk';
+	ReserveViewModel,
+	GetReserveAmountRequest,
+	GetReserveAddressRequest,
+	UpdateReserveAddressRequest,
+	UpdateReserveAmountRequest
+} from 'hedera-stable-coin-sdk';
 
 export type StableCoinListRaw = Array<Record<'id' | 'symbol', string>>;
 
@@ -102,8 +108,8 @@ export class SDKService {
 
 	public static async createStableCoin(
 		CreateRequest: CreateRequest,
-	): Promise<{coin: StableCoinViewModel; reserve: ReserveViewModel;}| null> {
-		 return await StableCoin.create(CreateRequest);
+	): Promise<{ coin: StableCoinViewModel; reserve: ReserveViewModel } | null> {
+		return await StableCoin.create(CreateRequest);
 	}
 
 	public static async getBalance(req: GetAccountBalanceRequest) {
@@ -193,6 +199,22 @@ export class SDKService {
 
 	public static async getRoles(data: GetRolesRequest) {
 		return await Role.getRoles(data);
+	}
+
+	public static async getReserveAddress(data: GetReserveAddressRequest) {
+		return await StableCoin.getReserveAddress(data);
+	}
+
+	public static async getReserveAmount(data: GetReserveAmountRequest) {
+		return await ReserveDataFeed.getReserveAmount(data);
+	}
+
+	public static async updateReserveAddress(data: UpdateReserveAddressRequest) {
+		return await StableCoin.updateReserveAddress(data);
+	}
+
+	public static async updateReserveAmount(data: UpdateReserveAmountRequest) {
+		return await ReserveDataFeed.updateReserveAmount(data);
 	}
 }
 

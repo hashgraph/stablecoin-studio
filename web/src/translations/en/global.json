@@ -62,5 +62,9 @@
 		"error": "There was an error pairing the wallet.",
 		"rejected": "The pairing request has been rejected.",
 		"loading": "Loading"
+	},
+	"walletActions": {
+		"awaitingSignatureTitle": "Awaiting wallet action",
+		"loading": "Loading data"
 	}
 }
