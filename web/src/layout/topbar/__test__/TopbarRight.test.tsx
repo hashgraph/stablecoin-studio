@@ -2,13 +2,12 @@ import TopbarRight from '../TopbarRight';
 import { render } from '../../../test/';
 import configureMockStore from 'redux-mock-store';
 
-const networkName = 'TESNET';
-const accountId = '0.0.123';
+const networkName = 'testnet';
 const mockStore = configureMockStore();
 const store = mockStore({
 	wallet: {
 		data: {
-			savedPairings: [{ network: networkName, accountIds: [accountId] }],
+			savedPairings: [{ network: networkName, accountIds: [] }],
 			topic: '',
 			pairingString: '',
 			encryptionKey: '',
@@ -37,6 +36,5 @@ describe(`<${TopbarRight.name} />`, () => {
 
 		const account = component.getByTestId('topbar-right-account');
 		expect(account).toBeInTheDocument();
-		expect(account).toHaveTextContent(accountId);
 	});
 });

@@ -1,5 +1,4 @@
-import { RepeatIcon } from '@chakra-ui/icons';
-import { Box, Grid, GridItem, VStack, Stack, Button, useDisclosure } from '@chakra-ui/react';
+import { VStack, Button, useDisclosure, Heading, Text, SimpleGrid, Flex } from '@chakra-ui/react';
 
 import {
 	GetReserveAddressRequest,
@@ -8,6 +7,7 @@ import {
 	GetReserveAmountRequest,
 } from 'hedera-stable-coin-sdk';
 
+import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 
 import type { FieldValues } from 'react-hook-form';
@@ -65,7 +65,7 @@ const StableCoinProof = () => {
 		mode: 'onChange',
 	});
 
-	const { control, getValues, setValue } = form;
+	const { control, getValues } = form;
 
 	// Update address and amount state when stable coin changes
 	useEffect(() => {
@@ -74,17 +74,15 @@ const StableCoinProof = () => {
 
 	// Update address field when loaded
 	useEffect(() => {
-		if (reserveAddress) {
-			setValue('reserveAddress', reserveAddress);
-		} else if(error || !success) {
-			setValue('reserveAddress', 'Error');
+		if (!reserveAddress && (error || !success)) {
+			dispatch(walletActions.setReserveAddress('Error'));
 		}
-		if (reserveAmount) {
-			setValue('currentReserveAmount', reserveAmount);
-		} else if (error || !success) {
-			setValue('currentReserveAmount', 'Error');
+	}, [reserveAddress]);
+	useEffect(() => {
+		if (!reserveAmount && (error || !success)) {
+			dispatch(walletActions.setReserveAmount('Error'));
 		}
-	}, [reserveAddress, reserveAmount]);
+	}, [reserveAmount]);
 
 	const updateProofOfReserveState = async () => {
 		let request: GetReserveAddressRequest;
@@ -161,113 +159,148 @@ const StableCoinProof = () => {
 		}
 	};
 
+	const GridItem = ({
+		name,
+		title,
+		label,
+		current,
+		input,
+		button,
+	}: {
+		name: string;
+		title: string;
+		label: string;
+		current: string;
+		input: ReactNode;
+		button: ReactNode;
+	}) => (
+		<VStack w='100%' alignItems={'start'} gap='6px'>
+			<Heading
+				data-testid={name + '-title'}
+				fontSize='24px'
+				fontWeight='600'
+				mb={8}
+				lineHeight='15.2px'
+				textAlign={'left'}
+			>
+				{title}
+			</Heading>
+			<Text data-testid={name + '-label'} style={{ fontWeight: '600' }}>
+				{label}
+			</Text>
+			<Text pl='10px' data-testid={name + '-value'} color={current === 'Error' ? 'red' : ''} mb={5}>
+				{current}
+			</Text>
+			{input}
+			{button}
+		</VStack>
+	);
+
 	return (
 		<BaseContainer title={t('proofOfReserve:title')}>
 			{selectedStableCoin && fetching && <AwaitingWalletSignature />}
 			{selectedStableCoin && !fetching && hasReserve && (
-				<Box p={{ base: 4, md: '128px' }}>
-					<VStack h='full' justify={'space-between'} pt='80px'>
-						<Stack h='full'>
-							<ModalNotification
-								variant={variant}
-								title={
-									awaitingUpdate
-										? 'Loading'
-										: t('proofOfReserve:notification.title', {
-												result: success ? 'Success' : 'Error',
-										  })
-								}
-								description={
-									awaitingUpdate
-										? undefined
-										: t(`proofOfReserve:notification.description${success ? 'Success' : 'Error'}`)
-								}
-								isOpen={isOpen}
-								onClose={onClose}
-								onClick={onClose}
-								errorTransactionUrl={error}
-								closeButton={false}
-								closeOnOverlayClick={false}
-							/>
-							<Grid templateColumns='repeat(2, 1fr)' gap={6}>
-								<GridItem>
-									<InputController
-										control={control}
-										name={'updateReserveAmount'}
-										label={t('proofOfReserve:reserveAmount')}
-										placeholder={t('proofOfReserve:reserveAmountToolTip')}
-										isReadOnly={false}
-									/>
-								</GridItem>
-								<GridItem>
-									<InputController
-										rules={{
-											required: t('global:validations.required'),
-											validate: {
-												validation: (value: string) => {
-													updateReserveAddressRequest.reserveAddress = value;
-													const res = handleRequestValidation(
-														updateReserveAddressRequest.validate('reserveAddress'),
-													);
-													return res;
-												},
+				<Flex
+					direction='column'
+					bg='brand.gray100'
+					px={{ base: 4, lg: 14 }}
+					pt={{ base: 4, lg: 14 }}
+					pb={6}
+				>
+					<SimpleGrid columns={{ lg: 2 }} gap={{ base: 10, lg: 40 }}>
+						{GridItem({
+							name: 'amount',
+							title: t('proofOfReserve:updateReserveAmount.title'),
+							label: t('proofOfReserve:updateReserveAmount.label'),
+							current: reserveAmount ?? '',
+							input: (
+								<InputController
+									control={control}
+									rules={{
+										required: t('global:validations.required'),
+										validate: {
+											validation: (value: string) => {
+												updateReserveAmountRequest.reserveAmount = value;
+												const res = handleRequestValidation(
+													updateReserveAmountRequest.validate('reserveAmount'),
+												);
+												return res;
 											},
-										}}
-										control={control}
-										name={'reserveAddress'}
-										label={t('proofOfReserve:reserveAddress')}
-										right='1em'
-										isReadOnly={false}
-										rightElement={
-											<Button
-												data-testid={`update-reserve-address-button`}
-												variant='secondary'
-												onClick={handleUpdateReserveAddress}
-												width='1em'
-												placeContent={'center'}
-											>
-												<RepeatIcon />
-											</Button>
-										}
-									/>
-								</GridItem>
-
-								<GridItem w='100%'>
-									<Stack>
-										<InputController
-											rules={{
-												required: t('global:validations.required'),
-												validate: {
-													validation: (value: string) => {
-														updateReserveAmountRequest.reserveAmount = value;
-														const res = handleRequestValidation(
-															updateReserveAmountRequest.validate('reserveAmount'),
-														);
-														return res;
-													},
-												},
-											}}
-											control={control}
-											name={'currentReserveAmount'}
-											label={t('proofOfReserve:currentReserveAmount')}
-											isReadOnly={true}
-											disabled={true}
-										/>
-
-										<Button
-											data-testid={`update-reserve-amount-button`}
-											variant='secondary'
-											onClick={handleUpdateReserveAmount}
-										>
-											{t('proofOfReserve:sendAmount')}
-										</Button>
-									</Stack>
-								</GridItem>
-							</Grid>
-						</Stack>
-					</VStack>
-				</Box>
+										},
+									}}
+									name={'updateReserveAmount'}
+									placeholder={t('proofOfReserve:updateReserveAmount.inputPlaceholder')}
+									isReadOnly={false}
+								/>
+							),
+							button: (
+								<Button
+									data-testid={`update-reserve-amount-button`}
+									variant='primary'
+									onClick={handleUpdateReserveAmount}
+								>
+									{t('proofOfReserve:updateReserveAmount.buttonText')}
+								</Button>
+							),
+						})}
+						{GridItem({
+							name: 'address',
+							title: t('proofOfReserve:updateReserveAddress.title'),
+							label: t('proofOfReserve:updateReserveAddress.label'),
+							current: reserveAddress ?? '',
+							input: (
+								<InputController
+									rules={{
+										required: t('global:validations.required'),
+										validate: {
+											validation: (value: string) => {
+												updateReserveAddressRequest.reserveAddress = value;
+												const res = handleRequestValidation(
+													updateReserveAddressRequest.validate('reserveAddress'),
+												);
+												return res;
+											},
+										},
+									}}
+									control={control}
+									name={'reserveAddress'}
+									placeholder={t('proofOfReserve:updateReserveAddress.inputPlaceholder')}
+								/>
+							),
+							button: (
+								<Button
+									data-testid={`update-reserve-address-button`}
+									variant='primary'
+									onClick={handleUpdateReserveAddress}
+								>
+									{t('proofOfReserve:updateReserveAddress.buttonText')}
+								</Button>
+							),
+						})}
+					</SimpleGrid>
+				</Flex>
 			)}
+			<ModalNotification
+				variant={variant}
+				title={
+					awaitingUpdate
+						? 'Loading'
+						: t('proofOfReserve:notification.title', {
+								result: success ? 'Success' : 'Error',
+						  })
+				}
+				description={
+					awaitingUpdate
+						? undefined
+						: t(`proofOfReserve:notification.description${success ? 'Success' : 'Error'}`)
+				}
+				isOpen={isOpen}
+				onClose={onClose}
+				onClick={onClose}
+				errorTransactionUrl={error}
+				closeButton={false}
+				closeOnOverlayClick={false}
+			/>
 			{selectedStableCoin && !fetching && !hasReserve && <NoProofOfReserve />}
 		</BaseContainer>
 	);

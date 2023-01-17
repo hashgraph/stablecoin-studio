@@ -19,23 +19,21 @@ exports[`<StableCoinProof /> should render correctly 1`] = `
         class="css-mytqyt"
         data-testid="no-proof-of-reserve-container"
       >
-        <img
-          alt="Safe box"
-          class="chakra-image css-1faqnpj"
-          data-testid="no-proof-of-reserve-logo"
-          src="safe-box.svg"
-        />
+        <div
+          class="chakra-spinner css-n6xvdu"
+          data-testid="awaiting-wallet-signature-logo"
+        >
+          <span
+            class="css-8b45rq"
+          >
+            Loading...
+          </span>
+        </div>
         <p
-          class="chakra-text css-1hg9qrt"
+          class="chakra-text css-13te9l5"
           data-testid="no-proof-of-reserve-title"
         >
-          Missing Proof of Reserve
-        </p>
-        <p
-          class="chakra-text css-18wysbb"
-          data-testid="no-proof-of-reserve-description"
-        >
-          The stable coin you have chosen does not have a proof of reserve, please, select a different stable coin.
+          Loading data
         </p>
       </div>
     </div>

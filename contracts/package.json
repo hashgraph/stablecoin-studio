@@ -2,7 +2,8 @@
     "name": "hedera-stable-coin-contracts",
     "version": "1.0.0",
     "description": "",
-    "main": "index.js",
+    "main": "./build/typechain-types/index.js",
+    "module": "./build/typechain-types/index.js",
     "exports": {
         ".": {
             "import": "./build/typechain-types/index.js",
