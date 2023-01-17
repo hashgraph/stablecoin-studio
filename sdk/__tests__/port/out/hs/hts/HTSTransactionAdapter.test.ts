@@ -462,21 +462,21 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		tr = await th.getReserveAddress(
 			stableCoinCapabilitiesSC
 		);
-		expect(tr.response).toBeNull
+		expect(tr.response).toBeNull()
 	}, 20000);
 
 	it('Test get reserve address returns a value when stable coin has reserve', async () => {
 		tr = await th.getReserveAddress(
 			stableCoinCapabilitiesHTS
 		);
-		expect(tr.response).not.toBeNull;
+		expect(tr.response).not.toBeNull();
 	}, 20000);
 
 	it('Test get reserve amount returns null when stable coin has no reserve', async () => {
 		tr = await th.getReserveAmount(
 			stableCoinCapabilitiesSC
 		);
-		expect(tr.response).toBeNull
+		expect(tr.response).toBeNull()
 	}, 20000);
 
 	it('Test get reserve amount returns a value when stable coin has reserve', async () => {
