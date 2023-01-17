@@ -67,7 +67,7 @@ From the root of the CLI project workspace:
 
 ## Starting the CLI
 
-The first time you execute the `accelerator wizard` command in your terminal, if you haven't added your default configuration path the interface will ask you wether you want create a new configuration file in the default path. When the configuration file is created you must configure the default network and add a default account. In order to create the default account you can use [HashPack](https://www.hashpack.app/download) or the [Hedera Developer Portal](https://portal.hedera.com/register).
+The first time you execute the `accelerator wizard` command in your terminal, if you haven't added your default configuration path the interface will ask you wether you want to create a new configuration file in the default path. When the configuration file is created you must configure the default network and add a default account. In order to create the default account you can use [HashPack](https://www.hashpack.app/download) or the [Hedera Developer Portal](https://portal.hedera.com/register).
 
 https://user-images.githubusercontent.com/102601367/205074337-a1f09813-9434-42e9-972b-1c40655bb1d1.mov
 
@@ -75,11 +75,11 @@ _Note that for testing purpose you should create a **Testnet** account instead o
 
 # Usage
 
-To use the CLI correctly it is necessary to generate a configuration file in which the default network and the accounts with which you want to operate in the network will be included. These parameters can be modified later on, from the CLI.
+To use the CLI correctly it is necessary to generate a configuration file in which the default network and their associated accounts will be included. These parameters can be modified later on, from the CLI.
 
 ## Creating a config file
 
-The configuration file that is generated populates its fields with dynamic questions when the CLI is started for the first time.
+The configuration file that is generated populates its fields using the answers to the questions displayed in the CLI when the application is run for the first time.
 The file format is .yaml and the structure is as follows:
 
 ```
@@ -141,9 +141,9 @@ hederaERC20s: [
 
 ![Alt text](docs/images/CLI-flow.png?raw=true 'CLI flow')
 
-When the CLI is started with the configuration file properly configured. The first action will be to select the account you want to operate with. By default, the list of configured accounts belonging to the default network indicated in the configuration file is displayed.
+When the CLI is started with the configuration file properly configured, the first action will be to select the account you want to operate with. By default, the list of configured accounts belonging to the default network indicated in the configuration file is displayed.
 
-If there are no accounts in the file for the default network, a warning message will be displayed and a list of all the accounts in the file will be shown.
+If there are no accounts in the file for the default network, a warning message will be displayed and a list of all the accounts in the file will be displayed.
 
 When an account is selected, the main menu (shown in the previous image) is displayed. The network the account belongs to will be set.
 
@@ -158,6 +158,18 @@ With this option you are able to create a new stable coin adding the mandatory d
 > The autorenew account must be the user's current account otherwise the stable coin creation will not work, this is due to the fact that the autorenew account must sign the underlying token's creation transaction and currently we do not support multi-signatures transactions.
 
 After the minimum details have been added, you will be asked if you want to add optional details like the number of decimals, the initial supply or the max supply. If you reply "no", the default values will be set.
+
+Then you will have the possibility to set a **Proof of Reserve Feed (PoR)** for your stable coin. A PoR is a smart contract that connects your on-chain stable coin to your off-chain fiat currency supply. The idea is to have an on-chain reprensentation of the amount of fiat currency currently collateralizing your stable coin, this amount is called the **"Reserve"**.
+The PoR smart contract will store at all time the current Reserve so that the stable coin can check it before minting new tokens.
+The Wizard will give you the possibility to link your stable coin to an already existing PoR smart contract or, if you do not have any, deploy a new one setting an initial Reserve. 
+
+> It is important to note that, if you choose to deploy a new PoR for your stable coin, your current account will be set as the PoR admin, meaning that it will have the possibility to update the Reserve and upgrade the smart contract code at any time. Nevertheless, the CLI will only let you deploy the PoR and link it to your stable coin, in order to operate the new PoR (update the Reserve etc...) or change the PoR your stable coin is linked to, you will have to use the UI...
+
+> It is also important to note that the PoR you deploy using our tools is purely for demo purposes. Chainlink implements a complex, secure and reliable decentralize off-chain system to manage the PoR Reserves, whereas, as specified above, our PoR can be fully managed by your account.
+
+
+_For more information about PoR Feeds, check the official [ChainLink documentation](https://docs.chain.link/data-feeds/proof-of-reserve/)._
+
 
 Another question is prompt asking if you would like the smart contract to be set as the owner of all the underlying token keys (admin, wipe, ...), you could however set any account you wish as the owner of any token key.
 If you set the smart contract as a key owner, you will be able to grant and revoke this capacity to any other account, since it is the smart contract that will be ultimately controlling the underlying token.
@@ -186,7 +198,10 @@ Once a stable coin is created or added, you can operate it.
 
 The following list contains all the possible operations an user can perform if he/she has the appropriate role.
 
-- **Cash in**: Min tokens and transfer to an account
+- **Cash in**: Min tokens and transfer them to an account. If you have linked a PoR Feed to your stable coin, this operation will fail in two cases : 
+  - if you try to mint more tokens than the total Reserve (1 to 1 match between the token's total supply and the Reserve)
+  - if you try to mint tokens using more decimals than the Reserve has, for instance, minting 1.001 tokens when the Reserve only has 2 decimals.
+  > this DOES NOT mean that a stable coin can not have more decimals than the Reserve, transfers between accounts can use as many decimals as required.
 
 https://user-images.githubusercontent.com/102601367/205074103-e9f584d0-8262-406c-b45b-a9060a9aa32d.mov
 
