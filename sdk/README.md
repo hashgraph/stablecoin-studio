@@ -38,6 +38,8 @@
 		- [Delete](#delete)
 		- [Freeze](#freeze)
 		- [Unfreeze](#unfreeze)
+		- [Get Reserve Address](#Get-Reserve-Address)
+		- [Update Reserve Address](#Upsate-Reserve-Address)
 	- [Network](#network)
 		- [Connect](#connect)
 		- [Disconnect](#disconnect)
