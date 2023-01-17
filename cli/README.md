@@ -182,7 +182,7 @@ The request will then be submitted to the SDK and the stable coin will be create
 
 > When the configuration file is first created, the factory and HederaERC20 contracts added to the "testnet" network are the default ones (pre-deployed contracts). However users are free to deploy and use their own contracts, in order to do that, the configuration file must be updated with the new factory and/or HederaERC20 contract' addresses.
 
-https://user-images.githubusercontent.com/102601367/205074369-b3a72bb2-61f9-421a-9738-abb1ca65375e.mov
+https://user-images.githubusercontent.com/114951681/212935747-30e21e6a-5f9e-4922-807e-056c6ea9965f.mp4
 
 #### Manage imported tokens
 
