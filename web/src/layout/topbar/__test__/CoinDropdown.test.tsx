@@ -52,7 +52,7 @@ describe(`<${CoinDropdown.name} />`, () => {
 
 		const select = component.getByTestId('select-coin-dropdown');
 		userEvent.click(select);
-		const coinLabel = `${mockedStableCoinsList[0].id} - ${mockedStableCoinsList[0].symbol}`;
+		const coinLabel = `${mockedStableCoinsList.coins[0].id} - ${mockedStableCoinsList.coins[0].symbol}`;
 
 		await waitFor(() => {
 			expect(component.getByText(coinLabel)).toBeInTheDocument();
@@ -64,13 +64,12 @@ describe(`<${CoinDropdown.name} />`, () => {
 
 		const select = component.getByTestId('select-coin-dropdown');
 		userEvent.click(select);
-
-		const coinLabel = `${mockedStableCoinsList[0].id} - ${mockedStableCoinsList[0].symbol}`;
+		const coinLabel = `${mockedStableCoinsList.coins[0].id} - ${mockedStableCoinsList.coins[0].symbol}`;
 		const option = component.getByText(coinLabel);
 		userEvent.click(option);
 
 		await waitFor(() => {
-			expect((select as HTMLInputElement).value).toEqual(mockedStableCoinsList[0].id);
+			expect((select as HTMLInputElement).value).toEqual(mockedStableCoinsList.coins[0].id);
 		});
 	});
 });
