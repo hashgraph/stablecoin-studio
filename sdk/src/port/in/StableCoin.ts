@@ -74,10 +74,10 @@ import { UpdateReserveAddressCommand } from '../../app/usecase/command/stablecoi
 import { RESERVE_DECIMALS } from '../../domain/context/reserve/Reserve.js';
 import ReserveViewModel from '../out/mirror/response/ReserveViewModel.js';
 
-export const HederaERC20AddressTestnet = '0.0.49313250';
+export const HederaERC20AddressTestnet = '0.0.49318811';
 export const HederaERC20AddressPreviewnet = '0.0.11111111';
 
-export const FactoryAddressTestnet = '0.0.49313269';
+export const FactoryAddressTestnet = '0.0.49318817';
 export const FactoryAddressPreviewnet = '0.0.11111111';
 
 export { StableCoinViewModel, StableCoinListViewModel, ReserveViewModel };

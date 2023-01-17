@@ -31,7 +31,7 @@ exports[`<Roles /> should render correctly 1`] = `
             class="css-180e663"
           >
             <button
-              class="css-1g500l7"
+              class="css-xtz4af"
               data-testid="direct-access-giveRole"
             >
               <div
@@ -97,7 +97,7 @@ exports[`<Roles /> should render correctly 1`] = `
             class="css-180e663"
           >
             <button
-              class="css-1g500l7"
+              class="css-xtz4af"
               data-testid="direct-access-revokeRole"
             >
               <div
@@ -152,7 +152,7 @@ exports[`<Roles /> should render correctly 1`] = `
             class="css-180e663"
           >
             <button
-              class="css-kly7w1"
+              class="css-a70rbc"
               data-testid="direct-access-editRole"
               disabled=""
             >
@@ -207,7 +207,7 @@ exports[`<Roles /> should render correctly 1`] = `
             class="css-180e663"
           >
             <button
-              class="css-kly7w1"
+              class="css-a70rbc"
               data-testid="direct-access-refreshRoles"
               disabled=""
             >

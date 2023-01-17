@@ -50,7 +50,7 @@ exports[`<Topbar /> should render correctly 1`] = `
                   class="css-1f43avz-a11yText-A11yText"
                 />
                 <div
-                  class=" css-17n5zh"
+                  class=" css-1ugyojt"
                 >
                   <div
                     class="css-3y2vuh"
@@ -59,7 +59,7 @@ exports[`<Topbar /> should render correctly 1`] = `
                       class="chakra-text css-4pvr19"
                       data-testid="select-placeholder"
                     >
-                      Choose stable coin
+                      0.0.48471242 - MCC2
                     </span>
                     <div
                       class=" css-svnjlw"
@@ -131,7 +131,7 @@ exports[`<Topbar /> should render correctly 1`] = `
             class="css-0"
           >
             <button
-              class="chakra-button css-16hro5k"
+              class="chakra-button css-er0jx8"
               type="button"
             >
               <svg
@@ -177,7 +177,7 @@ exports[`<Topbar /> should render correctly 1`] = `
             class="css-0"
           >
             <button
-              class="chakra-button css-16hro5k"
+              class="chakra-button css-er0jx8"
               type="button"
             >
               <svg
@@ -245,9 +245,7 @@ exports[`<Topbar /> should render correctly 1`] = `
               <p
                 class="chakra-text css-o1au3i"
                 data-testid="topbar-right-account"
-              >
-                0.0.48450590
-              </p>
+              />
             </div>
             <p
               class="chakra-text css-gegx7f"
@@ -256,11 +254,42 @@ exports[`<Topbar /> should render correctly 1`] = `
               testnet
             </p>
           </div>
-          <img
-            alt="HashPack"
-            class="chakra-image css-1lzenv"
-            src="hashpackLogo.png"
-          />
+          <svg
+            fill="#fdfdfc"
+            height="22"
+            viewBox="0 0 256 256"
+            width="22"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect
+              fill="none"
+              height="256"
+              width="256"
+            />
+            <circle
+              cx="128"
+              cy="128"
+              fill="none"
+              r="96"
+              stroke="#fdfdfc"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="12"
+            />
+            <circle
+              cx="128"
+              cy="180"
+              r="10"
+            />
+            <path
+              d="M128,144v-8a28,28,0,1,0-28-28"
+              fill="none"
+              stroke="#fdfdfc"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="12"
+            />
+          </svg>
         </div>
         <div
           class="css-dv2lk7"

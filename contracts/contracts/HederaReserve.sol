@@ -19,13 +19,13 @@ contract HederaReserve is IHederaReserve, Initializable {
     }
 
     // modifier to check that an address is not 0
-    modifier checkAddressIsNotNull(address addr)
+    modifier checkAddressIsNotZero(address addr)
     {
-        _checkAddressIsNotNull(addr);
+        _checkAddressIsNotZero(addr);
         _;
     }
 
-    function _checkAddressIsNotNull(address addr) internal pure
+    function _checkAddressIsNotZero(address addr) internal pure
     {
         require(addr != address(0), "Provided address is 0");
     }
@@ -37,8 +37,8 @@ contract HederaReserve is IHederaReserve, Initializable {
      */
     function initialize(int256 initialReserve, address admin)
         external
-        checkAddressIsNotNull(admin)
         initializer
+        checkAddressIsNotZero(admin)
     {
         _reserveAmount = initialReserve;
         _admin = admin;
@@ -60,7 +60,11 @@ contract HederaReserve is IHederaReserve, Initializable {
      *
      *  @param admin The new admin
      */
-    function setAdmin(address admin) external checkAddressIsNotNull(admin) isAdmin {
+    function setAdmin(address admin) 
+        external 
+        isAdmin
+        checkAddressIsNotZero(admin) 
+    {
         emit AdminChanged(_admin, admin);
         _admin = admin;
     }

@@ -4,10 +4,10 @@ exports[`<App /> should render correctly 1`] = `
 <DocumentFragment>
   <main>
     <div
-      class="css-5kdyq4"
+      class="css-1amrwrf"
     >
       <div
-        class="chakra-spinner css-1pkq0p5"
+        class="chakra-spinner css-djtcb6"
       >
         <span
           class="css-8b45rq"
@@ -15,6 +15,11 @@ exports[`<App /> should render correctly 1`] = `
           Loading...
         </span>
       </div>
+      <p
+        class="chakra-text css-1xabux3"
+      >
+        Searching for supported wallets
+      </p>
     </div>
   </main>
   <span

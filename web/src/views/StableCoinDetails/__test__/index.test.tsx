@@ -21,7 +21,7 @@ describe(`<${StableCoinDetails.name} />`, () => {
 		expect(header).toHaveTextContent(translations.title);
 	});
 
-	test('should has subtitle', () => {
+	test('should has subtitle', async () => {
 		const selectedStableCoin = {
 			initialSupply: 0,
 			tokenId: '0.0.48162226',
@@ -55,7 +55,7 @@ describe(`<${StableCoinDetails.name} />`, () => {
 			},
 		});
 
-		const component = render(<StableCoinDetails />, store);
+		const component = render(<StableCoinDetails />, store)
 		const subtitle = component.getByTestId('details-review-title');
 
 		expect(subtitle).toHaveTextContent(translations.subtitle);

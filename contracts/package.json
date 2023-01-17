@@ -2,7 +2,8 @@
     "name": "hedera-stable-coin-contracts",
     "version": "1.0.0",
     "description": "",
-    "main": "index.js",
+    "main": "./build/typechain-types/index.js",
+    "module": "./build/typechain-types/index.js",
     "exports": {
         ".": {
             "import": "./build/typechain-types/index.js",
@@ -62,7 +63,7 @@
         "lint:sol": "npx solhint 'contracts/**/*.sol'",
         "lint:ts": "npx eslint . --ext .ts",
         "doc": "npx hardhat dodoc",
-        "security": "docker run -t --rm -v /var/run/docker.sock:/var/run/docker.sock -v \"$(pwd)\":\"/home/ethsec/contracts\" -w \"/home/ethsec/contracts\" -u 0:0 trailofbits/eth-security-toolbox -c \"solc-select use 0.8.13  && slither ./contracts --solc-remaps @=node_modules/@\""
+        "security": "docker run -t --rm -v /var/run/docker.sock:/var/run/docker.sock -v \"$(pwd)\":\"/home/ethsec/contracts\" -w \"/home/ethsec/contracts\" -u 0:0 trailofbits/eth-security-toolbox -c \"solc-select install 0.8.16  && solc-select use 0.8.16  && slither ./contracts --solc-remaps @=node_modules/@\""
     },
     "author": "",
     "license": "ISC",

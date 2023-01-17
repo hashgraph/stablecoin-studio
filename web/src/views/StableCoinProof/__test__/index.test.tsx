@@ -1,13 +1,16 @@
-
-import { render } from '../../../test/index';
+import { render, sdkMock } from '../../../test/index';
 import translations from '../../../translations/en/proofOfReserve.json';
 import configureMockStore from 'redux-mock-store';
 import StableCoinProof from '../';
+import { screen } from '@testing-library/react';
 
 const mockStore = configureMockStore();
 
 describe(`<${StableCoinProof.name} />`, () => {
-	beforeEach(() => {});
+
+	afterEach(() => {
+		jest.clearAllMocks();
+	})
 
 	test('should render correctly', () => {
 		const component = render(<StableCoinProof />);
@@ -15,14 +18,14 @@ describe(`<${StableCoinProof.name} />`, () => {
 		expect(component.asFragment()).toMatchSnapshot();
 	});
 
-	test('should has title', () => {
+	test('should have a title', () => {
 		const component = render(<StableCoinProof />);
 		const header = component.getByTestId('base-container-heading');
 
 		expect(header).toHaveTextContent(translations.title);
 	});
 
-	test('should have buttons', () => {
+	test('should have buttons', async () => {
 		const selectedStableCoin = {
 			initialSupply: 0,
 			tokenId: '0.0.48162226',
@@ -48,6 +51,8 @@ describe(`<${StableCoinProof.name} />`, () => {
 			supplyKey: {
 				id: '0.0.48160285',
 			},
+			reserveAddress: '0.0.444',
+			reserveAmount: '0',
 		};
 
 		const store = mockStore({
@@ -55,12 +60,19 @@ describe(`<${StableCoinProof.name} />`, () => {
 				selectedStableCoin,
 			},
 		});
+		
+		const getAddressMock = sdkMock('getReserveAddress');
+		const getAmountMock = sdkMock('getReserveAmount');
 
-		const component = render(<StableCoinProof />, store);
-		const buttonAddress = component.getByTestId('update-reserve-address-button');
-		const buttonAmount = component.getByTestId('update-reserve-address-button');
+		getAddressMock.mockReturnValueOnce('0.0.444');
+		getAmountMock.mockReturnValueOnce('0');
 
-		expect(buttonAddress).toBeInTheDocument();
-		expect(buttonAmount).toBeInTheDocument();
+		render(<StableCoinProof />, store);
+		const amountButton = await screen.findByTestId('update-reserve-amount-button');
+		expect(amountButton).toBeInTheDocument();
+		expect(amountButton).toBeEnabled();
+		const addressButton = await screen.findByTestId('update-reserve-address-button');
+		expect(addressButton).toBeInTheDocument();
+		expect(addressButton).toBeEnabled();
 	});
 });
