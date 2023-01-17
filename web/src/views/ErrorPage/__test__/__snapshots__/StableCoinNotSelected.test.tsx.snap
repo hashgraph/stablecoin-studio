@@ -3,7 +3,7 @@
 exports[`<StableCoinNotSelected /> should render correctly 1`] = `
 <DocumentFragment>
   <div
-    class="css-mytqyt"
+    class="css-1jib1v"
     data-testid="stable-coin-not-selected-container"
   >
     <img
@@ -13,19 +13,19 @@ exports[`<StableCoinNotSelected /> should render correctly 1`] = `
       src="safe-box.svg"
     />
     <p
-      class="chakra-text css-1hg9qrt"
+      class="chakra-text css-1xvinut"
       data-testid="stable-coin-not-selected-title"
     >
       Choose a stable coin to start operating!
     </p>
     <p
-      class="chakra-text css-18wysbb"
+      class="chakra-text css-exh7zu"
       data-testid="stable-coin-not-selected-description"
     >
       You have not chosen a stable coin yet.
     </p>
     <p
-      class="chakra-text css-1vi71u4"
+      class="chakra-text css-c7s95i"
     >
       Choose an item to operate.
     </p>

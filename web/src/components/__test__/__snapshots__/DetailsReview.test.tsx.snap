@@ -11,7 +11,7 @@ Object {
         class="css-13brihr"
       >
         <p
-          class="chakra-text css-1r1i26i"
+          class="chakra-text css-xbo6oz"
           data-testid="details-review-title"
         >
           Datails Review
@@ -27,7 +27,7 @@ Object {
               data-testid="details-review-detail-0"
             >
               <p
-                class="chakra-text css-bpirlf"
+                class="chakra-text css-9s6br4"
               >
                 Account to revoke rol
               </p>
@@ -55,7 +55,7 @@ Object {
               data-testid="details-review-detail-1"
             >
               <p
-                class="chakra-text css-bpirlf"
+                class="chakra-text css-9s6br4"
               >
                 Role to revoke
               </p>
@@ -123,7 +123,7 @@ Object {
       class="css-13brihr"
     >
       <p
-        class="chakra-text css-1r1i26i"
+        class="chakra-text css-xbo6oz"
         data-testid="details-review-title"
       >
         Datails Review
@@ -139,7 +139,7 @@ Object {
             data-testid="details-review-detail-0"
           >
             <p
-              class="chakra-text css-bpirlf"
+              class="chakra-text css-9s6br4"
             >
               Account to revoke rol
             </p>
@@ -167,7 +167,7 @@ Object {
             data-testid="details-review-detail-1"
           >
             <p
-              class="chakra-text css-bpirlf"
+              class="chakra-text css-9s6br4"
             >
               Role to revoke
             </p>

@@ -3,7 +3,7 @@
 exports[`<ModalHashpack /> should render correctly 1`] = `
 <DocumentFragment>
   <div
-    class="css-1e9z5ru"
+    class="css-1fkmpas"
   >
     <img
       alt="Hedera logo"
@@ -12,26 +12,26 @@ exports[`<ModalHashpack /> should render correctly 1`] = `
       src="hedera-hbar-logo.svg"
     />
     <p
-      class="chakra-text css-q6jngl"
+      class="chakra-text css-1knuv2"
       data-testid="modal-hashpack-title"
     >
       Extensions are not installed yet
     </p>
     <p
-      class="chakra-text css-zxkbt5"
+      class="chakra-text css-wfudvb"
       data-testid="modal-hashpack-description"
     >
       Click on the button bellow to download the extension
     </p>
     <a
-      class="chakra-link css-13jvj27"
+      class="chakra-link css-4a6x12"
       data-testid="modal-hashpack-link"
       href="https://www.hashpack.app/download"
       rel="noopener"
       target="_blank"
     >
       <button
-        class="chakra-button css-6z8iia"
+        class="chakra-button css-qvkb6r"
         data-testid="modal-hashpack-button"
         type="button"
       >

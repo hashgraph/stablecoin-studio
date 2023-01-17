@@ -3,7 +3,7 @@
 exports[`<SidebarOption /> should render correctly 1`] = `
 <DocumentFragment>
   <button
-    class="chakra-button css-1rqsley"
+    class="chakra-button css-9d0zi7"
     data-testid="sidebar-option-Coin"
     type="button"
   >
@@ -75,7 +75,7 @@ exports[`<SidebarOption /> should render correctly 1`] = `
       />
     </svg>
     <p
-      class="chakra-text css-h0pfk0"
+      class="chakra-text css-1d26k2o"
       data-testid="sidebar-option-title"
     >
       Operations

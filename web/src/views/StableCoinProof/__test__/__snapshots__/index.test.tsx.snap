@@ -6,7 +6,7 @@ exports[`<StableCoinProof /> should render correctly 1`] = `
     class="chakra-stack css-16oka5y"
   >
     <h2
-      class="chakra-heading css-llrpa2"
+      class="chakra-heading css-bqsusc"
       data-testid="base-container-heading"
     >
       Proof of Reserve
@@ -16,7 +16,7 @@ exports[`<StableCoinProof /> should render correctly 1`] = `
       data-testid="base-container-children"
     >
       <div
-        class="css-mytqyt"
+        class="css-1jib1v"
         data-testid="no-proof-of-reserve-container"
       >
         <div
@@ -30,7 +30,7 @@ exports[`<StableCoinProof /> should render correctly 1`] = `
           </span>
         </div>
         <p
-          class="chakra-text css-13te9l5"
+          class="chakra-text css-e8j0ix"
           data-testid="no-proof-of-reserve-title"
         >
           Loading data

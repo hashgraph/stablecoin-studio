@@ -6,7 +6,7 @@ exports[`<CashInOperation /> should render correctly 1`] = `
     class="chakra-stack css-16oka5y"
   >
     <h2
-      class="chakra-heading css-llrpa2"
+      class="chakra-heading css-bqsusc"
       data-testid="base-container-heading"
     >
       Operations
@@ -25,7 +25,7 @@ exports[`<CashInOperation /> should render correctly 1`] = `
             class="chakra-stack css-n21gh5"
           >
             <h2
-              class="chakra-heading css-17ipgvs"
+              class="chakra-heading css-utvjhb"
               data-testid="title"
             >
               Cash in operation
@@ -47,7 +47,7 @@ exports[`<CashInOperation /> should render correctly 1`] = `
                   role="group"
                 >
                   <label
-                    class="chakra-form__label css-1y854pg"
+                    class="chakra-form__label css-1hfoxt1"
                     for="field-:r1:"
                     id="field-:r1:-label"
                   >
@@ -68,11 +68,11 @@ exports[`<CashInOperation /> should render correctly 1`] = `
                     </div>
                   </label>
                   <div
-                    class="chakra-input__group css-4302v8"
+                    class="chakra-input__group css-bx0blc"
                   >
                     <input
                       autocomplete="off"
-                      class="chakra-input css-16lr1fk"
+                      class="chakra-input css-l1kxkf"
                       data-testid="amount"
                       id="field-:r1:"
                       name="amount"
@@ -90,7 +90,7 @@ exports[`<CashInOperation /> should render correctly 1`] = `
                   role="group"
                 >
                   <label
-                    class="chakra-form__label css-1y854pg"
+                    class="chakra-form__label css-1hfoxt1"
                     for="field-:r2:"
                     id="field-:r2:-label"
                   >
@@ -111,11 +111,11 @@ exports[`<CashInOperation /> should render correctly 1`] = `
                     </div>
                   </label>
                   <div
-                    class="chakra-input__group css-4302v8"
+                    class="chakra-input__group css-bx0blc"
                   >
                     <input
                       autocomplete="off"
-                      class="chakra-input css-16lr1fk"
+                      class="chakra-input css-l1kxkf"
                       data-testid="destinationAccount"
                       id="field-:r2:"
                       name="destinationAccount"
@@ -134,7 +134,7 @@ exports[`<CashInOperation /> should render correctly 1`] = `
               class="chakra-stack css-wqnj46"
             >
               <h2
-                class="chakra-heading css-m8uvwu"
+                class="chakra-heading css-1udj1g5"
                 data-testid="details-title"
               >
                 Stable coin details
@@ -143,7 +143,7 @@ exports[`<CashInOperation /> should render correctly 1`] = `
                 class="css-13brihr"
               >
                 <p
-                  class="chakra-text css-53sllx"
+                  class="chakra-text css-1osh15g"
                   data-testid="details-review-title"
                 >
                   Basic details
@@ -159,7 +159,7 @@ exports[`<CashInOperation /> should render correctly 1`] = `
                       data-testid="details-review-detail-0"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Name
                       </p>
@@ -187,7 +187,7 @@ exports[`<CashInOperation /> should render correctly 1`] = `
                       data-testid="details-review-detail-1"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Symbol
                       </p>
@@ -215,7 +215,7 @@ exports[`<CashInOperation /> should render correctly 1`] = `
                       data-testid="details-review-detail-2"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Decimals
                       </p>
@@ -236,7 +236,7 @@ exports[`<CashInOperation /> should render correctly 1`] = `
                 class="css-13brihr"
               >
                 <p
-                  class="chakra-text css-53sllx"
+                  class="chakra-text css-1osh15g"
                   data-testid="details-review-title"
                 >
                   Optional details
@@ -252,7 +252,7 @@ exports[`<CashInOperation /> should render correctly 1`] = `
                       data-testid="details-review-detail-0"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Initial supply
                       </p>
@@ -272,7 +272,7 @@ exports[`<CashInOperation /> should render correctly 1`] = `
                       data-testid="details-review-detail-1"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Total supply
                       </p>
@@ -292,7 +292,7 @@ exports[`<CashInOperation /> should render correctly 1`] = `
                       data-testid="details-review-detail-2"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Max supply
                       </p>
@@ -312,7 +312,7 @@ exports[`<CashInOperation /> should render correctly 1`] = `
                       data-testid="details-review-detail-3"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Supply type
                       </p>
@@ -339,14 +339,14 @@ exports[`<CashInOperation /> should render correctly 1`] = `
             class="chakra-stack css-1amf41o"
           >
             <button
-              class="chakra-button css-skboyg"
+              class="chakra-button css-1urzhdw"
               data-testid="cancel-btn"
               type="button"
             >
               Go back
             </button>
             <button
-              class="chakra-button css-6z8iia"
+              class="chakra-button css-qvkb6r"
               data-testid="confirm-btn"
               disabled=""
               type="button"

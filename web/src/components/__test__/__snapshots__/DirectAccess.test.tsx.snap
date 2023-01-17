@@ -3,11 +3,11 @@
 exports[`<DirectAccess /> should render correctly 1`] = `
 <DocumentFragment>
   <button
-    class="css-xtz4af"
+    class="css-3aphhy"
     data-testid="direct-access-dashboard"
   >
     <div
-      class="css-bv4l9q"
+      class="css-1i763ui"
     >
       <svg
         class="chakra-icon css-1f9qa95"
@@ -79,7 +79,7 @@ exports[`<DirectAccess /> should render correctly 1`] = `
       </svg>
     </div>
     <p
-      class="chakra-text css-1mbt7nu"
+      class="chakra-text css-o5z2l9"
       data-testid="direct-access-Test"
     >
       Test

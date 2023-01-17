@@ -6,7 +6,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
     class="chakra-stack css-16oka5y"
   >
     <h2
-      class="chakra-heading css-llrpa2"
+      class="chakra-heading css-bqsusc"
       data-testid="base-container-heading"
     >
       Stable coin details
@@ -25,7 +25,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
             class="css-13brihr"
           >
             <p
-              class="chakra-text css-hduy72"
+              class="chakra-text css-6qs4y"
               data-testid="details-review-title"
             >
               Basic information
@@ -41,7 +41,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                   data-testid="details-review-detail-0"
                 >
                   <p
-                    class="chakra-text css-bpirlf"
+                    class="chakra-text css-9s6br4"
                   >
                     Token id
                   </p>
@@ -61,7 +61,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                   data-testid="details-review-detail-1"
                 >
                   <p
-                    class="chakra-text css-bpirlf"
+                    class="chakra-text css-9s6br4"
                   >
                     Name
                   </p>
@@ -89,7 +89,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                   data-testid="details-review-detail-2"
                 >
                   <p
-                    class="chakra-text css-bpirlf"
+                    class="chakra-text css-9s6br4"
                   >
                     Symbol
                   </p>
@@ -117,7 +117,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                   data-testid="details-review-detail-3"
                 >
                   <p
-                    class="chakra-text css-bpirlf"
+                    class="chakra-text css-9s6br4"
                   >
                     Decimals
                   </p>
@@ -145,7 +145,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                   data-testid="details-review-detail-4"
                 >
                   <p
-                    class="chakra-text css-bpirlf"
+                    class="chakra-text css-9s6br4"
                   >
                     Initial supply
                   </p>
@@ -173,7 +173,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                   data-testid="details-review-detail-5"
                 >
                   <p
-                    class="chakra-text css-bpirlf"
+                    class="chakra-text css-9s6br4"
                   >
                     Total supply
                   </p>
@@ -201,7 +201,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                   data-testid="details-review-detail-6"
                 >
                   <p
-                    class="chakra-text css-bpirlf"
+                    class="chakra-text css-9s6br4"
                   >
                     Max supply
                   </p>
@@ -229,7 +229,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                   data-testid="details-review-detail-7"
                 >
                   <p
-                    class="chakra-text css-bpirlf"
+                    class="chakra-text css-9s6br4"
                   >
                     Treasury
                   </p>
@@ -249,7 +249,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                   data-testid="details-review-detail-8"
                 >
                   <p
-                    class="chakra-text css-bpirlf"
+                    class="chakra-text css-9s6br4"
                   >
                     Autorenew account
                   </p>
@@ -269,7 +269,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                   data-testid="details-review-detail-9"
                 >
                   <p
-                    class="chakra-text css-bpirlf"
+                    class="chakra-text css-9s6br4"
                   >
                     Proxy Address
                   </p>
@@ -289,7 +289,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                   data-testid="details-review-detail-10"
                 >
                   <p
-                    class="chakra-text css-bpirlf"
+                    class="chakra-text css-9s6br4"
                   >
                     Paused
                   </p>
@@ -317,7 +317,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                   data-testid="details-review-detail-11"
                 >
                   <p
-                    class="chakra-text css-bpirlf"
+                    class="chakra-text css-9s6br4"
                   >
                     Deleted
                   </p>
@@ -345,7 +345,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                   data-testid="details-review-detail-12"
                 >
                   <p
-                    class="chakra-text css-bpirlf"
+                    class="chakra-text css-9s6br4"
                   >
                     Admin key
                   </p>
@@ -373,7 +373,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                   data-testid="details-review-detail-13"
                 >
                   <p
-                    class="chakra-text css-bpirlf"
+                    class="chakra-text css-9s6br4"
                   >
                     KYC key
                   </p>
@@ -401,7 +401,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                   data-testid="details-review-detail-14"
                 >
                   <p
-                    class="chakra-text css-bpirlf"
+                    class="chakra-text css-9s6br4"
                   >
                     Freeze key
                   </p>
@@ -429,7 +429,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                   data-testid="details-review-detail-15"
                 >
                   <p
-                    class="chakra-text css-bpirlf"
+                    class="chakra-text css-9s6br4"
                   >
                     Wipe key
                   </p>
@@ -457,7 +457,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                   data-testid="details-review-detail-16"
                 >
                   <p
-                    class="chakra-text css-bpirlf"
+                    class="chakra-text css-9s6br4"
                   >
                     Supply key
                   </p>
@@ -485,7 +485,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                   data-testid="details-review-detail-17"
                 >
                   <p
-                    class="chakra-text css-bpirlf"
+                    class="chakra-text css-9s6br4"
                   >
                     Pause key
                   </p>

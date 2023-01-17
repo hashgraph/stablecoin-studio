@@ -3,14 +3,14 @@
 exports[`<Sidebar /> should render correctly 1`] = `
 <DocumentFragment>
   <div
-    class="css-jefzb5"
+    class="css-1nfhpzz"
     data-testid="sidebar"
   >
     <div
       class="css-17lnxuq"
     >
       <button
-        class="chakra-button css-1rqsley"
+        class="chakra-button css-9d0zi7"
         data-testid="sidebar-option-Coin"
         type="button"
       >
@@ -82,14 +82,14 @@ exports[`<Sidebar /> should render correctly 1`] = `
           />
         </svg>
         <p
-          class="chakra-text css-h0pfk0"
+          class="chakra-text css-1d26k2o"
           data-testid="sidebar-option-title"
         >
           Operations
         </p>
       </button>
       <button
-        class="chakra-button css-1rqsley"
+        class="chakra-button css-9d0zi7"
         data-testid="sidebar-option-Users"
         type="button"
       >
@@ -142,14 +142,14 @@ exports[`<Sidebar /> should render correctly 1`] = `
           />
         </svg>
         <p
-          class="chakra-text css-h0pfk0"
+          class="chakra-text css-1d26k2o"
           data-testid="sidebar-option-title"
         >
           Role management
         </p>
       </button>
       <button
-        class="chakra-button css-1rqsley"
+        class="chakra-button css-9d0zi7"
         data-testid="sidebar-option-Gear"
         type="button"
       >
@@ -187,14 +187,14 @@ exports[`<Sidebar /> should render correctly 1`] = `
           />
         </svg>
         <p
-          class="chakra-text css-h0pfk0"
+          class="chakra-text css-1d26k2o"
           data-testid="sidebar-option-title"
         >
           Stable coin details
         </p>
       </button>
       <button
-        class="chakra-button css-1rqsley"
+        class="chakra-button css-9d0zi7"
         data-testid="sidebar-option-File"
         type="button"
       >
@@ -230,7 +230,7 @@ exports[`<Sidebar /> should render correctly 1`] = `
           />
         </svg>
         <p
-          class="chakra-text css-h0pfk0"
+          class="chakra-text css-1d26k2o"
           data-testid="sidebar-option-title"
         >
           Proof of reserve
