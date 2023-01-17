@@ -25,7 +25,7 @@
 import {
 	Transaction,
 	PublicKey as HPublicKey,
-	ContractId as HContractId,
+	ContractId as HContractId
 } from '@hashgraph/sdk';
 import TransactionAdapter from '../TransactionAdapter';
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
@@ -724,7 +724,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 						OperationNotAllowed,
 					);
 			}
-		} catch (error) {
+		} catch (error) {			
 			throw new TransactionResponseError({
 				message: `Unexpected error in HederaTransactionHandler ${operationName} operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
@@ -747,14 +747,12 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 						return element !== undefined;
 				  });
 		for (let i = 0; i < filteredContractParams.length; i++) {
-			if (filteredContractParams[i] instanceof HederaId) {
-				filteredContractParams[i] = await this.accountToEvmAddress(
-					filteredContractParams[i],
-				);
-			}
-
 			if (filteredContractParams[i] instanceof ContractId) {
 				filteredContractParams[i] = await this.contractToEvmAddress(
+					filteredContractParams[i],
+				);
+			} else if (filteredContractParams[i] instanceof HederaId) {
+				filteredContractParams[i] = await this.accountToEvmAddress(
 					filteredContractParams[i],
 				);
 			}
