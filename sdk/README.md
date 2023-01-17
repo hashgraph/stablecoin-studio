@@ -61,7 +61,7 @@
 		- [Decrease Allowance](#decrease-allowance)		
 		- [Is Allowance Limited](#is-allowance-limited)
 		- [Is Allowance Unlimited](#is-allowance-unlimited)
-          - [Reserve Data Feed](#reserve-data-feed)
+	- [Reserve Data Feed](#reserve-data-feed)
 		- [Get Reserve Amount](#get-reserve-amount)	 		
 		- [Update Reserve Amount](#update-reserve-amount)	 		
 	- [Common](#Common)
