@@ -1,55 +1,49 @@
 import { Heading, HStack, Stack, Text, VStack } from '@chakra-ui/react';
 import type { CreateRequest } from 'hedera-stable-coin-sdk';
+import { useEffect } from 'react';
 
-
-import type { Control, FieldValues, UseFormReturn} from 'react-hook-form';
-import { useWatch  } from 'react-hook-form';
+import type { Control, FieldValues, UseFormReturn } from 'react-hook-form';
+import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import InputController from '../../components/Form/InputController';
 import SwitchController from '../../components/Form/SwitchController';
-// import { handleRequestValidation } from '../../utils/validationsHelper.js';
-
+import { handleRequestValidation } from '../../utils/validationsHelper';
 
 interface ProofOfReserveProps {
-	form : UseFormReturn;
+	form: UseFormReturn;
 	control: Control<FieldValues>;
 	request: CreateRequest;
 }
 
 const ProofOfReserve = (props: ProofOfReserveProps) => {
-	const { control } = props;
+	const { control, form, request } = props;
 	const { t } = useTranslation(['global', 'stableCoinCreation']);
 
-	const isProofOfReserve = useWatch({
+	const proofOfReserve = useWatch({
 		control,
 		name: 'proofOfReserve',
-		
 	});
-	
-	/* useEffect(() => {
-		if (!isproofOfReserve) {
-			form.resetField('PoRInitialAmount', { defaultValue: "" });
-			form.resetField('PoR', { defaultValue: "" });
-		}
-	}, [isproofOfReserve]);
-	*/
-	
 
-	const haveDataFeed = useWatch({
-	
+	const hasDataFeed = useWatch({
 		control,
 		name: 'hasDataFeed',
 	});
-/*
+
 	useEffect(() => {
-		if (!haveDataFeed) {
-			form.resetField('PoR', { defaultValue: "" });
-		}else{
-			form.resetField('PoRInitialAmount', { defaultValue: "" });
+		if (!proofOfReserve) {
+			form.resetField('reserveInitialAmount');
+			form.resetField('reserveAddress');
 		}
-	}, [haveDataFeed]);
-*/	
-	
+	}, [proofOfReserve]);
+
+	useEffect(() => {
+		if (!hasDataFeed) {
+			form.resetField('reserveAddress');
+		} else {
+			form.resetField('reserveInitialAmount');
+		}
+	}, [hasDataFeed]);
+
 	return (
 		<VStack h='full' justify={'space-between'} pt='80px'>
 			<Stack minW={400}>
@@ -63,81 +57,68 @@ const ProofOfReserve = (props: ProofOfReserveProps) => {
 				>
 					{t('stableCoinCreation:proofOfReserve.title')}
 				</Heading>
-			
+
 				<HStack>
 					<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>
 						{t('stableCoinCreation:proofOfReserve.description')}
 					</Text>
-					<SwitchController
-						control={control}
-						name={'proofOfReserve'}
-						defaultValue={false}
-					/>
+					<SwitchController control={control} name={'proofOfReserve'} defaultValue={false} />
 				</HStack>
 
-				{isProofOfReserve === true ? (<HStack >
+				{proofOfReserve === true && (
+					<HStack>
 						<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>
 							{t('stableCoinCreation:proofOfReserve.haveDataFeed')}
 						</Text>
-						<SwitchController
-							control={control}
-							name={'hasDataFeed'}
-							defaultValue={false}
-						/>
-					</HStack>) : (<></>		
+						<SwitchController control={control} name={'hasDataFeed'} defaultValue={false} />
+					</HStack>
 				)}
 
-
-				{(haveDataFeed === true && isProofOfReserve === true)  ?  (
-				<HStack >
+				{hasDataFeed === true && proofOfReserve === true && (
+					<HStack pt={'15px'}>
 						<InputController
-						rules={{
-							// required: t(`global:validations.required`),
-							/* validate: {
-								validation: (value: string) => {
-									request.symbol = value;
-									const res = handleRequestValidation(request.validate('symbol'));
-									return res;
+							rules={{
+								required: t(`global:validations.required`),
+								validate: {
+									validation: (value: string) => {
+										request.createReserve = proofOfReserve;
+										request.reserveAddress = value;
+										const res = handleRequestValidation(request.validate('reserveAddress'));
+										return res;
+									},
 								},
-							}, */
-						}}
-						
-						control={control}
-						name={'reserveAddress'}
-						label={t('stableCoinCreation:proofOfReserve.dataFeed')}
-						placeholder={t('stableCoinCreation:proofOfReserve.dataFeedPlaceholder')}
+							}}
+							isRequired
+							control={control}
+							name={'reserveAddress'}
+							label={t('stableCoinCreation:proofOfReserve.dataFeed')}
+							placeholder={t('stableCoinCreation:proofOfReserve.dataFeedPlaceholder')}
 						/>
 					</HStack>
-			
+				)}
 
-					
-				):(<></>) }
-
-				{ (haveDataFeed === false && isProofOfReserve === true)  ?  (
-				
-				<HStack >
-					<InputController
-						rules={{
-							// required: t(`global:validations.required`),
-							/* validate: {
-								validation: (value: string) => {
-									request.symbol = value;
-									const res = handleRequestValidation(request.validate('symbol'));
-									return res;
+				{!hasDataFeed && proofOfReserve === true && (
+					<HStack pt={'15px'}>
+						<InputController
+							rules={{
+								required: t(`global:validations.required`),
+								validate: {
+									validation: (value: string) => {
+										request.createReserve = proofOfReserve;
+										request.reserveInitialAmount = value;
+										const res = handleRequestValidation(request.validate('reserveInitialAmount'));
+										return res;
+									},
 								},
-							}, */
-						}}
-						
-						control={control}
-						name={'reserveInitialAmount'}
-						label={t('stableCoinCreation:proofOfReserve.initialSupply')}
-						placeholder={t('stableCoinCreation:proofOfReserve.initialSupply')}
+							}}
+							isRequired
+							control={control}
+							name={'reserveInitialAmount'}
+							label={t('stableCoinCreation:proofOfReserve.initialSupply')}
+							placeholder={t('stableCoinCreation:proofOfReserve.initialSupply')}
 						/>
-
-				</HStack>
-									
-				):(<></>) }				
-								
+					</HStack>
+				)}
 			</Stack>
 		</VStack>
 	);

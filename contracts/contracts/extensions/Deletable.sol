@@ -14,13 +14,13 @@ abstract contract Deletable is IDeletable, TokenOwner, Roles {
      */
     function deleteToken() 
         external       
-        onlyRole(_getRoleId(roleName.DELETE)) 
+        onlyRole(_getRoleId(RoleName.DELETE)) 
         override(IDeletable) 
         returns (bool)
     {         
         emit TokenDeleted(_getTokenAddress()); 
 
-        int256 responseCode = IHederaTokenService(precompileAddress).deleteToken(_getTokenAddress());
+        int256 responseCode = IHederaTokenService(PRECOMPILED_ADDRESS).deleteToken(_getTokenAddress());
 
         bool success = _checkResponse(responseCode);
         

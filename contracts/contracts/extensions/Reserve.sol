@@ -29,7 +29,7 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
         _;
     }
 
-    function reserve_init(address dataFeed) internal onlyInitializing {
+    function __reserve_init(address dataFeed) internal onlyInitializing {
         _reserveAddress = dataFeed;
     }
 
@@ -79,7 +79,7 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
     function updateReserveAddress(
         address newAddress
     ) external override(IReserve)
-    onlyRole(_getRoleId(roleName.ADMIN)) {
+    onlyRole(_getRoleId(RoleName.ADMIN)) {
         address previous = _reserveAddress;
         _reserveAddress = newAddress;
         emit ReserveAddressChanged(previous, newAddress);

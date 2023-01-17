@@ -3,7 +3,7 @@ pragma solidity 0.8.16;
 
 interface IRoles {
 
-    enum roleName{ADMIN,
+    enum RoleName{ADMIN,
         CASHIN,
         BURN,
         WIPE,
@@ -15,5 +15,5 @@ interface IRoles {
     
     function getRoles(address account) external view returns (bytes32[] memory);
 
-    function getRoleId(roleName roleNameToReturn) external view returns(bytes32);
+    function getRoleId(RoleName roleNameToReturn) external view returns(bytes32);
 }

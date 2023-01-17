@@ -14,9 +14,9 @@ abstract contract TokenOwner is
     Initializable
 {
     // Hedera HTS precompiled contract
-    address internal constant precompileAddress = address(0x167);
+    address internal constant PRECOMPILED_ADDRESS = address(0x167);
     // HTS Token this contract owns
-    address private _tokenAddress;
+    address private tokenAddress;
 
     // modifier to check that an address is not 0
     modifier checkAddressIsNotNull(address addr)
@@ -31,8 +31,8 @@ abstract contract TokenOwner is
     }
 
     // Initiliazes the token address
-    function tokenOwner_init(address tokenAddress) internal onlyInitializing {
-        _tokenAddress = tokenAddress;
+    function __tokenOwner_init(address initTokenAddress) internal onlyInitializing {
+        tokenAddress = initTokenAddress;
     }
 
     /**
@@ -50,7 +50,7 @@ abstract contract TokenOwner is
      * @return address of The token address
      */
     function _getTokenAddress() internal view returns (address) {
-        return _tokenAddress;
+        return tokenAddress;
     }
 
     /**
@@ -69,7 +69,7 @@ abstract contract TokenOwner is
      * @return uint256 The total number of tokens that exists
      */
     function _totalSupply() internal view returns (uint256) {
-        return IHederaERC20Upgradeable(_tokenAddress).totalSupply();
+        return IHederaERC20Upgradeable(tokenAddress).totalSupply();
     }
 
     /**
@@ -78,7 +78,7 @@ abstract contract TokenOwner is
      * @return uint8 The number of decimals of the token
      */
     function _decimals() internal view returns (uint8) {
-        return IERC20MetadataUpgradeable(_tokenAddress).decimals();
+        return IERC20MetadataUpgradeable(tokenAddress).decimals();
     }
 
     /**

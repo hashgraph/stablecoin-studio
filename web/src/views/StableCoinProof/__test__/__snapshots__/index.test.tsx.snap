@@ -1,0 +1,48 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<StableCoinProof /> should render correctly 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-stack css-16oka5y"
+  >
+    <h2
+      class="chakra-heading css-llrpa2"
+      data-testid="base-container-heading"
+    >
+      Proof of Reserve
+    </h2>
+    <div
+      class="css-1b6lda7"
+      data-testid="base-container-children"
+    >
+      <div
+        class="css-mytqyt"
+        data-testid="no-proof-of-reserve-container"
+      >
+        <img
+          alt="Safe box"
+          class="chakra-image css-1faqnpj"
+          data-testid="no-proof-of-reserve-logo"
+          src="safe-box.svg"
+        />
+        <p
+          class="chakra-text css-1hg9qrt"
+          data-testid="no-proof-of-reserve-title"
+        >
+          Missing Proof of Reserve
+        </p>
+        <p
+          class="chakra-text css-18wysbb"
+          data-testid="no-proof-of-reserve-description"
+        >
+          The stable coin you have chosen does not have a proof of reserve, please, select a different stable coin.
+        </p>
+      </div>
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;

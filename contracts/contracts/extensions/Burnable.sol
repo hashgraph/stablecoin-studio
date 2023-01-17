@@ -16,7 +16,7 @@ abstract contract Burnable is IBurnable, TokenOwner, Roles {
      */
     function burn(uint256 amount) 
         external 
-        onlyRole(_getRoleId(roleName.BURN))  
+        onlyRole(_getRoleId(RoleName.BURN))  
         override(IBurnable)
         returns (bool)      
     {         
@@ -24,7 +24,7 @@ abstract contract Burnable is IBurnable, TokenOwner, Roles {
 
         emit TokensBurned (msg.sender, _getTokenAddress(), amount);
 
-        (int256 responseCode, ) = IHederaTokenService(precompileAddress).burnToken(_getTokenAddress(), uint64(amount),  new int64[](0));
+        (int256 responseCode, ) = IHederaTokenService(PRECOMPILED_ADDRESS).burnToken(_getTokenAddress(), uint64(amount),  new int64[](0));
         
         bool success = _checkResponse(responseCode);
 

@@ -98,7 +98,7 @@ const StableCoinCreation = () => {
 		{
 			number: '04',
 			title: t('tabs.proofOfReserve'),
-			children: <ProofOfReserve control={control} request={request}  form={form}/>,
+			children: <ProofOfReserve control={control} request={request} form={form} />,
 		},
 		{
 			number: '05',
@@ -144,6 +144,23 @@ const StableCoinCreation = () => {
 			}
 		}
 
+		if (currentStep === 3) {
+			// @ts-ignore
+			const proofOfReserve = watch('proofOfReserve');
+			// @ts-ignore
+			const hasDataFeed = watch('hasDataFeed');
+			if (proofOfReserve) {
+				const keys: string[] = [];
+				if (hasDataFeed) {
+					keys.push('reserveAddress');
+				} else {
+					keys.push('reserveInitialAmount');
+				}
+				// @ts-ignore
+				fieldsStep = watch(keys);
+			}
+		}
+
 		return setIsValidForm(
 			fieldsStep?.filter((item) => !item && item !== 0).length === 0 &&
 				Object.keys(errors).length === 0,
@@ -171,20 +188,26 @@ const StableCoinCreation = () => {
 	};
 
 	const handleFinish = async () => {
-		const { autorenewAccount, managementPermissions, freezeKey, wipeKey, pauseKey, supplyKey ,reserveInitialAmount,reserveAddress} =
-			getValues();
+		const {
+			autorenewAccount,
+			managementPermissions,
+			freezeKey,
+			wipeKey,
+			pauseKey,
+			supplyKey,
+			reserveInitialAmount,
+			reserveAddress,
+		} = getValues();
 
 		request.autoRenewAccount = autorenewAccount;
 
-		if (!reserveInitialAmount){
+		if (!reserveInitialAmount) {
 			request.createReserve = false;
 			request.reserveAddress = reserveAddress;
-
-		}else{
+		} else {
 			request.createReserve = true;
 			request.reserveInitialAmount = reserveInitialAmount;
 			request.reserveAddress = undefined;
-
 		}
 
 		if (managementPermissions) {
@@ -204,7 +227,6 @@ const StableCoinCreation = () => {
 				formatKey(supplyKey.label, 'supplyKey')?.key !== Account.NullPublicKey.key && accountInfo.id
 					? accountInfo.id
 					: undefined;
-			
 		}
 		// alert(request.dataFeedAddress)
 		try {

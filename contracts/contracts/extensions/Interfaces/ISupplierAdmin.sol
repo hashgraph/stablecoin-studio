@@ -10,7 +10,7 @@ interface ISupplierAdmin {
      * @return uint256 The number of tokens allowed to be minted
      * 
     */
-    function supplierAllowance(address supplier) external view returns (uint256);
+    function getSupplierAllowance(address supplier) external view returns (uint256);
     
     /**
      * @dev Validate if the address account `supplier' has unlimited supplier's allowance

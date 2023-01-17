@@ -20,7 +20,7 @@ import {
     isUnlimitedSupplierAllowance,
     resetSupplierAllowance,
     revokeSupplierRole,
-    supplierAllowance,
+    getSupplierAllowance,
     associateToken,
     getTotalSupply,
     getBalanceOf,
@@ -55,7 +55,7 @@ const INIT_SUPPLY = BigNumber.from(0).mul(TokenFactor)
 const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor)
 const TokenMemo = 'Hedera Accelerator Stable Coin'
 
-describe('Only Admin can grant, revoke, increase, decrease and reset cashin role (limited and unlimited)', function() {
+describe('Supplier Admin Tests - (roles)', function() {
     before(async function() {
         // Generate Client 1 and Client 2
         const [
@@ -136,7 +136,7 @@ describe('Only Admin can grant, revoke, increase, decrease and reset cashin role
             nonOperatorIsE25519
         )
         expect(Role).to.equals(false)
-        let result = await supplierAllowance(
+        let result = await getSupplierAllowance(
             proxyAddress,
             nonOperatorClient,
             nonOperatorAccount,
@@ -160,7 +160,7 @@ describe('Only Admin can grant, revoke, increase, decrease and reset cashin role
             nonOperatorIsE25519
         )
         expect(Role).to.equals(true)
-        result = await supplierAllowance(
+        result = await getSupplierAllowance(
             proxyAddress,
             nonOperatorClient,
             nonOperatorAccount,
@@ -184,7 +184,7 @@ describe('Only Admin can grant, revoke, increase, decrease and reset cashin role
             nonOperatorIsE25519
         )
         expect(Role).to.equals(false)
-        result = await supplierAllowance(
+        result = await getSupplierAllowance(
             proxyAddress,
             nonOperatorClient,
             nonOperatorAccount,
@@ -267,7 +267,7 @@ describe('Only Admin can grant, revoke, increase, decrease and reset cashin role
             nonOperatorAccount,
             nonOperatorIsE25519
         )
-        let result = await supplierAllowance(
+        let result = await getSupplierAllowance(
             proxyAddress,
             nonOperatorClient,
             nonOperatorAccount,
@@ -284,7 +284,7 @@ describe('Only Admin can grant, revoke, increase, decrease and reset cashin role
             nonOperatorAccount,
             nonOperatorIsE25519
         )
-        result = await supplierAllowance(
+        result = await getSupplierAllowance(
             proxyAddress,
             nonOperatorClient,
             nonOperatorAccount,
@@ -300,7 +300,7 @@ describe('Only Admin can grant, revoke, increase, decrease and reset cashin role
             nonOperatorAccount,
             nonOperatorIsE25519
         )
-        result = await supplierAllowance(
+        result = await getSupplierAllowance(
             proxyAddress,
             nonOperatorClient,
             nonOperatorAccount,
@@ -436,7 +436,7 @@ describe('Only Admin can grant, revoke, increase, decrease and reset cashin role
     })
 })
 
-describe('Grant unlimited supplier role and test its cashin right, maxsupply limit and role immutability', function() {
+describe('Supplier Admin Tests - (Unlimited)', function() {
     before(async function() {
         // Generate Client 1 and Client 2
         const [
@@ -618,7 +618,7 @@ describe('Grant unlimited supplier role and test its cashin right, maxsupply lim
     })
 })
 
-describe('Grant limited supplier role and test its cashin right and cashin/maxsupply limits', function() {
+describe('Supplier Admin Tests - (Limited)', function() {
     const cashInLimit = BigNumber.from(100).mul(TokenFactor)
 
     before(async function() {
@@ -834,7 +834,7 @@ describe('Grant limited supplier role and test its cashin right and cashin/maxsu
         )
 
         // Check that supplier Allowance was not set
-        const result = await supplierAllowance(
+        const result = await getSupplierAllowance(
             proxyAddress,
             nonOperatorClient,
             nonOperatorAccount,
