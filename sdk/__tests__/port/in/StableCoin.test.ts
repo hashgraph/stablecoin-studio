@@ -257,7 +257,6 @@ describe('🧪 Stablecoin test', () => {
 					accountId: CLIENT_ACCOUNT_ECDSA.id.toString(),
 					privateKey: CLIENT_ACCOUNT_ECDSA.privateKey,
 				},
-				proxyContractId: '0.0.0', // <-- Change
 			}),
 		);
 		expect(result).not.toBeNull();
@@ -447,7 +446,6 @@ describe('🧪 Stablecoin test', () => {
 					accountId: CLIENT_ACCOUNT_ECDSA.id.toString(),
 					privateKey: CLIENT_ACCOUNT_ECDSA.privateKey,
 				},
-				proxyContractId: '0.0.0', // <-- Change
 			}),
 		);
 		expect(result).not.toBeNull();

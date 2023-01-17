@@ -9,62 +9,64 @@
 </div>
 
 # Table of contents
+- [Hedera Stable Coin SDK](#hedera-stable-coin-sdk)
+- [Table of contents](#table-of-contents)
 - [Overview](#overview)
 - [Installing](#installing)
-	- [Pre-requirements](#pre-requirements)
-	- [Steps](#steps)
-		- [**For projects (WIP - when published)**](#for-projects-wip---when-published)
-		- [**For development**](#for-development)
-- [Build](#Build)
-- [Quick Start](#quickstart)
+		- [Pre-requirements](#pre-requirements)
+		- [Steps](#steps)
+			- [**For projects (WIP - when published)**](#for-projects-wip---when-published)
+			- [**For development**](#for-development)
+- [Build](#build)
+- [Quick Start](#quick-start)
 	- [Initialization](#initialization)
-	- [Connect sdk](#connect-sdk)
+	- [Connect SDK](#connect-sdk)
 	- [Wallet Events](#wallet-events)
-	- [Getting Account Information](#account-information)
+	- [About Operations Execution](#about-operations-execution)
 - [Usage](#usage)
-	- [**Important**](#important)
 	- [StableCoin](#stablecoin)
-		- [Create Stable Coin](#create-stable-coin)
-		- [Get Info](#get-info)
-		- [Cash In](#cash-in)
+		- [Create](#create)
+		- [GetInfo](#getinfo)
+		- [GetBalanceOf](#getbalanceof)
+		- [Associate](#associate)
+		- [isAccountAssociated](#isaccountassociated)
+		- [CashIn](#cashin)
 		- [Burn](#burn)
 		- [Rescue](#rescue)
 		- [Wipe](#wipe)
-		- [Associate](#associate)
-		- [Get Balance Of](#get-balance-of)
-		- [Capabilities](#capabilities)
 		- [Pause](#pause)
 		- [Unpause](#unpause)
-		- [Delete](#delete)
 		- [Freeze](#freeze)
 		- [Unfreeze](#unfreeze)
-		- [Get Reserve Address](#Get-Reserve-Address)
-		- [Update Reserve Address](#Upsate-Reserve-Address)
+		- [Delete](#delete)
+		- [GetReserveAddress](#getreserveaddress)
+		- [Update Reserve Address](#update-reserve-address)
+		- [Capabilities](#capabilities)
 	- [Network](#network)
 		- [Connect](#connect)
 		- [Disconnect](#disconnect)
-		- [Set Network](#set-network)
+		- [SetNetwork](#setnetwork)
 	- [Event](#event)
 		- [Register](#register)
 	- [Account](#account)
-		- [Get Public Key](#get-public-key)
-		- [List Stable Coins](#list-stable-coins)
-		- [Get Account Info](#get-account-info)
+		- [GetPublicKey](#getpublickey)
+		- [ListStableCoins](#liststablecoins)
+		- [GetInfo](#getinfo-1)
 	- [Role](#role)
-		- [Has Role](#has-role)	
-		- [Grant Role](#grant-role)
-		- [Revoke Role](#revoke-role)
-		- [Get Roles](#get-roles)
-		- [Get Allowance](#get-allowance)
-		- [Reset Allowance](#reset-allowance)
-		- [Increase Allowance](#increase-allowance)
-		- [Decrease Allowance](#decrease-allowance)		
-		- [Is Allowance Limited](#is-allowance-limited)
-		- [Is Allowance Unlimited](#is-allowance-unlimited)
+		- [HasRole](#hasrole)
+		- [GrantRole](#grantrole)
+		- [RevokeRole](#revokerole)
+		- [GetRoles](#getroles)
+		- [GetAllowance](#getallowance)
+		- [ResetAllowance](#resetallowance)
+		- [IncreaseAllowance](#increaseallowance)
+		- [DecreaseAllowance](#decreaseallowance)
+		- [IsLimited](#islimited)
+		- [IsUnlimited](#isunlimited)
 	- [Reserve Data Feed](#reserve-data-feed)
-		- [Get Reserve Amount](#get-reserve-amount)	 		
-		- [Update Reserve Amount](#update-reserve-amount)	 		
-	- [Common](#Common)
+		- [Get Reserve Amount](#get-reserve-amount)
+		- [Update Reserve Amount](#update-reserve-amount)
+	- [Common](#common)
 - [Testing](#testing)
 		- [Jest](#jest)
 - [Typescript](#typescript)
@@ -78,9 +80,9 @@
 
 # Overview
 
-This project provides an sdk to manage hedera tokens throughout their lifecycle.
+This project provides an SDK to manage hedera tokens throughout their lifecycle.
 
-This project based on hybrid tokens, that is, it uses Smart Contracts that communicate with hedera to interact with them. It provides functionalities for use in server mode, as well as for web integration (currently supporting Hashpack and Metamask).
+This project based on hybrid tokens, that is, it uses Smart Contracts that communicate with Hedera to interact with them. It provides functionalities for use in server mode, as well as for web integration (currently supporting HashPack and Metamask).
 
 For more information about the deployed contracts you can consult them in this project - [Contracts link](../contracts)
 
@@ -136,8 +138,8 @@ SDK.log = configurationService.getLogConfiguration();
  );
 ```  
 
-## Connect sdk
-The next step would be to connect to the network. Currently 3 types of connections are offered: Client, Metamask and Haspack. These 3 connection types are in the SupportedWallets enum.
+## Connect SDK
+The next step would be to connect to the network. Currently 3 types of connections are offered: Client (an Hedera account configured in an application configuration file), Metamask and HashPack. These 3 connection types are in the SupportedWallets enum.
 
 ```Typescript
 export enum SupportedWallets {
@@ -168,7 +170,7 @@ await Network.connect(
     );
   }
 ```
-Hashpack Example
+HashPack Example
 
 ```Typescript
 await Network.connect(
@@ -192,7 +194,7 @@ await Network.connect(
   }
 ```
 ## Wallet Events
-Wallets fire events the following events, see [Event.register](#Register) for more info. 
+Wallets fire the following events, see [Event.register](#Register) for more info. 
 
 ```Typescript
 export enum WalletEvents {
@@ -205,11 +207,20 @@ export enum WalletEvents {
 }
 ```
 
+## About Operations Execution
+Before explaining all operations exposed by the SDK, is important to know something about the way some of this operations are going to be performed.
+When creating a stable coin, a set of keys (supply key, wipe key, pause key, etc) must be provided in order to create the stable coin token. Each of theses keys will control, first of all, if the operation related with the key can be performed or not (if the token wipe key is not set, the wipe operation can not be performed), but, in the case the key is provided, depending on its value the operation could be performed through the stable coin smart contracts or through the Hedera SDK:
+
+1. If the token key corresponds to a Hedera account public key, the operation can only be performed by the Hedera account owning this public key, and only through the Hedera SDK.
+2. If the token key corresponds to the stable coin smart contract administrator key, the operation can only be performed through the smart contract, so whoever calls the smart contract could perform the operation. To prevent anyone from performing certain operations roles are used. When the needed of a role is told in some operations description, this is only when the related key of the stable coin token in configured to be the smart contract admin key.
+
 # Usage
+Next, all operations offered by this SDK, grouped by the files of the input ports in which they are located, will be explained.
 
 ## StableCoin
+The following operations represents most of the operations that can be performed using a stable coin. Some of then can be perfomed through smart contracts or through the Hedera SDK depending on the token configuration explained above.
 
-### Create Stable Coin
+### Create
 Creates a new stable coin. You must use Network.connect first with a SupportedWallet.
 
 **Spec:**
@@ -231,8 +242,8 @@ Creates a new stable coin. You must use Network.connect first with a SupportedWa
 	);
 ```
 
-### Get Info
-Gets the information of an existing stable coin
+### GetInfo
+Gets the information of an existing stable coin.
 
 **Spec:**
 
@@ -251,98 +262,8 @@ Gets the information of an existing stable coin
 ```
 
 
-### Cash In
-Mint tokens in a specific stable coin. The operating account must have the supplier role.
-
-**Spec:**
-
-```Typescript
-	StableCoin.cashIn = (request: CashInRequest): Promise<boolean>
-```
-
-**Example:**
-
-```Typescript
-	const result: boolean = await StableCoin.cashIn(
-		new CashInRequest({
-			tokenId: "0.0.1",
-			targetId: "0.0.2",
-			amount: "1234",
-		})
-	);
-```
-
-
-
-### Burn
-Burn tokens in a specific stable coin.
-
-**Spec:**
-
-```Typescript
-	StableCoin.burn = (request: BurnRequest): Promise<boolean>
-```
-
-**Example:**
-
-```Typescript
-	const result: boolean = await StableCoin.burn(
-		new BurnRequest({
-			tokenId: "0.0.1",
-			amount: "1234",
-		})
-	);
-```
-
-
-
-### Rescue
-Rescue tokens in a specific stable coin.
-
-**Spec:**
-
-```Typescript
-	StableCoin.rescue = (request: RescueRequest): Promise<boolean>
-```
-
-**Example:**
-
-```Typescript
-	const result: boolean = await StableCoin.rescue(
-		new RescueRequest({
-			tokenId: "0.0.1",
-			amount: "1234",
-		})
-	);
-```
-
-
-
-### Wipe
-Mint tokens in a specific stable coin. The operating account must have the supplier role.
-
-**Spec:**
-
-```Typescript
-	StableCoin.wipe = (request: WipeRequest): Promise<boolean>
-```
-
-**Example:**
-
-```Typescript
-	const result: boolean = await StableCoin.wipe(
-		new WipeRequest({
-			tokenId: "0.0.1",
-			targetId: "0.0.2",
-			amount: "1234",
-		})
-	);
-```
-
-
-
-### Get balance of
-Get balance of tokens for an account of a specific stable coin.
+### GetBalanceOf
+Gets the balance of tokens for an account.
 
 **Spec:**
 
@@ -366,8 +287,236 @@ Get balance of tokens for an account of a specific stable coin.
 	result.toString() // "1234"
 	result.decimals // 2
 ```
-### Get Reserve Address
-Get contract reserve address .
+
+
+### Associate
+Associates a stable coin with an account.
+
+**Spec:**
+
+```Typescript
+	StableCoin.associate = (request: AssociateTokenRequest): Promise<boolean>
+```
+
+**Example:**
+
+```Typescript
+	const result: boolean = await StableCoin.associate(
+		new AssociateTokenRequest({
+			account: new HashPackAccount("0.0.1")
+		})
+	);
+```
+
+
+### isAccountAssociated
+Checks if an account is associated with a stable coin.
+
+**Spec:**
+
+```Typescript
+	StableCoin.isAccountAssociated = (request: IsAccountAssociatedTokenRequest): Promise<boolean>
+```
+
+**Example:**
+
+```Typescript
+	const result: boolean = await StableCoin.isAccountAssociated(
+		new IsAccountAssociatedTokenRequest({
+			tokenId: "0.0.1",
+			targetId: "0.0.2"
+		})
+	);
+```
+
+
+### CashIn
+Mints tokens and then transfers to to an account. The operating account must have the supplier role.
+
+**Spec:**
+
+```Typescript
+	StableCoin.cashIn = (request: CashInRequest): Promise<boolean>
+```
+
+**Example:**
+
+```Typescript
+	const result: boolean = await StableCoin.cashIn(
+		new CashInRequest({
+			tokenId: "0.0.1",
+			targetId: "0.0.2",
+			amount: "1234",
+		})
+	);
+```
+
+
+### Burn
+Burns an amount of tokens existing in the treasury account. The operating account must have the burn role.
+
+**Spec:**
+
+```Typescript
+	StableCoin.burn = (request: BurnRequest): Promise<boolean>
+```
+
+**Example:**
+
+```Typescript
+	const result: boolean = await StableCoin.burn(
+		new BurnRequest({
+			tokenId: "0.0.1",
+			amount: "1234",
+		})
+	);
+```
+
+
+### Rescue
+Transfers an amount of tokens existing in the treasury account to the account that invokes de operation. The operating account must have the rescue role.
+
+**Spec:**
+
+```Typescript
+	StableCoin.rescue = (request: RescueRequest): Promise<boolean>
+```
+
+**Example:**
+
+```Typescript
+	const result: boolean = await StableCoin.rescue(
+		new RescueRequest({
+			tokenId: "0.0.1",
+			amount: "1234",
+		})
+	);
+```
+
+
+### Wipe
+Wipes an amount of tokens from an account. The operating account must have the wipe role.
+
+**Spec:**
+
+```Typescript
+	StableCoin.wipe = (request: WipeRequest): Promise<boolean>
+```
+
+**Example:**
+
+```Typescript
+	const result: boolean = await StableCoin.wipe(
+		new WipeRequest({
+			tokenId: "0.0.1",
+			targetId: "0.0.2",
+			amount: "1234",
+		})
+	);
+```
+
+
+### Pause
+Pauses a stable coin. None of the operations can be taken while the stable coin is in paused state. The operating account must have the pause role.
+
+**Spec:**
+
+```Typescript
+	StableCoin.pause = (request: PauseRequest): Promise<boolean>
+```
+
+**Example:**
+
+```Typescript
+	const result: boolean = await StableCoin.pause(
+		new PauseRequest({
+			tokenId: "0.0.1",
+		})
+	);
+```
+
+### Unpause
+Unpauses a stable coin. If the stable coin is not paused it will throw an exception. The operating account must have the pause role.
+
+**Spec:**
+
+```Typescript
+	StableCoin.unPause = (request: PauseRequest): Promise<boolean>
+```
+
+**Example:**
+
+```Typescript
+	await StableCoin.unPause(
+		new PauseRequest({
+			tokenId: "0.0.1",
+		})
+	);
+```
+
+### Freeze
+Freezes transfers of a stable coin for an account. The operating account must have the freeze role.
+
+**Spec:**
+
+```Typescript
+	StableCoin.freeze = (request: FreezeRequest): Promise<boolean>
+```
+
+**Example:**
+
+```Typescript
+	const result: boolean = await StableCoin.freeze(
+		new FreezeRequest({
+			tokenId: "0.0.1",
+			targetId: "0.0.2"
+		})
+	);
+```
+
+### Unfreeze
+Unfreezes transfers of a stable coin for an account. The operating account must have the freeze role.
+
+**Spec:**
+
+```Typescript
+	StableCoin.unFreeze = (request: FreezeRequest): Promise<boolean>
+```
+
+**Example:**
+
+```Typescript
+	await StableCoin.unFreeze(
+		new FreezeRequest({
+			tokenId: "0.0.1",
+			targetId: "0.0.2"
+		})
+	);
+```
+
+
+### Delete
+Deletes a stable coin. **Important** this operation is not reversible.
+
+**Spec:**
+
+```Typescript
+	StableCoin.delete = (request: DeleteRequest): Promise<boolean>
+```
+
+**Example:**
+
+```Typescript
+	await StableCoin.delete(
+		new DeleteRequest({
+			tokenId: "0.0.1",
+		})
+	);
+```
+
+
+### GetReserveAddress
+Gets the contract reserve address.
 
 **Spec:**
 
@@ -388,8 +537,9 @@ Get contract reserve address .
 	
 ```
 
+
 ### Update Reserve Address
-Update contract reserve address .
+Updates the contract reserve address.
 
 **Spec:**
 
@@ -412,7 +562,7 @@ Update contract reserve address .
 ```
 
 ### Capabilities
-Get capabiltities for an account on a stable coin. Capabilties have a reference of all the details of the stable coin quering to, the list of capabiltities and the account the capabilities belong to. Each capabiltiy determines the type of operation that can be performed (cash in, burn, etc) and on wether it should be done onto the smart contract for the stable coin (proxyAddress in the `coin: StableCoin` attirbute) or through the Hedera Token Service. 
+Get capabilities for an account on a stable coin. Capabilties have a reference of all the details of the stable coin querying to, the list of capabilities and the account the capabilities belong to. Each capability determines the type of operation that can be performed (cash in, burn, wipe, etc) and on wether it should be done onto the smart contract for the stable coin (proxyAddress in the `coin: StableCoin` attribute) or through the Hedera Token Service. 
 
 See the spec below for all the atributes you can get from the request.
 
@@ -506,106 +656,12 @@ See the spec below for all the atributes you can get from the request.
 	);
 ```
 
-### Pause
-Pause a stable coin. None of the operations can take while the stable coin is in the paused state.
-
-**Spec:**
-
-```Typescript
-	StableCoin.pause = (request: PauseRequest): Promise<boolean>
-```
-
-**Example:**
-
-```Typescript
-	const result: boolean = await StableCoin.pause(
-		new PauseRequest({
-			tokenId: "0.0.1",
-		})
-	);
-```
-
-### Unpause
-Unpause a stable coin. If the stable coin is not paused it will throw an exception.
-
-**Spec:**
-
-```Typescript
-	StableCoin.unPause = (request: PauseRequest): Promise<boolean>
-```
-
-**Example:**
-
-```Typescript
-	await StableCoin.unPause(
-		new PauseRequest({
-			tokenId: "0.0.1",
-		})
-	);
-```
-
-### Freeze
-Freeze an account for a stable coin.
-
-**Spec:**
-
-```Typescript
-	StableCoin.freeze = (request: FreezeRequest): Promise<boolean>
-```
-
-**Example:**
-
-```Typescript
-	const result: boolean = await StableCoin.freeze(
-		new FreezeRequest({
-			tokenId: "0.0.1",
-			targetId: "0.0.2"
-		})
-	);
-```
-
-### Unfreeze
-Unfreeze an account for a stable coin.
-
-**Spec:**
-
-```Typescript
-	StableCoin.unFreeze = (request: FreezeRequest): Promise<boolean>
-```
-
-**Example:**
-
-```Typescript
-	await StableCoin.unFreeze(
-		new FreezeRequest({
-			tokenId: "0.0.1",
-			targetId: "0.0.2"
-		})
-	);
-```
-
-### Delete
-Delete a stable coin. **Important** this operation is not reversible.
-
-**Spec:**
-
-```Typescript
-	StableCoin.delete = (request: DeleteRequest): Promise<boolean>
-```
-
-**Example:**
-
-```Typescript
-	await StableCoin.delete(
-		new DeleteRequest({
-			tokenId: "0.0.1",
-		})
-	);
-```
 
 ## Network
 
 ### Connect
+Establishes the connection to work with an existing Hedera account in a wallet in a certain Hedera network.
+
 **Spec:**
 	
 	
@@ -625,6 +681,8 @@ Delete a stable coin. **Important** this operation is not reversible.
 ```
 
 ### Disconnect
+Disconnects the previously established connection.
+
 **Spec:**
 	
 	
@@ -639,6 +697,8 @@ Delete a stable coin. **Important** this operation is not reversible.
 ```
 
 ### SetNetwork
+Configures an Hedera network, setting some properties like environment, mirror nodes, consensus nodes and a RPC node.
+
 **Spec:**
 	
 	
@@ -662,9 +722,9 @@ Delete a stable coin. **Important** this operation is not reversible.
 ## Event
 
 ### Register
-Register for wallet events. All event listeners are optional, just make sure to call it before trying to pair with any wallet, since pairing events can occur right when the page loads and the extension is found, if the wallet was paired previously.
+Registers for wallet events. All event listeners are optional, just make sure to call it before trying to pair with any wallet, since pairing events can occur right when the page loads and the extension is found, if the wallet was paired previously.
 
-Multiple wallets can emit events, so make sure to filter them by the `wallet` attribute available in all of them indicating which wallet is emitting the event. All wallets supported emit the same events.
+Multiple wallets can emit events, so make sure to filter them by the `wallet` attribute available in all of them indicating which wallet is emitting the event. All supported wallets emit the same events.
 
 All events use the [standard node event emitting system](https://nodejs.dev/es/learn/the-nodejs-event-emitter/) and listeners are fully TS typed.
 
@@ -715,10 +775,12 @@ All events use the [standard node event emitting system](https://nodejs.dev/es/l
 Check out [Router.tsx](https://github.com/hashgraph/hedera-accelerator-stablecoin/blob/main/web/src/Router/Router.tsx) from the web repository for a comprehensive example in React of how to subscribe to events.
 
 ## Account
+The following operations give information about Hedera accounts using Hedera mirror nodes, so do not imply any cost.
 
 ### GetPublicKey
+Gets the account public key.
+
 **Spec:**
-	
 	
 ```Typescript
 	Account.getPublicKey(request: GetPublicKeyRequest): Promise<PublicKey>;
@@ -735,8 +797,9 @@ Check out [Router.tsx](https://github.com/hashgraph/hedera-accelerator-stablecoi
 ```
 	
 ### ListStableCoins
-**Spec:**
-	
+Gets a list of stable coins associated with an account.
+
+**Spec:**	
 	
 ```Typescript
 	Account.listStableCoins(request: GetListStableCoinRequest,): Promise<StableCoinListViewModel>;
@@ -753,8 +816,9 @@ Check out [Router.tsx](https://github.com/hashgraph/hedera-accelerator-stablecoi
 ```
 
 ### GetInfo
+Gets an account information.
+
 **Spec:**
-	
 	
 ```Typescript
 	Account.getInfo(request: GetAccountInfoRequest): Promise<AccountViewModel>;
@@ -772,11 +836,13 @@ Check out [Router.tsx](https://github.com/hashgraph/hedera-accelerator-stablecoi
 
 
 ## Role
+Roles allow Hedera accounts to perform certain operations on a stable coin through the smart contracts, so operations that can be performed through Hedera SDK, due to the token configuration, do not need any role to be performed . The roles management, to which the following operations belong, can only be performed by a Hedera account having the admin role.
 
 ### HasRole
+Checks if an account has a certain role for a stable coin.
+
 **Spec:**
-	
-	
+		
 ```Typescript
 	Role.hasRole(request: HasRoleRequest): Promise<boolean>;
 ```
@@ -794,9 +860,10 @@ Check out [Router.tsx](https://github.com/hashgraph/hedera-accelerator-stablecoi
 ```
 
 ### GrantRole
+Grants a role to an account for a certain stable coin.
+
 **Spec:**
-	
-	
+		
 ```Typescript
 	Role.grantRole(request: HasRoleRequest): Promise<boolean>;
 ```
@@ -814,8 +881,9 @@ Check out [Router.tsx](https://github.com/hashgraph/hedera-accelerator-stablecoi
 ```
 
 ### RevokeRole
-**Spec:**
-	
+Revokes a role of an account for a certain stable coin.
+
+**Spec:**	
 	
 ```Typescript
 	Role.revokeRole(request: RevokeRoleRequest): Promise<boolean>;
@@ -834,8 +902,9 @@ Check out [Router.tsx](https://github.com/hashgraph/hedera-accelerator-stablecoi
 ```
 
 ### GetRoles
-**Spec:**
-	
+Gets a list of all roles a Hedera account has for a certain stable coin.
+
+**Spec:**	
 	
 ```Typescript
 	Role.getRoles(request: GetRolesRequest): Promise<string[]>;
@@ -853,8 +922,9 @@ Check out [Router.tsx](https://github.com/hashgraph/hedera-accelerator-stablecoi
 ```
 
 ### GetAllowance
-**Spec:**
-	
+Gets the supplier allowance (amount of tokens that can be minted by an account) for a certain account and a stable coin.
+
+**Spec:**	
 	
 ```Typescript
 	Role.getAllowance(request: GetSupplierAllowanceRequest): Promise<Balance>;
@@ -873,8 +943,9 @@ Check out [Router.tsx](https://github.com/hashgraph/hedera-accelerator-stablecoi
 ```
 
 ### ResetAllowance
+Sets the supplier allowance to 0 for a certain account and a stable coin.
+
 **Spec:**
-	
 	
 ```Typescript
 	Role.resetAllowance(request: ResetSupplierAllowanceRequest): Promise<boolean>;
@@ -893,8 +964,9 @@ Check out [Router.tsx](https://github.com/hashgraph/hedera-accelerator-stablecoi
 ```
 
 ### IncreaseAllowance
+Increases the supplier allowance amount for a certain account and a stable coin.
+
 **Spec:**
-	
 	
 ```Typescript
 	Role.increaseAllowance(request: IncreaseSupplierAllowanceRequest): Promise<boolean>;
@@ -913,8 +985,9 @@ Check out [Router.tsx](https://github.com/hashgraph/hedera-accelerator-stablecoi
 ```
  
 ### DecreaseAllowance
-**Spec:**
-	
+Decreases the supplier allowance amount for a certain account and a stable coin.
+
+**Spec:**	
 	
 ```Typescript
 	Role.decreaseAllowance(request: DecreaseSupplierAllowanceRequest): Promise<boolean>;
@@ -933,8 +1006,9 @@ Check out [Router.tsx](https://github.com/hashgraph/hedera-accelerator-stablecoi
 ```
 
 ### IsLimited
+Checks if a certain account has a limited supplier allowance for a stable coin or not.
+
 **Spec:**
-	
 	
 ```Typescript
 	Role.isLimited(request: CheckSupplierLimitRequest): Promise<boolean>;
@@ -951,10 +1025,12 @@ Check out [Router.tsx](https://github.com/hashgraph/hedera-accelerator-stablecoi
 		})
 	);
 ```
+
 ### IsUnlimited
+Checks if a certain account has an unlimited supplier allowance for a stable coin or not.
+
 **Spec:**
-	
-	
+		
 ```Typescript
 	Role.isUnlimited(request: CheckSupplierLimitRequest): Promise<boolean>;
 ```
@@ -970,15 +1046,13 @@ Check out [Router.tsx](https://github.com/hashgraph/hedera-accelerator-stablecoi
 		})
 	);
 ```    
-    
-    
-   
-}
 
 ## Reserve Data Feed
+The following operations are always performed through smart contracts calls, since reserve data feed is a contract which can be deployed alongside the stable coin.
+Getting the reserve amount can be performed by anyone while updating this amount can only be performed by the previously commented smart contract administrator.
 
 ### Get Reserve Amount
-Get reserve Amount
+Gets the reserve amount for certain stable coin.
 
 **Spec:**
 
@@ -998,7 +1072,7 @@ Get reserve Amount
 ```
 
 ### Update Reserve Amount
-Update reserve Amount
+Updates the reserve amount for certain stable coin.
 
 **Spec:**
 
@@ -1015,10 +1089,11 @@ Update reserve Amount
 		})
 	);
 ```
+
 ## Common
 The SDK class is exported. This static class allows to set the log level and application metadata at any point in your code, just import it and change the values.
 
-We use [winston](https://github.com/winstonjs/winston) under the hood for logging, so all transports are exported from the sdk under `LoggerTransports` for you to use. Refer to the [documentation](https://github.com/winstonjs/winston/blob/master/docs/transports.md) for more information on what transports are available.
+We use [winston](https://github.com/winstonjs/winston) under the hood for logging, so all transports are exported from the SDK under `LoggerTransports` for you to use. Refer to the [documentation](https://github.com/winstonjs/winston/blob/master/docs/transports.md) for more information on what transports are available.
 
 ```Typescript
 	import { LoggerTransports, SDK } from 'hedera-stable-coin-sdk';

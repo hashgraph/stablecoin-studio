@@ -41,7 +41,6 @@ import { GetRolesCommand } from '../../app/usecase/command/stablecoin/roles/getR
 import { GetAllowanceCommand } from '../../app/usecase/command/stablecoin/roles/getAllowance/GetAllowanceCommand.js';
 import { ResetAllowanceCommand } from '../../app/usecase/command/stablecoin/roles/resetAllowance/ResetAllowanceCommand.js';
 import { IncreaseAllowanceCommand } from '../../app/usecase/command/stablecoin/roles/increaseAllowance/IncreaseAllowanceCommand.js';
-import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import { DecreaseAllowanceCommand } from '../../app/usecase/command/stablecoin/roles/decreaseAllowance/DecreaseAllowanceCommand.js';
 import { IsUnlimitedCommand } from '../../app/usecase/command/stablecoin/roles/isUnlimited/IsUnlimitedCommand.js';
 import {

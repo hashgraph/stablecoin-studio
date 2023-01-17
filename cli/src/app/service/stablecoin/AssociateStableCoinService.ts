@@ -13,7 +13,6 @@ export default class AssociateStableCoinsService extends Service {
   }
 
   public async associateStableCoin(
-    proxyContractId: string,
     account: RequestAccount,
   ): Promise<void> {
     let respDetail;
@@ -21,7 +20,6 @@ export default class AssociateStableCoinsService extends Service {
     await utilsService.showSpinner(
       StableCoin.associate(
         new AssociateTokenRequest({
-          proxyContractId,
           account,
         }),
       ).then((response) => (respDetail = response)),
