@@ -31,7 +31,7 @@ exports[`<ModalHashpack /> should render correctly 1`] = `
       target="_blank"
     >
       <button
-        class="chakra-button css-6z8iia"
+        class="chakra-button css-qvkb6r"
         data-testid="modal-hashpack-button"
         type="button"
       >

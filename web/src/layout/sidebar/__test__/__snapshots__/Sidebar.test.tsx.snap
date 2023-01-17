@@ -10,7 +10,7 @@ exports[`<Sidebar /> should render correctly 1`] = `
       class="css-17lnxuq"
     >
       <button
-        class="chakra-button css-1rqsley"
+        class="chakra-button css-16b3c4e"
         data-testid="sidebar-option-Coin"
         type="button"
       >
@@ -89,7 +89,7 @@ exports[`<Sidebar /> should render correctly 1`] = `
         </p>
       </button>
       <button
-        class="chakra-button css-1rqsley"
+        class="chakra-button css-16b3c4e"
         data-testid="sidebar-option-Users"
         type="button"
       >
@@ -149,7 +149,7 @@ exports[`<Sidebar /> should render correctly 1`] = `
         </p>
       </button>
       <button
-        class="chakra-button css-1rqsley"
+        class="chakra-button css-16b3c4e"
         data-testid="sidebar-option-Gear"
         type="button"
       >
@@ -194,7 +194,7 @@ exports[`<Sidebar /> should render correctly 1`] = `
         </p>
       </button>
       <button
-        class="chakra-button css-1rqsley"
+        class="chakra-button css-16b3c4e"
         data-testid="sidebar-option-File"
         type="button"
       >

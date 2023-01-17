@@ -50,7 +50,7 @@ exports[`<Topbar /> should render correctly 1`] = `
                   class="css-1f43avz-a11yText-A11yText"
                 />
                 <div
-                  class=" css-1ugyojt"
+                  class=" css-17n5zh"
                 >
                   <div
                     class="css-3y2vuh"
@@ -59,7 +59,7 @@ exports[`<Topbar /> should render correctly 1`] = `
                       class="chakra-text css-4pvr19"
                       data-testid="select-placeholder"
                     >
-                      0.0.48471242 - MCC2
+                      0.0.49319786 - TEST
                     </span>
                     <div
                       class=" css-svnjlw"
@@ -131,7 +131,7 @@ exports[`<Topbar /> should render correctly 1`] = `
             class="css-0"
           >
             <button
-              class="chakra-button css-er0jx8"
+              class="chakra-button css-8bto8d"
               type="button"
             >
               <svg
@@ -177,7 +177,7 @@ exports[`<Topbar /> should render correctly 1`] = `
             class="css-0"
           >
             <button
-              class="chakra-button css-er0jx8"
+              class="chakra-button css-8bto8d"
               type="button"
             >
               <svg

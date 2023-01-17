@@ -70,7 +70,7 @@ exports[`<OperationLayout /> should render correctly 1`] = `
                         <p
                           class="chakra-text css-mgupmj"
                         >
-                          ManuCoin2
+                          TEST_ACCELERATOR_SC
                         </p>
                       </div>
                     </div>
@@ -98,7 +98,7 @@ exports[`<OperationLayout /> should render correctly 1`] = `
                         <p
                           class="chakra-text css-mgupmj"
                         >
-                          MCC2
+                          TEST
                         </p>
                       </div>
                     </div>
@@ -126,7 +126,7 @@ exports[`<OperationLayout /> should render correctly 1`] = `
                         <p
                           class="chakra-text css-mgupmj"
                         >
-                          3
+                          6
                         </p>
                       </div>
                     </div>
@@ -157,15 +157,7 @@ exports[`<OperationLayout /> should render correctly 1`] = `
                       >
                         Initial supply
                       </p>
-                      <div
-                        class="chakra-stack css-1c8ysgd"
-                      >
-                        <p
-                          class="chakra-text css-mgupmj"
-                        >
-                          0
-                        </p>
-                      </div>
+                      1000
                     </div>
                     <hr
                       aria-orientation="horizontal"
@@ -185,15 +177,7 @@ exports[`<OperationLayout /> should render correctly 1`] = `
                       >
                         Total supply
                       </p>
-                      <div
-                        class="chakra-stack css-1c8ysgd"
-                      >
-                        <p
-                          class="chakra-text css-mgupmj"
-                        >
-                          100000
-                        </p>
-                      </div>
+                      1000
                     </div>
                     <hr
                       aria-orientation="horizontal"
@@ -213,15 +197,7 @@ exports[`<OperationLayout /> should render correctly 1`] = `
                       >
                         Max supply
                       </p>
-                      <div
-                        class="chakra-stack css-1c8ysgd"
-                      >
-                        <p
-                          class="chakra-text css-mgupmj"
-                        >
-                          0
-                        </p>
-                      </div>
+                      1000
                     </div>
                     <hr
                       aria-orientation="horizontal"
@@ -264,14 +240,14 @@ exports[`<OperationLayout /> should render correctly 1`] = `
             class="chakra-stack css-1amf41o"
           >
             <button
-              class="chakra-button css-1nrhi9n"
+              class="chakra-button css-1urzhdw"
               data-testid="cancel-btn"
               type="button"
             >
               Go back
             </button>
             <button
-              class="chakra-button css-1178n6s"
+              class="chakra-button css-qvkb6r"
               data-testid="confirm-btn"
               type="button"
             >
