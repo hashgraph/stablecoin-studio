@@ -942,7 +942,10 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 		tr = await th.getReserveAmount(
 			stableCoinCapabilitiesSC
 		);
-		expect(tr.response).toEqual(BigDecimal.fromStringFixed('100000000', RESERVE_DECIMALS))
+	
+		expect(BigDecimal.fromStringFixed(tr.response.toString(), RESERVE_DECIMALS)).toEqual(
+			BigDecimal.fromStringFixed('1000000', RESERVE_DECIMALS)
+		);
 	}, 20000);
 
 	it('Test update reserve amount when stable coin has existing reserve', async () => {
