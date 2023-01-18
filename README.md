@@ -115,6 +115,8 @@ During setup, it is possible to link an existing data feed, by providing the sma
 
 > The initial supply of the stable coin cannot be higher than the reserve initial / current amount.
 
+The interface the Reserve Data Feed must implement for the stable coin to be able to interact with is the **AggregatorV3Interface** defined and used by Chainlink for its [Data Feeds](https://docs.chain.link/data-feeds/). This means that any Reserve Data Feed implemented by Chainlink or adhering to Chainlink's standards is fully compatible with our Stable coins.
+
 Therefore three options exist
 - **Stable Coin not linked to a Reserve:** No Reserve collaterizing the Token. Stable Coins with no reserve are technically not "stable" but just "coins".
 - **Stable Coin linked to a Reserve but no data feed is provided:** This will deploy and initialize a reserve based on our example implementation. This reserve is meant to be used for demo purposes and allows the admin to change the reserve amount to showcase the integration between the two.
