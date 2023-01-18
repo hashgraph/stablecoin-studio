@@ -135,9 +135,8 @@ const StableCoinProof = () => {
 	};
 
 	const handleUpdateReserveAmount = async () => {
-		const { updateReserveAmount, reserveAddress } = getValues();
-
-		updateReserveAmountRequest.reserveAddress = reserveAddress;
+		const { updateReserveAmount } = getValues();
+		updateReserveAmountRequest.reserveAddress = reserveAddress ?? '';
 		updateReserveAmountRequest.reserveAmount = updateReserveAmount;
 
 		try {

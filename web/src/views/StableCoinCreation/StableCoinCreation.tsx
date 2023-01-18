@@ -238,7 +238,7 @@ const StableCoinCreation = () => {
 		} catch (error: any) {
 			setLoading(false);
 			console.log(error);
-			setError(error.transactionError.transactionUrl);
+			setError(error?.transactionError?.transactionUrl);
 			setSuccess(false);
 			setLoading(false);
 		}

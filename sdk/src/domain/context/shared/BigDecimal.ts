@@ -186,13 +186,15 @@ export default class BigDecimal implements FixedNumber {
 	public setDecimals(value: number): BigDecimal {
 		// eslint-disable-next-line prefer-const
 		let [int, float] = this.value.split(SEPARATOR);
-		if (float.length > value) {
+		if (float && float.length && float.length > value) {
 			float = float.substring(0, float.length - value);
+			return BigDecimal.fromString(
+				`${int}${SEPARATOR}${float}`,
+				Math.max(float?.length ?? 0, value),
+			);
+		} else {
+			return BigDecimal.fromString(int, Math.max(0, value));
 		}
-		return BigDecimal.fromString(
-			`${int}${SEPARATOR}${float}`,
-			Math.max(float.length, value),
-		);
 	}
 
 	private splitNumber(): string[] {
