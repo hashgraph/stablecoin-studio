@@ -17,7 +17,6 @@ import {
 	SELECTED_WALLET_PAIRED_ACCOUNTID
 } from '../../store/slices/walletSlice';
 import { SelectController } from '../../components/Form/SelectController';
-import { formatAmountWithDecimals } from '../../utils/inputHelper';
 import {
 	CheckSupplierLimitRequest,
 	GetSupplierAllowanceRequest,
@@ -274,6 +273,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 									targetId: account,
 									amount: amount.toString(),
 									role: role.value,
+									supplierType: !infinity ? 'limited' : undefined,
 								}),
 						  )
 						: await SDKService.grantRole(
@@ -621,10 +621,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 					checkOptionSelected
 						? t(`roles:${action}.checkCashinLimitSuccessDesc`, {
 								account,
-								limit: formatAmountWithDecimals({
-									amount: limit ? limit.toString() : '',
-									decimals: selectedStableCoin!.decimals!,
-								}),
+								limit,
 						  })
 						: ''
 				}

@@ -13,7 +13,6 @@ import SDKService from '../../../services/SDKService';
 import { SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
-import { formatAmountWithDecimals } from '../../../utils/inputHelper';
 import { GetAccountBalanceRequest } from 'hedera-stable-coin-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 
@@ -131,10 +130,7 @@ const GetBalanceOperation = () => {
 				successNotificationTitle={t('operations:modalSuccessTitle')}
 				successNotificationDescription={t('getBalance:modalSuccessBalance', {
 					account: getValues().targetAccount,
-					balance: formatAmountWithDecimals({
-						amount: balance ?? '',
-						decimals: selectedStableCoin?.decimals ?? 0,
-					}),
+					balance,
 				})}
 				handleOnCloseModalError={handleCloseModal}
 				handleOnCloseModalSuccess={handleCloseModal}
