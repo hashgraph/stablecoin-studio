@@ -147,7 +147,7 @@ Learn more about them in their README:
 
 
 # Technologies
-- **Smart contracts**: Solidity version 0.8.10.
+- **Smart contracts**: Solidity version 0.8.16 (and lower versions for contracts imported from external sources like OpenZeppelin).
 - **SDK, CLI and UI**: Typescript 4.7 or higher is highly reccomended to work with the repositories.
 - **SDK**: Node `>= v16.13` and `< v17`
 - **UI**: React.js 2.2.6 or higher.
@@ -188,7 +188,7 @@ The development of the project follows enterprise-grade practices for software d
 ## Domain Driven Design
 By using DDD (Domain-Driven Design), we aim to create a shared language among all members of the project team, which allows us to focus our development efforts on thoroughly understanding the processes and rules of the domain. This helps to bring benefits such as increased efficiency and improved communication.
 
-## Hexagonal Architecture
+## Hexagonal Architecture
 We employ this architectural pattern to differentiate between the internal and external parts of our software. By encapsulating logic in different layers of the application, we are able to separate concerns and promote a higher level of isolation, testability, and control over business-specific code. This structure allows each layer of the application to have clear responsibilities and requirements, which helps to improve the overall quality and maintainability of the software.
 
 ## CQS and Command Handlers
