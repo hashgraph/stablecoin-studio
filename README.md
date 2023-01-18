@@ -106,16 +106,19 @@ From an accounts's perspective, there are two kinds of stable coins:
 Every stable coin for which the account has at least one role but was created using a different account.
 
 ## Proof of reserve
-Under the current implementation, all stable coins may choose to implement a proof of reserve data feed at creation (it cannot be added after creation). A proof of reserve is, in very simple terms, an external feed that provides the backing of the tokens in real world, this may be FIAT or other assets. 
+Under the current implementation, all stable coins may choose to implement a proof of reserve data feed at creation (new Reserve data Feeds can only be deployed when a stable coin is been created as part of the creation process itself. They can not be deployed independently).
+
+> A proof of reserve is, in very simple terms, an external feed that provides the backing of the tokens in real world, this may be FIAT or other assets. 
 
 ### Setting up a proof of reserve
 During setup, it is possible to link an existing data feed, by providing the smart contract's address, or create a new one based on our implementation. If a reserve was created during the stable coin deployment, it will also be possible to edit the amount of the reserve.
 
 > The initial supply of the stable coin cannot be higher than the reserve initial / current amount.
 
-Therefore two options exist
-- **No data feed is provided:** This will deploy and initialize a reserve based on our example imentation. This reserve is meant to be used for demo purposes and allows the admin to change the reserve amount to showcase the integration between the two.
-- **An existing data feed is provided**: This data feed will be used to check the reserve before minting any new tokens.
+Therefore three options exist
+- **Stable Coin not linked to a Reserve:** No Reserve collaterizing the Token. Stable Coins with no reserve are technically not "stable" but just "coins".
+- **Stable Coin linked to a Reserve but no data feed is provided:** This will deploy and initialize a reserve based on our example implementation. This reserve is meant to be used for demo purposes and allows the admin to change the reserve amount to showcase the integration between the two.
+- **Stable Coin linked to a Reserve and an existing data feed is provided**: This data feed will be used to check the reserve before minting any new tokens.
 
 In either case, the reserve address can be edited after creation. However, changing the amount in the reserve can only be performed with the example reserve.
 
