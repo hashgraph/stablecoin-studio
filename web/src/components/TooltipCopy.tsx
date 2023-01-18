@@ -23,7 +23,7 @@ const TooltipCopy = ({ children, valueToCopy, ...props }: TooltipCopyProps) => {
 			{...props}
 		>
 			<Box _hover={{ cursor: 'pointer' }} onClick={() => {
-				console.log(valueToCopy);
+				console.log("Copied to clipboard: ",valueToCopy);
 				onCopy();
 			}}>
 				{children}
