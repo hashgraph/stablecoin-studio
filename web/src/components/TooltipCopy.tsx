@@ -22,7 +22,10 @@ const TooltipCopy = ({ children, valueToCopy, ...props }: TooltipCopyProps) => {
 			borderRadius='5px'
 			{...props}
 		>
-			<Box _hover={{ cursor: 'pointer' }} onClick={onCopy}>
+			<Box _hover={{ cursor: 'pointer' }} onClick={() => {
+				console.log("Copied to clipboard: ",valueToCopy);
+				onCopy();
+			}}>
 				{children}
 			</Box>
 		</Tooltip>

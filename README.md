@@ -15,7 +15,8 @@
   - [Creating Stable Coins](#Creating-Stable-Coins)<br>
   - [Managing Stable Coins](#Managing-Stable-Coins)<br>
   - [Operating Stable Coins](#Operating-Stable-Coins)<br>
-  - [Stable Coins categories](#Stable-Coins-categories)<br>
+  - [Stable Coin categories](#Stable-Coins-categories)<br>
+  - [Proof of Reserve](#Proof-of-reserve)<br>
 - **[Architecture](#Architecture)**<br>
 - **[Technologies](#Technologies)**<br>
 - **[Installation](#Installation)**<br>
@@ -86,7 +87,7 @@ Every time a stable coin is created, a new Hedera Token is created (the underlyi
 
 Users interact with the Stable Coin proxy smart contract because its address will never change. Stable Coin logic smart contract addresses change if a new version is deployed. 
 
-> It is important to note that when creating a new stable coin, the user will have the possibility to specify the underlying token's keys (those that will have the wipe, supply, ... roles attached). By default those keys will be assigned to the *Stable Coin proxy smart contract* because by doing that the user will be able to enjoy the whole functionality implemented in this project through the Stable Coin logic smart contract methods. **NEVERTHELESS**, the user is free to assign any key to any account (not only during the creation process but also later, IF the user's account was set as the underlying key admin). If the user assigns a key to a different account, the Stable Coin Proxy will not be able to fully manage the underlying token, limiting the functionality it exposes to the user... It is also worth noting that just like the user will have to possibility to assign any key to any account other than the Stable Coin smart contract proxy, he/she will be able to assign it back too.
+> It is important to note that when creating a new stable coin, the user will have the possibility to specify the underlying token's keys (those that will have the wipe, supply, ... roles attached). By default those keys will be assigned to the *Stable Coin proxy smart contract* because by doing that the user will be able to enjoy the whole functionality implemented in this project through the Stable Coin logic smart contract methods. **NEVERTHELESS**, the user is free to assign any key to any account (not only during the creation process but also later, IF the user's account was set as the underlying key admin). If the user assigns a key to a different account, the Stable Coin Proxy will not be able to fully manage the underlying token, limiting the functionality it exposes to the user... It is also worth noting that just like the user will have the possibility to assign any key to any account other than the Stable Coin smart contract proxy, he/she will be able to assign it back too.
 
 ## Managing Stable Coins
 Every time a stable coin is deployed, the deploying account will be defined as the Stable Coin administrator and will be granted all roles (wipe, rescue, ...). That account will have the possibility to assign and remove any role to any account, increase and decrease cash-in limits etc...
@@ -103,6 +104,27 @@ From an accounts's perspective, there are two kinds of stable coins:
  - *Imported Stable Coins*
 
 Every stable coin for which the account has at least one role but was created using a different account.
+
+## Proof of reserve
+Under the current implementation, all stable coins may choose to implement a proof of reserve data feed at creation (new Reserve data Feeds can only be deployed when a stable coin is been created as part of the creation process itself. They can not be deployed independently).
+
+> A proof of reserve is, in very simple terms, an external feed that provides the backing of the tokens in real world, this may be FIAT or other assets. 
+
+### Setting up a proof of reserve
+During setup, it is possible to link an existing data feed, by providing the smart contract's address, or create a new one based on our implementation. If a reserve was created during the stable coin deployment, it will also be possible to edit the amount of the reserve.
+
+> The initial supply of the stable coin cannot be higher than the reserve initial / current amount.
+
+The interface the Reserve Data Feed must implement for the stable coin to be able to interact with is the **AggregatorV3Interface** defined and used by Chainlink for its [Data Feeds](https://docs.chain.link/data-feeds/). This means that any Reserve Data Feed implemented by Chainlink or adhering to Chainlink's standards is fully compatible with our Stable coins.
+
+Therefore three options exist
+- **Stable Coin not linked to a Reserve:** No Reserve collaterizing the Token. Stable Coins with no reserve are technically not "stable" but just "coins".
+- **Stable Coin linked to a Reserve but no data feed is provided:** This will deploy and initialize a reserve based on our example implementation. This reserve is meant to be used for demo purposes and allows the admin to change the reserve amount to showcase the integration between the two.
+- **Stable Coin linked to a Reserve and an existing data feed is provided**: This data feed will be used to check the reserve before minting any new tokens.
+
+In either case, the reserve address can be edited after creation. However, changing the amount in the reserve can only be performed with the example reserve.
+
+For more information about the SDK and the methods to perform this opertions, visit to the [docs](https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/sdk#get-reserve-address).
 
 # Architecture
 The project is divided in 4 node modules:
@@ -125,7 +147,7 @@ Learn more about them in their README:
 
 
 # Technologies
-- **Smart contracts**: Solidity version 0.8.10.
+- **Smart contracts**: Solidity version 0.8.16 (and lower versions for contracts imported from external sources like OpenZeppelin).
 - **SDK, CLI and UI**: Typescript 4.7 or higher is highly reccomended to work with the repositories.
 - **SDK**: Node `>= v16.13` and `< v17`
 - **UI**: React.js 2.2.6 or higher.
@@ -166,14 +188,16 @@ The development of the project follows enterprise-grade practices for software d
 ## Domain Driven Design
 By using DDD (Domain-Driven Design), we aim to create a shared language among all members of the project team, which allows us to focus our development efforts on thoroughly understanding the processes and rules of the domain. This helps to bring benefits such as increased efficiency and improved communication.
 
-## Hexagonal Architecture
+## Hexagonal Architecture
 We employ this architectural pattern to differentiate between the internal and external parts of our software. By encapsulating logic in different layers of the application, we are able to separate concerns and promote a higher level of isolation, testability, and control over business-specific code. This structure allows each layer of the application to have clear responsibilities and requirements, which helps to improve the overall quality and maintainability of the software.
 
 ## CQS and Command Handlers
 We use a separation of queries/commands, query handlers/command handlers to divide state changes from state reads, with the goal of decoupling functional workflows and separating viewmodels from the domain. By using command handlers and an internal command bus, we are able to completely decouple the use cases within the system, improving flexibility and maintainability. This has been achieved by developing a fully typed TS Command / Query Handler module.
 
 ## Code Standards
-The SDK has over 70% code coverage in unit and integration tests. The Smart Contracts have a 100% code coverage.
+The SDK has over 70% code coverage in unit and integration tests. The Smart Contracts have a 100% code coverage(*).
+
+_(*) we could not find any tool to automatically measure the Smart Contracts coverage, but we included tests for all external and public methods implemented by this project (external and public methods imported from trusted external sources were not considered)._
 
 # Support
 If you have a question on how to use the product, please see our

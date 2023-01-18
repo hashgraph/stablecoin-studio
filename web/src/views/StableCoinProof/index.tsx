@@ -174,26 +174,33 @@ const StableCoinProof = () => {
 		input: ReactNode;
 		button: ReactNode;
 	}) => (
-		<VStack w='100%' alignItems={'start'} gap='6px'>
-			<Heading
-				data-testid={name + '-title'}
-				fontSize='24px'
-				fontWeight='600'
-				mb={8}
-				lineHeight='15.2px'
-				textAlign={'left'}
-			>
-				{title}
-			</Heading>
-			<Text data-testid={name + '-label'} style={{ fontWeight: '600' }}>
-				{label}
-			</Text>
-			<Text pl='10px' data-testid={name + '-value'} color={current === 'Error' ? 'red' : ''} mb={5}>
-				{current}
-			</Text>
-			{input}
-			{button}
-		</VStack>
+		<Flex direction='column' alignItems={'center'}>
+			<VStack w='100%' alignItems={'start'} gap='6px' maxWidth={'500px'} alignSelf='center'>
+				<Heading
+					data-testid={name + '-title'}
+					fontSize='24px'
+					fontWeight='600'
+					mb={8}
+					lineHeight='15.2px'
+					textAlign={'left'}
+				>
+					{title}
+				</Heading>
+				<Text data-testid={name + '-label'} style={{ fontWeight: '600' }}>
+					{label}
+				</Text>
+				<Text
+					pl='10px'
+					data-testid={name + '-value'}
+					color={current === 'Error' ? 'red' : ''}
+					mb={5}
+				>
+					{current}
+				</Text>
+				{input}
+				{button}
+			</VStack>
+		</Flex>
 	);
 
 	return (
@@ -207,7 +214,7 @@ const StableCoinProof = () => {
 					pt={{ base: 4, lg: 14 }}
 					pb={6}
 				>
-					<SimpleGrid columns={{ lg: 2 }} gap={{ base: 10, lg: 40 }}>
+					<SimpleGrid columns={{ base: 2 }} gap={{ base: 10, lg: 20, md: 40 }} alignItems='center'>
 						{GridItem({
 							name: 'amount',
 							title: t('proofOfReserve:updateReserveAmount.title'),
