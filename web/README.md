@@ -125,7 +125,7 @@ Underlying token's keys definition (stable coin smart contract or another accoun
 
 **Proof Of Reserve**
 
-Select if the token will have a proof of reservation, if yes, if you have a contract for it or if you want a new one to be generated.
+Select if the token will have a proof of reserve, if so, if you have an existing contract for it or if you want a new reserve to be generated. For more information about proof of reserve, see the [docs](https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/feature/sdk/Chainlink_PoR#Proof-of-reserve).
 
 ![image](https://user-images.githubusercontent.com/110089113/212882109-7975a305-7bfa-450e-973a-625b5d528e5e.png)
 
@@ -167,7 +167,7 @@ If your account has the stable coin admin role, you will also be allowed to mana
 
 ![image](https://user-images.githubusercontent.com/110089113/212882788-57de3200-5a38-4525-b9e6-dca9048296b1.png)
 
-If your token has proof of reservation, you can manage it from here. You can modify both the contract address and the initial supply of the contract.
+If your token has proof of reserve, you can manage it from here. You can modify both the contract address and the initial supply of the contract.
 
 # Testing
 
