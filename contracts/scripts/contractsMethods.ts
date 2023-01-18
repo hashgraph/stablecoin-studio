@@ -255,6 +255,98 @@ export async function initialize(
     )
 }
 
+export async function allowance(
+    proxyAddress: ContractId,
+    addressOwner: string,
+    ownerIsE25519: boolean,
+    addressSpender: string,
+    spenderIsE25519: boolean,
+    client: Client
+): Promise<BigNumber> {
+    const params = [
+        await toEvmAddress(addressOwner, ownerIsE25519),
+        await toEvmAddress(addressSpender, spenderIsE25519),
+    ]
+    const response = await contractCall(
+        proxyAddress!,
+        'allowance',
+        params,
+        client,
+        Gas1,
+        HederaERC20__factory.abi
+    )
+    return BigNumber.from(response[0])
+}
+
+export async function approve(
+    proxyAddress: ContractId,
+    addressSpender: string,
+    spenderIsE25519: boolean,
+    amount: BigNumber,
+    client: Client
+): Promise<boolean> {
+    const params = [
+        await toEvmAddress(addressSpender, spenderIsE25519),
+        amount.toString(),
+    ]
+    const response = await contractCall(
+        proxyAddress,
+        'approve',
+        params,
+        client,
+        Gas1,
+        HederaERC20__factory.abi
+    )
+    return response[0]
+}
+
+export async function transfer(
+    proxyAddress: ContractId,
+    addressSpender: string,
+    spenderIsE25519: boolean,
+    amount: BigNumber,
+    client: Client
+): Promise<boolean> {
+    const params: string[] = [
+        await toEvmAddress(addressSpender, spenderIsE25519),
+        amount.toString(),
+    ]
+    const response = await contractCall(
+        proxyAddress,
+        'transfer',
+        params,
+        client,
+        Gas1,
+        HederaERC20__factory.abi
+    )
+    return response[0]
+}
+
+export async function transferFrom(
+    proxyAddress: ContractId,
+    addressOwner: string,
+    ownerIsE25519: boolean,
+    addressSpender: string,
+    spenderIsE25519: boolean,
+    amount: BigNumber,
+    client: Client
+): Promise<boolean> {
+    const params: string[] = [
+        await toEvmAddress(addressOwner, ownerIsE25519),
+        await toEvmAddress(addressSpender, spenderIsE25519),
+        amount.toString(),
+    ]
+    const response = await contractCall(
+        proxyAddress,
+        'transferFrom',
+        params,
+        client,
+        Gas1,
+        HederaERC20__factory.abi
+    )
+    return response[0]
+}
+
 // HederaERC20Proxy ///////////////////////////////////////////////////
 export async function upgradeTo(
     proxyAbi: any,
@@ -572,104 +664,6 @@ export async function getProxyAdmin_SCF(
         StableCoinFactoryProxyAdmin__factory.abi
     )
     return result[0]
-}
-
-/* Methods to add
-    - allowance(address,address) (external)
-    - approve(address,uint256) (external)
-    - transfer(address,uint256) (external)
-    - transferFrom(address,address,uint256) (external)
-*/
-export async function allowance(
-    proxyAddress: ContractId,
-    addressOwner: string,
-    ownerIsE25519: boolean,
-    addressSpender: string,
-    spenderIsE25519: boolean,
-    client: Client
-): Promise<BigNumber> {
-    const params = [
-        await toEvmAddress(addressOwner, ownerIsE25519),
-        await toEvmAddress(addressSpender, spenderIsE25519),
-    ]
-    const response = await contractCall(
-        proxyAddress,
-        'allowance',
-        params,
-        client,
-        Gas1,
-        HederaERC20__factory.abi
-    )
-    return BigNumber.from(response[0])
-}
-
-export async function approve(
-    proxyAddress: ContractId,
-    addressSpender: string,
-    spenderIsE25519: boolean,
-    amount: BigNumber,
-    client: Client
-): Promise<boolean> {
-    const params = [
-        await toEvmAddress(addressSpender, spenderIsE25519),
-        amount.toString(),
-    ]
-    const response = await contractCall(
-        proxyAddress,
-        'approve',
-        params,
-        client,
-        Gas1,
-        HederaERC20__factory.abi
-    )
-    return response[0]
-}
-
-export async function transfer(
-    proxyAddress: ContractId,
-    addressSpender: string,
-    spenderIsE25519: boolean,
-    amount: BigNumber,
-    client: Client
-): Promise<boolean> {
-    const params: string[] = [
-        await toEvmAddress(addressSpender, spenderIsE25519),
-        amount.toString(),
-    ]
-    const response = await contractCall(
-        proxyAddress,
-        'transfer',
-        params,
-        client,
-        Gas1,
-        HederaERC20__factory.abi
-    )
-    return response[0]
-}
-
-export async function transferFrom(
-    proxyAddress: ContractId,
-    addressOwner: string,
-    ownerIsE25519: boolean,
-    addressSpender: string,
-    spenderIsE25519: boolean,
-    amount: BigNumber,
-    client: Client
-): Promise<boolean> {
-    const params: string[] = [
-        await toEvmAddress(addressOwner, ownerIsE25519),
-        await toEvmAddress(addressSpender, spenderIsE25519),
-        amount.toString(),
-    ]
-    const response = await contractCall(
-        proxyAddress,
-        'transferFrom',
-        params,
-        client,
-        Gas1,
-        HederaERC20__factory.abi
-    )
-    return response[0]
 }
 
 // TokenOwner ///////////////////////////////////////////////////
@@ -1061,6 +1055,7 @@ export async function getReserveAmount(
     )
     return BigNumber.from(result[0])
 }
+
 export async function getReserveAddress(
     proxyAddress: ContractId,
     operatorClient: Client
