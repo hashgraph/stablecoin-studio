@@ -130,7 +130,7 @@ If so, the user will have two options, either submit the address of an already e
 
 For more information about proof of reserve, see the [docs](https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/feature/sdk/Chainlink_PoR#Proof-of-reserve).
 
-![image](https://user-images.githubusercontent.com/110887433/213154467-70663bd0-2116-4121-9b3a-3028e4309fff.png)
+![image](https://user-images.githubusercontent.com/110089113/212882109-7975a305-7bfa-450e-973a-625b5d528e5e.png)
 
 **Review**
 
@@ -168,7 +168,7 @@ If your account has the stable coin admin role, you will also be allowed to mana
 
 ### Proof Of Reserve
 
-![image](https://user-images.githubusercontent.com/110089113/212882788-57de3200-5a38-4525-b9e6-dca9048296b1.png)
+![image](https://user-images.githubusercontent.com/110887433/213154467-70663bd0-2116-4121-9b3a-3028e4309fff.png)
 
 If your stable coin is associated to a proof of reserve (PoR), you can update the PoR contract address at anytime from here.
 
