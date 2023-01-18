@@ -195,7 +195,9 @@ We employ this architectural pattern to differentiate between the internal and e
 We use a separation of queries/commands, query handlers/command handlers to divide state changes from state reads, with the goal of decoupling functional workflows and separating viewmodels from the domain. By using command handlers and an internal command bus, we are able to completely decouple the use cases within the system, improving flexibility and maintainability. This has been achieved by developing a fully typed TS Command / Query Handler module.
 
 ## Code Standards
-The SDK has over 70% code coverage in unit and integration tests. The Smart Contracts have a 100% code coverage.
+The SDK has over 70% code coverage in unit and integration tests. The Smart Contracts have a 100% code coverage(*).
+
+_(*) we could not find any tool to automatically measure the Smart Contracts coverage, but we included tests for all external and public methods implemented by this project (external and public methods imported from trusted external sources were not considered)._
 
 # Support
 If you have a question on how to use the product, please see our
