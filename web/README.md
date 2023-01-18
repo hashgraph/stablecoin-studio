@@ -125,7 +125,10 @@ Underlying token's keys definition (stable coin smart contract or another accoun
 
 **Proof Of Reserve**
 
-Select if the token will have a proof of reserve, if so, if you have an existing contract for it or if you want a new reserve to be generated. For more information about proof of reserve, see the [docs](https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/feature/sdk/Chainlink_PoR#Proof-of-reserve).
+Choose if the stable coin will have a proof of reserve (PoR) associated to it or not.
+If so, the user will have two options, either submit the address of an already existing PoR contract or generate a completely new one (using the demo implementation of a PoR contract included in the project) specifying an initial Reserve amount.
+
+For more information about proof of reserve, see the [docs](https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/feature/sdk/Chainlink_PoR#Proof-of-reserve).
 
 ![image](https://user-images.githubusercontent.com/110089113/212882109-7975a305-7bfa-450e-973a-625b5d528e5e.png)
 
@@ -167,7 +170,14 @@ If your account has the stable coin admin role, you will also be allowed to mana
 
 ![image](https://user-images.githubusercontent.com/110089113/212882788-57de3200-5a38-4525-b9e6-dca9048296b1.png)
 
-If your token has proof of reserve, you can manage it from here. You can modify both the contract address and the initial supply of the contract.
+If your stable coin is associated to a proof of reserve (PoR), you can update the PoR contract address at anytime from here.
+
+> Warning: updating the PoR contract address can have a serious impact on your stable coin cash-in functionality since it will start refering to a completely different contract to check the Reserve. If for some reason the new contract's Reserve is less than the previous one, you might not be able to mint any new tokens.
+
+If (and only if) the PoR contract attached to your stable coin is the PoR demo implementation included in this project you will also have the possibility to change its Reserve amount from here. You will only need to use the PoR admin account (the account used to deploy the stable coin).
+
+> This is the main reason why the PoR demo implementation included in this project must be used only for demo purposes, the Reseve amount can be changed at any time without any check or control whatsoever...
+
 
 # Testing
 
