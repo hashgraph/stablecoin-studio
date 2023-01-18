@@ -13,7 +13,19 @@ interface IRoles {
         DELETE
     }
     
+    /**
+     * @dev Returns an array of roles the account currently has
+     *
+     * @param account The account address
+     * @return bytes32[] The array containing the roles
+     */
     function getRoles(address account) external view returns (bytes32[] memory);
 
-    function getRoleId(RoleName roleNameToReturn) external view returns(bytes32);
+    /**
+     * @dev Returns a role bytes32 representation
+     *
+     * @param role The role we want to retrieve the bytes32 for
+     * @return bytes32 The bytes32 of the role
+     */
+    function getRoleId(RoleName role) external view returns(bytes32);
 }
