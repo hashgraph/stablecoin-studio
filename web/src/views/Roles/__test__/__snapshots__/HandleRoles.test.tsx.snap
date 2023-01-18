@@ -418,6 +418,7 @@ exports[`<HandleRoles /> should render correctly on all actions: edit 1`] = `
             <button
               class="chakra-button css-qvkb6r"
               data-testid="confirm-btn"
+              disabled=""
               type="button"
             >
               Accept
@@ -852,6 +853,7 @@ exports[`<HandleRoles /> should render correctly on all actions: give 1`] = `
             <button
               class="chakra-button css-qvkb6r"
               data-testid="confirm-btn"
+              disabled=""
               type="button"
             >
               Accept
@@ -1286,6 +1288,7 @@ exports[`<HandleRoles /> should render correctly on all actions: refresh 1`] = `
             <button
               class="chakra-button css-qvkb6r"
               data-testid="confirm-btn"
+              disabled=""
               type="button"
             >
               Accept
@@ -1720,6 +1723,7 @@ exports[`<HandleRoles /> should render correctly on all actions: revoke 1`] = `
             <button
               class="chakra-button css-qvkb6r"
               data-testid="confirm-btn"
+              disabled=""
               type="button"
             >
               Accept
