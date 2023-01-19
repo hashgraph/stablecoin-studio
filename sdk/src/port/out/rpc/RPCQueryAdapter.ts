@@ -113,7 +113,7 @@ export default class RPCQueryAdapter {
 	}
 
 	async getRoles(address: string, target: string): Promise<string[]> {
-		console.log(address,target, this.provider.connection.url)
+		console.log(address, target, this.provider.connection.url);
 		return await HederaERC20.connect(address, this.provider).getRoles(
 			target,
 		);
@@ -142,7 +142,7 @@ export default class RPCQueryAdapter {
 		).getSupplierAllowance(target);
 	}
 
-	async reserveDecimals(address: HederaId): Promise<number> {
+	async getReserveDecimals(address: HederaId): Promise<number> {
 		return await this.connect(
 			Reserve,
 			address.toHederaAddress().toSolidityAddress(),

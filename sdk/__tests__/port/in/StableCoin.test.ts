@@ -60,7 +60,7 @@ describe('🧪 Stablecoin test', () => {
 		await new Promise((r) => setTimeout(r, seconds));
 	};
 	beforeAll(async () => {
-		await Network.init(new InitializationRequest({network:'testnet'}))
+		await Network.init(new InitializationRequest({ network: 'testnet' }));
 		await Network.connect(
 			new ConnectRequest({
 				account: {
@@ -89,7 +89,7 @@ describe('🧪 Stablecoin test', () => {
 			supplyType: TokenSupplyType.INFINITE,
 			stableCoinFactory: FactoryAddressTestnet,
 			hederaERC20: HederaERC20AddressTestnet,
-			createReserve: false
+			createReserve: false,
 		});
 		const requestHTS = new CreateRequest({
 			name: 'TEST_ACCELERATOR_HTS',
@@ -261,7 +261,7 @@ describe('🧪 Stablecoin test', () => {
 	// 		}),
 	// 	);
 	// 	await expect(result).rejects.toThrow('Method not implemented');
-		
+
 	// }, 60_000);
 
 	// it('Performs freeze SC', async () => {
@@ -449,7 +449,7 @@ describe('🧪 Stablecoin test', () => {
 	// 		}),
 	// 	);
 	// 	await expect(result).rejects.toThrow('Method not implemented');
-		
+
 	// }, 60_000);
 
 	// it('Performs capabilities HTS', async () => {

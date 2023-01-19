@@ -18,11 +18,11 @@
  *
  */
 
-import { QueryResponse } from "../../../../core/query/QueryResponse.js";
-import PublicKey from "../../../../domain/context/account/PublicKey.js";
-import ContractId from "../../../../domain/context/contract/ContractId.js";
-import BigDecimal from "../../../../domain/context/shared/BigDecimal.js";
-import { HederaId } from "../../../../domain/context/shared/HederaId.js";
+import { QueryResponse } from '../../../../core/query/QueryResponse.js';
+import PublicKey from '../../../../domain/context/account/PublicKey.js';
+import ContractId from '../../../../domain/context/contract/ContractId.js';
+import BigDecimal from '../../../../domain/context/shared/BigDecimal.js';
+import { HederaId } from '../../../../domain/context/shared/HederaId.js';
 
 export default interface StableCoinViewModel extends QueryResponse {
 	tokenId?: HederaId;
@@ -47,6 +47,6 @@ export default interface StableCoinViewModel extends QueryResponse {
 	wipeKey?: ContractId | PublicKey | undefined;
 	supplyKey?: ContractId | PublicKey | undefined;
 	pauseKey?: ContractId | PublicKey | undefined;
-	reserveAddress?:ContractId,
-	reserveAmount?:BigDecimal
+	reserveAddress?: ContractId;
+	reserveAmount?: BigDecimal;
 }

@@ -20,8 +20,7 @@ const StableCoinDetails = () => {
 	const renderKeys = ({ key }: { key: any }) => {
 		if (!key) return t('none').toUpperCase();
 		if ('value' in key) return t('smartContract').toUpperCase();
-		if (key.key === account.publicKey?.toString())
-			return t('currentUser').toUpperCase();
+		if (key.key === account.publicKey?.toString()) return t('currentUser').toUpperCase();
 		return (
 			<Flex
 				gap={2}
@@ -41,6 +40,113 @@ const StableCoinDetails = () => {
 		);
 	};
 
+	let details = [
+		{
+			label: t('tokenId'),
+			value: selectedStableCoin?.tokenId,
+			copyButton: true,
+		},
+		{
+			label: t('name'),
+			value: selectedStableCoin?.name,
+		},
+		{
+			label: t('symbol'),
+			value: selectedStableCoin?.symbol,
+		},
+		{
+			label: t('decimals'),
+			value: selectedStableCoin?.decimals,
+		},
+		{
+			label: t('initialSupply'),
+			value: selectedStableCoin?.initialSupply?.toString() ?? '0',
+		},
+		{
+			label: t('totalSupply'),
+			value: selectedStableCoin?.totalSupply?.toString() ?? '0',
+		},
+		{
+			label: t('maxSupply'),
+			value:
+				selectedStableCoin?.maxSupply && !selectedStableCoin?.maxSupply.isZero
+					? selectedStableCoin?.maxSupply
+					: 'INFINITE',
+		},
+		{
+			label: t('treasury'),
+			value: selectedStableCoin?.treasury,
+			copyButton: true,
+		},
+		{
+			label: t('autoRenewAccount'),
+			value: selectedStableCoin?.autoRenewAccount,
+			copyButton: true,
+		},
+		{
+			label: t('proxyAddress'),
+			value: selectedStableCoin?.proxyAddress,
+		},
+		{
+			label: t('paused'),
+			value: selectedStableCoin?.paused?.toString().toUpperCase(),
+		},
+		{
+			label: t('deleted'),
+			value: selectedStableCoin?.deleted?.toString().toUpperCase(),
+		},
+		{
+			label: t('adminKey'),
+			value: renderKeys({
+				key: selectedStableCoin?.adminKey as any,
+			}),
+		},
+		{
+			label: t('kycKey'),
+			value: renderKeys({
+				key: selectedStableCoin?.kycKey as any,
+			}),
+		},
+		{
+			label: t('freezeKey'),
+			value: renderKeys({
+				key: selectedStableCoin?.freezeKey as any,
+			}),
+		},
+		{
+			label: t('wipeKey'),
+			value: renderKeys({
+				key: selectedStableCoin?.wipeKey as any,
+			}),
+		},
+		{
+			label: t('supplyKey'),
+			value: renderKeys({
+				key: selectedStableCoin?.supplyKey as any,
+			}),
+		},
+		{
+			label: t('pauseKey'),
+			value: renderKeys({
+				key: selectedStableCoin?.pauseKey as any,
+			}),
+		},
+	];
+
+	if (selectedStableCoin?.reserveAddress) {
+		details = details.concat([
+			{
+				label: t('reserveAddress'),
+				value: selectedStableCoin?.reserveAddress,
+				copyButton: true,
+			},
+			{
+				label: t('reserveAmount'),
+				value: selectedStableCoin?.reserveAmount?.toString(),
+			},
+		]);
+	}
+
 	return (
 		<BaseContainer title={t('title')}>
 			<Flex
@@ -55,98 +161,7 @@ const StableCoinDetails = () => {
 							title={t('subtitle')}
 							titleProps={{ fontWeight: 'bold' }}
 							contentProps={{ justifyContent: 'space-between', gap: 4 }}
-							details={[
-								{
-									label: t('tokenId'),
-									value: selectedStableCoin?.tokenId,
-									copyButton: true,
-								},
-								{
-									label: t('name'),
-									value: selectedStableCoin?.name,
-								},
-								{
-									label: t('symbol'),
-									value: selectedStableCoin?.symbol,
-								},
-								{
-									label: t('decimals'),
-									value: selectedStableCoin?.decimals,
-								},
-								{
-									label: t('initialSupply'),
-									value: selectedStableCoin?.initialSupply?.toString() ?? '0',
-								},
-								{
-									label: t('totalSupply'),
-									value: selectedStableCoin?.totalSupply?.toString() ?? '0',
-								},
-								{
-									label: t('maxSupply'),
-									value:
-										selectedStableCoin?.maxSupply && !selectedStableCoin?.maxSupply.isZero
-											? selectedStableCoin?.maxSupply
-											: 'INFINITE',
-								},
-								{
-									label: t('treasury'),
-									value: selectedStableCoin?.treasury,
-									copyButton: true,
-								},
-								{
-									label: t('autoRenewAccount'),
-									value: selectedStableCoin?.autoRenewAccount,
-									copyButton: true,
-								},
-								{
-									label: t('proxyAddress'),
-									value: selectedStableCoin.proxyAddress,
-								},
-								{
-									label: t('paused'),
-									value: selectedStableCoin?.paused?.toString().toUpperCase(),
-								},
-								{
-									label: t('deleted'),
-									value: selectedStableCoin?.deleted?.toString().toUpperCase(),
-								},
-								{
-									label: t('adminKey'),
-									value: renderKeys({
-										key: selectedStableCoin?.adminKey as any,
-									}),
-								},
-								{
-									label: t('kycKey'),
-									value: renderKeys({
-										key: selectedStableCoin?.kycKey as any,
-									}),
-								},
-								{
-									label: t('freezeKey'),
-									value: renderKeys({
-										key: selectedStableCoin?.freezeKey as any,
-									}),
-								},
-								{
-									label: t('wipeKey'),
-									value: renderKeys({
-										key: selectedStableCoin?.wipeKey as any,
-									}),
-								},
-								{
-									label: t('supplyKey'),
-									value: renderKeys({
-										key: selectedStableCoin?.supplyKey as any,
-									}),
-								},
-								{
-									label: t('pauseKey'),
-									value: renderKeys({
-										key: selectedStableCoin?.pauseKey as any,
-									}),
-								},
-							]}
+							details={details}
 						/>
 					</Box>
 				)}

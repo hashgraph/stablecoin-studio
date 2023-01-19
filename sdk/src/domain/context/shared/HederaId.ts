@@ -26,4 +26,8 @@ export class HederaId {
 	toString(): string {
 		return this.value;
 	}
+
+	isNull(): boolean {
+		return this.value == '0.0.0';
+	}
 }
