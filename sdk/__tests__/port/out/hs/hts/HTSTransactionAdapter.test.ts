@@ -984,7 +984,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 		tr = await th.getReserveAddress(
 			stableCoinCapabilitiesHTS
 		);
-		expect(tr.response).not.toBeNull;
+		expect(tr.response).not.toBeNull();
 	}, 20000);
 
 	it('Test get reserve amount returns the reserve amount when stable coin has existing reserve', async () => {
