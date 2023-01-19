@@ -50,6 +50,7 @@ The remaining smart contracts have been implemented for this specific project:
    - `Freezable.sol`: abstract contract implementing the *freeze* and *unfreeze* operations (if an account is frozen, it will not be able to operate with the stable coin until unfrozen).
    - `Pausable.sol`: abstract contract implementing the *pause* and *unpause* operations (if a token is paused, nobody will be able to operate with it until the token is unpaused).  
    - `Rescatbale.sol`: abstract contract implementing the *rescue* operation (transfer tokens from the treasury to another account).
+   - `Reserve.sol`: abstract contract implementing the reserve for the stable coin (checking against the current reserve before minting, changing the reserve data feed, etc.).
    - `Roles.sol`: Contains the definition of the roles that can be assigned for every stable coin.
    - `Supplieradmin.sol`: abstract contract implementing all the cashin role assignment and management (assigning/removing the role as well as setting, increasing and decreasing the cash-in limit).
    - `TokenOwner.sol`: abstract contract that stores the addresses of the *HTS precompiled smart contract* and the *underlying token* related to the stable coin. All the smart contracts mentioned above, inherit from this abstract contract.
@@ -57,11 +58,14 @@ The remaining smart contracts have been implemented for this specific project:
  - `HederaERC20.sol`: Main Stable coin contract. Contains all the stable coin related logic. Inherits all the contracts defined in the "extension" folder as well as the Role.sol contract. **IMPORTANT** : a HederaERC20 contract will be deployed in Testnet for anybody to use. Users are also free to deploy and use their own HederaERC20 contract. Whatever HederaERC20 contract users choose to use, they will need to pass the contract's address as an input argument when calling the factory.
  - `HederaERC20Proxy.sol`: Extends the OpenZeppelin transaparent proxy implemention. This proxy will delegate business method calls to a *HederaERC20* smart contract and will implement the upgradable logic.
  - `HederaERC20ProxyAdmin.sol`: Extends the OpenZeppelin proxy admin implementation. This proxy will be the admin of the HederaERC20Proxy, that way, users will be able to invoke the HederaERC20 functionality through the HederaERC20Proxy and upgrade the HederaERC20Proxy implementation through the HederaERC20ProxyAdmin.
+ - `HederaReserve.sol`: Implements the ChainLink AggregatorV3Interface to provide the current data about the stable coin's reserves.
+ - `HederaReserveProxy.sol`: Extends the OpenZeppelin transaparent proxy implemention. This proxy will delegate business method calls to a *HederaReserve* smart contract and will implement the upgradable logic.
+ - `HederaReserveProxyAdmin.sol`: Extends the OpenZeppelin proxy admin implementation. This proxy will be the admin of the HederaReserveProxy, that way, users will be able to invoke the HederaReserve functionality through the HederaReserveProxy and upgrade the HederaReserveProxy implementation through the HederaReserveProxyAdmin.
  - `StableCoinFactory.sol`: Implements the flow to create a new stable coin. Every time a new stable coin is created, several smart contracts must be deployed and initialized and an underlying token must be created through the `HTS precompiled smart contract`. This multi-transaction process is encapsulated in this contract so that users can create new stable coins in a single transaction. **IMPORTANT** : a Factory contract will be deployed in Tesnet for anybody to use. Users are also free to deploy and use their own Factory contract.
  - `StableCoinFactoryProxy.sol`: Extends the OpenZeppelin transaparent proxy implemention. This proxy will delegate business method calls to a *StableCoinFactory* smart contract and will implement the upgradable logic.
  - `StableCoinFactoryProxyAdmin.sol`: Extends the OpenZeppelin proxy admin implementation. This proxy will be the admin of the StableCoinFactoryProxy, that way, users will be able to invoke the StableCoinFactory functionality through the StableCoinFactoryProxy and upgrade the StableCoinFactoryProxy implementation through the StableCoinFactoryProxyAdmin.
 
- > Every stable coin is made of an **HederaERC20ProxyAdmin** contract, an **HederaERC20Proxy** contract and an **underlying token** managed through the *HTS precompiled smart contract*. The **HederaERC20** contract is meant to be "shared" by multiple users (by using proxies).
+ > Every stable coin is made of an **HederaERC20ProxyAdmin** contract, an **HederaERC20Proxy** contract and an **underlying token** managed through the *HTS precompiled smart contract*. The **HederaERC20** contract is meant to be "shared" by multiple users (by using proxies). A stable coin admin may also choose to deploy an **HederaReserve** along with the stable coin at creation, with it's **HederaReserveProxy** and **HederaReserveProxyAdmin** contracts, or to define an existing reserve instead.
 
 # Architecture
 
@@ -141,7 +145,7 @@ Typescript test files can be foud in the `test` folder:
 
 ## Configuration
 ### Tests accounts
-You need to configure in the `hardhat.config.ts` file **two Hedera accounts** that will be used for testing.
+You need to create the `.env` file cloning the content of `.env.sample` and add **two Hedera accounts** that will be used for testing.
 
 These accounts must be existing valid accounts in the **Hedera network** you are using to test the smart contracts, they must also have a **positive balance large enough** to run all the contract deployments, invocations and token creations executed in the tests.
 
@@ -158,24 +162,16 @@ For each account you must provide the following information:
 
 Example for the Hedera testnet (_these are fake accounts/keys_):
 
-```hardhat.config.ts
-    testnet: {
-        accounts: [
-            // An array of predefined Externally Owned Accounts
-            {
-                account: "0.0.48513676",
-                privateKey:"8830990f02fae1c3a843b8aaad0433a73ee47b08d56426a8e416d08727ea0609",
-                publicKey:"c14dbe4c936181b7a2fe7faf086fd95bdc6900e2d16533e3e8ffd00cac1fe607",
-                isED25519Type: true
-            },
-            {
-                account: "0.0.47786654",
-                privateKey:"302e020100300506032b6baf04220420b7ca8f1a5453d5c03b0d8ba99d06306ed6c93ee64d7bf122c21b0981e2b0b679",
-                publicKey:"302a300506032b657003210057056288u5d5a9cdaeb85687391dc7372707c464f9e7cb0efb386cf4244ebdf6",
-                isED25519Type: true
-            },
-        ],
-    }
+```.env
+    HEDERA_OPERATOR_ACCOUNT='0.0.48513676'
+    HEDERA_OPERATOR_PUBLICKEY='c14dbe4c936181b7a2fe7faf086fd95bdc6900e2d16533e3e8ffd00cac1fe607'
+    HEDERA_OPERATOR_PRIVATEKEY='8830990f02fae1c3a843b8aaad0433a73ee47b08d56426a8e416d08727ea0609'
+    HEDERA_OPERATOR_ED25519=true
+
+    HEDERA_NON_OPERATOR_ACCOUNT='0.0.47786654'
+    HEDERA_NON_OPERATOR_PUBLICKEY='302a300506032b657003210057056288u5d5a9cdaeb85687391dc7372707c464f9e7cb0efb386cf4244ebdf6'
+    HEDERA_NON_OPERATOR_PRIVATEKEY='302e020100300506032b6baf04220420b7ca8f1a5453d5c03b0d8ba99d06306ed6c93ee64d7bf122c21b0981e2b0b679'
+    HEDERA_NON_OPERATOR_ED25519=true
 ```
 ### Operating accounts
 All tests will use the two above mentionned accounts.

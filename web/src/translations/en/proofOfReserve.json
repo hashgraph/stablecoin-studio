@@ -1,0 +1,26 @@
+{
+	"title": "Proof of Reserve",
+	"operationTitle": "Proof of Reserve",
+	"subtitle": "Manage Proof of Reserve",
+	"updateReserveAddress": {
+		"title": "Update Reserve Address",
+		"label": "Current Address",
+		"inputPlaceholder": "Introduce Address",
+		"buttonText": "Update Address"
+	},
+	"updateReserveAmount": {
+		"title": "Update Reserve Amount",
+		"label": "Current Amount",
+		"inputPlaceholder": "Introduce Amount",
+		"buttonText": "Update Amount"
+	},
+	"notification": {
+		"title": "{{ result }} updating proof of reserve",
+		"descriptionSuccess": "Proof of Reserve was updated",
+		"descriptionError": "Sorry, there was an error updating proof of reserve"
+	},
+	"noProofOfReserve": {
+		"title": "Missing Proof of Reserve",
+		"description": "The stable coin you have chosen does not have a proof of reserve, please, select a different stable coin."
+	}
+}

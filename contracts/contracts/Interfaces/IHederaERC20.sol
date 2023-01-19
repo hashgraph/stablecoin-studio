@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.10;
+pragma solidity 0.8.16;
 
 interface IHederaERC20 {
     /**
@@ -70,4 +70,60 @@ interface IHederaERC20 {
      * @return uint8 The number of decimals of the token
      */
     function decimals() external view returns (uint8);
+
+    /**
+     * @dev Associates a account to the token
+     *
+     * @param addr The address of the account to associate
+     *
+     */
+    function associateToken(address addr) 
+    external;
+
+    /**
+     * @dev Dissociates an account from the token
+     *
+     * @param addr The address of the account to dissociate
+     *
+     */
+    function dissociateToken(address addr) 
+    external;
+
+    /**
+     * @dev Transfers an amount of tokens to an account
+     *
+     * @param to The address the tokens are transferred to
+     */
+    function transfer(address to, uint256 amount) external returns (bool);
+
+     /**
+     * @dev Function not already implemented
+     */
+    function allowance(
+        address owner,
+        address spender
+    ) 
+    external returns (uint256) ;
+
+    /**
+     * @dev Function not already implemented
+     */
+    function approve(address spender, uint256 amount) 
+    external returns (bool);
+
+    /**
+     * @dev Transfers an amount of tokens from and account to another account
+     *
+     * @param from The address the tokens are transferred from
+     * @param to The address the tokens are transferred to
+     * @param amount The amount to transfer
+     */
+    function transferFrom(
+        address from,
+        address to,
+        uint256 amount
+    ) 
+    external returns (bool) ;
+
+
 }

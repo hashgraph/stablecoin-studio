@@ -1,12 +1,5 @@
 import '@hashgraph/hardhat-hethers'
-require('@hashgraph/sdk')
-import { BigNumber, Contract } from 'ethers'
-
-const chai = require('chai')
-const chaiAsPromised = require('chai-as-promised')
-chai.use(chaiAsPromised)
-const expect = chai.expect
-
+import { BigNumber } from 'ethers'
 import {
     deployContractsWithSDK,
     initializeClients,
@@ -17,8 +10,6 @@ import {
     getOperatorPublicKey,
     getNonOperatorClient,
     getNonOperatorAccount,
-    getNonOperatorPrivateKey,
-    getNonOperatorPublicKey,
     getNonOperatorE25519,
 } from '../scripts/deploy'
 import {
@@ -34,6 +25,10 @@ import { WIPE_ROLE } from '../scripts/constants'
 
 import { clientId } from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
+import chai from 'chai'
+import chaiAsPromised from 'chai-as-promised'
+chai.use(chaiAsPromised)
+const expect = chai.expect
 
 let proxyAddress: ContractId
 
@@ -45,7 +40,6 @@ let operatorPriKey: string
 let operatorPubKey: string
 let operatorIsE25519: boolean
 let nonOperatorIsE25519: boolean
-
 
 const TokenName = 'MIDAS'
 const TokenSymbol = 'MD'
@@ -105,18 +99,21 @@ describe('Wipe Tests', function() {
         )
 
         // Deploy Token using Client
-        const result = await deployContractsWithSDK(
-            TokenName,
-            TokenSymbol,
-            TokenDecimals,
-            INIT_SUPPLY.toString(),
-            MAX_SUPPLY.toString(),
-            TokenMemo,
-            operatorAccount,
-            operatorPriKey,
-            operatorPubKey,
-            operatorIsE25519
-        )
+        const result = await deployContractsWithSDK({
+            name: TokenName,
+            symbol: TokenSymbol,
+            decimals: TokenDecimals,
+            initialSupply: INIT_SUPPLY.toString(),
+            maxSupply: MAX_SUPPLY.toString(),
+            memo: TokenMemo,
+            account: operatorAccount,
+            privateKey: operatorPriKey,
+            publicKey: operatorPubKey,
+            isED25519Type: operatorIsE25519,
+            initialAmountDataFeed: INIT_SUPPLY.add(
+                BigNumber.from('100000')
+            ).toString(),
+        })
 
         proxyAddress = result[0]
     })

@@ -40,7 +40,8 @@
 	"sidebar": {
 		"operations": "Operations",
 		"role": "Role management",
-		"details": "Stable coin details"
+		"details": "Stable coin details",
+		"proofOfReserve": "Proof of reserve"
 	},
 	"validations": {
 		"required": "This field is required",
@@ -61,5 +62,9 @@
 		"error": "There was an error pairing the wallet.",
 		"rejected": "The pairing request has been rejected.",
 		"loading": "Loading"
+	},
+	"walletActions": {
+		"awaitingSignatureTitle": "Awaiting wallet action",
+		"loading": "Loading data"
 	}
 }

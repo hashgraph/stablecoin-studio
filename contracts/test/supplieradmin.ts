@@ -1,11 +1,5 @@
-const chai = require('chai')
-const chaiAsPromised = require('chai-as-promised')
-chai.use(chaiAsPromised)
-const expect = chai.expect
-
 import '@hashgraph/hardhat-hethers'
 import { BigNumber } from 'ethers'
-
 import {
     deployContractsWithSDK,
     initializeClients,
@@ -26,7 +20,7 @@ import {
     isUnlimitedSupplierAllowance,
     resetSupplierAllowance,
     revokeSupplierRole,
-    supplierAllowance,
+    getSupplierAllowance,
     associateToken,
     getTotalSupply,
     getBalanceOf,
@@ -34,9 +28,13 @@ import {
     hasRole,
 } from '../scripts/contractsMethods'
 import { CASHIN_ROLE } from '../scripts/constants'
-
 import { clientId } from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
+import chai from 'chai'
+import chaiAsPromised from 'chai-as-promised'
+
+chai.use(chaiAsPromised)
+const expect = chai.expect
 
 let proxyAddress: ContractId
 
@@ -57,7 +55,7 @@ const INIT_SUPPLY = BigNumber.from(0).mul(TokenFactor)
 const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor)
 const TokenMemo = 'Hedera Accelerator Stable Coin'
 
-describe('Only Admin can grant, revoke, increase, decrease and reset cashin role (limited and unlimited)', function() {
+describe('Supplier Admin Tests - (roles)', function() {
     before(async function() {
         // Generate Client 1 and Client 2
         const [
@@ -107,18 +105,21 @@ describe('Only Admin can grant, revoke, increase, decrease and reset cashin role
         )
 
         // Deploy Token using Client
-        const result = await deployContractsWithSDK(
-            TokenName,
-            TokenSymbol,
-            TokenDecimals,
-            INIT_SUPPLY.toString(),
-            MAX_SUPPLY.toString(),
-            TokenMemo,
-            operatorAccount,
-            operatorPriKey,
-            operatorPubKey,
-            operatorIsE25519
-        )
+        const result = await deployContractsWithSDK({
+            name: TokenName,
+            symbol: TokenSymbol,
+            decimals: TokenDecimals,
+            initialSupply: INIT_SUPPLY.toString(),
+            maxSupply: MAX_SUPPLY.toString(),
+            memo: TokenMemo,
+            account: operatorAccount,
+            privateKey: operatorPriKey,
+            publicKey: operatorPubKey,
+            isED25519Type: operatorIsE25519,
+            initialAmountDataFeed: INIT_SUPPLY.add(
+                BigNumber.from('150').mul(TokenFactor)
+            ).toString(),
+        })
 
         proxyAddress = result[0]
     })
@@ -135,7 +136,7 @@ describe('Only Admin can grant, revoke, increase, decrease and reset cashin role
             nonOperatorIsE25519
         )
         expect(Role).to.equals(false)
-        let result = await supplierAllowance(
+        let result = await getSupplierAllowance(
             proxyAddress,
             nonOperatorClient,
             nonOperatorAccount,
@@ -159,7 +160,7 @@ describe('Only Admin can grant, revoke, increase, decrease and reset cashin role
             nonOperatorIsE25519
         )
         expect(Role).to.equals(true)
-        result = await supplierAllowance(
+        result = await getSupplierAllowance(
             proxyAddress,
             nonOperatorClient,
             nonOperatorAccount,
@@ -183,7 +184,7 @@ describe('Only Admin can grant, revoke, increase, decrease and reset cashin role
             nonOperatorIsE25519
         )
         expect(Role).to.equals(false)
-        result = await supplierAllowance(
+        result = await getSupplierAllowance(
             proxyAddress,
             nonOperatorClient,
             nonOperatorAccount,
@@ -266,7 +267,7 @@ describe('Only Admin can grant, revoke, increase, decrease and reset cashin role
             nonOperatorAccount,
             nonOperatorIsE25519
         )
-        let result = await supplierAllowance(
+        let result = await getSupplierAllowance(
             proxyAddress,
             nonOperatorClient,
             nonOperatorAccount,
@@ -283,7 +284,7 @@ describe('Only Admin can grant, revoke, increase, decrease and reset cashin role
             nonOperatorAccount,
             nonOperatorIsE25519
         )
-        result = await supplierAllowance(
+        result = await getSupplierAllowance(
             proxyAddress,
             nonOperatorClient,
             nonOperatorAccount,
@@ -299,7 +300,7 @@ describe('Only Admin can grant, revoke, increase, decrease and reset cashin role
             nonOperatorAccount,
             nonOperatorIsE25519
         )
-        result = await supplierAllowance(
+        result = await getSupplierAllowance(
             proxyAddress,
             nonOperatorClient,
             nonOperatorAccount,
@@ -435,7 +436,7 @@ describe('Only Admin can grant, revoke, increase, decrease and reset cashin role
     })
 })
 
-describe('Grant unlimited supplier role and test its cashin right, maxsupply limit and role immutability', function() {
+describe('Supplier Admin Tests - (Unlimited)', function() {
     before(async function() {
         // Generate Client 1 and Client 2
         const [
@@ -485,18 +486,21 @@ describe('Grant unlimited supplier role and test its cashin right, maxsupply lim
         )
 
         // Deploy Token using Client
-        const result = await deployContractsWithSDK(
-            TokenName,
-            TokenSymbol,
-            TokenDecimals,
-            INIT_SUPPLY.toString(),
-            MAX_SUPPLY.toString(),
-            TokenMemo,
-            operatorAccount,
-            operatorPriKey,
-            operatorPubKey,
-            operatorIsE25519
-        )
+        const result = await deployContractsWithSDK({
+            name: TokenName,
+            symbol: TokenSymbol,
+            decimals: TokenDecimals,
+            initialSupply: INIT_SUPPLY.toString(),
+            maxSupply: MAX_SUPPLY.toString(),
+            memo: TokenMemo,
+            account: operatorAccount,
+            privateKey: operatorPriKey,
+            publicKey: operatorPubKey,
+            isED25519Type: operatorIsE25519,
+            initialAmountDataFeed: INIT_SUPPLY.add(
+                BigNumber.from('1500').mul(TokenFactor)
+            ).toString(),
+        })
 
         proxyAddress = result[0]
 
@@ -605,7 +609,7 @@ describe('Grant unlimited supplier role and test its cashin right, maxsupply lim
         await expect(
             Mint(
                 proxyAddress,
-                BigNumber.from(1),
+                BigNumber.from(1).mul(TokenFactor),
                 nonOperatorClient,
                 nonOperatorAccount,
                 nonOperatorIsE25519
@@ -614,7 +618,7 @@ describe('Grant unlimited supplier role and test its cashin right, maxsupply lim
     })
 })
 
-describe('Grant limited supplier role and test its cashin right and cashin/maxsupply limits', function() {
+describe('Supplier Admin Tests - (Limited)', function() {
     const cashInLimit = BigNumber.from(100).mul(TokenFactor)
 
     before(async function() {
@@ -666,18 +670,21 @@ describe('Grant limited supplier role and test its cashin right and cashin/maxsu
         )
 
         // Deploy Token using Client
-        const result = await deployContractsWithSDK(
-            TokenName,
-            TokenSymbol,
-            TokenDecimals,
-            INIT_SUPPLY.toString(),
-            MAX_SUPPLY.toString(),
-            TokenMemo,
-            operatorAccount,
-            operatorPriKey,
-            operatorPubKey,
-            operatorIsE25519
-        )
+        const result = await deployContractsWithSDK({
+            name: TokenName,
+            symbol: TokenSymbol,
+            decimals: TokenDecimals,
+            initialSupply: INIT_SUPPLY.toString(),
+            maxSupply: MAX_SUPPLY.toString(),
+            memo: TokenMemo,
+            account: operatorAccount,
+            privateKey: operatorPriKey,
+            publicKey: operatorPubKey,
+            isED25519Type: operatorIsE25519,
+            initialAmountDataFeed: INIT_SUPPLY.add(
+                BigNumber.from('250').mul(TokenFactor)
+            ).toString(),
+        })
 
         proxyAddress = result[0]
 
@@ -827,7 +834,7 @@ describe('Grant limited supplier role and test its cashin right and cashin/maxsu
         )
 
         // Check that supplier Allowance was not set
-        const result = await supplierAllowance(
+        const result = await getSupplierAllowance(
             proxyAddress,
             nonOperatorClient,
             nonOperatorAccount,
@@ -857,7 +864,7 @@ describe('Grant limited supplier role and test its cashin right and cashin/maxsu
         await expect(
             Mint(
                 proxyAddress,
-                BigNumber.from(1),
+                BigNumber.from(1).mul(TokenFactor),
                 nonOperatorClient,
                 nonOperatorAccount,
                 nonOperatorIsE25519

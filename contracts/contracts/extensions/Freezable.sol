@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.10;
+pragma solidity 0.8.16;
 
 import "./TokenOwner.sol";
 import "./Roles.sol";
@@ -15,14 +15,17 @@ abstract contract Freezable is IFreezable, TokenOwner, Roles {
      */
      function freeze(address account) 
         external       
-        onlyRole(_getRoleId(roleName.FREEZE))  
+        onlyRole(_getRoleId(RoleName.FREEZE))  
+        checkAddressIsNotZero(account)
+        override(IFreezable)
         returns (bool)
     {         
-        int256 responseCode = IHederaTokenService(precompileAddress).freezeToken(_getTokenAddress(), account);
-        bool success = _checkResponse(responseCode);
-        
         emit TransfersFrozen(_getTokenAddress(), account); 
 
+        int256 responseCode = IHederaTokenService(PRECOMPILED_ADDRESS).freezeToken(_getTokenAddress(), account);
+
+        bool success = _checkResponse(responseCode);
+        
         return success;
     }
 
@@ -33,14 +36,17 @@ abstract contract Freezable is IFreezable, TokenOwner, Roles {
      */
     function unfreeze(address account)
         external       
-        onlyRole(_getRoleId(roleName.FREEZE))  
+        onlyRole(_getRoleId(RoleName.FREEZE))  
+        checkAddressIsNotZero(account)
+        override(IFreezable)
         returns (bool)
     {         
-        int256 responseCode = IHederaTokenService(precompileAddress).unfreezeToken(_getTokenAddress(), account);
-        bool success = _checkResponse(responseCode);
-        
         emit TransfersUnfrozen(_getTokenAddress(), account);  
 
+        int256 responseCode = IHederaTokenService(PRECOMPILED_ADDRESS).unfreezeToken(_getTokenAddress(), account);
+        
+        bool success = _checkResponse(responseCode);
+        
         return success;
     }
 }

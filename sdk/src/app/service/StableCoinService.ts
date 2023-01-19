@@ -56,7 +56,7 @@ export default class StableCoinService extends Service {
 			await this.queryBus.execute(new GetStableCoinQuery(tokenId))
 		).coin;
 		const { name, decimals, symbol } = viewModel;
-		if (!name || !decimals || !symbol)
+		if (!name || decimals === undefined || !symbol)
 			throw new StableCoinNotFound(tokenId);
 		return new StableCoin({ ...viewModel, name, decimals, symbol });
 	}
@@ -192,7 +192,9 @@ export default class StableCoinService extends Service {
 				listCapabilities.push(
 					new Capability(Operation.ROLE_ADMIN_MANAGEMENT, Access.CONTRACT),
 				);
-
+				listCapabilities.push(
+					new Capability(Operation.RESERVE_MANAGEMENT, Access.CONTRACT),
+				);
 			}
 			
 	

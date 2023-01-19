@@ -30,6 +30,7 @@ import {
 import type { RequestPublicKey } from 'hedera-stable-coin-sdk';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch } from '../../store/store';
+import ProofOfReserve from './ProofOfReserve';
 
 const StableCoinCreation = () => {
 	const navigate = useNavigate();
@@ -61,6 +62,7 @@ const StableCoinCreation = () => {
 			decimals: 6,
 			hederaERC20: HederaERC20AddressTestnet,
 			stableCoinFactory: FactoryAddressTestnet,
+			createReserve: false,
 		}),
 	);
 
@@ -95,6 +97,11 @@ const StableCoinCreation = () => {
 		},
 		{
 			number: '04',
+			title: t('tabs.proofOfReserve'),
+			children: <ProofOfReserve control={control} request={request} form={form} />,
+		},
+		{
+			number: '05',
 			title: t('tabs.review'),
 			children: <Review form={form} />,
 		},
@@ -137,6 +144,23 @@ const StableCoinCreation = () => {
 			}
 		}
 
+		if (currentStep === 3) {
+			// @ts-ignore
+			const proofOfReserve = watch('proofOfReserve');
+			// @ts-ignore
+			const hasDataFeed = watch('hasDataFeed');
+			if (proofOfReserve) {
+				const keys: string[] = [];
+				if (hasDataFeed) {
+					keys.push('reserveAddress');
+				} else {
+					keys.push('reserveInitialAmount');
+				}
+				// @ts-ignore
+				fieldsStep = watch(keys);
+			}
+		}
+
 		return setIsValidForm(
 			fieldsStep?.filter((item) => !item && item !== 0).length === 0 &&
 				Object.keys(errors).length === 0,
@@ -164,10 +188,28 @@ const StableCoinCreation = () => {
 	};
 
 	const handleFinish = async () => {
-		const { autorenewAccount, managementPermissions, freezeKey, wipeKey, pauseKey, supplyKey } =
-			getValues();
+		const {
+			autorenewAccount,
+			managementPermissions,
+			freezeKey,
+			wipeKey,
+			pauseKey,
+			supplyKey,
+			reserveInitialAmount,
+			reserveAddress,
+		} = getValues();
 
 		request.autoRenewAccount = autorenewAccount;
+
+		if (!reserveInitialAmount) {
+			request.createReserve = false;
+			request.reserveAddress = reserveAddress;
+		} else {
+			request.createReserve = true;
+			request.reserveInitialAmount = reserveInitialAmount;
+			request.reserveAddress = undefined;
+		}
+
 		if (managementPermissions) {
 			request.adminKey = Account.NullPublicKey; // accountInfo.publicKey;
 			request.freezeKey = Account.NullPublicKey;
@@ -186,8 +228,8 @@ const StableCoinCreation = () => {
 					? accountInfo.id
 					: undefined;
 		}
+		// alert(request.dataFeedAddress)
 		try {
-			console.log(request);
 			onOpen();
 			setLoading(true);
 			await SDKService.createStableCoin(request);
@@ -196,7 +238,7 @@ const StableCoinCreation = () => {
 		} catch (error: any) {
 			setLoading(false);
 			console.log(error);
-			setError(error.transactionError.transactionUrl);
+			setError(error?.transactionError?.transactionUrl);
 			setSuccess(false);
 			setLoading(false);
 		}

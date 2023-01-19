@@ -7,7 +7,7 @@
     "build:sdk": "cd sdk && npm run build",
     "build:cli": "cd cli && npm run build",
     "build:cli:full": "npm run build:contracts && npm run build:hashconnect &&  npm run build:sdk && npm run build:cli",
-    "build:contracts": "cd contracts && npm run build",
+    "build:contracts": "cd contracts && npm run compile:force",
     "build:web": "cd web && npm run build",
     "build:hashconnect": "cd hashconnect/lib && npm run build",
     "setup": "npm run install",
@@ -27,6 +27,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@chainlink/contracts": "^0.5.1",
     "concurrently": "^7.4.0",
     "ethers": "^5.7.2",
     "rimraf": "^3.0.2"

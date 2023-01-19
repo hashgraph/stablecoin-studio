@@ -19,4 +19,5 @@ export enum NamedRoutes {
 	DangerZone = 'dangerZone',
 	Freeze = 'freeze',
 	Unfreeze = 'unfreeze',
+	ProofOfReserve = 'proofOfReserve',
 }

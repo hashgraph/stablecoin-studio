@@ -1,6 +1,6 @@
 {
   "common": {
-    "nextStep" : "Next step",
+    "" : "Next step",
     "goBack" : "Go back",
     "createStableCoin": "Create stable coin",
     "createNewStableCoin": "Create new stable coin",
@@ -11,6 +11,7 @@
     "optionalDetails": "Optional details",
     "managementPermissions": "Manage permissions",
     "supplierKey": "Supplier key",
+    "proofOfReserve" : "Proof Of Reserve",
     "review": "Review"
   },
   "basicDetails": {
@@ -50,6 +51,21 @@
     "totalSupply": "Total supply",
     "treasuryAccountAddress": "Treasury account address",
     "wipe": "Wipe"
+  },
+  "proofOfReserve": {
+    "title": "Proof of Reserve",
+    "description": "Would you like that your stable coin collateralization with any on-chain asset?",
+    "haveDataFeed": "Do you have an existing data feed? (You will need the contract address)",
+    "dataFeed": "Data Feed",
+    "dataFeedPlaceholder": "Address for data feed contract",
+    "hasPor": "Has proof of reserve",
+    "notHasPor": "Not proof of reserve",
+    "createDataFeed": "Create data feed",
+    "initialSupply" : "Initial supply",
+    "addressPor" : "Adrress proof of reserve  ",
+    "initialSupplyPor":"Initial supply POR",
+    "initialSupplyPorExternal":"External POR"
+
   },
   "review": {
     "basicDetails": "Basic details",

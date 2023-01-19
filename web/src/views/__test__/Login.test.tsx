@@ -2,6 +2,7 @@ import { render } from '../../test/index';
 import Login from '../Login';
 import configureMockStore from 'redux-mock-store';
 import translations from '../../translations/en/global.json';
+import { mockedFoundWallets } from '../../mocks/sdk.js';
 
 const mockStore = configureMockStore();
 
@@ -25,6 +26,7 @@ describe(`<${Login.name} />`, () => {
 		const store = mockStore({
 			wallet: {
 				hasWalletExtension: false,
+				foundWallets: mockedFoundWallets,
 			},
 		});
 
@@ -38,10 +40,11 @@ describe(`<${Login.name} />`, () => {
 		const store = mockStore({
 			wallet: {
 				hasWalletExtension: true,
+				foundWallets: mockedFoundWallets,
 			},
 		});
 
-		const component = render(<Login />, store);
+		const component = render(<Login />,store);
 		const title = component.getByTestId('modal-hashpack-title');
 
 		expect(title).toHaveTextContent(translations['hashpack-no-connected'].title);

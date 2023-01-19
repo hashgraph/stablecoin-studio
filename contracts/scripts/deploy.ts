@@ -6,12 +6,16 @@ import {
     ContractFunctionParameters,
     Client,
 } from '@hashgraph/sdk'
+import { BigNumber } from 'ethers'
 
 import {
     StableCoinFactory__factory,
     StableCoinFactoryProxyAdmin__factory,
     StableCoinFactoryProxy__factory,
     HederaERC20__factory,
+    HederaReserveProxyAdmin__factory,
+    HederaReserve__factory,
+    HederaReserveProxy__factory,
 } from '../typechain-types'
 
 import {
@@ -22,13 +26,14 @@ import {
 } from './utils'
 
 const hre = require('hardhat')
-const hederaERC20Address = '' //"0.0.49127272";
 
-const factoryProxyAddress = '' //"0.0.49127286";
-const factoryProxyAdminAddress = '' //"0.0.49127281";
-const factoryAddress = '' //"0.0.49127276";
+const hederaERC20Address = '0.0.49318811'
 
-const address_0 = '0x0000000000000000000000000000000000000000'
+const factoryProxyAddress = '0.0.49318817'
+const factoryProxyAdminAddress = '0.0.49318815'
+const factoryAddress = '0.0.49318813' 
+
+export const ADDRESS_0 = '0x0000000000000000000000000000000000000000'
 const hreConfig = hre.network.config
 
 export function initializeClients(): [
@@ -230,21 +235,40 @@ export async function deployFactory(
 
     return [factoryProxy, factoryProxyAdmin, factory]
 }
-
-export async function deployContractsWithSDK(
-    name: string,
-    symbol: string,
+export type DeployParameters = {
+    name: string
+    symbol: string
+    decimals: number
+    initialSupply: string
+    maxSupply: string | null
+    memo: string
+    account: string
+    privateKey: string
+    publicKey: string
+    isED25519Type: boolean
+    freeze?: boolean
+    allToContract?: boolean
+    reserveAddress?: string
+    initialAmountDataFeed?: string
+    createReserve?: boolean
+}
+export async function deployContractsWithSDK({
+    name,
+    symbol,
     decimals = 6,
-    initialSupply: string,
-    maxSupply: string | null,
-    memo: string,
-    account: string,
-    privateKey: string,
-    publicKey: string,
-    isED25519Type: boolean,
+    initialSupply,
+    maxSupply,
+    memo,
+    account,
+    privateKey,
+    publicKey,
+    isED25519Type,
     freeze = false,
-    allToContract = true
-): Promise<ContractId[]> {
+    allToContract = true,
+    reserveAddress = ADDRESS_0,
+    initialAmountDataFeed = initialSupply,
+    createReserve = true
+}: DeployParameters): Promise<ContractId[]> {
     const AccountEvmAddress = await toEvmAddress(account, isED25519Type)
 
     console.log(
@@ -296,7 +320,10 @@ export async function deployContractsWithSDK(
         tokenInitialSupply: initialSupply,
         tokenDecimals: decimals,
         autoRenewAccountAddress: AccountEvmAddress,
-        treasuryAddress: address_0,
+        treasuryAddress: ADDRESS_0,
+        reserveAddress,
+        reserveInitialAmount: initialAmountDataFeed,
+        createReserve,
         keys: allToContract
             ? tokenKeystoContract()
             : tokenKeystoKey(publicKey, isED25519Type),
@@ -309,17 +336,19 @@ export async function deployContractsWithSDK(
         hederaERC20.toSolidityAddress(),
     ]
 
-    console.log(`deploying stableCoin... please wait.`)
+    console.log(`Deploying stableCoin... please wait.`)
 
-    const proxyContract = await contractCall(
-        f_proxyAddress,
-        'deployStableCoin',
-        parametersContractCall,
-        clientSdk,
-        15000000,
-        StableCoinFactory__factory.abi,
-        35
-    )
+    const proxyContract: string[] = (
+        await contractCall(
+            f_proxyAddress,
+            'deployStableCoin',
+            parametersContractCall,
+            clientSdk,
+            15000000,
+            StableCoinFactory__factory.abi,
+            35
+        )
+    )[0]
 
     console.log(
         `Proxy created: ${proxyContract[0]} , ${ContractId.fromSolidityAddress(
@@ -350,7 +379,17 @@ export async function deployContractsWithSDK(
     console.log(
         `Factory Implementation: ${f_address.toSolidityAddress()}, ${f_address}`
     )
+    console.log(
+        `HederaReserveProxy created: ${
+            proxyContract[4]
+        }, ${ContractId.fromSolidityAddress(proxyContract[4]).toString()}`
+    )
 
+    console.log(
+        `HederaReserveProxyAdmin created: ${
+            proxyContract[5]
+        }, ${ContractId.fromSolidityAddress(proxyContract[5]).toString()}`
+    )
     return [
         ContractId.fromSolidityAddress(proxyContract[0]),
         ContractId.fromSolidityAddress(proxyContract[1]),
@@ -358,6 +397,8 @@ export async function deployContractsWithSDK(
         f_proxyAddress,
         f_proxyAdminAddress,
         f_address,
+        ContractId.fromSolidityAddress(proxyContract[4]),
+        ContractId.fromSolidityAddress(proxyContract[5]),
     ]
 }
 
@@ -424,4 +465,50 @@ function tokenKeystoKey(publicKey: string, isED25519: boolean) {
     ]
 
     return keys
+}
+
+export async function deployHederaReserve(
+    initialAmountDataFeed: BigNumber,
+    account: string,
+    isED25519: boolean,
+    clientOperator: Client,
+    privateKeyOperatorEd25519: string
+): Promise<ContractId[]> {
+    console.log(`Deploying HederaReserve logic. please wait...`)
+    const hederaReserveProxyAdmin = await deployContractSDK(
+        HederaReserveProxyAdmin__factory,
+        privateKeyOperatorEd25519,
+        clientOperator
+    )
+
+    const hederaReserve = await deployContractSDK(
+        HederaReserve__factory,
+        privateKeyOperatorEd25519,
+        clientOperator
+    )
+
+    const params = new ContractFunctionParameters()
+        .addAddress(hederaReserve.toSolidityAddress())
+        .addAddress(hederaReserveProxyAdmin.toSolidityAddress())
+        .addBytes(new Uint8Array([]))
+
+    const hederaReserveProxy = await deployContractSDK(
+        HederaReserveProxy__factory,
+        privateKeyOperatorEd25519,
+        clientOperator,
+        params
+    )
+
+    const AccountEvmAddress = await toEvmAddress(account, isED25519)
+
+    contractCall(
+        hederaReserveProxy,
+        'initialize',
+        [initialAmountDataFeed.toString(), AccountEvmAddress],
+        clientOperator,
+        130000,
+        HederaReserve__factory.abi
+    )
+
+    return [hederaReserveProxy, hederaReserveProxyAdmin, hederaReserve]
 }

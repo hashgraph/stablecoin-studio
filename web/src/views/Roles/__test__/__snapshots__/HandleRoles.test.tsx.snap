@@ -6,7 +6,7 @@ exports[`<HandleRoles /> should render correctly on all actions: edit 1`] = `
     class="chakra-stack css-16oka5y"
   >
     <h2
-      class="chakra-heading css-llrpa2"
+      class="chakra-heading css-bqsusc"
       data-testid="base-container-heading"
     >
       Role management
@@ -25,7 +25,7 @@ exports[`<HandleRoles /> should render correctly on all actions: edit 1`] = `
             class="chakra-stack css-135a0es"
           >
             <h2
-              class="chakra-heading css-uig24d"
+              class="chakra-heading css-1ouevxk"
               data-testid="title"
             >
               edit.title
@@ -62,7 +62,7 @@ exports[`<HandleRoles /> should render correctly on all actions: edit 1`] = `
                     </div>
                   </label>
                   <div
-                    class="chakra-input__group css-4302v8"
+                    class="chakra-input__group css-bx0blc"
                   >
                     <input
                       autocomplete="off"
@@ -204,7 +204,7 @@ exports[`<HandleRoles /> should render correctly on all actions: edit 1`] = `
               class="chakra-stack css-wqnj46"
             >
               <h2
-                class="chakra-heading css-m8uvwu"
+                class="chakra-heading css-1udj1g5"
                 data-testid="details-title"
               >
                 Stable coin details
@@ -213,7 +213,7 @@ exports[`<HandleRoles /> should render correctly on all actions: edit 1`] = `
                 class="css-13brihr"
               >
                 <p
-                  class="chakra-text css-53sllx"
+                  class="chakra-text css-1osh15g"
                   data-testid="details-review-title"
                 >
                   Basic details
@@ -229,7 +229,7 @@ exports[`<HandleRoles /> should render correctly on all actions: edit 1`] = `
                       data-testid="details-review-detail-0"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Name
                       </p>
@@ -239,7 +239,7 @@ exports[`<HandleRoles /> should render correctly on all actions: edit 1`] = `
                         <p
                           class="chakra-text css-mgupmj"
                         >
-                          ManuCoin2
+                          TEST_ACCELERATOR_SC
                         </p>
                       </div>
                     </div>
@@ -257,7 +257,7 @@ exports[`<HandleRoles /> should render correctly on all actions: edit 1`] = `
                       data-testid="details-review-detail-1"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Symbol
                       </p>
@@ -267,7 +267,7 @@ exports[`<HandleRoles /> should render correctly on all actions: edit 1`] = `
                         <p
                           class="chakra-text css-mgupmj"
                         >
-                          MCC2
+                          TEST
                         </p>
                       </div>
                     </div>
@@ -285,7 +285,7 @@ exports[`<HandleRoles /> should render correctly on all actions: edit 1`] = `
                       data-testid="details-review-detail-2"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Decimals
                       </p>
@@ -295,7 +295,7 @@ exports[`<HandleRoles /> should render correctly on all actions: edit 1`] = `
                         <p
                           class="chakra-text css-mgupmj"
                         >
-                          3
+                          6
                         </p>
                       </div>
                     </div>
@@ -306,7 +306,7 @@ exports[`<HandleRoles /> should render correctly on all actions: edit 1`] = `
                 class="css-13brihr"
               >
                 <p
-                  class="chakra-text css-53sllx"
+                  class="chakra-text css-1osh15g"
                   data-testid="details-review-title"
                 >
                   Optional details
@@ -322,19 +322,11 @@ exports[`<HandleRoles /> should render correctly on all actions: edit 1`] = `
                       data-testid="details-review-detail-0"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Initial supply
                       </p>
-                      <div
-                        class="chakra-stack css-1c8ysgd"
-                      >
-                        <p
-                          class="chakra-text css-mgupmj"
-                        >
-                          0
-                        </p>
-                      </div>
+                      1000
                     </div>
                     <hr
                       aria-orientation="horizontal"
@@ -350,19 +342,11 @@ exports[`<HandleRoles /> should render correctly on all actions: edit 1`] = `
                       data-testid="details-review-detail-1"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Total supply
                       </p>
-                      <div
-                        class="chakra-stack css-1c8ysgd"
-                      >
-                        <p
-                          class="chakra-text css-mgupmj"
-                        >
-                          100000
-                        </p>
-                      </div>
+                      1000
                     </div>
                     <hr
                       aria-orientation="horizontal"
@@ -378,19 +362,11 @@ exports[`<HandleRoles /> should render correctly on all actions: edit 1`] = `
                       data-testid="details-review-detail-2"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Max supply
                       </p>
-                      <div
-                        class="chakra-stack css-1c8ysgd"
-                      >
-                        <p
-                          class="chakra-text css-mgupmj"
-                        >
-                          0
-                        </p>
-                      </div>
+                      1000
                     </div>
                     <hr
                       aria-orientation="horizontal"
@@ -406,7 +382,7 @@ exports[`<HandleRoles /> should render correctly on all actions: edit 1`] = `
                       data-testid="details-review-detail-3"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Supply type
                       </p>
@@ -433,14 +409,14 @@ exports[`<HandleRoles /> should render correctly on all actions: edit 1`] = `
             class="chakra-stack css-1amf41o"
           >
             <button
-              class="chakra-button css-1nrhi9n"
+              class="chakra-button css-1urzhdw"
               data-testid="cancel-btn"
               type="button"
             >
               Go back
             </button>
             <button
-              class="chakra-button css-1178n6s"
+              class="chakra-button css-qvkb6r"
               data-testid="confirm-btn"
               disabled=""
               type="button"
@@ -465,7 +441,7 @@ exports[`<HandleRoles /> should render correctly on all actions: give 1`] = `
     class="chakra-stack css-16oka5y"
   >
     <h2
-      class="chakra-heading css-llrpa2"
+      class="chakra-heading css-bqsusc"
       data-testid="base-container-heading"
     >
       Role management
@@ -484,7 +460,7 @@ exports[`<HandleRoles /> should render correctly on all actions: give 1`] = `
             class="chakra-stack css-135a0es"
           >
             <h2
-              class="chakra-heading css-uig24d"
+              class="chakra-heading css-1ouevxk"
               data-testid="title"
             >
               give.title
@@ -501,8 +477,8 @@ exports[`<HandleRoles /> should render correctly on all actions: give 1`] = `
                 >
                   <label
                     class="chakra-form__label css-1hfoxt1"
-                    for="field-:rb:"
-                    id="field-:rb:-label"
+                    for="field-:rd:"
+                    id="field-:rd:-label"
                   >
                     <div
                       class="chakra-stack css-84zodg"
@@ -521,13 +497,13 @@ exports[`<HandleRoles /> should render correctly on all actions: give 1`] = `
                     </div>
                   </label>
                   <div
-                    class="chakra-input__group css-4302v8"
+                    class="chakra-input__group css-bx0blc"
                   >
                     <input
                       autocomplete="off"
                       class="chakra-input css-l1kxkf"
                       data-testid="account"
-                      id="field-:rb:"
+                      id="field-:rd:"
                       name="account"
                       placeholder="give.accountPlaceholder"
                       value=""
@@ -545,8 +521,8 @@ exports[`<HandleRoles /> should render correctly on all actions: give 1`] = `
                 >
                   <label
                     class="chakra-form__label css-1hfoxt1"
-                    for="field-:rc:"
-                    id="field-:rc:-label"
+                    for="field-:re:"
+                    id="field-:re:-label"
                   >
                     <div
                       class="chakra-stack css-84zodg"
@@ -605,7 +581,7 @@ exports[`<HandleRoles /> should render correctly on all actions: give 1`] = `
                             autocomplete="off"
                             autocorrect="off"
                             class=" css-146k1ar-input"
-                            id="field-:rc:"
+                            id="field-:re:"
                             role="combobox"
                             spellcheck="false"
                             tabindex="0"
@@ -663,7 +639,7 @@ exports[`<HandleRoles /> should render correctly on all actions: give 1`] = `
               class="chakra-stack css-wqnj46"
             >
               <h2
-                class="chakra-heading css-m8uvwu"
+                class="chakra-heading css-1udj1g5"
                 data-testid="details-title"
               >
                 Stable coin details
@@ -672,7 +648,7 @@ exports[`<HandleRoles /> should render correctly on all actions: give 1`] = `
                 class="css-13brihr"
               >
                 <p
-                  class="chakra-text css-53sllx"
+                  class="chakra-text css-1osh15g"
                   data-testid="details-review-title"
                 >
                   Basic details
@@ -688,7 +664,7 @@ exports[`<HandleRoles /> should render correctly on all actions: give 1`] = `
                       data-testid="details-review-detail-0"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Name
                       </p>
@@ -698,7 +674,7 @@ exports[`<HandleRoles /> should render correctly on all actions: give 1`] = `
                         <p
                           class="chakra-text css-mgupmj"
                         >
-                          ManuCoin2
+                          TEST_ACCELERATOR_SC
                         </p>
                       </div>
                     </div>
@@ -716,7 +692,7 @@ exports[`<HandleRoles /> should render correctly on all actions: give 1`] = `
                       data-testid="details-review-detail-1"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Symbol
                       </p>
@@ -726,7 +702,7 @@ exports[`<HandleRoles /> should render correctly on all actions: give 1`] = `
                         <p
                           class="chakra-text css-mgupmj"
                         >
-                          MCC2
+                          TEST
                         </p>
                       </div>
                     </div>
@@ -744,7 +720,7 @@ exports[`<HandleRoles /> should render correctly on all actions: give 1`] = `
                       data-testid="details-review-detail-2"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Decimals
                       </p>
@@ -754,7 +730,7 @@ exports[`<HandleRoles /> should render correctly on all actions: give 1`] = `
                         <p
                           class="chakra-text css-mgupmj"
                         >
-                          3
+                          6
                         </p>
                       </div>
                     </div>
@@ -765,7 +741,7 @@ exports[`<HandleRoles /> should render correctly on all actions: give 1`] = `
                 class="css-13brihr"
               >
                 <p
-                  class="chakra-text css-53sllx"
+                  class="chakra-text css-1osh15g"
                   data-testid="details-review-title"
                 >
                   Optional details
@@ -781,19 +757,11 @@ exports[`<HandleRoles /> should render correctly on all actions: give 1`] = `
                       data-testid="details-review-detail-0"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Initial supply
                       </p>
-                      <div
-                        class="chakra-stack css-1c8ysgd"
-                      >
-                        <p
-                          class="chakra-text css-mgupmj"
-                        >
-                          0
-                        </p>
-                      </div>
+                      1000
                     </div>
                     <hr
                       aria-orientation="horizontal"
@@ -809,19 +777,11 @@ exports[`<HandleRoles /> should render correctly on all actions: give 1`] = `
                       data-testid="details-review-detail-1"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Total supply
                       </p>
-                      <div
-                        class="chakra-stack css-1c8ysgd"
-                      >
-                        <p
-                          class="chakra-text css-mgupmj"
-                        >
-                          100000
-                        </p>
-                      </div>
+                      1000
                     </div>
                     <hr
                       aria-orientation="horizontal"
@@ -837,19 +797,11 @@ exports[`<HandleRoles /> should render correctly on all actions: give 1`] = `
                       data-testid="details-review-detail-2"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Max supply
                       </p>
-                      <div
-                        class="chakra-stack css-1c8ysgd"
-                      >
-                        <p
-                          class="chakra-text css-mgupmj"
-                        >
-                          0
-                        </p>
-                      </div>
+                      1000
                     </div>
                     <hr
                       aria-orientation="horizontal"
@@ -865,7 +817,7 @@ exports[`<HandleRoles /> should render correctly on all actions: give 1`] = `
                       data-testid="details-review-detail-3"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Supply type
                       </p>
@@ -892,14 +844,14 @@ exports[`<HandleRoles /> should render correctly on all actions: give 1`] = `
             class="chakra-stack css-1amf41o"
           >
             <button
-              class="chakra-button css-1nrhi9n"
+              class="chakra-button css-1urzhdw"
               data-testid="cancel-btn"
               type="button"
             >
               Go back
             </button>
             <button
-              class="chakra-button css-1178n6s"
+              class="chakra-button css-qvkb6r"
               data-testid="confirm-btn"
               disabled=""
               type="button"
@@ -924,7 +876,7 @@ exports[`<HandleRoles /> should render correctly on all actions: refresh 1`] = `
     class="chakra-stack css-16oka5y"
   >
     <h2
-      class="chakra-heading css-llrpa2"
+      class="chakra-heading css-bqsusc"
       data-testid="base-container-heading"
     >
       Role management
@@ -943,7 +895,7 @@ exports[`<HandleRoles /> should render correctly on all actions: refresh 1`] = `
             class="chakra-stack css-135a0es"
           >
             <h2
-              class="chakra-heading css-uig24d"
+              class="chakra-heading css-1ouevxk"
               data-testid="title"
             >
               refresh.title
@@ -960,8 +912,8 @@ exports[`<HandleRoles /> should render correctly on all actions: refresh 1`] = `
                 >
                   <label
                     class="chakra-form__label css-1hfoxt1"
-                    for="field-:rv:"
-                    id="field-:rv:-label"
+                    for="field-:r15:"
+                    id="field-:r15:-label"
                   >
                     <div
                       class="chakra-stack css-84zodg"
@@ -980,13 +932,13 @@ exports[`<HandleRoles /> should render correctly on all actions: refresh 1`] = `
                     </div>
                   </label>
                   <div
-                    class="chakra-input__group css-4302v8"
+                    class="chakra-input__group css-bx0blc"
                   >
                     <input
                       autocomplete="off"
                       class="chakra-input css-l1kxkf"
                       data-testid="account"
-                      id="field-:rv:"
+                      id="field-:r15:"
                       name="account"
                       placeholder="refresh.accountPlaceholder"
                       value=""
@@ -1004,8 +956,8 @@ exports[`<HandleRoles /> should render correctly on all actions: refresh 1`] = `
                 >
                   <label
                     class="chakra-form__label css-1hfoxt1"
-                    for="field-:r10:"
-                    id="field-:r10:-label"
+                    for="field-:r16:"
+                    id="field-:r16:-label"
                   >
                     <div
                       class="chakra-stack css-84zodg"
@@ -1064,7 +1016,7 @@ exports[`<HandleRoles /> should render correctly on all actions: refresh 1`] = `
                             autocomplete="off"
                             autocorrect="off"
                             class=" css-146k1ar-input"
-                            id="field-:r10:"
+                            id="field-:r16:"
                             role="combobox"
                             spellcheck="false"
                             tabindex="0"
@@ -1122,7 +1074,7 @@ exports[`<HandleRoles /> should render correctly on all actions: refresh 1`] = `
               class="chakra-stack css-wqnj46"
             >
               <h2
-                class="chakra-heading css-m8uvwu"
+                class="chakra-heading css-1udj1g5"
                 data-testid="details-title"
               >
                 Stable coin details
@@ -1131,7 +1083,7 @@ exports[`<HandleRoles /> should render correctly on all actions: refresh 1`] = `
                 class="css-13brihr"
               >
                 <p
-                  class="chakra-text css-53sllx"
+                  class="chakra-text css-1osh15g"
                   data-testid="details-review-title"
                 >
                   Basic details
@@ -1147,7 +1099,7 @@ exports[`<HandleRoles /> should render correctly on all actions: refresh 1`] = `
                       data-testid="details-review-detail-0"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Name
                       </p>
@@ -1157,7 +1109,7 @@ exports[`<HandleRoles /> should render correctly on all actions: refresh 1`] = `
                         <p
                           class="chakra-text css-mgupmj"
                         >
-                          ManuCoin2
+                          TEST_ACCELERATOR_SC
                         </p>
                       </div>
                     </div>
@@ -1175,7 +1127,7 @@ exports[`<HandleRoles /> should render correctly on all actions: refresh 1`] = `
                       data-testid="details-review-detail-1"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Symbol
                       </p>
@@ -1185,7 +1137,7 @@ exports[`<HandleRoles /> should render correctly on all actions: refresh 1`] = `
                         <p
                           class="chakra-text css-mgupmj"
                         >
-                          MCC2
+                          TEST
                         </p>
                       </div>
                     </div>
@@ -1203,7 +1155,7 @@ exports[`<HandleRoles /> should render correctly on all actions: refresh 1`] = `
                       data-testid="details-review-detail-2"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Decimals
                       </p>
@@ -1213,7 +1165,7 @@ exports[`<HandleRoles /> should render correctly on all actions: refresh 1`] = `
                         <p
                           class="chakra-text css-mgupmj"
                         >
-                          3
+                          6
                         </p>
                       </div>
                     </div>
@@ -1224,7 +1176,7 @@ exports[`<HandleRoles /> should render correctly on all actions: refresh 1`] = `
                 class="css-13brihr"
               >
                 <p
-                  class="chakra-text css-53sllx"
+                  class="chakra-text css-1osh15g"
                   data-testid="details-review-title"
                 >
                   Optional details
@@ -1240,19 +1192,11 @@ exports[`<HandleRoles /> should render correctly on all actions: refresh 1`] = `
                       data-testid="details-review-detail-0"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Initial supply
                       </p>
-                      <div
-                        class="chakra-stack css-1c8ysgd"
-                      >
-                        <p
-                          class="chakra-text css-mgupmj"
-                        >
-                          0
-                        </p>
-                      </div>
+                      1000
                     </div>
                     <hr
                       aria-orientation="horizontal"
@@ -1268,19 +1212,11 @@ exports[`<HandleRoles /> should render correctly on all actions: refresh 1`] = `
                       data-testid="details-review-detail-1"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Total supply
                       </p>
-                      <div
-                        class="chakra-stack css-1c8ysgd"
-                      >
-                        <p
-                          class="chakra-text css-mgupmj"
-                        >
-                          100000
-                        </p>
-                      </div>
+                      1000
                     </div>
                     <hr
                       aria-orientation="horizontal"
@@ -1296,19 +1232,11 @@ exports[`<HandleRoles /> should render correctly on all actions: refresh 1`] = `
                       data-testid="details-review-detail-2"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Max supply
                       </p>
-                      <div
-                        class="chakra-stack css-1c8ysgd"
-                      >
-                        <p
-                          class="chakra-text css-mgupmj"
-                        >
-                          0
-                        </p>
-                      </div>
+                      1000
                     </div>
                     <hr
                       aria-orientation="horizontal"
@@ -1324,7 +1252,7 @@ exports[`<HandleRoles /> should render correctly on all actions: refresh 1`] = `
                       data-testid="details-review-detail-3"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Supply type
                       </p>
@@ -1351,14 +1279,14 @@ exports[`<HandleRoles /> should render correctly on all actions: refresh 1`] = `
             class="chakra-stack css-1amf41o"
           >
             <button
-              class="chakra-button css-1nrhi9n"
+              class="chakra-button css-1urzhdw"
               data-testid="cancel-btn"
               type="button"
             >
               Go back
             </button>
             <button
-              class="chakra-button css-1178n6s"
+              class="chakra-button css-qvkb6r"
               data-testid="confirm-btn"
               disabled=""
               type="button"
@@ -1383,7 +1311,7 @@ exports[`<HandleRoles /> should render correctly on all actions: revoke 1`] = `
     class="chakra-stack css-16oka5y"
   >
     <h2
-      class="chakra-heading css-llrpa2"
+      class="chakra-heading css-bqsusc"
       data-testid="base-container-heading"
     >
       Role management
@@ -1402,7 +1330,7 @@ exports[`<HandleRoles /> should render correctly on all actions: revoke 1`] = `
             class="chakra-stack css-135a0es"
           >
             <h2
-              class="chakra-heading css-uig24d"
+              class="chakra-heading css-1ouevxk"
               data-testid="title"
             >
               revoke.title
@@ -1419,8 +1347,8 @@ exports[`<HandleRoles /> should render correctly on all actions: revoke 1`] = `
                 >
                   <label
                     class="chakra-form__label css-1hfoxt1"
-                    for="field-:rl:"
-                    id="field-:rl:-label"
+                    for="field-:rp:"
+                    id="field-:rp:-label"
                   >
                     <div
                       class="chakra-stack css-84zodg"
@@ -1439,13 +1367,13 @@ exports[`<HandleRoles /> should render correctly on all actions: revoke 1`] = `
                     </div>
                   </label>
                   <div
-                    class="chakra-input__group css-4302v8"
+                    class="chakra-input__group css-bx0blc"
                   >
                     <input
                       autocomplete="off"
                       class="chakra-input css-l1kxkf"
                       data-testid="account"
-                      id="field-:rl:"
+                      id="field-:rp:"
                       name="account"
                       placeholder="revoke.accountPlaceholder"
                       value=""
@@ -1463,8 +1391,8 @@ exports[`<HandleRoles /> should render correctly on all actions: revoke 1`] = `
                 >
                   <label
                     class="chakra-form__label css-1hfoxt1"
-                    for="field-:rm:"
-                    id="field-:rm:-label"
+                    for="field-:rq:"
+                    id="field-:rq:-label"
                   >
                     <div
                       class="chakra-stack css-84zodg"
@@ -1523,7 +1451,7 @@ exports[`<HandleRoles /> should render correctly on all actions: revoke 1`] = `
                             autocomplete="off"
                             autocorrect="off"
                             class=" css-146k1ar-input"
-                            id="field-:rm:"
+                            id="field-:rq:"
                             role="combobox"
                             spellcheck="false"
                             tabindex="0"
@@ -1581,7 +1509,7 @@ exports[`<HandleRoles /> should render correctly on all actions: revoke 1`] = `
               class="chakra-stack css-wqnj46"
             >
               <h2
-                class="chakra-heading css-m8uvwu"
+                class="chakra-heading css-1udj1g5"
                 data-testid="details-title"
               >
                 Stable coin details
@@ -1590,7 +1518,7 @@ exports[`<HandleRoles /> should render correctly on all actions: revoke 1`] = `
                 class="css-13brihr"
               >
                 <p
-                  class="chakra-text css-53sllx"
+                  class="chakra-text css-1osh15g"
                   data-testid="details-review-title"
                 >
                   Basic details
@@ -1606,7 +1534,7 @@ exports[`<HandleRoles /> should render correctly on all actions: revoke 1`] = `
                       data-testid="details-review-detail-0"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Name
                       </p>
@@ -1616,7 +1544,7 @@ exports[`<HandleRoles /> should render correctly on all actions: revoke 1`] = `
                         <p
                           class="chakra-text css-mgupmj"
                         >
-                          ManuCoin2
+                          TEST_ACCELERATOR_SC
                         </p>
                       </div>
                     </div>
@@ -1634,7 +1562,7 @@ exports[`<HandleRoles /> should render correctly on all actions: revoke 1`] = `
                       data-testid="details-review-detail-1"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Symbol
                       </p>
@@ -1644,7 +1572,7 @@ exports[`<HandleRoles /> should render correctly on all actions: revoke 1`] = `
                         <p
                           class="chakra-text css-mgupmj"
                         >
-                          MCC2
+                          TEST
                         </p>
                       </div>
                     </div>
@@ -1662,7 +1590,7 @@ exports[`<HandleRoles /> should render correctly on all actions: revoke 1`] = `
                       data-testid="details-review-detail-2"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Decimals
                       </p>
@@ -1672,7 +1600,7 @@ exports[`<HandleRoles /> should render correctly on all actions: revoke 1`] = `
                         <p
                           class="chakra-text css-mgupmj"
                         >
-                          3
+                          6
                         </p>
                       </div>
                     </div>
@@ -1683,7 +1611,7 @@ exports[`<HandleRoles /> should render correctly on all actions: revoke 1`] = `
                 class="css-13brihr"
               >
                 <p
-                  class="chakra-text css-53sllx"
+                  class="chakra-text css-1osh15g"
                   data-testid="details-review-title"
                 >
                   Optional details
@@ -1699,19 +1627,11 @@ exports[`<HandleRoles /> should render correctly on all actions: revoke 1`] = `
                       data-testid="details-review-detail-0"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Initial supply
                       </p>
-                      <div
-                        class="chakra-stack css-1c8ysgd"
-                      >
-                        <p
-                          class="chakra-text css-mgupmj"
-                        >
-                          0
-                        </p>
-                      </div>
+                      1000
                     </div>
                     <hr
                       aria-orientation="horizontal"
@@ -1727,19 +1647,11 @@ exports[`<HandleRoles /> should render correctly on all actions: revoke 1`] = `
                       data-testid="details-review-detail-1"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Total supply
                       </p>
-                      <div
-                        class="chakra-stack css-1c8ysgd"
-                      >
-                        <p
-                          class="chakra-text css-mgupmj"
-                        >
-                          100000
-                        </p>
-                      </div>
+                      1000
                     </div>
                     <hr
                       aria-orientation="horizontal"
@@ -1755,19 +1667,11 @@ exports[`<HandleRoles /> should render correctly on all actions: revoke 1`] = `
                       data-testid="details-review-detail-2"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Max supply
                       </p>
-                      <div
-                        class="chakra-stack css-1c8ysgd"
-                      >
-                        <p
-                          class="chakra-text css-mgupmj"
-                        >
-                          0
-                        </p>
-                      </div>
+                      1000
                     </div>
                     <hr
                       aria-orientation="horizontal"
@@ -1783,7 +1687,7 @@ exports[`<HandleRoles /> should render correctly on all actions: revoke 1`] = `
                       data-testid="details-review-detail-3"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Supply type
                       </p>
@@ -1810,14 +1714,14 @@ exports[`<HandleRoles /> should render correctly on all actions: revoke 1`] = `
             class="chakra-stack css-1amf41o"
           >
             <button
-              class="chakra-button css-1nrhi9n"
+              class="chakra-button css-1urzhdw"
               data-testid="cancel-btn"
               type="button"
             >
               Go back
             </button>
             <button
-              class="chakra-button css-1178n6s"
+              class="chakra-button css-qvkb6r"
               data-testid="confirm-btn"
               disabled=""
               type="button"

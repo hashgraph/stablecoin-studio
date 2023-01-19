@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.10;
+pragma solidity 0.8.16;
 
 import "./Interfaces/IBurnable.sol";
 import "./TokenOwner.sol";
@@ -16,15 +16,17 @@ abstract contract Burnable is IBurnable, TokenOwner, Roles {
      */
     function burn(uint256 amount) 
         external 
-        onlyRole(_getRoleId(roleName.BURN))  
+        onlyRole(_getRoleId(RoleName.BURN))  
+        override(IBurnable)
         returns (bool)      
     {         
         require(_balanceOf(address(this)) >= amount, "Amount is greater than treasury account balance");
 
-        (int256 responseCode, ) = IHederaTokenService(precompileAddress).burnToken(_getTokenAddress(), uint64(amount),  new int64[](0));
-        bool success = _checkResponse(responseCode);
-
         emit TokensBurned (msg.sender, _getTokenAddress(), amount);
+
+        (int256 responseCode, ) = IHederaTokenService(PRECOMPILED_ADDRESS).burnToken(_getTokenAddress(), uint64(amount),  new int64[](0));
+        
+        bool success = _checkResponse(responseCode);
 
         return success;
     }

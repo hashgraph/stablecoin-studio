@@ -6,7 +6,7 @@ exports[`<Operations /> should render correctly 1`] = `
     class="chakra-stack css-16oka5y"
   >
     <h2
-      class="chakra-heading css-llrpa2"
+      class="chakra-heading css-bqsusc"
       data-testid="base-container-heading"
     >
       Operations
@@ -19,7 +19,7 @@ exports[`<Operations /> should render correctly 1`] = `
         class="css-src872"
       >
         <h2
-          class="chakra-heading css-1bjzvf5"
+          class="chakra-heading css-qltjox"
           data-testid="subtitle"
         >
           Choose an operation
@@ -31,12 +31,12 @@ exports[`<Operations /> should render correctly 1`] = `
             class="css-180e663"
           >
             <button
-              class="css-kly7w1"
+              class="css-1wr8k95"
               data-testid="direct-access-cashIn"
               disabled=""
             >
               <div
-                class="css-bv4l9q"
+                class="css-1i763ui"
               >
                 <svg
                   class="chakra-icon css-1f9qa95"
@@ -75,7 +75,7 @@ exports[`<Operations /> should render correctly 1`] = `
                 </svg>
               </div>
               <p
-                class="chakra-text css-1mbt7nu"
+                class="chakra-text css-o5z2l9"
                 data-testid="direct-access-Cash in"
               >
                 Cash in
@@ -86,12 +86,12 @@ exports[`<Operations /> should render correctly 1`] = `
             class="css-180e663"
           >
             <button
-              class="css-kly7w1"
+              class="css-1wr8k95"
               data-testid="direct-access-burn"
               disabled=""
             >
               <div
-                class="css-bv4l9q"
+                class="css-1i763ui"
               >
                 <svg
                   class="chakra-icon css-1f9qa95"
@@ -130,7 +130,7 @@ exports[`<Operations /> should render correctly 1`] = `
                 </svg>
               </div>
               <p
-                class="chakra-text css-1mbt7nu"
+                class="chakra-text css-o5z2l9"
                 data-testid="direct-access-Burn"
               >
                 Burn
@@ -141,12 +141,11 @@ exports[`<Operations /> should render correctly 1`] = `
             class="css-180e663"
           >
             <button
-              class="css-kly7w1"
+              class="css-3aphhy"
               data-testid="direct-access-balance"
-              disabled=""
             >
               <div
-                class="css-bv4l9q"
+                class="css-1i763ui"
               >
                 <svg
                   class="chakra-icon css-1f9qa95"
@@ -218,7 +217,7 @@ exports[`<Operations /> should render correctly 1`] = `
                 </svg>
               </div>
               <p
-                class="chakra-text css-1mbt7nu"
+                class="chakra-text css-o5z2l9"
                 data-testid="direct-access-Get balance"
               >
                 Get balance
@@ -229,12 +228,12 @@ exports[`<Operations /> should render correctly 1`] = `
             class="css-180e663"
           >
             <button
-              class="css-kly7w1"
+              class="css-1wr8k95"
               data-testid="direct-access-rescueTokens"
               disabled=""
             >
               <div
-                class="css-bv4l9q"
+                class="css-1i763ui"
               >
                 <svg
                   class="chakra-icon css-1f9qa95"
@@ -292,7 +291,7 @@ exports[`<Operations /> should render correctly 1`] = `
                 </svg>
               </div>
               <p
-                class="chakra-text css-1mbt7nu"
+                class="chakra-text css-o5z2l9"
                 data-testid="direct-access-Rescue"
               >
                 Rescue
@@ -303,12 +302,12 @@ exports[`<Operations /> should render correctly 1`] = `
             class="css-180e663"
           >
             <button
-              class="css-kly7w1"
+              class="css-1wr8k95"
               data-testid="direct-access-wipe"
               disabled=""
             >
               <div
-                class="css-bv4l9q"
+                class="css-1i763ui"
               >
                 <svg
                   class="chakra-icon css-1f9qa95"
@@ -348,7 +347,7 @@ exports[`<Operations /> should render correctly 1`] = `
                 </svg>
               </div>
               <p
-                class="chakra-text css-1mbt7nu"
+                class="chakra-text css-o5z2l9"
                 data-testid="direct-access-Wipe"
               >
                 Wipe
@@ -359,12 +358,12 @@ exports[`<Operations /> should render correctly 1`] = `
             class="css-180e663"
           >
             <button
-              class="css-kly7w1"
+              class="css-1wr8k95"
               data-testid="direct-access-freeze"
               disabled=""
             >
               <div
-                class="css-bv4l9q"
+                class="css-1i763ui"
               >
                 <svg
                   class="chakra-icon css-1f9qa95"
@@ -465,7 +464,7 @@ exports[`<Operations /> should render correctly 1`] = `
                 </svg>
               </div>
               <p
-                class="chakra-text css-1mbt7nu"
+                class="chakra-text css-o5z2l9"
                 data-testid="direct-access-Freeze account"
               >
                 Freeze account
@@ -476,12 +475,12 @@ exports[`<Operations /> should render correctly 1`] = `
             class="css-180e663"
           >
             <button
-              class="css-kly7w1"
+              class="css-1wr8k95"
               data-testid="direct-access-unfreeze"
               disabled=""
             >
               <div
-                class="css-bv4l9q"
+                class="css-1i763ui"
               >
                 <svg
                   class="chakra-icon css-1f9qa95"
@@ -575,7 +574,7 @@ exports[`<Operations /> should render correctly 1`] = `
                 </svg>
               </div>
               <p
-                class="chakra-text css-1mbt7nu"
+                class="chakra-text css-o5z2l9"
                 data-testid="direct-access-Unfreeze account"
               >
                 Unfreeze account
@@ -586,11 +585,12 @@ exports[`<Operations /> should render correctly 1`] = `
             class="css-180e663"
           >
             <button
-              class="css-1g500l7"
+              class="css-1wr8k95"
               data-testid="direct-access-dangerZone"
+              disabled=""
             >
               <div
-                class="css-bv4l9q"
+                class="css-1i763ui"
               >
                 <svg
                   class="chakra-icon css-1f9qa95"
@@ -634,7 +634,7 @@ exports[`<Operations /> should render correctly 1`] = `
                 </svg>
               </div>
               <p
-                class="chakra-text css-1mbt7nu"
+                class="chakra-text css-o5z2l9"
                 data-testid="direct-access-Danger Zone"
               >
                 Danger Zone

@@ -29,9 +29,10 @@ import {
 } from '@hashgraph/sdk';
 import {
 	HederaERC20__factory,
+	HederaReserve__factory,
 	StableCoinFactory__factory,
 	IHederaTokenService__factory,
-} from 'hedera-stable-coin-contracts/typechain-types/index.js';
+} from 'hedera-stable-coin-contracts';
 import TransactionAdapter, { InitializationData } from '../TransactionAdapter';
 import { ContractTransaction, ethers, Signer } from 'ethers';
 import { singleton } from 'tsyringe';
@@ -72,6 +73,7 @@ import LogService from '../../../app/service/LogService.js';
 import { WalletConnectRejectedError } from '../../../domain/context/network/error/WalletConnectRejectedError.js';
 import { TransactionResponseError } from '../error/TransactionResponseError.js';
 import { SigningError } from '../hs/error/SigningError.js';
+import { RESERVE_DECIMALS } from '../../../domain/context/reserve/Reserve.js';
 
 // eslint-disable-next-line no-var
 declare var ethereum: MetaMaskInpageProvider;
@@ -97,6 +99,9 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		coin: StableCoinProps,
 		factory: ContractId,
 		hederaERC20: ContractId,
+		createReserve: boolean,
+		reserveAddress?: ContractId,
+		reserveInitialAmount? : BigDecimal
 	): Promise<TransactionResponse<any, Error>> {
 		try {
 			const keys: FactoryKey[] = [];
@@ -168,6 +173,16 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				coin.treasury.toString() == '0.0.0'
 					? '0x0000000000000000000000000000000000000000'
 					: await this.accountToEvmAddress(coin.treasury),
+				reserveAddress == undefined ||
+				reserveAddress.toString() == '0.0.0'
+							? '0x0000000000000000000000000000000000000000'
+							: HContractId.fromString(
+								reserveAddress.value,
+							).toSolidityAddress(),
+				reserveInitialAmount 
+						? reserveInitialAmount.toFixedNumber()
+						: BigDecimal.ZERO.toFixedNumber(),
+				createReserve,
 				keys,
 			);
 
@@ -193,10 +208,19 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					gasLimit: 15000000,
 				},
 			);
+			// Put it into an array since structs change the response from the event and its not a simple array
+			/*const txRes = await RPCTransactionResponseAdapter.manageResponse(
+				res,
+				'Deployed',
+			);
+			txRes.response = [txRes.response]
+			return txRes;*/
+			
 			return RPCTransactionResponseAdapter.manageResponse(
 				res,
 				'Deployed',
 			);
+
 		} catch (error) {
 			throw new SigningError(
 				`Unexpected error in RPCTransactionAdapter create operation : ${error}`,
@@ -331,6 +355,112 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	async delete(coin: StableCoinCapabilities): Promise<TransactionResponse> {
 		return this.performOperation(coin, Operation.DELETE);
 	}
+
+	public async getReserveAddress(
+		coin: StableCoinCapabilities
+	): Promise<TransactionResponse> {
+		try {
+			if (!coin.coin.evmProxyAddress)
+				throw new TransactionResponseError({
+					RPC_relay: true,
+					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
+				});
+
+			const res = await HederaERC20__factory.connect(
+					coin.coin.evmProxyAddress,
+					this.signerOrProvider,
+				).getReserveAddress();
+
+			return new TransactionResponse(
+					undefined,
+					res.toString()
+				);				
+		} catch (error) {
+			throw new TransactionResponseError({
+				RPC_relay: true,
+				message: `Unexpected error in HederaTransactionHandler update reserve operation : ${error}`,
+				transactionId: (error as any).error?.transactionId,
+			});
+		}
+	}
+
+	public async updateReserveAddress(
+		coin: StableCoinCapabilities,
+		reserveAddress: ContractId
+	): Promise<TransactionResponse> {
+		try {
+			if (!coin.coin.evmProxyAddress)
+				throw new TransactionResponseError({
+					RPC_relay: true,
+					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
+				});
+
+			return RPCTransactionResponseAdapter.manageResponse(
+				await HederaERC20__factory.connect(
+					coin.coin.evmProxyAddress,
+					this.signerOrProvider,
+				).updateReserveAddress(
+					reserveAddress.toHederaAddress().toSolidityAddress(),
+				),
+			);
+		} catch (error) {
+			throw new TransactionResponseError({
+				RPC_relay: true,
+				message: `Unexpected error in HederaTransactionHandler update reserve operation : ${error}`,
+				transactionId: (error as any).error?.transactionId,
+			});
+		}
+	}
+
+	public async getReserveAmount(
+		coin: StableCoinCapabilities
+	): Promise<TransactionResponse> {
+		try {
+			if (!coin.coin.evmProxyAddress)
+				throw new TransactionResponseError({
+					RPC_relay: true,
+					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
+				});
+
+			const res = await HederaERC20__factory.connect(
+					coin.coin.evmProxyAddress,
+					this.signerOrProvider,
+				).getReserveAmount();
+
+			return new TransactionResponse(
+					undefined,
+					BigDecimal.fromStringFixed(res.toString(), RESERVE_DECIMALS),
+				);						
+		} catch (error) {
+			throw new TransactionResponseError({
+				RPC_relay: true,
+				message: `Unexpected error in HederaTransactionHandler update reserve operation : ${error}`,
+				transactionId: (error as any).error?.transactionId,
+			});
+		}
+	}
+
+	public async updateReserveAmount(
+		reserveAddress: ContractId,
+		amount: BigDecimal
+	): Promise<TransactionResponse> {
+		try {
+			return RPCTransactionResponseAdapter.manageResponse(
+				await HederaReserve__factory.connect(
+					reserveAddress.toHederaAddress().toSolidityAddress(),
+					this.signerOrProvider,
+				).setAmount(
+					amount.toBigNumber(),
+				),
+			);
+		} catch (error) {
+			throw new TransactionResponseError({
+				RPC_relay: true,
+				message: `Unexpected error in HederaTransactionHandler updatePorAmount operation : ${error}`,
+				transactionId: (error as any).error?.transactionId,
+			});
+		}
+	}		
 
 	async grantRole(
 		coin: StableCoinCapabilities,
@@ -620,7 +750,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			const res = await HederaERC20__factory.connect(
 				coin.coin.evmProxyAddress,
 				this.signerOrProvider,
-			).supplierAllowance(this.accountToEvmAddress(targetId));
+			).getSupplierAllowance(this.accountToEvmAddress(targetId));
 
 			return new TransactionResponse(
 				undefined,

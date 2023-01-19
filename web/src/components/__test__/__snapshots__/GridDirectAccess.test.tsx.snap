@@ -9,11 +9,11 @@ exports[`<GridDirectAccess /> should render correctly 1`] = `
       class="css-180e663"
     >
       <button
-        class="css-1g500l7"
+        class="css-3aphhy"
         data-testid="direct-access-giveRole"
       >
         <div
-          class="css-bv4l9q"
+          class="css-1i763ui"
         >
           <svg
             class="chakra-icon css-1f9qa95"
@@ -64,7 +64,7 @@ exports[`<GridDirectAccess /> should render correctly 1`] = `
           </svg>
         </div>
         <p
-          class="chakra-text css-1mbt7nu"
+          class="chakra-text css-o5z2l9"
           data-testid="direct-access-Enable functionallity"
         >
           Enable functionallity
@@ -75,11 +75,11 @@ exports[`<GridDirectAccess /> should render correctly 1`] = `
       class="css-180e663"
     >
       <button
-        class="css-1g500l7"
+        class="css-3aphhy"
         data-testid="direct-access-revokeRole"
       >
         <div
-          class="css-bv4l9q"
+          class="css-1i763ui"
         >
           <svg
             class="chakra-icon css-1f9qa95"
@@ -119,7 +119,7 @@ exports[`<GridDirectAccess /> should render correctly 1`] = `
           </svg>
         </div>
         <p
-          class="chakra-text css-1mbt7nu"
+          class="chakra-text css-o5z2l9"
           data-testid="direct-access-Revoke functionallity"
         >
           Revoke functionallity

@@ -13,7 +13,6 @@ import {
     getNonOperatorE25519,
 } from '../scripts/deploy'
 import { clientId } from '../scripts/utils'
-
 import {
     grantRole,
     revokeRole,
@@ -23,9 +22,9 @@ import {
 } from '../scripts/contractsMethods'
 import { BURN_ROLE } from '../scripts/constants'
 import { Client, ContractId } from '@hashgraph/sdk'
+import chai from 'chai'
+import chaiAsPromised from 'chai-as-promised'
 
-const chai = require('chai')
-const chaiAsPromised = require('chai-as-promised')
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
@@ -98,18 +97,21 @@ describe('Burn Tests', function() {
         )
 
         // Deploy Token using Client
-        const result = await deployContractsWithSDK(
-            TokenName,
-            TokenSymbol,
-            TokenDecimals,
-            INIT_SUPPLY.toString(),
-            MAX_SUPPLY.toString(),
-            TokenMemo,
-            operatorAccount,
-            operatorPriKey,
-            operatorPubKey,
-            operatorIsE25519
-        )
+        const result = await deployContractsWithSDK({
+            name: TokenName,
+            symbol: TokenSymbol,
+            decimals: TokenDecimals,
+            initialSupply: INIT_SUPPLY.toString(),
+            maxSupply: MAX_SUPPLY.toString(),
+            memo: TokenMemo,
+            account: operatorAccount,
+            privateKey: operatorPriKey,
+            publicKey: operatorPubKey,
+            isED25519Type: operatorIsE25519,
+            initialAmountDataFeed: INIT_SUPPLY.add(
+                BigNumber.from('100000')
+            ).toString(),
+        })
 
         proxyAddress = result[0]
     })

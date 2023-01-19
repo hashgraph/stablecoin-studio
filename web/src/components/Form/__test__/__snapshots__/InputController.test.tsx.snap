@@ -10,7 +10,7 @@ exports[`<InputController /> .render should be disabled if disabled=true: Disabl
       role="group"
     >
       <div
-        class="chakra-input__group css-4302v8"
+        class="chakra-input__group css-bx0blc"
       >
         <input
           autocomplete="off"
@@ -56,7 +56,7 @@ exports[`<InputController /> .render should render the component: WithLabel 1`] 
         </div>
       </label>
       <div
-        class="chakra-input__group css-4302v8"
+        class="chakra-input__group css-bx0blc"
       >
         <input
           autocomplete="off"
@@ -86,7 +86,7 @@ exports[`<InputController /> .render should render the left element: WithLeftEle
       role="group"
     >
       <div
-        class="chakra-input__group css-4302v8"
+        class="chakra-input__group css-bx0blc"
       >
         <span
           data-testid="left-element"
@@ -119,7 +119,7 @@ exports[`<InputController /> .render should render the right element: WithRightE
       role="group"
     >
       <div
-        class="chakra-input__group css-4302v8"
+        class="chakra-input__group css-bx0blc"
       >
         <input
           autocomplete="off"
@@ -152,7 +152,7 @@ exports[`<InputController /> .render should show placeholder: WithPlaceholder 1`
       role="group"
     >
       <div
-        class="chakra-input__group css-4302v8"
+        class="chakra-input__group css-bx0blc"
       >
         <input
           autocomplete="off"
@@ -183,7 +183,7 @@ exports[`<InputController /> .render should show the error message: WithError 1`
       role="group"
     >
       <div
-        class="chakra-input__group css-4302v8"
+        class="chakra-input__group css-bx0blc"
       >
         <input
           aria-describedby="field-:r2:-feedback"
@@ -198,7 +198,7 @@ exports[`<InputController /> .render should show the error message: WithError 1`
       </div>
       <div
         aria-live="polite"
-        class="chakra-form__error-message css-2e3jkk"
+        class="chakra-form__error-message css-10ckq1i"
         data-testid="input-error-message"
         id="field-:r2:-feedback"
       >

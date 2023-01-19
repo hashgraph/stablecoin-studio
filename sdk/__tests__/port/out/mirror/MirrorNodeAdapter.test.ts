@@ -99,7 +99,6 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 		const accountInfo: AccountInfo = await mn.getAccountInfo(
 			HEDERA_ID_ACCOUNT_ECDSA,
 		);
-		console.log(accountInfo);
 
 		expect(accountInfo.id).toEqual(CLIENT_ACCOUNT_ECDSA.id.value);
 		expect(accountInfo.accountEvmAddress).toEqual(

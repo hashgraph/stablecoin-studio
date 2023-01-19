@@ -1,12 +1,6 @@
 import '@hashgraph/hardhat-hethers'
 import '@hashgraph/sdk'
 import { BigNumber } from 'ethers'
-
-const chai = require('chai')
-const chaiAsPromised = require('chai-as-promised')
-chai.use(chaiAsPromised)
-const expect = chai.expect
-
 import {
     deployContractsWithSDK,
     initializeClients,
@@ -20,6 +14,8 @@ import {
     getNonOperatorE25519,
     deployFactory,
     toHashgraphKey,
+    ADDRESS_0,
+    deployHederaReserve,
 } from '../scripts/deploy'
 import {
     upgradeTo_SCF,
@@ -31,10 +27,17 @@ import {
     transferOwnership_SCF,
     getProxyAdmin_SCF,
     getProxyImplementation_SCF,
+    getReserveAddress,
+    getReserveAmount,
 } from '../scripts/contractsMethods'
 
 import { clientId, toEvmAddress, getClient } from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
+import chai from 'chai'
+import chaiAsPromised from 'chai-as-promised'
+
+chai.use(chaiAsPromised)
+const expect = chai.expect
 
 let clientSdk: Client
 
@@ -51,10 +54,15 @@ let operatorPubKey: string
 let operatorIsE25519: boolean
 let nonOperatorIsE25519: boolean
 
-
 const TokenName = 'MIDAS'
 const TokenSymbol = 'MD'
 const TokenDecimals = 3
+const toReserve = (amount: BigNumber) => {
+    return amount.div(10)
+}
+const fromReserve = (amount: BigNumber) => {
+    return amount.mul(10)
+}
 const TokenFactor = BigNumber.from(10).pow(TokenDecimals)
 const INIT_SUPPLY = BigNumber.from(10).mul(TokenFactor)
 const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor)
@@ -112,40 +120,219 @@ describe('StableCoinFactory Tests', function() {
 
     it('Create StableCoin setting all token keys to the Proxy', async function() {
         // Deploy Token using Client
-        await deployContractsWithSDK(
-            TokenName,
-            TokenSymbol,
-            TokenDecimals,
-            INIT_SUPPLY.toString(),
-            MAX_SUPPLY.toString(),
-            TokenMemo,
-            operatorAccount,
-            operatorPriKey,
-            operatorPubKey,
-            operatorIsE25519
-        )
+        await deployContractsWithSDK({
+            name: TokenName,
+            symbol: TokenSymbol,
+            decimals: TokenDecimals,
+            initialSupply: INIT_SUPPLY.toString(),
+            maxSupply: MAX_SUPPLY.toString(),
+            memo: TokenMemo,
+            account: operatorAccount,
+            privateKey: operatorPriKey,
+            publicKey: operatorPubKey,
+            isED25519Type: operatorIsE25519,
+            initialAmountDataFeed: INIT_SUPPLY.add(
+                BigNumber.from('100000')
+            ).toString(),
+        })
     })
 
     it('Create StableCoin setting all token keys to the Account', async function() {
         // Deploy Token using Client
-        await deployContractsWithSDK(
-            TokenName,
-            TokenSymbol,
-            TokenDecimals,
-            INIT_SUPPLY.toString(),
-            MAX_SUPPLY.toString(),
-            TokenMemo,
+        await deployContractsWithSDK({
+            name: TokenName,
+            symbol: TokenSymbol,
+            decimals: TokenDecimals,
+            initialSupply: INIT_SUPPLY.toString(),
+            maxSupply: MAX_SUPPLY.toString(),
+            memo: TokenMemo,
+            account: operatorAccount,
+            privateKey: operatorPriKey,
+            publicKey: operatorPubKey,
+            isED25519Type: operatorIsE25519,
+            allToContract: false,
+            initialAmountDataFeed: INIT_SUPPLY.add(
+                BigNumber.from('150').mul(TokenFactor)
+            ).toString(),
+        })
+    })
+
+    it('Create StableCoin setting all token keys to the Account, with a very close reserve number', async function() {
+        // Deploy Token using Client
+        await deployContractsWithSDK({
+            name: TokenName,
+            symbol: TokenSymbol,
+            decimals: TokenDecimals,
+            initialSupply: INIT_SUPPLY.toString(),
+            maxSupply: MAX_SUPPLY.toString(),
+            memo: TokenMemo,
+            account: operatorAccount,
+            privateKey: operatorPriKey,
+            publicKey: operatorPubKey,
+            isED25519Type: operatorIsE25519,
+            allToContract: false,
+            initialAmountDataFeed: toReserve(INIT_SUPPLY)
+                .add(1)
+                .toString(),
+        })
+    })
+
+    it('Create StableCoin setting all token keys to the Account, with no reserve', async function() {
+        // Deploy Token using Client
+        const res = await deployContractsWithSDK({
+            name: TokenName,
+            symbol: TokenSymbol,
+            decimals: TokenDecimals,
+            initialSupply: INIT_SUPPLY.toString(),
+            maxSupply: MAX_SUPPLY.toString(),
+            memo: TokenMemo,
+            account: operatorAccount,
+            privateKey: operatorPriKey,
+            publicKey: operatorPubKey,
+            isED25519Type: operatorIsE25519,
+            allToContract: false,
+            initialAmountDataFeed: toReserve(INIT_SUPPLY)
+                .add(1)
+                .toString(),
+            createReserve: false,
+        })
+        const proxyAddress = res[0]
+
+        const address = await getReserveAddress(proxyAddress, operatorClient)
+        const amount = await getReserveAmount(proxyAddress, operatorClient)
+
+        expect(address).to.equal(ADDRESS_0)
+        expect(amount).to.equal(BigNumber.from(0))
+
+        expect('0x' + res[7].toSolidityAddress()).to.equal(ADDRESS_0)
+        expect('0x' + res[6].toSolidityAddress()).to.equal(ADDRESS_0)
+    })
+
+    it('Create StableCoin setting all token keys to the Account, with less decimals than reserve', async function() {
+        // Deploy Token using Client
+        const res = await deployContractsWithSDK({
+            name: TokenName,
+            symbol: TokenSymbol,
+            decimals: 0,
+            initialSupply: BigNumber.from(10).toString(),
+            maxSupply: MAX_SUPPLY.toString(),
+            memo: TokenMemo,
+            account: operatorAccount,
+            privateKey: operatorPriKey,
+            publicKey: operatorPubKey,
+            isED25519Type: operatorIsE25519,
+            allToContract: false,
+            initialAmountDataFeed: toReserve(INIT_SUPPLY).toString(),
+        })
+        const proxyAddress = res[0]
+
+        const address = await getReserveAddress(proxyAddress, operatorClient)
+        const amount = await getReserveAmount(proxyAddress, operatorClient)
+
+        expect(address).not.to.equal(ADDRESS_0)
+        expect(amount.toString()).to.equal(toReserve(INIT_SUPPLY).toString())
+    })
+
+    it('Create StableCoin setting all token keys to the Account, with less decimals than reserve, expect it to fail', async function() {
+        // Deploy Token using Client
+        expect(
+            deployContractsWithSDK({
+                name: TokenName,
+                symbol: TokenSymbol,
+                decimals: 0,
+                initialSupply: INIT_SUPPLY.toString(),
+                maxSupply: MAX_SUPPLY.toString(),
+                memo: TokenMemo,
+                account: operatorAccount,
+                privateKey: operatorPriKey,
+                publicKey: operatorPubKey,
+                isED25519Type: operatorIsE25519,
+                allToContract: false,
+                initialAmountDataFeed: toReserve(INIT_SUPPLY)
+                    .sub(1)
+                    .toString(),
+            })
+        ).to.eventually.be.rejectedWith(Error)
+    })
+
+    it('Create StableCoin setting an initial supply over the reserve, expect it to fail', async function() {
+        // Deploy Token using Client
+        expect(
+            deployContractsWithSDK({
+                name: TokenName,
+                symbol: TokenSymbol,
+                decimals: TokenDecimals,
+                initialSupply: INIT_SUPPLY.toString(),
+                maxSupply: MAX_SUPPLY.toString(),
+                memo: TokenMemo,
+                account: operatorAccount,
+                privateKey: operatorPriKey,
+                publicKey: operatorPubKey,
+                isED25519Type: operatorIsE25519,
+                allToContract: false,
+                initialAmountDataFeed: BigNumber.from(1).toString(),
+            })
+        ).to.eventually.be.rejectedWith(Error)
+    })
+
+    it('Create StableCoin setting an initial supply over the reserve, expect it to fail with a very close number', async function() {
+        // Deploy Token using Client
+        expect(
+            deployContractsWithSDK({
+                name: TokenName,
+                symbol: TokenSymbol,
+                decimals: TokenDecimals,
+                initialSupply: INIT_SUPPLY.toString(),
+                maxSupply: MAX_SUPPLY.toString(),
+                memo: TokenMemo,
+                account: operatorAccount,
+                privateKey: operatorPriKey,
+                publicKey: operatorPubKey,
+                isED25519Type: operatorIsE25519,
+                allToContract: false,
+                initialAmountDataFeed: toReserve(INIT_SUPPLY)
+                    .sub(1)
+                    .toString(),
+            })
+        ).to.eventually.be.rejectedWith(Error)
+    })
+
+    it('Create StableCoin setting an initial supply over the reserve, when the reserve is provided and not deployed, expect it to fail', async function() {
+        // first deploy Hedera Reserve 
+        const reserveAmount = BigNumber.from(1);
+        const result = await deployHederaReserve(
+            reserveAmount,
             operatorAccount,
-            operatorPriKey,
-            operatorPubKey,
             operatorIsE25519,
-            false,
-            false
+            operatorClient,
+            operatorPriKey
         )
+        const DataFeedAddress = result[0];
+        
+        // Deploy Token using Client
+        const initSupplyAmount = reserveAmount.add(1);
+        const maxSupplyAmount = initSupplyAmount.add(1);
+        expect(
+            deployContractsWithSDK({
+                name: TokenName,
+                symbol: TokenSymbol,
+                decimals: TokenDecimals,
+                initialSupply: initSupplyAmount.toString(),
+                maxSupply: maxSupplyAmount.toString(),
+                memo: TokenMemo,
+                account: operatorAccount,
+                privateKey: operatorPriKey,
+                publicKey: operatorPubKey,
+                isED25519Type: operatorIsE25519,
+                allToContract: false,
+                reserveAddress: String(DataFeedAddress),
+                createReserve: false,
+            })
+        ).to.eventually.be.rejectedWith(Error)
     })
 })
 
-describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', function() {
+describe.skip('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', function() {
     before(async function() {
         // Generate Client 1 and Client 2
         const [

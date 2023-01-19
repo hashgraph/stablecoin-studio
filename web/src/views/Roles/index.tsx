@@ -97,9 +97,7 @@ const Roles = () => {
 	});
 
 	const { t } = useTranslation('roles');
-	console.log(localStorage.tokensAccount[0].externaTokens);
-	console.log(accountId);
-	console.log(coinSelected);
+	
 	const directAccesses = [
 		{
 			icon: 'PlusCircle',

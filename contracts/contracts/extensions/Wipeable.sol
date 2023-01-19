@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.10;
+pragma solidity 0.8.16;
 
 import "./TokenOwner.sol";
 import "./Roles.sol";
@@ -21,15 +21,18 @@ abstract contract Wipeable is IWipeable, TokenOwner, Roles {
     */
     function wipe(address account, uint32 amount) 
         external       
-        onlyRole(_getRoleId(roleName.WIPE))  
+        onlyRole(_getRoleId(RoleName.WIPE))
+        checkAddressIsNotZero(account)
+        override(IWipeable)
         returns (bool)
     {      
         require(_balanceOf(account) >= amount, "Insufficient token balance for wiped"); 
 
-        int256 responseCode = IHederaTokenService(precompileAddress).wipeTokenAccount(_getTokenAddress(), account,  amount);
-        bool success = _checkResponse(responseCode);
-
         emit TokensWiped (msg.sender, _getTokenAddress(), account, amount);
+
+        int256 responseCode = IHederaTokenService(PRECOMPILED_ADDRESS).wipeTokenAccount(_getTokenAddress(), account,  amount);
+
+        bool success = _checkResponse(responseCode);
 
         return success;
     }

@@ -27,6 +27,9 @@ const Review = (props: ReviewProps) => {
 		wipeKey,
 		freezeKey,
 		pauseKey,
+		reserveAddress,
+		reserveInitialAmount
+
 	} = getValues();
 
 	const getKey = (keySelected: { value: number; label: string }, nameOtherKey: string) => {
@@ -142,6 +145,43 @@ const Review = (props: ReviewProps) => {
 							},
 						]}
 					/>
+
+					{ (!reserveAddress && !reserveInitialAmount  )  ?  (
+						<DetailsReview
+						title={t('stableCoinCreation:proofOfReserve.title')}
+						titleProps={{ fontWeight: 700, color: 'brand.secondary' }}
+						details={[
+							{
+								label: t('stableCoinCreation:proofOfReserve.hasPor'),
+								value: t('stableCoinCreation:proofOfReserve.notHasPor'),
+							},
+							
+						]}
+					/>
+					):(
+						<DetailsReview
+						title={t('stableCoinCreation:proofOfReserve.title')}
+						titleProps={{ fontWeight: 700, color: 'brand.secondary' }}
+						details={[
+							{
+								label: t('stableCoinCreation:proofOfReserve.hasPor'),
+								value: t('stableCoinCreation:proofOfReserve.hasPor')
+							},
+							{
+								label: t('stableCoinCreation:proofOfReserve.addressPor'),
+								value: 	reserveAddress || t('stableCoinCreation:proofOfReserve.createDataFeed') 
+								
+							},
+							{
+								label: t('stableCoinCreation:proofOfReserve.initialSupplyPor'),
+								value: reserveInitialAmount || "undefined" 
+							},
+						]}
+					/>
+
+					)
+					}
+
 				</Stack>
 			</Stack>
 		</VStack>

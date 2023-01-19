@@ -15,6 +15,7 @@ import type WIPE_EN from './translations/en/wipe.json';
 import type EXTERNAL_TOKEN_INFO_EN from './translations/en/externalTokenInfo.json';
 import type FREEZE_EN from './translations/en/freeze.json';
 import type UNFREEZE_EN from './translations/en/unfreeze.json';
+import type PROOF_OF_RESERVE_EN from './translations/en/proofOfReserve.json';
 
 declare module 'react-i18next' {
 	interface Resources {
@@ -32,6 +33,7 @@ declare module 'react-i18next' {
 		externalTokenInfo: typeof EXTERNAL_TOKEN_INFO_EN;
 		freeze: typeof FREEZE_EN;
 		unfreeze: typeof UNFREEZE_EN;
+		proofOfReserve: typeof PROOF_OF_RESERVE_EN;
 	}
 }
 
@@ -55,6 +57,7 @@ declare module 'react-i18next' {
 			externalTokenInfo: typeof EXTERNAL_TOKEN_INFO_EN;
 			freeze: typeof FREEZE_EN;
 			unfreeze: typeof UNFREEZE_EN;
+			proofOfReserve: typeof PROOF_OF_RESERVE_EN;
 		};
 	}
 }

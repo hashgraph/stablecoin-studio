@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`<SelectController /> doesn't show error with showError=false: NotShowingError 1`] = `
+exports[`<undefined /> doesn't show error with showError=false: NotShowingError 1`] = `
 <DocumentFragment>
   <div
     class="chakra-stack css-1h0sumw"
@@ -121,7 +121,7 @@ exports[`<SelectController /> doesn't show error with showError=false: NotShowin
 </DocumentFragment>
 `;
 
-exports[`<SelectController /> shows error with showErrors=true: ShowingError 1`] = `
+exports[`<undefined /> shows error with showErrors=true: ShowingError 1`] = `
 <DocumentFragment>
   <div
     class="chakra-stack css-1h0sumw"
@@ -235,7 +235,7 @@ exports[`<SelectController /> shows error with showErrors=true: ShowingError 1`]
       </div>
       <div
         aria-live="polite"
-        class="chakra-form__error-message css-2e3jkk"
+        class="chakra-form__error-message css-10ckq1i"
         data-testid="form-error-msg"
         id="field-:r5:-feedback"
       />
@@ -248,7 +248,7 @@ exports[`<SelectController /> shows error with showErrors=true: ShowingError 1`]
 </DocumentFragment>
 `;
 
-exports[`<SelectController /> shows placeholder with default value: DefaultPlaceholder 1`] = `
+exports[`<undefined /> shows placeholder with default value: DefaultPlaceholder 1`] = `
 <DocumentFragment>
   <div
     class="chakra-stack css-1h0sumw"
@@ -366,7 +366,7 @@ exports[`<SelectController /> shows placeholder with default value: DefaultPlace
 </DocumentFragment>
 `;
 
-exports[`<SelectController /> shows placeholder with the provided value: CustomPlaceholder 1`] = `
+exports[`<undefined /> shows placeholder with the provided value: CustomPlaceholder 1`] = `
 <DocumentFragment>
   <div
     class="chakra-stack css-1h0sumw"

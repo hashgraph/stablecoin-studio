@@ -7,7 +7,7 @@ exports[`<Stepper /> should render correctly 1`] = `
   >
     <div
       aria-orientation="horizontal"
-      class="chakra-tabs__tablist css-10a73ai"
+      class="chakra-tabs__tablist css-9jay18"
       role="tablist"
     >
       <button
@@ -64,7 +64,7 @@ exports[`<Stepper /> should render correctly 1`] = `
     >
       <div
         aria-labelledby="tabs-:r0:--tab-0"
-        class="chakra-tabs__tab-panel css-4278sh"
+        class="chakra-tabs__tab-panel css-1iyuyap"
         data-testid="stepper-step-panel-container-1"
         id="tabs-:r0:--tabpanel-0"
         role="tabpanel"
@@ -90,17 +90,17 @@ exports[`<Stepper /> should render correctly 1`] = `
               class="chakra-divider css-12thghs"
             />
             <div
-              class="css-g4d8ui"
+              class="css-1e334ws"
             >
               <button
-                class="chakra-button css-1bav4bk"
+                class="chakra-button css-hi7zxp"
                 data-testid="stepper-step-panel-button-secondary-1"
                 type="button"
               >
                 Cancel
               </button>
               <button
-                class="chakra-button css-1178n6s"
+                class="chakra-button css-qvkb6r"
                 data-testid="stepper-step-panel-button-primary-1"
                 type="button"
               >
@@ -112,7 +112,7 @@ exports[`<Stepper /> should render correctly 1`] = `
       </div>
       <div
         aria-labelledby="tabs-:r0:--tab-1"
-        class="chakra-tabs__tab-panel css-4278sh"
+        class="chakra-tabs__tab-panel css-1iyuyap"
         data-testid="stepper-step-panel-container-2"
         hidden=""
         id="tabs-:r0:--tabpanel-1"

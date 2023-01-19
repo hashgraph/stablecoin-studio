@@ -57,10 +57,10 @@ export default class CreateStableCoinService extends Service {
     await utilsService.showSpinner(
       new Promise((resolve, reject) => {
         StableCoin.create(stableCoin)
-          .then((coin) => {
-            console.log(coin);
-            createdToken = coin;
-            resolve(coin);
+          .then((response) => {
+            console.log(response);
+            createdToken = response.coin;
+            resolve(response);
           })
           .catch((err) => {
             reject(err);
@@ -98,6 +98,7 @@ export default class CreateStableCoinService extends Service {
       decimals: 6,
       stableCoinFactory: currentFactory.id,
       hederaERC20: currentHederaERC20.id,
+      createReserve: false,
     });
 
     // Name
@@ -195,6 +196,39 @@ export default class CreateStableCoinService extends Service {
       );
     }
 
+    // Proof of Reserve
+    const reserve = await this.askForReserve();
+    let existingReserve = false;
+
+    if(reserve){
+      existingReserve = await this.askForExistingReserve();
+      if(!existingReserve){
+        tokenToCreate.createReserve = true;
+        tokenToCreate.reserveInitialAmount = await this.askForReserveInitialAmount();
+        await utilsService.handleValidation(
+          () => tokenToCreate.validate('reserveInitialAmount'),
+          async () => {
+            tokenToCreate.reserveInitialAmount = await this.askForReserveInitialAmount();
+          },
+        );
+      }
+      else{
+        tokenToCreate.reserveAddress = await utilsService.defaultSingleAsk(
+          language.getText('stablecoin.askReserveAddress'),
+          tokenToCreate.reserveAddress || '0.0.0',
+        );
+        await utilsService.handleValidation(
+          () => tokenToCreate.validate('reserveAddress'),
+          async () => {
+            tokenToCreate.reserveAddress = await utilsService.defaultSingleAsk(
+              language.getText('stablecoin.askReserveAddress'),
+              tokenToCreate.reserveAddress || '0.0.0',
+            );
+          },
+        );
+      }
+    }
+
     const managedBySC = await this.askForManagedFeatures();
     console.log({
       name: tokenToCreate.name,
@@ -205,6 +239,13 @@ export default class CreateStableCoinService extends Service {
         initialSupply === '' || !initialSupply ? undefined : initialSupply,
       supplyType: supplyType ? TokenSupplyType.INFINITE : TokenSupplyType.FINITE,
       maxSupply: tokenToCreate.maxSupply,
+      reserve: (reserve == false) 
+        ? '-' 
+        : (
+          (existingReserve) 
+          ? tokenToCreate.reserveAddress
+          : "Proof of Reserve Feed initial amount : " + tokenToCreate.reserveInitialAmount
+        ),
     });
     if (managedBySC) {
       tokenToCreate.adminKey = Account.NullPublicKey;
@@ -279,6 +320,13 @@ export default class CreateStableCoinService extends Service {
           ? pauseKey
           : language.getText('wizard.featureOptions.SmartContract'),
       treasury: treasury !== '0.0.0' ? treasury : language.getText('wizard.featureOptions.SmartContract'),
+      reserve: (reserve == false) 
+        ? '-' 
+        : (
+          (existingReserve) 
+          ? tokenToCreate.reserveAddress
+          : "Proof of Reserve Feed initial amount : " + tokenToCreate.reserveInitialAmount
+        ),
     });
     if (
       !(await utilsService.defaultConfirmAsk(
@@ -307,6 +355,20 @@ export default class CreateStableCoinService extends Service {
     );
   }
 
+  private async askForReserve(): Promise<boolean> {
+    return await utilsService.defaultConfirmAsk(
+      language.getText('stablecoin.askReserve'),
+      true,
+    );
+  }
+
+  private async askForExistingReserve(): Promise<boolean> {
+    return await utilsService.defaultConfirmAsk(
+      language.getText('stablecoin.askExistingReserve'),
+      true,
+    );
+  }
+
   private async askForInitialSupply(val?: string): Promise<string> {
     return await utilsService.defaultSingleAsk(
       language.getText('stablecoin.askInitialSupply'),
@@ -324,6 +386,13 @@ export default class CreateStableCoinService extends Service {
   private async askForTotalSupply(val?: string): Promise<string> {
     return await utilsService.defaultSingleAsk(
       language.getText('stablecoin.askTotalSupply'),
+      val || '1',
+    );
+  }
+
+  private async askForReserveInitialAmount(val?: string): Promise<string> {
+    return await utilsService.defaultSingleAsk(
+      language.getText('stablecoin.askReserveInitialAmount'),
       val || '1',
     );
   }

@@ -6,7 +6,7 @@ exports[`<BurnOperation /> should render correctly 1`] = `
     class="chakra-stack css-16oka5y"
   >
     <h2
-      class="chakra-heading css-llrpa2"
+      class="chakra-heading css-bqsusc"
       data-testid="base-container-heading"
     >
       Operations
@@ -25,7 +25,7 @@ exports[`<BurnOperation /> should render correctly 1`] = `
             class="chakra-stack css-n21gh5"
           >
             <h2
-              class="chakra-heading css-17ipgvs"
+              class="chakra-heading css-utvjhb"
               data-testid="title"
             >
               Burn tokens operation
@@ -57,7 +57,7 @@ exports[`<BurnOperation /> should render correctly 1`] = `
                       <p
                         class="chakra-text css-mgupmj"
                       >
-                        Introduce amount
+                        Enter the amount
                       </p>
                       <p
                         class="chakra-text css-ftb7fv"
@@ -68,7 +68,7 @@ exports[`<BurnOperation /> should render correctly 1`] = `
                     </div>
                   </label>
                   <div
-                    class="chakra-input__group css-4302v8"
+                    class="chakra-input__group css-bx0blc"
                   >
                     <input
                       autocomplete="off"
@@ -91,7 +91,7 @@ exports[`<BurnOperation /> should render correctly 1`] = `
               class="chakra-stack css-wqnj46"
             >
               <h2
-                class="chakra-heading css-m8uvwu"
+                class="chakra-heading css-1udj1g5"
                 data-testid="details-title"
               >
                 Stable coin details
@@ -100,7 +100,7 @@ exports[`<BurnOperation /> should render correctly 1`] = `
                 class="css-13brihr"
               >
                 <p
-                  class="chakra-text css-53sllx"
+                  class="chakra-text css-1osh15g"
                   data-testid="details-review-title"
                 >
                   Basic details
@@ -116,7 +116,7 @@ exports[`<BurnOperation /> should render correctly 1`] = `
                       data-testid="details-review-detail-0"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Name
                       </p>
@@ -126,7 +126,7 @@ exports[`<BurnOperation /> should render correctly 1`] = `
                         <p
                           class="chakra-text css-mgupmj"
                         >
-                          ManuCoin2
+                          TEST_ACCELERATOR_SC
                         </p>
                       </div>
                     </div>
@@ -144,7 +144,7 @@ exports[`<BurnOperation /> should render correctly 1`] = `
                       data-testid="details-review-detail-1"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Symbol
                       </p>
@@ -154,7 +154,7 @@ exports[`<BurnOperation /> should render correctly 1`] = `
                         <p
                           class="chakra-text css-mgupmj"
                         >
-                          MCC2
+                          TEST
                         </p>
                       </div>
                     </div>
@@ -172,7 +172,7 @@ exports[`<BurnOperation /> should render correctly 1`] = `
                       data-testid="details-review-detail-2"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Decimals
                       </p>
@@ -182,7 +182,7 @@ exports[`<BurnOperation /> should render correctly 1`] = `
                         <p
                           class="chakra-text css-mgupmj"
                         >
-                          3
+                          6
                         </p>
                       </div>
                     </div>
@@ -193,7 +193,7 @@ exports[`<BurnOperation /> should render correctly 1`] = `
                 class="css-13brihr"
               >
                 <p
-                  class="chakra-text css-53sllx"
+                  class="chakra-text css-1osh15g"
                   data-testid="details-review-title"
                 >
                   Optional details
@@ -209,19 +209,11 @@ exports[`<BurnOperation /> should render correctly 1`] = `
                       data-testid="details-review-detail-0"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Initial supply
                       </p>
-                      <div
-                        class="chakra-stack css-1c8ysgd"
-                      >
-                        <p
-                          class="chakra-text css-mgupmj"
-                        >
-                          0
-                        </p>
-                      </div>
+                      1000
                     </div>
                     <hr
                       aria-orientation="horizontal"
@@ -237,19 +229,11 @@ exports[`<BurnOperation /> should render correctly 1`] = `
                       data-testid="details-review-detail-1"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Total supply
                       </p>
-                      <div
-                        class="chakra-stack css-1c8ysgd"
-                      >
-                        <p
-                          class="chakra-text css-mgupmj"
-                        >
-                          100000
-                        </p>
-                      </div>
+                      1000
                     </div>
                     <hr
                       aria-orientation="horizontal"
@@ -265,19 +249,11 @@ exports[`<BurnOperation /> should render correctly 1`] = `
                       data-testid="details-review-detail-2"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Max supply
                       </p>
-                      <div
-                        class="chakra-stack css-1c8ysgd"
-                      >
-                        <p
-                          class="chakra-text css-mgupmj"
-                        >
-                          0
-                        </p>
-                      </div>
+                      1000
                     </div>
                     <hr
                       aria-orientation="horizontal"
@@ -293,7 +269,7 @@ exports[`<BurnOperation /> should render correctly 1`] = `
                       data-testid="details-review-detail-3"
                     >
                       <p
-                        class="chakra-text css-bpirlf"
+                        class="chakra-text css-9s6br4"
                       >
                         Supply type
                       </p>
@@ -320,14 +296,14 @@ exports[`<BurnOperation /> should render correctly 1`] = `
             class="chakra-stack css-1amf41o"
           >
             <button
-              class="chakra-button css-1nrhi9n"
+              class="chakra-button css-1urzhdw"
               data-testid="cancel-btn"
               type="button"
             >
               Go back
             </button>
             <button
-              class="chakra-button css-1178n6s"
+              class="chakra-button css-qvkb6r"
               data-testid="confirm-btn"
               disabled=""
               type="button"

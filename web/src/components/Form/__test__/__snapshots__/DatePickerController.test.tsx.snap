@@ -17,13 +17,13 @@ exports[`<DatePickerController /> .render should be disabled if disabled=true: D
           class="react-datepicker__input-container"
         >
           <div
-            class="chakra-input__group css-1hua6uu"
+            class="chakra-input__group css-1rp2huo"
           >
             <div
               class="chakra-input__left-element css-nc17it"
             >
               <div
-                class="css-gmuwbf"
+                class="css-1n2mv2k"
               >
                 <svg
                   class="chakra-icon css-g5uxme"
@@ -88,7 +88,7 @@ exports[`<DatePickerController /> .render should be disabled if disabled=true: D
               </div>
             </div>
             <input
-              class="chakra-input css-829f9v"
+              class="chakra-input css-1jo7i1r"
               disabled=""
               id="field-:r4:"
               placeholder="datepicker-placeholder"
@@ -138,13 +138,13 @@ exports[`<DatePickerController /> .render should render the component: WithLabel
           class="react-datepicker__input-container"
         >
           <div
-            class="chakra-input__group css-1hua6uu"
+            class="chakra-input__group css-1rp2huo"
           >
             <div
               class="chakra-input__left-element css-nc17it"
             >
               <div
-                class="css-gmuwbf"
+                class="css-1n2mv2k"
               >
                 <svg
                   class="chakra-icon css-g5uxme"
@@ -209,7 +209,7 @@ exports[`<DatePickerController /> .render should render the component: WithLabel
               </div>
             </div>
             <input
-              class="chakra-input css-829f9v"
+              class="chakra-input css-1jo7i1r"
               id="field-:r0:"
               value=""
             />
@@ -242,13 +242,13 @@ exports[`<DatePickerController /> .render should show the error message: WithErr
           class="react-datepicker__input-container"
         >
           <div
-            class="chakra-input__group css-1hua6uu"
+            class="chakra-input__group css-1rp2huo"
           >
             <div
               class="chakra-input__left-element css-nc17it"
             >
               <div
-                class="css-gmuwbf"
+                class="css-1n2mv2k"
               >
                 <svg
                   class="chakra-icon css-g5uxme"
@@ -315,7 +315,7 @@ exports[`<DatePickerController /> .render should show the error message: WithErr
             <input
               aria-describedby="field-:r2:-feedback"
               aria-invalid="true"
-              class="chakra-input css-829f9v"
+              class="chakra-input css-1jo7i1r"
               id="field-:r2:"
               value=""
             />
@@ -324,7 +324,7 @@ exports[`<DatePickerController /> .render should show the error message: WithErr
       </div>
       <div
         aria-live="polite"
-        class="chakra-form__error-message css-2e3jkk"
+        class="chakra-form__error-message css-10ckq1i"
         data-testid="datepicker-error-message"
         id="field-:r2:-feedback"
       >

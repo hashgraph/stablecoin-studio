@@ -35,9 +35,6 @@ build
 # history
 .history
 
-# Compile contract
-hardhat.config.ts
-
 node_modules
 .env
 coverage
@@ -49,15 +46,9 @@ typechain-types
 cache
 artifacts
 
+./docs/
+./cache/*
+./typechain-types/
 
-node_modules
-.env
-coverage
-coverage.json
-typechain
-typechain-types
-
-#Hardhat files
-cache
-artifacts
-
+#Slither
+Slither/

@@ -79,6 +79,13 @@ export const english = {
     askDoSomething: 'What do you want to do?',
     askOptionalProps:
       'Do you want to configure the initial supply, max supply or decimals?',
+    askReserve:
+      'Do you want to link the stable coin to a Proof of Reserve?',
+    askExistingReserve:
+      'Do you want to link it to an already existing Proof of Reserve?',
+
+    askReserveAddress: 'Enter the Proof of Reserve Feed you wish to link your stable coin to',
+    askReserveInitialAmount: 'Enter the Proof of Reserve Feed initial amount',
     askInitialSupply: 'Enter the initial supply',
     askSupplyType: 'Do you want the token max supply to be infinite?',
     askTotalSupply: 'Enter the max supply',

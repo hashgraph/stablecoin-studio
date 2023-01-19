@@ -218,7 +218,6 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 				nameFunction,
 				t,
 			);
-			console.log('here');
 			await this.getAccountKey(); // Ensure we have the public key)
 			let signedT = t;
 			if (!t.isFrozen()) {

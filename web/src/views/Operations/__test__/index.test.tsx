@@ -1,5 +1,5 @@
 import { render } from '../../../test/index';
-import Operations from '../index';
+import Operations from '../../../Router/index';
 import translations from '../../../translations/en/operations.json';
 // import configureMockStore from 'redux-mock-store';
 

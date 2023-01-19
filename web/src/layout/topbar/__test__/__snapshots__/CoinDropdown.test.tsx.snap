@@ -17,7 +17,7 @@ exports[`<CoinDropdown /> should render correctly 1`] = `
         <span
           data-testid="select-placeholder"
         >
-          Choose stable coin 
+          0.0.49319786 - TEST 
         </span>
         <select
           data-testid="select-coin-dropdown"

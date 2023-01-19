@@ -237,7 +237,7 @@ const RoleLayout = (props: RoleLayoutProps) => {
 						>
 							{t('global:common.goBack')}
 						</Button>
-						<Button data-testid='confirm-btn' disabled={!buttonConfirmEnable} onClick={onConfirm}>
+						<Button data-testid='confirm-btn' isDisabled={!buttonConfirmEnable} onClick={onConfirm}>
 							{t('global:common.accept')}
 						</Button>
 					</Stack>

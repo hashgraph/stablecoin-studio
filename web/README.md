@@ -109,25 +109,34 @@ In order to create a new stable coin using the WEB, you must click on the "Creat
 
 Basic information about the Stable coin.
 
-![image](https://user-images.githubusercontent.com/114951681/210237528-85f9a88b-6593-4e2a-92b6-f869d4f4d52a.png)
+![image](https://user-images.githubusercontent.com/110089113/212881844-776a06b8-ba65-4722-992b-ef1b7529e4e6.png)
 
 **Optional details**
 
 Stable coin supply and accuracy definition (inital supply, max supply, decimals)
 
-![image](https://user-images.githubusercontent.com/114951681/210237700-226bcc17-7986-426c-adab-a72de0e82d2e.png)
+![image](https://user-images.githubusercontent.com/110089113/212881920-45aed35b-4c82-4b01-bbb3-a6699a2dfa8b.png)
 
 **Manage permissions**
 
 Underlying token's keys definition (stable coin smart contract or another account)
 
-![image](https://user-images.githubusercontent.com/114951681/210237760-ee1f83fc-3ddf-48be-8661-8a4ab4aa83df.png)
+![image](https://user-images.githubusercontent.com/110089113/212882025-89045f22-7ffd-4e46-a419-7bc7efda54a3.png)
+
+**Proof Of Reserve**
+
+Choose if the stable coin will have a proof of reserve (PoR) associated to it or not.
+If so, the user will have two options, either submit the address of an already existing PoR contract or generate a completely new one (using the demo implementation of a PoR contract included in the project) specifying an initial Reserve amount.
+
+For more information about proof of reserve, see the [docs](https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/feature/sdk/Chainlink_PoR#Proof-of-reserve).
+
+![image](https://user-images.githubusercontent.com/110089113/212882109-7975a305-7bfa-450e-973a-625b5d528e5e.png)
 
 **Review**
 
 Final validation before creating the stable coin.
 
-![image](https://user-images.githubusercontent.com/114951681/210238265-5047651b-6c5b-431c-a5d3-0b26fdb18df3.png)
+![image](https://user-images.githubusercontent.com/110089113/212882395-b7cd1366-9c67-4db3-8532-557d4f0ff3a2.png)
 
 You will then have to validate the transaction using the wallet you paired to.
 
@@ -156,6 +165,19 @@ The operations linked to the capabilities (roles) assigned to your account for t
 ![Alt text](docs/images/RoleMgmgt.png?raw=true 'Roles management')
 
 If your account has the stable coin admin role, you will also be allowed to manage the stable coin's roles.
+
+### Proof Of Reserve
+
+![image](https://user-images.githubusercontent.com/110887433/213154467-70663bd0-2116-4121-9b3a-3028e4309fff.png)
+
+If your stable coin is associated to a proof of reserve (PoR), you can update the PoR contract address at anytime from here.
+
+> Warning: updating the PoR contract address can have a serious impact on your stable coin cash-in functionality since it will start refering to a completely different contract to check the Reserve. If for some reason the new contract's Reserve is less than the previous one, you might not be able to mint any new tokens.
+
+If (and only if) the PoR contract attached to your stable coin is the PoR demo implementation included in this project you will also have the possibility to change its Reserve amount from here. You will only need to use the PoR admin account (the account used to deploy the stable coin).
+
+> This is the main reason why the PoR demo implementation included in this project must be used only for demo purposes, the Reseve amount can be changed at any time without any check or control whatsoever...
+
 
 # Testing
 

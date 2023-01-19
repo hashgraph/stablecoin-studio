@@ -20,7 +20,7 @@ exports[`<SwitchComponent /> should render directly 1`] = `
           class="chakra-stack css-191yzw1"
         >
           <p
-            class="chakra-text css-6ixl7s"
+            class="chakra-text css-1f7y1le"
             data-testid="switch-handler-no"
           >
             NO
@@ -34,7 +34,7 @@ exports[`<SwitchComponent /> should render directly 1`] = `
           class="chakra-stack css-191yzw1"
         >
           <p
-            class="chakra-text css-6ixl7s"
+            class="chakra-text css-1f7y1le"
             data-testid="switch-handler-yes"
           >
             YES

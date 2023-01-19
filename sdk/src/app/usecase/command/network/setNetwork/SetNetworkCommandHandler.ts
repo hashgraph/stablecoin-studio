@@ -21,7 +21,9 @@
 import { ICommandHandler } from '../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../core/decorator/LazyInjectDecorator.js';
+import Injectable from '../../../../../core/Injectable.js';
 import { MirrorNodeAdapter } from '../../../../../port/out/mirror/MirrorNodeAdapter.js';
+import RPCQueryAdapter from '../../../../../port/out/rpc/RPCQueryAdapter.js';
 import NetworkService from '../../../../service/NetworkService.js';
 import {
 	SetNetworkCommand,
@@ -49,7 +51,11 @@ export class SetNetworkCommandHandler
 			this.networkService.mirrorNode = command.mirrorNode;
 		if (command.rpcNode) this.networkService.rpcNode = command.rpcNode;
 
+		// Init Mirror Node Adapter
 		this.mirrorNodeAdapter.setEnvironment(command.environment);
+
+		// Init RPC Query Adapter
+		Injectable.resolve(RPCQueryAdapter).init();
 
 		return Promise.resolve(
 			new SetNetworkCommandResponse(

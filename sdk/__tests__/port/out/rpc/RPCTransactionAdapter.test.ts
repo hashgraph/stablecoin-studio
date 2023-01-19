@@ -43,6 +43,7 @@ import Account from '../../../../src/domain/context/account/Account.js';
 import NetworkService from '../../../../src/app/service/NetworkService.js';
 import { ContractId as HContractId } from '@hashgraph/sdk';
 import StableCoinService from '../../../../src/app/service/StableCoinService.js';
+import { RESERVE_DECIMALS } from '../../../../src/domain/context/reserve/Reserve.js';
 
 describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 	let stableCoinCapabilitiesHTS: StableCoinCapabilities;
@@ -65,9 +66,12 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 			stablecoin,
 			new ContractId(FactoryAddressTestnet),
 			new ContractId(HederaERC20AddressTestnet),
+			true,
+			undefined,
+			BigDecimal.fromString('100000000', RESERVE_DECIMALS)
 		);
 		const tokenIdSC = ContractId.fromHederaContractId(
-			HContractId.fromSolidityAddress(tr.response[3]),
+			HContractId.fromSolidityAddress(tr.response[0][3]),
 		);
 		return await stableCoinService.getCapabilities(account, tokenIdSC);
 	};
@@ -90,14 +94,12 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 			symbol: 'TEST',
 			decimals: 6,
 			initialSupply: BigDecimal.fromString('1000', 6),
-			// maxSupply: '',
 			autoRenewAccount: CLIENT_ACCOUNT_ECDSA.id,
 			adminKey: PublicKey.NULL,
 			freezeKey: PublicKey.NULL,
 			wipeKey: PublicKey.NULL,
 			pauseKey: PublicKey.NULL,
 			supplyKey: PublicKey.NULL,
-			// treasury: CLIENT_ACCOUNT_ED25519.id.toString(),
 			supplyType: TokenSupplyType.INFINITE,
 		});
 
@@ -106,14 +108,12 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 			symbol: 'TEST',
 			decimals: 6,
 			initialSupply: BigDecimal.fromString('1000', 6),
-			// maxSupply: '',
 			autoRenewAccount: CLIENT_ACCOUNT_ECDSA.id,
 			adminKey: CLIENT_ACCOUNT_ECDSA.publicKey,
 			freezeKey: CLIENT_ACCOUNT_ECDSA.publicKey,
 			wipeKey: CLIENT_ACCOUNT_ECDSA.publicKey,
 			pauseKey: CLIENT_ACCOUNT_ECDSA.publicKey,
 			supplyKey: CLIENT_ACCOUNT_ECDSA.publicKey,
-			treasury: CLIENT_ACCOUNT_ECDSA.id,
 			supplyType: TokenSupplyType.INFINITE,
 		});
 
@@ -125,11 +125,6 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 			coinHTS,
 			CLIENT_ACCOUNT_ECDSA,
 		);
-		console.log(
-			`HTS: ${stableCoinCapabilitiesHTS.coin.tokenId?.toString()}`,
-		);
-		console.log(`SC: ${stableCoinCapabilitiesSC.coin.tokenId?.toString()}`);
-
 		expect(stableCoinCapabilitiesSC).not.toBeNull();
 		expect(stableCoinCapabilitiesHTS).not.toBeNull();
 	}, 1500000);
@@ -156,6 +151,7 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 			coin,
 			new ContractId(FactoryAddressTestnet),
 			new ContractId(HederaERC20AddressTestnet),
+			true
 		);
 	}, 1500000);
 
@@ -180,6 +176,30 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 			),
 		);
 	}, 1500000);
+
+	it('Test cashIn contract function does not succeeded if exceeds reserve', async () => {
+		await delay(3);
+		tr = await th.getReserveAddress(
+			stableCoinCapabilitiesSC
+		);
+		const reserveContractId: HContractId = HContractId.fromSolidityAddress(tr.response);	
+		await delay(3);
+		tr = await th.updateReserveAmount(
+			new ContractId(reserveContractId.toString()),
+			BigDecimal.fromStringFixed('900', RESERVE_DECIMALS)
+		);
+		await delay(3);
+		await expect(th.cashin(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ECDSA.id,
+			BigDecimal.fromString('900', stableCoinCapabilitiesSC.coin.decimals)
+		)).rejects.toThrow();
+
+		tr = await th.updateReserveAmount(
+			new ContractId(reserveContractId.toString()),
+			BigDecimal.fromString('100000000', RESERVE_DECIMALS)
+		);
+	}, 150000);	
 
 	it('Test wipe SC', async () => {
 		await delay(3);
@@ -424,6 +444,67 @@ describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
 			stableCoinCapabilitiesSC,
 			CLIENT_ACCOUNT_ECDSA.id,
 		);
+	}, 1500000);
+
+	it('Test cannot create coin with an initial supply greater than reserve', async () => {
+		const coinSC = new StableCoin({
+			name: 'TEST_ACCELERATOR_SC',
+			symbol: 'TEST',
+			decimals: 6,
+			initialSupply: BigDecimal.fromString('100000001', 6),
+			autoRenewAccount: CLIENT_ACCOUNT_ECDSA.id,
+			adminKey: PublicKey.NULL,
+			freezeKey: PublicKey.NULL,
+			wipeKey: PublicKey.NULL,
+			pauseKey: PublicKey.NULL,
+			supplyKey: PublicKey.NULL,
+			supplyType: TokenSupplyType.INFINITE,
+		});
+		await expect (createToken(
+			coinSC,
+			CLIENT_ACCOUNT_ECDSA,
+		)).rejects.toThrow();
+	}, 1500000);
+
+	it('Test get reserve address returns a value when stable coin has reserve', async () => {
+		tr = await th.getReserveAddress(
+			stableCoinCapabilitiesHTS
+		);
+		expect(tr.response).not.toBeNull;
+	}, 1500000);
+
+	it('Test get reserve amount returns a value when stable coin has reserve', async () => {
+		tr = await th.getReserveAmount(
+			stableCoinCapabilitiesHTS
+		);
+		expect(tr.response).toEqual(BigDecimal.fromStringFixed('10000000000', RESERVE_DECIMALS))
+	}, 1500000);
+	
+	it('Test update reserve amount when stable coin has reserve', async () => {
+		tr = await th.getReserveAddress(
+			stableCoinCapabilitiesHTS
+		);
+		const reserveContractId: HContractId = HContractId.fromSolidityAddress(tr.response);
+		tr = await th.updateReserveAmount(
+			new ContractId(reserveContractId.toString()),
+			BigDecimal.fromStringFixed('1000', RESERVE_DECIMALS)
+		);
+		tr = await th.getReserveAmount(
+			stableCoinCapabilitiesHTS
+		);
+		expect(tr.response).toEqual(BigDecimal.fromStringFixed('1000', RESERVE_DECIMALS))
+	}, 1500000);	
+
+	it('Test update reserve address when stable coin has reserve', async () => {
+		tr = await th.updateReserveAddress(
+			stableCoinCapabilitiesHTS,
+			new ContractId('0.0.11111111')
+		);
+		tr = await th.getReserveAddress(
+			stableCoinCapabilitiesHTS
+		);
+		expect(tr.response.toString().toUpperCase()).
+			toEqual(`0X${HContractId.fromString('0.0.11111111').toSolidityAddress().toUpperCase()}`)
 	}, 1500000);
 
 	afterEach(async () => {

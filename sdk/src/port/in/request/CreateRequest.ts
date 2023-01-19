@@ -22,14 +22,13 @@
 import CheckNums from '../../../core/checks/numbers/CheckNums.js';
 import { OptionalField } from '../../../core/decorator/OptionalDecorator.js';
 import Injectable from '../../../core/Injectable.js';
+import { RESERVE_DECIMALS } from '../../../domain/context/reserve/Reserve.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import InvalidDecimalRange from '../../../domain/context/stablecoin/error/InvalidDecimalRange.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.js';
 import {
-	AccountBaseRequest,
-	RequestAccount,
-	RequestPublicKey,
+	RequestPublicKey
 } from './BaseRequest.js';
 import { InvalidType } from './error/InvalidType.js';
 import { InvalidValue } from './error/InvalidValue.js';
@@ -50,6 +49,14 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 	stableCoinFactory: string;
 
 	hederaERC20: string;
+
+	createReserve: boolean;
+
+	@OptionalField()
+	reserveAddress?: string;
+
+	@OptionalField()
+	reserveInitialAmount?: string | undefined;
 
 	@OptionalField()
 	initialSupply?: string | undefined;
@@ -105,6 +112,9 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		supplyType,
 		stableCoinFactory,
 		hederaERC20,
+		reserveAddress,
+		reserveInitialAmount,
+		createReserve
 	}: {
 		name: string;
 		symbol: string;
@@ -123,6 +133,9 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		supplyType?: TokenSupplyType;
 		stableCoinFactory: string;
 		hederaERC20: string;
+		reserveAddress?: string;
+		reserveInitialAmount?: string;
+		createReserve: boolean;
 	}) {
 		super({
 			name: (val) => {
@@ -219,6 +232,44 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 			treasury: Validation.checkHederaIdFormat(),
 			stableCoinFactory: Validation.checkContractId(),
 			hederaERC20: Validation.checkContractId(),
+			reserveAddress: Validation.checkContractId(),
+			reserveInitialAmount: (val) => {
+				if (val === undefined || val === '' || this.createReserve == false) {
+					return;
+				}
+				if (!BigDecimal.isBigDecimal(val)) {
+					return [new InvalidType(val, 'BigDecimal')];
+				}
+				if (CheckNums.hasMoreDecimals(val, RESERVE_DECIMALS)) {
+					return [new InvalidDecimalRange(val, RESERVE_DECIMALS)];
+				}
+
+				const commonDecimals = (RESERVE_DECIMALS > this.decimals)? RESERVE_DECIMALS : this.decimals;
+
+				const reserveInitialAmount = BigDecimal.fromString(
+					val,
+					commonDecimals,
+				);
+
+				const bInitialSupply =
+					this.initialSupply &&
+					BigDecimal.isBigDecimal(this.initialSupply) &&
+					!CheckNums.hasMoreDecimals(
+						this.initialSupply,
+						this.decimals,
+					)
+						? BigDecimal.fromString(
+								this.initialSupply,
+								commonDecimals,
+						  )
+						: undefined;
+
+				return StableCoin.checkReserveInitialAmount(
+					reserveInitialAmount,
+					commonDecimals,
+					bInitialSupply,
+				);
+			},
 		});
 		this.name = name;
 		this.symbol = symbol;
@@ -238,5 +289,9 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		this.supplyType = supplyType;
 		this.stableCoinFactory = stableCoinFactory;
 		this.hederaERC20 = hederaERC20;
+		this.reserveAddress = reserveAddress;
+		this.reserveInitialAmount = reserveInitialAmount;
+		this.createReserve = createReserve;
+
 	}
 }
