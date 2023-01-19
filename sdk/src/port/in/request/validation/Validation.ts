@@ -39,6 +39,8 @@ import BigDecimal from '../../../../domain/context/shared/BigDecimal.js';
 import Account from '../../../../domain/context/account/Account.js';
 import ContractId from '../../../../domain/context/contract/ContractId.js';
 import InvalidDecimalRange from '../../../../domain/context/stablecoin/error/InvalidDecimalRange.js';
+import { StableCoinRole } from '../../../../domain/context/stablecoin/StableCoinRole.js';
+import { InvalidRole } from '../../../../domain/context/stablecoin/error/InvalidRole.js';
 
 export default class Validation {
 	public static checkPublicKey = () => {
@@ -116,10 +118,10 @@ export default class Validation {
 	public static checkRole = () => {
 		return (val: any): BaseError[] => {
 			const err: BaseError[] = [];
-			// const roles: string[] = Object.values(StableCoinRole);
-			// if (!roles.includes(val)) {
-			// 	err.push(new InvalidRole(val));
-			// }
+			const roles: string[] = Object.values(StableCoinRole);
+			if (!roles.includes(val)) {
+				err.push(new InvalidRole(val));
+			}
 			return err;
 		};
 	};

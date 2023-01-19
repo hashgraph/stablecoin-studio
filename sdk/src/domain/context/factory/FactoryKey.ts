@@ -20,6 +20,7 @@
 
 export class FactoryKey {
 	public keyType: number;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	public PublicKey: any;
 	public isED25519: boolean;
 }
