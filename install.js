@@ -24,6 +24,11 @@ const npmLinkProject = (dir) => {
   execSync(`cd ${dir} && npm link`, handleError);
   console.log("\tDone");
 };
+const npmBuild = (dir,name='module') =>{
+  process.stdout.write(`Build for ${name}...`);
+  execSync(`cd ${dir} && npm run build`, handleError);
+  console.log("\tDone");
+}
 
 let option = process.argv.slice(2)[0];
 
@@ -31,6 +36,7 @@ if (option) {
   npmInstall(`${dir}/${option}`, option.toUpperCase());
 } else {
   npmInstall(hashDir, "HASHCONNECT");
+  npmBuild(hashDir, "HASHCONNECT");
   npmInstall(conDir, "CONTRACTS");
   npmInstall(sdkDir, "SDK");
   npmInstall(cliDir, "CLI");
