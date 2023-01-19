@@ -28,10 +28,15 @@ import { singleton } from 'tsyringe';
 import { lazyInject } from '../../../core/decorator/LazyInjectDecorator.js';
 import NetworkService from '../../../app/service/NetworkService.js';
 import LogService from '../../../app/service/LogService.js';
-import { HederaERC20__factory } from 'hedera-stable-coin-contracts';
+import {
+	AggregatorV3Interface__factory,
+	HederaERC20__factory,
+} from 'hedera-stable-coin-contracts';
 import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
+import ContractId from '../../../domain/context/contract/ContractId.js';
 
-const Factory = HederaERC20__factory;
+const HederaERC20 = HederaERC20__factory;
+const Reserve = AggregatorV3Interface__factory;
 
 type StaticConnect = { connect: (...args: any[]) => any };
 
@@ -68,32 +73,36 @@ export default class RPCQueryAdapter {
 	}
 
 	async balanceOf(address: string, target: string): Promise<BigNumber> {
-		return await this.connect(Factory, address).balanceOf(target);
+		return await this.connect(HederaERC20, address).balanceOf(target);
 	}
 
-	async getReserveAddress(address: string): Promise<string> {
-		return await this.connect(Factory, address).getReserveAddress();
+	async getReserveAddress(address: string): Promise<ContractId> {
+		const val = await this.connect(
+			HederaERC20,
+			address,
+		).getReserveAddress();
+		return ContractId.fromHederaEthereumAddress(val);
 	}
 	async getReserveAmount(address: string): Promise<BigNumber> {
-		return await this.connect(Factory, address).getReserveAmount();
+		return await this.connect(HederaERC20, address).getReserveAmount();
 	}
 
 	async isLimited(address: string, target: string): Promise<boolean> {
 		return await this.connect(
-			Factory,
+			HederaERC20,
 			address,
 		).isUnlimitedSupplierAllowance(target);
 	}
 
 	async isUnlimited(address: string, target: string): Promise<boolean> {
 		return await this.connect(
-			Factory,
+			HederaERC20,
 			address,
 		).isUnlimitedSupplierAllowance(target);
 	}
 
 	async getRoles(address: string, target: string): Promise<string[]> {
-		return await this.connect(Factory, address).getRoles(target);
+		return await this.connect(HederaERC20, address).getRoles(target);
 	}
 
 	async hasRole(
@@ -101,15 +110,19 @@ export default class RPCQueryAdapter {
 		target: string,
 		role: StableCoinRole,
 	): Promise<boolean> {
-		return await this.connect(Factory, address).hasRole(role, target);
+		return await this.connect(HederaERC20, address).hasRole(role, target);
 	}
 
 	async supplierAllowance(
 		address: string,
 		target: string,
 	): Promise<BigNumber> {
-		return await this.connect(Factory, address).getSupplierAllowance(
+		return await this.connect(HederaERC20, address).getSupplierAllowance(
 			target,
 		);
+	}
+
+	async reserveDecimals(address: string): Promise<number> {
+		return await this.connect(Reserve, address).decimals();
 	}
 }

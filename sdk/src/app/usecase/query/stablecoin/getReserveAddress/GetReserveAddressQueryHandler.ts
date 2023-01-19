@@ -21,7 +21,6 @@
 import { lazyInject } from '../../../../../core/decorator/LazyInjectDecorator.js';
 import { QueryHandler } from '../../../../../core/decorator/QueryHandlerDecorator.js';
 import { IQueryHandler } from '../../../../../core/query/QueryHandler.js';
-import ContractId from '../../../../../domain/context/contract/ContractId.js';
 import { MirrorNodeAdapter } from '../../../../../port/out/mirror/MirrorNodeAdapter.js';
 import RPCQueryAdapter from '../../../../../port/out/rpc/RPCQueryAdapter.js';
 import StableCoinService from '../../../../service/StableCoinService.js';
@@ -48,7 +47,7 @@ export class GetReserveAddressQueryHandler implements IQueryHandler<GetReserveAd
 
 		const res = await this.queryAdapter.getReserveAddress(coin.evmProxyAddress);
 		return Promise.resolve(
-			new GetReserveAddressQueryResponse(new ContractId(res).toString()),
+			new GetReserveAddressQueryResponse(res),
 		);
 	}
 }
