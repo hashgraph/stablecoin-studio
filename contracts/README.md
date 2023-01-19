@@ -145,7 +145,7 @@ Typescript test files can be foud in the `test` folder:
 
 ## Configuration
 ### Tests accounts
-You need to configure in the `hardhat.config.ts` file **two Hedera accounts** that will be used for testing.
+You need to create the `.env` file cloning the content of `.env.sample` and add **two Hedera accounts** that will be used for testing.
 
 These accounts must be existing valid accounts in the **Hedera network** you are using to test the smart contracts, they must also have a **positive balance large enough** to run all the contract deployments, invocations and token creations executed in the tests.
 
@@ -162,24 +162,16 @@ For each account you must provide the following information:
 
 Example for the Hedera testnet (_these are fake accounts/keys_):
 
-```hardhat.config.ts
-    testnet: {
-        accounts: [
-            // An array of predefined Externally Owned Accounts
-            {
-                account: "0.0.48513676",
-                privateKey:"8830990f02fae1c3a843b8aaad0433a73ee47b08d56426a8e416d08727ea0609",
-                publicKey:"c14dbe4c936181b7a2fe7faf086fd95bdc6900e2d16533e3e8ffd00cac1fe607",
-                isED25519Type: true
-            },
-            {
-                account: "0.0.47786654",
-                privateKey:"302e020100300506032b6baf04220420b7ca8f1a5453d5c03b0d8ba99d06306ed6c93ee64d7bf122c21b0981e2b0b679",
-                publicKey:"302a300506032b657003210057056288u5d5a9cdaeb85687391dc7372707c464f9e7cb0efb386cf4244ebdf6",
-                isED25519Type: true
-            },
-        ],
-    }
+```.env
+    HEDERA_OPERATOR_ACCOUNT='0.0.48513676'
+    HEDERA_OPERATOR_PUBLICKEY='c14dbe4c936181b7a2fe7faf086fd95bdc6900e2d16533e3e8ffd00cac1fe607'
+    HEDERA_OPERATOR_PRIVATEKEY='8830990f02fae1c3a843b8aaad0433a73ee47b08d56426a8e416d08727ea0609'
+    HEDERA_OPERATOR_ED25519=true
+
+    HEDERA_NON_OPERATOR_ACCOUNT='0.0.47786654'
+    HEDERA_NON_OPERATOR_PUBLICKEY='302a300506032b657003210057056288u5d5a9cdaeb85687391dc7372707c464f9e7cb0efb386cf4244ebdf6'
+    HEDERA_NON_OPERATOR_PRIVATEKEY='302e020100300506032b6baf04220420b7ca8f1a5453d5c03b0d8ba99d06306ed6c93ee64d7bf122c21b0981e2b0b679'
+    HEDERA_NON_OPERATOR_ED25519=true
 ```
 ### Operating accounts
 All tests will use the two above mentionned accounts.
