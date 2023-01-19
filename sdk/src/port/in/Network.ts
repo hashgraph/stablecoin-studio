@@ -35,6 +35,7 @@ import InitializationRequest from './request/InitializationRequest.js';
 import Event, { WalletEvents } from './Event.js';
 import RPCTransactionAdapter from '../out/rpc/RPCTransactionAdapter.js';
 import { HashpackTransactionAdapter } from '../out/hs/hashpack/HashpackTransactionAdapter.js';
+import RPCQueryAdapter from '../out/rpc/RPCQueryAdapter.js';
 
 export { InitializationData, SupportedWallets };
 

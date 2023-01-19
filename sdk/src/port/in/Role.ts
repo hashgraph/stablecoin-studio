@@ -21,6 +21,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import Injectable from '../../core/Injectable.js';
+import { QueryBus } from '../../core/query/QueryBus.js';
 import { CommandBus } from '../../core/command/CommandBus.js';
 import {
 	GetRolesRequest,
@@ -33,16 +34,15 @@ import ResetSupplierAllowanceRequest from './request/ResetSupplierAllowanceReque
 import IncreaseSupplierAllowanceRequest from './request/IncreaseSupplierAllowanceRequest.js';
 import DecreaseSupplierAllowanceRequest from './request/DecreaseSupplierAllowanceRequest.js';
 import CheckSupplierLimitRequest from './request/CheckSupplierLimitRequest.js';
-import { HasRoleCommand } from '../../app/usecase/command/stablecoin/roles/hasRole/HasRoleCommand.js';
+import { HasRoleQuery } from '../../app/usecase/query/stablecoin/roles/hasRole/HasRoleQuery.js';
 import { HederaId } from '../../domain/context/shared/HederaId.js';
 import { GrantRoleCommand } from '../../app/usecase/command/stablecoin/roles/grantRole/GrantRoleCommand.js';
 import { RevokeRoleCommand } from '../../app/usecase/command/stablecoin/roles/revokeRole/RevokeRoleCommand.js';
-import { GetRolesCommand } from '../../app/usecase/command/stablecoin/roles/getRoles/GetRolesCommand.js';
-import { GetAllowanceCommand } from '../../app/usecase/command/stablecoin/roles/getAllowance/GetAllowanceCommand.js';
+import { GetRolesQuery } from '../../app/usecase/query/stablecoin/roles/getRoles/GetRolesQuery.js';
+import { GetAllowanceQuery} from '../../app/usecase/query/stablecoin/roles/getAllowance/GetAllowanceQuery.js';
 import { ResetAllowanceCommand } from '../../app/usecase/command/stablecoin/roles/resetAllowance/ResetAllowanceCommand.js';
 import { IncreaseAllowanceCommand } from '../../app/usecase/command/stablecoin/roles/increaseAllowance/IncreaseAllowanceCommand.js';
 import { DecreaseAllowanceCommand } from '../../app/usecase/command/stablecoin/roles/decreaseAllowance/DecreaseAllowanceCommand.js';
-import { IsUnlimitedCommand } from '../../app/usecase/command/stablecoin/roles/isUnlimited/IsUnlimitedCommand.js';
 import {
 	StableCoinRole,
 	StableCoinRoleLabel,
@@ -52,6 +52,7 @@ import { GrantUnlimitedSupplierRoleCommand } from '../../app/usecase/command/sta
 import { RevokeSupplierRoleCommand } from '../../app/usecase/command/stablecoin/roles/revokeSupplierRole/RevokeSupplierRoleCommand.js';
 import { handleValidation } from './Common.js';
 import { Balance } from '../../domain/context/stablecoin/Balance.js';
+import { IsUnlimitedQuery } from '../../app/usecase/query/stablecoin/isUnlimited/IsUnlimitedQuery.js';
 
 export { StableCoinRole, StableCoinRoleLabel };
 
@@ -75,6 +76,7 @@ interface IRole {
 
 class RoleInPort implements IRole {
 	constructor(
+		private readonly queryBus: QueryBus = Injectable.resolve(QueryBus),
 		private readonly commandBus: CommandBus = Injectable.resolve(
 			CommandBus,
 		),
@@ -84,8 +86,8 @@ class RoleInPort implements IRole {
 		const { tokenId, targetId, role } = request;
 		handleValidation('HasRoleRequest', request);
 		return (
-			await this.commandBus.execute(
-				new HasRoleCommand(
+			await this.queryBus.execute(
+				new HasRoleQuery(
 					role!,
 					HederaId.from(targetId),
 					HederaId.from(tokenId),
@@ -163,8 +165,8 @@ class RoleInPort implements IRole {
 		handleValidation('GetRolesRequest', request);
 
 		return (
-			await this.commandBus.execute(
-				new GetRolesCommand(
+			await this.queryBus.execute(
+				new GetRolesQuery(
 					HederaId.from(targetId),
 					HederaId.from(tokenId),
 				),
@@ -176,8 +178,8 @@ class RoleInPort implements IRole {
 		const { tokenId, targetId } = request;
 		handleValidation('GetSupplierAllowanceRequest', request);
 
-		const res = await this.commandBus.execute(
-			new GetAllowanceCommand(
+		const res = await this.queryBus.execute(
+			new GetAllowanceQuery(
 				HederaId.from(targetId),
 				HederaId.from(tokenId),
 			),
@@ -240,8 +242,8 @@ class RoleInPort implements IRole {
 		const { tokenId, targetId } = request;
 		handleValidation('CheckSupplierLimitRequest', request);
 		const hasRole = (
-			await this.commandBus.execute(
-				new HasRoleCommand(
+			await this.queryBus.execute(
+				new HasRoleQuery(
 					StableCoinRole.CASHIN_ROLE,
 					HederaId.from(targetId),
 					HederaId.from(tokenId),
@@ -249,8 +251,8 @@ class RoleInPort implements IRole {
 			)
 		).payload;
 		const unlimited = (
-			await this.commandBus.execute(
-				new IsUnlimitedCommand(
+			await this.queryBus.execute(
+				new IsUnlimitedQuery(
 					HederaId.from(targetId),
 					HederaId.from(tokenId),
 				),
@@ -263,8 +265,8 @@ class RoleInPort implements IRole {
 		const { tokenId, targetId } = request;
 		handleValidation('CheckSupplierLimitRequest', request);
 		return (
-			await this.commandBus.execute(
-				new IsUnlimitedCommand(
+			await this.queryBus.execute(
+				new IsUnlimitedQuery(
 					HederaId.from(targetId),
 					HederaId.from(tokenId),
 				),

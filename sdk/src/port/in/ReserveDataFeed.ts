@@ -29,30 +29,28 @@ import { Balance } from '../../domain/context/stablecoin/Balance.js';
 import { HederaId } from '../../domain/context/shared/HederaId.js';
 import UpdateReserveAmountRequest from './request/UpdateReserveAmountRequest.js';
 import GetReserveAmountRequest from './request/GetReserveAmountRequest.js';
-import { GetReserveAmountCommand } from '../../app/usecase/command/reserve/operations/getReserveAmount/GetReserveAmountCommand.js';
 import { RESERVE_DECIMALS } from '../../domain/context/reserve/Reserve.js';
+import { GetReserveAmountQuery } from '../../app/usecase/query/stablecoin/getReserveAmount/GetReserveAmountQuery.js';
+import { QueryBus } from '../../core/query/QueryBus.js';
 
 interface IReserveDataFeedInPort {
 	getReserveAmount(request: GetReserveAmountRequest): Promise<Balance>;
-	updateReserveAmount(request: UpdateReserveAmountRequest): Promise<boolean>
+	updateReserveAmount(request: UpdateReserveAmountRequest): Promise<boolean>;
 }
 
 class ReserveDataFeedInPort implements IReserveDataFeedInPort {
 	constructor(
 		private readonly commandBus: CommandBus = Injectable.resolve(
 			CommandBus,
-		)
+		),
+		private readonly queryBus: QueryBus = Injectable.resolve(QueryBus),
 	) {}
 
-	async getReserveAmount(
-		request: GetReserveAmountRequest,
-	): Promise<Balance> {
+	async getReserveAmount(request: GetReserveAmountRequest): Promise<Balance> {
 		handleValidation('GetReserveAmountRequest', request);
 
-		const res = await this.commandBus.execute(
-			new GetReserveAmountCommand(
-				HederaId.from(request.tokenId)
-			)
+		const res = await this.queryBus.execute(
+			new GetReserveAmountQuery(HederaId.from(request.tokenId)),
 		);
 
 		return new Balance(res.payload);
@@ -67,7 +65,10 @@ class ReserveDataFeedInPort implements IReserveDataFeedInPort {
 			await this.commandBus.execute(
 				new UpdateReserveAmountCommand(
 					new ContractId(request.reserveAddress),
-					BigDecimal.fromString(request.reserveAmount, RESERVE_DECIMALS)
+					BigDecimal.fromString(
+						request.reserveAmount,
+						RESERVE_DECIMALS,
+					),
 				),
 			)
 		).payload;

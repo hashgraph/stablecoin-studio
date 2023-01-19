@@ -56,7 +56,6 @@ import {
 import { TokenSupplyType } from '../../domain/context/stablecoin/TokenSupply.js';
 import Account from '../../domain/context/account/Account.js';
 import { BurnCommand } from '../../app/usecase/command/stablecoin/operations/burn/BurnCommand.js';
-import { BalanceOfCommand } from '../../app/usecase/command/stablecoin/operations/balanceof/BalanceOfCommand.js';
 import { RescueCommand } from '../../app/usecase/command/stablecoin/operations/rescue/RescueCommand.js';
 import { WipeCommand } from '../../app/usecase/command/stablecoin/operations/wipe/WipeCommand.js';
 import { PauseCommand } from '../../app/usecase/command/stablecoin/operations/pause/PauseCommand.js';
@@ -69,10 +68,11 @@ import { handleValidation } from './Common.js';
 import { GetAccountTokenAssociatedQuery } from '../../app/usecase/query/account/tokenAssociated/GetAccountTokenAssociatedQuery.js';
 import UpdateReserveAddressRequest from './request/UpdateReserveAddressRequest.js';
 import GetReserveAddressRequest from './request/GetReserveAddressRequest.js';
-import { GetReserveAddressCommand } from '../../app/usecase/command/stablecoin/operations/getReserveAddress/GetReserveAddressCommand.js';
 import { UpdateReserveAddressCommand } from '../../app/usecase/command/stablecoin/operations/updateReserveAddress/UpdateReserveAddressCommand.js';
 import { RESERVE_DECIMALS } from '../../domain/context/reserve/Reserve.js';
 import ReserveViewModel from '../out/mirror/response/ReserveViewModel.js';
+import { BalanceOfQuery } from '../../app/usecase/query/stablecoin/balanceof/BalanceOfQuery.js';
+import { GetReserveAddressQuery } from '../../app/usecase/query/stablecoin/getReserveAddress/GetReserveAddressQuey.js';
 
 export const HederaERC20AddressTestnet = '0.0.49318811';
 export const HederaERC20AddressPreviewnet = '0.0.11111111';
@@ -285,10 +285,10 @@ class StableCoinInPort implements IStableCoinInPort {
 	async getBalanceOf(request: GetAccountBalanceRequest): Promise<Balance> {
 		handleValidation('GetAccountBalanceRequest', request);
 
-		const res = await this.commandBus.execute(
-			new BalanceOfCommand(
-				HederaId.from(request.targetId),
+		const res = await this.queryBus.execute(
+			new BalanceOfQuery(
 				HederaId.from(request.tokenId),
+				HederaId.from(request.targetId),
 			),
 		);
 
@@ -396,8 +396,8 @@ class StableCoinInPort implements IStableCoinInPort {
 		handleValidation('GetReserveAddressRequest', request);
 
 		return (
-			await this.commandBus.execute(
-				new GetReserveAddressCommand(HederaId.from(request.tokenId)),
+			await this.queryBus.execute(
+				new GetReserveAddressQuery(HederaId.from(request.tokenId)),
 			)
 		).payload;
 	}

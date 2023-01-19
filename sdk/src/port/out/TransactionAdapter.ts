@@ -30,8 +30,10 @@ import Account from '../../domain/context/account/Account.js';
 import { HederaId } from '../../domain/context/shared/HederaId.js';
 import { KeyType } from '../../domain/context/account/KeyProps.js';
 import AccountViewModel from './mirror/response/AccountViewModel.js';
-import { PublicKey as HPublicKey,
-		 ContractId as HContractId } from '@hashgraph/sdk';
+import {
+	PublicKey as HPublicKey,
+	ContractId as HContractId,
+} from '@hashgraph/sdk';
 import { MirrorNodeAdapter } from './mirror/MirrorNodeAdapter.js';
 import { Environment } from '../../domain/context/network/Environment.js';
 
@@ -48,7 +50,7 @@ interface ITransactionAdapter {
 		hederaERC20: ContractId,
 		createReserve: boolean,
 		reserveAddress?: ContractId,
-		reserveInitialAmount? : BigDecimal
+		reserveInitialAmount?: BigDecimal,
 	): Promise<TransactionResponse>;
 	init(): Promise<Environment>;
 	register(account?: Account): Promise<InitializationData>;
@@ -98,19 +100,19 @@ interface ITransactionAdapter {
 	): Promise<TransactionResponse>;
 	getAccount(): Account;
 	getReserveAddress(
-		coin: StableCoinCapabilities
+		coin: StableCoinCapabilities,
 	): Promise<TransactionResponse>;
 	updateReserveAddress(
 		coin: StableCoinCapabilities,
-		reserveAddress: ContractId
+		reserveAddress: ContractId,
 	): Promise<TransactionResponse>;
 	getReserveAmount(
-		coin: StableCoinCapabilities
-	): Promise<TransactionResponse>;	
+		coin: StableCoinCapabilities,
+	): Promise<TransactionResponse>;
 	updateReserveAmount(
 		reserveAddress: ContractId,
-		amount: BigDecimal
-	): Promise<TransactionResponse>;	
+		amount: BigDecimal,
+	): Promise<TransactionResponse>;
 	getMirrorNodeAdapter(): MirrorNodeAdapter;
 }
 
@@ -191,7 +193,7 @@ export default abstract class TransactionAdapter
 		hederaERC20: ContractId,
 		createReserve: boolean,
 		reserveAddress?: ContractId,
-		reserveInitialAmount? : BigDecimal
+		reserveInitialAmount?: BigDecimal,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
@@ -267,27 +269,27 @@ export default abstract class TransactionAdapter
 		throw new Error('Method not implemented.');
 	}
 	getReserveAddress(
-		coin: StableCoinCapabilities
+		coin: StableCoinCapabilities,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
 	updateReserveAddress(
 		coin: StableCoinCapabilities,
-		reserveAddress: ContractId
+		reserveAddress: ContractId,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
 	getReserveAmount(
-		coin: StableCoinCapabilities
+		coin: StableCoinCapabilities,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
-	}	
+	}
 	updateReserveAmount(
 		reserveAddress: ContractId,
-		amount: BigDecimal
+		amount: BigDecimal,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
-	}	
+	}
 	grantRole(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
@@ -385,36 +387,10 @@ export default abstract class TransactionAdapter
 	}
 
 	async accountToEvmAddress(accountId: HederaId): Promise<string> {
-		const accountInfoViewModel: AccountViewModel =
-			await this.getMirrorNodeAdapter().getAccountInfo(accountId);
-		if (accountInfoViewModel.accountEvmAddress) {
-			return accountInfoViewModel.accountEvmAddress;
-		} else if (accountInfoViewModel.publicKey) {
-			return this.getAccountEvmAddressFromPrivateKeyType(
-				accountInfoViewModel.publicKey.type,
-				accountInfoViewModel.publicKey.key,
-				accountId,
-			);
-		} else {
-			return Promise.reject<string>('');
-		}
-	}
-
-	private async getAccountEvmAddressFromPrivateKeyType(
-		privateKeyType: string,
-		publicKey: string,
-		accountId: HederaId,
-	): Promise<string> {
-		switch (privateKeyType) {
-			case KeyType.ECDSA:
-				return HPublicKey.fromString(publicKey).toEthereumAddress();
-
-			default:
-				return '0x' + accountId.toHederaAddress().toSolidityAddress();
-		}
+		return this.getMirrorNodeAdapter().accountToEvmAddress(accountId);
 	}
 
 	async contractToEvmAddress(contractId: ContractId): Promise<string> {
-		return HContractId.fromString(contractId.toString()).toSolidityAddress();
+		return this.getMirrorNodeAdapter().contractToEvmAddress(contractId);
 	}
 }

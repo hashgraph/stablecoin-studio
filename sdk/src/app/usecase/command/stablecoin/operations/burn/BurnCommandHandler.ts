@@ -23,13 +23,14 @@ import { CommandBus } from '../../../../../../core/command/CommandBus.js';
 import { ICommandHandler } from '../../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
+import { QueryBus } from '../../../../../../core/query/QueryBus.js';
 import BigDecimal from '../../../../../../domain/context/shared/BigDecimal.js';
 import AccountService from '../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
+import { BalanceOfQuery } from '../../../../query/stablecoin/balanceof/BalanceOfQuery.js';
 import { DecimalsOverRange } from '../../error/DecimalsOverRange.js';
 import { OperationNotAllowed } from '../../error/OperationNotAllowed.js';
-import { BalanceOfCommand } from '../balanceof/BalanceOfCommand.js';
 import { BurnCommand, BurnCommandResponse } from './BurnCommand.js';
 
 @CommandHandler(BurnCommand)
@@ -39,6 +40,8 @@ export class BurnCommandHandler implements ICommandHandler<BurnCommand> {
 		public readonly stableCoinService: StableCoinService,
 		@lazyInject(CommandBus)
 		public readonly commandBus: CommandBus,
+		@lazyInject(QueryBus)
+		public readonly queryBus: QueryBus,
 		@lazyInject(AccountService)
 		public readonly accountService: AccountService,
 		@lazyInject(TransactionService)
@@ -64,11 +67,10 @@ export class BurnCommandHandler implements ICommandHandler<BurnCommand> {
 			throw new OperationNotAllowed(`The stable coin is not valid`);
 
 		const treasuryBalance = (
-			await this.commandBus.execute(
-				new BalanceOfCommand(coin.treasury, coin.tokenId),
+			await this.queryBus.execute(
+				new BalanceOfQuery(coin.treasury, coin.tokenId),
 			)
 		).payload;
-
 
 		if (amountBd.isGreaterThan(treasuryBalance)) {
 			throw new OperationNotAllowed(

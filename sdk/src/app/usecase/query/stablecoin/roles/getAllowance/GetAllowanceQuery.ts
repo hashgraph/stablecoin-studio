@@ -18,17 +18,20 @@
  *
  */
 
-import { Command } from '../../../../../../core/command/Command.js';
-import { CommandResponse } from '../../../../../../core/command/CommandResponse.js';
-import { HederaId } from '../../../../../../domain/context/shared/HederaId.js';
+import { Query } from "../../../../../../core/query/Query.js";
+import { QueryResponse } from "../../../../../../core/query/QueryResponse.js";
+import BigDecimal from "../../../../../../domain/context/shared/BigDecimal.js";
 
-export class GetReserveAddressCommandResponse implements CommandResponse {
-	constructor(public readonly payload: string) {}
+import { HederaId } from "../../../../../../domain/context/shared/HederaId.js";
+
+export class GetAllowanceQueryResponse implements QueryResponse {
+	constructor(public readonly payload: BigDecimal) {}
 }
 
-export class GetReserveAddressCommand extends Command<GetReserveAddressCommandResponse> {
+export class GetAllowanceQuery extends Query<GetAllowanceQueryResponse> {
 	constructor(
-		public readonly tokenId: HederaId
+		public readonly targetId: HederaId,
+		public readonly tokenId: HederaId,
 	) {
 		super();
 	}

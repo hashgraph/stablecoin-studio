@@ -17,18 +17,22 @@
  * limitations under the License.
  *
  */
-import { Command } from '../../../../../../core/command/Command.js';
-import { CommandResponse } from '../../../../../../core/command/CommandResponse.js';
-import BigDecimal from '../../../../../../domain/context/shared/BigDecimal.js';
-import { HederaId } from '../../../../../../domain/context/shared/HederaId.js';
 
-export class GetReserveAmountCommandResponse implements CommandResponse {
-	constructor(public readonly payload: BigDecimal) {}
+import { Query } from "../../../../../../core/query/Query.js";
+import { QueryResponse } from "../../../../../../core/query/QueryResponse.js";
+import { HederaId } from "../../../../../../domain/context/shared/HederaId.js";
+import { StableCoinRole } from "../../../../../../domain/context/stablecoin/StableCoinRole.js";
+
+
+export class HasRoleQueryResponse implements QueryResponse {
+	constructor(public readonly payload: boolean) {}
 }
 
-export class GetReserveAmountCommand extends Command<GetReserveAmountCommandResponse> {
+export class HasRoleQuery extends Query<HasRoleQueryResponse> {
 	constructor(
-		public readonly tokenId: HederaId
+		public readonly role: StableCoinRole,
+		public readonly targetId: HederaId,
+		public readonly tokenId: HederaId,
 	) {
 		super();
 	}
