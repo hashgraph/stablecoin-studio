@@ -31,8 +31,9 @@ import TransactionService from '../../../../../service/TransactionService.js';
 import { GetAccountTokenAssociatedQuery } from '../../../../query/account/tokenAssociated/GetAccountTokenAssociatedQuery.js';
 import { DecimalsOverRange } from '../../error/DecimalsOverRange.js';
 import { OperationNotAllowed } from '../../error/OperationNotAllowed.js';
-import { BalanceOfCommand } from '../balanceof/BalanceOfCommand.js';
 import { RescueCommand, RescueCommandResponse } from './RescueCommand.js';
+import { QueryBus } from '../../../../../../core/query/QueryBus.js';
+import { BalanceOfQuery } from '../../../../query/stablecoin/balanceof/BalanceOfQuery.js';
 
 @CommandHandler(RescueCommand)
 export class RescueCommandHandler implements ICommandHandler<RescueCommand> {
@@ -41,6 +42,8 @@ export class RescueCommandHandler implements ICommandHandler<RescueCommand> {
 		public readonly stableCoinService: StableCoinService,
 		@lazyInject(CommandBus)
 		public readonly commandBus: CommandBus,
+		@lazyInject(QueryBus)
+		public readonly queryBus: QueryBus,
 		@lazyInject(AccountService)
 		public readonly accountService: AccountService,
 		@lazyInject(TransactionService)
@@ -78,8 +81,8 @@ export class RescueCommandHandler implements ICommandHandler<RescueCommand> {
 			throw new OperationNotAllowed(`The stable coin is not valid`);
 
 		const treasuryBalance = (
-			await this.commandBus.execute(
-				new BalanceOfCommand(coin.treasury, coin.tokenId),
+			await this.queryBus.execute(
+				new BalanceOfQuery(coin.treasury, coin.tokenId),
 			)
 		).payload;
 

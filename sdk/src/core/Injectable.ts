@@ -32,7 +32,6 @@ import { Constructor } from './Type.js';
 import { CreateCommandHandler } from '../app/usecase/command/stablecoin/create/CreateCommandHandler.js';
 import { CashInCommandHandler } from '../app/usecase/command/stablecoin/operations/cashin/CashInCommandHandler.js';
 import { BurnCommandHandler } from '../app/usecase/command/stablecoin/operations/burn/BurnCommandHandler.js';
-import { BalanceOfCommandHandler } from '../app/usecase/command/stablecoin/operations/balanceof/BalanceOfCommandHandler.js';
 import { DeleteCommandHandler } from '../app/usecase/command/stablecoin/operations/delete/DeleteCommandHandler.js';
 import { FreezeCommandHandler } from '../app/usecase/command/stablecoin/operations/freeze/FreezeCommandHandler.js';
 import { PauseCommandHandler } from '../app/usecase/command/stablecoin/operations/pause/PauseCommandHandler.js';
@@ -41,13 +40,11 @@ import { UnFreezeCommandHandler } from '../app/usecase/command/stablecoin/operat
 import { UnPauseCommandHandler } from '../app/usecase/command/stablecoin/operations/unpause/UnPauseCommandHandler.js';
 import { WipeCommandHandler } from '../app/usecase/command/stablecoin/operations/wipe/WipeCommandHandler.js';
 import { DecreaseAllowanceCommandHandler } from '../app/usecase/command/stablecoin/roles/decreaseAllowance/DecreaseAllowanceCommandHandler.js';
-import { GetAllowanceCommandHandler } from '../app/usecase/command/stablecoin/roles/getAllowance/GetAllowanceCommandHandler.js';
-import { GetRolesCommandHandler } from '../app/usecase/command/stablecoin/roles/getRoles/GetRolesCommandHandler.js';
+import { GetAllowanceQueryHandler } from '../app/usecase/query/stablecoin/roles/getAllowance/GetAllowanceQueryHandler.js';
+import { GetRolesQueryHandler } from '../app/usecase/query/stablecoin/roles/getRoles/GetRolesQueryHandler.js';
 import { GrantRoleCommandHandler } from '../app/usecase/command/stablecoin/roles/grantRole/GrantRoleCommandHandler.js';
-import { HasRoleCommandHandler } from '../app/usecase/command/stablecoin/roles/hasRole/HasRoleCommandHandler.js';
+import { HasRoleQueryHandler } from '../app/usecase/query/stablecoin/roles/hasRole/HasRoleQueryHandler.js';
 import { IncreaseAllowanceCommandHandler } from '../app/usecase/command/stablecoin/roles/increaseAllowance/IncreaseAllowanceCommandHandler.js';
-import { IsLimitedCommandHandler } from '../app/usecase/command/stablecoin/roles/isLimited/IsLimitedCommandHandler.js';
-import { IsUnlimitedCommandHandler } from '../app/usecase/command/stablecoin/roles/isUnlimited/IsUnlimitedCommandHandler.js';
 import { ResetAllowanceCommandHandler } from '../app/usecase/command/stablecoin/roles/resetAllowance/ResetAllowanceCommandHandler.js';
 import { RevokeRoleCommandHandler } from '../app/usecase/command/stablecoin/roles/revokeRole/RevokeRoleCommandHandler.js';
 import { ConnectCommandHandler } from '../app/usecase/command/network/connect/ConnectCommandHandler.js';
@@ -71,11 +68,12 @@ import { RevokeSupplierRoleCommandHandler } from '../app/usecase/command/stablec
 import { GrantSupplierRoleCommandHandler } from '../app/usecase/command/stablecoin/roles/grantSupplierRole/GrantSupplierRoleCommandHandler.js';
 import { GrantUnlimitedSupplierRoleCommandHandler } from '../app/usecase/command/stablecoin/roles/granUnlimitedSupplierRole/GrantUnlimitedSupplierRoleCommandHandler.js';
 import { GetAccountTokenAssociatedQueryHandler } from '../app/usecase/query/account/tokenAssociated/GetAccountTokenAssociatedQueryHandler.js';
-import { GetReserveAddressCommandHandler } from '../app/usecase/command/stablecoin/operations/getReserveAddress/GetReserveAddressCommandHandler.js';
-import { GetReserveAmountCommandHandler } from '../app/usecase/command/reserve/operations/getReserveAmount/GetReserveAmountCommandHandler.js';
+import { GetReserveAmountQueryHandler } from '../app/usecase/query/stablecoin/getReserveAmount/GetReserveAmountQueryHandler.js'; 
 import { UpdateReserveAddressCommandHandler } from '../app/usecase/command/stablecoin/operations/updateReserveAddress/UpdateReserveAddressCommandHandler.js';
 import { UpdateReserveAmountCommandHandler } from '../app/usecase/command/reserve/operations/updateReserveAmount/UpdateReserveAmountCommandHandler.js';
-
+import { BalanceOfQueryHandler } from '../app/usecase/query/stablecoin/balanceof/BalanceOfQueryHandler.js';
+import { GetReserveAddressQueryHandler } from '../app/usecase/query/stablecoin/getReserveAddress/GetReserveAddressQueryHandler.js';
+import { IsUnlimitedQueryHandler } from '../app/usecase/query/stablecoin/isUnlimited/IsUnlimitedQueryHandler.js';
 
 export const TOKENS = {
 	COMMAND_HANDLER: Symbol('CommandHandler'),
@@ -102,10 +100,6 @@ const COMMAND_HANDLERS = [
 	{
 		token: TOKENS.COMMAND_HANDLER,
 		useClass: BurnCommandHandler,
-	},
-	{
-		token: TOKENS.COMMAND_HANDLER,
-		useClass: BalanceOfCommandHandler,
 	},
 	{
 		token: TOKENS.COMMAND_HANDLER,
@@ -146,31 +140,11 @@ const COMMAND_HANDLERS = [
 	},
 	{
 		token: TOKENS.COMMAND_HANDLER,
-		useClass: GetAllowanceCommandHandler,
-	},
-	{
-		token: TOKENS.COMMAND_HANDLER,
-		useClass: GetRolesCommandHandler,
-	},
-	{
-		token: TOKENS.COMMAND_HANDLER,
 		useClass: GrantRoleCommandHandler,
 	},
 	{
 		token: TOKENS.COMMAND_HANDLER,
-		useClass: HasRoleCommandHandler,
-	},
-	{
-		token: TOKENS.COMMAND_HANDLER,
 		useClass: IncreaseAllowanceCommandHandler,
-	},
-	{
-		token: TOKENS.COMMAND_HANDLER,
-		useClass: IsLimitedCommandHandler,
-	},
-	{
-		token: TOKENS.COMMAND_HANDLER,
-		useClass: IsUnlimitedCommandHandler,
 	},
 	{
 		token: TOKENS.COMMAND_HANDLER,
@@ -207,14 +181,6 @@ const COMMAND_HANDLERS = [
 	},
 	{
 		token: TOKENS.COMMAND_HANDLER,
-		useClass: GetReserveAddressCommandHandler,
-	},
-	{
-		token: TOKENS.COMMAND_HANDLER,
-		useClass: GetReserveAmountCommandHandler,
-	},
-	{
-		token: TOKENS.COMMAND_HANDLER,
 		useClass: UpdateReserveAddressCommandHandler,
 	},
 	{
@@ -243,6 +209,37 @@ const QUERY_HANDLERS = [
 	{
 		token: TOKENS.QUERY_HANDLER,
 		useClass: GetAccountTokenAssociatedQueryHandler,
+	},
+	{
+		token: TOKENS.QUERY_HANDLER,
+		useClass: BalanceOfQueryHandler,
+	},
+	{
+		token: TOKENS.QUERY_HANDLER,
+		useClass: GetReserveAmountQueryHandler,
+	},
+	{
+		token: TOKENS.QUERY_HANDLER,
+		useClass: GetReserveAddressQueryHandler,
+		
+	},
+	{
+		token: TOKENS.QUERY_HANDLER,
+		useClass: GetRolesQueryHandler,
+	},
+	{
+		token: TOKENS.QUERY_HANDLER,
+		useClass: HasRoleQueryHandler,
+	},
+	{
+		token: TOKENS.QUERY_HANDLER,
+		useClass: GetAllowanceQueryHandler,
+
+	},
+	{
+		token: TOKENS.QUERY_HANDLER,
+		useClass: IsUnlimitedQueryHandler,
+
 	},
 ];
 

@@ -23,16 +23,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
-import { ContractFactory, ethers } from 'ethers';
+import { BigNumber, ContractFactory, ethers } from 'ethers';
 import { singleton } from 'tsyringe';
 import { lazyInject } from '../../../core/decorator/LazyInjectDecorator.js';
 import NetworkService from '../../../app/service/NetworkService.js';
 import LogService from '../../../app/service/LogService.js';
+import { HederaERC20__factory } from 'hedera-stable-coin-contracts';
+import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
 
-type CallableContractFn<T extends ContractFactory> = Extract<
-	T,
-	CallableFunction
->;
+const Factory = HederaERC20__factory;
 
 @singleton()
 export default class RPCQueryAdapter {
@@ -53,19 +52,68 @@ export default class RPCQueryAdapter {
 		return this.networkService.environment;
 	}
 
-	async execute(
-		target: any,
+	async balanceOf(address: string, target: string): Promise<BigNumber> {
+		return await Factory.connect(
+			address,
+			this.provider,
+		).balanceOf(target);
+	}
+
+	async getReserveAddress(address: string): Promise<string> {
+		return await Factory.connect(
+			address,
+			this.provider,
+		).getReserveAddress();
+	}
+	async getReserveAmount(address: string): Promise<BigNumber> {
+		return await Factory.connect(
+			address,
+			this.provider,
+		).getReserveAmount();
+	}
+
+	async isLimited(address: string, target: string): Promise<boolean> {
+		return await Factory.connect(
+			address,
+			this.provider,
+		).isUnlimitedSupplierAllowance(target);
+	}
+
+	async isUnlimited(address: string, target: string): Promise<boolean> {
+		return await Factory.connect(
+			address,
+			this.provider,
+		).isUnlimitedSupplierAllowance(target);
+	}
+
+	async getRoles(address: string, target: string): Promise<string[]> {
+		console.log(this.provider, address, target);
+		return await Factory.connect(
+			address,
+			this.provider,
+		).getRoles(target);
+	}
+
+	async hasRole(
 		address: string,
-		query: any,
-		args: any[],
-	): Promise<any> {
-		try {
-			console.log(target)
-			const contract = target.connect(address, this.provider);
-			console.log(contract)
-			return await contract[query](...args);
-		} catch (error) {
-			console.error(error);
-		}
+		target: string,
+		role: StableCoinRole,
+	): Promise<boolean> {
+		console.log(this.provider, address, target, role);
+		return await Factory.connect(
+			address,
+			this.provider,
+		).hasRole(role, target);
+	}
+
+	async supplierAllowance(
+		address: string,
+		target: string,
+	): Promise<BigNumber> {
+		console.log(this.provider, address, target);
+		return await Factory.connect(
+			address,
+			this.provider,
+		).getSupplierAllowance(target);
 	}
 }

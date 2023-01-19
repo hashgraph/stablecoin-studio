@@ -29,7 +29,10 @@ import { Environment } from '../../../domain/context/network/Environment.js';
 import LogService from '../../../app/service/LogService.js';
 import { StableCoinNotFound } from './error/StableCoinNotFound.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
-import { ContractId as HContractId } from '@hashgraph/sdk';
+import {
+	ContractId as HContractId,
+	PublicKey as HPublicKey,
+} from '@hashgraph/sdk';
 import PublicKey from '../../../domain/context/account/PublicKey.js';
 import { StableCoinMemo } from '../../../domain/context/stablecoin/StableCoinMemo.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
@@ -286,6 +289,42 @@ export class MirrorNodeAdapter {
 			default:
 				return 'https://mainnet.mirrornode.hedera.com';
 		}
+	}
+
+	async accountToEvmAddress(accountId: HederaId): Promise<string> {
+		const accountInfoViewModel: AccountViewModel =
+			await this.getAccountInfo(accountId);
+		if (accountInfoViewModel.accountEvmAddress) {
+			return accountInfoViewModel.accountEvmAddress;
+		} else if (accountInfoViewModel.publicKey) {
+			return this.getAccountEvmAddressFromPrivateKeyType(
+				accountInfoViewModel.publicKey.type,
+				accountInfoViewModel.publicKey.key,
+				accountId,
+			);
+		} else {
+			return Promise.reject<string>('');
+		}
+	}
+
+	private async getAccountEvmAddressFromPrivateKeyType(
+		privateKeyType: string,
+		publicKey: string,
+		accountId: HederaId,
+	): Promise<string> {
+		switch (privateKeyType) {
+			case KeyType.ECDSA:
+				return HPublicKey.fromString(publicKey).toEthereumAddress();
+
+			default:
+				return '0x' + accountId.toHederaAddress().toSolidityAddress();
+		}
+	}
+
+	async contractToEvmAddress(contractId: ContractId): Promise<string> {
+		return HContractId.fromString(
+			contractId.toString(),
+		).toSolidityAddress();
 	}
 }
 
