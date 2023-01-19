@@ -23,7 +23,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
-import { BigNumber, ContractFactory, ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { singleton } from 'tsyringe';
 import { lazyInject } from '../../../core/decorator/LazyInjectDecorator.js';
 import NetworkService from '../../../app/service/NetworkService.js';
@@ -32,6 +32,14 @@ import { HederaERC20__factory } from 'hedera-stable-coin-contracts';
 import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
 
 const Factory = HederaERC20__factory;
+
+type StaticConnect = { connect: (...args: any[]) => any };
+
+type FactoryContract<T extends StaticConnect> = T['connect'] extends (
+	...args: any[]
+) => infer K
+	? K
+	: never;
 
 @singleton()
 export default class RPCQueryAdapter {
@@ -52,45 +60,40 @@ export default class RPCQueryAdapter {
 		return this.networkService.environment;
 	}
 
+	connect<T extends StaticConnect>(
+		fac: T,
+		address: string,
+	): FactoryContract<T> {
+		return fac.connect(address, this.provider);
+	}
+
 	async balanceOf(address: string, target: string): Promise<BigNumber> {
-		return await Factory.connect(
-			address,
-			this.provider,
-		).balanceOf(target);
+		return await this.connect(Factory, address).balanceOf(target);
 	}
 
 	async getReserveAddress(address: string): Promise<string> {
-		return await Factory.connect(
-			address,
-			this.provider,
-		).getReserveAddress();
+		return await this.connect(Factory, address).getReserveAddress();
 	}
 	async getReserveAmount(address: string): Promise<BigNumber> {
-		return await Factory.connect(
-			address,
-			this.provider,
-		).getReserveAmount();
+		return await this.connect(Factory, address).getReserveAmount();
 	}
 
 	async isLimited(address: string, target: string): Promise<boolean> {
-		return await Factory.connect(
+		return await this.connect(
+			Factory,
 			address,
-			this.provider,
 		).isUnlimitedSupplierAllowance(target);
 	}
 
 	async isUnlimited(address: string, target: string): Promise<boolean> {
-		return await Factory.connect(
+		return await this.connect(
+			Factory,
 			address,
-			this.provider,
 		).isUnlimitedSupplierAllowance(target);
 	}
 
 	async getRoles(address: string, target: string): Promise<string[]> {
-		return await Factory.connect(
-			address,
-			this.provider,
-		).getRoles(target);
+		return await this.connect(Factory, address).getRoles(target);
 	}
 
 	async hasRole(
@@ -98,19 +101,15 @@ export default class RPCQueryAdapter {
 		target: string,
 		role: StableCoinRole,
 	): Promise<boolean> {
-		return await Factory.connect(
-			address,
-			this.provider,
-		).hasRole(role, target);
+		return await this.connect(Factory, address).hasRole(role, target);
 	}
 
 	async supplierAllowance(
 		address: string,
 		target: string,
 	): Promise<BigNumber> {
-		return await Factory.connect(
-			address,
-			this.provider,
-		).getSupplierAllowance(target);
+		return await this.connect(Factory, address).getSupplierAllowance(
+			target,
+		);
 	}
 }
