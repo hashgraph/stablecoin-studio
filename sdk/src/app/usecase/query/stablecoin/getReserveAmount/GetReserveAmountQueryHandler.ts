@@ -21,6 +21,7 @@
 import { lazyInject } from "../../../../../core/decorator/LazyInjectDecorator.js"
 import { QueryHandler } from "../../../../../core/decorator/QueryHandlerDecorator.js"
 import { IQueryHandler } from "../../../../../core/query/QueryHandler.js"
+import { RESERVE_DECIMALS } from "../../../../../domain/context/reserve/Reserve.js"
 import BigDecimal from "../../../../../domain/context/shared/BigDecimal.js"
 import { MirrorNodeAdapter } from "../../../../../port/out/mirror/MirrorNodeAdapter.js"
 import RPCQueryAdapter from "../../../../../port/out/rpc/RPCQueryAdapter.js"
@@ -50,7 +51,7 @@ constructor(
 
 		const amount = BigDecimal.fromStringFixed(
 			res.toString(),
-			coin.decimals,
+			RESERVE_DECIMALS,
 		);
 
 		return Promise.resolve(
