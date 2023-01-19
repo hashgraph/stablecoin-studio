@@ -38,9 +38,20 @@ export default class DetailsStableCoinsService extends Service {
     if (show) {
       const out = {
         ...respDetail,
+        tokenId: respDetail.tokenId.toString(),
         initialSupply: respDetail.initialSupply.toString(),
         maxSupply: respDetail.maxSupply.toString(),
         totalSupply: respDetail.totalSupply.toString(),
+        proxyAddress: respDetail.proxyAddress.toString(),
+        treasury: respDetail.treasury.toString(),
+        autoRenewAccount: respDetail.autoRenewAccount.toString(),
+        adminKey: respDetail.adminKey.toString(),
+        freezeKey: respDetail.freezeKey.toString(),
+        wipeKey: respDetail.wipeKey.toString(),
+        supplyKey: respDetail.supplyKey.toString(),
+        pauseKey: respDetail.pauseKey.toString(),
+        reserveAddress: respDetail.reserveAddress.toString(),
+        reserveAmount: respDetail.reserveAmount.toString(),
       };
       console.log(out);
       utilsService.breakLine();
