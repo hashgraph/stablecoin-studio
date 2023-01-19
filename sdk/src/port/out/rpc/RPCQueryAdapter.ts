@@ -74,14 +74,12 @@ export default class RPCQueryAdapter {
 	}
 
 	async balanceOf(address: string, target: string): Promise<BigNumber> {
-		console.log(address, target, this.provider.connection.url);
 		return await HederaERC20.connect(address, this.provider).balanceOf(
 			target,
 		);
 	}
 
 	async getReserveAddress(address: string): Promise<ContractId> {
-		console.log(address, this.provider.connection.url);
 		const val = await this.connect(
 			HederaERC20,
 			address,
@@ -89,7 +87,6 @@ export default class RPCQueryAdapter {
 		return ContractId.fromHederaEthereumAddress(val);
 	}
 	async getReserveAmount(address: string): Promise<BigNumber> {
-		console.log(address, this.provider.connection.url);
 		return await HederaERC20.connect(
 			address,
 			this.provider,
@@ -97,7 +94,6 @@ export default class RPCQueryAdapter {
 	}
 
 	async isLimited(address: string, target: string): Promise<boolean> {
-		console.log(address, target, this.provider.connection.url);
 		return await this.connect(
 			HederaERC20,
 			address,
@@ -105,7 +101,6 @@ export default class RPCQueryAdapter {
 	}
 
 	async isUnlimited(address: string, target: string): Promise<boolean> {
-		console.log(address, target, this.provider.connection.url);
 		return await this.connect(
 			HederaERC20,
 			address,
@@ -124,7 +119,6 @@ export default class RPCQueryAdapter {
 		target: string,
 		role: StableCoinRole,
 	): Promise<boolean> {
-		console.log(address, target, this.provider.connection.url);
 		return await HederaERC20.connect(address, this.provider).hasRole(
 			role,
 			target,
@@ -135,7 +129,6 @@ export default class RPCQueryAdapter {
 		address: string,
 		target: string,
 	): Promise<BigNumber> {
-		console.log(address, target, this.provider.connection.url);
 		return await HederaERC20.connect(
 			address,
 			this.provider,
