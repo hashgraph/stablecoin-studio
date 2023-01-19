@@ -6,7 +6,7 @@ exports[`<Roles /> should render correctly 1`] = `
     class="chakra-stack css-16oka5y"
   >
     <h2
-      class="chakra-heading css-llrpa2"
+      class="chakra-heading css-bqsusc"
       data-testid="base-container-heading"
     >
       Role management
@@ -19,7 +19,7 @@ exports[`<Roles /> should render correctly 1`] = `
         class="css-src872"
       >
         <h2
-          class="chakra-heading css-1bjzvf5"
+          class="chakra-heading css-qltjox"
           data-testid="subtitle"
         >
           Give / Revoke roles
@@ -31,11 +31,11 @@ exports[`<Roles /> should render correctly 1`] = `
             class="css-180e663"
           >
             <button
-              class="css-xtz4af"
+              class="css-3aphhy"
               data-testid="direct-access-giveRole"
             >
               <div
-                class="css-bv4l9q"
+                class="css-1i763ui"
               >
                 <svg
                   class="chakra-icon css-1f9qa95"
@@ -86,7 +86,7 @@ exports[`<Roles /> should render correctly 1`] = `
                 </svg>
               </div>
               <p
-                class="chakra-text css-1mbt7nu"
+                class="chakra-text css-o5z2l9"
                 data-testid="direct-access-Give role"
               >
                 Give role
@@ -97,11 +97,11 @@ exports[`<Roles /> should render correctly 1`] = `
             class="css-180e663"
           >
             <button
-              class="css-xtz4af"
+              class="css-3aphhy"
               data-testid="direct-access-revokeRole"
             >
               <div
-                class="css-bv4l9q"
+                class="css-1i763ui"
               >
                 <svg
                   class="chakra-icon css-1f9qa95"
@@ -141,7 +141,7 @@ exports[`<Roles /> should render correctly 1`] = `
                 </svg>
               </div>
               <p
-                class="chakra-text css-1mbt7nu"
+                class="chakra-text css-o5z2l9"
                 data-testid="direct-access-Revoke role"
               >
                 Revoke role
@@ -152,12 +152,12 @@ exports[`<Roles /> should render correctly 1`] = `
             class="css-180e663"
           >
             <button
-              class="css-a70rbc"
+              class="css-1wr8k95"
               data-testid="direct-access-editRole"
               disabled=""
             >
               <div
-                class="css-bv4l9q"
+                class="css-1i763ui"
               >
                 <svg
                   class="chakra-icon css-1f9qa95"
@@ -196,7 +196,7 @@ exports[`<Roles /> should render correctly 1`] = `
                 </svg>
               </div>
               <p
-                class="chakra-text css-1mbt7nu"
+                class="chakra-text css-o5z2l9"
                 data-testid="direct-access-Manage cash in limit"
               >
                 Manage cash in limit
@@ -207,12 +207,12 @@ exports[`<Roles /> should render correctly 1`] = `
             class="css-180e663"
           >
             <button
-              class="css-a70rbc"
+              class="css-1wr8k95"
               data-testid="direct-access-refreshRoles"
               disabled=""
             >
               <div
-                class="css-bv4l9q"
+                class="css-1i763ui"
               >
                 <svg
                   class="chakra-icon css-1f9qa95"
@@ -264,7 +264,7 @@ exports[`<Roles /> should render correctly 1`] = `
                 </svg>
               </div>
               <p
-                class="chakra-text css-1mbt7nu"
+                class="chakra-text css-o5z2l9"
                 data-testid="direct-access-Refresh roles"
               >
                 Refresh roles

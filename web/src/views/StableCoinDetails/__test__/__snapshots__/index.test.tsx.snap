@@ -6,7 +6,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
     class="chakra-stack css-16oka5y"
   >
     <h2
-      class="chakra-heading css-llrpa2"
+      class="chakra-heading css-bqsusc"
       data-testid="base-container-heading"
     >
       Stable coin details
@@ -25,7 +25,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
             class="css-13brihr"
           >
             <p
-              class="chakra-text css-hduy72"
+              class="chakra-text css-6qs4y"
               data-testid="details-review-title"
             >
               Basic information
@@ -41,57 +41,11 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                   data-testid="details-review-detail-0"
                 >
                   <p
-                    class="chakra-text css-bpirlf"
+                    class="chakra-text css-9s6br4"
                   >
                     Token id
                   </p>
-                  <div
-                    class="chakra-stack css-1c8ysgd"
-                  >
-                    <p
-                      class="chakra-text css-mgupmj"
-                    >
-                      0.0.48471242
-                    </p>
-                    <div
-                      class="css-1m8iww1"
-                    >
-                      <svg
-                        class="chakra-icon css-13otjrl"
-                        fill="currentColor"
-                        focusable="false"
-                        height="1em"
-                        viewBox="0 0 256 256"
-                        width="1em"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <rect
-                          fill="none"
-                          height="256"
-                          width="256"
-                        />
-                        <polyline
-                          fill="none"
-                          points="168 168 216 168 216 40 88 40 88 88"
-                          stroke="currentColor"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="16"
-                        />
-                        <rect
-                          fill="none"
-                          height="128"
-                          stroke="currentColor"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="16"
-                          width="128"
-                          x="40"
-                          y="88"
-                        />
-                      </svg>
-                    </div>
-                  </div>
+                  0.0.49319786
                 </div>
                 <hr
                   aria-orientation="horizontal"
@@ -107,7 +61,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                   data-testid="details-review-detail-1"
                 >
                   <p
-                    class="chakra-text css-bpirlf"
+                    class="chakra-text css-9s6br4"
                   >
                     Name
                   </p>
@@ -117,7 +71,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                     <p
                       class="chakra-text css-mgupmj"
                     >
-                      ManuCoin2
+                      TEST_ACCELERATOR_SC
                     </p>
                   </div>
                 </div>
@@ -135,7 +89,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                   data-testid="details-review-detail-2"
                 >
                   <p
-                    class="chakra-text css-bpirlf"
+                    class="chakra-text css-9s6br4"
                   >
                     Symbol
                   </p>
@@ -145,7 +99,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                     <p
                       class="chakra-text css-mgupmj"
                     >
-                      MCC2
+                      TEST
                     </p>
                   </div>
                 </div>
@@ -163,7 +117,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                   data-testid="details-review-detail-3"
                 >
                   <p
-                    class="chakra-text css-bpirlf"
+                    class="chakra-text css-9s6br4"
                   >
                     Decimals
                   </p>
@@ -173,7 +127,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                     <p
                       class="chakra-text css-mgupmj"
                     >
-                      3
+                      6
                     </p>
                   </div>
                 </div>
@@ -191,7 +145,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                   data-testid="details-review-detail-4"
                 >
                   <p
-                    class="chakra-text css-bpirlf"
+                    class="chakra-text css-9s6br4"
                   >
                     Initial supply
                   </p>
@@ -201,7 +155,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                     <p
                       class="chakra-text css-mgupmj"
                     >
-                      0
+                      1000
                     </p>
                   </div>
                 </div>
@@ -219,7 +173,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                   data-testid="details-review-detail-5"
                 >
                   <p
-                    class="chakra-text css-bpirlf"
+                    class="chakra-text css-9s6br4"
                   >
                     Total supply
                   </p>
@@ -229,7 +183,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                     <p
                       class="chakra-text css-mgupmj"
                     >
-                      100000
+                      1000
                     </p>
                   </div>
                 </div>
@@ -247,7 +201,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                   data-testid="details-review-detail-6"
                 >
                   <p
-                    class="chakra-text css-bpirlf"
+                    class="chakra-text css-9s6br4"
                   >
                     Max supply
                   </p>
@@ -257,7 +211,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                     <p
                       class="chakra-text css-mgupmj"
                     >
-                      0
+                      INFINITE
                     </p>
                   </div>
                 </div>
@@ -275,57 +229,11 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                   data-testid="details-review-detail-7"
                 >
                   <p
-                    class="chakra-text css-bpirlf"
+                    class="chakra-text css-9s6br4"
                   >
-                    Treasury id
+                    Treasury
                   </p>
-                  <div
-                    class="chakra-stack css-1c8ysgd"
-                  >
-                    <p
-                      class="chakra-text css-mgupmj"
-                    >
-                      0.0.48450590
-                    </p>
-                    <div
-                      class="css-1m8iww1"
-                    >
-                      <svg
-                        class="chakra-icon css-13otjrl"
-                        fill="currentColor"
-                        focusable="false"
-                        height="1em"
-                        viewBox="0 0 256 256"
-                        width="1em"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <rect
-                          fill="none"
-                          height="256"
-                          width="256"
-                        />
-                        <polyline
-                          fill="none"
-                          points="168 168 216 168 216 40 88 40 88 88"
-                          stroke="currentColor"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="16"
-                        />
-                        <rect
-                          fill="none"
-                          height="128"
-                          stroke="currentColor"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="16"
-                          width="128"
-                          x="40"
-                          y="88"
-                        />
-                      </svg>
-                    </div>
-                  </div>
+                  0.0.49319785
                 </div>
                 <hr
                   aria-orientation="horizontal"
@@ -341,10 +249,11 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                   data-testid="details-review-detail-8"
                 >
                   <p
-                    class="chakra-text css-bpirlf"
+                    class="chakra-text css-9s6br4"
                   >
                     Autorenew account
                   </p>
+                  0.0.49071854
                 </div>
                 <hr
                   aria-orientation="horizontal"
@@ -360,108 +269,11 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                   data-testid="details-review-detail-9"
                 >
                   <p
-                    class="chakra-text css-bpirlf"
+                    class="chakra-text css-9s6br4"
                   >
-                    Memo
+                    Proxy Address
                   </p>
-                  <div
-                    class="chakra-stack css-n8fv4a"
-                  >
-                    <div
-                      class="chakra-stack css-84zodg"
-                    >
-                      <p
-                        class="chakra-text css-mgupmj"
-                      >
-                        Proxy contract : 
-                      </p>
-                      <div
-                        class="css-1m8iww1"
-                      >
-                        <svg
-                          class="chakra-icon css-13otjrl"
-                          fill="currentColor"
-                          focusable="false"
-                          height="1em"
-                          viewBox="0 0 256 256"
-                          width="1em"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <rect
-                            fill="none"
-                            height="256"
-                            width="256"
-                          />
-                          <polyline
-                            fill="none"
-                            points="168 168 216 168 216 40 88 40 88 88"
-                            stroke="currentColor"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="16"
-                          />
-                          <rect
-                            fill="none"
-                            height="128"
-                            stroke="currentColor"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="16"
-                            width="128"
-                            x="40"
-                            y="88"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                    <div
-                      class="chakra-stack css-84zodg"
-                    >
-                      <p
-                        class="chakra-text css-mgupmj"
-                      >
-                        HTS account : 
-                      </p>
-                      <div
-                        class="css-1m8iww1"
-                      >
-                        <svg
-                          class="chakra-icon css-13otjrl"
-                          fill="currentColor"
-                          focusable="false"
-                          height="1em"
-                          viewBox="0 0 256 256"
-                          width="1em"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <rect
-                            fill="none"
-                            height="256"
-                            width="256"
-                          />
-                          <polyline
-                            fill="none"
-                            points="168 168 216 168 216 40 88 40 88 88"
-                            stroke="currentColor"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="16"
-                          />
-                          <rect
-                            fill="none"
-                            height="128"
-                            stroke="currentColor"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="16"
-                            width="128"
-                            x="40"
-                            y="88"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                  </div>
+                  0.0.49319785
                 </div>
                 <hr
                   aria-orientation="horizontal"
@@ -477,10 +289,19 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                   data-testid="details-review-detail-10"
                 >
                   <p
-                    class="chakra-text css-bpirlf"
+                    class="chakra-text css-9s6br4"
                   >
                     Paused
                   </p>
+                  <div
+                    class="chakra-stack css-1c8ysgd"
+                  >
+                    <p
+                      class="chakra-text css-mgupmj"
+                    >
+                      FALSE
+                    </p>
+                  </div>
                 </div>
                 <hr
                   aria-orientation="horizontal"
@@ -496,10 +317,19 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                   data-testid="details-review-detail-11"
                 >
                   <p
-                    class="chakra-text css-bpirlf"
+                    class="chakra-text css-9s6br4"
                   >
                     Deleted
                   </p>
+                  <div
+                    class="chakra-stack css-1c8ysgd"
+                  >
+                    <p
+                      class="chakra-text css-mgupmj"
+                    >
+                      FALSE
+                    </p>
+                  </div>
                 </div>
                 <hr
                   aria-orientation="horizontal"
@@ -515,56 +345,18 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                   data-testid="details-review-detail-12"
                 >
                   <p
-                    class="chakra-text css-bpirlf"
+                    class="chakra-text css-9s6br4"
                   >
                     Admin key
                   </p>
                   <div
-                    class="css-1p3aqhz"
+                    class="chakra-stack css-1c8ysgd"
                   >
                     <p
                       class="chakra-text css-mgupmj"
                     >
-                      Other key: cd7c24...31a622
+                      SMART CONTRACT
                     </p>
-                    <div
-                      class="css-1m8iww1"
-                    >
-                      <svg
-                        class="chakra-icon css-13otjrl"
-                        fill="currentColor"
-                        focusable="false"
-                        height="1em"
-                        viewBox="0 0 256 256"
-                        width="1em"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <rect
-                          fill="none"
-                          height="256"
-                          width="256"
-                        />
-                        <polyline
-                          fill="none"
-                          points="168 168 216 168 216 40 88 40 88 88"
-                          stroke="currentColor"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="16"
-                        />
-                        <rect
-                          fill="none"
-                          height="128"
-                          stroke="currentColor"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="16"
-                          width="128"
-                          x="40"
-                          y="88"
-                        />
-                      </svg>
-                    </div>
                   </div>
                 </div>
                 <hr
@@ -581,7 +373,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                   data-testid="details-review-detail-13"
                 >
                   <p
-                    class="chakra-text css-bpirlf"
+                    class="chakra-text css-9s6br4"
                   >
                     KYC key
                   </p>
@@ -591,7 +383,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                     <p
                       class="chakra-text css-mgupmj"
                     >
-                      None
+                      NONE
                     </p>
                   </div>
                 </div>
@@ -609,7 +401,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                   data-testid="details-review-detail-14"
                 >
                   <p
-                    class="chakra-text css-bpirlf"
+                    class="chakra-text css-9s6br4"
                   >
                     Freeze key
                   </p>
@@ -619,7 +411,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                     <p
                       class="chakra-text css-mgupmj"
                     >
-                      Smart contract
+                      SMART CONTRACT
                     </p>
                   </div>
                 </div>
@@ -637,7 +429,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                   data-testid="details-review-detail-15"
                 >
                   <p
-                    class="chakra-text css-bpirlf"
+                    class="chakra-text css-9s6br4"
                   >
                     Wipe key
                   </p>
@@ -647,7 +439,7 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                     <p
                       class="chakra-text css-mgupmj"
                     >
-                      Smart contract
+                      SMART CONTRACT
                     </p>
                   </div>
                 </div>
@@ -665,56 +457,46 @@ exports[`<StableCoinDetails /> should render correctly 1`] = `
                   data-testid="details-review-detail-16"
                 >
                   <p
-                    class="chakra-text css-bpirlf"
+                    class="chakra-text css-9s6br4"
                   >
                     Supply key
                   </p>
                   <div
-                    class="css-1p3aqhz"
+                    class="chakra-stack css-1c8ysgd"
                   >
                     <p
                       class="chakra-text css-mgupmj"
                     >
-                      Other key: cd7c24...31a622
+                      SMART CONTRACT
                     </p>
-                    <div
-                      class="css-1m8iww1"
+                  </div>
+                </div>
+                <hr
+                  aria-orientation="horizontal"
+                  class="chakra-divider css-zaaihy"
+                  title="divider"
+                />
+              </div>
+              <div
+                class="css-0"
+              >
+                <div
+                  class="css-3fqpsw"
+                  data-testid="details-review-detail-17"
+                >
+                  <p
+                    class="chakra-text css-9s6br4"
+                  >
+                    Pause key
+                  </p>
+                  <div
+                    class="chakra-stack css-1c8ysgd"
+                  >
+                    <p
+                      class="chakra-text css-mgupmj"
                     >
-                      <svg
-                        class="chakra-icon css-13otjrl"
-                        fill="currentColor"
-                        focusable="false"
-                        height="1em"
-                        viewBox="0 0 256 256"
-                        width="1em"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <rect
-                          fill="none"
-                          height="256"
-                          width="256"
-                        />
-                        <polyline
-                          fill="none"
-                          points="168 168 216 168 216 40 88 40 88 88"
-                          stroke="currentColor"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="16"
-                        />
-                        <rect
-                          fill="none"
-                          height="128"
-                          stroke="currentColor"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="16"
-                          width="128"
-                          x="40"
-                          y="88"
-                        />
-                      </svg>
-                    </div>
+                      SMART CONTRACT
+                    </p>
                   </div>
                 </div>
               </div>

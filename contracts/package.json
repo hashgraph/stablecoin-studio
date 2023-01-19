@@ -97,6 +97,7 @@
     "dependencies": {
         "@chainlink/contracts": "^0.5.1",
         "chai-as-promised": "^7.1.1",
+        "dotenv": "^16.0.3",
         "ethers": "5.7.2",
         "solhint": "^3.3.7",
         "web3": "1.8.0"

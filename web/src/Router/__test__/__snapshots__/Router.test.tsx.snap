@@ -16,7 +16,7 @@ exports[`<Router /> should render correctly 1`] = `
         </span>
       </div>
       <p
-        class="chakra-text css-1xabux3"
+        class="chakra-text css-1sna1gh"
       >
         Searching for supported wallets
       </p>

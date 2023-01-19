@@ -7,7 +7,7 @@ exports[`<Layout /> should render correctly 1`] = `
     data-testid="layout"
   >
     <div
-      class="css-9go0lu"
+      class="css-1njzpr3"
       data-testid="topbar"
     >
       <div
@@ -23,10 +23,10 @@ exports[`<Layout /> should render correctly 1`] = `
         class="css-1grq7v1"
       />
       <div
-        class="css-1gacwoi"
+        class="css-1xcxk9t"
       >
         <div
-          class="css-16czca"
+          class="css-1lbjv5i"
         >
           <div
             class="css-1rc4l3d"
@@ -54,7 +54,7 @@ exports[`<Layout /> should render correctly 1`] = `
                     class="css-1f43avz-a11yText-A11yText"
                   />
                   <div
-                    class=" css-1ugyojt"
+                    class=" css-17n5zh"
                   >
                     <div
                       class="css-3y2vuh"
@@ -63,7 +63,7 @@ exports[`<Layout /> should render correctly 1`] = `
                         class="chakra-text css-4pvr19"
                         data-testid="select-placeholder"
                       >
-                        0.0.48471242 - MCC2
+                        0.0.49319786 - TEST
                       </span>
                       <div
                         class=" css-svnjlw"
@@ -94,7 +94,7 @@ exports[`<Layout /> should render correctly 1`] = `
                         class="css-1aabyhj"
                       >
                         <svg
-                          class="chakra-icon css-zsadqz"
+                          class="chakra-icon css-1r5bg7h"
                           fill="currentColor"
                           focusable="false"
                           height="1em"
@@ -135,7 +135,7 @@ exports[`<Layout /> should render correctly 1`] = `
               class="css-0"
             >
               <button
-                class="chakra-button css-er0jx8"
+                class="chakra-button css-r4h8vy"
                 type="button"
               >
                 <svg
@@ -181,7 +181,7 @@ exports[`<Layout /> should render correctly 1`] = `
               class="css-0"
             >
               <button
-                class="chakra-button css-er0jx8"
+                class="chakra-button css-r4h8vy"
                 type="button"
               >
                 <svg
@@ -247,7 +247,7 @@ exports[`<Layout /> should render correctly 1`] = `
                 class="css-1m8iww1"
               >
                 <p
-                  class="chakra-text css-o1au3i"
+                  class="chakra-text css-1oyarqz"
                   data-testid="topbar-right-account"
                 />
               </div>
@@ -299,7 +299,7 @@ exports[`<Layout /> should render correctly 1`] = `
             class="css-dv2lk7"
           />
           <div
-            class="css-1a9f5vk"
+            class="css-hf30mn"
           >
             <svg
               class="chakra-icon css-dee54c"
@@ -343,14 +343,14 @@ exports[`<Layout /> should render correctly 1`] = `
       class="css-1jaqult"
     >
       <div
-        class="css-jefzb5"
+        class="css-1nfhpzz"
         data-testid="sidebar"
       >
         <div
           class="css-17lnxuq"
         >
           <button
-            class="chakra-button css-1rqsley"
+            class="chakra-button css-9d0zi7"
             data-testid="sidebar-option-Coin"
             type="button"
           >
@@ -422,14 +422,14 @@ exports[`<Layout /> should render correctly 1`] = `
               />
             </svg>
             <p
-              class="chakra-text css-h0pfk0"
+              class="chakra-text css-1d26k2o"
               data-testid="sidebar-option-title"
             >
               Operations
             </p>
           </button>
           <button
-            class="chakra-button css-1rqsley"
+            class="chakra-button css-9d0zi7"
             data-testid="sidebar-option-Users"
             type="button"
           >
@@ -482,14 +482,14 @@ exports[`<Layout /> should render correctly 1`] = `
               />
             </svg>
             <p
-              class="chakra-text css-h0pfk0"
+              class="chakra-text css-1d26k2o"
               data-testid="sidebar-option-title"
             >
               Role management
             </p>
           </button>
           <button
-            class="chakra-button css-1rqsley"
+            class="chakra-button css-9d0zi7"
             data-testid="sidebar-option-Gear"
             type="button"
           >
@@ -527,14 +527,14 @@ exports[`<Layout /> should render correctly 1`] = `
               />
             </svg>
             <p
-              class="chakra-text css-h0pfk0"
+              class="chakra-text css-1d26k2o"
               data-testid="sidebar-option-title"
             >
               Stable coin details
             </p>
           </button>
           <button
-            class="chakra-button css-1rqsley"
+            class="chakra-button css-9d0zi7"
             data-testid="sidebar-option-File"
             type="button"
           >
@@ -570,7 +570,7 @@ exports[`<Layout /> should render correctly 1`] = `
               />
             </svg>
             <p
-              class="chakra-text css-h0pfk0"
+              class="chakra-text css-1d26k2o"
               data-testid="sidebar-option-title"
             >
               Proof of reserve

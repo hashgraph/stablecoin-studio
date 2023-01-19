@@ -3,11 +3,11 @@
 exports[`<Login /> should render correctly 1`] = `
 <DocumentFragment>
   <div
-    class="css-1ioh5vy"
+    class="css-1c2z20w"
     data-testid="login_container"
   >
     <div
-      class="css-1e9z5ru"
+      class="css-1fkmpas"
     >
       <img
         alt="Hedera logo"
@@ -16,13 +16,13 @@ exports[`<Login /> should render correctly 1`] = `
         src="hedera-hbar-logo.svg"
       />
       <p
-        class="chakra-text css-q6jngl"
+        class="chakra-text css-1knuv2"
         data-testid="modal-hashpack-title"
       >
         Extensions are not installed yet
       </p>
       <p
-        class="chakra-text css-zxkbt5"
+        class="chakra-text css-wfudvb"
         data-testid="modal-hashpack-description"
       >
         Click on the button bellow to download the extension
@@ -31,14 +31,14 @@ exports[`<Login /> should render correctly 1`] = `
         class="chakra-stack css-1lm32qo"
       >
         <a
-          class="chakra-link css-1an9p0o"
+          class="chakra-link css-1bxx0l9"
           data-testid="modal-hashpack-link-hashpack"
           href="https://www.hashpack.app/download"
           rel="noopener"
           target="_blank"
         >
           <button
-            class="chakra-button css-13x86cv"
+            class="chakra-button css-o6h8z1"
             data-testid="modal-hashpack-button-hashpack"
             type="button"
           >
@@ -60,14 +60,14 @@ exports[`<Login /> should render correctly 1`] = `
           </button>
         </a>
         <a
-          class="chakra-link css-1an9p0o"
+          class="chakra-link css-1bxx0l9"
           data-testid="modal-hashpack-link-metamask"
           href="https://metamask.io/download/"
           rel="noopener"
           target="_blank"
         >
           <button
-            class="chakra-button css-13x86cv"
+            class="chakra-button css-o6h8z1"
             data-testid="modal-hashpack-button-metamask"
             type="button"
           >

@@ -35,9 +35,6 @@ build
 # history
 .history
 
-# Compile contract
-hardhat.config.ts
-
 node_modules
 .env
 coverage

@@ -16,7 +16,7 @@ exports[`<TopbarRight /> should render correctly 1`] = `
           class="css-1m8iww1"
         >
           <p
-            class="chakra-text css-o1au3i"
+            class="chakra-text css-1oyarqz"
             data-testid="topbar-right-account"
           />
         </div>
@@ -68,7 +68,7 @@ exports[`<TopbarRight /> should render correctly 1`] = `
       class="css-dv2lk7"
     />
     <div
-      class="css-1a9f5vk"
+      class="css-hf30mn"
     >
       <svg
         class="chakra-icon css-dee54c"

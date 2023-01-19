@@ -3,7 +3,7 @@
 exports[`<Topbar /> should render correctly 1`] = `
 <DocumentFragment>
   <div
-    class="css-9go0lu"
+    class="css-1njzpr3"
     data-testid="topbar"
   >
     <div
@@ -19,10 +19,10 @@ exports[`<Topbar /> should render correctly 1`] = `
       class="css-1grq7v1"
     />
     <div
-      class="css-1gacwoi"
+      class="css-1xcxk9t"
     >
       <div
-        class="css-16czca"
+        class="css-1lbjv5i"
       >
         <div
           class="css-1rc4l3d"
@@ -50,7 +50,7 @@ exports[`<Topbar /> should render correctly 1`] = `
                   class="css-1f43avz-a11yText-A11yText"
                 />
                 <div
-                  class=" css-1ugyojt"
+                  class=" css-17n5zh"
                 >
                   <div
                     class="css-3y2vuh"
@@ -59,7 +59,7 @@ exports[`<Topbar /> should render correctly 1`] = `
                       class="chakra-text css-4pvr19"
                       data-testid="select-placeholder"
                     >
-                      0.0.48471242 - MCC2
+                      0.0.49319786 - TEST
                     </span>
                     <div
                       class=" css-svnjlw"
@@ -90,7 +90,7 @@ exports[`<Topbar /> should render correctly 1`] = `
                       class="css-1aabyhj"
                     >
                       <svg
-                        class="chakra-icon css-zsadqz"
+                        class="chakra-icon css-1r5bg7h"
                         fill="currentColor"
                         focusable="false"
                         height="1em"
@@ -131,7 +131,7 @@ exports[`<Topbar /> should render correctly 1`] = `
             class="css-0"
           >
             <button
-              class="chakra-button css-er0jx8"
+              class="chakra-button css-r4h8vy"
               type="button"
             >
               <svg
@@ -177,7 +177,7 @@ exports[`<Topbar /> should render correctly 1`] = `
             class="css-0"
           >
             <button
-              class="chakra-button css-er0jx8"
+              class="chakra-button css-r4h8vy"
               type="button"
             >
               <svg
@@ -243,7 +243,7 @@ exports[`<Topbar /> should render correctly 1`] = `
               class="css-1m8iww1"
             >
               <p
-                class="chakra-text css-o1au3i"
+                class="chakra-text css-1oyarqz"
                 data-testid="topbar-right-account"
               />
             </div>
@@ -295,7 +295,7 @@ exports[`<Topbar /> should render correctly 1`] = `
           class="css-dv2lk7"
         />
         <div
-          class="css-1a9f5vk"
+          class="css-hf30mn"
         >
           <svg
             class="chakra-icon css-dee54c"

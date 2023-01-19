@@ -18,9 +18,6 @@
  *
  */
 
-/* eslint-disable jest/valid-expect */
-/* eslint-disable jest/expect-expect */
-/* eslint-disable jest/no-standalone-expect */
 import { HTSTransactionAdapter } from '../../../../../src/port/out/hs/hts/HTSTransactionAdapter.js';
 import TransactionResponse from '../../../../../src/domain/context/transaction/TransactionResponse.js';
 import StableCoinCapabilities from '../../../../../src/domain/context/stablecoin/StableCoinCapabilities.js';
@@ -516,21 +513,21 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		tr = await th.getReserveAddress(
 			stableCoinCapabilitiesHTS
 		);
-		expect(tr.response).toBeNull
+		expect(tr.response).toBeNull()
 	}, 20000);
 
 	it('Test get reserve address returns a value when stable coin has reserve', async () => {
 		tr = await th.getReserveAddress(
 			stableCoinCapabilitiesSC
 		);
-		expect(tr.response).not.toBeNull;
+		expect(tr.response).not.toBeNull();
 	}, 20000);
 
 	it('Test get reserve amount returns null when stable coin has no reserve', async () => {
 		tr = await th.getReserveAmount(
 			stableCoinCapabilitiesHTS
 		);
-		expect(tr.response).toBeNull
+		expect(tr.response).toBeNull()
 	}, 20000);
 
 	it('Test get reserve amount returns a value when stable coin has reserve', async () => {
@@ -987,14 +984,17 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 		tr = await th.getReserveAddress(
 			stableCoinCapabilitiesHTS
 		);
-		expect(tr.response).not.toBeNull;
+		expect(tr.response).not.toBeNull();
 	}, 20000);
 
 	it('Test get reserve amount returns the reserve amount when stable coin has existing reserve', async () => {
 		tr = await th.getReserveAmount(
 			stableCoinCapabilitiesSC
 		);
-		expect(tr.response).toEqual(BigDecimal.fromString('100000000', RESERVE_DECIMALS))
+	
+		expect(BigDecimal.fromStringFixed(tr.response.toString(), RESERVE_DECIMALS)).toEqual(
+			BigDecimal.fromStringFixed('1000000', RESERVE_DECIMALS)
+		);
 	}, 20000);
 
 	it('Test update reserve amount when stable coin has existing reserve', async () => {

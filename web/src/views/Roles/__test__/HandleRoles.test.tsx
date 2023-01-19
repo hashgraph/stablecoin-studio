@@ -6,6 +6,7 @@ import { roleOptions, fields, actions } from '../constants';
 import { waitFor } from '@testing-library/react';
 import { RouterManager } from '../../../Router/RouterManager';
 import configureMockStore from 'redux-mock-store';
+import { mockedStableCoinCapabilities } from '../../../mocks/sdk.js';
 
 jest.mock('../../../Router/RouterManager', () => ({
 	RouterManager: {
@@ -26,17 +27,18 @@ describe(`<${HandleRoles.name} />`, () => {
 		});
 	});
 
-	test('should has disabled confirm button as default', () => {
-		const component = render(<HandleRoles action='giveRole' />);
-
+	test('should has disabled confirm button as default', async() => {
+		const component = render(<HandleRoles action='giveRole' />);		
 		const confirmButton = component.getByTestId('confirm-btn');
-		expect(confirmButton).toHaveAttribute('disabled');
+		await waitFor(() => {
+			expect(confirmButton).toBeDisabled();
+		})
 	});
 
 	test('should enable confirm button after fill form correctly', async () => {
 		const store = mockStore({
 			wallet: {
-				capabilities: ['Cash in'],
+				capabilities: mockedStableCoinCapabilities,
 				data: {
 					savedPairings: [
 						{

@@ -46,6 +46,7 @@
 		"typescript": "4.8"
 	},
 	"scripts": {
+		"postinstall": "npm run build",
 		"start": "node build/src/index.js",
 		"clean": "rimraf coverage build",
 		"prebuild": "npm run lint",

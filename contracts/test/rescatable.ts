@@ -216,6 +216,7 @@ describe('Rescue Tests', function() {
             proxyAddress,
             operatorClient,
             proxyAddress.toSolidityAddress(),
+            false,
             false
         )
         const initialClientBalance = await getBalanceOf(
@@ -233,6 +234,7 @@ describe('Rescue Tests', function() {
             proxyAddress,
             operatorClient,
             proxyAddress.toSolidityAddress(),
+            false,
             false
         )
         const finalClientBalance = await getBalanceOf(
@@ -261,6 +263,7 @@ describe('Rescue Tests', function() {
             proxyAddress,
             operatorClient,
             proxyAddress.toSolidityAddress(),
+            false,
             false
         )
 
@@ -285,6 +288,7 @@ describe('Rescue Tests', function() {
             proxyAddress,
             operatorClient,
             proxyAddress.toSolidityAddress(),
+            false,
             false
         )
         const initialClientBalance = await getBalanceOf(
@@ -319,6 +323,7 @@ describe('Rescue Tests', function() {
             proxyAddress,
             operatorClient,
             proxyAddress.toSolidityAddress(),
+            false,
             false
         )
         const finalClientBalance = await getBalanceOf(
