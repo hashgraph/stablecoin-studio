@@ -18,10 +18,12 @@
  *
  */
 
+import { lazyInject } from '../../../../../core/decorator/LazyInjectDecorator.js';
 import { QueryHandler } from '../../../../../core/decorator/QueryHandlerDecorator.js';
 import Injectable from '../../../../../core/Injectable.js';
 import { IQueryHandler } from '../../../../../core/query/QueryHandler.js';
 import { MirrorNodeAdapter } from '../../../../../port/out/mirror/MirrorNodeAdapter.js';
+import RPCQueryAdapter from '../../../../../port/out/rpc/RPCQueryAdapter.js';
 import {
 	GetStableCoinQuery,
 	GetStableCoinQueryResponse,
@@ -32,15 +34,23 @@ export class GetStableCoinQueryHandler
 	implements IQueryHandler<GetStableCoinQuery>
 {
 	constructor(
-		public readonly repo: MirrorNodeAdapter = Injectable.resolve(
-			MirrorNodeAdapter,
-		),
+		@lazyInject(MirrorNodeAdapter)
+		public readonly mirrorNode: MirrorNodeAdapter,
+		@lazyInject(RPCQueryAdapter)
+		public readonly queryAdapter: RPCQueryAdapter,
 	) {}
 
 	async execute(
 		query: GetStableCoinQuery,
 	): Promise<GetStableCoinQueryResponse> {
-		const coin = await this.repo.getStableCoin(query.tokenId);
+		const {tokenId} = query;
+		const coin = await this.mirrorNode.getStableCoin(tokenId);
+		const reserveAddress = await this.queryAdapter.getReserveAddress(
+			tokenId.toString(),
+		);
+		// const reserveAmount = await this.queryAdapter.getReserveAmount(tokenId.toString())
+		console.log(reserveAddress);
+
 		return Promise.resolve(new GetStableCoinQueryResponse(coin));
 	}
 }
