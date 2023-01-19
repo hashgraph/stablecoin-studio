@@ -87,7 +87,6 @@ export default class RPCQueryAdapter {
 	}
 
 	async getRoles(address: string, target: string): Promise<string[]> {
-		console.log(this.provider, address, target);
 		return await Factory.connect(
 			address,
 			this.provider,
@@ -99,7 +98,6 @@ export default class RPCQueryAdapter {
 		target: string,
 		role: StableCoinRole,
 	): Promise<boolean> {
-		console.log(this.provider, address, target, role);
 		return await Factory.connect(
 			address,
 			this.provider,
@@ -110,7 +108,6 @@ export default class RPCQueryAdapter {
 		address: string,
 		target: string,
 	): Promise<BigNumber> {
-		console.log(this.provider, address, target);
 		return await Factory.connect(
 			address,
 			this.provider,
