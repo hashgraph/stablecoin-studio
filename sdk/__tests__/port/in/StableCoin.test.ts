@@ -130,480 +130,480 @@ describe('🧪 Stablecoin test', () => {
 		expect(res.tokenId).not.toBeNull();
 	}, 60_000);
 
-	// it('Performs getBalanceOf', async () => {
-	// 	const handler = Injectable.resolveTransactionHandler();
-	// 	expect(handler).not.toBeNull();
-	// 	const eventService = Injectable.resolve(EventService);
-	// 	expect(eventService).not.toBeNull();
-	// 	eventService.on(WalletEvents.walletInit, (data) => {
-	// 		console.log(`Wallet: ${data.wallet} initialized`);
-	// 	});
-	// 	const result = await StableCoin.getBalanceOf(
-	// 		new GetAccountBalanceRequest({
-	// 			tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
-	// 			targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-	// 		}),
-	// 	);
-	// 	expect(result instanceof Balance).toBe(true);
-	// 	expect(result.value).not.toBeNull();
-	// }, 60_000);
+	it('Performs getBalanceOf', async () => {
+		const handler = Injectable.resolveTransactionHandler();
+		expect(handler).not.toBeNull();
+		const eventService = Injectable.resolve(EventService);
+		expect(eventService).not.toBeNull();
+		eventService.on(WalletEvents.walletInit, (data) => {
+			console.log(`Wallet: ${data.wallet} initialized`);
+		});
+		const result = await StableCoin.getBalanceOf(
+			new GetAccountBalanceRequest({
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+			}),
+		);
+		expect(result instanceof Balance).toBe(true);
+		expect(result.value).not.toBeNull();
+	}, 60_000);
 
-	// it('Performs capabilities', async () => {
-	// 	const handler = Injectable.resolveTransactionHandler();
-	// 	expect(handler).not.toBeNull();
-	// 	const eventService = Injectable.resolve(EventService);
-	// 	expect(eventService).not.toBeNull();
-	// 	eventService.on(WalletEvents.walletInit, (data) => {
-	// 		console.log(`Wallet: ${data.wallet} initialized`);
-	// 	});
-	// 	const result = await StableCoin.capabilities(
-	// 		new CapabilitiesRequest({
-	// 			account: {
-	// 				accountId: CLIENT_ACCOUNT_ED25519.id.toString(),
-	// 				privateKey: CLIENT_ACCOUNT_ED25519.privateKey,
-	// 			},
-	// 			tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
-	// 		}),
-	// 	);
-	// 	expect(result).not.toBeNull();
-	// 	expect(result.capabilities).not.toBeNull();
-	// }, 60_000);
+	it('Performs capabilities', async () => {
+		const handler = Injectable.resolveTransactionHandler();
+		expect(handler).not.toBeNull();
+		const eventService = Injectable.resolve(EventService);
+		expect(eventService).not.toBeNull();
+		eventService.on(WalletEvents.walletInit, (data) => {
+			console.log(`Wallet: ${data.wallet} initialized`);
+		});
+		const result = await StableCoin.capabilities(
+			new CapabilitiesRequest({
+				account: {
+					accountId: CLIENT_ACCOUNT_ED25519.id.toString(),
+					privateKey: CLIENT_ACCOUNT_ED25519.privateKey,
+				},
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
+			}),
+		);
+		expect(result).not.toBeNull();
+		expect(result.capabilities).not.toBeNull();
+	}, 60_000);
 
-	// it('Performs a cash in SC', async () => {
-	// 	const handler = Injectable.resolveTransactionHandler();
-	// 	expect(handler).not.toBeNull();
-	// 	const eventService = Injectable.resolve(EventService);
-	// 	expect(eventService).not.toBeNull();
-	// 	eventService.on(WalletEvents.walletInit, (data) => {
-	// 		console.log(`Wallet: ${data.wallet} initialized`);
-	// 	});
-	// 	const result = await StableCoin.cashIn(
-	// 		new CashInRequest({
-	// 			amount: '1',
-	// 			tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
-	// 			targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-	// 		}),
-	// 	);
+	it('Performs a cash in SC', async () => {
+		const handler = Injectable.resolveTransactionHandler();
+		expect(handler).not.toBeNull();
+		const eventService = Injectable.resolve(EventService);
+		expect(eventService).not.toBeNull();
+		eventService.on(WalletEvents.walletInit, (data) => {
+			console.log(`Wallet: ${data.wallet} initialized`);
+		});
+		const result = await StableCoin.cashIn(
+			new CashInRequest({
+				amount: '1',
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+			}),
+		);
 
-	// 	expect(result).not.toBeNull();
-	// 	await expect(result).toBe(true);
-	// }, 60_000);
+		expect(result).not.toBeNull();
+		await expect(result).toBe(true);
+	}, 60_000);
 
-	// it('Performs burn SC', async () => {
-	// 	const handler = Injectable.resolveTransactionHandler();
-	// 	expect(handler).not.toBeNull();
-	// 	const eventService = Injectable.resolve(EventService);
-	// 	expect(eventService).not.toBeNull();
-	// 	eventService.on(WalletEvents.walletInit, (data) => {
-	// 		console.log(`Wallet: ${data.wallet} initialized`);
-	// 	});
-	// 	const result = await StableCoin.burn(
-	// 		new BurnRequest({
-	// 			amount: '1',
-	// 			tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
-	// 		}),
-	// 	);
-	// 	expect(result).not.toBeNull();
-	// 	expect(result).toBe(true);
-	// }, 60_000);
+	it('Performs burn SC', async () => {
+		const handler = Injectable.resolveTransactionHandler();
+		expect(handler).not.toBeNull();
+		const eventService = Injectable.resolve(EventService);
+		expect(eventService).not.toBeNull();
+		eventService.on(WalletEvents.walletInit, (data) => {
+			console.log(`Wallet: ${data.wallet} initialized`);
+		});
+		const result = await StableCoin.burn(
+			new BurnRequest({
+				amount: '1',
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
+			}),
+		);
+		expect(result).not.toBeNull();
+		expect(result).toBe(true);
+	}, 60_000);
 
-	// it('Performs rescue SC', async () => {
-	// 	const handler = Injectable.resolveTransactionHandler();
-	// 	expect(handler).not.toBeNull();
-	// 	const eventService = Injectable.resolve(EventService);
-	// 	expect(eventService).not.toBeNull();
-	// 	eventService.on(WalletEvents.walletInit, (data) => {
-	// 		console.log(`Wallet: ${data.wallet} initialized`);
-	// 	});
-	// 	const result = await StableCoin.rescue(
-	// 		new RescueRequest({
-	// 			amount: '1',
-	// 			tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
-	// 		}),
-	// 	);
-	// 	expect(result).not.toBeNull();
-	// 	expect(result).toBe(true);
-	// }, 60_000);
+	it('Performs rescue SC', async () => {
+		const handler = Injectable.resolveTransactionHandler();
+		expect(handler).not.toBeNull();
+		const eventService = Injectable.resolve(EventService);
+		expect(eventService).not.toBeNull();
+		eventService.on(WalletEvents.walletInit, (data) => {
+			console.log(`Wallet: ${data.wallet} initialized`);
+		});
+		const result = await StableCoin.rescue(
+			new RescueRequest({
+				amount: '1',
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
+			}),
+		);
+		expect(result).not.toBeNull();
+		expect(result).toBe(true);
+	}, 60_000);
 
-	// it('Performs wipe SC', async () => {
-	// 	const handler = Injectable.resolveTransactionHandler();
-	// 	expect(handler).not.toBeNull();
-	// 	const eventService = Injectable.resolve(EventService);
-	// 	expect(eventService).not.toBeNull();
-	// 	eventService.on(WalletEvents.walletInit, (data) => {
-	// 		console.log(`Wallet: ${data.wallet} initialized`);
-	// 	});
-	// 	const result = await StableCoin.wipe(
-	// 		new WipeRequest({
-	// 			amount: '1',
-	// 			tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
-	// 			targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-	// 		}),
-	// 	);
-	// 	expect(result).not.toBeNull();
-	// 	expect(result).toBe(true);
-	// }, 60_000);
+	it('Performs wipe SC', async () => {
+		const handler = Injectable.resolveTransactionHandler();
+		expect(handler).not.toBeNull();
+		const eventService = Injectable.resolve(EventService);
+		expect(eventService).not.toBeNull();
+		eventService.on(WalletEvents.walletInit, (data) => {
+			console.log(`Wallet: ${data.wallet} initialized`);
+		});
+		const result = await StableCoin.wipe(
+			new WipeRequest({
+				amount: '1',
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+			}),
+		);
+		expect(result).not.toBeNull();
+		expect(result).toBe(true);
+	}, 60_000);
 
-	// it('Performs associate SC', async () => {
-	// 	const handler = Injectable.resolveTransactionHandler();
-	// 	expect(handler).not.toBeNull();
-	// 	const eventService = Injectable.resolve(EventService);
-	// 	expect(eventService).not.toBeNull();
-	// 	eventService.on(WalletEvents.walletInit, (data) => {
-	// 		console.log(`Wallet: ${data.wallet} initialized`);
-	// 	});
-	// 	const result =  StableCoin.associate(
-	// 		new AssociateTokenRequest({
-	// 			account: {
-	// 				accountId: CLIENT_ACCOUNT_ECDSA.id.toString(),
-	// 				privateKey: CLIENT_ACCOUNT_ECDSA.privateKey,
-	// 			},
-	// 		}),
-	// 	);
-	// 	await expect(result).rejects.toThrow('Method not implemented');
+	it('Performs associate SC', async () => {
+		const handler = Injectable.resolveTransactionHandler();
+		expect(handler).not.toBeNull();
+		const eventService = Injectable.resolve(EventService);
+		expect(eventService).not.toBeNull();
+		eventService.on(WalletEvents.walletInit, (data) => {
+			console.log(`Wallet: ${data.wallet} initialized`);
+		});
+		const result =  StableCoin.associate(
+			new AssociateTokenRequest({
+				account: {
+					accountId: CLIENT_ACCOUNT_ECDSA.id.toString(),
+					privateKey: CLIENT_ACCOUNT_ECDSA.privateKey,
+				},
+			}),
+		);
+		await expect(result).rejects.toThrow('Method not implemented');
 
-	// }, 60_000);
+	}, 60_000);
 
-	// it('Performs freeze SC', async () => {
-	// 	const handler = Injectable.resolveTransactionHandler();
-	// 	expect(handler).not.toBeNull();
-	// 	const eventService = Injectable.resolve(EventService);
-	// 	expect(eventService).not.toBeNull();
-	// 	eventService.on(WalletEvents.walletInit, (data) => {
-	// 		console.log(`Wallet: ${data.wallet} initialized`);
-	// 	});
-	// 	await delay();
-	// 	const result = await StableCoin.freeze(
-	// 		new FreezeAccountRequest({
-	// 			targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-	// 			tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49131205',
-	// 		}),
-	// 	);
+	it('Performs freeze SC', async () => {
+		const handler = Injectable.resolveTransactionHandler();
+		expect(handler).not.toBeNull();
+		const eventService = Injectable.resolve(EventService);
+		expect(eventService).not.toBeNull();
+		eventService.on(WalletEvents.walletInit, (data) => {
+			console.log(`Wallet: ${data.wallet} initialized`);
+		});
+		await delay();
+		const result = await StableCoin.freeze(
+			new FreezeAccountRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49131205',
+			}),
+		);
 
-	// 	expect(result).not.toBeNull();
-	// 	expect(result).toBe(true);
-	// }, 60_000);
+		expect(result).not.toBeNull();
+		expect(result).toBe(true);
+	}, 60_000);
 
-	// it('Performs unfreeze SC', async () => {
-	// 	const handler = Injectable.resolveTransactionHandler();
-	// 	expect(handler).not.toBeNull();
-	// 	const eventService = Injectable.resolve(EventService);
-	// 	expect(eventService).not.toBeNull();
-	// 	eventService.on(WalletEvents.walletInit, (data) => {
-	// 		console.log(`Wallet: ${data.wallet} initialized`);
-	// 	});
-	// 	await delay();
-	// 	const result = await StableCoin.unFreeze(
-	// 		new FreezeAccountRequest({
-	// 			targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-	// 			tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49131205',
-	// 		}),
-	// 	);
-	// 	expect(result).not.toBeNull();
-	// 	expect(result).toBe(true);
-	// }, 60_000);
+	it('Performs unfreeze SC', async () => {
+		const handler = Injectable.resolveTransactionHandler();
+		expect(handler).not.toBeNull();
+		const eventService = Injectable.resolve(EventService);
+		expect(eventService).not.toBeNull();
+		eventService.on(WalletEvents.walletInit, (data) => {
+			console.log(`Wallet: ${data.wallet} initialized`);
+		});
+		await delay();
+		const result = await StableCoin.unFreeze(
+			new FreezeAccountRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49131205',
+			}),
+		);
+		expect(result).not.toBeNull();
+		expect(result).toBe(true);
+	}, 60_000);
 
-	// it('Performs pause SC', async () => {
-	// 	const handler = Injectable.resolveTransactionHandler();
-	// 	expect(handler).not.toBeNull();
-	// 	const eventService = Injectable.resolve(EventService);
-	// 	expect(eventService).not.toBeNull();
-	// 	eventService.on(WalletEvents.walletInit, (data) => {
-	// 		console.log(`Wallet: ${data.wallet} initialized`);
-	// 	});
-	// 	const result = await StableCoin.pause(
-	// 		new PauseRequest({
-	// 			tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
-	// 		}),
-	// 	);
-	// 	expect(result).not.toBeNull();
-	// 	expect(result).toBe(true);
-	// }, 90_000);
+	it('Performs pause SC', async () => {
+		const handler = Injectable.resolveTransactionHandler();
+		expect(handler).not.toBeNull();
+		const eventService = Injectable.resolve(EventService);
+		expect(eventService).not.toBeNull();
+		eventService.on(WalletEvents.walletInit, (data) => {
+			console.log(`Wallet: ${data.wallet} initialized`);
+		});
+		const result = await StableCoin.pause(
+			new PauseRequest({
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
+			}),
+		);
+		expect(result).not.toBeNull();
+		expect(result).toBe(true);
+	}, 90_000);
 
-	// it('Performs unpause SC', async () => {
-	// 	const handler = Injectable.resolveTransactionHandler();
-	// 	expect(handler).not.toBeNull();
-	// 	const eventService = Injectable.resolve(EventService);
-	// 	expect(eventService).not.toBeNull();
-	// 	eventService.on(WalletEvents.walletInit, (data) => {
-	// 		console.log(`Wallet: ${data.wallet} initialized`);
-	// 	});
-	// 	const result = await StableCoin.unPause(
-	// 		new PauseRequest({
-	// 			tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
-	// 		}),
-	// 	);
-	// 	expect(result).not.toBeNull();
-	// 	expect(result).toBe(true);
-	// }, 60_000);
+	it('Performs unpause SC', async () => {
+		const handler = Injectable.resolveTransactionHandler();
+		expect(handler).not.toBeNull();
+		const eventService = Injectable.resolve(EventService);
+		expect(eventService).not.toBeNull();
+		eventService.on(WalletEvents.walletInit, (data) => {
+			console.log(`Wallet: ${data.wallet} initialized`);
+		});
+		const result = await StableCoin.unPause(
+			new PauseRequest({
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
+			}),
+		);
+		expect(result).not.toBeNull();
+		expect(result).toBe(true);
+	}, 60_000);
 
-	// // eslint-disable-next-line jest/no-disabled-tests
-	// it.skip('Performs delete SC', async () => {
-	// 	const handler = Injectable.resolveTransactionHandler();
-	// 	expect(handler).not.toBeNull();
-	// 	const eventService = Injectable.resolve(EventService);
-	// 	expect(eventService).not.toBeNull();
-	// 	eventService.on(WalletEvents.walletInit, (data) => {
-	// 		console.log(`Wallet: ${data.wallet} initialized`);
-	// 	});
-	// 	const result = await StableCoin.delete(
-	// 		new DeleteRequest({
-	// 			tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
-	// 		}),
-	// 	);
-	// 	expect(result).not.toBeNull();
-	// 	expect(result).toBe(true);
-	// }, 60_000);
+	// eslint-disable-next-line jest/no-disabled-tests
+	it.skip('Performs delete SC', async () => {
+		const handler = Injectable.resolveTransactionHandler();
+		expect(handler).not.toBeNull();
+		const eventService = Injectable.resolve(EventService);
+		expect(eventService).not.toBeNull();
+		eventService.on(WalletEvents.walletInit, (data) => {
+			console.log(`Wallet: ${data.wallet} initialized`);
+		});
+		const result = await StableCoin.delete(
+			new DeleteRequest({
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
+			}),
+		);
+		expect(result).not.toBeNull();
+		expect(result).toBe(true);
+	}, 60_000);
 
-	// // ----------------------HTS--------------------------
+	// ----------------------HTS--------------------------
 
-	// it('Performs a cash in HTS', async () => {
-	// 	const handler = Injectable.resolveTransactionHandler();
-	// 	expect(handler).not.toBeNull();
-	// 	const eventService = Injectable.resolve(EventService);
-	// 	expect(eventService).not.toBeNull();
-	// 	eventService.on(WalletEvents.walletInit, (data) => {
-	// 		console.log(`Wallet: ${data.wallet} initialized`);
-	// 	});
-	// 	const result =  StableCoin.cashIn(
-	// 		new CashInRequest({
-	// 			amount: '1',
-	// 			tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49131205',
-	// 			targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-	// 		}),
-	// 	);
+	it('Performs a cash in HTS', async () => {
+		const handler = Injectable.resolveTransactionHandler();
+		expect(handler).not.toBeNull();
+		const eventService = Injectable.resolve(EventService);
+		expect(eventService).not.toBeNull();
+		eventService.on(WalletEvents.walletInit, (data) => {
+			console.log(`Wallet: ${data.wallet} initialized`);
+		});
+		const result =  StableCoin.cashIn(
+			new CashInRequest({
+				amount: '1',
+				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49131205',
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+			}),
+		);
 
-	// 	await expect(result).rejects.toThrow('SPENDER_DOES_NOT_HAVE_ALLOWANCE');
+		await expect(result).rejects.toThrow('SPENDER_DOES_NOT_HAVE_ALLOWANCE');
 
-	// }, 60_000);
+	}, 60_000);
 
-	// it('Performs burn HTS', async () => {
-	// 	const handler = Injectable.resolveTransactionHandler();
-	// 	expect(handler).not.toBeNull();
-	// 	const eventService = Injectable.resolve(EventService);
-	// 	expect(eventService).not.toBeNull();
-	// 	eventService.on(WalletEvents.walletInit, (data) => {
-	// 		console.log(`Wallet: ${data.wallet} initialized`);
-	// 	});
-	// 	const result = await StableCoin.burn(
-	// 		new BurnRequest({
-	// 			amount: '1',
-	// 			tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49106247',
-	// 		}),
-	// 	);
-	// 	expect(result).not.toBeNull();
-	// 	expect(result).toBe(true);
-	// }, 60_000);
+	it('Performs burn HTS', async () => {
+		const handler = Injectable.resolveTransactionHandler();
+		expect(handler).not.toBeNull();
+		const eventService = Injectable.resolve(EventService);
+		expect(eventService).not.toBeNull();
+		eventService.on(WalletEvents.walletInit, (data) => {
+			console.log(`Wallet: ${data.wallet} initialized`);
+		});
+		const result = await StableCoin.burn(
+			new BurnRequest({
+				amount: '1',
+				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49106247',
+			}),
+		);
+		expect(result).not.toBeNull();
+		expect(result).toBe(true);
+	}, 60_000);
 
-	// it('Performs rescue HTS', async () => {
-	// 	const handler = Injectable.resolveTransactionHandler();
-	// 	expect(handler).not.toBeNull();
-	// 	const eventService = Injectable.resolve(EventService);
-	// 	expect(eventService).not.toBeNull();
-	// 	eventService.on(WalletEvents.walletInit, (data) => {
-	// 		console.log(`Wallet: ${data.wallet} initialized`);
-	// 	});
-	// 	const result = await StableCoin.rescue(
-	// 		new RescueRequest({
-	// 			amount: '1',
-	// 			tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49106247',
-	// 		}),
-	// 	);
-	// 	expect(result).not.toBeNull();
-	// 	expect(result).toBe(true);
-	// }, 60_000);
+	it('Performs rescue HTS', async () => {
+		const handler = Injectable.resolveTransactionHandler();
+		expect(handler).not.toBeNull();
+		const eventService = Injectable.resolve(EventService);
+		expect(eventService).not.toBeNull();
+		eventService.on(WalletEvents.walletInit, (data) => {
+			console.log(`Wallet: ${data.wallet} initialized`);
+		});
+		const result = await StableCoin.rescue(
+			new RescueRequest({
+				amount: '1',
+				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49106247',
+			}),
+		);
+		expect(result).not.toBeNull();
+		expect(result).toBe(true);
+	}, 60_000);
 
-	// it('Performs wipe HTS', async () => {
-	// 	const handler = Injectable.resolveTransactionHandler();
-	// 	expect(handler).not.toBeNull();
-	// 	const eventService = Injectable.resolve(EventService);
-	// 	expect(eventService).not.toBeNull();
-	// 	eventService.on(WalletEvents.walletInit, (data) => {
-	// 		console.log(`Wallet: ${data.wallet} initialized`);
-	// 	});
-	// 	const result = await StableCoin.wipe(
-	// 		new WipeRequest({
-	// 			amount: '1',
-	// 			tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49106247',
-	// 			targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-	// 		}),
-	// 	);
-	// 	expect(result).not.toBeNull();
-	// 	expect(result).toBe(true);
-	// }, 60_000);
+	it('Performs wipe HTS', async () => {
+		const handler = Injectable.resolveTransactionHandler();
+		expect(handler).not.toBeNull();
+		const eventService = Injectable.resolve(EventService);
+		expect(eventService).not.toBeNull();
+		eventService.on(WalletEvents.walletInit, (data) => {
+			console.log(`Wallet: ${data.wallet} initialized`);
+		});
+		const result = await StableCoin.wipe(
+			new WipeRequest({
+				amount: '1',
+				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49106247',
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+			}),
+		);
+		expect(result).not.toBeNull();
+		expect(result).toBe(true);
+	}, 60_000);
 
-	// it('Performs associate HTS', async () => {
-	// 	const handler = Injectable.resolveTransactionHandler();
-	// 	expect(handler).not.toBeNull();
-	// 	const eventService = Injectable.resolve(EventService);
-	// 	expect(eventService).not.toBeNull();
-	// 	eventService.on(WalletEvents.walletInit, (data) => {
-	// 		console.log(`Wallet: ${data.wallet} initialized`);
-	// 	});
-	// 	const result = StableCoin.associate(
-	// 		new AssociateTokenRequest({
-	// 			account: {
-	// 				accountId: CLIENT_ACCOUNT_ECDSA.id.toString(),
-	// 				privateKey: CLIENT_ACCOUNT_ECDSA.privateKey,
-	// 			},
-	// 		}),
-	// 	);
-	// 	await expect(result).rejects.toThrow('Method not implemented');
+	it('Performs associate HTS', async () => {
+		const handler = Injectable.resolveTransactionHandler();
+		expect(handler).not.toBeNull();
+		const eventService = Injectable.resolve(EventService);
+		expect(eventService).not.toBeNull();
+		eventService.on(WalletEvents.walletInit, (data) => {
+			console.log(`Wallet: ${data.wallet} initialized`);
+		});
+		const result = StableCoin.associate(
+			new AssociateTokenRequest({
+				account: {
+					accountId: CLIENT_ACCOUNT_ECDSA.id.toString(),
+					privateKey: CLIENT_ACCOUNT_ECDSA.privateKey,
+				},
+			}),
+		);
+		await expect(result).rejects.toThrow('Method not implemented');
 
-	// }, 60_000);
+	}, 60_000);
 
-	// it('Performs capabilities HTS', async () => {
-	// 	const handler = Injectable.resolveTransactionHandler();
-	// 	expect(handler).not.toBeNull();
-	// 	const eventService = Injectable.resolve(EventService);
-	// 	expect(eventService).not.toBeNull();
-	// 	eventService.on(WalletEvents.walletInit, (data) => {
-	// 		console.log(`Wallet: ${data.wallet} initialized`);
-	// 	});
-	// 	const result = await StableCoin.capabilities(
-	// 		new CapabilitiesRequest({
-	// 			account: {
-	// 				accountId: CLIENT_ACCOUNT_ED25519.id.toString(),
-	// 				privateKey: CLIENT_ACCOUNT_ED25519.privateKey,
-	// 			},
-	// 			tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49106247',
-	// 		}),
-	// 	);
-	// 	expect(result).not.toBeNull();
-	// 	expect(result.capabilities).not.toBeNull();
-	// }, 60_000);
+	it('Performs capabilities HTS', async () => {
+		const handler = Injectable.resolveTransactionHandler();
+		expect(handler).not.toBeNull();
+		const eventService = Injectable.resolve(EventService);
+		expect(eventService).not.toBeNull();
+		eventService.on(WalletEvents.walletInit, (data) => {
+			console.log(`Wallet: ${data.wallet} initialized`);
+		});
+		const result = await StableCoin.capabilities(
+			new CapabilitiesRequest({
+				account: {
+					accountId: CLIENT_ACCOUNT_ED25519.id.toString(),
+					privateKey: CLIENT_ACCOUNT_ED25519.privateKey,
+				},
+				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49106247',
+			}),
+		);
+		expect(result).not.toBeNull();
+		expect(result.capabilities).not.toBeNull();
+	}, 60_000);
 
-	// it('Performs freeze HTS', async () => {
-	// 	const handler = Injectable.resolveTransactionHandler();
-	// 	expect(handler).not.toBeNull();
-	// 	const eventService = Injectable.resolve(EventService);
-	// 	expect(eventService).not.toBeNull();
-	// 	eventService.on(WalletEvents.walletInit, (data) => {
-	// 		console.log(`Wallet: ${data.wallet} initialized`);
-	// 	});
-	// 	await delay();
-	// 	const result = await StableCoin.freeze(
-	// 		new FreezeAccountRequest({
-	// 			targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-	// 			tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49131205',
-	// 		}),
-	// 	);
-	// 	expect(result).not.toBeNull();
-	// 	expect(result).toBe(true);
-	// }, 60_000);
+	it('Performs freeze HTS', async () => {
+		const handler = Injectable.resolveTransactionHandler();
+		expect(handler).not.toBeNull();
+		const eventService = Injectable.resolve(EventService);
+		expect(eventService).not.toBeNull();
+		eventService.on(WalletEvents.walletInit, (data) => {
+			console.log(`Wallet: ${data.wallet} initialized`);
+		});
+		await delay();
+		const result = await StableCoin.freeze(
+			new FreezeAccountRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49131205',
+			}),
+		);
+		expect(result).not.toBeNull();
+		expect(result).toBe(true);
+	}, 60_000);
 
-	// it('Performs unfreeze HTS', async () => {
-	// 	const handler = Injectable.resolveTransactionHandler();
-	// 	expect(handler).not.toBeNull();
-	// 	const eventService = Injectable.resolve(EventService);
-	// 	expect(eventService).not.toBeNull();
-	// 	eventService.on(WalletEvents.walletInit, (data) => {
-	// 		console.log(`Wallet: ${data.wallet} initialized`);
-	// 	});
-	// 	await delay();
-	// 	const result = await StableCoin.unFreeze(
-	// 		new FreezeAccountRequest({
-	// 			targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-	// 			tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49131205',
-	// 		}),
-	// 	);
-	// 	expect(result).not.toBeNull();
-	// 	expect(result).toBe(true);
-	// }, 60_000);
+	it('Performs unfreeze HTS', async () => {
+		const handler = Injectable.resolveTransactionHandler();
+		expect(handler).not.toBeNull();
+		const eventService = Injectable.resolve(EventService);
+		expect(eventService).not.toBeNull();
+		eventService.on(WalletEvents.walletInit, (data) => {
+			console.log(`Wallet: ${data.wallet} initialized`);
+		});
+		await delay();
+		const result = await StableCoin.unFreeze(
+			new FreezeAccountRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49131205',
+			}),
+		);
+		expect(result).not.toBeNull();
+		expect(result).toBe(true);
+	}, 60_000);
 
-	// it('Performs pause HTS', async () => {
-	// 	const handler = Injectable.resolveTransactionHandler();
-	// 	expect(handler).not.toBeNull();
-	// 	const eventService = Injectable.resolve(EventService);
-	// 	expect(eventService).not.toBeNull();
-	// 	eventService.on(WalletEvents.walletInit, (data) => {
-	// 		console.log(`Wallet: ${data.wallet} initialized`);
-	// 	});
-	// 	const result = await StableCoin.pause(
-	// 		new PauseRequest({
-	// 			tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49106247',
-	// 		}),
-	// 	);
-	// 	expect(result).not.toBeNull();
-	// 	expect(result).toBe(true);
-	// }, 60_000);
+	it('Performs pause HTS', async () => {
+		const handler = Injectable.resolveTransactionHandler();
+		expect(handler).not.toBeNull();
+		const eventService = Injectable.resolve(EventService);
+		expect(eventService).not.toBeNull();
+		eventService.on(WalletEvents.walletInit, (data) => {
+			console.log(`Wallet: ${data.wallet} initialized`);
+		});
+		const result = await StableCoin.pause(
+			new PauseRequest({
+				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49106247',
+			}),
+		);
+		expect(result).not.toBeNull();
+		expect(result).toBe(true);
+	}, 60_000);
 
-	// it('Performs unpause HTS', async () => {
-	// 	const handler = Injectable.resolveTransactionHandler();
-	// 	expect(handler).not.toBeNull();
-	// 	const eventService = Injectable.resolve(EventService);
-	// 	expect(eventService).not.toBeNull();
-	// 	eventService.on(WalletEvents.walletInit, (data) => {
-	// 		console.log(`Wallet: ${data.wallet} initialized`);
-	// 	});
-	// 	const result = await StableCoin.unPause(
-	// 		new PauseRequest({
-	// 			tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49106247',
-	// 		}),
-	// 	);
-	// 	expect(result).not.toBeNull();
-	// 	expect(result).toBe(true);
-	// }, 60_000);
+	it('Performs unpause HTS', async () => {
+		const handler = Injectable.resolveTransactionHandler();
+		expect(handler).not.toBeNull();
+		const eventService = Injectable.resolve(EventService);
+		expect(eventService).not.toBeNull();
+		eventService.on(WalletEvents.walletInit, (data) => {
+			console.log(`Wallet: ${data.wallet} initialized`);
+		});
+		const result = await StableCoin.unPause(
+			new PauseRequest({
+				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49106247',
+			}),
+		);
+		expect(result).not.toBeNull();
+		expect(result).toBe(true);
+	}, 60_000);
 
-	// // eslint-disable-next-line jest/no-disabled-tests
-	// it.skip('Performs delete HTS', async () => {
-	// 	const handler = Injectable.resolveTransactionHandler();
-	// 	expect(handler).not.toBeNull();
-	// 	const eventService = Injectable.resolve(EventService);
-	// 	expect(eventService).not.toBeNull();
-	// 	eventService.on(WalletEvents.walletInit, (data) => {
-	// 		console.log(`Wallet: ${data.wallet} initialized`);
-	// 	});
-	// 	const result = await StableCoin.delete(
-	// 		new DeleteRequest({
-	// 			tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49106247',
-	// 		}),
-	// 	);
-	// 	expect(result).not.toBeNull();
-	// 	expect(result).toBe(true);
-	// }, 60_000);
+	// eslint-disable-next-line jest/no-disabled-tests
+	it.skip('Performs delete HTS', async () => {
+		const handler = Injectable.resolveTransactionHandler();
+		expect(handler).not.toBeNull();
+		const eventService = Injectable.resolve(EventService);
+		expect(eventService).not.toBeNull();
+		eventService.on(WalletEvents.walletInit, (data) => {
+			console.log(`Wallet: ${data.wallet} initialized`);
+		});
+		const result = await StableCoin.delete(
+			new DeleteRequest({
+				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49106247',
+			}),
+		);
+		expect(result).not.toBeNull();
+		expect(result).toBe(true);
+	}, 60_000);
 
-	// it('Get isAccountTokenAssociated', async () => {
-	// 	const handler = Injectable.resolveTransactionHandler();
-	// 	expect(handler).not.toBeNull();
-	// 	const eventService = Injectable.resolve(EventService);
-	// 	expect(eventService).not.toBeNull();
-	// 	eventService.on(WalletEvents.walletInit, (data) => {
-	// 		console.log(`Wallet: ${data.wallet} initialized`);
-	// 	});
-	// 	const result = await StableCoin.isAccountAssociated(
-	// 		new IsAccountAssociatedTokenRequest({
-	// 			targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-	// 			tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49206466',
-	// 		}),
-	// 	);
-	// 	expect(result).not.toBeNull();
-	// 	expect(result).toBe(true);
-	// }, 60_000);
+	it('Get isAccountTokenAssociated', async () => {
+		const handler = Injectable.resolveTransactionHandler();
+		expect(handler).not.toBeNull();
+		const eventService = Injectable.resolve(EventService);
+		expect(eventService).not.toBeNull();
+		eventService.on(WalletEvents.walletInit, (data) => {
+			console.log(`Wallet: ${data.wallet} initialized`);
+		});
+		const result = await StableCoin.isAccountAssociated(
+			new IsAccountAssociatedTokenRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49206466',
+			}),
+		);
+		expect(result).not.toBeNull();
+		expect(result).toBe(true);
+	}, 60_000);
 
-	// afterAll(async () => {
-	// 	const handler = Injectable.resolveTransactionHandler();
-	// 	expect(handler).not.toBeNull();
-	// 	const eventService = Injectable.resolve(EventService);
-	// 	expect(eventService).not.toBeNull();
-	// 	eventService.on(WalletEvents.walletInit, (data) => {
-	// 		console.log(`Wallet: ${data.wallet} initialized`);
-	// 	});
-	// 	console.log(`Token HTS: ${stableCoinHTS?.tokenId?.toString()}`);
-	// 	console.log(`Token SC: ${stableCoinSC?.tokenId?.toString()}`);
+	afterAll(async () => {
+		const handler = Injectable.resolveTransactionHandler();
+		expect(handler).not.toBeNull();
+		const eventService = Injectable.resolve(EventService);
+		expect(eventService).not.toBeNull();
+		eventService.on(WalletEvents.walletInit, (data) => {
+			console.log(`Wallet: ${data.wallet} initialized`);
+		});
+		console.log(`Token HTS: ${stableCoinHTS?.tokenId?.toString()}`);
+		console.log(`Token SC: ${stableCoinSC?.tokenId?.toString()}`);
 
-	// 	await delay(10);
-	// 	const resultHTS = await StableCoin.delete(
-	// 		new DeleteRequest({
-	// 			tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49106247',
-	// 		}),
-	// 	);
-	// 	const resultSC = await StableCoin.delete(
-	// 		new DeleteRequest({
-	// 			tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
-	// 		}),
-	// 	);
-	// 	expect(resultHTS).toBe(true);
-	// 	expect(resultSC).toBe(true);
-	// }, 60_000);
+		await delay(10);
+		const resultHTS = await StableCoin.delete(
+			new DeleteRequest({
+				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49106247',
+			}),
+		);
+		const resultSC = await StableCoin.delete(
+			new DeleteRequest({
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
+			}),
+		);
+		expect(resultHTS).toBe(true);
+		expect(resultSC).toBe(true);
+	}, 60_000);
 });

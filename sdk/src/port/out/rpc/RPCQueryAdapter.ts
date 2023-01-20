@@ -34,7 +34,7 @@ import {
 } from 'hedera-stable-coin-contracts';
 import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
-import { HederaId } from '../../../domain/context/shared/HederaId.js';
+import EvmAddress from '../../../domain/context/contract/EvmAddress.js';
 
 const HederaERC20 = HederaERC20__factory;
 const Reserve = AggregatorV3Interface__factory;
@@ -73,72 +73,99 @@ export default class RPCQueryAdapter {
 		return fac.connect(address, this.provider);
 	}
 
-	async balanceOf(address: string, target: string): Promise<BigNumber> {
-		return await HederaERC20.connect(address, this.provider).balanceOf(
-			target,
+	async balanceOf(
+		address: EvmAddress,
+		target: EvmAddress,
+	): Promise<BigNumber> {
+		LogService.logTrace(
+			`Requesting balanceOf address: ${address.toString()}, target: ${target.toString()}`,
+		);
+		return await this.connect(HederaERC20, address.toString()).balanceOf(
+			target.toString(),
 		);
 	}
 
-	async getReserveAddress(address: string): Promise<ContractId> {
+	async getReserveAddress(address: EvmAddress): Promise<ContractId> {
+		LogService.logTrace(
+			`Requesting getReserveAddress address: ${address.toString()}`,
+		);
 		const val = await this.connect(
 			HederaERC20,
-			address,
+			address.toString(),
 		).getReserveAddress();
 		return ContractId.fromHederaEthereumAddress(val);
 	}
-	async getReserveAmount(address: string): Promise<BigNumber> {
-		return await HederaERC20.connect(
-			address,
-			this.provider,
+	async getReserveAmount(address: EvmAddress): Promise<BigNumber> {
+		LogService.logTrace(`Requesting getReserveAmount address: ${address}`);
+		return await this.connect(
+			HederaERC20,
+			address.toString(),
 		).getReserveAmount();
 	}
 
-	async isLimited(address: string, target: string): Promise<boolean> {
+	async isLimited(address: EvmAddress, target: EvmAddress): Promise<boolean> {
+		LogService.logTrace(
+			`Requesting isLimited address: ${address.toString()}, target: ${target.toString()}`,
+		);
 		return await this.connect(
 			HederaERC20,
-			address,
-		).isUnlimitedSupplierAllowance(target);
+			address.toString(),
+		).isUnlimitedSupplierAllowance(target.toString());
 	}
 
-	async isUnlimited(address: string, target: string): Promise<boolean> {
+	async isUnlimited(
+		address: EvmAddress,
+		target: EvmAddress,
+	): Promise<boolean> {
+		LogService.logTrace(
+			`Requesting isUnlimited address: ${address.toString()}, target: ${target.toString()}`,
+		);
 		return await this.connect(
 			HederaERC20,
-			address,
-		).isUnlimitedSupplierAllowance(target);
+			address.toString(),
+		).isUnlimitedSupplierAllowance(target.toString());
 	}
 
-	async getRoles(address: string, target: string): Promise<string[]> {
-		console.log(address, target, this.provider.connection.url);
-		return await HederaERC20.connect(address, this.provider).getRoles(
-			target,
+	async getRoles(address: EvmAddress, target: EvmAddress): Promise<string[]> {
+		LogService.logTrace(
+			`Requesting getRoles address: ${address.toString()}, target: ${target.toString()}`,
+		);
+		return await this.connect(HederaERC20, address.toString()).getRoles(
+			target.toString(),
 		);
 	}
 
 	async hasRole(
-		address: string,
-		target: string,
+		address: EvmAddress,
+		target: EvmAddress,
 		role: StableCoinRole,
 	): Promise<boolean> {
-		return await HederaERC20.connect(address, this.provider).hasRole(
+		LogService.logTrace(
+			`Requesting balanceOf address: ${address.toString()}, target: ${target.toString()}`,
+		);
+		return await this.connect(HederaERC20, address.toString()).hasRole(
 			role,
-			target,
+			target.toString(),
 		);
 	}
 
 	async supplierAllowance(
-		address: string,
-		target: string,
+		address: EvmAddress,
+		target: EvmAddress,
 	): Promise<BigNumber> {
-		return await HederaERC20.connect(
-			address,
-			this.provider,
-		).getSupplierAllowance(target);
+		LogService.logTrace(
+			`Requesting balanceOf address: ${address.toString()}, target: ${target.toString()}`,
+		);
+		return await this.connect(
+			HederaERC20,
+			address.toString(),
+		).getSupplierAllowance(target.toString());
 	}
 
-	async getReserveDecimals(address: HederaId): Promise<number> {
-		return await this.connect(
-			Reserve,
-			address.toHederaAddress().toSolidityAddress(),
-		).decimals();
+	async getReserveDecimals(address: EvmAddress): Promise<number> {
+		LogService.logTrace(
+			`Requesting balanceOf address: ${address.toString()}`,
+		);
+		return await this.connect(Reserve, address.toString()).decimals();
 	}
 }

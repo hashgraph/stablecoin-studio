@@ -46,7 +46,7 @@ export class ReserveDecimalsQueryHandler
 		query: ReserveDecimalsQuery,
 	): Promise<ReserveDecimalsQueryResponse> {
 		const { address } = query;
-		const res = await this.queryAdapter.getReserveDecimals(address);
+		const res = await this.queryAdapter.getReserveDecimals(address.toEvmAddress());
 		return new ReserveDecimalsQueryResponse(res);
 	}
 }

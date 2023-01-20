@@ -18,18 +18,14 @@
  *
  */
 
-import { Query } from "../../../../../core/query/Query.js";
-import { QueryResponse } from "../../../../../core/query/QueryResponse.js";
-import ContractId from "../../../../../domain/context/contract/ContractId.js";
+import BaseError, { ErrorCode } from "../../../../core/error/BaseError.js";
 
-export class ReserveDecimalsQueryResponse implements QueryResponse {
-	constructor(public readonly payload: number) {}
-}
 
-export class ReserveDecimalsQuery extends Query<ReserveDecimalsQueryResponse> {
-	constructor(
-		public readonly address: ContractId,
-	) {
-		super();
-	}
+export class InvalidEvmAddress extends BaseError {
+    constructor(value: string) {
+        super(
+			ErrorCode.InvalidEvmAddress,
+			`EVM Address ${value} is not valid`,
+		);        
+    }
 }

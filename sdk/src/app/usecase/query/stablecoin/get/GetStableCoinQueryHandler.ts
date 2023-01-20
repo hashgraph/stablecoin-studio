@@ -21,6 +21,7 @@
 import { lazyInject } from '../../../../../core/decorator/LazyInjectDecorator.js';
 import { QueryHandler } from '../../../../../core/decorator/QueryHandlerDecorator.js';
 import { IQueryHandler } from '../../../../../core/query/QueryHandler.js';
+import EvmAddress from '../../../../../domain/context/contract/EvmAddress.js';
 import BigDecimal from '../../../../../domain/context/shared/BigDecimal.js';
 import { MirrorNodeAdapter } from '../../../../../port/out/mirror/MirrorNodeAdapter.js';
 import RPCQueryAdapter from '../../../../../port/out/rpc/RPCQueryAdapter.js';
@@ -57,7 +58,7 @@ export class GetStableCoinQueryHandler
 			coin.reserveAddress = reserveAddress;
 
 			const reserveDecimals = await this.queryAdapter.getReserveDecimals(
-				reserveAddress,
+				EvmAddress.fromContractId(reserveAddress),
 			);
 
 			coin.reserveAmount = BigDecimal.fromStringFixed(
