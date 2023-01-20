@@ -31,7 +31,7 @@ const hederaERC20Address = '0.0.49318811'
 
 const factoryProxyAddress = '0.0.49318817'
 const factoryProxyAdminAddress = '0.0.49318815'
-const factoryAddress = '0.0.49318813' 
+const factoryAddress = '0.0.49318813'
 
 export const ADDRESS_0 = '0x0000000000000000000000000000000000000000'
 const hreConfig = hre.network.config
@@ -52,7 +52,8 @@ export function initializeClients(): [
     const client1account: string = hreConfig.accounts[0].account
     const client1privatekey: string = hreConfig.accounts[0].privateKey
     const client1publickey: string = hreConfig.accounts[0].publicKey
-    const client1isED25519: boolean = hreConfig.accounts[0].isED25519Type
+    const client1isED25519: boolean =
+        hreConfig.accounts[0].isED25519Type === 'true'
     client1.setOperator(
         client1account,
         toHashgraphKey(client1privatekey, client1isED25519)
@@ -62,7 +63,7 @@ export function initializeClients(): [
     const client2account: string = hreConfig.accounts[1].account
     const client2privatekey: string = hreConfig.accounts[1].privateKey
     const client2publickey: string = hreConfig.accounts[1].publicKey
-    const client2isED25519: boolean = hreConfig.accounts[1].isED25519Type
+    const client2isED25519 = hreConfig.accounts[1].isED25519Type === 'true'
     client2.setOperator(
         client2account,
         toHashgraphKey(client2privatekey, client2isED25519)
@@ -267,7 +268,7 @@ export async function deployContractsWithSDK({
     allToContract = true,
     reserveAddress = ADDRESS_0,
     initialAmountDataFeed = initialSupply,
-    createReserve = true
+    createReserve = true,
 }: DeployParameters): Promise<ContractId[]> {
     const AccountEvmAddress = await toEvmAddress(account, isED25519Type)
 

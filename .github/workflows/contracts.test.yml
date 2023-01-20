@@ -1,5 +1,5 @@
 name: Contracts - Test
-on: 
+on:
   workflow_dispatch:
   push:
     branches: [main]
@@ -27,7 +27,7 @@ jobs:
         #   test-script: npm run test:ci
         working-directory: contracts
         env:
-          HEDERA_OPERATOR_ACCOUNT: ${{ secrets.HEDERA_OPERATOR_ACCOUNT }}
+          HEDERA_OPERATOR_ACCOUNT: ${{ secrets.CLIENT_ACCOUNT_ID_ECDSA }}
           HEDERA_OPERATOR_PUBLICKEY: ${{ secrets.CLIENT_PUBLIC_KEY_ECDSA }}
           HEDERA_OPERATOR_PRIVATEKEY: ${{ secrets.CLIENT_PRIVATE_KEY_ECDSA }}
           HEDERA_OPERATOR_ED25519: false
