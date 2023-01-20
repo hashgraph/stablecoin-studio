@@ -219,11 +219,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			);
 			txRes.response = [txRes.response]
 			return txRes;*/
-
 			return RPCTransactionResponseAdapter.manageResponse(
 				res,
 				'Deployed',
 			);
+
 		} catch (error) {
 			throw new SigningError(
 				`Unexpected error in RPCTransactionAdapter create operation : ${error}`,

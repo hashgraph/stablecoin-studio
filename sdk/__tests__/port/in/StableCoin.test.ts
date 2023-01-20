@@ -89,7 +89,7 @@ describe('🧪 Stablecoin test', () => {
 			supplyType: TokenSupplyType.INFINITE,
 			stableCoinFactory: FactoryAddressTestnet,
 			hederaERC20: HederaERC20AddressTestnet,
-			createReserve: false,
+			createReserve: false
 		});
 		const requestHTS = new CreateRequest({
 			name: 'TEST_ACCELERATOR_HTS',
