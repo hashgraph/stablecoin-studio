@@ -43,6 +43,7 @@ export default class DetailsStableCoinsService extends Service {
         maxSupply: respDetail.maxSupply.toString(),
         totalSupply: respDetail.totalSupply.toString(),
         proxyAddress: respDetail.proxyAddress.toString(),
+        evmProxyAddress: respDetail.proxyAddress.toString(),
         treasury: respDetail.treasury.toString(),
         autoRenewAccount: respDetail.autoRenewAccount.toString(),
         adminKey: respDetail.adminKey.toString(),
