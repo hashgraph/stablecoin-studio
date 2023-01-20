@@ -391,7 +391,7 @@ export default abstract class TransactionAdapter
 		return this.getMirrorNodeAdapter().accountToEvmAddress(accountId);
 	}
 
-	async contractToEvmAddress(contractId: ContractId): Promise<string> {
+	async contractToEvmAddress(contractId: ContractId): Promise<string>  {
 		return this.getMirrorNodeAdapter().contractToEvmAddress(contractId);
 	}
 }
