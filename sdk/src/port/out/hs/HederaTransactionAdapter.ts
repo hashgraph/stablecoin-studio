@@ -137,11 +137,11 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					? coin.initialSupply.toFixedNumber()
 					: BigDecimal.ZERO.toFixedNumber(),
 				coin.decimals,
-				await this.accountToEvmAddress(coin.autoRenewAccount!),
+				(await this.accountToEvmAddress(coin.autoRenewAccount!)).toString(),
 				coin.treasury == undefined ||
 				coin.treasury.toString() == '0.0.0'
 					? '0x0000000000000000000000000000000000000000'
-					: await this.accountToEvmAddress(coin.treasury),
+					: (await this.accountToEvmAddress(coin.treasury)).toString(),
 				reserveAddress == undefined || reserveAddress.toString() == '0.0.0'
 					? '0x0000000000000000000000000000000000000000'
 					: HContractId.fromString(reserveAddress.value).toSolidityAddress(),

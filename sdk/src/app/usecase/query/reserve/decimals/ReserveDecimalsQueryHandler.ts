@@ -18,16 +18,21 @@
  *
  */
 
-import { lazyInject } from '../../../../../core/decorator/LazyInjectDecorator.js';
+import {
+	ReserveDecimalsQuery,
+	ReserveDecimalsQueryResponse,
+} from './ReserveDecimalsQuery.js';
 import { QueryHandler } from '../../../../../core/decorator/QueryHandlerDecorator.js';
 import { IQueryHandler } from '../../../../../core/query/QueryHandler.js';
-import { MirrorNodeAdapter } from '../../../../../port/out/mirror/MirrorNodeAdapter.js';
 import RPCQueryAdapter from '../../../../../port/out/rpc/RPCQueryAdapter.js';
+import { lazyInject } from '../../../../../core/decorator/LazyInjectDecorator.js';
 import StableCoinService from '../../../../service/StableCoinService.js';
-import {  GetReserveAddressQuery, GetReserveAddressQueryResponse } from './GetReserveAddressQuey.js';
+import { MirrorNodeAdapter } from '../../../../../port/out/mirror/MirrorNodeAdapter.js';
 
-@QueryHandler(GetReserveAddressQuery)
-export class GetReserveAddressQueryHandler implements IQueryHandler<GetReserveAddressQuery> {
+@QueryHandler(ReserveDecimalsQuery)
+export class ReserveDecimalsQueryHandler
+	implements IQueryHandler<ReserveDecimalsQuery>
+{
 	constructor(
 		@lazyInject(StableCoinService)
 		public readonly stableCoinService: StableCoinService,
@@ -37,17 +42,11 @@ export class GetReserveAddressQueryHandler implements IQueryHandler<GetReserveAd
 		public readonly queryAdapter: RPCQueryAdapter,
 	) {}
 
-
-	async execute(command: GetReserveAddressQuery): Promise<GetReserveAddressQueryResponse> {
-		const { tokenId } = command;
-	
-		const coin = await this.stableCoinService.get(tokenId);
-
-		if (!coin.evmProxyAddress) throw new Error('Invalid token id');
-
-		const res = await this.queryAdapter.getReserveAddress(coin.evmProxyAddress);
-		return Promise.resolve(
-			new GetReserveAddressQueryResponse(res),
-		);
+	async execute(
+		query: ReserveDecimalsQuery,
+	): Promise<ReserveDecimalsQueryResponse> {
+		const { address } = query;
+		const res = await this.queryAdapter.getReserveDecimals(address.toEvmAddress());
+		return new ReserveDecimalsQueryResponse(res);
 	}
 }

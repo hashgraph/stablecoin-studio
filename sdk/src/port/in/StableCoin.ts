@@ -399,7 +399,7 @@ class StableCoinInPort implements IStableCoinInPort {
 			await this.queryBus.execute(
 				new GetReserveAddressQuery(HederaId.from(request.tokenId)),
 			)
-		).payload;
+		).payload.toString();
 	}
 
 	async updateReserveAddress(

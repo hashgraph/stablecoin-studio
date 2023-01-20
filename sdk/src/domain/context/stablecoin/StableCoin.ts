@@ -44,6 +44,7 @@ import SymbolEmpty from './error/SymbolEmpty.js';
 import SymbolLength from './error/SymbolLength.js';
 import { TokenSupplyType } from './TokenSupply.js';
 import { TokenType } from './TokenType.js';
+import EvmAddress from '../contract/EvmAddress.js';
 
 const MAX_SUPPLY = 9_223_372_036_854_775_807n;
 const TEN = 10;
@@ -61,7 +62,7 @@ export interface StableCoinProps {
 	maxSupply?: BigDecimal;
 	memo?: string;
 	proxyAddress?: HederaId;
-	evmProxyAddress?: string;
+	evmProxyAddress?: EvmAddress;
 	freezeKey?: PublicKey | ContractId;
 	freezeDefault?: boolean;
 	kycKey?: PublicKey | ContractId;
@@ -89,7 +90,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 	maxSupply?: BigDecimal;
 	memo?: string;
 	proxyAddress?: HederaId;
-	evmProxyAddress?: string;
+	evmProxyAddress?: EvmAddress;
 	freezeKey?: PublicKey | ContractId;
 	freezeDefault?: boolean;
 	kycKey?: PublicKey | ContractId;
