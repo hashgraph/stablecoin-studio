@@ -21,16 +21,14 @@
 import { Query } from "../../../../../core/query/Query.js";
 import { QueryResponse } from "../../../../../core/query/QueryResponse.js";
 import ContractId from "../../../../../domain/context/contract/ContractId.js";
-import { HederaId } from "../../../../../domain/context/shared/HederaId.js";
 
-
-export class GetReserveAddressQueryResponse implements QueryResponse {
-	constructor(public readonly payload: ContractId) {}
+export class ReserveDecimalsQueryResponse implements QueryResponse {
+	constructor(public readonly payload: number) {}
 }
 
-export class GetReserveAddressQuery extends Query<GetReserveAddressQueryResponse> {
+export class ReserveDecimalsQuery extends Query<ReserveDecimalsQueryResponse> {
 	constructor(
-		public readonly tokenId: HederaId
+		public readonly address: ContractId,
 	) {
 		super();
 	}

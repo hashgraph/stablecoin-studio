@@ -24,5 +24,7 @@
 	"currentUser": "Current user",
 	"otherKey": "Other key: {{key}}",
 	"htsAccount": "HTS account",
-	"proxyContract": "Proxy contract"
+	"proxyContract": "Proxy contract",
+	"reserveAddress": "Reserve Address",
+	"reserveAmount": "Reserve amount"
 }

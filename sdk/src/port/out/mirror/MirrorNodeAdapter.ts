@@ -40,6 +40,7 @@ import { InvalidResponse } from './error/InvalidResponse.js';
 import { HederaId } from '../../../domain/context/shared/HederaId.js';
 import { KeyType } from '../../../domain/context/account/KeyProps.js';
 import AccountTokenListRelationViewModel from './response/AccountTokenListRelationViewModel.js';
+import EvmAddress from '../../../domain/context/contract/EvmAddress.js';
 
 @singleton()
 export class MirrorNodeAdapter {
@@ -161,8 +162,7 @@ export class MirrorNodeAdapter {
 					  )
 					: undefined,
 				proxyAddress: new ContractId(proxyAddress),
-				evmProxyAddress:
-					HContractId.fromString(proxyAddress).toSolidityAddress(),
+				evmProxyAddress: EvmAddress.fromContractId(new ContractId(proxyAddress)),
 				treasury: HederaId.from(response.data.treasury_account_id),
 				paused: response.data.pause_status === 'PAUSED',
 				deleted: Boolean(response.data.deleted) ?? false,
@@ -291,11 +291,11 @@ export class MirrorNodeAdapter {
 		}
 	}
 
-	async accountToEvmAddress(accountId: HederaId): Promise<string> {
+	async accountToEvmAddress(accountId: HederaId): Promise<EvmAddress> {
 		const accountInfoViewModel: AccountViewModel =
 			await this.getAccountInfo(accountId);
 		if (accountInfoViewModel.accountEvmAddress) {
-			return accountInfoViewModel.accountEvmAddress;
+			return new EvmAddress(accountInfoViewModel.accountEvmAddress);
 		} else if (accountInfoViewModel.publicKey) {
 			return this.getAccountEvmAddressFromPrivateKeyType(
 				accountInfoViewModel.publicKey.type,
@@ -303,7 +303,7 @@ export class MirrorNodeAdapter {
 				accountId,
 			);
 		} else {
-			return Promise.reject<string>('');
+			return Promise.reject<EvmAddress>('');
 		}
 	}
 
@@ -311,13 +311,13 @@ export class MirrorNodeAdapter {
 		privateKeyType: string,
 		publicKey: string,
 		accountId: HederaId,
-	): Promise<string> {
+	): Promise<EvmAddress> {
 		switch (privateKeyType) {
 			case KeyType.ECDSA:
-				return HPublicKey.fromString(publicKey).toEthereumAddress();
+				return new EvmAddress(HPublicKey.fromString(publicKey).toEthereumAddress());
 
 			default:
-				return '0x' + accountId.toHederaAddress().toSolidityAddress();
+				return new EvmAddress('0x' + accountId.toHederaAddress().toSolidityAddress());
 		}
 	}
 

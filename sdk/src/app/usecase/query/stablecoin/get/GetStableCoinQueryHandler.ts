@@ -20,8 +20,9 @@
 
 import { lazyInject } from '../../../../../core/decorator/LazyInjectDecorator.js';
 import { QueryHandler } from '../../../../../core/decorator/QueryHandlerDecorator.js';
-import Injectable from '../../../../../core/Injectable.js';
 import { IQueryHandler } from '../../../../../core/query/QueryHandler.js';
+import EvmAddress from '../../../../../domain/context/contract/EvmAddress.js';
+import BigDecimal from '../../../../../domain/context/shared/BigDecimal.js';
 import { MirrorNodeAdapter } from '../../../../../port/out/mirror/MirrorNodeAdapter.js';
 import RPCQueryAdapter from '../../../../../port/out/rpc/RPCQueryAdapter.js';
 import {
@@ -43,13 +44,32 @@ export class GetStableCoinQueryHandler
 	async execute(
 		query: GetStableCoinQuery,
 	): Promise<GetStableCoinQueryResponse> {
-		const {tokenId} = query;
+		const { tokenId } = query;
 		const coin = await this.mirrorNode.getStableCoin(tokenId);
+
+		if (!coin.evmProxyAddress) throw new Error('Invalid proxy address');
+		if (!coin.decimals) throw new Error('Invalid decimal');
+
 		const reserveAddress = await this.queryAdapter.getReserveAddress(
-			tokenId.toString(),
+			coin.evmProxyAddress,
 		);
-		// const reserveAmount = await this.queryAdapter.getReserveAmount(tokenId.toString())
-		console.log(reserveAddress);
+
+		if (!reserveAddress.isNull()) {
+			coin.reserveAddress = reserveAddress;
+
+			const reserveDecimals = await this.queryAdapter.getReserveDecimals(
+				EvmAddress.fromContractId(reserveAddress),
+			);
+
+			coin.reserveAmount = BigDecimal.fromStringFixed(
+				(
+					await this.queryAdapter.getReserveAmount(
+						coin.evmProxyAddress,
+					)
+				).toString(),
+				reserveDecimals,
+			);
+		}
 
 		return Promise.resolve(new GetStableCoinQueryResponse(coin));
 	}

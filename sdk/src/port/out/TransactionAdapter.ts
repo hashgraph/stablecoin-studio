@@ -36,6 +36,7 @@ import {
 } from '@hashgraph/sdk';
 import { MirrorNodeAdapter } from './mirror/MirrorNodeAdapter.js';
 import { Environment } from '../../domain/context/network/Environment.js';
+import EvmAddress from '../../domain/context/contract/EvmAddress.js';
 
 export interface InitializationData {
 	account?: Account;
@@ -386,11 +387,11 @@ export default abstract class TransactionAdapter
 		throw new Error('Method not implemented.');
 	}
 
-	async accountToEvmAddress(accountId: HederaId): Promise<string> {
+	async accountToEvmAddress(accountId: HederaId): Promise<EvmAddress> {
 		return this.getMirrorNodeAdapter().accountToEvmAddress(accountId);
 	}
 
-	async contractToEvmAddress(contractId: ContractId): Promise<string> {
+	async contractToEvmAddress(contractId: ContractId): Promise<string>  {
 		return this.getMirrorNodeAdapter().contractToEvmAddress(contractId);
 	}
 }

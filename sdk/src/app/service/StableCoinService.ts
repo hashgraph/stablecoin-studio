@@ -65,7 +65,7 @@ export default class StableCoinService extends Service {
 		account: Account,
 		target: HederaId | StableCoin,
 		tokenIsPaused?: boolean,
-		tokenIsDeleted?: boolean
+		tokenIsDeleted?: boolean,
 	): Promise<StableCoinCapabilities> {
 		try {
 			let _coin: StableCoin;
@@ -76,8 +76,10 @@ export default class StableCoinService extends Service {
 			} else {
 				_coin = await this.get(target);
 			}
-			const paused = tokenIsPaused !== undefined ? tokenIsPaused : _coin.paused;
-			const deleted = tokenIsDeleted != undefined ? tokenIsDeleted : _coin.deleted;
+			const paused =
+				tokenIsPaused !== undefined ? tokenIsPaused : _coin.paused;
+			const deleted =
+				tokenIsDeleted != undefined ? tokenIsDeleted : _coin.deleted;
 			const operable = !deleted && !paused;
 
 			if (
@@ -188,16 +190,35 @@ export default class StableCoinService extends Service {
 				);
 			}
 
-			if (_coin.autoRenewAccount?.toString() === account.id.toString() && _coin.memo !== '') {
+			if (
+				_coin.autoRenewAccount?.toString() === account.id.toString() &&
+				_coin.memo !== ''
+			) {
 				listCapabilities.push(
-					new Capability(Operation.ROLE_ADMIN_MANAGEMENT, Access.CONTRACT),
+					new Capability(
+						Operation.ROLE_ADMIN_MANAGEMENT,
+						Access.CONTRACT,
+					),
 				);
 				listCapabilities.push(
-					new Capability(Operation.RESERVE_MANAGEMENT, Access.CONTRACT),
+					new Capability(
+						Operation.RESERVE_MANAGEMENT,
+						Access.CONTRACT,
+					),
+				);
+				listCapabilities.push(
+					new Capability(
+						Operation.RESERVE_MANAGEMENT,
+						Access.CONTRACT,
+					),
+				);
+				listCapabilities.push(
+					new Capability(
+						Operation.RESERVE_MANAGEMENT,
+						Access.CONTRACT,
+					),
 				);
 			}
-			
-	
 
 			return new StableCoinCapabilities(_coin, listCapabilities, account);
 		} catch (error) {
