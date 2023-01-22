@@ -25,7 +25,7 @@
 import {
 	Transaction,
 	PublicKey as HPublicKey,
-	ContractId as HContractId
+	ContractId as HContractId,
 } from '@hashgraph/sdk';
 import TransactionAdapter from '../TransactionAdapter';
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
@@ -137,14 +137,21 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					? coin.initialSupply.toFixedNumber()
 					: BigDecimal.ZERO.toFixedNumber(),
 				coin.decimals,
-				(await this.accountToEvmAddress(coin.autoRenewAccount!)).toString(),
+				(
+					await this.accountToEvmAddress(coin.autoRenewAccount!)
+				).toString(),
 				coin.treasury == undefined ||
 				coin.treasury.toString() == '0.0.0'
 					? '0x0000000000000000000000000000000000000000'
-					: (await this.accountToEvmAddress(coin.treasury)).toString(),
-				reserveAddress == undefined || reserveAddress.toString() == '0.0.0'
+					: (
+							await this.accountToEvmAddress(coin.treasury)
+					  ).toString(),
+				reserveAddress == undefined ||
+				reserveAddress.toString() == '0.0.0'
 					? '0x0000000000000000000000000000000000000000'
-					: HContractId.fromString(reserveAddress.value).toSolidityAddress(),
+					: HContractId.fromString(
+							reserveAddress.value,
+					  ).toSolidityAddress(),
 				reserveInitialAmount
 					? reserveInitialAmount.toFixedNumber()
 					: BigDecimal.ZERO.toFixedNumber(),
@@ -401,7 +408,8 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			TransactionType.RECORD,
 		);
 
-		transactionResponse.response = transactionResponse.response[0].toString();
+		transactionResponse.response =
+			transactionResponse.response[0].toString();
 		return transactionResponse;
 	}
 
@@ -453,7 +461,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			400000,
 			params,
 			TransactionType.RECEIPT,
-			HederaReserve__factory.abi
+			HederaReserve__factory.abi,
 		);
 	}
 
@@ -684,11 +692,11 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		gas: number,
 		params?: Params,
 		transactionType: TransactionType = TransactionType.RECEIPT,
-		contractAbi: any[] = HederaERC20__factory.abi
+		contractAbi: any[] = HederaERC20__factory.abi,
 	): Promise<TransactionResponse> {
 		try {
 			switch (CapabilityDecider.decide(coin, operation)) {
-				case Decision.CONTRACT:					
+				case Decision.CONTRACT:
 					if (!coin.coin.proxyAddress)
 						throw new Error(
 							`StableCoin ${coin.coin.name} does not have a proxy Address`,
@@ -699,7 +707,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 						gas,
 						params,
 						transactionType,
-						contractAbi
+						contractAbi,
 					);
 
 				case Decision.HTS:
@@ -724,7 +732,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 						OperationNotAllowed,
 					);
 			}
-		} catch (error) {			
+		} catch (error) {
 			throw new TransactionResponseError({
 				message: `Unexpected error in HederaTransactionHandler ${operationName} operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
@@ -738,7 +746,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		gas: number,
 		params?: Params,
 		transactionType: TransactionType = TransactionType.RECEIPT,
-		contractAbi: any[] = HederaERC20__factory.abi
+		contractAbi: any[] = HederaERC20__factory.abi,
 	): Promise<TransactionResponse> {
 		const filteredContractParams: any[] =
 			params === undefined || params === null
@@ -748,13 +756,13 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				  });
 		for (let i = 0; i < filteredContractParams.length; i++) {
 			if (filteredContractParams[i] instanceof ContractId) {
-				filteredContractParams[i] = await this.contractToEvmAddress(
-					filteredContractParams[i],
-				);
+				filteredContractParams[i] = (
+					await this.contractToEvmAddress(filteredContractParams[i])
+				).toString();
 			} else if (filteredContractParams[i] instanceof HederaId) {
-				filteredContractParams[i] = await this.accountToEvmAddress(
-					filteredContractParams[i],
-				);
+				filteredContractParams[i] = (
+					await this.accountToEvmAddress(filteredContractParams[i])
+				).toString();
 			}
 		}
 		return await this.contractCall(
