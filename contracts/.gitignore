@@ -46,9 +46,9 @@ typechain-types
 cache
 artifacts
 
-./docs/
+./docs/*
 ./cache/*
-./typechain-types/
+./typechain-types/*
 
 #Slither
-Slither/
+Slither/*
