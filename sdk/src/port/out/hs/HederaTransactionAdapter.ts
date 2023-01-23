@@ -685,6 +685,32 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		);
 	}
 
+	public async approveKyc(coin: StableCoinCapabilities, targetId: HederaId): Promise<TransactionResponse<boolean, Error>> {
+		const params = new Params({
+			targetId: targetId,
+		});
+		return this.performOperation(
+			coin,
+			Operation.APPROVE_KYC,
+			'approveKyc',
+			120000,
+			params,
+		);
+	}
+	
+	public async revokeKyc(coin: StableCoinCapabilities, targetId: HederaId): Promise<TransactionResponse<boolean, Error>> {
+		const params = new Params({
+			targetId: targetId,
+		});
+		return this.performOperation(
+			coin,
+			Operation.REVOKE_KYC,
+			'revokeKyc',
+			120000,
+			params,
+		);
+	}
+
 	private async performOperation(
 		coin: StableCoinCapabilities,
 		operation: Operation,

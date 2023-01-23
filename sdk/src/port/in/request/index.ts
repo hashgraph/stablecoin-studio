@@ -51,6 +51,7 @@ import GetReserveAddressRequest from './GetReserveAddressRequest.js';
 import UpdateReserveAddressRequest from './UpdateReserveAddressRequest.js';
 import GetReserveAmountRequest from './GetReserveAmountRequest.js';
 import UpdateReserveAmountRequest from './UpdateReserveAmountRequest.js';
+import KYCRequest from './KYCRequest.js';
 
 export * from './BaseRequest.js';
 export {
@@ -86,5 +87,6 @@ export {
 	GetReserveAddressRequest,
 	UpdateReserveAddressRequest,
 	GetReserveAmountRequest,
-	UpdateReserveAmountRequest
+	UpdateReserveAmountRequest,
+	KYCRequest,
 };

@@ -18,31 +18,14 @@
  *
  */
 
-export enum Operation {
-	CASH_IN = 'Cash_in',
-	BURN = 'Burn',
-	WIPE = 'Wipe',
-	FREEZE = 'Freeze',
-	UNFREEZE = 'Unfreeze',
-	PAUSE = 'Pause',
-	UNPAUSE = 'Unpause',
-	DELETE = 'Delete',
-	RESCUE = 'Rescue',
-	ROLE_MANAGEMENT = 'Role_Management',
-	ROLE_ADMIN_MANAGEMENT = 'Admin_Role',
-	RESERVE_MANAGEMENT = 'Admin_Role',
-	APPROVE_KYC = 'Approve_KYC',
-	REVOKE_KYC = 'Revoke_KYC',
-}
+import BaseError, { ErrorCode } from "../../../../../core/error/BaseError.js";
 
-export enum Access {
-	HTS,
-	CONTRACT,
-}
 
-export class Capability {
-	constructor(
-		public readonly operation: Operation,
-		public readonly access: Access,
-	) {}
+export class KycNotActive extends BaseError {
+	constructor(tokenId: unknown) {
+		super(
+			ErrorCode.KYCNotEnabled,
+			`The coin ${tokenId} does not have KYC active`,
+		);
+	}
 }

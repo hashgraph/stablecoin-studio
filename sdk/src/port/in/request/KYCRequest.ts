@@ -18,31 +18,20 @@
  *
  */
 
-export enum Operation {
-	CASH_IN = 'Cash_in',
-	BURN = 'Burn',
-	WIPE = 'Wipe',
-	FREEZE = 'Freeze',
-	UNFREEZE = 'Unfreeze',
-	PAUSE = 'Pause',
-	UNPAUSE = 'Unpause',
-	DELETE = 'Delete',
-	RESCUE = 'Rescue',
-	ROLE_MANAGEMENT = 'Role_Management',
-	ROLE_ADMIN_MANAGEMENT = 'Admin_Role',
-	RESERVE_MANAGEMENT = 'Admin_Role',
-	APPROVE_KYC = 'Approve_KYC',
-	REVOKE_KYC = 'Revoke_KYC',
-}
+import ValidatedRequest from './validation/ValidatedRequest.js';
+import Validation from './validation/Validation.js';
 
-export enum Access {
-	HTS,
-	CONTRACT,
-}
+export default class KYCRequest extends ValidatedRequest<KYCRequest> {
+	targetId: string;
+	tokenId: string;
 
-export class Capability {
-	constructor(
-		public readonly operation: Operation,
-		public readonly access: Access,
-	) {}
+	constructor({ targetId, tokenId }: { targetId: string; tokenId: string }) {
+		super({
+			targetId: Validation.checkHederaIdFormat(),
+			tokenId: Validation.checkHederaIdFormat(),
+		});
+
+		this.targetId = targetId;
+		this.tokenId = tokenId;
+	}
 }
