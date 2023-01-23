@@ -12,6 +12,7 @@ import {
 	VStack,
 } from '@chakra-ui/react';
 import type { MouseEvent, ReactNode } from 'react';
+import type { UseFormReturn } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
 export interface Step {
@@ -33,9 +34,13 @@ interface StepperProps {
 	handleLastButtonPrimary: () => void;
 }
 
+interface StepperFormProps {
+	form: UseFormReturn;
+}
+
 const FOOTER_HEIGHT = '88px';
 
-const Stepper = (props: StepperProps) => {
+const Stepper = (props: StepperProps, formProps: StepperFormProps) => {
 	const { t } = useTranslation('global');
 
 	const {
@@ -51,10 +56,19 @@ const Stepper = (props: StepperProps) => {
 		handleLastButtonPrimary,
 	} = props;
 
+	const {
+		form
+	} = formProps;
+
+	const supplyKey = form;
+console.log(`supplykey: ${supplyKey}`);
+
+
 	const handleStep = (e: MouseEvent<HTMLButtonElement>, index: number, type: 'next' | 'prev') => {
 		e.preventDefault();
 
 		return type === 'next' ? setCurrentStep(index + 1) : setCurrentStep(index - 1);
+		// return type === 'next' ? setCurrentStep(index + 1) : index === 4 ? setCurrentStep(2) : setCurrentStep(index - 1);
 	};
 
 	return (
@@ -73,6 +87,7 @@ const Stepper = (props: StepperProps) => {
 						<Tab
 							key={index}
 							p='15px'
+							// isDisabled={index === 3}
 							isDisabled={index > currentStep}
 							onClick={handleChangeTab}
 							_hover={{

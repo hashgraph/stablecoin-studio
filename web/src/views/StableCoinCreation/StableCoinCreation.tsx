@@ -159,6 +159,9 @@ const StableCoinCreation = () => {
 				// @ts-ignore
 				fieldsStep = watch(keys);
 			}
+
+			const supplyKey = form.getValues().supplyKey?.value;
+			console.log(`supplykeyxxx: ${supplyKey}`);			
 		}
 
 		return setIsValidForm(
