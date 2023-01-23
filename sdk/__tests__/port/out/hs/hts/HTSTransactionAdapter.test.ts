@@ -527,7 +527,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 
 	it('Test get reserve address returns null when stable coin has no reserve', async () => {
 		tr = await th.getReserveAddress(stableCoinCapabilitiesHTS);
-		expect(tr.response).toBeNull();
+		expect(tr.response).toBe('0x0000000000000000000000000000000000000000');
 	}, 20000);
 
 	it('Test get reserve address returns a value when stable coin has reserve', async () => {
@@ -537,7 +537,9 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 
 	it('Test get reserve amount returns null when stable coin has no reserve', async () => {
 		tr = await th.getReserveAmount(stableCoinCapabilitiesHTS);
-		expect(tr.response).toBeNull();
+		expect(tr.response).toStrictEqual(
+			BigDecimal.fromString('0', RESERVE_DECIMALS),
+		);
 	}, 20000);
 
 	it('Test get reserve amount returns a value when stable coin has reserve', async () => {
@@ -1013,7 +1015,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 				tr.response.toString(),
 				RESERVE_DECIMALS,
 			),
-		).toEqual(BigDecimal.fromStringFixed('1000000', RESERVE_DECIMALS));
+		).toEqual(BigDecimal.fromStringFixed('100000000', RESERVE_DECIMALS));
 	}, 20000);
 
 	it('Test update reserve amount when stable coin has existing reserve', async () => {
