@@ -937,7 +937,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
-	async approveKyc(coin: StableCoinCapabilities, targetId: HederaId): Promise<TransactionResponse<boolean, Error>> {
+	async grantKyc(coin: StableCoinCapabilities, targetId: HederaId): Promise<TransactionResponse<boolean, Error>> {
 		try {
 			if (!coin.coin.evmProxyAddress?.toString())
 				throw new TransactionResponseError({
@@ -950,7 +950,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				// await HederaERC20__factory.connect(
 				// 	coin.coin.evmProxyAddress?.toString(),
 				// 	this.signerOrProvider,
-				// ).approveKyc(
+				// ).grantKyc(
 				// 	await(await this.accountToEvmAddress(targetId))
 				// 		.toString()
 				// 		.toString(),
@@ -959,7 +959,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		} catch (error) {
 			throw new TransactionResponseError({
 				RPC_relay: true,
-				message: `Unexpected error in RPCTransactionAdapter approveKyc operation : ${error}`,
+				message: `Unexpected error in RPCTransactionAdapter grantKyc operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
 			});
 		}

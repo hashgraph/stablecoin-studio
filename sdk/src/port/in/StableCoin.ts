@@ -74,7 +74,7 @@ import ReserveViewModel from '../out/mirror/response/ReserveViewModel.js';
 import { BalanceOfQuery } from '../../app/usecase/query/stablecoin/balanceof/BalanceOfQuery.js';
 import { GetReserveAddressQuery } from '../../app/usecase/query/stablecoin/getReserveAddress/GetReserveAddressQuey.js';
 import KYCRequest from './request/KYCRequest.js';
-import { ApproveKycCommand } from '../../app/usecase/command/stablecoin/operations/approveKyc/ApproveKycCommand.js';
+import { GrantKycCommand } from '../../app/usecase/command/stablecoin/operations/grantKyc/GrantKycCommand.js';
 import { RevokeKycCommand } from '../../app/usecase/command/stablecoin/operations/revokeKyc/RevokeKycCommand.js';
 
 export const HederaERC20AddressTestnet = '0.0.49318811';
@@ -392,7 +392,7 @@ class StableCoinInPort implements IStableCoinInPort {
 
 		return (
 			await this.commandBus.execute(
-				new ApproveKycCommand(
+				new GrantKycCommand(
 					HederaId.from(targetId),
 					HederaId.from(tokenId),
 				),

@@ -115,23 +115,26 @@ describe('🧪 MirrorNodeAdapter', () => {
 	it('Test get account relationship token', async () => {
 		// StableCoin.create();
 		const tokenId = HederaId.from('0.0.49171802');
-		const accountTokenRelation: AccountTokenListRelationViewModel =
-			await mn.getAccountTokens(HEDERA_ID_ACCOUNT_ED25519, tokenId);
-		expect(accountTokenRelation.tokens[0].token_id).toStrictEqual(tokenId);
-		expect(accountTokenRelation.tokens[0].created_timestamp).not.toBeNull();
-		expect(accountTokenRelation.tokens[0].balance).not.toBeNull();
-		expect(
-			accountTokenRelation.tokens[0].automatic_association,
-		).not.toBeNull();
-		expect(accountTokenRelation.tokens[0].freeze_status).not.toBeNull();
-		expect(accountTokenRelation.tokens[0].kyc_status).not.toBeNull();
+		const accountTokenRelation = await mn.getAccountToken(
+			HEDERA_ID_ACCOUNT_ED25519,
+			tokenId,
+		);
+		expect(accountTokenRelation).toBeTruthy();
+		expect(accountTokenRelation?.tokenId).toStrictEqual(tokenId);
+		expect(accountTokenRelation?.createdTimestamp).not.toBeNull();
+		expect(accountTokenRelation?.balance).not.toBeNull();
+		expect(accountTokenRelation?.automaticAssociation).not.toBeNull();
+		expect(accountTokenRelation?.freezeStatus).not.toBeNull();
+		expect(accountTokenRelation?.kycStatus).not.toBeNull();
 	}, 150000000);
 
 	it('Test get account no relationship token', async () => {
 		// StableCoin.create();
 		const tokenId = HederaId.from('0.0.49207748');
-		const accountTokenRelation: AccountTokenListRelationViewModel =
-			await mn.getAccountTokens(HEDERA_ID_ACCOUNT_ED25519, tokenId);
-		expect(accountTokenRelation.tokens).toStrictEqual([]);
+		const accountTokenRelation = await mn.getAccountToken(
+			HEDERA_ID_ACCOUNT_ED25519,
+			tokenId,
+		);
+		expect(accountTokenRelation).toBeFalsy();
 	}, 150000000);
 });

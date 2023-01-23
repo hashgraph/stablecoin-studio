@@ -177,7 +177,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			);
 		} catch (error) {
 			throw new Error(
-				`Unexpected error in HederaTransactionHandler create operation : ${error}`,
+				`Unexpected error in HederaTransactionHandler create operation: ${error}`,
 			);
 		}
 	}
@@ -685,14 +685,14 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		);
 	}
 
-	public async approveKyc(coin: StableCoinCapabilities, targetId: HederaId): Promise<TransactionResponse<boolean, Error>> {
+	public async grantKyc(coin: StableCoinCapabilities, targetId: HederaId): Promise<TransactionResponse<boolean, Error>> {
 		const params = new Params({
 			targetId: targetId,
 		});
 		return this.performOperation(
 			coin,
 			Operation.GRANT_KYC,
-			'approveKyc',
+			'grantKyc',
 			120000,
 			params,
 		);
@@ -725,7 +725,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				case Decision.CONTRACT:
 					if (!coin.coin.proxyAddress)
 						throw new Error(
-							`StableCoin ${coin.coin.name} does not have a proxy Address`,
+							`StableCoin ${coin.coin.name} does not have a proxy address`,
 						);
 					return await this.performSmartContractOperation(
 						coin.coin.proxyAddress!.value,
@@ -760,7 +760,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			}
 		} catch (error) {
 			throw new TransactionResponseError({
-				message: `Unexpected error in HederaTransactionHandler ${operationName} operation : ${error}`,
+				message: `Unexpected error in HederaTransactionHandler ${operationName} operation: ${error}`,
 				transactionId: (error as any).error?.transactionId,
 			});
 		}

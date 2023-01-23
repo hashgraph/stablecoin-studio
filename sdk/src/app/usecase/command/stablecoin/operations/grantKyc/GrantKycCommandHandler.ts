@@ -22,15 +22,23 @@ import { CommandBus } from '../../../../../../core/command/CommandBus.js';
 import { ICommandHandler } from '../../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
-import { QueryBus } from '../../../../../../core/query/QueryBus.js';;
+import { QueryBus } from '../../../../../../core/query/QueryBus.js';
+import { KycStatus } from '../../../../../../port/out/mirror/response/AccountTokenRelationViewModel.js';
 import AccountService from '../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
+import { GetAccountTokenRelationshipQuery } from '../../../../query/account/tokenRelationship/GetAccountTokenRelationshipQuery.js';
 import { KycNotActive } from '../../error/KycNotActive.js';
-import { ApproveKycCommand, ApproveKycCommandResponse } from './ApproveKycCommand.js';
+import { OperationNotAllowed } from '../../error/OperationNotAllowed.js';
+import {
+	GrantKycCommand,
+	GrantKycCommandResponse,
+} from './GrantKycCommand.js';
 
-@CommandHandler(ApproveKycCommand)
-export class ApproveKYCCommandHandler implements ICommandHandler<ApproveKycCommand> {
+@CommandHandler(GrantKycCommand)
+export class GrantKycCommandHandler
+	implements ICommandHandler<GrantKycCommand>
+{
 	constructor(
 		@lazyInject(StableCoinService)
 		public readonly stableCoinService: StableCoinService,
@@ -45,8 +53,8 @@ export class ApproveKYCCommandHandler implements ICommandHandler<ApproveKycComma
 	) {}
 
 	async execute(
-		command: ApproveKycCommand,
-	): Promise<ApproveKycCommandResponse> {
+		command: GrantKycCommand,
+	): Promise<GrantKycCommandResponse> {
 		const { targetId, tokenId } = command;
 		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
@@ -55,14 +63,26 @@ export class ApproveKYCCommandHandler implements ICommandHandler<ApproveKycComma
 			tokenId,
 		);
 		const coin = capabilities.coin;
-		
-		if(!coin.kycKey){
-			throw new KycNotActive(tokenId.value)
+		const relationship = await this.queryBus.execute(
+			new GetAccountTokenRelationshipQuery(targetId, tokenId),
+		);
+
+		if (!coin.kycKey) {
+			throw new KycNotActive(tokenId.value);
 		}
 
-		const res = await handler.approveKyc(capabilities, targetId);
+		if (
+			!relationship ||
+			relationship.payload?.kycStatus !== KycStatus.REVOKED
+		) {
+			throw new OperationNotAllowed(
+				`KYC cannot be granted for account ${targetId} on token ${tokenId}`,
+			);
+		}
+
+		const res = await handler.grantKyc(capabilities, targetId);
 		return Promise.resolve(
-			new ApproveKycCommandResponse(res.error === undefined),
+			new GrantKycCommandResponse(res.error === undefined),
 		);
 	}
 }

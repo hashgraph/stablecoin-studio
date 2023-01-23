@@ -176,7 +176,7 @@ interface RoleTransactionAdapter {
 		targetId: HederaId,
 		amount: BigDecimal,
 	): Promise<TransactionResponse>;
-	approveKyc(
+	grantKyc(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
 	): Promise<TransactionResponse<boolean, Error>>;
@@ -383,7 +383,7 @@ export default abstract class TransactionAdapter
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
-	approveKyc(
+	grantKyc(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
 	): Promise<TransactionResponse<boolean, Error>> {

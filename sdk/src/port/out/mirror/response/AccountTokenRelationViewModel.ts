@@ -19,9 +19,25 @@
  */
 
 import { QueryResponse } from '../../../../core/query/QueryResponse.js';
-import { AccountTokenRelationViewModel } from './AccountTokenRelationViewModel.js';
+import BigDecimal from '../../../../domain/context/shared/BigDecimal.js';
+import { HederaId } from '../../../../domain/context/shared/HederaId.js';
 
-export default interface AccountTokenListRelationViewModel
-	extends QueryResponse {
-	tokens: AccountTokenRelationViewModel[];
+export enum FreezeStatus {
+	'UNFROZEN' = 'UNFROZEN',
+	'FROZEN' = 'FROZEN',
+}
+
+export enum KycStatus {
+	'NOT_APPLICABLE' = 'NOT_APPLICABLE',
+	'GRANTED' = 'GRANTED',
+	'REVOKED' = 'REVOKED',
+}
+
+export interface AccountTokenRelationViewModel extends QueryResponse {
+	automaticAssociation: boolean;
+	balance: BigDecimal;
+	createdTimestamp: string;
+	freezeStatus: FreezeStatus;
+	kycStatus: KycStatus;
+	tokenId: HederaId;
 }
