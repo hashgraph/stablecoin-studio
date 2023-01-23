@@ -852,6 +852,43 @@ export async function rescue(
     if (result[0] != true) throw Error
 }
 
+export async function grantKyc(
+    proxyAddress: ContractId,
+    clientGratingKyc: Client,
+    accountToGrant: string,
+    isE25519: boolean
+) {
+    const params: string[] = [await toEvmAddress(accountToGrant, isE25519)]
+    const result = await contractCall(
+        proxyAddress,
+        'grantKyc',
+        params,
+        clientGratingKyc,
+        Gas1,
+        HederaERC20__factory.abi
+    )
+    if (result[0] != true) throw Error
+}
+
+export async function revokeKyc(
+    proxyAddress: ContractId,
+    clientRevokingKyc: Client,
+    accountToRevoke: string,
+    isE25519: boolean
+) {
+    const params: string[] = [await toEvmAddress(accountToRevoke, isE25519)]
+    const result = await contractCall(
+        proxyAddress,
+        'revokeKyc',
+        params,
+        clientRevokingKyc,
+        Gas1,
+        HederaERC20__factory.abi
+    )
+    if (result[0] != true) throw Error
+}
+
+
 // Roles ///////////////////////////////////////////////////
 export async function getRoles(
     proxyAddress: ContractId,

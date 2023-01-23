@@ -12,40 +12,20 @@ import {
     getNonOperatorE25519,
 } from '../scripts/deploy'
 import {
-    name,
-    symbol,
-    decimals,
-    initialize,
     associateToken,
     dissociateToken,
     Mint,
     Wipe,
-    getTotalSupply,
     getBalanceOf,
-    getTokenAddress,
-    upgradeTo,
-    admin,
-    changeAdmin,
-    owner,
-    upgrade,
-    changeProxyAdmin,
-    transferOwnership,
-    getProxyAdmin,
-    getProxyImplementation,
     approve,
-    allowance,
     transferFrom,
-    Burn,
     transfer,
+    rescue,
     grantKyc,
-    revokeKyc,
+    revokeKyc
 } from '../scripts/contractsMethods'
-import { clientId, toEvmAddress } from '../scripts/utils'
+import { clientId } from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
-import {
-    HederaERC20ProxyAdmin__factory,
-    HederaERC20Proxy__factory,
-} from '../typechain-types'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 
@@ -53,10 +33,6 @@ chai.use(chaiAsPromised)
 const expect = chai.expect
 
 let proxyAddress: ContractId
-let proxyAdminAddress: ContractId
-let stableCoinAddress: ContractId
-let reserveProxy: ContractId
-
 let operatorClient: Client
 let nonOperatorClient: Client
 let operatorAccount: string
@@ -517,7 +493,7 @@ describe('HederaERC20 Tests', function() {
         )
     })
 
-    it.only('An account with kyc, approve to transfer to other account with kyc', async () => {
+    it('An account with kyc, approve to transfer to other account with kyc', async () => {
         const amount = BigNumber.from(1).mul(TokenFactor)
         await grantKyc(
             proxyAddress,
@@ -589,4 +565,88 @@ describe('HederaERC20 Tests', function() {
             nonOperatorIsE25519
         )
     })
+
+    it('Account without kyc can not rescue tokens', async function() {
+        const AmountToRescue = BigNumber.from(10).mul(TokenFactor)
+
+        // rescue some tokens
+        await expect(
+            rescue(proxyAddress, AmountToRescue, operatorClient)
+        ).to.eventually.be.rejectedWith(Error);
+    });    
+
+    it('Account with granted kyc can rescue tokens', async function() {
+        const AmountToRescue = BigNumber.from(10).mul(TokenFactor)
+
+        // Get the initial balance of the token owner and client
+        const initialTokenOwnerBalance = await getBalanceOf(
+            proxyAddress,
+            operatorClient,
+            proxyAddress.toSolidityAddress(),
+            false,
+            false
+        )
+
+        const initialClientBalance = await getBalanceOf(
+            proxyAddress,
+            operatorClient,
+            operatorAccount,
+            operatorIsE25519
+        )
+
+        // grant kyc to client for the token
+        await grantKyc(
+            proxyAddress,
+            operatorClient,
+            operatorAccount,
+            operatorIsE25519            
+        )
+
+        // rescue some tokens
+        await rescue(proxyAddress, AmountToRescue, operatorClient);
+
+        // check new balances : success
+        const finalTokenOwnerBalance = await getBalanceOf(
+            proxyAddress,
+            operatorClient,
+            proxyAddress.toSolidityAddress(),
+            false,
+            false
+        )
+        const finalClientBalance = await getBalanceOf(
+            proxyAddress,
+            operatorClient,
+            operatorAccount,
+            operatorIsE25519
+        )
+
+        const expectedTokenOwnerBalance = initialTokenOwnerBalance.sub(
+            AmountToRescue
+        )
+        const expectedClientBalance = initialClientBalance.add(AmountToRescue)
+
+        expect(finalTokenOwnerBalance.toString()).to.equals(
+            expectedTokenOwnerBalance.toString()
+        )
+        expect(finalClientBalance.toString()).to.equals(
+            expectedClientBalance.toString()
+        )  
+    });
+    
+    it('Account with revoked kyc can not rescue tokens', async function() {
+        const AmountToRescue = BigNumber.from(10).mul(TokenFactor)
+
+        // revoke kyc to client for the token
+        await revokeKyc(
+            proxyAddress,
+            operatorClient,
+            operatorAccount,
+            operatorIsE25519            
+        )
+
+        // rescue some tokens
+        await expect(
+            rescue(proxyAddress, AmountToRescue, operatorClient)
+        ).to.eventually.be.rejectedWith(Error);
+    });    
 })
