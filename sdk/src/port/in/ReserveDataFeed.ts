@@ -32,6 +32,7 @@ import GetReserveAmountRequest from './request/GetReserveAmountRequest.js';
 import { RESERVE_DECIMALS } from '../../domain/context/reserve/Reserve.js';
 import { GetReserveAmountQuery } from '../../app/usecase/query/stablecoin/getReserveAmount/GetReserveAmountQuery.js';
 import { QueryBus } from '../../core/query/QueryBus.js';
+import { LogError } from '../../core/decorator/LogErrorDecorator.js';
 
 interface IReserveDataFeedInPort {
 	getReserveAmount(request: GetReserveAmountRequest): Promise<Balance>;
@@ -46,6 +47,7 @@ class ReserveDataFeedInPort implements IReserveDataFeedInPort {
 		private readonly queryBus: QueryBus = Injectable.resolve(QueryBus),
 	) {}
 
+	@LogError
 	async getReserveAmount(request: GetReserveAmountRequest): Promise<Balance> {
 		handleValidation('GetReserveAmountRequest', request);
 
@@ -56,6 +58,7 @@ class ReserveDataFeedInPort implements IReserveDataFeedInPort {
 		return new Balance(res.payload);
 	}
 
+	@LogError
 	async updateReserveAmount(
 		request: UpdateReserveAmountRequest,
 	): Promise<boolean> {
