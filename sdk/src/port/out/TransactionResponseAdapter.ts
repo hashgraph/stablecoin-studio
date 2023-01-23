@@ -19,6 +19,7 @@
  */
 
 import Web3 from 'web3';
+import LogService from '../../app/service/LogService.js';
 import TransactionResponse from '../../domain/context/transaction/TransactionResponse.js';
 import { TransactionResponseError } from './error/TransactionResponseError.js';
 
@@ -61,6 +62,7 @@ export class TransactionResponseAdapter {
             const jsonParsedArray = JSON.parse(JSON.stringify(result));
             return jsonParsedArray;
         } catch (error) {
+            LogService.logError(error);
             throw new TransactionResponseError({
                 message: 'Could not decode function result',
             });

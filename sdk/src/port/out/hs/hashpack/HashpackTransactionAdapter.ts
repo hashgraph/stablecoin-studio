@@ -264,6 +264,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 				abi,
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new SigningError(error);
 		}
 	}
@@ -325,6 +326,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 					throw new PairingError(data);
 				}
 			} catch (error) {
+				LogService.logError(error);
 				throw new PairingError(error);
 			}
 		});

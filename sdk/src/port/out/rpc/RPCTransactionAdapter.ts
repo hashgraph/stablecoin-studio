@@ -225,6 +225,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			);
 
 		} catch (error) {
+			LogService.logError(error);
 			throw new SigningError(
 				`Unexpected error in RPCTransactionAdapter create operation : ${error}`,
 			);
@@ -382,6 +383,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 
 			return new TransactionResponse(undefined, res.toString());
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter update reserve operation : ${error}`,
@@ -410,6 +412,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				),
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter update reserve operation : ${error}`,
@@ -438,6 +441,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				BigDecimal.fromStringFixed(res.toString(), RESERVE_DECIMALS),
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter update reserve operation : ${error}`,
@@ -458,6 +462,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				).setAmount(amount.toBigNumber()),
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter updatePorAmount operation : ${error}`,
@@ -492,6 +497,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				),
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter grantRole operation : ${error}`,
@@ -526,6 +532,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				),
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter revokeRole operation : ${error}`,
@@ -556,6 +563,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				),
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter grantSupplierRole operation : ${error}`,
@@ -584,6 +592,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				),
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter grantUnlimitedSupplierRole operation : ${error}`,
@@ -616,6 +625,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				),
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter revokeSupplierRole operation : ${error}`,
@@ -648,6 +658,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 
 			return new TransactionResponse(undefined, res.valueOf());
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter hasRole operation : ${error}`,
@@ -680,6 +691,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				BigDecimal.fromStringFixed(res.toString(), coin.coin.decimals),
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter balanceOf operation : ${error}`,
@@ -712,6 +724,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				),
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter associateToken operation : ${error}`,
@@ -744,6 +757,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				),
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter dissociateToken operation : ${error}`,
@@ -773,6 +787,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				),
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter isUnlimitedSupplierAllowance operation : ${error}`,
@@ -804,6 +819,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				BigDecimal.fromStringFixed(res.toString(), coin.coin.decimals),
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter supplierAllowance operation : ${error}`,
@@ -836,6 +852,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				),
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter resetSupplierAllowance operation : ${error}`,
@@ -866,6 +883,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				),
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter increaseSupplierAllowance operation : ${error}`,
@@ -896,6 +914,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				),
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter decreaseSupplierAllowance operation : ${error}`,
@@ -929,6 +948,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				),
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter getRoles operation : ${error}`,
@@ -957,6 +977,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				// ),
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter grantKyc operation : ${error}`,
@@ -985,6 +1006,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				// ),
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter revokeKyc operation : ${error}`,
@@ -1167,6 +1189,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				}
 			});
 		} catch (error) {
+			LogService.logError(error);
 			throw new WalletConnectError('Ethereum is not defined');
 		}
 	}
@@ -1217,6 +1240,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					);
 			}
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter ${operation} operation : ${error}`,

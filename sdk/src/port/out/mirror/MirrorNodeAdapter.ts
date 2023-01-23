@@ -91,6 +91,7 @@ export class MirrorNodeAdapter {
 			});
 			return resObject;
 		} catch (error) {
+			LogService.logError(error);
 			return Promise.reject<StableCoinListViewModel>(
 				new InvalidResponse(error),
 			);
@@ -193,6 +194,7 @@ export class MirrorNodeAdapter {
 			};
 			return stableCoinDetail;
 		} catch (error) {
+			LogService.logError(error);
 			return Promise.reject<StableCoinViewModel>(
 				new InvalidResponse(error),
 			);
@@ -220,6 +222,7 @@ export class MirrorNodeAdapter {
 
 			return account;
 		} catch (error) {
+			LogService.logError(error);
 			return Promise.reject<AccountViewModel>(new InvalidResponse(error));
 		}
 	}
@@ -248,6 +251,7 @@ export class MirrorNodeAdapter {
 				return undefined;
 			}
 		} catch (error) {
+			LogService.logError(error);
 			return Promise.reject<AccountTokenRelationViewModel>(
 				new InvalidResponse(error),
 			);
@@ -273,6 +277,7 @@ export class MirrorNodeAdapter {
 
 			return result;
 		} catch (error) {
+			LogService.logError(error);
 			return Promise.reject<TransactionResultViewModel>(
 				new InvalidResponse(error),
 			);

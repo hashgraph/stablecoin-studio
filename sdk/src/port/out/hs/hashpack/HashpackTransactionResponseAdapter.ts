@@ -145,6 +145,7 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 			}
 		} catch (error) {
 			const res: any = transactionResponse.error;
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				message: res.message,
 				name: res.name,
@@ -216,6 +217,7 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 			try {
 				return new Uint32Array(Object.values(record));
 			} catch (err) {
+				LogService.logError(err);
 				throw new TransactionResponseError({
 					message: `Could not determine response type for: ${record}`,
 				});

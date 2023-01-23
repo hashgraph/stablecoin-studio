@@ -51,7 +51,7 @@ export class RPCTransactionResponseAdapter extends TransactionResponseAdapter {
 		eventName?: string,
 	): Promise<TransactionResponse> {
 		LogService.logTrace('Constructing response from:', response);
-		try{
+		try {
 			const receipt = await response.wait();
 			LogService.logTrace('Receipt:', receipt);
 			if (receipt.events && eventName) {
@@ -66,21 +66,20 @@ export class RPCTransactionResponseAdapter extends TransactionResponseAdapter {
 				}
 			}
 			return Promise.resolve(
-				new TransactionResponse(receipt.transactionHash, receipt.status),
+				new TransactionResponse(
+					receipt.transactionHash,
+					receipt.status,
+				),
 			);
-		}
-		catch(error){
+		} catch (error) {
 			LogService.logError('Uncaught Exception:', JSON.stringify(error));
-				throw new TransactionResponseError({
-						message: '',
-						name: eventName,
-						status: 'error',
-						transactionId: (error as any)?.transactionHash,
-						RPC_relay: true,
-					});
-				
-			
+			throw new TransactionResponseError({
+				message: '',
+				name: eventName,
+				status: 'error',
+				transactionId: (error as any)?.transactionHash,
+				RPC_relay: true,
+			});
 		}
-		
 	}
 }

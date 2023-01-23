@@ -26,6 +26,7 @@ import WalletEvent, {
 	WalletEvents,
 } from '../../app/service/event/WalletEvent.js';
 import EventService from '../../app/service/event/EventService.js';
+import { LogError } from '../../core/decorator/LogErrorDecorator.js';
 
 export { WalletEvent, WalletEvents, ConnectionState };
 
@@ -47,6 +48,7 @@ class EventInPort implements EventInPortBase {
 		),
 	) {}
 
+	@LogError
 	register(events: Partial<WalletEvent>): void {
 		Object.entries(events).map(([name, cll]) => {
 			if (name in WalletEvents) {

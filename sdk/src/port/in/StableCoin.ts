@@ -76,6 +76,7 @@ import { GetReserveAddressQuery } from '../../app/usecase/query/stablecoin/getRe
 import KYCRequest from './request/KYCRequest.js';
 import { GrantKycCommand } from '../../app/usecase/command/stablecoin/operations/grantKyc/GrantKycCommand.js';
 import { RevokeKycCommand } from '../../app/usecase/command/stablecoin/operations/revokeKyc/RevokeKycCommand.js';
+import { LogError } from '../../core/decorator/LogErrorDecorator.js';
 
 export const HederaERC20AddressTestnet = '0.0.49394934';
 export const HederaERC20AddressPreviewnet = '0.0.11111111';
@@ -127,6 +128,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		),
 	) {}
 
+	@LogError
 	async create(req: CreateRequest): Promise<{
 		coin: StableCoinViewModel;
 		reserve: ReserveViewModel;
@@ -224,6 +226,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		};
 	}
 
+	@LogError
 	async getInfo(
 		request: GetStableCoinDetailsRequest,
 	): Promise<StableCoinViewModel> {
@@ -237,6 +240,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		return coin;
 	}
 
+	@LogError
 	async cashIn(request: CashInRequest): Promise<boolean> {
 		const { tokenId, amount, targetId } = request;
 		handleValidation('CashInRequest', request);
@@ -252,6 +256,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		).payload;
 	}
 
+	@LogError
 	async burn(request: BurnRequest): Promise<boolean> {
 		const { tokenId, amount } = request;
 		handleValidation('BurnRequest', request);
@@ -263,6 +268,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		).payload;
 	}
 
+	@LogError
 	async rescue(request: RescueRequest): Promise<boolean> {
 		const { tokenId, amount } = request;
 		handleValidation('RescueRequest', request);
@@ -274,6 +280,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		).payload;
 	}
 
+	@LogError
 	async wipe(request: WipeRequest): Promise<boolean> {
 		const { tokenId, amount, targetId } = request;
 		handleValidation('WipeRequest', request);
@@ -289,10 +296,12 @@ class StableCoinInPort implements IStableCoinInPort {
 		).payload;
 	}
 
+	@LogError
 	async associate(request: AssociateTokenRequest): Promise<boolean> {
 		throw new Error('Method not implemented.');
 	}
 
+	@LogError
 	async getBalanceOf(request: GetAccountBalanceRequest): Promise<Balance> {
 		handleValidation('GetAccountBalanceRequest', request);
 
@@ -306,6 +315,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		return new Balance(res.payload);
 	}
 
+	@LogError
 	async capabilities(
 		request: CapabilitiesRequest,
 	): Promise<StableCoinCapabilities> {
@@ -325,6 +335,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		);
 	}
 
+	@LogError
 	async pause(request: PauseRequest): Promise<boolean> {
 		const { tokenId } = request;
 		handleValidation('PauseRequest', request);
@@ -336,6 +347,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		).payload;
 	}
 
+	@LogError
 	async unPause(request: PauseRequest): Promise<boolean> {
 		const { tokenId } = request;
 		handleValidation('PauseRequest', request);
@@ -347,6 +359,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		).payload;
 	}
 
+	@LogError
 	async delete(request: DeleteRequest): Promise<boolean> {
 		const { tokenId } = request;
 		handleValidation('DeleteRequest', request);
@@ -358,6 +371,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		).payload;
 	}
 
+	@LogError
 	async freeze(request: FreezeAccountRequest): Promise<boolean> {
 		const { tokenId, targetId } = request;
 		handleValidation('FreezeAccountRequest', request);
@@ -372,6 +386,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		).payload;
 	}
 
+	@LogError
 	async unFreeze(request: FreezeAccountRequest): Promise<boolean> {
 		const { tokenId, targetId } = request;
 		handleValidation('FreezeAccountRequest', request);
@@ -386,6 +401,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		).payload;
 	}
 
+	@LogError
 	async grantKyc(request: KYCRequest): Promise<boolean> {
 		const { tokenId, targetId } = request;
 		handleValidation('KYCRequest', request);
@@ -400,6 +416,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		).payload;
 	}
 
+	@LogError
 	async revokeKyc(request: KYCRequest): Promise<boolean> {
 		const { tokenId, targetId } = request;
 		handleValidation('KYCRequest', request);
@@ -414,6 +431,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		).payload;
 	}
 
+	@LogError
 	async isAccountAssociated(
 		request: IsAccountAssociatedTokenRequest,
 	): Promise<boolean> {
@@ -429,6 +447,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		).isAssociated;
 	}
 
+	@LogError
 	async getReserveAddress(
 		request: GetReserveAddressRequest,
 	): Promise<string> {
@@ -441,6 +460,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		).payload.toString();
 	}
 
+	@LogError
 	async updateReserveAddress(
 		request: UpdateReserveAddressRequest,
 	): Promise<boolean> {

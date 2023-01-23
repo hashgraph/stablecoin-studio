@@ -176,6 +176,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				TOKEN_CREATION_COST_HBAR,
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new Error(
 				`Unexpected error in HederaTransactionHandler create operation: ${error}`,
 			);
@@ -759,6 +760,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					);
 			}
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				message: `Unexpected error in HederaTransactionHandler ${operationName} operation: ${error}`,
 				transactionId: (error as any).error?.transactionId,

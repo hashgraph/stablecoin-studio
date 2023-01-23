@@ -39,7 +39,7 @@ import { HederaId } from '../../domain/context/shared/HederaId.js';
 import { GrantRoleCommand } from '../../app/usecase/command/stablecoin/roles/grantRole/GrantRoleCommand.js';
 import { RevokeRoleCommand } from '../../app/usecase/command/stablecoin/roles/revokeRole/RevokeRoleCommand.js';
 import { GetRolesQuery } from '../../app/usecase/query/stablecoin/roles/getRoles/GetRolesQuery.js';
-import { GetAllowanceQuery} from '../../app/usecase/query/stablecoin/roles/getAllowance/GetAllowanceQuery.js';
+import { GetAllowanceQuery } from '../../app/usecase/query/stablecoin/roles/getAllowance/GetAllowanceQuery.js';
 import { ResetAllowanceCommand } from '../../app/usecase/command/stablecoin/roles/resetAllowance/ResetAllowanceCommand.js';
 import { IncreaseAllowanceCommand } from '../../app/usecase/command/stablecoin/roles/increaseAllowance/IncreaseAllowanceCommand.js';
 import { DecreaseAllowanceCommand } from '../../app/usecase/command/stablecoin/roles/decreaseAllowance/DecreaseAllowanceCommand.js';
@@ -53,6 +53,8 @@ import { RevokeSupplierRoleCommand } from '../../app/usecase/command/stablecoin/
 import { handleValidation } from './Common.js';
 import { Balance } from '../../domain/context/stablecoin/Balance.js';
 import { IsUnlimitedQuery } from '../../app/usecase/query/stablecoin/isUnlimited/IsUnlimitedQuery.js';
+import LogService from '../../app/service/LogService.js';
+import { LogError } from '../../core/decorator/LogErrorDecorator.js';
 
 export { StableCoinRole, StableCoinRoleLabel };
 
@@ -82,6 +84,7 @@ class RoleInPort implements IRole {
 		),
 	) {}
 
+	@LogError
 	async hasRole(request: HasRoleRequest): Promise<boolean> {
 		const { tokenId, targetId, role } = request;
 		handleValidation('HasRoleRequest', request);
@@ -96,6 +99,7 @@ class RoleInPort implements IRole {
 		).payload;
 	}
 
+	@LogError
 	async grantRole(request: GrantRoleRequest): Promise<boolean> {
 		const { tokenId, targetId, role, supplierType, amount } = request;
 		handleValidation('GrantRoleRequest', request);
@@ -134,6 +138,7 @@ class RoleInPort implements IRole {
 		}
 	}
 
+	@LogError
 	async revokeRole(request: RevokeRoleRequest): Promise<boolean> {
 		const { tokenId, targetId, role } = request;
 		handleValidation('HasRoleRequest', request);
@@ -160,6 +165,7 @@ class RoleInPort implements IRole {
 		}
 	}
 
+	@LogError
 	async getRoles(request: GetRolesRequest): Promise<string[]> {
 		const { tokenId, targetId } = request;
 		handleValidation('GetRolesRequest', request);
@@ -174,6 +180,7 @@ class RoleInPort implements IRole {
 		).payload;
 	}
 
+	@LogError
 	async getAllowance(request: GetSupplierAllowanceRequest): Promise<Balance> {
 		const { tokenId, targetId } = request;
 		handleValidation('GetSupplierAllowanceRequest', request);
@@ -188,6 +195,7 @@ class RoleInPort implements IRole {
 		return new Balance(res.payload);
 	}
 
+	@LogError
 	async resetAllowance(
 		request: ResetSupplierAllowanceRequest,
 	): Promise<boolean> {
@@ -204,6 +212,7 @@ class RoleInPort implements IRole {
 		).payload;
 	}
 
+	@LogError
 	async increaseAllowance(
 		request: IncreaseSupplierAllowanceRequest,
 	): Promise<boolean> {
@@ -221,6 +230,7 @@ class RoleInPort implements IRole {
 		).payload;
 	}
 
+	@LogError
 	async decreaseAllowance(
 		request: DecreaseSupplierAllowanceRequest,
 	): Promise<boolean> {
@@ -238,6 +248,7 @@ class RoleInPort implements IRole {
 		).payload;
 	}
 
+	@LogError
 	async isLimited(request: CheckSupplierLimitRequest): Promise<boolean> {
 		const { tokenId, targetId } = request;
 		handleValidation('CheckSupplierLimitRequest', request);
@@ -261,6 +272,7 @@ class RoleInPort implements IRole {
 		return hasRole && !unlimited;
 	}
 
+	@LogError
 	async isUnlimited(request: CheckSupplierLimitRequest): Promise<boolean> {
 		const { tokenId, targetId } = request;
 		handleValidation('CheckSupplierLimitRequest', request);
