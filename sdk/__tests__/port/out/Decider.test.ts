@@ -31,7 +31,7 @@ import {
 } from '../../../src/port/out/CapabilityDecider.js';
 import { CLIENT_ACCOUNT_ED25519 } from '../../config.js';
 
-describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
+describe('🧪 Decider', () => {
 	const capabilities: Capability[] = [
 		new Capability(Operation.CASH_IN, Access.CONTRACT),
 		new Capability(Operation.BURN, Access.HTS),

@@ -32,7 +32,7 @@ import {
 } from '../../../config.js';
 import AccountTokenListRelationViewModel from '../../../../src/port/out/mirror/response/AccountTokenListRelationViewModel.js';
 
-describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
+describe('🧪 MirrorNodeAdapter', () => {
 	const tokenId = HederaId.from('0.0.49117058');
 	const proxyEvmAddress = '0000000000000000000000000000000002ed7781';
 
@@ -59,7 +59,9 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 		expect(stableCoinDetail.name).toEqual('TEST_ACCELERATOR_HTS');
 		expect(stableCoinDetail.symbol).toEqual('TEST');
 		expect(stableCoinDetail.decimals).toEqual(6);
-		expect(stableCoinDetail.evmProxyAddress).toEqual(proxyEvmAddress);
+		expect(stableCoinDetail.evmProxyAddress?.toString()).toEqual(
+			'0x' + proxyEvmAddress,
+		);
 		expect(stableCoinDetail.autoRenewAccount).toEqual(
 			CLIENT_ACCOUNT_ED25519.id,
 		);
