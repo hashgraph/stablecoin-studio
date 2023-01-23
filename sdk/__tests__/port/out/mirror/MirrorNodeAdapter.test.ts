@@ -60,7 +60,7 @@ describe('🧪 MirrorNodeAdapter', () => {
 		expect(stableCoinDetail.symbol).toEqual('TEST');
 		expect(stableCoinDetail.decimals).toEqual(6);
 		expect(stableCoinDetail.evmProxyAddress?.toString()).toEqual(
-			proxyEvmAddress,
+			'0x' + proxyEvmAddress,
 		);
 		expect(stableCoinDetail.autoRenewAccount).toEqual(
 			CLIENT_ACCOUNT_ED25519.id,
