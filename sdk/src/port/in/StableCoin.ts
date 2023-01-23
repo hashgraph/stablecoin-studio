@@ -112,7 +112,7 @@ interface IStableCoinInPort {
 	updateReserveAddress(
 		request: UpdateReserveAddressRequest,
 	): Promise<boolean>;
-	approveKyc(request: KYCRequest): Promise<boolean>;
+	grantKyc(request: KYCRequest): Promise<boolean>;
 	revokeKyc(request: KYCRequest): Promise<boolean>;
 }
 
@@ -386,7 +386,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		).payload;
 	}
 
-	async approveKyc(request: KYCRequest): Promise<boolean> {
+	async grantKyc(request: KYCRequest): Promise<boolean> {
 		const { tokenId, targetId } = request;
 		handleValidation('KYCRequest', request);
 

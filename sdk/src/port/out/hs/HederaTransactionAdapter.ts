@@ -691,7 +691,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		});
 		return this.performOperation(
 			coin,
-			Operation.APPROVE_KYC,
+			Operation.GRANT_KYC,
 			'approveKyc',
 			120000,
 			params,

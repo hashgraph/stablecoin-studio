@@ -48,6 +48,7 @@ export default class DetailsStableCoinsService extends Service {
         autoRenewAccount: respDetail.autoRenewAccount.toString(),
         adminKey: respDetail.adminKey.toString(),
         freezeKey: respDetail.freezeKey.toString(),
+        kycKey: respDetail.kycKey.toString(),
         wipeKey: respDetail.wipeKey.toString(),
         supplyKey: respDetail.supplyKey.toString(),
         pauseKey: respDetail.pauseKey.toString(),

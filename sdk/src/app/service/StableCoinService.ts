@@ -183,7 +183,7 @@ export default class StableCoinService extends Service {
 			if (operable && _coin.kycKey instanceof PublicKey) {
 				if (_coin.kycKey?.key.toString() === account.publicKey?.key) {
 					listCapabilities.push(
-						new Capability(Operation.APPROVE_KYC, Access.HTS),
+						new Capability(Operation.GRANT_KYC, Access.HTS),
 					);
 					listCapabilities.push(
 						new Capability(Operation.REVOKE_KYC, Access.HTS),
@@ -192,7 +192,7 @@ export default class StableCoinService extends Service {
 			}
 			if (operable && _coin.kycKey instanceof HederaId) {
 				listCapabilities.push(
-					new Capability(Operation.APPROVE_KYC, Access.CONTRACT),
+					new Capability(Operation.GRANT_KYC, Access.CONTRACT),
 				);
 				listCapabilities.push(
 					new Capability(Operation.REVOKE_KYC, Access.CONTRACT),

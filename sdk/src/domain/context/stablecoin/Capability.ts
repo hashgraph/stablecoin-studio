@@ -31,7 +31,7 @@ export enum Operation {
 	ROLE_MANAGEMENT = 'Role_Management',
 	ROLE_ADMIN_MANAGEMENT = 'Admin_Role',
 	RESERVE_MANAGEMENT = 'Admin_Role',
-	APPROVE_KYC = 'Approve_KYC',
+	GRANT_KYC = 'Grant_KYC',
 	REVOKE_KYC = 'Revoke_KYC',
 }
 
