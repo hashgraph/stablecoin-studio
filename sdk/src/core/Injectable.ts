@@ -76,7 +76,7 @@ import { GetReserveAddressQueryHandler } from '../app/usecase/query/stablecoin/g
 import { IsUnlimitedQueryHandler } from '../app/usecase/query/stablecoin/isUnlimited/IsUnlimitedQueryHandler.js';
 import { RevokeKycCommandHandler } from '../app/usecase/command/stablecoin/operations/revokeKyc/RevokeKycCommandHandler.js';
 import { GrantKycCommandHandler } from '../app/usecase/command/stablecoin/operations/grantKyc/GrantKycCommandHandler.js';
-import { GetAccountTokenRelationshipQuery } from '../app/usecase/query/account/tokenRelationship/GetAccountTokenRelationshipQuery.js';
+import { GetAccountTokenRelationshipQueryHandler } from '../app/usecase/query/account/tokenRelationship/GetAccountTokenRelationshipQueryHandler.js';
 
 export const TOKENS = {
 	COMMAND_HANDLER: Symbol('CommandHandler'),
@@ -251,7 +251,7 @@ const QUERY_HANDLERS = [
 	},
 	{
 		token: TOKENS.QUERY_HANDLER,
-		useClass: GetAccountTokenRelationshipQuery,
+		useClass: GetAccountTokenRelationshipQueryHandler,
 	},
 ];
 
