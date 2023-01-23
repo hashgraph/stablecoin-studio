@@ -252,6 +252,7 @@ export type DeployParameters = {
     reserveAddress?: string
     initialAmountDataFeed?: string
     createReserve?: boolean
+    addKyc?: boolean
 }
 export async function deployContractsWithSDK({
     name,
@@ -269,6 +270,7 @@ export async function deployContractsWithSDK({
     reserveAddress = ADDRESS_0,
     initialAmountDataFeed = initialSupply,
     createReserve = true,
+    addKyc = false,
 }: DeployParameters): Promise<ContractId[]> {
     const AccountEvmAddress = await toEvmAddress(account, isED25519Type)
 
@@ -326,7 +328,7 @@ export async function deployContractsWithSDK({
         reserveInitialAmount: initialAmountDataFeed,
         createReserve,
         keys: allToContract
-            ? tokenKeystoContract()
+            ? tokenKeystoContract(addKyc)
             : tokenKeystoKey(publicKey, isED25519Type),
     }
 
@@ -403,7 +405,7 @@ export async function deployContractsWithSDK({
     ]
 }
 
-function tokenKeystoContract() {
+function tokenKeystoContract(addKyc = false) {
     const keys = [
         {
             keyType: 1, // admin
@@ -431,6 +433,13 @@ function tokenKeystoContract() {
             isED25519: false,
         },
     ]
+    if (addKyc) {
+        keys.push({
+            keyType: 2, // KYC
+            PublicKey: '0x', // PublicKey.fromString(publicKey).toBytes(),
+            isED25519: false,
+        })
+    }
 
     return keys
 }
@@ -440,6 +449,11 @@ function tokenKeystoKey(publicKey: string, isED25519: boolean) {
     const keys = [
         {
             keyType: 1, // admin
+            PublicKey: PK,
+            isED25519: isED25519,
+        },
+        {
+            keyType: 2, // KYC
             PublicKey: PK,
             isED25519: isED25519,
         },

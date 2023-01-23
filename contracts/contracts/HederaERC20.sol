@@ -12,8 +12,9 @@ import './extensions/Freezable.sol';
 import './extensions/Rescatable.sol';
 import './extensions/Deletable.sol';
 import './extensions/Reserve.sol';
-import './hts-precompile/IHederaTokenService.sol';
 import './extensions/TokenOwner.sol';
+import './extensions/KYC.sol';
+import './hts-precompile/IHederaTokenService.sol';
 
 contract HederaERC20 is
     IHederaERC20,
@@ -23,7 +24,8 @@ contract HederaERC20 is
     Pausable,
     Freezable,
     Deletable,
-    Rescatable
+    Rescatable,
+    KYC
 {
     // using SafeERC20Upgradeable for IHederaERC20Upgradeable;
 
