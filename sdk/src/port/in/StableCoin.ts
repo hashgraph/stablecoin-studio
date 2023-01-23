@@ -165,6 +165,12 @@ class StableCoinInPort implements IStableCoinInPort {
 						type: req.wipeKey.type,
 				  })
 				: undefined,
+			kycKey: req.KYCKey
+				? new PublicKey({
+						key: req.KYCKey.key,
+						type: req.KYCKey.type,
+				  })
+				: undefined,
 			pauseKey: req.pauseKey
 				? new PublicKey({
 						key: req.pauseKey.key,

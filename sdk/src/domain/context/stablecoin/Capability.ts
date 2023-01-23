@@ -31,6 +31,7 @@ export enum Operation {
 	ROLE_MANAGEMENT = 'Role_Management',
 	ROLE_ADMIN_MANAGEMENT = 'Admin Role',
 	RESERVE_MANAGEMENT = 'Admin Role',
+	KYC = 'KYC',
 }
 
 export enum Access {
