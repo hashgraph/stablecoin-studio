@@ -31,6 +31,7 @@ export const LogError = (
 			const result = originalMethod.apply(this, args);
 			return result;
 		} catch (error) {
+			console.log('error');
 			LogService.logError(error);
 			throw error;
 		}
