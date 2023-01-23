@@ -176,6 +176,14 @@ interface RoleTransactionAdapter {
 		targetId: HederaId,
 		amount: BigDecimal,
 	): Promise<TransactionResponse>;
+	grantKyc(
+		coin: StableCoinCapabilities,
+		targetId: HederaId,
+	): Promise<TransactionResponse<boolean, Error>>;
+	revokeKyc(
+		coin: StableCoinCapabilities,
+		targetId: HederaId,
+	): Promise<TransactionResponse<boolean, Error>>;
 	getRoles(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
@@ -373,6 +381,18 @@ export default abstract class TransactionAdapter
 		targetId: HederaId,
 		amount: BigDecimal,
 	): Promise<TransactionResponse<any, Error>> {
+		throw new Error('Method not implemented.');
+	}
+	grantKyc(
+		coin: StableCoinCapabilities,
+		targetId: HederaId,
+	): Promise<TransactionResponse<boolean, Error>> {
+		throw new Error('Method not implemented.');
+	}
+	revokeKyc(
+		coin: StableCoinCapabilities,
+		targetId: HederaId,
+	): Promise<TransactionResponse<boolean, Error>> {
 		throw new Error('Method not implemented.');
 	}
 

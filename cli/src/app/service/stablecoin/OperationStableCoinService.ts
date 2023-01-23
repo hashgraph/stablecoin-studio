@@ -17,6 +17,7 @@ import {
   RevokeRoleRequest,
   HasRoleRequest,
   FreezeAccountRequest,
+  KYCRequest,
   StableCoinCapabilities,
   Access,
   Operation,
@@ -43,6 +44,7 @@ import DeleteStableCoinService from './DeleteStableCoinService.js';
 import PauseStableCoinService from './PauseStableCoinService.js';
 import ManageImportedTokenService from './ManageImportedTokenService';
 import FreezeStableCoinService from './FreezeStableCoinService.js';
+import KYCStableCoinService from './KYCStableCoinService.js';
 import ListStableCoinsService from './ListStableCoinsService.js';
 import CapabilitiesStableCoinService from './CapabilitiesStableCoinService.js';
 
@@ -470,6 +472,80 @@ export default class OperationStableCoinService extends Service {
           );
         }
         break;
+      case language.getText('wizard.stableCoinOptions.GrantKYC'):
+          await utilsService.cleanAndShowBanner();
+          utilsService.displayCurrentUserInfo(
+            configAccount,
+            this.stableCoinWithSymbol,
+          );
+  
+          const grantKYCRequest = new KYCRequest({
+            tokenId: this.stableCoinId,
+            targetId: '',
+          });
+          grantKYCRequest.targetId = await utilsService.defaultSingleAsk(
+            language.getText('wizard.grantKYCToAccount'),
+            '0.0.0',
+          );
+  
+          await utilsService.handleValidation(
+            () => grantKYCRequest.validate('targetId'),
+            async () => {
+              grantKYCRequest.targetId = await utilsService.defaultSingleAsk(
+                language.getText('wizard.grantKYCToAccount'),
+                '0.0.0',
+              );
+            },
+          );
+          try {
+            await new KYCStableCoinService().grantKYCToAccount(
+              grantKYCRequest,
+            );
+          } catch (error) {
+            await utilsService.askErrorConfirmation(
+              async () => await this.operationsStableCoin(),
+              error,
+            );
+          }
+  
+          break;
+      case language.getText('wizard.stableCoinOptions.RevokeKYC'):
+          await utilsService.cleanAndShowBanner();
+          utilsService.displayCurrentUserInfo(
+            configAccount,
+            this.stableCoinWithSymbol,
+          );
+  
+          const revokeKYCRequest = new KYCRequest({
+            tokenId: this.stableCoinId,
+            targetId: '',
+          });
+          revokeKYCRequest.targetId = await utilsService.defaultSingleAsk(
+            language.getText('wizard.revokeKYCFromAccount'),
+            '0.0.0',
+          );
+  
+          await utilsService.handleValidation(
+            () => revokeKYCRequest.validate('targetId'),
+            async () => {
+              revokeKYCRequest.targetId =
+                await utilsService.defaultSingleAsk(
+                  language.getText('wizard.revokeKYCFromAccount'),
+                  '0.0.0',
+                );
+            },
+          );
+          try {
+            await new KYCStableCoinService().revokeKYCFromAccount(
+              revokeKYCRequest,
+            );
+          } catch (error) {
+            await utilsService.askErrorConfirmation(
+              async () => await this.operationsStableCoin(),
+              error,
+            );
+          }
+          break;   
       case language.getText('wizard.stableCoinOptions.RoleMgmt'):
         await utilsService.cleanAndShowBanner();
 
@@ -1146,10 +1222,10 @@ export default class OperationStableCoinService extends Service {
         (option === language.getText('wizard.stableCoinOptions.Burn') && capabilities.includes(Operation.BURN)) ||
         (option === language.getText('wizard.stableCoinOptions.Wipe') && capabilities.includes(Operation.WIPE)) ||
         (option === language.getText('wizard.stableCoinOptions.Rescue') && capabilities.includes(Operation.RESCUE)) ||
-        (option === language.getText('wizard.stableCoinOptions.Freeze') &&
-          capabilities.includes(Operation.FREEZE)) ||
-        (option === language.getText('wizard.stableCoinOptions.UnFreeze') &&
-          capabilities.includes(Operation.UNFREEZE)) ||
+        (option === language.getText('wizard.stableCoinOptions.Freeze') && capabilities.includes(Operation.FREEZE)) ||
+        (option === language.getText('wizard.stableCoinOptions.UnFreeze') && capabilities.includes(Operation.UNFREEZE)) ||
+        (option === language.getText('wizard.stableCoinOptions.GrantKYC') && capabilities.includes(Operation.GRANT_KYC)) ||
+        (option === language.getText('wizard.stableCoinOptions.RevokeKYC') && capabilities.includes(Operation.REVOKE_KYC)) ||
         (option === language.getText('wizard.stableCoinOptions.DangerZone') &&
           (capabilities.includes(Operation.PAUSE) ||
             capabilities.includes(Operation.DELETE))) ||
@@ -1203,6 +1279,22 @@ export default class OperationStableCoinService extends Service {
               this.isOperationAccess(
                 stableCoinCapabilities,
                 Operation.UNFREEZE,
+                Access.HTS,
+              )) ||
+            (option === language.getText('wizard.stableCoinOptions.GrantKYC') &&
+              roles.includes(StableCoinRole.KYC_ROLE)) ||
+            (option === language.getText('wizard.stableCoinOptions.GrantKYC') &&
+              this.isOperationAccess(
+                stableCoinCapabilities,
+                Operation.GRANT_KYC,
+                Access.HTS,
+              )) ||
+            (option === language.getText('wizard.stableCoinOptions.RevokeKYC') &&
+              roles.includes(StableCoinRole.KYC_ROLE)) ||
+            (option === language.getText('wizard.stableCoinOptions.RevokeKYC') &&
+              this.isOperationAccess(
+                stableCoinCapabilities,
+                Operation.REVOKE_KYC,
                 Access.HTS,
               )) ||
             (option === language.getText('wizard.stableCoinOptions.DangerZone') &&
@@ -1295,6 +1387,13 @@ export default class OperationStableCoinService extends Service {
           availability: capabilities.includes(Operation.FREEZE),
           name: 'Freeze Role',
           value: StableCoinRole.FREEZE_ROLE,
+        },
+      },
+      {
+        role: {
+          availability: capabilities.includes(Operation.GRANT_KYC),
+          name: 'KYC Role',
+          value: StableCoinRole.KYC_ROLE,
         },
       },
       {

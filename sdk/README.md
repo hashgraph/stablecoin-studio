@@ -130,12 +130,16 @@ Before using the SDK we need to execute the `Network.init` function and specifiy
 
 Example
 ```Typescript
-SDK.log = configurationService.getLogConfiguration();
-  await Network.init(
-    new InitializationRequest({
-    	network: 'Testnet',
-    }),
- );
+import { LoggerTransports, SDK } from 'hedera-stable-coin-sdk';
+SDK.log = {
+	level: process.env.REACT_APP_LOG_LEVEL ?? 'ERROR',
+	transports: new LoggerTransports.Console(),
+};
+await Network.init(
+	new InitializationRequest({
+		network: 'testnet',
+	}),
+);
 ```  
 
 ## Connect SDK
@@ -207,15 +211,15 @@ export enum WalletEvents {
 }
 ```
 
+# Usage
+Next, all operations offered by this SDK, grouped by the files of the input ports in which they are located, will be explained.
+
 ## About Operations Execution
 Before explaining all operations exposed by the SDK, is important to know something about the way some of this operations are going to be performed.
 When creating a stable coin, a set of keys (supply key, wipe key, pause key, etc) must be provided in order to create the stable coin token. Each of theses keys will control, first of all, if the operation related with the key can be performed or not (if the token wipe key is not set, the wipe operation can not be performed), but, in the case the key is provided, depending on its value the operation could be performed through the stable coin smart contracts or through the Hedera SDK:
 
 1. If the token key corresponds to a Hedera account public key, the operation can only be performed by the Hedera account owning this public key, and only through the Hedera SDK.
 2. If the token key corresponds to the stable coin smart contract administrator key, the operation can only be performed through the smart contract, so whoever calls the smart contract could perform the operation. To prevent anyone from performing certain operations roles are used. When the needed of a role is indicated in some operations description, this is only when the related key of the stable coin token is configured to be the smart contract admin key.
-
-# Usage
-Next, all operations offered by this SDK, grouped by the files of the input ports in which they are located, will be explained.
 
 ## StableCoin
 The following operations represents most of the operations that can be performed using a stable coin. Some of then can be perfomed through smart contracts or through the Hedera SDK depending on the token configuration explained above.
@@ -226,18 +230,122 @@ Creates a new stable coin. You must use Network.connect first with a SupportedWa
 **Spec:**
 
 ```Typescript
+	interface CreateRequest {
+		name: string;
+		symbol: string;
+		decimals: number | string;
+		initialSupply?: string;
+		maxSupply?: string;
+		freezeDefault?: boolean;
+		autoRenewAccount?: string;
+		adminKey?: RequestPublicKey;
+		freezeKey?: RequestPublicKey;
+		KYCKey?: RequestPublicKey;
+		wipeKey?: RequestPublicKey;
+		pauseKey?: RequestPublicKey;
+		supplyKey?: RequestPublicKey;
+		treasury?: string;
+		supplyType?: TokenSupplyType;
+		stableCoinFactory: string;
+		hederaERC20: string;
+		reserveAddress?: string;
+		reserveInitialAmount?: string;
+		createReserve: boolean;
+	}
+
 	StableCoin.create = (request: CreateRequest): Promise<StableCoinViewModel>
 ```
 
 **Example:**
+### Create a simple stable coin, with all keys set to the Smart Contracts
+
+This sets the smart contracts as the ones that will manage the features, this enables the usage of roles so multiple accounts can have the same role.
 
 ```Typescript
+	import {
+		FactoryAddressTestnet,
+		HederaERC20AddressTestnet,
+		Account,
+		CreateRequest,
+	} from 'hedera-stable-coin-sdk';
 	const stableCoin: StableCoinViewModel = await StableCoin.create(
 		new CreateRequest({
-			account: new HashPackAccount("0.0.1"),
 			name: "Hedera Stable Coin",
 			symbol: "HSC",
-			decimals: 6
+			decimals: 6,
+			kycKey: Account.NullPublicKey,
+			wipeKey: Account.NullPublicKey,
+			pauseKey: Account.NullPublicKey,
+			adminKey: Account.NullPublicKey,
+			supplyKey: Account.NullPublicKey,
+			freezeKey: Account.NullPublicKey,
+			hederaERC20: HederaERC20AddressTestnet,
+			stableCoinFactory: FactoryAddressTestnet,
+			createReserve: false,
+		})
+	);
+```
+
+### Create a simple stable coin, with all keys set to the admin's public key
+
+By requesting the public key of the account, we can set the stable coin's keys to be the admin's enabling all features through the Hedera Token Service. Keep in mind that multiple users per role is not available when using public keys.
+
+```Typescript
+	import {
+		FactoryAddressTestnet,
+		HederaERC20AddressTestnet,
+		Account,
+		CreateRequest,
+	} from 'hedera-stable-coin-sdk';
+	const privateKey: RequestPrivateKey = {
+		key: 'someKey',
+		type: 'ED25519',
+	};
+	const reqAccount: RequestAccount = {
+		accountId: '0.0.1',
+		privateKey: privateKey,
+	};
+	const req: GetPublicKeyRequest = new GetPublicKeyRequest({
+		account: reqAccount,
+	});
+	const publicKey = Account.getPublicKey(req);
+	const stableCoin: StableCoinViewModel = await StableCoin.create(
+		new CreateRequest({
+			name: "Hedera Stable Coin",
+			symbol: "HSC",
+			decimals: 6,
+			kycKey: publicKey,
+			wipeKey: publicKey,
+			pauseKey: publicKey,
+			adminKey: publicKey,
+			supplyKey: publicKey,
+			freezeKey: publicKey,
+			hederaERC20: HederaERC20AddressTestnet,
+			stableCoinFactory: FactoryAddressTestnet,
+			createReserve: false,
+		})
+	);
+```
+
+### Create a simple stable coin, with all keys set to none
+ 
+By not setting any of the keys, the stable coin will have the corresponding features disabled and the key set to none
+
+```Typescript
+	import {
+		FactoryAddressTestnet,
+		HederaERC20AddressTestnet,
+		Account,
+		CreateRequest,
+	} from 'hedera-stable-coin-sdk';
+	const stableCoin: StableCoinViewModel = await StableCoin.create(
+		new CreateRequest({
+			name: "Hedera Stable Coin",
+			symbol: "HSC",
+			decimals: 6,
+			hederaERC20: HederaERC20AddressTestnet,
+			stableCoinFactory: FactoryAddressTestnet,
+			createReserve: false,
 		})
 	);
 ```

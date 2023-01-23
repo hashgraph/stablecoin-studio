@@ -18,6 +18,20 @@
  *
  */
 
-import { RequestContracts } from './model/ContractRequests.js';
+import ValidatedRequest from './validation/ValidatedRequest.js';
+import Validation from './validation/Validation.js';
 
-export type IAssociateStableCoinRequest = RequestContracts;
+export default class KYCRequest extends ValidatedRequest<KYCRequest> {
+	targetId: string;
+	tokenId: string;
+
+	constructor({ targetId, tokenId }: { targetId: string; tokenId: string }) {
+		super({
+			targetId: Validation.checkHederaIdFormat(),
+			tokenId: Validation.checkHederaIdFormat(),
+		});
+
+		this.targetId = targetId;
+		this.tokenId = tokenId;
+	}
+}

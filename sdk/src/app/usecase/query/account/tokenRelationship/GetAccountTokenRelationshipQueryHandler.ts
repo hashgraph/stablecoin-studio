@@ -23,13 +23,13 @@ import Injectable from '../../../../../core/Injectable.js';
 import { IQueryHandler } from '../../../../../core/query/QueryHandler.js';
 import { MirrorNodeAdapter } from '../../../../../port/out/mirror/MirrorNodeAdapter.js';
 import {
-	GetAccountTokenAssociatedQuery,
-	GetAccountTokenAssociatedQueryResponse,
-} from './GetAccountTokenAssociatedQuery.js';
+	GetAccountTokenRelationshipQuery,
+	GetAccountTokenRelationshipQueryResponse,
+} from './GetAccountTokenRelationshipQuery.js';
 
-@QueryHandler(GetAccountTokenAssociatedQuery)
-export class GetAccountTokenAssociatedQueryHandler
-	implements IQueryHandler<GetAccountTokenAssociatedQuery>
+@QueryHandler(GetAccountTokenRelationshipQuery)
+export class GetAccountTokenRelationshipQueryHandler
+	implements IQueryHandler<GetAccountTokenRelationshipQuery>
 {
 	constructor(
 		public readonly repo: MirrorNodeAdapter = Injectable.resolve(
@@ -38,15 +38,15 @@ export class GetAccountTokenAssociatedQueryHandler
 	) {}
 
 	async execute(
-		query: GetAccountTokenAssociatedQuery,
-	): Promise<GetAccountTokenAssociatedQueryResponse> {
+		query: GetAccountTokenRelationshipQuery,
+	): Promise<GetAccountTokenRelationshipQueryResponse> {
 		const res = await this.repo.getAccountToken(
 			query.targetId,
 			query.tokenId,
 		);
 
 		return Promise.resolve(
-			new GetAccountTokenAssociatedQueryResponse(!!res),
+			new GetAccountTokenRelationshipQueryResponse(res),
 		);
 	}
 }

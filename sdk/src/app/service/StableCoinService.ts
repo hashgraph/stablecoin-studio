@@ -180,6 +180,24 @@ export default class StableCoinService extends Service {
 					new Capability(Operation.DELETE, Access.CONTRACT),
 				);
 			}
+			if (operable && _coin.kycKey instanceof PublicKey) {
+				if (_coin.kycKey?.key.toString() === account.publicKey?.key) {
+					listCapabilities.push(
+						new Capability(Operation.GRANT_KYC, Access.HTS),
+					);
+					listCapabilities.push(
+						new Capability(Operation.REVOKE_KYC, Access.HTS),
+					);
+				}
+			}
+			if (operable && _coin.kycKey instanceof HederaId) {
+				listCapabilities.push(
+					new Capability(Operation.GRANT_KYC, Access.CONTRACT),
+				);
+				listCapabilities.push(
+					new Capability(Operation.REVOKE_KYC, Access.CONTRACT),
+				);
+			}
 
 			const roleManagement = listCapabilities.some(
 				(capability) => capability.access === Access.CONTRACT,

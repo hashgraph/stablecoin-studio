@@ -28,6 +28,7 @@ export enum StableCoinRole {
 	DELETE_ROLE = '0x2b73f0f98ad60ca619bbdee4bcd175da1127db86346339f8b718e3f8b4a006e2',
 	DEFAULT_ADMIN_ROLE = '0x0000000000000000000000000000000000000000000000000000000000000000',
 	WITHOUT_ROLE = '0xe11b25922c3ff9f0f0a34f0b8929ac96a1f215b99dcb08c2891c220cf3a7e8cc',
+	KYC_ROLE = '0xdb11624602202c396fa347735a55e345a3aeb3e60f8885e1a71f1bf8d5886db7',
 }
 
 export const StableCoinRoleLabel = new Map<StableCoinRole, string>([
@@ -40,4 +41,5 @@ export const StableCoinRoleLabel = new Map<StableCoinRole, string>([
 	[StableCoinRole.DELETE_ROLE, 'Delete'],
 	[StableCoinRole.DEFAULT_ADMIN_ROLE, 'Admin'],
 	[StableCoinRole.WITHOUT_ROLE, 'Without'],
+	[StableCoinRole.KYC_ROLE, 'KYC'],
   ]);

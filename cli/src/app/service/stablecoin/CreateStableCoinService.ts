@@ -250,7 +250,7 @@ export default class CreateStableCoinService extends Service {
     if (managedBySC) {
       tokenToCreate.adminKey = Account.NullPublicKey;
       tokenToCreate.freezeKey = Account.NullPublicKey;
-      //KYCKey,
+      tokenToCreate.KYCKey = Account.NullPublicKey;
       tokenToCreate.wipeKey = Account.NullPublicKey;
       tokenToCreate.supplyKey = Account.NullPublicKey;
       tokenToCreate.pauseKey = Account.NullPublicKey;
@@ -267,12 +267,12 @@ export default class CreateStableCoinService extends Service {
       return tokenToCreate;
     }
 
-    const { adminKey, supplyKey, freezeKey, wipeKey, pauseKey } =
+    const { adminKey, supplyKey, freezeKey, wipeKey, pauseKey, KYCKey } =
       await this.configureManagedFeatures();
 
     tokenToCreate.adminKey = adminKey;
     tokenToCreate.supplyKey = supplyKey;
-    //tokenToCreate.KYCKey = KYCKey;
+    tokenToCreate.KYCKey = KYCKey;
     tokenToCreate.freezeKey = freezeKey;
     tokenToCreate.wipeKey = wipeKey;
     tokenToCreate.pauseKey = pauseKey;
@@ -294,7 +294,12 @@ export default class CreateStableCoinService extends Service {
           : freezeKey.key !== 'null'
           ? freezeKey
           : language.getText('wizard.featureOptions.SmartContract'),
-      //KYCKey,
+      KYCKey:
+          KYCKey === undefined
+            ? language.getText('wizard.featureOptions.None')
+            : KYCKey.key !== 'null'
+            ? KYCKey
+            : language.getText('wizard.featureOptions.SmartContract'),
       wipeKey:
         wipeKey === undefined
           ? language.getText('wizard.featureOptions.None')
@@ -440,7 +445,14 @@ export default class CreateStableCoinService extends Service {
       ),
     );
 
-    return { adminKey, supplyKey, freezeKey, wipeKey, pauseKey };
+    const KYCKey = await this.checkAnswer(
+      await utilsService.defaultMultipleAsk(
+        language.getText('stablecoin.features.KYC'),
+        language.getArrayFromObject('wizard.featureOptions'),
+      ),
+    );
+
+    return { adminKey, supplyKey, freezeKey, wipeKey, pauseKey, KYCKey };
   }
 
   private async checkAnswer(answer: string): Promise<RequestPublicKey> {

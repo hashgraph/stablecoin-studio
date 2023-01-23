@@ -18,6 +18,14 @@
  *
  */
 
-import { RequestContracts } from './model/ContractRequests.js';
+import BaseError, { ErrorCode } from "../../../../../core/error/BaseError.js";
 
-export type IGetNameStableCoinRequest = RequestContracts;
+
+export class KycNotActive extends BaseError {
+	constructor(tokenId: unknown) {
+		super(
+			ErrorCode.KYCNotEnabled,
+			`The coin ${tokenId} does not have KYC active`,
+		);
+	}
+}

@@ -73,6 +73,9 @@ import { RESERVE_DECIMALS } from '../../domain/context/reserve/Reserve.js';
 import ReserveViewModel from '../out/mirror/response/ReserveViewModel.js';
 import { BalanceOfQuery } from '../../app/usecase/query/stablecoin/balanceof/BalanceOfQuery.js';
 import { GetReserveAddressQuery } from '../../app/usecase/query/stablecoin/getReserveAddress/GetReserveAddressQuey.js';
+import KYCRequest from './request/KYCRequest.js';
+import { GrantKycCommand } from '../../app/usecase/command/stablecoin/operations/grantKyc/GrantKycCommand.js';
+import { RevokeKycCommand } from '../../app/usecase/command/stablecoin/operations/revokeKyc/RevokeKycCommand.js';
 
 export const HederaERC20AddressTestnet = '0.0.49318811';
 export const HederaERC20AddressPreviewnet = '0.0.11111111';
@@ -109,6 +112,8 @@ interface IStableCoinInPort {
 	updateReserveAddress(
 		request: UpdateReserveAddressRequest,
 	): Promise<boolean>;
+	grantKyc(request: KYCRequest): Promise<boolean>;
+	revokeKyc(request: KYCRequest): Promise<boolean>;
 }
 
 class StableCoinInPort implements IStableCoinInPort {
@@ -163,6 +168,12 @@ class StableCoinInPort implements IStableCoinInPort {
 				? new PublicKey({
 						key: req.wipeKey.key,
 						type: req.wipeKey.type,
+				  })
+				: undefined,
+			kycKey: req.KYCKey
+				? new PublicKey({
+						key: req.KYCKey.key,
+						type: req.KYCKey.type,
 				  })
 				: undefined,
 			pauseKey: req.pauseKey
@@ -368,6 +379,34 @@ class StableCoinInPort implements IStableCoinInPort {
 		return (
 			await this.commandBus.execute(
 				new UnFreezeCommand(
+					HederaId.from(targetId),
+					HederaId.from(tokenId),
+				),
+			)
+		).payload;
+	}
+
+	async grantKyc(request: KYCRequest): Promise<boolean> {
+		const { tokenId, targetId } = request;
+		handleValidation('KYCRequest', request);
+
+		return (
+			await this.commandBus.execute(
+				new GrantKycCommand(
+					HederaId.from(targetId),
+					HederaId.from(tokenId),
+				),
+			)
+		).payload;
+	}
+
+	async revokeKyc(request: KYCRequest): Promise<boolean> {
+		const { tokenId, targetId } = request;
+		handleValidation('KYCRequest', request);
+
+		return (
+			await this.commandBus.execute(
+				new RevokeKycCommand(
 					HederaId.from(targetId),
 					HederaId.from(tokenId),
 				),

@@ -41,6 +41,7 @@ export enum ErrorCode {
 	RoleNotAssigned = '20003',
 	OperationNotAllowed = '20004',
 	InsufficientFunds = '20005',
+	KYCNotEnabled = '20006',
 	ReceiptNotReceived = '30001',
 	ContractNotFound = '30002',
 	Unexpected = '30003',
