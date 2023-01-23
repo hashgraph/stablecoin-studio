@@ -362,12 +362,6 @@ describe('HederaERC20 Tests', function() {
             operatorIsE25519,
             operatorClient
         )
-        await associateToken(
-            proxyAddress,
-            nonOperatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
         await grantKyc(
             proxyAddress,
             nonOperatorAccount,
@@ -597,9 +591,9 @@ describe('HederaERC20 Tests', function() {
         // grant kyc to client for the token
         await grantKyc(
             proxyAddress,
-            operatorClient,
             operatorAccount,
-            operatorIsE25519            
+            operatorIsE25519,
+            operatorClient
         )
 
         // rescue some tokens
@@ -639,9 +633,9 @@ describe('HederaERC20 Tests', function() {
         // revoke kyc to client for the token
         await revokeKyc(
             proxyAddress,
-            operatorClient,
             operatorAccount,
-            operatorIsE25519            
+            operatorIsE25519,
+            operatorClient
         )
 
         // rescue some tokens
