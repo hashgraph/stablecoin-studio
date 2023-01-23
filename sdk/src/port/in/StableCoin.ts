@@ -77,10 +77,10 @@ import KYCRequest from './request/KYCRequest.js';
 import { GrantKycCommand } from '../../app/usecase/command/stablecoin/operations/grantKyc/GrantKycCommand.js';
 import { RevokeKycCommand } from '../../app/usecase/command/stablecoin/operations/revokeKyc/RevokeKycCommand.js';
 
-export const HederaERC20AddressTestnet = '0.0.49318811';
+export const HederaERC20AddressTestnet = '0.0.49394934';
 export const HederaERC20AddressPreviewnet = '0.0.11111111';
 
-export const FactoryAddressTestnet = '0.0.49318817';
+export const FactoryAddressTestnet = '0.0.49394940';
 export const FactoryAddressPreviewnet = '0.0.11111111';
 
 export { StableCoinViewModel, StableCoinListViewModel, ReserveViewModel };
