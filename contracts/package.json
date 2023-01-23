@@ -45,6 +45,7 @@
         "test:testnet:HederaERC20": "npx hardhat test --network testnet test/HederaERC20.ts",
         "test:testnet:StableCoinFactory": "npx hardhat test --network testnet test/StableCoinFactory.ts",
         "test:testnet:reserve": "npx hardhat test --network testnet test/reserve.ts",
+        "test:testnet:kyc": "npx hardhat test --network testnet test/KYC.ts",
         "test:testnet:HederaReserve": "npx hardhat test --network testnet test/HederaReserve.ts",
         "test:previewnet:roles": "npx hardhat test --network previewnet test/roles.ts",
         "test:previewnet:burnable": "npx hardhat test --network previewnet test/burnable.ts",
