@@ -29,10 +29,6 @@ const ProofOfReserve = (props: ProofOfReserveProps) => {
 		name: 'hasDataFeed',
 	});
 
-	const supplyKey = form.getValues().supplyKey?.value;
-console.log(`supplykey: ${supplyKey}`);
-
-
 	useEffect(() => {
 		if (!proofOfReserve) {
 			form.resetField('reserveInitialAmount');
