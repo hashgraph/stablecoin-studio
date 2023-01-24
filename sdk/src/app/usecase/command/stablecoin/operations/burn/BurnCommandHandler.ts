@@ -68,7 +68,7 @@ export class BurnCommandHandler implements ICommandHandler<BurnCommand> {
 
 		const treasuryBalance = (
 			await this.queryBus.execute(
-				new BalanceOfQuery(coin.treasury, coin.tokenId),
+				new BalanceOfQuery(coin.tokenId, coin.treasury),
 			)
 		).payload;
 

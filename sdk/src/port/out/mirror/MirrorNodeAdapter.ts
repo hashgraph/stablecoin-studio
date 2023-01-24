@@ -162,7 +162,9 @@ export class MirrorNodeAdapter {
 					  )
 					: undefined,
 				proxyAddress: new ContractId(proxyAddress),
-				evmProxyAddress: EvmAddress.fromContractId(new ContractId(proxyAddress)),
+				evmProxyAddress: EvmAddress.fromContractId(
+					new ContractId(proxyAddress),
+				),
 				treasury: HederaId.from(response.data.treasury_account_id),
 				paused: response.data.pause_status === 'PAUSED',
 				deleted: Boolean(response.data.deleted) ?? false,
@@ -314,17 +316,21 @@ export class MirrorNodeAdapter {
 	): Promise<EvmAddress> {
 		switch (privateKeyType) {
 			case KeyType.ECDSA:
-				return new EvmAddress(HPublicKey.fromString(publicKey).toEthereumAddress());
+				return new EvmAddress(
+					HPublicKey.fromString(publicKey).toEthereumAddress(),
+				);
 
 			default:
-				return new EvmAddress('0x' + accountId.toHederaAddress().toSolidityAddress());
+				return new EvmAddress(
+					'0x' + accountId.toHederaAddress().toSolidityAddress(),
+				);
 		}
 	}
 
-	async contractToEvmAddress(contractId: ContractId): Promise<string> {
-		return HContractId.fromString(
-			contractId.toString(),
-		).toSolidityAddress();
+	async contractToEvmAddress(contractId: ContractId): Promise<EvmAddress> {
+		return new EvmAddress(
+			HContractId.fromString(contractId.toString()).toSolidityAddress(),
+		);
 	}
 }
 

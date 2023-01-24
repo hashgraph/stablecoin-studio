@@ -60,7 +60,7 @@ describe('🧪 Stablecoin test', () => {
 		await new Promise((r) => setTimeout(r, seconds));
 	};
 	beforeAll(async () => {
-		await Network.init(new InitializationRequest({network:'testnet'}))
+		await Network.init(new InitializationRequest({ network: 'testnet' }));
 		await Network.connect(
 			new ConnectRequest({
 				account: {
@@ -89,7 +89,7 @@ describe('🧪 Stablecoin test', () => {
 			supplyType: TokenSupplyType.INFINITE,
 			stableCoinFactory: FactoryAddressTestnet,
 			hederaERC20: HederaERC20AddressTestnet,
-			createReserve: false
+			createReserve: false,
 		});
 		const requestHTS = new CreateRequest({
 			name: 'TEST_ACCELERATOR_HTS',
@@ -252,7 +252,7 @@ describe('🧪 Stablecoin test', () => {
 		eventService.on(WalletEvents.walletInit, (data) => {
 			console.log(`Wallet: ${data.wallet} initialized`);
 		});
-		const result =  StableCoin.associate(
+		const result = StableCoin.associate(
 			new AssociateTokenRequest({
 				account: {
 					accountId: CLIENT_ACCOUNT_ECDSA.id.toString(),
@@ -261,7 +261,6 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 		await expect(result).rejects.toThrow('Method not implemented');
-		
 	}, 60_000);
 
 	it('Performs freeze SC', async () => {
@@ -365,7 +364,7 @@ describe('🧪 Stablecoin test', () => {
 		eventService.on(WalletEvents.walletInit, (data) => {
 			console.log(`Wallet: ${data.wallet} initialized`);
 		});
-		const result =  StableCoin.cashIn(
+		const result = StableCoin.cashIn(
 			new CashInRequest({
 				amount: '1',
 				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49131205',
@@ -374,7 +373,6 @@ describe('🧪 Stablecoin test', () => {
 		);
 
 		await expect(result).rejects.toThrow('SPENDER_DOES_NOT_HAVE_ALLOWANCE');
-
 	}, 60_000);
 
 	it('Performs burn HTS', async () => {
@@ -449,7 +447,6 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 		await expect(result).rejects.toThrow('Method not implemented');
-		
 	}, 60_000);
 
 	it('Performs capabilities HTS', async () => {
