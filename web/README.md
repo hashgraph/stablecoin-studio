@@ -109,7 +109,7 @@ In order to create a new stable coin using the WEB, you must click on the "Creat
 
 Basic information about the Stable coin.
 
-![image](https://user-images.githubusercontent.com/110089113/212881844-776a06b8-ba65-4722-992b-ef1b7529e4e6.png)
+![image](docs/images/creationKeys.png?raw=true)
 
 **Optional details**
 
