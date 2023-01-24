@@ -64,9 +64,9 @@ describe(`<${HandleRoles.name} />`, () => {
 
 		const confirmButton = component.getByTestId('confirm-btn');
 
-		await waitFor(async () => {
+		await waitFor(() => {
 			expect(confirmButton).not.toHaveAttribute('disabled');
-			await userEvent.click(confirmButton);
+			userEvent.click(confirmButton);
 		});
 	});
 
