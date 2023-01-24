@@ -52,31 +52,31 @@ describe(`<${HandleRoles.name} />`, () => {
 		const component = render(<HandleRoles action='giveRole' />, store);
 
 		const account = component.getByTestId(fields.account);
-		userEvent.type(account, validAccount);
+		await userEvent.type(account, validAccount);
 
 		const roles = component.getByTestId('select-placeholder');
-		userEvent.click(roles);
+		await userEvent.click(roles);
 
 		const option = component.getByText(roleOptions[0].label);
-		userEvent.click(option);
+		await userEvent.click(option);
 
 		expect(roles).not.toBeInTheDocument();
 
 		const confirmButton = component.getByTestId('confirm-btn');
 
-		await waitFor(() => {
+		await waitFor(async () => {
 			expect(confirmButton).not.toHaveAttribute('disabled');
-			userEvent.click(confirmButton);
+			await userEvent.click(confirmButton);
 		});
 	});
 
-	test('cancel button should redirect to Roles view', () => {
+	test('cancel button should redirect to Roles view', async () => {
 		const component = render(<HandleRoles action='giveRole' />);
 
 		const anything = expect.any(Function);
 
 		const cancelButton = component.getByTestId('cancel-btn');
-		userEvent.click(cancelButton);
+		await userEvent.click(cancelButton);
 		expect(RouterManager.to).toHaveBeenCalledWith(anything, 'roles');
 	});
 });
