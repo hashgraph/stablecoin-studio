@@ -640,9 +640,7 @@ Gets the contract reserve address.
 		new GetReserveAddressRequest({
 			tokenId: "0.0.1",
 		})
-	);
-	result // "0.1.255445"
-	
+	);	
 ```
 
 
