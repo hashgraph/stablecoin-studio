@@ -22,8 +22,12 @@ import {
     transfer,
     rescue,
     grantKyc,
-    revokeKyc
+    revokeKyc,
+    hasRole,
+    grantRole,
+    revokeRole
 } from '../scripts/contractsMethods'
+import { KYC_ROLE } from '../scripts/constants'
 import { clientId } from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
 import chai from 'chai'
@@ -117,6 +121,123 @@ describe('HederaERC20 Tests', function() {
 
         proxyAddress = result[0]
     })
+
+    it('Admin account can grant and revoke kyc role to an account', async function() {
+        // Admin grants pause role : success
+        let result = await hasRole(
+            KYC_ROLE,
+            proxyAddress,
+            operatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
+        expect(result).to.equals(false)
+
+        await grantRole(
+            KYC_ROLE,
+            proxyAddress,
+            operatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
+
+        result = await hasRole(
+            KYC_ROLE,
+            proxyAddress,
+            operatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
+        expect(result).to.equals(true)
+
+        // Admin revokes pause role : success
+        await revokeRole(
+            KYC_ROLE,
+            proxyAddress,
+            operatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
+        result = await hasRole(
+            KYC_ROLE,
+            proxyAddress,
+            operatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
+        expect(result).to.equals(false)
+    })    
+
+    it('Non Admin account can not grant kyc role to an account', async function() {
+        // Non Admin grants pause role : fail
+        await expect(
+            grantRole(
+                KYC_ROLE,
+                proxyAddress,
+                nonOperatorClient,
+                nonOperatorAccount,
+                nonOperatorIsE25519
+            )
+        ).to.eventually.be.rejectedWith(Error)
+    })    
+
+    it('Non Admin account can not revoke kyc role to an account', async function() {
+        // Non Admin revokes pause role : fail
+        await grantRole(
+            KYC_ROLE,
+            proxyAddress,
+            operatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
+        await expect(
+            revokeRole(
+                KYC_ROLE,
+                proxyAddress,
+                nonOperatorClient,
+                nonOperatorAccount,
+                nonOperatorIsE25519
+            )
+        ).to.eventually.be.rejectedWith(Error)
+
+        //Reset status
+        await revokeRole(
+            KYC_ROLE,
+            proxyAddress,
+            operatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
+    })    
+
+    it("An account without kyc role can't grant kyc to an account for a token", async function() {
+        await expect(
+            grantKyc(proxyAddress,
+                     operatorAccount,
+                     operatorIsE25519,
+                     nonOperatorClient)
+        ).to.eventually.be.rejectedWith(Error)
+    })    
+
+    it("An account without kyc role can't revoke kyc to an account for a token", async function() {
+        await grantKyc(proxyAddress,
+                       operatorAccount,
+                       operatorIsE25519,
+                       operatorClient)
+        
+        await expect(
+            revokeKyc(proxyAddress,
+                      operatorAccount,
+                      operatorIsE25519,
+                      nonOperatorClient)
+        ).to.eventually.be.rejectedWith(Error)
+
+        //Reset kyc
+        await revokeKyc(proxyAddress,
+                        operatorAccount,
+                        operatorIsE25519,
+                        operatorClient)
+    })    
 
     it('An account without kyc can not cash in', async () => {
         const amount = BigNumber.from(1).mul(TokenFactor)
