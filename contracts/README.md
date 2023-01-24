@@ -48,6 +48,7 @@ The remaining smart contracts have been implemented for this specific project:
    - `CashIn.sol`: abstract contract implementing the *cash-in* operation (mint new tokens and assign them to an account, increases the total supply).
    - `Deletable.sol`: abstract contract implementing the *delete* operation (deletes the satble coin's underlying token. **WARNING** : THIS OPERATION CANNOT BE ROLLED-BACK AND A STABLECOIN WITHOUT AN UNDERLYING TOKEN WILL NOT WORK ANYMORE).
    - `Freezable.sol`: abstract contract implementing the *freeze* and *unfreeze* operations (if an account is frozen, it will not be able to operate with the stable coin until unfrozen).
+   - `KYC.sol`: abstract contract implementing the *grantKyc* and *revokeKyc* operations to grant or revoke KYC flag to an Hedera account for the stable coin.
    - `Pausable.sol`: abstract contract implementing the *pause* and *unpause* operations (if a token is paused, nobody will be able to operate with it until the token is unpaused).  
    - `Rescatbale.sol`: abstract contract implementing the *rescue* operation (transfer tokens from the treasury to another account).
    - `Reserve.sol`: abstract contract implementing the reserve for the stable coin (checking against the current reserve before minting, changing the reserve data feed, etc.).
@@ -134,6 +135,7 @@ Typescript test files can be foud in the `test` folder:
 - `burnable.ts`: Tests the stable coin burn functionality.
 - `deletable.ts`: Tests the stable coin delete functionality.
 - `freezable.ts`: Tests the stable coin freeze/unfreeze functionality.
+- `KYC.ts`: Tests the KYC grant/revoke functionality to account for stable coins.
 - `HederaERC20.ts`: Tests the HederaERC20 functionality.
 - `pausable.ts`: Tests the stable coin pause functionality.
 - `rescatable.ts`: Tests the stable coin rescue functionality.

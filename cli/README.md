@@ -8,15 +8,27 @@
 
 ### Table of contents
 
-- [Overview](#overview)
-- [Installation](#installation)
+- [Hedera Accelerator Stablecoin - Command Line Interface (CLI)](#hedera-accelerator-stablecoin---command-line-interface-cli)
+    - [Table of contents](#table-of-contents)
+  - [Overview](#overview)
+  - [Installation](#installation)
 - [Build](#build)
+  - [Pre-requirements](#pre-requirements)
+  - [Steps](#steps)
 - [Quickstart](#quickstart)
   - [Starting the CLI](#starting-the-cli)
 - [Usage](#usage)
   - [Creating a config file](#creating-a-config-file)
   - [CLI flow](#cli-flow)
+    - [Main menu](#main-menu)
+      - [Create a new Stable Coin](#create-a-new-stable-coin)
+      - [Manage imported tokens](#manage-imported-tokens)
+      - [Operate with Stable Coin](#operate-with-stable-coin)
+      - [List Stable Coins](#list-stable-coins)
+      - [Configuration](#configuration)
 - [Testing](#testing)
+  - [Jest](#jest)
+  - [Run](#run)
 - [Contributing](#contributing)
 - [Code of Conduct](#code-of-conduct)
 - [License](#license)
@@ -223,6 +235,9 @@ https://user-images.githubusercontent.com/102601367/205074235-32145a1b-4ce0-4913
 - **Unfreeze**: Unfreeze an account. If an account is unfrozen it will be able to transfer tokens again.
 
 https://user-images.githubusercontent.com/102601367/205074293-73156a99-fc65-41ba-9a45-0be08ca5837e.mov
+
+- **Grant KYC**: Grant KYC to an account. If an account is marked as KYC granted, it will be able to be involved in any tokens transfer.
+- **Revoke KYC**: Revoke KYC to an account. If an account is not marked as KYC Granted, it will no be able to be involved in any tokens transfer.
 
 - **Role management**: Administrators of a stable coin can manage user roles from this menu, the will have the posibility to give, revoke and edit roles.
 

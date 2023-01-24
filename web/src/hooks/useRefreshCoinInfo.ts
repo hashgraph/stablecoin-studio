@@ -1,24 +1,34 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { GetStableCoinDetailsRequest } from 'hedera-stable-coin-sdk';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import SDKService from '../services/SDKService';
 import { walletActions, SELECTED_WALLET_COIN } from '../store/slices/walletSlice';
 
-export const useRefreshCoinInfo = async (): Promise<void> => {
+export const useRefreshCoinInfo = (): boolean => {
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
+	const [lastId, setLastId] = useState<string>();
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const dispatch = useDispatch();
 	useEffect(() => {
-		getStableCoinDetails();
-	}, [selectedStableCoin?.deleted, selectedStableCoin?.paused, selectedStableCoin?.tokenId]);
+		if (!lastId || lastId !== selectedStableCoin?.tokenId?.toString()) {
+			getStableCoinDetails();
+		}
+	}, [
+		selectedStableCoin?.deleted,
+		selectedStableCoin?.paused,
+		selectedStableCoin?.tokenId?.toString(),
+	]);
 
 	const getStableCoinDetails = async () => {
+		setIsLoading(true);
 		const resp = await SDKService.getStableCoinDetails(
 			new GetStableCoinDetailsRequest({
 				id: selectedStableCoin?.tokenId?.toString() ?? '',
 			}),
 		);
+		setLastId(resp?.tokenId?.toString());
 		dispatch(
 			walletActions.setSelectedStableCoin({
 				tokenId: resp?.tokenId?.toString(),
@@ -44,6 +54,8 @@ export const useRefreshCoinInfo = async (): Promise<void> => {
 				reserveAddress: resp?.reserveAddress?.toString(),
 			}),
 		);
+		setIsLoading(false);
 	};
-	// return stableCoinDetails;
+
+	return isLoading;
 };
