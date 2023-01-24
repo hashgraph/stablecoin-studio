@@ -239,6 +239,8 @@ https://user-images.githubusercontent.com/102601367/205074293-73156a99-fc65-41ba
 - **Grant KYC**: Grant KYC to an account. If an account is marked as KYC granted, it will be able to be involved in any tokens transfer.
 - **Revoke KYC**: Revoke KYC to an account. If an account is not marked as KYC Granted, it will no be able to be involved in any tokens transfer.
 
+https://user-images.githubusercontent.com/108128685/214292138-c5d44bc6-3fc1-4995-99af-a9a8a2c9dec5.mov
+
 - **Role management**: Administrators of a stable coin can manage user roles from this menu, the will have the posibility to give, revoke and edit roles.
 
   - The available roles are:
