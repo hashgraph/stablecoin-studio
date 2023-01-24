@@ -23,9 +23,7 @@ const Operations = () => {
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const accountId = useSelector(SELECTED_WALLET_PAIRED_ACCOUNTID);
-	const capabilities = useSelector(
-		SELECTED_WALLET_CAPABILITIES,
-	);
+	const capabilities = useSelector(SELECTED_WALLET_CAPABILITIES);
 
 	const [disabledFeatures, setDisabledFeatures] = useState({
 		cashIn: false,
@@ -70,50 +68,64 @@ const Operations = () => {
 		}
 
 		function getAccessByOperation(operation: Operation): Access | undefined {
-			return capabilities?.capabilities.filter((capability) => {
-				return (capability.operation === operation);
-			})[0].access ?? undefined;
+			return (
+				capabilities?.capabilities.filter((capability) => {
+					return capability.operation === operation;
+				})[0].access ?? undefined
+			);
 		}
 
 		const operations = capabilities?.capabilities.map((x) => x.operation);
 		const areDisabled = {
 			cashIn: !isExternalToken
 				? !operations?.includes(Operation.CASH_IN)
-				: (!operations?.includes(Operation.CASH_IN) ||
-				  (operations?.includes(Operation.CASH_IN) && ((getAccessByOperation(Operation.CASH_IN) !== Access.HTS) && 
-				  !roles.includes(StableCoinRole.CASHIN_ROLE)))),
+				: !operations?.includes(Operation.CASH_IN) ||
+				  (operations?.includes(Operation.CASH_IN) &&
+						getAccessByOperation(Operation.CASH_IN) !== Access.HTS &&
+						!roles.includes(StableCoinRole.CASHIN_ROLE)),
 			burn: !isExternalToken
 				? !operations?.includes(Operation.BURN)
-				: (!operations?.includes(Operation.BURN) ||
-				(operations?.includes(Operation.BURN) && ((getAccessByOperation(Operation.BURN) !== Access.HTS) &&
-				!roles.includes(StableCoinRole.BURN_ROLE)))),
+				: !operations?.includes(Operation.BURN) ||
+				  (operations?.includes(Operation.BURN) &&
+						getAccessByOperation(Operation.BURN) !== Access.HTS &&
+						!roles.includes(StableCoinRole.BURN_ROLE)),
 			balance: false,
 			rescue: !isExternalToken
 				? !operations?.includes(Operation.RESCUE)
-				: (!operations?.includes(Operation.RESCUE) ||
-				(operations?.includes(Operation.RESCUE) && ((getAccessByOperation(Operation.RESCUE) !== Access.HTS) && 
-				!roles.includes(StableCoinRole.RESCUE_ROLE)))),
+				: !operations?.includes(Operation.RESCUE) ||
+				  (operations?.includes(Operation.RESCUE) &&
+						getAccessByOperation(Operation.RESCUE) !== Access.HTS &&
+						!roles.includes(StableCoinRole.RESCUE_ROLE)),
 			wipe: !isExternalToken
 				? !operations?.includes(Operation.WIPE)
-				: (!operations?.includes(Operation.WIPE) ||
-				(operations?.includes(Operation.WIPE) && ((getAccessByOperation(Operation.WIPE) !== Access.HTS) && 
-				!roles.includes(StableCoinRole.WIPE_ROLE)))),
+				: !operations?.includes(Operation.WIPE) ||
+				  (operations?.includes(Operation.WIPE) &&
+						getAccessByOperation(Operation.WIPE) !== Access.HTS &&
+						!roles.includes(StableCoinRole.WIPE_ROLE)),
 			freeze: !isExternalToken
 				? !operations?.includes(Operation.FREEZE)
-				: (!operations?.includes(Operation.FREEZE) ||
-				(operations?.includes(Operation.FREEZE) && ((getAccessByOperation(Operation.FREEZE) !== Access.HTS) &&
-				!roles.includes(StableCoinRole.FREEZE_ROLE)))),
+				: !operations?.includes(Operation.FREEZE) ||
+				  (operations?.includes(Operation.FREEZE) &&
+						getAccessByOperation(Operation.FREEZE) !== Access.HTS &&
+						!roles.includes(StableCoinRole.FREEZE_ROLE)),
 			pause: !isExternalToken
 				? !operations?.includes(Operation.PAUSE)
-				: (!operations?.includes(Operation.PAUSE) ||
-				(operations?.includes(Operation.PAUSE) && ((getAccessByOperation(Operation.PAUSE) !== Access.HTS) &&
-				!roles.includes(StableCoinRole.PAUSE_ROLE)))),
+				: !operations?.includes(Operation.PAUSE) ||
+				  (operations?.includes(Operation.PAUSE) &&
+						getAccessByOperation(Operation.PAUSE) !== Access.HTS &&
+						!roles.includes(StableCoinRole.PAUSE_ROLE)),
 			delete: !isExternalToken
 				? !operations?.includes(Operation.DELETE)
-				: (!operations?.includes(Operation.DELETE) ||
-				(operations?.includes(Operation.DELETE) && ((getAccessByOperation(Operation.DELETE) !== Access.HTS) && 
-				!roles.includes(StableCoinRole.DELETE_ROLE)))),
-								
+				: !operations?.includes(Operation.DELETE) ||
+				  (operations?.includes(Operation.DELETE) &&
+						getAccessByOperation(Operation.DELETE) !== Access.HTS &&
+						!roles.includes(StableCoinRole.DELETE_ROLE)),
+			kyc: !isExternalToken
+				? !operations?.includes(Operation.GRANT_KYC)
+				: !operations?.includes(Operation.GRANT_KYC) ||
+				  (operations?.includes(Operation.GRANT_KYC) &&
+						getAccessByOperation(Operation.GRANT_KYC) !== Access.HTS &&
+						!roles.includes(StableCoinRole.KYC_ROLE)),
 		};
 		setDisabledFeatures(areDisabled);
 	};
