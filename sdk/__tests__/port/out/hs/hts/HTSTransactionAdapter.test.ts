@@ -882,6 +882,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 			StableCoinRole.PAUSE_ROLE,
 			StableCoinRole.FREEZE_ROLE,
 			StableCoinRole.DELETE_ROLE,
+			StableCoinRole.KYC_ROLE,
 		]);
 	}, 10000);
 

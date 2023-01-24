@@ -45,7 +45,7 @@ import { ContractId as HContractId } from '@hashgraph/sdk';
 import StableCoinService from '../../../../src/app/service/StableCoinService.js';
 import { RESERVE_DECIMALS } from '../../../../src/domain/context/reserve/Reserve.js';
 
-describe('🧪 [BUILDER] RPCTransactionBuilder', () => {
+describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 	let stableCoinCapabilitiesHTS: StableCoinCapabilities;
 	let stableCoinCapabilitiesSC: StableCoinCapabilities;
 
