@@ -174,6 +174,18 @@ const Operations = () => {
 			isDisabled: disabledFeatures?.freeze,
 		},
 		{
+			icon: 'IdentificationCard',
+			route: NamedRoutes.GrantKyc,
+			title: t('grantKycOperation'),
+			isDisabled: disabledFeatures?.kyc,
+		},
+		{
+			icon: 'IdentificationCard',
+			route: NamedRoutes.RevokeKyc,
+			title: t('revokeKycOperation'),
+			isDisabled: disabledFeatures?.kyc,
+		},
+		{
 			icon: 'Warning',
 			route: NamedRoutes.DangerZone,
 			title: t('dangerZoneOperation'),

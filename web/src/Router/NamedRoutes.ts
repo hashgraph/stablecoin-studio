@@ -17,6 +17,8 @@ export enum NamedRoutes {
 	Wipe = 'wipe',
 	ImportedToken = 'importedToken',
 	DangerZone = 'dangerZone',
+	GrantKyc = 'grantKyc',
+	RevokeKyc = 'revokeKyc',
 	Freeze = 'freeze',
 	Unfreeze = 'unfreeze',
 	ProofOfReserve = 'proofOfReserve',

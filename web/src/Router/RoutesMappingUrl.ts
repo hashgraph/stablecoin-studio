@@ -25,4 +25,6 @@ export const RoutesMappingUrl: Record<NamedRoutes, string> = {
 	[NamedRoutes.Freeze]: '/operations/freeze',
 	[NamedRoutes.Unfreeze]: '/operations/unfreeze',
 	[NamedRoutes.ProofOfReserve]: '/proofOfReserve',
+	[NamedRoutes.GrantKyc]: '/operations/grant-kyc',
+	[NamedRoutes.RevokeKyc]: '/operations/revoke-kyc',
 };

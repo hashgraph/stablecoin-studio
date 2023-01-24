@@ -33,6 +33,8 @@ import DangerZoneOperations from '../views/Operations/DangerZone';
 import type { EventParameter, WalletEvent } from 'hedera-stable-coin-sdk';
 import { LoggerTransports, SDK, ConnectionState } from 'hedera-stable-coin-sdk';
 import StableCoinProof from '../views/StableCoinProof';
+import GrantKycOperation from '../views/Operations/GrantKyc';
+import RevokeKycOperation from '../views/Operations/RevokeKyc';
 
 const LoginOverlayRoute = ({ show }: { show: boolean }) => {
 	return (
@@ -148,6 +150,8 @@ const Router = () => {
 								/>
 								<Route path={RoutesMappingUrl.operations} element={<Operations />} />
 								<Route path={RoutesMappingUrl.dangerZone} element={<DangerZoneOperations />} />
+								<Route path={RoutesMappingUrl.grantKyc} element={<GrantKycOperation />} />
+								<Route path={RoutesMappingUrl.revokeKyc} element={<RevokeKycOperation />} />
 								<Route
 									path={RoutesMappingUrl.revokeRole}
 									element={<HandleRoles action={actions.revoke} />}
@@ -159,8 +163,6 @@ const Router = () => {
 								<Route path={RoutesMappingUrl.roles} element={<Roles />} />
 								<Route path={RoutesMappingUrl.stableCoinDetails} element={<StableCoinDetails />} />
 								<Route path={RoutesMappingUrl.proofOfReserve} element={<StableCoinProof />} />
-								
-								
 							</>
 						)}
 						<Route path={RoutesMappingUrl.stableCoinCreation} element={<StableCoinCreation />} />
@@ -170,7 +172,6 @@ const Router = () => {
 							element={<StableCoinNotSelected />}
 						/>
 						<Route path='*' element={<Navigate to={RoutesMappingUrl.stableCoinNotSelected} />} />
-						
 					</Route>
 				</Routes>
 			) : (
