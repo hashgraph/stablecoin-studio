@@ -6,7 +6,7 @@ import {
 	CapabilitiesRequest,
 	ConnectRequest,
 	InitializationRequest,
-	ReserveDataFeed
+	ReserveDataFeed,
 } from 'hedera-stable-coin-sdk';
 import type {
 	WalletEvent,
@@ -37,12 +37,12 @@ import type {
 	GetSupplierAllowanceRequest,
 	CheckSupplierLimitRequest,
 	RequestAccount,
-
 	ReserveViewModel,
 	GetReserveAmountRequest,
 	GetReserveAddressRequest,
 	UpdateReserveAddressRequest,
-	UpdateReserveAmountRequest
+	UpdateReserveAmountRequest,
+	KYCRequest,
 } from 'hedera-stable-coin-sdk';
 
 export type StableCoinListRaw = Array<Record<'id' | 'symbol', string>>;
@@ -215,6 +215,14 @@ export class SDKService {
 
 	public static async updateReserveAmount(data: UpdateReserveAmountRequest) {
 		return await ReserveDataFeed.updateReserveAmount(data);
+	}
+
+	public static async grantKyc(data: KYCRequest) {
+		return await StableCoin.grantKyc(data);
+	}
+
+	public static async revokeKyc(data: KYCRequest) {
+		return await StableCoin.revokeKyc(data);
 	}
 }
 
