@@ -223,7 +223,6 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				res,
 				'Deployed',
 			);
-
 		} catch (error) {
 			LogService.logError(error);
 			throw new SigningError(
@@ -957,7 +956,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
-	async grantKyc(coin: StableCoinCapabilities, targetId: HederaId): Promise<TransactionResponse<boolean, Error>> {
+	async grantKyc(
+		coin: StableCoinCapabilities,
+		targetId: HederaId,
+	): Promise<TransactionResponse<boolean, Error>> {
 		try {
 			if (!coin.coin.evmProxyAddress?.toString())
 				throw new TransactionResponseError({
@@ -965,16 +967,13 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
 				});
 
-			return new TransactionResponse(
-				undefined,
-				// await HederaERC20__factory.connect(
-				// 	coin.coin.evmProxyAddress?.toString(),
-				// 	this.signerOrProvider,
-				// ).grantKyc(
-				// 	await(await this.accountToEvmAddress(targetId))
-				// 		.toString()
-				// 		.toString(),
-				// ),
+			return RPCTransactionResponseAdapter.manageResponse(
+				await HederaERC20__factory.connect(
+					coin.coin.evmProxyAddress?.toString(),
+					this.signerOrProvider,
+				).grantKyc(
+					(await this.accountToEvmAddress(targetId)).toString(),
+				),
 			);
 		} catch (error) {
 			LogService.logError(error);
@@ -985,8 +984,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			});
 		}
 	}
-	
-	async revokeKyc(coin: StableCoinCapabilities, targetId: HederaId): Promise<TransactionResponse<boolean, Error>> {
+
+	async revokeKyc(
+		coin: StableCoinCapabilities,
+		targetId: HederaId,
+	): Promise<TransactionResponse<boolean, Error>> {
 		try {
 			if (!coin.coin.evmProxyAddress?.toString())
 				throw new TransactionResponseError({
@@ -994,16 +996,13 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
 				});
 
-			return new TransactionResponse(
-				undefined,
-				// await HederaERC20__factory.connect(
-				// 	coin.coin.evmProxyAddress?.toString(),
-				// 	this.signerOrProvider,
-				// ).revokeKyc(
-				// 	await(await this.accountToEvmAddress(targetId))
-				// 		.toString()
-				// 		.toString(),
-				// ),
+			return RPCTransactionResponseAdapter.manageResponse(
+				await HederaERC20__factory.connect(
+					coin.coin.evmProxyAddress?.toString(),
+					this.signerOrProvider,
+				).revokeKyc(
+					(await this.accountToEvmAddress(targetId)).toString(),
+				),
 			);
 		} catch (error) {
 			LogService.logError(error);
