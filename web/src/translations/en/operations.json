@@ -1,63 +1,65 @@
 {
-    "title": "Operations",
-    "subtitle": "Choose an operation",
-    "cashInOperation": "Cash in",
-    "wipeOperation": "Wipe",
-    "rescueOperation": "Rescue",
-    "burnOperation": "Burn",
-    "dangerZoneOperation":"Danger Zone",
-    "getBalanceOperation": "Get balance",
-    "modalLoadingTitle": "Loading",
-    "modalSuccessTitle": "Operation successfully completed",
-    "modalSuccessDesc": "You can follow the order in the list of operations.",
-    "modalErrorTitle": "An error occurred",
-    "modalErrorDesc": "Operation failed, please try again later.",
-    "details": {
-        "title": "Stable coin details",
-        "basicTitle": "Basic details",
-        "optionalTitle": "Optional details",
-        "name": "Name",
-        "symbol": "Symbol",
-        "decimals": "Decimals",
-        "initialSupply": "Initial supply",
-        "totalSupply": "Total supply",
-        "maxSupply": "Max supply",
-        "supplyType": "Supply type",
-        "infinite": "Infinite",
-        "finite": "Finite"
-    },
-    "dangerZone": {
-        "pauseOperation": "Pause",
-        "unpauseOperation": "Unpause",
-        "deleteOperation": "Delete"
-    },
-    "freezeOperation": "Freeze account",
-    "unfreezeOperation": "Unfreeze account",
-    "pause":{
-        "title": "Pause",
-        "modalSuccessTitle": "Operation successfully completed",
-        "modalSuccessDesc": "Pause successful",
-        "modalAction": {
-            "accept": "Pause",
-            "subtitle": "Are you sure you want to continue with the pause operation?"
-        }
-    },
-    "unpause":{
-        "title": "Unpause",
-        "modalSuccessTitle": "Operation successfully completed",
-        "modalSuccessDesc": "Unpause successful",
-        "modalAction": {
-            "accept": "Unpause",
-            "subtitle": "Are you sure you want to continue with the unpause operation?"
-        }
-    },
-    "delete":{
-        "title": "Delete",
-        "modalSuccessTitle": "Operation successfully completed",
-        "modalSuccessDesc": "Delete successful",
-        "modalAction": {
-            "accept": "Delete",
-            "subtitle": "Are you sure you want to continue with the delete operation?"
-        }
-    }
+	"title": "Operations",
+	"subtitle": "Choose an operation",
+	"cashInOperation": "Cash in",
+	"wipeOperation": "Wipe",
+	"rescueOperation": "Rescue",
+	"burnOperation": "Burn",
+	"dangerZoneOperation": "Danger Zone",
+	"getBalanceOperation": "Get balance",
+	"grantKycOperation": "Grant KYC",
+	"revokeKycOperation": "Revoke KYC",
+	"modalLoadingTitle": "Loading",
+	"modalSuccessTitle": "Operation successfully completed",
+	"modalSuccessDesc": "You can follow the order in the list of operations.",
+	"modalErrorTitle": "An error occurred",
+	"modalErrorDesc": "Operation failed, please try again later.",
+	"details": {
+		"title": "Stable coin details",
+		"basicTitle": "Basic details",
+		"optionalTitle": "Optional details",
+		"name": "Name",
+		"symbol": "Symbol",
+		"decimals": "Decimals",
+		"initialSupply": "Initial supply",
+		"totalSupply": "Total supply",
+		"maxSupply": "Max supply",
+		"supplyType": "Supply type",
+		"infinite": "Infinite",
+		"finite": "Finite"
+	},
+	"dangerZone": {
+		"pauseOperation": "Pause",
+		"unpauseOperation": "Unpause",
+		"deleteOperation": "Delete"
+	},
+	"freezeOperation": "Freeze account",
+	"unfreezeOperation": "Unfreeze account",
+	"pause": {
+		"title": "Pause",
+		"modalSuccessTitle": "Operation successfully completed",
+		"modalSuccessDesc": "Pause successful",
+		"modalAction": {
+			"accept": "Pause",
+			"subtitle": "Are you sure you want to continue with the pause operation?"
+		}
+	},
+	"unpause": {
+		"title": "Unpause",
+		"modalSuccessTitle": "Operation successfully completed",
+		"modalSuccessDesc": "Unpause successful",
+		"modalAction": {
+			"accept": "Unpause",
+			"subtitle": "Are you sure you want to continue with the unpause operation?"
+		}
+	},
+	"delete": {
+		"title": "Delete",
+		"modalSuccessTitle": "Operation successfully completed",
+		"modalSuccessDesc": "Delete successful",
+		"modalAction": {
+			"accept": "Delete",
+			"subtitle": "Are you sure you want to continue with the delete operation?"
+		}
+	}
 }
