@@ -8,6 +8,7 @@ import TooltipCopy from '../../components/TooltipCopy';
 import { SELECTED_WALLET_ACCOUNT_INFO, SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
 import { formatShortKey } from '../../utils/inputHelper';
 import { useRefreshCoinInfo } from '../../hooks/useRefreshCoinInfo';
+import AwaitingWalletSignature from '../../components/AwaitingWalletSignature';
 
 const StableCoinDetails = () => {
 	const { t } = useTranslation('stableCoinDetails');
@@ -15,7 +16,7 @@ const StableCoinDetails = () => {
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const account = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 
-	useRefreshCoinInfo();
+	const isLoading = useRefreshCoinInfo();
 
 	const renderKeys = ({ key }: { key: any }) => {
 		if (!key) return t('none').toUpperCase();
@@ -149,13 +150,14 @@ const StableCoinDetails = () => {
 
 	return (
 		<BaseContainer title={t('title')}>
-			<Flex
-				justify='center'
-				p={{ base: 4, md: '128px' }}
-				pt={{ base: 4, lg: 14 }}
-				overflowY='scroll'
-			>
-				{selectedStableCoin && (
+			{isLoading && <AwaitingWalletSignature />}
+			{selectedStableCoin && !isLoading && (
+				<Flex
+					justify='center'
+					p={{ base: 4, md: '128px' }}
+					pt={{ base: 4, lg: 14 }}
+					overflowY='scroll'
+				>
 					<Box flex={1} maxW='563px'>
 						<DetailsReview
 							title={t('subtitle')}
@@ -164,8 +166,8 @@ const StableCoinDetails = () => {
 							details={details}
 						/>
 					</Box>
-				)}
-			</Flex>
+				</Flex>
+			)}
 		</BaseContainer>
 	);
 };

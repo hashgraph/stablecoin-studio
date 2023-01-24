@@ -17,6 +17,7 @@ import type { IExternalToken } from '../interfaces/IExternalToken';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useRefreshCoinInfo } from '../hooks/useRefreshCoinInfo';
 import { Access, Operation, StableCoinRole } from 'hedera-stable-coin-sdk';
+import AwaitingWalletSignature from '../components/AwaitingWalletSignature';
 
 const Operations = () => {
 	const { t } = useTranslation('operations');
@@ -37,7 +38,7 @@ const Operations = () => {
 		delete: false,
 	});
 
-	useRefreshCoinInfo();
+	const isLoading = useRefreshCoinInfo();
 
 	useEffect(() => {
 		if (selectedStableCoin) {
@@ -183,12 +184,15 @@ const Operations = () => {
 
 	return (
 		<BaseContainer title={t('title')}>
-			<Box p={{ base: 4, md: '128px' }}>
-				<Heading fontSize='20px' fontWeight='600' mb={14} data-testid='subtitle'>
-					{t('subtitle')}
-				</Heading>
-				<GridDirectAccess directAccesses={directAccesses} />
-			</Box>
+			{isLoading && <AwaitingWalletSignature />}
+			{!isLoading && (
+				<Box p={{ base: 4, md: '128px' }}>
+					<Heading fontSize='20px' fontWeight='600' mb={14} data-testid='subtitle'>
+						{t('subtitle')}
+					</Heading>
+					<GridDirectAccess directAccesses={directAccesses} />
+				</Box>
+			)}
 		</BaseContainer>
 	);
 };
