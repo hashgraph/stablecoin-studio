@@ -85,12 +85,12 @@ const CashInOperation = () => {
 						<Stack as='form' spacing={6} maxW='520px'>
 							<InputController
 								rules={{
-									required: t(`global:validations.required`),
+									required: t(`global:validations.required`)!,
 									validate: {
 										validDecimals: (value: string) => {
 											return (
 												validateDecimalsString(value, decimals) ||
-												t('global:validations.decimalsValidation')
+												t('global:validations.decimalsValidation')!
 											);
 										},
 										validation: (value: string) => {
@@ -103,12 +103,12 @@ const CashInOperation = () => {
 								isRequired
 								control={control}
 								name={'amount'}
-								label={t('cashIn:amountLabel')}
-								placeholder={t('cashIn:amountPlaceholder')}
+								label={t('cashIn:amountLabel')!}
+								placeholder={t('cashIn:amountPlaceholder')!}
 							/>
 							<InputController
 								rules={{
-									required: t('global:validations.required'),
+									required: t('global:validations.required')!,
 									validate: {
 										validation: (value: string) => {
 											request.targetId = value;
@@ -120,8 +120,8 @@ const CashInOperation = () => {
 								isRequired
 								control={control}
 								name='destinationAccount'
-								placeholder={t('cashIn:destinationAccountPlaceholder')}
-								label={t('cashIn:destinationAccountLabel')}
+								placeholder={t('cashIn:destinationAccountPlaceholder')!}
+								label={t('cashIn:destinationAccountLabel')!}
 							/>
 						</Stack>
 					</>

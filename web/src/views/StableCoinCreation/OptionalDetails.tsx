@@ -86,10 +86,10 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 						isRequired
 						control={control}
 						name={'initialSupply'}
-						label={t('stableCoinCreation:optionalDetails.initialSupply')}
+						label={t('stableCoinCreation:optionalDetails.initialSupply')!}
 						placeholder={t('stableCoinCreation:optionalDetails.placeholder', {
 							placeholder: t('stableCoinCreation:optionalDetails.initialSupply'),
-						})}
+						})!}
 						onChangeAux={handleResetMaxSupply}
 					/>
 					<SelectController
@@ -106,7 +106,7 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 					{isSupplyTypeFinite && (
 						<InputController
 							rules={{
-								required: t(`global:validations.required`),
+								required: t(`global:validations.required`)!,
 								validate: {
 									validation: (value: string) => {
 										request.maxSupply = value;
@@ -118,15 +118,15 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 							isRequired
 							control={control}
 							name={'maxSupply'}
-							label={t('stableCoinCreation:optionalDetails.maxSupply')}
+							label={t('stableCoinCreation:optionalDetails.maxSupply')!}
 							placeholder={t('stableCoinCreation:optionalDetails.placeholder', {
 								placeholder: t('stableCoinCreation:optionalDetails.maxSupply'),
-							})}
+							})!}
 						/>
 					)}
 					<InputNumberController
 						rules={{
-							required: t(`global:validations.required`),
+							required: t(`global:validations.required`)!,
 							validate: {
 								validation: (value: string) => {
 									request.decimals = value;
@@ -138,10 +138,10 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 						isRequired
 						control={control}
 						name={'decimals'}
-						label={t('stableCoinCreation:optionalDetails.decimals')}
+						label={t('stableCoinCreation:optionalDetails.decimals')!}
 						placeholder={t('stableCoinCreation:optionalDetails.placeholder', {
 							placeholder: t('stableCoinCreation:optionalDetails.decimals'),
-						})}
+						})!}
 						maxValue={18}
 						initialValue={6}
 					/>

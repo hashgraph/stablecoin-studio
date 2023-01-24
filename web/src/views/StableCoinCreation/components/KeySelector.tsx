@@ -86,7 +86,7 @@ const KeySelector = ({ control, name, label, request }: KeySelectorProps) => {
 			{isOtherKeyOptionSelected?.value === OTHER_KEY_VALUE && (
 				<InputController
 					rules={{
-						required: t(`global:validations.required`),
+						required: t(`global:validations.required`)!,
 						validate: {
 							validation: (value: string) => {
 								// @ts-ignore
@@ -100,9 +100,9 @@ const KeySelector = ({ control, name, label, request }: KeySelectorProps) => {
 					isRequired
 					control={control}
 					name={name + 'Other'}
-					placeholder={t('stableCoinCreation:managementPermissions.introduce', {
+					 placeholder={t('stableCoinCreation:managementPermissions.introduce', {
 						name: label,
-					})}
+					 })!}
 				/>
 			)}
 		</VStack>

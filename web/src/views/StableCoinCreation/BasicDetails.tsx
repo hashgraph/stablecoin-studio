@@ -34,7 +34,7 @@ const BasicDetails = (props: BasicDetailsProps) => {
 				<Stack as='form' spacing={6}>
 					<InputController
 						rules={{
-							required: t(`global:validations.required`),
+							required: t(`global:validations.required`)!,
 							validate: {
 								validation: (value: string) => {
 									request.name = value;
@@ -46,12 +46,12 @@ const BasicDetails = (props: BasicDetailsProps) => {
 						isRequired
 						control={control}
 						name={'name'}
-						label={t('stableCoinCreation:basicDetails.name')}
-						placeholder={t('stableCoinCreation:basicDetails.namePlaceholder')}
+						label={t('stableCoinCreation:basicDetails.name')!}
+						placeholder={t('stableCoinCreation:basicDetails.namePlaceholder')!}
 					/>
 					<InputController
 						rules={{
-							required: t(`global:validations.required`),
+							required: t(`global:validations.required`)!,
 							validate: {
 								validation: (value: string) => {
 									request.symbol = value;
@@ -63,15 +63,15 @@ const BasicDetails = (props: BasicDetailsProps) => {
 						isRequired
 						control={control}
 						name={'symbol'}
-						label={t('stableCoinCreation:basicDetails.symbol')}
-						placeholder={t('stableCoinCreation:basicDetails.symbolPlaceholder')}
+						label={t('stableCoinCreation:basicDetails.symbol')!}
+						placeholder={t('stableCoinCreation:basicDetails.symbolPlaceholder')!}
 					/>
 					<InputController
 						isRequired
 						control={control}
 						name={'autorenewAccount'}
-						label={t('stableCoinCreation:basicDetails.autorenewAccount')}
-						placeholder={t('stableCoinCreation:basicDetails.autorenewAccountPlaceholder')}
+						label={t('stableCoinCreation:basicDetails.autorenewAccount')!}
+						placeholder={t('stableCoinCreation:basicDetails.autorenewAccountPlaceholder')!}
 						value={pairingData ? pairingData.account?.id.toString() : ''}
 						isReadOnly
 					/>

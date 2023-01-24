@@ -84,7 +84,7 @@ const GetBalanceOperation = () => {
 						<Stack as='form' spacing={6} maxW='520px'>
 							<InputController
 								rules={{
-									required: t('global:validations.required'),
+									required: t('global:validations.required')!,
 									validate: {
 										validation: (value: string) => {
 											request.targetId = value;
@@ -96,8 +96,8 @@ const GetBalanceOperation = () => {
 								isRequired
 								control={control}
 								name='targetAccount'
-								placeholder={t('getBalance:accountPlaceholder')}
-								label={t('getBalance:accountLabel')}
+								placeholder={t('getBalance:accountPlaceholder')!}
+								label={t('getBalance:accountLabel')!}
 							/>
 						</Stack>
 					</>

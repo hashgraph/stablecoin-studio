@@ -83,7 +83,7 @@ const UnfreezeOperation = () => {
 						<Stack as='form' spacing={6} maxW='520px'>
 							<InputController
 								rules={{
-									required: t('global:validations.required'),
+									required: t('global:validations.required')!,
 									validate: {
 										validation: (value: string) => {
 											request.targetId = value;
@@ -95,8 +95,8 @@ const UnfreezeOperation = () => {
 								isRequired
 								control={control}
 								name='targetAccount'
-								placeholder={t('unfreeze:accountPlaceholder')}
-								label={t('unfreeze:accountLabel')}
+								placeholder={t('unfreeze:accountPlaceholder')!}
+								label={t('unfreeze:accountLabel')!}
 							/>
 						</Stack>
 					</>

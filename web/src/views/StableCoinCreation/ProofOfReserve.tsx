@@ -78,7 +78,7 @@ const ProofOfReserve = (props: ProofOfReserveProps) => {
 					<HStack pt={'15px'}>
 						<InputController
 							rules={{
-								required: t(`global:validations.required`),
+								required: t(`global:validations.required`)!,
 								validate: {
 									validation: (value: string) => {
 										request.createReserve = proofOfReserve;
@@ -91,8 +91,8 @@ const ProofOfReserve = (props: ProofOfReserveProps) => {
 							isRequired
 							control={control}
 							name={'reserveAddress'}
-							label={t('stableCoinCreation:proofOfReserve.dataFeed')}
-							placeholder={t('stableCoinCreation:proofOfReserve.dataFeedPlaceholder')}
+							label={t('stableCoinCreation:proofOfReserve.dataFeed')!}
+							placeholder={t('stableCoinCreation:proofOfReserve.dataFeedPlaceholder')!}
 						/>
 					</HStack>
 				)}
@@ -101,7 +101,7 @@ const ProofOfReserve = (props: ProofOfReserveProps) => {
 					<HStack pt={'15px'}>
 						<InputController
 							rules={{
-								required: t(`global:validations.required`),
+								required: t(`global:validations.required`)!,
 								validate: {
 									validation: (value: string) => {
 										request.createReserve = proofOfReserve;
@@ -114,8 +114,8 @@ const ProofOfReserve = (props: ProofOfReserveProps) => {
 							isRequired
 							control={control}
 							name={'reserveInitialAmount'}
-							label={t('stableCoinCreation:proofOfReserve.initialSupply')}
-							placeholder={t('stableCoinCreation:proofOfReserve.initialSupply')}
+							label={t('stableCoinCreation:proofOfReserve.initialSupply')!}
+							placeholder={t('stableCoinCreation:proofOfReserve.initialSupply')!}
 						/>
 					</HStack>
 				)}

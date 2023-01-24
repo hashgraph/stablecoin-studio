@@ -65,18 +65,18 @@ const ImportedTokenInfo = (props: ImportedTokenInfoProps) => {
 				<Stack as='form' spacing={6}>
 					<InputController
 						rules={{
-							required: t(`global:validations.required`),
+							required: t(`global:validations.required`)!,
 							validate: {
 								validCoinId: (value: string) => {
-									return validateAccount(value) || t('global:validations.invalidCoinId');
+									return validateAccount(value) || t('global:validations.invalidCoinId')!;
 								},
 							},
 						}}
 						isRequired
 						control={control}
 						name={'stableCoinId'}
-						label={t('externalTokenInfo:externalTokenInfo.stableCoinId')}
-						placeholder={t('externalTokenInfo:externalTokenInfo.stableCoinIdPlaceholder')}
+						label={t('externalTokenInfo:externalTokenInfo.stableCoinId')!}
+						placeholder={t('externalTokenInfo:externalTokenInfo.stableCoinIdPlaceholder')!}
 					/>
 					<HStack mb={4}>
 						<Text fontSize='14px' fontWeight='400' lineHeight='17px'>

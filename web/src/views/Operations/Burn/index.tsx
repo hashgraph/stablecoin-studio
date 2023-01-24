@@ -82,12 +82,12 @@ const BurnOperation = () => {
 						<Stack as='form' spacing={6}>
 							<InputController
 								rules={{
-									required: t(`global:validations.required`),
+									required: t(`global:validations.required`)!,
 									validate: {
 										validDecimals: (value: string) => {
 											return (
 												validateDecimalsString(value, decimals) ||
-												t('global:validations.decimalsValidation')
+												t('global:validations.decimalsValidation')!
 											);
 										},
 										validation: (value: string) => {
@@ -101,8 +101,8 @@ const BurnOperation = () => {
 								isRequired
 								control={control}
 								name={'amount'}
-								label={t('burn:amountLabel')}
-								placeholder={t('burn:amountPlaceholder')}
+								label={t('burn:amountLabel')!}
+								placeholder={t('burn:amountPlaceholder')!}
 							/>
 						</Stack>
 					</>

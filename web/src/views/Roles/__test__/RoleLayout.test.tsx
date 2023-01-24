@@ -76,30 +76,30 @@ describe(`<${RoleLayout.name} />`, () => {
 		expect(children).toBeInTheDocument();
 	});
 
-	test('Confirm button call to onConfirm', () => {
+	test('Confirm button call to onConfirm',async () => {
 		const component = factoryComponent();
 
 		const confirmButton = component.getByTestId('confirm-btn');
-		userEvent.click(confirmButton);
+		await userEvent.click(confirmButton);
 		expect(defaultProps.onConfirm).toHaveBeenCalled();
 	});
 
-	test('Confirm button can be setted as disabled', () => {
+	test('Confirm button can be setted as disabled',async () => {
 		defaultProps.buttonConfirmEnable = false;
 		const component = factoryComponent();
 
 		const confirmButton = component.getByTestId('confirm-btn');
 		expect(confirmButton).toHaveAttribute('disabled');
-		userEvent.click(confirmButton);
+		await userEvent.click(confirmButton);
 		expect(defaultProps.onConfirm).not.toHaveBeenCalled();
 	});
 
-	test('Cancel button redirect to Roles view', () => {
+	test('Cancel button redirect to Roles view', async() => {
 		const component = factoryComponent();
 		const anything = expect.any(Function);
 
 		const cancelButton = component.getByTestId('cancel-btn');
-		userEvent.click(cancelButton);
+		await userEvent.click(cancelButton);
 		expect(RouterManager.to).toHaveBeenCalledWith(anything, 'roles');
 	});
 });

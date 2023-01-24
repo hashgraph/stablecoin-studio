@@ -223,7 +223,7 @@ const StableCoinProof = () => {
 								<InputController
 									control={control}
 									rules={{
-										required: t('global:validations.required'),
+										required: t('global:validations.required')!,
 										validate: {
 											validation: (value: string) => {
 												updateReserveAmountRequest.reserveAmount = value;
@@ -235,7 +235,7 @@ const StableCoinProof = () => {
 										},
 									}}
 									name={'updateReserveAmount'}
-									placeholder={t('proofOfReserve:updateReserveAmount.inputPlaceholder')}
+									placeholder={t('proofOfReserve:updateReserveAmount.inputPlaceholder')!}
 									isReadOnly={false}
 								/>
 							),
@@ -257,7 +257,7 @@ const StableCoinProof = () => {
 							input: (
 								<InputController
 									rules={{
-										required: t('global:validations.required'),
+										required: t('global:validations.required')!,
 										validate: {
 											validation: (value: string) => {
 												updateReserveAddressRequest.reserveAddress = value;
@@ -270,7 +270,7 @@ const StableCoinProof = () => {
 									}}
 									control={control}
 									name={'reserveAddress'}
-									placeholder={t('proofOfReserve:updateReserveAddress.inputPlaceholder')}
+									placeholder={t('proofOfReserve:updateReserveAddress.inputPlaceholder')!}
 								/>
 							),
 							button: (

@@ -81,12 +81,12 @@ const WipeOperation = () => {
 						<Stack as='form' spacing={6} maxW='520px'>
 							<InputController
 								rules={{
-									required: t(`global:validations.required`),
+									required: t(`global:validations.required`)!,
 									validate: {
 										validDecimals: (value: string) => {
 											return (
 												validateDecimalsString(value, decimals) ||
-												t('global:validations.decimalsValidation')
+												t('global:validations.decimalsValidation')!
 											);
 										},
 										validation: (value: string) => {
@@ -100,12 +100,12 @@ const WipeOperation = () => {
 								isRequired
 								control={control}
 								name={'amount'}
-								label={t('wipe:amountLabel')}
-								placeholder={t('wipe:amountPlaceholder')}
+								label={t('wipe:amountLabel')!}
+								placeholder={t('wipe:amountPlaceholder')!}
 							/>
 							<InputController
 								rules={{
-									required: t('global:validations.required'),
+									required: t('global:validations.required')!,
 									validate: {
 										validation: (value: string) => {
 											request.targetId = value;
@@ -117,8 +117,8 @@ const WipeOperation = () => {
 								isRequired
 								control={control}
 								name='destinationAccount'
-								placeholder={t('wipe:fromAccountPlaceholder')}
-								label={t('wipe:fromAccountLabel')}
+								placeholder={t('wipe:fromAccountPlaceholder')!}
+								label={t('wipe:fromAccountLabel')!}
 								onChangeAux={(e) => {
 									request.targetId = e.target.value;
 								}}

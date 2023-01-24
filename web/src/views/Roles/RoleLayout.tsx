@@ -153,7 +153,7 @@ const RoleLayout = (props: RoleLayoutProps) => {
 						<Stack as='form' spacing={6}>
 							<InputController
 								rules={{
-									required: t('global:validations.required'),
+									required: t('global:validations.required')!,
 									validate: {
 										validation: (value: string) => {
 											if (request) {
@@ -174,7 +174,7 @@ const RoleLayout = (props: RoleLayoutProps) => {
 							{roleRequest && (
 								<SelectController
 									rules={{
-										required: t('global:validations.required'),
+										required: t('global:validations.required')!,
 									}}
 									isRequired
 									control={control}
