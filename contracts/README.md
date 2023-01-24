@@ -50,7 +50,7 @@ The remaining smart contracts have been implemented for this specific project:
    - `Freezable.sol`: abstract contract implementing the *freeze* and *unfreeze* operations (if an account is frozen, it will not be able to operate with the stable coin until unfrozen).
    - `KYC.sol`: abstract contract implementing the *grantKyc* and *revokeKyc* operations to grant or revoke KYC flag to an Hedera account for the stable coin.
    - `Pausable.sol`: abstract contract implementing the *pause* and *unpause* operations (if a token is paused, nobody will be able to operate with it until the token is unpaused).  
-   - `Rescatbale.sol`: abstract contract implementing the *rescue* operation (transfer tokens from the treasury to another account).
+   - `Rescatable.sol`: abstract contract implementing the *rescue* operation (transfer tokens from the treasury to another account).
    - `Reserve.sol`: abstract contract implementing the reserve for the stable coin (checking against the current reserve before minting, changing the reserve data feed, etc.).
    - `Roles.sol`: Contains the definition of the roles that can be assigned for every stable coin.
    - `Supplieradmin.sol`: abstract contract implementing all the cashin role assignment and management (assigning/removing the role as well as setting, increasing and decreasing the cash-in limit).
@@ -134,11 +134,13 @@ Typescript test files can be foud in the `test` folder:
 
 - `burnable.ts`: Tests the stable coin burn functionality.
 - `deletable.ts`: Tests the stable coin delete functionality.
+- `deployFactory.ts`: Tests the stable coin factory deployment functionality.
 - `freezable.ts`: Tests the stable coin freeze/unfreeze functionality.
-- `KYC.ts`: Tests the KYC grant/revoke functionality to account for stable coins.
 - `HederaERC20.ts`: Tests the HederaERC20 functionality.
+- `KYC.ts`: Tests the KYC grant/revoke functionality to account for stable coins.
 - `pausable.ts`: Tests the stable coin pause functionality.
 - `rescatable.ts`: Tests the stable coin rescue functionality.
+- `reserve.ts`: Tests the stable coin reserve functionality.
 - `roles.ts`: Tests the stable coin roles functionality.
 - `StableCoinFactory.ts`: Tests the Factory functionality.
 - `supplieradmin.ts`: Tests the stable coin cashin functionality.

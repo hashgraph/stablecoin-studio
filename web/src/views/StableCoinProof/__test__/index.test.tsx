@@ -45,6 +45,10 @@ describe(`<${StableCoinProof.name} />`, () => {
 				key: 'key',
 				type: 'ED25519',
 			},
+			kycKey: {
+				key: 'key',
+				type: 'ED25519',
+			},
 			wipeKey: {
 				id: '0.0.48160285',
 			},

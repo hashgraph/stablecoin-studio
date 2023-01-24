@@ -33,6 +33,7 @@
       "description": "Allow all the following features to be managed through smart contracts",
       "pause": "Pause",
       "freeze": "Freeze",
+      "kyc" : "KYC",
       "introduce": "Enter the {{name}}",
       "none": "None",
       "otherKey": "Other key",
