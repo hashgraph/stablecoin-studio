@@ -636,13 +636,11 @@ Gets the contract reserve address.
 **Example:**
 
 ```Typescript
-	const result: string = await StableCoin.StableCoin(
+	const result: string = await StableCoin.getReserveAddress(
 		new GetReserveAddressRequest({
 			tokenId: "0.0.1",
 		})
-	);
-	result // "0.1.255445"
-	
+	);	
 ```
 
 
@@ -659,14 +657,54 @@ Updates the contract reserve address.
 **Example:**
 
 ```Typescript
-	const result: string = await StableCoin.updateReserveAddress(
+	const result: boolean = await StableCoin.updateReserveAddress(
 		new GetReserveAddressRequest({
 			tokenId: "0.0.1",
 			reserveAddress: "0.0.54445787"
 		})
+	);	
+```
+
+### Grant KYC
+Grants KYC status to an account for a specific stable coin.
+
+**Spec:**
+
+```Typescript
+	StableCoin.updateReserveAddress = (request: UpdateReserveAddressRequest,): Promise<boolean>;
+
+```
+
+**Example:**
+
+```Typescript
+	const result: boolean = await StableCoin.grantKyc(
+		new KYCRequest({
+			tokenId: "0.0.1",
+			targetId: "0.0.1"
+		})
 	);
-	result // "true"
-	
+```
+
+### Revoke KYC
+Revokes KYC status to an account for a specific stable coin.
+
+**Spec:**
+
+```Typescript
+	StableCoin.updateReserveAddress = (request: UpdateReserveAddressRequest,): Promise<boolean>;
+
+```
+
+**Example:**
+
+```Typescript
+	const result: boolean = await StableCoin.revokeKyc(
+		new KYCRequest({
+			tokenId: "0.0.1",
+			targetId: "0.0.1"
+		})
+	);
 ```
 
 ### Capabilities
