@@ -131,7 +131,7 @@ const StableCoinCreation = () => {
 			const managePermissions = watch('managementPermissions');
 
 			if (!managePermissions) {
-				const keys = ['adminKey', 'supplyKey', 'wipeKey', 'freezeKey', 'pauseKey'];
+				const keys = ['adminKey', 'supplyKey', 'wipeKey', 'freezeKey', 'pauseKey', 'kycKey'];
 
 				// @ts-ignore
 				fieldsStep = watch(keys);
@@ -192,6 +192,7 @@ const StableCoinCreation = () => {
 			autorenewAccount,
 			managementPermissions,
 			freezeKey,
+			kycKey,
 			wipeKey,
 			pauseKey,
 			supplyKey,
@@ -213,6 +214,7 @@ const StableCoinCreation = () => {
 		if (managementPermissions) {
 			request.adminKey = Account.NullPublicKey; // accountInfo.publicKey;
 			request.freezeKey = Account.NullPublicKey;
+			request.KYCKey = Account.NullPublicKey;
 			request.wipeKey = Account.NullPublicKey;
 			request.pauseKey = Account.NullPublicKey;
 			request.supplyKey = Account.NullPublicKey;
@@ -220,6 +222,7 @@ const StableCoinCreation = () => {
 		} else {
 			request.adminKey = accountInfo.publicKey;
 			request.freezeKey = formatKey(freezeKey.label, 'freezeKey');
+			request.KYCKey = formatKey(kycKey.label, 'kycKey');
 			request.wipeKey = formatKey(wipeKey.label, 'wipeKey');
 			request.pauseKey = formatKey(pauseKey.label, 'pauseKey');
 			request.supplyKey = formatKey(supplyKey.label, 'supplyKey');

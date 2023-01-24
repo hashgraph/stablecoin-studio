@@ -34,6 +34,7 @@ const Operations = () => {
 		rescue: false,
 		wipe: false,
 		freeze: false,
+		kyc: false,
 		pause: false,
 		delete: false,
 	});

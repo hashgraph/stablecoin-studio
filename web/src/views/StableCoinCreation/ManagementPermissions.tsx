@@ -38,6 +38,10 @@ const ManagementPermissions = (props: ManagementPermissionsProps) => {
 			nameTranslate: t('stableCoinCreation:managementPermissions.freeze'),
 		},
 		{
+			name: 'kycKey',
+			nameTranslate: t('stableCoinCreation:managementPermissions.kyc'),
+		},
+		{
 			name: 'pauseKey',
 			nameTranslate: t('stableCoinCreation:managementPermissions.pause'),
 		},
