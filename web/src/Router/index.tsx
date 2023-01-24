@@ -175,13 +175,13 @@ const Operations = () => {
 			isDisabled: disabledFeatures?.freeze,
 		},
 		{
-			icon: 'IdentificationCard',
+			icon: 'UserPlus',
 			route: NamedRoutes.GrantKyc,
 			title: t('grantKycOperation'),
 			isDisabled: disabledFeatures?.kyc,
 		},
 		{
-			icon: 'IdentificationCard',
+			icon: 'UserMinus',
 			route: NamedRoutes.RevokeKyc,
 			title: t('revokeKycOperation'),
 			isDisabled: disabledFeatures?.kyc,
