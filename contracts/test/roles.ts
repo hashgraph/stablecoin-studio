@@ -29,6 +29,7 @@ import {
     DELETE_ROLE,
     WITHOUT_ROLE,
     DEFAULT_ADMIN_ROLE,
+    KYC_ROLE,
     RolesId,
 } from '../scripts/constants'
 
@@ -198,6 +199,13 @@ describe('Roles Tests', function() {
             nonOperatorAccount,
             nonOperatorIsE25519
         )
+        await grantRole(
+            KYC_ROLE,
+            proxyAddress,
+            operatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )        
 
         // Checking roles
         result = await getRoles(
@@ -236,6 +244,10 @@ describe('Roles Tests', function() {
                 expect(result[i].toUpperCase()).to.equals(
                     PAUSE_ROLE.toUpperCase()
                 )
+            else if (i == RolesId.Kyc)
+                expect(result[i].toUpperCase()).to.equals(
+                    KYC_ROLE.toUpperCase()
+                )                
             else if (i == RolesId.Admin)
                 expect(result[i].toUpperCase()).to.equals(
                     DEFAULT_ADMIN_ROLE.toUpperCase()
@@ -296,6 +308,13 @@ describe('Roles Tests', function() {
             nonOperatorAccount,
             nonOperatorIsE25519
         )
+        await revokeRole(
+            KYC_ROLE,
+            proxyAddress,
+            operatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )        
         await revokeRole(
             DEFAULT_ADMIN_ROLE,
             proxyAddress,
@@ -359,6 +378,11 @@ describe('Roles Tests', function() {
             operatorClient,
             RolesId.Delete
         )
+        const roleKyc = await getRoleId(
+            proxyAddress,
+            operatorClient,
+            RolesId.Kyc
+        )        
 
         // Checking
         expect(roleAdmin.toUpperCase()).to.equals(
@@ -371,5 +395,6 @@ describe('Roles Tests', function() {
         expect(roleRescue.toUpperCase()).to.equals(RESCUE_ROLE.toUpperCase())
         expect(roleFreeze.toUpperCase()).to.equals(FREEZE_ROLE.toUpperCase())
         expect(roleDelete.toUpperCase()).to.equals(DELETE_ROLE.toUpperCase())
+        expect(roleKyc.toUpperCase()).to.equals(KYC_ROLE.toUpperCase())
     })
 })

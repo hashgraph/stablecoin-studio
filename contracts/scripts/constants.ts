@@ -7,6 +7,7 @@ export const CASHIN_ROLE  = '0x53300d27a2268d3ff3ecb0ec8e628321ecfba1a08aed8b817
 export const WITHOUT_ROLE  = '0xe11b25922c3ff9f0f0a34f0b8929ac96a1f215b99dcb08c2891c220cf3a7e8cc';
 export const FREEZE_ROLE  = '0x5789b43a60de35bcedee40618ae90979bab7d1315fd4b079234241bdab19936d';
 export const DELETE_ROLE  = '0x2b73f0f98ad60ca619bbdee4bcd175da1127db86346339f8b718e3f8b4a006e2';
+export const KYC_ROLE  = '0xdb11624602202c396fa347735a55e345a3aeb3e60f8885e1a71f1bf8d5886db7';
 export const DEFAULT_ADMIN_ROLE  = '0x0000000000000000000000000000000000000000000000000000000000000000';
 
 export const RolesId = {
@@ -17,7 +18,8 @@ export const RolesId = {
     Rescue: 4,
 	Pause: 5,
 	Freeze: 6,
-	Delete: 7
+	Delete: 7,
+	Kyc: 8
 }
 
 export const Gas1 = 4000000;
