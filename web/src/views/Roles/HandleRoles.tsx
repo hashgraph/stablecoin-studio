@@ -36,6 +36,7 @@ import { useRefreshCoinInfo } from '../../hooks/useRefreshCoinInfo';
 import type { IExternalToken } from '../../interfaces/IExternalToken.js';
 import type  { IAccountToken } from '../../interfaces/IAccountToken.js';
 import type { IRole } from '../../interfaces/IRole.js';
+import { propertyNotFound } from '../../constant';
 
 const supplier = 'Cash in';
 
@@ -415,12 +416,12 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 						<InputController
 							data-testid='input-supplier-quantity'
 							rules={{
-								required: t(`global:validations.required`)!,
+								required: t(`global:validations.required`) ?? propertyNotFound,
 								validate: {
 									validDecimals: (value: string) => {
 										return (
 											validateDecimalsString(value, decimals) ||
-											t('global:validations.decimalsValidation')!
+											(t('global:validations.decimalsValidation') ?? propertyNotFound)
 										);
 									},
 									validation: (value: string) => {
@@ -435,7 +436,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 							isRequired
 							control={control}
 							name={fields.amount}
-							placeholder={t(`roles:${action}.supplierQuantityInputPlaceholder`)!}
+							placeholder={t(`roles:${action}.supplierQuantityInputPlaceholder`) ?? propertyNotFound}
 						/>
 					</Box>
 				)}
@@ -447,7 +448,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 		return (
 			<SelectController
 				rules={{
-					required: t('global:validations.required')!,
+					required: t('global:validations.required') ?? propertyNotFound,
 				}}
 				isRequired
 				control={control}
@@ -469,12 +470,12 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 				{increaseOrDecreseOptionSelected && (
 					<InputController
 						rules={{
-							required: t(`global:validations.required`)!,
+							required: t(`global:validations.required`) ?? propertyNotFound,
 							validate: {
 								validDecimals: (value: string) => {
 									return (
 										validateDecimalsString(value, decimals) ||
-										t('global:validations.decimalsValidation')!
+										(t('global:validations.decimalsValidation') ?? propertyNotFound)
 									);
 								},
 								validation: (value: string) => {
@@ -489,8 +490,8 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 						isRequired
 						control={control}
 						name='amount'
-						label={t(`roles:${action}.amountLabel`)!}
-						placeholder={t(`roles:${action}.amountPlaceholder`)!}
+						label={t(`roles:${action}.amountLabel`) ?? propertyNotFound}
+						placeholder={t(`roles:${action}.amountPlaceholder`) ?? propertyNotFound}
 					/>
 				)}
 			</Stack>

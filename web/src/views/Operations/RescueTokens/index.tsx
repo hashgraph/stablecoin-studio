@@ -17,6 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
 import { RescueRequest } from 'hedera-stable-coin-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
+import { propertyNotFound } from '../../../constant';
 
 const RescueTokenOperation = () => {
 	const {
@@ -82,12 +83,12 @@ const RescueTokenOperation = () => {
 						<Stack as='form' spacing={6}>
 							<InputController
 								rules={{
-									required: t(`global:validations.required`)!,
+									required: t(`global:validations.required`)??propertyNotFound,
 									validate: {
 										validDecimals: (value: string) => {
 											return (
 												validateDecimalsString(value, decimals) ||
-												t('global:validations.decimalsValidation')!
+												(t('global:validations.decimalsValidation')??propertyNotFound)
 											);
 										},
 										validation: (value: string) => {
@@ -100,8 +101,8 @@ const RescueTokenOperation = () => {
 								isRequired
 								control={control}
 								name={'amount'}
-								label={t('rescueTokens:amountLabel')!}
-								placeholder={t('rescueTokens:amountPlaceholder')!}
+								label={t('rescueTokens:amountLabel')??propertyNotFound}
+								placeholder={t('rescueTokens:amountPlaceholder')??propertyNotFound}
 							/>
 						</Stack>
 					</>

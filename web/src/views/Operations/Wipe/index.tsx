@@ -16,6 +16,7 @@ import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
 import { WipeRequest } from 'hedera-stable-coin-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
+import { propertyNotFound } from '../../../constant';
 
 const WipeOperation = () => {
 	const {
@@ -81,12 +82,12 @@ const WipeOperation = () => {
 						<Stack as='form' spacing={6} maxW='520px'>
 							<InputController
 								rules={{
-									required: t(`global:validations.required`)!,
+									required: t(`global:validations.required`)??propertyNotFound,
 									validate: {
 										validDecimals: (value: string) => {
 											return (
 												validateDecimalsString(value, decimals) ||
-												t('global:validations.decimalsValidation')!
+												(t('global:validations.decimalsValidation')??propertyNotFound)
 											);
 										},
 										validation: (value: string) => {
@@ -100,12 +101,12 @@ const WipeOperation = () => {
 								isRequired
 								control={control}
 								name={'amount'}
-								label={t('wipe:amountLabel')!}
-								placeholder={t('wipe:amountPlaceholder')!}
+								label={t('wipe:amountLabel')??propertyNotFound}
+								placeholder={t('wipe:amountPlaceholder')??propertyNotFound}
 							/>
 							<InputController
 								rules={{
-									required: t('global:validations.required')!,
+									required: t('global:validations.required') ?? propertyNotFound,
 									validate: {
 										validation: (value: string) => {
 											request.targetId = value;
@@ -117,8 +118,8 @@ const WipeOperation = () => {
 								isRequired
 								control={control}
 								name='destinationAccount'
-								placeholder={t('wipe:fromAccountPlaceholder')!}
-								label={t('wipe:fromAccountLabel')!}
+								placeholder={t('wipe:fromAccountPlaceholder') ?? propertyNotFound}
+								label={t('wipe:fromAccountLabel') ?? propertyNotFound}
 								onChangeAux={(e) => {
 									request.targetId = e.target.value;
 								}}

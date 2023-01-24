@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
 import { BurnRequest } from 'hedera-stable-coin-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
+import { propertyNotFound } from '../../../constant';
 
 const BurnOperation = () => {
 	const {
@@ -82,12 +83,12 @@ const BurnOperation = () => {
 						<Stack as='form' spacing={6}>
 							<InputController
 								rules={{
-									required: t(`global:validations.required`)!,
+									required: t(`global:validations.required`)??propertyNotFound,
 									validate: {
 										validDecimals: (value: string) => {
 											return (
 												validateDecimalsString(value, decimals) ||
-												t('global:validations.decimalsValidation')!
+												(t('global:validations.decimalsValidation')??propertyNotFound)
 											);
 										},
 										validation: (value: string) => {
@@ -101,8 +102,8 @@ const BurnOperation = () => {
 								isRequired
 								control={control}
 								name={'amount'}
-								label={t('burn:amountLabel')!}
-								placeholder={t('burn:amountPlaceholder')!}
+								label={t('burn:amountLabel')??propertyNotFound}
+								placeholder={t('burn:amountPlaceholder')??propertyNotFound}
 							/>
 						</Stack>
 					</>
