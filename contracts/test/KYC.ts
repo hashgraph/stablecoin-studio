@@ -25,7 +25,7 @@ import {
     revokeKyc,
     hasRole,
     grantRole,
-    revokeRole
+    revokeRole,
 } from '../scripts/contractsMethods'
 import { KYC_ROLE } from '../scripts/constants'
 import { clientId } from '../scripts/utils'
@@ -150,7 +150,7 @@ describe('HederaERC20 Tests', function() {
         )
         expect(result).to.equals(true)
 
-        // Admin revokes pause role : success
+        // Admin revokes KYC role : success
         await revokeRole(
             KYC_ROLE,
             proxyAddress,
@@ -166,10 +166,10 @@ describe('HederaERC20 Tests', function() {
             nonOperatorIsE25519
         )
         expect(result).to.equals(false)
-    })    
+    })
 
     it('Non Admin account can not grant kyc role to an account', async function() {
-        // Non Admin grants pause role : fail
+        // Non Admin grants KYC role : fail
         await expect(
             grantRole(
                 KYC_ROLE,
@@ -179,10 +179,10 @@ describe('HederaERC20 Tests', function() {
                 nonOperatorIsE25519
             )
         ).to.eventually.be.rejectedWith(Error)
-    })    
+    })
 
     it('Non Admin account can not revoke kyc role to an account', async function() {
-        // Non Admin revokes pause role : fail
+        // Non Admin revokes KYC role : fail
         await grantRole(
             KYC_ROLE,
             proxyAddress,
@@ -208,36 +208,44 @@ describe('HederaERC20 Tests', function() {
             nonOperatorAccount,
             nonOperatorIsE25519
         )
-    })    
+    })
 
     it("An account without kyc role can't grant kyc to an account for a token", async function() {
         await expect(
-            grantKyc(proxyAddress,
-                     operatorAccount,
-                     operatorIsE25519,
-                     nonOperatorClient)
+            grantKyc(
+                proxyAddress,
+                operatorAccount,
+                operatorIsE25519,
+                nonOperatorClient
+            )
         ).to.eventually.be.rejectedWith(Error)
-    })    
+    })
 
     it("An account without kyc role can't revoke kyc to an account for a token", async function() {
-        await grantKyc(proxyAddress,
-                       operatorAccount,
-                       operatorIsE25519,
-                       operatorClient)
-        
+        await grantKyc(
+            proxyAddress,
+            operatorAccount,
+            operatorIsE25519,
+            operatorClient
+        )
+
         await expect(
-            revokeKyc(proxyAddress,
-                      operatorAccount,
-                      operatorIsE25519,
-                      nonOperatorClient)
+            revokeKyc(
+                proxyAddress,
+                operatorAccount,
+                operatorIsE25519,
+                nonOperatorClient
+            )
         ).to.eventually.be.rejectedWith(Error)
 
         //Reset kyc
-        await revokeKyc(proxyAddress,
-                        operatorAccount,
-                        operatorIsE25519,
-                        operatorClient)
-    })    
+        await revokeKyc(
+            proxyAddress,
+            operatorAccount,
+            operatorIsE25519,
+            operatorClient
+        )
+    })
 
     it('An account without kyc can not cash in', async () => {
         const amount = BigNumber.from(1).mul(TokenFactor)
@@ -687,8 +695,8 @@ describe('HederaERC20 Tests', function() {
         // rescue some tokens
         await expect(
             rescue(proxyAddress, AmountToRescue, operatorClient)
-        ).to.eventually.be.rejectedWith(Error);
-    });    
+        ).to.eventually.be.rejectedWith(Error)
+    })
 
     it('Account with granted kyc can rescue tokens', async function() {
         const AmountToRescue = BigNumber.from(10).mul(TokenFactor)
@@ -718,7 +726,7 @@ describe('HederaERC20 Tests', function() {
         )
 
         // rescue some tokens
-        await rescue(proxyAddress, AmountToRescue, operatorClient);
+        await rescue(proxyAddress, AmountToRescue, operatorClient)
 
         // check new balances : success
         const finalTokenOwnerBalance = await getBalanceOf(
@@ -745,9 +753,9 @@ describe('HederaERC20 Tests', function() {
         )
         expect(finalClientBalance.toString()).to.equals(
             expectedClientBalance.toString()
-        )  
-    });
-    
+        )
+    })
+
     it('Account with revoked kyc can not rescue tokens', async function() {
         const AmountToRescue = BigNumber.from(10).mul(TokenFactor)
 
@@ -762,6 +770,6 @@ describe('HederaERC20 Tests', function() {
         // rescue some tokens
         await expect(
             rescue(proxyAddress, AmountToRescue, operatorClient)
-        ).to.eventually.be.rejectedWith(Error);
-    });    
+        ).to.eventually.be.rejectedWith(Error)
+    })
 })
