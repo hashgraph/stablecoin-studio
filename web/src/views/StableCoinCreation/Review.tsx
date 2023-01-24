@@ -26,6 +26,7 @@ const Review = (props: ReviewProps) => {
 		supplyKey,
 		wipeKey,
 		freezeKey,
+		kycKey,
 		pauseKey,
 		reserveAddress,
 		reserveInitialAmount
@@ -123,6 +124,12 @@ const Review = (props: ReviewProps) => {
 								value: managementPermissions
 									? t('stableCoinCreation:managementPermissions.theSmartContract')
 									: getKey(freezeKey, 'freezeKeyOther'),
+							},
+							{
+								label: t('stableCoinCreation:managementPermissions.kyc'),
+								value: managementPermissions
+									? t('stableCoinCreation:managementPermissions.theSmartContract')
+									: getKey(kycKey, 'kycKeyOther'),
 							},
 							{
 								label: t('stableCoinCreation:managementPermissions.pause'),
