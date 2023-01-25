@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
+import '../hts-precompile/IHederaTokenService.sol';
+
+
 interface IHederaERC20 {
     /**
      * @dev Emitted when the token has been associated to the account
@@ -33,6 +36,15 @@ interface IHederaERC20 {
         address receiver,
         uint256 amount
     );
+
+    struct InitializeStruct {
+        IHederaTokenService.HederaToken token;
+        uint64 initialTotalSupply;
+        uint32 tokenDecimals;
+        address originalSender;
+        address reserveAddress;
+        bool grantKYCToOriginalSender;
+    }
 
     /**
      * @dev Returns the name of the token
