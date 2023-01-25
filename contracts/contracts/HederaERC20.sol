@@ -76,14 +76,21 @@ contract HederaERC20 is
 
         __tokenOwner_init(createdTokenAddress);
 
-        if(init.grantKYCToOriginalSender)
-        {
-            responseCode = IHederaTokenService(PRECOMPILED_ADDRESS).grantTokenKyc(createdTokenAddress, init.originalSender);
+        // Associate token if required
+        if (init.treasuryIsContract){
+            
+            _associateToken(init.originalSender);
 
-            require(
-                responseCode == HederaResponseCodes.SUCCESS,
-                'KYC grant failed'
-            );
+            // Grant KYC if required
+            if(init.grantKYCToOriginalSender)
+            {
+                responseCode = IHederaTokenService(PRECOMPILED_ADDRESS).grantTokenKyc(createdTokenAddress, init.originalSender);
+
+                require(
+                    responseCode == HederaResponseCodes.SUCCESS,
+                    'KYC grant failed'
+                );
+            }
         }
 
         return createdTokenAddress;
@@ -161,6 +168,18 @@ contract HederaERC20 is
     function associateToken(
         address addr
     ) external override(IHederaERC20) checkAddressIsNotZero(addr) {
+        _associateToken(addr);
+    }
+
+    /**
+     * @dev Associates a account to the token
+     *
+     * @param addr The address of the account to associate
+     *
+     */
+    function _associateToken(
+        address addr
+    ) private checkAddressIsNotZero(addr) {
         emit TokenAssociated(_getTokenAddress(), addr);
 
         int256 responseCode = IHederaTokenService(PRECOMPILED_ADDRESS)

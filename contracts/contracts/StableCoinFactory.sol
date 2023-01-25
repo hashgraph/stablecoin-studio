@@ -96,6 +96,7 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
         initInfo.originalSender = msg.sender;
         initInfo.reserveAddress = reserveAddress;
         initInfo.grantKYCToOriginalSender = requestedToken.grantKYCToOriginalSender;
+        initInfo.treasuryIsContract = treasuryIsContract(requestedToken.treasuryAddress);
 
         address tokenAddress = HederaERC20(address(StableCoinProxy)).initialize{
             value: msg.value
@@ -103,10 +104,7 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
             initInfo
         );
 
-        // Associate token
-        if (treasuryIsContract(requestedToken.treasuryAddress))
-            HederaERC20(address(StableCoinProxy)).associateToken(msg.sender);
-
+        // Return event
         DeployedStableCoin memory deployedStableCoin;
 
         deployedStableCoin.stableCoinProxy = address(StableCoinProxy);

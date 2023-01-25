@@ -44,6 +44,7 @@ interface IHederaERC20 {
         address originalSender;
         address reserveAddress;
         bool grantKYCToOriginalSender;
+        bool treasuryIsContract;
     }
 
     /**
