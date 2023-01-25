@@ -467,7 +467,8 @@ export default class CreateStableCoinService extends Service {
 
     let grantKYCToOriginalSender = false;
 
-    if(supplyKey == Account.NullPublicKey){
+    if(supplyKey == Account.NullPublicKey &&
+      KYCKey == Account.NullPublicKey){
       grantKYCToOriginalSender = await this.askForKYCGrantToSender();
     }
 
