@@ -22,6 +22,6 @@ import BaseError, { ErrorCode } from '../../../../../core/error/BaseError.js';
 
 export class AccountFreeze extends BaseError {
 	constructor(targetId: unknown) {
-		super(ErrorCode.AccountFreeze, `The account ${targetId} is freezed`);
+		super(ErrorCode.AccountFreeze, `The account ${targetId} is frozen`);
 	}
 }
