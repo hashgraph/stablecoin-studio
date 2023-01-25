@@ -29,10 +29,6 @@ export default class Language extends BaseEntity {
     return String.raw({ raw: parts }, ...parameters);
   }
 
-  /*public getArray(attribute: string): Array<string> {
-    return lodash.get(this.lang, attribute);
-  }*/
-
   public getArrayFromObject(attribute: string): Array<string> {
     const values = [];
 
