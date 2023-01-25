@@ -42,6 +42,8 @@ export enum ErrorCode {
 	OperationNotAllowed = '20004',
 	InsufficientFunds = '20005',
 	KYCNotEnabled = '20006',
+	AccountNotKyc = '20007',
+	AccountFreeze = '20008',
 	ReceiptNotReceived = '30001',
 	ContractNotFound = '30002',
 	Unexpected = '30003',

@@ -65,7 +65,6 @@ import { FreezeCommand } from '../../app/usecase/command/stablecoin/operations/f
 import { UnFreezeCommand } from '../../app/usecase/command/stablecoin/operations/unfreeze/UnFreezeCommand.js';
 import { GetAccountInfoQuery } from '../../app/usecase/query/account/info/GetAccountInfoQuery.js';
 import { handleValidation } from './Common.js';
-import { GetAccountTokenAssociatedQuery } from '../../app/usecase/query/account/tokenAssociated/GetAccountTokenAssociatedQuery.js';
 import UpdateReserveAddressRequest from './request/UpdateReserveAddressRequest.js';
 import GetReserveAddressRequest from './request/GetReserveAddressRequest.js';
 import { UpdateReserveAddressCommand } from '../../app/usecase/command/stablecoin/operations/updateReserveAddress/UpdateReserveAddressCommand.js';
@@ -77,6 +76,7 @@ import KYCRequest from './request/KYCRequest.js';
 import { GrantKycCommand } from '../../app/usecase/command/stablecoin/operations/grantKyc/GrantKycCommand.js';
 import { RevokeKycCommand } from '../../app/usecase/command/stablecoin/operations/revokeKyc/RevokeKycCommand.js';
 import { LogError } from '../../core/decorator/LogErrorDecorator.js';
+import { GetAccountTokenRelationshipQuery } from '../../app/usecase/query/account/tokenRelationship/GetAccountTokenRelationshipQuery.js';
 
 export const HederaERC20AddressTestnet = '0.0.49414839';
 export const HederaERC20AddressPreviewnet = '0.0.11111111';
@@ -440,13 +440,15 @@ class StableCoinInPort implements IStableCoinInPort {
 		handleValidation('IsAccountAssociatedTokenRequest', request);
 
 		return (
-			await this.queryBus.execute(
-				new GetAccountTokenAssociatedQuery(
-					HederaId.from(request.targetId),
-					HederaId.from(request.tokenId),
-				),
-			)
-		).isAssociated;
+			(
+				await this.queryBus.execute(
+					new GetAccountTokenRelationshipQuery(
+						HederaId.from(request.targetId),
+						HederaId.from(request.tokenId),
+					),
+				)
+			).payload !== undefined
+		);
 	}
 
 	@LogError
