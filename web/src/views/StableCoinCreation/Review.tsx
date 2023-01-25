@@ -94,7 +94,7 @@ const Review = (props: ReviewProps) => {
 							{
 								label: t('stableCoinCreation:optionalDetails.decimals'),
 								value: decimals || '',
-							}
+							},
 						]}
 					/>
 					<DetailsReview
@@ -153,42 +153,37 @@ const Review = (props: ReviewProps) => {
 						]}
 					/>
 
-					{ (!reserveAddress && !reserveInitialAmount  )  ?  (
+					{!reserveAddress && !reserveInitialAmount ? (
 						<DetailsReview
-						title={t('stableCoinCreation:proofOfReserve.title')}
-						titleProps={{ fontWeight: 700, color: 'brand.secondary' }}
-						details={[
-							{
-								label: t('stableCoinCreation:proofOfReserve.hasPor'),
-								value: t('stableCoinCreation:proofOfReserve.notHasPor'),
-							},
-							
-						]}
-					/>
-					):(
+							title={t('stableCoinCreation:proofOfReserve.title')}
+							titleProps={{ fontWeight: 700, color: 'brand.secondary' }}
+							details={[
+								{
+									label: t('stableCoinCreation:proofOfReserve.hasPor'),
+									value: t('stableCoinCreation:proofOfReserve.hasPorValueFalse'),
+								},
+							]}
+						/>
+					) : (
 						<DetailsReview
-						title={t('stableCoinCreation:proofOfReserve.title')}
-						titleProps={{ fontWeight: 700, color: 'brand.secondary' }}
-						details={[
-							{
-								label: t('stableCoinCreation:proofOfReserve.hasPor'),
-								value: t('stableCoinCreation:proofOfReserve.hasPor')
-							},
-							{
-								label: t('stableCoinCreation:proofOfReserve.addressPor'),
-								value: 	reserveAddress || t('stableCoinCreation:proofOfReserve.createDataFeed') 
-								
-							},
-							{
-								label: t('stableCoinCreation:proofOfReserve.initialSupplyPor'),
-								value: reserveInitialAmount || "undefined" 
-							},
-						]}
-					/>
-
-					)
-					}
-
+							title={t('stableCoinCreation:proofOfReserve.title')}
+							titleProps={{ fontWeight: 700, color: 'brand.secondary' }}
+							details={[
+								{
+									label: t('stableCoinCreation:proofOfReserve.hasPor'),
+									value: t('stableCoinCreation:proofOfReserve.hasPorValue'),
+								},
+								{
+									label: t('stableCoinCreation:proofOfReserve.addressPor'),
+									value: reserveAddress || t('stableCoinCreation:proofOfReserve.createDataFeed'),
+								},
+								{
+									label: t('stableCoinCreation:proofOfReserve.initialSupplyPor'),
+									value: reserveInitialAmount || '-',
+								},
+							]}
+						/>
+					)}
 				</Stack>
 			</Stack>
 		</VStack>

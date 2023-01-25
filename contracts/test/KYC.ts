@@ -54,7 +54,7 @@ const INIT_SUPPLY = BigNumber.from(10).mul(TokenFactor)
 const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor)
 const TokenMemo = 'Hedera Accelerator Stable Coin'
 
-describe('HederaERC20 Tests', function() {
+describe('KYC Tests', function() {
     before(async function() {
         // Generate Client 1 and Client 2
         const [
@@ -116,6 +116,7 @@ describe('HederaERC20 Tests', function() {
             publicKey: operatorPubKey,
             isED25519Type: operatorIsE25519,
             initialAmountDataFeed: BigNumber.from('2000').toString(),
+            grantKYCToOriginalSender: true,
             addKyc: true,
         })
 
