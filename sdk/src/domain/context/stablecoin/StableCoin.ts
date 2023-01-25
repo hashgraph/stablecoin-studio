@@ -74,9 +74,11 @@ export interface StableCoinProps {
 	tokenType?: TokenType;
 	supplyType?: TokenSupplyType;
 	tokenId?: HederaId;
+	grantKYCToOriginalSender?:boolean
 	autoRenewAccount?: HederaId;
 	autoRenewAccountPeriod?: number;
 	deleted?: boolean;
+	
 }
 
 export class StableCoin extends BaseEntity implements StableCoinProps {
@@ -102,6 +104,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 	tokenType?: TokenType;
 	supplyType?: TokenSupplyType;
 	tokenId?: HederaId;
+	grantKYCToOriginalSender?:boolean
 	autoRenewAccount?: HederaId;
 	autoRenewAccountPeriod?: number;
 	deleted?: boolean;

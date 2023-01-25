@@ -156,7 +156,9 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					? reserveInitialAmount.toFixedNumber()
 					: BigDecimal.ZERO.toFixedNumber(),
 				createReserve,
-				keys,
+				coin.grantKYCToOriginalSender?coin.grantKYCToOriginalSender:false,
+				keys
+				
 			);
 			const params = [
 				stableCoinToCreate,

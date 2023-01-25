@@ -94,6 +94,9 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 	@OptionalField()
 	supplyType?: TokenSupplyType;
 
+	@OptionalField()
+	grantKYCToOriginalSender?: boolean;
+
 	constructor({
 		name,
 		symbol,
@@ -114,7 +117,8 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		hederaERC20,
 		reserveAddress,
 		reserveInitialAmount,
-		createReserve
+		createReserve,
+		grantKYCToOriginalSender
 	}: {
 		name: string;
 		symbol: string;
@@ -136,6 +140,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		reserveAddress?: string;
 		reserveInitialAmount?: string;
 		createReserve: boolean;
+		grantKYCToOriginalSender:boolean;
 	}) {
 		super({
 			name: (val) => {
@@ -292,6 +297,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		this.reserveAddress = reserveAddress;
 		this.reserveInitialAmount = reserveInitialAmount;
 		this.createReserve = createReserve;
+		this.grantKYCToOriginalSender = grantKYCToOriginalSender
 
 	}
 }

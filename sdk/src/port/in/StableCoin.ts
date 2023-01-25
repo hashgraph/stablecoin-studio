@@ -195,6 +195,8 @@ class StableCoinInPort implements IStableCoinInPort {
 			autoRenewAccount: req.autoRenewAccount
 				? new HederaId(req.autoRenewAccount)
 				: undefined,
+			grantKYCToOriginalSender:
+				req.grantKYCToOriginalSender? req.grantKYCToOriginalSender: false
 		};
 
 		const createResponse = await this.commandBus.execute(
