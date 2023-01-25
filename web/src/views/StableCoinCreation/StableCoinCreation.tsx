@@ -221,7 +221,7 @@ const StableCoinCreation = () => {
 			request.pauseKey = Account.NullPublicKey;
 			request.supplyKey = Account.NullPublicKey;
 			request.treasury = undefined;
-			request.grantKYCToOriginalSender = false;
+			request.grantKYCToOriginalSender = grantKYCToOriginalSender;
 		} else {
 			request.adminKey = accountInfo.publicKey;
 			request.freezeKey = formatKey(freezeKey.label, 'freezeKey');
