@@ -62,7 +62,7 @@ const StableCoinCreation = () => {
 			decimals: 6,
 			hederaERC20: HederaERC20AddressTestnet,
 			stableCoinFactory: FactoryAddressTestnet,
-			createReserve: false,
+			createReserve: false
 			
 		}),
 	);
@@ -94,7 +94,7 @@ const StableCoinCreation = () => {
 		{
 			number: '03',
 			title: t('tabs.managementPermissions'),
-			children: <ManagementPermissions control={control} request={request} />,
+			children: <ManagementPermissions control={control} request={request}  watch={watch}/>,
 		},
 		{
 			number: '04',
@@ -199,6 +199,7 @@ const StableCoinCreation = () => {
 			supplyKey,
 			reserveInitialAmount,
 			reserveAddress,
+			grantKYCToOriginalSender
 		} = getValues();
 
 		request.autoRenewAccount = autorenewAccount;
@@ -220,10 +221,12 @@ const StableCoinCreation = () => {
 			request.pauseKey = Account.NullPublicKey;
 			request.supplyKey = Account.NullPublicKey;
 			request.treasury = undefined;
+			request.grantKYCToOriginalSender = false;
 		} else {
 			request.adminKey = accountInfo.publicKey;
 			request.freezeKey = formatKey(freezeKey.label, 'freezeKey');
 			request.KYCKey = formatKey(kycKey.label, 'kycKey');
+			request.grantKYCToOriginalSender = grantKYCToOriginalSender;
 			request.wipeKey = formatKey(wipeKey.label, 'wipeKey');
 			request.pauseKey = formatKey(pauseKey.label, 'pauseKey');
 			request.supplyKey = formatKey(supplyKey.label, 'supplyKey');

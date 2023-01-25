@@ -1,6 +1,6 @@
 import { Heading, HStack, Stack, Text, VStack } from '@chakra-ui/react';
 import type { CreateRequest } from 'hedera-stable-coin-sdk';
-import type { Control, FieldValues } from 'react-hook-form';
+import type { Control, FieldValues, UseFormWatch } from 'react-hook-form';
 import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import SwitchController from '../../components/Form/SwitchController';
@@ -9,10 +9,11 @@ import KeySelector from './components/KeySelector';
 interface ManagementPermissionsProps {
 	control: Control<FieldValues>;
 	request: CreateRequest;
+	watch: UseFormWatch<FieldValues>;
 }
 
-const ManagementPermissions = (props: ManagementPermissionsProps) => {
-	const { control } = props;
+const ManagementPermissions = (	{ control, watch ,request } :  ManagementPermissionsProps) => {
+
 	const { t } = useTranslation(['global', 'stableCoinCreation']);
 
 	const isManagementPermissions = useWatch({
@@ -61,7 +62,7 @@ const ManagementPermissions = (props: ManagementPermissionsProps) => {
 					{t('stableCoinCreation:managementPermissions.title')}
 				</Heading>
 				<Stack as='form' spacing={6} pb={6}>
-					<HStack mb={4}>
+					<HStack mb={4} justifyContent ="space-between" >
 						<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>
 							{t('stableCoinCreation:managementPermissions.description')}
 						</Text>
@@ -80,7 +81,7 @@ const ManagementPermissions = (props: ManagementPermissionsProps) => {
 										control={control}
 										name={item.name}
 										label={item.nameTranslate}
-										request={props.request}
+										request={request}
 									/>
 								);
 							})}
@@ -91,6 +92,23 @@ const ManagementPermissions = (props: ManagementPermissionsProps) => {
 								return <Text key={index}>{item.nameTranslate}</Text>;
 							})}
 						</Stack>
+					)}
+					
+					
+					{watch("kycKey")?.value !== 4 && (
+					<Stack minW={400}>
+						<HStack mb={4} justifyContent ="space-between" >
+							<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>
+								{t('stableCoinCreation:managementPermissions.grantKYCToOriginalSender')}
+							</Text>
+
+							<SwitchController
+								control={control}
+								name={'grantKYCToOriginalSender'}
+								defaultValue={true}
+							/>
+						</HStack>
+					</Stack>
 					)}
 				</Stack>
 			</Stack>
