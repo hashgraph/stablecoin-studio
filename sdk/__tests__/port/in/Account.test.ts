@@ -21,7 +21,6 @@
 import {
 	Account,
 	Network,
-	StableCoinViewModel,
 } from '../../../src/index.js';
 import {
 	GetAccountInfoRequest,
@@ -35,7 +34,6 @@ import ConnectRequest, {
 import { CLIENT_ACCOUNT_ED25519, CLIENT_PUBLIC_KEY_ED25519 } from '../../config.js';
 
 describe('🧪 Account test', () => {
-	let stableCoinSC: StableCoinViewModel;
 	beforeAll(async () => {
 		await Network.connect(
 			new ConnectRequest({
