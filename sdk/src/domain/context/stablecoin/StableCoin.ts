@@ -135,6 +135,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 			paused,
 			evmProxyAddress,
 			proxyAddress,
+			grantKYCToOriginalSender
 		} = params;
 		super();
 		this.adminKey = adminKey;
@@ -168,6 +169,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 		this.deleted = deleted ?? false;
 		this.evmProxyAddress = evmProxyAddress;
 		this.proxyAddress = proxyAddress;
+		this.grantKYCToOriginalSender = grantKYCToOriginalSender
 	}
 
 	public static checkName(value: string): BaseError[] {
