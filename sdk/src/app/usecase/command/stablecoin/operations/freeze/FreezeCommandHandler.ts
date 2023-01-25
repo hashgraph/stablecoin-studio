@@ -24,6 +24,8 @@ import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator
 import AccountService from '../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
+import { GetAccountTokenRelationshipQuery } from '../../../../query/account/tokenRelationship/GetAccountTokenRelationshipQuery.js';
+import { StableCoinNotAssociated } from '../../error/StableCoinNotAssociated.js';
 import { FreezeCommand, FreezeCommandResponse } from './FreezeCommand.js';
 
 @CommandHandler(FreezeCommand)
@@ -41,6 +43,20 @@ export class FreezeCommandHandler implements ICommandHandler<FreezeCommand> {
 		const { targetId, tokenId } = command;
 		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
+
+		const tokenRelationship = (
+			await this.stableCoinService.queryBus.execute(
+				new GetAccountTokenRelationshipQuery(targetId, tokenId),
+			)
+		).payload;
+
+		if (!tokenRelationship) {
+			throw new StableCoinNotAssociated(
+				targetId.toString(),
+				tokenId.toString(),
+			);
+		}
+
 		const capabilities = await this.stableCoinService.getCapabilities(
 			account,
 			tokenId,

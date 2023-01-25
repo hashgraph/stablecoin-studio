@@ -117,6 +117,8 @@ export const english = {
     askBurnAmount: 'How many tokens do you want to burn?',
     askWipeAmount: 'How many tokens do you want to wipe?',
     askRescueAmount: 'How many tokens do you want to rescue?',
+    askGrantKYCToSender:
+      'Do you want to grant KYC to your current account?',
     askTargetAccount: 'What is the target account?',
     askAccountToBalance:
       'Which account would you like to obtain the balance from?',

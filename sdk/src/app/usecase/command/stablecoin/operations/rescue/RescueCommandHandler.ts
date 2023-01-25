@@ -35,8 +35,12 @@ import { RescueCommand, RescueCommandResponse } from './RescueCommand.js';
 import { QueryBus } from '../../../../../../core/query/QueryBus.js';
 import { BalanceOfQuery } from '../../../../query/stablecoin/balanceof/BalanceOfQuery.js';
 import { GetAccountTokenRelationshipQuery } from '../../../../query/account/tokenRelationship/GetAccountTokenRelationshipQuery.js';
-import { KycStatus } from '../../../../../../port/out/mirror/response/AccountTokenRelationViewModel.js';
+import {
+	FreezeStatus,
+	KycStatus,
+} from '../../../../../../port/out/mirror/response/AccountTokenRelationViewModel.js';
 import { AccountNotKyc } from '../../error/AccountNotKyc.js';
+import { AccountFreeze } from '../../error/AccountFreeze.js';
 
 @CommandHandler(RescueCommand)
 export class RescueCommandHandler implements ICommandHandler<RescueCommand> {
@@ -68,6 +72,10 @@ export class RescueCommandHandler implements ICommandHandler<RescueCommand> {
 				account.id.toString(),
 				tokenId.toString(),
 			);
+		}
+
+		if (tokenRelationship.freezeStatus === FreezeStatus.FROZEN) {
+			throw new AccountFreeze(account.id.toString());
 		}
 
 		if (tokenRelationship.kycStatus === KycStatus.REVOKED) {

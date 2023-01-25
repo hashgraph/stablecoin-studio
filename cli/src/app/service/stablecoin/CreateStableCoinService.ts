@@ -99,6 +99,7 @@ export default class CreateStableCoinService extends Service {
       stableCoinFactory: currentFactory.id,
       hederaERC20: currentHederaERC20.id,
       createReserve: false,
+      grantKYCToOriginalSender: false,
     });
 
     // Name
@@ -254,6 +255,9 @@ export default class CreateStableCoinService extends Service {
       tokenToCreate.wipeKey = Account.NullPublicKey;
       tokenToCreate.supplyKey = Account.NullPublicKey;
       tokenToCreate.pauseKey = Account.NullPublicKey;
+
+      tokenToCreate.grantKYCToOriginalSender = await this.askForKYCGrantToSender();
+
       if (
         !(await utilsService.defaultConfirmAsk(
           language.getText('stablecoin.askConfirmCreation'),
@@ -267,7 +271,7 @@ export default class CreateStableCoinService extends Service {
       return tokenToCreate;
     }
 
-    const { adminKey, supplyKey, freezeKey, wipeKey, pauseKey, KYCKey } =
+    const { adminKey, supplyKey, freezeKey, wipeKey, pauseKey, KYCKey, grantKYCToOriginalSender } =
       await this.configureManagedFeatures();
 
     tokenToCreate.adminKey = adminKey;
@@ -276,6 +280,7 @@ export default class CreateStableCoinService extends Service {
     tokenToCreate.freezeKey = freezeKey;
     tokenToCreate.wipeKey = wipeKey;
     tokenToCreate.pauseKey = pauseKey;
+    tokenToCreate.grantKYCToOriginalSender = grantKYCToOriginalSender;
 
     const treasury = this.getTreasuryAccountFromSupplyKey(supplyKey);
     tokenToCreate.treasury = treasury;
@@ -332,6 +337,7 @@ export default class CreateStableCoinService extends Service {
           ? tokenToCreate.reserveAddress
           : "Proof of Reserve Feed initial amount : " + tokenToCreate.reserveInitialAmount
         ),
+        grantKYCToOriginalSender: grantKYCToOriginalSender,
     });
     if (
       !(await utilsService.defaultConfirmAsk(
@@ -409,6 +415,13 @@ export default class CreateStableCoinService extends Service {
     );
   }
 
+  private async askForKYCGrantToSender(): Promise<boolean>{
+    return await utilsService.defaultConfirmAsk(
+      language.getText('stablecoin.askGrantKYCToSender'),
+      true,
+    );
+  }
+
   private async configureManagedFeatures(): Promise<IManagedFeatures> {
     const adminKey = await this.checkAnswer(
       await utilsService.defaultMultipleAsk(
@@ -452,7 +465,14 @@ export default class CreateStableCoinService extends Service {
       ),
     );
 
-    return { adminKey, supplyKey, freezeKey, wipeKey, pauseKey, KYCKey };
+    let grantKYCToOriginalSender = false;
+
+    if(supplyKey == Account.NullPublicKey &&
+      KYCKey == Account.NullPublicKey){
+      grantKYCToOriginalSender = await this.askForKYCGrantToSender();
+    }
+
+    return { adminKey, supplyKey, freezeKey, wipeKey, pauseKey, KYCKey, grantKYCToOriginalSender };
   }
 
   private async checkAnswer(answer: string): Promise<RequestPublicKey> {
