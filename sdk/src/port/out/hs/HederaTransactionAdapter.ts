@@ -160,7 +160,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				keys
 				
 			);
-			console.log("Adri ->"  + JSON.stringify(stableCoinToCreate));
+			
 			const params = [
 				stableCoinToCreate,
 				'0x' +

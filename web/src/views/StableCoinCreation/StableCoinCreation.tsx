@@ -63,6 +63,7 @@ const StableCoinCreation = () => {
 			hederaERC20: HederaERC20AddressTestnet,
 			stableCoinFactory: FactoryAddressTestnet,
 			createReserve: false,
+			
 		}),
 	);
 
