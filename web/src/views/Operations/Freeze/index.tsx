@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
 import { FreezeAccountRequest } from 'hedera-stable-coin-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
+import { propertyNotFound } from '../../../constant';
 
 const FreezeOperation = () => {
 	const {
@@ -76,7 +77,7 @@ const FreezeOperation = () => {
 						<Stack as='form' spacing={6} maxW='520px'>
 							<InputController
 								rules={{
-									required: t('global:validations.required'),
+									required: t('global:validations.required')??propertyNotFound,
 									validate: {
 										validation: (value: string) => {
 											request.targetId = value;
@@ -88,8 +89,8 @@ const FreezeOperation = () => {
 								isRequired
 								control={control}
 								name='targetAccount'
-								placeholder={t('freeze:accountPlaceholder')}
-								label={t('freeze:accountLabel')}
+								placeholder={t('freeze:accountPlaceholder')??propertyNotFound}
+								label={t('freeze:accountLabel')??propertyNotFound}
 							/>
 						</Stack>
 					</>

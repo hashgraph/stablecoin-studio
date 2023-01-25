@@ -49,7 +49,7 @@ describe(`<${ModalAction.name} />`, () => {
 		expect(cancelButton).toHaveTextContent(defaultProps.cancelButtonLabel);
 	});
 
-	test('cancel button close modal by default', () => {
+	test('cancel button close modal by default',async () => {
 		const component = render(
 			<ModalAction {...defaultProps}>
 				<Detail />
@@ -57,11 +57,11 @@ describe(`<${ModalAction.name} />`, () => {
 		);
 
 		const cancelButton = component.getByTestId('modal-action-cancel-button');
-		userEvent.click(cancelButton);
+		await userEvent.click(cancelButton);
 		expect(defaultProps.onClose).toHaveBeenCalled();
 	});
 
-	test('cancel button call onCancel function if this prop exists', () => {
+	test('cancel button call onCancel function if this prop exists', async () => {
 		const onCancel = jest.fn();
 		const component = render(
 			<ModalAction onCancel={onCancel} {...defaultProps}>
@@ -70,7 +70,7 @@ describe(`<${ModalAction.name} />`, () => {
 		);
 
 		const cancelButton = component.getByTestId('modal-action-cancel-button');
-		userEvent.click(cancelButton);
+		await userEvent.click(cancelButton);
 		expect(onCancel).toHaveBeenCalled();
 	});
 
@@ -86,7 +86,7 @@ describe(`<${ModalAction.name} />`, () => {
 		expect(confirmButton).toHaveTextContent(defaultProps.confirmButtonLabel);
 	});
 
-	test('confirm button call confirm function', () => {
+	test('confirm button call confirm function', async() => {
 		const component = render(
 			<ModalAction {...defaultProps}>
 				<Detail />
@@ -94,7 +94,7 @@ describe(`<${ModalAction.name} />`, () => {
 		);
 
 		const confirmButton = component.getByTestId('modal-action-confirm-button');
-		userEvent.click(confirmButton);
+		await userEvent.click(confirmButton);
 		expect(defaultProps.onConfirm).toHaveBeenCalled();
 	});
 

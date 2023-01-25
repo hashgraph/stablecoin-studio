@@ -7,6 +7,7 @@ import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import InputController from '../../components/Form/InputController';
 import SwitchController from '../../components/Form/SwitchController';
+import { propertyNotFound } from '../../constant';
 import { handleRequestValidation } from '../../utils/validationsHelper';
 
 interface ProofOfReserveProps {
@@ -78,7 +79,7 @@ const ProofOfReserve = (props: ProofOfReserveProps) => {
 					<HStack pt={'15px'}>
 						<InputController
 							rules={{
-								required: t(`global:validations.required`),
+								required: t(`global:validations.required`) ?? propertyNotFound,
 								validate: {
 									validation: (value: string) => {
 										request.createReserve = proofOfReserve;
@@ -91,8 +92,8 @@ const ProofOfReserve = (props: ProofOfReserveProps) => {
 							isRequired
 							control={control}
 							name={'reserveAddress'}
-							label={t('stableCoinCreation:proofOfReserve.dataFeed')}
-							placeholder={t('stableCoinCreation:proofOfReserve.dataFeedPlaceholder')}
+							label={t('stableCoinCreation:proofOfReserve.dataFeed') ?? propertyNotFound}
+							placeholder={t('stableCoinCreation:proofOfReserve.dataFeedPlaceholder') ?? propertyNotFound}
 						/>
 					</HStack>
 				)}
@@ -101,7 +102,7 @@ const ProofOfReserve = (props: ProofOfReserveProps) => {
 					<HStack pt={'15px'}>
 						<InputController
 							rules={{
-								required: t(`global:validations.required`),
+								required: t(`global:validations.required`) ?? propertyNotFound,
 								validate: {
 									validation: (value: string) => {
 										request.createReserve = proofOfReserve;
@@ -114,8 +115,8 @@ const ProofOfReserve = (props: ProofOfReserveProps) => {
 							isRequired
 							control={control}
 							name={'reserveInitialAmount'}
-							label={t('stableCoinCreation:proofOfReserve.initialSupply')}
-							placeholder={t('stableCoinCreation:proofOfReserve.initialSupply')}
+							label={t('stableCoinCreation:proofOfReserve.initialSupply') ?? propertyNotFound}
+							placeholder={t('stableCoinCreation:proofOfReserve.initialSupply') ?? propertyNotFound}
 						/>
 					</HStack>
 				)}

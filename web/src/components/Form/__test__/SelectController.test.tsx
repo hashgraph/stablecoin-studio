@@ -41,17 +41,17 @@ describe(`<${SelectController.name} />`, () => {
 		return render(<RenderWithForm {...props} />);
 	};
 
-	test('reports correctly the values', () => {
+	test('reports correctly the values', async () => {
 		const component = factoryComponent();
 
 		expect(form.getValues()[defaultProps.name]).toBeUndefined();
 
 		const selector = component.getByRole('combobox');
 		expect(selector).toBeInTheDocument();
-		userEvent.click(selector);
+		await userEvent.click(selector);
 
 		const optionToSelect = component.getByText(defaultProps.options[1].label);
-		userEvent.click(optionToSelect);
+		await userEvent.click(optionToSelect);
 
 		expect(form.getValues()[defaultProps.name]).toEqual(defaultProps.options[1]);
 	});
@@ -85,10 +85,10 @@ describe(`<${SelectController.name} />`, () => {
 
 		const selector = component.getByRole('combobox');
 		expect(selector).toBeInTheDocument();
-		userEvent.click(selector);
+		await userEvent.click(selector);
 
 		const optionToSelect = component.getByText(notSelectableOption.label);
-		userEvent.click(optionToSelect);
+		await userEvent.click(optionToSelect);
 
 		await waitFor(() => {
 			errorMessage = component.getByTestId('form-error-msg');
@@ -199,10 +199,10 @@ describe(`<${SelectController.name} />`, () => {
 
 		const selector = component.getByRole('combobox');
 		expect(selector).toBeInTheDocument();
-		userEvent.click(selector);
+		await userEvent.click(selector);
 
 		const optionToSelect = component.getByText(defaultProps.options[1].label);
-		userEvent.click(optionToSelect);
+		await userEvent.click(optionToSelect);
 
 		expect(onChange).toHaveBeenCalled();
 	});
@@ -216,8 +216,8 @@ describe(`<${SelectController.name} />`, () => {
 
 		const selector = component.getByRole('combobox');
 		expect(selector).toBeInTheDocument();
-		userEvent.click(selector);
-		userEvent.click(document.body);
+		await userEvent.click(selector);
+		await userEvent.click(document.body);
 
 		expect(onBlur).toHaveBeenCalled();
 	});
@@ -244,7 +244,7 @@ describe(`<${SelectController.name} />`, () => {
 		expect(label).not.toBeInTheDocument();
 	});
 
-	test('cannot be used when is disabled', () => {
+	test('cannot be used when is disabled', async () => {
 		const onChange = jest.fn();
 		const placeholderText = 'disabled selector';
 		const component = factoryComponent({
@@ -258,7 +258,7 @@ describe(`<${SelectController.name} />`, () => {
 		expect(selector).not.toBeInTheDocument();
 
 		const placeholder = component.getByText(placeholderText);
-		userEvent.click(placeholder);
+		await userEvent.click(placeholder);
 
 		defaultProps.options.forEach((option) => {
 			expect(component.queryByText(option.label)).not.toBeInTheDocument();

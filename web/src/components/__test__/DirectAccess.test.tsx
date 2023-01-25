@@ -34,13 +34,13 @@ describe(`<${DirectAccess.name} />`, () => {
 		expect(icon).toBeInTheDocument();
 	});
 
-	test('on click should redirect', () => {
+	test('on click should redirect',async () => {
 		const component = render(<DirectAccess {...directAccessProps} />);
 
 		const container = component.getByTestId(`direct-access-${directAccessProps.route}`);
 		const anything = expect.any(Function);
 
-		userEvent.click(container);
+		await userEvent.click(container);
 		expect(RouterManager.to).toHaveBeenCalledTimes(1);
 		expect(RouterManager.to).toHaveBeenCalledWith(anything, directAccessProps.route);
 	});

@@ -49,11 +49,11 @@ describe(`<${Stepper.name} />`, () => {
 		expect(numberTab2).toHaveTextContent(steps[1].number);
 	});
 
-	test('should change tab when next step button clicked', () => {
+	test('should change tab when next step button clicked', async () => {
 		const component = render(<Stepper {...StepsProps} />);
 
 		const buttonPrimaryTab1 = component.getByTestId('stepper-step-panel-button-primary-1');
-		userEvent.click(buttonPrimaryTab1);
+		await userEvent.click(buttonPrimaryTab1);
 
 		expect(StepsProps.setCurrentStep).toHaveBeenCalledWith(1);
 	});
@@ -66,7 +66,7 @@ describe(`<${Stepper.name} />`, () => {
 		);
 
 		const buttonSecondaryTab1 = component.getByTestId('stepper-step-panel-button-secondary-1');
-		userEvent.click(buttonSecondaryTab1);
+		await userEvent.click(buttonSecondaryTab1);
 
 		expect(handleFirstButtonSecondary).toHaveBeenCalled();
 	});
@@ -83,7 +83,7 @@ describe(`<${Stepper.name} />`, () => {
 		);
 
 		const buttonPrimaryTab2 = component.getByTestId('stepper-step-panel-button-primary-2');
-		userEvent.click(buttonPrimaryTab2);
+		await userEvent.click(buttonPrimaryTab2);
 
 		expect(handleLastButtonPrimary).toHaveBeenCalled();
 	});

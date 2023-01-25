@@ -54,7 +54,7 @@ describe(`<${ModalHashpack.name} />`, () => {
 		const connectButton = component.getByTestId('modal-hashpack-button');
 		expect(connectButton).toBeInTheDocument();
 
-		userEvent.click(connectButton);
+		await userEvent.click(connectButton);
 
 		expect(SDKService.connectWallet).toHaveBeenCalled();
 	});

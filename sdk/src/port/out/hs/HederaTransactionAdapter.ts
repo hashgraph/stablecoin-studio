@@ -692,7 +692,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		gas: number,
 		params?: Params,
 		transactionType: TransactionType = TransactionType.RECEIPT,
-		contractAbi: any[] = HederaERC20__factory.abi,
+		contractAbi: any = HederaERC20__factory.abi
 	): Promise<TransactionResponse> {
 		try {
 			switch (CapabilityDecider.decide(coin, operation)) {
@@ -746,7 +746,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		gas: number,
 		params?: Params,
 		transactionType: TransactionType = TransactionType.RECEIPT,
-		contractAbi: any[] = HederaERC20__factory.abi,
+		contractAbi: any = HederaERC20__factory.abi
 	): Promise<TransactionResponse> {
 		const filteredContractParams: any[] =
 			params === undefined || params === null
@@ -883,7 +883,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		parameters: any[],
 		gas: number,
 		trxType: TransactionType,
-		abi: any[],
+		abi: any,
 		value?: number,
 	): Promise<TransactionResponse> {
 		const functionCallParameters = this.encodeFunctionCall(
@@ -910,7 +910,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	private encodeFunctionCall(
 		functionName: string,
 		parameters: any[],
-		abi: any[],
+		abi: any,
 	): Uint8Array {
 		const functionAbi = abi.find(
 			(func: { name: any; type: string }) =>

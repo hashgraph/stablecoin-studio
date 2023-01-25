@@ -18,6 +18,7 @@ import AwaitingWalletSignature from '../../components/AwaitingWalletSignature';
 import BaseContainer from '../../components/BaseContainer';
 import InputController from '../../components/Form/InputController';
 import ModalNotification from '../../components/ModalNotification';
+import { propertyNotFound } from '../../constant';
 
 import { useRefreshCoinInfo } from '../../hooks/useRefreshCoinInfo';
 import SDKService from '../../services/SDKService';
@@ -223,7 +224,7 @@ const StableCoinProof = () => {
 								<InputController
 									control={control}
 									rules={{
-										required: t('global:validations.required'),
+										required: t('global:validations.required') ?? propertyNotFound,
 										validate: {
 											validation: (value: string) => {
 												updateReserveAmountRequest.reserveAmount = value;
@@ -235,7 +236,7 @@ const StableCoinProof = () => {
 										},
 									}}
 									name={'updateReserveAmount'}
-									placeholder={t('proofOfReserve:updateReserveAmount.inputPlaceholder')}
+									placeholder={t('proofOfReserve:updateReserveAmount.inputPlaceholder') ?? propertyNotFound}
 									isReadOnly={false}
 								/>
 							),
@@ -257,7 +258,7 @@ const StableCoinProof = () => {
 							input: (
 								<InputController
 									rules={{
-										required: t('global:validations.required'),
+										required: t('global:validations.required') ?? propertyNotFound,
 										validate: {
 											validation: (value: string) => {
 												updateReserveAddressRequest.reserveAddress = value;
@@ -270,7 +271,7 @@ const StableCoinProof = () => {
 									}}
 									control={control}
 									name={'reserveAddress'}
-									placeholder={t('proofOfReserve:updateReserveAddress.inputPlaceholder')}
+									placeholder={t('proofOfReserve:updateReserveAddress.inputPlaceholder') ?? propertyNotFound}
 								/>
 							),
 							button: (
