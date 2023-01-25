@@ -140,7 +140,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		reserveAddress?: string;
 		reserveInitialAmount?: string;
 		createReserve: boolean;
-		grantKYCToOriginalSender:boolean;
+		grantKYCToOriginalSender?:boolean;
 	}) {
 		super({
 			name: (val) => {
