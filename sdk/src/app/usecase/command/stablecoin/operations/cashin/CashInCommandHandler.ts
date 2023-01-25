@@ -27,10 +27,16 @@ import { StableCoinNotAssociated } from '../../error/StableCoinNotAssociated.js'
 import AccountService from '../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
-import { GetAccountTokenAssociatedQuery } from '../../../../query/account/tokenAssociated/GetAccountTokenAssociatedQuery.js';
 import { DecimalsOverRange } from '../../error/DecimalsOverRange.js';
 import { OperationNotAllowed } from '../../error/OperationNotAllowed.js';
 import { CashInCommand, CashInCommandResponse } from './CashInCommand.js';
+import { GetAccountTokenRelationshipQuery } from '../../../../query/account/tokenRelationship/GetAccountTokenRelationshipQuery.js';
+import {
+	FreezeStatus,
+	KycStatus,
+} from '../../../../../../port/out/mirror/response/AccountTokenRelationViewModel.js';
+import { AccountFreeze } from '../../error/AccountFreeze.js';
+import { AccountNotKyc } from '../../error/AccountNotKyc.js';
 
 @CommandHandler(CashInCommand)
 export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
@@ -47,17 +53,24 @@ export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
 		const { amount, targetId, tokenId } = command;
 		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
-		const tokenAssociated = (
+		const tokenRelationship = (
 			await this.stableCoinService.queryBus.execute(
-				new GetAccountTokenAssociatedQuery(targetId, tokenId),
+				new GetAccountTokenRelationshipQuery(targetId, tokenId),
 			)
-		).isAssociated;
+		).payload;
 
-		if (!tokenAssociated) {
+		if (!tokenRelationship) {
 			throw new StableCoinNotAssociated(
 				targetId.toString(),
 				tokenId.toString(),
 			);
+		}
+		if (tokenRelationship.freezeStatus === FreezeStatus.FROZEN) {
+			throw new AccountFreeze(targetId.toString());
+		}
+
+		if (tokenRelationship.kycStatus === KycStatus.REVOKED) {
+			throw new AccountNotKyc(targetId.toString());
 		}
 
 		const capabilities = await this.stableCoinService.getCapabilities(

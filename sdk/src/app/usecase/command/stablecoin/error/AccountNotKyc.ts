@@ -18,19 +18,13 @@
  *
  */
 
-import { Query } from '../../../../../core/query/Query.js';
-import { QueryResponse } from '../../../../../core/query/QueryResponse.js';
-import { HederaId } from '../../../../../domain/context/shared/HederaId.js';
+import BaseError, { ErrorCode } from '../../../../../core/error/BaseError.js';
 
-export class GetAccountTokenAssociatedQueryResponse implements QueryResponse {
-	constructor(public readonly isAssociated: boolean) {}
-}
-
-export class GetAccountTokenAssociatedQuery extends Query<GetAccountTokenAssociatedQueryResponse> {
-	constructor(
-		public readonly targetId: HederaId,
-		public readonly tokenId: HederaId,
-	) {
-		super();
+export class AccountNotKyc extends BaseError {
+	constructor(targetId: unknown) {
+		super(
+			ErrorCode.AccountNotKyc,
+			`The account ${targetId} has not passed the KYC validation`,
+		);
 	}
 }

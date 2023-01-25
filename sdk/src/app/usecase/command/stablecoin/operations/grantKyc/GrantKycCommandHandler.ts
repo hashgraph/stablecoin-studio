@@ -30,10 +30,8 @@ import TransactionService from '../../../../../service/TransactionService.js';
 import { GetAccountTokenRelationshipQuery } from '../../../../query/account/tokenRelationship/GetAccountTokenRelationshipQuery.js';
 import { KycNotActive } from '../../error/KycNotActive.js';
 import { OperationNotAllowed } from '../../error/OperationNotAllowed.js';
-import {
-	GrantKycCommand,
-	GrantKycCommandResponse,
-} from './GrantKycCommand.js';
+import { StableCoinNotAssociated } from '../../error/StableCoinNotAssociated.js';
+import { GrantKycCommand, GrantKycCommandResponse } from './GrantKycCommand.js';
 
 @CommandHandler(GrantKycCommand)
 export class GrantKycCommandHandler
@@ -52,9 +50,7 @@ export class GrantKycCommandHandler
 		public readonly transactionService: TransactionService,
 	) {}
 
-	async execute(
-		command: GrantKycCommand,
-	): Promise<GrantKycCommandResponse> {
+	async execute(command: GrantKycCommand): Promise<GrantKycCommandResponse> {
 		const { targetId, tokenId } = command;
 		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
@@ -63,18 +59,23 @@ export class GrantKycCommandHandler
 			tokenId,
 		);
 		const coin = capabilities.coin;
-		const relationship = await this.queryBus.execute(
-			new GetAccountTokenRelationshipQuery(targetId, tokenId),
-		);
+		const tokenRelationship = (
+			await this.queryBus.execute(
+				new GetAccountTokenRelationshipQuery(targetId, tokenId),
+			)
+		).payload;
 
 		if (!coin.kycKey) {
 			throw new KycNotActive(tokenId.value);
 		}
 
-		if (
-			!relationship ||
-			relationship.payload?.kycStatus !== KycStatus.REVOKED
-		) {
+		if (!tokenRelationship) {
+			throw new StableCoinNotAssociated(
+				targetId.toString(),
+				tokenId.toString(),
+			);
+		}
+		if (tokenRelationship.kycStatus !== KycStatus.REVOKED) {
 			throw new OperationNotAllowed(
 				`KYC cannot be granted for account ${targetId} on token ${tokenId}`,
 			);
