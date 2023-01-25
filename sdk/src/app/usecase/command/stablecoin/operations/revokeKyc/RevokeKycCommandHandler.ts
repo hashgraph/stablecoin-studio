@@ -22,18 +22,24 @@ import { CommandBus } from '../../../../../../core/command/CommandBus.js';
 import { ICommandHandler } from '../../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
-import { QueryBus } from '../../../../../../core/query/QueryBus.js';import { KycStatus } from '../../../../../../port/out/mirror/response/AccountTokenRelationViewModel.js';
-;
+import { QueryBus } from '../../../../../../core/query/QueryBus.js';
+import { KycStatus } from '../../../../../../port/out/mirror/response/AccountTokenRelationViewModel.js';
 import AccountService from '../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
 import { GetAccountTokenRelationshipQuery } from '../../../../query/account/tokenRelationship/GetAccountTokenRelationshipQuery.js';
 import { KycNotActive } from '../../error/KycNotActive.js';
 import { OperationNotAllowed } from '../../error/OperationNotAllowed.js';
-import { RevokeKycCommand, RevokeKycCommandResponse } from './RevokeKycCommand.js';
+import { StableCoinNotAssociated } from '../../error/StableCoinNotAssociated.js';
+import {
+	RevokeKycCommand,
+	RevokeKycCommandResponse,
+} from './RevokeKycCommand.js';
 
 @CommandHandler(RevokeKycCommand)
-export class RevokeKycCommandHandler implements ICommandHandler<RevokeKycCommand> {
+export class RevokeKycCommandHandler
+	implements ICommandHandler<RevokeKycCommand>
+{
 	constructor(
 		@lazyInject(StableCoinService)
 		public readonly stableCoinService: StableCoinService,
@@ -58,18 +64,25 @@ export class RevokeKycCommandHandler implements ICommandHandler<RevokeKycCommand
 			tokenId,
 		);
 		const coin = capabilities.coin;
-		const relationship = await this.queryBus.execute(
-			new GetAccountTokenRelationshipQuery(targetId, tokenId),
-		);
+
+		const tokenRelationship = (
+			await this.stableCoinService.queryBus.execute(
+				new GetAccountTokenRelationshipQuery(targetId, tokenId),
+			)
+		).payload;
+
+		if (!tokenRelationship) {
+			throw new StableCoinNotAssociated(
+				targetId.toString(),
+				tokenId.toString(),
+			);
+		}
 
 		if (!coin.kycKey) {
 			throw new KycNotActive(tokenId.value);
 		}
 
-		if (
-			!relationship ||
-			relationship.payload?.kycStatus !== KycStatus.GRANTED
-		) {
+		if (tokenRelationship.kycStatus !== KycStatus.GRANTED) {
 			throw new OperationNotAllowed(
 				`KYC cannot be revoked for account ${targetId} on token ${tokenId}`,
 			);
