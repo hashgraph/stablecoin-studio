@@ -40,7 +40,7 @@
     "pause": "Pause",
     "freeze": "Freeze",
     "kyc": "KYC",
-    "grantKYCToOriginalSender": "Grant KYC Sender",
+    "grantKYCToOriginalSender": "Grant KYC flag to the token creator",
     "introduce": "Enter the {{name}}",
     "none": "None",
     "otherKey": "Other key",
