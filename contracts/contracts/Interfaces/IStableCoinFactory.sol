@@ -23,6 +23,7 @@ interface IStableCoinFactory {
         address reserveAddress;
         int256 reserveInitialAmount;
         bool createReserve;
+        bool grantKYCToOriginalSender;
         KeysStruct[] keys;
     }
 

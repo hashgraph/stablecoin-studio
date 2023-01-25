@@ -187,6 +187,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					? reserveInitialAmount.toFixedNumber()
 					: BigDecimal.ZERO.toFixedNumber(),
 				createReserve,
+				coin.grantKYCToOriginalSender?coin.grantKYCToOriginalSender:false,
 				keys,
 			);
 

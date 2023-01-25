@@ -78,10 +78,10 @@ import { RevokeKycCommand } from '../../app/usecase/command/stablecoin/operation
 import { LogError } from '../../core/decorator/LogErrorDecorator.js';
 import { GetAccountTokenRelationshipQuery } from '../../app/usecase/query/account/tokenRelationship/GetAccountTokenRelationshipQuery.js';
 
-export const HederaERC20AddressTestnet = '0.0.49394934';
+export const HederaERC20AddressTestnet = '0.0.49414839';
 export const HederaERC20AddressPreviewnet = '0.0.11111111';
 
-export const FactoryAddressTestnet = '0.0.49394940';
+export const FactoryAddressTestnet = '0.0.49414875';
 export const FactoryAddressPreviewnet = '0.0.11111111';
 
 export { StableCoinViewModel, StableCoinListViewModel, ReserveViewModel };
@@ -195,6 +195,8 @@ class StableCoinInPort implements IStableCoinInPort {
 			autoRenewAccount: req.autoRenewAccount
 				? new HederaId(req.autoRenewAccount)
 				: undefined,
+			grantKYCToOriginalSender:
+				req.grantKYCToOriginalSender? req.grantKYCToOriginalSender: false
 		};
 
 		const createResponse = await this.commandBus.execute(

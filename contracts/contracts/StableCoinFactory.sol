@@ -10,6 +10,7 @@ import './HederaReserve.sol';
 import './HederaReserveProxy.sol';
 import './HederaReserveProxyAdmin.sol';
 import './Interfaces/IStableCoinFactory.sol';
+import './Interfaces/IHederaERC20.sol';
 import '@openzeppelin/contracts/utils/Strings.sol';
 
 contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
@@ -88,20 +89,22 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
         );
 
         // Initialize Proxy
+        IHederaERC20.InitializeStruct memory initInfo;
+        initInfo.token = token;
+        initInfo.initialTotalSupply = requestedToken.tokenInitialSupply;
+        initInfo.tokenDecimals = requestedToken.tokenDecimals;
+        initInfo.originalSender = msg.sender;
+        initInfo.reserveAddress = reserveAddress;
+        initInfo.grantKYCToOriginalSender = requestedToken.grantKYCToOriginalSender;
+        initInfo.treasuryIsContract = treasuryIsContract(requestedToken.treasuryAddress);
+
         address tokenAddress = HederaERC20(address(StableCoinProxy)).initialize{
             value: msg.value
         }(
-            token,
-            requestedToken.tokenInitialSupply,
-            requestedToken.tokenDecimals,
-            msg.sender,
-            reserveAddress
+            initInfo
         );
 
-        // Associate token
-        if (treasuryIsContract(requestedToken.treasuryAddress))
-            HederaERC20(address(StableCoinProxy)).associateToken(msg.sender);
-
+        // Return event
         DeployedStableCoin memory deployedStableCoin;
 
         deployedStableCoin.stableCoinProxy = address(StableCoinProxy);
