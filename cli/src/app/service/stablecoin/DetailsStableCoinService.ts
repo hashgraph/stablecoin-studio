@@ -36,6 +36,13 @@ export default class DetailsStableCoinsService extends Service {
     );
 
     if (show) {
+      const reserveData = respDetail.reserveAddress
+        ? {
+            reserveAddress: respDetail?.reserveAddress.toString(),
+            reserveAmount: respDetail?.reserveAmount.toString(),
+          }
+        : {};
+
       const out = {
         ...respDetail,
         tokenId: respDetail.tokenId.toString(),
@@ -52,8 +59,7 @@ export default class DetailsStableCoinsService extends Service {
         wipeKey: respDetail.wipeKey.toString(),
         supplyKey: respDetail.supplyKey.toString(),
         pauseKey: respDetail.pauseKey.toString(),
-        reserveAddress: respDetail.reserveAddress.toString(),
-        reserveAmount: respDetail.reserveAmount.toString(),
+        ...reserveData,
       };
       console.log(out);
       utilsService.breakLine();
