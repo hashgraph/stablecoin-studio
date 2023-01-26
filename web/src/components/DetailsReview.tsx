@@ -14,7 +14,7 @@ export interface Detail {
 export interface DetailsReviewProps {
 	details: Detail[];
 	divider?: boolean;
-	title?: string;
+	title?: string|null;
 	titleProps?: ChakraTextProps;
 	contentProps?: ChakraFlexProps;
 }

@@ -23,15 +23,15 @@ const WARNING = 'warning';
 const ERROR = 'error';
 
 interface ModalNotificationProps extends Omit<ModalProps, 'children'> {
-	description?: string;
+	description?: string | null;
 	icon?: string;
 	isOpen: boolean;
 	onClose: () => void;
-	title: string;
+	title: string|null;
 	variant?: 'error' | 'success' | 'warning' | 'loading';
 	onClick?: () => void;
 	closeButton?: boolean;
-	errorTransactionUrl?: string;
+	errorTransactionUrl?: string | null;
 }
 
 const ModalNotification = (props: ModalNotificationProps) => {

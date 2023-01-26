@@ -22,6 +22,7 @@ import type {
 	ResetSupplierAllowanceRequest,
 	RevokeRoleRequest,
 } from 'hedera-stable-coin-sdk';
+import { propertyNotFound } from '../../constant';
 
 const styles = {
 	menuList: {
@@ -153,7 +154,7 @@ const RoleLayout = (props: RoleLayoutProps) => {
 						<Stack as='form' spacing={6}>
 							<InputController
 								rules={{
-									required: t('global:validations.required'),
+									required: t('global:validations.required') ?? propertyNotFound,
 									validate: {
 										validation: (value: string) => {
 											if (request) {
@@ -174,7 +175,7 @@ const RoleLayout = (props: RoleLayoutProps) => {
 							{roleRequest && (
 								<SelectController
 									rules={{
-										required: t('global:validations.required'),
+										required: t('global:validations.required') ?? propertyNotFound,
 									}}
 									isRequired
 									control={control}

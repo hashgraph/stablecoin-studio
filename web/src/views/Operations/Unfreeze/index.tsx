@@ -16,6 +16,7 @@ import { RouterManager } from '../../../Router/RouterManager';
 
 import { FreezeAccountRequest } from 'hedera-stable-coin-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
+import { propertyNotFound } from '../../../constant';
 
 const UnfreezeOperation = () => {
 	const {
@@ -83,7 +84,7 @@ const UnfreezeOperation = () => {
 						<Stack as='form' spacing={6} maxW='520px'>
 							<InputController
 								rules={{
-									required: t('global:validations.required'),
+									required: t('global:validations.required')??propertyNotFound,
 									validate: {
 										validation: (value: string) => {
 											request.targetId = value;
@@ -95,8 +96,8 @@ const UnfreezeOperation = () => {
 								isRequired
 								control={control}
 								name='targetAccount'
-								placeholder={t('unfreeze:accountPlaceholder')}
-								label={t('unfreeze:accountLabel')}
+								placeholder={t('unfreeze:accountPlaceholder')??propertyNotFound}
+								label={t('unfreeze:accountLabel')??propertyNotFound}
 							/>
 						</Stack>
 					</>
