@@ -255,7 +255,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 					this.initData.topic,
 					hashPackTrx,
 				);
-				this.logTransaction(hashPackTransactionResponse.id ?? '');
+				this.logTransaction((hashPackTransactionResponse.response as any).transactionId ?? '');
 			}
 			return HashpackTransactionResponseAdapter.manageResponse(
 				this.signer,

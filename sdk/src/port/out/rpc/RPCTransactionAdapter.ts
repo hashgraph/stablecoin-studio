@@ -187,7 +187,9 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					? reserveInitialAmount.toFixedNumber()
 					: BigDecimal.ZERO.toFixedNumber(),
 				createReserve,
-				coin.grantKYCToOriginalSender?coin.grantKYCToOriginalSender:false,
+				coin.grantKYCToOriginalSender
+					? coin.grantKYCToOriginalSender
+					: false,
 				keys,
 			);
 
@@ -1200,17 +1202,20 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		params?: Params,
 	): Promise<TransactionResponse> {
 		try {
+			let response;
 			switch (CapabilityDecider.decide(coin, operation)) {
 				case Decision.CONTRACT:
 					if (!coin.coin.evmProxyAddress?.toString())
 						throw new Error(
 							`StableCoin ${coin.coin.name} does not have a proxy address`,
 						);
-					return this.performSmartContractOperation(
+					response = await this.performSmartContractOperation(
 						coin,
 						operation,
 						params,
 					);
+					this.logTransaction(response.id ?? '');
+					return response;
 
 				case Decision.HTS:
 					if (!coin.coin.evmProxyAddress?.toString())
@@ -1221,8 +1226,13 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 						throw new Error(
 							`StableCoin ${coin.coin.name}  does not have an underlying token`,
 						);
-
-					return this.performHTSOperation(coin, operation, params);
+					response = await this.performHTSOperation(
+						coin,
+						operation,
+						params,
+					);
+					this.logTransaction(response.id ?? '');
+					return response;
 
 				default:
 					const tokenId = coin.coin.tokenId
@@ -1241,6 +1251,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			}
 		} catch (error) {
 			LogService.logError(error);
+			this.logTransaction((error as any).error.transactionHash ?? '');
 			throw new TransactionResponseError({
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter ${operation} operation : ${error}`,
@@ -1484,7 +1495,6 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			transaction.id,
 		);
 
-		console.log(transaction.id);
 		this.logTransaction(transaction.id);
 
 		if (

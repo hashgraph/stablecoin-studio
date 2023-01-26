@@ -85,7 +85,7 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 			const transactionId =
 				transactionResponse instanceof HTransactionResponse
 					? transactionResponse.transactionId.toString()
-					: transactionResponse.id;
+					: (transactionResponse as any).response.transactionId;
 			LogService.logTrace(
 				`Creating RECORD response from TRX (${transactionId}) from record: `,
 				record?.toString(),

@@ -418,7 +418,10 @@ export default abstract class TransactionAdapter
 
 	logTransaction(id: string): void {
 		const HASHSCAN_URL = 'https://hashscan.io/testnet/transactionsById/';
-		const msg = `\nYou can see your transaction at ${HASHSCAN_URL}${id}\n`;
+		const HASHSCAN_TX_URL = 'https://hashscan.io/testnet/tx/';
+		const msg = `\nYou can see your transaction at ${
+			id.startsWith('0x') ? HASHSCAN_TX_URL : HASHSCAN_URL
+		}${id}\n`;
 		LogService.logInfo(msg);
 		console.log(msg);
 	}
