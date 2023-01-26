@@ -486,8 +486,8 @@ export default class OperationStableCoinService extends Service {
           grantKYCRequest.targetId = await utilsService.defaultSingleAsk(
             language.getText('wizard.grantKYCToAccount'),
             '0.0.0',
-          );
-  
+            );
+            
           await utilsService.handleValidation(
             () => grantKYCRequest.validate('targetId'),
             async () => {

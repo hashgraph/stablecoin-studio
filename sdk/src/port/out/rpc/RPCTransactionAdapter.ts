@@ -1484,6 +1484,8 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			transaction.id,
 		);
 
+		this.logTransaction(transaction.id);
+
 		if (
 			!txResponse.result ||
 			txResponse.result.length < responseCodeLength

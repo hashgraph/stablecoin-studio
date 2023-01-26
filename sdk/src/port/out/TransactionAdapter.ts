@@ -37,6 +37,7 @@ import {
 import { MirrorNodeAdapter } from './mirror/MirrorNodeAdapter.js';
 import { Environment } from '../../domain/context/network/Environment.js';
 import EvmAddress from '../../domain/context/contract/EvmAddress.js';
+import LogService from '../../app/service/LogService.js';
 
 export interface InitializationData {
 	account?: Account;
@@ -413,5 +414,14 @@ export default abstract class TransactionAdapter
 
 	async contractToEvmAddress(contractId: ContractId): Promise<EvmAddress> {
 		return this.getMirrorNodeAdapter().contractToEvmAddress(contractId);
+	}
+
+	logTransaction(id: string): void {
+		const target = id.replace('@', '').replace(/\./g, '');
+		const url =
+			'https://testnet.dragonglass.me/transactions/';
+		const msg = `\nYou can see your transaction at ${url}${target}\n`
+		LogService.logInfo(msg);
+		console.log(msg);
 	}
 }

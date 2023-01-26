@@ -122,6 +122,7 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 		abi: object[],
 	): Promise<TransactionResponse> {
 		const tr: HTransactionResponse = await t.execute(this.client);
+		this.logTransaction(tr.transactionId.toString());
 		return HTSTransactionResponseAdapter.manageResponse(
 			tr,
 			transactionType,
