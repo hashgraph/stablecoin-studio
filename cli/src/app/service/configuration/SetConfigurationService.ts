@@ -242,7 +242,9 @@ export default class SetConfigurationService extends Service {
 
   public async manageAccountMenu(): Promise<void> {
     const currentAccount = utilsService.getCurrentAccount();
-    const manageOptions = language.getArrayFromObject('wizard.manageAccountOptions');
+    const manageOptions = language.getArrayFromObject(
+      'wizard.manageAccountOptions',
+    );
     const defaultCfgData = configurationService.getConfiguration();
     const accounts = defaultCfgData.accounts;
     const accountAction = await utilsService.defaultMultipleAsk(

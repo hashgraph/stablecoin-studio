@@ -13,7 +13,7 @@ import {
   IncreaseSupplierAllowanceRequest,
   DecreaseSupplierAllowanceRequest,
   ResetSupplierAllowanceRequest,
-  GetSupplierAllowanceRequest
+  GetSupplierAllowanceRequest,
 } from 'hedera-stable-coin-sdk';
 import colors from 'colors';
 
@@ -47,20 +47,17 @@ export default class RoleStableCoinsService extends Service {
     let respDetail;
 
     if (req.supplierType === 'unlimited') {
-      await utilsService.showSpinner(Role.isUnlimited(req).then(
-          (response) => (respDetail = response)
-        ),
+      await utilsService.showSpinner(
+        Role.isUnlimited(req).then((response) => (respDetail = response)),
         {
           text: language.getText('state.loading'),
           successText: language.getText('state.loadCompleted') + '\n',
-        }
+        },
       );
       return respDetail;
     } else {
       await utilsService.showSpinner(
-        Role.isLimited(req).then(
-          (response) => (respDetail = response),
-        ),
+        Role.isLimited(req).then((response) => (respDetail = response)),
         {
           text: language.getText('state.loading'),
           successText: language.getText('state.loadCompleted') + '\n',
@@ -134,9 +131,9 @@ export default class RoleStableCoinsService extends Service {
         text: language.getText('state.loading'),
         successText: language.getText('state.loadCompleted') + '\n',
       },
-    );    
+    );
     return hasRole;
-  }  
+  }
 
   public async hasRoleStableCoin(req: HasRoleRequest): Promise<void> {
     const hasRole = await this.hasRole(req);
@@ -148,7 +145,8 @@ export default class RoleStableCoinsService extends Service {
     console.log(
       response
         .replace('${address}', req.targetId)
-        .replace('${role}', colors.yellow(StableCoinRoleLabel.get(req.role))) + '\n',
+        .replace('${role}', colors.yellow(StableCoinRoleLabel.get(req.role))) +
+        '\n',
     );
 
     utilsService.breakLine();
@@ -188,9 +186,9 @@ export default class RoleStableCoinsService extends Service {
     );
     console.log(language.getText('operation.success'));
     roles.length > 0
-      ? roles.forEach((role: StableCoinRole) => { 
-        console.log(colors.yellow(StableCoinRoleLabel.get(role)))
-      })
+      ? roles.forEach((role: StableCoinRole) => {
+          console.log(colors.yellow(StableCoinRoleLabel.get(role)));
+        })
       : console.log(colors.red(language.getText('roleManagement.noRoles')));
     utilsService.breakLine();
 

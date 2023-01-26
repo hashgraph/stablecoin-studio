@@ -1,4 +1,4 @@
 export interface IGeneralConfig {
-    configPath?: string;
-    network?: string;
+  configPath?: string;
+  network?: string;
 }

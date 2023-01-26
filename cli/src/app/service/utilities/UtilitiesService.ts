@@ -307,7 +307,8 @@ export default class UtilitiesService extends Service {
    */
   public async defaultPublicKeyAsk(): Promise<{ key: string }> {
     let publicKey: string = await this.defaultSingleAsk(
-      language.getText('configuration.askPublicKey') + ` '96|64|66|68 characters'`,
+      language.getText('configuration.askPublicKey') +
+        ` '96|64|66|68 characters'`,
       undefined,
     );
 
@@ -320,7 +321,7 @@ export default class UtilitiesService extends Service {
       return await this.defaultPublicKeyAsk();
     }
 
-    return { key: publicKey};
+    return { key: publicKey };
   }
 
   public async drawTableListStableCoin(

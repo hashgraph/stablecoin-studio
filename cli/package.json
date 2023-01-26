@@ -21,7 +21,8 @@
     "test": "NODE_OPTIONS=--experimental-vm-modules npx jest --ci --json --coverage --forceExit --testLocationInResults --outputFile=report.json",
     "test:vm": "NODE_OPTIONS=--experimental-vm-modules npm run test",
     "prettier": "prettier --config .prettierrc --write .",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "pre-commit": "npm run lint && npm run prettier"
   },
   "keywords": [],
   "author": "",

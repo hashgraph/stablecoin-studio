@@ -12,7 +12,11 @@ import ManageImportedTokenService from '../stablecoin/ManageImportedTokenService
 import ListStableCoinsService from '../stablecoin/ListStableCoinsService.js';
 import colors from 'colors';
 import { clear } from 'console';
-import { Network, SetNetworkRequest, StableCoinViewModel } from 'hedera-stable-coin-sdk';
+import {
+  Network,
+  SetNetworkRequest,
+  StableCoinViewModel,
+} from 'hedera-stable-coin-sdk';
 
 /**
  * Wizard Service
@@ -97,9 +101,8 @@ export default class WizardService extends Service {
    * Show configuration menu
    */
   public async configurationMenu(): Promise<void> {
-    const wizardChangeConfigOptions: Array<string> = language.getArrayFromObject(
-      'wizard.changeOptions',
-    );
+    const wizardChangeConfigOptions: Array<string> =
+      language.getArrayFromObject('wizard.changeOptions');
 
     switch (
       await utilsService.defaultMultipleAsk(

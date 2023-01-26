@@ -1,4 +1,4 @@
 export interface IConsensusNodeConfig {
-    url:    string;
-    nodeId: string;
+  url: string;
+  nodeId: string;
 }

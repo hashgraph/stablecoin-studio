@@ -1,0 +1,6 @@
+*.md
+build
+coverage
+logs
+hsca-config.yaml
+package-lock.json

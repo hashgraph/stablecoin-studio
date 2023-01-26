@@ -34,16 +34,16 @@ export default class Language extends BaseEntity {
 
     let obj = this.lang;
 
-    if(!obj || attribute === '') return values;
+    if (!obj || attribute === '') return values;
 
-    attribute.split(".").forEach(item => {
+    attribute.split('.').forEach((item) => {
       obj = obj[item];
     });
 
     const objKeys = Object.keys(obj);
 
-    objKeys.forEach(key => {
-      values.push(lodash.get(this.lang, attribute + "." + key));
+    objKeys.forEach((key) => {
+      values.push(lodash.get(this.lang, attribute + '.' + key));
     });
 
     return values;

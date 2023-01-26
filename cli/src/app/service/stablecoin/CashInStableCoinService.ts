@@ -8,9 +8,7 @@ export default class CashInStableCoinsService extends Service {
     super('Cash In Stable Coin');
   }
 
-  public async cashInStableCoin(
-    request: CashInRequest,
-  ): Promise<void> {
+  public async cashInStableCoin(request: CashInRequest): Promise<void> {
     await utilsService.showSpinner(StableCoin.cashIn(request), {
       text: language.getText('state.loading'),
       successText: language.getText('state.cashInCompleted') + '\n',

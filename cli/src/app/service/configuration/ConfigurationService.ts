@@ -155,8 +155,18 @@ export default class ConfigurationService extends Service {
         'hederaERC20s'
       ] as unknown as IHederaERC20Config[],
     };
-    this.logFactoryIdWarning(FactoryAddressTestnet,'Factory', config.defaultNetwork ?? '', config.factories);
-    this.logFactoryIdWarning(HederaERC20AddressTestnet,'HederaERC20Factory', config.defaultNetwork ?? '', config.hederaERC20s);
+    this.logFactoryIdWarning(
+      FactoryAddressTestnet,
+      'Factory',
+      config.defaultNetwork ?? '',
+      config.factories,
+    );
+    this.logFactoryIdWarning(
+      HederaERC20AddressTestnet,
+      'HederaERC20Factory',
+      config.defaultNetwork ?? '',
+      config.hederaERC20s,
+    );
     this.setConfiguration(config);
     return config;
   }
