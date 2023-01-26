@@ -1484,6 +1484,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			transaction.id,
 		);
 
+		console.log(transaction.id);
 		this.logTransaction(transaction.id);
 
 		if (

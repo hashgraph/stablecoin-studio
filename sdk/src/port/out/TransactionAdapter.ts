@@ -417,10 +417,8 @@ export default abstract class TransactionAdapter
 	}
 
 	logTransaction(id: string): void {
-		const target = id.replace('@', '').replace(/\./g, '');
-		const url =
-			'https://testnet.dragonglass.me/transactions/';
-		const msg = `\nYou can see your transaction at ${url}${target}\n`
+		const HASHSCAN_URL = 'https://hashscan.io/testnet/transactionsById/';
+		const msg = `\nYou can see your transaction at ${HASHSCAN_URL}${id}\n`;
 		LogService.logInfo(msg);
 		console.log(msg);
 	}

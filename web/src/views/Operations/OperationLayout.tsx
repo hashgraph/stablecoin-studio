@@ -9,7 +9,6 @@ import BaseContainer from '../../components/BaseContainer';
 import DetailsReview from '../../components/DetailsReview';
 import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
 import { useRefreshCoinInfo } from '../../hooks/useRefreshCoinInfo';
-import AwaitingWalletSignature from '../../components/AwaitingWalletSignature';
 
 export interface OperationLayoutProps {
 	LeftContent: ReactNode;
@@ -27,7 +26,7 @@ const OperationLayout = ({ LeftContent, onConfirm, confirmBtnProps }: OperationL
 		RouterManager.goBack(navigate);
 	};
 
-	const isLoading = useRefreshCoinInfo();
+	useRefreshCoinInfo();
 	const optionalDetailsFinite = [
 		{
 			label: t('operations:details.initialSupply'),
@@ -76,10 +75,7 @@ const OperationLayout = ({ LeftContent, onConfirm, confirmBtnProps }: OperationL
 				pb={6}
 			>
 				<SimpleGrid columns={{ lg: 2 }} gap={{ base: 4, lg: 20 }}>
-					<Stack>
-						{!isLoading && LeftContent}
-						{isLoading && <AwaitingWalletSignature />}
-					</Stack>
+					<Stack>{LeftContent}</Stack>
 					<Stack bg='brand.white' p={6}>
 						<Stack bg='brand.white' spacing={10}>
 							<Heading fontSize='16px' color='brand.secondary' data-testid='details-title'>

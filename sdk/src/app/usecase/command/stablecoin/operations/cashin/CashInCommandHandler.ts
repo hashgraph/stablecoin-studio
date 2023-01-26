@@ -65,13 +65,13 @@ export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
 				tokenId.toString(),
 			);
 		}
-		if (tokenRelationship.freezeStatus === FreezeStatus.FROZEN) {
-			throw new AccountFreeze(targetId.toString());
-		}
+		// if (tokenRelationship.freezeStatus === FreezeStatus.FROZEN) {
+		// 	throw new AccountFreeze(targetId.toString());
+		// }
 
-		if (tokenRelationship.kycStatus === KycStatus.REVOKED) {
-			throw new AccountNotKyc(targetId.toString());
-		}
+		// if (tokenRelationship.kycStatus === KycStatus.REVOKED) {
+		// 	throw new AccountNotKyc(targetId.toString());
+		// }
 
 		const capabilities = await this.stableCoinService.getCapabilities(
 			account,
