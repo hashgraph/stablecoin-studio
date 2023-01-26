@@ -23,7 +23,10 @@ import { QueryHandler } from '../../../../../../core/decorator/QueryHandlerDecor
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
 import BigDecimal from '../../../../../../domain/context/shared/BigDecimal.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
-import {GetAllowanceQuery,GetAllowanceQueryResponse} from './GetAllowanceQuery.js';
+import {
+	GetAllowanceQuery,
+	GetAllowanceQueryResponse,
+} from './GetAllowanceQuery.js';
 import RPCQueryAdapter from '../../../../../../port/out/rpc/RPCQueryAdapter.js';
 import { MirrorNodeAdapter } from '../../../../../../port/out/mirror/MirrorNodeAdapter.js';
 

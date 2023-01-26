@@ -29,8 +29,11 @@ export class CreateCommandResponse implements CommandResponse {
 	public readonly reserveProxy: ContractId;
 	public readonly reserveProxyAdmin: ContractId;
 
-	constructor(tokenId: ContractId, reserveProxy: ContractId, reserveProxyAdmin: ContractId) 
-	{
+	constructor(
+		tokenId: ContractId,
+		reserveProxy: ContractId,
+		reserveProxyAdmin: ContractId,
+	) {
 		this.tokenId = tokenId;
 		this.reserveProxy = reserveProxy;
 		this.reserveProxyAdmin = reserveProxyAdmin;

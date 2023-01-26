@@ -24,12 +24,10 @@ import { InvalidSupplierType } from '../../../domain/context/stablecoin/error/In
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
 
-export default class CheckSupplierLimitRequest
-	extends ValidatedRequest<CheckSupplierLimitRequest>
-{
+export default class CheckSupplierLimitRequest extends ValidatedRequest<CheckSupplierLimitRequest> {
 	targetId: string;
 	tokenId: string;
-    @OptionalField()
+	@OptionalField()
 	supplierType?: string;
 
 	constructor({
@@ -44,7 +42,7 @@ export default class CheckSupplierLimitRequest
 		super({
 			targetId: Validation.checkHederaIdFormat(),
 			tokenId: Validation.checkHederaIdFormat(),
-			supplierType: CheckSupplierLimitRequest.checkSupplierType()
+			supplierType: CheckSupplierLimitRequest.checkSupplierType(),
 		});
 		this.targetId = targetId;
 		this.tokenId = tokenId;

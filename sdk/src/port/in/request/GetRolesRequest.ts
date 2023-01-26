@@ -21,24 +21,16 @@
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
 
-export default class GetRolesRequest
-	extends ValidatedRequest<GetRolesRequest>
-{
+export default class GetRolesRequest extends ValidatedRequest<GetRolesRequest> {
 	targetId: string;
-    tokenId: string
+	tokenId: string;
 
-	constructor({
-		targetId,
-        tokenId
-	}: {
-		targetId: string;
-        tokenId: string;
-	}) {
+	constructor({ targetId, tokenId }: { targetId: string; tokenId: string }) {
 		super({
 			targetId: Validation.checkHederaIdFormat(),
-            tokenId: Validation.checkHederaIdFormat(),
+			tokenId: Validation.checkHederaIdFormat(),
 		});
 		this.targetId = targetId;
-        this.tokenId = tokenId;
+		this.tokenId = tokenId;
 	}
 }

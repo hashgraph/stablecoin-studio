@@ -249,13 +249,18 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 				hashPackTransactionResponse = await t.executeWithSigner(
 					this.signer,
 				);
-				this.logTransaction(hashPackTransactionResponse.transactionId.toString());
+				this.logTransaction(
+					hashPackTransactionResponse.transactionId.toString(),
+				);
 			} else {
 				hashPackTransactionResponse = await this.hc.sendTransaction(
 					this.initData.topic,
 					hashPackTrx,
 				);
-				this.logTransaction((hashPackTransactionResponse.response as any).transactionId ?? '');
+				this.logTransaction(
+					(hashPackTransactionResponse.response as any)
+						.transactionId ?? '',
+				);
 			}
 			return HashpackTransactionResponseAdapter.manageResponse(
 				this.signer,

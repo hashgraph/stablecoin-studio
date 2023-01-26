@@ -18,10 +18,7 @@
  *
  */
 
-import {
-	Account,
-	Network,
-} from '../../../src/index.js';
+import { Account, Network } from '../../../src/index.js';
 import {
 	GetAccountInfoRequest,
 	GetListStableCoinRequest,
@@ -31,7 +28,10 @@ import ConnectRequest, {
 	SupportedWallets,
 } from '../../../src/port/in/request/ConnectRequest.js';
 
-import { CLIENT_ACCOUNT_ED25519, CLIENT_PUBLIC_KEY_ED25519 } from '../../config.js';
+import {
+	CLIENT_ACCOUNT_ED25519,
+	CLIENT_PUBLIC_KEY_ED25519,
+} from '../../config.js';
 
 describe('🧪 Account test', () => {
 	beforeAll(async () => {
@@ -69,7 +69,7 @@ describe('🧪 Account test', () => {
 		);
 		expect(res.coins).not.toBeFalsy();
 		expect(res.coins.length).toBeDefined();
-		expect(res.coins[0]).toHaveProperty('symbol')
+		expect(res.coins[0]).toHaveProperty('symbol');
 	}, 60_000);
 
 	it('Gets account info', async () => {

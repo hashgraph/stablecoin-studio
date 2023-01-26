@@ -42,4 +42,4 @@ export const StableCoinRoleLabel = new Map<StableCoinRole, string>([
 	[StableCoinRole.DEFAULT_ADMIN_ROLE, 'Admin'],
 	[StableCoinRole.WITHOUT_ROLE, 'Without'],
 	[StableCoinRole.KYC_ROLE, 'KYC'],
-  ]);
+]);

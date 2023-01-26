@@ -42,9 +42,7 @@ export class ConcreteQueryRepository {
 }
 
 @QueryHandler(ConcreteQuery)
-export class ConcreteQueryHandler
-	implements IQueryHandler<ConcreteQuery>
-{
+export class ConcreteQueryHandler implements IQueryHandler<ConcreteQuery> {
 	constructor(
 		public readonly repo: ConcreteQueryRepository = new ConcreteQueryRepository(),
 	) {}

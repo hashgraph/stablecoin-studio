@@ -29,7 +29,7 @@ import { QueryBus } from '../../../../src/core/query/QueryBus.js';
 import { HederaId } from '../../../../src/domain/context/shared/HederaId.js';
 import { Network, SetNetworkRequest } from '../../../../src/index.js';
 import RPCQueryAdapter from '../../../../src/port/out/rpc/RPCQueryAdapter.js';
-import { StableCoinRole } from "../../../../src/domain/context/stablecoin/StableCoinRole.js";
+import { StableCoinRole } from '../../../../src/domain/context/stablecoin/StableCoinRole.js';
 
 describe('🧪 RPCQueryAdapter', () => {
 	const bus = Injectable.resolve(QueryBus);
@@ -45,9 +45,9 @@ describe('🧪 RPCQueryAdapter', () => {
 		);
 	});
 
-	beforeEach(async() => {
+	beforeEach(async () => {
 		await adapter.init();
-	})
+	});
 
 	it('Test it initializes', async () => {
 		const env = await adapter.init('testUrl');
@@ -100,18 +100,14 @@ describe('🧪 RPCQueryAdapter', () => {
 
 	it('Test it fetches reserve address', async () => {
 		const res = await bus.execute(
-			new GetReserveAddressQuery(
-				HederaId.from(tokenId),
-			),
+			new GetReserveAddressQuery(HederaId.from(tokenId)),
 		);
 		expect(res).not.toBeUndefined();
 	});
 
 	it('Test it fetches reserve amount', async () => {
 		const res = await bus.execute(
-			new GetReserveAmountQuery(
-				HederaId.from(tokenId),
-			),
+			new GetReserveAmountQuery(HederaId.from(tokenId)),
 		);
 		expect(res).not.toBeUndefined();
 	});

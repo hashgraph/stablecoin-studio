@@ -46,9 +46,9 @@ export class HasRoleQueryHandler implements IQueryHandler<HasRoleQuery> {
 		const res = await this.queryAdapter.hasRole(
 			coin.evmProxyAddress,
 			await this.mirrorNode.accountToEvmAddress(targetId),
-			role
+			role,
 		);
-		
+
 		return new HasRoleQueryResponse(res);
 	}
 }

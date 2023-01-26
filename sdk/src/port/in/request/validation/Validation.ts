@@ -58,9 +58,9 @@ export default class Validation {
 	};
 
 	public static checkContractId = () => {
-		 return (val: any): BaseError[] => {
-		 	return ContractId.validate(val as string);
-		 };
+		return (val: any): BaseError[] => {
+			return ContractId.validate(val as string);
+		};
 	};
 
 	public static checkString = ({

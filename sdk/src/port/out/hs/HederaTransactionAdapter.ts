@@ -156,11 +156,12 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					? reserveInitialAmount.toFixedNumber()
 					: BigDecimal.ZERO.toFixedNumber(),
 				createReserve,
-				coin.grantKYCToOriginalSender? coin.grantKYCToOriginalSender: false,
-				keys
-				
+				coin.grantKYCToOriginalSender
+					? coin.grantKYCToOriginalSender
+					: false,
+				keys,
 			);
-			
+
 			const params = [
 				stableCoinToCreate,
 				'0x' +
@@ -689,7 +690,10 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		);
 	}
 
-	public async grantKyc(coin: StableCoinCapabilities, targetId: HederaId): Promise<TransactionResponse<boolean, Error>> {
+	public async grantKyc(
+		coin: StableCoinCapabilities,
+		targetId: HederaId,
+	): Promise<TransactionResponse<boolean, Error>> {
 		const params = new Params({
 			targetId: targetId,
 		});
@@ -701,8 +705,11 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			params,
 		);
 	}
-	
-	public async revokeKyc(coin: StableCoinCapabilities, targetId: HederaId): Promise<TransactionResponse<boolean, Error>> {
+
+	public async revokeKyc(
+		coin: StableCoinCapabilities,
+		targetId: HederaId,
+	): Promise<TransactionResponse<boolean, Error>> {
 		const params = new Params({
 			targetId: targetId,
 		});

@@ -26,9 +26,7 @@ import BaseError from '../../../core/error/BaseError.js';
 import { InvalidSupplierType } from '../../../domain/context/stablecoin/error/InvalidSupplierType.js';
 import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
 
-export default class GrantRoleRequest
-	extends ValidatedRequest<GrantRoleRequest>
-{
+export default class GrantRoleRequest extends ValidatedRequest<GrantRoleRequest> {
 	targetId: string;
 	tokenId: string;
 	role: StableCoinRole | undefined;
@@ -44,7 +42,7 @@ export default class GrantRoleRequest
 		tokenId,
 		role,
 		supplierType,
-		amount
+		amount,
 	}: {
 		targetId: string;
 		tokenId: string;
@@ -55,9 +53,9 @@ export default class GrantRoleRequest
 		super({
 			targetId: Validation.checkHederaIdFormat(),
 			tokenId: Validation.checkHederaIdFormat(),
-			role: Validation.checkRole(),	
+			role: Validation.checkRole(),
 			supplierType: GrantRoleRequest.checkSupplierType(),
-			amount: Validation.checkAmount()
+			amount: Validation.checkAmount(),
 		});
 		this.tokenId = tokenId;
 		this.targetId = targetId;

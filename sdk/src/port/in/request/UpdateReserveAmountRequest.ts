@@ -31,10 +31,10 @@ export default class UpdateReserveAmountRequest extends ValidatedRequest<UpdateR
 	reserveAddress: string;
 	reserveAmount: string;
 
-	constructor({ 
+	constructor({
 		reserveAddress,
 		reserveAmount,
-	}: { 
+	}: {
 		reserveAddress: string;
 		reserveAmount: string;
 	}) {
@@ -52,10 +52,10 @@ export default class UpdateReserveAmountRequest extends ValidatedRequest<UpdateR
 					val,
 					RESERVE_DECIMALS,
 				);
-			
+
 				return StableCoin.checkReserveAmount(
 					reserveAmount,
-					RESERVE_DECIMALS
+					RESERVE_DECIMALS,
 				);
 			},
 		});

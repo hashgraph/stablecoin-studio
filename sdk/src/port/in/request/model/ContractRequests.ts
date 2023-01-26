@@ -18,9 +18,9 @@
  *
  */
 
-import Account from "../../../../domain/context/account/Account.js";
-import PublicKey from "../../../../domain/context/account/PublicKey.js";
-import { StableCoinRole } from "../../../../domain/context/stablecoin/StableCoinRole.js";
+import Account from '../../../../domain/context/account/Account.js';
+import PublicKey from '../../../../domain/context/account/PublicKey.js';
+import { StableCoinRole } from '../../../../domain/context/stablecoin/StableCoinRole.js';
 
 export interface AccountRequestModel {
 	account: Account;
@@ -52,9 +52,7 @@ export interface RequestRole
 	role: StableCoinRole;
 }
 
-export interface RequestRoles
-	extends RequestContracts,
-		TargetIdRequestModel {}
+export interface RequestRoles extends RequestContracts, TargetIdRequestModel {}
 
 export interface SupplierRequestRoleModel extends RequestRole {
 	amount: string;

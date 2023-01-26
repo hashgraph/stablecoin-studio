@@ -21,9 +21,7 @@
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
 
-export default class IncreaseSupplierAllowanceRequest
-	extends ValidatedRequest<IncreaseSupplierAllowanceRequest>
-{
+export default class IncreaseSupplierAllowanceRequest extends ValidatedRequest<IncreaseSupplierAllowanceRequest> {
 	targetId: string;
 	tokenId: string;
 	amount: string;
@@ -31,7 +29,7 @@ export default class IncreaseSupplierAllowanceRequest
 	constructor({
 		targetId,
 		tokenId,
-		amount
+		amount,
 	}: {
 		targetId: string;
 		tokenId: string;
@@ -40,7 +38,7 @@ export default class IncreaseSupplierAllowanceRequest
 		super({
 			targetId: Validation.checkHederaIdFormat(),
 			tokenId: Validation.checkHederaIdFormat(),
-			amount: Validation.checkAmount()
+			amount: Validation.checkAmount(),
 		});
 		this.tokenId = tokenId;
 		this.targetId = targetId;

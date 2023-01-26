@@ -90,7 +90,7 @@ describe('🧪 Stablecoin test', () => {
 			stableCoinFactory: FactoryAddressTestnet,
 			hederaERC20: HederaERC20AddressTestnet,
 			createReserve: false,
-			grantKYCToOriginalSender: true
+			grantKYCToOriginalSender: true,
 		});
 		const requestHTS = new CreateRequest({
 			name: 'TEST_ACCELERATOR_HTS',
@@ -110,9 +110,8 @@ describe('🧪 Stablecoin test', () => {
 			stableCoinFactory: FactoryAddressTestnet,
 			hederaERC20: HederaERC20AddressTestnet,
 			createReserve: false,
-			grantKYCToOriginalSender: true
+			grantKYCToOriginalSender: true,
 			// reserveAddress: '0.0.11111111'
-			
 		});
 
 		stableCoinSC = (await StableCoin.create(requestSC)).coin;

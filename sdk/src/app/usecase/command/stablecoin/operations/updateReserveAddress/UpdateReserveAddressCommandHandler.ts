@@ -24,10 +24,15 @@ import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator
 import AccountService from '../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
-import { UpdateReserveAddressCommand, UpdateReserveAddressCommandResponse } from './UpdateReserveAddressCommand.js';
+import {
+	UpdateReserveAddressCommand,
+	UpdateReserveAddressCommandResponse,
+} from './UpdateReserveAddressCommand.js';
 
 @CommandHandler(UpdateReserveAddressCommand)
-export class UpdateReserveAddressCommandHandler implements ICommandHandler<UpdateReserveAddressCommand> {
+export class UpdateReserveAddressCommandHandler
+	implements ICommandHandler<UpdateReserveAddressCommand>
+{
 	constructor(
 		@lazyInject(StableCoinService)
 		public readonly stableCoinService: StableCoinService,
@@ -37,7 +42,9 @@ export class UpdateReserveAddressCommandHandler implements ICommandHandler<Updat
 		public readonly transactionService: TransactionService,
 	) {}
 
-	async execute(command: UpdateReserveAddressCommand): Promise<UpdateReserveAddressCommandResponse> {
+	async execute(
+		command: UpdateReserveAddressCommand,
+	): Promise<UpdateReserveAddressCommandResponse> {
 		const { tokenId, reserveAddress } = command;
 		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
@@ -47,7 +54,10 @@ export class UpdateReserveAddressCommandHandler implements ICommandHandler<Updat
 			tokenId,
 		);
 
-		const res = await handler.updateReserveAddress(capabilities, reserveAddress);
+		const res = await handler.updateReserveAddress(
+			capabilities,
+			reserveAddress,
+		);
 		return Promise.resolve(
 			new UpdateReserveAddressCommandResponse(res.error === undefined),
 		);

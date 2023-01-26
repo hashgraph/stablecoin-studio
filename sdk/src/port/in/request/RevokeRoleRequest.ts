@@ -19,11 +19,10 @@
  */
 
 import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
-import ValidatedRequest from './validation/ValidatedRequest.js';import Validation from './validation/Validation.js';
+import ValidatedRequest from './validation/ValidatedRequest.js';
+import Validation from './validation/Validation.js';
 
-export default class RevokeRoleRequest
-	extends ValidatedRequest<RevokeRoleRequest>
-{
+export default class RevokeRoleRequest extends ValidatedRequest<RevokeRoleRequest> {
 	targetId: string;
 	tokenId: string;
 	role: StableCoinRole | undefined;
@@ -31,7 +30,7 @@ export default class RevokeRoleRequest
 	constructor({
 		targetId,
 		tokenId,
-		role
+		role,
 	}: {
 		targetId: string;
 		tokenId: string;
@@ -40,7 +39,7 @@ export default class RevokeRoleRequest
 		super({
 			targetId: Validation.checkHederaIdFormat(),
 			tokenId: Validation.checkHederaIdFormat(),
-			role: Validation.checkRole()	
+			role: Validation.checkRole(),
 		});
 		this.tokenId = tokenId;
 		this.targetId = targetId;

@@ -230,5 +230,4 @@ export class HTSTransactionBuilder {
 			throw new TransactionBuildingError(error);
 		}
 	}
-
 }

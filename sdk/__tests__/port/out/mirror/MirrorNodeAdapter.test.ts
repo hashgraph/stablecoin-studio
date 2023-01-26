@@ -30,7 +30,6 @@ import {
 	CLIENT_ACCOUNT_ED25519,
 	ENVIRONMENT,
 } from '../../../config.js';
-import AccountTokenListRelationViewModel from '../../../../src/port/out/mirror/response/AccountTokenListRelationViewModel.js';
 
 describe('🧪 MirrorNodeAdapter', () => {
 	const tokenId = HederaId.from('0.0.49117058');

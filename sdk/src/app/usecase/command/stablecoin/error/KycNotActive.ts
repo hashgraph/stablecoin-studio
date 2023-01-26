@@ -18,8 +18,7 @@
  *
  */
 
-import BaseError, { ErrorCode } from "../../../../../core/error/BaseError.js";
-
+import BaseError, { ErrorCode } from '../../../../../core/error/BaseError.js';
 
 export class KycNotActive extends BaseError {
 	constructor(tokenId: unknown) {

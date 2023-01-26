@@ -24,10 +24,15 @@ import { IQueryHandler } from '../../../../../core/query/QueryHandler.js';
 import { MirrorNodeAdapter } from '../../../../../port/out/mirror/MirrorNodeAdapter.js';
 import RPCQueryAdapter from '../../../../../port/out/rpc/RPCQueryAdapter.js';
 import StableCoinService from '../../../../service/StableCoinService.js';
-import {  GetReserveAddressQuery, GetReserveAddressQueryResponse } from './GetReserveAddressQuey.js';
+import {
+	GetReserveAddressQuery,
+	GetReserveAddressQueryResponse,
+} from './GetReserveAddressQuey.js';
 
 @QueryHandler(GetReserveAddressQuery)
-export class GetReserveAddressQueryHandler implements IQueryHandler<GetReserveAddressQuery> {
+export class GetReserveAddressQueryHandler
+	implements IQueryHandler<GetReserveAddressQuery>
+{
 	constructor(
 		@lazyInject(StableCoinService)
 		public readonly stableCoinService: StableCoinService,
@@ -37,17 +42,18 @@ export class GetReserveAddressQueryHandler implements IQueryHandler<GetReserveAd
 		public readonly queryAdapter: RPCQueryAdapter,
 	) {}
 
-
-	async execute(command: GetReserveAddressQuery): Promise<GetReserveAddressQueryResponse> {
+	async execute(
+		command: GetReserveAddressQuery,
+	): Promise<GetReserveAddressQueryResponse> {
 		const { tokenId } = command;
-	
+
 		const coin = await this.stableCoinService.get(tokenId);
 
 		if (!coin.evmProxyAddress) throw new Error('Invalid token id');
 
-		const res = await this.queryAdapter.getReserveAddress(coin.evmProxyAddress);
-		return Promise.resolve(
-			new GetReserveAddressQueryResponse(res),
+		const res = await this.queryAdapter.getReserveAddress(
+			coin.evmProxyAddress,
 		);
+		return Promise.resolve(new GetReserveAddressQueryResponse(res));
 	}
 }

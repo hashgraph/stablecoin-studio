@@ -27,9 +27,7 @@ import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import InvalidDecimalRange from '../../../domain/context/stablecoin/error/InvalidDecimalRange.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.js';
-import {
-	RequestPublicKey
-} from './BaseRequest.js';
+import { RequestPublicKey } from './BaseRequest.js';
 import { InvalidType } from './error/InvalidType.js';
 import { InvalidValue } from './error/InvalidValue.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
@@ -118,7 +116,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		reserveAddress,
 		reserveInitialAmount,
 		createReserve,
-		grantKYCToOriginalSender
+		grantKYCToOriginalSender,
 	}: {
 		name: string;
 		symbol: string;
@@ -140,7 +138,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		reserveAddress?: string;
 		reserveInitialAmount?: string;
 		createReserve: boolean;
-		grantKYCToOriginalSender?:boolean;
+		grantKYCToOriginalSender?: boolean;
 	}) {
 		super({
 			name: (val) => {
@@ -239,7 +237,11 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 			hederaERC20: Validation.checkContractId(),
 			reserveAddress: Validation.checkContractId(),
 			reserveInitialAmount: (val) => {
-				if (val === undefined || val === '' || this.createReserve == false) {
+				if (
+					val === undefined ||
+					val === '' ||
+					this.createReserve == false
+				) {
 					return;
 				}
 				if (!BigDecimal.isBigDecimal(val)) {
@@ -249,7 +251,10 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 					return [new InvalidDecimalRange(val, RESERVE_DECIMALS)];
 				}
 
-				const commonDecimals = (RESERVE_DECIMALS > this.decimals)? RESERVE_DECIMALS : this.decimals;
+				const commonDecimals =
+					RESERVE_DECIMALS > this.decimals
+						? RESERVE_DECIMALS
+						: this.decimals;
 
 				const reserveInitialAmount = BigDecimal.fromString(
 					val,
@@ -297,7 +302,6 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		this.reserveAddress = reserveAddress;
 		this.reserveInitialAmount = reserveInitialAmount;
 		this.createReserve = createReserve;
-		this.grantKYCToOriginalSender = grantKYCToOriginalSender
-
+		this.grantKYCToOriginalSender = grantKYCToOriginalSender;
 	}
 }

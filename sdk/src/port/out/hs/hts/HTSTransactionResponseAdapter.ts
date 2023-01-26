@@ -21,11 +21,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
-    Client,
+	Client,
 	TransactionResponse as HTransactionResponse,
 	TransactionReceipt,
 	TransactionRecord,
-	TransactionId
+	TransactionId,
 } from '@hashgraph/sdk';
 import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
 import { TransactionResponseError } from '../../error/TransactionResponseError.js';
@@ -42,7 +42,8 @@ export class HTSTransactionResponseAdapter extends TransactionResponseAdapter {
 	): Promise<TransactionResponse> {
 		let results: Uint8Array = new Uint8Array();
 		if (responseType === TransactionType.RECEIPT) {
-			const transactionReceipt: TransactionReceipt | undefined = await this.getReceipt(client, transactionResponse);
+			const transactionReceipt: TransactionReceipt | undefined =
+				await this.getReceipt(client, transactionResponse);
 			const transId = transactionResponse.transactionId;
 			return this.createTransactionResponse(
 				transId,
@@ -56,10 +57,7 @@ export class HTSTransactionResponseAdapter extends TransactionResponseAdapter {
 			const transactionRecord:
 				| TransactionRecord
 				| Uint32Array
-				| undefined = await this.getRecord(
-				client,
-				transactionResponse,
-			);
+				| undefined = await this.getRecord(client, transactionResponse);
 			let record: Uint8Array | Uint32Array | undefined;
 			if (nameFunction) {
 				if (transactionRecord instanceof TransactionRecord) {
@@ -98,16 +96,16 @@ export class HTSTransactionResponseAdapter extends TransactionResponseAdapter {
 
 	private static async getRecord(
 		client: Client,
-		transactionResponse: HTransactionResponse
+		transactionResponse: HTransactionResponse,
 	): Promise<TransactionRecord | Uint32Array | undefined> {
-	    return await transactionResponse.getRecord(client);
+		return await transactionResponse.getRecord(client);
 	}
 
 	private static async getReceipt(
 		client: Client,
-		transactionResponse: HTransactionResponse
+		transactionResponse: HTransactionResponse,
 	): Promise<TransactionReceipt | undefined> {
- 		return await transactionResponse.getReceipt(client);
+		return await transactionResponse.getReceipt(client);
 	}
 
 	public static createTransactionResponse(
@@ -118,7 +116,7 @@ export class HTSTransactionResponseAdapter extends TransactionResponseAdapter {
 	): TransactionResponse {
 		return new TransactionResponse(
 			(transactionId ?? '').toString(),
-			response
+			response,
 		);
 	}
 }

@@ -1,11 +1,11 @@
-import HederaStableCoinSDK from "hedera-stable-coin-sdk";
+import HederaStableCoinSDK from 'hedera-stable-coin-sdk';
 
 const main = async () => {
-    console.log(JSON.stringify(HederaStableCoinSDK));
-}
+	console.log(JSON.stringify(HederaStableCoinSDK));
+};
 
 try {
-    main();
+	main();
 } catch (error) {
-    console.error(error);
+	console.error(error);
 }

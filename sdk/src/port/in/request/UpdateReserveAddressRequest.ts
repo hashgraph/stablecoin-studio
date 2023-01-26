@@ -25,16 +25,16 @@ export default class UpdateReserveAddressRequest extends ValidatedRequest<Update
 	tokenId: string;
 	reserveAddress: string;
 
-	constructor({ 
+	constructor({
 		tokenId,
-		reserveAddress 
-	}: { 
+		reserveAddress,
+	}: {
 		tokenId: string;
 		reserveAddress: string;
 	}) {
 		super({
 			tokenId: Validation.checkHederaIdFormat(),
-			reserveAddress: Validation.checkContractId()
+			reserveAddress: Validation.checkContractId(),
 		});
 		this.tokenId = tokenId;
 		this.reserveAddress = reserveAddress;
