@@ -1,16 +1,16 @@
 {
-    "title": "Rescue Tokens operation",
-    "operationTitle": "Operation details",
-    "amountLabel": "Enter the amount",
-    "amountPlaceholder": "0",
-    "originAccountLabel": "Target account",
-    "originAccountPlaceholder": "0.0.0",
-    "modalSuccessDesc": "You have rescued {{amount}} tokens",
-    "decimalsValidation": "The amount has an invalid number of decimals",
-    "modalAction": {
-        "subtitle": "Operation details review",
-        "originAccount": "Account",
-        "amount": "Amount",
-        "accept": "Rescue tokens"
-    }
+	"title": "Rescue Tokens operation",
+	"operationTitle": "Operation details",
+	"amountLabel": "Enter the amount",
+	"amountPlaceholder": "0",
+	"originAccountLabel": "Target account",
+	"originAccountPlaceholder": "0.0.0",
+	"modalSuccessDesc": "You have rescued {{amount}} tokens",
+	"decimalsValidation": "The amount has an invalid number of decimals",
+	"modalAction": {
+		"subtitle": "Operation details review",
+		"originAccount": "Account",
+		"amount": "Amount",
+		"accept": "Rescue tokens"
+	}
 }

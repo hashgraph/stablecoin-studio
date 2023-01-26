@@ -51,7 +51,7 @@ const GetBalanceOperation = () => {
 	const handleGetBalance: ModalsHandlerActionsProps['onConfirm'] = async ({
 		onSuccess,
 		onError,
-		onLoading
+		onLoading,
 	}) => {
 		try {
 			onLoading();

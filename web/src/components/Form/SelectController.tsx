@@ -11,7 +11,7 @@ import {
 	type SystemStyleObject,
 	Box,
 } from '@chakra-ui/react';
-import type { ChangeEvent, ReactNode , Ref } from 'react';
+import type { ChangeEvent, ReactNode, Ref } from 'react';
 import { Controller } from 'react-hook-form';
 import type { Props as ReactSelectProps } from 'react-select';
 import type { Control, UseControllerProps } from 'react-hook-form';

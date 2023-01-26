@@ -26,7 +26,7 @@ export const validateDecimals = (value: number, decimals: number) => {
 export const handleRequestValidation = (
 	val: ValidationResponse[],
 	msg?: string,
-	): string | boolean => {
+): string | boolean => {
 	if (val.length > 0) {
 		if (msg) return msg;
 		return val.map((v) => v.errors.flatMap((e) => e.message)).join('\n');

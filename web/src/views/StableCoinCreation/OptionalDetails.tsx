@@ -51,7 +51,7 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 	};
 
 	const isSupplyTypeFinite = form.getValues().supplyType?.value === 1;
-	request.supplyType = isSupplyTypeFinite ? TokenSupplyType.FINITE: TokenSupplyType.INFINITE;
+	request.supplyType = isSupplyTypeFinite ? TokenSupplyType.FINITE : TokenSupplyType.INFINITE;
 
 	const handleResetMaxSupply = () => {
 		const { maxSupply, initialSupply } = form.getValues();

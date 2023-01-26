@@ -29,8 +29,7 @@ const Review = (props: ReviewProps) => {
 		kycKey,
 		pauseKey,
 		reserveAddress,
-		reserveInitialAmount
-
+		reserveInitialAmount,
 	} = getValues();
 
 	const getKey = (keySelected: { value: number; label: string }, nameOtherKey: string) => {

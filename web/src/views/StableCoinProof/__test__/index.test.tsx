@@ -7,10 +7,9 @@ import { screen } from '@testing-library/react';
 const mockStore = configureMockStore();
 
 describe(`<${StableCoinProof.name} />`, () => {
-
 	afterEach(() => {
 		jest.clearAllMocks();
-	})
+	});
 
 	test('should render correctly', () => {
 		const component = render(<StableCoinProof />);
@@ -64,7 +63,7 @@ describe(`<${StableCoinProof.name} />`, () => {
 				selectedStableCoin,
 			},
 		});
-		
+
 		const getAddressMock = sdkMock('getReserveAddress');
 		const getAmountMock = sdkMock('getReserveAmount');
 

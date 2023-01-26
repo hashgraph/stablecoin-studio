@@ -19,7 +19,7 @@ describe(`<${StableCoinDetails.name} />`, () => {
 	});
 
 	test('should has subtitle', async () => {
-		const component = render(<StableCoinDetails />)
+		const component = render(<StableCoinDetails />);
 		const subtitle = component.getByTestId('details-review-title');
 
 		expect(subtitle).toHaveTextContent(translations.subtitle);

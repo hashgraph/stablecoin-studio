@@ -1,84 +1,83 @@
 {
-  "common": {
-    "" : "Next step",
-    "goBack" : "Go back",
-    "createStableCoin": "Create stable coin",
-    "createNewStableCoin": "Create new stable coin",
-    "cancel": "Cancel"
-  },
-  "tabs": {
-    "basicDetails": "Basic details",
-    "optionalDetails": "Optional details",
-    "managementPermissions": "Manage permissions",
-    "supplierKey": "Supplier key",
-    "proofOfReserve" : "Proof Of Reserve",
-    "review": "Review"
-  },
-  "basicDetails": {
-    "autorenewAccount": "Autorenew account",
-    "autorenewAccountPlaceholder": "0.0.0",
-    "name": "Name",
-    "namePlaceholder": "Name",
-    "symbol": "Symbol",
-    "symbolPlaceholder": "Symbol",
-    "title": "Stable coin basic details"
-  },
-  "optionalDetails": {
-    "decimals": "Decimals",
-    "finite": "Finite",
-    "initialSupply": "Initial supply",
-    "infinite": "Infinite",
-    "placeholder": "Introduce {{placeholder}}",
-    "maxSupply": "Max supply",
-    "title": "Stable coin optional details",
-    "typeSupply": "Supply type",
-    "typeSupplyPlaceholder": "Choose supply type"
-  },
-  "managementPermissions": {
-    "currentUserKey": "Current user key",
-    "description": "Allow all the following features to be managed through smart contract",
-    "pause": "Pause",
-    "freeze": "Freeze",
-    "kyc": "KYC",
-    "grantKYCToOriginalSender": "Grant KYC flag to the token creator",
-    "introduce": "Enter the {{name}}",
-    "none": "None",
-    "otherKey": "Other key",
-    "placeholder": "Enter the {{placeholder}}",
-    "rescue": "Rescue",
-    "admin": "Admin",
-    "supply": "Supply",
-    "theSmartContract": "The smart contract",
-    "title": "Permission management",
-    "totalSupply": "Total supply",
-    "treasuryAccountAddress": "Treasury account address",
-    "wipe": "Wipe"
-  },
-  "proofOfReserve": {
-    "title": "Proof of Reserve",
-    "description": "Would you like that your stable coin collateralization with any on-chain asset?",
-    "haveDataFeed": "Do you have an existing data feed? (You will need the contract address)",
-    "dataFeed": "Data Feed",
-    "dataFeedPlaceholder": "Address for data feed contract",
-    "hasPor": "Has proof of reserve",
-    "hasPorValue": "TRUE",
-    "hasPorValueFalse": "FALSE",
-    "createDataFeed": "Create data feed",
-    "initialSupply" : "Initial supply",
-    "addressPor" : "Adrress proof of reserve  ",
-    "initialSupplyPor":"Initial supply POR",
-    "initialSupplyPorExternal":"External POR"
-
-  },
-  "review": {
-    "basicDetails": "Basic details",
-    "managementPermissions": "Manage permissions",
-    "optionalDetails": "Optional details",
-    "title": "Stable coin review"
-  },
-  "notification": {
-    "title": "{{ result }} creating the stable coin",
-    "descriptionSuccess": "The stable coin was created",
-    "descriptionError": "Sorry, there was an error creating the stable coin"
-  }
+	"common": {
+		"": "Next step",
+		"goBack": "Go back",
+		"createStableCoin": "Create stable coin",
+		"createNewStableCoin": "Create new stable coin",
+		"cancel": "Cancel"
+	},
+	"tabs": {
+		"basicDetails": "Basic details",
+		"optionalDetails": "Optional details",
+		"managementPermissions": "Manage permissions",
+		"supplierKey": "Supplier key",
+		"proofOfReserve": "Proof Of Reserve",
+		"review": "Review"
+	},
+	"basicDetails": {
+		"autorenewAccount": "Autorenew account",
+		"autorenewAccountPlaceholder": "0.0.0",
+		"name": "Name",
+		"namePlaceholder": "Name",
+		"symbol": "Symbol",
+		"symbolPlaceholder": "Symbol",
+		"title": "Stable coin basic details"
+	},
+	"optionalDetails": {
+		"decimals": "Decimals",
+		"finite": "Finite",
+		"initialSupply": "Initial supply",
+		"infinite": "Infinite",
+		"placeholder": "Introduce {{placeholder}}",
+		"maxSupply": "Max supply",
+		"title": "Stable coin optional details",
+		"typeSupply": "Supply type",
+		"typeSupplyPlaceholder": "Choose supply type"
+	},
+	"managementPermissions": {
+		"currentUserKey": "Current user key",
+		"description": "Allow all the following features to be managed through smart contract",
+		"pause": "Pause",
+		"freeze": "Freeze",
+		"kyc": "KYC",
+		"grantKYCToOriginalSender": "Grant KYC flag to the token creator",
+		"introduce": "Enter the {{name}}",
+		"none": "None",
+		"otherKey": "Other key",
+		"placeholder": "Enter the {{placeholder}}",
+		"rescue": "Rescue",
+		"admin": "Admin",
+		"supply": "Supply",
+		"theSmartContract": "The smart contract",
+		"title": "Permission management",
+		"totalSupply": "Total supply",
+		"treasuryAccountAddress": "Treasury account address",
+		"wipe": "Wipe"
+	},
+	"proofOfReserve": {
+		"title": "Proof of Reserve",
+		"description": "Would you like that your stable coin collateralization with any on-chain asset?",
+		"haveDataFeed": "Do you have an existing data feed? (You will need the contract address)",
+		"dataFeed": "Data Feed",
+		"dataFeedPlaceholder": "Address for data feed contract",
+		"hasPor": "Has proof of reserve",
+		"hasPorValue": "TRUE",
+		"hasPorValueFalse": "FALSE",
+		"createDataFeed": "Create data feed",
+		"initialSupply": "Initial supply",
+		"addressPor": "Adrress proof of reserve  ",
+		"initialSupplyPor": "Initial supply POR",
+		"initialSupplyPorExternal": "External POR"
+	},
+	"review": {
+		"basicDetails": "Basic details",
+		"managementPermissions": "Manage permissions",
+		"optionalDetails": "Optional details",
+		"title": "Stable coin review"
+	},
+	"notification": {
+		"title": "{{ result }} creating the stable coin",
+		"descriptionSuccess": "The stable coin was created",
+		"descriptionError": "Sorry, there was an error creating the stable coin"
+	}
 }

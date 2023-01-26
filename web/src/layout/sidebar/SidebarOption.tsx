@@ -14,7 +14,14 @@ interface SidebarOptionProps {
 	isDisabled?: boolean;
 }
 
-const SidebarOption = ({ icon, title, route, bgColor, color, isDisabled = false, }: SidebarOptionProps) => {
+const SidebarOption = ({
+	icon,
+	title,
+	route,
+	bgColor,
+	color,
+	isDisabled = false,
+}: SidebarOptionProps) => {
 	const navigate = useNavigate();
 	const { pathname } = useLocation();
 

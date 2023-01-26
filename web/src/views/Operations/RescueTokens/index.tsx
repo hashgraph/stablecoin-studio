@@ -51,7 +51,11 @@ const RescueTokenOperation = () => {
 
 	useRefreshCoinInfo();
 
-	const handleRescueToken: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError, onLoading }) => {
+	const handleRescueToken: ModalsHandlerActionsProps['onConfirm'] = async ({
+		onSuccess,
+		onError,
+		onLoading,
+	}) => {
 		try {
 			onLoading();
 			if (!selectedStableCoin?.proxyAddress || !selectedStableCoin?.tokenId) {

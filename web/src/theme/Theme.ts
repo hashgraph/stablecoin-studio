@@ -36,7 +36,7 @@ const theme = extendTheme({
 			lightGray: '#E1E1E1',
 			lightPrimary: '#ECE8FF',
 			primary200: '#5C47D9',
-			hover: '#8750AF'
+			hover: '#8750AF',
 		},
 		light: {
 			primary: '#ECEBF1',

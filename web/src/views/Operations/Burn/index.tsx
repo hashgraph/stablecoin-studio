@@ -61,7 +61,7 @@ const BurnOperation = () => {
 			await SDKService.burn(request);
 			onSuccess();
 		} catch (error: any) {
-			console.log(JSON.stringify(error))
+			console.log(JSON.stringify(error));
 			setErrorTransactionUrl(error.transactionUrl);
 			setErrorOperation(error.message);
 			onError();
@@ -93,7 +93,7 @@ const BurnOperation = () => {
 										validation: (value: string) => {
 											request.amount = value;
 											const res = handleRequestValidation(request.validate('amount'));
-											
+
 											return res;
 										},
 									},

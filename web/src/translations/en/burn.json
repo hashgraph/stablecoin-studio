@@ -1,14 +1,14 @@
 {
-    "title": "Burn tokens operation",
-    "operationTitle": "Operation details",
-    "amountLabel": "Enter the amount",
-    "amountPlaceholder": "0",
-    "originAccountPlaceholder": "0.0.0",
-    "modalSuccessDesc": "{{amount}} tokens have been burned.",
-    "modalAction": {
-        "subtitle": "Operation details review",
-        "originAccount": "Account",
-        "amount": "Amount",
-        "accept": "Burn tokens"
-    }
+	"title": "Burn tokens operation",
+	"operationTitle": "Operation details",
+	"amountLabel": "Enter the amount",
+	"amountPlaceholder": "0",
+	"originAccountPlaceholder": "0.0.0",
+	"modalSuccessDesc": "{{amount}} tokens have been burned.",
+	"modalAction": {
+		"subtitle": "Operation details review",
+		"originAccount": "Account",
+		"amount": "Amount",
+		"accept": "Burn tokens"
+	}
 }

@@ -176,6 +176,7 @@ export const SELECTED_TOKEN_PAUSED = (state: RootState) => state.wallet.pausedTo
 export const SELECTED_TOKEN_DELETED = (state: RootState) => state.wallet.deletedToken;
 export const SELECTED_TOKEN_RESERVE_ADDRESS = (state: RootState) =>
 	state.wallet.selectedStableCoin?.reserveAddress;
-export const SELECTED_TOKEN_RESERVE_AMOUNT = (state: RootState) => state.wallet.selectedStableCoin?.reserveAmount;
+export const SELECTED_TOKEN_RESERVE_AMOUNT = (state: RootState) =>
+	state.wallet.selectedStableCoin?.reserveAmount;
 
 export const walletActions = walletSlice.actions;

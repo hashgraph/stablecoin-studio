@@ -44,7 +44,7 @@ describe(`<${Login.name} />`, () => {
 			},
 		});
 
-		const component = render(<Login />,store);
+		const component = render(<Login />, store);
 		const title = component.getByTestId('modal-hashpack-title');
 
 		expect(title).toHaveTextContent(translations['hashpack-no-connected'].title);

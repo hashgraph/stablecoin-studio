@@ -1,12 +1,12 @@
 {
-    "title": "Revoke KYC operation",
-    "operationTitle": "Operation details",
-    "accountLabel": "Enter the account",
-    "accountPlaceholder": "0.0.0",
-    "modalSuccess": "The account {{ account }} KYC has been revoked.",
-    "modalAction": {
-        "subtitle": "Operation details review",
-        "account": "Account",
-        "accept": "Revoke KYC from account"
-    }
+	"title": "Revoke KYC operation",
+	"operationTitle": "Operation details",
+	"accountLabel": "Enter the account",
+	"accountPlaceholder": "0.0.0",
+	"modalSuccess": "The account {{ account }} KYC has been revoked.",
+	"modalAction": {
+		"subtitle": "Operation details review",
+		"account": "Account",
+		"accept": "Revoke KYC from account"
+	}
 }

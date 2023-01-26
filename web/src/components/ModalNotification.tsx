@@ -85,7 +85,14 @@ const ModalNotification = (props: ModalNotificationProps) => {
 					</ModalHeader>
 				)}
 				{isLoading && (
-					<Spinner w='54px' h='54px' justifyContent='center' alignSelf={'center'} color='#C6AEFA' thickness='4px'/>
+					<Spinner
+						w='54px'
+						h='54px'
+						justifyContent='center'
+						alignSelf={'center'}
+						color='#C6AEFA'
+						thickness='4px'
+					/>
 				)}
 				<ModalBody textAlign='center' pt='14px'>
 					<Text

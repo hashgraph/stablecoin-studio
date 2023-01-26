@@ -1055,7 +1055,7 @@ const NameIcons = [
 ];
 
 export interface IconProps extends Omit<ChakraIconProps, 'name' | 'as'> {
-	name: typeof NameIcons[number];
+	name: (typeof NameIcons)[number];
 }
 
 const Icon = ({ name, ...props }: IconProps) => {

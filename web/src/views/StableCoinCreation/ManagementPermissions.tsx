@@ -12,8 +12,7 @@ interface ManagementPermissionsProps {
 	watch: UseFormWatch<FieldValues>;
 }
 
-const ManagementPermissions = (	{ control, watch ,request } :  ManagementPermissionsProps) => {
-
+const ManagementPermissions = ({ control, watch, request }: ManagementPermissionsProps) => {
 	const { t } = useTranslation(['global', 'stableCoinCreation']);
 
 	const isManagementPermissions = useWatch({
@@ -62,7 +61,7 @@ const ManagementPermissions = (	{ control, watch ,request } :  ManagementPermiss
 					{t('stableCoinCreation:managementPermissions.title')}
 				</Heading>
 				<Stack as='form' spacing={6} pb={6}>
-					<HStack mb={4} justifyContent ="space-between" >
+					<HStack mb={4} justifyContent='space-between'>
 						<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>
 							{t('stableCoinCreation:managementPermissions.description')}
 						</Text>
@@ -93,22 +92,21 @@ const ManagementPermissions = (	{ control, watch ,request } :  ManagementPermiss
 							})}
 						</Stack>
 					)}
-					
-					
-					{watch("kycKey")?.value !== 4 && (
-					<Stack minW={400}>
-						<HStack mb={4} justifyContent ="space-between" >
-							<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>
-								{t('stableCoinCreation:managementPermissions.grantKYCToOriginalSender')}
-							</Text>
 
-							<SwitchController
-								control={control}
-								name={'grantKYCToOriginalSender'}
-								defaultValue={true}
-							/>
-						</HStack>
-					</Stack>
+					{watch('kycKey')?.value !== 4 && (
+						<Stack minW={400}>
+							<HStack mb={4} justifyContent='space-between'>
+								<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>
+									{t('stableCoinCreation:managementPermissions.grantKYCToOriginalSender')}
+								</Text>
+
+								<SwitchController
+									control={control}
+									name={'grantKYCToOriginalSender'}
+									defaultValue={true}
+								/>
+							</HStack>
+						</Stack>
 					)}
 				</Stack>
 			</Stack>

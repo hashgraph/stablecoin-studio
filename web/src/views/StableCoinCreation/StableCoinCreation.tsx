@@ -62,7 +62,7 @@ const StableCoinCreation = () => {
 			decimals: 6,
 			hederaERC20: HederaERC20AddressTestnet,
 			stableCoinFactory: FactoryAddressTestnet,
-			createReserve: false
+			createReserve: false,
 		}),
 	);
 
@@ -93,7 +93,7 @@ const StableCoinCreation = () => {
 		{
 			number: '03',
 			title: t('tabs.managementPermissions'),
-			children: <ManagementPermissions control={control} request={request}  watch={watch}/>,
+			children: <ManagementPermissions control={control} request={request} watch={watch} />,
 		},
 		{
 			number: '04',
@@ -198,7 +198,7 @@ const StableCoinCreation = () => {
 			supplyKey,
 			reserveInitialAmount,
 			reserveAddress,
-			grantKYCToOriginalSender
+			grantKYCToOriginalSender,
 		} = getValues();
 
 		request.autoRenewAccount = autorenewAccount;

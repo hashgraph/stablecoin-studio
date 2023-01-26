@@ -1,4 +1,3 @@
-
 import { Flex, Spinner, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 

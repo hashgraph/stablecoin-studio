@@ -2,16 +2,14 @@ import { Flex } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { NamedRoutes } from '../../Router/NamedRoutes';
 import SidebarOption from './SidebarOption';
-import {
-	SELECTED_WALLET_COIN,
-} from '../../store/slices/walletSlice';
+import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
 import { useSelector } from 'react-redux';
 
 interface optionsProps {
 	icon: string;
 	title: string;
 	route: NamedRoutes;
-	isDisabled?: boolean
+	isDisabled?: boolean;
 }
 
 const Sidebar = () => {
@@ -28,7 +26,7 @@ const Sidebar = () => {
 			icon: 'Users',
 			title: t('sidebar.role'),
 			route: NamedRoutes.Roles,
-			isDisabled: selectedStableCoin?.deleted ?? false
+			isDisabled: selectedStableCoin?.deleted ?? false,
 		},
 		{
 			icon: 'Gear',
@@ -40,9 +38,8 @@ const Sidebar = () => {
 			title: t('sidebar.proofOfReserve'),
 			route: NamedRoutes.ProofOfReserve,
 		},
-
 	];
-	
+
 	return (
 		<Flex
 			data-testid='sidebar'
