@@ -1,4 +1,4 @@
-cd/*
+/*
  *
  * Hedera Stable Coin SDK
  *
