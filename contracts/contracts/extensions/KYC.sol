@@ -19,9 +19,9 @@ abstract contract KYC is IKYC, TokenOwner, Roles {
         onlyRole(_getRoleId(RoleName.KYC))
         returns (bool)
     {
-        emit grantTokenKyc(_getTokenAddress(), account);
+        emit GrantTokenKyc(_getTokenAddress(), account);
 
-        int256 responseCode = IHederaTokenService(PRECOMPILED_ADDRESS)
+        int256 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
             .grantTokenKyc(_getTokenAddress(), account);
 
         bool success = _checkResponse(responseCode);
@@ -41,9 +41,9 @@ abstract contract KYC is IKYC, TokenOwner, Roles {
         onlyRole(_getRoleId(RoleName.KYC))
         returns (bool)
     {
-        emit revokeTokenKyc(_getTokenAddress(), account);
+        emit RevokeTokenKyc(_getTokenAddress(), account);
 
-        int256 responseCode = IHederaTokenService(PRECOMPILED_ADDRESS)
+        int256 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
             .revokeTokenKyc(_getTokenAddress(), account);
 
         bool success = _checkResponse(responseCode);

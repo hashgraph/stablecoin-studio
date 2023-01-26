@@ -60,8 +60,8 @@ const INIT_SUPPLY = BigNumber.from(0).mul(TokenFactor)
 const MAX_SUPPLY = BigNumber.from(1).mul(TokenFactor)
 const TokenMemo = 'Hedera Accelerator Stable Coin'
 
-describe('Roles Tests', function() {
-    before(async function() {
+describe('Roles Tests', function () {
+    before(async function () {
         // Generate Client 1 and Client 2
         const [
             client1,
@@ -129,7 +129,7 @@ describe('Roles Tests', function() {
         proxyAddress = result[0]
     })
 
-    it('Getting roles', async function() {
+    it('Getting roles', async function () {
         // Checking roles
         let result = await getRoles(
             proxyAddress,
@@ -205,7 +205,7 @@ describe('Roles Tests', function() {
             operatorClient,
             nonOperatorAccount,
             nonOperatorIsE25519
-        )        
+        )
 
         // Checking roles
         result = await getRoles(
@@ -247,7 +247,7 @@ describe('Roles Tests', function() {
             else if (i == RolesId.Kyc)
                 expect(result[i].toUpperCase()).to.equals(
                     KYC_ROLE.toUpperCase()
-                )                
+                )
             else if (i == RolesId.Admin)
                 expect(result[i].toUpperCase()).to.equals(
                     DEFAULT_ADMIN_ROLE.toUpperCase()
@@ -314,7 +314,7 @@ describe('Roles Tests', function() {
             operatorClient,
             nonOperatorAccount,
             nonOperatorIsE25519
-        )        
+        )
         await revokeRole(
             DEFAULT_ADMIN_ROLE,
             proxyAddress,
@@ -336,7 +336,7 @@ describe('Roles Tests', function() {
         })
     })
 
-    it('Getting roles Id', async function() {
+    it('Getting roles Id', async function () {
         // Retrieving roles
         const roleAdmin = await getRoleId(
             proxyAddress,
@@ -382,7 +382,7 @@ describe('Roles Tests', function() {
             proxyAddress,
             operatorClient,
             RolesId.Kyc
-        )        
+        )
 
         // Checking
         expect(roleAdmin.toUpperCase()).to.equals(

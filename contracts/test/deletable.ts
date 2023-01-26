@@ -48,8 +48,8 @@ const INIT_SUPPLY = BigNumber.from(1).mul(TokenFactor)
 const MAX_SUPPLY = BigNumber.from(10).mul(TokenFactor)
 const TokenMemo = 'Hedera Accelerator Stable Coin'
 
-describe('Delete Tests', function() {
-    before(async function() {
+describe('Delete Tests', function () {
+    before(async function () {
         // Generate Client 1 and Client 2
         const [
             client1,
@@ -115,7 +115,7 @@ describe('Delete Tests', function() {
         proxyAddress = result[0]
     })
 
-    it('Admin account can grant and revoke delete role to an account', async function() {
+    it('Admin account can grant and revoke delete role to an account', async function () {
         // Admin grants delete role : success
         let result = await hasRole(
             DELETE_ROLE,
@@ -159,7 +159,7 @@ describe('Delete Tests', function() {
         expect(result).to.equals(false)
     })
 
-    it('Non Admin account can not grant delete role to an account', async function() {
+    it('Non Admin account can not grant delete role to an account', async function () {
         // Non Admin grants delete role : fail
         await expect(
             grantRole(
@@ -172,7 +172,7 @@ describe('Delete Tests', function() {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Non Admin account can not revoke delete role to an account', async function() {
+    it('Non Admin account can not revoke delete role to an account', async function () {
         // Non Admin revokes delete role : fail
         await grantRole(
             DELETE_ROLE,
@@ -201,13 +201,13 @@ describe('Delete Tests', function() {
         )
     })
 
-    it("An account without delete role can't delete a token", async function() {
+    it("An account without delete role can't delete a token", async function () {
         await expect(
             deleteToken(proxyAddress, nonOperatorClient)
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('An account with delete role can delete a token', async function() {
+    it('An account with delete role can delete a token', async function () {
         const ONE = BigNumber.from(1).mul(TokenFactor)
         // We first grant delete role to account
         await grantRole(

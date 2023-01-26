@@ -73,8 +73,8 @@ const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor)
 const TokenMemo = 'Hedera Accelerator Stable Coin'
 const abiERC20ProxyAdmin = HederaERC20ProxyAdmin__factory.abi
 
-describe('HederaERC20 Tests', function() {
-    before(async function() {
+describe('HederaERC20 Tests', function () {
+    before(async function () {
         // Generate Client 1 and Client 2
         const [
             client1,
@@ -141,7 +141,7 @@ describe('HederaERC20 Tests', function() {
         reserveProxy = result[6]
     })
 
-    it('input parmeters check', async function() {
+    it('input parmeters check', async function () {
         // We retreive the Token basic params
         const retrievedTokenName = await name(proxyAddress, operatorClient)
         const retrievedTokenSymbol = await symbol(proxyAddress, operatorClient)
@@ -163,7 +163,7 @@ describe('HederaERC20 Tests', function() {
         )
     })
 
-    it('Only Account can associate and dissociate itself when balance is 0', async function() {
+    it('Only Account can associate and dissociate itself when balance is 0', async function () {
         const amount = BigNumber.from(1).mul(TokenFactor)
         // associate a token to an account : success
         await associateToken(
@@ -252,7 +252,7 @@ describe('HederaERC20 Tests', function() {
         )
     })
 
-    it('Associate and Dissociate Token', async function() {
+    it('Associate and Dissociate Token', async function () {
         const amountToMint = BigNumber.from(1).mul(TokenFactor)
 
         // First we associate a token to an account
@@ -331,7 +331,7 @@ describe('HederaERC20 Tests', function() {
         expect('0').to.equals(newBalance.toString())
     })
 
-    it('Check initialize can only be run once', async function() {
+    it('Check initialize can only be run once', async function () {
         // Retrieve current Token address
         const TokenAddress = await getTokenAddress(proxyAddress, operatorClient)
 
@@ -478,8 +478,8 @@ describe('HederaERC20 Tests', function() {
     })
 })
 
-describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
-    before(async function() {
+describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function () {
+    before(async function () {
         // Generate Client 1 and Client 2
 
         const [
@@ -548,7 +548,7 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
         stableCoinAddress = result[2]
     })
 
-    it('Retrieve admin and implementation addresses for the Proxy', async function() {
+    it('Retrieve admin and implementation addresses for the Proxy', async function () {
         // We retreive the HederaERC20Proxy admin and implementation
         const implementation = await getProxyImplementation(
             abiERC20ProxyAdmin,
@@ -572,7 +572,7 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
         )
     })
 
-    it('Retrieve proxy admin owner', async function() {
+    it('Retrieve proxy admin owner', async function () {
         // We retreive the HederaERC20Proxy admin and implementation
         const ownerAccount = await owner(
             abiERC20ProxyAdmin,
@@ -588,7 +588,7 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
         )
     })
 
-    it('Upgrade Proxy implementation without the proxy admin', async function() {
+    it('Upgrade Proxy implementation without the proxy admin', async function () {
         // Deploy a new contract
         const result = await deployContractsWithSDK({
             name: TokenName,
@@ -617,7 +617,7 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Change Proxy admin without the proxy admin', async function() {
+    it('Change Proxy admin without the proxy admin', async function () {
         // Non Admin changes admin : fail
         await expect(
             changeAdmin(
@@ -629,7 +629,7 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Upgrade Proxy implementation with the proxy admin but without the owner account', async function() {
+    it('Upgrade Proxy implementation with the proxy admin but without the owner account', async function () {
         // Deploy a new contract
         const result = await deployContractsWithSDK({
             name: TokenName,
@@ -659,7 +659,7 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Change Proxy admin with the proxy admin but without the owner account', async function() {
+    it('Change Proxy admin with the proxy admin but without the owner account', async function () {
         // Non Owner changes admin : fail
         await expect(
             changeProxyAdmin(
@@ -673,7 +673,7 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Upgrade Proxy implementation with the proxy admin and the owner account', async function() {
+    it('Upgrade Proxy implementation with the proxy admin and the owner account', async function () {
         // Deploy a new contract
         const result = await deployContractsWithSDK({
             name: TokenName,
@@ -721,7 +721,7 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
         )
     })
 
-    it('Change Proxy admin with the proxy admin and the owner account', async function() {
+    it('Change Proxy admin with the proxy admin and the owner account', async function () {
         // Owner changes admin : success
         await changeProxyAdmin(
             abiERC20ProxyAdmin,
@@ -769,7 +769,7 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
         )
     })
 
-    it('Transfers Proxy admin owner without the owner account', async function() {
+    it('Transfers Proxy admin owner without the owner account', async function () {
         // Non Owner transfers owner : fail
         await expect(
             transferOwnership(
@@ -782,7 +782,7 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function() {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Transfers Proxy admin owner with the owner account', async function() {
+    it('Transfers Proxy admin owner with the owner account', async function () {
         // Owner transfers owner : success
         await transferOwnership(
             abiERC20ProxyAdmin,

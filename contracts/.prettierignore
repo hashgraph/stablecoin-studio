@@ -1,0 +1,10 @@
+export/
+deployments/
+artifacts/
+cache/
+coverage/
+node_modules/
+package.json
+typechain-types/
+.gitlab-ci.yml
+build

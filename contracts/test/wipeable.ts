@@ -49,8 +49,8 @@ const INIT_SUPPLY = BigNumber.from(0).mul(TokenFactor)
 const MAX_SUPPLY = BigNumber.from(6000).mul(TokenFactor)
 const TokenMemo = 'Hedera Accelerator Stable Coin'
 
-describe('Wipe Tests', function() {
-    before(async function() {
+describe('Wipe Tests', function () {
+    before(async function () {
         // Generate Client 1 and Client 2
         const [
             client1,
@@ -118,7 +118,7 @@ describe('Wipe Tests', function() {
         proxyAddress = result[0]
     })
 
-    it('Admin account can grant and revoke wipe role to an account', async function() {
+    it('Admin account can grant and revoke wipe role to an account', async function () {
         // Admin grants wipe role : success
         let result = await hasRole(
             WIPE_ROLE,
@@ -164,7 +164,7 @@ describe('Wipe Tests', function() {
         expect(result).to.equals(false)
     })
 
-    it('Non Admin account can not grant wipe role to an account', async function() {
+    it('Non Admin account can not grant wipe role to an account', async function () {
         // Non Admin grants wipe role : fail
         await expect(
             grantRole(
@@ -177,7 +177,7 @@ describe('Wipe Tests', function() {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Non Admin account can not revoke wipe role to an account', async function() {
+    it('Non Admin account can not revoke wipe role to an account', async function () {
         // Non Admin revokes wipe role : fail
         await grantRole(
             WIPE_ROLE,
@@ -206,7 +206,7 @@ describe('Wipe Tests', function() {
         )
     })
 
-    it('wipe 10 tokens from an account with 20 tokens', async function() {
+    it('wipe 10 tokens from an account with 20 tokens', async function () {
         const TokensToMint = BigNumber.from(20).mul(TokenFactor)
         const TokensToWipe = BigNumber.from(10).mul(TokenFactor)
 
@@ -262,7 +262,7 @@ describe('Wipe Tests', function() {
         )
     })
 
-    it("Wiping more than account's balance", async function() {
+    it("Wiping more than account's balance", async function () {
         const TokensToMint = BigNumber.from(20).mul(TokenFactor)
 
         // Mint 20 tokens
@@ -294,7 +294,7 @@ describe('Wipe Tests', function() {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Wiping from account without the wipe role', async function() {
+    it('Wiping from account without the wipe role', async function () {
         const TokensToMint = BigNumber.from(20).mul(TokenFactor)
 
         // Mint 20 tokens
@@ -318,7 +318,7 @@ describe('Wipe Tests', function() {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('User with granted wipe role can wipe tokens', async function() {
+    it('User with granted wipe role can wipe tokens', async function () {
         const TokensToMint = BigNumber.from(20).mul(TokenFactor)
         const TokensToWipe = BigNumber.from(1)
 

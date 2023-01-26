@@ -3,4 +3,7 @@ pragma solidity 0.8.16;
 
 import '@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol';
 
-contract HederaReserveProxyAdmin is ProxyAdmin {}
+// solhint-disable-next-line
+contract HederaReserveProxyAdmin is ProxyAdmin {
+
+}

@@ -3,7 +3,6 @@ pragma solidity 0.8.16;
 
 import '../hts-precompile/IHederaTokenService.sol';
 
-
 interface IHederaERC20 {
     /**
      * @dev Emitted when the token has been associated to the account
@@ -90,8 +89,7 @@ interface IHederaERC20 {
      * @param addr The address of the account to associate
      *
      */
-    function associateToken(address addr) 
-    external;
+    function associateToken(address addr) external;
 
     /**
      * @dev Dissociates an account from the token
@@ -99,8 +97,7 @@ interface IHederaERC20 {
      * @param addr The address of the account to dissociate
      *
      */
-    function dissociateToken(address addr) 
-    external;
+    function dissociateToken(address addr) external;
 
     /**
      * @dev Transfers an amount of tokens to an account
@@ -109,20 +106,18 @@ interface IHederaERC20 {
      */
     function transfer(address to, uint256 amount) external returns (bool);
 
-     /**
+    /**
      * @dev Function not already implemented
      */
     function allowance(
         address owner,
         address spender
-    ) 
-    external returns (uint256) ;
+    ) external returns (uint256);
 
     /**
      * @dev Function not already implemented
      */
-    function approve(address spender, uint256 amount) 
-    external returns (bool);
+    function approve(address spender, uint256 amount) external returns (bool);
 
     /**
      * @dev Transfers an amount of tokens from and account to another account
@@ -135,8 +130,5 @@ interface IHederaERC20 {
         address from,
         address to,
         uint256 amount
-    ) 
-    external returns (bool) ;
-
-
+    ) external returns (bool);
 }

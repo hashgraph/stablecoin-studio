@@ -1,29 +1,29 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import "./TokenOwner.sol";
-import "./Roles.sol";
-import "./Interfaces/IPausable.sol";
-import "../hts-precompile/IHederaTokenService.sol";
+import './TokenOwner.sol';
+import './Roles.sol';
+import './Interfaces/IPausable.sol';
+import '../hts-precompile/IHederaTokenService.sol';
 
 abstract contract Pausable is IPausable, TokenOwner, Roles {
-    
     /**
      * @dev Pauses the token in order to prevent it from being involved in any kind of operation
      *
      */
-    function pause() 
-        external       
-        onlyRole(_getRoleId(RoleName.PAUSE))  
+    function pause()
+        external
         override(IPausable)
+        onlyRole(_getRoleId(RoleName.PAUSE))
         returns (bool)
-    {         
-        emit TokenPaused(_getTokenAddress()); 
+    {
+        emit TokenPaused(_getTokenAddress());
 
-        int256 responseCode = IHederaTokenService(PRECOMPILED_ADDRESS).pauseToken(_getTokenAddress());
-        
+        int256 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
+            .pauseToken(_getTokenAddress());
+
         bool success = _checkResponse(responseCode);
-        
+
         return success;
     }
 
@@ -32,17 +32,18 @@ abstract contract Pausable is IPausable, TokenOwner, Roles {
      *
      */
     function unpause()
-        external       
-        onlyRole(_getRoleId(RoleName.PAUSE))  
+        external
         override(IPausable)
+        onlyRole(_getRoleId(RoleName.PAUSE))
         returns (bool)
-    {         
-        emit TokenUnpaused(_getTokenAddress()); 
+    {
+        emit TokenUnpaused(_getTokenAddress());
 
-        int256 responseCode = IHederaTokenService(PRECOMPILED_ADDRESS).unpauseToken(_getTokenAddress());
+        int256 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
+            .unpauseToken(_getTokenAddress());
 
         bool success = _checkResponse(responseCode);
-        
+
         return success;
     }
 }

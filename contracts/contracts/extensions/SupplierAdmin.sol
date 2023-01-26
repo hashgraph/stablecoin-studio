@@ -1,64 +1,74 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import "./Interfaces/ISupplierAdmin.sol";
-import "./TokenOwner.sol";
-import "./Roles.sol";
+import './Interfaces/ISupplierAdmin.sol';
+import './TokenOwner.sol';
+import './Roles.sol';
 
 abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
+    mapping(address => uint256) internal _supplierAllowances;
+    mapping(address => bool) internal _unlimitedSupplierAllowances;
 
-    mapping(address => uint256) internal supplierAllowances;
-    mapping(address => bool) internal unlimitedSupplierAllowances;
-
-     /**
+    /**
      * @dev Emitted when a supply controller increases a supplier's allowance
-     * 
+     *
      * @param sender The caller of the function that emitted the event
      * @param supplier The supplier account
      * @param amount The amount to increase supplier allowance by
      * @param oldAllowance The supplier allowance before the increase
      * @param newAllowance The supplier allowance after the increase
      */
-    event SupplierAllowanceIncreased(address indexed sender, address indexed supplier, 
-                                     uint256 amount, uint256 oldAllowance, uint256 newAllowance);
-    
+    event SupplierAllowanceIncreased(
+        address indexed sender,
+        address indexed supplier,
+        uint256 amount,
+        uint256 oldAllowance,
+        uint256 newAllowance
+    );
+
     /**
      * @dev Emitted when a supply controller decreases a supplier's allowance
-     * 
+     *
      * @param sender The caller of the function that emitted the event
      * @param supplier The supplier account
      * @param amount The amount to decrease supplier allowance by
      * @param oldAllowance The supplier allowance before the decrease
      * @param newAllowance The supplier allowance after the decrease
      */
-    event SupplierAllowanceDecreased(address indexed sender, address indexed supplier, 
-                                     uint256 amount, uint256 oldAllowance, uint256 newAllowance);
+    event SupplierAllowanceDecreased(
+        address indexed sender,
+        address indexed supplier,
+        uint256 amount,
+        uint256 oldAllowance,
+        uint256 newAllowance
+    );
 
     /**
      * @dev Emitted when a supply controller resets a supplier's allowance
-     * 
+     *
      * @param sender The caller of the function that emitted the event
      * @param supplier The supplier account
      * @param oldAllowance The supplier allowance before the reset
      * @param newAllowance The supplier allowance after the reset (expected to be 0)
      */
-    event SupplierAllowanceReset(address indexed sender, address indexed supplier, 
-                                 uint256 oldAllowance, uint256 newAllowance);
+    event SupplierAllowanceReset(
+        address indexed sender,
+        address indexed supplier,
+        uint256 oldAllowance,
+        uint256 newAllowance
+    );
 
     /**
      * @dev Retrun number of tokens allowed to be minted of the address account `supplier`.
      *
      * @param supplier The address of the supplier
      * @return The number of tokens allowed to be minted
-     * 
-    */
-    function getSupplierAllowance(address supplier) 
-        external 
-        override(ISupplierAdmin)
-        view 
-        returns (uint256) 
-    {
-        return supplierAllowances[supplier];
+     *
+     */
+    function getSupplierAllowance(
+        address supplier
+    ) external view override(ISupplierAdmin) returns (uint256) {
+        return _supplierAllowances[supplier];
     }
 
     /**
@@ -66,173 +76,204 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
      *
      * @param supplier The address of the supplier
      * @return True if is unlimited supplier's allowance
-     * 
-    */
-    function isUnlimitedSupplierAllowance(address supplier) 
-        external 
-        override(ISupplierAdmin)
-        view 
-        returns (bool) 
-    {
-        return unlimitedSupplierAllowances[supplier];
+     *
+     */
+    function isUnlimitedSupplierAllowance(
+        address supplier
+    ) external view override(ISupplierAdmin) returns (bool) {
+        return _unlimitedSupplierAllowances[supplier];
     }
 
     /**
-     * @dev  Gives `SUPPLIER ROLE' permissions to perform supplier's allowance and sets the `amount` 
+     * @dev  Gives `SUPPLIER ROLE' permissions to perform supplier's allowance and sets the `amount`
      * the supplier can mint, if you don't already have unlimited supplier's allowance permission.
      * Only the 'ADMIN SUPPLIER ROLE` can execute.
      *
      * @param supplier The address of the supplier
      * @param amount The amount to add to the supplier's current minting allowance
-     * 
-    */
-    function grantSupplierRole(address supplier, uint256 amount)
-        external 
-        virtual 
-        onlyRole(_getRoleId(RoleName.ADMIN)) 
-        checkAddressIsNotZero(supplier)
+     *
+     */
+    function grantSupplierRole(
+        address supplier,
+        uint256 amount
+    )
+        external
+        virtual
         override(ISupplierAdmin)
-    {
-        require(!unlimitedSupplierAllowances[supplier], "Account already has unlimited supplier allowance");
-        supplierAllowances[supplier] = amount;
-        _grantRole(_getRoleId(RoleName.CASHIN), supplier);
-        
-    }
-
-    /** 
-    * @dev Gives `SUPPLIER ROLE' permissions to perform supplier's allowance, sets unlimited 
-    * supplier's allowance permission, and sets the `amount` the supplier can mint to 0.
-    * Only the 'ADMIN SUPPLIER ROLE` can execute.
-    *
-    * @param supplier The address of the supplier
-    */
-    function grantUnlimitedSupplierRole(address supplier)
-        external 
-        virtual 
-        override(ISupplierAdmin)
-    {
-        _grantUnlimitedSupplierRole(supplier);
-    }
-
-    /** 
-    * @dev Gives `SUPPLIER ROLE' permissions to perform supplier's allowance, sets unlimited 
-    * supplier's allowance permission, and sets the `amount` the supplier can mint to 0.
-    * Only the 'ADMIN SUPPLIER ROLE` can execute.
-    *
-    * @param supplier The address of the supplier
-    */
-    function _grantUnlimitedSupplierRole(address supplier)
-        internal  
-        onlyRole(_getRoleId(RoleName.ADMIN)) 
+        onlyRole(_getRoleId(RoleName.ADMIN))
         checkAddressIsNotZero(supplier)
     {
-        unlimitedSupplierAllowances[supplier] = true;
-        supplierAllowances[supplier] = 0;
+        require(
+            !_unlimitedSupplierAllowances[supplier],
+            'Account already has unlimited supplier allowance'
+        );
+        _supplierAllowances[supplier] = amount;
         _grantRole(_getRoleId(RoleName.CASHIN), supplier);
     }
 
     /**
-    * @dev Revoke `SUPPLIER ROLE' permissions to perform supplier's allowance and revoke unlimited 
-    * supplier's allowance permission.    
-    * Only the 'ADMIN SUPPLIER ROLE` can execute.
-    *
-    * @param supplier The address of the supplier
-    */
-    function revokeSupplierRole(address supplier)
-        external 
-        virtual 
+     * @dev Gives `SUPPLIER ROLE' permissions to perform supplier's allowance, sets unlimited
+     * supplier's allowance permission, and sets the `amount` the supplier can mint to 0.
+     * Only the 'ADMIN SUPPLIER ROLE` can execute.
+     *
+     * @param supplier The address of the supplier
+     */
+    function grantUnlimitedSupplierRole(
+        address supplier
+    ) external virtual override(ISupplierAdmin) {
+        _grantUnlimitedSupplierRole(supplier);
+    }
+
+    /**
+     * @dev Gives `SUPPLIER ROLE' permissions to perform supplier's allowance, sets unlimited
+     * supplier's allowance permission, and sets the `amount` the supplier can mint to 0.
+     * Only the 'ADMIN SUPPLIER ROLE` can execute.
+     *
+     * @param supplier The address of the supplier
+     */
+    function _grantUnlimitedSupplierRole(
+        address supplier
+    )
+        internal
         onlyRole(_getRoleId(RoleName.ADMIN))
         checkAddressIsNotZero(supplier)
-        override(ISupplierAdmin) 
     {
-        supplierAllowances[supplier] = 0;
-        unlimitedSupplierAllowances[supplier] = false;
+        _unlimitedSupplierAllowances[supplier] = true;
+        _supplierAllowances[supplier] = 0;
+        _grantRole(_getRoleId(RoleName.CASHIN), supplier);
+    }
+
+    /**
+     * @dev Revoke `SUPPLIER ROLE' permissions to perform supplier's allowance and revoke unlimited
+     * supplier's allowance permission.
+     * Only the 'ADMIN SUPPLIER ROLE` can execute.
+     *
+     * @param supplier The address of the supplier
+     */
+    function revokeSupplierRole(
+        address supplier
+    )
+        external
+        virtual
+        override(ISupplierAdmin)
+        onlyRole(_getRoleId(RoleName.ADMIN))
+        checkAddressIsNotZero(supplier)
+    {
+        _supplierAllowances[supplier] = 0;
+        _unlimitedSupplierAllowances[supplier] = false;
         _revokeRole(_getRoleId(RoleName.CASHIN), supplier);
     }
 
     /**
-    * @dev Reset a supplier's allowance to 0.
-    * Emits a SupplierAllowanceReset event
-    * Only the 'ADMIN SUPPLIER ROLE` can execute
-    *
-    * @param supplier The address of the supplier
-    */
-    function resetSupplierAllowance(address supplier) 
-        external 
-        virtual 
-        onlyRole(_getRoleId(RoleName.ADMIN))
-        checkAddressIsNotZero(supplier)
-        override(ISupplierAdmin)
-    {    
-        uint256 oldAllowance = supplierAllowances[supplier];
-        uint256 newAllowance = 0;
-        supplierAllowances[supplier] = newAllowance;
-
-        emit SupplierAllowanceReset(msg.sender, supplier, oldAllowance, newAllowance);
-    }
-
-    /**
-    * @dev Increases the minting allowance of the `supplier`, increasing the `amount` the supplier can mint.
-    * Validate that the amount must be greater than zero.
-    * Emits a SupplierAllowanceIncreased event.
-    * Only the 'ADMIN SUPPLIER ROLE` can execute.
-    *
-    * @param supplier The address of the supplier
-    * @param amount The amount to add to the supplier's current minting allowance
-    */
-    function increaseSupplierAllowance(address supplier, uint256 amount) 
-        external 
-        virtual 
-        onlyRole(_getRoleId(RoleName.ADMIN))
-        checkAddressIsNotZero(supplier) 
-        override(ISupplierAdmin)
-    {
-        require(amount > 0, "Amount must be greater than zero");
-        
-        uint256 oldAllowance = supplierAllowances[supplier];
-        uint256 newAllowance = oldAllowance + amount;  
-        supplierAllowances[supplier] = newAllowance;
-        
-        emit SupplierAllowanceIncreased(msg.sender, supplier, amount, oldAllowance, newAllowance);
-    }
-
-    /**
-    * @dev Decreases the minting allowance of the `supplier`, reducing the `amount` that the supplier can mint.
-    * Validate that the amount must be greater than zero, and the amount must not exceed the supplier allowance.
-    * Emits a SupplierAllowanceDecreased event.
-    * Only the 'ADMIN SUPPLIER ROLE` can execute.
-    *
-    * @param supplier The address of the supplier
-    * @param amount The amount to subtract from the supplier's current minting allowance
-    */
-    function decreaseSupplierAllowance(address supplier, uint256 amount) 
-        external 
-        virtual 
-        onlyRole(_getRoleId(RoleName.ADMIN))
-        override(ISupplierAdmin)
-    {    
-        _decreaseSupplierAllowance(supplier, amount);
-    }    
-
-    /**
-    * @dev Validate that if the address account `supplier` isn't unlimited supplier's allowance, 
-    * and the `amount` not exceed the supplier allowance, subtracting the amount from supplier's allowance
-    *
-    * @param supplier The address of the supplier
-    * @param amount The amount to check whether exceeds current supplier allowance
-    */
-    function _decreaseSupplierAllowance(address supplier, uint256 amount) 
-        internal
+     * @dev Reset a supplier's allowance to 0.
+     * Emits a SupplierAllowanceReset event
+     * Only the 'ADMIN SUPPLIER ROLE` can execute
+     *
+     * @param supplier The address of the supplier
+     */
+    function resetSupplierAllowance(
+        address supplier
+    )
+        external
         virtual
+        override(ISupplierAdmin)
+        onlyRole(_getRoleId(RoleName.ADMIN))
         checkAddressIsNotZero(supplier)
     {
-        require(amount > 0, "Amount must be greater than zero");
+        uint256 oldAllowance = _supplierAllowances[supplier];
+        uint256 newAllowance = 0;
+        _supplierAllowances[supplier] = newAllowance;
 
-        uint256 oldAllowance = supplierAllowances[supplier];
-        require(oldAllowance >= amount, "Amount must not exceed the supplier allowance");
+        emit SupplierAllowanceReset(
+            msg.sender,
+            supplier,
+            oldAllowance,
+            newAllowance
+        );
+    }
+
+    /**
+     * @dev Increases the minting allowance of the `supplier`, increasing the `amount` the supplier can mint.
+     * Validate that the amount must be greater than zero.
+     * Emits a SupplierAllowanceIncreased event.
+     * Only the 'ADMIN SUPPLIER ROLE` can execute.
+     *
+     * @param supplier The address of the supplier
+     * @param amount The amount to add to the supplier's current minting allowance
+     */
+    function increaseSupplierAllowance(
+        address supplier,
+        uint256 amount
+    )
+        external
+        virtual
+        override(ISupplierAdmin)
+        onlyRole(_getRoleId(RoleName.ADMIN))
+        checkAddressIsNotZero(supplier)
+    {
+        require(amount > 0, 'Amount must be greater than zero');
+
+        uint256 oldAllowance = _supplierAllowances[supplier];
+        uint256 newAllowance = oldAllowance + amount;
+        _supplierAllowances[supplier] = newAllowance;
+
+        emit SupplierAllowanceIncreased(
+            msg.sender,
+            supplier,
+            amount,
+            oldAllowance,
+            newAllowance
+        );
+    }
+
+    /**
+     * @dev Decreases the minting allowance of the `supplier`, reducing the `amount` that the supplier can mint.
+     * Validate that the amount must be greater than zero, and the amount must not exceed the supplier allowance.
+     * Emits a SupplierAllowanceDecreased event.
+     * Only the 'ADMIN SUPPLIER ROLE` can execute.
+     *
+     * @param supplier The address of the supplier
+     * @param amount The amount to subtract from the supplier's current minting allowance
+     */
+    function decreaseSupplierAllowance(
+        address supplier,
+        uint256 amount
+    )
+        external
+        virtual
+        override(ISupplierAdmin)
+        onlyRole(_getRoleId(RoleName.ADMIN))
+    {
+        _decreaseSupplierAllowance(supplier, amount);
+    }
+
+    /**
+     * @dev Validate that if the address account `supplier` isn't unlimited supplier's allowance,
+     * and the `amount` not exceed the supplier allowance, subtracting the amount from supplier's allowance
+     *
+     * @param supplier The address of the supplier
+     * @param amount The amount to check whether exceeds current supplier allowance
+     */
+    function _decreaseSupplierAllowance(
+        address supplier,
+        uint256 amount
+    ) internal virtual checkAddressIsNotZero(supplier) {
+        require(amount > 0, 'Amount must be greater than zero');
+
+        uint256 oldAllowance = _supplierAllowances[supplier];
+        require(
+            oldAllowance >= amount,
+            'Amount must not exceed the supplier allowance'
+        );
         uint256 newAllowance = oldAllowance - amount;
-        supplierAllowances[supplier] = newAllowance;
+        _supplierAllowances[supplier] = newAllowance;
 
-        emit SupplierAllowanceDecreased(msg.sender, supplier, amount, oldAllowance, newAllowance);
+        emit SupplierAllowanceDecreased(
+            msg.sender,
+            supplier,
+            amount,
+            oldAllowance,
+            newAllowance
+        );
     }
 }

@@ -2,9 +2,9 @@
 
 pragma solidity 0.8.16;
 
-import "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol";
+import '@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol';
 
-
+// solhint-disable-next-line no-empty-blocks
 contract StableCoinFactoryProxyAdmin is ProxyAdmin {
 
 }

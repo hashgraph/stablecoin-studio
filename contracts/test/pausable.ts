@@ -49,8 +49,8 @@ const INIT_SUPPLY = BigNumber.from(0).mul(TokenFactor)
 const MAX_SUPPLY = BigNumber.from(1).mul(TokenFactor)
 const TokenMemo = 'Hedera Accelerator Stable Coin'
 
-describe('Pause Tests', function() {
-    before(async function() {
+describe('Pause Tests', function () {
+    before(async function () {
         // Generate Client 1 and Client 2
         const [
             client1,
@@ -118,7 +118,7 @@ describe('Pause Tests', function() {
         proxyAddress = result[0]
     })
 
-    it('Admin account can grant and revoke pause role to an account', async function() {
+    it('Admin account can grant and revoke pause role to an account', async function () {
         // Admin grants pause role : success
         let result = await hasRole(
             PAUSE_ROLE,
@@ -164,7 +164,7 @@ describe('Pause Tests', function() {
         expect(result).to.equals(false)
     })
 
-    it('Non Admin account can not grant pause role to an account', async function() {
+    it('Non Admin account can not grant pause role to an account', async function () {
         // Non Admin grants pause role : fail
         await expect(
             grantRole(
@@ -177,7 +177,7 @@ describe('Pause Tests', function() {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Non Admin account can not revoke pause role to an account', async function() {
+    it('Non Admin account can not revoke pause role to an account', async function () {
         // Non Admin revokes pause role : fail
         await grantRole(
             PAUSE_ROLE,
@@ -206,19 +206,19 @@ describe('Pause Tests', function() {
         )
     })
 
-    it("An account without pause role can't pause a token", async function() {
+    it("An account without pause role can't pause a token", async function () {
         await expect(
             pause(proxyAddress, nonOperatorClient)
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it("An account without pause role can't unpause a token", async function() {
+    it("An account without pause role can't unpause a token", async function () {
         await expect(
             unpause(proxyAddress, nonOperatorClient)
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('An account with pause role can pause a token', async function() {
+    it('An account with pause role can pause a token', async function () {
         await grantRole(
             PAUSE_ROLE,
             proxyAddress,
@@ -242,7 +242,7 @@ describe('Pause Tests', function() {
         )
     })
 
-    it('An account with pause role can unpause a token', async function() {
+    it('An account with pause role can unpause a token', async function () {
         await grantRole(
             PAUSE_ROLE,
             proxyAddress,
@@ -265,7 +265,7 @@ describe('Pause Tests', function() {
         )
     })
 
-    it('A paused token can not be used for any other operation, like associating', async function() {
+    it('A paused token can not be used for any other operation, like associating', async function () {
         await grantRole(
             PAUSE_ROLE,
             proxyAddress,
@@ -295,7 +295,7 @@ describe('Pause Tests', function() {
         )
     })
 
-    it('An unpaused token can be used for any other operation, like associating', async function() {
+    it('An unpaused token can be used for any other operation, like associating', async function () {
         await grantRole(
             PAUSE_ROLE,
             proxyAddress,

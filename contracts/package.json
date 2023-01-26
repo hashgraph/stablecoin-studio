@@ -63,12 +63,13 @@
         "test:previewnet:HederaReserve": "npx hardhat test --network previewnet test/HederaReserve.ts",
         "size": "npx hardhat size-contracts",
         "build": "rimraf build && npx tsc -p tsconfig.json",
-        "lint:sol": "npx solhint 'contracts/**/*.sol'",
+        "lint:sol": "solhint 'contracts/**/*.sol'",
         "lint:ts": "npx eslint . --ext .ts",
         "lint": "npm run lint:sol && npm run lint:ts",
+        "prettier": "prettier --write  \"**/*.{ts,js,sol}\"",
         "doc": "npx hardhat dodoc",
         "security": "docker run -t --rm -v /var/run/docker.sock:/var/run/docker.sock -v \"$(pwd)\":\"/home/ethsec/contracts\" -w \"/home/ethsec/contracts\" -u 0:0 trailofbits/eth-security-toolbox -c \"solc-select install 0.8.16  && solc-select use 0.8.16  && slither ./contracts --solc-remaps @=node_modules/@\"",
-        "pre-commit": "npm run lint"
+        "pre-commit": "npm run prettier && npm run lint"
     },
     "author": "",
     "license": "ISC",
@@ -95,6 +96,9 @@
         "hardhat-abi-exporter": "^2.10.0",
         "hardhat-contract-sizer": "^2.6.1",
         "hardhat-gas-reporter": "^1.0.9",
+        "prettier": "^2.8.2",
+        "prettier-plugin-solidity": "^1.1.1",
+        "solhint-plugin-prettier": "^0.0.5",
         "ts-node": "^10.9.1",
         "typechain": "8.1.0",
         "typescript": "latest"

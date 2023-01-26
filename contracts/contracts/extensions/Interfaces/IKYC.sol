@@ -8,7 +8,7 @@ interface IKYC {
      * @param token Token address
      * @param account Token address
      */
-    event grantTokenKyc(address token, address account);
+    event GrantTokenKyc(address token, address account);
 
     /**
      * @dev Emitted when the KYC is revoked to an account for the token
@@ -16,7 +16,7 @@ interface IKYC {
      * @param token Token address
      * @param account Token address
      */
-    event revokeTokenKyc(address token, address account);
+    event RevokeTokenKyc(address token, address account);
 
     /**
      * @dev Grants KYC to an account for the token

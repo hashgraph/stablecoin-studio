@@ -54,8 +54,8 @@ const INIT_SUPPLY = BigNumber.from(10).mul(TokenFactor)
 const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor)
 const TokenMemo = 'Hedera Accelerator Stable Coin'
 
-describe('KYC Tests', function() {
-    before(async function() {
+describe('KYC Tests', function () {
+    before(async function () {
         // Generate Client 1 and Client 2
         const [
             client1,
@@ -123,7 +123,7 @@ describe('KYC Tests', function() {
         proxyAddress = result[0]
     })
 
-    it('Admin account can grant and revoke kyc role to an account', async function() {
+    it('Admin account can grant and revoke kyc role to an account', async function () {
         // Admin grants pause role : success
         let result = await hasRole(
             KYC_ROLE,
@@ -169,7 +169,7 @@ describe('KYC Tests', function() {
         expect(result).to.equals(false)
     })
 
-    it('Non Admin account can not grant kyc role to an account', async function() {
+    it('Non Admin account can not grant kyc role to an account', async function () {
         // Non Admin grants KYC role : fail
         await expect(
             grantRole(
@@ -182,7 +182,7 @@ describe('KYC Tests', function() {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Non Admin account can not revoke kyc role to an account', async function() {
+    it('Non Admin account can not revoke kyc role to an account', async function () {
         // Non Admin revokes KYC role : fail
         await grantRole(
             KYC_ROLE,
@@ -211,7 +211,7 @@ describe('KYC Tests', function() {
         )
     })
 
-    it("An account without kyc role can't grant kyc to an account for a token", async function() {
+    it("An account without kyc role can't grant kyc to an account for a token", async function () {
         await expect(
             grantKyc(
                 proxyAddress,
@@ -222,7 +222,7 @@ describe('KYC Tests', function() {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it("An account without kyc role can't revoke kyc to an account for a token", async function() {
+    it("An account without kyc role can't revoke kyc to an account for a token", async function () {
         await grantKyc(
             proxyAddress,
             operatorAccount,
@@ -690,7 +690,7 @@ describe('KYC Tests', function() {
         )
     })
 
-    it('Account without kyc can not rescue tokens', async function() {
+    it('Account without kyc can not rescue tokens', async function () {
         const AmountToRescue = BigNumber.from(10).mul(TokenFactor)
 
         // rescue some tokens
@@ -699,7 +699,7 @@ describe('KYC Tests', function() {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Account with granted kyc can rescue tokens', async function() {
+    it('Account with granted kyc can rescue tokens', async function () {
         const AmountToRescue = BigNumber.from(10).mul(TokenFactor)
 
         // Get the initial balance of the token owner and client
@@ -744,9 +744,8 @@ describe('KYC Tests', function() {
             operatorIsE25519
         )
 
-        const expectedTokenOwnerBalance = initialTokenOwnerBalance.sub(
-            AmountToRescue
-        )
+        const expectedTokenOwnerBalance =
+            initialTokenOwnerBalance.sub(AmountToRescue)
         const expectedClientBalance = initialClientBalance.add(AmountToRescue)
 
         expect(finalTokenOwnerBalance.toString()).to.equals(
@@ -757,7 +756,7 @@ describe('KYC Tests', function() {
         )
     })
 
-    it('Account with revoked kyc can not rescue tokens', async function() {
+    it('Account with revoked kyc can not rescue tokens', async function () {
         const AmountToRescue = BigNumber.from(10).mul(TokenFactor)
 
         // revoke kyc to client for the token

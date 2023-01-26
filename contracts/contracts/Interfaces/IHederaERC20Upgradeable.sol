@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts (last updated v4.6.0) (token/ERC20/IERC20.sol)
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.11;
 
 /**
  * @dev Interface of the ERC20 standard as defined in the EIP.
@@ -51,9 +51,10 @@ interface IHederaERC20Upgradeable {
      *
      * This value changes when {approve} or {transferFrom} are called.
      */
-    function allowance(address owner, address spender)
-        external
-        returns (uint256);
+    function allowance(
+        address owner,
+        address spender
+    ) external returns (uint256);
 
     /**
      * @dev Sets `amount` as the allowance of `spender` over the caller's tokens.
