@@ -51,9 +51,7 @@ class AccountInPort implements IAccountInPort {
 	public readonly NullHederaAccount: HederaAccount = HederaAccount.NULL;
 	public readonly NullPublicKey: PublicKey = PublicKey.NULL;
 
-	constructor(
-		private readonly queryBus: QueryBus = Injectable.resolve(QueryBus),
-	) {}
+	constructor(private readonly queryBus: QueryBus = Injectable.resolve(QueryBus)) {}
 
 	@LogError
 	async getPublicKey(request: GetPublicKeyRequest): Promise<PublicKey> {
