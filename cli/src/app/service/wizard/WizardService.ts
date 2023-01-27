@@ -75,7 +75,9 @@ export default class WizardService extends Service {
           break;
         case language.getText('wizard.mainOptions.List'):
           await utilsService.cleanAndShowBanner();
-          const resp = await new ListStableCoinsService().listStableCoins(false);
+          const resp = await new ListStableCoinsService().listStableCoins(
+            false,
+          );
           utilsService.drawTableListStableCoin(resp);
           break;
         case language.getText('wizard.mainOptions.Configuration'):
