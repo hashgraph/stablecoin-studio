@@ -9,7 +9,6 @@ import {
 	ModalFooter,
 	ModalHeader,
 	ModalOverlay,
-	Spinner,
 	Text,
 } from '@chakra-ui/react';
 import type { ModalProps } from '@chakra-ui/react';
@@ -17,6 +16,7 @@ import { useTranslation } from 'react-i18next';
 import SUCCESS_ICON from '../assets/svg/success.svg';
 import ERROR_ICON from '../assets/svg/error.svg';
 import WARNING_ICON from '../assets/svg/warning.svg';
+import HederaSpinner from './HederaSpinner';
 
 const SUCCESS = 'success';
 const WARNING = 'warning';
@@ -85,14 +85,7 @@ const ModalNotification = (props: ModalNotificationProps) => {
 					</ModalHeader>
 				)}
 				{isLoading && (
-					<Spinner
-						w='54px'
-						h='54px'
-						justifyContent='center'
-						alignSelf={'center'}
-						color='#C6AEFA'
-						thickness='4px'
-					/>
+					<HederaSpinner />
 				)}
 				<ModalBody textAlign='center' pt='14px'>
 					<Text
