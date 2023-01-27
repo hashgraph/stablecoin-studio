@@ -114,7 +114,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 						}
 					}
 					const providedKeyCasted = providedKey as PublicKey;
-					key.PublicKey =
+					key.publicKey =
 						providedKeyCasted.key == PublicKey.NULL.key
 							? '0x'
 							: HPublicKey.fromString(
