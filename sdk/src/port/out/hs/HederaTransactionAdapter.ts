@@ -903,6 +903,20 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				);
 				break;
 
+			case Operation.GRANT_KYC:
+					t = HTSTransactionBuilder.buildGrantTokenKycTransaction(
+						coin.coin.tokenId?.value!,
+						params.targetId!.toString(),	
+					);
+					break;			
+					
+			case Operation.REVOKE_KYC:
+				t = HTSTransactionBuilder.buildRevokeTokenKycTransaction(
+					coin.coin.tokenId?.value!,
+					params.targetId!.toString(),
+				);
+				break;					
+
 			case Operation.DELETE:
 				t = HTSTransactionBuilder.buildDeleteTransaction(
 					coin.coin.tokenId?.value!,
@@ -910,7 +924,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				break;
 
 			default:
-				throw new Error(`Rescue operation does not exist through HTS`);
+				throw new Error(`Operation does not exist through HTS`);
 		}
 		return this.signAndSendTransaction(t, TransactionType.RECEIPT);
 	}

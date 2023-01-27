@@ -34,6 +34,8 @@ import {
 	TokenFreezeTransaction,
 	TokenUnfreezeTransaction,
 	TokenAssociateTransaction,
+	TokenGrantKycTransaction,
+	TokenRevokeKycTransaction
 } from '@hashgraph/sdk';
 import LogService from '../../../app/service/LogService.js';
 import { TransactionBuildingError } from './error/TransactionBuildingError.js';
@@ -230,4 +232,34 @@ export class HTSTransactionBuilder {
 			throw new TransactionBuildingError(error);
 		}
 	}
+
+	public static buildGrantTokenKycTransaction(
+		tokenId: string,
+		targetId: string,
+	): Transaction {
+		try {
+			return new TokenGrantKycTransaction({
+				tokenId: tokenId,
+				accountId: targetId,
+			});
+		} catch (error) {
+			LogService.logError(error);
+			throw new TransactionBuildingError(error);
+		}
+	}
+
+	public static buildRevokeTokenKycTransaction(
+		tokenId: string,
+		targetId: string,
+	): Transaction {
+		try {
+			return new TokenRevokeKycTransaction({
+				tokenId: tokenId,				
+				accountId: targetId,
+			});
+		} catch (error) {
+			LogService.logError(error);
+			throw new TransactionBuildingError(error);
+		}
+	}	
 }
