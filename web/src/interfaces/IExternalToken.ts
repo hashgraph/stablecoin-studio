@@ -1,4 +1,4 @@
-import { IRole } from './IRole.js';
+import type { IRole } from './IRole.js';
 
 export interface IExternalToken {
 	id: string;

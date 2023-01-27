@@ -8,3 +8,4 @@ package.json
 typechain-types/
 .gitlab-ci.yml
 build
+package.json

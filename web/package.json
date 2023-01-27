@@ -44,8 +44,9 @@
 		"build": "react-app-rewired build",
 		"test": "react-app-rewired test",
 		"eject": "react-app-rewired eject",
-		"lint": "eslint --fix --ext .js,.jsx .",
+		"lint": "eslint . --ext .ts --ext .mts",
 		"prettier": "prettier --config .prettierrc --write .",
+		"prettierCheck": "prettier --config .prettierrc --check",
 		"pre-commit": "npm run lint && npm run prettier"
 	},
 	"eslintConfig": {

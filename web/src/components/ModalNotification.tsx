@@ -84,9 +84,7 @@ const ModalNotification = (props: ModalNotificationProps) => {
 						/>
 					</ModalHeader>
 				)}
-				{isLoading && (
-					<HederaSpinner />
-				)}
+				{isLoading && <HederaSpinner />}
 				<ModalBody textAlign='center' pt='14px'>
 					<Text
 						data-testid='modal-notification-title'
