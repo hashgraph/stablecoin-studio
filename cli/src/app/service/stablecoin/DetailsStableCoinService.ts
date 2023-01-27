@@ -53,12 +53,12 @@ export default class DetailsStableCoinsService extends Service {
         evmProxyAddress: respDetail.proxyAddress.toString(),
         treasury: respDetail.treasury.toString(),
         autoRenewAccount: respDetail.autoRenewAccount.toString(),
-        adminKey: respDetail.adminKey.toString(),
-        freezeKey: respDetail.freezeKey.toString(),
-        kycKey: respDetail.kycKey.toString(),
-        wipeKey: respDetail.wipeKey.toString(),
-        supplyKey: respDetail.supplyKey.toString(),
-        pauseKey: respDetail.pauseKey.toString(),
+        adminKey: respDetail.adminKey ? respDetail.adminKey.toString() : '-',
+        freezeKey: respDetail.freezeKey ? respDetail.freezeKey.toString() : '-',
+        kycKey: respDetail.kycKey ? respDetail.kycKey.toString() : '-',
+        wipeKey: respDetail.wipeKey ? respDetail.wipeKey.toString() : '-',
+        supplyKey: respDetail.supplyKey ? respDetail.supplyKey.toString() : '-',
+        pauseKey: respDetail.pauseKey ? respDetail.pauseKey.toString() : '-',
         ...reserveData,
       };
       console.log(out);
