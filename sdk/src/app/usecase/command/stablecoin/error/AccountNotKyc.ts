@@ -24,7 +24,7 @@ export class AccountNotKyc extends BaseError {
 	constructor(targetId: unknown) {
 		super(
 			ErrorCode.AccountNotKyc,
-			`The account ${targetId} must be granted KYC status`,
+			`The account ${targetId} has not verified the KYC`,
 		);
 	}
 }
