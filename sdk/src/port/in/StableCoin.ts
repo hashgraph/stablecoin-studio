@@ -78,10 +78,10 @@ import { RevokeKycCommand } from '../../app/usecase/command/stablecoin/operation
 import { LogError } from '../../core/decorator/LogErrorDecorator.js';
 import { GetAccountTokenRelationshipQuery } from '../../app/usecase/query/account/tokenRelationship/GetAccountTokenRelationshipQuery.js';
 
-export const HederaERC20AddressTestnet = '0.0.49414839';
+export const HederaERC20AddressTestnet = '0.0.7102';
 export const HederaERC20AddressPreviewnet = '0.0.11111111';
 
-export const FactoryAddressTestnet = '0.0.49414875';
+export const FactoryAddressTestnet = '0.0.7106';
 export const FactoryAddressPreviewnet = '0.0.11111111';
 
 export { StableCoinViewModel, StableCoinListViewModel, ReserveViewModel };
