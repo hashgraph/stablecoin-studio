@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react';
 import { motion } from 'framer-motion';
-import { HStack } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 
 interface HederaSpinnerProps {
 	children?: ReactNode;
@@ -17,7 +17,7 @@ const transition = {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const HederaSpinner = ({ ...props }: HederaSpinnerProps) => {
 	return (
-		<HStack gap='10px'>
+		<Flex justifyContent={'center'} w='full'>
 			<motion.svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2500 2500' width='48px'>
 				<motion.g data-name='Layer 2'>
 					<motion.g
@@ -35,7 +35,7 @@ const HederaSpinner = ({ ...props }: HederaSpinnerProps) => {
 					</motion.g>
 				</motion.g>
 			</motion.svg>
-		</HStack>
+		</Flex>
 	);
 };
 
