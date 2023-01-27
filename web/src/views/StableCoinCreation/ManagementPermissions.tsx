@@ -20,6 +20,7 @@ const ManagementPermissions = ({ control, watch, request }: ManagementPermission
 		name: 'managementPermissions',
 	});
 
+	console.log(watch('managementPermissions'));
 	const keys = [
 		{
 			name: 'adminKey',
@@ -59,6 +60,7 @@ const ManagementPermissions = ({ control, watch, request }: ManagementPermission
 					textAlign={'left'}
 				>
 					{t('stableCoinCreation:managementPermissions.title')}
+					
 				</Heading>
 				<Stack as='form' spacing={6} pb={6}>
 					<HStack mb={4} justifyContent='space-between'>
@@ -93,7 +95,7 @@ const ManagementPermissions = ({ control, watch, request }: ManagementPermission
 						</Stack>
 					)}
 
-					{watch('kycKey')?.value !== 4 && (
+					{(watch('kycKey')?.value !== 4 || watch('managementPermissions') === true) && (
 						<Stack minW={400}>
 							<HStack mb={4} justifyContent='space-between'>
 								<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>
