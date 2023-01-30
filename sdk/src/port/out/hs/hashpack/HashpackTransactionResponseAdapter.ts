@@ -53,7 +53,9 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 			await this.getReceipt(signer, transactionResponse);
 			let transId;
 			if (transactionResponse instanceof HTransactionResponse) {
-				transId = transactionResponse.transactionId.toString();
+				transId = JSON.parse(
+					JSON.stringify(transactionResponse),
+				).response.transactionId.toString();
 			} else {
 				transId = transactionResponse.id;
 			}
