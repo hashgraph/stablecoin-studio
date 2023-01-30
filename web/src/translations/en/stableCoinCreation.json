@@ -52,7 +52,10 @@
 		"title": "Permission management",
 		"totalSupply": "Total supply",
 		"treasuryAccountAddress": "Treasury account address",
-		"wipe": "Wipe"
+		"wipe": "Wipe",
+		"CreatorKYCFlag": "Creator account KYC",
+		"CreatorGrantedKYC": "TRUE",
+		"CreatorNotGrantedKYC": "FALSE"
 	},
 	"proofOfReserve": {
 		"title": "Proof of Reserve",
