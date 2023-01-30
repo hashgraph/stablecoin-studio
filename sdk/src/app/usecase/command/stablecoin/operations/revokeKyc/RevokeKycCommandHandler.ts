@@ -84,7 +84,7 @@ export class RevokeKycCommandHandler
 
 		if (tokenRelationship.kycStatus !== KycStatus.GRANTED) {
 			throw new OperationNotAllowed(
-				`KYC cannot be revoked for account ${targetId} on token ${tokenId}`,
+				`KYC cannot be revoked from account ${targetId} on token ${tokenId}`,
 			);
 		}
 
