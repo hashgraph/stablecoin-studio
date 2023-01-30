@@ -33,6 +33,8 @@ import {
 	TokenUnpauseTransaction,
 	TokenWipeTransaction,
 	TransferTransaction,
+	TokenRevokeKycTransaction,
+	TokenGrantKycTransaction,
 } from '@hashgraph/sdk';
 import { singleton } from 'tsyringe';
 import { HederaTransactionAdapter } from '../HederaTransactionAdapter.js';
@@ -244,13 +246,15 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 				t instanceof TokenDeleteTransaction ||
 				t instanceof TokenFreezeTransaction ||
 				t instanceof TokenUnfreezeTransaction ||
+				t instanceof TokenGrantKycTransaction ||
+				t instanceof TokenRevokeKycTransaction ||
 				t instanceof TransferTransaction
 			) {
 				hashPackTransactionResponse = await t.executeWithSigner(
 					this.signer,
 				);
 				this.logTransaction(
-					hashPackTransactionResponse.transactionId.toString(),
+					hashPackTransactionResponse.response.transactionId,
 				);
 			} else {
 				hashPackTransactionResponse = await this.hc.sendTransaction(
