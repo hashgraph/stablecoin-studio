@@ -74,10 +74,10 @@ import ReserveViewModel from '../out/mirror/response/ReserveViewModel.js';
 import { BalanceOfQuery } from '../../app/usecase/query/stablecoin/balanceof/BalanceOfQuery.js';
 import { GetReserveAddressQuery } from '../../app/usecase/query/stablecoin/getReserveAddress/GetReserveAddressQuey.js';
 
-export const HederaERC20AddressTestnet = '0.0.49318811';
+export const HederaERC20AddressTestnet = '0.0.2383187';
 export const HederaERC20AddressPreviewnet = '0.0.11111111';
 
-export const FactoryAddressTestnet = '0.0.49318817';
+export const FactoryAddressTestnet = '0.0.2383520';
 export const FactoryAddressPreviewnet = '0.0.11111111';
 
 export { StableCoinViewModel, StableCoinListViewModel, ReserveViewModel };
