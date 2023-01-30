@@ -26,11 +26,12 @@ export const LogError = (
 	descriptor: PropertyDescriptor,
 ): PropertyDescriptor => {
 	const originalMethod = descriptor.value;
-	descriptor.value = function (...args: unknown[]): unknown {
+	descriptor.value = async function (...args: unknown[]): Promise<unknown> {
 		try {
-			const result = originalMethod.apply(this, args);
+			const result = await originalMethod.apply(this, args);
 			return result;
 		} catch (error) {
+
 			LogService.logError(error);
 			throw error;
 		}

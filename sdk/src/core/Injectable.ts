@@ -76,6 +76,7 @@ import { IsUnlimitedQueryHandler } from '../app/usecase/query/stablecoin/isUnlim
 import { RevokeKycCommandHandler } from '../app/usecase/command/stablecoin/operations/revokeKyc/RevokeKycCommandHandler.js';
 import { GrantKycCommandHandler } from '../app/usecase/command/stablecoin/operations/grantKyc/GrantKycCommandHandler.js';
 import { GetAccountTokenRelationshipQueryHandler } from '../app/usecase/query/account/tokenRelationship/GetAccountTokenRelationshipQueryHandler.js';
+import { SDK } from '../port/in/Common.js';
 
 export const TOKENS = {
 	COMMAND_HANDLER: Symbol('CommandHandler'),
@@ -277,6 +278,11 @@ container.register<NetworkProps>('NetworkProps', {
 // Wallet events
 container.register<typeof WalletEvents>('WalletEvents', {
 	useValue: WalletEvents,
+});
+
+// SDK Logs
+container.register<typeof SDK>('SDK', {
+	useValue: SDK,
 });
 
 @registry([...COMMAND_HANDLERS, ...QUERY_HANDLERS, ...TRANSACTION_HANDLER])

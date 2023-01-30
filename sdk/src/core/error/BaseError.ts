@@ -93,4 +93,10 @@ export default class BaseError extends Error {
 		this.errorCategory = getErrorCategory(code);
 		Object.setPrototypeOf(this, BaseError.prototype);
 	}
+
+	toString(stack = false): string {
+		return `${this.errorCode} - ${
+			stack ? this.stack : this.message
+		}`;
+	}
 }

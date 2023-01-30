@@ -22,6 +22,8 @@
 import { createLogger, LoggerOptions, transports, format } from 'winston';
 import safeStringify from 'fast-safe-stringify';
 import BaseError from '../../core/error/BaseError.js';
+import { SDK } from '../../port/in/Common.js';
+import Injectable from '../../core/Injectable.js';
 
 const { Console } = transports;
 const { printf } = format;
@@ -88,9 +90,17 @@ export default class LogService {
 
 	public static logError(error: unknown, ...params: any[]): void;
 	public static logError(error: BaseError, ...params: any[]): void {
-		let other = params;
-		if (error && error?.stack) other = [error.stack, ...params];
-		this.log(LogLevel.ERROR, error, other);
+		if (error instanceof BaseError) {
+			this.log(
+				LogLevel.ERROR,
+				error.toString(
+					Injectable.resolve<typeof SDK>('SDK').log.level === 'TRACE',
+				),
+				params,
+			);
+		} else {
+			this.log(LogLevel.ERROR, error, params);
+		}
 	}
 
 	public static logInfo(message: any, ...params: any[]): void {
