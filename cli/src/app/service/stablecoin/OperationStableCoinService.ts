@@ -1293,8 +1293,10 @@ export default class OperationStableCoinService extends Service {
           capabilities.includes(Operation.GRANT_KYC)) ||
         (option === language.getText('wizard.stableCoinOptions.RevokeKYC') &&
           capabilities.includes(Operation.REVOKE_KYC)) ||
-        option ===
-          language.getText('wizard.stableCoinOptions.AccountKYCGranted') ||
+        (option ===
+          language.getText('wizard.stableCoinOptions.AccountKYCGranted') &&
+          capabilities.includes(Operation.GRANT_KYC) &&
+          capabilities.includes(Operation.REVOKE_KYC)) ||
         (option === language.getText('wizard.stableCoinOptions.DangerZone') &&
           (capabilities.includes(Operation.PAUSE) ||
             capabilities.includes(Operation.DELETE))) ||
