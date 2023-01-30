@@ -543,6 +543,42 @@ export default class OperationStableCoinService extends Service {
           );
         }
         break;
+        case language.getText('wizard.stableCoinOptions.AccountKYCGranted'):
+          await utilsService.cleanAndShowBanner();
+          utilsService.displayCurrentUserInfo(
+            configAccount,
+            this.stableCoinWithSymbol,
+          );
+  
+          const checkAccountKYCRequest = new KYCRequest({
+            tokenId: this.stableCoinId,
+            targetId: '',
+          });
+          checkAccountKYCRequest.targetId = await utilsService.defaultSingleAsk(
+            language.getText('wizard.checkAccountKYCGranted'),
+            '0.0.0',
+          );
+  
+          await utilsService.handleValidation(
+            () => checkAccountKYCRequest.validate('targetId'),
+            async () => {
+              checkAccountKYCRequest.targetId = await utilsService.defaultSingleAsk(
+                language.getText('wizard.checkAccountKYCGranted'),
+                '0.0.0',
+              );
+            },
+          );
+          try {
+            await new KYCStableCoinService().isAccountKYCGranted(
+              checkAccountKYCRequest,
+            );
+          } catch (error) {
+            await utilsService.askErrorConfirmation(
+              async () => await this.operationsStableCoin(),
+              error,
+            );
+          }
+          break;
       case language.getText('wizard.stableCoinOptions.RoleMgmt'):
         await utilsService.cleanAndShowBanner();
 
@@ -1256,6 +1292,7 @@ export default class OperationStableCoinService extends Service {
           capabilities.includes(Operation.GRANT_KYC)) ||
         (option === language.getText('wizard.stableCoinOptions.RevokeKYC') &&
           capabilities.includes(Operation.REVOKE_KYC)) ||
+        (option === language.getText('wizard.stableCoinOptions.AccountKYCGranted')) ||
         (option === language.getText('wizard.stableCoinOptions.DangerZone') &&
           (capabilities.includes(Operation.PAUSE) ||
             capabilities.includes(Operation.DELETE))) ||

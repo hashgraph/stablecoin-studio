@@ -77,6 +77,7 @@ import { GrantKycCommand } from '../../app/usecase/command/stablecoin/operations
 import { RevokeKycCommand } from '../../app/usecase/command/stablecoin/operations/revokeKyc/RevokeKycCommand.js';
 import { LogError } from '../../core/decorator/LogErrorDecorator.js';
 import { GetAccountTokenRelationshipQuery } from '../../app/usecase/query/account/tokenRelationship/GetAccountTokenRelationshipQuery.js';
+import { KycStatus } from '../out/mirror/response/AccountTokenRelationViewModel.js';
 
 export const HederaERC20AddressTestnet = '0.0.7102';
 export const HederaERC20AddressPreviewnet = '0.0.11111111';
@@ -423,7 +424,6 @@ class StableCoinInPort implements IStableCoinInPort {
 	async revokeKyc(request: KYCRequest): Promise<boolean> {
 		const { tokenId, targetId } = request;
 		handleValidation('KYCRequest', request);
-
 		return (
 			await this.commandBus.execute(
 				new RevokeKycCommand(
@@ -432,6 +432,21 @@ class StableCoinInPort implements IStableCoinInPort {
 				),
 			)
 		).payload;
+	}
+
+	@LogError
+	async isAccountKYCGranted(request: KYCRequest): Promise<boolean> {
+		const { tokenId, targetId } = request;
+		handleValidation('KYCRequest', request);
+
+		return (
+			await this.queryBus.execute(
+				new GetAccountTokenRelationshipQuery(
+					HederaId.from(targetId),
+					HederaId.from(tokenId),
+				),
+			)
+		).payload?.kycStatus === KycStatus.GRANTED;
 	}
 
 	@LogError
