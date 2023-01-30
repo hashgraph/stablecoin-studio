@@ -116,6 +116,7 @@ interface IStableCoinInPort {
 	): Promise<boolean>;
 	grantKyc(request: KYCRequest): Promise<boolean>;
 	revokeKyc(request: KYCRequest): Promise<boolean>;
+	isAccountKYCGranted(request: KYCRequest): Promise<boolean>;
 }
 
 class StableCoinInPort implements IStableCoinInPort {

@@ -18,6 +18,7 @@ import type UNFREEZE_EN from './translations/en/unfreeze.json';
 import type PROOF_OF_RESERVE_EN from './translations/en/proofOfReserve.json';
 import type GRANT_KYC_EN from './translations/en/grantKYC.json';
 import type REVOKE_KYC_EN from './translations/en/revokeKYC.json';
+import CHECK_KYC_EN from './translations/en/checkKyc.json';
 
 declare module 'react-i18next' {
 	interface Resources {
@@ -38,6 +39,7 @@ declare module 'react-i18next' {
 		proofOfReserve: typeof PROOF_OF_RESERVE_EN;
 		grantKYC: typeof GRANT_KYC_EN;
 		revokeKYC: typeof REVOKE_KYC_EN;
+		checkKyc: typeof CHECK_KYC_EN;
 	}
 }
 
@@ -64,6 +66,7 @@ declare module 'react-i18next' {
 			proofOfReserve: typeof PROOF_OF_RESERVE_EN;
 			grantKYC: typeof GRANT_KYC_EN;
 			revokeKYC: typeof REVOKE_KYC_EN;
+			checkKyc: typeof CHECK_KYC_EN;
 		};
 	}
 }

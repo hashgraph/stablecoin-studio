@@ -19,6 +19,7 @@ export enum NamedRoutes {
 	DangerZone = 'dangerZone',
 	GrantKyc = 'grantKyc',
 	RevokeKyc = 'revokeKyc',
+	CheckKyc = 'checkKyc',
 	Freeze = 'freeze',
 	Unfreeze = 'unfreeze',
 	ProofOfReserve = 'proofOfReserve',

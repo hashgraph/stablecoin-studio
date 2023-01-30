@@ -224,6 +224,10 @@ export class SDKService {
 	public static async revokeKyc(data: KYCRequest) {
 		return await StableCoin.revokeKyc(data);
 	}
+
+	public static async isAccountKYCGranted(data: KYCRequest) {
+		return await StableCoin.isAccountKYCGranted(data);
+	}
 }
 
 export default SDKService;

@@ -35,6 +35,7 @@ import { LoggerTransports, SDK, ConnectionState } from 'hedera-stable-coin-sdk';
 import StableCoinProof from '../views/StableCoinProof';
 import GrantKycOperation from '../views/Operations/GrantKyc';
 import RevokeKycOperation from '../views/Operations/RevokeKyc';
+import CheckKycOperation from '../views/Operations/CheckKyc';
 
 const LoginOverlayRoute = ({ show }: { show: boolean }) => {
 	return (
@@ -152,6 +153,7 @@ const Router = () => {
 								<Route path={RoutesMappingUrl.dangerZone} element={<DangerZoneOperations />} />
 								<Route path={RoutesMappingUrl.grantKyc} element={<GrantKycOperation />} />
 								<Route path={RoutesMappingUrl.revokeKyc} element={<RevokeKycOperation />} />
+								<Route path={RoutesMappingUrl.checkKyc} element={<CheckKycOperation />} />
 								<Route
 									path={RoutesMappingUrl.revokeRole}
 									element={<HandleRoles action={actions.revoke} />}

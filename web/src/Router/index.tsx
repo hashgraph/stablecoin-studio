@@ -187,6 +187,12 @@ const Operations = () => {
 			isDisabled: disabledFeatures?.kyc,
 		},
 		{
+			icon: 'IdentificationCard',
+			route: NamedRoutes.CheckKyc,
+			title: t('checkKycOperation'),
+			isDisabled: disabledFeatures?.kyc,
+		},
+		{
 			icon: 'Warning',
 			route: NamedRoutes.DangerZone,
 			title: t('dangerZoneOperation'),

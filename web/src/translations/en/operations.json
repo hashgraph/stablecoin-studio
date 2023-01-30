@@ -9,6 +9,7 @@
 	"getBalanceOperation": "Get balance",
 	"grantKycOperation": "Grant KYC",
 	"revokeKycOperation": "Revoke KYC",
+	"checkKycOperation": "Check KYC",
 	"modalLoadingTitle": "Loading",
 	"modalSuccessTitle": "Operation successfully completed",
 	"modalSuccessDesc": "You can follow the order in the list of operations.",
