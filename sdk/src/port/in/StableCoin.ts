@@ -440,13 +440,15 @@ class StableCoinInPort implements IStableCoinInPort {
 		handleValidation('KYCRequest', request);
 
 		return (
-			await this.queryBus.execute(
-				new GetAccountTokenRelationshipQuery(
-					HederaId.from(targetId),
-					HederaId.from(tokenId),
-				),
-			)
-		).payload?.kycStatus === KycStatus.GRANTED;
+			(
+				await this.queryBus.execute(
+					new GetAccountTokenRelationshipQuery(
+						HederaId.from(targetId),
+						HederaId.from(tokenId),
+					),
+				)
+			).payload?.kycStatus === KycStatus.GRANTED
+		);
 	}
 
 	@LogError

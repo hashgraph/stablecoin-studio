@@ -195,7 +195,8 @@ export const english = {
     unfreezeAccount: 'Which account do you want to unfreeze?',
     grantKYCToAccount: 'Which account do you want to grant KYC to?',
     revokeKYCFromAccount: 'Which account do you want to revoke KYC from?',
-    checkAccountKYCGranted: 'which account do you want to know if it has been granted the KYC for the token?',
+    checkAccountKYCGranted:
+      'which account do you want to know if it has been granted the KYC for the token?',
     returnOption: {
       ...returnToMainMenu,
     },
@@ -210,7 +211,7 @@ export const english = {
       UnFreeze: 'Unfreeze an account',
       GrantKYC: 'Grant KYC to an account',
       RevokeKYC: 'Revoke KYC from an account',
-      AccountKYCGranted: 'Check KYC status from an account',      
+      AccountKYCGranted: 'Check KYC status from an account',
       RoleMgmt: 'Role management',
       RoleRefresh: 'Refresh roles',
       DangerZone: colors.red('Danger zone'),
@@ -314,8 +315,10 @@ export const english = {
     unfreezeCompleted: 'Account unfrozen',
     KYCGranted: 'Account KYC granted',
     KYCRevoked: 'Account KYC revoked',
-    accountKYCGranted: 'The account ${address} has KYC granted for the ${token} token',
-    accountKYCNotGranted: 'The account ${address} has not KYC granted for the ${token} token',
+    accountKYCGranted:
+      'The account ${address} has KYC granted for the ${token} token',
+    accountKYCNotGranted:
+      'The account ${address} has not KYC granted for the ${token} token',
   },
   operation: {
     success: colors.green('Operation has been completed successfully.'),

@@ -38,11 +38,13 @@ export default class KYCStableCoinService extends Service {
     let isGranted = false;
     let response = language.getText('state.accountKYCNotGranted');
     await utilsService.showSpinner(
-      StableCoin.isAccountKYCGranted(req).then((response) => (isGranted = response)), 
+      StableCoin.isAccountKYCGranted(req).then(
+        (response) => (isGranted = response),
+      ),
       {
         text: language.getText('state.loading'),
-        successText: language.getText('state.loadCompleted') + '\n',                
-      }
+        successText: language.getText('state.loadCompleted') + '\n',
+      },
     );
     if (isGranted) {
       response = language.getText('state.accountKYCGranted');
@@ -51,9 +53,8 @@ export default class KYCStableCoinService extends Service {
     console.log(
       response
         .replace('${address}', req.targetId)
-        .replace('${token}', colors.yellow(req.tokenId)) +
-        '\n',
-    );    
+        .replace('${token}', colors.yellow(req.tokenId)) + '\n',
+    );
 
     utilsService.breakLine();
   }

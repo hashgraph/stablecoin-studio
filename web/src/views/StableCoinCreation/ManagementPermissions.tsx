@@ -60,7 +60,6 @@ const ManagementPermissions = ({ control, watch, request }: ManagementPermission
 					textAlign={'left'}
 				>
 					{t('stableCoinCreation:managementPermissions.title')}
-					
 				</Heading>
 				<Stack as='form' spacing={6} pb={6}>
 					<HStack mb={4} justifyContent='space-between'>

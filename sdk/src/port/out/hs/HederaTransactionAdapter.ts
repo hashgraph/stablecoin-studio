@@ -904,18 +904,18 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				break;
 
 			case Operation.GRANT_KYC:
-					t = HTSTransactionBuilder.buildGrantTokenKycTransaction(
-						coin.coin.tokenId?.value!,
-						params.targetId!.toString(),	
-					);
-					break;			
-					
+				t = HTSTransactionBuilder.buildGrantTokenKycTransaction(
+					coin.coin.tokenId?.value!,
+					params.targetId!.toString(),
+				);
+				break;
+
 			case Operation.REVOKE_KYC:
 				t = HTSTransactionBuilder.buildRevokeTokenKycTransaction(
 					coin.coin.tokenId?.value!,
 					params.targetId!.toString(),
 				);
-				break;					
+				break;
 
 			case Operation.DELETE:
 				t = HTSTransactionBuilder.buildDeleteTransaction(

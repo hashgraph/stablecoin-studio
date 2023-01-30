@@ -35,7 +35,7 @@ import {
 	TokenUnfreezeTransaction,
 	TokenAssociateTransaction,
 	TokenGrantKycTransaction,
-	TokenRevokeKycTransaction
+	TokenRevokeKycTransaction,
 } from '@hashgraph/sdk';
 import LogService from '../../../app/service/LogService.js';
 import { TransactionBuildingError } from './error/TransactionBuildingError.js';
@@ -254,12 +254,12 @@ export class HTSTransactionBuilder {
 	): Transaction {
 		try {
 			return new TokenRevokeKycTransaction({
-				tokenId: tokenId,				
+				tokenId: tokenId,
 				accountId: targetId,
 			});
 		} catch (error) {
 			LogService.logError(error);
 			throw new TransactionBuildingError(error);
 		}
-	}	
+	}
 }
