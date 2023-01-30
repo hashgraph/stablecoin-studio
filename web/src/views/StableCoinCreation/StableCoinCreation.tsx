@@ -53,6 +53,7 @@ const StableCoinCreation = () => {
 		getValues,
 		watch,
 		formState: { errors },
+		setValue,
 	} = form;
 
 	const [request] = useState(
@@ -93,7 +94,14 @@ const StableCoinCreation = () => {
 		{
 			number: '03',
 			title: t('tabs.managementPermissions'),
-			children: <ManagementPermissions control={control} request={request} watch={watch} />,
+			children: (
+				<ManagementPermissions
+					control={control}
+					request={request}
+					watch={watch}
+					setValue={setValue}
+				/>
+			),
 		},
 		{
 			number: '04',
@@ -215,7 +223,7 @@ const StableCoinCreation = () => {
 		if (managementPermissions) {
 			request.adminKey = Account.NullPublicKey; // accountInfo.publicKey;
 			request.freezeKey = Account.NullPublicKey;
-			request.KYCKey = Account.NullPublicKey;
+			request.kycKey = Account.NullPublicKey;
 			request.wipeKey = Account.NullPublicKey;
 			request.pauseKey = Account.NullPublicKey;
 			request.supplyKey = Account.NullPublicKey;
@@ -224,7 +232,7 @@ const StableCoinCreation = () => {
 		} else {
 			request.adminKey = accountInfo.publicKey;
 			request.freezeKey = formatKey(freezeKey.label, 'freezeKey');
-			request.KYCKey = formatKey(kycKey.label, 'kycKey');
+			request.kycKey = formatKey(kycKey.label, 'kycKey');
 			request.grantKYCToOriginalSender = grantKYCToOriginalSender;
 			request.wipeKey = formatKey(wipeKey.label, 'wipeKey');
 			request.pauseKey = formatKey(pauseKey.label, 'pauseKey');

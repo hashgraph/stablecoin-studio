@@ -1,6 +1,7 @@
 import { Heading, HStack, Stack, Text, VStack } from '@chakra-ui/react';
 import type { CreateRequest } from 'hedera-stable-coin-sdk';
-import type { Control, FieldValues, UseFormWatch } from 'react-hook-form';
+import { useEffect } from 'react';
+import type { Control, FieldValues, UseFormSetValue, UseFormWatch } from 'react-hook-form';
 import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import SwitchController from '../../components/Form/SwitchController';
@@ -10,9 +11,15 @@ interface ManagementPermissionsProps {
 	control: Control<FieldValues>;
 	request: CreateRequest;
 	watch: UseFormWatch<FieldValues>;
+	setValue: UseFormSetValue<FieldValues>;
 }
 
-const ManagementPermissions = ({ control, watch, request }: ManagementPermissionsProps) => {
+const ManagementPermissions = ({
+	control,
+	watch,
+	request,
+	setValue,
+}: ManagementPermissionsProps) => {
 	const { t } = useTranslation(['global', 'stableCoinCreation']);
 
 	const isManagementPermissions = useWatch({
@@ -20,7 +27,12 @@ const ManagementPermissions = ({ control, watch, request }: ManagementPermission
 		name: 'managementPermissions',
 	});
 
-	console.log(watch('managementPermissions'));
+	useEffect(() => {
+		if (watch('kycKey')?.value === 4 || watch('kycKey')?.value === 3) {
+			setValue('grantKYCToOriginalSender', false);
+		}
+	}, [watch('kycKey')]);
+
 	const keys = [
 		{
 			name: 'adminKey',
@@ -94,7 +106,8 @@ const ManagementPermissions = ({ control, watch, request }: ManagementPermission
 						</Stack>
 					)}
 
-					{(watch('kycKey')?.value !== 4 || watch('managementPermissions') === true) && (
+					{((watch('kycKey')?.value !== 4 && watch('kycKey')?.value !== 3) ||
+						watch('managementPermissions') === true) && (
 						<Stack minW={400}>
 							<HStack mb={4} justifyContent='space-between'>
 								<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>

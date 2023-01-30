@@ -254,7 +254,7 @@ export default class CreateStableCoinService extends Service {
     if (managedBySC) {
       tokenToCreate.adminKey = Account.NullPublicKey;
       tokenToCreate.freezeKey = Account.NullPublicKey;
-      tokenToCreate.KYCKey = Account.NullPublicKey;
+      tokenToCreate.kycKey = Account.NullPublicKey;
       tokenToCreate.wipeKey = Account.NullPublicKey;
       tokenToCreate.supplyKey = Account.NullPublicKey;
       tokenToCreate.pauseKey = Account.NullPublicKey;
@@ -287,7 +287,7 @@ export default class CreateStableCoinService extends Service {
 
     tokenToCreate.adminKey = adminKey;
     tokenToCreate.supplyKey = supplyKey;
-    tokenToCreate.KYCKey = KYCKey;
+    tokenToCreate.kycKey = KYCKey;
     tokenToCreate.freezeKey = freezeKey;
     tokenToCreate.wipeKey = wipeKey;
     tokenToCreate.pauseKey = pauseKey;

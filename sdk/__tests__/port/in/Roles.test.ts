@@ -73,7 +73,7 @@ describe('🧪 Role test', () => {
 			autoRenewAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 			adminKey: Account.NullPublicKey,
 			freezeKey: Account.NullPublicKey,
-			KYCKey: Account.NullPublicKey,
+			kycKey: Account.NullPublicKey,
 			wipeKey: Account.NullPublicKey,
 			pauseKey: Account.NullPublicKey,
 			supplyKey: Account.NullPublicKey,

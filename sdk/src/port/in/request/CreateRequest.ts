@@ -75,7 +75,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 	freezeKey?: RequestPublicKey;
 
 	@OptionalField()
-	KYCKey?: RequestPublicKey;
+	kycKey?: RequestPublicKey;
 
 	@OptionalField()
 	wipeKey?: RequestPublicKey;
@@ -105,7 +105,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		autoRenewAccount,
 		adminKey,
 		freezeKey,
-		KYCKey,
+		kycKey,
 		wipeKey,
 		pauseKey,
 		supplyKey,
@@ -127,7 +127,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		autoRenewAccount?: string;
 		adminKey?: RequestPublicKey;
 		freezeKey?: RequestPublicKey;
-		KYCKey?: RequestPublicKey;
+		kycKey?: RequestPublicKey;
 		wipeKey?: RequestPublicKey;
 		pauseKey?: RequestPublicKey;
 		supplyKey?: RequestPublicKey;
@@ -228,7 +228,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 			},
 			adminKey: Validation.checkPublicKey(),
 			freezeKey: Validation.checkPublicKey(),
-			KYCKey: Validation.checkPublicKey(),
+			kycKey: Validation.checkPublicKey(),
 			wipeKey: Validation.checkPublicKey(),
 			pauseKey: Validation.checkPublicKey(),
 			supplyKey: Validation.checkPublicKey(),
@@ -291,7 +291,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		this.autoRenewAccount = autoRenewAccount;
 		this.adminKey = adminKey;
 		this.freezeKey = freezeKey;
-		this.KYCKey = KYCKey;
+		this.kycKey = kycKey;
 		this.wipeKey = wipeKey;
 		this.pauseKey = pauseKey;
 		this.supplyKey = supplyKey;
