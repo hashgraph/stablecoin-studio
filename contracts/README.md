@@ -236,6 +236,17 @@ If you want to deploy your own Factory contracts do the following steps:
    2. Deploy the Factory **Proxy Admin** smart contract (*StableCoinFactoryProxyAdmin.sol*).
    3. Deploy the Factory **Proxy** smart contract (*StableCoinFactoryProxy.sol*) setting the Factory logic as the implementation and the Factory proxy admin as the admin.
 
+You may also clone this repository, install the dependecies (see [Build](#Build)) and run `npm run test:testnet:deployFactory` in order to deploy all factories (HederaERC20 and StableCoinFactory) and its proxies onto the testnet network. Once completed, an output with the new addresses is provided:
+
+`````
+Proxy Address:           0.0.7110 
+Proxy Admin Address:     0.0.7108 
+Factory Address:         0.0.7106 
+HederaERC20 Address:     0.0.7102
+`````
+
+> The account used to deploy will be determined by the values in the `.env` file, that must contain the `HEDERA_OPERATOR_` entries for the account id, public / private key and evm address. See the `.env.sample` file to see all the attributes. See [Test accounts](#Tests-accounts) to learn more.
+
 
 ## Create Stable Coins
 Once the Factory has been deployed (or if you are using the common Factory), creating stable coins is very simple, just invoke one single method of the Factory's Logic (through the Factory's Proxy): `deployStableCoin(...)`
