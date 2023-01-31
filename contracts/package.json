@@ -70,9 +70,7 @@
         "doc": "npx hardhat dodoc",
         "security": "docker run -t --rm -v /var/run/docker.sock:/var/run/docker.sock -v \"$(pwd)\":\"/home/ethsec/contracts\" -w \"/home/ethsec/contracts\" -u 0:0 trailofbits/eth-security-toolbox -c \"solc-select install 0.8.16  && solc-select use 0.8.16  && slither ./contracts --solc-remaps @=node_modules/@\"",
         "pre-commit": "npm run prettier && npm run lint",
-        "prettierCheck": "prettier --check",
-        "lintFile:sol": "solhint",
-        "lintFile:ts": "npx eslint --ext .ts --check"
+        "prettierCheck": "prettier --check"
     },
     "author": "",
     "license": "ISC",

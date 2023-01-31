@@ -95,8 +95,6 @@ export default class BaseError extends Error {
 	}
 
 	toString(stack = false): string {
-		return `${this.errorCode} - ${
-			stack ? this.stack : this.message
-		}`;
+		return `${this.errorCode} - ${stack ? this.stack : this.message}`;
 	}
 }

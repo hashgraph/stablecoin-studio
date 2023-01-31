@@ -31,7 +31,6 @@ export const LogError = (
 			const result = await originalMethod.apply(this, args);
 			return result;
 		} catch (error) {
-
 			LogService.logError(error);
 			throw error;
 		}

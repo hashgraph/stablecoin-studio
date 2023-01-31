@@ -23,11 +23,11 @@
     "clean:contracts:build": "rimraf ./contracts/build",
     "clean:all:build": "concurrently \"npm run clean:sdk:build\" \"npm run clean:cli:build\" \"npm run clean:web:build\" \"npm run clean:contracts:build\"",
     "prepare": "npx husky install",
-    "pre-commit": "concurrently \"npm run pre-commit:sdk\" \"npm run pre-commit:web\" \"npm run pre-commit:cli\" \"npm run pre-commit:contracts\"",
-    "pre-commit:sdk": "cd sdk && npm run pre-commit",
-    "pre-commit:web": "cd web && npm run pre-commit",
-    "pre-commit:cli": "cd cli && npm run pre-commit",
-    "pre-commit:contracts": "cd contracts && npm run pre-commit"
+    "prettier": "concurrently \"npm run prettier:sdk\" \"npm run prettier:web\" \"npm run prettier:cli\" \"npm run prettier:contracts\"",
+    "prettier:sdk": "cd sdk && npm run prettier",
+    "prettier:web": "cd web && npm run prettier",
+    "prettier:cli": "cd cli && npm run prettier",
+    "prettier:contracts": "cd contracts && npm run prettier"
   },
   "keywords": [],
   "author": "",
