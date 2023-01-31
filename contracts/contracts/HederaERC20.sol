@@ -178,12 +178,14 @@ contract HederaERC20 is
      *
      */
     function _associateToken(address addr) private checkAddressIsNotZero(addr) {
-        emit TokenAssociated(_getTokenAddress(), addr);
+        address currentTokenAddress = _getTokenAddress();
 
         int256 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .associateToken(addr, _getTokenAddress());
+            .associateToken(addr, currentTokenAddress);
 
         _checkResponse(responseCode);
+
+        emit TokenAssociated(currentTokenAddress, addr);
     }
 
     /**
@@ -195,12 +197,14 @@ contract HederaERC20 is
     function dissociateToken(
         address addr
     ) external override(IHederaERC20) checkAddressIsNotZero(addr) {
-        emit TokenDissociated(_getTokenAddress(), addr);
+        address currentTokenAddress = _getTokenAddress();
 
         int256 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .dissociateToken(addr, _getTokenAddress());
+            .dissociateToken(addr, currentTokenAddress);
 
         _checkResponse(responseCode);
+
+        emit TokenDissociated(currentTokenAddress, addr);
     }
 
     /**
@@ -221,12 +225,19 @@ contract HederaERC20 is
     {
         require(_balanceOf(from) >= amount, 'Insufficient token balance');
 
-        emit TokenTransfer(_getTokenAddress(), from, to, amount);
+        address currentTokenAddress = _getTokenAddress();
 
         int256 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .transferToken(_getTokenAddress(), from, to, int64(int256(amount)));
+            .transferToken(
+                currentTokenAddress,
+                from,
+                to,
+                int64(int256(amount))
+            );
 
         _checkResponse(responseCode);
+
+        emit TokenTransfer(currentTokenAddress, from, to, amount);
     }
 
     /**
@@ -239,6 +250,7 @@ contract HederaERC20 is
         uint256 amount
     ) external override(IHederaERC20) returns (bool) {
         _transfer(_msgSender(), to, amount);
+
         return true;
     }
 
@@ -305,12 +317,14 @@ contract HederaERC20 is
         checkAddressIsNotZero(to)
         returns (bool)
     {
-        emit TokenTransfer(_getTokenAddress(), from, to, amount);
+        require(_balanceOf(from) >= amount, 'Insufficient token balance');
+
+        address currentTokenAddress = _getTokenAddress();
 
         (bool success, bytes memory result) = _PRECOMPILED_ADDRESS.delegatecall(
             abi.encodeWithSelector(
                 IHederaTokenService.transferFrom.selector,
-                _getTokenAddress(),
+                currentTokenAddress,
                 from,
                 to,
                 amount
@@ -320,6 +334,14 @@ contract HederaERC20 is
             ? abi.decode(result, (int32))
             : HederaResponseCodes.UNKNOWN;
         success = _checkResponse(responseCode);
+
+        emit TokenTransferFrom(
+            currentTokenAddress,
+            msg.sender,
+            from,
+            to,
+            amount
+        );
 
         return success;
     }

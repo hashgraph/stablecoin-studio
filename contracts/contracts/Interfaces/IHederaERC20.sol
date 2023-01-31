@@ -36,6 +36,23 @@ interface IHederaERC20 {
         uint256 amount
     );
 
+    /**
+    * @dev Emitted when tokens have been transfered from sender to receiver
+    *
+    * @param token Token address
+    * @param sender Sender address
+    * @param receiver Receiver address
+    * @param amount Transfered amount
+
+    */
+    event TokenTransferFrom(
+        address token,
+        address sender,
+        address from,
+        address receiver,
+        uint256 amount
+    );
+
     struct InitializeStruct {
         IHederaTokenService.HederaToken token;
         uint64 initialTotalSupply;

@@ -100,19 +100,22 @@ abstract contract Roles is IRoles, AccessControlUpgradeable {
      * @dev Returns an array of roles the account currently has
      *
      * @param account The account address
-     * @return bytes32[] The array containing the roles
+     * @return rolesToReturn The array containing the roles
      */
     function getRoles(
         address account
-    ) external view override(IRoles) returns (bytes32[] memory) {
-        bytes32[] memory rolesToReturn = new bytes32[](_roles.length);
+    ) external view override(IRoles) returns (bytes32[] memory rolesToReturn) {
+        uint256 rolesLength = _roles.length;
 
-        for (uint i = 0; i < _roles.length; i++) {
-            rolesToReturn[i] = hasRole(_roles[i], account)
-                ? _roles[i]
+        rolesToReturn = new bytes32[](rolesLength);
+
+        for (uint i = rolesLength; i > 0; i--) {
+            bytes32 role = _roles[i - 1];
+
+            rolesToReturn[i - 1] = hasRole(role, account)
+                ? role
                 : _WITHOUT_ROLE;
         }
-        return (rolesToReturn);
     }
 
     /**
@@ -130,4 +133,11 @@ abstract contract Roles is IRoles, AccessControlUpgradeable {
     function _getRoleId(RoleName role) internal view returns (bytes32) {
         return _roles[uint256(role)];
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[49] private __gap;
 }

@@ -28,15 +28,24 @@ abstract contract CashIn is ICashIn, SupplierAdmin, Reserve {
         if (!_unlimitedSupplierAllowances[msg.sender])
             _decreaseSupplierAllowance(msg.sender, amount);
 
-        emit TokensMinted(msg.sender, _getTokenAddress(), amount, account);
+        address currentTokenAddress = _getTokenAddress();
 
         (int256 responseCode, , ) = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .mintToken(_getTokenAddress(), uint64(amount), new bytes[](0));
+            .mintToken(currentTokenAddress, uint64(amount), new bytes[](0));
 
         bool success = _checkResponse(responseCode);
 
         _transfer(address(this), account, amount);
 
+        emit TokensMinted(msg.sender, currentTokenAddress, amount, account);
+
         return success;
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[50] private __gap;
 }

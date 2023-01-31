@@ -19,12 +19,14 @@ abstract contract KYC is IKYC, TokenOwner, Roles {
         onlyRole(_getRoleId(RoleName.KYC))
         returns (bool)
     {
-        emit GrantTokenKyc(_getTokenAddress(), account);
+        address currentTokenAddress = _getTokenAddress();
 
         int256 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .grantTokenKyc(_getTokenAddress(), account);
+            .grantTokenKyc(currentTokenAddress, account);
 
         bool success = _checkResponse(responseCode);
+
+        emit GrantTokenKyc(currentTokenAddress, account);
 
         return success;
     }
@@ -41,13 +43,22 @@ abstract contract KYC is IKYC, TokenOwner, Roles {
         onlyRole(_getRoleId(RoleName.KYC))
         returns (bool)
     {
-        emit RevokeTokenKyc(_getTokenAddress(), account);
+        address currentTokenAddress = _getTokenAddress();
 
         int256 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .revokeTokenKyc(_getTokenAddress(), account);
+            .revokeTokenKyc(currentTokenAddress, account);
 
         bool success = _checkResponse(responseCode);
 
+        emit RevokeTokenKyc(currentTokenAddress, account);
+
         return success;
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[50] private __gap;
 }

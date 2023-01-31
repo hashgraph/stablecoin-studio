@@ -27,11 +27,11 @@ abstract contract Rescatable is IRescatable, TokenOwner, Roles {
             'Amount must not exceed the token balance'
         );
 
-        emit TokenRescued(msg.sender, _getTokenAddress(), amount);
+        address currentTokenAddress = _getTokenAddress();
 
         int256 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
             .transferToken(
-                _getTokenAddress(),
+                currentTokenAddress,
                 address(this),
                 msg.sender,
                 int64(int256(amount))
@@ -39,6 +39,15 @@ abstract contract Rescatable is IRescatable, TokenOwner, Roles {
 
         bool success = _checkResponse(responseCode);
 
+        emit TokenRescued(msg.sender, currentTokenAddress, amount);
+
         return success;
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[50] private __gap;
 }

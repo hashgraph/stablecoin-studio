@@ -21,12 +21,14 @@ abstract contract Freezable is IFreezable, TokenOwner, Roles {
         checkAddressIsNotZero(account)
         returns (bool)
     {
-        emit TransfersFrozen(_getTokenAddress(), account);
+        address currentTokenAddress = _getTokenAddress();
 
         int256 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .freezeToken(_getTokenAddress(), account);
+            .freezeToken(currentTokenAddress, account);
 
         bool success = _checkResponse(responseCode);
+
+        emit TransfersFrozen(currentTokenAddress, account);
 
         return success;
     }
@@ -45,13 +47,22 @@ abstract contract Freezable is IFreezable, TokenOwner, Roles {
         checkAddressIsNotZero(account)
         returns (bool)
     {
-        emit TransfersUnfrozen(_getTokenAddress(), account);
+        address currentTokenAddress = _getTokenAddress();
 
         int256 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .unfreezeToken(_getTokenAddress(), account);
+            .unfreezeToken(currentTokenAddress, account);
 
         bool success = _checkResponse(responseCode);
 
+        emit TransfersUnfrozen(currentTokenAddress, account);
+
         return success;
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[50] private __gap;
 }
