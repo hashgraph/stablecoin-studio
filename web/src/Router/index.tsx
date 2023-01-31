@@ -36,6 +36,7 @@ const Operations = () => {
 		kyc: false,
 		pause: false,
 		delete: false,
+		checkKyc: false,
 	});
 
 	const isLoading = useRefreshCoinInfo();
@@ -127,6 +128,7 @@ const Operations = () => {
 				  (operations?.includes(Operation.GRANT_KYC) &&
 						getAccessByOperation(Operation.GRANT_KYC) !== Access.HTS &&
 						!roles.includes(StableCoinRole.KYC_ROLE)),
+			checkKyc: selectedStableCoin?.kycKey === undefined,
 		};
 		setDisabledFeatures(areDisabled);
 	};
@@ -190,7 +192,7 @@ const Operations = () => {
 			icon: 'IdentificationCard',
 			route: NamedRoutes.CheckKyc,
 			title: t('checkKycOperation'),
-			isDisabled: disabledFeatures?.kyc,
+			isDisabled: disabledFeatures?.checkKyc,
 		},
 		{
 			icon: 'Warning',
