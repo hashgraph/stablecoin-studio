@@ -58,6 +58,7 @@ export default class OperationStableCoinService extends Service {
   private listStableCoinService = new ListStableCoinsService();
   private stableCoinPaused;
   private stableCoinDeleted;
+  private hasKycKey;
 
   constructor(tokenId?: string, memo?: string, symbol?: string) {
     super('Operation Stable Coin');
@@ -147,6 +148,7 @@ export default class OperationStableCoinService extends Service {
 
     this.stableCoinDeleted = capabilitiesStableCoin.coin.deleted;
     this.stableCoinPaused = capabilitiesStableCoin.coin.paused;
+    this.hasKycKey = capabilitiesStableCoin.coin.kycKey !== undefined;
 
     switch (
       await utilsService.defaultMultipleAsk(
@@ -1307,7 +1309,10 @@ export default class OperationStableCoinService extends Service {
         (option === language.getText('wizard.stableCoinOptions.Details') &&
           !this.stableCoinDeleted) ||
         (option === language.getText('wizard.stableCoinOptions.Balance') &&
-          !this.stableCoinDeleted)
+          !this.stableCoinDeleted) ||
+        (option ===
+          language.getText('wizard.stableCoinOptions.AccountKYCGranted') &&
+          this.hasKycKey)
       ) {
         return true;
       }
