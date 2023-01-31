@@ -55,7 +55,7 @@ if ( [ "$SDK_STAGED_FILES" != "" ] ); then
 fi
 
 if ( [ "$WEB_STAGED_FILES" != "" ] ); then
-    cd sdk
+    cd web
     checkPrettier $WEB_STAGED_FILES
     checkLinter
     cd ..
