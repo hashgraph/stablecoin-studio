@@ -31,6 +31,7 @@ interface StepperProps {
 	setCurrentStep: (arg0: number) => void;
 	handleFirstButtonSecondary: () => void;
 	handleLastButtonPrimary: () => void;
+	supplyKey?: number;
 }
 
 const FOOTER_HEIGHT = '88px';
@@ -49,12 +50,18 @@ const Stepper = (props: StepperProps) => {
 		setCurrentStep,
 		handleFirstButtonSecondary,
 		handleLastButtonPrimary,
+		supplyKey
 	} = props;
 
 	const handleStep = (e: MouseEvent<HTMLButtonElement>, index: number, type: 'next' | 'prev') => {
 		e.preventDefault();
 
-		return type === 'next' ? setCurrentStep(index + 1) : setCurrentStep(index - 1);
+	    if (supplyKey !== 2) {
+			return type === 'next' ? index === 2 ? setCurrentStep(4) : setCurrentStep(index + 1) : 
+				index === 4 ? setCurrentStep(2) : setCurrentStep(index - 1);
+		} else {
+			return type === 'next' ? setCurrentStep(index + 1) : setCurrentStep(index - 1);			
+		}
 	};
 
 	return (
@@ -68,12 +75,13 @@ const Stepper = (props: StepperProps) => {
 					const handleChangeTab = () => {
 						setCurrentStep(index);
 					};
-
 					return (
 						<Tab
 							key={index}
 							p='15px'
-							isDisabled={index > currentStep}
+					
+							isDisabled={ supplyKey !== 2 && index === 3 || index > currentStep }
+					
 							onClick={handleChangeTab}
 							_hover={{
 								cursor: index < currentStep ? 'pointer' : 'default',

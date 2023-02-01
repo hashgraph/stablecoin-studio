@@ -247,7 +247,8 @@ const StableCoinCreation = () => {
 	const handleCancel = () => {
 		RouterManager.to(navigate, NamedRoutes.Operations);
 	};
-
+	
+	const supplyKey = watch('supplyKey') ? watch('supplyKey')!.value : 2;
 	const stepperProps = {
 		steps,
 		handleLastButtonPrimary: handleFinish,
@@ -256,6 +257,7 @@ const StableCoinCreation = () => {
 		isValid: isValidForm,
 		currentStep,
 		setCurrentStep,
+		supplyKey
 	};
 
 	const variant = loading ? 'loading' : success ? 'success' : 'error';
