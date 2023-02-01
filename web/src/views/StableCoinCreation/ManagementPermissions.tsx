@@ -106,8 +106,10 @@ const ManagementPermissions = ({
 						</Stack>
 					)}
 
-					{((watch('kycKey')?.value !== 4 && watch('kycKey')?.value !== 3) ||
-						watch('managementPermissions') === true) && (
+					{((watch('kycKey') === undefined ||
+						watch('managementPermissions') === true ||
+						(watch('kycKey')?.value === 2) && watch('supplyKey')?.value !== 1)
+						) && (
 						<Stack minW={400}>
 							<HStack mb={4} justifyContent='space-between'>
 								<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>
