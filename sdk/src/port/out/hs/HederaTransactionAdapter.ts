@@ -773,7 +773,9 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			LogService.logError(error);
 			throw new TransactionResponseError({
 				message: `Unexpected error in HederaTransactionHandler ${operationName} operation: ${error}`,
-				transactionId: (error as any).error?.transactionId,
+				transactionId:
+					(error as any).error?.transactionId ??
+					(error as any)?.transactionId,
 			});
 		}
 	}
