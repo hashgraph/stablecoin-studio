@@ -28,10 +28,10 @@ const ManagementPermissions = ({
 	});
 
 	useEffect(() => {
-		if (watch('kycKey')?.value === 4 || watch('kycKey')?.value === 3) {
+		if (watch('kycKey')?.value !== 2 || watch('supplyKey')?.value === 1) {
 			setValue('grantKYCToOriginalSender', false);
 		}
-	}, [watch('kycKey')]);
+	}, [watch('kycKey'), watch('supplyKey')]);
 
 	const keys = [
 		{
@@ -107,7 +107,6 @@ const ManagementPermissions = ({
 					)}
 
 					{(watch('kycKey') === undefined ||
-						watch('managementPermissions') === true ||
 						(watch('kycKey')?.value === 2 && watch('supplyKey')?.value !== 1)) && (
 						<Stack minW={400}>
 							<HStack mb={4} justifyContent='space-between'>
