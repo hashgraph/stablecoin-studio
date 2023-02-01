@@ -82,7 +82,7 @@ import { KycStatus } from '../out/mirror/response/AccountTokenRelationViewModel.
 export const HederaERC20AddressTestnet = '0.0.3121145';
 export const HederaERC20AddressPreviewnet = '0.0.11111111';
 
-export const FactoryAddressTestnet = '0.0.3071443';
+export const FactoryAddressTestnet = '0.0.3121759';
 export const FactoryAddressPreviewnet = '0.0.11111111';
 
 export { StableCoinViewModel, StableCoinListViewModel, ReserveViewModel };

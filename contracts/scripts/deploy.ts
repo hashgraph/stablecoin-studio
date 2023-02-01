@@ -29,9 +29,9 @@ const hre = require('hardhat')
 
 const hederaERC20Address = '0.0.3121145' //'0.0.49414839' //'0.0.49394934'
 
-const factoryProxyAddress = '0.0.3071443' //'0.0.49414875' //'0.0.49394940'
-const factoryProxyAdminAddress = '0.0.3071439' //'0.0.49414871' //'0.0.49394938'
-const factoryAddress = '0.0.3071436' //'0.0.49414862' //'0.0.49394936'
+const factoryProxyAddress = '0.0.3121759' //'0.0.3071443' //'0.0.49414875' //'0.0.49394940'
+const factoryProxyAdminAddress = '0.0.3121755' //'0.0.3071439' //'0.0.49414871' //'0.0.49394938'
+const factoryAddress = '0.0.3121752' //'0.0.3071436' //'0.0.49414862' //'0.0.49394936'
 
 export const ADDRESS_0 = '0x0000000000000000000000000000000000000000'
 const hreConfig = hre.network.config
