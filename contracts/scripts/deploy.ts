@@ -27,7 +27,7 @@ import {
 
 const hre = require('hardhat')
 
-const hederaERC20Address = '0.0.3072413' //'0.0.49414839' //'0.0.49394934'
+const hederaERC20Address = '0.0.3121145' //'0.0.49414839' //'0.0.49394934'
 
 const factoryProxyAddress = '0.0.3071443' //'0.0.49414875' //'0.0.49394940'
 const factoryProxyAdminAddress = '0.0.3071439' //'0.0.49414871' //'0.0.49394938'

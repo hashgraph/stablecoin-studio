@@ -109,12 +109,10 @@ abstract contract Roles is IRoles, AccessControlUpgradeable {
 
         rolesToReturn = new bytes32[](rolesLength);
 
-        for (uint i = rolesLength; i > 0; i--) {
-            bytes32 role = _roles[i - 1];
+        for (uint i = 0; i < rolesLength; i++) {
+            bytes32 role = _roles[i];
 
-            rolesToReturn[i - 1] = hasRole(role, account)
-                ? role
-                : _WITHOUT_ROLE;
+            rolesToReturn[i] = hasRole(role, account) ? role : _WITHOUT_ROLE;
         }
     }
 

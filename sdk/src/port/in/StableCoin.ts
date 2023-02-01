@@ -79,7 +79,7 @@ import { LogError } from '../../core/decorator/LogErrorDecorator.js';
 import { GetAccountTokenRelationshipQuery } from '../../app/usecase/query/account/tokenRelationship/GetAccountTokenRelationshipQuery.js';
 import { KycStatus } from '../out/mirror/response/AccountTokenRelationViewModel.js';
 
-export const HederaERC20AddressTestnet = '0.0.3072413';
+export const HederaERC20AddressTestnet = '0.0.3121145';
 export const HederaERC20AddressPreviewnet = '0.0.11111111';
 
 export const FactoryAddressTestnet = '0.0.3071443';
