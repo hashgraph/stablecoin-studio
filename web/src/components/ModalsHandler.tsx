@@ -15,15 +15,15 @@ export interface ModalsHandlerActionsProps
 }
 
 export interface ModalsHandlerProps {
-	errorNotificationDescription?: string;
-	errorNotificationTitle: string;
-	errorTransactionUrl?: string;
-	warningNotificationDescription?: string;
-	warningNotificationTitle?: string;
+	errorNotificationDescription?: string | null;
+	errorNotificationTitle: string | null;
+	errorTransactionUrl?: string | null;
+	warningNotificationDescription?: string | null;
+	warningNotificationTitle?: string | null;
 	ModalActionChildren: ReactNode;
 	modalActionProps: ModalsHandlerActionsProps;
-	successNotificationDescription?: string;
-	successNotificationTitle: string;
+	successNotificationDescription?: string | null;
+	successNotificationTitle: string | null;
 	handleOnCloseModalSuccess?: () => void;
 	handleOnCloseModalError?: () => void;
 	handleOnCloseModalWarning?: () => void;

@@ -31,7 +31,7 @@ describe(`<${SwitchController.name} />`, () => {
 		expect(component.asFragment()).toMatchSnapshot();
 	});
 
-	it('should change value on click', () => {
+	it('should change value on click', async () => {
 		const component = factoryComponent();
 
 		const handler = component.getByRole('switch');
@@ -44,7 +44,7 @@ describe(`<${SwitchController.name} />`, () => {
 		expect(noHandler).not.toBeVisible();
 
 		const switchComponent = component.getByTestId('switch');
-		userEvent.click(switchComponent);
+		await userEvent.click(switchComponent);
 
 		expect(handler).toHaveAttribute('aria-checked', 'false');
 		expect(yesHandler).not.toBeVisible();

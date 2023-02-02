@@ -52,6 +52,6 @@ const customRender = (
 export { customRender as render };
 
 export const sdkMock = (fnToBeMocked: keyof typeof SDKService) => {
-	const mock = jest.mocked(SDKService[fnToBeMocked], true);
+	const mock = jest.mocked(SDKService[fnToBeMocked], { shallow: true });
 	return mock as jest.Mock<typeof mock>;
 };

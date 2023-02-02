@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import InputController from '../../components/Form/InputController';
 import { SelectController } from '../../components/Form/SelectController';
 import SwitchController from '../../components/Form/SwitchController';
+import { propertyNotFound } from '../../constant';
 import { validateAccount } from '../../utils/validationsHelper';
 import { roleOptions } from '../Roles/constants';
 
@@ -65,18 +66,23 @@ const ImportedTokenInfo = (props: ImportedTokenInfoProps) => {
 				<Stack as='form' spacing={6}>
 					<InputController
 						rules={{
-							required: t(`global:validations.required`),
+							required: t(`global:validations.required`) ?? propertyNotFound,
 							validate: {
 								validCoinId: (value: string) => {
-									return validateAccount(value) || t('global:validations.invalidCoinId');
+									return (
+										validateAccount(value) ||
+										(t('global:validations.invalidCoinId') ?? propertyNotFound)
+									);
 								},
 							},
 						}}
 						isRequired
 						control={control}
 						name={'stableCoinId'}
-						label={t('externalTokenInfo:externalTokenInfo.stableCoinId')}
-						placeholder={t('externalTokenInfo:externalTokenInfo.stableCoinIdPlaceholder')}
+						label={t('externalTokenInfo:externalTokenInfo.stableCoinId') ?? propertyNotFound}
+						placeholder={
+							t('externalTokenInfo:externalTokenInfo.stableCoinIdPlaceholder') ?? propertyNotFound
+						}
 					/>
 					<HStack mb={4}>
 						<Text fontSize='14px' fontWeight='400' lineHeight='17px'>

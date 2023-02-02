@@ -60,20 +60,20 @@ describe(`<${Switch.name} />`, () => {
 		expect(noHandler).toHaveTextContent(translations.no.toUpperCase());
 	});
 
-	test('should call onChange function on click', () => {
+	test('should call onChange function on click', async () => {
 		const component = render(<Switch {...defaultProps} />);
 
 		const switchComponent = component.getByTestId('switch');
-		userEvent.click(switchComponent);
+		await userEvent.click(switchComponent);
 		expect(defaultProps.onChange).toHaveBeenCalled();
 	});
 
-	test('should not call to onChange function if is disabled', () => {
+	test('should not call to onChange function if is disabled', async () => {
 		defaultProps.disabled = true;
 		const component = render(<Switch {...defaultProps} />);
 
 		const switchComponent = component.getByTestId('switch');
-		userEvent.click(switchComponent);
+		await userEvent.click(switchComponent);
 		expect(defaultProps.onChange).not.toHaveBeenCalled();
 	});
 });
