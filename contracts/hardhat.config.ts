@@ -5,6 +5,7 @@ import 'hardhat-abi-exporter'
 import 'hardhat-contract-sizer'
 import '@primitivefi/hardhat-dodoc'
 import 'hardhat-gas-reporter'
+import '@openzeppelin/hardhat-upgrades'
 import * as dotenv from 'dotenv'
 dotenv.config()
 
