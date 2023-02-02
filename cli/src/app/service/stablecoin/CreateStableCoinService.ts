@@ -232,25 +232,7 @@ export default class CreateStableCoinService extends Service {
     }
 
     const managedBySC = await this.askForManagedFeatures();
-    console.log({
-      name: tokenToCreate.name,
-      symbol: tokenToCreate.symbol,
-      autoRenewAccount: tokenToCreate.autoRenewAccount,
-      decimals: tokenToCreate.decimals,
-      initialSupply:
-        initialSupply === '' || !initialSupply ? undefined : initialSupply,
-      supplyType: supplyType
-        ? TokenSupplyType.INFINITE
-        : TokenSupplyType.FINITE,
-      maxSupply: tokenToCreate.maxSupply,
-      reserve:
-        reserve == false
-          ? '-'
-          : existingReserve
-          ? tokenToCreate.reserveAddress
-          : 'Proof of Reserve Feed initial amount : ' +
-            tokenToCreate.reserveInitialAmount,
-    });
+
     if (managedBySC) {
       tokenToCreate.adminKey = Account.NullPublicKey;
       tokenToCreate.freezeKey = Account.NullPublicKey;
@@ -261,6 +243,27 @@ export default class CreateStableCoinService extends Service {
 
       tokenToCreate.grantKYCToOriginalSender =
         await this.askForKYCGrantToSender();
+
+      console.log({
+        name: tokenToCreate.name,
+        symbol: tokenToCreate.symbol,
+        autoRenewAccount: tokenToCreate.autoRenewAccount,
+        decimals: tokenToCreate.decimals,
+        initialSupply:
+          initialSupply === '' || !initialSupply ? undefined : initialSupply,
+        supplyType: supplyType
+          ? TokenSupplyType.INFINITE
+          : TokenSupplyType.FINITE,
+        maxSupply: tokenToCreate.maxSupply,
+        reserve:
+          reserve == false
+            ? '-'
+            : existingReserve
+            ? tokenToCreate.reserveAddress
+            : 'Proof of Reserve Feed initial amount : ' +
+              tokenToCreate.reserveInitialAmount,
+        grantKYCToOriginalSender: tokenToCreate.grantKYCToOriginalSender,
+      });
 
       if (
         !(await utilsService.defaultConfirmAsk(
